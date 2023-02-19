@@ -545,9 +545,10 @@ const Tree = ({
               <textSprite
                 userData={{ unintersectable: true }}
                 name={'Label'}
+                fontFace={'Roboto'}
                 text={labelText}
-                fontSize={20}
-                fontFace={'Times Roman'}
+                color={treeModel?.labelColor ?? 'white'}
+                fontSize={treeModel?.labelFontSize ?? 20}
                 textHeight={treeModel?.labelSize ?? 0.2}
                 position={[0, 0, lz / 2 + (treeModel?.labelHeight ?? 0.4)]}
               />

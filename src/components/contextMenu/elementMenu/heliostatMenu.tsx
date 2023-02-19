@@ -16,7 +16,15 @@ import HeliostatReflectanceInput from './heliostatReflectorReflectanceInput';
 import HeliostatDrawSunBeamSelection from './heliostatDrawSunBeamSelection';
 import HeliostatTowerSelection from './heliostatTowerSelection';
 import { ObjectType } from '../../../types';
-import { useLabel, useLabelHeight, useLabelShow, useLabelSize, useLabelText } from './menuHooks';
+import {
+  useLabel,
+  useLabelColor,
+  useLabelFontSize,
+  useLabelHeight,
+  useLabelShow,
+  useLabelSize,
+  useLabelText,
+} from './menuHooks';
 import SubMenu from 'antd/lib/menu/SubMenu';
 
 export const HeliostatMenu = React.memo(() => {
@@ -38,6 +46,8 @@ export const HeliostatMenu = React.memo(() => {
   const showLabel = useLabelShow(heliostat);
   const updateLabelText = useLabelText(heliostat, labelText);
   const setLabelSize = useLabelSize(heliostat);
+  const setLabelFontSize = useLabelFontSize(heliostat);
+  const setLabelColor = useLabelColor(heliostat);
   const setLabelHeight = useLabelHeight(heliostat);
 
   if (!heliostat) return null;
@@ -162,16 +172,39 @@ export const HeliostatMenu = React.memo(() => {
                   onChange={(value) => setLabelHeight(value)}
                 />
               </Menu.Item>
+              {/* the label's font size */}
+              <Menu.Item
+                style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }}
+                key={'heliostat-label-font-size'}
+              >
+                <InputNumber
+                  addonBefore={i18n.t('labelSubMenu.LabelFontSize', lang) + ':'}
+                  min={10}
+                  max={100}
+                  step={1}
+                  precision={0}
+                  value={heliostat.labelFontSize ?? 20}
+                  onChange={(value) => setLabelFontSize(value)}
+                />
+              </Menu.Item>
               {/* the label's size */}
               <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'heliostat-label-size'}>
                 <InputNumber
                   addonBefore={i18n.t('labelSubMenu.LabelSize', lang) + ':'}
                   min={0.2}
-                  max={2}
+                  max={5}
                   step={0.1}
                   precision={1}
                   value={heliostat.labelSize ?? 0.2}
                   onChange={(value) => setLabelSize(value)}
+                />
+              </Menu.Item>
+              {/* the label's color */}
+              <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'heliostat-label-color'}>
+                <Input
+                  addonBefore={i18n.t('labelSubMenu.LabelColor', lang) + ':'}
+                  value={heliostat.labelColor ?? '#ffffff'}
+                  onChange={(e) => setLabelColor(e.target.value)}
                 />
               </Menu.Item>
             </Menu>

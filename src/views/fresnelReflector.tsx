@@ -635,9 +635,10 @@ const FresnelReflector = ({
         <textSprite
           userData={{ unintersectable: true }}
           name={'Label'}
+          fontFace={'Roboto'}
           text={labelText}
-          fontSize={20}
-          fontFace={'Times Roman'}
+          color={fresnelReflector?.labelColor ?? 'white'}
+          fontSize={fresnelReflector?.labelFontSize ?? 20}
           textHeight={fresnelReflector?.labelSize ?? 0.2}
           castShadow={false}
           receiveShadow={false}

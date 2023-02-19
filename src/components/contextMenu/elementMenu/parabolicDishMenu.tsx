@@ -19,7 +19,15 @@ import ParabolicDishOpticalEfficiencyInput from './parabolicDishOpticalEfficienc
 import ParabolicDishThermalEfficiencyInput from './parabolicDishThermalEfficiencyInput';
 import ParabolicDishStructureTypeInput from './parabolicDishStructureTypeInput';
 import { ObjectType } from '../../../types';
-import { useLabel, useLabelHeight, useLabelShow, useLabelSize, useLabelText } from './menuHooks';
+import {
+  useLabel,
+  useLabelColor,
+  useLabelFontSize,
+  useLabelHeight,
+  useLabelShow,
+  useLabelSize,
+  useLabelText,
+} from './menuHooks';
 import SubMenu from 'antd/lib/menu/SubMenu';
 
 export const ParabolicDishMenu = React.memo(() => {
@@ -45,6 +53,8 @@ export const ParabolicDishMenu = React.memo(() => {
   const showLabel = useLabelShow(parabolicDish);
   const updateLabelText = useLabelText(parabolicDish, labelText);
   const setLabelSize = useLabelSize(parabolicDish);
+  const setLabelFontSize = useLabelFontSize(parabolicDish);
+  const setLabelColor = useLabelColor(parabolicDish);
   const setLabelHeight = useLabelHeight(parabolicDish);
 
   if (!parabolicDish) return null;
@@ -235,6 +245,21 @@ export const ParabolicDishMenu = React.memo(() => {
                   onChange={(value) => setLabelHeight(value)}
                 />
               </Menu.Item>
+              {/* the label's font size */}
+              <Menu.Item
+                style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }}
+                key={'parabolic-dish-label-font-size'}
+              >
+                <InputNumber
+                  addonBefore={i18n.t('labelSubMenu.LabelFontSize', lang) + ':'}
+                  min={10}
+                  max={100}
+                  step={1}
+                  precision={0}
+                  value={parabolicDish.labelFontSize ?? 20}
+                  onChange={(value) => setLabelFontSize(value)}
+                />
+              </Menu.Item>
               {/* the label's size */}
               <Menu.Item
                 style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }}
@@ -243,11 +268,22 @@ export const ParabolicDishMenu = React.memo(() => {
                 <InputNumber
                   addonBefore={i18n.t('labelSubMenu.LabelSize', lang) + ':'}
                   min={0.2}
-                  max={2}
+                  max={5}
                   step={0.1}
                   precision={1}
                   value={parabolicDish.labelSize ?? 0.2}
                   onChange={(value) => setLabelSize(value)}
+                />
+              </Menu.Item>
+              {/* the label's color */}
+              <Menu.Item
+                style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }}
+                key={'parabolic-dish-label-color'}
+              >
+                <Input
+                  addonBefore={i18n.t('labelSubMenu.LabelColor', lang) + ':'}
+                  value={parabolicDish.labelColor ?? '#ffffff'}
+                  onChange={(e) => setLabelColor(e.target.value)}
                 />
               </Menu.Item>
             </Menu>

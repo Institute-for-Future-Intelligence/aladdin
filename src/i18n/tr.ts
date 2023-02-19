@@ -566,6 +566,8 @@ export const i18n_tr = {
       LabelText: 'Label Text',
       LabelHeight: 'Label Height',
       LabelSize: 'Label Size',
+      LabelFontSize: 'Font Size',
+      LabelColor: 'Label Color',
       KeepShowingLabel: 'Etiketi Göstermeye Devam Et',
     },
 

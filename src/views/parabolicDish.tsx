@@ -737,9 +737,10 @@ const ParabolicDish = ({
         <textSprite
           userData={{ unintersectable: true }}
           name={'Label'}
+          fontFace={'Roboto'}
           text={labelText}
-          fontSize={20}
-          fontFace={'Times Roman'}
+          color={dish?.labelColor ?? 'white'}
+          fontSize={dish?.labelFontSize ?? 20}
           textHeight={dish?.labelSize ?? 0.2}
           position={[0, 0, dish?.labelHeight ?? Math.max(hy * Math.abs(Math.sin(dish.tiltAngle)) + 0.1, 0.2)]}
         />

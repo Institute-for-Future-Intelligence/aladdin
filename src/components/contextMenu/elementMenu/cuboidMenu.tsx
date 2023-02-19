@@ -29,7 +29,15 @@ import {
 } from '../../../constants';
 import { Vector3 } from 'three';
 import { ElementCounter } from '../../../stores/ElementCounter';
-import { useLabel, useLabelHeight, useLabelShow, useLabelSize, useLabelText } from './menuHooks';
+import {
+  useLabel,
+  useLabelColor,
+  useLabelFontSize,
+  useLabelHeight,
+  useLabelShow,
+  useLabelSize,
+  useLabelText,
+} from './menuHooks';
 
 export const CuboidMenu = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
@@ -58,7 +66,9 @@ export const CuboidMenu = React.memo(() => {
   const { labelText, setLabelText } = useLabel(cuboid);
   const showLabel = useLabelShow(cuboid);
   const updateLabelText = useLabelText(cuboid, labelText);
+  const setLabelFontSize = useLabelFontSize(cuboid);
   const setLabelSize = useLabelSize(cuboid);
+  const setLabelColor = useLabelColor(cuboid);
   const setLabelHeight = useLabelHeight(cuboid);
 
   if (!cuboid) return null;
@@ -557,16 +567,36 @@ export const CuboidMenu = React.memo(() => {
               onChange={(value) => setLabelHeight(value)}
             />
           </Menu.Item>
+          {/* the label's font size */}
+          <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'cuboid-label-font-size'}>
+            <InputNumber
+              addonBefore={i18n.t('labelSubMenu.LabelFontSize', lang) + ':'}
+              min={10}
+              max={100}
+              step={1}
+              precision={0}
+              value={cuboid.labelFontSize ?? 20}
+              onChange={(value) => setLabelFontSize(value)}
+            />
+          </Menu.Item>
           {/* the label's size */}
           <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'cuboid-label-size'}>
             <InputNumber
               addonBefore={i18n.t('labelSubMenu.LabelSize', lang) + ':'}
               min={0.2}
-              max={2}
+              max={5}
               step={0.1}
               precision={1}
               value={cuboid.labelSize ?? 0.2}
               onChange={(value) => setLabelSize(value)}
+            />
+          </Menu.Item>
+          {/* the label's color */}
+          <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'cuboid-label-color'}>
+            <Input
+              addonBefore={i18n.t('labelSubMenu.LabelColor', lang) + ':'}
+              value={cuboid.labelColor ?? 'white'}
+              onChange={(e) => setLabelColor(e.target.value)}
             />
           </Menu.Item>
         </Menu>

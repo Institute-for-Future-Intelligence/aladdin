@@ -13,7 +13,15 @@ import i18n from '../../../i18n/i18n';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { TreeModel } from '../../../models/TreeModel';
-import { useLabel, useLabelHeight, useLabelShow, useLabelSize, useLabelText } from './menuHooks';
+import {
+  useLabel,
+  useLabelColor,
+  useLabelFontSize,
+  useLabelHeight,
+  useLabelShow,
+  useLabelSize,
+  useLabelText,
+} from './menuHooks';
 import SubMenu from 'antd/lib/menu/SubMenu';
 
 export const TreeMenu = React.memo(() => {
@@ -33,6 +41,8 @@ export const TreeMenu = React.memo(() => {
   const showLabel = useLabelShow(tree);
   const updateLabelText = useLabelText(tree, labelText);
   const setLabelSize = useLabelSize(tree);
+  const setLabelFontSize = useLabelFontSize(tree);
+  const setLabelColor = useLabelColor(tree);
   const setLabelHeight = useLabelHeight(tree);
 
   if (!tree) return null;
@@ -227,16 +237,36 @@ export const TreeMenu = React.memo(() => {
                 onChange={(value) => setLabelHeight(value)}
               />
             </Menu.Item>
+            {/* the label's font size */}
+            <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'tree-label-font-size'}>
+              <InputNumber
+                addonBefore={i18n.t('labelSubMenu.LabelFontSize', lang) + ':'}
+                min={10}
+                max={100}
+                step={1}
+                precision={0}
+                value={tree.labelFontSize ?? 20}
+                onChange={(value) => setLabelFontSize(value)}
+              />
+            </Menu.Item>
             {/* the label's size */}
             <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'tree-label-size'}>
               <InputNumber
                 addonBefore={i18n.t('labelSubMenu.LabelSize', lang) + ':'}
                 min={0.2}
-                max={2}
+                max={5}
                 step={0.1}
                 precision={1}
                 value={tree.labelSize ?? 0.2}
                 onChange={(value) => setLabelSize(value)}
+              />
+            </Menu.Item>
+            {/* the label's color */}
+            <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'tree-label-color'}>
+              <Input
+                addonBefore={i18n.t('labelSubMenu.LabelColor', lang) + ':'}
+                value={tree.labelColor ?? '#ffffff'}
+                onChange={(e) => setLabelColor(e.target.value)}
               />
             </Menu.Item>
           </Menu>

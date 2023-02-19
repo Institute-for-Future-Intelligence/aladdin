@@ -27,6 +27,8 @@ export interface ElementModel {
   label?: string;
   showLabel?: boolean;
   labelSize?: number;
+  labelFontSize?: number;
+  labelColor?: string;
   labelHeight?: number;
 
   // EVIL: DO NOT DO THIS!!!

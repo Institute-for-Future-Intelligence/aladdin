@@ -3206,8 +3206,9 @@ const Foundation = ({
                   (foundationModel?.label ? foundationModel.label : i18n.t('shared.FoundationElement', lang)) +
                   (locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '')
                 }
-                fontSize={20}
-                fontFace={'Times Roman'}
+                color={foundationModel?.labelColor ?? 'white'}
+                fontSize={foundationModel?.labelFontSize ?? 20}
+                fontFace={'Roboto'}
                 textHeight={foundationModel?.labelSize ?? 0.2}
                 position={[0, 0, foundationModel?.labelHeight ?? hz + 0.2]}
               />

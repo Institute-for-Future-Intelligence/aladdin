@@ -1611,8 +1611,9 @@ const Cuboid = ({
           userData={{ unintersectable: true }}
           name={'Label'}
           text={labelText}
-          fontSize={20}
-          fontFace={'Times Roman'}
+          color={cuboidModel?.labelColor ?? 'white'}
+          fontSize={cuboidModel?.labelFontSize ?? 20}
+          fontFace={'Roboto'}
           textHeight={cuboidModel?.labelSize ?? 0.2}
           position={[0, 0, hz + (cuboidModel?.labelHeight ?? 0.2)]}
         />

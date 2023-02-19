@@ -375,9 +375,10 @@ const Human = ({
               <textSprite
                 userData={{ unintersectable: true }}
                 name={'Label'}
+                fontFace={'Roboto'}
                 text={labelText}
-                fontSize={20}
-                fontFace={'Times Roman'}
+                color={humanModel?.labelColor ?? 'white'}
+                fontSize={humanModel?.labelFontSize ?? 20}
                 textHeight={humanModel?.labelSize ?? 0.2}
                 position={[0, 0, height / 2 + (humanModel?.labelHeight ?? 0.4)]}
               />

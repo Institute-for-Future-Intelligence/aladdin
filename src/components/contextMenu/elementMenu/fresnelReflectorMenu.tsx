@@ -17,7 +17,15 @@ import FresnelReflectorReflectanceInput from './fresnelReflectorReflectanceInput
 import FresnelReflectorAbsorberSelection from './fresnelReflectorAbsorberSelection';
 import FresnelReflectorDrawSunBeamSelection from './fresnelReflectorDrawSunBeamSelection';
 import { ObjectType } from '../../../types';
-import { useLabel, useLabelHeight, useLabelShow, useLabelSize, useLabelText } from './menuHooks';
+import {
+  useLabel,
+  useLabelColor,
+  useLabelFontSize,
+  useLabelHeight,
+  useLabelShow,
+  useLabelSize,
+  useLabelText,
+} from './menuHooks';
 import SubMenu from 'antd/lib/menu/SubMenu';
 
 export const FresnelReflectorMenu = React.memo(() => {
@@ -40,6 +48,8 @@ export const FresnelReflectorMenu = React.memo(() => {
   const showLabel = useLabelShow(fresnelReflector);
   const updateLabelText = useLabelText(fresnelReflector, labelText);
   const setLabelSize = useLabelSize(fresnelReflector);
+  const setLabelFontSize = useLabelFontSize(fresnelReflector);
+  const setLabelColor = useLabelColor(fresnelReflector);
   const setLabelHeight = useLabelHeight(fresnelReflector);
 
   if (!fresnelReflector) return null;
@@ -188,6 +198,21 @@ export const FresnelReflectorMenu = React.memo(() => {
                   onChange={(value) => setLabelHeight(value)}
                 />
               </Menu.Item>
+              {/* the label's font size */}
+              <Menu.Item
+                style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }}
+                key={'fresnel-reflector-label-font-size'}
+              >
+                <InputNumber
+                  addonBefore={i18n.t('labelSubMenu.LabelFontSize', lang) + ':'}
+                  min={10}
+                  max={100}
+                  step={1}
+                  precision={0}
+                  value={fresnelReflector.labelFontSize ?? 20}
+                  onChange={(value) => setLabelFontSize(value)}
+                />
+              </Menu.Item>
               {/* the label's size */}
               <Menu.Item
                 style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }}
@@ -196,11 +221,22 @@ export const FresnelReflectorMenu = React.memo(() => {
                 <InputNumber
                   addonBefore={i18n.t('labelSubMenu.LabelSize', lang) + ':'}
                   min={0.2}
-                  max={2}
+                  max={5}
                   step={0.1}
                   precision={1}
                   value={fresnelReflector.labelSize ?? 0.2}
                   onChange={(value) => setLabelSize(value)}
+                />
+              </Menu.Item>
+              {/* the label's color */}
+              <Menu.Item
+                style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }}
+                key={'fresnel-reflector-label-color'}
+              >
+                <Input
+                  addonBefore={i18n.t('labelSubMenu.LabelColor', lang) + ':'}
+                  value={fresnelReflector.labelColor ?? '#ffffff'}
+                  onChange={(e) => setLabelColor(e.target.value)}
                 />
               </Menu.Item>
             </Menu>

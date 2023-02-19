@@ -25,7 +25,15 @@ import SolarPanelPoleSpacingInput from './solarPanelPoleSpacingInput';
 import SolarPanelFrameColorSelection from './solarPanelFrameColorSelection';
 import { UNIT_VECTOR_POS_Z } from '../../../constants';
 import { ObjectType } from '../../../types';
-import { useLabel, useLabelHeight, useLabelShow, useLabelSize, useLabelText } from './menuHooks';
+import {
+  useLabel,
+  useLabelColor,
+  useLabelFontSize,
+  useLabelHeight,
+  useLabelShow,
+  useLabelSize,
+  useLabelText,
+} from './menuHooks';
 
 export const SolarPanelMenu = React.memo(() => {
   const updateSolarCollectorDrawSunBeamById = useStore(Selector.updateSolarCollectorDrawSunBeamById);
@@ -51,7 +59,9 @@ export const SolarPanelMenu = React.memo(() => {
   const { labelText, setLabelText } = useLabel(solarPanel);
   const showLabel = useLabelShow(solarPanel);
   const updateLabelText = useLabelText(solarPanel, labelText);
+  const setLabelColor = useLabelColor(solarPanel);
   const setLabelSize = useLabelSize(solarPanel);
+  const setLabelFontSize = useLabelFontSize(solarPanel);
   const setLabelHeight = useLabelHeight(solarPanel);
 
   if (!solarPanel) return null;
@@ -295,16 +305,39 @@ export const SolarPanelMenu = React.memo(() => {
                   onChange={(value) => setLabelHeight(value)}
                 />
               </Menu.Item>
+              {/* the label's font size */}
+              <Menu.Item
+                style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }}
+                key={'solar-panel-label-font-size'}
+              >
+                <InputNumber
+                  addonBefore={i18n.t('labelSubMenu.LabelFontSize', lang) + ':'}
+                  min={10}
+                  max={100}
+                  step={1}
+                  precision={0}
+                  value={solarPanel.labelFontSize ?? 20}
+                  onChange={(value) => setLabelFontSize(value)}
+                />
+              </Menu.Item>
               {/* the label's size */}
               <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'solar-panel-label-size'}>
                 <InputNumber
                   addonBefore={i18n.t('labelSubMenu.LabelSize', lang) + ':'}
                   min={0.2}
-                  max={2}
+                  max={5}
                   step={0.1}
                   precision={1}
                   value={solarPanel.labelSize ?? 0.2}
                   onChange={(value) => setLabelSize(value)}
+                />
+              </Menu.Item>
+              {/* the label's color */}
+              <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'solar-panel-label-color'}>
+                <Input
+                  addonBefore={i18n.t('labelSubMenu.LabelColor', lang) + ':'}
+                  value={solarPanel.labelColor ?? '#ffffff'}
+                  onChange={(e) => setLabelColor(e.target.value)}
                 />
               </Menu.Item>
             </Menu>

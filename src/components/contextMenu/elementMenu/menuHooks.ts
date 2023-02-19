@@ -71,6 +71,43 @@ export const useLabelText = (element: ElementModel, labelText: string) => {
   };
 };
 
+export const useLabelFontSize = (element: ElementModel) => {
+  const setCommonStore = useStore(Selector.set);
+  const addUndoable = useStore(Selector.addUndoable);
+
+  const updateFontSize = (value: number) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === element.id) {
+          e.labelFontSize = value;
+          break;
+        }
+      }
+    });
+  };
+
+  return (value: number) => {
+    if (element) {
+      const oldSize = element.labelFontSize ?? 20;
+      const newSize = value;
+      const undoableChange = {
+        name: 'Set Label Font Size for ' + element.type,
+        timestamp: Date.now(),
+        oldValue: oldSize,
+        newValue: newSize,
+        undo: () => {
+          updateFontSize(undoableChange.oldValue as number);
+        },
+        redo: () => {
+          updateFontSize(undoableChange.newValue as number);
+        },
+      } as UndoableChange;
+      addUndoable(undoableChange);
+      updateFontSize(newSize);
+    }
+  };
+};
+
 export const useLabelSize = (element: ElementModel) => {
   const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
@@ -104,6 +141,43 @@ export const useLabelSize = (element: ElementModel) => {
       } as UndoableChange;
       addUndoable(undoableChange);
       updateLabelSize(newSize);
+    }
+  };
+};
+
+export const useLabelColor = (element: ElementModel) => {
+  const setCommonStore = useStore(Selector.set);
+  const addUndoable = useStore(Selector.addUndoable);
+
+  const updateLabelColor = (value: string) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === element.id) {
+          e.labelColor = value;
+          break;
+        }
+      }
+    });
+  };
+
+  return (value: string) => {
+    if (element) {
+      const oldColor = element.labelColor ?? 'white';
+      const newColor = value;
+      const undoableChange = {
+        name: 'Set Label Color for ' + element.type,
+        timestamp: Date.now(),
+        oldValue: oldColor,
+        newValue: newColor,
+        undo: () => {
+          updateLabelColor(undoableChange.oldValue as string);
+        },
+        redo: () => {
+          updateLabelColor(undoableChange.newValue as string);
+        },
+      } as UndoableChange;
+      addUndoable(undoableChange);
+      updateLabelColor(newColor as string);
     }
   };
 };

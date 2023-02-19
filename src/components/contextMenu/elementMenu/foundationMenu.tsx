@@ -48,7 +48,15 @@ import SolarPanelTiltAnglePsoWizard from './solarPanelTiltAnglePsoWizard';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import GroundFloorRValueInput from './groundFloorRValueInput';
 import { Util } from '../../../Util';
-import { useLabel, useLabelHeight, useLabelShow, useLabelSize, useLabelText } from './menuHooks';
+import {
+  useLabel,
+  useLabelColor,
+  useLabelFontSize,
+  useLabelHeight,
+  useLabelShow,
+  useLabelSize,
+  useLabelText,
+} from './menuHooks';
 
 export const FoundationMenu = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
@@ -117,6 +125,8 @@ export const FoundationMenu = React.memo(() => {
   const showLabel = useLabelShow(foundation);
   const updateLabelText = useLabelText(foundation, labelText);
   const setLabelSize = useLabelSize(foundation);
+  const setLabelFontSize = useLabelFontSize(foundation);
+  const setLabelColor = useLabelColor(foundation);
   const setLabelHeight = useLabelHeight(foundation);
 
   if (!foundation) return null;
@@ -1593,6 +1603,18 @@ export const FoundationMenu = React.memo(() => {
                 onChange={(value) => setLabelHeight(value)}
               />
             </Menu.Item>
+            {/* the label's font size */}
+            <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'foundation-label-font-size'}>
+              <InputNumber
+                addonBefore={i18n.t('labelSubMenu.LabelFontSize', lang) + ':'}
+                min={10}
+                max={100}
+                step={1}
+                precision={0}
+                value={foundation.labelFontSize ?? 20}
+                onChange={(value) => setLabelFontSize(value)}
+              />
+            </Menu.Item>
             {/* the label's size */}
             <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'foundation-label-size'}>
               <InputNumber
@@ -1603,6 +1625,14 @@ export const FoundationMenu = React.memo(() => {
                 precision={1}
                 value={foundation.labelSize ?? 0.2}
                 onChange={(value) => setLabelSize(value)}
+              />
+            </Menu.Item>
+            {/* the label's color */}
+            <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'foundation-label-color'}>
+              <Input
+                addonBefore={i18n.t('labelSubMenu.LabelColor', lang) + ':'}
+                value={foundation.labelColor ?? '#ffffff'}
+                onChange={(e) => setLabelColor(e.target.value)}
               />
             </Menu.Item>
           </Menu>

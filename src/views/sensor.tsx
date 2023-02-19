@@ -270,9 +270,10 @@ const Sensor = ({
         <textSprite
           userData={{ unintersectable: true }}
           name={'Label'}
+          fontFace={'Roboto'}
           text={labelText}
-          fontSize={20}
-          fontFace={'Times Roman'}
+          color={sensorModel?.labelColor ?? 'white'}
+          fontSize={sensorModel?.labelFontSize ?? 20}
           textHeight={sensorModel?.labelSize ?? 0.2}
           position={[0, 0, lz + (sensorModel?.labelHeight ?? 0.2)]}
         />

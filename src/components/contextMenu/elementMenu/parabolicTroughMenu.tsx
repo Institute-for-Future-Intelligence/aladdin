@@ -20,7 +20,15 @@ import ParabolicTroughAbsorptanceInput from './parabolicTroughAbsorptanceInput';
 import ParabolicTroughOpticalEfficiencyInput from './parabolicTroughOpticalEfficiencyInput';
 import ParabolicTroughThermalEfficiencyInput from './parabolicTroughThermalEfficiencyInput';
 import { ObjectType } from '../../../types';
-import { useLabel, useLabelHeight, useLabelShow, useLabelSize, useLabelText } from './menuHooks';
+import {
+  useLabel,
+  useLabelColor,
+  useLabelFontSize,
+  useLabelHeight,
+  useLabelShow,
+  useLabelSize,
+  useLabelText,
+} from './menuHooks';
 import SubMenu from 'antd/lib/menu/SubMenu';
 
 export const ParabolicTroughMenu = React.memo(() => {
@@ -47,6 +55,8 @@ export const ParabolicTroughMenu = React.memo(() => {
   const showLabel = useLabelShow(parabolicTrough);
   const updateLabelText = useLabelText(parabolicTrough, labelText);
   const setLabelSize = useLabelSize(parabolicTrough);
+  const setLabelFontSize = useLabelFontSize(parabolicTrough);
+  const setLabelColor = useLabelColor(parabolicTrough);
   const setLabelHeight = useLabelHeight(parabolicTrough);
 
   if (!parabolicTrough) return null;
@@ -256,6 +266,21 @@ export const ParabolicTroughMenu = React.memo(() => {
                   onChange={(value) => setLabelHeight(value)}
                 />
               </Menu.Item>
+              {/* the label's font size */}
+              <Menu.Item
+                style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }}
+                key={'parabolic-trough-label-font-size'}
+              >
+                <InputNumber
+                  addonBefore={i18n.t('labelSubMenu.LabelFontSize', lang) + ':'}
+                  min={10}
+                  max={100}
+                  step={1}
+                  precision={0}
+                  value={parabolicTrough.labelFontSize ?? 20}
+                  onChange={(value) => setLabelFontSize(value)}
+                />
+              </Menu.Item>
               {/* the label's size */}
               <Menu.Item
                 style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }}
@@ -264,11 +289,22 @@ export const ParabolicTroughMenu = React.memo(() => {
                 <InputNumber
                   addonBefore={i18n.t('labelSubMenu.LabelSize', lang) + ':'}
                   min={0.2}
-                  max={2}
+                  max={5}
                   step={0.1}
                   precision={1}
                   value={parabolicTrough.labelSize ?? 0.2}
                   onChange={(value) => setLabelSize(value)}
+                />
+              </Menu.Item>
+              {/* the label's color */}
+              <Menu.Item
+                style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }}
+                key={'parabolic-trough-label-color'}
+              >
+                <Input
+                  addonBefore={i18n.t('labelSubMenu.LabelColor', lang) + ':'}
+                  value={parabolicTrough.labelColor ?? '#ffffff'}
+                  onChange={(e) => setLabelColor(e.target.value)}
                 />
               </Menu.Item>
             </Menu>

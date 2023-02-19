@@ -356,9 +356,10 @@ const Flower = ({
               <textSprite
                 userData={{ unintersectable: true }}
                 name={'Label'}
+                fontFace={'Roboto'}
                 text={labelText}
-                fontSize={20}
-                fontFace={'Times Roman'}
+                color={flowerModel?.labelColor ?? 'white'}
+                fontSize={flowerModel?.labelFontSize ?? 20}
                 textHeight={flowerModel?.labelSize ?? 0.2}
                 position={[0, 0, height / 2 + (flowerModel?.labelHeight ?? 0.4)]}
               />

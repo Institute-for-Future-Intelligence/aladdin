@@ -430,9 +430,10 @@ const Label = ({ id }: LabelProps) => {
     <textSprite
       userData={{ unintersectable: true }}
       name={'Label'}
+      fontFace={'Roboto'}
       text={labelText}
-      fontSize={20}
-      fontFace={'Times Roman'}
+      color={sp.labelColor ?? 'white'}
+      fontSize={sp.labelFontSize ?? 20}
       textHeight={sp.labelSize ?? 0.2}
       position={[0, 0, sp.labelHeight ?? Math.max((sp.ly / 2) * Math.abs(Math.sin(sp.tiltAngle)) + 0.1, 0.2)]}
     />

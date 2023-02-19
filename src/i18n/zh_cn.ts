@@ -563,6 +563,8 @@ export const i18n_zh_cn = {
       LabelText: '标签的内容',
       LabelHeight: '标签的高度',
       LabelSize: '标签的大小',
+      LabelFontSize: '字体的大小',
+      LabelColor: '标签的颜色',
       KeepShowingLabel: '显示标签',
     },
 

@@ -671,9 +671,10 @@ const ParabolicTrough = ({
         <textSprite
           userData={{ unintersectable: true }}
           name={'Label'}
+          fontFace={'Roboto'}
           text={labelText}
-          fontSize={20}
-          fontFace={'Times Roman'}
+          color={trough?.labelColor ?? 'white'}
+          fontSize={trough?.labelFontSize ?? 20}
           textHeight={trough?.labelSize ?? 0.2}
           position={[0, 0, trough?.labelHeight ?? Math.max(hy * Math.abs(Math.sin(trough.tiltAngle)) + 0.1, 0.2)]}
         />
