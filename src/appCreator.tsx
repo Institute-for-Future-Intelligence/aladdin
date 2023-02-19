@@ -66,7 +66,6 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const evolutionaryAlgorithmState = useStore(Selector.evolutionaryAlgorithmState);
 
   const [initializing, setInitializing] = useState<boolean>(true);
-  const [owner, setOwner] = useState<boolean>(false);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const lang = { lng: language };
@@ -90,9 +89,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
         state.loggable = false;
       }
     });
-    const params = new URLSearchParams(window.location.search);
-    setOwner(params.get('userid') === user.uid);
-  }, [user, window.location.search]);
+  }, [user]);
 
   const zoomView = (scale: number) => {
     if (orthographic) {
@@ -224,7 +221,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
               fontSize: '14px',
               verticalAlign: 'center',
               userSelect: 'none',
-              color: owner ? '#000' : '#888',
+              color: new URLSearchParams(window.location.search).get('userid') === user.uid ? 'black' : 'gray',
             }}
             title={i18n.t('toolbar.CloudFile', lang)}
           >
@@ -234,7 +231,6 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
               src={CloudImage}
               height={32}
               width={32}
-              color={owner ? '#000' : '#888'}
               style={{ paddingRight: '8px' }}
             />
             {cloudFile + (changed ? ' *' : '')}
@@ -301,7 +297,6 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
         <ShareLink size={16} round={true} margin={'2px'} style={{ position: 'absolute', right: '0', top: '80px' }} />
       )}
       <MainMenu
-        owner={owner}
         viewOnly={viewOnly}
         canvas={canvasRef.current}
         set2DView={set2DView}

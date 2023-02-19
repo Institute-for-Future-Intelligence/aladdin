@@ -80,7 +80,6 @@ const LabelContainer = styled.div`
 `;
 
 export interface MainMenuProps {
-  owner: boolean;
   viewOnly: boolean;
   set2DView: (selected: boolean) => void;
   resetView: () => void;
@@ -88,7 +87,7 @@ export interface MainMenuProps {
   canvas?: HTMLCanvasElement | null;
 }
 
-const MainMenu = ({ owner, viewOnly, set2DView, resetView, zoomView, canvas }: MainMenuProps) => {
+const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenuProps) => {
   const setCommonStore = useStore(Selector.set);
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const pasteElements = useStore(Selector.pasteElementsByKey);
@@ -902,16 +901,19 @@ const MainMenu = ({ owner, viewOnly, set2DView, resetView, zoomView, canvas }: M
             </Menu.Item>
           )}
 
-          {user.uid && cloudFile && !viewOnly && owner && (
-            <>
-              {modelAnnotationDialogVisible && (
-                <ModelAnnotationDialog setDialogVisible={setModelAnnotationDialogVisible} />
-              )}
-              <Menu.Item key="publish-on-model-map" onClick={() => setModelAnnotationDialogVisible(true)}>
-                {i18n.t('menu.file.PublishOnModelMap', lang)}
-              </Menu.Item>
-            </>
-          )}
+          {user.uid &&
+            cloudFile &&
+            !viewOnly &&
+            new URLSearchParams(window.location.search).get('userid') === user.uid && (
+              <>
+                {modelAnnotationDialogVisible && (
+                  <ModelAnnotationDialog setDialogVisible={setModelAnnotationDialogVisible} />
+                )}
+                <Menu.Item key="publish-on-model-map" onClick={() => setModelAnnotationDialogVisible(true)}>
+                  {i18n.t('menu.file.PublishOnModelMap', lang)}
+                </Menu.Item>
+              </>
+            )}
 
           <Menu.Item key="screenshot" onClick={takeScreenshot}>
             {i18n.t('menu.file.TakeScreenshot', lang)}
