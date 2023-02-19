@@ -20,7 +20,7 @@ import { useDataStore } from '../stores/commonData';
 const SolarUpdraftTower = ({ foundation }: { foundation: FoundationModel }) => {
   const date = useStore(Selector.world.date);
   const latitude = useStore(Selector.world.latitude);
-  const animate = useStore(Selector.animateSun);
+  const animate = usePrimitiveStore(Selector.animateSun);
   const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);
   const simulationPaused = usePrimitiveStore(Selector.simulationPaused);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);

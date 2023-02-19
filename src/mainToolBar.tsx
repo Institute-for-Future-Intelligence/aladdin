@@ -52,11 +52,12 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
   const longitude = useStore(Selector.world.longitude);
   const address = useStore(Selector.world.address);
   const exportContent = useStore(Selector.exportContent);
-  const showCloudFilePanel = useStore(Selector.showCloudFilePanel);
-  const showAccountSettingsPanel = useStore(Selector.showAccountSettingsPanel);
+  const showCloudFilePanel = usePrimitiveStore(Selector.showCloudFilePanel);
+  const showAccountSettingsPanel = usePrimitiveStore(Selector.showAccountSettingsPanel);
   const openModelMap = useStore(Selector.openModelMap);
   const cloudFile = useStore(Selector.cloudFile);
   const saveCloudFileFlag = useStore(Selector.saveCloudFileFlag);
+  const exploreMapFlag = usePrimitiveStore(Selector.exploreMapFlag);
   const publishOnMapFlag = usePrimitiveStore(Selector.publishOnMapFlag);
   const listCloudFilesFlag = useStore(Selector.listCloudFilesFlag);
   const showCloudFileTitleDialog = useStore(Selector.showCloudFileTitleDialog);
@@ -77,6 +78,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
   const dragRef = useRef<HTMLDivElement | null>(null);
   const cloudFiles = useRef<CloudFileInfo[] | void>();
   const firstCallUpdateCloudFile = useRef<boolean>(true);
+  const firstExploreMap = useRef<boolean>(true);
   const firstCallPublishOnMap = useRef<boolean>(true);
   const firstCallListCloudFiles = useRef<boolean>(true);
   const firstAccountSettings = useRef<boolean>(true);
@@ -165,6 +167,15 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [saveCloudFileFlag]);
+
+  useEffect(() => {
+    if (firstExploreMap.current) {
+      firstExploreMap.current = false;
+    } else {
+      fetchModelSites();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [exploreMapFlag]);
 
   useEffect(() => {
     if (firstCallPublishOnMap.current) {
@@ -275,6 +286,8 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         state.user.noLogging = noLogging;
         state.user.schoolID = schoolID;
         state.user.classID = classID;
+      });
+      usePrimitiveStore.setState((state) => {
         state.userCount = userCount;
       });
       user.signFile = signFile;
@@ -317,8 +330,10 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
           state.user.photoURL = null;
           state.user.signFile = false;
           state.cloudFile = undefined; // if there is a current cloud file
-          state.showAccountSettingsPanel = false;
+        });
+        usePrimitiveStore.setState((state) => {
           state.showCloudFilePanel = false;
+          state.showAccountSettingsPanel = false;
         });
       })
       .catch((error) => {
@@ -344,6 +359,38 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
           showError(i18n.t('message.CannotSaveYourAccountSettings', lang) + ': ' + error);
         });
     }
+  };
+
+  const fetchModelSites = async () => {
+    setLoading(true);
+    return await firebase
+      .firestore()
+      .collection('sites')
+      .get()
+      .then((querySnapshot) => {
+        const a: ModelSite[] = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          a.push({
+            userid: data.userid,
+            title: data.title,
+            latitude: data.latitude,
+            longitude: data.longitude,
+            address: data.address,
+            type: data.type,
+            author: data.author,
+            label: data.label,
+          } as ModelSite);
+        });
+        setLoading(false);
+        setCommonStore((state) => {
+          state.modelSites = a;
+        });
+        return a;
+      })
+      .catch((error) => {
+        showError(i18n.t('message.CannotOpenModelsOnMap', lang) + ': ' + error);
+      });
   };
 
   const publishOnModelMap = () => {
@@ -522,14 +569,14 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         return a;
       })
       .catch((error) => {
-        showError(i18n.t('message.CannotOpenYourCloudFolder', lang) + ': ' + error);
+        showError(i18n.t('message.CannotOpenCloudFolder', lang) + ': ' + error);
       });
   };
 
   const listMyCloudFiles = () => {
     if (user.uid) {
       fetchMyCloudFiles().then(() => {
-        setCommonStore((state) => {
+        usePrimitiveStore.setState((state) => {
           state.showCloudFilePanel = true;
         });
       });
@@ -602,7 +649,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
   };
 
   const gotoAccountSettings = () => {
-    setCommonStore((state) => {
+    usePrimitiveStore.setState((state) => {
       state.showAccountSettingsPanel = true;
     });
   };

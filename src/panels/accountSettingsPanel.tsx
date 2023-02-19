@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -13,6 +13,7 @@ import { copyTextToClipboard, showSuccess } from '../helpers';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { SchoolID } from '../types';
 import { ClassID } from '../types';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 const { confirm } = Modal;
 const { Option } = Select;
@@ -75,7 +76,7 @@ const AccountSettingsPanel = () => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const user = useStore(Selector.user);
-  const userCount = useStore(Selector.userCount);
+  const userCount = usePrimitiveStore(Selector.userCount);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -116,7 +117,7 @@ const AccountSettingsPanel = () => {
   };
 
   const closePanel = () => {
-    setCommonStore((state) => {
+    usePrimitiveStore.setState((state) => {
       state.showAccountSettingsPanel = false;
     });
   };

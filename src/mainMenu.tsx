@@ -2286,9 +2286,12 @@ const MainMenu = ({ owner, viewOnly, set2DView, resetView, zoomView, canvas }: M
         <Menu.Item
           key="world"
           onClick={() => {
+            usePrimitiveStore.setState((state) => {
+              state.exploreMapFlag = !state.exploreMapFlag;
+              state.modelMapWeatherStations = false;
+            });
             setCommonStore((state) => {
               state.openModelMap = true;
-              state.modelMapWeatherStations = false;
               if (loggable) {
                 state.actionInfo = {
                   name: 'Open Model Map',

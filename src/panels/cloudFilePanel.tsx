@@ -17,6 +17,7 @@ import RenameImage from '../assets/rename.png';
 import DeleteImage from '../assets/delete.png';
 import LinkImage from '../assets/create_link.png';
 import OpenImage from '../assets/open_file.png';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 const { Column } = Table;
 
@@ -82,7 +83,6 @@ export interface CloudFilePanelProps {
 
 const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, renameCloudFile }: CloudFilePanelProps) => {
   const language = useStore(Selector.language);
-  const setCommonStore = useStore(Selector.set);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -128,7 +128,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
   };
 
   const closePanel = () => {
-    setCommonStore((state) => {
+    usePrimitiveStore.setState((state) => {
       state.showCloudFilePanel = false;
     });
   };

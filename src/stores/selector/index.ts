@@ -10,7 +10,7 @@ export const set = (state: CommonStoreState) => state.set;
 
 export const user = (state: CommonStoreState) => state.user;
 
-export const userCount = (state: CommonStoreState) => state.userCount;
+export const userCount = (state: PrimitiveStoreState) => state.userCount;
 
 export const getHeatmap = (state: DataStoreState) => state.getHeatmap;
 
@@ -89,7 +89,7 @@ export const modelMapTilt = (state: CommonStoreState) => state.modelMapTilt;
 
 export const modelMapType = (state: CommonStoreState) => state.modelMapType;
 
-export const modelMapWeatherStations = (state: CommonStoreState) => state.modelMapWeatherStations;
+export const modelMapWeatherStations = (state: PrimitiveStoreState) => state.modelMapWeatherStations;
 
 export const showCloudFileTitleDialog = (state: CommonStoreState) => state.showCloudFileTitleDialog;
 
@@ -97,7 +97,11 @@ export const showCloudFileTitleDialogFlag = (state: CommonStoreState) => state.s
 
 export const cloudFile = (state: CommonStoreState) => state.cloudFile;
 
+export const modelSites = (state: CommonStoreState) => state.modelSites;
+
 export const saveCloudFileFlag = (state: CommonStoreState) => state.saveCloudFileFlag;
+
+export const exploreMapFlag = (state: PrimitiveStoreState) => state.exploreMapFlag;
 
 export const publishOnMapFlag = (state: PrimitiveStoreState) => state.publishOnMapFlag;
 
@@ -132,7 +136,7 @@ export const createEmptyFile = (state: CommonStoreState) => state.createEmptyFil
 
 export const aabb = (state: CommonStoreState) => state.aabb;
 
-export const animateSun = (state: CommonStoreState) => state.animateSun;
+export const animateSun = (state: PrimitiveStoreState) => state.animateSun;
 
 export const animate24Hours = (state: CommonStoreState) => state.animate24Hours;
 
@@ -750,9 +754,9 @@ export const enableFineGrid = (state: CommonStoreState) => state.enableFineGrid;
 
 export const setEnableFineGrid = (state: CommonStoreState) => state.setEnableFineGrid;
 
-export const showCloudFilePanel = (state: CommonStoreState) => state.showCloudFilePanel;
+export const showCloudFilePanel = (state: PrimitiveStoreState) => state.showCloudFilePanel;
 
-export const showAccountSettingsPanel = (state: CommonStoreState) => state.showAccountSettingsPanel;
+export const showAccountSettingsPanel = (state: PrimitiveStoreState) => state.showAccountSettingsPanel;
 
 // science
 export const weatherData = (state: CommonStoreState) => state.weatherData;

@@ -14,6 +14,7 @@ import { Checkbox, Space } from 'antd';
 import ModelMap from './components/modelMap';
 import { UndoableChangeLocation } from './undo/UndoableChangeLocation';
 import { DEFAULT_ADDRESS } from './constants';
+import { usePrimitiveStore } from './stores/commonPrimitive';
 
 const libraries = ['places'] as Libraries;
 
@@ -46,7 +47,7 @@ const Explorer = ({ openCloudFile }: ExplorerProps) => {
   const modelMapLongitude = useStore(Selector.modelMapLongitude);
   const longitude = modelMapLongitude !== undefined ? modelMapLongitude : -71.3488548;
   const address = useStore.getState().modelMapAddress ?? DEFAULT_ADDRESS;
-  const mapWeatherStations = useStore(Selector.modelMapWeatherStations);
+  const mapWeatherStations = usePrimitiveStore(Selector.modelMapWeatherStations);
 
   const searchBox = useRef<google.maps.places.SearchBox>();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -208,7 +209,7 @@ const Explorer = ({ openCloudFile }: ExplorerProps) => {
                 paddingLeft: '4px',
               }}
               onChange={() => {
-                setCommonStore((state) => {
+                usePrimitiveStore.setState((state) => {
                   state.modelMapWeatherStations = !state.modelMapWeatherStations;
                 });
               }}

@@ -9,9 +9,17 @@ import { ModelType } from '../types';
 export interface PrimitiveStoreState {
   setPrimitiveStore: <K extends keyof PrimitiveStoreState, V extends PrimitiveStoreState[K]>(key: K, val: V) => void;
 
+  exploreMapFlag: boolean;
   publishOnMapFlag: boolean;
   modelType: ModelType;
   modelLabel: string | undefined;
+  modelMapWeatherStations: boolean;
+
+  userCount: number;
+  showCloudFilePanel: boolean;
+  showAccountSettingsPanel: boolean;
+
+  animateSun: boolean;
 
   simulationInProgress: boolean;
   simulationPaused: boolean;
@@ -91,9 +99,17 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
       });
     },
 
+    exploreMapFlag: false,
     publishOnMapFlag: false,
     modelType: ModelType.UNKNOWN,
     modelLabel: undefined,
+    modelMapWeatherStations: false,
+
+    userCount: 0,
+    showCloudFilePanel: false,
+    showAccountSettingsPanel: false,
+
+    animateSun: false,
 
     simulationInProgress: false,
     simulationPaused: false,

@@ -71,7 +71,7 @@ const HeliodonPanel = () => {
   const dateString = useStore(Selector.world.date);
   const latitude = useStore(Selector.world.latitude);
   const address = useStore(Selector.world.address);
-  const animateSun = useStore(Selector.animateSun);
+  const animateSun = usePrimitiveStore(Selector.animateSun);
   const animate24Hours = useStore(Selector.animate24Hours);
   const runSimulation = usePrimitiveStore(Selector.runDynamicSimulation);
   const showSunAngles = useStore(Selector.viewState.showSunAngles);
@@ -128,7 +128,7 @@ const HeliodonPanel = () => {
     if (animateSun) {
       if (sunriseAndSunsetInMinutes.sunset === 0) {
         cancelAnimationFrame(requestRef.current);
-        setCommonStore((state) => {
+        usePrimitiveStore.setState((state) => {
           state.animateSun = false;
         });
       }
@@ -371,18 +371,18 @@ const HeliodonPanel = () => {
                         timestamp: Date.now(),
                         checked: !animateSun,
                         undo: () => {
-                          setCommonStore((state) => {
+                          usePrimitiveStore.setState((state) => {
                             state.animateSun = !undoableCheck.checked;
                           });
                         },
                         redo: () => {
-                          setCommonStore((state) => {
+                          usePrimitiveStore.setState((state) => {
                             state.animateSun = undoableCheck.checked;
                           });
                         },
                       } as UndoableCheck;
                       addUndoable(undoableCheck);
-                      setCommonStore((state) => {
+                      usePrimitiveStore.setState((state) => {
                         state.animateSun = checked;
                       });
                     }}

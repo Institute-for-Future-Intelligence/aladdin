@@ -24,6 +24,7 @@ import {
   FoundationTexture,
   HumanName,
   LineStyle,
+  ModelSite,
   ModelType,
   MoveHandleType,
   ObjectType,
@@ -125,10 +126,10 @@ export interface CommonStoreState {
   graphState: GraphState;
   notes: string[];
   user: User;
-  userCount: number;
   language: string;
   floatingWindowOpacity: number;
   cloudFile: string | undefined;
+  modelSites: ModelSite[];
 
   openModelMap: boolean;
   modelMapLatitude: number;
@@ -137,7 +138,6 @@ export interface CommonStoreState {
   modelMapZoom: number;
   modelMapType: string;
   modelMapTilt: number;
-  modelMapWeatherStations: boolean;
 
   roofSegmentVerticesMap: Map<string, Vector3[][]>; // key: roofId, val: [segmentIndex][vertex]
   getRoofSegmentVertices: (id: string) => Vector3[][] | undefined;
@@ -180,7 +180,6 @@ export interface CommonStoreState {
   loadPvModules: () => void;
 
   aabb: Box3; // axis-aligned bounding box of elements
-  animateSun: boolean;
   animate24Hours: boolean;
   evolutionMethod: EvolutionMethod;
   clickObjectType: ObjectType | null;
@@ -190,8 +189,6 @@ export interface CommonStoreState {
   resizeHandleType: ResizeHandleType | null;
   rotateHandleType: RotateHandleType | null;
   resizeAnchor: Vector3;
-  showCloudFilePanel: boolean;
-  showAccountSettingsPanel: boolean;
   selectedElement: ElementModel | null;
   getSelectedElement: () => ElementModel | null;
   findNearestSibling: (id: string) => string | null;
@@ -714,10 +711,10 @@ export const useStore = create<CommonStoreState>(
           particleSwarmOptimizationWizardSelectedTab: '1',
           notes: [],
           user: {} as User,
-          userCount: 0,
           language: 'en',
           floatingWindowOpacity: FLOATING_WINDOW_OPACITY,
           cloudFile: undefined,
+          modelSites: [],
 
           openModelMap: false,
           modelMapLatitude: 42.2844063,
@@ -726,7 +723,6 @@ export const useStore = create<CommonStoreState>(
           modelMapZoom: DEFAULT_MODEL_MAP_ZOOM,
           modelMapType: 'roadmap',
           modelMapTilt: 0,
-          modelMapWeatherStations: false,
 
           roofSegmentVerticesMap: new Map<string, Vector3[][]>(),
           getRoofSegmentVertices(id) {
@@ -815,6 +811,7 @@ export const useStore = create<CommonStoreState>(
               state.clearDailySimulationResultsFlag = !state.clearDailySimulationResultsFlag;
               state.clearYearlySimulationResultsFlag = !state.clearYearlySimulationResultsFlag;
               state.modelType = ModelType.UNKNOWN;
+              state.modelLabel = undefined;
             });
             useDataStore.setState((state) => {
               state.clearDataStore();
@@ -908,7 +905,6 @@ export const useStore = create<CommonStoreState>(
           // aabb must be initialized with defined vectors or it may cause problems as it may be used to
           // determine the scopes of the axes.
           aabb: new Box3(new Vector3(-10, -10, -10), new Vector3(10, 10, 10)),
-          animateSun: false,
           animate24Hours: false,
           evolutionMethod: EvolutionMethod.GENETIC_ALGORITHM,
           clickObjectType: null,
@@ -918,8 +914,6 @@ export const useStore = create<CommonStoreState>(
           resizeHandleType: null,
           rotateHandleType: null,
           resizeAnchor: new Vector3(),
-          showCloudFilePanel: false,
-          showAccountSettingsPanel: false,
 
           selectedElement: null,
           getSelectedElement() {
@@ -5699,6 +5693,7 @@ export const useStore = create<CommonStoreState>(
           'locale',
           'cloudFile',
           'openModelMap',
+          'modelSites',
           'modelMapLatitude',
           'modelMapLongitude',
           'modelMapAddress',

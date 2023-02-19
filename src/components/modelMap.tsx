@@ -20,6 +20,7 @@ import { DEFAULT_MODEL_MAP_ZOOM } from '../constants';
 import { showError } from '../helpers';
 import i18n from '../i18n/i18n';
 import { ModelSite, ModelType } from '../types';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 export interface ModelMapProps {
   closeMap: () => void;
@@ -38,7 +39,8 @@ const ModelMap = ({ closeMap, openModel }: ModelMapProps) => {
   const mapTilt = useStore(Selector.modelMapTilt) ?? 0;
   const mapType = useStore(Selector.modelMapType) ?? 'roadmap';
   const weatherData = useStore(Selector.weatherData);
-  const mapWeatherStations = useStore(Selector.modelMapWeatherStations);
+  const mapWeatherStations = usePrimitiveStore(Selector.modelMapWeatherStations);
+  const modelSites = useStore(Selector.modelSites);
 
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [selectedSite, setSelectedSite] = useState<ModelSite | null>(null);
@@ -269,6 +271,53 @@ const ModelMap = ({ closeMap, openModel }: ModelMapProps) => {
             {(clusterer) => (
               <div>
                 {sites.map((site: ModelSite, index: number) => {
+                  let iconUrl = undefined;
+                  switch (site.type) {
+                    case ModelType.PHOTOVOLTAIC:
+                      iconUrl = SolarPanelIcon;
+                      break;
+                    case ModelType.PARABOLIC_DISH:
+                      iconUrl = ParabolicDishIcon;
+                      break;
+                    case ModelType.PARABOLIC_TROUGH:
+                      iconUrl = ParabolicTroughIcon;
+                      break;
+                    case ModelType.FRESNEL_REFLECTOR:
+                      iconUrl = FresnelReflectorIcon;
+                      break;
+                    case ModelType.SOLAR_POWER_TOWER:
+                      iconUrl = PowerTowerIcon;
+                      break;
+                    case ModelType.BUILDING:
+                      iconUrl = BuildingIcon;
+                      break;
+                  }
+                  const scaledSize = Math.min(32, 3 * mapZoom);
+                  return (
+                    <Marker
+                      key={index}
+                      clusterer={clusterer}
+                      icon={
+                        iconUrl
+                          ? {
+                              url: iconUrl,
+                              scaledSize: new google.maps.Size(scaledSize, scaledSize),
+                            }
+                          : undefined
+                      }
+                      position={{ lat: site.latitude, lng: site.longitude }}
+                      onClick={() => openSite(site)}
+                      onMouseOver={(e) => {
+                        previousSiteRef.current = selectedSite;
+                        setSelectedSite(site);
+                      }}
+                      onMouseOut={(e) => {
+                        if (selectedSite === previousSiteRef.current) setSelectedSite(null);
+                      }}
+                    />
+                  );
+                })}
+                {modelSites.map((site: ModelSite, index: number) => {
                   let iconUrl = undefined;
                   switch (site.type) {
                     case ModelType.PHOTOVOLTAIC:
