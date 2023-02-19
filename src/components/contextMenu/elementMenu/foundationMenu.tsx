@@ -1598,7 +1598,7 @@ export const FoundationMenu = React.memo(() => {
               <InputNumber
                 addonBefore={i18n.t('labelSubMenu.LabelSize', lang) + ':'}
                 min={0.2}
-                max={2}
+                max={5}
                 step={0.1}
                 precision={1}
                 value={foundation.labelSize ?? 0.2}

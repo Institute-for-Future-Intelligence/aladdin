@@ -442,7 +442,7 @@ export const i18n_tr = {
         Floatovoltaics: 'Floatovoltaics',
         Agrivoltaics: 'Agrivoltaics',
         VegetativeBuffer: 'Bitkisel Tampon',
-        FixedSolarPanelArraysFraminghamMA: 'Framingham Şehrinde Sabit Güneş Paneli Dizileri',
+        RainbowSwashSolarFarmBostonMA: 'Rainbow Swash Solar Farm in Boston, MA',
         MickeyMouseSolarFarmOrlandoFL: 'Mickey Mouse Solar Farm in Orlando, FL',
         SolarPanelsOverCanalBakersfieldCA: 'Bakersfield Şehrinde Kanal Üzerindeki Varsayımsal Güneş Panelleri',
         SolarNoiseBarrierLexingtonMA: 'Lexington Kasabasında Varsayımsal Güneş Gürültü Bariyeri',

@@ -442,7 +442,7 @@ export const i18n_en = {
         Floatovoltaics: 'Floatovoltaics',
         Agrivoltaics: 'Agrivoltaics',
         VegetativeBuffer: 'Vegetative Buffer',
-        FixedSolarPanelArraysFraminghamMA: 'Fixed Solar Panel Arrays in Framingham, MA',
+        RainbowSwashSolarFarmBostonMA: 'Rainbow Swash Solar Farm in Boston, MA',
         MickeyMouseSolarFarmOrlandoFL: 'Mickey Mouse Solar Farm in Orlando, FL',
         SolarPanelsOverCanalBakersfieldCA: 'Hypothetical Solar Panels Over Canal in Bakersfield, CA',
         SolarNoiseBarrierLexingtonMA: 'Hypothetical Solar Noise Barrier in Lexington, MA',

@@ -1,16 +1,6 @@
 [
   {
     "author": "Charles Xie",
-    "latitude": 42.3136803635408,
-    "longitude": -71.38295104099733,
-    "type": "Photovoltaic",
-    "label": "Ground-Mounted Solar Panel Array",
-    "address": "Framingham, MA, USA",
-    "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
-    "title": "Solar Farm Framingham"
-  },
-  {
-    "author": "Charles Xie",
     "latitude": 42.30152633098348,
     "longitude": -71.04686341053608,
     "type": "Photovoltaic",

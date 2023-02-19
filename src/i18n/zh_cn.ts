@@ -439,7 +439,7 @@ export const i18n_zh_cn = {
         Floatovoltaics: '浮动光伏',
         Agrivoltaics: '农业光伏',
         VegetativeBuffer: '太阳能农场绿化带',
-        FixedSolarPanelArraysFraminghamMA: '马萨诸塞州弗雷明翰的一个固定角度光伏板阵列',
+        RainbowSwashSolarFarmBostonMA: '马萨诸塞州波士顿彩虹激流旁边的光伏板阵列',
         MickeyMouseSolarFarmOrlandoFL: '佛罗里达州奥兰多的米老鼠形状光伏板阵列',
         SolarPanelsOverCanalBakersfieldCA: '加利福尼亚州贝克斯菲尔德灌溉渠上假想的光伏板阵列',
         SolarNoiseBarrierLexingtonMA: '马萨诸塞州列克星敦高速公路噪音墙上假想的光伏板',
