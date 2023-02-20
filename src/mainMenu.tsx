@@ -901,18 +901,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             </Menu.Item>
           )}
 
+          {modelAnnotationDialogVisible && <ModelAnnotationDialog setDialogVisible={setModelAnnotationDialogVisible} />}
           {user.uid &&
             cloudFile &&
             !viewOnly &&
             new URLSearchParams(window.location.search).get('userid') === user.uid && (
-              <>
-                {modelAnnotationDialogVisible && (
-                  <ModelAnnotationDialog setDialogVisible={setModelAnnotationDialogVisible} />
-                )}
-                <Menu.Item key="publish-on-model-map" onClick={() => setModelAnnotationDialogVisible(true)}>
-                  {i18n.t('menu.file.PublishOnModelMap', lang)}
-                </Menu.Item>
-              </>
+              <Menu.Item key="publish-on-model-map" onClick={() => setModelAnnotationDialogVisible(true)}>
+                {i18n.t('menu.file.PublishOnModelMap', lang)}
+              </Menu.Item>
             )}
 
           <Menu.Item key="screenshot" onClick={takeScreenshot}>
