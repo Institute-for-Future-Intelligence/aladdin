@@ -415,7 +415,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
                 label: usePrimitiveStore.getState().modelLabel,
               } as ModelSite;
               doc.set(modelSite).then(() => {
-                showSuccess(i18n.t('menu.file.PublishedOnModelMap', lang) + '.');
+                showSuccess(i18n.t('menu.file.PublishedOnMapOfModels', lang) + '.');
               });
             }
           }

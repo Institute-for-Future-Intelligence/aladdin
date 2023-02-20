@@ -101,7 +101,7 @@ export const modelSites = (state: CommonStoreState) => state.modelSites;
 
 export const saveCloudFileFlag = (state: CommonStoreState) => state.saveCloudFileFlag;
 
-export const exploreMapFlag = (state: PrimitiveStoreState) => state.exploreMapFlag;
+export const exploreMapFlag = (state: PrimitiveStoreState) => state.mapOfModelsFlag;
 
 export const publishOnMapFlag = (state: PrimitiveStoreState) => state.publishOnMapFlag;
 

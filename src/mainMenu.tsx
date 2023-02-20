@@ -907,7 +907,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             !viewOnly &&
             new URLSearchParams(window.location.search).get('userid') === user.uid && (
               <Menu.Item key="publish-on-model-map" onClick={() => setModelAnnotationDialogVisible(true)}>
-                {i18n.t('menu.file.PublishOnModelMap', lang)}
+                {i18n.t('menu.file.PublishOnMapOfModels', lang)}
               </Menu.Item>
             )}
 
@@ -2279,27 +2279,27 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Radio>
         </Radio.Group>
       </SubMenu>
-      {/* explore window */}
+      {/* map of models window */}
       {!viewOnly && !openModelMap && (
         <Menu.Item
-          key="world"
+          key="map-of-models"
           onClick={() => {
             usePrimitiveStore.setState((state) => {
-              state.exploreMapFlag = !state.exploreMapFlag;
+              state.mapOfModelsFlag = !state.mapOfModelsFlag;
               state.modelMapWeatherStations = false;
             });
             setCommonStore((state) => {
               state.openModelMap = true;
               if (loggable) {
                 state.actionInfo = {
-                  name: 'Open Model Map',
+                  name: 'Open Map of Models',
                   timestamp: new Date().getTime(),
                 };
               }
             });
           }}
         >
-          {i18n.t('menu.Explore', lang)}...
+          {i18n.t('menu.MapOfModels', lang)}...
         </Menu.Item>
       )}
       {/* about window */}

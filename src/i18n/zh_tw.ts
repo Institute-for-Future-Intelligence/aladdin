@@ -234,8 +234,8 @@ export const i18n_zh_tw = {
         ToSaveYourWorkPleaseSignIn: '為了保存您的雲端文檔，請您先登錄。',
         TakeScreenshot: '截屏',
         UseCloudFileName: '採用雲端文件名',
-        PublishOnModelMap: '發佈到地圖上',
-        PublishedOnModelMap: '您的模型成功發佈到地圖上了',
+        PublishOnMapOfModels: '發佈到地圖上',
+        PublishedOnMapOfModels: '您的模型成功發佈到地圖上了',
       },
       editSubMenu: '編輯',
       edit: {
@@ -505,7 +505,7 @@ export const i18n_zh_tw = {
       },
 
       languageSubMenu: '語言',
-      Explore: '探索',
+      MapOfModels: '模型的地圖',
       AboutUs: '關於我們',
     },
 

@@ -59,7 +59,7 @@ const ModelAnnotationDialog = ({ setDialogVisible }: { setDialogVisible: (b: boo
     if (loggable) {
       setCommonStore((state) => {
         state.actionInfo = {
-          name: 'Publish on Model Map',
+          name: 'Publish on Map of Models',
           timestamp: new Date().getTime(),
         };
       });
@@ -77,7 +77,7 @@ const ModelAnnotationDialog = ({ setDialogVisible }: { setDialogVisible: (b: boo
           onMouseOver={() => setDragEnabled(true)}
           onMouseOut={() => setDragEnabled(false)}
         >
-          {i18n.t('menu.file.PublishOnModelMap', lang)}
+          {i18n.t('menu.file.PublishOnMapOfModels', lang)}
         </div>
       }
       footer={[

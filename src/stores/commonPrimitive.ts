@@ -9,7 +9,7 @@ import { ModelType } from '../types';
 export interface PrimitiveStoreState {
   setPrimitiveStore: <K extends keyof PrimitiveStoreState, V extends PrimitiveStoreState[K]>(key: K, val: V) => void;
 
-  exploreMapFlag: boolean;
+  mapOfModelsFlag: boolean;
   publishOnMapFlag: boolean;
   modelType: ModelType;
   modelLabel: string | undefined;
@@ -99,7 +99,7 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
       });
     },
 
-    exploreMapFlag: false,
+    mapOfModelsFlag: false,
     publishOnMapFlag: false,
     modelType: ModelType.UNKNOWN,
     modelLabel: undefined,
