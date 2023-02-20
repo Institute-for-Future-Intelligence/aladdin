@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useState } from 'react';
@@ -66,11 +66,13 @@ export const PolarGrid = ({ element, height }: { element: ElementModel; height?:
     }
   };
 
+  const color = groundImage ? '#222' : '#ccc';
+
   return (
     <>
       {position && (
         <group position={position} rotation={[HALF_PI, 0, 0]} name={'Polar Auxiliary'}>
-          <polarGridHelper args={[radius, 24, 6, 120, 'gray', 'gray']} userData={{ unintersectable: true }} />
+          <polarGridHelper args={[radius, 24, 6, 120, color, color]} userData={{ unintersectable: true }} />
           <Ring
             args={[radius * 0.98, radius, 24, 1, HALF_PI, angle]}
             userData={{ unintersectable: true }}

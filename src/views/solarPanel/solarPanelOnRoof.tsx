@@ -30,7 +30,6 @@ import { SolarPanelModel } from '../../models/SolarPanelModel';
 import { LineData } from '../LineData';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { RoofModel } from 'src/models/RoofModel';
-import { WallModel } from 'src/models/WallModel';
 import { spBoundaryCheck, spCollisionCheck } from '../roof/roofRenderer';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UnoableResizeSolarPanelOnRoof } from 'src/undo/UndoableResize';
@@ -476,6 +475,7 @@ const SolarPanelOnRoof = ({
   const solarPanelShininess = useStore(Selector.viewState.solarPanelShininess);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
   const pvModules = useStore(Selector.pvModules);
+  const sceneRadius = useStore(Selector.sceneRadius);
 
   const pvModel = pvModules[pvModelName] as PvModel;
   if (pvModel) {
@@ -512,8 +512,9 @@ const SolarPanelOnRoof = ({
     if (drawPole) {
       return new Vector3(cx, cy, cz + hz + poleHeight);
     }
-    return new Vector3(cx, cy, cz + lz / 2 + 0.02); // raise it by 2 cm to show
-  }, [cx, cy, cz, hz, drawPole, poleHeight]);
+    const offset = Math.max(1, sceneRadius / 25) * 0.02; // TODO: Find a better way to decide this
+    return new Vector3(cx, cy, cz + lz / 2 + offset); // raise it a bit to show
+  }, [cx, cy, cz, hz, drawPole, poleHeight, sceneRadius]);
 
   const euler = useMemo(() => {
     return new Euler().fromArray([...rotation, 'ZXY']);
