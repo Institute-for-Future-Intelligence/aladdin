@@ -310,7 +310,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
           <Canvas
             ref={canvasRef}
             shadows={true}
-            gl={{ preserveDrawingBuffer: true }}
+            gl={{ preserveDrawingBuffer: true, logarithmicDepthBuffer: true }}
             frameloop={'demand'}
             style={{ height: 'calc(100vh - 72px)', backgroundColor: 'black' }}
           >

@@ -512,8 +512,7 @@ const SolarPanelOnRoof = ({
     if (drawPole) {
       return new Vector3(cx, cy, cz + hz + poleHeight);
     }
-    const offset = Math.max(1, sceneRadius / 25) * 0.02; // TODO: Find a better way to decide this
-    return new Vector3(cx, cy, cz + lz / 2 + offset); // raise it a bit to show
+    return new Vector3(cx, cy, cz + lz / 2 + 0.02); // raise it by 2cm to show
   }, [cx, cy, cz, hz, drawPole, poleHeight, sceneRadius]);
 
   const euler = useMemo(() => {
