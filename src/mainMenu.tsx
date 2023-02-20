@@ -901,7 +901,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             </Menu.Item>
           )}
 
-          {modelAnnotationDialogVisible && <ModelAnnotationDialog setDialogVisible={setModelAnnotationDialogVisible} />}
           {user.uid &&
             cloudFile &&
             !viewOnly &&
@@ -2339,6 +2338,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         </MainMenuContainer>
       </Dropdown>
       {aboutUs && <About close={() => setAboutUs(false)} />}
+      {modelAnnotationDialogVisible && <ModelAnnotationDialog setDialogVisible={setModelAnnotationDialogVisible} />}
     </>
   );
 };
