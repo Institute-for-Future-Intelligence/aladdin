@@ -31,7 +31,6 @@ import { CuboidModel } from '../models/CuboidModel';
 import { showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
 import { WallModel } from '../models/WallModel';
-import { Point2 } from '../models/Point2';
 import { RoofModel, RoofType } from '../models/RoofModel';
 import { DoorModel, DoorType } from '../models/DoorModel';
 import { SolarRadiation } from './SolarRadiation';

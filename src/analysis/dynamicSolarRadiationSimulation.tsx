@@ -36,7 +36,6 @@ import { ParabolicDishModel } from '../models/ParabolicDishModel';
 import { FresnelReflectorModel } from '../models/FresnelReflectorModel';
 import { HeliostatModel } from '../models/HeliostatModel';
 import { WallModel } from '../models/WallModel';
-import { Point2 } from '../models/Point2';
 import { RoofModel, RoofType } from '../models/RoofModel';
 import { DoorModel, DoorType } from '../models/DoorModel';
 import { SolarRadiation } from './SolarRadiation';
@@ -128,7 +127,6 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     // clear the buffer arrays if any
     for (const e of elements) {
       switch (e.type) {
-        case ObjectType.Cuboid:
         case ObjectType.Wall:
         case ObjectType.Door:
         case ObjectType.SolarPanel:
@@ -137,6 +135,13 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         case ObjectType.FresnelReflector:
         case ObjectType.Heliostat:
           cellOutputsMapRef.current.delete(e.id);
+          break;
+        case ObjectType.Cuboid:
+          cellOutputsMapRef.current.delete(e.id + '-top');
+          cellOutputsMapRef.current.delete(e.id + '-north');
+          cellOutputsMapRef.current.delete(e.id + '-south');
+          cellOutputsMapRef.current.delete(e.id + '-west');
+          cellOutputsMapRef.current.delete(e.id + '-east');
           break;
         case ObjectType.Roof:
           const roof = e as RoofModel;
