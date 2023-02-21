@@ -2305,9 +2305,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       <Menu.Item
         key="about"
         onClick={() => {
-          setCommonStore((state) => {
-            state.openModelsMap = false;
-          });
           setAboutUs(true);
         }}
       >

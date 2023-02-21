@@ -504,7 +504,7 @@ export const i18n_zh_cn = {
       },
 
       languageSubMenu: '语言',
-      ModelsMap: '模型的地图',
+      ModelsMap: '模型地图',
       AboutUs: '关于我们',
     },
 

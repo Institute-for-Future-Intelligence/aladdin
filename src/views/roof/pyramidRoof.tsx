@@ -5,7 +5,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { PyramidRoofModel, RoofModel } from 'src/models/RoofModel';
 import { useStore } from 'src/stores/common';
-import { CanvasTexture, DoubleSide, Euler, Mesh, Raycaster, RepeatWrapping, Shape, Vector2, Vector3 } from 'three';
+import { CanvasTexture, Euler, FrontSide, Mesh, Raycaster, RepeatWrapping, Shape, Vector2, Vector3 } from 'three';
 import * as Selector from 'src/stores/selector';
 import { WallModel } from 'src/models/WallModel';
 import { Cone, Extrude, Line, Plane } from '@react-three/drei';
@@ -229,14 +229,14 @@ export const FlatRoof = ({
           >
             <shapeBufferGeometry args={[shape]}></shapeBufferGeometry>
             {showSolarRadiationHeatmap && heatmap ? (
-              <meshBasicMaterial attach="material" map={heatmap} color={'white'} side={DoubleSide} />
+              <meshBasicMaterial attach="material" map={heatmap} color={'white'} side={FrontSide} />
             ) : (
               <meshStandardMaterial
                 map={texture}
                 color={color}
                 transparent={transparent}
                 opacity={opacity}
-                side={DoubleSide}
+                side={FrontSide}
               />
             )}
           </mesh>

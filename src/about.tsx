@@ -18,7 +18,7 @@ const Container = styled.div`
   height: 400px;
   flex-direction: column;
   align-items: center;
-  z-index: 99;
+  z-index: 1001;
   border-radius: 10px;
   background: dimgray;
   box-shadow: 3px 3px 3px 3px black;
