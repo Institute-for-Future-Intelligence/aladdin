@@ -75,21 +75,21 @@ export const actionInfo = (state: CommonStoreState) => state.actionInfo;
 
 export const currentUndoable = (state: CommonStoreState) => state.currentUndoable;
 
-export const openModelMap = (state: CommonStoreState) => state.openModelMap;
+export const openModelsMap = (state: CommonStoreState) => state.openModelsMap;
 
-export const modelMapLatitude = (state: CommonStoreState) => state.modelMapLatitude;
+export const modelsMapLatitude = (state: CommonStoreState) => state.modelsMapLatitude;
 
-export const modelMapLongitude = (state: CommonStoreState) => state.modelMapLongitude;
+export const modelsMapLongitude = (state: CommonStoreState) => state.modelsMapLongitude;
 
-export const modelMapAddress = (state: CommonStoreState) => state.modelMapAddress;
+export const modelsMapAddress = (state: CommonStoreState) => state.modelsMapAddress;
 
-export const modelMapZoom = (state: CommonStoreState) => state.modelMapZoom;
+export const modelsMapZoom = (state: CommonStoreState) => state.modelsMapZoom;
 
-export const modelMapTilt = (state: CommonStoreState) => state.modelMapTilt;
+export const modelsMapTilt = (state: CommonStoreState) => state.modelsMapTilt;
 
-export const modelMapType = (state: CommonStoreState) => state.modelMapType;
+export const modelsMapType = (state: CommonStoreState) => state.modelsMapType;
 
-export const modelMapWeatherStations = (state: PrimitiveStoreState) => state.modelMapWeatherStations;
+export const modelsMapWeatherStations = (state: PrimitiveStoreState) => state.modelsMapWeatherStations;
 
 export const showCloudFileTitleDialog = (state: CommonStoreState) => state.showCloudFileTitleDialog;
 
@@ -101,9 +101,9 @@ export const modelSites = (state: CommonStoreState) => state.modelSites;
 
 export const saveCloudFileFlag = (state: CommonStoreState) => state.saveCloudFileFlag;
 
-export const exploreMapFlag = (state: PrimitiveStoreState) => state.mapOfModelsFlag;
+export const exploreMapFlag = (state: PrimitiveStoreState) => state.modelsMapFlag;
 
-export const publishOnMapFlag = (state: PrimitiveStoreState) => state.publishOnMapFlag;
+export const publishOnModelsMapFlag = (state: PrimitiveStoreState) => state.publishOnModelsMapFlag;
 
 export const listCloudFilesFlag = (state: CommonStoreState) => state.listCloudFilesFlag;
 

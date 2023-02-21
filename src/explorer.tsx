@@ -42,12 +42,12 @@ const Explorer = ({ openCloudFile }: ExplorerProps) => {
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
-  const modelMapLatitude = useStore(Selector.modelMapLatitude);
+  const modelMapLatitude = useStore(Selector.modelsMapLatitude);
   const latitude = modelMapLatitude !== undefined ? modelMapLatitude : 42.2844063;
-  const modelMapLongitude = useStore(Selector.modelMapLongitude);
+  const modelMapLongitude = useStore(Selector.modelsMapLongitude);
   const longitude = modelMapLongitude !== undefined ? modelMapLongitude : -71.3488548;
-  const address = useStore.getState().modelMapAddress ?? DEFAULT_ADDRESS;
-  const mapWeatherStations = usePrimitiveStore(Selector.modelMapWeatherStations);
+  const address = useStore.getState().modelsMapAddress ?? DEFAULT_ADDRESS;
+  const mapWeatherStations = usePrimitiveStore(Selector.modelsMapWeatherStations);
 
   const searchBox = useRef<google.maps.places.SearchBox>();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -65,7 +65,7 @@ const Explorer = ({ openCloudFile }: ExplorerProps) => {
 
   const close = () => {
     setCommonStore((state) => {
-      state.openModelMap = false;
+      state.openModelsMap = false;
     });
   };
 
@@ -90,26 +90,26 @@ const Explorer = ({ openCloudFile }: ExplorerProps) => {
           newAddress: places[0].formatted_address as string,
           undo: () => {
             setCommonStore((state) => {
-              state.modelMapLatitude = undoableChangeLocation.oldLatitude;
-              state.modelMapLongitude = undoableChangeLocation.oldLongitude;
-              state.modelMapAddress = undoableChangeLocation.oldAddress;
+              state.modelsMapLatitude = undoableChangeLocation.oldLatitude;
+              state.modelsMapLongitude = undoableChangeLocation.oldLongitude;
+              state.modelsMapAddress = undoableChangeLocation.oldAddress;
             });
           },
           redo: () => {
             setCommonStore((state) => {
-              state.modelMapLatitude = undoableChangeLocation.newLatitude;
-              state.modelMapLongitude = undoableChangeLocation.newLongitude;
-              state.modelMapAddress = undoableChangeLocation.newAddress;
+              state.modelsMapLatitude = undoableChangeLocation.newLatitude;
+              state.modelsMapLongitude = undoableChangeLocation.newLongitude;
+              state.modelsMapAddress = undoableChangeLocation.newAddress;
             });
           },
         } as UndoableChangeLocation;
         addUndoable(undoableChangeLocation);
         setCommonStore((state) => {
           if (geometry.location) {
-            state.modelMapLatitude = geometry.location.lat();
-            state.modelMapLongitude = geometry.location.lng();
+            state.modelsMapLatitude = geometry.location.lat();
+            state.modelsMapLongitude = geometry.location.lng();
           }
-          state.modelMapAddress = places[0].formatted_address as string;
+          state.modelsMapAddress = places[0].formatted_address as string;
         });
       }
     }
@@ -210,7 +210,7 @@ const Explorer = ({ openCloudFile }: ExplorerProps) => {
               }}
               onChange={() => {
                 usePrimitiveStore.setState((state) => {
-                  state.modelMapWeatherStations = !state.modelMapWeatherStations;
+                  state.modelsMapWeatherStations = !state.modelsMapWeatherStations;
                 });
               }}
             >

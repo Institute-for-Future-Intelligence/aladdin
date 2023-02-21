@@ -102,7 +102,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const countSolarStructuresByType = useStore(Selector.countSolarStructuresByType);
   const selectNone = useStore(Selector.selectNone);
   const addUndoable = useStore(Selector.addUndoable);
-  const openModelMap = useStore(Selector.openModelMap);
+  const openModelsMap = useStore(Selector.openModelsMap);
 
   const loggable = useStore.getState().loggable;
   const language = useStore.getState().language;
@@ -163,7 +163,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
     if (canvas) {
       saveImage('screenshot.png', canvas.toDataURL('image/png'));
       setCommonStore((state) => {
-        state.openModelMap = false;
+        state.openModelsMap = false;
         if (loggable) {
           state.actionInfo = {
             name: 'Take Screenshot',
@@ -178,7 +178,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
     const input = getExample(e.key);
     if (input) {
       setCommonStore((state) => {
-        state.openModelMap = false;
+        state.openModelsMap = false;
       });
       if (!viewOnly && changed) {
         Modal.confirm({
@@ -767,7 +767,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const menu = (
     <Menu triggerSubMenuAction={'click'}>
       {/* file menu */}
-      {!openModelMap && (
+      {!openModelsMap && (
         <SubMenu key={'file'} title={i18n.t('menu.fileSubMenu', lang)}>
           {!viewOnly && (
             <Menu.Item
@@ -779,7 +779,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   state.objectTypeToAdd = ObjectType.None;
                   state.groupActionMode = false;
                   state.elementGroupId = null;
-                  state.openModelMap = false; // in case the user uses the keyboard shortcut
+                  state.openModelsMap = false; // in case the user uses the keyboard shortcut
                   window.history.pushState({}, document.title, HOME_URL);
                   if (loggable) {
                     state.actionInfo = {
@@ -806,7 +806,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   state.groupActionMode = false;
                   state.elementGroupId = null;
                   state.cloudFile = undefined;
-                  state.openModelMap = false; // in case the user uses the keyboard shortcut
+                  state.openModelsMap = false; // in case the user uses the keyboard shortcut
                   window.history.pushState({}, document.title, HOME_URL);
                   if (loggable) {
                     state.actionInfo = {
@@ -846,7 +846,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               onClick={() => {
                 setCommonStore((state) => {
                   state.listCloudFilesFlag = !state.listCloudFilesFlag;
-                  state.openModelMap = false; // in case the user uses the keyboard shortcut
+                  state.openModelsMap = false; // in case the user uses the keyboard shortcut
                   if (loggable) {
                     state.actionInfo = {
                       name: 'List Cloud Files',
@@ -906,7 +906,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             !viewOnly &&
             new URLSearchParams(window.location.search).get('userid') === user.uid && (
               <Menu.Item key="publish-on-model-map" onClick={() => setModelAnnotationDialogVisible(true)}>
-                {i18n.t('menu.file.PublishOnMapOfModels', lang)}
+                {i18n.t('menu.file.PublishOnModelsMap', lang)}
               </Menu.Item>
             )}
 
@@ -917,7 +917,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       )}
 
       {/* edit menu */}
-      {(selectedElement || readyToPaste || undoManager.hasUndo() || undoManager.hasRedo()) && !openModelMap && (
+      {(selectedElement || readyToPaste || undoManager.hasUndo() || undoManager.hasRedo()) && !openModelsMap && (
         <SubMenu key={'edit'} title={i18n.t('menu.editSubMenu', lang)}>
           {selectedElement && (
             <Menu.Item key="copy" onClick={copySelectedElement}>
@@ -987,7 +987,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       )}
 
       {/* view menu */}
-      {!openModelMap && (
+      {!openModelsMap && (
         <SubMenu key={'view'} title={i18n.t('menu.viewSubMenu', lang)}>
           {!orthographic && !viewAlreadyReset && (
             <Menu.Item
@@ -1127,7 +1127,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       )}
 
       {/* tool menu */}
-      {!openModelMap && (
+      {!openModelsMap && (
         <SubMenu key={'tool'} title={i18n.t('menu.toolSubMenu', lang)}>
           {!showHeliodonPanel && (
             <Menu.Item key={'heliodon-panel-check-box'} onClick={openHeliodonPanel}>
@@ -1171,7 +1171,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       )}
 
       {/* analysis menu */}
-      {!openModelMap && (
+      {!openModelsMap && (
         <SubMenu key={'analysis'} title={i18n.t('menu.analysisSubMenu', lang)}>
           {/* physics */}
           <SubMenu key={'physics'} title={i18n.t('menu.physicsSubMenu', lang)}>
@@ -2278,27 +2278,27 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Radio>
         </Radio.Group>
       </SubMenu>
-      {/* map of models window */}
-      {!viewOnly && !openModelMap && (
+      {/* models map */}
+      {!viewOnly && !openModelsMap && (
         <Menu.Item
-          key="map-of-models"
+          key="models-map"
           onClick={() => {
             usePrimitiveStore.setState((state) => {
-              state.mapOfModelsFlag = !state.mapOfModelsFlag;
-              state.modelMapWeatherStations = false;
+              state.modelsMapFlag = !state.modelsMapFlag;
+              state.modelsMapWeatherStations = false;
             });
             setCommonStore((state) => {
-              state.openModelMap = true;
+              state.openModelsMap = true;
               if (loggable) {
                 state.actionInfo = {
-                  name: 'Open Map of Models',
+                  name: 'Open Models Map',
                   timestamp: new Date().getTime(),
                 };
               }
             });
           }}
         >
-          {i18n.t('menu.MapOfModels', lang)}...
+          {i18n.t('menu.ModelsMap', lang)}...
         </Menu.Item>
       )}
       {/* about window */}
@@ -2306,7 +2306,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         key="about"
         onClick={() => {
           setCommonStore((state) => {
-            state.openModelMap = false;
+            state.openModelsMap = false;
           });
           setAboutUs(true);
         }}

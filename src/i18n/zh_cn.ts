@@ -234,8 +234,8 @@ export const i18n_zh_cn = {
         ToSaveYourWorkPleaseSignIn: '为了保存您的云端文件，请您先登录。',
         TakeScreenshot: '截屏',
         UseCloudFileName: '采用云端文件名',
-        PublishOnMapOfModels: '发布到地图上',
-        PublishedOnMapOfModels: '您的模型成功发布到地图上了',
+        PublishOnModelsMap: '发布到地图上',
+        PublishedOnModelsMap: '您的模型成功发布到地图上了',
       },
       editSubMenu: '编辑',
       edit: {
@@ -504,7 +504,7 @@ export const i18n_zh_cn = {
       },
 
       languageSubMenu: '语言',
-      MapOfModels: '模型的地图',
+      ModelsMap: '模型的地图',
       AboutUs: '关于我们',
     },
 

@@ -54,11 +54,11 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
   const exportContent = useStore(Selector.exportContent);
   const showCloudFilePanel = usePrimitiveStore(Selector.showCloudFilePanel);
   const showAccountSettingsPanel = usePrimitiveStore(Selector.showAccountSettingsPanel);
-  const openModelMap = useStore(Selector.openModelMap);
+  const openModelMap = useStore(Selector.openModelsMap);
   const cloudFile = useStore(Selector.cloudFile);
   const saveCloudFileFlag = useStore(Selector.saveCloudFileFlag);
   const exploreMapFlag = usePrimitiveStore(Selector.exploreMapFlag);
-  const publishOnMapFlag = usePrimitiveStore(Selector.publishOnMapFlag);
+  const publishOnMapFlag = usePrimitiveStore(Selector.publishOnModelsMapFlag);
   const listCloudFilesFlag = useStore(Selector.listCloudFilesFlag);
   const showCloudFileTitleDialog = useStore(Selector.showCloudFileTitleDialog);
   const showCloudFileTitleDialogFlag = useStore(Selector.showCloudFileTitleDialogFlag);
@@ -415,7 +415,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
                 label: usePrimitiveStore.getState().modelLabel,
               } as ModelSite;
               doc.set(modelSite).then(() => {
-                showSuccess(i18n.t('menu.file.PublishedOnMapOfModels', lang) + '.');
+                showSuccess(i18n.t('menu.file.PublishedOnModelsMap', lang) + '.');
               });
             }
           }

@@ -236,8 +236,8 @@ export const i18n_es = {
         ToSaveYourWorkPleaseSignIn: 'Para guardar tu trabajo, por favor regístrese.',
         TakeScreenshot: 'Hacer captura de pantalla',
         UseCloudFileName: 'Use Cloud File Name',
-        PublishOnMapOfModels: 'Publish on Map of Models',
-        PublishedOnMapOfModels: 'Your model has been published on the Map of Models',
+        PublishOnModelsMap: 'Publish on Models Map',
+        PublishedOnModelsMap: 'Your model has been published on the Models Map',
       },
       editSubMenu: 'Editar',
       edit: {
@@ -507,7 +507,7 @@ export const i18n_es = {
       },
 
       languageSubMenu: 'Idioma',
-      MapOfModels: 'Map of Models',
+      ModelsMap: 'Models Map',
       AboutUs: 'Sobre nosotros',
     },
 

@@ -6,7 +6,7 @@
   "owner": null,
   "email": null,
   "world": {
-    "solarRadiationHeatmapGridCellSize": 20,
+    "solarRadiationHeatmapGridCellSize": 2,
     "date": "6/22/2022, 12:00:00 PM",
     "cspTimesPerHour": 4,
     "noAnimationForHeatmapSimulation": true,
@@ -1973,7 +1973,7 @@
     "yearlyFresnelReflectorYieldPanelY": 0,
     "showHeliodonPanel": false,
     "axes": true,
-    "solarRadiationHeatMapMaxValue": 5,
+    "solarRadiationHeatMapMaxValue": 7,
     "dailyParabolicDishYieldPanelX": 0,
     "showSolarPanelVisibilityResultsPanel": false,
     "stickyNotePanelY": 0,

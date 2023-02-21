@@ -32,7 +32,8 @@
     "timesPerHour": 1,
     "longitude": -81.5624358808899,
     "orthographic": false,
-    "pvGridCellSize": 2
+    "solarRadiationHeatmapGridCellSize": 5,
+    "pvGridCellSize": 1
   },
   "elements": [
     {

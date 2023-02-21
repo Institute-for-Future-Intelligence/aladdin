@@ -31,15 +31,15 @@ const ModelMap = ({ closeMap, openModel }: ModelMapProps) => {
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
-  const modelMapLatitude = useStore(Selector.modelMapLatitude);
+  const modelMapLatitude = useStore(Selector.modelsMapLatitude);
   const latitude = modelMapLatitude !== undefined ? modelMapLatitude : 42.2844063;
-  const modelMapLongitude = useStore(Selector.modelMapLongitude);
+  const modelMapLongitude = useStore(Selector.modelsMapLongitude);
   const longitude = modelMapLongitude !== undefined ? modelMapLongitude : -71.3488548;
-  const mapZoom = useStore(Selector.modelMapZoom) ?? DEFAULT_MODEL_MAP_ZOOM;
-  const mapTilt = useStore(Selector.modelMapTilt) ?? 0;
-  const mapType = useStore(Selector.modelMapType) ?? 'roadmap';
+  const mapZoom = useStore(Selector.modelsMapZoom) ?? DEFAULT_MODEL_MAP_ZOOM;
+  const mapTilt = useStore(Selector.modelsMapTilt) ?? 0;
+  const mapType = useStore(Selector.modelsMapType) ?? 'roadmap';
   const weatherData = useStore(Selector.weatherData);
-  const mapWeatherStations = usePrimitiveStore(Selector.modelMapWeatherStations);
+  const mapWeatherStations = usePrimitiveStore(Selector.modelsMapWeatherStations);
   const modelSites = useStore(Selector.modelSites);
 
   const [map, setMap] = useState<google.maps.Map | null>(null);
@@ -87,21 +87,21 @@ const ModelMap = ({ closeMap, openModel }: ModelMapProps) => {
             newLongitude: lng,
             undo: () => {
               setCommonStore((state) => {
-                state.modelMapLatitude = undoableChangeLocation.oldLatitude;
-                state.modelMapLongitude = undoableChangeLocation.oldLongitude;
+                state.modelsMapLatitude = undoableChangeLocation.oldLatitude;
+                state.modelsMapLongitude = undoableChangeLocation.oldLongitude;
               });
             },
             redo: () => {
               setCommonStore((state) => {
-                state.modelMapLatitude = undoableChangeLocation.newLatitude;
-                state.modelMapLongitude = undoableChangeLocation.newLongitude;
+                state.modelsMapLatitude = undoableChangeLocation.newLatitude;
+                state.modelsMapLongitude = undoableChangeLocation.newLongitude;
               });
             },
           } as UndoableChangeLocation;
           addUndoable(undoableChangeLocation);
           setCommonStore((state) => {
-            state.modelMapLatitude = lat;
-            state.modelMapLongitude = lng;
+            state.modelsMapLatitude = lat;
+            state.modelsMapLongitude = lng;
           });
         }
       }
@@ -119,18 +119,18 @@ const ModelMap = ({ closeMap, openModel }: ModelMapProps) => {
           newValue: z,
           undo: () => {
             setCommonStore((state) => {
-              state.modelMapZoom = undoableChange.oldValue as number;
+              state.modelsMapZoom = undoableChange.oldValue as number;
             });
           },
           redo: () => {
             setCommonStore((state) => {
-              state.modelMapZoom = undoableChange.newValue as number;
+              state.modelsMapZoom = undoableChange.newValue as number;
             });
           },
         } as UndoableChange;
         addUndoable(undoableChange);
         setCommonStore((state) => {
-          state.modelMapZoom = z;
+          state.modelsMapZoom = z;
         });
       }
     }
@@ -147,18 +147,18 @@ const ModelMap = ({ closeMap, openModel }: ModelMapProps) => {
           newValue: t,
           undo: () => {
             setCommonStore((state) => {
-              state.modelMapTilt = undoableChange.oldValue as number;
+              state.modelsMapTilt = undoableChange.oldValue as number;
             });
           },
           redo: () => {
             setCommonStore((state) => {
-              state.modelMapTilt = undoableChange.newValue as number;
+              state.modelsMapTilt = undoableChange.newValue as number;
             });
           },
         } as UndoableChange;
         addUndoable(undoableChange);
         setCommonStore((state) => {
-          state.modelMapTilt = t;
+          state.modelsMapTilt = t;
         });
       }
     }
@@ -175,18 +175,18 @@ const ModelMap = ({ closeMap, openModel }: ModelMapProps) => {
           newValue: typeId,
           undo: () => {
             setCommonStore((state) => {
-              state.modelMapType = undoableChange.oldValue as string;
+              state.modelsMapType = undoableChange.oldValue as string;
             });
           },
           redo: () => {
             setCommonStore((state) => {
-              state.modelMapType = undoableChange.newValue as string;
+              state.modelsMapType = undoableChange.newValue as string;
             });
           },
         } as UndoableChange;
         addUndoable(undoableChange);
         setCommonStore((state) => {
-          state.modelMapType = typeId;
+          state.modelsMapType = typeId;
         });
       }
     }

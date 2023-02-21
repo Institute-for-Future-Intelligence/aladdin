@@ -52,7 +52,7 @@ const ModelAnnotationDialog = ({ setDialogVisible }: { setDialogVisible: (b: boo
 
   const onOkClick = () => {
     usePrimitiveStore.setState((state) => {
-      state.publishOnMapFlag = !state.publishOnMapFlag;
+      state.publishOnModelsMapFlag = !state.publishOnModelsMapFlag;
       state.modelType = modelType;
       state.modelLabel = modelLabel;
     });
@@ -77,7 +77,7 @@ const ModelAnnotationDialog = ({ setDialogVisible }: { setDialogVisible: (b: boo
           onMouseOver={() => setDragEnabled(true)}
           onMouseOut={() => setDragEnabled(false)}
         >
-          {i18n.t('menu.file.PublishOnMapOfModels', lang)}
+          {i18n.t('menu.file.PublishOnModelsMap', lang)}
         </div>
       }
       footer={[

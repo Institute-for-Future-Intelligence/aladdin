@@ -131,13 +131,13 @@ export interface CommonStoreState {
   cloudFile: string | undefined;
   modelSites: ModelSite[];
 
-  openModelMap: boolean;
-  modelMapLatitude: number;
-  modelMapLongitude: number;
-  modelMapAddress: string;
-  modelMapZoom: number;
-  modelMapType: string;
-  modelMapTilt: number;
+  openModelsMap: boolean;
+  modelsMapLatitude: number;
+  modelsMapLongitude: number;
+  modelsMapAddress: string;
+  modelsMapZoom: number;
+  modelsMapType: string;
+  modelsMapTilt: number;
 
   roofSegmentVerticesMap: Map<string, Vector3[][]>; // key: roofId, val: [segmentIndex][vertex]
   getRoofSegmentVertices: (id: string) => Vector3[][] | undefined;
@@ -716,13 +716,13 @@ export const useStore = create<CommonStoreState>(
           cloudFile: undefined,
           modelSites: [],
 
-          openModelMap: false,
-          modelMapLatitude: 42.2844063,
-          modelMapLongitude: -71.3488548,
-          modelMapAddress: DEFAULT_ADDRESS,
-          modelMapZoom: DEFAULT_MODEL_MAP_ZOOM,
-          modelMapType: 'roadmap',
-          modelMapTilt: 0,
+          openModelsMap: false,
+          modelsMapLatitude: 42.2844063,
+          modelsMapLongitude: -71.3488548,
+          modelsMapAddress: DEFAULT_ADDRESS,
+          modelsMapZoom: DEFAULT_MODEL_MAP_ZOOM,
+          modelsMapType: 'roadmap',
+          modelsMapTilt: 0,
 
           roofSegmentVerticesMap: new Map<string, Vector3[][]>(),
           getRoofSegmentVertices(id) {
@@ -5692,14 +5692,14 @@ export const useStore = create<CommonStoreState>(
           'floatingWindowOpacity',
           'locale',
           'cloudFile',
-          'openModelMap',
+          'openModelsMap',
           'modelSites',
-          'modelMapLatitude',
-          'modelMapLongitude',
-          'modelMapAddress',
-          'modelMapZoom',
-          'modelMapType',
-          'modelMapTilt',
+          'modelsMapLatitude',
+          'modelsMapLongitude',
+          'modelsMapAddress',
+          'modelsMapZoom',
+          'modelsMapType',
+          'modelsMapTilt',
           'world',
           'elements',
           'viewState',

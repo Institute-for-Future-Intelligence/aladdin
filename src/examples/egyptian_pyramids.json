@@ -7,8 +7,9 @@
   "email": null,
   "world": {
     "latitude": 29.97967840899827,
+    "solarRadiationHeatmapGridCellSize": 2,
     "pvGridCellSize": 0.5,
-    "timesPerHour": 4,
+    "timesPerHour": 1,
     "longitude": 31.1328118254,
     "ground": {
       "albedo": 0.3,
