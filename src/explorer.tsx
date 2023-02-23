@@ -11,7 +11,7 @@ import { Libraries } from '@react-google-maps/api/dist/utils/make-load-script-ur
 import { StandaloneSearchBox, useJsApiLoader } from '@react-google-maps/api';
 import Spinner from './components/spinner';
 import { Checkbox, Space } from 'antd';
-import ModelMap from './components/modelMap';
+import ModelsMap from './components/modelsMap';
 import { UndoableChangeLocation } from './undo/UndoableChangeLocation';
 import { DEFAULT_ADDRESS } from './constants';
 import { usePrimitiveStore } from './stores/commonPrimitive';
@@ -42,10 +42,10 @@ const Explorer = ({ openCloudFile }: ExplorerProps) => {
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
-  const modelMapLatitude = useStore(Selector.modelsMapLatitude);
-  const latitude = modelMapLatitude !== undefined ? modelMapLatitude : 42.2844063;
-  const modelMapLongitude = useStore(Selector.modelsMapLongitude);
-  const longitude = modelMapLongitude !== undefined ? modelMapLongitude : -71.3488548;
+  const modelsMapLatitude = useStore(Selector.modelsMapLatitude);
+  const latitude = modelsMapLatitude !== undefined ? modelsMapLatitude : 42.2844063;
+  const modelsMapLongitude = useStore(Selector.modelsMapLongitude);
+  const longitude = modelsMapLongitude !== undefined ? modelsMapLongitude : -71.3488548;
   const address = useStore.getState().modelsMapAddress ?? DEFAULT_ADDRESS;
   const mapWeatherStations = usePrimitiveStore(Selector.modelsMapWeatherStations);
 
@@ -163,7 +163,7 @@ const Explorer = ({ openCloudFile }: ExplorerProps) => {
           </div>
         </Space>
       )}
-      {isLoaded ? <ModelMap closeMap={close} openModel={openCloudFile} /> : <Spinner />}
+      {isLoaded ? <ModelsMap closeMap={close} openModel={openCloudFile} /> : <Spinner />}
       {loadError && (
         <Space>
           <div>Map cannot be loaded right now, sorry.</div>

@@ -54,7 +54,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
   const exportContent = useStore(Selector.exportContent);
   const showCloudFilePanel = usePrimitiveStore(Selector.showCloudFilePanel);
   const showAccountSettingsPanel = usePrimitiveStore(Selector.showAccountSettingsPanel);
-  const openModelMap = useStore(Selector.openModelsMap);
+  const openModelsMap = useStore(Selector.openModelsMap);
   const cloudFile = useStore(Selector.cloudFile);
   const saveCloudFileFlag = useStore(Selector.saveCloudFileFlag);
   const exploreMapFlag = usePrimitiveStore(Selector.exploreMapFlag);
@@ -181,7 +181,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
     if (firstCallPublishOnMap.current) {
       firstCallPublishOnMap.current = false;
     } else {
-      publishOnModelMap();
+      publishOnModelsMap();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [publishOnMapFlag]);
@@ -393,7 +393,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
       });
   };
 
-  const publishOnModelMap = () => {
+  const publishOnModelsMap = () => {
     if (user) {
       if (user.uid && title) {
         const p = new URLSearchParams(window.location.search);
@@ -740,7 +740,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
       {loading && <Spinner />}
       <ButtonsContainer>
         <Space direction="horizontal">
-          {!openModelMap && <MainToolBarButtons />}
+          {!openModelsMap && <MainToolBarButtons />}
           <div style={{ verticalAlign: 'top' }}>
             {user.displayName ? (
               <Dropdown overlay={avatarMenu} trigger={['click']}>
@@ -769,7 +769,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         />
       )}
       {showAccountSettingsPanel && <AccountSettingsPanel />}
-      {openModelMap && <Explorer openCloudFile={openCloudFileWithSaveReminder} />}
+      {openModelsMap && <Explorer openCloudFile={openCloudFileWithSaveReminder} />}
     </>
   );
 };

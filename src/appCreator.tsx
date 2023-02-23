@@ -61,7 +61,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const axes = useStore(Selector.viewState.axes);
   const theme = useStore(Selector.viewState.theme);
   const groundImage = useStore(Selector.viewState.groundImage);
-  const openModelMap = useStore(Selector.openModelsMap);
+  const openModelsMap = useStore(Selector.openModelsMap);
   const evolutionMethod = useStore(Selector.evolutionMethod);
   const evolutionaryAlgorithmState = useStore(Selector.evolutionaryAlgorithmState);
 
@@ -214,7 +214,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
         >
           {i18n.t('name.Aladdin', lang)}
         </span>
-        {cloudFile && !openModelMap && (
+        {cloudFile && !openModelsMap && (
           <span
             style={{
               marginLeft: '20px',

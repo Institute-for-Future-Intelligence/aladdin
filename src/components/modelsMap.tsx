@@ -22,19 +22,19 @@ import i18n from '../i18n/i18n';
 import { ModelSite, ModelType } from '../types';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 
-export interface ModelMapProps {
+export interface ModelsMapProps {
   closeMap: () => void;
   openModel: (userid: string, title: string) => void;
 }
 
-const ModelMap = ({ closeMap, openModel }: ModelMapProps) => {
+const ModelsMap = ({ closeMap, openModel }: ModelsMapProps) => {
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
-  const modelMapLatitude = useStore(Selector.modelsMapLatitude);
-  const latitude = modelMapLatitude !== undefined ? modelMapLatitude : 42.2844063;
-  const modelMapLongitude = useStore(Selector.modelsMapLongitude);
-  const longitude = modelMapLongitude !== undefined ? modelMapLongitude : -71.3488548;
+  const modelsMapLatitude = useStore(Selector.modelsMapLatitude);
+  const latitude = modelsMapLatitude !== undefined ? modelsMapLatitude : 42.2844063;
+  const modelsMapLongitude = useStore(Selector.modelsMapLongitude);
+  const longitude = modelsMapLongitude !== undefined ? modelsMapLongitude : -71.3488548;
   const mapZoom = useStore(Selector.modelsMapZoom) ?? DEFAULT_MODEL_MAP_ZOOM;
   const mapTilt = useStore(Selector.modelsMapTilt) ?? 0;
   const mapType = useStore(Selector.modelsMapType) ?? 'roadmap';
@@ -373,4 +373,4 @@ const ModelMap = ({ closeMap, openModel }: ModelMapProps) => {
   );
 };
 
-export default React.memo(ModelMap);
+export default React.memo(ModelsMap);
