@@ -389,38 +389,52 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         return a;
       })
       .catch((error) => {
-        showError(i18n.t('message.CannotOpenModelsOnMap', lang) + ': ' + error);
+        showError(i18n.t('message.CannotOpenModelOnMap', lang) + ': ' + error);
       });
   };
 
   const publishOnModelsMap = () => {
-    if (user) {
-      if (user.uid && title) {
-        const p = new URLSearchParams(window.location.search);
-        const useridFromURL = p.get('userid');
-        const titleFromURL = p.get('title');
-        if (useridFromURL === user.uid && titleFromURL === title) {
-          const collection = firebase.firestore().collection('sites');
-          if (collection) {
-            const doc = collection.doc(title + ' - ' + user.uid);
-            if (doc) {
-              const modelSite = {
-                latitude: latitude,
-                longitude: longitude,
-                address: address,
-                type: usePrimitiveStore.getState().modelType,
-                author: user.displayName,
-                userid: user.uid,
-                title: title,
-                label: usePrimitiveStore.getState().modelLabel,
-              } as ModelSite;
-              doc.set(modelSite).then(() => {
-                showSuccess(i18n.t('menu.file.PublishedOnModelsMap', lang) + '.');
-              });
-            }
+    if (user && user.uid && title) {
+      const p = new URLSearchParams(window.location.search);
+      const useridFromURL = p.get('userid');
+      const titleFromURL = p.get('title');
+      if (useridFromURL === user.uid && titleFromURL === title) {
+        const collection = firebase.firestore().collection('sites');
+        if (collection) {
+          const doc = collection.doc(title + ' - ' + user.uid);
+          if (doc) {
+            const modelSite = {
+              latitude: latitude,
+              longitude: longitude,
+              address: address,
+              type: usePrimitiveStore.getState().modelType,
+              author: user.displayName,
+              userid: user.uid,
+              title: title,
+              label: usePrimitiveStore.getState().modelLabel,
+            } as ModelSite;
+            doc.set(modelSite).then(() => {
+              showSuccess(i18n.t('menu.file.PublishedOnModelsMap', lang) + '.');
+            });
           }
         }
       }
+    }
+  };
+
+  const deleteFromModelsMap = (userid: string, title: string) => {
+    if (user && user.uid && title) {
+      firebase
+        .firestore()
+        .collection('sites')
+        .doc(title + ' - ' + userid)
+        .delete()
+        .then(() => {
+          // TODO: What to do?
+        })
+        .catch((error) => {
+          showError(i18n.t('message.CannotDeleteModelFromMap', lang) + ': ' + error);
+        });
     }
   };
 
@@ -769,7 +783,9 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         />
       )}
       {showAccountSettingsPanel && <AccountSettingsPanel />}
-      {openModelsMap && <Explorer openCloudFile={openCloudFileWithSaveReminder} />}
+      {openModelsMap && (
+        <Explorer openCloudFile={openCloudFileWithSaveReminder} deleteModelFromMap={deleteFromModelsMap} />
+      )}
     </>
   );
 };

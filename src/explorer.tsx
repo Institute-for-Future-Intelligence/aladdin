@@ -30,14 +30,14 @@ const Container = styled.div`
   z-index: 999;
   tab-index: 0;
   background: white;
-  //box-shadow: 1px 1px 1px 1px dimgray;
 `;
 
 export interface ExplorerProps {
   openCloudFile: (userid: string, title: string) => void;
+  deleteModelFromMap: (userid: string, title: string) => void;
 }
 
-const Explorer = ({ openCloudFile }: ExplorerProps) => {
+const Explorer = ({ openCloudFile, deleteModelFromMap }: ExplorerProps) => {
   const user = useStore(Selector.user);
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
@@ -163,7 +163,11 @@ const Explorer = ({ openCloudFile }: ExplorerProps) => {
           </div>
         </Space>
       )}
-      {isLoaded ? <ModelsMap closeMap={close} openModel={openCloudFile} /> : <Spinner />}
+      {isLoaded ? (
+        <ModelsMap closeMap={close} openModel={openCloudFile} deleteModel={deleteModelFromMap} />
+      ) : (
+        <Spinner />
+      )}
       {loadError && (
         <Space>
           <div>Map cannot be loaded right now, sorry.</div>

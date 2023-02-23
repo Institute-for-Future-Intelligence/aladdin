@@ -129,6 +129,7 @@ export const i18n_tr = {
       Author: 'Author',
       Building: 'Building',
       Photovoltaic: 'Photovoltaic',
+      Anonymous: 'Anonymous',
     },
 
     shared: {
@@ -159,7 +160,9 @@ export const i18n_tr = {
       CannotSaveYourAccountSettings: 'Hesap ayarlarınız kaydedilemiyor',
       CannotSaveYourFileToCloud: 'Dosyanız buluta kaydedilemiyor',
       CloudFileNotFound: 'Bulut dosyası bulunamadı',
-      CannotOpenModelsOnMap: 'Cannot open models on map',
+      CannotOpenModelOnMap: 'Cannot open model on map',
+      CannotDeleteModelFromMap: 'Cannot delete model from map',
+      DoYouWantToDeleteModelFromMap: 'Do you want to delete the model from map?',
       CannotOpenCloudFile: 'Bulut dosyası açılamıyor',
       CannotOpenCloudFolder: 'Bulut klasörünüz açılamıyor',
       CannotDeleteCloudFile: 'Bulut dosyası silinemiyor',

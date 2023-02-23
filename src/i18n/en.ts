@@ -129,6 +129,7 @@ export const i18n_en = {
       Author: 'Author',
       Building: 'Building',
       Photovoltaic: 'Photovoltaic',
+      Anonymous: 'Anonymous',
     },
 
     shared: {
@@ -159,7 +160,9 @@ export const i18n_en = {
       CannotSaveYourAccountSettings: 'Cannot save your account settings',
       CannotSaveYourFileToCloud: 'Cannot save your file to the cloud',
       CloudFileNotFound: 'The cloud file was not found',
-      CannotOpenModelsOnMap: 'Cannot open models on map',
+      CannotOpenModelOnMap: 'Cannot open model on map',
+      CannotDeleteModelFromMap: 'Cannot delete model from map',
+      DoYouWantToDeleteModelFromMap: 'Do you want to delete the model from map?',
       CannotOpenCloudFile: 'Cannot open the cloud file',
       CannotOpenCloudFolder: 'Cannot open your cloud folder',
       CannotDeleteCloudFile: 'Cannot delete the cloud file',

@@ -2,7 +2,7 @@
  * @Copyright 2023. Institute for Future Intelligence, Inc.
  */
 
-import sites from '../sites/sites.json';
+import internalSites from '../sites/sites.json';
 import BuildingIcon from '../assets/map-building.png';
 import SolarPanelIcon from '../assets/map-solar-panel.png';
 import ParabolicDishIcon from '../assets/map-parabolic-dish.png';
@@ -21,14 +21,18 @@ import { showError } from '../helpers';
 import i18n from '../i18n/i18n';
 import { ModelSite, ModelType } from '../types';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { Modal } from 'antd';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 export interface ModelsMapProps {
   closeMap: () => void;
   openModel: (userid: string, title: string) => void;
+  deleteModel: (userid: string, title: string) => void;
 }
 
-const ModelsMap = ({ closeMap, openModel }: ModelsMapProps) => {
+const ModelsMap = ({ closeMap, openModel, deleteModel }: ModelsMapProps) => {
   const language = useStore(Selector.language);
+  const user = useStore.getState().user;
   const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
   const modelsMapLatitude = useStore(Selector.modelsMapLatitude);
@@ -40,11 +44,14 @@ const ModelsMap = ({ closeMap, openModel }: ModelsMapProps) => {
   const mapType = useStore(Selector.modelsMapType) ?? 'roadmap';
   const weatherData = useStore(Selector.weatherData);
   const mapWeatherStations = usePrimitiveStore(Selector.modelsMapWeatherStations);
-  const modelSites = useStore(Selector.modelSites);
+  const externalSites = useStore(Selector.modelSites);
 
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [selectedSite, setSelectedSite] = useState<ModelSite | null>(null);
+  const [internal, setInternal] = useState<boolean>(false);
   const previousSiteRef = useRef<ModelSite | null>(null);
+  const markersRef = useRef<Array<Marker | null>>([]);
+  const selectedMarkerIndexRef = useRef<number>(-1);
   const cities = useRef<google.maps.LatLng[]>([]);
 
   const lang = { lng: language };
@@ -216,6 +223,41 @@ const ModelsMap = ({ closeMap, openModel }: ModelsMapProps) => {
     }
   };
 
+  const deleteSite = (site: ModelSite) => {
+    if (site) {
+      Modal.confirm({
+        title: i18n.t('message.DoYouWantToDeleteModelFromMap', lang),
+        icon: <ExclamationCircleOutlined />,
+        onOk: () => {
+          deleteModel(site.userid, site.title);
+          markersRef.current[selectedMarkerIndexRef.current]?.marker?.setMap(null);
+          setSelectedSite(null);
+        },
+        onCancel: () => {},
+        okText: i18n.t('word.Yes', lang),
+        cancelText: i18n.t('word.No', lang),
+      });
+    }
+  };
+
+  const getIconUrl = (site: ModelSite) => {
+    switch (site.type) {
+      case ModelType.PHOTOVOLTAIC:
+        return SolarPanelIcon;
+      case ModelType.PARABOLIC_DISH:
+        return ParabolicDishIcon;
+      case ModelType.PARABOLIC_TROUGH:
+        return ParabolicTroughIcon;
+      case ModelType.FRESNEL_REFLECTOR:
+        return FresnelReflectorIcon;
+      case ModelType.SOLAR_POWER_TOWER:
+        return PowerTowerIcon;
+      case ModelType.BUILDING:
+        return BuildingIcon;
+    }
+    return undefined;
+  };
+
   return (
     <GoogleMap
       mapContainerStyle={{
@@ -256,13 +298,19 @@ const ModelsMap = ({ closeMap, openModel }: ModelsMapProps) => {
         {selectedSite && (
           <InfoWindow position={{ lat: selectedSite.latitude, lng: selectedSite.longitude }}>
             <div>
-              <label style={{ cursor: 'pointer', color: 'darkblue' }} onClick={() => openSite(selectedSite)}>
-                {selectedSite.label}
-              </label>
+              <label>{selectedSite.label}</label>
               <br />
               <label style={{ fontSize: '11px' }}>{selectedSite.address ?? 'Unknown'}</label>
               <hr />
-              <label>by {selectedSite.author ?? 'Anonymous'}</label>
+              <label>by {selectedSite.author ?? i18n.t('word.Anonymous', { lng: language })}</label>
+              <div style={{ marginTop: '10px' }}>
+                <button onClick={() => openSite(selectedSite)}>{i18n.t('word.Open', { lng: language })}</button>
+                {!internal && selectedSite.userid === user.uid && (
+                  <button style={{ marginLeft: '5px' }} onClick={() => deleteSite(selectedSite)}>
+                    {i18n.t('word.Delete', { lng: language })}
+                  </button>
+                )}
+              </div>
             </div>
           </InfoWindow>
         )}
@@ -270,28 +318,8 @@ const ModelsMap = ({ closeMap, openModel }: ModelsMapProps) => {
           <MarkerClusterer>
             {(clusterer) => (
               <div>
-                {sites.map((site: ModelSite, index: number) => {
-                  let iconUrl = undefined;
-                  switch (site.type) {
-                    case ModelType.PHOTOVOLTAIC:
-                      iconUrl = SolarPanelIcon;
-                      break;
-                    case ModelType.PARABOLIC_DISH:
-                      iconUrl = ParabolicDishIcon;
-                      break;
-                    case ModelType.PARABOLIC_TROUGH:
-                      iconUrl = ParabolicTroughIcon;
-                      break;
-                    case ModelType.FRESNEL_REFLECTOR:
-                      iconUrl = FresnelReflectorIcon;
-                      break;
-                    case ModelType.SOLAR_POWER_TOWER:
-                      iconUrl = PowerTowerIcon;
-                      break;
-                    case ModelType.BUILDING:
-                      iconUrl = BuildingIcon;
-                      break;
-                  }
+                {internalSites.map((site: ModelSite, index: number) => {
+                  const iconUrl = getIconUrl(site);
                   const scaledSize = Math.min(32, 3 * mapZoom);
                   return (
                     <Marker
@@ -310,6 +338,7 @@ const ModelsMap = ({ closeMap, openModel }: ModelsMapProps) => {
                       onMouseOver={(e) => {
                         previousSiteRef.current = selectedSite;
                         setSelectedSite(site);
+                        setInternal(true);
                       }}
                       onMouseOut={(e) => {
                         if (selectedSite === previousSiteRef.current) setSelectedSite(null);
@@ -317,32 +346,13 @@ const ModelsMap = ({ closeMap, openModel }: ModelsMapProps) => {
                     />
                   );
                 })}
-                {modelSites.map((site: ModelSite, index: number) => {
-                  let iconUrl = undefined;
-                  switch (site.type) {
-                    case ModelType.PHOTOVOLTAIC:
-                      iconUrl = SolarPanelIcon;
-                      break;
-                    case ModelType.PARABOLIC_DISH:
-                      iconUrl = ParabolicDishIcon;
-                      break;
-                    case ModelType.PARABOLIC_TROUGH:
-                      iconUrl = ParabolicTroughIcon;
-                      break;
-                    case ModelType.FRESNEL_REFLECTOR:
-                      iconUrl = FresnelReflectorIcon;
-                      break;
-                    case ModelType.SOLAR_POWER_TOWER:
-                      iconUrl = PowerTowerIcon;
-                      break;
-                    case ModelType.BUILDING:
-                      iconUrl = BuildingIcon;
-                      break;
-                  }
+                {externalSites.map((site: ModelSite, index: number) => {
+                  const iconUrl = getIconUrl(site);
                   const scaledSize = Math.min(32, 3 * mapZoom);
                   return (
                     <Marker
                       key={index}
+                      ref={(e) => (markersRef.current[index] = e)}
                       clusterer={clusterer}
                       icon={
                         iconUrl
@@ -356,6 +366,8 @@ const ModelsMap = ({ closeMap, openModel }: ModelsMapProps) => {
                       onClick={() => openSite(site)}
                       onMouseOver={(e) => {
                         previousSiteRef.current = selectedSite;
+                        selectedMarkerIndexRef.current = index;
+                        setInternal(false);
                         setSelectedSite(site);
                       }}
                       onMouseOut={(e) => {

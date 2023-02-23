@@ -129,6 +129,7 @@ export const i18n_zh_cn = {
       Author: '作者',
       Building: '建筑',
       Photovoltaic: '光伏',
+      Anonymous: '无名氏',
     },
 
     shared: {
@@ -159,7 +160,9 @@ export const i18n_zh_cn = {
       CannotSaveYourAccountSettings: '您的账号设定无法保存',
       CannotSaveYourFileToCloud: '无法保存您的文件到云端',
       CloudFileNotFound: '找不到此云端文件',
-      CannotOpenModelsOnMap: '无法打开地图上的文件',
+      CannotOpenModelOnMap: '无法打开地图上的模型',
+      CannotDeleteModelFromMap: '无法删除地图上的模型',
+      DoYouWantToDeleteModelFromMap: '您要删除地图上的这个模型吗？',
       CannotOpenCloudFile: '此云端文件无法打开',
       CannotOpenCloudFolder: '您的云端文件夹无法打开',
       CannotDeleteCloudFile: '无法删除此云端文件',
