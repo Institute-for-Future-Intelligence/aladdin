@@ -123,6 +123,7 @@ const AccountSettingsPanel = () => {
   };
 
   const superuser = user && user.email && user.email.endsWith('intofuture.org');
+  const signFile = false;
 
   return (
     <>
@@ -175,39 +176,41 @@ const AccountSettingsPanel = () => {
               </Col>
             </Row>
 
-            <Row gutter={20} style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>
-              <Col className="gutter-row" span={6}>
-                <Switch
-                  checked={user.signFile}
-                  onChange={(checked) => {
-                    if (checked) {
-                      confirm({
-                        title: i18n.t('accountSettingsPanel.DoYouReallyWantToShowYourNameInYourFiles', lang),
-                        icon: <ExclamationCircleOutlined />,
-                        content: i18n.t('accountSettingsPanel.SignFileDisclaimer', lang),
-                        onOk() {
-                          setCommonStore((state) => {
-                            state.user.signFile = true;
-                          });
-                        },
-                        onCancel() {
-                          setCommonStore((state) => {
-                            state.user.signFile = false;
-                          });
-                        },
-                      });
-                    } else {
-                      setCommonStore((state) => {
-                        state.user.signFile = false;
-                      });
-                    }
-                  }}
-                />
-              </Col>
-              <Col className="gutter-row" span={18}>
-                {i18n.t('accountSettingsPanel.StoreMyNameInMyFilesWhenSaving', lang)}
-              </Col>
-            </Row>
+            {signFile && (
+              <Row gutter={20} style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>
+                <Col className="gutter-row" span={6}>
+                  <Switch
+                    checked={user.signFile}
+                    onChange={(checked) => {
+                      if (checked) {
+                        confirm({
+                          title: i18n.t('accountSettingsPanel.DoYouReallyWantToShowYourNameInYourFiles', lang),
+                          icon: <ExclamationCircleOutlined />,
+                          content: i18n.t('accountSettingsPanel.SignFileDisclaimer', lang),
+                          onOk() {
+                            setCommonStore((state) => {
+                              state.user.signFile = true;
+                            });
+                          },
+                          onCancel() {
+                            setCommonStore((state) => {
+                              state.user.signFile = false;
+                            });
+                          },
+                        });
+                      } else {
+                        setCommonStore((state) => {
+                          state.user.signFile = false;
+                        });
+                      }
+                    }}
+                  />
+                </Col>
+                <Col className="gutter-row" span={18}>
+                  {i18n.t('accountSettingsPanel.StoreMyNameInMyFilesWhenSaving', lang)}
+                </Col>
+              </Row>
+            )}
 
             <Row gutter={20} style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>
               <Col className="gutter-row" span={6}>
@@ -292,6 +295,15 @@ const AccountSettingsPanel = () => {
                     {ClassID.CLASS9}
                   </Option>
                 </Select>
+              </Col>
+            </Row>
+
+            <Row gutter={6} style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>
+              <Col className="gutter-row" span={6}>
+                {i18n.t('accountSettingsPanel.Likes', lang)}
+              </Col>
+              <Col className="gutter-row" span={18}>
+                {user.likes?.length}
               </Col>
             </Row>
 

@@ -2,7 +2,6 @@
  * @Copyright 2023. Institute for Future Intelligence, Inc.
  */
 
-import internalSites from '../sites/sites.json';
 import BuildingIcon from '../assets/map-building.png';
 import SolarPanelIcon from '../assets/map-solar-panel.png';
 import ParabolicDishIcon from '../assets/map-parabolic-dish.png';
@@ -52,7 +51,7 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
   const mapType = useStore(Selector.modelsMapType) ?? 'roadmap';
   const weatherData = useStore(Selector.weatherData);
   const mapWeatherStations = usePrimitiveStore(Selector.modelsMapWeatherStations);
-  const externalSites = useStore.getState().modelSites;
+  const modelSites = useStore.getState().modelSites;
 
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [selectedSite, setSelectedSite] = useState<ModelSite | null>(null);
@@ -454,35 +453,7 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
           <MarkerClusterer>
             {(clusterer) => (
               <div>
-                {internalSites.map((site: ModelSite, index: number) => {
-                  const iconUrl = getIconUrl(site);
-                  const scaledSize = Math.min(32, 3 * mapZoom);
-                  return (
-                    <Marker
-                      key={index}
-                      clusterer={clusterer}
-                      icon={
-                        iconUrl
-                          ? {
-                              url: iconUrl,
-                              scaledSize: new google.maps.Size(scaledSize, scaledSize),
-                            }
-                          : undefined
-                      }
-                      position={{ lat: site.latitude, lng: site.longitude }}
-                      onClick={() => openSite(site)}
-                      onMouseOver={(e) => {
-                        previousSiteRef.current = selectedSite;
-                        setSelectedSite(site);
-                        setInternal(true);
-                      }}
-                      onMouseOut={(e) => {
-                        if (selectedSite === previousSiteRef.current) setSelectedSite(null);
-                      }}
-                    />
-                  );
-                })}
-                {externalSites.map((site: ModelSite, index: number) => {
+                {modelSites.map((site: ModelSite, index: number) => {
                   const iconUrl = getIconUrl(site);
                   const scaledSize = Math.min(32, 3 * mapZoom);
                   return (

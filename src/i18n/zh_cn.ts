@@ -1249,6 +1249,7 @@ export const i18n_zh_cn = {
       StoreMyNameInMyFilesWhenSaving: '保存文件时签上我的大名',
       DoYouReallyWantToShowYourNameInYourFiles: '您确定在您的文件里保存您的大名吗？',
       SignFileDisclaimer: '如果您选择保存，您的大名可能被所有打开您的文件的人看到。',
+      Likes: '点赞总数',
       UserCount: '用户总数',
       SchoolID: '学校编号',
       ClassID: '班级编号',

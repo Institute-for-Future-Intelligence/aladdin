@@ -1273,6 +1273,7 @@ export const i18n_tr = {
       StoreMyNameInMyFilesWhenSaving: 'Kaydederken, adımı dosyalarıma ekle',
       DoYouReallyWantToShowYourNameInYourFiles: 'Dosyalarınızda isminizin gösterilmesini istiyor musunuz?',
       SignFileDisclaimer: 'Evet ise, isiminiz dosyalarınıza erişimi olan bütün kişiler tarafından görülebilir.',
+      Likes: 'Likes',
       UserCount: 'Kullanıcı Sayısı',
       SchoolID: 'Okul',
       ClassID: 'Sınıf',
