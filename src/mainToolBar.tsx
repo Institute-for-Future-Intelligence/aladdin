@@ -263,6 +263,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
     let userCount = 0;
     let schoolID = SchoolID.UNKNOWN;
     let classID = ClassID.UNKNOWN;
+    let likes: string[] = [];
     const found = await firestore
       .collection('users')
       .get()
@@ -275,6 +276,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
             noLogging = !!docData.noLogging;
             schoolID = docData.schoolID ? (docData.schoolID as SchoolID) : SchoolID.UNKNOWN;
             classID = docData.classID ? (docData.classID as ClassID) : ClassID.UNKNOWN;
+            likes = docData.likes ?? new Array<string>();
             return true;
           }
         }
@@ -286,6 +288,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         state.user.noLogging = noLogging;
         state.user.schoolID = schoolID;
         state.user.classID = classID;
+        state.user.likes = likes;
       });
       usePrimitiveStore.setState((state) => {
         state.userCount = userCount;
@@ -294,6 +297,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
       user.noLogging = noLogging;
       user.schoolID = schoolID;
       user.classID = classID;
+      user.likes = likes;
     } else {
       if (user.uid) {
         firestore
@@ -380,6 +384,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
             type: data.type,
             author: data.author,
             label: data.label,
+            likeCount: data.likeCount ?? 0,
           } as ModelSite);
         });
         setLoading(false);
@@ -434,6 +439,50 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         })
         .catch((error) => {
           showError(i18n.t('message.CannotDeleteModelFromMap', lang) + ': ' + error);
+        });
+    }
+  };
+
+  const likeModelsMap = (userid: string, title: string, like: boolean) => {
+    if (user && user.uid && title) {
+      const siteId = title + ' - ' + userid;
+      firebase
+        .firestore()
+        .collection('users')
+        .doc(user.uid)
+        .update(
+          like
+            ? {
+                likes: firebase.firestore.FieldValue.arrayUnion(siteId),
+              }
+            : {
+                likes: firebase.firestore.FieldValue.arrayRemove(siteId),
+              },
+        )
+        .then(() => {
+          // TODO: What to do?
+        })
+        .catch((error) => {
+          showError(i18n.t('message.CannotLikeModelFromMap', lang) + ': ' + error);
+        });
+      firebase
+        .firestore()
+        .collection('sites')
+        .doc(siteId)
+        .update(
+          like
+            ? {
+                likeCount: firebase.firestore.FieldValue.increment(1),
+              }
+            : {
+                likeCount: firebase.firestore.FieldValue.increment(-1),
+              },
+        )
+        .then(() => {
+          // TODO: What to do?
+        })
+        .catch((error) => {
+          showError(i18n.t('message.CannotLikeModelFromMap', lang) + ': ' + error);
         });
     }
   };
@@ -784,7 +833,11 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
       )}
       {showAccountSettingsPanel && <AccountSettingsPanel />}
       {openModelsMap && (
-        <Explorer openCloudFile={openCloudFileWithSaveReminder} deleteModelFromMap={deleteFromModelsMap} />
+        <Explorer
+          openCloudFile={openCloudFileWithSaveReminder}
+          deleteModelFromMap={deleteFromModelsMap}
+          likeModelFromMap={likeModelsMap}
+        />
       )}
     </>
   );

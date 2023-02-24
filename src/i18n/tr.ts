@@ -31,6 +31,8 @@ export const i18n_tr = {
     },
 
     word: {
+      AlreadyLike: 'Already like',
+      Like: 'Like',
       AllRightsReserved: 'Tüm Hakları Saklıdır.',
       MeterAbbreviation: 'm',
       Version: 'Sürüm',
@@ -161,6 +163,7 @@ export const i18n_tr = {
       CannotSaveYourFileToCloud: 'Dosyanız buluta kaydedilemiyor',
       CloudFileNotFound: 'Bulut dosyası bulunamadı',
       CannotOpenModelOnMap: 'Cannot open model on map',
+      CannotLikeModelFromMap: 'Cannot like model from map',
       CannotDeleteModelFromMap: 'Cannot delete model from map',
       DoYouWantToDeleteModelFromMap: 'Do you want to delete the model from map?',
       CannotOpenCloudFile: 'Bulut dosyası açılamıyor',

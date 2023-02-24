@@ -31,6 +31,8 @@ export const i18n_zh_cn = {
     },
 
     word: {
+      AlreadyLike: '已点赞',
+      Like: '点赞',
       AllRightsReserved: '版权所有',
       MeterAbbreviation: '米',
       Version: '版本',
@@ -161,6 +163,7 @@ export const i18n_zh_cn = {
       CannotSaveYourFileToCloud: '无法保存您的文件到云端',
       CloudFileNotFound: '找不到此云端文件',
       CannotOpenModelOnMap: '无法打开地图上的模型',
+      CannotLikeModelFromMap: '无法点赞地图上的模型',
       CannotDeleteModelFromMap: '无法删除地图上的模型',
       DoYouWantToDeleteModelFromMap: '您要删除地图上的这个模型吗？',
       CannotOpenCloudFile: '此云端文件无法打开',

@@ -35,9 +35,10 @@ const Container = styled.div`
 export interface ExplorerProps {
   openCloudFile: (userid: string, title: string) => void;
   deleteModelFromMap: (userid: string, title: string) => void;
+  likeModelFromMap: (userid: string, title: string, like: boolean) => void;
 }
 
-const Explorer = ({ openCloudFile, deleteModelFromMap }: ExplorerProps) => {
+const Explorer = ({ openCloudFile, deleteModelFromMap, likeModelFromMap }: ExplorerProps) => {
   const user = useStore(Selector.user);
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
@@ -164,7 +165,12 @@ const Explorer = ({ openCloudFile, deleteModelFromMap }: ExplorerProps) => {
         </Space>
       )}
       {isLoaded ? (
-        <ModelsMap closeMap={close} openModel={openCloudFile} deleteModel={deleteModelFromMap} />
+        <ModelsMap
+          closeMap={close}
+          openModel={openCloudFile}
+          deleteModel={deleteModelFromMap}
+          likeModel={likeModelFromMap}
+        />
       ) : (
         <Spinner />
       )}

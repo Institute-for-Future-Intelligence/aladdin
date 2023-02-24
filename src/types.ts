@@ -38,6 +38,7 @@ export interface User {
   noLogging: boolean;
   schoolID: SchoolID;
   classID: ClassID;
+  likes?: string[];
 }
 
 export enum FirebaseName {
@@ -54,6 +55,7 @@ export interface ModelSite {
   type?: string;
   author?: string;
   label?: string;
+  likeCount?: number;
 }
 
 export enum SchoolID {

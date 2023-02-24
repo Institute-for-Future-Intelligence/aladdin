@@ -31,6 +31,8 @@ export const i18n_en = {
     },
 
     word: {
+      AlreadyLike: 'Already like',
+      Like: 'Like',
       AllRightsReserved: 'All Rights Reserved',
       MeterAbbreviation: 'm',
       Version: 'Version',
@@ -161,6 +163,7 @@ export const i18n_en = {
       CannotSaveYourFileToCloud: 'Cannot save your file to the cloud',
       CloudFileNotFound: 'The cloud file was not found',
       CannotOpenModelOnMap: 'Cannot open model on map',
+      CannotLikeModelFromMap: 'Cannot like model from map',
       CannotDeleteModelFromMap: 'Cannot delete model from map',
       DoYouWantToDeleteModelFromMap: 'Do you want to delete the model from map?',
       CannotOpenCloudFile: 'Cannot open the cloud file',

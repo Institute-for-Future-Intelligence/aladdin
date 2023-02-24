@@ -9,6 +9,10 @@ import ParabolicDishIcon from '../assets/map-parabolic-dish.png';
 import ParabolicTroughIcon from '../assets/map-parabolic-trough.png';
 import FresnelReflectorIcon from '../assets/map-fresnel-reflector.png';
 import PowerTowerIcon from '../assets/map-power-tower.png';
+import EmptyHeartIcon from '../assets/empty_heart.png';
+import RedHeartIcon from '../assets/red_heart.png';
+import OpenFileIcon from '../assets/open_file.png';
+import DeleteIcon from '../assets/delete.png';
 
 import React, { useCallback, useRef, useState } from 'react';
 import { GoogleMap, Marker, GoogleMapProps, InfoWindow, MarkerClusterer } from '@react-google-maps/api';
@@ -28,9 +32,10 @@ export interface ModelsMapProps {
   closeMap: () => void;
   openModel: (userid: string, title: string) => void;
   deleteModel: (userid: string, title: string) => void;
+  likeModel: (userid: string, title: string, like: boolean) => void;
 }
 
-const ModelsMap = ({ closeMap, openModel, deleteModel }: ModelsMapProps) => {
+const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapProps) => {
   const language = useStore(Selector.language);
   const user = useStore.getState().user;
   const setCommonStore = useStore(Selector.set);
@@ -44,7 +49,7 @@ const ModelsMap = ({ closeMap, openModel, deleteModel }: ModelsMapProps) => {
   const mapType = useStore(Selector.modelsMapType) ?? 'roadmap';
   const weatherData = useStore(Selector.weatherData);
   const mapWeatherStations = usePrimitiveStore(Selector.modelsMapWeatherStations);
-  const externalSites = useStore(Selector.modelSites);
+  const externalSites = useStore.getState().modelSites;
 
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [selectedSite, setSelectedSite] = useState<ModelSite | null>(null);
@@ -240,6 +245,44 @@ const ModelsMap = ({ closeMap, openModel, deleteModel }: ModelsMapProps) => {
     }
   };
 
+  const likeSite = (site: ModelSite) => {
+    if (site.userid && site.title) {
+      const id = site.title + ' - ' + site.userid;
+      const liked = !!user.likes?.includes(id);
+      likeModel(site.userid, site.title, !liked);
+      setCommonStore((state) => {
+        if (state.user && state.user.likes) {
+          if (state.user.likes.includes(id)) {
+            const index = state.user.likes.indexOf(id);
+            if (index >= 0) {
+              state.user.likes.splice(index, 1);
+            }
+          } else {
+            state.user.likes.push(id);
+          }
+        }
+        if (state.modelSites) {
+          for (const m of state.modelSites) {
+            if (m.userid === site.userid && m.title === site.title) {
+              if (m.likeCount === undefined) m.likeCount = 0;
+              m.likeCount += liked ? -1 : 1;
+            }
+          }
+        }
+      });
+    }
+  };
+
+  const getLikeCount = () => {
+    if (!selectedSite) return 0;
+    for (const m of useStore.getState().modelSites) {
+      if (m.userid === selectedSite.userid && m.title === selectedSite.title) {
+        return m.likeCount;
+      }
+    }
+    return 0;
+  };
+
   const getIconUrl = (site: ModelSite) => {
     switch (site.type) {
       case ModelType.PHOTOVOLTAIC:
@@ -304,12 +347,56 @@ const ModelsMap = ({ closeMap, openModel, deleteModel }: ModelsMapProps) => {
               <hr />
               <label>by {selectedSite.author ?? i18n.t('word.Anonymous', { lng: language })}</label>
               <div style={{ marginTop: '10px' }}>
-                <button onClick={() => openSite(selectedSite)}>{i18n.t('word.Open', { lng: language })}</button>
+                <img
+                  alt={'Open'}
+                  onClick={() => {
+                    openSite(selectedSite);
+                  }}
+                  style={{ marginLeft: '10px' }}
+                  title={i18n.t('word.Open', { lng: language })}
+                  src={OpenFileIcon}
+                  height={16}
+                  width={16}
+                />
                 {!internal && selectedSite.userid === user.uid && (
-                  <button style={{ marginLeft: '5px' }} onClick={() => deleteSite(selectedSite)}>
-                    {i18n.t('word.Delete', { lng: language })}
-                  </button>
+                  <img
+                    alt={'Delete'}
+                    onClick={() => {
+                      deleteSite(selectedSite);
+                    }}
+                    style={{ marginLeft: '5px' }}
+                    title={i18n.t('word.Delete', { lng: language })}
+                    src={DeleteIcon}
+                    height={16}
+                    width={16}
+                  />
                 )}
+                {user.likes && user.likes.includes(selectedSite.title + ' - ' + selectedSite.userid) ? (
+                  <img
+                    alt={'Like'}
+                    onClick={() => {
+                      likeSite(selectedSite);
+                    }}
+                    style={{ marginLeft: '10px' }}
+                    title={i18n.t('word.AlreadyLike', { lng: language })}
+                    src={RedHeartIcon}
+                    height={16}
+                    width={16}
+                  />
+                ) : (
+                  <img
+                    alt={'Like'}
+                    onClick={() => {
+                      likeSite(selectedSite);
+                    }}
+                    style={{ marginLeft: '10px' }}
+                    title={i18n.t('word.Like', { lng: language })}
+                    src={EmptyHeartIcon}
+                    height={16}
+                    width={16}
+                  />
+                )}
+                &nbsp;&nbsp;&nbsp;{getLikeCount()}
               </div>
             </div>
           </InfoWindow>
