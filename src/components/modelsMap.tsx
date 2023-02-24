@@ -14,6 +14,7 @@ import RedHeartIcon from '../assets/red_heart.png';
 import OpenFileIcon from '../assets/open_file.png';
 import DeleteIcon from '../assets/delete.png';
 import ExportLinkIcon from '../assets/export_link.png';
+import ClickCountIcon from '../assets/click_count.png';
 
 import React, { useCallback, useRef, useState } from 'react';
 import { GoogleMap, Marker, GoogleMapProps, InfoWindow, MarkerClusterer } from '@react-google-maps/api';
@@ -32,7 +33,7 @@ import ReactTimeago from 'react-timeago';
 
 export interface ModelsMapProps {
   closeMap: () => void;
-  openModel: (userid: string, title: string) => void;
+  openModel: (userid: string, title: string, fromMap?: boolean) => void;
   deleteModel: (userid: string, title: string) => void;
   likeModel: (userid: string, title: string, like: boolean) => void;
 }
@@ -223,7 +224,7 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
 
   const openSite = (site: ModelSite) => {
     if (site.userid && site.title) {
-      openModel(site.userid, site.title);
+      openModel(site.userid, site.title, true);
       closeMap();
     } else {
       showError(i18n.t('message.ModelNotFound', lang));
@@ -295,6 +296,16 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
     return 0;
   };
 
+  const getClickCount = () => {
+    if (!selectedSite) return 0;
+    for (const m of useStore.getState().modelSites) {
+      if (m.userid === selectedSite.userid && m.title === selectedSite.title) {
+        return m.clickCount;
+      }
+    }
+    return 0;
+  };
+
   const getIconUrl = (site: ModelSite) => {
     switch (site.type) {
       case ModelType.PHOTOVOLTAIC:
@@ -356,13 +367,15 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
               <label>{selectedSite.label}</label>
               <br />
               <label style={{ fontSize: '11px' }}>{selectedSite.address ?? 'Unknown'}</label>
-              <hr />
+              <br />
+              <br />
               <label>
                 by {selectedSite.author ?? i18n.t('word.Anonymous', { lng: language })}
                 &nbsp;&nbsp;&nbsp;
                 {selectedSite.timeCreated && <ReactTimeago date={new Date(selectedSite.timeCreated)} />}
               </label>
-              <div style={{ marginTop: '10px' }}>
+              <hr />
+              <div style={{ marginTop: '10px', fontSize: '14px' }}>
                 <img
                   alt={'Open'}
                   onClick={() => {
@@ -371,6 +384,17 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
                   style={{ marginLeft: '10px' }}
                   title={i18n.t('word.Open', { lng: language })}
                   src={OpenFileIcon}
+                  height={16}
+                  width={16}
+                />
+                <img
+                  alt={'Export link'}
+                  onClick={() => {
+                    shareSite(selectedSite);
+                  }}
+                  style={{ marginLeft: '5px' }}
+                  title={i18n.t('word.Share', { lng: language })}
+                  src={ExportLinkIcon}
                   height={16}
                   width={16}
                 />
@@ -387,17 +411,6 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
                     width={16}
                   />
                 )}
-                <img
-                  alt={'Export link'}
-                  onClick={() => {
-                    shareSite(selectedSite);
-                  }}
-                  style={{ marginLeft: '5px' }}
-                  title={i18n.t('word.Share', { lng: language })}
-                  src={ExportLinkIcon}
-                  height={16}
-                  width={16}
-                />
                 {user.likes && user.likes.includes(selectedSite.title + ' - ' + selectedSite.userid) ? (
                   <img
                     alt={'Like'}
@@ -424,6 +437,15 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
                   />
                 )}
                 &nbsp;&nbsp;&nbsp;{getLikeCount()}
+                <img
+                  alt={'Click counter'}
+                  style={{ marginLeft: '10px' }}
+                  title={i18n.t('word.ClickCount', { lng: language })}
+                  src={ClickCountIcon}
+                  height={16}
+                  width={16}
+                />
+                &nbsp;&nbsp;&nbsp;{getClickCount()}
               </div>
             </div>
           </InfoWindow>

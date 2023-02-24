@@ -385,7 +385,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
             author: data.author,
             label: data.label,
             likeCount: data.likeCount ?? 0,
-            viewCount: data.viewCount ?? 0,
+            clickCount: data.clickCount ?? 0,
             timeCreated: data.timeCreated,
           } as ModelSite);
         });
@@ -490,6 +490,25 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
     }
   };
 
+  const countClicksModelsMap = (userid: string, title: string) => {
+    if (user && user.uid && title) {
+      const siteId = title + ' - ' + userid;
+      firebase
+        .firestore()
+        .collection('sites')
+        .doc(siteId)
+        .update({
+          clickCount: firebase.firestore.FieldValue.increment(1),
+        })
+        .then(() => {
+          // TODO: What to do?
+        })
+        .catch((error) => {
+          // Ignore
+        });
+    }
+  };
+
   const saveToCloud = (tlt: string, silent: boolean) => {
     const t = tlt.trim();
     if (t.length > 0) {
@@ -556,6 +575,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
           if (cloudFile) {
             saveToCloud(cloudFile, true);
             openCloudFile(userid, title);
+            if (fromMap) countClicksModelsMap(userid, title);
           } else {
             setCommonStore((state) => {
               state.showCloudFileTitleDialogFlag = !state.showCloudFileTitleDialogFlag;
@@ -563,12 +583,16 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
             });
           }
         },
-        onCancel: () => openCloudFile(userid, title),
+        onCancel: () => {
+          openCloudFile(userid, title);
+          if (fromMap) countClicksModelsMap(userid, title);
+        },
         okText: i18n.t('word.Yes', lang),
         cancelText: i18n.t('word.No', lang),
       });
     } else {
       openCloudFile(userid, title);
+      if (fromMap) countClicksModelsMap(userid, title);
     }
   };
 

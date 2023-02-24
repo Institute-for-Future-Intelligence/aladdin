@@ -56,7 +56,7 @@ export interface ModelSite {
   author?: string;
   label?: string;
   likeCount?: number;
-  viewCount?: number;
+  clickCount?: number;
   timeCreated?: number;
 }
 
