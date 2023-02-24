@@ -31,6 +31,7 @@ export const i18n_zh_cn = {
     },
 
     word: {
+      Share: '分享',
       AlreadyLike: '已点赞',
       Like: '点赞',
       AllRightsReserved: '版权所有',

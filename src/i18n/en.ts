@@ -31,6 +31,7 @@ export const i18n_en = {
     },
 
     word: {
+      Share: 'Share',
       AlreadyLike: 'Already like',
       Like: 'Like',
       AllRightsReserved: 'All Rights Reserved',

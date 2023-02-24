@@ -56,6 +56,8 @@ export interface ModelSite {
   author?: string;
   label?: string;
   likeCount?: number;
+  viewCount?: number;
+  timeCreated?: number;
 }
 
 export enum SchoolID {

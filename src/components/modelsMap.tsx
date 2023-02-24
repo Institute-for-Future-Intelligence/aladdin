@@ -13,6 +13,7 @@ import EmptyHeartIcon from '../assets/empty_heart.png';
 import RedHeartIcon from '../assets/red_heart.png';
 import OpenFileIcon from '../assets/open_file.png';
 import DeleteIcon from '../assets/delete.png';
+import ExportLinkIcon from '../assets/export_link.png';
 
 import React, { useCallback, useRef, useState } from 'react';
 import { GoogleMap, Marker, GoogleMapProps, InfoWindow, MarkerClusterer } from '@react-google-maps/api';
@@ -20,13 +21,14 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { UndoableChange } from '../undo/UndoableChange';
 import { UndoableChangeLocation } from '../undo/UndoableChangeLocation';
-import { DEFAULT_MODEL_MAP_ZOOM } from '../constants';
-import { showError } from '../helpers';
+import { DEFAULT_MODEL_MAP_ZOOM, HOME_URL } from '../constants';
+import { copyTextToClipboard, showError, showSuccess } from '../helpers';
 import i18n from '../i18n/i18n';
 import { ModelSite, ModelType } from '../types';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { Modal } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import ReactTimeago from 'react-timeago';
 
 export interface ModelsMapProps {
   closeMap: () => void;
@@ -228,6 +230,16 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
     }
   };
 
+  const shareSite = (site: ModelSite) => {
+    if (site.userid && site.title) {
+      const url = HOME_URL + '?client=web&userid=' + site.userid + '&title=' + encodeURIComponent(site.title);
+      copyTextToClipboard(url);
+      showSuccess(i18n.t('cloudFilePanel.LinkGeneratedInClipBoard', lang) + '.');
+    } else {
+      showError(i18n.t('message.ModelNotFound', lang));
+    }
+  };
+
   const deleteSite = (site: ModelSite) => {
     if (site) {
       Modal.confirm({
@@ -345,7 +357,11 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
               <br />
               <label style={{ fontSize: '11px' }}>{selectedSite.address ?? 'Unknown'}</label>
               <hr />
-              <label>by {selectedSite.author ?? i18n.t('word.Anonymous', { lng: language })}</label>
+              <label>
+                by {selectedSite.author ?? i18n.t('word.Anonymous', { lng: language })}
+                &nbsp;&nbsp;&nbsp;
+                {selectedSite.timeCreated && <ReactTimeago date={new Date(selectedSite.timeCreated)} />}
+              </label>
               <div style={{ marginTop: '10px' }}>
                 <img
                   alt={'Open'}
@@ -371,6 +387,17 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
                     width={16}
                   />
                 )}
+                <img
+                  alt={'Export link'}
+                  onClick={() => {
+                    shareSite(selectedSite);
+                  }}
+                  style={{ marginLeft: '5px' }}
+                  title={i18n.t('word.Share', { lng: language })}
+                  src={ExportLinkIcon}
+                  height={16}
+                  width={16}
+                />
                 {user.likes && user.likes.includes(selectedSite.title + ' - ' + selectedSite.userid) ? (
                   <img
                     alt={'Like'}

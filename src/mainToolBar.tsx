@@ -385,6 +385,8 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
             author: data.author,
             label: data.label,
             likeCount: data.likeCount ?? 0,
+            viewCount: data.viewCount ?? 0,
+            timeCreated: data.timeCreated,
           } as ModelSite);
         });
         setLoading(false);
@@ -417,6 +419,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
               userid: user.uid,
               title: title,
               label: usePrimitiveStore.getState().modelLabel,
+              timeCreated: Date.now(),
             } as ModelSite;
             doc.set(modelSite).then(() => {
               showSuccess(i18n.t('menu.file.PublishedOnModelsMap', lang) + '.');
@@ -544,7 +547,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
     }
   };
 
-  const openCloudFileWithSaveReminder = (userid: string, title: string) => {
+  const openCloudFileWithSaveReminder = (userid: string, title: string, fromMap?: boolean) => {
     if (changed) {
       Modal.confirm({
         title: i18n.t('message.DoYouWantToSaveChanges', lang),

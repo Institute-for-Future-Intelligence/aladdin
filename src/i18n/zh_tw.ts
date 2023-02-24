@@ -31,6 +31,7 @@ export const i18n_zh_tw = {
     },
 
     word: {
+      Share: '分享',
       AlreadyLike: '已點贊',
       Like: '點贊',
       AllRightsReserved: '版權所有',

@@ -31,6 +31,7 @@ export const i18n_tr = {
     },
 
     word: {
+      Share: 'Share',
       AlreadyLike: 'Already like',
       Like: 'Like',
       AllRightsReserved: 'Tüm Hakları Saklıdır.',
