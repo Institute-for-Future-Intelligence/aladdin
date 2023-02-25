@@ -2909,7 +2909,15 @@ const Foundation = ({
         {selected && <HorizontalRuler element={foundationModel} verticalLift={moveHandleSize} />}
 
         {/* wireFrame */}
-        {!selected && <Wireframe hx={hx} hy={hy} hz={hz} lineColor={lineColor} lineWidth={lineWidth} />}
+        {(!selected || groundImage) && (
+          <Wireframe
+            hx={hx}
+            hy={hy}
+            hz={hz}
+            lineColor={groundImage && orthographic ? 'white' : lineColor}
+            lineWidth={groundImage && orthographic ? lineWidth * 3 : lineWidth}
+          />
+        )}
 
         {/* highlight with a thick wireframe when it is selected but locked */}
         {selected && locked && (

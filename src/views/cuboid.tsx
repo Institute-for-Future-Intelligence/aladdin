@@ -204,6 +204,25 @@ const Cuboid = ({
     intersectionPlanePosition.set(0, 0, cuboidModel.lz / 2 + (grabRef.current as SolarPanelModel).poleHeight);
   }
 
+  const labelText = useMemo(() => {
+    return (
+      (cuboidModel?.label ? cuboidModel.label : i18n.t('shared.CuboidElement', lang)) +
+      (cuboidModel.locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
+      (cuboidModel?.label
+        ? ''
+        : '\n' +
+          i18n.t('word.Coordinates', lang) +
+          ': (' +
+          cx.toFixed(1) +
+          ', ' +
+          cy.toFixed(1) +
+          ', ' +
+          (lz / 2).toFixed(1) +
+          ') ' +
+          i18n.t('word.MeterAbbreviation', lang))
+    );
+  }, [cuboidModel?.label, locked, language, cx, cy, lz]);
+
   useEffect(() => {
     const handlePointerUp = () => {
       grabRef.current = null;
@@ -1100,25 +1119,6 @@ const Cuboid = ({
     null,
   ];
 
-  const labelText = useMemo(() => {
-    return (
-      (cuboidModel?.label ? cuboidModel.label : i18n.t('shared.CuboidElement', lang)) +
-      (cuboidModel.locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
-      (cuboidModel?.label
-        ? ''
-        : '\n' +
-          i18n.t('word.Coordinates', lang) +
-          ': (' +
-          cx.toFixed(1) +
-          ', ' +
-          cy.toFixed(1) +
-          ', ' +
-          (lz / 2).toFixed(1) +
-          ') ' +
-          i18n.t('word.MeterAbbreviation', lang))
-    );
-  }, [cuboidModel?.label, locked, language, cx, cy, lz]);
-
   const opacity = groundImage ? (orthographic ? 0.25 : 0.75) : 1;
 
   return (
@@ -1238,7 +1238,15 @@ const Cuboid = ({
       {selected && <HorizontalRuler element={cuboidModel} verticalLift={moveHandleSize} />}
 
       {/* wireFrame */}
-      {!selected && <Wireframe hx={hx} hy={hy} hz={hz} lineColor={lineColor} lineWidth={lineWidth} />}
+      {(!selected || groundImage) && (
+        <Wireframe
+          hx={hx}
+          hy={hy}
+          hz={hz}
+          lineColor={groundImage && orthographic ? 'white' : lineColor}
+          lineWidth={groundImage && orthographic ? lineWidth * 5 : lineWidth}
+        />
+      )}
 
       {/* highlight with a thick wireframe when it is selected but locked */}
       {selected && locked && (
