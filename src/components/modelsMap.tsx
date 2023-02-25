@@ -56,6 +56,7 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
 
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [selectedSite, setSelectedSite] = useState<ModelSite | null>(null);
+  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const previousSiteRef = useRef<ModelSite | null>(null);
   const markersRef = useRef<Array<Marker | null>>([]);
   const selectedMarkerIndexRef = useRef<number>(-1);
@@ -297,6 +298,7 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
           }
         }
       });
+      setUpdateFlag(!updateFlag);
     }
   };
 
@@ -427,30 +429,45 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
                     width={16}
                   />
                 )}
-                {user.likes && user.likes.includes(selectedSite.title + ' - ' + selectedSite.userid) ? (
-                  <img
-                    alt={'Like'}
-                    onClick={() => {
-                      likeSite(selectedSite);
-                    }}
-                    style={{ marginLeft: '10px' }}
-                    title={i18n.t('word.AlreadyLike', { lng: language })}
-                    src={RedHeartIcon}
-                    height={16}
-                    width={16}
-                  />
+                {user.uid ? (
+                  <>
+                    {user.likes && user.likes.includes(selectedSite.title + ' - ' + selectedSite.userid) ? (
+                      <img
+                        alt={'Like'}
+                        onClick={() => {
+                          likeSite(selectedSite);
+                        }}
+                        style={{ marginLeft: '10px' }}
+                        title={i18n.t('word.AlreadyLike', { lng: language })}
+                        src={RedHeartIcon}
+                        height={16}
+                        width={16}
+                      />
+                    ) : (
+                      <img
+                        alt={'Like'}
+                        onClick={() => {
+                          likeSite(selectedSite);
+                        }}
+                        style={{ marginLeft: '10px' }}
+                        title={i18n.t('word.Like', { lng: language })}
+                        src={EmptyHeartIcon}
+                        height={16}
+                        width={16}
+                      />
+                    )}
+                  </>
                 ) : (
-                  <img
-                    alt={'Like'}
-                    onClick={() => {
-                      likeSite(selectedSite);
-                    }}
-                    style={{ marginLeft: '10px' }}
-                    title={i18n.t('word.Like', { lng: language })}
-                    src={EmptyHeartIcon}
-                    height={16}
-                    width={16}
-                  />
+                  <>
+                    <img
+                      alt={'Like'}
+                      style={{ marginLeft: '10px' }}
+                      title={i18n.t('word.Like', { lng: language })}
+                      src={EmptyHeartIcon}
+                      height={16}
+                      width={16}
+                    />
+                  </>
                 )}
                 &nbsp;&nbsp;&nbsp;{getLikeCount()}
                 <img

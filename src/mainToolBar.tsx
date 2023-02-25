@@ -276,7 +276,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
             noLogging = !!docData.noLogging;
             schoolID = docData.schoolID ? (docData.schoolID as SchoolID) : SchoolID.UNKNOWN;
             classID = docData.classID ? (docData.classID as ClassID) : ClassID.UNKNOWN;
-            likes = docData.likes ?? new Array<string>();
+            if (docData.likes) likes = docData.likes;
             return true;
           }
         }
@@ -333,6 +333,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
           state.user.displayName = null;
           state.user.photoURL = null;
           state.user.signFile = false;
+          state.user.likes = [];
           state.cloudFile = undefined; // if there is a current cloud file
         });
         usePrimitiveStore.setState((state) => {
@@ -419,6 +420,8 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
               userid: user.uid,
               title: title,
               label: usePrimitiveStore.getState().modelLabel,
+              likeCount: 0,
+              clickCount: 0,
               timeCreated: Date.now(),
             } as ModelSite;
             doc.set(modelSite).then(() => {
