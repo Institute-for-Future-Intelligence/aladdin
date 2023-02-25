@@ -381,7 +381,7 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
           })}
         {selectedSite && (
           <InfoWindow position={{ lat: selectedSite.latitude, lng: selectedSite.longitude }}>
-            <div>
+            <div onMouseLeave={() => setSelectedSite(null)}>
               <label>{selectedSite.label}</label>
               <br />
               <label style={{ fontSize: '10px' }}>{selectedSite.address ?? 'Unknown'}</label>
