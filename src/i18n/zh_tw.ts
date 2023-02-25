@@ -132,6 +132,7 @@ export const i18n_zh_tw = {
       Label: '標籤',
       Author: '作者',
       Building: '建築',
+      UnderConstruction: '在建',
       Photovoltaic: '光伏',
       Anonymous: '無名氏',
     },

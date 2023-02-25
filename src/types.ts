@@ -103,6 +103,7 @@ export interface ActionInfo {
 
 export enum ModelType {
   UNKNOWN = 'Unknown',
+  UNDER_CONSTRUCTION = 'Under Construction',
   BUILDING = 'Building',
   PHOTOVOLTAIC = 'Photovoltaic',
   PARABOLIC_DISH = 'Parabolic Dish',

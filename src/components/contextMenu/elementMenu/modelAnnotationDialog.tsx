@@ -115,6 +115,9 @@ const ModelAnnotationDialog = ({ setDialogVisible }: { setDialogVisible: (b: boo
             <Option key={ModelType.UNKNOWN} value={ModelType.UNKNOWN}>
               {i18n.t('word.Unknown', lang)}
             </Option>
+            <Option key={ModelType.UNDER_CONSTRUCTION} value={ModelType.UNDER_CONSTRUCTION}>
+              {i18n.t('word.UnderConstruction', lang)}
+            </Option>
             <Option key={ModelType.BUILDING} value={ModelType.BUILDING}>
               {i18n.t('word.Building', lang)}
             </Option>

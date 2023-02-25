@@ -2,6 +2,7 @@
  * @Copyright 2023. Institute for Future Intelligence, Inc.
  */
 
+import UnderConstructionIcon from '../assets/map-under-construction.png';
 import BuildingIcon from '../assets/map-building.png';
 import SolarPanelIcon from '../assets/map-solar-panel.png';
 import ParabolicDishIcon from '../assets/map-parabolic-dish.png';
@@ -55,7 +56,6 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
 
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [selectedSite, setSelectedSite] = useState<ModelSite | null>(null);
-  const [internal, setInternal] = useState<boolean>(false);
   const previousSiteRef = useRef<ModelSite | null>(null);
   const markersRef = useRef<Array<Marker | null>>([]);
   const selectedMarkerIndexRef = useRef<number>(-1);
@@ -248,6 +248,21 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
         onOk: () => {
           deleteModel(site.userid, site.title);
           markersRef.current[selectedMarkerIndexRef.current]?.marker?.setMap(null);
+          // also remove from the cached sites
+          setCommonStore((state) => {
+            if (state.modelSites) {
+              let index = -1;
+              for (const [i, m] of state.modelSites.entries()) {
+                if (m.userid === site.userid && m.title === site.title) {
+                  index = i;
+                  break;
+                }
+              }
+              if (index >= 0) {
+                state.modelSites.splice(index, 1);
+              }
+            }
+          });
           setSelectedSite(null);
         },
         onCancel: () => {},
@@ -319,6 +334,8 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
         return PowerTowerIcon;
       case ModelType.BUILDING:
         return BuildingIcon;
+      case ModelType.UNDER_CONSTRUCTION:
+        return UnderConstructionIcon;
     }
     return undefined;
   };
@@ -365,7 +382,7 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
             <div>
               <label>{selectedSite.label}</label>
               <br />
-              <label style={{ fontSize: '11px' }}>{selectedSite.address ?? 'Unknown'}</label>
+              <label style={{ fontSize: '10px' }}>{selectedSite.address ?? 'Unknown'}</label>
               <br />
               <br />
               <label>
@@ -397,7 +414,7 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
                   height={16}
                   width={16}
                 />
-                {!internal && selectedSite.userid === user.uid && (
+                {selectedSite.userid === user.uid && (
                   <img
                     alt={'Delete'}
                     onClick={() => {
@@ -455,26 +472,17 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
               <div>
                 {modelSites.map((site: ModelSite, index: number) => {
                   const iconUrl = getIconUrl(site);
-                  const scaledSize = Math.min(32, 3 * mapZoom);
                   return (
                     <Marker
                       key={index}
                       ref={(e) => (markersRef.current[index] = e)}
                       clusterer={clusterer}
-                      icon={
-                        iconUrl
-                          ? {
-                              url: iconUrl,
-                              scaledSize: new google.maps.Size(scaledSize, scaledSize),
-                            }
-                          : undefined
-                      }
+                      icon={iconUrl ? { url: iconUrl } : undefined}
                       position={{ lat: site.latitude, lng: site.longitude }}
                       onClick={() => openSite(site)}
                       onMouseOver={(e) => {
                         previousSiteRef.current = selectedSite;
                         selectedMarkerIndexRef.current = index;
-                        setInternal(false);
                         setSelectedSite(site);
                       }}
                       onMouseOut={(e) => {

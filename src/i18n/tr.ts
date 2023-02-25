@@ -132,6 +132,7 @@ export const i18n_tr = {
       Label: 'Label',
       Author: 'Author',
       Building: 'Building',
+      UnderConstruction: 'Under Construction',
       Photovoltaic: 'Photovoltaic',
       Anonymous: 'Anonymous',
     },

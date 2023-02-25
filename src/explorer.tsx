@@ -49,6 +49,7 @@ const Explorer = ({ openCloudFile, deleteModelFromMap, likeModelFromMap }: Explo
   const longitude = modelsMapLongitude !== undefined ? modelsMapLongitude : -71.3488548;
   const address = useStore.getState().modelsMapAddress ?? DEFAULT_ADDRESS;
   const mapWeatherStations = usePrimitiveStore(Selector.modelsMapWeatherStations);
+  const modelSites = useStore.getState().modelSites;
 
   const searchBox = useRef<google.maps.places.SearchBox>();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -180,6 +181,23 @@ const Explorer = ({ openCloudFile, deleteModelFromMap, likeModelFromMap }: Explo
         </Space>
       )}
       <>
+        <Space>
+          <div
+            style={{
+              position: 'absolute',
+              fontSize: 'medium',
+              color: 'black',
+              bottom: '6px',
+              left: '6px',
+              width: '80px',
+              height: '28px',
+              background: 'whitesmoke',
+              boxShadow: '1px 1px 1px 1px gray',
+            }}
+          >
+            {i18n.t('word.Total', { lng: language }) + ': ' + modelSites.length}
+          </div>
+        </Space>
         <Space>
           <div
             style={{
