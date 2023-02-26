@@ -976,11 +976,12 @@ export const useStore = create<CommonStoreState>(
             } else {
               // when threshold is set, use the distance between centers to detect overlap using it
               const thresholdSquared = threshold * threshold;
+              const parent = get().getParent(me);
               for (const e of get().elements) {
                 if (e.type === me.type && e.parentId === me.parentId && e.id !== me.id) {
-                  const dx = me.cx - e.cx;
-                  const dy = me.cy - e.cy;
-                  const dz = me.cz - e.cz;
+                  const dx = (me.cx - e.cx) * (parent ? parent.lx : 1);
+                  const dy = (me.cy - e.cy) * (parent ? parent.ly : 1);
+                  const dz = (me.cz - e.cz) * (parent ? parent.lz : 1);
                   const sq = dx * dx + dy * dy + dz * dz;
                   if (sq < thresholdSquared) {
                     overlap = true;
@@ -5070,8 +5071,7 @@ export const useStore = create<CommonStoreState>(
                             } else {
                             }
                             break;
-                          }
-                          if (parent.type === ObjectType.Roof) {
+                          } else if (parent.type === ObjectType.Roof) {
                             if (elem.foundationId) {
                               const foundation = state.getElementById(elem.foundationId);
                               if (foundation) {
@@ -5146,17 +5146,17 @@ export const useStore = create<CommonStoreState>(
                               e.cx = nearestNeighbor.cx + dx;
                               e.cy = nearestNeighbor.cy + dy;
                               e.cz = nearestNeighbor.cz + dz;
-                              if (state.overlapWithSibling(e, 0.001)) {
+                              if (state.overlapWithSibling(e)) {
                                 // try the opposite direction first before giving up
                                 e.cx = elem.cx - dx;
                                 e.cy = elem.cy - dy;
                                 e.cz = elem.cz - dz;
-                                if (state.overlapWithSibling(e, 0.001)) {
+                                if (state.overlapWithSibling(e)) {
                                   // we may need to hop twice in the opposite direction
                                   e.cx = elem.cx - 2 * dx;
                                   e.cy = elem.cy - 2 * dy;
                                   e.cz = elem.cz - 2 * dz;
-                                  if (state.overlapWithSibling(e, 0.001)) {
+                                  if (state.overlapWithSibling(e)) {
                                     e.cx = oldX - dx;
                                     e.cy = oldY - dy;
                                     e.cz = oldZ - dz;
@@ -5171,7 +5171,7 @@ export const useStore = create<CommonStoreState>(
                             e.cx += e.lx / parent.lx;
                           }
                           const lang = { lng: state.language };
-                          if (!state.overlapWithSibling(e, 0.01)) {
+                          if (!state.overlapWithSibling(e)) {
                             if (
                               parent.type === ObjectType.Foundation ||
                               (parent.type === ObjectType.Cuboid && Util.isIdentical(e.normal, UNIT_VECTOR_POS_Z_ARRAY))

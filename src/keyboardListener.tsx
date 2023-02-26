@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useState } from 'react';
@@ -64,7 +64,6 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
   const [keyDown, setKeyDown] = useState(false);
   const [keyUp, setKeyUp] = useState(false);
 
-  const moveStepRelative = 0.01;
   const moveStepAbsolute = 0.1;
   const lang = { lng: language };
 
@@ -248,30 +247,37 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
           case ObjectType.Cuboid:
           case ObjectType.Tree:
           case ObjectType.Flower:
-          case ObjectType.Human:
+          case ObjectType.Human: {
             displacement = -moveStepAbsolute;
             break;
-          case ObjectType.Wall:
+          }
+          case ObjectType.Wall: {
             const wall = selectedElement as WallModel;
             if (wall.leftJoints.length === 0 && wall.rightJoints.length === 0) {
               displacement = -moveStepAbsolute;
             }
             break;
-          case ObjectType.Sensor:
+          }
+          case ObjectType.Sensor: {
             const parent = getParent(selectedElement);
             if (parent) {
               const halfLx = selectedElement.lx / (2 * parent.lx);
-              const x = Math.max(-0.5 + halfLx, selectedElement.cx - moveStepRelative);
+              const x = Math.max(-0.5 + halfLx, selectedElement.cx - moveStepAbsolute / parent.lx);
               displacement = x - selectedElement.cx;
             }
             break;
+          }
           case ObjectType.SolarPanel:
           case ObjectType.ParabolicDish:
           case ObjectType.ParabolicTrough:
           case ObjectType.FresnelReflector:
-          case ObjectType.Heliostat:
-            displacement = -moveStepRelative;
+          case ObjectType.Heliostat: {
+            const parent = getParent(selectedElement);
+            if (parent) {
+              displacement = -moveStepAbsolute / parent.lx;
+            }
             break;
+          }
         }
         if (displacement !== 0) {
           let accept = true;
@@ -346,30 +352,37 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
           case ObjectType.Cuboid:
           case ObjectType.Tree:
           case ObjectType.Flower:
-          case ObjectType.Human:
+          case ObjectType.Human: {
             displacement = moveStepAbsolute;
             break;
-          case ObjectType.Wall:
+          }
+          case ObjectType.Wall: {
             const wall = selectedElement as WallModel;
             if (wall.leftJoints.length === 0 && wall.rightJoints.length === 0) {
               displacement = moveStepAbsolute;
             }
             break;
-          case ObjectType.Sensor:
+          }
+          case ObjectType.Sensor: {
             const parent = getParent(selectedElement);
             if (parent) {
               const halfLx = parent ? selectedElement.lx / (2 * parent.lx) : 0;
-              const x = Math.min(0.5 - halfLx, selectedElement.cx + moveStepRelative);
+              const x = Math.min(0.5 - halfLx, selectedElement.cx + moveStepAbsolute / parent.lx);
               displacement = x - selectedElement.cx;
             }
             break;
+          }
           case ObjectType.SolarPanel:
           case ObjectType.ParabolicDish:
           case ObjectType.ParabolicTrough:
           case ObjectType.FresnelReflector:
-          case ObjectType.Heliostat:
-            displacement = moveStepRelative;
+          case ObjectType.Heliostat: {
+            const parent = getParent(selectedElement);
+            if (parent) {
+              displacement = moveStepAbsolute / parent.lx;
+            }
             break;
+          }
         }
         if (displacement !== 0) {
           let accept = true;
@@ -444,30 +457,37 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
           case ObjectType.Cuboid:
           case ObjectType.Tree:
           case ObjectType.Flower:
-          case ObjectType.Human:
+          case ObjectType.Human: {
             displacement = moveStepAbsolute;
             break;
-          case ObjectType.Wall:
+          }
+          case ObjectType.Wall: {
             const wall = selectedElement as WallModel;
             if (wall.leftJoints.length === 0 && wall.rightJoints.length === 0) {
               displacement = moveStepAbsolute;
             }
             break;
-          case ObjectType.Sensor:
+          }
+          case ObjectType.Sensor: {
             const parent = getParent(selectedElement);
             if (parent) {
               const halfLy = parent ? selectedElement.ly / (2 * parent.ly) : 0;
-              const y = Math.min(0.5 - halfLy, selectedElement.cy + moveStepRelative);
+              const y = Math.min(0.5 - halfLy, selectedElement.cy + moveStepAbsolute / parent.ly);
               displacement = y - selectedElement.cy;
             }
             break;
+          }
           case ObjectType.SolarPanel:
           case ObjectType.ParabolicDish:
           case ObjectType.ParabolicTrough:
           case ObjectType.FresnelReflector:
-          case ObjectType.Heliostat:
-            displacement = moveStepRelative;
+          case ObjectType.Heliostat: {
+            const parent = getParent(selectedElement);
+            if (parent) {
+              displacement = moveStepAbsolute / parent.ly;
+            }
             break;
+          }
         }
         if (displacement !== 0) {
           let accept = true;
@@ -536,30 +556,37 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
           case ObjectType.Cuboid:
           case ObjectType.Tree:
           case ObjectType.Flower:
-          case ObjectType.Human:
+          case ObjectType.Human: {
             displacement = -moveStepAbsolute;
             break;
-          case ObjectType.Wall:
+          }
+          case ObjectType.Wall: {
             const wall = selectedElement as WallModel;
             if (wall.leftJoints.length === 0 && wall.rightJoints.length === 0) {
               displacement = -moveStepAbsolute;
             }
             break;
-          case ObjectType.Sensor:
+          }
+          case ObjectType.Sensor: {
             const parent = getParent(selectedElement);
             if (parent) {
               const halfLy = parent ? selectedElement.ly / (2 * parent.ly) : 0;
-              const y = Math.max(-0.5 + halfLy, selectedElement.cy - moveStepRelative);
+              const y = Math.max(-0.5 + halfLy, selectedElement.cy - moveStepAbsolute / parent.ly);
               displacement = y - selectedElement.cy;
             }
             break;
+          }
           case ObjectType.SolarPanel:
           case ObjectType.ParabolicDish:
           case ObjectType.ParabolicTrough:
           case ObjectType.FresnelReflector:
-          case ObjectType.Heliostat:
-            displacement = -moveStepRelative;
+          case ObjectType.Heliostat: {
+            const parent = getParent(selectedElement);
+            if (parent) {
+              displacement = -moveStepAbsolute / parent.ly;
+            }
             break;
+          }
         }
         if (displacement !== 0) {
           let accept = true;

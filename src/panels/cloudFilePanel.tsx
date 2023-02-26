@@ -38,7 +38,7 @@ const ColumnWrapper = styled.div`
   right: 0;
   top: 0;
   width: 640px;
-  height: 480px;
+  height: 520px;
   min-width: 400px;
   max-width: 800px;
   min-height: 200px;
@@ -233,7 +233,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
               size={'small'}
               style={{ width: '100%', direction: 'ltr' }}
               dataSource={cloudFileArray}
-              scroll={{ y: 360 }}
+              scroll={{ y: 400 }}
               pagination={{
                 defaultPageSize: 10,
                 showSizeChanger: true,
