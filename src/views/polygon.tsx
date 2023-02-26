@@ -82,7 +82,7 @@ const Polygon = ({
       }
     }
   });
-  const ratio = parent ? Math.max(1, Math.max(parent.lx, parent.ly) / 12) : 1;
+  const ratio = parent ? Math.max(1, Math.max(parent.lx, parent.ly) / 24) : 1;
   const resizeHandleSize = RESIZE_HANDLE_SIZE * ratio;
   const moveHandleSize = MOVE_HANDLE_RADIUS * ratio;
   const lang = { lng: language };

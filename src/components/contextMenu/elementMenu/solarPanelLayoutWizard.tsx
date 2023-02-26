@@ -566,14 +566,14 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
           <Col className="gutter-row" span={14}>
             {i18n.t('polygonMenu.SolarPanelArrayPoleSpacing', lang) +
-              ' ([2, 10] ' +
+              ' ([2, 50] ' +
               i18n.t('word.MeterAbbreviation', lang) +
               '): '}
           </Col>
           <Col className="gutter-row" span={10}>
             <InputNumber
               min={2}
-              max={10}
+              max={50}
               style={{ width: '100%' }}
               precision={2}
               value={poleSpacingRef.current}

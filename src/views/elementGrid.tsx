@@ -19,7 +19,8 @@ interface ElementGridProps {
 
 export const ElementGrid = React.memo(({ hx, hy, hz, position, rotation }: ElementGridProps) => {
   const enableFineGrid = useStore(Selector.enableFineGrid);
-  const lineColor = '#444444';
+  const groundImage = useStore(Selector.viewState.groundImage);
+  const lineColor = groundImage ? '#888888' : '#444444';
 
   const maxSize = Math.max(hx, hy);
   const [step, setStep] = useState(Math.floor(maxSize / 50) + 1);
@@ -28,10 +29,10 @@ export const ElementGrid = React.memo(({ hx, hy, hz, position, rotation }: Eleme
   useEffect(() => {
     if (enableFineGrid) {
       setStep((Math.floor(maxSize / 25) + 1) * FINE_GRID_SCALE);
-      setLineWidth(0.1);
+      setLineWidth(groundImage ? 0.05 : 0.1);
     } else {
       setStep((Math.floor(maxSize / 25) + 1) * NORMAL_GRID_SCALE);
-      setLineWidth(0.1 * FINE_GRID_RATIO);
+      setLineWidth((groundImage ? 0.05 : 0.1) * FINE_GRID_RATIO);
     }
   }, [enableFineGrid, maxSize]);
 

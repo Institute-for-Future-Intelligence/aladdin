@@ -188,9 +188,9 @@ const Explorer = ({ openCloudFile, deleteModelFromMap, likeModelFromMap }: Explo
               fontSize: 'medium',
               color: 'black',
               bottom: '6px',
-              left: '6px',
+              left: '10px',
               width: '80px',
-              height: '28px',
+              height: '25px',
               background: 'whitesmoke',
               boxShadow: '1px 1px 1px 1px gray',
             }}
