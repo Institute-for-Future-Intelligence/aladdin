@@ -906,7 +906,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             !viewOnly &&
             new URLSearchParams(window.location.search).get('userid') === user.uid && (
               <Menu.Item key="publish-on-model-map" onClick={() => setModelAnnotationDialogVisible(true)}>
-                {i18n.t('menu.file.PublishOnModelsMap', lang)}
+                {i18n.t('menu.file.PublishOnModelsMap', lang)}...
               </Menu.Item>
             )}
 

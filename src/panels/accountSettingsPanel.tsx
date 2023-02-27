@@ -35,7 +35,7 @@ const ColumnWrapper = styled.div`
   right: 0;
   top: 0;
   width: 450px;
-  height: 300px;
+  height: 360px;
   min-width: 400px;
   max-width: 800px;
   min-height: 200px;
@@ -295,6 +295,15 @@ const AccountSettingsPanel = () => {
                     {ClassID.CLASS9}
                   </Option>
                 </Select>
+              </Col>
+            </Row>
+
+            <Row gutter={6} style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>
+              <Col className="gutter-row" span={6}>
+                {i18n.t('accountSettingsPanel.Published', lang)}
+              </Col>
+              <Col className="gutter-row" span={18}>
+                {user.published?.length ?? 0}
               </Col>
             </Row>
 

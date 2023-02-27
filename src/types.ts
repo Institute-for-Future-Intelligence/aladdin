@@ -39,6 +39,7 @@ export interface User {
   schoolID: SchoolID;
   classID: ClassID;
   likes?: string[];
+  published?: string[];
 }
 
 export enum FirebaseName {

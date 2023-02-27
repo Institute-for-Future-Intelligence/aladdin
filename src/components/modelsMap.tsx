@@ -279,7 +279,8 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
       const liked = !!user.likes?.includes(id);
       likeModel(site.userid, site.title, !liked);
       setCommonStore((state) => {
-        if (state.user && state.user.likes) {
+        if (state.user) {
+          if (!state.user.likes) state.user.likes = [];
           if (state.user.likes.includes(id)) {
             const index = state.user.likes.indexOf(id);
             if (index >= 0) {

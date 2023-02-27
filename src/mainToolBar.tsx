@@ -264,6 +264,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
     let schoolID = SchoolID.UNKNOWN;
     let classID = ClassID.UNKNOWN;
     let likes: string[] = [];
+    let published: string[] = [];
     const found = await firestore
       .collection('users')
       .get()
@@ -277,6 +278,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
             schoolID = docData.schoolID ? (docData.schoolID as SchoolID) : SchoolID.UNKNOWN;
             classID = docData.classID ? (docData.classID as ClassID) : ClassID.UNKNOWN;
             if (docData.likes) likes = docData.likes;
+            if (docData.published) published = docData.published;
             return true;
           }
         }
@@ -289,6 +291,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         state.user.schoolID = schoolID;
         state.user.classID = classID;
         state.user.likes = likes;
+        state.user.published = published;
       });
       usePrimitiveStore.setState((state) => {
         state.userCount = userCount;
@@ -298,6 +301,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
       user.schoolID = schoolID;
       user.classID = classID;
       user.likes = likes;
+      user.published = published;
     } else {
       if (user.uid) {
         firestore
@@ -334,6 +338,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
           state.user.photoURL = null;
           state.user.signFile = false;
           state.user.likes = [];
+          state.user.published = [];
           state.cloudFile = undefined; // if there is a current cloud file
         });
         usePrimitiveStore.setState((state) => {
@@ -429,6 +434,24 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
             });
           }
         }
+        firebase
+          .firestore()
+          .collection('users')
+          .doc(user.uid)
+          .update({
+            published: firebase.firestore.FieldValue.arrayUnion(title),
+          })
+          .then(() => {
+            // TODO: What to do?
+          });
+        setCommonStore((state) => {
+          if (state.user) {
+            if (!state.user.published) state.user.published = [];
+            if (!state.user.published.includes(title)) {
+              state.user.published.push(title);
+            }
+          }
+        });
       }
     }
   };
@@ -446,11 +469,31 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         .catch((error) => {
           showError(i18n.t('message.CannotDeleteModelFromMap', lang) + ': ' + error);
         });
+      firebase
+        .firestore()
+        .collection('users')
+        .doc(user.uid)
+        .update({
+          published: firebase.firestore.FieldValue.arrayRemove(title),
+        })
+        .then(() => {
+          // TODO: What to do?
+        });
+      setCommonStore((state) => {
+        if (state.user && state.user.published) {
+          if (state.user.published.includes(title)) {
+            const index = state.user.published.indexOf(title);
+            if (index >= 0) {
+              state.user.published.splice(index, 1);
+            }
+          }
+        }
+      });
     }
   };
 
   const likeModelsMap = (userid: string, title: string, like: boolean) => {
-    if (user && user.uid && title) {
+    if (user && user.uid) {
       const siteId = title + ' - ' + userid;
       firebase
         .firestore()
