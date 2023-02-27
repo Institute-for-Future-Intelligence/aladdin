@@ -1097,41 +1097,15 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               {i18n.t('menu.view.TranslucentFloatingWindows', lang)}
             </Checkbox>
           </Menu.Item>
-          <SubMenu
-            key={'accessories'}
-            style={{ paddingLeft: '24px' }}
-            title={i18n.t('menu.view.accessoriesSubMenu', lang)}
-          >
-            <Menu.Item key={'site-info-panel-check-box'}>
-              <Checkbox checked={showSiteInfoPanel} onChange={toggleSiteInfoPanel}>
-                {i18n.t('menu.view.accessories.SiteInformation', lang)}
-              </Checkbox>
-            </Menu.Item>
-            <Menu.Item key={'design-info-panel-check-box'}>
-              <Checkbox checked={showDesignInfoPanel} onChange={toggleDesignInfoPanel}>
-                {i18n.t('menu.view.accessories.DesignInformation', lang)}
-              </Checkbox>
-            </Menu.Item>
-            <Menu.Item key={'instruction-panel-check-box'}>
-              <Checkbox checked={showInstructionPanel} onChange={toggleInstructionPanel}>
-                {i18n.t('menu.view.accessories.Instruction', lang)}
-              </Checkbox>
-            </Menu.Item>
-            <Menu.Item key={'sticky-note-panel-check-box'}>
-              <Checkbox checked={showStickyNotePanel} onChange={toggleStickyNote}>
-                {i18n.t('menu.view.accessories.StickyNote', lang)}
-              </Checkbox>
-            </Menu.Item>
-          </SubMenu>
         </SubMenu>
       )}
 
-      {/* tool menu */}
+      {/* settings menu */}
       {!openModelsMap && (
-        <SubMenu key={'tool'} title={i18n.t('menu.toolSubMenu', lang)}>
+        <SubMenu key={'settings'} title={i18n.t('menu.settingsSubMenu', lang)}>
           {!showHeliodonPanel && (
             <Menu.Item key={'heliodon-panel-check-box'} onClick={openHeliodonPanel}>
-              {i18n.t('menu.tool.SunAndTime', lang)}...
+              {i18n.t('menu.settings.SunAndTime', lang)}...
             </Menu.Item>
           )}
           {!showMapPanel && (
@@ -1141,12 +1115,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           )}
           {!showWeatherPanel && (
             <Menu.Item key={'weather-panel-check-box'} onClick={openWeatherPanel}>
-              {i18n.t('menu.tool.WeatherData', lang)}...
+              {i18n.t('menu.settings.WeatherData', lang)}...
             </Menu.Item>
           )}
           {!showDiurnalTemperaturePanel && (
             <Menu.Item key={'diurnal-temperature-panel-check-box'} onClick={openDiurnalTemperaturePanel}>
-              {i18n.t('menu.tool.DiurnalTemperature', lang)}...
+              {i18n.t('menu.settings.DiurnalTemperature', lang)}...
             </Menu.Item>
           )}
           {!showEconomicsPanel && (
@@ -1169,6 +1143,29 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           )}
         </SubMenu>
       )}
+
+      <SubMenu key={'accessories'} title={i18n.t('menu.view.accessoriesSubMenu', lang)}>
+        <Menu.Item key={'site-info-panel-check-box'}>
+          <Checkbox checked={showSiteInfoPanel} onChange={toggleSiteInfoPanel}>
+            {i18n.t('menu.view.accessories.SiteInformation', lang)}
+          </Checkbox>
+        </Menu.Item>
+        <Menu.Item key={'design-info-panel-check-box'}>
+          <Checkbox checked={showDesignInfoPanel} onChange={toggleDesignInfoPanel}>
+            {i18n.t('menu.view.accessories.DesignInformation', lang)}
+          </Checkbox>
+        </Menu.Item>
+        <Menu.Item key={'instruction-panel-check-box'}>
+          <Checkbox checked={showInstructionPanel} onChange={toggleInstructionPanel}>
+            {i18n.t('menu.view.accessories.Instruction', lang)}
+          </Checkbox>
+        </Menu.Item>
+        <Menu.Item key={'sticky-note-panel-check-box'}>
+          <Checkbox checked={showStickyNotePanel} onChange={toggleStickyNote}>
+            {i18n.t('menu.view.accessories.StickyNote', lang)}
+          </Checkbox>
+        </Menu.Item>
+      </SubMenu>
 
       {/* analysis menu */}
       {!openModelsMap && (
@@ -1853,25 +1850,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         </SubMenu>
       )}
 
-      {/* benchmarks menu */}
-      <SubMenu key={'benchmarks'} title={i18n.t('menu.benchmarksSubMenu', lang)}>
-        <Menu.Item key="solar_radiation_predicted_vs_measured" onClick={loadFile}>
-          {i18n.t('menu.benchmarks.SolarRadiationPredictionVsMeasurement', lang)}
-        </Menu.Item>
-        <Menu.Item key="bestest_case_600" onClick={loadFile}>
-          {i18n.t('menu.benchmarks.BESTESTCase600', lang)}
-        </Menu.Item>
-        <Menu.Item key="bestest_case_610" onClick={loadFile}>
-          {i18n.t('menu.benchmarks.BESTESTCase610', lang)}
-        </Menu.Item>
-        <Menu.Item key="bestest_case_620" onClick={loadFile}>
-          {i18n.t('menu.benchmarks.BESTESTCase620', lang)}
-        </Menu.Item>
-        <Menu.Item key="bestest_case_630" onClick={loadFile}>
-          {i18n.t('menu.benchmarks.BESTESTCase630', lang)}
-        </Menu.Item>
-      </SubMenu>
-
       {/* tutorials menu */}
       <SubMenu key={'tutorials'} title={i18n.t('menu.tutorialsSubMenu', lang)}>
         {/* solar science */}
@@ -2230,6 +2208,25 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Menu.Item>
           <Menu.Item key="ai_fitchburg_solar_farm" onClick={loadFile}>
             {i18n.t('menu.artificialIntelligenceExamples.FitchburgSolarFarmGenerativeDesign', lang)}
+          </Menu.Item>
+        </SubMenu>
+
+        {/* benchmarks menu */}
+        <SubMenu key={'benchmarks'} title={i18n.t('menu.benchmarksSubMenu', lang)}>
+          <Menu.Item key="solar_radiation_predicted_vs_measured" onClick={loadFile}>
+            {i18n.t('menu.benchmarks.SolarRadiationPredictionVsMeasurement', lang)}
+          </Menu.Item>
+          <Menu.Item key="bestest_case_600" onClick={loadFile}>
+            {i18n.t('menu.benchmarks.BESTESTCase600', lang)}
+          </Menu.Item>
+          <Menu.Item key="bestest_case_610" onClick={loadFile}>
+            {i18n.t('menu.benchmarks.BESTESTCase610', lang)}
+          </Menu.Item>
+          <Menu.Item key="bestest_case_620" onClick={loadFile}>
+            {i18n.t('menu.benchmarks.BESTESTCase620', lang)}
+          </Menu.Item>
+          <Menu.Item key="bestest_case_630" onClick={loadFile}>
+            {i18n.t('menu.benchmarks.BESTESTCase630', lang)}
           </Menu.Item>
         </SubMenu>
       </SubMenu>

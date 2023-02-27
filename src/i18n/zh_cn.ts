@@ -270,8 +270,8 @@ export const i18n_zh_cn = {
           Note: '便签',
         },
       },
-      toolSubMenu: '工具',
-      tool: {
+      settingsSubMenu: '设置',
+      settings: {
         WeatherData: '气象数据',
         DiurnalTemperature: '昼夜温度',
         Heliodon: '日影仪',

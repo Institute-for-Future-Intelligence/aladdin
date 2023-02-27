@@ -272,8 +272,8 @@ export const i18n_es = {
           Note: 'Nota',
         },
       },
-      toolSubMenu: 'Herramienta',
-      tool: {
+      settingsSubMenu: 'Settings',
+      settings: {
         WeatherData: 'Datos del tiempo',
         DiurnalTemperature: 'Diurnal Temperature',
         Heliodon: 'Heliodon',

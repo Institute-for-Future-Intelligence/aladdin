@@ -287,7 +287,7 @@ const DiurnalTemperaturePanel = ({ city }: DiurnalTemperaturePanelProps) => {
         >
           <Header className="handle">
             <span>
-              {i18n.t('menu.tool.DiurnalTemperature', lang) + ': ' + city + ' | ' + dayjs(now).format('MM/DD')}
+              {i18n.t('menu.settings.DiurnalTemperature', lang) + ': ' + city + ' | ' + dayjs(now).format('MM/DD')}
             </span>
             <span
               style={{ cursor: 'pointer' }}

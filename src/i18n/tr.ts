@@ -271,8 +271,8 @@ export const i18n_tr = {
           Note: 'Notlar',
         },
       },
-      toolSubMenu: 'Araçlar',
-      tool: {
+      settingsSubMenu: 'Settings',
+      settings: {
         WeatherData: 'Hava Durumu',
         DiurnalTemperature: 'Günlük Sıcaklık',
         Heliodon: 'Heliodon',

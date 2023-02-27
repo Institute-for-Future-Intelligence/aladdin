@@ -292,7 +292,7 @@ const HeliodonPanel = () => {
           </Header>
           <Space style={{ padding: '20px' }} align={'baseline'} size={20}>
             <div>
-              {i18n.t('menu.tool.Heliodon', lang)}
+              {i18n.t('menu.settings.Heliodon', lang)}
               <br />
               <Switch
                 checked={heliodon}
