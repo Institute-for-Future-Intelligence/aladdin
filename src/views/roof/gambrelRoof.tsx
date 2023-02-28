@@ -32,7 +32,6 @@ import { ActionType, ObjectType, RoofHandleType, RoofTexture } from 'src/types';
 import { RoofUtil } from './RoofUtil';
 import {
   useCurrWallArray,
-  useElementUndoable,
   useUpdateSegmentVerticesMap,
   useRoofHeight,
   useUpdateOldRoofFiles,
@@ -658,7 +657,6 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
     useStore.getState().setRoofSegmentVerticesWithoutOverhang(id, segmentVertices);
   };
 
-  const { addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
   useUpdateSegmentVerticesMap(id, centroid, roofSegments);
   useUpdateSegmentVerticesWithoutOverhangMap(updateSegmentVerticesWithoutOverhangeMap);
 
@@ -704,13 +702,13 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
         position={[centroid.x, centroid.y, centroid.z]}
         userData={userData}
         onPointerDown={(e) => {
-          handlePointerDown(e, id, foundation, roofSegments, centroid, setOldRefData);
+          handlePointerDown(e, id, foundation, roofSegments, centroid);
         }}
         onPointerMove={(e) => {
           handlePointerMove(e, id);
         }}
         onPointerUp={(e) => {
-          handlePointerUp(e, roofModel, undoMove, addUndoableMove);
+          handlePointerUp(e, roofModel);
         }}
         onContextMenu={(e) => {
           handleContextMenu(e, id);

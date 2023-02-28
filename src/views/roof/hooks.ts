@@ -3,11 +3,8 @@
  */
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ElementModel } from 'src/models/ElementModel';
-import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { useStore } from 'src/stores/common';
-import { ObjectType, OldRooftopElementData, RoofTexture } from 'src/types';
-import { UndoableMoveElementOnRoof } from 'src/undo/UndoableMove';
+import { ObjectType, RoofTexture } from 'src/types';
 
 import RoofTextureDefault from 'src/resources/roof_edge.png';
 import RoofTexture00 from 'src/resources/tiny_white_square.png';
@@ -22,96 +19,10 @@ import { RepeatWrapping, TextureLoader, Vector3 } from 'three';
 import * as Selector from 'src/stores/selector';
 import { WallModel } from 'src/models/WallModel';
 import { useThree } from '@react-three/fiber';
-import { SensorModel } from '../../models/SensorModel';
-import { LightModel } from '../../models/LightModel';
 import { RoofSegmentProps } from './roofRenderer';
 import { RoofUtil } from './RoofUtil';
 import { GambrelRoofModel, RoofModel, RoofType } from 'src/models/RoofModel';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
-
-export const useElementUndoable = () => {
-  const addUndoableMove = (elem: SolarPanelModel | SensorModel | LightModel) => {
-    const oldRooftopElementData = useStore.getState().oldRooftopElementData;
-    if (!oldRooftopElementData) return;
-    const undoabeMove = {
-      name: 'Move ' + elem.type + ' on Roof',
-      timestamp: Date.now(),
-      id: elem.id,
-      oldParentId: oldRooftopElementData.parentId,
-      newParentId: elem.parentId,
-      oldFoundationId: oldRooftopElementData.foundationId,
-      newFoundationId: elem.foundationId,
-      oldPos: [...oldRooftopElementData.position],
-      newPos: [elem.cx, elem.cy, elem.cz],
-      oldRot: [...oldRooftopElementData.rotation],
-      newRot: [...elem.rotation],
-      oldNor: [...oldRooftopElementData.normal],
-      newNor: [...elem.normal],
-      undo() {
-        useStore.getState().set((state) => {
-          for (const e of state.elements) {
-            if (e.id === this.id) {
-              e.parentId = this.oldParentId;
-              e.foundationId = this.oldFoundationId;
-              [e.cx, e.cy, e.cz] = [...this.oldPos];
-              e.rotation = [...this.oldRot];
-              e.normal = [...this.oldNor];
-              break;
-            }
-          }
-        });
-      },
-      redo() {
-        useStore.getState().set((state) => {
-          for (const e of state.elements) {
-            if (e.id === this.id) {
-              e.parentId = this.newParentId;
-              e.foundationId = this.newFoundationId;
-              [e.cx, e.cy, e.cz] = [...this.newPos];
-              e.rotation = [...this.newRot];
-              e.normal = [...this.newNor];
-              break;
-            }
-          }
-        });
-      },
-    } as UndoableMoveElementOnRoof;
-    useStore.getState().addUndoable(undoabeMove);
-  };
-
-  const undoMove = () => {
-    useStore.getState().set((state) => {
-      if (!state.selectedElement) return;
-      for (const e of state.elements) {
-        if (e.id === state.selectedElement.id) {
-          const oldData = state.oldRooftopElementData;
-          if (oldData) {
-            e.parentId = oldData.parentId;
-            e.foundationId = oldData.foundationId;
-            e.cx = oldData.position[0];
-            e.cy = oldData.position[1];
-            e.cz = oldData.position[2];
-            e.rotation = [...oldData.rotation];
-            e.normal = [...oldData.normal];
-          }
-          break;
-        }
-      }
-    });
-  };
-
-  const setOldRefData = (elem: ElementModel) => {
-    useStore.getState().setOldRooftopElementData({
-      position: [elem.cx, elem.cy, elem.cz],
-      rotation: [...elem.rotation],
-      normal: [...elem.normal],
-      parentId: elem.parentId,
-      foundationId: elem.foundationId,
-    } as OldRooftopElementData);
-  };
-
-  return { addUndoableMove, undoMove, setOldRefData };
-};
 
 export const useRoofTexture = (textureType: RoofTexture) => {
   const textureLoader = useMemo(() => {

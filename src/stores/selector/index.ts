@@ -1058,11 +1058,7 @@ export const groupActionUpdateFlag = (state: CommonStoreState) => state.groupAct
 
 export const addedWindowId = (state: CommonStoreState) => state.addedWindowId;
 
-export const deletedWindowAndParentId = (state: CommonStoreState) => state.deletedWindowAndParentId;
-
 export const addedDoorId = (state: CommonStoreState) => state.addedDoorId;
-
-export const deletedDoorAndParentId = (state: CommonStoreState) => state.deletedDoorAndParentId;
 
 export const updateWallMapOnFoundationFlag = (state: CommonStoreState) => state.updateWallMapOnFoundationFlag;
 

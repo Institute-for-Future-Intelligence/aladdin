@@ -37,7 +37,6 @@ import {
 } from './roofRenderer';
 import { RoofUtil } from './RoofUtil';
 import {
-  useElementUndoable,
   useMultiCurrWallArray,
   useRoofHeight,
   useRoofTexture,
@@ -653,8 +652,6 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
     }
   }, [currentWallArray, updateRoofFlag]);
 
-  const { addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
-
   const updateElementOnRoofFlag = useStore(Selector.updateElementOnRoofFlag);
 
   useEffect(() => {
@@ -819,13 +816,13 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
         userData={userData}
         position={[centerPoint.x, centerPoint.y, topZ]}
         onPointerDown={(e) => {
-          handlePointerDown(e, id, foundation, roofSegments, centerPointV3, setOldRefData);
+          handlePointerDown(e, id, foundation, roofSegments, centerPointV3);
         }}
         onPointerMove={(e) => {
           handlePointerMove(e, id);
         }}
         onPointerUp={(e) => {
-          handlePointerUp(e, roofModel, undoMove, addUndoableMove);
+          handlePointerUp(e, roofModel);
         }}
         onContextMenu={(e) => {
           handleContextMenu(e, id);

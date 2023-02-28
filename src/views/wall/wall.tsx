@@ -39,7 +39,7 @@ import { Util } from 'src/Util';
 import { useStore } from 'src/stores/common';
 import { useRefStore } from 'src/stores/commonRef';
 import { ElementModel } from 'src/models/ElementModel';
-import { ShutterProps, WindowModel, WindowType } from 'src/models/WindowModel';
+import { WindowModel, WindowType } from 'src/models/WindowModel';
 import { WallFill, WallModel, WallStructure } from 'src/models/WallModel';
 import { ElementModelFactory } from 'src/models/ElementModelFactory';
 import { Point2 } from 'src/models/Point2';
@@ -47,6 +47,21 @@ import { ElementGrid } from '../elementGrid';
 import Window, { WINDOW_GROUP_NAME } from '../window/window';
 import WallWireFrame from './wallWireFrame';
 import * as Selector from 'src/stores/selector';
+import { UndoableMove } from 'src/undo/UndoableMove';
+import { UndoableAdd } from 'src/undo/UndoableAdd';
+import { UndoableResizeElementOnWall } from 'src/undo/UndoableResize';
+import { DoorModel, DoorType } from 'src/models/DoorModel';
+import Door from '../door/door';
+import { SolarPanelModel } from 'src/models/SolarPanelModel';
+import SolarPanelOnWall from '../solarPanel/solarPanelOnWall';
+import { useElements } from './hooks';
+import { FoundationModel } from 'src/models/FoundationModel';
+import { HorizontalRuler } from '../horizontalRuler';
+import { usePrimitiveStore } from '../../stores/commonPrimitive';
+import { useDataStore } from '../../stores/commonData';
+import { showError } from 'src/helpers';
+import i18n from 'src/i18n/i18n';
+import { RoofUtil } from '../roof/RoofUtil';
 import {
   DEFAULT_HEAT_FLUX_COLOR,
   DEFAULT_HEAT_FLUX_DENSITY_FACTOR,
@@ -60,27 +75,6 @@ import {
   UNIT_VECTOR_POS_Y,
   UNIT_VECTOR_POS_Z,
 } from 'src/constants';
-import { UndoableMove } from 'src/undo/UndoableMove';
-import { UndoableAdd } from 'src/undo/UndoableAdd';
-import { UndoableResizeElementOnWall } from 'src/undo/UndoableResize';
-import { DoorModel, DoorType } from 'src/models/DoorModel';
-import Door from '../door/door';
-import { SolarPanelModel } from 'src/models/SolarPanelModel';
-import SolarPanelOnWall from '../solarPanel/solarPanelOnWall';
-import { useElements } from './hooks';
-import { FoundationModel } from 'src/models/FoundationModel';
-import { HorizontalRuler } from '../horizontalRuler';
-import { InnerCommonState } from 'src/stores/InnerCommonState';
-import { usePrimitiveStore } from '../../stores/commonPrimitive';
-import { useDataStore } from '../../stores/commonData';
-import { showError } from 'src/helpers';
-import i18n from 'src/i18n/i18n';
-import { RoofUtil } from '../roof/RoofUtil';
-
-export interface WallProps {
-  wallModel: WallModel;
-  foundationModel: FoundationModel;
-}
 
 export const WALL_OUTSIDE_SURFACE_MESH_NAME = 'Wall Outside Surface';
 
@@ -89,6 +83,152 @@ export const WALL_BLOCK_PLANE = 'Wall Block Plane';
 export const WALL_INTERSECTION_PLANE_NAME = 'Wall Intersection Plane';
 
 export const WALL_PADDING = 0.1;
+export interface WallProps {
+  wallModel: WallModel;
+  foundationModel: FoundationModel;
+}
+
+export function addUndoableMove() {
+  const oldElement = useStore.getState().selectedElement;
+  if (!oldElement) return;
+  const newElement = useStore.getState().getElementById(oldElement.id);
+  const oldParentId = usePrimitiveStore.getState().oldParentId;
+  const oldFoundationId = usePrimitiveStore.getState().oldFoundationId;
+  if (!newElement || !oldParentId || !oldFoundationId) return;
+
+  const isSolarPanel = oldElement.type === ObjectType.SolarPanel;
+  const undoableMove = {
+    name: 'Move',
+    timestamp: Date.now(),
+    movedElementId: newElement.id,
+    movedElementType: newElement.type,
+    oldCx: oldElement.cx,
+    oldCy: oldElement.cy,
+    oldCz: oldElement.cz,
+    newCx: newElement.cx,
+    newCy: newElement.cy,
+    newCz: newElement.cz,
+    oldParentType: isSolarPanel ? (oldElement as SolarPanelModel).parentType : undefined,
+    newParentType: isSolarPanel ? (newElement as SolarPanelModel).parentType : undefined,
+    oldParentId: oldParentId,
+    newParentId: newElement.parentId,
+    oldFoundationId: oldFoundationId,
+    newFoundationId: newElement.foundationId,
+    oldNormal: new Vector3().fromArray(oldElement.normal),
+    newNormal: new Vector3().fromArray(newElement.normal),
+    oldRotation: [...oldElement.rotation],
+    newRotation: [...newElement.rotation],
+    undo() {
+      setUndoRedoMove(
+        this.movedElementId,
+        [this.oldCx, this.oldCy, this.oldCz],
+        this.oldParentId,
+        this.newParentId,
+        this.oldFoundationId,
+        this.oldParentType,
+        this.oldRotation,
+        this.oldNormal,
+      );
+    },
+    redo() {
+      setUndoRedoMove(
+        this.movedElementId,
+        [this.newCx, this.newCy, this.newCz],
+        this.newParentId,
+        this.oldParentId,
+        this.newFoundationId,
+        this.newParentType,
+        this.newRotation,
+        this.newNormal,
+      );
+    },
+  } as UndoableMove;
+  useStore.getState().addUndoable(undoableMove);
+
+  function setUndoRedoMove(
+    id: string,
+    pos: number[],
+    oldParentId?: string,
+    newParentId?: string,
+    foundationId?: string | null,
+    parentType?: ObjectType,
+    rotation?: number[],
+    normal?: Vector3,
+  ) {
+    useStore.getState().set((state) => {
+      const el = state.elements.find((e) => e.id === id);
+      if (!el) return;
+      [el.cx, el.cy, el.cz] = [...pos];
+      if (oldParentId && newParentId && foundationId) {
+        el.parentId = oldParentId;
+        el.foundationId = foundationId;
+
+        if (parentType && el.type === ObjectType.SolarPanel) {
+          (el as SolarPanelModel).parentType = parentType;
+        }
+        if (rotation) {
+          el.rotation = [...rotation];
+        }
+        if (normal) {
+          el.normal = [normal.x, normal.y, normal.z];
+        }
+
+        // keep abs size
+        if (el.type === ObjectType.Window) {
+          const oldParent = state.elements.find((e) => e.id === oldParentId);
+          const newParent = state.elements.find((e) => e.id === newParentId);
+          if (!oldParent || !newParent) return;
+          const absLx = el.lx * newParent.lx;
+          const absLz = el.lz * newParent.lz;
+
+          el.lx = absLx / oldParent.lx;
+          el.lz = absLz / oldParent.lz;
+        }
+      }
+    });
+  }
+}
+
+export function undoInvalidOperation() {
+  useStore.getState().set((state) => {
+    if (!state.selectedElement) return;
+    for (let i = 0; i < state.elements.length; i++) {
+      const element = state.elements[i];
+      if (element.id === state.selectedElement?.id) {
+        const oldElement = state.selectedElement;
+        const oldParentId = usePrimitiveStore.getState().oldParentId;
+        const oldFoundationId = usePrimitiveStore.getState().oldFoundationId;
+        if (oldParentId) {
+          oldElement.parentId = oldParentId;
+        }
+        if (oldFoundationId) {
+          oldElement.foundationId = oldFoundationId;
+        }
+        state.elements[i] = oldElement;
+        break;
+      }
+    }
+  });
+}
+
+const PERPENDICULAR_THRESHOLD = 0.087; // 5 degree
+
+enum ElBeingAddedStatus {
+  SettingStartPoint,
+  SettingEndPoint,
+}
+
+type ElBeingAdded = {
+  id: string;
+  type: ObjectType;
+  status: ElBeingAddedStatus;
+};
+
+type BoundedPointerOptions = {
+  elementHalfSize?: number[];
+  ignorePadding?: boolean;
+  resizeAnchor?: Vector3;
+};
 
 const Wall = ({ wallModel, foundationModel }: WallProps) => {
   let {
@@ -122,6 +262,9 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     fill = WallFill.Full,
     unfilledHeight = 0.5,
   } = wallModel;
+
+  leftRoofHeight = leftJoints.length > 0 ? leftRoofHeight : lz;
+  rightRoofHeight = rightJoints.length > 0 ? rightRoofHeight : lz;
 
   const textureLoader = useMemo(() => {
     let textureImg;
@@ -195,19 +338,66 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     });
   }, [textureType, wallStructure]);
   const [texture, setTexture] = useState(textureLoader);
-  const { invalidate } = useThree();
 
-  const world = useStore.getState().world;
-  const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
-  const showHeatFluxes = usePrimitiveStore(Selector.showHeatFluxes);
-  const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
+  // common store
+  const setCommonStore = useStore(Selector.set);
+  const getSelectedElement = useStore(Selector.getSelectedElement);
+  const selectMe = useStore(Selector.selectMe);
+  const isAddingElement = useStore(Selector.isAddingElement);
   const getHeatmap = useDataStore(Selector.getHeatmap);
+  const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
+
+  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
+  const sunlightDirection = useStore(Selector.sunlightDirection);
+  const deletedRoofId = useStore(Selector.deletedRoofId);
+
+  // primitive store
+  const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
+  const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
+  const elementBeingCanceledId = usePrimitiveStore((state) => state.elementBeingCanceledId);
+  const showWallIntersectionPlaneId = usePrimitiveStore((state) => state.showWallIntersectionPlaneId);
+
+  // state
+  const [showIntersectionPlane, setShowIntersectionPlane] = useState(false);
   const [heatmapTexture, setHeatmapTexture] = useState<CanvasTexture | null>(null);
-  const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
-  const heatFluxColor = useStore(Selector.viewState.heatFluxColor);
-  const heatFluxWidth = useStore(Selector.viewState.heatFluxWidth);
-  const hourlyHeatExchangeArrayMap = useDataStore(Selector.hourlyHeatExchangeArrayMap);
-  const getChildrenOfType = useStore(Selector.getChildrenOfType);
+
+  // hooks
+  const { camera, gl, invalidate } = useThree();
+  const { elementsOnWall, leftWall, rightWall } = useElements(id, leftJoints[0], rightJoints[0]);
+
+  // object ref
+  const outsideWallRef = useRef<Mesh>(null);
+  const insideWallRef = useRef<Mesh>(null);
+  const topSurfaceRef = useRef<Mesh>(null);
+  const intersectionPlaneRef = useRef<Mesh>(null);
+
+  // variables
+  const grabRef = useRef<ElementModel | null>(null);
+  const addedWindowIdRef = useRef<string | null>(null);
+  const invalidElementIdRef = useRef<string | null>(null);
+  const elBeingAddedRef = useRef<ElBeingAdded | null>(null);
+
+  const hx = lx / 2;
+  const hy = ly / 2;
+  const hz = lz / 2;
+  const wallAbsAngle = foundationModel ? foundationModel.rotation[2] + relativeAngle : relativeAngle;
+  const leftOffset = Util.getInnerWallOffset(leftWall, lx, ly, relativeAngle, 'left');
+  const rightOffset = Util.getInnerWallOffset(rightWall, lx, ly, relativeAngle, 'right');
+  const transparent = wallStructure === WallStructure.Stud || wallStructure === WallStructure.Pillar;
+  const night = sunlightDirection.z <= 0;
+  const wallLeftHeight = leftRoofHeight ?? lz;
+  const wallRightHeight = rightRoofHeight ?? lz;
+  const realUnfilledHeight = fill === WallFill.Partial ? unfilledHeight : 0;
+  const bottomZ = -hz + realUnfilledHeight;
+  const castShadow = shadowEnabled && !transparent;
+
+  const mouse = useMemo(() => new Vector2(), []);
+  const ray = useMemo(() => new Raycaster(), []);
+
+  const whiteMaterialDouble = useMemo(
+    () => new MeshStandardMaterial({ color: 'white', side: DoubleSide, transparent: transparent, opacity: opacity }),
+    [transparent, opacity],
+  );
 
   const zmax = useMemo(() => {
     return Util.getHighestPointOfWall(wallModel);
@@ -219,337 +409,6 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     wallModel.centerLeftRoofHeight,
     wallModel.centerRightRoofHeight,
   ]);
-
-  useEffect(() => {
-    if (wallModel && showSolarRadiationHeatmap) {
-      const heatmap = getHeatmap(wallModel.id);
-      if (heatmap) {
-        const t = Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5);
-        if (t) {
-          t.wrapS = RepeatWrapping;
-          t.wrapT = RepeatWrapping;
-          const shiftZ = lz === zmax ? 0 : (1 - lz / zmax) / 2;
-          t.offset.set(-lx / 2, -zmax / 2 - shiftZ);
-          t.center.set(lx / 2, zmax / 2);
-          t.repeat.set(1 / lx, 1 / zmax);
-          setHeatmapTexture(t);
-        }
-      }
-    }
-  }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
-
-  const heatFluxArrowHead = useRef<number>(0);
-  const heatFluxArrowEuler = useRef<Euler>();
-
-  const heatFluxes: Vector3[][] | undefined = useMemo(() => {
-    if (!showHeatFluxes) return undefined;
-    const heat = hourlyHeatExchangeArrayMap.get(id);
-    if (!heat) return undefined;
-    const sum = heat.reduce((a, b) => a + b, 0);
-    let area = Util.getPolygonArea(Util.getWallVertices(wallModel, 0));
-    if (area === 0) return undefined;
-    const windows = getChildrenOfType(ObjectType.Window, id);
-    const doors = getChildrenOfType(ObjectType.Door, id);
-    if (windows && windows.length > 0) {
-      for (const w of windows) {
-        // window dimension is relative to the wall
-        area -= Util.getWindowArea(w as WindowModel, wallModel);
-      }
-    }
-    if (doors && doors.length > 0) {
-      for (const d of doors) {
-        // door dimension is relative to the wall
-        area -= d.lx * d.lz * wallModel.lx * wallModel.lz;
-      }
-    }
-    const cellSize = DEFAULT_HEAT_FLUX_DENSITY_FACTOR * (world.solarRadiationHeatmapGridCellSize ?? 0.5);
-    const lz = Util.getHighestPointOfWall(wallModel); // height
-    const nx = Math.max(2, Math.round(lx / cellSize));
-    const nz = Math.max(2, Math.round(lz / cellSize));
-    const dx = lx / nx;
-    const dz = lz / nz;
-    const halfDif = (lz - wallModel.lz) / 2;
-    const intensity = (sum / area) * (heatFluxScaleFactor ?? DEFAULT_HEAT_FLUX_SCALE_FACTOR);
-    heatFluxArrowHead.current = intensity < 0 ? 1 : 0;
-    heatFluxArrowEuler.current = Util.getEuler(
-      UNIT_VECTOR_POS_Z,
-      UNIT_VECTOR_POS_Y,
-      'YXZ',
-      Math.sign(intensity) * HALF_PI,
-    );
-    const vectors: Vector3[][] = [];
-    const polygon = Util.getWallVertices(wallModel, 0);
-    for (let kx = 0; kx < nx; kx++) {
-      for (let kz = 0; kz < nz; kz++) {
-        const v: Vector3[] = [];
-        const rx = (kx - nx / 2 + 0.5) * dx;
-        const rz = (kz - nz / 2 + 0.5) * dz + halfDif;
-        if (Util.isPointInside(rx, rz, polygon)) {
-          let isWall = true;
-          if (windows && windows.length > 0) {
-            for (const w of windows) {
-              if (w.type !== ObjectType.Window) continue;
-              const cx = w.cx * wallModel.lx;
-              const cz = w.cz * wallModel.lz;
-              const hx = (w.lx * wallModel.lx) / 2;
-              const hz = (w.lz * wallModel.lz) / 2;
-              const win = w as WindowModel;
-              if (win.windowType === WindowType.Arched) {
-                // TODO: Deal with arched window
-                if (rx >= cx - hx && rx < cx + hx && rz >= cz - hz && rz < cz + hz) {
-                  isWall = false;
-                  break;
-                }
-              } else {
-                if (rx >= cx - hx && rx < cx + hx && rz >= cz - hz && rz < cz + hz) {
-                  isWall = false;
-                  break;
-                }
-              }
-            }
-          }
-          if (doors && doors.length > 0) {
-            for (const d of doors) {
-              const cx = d.cx * lx;
-              const cz = d.cz * lz;
-              const hx = (d.lx * lx) / 2;
-              const hz = (d.lz * lz) / 2;
-              // TODO: Deal with arched door
-              if (rx >= cx - hx && rx < cx + hx && rz >= cz - hz && rz < cz + hz) {
-                isWall = false;
-                break;
-              }
-            }
-          }
-          if (isWall) {
-            if (intensity < 0) {
-              v.push(new Vector3(rx, 0, rz));
-              v.push(new Vector3(rx, intensity, rz));
-            } else {
-              v.push(new Vector3(rx, 0, rz));
-              v.push(new Vector3(rx, -intensity, rz));
-            }
-            vectors.push(v);
-          }
-        }
-      }
-    }
-    return vectors;
-  }, [lx, lz, showHeatFluxes, heatFluxScaleFactor]);
-
-  const deletedWindowAndParentId = useStore(Selector.deletedWindowAndParentId);
-  const deletedDoorAndParentId = useStore(Selector.deletedDoorAndParentId);
-  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
-  const setCommonStore = useStore(Selector.set);
-  const getSelectedElement = useStore(Selector.getSelectedElement);
-  const selectMe = useStore(Selector.selectMe);
-  const removeElementById = useStore(Selector.removeElementById);
-  const isAddingElement = useStore(Selector.isAddingElement);
-  const addUndoable = useStore(Selector.addUndoable);
-  const setElementPosition = useStore(Selector.setElementPosition);
-  const getElementById = useStore(Selector.getElementById);
-  const sunlightDirection = useStore(Selector.sunlightDirection);
-  const night = sunlightDirection.z <= 0;
-
-  const deletedRoofId = useStore(Selector.deletedRoofId);
-
-  useEffect(() => {
-    if (deletedRoofId === roofId) {
-      useStore.getState().set((state) => {
-        const invalidateIdSet = new Set<string>();
-
-        for (const e of state.elements) {
-          if (e.id === id && e.type === ObjectType.Wall) {
-            const wall = e as WallModel;
-            wall.roofId = null;
-            wall.leftRoofHeight = undefined;
-            wall.rightRoofHeight = undefined;
-            wall.centerRoofHeight = undefined;
-            wall.centerLeftRoofHeight = undefined;
-            wall.centerRightRoofHeight = undefined;
-
-            if (elementsOnWall.length > 0) {
-              const wallPoints = RoofUtil.getWallPoints2D(wall);
-              elementsOnWall.forEach((e) => {
-                const isSolarPanel = e.type === ObjectType.SolarPanel;
-                const eLx = isSolarPanel ? e.lx - 0.01 : e.lx * lx;
-                const eLz = isSolarPanel ? e.ly - 0.01 : e.lz * lz;
-                const center = new Vector3(e.cx * lx, 0, e.cz * lz);
-                if (!Util.isElementInsideWall(center, eLx, eLz, wallPoints)) {
-                  invalidateIdSet.add(e.id);
-                }
-              });
-            }
-            break;
-          }
-        }
-        if (invalidateIdSet.size > 0) {
-          state.elements = state.elements.filter((e) => !invalidateIdSet.has(e.id));
-        }
-      });
-    }
-  }, [deletedRoofId]);
-
-  // const intersectionPlaneRef = useRef<Mesh>(null);
-  const outsideWallRef = useRef<Mesh>(null);
-  // const outsideWallInnerFaceRef = useRef<Mesh>(null);
-  const insideWallRef = useRef<Mesh>(null);
-  const topSurfaceRef = useRef<Mesh>(null);
-  const grabRef = useRef<ElementModel | null>(null);
-
-  const addedWindowIdRef = useRef<string | null>(null);
-  const isSettingWindowStartPointRef = useRef(false);
-  const isSettingWindowEndPointRef = useRef(false);
-  const invalidElementIdRef = useRef<string | null>(null);
-  const isSettingDoorStartPointRef = useRef(false);
-  const isSettingDoorEndPointRef = useRef(false);
-  const oldPositionRef = useRef<number[]>([]);
-  const oldDimensionRef = useRef<number[]>([]);
-  const oldTintRef = useRef<string>('#73D8FF');
-  const oldDoorColorRef = useRef<string>('white');
-  const oldWindowArchHeight = useRef<number>();
-
-  const [originElements, setOriginElements] = useState<ElementModel[] | null>(null);
-  const [showGrid, setShowGrid] = useState(false);
-
-  const { elementsOnWall, leftWall, rightWall } = useElements(id, leftJoints[0], rightJoints[0]);
-
-  const transparent = wallStructure === WallStructure.Stud || wallStructure === WallStructure.Pillar;
-
-  const { camera, gl } = useThree();
-  const mouse = useMemo(() => new Vector2(), []);
-  const ray = useMemo(() => new Raycaster(), []);
-  const whiteMaterialDouble = useMemo(
-    () => new MeshStandardMaterial({ color: 'white', side: DoubleSide, transparent: transparent, opacity: opacity }),
-    [transparent, opacity],
-  );
-
-  const hx = lx / 2;
-  const hy = ly / 2;
-  const hz = lz / 2;
-  const wallAbsAngle = foundationModel ? foundationModel.rotation[2] + relativeAngle : relativeAngle;
-
-  leftRoofHeight = leftJoints.length > 0 ? leftRoofHeight : lz;
-  rightRoofHeight = rightJoints.length > 0 ? rightRoofHeight : lz;
-
-  const leftOffset = Util.getInnerWallOffset(leftWall, lx, ly, relativeAngle, 'left');
-  const rightOffset = Util.getInnerWallOffset(rightWall, lx, ly, relativeAngle, 'right');
-
-  const drawTopSurface = (shape: Shape, lx: number, ly: number, leftOffset: number, rightOffset: number) => {
-    const x = lx / 2;
-    const y = ly / 2;
-    shape.moveTo(-x, -y);
-    shape.lineTo(x, -y);
-    shape.lineTo(x - rightOffset, y);
-    shape.lineTo(-x + leftOffset, y);
-    shape.closePath();
-  };
-
-  const drawWallShape = (
-    shape: Shape,
-    lx: number,
-    ly: number,
-    cx = 0,
-    cy = 0,
-    leftOffset = 0,
-    rightOffset = 0,
-    drawDoorShape = true,
-  ) => {
-    const hx = lx / 2;
-    const hy = ly / 2;
-
-    if (fill === WallFill.Partial) {
-      shape.moveTo(cx - hx + leftOffset, cy - hy + unfilledHeight); // lower left
-      shape.lineTo(cx + hx - rightOffset, cy - hy + unfilledHeight); // lower right
-    } else {
-      shape.moveTo(cx - hx + leftOffset, cy - hy); // lower left
-      if (drawDoorShape) {
-        const doors = elementsOnWall
-          .filter((e) => e.type === ObjectType.Door)
-          .sort((a, b) => a.cx - b.cx) as DoorModel[];
-        for (const door of doors) {
-          if (door.id !== invalidElementIdRef.current) {
-            const [dcx, dcy, dlx, dly] = [door.cx * lx, door.cz * ly, door.lx * lx, door.lz * lz];
-            if (door.doorType === DoorType.Default) {
-              shape.lineTo(cx + dcx - dlx / 2, cy - hy);
-              shape.lineTo(cx + dcx - dlx / 2, cy - hy + dly);
-              shape.lineTo(cx + dcx + dlx / 2, cy - hy + dly);
-              shape.lineTo(cx + dcx + dlx / 2, cy - hy);
-            } else {
-              const ah = Math.min(door.archHeight, dly, dlx / 2);
-              shape.lineTo(cx + dcx - dlx / 2, cy - hy);
-              if (ah > 0.1) {
-                shape.lineTo(cx + dcx - dlx / 2, cy - hy + dly / 2 - ah);
-                const r = ah / 2 + dlx ** 2 / (8 * ah);
-                const [cX, cY] = [dcx, cy + dcy + dly / 2 - r];
-                const endAngle = Math.acos(Math.min(dlx / 2 / r, 1));
-                const startAngle = Math.PI - endAngle;
-                shape.absarc(cX, cY, r, startAngle, endAngle, true);
-              } else {
-                shape.lineTo(cx + dcx - dlx / 2, cy - hy + dly);
-                shape.lineTo(cx + dcx + dlx / 2, cy - hy + dly);
-              }
-              shape.lineTo(cx + dcx + dlx / 2, cy - hy);
-            }
-          }
-        }
-      }
-      shape.lineTo(cx + hx - rightOffset, cy - hy); // lower right
-    }
-
-    if (roofId) {
-      if (rightRoofHeight) {
-        shape.lineTo(cx + hx - rightOffset, rightRoofHeight - hy);
-      } else {
-        shape.lineTo(cx + hx - rightOffset, cy + hy); // upper right
-      }
-      centerRightRoofHeight && shape.lineTo(centerRightRoofHeight[0] * lx, centerRightRoofHeight[1] - hy);
-      centerRoofHeight && shape.lineTo(centerRoofHeight[0] * lx, centerRoofHeight[1] - hy);
-      centerLeftRoofHeight && shape.lineTo(centerLeftRoofHeight[0] * lx, centerLeftRoofHeight[1] - hy);
-      if (leftRoofHeight) {
-        shape.lineTo(cx - hx + leftOffset, leftRoofHeight - hy);
-      } else {
-        shape.lineTo(cx - hx + leftOffset, cy + hy); // upper left
-      }
-    } else {
-      shape.lineTo(cx + hx - rightOffset, cy + hy); // upper right
-      shape.lineTo(cx - hx + leftOffset, cy + hy); // upper left
-    }
-
-    shape.closePath();
-  };
-
-  const drawRectWindow = (shape: Shape, lx: number, ly: number, cx = 0, cy = 0) => {
-    const x = lx / 2;
-    const y = ly / 2;
-    shape.moveTo(cx - x, cy - y);
-    shape.lineTo(cx + x, cy - y);
-    shape.lineTo(cx + x, cy + y);
-    shape.lineTo(cx - x, cy + y);
-    shape.closePath();
-  };
-
-  const drawArchWindow = (shape: Shape, lx: number, ly: number, cx: number, cy: number, archHeight = 0) => {
-    const hx = lx / 2;
-    const hy = ly / 2;
-    const ah = Math.min(archHeight, ly, hx);
-
-    shape.moveTo(cx - hx, cy - hy);
-    shape.lineTo(cx + hx, cy - hy);
-    shape.lineTo(cx + hx, cy + hy - ah);
-
-    if (ah > 0) {
-      const r = ah / 2 + lx ** 2 / (8 * ah);
-      const [cX, cY] = [cx, cy + hy - r];
-      const startAngle = Math.acos(Math.min(1, hx / r));
-      const endAngle = Math.PI - startAngle;
-      shape.absarc(cX, cY, r, startAngle, endAngle, false);
-    } else {
-      shape.lineTo(cx - hx, cy + hy);
-    }
-
-    shape.closePath();
-  };
 
   const outsideWallShape = useMemo(() => {
     const wallShape = new Shape();
@@ -632,118 +491,11 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     centerRightRoofHeight,
   ]);
 
-  const intersectionPlaneShape = useMemo(() => {
-    const wallShape = new Shape();
-    drawWallShape(wallShape, lx, lz, 0, 0, 0, 0, false);
-    return wallShape;
-  }, [
-    lx,
-    lz,
-    fill,
-    unfilledHeight,
-    leftOffset,
-    rightOffset,
-    elementsOnWall,
-    leftRoofHeight,
-    rightRoofHeight,
-    centerRoofHeight,
-    centerLeftRoofHeight,
-    centerRightRoofHeight,
-    elementsOnWall,
-  ]);
-
   const topWallShape = useMemo(() => {
     const shape = new Shape();
     drawTopSurface(shape, lx, ly, leftOffset, rightOffset);
     return shape;
   }, [lx, ly, leftOffset, rightOffset]);
-
-  // useEffect(() => {
-  //   if (deletedWindowAndParentId && deletedWindowAndParentId[1] === id) {
-  //     resetCurrentState();
-  //     setShowGrid(false);
-  //     setCommonStore((state) => {
-  //       state.deletedWindowAndParentId = null;
-  //       state.addedWindowId = null;
-  //     });
-  //   }
-  // }, [deletedWindowAndParentId]);
-
-  // useEffect(() => {
-  //   if (deletedDoorAndParentId && deletedDoorAndParentId[1] === id) {
-  //     resetCurrentState();
-  //     setShowGrid(false);
-  //     setCommonStore((state) => {
-  //       state.deletedDoorAndParentId = null;
-  //       state.addedDoorId = null;
-  //     });
-  //   }
-  // }, [deletedDoorAndParentId]);
-
-  const getRelativePosOnWall = (p: Vector3, wall: WallModel) => {
-    const { cx, cy, cz } = wall;
-    if (foundationModel && wallAbsAngle !== undefined) {
-      const wallAbsPos = Util.wallAbsolutePosition(new Vector3(cx, cy, cz), foundationModel).setZ(
-        lz / 2 + foundationModel.lz,
-      );
-      return new Vector3().subVectors(p, wallAbsPos).applyEuler(new Euler(0, 0, -wallAbsAngle));
-    }
-    return new Vector3();
-  };
-
-  const snapToNormalGrid = (v: Vector3) => {
-    const x = parseFloat((Math.round(v.x / NORMAL_GRID_SCALE) * NORMAL_GRID_SCALE).toFixed(1));
-    const z = parseFloat((Math.round(v.z / NORMAL_GRID_SCALE) * NORMAL_GRID_SCALE).toFixed(1));
-    return new Vector3(x, v.y, z);
-  };
-
-  const snapToFineGrid = (v: Vector3) => {
-    const x = parseFloat((Math.round(v.x / FINE_GRID_SCALE) * FINE_GRID_SCALE).toFixed(1));
-    const z = parseFloat((Math.round(v.z / FINE_GRID_SCALE) * FINE_GRID_SCALE).toFixed(1));
-    return new Vector3(x, v.y, z);
-  };
-
-  const innerWallPoints2D = useMemo(() => {
-    const points: Point2[] = [];
-    const x = lx / 2;
-    const y = lz / 2;
-    if (fill === WallFill.Partial) {
-      points.push({ x: -x + leftOffset, y: -y + unfilledHeight });
-      points.push({ x: x - rightOffset, y: -y + unfilledHeight });
-    } else {
-      points.push({ x: -x + leftOffset, y: -y });
-      points.push({ x: x - rightOffset, y: -y });
-    }
-    rightRoofHeight
-      ? points.push({ x: x - rightOffset, y: rightRoofHeight - y })
-      : points.push({ x: x - rightOffset, y: y });
-    if (centerRightRoofHeight) {
-      points.push({ x: centerRightRoofHeight[0] * lx, y: centerRightRoofHeight[1] - y });
-    }
-    if (centerRoofHeight) {
-      points.push({ x: centerRoofHeight[0] * lx, y: centerRoofHeight[1] - y });
-    }
-    if (centerLeftRoofHeight) {
-      points.push({ x: centerLeftRoofHeight[0] * lx, y: centerLeftRoofHeight[1] - y });
-    }
-    leftRoofHeight
-      ? points.push({ x: -x + leftOffset, y: leftRoofHeight - y })
-      : points.push({ x: -x + leftOffset, y: y });
-
-    return points;
-  }, [
-    lx,
-    lz,
-    fill,
-    unfilledHeight,
-    leftRoofHeight,
-    rightRoofHeight,
-    centerRoofHeight,
-    centerLeftRoofHeight,
-    centerRightRoofHeight,
-    leftOffset,
-    rightOffset,
-  ]);
 
   const outerWallPoints2D = useMemo(() => {
     const points: Point2[] = [];
@@ -781,25 +533,176 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     centerRightRoofHeight,
   ]);
 
-  const collisionHelper = (args: number[], tolerance = 0) => {
-    let [tMinX, tMaxX, tMinZ, tMaxZ, cMinX, cMaxX, cMinZ, cMaxZ] = args;
-    cMinX += tolerance;
-    cMaxX -= tolerance;
-    cMinZ += tolerance;
-    cMaxZ -= tolerance;
-    return (
-      ((cMinX >= tMinX && cMinX <= tMaxX) ||
-        (cMaxX >= tMinX && cMaxX <= tMaxX) ||
-        (tMinX >= cMinX && tMinX <= cMaxX) ||
-        (tMaxX >= cMinX && tMaxX <= cMaxX)) &&
-      ((cMinZ >= tMinZ && cMinZ <= tMaxZ) ||
-        (cMaxZ >= tMinZ && cMaxZ <= tMaxZ) ||
-        (tMinZ >= cMinZ && tMinZ <= cMaxZ) ||
-        (tMaxZ >= cMinZ && tMaxZ <= cMaxZ))
-    );
-  };
+  const structureUnitArray = useMemo(() => {
+    const arr: number[] = [];
+    if (wallStructure === WallStructure.Stud) {
+      let pos = -hx + structureWidth / 2;
+      while (pos <= hx) {
+        arr.push(pos);
+        pos += structureSpacing;
+      }
+      arr.push(hx - structureWidth / 2);
+    } else if (wallStructure === WallStructure.Pillar) {
+      let pos = -hx;
+      while (pos <= hx) {
+        arr.push(pos);
+        pos += structureSpacing;
+      }
+      arr.push(hx);
+    }
 
-  const checkCollision = (id: string, p: Vector3, wlx: number, wlz: number) => {
+    return arr;
+  }, [wallStructure, structureWidth, structureSpacing, lx, ly, lz]);
+
+  // effects
+  useEffect(() => {
+    if (elBeingAddedRef.current && elBeingAddedRef.current.id === elementBeingCanceledId) {
+      elBeingAddedRef.current = null;
+      resetBeingAddedChildId();
+    }
+  }, [elementBeingCanceledId]);
+
+  useEffect(() => {
+    if (wallModel && showSolarRadiationHeatmap) {
+      const heatmap = getHeatmap(wallModel.id);
+      if (heatmap) {
+        const t = Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5);
+        if (t) {
+          t.wrapS = RepeatWrapping;
+          t.wrapT = RepeatWrapping;
+          const shiftZ = lz === zmax ? 0 : (1 - lz / zmax) / 2;
+          t.offset.set(-lx / 2, -zmax / 2 - shiftZ);
+          t.center.set(lx / 2, zmax / 2);
+          t.repeat.set(1 / lx, 1 / zmax);
+          setHeatmapTexture(t);
+        }
+      }
+    }
+  }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
+
+  useEffect(() => {
+    if (deletedRoofId === roofId) {
+      useStore.getState().set((state) => {
+        const invalidateIdSet = new Set<string>();
+
+        for (const e of state.elements) {
+          if (e.id === id && e.type === ObjectType.Wall) {
+            const wall = e as WallModel;
+            wall.roofId = null;
+            wall.leftRoofHeight = undefined;
+            wall.rightRoofHeight = undefined;
+            wall.centerRoofHeight = undefined;
+            wall.centerLeftRoofHeight = undefined;
+            wall.centerRightRoofHeight = undefined;
+
+            if (elementsOnWall.length > 0) {
+              const wallPoints = RoofUtil.getWallPoints2D(wall);
+              elementsOnWall.forEach((e) => {
+                const isSolarPanel = e.type === ObjectType.SolarPanel;
+                const eLx = isSolarPanel ? e.lx - 0.01 : e.lx * lx;
+                const eLz = isSolarPanel ? e.ly - 0.01 : e.lz * lz;
+                const center = new Vector3(e.cx * lx, 0, e.cz * lz);
+                if (!Util.isElementInsideWall(center, eLx, eLz, wallPoints)) {
+                  invalidateIdSet.add(e.id);
+                }
+              });
+            }
+            break;
+          }
+        }
+        if (invalidateIdSet.size > 0) {
+          state.elements = state.elements.filter((e) => !invalidateIdSet.has(e.id));
+        }
+      });
+    }
+  }, [deletedRoofId]);
+
+  function drawWallShape(
+    shape: Shape,
+    lx: number,
+    ly: number,
+    cx = 0,
+    cy = 0,
+    leftOffset = 0,
+    rightOffset = 0,
+    drawDoorShape = true,
+  ) {
+    const hx = lx / 2;
+    const hy = ly / 2;
+
+    if (fill === WallFill.Partial) {
+      shape.moveTo(cx - hx + leftOffset, cy - hy + unfilledHeight); // lower left
+      shape.lineTo(cx + hx - rightOffset, cy - hy + unfilledHeight); // lower right
+    } else {
+      shape.moveTo(cx - hx + leftOffset, cy - hy); // lower left
+      if (drawDoorShape) {
+        const doors = elementsOnWall
+          .filter((e) => e.type === ObjectType.Door)
+          .sort((a, b) => a.cx - b.cx) as DoorModel[];
+        for (const door of doors) {
+          if (door.id !== invalidElementIdRef.current) {
+            const [dcx, dcy, dlx, dly] = [door.cx * lx, door.cz * ly, door.lx * lx, door.lz * lz];
+            if (door.doorType === DoorType.Default) {
+              shape.lineTo(cx + dcx - dlx / 2, cy - hy);
+              shape.lineTo(cx + dcx - dlx / 2, cy - hy + dly);
+              shape.lineTo(cx + dcx + dlx / 2, cy - hy + dly);
+              shape.lineTo(cx + dcx + dlx / 2, cy - hy);
+            } else {
+              const ah = Math.min(door.archHeight, dly, dlx / 2);
+              shape.lineTo(cx + dcx - dlx / 2, cy - hy);
+              if (ah > 0.1) {
+                shape.lineTo(cx + dcx - dlx / 2, cy - hy + dly / 2 - ah);
+                const r = ah / 2 + dlx ** 2 / (8 * ah);
+                const [cX, cY] = [dcx, cy + dcy + dly / 2 - r];
+                const endAngle = Math.acos(Math.min(dlx / 2 / r, 1));
+                const startAngle = Math.PI - endAngle;
+                shape.absarc(cX, cY, r, startAngle, endAngle, true);
+              } else {
+                shape.lineTo(cx + dcx - dlx / 2, cy - hy + dly);
+                shape.lineTo(cx + dcx + dlx / 2, cy - hy + dly);
+              }
+              shape.lineTo(cx + dcx + dlx / 2, cy - hy);
+            }
+          }
+        }
+      }
+      shape.lineTo(cx + hx - rightOffset, cy - hy); // lower right
+    }
+
+    if (roofId) {
+      if (rightRoofHeight) {
+        shape.lineTo(cx + hx - rightOffset, rightRoofHeight - hy);
+      } else {
+        shape.lineTo(cx + hx - rightOffset, cy + hy); // upper right
+      }
+      centerRightRoofHeight && shape.lineTo(centerRightRoofHeight[0] * lx, centerRightRoofHeight[1] - hy);
+      centerRoofHeight && shape.lineTo(centerRoofHeight[0] * lx, centerRoofHeight[1] - hy);
+      centerLeftRoofHeight && shape.lineTo(centerLeftRoofHeight[0] * lx, centerLeftRoofHeight[1] - hy);
+      if (leftRoofHeight) {
+        shape.lineTo(cx - hx + leftOffset, leftRoofHeight - hy);
+      } else {
+        shape.lineTo(cx - hx + leftOffset, cy + hy); // upper left
+      }
+    } else {
+      shape.lineTo(cx + hx - rightOffset, cy + hy); // upper right
+      shape.lineTo(cx - hx + leftOffset, cy + hy); // upper left
+    }
+
+    shape.closePath();
+  }
+
+  function getRelativePosOnWall(p: Vector3, wall: WallModel) {
+    const { cx, cy, cz } = wall;
+    if (foundationModel && wallAbsAngle !== undefined) {
+      const wallAbsPos = Util.wallAbsolutePosition(new Vector3(cx, cy, cz), foundationModel).setZ(
+        lz / 2 + foundationModel.lz,
+      );
+      return new Vector3().subVectors(p, wallAbsPos).applyEuler(new Euler(0, 0, -wallAbsAngle));
+    }
+    return new Vector3();
+  }
+
+  function checkCollision(id: string, p: Vector3, wlx: number, wlz: number) {
     if (wlx < 0.1 || wlz < 0.1) {
       invalidElementIdRef.current = id;
       return false;
@@ -845,33 +748,15 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     }
     invalidElementIdRef.current = null;
     return true; // no collision
-  };
+  }
 
-  const setRayCast = (e: PointerEvent) => {
+  function setRayCast(e: PointerEvent) {
     mouse.x = (e.offsetX / gl.domElement.clientWidth) * 2 - 1;
     mouse.y = -(e.offsetY / gl.domElement.clientHeight) * 2 + 1;
     ray.setFromCamera(mouse, camera);
-  };
+  }
 
-  const getPositionOnGrid = (p: Vector3) => {
-    if (useStore.getState().enableFineGrid) {
-      p = snapToFineGrid(p);
-    } else {
-      p = snapToNormalGrid(p);
-    }
-    return p;
-  };
-
-  const checkIsFirstWall = (e: ThreeEvent<PointerEvent>) => {
-    for (const intersection of e.intersections) {
-      if (intersection.object.name.includes('Wall Intersection Plane')) {
-        return intersection.object.name === `Wall Intersection Plane ${id}`;
-      }
-    }
-    return false;
-  };
-
-  const checkIfCanSelectMe = (e: ThreeEvent<PointerEvent>) => {
+  function checkIfCanSelectMe(e: ThreeEvent<PointerEvent>) {
     return !(
       e.button === 2 ||
       useStore.getState().addedWallId ||
@@ -882,20 +767,90 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       selected ||
       isAddingElement()
     );
-  };
+  }
 
-  const resetCurrentState = () => {
-    grabRef.current = null;
-    addedWindowIdRef.current = null;
-    isSettingWindowStartPointRef.current = false;
-    isSettingWindowEndPointRef.current = false;
-    invalidElementIdRef.current = null;
-    isSettingDoorStartPointRef.current = false;
-    isSettingDoorEndPointRef.current = false;
-    oldWindowArchHeight.current = undefined;
-  };
+  function drawTopSurface(shape: Shape, lx: number, ly: number, leftOffset: number, rightOffset: number) {
+    const x = lx / 2;
+    const y = ly / 2;
+    shape.moveTo(-x, -y);
+    shape.lineTo(x, -y);
+    shape.lineTo(x - rightOffset, y);
+    shape.lineTo(-x + leftOffset, y);
+    shape.closePath();
+  }
 
-  const checkPerpendicular = (leftWall: WallModel, rightWall: WallModel) => {
+  function drawRectWindow(shape: Shape, lx: number, ly: number, cx = 0, cy = 0) {
+    const x = lx / 2;
+    const y = ly / 2;
+    shape.moveTo(cx - x, cy - y);
+    shape.lineTo(cx + x, cy - y);
+    shape.lineTo(cx + x, cy + y);
+    shape.lineTo(cx - x, cy + y);
+    shape.closePath();
+  }
+
+  function drawArchWindow(shape: Shape, lx: number, ly: number, cx: number, cy: number, archHeight = 0) {
+    const hx = lx / 2;
+    const hy = ly / 2;
+    const ah = Math.min(archHeight, ly, hx);
+
+    shape.moveTo(cx - hx, cy - hy);
+    shape.lineTo(cx + hx, cy - hy);
+    shape.lineTo(cx + hx, cy + hy - ah);
+
+    if (ah > 0) {
+      const r = ah / 2 + lx ** 2 / (8 * ah);
+      const [cX, cY] = [cx, cy + hy - r];
+      const startAngle = Math.acos(Math.min(1, hx / r));
+      const endAngle = Math.PI - startAngle;
+      shape.absarc(cX, cY, r, startAngle, endAngle, false);
+    } else {
+      shape.lineTo(cx - hx, cy + hy);
+    }
+
+    shape.closePath();
+  }
+
+  function snapToNormalGrid(v: Vector3) {
+    const x = parseFloat((Math.round(v.x / NORMAL_GRID_SCALE) * NORMAL_GRID_SCALE).toFixed(1));
+    const z = parseFloat((Math.round(v.z / NORMAL_GRID_SCALE) * NORMAL_GRID_SCALE).toFixed(1));
+    return new Vector3(x, v.y, z);
+  }
+
+  function snapToFineGrid(v: Vector3) {
+    const x = parseFloat((Math.round(v.x / FINE_GRID_SCALE) * FINE_GRID_SCALE).toFixed(1));
+    const z = parseFloat((Math.round(v.z / FINE_GRID_SCALE) * FINE_GRID_SCALE).toFixed(1));
+    return new Vector3(x, v.y, z);
+  }
+
+  function getPositionOnGrid(p: Vector3) {
+    if (useStore.getState().enableFineGrid) {
+      p = snapToFineGrid(p);
+    } else {
+      p = snapToNormalGrid(p);
+    }
+    return p;
+  }
+
+  function collisionHelper(args: number[], tolerance = 0) {
+    let [tMinX, tMaxX, tMinZ, tMaxZ, cMinX, cMaxX, cMinZ, cMaxZ] = args;
+    cMinX += tolerance;
+    cMaxX -= tolerance;
+    cMinZ += tolerance;
+    cMaxZ -= tolerance;
+    return (
+      ((cMinX >= tMinX && cMinX <= tMaxX) ||
+        (cMaxX >= tMinX && cMaxX <= tMaxX) ||
+        (tMinX >= cMinX && tMinX <= cMaxX) ||
+        (tMaxX >= cMinX && tMaxX <= cMaxX)) &&
+      ((cMinZ >= tMinZ && cMinZ <= tMaxZ) ||
+        (cMaxZ >= tMinZ && cMaxZ <= tMaxZ) ||
+        (tMinZ >= cMinZ && tMinZ <= cMaxZ) ||
+        (tMaxZ >= cMinZ && tMaxZ <= cMaxZ))
+    );
+  }
+
+  function checkPerpendicular(leftWall: WallModel, rightWall: WallModel) {
     // from right point to left point
     const vLeft = new Vector3().subVectors(
       new Vector3().fromArray(leftWall.leftPoint).setZ(0),
@@ -906,11 +861,217 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       new Vector3().fromArray(rightWall.leftPoint).setZ(0),
     );
     const angle = vRight.angleTo(vLeft);
-    const threshold = 0.087; // 5 degree
-    return Math.abs(angle - Math.PI / 2) < threshold;
-  };
+    return Math.abs(angle - Math.PI / 2) < PERPENDICULAR_THRESHOLD;
+  }
 
-  const isValidToAddRoof = (rect: boolean, sameHeight: boolean) => {
+  function setElementPosDms(id: string, pos: number[], dms: number[], archHeight?: number) {
+    useStore.getState().set((state) => {
+      for (const e of state.elements) {
+        if (e.id === id) {
+          [e.cx, e.cy, e.cz] = pos;
+          [e.lx, e.ly, e.lz] = dms;
+          if (archHeight !== undefined) {
+            if (e.type === ObjectType.Window) {
+              (e as WindowModel).archHeight = archHeight;
+            } else if (e.type === ObjectType.Door) {
+              (e as DoorModel).archHeight = archHeight;
+            }
+          }
+          break;
+        }
+      }
+    });
+  }
+
+  function handleUndoableAdd(elem: ElementModel) {
+    const undoableAdd = {
+      name: 'Add',
+      timestamp: Date.now(),
+      addedElement: elem,
+      undo: () => {
+        useStore.getState().removeElementById(elem.id, false);
+      },
+      redo: () => {
+        useStore.getState().set((state) => {
+          state.elements.push(undoableAdd.addedElement);
+          state.selectedElement = undoableAdd.addedElement;
+          state.deletedRoofId = null;
+        });
+      },
+    } as UndoableAdd;
+    useStore.getState().addUndoable(undoableAdd);
+  }
+
+  function handleUndoableResize() {
+    const oldElement = useStore.getState().selectedElement;
+    if (!oldElement) return;
+    const newElement = useStore.getState().getElementById(oldElement.id);
+    if (!newElement) return;
+
+    switch (newElement.type) {
+      case ObjectType.Door:
+      case ObjectType.Window:
+      case ObjectType.SolarPanel:
+        const undoableResize = {
+          name: `Resize ${newElement.type}`,
+          timestamp: Date.now(),
+          resizedElementId: newElement.id,
+          resizedElementType: newElement.type,
+          oldPosition: [oldElement.cx, oldElement.cy, oldElement.cz],
+          oldDimension: [oldElement.lx, oldElement.ly, oldElement.lz],
+          newPosition: [newElement.cx, newElement.cy, newElement.cz],
+          newDimension: [newElement.lx, newElement.ly, newElement.lz],
+          oldArchHeight:
+            oldElement.type === ObjectType.Window || oldElement.type === ObjectType.Door
+              ? (oldElement as WindowModel).archHeight
+              : undefined,
+          newArchHeight:
+            newElement.type === ObjectType.Window || newElement.type === ObjectType.Door
+              ? (newElement as WindowModel).archHeight
+              : undefined,
+          undo() {
+            setElementPosDms(this.resizedElementId, this.oldPosition, this.oldDimension, this.oldArchHeight);
+          },
+          redo() {
+            setElementPosDms(this.resizedElementId, this.newPosition, this.newDimension, this.newArchHeight);
+          },
+        } as UndoableResizeElementOnWall;
+        useStore.getState().addUndoable(undoableResize);
+        break;
+    }
+  }
+
+  function resetBeingAddedChildId() {
+    useStore.getState().set((state) => {
+      state.addedWindowId = null;
+      state.addedDoorId = null;
+    });
+  }
+
+  function isElementAllowedMovingAdd(objectType: ObjectType) {
+    return objectType === ObjectType.Window || objectType === ObjectType.Door;
+  }
+
+  function isFirstIntersectedWall(e: ThreeEvent<PointerEvent>, id: string) {
+    const intersectedWalls = e.intersections.filter((i) => i.object.name !== WALL_INTERSECTION_PLANE_NAME);
+    if (intersectedWalls.length > 0 && intersectedWalls[0].object.name === `${WALL_OUTSIDE_SURFACE_MESH_NAME} ${id}`) {
+      return true;
+    }
+    return false;
+  }
+
+  function isFirstIntersectedObject(e: ThreeEvent<PointerEvent>) {
+    return e.intersections.length > 0 && e.intersections[0].object === e.eventObject;
+  }
+
+  function ifChildNeedsChangeParent(wallId: string, child: ElementModel | null, event: ThreeEvent<PointerEvent>) {
+    if (useStore.getState().moveHandleType && child && isChildType(child) && child.parentId !== wallId) {
+      const intersections = event.intersections.filter(
+        (i) =>
+          i.eventObject.name.includes(WALL_OUTSIDE_SURFACE_MESH_NAME) ||
+          i.eventObject.name.includes(WINDOW_GROUP_NAME) ||
+          i.eventObject.name === WALL_BLOCK_PLANE,
+      );
+      const hasBlockedPlane =
+        intersections.length > 0 &&
+        (intersections[0].eventObject.name === WALL_BLOCK_PLANE ||
+          intersections[0].eventObject.name.includes(WINDOW_GROUP_NAME));
+
+      if (!hasBlockedPlane) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function isChildType(el: ElementModel | null) {
+    if (!el) return false;
+    switch (el.type) {
+      case ObjectType.Window:
+      case ObjectType.Door:
+      case ObjectType.SolarPanel:
+      case ObjectType.Light:
+      case ObjectType.Sensor:
+        return true;
+    }
+    return false;
+  }
+
+  function isArchedResize(el: ElementModel) {
+    if (useStore.getState().resizeHandleType !== ResizeHandleType.Arch) return false;
+    if (el.type === ObjectType.Window) {
+      const window = el as WindowModel;
+      return window.windowType === WindowType.Arched && window.archHeight !== undefined;
+    }
+    if (el.type === ObjectType.Door) {
+      const door = el as DoorModel;
+      return door.doorType === DoorType.Arched && door.archHeight !== undefined;
+    }
+  }
+
+  function isPointerOutsideShape(boundedShape: Shape, pointer2D: Vector2) {
+    const points = boundedShape.getPoints().map((point) => ({ x: point.x, y: point.y }));
+    return !Util.isPointInside(pointer2D.x, pointer2D.y, points);
+  }
+
+  function offsetWallEdgePoints(start: Vector3, end: Vector3, elHx: number, elHy: number, padding: number) {
+    const edgeVector = new Vector3().subVectors(end, start).normalize();
+    let d;
+    if (start.y < end.y) {
+      const a = edgeVector.angleTo(new Vector3(-elHx, -elHy));
+      d = Math.sin(a) * Math.hypot(elHx, elHy);
+    } else {
+      const a = edgeVector.angleTo(new Vector3(elHx, -elHy));
+      d = Math.sin(Math.PI - a) * Math.hypot(elHx, elHy);
+    }
+    const offsetVector = edgeVector
+      .clone()
+      .applyEuler(new Euler(0, 0, HALF_PI))
+      .multiplyScalar(d + padding);
+    start.add(offsetVector);
+    end.add(offsetVector);
+  }
+
+  function getClosestPointOnPolygon(polygon: Shape, point: Vector2) {
+    const edges = polygon.getPoints();
+    let closestPoint = point;
+    let closestDistance = Infinity;
+    for (let i = 0; i < edges.length; i++) {
+      const edgeStart = edges[i];
+      const edgeEnd = edges[(i + 1) % edges.length];
+      const edgeDirection = edgeEnd.clone().sub(edgeStart);
+      const edgeLengthSq = edgeDirection.lengthSq();
+      const toStart = point.clone().sub(edgeStart);
+      const projectionFactor = Math.max(0, Math.min(1, toStart.dot(edgeDirection) / edgeLengthSq));
+      const closestEdgePoint = edgeStart.clone().add(edgeDirection.clone().multiplyScalar(projectionFactor));
+      const distanceSq = closestEdgePoint.distanceToSquared(point);
+      if (distanceSq < closestDistance) {
+        closestPoint = closestEdgePoint;
+        closestDistance = distanceSq;
+      }
+    }
+    return closestPoint;
+  }
+
+  function getSolarPanelUnit(solarPanel: SolarPanelModel) {
+    const pvModel = useStore.getState().getPvModule(solarPanel.pvModelName);
+    if (solarPanel.orientation === Orientation.landscape) {
+      return [pvModel.length, pvModel.width];
+    } else {
+      return [pvModel.width, pvModel.length];
+    }
+  }
+
+  function getDiagonalResizedData(e: ThreeEvent<PointerEvent>, pointer: Vector3, anchor: Vector3) {
+    const diagonal = new Vector3().subVectors(anchor, pointer);
+    const center = new Vector3().addVectors(anchor, pointer).divideScalar(2);
+    return {
+      dimensionXZ: { x: Math.abs(diagonal.x), z: Math.abs(diagonal.z) },
+      positionXZ: { x: center.x, z: center.z },
+    };
+  }
+
+  function isValidToAddRoof(rect: boolean, sameHeight: boolean) {
     const wallMapOnFoundation = useStore.getState().elements.reduce((map, el) => {
       if (el.type === ObjectType.Wall && el.parentId === parentId) {
         map.set(el.id, el as WallModel);
@@ -958,797 +1119,36 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       return false;
     }
     return true;
-  };
-
-  const setElementPosDms = (id: string, pos: number[], dms: number[], archHeight?: number) => {
-    setCommonStore((state) => {
-      for (const e of state.elements) {
-        if (e.id === id) {
-          [e.cx, e.cy, e.cz] = pos;
-          [e.lx, e.ly, e.lz] = dms;
-          if (archHeight !== undefined) {
-            if (e.type === ObjectType.Window) {
-              (e as WindowModel).archHeight = archHeight;
-            } else if (e.type === ObjectType.Door) {
-              (e as DoorModel).archHeight = archHeight;
-            }
-          }
-          break;
-        }
-      }
-    });
-  };
-
-  const setUndoRedoMove = (
-    id: string,
-    pos: number[],
-    oldParentId?: string,
-    newParentId?: string,
-    foundationId?: string | null,
-  ) => {
-    setCommonStore((state) => {
-      const el = state.elements.find((e) => e.id === id);
-      if (!el) return;
-      [el.cx, el.cy, el.cz] = [...pos];
-      if (oldParentId && newParentId && foundationId) {
-        el.parentId = oldParentId;
-        el.foundationId = foundationId;
-
-        // keep abs size
-        if (el.type === ObjectType.Window) {
-          const oldParent = state.elements.find((e) => e.id === oldParentId);
-          const newParent = state.elements.find((e) => e.id === newParentId);
-          if (!oldParent || !newParent) return;
-          const absLx = el.lx * newParent.lx;
-          const absLz = el.lz * newParent.lz;
-
-          el.lx = absLx / oldParent.lx;
-          el.lz = absLz / oldParent.lz;
-        }
-      }
-    });
-  };
-
-  const handleUndoableAdd = (elem: ElementModel) => {
-    const undoableAdd = {
-      name: 'Add',
-      timestamp: Date.now(),
-      addedElement: elem,
-      undo: () => {
-        removeElementById(elem.id, false);
-      },
-      redo: () => {
-        setCommonStore((state) => {
-          state.elements.push(undoableAdd.addedElement);
-          state.selectedElement = undoableAdd.addedElement;
-          state.deletedRoofId = null;
-        });
-      },
-    } as UndoableAdd;
-    addUndoable(undoableAdd);
-  };
-
-  const handleUndoableMove = () => {
-    const oldElement = useStore.getState().selectedElement;
-    if (!oldElement) return;
-    const newElement = getElementById(oldElement.id);
-    const oldParentId = usePrimitiveStore.getState().oldParentId;
-    const oldFoundationId = usePrimitiveStore.getState().oldFoundationId;
-    if (!newElement || !oldParentId || !oldFoundationId) return;
-
-    const undoableMove = {
-      name: 'Move',
-      timestamp: Date.now(),
-      movedElementId: newElement.id,
-      movedElementType: newElement.type,
-      oldCx: oldElement.cx,
-      oldCy: oldElement.cy,
-      oldCz: oldElement.cz,
-      newCx: newElement.cx,
-      newCy: newElement.cy,
-      newCz: newElement.cz,
-      oldParentId: oldParentId,
-      newParentId: newElement.parentId,
-      oldFoundationId: oldFoundationId,
-      newFoundationId: newElement.foundationId,
-      undo() {
-        setUndoRedoMove(
-          this.movedElementId,
-          [this.oldCx, this.oldCy, this.oldCz],
-          this.oldParentId,
-          this.newParentId,
-          this.oldFoundationId,
-        );
-      },
-      redo() {
-        setUndoRedoMove(
-          this.movedElementId,
-          [this.newCx, this.newCy, this.newCz],
-          this.newParentId,
-          this.oldParentId,
-          this.newFoundationId,
-        );
-      },
-    } as UndoableMove;
-    addUndoable(undoableMove);
-  };
-
-  const handleUndoableResize = () => {
-    const oldElement = useStore.getState().selectedElement;
-    if (!oldElement) return;
-    const newElement = getElementById(oldElement.id);
-    if (!newElement) return;
-
-    switch (newElement.type) {
-      case ObjectType.Door:
-      case ObjectType.Window:
-      case ObjectType.SolarPanel:
-        const undoableResize = {
-          name: `Resize ${newElement.type}`,
-          timestamp: Date.now(),
-          resizedElementId: newElement.id,
-          resizedElementType: newElement.type,
-          oldPosition: [oldElement.cx, oldElement.cy, oldElement.cz],
-          oldDimension: [oldElement.lx, oldElement.ly, oldElement.lz],
-          newPosition: [newElement.cx, newElement.cy, newElement.cz],
-          newDimension: [newElement.lx, newElement.ly, newElement.lz],
-          oldArchHeight:
-            oldElement.type === ObjectType.Window || oldElement.type === ObjectType.Door
-              ? (oldElement as WindowModel).archHeight
-              : undefined,
-          newArchHeight:
-            newElement.type === ObjectType.Window || newElement.type === ObjectType.Door
-              ? (newElement as WindowModel).archHeight
-              : undefined,
-          undo() {
-            setElementPosDms(this.resizedElementId, this.oldPosition, this.oldDimension, this.oldArchHeight);
-          },
-          redo() {
-            setElementPosDms(this.resizedElementId, this.newPosition, this.newDimension, this.newArchHeight);
-          },
-        } as UndoableResizeElementOnWall;
-        addUndoable(undoableResize);
-        break;
-    }
-  };
-
-  const handleIntersectionPointerDown = (e: ThreeEvent<PointerEvent>) => {
-    // return on right-click or not first wall
-    if (e.button === 2 || useStore.getState().addedWallId || !checkIsFirstWall(e)) {
-      return;
-    }
-
-    setRayCast(e);
-
-    if (intersectionPlaneRef.current) {
-      const intersects = ray.intersectObjects([intersectionPlaneRef.current]);
-
-      if (intersects.length > 0) {
-        const pointer = intersects[0].point;
-
-        // set window start point
-        if (isSettingWindowStartPointRef.current) {
-          useRefStore.getState().setEnableOrbitController(false);
-          setCommonStore((state) => {
-            state.moveHandleType = null;
-            state.resizeHandleType = ResizeHandleType.LowerRight;
-            state.resizeAnchor.copy(pointer);
-          });
-          isSettingWindowStartPointRef.current = false;
-          isSettingWindowEndPointRef.current = true;
-          return;
-        }
-
-        // set door start point
-        if (isSettingDoorStartPointRef.current) {
-          useRefStore.getState().setEnableOrbitController(false);
-          setCommonStore((state) => {
-            state.moveHandleType = null;
-            state.resizeHandleType = ResizeHandleType.UpperRight;
-            state.resizeAnchor.copy(pointer).setZ(-lz / 2);
-          });
-          isSettingDoorStartPointRef.current = false;
-          isSettingDoorEndPointRef.current = true;
-          return;
-        }
-
-        addElementByClick(pointer);
-
-        const selectedElement = getSelectedElement();
-        // a child of this wall is clicked
-        if (selectedElement && selectedElement.parentId === id) {
-          grabRef.current = selectedElement;
-          if (useStore.getState().moveHandleType || useStore.getState().resizeHandleType) {
-            setShowGrid(true);
-            setOriginElements([...useStore.getState().elements]);
-            oldPositionRef.current = [selectedElement.cx, selectedElement.cy, selectedElement.cz];
-            oldDimensionRef.current = [selectedElement.lx, selectedElement.ly, selectedElement.lz];
-            if (selectedElement.type === ObjectType.Window) {
-              oldTintRef.current = (selectedElement as WindowModel).tint;
-              oldWindowArchHeight.current = (selectedElement as WindowModel).archHeight;
-            }
-            if (selectedElement.type === ObjectType.Door) {
-              oldDoorColorRef.current = (selectedElement as DoorModel).color ?? 'white';
-              oldWindowArchHeight.current = (selectedElement as DoorModel).archHeight;
-            }
-          }
-        }
-      }
-    }
-  };
-
-  // const handleIntersectionPointerUp = (e: ThreeEvent<PointerEvent>) => {
-  //   if (e.button === 2 || grabRef.current === null || grabRef.current.parentId !== id) {
-  //     return;
-  //   }
-  //   if (invalidElementIdRef.current) {
-  //     if (isSettingWindowEndPointRef.current || isSettingDoorEndPointRef.current) {
-  //       setCommonStore((state) => {
-  //         state.elements.pop();
-  //       });
-  //     } else {
-  //       if (originElements) {
-  //         setCommonStore((state) => {
-  //           state.elements = [...originElements];
-  //         });
-  //       }
-  //     }
-  //     invalidElementIdRef.current = null;
-  //     setOriginElements(null);
-  //   }
-  //   // add undo for valid operation
-  //   else {
-  //     const elem = getElementById(grabRef.current.id);
-  //     if (elem) {
-  //       if (useStore.getState().moveHandleType) {
-  //         handleUndoableMove(elem);
-  //       } else if (useStore.getState().resizeHandleType) {
-  //         if (isSettingWindowEndPointRef.current || isSettingDoorEndPointRef.current) {
-  //           handleUndoableAdd(elem);
-  //         } else {
-  //           handleUndoableResize(elem);
-  //         }
-  //       }
-  //     }
-  //   }
-
-  //   setCommonStore((state) => {
-  //     state.moveHandleType = null;
-  //     state.resizeHandleType = null;
-  //     state.addedWindowId = null;
-  //     state.addedDoorId = null;
-  //     if (state.actionModeLock) {
-  //       if (isSettingDoorEndPointRef.current) {
-  //         state.objectTypeToAdd = ObjectType.Door;
-  //       } else if (isSettingWindowEndPointRef.current) {
-  //         state.objectTypeToAdd = ObjectType.Window;
-  //       }
-  //       InnerCommonState.selectNone(state);
-  //     }
-  //   });
-  //   useRefStore.getState().setEnableOrbitController(true);
-  //   setShowGrid(false);
-  //   resetCurrentState();
-  // };
-
-  const handleIntersectionPointerMove = (e: ThreeEvent<PointerEvent>) => {
-    // return if it's not first wall when adding new window
-    if ((isSettingWindowStartPointRef.current || isSettingDoorStartPointRef.current) && !checkIsFirstWall(e)) {
-      if (grabRef.current) {
-        removeElementById(grabRef.current.id, false);
-      }
-      setCommonStore((state) => {
-        if (isSettingWindowStartPointRef.current) {
-          state.objectTypeToAdd = ObjectType.Window;
-          state.addedWindowId = null;
-        } else if (isSettingDoorStartPointRef.current) {
-          state.objectTypeToAdd = ObjectType.Door;
-          state.addedDoorId = null;
-        }
-      });
-      setShowGrid(false);
-      resetCurrentState();
-      return;
-    }
-
-    setRayCast(e);
-
-    if (intersectionPlaneRef.current) {
-      const intersects = ray.intersectObjects([intersectionPlaneRef.current]);
-      if (intersects.length > 0) {
-        const pointer = intersects[0].point;
-
-        // move or resize
-        if (grabRef.current && grabRef.current.parentId === id) {
-          const moveHandleType = useStore.getState().moveHandleType;
-          const resizeHandleType = useStore.getState().resizeHandleType;
-
-          switch (grabRef.current.type) {
-            case ObjectType.Window: {
-              let p = getRelativePosOnWall(pointer, wallModel);
-              if (moveHandleType) {
-                const v = new Vector3((-grabRef.current.lx / 2) * lx, 0, (grabRef.current.lz / 2) * lz);
-                p = getPositionOnGrid(p.clone().add(v)).sub(v);
-                if (!Util.isElementInsideWall(p, grabRef.current.lx * lx, grabRef.current.lz * lz, innerWallPoints2D)) {
-                  return;
-                }
-                checkCollision(grabRef.current.id, p, grabRef.current.lx * lx, grabRef.current.lz * lz);
-                setCommonStore((state) => {
-                  for (const e of state.elements) {
-                    if (e.id === grabRef.current?.id) {
-                      e.cx = p.x / lx;
-                      e.cz = p.z / lz;
-                      e.cy = e.id === invalidElementIdRef.current ? -0.01 : 0.3;
-                      (e as WindowModel).tint = e.id === invalidElementIdRef.current ? 'red' : oldTintRef.current;
-                      break;
-                    }
-                  }
-                });
-              } else if (resizeHandleType) {
-                p = getPositionOnGrid(p);
-                if (!Util.isPointInside(p.x, p.z, innerWallPoints2D)) {
-                  return;
-                }
-                let resizeAnchor = getRelativePosOnWall(useStore.getState().resizeAnchor, wallModel);
-                if (isSettingWindowEndPointRef.current) {
-                  resizeAnchor = getPositionOnGrid(resizeAnchor);
-                }
-                const window = grabRef.current as WindowModel;
-                if (
-                  window.windowType === WindowType.Arched &&
-                  resizeHandleType === ResizeHandleType.Arch &&
-                  window.archHeight !== undefined
-                ) {
-                  const [wlx, wlz] = [window.lx * lx, window.lz * lz];
-                  const archHeightBottom = wlz / 2 - Math.min(window.archHeight, wlx / 2, wlz);
-                  const newArchHeight = Math.max(0, Math.min(p.z - resizeAnchor.z - archHeightBottom, wlx / 2));
-                  const newWindowHeight = archHeightBottom + newArchHeight + wlz / 2;
-                  const relativePos = new Vector3(
-                    window.cx * lx,
-                    window.cy,
-                    window.cz * lz + (newWindowHeight - wlz) / 2,
-                  );
-                  checkCollision(grabRef.current.id, relativePos, wlx, newWindowHeight);
-                  setCommonStore((state) => {
-                    for (const e of state.elements) {
-                      if (e.id === grabRef.current?.id) {
-                        e.lz = newWindowHeight / lz;
-                        e.cz = relativePos.z / lz;
-                        e.cy = e.id === invalidElementIdRef.current ? -0.01 : 0.3;
-                        (e as WindowModel).tint = e.id === invalidElementIdRef.current ? 'red' : oldTintRef.current;
-                        (e as WindowModel).archHeight = newArchHeight;
-                      }
-                    }
-                  });
-                } else {
-                  const v = new Vector3().subVectors(resizeAnchor, p); // window diagonal vector
-                  const relativePos = new Vector3().addVectors(resizeAnchor, p).divideScalar(2);
-                  checkCollision(grabRef.current.id, relativePos, Math.abs(v.x), Math.abs(v.z));
-                  setCommonStore((state) => {
-                    for (const e of state.elements) {
-                      if (e.id === grabRef.current?.id) {
-                        const window = e as WindowModel;
-                        window.lx = Math.abs(v.x) / lx;
-                        window.lz = Math.abs(v.z) / lz;
-                        window.cx = relativePos.x / lx;
-                        window.cz = relativePos.z / lz;
-                        window.cy = window.id === invalidElementIdRef.current ? -0.01 : 0.3;
-                        window.tint = window.id === invalidElementIdRef.current ? 'red' : oldTintRef.current;
-                      }
-                    }
-                  });
-                }
-              }
-              break;
-            }
-            case ObjectType.Door: {
-              let p = getRelativePosOnWall(pointer, wallModel);
-              p = getPositionOnGrid(p);
-              if (!Util.isPointInside(p.x, p.z, innerWallPoints2D)) {
-                return;
-              }
-              // adding door
-              if (moveHandleType) {
-                checkCollision(grabRef.current.id, p, grabRef.current.lx * lx, grabRef.current.lz * lz);
-                setCommonStore((state) => {
-                  for (const e of state.elements) {
-                    if (e.id === grabRef.current?.id) {
-                      e.cx = p.x / lx;
-                      e.cz = (p.z - lz / 2) / 2 / lz;
-                      e.lz = (p.z + lz / 2) / lz;
-                      break;
-                    }
-                  }
-                });
-              } else if (resizeHandleType) {
-                let resizeAnchor = getRelativePosOnWall(useStore.getState().resizeAnchor, wallModel);
-                if (isSettingDoorEndPointRef.current) {
-                  resizeAnchor = getPositionOnGrid(resizeAnchor);
-                }
-                const door = grabRef.current as DoorModel;
-                if (
-                  door.doorType === DoorType.Arched &&
-                  resizeHandleType === ResizeHandleType.Arch &&
-                  door.archHeight !== undefined
-                ) {
-                  const [dlx, dlz] = [door.lx * lx, door.lz * lz];
-                  const archHeightBottom = dlz / 2 - Math.min(door.archHeight, dlx / 2, dlz);
-                  const newArchHeight = Math.max(0, Math.min(p.z - resizeAnchor.z - archHeightBottom, dlx / 2));
-                  const newDoorHeight = archHeightBottom + newArchHeight + dlz / 2;
-                  const relativePos = new Vector3(door.cx * lx, door.cy, door.cz * lz + (newDoorHeight - dlz) / 2);
-                  checkCollision(grabRef.current.id, relativePos, dlx, newDoorHeight);
-                  setCommonStore((state) => {
-                    for (const e of state.elements) {
-                      if (e.id === grabRef.current?.id && e.type === ObjectType.Door) {
-                        e.lz = newDoorHeight / lz;
-                        e.cz = relativePos.z / lz;
-                        (e as DoorModel).color =
-                          e.id === invalidElementIdRef.current ? INVALID_ELEMENT_COLOR : oldDoorColorRef.current;
-                        (e as DoorModel).archHeight = newArchHeight;
-                      }
-                    }
-                  });
-                } else {
-                  const v = new Vector3().subVectors(resizeAnchor, p); // door diagonal vector
-                  let relativePos = new Vector3().addVectors(resizeAnchor, p).divideScalar(2);
-                  checkCollision(grabRef.current.id, relativePos, Math.abs(v.x), Math.abs(v.z));
-                  setCommonStore((state) => {
-                    for (const e of state.elements) {
-                      if (e.id === grabRef.current?.id) {
-                        e.cx = relativePos.x / lx;
-                        e.lx = Math.abs(v.x) / lx;
-                        e.cz = (p.z - lz / 2) / 2 / lz;
-                        e.lz = (p.z + lz / 2) / lz;
-                        e.color =
-                          e.id === invalidElementIdRef.current ? INVALID_ELEMENT_COLOR : oldDoorColorRef.current;
-                        break;
-                      }
-                    }
-                  });
-                }
-              }
-              break;
-            }
-            case ObjectType.SolarPanel: {
-              const pvModel = useStore.getState().getPvModule((grabRef.current as SolarPanelModel).pvModelName);
-              let unitX = pvModel.width;
-              let unitY = pvModel.length;
-              if ((grabRef.current as SolarPanelModel).orientation === Orientation.landscape) {
-                [unitX, unitY] = [unitY, unitX];
-              }
-              let p = getRelativePosOnWall(pointer, wallModel);
-              if (moveHandleType) {
-                const v = new Vector3(-grabRef.current.lx / 2, 0, grabRef.current.ly / 2);
-                p = getPositionOnGrid(p.clone().add(v)).sub(v);
-                if (!Util.isElementInsideWall(p, grabRef.current.lx, grabRef.current.ly, outerWallPoints2D)) {
-                  return;
-                }
-                checkCollision(grabRef.current.id, p, grabRef.current.lx, grabRef.current.ly);
-                setCommonStore((state) => {
-                  for (const e of state.elements) {
-                    if (e.id === grabRef.current?.id) {
-                      e.cx = p.x / lx;
-                      e.cz = p.z / lz;
-                      e.color = e.id === invalidElementIdRef.current ? 'red' : '#fff';
-                      break;
-                    }
-                  }
-                });
-              } else if (resizeHandleType) {
-                const resizeAnchor = getRelativePosOnWall(useStore.getState().resizeAnchor, wallModel);
-                setCommonStore((state) => {
-                  for (const e of state.elements) {
-                    if (e.id === grabRef.current?.id) {
-                      if (
-                        state.resizeHandleType === ResizeHandleType.Lower ||
-                        state.resizeHandleType === ResizeHandleType.Upper
-                      ) {
-                        const ny = Math.max(1, Math.round(Math.abs(p.z - resizeAnchor.z) / unitY));
-                        const length = ny * unitY;
-                        const v = new Vector3(0, 0, p.z - resizeAnchor.z).normalize().multiplyScalar(length);
-                        const c = new Vector3().addVectors(resizeAnchor, v.clone().divideScalar(2));
-                        e.cz = c.z / lz;
-                        e.ly = Math.abs(v.z);
-                        checkCollision(grabRef.current.id, c, e.lx, Math.abs(v.z));
-                      } else if (
-                        state.resizeHandleType === ResizeHandleType.Left ||
-                        state.resizeHandleType === ResizeHandleType.Right
-                      ) {
-                        const nx = Math.max(1, Math.round(Math.abs(p.x - resizeAnchor.x) / unitX));
-                        const length = nx * unitX;
-                        const v = new Vector3(p.x - resizeAnchor.x, 0, 0).normalize().multiplyScalar(length);
-                        const c = new Vector3().addVectors(resizeAnchor, v.clone().divideScalar(2));
-                        e.cx = c.x / lx;
-                        e.lx = Math.abs(v.x);
-                        checkCollision(grabRef.current.id, c, Math.abs(v.x), e.ly);
-                      }
-                      e.color = e.id === invalidElementIdRef.current ? 'red' : '#fff';
-                      break;
-                    }
-                  }
-                });
-              }
-              break;
-            }
-            case ObjectType.Light:
-            case ObjectType.Sensor: {
-              let p = getRelativePosOnWall(pointer, wallModel);
-              if (moveHandleType) {
-                const v = new Vector3(-grabRef.current.lx / 2, 0, grabRef.current.ly / 2);
-                p = getPositionOnGrid(p.clone().add(v)).sub(v);
-                if (!Util.isElementInsideWall(p, grabRef.current.lx, grabRef.current.ly, outerWallPoints2D)) {
-                  return;
-                }
-                setCommonStore((state) => {
-                  for (const e of state.elements) {
-                    if (e.id === grabRef.current?.id) {
-                      e.cx = (p.x - 0.05) / lx;
-                      e.cz = (p.z + 0.05) / lz;
-                      break;
-                    }
-                  }
-                });
-              }
-              break;
-            }
-          }
-        }
-
-        // add new element
-        // switch (useStore.getState().objectTypeToAdd) {
-        //   case ObjectType.Window: {
-        //     const actionState = useStore.getState().actionState;
-        //     let relativePos = getRelativePosOnWall(pointer, wallModel);
-        //     relativePos = getPositionOnGrid(relativePos);
-        //     const shutter = {
-        //       showLeft: actionState.windowShutterLeft,
-        //       showRight: actionState.windowShutterRight,
-        //       color: actionState.windowShutterColor,
-        //       width: actionState.windowShutterWidth,
-        //     } as ShutterProps;
-        //     // const newWindow = ElementModelFactory.makeWindow(
-        //     //   wallModel,
-        //     //   actionState.windowColor,
-        //     //   actionState.windowTint,
-        //     //   actionState.windowOpacity,
-        //     //   actionState.windowUValue,
-        //     //   actionState.windowMullion,
-        //     //   actionState.windowMullionWidth,
-        //     //   actionState.windowMullionSpacing,
-        //     //   actionState.windowMullionColor,
-        //     //   shutter,
-        //     //   actionState.windowFrame,
-        //     //   actionState.windowFrameWidth,
-        //     //   actionState.windowType,
-        //     //   actionState.windowArchHeight,
-        //     //   relativePos.x / lx,
-        //     //   0,
-        //     //   relativePos.z / lz,
-        //     // );
-        //     useRefStore.getState().setEnableOrbitController(false);
-        //     setCommonStore((state) => {
-        //       state.objectTypeToAdd = ObjectType.None;
-        //       state.elements.push(newWindow);
-        //       state.moveHandleType = MoveHandleType.Mid;
-        //       state.selectedElement = newWindow;
-        //       state.addedWindowId = newWindow.id;
-        //     });
-        //     setShowGrid(true);
-        //     grabRef.current = newWindow;
-        //     addedWindowIdRef.current = newWindow.id;
-        //     isSettingWindowStartPointRef.current = true;
-        //     break;
-        //   }
-        //   case ObjectType.Door: {
-        //     const actionState = useStore.getState().actionState;
-        //     const newDoor = ElementModelFactory.makeDoor(
-        //       wallModel,
-        //       actionState.doorColor,
-        //       actionState.doorUValue,
-        //       actionState.doorTexture,
-        //       actionState.doorArchHeight,
-        //       actionState.doorType,
-        //       actionState.doorFilled,
-        //     );
-        //     useRefStore.getState().setEnableOrbitController(false);
-        //     setCommonStore((state) => {
-        //       state.objectTypeToAdd = ObjectType.None;
-        //       state.elements.push(newDoor);
-        //       state.moveHandleType = MoveHandleType.Mid;
-        //       state.selectedElement = newDoor;
-        //       state.addedDoorId = newDoor.id;
-        //     });
-        //     setShowGrid(true);
-        //     grabRef.current = newDoor;
-        //     isSettingDoorStartPointRef.current = true;
-        //     break;
-        //   }
-        // }
-      }
-    }
-  };
-
-  const handleIntersectionPointerOut = (e: ThreeEvent<PointerEvent>) => {
-    if (grabRef.current && (isSettingDoorStartPointRef.current || isSettingWindowStartPointRef.current)) {
-      setCommonStore((state) => {
-        if (isSettingDoorStartPointRef.current) {
-          state.objectTypeToAdd = ObjectType.Door;
-          state.addedDoorId = null;
-        }
-        if (isSettingWindowStartPointRef.current) {
-          state.objectTypeToAdd = ObjectType.Window;
-          state.addedWindowId = null;
-        }
-      });
-      removeElementById(grabRef.current!.id, false);
-      setShowGrid(false);
-      resetCurrentState();
-    }
-  };
-
-  // const handleWallBodyPointerDown = (e: ThreeEvent<PointerEvent>) => {
-  //   if (e.intersections.length > 0) {
-  //     const intersectableObjects = e.intersections.filter(
-  //       (obj) => !obj.eventObject.name.startsWith('Wall Intersection Plane'),
-  //     );
-  //     if (intersectableObjects[0].eventObject !== e.eventObject) return;
-  //   }
-  //   if (useStore.getState().groupActionMode) {
-  //     setCommonStore((state) => {
-  //       for (const e of state.elements) {
-  //         e.selected = e.id === parentId;
-  //       }
-  //       state.elementGroupId = parentId;
-  //     });
-  //     e.stopPropagation();
-  //   } else {
-  //     if (checkIfCanSelectMe(e)) {
-  //       setCommonStore((state) => {
-  //         state.contextMenuObjectType = null;
-  //         InnerCommonState.selectMe(state, id, e, ActionType.Select);
-  //       });
-  //     }
-  //     if (outsideWallRef.current) {
-  //       const intersects = ray.intersectObjects([outsideWallRef.current]);
-  //       if (intersects.length > 0) {
-  //         const pointer = intersects[0].point;
-  //         handleAddElement(pointer, true);
-  //       }
-  //     }
-  //   }
-  // };
-
-  console.log();
-  // =============================== start =======================================================
-
-  enum ElBeingAddedStatus {
-    SettingStartPoint,
-    SettingEndPoint,
   }
-  type ElBeingAdded = {
-    id: string;
-    type: ObjectType;
-    status: ElBeingAddedStatus;
-  };
 
-  const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
-  const elementBeingCanceledId = usePrimitiveStore((state) => state.elementBeingCanceledId);
-  const showWallIntersectionPlaneId = usePrimitiveStore((state) => state.showWallIntersectionPlaneId);
-
-  const [showIntersectionPlane, setShowIntersectionPlane] = useState(false);
-
-  const elBeingAddedRef = useRef<ElBeingAdded | null>(null);
-  const intersectionPlaneRef = useRef<Mesh>(null);
-
-  useEffect(() => {
-    if (elBeingAddedRef.current && elBeingAddedRef.current.id === elementBeingCanceledId) {
-      elBeingAddedRef.current = null;
-      resetBeingAddedChildId();
-      setShowGrid(false);
-    }
-  }, [elementBeingCanceledId]);
-
-  const resetBeingAddedChildId = () => {
-    setCommonStore((state) => {
-      state.addedWindowId = null;
-      state.addedDoorId = null;
-    });
-  };
-
-  const isElementAllowedMovingAdd = (objectType: ObjectType) => {
-    return objectType === ObjectType.Window || objectType === ObjectType.Door;
-  };
-
-  const isFirstIntersectedWall = (e: ThreeEvent<PointerEvent>) => {
-    const intersectedWalls = e.intersections.filter((i) => i.object.name !== WALL_INTERSECTION_PLANE_NAME);
-    if (intersectedWalls.length > 0 && intersectedWalls[0].object.name === `${WALL_OUTSIDE_SURFACE_MESH_NAME} ${id}`) {
-      return true;
-    }
-    return false;
-  };
-
-  const isFirstIntersectedObject = (e: ThreeEvent<PointerEvent>) => {
-    return e.intersections.length > 0 && e.intersections[0].object === e.eventObject;
-  };
-
-  const isSettingElementStartPoint = () => {
+  function isSettingElementStartPoint() {
     return (
       elBeingAddedRef.current &&
       elBeingAddedRef.current.status === ElBeingAddedStatus.SettingStartPoint &&
       useStore.getState().moveHandleType === MoveHandleType.Mid
     );
-  };
+  }
 
-  const isAllowedToSelectMe = () => {
+  function isAllowedToSelectMe() {
     if (useStore.getState().moveHandleType || useStore.getState().resizeHandleType || selected || isAddingElement()) {
       return false;
     }
     return true;
-  };
+  }
 
-  const ifChildNeedsChangeParent = (child: ElementModel | null, event: ThreeEvent<PointerEvent>) => {
-    if (useStore.getState().moveHandleType && child && isChildType(child) && child.parentId !== id) {
-      const intersections = event.intersections.filter(
-        (i) =>
-          i.eventObject.name.includes(WALL_OUTSIDE_SURFACE_MESH_NAME) ||
-          i.eventObject.name.includes(WINDOW_GROUP_NAME) ||
-          i.eventObject.name === WALL_BLOCK_PLANE,
-      );
-      const hasBlockedPlane =
-        intersections.length > 0 &&
-        (intersections[0].eventObject.name === WALL_BLOCK_PLANE ||
-          intersections[0].eventObject.name.includes(WINDOW_GROUP_NAME));
-
-      if (!hasBlockedPlane) {
-        return true;
-      }
-    }
-    return false;
-  };
-
-  const isChildType = (el: ElementModel | null) => {
-    if (!el) return false;
-    switch (el.type) {
-      case ObjectType.Window:
-      case ObjectType.Door:
-      case ObjectType.SolarPanel:
-      case ObjectType.Light:
-      case ObjectType.Sensor:
-        return true;
-    }
-    return false;
-  };
-
-  const isArchedResize = (el: ElementModel) => {
-    if (useStore.getState().resizeHandleType !== ResizeHandleType.Arch) return false;
-    if (el.type === ObjectType.Window) {
-      const window = el as WindowModel;
-      return window.windowType === WindowType.Arched && window.archHeight !== undefined;
-    }
-    if (el.type === ObjectType.Door) {
-      const door = el as DoorModel;
-      return door.doorType === DoorType.Arched && door.archHeight !== undefined;
-    }
-  };
-
-  const isRectWall = () => {
+  function isRectWall() {
     if (!roofId) return true;
     if (leftRoofHeight !== rightRoofHeight) return false;
     if (centerRoofHeight !== undefined || centerLeftRoofHeight !== undefined || centerRightRoofHeight !== undefined)
       return false;
     return true;
-  };
-
-  const isPointerOutsideShape = (boundedShape: Shape, pointer2D: Vector2) => {
-    const points = boundedShape.getPoints().map((point) => ({ x: point.x, y: point.y }));
-    return !Util.isPointInside(pointer2D.x, pointer2D.y, points);
-  };
+  }
 
   /** Relative to wall and snapped to grid */
-  const getPointer = (e: ThreeEvent<PointerEvent>, object3D?: Object3D | null, diagonalVector?: Vector3) => {
+  function getPointer(e: ThreeEvent<PointerEvent>, object3D?: Object3D | null, diagonalVector?: Vector3) {
     setRayCast(e);
     const intersections = object3D ? ray.intersectObjects([object3D]) : e.intersections;
-    const pointer = intersections[0].point;
+    const pointer = intersections[0]?.point ?? e.point;
     const relativePositionOnWall = getRelativePosOnWall(pointer, wallModel);
     const positionOnGrid = diagonalVector
       ? getPositionOnGrid(relativePositionOnWall.clone().add(diagonalVector)).sub(diagonalVector)
@@ -1757,9 +1157,9 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       relativePointer: relativePositionOnWall,
       pointerOnGrid: positionOnGrid,
     };
-  };
+  }
 
-  const makeNewMovingElement = (e: ThreeEvent<PointerEvent>, objectTypeToAdd: ObjectType) => {
+  function makeNewMovingElement(e: ThreeEvent<PointerEvent>, objectTypeToAdd: ObjectType) {
     if (!outsideWallRef.current) return null;
     const { pointerOnGrid } = getPointer(e, outsideWallRef.current);
     const cx = pointerOnGrid.x / wallModel.lx;
@@ -1771,9 +1171,9 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       return ElementModelFactory.makeDoor(wallModel);
     }
     return null;
-  };
+  }
 
-  const setElementHasBeenAdded = (newElement: ElementModel | null) => {
+  function setElementHasBeenAdded(newElement: ElementModel | null) {
     if (newElement) {
       elBeingAddedRef.current = {
         id: newElement.id,
@@ -1794,10 +1194,9 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       state.moveHandleType = MoveHandleType.Mid;
       state.objectTypeToAdd = ObjectType.None;
     });
-    setShowGrid(true);
-  };
+  }
 
-  const resetToAddingNewObjectStatus = (elBeingAdded: ElBeingAdded | null) => {
+  function resetToAddingNewObjectStatus(elBeingAdded: ElBeingAdded | null) {
     if (!elBeingAdded) return;
     const { id, type } = elBeingAdded;
     setCommonStore((state) => {
@@ -1808,11 +1207,10 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       state.addedWindowId = null;
       state.addedDoorId = null;
     });
-    setShowGrid(false);
     elBeingAddedRef.current = null;
-  };
+  }
 
-  const getElementHalfSize = (element?: ElementModel) => {
+  function getElementHalfSize(element?: ElementModel) {
     if (!element) return [0, 0];
 
     switch (element.type) {
@@ -1834,28 +1232,10 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       }
     }
     return [WALL_PADDING, WALL_PADDING];
-  };
-
-  const offsetWallEdgePoints = (start: Vector3, end: Vector3, elHx: number, elHy: number, padding: number) => {
-    const edgeVector = new Vector3().subVectors(end, start).normalize();
-    let d;
-    if (start.y < end.y) {
-      const a = edgeVector.angleTo(new Vector3(-elHx, -elHy));
-      d = Math.sin(a) * Math.hypot(elHx, elHy);
-    } else {
-      const a = edgeVector.angleTo(new Vector3(elHx, -elHy));
-      d = Math.sin(Math.PI - a) * Math.hypot(elHx, elHy);
-    }
-    const offsetVector = edgeVector
-      .clone()
-      .applyEuler(new Euler(0, 0, HALF_PI))
-      .multiplyScalar(d + padding);
-    start.add(offsetVector);
-    end.add(offsetVector);
-  };
+  }
 
   /** only use x y as 2D, from right to left */
-  const getRoofPoints = () => {
+  function getRoofPoints() {
     const roofPoints: Vector3[] = [];
 
     // exception: shed roof
@@ -1891,93 +1271,33 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       roofPoints.push(new Vector3(-hx, hz));
     }
     return roofPoints;
-  };
+  }
 
-  const getBoundedShape = (elHx: number, elHz: number, boundingMinX: number, boundingMaxX: number, padding: number) => {
-    const edgesPoints: { start: Vector3; end: Vector3 }[] = [];
-
-    // starting from wall left edge, counter-clockwise
-    edgesPoints.push({ start: new Vector3(boundingMinX, hz), end: new Vector3(boundingMinX, -hz) });
-
-    // bottom edge
-    const bot = (fill === WallFill.Partial ? unfilledHeight : 0) - hz + padding + elHz;
-    edgesPoints.push({ start: new Vector3(-hx, bot), end: new Vector3(hx, bot) });
-
-    // right
-    edgesPoints.push({ start: new Vector3(boundingMaxX, -hz), end: new Vector3(boundingMaxX, hz) });
-
-    const roofPoints = getRoofPoints();
-    for (let i = 1; i < roofPoints.length; i++) {
-      const start = roofPoints[i - 1].clone();
-      const end = roofPoints[i].clone();
-      offsetWallEdgePoints(start, end, elHx, elHz, padding);
-      edgesPoints.push({ start, end });
-    }
-
-    const shape = new Shape();
-    edgesPoints.push(edgesPoints[0]);
-    for (let i = 1; i < edgesPoints.length; i++) {
-      const edge1 = edgesPoints[i - 1];
-      const edge2 = edgesPoints[i];
-      const point = RoofUtil.getIntersectionPoint(edge1.start, edge1.end, edge2.start, edge2.end);
-      if (i === 1) {
-        shape.moveTo(point.x, point.y);
-      } else {
-        shape.lineTo(point.x, point.y);
-      }
-    }
-    shape.closePath();
-    return shape;
-  };
-
-  const getClosestPointOnPolygon = (polygon: Shape, point: Vector2) => {
-    const edges = polygon.getPoints();
-    let closestPoint = point;
-    let closestDistance = Infinity;
-    for (let i = 0; i < edges.length; i++) {
-      const edgeStart = edges[i];
-      const edgeEnd = edges[(i + 1) % edges.length];
-      const edgeDirection = edgeEnd.clone().sub(edgeStart);
-      const edgeLengthSq = edgeDirection.lengthSq();
-      const toStart = point.clone().sub(edgeStart);
-      const projectionFactor = Math.max(0, Math.min(1, toStart.dot(edgeDirection) / edgeLengthSq));
-      const closestEdgePoint = edgeStart.clone().add(edgeDirection.clone().multiplyScalar(projectionFactor));
-      const distanceSq = closestEdgePoint.distanceToSquared(point);
-      if (distanceSq < closestDistance) {
-        closestPoint = closestEdgePoint;
-        closestDistance = distanceSq;
-      }
-    }
-    return closestPoint;
-  };
-
-  type BoundedPointerOptions = {
-    elementHalfSize?: number[];
-    ignorePadding?: boolean;
-    resizeAnchor?: Vector3;
-  };
-
-  const getBoundedPointer = (pointer: Vector3, options?: BoundedPointerOptions) => {
+  function getBoundedPointer(pointer: Vector3, options?: BoundedPointerOptions) {
     const ignorePadding = options?.ignorePadding;
     const elementHalfSize = options?.elementHalfSize ? [...options.elementHalfSize] : [0, 0];
+    const botHeight = fill === WallFill.Partial ? unfilledHeight : 0;
 
+    const padding = ignorePadding ? 0 : WALL_PADDING;
     const leftPadding = ignorePadding ? 0 : WALL_PADDING + leftOffset;
     const rightPadding = ignorePadding ? 0 : WALL_PADDING + rightOffset;
-    const padding = ignorePadding ? 0 : WALL_PADDING;
+    const topPadding = padding;
+    const botPadding = padding + botHeight;
     const [elHx, elHz] = elementHalfSize;
 
-    const [boundingMinX, boundingMaxX, boundingZ] = [
+    const [boundingMinX, boundingMaxX, boundingMinZ, boundingMaxZ] = [
       -hx + elHx + leftPadding,
       hx - elHx - rightPadding,
-      hz - elHz - padding,
+      -hz + elHz + botPadding,
+      hz - elHz - topPadding,
     ];
 
     const boundedPointer = pointer.clone();
     if (isRectWall()) {
       boundedPointer.setX(Util.clamp(pointer.x, boundingMinX, boundingMaxX));
-      boundedPointer.setZ(Util.clamp(pointer.z, -boundingZ, boundingZ));
+      boundedPointer.setZ(Util.clamp(pointer.z, boundingMinZ, boundingMaxZ));
     } else {
-      const boundedShape = getBoundedShape(elHx, elHz, boundingMinX, boundingMaxX, padding);
+      const boundedShape = getBoundedShape(elHx, elHz, boundingMinX, boundingMaxX, boundingMinZ, topPadding);
       const pointer2D = new Vector2(pointer.x, pointer.z);
 
       let maxY = Infinity;
@@ -2001,24 +1321,15 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       if (isPointerOutside) {
         const p = getClosestPointOnPolygon(boundedShape, pointer2D);
         boundedPointer.setX(p.x);
-        boundedPointer.setZ(Math.min(p.y, maxY - padding));
+        boundedPointer.setZ(Math.min(p.y, maxY - botPadding));
       } else if (isElementOutside) {
-        boundedPointer.setZ(maxY - padding);
+        boundedPointer.setZ(maxY - botPadding);
       }
     }
     return boundedPointer;
-  };
+  }
 
-  const getSolarPanelUnit = (solarPanel: SolarPanelModel) => {
-    const pvModel = useStore.getState().getPvModule(solarPanel.pvModelName);
-    if (solarPanel.orientation === Orientation.landscape) {
-      return [pvModel.length, pvModel.width];
-    } else {
-      return [pvModel.width, pvModel.length];
-    }
-  };
-
-  const moveElement = (id: string, pointer: Vector3) => {
+  function moveElement(id: string, pointer: Vector3) {
     setCommonStore((state) => {
       const el = state.elements.find((e) => e.id === id);
       if (!el) return;
@@ -2052,28 +1363,62 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         }
       }
     });
-  };
+  }
 
-  const getDiagonalResizedData = (e: ThreeEvent<PointerEvent>, pointer: Vector3, anchor: Vector3) => {
-    const diagonal = new Vector3().subVectors(anchor, pointer);
-    const center = new Vector3().addVectors(anchor, pointer).divideScalar(2);
-    return {
-      dimensionXZ: { x: Math.abs(diagonal.x), z: Math.abs(diagonal.z) },
-      positionXZ: { x: center.x, z: center.z },
-    };
-  };
+  function getBoundedShape(
+    elHx: number,
+    elHz: number,
+    boundingMinX: number,
+    boundingMaxX: number,
+    boundingMinZ: number,
+    topPadding: number,
+  ) {
+    const edgesPoints: { start: Vector3; end: Vector3 }[] = [];
 
-  const getArchedResizedData = (archedElement: WindowModel | DoorModel, pointer: Vector3, anchor: Vector3) => {
+    // starting from wall left edge, counter-clockwise
+    edgesPoints.push({ start: new Vector3(boundingMinX, hz), end: new Vector3(boundingMinX, -hz) });
+
+    // bottom edge
+    edgesPoints.push({ start: new Vector3(-hx, boundingMinZ), end: new Vector3(hx, boundingMinZ) });
+
+    // right
+    edgesPoints.push({ start: new Vector3(boundingMaxX, -hz), end: new Vector3(boundingMaxX, hz) });
+
+    const roofPoints = getRoofPoints();
+    for (let i = 1; i < roofPoints.length; i++) {
+      const start = roofPoints[i - 1].clone();
+      const end = roofPoints[i].clone();
+      offsetWallEdgePoints(start, end, elHx, elHz, topPadding);
+      edgesPoints.push({ start, end });
+    }
+
+    const shape = new Shape();
+    edgesPoints.push(edgesPoints[0]);
+    for (let i = 1; i < edgesPoints.length; i++) {
+      const edge1 = edgesPoints[i - 1];
+      const edge2 = edgesPoints[i];
+      const point = RoofUtil.getIntersectionPoint(edge1.start, edge1.end, edge2.start, edge2.end);
+      if (i === 1) {
+        shape.moveTo(point.x, point.y);
+      } else {
+        shape.lineTo(point.x, point.y);
+      }
+    }
+    shape.closePath();
+    return shape;
+  }
+
+  function getArchedResizedData(archedElement: WindowModel | DoorModel, pointer: Vector3, anchor: Vector3) {
     const [wlx, wlz] = [archedElement.lx * lx, archedElement.lz * lz];
     const archHeightBottom = wlz / 2 - Math.min(archedElement.archHeight, wlx / 2, wlz);
     const newArchHeight = Math.max(0, Math.min(pointer.z - anchor.z - archHeightBottom, wlx / 2));
     const newLz = archHeightBottom + newArchHeight + wlz / 2;
     const center = new Vector3(archedElement.cx * lx, archedElement.cy, archedElement.cz * lz + (newLz - wlz) / 2);
     return { newLz: newLz, newCz: center.z, newArchHeight: newArchHeight };
-  };
+  }
 
-  const handleWallBodyPointMove = (e: ThreeEvent<PointerEvent>) => {
-    if (isFirstIntersectedWall(e)) {
+  function handleWallBodyPointMove(e: ThreeEvent<PointerEvent>) {
+    if (isFirstIntersectedWall(e, id)) {
       const objectTypeToAdd = useStore.getState().objectTypeToAdd;
       // add new element
       if (isElementAllowedMovingAdd(objectTypeToAdd)) {
@@ -2088,7 +1433,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       }
       // move child across different parent
       const selectedElement = useStore.getState().selectedElement;
-      if (ifChildNeedsChangeParent(selectedElement, e)) {
+      if (ifChildNeedsChangeParent(id, selectedElement, e)) {
         setCommonStore((state) => {
           const el = state.elements.find((e) => e.id === selectedElement?.id);
           if (!el || (el.type === ObjectType.SolarPanel && (el as SolarPanelModel).parentType === undefined)) return;
@@ -2118,6 +1463,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           el.foundationId = parentId;
           if (state.selectedElement) {
             state.selectedElement.parentId = id;
+            state.selectedElement.foundationId = parentId;
           }
 
           if (el.type === ObjectType.Window) {
@@ -2134,9 +1480,9 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     } else if (isSettingElementStartPoint()) {
       resetToAddingNewObjectStatus(elBeingAddedRef.current);
     }
-  };
+  }
 
-  const handleWallBodyPointerDown = (e: ThreeEvent<PointerEvent>) => {
+  function handleWallBodyPointerDown(e: ThreeEvent<PointerEvent>) {
     if (isSettingElementStartPoint()) {
       useRefStore.getState().setEnableOrbitController(false);
       setShowIntersectionPlane(true);
@@ -2170,16 +1516,16 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         useStore.getState().selectMe(id, e, ActionType.Select);
       }
     }
-  };
+  }
 
-  const handleWallBodyPointerOut = () => {
+  function handleWallBodyPointerOut() {
     if (isSettingElementStartPoint()) {
       resetToAddingNewObjectStatus(elBeingAddedRef.current);
     }
     invalidElementIdRef.current = null;
-  };
+  }
 
-  const handleIntersectionPlanePointerMove = (e: ThreeEvent<PointerEvent>) => {
+  function handleIntersectionPlanePointerMove(e: ThreeEvent<PointerEvent>) {
     const selectedElement = useStore.getState().selectedElement ?? getSelectedElement();
     if (selectedElement?.parentId === wallModel.id) {
       // move element
@@ -2194,6 +1540,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         checkCollision(selectedElement.id, boundedPointer, elementHalfSize[0] * 2, elementHalfSize[1] * 2);
         moveElement(selectedElement.id, boundedPointer);
       }
+
       // resize element
       else if (useStore.getState().resizeHandleType) {
         const { relativePointer, pointerOnGrid } = getPointer(e, intersectionPlaneRef.current);
@@ -2299,6 +1646,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
                 sp.color = sp.id === invalidElementIdRef.current ? 'red' : '#fff';
               });
             }
+
             // X direction
             else if (resizeHandleType === ResizeHandleType.Left || resizeHandleType === ResizeHandleType.Right) {
               const nx = Math.max(1, Math.round(Math.abs(relativePointer.x - resizeAnchor.x) / unitX));
@@ -2322,9 +1670,9 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         }
       }
     }
-  };
+  }
 
-  const handleIntersectionPlanePointerUp = () => {
+  function handleIntersectionPlanePointerUp() {
     if (invalidElementIdRef.current) {
       if (elBeingAddedRef.current && elBeingAddedRef.current.status === ElBeingAddedStatus.SettingEndPoint) {
         // remove new element directly
@@ -2333,20 +1681,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         });
         elBeingAddedRef.current = null;
       } else if (useStore.getState().moveHandleType || useStore.getState().resizeHandleType) {
-        setCommonStore((state) => {
-          state.elements = state.elements.map((element) => {
-            if (element.id === state.selectedElement?.id) {
-              const oldElement = state.selectedElement;
-              const oldParentId = usePrimitiveStore.getState().oldParentId;
-              if (oldParentId) {
-                oldElement.parentId = oldParentId;
-              }
-              return oldElement;
-            } else {
-              return element;
-            }
-          });
-        });
+        undoInvalidOperation();
       }
     } else {
       if (elBeingAddedRef.current) {
@@ -2368,7 +1703,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           elBeingAddedRef.current = null;
         }
       } else if (useStore.getState().moveHandleType) {
-        handleUndoableMove();
+        addUndoableMove();
       } else if (useStore.getState().resizeHandleType) {
         handleUndoableResize();
       }
@@ -2384,12 +1719,9 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     setPrimitiveStore('showWallIntersectionPlaneId', null);
     invalidElementIdRef.current = null;
     resetBeingAddedChildId();
-  };
+  }
 
-  // ================================= end =====================================================
-
-  // todo: could simplify this
-  const addElementByClick = (pointer?: Vector3, body?: boolean) => {
+  function addElementByClick(pointer?: Vector3, body?: boolean) {
     // add new elements
     if (foundationModel && useStore.getState().objectTypeToAdd) {
       let newElement: ElementModel | null = null;
@@ -2499,9 +1831,9 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         });
       }
     }
-  };
+  }
 
-  const handleContextMenu = (e: ThreeEvent<MouseEvent>, mesh: Mesh | null, canPaste?: boolean) => {
+  function handleContextMenu(e: ThreeEvent<MouseEvent>, mesh: Mesh | null, canPaste?: boolean) {
     if (grabRef.current) {
       return;
     }
@@ -2514,9 +1846,30 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         }
       }
     });
-  };
+  }
 
-  const handleStudPointerDown = (e: ThreeEvent<PointerEvent>) => {
+  function handleWallSideSurfacePointerDown(e: ThreeEvent<PointerEvent>) {
+    if (
+      !isSettingElementStartPoint() &&
+      !isAddingElement() &&
+      isFirstIntersectedObject(e) &&
+      useStore.getState().objectTypeToAdd === ObjectType.None
+    ) {
+      if (useStore.getState().groupActionMode) {
+        setCommonStore((state) => {
+          for (const e of state.elements) {
+            e.selected = e.id === parentId;
+          }
+          state.elementGroupId = parentId;
+        });
+        e.stopPropagation();
+      } else if (isAllowedToSelectMe()) {
+        useStore.getState().selectMe(id, e, ActionType.Select);
+      }
+    }
+  }
+
+  function handleStudPointerDown(e: ThreeEvent<PointerEvent>) {
     if (e.intersections.length === 0 || e.intersections[0].object !== e.eventObject) return;
     if (useStore.getState().groupActionMode) {
       setCommonStore((state) => {
@@ -2535,9 +1888,9 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       addElementByClick();
       e.stopPropagation();
     }
-  };
+  }
 
-  const handleStudContextMenu = (e: ThreeEvent<MouseEvent>) => {
+  function handleStudContextMenu(e: ThreeEvent<MouseEvent>) {
     if (e.intersections.length > 0 && e.intersections[0].object === e.eventObject) {
       setCommonStore((state) => {
         state.contextMenuObjectType = ObjectType.Wall;
@@ -2545,32 +1898,9 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       selectMe(id, e, ActionType.Select);
       e.stopPropagation();
     }
-  };
+  }
 
-  const structureUnitArray = useMemo(() => {
-    const arr: number[] = [];
-    if (wallStructure === WallStructure.Stud) {
-      let pos = -hx + structureWidth / 2;
-      while (pos <= hx) {
-        arr.push(pos);
-        pos += structureSpacing;
-      }
-      arr.push(hx - structureWidth / 2);
-    } else if (wallStructure === WallStructure.Pillar) {
-      let pos = -hx;
-      while (pos <= hx) {
-        arr.push(pos);
-        pos += structureSpacing;
-      }
-      arr.push(hx);
-    }
-
-    return arr;
-  }, [wallStructure, structureWidth, structureSpacing, lx, ly, lz]);
-
-  const castShadow = shadowEnabled && !transparent;
-
-  const renderStuds = () => {
+  function renderStuds() {
     let [wallCenterPos, wallCenterHeight] = centerRoofHeight ?? [0, (wallLeftHeight + wallRightHeight) / 2];
     wallCenterPos = wallCenterPos * lx;
 
@@ -2636,9 +1966,9 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         </Box>
       </group>
     );
-  };
+  }
 
-  const renderPillars = () => {
+  function renderPillars() {
     let [wallCenterPos, wallCenterHeight] = centerRoofHeight ?? [0, (wallLeftHeight + wallRightHeight) / 2];
     wallCenterPos = wallCenterPos * lx;
 
@@ -2706,12 +2036,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         </Box>
       </group>
     );
-  };
-
-  const wallLeftHeight = leftRoofHeight ?? lz;
-  const wallRightHeight = rightRoofHeight ?? lz;
-  const realUnfilledHeight = fill === WallFill.Partial ? unfilledHeight : 0;
-  const bottomZ = -hz + realUnfilledHeight;
+  }
 
   return (
     <>
@@ -2777,7 +2102,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
             rotation={[HALF_PI, 0, 0]}
             castShadow={castShadow}
             receiveShadow={shadowEnabled}
-            onPointerDown={handleWallBodyPointerDown}
+            onPointerDown={handleWallSideSurfacePointerDown}
             onContextMenu={(e) => {
               handleContextMenu(e, insideWallRef.current);
             }}
@@ -2805,7 +2130,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               position={[0, hy, hz]}
               castShadow={castShadow}
               receiveShadow={shadowEnabled}
-              // onPointerDown={handleWallBodyPointerDown}
+              onPointerDown={handleWallSideSurfacePointerDown}
               onContextMenu={(e) => {
                 handleContextMenu(e, topSurfaceRef.current);
               }}
@@ -2823,7 +2148,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               rotation={[0, HALF_PI, 0]}
               castShadow={castShadow}
               receiveShadow={shadowEnabled}
-              // onPointerDown={handleWallBodyPointerDown}
+              onPointerDown={handleWallSideSurfacePointerDown}
             />
           )}
           {rightOffset === 0 && (
@@ -2834,38 +2159,39 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               rotation={[0, HALF_PI, 0]}
               castShadow={castShadow}
               receiveShadow={shadowEnabled}
-              // onPointerDown={handleWallBodyPointerDown}
+              onPointerDown={handleWallSideSurfacePointerDown}
             />
           )}
 
           {/* intersection planes for childs */}
-          {(showIntersectionPlane || showWallIntersectionPlaneId === id) && (
-            <>
-              <Plane
-                ref={intersectionPlaneRef}
-                name={WALL_INTERSECTION_PLANE_NAME}
-                args={[10000, 10000]}
-                position={[0, ly / 3, 0]}
-                rotation={[HALF_PI, 0, 0]}
-                onPointerMove={handleIntersectionPlanePointerMove}
-                onPointerUp={handleIntersectionPlanePointerUp}
-                visible={false}
-              >
-                <meshBasicMaterial color={'blue'} side={DoubleSide} />
-              </Plane>
-              {/* block plane */}
-              <Plane
-                name={WALL_BLOCK_PLANE}
-                args={[lx, lz]}
-                rotation={[HALF_PI, 0, 0]}
-                position={[0, ly, 0]}
-                onPointerMove={() => {
-                  /* Do Not Delete! Capture event for wall pointer move*/
-                }}
-                visible={false}
-              />
-            </>
-          )}
+          {(showIntersectionPlane || showWallIntersectionPlaneId === id) &&
+            useStore.getState().selectedElement?.parentId === id && (
+              <>
+                <Plane
+                  ref={intersectionPlaneRef}
+                  name={WALL_INTERSECTION_PLANE_NAME}
+                  args={[10000, 10000]}
+                  position={[0, ly / 3, 0]}
+                  rotation={[HALF_PI, 0, 0]}
+                  onPointerMove={handleIntersectionPlanePointerMove}
+                  onPointerUp={handleIntersectionPlanePointerUp}
+                  visible={false}
+                >
+                  <meshBasicMaterial color={'blue'} side={DoubleSide} />
+                </Plane>
+                {/* block plane */}
+                <Plane
+                  name={WALL_BLOCK_PLANE}
+                  args={[lx, lz]}
+                  rotation={[HALF_PI, 0, 0]}
+                  position={[0, ly, 0]}
+                  onPointerMove={() => {
+                    /* Do Not Delete! Capture event for wall pointer move*/
+                  }}
+                  visible={false}
+                />
+              </>
+            )}
 
           {elementsOnWall.map((e) => {
             switch (e.type) {
@@ -2939,37 +2265,158 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       {selected && <HorizontalRuler element={wallModel} verticalLift={0} />}
 
       {/* grid */}
-      {/* {showGrid && (useStore.getState().moveHandleType || useStore.getState().resizeHandleType) && (
-        <group position={[0, -0.001, 0]} rotation={[HALF_PI, 0, 0]}>
-          <ElementGrid hx={hx} hy={hz} hz={0} />
-        </group>
-      )} */}
+      {(showIntersectionPlane || showWallIntersectionPlaneId === id) &&
+        useStore.getState().selectedElement?.parentId === id && (
+          <group position={[0, -0.001, 0]} rotation={[HALF_PI, 0, 0]}>
+            <ElementGrid hx={hx} hy={hz} hz={0} />
+          </group>
+        )}
 
-      {heatFluxes &&
-        heatFluxes.map((v, index) => {
-          return (
-            <React.Fragment key={index}>
-              <Line
-                points={v}
-                name={'Heat Flux ' + index}
-                lineWidth={heatFluxWidth ?? DEFAULT_HEAT_FLUX_WIDTH}
-                color={heatFluxColor ?? DEFAULT_HEAT_FLUX_COLOR}
-              />
-              ;
-              <Cone
-                userData={{ unintersectable: true }}
-                position={v[heatFluxArrowHead.current]
-                  .clone()
-                  .add(new Vector3(0, heatFluxArrowHead.current === 0 ? -0.1 : 0.1, 0))}
-                args={[0.06, 0.2, 4, 1]}
-                name={'Normal Vector Arrow Head'}
-                rotation={heatFluxArrowEuler.current ?? [0, 0, 0]}
-              >
-                <meshBasicMaterial attach="material" color={heatFluxColor ?? DEFAULT_HEAT_FLUX_COLOR} />
-              </Cone>
-            </React.Fragment>
-          );
-        })}
+      {/* heat flux */}
+      <HeatFlux wallModel={wallModel} />
+    </>
+  );
+};
+
+interface HeatFluxProps {
+  wallModel: WallModel;
+}
+
+const HeatFlux = ({ wallModel }: HeatFluxProps) => {
+  const { id, lx, lz } = wallModel;
+  const getChildrenOfType = useStore(Selector.getChildrenOfType);
+  const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
+  const heatFluxColor = useStore(Selector.viewState.heatFluxColor);
+  const heatFluxWidth = useStore(Selector.viewState.heatFluxWidth);
+  const hourlyHeatExchangeArrayMap = useDataStore(Selector.hourlyHeatExchangeArrayMap);
+  const showHeatFluxes = usePrimitiveStore(Selector.showHeatFluxes);
+
+  const heatFluxArrowHead = useRef<number>(0);
+  const heatFluxArrowEuler = useRef<Euler>();
+
+  const heatFluxes: Vector3[][] | undefined = useMemo(() => {
+    if (!showHeatFluxes) return undefined;
+    const heat = hourlyHeatExchangeArrayMap.get(id);
+    if (!heat) return undefined;
+    const sum = heat.reduce((a, b) => a + b, 0);
+    let area = Util.getPolygonArea(Util.getWallVertices(wallModel, 0));
+    if (area === 0) return undefined;
+    const windows = getChildrenOfType(ObjectType.Window, id);
+    const doors = getChildrenOfType(ObjectType.Door, id);
+    if (windows && windows.length > 0) {
+      for (const w of windows) {
+        // window dimension is relative to the wall
+        area -= Util.getWindowArea(w as WindowModel, wallModel);
+      }
+    }
+    if (doors && doors.length > 0) {
+      for (const d of doors) {
+        // door dimension is relative to the wall
+        area -= d.lx * d.lz * wallModel.lx * wallModel.lz;
+      }
+    }
+    const world = useStore.getState().world;
+    const cellSize = DEFAULT_HEAT_FLUX_DENSITY_FACTOR * (world.solarRadiationHeatmapGridCellSize ?? 0.5);
+    const lz = Util.getHighestPointOfWall(wallModel); // height
+    const nx = Math.max(2, Math.round(lx / cellSize));
+    const nz = Math.max(2, Math.round(lz / cellSize));
+    const dx = lx / nx;
+    const dz = lz / nz;
+    const halfDif = (lz - wallModel.lz) / 2;
+    const intensity = (sum / area) * (heatFluxScaleFactor ?? DEFAULT_HEAT_FLUX_SCALE_FACTOR);
+    heatFluxArrowHead.current = intensity < 0 ? 1 : 0;
+    heatFluxArrowEuler.current = Util.getEuler(
+      UNIT_VECTOR_POS_Z,
+      UNIT_VECTOR_POS_Y,
+      'YXZ',
+      Math.sign(intensity) * HALF_PI,
+    );
+    const vectors: Vector3[][] = [];
+    const polygon = Util.getWallVertices(wallModel, 0);
+    for (let kx = 0; kx < nx; kx++) {
+      for (let kz = 0; kz < nz; kz++) {
+        const v: Vector3[] = [];
+        const rx = (kx - nx / 2 + 0.5) * dx;
+        const rz = (kz - nz / 2 + 0.5) * dz + halfDif;
+        if (Util.isPointInside(rx, rz, polygon)) {
+          let isWall = true;
+          if (windows && windows.length > 0) {
+            for (const w of windows) {
+              if (w.type !== ObjectType.Window) continue;
+              const cx = w.cx * wallModel.lx;
+              const cz = w.cz * wallModel.lz;
+              const hx = (w.lx * wallModel.lx) / 2;
+              const hz = (w.lz * wallModel.lz) / 2;
+              const win = w as WindowModel;
+              if (win.windowType === WindowType.Arched) {
+                // TODO: Deal with arched window
+                if (rx >= cx - hx && rx < cx + hx && rz >= cz - hz && rz < cz + hz) {
+                  isWall = false;
+                  break;
+                }
+              } else {
+                if (rx >= cx - hx && rx < cx + hx && rz >= cz - hz && rz < cz + hz) {
+                  isWall = false;
+                  break;
+                }
+              }
+            }
+          }
+          if (doors && doors.length > 0) {
+            for (const d of doors) {
+              const cx = d.cx * lx;
+              const cz = d.cz * lz;
+              const hx = (d.lx * lx) / 2;
+              const hz = (d.lz * lz) / 2;
+              // TODO: Deal with arched door
+              if (rx >= cx - hx && rx < cx + hx && rz >= cz - hz && rz < cz + hz) {
+                isWall = false;
+                break;
+              }
+            }
+          }
+          if (isWall) {
+            if (intensity < 0) {
+              v.push(new Vector3(rx, 0, rz));
+              v.push(new Vector3(rx, intensity, rz));
+            } else {
+              v.push(new Vector3(rx, 0, rz));
+              v.push(new Vector3(rx, -intensity, rz));
+            }
+            vectors.push(v);
+          }
+        }
+      }
+    }
+    return vectors;
+  }, [lx, lz, showHeatFluxes, heatFluxScaleFactor]);
+
+  if (!heatFluxes) return null;
+
+  return (
+    <>
+      {heatFluxes.map((v, index) => (
+        <React.Fragment key={index}>
+          <Line
+            points={v}
+            name={'Heat Flux ' + index}
+            lineWidth={heatFluxWidth ?? DEFAULT_HEAT_FLUX_WIDTH}
+            color={heatFluxColor ?? DEFAULT_HEAT_FLUX_COLOR}
+          />
+          ;
+          <Cone
+            userData={{ unintersectable: true }}
+            position={v[heatFluxArrowHead.current]
+              .clone()
+              .add(new Vector3(0, heatFluxArrowHead.current === 0 ? -0.1 : 0.1, 0))}
+            args={[0.06, 0.2, 4, 1]}
+            name={'Normal Vector Arrow Head'}
+            rotation={heatFluxArrowEuler.current ?? [0, 0, 0]}
+          >
+            <meshBasicMaterial attach="material" color={heatFluxColor ?? DEFAULT_HEAT_FLUX_COLOR} />
+          </Cone>
+        </React.Fragment>
+      ))}
     </>
   );
 };

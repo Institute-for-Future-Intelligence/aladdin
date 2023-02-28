@@ -631,18 +631,12 @@ export interface CommonStoreState {
   updateRoofFlag: boolean;
 
   addedWindowId: string | null;
-  deletedWindowAndParentId: string[] | null;
 
   addedDoorId: string | null;
-  deletedDoorAndParentId: string[] | null;
 
   addedRoofId: string | null;
   deletedRoofId: string | null;
   setAddedRoofId: (id: string | null) => void;
-
-  // used for undo/redo for elements on roof
-  oldRooftopElementData: OldRooftopElementData | null;
-  setOldRooftopElementData: (data: OldRooftopElementData | null) => void;
 
   groupActionMode: boolean;
   setGroupActionMode: (b: boolean) => void;
@@ -4270,20 +4264,12 @@ export const useStore = create<CommonStoreState>(
                       state.deletedWallId = elem.id;
                       break;
                     }
-                    case ObjectType.Window: {
-                      state.deletedWindowAndParentId = [elem.id, elem.parentId];
-                      break;
-                    }
                     case ObjectType.Foundation: {
                       state.deletedFoundationId = elem.id;
                       break;
                     }
                     case ObjectType.Cuboid: {
                       state.deletedCuboidId = elem.id;
-                      break;
-                    }
-                    case ObjectType.Door: {
-                      state.deletedDoorAndParentId = [elem.id, elem.parentId];
                       break;
                     }
                   }
@@ -5617,23 +5603,14 @@ export const useStore = create<CommonStoreState>(
           updateRoofFlag: false,
 
           addedWindowId: null,
-          deletedWindowAndParentId: null,
 
           addedDoorId: null,
-          deletedDoorAndParentId: null,
 
           addedRoofId: null,
           deletedRoofId: null,
           setAddedRoofId(id: string | null) {
             immerSet((state) => {
               state.addedRoofId = id;
-            });
-          },
-
-          oldRooftopElementData: null,
-          setOldRooftopElementData(data: OldRooftopElementData | null) {
-            immerSet((state) => {
-              state.oldRooftopElementData = data;
             });
           },
 

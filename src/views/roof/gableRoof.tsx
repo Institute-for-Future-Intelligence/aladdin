@@ -50,7 +50,6 @@ import { Point2 } from 'src/models/Point2';
 import { RoofUtil } from './RoofUtil';
 import {
   useCurrWallArray,
-  useElementUndoable,
   useRoofHeight,
   useRoofTexture,
   useTransparent,
@@ -860,7 +859,6 @@ const GableRoof = (roofModel: GableRoofModel) => {
     useStore.getState().setRoofSegmentVerticesWithoutOverhang(id, segmentVertices);
   };
 
-  const { addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
   useUpdateSegmentVerticesMap(id, centroid, roofSegments);
   useUpdateSegmentVerticesWithoutOverhangMap(updateSegmentVerticesWithoutOverhangeMap);
 
@@ -905,13 +903,13 @@ const GableRoof = (roofModel: GableRoofModel) => {
         position={[centroid.x, centroid.y, centroid.z]}
         userData={userData}
         onPointerDown={(e) => {
-          handlePointerDown(e, id, foundation, roofSegments, centroid, setOldRefData);
+          handlePointerDown(e, id, foundation, roofSegments, centroid);
         }}
         onPointerMove={(e) => {
           handlePointerMove(e, id);
         }}
         onPointerUp={(e) => {
-          handlePointerUp(e, roofModel, undoMove, addUndoableMove);
+          handlePointerUp(e, roofModel);
         }}
         onContextMenu={(e) => {
           handleContextMenu(e, id);

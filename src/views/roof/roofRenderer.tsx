@@ -23,7 +23,6 @@ import MansardRoof from './mansardRoof';
 import { Euler, Mesh, Vector3 } from 'three';
 import { ObjectType, Orientation } from 'src/types';
 import { ThreeEvent, useThree } from '@react-three/fiber';
-import { WallModel } from 'src/models/WallModel';
 import { HIGHLIGHT_HANDLE_COLOR, LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
 import { Point2 } from 'src/models/Point2';
 import { showError } from 'src/helpers';
@@ -34,10 +33,9 @@ import { RoofUtil } from './RoofUtil';
 import { ElementModelFactory } from 'src/models/ElementModelFactory';
 import { UndoableAdd } from 'src/undo/UndoableAdd';
 import { Sphere } from '@react-three/drei';
-import { SensorModel } from '../../models/SensorModel';
-import { LightModel } from '../../models/LightModel';
 import { useHandleSize } from '../wall/hooks';
-import { WALL_OUTSIDE_SURFACE_MESH_NAME } from '../wall/wall';
+import { addUndoableMove, undoInvalidOperation, WALL_OUTSIDE_SURFACE_MESH_NAME } from '../wall/wall';
+import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 
 export interface RoofSegmentGroupUserData {
   roofId: string;
@@ -329,23 +327,11 @@ export const handlePointerDown = (
   foundation: ElementModel | null,
   roofSegments: RoofSegmentProps[],
   centroid: Vector3,
-  setOldRefData: (elem: ElementModel) => void,
 ) => {
   if (!foundation) return;
   handleAddElementOnRoof(e, roofId, foundation, roofSegments, centroid);
   // click on child
   if (e.intersections[0].eventObject.name !== e.eventObject.name) {
-    const selectedElement = useStore.getState().getSelectedElement();
-    if (
-      selectedElement &&
-      selectedElement.id !== roofId &&
-      selectedElement.parentId === roofId &&
-      (selectedElement.type === ObjectType.SolarPanel ||
-        selectedElement.type === ObjectType.Sensor ||
-        selectedElement.type === ObjectType.Light)
-    ) {
-      setOldRefData(selectedElement);
-    }
   }
   // click on roof body
   else {
@@ -353,41 +339,38 @@ export const handlePointerDown = (
   }
 };
 
-export const handlePointerUp = (
-  event: ThreeEvent<PointerEvent>,
-  roofModel: RoofModel,
-  undoMove: () => void,
-  addUndoableMove: (movingElement: SolarPanelModel | SensorModel | LightModel) => void,
-) => {
-  const selectedElement = useStore.getState().getSelectedElement();
+export const handlePointerUp = (event: ThreeEvent<PointerEvent>, roofModel: RoofModel) => {
+  const selectedElement = useStore.getState().selectedElement;
   if (!selectedElement || !RoofUtil.isValidOnRoof(selectedElement)) return;
 
-  if (useStore.getState().moveHandleType) {
+  const element = useStore.getState().getElementById(selectedElement.id);
+  if (element && useStore.getState().moveHandleType) {
     const intersectionRoofs = event.intersections.filter((i) => i.eventObject.name.includes('Roof'));
     const isFirstIntersectedRoof = intersectionRoofs[0].eventObject.userData.roofId === roofModel.id;
-    if (isFirstIntersectedRoof && selectedElement.foundationId) {
-      const foundation = useStore.getState().getElementById(selectedElement.foundationId);
+    if (isFirstIntersectedRoof && element.foundationId) {
+      const foundation = useStore.getState().getElementById(element.foundationId);
+
       if (foundation) {
-        switch (selectedElement.type) {
+        switch (element.type) {
           case ObjectType.SolarPanel: {
-            const solarPanel = selectedElement as SolarPanelModel;
+            const solarPanel = element as SolarPanelModel;
             const boundaryVertices = RoofUtil.getRoofBoundaryVertices(roofModel);
             const solarPanelVertices = RoofUtil.getSolarPanelVerticesOnRoof(solarPanel, foundation);
             if (
               !spBoundaryCheck(solarPanelVertices, boundaryVertices) ||
               !spCollisionCheck(solarPanel, foundation, solarPanelVertices)
             ) {
-              undoMove();
+              undoInvalidOperation();
             } else {
-              addUndoableMove(solarPanel);
+              addUndoableMove();
             }
             break;
           }
           case ObjectType.Sensor:
-            addUndoableMove(selectedElement as SensorModel);
+            addUndoableMove();
             break;
           case ObjectType.Light:
-            addUndoableMove(selectedElement as LightModel);
+            addUndoableMove();
             break;
         }
       }
@@ -395,7 +378,6 @@ export const handlePointerUp = (
   }
   useStore.getState().set((state) => {
     state.moveHandleType = null;
-    state.oldRooftopElementData = null;
   });
 };
 
@@ -443,7 +425,11 @@ export const handlePointerMove = (event: ThreeEvent<PointerEvent>, id: string) =
                     (e as SolarPanelModel).parentType = ObjectType.Roof;
                     e.color = '#fff';
                   }
-                  state.selectedElement = e;
+                  if (state.selectedElement) {
+                    state.selectedElement.parentId = roofId;
+                    state.selectedElement.foundationId = foundation.id;
+                  }
+                  usePrimitiveStore.getState().setPrimitiveStore('showWallIntersectionPlaneId', null);
                 }
                 break;
               }

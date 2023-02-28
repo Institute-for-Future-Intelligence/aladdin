@@ -17,7 +17,6 @@ import { Util } from 'src/Util';
 import { CanvasTexture, DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
 import {
   useCurrWallArray,
-  useElementUndoable,
   useUpdateSegmentVerticesMap,
   useRoofHeight,
   useUpdateOldRoofFiles,
@@ -420,7 +419,6 @@ const HipRoof = (roofModel: HipRoofModel) => {
     useStore.getState().setRoofSegmentVerticesWithoutOverhang(id, segmentVertices);
   };
 
-  const { addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
   useUpdateSegmentVerticesMap(id, new Vector3(centroid2D.x, centroid2D.y, topZ), roofSegments);
   useUpdateSegmentVerticesWithoutOverhangMap(updateSegmentVerticesWithoutOverhangeMap);
 
@@ -466,13 +464,13 @@ const HipRoof = (roofModel: HipRoofModel) => {
         position={[centroid2D.x, centroid2D.y, topZ]}
         userData={userData}
         onPointerDown={(e) => {
-          handlePointerDown(e, id, foundation, roofSegments, ridgeMidPoint, setOldRefData);
+          handlePointerDown(e, id, foundation, roofSegments, ridgeMidPoint);
         }}
         onPointerMove={(e) => {
           handlePointerMove(e, id);
         }}
         onPointerUp={(e) => {
-          handlePointerUp(e, roofModel, undoMove, addUndoableMove);
+          handlePointerUp(e, roofModel);
         }}
         onContextMenu={(e) => {
           handleContextMenu(e, id);

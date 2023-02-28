@@ -9,7 +9,7 @@ import { ElementModel } from 'src/models/ElementModel';
 import { Point2 } from 'src/models/Point2';
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
-import { RoofModel } from 'src/models/RoofModel';
+import { RoofModel, RoofType } from 'src/models/RoofModel';
 import { WALL_PADDING } from '../wall/wall';
 
 export class RoofUtil {
@@ -306,10 +306,39 @@ export class RoofUtil {
   static getRoofBoundaryVertices(roof: RoofModel) {
     const segments = useStore.getState().roofSegmentVerticesMap.get(roof.id);
     if (!segments) throw new Error();
-    return segments.reduce((acc, points) => {
-      acc.push({ x: points[0].x, y: points[0].y }, { x: points[1].x, y: points[1].y });
-      return acc;
-    }, [] as { x: number; y: number }[]);
+    switch (roof.roofType) {
+      case RoofType.Gable: {
+        if (segments.length === 1) {
+          return segments[0].map((p) => ({ x: p.x, y: p.y }));
+        }
+        return segments.reduce((acc, points) => {
+          acc.push({ x: points[0].x, y: points[0].y }, { x: points[1].x, y: points[1].y });
+          return acc;
+        }, [] as Point2[]);
+      }
+      case RoofType.Gambrel: {
+        return segments.reduce((acc, points, idx) => {
+          if (idx === 0 || idx === 3) {
+            acc.push({ x: points[0].x, y: points[0].y }, { x: points[1].x, y: points[1].y });
+          }
+          return acc;
+        }, [] as Point2[]);
+      }
+      case RoofType.Mansard: {
+        return segments.reduce((acc, points, idx) => {
+          if (idx !== segments.length - 1) {
+            acc.push({ x: points[0].x, y: points[0].y });
+          }
+          return acc;
+        }, [] as Point2[]);
+      }
+      default: {
+        return segments.reduce((acc, points, idx) => {
+          acc.push({ x: points[0].x, y: points[0].y });
+          return acc;
+        }, [] as Point2[]);
+      }
+    }
   }
 
   static getSolarPanelVerticesOnRoof(sp: SolarPanelModel, foundation: ElementModel) {

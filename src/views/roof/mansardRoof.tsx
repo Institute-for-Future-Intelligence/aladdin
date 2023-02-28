@@ -27,7 +27,6 @@ import { CanvasTexture, DoubleSide, Euler, Float32BufferAttribute, Mesh, Shape, 
 import {
   useMultiCurrWallArray,
   useRoofTexture,
-  useElementUndoable,
   useTransparent,
   useUpdateSegmentVerticesMap,
   useRoofHeight,
@@ -556,7 +555,6 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
     useStore.getState().setRoofSegmentVerticesWithoutOverhang(id, segmentVertices);
   };
 
-  const { addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
   const { transparent, opacity } = useTransparent();
   useUpdateSegmentVerticesMap(
     id,
@@ -783,13 +781,13 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
         position={[centroid.x, centroid.y, centroid.z]}
         userData={userData}
         onPointerDown={(e) => {
-          handlePointerDown(e, id, foundation, roofSegments, centroid, setOldRefData);
+          handlePointerDown(e, id, foundation, roofSegments, centroid);
         }}
         onPointerMove={(e) => {
           handlePointerMove(e, id);
         }}
         onPointerUp={(e) => {
-          handlePointerUp(e, roofModel, undoMove, addUndoableMove);
+          handlePointerUp(e, roofModel);
         }}
         onContextMenu={(e) => {
           handleContextMenu(e, id);

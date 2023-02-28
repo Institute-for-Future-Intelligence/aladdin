@@ -42,6 +42,8 @@ import { PvModel } from 'src/models/PvModel';
 
 interface MoveHandleProps {
   id: string;
+  parentId: string;
+  foundationId?: string;
   handleSize: number;
 }
 
@@ -80,7 +82,7 @@ interface LabelProps {
   id: string;
 }
 
-const MoveHandle = ({ id, handleSize }: MoveHandleProps) => {
+const MoveHandle = ({ id, parentId, foundationId, handleSize }: MoveHandleProps) => {
   const domElement = useThree().gl.domElement;
 
   return (
@@ -95,6 +97,11 @@ const MoveHandle = ({ id, handleSize }: MoveHandleProps) => {
       }}
       onPointerDown={(e) => {
         useStore.getState().selectMe(id, e, ActionType.Move);
+        usePrimitiveStore.setState((state) => {
+          state.showWallIntersectionPlaneId = parentId;
+          state.oldParentId = parentId;
+          state.oldFoundationId = foundationId;
+        });
       }}
     >
       <meshBasicMaterial attach="material" color={'orange'} />
@@ -970,7 +977,7 @@ const SolarPanelOnRoof = ({
         {selected && !locked && (
           <>
             {/* move handle */}
-            <MoveHandle id={id} handleSize={moveHandleSize} />
+            <MoveHandle id={id} handleSize={moveHandleSize} parentId={parentId} foundationId={foundationId} />
 
             {/* resize handles */}
             <group name="Resize Handle Group">

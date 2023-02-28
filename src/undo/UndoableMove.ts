@@ -22,8 +22,10 @@ export interface UndoableMove extends Undoable {
   newParentId?: string;
   oldFoundationId?: string;
   newFoundationId?: string;
-  oldDimension: number[];
-  newDimension: number[];
+  oldParentType: ObjectType;
+  newParentType: ObjectType;
+  oldRotation?: number[];
+  newRotation?: number[];
 }
 
 export interface UndoableMoveFoundationGroup extends Undoable {

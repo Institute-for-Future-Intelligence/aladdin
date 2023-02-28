@@ -540,7 +540,11 @@ const SolarPanelOnWall = ({
 
   const onClickResizeHandle = (handleType: ResizeHandleType, p: Vector3) => {
     useRefStore.getState().setEnableOrbitController(false);
-    setPrimitiveStore('showWallIntersectionPlaneId', parentId);
+    usePrimitiveStore.setState((state) => {
+      state.showWallIntersectionPlaneId = parentId;
+      state.oldParentId = parentId;
+      state.oldFoundationId = foundationId;
+    });
     setCommonStore((state) => {
       state.resizeHandleType = handleType;
       state.selectedElement = state.elements.find((e) => e.selected) as ElementModel;
