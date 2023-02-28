@@ -83,6 +83,8 @@ export interface WallProps {
 
 export const WALL_OUTSIDE_SURFACE_MESH_NAME = 'Wall Outside Surface';
 
+export const WALL_PADDING = 0.1;
+
 const Wall = ({ wallModel, foundationModel }: WallProps) => {
   let {
     id,
@@ -788,8 +790,13 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     );
   };
 
-  const checkCollision = (id: string, type: ObjectType, p: Vector3, wlx: number, wlz: number) => {
+  const checkCollision = (id: string, p: Vector3, wlx: number, wlz: number) => {
     if (wlx < 0.1 || wlz < 0.1) {
+      invalidElementIdRef.current = id;
+      return false;
+    }
+
+    if (wlx > lx || wlz > lz) {
       invalidElementIdRef.current = id;
       return false;
     }
@@ -963,6 +970,29 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     });
   };
 
+  const setUndoRedoMove = (id: string, pos: number[], oldParentId?: string, newParentId?: string) => {
+    setCommonStore((state) => {
+      const el = state.elements.find((e) => e.id === id);
+      if (!el) return;
+      [el.cx, el.cy, el.cz] = [...pos];
+      if (oldParentId && newParentId) {
+        el.parentId = oldParentId;
+
+        // keep abs size
+        if (el.type === ObjectType.Window) {
+          const oldParent = state.elements.find((e) => e.id === oldParentId);
+          const newParent = state.elements.find((e) => e.id === newParentId);
+          if (!oldParent || !newParent) return;
+          const absLx = el.lx * newParent.lx;
+          const absLz = el.lz * newParent.lz;
+
+          el.lx = absLx / oldParent.lx;
+          el.lz = absLz / oldParent.lz;
+        }
+      }
+    });
+  };
+
   const handleUndoableAdd = (elem: ElementModel) => {
     const undoableAdd = {
       name: 'Add',
@@ -982,46 +1012,62 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     addUndoable(undoableAdd);
   };
 
-  const handleUndoableMove = (elem: ElementModel) => {
+  const handleUndoableMove = () => {
+    const oldElement = useStore.getState().selectedElement;
+    if (!oldElement) return;
+    const newElement = getElementById(oldElement.id);
+    const oldParentId = usePrimitiveStore.getState().oldParentId;
+    if (!newElement || !oldParentId) return;
+
     const undoableMove = {
       name: 'Move',
       timestamp: Date.now(),
-      movedElementId: elem.id,
-      movedElementType: elem.type,
-      oldCx: oldPositionRef.current[0],
-      oldCy: oldPositionRef.current[1],
-      oldCz: oldPositionRef.current[2],
-      newCx: elem.cx,
-      newCy: elem.cy,
-      newCz: elem.cz,
-      undo: () => {
-        setElementPosition(undoableMove.movedElementId, undoableMove.oldCx, undoableMove.oldCy, undoableMove.oldCz);
+      movedElementId: newElement.id,
+      movedElementType: newElement.type,
+      oldCx: oldElement.cx,
+      oldCy: oldElement.cy,
+      oldCz: oldElement.cz,
+      newCx: newElement.cx,
+      newCy: newElement.cy,
+      newCz: newElement.cz,
+      oldParentId: oldParentId,
+      newParentId: newElement.parentId,
+      undo() {
+        setUndoRedoMove(this.movedElementId, [this.oldCx, this.oldCy, this.oldCz], this.oldParentId, this.newParentId);
       },
-      redo: () => {
-        setElementPosition(undoableMove.movedElementId, undoableMove.newCx, undoableMove.newCy, undoableMove.newCz);
+      redo() {
+        setUndoRedoMove(this.movedElementId, [this.newCx, this.newCy, this.newCz], this.newParentId, this.oldParentId);
       },
     } as UndoableMove;
     addUndoable(undoableMove);
   };
 
-  const handleUndoableResize = (elem: ElementModel) => {
-    switch (elem.type) {
+  const handleUndoableResize = () => {
+    const oldElement = useStore.getState().selectedElement;
+    if (!oldElement) return;
+    const newElement = getElementById(oldElement.id);
+    if (!newElement) return;
+
+    switch (newElement.type) {
       case ObjectType.Door:
       case ObjectType.Window:
       case ObjectType.SolarPanel:
         const undoableResize = {
-          name: `Resize ${elem.type}`,
+          name: `Resize ${newElement.type}`,
           timestamp: Date.now(),
-          resizedElementId: elem.id,
-          resizedElementType: elem.type,
-          oldPosition: [...oldPositionRef.current],
-          oldDimension: [...oldDimensionRef.current],
-          newPosition: [elem.cx, elem.cy, elem.cz],
-          newDimension: [elem.lx, elem.ly, elem.lz],
-          oldArchHeight: oldWindowArchHeight.current,
+          resizedElementId: newElement.id,
+          resizedElementType: newElement.type,
+          oldPosition: [oldElement.cx, oldElement.cy, oldElement.cz],
+          oldDimension: [oldElement.lx, oldElement.ly, oldElement.lz],
+          newPosition: [newElement.cx, newElement.cy, newElement.cz],
+          newDimension: [newElement.lx, newElement.ly, newElement.lz],
+          oldArchHeight:
+            oldElement.type === ObjectType.Window || oldElement.type === ObjectType.Door
+              ? (oldElement as WindowModel).archHeight
+              : undefined,
           newArchHeight:
-            elem.type === ObjectType.Window || elem.type === ObjectType.Door
-              ? (elem as WindowModel).archHeight
+            newElement.type === ObjectType.Window || newElement.type === ObjectType.Door
+              ? (newElement as WindowModel).archHeight
               : undefined,
           undo() {
             setElementPosDms(this.resizedElementId, this.oldPosition, this.oldDimension, this.oldArchHeight);
@@ -1100,59 +1146,59 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     }
   };
 
-  const handleIntersectionPointerUp = (e: ThreeEvent<PointerEvent>) => {
-    if (e.button === 2 || grabRef.current === null || grabRef.current.parentId !== id) {
-      return;
-    }
-    if (invalidElementIdRef.current) {
-      if (isSettingWindowEndPointRef.current || isSettingDoorEndPointRef.current) {
-        setCommonStore((state) => {
-          state.elements.pop();
-        });
-      } else {
-        if (originElements) {
-          setCommonStore((state) => {
-            state.elements = [...originElements];
-          });
-        }
-      }
-      invalidElementIdRef.current = null;
-      setOriginElements(null);
-    }
-    // add undo for valid operation
-    else {
-      const elem = getElementById(grabRef.current.id);
-      if (elem) {
-        if (useStore.getState().moveHandleType) {
-          handleUndoableMove(elem);
-        } else if (useStore.getState().resizeHandleType) {
-          if (isSettingWindowEndPointRef.current || isSettingDoorEndPointRef.current) {
-            handleUndoableAdd(elem);
-          } else {
-            handleUndoableResize(elem);
-          }
-        }
-      }
-    }
+  // const handleIntersectionPointerUp = (e: ThreeEvent<PointerEvent>) => {
+  //   if (e.button === 2 || grabRef.current === null || grabRef.current.parentId !== id) {
+  //     return;
+  //   }
+  //   if (invalidElementIdRef.current) {
+  //     if (isSettingWindowEndPointRef.current || isSettingDoorEndPointRef.current) {
+  //       setCommonStore((state) => {
+  //         state.elements.pop();
+  //       });
+  //     } else {
+  //       if (originElements) {
+  //         setCommonStore((state) => {
+  //           state.elements = [...originElements];
+  //         });
+  //       }
+  //     }
+  //     invalidElementIdRef.current = null;
+  //     setOriginElements(null);
+  //   }
+  //   // add undo for valid operation
+  //   else {
+  //     const elem = getElementById(grabRef.current.id);
+  //     if (elem) {
+  //       if (useStore.getState().moveHandleType) {
+  //         handleUndoableMove(elem);
+  //       } else if (useStore.getState().resizeHandleType) {
+  //         if (isSettingWindowEndPointRef.current || isSettingDoorEndPointRef.current) {
+  //           handleUndoableAdd(elem);
+  //         } else {
+  //           handleUndoableResize(elem);
+  //         }
+  //       }
+  //     }
+  //   }
 
-    setCommonStore((state) => {
-      state.moveHandleType = null;
-      state.resizeHandleType = null;
-      state.addedWindowId = null;
-      state.addedDoorId = null;
-      if (state.actionModeLock) {
-        if (isSettingDoorEndPointRef.current) {
-          state.objectTypeToAdd = ObjectType.Door;
-        } else if (isSettingWindowEndPointRef.current) {
-          state.objectTypeToAdd = ObjectType.Window;
-        }
-        InnerCommonState.selectNone(state);
-      }
-    });
-    useRefStore.getState().setEnableOrbitController(true);
-    setShowGrid(false);
-    resetCurrentState();
-  };
+  //   setCommonStore((state) => {
+  //     state.moveHandleType = null;
+  //     state.resizeHandleType = null;
+  //     state.addedWindowId = null;
+  //     state.addedDoorId = null;
+  //     if (state.actionModeLock) {
+  //       if (isSettingDoorEndPointRef.current) {
+  //         state.objectTypeToAdd = ObjectType.Door;
+  //       } else if (isSettingWindowEndPointRef.current) {
+  //         state.objectTypeToAdd = ObjectType.Window;
+  //       }
+  //       InnerCommonState.selectNone(state);
+  //     }
+  //   });
+  //   useRefStore.getState().setEnableOrbitController(true);
+  //   setShowGrid(false);
+  //   resetCurrentState();
+  // };
 
   const handleIntersectionPointerMove = (e: ThreeEvent<PointerEvent>) => {
     // return if it's not first wall when adding new window
@@ -1195,13 +1241,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
                 if (!Util.isElementInsideWall(p, grabRef.current.lx * lx, grabRef.current.lz * lz, innerWallPoints2D)) {
                   return;
                 }
-                checkCollision(
-                  grabRef.current.id,
-                  ObjectType.Window,
-                  p,
-                  grabRef.current.lx * lx,
-                  grabRef.current.lz * lz,
-                );
+                checkCollision(grabRef.current.id, p, grabRef.current.lx * lx, grabRef.current.lz * lz);
                 setCommonStore((state) => {
                   for (const e of state.elements) {
                     if (e.id === grabRef.current?.id) {
@@ -1237,7 +1277,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
                     window.cy,
                     window.cz * lz + (newWindowHeight - wlz) / 2,
                   );
-                  checkCollision(grabRef.current.id, ObjectType.Window, relativePos, wlx, newWindowHeight);
+                  checkCollision(grabRef.current.id, relativePos, wlx, newWindowHeight);
                   setCommonStore((state) => {
                     for (const e of state.elements) {
                       if (e.id === grabRef.current?.id) {
@@ -1252,7 +1292,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
                 } else {
                   const v = new Vector3().subVectors(resizeAnchor, p); // window diagonal vector
                   const relativePos = new Vector3().addVectors(resizeAnchor, p).divideScalar(2);
-                  checkCollision(grabRef.current.id, ObjectType.Window, relativePos, Math.abs(v.x), Math.abs(v.z));
+                  checkCollision(grabRef.current.id, relativePos, Math.abs(v.x), Math.abs(v.z));
                   setCommonStore((state) => {
                     for (const e of state.elements) {
                       if (e.id === grabRef.current?.id) {
@@ -1278,13 +1318,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               }
               // adding door
               if (moveHandleType) {
-                checkCollision(
-                  grabRef.current.id,
-                  ObjectType.Door,
-                  p,
-                  grabRef.current.lx * lx,
-                  grabRef.current.lz * lz,
-                );
+                checkCollision(grabRef.current.id, p, grabRef.current.lx * lx, grabRef.current.lz * lz);
                 setCommonStore((state) => {
                   for (const e of state.elements) {
                     if (e.id === grabRef.current?.id) {
@@ -1311,7 +1345,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
                   const newArchHeight = Math.max(0, Math.min(p.z - resizeAnchor.z - archHeightBottom, dlx / 2));
                   const newDoorHeight = archHeightBottom + newArchHeight + dlz / 2;
                   const relativePos = new Vector3(door.cx * lx, door.cy, door.cz * lz + (newDoorHeight - dlz) / 2);
-                  checkCollision(grabRef.current.id, ObjectType.Door, relativePos, dlx, newDoorHeight);
+                  checkCollision(grabRef.current.id, relativePos, dlx, newDoorHeight);
                   setCommonStore((state) => {
                     for (const e of state.elements) {
                       if (e.id === grabRef.current?.id && e.type === ObjectType.Door) {
@@ -1326,7 +1360,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
                 } else {
                   const v = new Vector3().subVectors(resizeAnchor, p); // door diagonal vector
                   let relativePos = new Vector3().addVectors(resizeAnchor, p).divideScalar(2);
-                  checkCollision(grabRef.current.id, ObjectType.Door, relativePos, Math.abs(v.x), Math.abs(v.z));
+                  checkCollision(grabRef.current.id, relativePos, Math.abs(v.x), Math.abs(v.z));
                   setCommonStore((state) => {
                     for (const e of state.elements) {
                       if (e.id === grabRef.current?.id) {
@@ -1358,7 +1392,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
                 if (!Util.isElementInsideWall(p, grabRef.current.lx, grabRef.current.ly, outerWallPoints2D)) {
                   return;
                 }
-                checkCollision(grabRef.current.id, ObjectType.SolarPanel, p, grabRef.current.lx, grabRef.current.ly);
+                checkCollision(grabRef.current.id, p, grabRef.current.lx, grabRef.current.ly);
                 setCommonStore((state) => {
                   for (const e of state.elements) {
                     if (e.id === grabRef.current?.id) {
@@ -1384,7 +1418,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
                         const c = new Vector3().addVectors(resizeAnchor, v.clone().divideScalar(2));
                         e.cz = c.z / lz;
                         e.ly = Math.abs(v.z);
-                        checkCollision(grabRef.current.id, ObjectType.SolarPanel, c, e.lx, Math.abs(v.z));
+                        checkCollision(grabRef.current.id, c, e.lx, Math.abs(v.z));
                       } else if (
                         state.resizeHandleType === ResizeHandleType.Left ||
                         state.resizeHandleType === ResizeHandleType.Right
@@ -1395,7 +1429,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
                         const c = new Vector3().addVectors(resizeAnchor, v.clone().divideScalar(2));
                         e.cx = c.x / lx;
                         e.lx = Math.abs(v.x);
-                        checkCollision(grabRef.current.id, ObjectType.SolarPanel, c, Math.abs(v.x), e.ly);
+                        checkCollision(grabRef.current.id, c, Math.abs(v.x), e.ly);
                       }
                       e.color = e.id === invalidElementIdRef.current ? 'red' : '#fff';
                       break;
@@ -1664,13 +1698,16 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   };
 
   /** Relative to wall and snapped to grid */
-  const getPointer = (e: ThreeEvent<PointerEvent>, object3D?: Object3D | null) => {
+  const getPointer = (e: ThreeEvent<PointerEvent>, object3D?: Object3D | null, diagonalVector?: Vector3) => {
     setRayCast(e);
     const intersections = object3D ? ray.intersectObjects([object3D]) : e.intersections;
     const pointer = intersections[0].point;
     const relativePositionOnWall = getRelativePosOnWall(pointer, wallModel);
-    const positionOnGrid = getPositionOnGrid(relativePositionOnWall);
-    return positionOnGrid;
+    if (diagonalVector) {
+      return getPositionOnGrid(relativePositionOnWall.clone().add(diagonalVector)).sub(diagonalVector);
+    } else {
+      return getPositionOnGrid(relativePositionOnWall);
+    }
   };
 
   const makeNewMovingElement = (e: ThreeEvent<PointerEvent>, objectTypeToAdd: ObjectType) => {
@@ -1726,43 +1763,97 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     elBeingAddedRef.current = null;
   };
 
-  const moveElement = (id: string, relativePosition: Vector3) => {
+  const getElementHalfSize = (element?: ElementModel) => {
+    if (!element) return [0, 0];
+
+    switch (element.type) {
+      case ObjectType.Window: {
+        const oldParentId = usePrimitiveStore.getState().oldParentId;
+        if (element.parentId !== oldParentId) {
+          const oldParent = useStore.getState().elements.find((e) => e.id === oldParentId);
+          if (!oldParent) return [0, 0];
+          return [(element.lx * oldParent.lx) / 2, (element.lz * oldParent.lz) / 2];
+        } else {
+          return [(element.lx * lx) / 2, (element.lz * lz) / 2];
+        }
+      }
+      case ObjectType.Door: {
+        return [(element.lx * lx) / 2, (element.lz * lz) / 2];
+      }
+      case ObjectType.SolarPanel: {
+        return [element.lx / 2, element.lz / 2];
+      }
+    }
+    return [0, 0];
+  };
+
+  /** Retures pointer position within wall boundary, deduct WALL_PADDING and element boundary if any */
+  const getBoundedPointer = (pointer: Vector3, elementHalfSize?: number[]) => {
+    const leftPadding = WALL_PADDING + leftOffset;
+    const rightPadding = WALL_PADDING + rightOffset;
+
+    const [elHx, elHz] = elementHalfSize ? [...elementHalfSize] : [0, 0];
+
+    const [boundingMinX, boundingMaxX, boundingZ] = [
+      -hx + elHx + leftPadding,
+      hx - elHx - rightPadding,
+      hz - elHz - WALL_PADDING,
+    ];
+
+    const boundedPointer = pointer.clone();
+    boundedPointer.setX(Util.clamp(pointer.x, boundingMinX, boundingMaxX));
+    boundedPointer.setZ(Util.clamp(pointer.z, -boundingZ, boundingZ));
+
+    return boundedPointer;
+  };
+
+  const moveElement = (id: string, pointer: Vector3) => {
     setCommonStore((state) => {
       const el = state.elements.find((e) => e.id === id);
       if (!el) return;
-      el.cx = relativePosition.x / lx;
-      if (el.type === ObjectType.Door) {
-        const hz = lz / 2;
-        el.cz = (relativePosition.z - hz) / 2 / lz;
-        el.lz = (relativePosition.z + hz) / lz;
-      } else {
-        el.cz = relativePosition.z / lz;
+
+      switch (el.type) {
+        case ObjectType.Window: {
+          el.cx = pointer.x / lx;
+          el.cz = pointer.z / lz;
+          el.cy = el.id === invalidElementIdRef.current ? -0.01 : 0.3;
+          (el as WindowModel).tint =
+            el.id === invalidElementIdRef.current ? 'red' : (state.selectedElement as WindowModel).tint; // usePrimitiveStore.getState().oldWindowTint ?? '#73D8FF';
+          break;
+        }
+        case ObjectType.Door: {
+          const hz = lz / 2;
+          el.cx = pointer.x / lx;
+          el.cz = (pointer.z - hz) / 2 / lz;
+          el.lz = (pointer.z + hz) / lz;
+          break;
+        }
+        case ObjectType.SolarPanel: {
+          el.cx = pointer.x / lx;
+          el.cz = pointer.z / lz;
+          el.color = el.id === invalidElementIdRef.current ? 'red' : '#fff';
+          break;
+        }
       }
     });
   };
 
-  /** ratioed */
-  const getResizedDataByDiagonal = (e: ThreeEvent<PointerEvent>, pointer: Vector3, anchor: Vector3) => {
+  const getDiagonalResizedData = (e: ThreeEvent<PointerEvent>, pointer: Vector3, anchor: Vector3) => {
     const diagonal = new Vector3().subVectors(anchor, pointer);
     const center = new Vector3().addVectors(anchor, pointer).divideScalar(2);
     return {
-      dimensionXZ: { x: Math.abs(diagonal.x) / lx, z: Math.abs(diagonal.z) / lz },
-      positionXZ: { x: center.x / lx, z: center.z / lz },
+      dimensionXZ: { x: Math.abs(diagonal.x), z: Math.abs(diagonal.z) },
+      positionXZ: { x: center.x, z: center.z },
     };
   };
 
-  const getResizedDataByArch = (
-    e: ThreeEvent<PointerEvent>,
-    window: WindowModel,
-    pointer: Vector3,
-    anchor: Vector3,
-  ) => {
-    const [wlx, wlz] = [window.lx * lx, window.lz * lz];
-    const archHeightBottom = wlz / 2 - Math.min(window.archHeight, wlx / 2, wlz);
+  const getArchedResizedData = (archedElement: WindowModel | DoorModel, pointer: Vector3, anchor: Vector3) => {
+    const [wlx, wlz] = [archedElement.lx * lx, archedElement.lz * lz];
+    const archHeightBottom = wlz / 2 - Math.min(archedElement.archHeight, wlx / 2, wlz);
     const newArchHeight = Math.max(0, Math.min(pointer.z - anchor.z - archHeightBottom, wlx / 2));
     const newLz = archHeightBottom + newArchHeight + wlz / 2;
-    const center = new Vector3(window.cx * lx, window.cy, window.cz * lz + (newLz - wlz) / 2);
-    return { newLz: newLz / lz, newArchHeight: newArchHeight / lz, newCz: center.z / lz };
+    const center = new Vector3(archedElement.cx * lx, archedElement.cy, archedElement.cz * lz + (newLz - wlz) / 2);
+    return { newLz: newLz, newCz: center.z, newArchHeight: newArchHeight };
   };
 
   const handleWallBodyPointMove = (e: ThreeEvent<PointerEvent>) => {
@@ -1776,7 +1867,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       // move element being added
       if (isSettingElementStartPoint()) {
         const pointer = getPointer(e, outsideWallRef.current);
-        moveElement(elBeingAddedRef.current!.id, pointer);
+        const boundedPointer = getBoundedPointer(pointer);
+        moveElement(elBeingAddedRef.current!.id, boundedPointer);
       }
       // move child across different parent
       const selectedElement = useStore.getState().selectedElement;
@@ -1785,7 +1877,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           const el = state.elements.find((e) => e.id === selectedElement?.id);
           if (!el) return;
 
-          // keep abs dimension
+          // keep old abs dimension
           if (el.type === ObjectType.Window) {
             const oldParent = state.elements.find((e) => e.id === el.parentId);
             if (oldParent) {
@@ -1797,10 +1889,23 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           }
 
           const pointer = getPointer(e, outsideWallRef.current);
-          el.cx = pointer.x / lx;
-          el.cz = pointer.z / lz;
+          const boundedPointer = getBoundedPointer(pointer, [el.lx / 2, el.lz / 2]);
+          checkCollision(el.id, boundedPointer, el.lx * lx, el.lz * lz);
+
+          el.cx = boundedPointer.x / lx;
+          el.cz = boundedPointer.z / lz;
           el.parentId = id;
-          state.selectedElement = el;
+          if (state.selectedElement) {
+            state.selectedElement.parentId = id;
+          }
+
+          if (el.type === ObjectType.Window) {
+            el.cy = el.id === invalidElementIdRef.current ? -0.01 : 0.3;
+            (el as WindowModel).tint =
+              el.id === invalidElementIdRef.current ? 'red' : (state.selectedElement as WindowModel).tint;
+          } else if (el.type === ObjectType.SolarPanel) {
+            el.color = el.id === invalidElementIdRef.current ? 'red' : '#fff';
+          }
         });
         setPrimitiveStore('showWallIntersectionPlaneId', id);
       }
@@ -1814,14 +1919,15 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       useRefStore.getState().setEnableOrbitController(false);
       setShowIntersectionPlane(true);
       const pointer = getPointer(e, outsideWallRef.current);
+      const boundedPointer = getBoundedPointer(pointer);
       setCommonStore((state) => {
         state.moveHandleType = null;
         if (elBeingAddedRef.current?.type === ObjectType.Window) {
           state.resizeHandleType = ResizeHandleType.LowerRight;
-          state.resizeAnchor.copy(pointer); // relative to wall
+          state.resizeAnchor.copy(boundedPointer); // relative to wall
         } else if (elBeingAddedRef.current?.type === ObjectType.Door) {
           state.resizeHandleType = ResizeHandleType.UpperRight;
-          state.resizeAnchor.copy(pointer).setZ(-lz / 2); // relative to wall
+          state.resizeAnchor.copy(boundedPointer).setZ(-lz / 2); // relative to wall
         }
       });
       elBeingAddedRef.current!.status = ElBeingAddedStatus.SettingEndPoint;
@@ -1848,73 +1954,80 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     if (isSettingElementStartPoint()) {
       resetToAddingNewObjectStatus(elBeingAddedRef.current);
     }
+    invalidElementIdRef.current = null;
   };
 
   const handleIntersectionPlanePointerMove = (e: ThreeEvent<PointerEvent>) => {
-    const selectedElement = useStore.getState().selectedElement;
+    const selectedElement = useStore.getState().selectedElement ?? getSelectedElement();
     if (selectedElement?.parentId === wallModel.id) {
-      const pointer = getPointer(e, intersectionPlaneRef.current);
       const resizeHandleType = useStore.getState().resizeHandleType;
       if (useStore.getState().moveHandleType) {
-        moveElement(selectedElement.id, pointer);
+        const diagonalVector = new Vector3((-selectedElement.lx / 2) * lx, 0, (selectedElement.lz / 2) * lz);
+        const pointer = getPointer(e, intersectionPlaneRef.current, diagonalVector);
+        const elementHalfSize = getElementHalfSize(selectedElement);
+        const boundedPointer = getBoundedPointer(pointer, elementHalfSize);
+        checkCollision(selectedElement.id, boundedPointer, elementHalfSize[0] * 2, elementHalfSize[1] * 2);
+        moveElement(selectedElement.id, boundedPointer);
       } else if (resizeHandleType) {
+        const pointer = getPointer(e, intersectionPlaneRef.current);
+        const boundedPointer = getBoundedPointer(pointer);
         const resizeAnchor = useStore.getState().resizeAnchor;
         switch (selectedElement.type) {
           case ObjectType.Window: {
             const window = selectedElement as WindowModel;
+
             if (isArchedResize(window)) {
-              console.log(window);
-              console.log('pointer', pointer, 'anchor', resizeAnchor);
-              const [wlx, wlz] = [window.lx * lx, window.lz * lz];
-              console.log('lx', wlx, 'lz', wlz);
-              const archHeightBottom = wlz / 2 - Math.min(window.archHeight, wlx / 2, wlz);
-              const newArchHeight = Math.max(0, Math.min(pointer.z - resizeAnchor.z - archHeightBottom, wlx / 2));
-              const newWindowHeight = archHeightBottom + newArchHeight + wlz / 2;
-              const relativePos = new Vector3(window.cx * lx, window.cy, window.cz * lz + (newWindowHeight - wlz) / 2);
-              console.log(archHeightBottom, newArchHeight, newWindowHeight, relativePos);
-              // checkCollision(grabRef.current.id, ObjectType.Window, relativePos, wlx, newWindowHeight);
-              setCommonStore((state) => {
-                for (const e of state.elements) {
-                  if (e.id === window.id) {
-                    e.lz = newWindowHeight / lz;
-                    e.cz = relativePos.z / lz;
-                    console.log('set cz', relativePos.z / lz);
-                    (e as WindowModel).archHeight = newArchHeight;
-                    // e.cy = e.id === invalidElementIdRef.current ? -0.01 : 0.3;
-                    // (e as WindowModel).tint = e.id === invalidElementIdRef.current ? 'red' : oldTintRef.current;
-                  }
-                }
-              });
-            } else {
-              const { dimensionXZ, positionXZ } = getResizedDataByDiagonal(e, pointer, resizeAnchor);
+              const { newLz, newCz, newArchHeight } = getArchedResizedData(window, boundedPointer, resizeAnchor);
+              checkCollision(window.id, new Vector3(window.cx * lx, 0, newCz), window.lx * lx, newLz);
               setCommonStore((state) => {
                 const w = state.elements.find((e) => e.id === window.id) as WindowModel;
                 if (!w) return;
-                w.lx = dimensionXZ.x;
-                w.lz = dimensionXZ.z;
-                w.cx = positionXZ.x;
-                w.cz = positionXZ.z;
-                // w.cy = w.id === invalidElementIdRef.current ? -0.01 : 0.3;
-                // w.tint = w.id === invalidElementIdRef.current ? 'red' : oldTintRef.current;
+                w.lz = newLz / lz;
+                w.cz = newCz / lz;
+                w.archHeight = newArchHeight;
+                w.cy = w.id === invalidElementIdRef.current ? -0.01 : 0.3;
+                w.tint = w.id === invalidElementIdRef.current ? 'red' : window.tint;
+              });
+            } else {
+              const { dimensionXZ, positionXZ } = getDiagonalResizedData(e, boundedPointer, resizeAnchor);
+              checkCollision(window.id, new Vector3(positionXZ.x, 0, positionXZ.z), dimensionXZ.x, dimensionXZ.z);
+              setCommonStore((state) => {
+                const w = state.elements.find((e) => e.id === window.id) as WindowModel;
+                if (!w) return;
+                w.lx = dimensionXZ.x / lx;
+                w.lz = dimensionXZ.z / lz;
+                w.cx = positionXZ.x / lx;
+                w.cz = positionXZ.z / lz;
+                w.cy = w.id === invalidElementIdRef.current ? -0.01 : 0.3;
+                w.tint = w.id === invalidElementIdRef.current ? 'red' : window.tint;
               });
             }
             break;
           }
           case ObjectType.Door: {
             const door = selectedElement as DoorModel;
-
             if (isArchedResize(door)) {
-              // todo
-            } else {
-              const { dimensionXZ, positionXZ } = getResizedDataByDiagonal(e, pointer, resizeAnchor);
+              const { newLz, newCz, newArchHeight } = getArchedResizedData(door, boundedPointer, resizeAnchor);
+              checkCollision(door.id, new Vector3(door.cx * lx, 0, newCz), door.lx * lx, newLz);
               setCommonStore((state) => {
                 const d = state.elements.find((e) => e.id === door.id) as DoorModel;
                 if (!d) return;
-                d.cx = positionXZ.x;
-                d.lx = dimensionXZ.x;
-                d.cz = (pointer.z - lz / 2) / 2 / lz;
-                d.lz = (pointer.z + lz / 2) / lz;
-                // d.color = d.id === invalidElementIdRef.current ? INVALID_ELEMENT_COLOR : oldDoorColorRef.current;
+                d.lz = newLz / lz;
+                d.cz = newCz / lz;
+                d.archHeight = newArchHeight;
+                d.color = d.id === invalidElementIdRef.current ? INVALID_ELEMENT_COLOR : selectedElement.color;
+              });
+            } else {
+              const { dimensionXZ, positionXZ } = getDiagonalResizedData(e, boundedPointer, resizeAnchor);
+              checkCollision(door.id, new Vector3(positionXZ.x, 0, positionXZ.z), dimensionXZ.x, dimensionXZ.z);
+              setCommonStore((state) => {
+                const d = state.elements.find((e) => e.id === door.id) as DoorModel;
+                if (!d) return;
+                d.cx = positionXZ.x / lx;
+                d.lx = dimensionXZ.x / lx;
+                d.cz = (boundedPointer.z - lz / 2) / 2 / lz;
+                d.lz = (boundedPointer.z + lz / 2) / lz;
+                d.color = d.id === invalidElementIdRef.current ? INVALID_ELEMENT_COLOR : selectedElement.color;
               });
             }
             break;
@@ -1925,13 +2038,51 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   };
 
   const handleIntersectionPlanePointerUp = () => {
+    if (invalidElementIdRef.current) {
+      if (elBeingAddedRef.current && elBeingAddedRef.current.status === ElBeingAddedStatus.SettingEndPoint) {
+        // remove new element directly
+        setCommonStore((state) => {
+          state.elements.pop();
+        });
+        elBeingAddedRef.current = null;
+      } else if (useStore.getState().moveHandleType || useStore.getState().resizeHandleType) {
+        setCommonStore((state) => {
+          state.elements = state.elements.map((element) => {
+            if (element.id === state.selectedElement?.id) {
+              const oldElement = state.selectedElement;
+              const oldParentId = usePrimitiveStore.getState().oldParentId;
+              if (oldParentId) {
+                oldElement.parentId = oldParentId;
+              }
+              return oldElement;
+            } else {
+              return element;
+            }
+          });
+        });
+      }
+    } else {
+      if (elBeingAddedRef.current && elBeingAddedRef.current.status === ElBeingAddedStatus.SettingEndPoint) {
+        const elements = useStore.getState().elements;
+        const newElement = elements[elements.length - 1];
+        handleUndoableAdd(newElement);
+        elBeingAddedRef.current = null;
+      } else if (useStore.getState().moveHandleType) {
+        handleUndoableMove();
+      } else if (useStore.getState().resizeHandleType) {
+        handleUndoableResize();
+      }
+    }
+
     useRefStore.getState().setEnableOrbitController(true);
     setShowIntersectionPlane(false);
     setCommonStore((state) => {
       state.moveHandleType = null;
       state.resizeHandleType = null;
+      state.selectedElement = state.elements.find((e) => e.selected) as ElementModel;
     });
     setPrimitiveStore('showWallIntersectionPlaneId', null);
+    invalidElementIdRef.current = null;
     resetBeingAddedChildId();
   };
 
@@ -2392,7 +2543,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
             <Plane
               ref={intersectionPlaneRef}
               name={'Wall Intersection Plane'}
-              args={[10, 10]}
+              args={[20, 20]}
               position={[0, ly / 3, 0]}
               rotation={[HALF_PI, 0, 0]}
               onPointerMove={handleIntersectionPlanePointerMove}

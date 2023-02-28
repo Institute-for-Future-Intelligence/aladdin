@@ -19,6 +19,7 @@ import { Util } from '../../Util';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useRefStore } from 'src/stores/commonRef';
 import { WALL_OUTSIDE_SURFACE_MESH_NAME } from '../wall/wall';
+import { ElementModel } from 'src/models/ElementModel';
 
 export const defaultShutter = { showLeft: false, showRight: false, color: 'grey', width: 0.5 };
 
@@ -189,7 +190,6 @@ const Window = (windowModel: WindowModel) => {
 
   const setCommonStore = useStore(Selector.set);
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
-  const isAddingElement = useStore(Selector.isAddingElement);
   const windowShininess = useStore(Selector.viewState.windowShininess);
 
   const selectMe = () => {
@@ -211,8 +211,8 @@ const Window = (windowModel: WindowModel) => {
       e.intersections[0].eventObject.name === GROUP_NAME &&
       !useStore.getState().moveHandleType &&
       !useStore.getState().resizeHandleType &&
-      useStore.getState().objectTypeToAdd === ObjectType.None &&
-      !isAddingElement()
+      !useStore.getState().isAddingElement() &&
+      useStore.getState().objectTypeToAdd === ObjectType.None
     );
   };
 
@@ -237,7 +237,7 @@ const Window = (windowModel: WindowModel) => {
     setCommonStore((state) => {
       state.resizeHandleType = handleType;
       state.resizeAnchor.copy(new Vector3(cx, 0, cz).add(p));
-      console.log('set anchor', state.resizeAnchor);
+      state.selectedElement = state.elements.find((e) => e.selected) as ElementModel;
     });
   };
 
@@ -253,8 +253,10 @@ const Window = (windowModel: WindowModel) => {
         case MoveHandleType.Mid: {
           useRefStore.getState().setEnableOrbitController(false);
           setPrimitiveStore('showWallIntersectionPlaneId', parentId);
+          setPrimitiveStore('oldParentId', parentId);
           setCommonStore((state) => {
             state.moveHandleType = handleType;
+            state.selectedElement = state.elements.find((e) => e.selected) as ElementModel;
           });
           break;
         }

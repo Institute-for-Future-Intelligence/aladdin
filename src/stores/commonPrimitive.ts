@@ -90,6 +90,8 @@ export interface PrimitiveStoreState {
   elementBeingCanceledId: string | null;
 
   showWallIntersectionPlaneId: string | null;
+
+  oldParentId: string | null;
 }
 
 export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
@@ -184,5 +186,7 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
     elementBeingCanceledId: null,
 
     showWallIntersectionPlaneId: null,
+
+    oldParentId: null,
   };
 });

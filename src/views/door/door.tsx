@@ -13,13 +13,23 @@ import RectangleDoor from './rectangleDoor';
 import ArchedDoor from './archedDoor';
 import { useDoorTexture, useUpdateOldDoors } from './hooks';
 import { ArchResizeHandle } from '../window/windowHandleWrapper';
-import { CanvasTexture, DoubleSide, FrontSide, MeshBasicMaterial, MeshStandardMaterial, RepeatWrapping } from 'three';
+import {
+  CanvasTexture,
+  DoubleSide,
+  FrontSide,
+  MeshBasicMaterial,
+  MeshStandardMaterial,
+  RepeatWrapping,
+  Vector3,
+} from 'three';
 import { Plane } from '@react-three/drei';
 import { HALF_PI, INVALID_ELEMENT_COLOR } from 'src/constants';
 import { RulerOnWall } from '../rulerOnWall';
 import { Util } from '../../Util';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
+import { useRefStore } from 'src/stores/commonRef';
+import { ElementModel } from 'src/models/ElementModel';
 
 interface DoorHandleWapperProps {
   dimension: number[];
@@ -79,6 +89,7 @@ const Door = (doorModel: DoorModel) => {
 
   const {
     id,
+    parentId,
     cx,
     cy,
     cz,
@@ -94,9 +105,10 @@ const Door = (doorModel: DoorModel) => {
     filled = true,
   } = doorModel;
 
-  const setCommonStore = useStore(Selector.set);
+  const GROUP_NAME = `Door Group ${id}`;
 
-  const addedWallIdRef = useRef(useStore.getState().addedWallId);
+  const setCommonStore = useStore(Selector.set);
+  const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
 
   const selectMe = () => {
     setCommonStore((state) => {
@@ -111,12 +123,46 @@ const Door = (doorModel: DoorModel) => {
     });
   };
 
-  const handleContextMenu = (e: ThreeEvent<MouseEvent>) => {
-    const intersectableObjects = e.intersections.filter(
-      (obj) => !obj.eventObject.name.startsWith('Wall Intersection Plane'),
+  const isAllowedToSelectMe = (e: ThreeEvent<PointerEvent | MouseEvent>) => {
+    // const intersectableObjects = e.intersections.filter(
+    //   (obj) => !obj.eventObject.name.startsWith('Wall Intersection Plane'),
+    // );
+    return (
+      e.intersections.length > 0 &&
+      e.intersections[0].eventObject.name === GROUP_NAME &&
+      !useStore.getState().moveHandleType &&
+      !useStore.getState().resizeHandleType &&
+      !useStore.getState().isAddingElement() &&
+      useStore.getState().objectTypeToAdd === ObjectType.None
     );
-    if (e.intersections.length > 0 && intersectableObjects[0].eventObject.name === `Door group ${id}`) {
-      selectMe();
+  };
+
+  const isClickedOnHandles = (e: ThreeEvent<PointerEvent>) => {
+    if (e.eventObject.name === GROUP_NAME && e.intersections.length > 0) {
+      switch (e.object.name) {
+        case ResizeHandleType.UpperLeft:
+        case ResizeHandleType.UpperRight:
+        case ResizeHandleType.Arch:
+          return true;
+      }
+    }
+    return false;
+  };
+
+  const onClickResizeHandle = (handleType: ResizeHandleType, p: Vector3) => {
+    useRefStore.getState().setEnableOrbitController(false);
+    setPrimitiveStore('showWallIntersectionPlaneId', parentId);
+    setCommonStore((state) => {
+      state.resizeHandleType = handleType;
+      state.resizeAnchor.copy(new Vector3(cx, 0, cz).add(p));
+      state.selectedElement = state.elements.find((e) => e.selected) as ElementModel;
+    });
+  };
+
+  const handleContextMenu = (e: ThreeEvent<MouseEvent>) => {
+    if (useStore.getState().addedWallId) return;
+    if (isAllowedToSelectMe(e)) {
+      !selected && selectMe();
       setCommonStore((state) => {
         state.contextMenuObjectType = ObjectType.Door;
       });
@@ -124,19 +170,26 @@ const Door = (doorModel: DoorModel) => {
   };
 
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
-    if (e.button === 2 || addedWallIdRef.current) return; // ignore right-click
-    const intersectableObjects = e.intersections.filter(
-      (obj) => !obj.eventObject.name.startsWith('Wall Intersection Plane'),
-    );
-    if (e.intersections.length > 0 && intersectableObjects[0].eventObject.name === `Door group ${id}`) {
-      if (
-        !useStore.getState().moveHandleType &&
-        !useStore.getState().resizeHandleType &&
-        useStore.getState().objectTypeToAdd === ObjectType.None &&
-        !useStore.getState().isAddingElement() &&
-        !selected
-      ) {
-        selectMe();
+    if (e.button === 2 || useStore.getState().addedWallId) return; // ignore right-click
+    if (isAllowedToSelectMe(e)) {
+      selectMe();
+    }
+
+    if (isClickedOnHandles(e)) {
+      const handleType = e.intersections[0].eventObject.name;
+      switch (handleType) {
+        case ResizeHandleType.UpperLeft: {
+          onClickResizeHandle(handleType, new Vector3(lx / 2, 0, -lz / 2));
+          break;
+        }
+        case ResizeHandleType.UpperRight: {
+          onClickResizeHandle(handleType, new Vector3(-lx / 2, 0, -lz / 2));
+          break;
+        }
+        case ResizeHandleType.Arch: {
+          onClickResizeHandle(handleType, new Vector3(0, 0, 0));
+          break;
+        }
       }
     }
   };
@@ -224,12 +277,7 @@ const Door = (doorModel: DoorModel) => {
   }, [showSolarRadiationHeatmap, heatmapTexture, color, textureType, texture, filled]);
 
   return (
-    <group
-      name={`Door group ${id}`}
-      position={[cx, 0, cz]}
-      onPointerDown={handlePointerDown}
-      onContextMenu={handleContextMenu}
-    >
+    <group name={GROUP_NAME} position={[cx, 0, cz]} onPointerDown={handlePointerDown} onContextMenu={handleContextMenu}>
       {renderDoor()}
 
       {selected && <RulerOnWall element={doorModel} />}
