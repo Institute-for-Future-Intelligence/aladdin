@@ -702,23 +702,23 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     return new Vector3();
   }
 
-  function checkCollision(id: string, p: Vector3, wlx: number, wlz: number) {
-    if (wlx < 0.1 || wlz < 0.1) {
+  function checkCollision(id: string, p: Vector3, elx: number, elz: number) {
+    if (elx < 0.1 || elz < 0.1) {
       invalidElementIdRef.current = id;
       return false;
     }
 
-    if (wlx > lx || (!roofId && wlz > lz)) {
+    if (elx > lx || (!roofId && elz > lz)) {
       invalidElementIdRef.current = id;
       return false;
     }
 
     for (const e of elementsOnWall) {
       if (e.id !== id) {
-        const cMinX = p.x - wlx / 2; // current element left
-        const cMaxX = p.x + wlx / 2; // current element right
-        const cMinZ = p.z - wlz / 2; // current element bot
-        const cMaxZ = p.z + wlz / 2; // current element up
+        const cMinX = p.x - elx / 2; // current element left
+        const cMaxX = p.x + elx / 2; // current element right
+        const cMinZ = p.z - elz / 2; // current element bot
+        const cMaxZ = p.z + elz / 2; // current element up
         switch (e.type) {
           case ObjectType.Door:
           case ObjectType.Window: {
@@ -748,6 +748,12 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     }
     invalidElementIdRef.current = null;
     return true; // no collision
+  }
+
+  function checkOutsideBoundary(id: string, center: Vector3, eLx: number, eLz: number) {
+    if (!Util.isElementInsideWall(center, eLx, eLz, outerWallPoints2D)) {
+      invalidElementIdRef.current = id;
+    }
   }
 
   function setRayCast(e: PointerEvent) {
@@ -1326,6 +1332,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         boundedPointer.setZ(maxY - botPadding);
       }
     }
+
+    boundedPointer.setZ(Math.max(boundingMinZ, boundedPointer.z));
     return boundedPointer;
   }
 
@@ -1537,7 +1545,11 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           elementHalfSize,
           ignorePadding: selectedElement.type === ObjectType.SolarPanel,
         });
-        checkCollision(selectedElement.id, boundedPointer, elementHalfSize[0] * 2, elementHalfSize[1] * 2);
+        const [eLx, eLz] = [elementHalfSize[0] * 2, elementHalfSize[1] * 2];
+        checkCollision(selectedElement.id, boundedPointer, eLx, eLz);
+        if (selectedElement.type !== ObjectType.SolarPanel) {
+          checkOutsideBoundary(selectedElement.id, boundedPointer, eLx, eLz);
+        }
         moveElement(selectedElement.id, boundedPointer);
       }
 
@@ -1555,9 +1567,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               const { newLz, newCz, newArchHeight } = getArchedResizedData(window, boundedPointer, resizeAnchor);
               const center = new Vector3(window.cx * lx, 0, newCz);
               checkCollision(window.id, center, window.lx * lx, newLz);
-              if (!Util.isElementInsideWall(center, window.lx * lx, newLz, outerWallPoints2D)) {
-                invalidElementIdRef.current = window.id;
-              }
+              checkOutsideBoundary(window.id, center, window.lx * lx, newLz);
               setCommonStore((state) => {
                 const w = state.elements.find((e) => e.id === window.id) as WindowModel;
                 if (!w) return;
@@ -1571,9 +1581,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               const { dimensionXZ, positionXZ } = getDiagonalResizedData(e, boundedPointer, resizeAnchor);
               const center = new Vector3(positionXZ.x, 0, positionXZ.z);
               checkCollision(window.id, center, dimensionXZ.x, dimensionXZ.z);
-              if (!Util.isElementInsideWall(center, dimensionXZ.x, dimensionXZ.z, outerWallPoints2D)) {
-                invalidElementIdRef.current = window.id;
-              }
+              checkOutsideBoundary(window.id, center, dimensionXZ.x, dimensionXZ.z);
               setCommonStore((state) => {
                 const w = state.elements.find((e) => e.id === window.id) as WindowModel;
                 if (!w) return;
@@ -1595,9 +1603,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               const { newLz, newCz, newArchHeight } = getArchedResizedData(door, boundedPointer, resizeAnchor);
               const center = new Vector3(door.cx * lx, 0, newCz);
               checkCollision(door.id, center, door.lx * lx, newLz);
-              if (!Util.isElementInsideWall(center, door.lx * lx, newLz, outerWallPoints2D)) {
-                invalidElementIdRef.current = door.id;
-              }
+              checkOutsideBoundary(door.id, center, door.lx * lx, newLz);
               setCommonStore((state) => {
                 const d = state.elements.find((e) => e.id === door.id) as DoorModel;
                 if (!d) return;
@@ -1610,9 +1616,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               const { dimensionXZ, positionXZ } = getDiagonalResizedData(e, boundedPointer, resizeAnchor);
               const center = new Vector3(positionXZ.x, 0, positionXZ.z);
               checkCollision(door.id, center, dimensionXZ.x, dimensionXZ.z);
-              if (!Util.isElementInsideWall(center, dimensionXZ.x, dimensionXZ.z, outerWallPoints2D)) {
-                invalidElementIdRef.current = door.id;
-              }
+              checkOutsideBoundary(door.id, center, dimensionXZ.x, dimensionXZ.z);
               setCommonStore((state) => {
                 const d = state.elements.find((e) => e.id === door.id) as DoorModel;
                 if (!d) return;
