@@ -83,6 +83,8 @@ export interface WallProps {
 
 export const WALL_OUTSIDE_SURFACE_MESH_NAME = 'Wall Outside Surface';
 
+export const WALL_BLOCK_PLANE = 'Wall Block Plane';
+
 export const WALL_PADDING = 0.1;
 
 const Wall = ({ wallModel, foundationModel }: WallProps) => {
@@ -1661,11 +1663,16 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     if (useStore.getState().moveHandleType && child && isChildType(child) && child.parentId !== id) {
       const intersections = event.intersections.filter(
         (i) =>
-          i.eventObject.name.includes(WALL_OUTSIDE_SURFACE_MESH_NAME) || i.eventObject.name.includes(WINDOW_GROUP_NAME),
+          i.eventObject.name.includes(WALL_OUTSIDE_SURFACE_MESH_NAME) ||
+          i.eventObject.name.includes(WINDOW_GROUP_NAME) ||
+          i.eventObject.name === WALL_BLOCK_PLANE,
       );
-      const hasBlockedWindow =
-        intersections.length > 0 && intersections[0].eventObject.name.includes(WINDOW_GROUP_NAME);
-      if (!hasBlockedWindow) {
+      const hasBlockedPlane =
+        intersections.length > 0 &&
+        (intersections[0].eventObject.name === WALL_BLOCK_PLANE ||
+          intersections[0].eventObject.name.includes(WINDOW_GROUP_NAME));
+
+      if (!hasBlockedPlane) {
         return true;
       }
     }
@@ -2538,20 +2545,33 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
             />
           )}
 
-          {/* intersection plane for childs */}
+          {/* intersection planes for childs */}
           {(showIntersectionPlane || showWallIntersectionPlaneId === id) && (
-            <Plane
-              ref={intersectionPlaneRef}
-              name={'Wall Intersection Plane'}
-              args={[20, 20]}
-              position={[0, ly / 3, 0]}
-              rotation={[HALF_PI, 0, 0]}
-              onPointerMove={handleIntersectionPlanePointerMove}
-              onPointerUp={handleIntersectionPlanePointerUp}
-              visible={false}
-            >
-              <meshBasicMaterial color={'blue'} side={DoubleSide} />
-            </Plane>
+            <>
+              <Plane
+                ref={intersectionPlaneRef}
+                name={'Wall Intersection Plane'}
+                args={[10000, 10000]}
+                position={[0, ly / 3, 0]}
+                rotation={[HALF_PI, 0, 0]}
+                onPointerMove={handleIntersectionPlanePointerMove}
+                onPointerUp={handleIntersectionPlanePointerUp}
+                visible={false}
+              >
+                <meshBasicMaterial color={'blue'} side={DoubleSide} />
+              </Plane>
+              {/* block plane */}
+              <Plane
+                name={WALL_BLOCK_PLANE}
+                args={[lx, lz]}
+                rotation={[HALF_PI, 0, 0]}
+                position={[0, ly, 0]}
+                onPointerMove={() => {
+                  /* Do Not Delete! Capture event for wall pointer move*/
+                }}
+                visible={false}
+              />
+            </>
           )}
 
           {elementsOnWall.map((e) => {
