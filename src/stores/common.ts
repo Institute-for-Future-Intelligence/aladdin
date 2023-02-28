@@ -641,7 +641,7 @@ export interface CommonStoreState {
   setAddedRoofId: (id: string | null) => void;
 
   // used for undo/redo for elements on roof
-  OldRooftopElementData: OldRooftopElementData | null;
+  oldRooftopElementData: OldRooftopElementData | null;
   setOldRooftopElementData: (data: OldRooftopElementData | null) => void;
 
   groupActionMode: boolean;
@@ -4180,6 +4180,7 @@ export const useStore = create<CommonStoreState>(
                     normal,
                   );
                   state.elements.push(wall);
+                  state.selectedElement = wall;
                   model = wall;
                   break;
               }
@@ -5629,10 +5630,10 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
-          OldRooftopElementData: null,
+          oldRooftopElementData: null,
           setOldRooftopElementData(data: OldRooftopElementData | null) {
             immerSet((state) => {
-              state.OldRooftopElementData = data;
+              state.oldRooftopElementData = data;
             });
           },
 

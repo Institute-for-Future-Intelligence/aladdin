@@ -20,6 +20,8 @@ export interface UndoableMove extends Undoable {
   movedElementType?: ObjectType;
   oldParentId?: string;
   newParentId?: string;
+  oldFoundationId?: string;
+  newFoundationId?: string;
   oldDimension: number[];
   newDimension: number[];
 }

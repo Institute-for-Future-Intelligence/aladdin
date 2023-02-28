@@ -1038,12 +1038,29 @@ export class Util {
   }
 
   // p is relative position on wall
-  static isElementInsideWall(p: Vector3, wlx: number, wlz: number, points: Point2[]) {
+  static isElementInsideWall(p: Vector3, wlx: number, wlz: number, boundingPoints: Point2[]) {
+    const hx = wlx / 2;
+    const hz = wlz / 2;
     for (let i = -1; i <= 1; i += 2) {
       for (let j = -1; j <= 1; j += 2) {
-        if (!Util.isPointInside(p.x + (wlx / 2) * i, p.z + (wlz / 2) * j, points)) {
+        const x = p.x + hx * i;
+        const y = p.z + hz * j;
+        if (!Util.isPointInside(x, y, boundingPoints)) {
           return false;
         }
+      }
+    }
+
+    const elementPoints = [
+      { x: p.x - hx, y: p.z - hz },
+      { x: p.x - hx, y: p.z + hz },
+      { x: p.x + hx, y: p.z + hz },
+      { x: p.x + hx, y: p.z - hz },
+    ];
+
+    for (const p of boundingPoints) {
+      if (Util.isPointInside(p.x, p.y, elementPoints)) {
+        return false;
       }
     }
     return true;

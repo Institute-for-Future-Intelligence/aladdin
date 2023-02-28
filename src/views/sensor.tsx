@@ -26,6 +26,8 @@ import Wireframe from '../components/wireframe';
 import i18n from '../i18n/i18n';
 import { WallModel } from '../models/WallModel';
 import { FoundationModel } from '../models/FoundationModel';
+import { useRefStore } from 'src/stores/commonRef';
+import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 
 const Sensor = ({
   id,
@@ -197,6 +199,15 @@ const Sensor = ({
         onPointerDown={(e) => {
           if (e.button === 2) return; // ignore right-click
           selectMe(id, e, ActionType.Move);
+          useRefStore.getState().setEnableOrbitController(false);
+          usePrimitiveStore.setState((state) => {
+            state.showWallIntersectionPlaneId = parentId;
+            state.oldParentId = parentId;
+            state.oldFoundationId = foundationId;
+          });
+          setCommonStore((state) => {
+            state.moveHandleType = MoveHandleType.Default;
+          });
         }}
         onContextMenu={(e) => {
           selectMe(id, e);
@@ -260,6 +271,15 @@ const Sensor = ({
           name={MoveHandleType.Default}
           onPointerDown={(e) => {
             selectMe(id, e, ActionType.Move);
+            useRefStore.getState().setEnableOrbitController(false);
+            usePrimitiveStore.setState((state) => {
+              state.showWallIntersectionPlaneId = parentId;
+              state.oldParentId = parentId;
+              state.oldFoundationId = foundationId;
+            });
+            setCommonStore((state) => {
+              state.moveHandleType = MoveHandleType.Default;
+            });
           }}
         >
           <meshBasicMaterial attach="material" color={'orange'} />

@@ -160,6 +160,7 @@ const Window = (windowModel: WindowModel) => {
   const {
     id,
     parentId,
+    foundationId,
     cx,
     cy,
     cz,
@@ -252,8 +253,11 @@ const Window = (windowModel: WindowModel) => {
       switch (handleType) {
         case MoveHandleType.Mid: {
           useRefStore.getState().setEnableOrbitController(false);
-          setPrimitiveStore('showWallIntersectionPlaneId', parentId);
-          setPrimitiveStore('oldParentId', parentId);
+          usePrimitiveStore.setState((state) => {
+            state.showWallIntersectionPlaneId = parentId;
+            state.oldParentId = parentId;
+            state.oldFoundationId = foundationId;
+          });
           setCommonStore((state) => {
             state.moveHandleType = handleType;
             state.selectedElement = state.elements.find((e) => e.selected) as ElementModel;

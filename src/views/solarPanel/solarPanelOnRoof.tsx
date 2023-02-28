@@ -900,7 +900,7 @@ const SolarPanelOnRoof = ({
     if (showSolarRadiationHeatmap && heatmapTexture) {
       return <meshBasicMaterial attachArray="material" map={heatmapTexture} />;
     }
-    if (!texture) return null;
+    if (!texture) return <meshStandardMaterial attachArray="material" color={color} />;
     if (orthographic || solarPanelShininess === 0) {
       return <meshStandardMaterial attachArray="material" map={texture} color={color} />;
     }

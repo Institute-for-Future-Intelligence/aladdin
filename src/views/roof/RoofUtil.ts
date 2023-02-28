@@ -10,6 +10,7 @@ import { Point2 } from 'src/models/Point2';
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
 import { RoofModel } from 'src/models/RoofModel';
+import { WALL_PADDING } from '../wall/wall';
 
 export class RoofUtil {
   // roof related
@@ -139,13 +140,15 @@ export class RoofUtil {
             if (e.parentId === wall.id) {
               let hx = e.lx / 2;
               let hz = e.lz / 2;
+              let padding = WALL_PADDING;
               if (e.type === ObjectType.SolarPanel) {
-                hx = hx / wall.lx;
-                hz = e.ly / wall.lz / 2;
+                hx = (hx - 0.01) / wall.lx;
+                hz = (e.ly / 2 - 0.01) / wall.lz;
+                padding = 0;
               }
               const minX = e.cx * wall.lx - hx * wall.lx;
               const maxX = e.cx * wall.lx + hx * wall.lx;
-              const maxZ = e.cz * wall.lz + hz * wall.lz + 0.5;
+              const maxZ = e.cz * wall.lz + hz * wall.lz + padding;
               if (!RoofUtil.isPointInside(points, minX, maxZ) || !RoofUtil.isPointInside(points, maxX, maxZ)) {
                 return false;
               }
@@ -404,7 +407,7 @@ export class RoofUtil {
     if (!elem) return false;
     switch (elem.type) {
       case ObjectType.SolarPanel:
-        return (elem as SolarPanelModel).parentType === ObjectType.Roof;
+      // return (elem as SolarPanelModel).parentType === ObjectType.Roof;
       case ObjectType.Light:
       case ObjectType.Sensor:
         return true;

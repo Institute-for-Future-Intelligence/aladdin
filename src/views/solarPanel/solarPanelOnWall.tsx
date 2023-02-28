@@ -354,6 +354,7 @@ const SolarPanelOnWall = ({
   selected = false,
   locked = false,
   parentId,
+  foundationId,
   orientation = Orientation.portrait,
   showLabel,
   drawSunBeam,
@@ -553,8 +554,11 @@ const SolarPanelOnWall = ({
       switch (handleType) {
         case MoveHandleType.Default: {
           useRefStore.getState().setEnableOrbitController(false);
-          setPrimitiveStore('showWallIntersectionPlaneId', parentId);
-          setPrimitiveStore('oldParentId', parentId);
+          usePrimitiveStore.setState((state) => {
+            state.showWallIntersectionPlaneId = parentId;
+            state.oldParentId = parentId;
+            state.oldFoundationId = foundationId;
+          });
           setCommonStore((state) => {
             state.moveHandleType = handleType;
             state.selectedElement = state.elements.find((e) => e.selected) as ElementModel;
@@ -595,7 +599,7 @@ const SolarPanelOnWall = ({
     if (showSolarRadiationHeatmap && heatmapTexture) {
       return <meshBasicMaterial attachArray="material" map={heatmapTexture} />;
     }
-    if (!texture) return null;
+    if (!texture) return <meshStandardMaterial attachArray="material" color={color} />;
     if (orthographic || solarPanelShininess === 0) {
       return <meshStandardMaterial attachArray="material" map={texture} color={color} />;
     }
@@ -624,7 +628,12 @@ const SolarPanelOnWall = ({
             args={[lx, ly, lz]}
             name={'Solar Panel'}
             onPointerDown={(e) => {
-              if (e.button === 2) return; // ignore right-click
+              if (
+                e.button === 2 ||
+                useStore.getState().isAddingElement() ||
+                useStore.getState().objectTypeToAdd !== ObjectType.None
+              )
+                return; // ignore right-click
               selectMe(id, e, ActionType.Select);
             }}
             onContextMenu={(e) => {

@@ -27,6 +27,8 @@ import { WallModel } from '../models/WallModel';
 import { FoundationModel } from '../models/FoundationModel';
 import { LightModel } from '../models/LightModel';
 import { RoofModel } from '../models/RoofModel';
+import { useRefStore } from 'src/stores/commonRef';
+import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 
 const Light = ({
   id,
@@ -219,6 +221,12 @@ const Light = ({
         onPointerDown={(e) => {
           if (e.button === 2) return; // ignore right-click
           selectMe(id, e, ActionType.Move);
+          useRefStore.getState().setEnableOrbitController(false);
+          usePrimitiveStore.setState((state) => {
+            state.showWallIntersectionPlaneId = parentId;
+            state.oldParentId = parentId;
+            state.oldFoundationId = foundationId;
+          });
         }}
         onContextMenu={(e) => {
           selectMe(id, e);
@@ -283,6 +291,12 @@ const Light = ({
           name={MoveHandleType.Default}
           onPointerDown={(e) => {
             selectMe(id, e, ActionType.Move);
+            useRefStore.getState().setEnableOrbitController(false);
+            usePrimitiveStore.setState((state) => {
+              state.showWallIntersectionPlaneId = parentId;
+              state.oldParentId = parentId;
+              state.oldFoundationId = foundationId;
+            });
           }}
         >
           <meshBasicMaterial attach="material" color={'orange'} />

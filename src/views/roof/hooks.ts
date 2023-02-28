@@ -31,21 +31,21 @@ import { usePrimitiveStore } from '../../stores/commonPrimitive';
 
 export const useElementUndoable = () => {
   const addUndoableMove = (elem: SolarPanelModel | SensorModel | LightModel) => {
-    const OldRooftopElementData = useStore.getState().OldRooftopElementData;
-    if (!OldRooftopElementData) return;
+    const oldRooftopElementData = useStore.getState().oldRooftopElementData;
+    if (!oldRooftopElementData) return;
     const undoabeMove = {
       name: 'Move ' + elem.type + ' on Roof',
       timestamp: Date.now(),
       id: elem.id,
-      oldParentId: OldRooftopElementData.parentId,
+      oldParentId: oldRooftopElementData.parentId,
       newParentId: elem.parentId,
-      oldFoundationId: OldRooftopElementData.foundationId,
+      oldFoundationId: oldRooftopElementData.foundationId,
       newFoundationId: elem.foundationId,
-      oldPos: [...OldRooftopElementData.position],
+      oldPos: [...oldRooftopElementData.position],
       newPos: [elem.cx, elem.cy, elem.cz],
-      oldRot: [...OldRooftopElementData.rotation],
+      oldRot: [...oldRooftopElementData.rotation],
       newRot: [...elem.rotation],
-      oldNor: [...OldRooftopElementData.normal],
+      oldNor: [...oldRooftopElementData.normal],
       newNor: [...elem.normal],
       undo() {
         useStore.getState().set((state) => {
@@ -84,7 +84,7 @@ export const useElementUndoable = () => {
       if (!state.selectedElement) return;
       for (const e of state.elements) {
         if (e.id === state.selectedElement.id) {
-          const oldData = state.OldRooftopElementData;
+          const oldData = state.oldRooftopElementData;
           if (oldData) {
             e.parentId = oldData.parentId;
             e.foundationId = oldData.foundationId;

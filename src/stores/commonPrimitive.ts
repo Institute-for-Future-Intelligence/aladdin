@@ -92,6 +92,7 @@ export interface PrimitiveStoreState {
   showWallIntersectionPlaneId: string | null;
 
   oldParentId: string | null;
+  oldFoundationId: string | null | undefined;
 }
 
 export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
@@ -188,5 +189,6 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
     showWallIntersectionPlaneId: null,
 
     oldParentId: null,
+    oldFoundationId: null,
   };
 });

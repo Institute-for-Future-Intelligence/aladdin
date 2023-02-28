@@ -2079,6 +2079,7 @@ const Foundation = ({
             }
             break;
           case ObjectType.Wall:
+            if (useStore.getState().selectedElement?.type !== ObjectType.Wall) break;
             if (
               resizeHandleType &&
               (resizeHandleType === ResizeHandleType.LowerLeft || resizeHandleType === ResizeHandleType.LowerRight)
@@ -2524,6 +2525,7 @@ const Foundation = ({
           state.addedWallId = null;
           state.objectTypeToAdd = ObjectType.Wall;
         });
+        grabRef.current = null;
       }
     }
     setWallAuxToAxis({ show: false, direction: null, position: null });

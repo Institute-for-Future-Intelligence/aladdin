@@ -37,6 +37,7 @@ import { Sphere } from '@react-three/drei';
 import { SensorModel } from '../../models/SensorModel';
 import { LightModel } from '../../models/LightModel';
 import { useHandleSize } from '../wall/hooks';
+import { WALL_OUTSIDE_SURFACE_MESH_NAME } from '../wall/wall';
 
 export interface RoofSegmentGroupUserData {
   roofId: string;
@@ -198,7 +199,7 @@ const handleAddElementOnRoof = (
 };
 
 export const handleRoofBodyPointerDown = (e: ThreeEvent<PointerEvent>, id: string, foundationId: string) => {
-  if (useStore.getState().isAddingElement()) {
+  if (useStore.getState().isAddingElement() || useStore.getState().objectTypeToAdd !== ObjectType.None) {
     return;
   }
   if (e.intersections.length > 0 && e.intersections[0].eventObject.name === e.eventObject.name) {
@@ -394,7 +395,7 @@ export const handlePointerUp = (
   }
   useStore.getState().set((state) => {
     state.moveHandleType = null;
-    state.OldRooftopElementData = null;
+    state.oldRooftopElementData = null;
   });
 };
 
@@ -406,19 +407,26 @@ export const handlePointerMove = (event: ThreeEvent<PointerEvent>, id: string) =
     case ObjectType.Sensor:
     case ObjectType.Light:
     case ObjectType.SolarPanel: {
+      if (
+        selectedElement.type === ObjectType.SolarPanel &&
+        (selectedElement as SolarPanelModel).parentType === undefined
+      )
+        return;
       if (useStore.getState().moveHandleType) {
-        const intersectionRoofs = event.intersections.filter((i) => i.eventObject.name.includes('Roof'));
-        const isFirstIntersectedRoof = intersectionRoofs[0].eventObject.userData.roofId === id;
+        const intersectionObjects = event.intersections.filter(
+          (i) => i.eventObject.name.includes('Roof') || i.eventObject.name.includes(WALL_OUTSIDE_SURFACE_MESH_NAME),
+        );
+        const isFirstIntersectedRoof = intersectionObjects[0].eventObject.userData.roofId === id;
 
         if (isFirstIntersectedRoof) {
           useStore.getState().set((state) => {
             for (const e of state.elements) {
               if (e.id === selectedElement.id) {
-                const { roofId, foundation, centroid, roofSegments } = intersectionRoofs[0].eventObject
+                const { roofId, foundation, centroid, roofSegments } = intersectionObjects[0].eventObject
                   .userData as RoofSegmentGroupUserData;
 
                 if (foundation && centroid && roofSegments && roofId) {
-                  const pointer = intersectionRoofs[0].point;
+                  const pointer = intersectionObjects[0].point;
                   const posRelToFoundation = new Vector3()
                     .subVectors(pointer, new Vector3(foundation.cx, foundation.cy))
                     .applyEuler(new Euler(0, 0, -foundation.rotation[2]));
@@ -431,6 +439,10 @@ export const handlePointerMove = (event: ThreeEvent<PointerEvent>, id: string) =
                   e.normal = normal.toArray();
                   e.parentId = roofId;
                   e.foundationId = foundation.id;
+                  if (e.type === ObjectType.SolarPanel) {
+                    (e as SolarPanelModel).parentType = ObjectType.Roof;
+                    e.color = '#fff';
+                  }
                   state.selectedElement = e;
                 }
                 break;
