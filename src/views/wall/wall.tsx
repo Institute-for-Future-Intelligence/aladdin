@@ -24,6 +24,7 @@ import {
   FrontSide,
   Mesh,
   MeshStandardMaterial,
+  Object3D,
   Raycaster,
   RepeatWrapping,
   Shape,
@@ -43,7 +44,7 @@ import { WallFill, WallModel, WallStructure } from 'src/models/WallModel';
 import { ElementModelFactory } from 'src/models/ElementModelFactory';
 import { Point2 } from 'src/models/Point2';
 import { ElementGrid } from '../elementGrid';
-import Window from '../window/window';
+import Window, { WINDOW_GROUP_NAME } from '../window/window';
 import WallWireFrame from './wallWireFrame';
 import * as Selector from 'src/stores/selector';
 import {
@@ -79,6 +80,8 @@ export interface WallProps {
   wallModel: WallModel;
   foundationModel: FoundationModel;
 }
+
+export const WALL_OUTSIDE_SURFACE_MESH_NAME = 'Wall Outside Surface';
 
 const Wall = ({ wallModel, foundationModel }: WallProps) => {
   let {
@@ -376,7 +379,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     }
   }, [deletedRoofId]);
 
-  const intersectionPlaneRef = useRef<Mesh>(null);
+  // const intersectionPlaneRef = useRef<Mesh>(null);
   const outsideWallRef = useRef<Mesh>(null);
   // const outsideWallInnerFaceRef = useRef<Mesh>(null);
   const insideWallRef = useRef<Mesh>(null);
@@ -542,7 +545,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     drawWallShape(wallShape, lx, lz, 0, 0, 0, 0);
 
     elementsOnWall.forEach((e) => {
-      if (e.type === ObjectType.Window && e.id !== invalidElementIdRef.current) {
+      if (e.type === ObjectType.Window && e.id !== invalidElementIdRef.current && e.lx > 0 && e.lz > 0) {
         const window = e as WindowModel;
         const windowShape = new Shape();
         const [wlx, wly, wcx, wcy] = [e.lx * lx, e.lz * lz, e.cx * lx, e.cz * lz];
@@ -582,7 +585,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     drawWallShape(wallShape, lx, lz, 0, 0, leftOffset, rightOffset);
 
     elementsOnWall.forEach((w) => {
-      if (w.type === ObjectType.Window && w.id !== invalidElementIdRef.current) {
+      if (w.type === ObjectType.Window && w.id !== invalidElementIdRef.current && w.lx > 0 && w.lz > 0) {
         const window = w as WindowModel;
         const windowShape = new Shape();
         const [wlx, wly, wcx, wcy] = [w.lx * lx, w.lz * lz, w.cx * lx, w.cz * lz];
@@ -644,27 +647,27 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     return shape;
   }, [lx, ly, leftOffset, rightOffset]);
 
-  useEffect(() => {
-    if (deletedWindowAndParentId && deletedWindowAndParentId[1] === id) {
-      resetCurrentState();
-      setShowGrid(false);
-      setCommonStore((state) => {
-        state.deletedWindowAndParentId = null;
-        state.addedWindowId = null;
-      });
-    }
-  }, [deletedWindowAndParentId]);
+  // useEffect(() => {
+  //   if (deletedWindowAndParentId && deletedWindowAndParentId[1] === id) {
+  //     resetCurrentState();
+  //     setShowGrid(false);
+  //     setCommonStore((state) => {
+  //       state.deletedWindowAndParentId = null;
+  //       state.addedWindowId = null;
+  //     });
+  //   }
+  // }, [deletedWindowAndParentId]);
 
-  useEffect(() => {
-    if (deletedDoorAndParentId && deletedDoorAndParentId[1] === id) {
-      resetCurrentState();
-      setShowGrid(false);
-      setCommonStore((state) => {
-        state.deletedDoorAndParentId = null;
-        state.addedDoorId = null;
-      });
-    }
-  }, [deletedDoorAndParentId]);
+  // useEffect(() => {
+  //   if (deletedDoorAndParentId && deletedDoorAndParentId[1] === id) {
+  //     resetCurrentState();
+  //     setShowGrid(false);
+  //     setCommonStore((state) => {
+  //       state.deletedDoorAndParentId = null;
+  //       state.addedDoorId = null;
+  //     });
+  //   }
+  // }, [deletedDoorAndParentId]);
 
   const getRelativePosOnWall = (p: Vector3, wall: WallModel) => {
     const { cx, cy, cz } = wall;
@@ -1072,7 +1075,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           return;
         }
 
-        handleAddElement(pointer);
+        addElementByClick(pointer);
 
         const selectedElement = getSelectedElement();
         // a child of this wall is clicked
@@ -1427,75 +1430,75 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         }
 
         // add new element
-        switch (useStore.getState().objectTypeToAdd) {
-          case ObjectType.Window: {
-            const actionState = useStore.getState().actionState;
-            let relativePos = getRelativePosOnWall(pointer, wallModel);
-            relativePos = getPositionOnGrid(relativePos);
-            const shutter = {
-              showLeft: actionState.windowShutterLeft,
-              showRight: actionState.windowShutterRight,
-              color: actionState.windowShutterColor,
-              width: actionState.windowShutterWidth,
-            } as ShutterProps;
-            const newWindow = ElementModelFactory.makeWindow(
-              wallModel,
-              actionState.windowColor,
-              actionState.windowTint,
-              actionState.windowOpacity,
-              actionState.windowUValue,
-              actionState.windowMullion,
-              actionState.windowMullionWidth,
-              actionState.windowMullionSpacing,
-              actionState.windowMullionColor,
-              shutter,
-              actionState.windowFrame,
-              actionState.windowFrameWidth,
-              actionState.windowType,
-              actionState.windowArchHeight,
-              relativePos.x / lx,
-              0,
-              relativePos.z / lz,
-            );
-            useRefStore.getState().setEnableOrbitController(false);
-            setCommonStore((state) => {
-              state.objectTypeToAdd = ObjectType.None;
-              state.elements.push(newWindow);
-              state.moveHandleType = MoveHandleType.Mid;
-              state.selectedElement = newWindow;
-              state.addedWindowId = newWindow.id;
-            });
-            setShowGrid(true);
-            grabRef.current = newWindow;
-            addedWindowIdRef.current = newWindow.id;
-            isSettingWindowStartPointRef.current = true;
-            break;
-          }
-          case ObjectType.Door: {
-            const actionState = useStore.getState().actionState;
-            const newDoor = ElementModelFactory.makeDoor(
-              wallModel,
-              actionState.doorColor,
-              actionState.doorUValue,
-              actionState.doorTexture,
-              actionState.doorArchHeight,
-              actionState.doorType,
-              actionState.doorFilled,
-            );
-            useRefStore.getState().setEnableOrbitController(false);
-            setCommonStore((state) => {
-              state.objectTypeToAdd = ObjectType.None;
-              state.elements.push(newDoor);
-              state.moveHandleType = MoveHandleType.Mid;
-              state.selectedElement = newDoor;
-              state.addedDoorId = newDoor.id;
-            });
-            setShowGrid(true);
-            grabRef.current = newDoor;
-            isSettingDoorStartPointRef.current = true;
-            break;
-          }
-        }
+        // switch (useStore.getState().objectTypeToAdd) {
+        //   case ObjectType.Window: {
+        //     const actionState = useStore.getState().actionState;
+        //     let relativePos = getRelativePosOnWall(pointer, wallModel);
+        //     relativePos = getPositionOnGrid(relativePos);
+        //     const shutter = {
+        //       showLeft: actionState.windowShutterLeft,
+        //       showRight: actionState.windowShutterRight,
+        //       color: actionState.windowShutterColor,
+        //       width: actionState.windowShutterWidth,
+        //     } as ShutterProps;
+        //     // const newWindow = ElementModelFactory.makeWindow(
+        //     //   wallModel,
+        //     //   actionState.windowColor,
+        //     //   actionState.windowTint,
+        //     //   actionState.windowOpacity,
+        //     //   actionState.windowUValue,
+        //     //   actionState.windowMullion,
+        //     //   actionState.windowMullionWidth,
+        //     //   actionState.windowMullionSpacing,
+        //     //   actionState.windowMullionColor,
+        //     //   shutter,
+        //     //   actionState.windowFrame,
+        //     //   actionState.windowFrameWidth,
+        //     //   actionState.windowType,
+        //     //   actionState.windowArchHeight,
+        //     //   relativePos.x / lx,
+        //     //   0,
+        //     //   relativePos.z / lz,
+        //     // );
+        //     useRefStore.getState().setEnableOrbitController(false);
+        //     setCommonStore((state) => {
+        //       state.objectTypeToAdd = ObjectType.None;
+        //       state.elements.push(newWindow);
+        //       state.moveHandleType = MoveHandleType.Mid;
+        //       state.selectedElement = newWindow;
+        //       state.addedWindowId = newWindow.id;
+        //     });
+        //     setShowGrid(true);
+        //     grabRef.current = newWindow;
+        //     addedWindowIdRef.current = newWindow.id;
+        //     isSettingWindowStartPointRef.current = true;
+        //     break;
+        //   }
+        //   case ObjectType.Door: {
+        //     const actionState = useStore.getState().actionState;
+        //     const newDoor = ElementModelFactory.makeDoor(
+        //       wallModel,
+        //       actionState.doorColor,
+        //       actionState.doorUValue,
+        //       actionState.doorTexture,
+        //       actionState.doorArchHeight,
+        //       actionState.doorType,
+        //       actionState.doorFilled,
+        //     );
+        //     useRefStore.getState().setEnableOrbitController(false);
+        //     setCommonStore((state) => {
+        //       state.objectTypeToAdd = ObjectType.None;
+        //       state.elements.push(newDoor);
+        //       state.moveHandleType = MoveHandleType.Mid;
+        //       state.selectedElement = newDoor;
+        //       state.addedDoorId = newDoor.id;
+        //     });
+        //     setShowGrid(true);
+        //     grabRef.current = newDoor;
+        //     isSettingDoorStartPointRef.current = true;
+        //     break;
+        //   }
+        // }
       }
     }
   };
@@ -1518,39 +1521,424 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     }
   };
 
-  const handleWallBodyPointerDown = (e: ThreeEvent<PointerEvent>) => {
-    if (e.intersections.length > 0) {
-      const intersectableObjects = e.intersections.filter(
-        (obj) => !obj.eventObject.name.startsWith('Wall Intersection Plane'),
-      );
-      if (intersectableObjects[0].eventObject !== e.eventObject) return;
+  // const handleWallBodyPointerDown = (e: ThreeEvent<PointerEvent>) => {
+  //   if (e.intersections.length > 0) {
+  //     const intersectableObjects = e.intersections.filter(
+  //       (obj) => !obj.eventObject.name.startsWith('Wall Intersection Plane'),
+  //     );
+  //     if (intersectableObjects[0].eventObject !== e.eventObject) return;
+  //   }
+  //   if (useStore.getState().groupActionMode) {
+  //     setCommonStore((state) => {
+  //       for (const e of state.elements) {
+  //         e.selected = e.id === parentId;
+  //       }
+  //       state.elementGroupId = parentId;
+  //     });
+  //     e.stopPropagation();
+  //   } else {
+  //     if (checkIfCanSelectMe(e)) {
+  //       setCommonStore((state) => {
+  //         state.contextMenuObjectType = null;
+  //         InnerCommonState.selectMe(state, id, e, ActionType.Select);
+  //       });
+  //     }
+  //     if (outsideWallRef.current) {
+  //       const intersects = ray.intersectObjects([outsideWallRef.current]);
+  //       if (intersects.length > 0) {
+  //         const pointer = intersects[0].point;
+  //         handleAddElement(pointer, true);
+  //       }
+  //     }
+  //   }
+  // };
+
+  console.log();
+  // =============================== start =======================================================
+
+  enum ElBeingAddedStatus {
+    SettingStartPoint,
+    SettingEndPoint,
+  }
+  type ElBeingAdded = {
+    id: string;
+    type: ObjectType;
+    status: ElBeingAddedStatus;
+  };
+
+  const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
+  const elementBeingCanceledId = usePrimitiveStore((state) => state.elementBeingCanceledId);
+  const showWallIntersectionPlaneId = usePrimitiveStore((state) => state.showWallIntersectionPlaneId);
+
+  const [showIntersectionPlane, setShowIntersectionPlane] = useState(false);
+
+  const elBeingAddedRef = useRef<ElBeingAdded | null>(null);
+  const intersectionPlaneRef = useRef<Mesh>(null);
+
+  useEffect(() => {
+    if (elBeingAddedRef.current && elBeingAddedRef.current.id === elementBeingCanceledId) {
+      elBeingAddedRef.current = null;
+      resetBeingAddedChildId();
+      setShowGrid(false);
     }
-    if (useStore.getState().groupActionMode) {
-      setCommonStore((state) => {
-        for (const e of state.elements) {
-          e.selected = e.id === parentId;
-        }
-        state.elementGroupId = parentId;
-      });
-      e.stopPropagation();
-    } else {
-      if (checkIfCanSelectMe(e)) {
-        setCommonStore((state) => {
-          state.contextMenuObjectType = null;
-          InnerCommonState.selectMe(state, id, e, ActionType.Select);
-        });
+  }, [elementBeingCanceledId]);
+
+  const resetBeingAddedChildId = () => {
+    setCommonStore((state) => {
+      state.addedWindowId = null;
+      state.addedDoorId = null;
+    });
+  };
+
+  const isElementAllowedMovingAdd = (objectType: ObjectType) => {
+    return objectType === ObjectType.Window || objectType === ObjectType.Door;
+  };
+
+  /** Only check walls, ignore other objects. */
+  const isFirstIntersectedWall = (e: ThreeEvent<PointerEvent>) => {
+    const intersectedWalls = e.intersections.filter((i) => i.object.name.includes(WALL_OUTSIDE_SURFACE_MESH_NAME));
+    if (intersectedWalls.length > 0 && intersectedWalls[0].object.name === `${WALL_OUTSIDE_SURFACE_MESH_NAME} ${id}`) {
+      return true;
+    }
+    return false;
+  };
+
+  /** Check all ojects. */
+  const isFirstIntersectedObject = (e: ThreeEvent<PointerEvent>) => {
+    return e.intersections.length > 0 && e.intersections[0].object === e.eventObject;
+  };
+
+  const isSettingElementStartPoint = () => {
+    return (
+      elBeingAddedRef.current &&
+      elBeingAddedRef.current.status === ElBeingAddedStatus.SettingStartPoint &&
+      useStore.getState().moveHandleType === MoveHandleType.Mid
+    );
+  };
+
+  const isAllowedToSelectMe = () => {
+    if (useStore.getState().moveHandleType || useStore.getState().resizeHandleType || selected || isAddingElement()) {
+      return false;
+    }
+    return true;
+  };
+
+  const ifChildNeedsChangeParent = (child: ElementModel | null, event: ThreeEvent<PointerEvent>) => {
+    if (useStore.getState().moveHandleType && child && isChildType(child) && child.parentId !== id) {
+      const intersections = event.intersections.filter(
+        (i) =>
+          i.eventObject.name.includes(WALL_OUTSIDE_SURFACE_MESH_NAME) || i.eventObject.name.includes(WINDOW_GROUP_NAME),
+      );
+      const hasBlockedWindow =
+        intersections.length > 0 && intersections[0].eventObject.name.includes(WINDOW_GROUP_NAME);
+      if (!hasBlockedWindow) {
+        return true;
       }
-      if (outsideWallRef.current) {
-        const intersects = ray.intersectObjects([outsideWallRef.current]);
-        if (intersects.length > 0) {
-          const pointer = intersects[0].point;
-          handleAddElement(pointer, true);
+    }
+    return false;
+  };
+
+  const isChildType = (el: ElementModel | null) => {
+    if (!el) return false;
+    switch (el.type) {
+      case ObjectType.Window:
+      case ObjectType.Door:
+      case ObjectType.SolarPanel:
+      case ObjectType.Light:
+      case ObjectType.Sensor:
+        return true;
+    }
+    return false;
+  };
+
+  const isArchedResize = (el: ElementModel) => {
+    if (useStore.getState().resizeHandleType !== ResizeHandleType.Arch) return false;
+    if (el.type === ObjectType.Window) {
+      const window = el as WindowModel;
+      return window.windowType === WindowType.Arched && window.archHeight !== undefined;
+    }
+    if (el.type === ObjectType.Door) {
+      const door = el as DoorModel;
+      return door.doorType === DoorType.Arched && door.archHeight !== undefined;
+    }
+  };
+
+  /** Relative to wall and snapped to grid */
+  const getPointer = (e: ThreeEvent<PointerEvent>, object3D?: Object3D | null) => {
+    setRayCast(e);
+    const intersections = object3D ? ray.intersectObjects([object3D]) : e.intersections;
+    const pointer = intersections[0].point;
+    const relativePositionOnWall = getRelativePosOnWall(pointer, wallModel);
+    const positionOnGrid = getPositionOnGrid(relativePositionOnWall);
+    return positionOnGrid;
+  };
+
+  const makeNewMovingElement = (e: ThreeEvent<PointerEvent>, objectTypeToAdd: ObjectType) => {
+    if (!outsideWallRef.current) return null;
+    const relativePosition = getPointer(e, outsideWallRef.current);
+    const cx = relativePosition.x / wallModel.lx;
+    const cz = relativePosition.z / wallModel.lz;
+    if (objectTypeToAdd === ObjectType.Window) {
+      return ElementModelFactory.makeWindow(wallModel, cx, cz);
+    }
+    if (objectTypeToAdd === ObjectType.Door) {
+      return ElementModelFactory.makeDoor(wallModel);
+    }
+    return null;
+  };
+
+  const setElementHasBeenAdded = (newElement: ElementModel | null) => {
+    if (newElement) {
+      elBeingAddedRef.current = {
+        id: newElement.id,
+        type: newElement.type,
+        status: ElBeingAddedStatus.SettingStartPoint,
+      };
+    }
+    setCommonStore((state) => {
+      if (newElement) {
+        state.elements.push(newElement);
+        state.selectedElement = newElement;
+        if (newElement.type === ObjectType.Window) {
+          state.addedWindowId = newElement.id;
+        } else if (newElement.type === ObjectType.Door) {
+          state.addedDoorId = newElement.id;
+        }
+      }
+      state.moveHandleType = MoveHandleType.Mid;
+      state.objectTypeToAdd = ObjectType.None;
+    });
+    setShowGrid(true);
+  };
+
+  const resetToAddingNewObjectStatus = (elBeingAdded: ElBeingAdded | null) => {
+    if (!elBeingAdded) return;
+    const { id, type } = elBeingAdded;
+    setCommonStore((state) => {
+      state.elements = state.elements.filter((e) => e.id !== id);
+      state.selectedElement = null;
+      state.moveHandleType = null;
+      state.objectTypeToAdd = type;
+      state.addedWindowId = null;
+      state.addedDoorId = null;
+    });
+    setShowGrid(false);
+    elBeingAddedRef.current = null;
+  };
+
+  const moveElement = (id: string, relativePosition: Vector3) => {
+    setCommonStore((state) => {
+      const el = state.elements.find((e) => e.id === id);
+      if (!el) return;
+      el.cx = relativePosition.x / lx;
+      if (el.type === ObjectType.Door) {
+        const hz = lz / 2;
+        el.cz = (relativePosition.z - hz) / 2 / lz;
+        el.lz = (relativePosition.z + hz) / lz;
+      } else {
+        el.cz = relativePosition.z / lz;
+      }
+    });
+  };
+
+  /** ratioed */
+  const getResizedDataByDiagonal = (e: ThreeEvent<PointerEvent>, pointer: Vector3, anchor: Vector3) => {
+    const diagonal = new Vector3().subVectors(anchor, pointer);
+    const center = new Vector3().addVectors(anchor, pointer).divideScalar(2);
+    return {
+      dimensionXZ: { x: Math.abs(diagonal.x) / lx, z: Math.abs(diagonal.z) / lz },
+      positionXZ: { x: center.x / lx, z: center.z / lz },
+    };
+  };
+
+  const getResizedDataByArch = (
+    e: ThreeEvent<PointerEvent>,
+    window: WindowModel,
+    pointer: Vector3,
+    anchor: Vector3,
+  ) => {
+    const [wlx, wlz] = [window.lx * lx, window.lz * lz];
+    const archHeightBottom = wlz / 2 - Math.min(window.archHeight, wlx / 2, wlz);
+    const newArchHeight = Math.max(0, Math.min(pointer.z - anchor.z - archHeightBottom, wlx / 2));
+    const newLz = archHeightBottom + newArchHeight + wlz / 2;
+    const center = new Vector3(window.cx * lx, window.cy, window.cz * lz + (newLz - wlz) / 2);
+    return { newLz: newLz / lz, newArchHeight: newArchHeight / lz, newCz: center.z / lz };
+  };
+
+  const handleWallBodyPointMove = (e: ThreeEvent<PointerEvent>) => {
+    if (isFirstIntersectedWall(e)) {
+      const objectTypeToAdd = useStore.getState().objectTypeToAdd;
+      // add new element
+      if (isElementAllowedMovingAdd(objectTypeToAdd)) {
+        const newElement = makeNewMovingElement(e, objectTypeToAdd);
+        setElementHasBeenAdded(newElement);
+      }
+      // move element being added
+      if (isSettingElementStartPoint()) {
+        const pointer = getPointer(e, outsideWallRef.current);
+        moveElement(elBeingAddedRef.current!.id, pointer);
+      }
+      // move child across different parent
+      const selectedElement = useStore.getState().selectedElement;
+      if (ifChildNeedsChangeParent(selectedElement, e)) {
+        setCommonStore((state) => {
+          const el = state.elements.find((e) => e.id === selectedElement?.id);
+          if (!el) return;
+
+          // keep abs dimension
+          if (el.type === ObjectType.Window) {
+            const oldParent = state.elements.find((e) => e.id === el.parentId);
+            if (oldParent) {
+              const absLx = el.lx * oldParent.lx;
+              const absLz = el.lz * oldParent.lz;
+              el.lx = absLx / lx;
+              el.lz = absLz / lz;
+            }
+          }
+
+          const pointer = getPointer(e, outsideWallRef.current);
+          el.cx = pointer.x / lx;
+          el.cz = pointer.z / lz;
+          el.parentId = id;
+          state.selectedElement = el;
+        });
+        setPrimitiveStore('showWallIntersectionPlaneId', id);
+      }
+    } else if (isSettingElementStartPoint()) {
+      resetToAddingNewObjectStatus(elBeingAddedRef.current);
+    }
+  };
+
+  const handleWallBodyPointerDown = (e: ThreeEvent<PointerEvent>) => {
+    if (isSettingElementStartPoint()) {
+      useRefStore.getState().setEnableOrbitController(false);
+      setShowIntersectionPlane(true);
+      const pointer = getPointer(e, outsideWallRef.current);
+      setCommonStore((state) => {
+        state.moveHandleType = null;
+        if (elBeingAddedRef.current?.type === ObjectType.Window) {
+          state.resizeHandleType = ResizeHandleType.LowerRight;
+          state.resizeAnchor.copy(pointer); // relative to wall
+        } else if (elBeingAddedRef.current?.type === ObjectType.Door) {
+          state.resizeHandleType = ResizeHandleType.UpperRight;
+          state.resizeAnchor.copy(pointer).setZ(-lz / 2); // relative to wall
+        }
+      });
+      elBeingAddedRef.current!.status = ElBeingAddedStatus.SettingEndPoint;
+    } else if (isFirstIntersectedObject(e)) {
+      const isAddingNewChildByClick = useStore.getState().objectTypeToAdd !== ObjectType.None;
+      if (isAddingNewChildByClick) {
+        const pointer = e.point;
+        addElementByClick(pointer, true);
+      } else if (useStore.getState().groupActionMode) {
+        setCommonStore((state) => {
+          for (const e of state.elements) {
+            e.selected = e.id === parentId;
+          }
+          state.elementGroupId = parentId;
+        });
+        e.stopPropagation();
+      } else if (isAllowedToSelectMe()) {
+        useStore.getState().selectMe(id, e, ActionType.Select);
+      }
+    }
+  };
+
+  const handleWallBodyPointerOut = () => {
+    if (isSettingElementStartPoint()) {
+      resetToAddingNewObjectStatus(elBeingAddedRef.current);
+    }
+  };
+
+  const handleIntersectionPlanePointerMove = (e: ThreeEvent<PointerEvent>) => {
+    const selectedElement = useStore.getState().selectedElement;
+    if (selectedElement?.parentId === wallModel.id) {
+      const pointer = getPointer(e, intersectionPlaneRef.current);
+      const resizeHandleType = useStore.getState().resizeHandleType;
+      if (useStore.getState().moveHandleType) {
+        moveElement(selectedElement.id, pointer);
+      } else if (resizeHandleType) {
+        const resizeAnchor = useStore.getState().resizeAnchor;
+        switch (selectedElement.type) {
+          case ObjectType.Window: {
+            const window = selectedElement as WindowModel;
+            if (isArchedResize(window)) {
+              console.log(window);
+              console.log('pointer', pointer, 'anchor', resizeAnchor);
+              const [wlx, wlz] = [window.lx * lx, window.lz * lz];
+              console.log('lx', wlx, 'lz', wlz);
+              const archHeightBottom = wlz / 2 - Math.min(window.archHeight, wlx / 2, wlz);
+              const newArchHeight = Math.max(0, Math.min(pointer.z - resizeAnchor.z - archHeightBottom, wlx / 2));
+              const newWindowHeight = archHeightBottom + newArchHeight + wlz / 2;
+              const relativePos = new Vector3(window.cx * lx, window.cy, window.cz * lz + (newWindowHeight - wlz) / 2);
+              console.log(archHeightBottom, newArchHeight, newWindowHeight, relativePos);
+              // checkCollision(grabRef.current.id, ObjectType.Window, relativePos, wlx, newWindowHeight);
+              setCommonStore((state) => {
+                for (const e of state.elements) {
+                  if (e.id === window.id) {
+                    e.lz = newWindowHeight / lz;
+                    e.cz = relativePos.z / lz;
+                    console.log('set cz', relativePos.z / lz);
+                    (e as WindowModel).archHeight = newArchHeight;
+                    // e.cy = e.id === invalidElementIdRef.current ? -0.01 : 0.3;
+                    // (e as WindowModel).tint = e.id === invalidElementIdRef.current ? 'red' : oldTintRef.current;
+                  }
+                }
+              });
+            } else {
+              const { dimensionXZ, positionXZ } = getResizedDataByDiagonal(e, pointer, resizeAnchor);
+              setCommonStore((state) => {
+                const w = state.elements.find((e) => e.id === window.id) as WindowModel;
+                if (!w) return;
+                w.lx = dimensionXZ.x;
+                w.lz = dimensionXZ.z;
+                w.cx = positionXZ.x;
+                w.cz = positionXZ.z;
+                // w.cy = w.id === invalidElementIdRef.current ? -0.01 : 0.3;
+                // w.tint = w.id === invalidElementIdRef.current ? 'red' : oldTintRef.current;
+              });
+            }
+            break;
+          }
+          case ObjectType.Door: {
+            const door = selectedElement as DoorModel;
+
+            if (isArchedResize(door)) {
+              // todo
+            } else {
+              const { dimensionXZ, positionXZ } = getResizedDataByDiagonal(e, pointer, resizeAnchor);
+              setCommonStore((state) => {
+                const d = state.elements.find((e) => e.id === door.id) as DoorModel;
+                if (!d) return;
+                d.cx = positionXZ.x;
+                d.lx = dimensionXZ.x;
+                d.cz = (pointer.z - lz / 2) / 2 / lz;
+                d.lz = (pointer.z + lz / 2) / lz;
+                // d.color = d.id === invalidElementIdRef.current ? INVALID_ELEMENT_COLOR : oldDoorColorRef.current;
+              });
+            }
+            break;
+          }
         }
       }
     }
   };
 
-  const handleAddElement = (pointer?: Vector3, body?: boolean) => {
+  const handleIntersectionPlanePointerUp = () => {
+    useRefStore.getState().setEnableOrbitController(true);
+    setShowIntersectionPlane(false);
+    setCommonStore((state) => {
+      state.moveHandleType = null;
+      state.resizeHandleType = null;
+    });
+    setPrimitiveStore('showWallIntersectionPlaneId', null);
+    resetBeingAddedChildId();
+  };
+
+  // ================================= end =====================================================
+
+  // todo: could simplify this
+  const addElementByClick = (pointer?: Vector3, body?: boolean) => {
     // add new elements
     if (foundationModel && useStore.getState().objectTypeToAdd) {
       let newElement: ElementModel | null = null;
@@ -1693,7 +2081,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         });
         selectMe(id, e, ActionType.Select);
       }
-      handleAddElement();
+      addElementByClick();
       e.stopPropagation();
     }
   };
@@ -1891,9 +2279,9 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
             <shapeBufferGeometry args={[outsideWallShape]} />
             <meshBasicMaterial side={DoubleSide} />
           </mesh>
-          {/* outside wall */}
+          {/* wall outside surface */}
           <mesh
-            name={'Outside Wall'}
+            name={`${WALL_OUTSIDE_SURFACE_MESH_NAME} ${id}`}
             ref={outsideWallRef}
             rotation={[HALF_PI, 0, 0]}
             castShadow={castShadow}
@@ -1901,7 +2289,9 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
             onContextMenu={(e) => {
               handleContextMenu(e, outsideWallRef.current, true);
             }}
+            onPointerMove={handleWallBodyPointMove}
             onPointerDown={handleWallBodyPointerDown}
+            onPointerOut={handleWallBodyPointerOut}
           >
             <shapeBufferGeometry args={[outsideWallShape]} />
             {showSolarRadiationHeatmap && heatmapTexture ? (
@@ -1964,7 +2354,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               position={[0, hy, hz]}
               castShadow={castShadow}
               receiveShadow={shadowEnabled}
-              onPointerDown={handleWallBodyPointerDown}
+              // onPointerDown={handleWallBodyPointerDown}
               onContextMenu={(e) => {
                 handleContextMenu(e, topSurfaceRef.current);
               }}
@@ -1982,7 +2372,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               rotation={[0, HALF_PI, 0]}
               castShadow={castShadow}
               receiveShadow={shadowEnabled}
-              onPointerDown={handleWallBodyPointerDown}
+              // onPointerDown={handleWallBodyPointerDown}
             />
           )}
           {rightOffset === 0 && (
@@ -1993,26 +2383,25 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               rotation={[0, HALF_PI, 0]}
               castShadow={castShadow}
               receiveShadow={shadowEnabled}
-              onPointerDown={handleWallBodyPointerDown}
+              // onPointerDown={handleWallBodyPointerDown}
             />
           )}
 
-          {/* intersection plane for child */}
-          <mesh
-            // Important: name related to selectMe function in common store
-            name={`Wall Intersection Plane ${id}`}
-            ref={intersectionPlaneRef}
-            position={[0, ly / 2 + 0.01, 0]}
-            rotation={[HALF_PI, 0, 0]}
-            visible={false}
-            onPointerDown={handleIntersectionPointerDown}
-            onPointerUp={handleIntersectionPointerUp}
-            onPointerMove={handleIntersectionPointerMove}
-            onPointerOut={handleIntersectionPointerOut}
-          >
-            <shapeBufferGeometry args={[intersectionPlaneShape]} />
-            <meshBasicMaterial />
-          </mesh>
+          {/* intersection plane for childs */}
+          {(showIntersectionPlane || showWallIntersectionPlaneId === id) && (
+            <Plane
+              ref={intersectionPlaneRef}
+              name={'Wall Intersection Plane'}
+              args={[10, 10]}
+              position={[0, ly / 3, 0]}
+              rotation={[HALF_PI, 0, 0]}
+              onPointerMove={handleIntersectionPlanePointerMove}
+              onPointerUp={handleIntersectionPlanePointerUp}
+              visible={false}
+            >
+              <meshBasicMaterial color={'blue'} side={DoubleSide} />
+            </Plane>
+          )}
 
           {elementsOnWall.map((e) => {
             switch (e.type) {
@@ -2086,11 +2475,11 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       {selected && <HorizontalRuler element={wallModel} verticalLift={0} />}
 
       {/* grid */}
-      {showGrid && (useStore.getState().moveHandleType || useStore.getState().resizeHandleType) && (
+      {/* {showGrid && (useStore.getState().moveHandleType || useStore.getState().resizeHandleType) && (
         <group position={[0, -0.001, 0]} rotation={[HALF_PI, 0, 0]}>
           <ElementGrid hx={hx} hy={hz} hz={0} />
         </group>
-      )}
+      )} */}
 
       {heatFluxes &&
         heatFluxes.map((v, index) => {

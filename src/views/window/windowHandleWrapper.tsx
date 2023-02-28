@@ -25,17 +25,18 @@ export const ArchResizeHandle = ({ z }: { z: number }) => {
   return (
     <Box
       ref={ref}
+      name={ResizeHandleType.Arch}
       args={[0.2, 0.2, 0.2]}
       position={[0, 0, z]}
-      onPointerDown={() => {
-        useRefStore.getState().setEnableOrbitController(false);
-        useStore.getState().set((state) => {
-          state.resizeHandleType = ResizeHandleType.Arch;
-          if (ref.current) {
-            state.resizeAnchor = ref.current.localToWorld(new Vector3(0, 0, -z)).clone();
-          }
-        });
-      }}
+      // onPointerDown={() => {
+      //   useRefStore.getState().setEnableOrbitController(false);
+      //   useStore.getState().set((state) => {
+      //     state.resizeHandleType = ResizeHandleType.Arch;
+      //     if (ref.current) {
+      //       state.resizeAnchor = ref.current.localToWorld(new Vector3(0, 0, -z)).clone();
+      //     }
+      //   });
+      // }}
       onPointerEnter={() => {
         setColor('red');
       }}
@@ -52,7 +53,7 @@ const WindowHandleWrapper = ({ lx, lz, windowType }: WindowHandleWrapperProps) =
   const isSettingNewWindow = lx === 0 && lz === 0;
 
   return (
-    <group>
+    <group name={'handle wrapper'}>
       {!isSettingNewWindow && (
         <>
           <WindowResizeHandle x={-lx / 2} z={lz / 2} handleType={ResizeHandleType.UpperLeft} />

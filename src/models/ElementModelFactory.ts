@@ -589,27 +589,7 @@ export class ElementModelFactory {
     } as LightModel;
   }
 
-  static makeWindow(
-    parent: ElementModel,
-    color: string,
-    tint: string,
-    opacity: number,
-    uValue: number,
-    mullion: boolean,
-    mullionWidth: number,
-    mullionSpacing: number,
-    mullionColor: string,
-    shutter: ShutterProps,
-    frame: boolean,
-    frameWidth: number,
-    style: WindowType,
-    archHeight: number,
-    cx: number,
-    cy: number,
-    cz?: number,
-    normal?: Vector3,
-    rotation?: number[],
-  ) {
+  static makeWindow(parent: ElementModel, cx: number, cz: number) {
     let foundationId;
     switch (parent.type) {
       case ObjectType.Cuboid:
@@ -620,6 +600,13 @@ export class ElementModelFactory {
         foundationId = parent.parentId;
         break;
     }
+    const actionState = useStore.getState().actionState;
+    const shutter = {
+      showLeft: actionState.windowShutterLeft,
+      showRight: actionState.windowShutterRight,
+      color: actionState.windowShutterColor,
+      width: actionState.windowShutterWidth,
+    };
     return {
       type: ObjectType.Window,
       cx: cx,
@@ -629,40 +616,31 @@ export class ElementModelFactory {
       ly: parent.ly,
       lz: 0,
       shutter: shutter,
-      mullion: mullion,
-      mullionWidth: mullionWidth,
-      mullionSpacing: mullionSpacing,
-      mullionColor: mullionColor,
-      frame: frame,
-      frameWidth: frameWidth,
-      windowType: style,
-      archHeight: archHeight,
+      mullion: actionState.windowMullion,
+      mullionWidth: actionState.windowMullionWidth,
+      mullionSpacing: actionState.windowMullionSpacing,
+      mullionColor: actionState.windowMullionColor,
+      frame: actionState.windowFrame,
+      frameWidth: actionState.windowFrameWidth,
+      windowType: actionState.windowType,
+      archHeight: actionState.windowArchHeight,
       selected: true,
       lineWidth: 0.2,
       lineColor: '#000000',
       showLabel: false,
-      color: color ?? '#ffffff', // frame color
-      tint: tint ?? '#73D8FF', // glass color
-      opacity: opacity !== undefined ? opacity : 0.5,
-      uValue: uValue ?? 0.5,
-      normal: normal ? normal.toArray() : [0, 0, 1],
-      rotation: rotation ? rotation : [0, 0, 0],
+      color: actionState.windowColor ?? '#ffffff', // frame color
+      tint: actionState.windowTint ?? '#73D8FF', // glass color
+      opacity: actionState.windowOpacity !== undefined ? actionState.windowOpacity : 0.5,
+      uValue: actionState.windowUValue ?? 0.5,
+      normal: [0, -1, 0],
+      rotation: [0, 0, 0],
       parentId: parent.id,
       foundationId: foundationId,
       id: short.generate() as string,
     } as WindowModel;
   }
 
-  static makeDoor(
-    parent: ElementModel,
-    color: string,
-    uValue: number,
-    texture: DoorTexture,
-    archHeight: number,
-    doorType: DoorType,
-    filled: boolean,
-    normal?: Vector3,
-  ) {
+  static makeDoor(parent: ElementModel) {
     let foundationId;
     switch (parent.type) {
       case ObjectType.Cuboid:
@@ -672,6 +650,7 @@ export class ElementModelFactory {
         foundationId = parent.parentId;
         break;
     }
+    const actionState = useStore.getState().actionState;
     return {
       type: ObjectType.Door,
       cx: 0,
@@ -680,17 +659,17 @@ export class ElementModelFactory {
       lx: 0,
       ly: 0,
       lz: 0,
-      doorType: doorType,
-      filled: filled,
-      archHeight: archHeight,
-      textureType: texture ?? DoorTexture.Default,
-      color: color ?? '#ffffff',
-      uValue: uValue ?? 0.5,
+      doorType: actionState.doorType,
+      filled: actionState.doorFilled,
+      archHeight: actionState.doorArchHeight,
+      textureType: actionState.doorTexture ?? DoorTexture.Default,
+      color: actionState.doorColor ?? '#ffffff',
+      uValue: actionState.doorUValue ?? 0.5,
       selected: true,
       lineWidth: 0.2,
       lineColor: '#000000',
       showLabel: false,
-      normal: normal ? normal.toArray() : [0, 1, 0],
+      normal: [0, 1, 0],
       rotation: [0, 0, 0],
       parentId: parent.id,
       foundationId: foundationId,

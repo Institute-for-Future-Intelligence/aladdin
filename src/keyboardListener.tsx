@@ -24,6 +24,7 @@ import { FINE_GRID_RATIO, GROUND_ID, UNDO_SHOW_INFO_DURATION } from './constants
 import { RoofUtil } from './views/roof/RoofUtil';
 import { RoofModel } from './models/RoofModel';
 import { spBoundaryCheck, spCollisionCheck } from './views/roof/roofRenderer';
+import { usePrimitiveStore } from './stores/commonPrimitive';
 
 export interface KeyboardListenerProps {
   canvas?: HTMLCanvasElement | null;
@@ -976,8 +977,10 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
           removeElementById(addedWallId, false);
         } else if (addedWindowId) {
           removeElementById(addedWindowId, false);
+          usePrimitiveStore.getState().setPrimitiveStore('elementBeingCanceledId', addedWindowId);
         } else if (addedDoorId) {
           removeElementById(addedDoorId, false);
+          usePrimitiveStore.getState().setPrimitiveStore('elementBeingCanceledId', addedDoorId);
         }
         setCommonStore((state) => {
           state.objectTypeToAdd = ObjectType.None;

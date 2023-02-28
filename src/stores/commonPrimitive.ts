@@ -85,6 +85,11 @@ export interface PrimitiveStoreState {
   showHeatFluxes: boolean;
 
   duringCameraInteraction: boolean;
+
+  // element being deleted by esc when adding
+  elementBeingCanceledId: string | null;
+
+  showWallIntersectionPlaneId: string | null;
 }
 
 export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
@@ -175,5 +180,9 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
     showHeatFluxes: false,
 
     duringCameraInteraction: false,
+
+    elementBeingCanceledId: null,
+
+    showWallIntersectionPlaneId: null,
   };
 });

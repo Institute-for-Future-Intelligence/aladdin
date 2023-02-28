@@ -6,7 +6,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Mesh } from 'three';
 import { Sphere } from '@react-three/drei';
 import { useStore } from 'src/stores/common';
-import { useRefStore } from 'src/stores/commonRef';
 import * as Selector from 'src/stores/selector';
 import { MoveHandleType } from 'src/types';
 
@@ -15,7 +14,6 @@ interface WindowMoveHandleProps {
 }
 
 const WindowMoveHandle = ({ handleType }: WindowMoveHandleProps) => {
-  const setCommonStore = useStore(Selector.set);
   const moveHandleType = useStore(Selector.moveHandleType);
 
   const handleRef = useRef<Mesh>();
@@ -34,12 +32,6 @@ const WindowMoveHandle = ({ handleType }: WindowMoveHandleProps) => {
     <Sphere
       ref={handleRef}
       name={handleType}
-      onPointerDown={(e) => {
-        useRefStore.getState().setEnableOrbitController(false);
-        setCommonStore((state) => {
-          state.moveHandleType = handleType;
-        });
-      }}
       args={[0.1, 6, 6]}
       onPointerEnter={() => {
         setColor('red');

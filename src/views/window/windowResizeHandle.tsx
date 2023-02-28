@@ -3,9 +3,8 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Mesh, Vector3 } from 'three';
+import { Mesh } from 'three';
 import { Box } from '@react-three/drei';
-import { useRefStore } from 'src/stores/commonRef';
 import { useStore } from 'src/stores/common';
 import { ResizeHandleType } from 'src/types';
 import * as Selector from 'src/stores/selector';
@@ -38,16 +37,6 @@ const WindowResizeHandle = ({ x, z, handleType }: WindowResizeHandleProps) => {
       name={handleType}
       args={[0.2, 0.2, 0.2]}
       position={[x, 0, z]}
-      onPointerDown={(e) => {
-        useRefStore.getState().setEnableOrbitController(false);
-        setCommonStore((state) => {
-          state.resizeHandleType = handleType;
-          if (handleRef.current) {
-            const anchor = handleRef.current.localToWorld(new Vector3(-x * 2, 0, -z * 2));
-            state.resizeAnchor.copy(anchor);
-          }
-        });
-      }}
       onPointerEnter={() => {
         setColor('red');
         setCommonStore((state) => {

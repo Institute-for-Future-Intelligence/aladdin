@@ -2,21 +2,23 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useMemo } from 'react';
-import { Color, DoubleSide } from 'three';
-import { Box } from '@react-three/drei';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Color, DoubleSide, Vec2, Vector3 } from 'three';
+import { Box, Plane } from '@react-three/drei';
 import { WindowModel, WindowType } from 'src/models/WindowModel';
 import { useStore } from 'src/stores/common';
-import { ObjectType } from 'src/types';
+import { MoveHandleType, ObjectType, ResizeHandleType } from 'src/types';
 import * as Selector from 'src/stores/selector';
 import WindowHandleWrapper from './windowHandleWrapper';
-import { DEFAULT_WINDOW_SHININESS } from 'src/constants';
+import { DEFAULT_WINDOW_SHININESS, HALF_PI } from 'src/constants';
 import { ThreeEvent } from '@react-three/fiber';
 import RectangleWindow from './rectangleWindow';
 import ArchedWindow from './archedWindow';
 import { RulerOnWall } from '../rulerOnWall';
 import { Util } from '../../Util';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
+import { useRefStore } from 'src/stores/commonRef';
+import { WALL_OUTSIDE_SURFACE_MESH_NAME } from '../wall/wall';
 
 export const defaultShutter = { showLeft: false, showRight: false, color: 'grey', width: 0.5 };
 
@@ -151,9 +153,12 @@ const useUpdataOldFiles = (windowModel: WindowModel) => {
   }, [fileChanged]);
 };
 
+export const WINDOW_GROUP_NAME = 'Window Group';
+
 const Window = (windowModel: WindowModel) => {
   const {
     id,
+    parentId,
     cx,
     cy,
     cz,
@@ -178,9 +183,12 @@ const Window = (windowModel: WindowModel) => {
     archHeight,
   } = windowModel;
 
+  const GROUP_NAME = `${WINDOW_GROUP_NAME} ${id}`;
+
   useUpdataOldFiles(windowModel);
 
   const setCommonStore = useStore(Selector.set);
+  const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const isAddingElement = useStore(Selector.isAddingElement);
   const windowShininess = useStore(Selector.viewState.windowShininess);
 
@@ -197,26 +205,87 @@ const Window = (windowModel: WindowModel) => {
     });
   };
 
-  const onPointerDown = (e: ThreeEvent<PointerEvent>) => {
+  const isAllowedToSelectMe = (e: ThreeEvent<PointerEvent | MouseEvent>) => {
+    return (
+      e.intersections.length > 0 &&
+      e.intersections[0].eventObject.name === GROUP_NAME &&
+      !useStore.getState().moveHandleType &&
+      !useStore.getState().resizeHandleType &&
+      useStore.getState().objectTypeToAdd === ObjectType.None &&
+      !isAddingElement()
+    );
+  };
+
+  const isClickedOnHandles = (e: ThreeEvent<PointerEvent>) => {
+    if (e.eventObject.name === GROUP_NAME && e.intersections.length > 0) {
+      switch (e.object.name) {
+        case MoveHandleType.Mid:
+        case ResizeHandleType.UpperLeft:
+        case ResizeHandleType.UpperRight:
+        case ResizeHandleType.LowerLeft:
+        case ResizeHandleType.LowerRight:
+        case ResizeHandleType.Arch:
+          return true;
+      }
+    }
+    return false;
+  };
+
+  const onClickResizeHandle = (handleType: ResizeHandleType, p: Vector3) => {
+    useRefStore.getState().setEnableOrbitController(false);
+    setPrimitiveStore('showWallIntersectionPlaneId', parentId);
+    setCommonStore((state) => {
+      state.resizeHandleType = handleType;
+      state.resizeAnchor.copy(new Vector3(cx, 0, cz).add(p));
+      console.log('set anchor', state.resizeAnchor);
+    });
+  };
+
+  const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
     if (e.button === 2 || useStore.getState().addedWallId) return; // ignore right-click
-    if (e.intersections.length > 0 && e.intersections[0].eventObject.name === `Window group ${id}`) {
-      if (
-        !useStore.getState().moveHandleType &&
-        !useStore.getState().resizeHandleType &&
-        useStore.getState().objectTypeToAdd === ObjectType.None &&
-        !selected &&
-        !isAddingElement()
-      ) {
-        selectMe();
+    if (!selected && isAllowedToSelectMe(e)) {
+      selectMe();
+    }
+
+    if (isClickedOnHandles(e)) {
+      const handleType = e.intersections[0].eventObject.name;
+      switch (handleType) {
+        case MoveHandleType.Mid: {
+          useRefStore.getState().setEnableOrbitController(false);
+          setPrimitiveStore('showWallIntersectionPlaneId', parentId);
+          setCommonStore((state) => {
+            state.moveHandleType = handleType;
+          });
+          break;
+        }
+        case ResizeHandleType.UpperLeft: {
+          onClickResizeHandle(handleType, new Vector3(lx / 2, 0, -lz / 2));
+          break;
+        }
+        case ResizeHandleType.UpperRight: {
+          onClickResizeHandle(handleType, new Vector3(-lx / 2, 0, -lz / 2));
+          break;
+        }
+        case ResizeHandleType.LowerLeft: {
+          onClickResizeHandle(handleType, new Vector3(lx / 2, 0, lz / 2));
+          break;
+        }
+        case ResizeHandleType.LowerRight: {
+          onClickResizeHandle(handleType, new Vector3(-lx / 2, 0, lz / 2));
+          break;
+        }
+        case ResizeHandleType.Arch: {
+          onClickResizeHandle(handleType, new Vector3(0, 0, 0));
+          break;
+        }
       }
     }
   };
 
-  const onContextMenu = (e: ThreeEvent<MouseEvent>) => {
-    if (e.intersections.length > 0 && e.intersections[0].eventObject.name === `Window group ${id}`) {
-      if (!selected) {
-        selectMe();
-      }
+  const handleContextMenu = (e: ThreeEvent<MouseEvent>) => {
+    if (useStore.getState().addedWallId) return;
+    if (isAllowedToSelectMe(e)) {
+      !selected && selectMe();
       setCommonStore((state) => {
         state.contextMenuObjectType = ObjectType.Window;
       });
@@ -308,10 +377,13 @@ const Window = (windowModel: WindowModel) => {
   return (
     <group
       key={id}
-      name={`Window group ${id}`}
+      name={GROUP_NAME}
       position={[cx, 0, cz]}
-      onPointerDown={onPointerDown}
-      onContextMenu={onContextMenu}
+      onPointerDown={handlePointerDown}
+      onContextMenu={handleContextMenu}
+      onPointerMove={() => {
+        /* Do Not Delete! Capture event for wall pointer move*/
+      }}
     >
       {renderWindow()}
 
