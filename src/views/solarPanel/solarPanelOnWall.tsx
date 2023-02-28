@@ -34,6 +34,7 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { useSolarPanelHeatmapTexture, useSolarPanelTexture } from './hooks';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { PvModel } from 'src/models/PvModel';
+import { ElementModel } from 'src/models/ElementModel';
 
 interface SumbeamProps {
   drawSunbeam: boolean;
@@ -338,6 +339,8 @@ const Mount = React.memo(
   },
 );
 
+const HANDLE_GROUP_NAME = 'Handle Group Move & Resize';
+
 const SolarPanelOnWall = ({
   id,
   pvModelName = 'SPR-X21-335-BLK',
@@ -360,6 +363,7 @@ const SolarPanelOnWall = ({
 }: SolarPanelModelOnWall) => {
   tiltAngle = Math.min(0, tiltAngle);
 
+  const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const setCommonStore = useStore(Selector.set);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
@@ -376,11 +380,6 @@ const SolarPanelOnWall = ({
   const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | RotateHandleType | null>(null);
   const [nx, setNx] = useState(1);
   const baseRef = useRef<Mesh>();
-  const moveHandleRef = useRef<Mesh>();
-  const resizeHandleLowerRef = useRef<Mesh>();
-  const resizeHandleUpperRef = useRef<Mesh>();
-  const resizeHandleLeftRef = useRef<Mesh>();
-  const resizeHandleRightRef = useRef<Mesh>();
   const solarPanelLinesRef = useRef<LineData[]>();
   const pointerDownRef = useRef(false);
   const oldTiltRef = useRef<number | null>(null);
@@ -438,10 +437,11 @@ const SolarPanelOnWall = ({
     return new Euler(tiltAngle, 0, 0, 'ZXY');
   }, [tiltAngle]);
 
-  const hoverHandle = (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {
+  const hoverHandle = (e: ThreeEvent<MouseEvent>) => {
     if (e.intersections.length > 0) {
-      const intersected = e.intersections[0].object === e.eventObject;
+      const intersected = e.eventObject.name.includes(HANDLE_GROUP_NAME);
       if (intersected) {
+        const handle = e.object.name as MoveHandleType | ResizeHandleType | RotateHandleType | null;
         setHoveredHandle(handle);
         if (handle === MoveHandleType.Top) {
           gl.domElement.style.cursor = 'move';
@@ -535,6 +535,50 @@ const SolarPanelOnWall = ({
     }
     useRefStore.getState().setEnableOrbitController(true);
     pointerDownRef.current = false;
+  };
+
+  const onClickResizeHandle = (handleType: ResizeHandleType, p: Vector3) => {
+    useRefStore.getState().setEnableOrbitController(false);
+    setPrimitiveStore('showWallIntersectionPlaneId', parentId);
+    setCommonStore((state) => {
+      state.resizeHandleType = handleType;
+      state.selectedElement = state.elements.find((e) => e.selected) as ElementModel;
+      state.resizeAnchor.copy(new Vector3(cx, 0, cz).add(p));
+    });
+  };
+
+  const clickHandle = (e: ThreeEvent<PointerEvent>) => {
+    if (e.intersections.length > 0 && e.intersections[0].eventObject.name === HANDLE_GROUP_NAME) {
+      const handleType = e.object.name;
+      switch (handleType) {
+        case MoveHandleType.Default: {
+          useRefStore.getState().setEnableOrbitController(false);
+          setPrimitiveStore('showWallIntersectionPlaneId', parentId);
+          setPrimitiveStore('oldParentId', parentId);
+          setCommonStore((state) => {
+            state.moveHandleType = handleType;
+            state.selectedElement = state.elements.find((e) => e.selected) as ElementModel;
+          });
+          break;
+        }
+        case ResizeHandleType.Left: {
+          onClickResizeHandle(handleType, new Vector3(lx / 2, 0, 0));
+          break;
+        }
+        case ResizeHandleType.Right: {
+          onClickResizeHandle(handleType, new Vector3(-lx / 2, 0, 0));
+          break;
+        }
+        case ResizeHandleType.Lower: {
+          onClickResizeHandle(handleType, new Vector3(0, 0, ly / 2));
+          break;
+        }
+        case ResizeHandleType.Upper: {
+          onClickResizeHandle(handleType, new Vector3(0, 0, -ly / 2));
+          break;
+        }
+      }
+    }
   };
 
   const texture = useSolarPanelTexture(
@@ -670,50 +714,21 @@ const SolarPanelOnWall = ({
           {/* move & resize handles */}
           {selected && !locked && (
             <>
-              {/* draw move handle */}
-              <Sphere
-                ref={moveHandleRef}
-                position={new Vector3(0, 0, 0)}
-                args={[moveHandleSize, 6, 6]}
-                name={MoveHandleType.Default}
-                onPointerOver={(e) => {
-                  hoverHandle(e, MoveHandleType.Top);
-                }}
-                onPointerOut={(e) => {
-                  noHoverHandle();
-                }}
-                onPointerDown={(e) => {
-                  selectMe(id, e, ActionType.Move);
-                }}
+              <group
+                name={HANDLE_GROUP_NAME}
+                onPointerDown={clickHandle}
+                onPointerOver={hoverHandle}
+                onPointerOut={noHoverHandle}
               >
-                <meshBasicMaterial attach="material" color={'orange'} />
-              </Sphere>
-
-              {/* draw resize handles */}
-              <group>
+                <Sphere position={new Vector3(0, 0, 0)} args={[moveHandleSize, 6, 6]} name={MoveHandleType.Default}>
+                  <meshBasicMaterial color={'orange'} />
+                </Sphere>
                 <Box
-                  ref={resizeHandleLowerRef}
                   position={[(positionLL.x + positionLR.x) / 2, positionLL.y, positionLL.z]}
                   args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
                   name={ResizeHandleType.Lower}
-                  onPointerDown={(e) => {
-                    selectMe(id, e, ActionType.Resize);
-                    if (resizeHandleLeftRef.current) {
-                      setCommonStore((state) => {
-                        const anchor = resizeHandleLowerRef.current!.localToWorld(new Vector3(0, ly, -positionLL.z));
-                        state.resizeAnchor.copy(anchor);
-                      });
-                    }
-                  }}
-                  onPointerOver={(e) => {
-                    hoverHandle(e, ResizeHandleType.Lower);
-                  }}
-                  onPointerOut={(e) => {
-                    noHoverHandle();
-                  }}
                 >
                   <meshBasicMaterial
-                    attach="material"
                     color={
                       hoveredHandle === ResizeHandleType.Lower || resizeHandleType === ResizeHandleType.Lower
                         ? HIGHLIGHT_HANDLE_COLOR
@@ -722,28 +737,11 @@ const SolarPanelOnWall = ({
                   />
                 </Box>
                 <Box
-                  ref={resizeHandleUpperRef}
                   position={[(positionUL.x + positionUR.x) / 2, positionUL.y, positionUL.z]}
                   args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
                   name={ResizeHandleType.Upper}
-                  onPointerDown={(e) => {
-                    selectMe(id, e, ActionType.Resize);
-                    if (resizeHandleLeftRef.current) {
-                      setCommonStore((state) => {
-                        const anchor = resizeHandleUpperRef.current!.localToWorld(new Vector3(0, -ly, -positionUL.z));
-                        state.resizeAnchor.copy(anchor);
-                      });
-                    }
-                  }}
-                  onPointerOver={(e) => {
-                    hoverHandle(e, ResizeHandleType.Upper);
-                  }}
-                  onPointerOut={(e) => {
-                    noHoverHandle();
-                  }}
                 >
                   <meshBasicMaterial
-                    attach="material"
                     color={
                       hoveredHandle === ResizeHandleType.Upper || resizeHandleType === ResizeHandleType.Upper
                         ? HIGHLIGHT_HANDLE_COLOR
@@ -752,28 +750,11 @@ const SolarPanelOnWall = ({
                   />
                 </Box>
                 <Box
-                  ref={resizeHandleLeftRef}
                   position={[positionLL.x, (positionLL.y + positionUL.y) / 2, positionLL.z]}
                   args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
                   name={ResizeHandleType.Left}
-                  onPointerDown={(e) => {
-                    selectMe(id, e, ActionType.Resize);
-                    if (resizeHandleLeftRef.current) {
-                      setCommonStore((state) => {
-                        const anchor = resizeHandleLeftRef.current!.localToWorld(new Vector3(lx, 0, -positionLL.z));
-                        state.resizeAnchor.copy(anchor);
-                      });
-                    }
-                  }}
-                  onPointerOver={(e) => {
-                    hoverHandle(e, ResizeHandleType.Left);
-                  }}
-                  onPointerOut={(e) => {
-                    noHoverHandle();
-                  }}
                 >
                   <meshBasicMaterial
-                    attach="material"
                     color={
                       hoveredHandle === ResizeHandleType.Left || resizeHandleType === ResizeHandleType.Left
                         ? HIGHLIGHT_HANDLE_COLOR
@@ -782,28 +763,11 @@ const SolarPanelOnWall = ({
                   />
                 </Box>
                 <Box
-                  ref={resizeHandleRightRef}
                   position={[positionLR.x, (positionLR.y + positionUR.y) / 2, positionLR.z]}
                   args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
                   name={ResizeHandleType.Right}
-                  onPointerDown={(e) => {
-                    selectMe(id, e, ActionType.Resize);
-                    if (resizeHandleLeftRef.current) {
-                      setCommonStore((state) => {
-                        const anchor = resizeHandleRightRef.current!.localToWorld(new Vector3(-lx, 0, -positionLR.z));
-                        state.resizeAnchor.copy(anchor);
-                      });
-                    }
-                  }}
-                  onPointerOver={(e) => {
-                    hoverHandle(e, ResizeHandleType.Right);
-                  }}
-                  onPointerOut={(e) => {
-                    noHoverHandle();
-                  }}
                 >
                   <meshBasicMaterial
-                    attach="material"
                     color={
                       hoveredHandle === ResizeHandleType.Right || resizeHandleType === ResizeHandleType.Right
                         ? HIGHLIGHT_HANDLE_COLOR
@@ -833,7 +797,7 @@ const SolarPanelOnWall = ({
       </group>
 
       {selected && !locked && (
-        <group name={'Tilt Handle Group'} position={[cx, 0, cz + hz]} rotation={euler}>
+        <group name={HANDLE_GROUP_NAME} position={[cx, 0, cz + hz]} rotation={euler}>
           <TiltHandle
             tiltAngle={tiltAngle}
             handleSize={tiltHandleSize}

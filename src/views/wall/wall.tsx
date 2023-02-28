@@ -1710,18 +1710,20 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     const intersections = object3D ? ray.intersectObjects([object3D]) : e.intersections;
     const pointer = intersections[0].point;
     const relativePositionOnWall = getRelativePosOnWall(pointer, wallModel);
-    if (diagonalVector) {
-      return getPositionOnGrid(relativePositionOnWall.clone().add(diagonalVector)).sub(diagonalVector);
-    } else {
-      return getPositionOnGrid(relativePositionOnWall);
-    }
+    const positionOnGrid = diagonalVector
+      ? getPositionOnGrid(relativePositionOnWall.clone().add(diagonalVector)).sub(diagonalVector)
+      : getPositionOnGrid(relativePositionOnWall);
+    return {
+      relativePointer: relativePositionOnWall,
+      pointerOnGrid: positionOnGrid,
+    };
   };
 
   const makeNewMovingElement = (e: ThreeEvent<PointerEvent>, objectTypeToAdd: ObjectType) => {
     if (!outsideWallRef.current) return null;
-    const relativePosition = getPointer(e, outsideWallRef.current);
-    const cx = relativePosition.x / wallModel.lx;
-    const cz = relativePosition.z / wallModel.lz;
+    const { pointerOnGrid } = getPointer(e, outsideWallRef.current);
+    const cx = pointerOnGrid.x / wallModel.lx;
+    const cz = pointerOnGrid.z / wallModel.lz;
     if (objectTypeToAdd === ObjectType.Window) {
       return ElementModelFactory.makeWindow(wallModel, cx, cz);
     }
@@ -1788,7 +1790,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         return [(element.lx * lx) / 2, (element.lz * lz) / 2];
       }
       case ObjectType.SolarPanel: {
-        return [element.lx / 2, element.lz / 2];
+        return [element.lx / 2, element.ly / 2];
       }
     }
     return [0, 0];
@@ -1812,6 +1814,15 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     boundedPointer.setZ(Util.clamp(pointer.z, -boundingZ, boundingZ));
 
     return boundedPointer;
+  };
+
+  const getSolarPanelUnit = (solarPanel: SolarPanelModel) => {
+    const pvModel = useStore.getState().getPvModule(solarPanel.pvModelName);
+    if (solarPanel.orientation === Orientation.landscape) {
+      return [pvModel.length, pvModel.width];
+    } else {
+      return [pvModel.width, pvModel.length];
+    }
   };
 
   const moveElement = (id: string, pointer: Vector3) => {
@@ -1873,8 +1884,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       }
       // move element being added
       if (isSettingElementStartPoint()) {
-        const pointer = getPointer(e, outsideWallRef.current);
-        const boundedPointer = getBoundedPointer(pointer);
+        const { pointerOnGrid } = getPointer(e, outsideWallRef.current);
+        const boundedPointer = getBoundedPointer(pointerOnGrid);
         moveElement(elBeingAddedRef.current!.id, boundedPointer);
       }
       // move child across different parent
@@ -1895,9 +1906,10 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
             }
           }
 
-          const pointer = getPointer(e, outsideWallRef.current);
-          const boundedPointer = getBoundedPointer(pointer, [el.lx / 2, el.lz / 2]);
-          checkCollision(el.id, boundedPointer, el.lx * lx, el.lz * lz);
+          const { pointerOnGrid } = getPointer(e, outsideWallRef.current);
+          const elementHalfSize = getElementHalfSize(el);
+          const boundedPointer = getBoundedPointer(pointerOnGrid, elementHalfSize);
+          checkCollision(el.id, boundedPointer, elementHalfSize[0] * 2, elementHalfSize[1] * 2);
 
           el.cx = boundedPointer.x / lx;
           el.cz = boundedPointer.z / lz;
@@ -1925,8 +1937,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     if (isSettingElementStartPoint()) {
       useRefStore.getState().setEnableOrbitController(false);
       setShowIntersectionPlane(true);
-      const pointer = getPointer(e, outsideWallRef.current);
-      const boundedPointer = getBoundedPointer(pointer);
+      const { pointerOnGrid } = getPointer(e, outsideWallRef.current);
+      const boundedPointer = getBoundedPointer(pointerOnGrid);
       setCommonStore((state) => {
         state.moveHandleType = null;
         if (elBeingAddedRef.current?.type === ObjectType.Window) {
@@ -1970,18 +1982,18 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       const resizeHandleType = useStore.getState().resizeHandleType;
       if (useStore.getState().moveHandleType) {
         const diagonalVector = new Vector3((-selectedElement.lx / 2) * lx, 0, (selectedElement.lz / 2) * lz);
-        const pointer = getPointer(e, intersectionPlaneRef.current, diagonalVector);
+        const { pointerOnGrid } = getPointer(e, intersectionPlaneRef.current, diagonalVector);
         const elementHalfSize = getElementHalfSize(selectedElement);
-        const boundedPointer = getBoundedPointer(pointer, elementHalfSize);
+        const boundedPointer = getBoundedPointer(pointerOnGrid, elementHalfSize);
         checkCollision(selectedElement.id, boundedPointer, elementHalfSize[0] * 2, elementHalfSize[1] * 2);
         moveElement(selectedElement.id, boundedPointer);
       } else if (resizeHandleType) {
-        const pointer = getPointer(e, intersectionPlaneRef.current);
-        const boundedPointer = getBoundedPointer(pointer);
+        const { relativePointer, pointerOnGrid } = getPointer(e, intersectionPlaneRef.current);
         const resizeAnchor = useStore.getState().resizeAnchor;
         switch (selectedElement.type) {
           case ObjectType.Window: {
             const window = selectedElement as WindowModel;
+            const boundedPointer = getBoundedPointer(pointerOnGrid);
 
             if (isArchedResize(window)) {
               const { newLz, newCz, newArchHeight } = getArchedResizedData(window, boundedPointer, resizeAnchor);
@@ -2013,6 +2025,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           }
           case ObjectType.Door: {
             const door = selectedElement as DoorModel;
+            const boundedPointer = getBoundedPointer(pointerOnGrid);
+
             if (isArchedResize(door)) {
               const { newLz, newCz, newArchHeight } = getArchedResizedData(door, boundedPointer, resizeAnchor);
               checkCollision(door.id, new Vector3(door.cx * lx, 0, newCz), door.lx * lx, newLz);
@@ -2035,6 +2049,39 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
                 d.cz = (boundedPointer.z - lz / 2) / 2 / lz;
                 d.lz = (boundedPointer.z + lz / 2) / lz;
                 d.color = d.id === invalidElementIdRef.current ? INVALID_ELEMENT_COLOR : selectedElement.color;
+              });
+            }
+            break;
+          }
+          case ObjectType.SolarPanel: {
+            const solarPanel = selectedElement as SolarPanelModel;
+            const boundedPointer = getBoundedPointer(relativePointer);
+            const [unitX, unitY] = getSolarPanelUnit(solarPanel);
+            if (resizeHandleType === ResizeHandleType.Lower || resizeHandleType === ResizeHandleType.Upper) {
+              const ny = Math.max(1, Math.round(Math.abs(boundedPointer.z - resizeAnchor.z) / unitY));
+              const length = ny * unitY;
+              const v = new Vector3(0, 0, boundedPointer.z - resizeAnchor.z).normalize().multiplyScalar(length);
+              const center = new Vector3().addVectors(resizeAnchor, v.clone().divideScalar(2));
+              checkCollision(solarPanel.id, center, solarPanel.lx, Math.abs(v.z));
+              setCommonStore((state) => {
+                const sp = state.elements.find((e) => e.id === solarPanel.id);
+                if (!sp) return;
+                sp.cz = center.z / lz;
+                sp.ly = Math.abs(v.z);
+                sp.color = sp.id === invalidElementIdRef.current ? 'red' : '#fff';
+              });
+            } else if (resizeHandleType === ResizeHandleType.Left || resizeHandleType === ResizeHandleType.Right) {
+              const nx = Math.max(1, Math.round(Math.abs(boundedPointer.x - resizeAnchor.x) / unitX));
+              const length = nx * unitX;
+              const v = new Vector3(boundedPointer.x - resizeAnchor.x, 0, 0).normalize().multiplyScalar(length);
+              const center = new Vector3().addVectors(resizeAnchor, v.clone().divideScalar(2));
+              checkCollision(solarPanel.id, center, Math.abs(v.x), solarPanel.ly);
+              setCommonStore((state) => {
+                const sp = state.elements.find((e) => e.id === solarPanel.id);
+                if (!sp) return;
+                sp.cx = center.x / lx;
+                sp.lx = Math.abs(v.x);
+                sp.color = sp.id === invalidElementIdRef.current ? 'red' : '#fff';
               });
             }
             break;

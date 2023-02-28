@@ -28,15 +28,6 @@ export const ArchResizeHandle = ({ z }: { z: number }) => {
       name={ResizeHandleType.Arch}
       args={[0.2, 0.2, 0.2]}
       position={[0, 0, z]}
-      // onPointerDown={() => {
-      //   useRefStore.getState().setEnableOrbitController(false);
-      //   useStore.getState().set((state) => {
-      //     state.resizeHandleType = ResizeHandleType.Arch;
-      //     if (ref.current) {
-      //       state.resizeAnchor = ref.current.localToWorld(new Vector3(0, 0, -z)).clone();
-      //     }
-      //   });
-      // }}
       onPointerEnter={() => {
         setColor('red');
       }}
