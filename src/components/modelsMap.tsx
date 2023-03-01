@@ -52,7 +52,7 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
   const mapType = useStore(Selector.modelsMapType) ?? 'roadmap';
   const weatherData = useStore(Selector.weatherData);
   const mapWeatherStations = usePrimitiveStore(Selector.modelsMapWeatherStations);
-  const modelSites = useStore.getState().modelSites;
+  const modelSites = useStore(Selector.modelSites);
 
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [selectedSite, setSelectedSite] = useState<ModelSite | null>(null);

@@ -49,7 +49,7 @@ const Explorer = ({ openCloudFile, deleteModelFromMap, likeModelFromMap }: Explo
   const longitude = modelsMapLongitude !== undefined ? modelsMapLongitude : -71.3488548;
   const address = useStore.getState().modelsMapAddress ?? DEFAULT_ADDRESS;
   const mapWeatherStations = usePrimitiveStore(Selector.modelsMapWeatherStations);
-  const modelSites = useStore.getState().modelSites;
+  const modelSites = useStore(Selector.modelSites);
 
   const searchBox = useRef<google.maps.places.SearchBox>();
   const containerRef = useRef<HTMLDivElement>(null);
