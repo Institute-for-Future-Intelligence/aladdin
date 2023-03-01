@@ -1066,7 +1066,7 @@ const Ground = () => {
       return;
     }
     // adding cuboid start point
-    else if (isSettingCuboidStartPointRef.current) {
+    if (isSettingCuboidStartPointRef.current) {
       setRayCast(e);
       const intersects = ray.intersectObjects([groundPlaneRef.current]);
       useRefStore.getState().setEnableOrbitController(false);
@@ -1354,7 +1354,6 @@ const Ground = () => {
         setRayCast(e);
         const intersects = ray.intersectObjects([groundPlaneRef.current]);
         const p = intersects[0].point;
-
         switch (objectTypeToAdd) {
           case ObjectType.Foundation: {
             const foundation = addElement(groundModel, p);
@@ -1817,7 +1816,7 @@ const Ground = () => {
         onContextMenu={handleContextMenu}
         onPointerDown={handlePointerDown}
         onPointerMove={handleGroundPointerMove}
-        onPointerOut={handleGroundPointerOut}
+        // onPointerOut={handleGroundPointerOut}
       >
         {showSolarRadiationHeatmap && !waterSurface ? (
           <meshBasicMaterial color={groundColor} />
