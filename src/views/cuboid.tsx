@@ -1133,8 +1133,6 @@ const Cuboid = (cuboidModel: CuboidModel) => {
 
   const opacity = groundImage ? (orthographic ? 0.25 : 0.75) : 1;
 
-  console.log('cuboid', groupMasterId, groupMasterDimension, groupMasterPosition);
-
   return (
     <>
       <group

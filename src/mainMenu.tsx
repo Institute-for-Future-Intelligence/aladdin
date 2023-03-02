@@ -1144,28 +1144,30 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         </SubMenu>
       )}
 
-      <SubMenu key={'accessories'} title={i18n.t('menu.view.accessoriesSubMenu', lang)}>
-        <Menu.Item key={'site-info-panel-check-box'}>
-          <Checkbox checked={showSiteInfoPanel} onChange={toggleSiteInfoPanel}>
-            {i18n.t('menu.view.accessories.SiteInformation', lang)}
-          </Checkbox>
-        </Menu.Item>
-        <Menu.Item key={'design-info-panel-check-box'}>
-          <Checkbox checked={showDesignInfoPanel} onChange={toggleDesignInfoPanel}>
-            {i18n.t('menu.view.accessories.DesignInformation', lang)}
-          </Checkbox>
-        </Menu.Item>
-        <Menu.Item key={'instruction-panel-check-box'}>
-          <Checkbox checked={showInstructionPanel} onChange={toggleInstructionPanel}>
-            {i18n.t('menu.view.accessories.Instruction', lang)}
-          </Checkbox>
-        </Menu.Item>
-        <Menu.Item key={'sticky-note-panel-check-box'}>
-          <Checkbox checked={showStickyNotePanel} onChange={toggleStickyNote}>
-            {i18n.t('menu.view.accessories.StickyNote', lang)}
-          </Checkbox>
-        </Menu.Item>
-      </SubMenu>
+      {!openModelsMap && (
+        <SubMenu key={'accessories'} title={i18n.t('menu.view.accessoriesSubMenu', lang)}>
+          <Menu.Item key={'site-info-panel-check-box'}>
+            <Checkbox checked={showSiteInfoPanel} onChange={toggleSiteInfoPanel}>
+              {i18n.t('menu.view.accessories.SiteInformation', lang)}
+            </Checkbox>
+          </Menu.Item>
+          <Menu.Item key={'design-info-panel-check-box'}>
+            <Checkbox checked={showDesignInfoPanel} onChange={toggleDesignInfoPanel}>
+              {i18n.t('menu.view.accessories.DesignInformation', lang)}
+            </Checkbox>
+          </Menu.Item>
+          <Menu.Item key={'instruction-panel-check-box'}>
+            <Checkbox checked={showInstructionPanel} onChange={toggleInstructionPanel}>
+              {i18n.t('menu.view.accessories.Instruction', lang)}
+            </Checkbox>
+          </Menu.Item>
+          <Menu.Item key={'sticky-note-panel-check-box'}>
+            <Checkbox checked={showStickyNotePanel} onChange={toggleStickyNote}>
+              {i18n.t('menu.view.accessories.StickyNote', lang)}
+            </Checkbox>
+          </Menu.Item>
+        </SubMenu>
+      )}
 
       {/* analysis menu */}
       {!openModelsMap && (
