@@ -52,7 +52,7 @@ const EmptyWall = (wallModel: WallModel) => {
         for (const e of state.elements) {
           e.selected = e.id === parentId;
         }
-        state.elementGroupId = parentId;
+        state.groupMasterId = parentId;
       });
       e.stopPropagation();
     } else {

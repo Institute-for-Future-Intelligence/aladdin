@@ -472,7 +472,7 @@ export class Util {
     return count;
   }
 
-  static doFoundationsOverlap(f1: ElementModel, f2: ElementModel): boolean {
+  static areTwoBasesOverlapped(f1: ElementModel, f2: ElementModel): boolean {
     const v1 = Util.fetchFoundationVertexCoordinates(f1);
     const v2 = Util.fetchFoundationVertexCoordinates(f2);
     for (const v of v1) {

@@ -4,8 +4,9 @@
 
 import { ElementModel } from './ElementModel';
 import { CuboidTexture } from '../types';
+import { Groupable } from './Groupable';
 
-export interface CuboidModel extends ElementModel {
+export interface CuboidModel extends ElementModel, Groupable {
   textureTypes?: CuboidTexture[];
   faceColors?: string[]; // if defined, these colors supersede the color attribute
 }

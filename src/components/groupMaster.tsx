@@ -17,9 +17,10 @@ import { UndoableMoveFoundationGroup } from 'src/undo/UndoableMove';
 import { UndoableResizeBuildingXY, UndoableResizeBuildingZ } from 'src/undo/UndoableResizeBuilding';
 import { useHandleSize } from 'src/views/wall/hooks';
 import { RoofModel } from 'src/models/RoofModel';
+import { isGroupable } from 'src/models/Groupable';
 
-interface BuildingResizerProps {
-  foundationGroupSet: Set<string>;
+interface GroupMasterProps {
+  baseGroupSet: Set<string>;
   initalPosition: number[];
   initalDimension: number[];
   initalRotation: number;
@@ -108,16 +109,11 @@ const RotateHandle = ({ args, handleType }: HandleProps) => {
   );
 };
 
-const BuildingResizer = ({
-  foundationGroupSet,
-  initalPosition,
-  initalDimension,
-  initalRotation,
-}: BuildingResizerProps) => {
+const GroupMaster = ({ baseGroupSet, initalPosition, initalDimension, initalRotation }: GroupMasterProps) => {
   const [cx, cy, cz] = initalPosition;
   const [lx, ly, lz] = initalDimension;
   const aspectRatio = lx === 0 ? 1 : ly / lx;
-  const lockAspectRatio = foundationGroupSet.size > 1 ? true : false;
+  const lockAspectRatio = baseGroupSet.size > 1 ? true : false;
 
   const intersectionPlaneRef = useRef<Mesh>(null);
   const intersectionPlanePositionRef = useRef(new Vector3());
@@ -190,7 +186,7 @@ const BuildingResizer = ({
   const updateUndoableResizeXY = (foundationDataMap: Map<string, number[]>, wallPointsMap: Map<string, number[]>) => {
     setCommonStore((state) => {
       for (const elem of state.elements) {
-        if (elem.type === ObjectType.Foundation && foundationDataMap.has(elem.id)) {
+        if (isGroupable(elem) && foundationDataMap.has(elem.id)) {
           [elem.cx, elem.cy, elem.lx, elem.ly] = foundationDataMap.get(elem.id)!;
         } else if (elem.type === ObjectType.Wall && wallPointsMap.has(elem.id)) {
           const points = wallPointsMap.get(elem.id)!;
@@ -242,10 +238,7 @@ const BuildingResizer = ({
   const addUndoableMove = () => {
     const map = new Map<string, number[]>();
     for (const elem of useStore.getState().elements) {
-      if (
-        (elem.type === ObjectType.Foundation && foundationGroupSet.has(elem.id)) ||
-        foundationGroupSet.has(elem.parentId)
-      ) {
+      if ((isGroupable(elem) && baseGroupSet.has(elem.id)) || baseGroupSet.has(elem.parentId)) {
         map.set(elem.id, [elem.cx, elem.cy, elem.cz, elem.rotation[2]]);
       }
     }
@@ -269,7 +262,7 @@ const BuildingResizer = ({
     const foundationNewDataMap = new Map<string, number[]>();
     const wallNewPointsMap = new Map<string, number[]>();
     for (const elem of useStore.getState().elements) {
-      if (elem.type === ObjectType.Foundation && foundatonOldDataMapRef.current.has(elem.id)) {
+      if (isGroupable(elem) && foundatonOldDataMapRef.current.has(elem.id)) {
         foundationNewDataMap.set(elem.id, [elem.cx, elem.cy, elem.lx, elem.ly]);
       } else if (elem.type === ObjectType.Wall && wallOldPointsMapRef.current.has(elem.id)) {
         const w = elem as WallModel;
@@ -341,7 +334,7 @@ const BuildingResizer = ({
       setDimension(lx, ly);
       setCommonStore((state) => {
         for (const elem of state.elements) {
-          if (elem.type === ObjectType.Foundation && foundationGroupSet.has(elem.id)) {
+          if (isGroupable(elem) && baseGroupSet.has(elem.id)) {
             const posRatio = foundationPosRatioMapRef.current.get(elem.id);
             const dmsRatio = foundationDmsRatioMapRef.current.get(elem.id);
             if (posRatio && dmsRatio) {
@@ -387,12 +380,12 @@ const BuildingResizer = ({
       setCommonStore((state) => {
         for (const elem of state.elements) {
           // foundationGroupSet only has one element here
-          if (foundationGroupSet.has(elem.id)) {
+          if (baseGroupSet.has(elem.id)) {
             elem.lx = lx;
             elem.ly = ly;
             elem.cx = center.x;
             elem.cy = center.y;
-          } else if (elem.type === ObjectType.Wall && foundationGroupSet.has(elem.parentId)) {
+          } else if (elem.type === ObjectType.Wall && baseGroupSet.has(elem.parentId)) {
             const wall = elem as WallModel;
             const relativePosition = wallRelPointsMapRef.current.get(wall.id);
             if (relativePosition) {
@@ -429,6 +422,13 @@ const BuildingResizer = ({
             elem.lz = height * elementHeightMapRef.current.get(elem.id)!;
           } else if (elem.type === ObjectType.Roof) {
             (elem as RoofModel).rise = height * elementHeightMapRef.current.get(elem.id)!;
+          } else if (elem.type === ObjectType.Cuboid) {
+            const heightRatio = elementHeightMapRef.current.get(elem.id);
+            if (heightRatio) {
+              const newHeight = heightRatio * height;
+              elem.lz = newHeight;
+              elem.cz = newHeight / 2;
+            }
           }
         }
       }
@@ -446,7 +446,7 @@ const BuildingResizer = ({
     const groupSize = foundatonRotationMapRef.current.size;
     setCommonStore((state) => {
       for (const elem of state.elements) {
-        if (elem.type === ObjectType.Foundation && foundationGroupSet.has(elem.id)) {
+        if (isGroupable(elem) && baseGroupSet.has(elem.id)) {
           const oldCenter = foundatonRelPosMapRef.current.get(elem.id);
           const oldRotation = groupSize !== 1 ? foundatonRotationMapRef.current.get(elem.id) : 0;
           if (oldCenter && oldRotation !== undefined) {
@@ -456,7 +456,7 @@ const BuildingResizer = ({
             elem.rotation = [0, 0, oldRotation + rotateAngle];
           }
         }
-        if (foundationGroupSet.has(elem.parentId)) {
+        if (baseGroupSet.has(elem.parentId)) {
           const oldRotation = groupSize !== 1 ? foundatonRotationMapRef.current.get(elem.parentId) : 0;
           if (oldRotation !== undefined) {
             elem.rotation = [0, 0, oldRotation + rotateAngle];
@@ -479,14 +479,14 @@ const BuildingResizer = ({
 
     const [currLx, currLy] = [hx * 2, hy * 2];
     for (const elem of useStore.getState().elements) {
-      if (elem.type === ObjectType.Foundation && foundationGroupSet.has(elem.id)) {
+      if (isGroupable(elem) && baseGroupSet.has(elem.id)) {
         foundationPosRatioMapRef.current.set(elem.id, [
           (elem.cx - position.x) / currLx,
           (elem.cy - position.y) / currLy,
         ]);
         foundationDmsRatioMapRef.current.set(elem.id, [elem.lx / currLx, elem.ly / currLy]);
         foundatonOldDataMapRef.current.set(elem.id, [elem.cx, elem.cy, elem.lx, elem.ly]);
-      } else if (elem.type === ObjectType.Wall && elem.foundationId && foundationGroupSet.has(elem.foundationId)) {
+      } else if (elem.type === ObjectType.Wall && elem.foundationId && baseGroupSet.has(elem.foundationId)) {
         const w = elem as WallModel;
         const f = getElementById(elem.foundationId);
         if (f) {
@@ -508,7 +508,7 @@ const BuildingResizer = ({
     elementHeightMapRef.current.clear();
     elementOldHeightMapRef.current.clear();
     for (const elem of useStore.getState().elements) {
-      if (elem.foundationId && foundationGroupSet.has(elem.foundationId)) {
+      if (elem.foundationId && baseGroupSet.has(elem.foundationId)) {
         if (elem.type === ObjectType.Wall) {
           elementHeightMapRef.current.set(elem.id, elem.lz / height);
           elementOldHeightMapRef.current.set(elem.id, elem.lz);
@@ -516,7 +516,7 @@ const BuildingResizer = ({
           elementHeightMapRef.current.set(elem.id, (elem as RoofModel).rise / height);
           elementOldHeightMapRef.current.set(elem.id, (elem as RoofModel).rise);
         }
-      } else if (foundationGroupSet.has(elem.id)) {
+      } else if (baseGroupSet.has(elem.id)) {
         elementHeightMapRef.current.set(elem.id, elem.lz / height);
         elementOldHeightMapRef.current.set(elem.id, elem.lz);
       }
@@ -568,7 +568,7 @@ const BuildingResizer = ({
       const p = event.intersections[0].point.clone().setZ(0);
       resizerCenterRelPosRef.current.subVectors(position, p);
       for (const elem of useStore.getState().elements) {
-        if (elem.type === ObjectType.Foundation && foundationGroupSet.has(elem.id)) {
+        if (isGroupable(elem) && baseGroupSet.has(elem.id)) {
           const c = new Vector3(elem.cx, elem.cy);
           const v = new Vector3().subVectors(c, p);
           foundatonRelPosMapRef.current.set(elem.id, v);
@@ -588,14 +588,14 @@ const BuildingResizer = ({
     if (event.intersections.length > 0) {
       const resizerCenter = new Vector3(position.x, position.y);
       for (const elem of useStore.getState().elements) {
-        if (elem.type === ObjectType.Foundation && foundationGroupSet.has(elem.id)) {
+        if (isGroupable(elem) && baseGroupSet.has(elem.id)) {
           const elemCenter = new Vector3(elem.cx, elem.cy);
           const v = new Vector3().subVectors(elemCenter, resizerCenter);
           foundatonRelPosMapRef.current.set(elem.id, v);
           foundatonRotationMapRef.current.set(elem.id, elem.rotation[2]);
           foundatonOldDataMapRef.current.set(elem.id, [elem.cx, elem.cy, elem.cz, elem.rotation[2]]);
         }
-        if (foundationGroupSet.has(elem.parentId)) {
+        if (baseGroupSet.has(elem.parentId)) {
           foundatonOldDataMapRef.current.set(elem.id, [elem.cx, elem.cy, elem.cz, elem.rotation[2]]);
         }
       }
@@ -651,7 +651,7 @@ const BuildingResizer = ({
           setPosition(new Vector3().addVectors(p.clone().setZ(0), resizerCenterRelPosRef.current));
           setCommonStore((state) => {
             for (const elem of state.elements) {
-              if (elem.type === ObjectType.Foundation && foundationGroupSet.has(elem.id)) {
+              if (isGroupable(elem) && baseGroupSet.has(elem.id)) {
                 const v = foundatonRelPosMapRef.current.get(elem.id);
                 if (v) {
                   elem.cx = p.x + v.x;
@@ -721,4 +721,4 @@ const BuildingResizer = ({
   );
 };
 
-export default React.memo(BuildingResizer);
+export default React.memo(GroupMaster);

@@ -101,6 +101,25 @@ export const CuboidMenu = React.memo(() => {
       {editable && <Cut keyName={'cuboid-cut'} />}
       <Lock keyName={'cuboid-lock'} />
 
+      <Menu.Item key={'group-master'}>
+        <Checkbox
+          checked={cuboid.enableGroupMaster}
+          onChange={(e) => {
+            setCommonStore((state) => {
+              for (const e of state.elements) {
+                if (e.id === cuboid.id) {
+                  (e as CuboidModel).enableGroupMaster = !(e as CuboidModel).enableGroupMaster;
+                  break;
+                }
+              }
+              state.groupActionUpdateFlag = !state.groupActionUpdateFlag;
+            });
+          }}
+        >
+          {i18n.t('foundationMenu.GroupMaster', { lng: language })}
+        </Checkbox>
+      </Menu.Item>
+
       {counterUnlocked.gotSome() && (
         <SubMenu key={'clear'} title={i18n.t('word.Clear', lang)} style={{ paddingLeft: '24px' }}>
           {counterUnlocked.sensorCount > 0 && (

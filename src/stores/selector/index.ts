@@ -1050,9 +1050,9 @@ export const groupActionMode = (state: CommonStoreState) => state.groupActionMod
 
 export const setGroupActionMode = (state: CommonStoreState) => state.setGroupActionMode;
 
-export const elementGroupId = (state: CommonStoreState) => state.elementGroupId;
+export const groupMasterId = (state: CommonStoreState) => state.groupMasterId;
 
-export const setElementGroupId = (state: CommonStoreState) => state.setElementGroupId;
+export const setGroupMasterId = (state: CommonStoreState) => state.setGroupMasterId;
 
 export const groupActionUpdateFlag = (state: CommonStoreState) => state.groupActionUpdateFlag;
 
