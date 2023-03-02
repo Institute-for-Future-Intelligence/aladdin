@@ -69,14 +69,14 @@ import SolarUpdraftTower from './solarUpdraftTower';
 import SolarPowerTower from './solarPowerTower';
 import SolarReceiverPipe from './solarReceiverPipe';
 import { UndoablePaste } from '../undo/UndoablePaste';
-import BuildingResizer from 'src/components/buildingResizer';
+import GroupMaster from 'src/components/groupMaster';
 import SolarPanelOnRoof from './solarPanel/solarPanelOnRoof';
 import { useHandleSize } from './wall/hooks';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import { InnerCommonState } from 'src/stores/InnerCommonState';
-import { RoofModel } from 'src/models/RoofModel';
 import produce from 'immer';
 import { useDataStore } from '../stores/commonData';
+import { useGroupMaster } from './hooks';
 
 interface WallAuxiliaryType {
   show: boolean;
@@ -91,24 +91,25 @@ interface SnapTargetType {
   jointId: string | undefined;
 }
 
-const Foundation = ({
-  id,
-  cx,
-  cy,
-  lx = 1,
-  ly = 1,
-  lz = 0.1,
-  rotation = [0, 0, 0],
-  color = 'gray',
-  lineColor = 'black',
-  lineWidth = 0.2,
-  locked = false,
-  selected = false,
-  showLabel = false,
-  textureType = FoundationTexture.NoTexture,
-  solarStructure,
-  enableGroupMaster,
-}: FoundationModel) => {
+const Foundation = (foundationModel: FoundationModel) => {
+  const {
+    id,
+    cx,
+    cy,
+    lx = 1,
+    ly = 1,
+    lz = 0.1,
+    rotation = [0, 0, 0],
+    color = 'gray',
+    lineColor = 'black',
+    lineWidth = 0.2,
+    locked = false,
+    selected = false,
+    showLabel = false,
+    textureType = FoundationTexture.NoTexture,
+    solarStructure,
+  } = foundationModel;
+
   const language = useStore(Selector.language);
   const orthographic = useStore(Selector.viewState.orthographic);
   const getElementById = useStore(Selector.getElementById);
@@ -143,8 +144,12 @@ const Foundation = ({
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const solarRadiationHeatmapReflectionOnly = useStore(Selector.viewState.solarRadiationHeatmapReflectionOnly);
   const getHeatmap = useDataStore(Selector.getHeatmap);
-  const elementGroupId = useStore(Selector.elementGroupId);
-  const buildingResizerUpdateFlag = useStore(Selector.groupActionUpdateFlag);
+  const groupMasterId = useStore(Selector.groupMasterId);
+
+  const { baseGroupSet, groupMasterDimension, groupMasterPosition, groupMasterRotation } = useGroupMaster(
+    foundationModel,
+    groupMasterId,
+  );
 
   const {
     camera,
@@ -153,9 +158,6 @@ const Foundation = ({
   const [hovered, setHovered] = useState(false);
   const [heatmapTexture, setHeatmapTexture] = useState<CanvasTexture | null>(null);
   const [showGrid, setShowGrid] = useState<boolean>(false);
-  const [buildingResizerPosition, setBuildingResizerPosition] = useState<number[]>([cx, cy, lz / 2]);
-  const [buildingResizerRotation, setBuildingResizerRotation] = useState<number>(0);
-  const [buildingResizerDimension, setBuildingResizerDimension] = useState<number[] | null>(null);
   const [wallAuxToAxis, setWallAuxToAxis] = useState<WallAuxiliaryType>({
     show: false,
     direction: null,
@@ -200,13 +202,10 @@ const Foundation = ({
   const newJointsRef = useRef<string[][]>([]);
   const oldPointRef = useRef<number[][]>([]);
   const newPointRef = useRef<number[][]>([]);
-  const foundationGroupSetRef = useRef<Set<string>>(new Set());
-  const foundationVerticesRef = useRef<Point2[]>([]);
 
   const lang = { lng: language };
   const mouse = useMemo(() => new Vector2(), []);
   const ray = useMemo(() => new Raycaster(), []);
-  const foundationModel = getElementById(id) as FoundationModel;
   const hx = lx / 2;
   const hy = ly / 2;
   const hz = lz / 2;
@@ -261,30 +260,6 @@ const Foundation = ({
   }
 
   useEffect(() => {
-    if (elementGroupId === id && selected) {
-      foundationGroupSetRef.current.clear();
-      foundationVerticesRef.current = [];
-
-      if (foundationModel?.enableGroupMaster) {
-        setFoundationVertices(foundationModel);
-        checkOverlapWithAllFoundations(foundationModel);
-        if (foundationGroupSetRef.current.size > 1) {
-          setGroupedFoundationBuildingResizer();
-        } else {
-          setSingleFoundationBuildingResizer();
-        }
-      } else {
-        foundationGroupSetRef.current.add(id);
-        setSingleFoundationBuildingResizer();
-      }
-    } else {
-      setBuildingResizerPosition([cx, cy, 0]);
-      setBuildingResizerDimension(null);
-      setBuildingResizerRotation(0);
-    }
-  }, [elementGroupId, selected, buildingResizerUpdateFlag, enableGroupMaster]);
-
-  useEffect(() => {
     wallMapOnFoundation.current.clear();
     for (const e of useStore.getState().elements) {
       if (e.type === ObjectType.Wall && e.parentId === id) {
@@ -330,87 +305,6 @@ const Foundation = ({
     mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;
     mouse.y = -(e.offsetY / domElement.clientHeight) * 2 + 1;
     ray.setFromCamera(mouse, camera);
-  };
-
-  const setFoundationVertices = (foundation: ElementModel) => {
-    const hx = foundation.lx / 2;
-    const hy = foundation.ly / 2;
-    const zero = new Vector2();
-    const center = new Vector2(foundation.cx, foundation.cy);
-    const v1 = new Vector2(hx, hy);
-    const v2 = new Vector2(-hx, hy);
-    const v3 = new Vector2(hx, -hy);
-    const v4 = new Vector2(-hx, -hy);
-    const arr = [v1, v2, v3, v4].map((v) => {
-      v.rotateAround(zero, foundation.rotation[2]).add(center);
-      return { x: v.x, y: v.y } as Point2;
-    });
-    foundationGroupSetRef.current.add(foundation.id);
-    foundationVerticesRef.current.push(...arr);
-  };
-
-  const checkOverlapWithAllFoundations = (foundation: ElementModel) => {
-    for (const element of useStore.getState().elements) {
-      if (
-        element.type === ObjectType.Foundation &&
-        !element.locked &&
-        !foundationGroupSetRef.current.has(element.id) &&
-        Util.doFoundationsOverlap(element, foundation)
-      ) {
-        setFoundationVertices(element);
-        checkOverlapWithAllFoundations(element);
-      }
-    }
-  };
-
-  const setSingleFoundationBuildingResizer = () => {
-    let maxHeight = 3;
-    const map = new Map<string, number>(); // roofId -> maxWallHeight
-    // we can use one loop to get maxWallHeight, because roof is always after wall
-    for (const elem of useStore.getState().elements) {
-      if (elem.foundationId === foundationModel?.id) {
-        if (elem.type === ObjectType.Wall) {
-          const wall = elem as WallModel;
-          maxHeight = Math.max(maxHeight, wall.lz);
-          if (wall.roofId) {
-            const maxWallHeight = map.get(wall.roofId) ?? 0;
-            if (maxWallHeight < wall.lz) {
-              map.set(wall.roofId, wall.lz);
-            }
-          }
-        } else if (elem.type === ObjectType.Roof) {
-          maxHeight = Math.max(maxHeight, (elem as RoofModel).rise + (map.get(elem.id) ?? 0));
-        }
-      }
-    }
-    setBuildingResizerPosition([cx, cy, 0]);
-    setBuildingResizerRotation(foundationModel?.rotation[2]);
-    setBuildingResizerDimension([lx, ly, maxHeight + lz]);
-  };
-
-  const setGroupedFoundationBuildingResizer = () => {
-    const bound = Util.calculatePolygonBounds(foundationVerticesRef.current);
-    let maxHeight = 1;
-    const map = new Map<string, number>(); // roofId -> maxWallHeight
-    for (const elem of useStore.getState().elements) {
-      if (elem.foundationId && foundationGroupSetRef.current.has(elem.foundationId)) {
-        if (elem.type === ObjectType.Wall) {
-          const wall = elem as WallModel;
-          maxHeight = Math.max(maxHeight, wall.lz);
-          if (wall.roofId) {
-            const maxWallHeight = map.get(wall.roofId) ?? 0;
-            if (maxWallHeight < wall.lz) {
-              map.set(wall.roofId, wall.lz);
-            }
-          }
-        } else if (elem.type === ObjectType.Roof) {
-          maxHeight = Math.max(maxHeight, (elem as RoofModel).rise + (map.get(elem.id) ?? 0));
-        }
-      }
-    }
-    setBuildingResizerPosition([bound.x + bound.width / 2, bound.y + bound.height / 2, 0]);
-    setBuildingResizerDimension([bound.width, bound.height, maxHeight + lz]);
-    setBuildingResizerRotation(0);
   };
 
   const fetchRepeatDividers = (textureType: FoundationTexture) => {
@@ -1350,7 +1244,7 @@ const Foundation = ({
       selectMe(id, e, ActionType.Select);
     }
     if (useStore.getState().groupActionMode) {
-      useStore.getState().setElementGroupId(id);
+      useStore.getState().setGroupMasterId(id);
     }
     const selectedElement = getSelectedElement();
     let bypass = false;
@@ -2955,7 +2849,7 @@ const Foundation = ({
         </group>
 
         {/* draw handles */}
-        {selected && !locked && !elementGroupId && (
+        {selected && !locked && !groupMasterId && (
           <>
             {/* resize handles */}
             <Box
@@ -3289,12 +3183,12 @@ const Foundation = ({
         })}
       </group>
 
-      {selected && !locked && elementGroupId === id && foundationModel && buildingResizerDimension && (
-        <BuildingResizer
-          foundationGroupSet={foundationGroupSetRef.current}
-          initalPosition={buildingResizerPosition}
-          initalDimension={buildingResizerDimension}
-          initalRotation={buildingResizerRotation}
+      {selected && !locked && groupMasterId === id && foundationModel && groupMasterDimension && (
+        <GroupMaster
+          baseGroupSet={baseGroupSet}
+          initalPosition={groupMasterPosition}
+          initalDimension={groupMasterDimension}
+          initalRotation={groupMasterRotation}
         />
       )}
     </>

@@ -80,30 +80,34 @@ import { HorizontalRuler } from './horizontalRuler';
 import { showError } from '../helpers';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
+import { useGroupMaster } from './hooks';
+import GroupMaster from 'src/components/groupMaster';
 
-const Cuboid = ({
-  id,
-  cx,
-  cy,
-  lx = 1,
-  ly = 1,
-  lz = 1,
-  rotation = [0, 0, 0],
-  color = 'silver',
-  lineColor = 'black',
-  lineWidth = 0.1,
-  selected = false,
-  locked = false,
-  showLabel = false,
-  textureTypes = [
-    CuboidTexture.NoTexture,
-    CuboidTexture.NoTexture,
-    CuboidTexture.NoTexture,
-    CuboidTexture.NoTexture,
-    CuboidTexture.NoTexture,
-    CuboidTexture.NoTexture,
-  ],
-}: CuboidModel) => {
+const Cuboid = (cuboidModel: CuboidModel) => {
+  const {
+    id,
+    cx,
+    cy,
+    lx = 1,
+    ly = 1,
+    lz = 1,
+    rotation = [0, 0, 0],
+    color = 'silver',
+    lineColor = 'black',
+    lineWidth = 0.1,
+    selected = false,
+    locked = false,
+    showLabel = false,
+    textureTypes = [
+      CuboidTexture.NoTexture,
+      CuboidTexture.NoTexture,
+      CuboidTexture.NoTexture,
+      CuboidTexture.NoTexture,
+      CuboidTexture.NoTexture,
+      CuboidTexture.NoTexture,
+    ],
+  } = cuboidModel;
+
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const orthographic = useStore(Selector.viewState.orthographic);
@@ -136,6 +140,12 @@ const Cuboid = ({
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const getHeatmap = useDataStore(Selector.getHeatmap);
   const groundImage = useStore(Selector.viewState.groundImage);
+  const groupMasterId = useStore(Selector.groupMasterId);
+
+  const { baseGroupSet, groupMasterDimension, groupMasterPosition, groupMasterRotation } = useGroupMaster(
+    cuboidModel,
+    groupMasterId,
+  );
 
   const {
     camera,
@@ -151,7 +161,6 @@ const Cuboid = ({
   const [normal, setNormal] = useState<Vector3>();
   const ray = useMemo(() => new Raycaster(), []);
 
-  const cuboidModel = getElementById(id) as CuboidModel;
   const groupRef = useRef<Group>(null);
   const baseRef = useRef<Mesh>();
   const grabRef = useRef<ElementModel | null>(null);
@@ -481,6 +490,9 @@ const Cuboid = ({
     if (e.button === 2) return; // ignore right-click
     if (!isAddingElement()) {
       selectMe(id, e, ActionType.Select);
+    }
+    if (useStore.getState().groupActionMode) {
+      useStore.getState().setGroupMasterId(id);
     }
     const selectedElement = getSelectedElement();
     let bypass = false;
@@ -1121,512 +1133,527 @@ const Cuboid = ({
 
   const opacity = groundImage ? (orthographic ? 0.25 : 0.75) : 1;
 
+  console.log('cuboid', groupMasterId, groupMasterDimension, groupMasterPosition);
+
   return (
-    <group
-      ref={groupRef}
-      name={'Cuboid Group ' + id}
-      userData={{ aabb: true }}
-      position={[cx, cy, hz]}
-      rotation={[0, 0, rotation[2]]}
-    >
-      {/* draw rectangular cuboid */}
-      <Box
-        castShadow={shadowEnabled}
-        receiveShadow={shadowEnabled}
-        userData={{ simulation: true, stand: true }}
-        uuid={id}
-        ref={baseRef}
-        args={[lx, ly, lz]}
-        name={'Cuboid'}
-        onContextMenu={handleContextMenu}
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onPointerOver={handlePointerOver}
-        onPointerOut={handlePointerOut}
-        onPointerEnter={handlePointerEnter}
+    <>
+      <group
+        ref={groupRef}
+        name={'Cuboid Group ' + id}
+        userData={{ aabb: true }}
+        position={[cx, cy, hz]}
+        rotation={[0, 0, rotation[2]]}
       >
-        {cuboidModel && cuboidModel.faceColors ? (
-          faces.map((i) => {
-            if (textureTypes && textureTypes[i] !== CuboidTexture.NoTexture) {
-              return showSolarRadiationHeatmap ? (
-                <meshBasicMaterial
-                  key={i}
-                  side={FrontSide}
-                  attachArray="material"
-                  color={'white'}
-                  map={textures[i]}
-                  transparent={orthographic && groundImage}
-                  opacity={opacity}
-                />
-              ) : (
-                <meshStandardMaterial
-                  key={i}
-                  side={FrontSide}
-                  attachArray="material"
-                  color={'white'}
-                  map={textures[i]}
-                  transparent={orthographic && groundImage}
-                  opacity={opacity}
-                />
-              );
-            } else {
-              return showSolarRadiationHeatmap ? (
-                <meshBasicMaterial
-                  key={i}
-                  side={FrontSide}
-                  attachArray="material"
-                  color={'white'}
-                  map={textures[i]}
-                  transparent={orthographic && groundImage}
-                  opacity={opacity}
-                />
-              ) : (
-                <meshStandardMaterial
-                  key={i}
-                  side={FrontSide}
-                  attachArray="material"
-                  color={cuboidModel.faceColors ? cuboidModel.faceColors[i] : color}
-                  map={textures[i]}
-                  transparent={orthographic && groundImage}
-                  opacity={opacity}
-                />
-              );
-            }
-          })
-        ) : (
-          <meshStandardMaterial
-            side={FrontSide}
-            attach="material"
-            color={color}
-            transparent={orthographic && groundImage}
-            opacity={opacity}
+        {/* draw rectangular cuboid */}
+        <Box
+          castShadow={shadowEnabled}
+          receiveShadow={shadowEnabled}
+          userData={{ simulation: true, stand: true }}
+          uuid={id}
+          ref={baseRef}
+          args={[lx, ly, lz]}
+          name={'Cuboid'}
+          onContextMenu={handleContextMenu}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerOver={handlePointerOver}
+          onPointerOut={handlePointerOut}
+          onPointerEnter={handlePointerEnter}
+        >
+          {cuboidModel && cuboidModel.faceColors ? (
+            faces.map((i) => {
+              if (textureTypes && textureTypes[i] !== CuboidTexture.NoTexture) {
+                return showSolarRadiationHeatmap ? (
+                  <meshBasicMaterial
+                    key={i}
+                    side={FrontSide}
+                    attachArray="material"
+                    color={'white'}
+                    map={textures[i]}
+                    transparent={orthographic && groundImage}
+                    opacity={opacity}
+                  />
+                ) : (
+                  <meshStandardMaterial
+                    key={i}
+                    side={FrontSide}
+                    attachArray="material"
+                    color={'white'}
+                    map={textures[i]}
+                    transparent={orthographic && groundImage}
+                    opacity={opacity}
+                  />
+                );
+              } else {
+                return showSolarRadiationHeatmap ? (
+                  <meshBasicMaterial
+                    key={i}
+                    side={FrontSide}
+                    attachArray="material"
+                    color={'white'}
+                    map={textures[i]}
+                    transparent={orthographic && groundImage}
+                    opacity={opacity}
+                  />
+                ) : (
+                  <meshStandardMaterial
+                    key={i}
+                    side={FrontSide}
+                    attachArray="material"
+                    color={cuboidModel.faceColors ? cuboidModel.faceColors[i] : color}
+                    map={textures[i]}
+                    transparent={orthographic && groundImage}
+                    opacity={opacity}
+                  />
+                );
+              }
+            })
+          ) : (
+            <meshStandardMaterial
+              side={FrontSide}
+              attach="material"
+              color={color}
+              transparent={orthographic && groundImage}
+              opacity={opacity}
+            />
+          )}
+        </Box>
+
+        {/* intersection plane that goes through the center of the selected solar panel */}
+        {grabRef.current?.type === ObjectType.SolarPanel && onTopSurface && !grabRef.current.locked && (
+          <Plane
+            ref={intersectPlaneRef}
+            name={'Cuboid Intersection Plane'}
+            position={intersectionPlanePosition}
+            args={[lx, ly]}
+            visible={false}
+            onPointerMove={handleSolarPanelPointerMoveOnTopSurface}
           />
         )}
-      </Box>
 
-      {/* intersection plane that goes through the center of the selected solar panel */}
-      {grabRef.current?.type === ObjectType.SolarPanel && onTopSurface && !grabRef.current.locked && (
-        <Plane
-          ref={intersectPlaneRef}
-          name={'Cuboid Intersection Plane'}
-          position={intersectionPlanePosition}
-          args={[lx, ly]}
-          visible={false}
-          onPointerMove={handleSolarPanelPointerMoveOnTopSurface}
+        {showGrid && (
+          <>
+            {(moveHandleType || resizeHandleType) && (
+              <ElementGrid
+                hx={gridDimensionRef.current.x}
+                hy={gridDimensionRef.current.y}
+                hz={gridDimensionRef.current.z}
+                position={gridPositionRef.current}
+                rotation={gridRotationRef.current}
+              />
+            )}
+            {rotateHandleType && grabRef.current && grabRef.current.type === ObjectType.SolarPanel && (
+              <PolarGrid element={grabRef.current} height={(grabRef.current as SolarPanelModel).poleHeight + hz} />
+            )}
+          </>
+        )}
+
+        {/* ruler */}
+        {selected && <HorizontalRuler element={cuboidModel} verticalLift={moveHandleSize} />}
+
+        {/* wireFrame */}
+        {(!selected || groundImage) && (
+          <Wireframe
+            hx={hx}
+            hy={hy}
+            hz={hz}
+            lineColor={groundImage && orthographic ? 'white' : lineColor}
+            lineWidth={groundImage && orthographic ? lineWidth * 5 : lineWidth}
+          />
+        )}
+
+        {/* highlight with a thick wireframe when it is selected but locked */}
+        {selected && locked && (
+          <Wireframe hx={hx} hy={hy} hz={hz} lineColor={LOCKED_ELEMENT_SELECTION_COLOR} lineWidth={lineWidth * 5} />
+        )}
+
+        {/* draw handles */}
+        {selected && !locked && !groupMasterId && (
+          <>
+            {/* resize handles */}
+            {!orthographic && (
+              <Box
+                ref={resizeHandleLLTopRef}
+                name={ResizeHandleType.LowerLeftTop}
+                args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
+                position={positionLLTop}
+                onPointerDown={(e) => {
+                  selectMe(id, e, ActionType.Resize);
+                }}
+                onPointerOver={(e) => {
+                  hoverHandle(e, ResizeHandleType.LowerLeftTop);
+                }}
+                onPointerOut={noHoverHandle}
+              >
+                <meshBasicMaterial
+                  attach="material"
+                  color={
+                    hoveredHandle === ResizeHandleType.LowerLeftTop ||
+                    resizeHandleType === ResizeHandleType.LowerLeftTop
+                      ? HIGHLIGHT_HANDLE_COLOR
+                      : RESIZE_HANDLE_COLOR
+                  }
+                />
+              </Box>
+            )}
+            {!orthographic && (
+              <Box
+                ref={resizeHandleULTopRef}
+                name={ResizeHandleType.UpperLeftTop}
+                args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
+                position={positionULTop}
+                onPointerDown={(e) => {
+                  selectMe(id, e, ActionType.Resize);
+                }}
+                onPointerOver={(e) => {
+                  hoverHandle(e, ResizeHandleType.UpperLeftTop);
+                }}
+                onPointerOut={noHoverHandle}
+              >
+                <meshBasicMaterial
+                  attach="material"
+                  color={
+                    hoveredHandle === ResizeHandleType.UpperLeftTop ||
+                    resizeHandleType === ResizeHandleType.UpperLeftTop
+                      ? HIGHLIGHT_HANDLE_COLOR
+                      : RESIZE_HANDLE_COLOR
+                  }
+                />
+              </Box>
+            )}
+            {!orthographic && (
+              <Box
+                ref={resizeHandleLRTopRef}
+                name={ResizeHandleType.LowerRightTop}
+                args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
+                position={positionLRTop}
+                onPointerDown={(e) => {
+                  selectMe(id, e, ActionType.Resize);
+                }}
+                onPointerOver={(e) => {
+                  hoverHandle(e, ResizeHandleType.LowerRightTop);
+                }}
+                onPointerOut={noHoverHandle}
+              >
+                <meshBasicMaterial
+                  attach="material"
+                  color={
+                    hoveredHandle === ResizeHandleType.LowerRightTop ||
+                    resizeHandleType === ResizeHandleType.LowerRightTop
+                      ? HIGHLIGHT_HANDLE_COLOR
+                      : RESIZE_HANDLE_COLOR
+                  }
+                />
+              </Box>
+            )}
+            {!orthographic && (
+              <Box
+                ref={resizeHandleURTopRef}
+                name={ResizeHandleType.UpperRightTop}
+                args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
+                position={positionURTop}
+                onPointerDown={(e) => {
+                  selectMe(id, e, ActionType.Resize);
+                }}
+                onPointerOver={(e) => {
+                  hoverHandle(e, ResizeHandleType.UpperRightTop);
+                }}
+                onPointerOut={noHoverHandle}
+              >
+                <meshBasicMaterial
+                  attach="material"
+                  color={
+                    hoveredHandle === ResizeHandleType.UpperRightTop ||
+                    resizeHandleType === ResizeHandleType.UpperRightTop
+                      ? HIGHLIGHT_HANDLE_COLOR
+                      : RESIZE_HANDLE_COLOR
+                  }
+                />
+              </Box>
+            )}
+            <Box
+              ref={resizeHandleLLBotRef}
+              name={ResizeHandleType.LowerLeft}
+              args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
+              position={new Vector3(-hx, -hy, resizeHandleSize / 2 - hz)}
+              onPointerDown={(e) => {
+                selectMe(id, e, ActionType.Resize);
+                if (resizeHandleLLBotRef.current) {
+                  setCommonStore((state) => {
+                    const anchor = resizeHandleLLBotRef.current!.localToWorld(new Vector3(lx, ly, 0));
+                    state.resizeAnchor.copy(anchor);
+                  });
+                }
+              }}
+              onPointerOver={(e) => {
+                hoverHandle(e, ResizeHandleType.LowerLeft);
+              }}
+              onPointerOut={noHoverHandle}
+            >
+              <meshBasicMaterial
+                attach="material"
+                color={
+                  hoveredHandle === ResizeHandleType.LowerLeft || resizeHandleType === ResizeHandleType.LowerLeft
+                    ? HIGHLIGHT_HANDLE_COLOR
+                    : RESIZE_HANDLE_COLOR
+                }
+              />
+            </Box>
+            <Box
+              ref={resizeHandleULBotRef}
+              name={ResizeHandleType.UpperLeft}
+              args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
+              position={new Vector3(-hx, hy, resizeHandleSize / 2 - hz)}
+              onPointerDown={(e) => {
+                selectMe(id, e, ActionType.Resize);
+                if (resizeHandleULBotRef.current) {
+                  setCommonStore((state) => {
+                    const anchor = resizeHandleULBotRef.current!.localToWorld(new Vector3(lx, -ly, 0));
+                    state.resizeAnchor.copy(anchor);
+                  });
+                }
+              }}
+              onPointerOver={(e) => {
+                hoverHandle(e, ResizeHandleType.UpperLeft);
+              }}
+              onPointerOut={noHoverHandle}
+            >
+              <meshBasicMaterial
+                attach="material"
+                color={
+                  hoveredHandle === ResizeHandleType.UpperLeft || resizeHandleType === ResizeHandleType.UpperLeft
+                    ? HIGHLIGHT_HANDLE_COLOR
+                    : RESIZE_HANDLE_COLOR
+                }
+              />
+            </Box>
+            <Box
+              ref={resizeHandleLRBotRef}
+              name={ResizeHandleType.LowerRight}
+              args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
+              position={new Vector3(hx, -hy, resizeHandleSize / 2 - hz)}
+              onPointerDown={(e) => {
+                selectMe(id, e, ActionType.Resize);
+                if (resizeHandleLRBotRef.current) {
+                  setCommonStore((state) => {
+                    const anchor = resizeHandleLRBotRef.current!.localToWorld(new Vector3(-lx, ly, 0));
+                    state.resizeAnchor.copy(anchor);
+                  });
+                }
+              }}
+              onPointerOver={(e) => {
+                hoverHandle(e, ResizeHandleType.LowerRight);
+              }}
+              onPointerOut={noHoverHandle}
+            >
+              <meshBasicMaterial
+                attach="material"
+                color={
+                  hoveredHandle === ResizeHandleType.LowerRight || resizeHandleType === ResizeHandleType.LowerRight
+                    ? HIGHLIGHT_HANDLE_COLOR
+                    : RESIZE_HANDLE_COLOR
+                }
+              />
+            </Box>
+            <Box
+              ref={resizeHandleURBotRef}
+              name={ResizeHandleType.UpperRight}
+              args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
+              position={new Vector3(hx, hy, resizeHandleSize / 2 - hz)}
+              onPointerDown={(e) => {
+                selectMe(id, e, ActionType.Resize);
+                if (resizeHandleURBotRef.current) {
+                  setCommonStore((state) => {
+                    const anchor = resizeHandleURBotRef.current!.localToWorld(new Vector3(-lx, -ly, 0));
+                    state.resizeAnchor.copy(anchor);
+                  });
+                }
+              }}
+              onPointerOver={(e) => {
+                hoverHandle(e, ResizeHandleType.UpperRight);
+              }}
+              onPointerOut={noHoverHandle}
+            >
+              <meshBasicMaterial
+                attach="material"
+                color={
+                  hoveredHandle === ResizeHandleType.UpperRight || resizeHandleType === ResizeHandleType.UpperRight
+                    ? HIGHLIGHT_HANDLE_COLOR
+                    : RESIZE_HANDLE_COLOR
+                }
+              />
+            </Box>
+
+            {!addedCuboidId && (
+              <>
+                {/* move handles */}
+                <Sphere
+                  ref={moveHandleLowerFaceRef}
+                  args={[moveHandleSize, 6, 6, 0, Math.PI]}
+                  name={MoveHandleType.Lower}
+                  position={positionLowerFace}
+                  onPointerDown={(e) => {
+                    selectMe(id, e, ActionType.Move);
+                  }}
+                  onPointerOver={(e) => {
+                    hoverHandle(e, MoveHandleType.Lower);
+                  }}
+                  onPointerOut={noHoverHandle}
+                >
+                  <meshBasicMaterial
+                    attach="material"
+                    color={
+                      hoveredHandle === MoveHandleType.Lower || moveHandleType === MoveHandleType.Lower
+                        ? HIGHLIGHT_HANDLE_COLOR
+                        : MOVE_HANDLE_COLOR_2
+                    }
+                  />
+                </Sphere>
+                <Sphere
+                  ref={moveHandleUpperFaceRef}
+                  args={[moveHandleSize, 6, 6, 0, Math.PI]}
+                  name={MoveHandleType.Upper}
+                  position={positionUpperFace}
+                  onPointerDown={(e) => {
+                    selectMe(id, e, ActionType.Move);
+                  }}
+                  onPointerOver={(e) => {
+                    hoverHandle(e, MoveHandleType.Upper);
+                  }}
+                  onPointerOut={noHoverHandle}
+                >
+                  <meshBasicMaterial
+                    attach="material"
+                    color={
+                      hoveredHandle === MoveHandleType.Upper || moveHandleType === MoveHandleType.Upper
+                        ? HIGHLIGHT_HANDLE_COLOR
+                        : MOVE_HANDLE_COLOR_2
+                    }
+                  />
+                </Sphere>
+                <Sphere
+                  ref={moveHandleLeftFaceRef}
+                  args={[moveHandleSize, 6, 6, 0, Math.PI]}
+                  name={MoveHandleType.Left}
+                  position={positionLeftFace}
+                  onPointerDown={(e) => {
+                    selectMe(id, e, ActionType.Move);
+                  }}
+                  onPointerOver={(e) => {
+                    hoverHandle(e, MoveHandleType.Left);
+                  }}
+                  onPointerOut={noHoverHandle}
+                >
+                  <meshBasicMaterial
+                    attach="material"
+                    color={
+                      hoveredHandle === MoveHandleType.Left || moveHandleType === MoveHandleType.Left
+                        ? HIGHLIGHT_HANDLE_COLOR
+                        : MOVE_HANDLE_COLOR_1
+                    }
+                  />
+                </Sphere>
+                <Sphere
+                  ref={moveHandleRightFaceRef}
+                  args={[moveHandleSize, 6, 6, 0, Math.PI]}
+                  name={MoveHandleType.Right}
+                  position={positionRightFace}
+                  onPointerDown={(e) => {
+                    selectMe(id, e, ActionType.Move);
+                  }}
+                  onPointerOver={(e) => {
+                    hoverHandle(e, MoveHandleType.Right);
+                  }}
+                  onPointerOut={noHoverHandle}
+                >
+                  <meshBasicMaterial
+                    attach="material"
+                    color={
+                      hoveredHandle === MoveHandleType.Right || moveHandleType === MoveHandleType.Right
+                        ? HIGHLIGHT_HANDLE_COLOR
+                        : MOVE_HANDLE_COLOR_1
+                    }
+                  />
+                </Sphere>
+                <Sphere
+                  ref={moveHandleTopFaceRef}
+                  args={[moveHandleSize, 6, 6, 0, Math.PI]}
+                  name={MoveHandleType.Top}
+                  position={positionTopFace}
+                  onPointerDown={(e) => {
+                    selectMe(id, e, ActionType.Move);
+                  }}
+                  onPointerOver={(e) => {
+                    hoverHandle(e, MoveHandleType.Top);
+                  }}
+                  onPointerOut={noHoverHandle}
+                >
+                  <meshBasicMaterial
+                    attach="material"
+                    color={
+                      hoveredHandle === MoveHandleType.Top || moveHandleType === MoveHandleType.Top
+                        ? HIGHLIGHT_HANDLE_COLOR
+                        : MOVE_HANDLE_COLOR_3
+                    }
+                  />
+                </Sphere>
+
+                {/* rotate handles */}
+                <RotateHandle
+                  id={id}
+                  position={lowerRotateHandlePosition}
+                  color={
+                    hoveredHandle === RotateHandleType.Lower || rotateHandleType === RotateHandleType.Lower
+                      ? HIGHLIGHT_HANDLE_COLOR
+                      : RESIZE_HANDLE_COLOR
+                  }
+                  ratio={ratio}
+                  handleType={RotateHandleType.Lower}
+                  hoverHandle={hoverHandle}
+                  noHoverHandle={noHoverHandle}
+                />
+                <RotateHandle
+                  id={id}
+                  position={upperRotateHandlePosition}
+                  color={
+                    hoveredHandle === RotateHandleType.Upper || rotateHandleType === RotateHandleType.Upper
+                      ? HIGHLIGHT_HANDLE_COLOR
+                      : RESIZE_HANDLE_COLOR
+                  }
+                  ratio={ratio}
+                  handleType={RotateHandleType.Upper}
+                  hoverHandle={hoverHandle}
+                  noHoverHandle={noHoverHandle}
+                />
+              </>
+            )}
+          </>
+        )}
+
+        {(hovered || showLabel) && !selected && (
+          <textSprite
+            userData={{ unintersectable: true }}
+            name={'Label'}
+            text={labelText}
+            color={cuboidModel?.labelColor ?? 'white'}
+            fontSize={cuboidModel?.labelFontSize ?? 20}
+            fontFace={'Roboto'}
+            textHeight={cuboidModel?.labelSize ?? 0.2}
+            position={[0, 0, hz + (cuboidModel?.labelHeight ?? 0.2)]}
+          />
+        )}
+      </group>
+
+      {selected && !locked && groupMasterId === id && cuboidModel && groupMasterDimension && (
+        <GroupMaster
+          baseGroupSet={baseGroupSet}
+          initalPosition={groupMasterPosition}
+          initalDimension={groupMasterDimension}
+          initalRotation={groupMasterRotation}
         />
       )}
-
-      {showGrid && (
-        <>
-          {(moveHandleType || resizeHandleType) && (
-            <ElementGrid
-              hx={gridDimensionRef.current.x}
-              hy={gridDimensionRef.current.y}
-              hz={gridDimensionRef.current.z}
-              position={gridPositionRef.current}
-              rotation={gridRotationRef.current}
-            />
-          )}
-          {rotateHandleType && grabRef.current && grabRef.current.type === ObjectType.SolarPanel && (
-            <PolarGrid element={grabRef.current} height={(grabRef.current as SolarPanelModel).poleHeight + hz} />
-          )}
-        </>
-      )}
-
-      {/* ruler */}
-      {selected && <HorizontalRuler element={cuboidModel} verticalLift={moveHandleSize} />}
-
-      {/* wireFrame */}
-      {(!selected || groundImage) && (
-        <Wireframe
-          hx={hx}
-          hy={hy}
-          hz={hz}
-          lineColor={groundImage && orthographic ? 'white' : lineColor}
-          lineWidth={groundImage && orthographic ? lineWidth * 5 : lineWidth}
-        />
-      )}
-
-      {/* highlight with a thick wireframe when it is selected but locked */}
-      {selected && locked && (
-        <Wireframe hx={hx} hy={hy} hz={hz} lineColor={LOCKED_ELEMENT_SELECTION_COLOR} lineWidth={lineWidth * 5} />
-      )}
-
-      {/* draw handles */}
-      {selected && !locked && (
-        <>
-          {/* resize handles */}
-          {!orthographic && (
-            <Box
-              ref={resizeHandleLLTopRef}
-              name={ResizeHandleType.LowerLeftTop}
-              args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
-              position={positionLLTop}
-              onPointerDown={(e) => {
-                selectMe(id, e, ActionType.Resize);
-              }}
-              onPointerOver={(e) => {
-                hoverHandle(e, ResizeHandleType.LowerLeftTop);
-              }}
-              onPointerOut={noHoverHandle}
-            >
-              <meshBasicMaterial
-                attach="material"
-                color={
-                  hoveredHandle === ResizeHandleType.LowerLeftTop || resizeHandleType === ResizeHandleType.LowerLeftTop
-                    ? HIGHLIGHT_HANDLE_COLOR
-                    : RESIZE_HANDLE_COLOR
-                }
-              />
-            </Box>
-          )}
-          {!orthographic && (
-            <Box
-              ref={resizeHandleULTopRef}
-              name={ResizeHandleType.UpperLeftTop}
-              args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
-              position={positionULTop}
-              onPointerDown={(e) => {
-                selectMe(id, e, ActionType.Resize);
-              }}
-              onPointerOver={(e) => {
-                hoverHandle(e, ResizeHandleType.UpperLeftTop);
-              }}
-              onPointerOut={noHoverHandle}
-            >
-              <meshBasicMaterial
-                attach="material"
-                color={
-                  hoveredHandle === ResizeHandleType.UpperLeftTop || resizeHandleType === ResizeHandleType.UpperLeftTop
-                    ? HIGHLIGHT_HANDLE_COLOR
-                    : RESIZE_HANDLE_COLOR
-                }
-              />
-            </Box>
-          )}
-          {!orthographic && (
-            <Box
-              ref={resizeHandleLRTopRef}
-              name={ResizeHandleType.LowerRightTop}
-              args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
-              position={positionLRTop}
-              onPointerDown={(e) => {
-                selectMe(id, e, ActionType.Resize);
-              }}
-              onPointerOver={(e) => {
-                hoverHandle(e, ResizeHandleType.LowerRightTop);
-              }}
-              onPointerOut={noHoverHandle}
-            >
-              <meshBasicMaterial
-                attach="material"
-                color={
-                  hoveredHandle === ResizeHandleType.LowerRightTop ||
-                  resizeHandleType === ResizeHandleType.LowerRightTop
-                    ? HIGHLIGHT_HANDLE_COLOR
-                    : RESIZE_HANDLE_COLOR
-                }
-              />
-            </Box>
-          )}
-          {!orthographic && (
-            <Box
-              ref={resizeHandleURTopRef}
-              name={ResizeHandleType.UpperRightTop}
-              args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
-              position={positionURTop}
-              onPointerDown={(e) => {
-                selectMe(id, e, ActionType.Resize);
-              }}
-              onPointerOver={(e) => {
-                hoverHandle(e, ResizeHandleType.UpperRightTop);
-              }}
-              onPointerOut={noHoverHandle}
-            >
-              <meshBasicMaterial
-                attach="material"
-                color={
-                  hoveredHandle === ResizeHandleType.UpperRightTop ||
-                  resizeHandleType === ResizeHandleType.UpperRightTop
-                    ? HIGHLIGHT_HANDLE_COLOR
-                    : RESIZE_HANDLE_COLOR
-                }
-              />
-            </Box>
-          )}
-          <Box
-            ref={resizeHandleLLBotRef}
-            name={ResizeHandleType.LowerLeft}
-            args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
-            position={new Vector3(-hx, -hy, resizeHandleSize / 2 - hz)}
-            onPointerDown={(e) => {
-              selectMe(id, e, ActionType.Resize);
-              if (resizeHandleLLBotRef.current) {
-                setCommonStore((state) => {
-                  const anchor = resizeHandleLLBotRef.current!.localToWorld(new Vector3(lx, ly, 0));
-                  state.resizeAnchor.copy(anchor);
-                });
-              }
-            }}
-            onPointerOver={(e) => {
-              hoverHandle(e, ResizeHandleType.LowerLeft);
-            }}
-            onPointerOut={noHoverHandle}
-          >
-            <meshBasicMaterial
-              attach="material"
-              color={
-                hoveredHandle === ResizeHandleType.LowerLeft || resizeHandleType === ResizeHandleType.LowerLeft
-                  ? HIGHLIGHT_HANDLE_COLOR
-                  : RESIZE_HANDLE_COLOR
-              }
-            />
-          </Box>
-          <Box
-            ref={resizeHandleULBotRef}
-            name={ResizeHandleType.UpperLeft}
-            args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
-            position={new Vector3(-hx, hy, resizeHandleSize / 2 - hz)}
-            onPointerDown={(e) => {
-              selectMe(id, e, ActionType.Resize);
-              if (resizeHandleULBotRef.current) {
-                setCommonStore((state) => {
-                  const anchor = resizeHandleULBotRef.current!.localToWorld(new Vector3(lx, -ly, 0));
-                  state.resizeAnchor.copy(anchor);
-                });
-              }
-            }}
-            onPointerOver={(e) => {
-              hoverHandle(e, ResizeHandleType.UpperLeft);
-            }}
-            onPointerOut={noHoverHandle}
-          >
-            <meshBasicMaterial
-              attach="material"
-              color={
-                hoveredHandle === ResizeHandleType.UpperLeft || resizeHandleType === ResizeHandleType.UpperLeft
-                  ? HIGHLIGHT_HANDLE_COLOR
-                  : RESIZE_HANDLE_COLOR
-              }
-            />
-          </Box>
-          <Box
-            ref={resizeHandleLRBotRef}
-            name={ResizeHandleType.LowerRight}
-            args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
-            position={new Vector3(hx, -hy, resizeHandleSize / 2 - hz)}
-            onPointerDown={(e) => {
-              selectMe(id, e, ActionType.Resize);
-              if (resizeHandleLRBotRef.current) {
-                setCommonStore((state) => {
-                  const anchor = resizeHandleLRBotRef.current!.localToWorld(new Vector3(-lx, ly, 0));
-                  state.resizeAnchor.copy(anchor);
-                });
-              }
-            }}
-            onPointerOver={(e) => {
-              hoverHandle(e, ResizeHandleType.LowerRight);
-            }}
-            onPointerOut={noHoverHandle}
-          >
-            <meshBasicMaterial
-              attach="material"
-              color={
-                hoveredHandle === ResizeHandleType.LowerRight || resizeHandleType === ResizeHandleType.LowerRight
-                  ? HIGHLIGHT_HANDLE_COLOR
-                  : RESIZE_HANDLE_COLOR
-              }
-            />
-          </Box>
-          <Box
-            ref={resizeHandleURBotRef}
-            name={ResizeHandleType.UpperRight}
-            args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
-            position={new Vector3(hx, hy, resizeHandleSize / 2 - hz)}
-            onPointerDown={(e) => {
-              selectMe(id, e, ActionType.Resize);
-              if (resizeHandleURBotRef.current) {
-                setCommonStore((state) => {
-                  const anchor = resizeHandleURBotRef.current!.localToWorld(new Vector3(-lx, -ly, 0));
-                  state.resizeAnchor.copy(anchor);
-                });
-              }
-            }}
-            onPointerOver={(e) => {
-              hoverHandle(e, ResizeHandleType.UpperRight);
-            }}
-            onPointerOut={noHoverHandle}
-          >
-            <meshBasicMaterial
-              attach="material"
-              color={
-                hoveredHandle === ResizeHandleType.UpperRight || resizeHandleType === ResizeHandleType.UpperRight
-                  ? HIGHLIGHT_HANDLE_COLOR
-                  : RESIZE_HANDLE_COLOR
-              }
-            />
-          </Box>
-
-          {!addedCuboidId && (
-            <>
-              {/* move handles */}
-              <Sphere
-                ref={moveHandleLowerFaceRef}
-                args={[moveHandleSize, 6, 6, 0, Math.PI]}
-                name={MoveHandleType.Lower}
-                position={positionLowerFace}
-                onPointerDown={(e) => {
-                  selectMe(id, e, ActionType.Move);
-                }}
-                onPointerOver={(e) => {
-                  hoverHandle(e, MoveHandleType.Lower);
-                }}
-                onPointerOut={noHoverHandle}
-              >
-                <meshBasicMaterial
-                  attach="material"
-                  color={
-                    hoveredHandle === MoveHandleType.Lower || moveHandleType === MoveHandleType.Lower
-                      ? HIGHLIGHT_HANDLE_COLOR
-                      : MOVE_HANDLE_COLOR_2
-                  }
-                />
-              </Sphere>
-              <Sphere
-                ref={moveHandleUpperFaceRef}
-                args={[moveHandleSize, 6, 6, 0, Math.PI]}
-                name={MoveHandleType.Upper}
-                position={positionUpperFace}
-                onPointerDown={(e) => {
-                  selectMe(id, e, ActionType.Move);
-                }}
-                onPointerOver={(e) => {
-                  hoverHandle(e, MoveHandleType.Upper);
-                }}
-                onPointerOut={noHoverHandle}
-              >
-                <meshBasicMaterial
-                  attach="material"
-                  color={
-                    hoveredHandle === MoveHandleType.Upper || moveHandleType === MoveHandleType.Upper
-                      ? HIGHLIGHT_HANDLE_COLOR
-                      : MOVE_HANDLE_COLOR_2
-                  }
-                />
-              </Sphere>
-              <Sphere
-                ref={moveHandleLeftFaceRef}
-                args={[moveHandleSize, 6, 6, 0, Math.PI]}
-                name={MoveHandleType.Left}
-                position={positionLeftFace}
-                onPointerDown={(e) => {
-                  selectMe(id, e, ActionType.Move);
-                }}
-                onPointerOver={(e) => {
-                  hoverHandle(e, MoveHandleType.Left);
-                }}
-                onPointerOut={noHoverHandle}
-              >
-                <meshBasicMaterial
-                  attach="material"
-                  color={
-                    hoveredHandle === MoveHandleType.Left || moveHandleType === MoveHandleType.Left
-                      ? HIGHLIGHT_HANDLE_COLOR
-                      : MOVE_HANDLE_COLOR_1
-                  }
-                />
-              </Sphere>
-              <Sphere
-                ref={moveHandleRightFaceRef}
-                args={[moveHandleSize, 6, 6, 0, Math.PI]}
-                name={MoveHandleType.Right}
-                position={positionRightFace}
-                onPointerDown={(e) => {
-                  selectMe(id, e, ActionType.Move);
-                }}
-                onPointerOver={(e) => {
-                  hoverHandle(e, MoveHandleType.Right);
-                }}
-                onPointerOut={noHoverHandle}
-              >
-                <meshBasicMaterial
-                  attach="material"
-                  color={
-                    hoveredHandle === MoveHandleType.Right || moveHandleType === MoveHandleType.Right
-                      ? HIGHLIGHT_HANDLE_COLOR
-                      : MOVE_HANDLE_COLOR_1
-                  }
-                />
-              </Sphere>
-              <Sphere
-                ref={moveHandleTopFaceRef}
-                args={[moveHandleSize, 6, 6, 0, Math.PI]}
-                name={MoveHandleType.Top}
-                position={positionTopFace}
-                onPointerDown={(e) => {
-                  selectMe(id, e, ActionType.Move);
-                }}
-                onPointerOver={(e) => {
-                  hoverHandle(e, MoveHandleType.Top);
-                }}
-                onPointerOut={noHoverHandle}
-              >
-                <meshBasicMaterial
-                  attach="material"
-                  color={
-                    hoveredHandle === MoveHandleType.Top || moveHandleType === MoveHandleType.Top
-                      ? HIGHLIGHT_HANDLE_COLOR
-                      : MOVE_HANDLE_COLOR_3
-                  }
-                />
-              </Sphere>
-
-              {/* rotate handles */}
-              <RotateHandle
-                id={id}
-                position={lowerRotateHandlePosition}
-                color={
-                  hoveredHandle === RotateHandleType.Lower || rotateHandleType === RotateHandleType.Lower
-                    ? HIGHLIGHT_HANDLE_COLOR
-                    : RESIZE_HANDLE_COLOR
-                }
-                ratio={ratio}
-                handleType={RotateHandleType.Lower}
-                hoverHandle={hoverHandle}
-                noHoverHandle={noHoverHandle}
-              />
-              <RotateHandle
-                id={id}
-                position={upperRotateHandlePosition}
-                color={
-                  hoveredHandle === RotateHandleType.Upper || rotateHandleType === RotateHandleType.Upper
-                    ? HIGHLIGHT_HANDLE_COLOR
-                    : RESIZE_HANDLE_COLOR
-                }
-                ratio={ratio}
-                handleType={RotateHandleType.Upper}
-                hoverHandle={hoverHandle}
-                noHoverHandle={noHoverHandle}
-              />
-            </>
-          )}
-        </>
-      )}
-
-      {(hovered || showLabel) && !selected && (
-        <textSprite
-          userData={{ unintersectable: true }}
-          name={'Label'}
-          text={labelText}
-          color={cuboidModel?.labelColor ?? 'white'}
-          fontSize={cuboidModel?.labelFontSize ?? 20}
-          fontFace={'Roboto'}
-          textHeight={cuboidModel?.labelSize ?? 0.2}
-          position={[0, 0, hz + (cuboidModel?.labelHeight ?? 0.2)]}
-        />
-      )}
-    </group>
+    </>
   );
 };
 

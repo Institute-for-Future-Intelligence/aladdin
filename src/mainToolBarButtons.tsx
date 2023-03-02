@@ -44,6 +44,7 @@ import { useRefStore } from './stores/commonRef';
 import { showInfo } from './helpers';
 import { Util } from './Util';
 import { usePrimitiveStore } from './stores/commonPrimitive';
+import { isGroupable } from './models/Groupable';
 
 const ToolBarButton = ({ ...props }) => {
   return (
@@ -96,7 +97,7 @@ const MainToolBarButtons = () => {
     setCommonStore((state) => {
       state.objectTypeToAdd = ObjectType.None;
       state.groupActionMode = false;
-      state.elementGroupId = null;
+      state.groupMasterId = null;
       state.actionModeLock = false;
     });
   };
@@ -104,13 +105,13 @@ const MainToolBarButtons = () => {
   const handleGroupActionMode = () => {
     setCommonStore((state) => {
       if (state.groupActionMode) {
-        state.elementGroupId = null;
+        state.groupMasterId = null;
       } else {
         if (state.selectedElement) {
-          if (state.selectedElement.type === ObjectType.Foundation) {
-            state.elementGroupId = state.selectedElement.id;
+          if (isGroupable(state.selectedElement)) {
+            state.groupMasterId = state.selectedElement.id;
           } else {
-            state.elementGroupId = state.selectedElement.foundationId ?? null;
+            state.groupMasterId = state.selectedElement.foundationId ?? null;
             for (const e of state.elements) {
               e.selected = e.id === state.selectedElement.foundationId;
             }
@@ -216,7 +217,7 @@ const MainToolBarButtons = () => {
     setCommonStore((state) => {
       state.objectTypeToAdd = type;
       state.groupActionMode = false;
-      state.elementGroupId = null;
+      state.groupMasterId = null;
       state.actionModeLock = false;
     });
     useRefStore.getState().setEnableOrbitController(false);

@@ -44,6 +44,7 @@ import { FoundationModel } from 'src/models/FoundationModel';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { InnerCommonState } from 'src/stores/InnerCommonState';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { Groupable, GroupableModel, isGroupable } from 'src/models/Groupable';
 
 const Ground = () => {
   const setCommonStore = useStore(Selector.set);
@@ -74,7 +75,7 @@ const Ground = () => {
   const updatePolygonVerticesById = useStore(Selector.updatePolygonVerticesById);
   const updateSceneRadius = useStore(Selector.updateSceneRadius);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
-  const elementGroupId = useStore(Selector.elementGroupId);
+  const groupMasterId = useStore(Selector.groupMasterId);
 
   const { get: getThree, scene, invalidate } = useThree();
   const groundPlaneRef = useRef<Mesh>();
@@ -103,8 +104,8 @@ const Ground = () => {
   const isSettingCuboidStartPointRef = useRef(false);
   const isSettingCuboidEndPointRef = useRef(false);
   const isHumanOrPlantMovedRef = useRef(false);
-  const foundationGroupRelPosMapRef = useRef<Map<string, Vector3>>(new Map());
-  const foundationGroupOldPosMapRef = useRef<Map<string, number[]>>(new Map());
+  const baseGroupRelPosMapRef = useRef<Map<string, Vector3>>(new Map());
+  const baseGroupOldPosMapRef = useRef<Map<string, number[]>>(new Map());
   const foundationGroupNewPosMapRef = useRef<Map<string, number[]>>(new Map());
 
   const lang = { lng: language };
@@ -812,17 +813,17 @@ const Ground = () => {
         }
         showError(i18n.t('message.CannotMoveObjectTooFar', lang));
       } else {
-        if (foundationGroupRelPosMapRef.current.size > 1) {
+        if (baseGroupRelPosMapRef.current.size > 1) {
           foundationGroupNewPosMapRef.current.clear();
           for (const elem of useStore.getState().elements) {
-            if (elem.type === ObjectType.Foundation && foundationGroupOldPosMapRef.current.has(elem.id)) {
+            if (elem.type === ObjectType.Foundation && baseGroupOldPosMapRef.current.has(elem.id)) {
               foundationGroupNewPosMapRef.current.set(elem.id, [elem.cx, elem.cy, elem.cz]);
             }
           }
           const undoableMove = {
             name: 'Move Foundation Group',
             timestamp: Date.now(),
-            oldPositionMap: new Map(foundationGroupOldPosMapRef.current),
+            oldPositionMap: new Map(baseGroupOldPosMapRef.current),
             newPositionMap: new Map(foundationGroupNewPosMapRef.current),
             undo: () => {
               updateFoundationGroupPosition(undoableMove.oldPositionMap);
@@ -1000,40 +1001,40 @@ const Ground = () => {
     });
   };
 
-  const setFoundationPosMap = (element: ElementModel, pointer: Vector3) => {
+  const setBasePosMap = (element: ElementModel, pointer: Vector3) => {
     const center = new Vector3(element.cx, element.cy);
     const diff = new Vector3().subVectors(center, pointer);
-    foundationGroupRelPosMapRef.current.set(element.id, diff);
-    foundationGroupOldPosMapRef.current.set(element.id, [element.cx, element.cy, element.cz]);
+    baseGroupRelPosMapRef.current.set(element.id, diff);
+    baseGroupOldPosMapRef.current.set(element.id, [element.cx, element.cy, element.cz]);
   };
 
-  const checkOverlapWithAllFoundation = (event: ThreeEvent<PointerEvent>, foundation: ElementModel) => {
+  const checkOverlapWithAllBases = (event: ThreeEvent<PointerEvent>, currElem: GroupableModel) => {
     const pointer = event.intersections[0].point.clone().setZ(0);
     for (const element of useStore.getState().elements) {
       if (
-        element.type === ObjectType.Foundation &&
+        isGroupable(element) &&
         !element.locked &&
-        element.id !== foundation.id &&
-        !foundationGroupRelPosMapRef.current.has(element.id) &&
-        Util.doFoundationsOverlap(element, foundation)
+        element.id !== currElem.id &&
+        !baseGroupRelPosMapRef.current.has(element.id) &&
+        Util.areTwoBasesOverlapped(element, currElem)
       ) {
-        setFoundationPosMap(element, pointer);
-        checkOverlapWithAllFoundation(event, element);
+        setBasePosMap(element, pointer);
+        checkOverlapWithAllBases(event, element);
       }
-      if (element.id === foundation.id) {
-        setFoundationPosMap(element, pointer);
+      if (element.id === currElem.id) {
+        setBasePosMap(element, pointer);
       }
     }
   };
 
-  const handleGroupMaster = (event: ThreeEvent<PointerEvent>, currElem: ElementModel) => {
-    foundationGroupRelPosMapRef.current.clear();
-    foundationGroupOldPosMapRef.current.clear();
-    if (!(currElem as FoundationModel).enableGroupMaster) {
+  const handleGroupMaster = (event: ThreeEvent<PointerEvent>, currElem: GroupableModel) => {
+    baseGroupRelPosMapRef.current.clear();
+    baseGroupOldPosMapRef.current.clear();
+    if (!currElem.enableGroupMaster) {
       return;
     }
     if (useStore.getState().moveHandleType) {
-      checkOverlapWithAllFoundation(event, currElem);
+      checkOverlapWithAllBases(event, currElem);
     }
   };
 
@@ -1169,6 +1170,9 @@ const Ground = () => {
               oldHumanOrPlantParentIdRef.current = selectedElement.parentId;
               break;
             case ObjectType.Cuboid:
+              if (isGroupable(selectedElement)) {
+                handleGroupMaster(e, selectedElement as GroupableModel);
+              }
               // getting ready for resizing even though it may not happen
               absPosMapRef.current.clear();
               const cuboidCenter = new Vector3(selectedElement.cx, selectedElement.cy, selectedElement.cz);
@@ -1217,7 +1221,9 @@ const Ground = () => {
               }
               break;
             case ObjectType.Foundation:
-              handleGroupMaster(e, selectedElement);
+              if (isGroupable(selectedElement)) {
+                handleGroupMaster(e, selectedElement as GroupableModel);
+              }
               // getting ready for resizing even though it may not happen
               absPosMapRef.current.clear();
               polygonsAbsPosMapRef.current.clear();
@@ -1330,11 +1336,7 @@ const Ground = () => {
               if (intersects.length > 0) {
                 const p = intersects[0].point;
                 if (moveHandleType) {
-                  if (moveHandleType === MoveHandleType.Top) {
-                    setElementPosition(grabRef.current.id, p.x, p.y);
-                  } else {
-                    handleMove(p);
-                  }
+                  handleMove(p);
                 } else if (resizeHandleType) {
                   handleResize(p);
                 } else if (rotateHandleType) {
@@ -1580,7 +1582,7 @@ const Ground = () => {
             case ObjectType.Cuboid: // we can only deal with the top surface of a cuboid now
             case ObjectType.Foundation:
               const children = getChildren(e.id);
-              if (children.length > 0 && !elementGroupId) {
+              if (children.length > 0 && !groupMasterId) {
                 // basically, we have to create a copy of parent and children, set them to the new values,
                 // check if the new values are OK, proceed to change the original elements in
                 // the common store only when they are OK.
@@ -1650,7 +1652,7 @@ const Ground = () => {
         }
       }
       // if the new size is okay, we can then change the relative positions of the children.
-      if (sizeOk && !elementGroupId) {
+      if (sizeOk && !groupMasterId) {
         for (const e of state.elements) {
           if (e.parentId === grabRef.current!.id) {
             switch (e.type) {
@@ -1748,11 +1750,11 @@ const Ground = () => {
   };
 
   const handleMove = (p: Vector3) => {
-    if (foundationGroupRelPosMapRef.current.size > 0) {
+    if (baseGroupRelPosMapRef.current.size > 0) {
       setCommonStore((state) => {
         for (const elem of state.elements) {
-          if (elem.type === ObjectType.Foundation && foundationGroupRelPosMapRef.current.has(elem.id)) {
-            const v = foundationGroupRelPosMapRef.current.get(elem.id);
+          if (isGroupable(elem) && baseGroupRelPosMapRef.current.has(elem.id)) {
+            const v = baseGroupRelPosMapRef.current.get(elem.id);
             if (v) {
               elem.cx = p.x + v.x;
               elem.cy = p.y + v.y;
@@ -1766,6 +1768,10 @@ const Ground = () => {
     const hx = grabRef.current!.lx / 2;
     const hy = grabRef.current!.ly / 2;
     switch (moveHandleType) {
+      case MoveHandleType.Top: {
+        setElementPosition(grabRef.current!.id, p.x, p.y);
+        break;
+      }
       case MoveHandleType.Upper:
         x0 = p.x + sinAngle * hy;
         y0 = p.y - cosAngle * hy;

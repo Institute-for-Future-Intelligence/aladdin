@@ -640,8 +640,8 @@ export interface CommonStoreState {
 
   groupActionMode: boolean;
   setGroupActionMode: (b: boolean) => void;
-  elementGroupId: string | null;
-  setElementGroupId: (id: string | null) => void;
+  groupMasterId: string | null;
+  setGroupMasterId: (id: string | null) => void;
   groupActionUpdateFlag: boolean;
 
   loadingFile: boolean;
@@ -5620,10 +5620,10 @@ export const useStore = create<CommonStoreState>(
               state.groupActionMode = b;
             });
           },
-          elementGroupId: null,
-          setElementGroupId(id: string | null) {
+          groupMasterId: null,
+          setGroupMasterId(id: string | null) {
             immerSet((state) => {
-              state.elementGroupId = id;
+              state.groupMasterId = id;
               for (const e of state.elements) {
                 e.selected = e.id === id;
               }

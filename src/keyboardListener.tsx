@@ -169,7 +169,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
           setCommonStore((state) => {
             state.objectTypeToAdd = ObjectType.None;
             state.groupActionMode = false;
-            state.elementGroupId = null;
+            state.groupMasterId = null;
             state.viewState.autoRotate = !undoableCheck.checked;
           });
         },
@@ -177,7 +177,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
           setCommonStore((state) => {
             state.objectTypeToAdd = ObjectType.None;
             state.groupActionMode = false;
-            state.elementGroupId = null;
+            state.groupMasterId = null;
             state.viewState.autoRotate = undoableCheck.checked;
           });
         },
@@ -186,7 +186,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
       setCommonStore((state) => {
         state.objectTypeToAdd = ObjectType.None;
         state.groupActionMode = false;
-        state.elementGroupId = null;
+        state.groupMasterId = null;
         state.viewState.autoRotate = !state.viewState.autoRotate;
       });
     }
@@ -817,7 +817,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
             setCommonStore((state) => {
               state.objectTypeToAdd = ObjectType.None;
               state.groupActionMode = false;
-              state.elementGroupId = null;
+              state.groupMasterId = null;
               state.viewState.orthographic = false;
             });
             resetView();
@@ -987,7 +987,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
           state.actionModeLock = false;
           state.moveHandleType = null;
           state.resizeHandleType = null;
-          state.elementGroupId = null;
+          state.groupMasterId = null;
           state.groupActionMode = false;
         });
         useRefStore.getState().setEnableOrbitController(true);

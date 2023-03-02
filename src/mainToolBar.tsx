@@ -225,7 +225,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
     setCommonStore((state) => {
       state.objectTypeToAdd = ObjectType.None;
       state.groupActionMode = false;
-      state.elementGroupId = null;
+      state.groupMasterId = null;
     });
   };
 
