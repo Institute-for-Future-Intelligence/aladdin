@@ -33,9 +33,9 @@ import ReactTimeago from 'react-timeago';
 
 export interface ModelsMapProps {
   closeMap: () => void;
-  openModel: (userid: string, title: string, fromMap?: boolean) => void;
-  deleteModel: (userid: string, title: string) => void;
-  likeModel: (userid: string, title: string, like: boolean) => void;
+  openModel: (model: ModelSite) => void;
+  deleteModel: (model: ModelSite, successCallback?: Function) => void;
+  likeModel: (model: ModelSite, like: boolean, successCallback?: Function) => void;
 }
 
 const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapProps) => {
@@ -55,7 +55,7 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
   const modelSites = useStore(Selector.modelSites);
 
   const [map, setMap] = useState<google.maps.Map | null>(null);
-  const [selectedSite, setSelectedSite] = useState<ModelSite | null>(null);
+  const [selectedModel, setSelectedModel] = useState<ModelSite | null>(null);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const previousSiteRef = useRef<ModelSite | null>(null);
   const markersRef = useRef<Array<Marker | null>>([]);
@@ -222,18 +222,18 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
     ],
   } as GoogleMapProps;
 
-  const openSite = (site: ModelSite) => {
-    if (site.userid && site.title) {
-      openModel(site.userid, site.title, true);
+  const openModelSite = (model: ModelSite) => {
+    if (model.userid && model.title) {
+      openModel(model);
       closeMap();
     } else {
       showError(i18n.t('message.ModelNotFound', lang));
     }
   };
 
-  const shareSite = (site: ModelSite) => {
-    if (site.userid && site.title) {
-      const url = HOME_URL + '?client=web&userid=' + site.userid + '&title=' + encodeURIComponent(site.title);
+  const shareModelSite = (model: ModelSite) => {
+    if (model.userid && model.title) {
+      const url = HOME_URL + '?client=web&userid=' + model.userid + '&title=' + encodeURIComponent(model.title);
       copyTextToClipboard(url);
       showSuccess(i18n.t('cloudFilePanel.LinkGeneratedInClipBoard', lang) + '.');
     } else {
@@ -241,30 +241,35 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
     }
   };
 
-  const deleteSite = (site: ModelSite) => {
-    if (site) {
+  const deleteModelSite = (model: ModelSite) => {
+    if (model) {
       Modal.confirm({
         title: i18n.t('message.DoYouWantToDeleteModelFromMap', lang),
         icon: <ExclamationCircleOutlined />,
         onOk: () => {
-          deleteModel(site.userid, site.title);
-          markersRef.current[selectedMarkerIndexRef.current]?.marker?.setMap(null);
-          // also remove from the cached sites
-          setCommonStore((state) => {
-            if (state.modelSites) {
-              let index = -1;
-              for (const [i, m] of state.modelSites.entries()) {
-                if (m.userid === site.userid && m.title === site.title) {
-                  index = i;
-                  break;
+          deleteModel(model, () => {
+            // also remove from the cached sites
+            setCommonStore((state) => {
+              if (state.modelSites) {
+                const latlng = model.latitude.toFixed(4) + ', ' + model.longitude.toFixed(4);
+                const map = state.modelSites.get(latlng);
+                if (map) {
+                  let key = undefined;
+                  for (const [k, v] of map) {
+                    if (v.userid === model.userid && v.title === model.title) {
+                      key = k;
+                      break;
+                    }
+                  }
+                  if (key) {
+                    map.delete(key);
+                  }
                 }
               }
-              if (index >= 0) {
-                state.modelSites.splice(index, 1);
-              }
-            }
+            });
+            markersRef.current[selectedMarkerIndexRef.current]?.marker?.setMap(null);
+            setSelectedModel(null);
           });
-          setSelectedSite(null);
         },
         onCancel: () => {},
         okText: i18n.t('word.Yes', lang),
@@ -273,51 +278,64 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
     }
   };
 
-  const likeSite = (site: ModelSite) => {
-    if (site.userid && site.title) {
-      const id = site.title + ' - ' + site.userid;
-      const liked = !!user.likes?.includes(id);
-      likeModel(site.userid, site.title, !liked);
-      setCommonStore((state) => {
-        if (state.user) {
-          if (!state.user.likes) state.user.likes = [];
-          if (state.user.likes.includes(id)) {
-            const index = state.user.likes.indexOf(id);
-            if (index >= 0) {
-              state.user.likes.splice(index, 1);
-            }
-          } else {
-            state.user.likes.push(id);
-          }
-        }
-        if (state.modelSites) {
-          for (const m of state.modelSites) {
-            if (m.userid === site.userid && m.title === site.title) {
-              if (m.likeCount === undefined) m.likeCount = 0;
-              m.likeCount += liked ? -1 : 1;
+  const likeModelSite = (model: ModelSite) => {
+    if (model.userid && model.title) {
+      const uid = model.title + ', ' + model.userid;
+      const liked = !!user.likes?.includes(uid);
+      likeModel(model, !liked, () => {
+        setCommonStore((state) => {
+          if (state.user) {
+            if (!state.user.likes) state.user.likes = [];
+            if (state.user.likes.includes(uid)) {
+              const index = state.user.likes.indexOf(uid);
+              if (index >= 0) {
+                state.user.likes.splice(index, 1);
+              }
+            } else {
+              state.user.likes.push(uid);
             }
           }
-        }
+          if (state.modelSites) {
+            const latlng = model.latitude.toFixed(4) + ', ' + model.longitude.toFixed(4);
+            const map = state.modelSites.get(latlng);
+            if (map) {
+              for (const v of map.values()) {
+                if (v.userid === model.userid && v.title === model.title) {
+                  if (v.likeCount === undefined) v.likeCount = 0;
+                  v.likeCount += liked ? -1 : 1;
+                }
+              }
+            }
+          }
+        });
       });
       setUpdateFlag(!updateFlag);
     }
   };
 
   const getLikeCount = () => {
-    if (!selectedSite) return 0;
-    for (const m of useStore.getState().modelSites) {
-      if (m.userid === selectedSite.userid && m.title === selectedSite.title) {
-        return m.likeCount;
+    if (!selectedModel) return 0;
+    const latlng = selectedModel.latitude.toFixed(4) + ', ' + selectedModel.longitude.toFixed(4);
+    const map = useStore.getState().modelSites.get(latlng);
+    if (map) {
+      for (const v of map.values()) {
+        if (v.userid === selectedModel.userid && v.title === selectedModel.title) {
+          return v.likeCount;
+        }
       }
     }
     return 0;
   };
 
   const getClickCount = () => {
-    if (!selectedSite) return 0;
-    for (const m of useStore.getState().modelSites) {
-      if (m.userid === selectedSite.userid && m.title === selectedSite.title) {
-        return m.clickCount;
+    if (!selectedModel) return 0;
+    const latlng = selectedModel.latitude.toFixed(4) + ', ' + selectedModel.longitude.toFixed(4);
+    const map = useStore.getState().modelSites.get(latlng);
+    if (map) {
+      for (const v of map.values()) {
+        if (v.userid === selectedModel.userid && v.title === selectedModel.title) {
+          return v.clickCount;
+        }
       }
     }
     return 0;
@@ -380,25 +398,25 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
               />
             );
           })}
-        {selectedSite && (
-          <InfoWindow position={{ lat: selectedSite.latitude, lng: selectedSite.longitude }}>
-            <div onMouseLeave={() => setSelectedSite(null)}>
-              <label>{selectedSite.label}</label>
+        {selectedModel && (
+          <InfoWindow position={{ lat: selectedModel.latitude, lng: selectedModel.longitude }}>
+            <div onMouseLeave={() => setSelectedModel(null)}>
+              <label>{selectedModel.label}</label>
               <br />
-              <label style={{ fontSize: '10px' }}>{selectedSite.address ?? 'Unknown'}</label>
+              <label style={{ fontSize: '10px' }}>{selectedModel.address ?? 'Unknown'}</label>
               <br />
               <br />
               <label>
-                by {selectedSite.author ?? i18n.t('word.Anonymous', { lng: language })}
+                by {selectedModel.author ?? i18n.t('word.Anonymous', { lng: language })}
                 &nbsp;&nbsp;&nbsp;
-                {selectedSite.timeCreated && <ReactTimeago date={new Date(selectedSite.timeCreated)} />}
+                {selectedModel.timeCreated && <ReactTimeago date={new Date(selectedModel.timeCreated)} />}
               </label>
               <hr />
               <div style={{ marginTop: '10px', fontSize: '14px' }}>
                 <img
                   alt={'Open'}
                   onClick={() => {
-                    openSite(selectedSite);
+                    openModelSite(selectedModel);
                   }}
                   style={{ marginLeft: '10px' }}
                   title={i18n.t('word.Open', { lng: language })}
@@ -409,7 +427,7 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
                 <img
                   alt={'Export link'}
                   onClick={() => {
-                    shareSite(selectedSite);
+                    shareModelSite(selectedModel);
                   }}
                   style={{ marginLeft: '5px' }}
                   title={i18n.t('word.Share', { lng: language })}
@@ -417,11 +435,11 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
                   height={16}
                   width={16}
                 />
-                {selectedSite.userid === user.uid && (
+                {selectedModel.userid === user.uid && (
                   <img
                     alt={'Delete'}
                     onClick={() => {
-                      deleteSite(selectedSite);
+                      deleteModelSite(selectedModel);
                     }}
                     style={{ marginLeft: '5px' }}
                     title={i18n.t('word.Delete', { lng: language })}
@@ -432,11 +450,11 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
                 )}
                 {user.uid ? (
                   <>
-                    {user.likes && user.likes.includes(selectedSite.title + ' - ' + selectedSite.userid) ? (
+                    {user.likes && user.likes.includes(selectedModel.title + ', ' + selectedModel.userid) ? (
                       <img
                         alt={'Like'}
                         onClick={() => {
-                          likeSite(selectedSite);
+                          likeModelSite(selectedModel);
                         }}
                         style={{ marginLeft: '10px' }}
                         title={i18n.t('word.AlreadyLike', { lng: language })}
@@ -448,7 +466,7 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
                       <img
                         alt={'Like'}
                         onClick={() => {
-                          likeSite(selectedSite);
+                          likeModelSite(selectedModel);
                         }}
                         style={{ marginLeft: '10px' }}
                         title={i18n.t('word.Like', { lng: language })}
@@ -462,8 +480,8 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
                   <>
                     <img
                       alt={'Like'}
-                      style={{ marginLeft: '10px' }}
-                      title={i18n.t('word.Like', { lng: language })}
+                      style={{ marginLeft: '10px', opacity: 0.5 }}
+                      title={i18n.t('word.MustLogInToLike', { lng: language })}
                       src={EmptyHeartIcon}
                       height={16}
                       width={16}
@@ -484,11 +502,14 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
             </div>
           </InfoWindow>
         )}
-        {
+        {!!modelSites && !!modelSites.size && (
           <MarkerClusterer>
             {(clusterer) => (
               <div>
-                {modelSites.map((site: ModelSite, index: number) => {
+                {[...modelSites.keys()].map((key: string, index: number) => {
+                  const m = modelSites.get(key);
+                  if (!m || !m.size) return null;
+                  const [[k, site]] = m;
                   const iconUrl = getIconUrl(site);
                   return (
                     <Marker
@@ -497,14 +518,14 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
                       clusterer={clusterer}
                       icon={iconUrl ? { url: iconUrl } : undefined}
                       position={{ lat: site.latitude, lng: site.longitude }}
-                      onClick={() => openSite(site)}
+                      onClick={() => openModelSite(site)}
                       onMouseOver={(e) => {
-                        previousSiteRef.current = selectedSite;
+                        previousSiteRef.current = selectedModel;
                         selectedMarkerIndexRef.current = index;
-                        setSelectedSite(site);
+                        setSelectedModel(site);
                       }}
                       onMouseOut={(e) => {
-                        if (selectedSite === previousSiteRef.current) setSelectedSite(null);
+                        if (selectedModel === previousSiteRef.current) setSelectedModel(null);
                       }}
                     />
                   );
@@ -512,7 +533,7 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
               </div>
             )}
           </MarkerClusterer>
-        }
+        )}
       </>
     </GoogleMap>
   );

@@ -2,7 +2,7 @@
  * @Copyright 2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import styled from 'styled-components';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
@@ -15,6 +15,7 @@ import ModelsMap from './components/modelsMap';
 import { UndoableChangeLocation } from './undo/UndoableChangeLocation';
 import { DEFAULT_ADDRESS } from './constants';
 import { usePrimitiveStore } from './stores/commonPrimitive';
+import { ModelSite } from './types';
 
 const libraries = ['places'] as Libraries;
 
@@ -33,9 +34,9 @@ const Container = styled.div`
 `;
 
 export interface ExplorerProps {
-  openCloudFile: (userid: string, title: string) => void;
-  deleteModelFromMap: (userid: string, title: string) => void;
-  likeModelFromMap: (userid: string, title: string, like: boolean) => void;
+  openCloudFile: (model: ModelSite) => void;
+  deleteModelFromMap: (model: ModelSite, successCallback?: Function) => void;
+  likeModelFromMap: (model: ModelSite, like: boolean, successCallback?: Function) => void;
 }
 
 const Explorer = ({ openCloudFile, deleteModelFromMap, likeModelFromMap }: ExplorerProps) => {
@@ -119,6 +120,15 @@ const Explorer = ({ openCloudFile, deleteModelFromMap, likeModelFromMap }: Explo
 
   const ifiUser = user.email?.endsWith('@intofuture.org');
 
+  const modelSitesCount = useMemo(() => {
+    if (!modelSites || !modelSites.size) return 0;
+    let count = 0;
+    for (const value of modelSites.values()) {
+      count += value.size ?? 0;
+    }
+    return count;
+  }, [modelSites]);
+
   return (
     <Container
       ref={containerRef}
@@ -195,7 +205,7 @@ const Explorer = ({ openCloudFile, deleteModelFromMap, likeModelFromMap }: Explo
               boxShadow: '1px 1px 1px 1px gray',
             }}
           >
-            {i18n.t('word.Total', { lng: language }) + ': ' + modelSites.length}
+            {i18n.t('word.Total', { lng: language }) + ': ' + modelSitesCount}
           </div>
         </Space>
         <Space>

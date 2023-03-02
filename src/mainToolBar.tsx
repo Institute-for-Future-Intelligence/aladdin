@@ -375,31 +375,25 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
     setLoading(true);
     return await firebase
       .firestore()
-      .collection('sites')
+      .collection('models')
       .get()
       .then((querySnapshot) => {
-        const a: ModelSite[] = [];
+        const map = new Map<string, Map<string, ModelSite>>();
         querySnapshot.forEach((doc) => {
           const data = doc.data();
-          a.push({
-            userid: data.userid,
-            title: data.title,
-            latitude: data.latitude,
-            longitude: data.longitude,
-            address: data.address,
-            type: data.type,
-            author: data.author,
-            label: data.label,
-            likeCount: data.likeCount ?? 0,
-            clickCount: data.clickCount ?? 0,
-            timeCreated: data.timeCreated,
-          } as ModelSite);
+          if (data) {
+            const a = new Map<string, ModelSite>();
+            for (const k in data) {
+              a.set(k, data[k]);
+            }
+            map.set(doc.id, a);
+          }
         });
         setLoading(false);
         setCommonStore((state) => {
-          state.modelSites = a;
+          state.modelSites = map;
         });
-        return a;
+        return map;
       })
       .catch((error) => {
         showError(i18n.t('message.CannotOpenModelOnMap', lang) + ': ' + error);
@@ -412,27 +406,45 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
       const useridFromURL = p.get('userid');
       const titleFromURL = p.get('title');
       if (useridFromURL === user.uid && titleFromURL === title) {
-        const collection = firebase.firestore().collection('sites');
+        const collection = firebase.firestore().collection('models');
         if (collection) {
-          const doc = collection.doc(title + ' - ' + user.uid);
-          if (doc) {
-            const modelSite = {
-              latitude: latitude,
-              longitude: longitude,
-              address: address,
-              type: usePrimitiveStore.getState().modelType,
-              author: user.displayName,
-              userid: user.uid,
-              title: title,
-              label: usePrimitiveStore.getState().modelLabel,
-              likeCount: 0,
-              clickCount: 0,
-              timeCreated: Date.now(),
-            } as ModelSite;
-            doc.set(modelSite).then(() => {
-              showSuccess(i18n.t('menu.file.PublishedOnModelsMap', lang) + '.');
+          const m = {
+            latitude: latitude,
+            longitude: longitude,
+            address: address,
+            type: usePrimitiveStore.getState().modelType,
+            author: user.displayName,
+            userid: user.uid,
+            title: title,
+            label: usePrimitiveStore.getState().modelLabel,
+            likeCount: 0,
+            clickCount: 0,
+            timeCreated: Date.now(),
+          } as ModelSite;
+          const latlng = latitude.toFixed(4) + ', ' + longitude.toFixed(4);
+          const document = collection.doc(latlng);
+          const uid = m.title + ', ' + m.userid;
+          document
+            .get()
+            .then((doc) => {
+              if (doc.exists) {
+                const data = doc.data();
+                if (data && data[uid]) {
+                  showInfo(i18n.t('menu.file.ModelAlreadyPublishedOnMap', lang) + '.');
+                } else {
+                  document.set({ [uid]: m }, { merge: true }).then(() => {
+                    showSuccess(i18n.t('menu.file.PublishedOnModelsMap', lang) + '.');
+                  });
+                }
+              } else {
+                document.set({ [uid]: m }, { merge: true }).then(() => {
+                  showSuccess(i18n.t('menu.file.PublishedOnModelsMap', lang) + '.');
+                });
+              }
+            })
+            .catch((error) => {
+              showError(i18n.t('message.CannotPublishModelOnMap', lang) + ': ' + error);
             });
-          }
         }
         firebase
           .firestore()
@@ -442,29 +454,32 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
             published: firebase.firestore.FieldValue.arrayUnion(title),
           })
           .then(() => {
-            // TODO: What to do?
+            setCommonStore((state) => {
+              if (state.user) {
+                if (!state.user.published) state.user.published = [];
+                if (!state.user.published.includes(title)) {
+                  state.user.published.push(title);
+                }
+              }
+            });
           });
-        setCommonStore((state) => {
-          if (state.user) {
-            if (!state.user.published) state.user.published = [];
-            if (!state.user.published.includes(title)) {
-              state.user.published.push(title);
-            }
-          }
-        });
       }
     }
   };
 
-  const deleteFromModelsMap = (userid: string, title: string) => {
-    if (user && user.uid && title) {
+  const deleteFromModelsMap = (model: ModelSite, successCallback?: Function) => {
+    if (user && user.uid && model.title) {
+      const latlng = model.latitude.toFixed(4) + ', ' + model.longitude.toFixed(4);
       firebase
         .firestore()
-        .collection('sites')
-        .doc(title + ' - ' + userid)
-        .delete()
+        .collection('models')
+        .doc(latlng)
+        .update({
+          [model.title + ', ' + model.userid]: firebase.firestore.FieldValue.delete(),
+        })
         .then(() => {
-          // TODO: What to do?
+          showSuccess(i18n.t('message.ModelDeletedFromMap', lang));
+          if (successCallback) successCallback();
         })
         .catch((error) => {
           showError(i18n.t('message.CannotDeleteModelFromMap', lang) + ': ' + error);
@@ -474,27 +489,26 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         .collection('users')
         .doc(user.uid)
         .update({
-          published: firebase.firestore.FieldValue.arrayRemove(title),
+          published: firebase.firestore.FieldValue.arrayRemove(model.title),
         })
         .then(() => {
-          // TODO: What to do?
-        });
-      setCommonStore((state) => {
-        if (state.user && state.user.published) {
-          if (state.user.published.includes(title)) {
-            const index = state.user.published.indexOf(title);
-            if (index >= 0) {
-              state.user.published.splice(index, 1);
+          setCommonStore((state) => {
+            if (state.user && state.user.published) {
+              if (state.user.published.includes(title)) {
+                const index = state.user.published.indexOf(title);
+                if (index >= 0) {
+                  state.user.published.splice(index, 1);
+                }
+              }
             }
-          }
-        }
-      });
+          });
+        });
     }
   };
 
-  const likeModelsMap = (userid: string, title: string, like: boolean) => {
+  const likeModelsMap = (model: ModelSite, like: boolean, successCallback?: Function) => {
     if (user && user.uid) {
-      const siteId = title + ' - ' + userid;
+      const uid = model.title + ', ' + model.userid;
       firebase
         .firestore()
         .collection('users')
@@ -502,33 +516,35 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         .update(
           like
             ? {
-                likes: firebase.firestore.FieldValue.arrayUnion(siteId),
+                likes: firebase.firestore.FieldValue.arrayUnion(uid),
               }
             : {
-                likes: firebase.firestore.FieldValue.arrayRemove(siteId),
+                likes: firebase.firestore.FieldValue.arrayRemove(uid),
               },
         )
         .then(() => {
-          // TODO: What to do?
+          // ignore
         })
         .catch((error) => {
           showError(i18n.t('message.CannotLikeModelFromMap', lang) + ': ' + error);
         });
+      const latlng = model.latitude.toFixed(4) + ', ' + model.longitude.toFixed(4);
+      const likeCountPath = uid + '.likeCount';
       firebase
         .firestore()
-        .collection('sites')
-        .doc(siteId)
+        .collection('models')
+        .doc(latlng)
         .update(
           like
             ? {
-                likeCount: firebase.firestore.FieldValue.increment(1),
+                [likeCountPath]: firebase.firestore.FieldValue.increment(1),
               }
             : {
-                likeCount: firebase.firestore.FieldValue.increment(-1),
+                [likeCountPath]: firebase.firestore.FieldValue.increment(-1),
               },
         )
         .then(() => {
-          // TODO: What to do?
+          if (successCallback) successCallback();
         })
         .catch((error) => {
           showError(i18n.t('message.CannotLikeModelFromMap', lang) + ': ' + error);
@@ -536,21 +552,23 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
     }
   };
 
-  const countClicksModelsMap = (userid: string, title: string) => {
-    if (user && user.uid && title) {
-      const siteId = title + ' - ' + userid;
+  const countClicksModelsMap = (model: ModelSite) => {
+    if (user && user.uid) {
+      const latlng = model.latitude.toFixed(4) + ', ' + model.longitude.toFixed(4);
+      const uid = model.title + ', ' + model.userid;
+      const clickCountPath = uid + '.clickCount';
       firebase
         .firestore()
-        .collection('sites')
-        .doc(siteId)
+        .collection('models')
+        .doc(latlng)
         .update({
-          clickCount: firebase.firestore.FieldValue.increment(1),
+          [clickCountPath]: firebase.firestore.FieldValue.increment(1),
         })
         .then(() => {
-          // TODO: What to do?
+          // ignore
         })
         .catch((error) => {
-          // Ignore
+          // ignore
         });
     }
   };
@@ -612,7 +630,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
     }
   };
 
-  const openCloudFileWithSaveReminder = (userid: string, title: string, fromMap?: boolean) => {
+  const openCloudFileWithSaveReminder = (userid: string, title: string) => {
     if (changed) {
       Modal.confirm({
         title: i18n.t('message.DoYouWantToSaveChanges', lang),
@@ -621,7 +639,6 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
           if (cloudFile) {
             saveToCloud(cloudFile, true);
             openCloudFile(userid, title);
-            if (fromMap) countClicksModelsMap(userid, title);
           } else {
             setCommonStore((state) => {
               state.showCloudFileTitleDialogFlag = !state.showCloudFileTitleDialogFlag;
@@ -631,14 +648,42 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         },
         onCancel: () => {
           openCloudFile(userid, title);
-          if (fromMap) countClicksModelsMap(userid, title);
         },
         okText: i18n.t('word.Yes', lang),
         cancelText: i18n.t('word.No', lang),
       });
     } else {
       openCloudFile(userid, title);
-      if (fromMap) countClicksModelsMap(userid, title);
+    }
+  };
+
+  const openCloudFileWithSaveReminderFromMap = (model: ModelSite) => {
+    if (changed) {
+      Modal.confirm({
+        title: i18n.t('message.DoYouWantToSaveChanges', lang),
+        icon: <ExclamationCircleOutlined />,
+        onOk: () => {
+          if (cloudFile) {
+            saveToCloud(cloudFile, true);
+            openCloudFile(model.userid, model.title);
+            countClicksModelsMap(model);
+          } else {
+            setCommonStore((state) => {
+              state.showCloudFileTitleDialogFlag = !state.showCloudFileTitleDialogFlag;
+              state.showCloudFileTitleDialog = true;
+            });
+          }
+        },
+        onCancel: () => {
+          openCloudFile(model.userid, model.title);
+          countClicksModelsMap(model);
+        },
+        okText: i18n.t('word.Yes', lang),
+        cancelText: i18n.t('word.No', lang),
+      });
+    } else {
+      openCloudFile(model.userid, model.title);
+      countClicksModelsMap(model);
     }
   };
 
@@ -907,7 +952,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
       {showAccountSettingsPanel && <AccountSettingsPanel />}
       {openModelsMap && (
         <Explorer
-          openCloudFile={openCloudFileWithSaveReminder}
+          openCloudFile={openCloudFileWithSaveReminderFromMap}
           deleteModelFromMap={deleteFromModelsMap}
           likeModelFromMap={likeModelsMap}
         />
