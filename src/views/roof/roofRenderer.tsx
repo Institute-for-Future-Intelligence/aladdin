@@ -207,7 +207,7 @@ export const handleRoofBodyPointerDown = (e: ThreeEvent<PointerEvent>, id: strin
         for (const e of state.elements) {
           e.selected = e.id === foundationId;
         }
-        state.elementGroupId = foundationId;
+        state.groupMasterId = foundationId;
       } else {
         for (const e of state.elements) {
           if (e.id === id) {

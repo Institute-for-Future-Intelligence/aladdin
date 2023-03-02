@@ -1517,7 +1517,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           for (const e of state.elements) {
             e.selected = e.id === parentId;
           }
-          state.elementGroupId = parentId;
+          state.groupMasterId = parentId;
         });
         e.stopPropagation();
       } else if (isAllowedToSelectMe()) {
@@ -1864,7 +1864,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           for (const e of state.elements) {
             e.selected = e.id === parentId;
           }
-          state.elementGroupId = parentId;
+          state.groupMasterId = parentId;
         });
         e.stopPropagation();
       } else if (isAllowedToSelectMe()) {
@@ -1880,7 +1880,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         for (const e of state.elements) {
           e.selected = e.id === parentId;
         }
-        state.elementGroupId = parentId;
+        state.groupMasterId = parentId;
       });
     } else {
       if (checkIfCanSelectMe(e)) {

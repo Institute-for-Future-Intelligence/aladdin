@@ -8,8 +8,9 @@ import { SolarUpdraftTowerModel } from './SolarUpdraftTowerModel';
 import { SolarPowerTowerModel } from './SolarPowerTowerModel';
 import { SolarAbsorberPipeModel } from './SolarAbsorberPipeModel';
 import { HvacSystem } from './HvacSystem';
+import { Groupable } from './Groupable';
 
-export interface FoundationModel extends ElementModel {
+export interface FoundationModel extends ElementModel, Groupable {
   textureType: FoundationTexture;
 
   solarStructure?: SolarStructure;
@@ -22,9 +23,6 @@ export interface FoundationModel extends ElementModel {
 
   // solar updraft tower
   solarUpdraftTower?: SolarUpdraftTowerModel;
-
-  // group master
-  enableGroupMaster?: boolean;
 
   // these apply only to the portion that are within a building
   rValue: number;

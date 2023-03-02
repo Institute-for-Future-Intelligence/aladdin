@@ -597,7 +597,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           setCommonStore((state) => {
             state.objectTypeToAdd = ObjectType.None;
             state.groupActionMode = false;
-            state.elementGroupId = null;
+            state.groupMasterId = null;
             state.viewState.autoRotate = !undoableCheck.checked;
           });
         },
@@ -605,7 +605,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           setCommonStore((state) => {
             state.objectTypeToAdd = ObjectType.None;
             state.groupActionMode = false;
-            state.elementGroupId = null;
+            state.groupMasterId = null;
             state.viewState.autoRotate = undoableCheck.checked;
           });
         },
@@ -614,7 +614,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       setCommonStore((state) => {
         state.objectTypeToAdd = ObjectType.None;
         state.groupActionMode = false;
-        state.elementGroupId = null;
+        state.groupMasterId = null;
         state.viewState.autoRotate = !state.viewState.autoRotate;
         if (loggable) {
           state.actionInfo = {
@@ -778,7 +778,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   state.createNewFileFlag = !state.createNewFileFlag;
                   state.objectTypeToAdd = ObjectType.None;
                   state.groupActionMode = false;
-                  state.elementGroupId = null;
+                  state.groupMasterId = null;
                   state.openModelsMap = false; // in case the user uses the keyboard shortcut
                   window.history.pushState({}, document.title, HOME_URL);
                   if (loggable) {
@@ -804,7 +804,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   state.openLocalFileFlag = !state.openLocalFileFlag;
                   state.objectTypeToAdd = ObjectType.None;
                   state.groupActionMode = false;
-                  state.elementGroupId = null;
+                  state.groupMasterId = null;
                   state.cloudFile = undefined;
                   state.openModelsMap = false; // in case the user uses the keyboard shortcut
                   window.history.pushState({}, document.title, HOME_URL);
@@ -1028,7 +1028,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                 setCommonStore((state) => {
                   state.objectTypeToAdd = ObjectType.None;
                   state.groupActionMode = false;
-                  state.elementGroupId = null;
+                  state.groupMasterId = null;
                   state.viewState.orthographic = false;
                 });
               }}
