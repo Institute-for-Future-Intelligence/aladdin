@@ -23,6 +23,7 @@ import { ElementModel } from './models/ElementModel';
 import { SolarPanelModel } from './models/SolarPanelModel';
 import {
   ElementState,
+  ModelSite,
   MoveHandleType,
   ObjectType,
   Orientation,
@@ -49,6 +50,10 @@ import { DoorModel, DoorType } from './models/DoorModel';
 export class Util {
   static getLatLngKey(lat: number, lng: number) {
     return lat.toFixed(LAT_LNG_FRACTION_DIGITS) + ', ' + lng.toFixed(LAT_LNG_FRACTION_DIGITS);
+  }
+
+  static getModelKey(model: ModelSite) {
+    return model.title + ', ' + model.userid;
   }
 
   static getEuler(

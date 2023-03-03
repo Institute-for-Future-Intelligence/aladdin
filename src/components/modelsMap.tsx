@@ -245,65 +245,65 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
   };
 
   const deleteModelSite = (model: ModelSite) => {
-    if (model) {
-      Modal.confirm({
-        title: i18n.t('message.DoYouWantToDeleteModelFromMap', lang),
-        icon: <ExclamationCircleOutlined />,
-        onOk: () => {
-          deleteModel(model, () => {
-            // also remove from the cached sites
-            setCommonStore((state) => {
-              if (state.modelSites) {
-                const map = state.modelSites.get(Util.getLatLngKey(model.latitude, model.longitude));
-                if (map) {
-                  let key = undefined;
-                  for (const [k, v] of map) {
-                    if (v.userid === model.userid && v.title === model.title) {
-                      key = k;
-                      break;
-                    }
+    Modal.confirm({
+      title: i18n.t('message.DoYouWantToDeleteModelFromMap', lang),
+      icon: <ExclamationCircleOutlined />,
+      onOk: () => {
+        deleteModel(model, () => {
+          // also remove from the cached records
+          setCommonStore((state) => {
+            if (state.modelSites) {
+              const modelsOfSite = state.modelSites.get(Util.getLatLngKey(model.latitude, model.longitude));
+              if (modelsOfSite) {
+                let key = undefined;
+                for (const [k, v] of modelsOfSite) {
+                  if (v.userid === model.userid && v.title === model.title) {
+                    key = k;
+                    break;
                   }
-                  if (key) {
-                    map.delete(key);
-                    if (map.size === 0) {
-                      markersRef.current[selectedMarkerIndexRef.current]?.marker?.setMap(null);
-                    }
+                }
+                if (key) {
+                  modelsOfSite.delete(key);
+                  // if there is no more model, remove the marker from the map
+                  if (modelsOfSite.size === 0) {
+                    markersRef.current[selectedMarkerIndexRef.current]?.marker?.setMap(null);
                   }
                 }
               }
-            });
-            setSelectedSite(null);
-            setSelectedLocation(null);
+            }
           });
-        },
-        onCancel: () => {},
-        okText: i18n.t('word.Yes', lang),
-        cancelText: i18n.t('word.No', lang),
-      });
-    }
+          setSelectedSite(null);
+          setSelectedLocation(null);
+        });
+      },
+      onCancel: () => {},
+      okText: i18n.t('word.Yes', lang),
+      cancelText: i18n.t('word.No', lang),
+    });
   };
 
   const likeModelSite = (model: ModelSite) => {
     if (model.userid && model.title) {
-      const uid = model.title + ', ' + model.userid;
-      const liked = !!user.likes?.includes(uid);
+      const modelKey = Util.getModelKey(model);
+      const liked = !!user.likes?.includes(modelKey);
       likeModel(model, !liked, () => {
+        // update the cached record
         setCommonStore((state) => {
           if (state.user) {
             if (!state.user.likes) state.user.likes = [];
-            if (state.user.likes.includes(uid)) {
-              const index = state.user.likes.indexOf(uid);
+            if (state.user.likes.includes(modelKey)) {
+              const index = state.user.likes.indexOf(modelKey);
               if (index >= 0) {
                 state.user.likes.splice(index, 1);
               }
             } else {
-              state.user.likes.push(uid);
+              state.user.likes.push(modelKey);
             }
           }
           if (state.modelSites) {
-            const map = state.modelSites.get(Util.getLatLngKey(model.latitude, model.longitude));
-            if (map) {
-              for (const v of map.values()) {
+            const modelsOfSite = state.modelSites.get(Util.getLatLngKey(model.latitude, model.longitude));
+            if (modelsOfSite) {
+              for (const v of modelsOfSite.values()) {
                 if (v.userid === model.userid && v.title === model.title) {
                   if (v.likeCount === undefined) v.likeCount = 0;
                   v.likeCount += liked ? -1 : 1;
@@ -318,10 +318,9 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
   };
 
   const getLikeCount = (model: ModelSite) => {
-    if (!model) return 0;
-    const map = useStore.getState().modelSites.get(Util.getLatLngKey(model.latitude, model.longitude));
-    if (map) {
-      for (const v of map.values()) {
+    const modelsOfSite = useStore.getState().modelSites.get(Util.getLatLngKey(model.latitude, model.longitude));
+    if (modelsOfSite) {
+      for (const v of modelsOfSite.values()) {
         if (v.userid === model.userid && v.title === model.title) {
           return v.likeCount;
         }
@@ -331,10 +330,9 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
   };
 
   const getClickCount = (model: ModelSite) => {
-    if (!model) return 0;
-    const map = useStore.getState().modelSites.get(Util.getLatLngKey(model.latitude, model.longitude));
-    if (map) {
-      for (const v of map.values()) {
+    const modelsOfSite = useStore.getState().modelSites.get(Util.getLatLngKey(model.latitude, model.longitude));
+    if (modelsOfSite) {
+      for (const v of modelsOfSite.values()) {
         if (v.userid === model.userid && v.title === model.title) {
           return v.clickCount;
         }
@@ -462,7 +460,7 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
                       )}
                       {user.uid ? (
                         <>
-                          {user.likes && user.likes.includes(m.title + ', ' + m.userid) ? (
+                          {user.likes && user.likes.includes(Util.getModelKey(m)) ? (
                             <img
                               alt={'Like'}
                               onClick={() => likeModelSite(m)}

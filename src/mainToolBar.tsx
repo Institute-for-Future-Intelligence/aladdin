@@ -403,10 +403,9 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
 
   const publishOnModelsMap = () => {
     if (user && user.uid && title) {
-      const p = new URLSearchParams(window.location.search);
-      const useridFromURL = p.get('userid');
-      const titleFromURL = p.get('title');
-      if (useridFromURL === user.uid && titleFromURL === title) {
+      // check if the user is the owner of the current model
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('userid') === user.uid && params.get('title') === title) {
         const collection = firebase.firestore().collection('models');
         if (collection) {
           const m = {
@@ -423,21 +422,21 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
             timeCreated: Date.now(),
           } as ModelSite;
           const document = collection.doc(Util.getLatLngKey(latitude, longitude));
-          const uid = m.title + ', ' + m.userid;
+          const modelKey = Util.getModelKey(m);
           document
             .get()
             .then((doc) => {
               if (doc.exists) {
                 const data = doc.data();
-                if (data && data[uid]) {
+                if (data && data[modelKey]) {
                   showInfo(i18n.t('menu.file.ModelAlreadyPublishedOnMap', lang) + '.');
                 } else {
-                  document.set({ [uid]: m }, { merge: true }).then(() => {
+                  document.set({ [modelKey]: m }, { merge: true }).then(() => {
                     showSuccess(i18n.t('menu.file.PublishedOnModelsMap', lang) + '.');
                   });
                 }
               } else {
-                document.set({ [uid]: m }, { merge: true }).then(() => {
+                document.set({ [modelKey]: m }, { merge: true }).then(() => {
                   showSuccess(i18n.t('menu.file.PublishedOnModelsMap', lang) + '.');
                 });
               }
@@ -446,6 +445,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
               showError(i18n.t('message.CannotPublishModelOnMap', lang) + ': ' + error);
             });
         }
+        // keep a record of the published model in the user's account
         firebase
           .firestore()
           .collection('users')
@@ -454,6 +454,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
             published: firebase.firestore.FieldValue.arrayUnion(title),
           })
           .then(() => {
+            // update the cache
             setCommonStore((state) => {
               if (state.user) {
                 if (!state.user.published) state.user.published = [];
@@ -468,14 +469,13 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
   };
 
   const deleteFromModelsMap = (model: ModelSite, successCallback?: Function) => {
-    if (user && user.uid && model.title) {
+    // pass if there is no user currently logged in
+    if (user && user.uid) {
       firebase
         .firestore()
         .collection('models')
         .doc(Util.getLatLngKey(model.latitude, model.longitude))
-        .update({
-          [model.title + ', ' + model.userid]: firebase.firestore.FieldValue.delete(),
-        })
+        .update({ [Util.getModelKey(model)]: firebase.firestore.FieldValue.delete() })
         .then(() => {
           showSuccess(i18n.t('message.ModelDeletedFromMap', lang));
           if (successCallback) successCallback();
@@ -483,6 +483,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         .catch((error) => {
           showError(i18n.t('message.CannotDeleteModelFromMap', lang) + ': ' + error);
         });
+      // remove the record in the user's account
       firebase
         .firestore()
         .collection('users')
@@ -491,10 +492,11 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
           published: firebase.firestore.FieldValue.arrayRemove(model.title),
         })
         .then(() => {
+          // also remove the cached record
           setCommonStore((state) => {
             if (state.user && state.user.published) {
-              if (state.user.published.includes(title)) {
-                const index = state.user.published.indexOf(title);
+              if (state.user.published.includes(model.title)) {
+                const index = state.user.published.indexOf(model.title);
                 if (index >= 0) {
                   state.user.published.splice(index, 1);
                 }
@@ -506,8 +508,10 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
   };
 
   const likeModelsMap = (model: ModelSite, like: boolean, successCallback?: Function) => {
+    // pass if there is no user currently logged in
     if (user && user.uid) {
-      const uid = model.title + ', ' + model.userid;
+      const modelKey = Util.getModelKey(model);
+      // keep or remove a record of like in the user's account
       firebase
         .firestore()
         .collection('users')
@@ -515,10 +519,10 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         .update(
           like
             ? {
-                likes: firebase.firestore.FieldValue.arrayUnion(uid),
+                likes: firebase.firestore.FieldValue.arrayUnion(modelKey),
               }
             : {
-                likes: firebase.firestore.FieldValue.arrayRemove(uid),
+                likes: firebase.firestore.FieldValue.arrayRemove(modelKey),
               },
         )
         .then(() => {
@@ -527,7 +531,8 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         .catch((error) => {
           showError(i18n.t('message.CannotLikeModelFromMap', lang) + ': ' + error);
         });
-      const likeCountPath = uid + '.likeCount';
+      // increment or decrement the likes counter
+      const likeCountPath = modelKey + '.likeCount';
       firebase
         .firestore()
         .collection('models')
@@ -551,30 +556,26 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
   };
 
   const countClicksModelsMap = (model: ModelSite) => {
-    if (user && user.uid) {
-      const uid = model.title + ', ' + model.userid;
-      const clickCountPath = uid + '.clickCount';
-      firebase
-        .firestore()
-        .collection('models')
-        .doc(Util.getLatLngKey(model.latitude, model.longitude))
-        .update({
-          [clickCountPath]: firebase.firestore.FieldValue.increment(1),
-        })
-        .then(() => {
-          // ignore
-        })
-        .catch((error) => {
-          // ignore
-        });
-    }
+    firebase
+      .firestore()
+      .collection('models')
+      .doc(Util.getLatLngKey(model.latitude, model.longitude))
+      .update({
+        [Util.getModelKey(model) + '.clickCount']: firebase.firestore.FieldValue.increment(1),
+      })
+      .then(() => {
+        // ignore
+      })
+      .catch((error) => {
+        // ignore
+      });
   };
 
   const saveToCloud = (tlt: string, silent: boolean) => {
     const t = tlt.trim();
     if (t.length > 0) {
-      setLoading(true);
       if (user.uid) {
+        setLoading(true);
         try {
           const doc = firebase.firestore().collection('users').doc(user.uid);
           if (doc) {
@@ -588,7 +589,6 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
               .doc(t)
               .set(exportContent())
               .then(() => {
-                setLoading(false);
                 if (!silent) {
                   setCommonStore((state) => {
                     state.cloudFile = t;
@@ -613,12 +613,14 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
               })
               .catch((error) => {
                 showError(i18n.t('message.CannotSaveYourFileToCloud', lang) + ': ' + error);
-                console.log(error);
+              })
+              .finally(() => {
+                setLoading(false);
               });
           }
-        } catch (e) {
-          showError(i18n.t('message.CannotSaveYourFileToCloud', lang) + ': ' + e);
-          console.log(e);
+        } catch (error) {
+          showError(i18n.t('message.CannotSaveYourFileToCloud', lang) + ': ' + error);
+          setLoading(false);
         }
       }
       setTitleDialogVisible(false);
@@ -708,7 +710,6 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
               state.cloudFile = undefined;
             });
           }
-          setLoading(false);
           if (!popState && !viewOnly) {
             const newUrl = HOME_URL + '?client=web&userid=' + userid + '&title=' + encodeURIComponent(title);
             window.history.pushState({}, document.title, newUrl);
@@ -716,6 +717,9 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         })
         .catch((error) => {
           showError(i18n.t('message.CannotOpenCloudFile', lang) + ': ' + error);
+        })
+        .finally(() => {
+          setLoading(false);
         });
     }
   };
@@ -743,11 +747,13 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
             uuid: data.docid,
           } as CloudFileInfo);
         });
-        setLoading(false);
         return a;
       })
       .catch((error) => {
         showError(i18n.t('message.CannotOpenCloudFolder', lang) + ': ' + error);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
