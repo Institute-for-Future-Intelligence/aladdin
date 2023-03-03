@@ -407,107 +407,117 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
                 setSelectedLocation(null);
               }}
             >
-              {[...selectedSite.keys()].map((key: string, index: number) => {
-                const m = selectedSite.get(key);
-                if (!m) return null;
-                return (
-                  <div
-                    style={{
-                      padding: index < selectedSite?.size - 1 ? '5px 5px 20px 5px' : '5px',
-                      background: index % 2 === 0 ? 'white' : '#dddddd',
-                    }}
-                  >
-                    {index === 0 && (
-                      <label style={{ fontSize: '10px', display: 'block', paddingBottom: '10px' }}>
-                        {m.address ?? 'Unknown'}
+              {selectedSite.size > 1 ? (
+                <div style={{ background: '#18EDAC' }}>
+                  <label style={{ fontSize: '10px' }}>{selectedSite.size} models found on this site</label>
+                  <hr />
+                </div>
+              ) : (
+                ''
+              )}
+              {[...selectedSite.keys()]
+                .sort((a, b) => (selectedSite.get(a)?.timeCreated ?? 0) - (selectedSite.get(b)?.timeCreated ?? 0))
+                .map((key: string, index: number) => {
+                  const m = selectedSite.get(key);
+                  if (!m) return null;
+                  return (
+                    <div
+                      style={{
+                        padding: index < selectedSite?.size - 1 ? '5px 5px 20px 5px' : '5px',
+                        background: index % 2 === 0 ? 'white' : '#dddddd',
+                      }}
+                    >
+                      {index === 0 && (
+                        <label style={{ fontSize: '10px', display: 'block', paddingBottom: '10px' }}>
+                          {m.address ?? 'Unknown'}
+                        </label>
+                      )}
+                      <label>{m.label}</label>
+                      <label style={{ fontSize: '10px', display: 'block', paddingTop: '10px' }}>
+                        by {!m.author || m.author === '' ? i18n.t('word.Anonymous', { lng: language }) : m.author}
+                        &nbsp;&nbsp;&nbsp;
+                        {m.timeCreated && <ReactTimeago date={new Date(m.timeCreated)} />}
                       </label>
-                    )}
-                    <label>{m.label}</label>
-                    <label style={{ fontSize: '10px', display: 'block', paddingTop: '10px' }}>
-                      by {!m.author || m.author === '' ? i18n.t('word.Anonymous', { lng: language }) : m.author}
-                      &nbsp;&nbsp;&nbsp;
-                      {m.timeCreated && <ReactTimeago date={new Date(m.timeCreated)} />}
-                    </label>
-                    <div style={{ marginTop: '10px', fontSize: '14px' }}>
-                      <img
-                        alt={'Open'}
-                        onClick={() => openModelSite(m)}
-                        style={{ marginLeft: '10px' }}
-                        title={i18n.t('word.Open', { lng: language })}
-                        src={OpenFileIcon}
-                        height={imageSize}
-                        width={imageSize}
-                      />
-                      <img
-                        alt={'Export link'}
-                        onClick={() => shareModelSite(m)}
-                        style={{ marginLeft: '5px' }}
-                        title={i18n.t('word.Share', { lng: language })}
-                        src={ExportLinkIcon}
-                        height={imageSize}
-                        width={imageSize}
-                      />
-                      {m.userid === user.uid && (
+                      <div style={{ marginTop: '10px', fontSize: '14px' }}>
                         <img
-                          alt={'Delete'}
-                          onClick={() => deleteModelSite(m)}
-                          style={{ marginLeft: '5px' }}
-                          title={i18n.t('word.Delete', { lng: language })}
-                          src={DeleteIcon}
+                          alt={'Open'}
+                          onClick={() => openModelSite(m)}
+                          style={{ marginLeft: '10px' }}
+                          title={i18n.t('word.Open', { lng: language })}
+                          src={OpenFileIcon}
                           height={imageSize}
                           width={imageSize}
                         />
-                      )}
-                      {user.uid ? (
-                        <>
-                          {user.likes && user.likes.includes(Util.getModelKey(m)) ? (
+                        <img
+                          alt={'Export link'}
+                          onClick={() => shareModelSite(m)}
+                          style={{ marginLeft: '5px' }}
+                          title={i18n.t('word.Share', { lng: language })}
+                          src={ExportLinkIcon}
+                          height={imageSize}
+                          width={imageSize}
+                        />
+                        {m.userid === user.uid && (
+                          <img
+                            alt={'Delete'}
+                            onClick={() => deleteModelSite(m)}
+                            style={{ marginLeft: '5px' }}
+                            title={i18n.t('word.Delete', { lng: language })}
+                            src={DeleteIcon}
+                            height={imageSize}
+                            width={imageSize}
+                          />
+                        )}
+                        {user.uid ? (
+                          <>
+                            {user.likes && user.likes.includes(Util.getModelKey(m)) ? (
+                              <img
+                                alt={'Like'}
+                                onClick={() => likeModelSite(m)}
+                                style={{ marginLeft: '10px' }}
+                                title={i18n.t('word.AlreadyLike', { lng: language })}
+                                src={RedHeartIcon}
+                                height={imageSize}
+                                width={imageSize}
+                              />
+                            ) : (
+                              <img
+                                alt={'Like'}
+                                onClick={() => likeModelSite(m)}
+                                style={{ marginLeft: '10px' }}
+                                title={i18n.t('word.Like', { lng: language })}
+                                src={EmptyHeartIcon}
+                                height={imageSize}
+                                width={imageSize}
+                              />
+                            )}
+                          </>
+                        ) : (
+                          <>
                             <img
                               alt={'Like'}
-                              onClick={() => likeModelSite(m)}
-                              style={{ marginLeft: '10px' }}
-                              title={i18n.t('word.AlreadyLike', { lng: language })}
-                              src={RedHeartIcon}
-                              height={imageSize}
-                              width={imageSize}
-                            />
-                          ) : (
-                            <img
-                              alt={'Like'}
-                              onClick={() => likeModelSite(m)}
-                              style={{ marginLeft: '10px' }}
-                              title={i18n.t('word.Like', { lng: language })}
+                              style={{ marginLeft: '10px', opacity: 0.5 }}
+                              title={i18n.t('word.MustLogInToLike', { lng: language })}
                               src={EmptyHeartIcon}
                               height={imageSize}
                               width={imageSize}
                             />
-                          )}
-                        </>
-                      ) : (
-                        <>
-                          <img
-                            alt={'Like'}
-                            style={{ marginLeft: '10px', opacity: 0.5 }}
-                            title={i18n.t('word.MustLogInToLike', { lng: language })}
-                            src={EmptyHeartIcon}
-                            height={imageSize}
-                            width={imageSize}
-                          />
-                        </>
-                      )}
-                      &nbsp;&nbsp;&nbsp;{getLikeCount(m)}
-                      <img
-                        alt={'Click counter'}
-                        style={{ marginLeft: '10px' }}
-                        title={i18n.t('word.ClickCount', { lng: language })}
-                        src={ClickCountIcon}
-                        height={imageSize}
-                        width={imageSize}
-                      />
-                      &nbsp;&nbsp;&nbsp;{getClickCount(m)}
+                          </>
+                        )}
+                        &nbsp;&nbsp;&nbsp;{getLikeCount(m)}
+                        <img
+                          alt={'Click counter'}
+                          style={{ marginLeft: '10px' }}
+                          title={i18n.t('word.ClickCount', { lng: language })}
+                          src={ClickCountIcon}
+                          height={imageSize}
+                          width={imageSize}
+                        />
+                        &nbsp;&nbsp;&nbsp;{getClickCount(m)}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
             </div>
           </InfoWindow>
         )}
@@ -518,7 +528,11 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
                 {[...modelSites.keys()].map((key: string, index: number) => {
                   const m = modelSites.get(key);
                   if (!m || !m.size) return null;
-                  const [[k, model]] = m;
+                  const keys = [...m.keys()].sort(
+                    (a, b) => (m.get(a)?.timeCreated ?? 0) - (m.get(b)?.timeCreated ?? 0),
+                  );
+                  const model = m.get(keys[0]);
+                  if (!model) return null;
                   const iconUrl = getIconUrl(model);
                   return (
                     <Marker

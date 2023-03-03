@@ -823,6 +823,12 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
                     state.cloudFile = newTitle;
                   }
                 });
+                // change the address field of the browser when the cloud file is currently open
+                const params = new URLSearchParams(window.location.search);
+                if (params.get('title') === oldTitle && params.get('userid') === user.uid) {
+                  const newUrl = HOME_URL + '?client=web&userid=' + user.uid + '&title=' + encodeURIComponent(newTitle);
+                  window.history.pushState({}, document.title, newUrl);
+                }
               });
           }
         }
