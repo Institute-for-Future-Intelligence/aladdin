@@ -1435,5 +1435,10 @@ export const i18n_zh_tw = {
       Juro: '朱諾',
       Justin: '賈斯汀',
     },
+    modelsMap: {
+      FromOldestToNewest: '從早到晚',
+      FromNewestToOldest: '從晚到早',
+      ModelsFoundOnThisSite: '個模型在此位置',
+    },
   },
 };

@@ -1458,5 +1458,10 @@ export const i18n_tr = {
       Juro: 'Efe',
       Justin: 'Justin',
     },
+    modelsMap: {
+      FromOldestToNewest: 'From oldest to newest',
+      FromNewestToOldest: 'From newest to oldest',
+      ModelsFoundOnThisSite: 'models found on this site',
+    },
   },
 };

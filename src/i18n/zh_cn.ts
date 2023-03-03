@@ -1434,5 +1434,10 @@ export const i18n_zh_cn = {
       Juro: '朱诺',
       Justin: '贾斯汀',
     },
+    modelsMap: {
+      FromOldestToNewest: '从早到晚',
+      FromNewestToOldest: '从晚到早',
+      ModelsFoundOnThisSite: '个模型在此位置',
+    },
   },
 };

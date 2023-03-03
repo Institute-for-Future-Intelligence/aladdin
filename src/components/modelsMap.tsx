@@ -28,7 +28,7 @@ import i18n from '../i18n/i18n';
 import { ModelSite, ModelType } from '../types';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { Modal } from 'antd';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined, UpCircleOutlined, DownCircleOutlined } from '@ant-design/icons';
 import ReactTimeago from 'react-timeago';
 import { Util } from '../Util';
 
@@ -58,6 +58,7 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [selectedSite, setSelectedSite] = useState<Map<string, ModelSite> | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<google.maps.LatLng | null>(null);
+  const [ascendingOrder, setAscendingOrder] = useState<boolean>(true);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const previousSiteRef = useRef<Map<string, ModelSite> | null>(null);
   const markersRef = useRef<Array<Marker | null>>([]);
@@ -408,15 +409,46 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
               }}
             >
               {selectedSite.size > 1 ? (
-                <div style={{ background: '#18EDAC' }}>
-                  <label style={{ fontSize: '10px' }}>{selectedSite.size} models found on this site</label>
-                  <hr />
+                <div
+                  style={{
+                    background: '#dddddd',
+                    textAlign: 'left',
+                    borderBottom: '1px solid',
+                    paddingBottom: '4px',
+                    marginBottom: '4px',
+                  }}
+                >
+                  {!ascendingOrder && (
+                    <UpCircleOutlined
+                      title={i18n.t('modelsMap.FromOldestToNewest', { lng: language })}
+                      style={{ marginLeft: '2px', marginRight: '6px' }}
+                      onClick={() => {
+                        setAscendingOrder(true);
+                      }}
+                    />
+                  )}
+                  {ascendingOrder && (
+                    <DownCircleOutlined
+                      title={i18n.t('modelsMap.FromNewestToOldest', { lng: language })}
+                      style={{ marginLeft: '2px', marginRight: '6px' }}
+                      onClick={() => {
+                        setAscendingOrder(false);
+                      }}
+                    />
+                  )}
+                  <label style={{ fontSize: '10px' }}>
+                    {selectedSite.size} {i18n.t('modelsMap.ModelsFoundOnThisSite', { lng: language })}
+                  </label>
                 </div>
               ) : (
                 ''
               )}
               {[...selectedSite.keys()]
-                .sort((a, b) => (selectedSite.get(a)?.timeCreated ?? 0) - (selectedSite.get(b)?.timeCreated ?? 0))
+                .sort(
+                  (a, b) =>
+                    (ascendingOrder ? 1 : -1) *
+                    ((selectedSite.get(a)?.timeCreated ?? 0) - (selectedSite.get(b)?.timeCreated ?? 0)),
+                )
                 .map((key: string, index: number) => {
                   const m = selectedSite.get(key);
                   if (!m) return null;
@@ -424,7 +456,7 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
                     <div
                       style={{
                         padding: index < selectedSite?.size - 1 ? '5px 5px 20px 5px' : '5px',
-                        background: index % 2 === 0 ? 'white' : '#dddddd',
+                        background: index % 2 === 0 ? 'white' : '#eeeeee',
                       }}
                     >
                       {index === 0 && (
