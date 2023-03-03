@@ -55,14 +55,16 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
   const modelSites = useStore(Selector.modelSites);
 
   const [map, setMap] = useState<google.maps.Map | null>(null);
-  const [selectedModel, setSelectedModel] = useState<ModelSite | null>(null);
+  const [selectedSite, setSelectedSite] = useState<Map<string, ModelSite> | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<google.maps.LatLng | null>(null);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
-  const previousSiteRef = useRef<ModelSite | null>(null);
+  const previousSiteRef = useRef<Map<string, ModelSite> | null>(null);
   const markersRef = useRef<Array<Marker | null>>([]);
   const selectedMarkerIndexRef = useRef<number>(-1);
   const cities = useRef<google.maps.LatLng[]>([]);
 
   const lang = { lng: language };
+  const imageSize = 14;
 
   const loadCities = () => {
     cities.current.length = 0;
@@ -263,12 +265,15 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
                   }
                   if (key) {
                     map.delete(key);
+                    if (map.size === 0) {
+                      markersRef.current[selectedMarkerIndexRef.current]?.marker?.setMap(null);
+                    }
                   }
                 }
               }
             });
-            markersRef.current[selectedMarkerIndexRef.current]?.marker?.setMap(null);
-            setSelectedModel(null);
+            setSelectedSite(null);
+            setSelectedLocation(null);
           });
         },
         onCancel: () => {},
@@ -313,13 +318,13 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
     }
   };
 
-  const getLikeCount = () => {
-    if (!selectedModel) return 0;
-    const latlng = selectedModel.latitude.toFixed(4) + ', ' + selectedModel.longitude.toFixed(4);
+  const getLikeCount = (model: ModelSite) => {
+    if (!model) return 0;
+    const latlng = model.latitude.toFixed(4) + ', ' + model.longitude.toFixed(4);
     const map = useStore.getState().modelSites.get(latlng);
     if (map) {
       for (const v of map.values()) {
-        if (v.userid === selectedModel.userid && v.title === selectedModel.title) {
+        if (v.userid === model.userid && v.title === model.title) {
           return v.likeCount;
         }
       }
@@ -327,13 +332,13 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
     return 0;
   };
 
-  const getClickCount = () => {
-    if (!selectedModel) return 0;
-    const latlng = selectedModel.latitude.toFixed(4) + ', ' + selectedModel.longitude.toFixed(4);
+  const getClickCount = (model: ModelSite) => {
+    if (!model) return 0;
+    const latlng = model.latitude.toFixed(4) + ', ' + model.longitude.toFixed(4);
     const map = useStore.getState().modelSites.get(latlng);
     if (map) {
       for (const v of map.values()) {
-        if (v.userid === selectedModel.userid && v.title === selectedModel.title) {
+        if (v.userid === model.userid && v.title === model.title) {
           return v.clickCount;
         }
       }
@@ -398,107 +403,116 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
               />
             );
           })}
-        {selectedModel && (
-          <InfoWindow position={{ lat: selectedModel.latitude, lng: selectedModel.longitude }}>
-            <div onMouseLeave={() => setSelectedModel(null)}>
-              <label>{selectedModel.label}</label>
-              <br />
-              <label style={{ fontSize: '10px' }}>{selectedModel.address ?? 'Unknown'}</label>
-              <br />
-              <br />
-              <label>
-                by {selectedModel.author ?? i18n.t('word.Anonymous', { lng: language })}
-                &nbsp;&nbsp;&nbsp;
-                {selectedModel.timeCreated && <ReactTimeago date={new Date(selectedModel.timeCreated)} />}
-              </label>
-              <hr />
-              <div style={{ marginTop: '10px', fontSize: '14px' }}>
-                <img
-                  alt={'Open'}
-                  onClick={() => {
-                    openModelSite(selectedModel);
-                  }}
-                  style={{ marginLeft: '10px' }}
-                  title={i18n.t('word.Open', { lng: language })}
-                  src={OpenFileIcon}
-                  height={16}
-                  width={16}
-                />
-                <img
-                  alt={'Export link'}
-                  onClick={() => {
-                    shareModelSite(selectedModel);
-                  }}
-                  style={{ marginLeft: '5px' }}
-                  title={i18n.t('word.Share', { lng: language })}
-                  src={ExportLinkIcon}
-                  height={16}
-                  width={16}
-                />
-                {selectedModel.userid === user.uid && (
-                  <img
-                    alt={'Delete'}
-                    onClick={() => {
-                      deleteModelSite(selectedModel);
+        {selectedSite && selectedSite.size && selectedLocation && (
+          <InfoWindow position={{ lat: selectedLocation.lat(), lng: selectedLocation.lng() }}>
+            <div
+              style={{ border: '2px solid gainsboro', maxHeight: '200px', overflowY: 'auto' }}
+              onMouseLeave={() => {
+                setSelectedSite(null);
+                setSelectedLocation(null);
+              }}
+            >
+              {[...selectedSite.keys()].map((key: string, index: number) => {
+                const m = selectedSite.get(key);
+                if (!m) return null;
+                return (
+                  <div
+                    style={{
+                      padding: index < selectedSite?.size - 1 ? '5px 5px 20px 5px' : '5px',
+                      background: index % 2 === 0 ? 'white' : '#dddddd',
                     }}
-                    style={{ marginLeft: '5px' }}
-                    title={i18n.t('word.Delete', { lng: language })}
-                    src={DeleteIcon}
-                    height={16}
-                    width={16}
-                  />
-                )}
-                {user.uid ? (
-                  <>
-                    {user.likes && user.likes.includes(selectedModel.title + ', ' + selectedModel.userid) ? (
-                      <img
-                        alt={'Like'}
-                        onClick={() => {
-                          likeModelSite(selectedModel);
-                        }}
-                        style={{ marginLeft: '10px' }}
-                        title={i18n.t('word.AlreadyLike', { lng: language })}
-                        src={RedHeartIcon}
-                        height={16}
-                        width={16}
-                      />
-                    ) : (
-                      <img
-                        alt={'Like'}
-                        onClick={() => {
-                          likeModelSite(selectedModel);
-                        }}
-                        style={{ marginLeft: '10px' }}
-                        title={i18n.t('word.Like', { lng: language })}
-                        src={EmptyHeartIcon}
-                        height={16}
-                        width={16}
-                      />
+                  >
+                    {index === 0 && (
+                      <label style={{ fontSize: '10px', display: 'block', paddingBottom: '10px' }}>
+                        {m.address ?? 'Unknown'}
+                      </label>
                     )}
-                  </>
-                ) : (
-                  <>
-                    <img
-                      alt={'Like'}
-                      style={{ marginLeft: '10px', opacity: 0.5 }}
-                      title={i18n.t('word.MustLogInToLike', { lng: language })}
-                      src={EmptyHeartIcon}
-                      height={16}
-                      width={16}
-                    />
-                  </>
-                )}
-                &nbsp;&nbsp;&nbsp;{getLikeCount()}
-                <img
-                  alt={'Click counter'}
-                  style={{ marginLeft: '10px' }}
-                  title={i18n.t('word.ClickCount', { lng: language })}
-                  src={ClickCountIcon}
-                  height={16}
-                  width={16}
-                />
-                &nbsp;&nbsp;&nbsp;{getClickCount()}
-              </div>
+                    <label>{m.label}</label>
+                    <label style={{ fontSize: '10px', display: 'block', paddingTop: '10px' }}>
+                      by {m.author ?? i18n.t('word.Anonymous', { lng: language })}
+                      &nbsp;&nbsp;&nbsp;
+                      {m.timeCreated && <ReactTimeago date={new Date(m.timeCreated)} />}
+                    </label>
+                    <div style={{ marginTop: '10px', fontSize: '14px' }}>
+                      <img
+                        alt={'Open'}
+                        onClick={() => openModelSite(m)}
+                        style={{ marginLeft: '10px' }}
+                        title={i18n.t('word.Open', { lng: language })}
+                        src={OpenFileIcon}
+                        height={imageSize}
+                        width={imageSize}
+                      />
+                      <img
+                        alt={'Export link'}
+                        onClick={() => shareModelSite(m)}
+                        style={{ marginLeft: '5px' }}
+                        title={i18n.t('word.Share', { lng: language })}
+                        src={ExportLinkIcon}
+                        height={imageSize}
+                        width={imageSize}
+                      />
+                      {m.userid === user.uid && (
+                        <img
+                          alt={'Delete'}
+                          onClick={() => deleteModelSite(m)}
+                          style={{ marginLeft: '5px' }}
+                          title={i18n.t('word.Delete', { lng: language })}
+                          src={DeleteIcon}
+                          height={imageSize}
+                          width={imageSize}
+                        />
+                      )}
+                      {user.uid ? (
+                        <>
+                          {user.likes && user.likes.includes(m.title + ', ' + m.userid) ? (
+                            <img
+                              alt={'Like'}
+                              onClick={() => likeModelSite(m)}
+                              style={{ marginLeft: '10px' }}
+                              title={i18n.t('word.AlreadyLike', { lng: language })}
+                              src={RedHeartIcon}
+                              height={imageSize}
+                              width={imageSize}
+                            />
+                          ) : (
+                            <img
+                              alt={'Like'}
+                              onClick={() => likeModelSite(m)}
+                              style={{ marginLeft: '10px' }}
+                              title={i18n.t('word.Like', { lng: language })}
+                              src={EmptyHeartIcon}
+                              height={imageSize}
+                              width={imageSize}
+                            />
+                          )}
+                        </>
+                      ) : (
+                        <>
+                          <img
+                            alt={'Like'}
+                            style={{ marginLeft: '10px', opacity: 0.5 }}
+                            title={i18n.t('word.MustLogInToLike', { lng: language })}
+                            src={EmptyHeartIcon}
+                            height={imageSize}
+                            width={imageSize}
+                          />
+                        </>
+                      )}
+                      &nbsp;&nbsp;&nbsp;{getLikeCount(m)}
+                      <img
+                        alt={'Click counter'}
+                        style={{ marginLeft: '10px' }}
+                        title={i18n.t('word.ClickCount', { lng: language })}
+                        src={ClickCountIcon}
+                        height={imageSize}
+                        width={imageSize}
+                      />
+                      &nbsp;&nbsp;&nbsp;{getClickCount(m)}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </InfoWindow>
         )}
@@ -509,23 +523,28 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
                 {[...modelSites.keys()].map((key: string, index: number) => {
                   const m = modelSites.get(key);
                   if (!m || !m.size) return null;
-                  const [[k, site]] = m;
-                  const iconUrl = getIconUrl(site);
+                  const [[k, model]] = m;
+                  const iconUrl = getIconUrl(model);
                   return (
                     <Marker
                       key={index}
                       ref={(e) => (markersRef.current[index] = e)}
                       clusterer={clusterer}
                       icon={iconUrl ? { url: iconUrl } : undefined}
-                      position={{ lat: site.latitude, lng: site.longitude }}
-                      onClick={() => openModelSite(site)}
+                      position={{ lat: model.latitude, lng: model.longitude }}
+                      onClick={() => openModelSite(model)}
                       onMouseOver={(e) => {
-                        previousSiteRef.current = selectedModel;
+                        previousSiteRef.current = selectedSite;
                         selectedMarkerIndexRef.current = index;
-                        setSelectedModel(site);
+                        setSelectedSite(m);
+                        const c = key.split(', ');
+                        setSelectedLocation(new google.maps.LatLng(Number.parseFloat(c[0]), Number.parseFloat(c[1])));
                       }}
                       onMouseOut={(e) => {
-                        if (selectedModel === previousSiteRef.current) setSelectedModel(null);
+                        if (selectedSite === previousSiteRef.current) {
+                          setSelectedSite(null);
+                          setSelectedLocation(null);
+                        }
                       }}
                     />
                   );
