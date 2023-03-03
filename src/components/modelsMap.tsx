@@ -30,6 +30,7 @@ import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { Modal } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import ReactTimeago from 'react-timeago';
+import { Util } from '../Util';
 
 export interface ModelsMapProps {
   closeMap: () => void;
@@ -253,8 +254,7 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
             // also remove from the cached sites
             setCommonStore((state) => {
               if (state.modelSites) {
-                const latlng = model.latitude.toFixed(4) + ', ' + model.longitude.toFixed(4);
-                const map = state.modelSites.get(latlng);
+                const map = state.modelSites.get(Util.getLatLngKey(model.latitude, model.longitude));
                 if (map) {
                   let key = undefined;
                   for (const [k, v] of map) {
@@ -301,8 +301,7 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
             }
           }
           if (state.modelSites) {
-            const latlng = model.latitude.toFixed(4) + ', ' + model.longitude.toFixed(4);
-            const map = state.modelSites.get(latlng);
+            const map = state.modelSites.get(Util.getLatLngKey(model.latitude, model.longitude));
             if (map) {
               for (const v of map.values()) {
                 if (v.userid === model.userid && v.title === model.title) {
@@ -320,8 +319,7 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
 
   const getLikeCount = (model: ModelSite) => {
     if (!model) return 0;
-    const latlng = model.latitude.toFixed(4) + ', ' + model.longitude.toFixed(4);
-    const map = useStore.getState().modelSites.get(latlng);
+    const map = useStore.getState().modelSites.get(Util.getLatLngKey(model.latitude, model.longitude));
     if (map) {
       for (const v of map.values()) {
         if (v.userid === model.userid && v.title === model.title) {
@@ -334,8 +332,7 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
 
   const getClickCount = (model: ModelSite) => {
     if (!model) return 0;
-    const latlng = model.latitude.toFixed(4) + ', ' + model.longitude.toFixed(4);
-    const map = useStore.getState().modelSites.get(latlng);
+    const map = useStore.getState().modelSites.get(Util.getLatLngKey(model.latitude, model.longitude));
     if (map) {
       for (const v of map.values()) {
         if (v.userid === model.userid && v.title === model.title) {
@@ -429,7 +426,7 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
                     )}
                     <label>{m.label}</label>
                     <label style={{ fontSize: '10px', display: 'block', paddingTop: '10px' }}>
-                      by {m.author ?? i18n.t('word.Anonymous', { lng: language })}
+                      by {!m.author || m.author === '' ? i18n.t('word.Anonymous', { lng: language }) : m.author}
                       &nbsp;&nbsp;&nbsp;
                       {m.timeCreated && <ReactTimeago date={new Date(m.timeCreated)} />}
                     </label>

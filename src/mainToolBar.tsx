@@ -250,7 +250,6 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
       .catch((error) => {
         if (error.code !== 'auth/popup-closed-by-user' && error.code !== 'auth/cancelled-popup-request') {
           showError(i18n.t('message.CannotSignIn', lang) + ': ' + error);
-          console.log(error);
         }
       });
     resetToSelectMode();
@@ -378,25 +377,27 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
       .collection('models')
       .get()
       .then((querySnapshot) => {
-        const map = new Map<string, Map<string, ModelSite>>();
+        const models = new Map<string, Map<string, ModelSite>>();
         querySnapshot.forEach((doc) => {
           const data = doc.data();
           if (data) {
-            const a = new Map<string, ModelSite>();
+            const m = new Map<string, ModelSite>();
             for (const k in data) {
-              a.set(k, data[k]);
+              m.set(k, data[k]);
             }
-            map.set(doc.id, a);
+            models.set(doc.id, m);
           }
         });
-        setLoading(false);
         setCommonStore((state) => {
-          state.modelSites = map;
+          state.modelSites = models;
         });
-        return map;
+        return models;
       })
       .catch((error) => {
-        showError(i18n.t('message.CannotOpenModelOnMap', lang) + ': ' + error);
+        showError(i18n.t('message.CannotLoadModelsOnMap', lang) + ': ' + error);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
@@ -409,20 +410,19 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         const collection = firebase.firestore().collection('models');
         if (collection) {
           const m = {
-            latitude: latitude,
-            longitude: longitude,
-            address: address,
+            latitude,
+            longitude,
+            address,
             type: usePrimitiveStore.getState().modelType,
-            author: user.displayName,
+            author: usePrimitiveStore.getState().modelAuthor ?? user.displayName,
             userid: user.uid,
-            title: title,
+            title,
             label: usePrimitiveStore.getState().modelLabel,
             likeCount: 0,
             clickCount: 0,
             timeCreated: Date.now(),
           } as ModelSite;
-          const latlng = latitude.toFixed(4) + ', ' + longitude.toFixed(4);
-          const document = collection.doc(latlng);
+          const document = collection.doc(Util.getLatLngKey(latitude, longitude));
           const uid = m.title + ', ' + m.userid;
           document
             .get()
@@ -469,11 +469,10 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
 
   const deleteFromModelsMap = (model: ModelSite, successCallback?: Function) => {
     if (user && user.uid && model.title) {
-      const latlng = model.latitude.toFixed(4) + ', ' + model.longitude.toFixed(4);
       firebase
         .firestore()
         .collection('models')
-        .doc(latlng)
+        .doc(Util.getLatLngKey(model.latitude, model.longitude))
         .update({
           [model.title + ', ' + model.userid]: firebase.firestore.FieldValue.delete(),
         })
@@ -528,12 +527,11 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         .catch((error) => {
           showError(i18n.t('message.CannotLikeModelFromMap', lang) + ': ' + error);
         });
-      const latlng = model.latitude.toFixed(4) + ', ' + model.longitude.toFixed(4);
       const likeCountPath = uid + '.likeCount';
       firebase
         .firestore()
         .collection('models')
-        .doc(latlng)
+        .doc(Util.getLatLngKey(model.latitude, model.longitude))
         .update(
           like
             ? {
@@ -554,13 +552,12 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
 
   const countClicksModelsMap = (model: ModelSite) => {
     if (user && user.uid) {
-      const latlng = model.latitude.toFixed(4) + ', ' + model.longitude.toFixed(4);
       const uid = model.title + ', ' + model.userid;
       const clickCountPath = uid + '.clickCount';
       firebase
         .firestore()
         .collection('models')
-        .doc(latlng)
+        .doc(Util.getLatLngKey(model.latitude, model.longitude))
         .update({
           [clickCountPath]: firebase.firestore.FieldValue.increment(1),
         })

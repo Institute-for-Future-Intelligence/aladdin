@@ -17,8 +17,12 @@ const ModelAnnotationDialog = ({ setDialogVisible }: { setDialogVisible: (b: boo
   const setCommonStore = useStore(Selector.set);
   const loggable = useStore(Selector.loggable);
   const language = useStore(Selector.language);
+  const user = useStore(Selector.user);
 
   const [modelType, setModelType] = useState<ModelType>(usePrimitiveStore.getState().modelType);
+  const [modelAuthor, setModelAuthor] = useState<string | undefined>(
+    usePrimitiveStore.getState().modelAuthor ?? user.displayName ?? undefined,
+  );
   const [modelLabel, setModelLabel] = useState<string | undefined>(useStore.getState().cloudFile);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -55,6 +59,7 @@ const ModelAnnotationDialog = ({ setDialogVisible }: { setDialogVisible: (b: boo
       state.publishOnModelsMapFlag = !state.publishOnModelsMapFlag;
       state.modelType = modelType;
       state.modelLabel = modelLabel;
+      state.modelAuthor = modelAuthor;
     });
     if (loggable) {
       setCommonStore((state) => {
@@ -101,10 +106,10 @@ const ModelAnnotationDialog = ({ setDialogVisible }: { setDialogVisible: (b: boo
       )}
     >
       <Row gutter={6} style={{ paddingBottom: '4px' }}>
-        <Col className="gutter-row" span={14}>
+        <Col className="gutter-row" span={8}>
           {i18n.t('shared.ModelType', lang) + ':'}
         </Col>
-        <Col className="gutter-row" span={10}>
+        <Col className="gutter-row" span={16}>
           <Select
             style={{ width: '100%' }}
             value={modelType}
@@ -141,15 +146,30 @@ const ModelAnnotationDialog = ({ setDialogVisible }: { setDialogVisible: (b: boo
       </Row>
 
       <Row gutter={6} style={{ paddingBottom: '4px' }}>
-        <Col className="gutter-row" span={14}>
+        <Col className="gutter-row" span={8}>
           {i18n.t('word.Label', lang)}:
         </Col>
-        <Col className="gutter-row" span={10}>
+        <Col className="gutter-row" span={16}>
           <Input
             style={{ width: '100%' }}
             value={modelLabel ?? ''}
             onChange={(e) => {
               setModelLabel(e.target.value);
+            }}
+          />
+        </Col>
+      </Row>
+
+      <Row gutter={6} style={{ paddingBottom: '4px' }}>
+        <Col className="gutter-row" span={8}>
+          {i18n.t('word.Author', lang)}:
+        </Col>
+        <Col className="gutter-row" span={16}>
+          <Input
+            style={{ width: '100%' }}
+            value={modelAuthor ?? ''}
+            onChange={(e) => {
+              setModelAuthor(e.target.value);
             }}
           />
         </Col>

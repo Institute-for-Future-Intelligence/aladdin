@@ -136,6 +136,7 @@ export const i18n_es = {
       UnderConstruction: 'Under Construction',
       Photovoltaic: 'Photovoltaic',
       Anonymous: 'Anonymous',
+      Nickname: 'Nickname',
     },
 
     shared: {
@@ -166,7 +167,7 @@ export const i18n_es = {
       CannotSaveYourAccountSettings: 'Cannot save your account settings',
       CannotSaveYourFileToCloud: 'Cannot save your file to the cloud',
       CloudFileNotFound: 'The cloud file was not found',
-      CannotOpenModelOnMap: 'Cannot open model on map',
+      CannotLoadModelsOnMap: 'Cannot load models on map',
       CannotPublishModelOnMap: 'Cannot publish model on map',
       CannotLikeModelFromMap: 'Cannot like model from map',
       CannotDeleteModelFromMap: 'Cannot delete model from map',

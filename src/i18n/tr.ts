@@ -136,6 +136,7 @@ export const i18n_tr = {
       UnderConstruction: 'Under Construction',
       Photovoltaic: 'Photovoltaic',
       Anonymous: 'Anonymous',
+      Nickname: 'Nickname',
     },
 
     shared: {
@@ -166,7 +167,7 @@ export const i18n_tr = {
       CannotSaveYourAccountSettings: 'Hesap ayarlarınız kaydedilemiyor',
       CannotSaveYourFileToCloud: 'Dosyanız buluta kaydedilemiyor',
       CloudFileNotFound: 'Bulut dosyası bulunamadı',
-      CannotOpenModelOnMap: 'Cannot open model on map',
+      CannotLoadModelsOnMap: 'Cannot load models on map',
       CannotPublishModelOnMap: 'Cannot publish model on map',
       CannotLikeModelFromMap: 'Cannot like model from map',
       CannotDeleteModelFromMap: 'Cannot delete model from map',

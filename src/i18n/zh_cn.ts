@@ -136,6 +136,7 @@ export const i18n_zh_cn = {
       UnderConstruction: '在建',
       Photovoltaic: '光伏',
       Anonymous: '无名氏',
+      Nickname: '别名',
     },
 
     shared: {
@@ -166,7 +167,7 @@ export const i18n_zh_cn = {
       CannotSaveYourAccountSettings: '您的账号设定无法保存',
       CannotSaveYourFileToCloud: '无法保存您的文件到云端',
       CloudFileNotFound: '找不到此云端文件',
-      CannotOpenModelOnMap: '无法打开地图上的模型',
+      CannotLoadModelsOnMap: '无法下载地图上的模型',
       CannotPublishModelOnMap: '模型无法发布到地图上',
       CannotLikeModelFromMap: '无法点赞地图上的模型',
       CannotDeleteModelFromMap: '无法删除地图上的模型',
@@ -248,7 +249,7 @@ export const i18n_zh_cn = {
         UseCloudFileName: '采用云端文件名',
         PublishOnModelsMap: '发布到地图上',
         PublishedOnModelsMap: '您的模型成功发布到地图上了',
-        ModelAlreadyPublishedOnMap: '您的模型已经发布在地图上了',
+        ModelAlreadyPublishedOnMap: '您的模型已经发布在地图上了，无须再发布',
       },
       editSubMenu: '编辑',
       edit: {

@@ -41,6 +41,7 @@ export const SOLAR_PANEL_BLUE_SPECULAR = '#3BB9FF';
 export const SOLAR_PANEL_BLACK_SPECULAR = '#36454F';
 
 export const DEFAULT_MODEL_MAP_ZOOM = 10;
+export const LAT_LNG_FRACTION_DIGITS = 4;
 
 export const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 

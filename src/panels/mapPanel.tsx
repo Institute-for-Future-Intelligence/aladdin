@@ -17,6 +17,7 @@ import i18n from '../i18n/i18n';
 import { UndoableChangeLocation } from '../undo/UndoableChangeLocation';
 import { UndoableCheck } from '../undo/UndoableCheck';
 import { Undoable } from '../undo/Undoable';
+import { LAT_LNG_FRACTION_DIGITS } from '../constants';
 
 const libraries = ['places'] as Libraries;
 
@@ -296,8 +297,8 @@ const MapPanel = () => {
                 <div>
                   <GroundMap width={400} height={400} />
                   <p style={{ paddingTop: '10px' }}>
-                    {i18n.t('mapPanel.Coordinates', lang) + ':'} ({latitude.toFixed(4)}°, {longitude.toFixed(4)}°),
-                    &nbsp;
+                    {i18n.t('mapPanel.Coordinates', lang) + ':'} ({latitude.toFixed(LAT_LNG_FRACTION_DIGITS)}°,{' '}
+                    {longitude.toFixed(LAT_LNG_FRACTION_DIGITS)}°), &nbsp;
                     {i18n.t('mapPanel.Zoom', lang) + ':'} {mapZoom}
                   </p>
                 </div>

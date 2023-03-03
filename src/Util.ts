@@ -5,6 +5,7 @@
 import {
   FINE_GRID_SCALE,
   HALF_PI,
+  LAT_LNG_FRACTION_DIGITS,
   NORMAL_GRID_SCALE,
   ORIGIN_VECTOR2,
   SOLAR_HEATMAP_COLORS,
@@ -46,6 +47,10 @@ import { WindowModel, WindowType } from './models/WindowModel';
 import { DoorModel, DoorType } from './models/DoorModel';
 
 export class Util {
+  static getLatLngKey(lat: number, lng: number) {
+    return lat.toFixed(LAT_LNG_FRACTION_DIGITS) + ', ' + lng.toFixed(LAT_LNG_FRACTION_DIGITS);
+  }
+
   static getEuler(
     from: Vector3,
     to: Vector3,
