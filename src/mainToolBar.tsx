@@ -556,6 +556,22 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
     }
   };
 
+  const pinModelsMap = (model: ModelSite, pinned: boolean, successCallback?: Function) => {
+    firebase
+      .firestore()
+      .collection('models')
+      .doc(Util.getLatLngKey(model.latitude, model.longitude))
+      .update({
+        [Util.getModelKey(model) + '.pinned']: pinned,
+      })
+      .then(() => {
+        if (successCallback) successCallback();
+      })
+      .catch((error) => {
+        // ignore
+      });
+  };
+
   const countClicksModelsMap = (model: ModelSite) => {
     firebase
       .firestore()
@@ -965,6 +981,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
           openCloudFile={openCloudFileWithSaveReminderFromMap}
           deleteModelFromMap={deleteFromModelsMap}
           likeModelFromMap={likeModelsMap}
+          pinModelFromMap={pinModelsMap}
         />
       )}
     </>

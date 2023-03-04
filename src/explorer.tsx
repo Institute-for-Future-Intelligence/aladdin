@@ -37,9 +37,10 @@ export interface ExplorerProps {
   openCloudFile: (model: ModelSite) => void;
   deleteModelFromMap: (model: ModelSite, successCallback?: Function) => void;
   likeModelFromMap: (model: ModelSite, like: boolean, successCallback?: Function) => void;
+  pinModelFromMap: (model: ModelSite, pinned: boolean, successCallback?: Function) => void;
 }
 
-const Explorer = ({ openCloudFile, deleteModelFromMap, likeModelFromMap }: ExplorerProps) => {
+const Explorer = ({ openCloudFile, deleteModelFromMap, likeModelFromMap, pinModelFromMap }: ExplorerProps) => {
   const user = useStore(Selector.user);
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
@@ -181,6 +182,7 @@ const Explorer = ({ openCloudFile, deleteModelFromMap, likeModelFromMap }: Explo
           openModel={openCloudFile}
           deleteModel={deleteModelFromMap}
           likeModel={likeModelFromMap}
+          pinModel={pinModelFromMap}
         />
       ) : (
         <Spinner />

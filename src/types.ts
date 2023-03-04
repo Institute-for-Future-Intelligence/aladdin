@@ -60,6 +60,7 @@ export interface ModelSite {
   likeCount?: number;
   clickCount?: number;
   timeCreated?: number;
+  pinned?: boolean;
 }
 
 export enum SchoolID {

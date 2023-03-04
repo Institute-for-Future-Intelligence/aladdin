@@ -140,6 +140,8 @@ export const i18n_zh_tw = {
       Photovoltaic: '光伏',
       Anonymous: '無名氏',
       Nickname: '别名',
+      Pin: '置頂',
+      Unpin: '解除置頂',
     },
 
     shared: {

@@ -28,7 +28,13 @@ import i18n from '../i18n/i18n';
 import { ModelSite, ModelType } from '../types';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { Modal, Collapse } from 'antd';
-import { ExclamationCircleOutlined, UpCircleOutlined, DownCircleOutlined } from '@ant-design/icons';
+import {
+  ExclamationCircleOutlined,
+  UpCircleOutlined,
+  DownCircleOutlined,
+  PushpinOutlined,
+  PushpinFilled,
+} from '@ant-design/icons';
 import ReactTimeago from 'react-timeago';
 import { Util } from '../Util';
 
@@ -39,9 +45,10 @@ export interface ModelsMapProps {
   openModel: (model: ModelSite) => void;
   deleteModel: (model: ModelSite, successCallback?: Function) => void;
   likeModel: (model: ModelSite, like: boolean, successCallback?: Function) => void;
+  pinModel: (model: ModelSite, pinned: boolean, successCallback?: Function) => void;
 }
 
-const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapProps) => {
+const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel, pinModel }: ModelsMapProps) => {
   const language = useStore(Selector.language);
   const user = useStore.getState().user;
   const setCommonStore = useStore(Selector.set);
@@ -69,6 +76,7 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
 
   const lang = { lng: language };
   const imageSize = 14;
+  const ifiUser = user.email?.endsWith('@intofuture.org');
 
   const loadCities = () => {
     cities.current.length = 0;
@@ -310,13 +318,14 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
                 if (v.userid === model.userid && v.title === model.title) {
                   if (v.likeCount === undefined) v.likeCount = 0;
                   v.likeCount += liked ? -1 : 1;
+                  break;
                 }
               }
             }
           }
         });
+        setUpdateFlag(!updateFlag);
       });
-      setUpdateFlag(!updateFlag);
     }
   };
 
@@ -342,6 +351,40 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
       }
     }
     return 0;
+  };
+
+  const isPinned = (model: ModelSite) => {
+    const modelsOfSite = useStore.getState().modelSites.get(Util.getLatLngKey(model.latitude, model.longitude));
+    if (modelsOfSite) {
+      for (const v of modelsOfSite.values()) {
+        if (v.userid === model.userid && v.title === model.title) {
+          return v.pinned;
+        }
+      }
+    }
+    return false;
+  };
+
+  const pinModelSite = (model: ModelSite, pinned: boolean) => {
+    if (model.userid && model.title) {
+      pinModel(model, pinned, () => {
+        // update the cached record
+        setCommonStore((state) => {
+          if (state.modelSites) {
+            const modelsOfSite = state.modelSites.get(Util.getLatLngKey(model.latitude, model.longitude));
+            if (modelsOfSite) {
+              for (const v of modelsOfSite.values()) {
+                if (v.userid === model.userid && v.title === model.title) {
+                  v.pinned = pinned;
+                  setUpdateFlag(!updateFlag);
+                  break;
+                }
+              }
+            }
+          }
+        });
+      });
+    }
   };
 
   const getIconUrl = (site: ModelSite) => {
@@ -440,16 +483,30 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
                   <label style={{ fontSize: '10px' }}>
                     {selectedSite.size} {i18n.t('modelsMap.ModelsFoundOnThisSite', { lng: language })}
                   </label>
+                  {selectedLocation && (
+                    <label style={{ fontSize: '10px' }}>
+                      &nbsp;&mdash;{' '}
+                      {i18n.t('word.Coordinates', { lng: language }) +
+                        ': (' +
+                        selectedLocation.lat().toFixed(LAT_LNG_FRACTION_DIGITS) +
+                        '°, ' +
+                        selectedLocation.lng().toFixed(LAT_LNG_FRACTION_DIGITS) +
+                        '°)'}
+                    </label>
+                  )}
                 </div>
               ) : (
                 ''
               )}
               {[...selectedSite.keys()]
-                .sort(
-                  (a, b) =>
-                    (ascendingOrder ? 1 : -1) *
-                    ((selectedSite.get(a)?.timeCreated ?? 0) - (selectedSite.get(b)?.timeCreated ?? 0)),
-                )
+                .sort((a, b) => {
+                  const modelA = selectedSite.get(a);
+                  const modelB = selectedSite.get(b);
+                  const r = ascendingOrder ? 1 : -1;
+                  if (modelA?.pinned && !modelB?.pinned) return -r;
+                  if (modelB?.pinned && !modelA?.pinned) return r;
+                  return r * ((modelA?.timeCreated ?? 0) - (modelB?.timeCreated ?? 0));
+                })
                 .map((key: string, index: number) => {
                   const m = selectedSite.get(key);
                   if (!m) return null;
@@ -461,27 +518,28 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
                       }}
                     >
                       {index === 0 && (
-                        <div style={{ fontSize: '10px', display: 'block', paddingBottom: '2px' }}>
+                        <div style={{ fontSize: '12px', display: 'block', paddingBottom: '6px' }}>
                           {m.address ?? 'Unknown'}
-                          <br />
-                          {selectedLocation && (
-                            <label style={{ fontSize: '9px', display: 'block', paddingTop: '6px' }}>
-                              {i18n.t('word.Coordinates', { lng: language }) +
-                                ': (' +
-                                selectedLocation.lat().toFixed(LAT_LNG_FRACTION_DIGITS) +
-                                '°, ' +
-                                selectedLocation.lng().toFixed(LAT_LNG_FRACTION_DIGITS) +
-                                '°)'}
-                            </label>
-                          )}
                         </div>
                       )}
                       <Collapse
-                        style={{ background: index % 2 === 0 ? 'white' : '#eeeeee', width: '300px' }}
+                        style={{
+                          background: isPinned(m) ? '#FEF9EC' : index % 2 === 0 ? 'white' : '#eeeeee',
+                          width: '300px',
+                        }}
                         bordered={false}
                         ghost={true}
                       >
-                        <Panel header={m.label} key={index} style={{ fontSize: '12px' }}>
+                        <Panel
+                          header={
+                            <>
+                              {m.label}
+                              {isPinned(m) && <PushpinOutlined style={{ marginLeft: '8px' }} />}
+                            </>
+                          }
+                          key={index}
+                          style={{ fontSize: '12px' }}
+                        >
                           <div style={{ fontSize: '10px', display: 'block', textAlign: 'left' }}>
                             {m.description && m.description.trim() !== '' ? m.description : ''}
                             &nbsp;&mdash;&nbsp; By{' '}
@@ -491,11 +549,28 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
                           </div>
                         </Panel>
                       </Collapse>
-                      <div style={{ marginTop: '10px', fontSize: '12px' }}>
+                      <div style={{ marginTop: '10px', fontSize: '11px' }}>
+                        {ifiUser && (
+                          <>
+                            {isPinned(m) ? (
+                              <PushpinFilled
+                                style={{ cursor: 'pointer' }}
+                                title={i18n.t('word.Unpin', { lng: language })}
+                                onClick={() => pinModelSite(m, false)}
+                              />
+                            ) : (
+                              <PushpinOutlined
+                                style={{ cursor: 'pointer' }}
+                                title={i18n.t('word.Pin', { lng: language })}
+                                onClick={() => pinModelSite(m, true)}
+                              />
+                            )}
+                          </>
+                        )}
                         <img
                           alt={'Open'}
                           onClick={() => openModelSite(m)}
-                          style={{ marginLeft: '10px' }}
+                          style={{ marginLeft: '10px', cursor: 'pointer' }}
                           title={i18n.t('word.Open', { lng: language })}
                           src={OpenFileIcon}
                           height={imageSize}
@@ -504,7 +579,7 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
                         <img
                           alt={'Export link'}
                           onClick={() => shareModelSite(m)}
-                          style={{ marginLeft: '5px' }}
+                          style={{ marginLeft: '5px', cursor: 'pointer' }}
                           title={i18n.t('word.Share', { lng: language })}
                           src={ExportLinkIcon}
                           height={imageSize}
@@ -514,7 +589,7 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
                           <img
                             alt={'Delete'}
                             onClick={() => deleteModelSite(m)}
-                            style={{ marginLeft: '5px' }}
+                            style={{ marginLeft: '5px', cursor: 'pointer' }}
                             title={i18n.t('word.Delete', { lng: language })}
                             src={DeleteIcon}
                             height={imageSize}
@@ -527,7 +602,7 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
                               <img
                                 alt={'Like'}
                                 onClick={() => likeModelSite(m)}
-                                style={{ marginLeft: '10px' }}
+                                style={{ marginLeft: '10px', cursor: 'pointer' }}
                                 title={i18n.t('word.AlreadyLike', { lng: language })}
                                 src={RedHeartIcon}
                                 height={imageSize}
@@ -537,7 +612,7 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
                               <img
                                 alt={'Like'}
                                 onClick={() => likeModelSite(m)}
-                                style={{ marginLeft: '10px' }}
+                                style={{ marginLeft: '10px', cursor: 'pointer' }}
                                 title={i18n.t('word.Like', { lng: language })}
                                 src={EmptyHeartIcon}
                                 height={imageSize}

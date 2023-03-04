@@ -140,6 +140,8 @@ export const i18n_en = {
       Photovoltaic: 'Photovoltaic',
       Anonymous: 'Anonymous',
       Nickname: 'Nickname',
+      Pin: 'Pin',
+      Unpin: 'Unpin',
     },
 
     shared: {
