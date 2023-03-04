@@ -37,7 +37,7 @@ import BuildingEnergySimulationSettings from './components/contextMenu/elementMe
 import { usePrimitiveStore } from './stores/commonPrimitive';
 import { getExample } from './examples';
 import { checkBuilding, CheckStatus } from './analysis/heatTools';
-import ModelAnnotationDialog from './components/contextMenu/elementMenu/modelAnnotationDialog';
+import ModelSiteDialog from './components/contextMenu/elementMenu/modelSiteDialog';
 
 const { SubMenu } = Menu;
 
@@ -2334,7 +2334,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         </MainMenuContainer>
       </Dropdown>
       {aboutUs && <About close={() => setAboutUs(false)} />}
-      {modelAnnotationDialogVisible && <ModelAnnotationDialog setDialogVisible={setModelAnnotationDialogVisible} />}
+      {modelAnnotationDialogVisible && <ModelSiteDialog setDialogVisible={setModelAnnotationDialogVisible} />}
     </>
   );
 };

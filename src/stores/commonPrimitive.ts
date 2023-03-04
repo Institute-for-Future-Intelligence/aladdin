@@ -14,6 +14,7 @@ export interface PrimitiveStoreState {
   modelsMapWeatherStations: boolean;
   modelType: ModelType;
   modelLabel: string | undefined;
+  modelDescription: string | undefined;
   modelAuthor: string | undefined;
 
   userCount: number;
@@ -113,6 +114,7 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
     modelsMapWeatherStations: false,
     modelType: ModelType.UNKNOWN,
     modelLabel: undefined,
+    modelDescription: undefined,
     modelAuthor: undefined,
 
     userCount: 0,

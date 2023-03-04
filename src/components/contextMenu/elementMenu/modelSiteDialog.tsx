@@ -13,7 +13,7 @@ import { ModelType } from '../../../types';
 
 const { Option } = Select;
 
-const ModelAnnotationDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const loggable = useStore(Selector.loggable);
   const language = useStore(Selector.language);
@@ -24,6 +24,9 @@ const ModelAnnotationDialog = ({ setDialogVisible }: { setDialogVisible: (b: boo
     usePrimitiveStore.getState().modelAuthor ?? user.displayName ?? undefined,
   );
   const [modelLabel, setModelLabel] = useState<string | undefined>(useStore.getState().cloudFile);
+  const [modelDescription, setModelDescription] = useState<string | undefined>(
+    usePrimitiveStore.getState().modelDescription,
+  );
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
@@ -59,6 +62,7 @@ const ModelAnnotationDialog = ({ setDialogVisible }: { setDialogVisible: (b: boo
       state.publishOnModelsMapFlag = !state.publishOnModelsMapFlag;
       state.modelType = modelType;
       state.modelLabel = modelLabel;
+      state.modelDescription = modelDescription;
       state.modelAuthor = modelAuthor;
     });
     if (loggable) {
@@ -162,6 +166,21 @@ const ModelAnnotationDialog = ({ setDialogVisible }: { setDialogVisible: (b: boo
 
       <Row gutter={6} style={{ paddingBottom: '4px' }}>
         <Col className="gutter-row" span={8}>
+          {i18n.t('word.Description', lang)}:
+        </Col>
+        <Col className="gutter-row" span={16}>
+          <Input
+            style={{ width: '100%' }}
+            value={modelDescription ?? ''}
+            onChange={(e) => {
+              setModelDescription(e.target.value);
+            }}
+          />
+        </Col>
+      </Row>
+
+      <Row gutter={6} style={{ paddingBottom: '4px' }}>
+        <Col className="gutter-row" span={8}>
           {i18n.t('word.Author', lang)}:
         </Col>
         <Col className="gutter-row" span={16}>
@@ -178,4 +197,4 @@ const ModelAnnotationDialog = ({ setDialogVisible }: { setDialogVisible: (b: boo
   );
 };
 
-export default React.memo(ModelAnnotationDialog);
+export default React.memo(ModelSiteDialog);

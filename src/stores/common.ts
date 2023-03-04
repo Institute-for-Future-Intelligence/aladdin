@@ -804,8 +804,8 @@ export const useStore = create<CommonStoreState>(
               state.simulationPaused = false;
               state.clearDailySimulationResultsFlag = !state.clearDailySimulationResultsFlag;
               state.clearYearlySimulationResultsFlag = !state.clearYearlySimulationResultsFlag;
-              state.modelType = ModelType.UNKNOWN;
               state.modelLabel = undefined;
+              state.modelDescription = undefined;
             });
             useDataStore.setState((state) => {
               state.clearDataStore();

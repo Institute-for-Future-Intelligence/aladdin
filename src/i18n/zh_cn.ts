@@ -131,6 +131,8 @@ export const i18n_zh_cn = {
       Energy: '能量',
       Unknown: '未知',
       Label: '标签',
+      Description: '描述',
+      NoDescription: '无描述',
       Author: '作者',
       Building: '建筑',
       UnderConstruction: '在建',

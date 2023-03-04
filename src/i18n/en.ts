@@ -131,6 +131,8 @@ export const i18n_en = {
       Energy: 'Energy',
       Unknown: 'Unknown',
       Label: 'Label',
+      Description: 'Description',
+      NoDescription: 'No description',
       Author: 'Author',
       Building: 'Building',
       UnderConstruction: 'Under Construction',

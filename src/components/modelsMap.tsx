@@ -27,10 +27,12 @@ import { copyTextToClipboard, showError, showSuccess } from '../helpers';
 import i18n from '../i18n/i18n';
 import { ModelSite, ModelType } from '../types';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
-import { Modal } from 'antd';
+import { Modal, Collapse } from 'antd';
 import { ExclamationCircleOutlined, UpCircleOutlined, DownCircleOutlined } from '@ant-design/icons';
 import ReactTimeago from 'react-timeago';
 import { Util } from '../Util';
+
+const { Panel } = Collapse;
 
 export interface ModelsMapProps {
   closeMap: () => void;
@@ -402,7 +404,7 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
         {selectedSite && selectedSite.size && selectedLocation && (
           <InfoWindow position={{ lat: selectedLocation.lat(), lng: selectedLocation.lng() }}>
             <div
-              style={{ border: '2px solid gainsboro', maxHeight: '200px', overflowY: 'auto' }}
+              style={{ border: '2px solid gainsboro', maxHeight: '400px', overflowY: 'auto' }}
               onMouseLeave={() => {
                 setSelectedSite(null);
                 setSelectedLocation(null);
@@ -413,26 +415,25 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
                   style={{
                     background: '#dddddd',
                     textAlign: 'left',
-                    borderBottom: '1px solid',
+                    borderBottom: '1px solid gainsboro',
                     paddingBottom: '4px',
                     marginBottom: '4px',
                   }}
                 >
-                  {!ascendingOrder && (
-                    <UpCircleOutlined
-                      title={i18n.t('modelsMap.FromOldestToNewest', { lng: language })}
-                      style={{ marginLeft: '2px', marginRight: '6px' }}
-                      onClick={() => {
-                        setAscendingOrder(true);
-                      }}
-                    />
-                  )}
-                  {ascendingOrder && (
+                  {ascendingOrder ? (
                     <DownCircleOutlined
                       title={i18n.t('modelsMap.FromNewestToOldest', { lng: language })}
                       style={{ marginLeft: '2px', marginRight: '6px' }}
                       onClick={() => {
                         setAscendingOrder(false);
+                      }}
+                    />
+                  ) : (
+                    <UpCircleOutlined
+                      title={i18n.t('modelsMap.FromOldestToNewest', { lng: language })}
+                      style={{ marginLeft: '2px', marginRight: '6px' }}
+                      onClick={() => {
+                        setAscendingOrder(true);
                       }}
                     />
                   )}
@@ -455,21 +456,40 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
                   return (
                     <div
                       style={{
-                        padding: index < selectedSite?.size - 1 ? '5px 5px 20px 5px' : '5px',
+                        padding: selectedSite?.size > 1 ? '5px 5px 20px 5px' : '5px',
                         background: index % 2 === 0 ? 'white' : '#eeeeee',
                       }}
                     >
                       {index === 0 && (
-                        <label style={{ fontSize: '10px', display: 'block', paddingBottom: '10px' }}>
+                        <label style={{ fontSize: '10px', display: 'block', paddingBottom: '2px' }}>
                           {m.address ?? 'Unknown'}
                         </label>
                       )}
-                      <label>{m.label}</label>
-                      <label style={{ fontSize: '10px', display: 'block', paddingTop: '10px' }}>
-                        by {!m.author || m.author === '' ? i18n.t('word.Anonymous', { lng: language }) : m.author}
-                        &nbsp;&nbsp;&nbsp;
-                        {m.timeCreated && <ReactTimeago date={new Date(m.timeCreated)} />}
-                      </label>
+                      <Collapse
+                        style={{ background: index % 2 === 0 ? 'white' : '#eeeeee' }}
+                        bordered={false}
+                        ghost={true}
+                      >
+                        <Panel header={m.label} key={index}>
+                          <div style={{ fontSize: '10px', display: 'block', maxWidth: '200px', textAlign: 'left' }}>
+                            {m.description && m.description.trim() !== ''
+                              ? m.description
+                              : i18n.t('word.NoDescription', { lng: language })}
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '10px',
+                              display: 'block',
+                              paddingTop: m.description && m.description.trim() !== '' ? '6px' : '0px',
+                              textAlign: 'right',
+                            }}
+                          >
+                            By {!m.author || m.author === '' ? i18n.t('word.Anonymous', { lng: language }) : m.author}
+                            &nbsp;&nbsp;&nbsp;
+                            {m.timeCreated && <ReactTimeago date={new Date(m.timeCreated)} />}
+                          </div>
+                        </Panel>
+                      </Collapse>
                       <div style={{ marginTop: '10px', fontSize: '14px' }}>
                         <img
                           alt={'Open'}

@@ -417,6 +417,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
             userid: user.uid,
             title,
             label: usePrimitiveStore.getState().modelLabel,
+            description: usePrimitiveStore.getState().modelDescription,
             likeCount: 0,
             clickCount: 0,
             timeCreated: Date.now(),
