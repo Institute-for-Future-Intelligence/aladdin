@@ -19,14 +19,14 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   const language = useStore(Selector.language);
   const user = useStore(Selector.user);
 
-  const [modelType, setModelType] = useState<ModelType>(usePrimitiveStore.getState().modelType);
-  const [modelAuthor, setModelAuthor] = useState<string | undefined>(
-    useStore.getState().notes[1] ?? user.displayName ?? undefined,
+  const [modelType, setModelType] = useState<ModelType>(useStore.getState().modelType);
+  const [modelAuthor, setModelAuthor] = useState<string | null>(
+    useStore.getState().modelAuthor ?? user.displayName ?? null,
   );
-  const [modelLabel, setModelLabel] = useState<string | undefined>(
-    useStore.getState().notes[2] ?? useStore.getState().cloudFile,
+  const [modelLabel, setModelLabel] = useState<string | null>(
+    useStore.getState().modelLabel ?? useStore.getState().cloudFile ?? null,
   );
-  const [modelDescription, setModelDescription] = useState<string | undefined>(useStore.getState().notes[3]);
+  const [modelDescription, setModelDescription] = useState<string | null>(useStore.getState().modelDescription);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
@@ -61,12 +61,12 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   const onOkClick = () => {
     usePrimitiveStore.setState((state) => {
       state.publishOnModelsMapFlag = !state.publishOnModelsMapFlag;
-      state.modelType = modelType;
     });
     setCommonStore((state) => {
-      state.notes[1] = modelAuthor ?? '';
-      state.notes[2] = modelLabel ?? '';
-      state.notes[3] = modelDescription ?? '';
+      state.modelType = modelType;
+      state.modelAuthor = modelAuthor;
+      state.modelLabel = modelLabel;
+      state.modelDescription = modelDescription;
       state.changed = true;
     });
     if (loggable) {

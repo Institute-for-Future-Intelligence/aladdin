@@ -486,7 +486,7 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
                             {m.description && m.description.trim() !== '' ? m.description : ''}
                             &nbsp;&mdash;&nbsp; By{' '}
                             {!m.author || m.author === '' ? i18n.t('word.Anonymous', { lng: language }) : m.author}
-                            ,&nbsp;&nbsp;&nbsp;
+                            ,&nbsp;
                             {m.timeCreated && <ReactTimeago date={new Date(m.timeCreated)} />}
                           </div>
                         </Panel>

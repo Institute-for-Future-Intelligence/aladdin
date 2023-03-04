@@ -25,6 +25,7 @@ import {
   HumanName,
   LineStyle,
   ModelSite,
+  ModelType,
   MoveHandleType,
   ObjectType,
   Orientation,
@@ -122,7 +123,11 @@ export interface CommonStoreState {
   viewState: ViewState;
   actionState: ActionState;
   graphState: GraphState;
-  notes: string[]; // 0 - sticky note, 1 - author nickname, 2 - model label, 3 - model description
+  modelType: ModelType;
+  modelAuthor: string | null;
+  modelLabel: string | null;
+  modelDescription: string | null;
+  notes: string[];
   user: User;
   language: string;
   floatingWindowOpacity: number;
@@ -701,6 +706,10 @@ export const useStore = create<CommonStoreState>(
           economicsParams: new DefaultEconomicsParams(),
           geneticAlgorithmWizardSelectedTab: '1',
           particleSwarmOptimizationWizardSelectedTab: '1',
+          modelType: ModelType.UNKNOWN,
+          modelAuthor: null,
+          modelLabel: null,
+          modelDescription: null,
           notes: [],
           user: {} as User,
           language: 'en',
@@ -770,6 +779,10 @@ export const useStore = create<CommonStoreState>(
               state.graphState = content.graphState ?? new DefaultGraphState();
               state.elements = content.elements;
               state.notes = content.notes ?? [];
+              state.modelType = content.modelType ?? ModelType.UNKNOWN;
+              state.modelAuthor = content.modelAuthor ?? null;
+              state.modelLabel = content.modelLabel ?? null;
+              state.modelDescription = content.modelDescription ?? null;
               state.cloudFile = title;
               state.currentUndoable = undefined;
               state.actionInfo = undefined;
@@ -828,6 +841,10 @@ export const useStore = create<CommonStoreState>(
               solarPanelArrayLayoutConstraints: JSON.parse(JSON.stringify(state.solarPanelArrayLayoutConstraints)),
               evolutionaryAlgorithmState: JSON.parse(JSON.stringify(state.evolutionaryAlgorithmState)),
               economicsParams: JSON.parse(JSON.stringify(state.economicsParams)),
+              modelType: state.modelType,
+              modelAuthor: state.modelAuthor,
+              modelLabel: state.modelLabel,
+              modelDescription: state.modelDescription,
               notes: state.notes,
             };
           },
@@ -5679,6 +5696,10 @@ export const useStore = create<CommonStoreState>(
           'viewState',
           'graphState',
           'actionState',
+          'modelType',
+          'modelAuthor',
+          'modelLabel',
+          'modelDescription',
           'notes',
           'user',
           'sceneRadius',
