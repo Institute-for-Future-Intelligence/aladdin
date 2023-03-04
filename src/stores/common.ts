@@ -25,10 +25,8 @@ import {
   HumanName,
   LineStyle,
   ModelSite,
-  ModelType,
   MoveHandleType,
   ObjectType,
-  OldRooftopElementData,
   Orientation,
   ParabolicDishStructureType,
   PolygonTexture,
@@ -124,7 +122,7 @@ export interface CommonStoreState {
   viewState: ViewState;
   actionState: ActionState;
   graphState: GraphState;
-  notes: string[];
+  notes: string[]; // 0 - sticky note, 1 - author nickname, 2 - model label, 3 - model description
   user: User;
   language: string;
   floatingWindowOpacity: number;
@@ -804,8 +802,6 @@ export const useStore = create<CommonStoreState>(
               state.simulationPaused = false;
               state.clearDailySimulationResultsFlag = !state.clearDailySimulationResultsFlag;
               state.clearYearlySimulationResultsFlag = !state.clearYearlySimulationResultsFlag;
-              state.modelLabel = undefined;
-              state.modelDescription = undefined;
             });
             useDataStore.setState((state) => {
               state.clearDataStore();

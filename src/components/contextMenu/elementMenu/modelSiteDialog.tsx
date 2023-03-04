@@ -21,12 +21,12 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
 
   const [modelType, setModelType] = useState<ModelType>(usePrimitiveStore.getState().modelType);
   const [modelAuthor, setModelAuthor] = useState<string | undefined>(
-    usePrimitiveStore.getState().modelAuthor ?? user.displayName ?? undefined,
+    useStore.getState().notes[1] ?? user.displayName ?? undefined,
   );
-  const [modelLabel, setModelLabel] = useState<string | undefined>(useStore.getState().cloudFile);
-  const [modelDescription, setModelDescription] = useState<string | undefined>(
-    usePrimitiveStore.getState().modelDescription,
+  const [modelLabel, setModelLabel] = useState<string | undefined>(
+    useStore.getState().notes[2] ?? useStore.getState().cloudFile,
   );
+  const [modelDescription, setModelDescription] = useState<string | undefined>(useStore.getState().notes[3]);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
@@ -62,9 +62,12 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
     usePrimitiveStore.setState((state) => {
       state.publishOnModelsMapFlag = !state.publishOnModelsMapFlag;
       state.modelType = modelType;
-      state.modelLabel = modelLabel;
-      state.modelDescription = modelDescription;
-      state.modelAuthor = modelAuthor;
+    });
+    setCommonStore((state) => {
+      state.notes[1] = modelAuthor ?? '';
+      state.notes[2] = modelLabel ?? '';
+      state.notes[3] = modelDescription ?? '';
+      state.changed = true;
     });
     if (loggable) {
       setCommonStore((state) => {
@@ -185,7 +188,7 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
       <Row gutter={6} style={{ paddingBottom: '4px' }}>
         <Col className="gutter-row" span={8}>
           {i18n.t('word.Description', lang)}:<br />
-          <label style={{ fontSize: '9px' }}>({i18n.t('word.MaximumCharacters', lang)}: 200)</label>
+          <label style={{ fontSize: '10px' }}>({i18n.t('word.MaximumCharacters', lang)}: 200)</label>
         </Col>
         <Col className="gutter-row" span={16}>
           <TextArea
