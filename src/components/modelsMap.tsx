@@ -502,10 +502,9 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel, pinModel }: Mo
                 .sort((a, b) => {
                   const modelA = selectedSite.get(a);
                   const modelB = selectedSite.get(b);
-                  const r = ascendingOrder ? 1 : -1;
-                  if (modelA?.pinned && !modelB?.pinned) return -r;
-                  if (modelB?.pinned && !modelA?.pinned) return r;
-                  return r * ((modelA?.timeCreated ?? 0) - (modelB?.timeCreated ?? 0));
+                  if (modelA?.pinned && !modelB?.pinned) return -1;
+                  if (modelB?.pinned && !modelA?.pinned) return 1;
+                  return (ascendingOrder ? 1 : -1) * ((modelA?.timeCreated ?? 0) - (modelB?.timeCreated ?? 0));
                 })
                 .map((key: string, index: number) => {
                   const m = selectedSite.get(key);
