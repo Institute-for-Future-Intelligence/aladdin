@@ -418,8 +418,6 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
             title,
             label: useStore.getState().modelLabel,
             description: useStore.getState().modelDescription,
-            likeCount: 0,
-            clickCount: 0,
             timeCreated: Date.now(),
           } as ModelSite;
           const document = collection.doc(Util.getLatLngKey(latitude, longitude));
@@ -430,7 +428,9 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
               if (doc.exists) {
                 const data = doc.data();
                 if (data && data[modelKey]) {
-                  showInfo(i18n.t('menu.file.ModelAlreadyPublishedOnMap', lang) + '.');
+                  document.set({ [modelKey]: m }, { merge: true }).then(() => {
+                    showSuccess(i18n.t('menu.file.UpdatedOnModelsMap', lang) + '.');
+                  });
                 } else {
                   document.set({ [modelKey]: m }, { merge: true }).then(() => {
                     showSuccess(i18n.t('menu.file.PublishedOnModelsMap', lang) + '.');

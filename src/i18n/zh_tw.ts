@@ -251,8 +251,8 @@ export const i18n_zh_tw = {
         TakeScreenshot: '截屏',
         UseCloudFileName: '採用雲端文件名',
         PublishOnModelsMap: '發佈到地圖上',
-        PublishedOnModelsMap: '您的模型成功發佈到地圖上了',
-        ModelAlreadyPublishedOnMap: '您的模型已經發佈在地圖上了，無須再發布',
+        PublishedOnModelsMap: '您的模型成功發佈到地圖上',
+        UpdatedOnModelsMap: '您的模型更新成功',
       },
       editSubMenu: '編輯',
       edit: {

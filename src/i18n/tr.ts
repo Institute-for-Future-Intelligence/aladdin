@@ -253,7 +253,7 @@ export const i18n_tr = {
         UseCloudFileName: 'Bulut Dosya Adını Kullan',
         PublishOnModelsMap: 'Publish on Models Map',
         PublishedOnModelsMap: 'Your model has been published on the Models Map',
-        ModelAlreadyPublishedOnMap: 'No action is taken - your model has already been published on the Models Map',
+        UpdatedOnModelsMap: 'Your model has been updated on the Models Map',
       },
       editSubMenu: 'Düzen',
       edit: {

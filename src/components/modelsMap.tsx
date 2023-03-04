@@ -325,7 +325,7 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
     if (modelsOfSite) {
       for (const v of modelsOfSite.values()) {
         if (v.userid === model.userid && v.title === model.title) {
-          return v.likeCount;
+          return v.likeCount ?? 0;
         }
       }
     }
@@ -337,7 +337,7 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
     if (modelsOfSite) {
       for (const v of modelsOfSite.values()) {
         if (v.userid === model.userid && v.title === model.title) {
-          return v.clickCount;
+          return v.clickCount ?? 0;
         }
       }
     }
