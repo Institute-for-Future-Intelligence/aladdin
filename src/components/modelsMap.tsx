@@ -22,7 +22,7 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { UndoableChange } from '../undo/UndoableChange';
 import { UndoableChangeLocation } from '../undo/UndoableChangeLocation';
-import { DEFAULT_MODEL_MAP_ZOOM, HOME_URL } from '../constants';
+import { DEFAULT_MODEL_MAP_ZOOM, HOME_URL, LAT_LNG_FRACTION_DIGITS } from '../constants';
 import { copyTextToClipboard, showError, showSuccess } from '../helpers';
 import i18n from '../i18n/i18n';
 import { ModelSite, ModelType } from '../types';
@@ -461,9 +461,19 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
                       }}
                     >
                       {index === 0 && (
-                        <label style={{ fontSize: '10px', display: 'block', paddingBottom: '2px' }}>
+                        <div style={{ fontSize: '10px', display: 'block', paddingBottom: '2px' }}>
                           {m.address ?? 'Unknown'}
-                        </label>
+                          <br />
+                          {selectedLocation && (
+                            <label style={{ fontSize: '9px', display: 'block', paddingTop: '6px' }}>
+                              {'(' +
+                                selectedLocation.lat().toFixed(LAT_LNG_FRACTION_DIGITS) +
+                                '°, ' +
+                                selectedLocation.lng().toFixed(LAT_LNG_FRACTION_DIGITS) +
+                                '°)'}
+                            </label>
+                          )}
+                        </div>
                       )}
                       <Collapse
                         style={{ background: index % 2 === 0 ? 'white' : '#eeeeee' }}
