@@ -466,7 +466,8 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
                           <br />
                           {selectedLocation && (
                             <label style={{ fontSize: '9px', display: 'block', paddingTop: '6px' }}>
-                              {'(' +
+                              {i18n.t('word.Coordinates', { lng: language }) +
+                                ': (' +
                                 selectedLocation.lat().toFixed(LAT_LNG_FRACTION_DIGITS) +
                                 '°, ' +
                                 selectedLocation.lng().toFixed(LAT_LNG_FRACTION_DIGITS) +
@@ -476,31 +477,21 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel }: ModelsMapPro
                         </div>
                       )}
                       <Collapse
-                        style={{ background: index % 2 === 0 ? 'white' : '#eeeeee' }}
+                        style={{ background: index % 2 === 0 ? 'white' : '#eeeeee', width: '300px' }}
                         bordered={false}
                         ghost={true}
                       >
-                        <Panel header={m.label} key={index}>
-                          <div style={{ fontSize: '10px', display: 'block', maxWidth: '200px', textAlign: 'left' }}>
-                            {m.description && m.description.trim() !== ''
-                              ? m.description
-                              : i18n.t('word.NoDescription', { lng: language })}
-                          </div>
-                          <div
-                            style={{
-                              fontSize: '10px',
-                              display: 'block',
-                              paddingTop: m.description && m.description.trim() !== '' ? '6px' : '0px',
-                              textAlign: 'right',
-                            }}
-                          >
-                            By {!m.author || m.author === '' ? i18n.t('word.Anonymous', { lng: language }) : m.author}
-                            &nbsp;&nbsp;&nbsp;
+                        <Panel header={m.label} key={index} style={{ fontSize: '12px' }}>
+                          <div style={{ fontSize: '10px', display: 'block', textAlign: 'left' }}>
+                            {m.description && m.description.trim() !== '' ? m.description : ''}
+                            &nbsp;&mdash;&nbsp; By{' '}
+                            {!m.author || m.author === '' ? i18n.t('word.Anonymous', { lng: language }) : m.author}
+                            ,&nbsp;&nbsp;&nbsp;
                             {m.timeCreated && <ReactTimeago date={new Date(m.timeCreated)} />}
                           </div>
                         </Panel>
                       </Collapse>
-                      <div style={{ marginTop: '10px', fontSize: '14px' }}>
+                      <div style={{ marginTop: '10px', fontSize: '12px' }}>
                         <img
                           alt={'Open'}
                           onClick={() => openModelSite(m)}

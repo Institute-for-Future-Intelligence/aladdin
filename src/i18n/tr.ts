@@ -133,6 +133,7 @@ export const i18n_tr = {
       Label: 'Label',
       Description: 'Description',
       NoDescription: 'No description',
+      MaximumCharacters: 'Maximum characters',
       Author: 'Author',
       Building: 'Building',
       UnderConstruction: 'Under Construction',

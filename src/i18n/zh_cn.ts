@@ -133,6 +133,7 @@ export const i18n_zh_cn = {
       Label: '标签',
       Description: '描述',
       NoDescription: '无描述',
+      MaximumCharacters: '最多字符数',
       Author: '作者',
       Building: '建筑',
       UnderConstruction: '在建',

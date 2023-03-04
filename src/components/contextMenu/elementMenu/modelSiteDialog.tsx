@@ -33,6 +33,7 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   const okButtonRef = useRef<HTMLElement | null>(null);
   const okButtonClickedRef = useRef<boolean>(false);
 
+  const { TextArea } = Input;
   const lang = { lng: language };
 
   useEffect(() => {
@@ -151,10 +152,27 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
 
       <Row gutter={6} style={{ paddingBottom: '4px' }}>
         <Col className="gutter-row" span={8}>
+          {i18n.t('word.Author', lang)}:
+        </Col>
+        <Col className="gutter-row" span={16}>
+          <Input
+            maxLength={30}
+            style={{ width: '100%' }}
+            value={modelAuthor ?? ''}
+            onChange={(e) => {
+              setModelAuthor(e.target.value);
+            }}
+          />
+        </Col>
+      </Row>
+
+      <Row gutter={6} style={{ paddingBottom: '4px' }}>
+        <Col className="gutter-row" span={8}>
           {i18n.t('word.Label', lang)}:
         </Col>
         <Col className="gutter-row" span={16}>
           <Input
+            maxLength={50}
             style={{ width: '100%' }}
             value={modelLabel ?? ''}
             onChange={(e) => {
@@ -166,29 +184,17 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
 
       <Row gutter={6} style={{ paddingBottom: '4px' }}>
         <Col className="gutter-row" span={8}>
-          {i18n.t('word.Description', lang)}:
+          {i18n.t('word.Description', lang)}:<br />
+          <label style={{ fontSize: '9px' }}>({i18n.t('word.MaximumCharacters', lang)}: 200)</label>
         </Col>
         <Col className="gutter-row" span={16}>
-          <Input
+          <TextArea
+            rows={5}
+            maxLength={200}
             style={{ width: '100%' }}
             value={modelDescription ?? ''}
             onChange={(e) => {
               setModelDescription(e.target.value);
-            }}
-          />
-        </Col>
-      </Row>
-
-      <Row gutter={6} style={{ paddingBottom: '4px' }}>
-        <Col className="gutter-row" span={8}>
-          {i18n.t('word.Author', lang)}:
-        </Col>
-        <Col className="gutter-row" span={16}>
-          <Input
-            style={{ width: '100%' }}
-            value={modelAuthor ?? ''}
-            onChange={(e) => {
-              setModelAuthor(e.target.value);
             }}
           />
         </Col>
