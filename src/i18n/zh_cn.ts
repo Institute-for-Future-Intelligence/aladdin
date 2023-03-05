@@ -31,6 +31,7 @@ export const i18n_zh_cn = {
     },
 
     word: {
+      Upload: '上传',
       ClickCount: '点击数',
       Share: '分享',
       AlreadyLike: '已点赞',

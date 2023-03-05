@@ -61,6 +61,7 @@ export interface ModelSite {
   clickCount?: number;
   timeCreated?: number;
   pinned?: boolean;
+  thumbnailUrl?: string;
 }
 
 export enum SchoolID {

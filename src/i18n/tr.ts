@@ -31,6 +31,7 @@ export const i18n_tr = {
     },
 
     word: {
+      Upload: 'Upload',
       ClickCount: 'Click Count',
       Share: 'Share',
       AlreadyLike: 'Already like',

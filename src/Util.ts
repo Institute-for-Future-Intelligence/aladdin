@@ -56,6 +56,17 @@ export class Util {
     return model.title + ', ' + model.userid;
   }
 
+  static resizeCanvas(canvas: HTMLCanvasElement, newWidth: number, newHeight?: number) {
+    const resizedCanvas = document.createElement('canvas');
+    resizedCanvas.width = newWidth;
+    resizedCanvas.height = newHeight ? newHeight : (newWidth * canvas.height) / canvas.width;
+    const ctx = resizedCanvas.getContext('2d');
+    if (ctx) {
+      ctx.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, resizedCanvas.width, resizedCanvas.height);
+    }
+    return resizedCanvas;
+  }
+
   static getEuler(
     from: Vector3,
     to: Vector3,

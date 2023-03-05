@@ -27,7 +27,7 @@ import { copyTextToClipboard, showError, showSuccess } from '../helpers';
 import i18n from '../i18n/i18n';
 import { ModelSite, ModelType } from '../types';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
-import { Modal, Collapse } from 'antd';
+import { Modal, Collapse, Space } from 'antd';
 import {
   ExclamationCircleOutlined,
   UpCircleOutlined,
@@ -511,6 +511,7 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel, pinModel }: Mo
                   if (!m) return null;
                   return (
                     <div
+                      key={index}
                       style={{
                         padding: selectedSite?.size > 1 ? '5px 5px 20px 5px' : '5px',
                         background: index % 2 === 0 ? 'white' : '#eeeeee',
@@ -524,7 +525,7 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel, pinModel }: Mo
                       <Collapse
                         style={{
                           background: isPinned(m) ? '#FEF9EC' : index % 2 === 0 ? 'white' : '#eeeeee',
-                          width: '300px',
+                          width: '400px',
                         }}
                         bordered={false}
                         ghost={true}
@@ -540,11 +541,16 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel, pinModel }: Mo
                           style={{ fontSize: '12px' }}
                         >
                           <div style={{ fontSize: '10px', display: 'block', textAlign: 'left' }}>
-                            {m.description && m.description.trim() !== '' ? m.description : ''}
-                            &nbsp;&mdash;&nbsp; By{' '}
-                            {!m.author || m.author === '' ? i18n.t('word.Anonymous', { lng: language }) : m.author}
-                            ,&nbsp;
-                            {m.timeCreated && <ReactTimeago date={new Date(m.timeCreated)} />}
+                            <Space align={'start'}>
+                              {m.thumbnailUrl && <img alt={m.label} src={m.thumbnailUrl} />}
+                              <div>
+                                {m.description && m.description.trim() !== '' ? m.description : ''}
+                                &nbsp;&mdash;&nbsp; By{' '}
+                                {!m.author || m.author === '' ? i18n.t('word.Anonymous', { lng: language }) : m.author}
+                                ,&nbsp;
+                                {m.timeCreated && <ReactTimeago date={new Date(m.timeCreated)} />}
+                              </div>
+                            </Space>
                           </div>
                         </Panel>
                       </Collapse>
@@ -655,9 +661,13 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel, pinModel }: Mo
                 {[...modelSites.keys()].map((key: string, index: number) => {
                   const m = modelSites.get(key);
                   if (!m || !m.size) return null;
-                  const keys = [...m.keys()].sort(
-                    (a, b) => (m.get(a)?.timeCreated ?? 0) - (m.get(b)?.timeCreated ?? 0),
-                  );
+                  const keys = [...m.keys()].sort((a, b) => {
+                    const modelA = m.get(a);
+                    const modelB = m.get(b);
+                    if (modelA?.pinned && !modelB?.pinned) return -1;
+                    if (modelB?.pinned && !modelA?.pinned) return 1;
+                    return (ascendingOrder ? 1 : -1) * ((modelA?.timeCreated ?? 0) - (modelB?.timeCreated ?? 0));
+                  });
                   const model = m.get(keys[0]);
                   if (!model) return null;
                   const iconUrl = getIconUrl(model);

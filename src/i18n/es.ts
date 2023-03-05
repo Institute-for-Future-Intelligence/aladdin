@@ -31,6 +31,7 @@ export const i18n_es = {
     },
 
     word: {
+      Upload: 'Upload',
       ClickCount: 'Click Count',
       Share: 'Share',
       AlreadyLike: 'Already like',

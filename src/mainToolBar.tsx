@@ -12,6 +12,7 @@ import styled from 'styled-components';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
+import 'firebase/storage';
 import { showError, showInfo, showSuccess } from './helpers';
 import { ClassID, CloudFileInfo, FirebaseName, ModelSite, ObjectType, SchoolID, User } from './types';
 import CloudFilePanel from './panels/cloudFilePanel';
@@ -42,9 +43,10 @@ const ButtonsContainer = styled.div`
 
 export interface MainToolBarProps {
   viewOnly: boolean;
+  canvas?: HTMLCanvasElement | null;
 }
 
-const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
+const MainToolBar = ({ viewOnly = false, canvas }: MainToolBarProps) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const user = useStore(Selector.user);
@@ -420,31 +422,61 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
             description: useStore.getState().modelDescription,
             timeCreated: Date.now(),
           } as ModelSite;
-          const document = collection.doc(Util.getLatLngKey(latitude, longitude));
           const modelKey = Util.getModelKey(m);
-          document
-            .get()
-            .then((doc) => {
-              if (doc.exists) {
-                const data = doc.data();
-                if (data && data[modelKey]) {
-                  document.set({ [modelKey]: m }, { merge: true }).then(() => {
-                    showSuccess(i18n.t('menu.file.UpdatedOnModelsMap', lang) + '.');
-                  });
-                } else {
-                  document.set({ [modelKey]: m }, { merge: true }).then(() => {
-                    showSuccess(i18n.t('menu.file.PublishedOnModelsMap', lang) + '.');
-                  });
-                }
-              } else {
-                document.set({ [modelKey]: m }, { merge: true }).then(() => {
-                  showSuccess(i18n.t('menu.file.PublishedOnModelsMap', lang) + '.');
-                });
+          // first we upload a thumbnail of the model to Firestore Cloud Storage
+          const storageRef = firebase.storage().ref();
+          if (canvas) {
+            const thumbnail = Util.resizeCanvas(canvas, 200);
+            thumbnail.toBlob((blob) => {
+              if (blob) {
+                const metadata = { contentType: 'image/png' };
+                const uploadTask = storageRef.child('images/' + modelKey + '.png').put(blob, metadata);
+                // Listen for state changes, errors, and completion of the upload.
+                uploadTask.on(
+                  firebase.storage.TaskEvent.STATE_CHANGED,
+                  (snapshot) => {
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    if (progress > 0) {
+                      showInfo(i18n.t('word.Upload', lang) + ': ' + progress + '%');
+                    }
+                  },
+                  (error) => {
+                    showError('Storage: ' + error);
+                  },
+                  () => {
+                    uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                      m.thumbnailUrl = downloadURL;
+                      // after we get a download URL for the thumbnail image, we then go on to upload other data
+                      const document = collection.doc(Util.getLatLngKey(latitude, longitude));
+                      document
+                        .get()
+                        .then((doc) => {
+                          if (doc.exists) {
+                            const data = doc.data();
+                            if (data && data[modelKey]) {
+                              document.set({ [modelKey]: m }, { merge: true }).then(() => {
+                                showSuccess(i18n.t('menu.file.UpdatedOnModelsMap', lang) + '.');
+                              });
+                            } else {
+                              document.set({ [modelKey]: m }, { merge: true }).then(() => {
+                                showSuccess(i18n.t('menu.file.PublishedOnModelsMap', lang) + '.');
+                              });
+                            }
+                          } else {
+                            document.set({ [modelKey]: m }, { merge: true }).then(() => {
+                              showSuccess(i18n.t('menu.file.PublishedOnModelsMap', lang) + '.');
+                            });
+                          }
+                        })
+                        .catch((error) => {
+                          showError(i18n.t('message.CannotPublishModelOnMap', lang) + ': ' + error);
+                        });
+                    });
+                  },
+                );
               }
-            })
-            .catch((error) => {
-              showError(i18n.t('message.CannotPublishModelOnMap', lang) + ': ' + error);
             });
+          }
         }
         // keep a record of the published model in the user's account
         firebase
@@ -557,35 +589,43 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
   };
 
   const pinModelsMap = (model: ModelSite, pinned: boolean, successCallback?: Function) => {
-    firebase
-      .firestore()
-      .collection('models')
-      .doc(Util.getLatLngKey(model.latitude, model.longitude))
-      .update({
-        [Util.getModelKey(model) + '.pinned']: pinned,
-      })
-      .then(() => {
-        if (successCallback) successCallback();
-      })
-      .catch((error) => {
-        // ignore
-      });
+    // pass if there is no user currently logged in
+    if (user && user.uid) {
+      firebase
+        .firestore()
+        .collection('models')
+        .doc(Util.getLatLngKey(model.latitude, model.longitude))
+        .update({
+          [Util.getModelKey(model) + '.pinned']: pinned,
+        })
+        .then(() => {
+          if (successCallback) successCallback();
+        })
+        .catch((error) => {
+          // ignore
+        });
+    }
   };
 
+  // TODO: unfortunately, this throws an error for users who do not log in
+  // because of write access is only granted to registered users who log in.
   const countClicksModelsMap = (model: ModelSite) => {
-    firebase
-      .firestore()
-      .collection('models')
-      .doc(Util.getLatLngKey(model.latitude, model.longitude))
-      .update({
-        [Util.getModelKey(model) + '.clickCount']: firebase.firestore.FieldValue.increment(1),
-      })
-      .then(() => {
-        // ignore
-      })
-      .catch((error) => {
-        // ignore
-      });
+    // pass if there is no user currently logged in
+    if (user && user.uid) {
+      firebase
+        .firestore()
+        .collection('models')
+        .doc(Util.getLatLngKey(model.latitude, model.longitude))
+        .update({
+          [Util.getModelKey(model) + '.clickCount']: firebase.firestore.FieldValue.increment(1),
+        })
+        .then(() => {
+          // ignore
+        })
+        .catch((error) => {
+          // ignore
+        });
+    }
   };
 
   const saveToCloud = (tlt: string, silent: boolean) => {
