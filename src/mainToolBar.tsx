@@ -386,6 +386,9 @@ const MainToolBar = ({ viewOnly = false, canvas }: MainToolBarProps) => {
           if (data) {
             const m = new Map<string, ModelSite>();
             for (const k in data) {
+              if (!data[k].countryCode) {
+                if (data[k].address?.endsWith('USA')) data[k]['countryCode'] = 'US';
+              }
               m.set(k, data[k]);
             }
             models.set(doc.id, m);
@@ -414,8 +417,8 @@ const MainToolBar = ({ viewOnly = false, canvas }: MainToolBarProps) => {
           const m = {
             latitude,
             longitude,
-            address,
-            countryCode,
+            address: address ?? null,
+            countryCode: countryCode ?? null,
             type: useStore.getState().modelType,
             author: useStore.getState().modelAuthor ?? user.displayName,
             userid: user.uid,
