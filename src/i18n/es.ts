@@ -1270,6 +1270,8 @@ export const i18n_es = {
     },
 
     cloudFilePanel: {
+      MyLikes: 'My Likes',
+      MyPublishedModels: 'My Published Models',
       MyCloudFiles: 'Mis archivos en la nube',
       GenerateLink: 'Generar enlace',
       LinkGeneratedInClipBoard: 'Se ha generado un enlace en el portapapeles',

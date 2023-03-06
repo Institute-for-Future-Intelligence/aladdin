@@ -16,6 +16,8 @@ export interface PrimitiveStoreState {
   userCount: number;
   showCloudFilePanel: boolean;
   showAccountSettingsPanel: boolean;
+  showLikesPanel: boolean;
+  showPublishedModelsPanel: boolean;
 
   animateSun: boolean;
 
@@ -112,6 +114,8 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
     userCount: 0,
     showCloudFilePanel: false,
     showAccountSettingsPanel: false,
+    showLikesPanel: false,
+    showPublishedModelsPanel: false,
 
     animateSun: false,
 

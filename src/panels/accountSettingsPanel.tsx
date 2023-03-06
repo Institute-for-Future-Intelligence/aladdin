@@ -14,6 +14,8 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { SchoolID } from '../types';
 import { ClassID } from '../types';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import LikesPanel from './likesPanel';
+import PublishedModelsPanel from './publishedModelsPanel';
 
 const { confirm } = Modal;
 const { Option } = Select;
@@ -72,11 +74,14 @@ const Header = styled.div`
   }
 `;
 
-const AccountSettingsPanel = () => {
+const AccountSettingsPanel = ({ openCloudFile }: { openCloudFile: (userid: string, title: string) => void }) => {
   const setCommonStore = useStore(Selector.set);
+  const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const language = useStore(Selector.language);
   const user = useStore(Selector.user);
   const userCount = usePrimitiveStore(Selector.userCount);
+  const showLikesPanel = usePrimitiveStore(Selector.showLikesPanel);
+  const showPublishedModelsPanel = usePrimitiveStore(Selector.showPublishedModelsPanel);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -127,6 +132,10 @@ const AccountSettingsPanel = () => {
 
   return (
     <>
+      {showLikesPanel && <LikesPanel likesArray={user.likes ?? []} openCloudFile={openCloudFile} />}
+      {showPublishedModelsPanel && (
+        <PublishedModelsPanel publishedModels={user.published ?? []} openCloudFile={openCloudFile} />
+      )}
       <ReactDraggable
         nodeRef={nodeRef}
         handle={'.handle'}
@@ -303,7 +312,14 @@ const AccountSettingsPanel = () => {
                 {i18n.t('accountSettingsPanel.Published', lang)}
               </Col>
               <Col className="gutter-row" span={18}>
-                {user.published?.length ?? 0}
+                <label
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => {
+                    setPrimitiveStore('showPublishedModelsPanel', true);
+                  }}
+                >
+                  {user.published?.length ?? 0}
+                </label>
               </Col>
             </Row>
 
@@ -312,7 +328,14 @@ const AccountSettingsPanel = () => {
                 {i18n.t('accountSettingsPanel.Likes', lang)}
               </Col>
               <Col className="gutter-row" span={18}>
-                {user.likes?.length}
+                <label
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => {
+                    setPrimitiveStore('showLikesPanel', true);
+                  }}
+                >
+                  {user.likes?.length ?? 0}
+                </label>
               </Col>
             </Row>
 

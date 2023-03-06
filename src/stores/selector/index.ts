@@ -758,6 +758,10 @@ export const showCloudFilePanel = (state: PrimitiveStoreState) => state.showClou
 
 export const showAccountSettingsPanel = (state: PrimitiveStoreState) => state.showAccountSettingsPanel;
 
+export const showLikesPanel = (state: PrimitiveStoreState) => state.showLikesPanel;
+
+export const showPublishedModelsPanel = (state: PrimitiveStoreState) => state.showPublishedModelsPanel;
+
 // science
 export const weatherData = (state: CommonStoreState) => state.weatherData;
 

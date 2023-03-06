@@ -1248,6 +1248,8 @@ export const i18n_zh_tw = {
     },
 
     cloudFilePanel: {
+      MyLikes: '我喜歡的模型',
+      MyPublishedModels: '我發佈的模型',
       MyCloudFiles: '我的雲文件',
       GenerateLink: '生成鏈接',
       LinkGeneratedInClipBoard: '鏈接已經復製到剪貼板',

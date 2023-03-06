@@ -520,6 +520,16 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel, pinModel }: Mo
                       {index === 0 && (
                         <div style={{ fontSize: '12px', display: 'block', paddingBottom: '6px' }}>
                           {m.address ?? 'Unknown'}
+                          {selectedSite.size === 1 && (
+                            <label style={{ fontSize: '10px', display: 'block', paddingTop: '10px' }}>
+                              {i18n.t('word.Coordinates', { lng: language }) +
+                                ': (' +
+                                selectedLocation.lat().toFixed(LAT_LNG_FRACTION_DIGITS) +
+                                '°, ' +
+                                selectedLocation.lng().toFixed(LAT_LNG_FRACTION_DIGITS) +
+                                '°)'}
+                            </label>
+                          )}
                         </div>
                       )}
                       <Collapse
@@ -529,6 +539,7 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel, pinModel }: Mo
                         }}
                         bordered={false}
                         ghost={true}
+                        defaultActiveKey={['0']}
                       >
                         <Panel
                           header={
@@ -542,7 +553,15 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel, pinModel }: Mo
                         >
                           <div style={{ fontSize: '10px', display: 'block', textAlign: 'left' }}>
                             <Space align={'start'}>
-                              {m.thumbnailUrl && <img alt={m.label} src={m.thumbnailUrl} />}
+                              {m.thumbnailUrl && (
+                                <img
+                                  alt={m.label}
+                                  title={i18n.t('word.Open', { lng: language })}
+                                  src={m.thumbnailUrl}
+                                  style={{ border: '1px solid #222', cursor: 'pointer' }}
+                                  onClick={() => openModelSite(m)}
+                                />
+                              )}
                               <div>
                                 {m.description && m.description.trim() !== '' ? m.description : ''}
                                 &nbsp;&mdash;&nbsp; By{' '}

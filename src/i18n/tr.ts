@@ -1271,6 +1271,8 @@ export const i18n_tr = {
     },
 
     cloudFilePanel: {
+      MyLikes: 'My Likes',
+      MyPublishedModels: 'My Published Models',
       MyCloudFiles: 'Bulut Dosyalarım',
       GenerateLink: 'Link Oluştur',
       LinkGeneratedInClipBoard: 'Klip Panosunda Oluşturulan Link',

@@ -2,7 +2,7 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { DoorTexture, ObjectType } from 'src/types';
 import DoorTextureDefault from 'src/resources/door_edge.png';
 import DoorTexture00 from 'src/resources/tiny_white_square.png';

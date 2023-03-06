@@ -2,7 +2,7 @@
  * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { DoorModel, DoorType } from 'src/models/DoorModel';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';

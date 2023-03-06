@@ -1247,6 +1247,8 @@ export const i18n_zh_cn = {
     },
 
     cloudFilePanel: {
+      MyLikes: '我喜欢的模型',
+      MyPublishedModels: '我发布的模型',
       MyCloudFiles: '我的云文件',
       GenerateLink: '生成链接',
       LinkGeneratedInClipBoard: '链接已经复制到剪贴板',

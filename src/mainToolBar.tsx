@@ -1015,7 +1015,7 @@ const MainToolBar = ({ viewOnly = false, canvas }: MainToolBarProps) => {
           renameCloudFile={renameCloudFile}
         />
       )}
-      {showAccountSettingsPanel && <AccountSettingsPanel />}
+      {showAccountSettingsPanel && <AccountSettingsPanel openCloudFile={openCloudFile} />}
       {openModelsMap && (
         <Explorer
           openCloudFile={openCloudFileWithSaveReminderFromMap}
