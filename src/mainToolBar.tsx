@@ -53,6 +53,7 @@ const MainToolBar = ({ viewOnly = false, canvas }: MainToolBarProps) => {
   const latitude = useStore(Selector.world.latitude);
   const longitude = useStore(Selector.world.longitude);
   const address = useStore(Selector.world.address);
+  const countryCode = useStore(Selector.world.countryCode);
   const exportContent = useStore(Selector.exportContent);
   const showCloudFilePanel = usePrimitiveStore(Selector.showCloudFilePanel);
   const showAccountSettingsPanel = usePrimitiveStore(Selector.showAccountSettingsPanel);
@@ -414,6 +415,7 @@ const MainToolBar = ({ viewOnly = false, canvas }: MainToolBarProps) => {
             latitude,
             longitude,
             address,
+            countryCode,
             type: useStore.getState().modelType,
             author: useStore.getState().modelAuthor ?? user.displayName,
             userid: user.uid,

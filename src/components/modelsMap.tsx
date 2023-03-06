@@ -36,6 +36,7 @@ import {
   PushpinFilled,
 } from '@ant-design/icons';
 import ReactTimeago from 'react-timeago';
+import ReactCountryFlag from 'react-country-flag';
 import { Util } from '../Util';
 
 const { Panel } = Collapse;
@@ -519,6 +520,13 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel, pinModel }: Mo
                     >
                       {index === 0 && (
                         <div style={{ fontSize: '12px', display: 'block', paddingBottom: '6px' }}>
+                          {m.countryCode && (
+                            <ReactCountryFlag
+                              countryCode={m.countryCode}
+                              style={{ marginRight: '6px', width: '20px' }}
+                              svg
+                            />
+                          )}
                           {m.address ?? 'Unknown'}
                           {selectedSite.size === 1 && (
                             <label style={{ fontSize: '10px', display: 'block', paddingTop: '10px' }}>

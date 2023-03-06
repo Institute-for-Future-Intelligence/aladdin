@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import { CommonStoreState } from '../common';
@@ -13,6 +13,8 @@ export const date = (state: CommonStoreState) => state.world.date;
 export const ground = (state: CommonStoreState) => state.world.ground;
 
 export const address = (state: CommonStoreState) => state.world.address;
+
+export const countryCode = (state: CommonStoreState) => state.world.countryCode;
 
 export const airAttenuationCoefficient = (state: CommonStoreState) => state.world.airAttenuationCoefficient;
 

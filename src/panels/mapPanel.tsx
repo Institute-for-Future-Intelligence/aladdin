@@ -159,7 +159,16 @@ const MapPanel = () => {
             state.world.latitude = geometry.location.lat();
             state.world.longitude = geometry.location.lng();
           }
-          state.world.address = places[0].formatted_address as string;
+          if (places[0]) {
+            state.world.address = places[0].formatted_address as string;
+            if (places[0].address_components) {
+              for (const a of places[0].address_components) {
+                if (a.types[0] === 'country') {
+                  state.world.countryCode = a.short_name;
+                }
+              }
+            }
+          }
         });
       }
     }

@@ -53,6 +53,7 @@ export interface ModelSite {
   latitude: number;
   longitude: number;
   address?: string;
+  countryCode?: string;
   type?: string;
   author?: string;
   label?: string;

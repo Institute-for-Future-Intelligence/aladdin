@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import { GroundModel } from './GroundModel';
@@ -11,6 +11,7 @@ export interface WorldModel {
   latitude: number;
   longitude: number;
   address: string;
+  countryCode: string;
   ground: GroundModel;
   diurnalTemperatureModel: DiurnalTemperatureModel;
 

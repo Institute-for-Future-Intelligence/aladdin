@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import { ElementModel } from '../models/ElementModel';
@@ -26,6 +26,7 @@ export class DefaultWorldModel implements WorldModel {
   latitude: number;
   longitude: number;
   address: string;
+  countryCode: string;
   airAttenuationCoefficient: number;
   airConvectiveCoefficient: number;
   timesPerHour: number;
@@ -57,6 +58,7 @@ export class DefaultWorldModel implements WorldModel {
     this.latitude = 42.2844063;
     this.longitude = -71.3488548;
     this.address = DEFAULT_ADDRESS;
+    this.countryCode = 'US';
     this.date = new Date(new Date().getFullYear(), 5, 22, 12).toLocaleString('en-US');
 
     this.name = 'default';
@@ -69,7 +71,7 @@ export class DefaultWorldModel implements WorldModel {
     this.airAttenuationCoefficient = 0.01;
     this.airConvectiveCoefficient = 5;
 
-    this.timesPerHour = 4; // how many times per hour to collect data
+    this.timesPerHour = 1; // how many times per hour to collect data
     this.daysPerYear = 12; // how many days per year for sampling
     this.dustLoss = 0.05;
     this.pvGridCellSize = 0.5;
@@ -80,11 +82,11 @@ export class DefaultWorldModel implements WorldModel {
     this.solarPanelVisibilityGridCellSize = 0.2;
     this.solarRadiationHeatmapGridCellSize = 0.5;
 
-    this.cspTimesPerHour = 4;
+    this.cspTimesPerHour = 1;
     this.cspDaysPerYear = 4;
     this.cspGridCellSize = 0.5;
 
-    this.sutTimesPerHour = 4;
+    this.sutTimesPerHour = 1;
     this.sutDaysPerYear = 4;
     this.sutGridCellSize = 1;
 
@@ -99,6 +101,7 @@ export class DefaultWorldModel implements WorldModel {
     worldModel.latitude = 42.2844063;
     worldModel.longitude = -71.3488548;
     worldModel.address = DEFAULT_ADDRESS;
+    worldModel.countryCode = 'US';
     worldModel.date = new Date(new Date().getFullYear(), 5, 22, 12).toLocaleString('en-US');
 
     worldModel.name = 'default';
@@ -109,7 +112,7 @@ export class DefaultWorldModel implements WorldModel {
     worldModel.airAttenuationCoefficient = 0.01;
     worldModel.airConvectiveCoefficient = 5;
 
-    worldModel.timesPerHour = 4; // how many times per hour to collect data
+    worldModel.timesPerHour = 1; // how many times per hour to collect data
     worldModel.daysPerYear = 12; // how many days per year for sampling
     worldModel.dustLoss = 0.05;
     worldModel.pvGridCellSize = 0.5;
@@ -120,11 +123,11 @@ export class DefaultWorldModel implements WorldModel {
     worldModel.solarPanelVisibilityGridCellSize = 0.2;
     worldModel.solarRadiationHeatmapGridCellSize = 0.5;
 
-    worldModel.cspTimesPerHour = 4;
+    worldModel.cspTimesPerHour = 1;
     worldModel.cspDaysPerYear = 4;
     worldModel.cspGridCellSize = 0.5;
 
-    worldModel.sutTimesPerHour = 4;
+    worldModel.sutTimesPerHour = 1;
     worldModel.sutDaysPerYear = 4;
     worldModel.sutGridCellSize = 1;
 
