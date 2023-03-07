@@ -34,14 +34,19 @@ const Container = styled.div`
   background: white;
 `;
 
-export interface ExplorerProps {
+export interface ModelsMapWrapperProps {
   openCloudFile: (model: ModelSite) => void;
   deleteModelFromMap: (model: ModelSite, successCallback?: Function) => void;
   likeModelFromMap: (model: ModelSite, like: boolean, successCallback?: Function) => void;
   pinModelFromMap: (model: ModelSite, pinned: boolean, successCallback?: Function) => void;
 }
 
-const Explorer = ({ openCloudFile, deleteModelFromMap, likeModelFromMap, pinModelFromMap }: ExplorerProps) => {
+const ModelsMapWrapper = ({
+  openCloudFile,
+  deleteModelFromMap,
+  likeModelFromMap,
+  pinModelFromMap,
+}: ModelsMapWrapperProps) => {
   const user = useStore(Selector.user);
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
@@ -307,4 +312,4 @@ const Explorer = ({ openCloudFile, deleteModelFromMap, likeModelFromMap, pinMode
   );
 };
 
-export default React.memo(Explorer);
+export default React.memo(ModelsMapWrapper);
