@@ -55,6 +55,7 @@ export const i18n_zh_cn = {
       Teacher: '老师',
       Class: '班级',
       Total: '总数',
+      Latest: '最新',
       Range: '范围',
       SIUnit: '国际单位制',
       USUnit: '美国单位制',

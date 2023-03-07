@@ -21,6 +21,8 @@ const GroundMap = ({ width = 400, height = 400 }: { width: number; height: numbe
 
   const [map, setMap] = useState<google.maps.Map | null>(null);
 
+  const waitTime = 200;
+
   const onLoad = useCallback((map: google.maps.Map) => {
     setMap(map);
   }, []);
@@ -28,6 +30,31 @@ const GroundMap = ({ width = 400, height = 400 }: { width: number; height: numbe
   const onUnmount = useCallback(function callback() {
     setMap(null);
   }, []);
+
+  const updateAddress = () => {
+    const latlng = new google.maps.LatLng(latitude, longitude);
+    new google.maps.Geocoder()
+      .geocode({ location: latlng }, function (results, status) {
+        if (status === google.maps.GeocoderStatus.OK) {
+          if (results && results[0].address_components) {
+            setCommonStore((state) => {
+              state.world.address = results[0].formatted_address;
+            });
+            for (const a of results[0].address_components) {
+              if (a.types[0] === 'country') {
+                setCommonStore((state) => {
+                  state.world.countryCode = a.short_name;
+                });
+                break;
+              }
+            }
+          }
+        }
+      })
+      .then(() => {
+        // ignore
+      });
+  };
 
   // FIXME: Undo doesn't work unless the focus is returned to the main window
   const onCenterChanged = throttle(
@@ -38,6 +65,7 @@ const GroundMap = ({ width = 400, height = 400 }: { width: number; height: numbe
           const lat = center.lat();
           const lng = center.lng();
           if (lat !== latitude || lng !== longitude) {
+            updateAddress();
             const undoableChangeLocation = {
               name: 'Set Location',
               timestamp: Date.now(),
@@ -67,7 +95,7 @@ const GroundMap = ({ width = 400, height = 400 }: { width: number; height: numbe
         }
       }
     },
-    1000,
+    waitTime,
     { leading: false, trailing: true },
   );
 
@@ -76,6 +104,7 @@ const GroundMap = ({ width = 400, height = 400 }: { width: number; height: numbe
       if (map) {
         const z = map.getZoom();
         if (z !== undefined && z !== mapZoom) {
+          updateAddress();
           const undoableChange = {
             name: 'Zoom Map',
             timestamp: Date.now(),
@@ -99,7 +128,7 @@ const GroundMap = ({ width = 400, height = 400 }: { width: number; height: numbe
         }
       }
     },
-    1000,
+    waitTime,
     { leading: false, trailing: true },
   );
 

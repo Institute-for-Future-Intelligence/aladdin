@@ -132,6 +132,7 @@ export interface CommonStoreState {
   language: string;
   floatingWindowOpacity: number;
   cloudFile: string | undefined;
+  latestModelSite?: ModelSite;
   modelSites: Map<string, Map<string, ModelSite>>; // primary key: 'lat, lng', secondary key: 'title, userid'
 
   openModelsMap: boolean;
@@ -715,6 +716,7 @@ export const useStore = create<CommonStoreState>(
           language: 'en',
           floatingWindowOpacity: FLOATING_WINDOW_OPACITY,
           cloudFile: undefined,
+          latestModelSite: undefined,
           modelSites: new Map<string, Map<string, ModelSite>>(),
 
           openModelsMap: false,
@@ -5683,6 +5685,7 @@ export const useStore = create<CommonStoreState>(
           'floatingWindowOpacity',
           'locale',
           'cloudFile',
+          'latestModelSite',
           'modelSites',
           'modelsMapLatitude',
           'modelsMapLongitude',

@@ -16,6 +16,7 @@ import { UndoableChangeLocation } from './undo/UndoableChangeLocation';
 import { DEFAULT_ADDRESS } from './constants';
 import { usePrimitiveStore } from './stores/commonPrimitive';
 import { ModelSite } from './types';
+import ReactCountryFlag from 'react-country-flag';
 
 const libraries = ['places'] as Libraries;
 
@@ -51,6 +52,7 @@ const Explorer = ({ openCloudFile, deleteModelFromMap, likeModelFromMap, pinMode
   const longitude = modelsMapLongitude !== undefined ? modelsMapLongitude : -71.3488548;
   const address = useStore.getState().modelsMapAddress ?? DEFAULT_ADDRESS;
   const mapWeatherStations = usePrimitiveStore(Selector.modelsMapWeatherStations);
+  const latestModelSite = useStore(Selector.latestModelSite);
   const modelSites = useStore(Selector.modelSites);
 
   const searchBox = useRef<google.maps.places.SearchBox>();
@@ -193,6 +195,45 @@ const Explorer = ({ openCloudFile, deleteModelFromMap, likeModelFromMap, pinMode
         </Space>
       )}
       <>
+        {latestModelSite && (
+          <Space>
+            <div
+              style={{
+                position: 'absolute',
+                fontSize: '10px',
+                color: 'black',
+                bottom: '7px',
+                left: '95px',
+                padding: '2px 4px 2px 4px',
+                background: 'whitesmoke',
+                boxShadow: '1px 1px 1px 1px gray',
+                cursor: 'pointer',
+              }}
+              onClick={() => {
+                setCommonStore((state) => {
+                  if (latestModelSite) {
+                    state.modelsMapLatitude = latestModelSite.latitude;
+                    state.modelsMapLongitude = latestModelSite.longitude;
+                    state.modelsMapZoom = 20;
+                  }
+                });
+              }}
+            >
+              {i18n.t('word.Latest', { lng: language }) +
+                ': ' +
+                latestModelSite.title +
+                ', by ' +
+                latestModelSite.author}
+              {latestModelSite.countryCode && (
+                <ReactCountryFlag
+                  countryCode={latestModelSite.countryCode}
+                  style={{ marginRight: '8px', width: '20px' }}
+                  svg
+                />
+              )}
+            </div>
+          </Space>
+        )}
         <Space>
           <div
             style={{

@@ -97,11 +97,13 @@ export const showCloudFileTitleDialogFlag = (state: CommonStoreState) => state.s
 
 export const cloudFile = (state: CommonStoreState) => state.cloudFile;
 
+export const latestModelSite = (state: CommonStoreState) => state.latestModelSite;
+
 export const modelSites = (state: CommonStoreState) => state.modelSites;
 
 export const saveCloudFileFlag = (state: CommonStoreState) => state.saveCloudFileFlag;
 
-export const exploreMapFlag = (state: PrimitiveStoreState) => state.modelsMapFlag;
+export const modelsMapFlag = (state: PrimitiveStoreState) => state.modelsMapFlag;
 
 export const publishOnModelsMapFlag = (state: PrimitiveStoreState) => state.publishOnModelsMapFlag;
 

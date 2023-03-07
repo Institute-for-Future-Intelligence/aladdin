@@ -165,6 +165,7 @@ const MapPanel = () => {
               for (const a of places[0].address_components) {
                 if (a.types[0] === 'country') {
                   state.world.countryCode = a.short_name;
+                  break;
                 }
               }
             }

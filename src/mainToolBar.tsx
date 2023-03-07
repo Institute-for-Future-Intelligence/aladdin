@@ -60,7 +60,7 @@ const MainToolBar = ({ viewOnly = false, canvas }: MainToolBarProps) => {
   const openModelsMap = useStore(Selector.openModelsMap);
   const cloudFile = useStore(Selector.cloudFile);
   const saveCloudFileFlag = useStore(Selector.saveCloudFileFlag);
-  const exploreMapFlag = usePrimitiveStore(Selector.exploreMapFlag);
+  const modelsMapFlag = usePrimitiveStore(Selector.modelsMapFlag);
   const publishOnMapFlag = usePrimitiveStore(Selector.publishOnModelsMapFlag);
   const listCloudFilesFlag = useStore(Selector.listCloudFilesFlag);
   const showCloudFileTitleDialog = useStore(Selector.showCloudFileTitleDialog);
@@ -175,10 +175,12 @@ const MainToolBar = ({ viewOnly = false, canvas }: MainToolBarProps) => {
     if (firstExploreMap.current) {
       firstExploreMap.current = false;
     } else {
-      fetchModelSites();
+      fetchModelSites().then(() => {
+        setLoading(false);
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [exploreMapFlag]);
+  }, [modelsMapFlag]);
 
   useEffect(() => {
     if (firstCallPublishOnMap.current) {
@@ -375,7 +377,7 @@ const MainToolBar = ({ viewOnly = false, canvas }: MainToolBarProps) => {
 
   const fetchModelSites = async () => {
     setLoading(true);
-    return await firebase
+    await firebase
       .firestore()
       .collection('models')
       .get()
@@ -405,6 +407,25 @@ const MainToolBar = ({ viewOnly = false, canvas }: MainToolBarProps) => {
       .finally(() => {
         setLoading(false);
       });
+    // get board info
+    await firebase
+      .firestore()
+      .collection('board')
+      .doc('info')
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          const data = doc.data();
+          if (data && data.latestModel) {
+            setCommonStore((state) => {
+              state.latestModelSite = data.latestModel as ModelSite;
+            });
+          }
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   const publishOnModelsMap = () => {
@@ -412,22 +433,22 @@ const MainToolBar = ({ viewOnly = false, canvas }: MainToolBarProps) => {
       // check if the user is the owner of the current model
       const params = new URLSearchParams(window.location.search);
       if (params.get('userid') === user.uid && params.get('title') === title) {
+        const m = {
+          latitude,
+          longitude,
+          address: address ?? null,
+          countryCode: countryCode ?? null,
+          type: useStore.getState().modelType,
+          author: useStore.getState().modelAuthor ?? user.displayName,
+          userid: user.uid,
+          title,
+          label: useStore.getState().modelLabel,
+          description: useStore.getState().modelDescription,
+          timeCreated: Date.now(),
+        } as ModelSite;
+        const modelKey = Util.getModelKey(m);
         const collection = firebase.firestore().collection('models');
         if (collection) {
-          const m = {
-            latitude,
-            longitude,
-            address: address ?? null,
-            countryCode: countryCode ?? null,
-            type: useStore.getState().modelType,
-            author: useStore.getState().modelAuthor ?? user.displayName,
-            userid: user.uid,
-            title,
-            label: useStore.getState().modelLabel,
-            description: useStore.getState().modelDescription,
-            timeCreated: Date.now(),
-          } as ModelSite;
-          const modelKey = Util.getModelKey(m);
           // first we upload a thumbnail of the model to Firestore Cloud Storage
           const storageRef = firebase.storage().ref();
           if (canvas) {
@@ -501,6 +522,15 @@ const MainToolBar = ({ viewOnly = false, canvas }: MainToolBarProps) => {
                 }
               }
             });
+          });
+        // notify info
+        firebase
+          .firestore()
+          .collection('board')
+          .doc('info')
+          .set({ latestModel: m }, { merge: true })
+          .then(() => {
+            // TODO
           });
       }
     }

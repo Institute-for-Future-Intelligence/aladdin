@@ -55,6 +55,7 @@ export const i18n_es = {
       Teacher: 'Profesor',
       Class: 'Clase',
       Total: 'Total',
+      Latest: 'Latest',
       Range: 'Rango',
       SIUnit: 'SI Unit',
       USUnit: 'US Unit',
