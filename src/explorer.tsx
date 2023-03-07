@@ -219,18 +219,15 @@ const Explorer = ({ openCloudFile, deleteModelFromMap, likeModelFromMap, pinMode
                 });
               }}
             >
-              {i18n.t('word.Latest', { lng: language }) +
-                ': ' +
-                latestModelSite.title +
-                ', by ' +
-                latestModelSite.author}
+              {i18n.t('word.Latest', { lng: language }) + ': '}
               {latestModelSite.countryCode && (
                 <ReactCountryFlag
                   countryCode={latestModelSite.countryCode}
-                  style={{ marginRight: '8px', width: '20px' }}
+                  style={{ marginLeft: '2px', marginRight: '4px', width: '20px' }}
                   svg
                 />
               )}
+              {latestModelSite.title + ', by ' + latestModelSite.author}
             </div>
           </Space>
         )}
