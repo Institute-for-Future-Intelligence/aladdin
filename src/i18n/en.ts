@@ -137,6 +137,8 @@ export const i18n_en = {
       MaximumCharacters: 'Maximum characters',
       Author: 'Author',
       Building: 'Building',
+      ResidentialBuilding: 'Residential Building',
+      CommercialBuilding: 'Commercial Building',
       UnderConstruction: 'Under Construction',
       Photovoltaic: 'Photovoltaic',
       Anonymous: 'Anonymous',

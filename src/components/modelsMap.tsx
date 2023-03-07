@@ -2,7 +2,8 @@
  * @Copyright 2023. Institute for Future Intelligence, Inc.
  */
 
-import BuildingIcon from '../assets/map_building.png';
+import ResidentialBuildingIcon from '../assets/map_residential_building.png';
+import CommercialBuildingIcon from '../assets/map_commercial_building.png';
 import SolarPanelIcon from '../assets/map_solar_panel.png';
 import ParabolicDishIcon from '../assets/map_parabolic_dish.png';
 import ParabolicTroughIcon from '../assets/map_parabolic_trough.png';
@@ -400,8 +401,11 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel, pinModel }: Mo
         return FresnelReflectorIcon;
       case ModelType.SOLAR_POWER_TOWER:
         return HeliostatIcon;
-      case ModelType.BUILDING:
-        return BuildingIcon;
+      case ModelType.RESIDENTIAL_BUILDING:
+        return ResidentialBuildingIcon;
+      case 'Building': // backward compatibility
+      case ModelType.COMMERCIAL_BUILDING:
+        return CommercialBuildingIcon;
       case ModelType.UNDER_CONSTRUCTION:
         return UnderConstructionIcon;
     }

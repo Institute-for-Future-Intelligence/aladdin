@@ -2,7 +2,8 @@
  * @Copyright 2023. Institute for Future Intelligence, Inc.
  */
 
-import BuildingIcon from '../../../assets/map_building.png';
+import ResidentialBuildingIcon from '../../../assets/map_residential_building.png';
+import CommercialBuildingIcon from '../../../assets/map_commercial_building.png';
 import SolarPanelIcon from '../../../assets/map_solar_panel.png';
 import ParabolicDishIcon from '../../../assets/map_parabolic_dish.png';
 import ParabolicTroughIcon from '../../../assets/map_parabolic_trough.png';
@@ -142,9 +143,18 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
               <img alt={'Building'} width={24} src={UnderConstructionIcon} style={{ marginRight: '8px' }} />
               {i18n.t('word.UnderConstruction', lang)}
             </Option>
-            <Option key={ModelType.BUILDING} value={ModelType.BUILDING}>
-              <img alt={'Building'} width={24} src={BuildingIcon} style={{ marginRight: '8px' }} />
-              {i18n.t('word.Building', lang)}
+            <Option key={ModelType.RESIDENTIAL_BUILDING} value={ModelType.RESIDENTIAL_BUILDING}>
+              <img
+                alt={'Residential Building'}
+                width={24}
+                src={ResidentialBuildingIcon}
+                style={{ marginRight: '8px' }}
+              />
+              {i18n.t('word.ResidentialBuilding', lang)}
+            </Option>
+            <Option key={ModelType.COMMERCIAL_BUILDING} value={ModelType.COMMERCIAL_BUILDING}>
+              <img alt={'Commercial Building'} width={24} src={CommercialBuildingIcon} style={{ marginRight: '8px' }} />
+              {i18n.t('word.CommercialBuilding', lang)}
             </Option>
             <Option key={ModelType.PHOTOVOLTAIC} value={ModelType.PHOTOVOLTAIC}>
               <img alt={'Building'} width={24} src={SolarPanelIcon} style={{ marginRight: '8px' }} />

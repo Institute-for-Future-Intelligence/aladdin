@@ -137,6 +137,8 @@ export const i18n_zh_tw = {
       MaximumCharacters: '最多字符數',
       Author: '作者',
       Building: '建築',
+      ResidentialBuilding: '住宅建築',
+      CommercialBuilding: '商用建築',
       UnderConstruction: '在建',
       Photovoltaic: '光伏',
       Anonymous: '無名氏',
