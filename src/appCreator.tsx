@@ -21,7 +21,7 @@ import AcceptCookie from './acceptCookie';
 import GroundImage from './views/groundImage';
 import DropdownContextMenu from './components/contextMenu';
 import { DesignProblem, EvolutionMethod } from './types';
-import MainManager from './mainManager';
+import CloudManager from './cloudManager';
 import ActionLogger from './actionLogger';
 import Lights from './lights';
 import { Auxiliary } from './auxiliary';
@@ -303,7 +303,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
         resetView={resetView}
         zoomView={zoomView}
       />
-      <MainManager viewOnly={viewOnly} canvas={canvasRef.current} />
+      <CloudManager viewOnly={viewOnly} canvas={canvasRef.current} />
       <Panels />
       <DropdownContextMenu>
         <div>

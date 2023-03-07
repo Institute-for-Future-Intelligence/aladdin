@@ -26,12 +26,12 @@ import ModelsMapWrapper from './modelsMapWrapper';
 import MainToolBar from './mainToolBar';
 import SaveCloudFileModal from './saveCloudFileModal';
 
-export interface MainManagerProps {
+export interface CloudManagerProps {
   viewOnly: boolean;
   canvas?: HTMLCanvasElement | null;
 }
 
-const MainManager = ({ viewOnly = false, canvas }: MainManagerProps) => {
+const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const user = useStore(Selector.user);
@@ -645,8 +645,8 @@ const MainManager = ({ viewOnly = false, canvas }: MainManagerProps) => {
     }
   };
 
-  const saveToCloud = (tlt: string, silent: boolean) => {
-    const t = tlt.trim();
+  const saveToCloud = (title: string, silent: boolean) => {
+    const t = title.trim();
     if (t.length > 0) {
       if (user.uid) {
         setLoading(true);
@@ -954,4 +954,4 @@ const MainManager = ({ viewOnly = false, canvas }: MainManagerProps) => {
   );
 };
 
-export default React.memo(MainManager);
+export default React.memo(CloudManager);
