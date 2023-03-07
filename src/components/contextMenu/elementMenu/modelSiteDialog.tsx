@@ -2,6 +2,15 @@
  * @Copyright 2023. Institute for Future Intelligence, Inc.
  */
 
+import BuildingIcon from '../../../assets/map_building.png';
+import SolarPanelIcon from '../../../assets/map_solar_panel.png';
+import ParabolicDishIcon from '../../../assets/map_parabolic_dish.png';
+import ParabolicTroughIcon from '../../../assets/map_parabolic_trough.png';
+import FresnelReflectorIcon from '../../../assets/map_fresnel_reflector.png';
+import HeliostatIcon from '../../../assets/map_heliostat.png';
+import UnderConstructionIcon from '../../../assets/map_under_construction.png';
+import UnknownIcon from '../../../assets/map_marker.png';
+
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Col, Input, Modal, Row, Select } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
@@ -126,27 +135,35 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
             }}
           >
             <Option key={ModelType.UNKNOWN} value={ModelType.UNKNOWN}>
+              <img alt={'Building'} width={24} src={UnknownIcon} style={{ marginRight: '8px' }} />
               {i18n.t('word.Unknown', lang)}
             </Option>
             <Option key={ModelType.UNDER_CONSTRUCTION} value={ModelType.UNDER_CONSTRUCTION}>
+              <img alt={'Building'} width={24} src={UnderConstructionIcon} style={{ marginRight: '8px' }} />
               {i18n.t('word.UnderConstruction', lang)}
             </Option>
             <Option key={ModelType.BUILDING} value={ModelType.BUILDING}>
+              <img alt={'Building'} width={24} src={BuildingIcon} style={{ marginRight: '8px' }} />
               {i18n.t('word.Building', lang)}
             </Option>
             <Option key={ModelType.PHOTOVOLTAIC} value={ModelType.PHOTOVOLTAIC}>
+              <img alt={'Building'} width={24} src={SolarPanelIcon} style={{ marginRight: '8px' }} />
               {i18n.t('word.Photovoltaic', lang)}
             </Option>
             <Option key={ModelType.PARABOLIC_DISH} value={ModelType.PARABOLIC_DISH}>
+              <img alt={'Building'} width={24} src={ParabolicDishIcon} style={{ marginRight: '8px' }} />
               {i18n.t('shared.ParabolicDishElement', lang)}
             </Option>
             <Option key={ModelType.PARABOLIC_TROUGH} value={ModelType.PARABOLIC_TROUGH}>
+              <img alt={'Building'} width={24} src={ParabolicTroughIcon} style={{ marginRight: '8px' }} />
               {i18n.t('shared.ParabolicTroughElement', lang)}
             </Option>
             <Option key={ModelType.FRESNEL_REFLECTOR} value={ModelType.FRESNEL_REFLECTOR}>
+              <img alt={'Building'} width={24} src={FresnelReflectorIcon} style={{ marginRight: '8px' }} />
               {i18n.t('shared.FresnelReflectorElement', lang)}
             </Option>
             <Option key={ModelType.SOLAR_POWER_TOWER} value={ModelType.SOLAR_POWER_TOWER}>
+              <img alt={'Building'} width={24} src={HeliostatIcon} style={{ marginRight: '8px' }} />
               {i18n.t('shared.HeliostatElement', lang)}
             </Option>
           </Select>

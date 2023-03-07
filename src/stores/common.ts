@@ -5683,7 +5683,6 @@ export const useStore = create<CommonStoreState>(
           'floatingWindowOpacity',
           'locale',
           'cloudFile',
-          'openModelsMap',
           'modelSites',
           'modelsMapLatitude',
           'modelsMapLongitude',

@@ -2,13 +2,13 @@
  * @Copyright 2023. Institute for Future Intelligence, Inc.
  */
 
-import UnderConstructionIcon from '../assets/map-under-construction.png';
-import BuildingIcon from '../assets/map-building.png';
-import SolarPanelIcon from '../assets/map-solar-panel.png';
-import ParabolicDishIcon from '../assets/map-parabolic-dish.png';
-import ParabolicTroughIcon from '../assets/map-parabolic-trough.png';
-import FresnelReflectorIcon from '../assets/map-fresnel-reflector.png';
-import PowerTowerIcon from '../assets/map-power-tower.png';
+import BuildingIcon from '../assets/map_building.png';
+import SolarPanelIcon from '../assets/map_solar_panel.png';
+import ParabolicDishIcon from '../assets/map_parabolic_dish.png';
+import ParabolicTroughIcon from '../assets/map_parabolic_trough.png';
+import FresnelReflectorIcon from '../assets/map_fresnel_reflector.png';
+import HeliostatIcon from '../assets/map_heliostat.png';
+import UnderConstructionIcon from '../assets/map_under_construction.png';
 import EmptyHeartIcon from '../assets/empty_heart.png';
 import RedHeartIcon from '../assets/red_heart.png';
 import OpenFileIcon from '../assets/open_file.png';
@@ -399,7 +399,7 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel, pinModel }: Mo
       case ModelType.FRESNEL_REFLECTOR:
         return FresnelReflectorIcon;
       case ModelType.SOLAR_POWER_TOWER:
-        return PowerTowerIcon;
+        return HeliostatIcon;
       case ModelType.BUILDING:
         return BuildingIcon;
       case ModelType.UNDER_CONSTRUCTION:
