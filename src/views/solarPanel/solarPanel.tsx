@@ -163,7 +163,7 @@ const SolarPanel = ({
   }
 
   if (pvModel) {
-    lz = pvModel.thickness;
+    lz = Math.max(pvModel.thickness, 0.02);
   }
 
   const hx = lx / 2;

@@ -391,7 +391,7 @@ const SolarPanelOnWall = ({
   const pvModel = pvModules[pvModelName] as PvModel;
 
   if (pvModel) {
-    lz = pvModel.thickness;
+    lz = Math.max(pvModel.thickness, 0.02);
   }
 
   const hx = lx / 2;
