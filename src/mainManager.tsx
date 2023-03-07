@@ -6,7 +6,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useStore } from './stores/common';
 import { usePrimitiveStore } from './stores/commonPrimitive';
 import * as Selector from './stores/selector';
-import { Input, Modal, Space } from 'antd';
+import { Modal } from 'antd';
 import dayjs from 'dayjs';
 import 'antd/dist/antd.css';
 import firebase from 'firebase/app';
@@ -19,12 +19,12 @@ import CloudFilePanel from './panels/cloudFilePanel';
 import Spinner from './components/spinner';
 import AccountSettingsPanel from './panels/accountSettingsPanel';
 import i18n from './i18n/i18n';
-import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Util } from './Util';
 import { HOME_URL } from './constants';
 import ModelsMapWrapper from './modelsMapWrapper';
 import MainToolBar from './mainToolBar';
+import SaveCloudFileModal from './saveCloudFileModal';
 
 export interface MainManagerProps {
   viewOnly: boolean;
@@ -61,9 +61,6 @@ const MainManager = ({ viewOnly = false, canvas }: MainManagerProps) => {
   const [cloudFileArray, setCloudFileArray] = useState<any[]>([]);
   const [title, setTitle] = useState<string>(cloudFile ?? 'My Aladdin File');
   const [titleDialogVisible, setTitleDialogVisible] = useState(false);
-  const [dragEnabled, setDragEnabled] = useState<boolean>(false);
-  const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
-  const dragRef = useRef<HTMLDivElement | null>(null);
   const cloudFiles = useRef<CloudFileInfo[] | void>();
   const firstCallUpdateCloudFile = useRef<boolean>(true);
   const firstExploreMap = useRef<boolean>(true);
@@ -298,7 +295,7 @@ const MainManager = ({ viewOnly = false, canvas }: MainManagerProps) => {
           .doc(user.uid)
           .set({
             uid: user.uid,
-            signFile: !!user.signFile, // don't listen to WS's suggestion to simplify it
+            signFile: !!user.signFile, // don't listen to WebStorm's suggestion to simplify it
             noLogging: !!user.noLogging,
             schoolID: user.schoolID ?? SchoolID.UNKNOWN,
             classID: user.classID ?? ClassID.UNKNOWN,
@@ -922,72 +919,19 @@ const MainManager = ({ viewOnly = false, canvas }: MainManagerProps) => {
     }
   };
 
-  const onStart = (event: DraggableEvent, uiData: DraggableData) => {
-    if (dragRef.current) {
-      const { clientWidth, clientHeight } = window.document.documentElement;
-      const targetRect = dragRef.current.getBoundingClientRect();
-      setBounds({
-        left: -targetRect.left + uiData.x,
-        right: clientWidth - (targetRect.right - uiData.x),
-        top: -targetRect.top + uiData.y,
-        bottom: clientHeight - (targetRect?.bottom - uiData.y),
-      });
-    }
-  };
-
   return viewOnly ? (
     <></>
   ) : (
     <>
-      <Modal
-        width={500}
-        title={
-          <div
-            style={{ width: '100%', cursor: 'move' }}
-            onMouseOver={() => setDragEnabled(true)}
-            onMouseOut={() => setDragEnabled(false)}
-          >
-            {i18n.t('menu.file.SaveAsCloudFile', lang)}
-          </div>
-        }
-        visible={titleDialogVisible}
-        onOk={() => {
-          saveToCloud(title, false);
-          setCommonStore((state) => {
-            state.showCloudFileTitleDialogFlag = !state.showCloudFileTitleDialogFlag;
-            state.showCloudFileTitleDialog = false;
-          });
-        }}
-        confirmLoading={loading}
-        onCancel={() => {
-          setTitleDialogVisible(false);
-          setCommonStore((state) => {
-            state.showCloudFileTitleDialogFlag = !state.showCloudFileTitleDialogFlag;
-            state.showCloudFileTitleDialog = false;
-          });
-        }}
-        modalRender={(modal) => (
-          <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
-            <div ref={dragRef}>{modal}</div>
-          </Draggable>
-        )}
-      >
-        <Space direction={'horizontal'}>
-          <label>{i18n.t('word.Title', lang)}:</label>
-          <Input
-            style={{ width: '400px' }}
-            placeholder="Title"
-            value={title}
-            onPressEnter={() => {
-              saveToCloud(title, false);
-            }}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              setTitle(e.target.value);
-            }}
-          />
-        </Space>
-      </Modal>
       {loading && <Spinner />}
+      <SaveCloudFileModal
+        saveToCloud={saveToCloud}
+        isLoading={() => loading}
+        setTitle={setTitle}
+        getTitle={() => title}
+        setTitleDialogVisible={setTitleDialogVisible}
+        isTitleDialogVisible={() => titleDialogVisible}
+      />
       <MainToolBar signIn={signIn} signOut={signOut} />
       {showCloudFilePanel && cloudFiles.current && (
         <CloudFilePanel

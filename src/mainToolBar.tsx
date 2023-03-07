@@ -1,6 +1,7 @@
 /*
  * @Copyright 2023. Institute for Future Intelligence, Inc.
  */
+
 import styled from 'styled-components';
 import { Avatar, Button, Dropdown, Menu, Space } from 'antd';
 import MainToolBarButtons from './mainToolBarButtons';
@@ -55,30 +56,28 @@ const MainToolBar = ({ signIn, signOut }: MainToolBarProps) => {
   );
 
   return (
-    <>
-      <ButtonsContainer>
-        <Space direction="horizontal">
-          {!openModelsMap && <MainToolBarButtons />}
-          <div style={{ verticalAlign: 'top' }}>
-            {user.displayName ? (
-              <Dropdown overlay={avatarMenu} trigger={['click']}>
-                <a
-                  className="ant-dropdown-link"
-                  onClick={(e) => e.preventDefault()}
-                  title={i18n.t('tooltip.clickToAccessCloudTools', lang)}
-                >
-                  <Avatar size={32} src={user.photoURL} alt={user.displayName} />
-                </a>
-              </Dropdown>
-            ) : (
-              <Button type="primary" title={i18n.t('avatarMenu.PrivacyInfo', lang)} onClick={signIn}>
-                {i18n.t('avatarMenu.SignIn', lang)}
-              </Button>
-            )}
-          </div>
-        </Space>
-      </ButtonsContainer>
-    </>
+    <ButtonsContainer>
+      <Space direction="horizontal">
+        {!openModelsMap && <MainToolBarButtons />}
+        <div style={{ verticalAlign: 'top' }}>
+          {user.displayName ? (
+            <Dropdown overlay={avatarMenu} trigger={['click']}>
+              <a
+                className="ant-dropdown-link"
+                onClick={(e) => e.preventDefault()}
+                title={i18n.t('tooltip.clickToAccessCloudTools', lang)}
+              >
+                <Avatar size={32} src={user.photoURL} alt={user.displayName} />
+              </a>
+            </Dropdown>
+          ) : (
+            <Button type="primary" title={i18n.t('avatarMenu.PrivacyInfo', lang)} onClick={signIn}>
+              {i18n.t('avatarMenu.SignIn', lang)}
+            </Button>
+          )}
+        </div>
+      </Space>
+    </ButtonsContainer>
   );
 };
 

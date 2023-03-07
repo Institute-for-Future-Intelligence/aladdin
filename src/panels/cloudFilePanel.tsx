@@ -146,6 +146,11 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
       icon: <ExclamationCircleOutlined />,
       onOk: () => {
         deleteCloudFile(userid, title);
+        // change the address field of the browser when the cloud file is currently open
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('title') === title && params.get('userid') === userid) {
+          window.history.pushState({}, document.title, HOME_URL);
+        }
       },
     });
   };
