@@ -220,7 +220,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
               marginLeft: '20px',
               fontSize: '14px',
               verticalAlign: 'center',
-              userSelect: 'none',
+              userSelect: 'text',
               color: new URLSearchParams(window.location.search).get('userid') === user.uid ? 'black' : 'gray',
             }}
             title={i18n.t('toolbar.CloudFile', lang)}

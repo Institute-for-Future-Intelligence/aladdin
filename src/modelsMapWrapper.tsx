@@ -255,7 +255,7 @@ const ModelsMapWrapper = ({
         )}
         <Space>
           <div
-            title={i18n.t('word.Total', lang) + ': ' + modelSitesCount}
+            title={i18n.t('modelsMap.TotalNumberOfUserPublishedModels', lang) + ': ' + modelSitesCount}
             style={{
               position: 'absolute',
               fontSize: '14px',
@@ -268,6 +268,7 @@ const ModelsMapWrapper = ({
               background: 'whitesmoke',
               boxShadow: '1px 1px 1px 1px gray',
               cursor: 'pointer',
+              userSelect: 'none',
             }}
             onClick={() => {
               usePrimitiveStore.setState((state) => {

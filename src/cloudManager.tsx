@@ -443,7 +443,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
         }
       })
       .catch((error) => {
-        showError(i18n.t('message.CannotLoadModelsOnMap', lang) + ': ' + error);
+        showError(i18n.t('message.CannotLoadScoreboard', lang) + ': ' + error);
       })
       .finally(() => {
         setLoading(false);

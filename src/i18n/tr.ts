@@ -178,6 +178,7 @@ export const i18n_tr = {
       CannotSaveYourFileToCloud: 'Dosyanız buluta kaydedilemiyor',
       CloudFileNotFound: 'Bulut dosyası bulunamadı',
       CannotLoadModelsOnMap: 'Cannot load models on map',
+      CannotLoadScoreboard: 'Cannot load scoreboard',
       CannotPublishModelOnMap: 'Cannot publish model on map',
       CannotLikeModelFromMap: 'Cannot like model from map',
       CannotDeleteModelFromMap: 'Cannot delete model from map',
@@ -1471,6 +1472,7 @@ export const i18n_tr = {
       Justin: 'Justin',
     },
     modelsMap: {
+      TotalNumberOfUserPublishedModels: 'Total number of user-published models',
       FromOldestToNewest: 'From oldest to newest',
       FromNewestToOldest: 'From newest to oldest',
       ModelsFoundOnThisSite: 'models found on this site',

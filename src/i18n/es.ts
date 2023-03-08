@@ -178,6 +178,7 @@ export const i18n_es = {
       CannotSaveYourFileToCloud: 'Cannot save your file to the cloud',
       CloudFileNotFound: 'The cloud file was not found',
       CannotLoadModelsOnMap: 'Cannot load models on map',
+      CannotLoadScoreboard: 'Cannot load scoreboard',
       CannotPublishModelOnMap: 'Cannot publish model on map',
       CannotLikeModelFromMap: 'Cannot like model from map',
       CannotDeleteModelFromMap: 'Cannot delete model from map',
@@ -1470,6 +1471,7 @@ export const i18n_es = {
       Justin: 'Justin',
     },
     modelsMap: {
+      TotalNumberOfUserPublishedModels: 'Total number of user-published models',
       FromOldestToNewest: 'From oldest to newest',
       FromNewestToOldest: 'From newest to oldest',
       ModelsFoundOnThisSite: 'models found on this site',
