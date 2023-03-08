@@ -134,7 +134,7 @@ export interface CommonStoreState {
   cloudFile: string | undefined;
   latestModelSite?: ModelSite;
   modelSites: Map<string, Map<string, ModelSite>>; // primary key: 'lat, lng', secondary key: 'title, userid'
-
+  modelsMapContributors: Map<string, string[]>; // author, model key array
   openModelsMap: boolean;
   modelsMapLatitude: number;
   modelsMapLongitude: number;
@@ -718,7 +718,7 @@ export const useStore = create<CommonStoreState>(
           cloudFile: undefined,
           latestModelSite: undefined,
           modelSites: new Map<string, Map<string, ModelSite>>(),
-
+          modelsMapContributors: new Map<string, string[]>(),
           openModelsMap: false,
           modelsMapLatitude: 42.2844063,
           modelsMapLongitude: -71.3488548,

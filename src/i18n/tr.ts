@@ -55,6 +55,7 @@ export const i18n_tr = {
       Teacher: 'Öğretmen',
       Class: 'Sınıf',
       Total: 'Toplam',
+      Scoreboard: 'Scoreboard',
       Latest: 'Latest',
       Range: 'Aralık',
       SIUnit: 'SI Unit',

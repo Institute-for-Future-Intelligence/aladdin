@@ -46,6 +46,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const cloudFile = useStore(Selector.cloudFile);
   const saveCloudFileFlag = useStore(Selector.saveCloudFileFlag);
   const modelsMapFlag = usePrimitiveStore(Selector.modelsMapFlag);
+  const scoreboardFlag = usePrimitiveStore(Selector.scoreboardFlag);
   const publishOnMapFlag = usePrimitiveStore(Selector.publishOnModelsMapFlag);
   const listCloudFilesFlag = useStore(Selector.listCloudFilesFlag);
   const showCloudFileTitleDialog = useStore(Selector.showCloudFileTitleDialog);
@@ -63,7 +64,8 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const [titleDialogVisible, setTitleDialogVisible] = useState(false);
   const cloudFiles = useRef<CloudFileInfo[] | void>();
   const firstCallUpdateCloudFile = useRef<boolean>(true);
-  const firstExploreMap = useRef<boolean>(true);
+  const firstCallFetchModels = useRef<boolean>(true);
+  const firstCallFetchScoreboard = useRef<boolean>(true);
   const firstCallPublishOnMap = useRef<boolean>(true);
   const firstCallListCloudFiles = useRef<boolean>(true);
   const firstAccountSettings = useRef<boolean>(true);
@@ -154,8 +156,8 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   }, [saveCloudFileFlag]);
 
   useEffect(() => {
-    if (firstExploreMap.current) {
-      firstExploreMap.current = false;
+    if (firstCallFetchModels.current) {
+      firstCallFetchModels.current = false;
     } else {
       fetchModelSites().then(() => {
         setLoading(false);
@@ -163,6 +165,17 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modelsMapFlag]);
+
+  useEffect(() => {
+    if (firstCallFetchScoreboard.current) {
+      firstCallFetchScoreboard.current = false;
+    } else {
+      fetchScoreboard().then(() => {
+        // what to do?
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scoreboardFlag]);
 
   useEffect(() => {
     if (firstCallPublishOnMap.current) {
@@ -389,7 +402,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       .finally(() => {
         setLoading(false);
       });
-    // get board info
+    // get latest submission
     await firebase
       .firestore()
       .collection('board')
@@ -401,6 +414,29 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           if (data && data.latestModel) {
             setCommonStore((state) => {
               state.latestModelSite = data.latestModel as ModelSite;
+            });
+          }
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const fetchScoreboard = async () => {
+    await firebase
+      .firestore()
+      .collection('board')
+      .doc('contributors')
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          const data = doc.data();
+          if (data) {
+            setCommonStore((state) => {
+              for (const k in data) {
+                state.modelsMapContributors.set(k, data[k]);
+              }
             });
           }
         }

@@ -55,6 +55,7 @@ export const i18n_zh_tw = {
       Teacher: '老師',
       Class: '班級',
       Total: '總數',
+      Scoreboard: '積分榜',
       Latest: '最新',
       Range: '範圍',
       SIUnit: '國際單位制',

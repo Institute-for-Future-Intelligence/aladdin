@@ -17,6 +17,7 @@ import { DEFAULT_ADDRESS } from './constants';
 import { usePrimitiveStore } from './stores/commonPrimitive';
 import { ModelSite } from './types';
 import ReactCountryFlag from 'react-country-flag';
+import { UserOutlined } from '@ant-design/icons';
 
 const libraries = ['places'] as Libraries;
 
@@ -57,11 +58,15 @@ const ModelsMapWrapper = ({
   const longitude = modelsMapLongitude !== undefined ? modelsMapLongitude : -71.3488548;
   const address = useStore.getState().modelsMapAddress ?? DEFAULT_ADDRESS;
   const mapWeatherStations = usePrimitiveStore(Selector.modelsMapWeatherStations);
+  const scoreboardFlag = usePrimitiveStore(Selector.scoreboardFlag);
   const latestModelSite = useStore(Selector.latestModelSite);
   const modelSites = useStore(Selector.modelSites);
+  const contributors = useStore(Selector.modelsMapContributors);
 
   const searchBox = useRef<google.maps.places.SearchBox>();
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const lang = { lng: language };
 
   useEffect(() => {
     // TODO: This doesn't seem to work
@@ -200,6 +205,71 @@ const ModelsMapWrapper = ({
         </Space>
       )}
       <>
+        {scoreboardFlag && (
+          <div
+            style={{
+              position: 'absolute',
+              fontSize: '10px',
+              color: 'black',
+              bottom: '33px',
+              left: '5px',
+              width: '100px',
+              height: '100px',
+              overflowY: 'auto',
+              padding: '6px 6px 6px 6px',
+              background: 'whitesmoke',
+              boxShadow: '1px 1px 1px 1px gray',
+              textAlign: 'left',
+            }}
+          >
+            <table>
+              {[...contributors.keys()]
+                .sort((a, b) => {
+                  const countA = contributors.get(a);
+                  const countB = contributors.get(b);
+                  return (countB ? countB.length : 0) - (countA ? countA.length : 0);
+                })
+                .map((key: string, index: number) => {
+                  return (
+                    <tr
+                      style={{ width: '100px', background: index % 2 === 0 ? 'lightgoldenrodyellow' : 'lavenderblush' }}
+                    >
+                      <td style={{ width: '80px' }}>
+                        <UserOutlined style={{ marginRight: '2px', fontSize: '10px' }} />
+                        {key}
+                      </td>
+                      <td>{contributors.get(key)?.length}</td>
+                    </tr>
+                  );
+                })}
+            </table>
+          </div>
+        )}
+        <Space>
+          <div
+            title={i18n.t('word.Total', lang) + ': ' + modelSitesCount}
+            style={{
+              position: 'absolute',
+              fontSize: '14px',
+              color: 'black',
+              bottom: '6px',
+              left: '5px',
+              width: '100px',
+              height: '25px',
+              paddingTop: '2px',
+              background: 'whitesmoke',
+              boxShadow: '1px 1px 1px 1px gray',
+              cursor: 'pointer',
+            }}
+            onClick={() => {
+              usePrimitiveStore.setState((state) => {
+                state.scoreboardFlag = !state.scoreboardFlag;
+              });
+            }}
+          >
+            {i18n.t('word.Scoreboard', lang)}
+          </div>
+        </Space>
         {latestModelSite && (
           <Space>
             <div
@@ -207,9 +277,10 @@ const ModelsMapWrapper = ({
                 position: 'absolute',
                 fontSize: '10px',
                 color: 'black',
-                bottom: '7px',
-                left: '95px',
-                padding: '2px 4px 2px 4px',
+                bottom: '6px',
+                left: '108px',
+                height: '25x',
+                padding: '6px 6px 2px 6px',
                 background: 'whitesmoke',
                 boxShadow: '1px 1px 1px 1px gray',
                 cursor: 'pointer',
@@ -224,7 +295,7 @@ const ModelsMapWrapper = ({
                 });
               }}
             >
-              {i18n.t('word.Latest', { lng: language }) + ': '}
+              {i18n.t('word.Latest', lang) + ': '}
               {latestModelSite.countryCode && (
                 <ReactCountryFlag
                   countryCode={latestModelSite.countryCode}
@@ -236,23 +307,6 @@ const ModelsMapWrapper = ({
             </div>
           </Space>
         )}
-        <Space>
-          <div
-            style={{
-              position: 'absolute',
-              fontSize: 'medium',
-              color: 'black',
-              bottom: '6px',
-              left: '10px',
-              width: '80px',
-              height: '25px',
-              background: 'whitesmoke',
-              boxShadow: '1px 1px 1px 1px gray',
-            }}
-          >
-            {i18n.t('word.Total', { lng: language }) + ': ' + modelSitesCount}
-          </div>
-        </Space>
         <Space>
           <div
             style={{
@@ -271,7 +325,7 @@ const ModelsMapWrapper = ({
               close();
             }}
           >
-            {i18n.t('word.Close', { lng: language })}
+            {i18n.t('word.Close', lang)}
           </div>
         </Space>
         {ifiUser && (
@@ -298,11 +352,11 @@ const ModelsMapWrapper = ({
               }}
             >
               {mapWeatherStations ? (
-                <label title={i18n.t('mapPanel.WeatherStationsNote', { lng: language })}>
-                  {i18n.t('mapPanel.WeatherStations', { lng: language })}
+                <label title={i18n.t('mapPanel.WeatherStationsNote', lang)}>
+                  {i18n.t('mapPanel.WeatherStations', lang)}
                 </label>
               ) : (
-                <label>{i18n.t('mapPanel.WeatherStations', { lng: language })}</label>
+                <label>{i18n.t('mapPanel.WeatherStations', lang)}</label>
               )}
             </Checkbox>
           </Space>
