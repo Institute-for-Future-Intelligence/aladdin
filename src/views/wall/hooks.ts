@@ -111,13 +111,13 @@ export const useHandleSize = (size = 0.3) => {
   let handleSize = size;
 
   if (orthographic) {
-    handleSize = Math.max(0.3, 15 / cameraZoom);
+    handleSize = Math.max(size, 15 / cameraZoom);
   } else {
     const panCenter = useStore.getState().viewState.panCenter;
     const p = new Vector3(...panCenter);
     const c = new Vector3(...cameraPosition);
     const distance = c.distanceTo(p);
-    handleSize = Math.max(0.3, distance / 100);
+    handleSize = Math.max(size, distance / 100);
   }
 
   return handleSize;

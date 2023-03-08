@@ -8,21 +8,29 @@ import { Torus, Cone, Circle, Plane } from '@react-three/drei';
 import { ActionType, MoveHandleType, ResizeHandleType, RotateHandleType } from '../types';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { HALF_PI } from '../constants';
+import { HALF_PI, HIGHLIGHT_HANDLE_COLOR, RESIZE_HANDLE_COLOR } from '../constants';
 
 export interface RotateHandleProps {
   id: string;
   position: [x: number, y: number, z: number];
-  color: string;
+  color?: string;
   ratio: number;
   handleType: RotateHandleType;
   hoverHandle: (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => void;
   noHoverHandle: () => void;
 }
 
-const RotateHandle = ({ id, position, color, ratio, handleType, hoverHandle, noHoverHandle }: RotateHandleProps) => {
+const RotateHandle = ({ id, position, ratio, handleType, hoverHandle, noHoverHandle }: RotateHandleProps) => {
   const selectMe = useStore(Selector.selectMe);
-  const rotationHandleLMesh = <meshBasicMaterial attach="material" color={color} />;
+
+  const rotateHandleType = useStore(Selector.rotateHandleType);
+  const hoveredHandle = useStore(Selector.hoveredHandle);
+
+  const color =
+    hoveredHandle === handleType || rotateHandleType === handleType ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR;
+
+  const rotationHandleLMesh = <meshBasicMaterial color={color} />;
+
   return (
     <group position={position} rotation={[HALF_PI, 0, 0]} scale={ratio} name={handleType}>
       <group>

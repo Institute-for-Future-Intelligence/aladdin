@@ -11,7 +11,6 @@ import Foundation from './views/foundation';
 import { SensorModel } from './models/SensorModel';
 import Sensor from './views/sensor';
 import { CuboidModel } from './models/CuboidModel';
-import Cuboid from './views/cuboid';
 import { HumanModel } from './models/HumanModel';
 import Human from './views/human';
 import { TreeModel } from './models/TreeModel';
@@ -38,6 +37,7 @@ import { FlowerModel } from './models/FlowerModel';
 import Light from './views/light';
 import { LightModel } from './models/LightModel';
 import WallRenderer from './views/wall/wallRenderer';
+import CuboidRenderer from './views/cuboid';
 
 const ElementsRenderer: React.FC = () => {
   const elements = useStore(Selector.elements);
@@ -76,7 +76,9 @@ const ElementsRenderer: React.FC = () => {
           case ObjectType.Light:
             return <Light key={e.id} {...(e as LightModel)} />;
           case ObjectType.Cuboid:
-            return <Cuboid key={e.id} {...(e as CuboidModel)} />;
+            // only base cuboid will be rendered here
+            if (e.parentId !== 'Ground') return null;
+            return <CuboidRenderer key={e.id} elements={elements} cuboidModel={e as CuboidModel} />;
           case ObjectType.Human:
             return <Human key={e.id} {...(e as HumanModel)} />;
           case ObjectType.Tree:

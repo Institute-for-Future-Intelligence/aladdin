@@ -2,20 +2,20 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import Facade_Texture_00 from '../resources/tiny_white_square.png';
-import Facade_Texture_01 from '../resources/building_facade_01.png';
-import Facade_Texture_02 from '../resources/building_facade_02.png';
-import Facade_Texture_03 from '../resources/building_facade_03.png';
-import Facade_Texture_04 from '../resources/building_facade_04.png';
-import Facade_Texture_05 from '../resources/building_facade_05.png';
-import Facade_Texture_06 from '../resources/building_facade_06.png';
-import Facade_Texture_07 from '../resources/building_facade_07.png';
-import Facade_Texture_08 from '../resources/building_facade_08.png';
-import Facade_Texture_09 from '../resources/building_facade_09.png';
-import Facade_Texture_10 from '../resources/building_facade_10.png';
+import Facade_Texture_00 from '../../resources/tiny_white_square.png';
+import Facade_Texture_01 from '../../resources/building_facade_01.png';
+import Facade_Texture_02 from '../../resources/building_facade_02.png';
+import Facade_Texture_03 from '../../resources/building_facade_03.png';
+import Facade_Texture_04 from '../../resources/building_facade_04.png';
+import Facade_Texture_05 from '../../resources/building_facade_05.png';
+import Facade_Texture_06 from '../../resources/building_facade_06.png';
+import Facade_Texture_07 from '../../resources/building_facade_07.png';
+import Facade_Texture_08 from '../../resources/building_facade_08.png';
+import Facade_Texture_09 from '../../resources/building_facade_09.png';
+import Facade_Texture_10 from '../../resources/building_facade_10.png';
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Box, Plane, Sphere } from '@react-three/drei';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Box, Plane } from '@react-three/drei';
 import {
   CanvasTexture,
   Euler,
@@ -28,10 +28,10 @@ import {
   Vector2,
   Vector3,
 } from 'three';
-import { useStore } from '../stores/common';
-import { useRefStore } from '../stores/commonRef';
-import * as Selector from '../stores/selector';
-import { CuboidModel } from '../models/CuboidModel';
+import { useStore } from '../../stores/common';
+import { useRefStore } from '../../stores/commonRef';
+import * as Selector from '../../stores/selector';
+import { CuboidModel } from '../../models/CuboidModel';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import {
   ActionType,
@@ -41,18 +41,12 @@ import {
   Orientation,
   ResizeHandleType,
   RotateHandleType,
-} from '../types';
+} from '../../types';
 import {
   HALF_PI,
-  HIGHLIGHT_HANDLE_COLOR,
   LOCKED_ELEMENT_SELECTION_COLOR,
-  MOVE_HANDLE_COLOR_1,
-  MOVE_HANDLE_COLOR_2,
-  MOVE_HANDLE_COLOR_3,
   MOVE_HANDLE_RADIUS,
   ORIGIN_VECTOR2,
-  RESIZE_HANDLE_COLOR,
-  RESIZE_HANDLE_SIZE,
   TWO_PI,
   UNIT_VECTOR_NEG_X,
   UNIT_VECTOR_NEG_Y,
@@ -61,27 +55,27 @@ import {
   UNIT_VECTOR_POS_Z,
   UNIT_VECTOR_POS_Z_ARRAY,
   ZERO_TOLERANCE,
-} from '../constants';
-import { Util } from '../Util';
-import { ElementModel } from '../models/ElementModel';
-import RotateHandle from '../components/rotateHandle';
-import { PolarGrid } from './polarGrid';
-import Wireframe from '../components/wireframe';
-import { SolarPanelModel } from '../models/SolarPanelModel';
-import { UndoableAdd } from '../undo/UndoableAdd';
-import { UndoableMove } from '../undo/UndoableMove';
-import { UndoableResize } from '../undo/UndoableResize';
-import { UndoableChange } from '../undo/UndoableChange';
-import i18n from '../i18n/i18n';
-import { Point2 } from '../models/Point2';
-import { PolygonModel } from '../models/PolygonModel';
-import { ElementGrid } from './elementGrid';
-import { HorizontalRuler } from './horizontalRuler';
-import { showError } from '../helpers';
+} from '../../constants';
+import { Util } from '../../Util';
+import { ElementModel } from '../../models/ElementModel';
+import { PolarGrid } from '../polarGrid';
+import Wireframe from '../../components/wireframe';
+import { SolarPanelModel } from '../../models/SolarPanelModel';
+import { UndoableAdd } from '../../undo/UndoableAdd';
+import { UndoableMove } from '../../undo/UndoableMove';
+import { UndoableResize } from '../../undo/UndoableResize';
+import { UndoableChange } from '../../undo/UndoableChange';
+import i18n from '../../i18n/i18n';
+import { Point2 } from '../../models/Point2';
+import { PolygonModel } from '../../models/PolygonModel';
+import { ElementGrid } from '../elementGrid';
+import { HorizontalRuler } from '../horizontalRuler';
+import { showError } from '../../helpers';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
-import { useDataStore } from '../stores/commonData';
-import { useGroupMaster } from './hooks';
+import { useDataStore } from '../../stores/commonData';
+import { useGroupMaster } from '../hooks';
 import GroupMaster from 'src/components/groupMaster';
+import Handles from './handles';
 
 const Cuboid = (cuboidModel: CuboidModel) => {
   const {
@@ -106,14 +100,12 @@ const Cuboid = (cuboidModel: CuboidModel) => {
       CuboidTexture.NoTexture,
       CuboidTexture.NoTexture,
     ],
+    stackable = false,
   } = cuboidModel;
 
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const orthographic = useStore(Selector.viewState.orthographic);
-  const moveHandleType = useStore(Selector.moveHandleType);
-  const rotateHandleType = useStore(Selector.rotateHandleType);
-  const resizeHandleType = useStore(Selector.resizeHandleType);
   const getElementById = useStore(Selector.getElementById);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const addElement = useStore(Selector.addElement);
@@ -123,19 +115,15 @@ const Cuboid = (cuboidModel: CuboidModel) => {
   const setElementPosition = useStore(Selector.setElementPosition);
   const setElementSize = useStore(Selector.setElementSize);
   const setElementNormal = useStore(Selector.setElementNormal);
-  const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
   const selectMe = useStore(Selector.selectMe);
   const updateSolarPanelRelativeAzimuthById = useStore(Selector.updateSolarCollectorRelativeAzimuthById);
-  const resizeAnchor = useStore(Selector.resizeAnchor);
   const getPvModule = useStore(Selector.getPvModule);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const addUndoable = useStore(Selector.addUndoable);
-  const addedCuboidId = useStore(Selector.addedCuboidId);
   const isAddingElement = useStore(Selector.isAddingElement);
   const updatePolygonVerticesById = useStore(Selector.updatePolygonVerticesById);
   const updatePolygonVertexPositionById = useStore(Selector.updatePolygonVertexPositionById);
   const overlapWithSibling = useStore(Selector.overlapWithSibling);
-  const hoveredHandle = useStore(Selector.hoveredHandle);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const getHeatmap = useDataStore(Selector.getHeatmap);
@@ -168,19 +156,6 @@ const Cuboid = (cuboidModel: CuboidModel) => {
   const gridPositionRef = useRef<Vector3>(new Vector3(0, 0, 0));
   const gridRotationRef = useRef<Euler>(new Euler(0, 0, 0));
   const gridDimensionRef = useRef<Vector3>(new Vector3(1, 1, 1));
-  const resizeHandleLLTopRef = useRef<Mesh>();
-  const resizeHandleULTopRef = useRef<Mesh>();
-  const resizeHandleLRTopRef = useRef<Mesh>();
-  const resizeHandleURTopRef = useRef<Mesh>();
-  const resizeHandleLLBotRef = useRef<Mesh>();
-  const resizeHandleULBotRef = useRef<Mesh>();
-  const resizeHandleLRBotRef = useRef<Mesh>();
-  const resizeHandleURBotRef = useRef<Mesh>();
-  const moveHandleLowerFaceRef = useRef<Mesh>();
-  const moveHandleUpperFaceRef = useRef<Mesh>();
-  const moveHandleLeftFaceRef = useRef<Mesh>();
-  const moveHandleRightFaceRef = useRef<Mesh>();
-  const moveHandleTopFaceRef = useRef<Mesh>();
   const oldPositionRef = useRef<Vector3>(new Vector3());
   const newPositionRef = useRef<Vector3>(new Vector3());
   const oldNormalRef = useRef<Vector3>(new Vector3());
@@ -197,16 +172,6 @@ const Cuboid = (cuboidModel: CuboidModel) => {
   const hx = lx / 2;
   const hy = ly / 2;
   const hz = lz / 2;
-  const positionLLTop = useMemo(() => new Vector3(-hx, -hy, hz), [hx, hy, hz]);
-  const positionULTop = useMemo(() => new Vector3(-hx, hy, hz), [hx, hy, hz]);
-  const positionLRTop = useMemo(() => new Vector3(hx, -hy, hz), [hx, hy, hz]);
-  const positionURTop = useMemo(() => new Vector3(hx, hy, hz), [hx, hy, hz]);
-
-  const positionLowerFace = useMemo(() => new Vector3(0, -hy, -hz), [hy, hz]);
-  const positionUpperFace = useMemo(() => new Vector3(0, hy, -hz), [hy, hz]);
-  const positionLeftFace = useMemo(() => new Vector3(-hx, 0, -hz), [hx, hz]);
-  const positionRightFace = useMemo(() => new Vector3(hx, 0, -hz), [hx, hz]);
-  const positionTopFace = useMemo(() => new Vector3(0, 0, hz), [hz]);
 
   const intersectionPlanePosition = useMemo(() => new Vector3(), []);
   if (grabRef.current && grabRef.current.type === ObjectType.SolarPanel) {
@@ -383,42 +348,6 @@ const Cuboid = (cuboidModel: CuboidModel) => {
   }, [textureTypes[4], lx, ly]);
   const [textureTop, setTextureTop] = useState(textureLoaderTop);
 
-  const hoverHandle = useCallback(
-    (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {
-      if (usePrimitiveStore.getState().duringCameraInteraction) return;
-      if (e.intersections.length > 0) {
-        // QUICK FIX: For some reason, the top one can sometimes be the ground, so we also go to the second one
-        const intersected =
-          e.intersections[0].object === e.eventObject ||
-          (e.intersections.length > 1 && e.intersections[1].object === e.eventObject);
-        if (intersected) {
-          setCommonStore((state) => {
-            state.hoveredHandle = handle;
-            const cm = getElementById(id);
-            if (cm) {
-              state.selectedElementHeight = cm.lz;
-            }
-          });
-          if (Util.isMoveHandle(handle)) {
-            domElement.style.cursor = 'move';
-          } else if (handle === RotateHandleType.Upper || handle === RotateHandleType.Lower) {
-            domElement.style.cursor = 'grab';
-          } else {
-            domElement.style.cursor = useStore.getState().addedCuboidId ? 'crosshair' : 'pointer';
-          }
-        }
-      }
-    },
-    [],
-  );
-
-  const noHoverHandle = useCallback(() => {
-    setCommonStore((state) => {
-      state.hoveredHandle = null;
-    });
-    domElement.style.cursor = useStore.getState().addedCuboidId ? 'crosshair' : 'default';
-  }, []);
-
   const legalOnCuboid = (type: ObjectType) => {
     switch (type) {
       case ObjectType.Polygon:
@@ -475,14 +404,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
   };
 
   const ratio = Math.max(1, Math.max(lx, ly) / 8);
-  const resizeHandleSize = RESIZE_HANDLE_SIZE * ratio;
   const moveHandleSize = MOVE_HANDLE_RADIUS * ratio;
-  const lowerRotateHandlePosition: [x: number, y: number, z: number] = useMemo(() => {
-    return [0, Math.min(-1.2 * hy, -hy - 0.75), RESIZE_HANDLE_SIZE / 2 - hz];
-  }, [hy, hz]);
-  const upperRotateHandlePosition: [x: number, y: number, z: number] = useMemo(() => {
-    return [0, Math.max(1.2 * hy, hy + 0.75), RESIZE_HANDLE_SIZE / 2 - hz];
-  }, [hy, hz]);
 
   const onTopSurface = Util.isIdentical(grabRef.current?.normal, UNIT_VECTOR_POS_Z_ARRAY);
 
@@ -496,12 +418,15 @@ const Cuboid = (cuboidModel: CuboidModel) => {
     }
     const selectedElement = getSelectedElement();
     let bypass = false;
-    if (e.intersections[0].object.name === ObjectType.Polygon && objectTypeToAdd !== ObjectType.None) {
+    if (
+      e.intersections[0].object.name === ObjectType.Polygon &&
+      useStore.getState().objectTypeToAdd !== ObjectType.None
+    ) {
       bypass = true;
     }
     if (selectedElement?.id === id || bypass) {
       // no child of this cuboid is clicked
-      if (legalAddToCuboid(objectTypeToAdd) && cuboidModel) {
+      if (legalAddToCuboid(useStore.getState().objectTypeToAdd) && cuboidModel) {
         setShowGrid(true);
         const intersection = e.intersections[0];
         const addedElement = addElement(cuboidModel, intersection.point, intersection.face?.normal);
@@ -583,7 +508,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
           if (intersects.length > 0) {
             let p = intersects[0].point;
             const face = intersects[0].face;
-            if (moveHandleType) {
+            if (useStore.getState().moveHandleType) {
               if (face) {
                 const n = face.normal;
                 if (normal && !normal.equals(n)) {
@@ -595,7 +520,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
               p = Util.relativeCoordinates(p.x, p.y, p.z, cuboidModel);
               if (grabRef.current.type === ObjectType.Polygon) {
                 const polygon = grabRef.current as PolygonModel;
-                if (moveHandleType === MoveHandleType.Default) {
+                if (useStore.getState().moveHandleType === MoveHandleType.Default) {
                   const centroid = Util.calculatePolygonCentroid(oldVerticesRef.current);
                   const n = new Vector3().fromArray(polygon.normal);
                   let dx: number, dy: number;
@@ -632,15 +557,15 @@ const Cuboid = (cuboidModel: CuboidModel) => {
               } else {
                 setElementPosition(grabRef.current.id, p.x, p.y, p.z);
               }
-            } else if (resizeHandleType) {
+            } else if (useStore.getState().resizeHandleType) {
               switch (grabRef.current.type) {
                 case ObjectType.SolarPanel:
                   const solarPanel = grabRef.current as SolarPanelModel;
                   const wp = new Vector3(p.x, p.y, p.z);
-                  const vd = new Vector3().subVectors(wp, resizeAnchor);
+                  const vd = new Vector3().subVectors(wp, useStore.getState().resizeAnchor);
                   const vh = new Vector3().subVectors(
                     Util.absoluteCoordinates(solarPanel.cx, solarPanel.cy, solarPanel.cz, cuboidModel),
-                    resizeAnchor,
+                    useStore.getState().resizeAnchor,
                   );
                   if (normal && Math.abs(normal.z - 1) < ZERO_TOLERANCE) {
                     vh.setZ(0);
@@ -651,7 +576,10 @@ const Cuboid = (cuboidModel: CuboidModel) => {
                   let newLx = solarPanel.lx;
                   let newLy = solarPanel.ly;
                   if (solarPanel.orientation === Orientation.portrait) {
-                    if (resizeHandleType === ResizeHandleType.Left || resizeHandleType === ResizeHandleType.Right) {
+                    if (
+                      useStore.getState().resizeHandleType === ResizeHandleType.Left ||
+                      useStore.getState().resizeHandleType === ResizeHandleType.Right
+                    ) {
                       const nx = Math.max(1, Math.ceil((d - pvModel.width / 2) / pvModel.width));
                       newLx = nx * pvModel.width;
                     } else {
@@ -659,7 +587,10 @@ const Cuboid = (cuboidModel: CuboidModel) => {
                       newLy = ny * pvModel.length;
                     }
                   } else {
-                    if (resizeHandleType === ResizeHandleType.Left || resizeHandleType === ResizeHandleType.Right) {
+                    if (
+                      useStore.getState().resizeHandleType === ResizeHandleType.Left ||
+                      useStore.getState().resizeHandleType === ResizeHandleType.Right
+                    ) {
                       const nx = Math.max(1, Math.ceil((d - pvModel.length / 2) / pvModel.length));
                       newLx = nx * pvModel.length;
                     } else {
@@ -667,14 +598,17 @@ const Cuboid = (cuboidModel: CuboidModel) => {
                       newLy = ny * pvModel.width;
                     }
                   }
-                  const wc = new Vector3().addVectors(resizeAnchor, vhd.normalize().multiplyScalar(d / 2));
+                  const wc = new Vector3().addVectors(
+                    useStore.getState().resizeAnchor,
+                    vhd.normalize().multiplyScalar(d / 2),
+                  );
                   const rc = Util.relativeCoordinates(wc.x, wc.y, wc.z, cuboidModel);
                   // TODO: check vertical surfaces
                   setElementSize(solarPanel.id, newLx, newLy);
                   setElementPosition(solarPanel.id, rc.x, rc.y);
                   break;
                 case ObjectType.Polygon:
-                  if (resizeHandleType === ResizeHandleType.Default) {
+                  if (useStore.getState().resizeHandleType === ResizeHandleType.Default) {
                     // first, reverse the rotation of p.x and p.y around the center of the cuboid
                     let q = new Vector3(p.x - cuboidModel.cx, p.y - cuboidModel.cy, 0).applyEuler(
                       new Euler(0, 0, -cuboidModel.rotation[2], 'ZXY'),
@@ -735,22 +669,24 @@ const Cuboid = (cuboidModel: CuboidModel) => {
       const intersects = ray.intersectObjects([intersectPlaneRef.current]);
       if (intersects.length > 0) {
         let p = intersects[0].point;
-        if (moveHandleType) {
+        if (useStore.getState().moveHandleType) {
           p = Util.relativeCoordinates(p.x, p.y, p.z, cuboidModel);
           setElementPosition(solarPanel.id, p.x, p.y, p.z);
-        } else if (rotateHandleType) {
+        } else if (useStore.getState().rotateHandleType) {
           const pr = cuboidModel.rotation[2]; //parent rotation
           const pc = new Vector2(cuboidModel.cx, cuboidModel.cy); //world parent center
           const cc = new Vector2(cuboidModel.lx * solarPanel.cx, cuboidModel.ly * solarPanel.cy) //local current center
             .rotateAround(ORIGIN_VECTOR2, pr); //add parent rotation
           const wc = new Vector2().addVectors(cc, pc); //world current center
           const rotation =
-            -pr + Math.atan2(-p.x + wc.x, p.y - wc.y) + (rotateHandleType === RotateHandleType.Lower ? 0 : Math.PI);
+            -pr +
+            Math.atan2(-p.x + wc.x, p.y - wc.y) +
+            (useStore.getState().rotateHandleType === RotateHandleType.Lower ? 0 : Math.PI);
           const offset = Math.abs(rotation) > Math.PI ? -Math.sign(rotation) * TWO_PI : 0; // make sure angle is between -PI to PI
           const newAzimuth = rotation + offset;
           updateSolarPanelRelativeAzimuthById(solarPanel.id, newAzimuth);
           newAzimuthRef.current = newAzimuth;
-        } else if (resizeHandleType) {
+        } else if (useStore.getState().resizeHandleType) {
           const resizeAnchor = useStore.getState().resizeAnchor;
           const pvModel = getPvModule(solarPanel.pvModelName);
           const wp = new Vector2(p.x, p.y);
@@ -758,11 +694,11 @@ const Cuboid = (cuboidModel: CuboidModel) => {
           const distance = wp.distanceTo(resizeAnchor2D);
           const angle = solarPanel.relativeAzimuth + rotation[2]; // world panel azimuth
           const rp = new Vector2().subVectors(wp, resizeAnchor2D); // relative vector from anchor to pointer
-          switch (resizeHandleType) {
+          switch (useStore.getState().resizeHandleType) {
             case ResizeHandleType.Lower:
             case ResizeHandleType.Upper:
               {
-                const sign = resizeHandleType === ResizeHandleType.Lower ? 1 : -1;
+                const sign = useStore.getState().resizeHandleType === ResizeHandleType.Lower ? 1 : -1;
                 const theta = rp.angle() - angle + sign * HALF_PI;
                 let dyl = distance * Math.cos(theta);
                 if (solarPanel.orientation === Orientation.portrait) {
@@ -788,8 +724,9 @@ const Cuboid = (cuboidModel: CuboidModel) => {
             case ResizeHandleType.Left:
             case ResizeHandleType.Right:
               {
-                let sign = resizeHandleType === ResizeHandleType.Left ? -1 : 1;
-                const theta = rp.angle() - angle + (resizeHandleType === ResizeHandleType.Left ? Math.PI : 0);
+                let sign = useStore.getState().resizeHandleType === ResizeHandleType.Left ? -1 : 1;
+                const theta =
+                  rp.angle() - angle + (useStore.getState().resizeHandleType === ResizeHandleType.Left ? Math.PI : 0);
                 let dxl = distance * Math.cos(theta);
                 if (solarPanel.orientation === Orientation.portrait) {
                   const nx = Math.max(1, Math.ceil((dxl - pvModel.width / 2) / pvModel.width));
@@ -872,10 +809,10 @@ const Cuboid = (cuboidModel: CuboidModel) => {
     const elem = getElementById(grabRef.current.id);
     if (!elem || elem.parentId !== id) return;
     if (elem.type === ObjectType.Polygon) {
-      if (moveHandleType || resizeHandleType) {
+      if (useStore.getState().moveHandleType || useStore.getState().resizeHandleType) {
         newVerticesRef.current = (elem as PolygonModel).vertices.map((v) => ({ ...v }));
         const undoableEditPolygon = {
-          name: moveHandleType ? 'Move Polygon' : 'Resize Polygon',
+          name: useStore.getState().moveHandleType ? 'Move Polygon' : 'Resize Polygon',
           timestamp: Date.now(),
           oldValue: oldVerticesRef.current,
           newValue: newVerticesRef.current,
@@ -891,7 +828,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
         addUndoable(undoableEditPolygon);
       }
     } else {
-      if (resizeHandleType) {
+      if (useStore.getState().resizeHandleType) {
         newPositionRef.current.x = elem.cx;
         newPositionRef.current.y = elem.cy;
         newPositionRef.current.z = elem.cz;
@@ -950,7 +887,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
           } as UndoableResize;
           addUndoable(undoableResize);
         }
-      } else if (rotateHandleType) {
+      } else if (useStore.getState().rotateHandleType) {
         // currently, solar panels are the only type of child that can be rotated
         if (grabRef.current.type === ObjectType.SolarPanel) {
           const solarPanel = grabRef.current as SolarPanelModel;
@@ -1084,7 +1021,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
         case ObjectType.SolarPanel:
           // Have to get the latest from the store (we may change this to ref in the future)
           const sp = useStore.getState().getElementById(grabRef.current.id) as SolarPanelModel;
-          if (moveHandleType && !isSolarPanelNewPositionOk(sp, sp.cx, sp.cy)) {
+          if (useStore.getState().moveHandleType && !isSolarPanelNewPositionOk(sp, sp.cx, sp.cy)) {
             setElementPosition(sp.id, oldPositionRef.current.x, oldPositionRef.current.y, oldPositionRef.current.z);
           }
           break;
@@ -1121,6 +1058,8 @@ const Cuboid = (cuboidModel: CuboidModel) => {
     });
   };
 
+  const opacity = groundImage ? (orthographic ? 0.25 : 0.75) : 1;
+
   const faces: number[] = [0, 1, 2, 3, 4, 5];
   const textures = [
     showSolarRadiationHeatmap && heatmapTextureEast ? heatmapTextureEast : textureEast,
@@ -1130,18 +1069,72 @@ const Cuboid = (cuboidModel: CuboidModel) => {
     showSolarRadiationHeatmap && heatmapTextureTop ? heatmapTextureTop : textureTop,
     null,
   ];
+  const materials =
+    cuboidModel && cuboidModel.faceColors ? (
+      faces.map((i) => {
+        if (textureTypes && textureTypes[i] !== CuboidTexture.NoTexture) {
+          return showSolarRadiationHeatmap ? (
+            <meshBasicMaterial
+              key={i}
+              side={FrontSide}
+              attachArray="material"
+              color={'white'}
+              map={textures[i]}
+              transparent={orthographic && groundImage}
+              opacity={opacity}
+            />
+          ) : (
+            <meshStandardMaterial
+              key={i}
+              side={FrontSide}
+              attachArray="material"
+              color={'white'}
+              map={textures[i]}
+              transparent={orthographic && groundImage}
+              opacity={opacity}
+            />
+          );
+        } else {
+          return showSolarRadiationHeatmap ? (
+            <meshBasicMaterial
+              key={i}
+              side={FrontSide}
+              attachArray="material"
+              color={'white'}
+              map={textures[i]}
+              transparent={orthographic && groundImage}
+              opacity={opacity}
+            />
+          ) : (
+            <meshStandardMaterial
+              key={i}
+              side={FrontSide}
+              attachArray="material"
+              color={cuboidModel.faceColors ? cuboidModel.faceColors[i] : color}
+              map={textures[i]}
+              transparent={orthographic && groundImage}
+              opacity={opacity}
+            />
+          );
+        }
+      })
+    ) : (
+      <meshStandardMaterial
+        side={FrontSide}
+        attach="material"
+        color={color}
+        transparent={orthographic && groundImage}
+        opacity={opacity}
+      />
+    );
 
-  const opacity = groundImage ? (orthographic ? 0.25 : 0.75) : 1;
+  const handleArgs = useMemo(() => [hx, hy, hz], [hx, hy, hz]);
+
+  const showHandles = selected && !locked && !groupMasterId;
 
   return (
     <>
-      <group
-        ref={groupRef}
-        name={'Cuboid Group ' + id}
-        userData={{ aabb: true }}
-        position={[cx, cy, hz]}
-        rotation={[0, 0, rotation[2]]}
-      >
+      <group ref={groupRef} name={'Cuboid Group ' + id} userData={{ aabb: true }}>
         {/* draw rectangular cuboid */}
         <Box
           castShadow={shadowEnabled}
@@ -1159,63 +1152,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
           onPointerOut={handlePointerOut}
           onPointerEnter={handlePointerEnter}
         >
-          {cuboidModel && cuboidModel.faceColors ? (
-            faces.map((i) => {
-              if (textureTypes && textureTypes[i] !== CuboidTexture.NoTexture) {
-                return showSolarRadiationHeatmap ? (
-                  <meshBasicMaterial
-                    key={i}
-                    side={FrontSide}
-                    attachArray="material"
-                    color={'white'}
-                    map={textures[i]}
-                    transparent={orthographic && groundImage}
-                    opacity={opacity}
-                  />
-                ) : (
-                  <meshStandardMaterial
-                    key={i}
-                    side={FrontSide}
-                    attachArray="material"
-                    color={'white'}
-                    map={textures[i]}
-                    transparent={orthographic && groundImage}
-                    opacity={opacity}
-                  />
-                );
-              } else {
-                return showSolarRadiationHeatmap ? (
-                  <meshBasicMaterial
-                    key={i}
-                    side={FrontSide}
-                    attachArray="material"
-                    color={'white'}
-                    map={textures[i]}
-                    transparent={orthographic && groundImage}
-                    opacity={opacity}
-                  />
-                ) : (
-                  <meshStandardMaterial
-                    key={i}
-                    side={FrontSide}
-                    attachArray="material"
-                    color={cuboidModel.faceColors ? cuboidModel.faceColors[i] : color}
-                    map={textures[i]}
-                    transparent={orthographic && groundImage}
-                    opacity={opacity}
-                  />
-                );
-              }
-            })
-          ) : (
-            <meshStandardMaterial
-              side={FrontSide}
-              attach="material"
-              color={color}
-              transparent={orthographic && groundImage}
-              opacity={opacity}
-            />
-          )}
+          {materials}
         </Box>
 
         {/* intersection plane that goes through the center of the selected solar panel */}
@@ -1232,7 +1169,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
 
         {showGrid && (
           <>
-            {(moveHandleType || resizeHandleType) && (
+            {(useStore.getState().moveHandleType || useStore.getState().resizeHandleType) && (
               <ElementGrid
                 hx={gridDimensionRef.current.x}
                 hy={gridDimensionRef.current.y}
@@ -1241,9 +1178,11 @@ const Cuboid = (cuboidModel: CuboidModel) => {
                 rotation={gridRotationRef.current}
               />
             )}
-            {rotateHandleType && grabRef.current && grabRef.current.type === ObjectType.SolarPanel && (
-              <PolarGrid element={grabRef.current} height={(grabRef.current as SolarPanelModel).poleHeight + hz} />
-            )}
+            {useStore.getState().rotateHandleType &&
+              grabRef.current &&
+              grabRef.current.type === ObjectType.SolarPanel && (
+                <PolarGrid element={grabRef.current} height={(grabRef.current as SolarPanelModel).poleHeight + hz} />
+              )}
           </>
         )}
 
@@ -1266,368 +1205,8 @@ const Cuboid = (cuboidModel: CuboidModel) => {
           <Wireframe hx={hx} hy={hy} hz={hz} lineColor={LOCKED_ELEMENT_SELECTION_COLOR} lineWidth={lineWidth * 5} />
         )}
 
-        {/* draw handles */}
-        {selected && !locked && !groupMasterId && (
-          <>
-            {/* resize handles */}
-            {!orthographic && (
-              <Box
-                ref={resizeHandleLLTopRef}
-                name={ResizeHandleType.LowerLeftTop}
-                args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
-                position={positionLLTop}
-                onPointerDown={(e) => {
-                  selectMe(id, e, ActionType.Resize);
-                }}
-                onPointerOver={(e) => {
-                  hoverHandle(e, ResizeHandleType.LowerLeftTop);
-                }}
-                onPointerOut={noHoverHandle}
-              >
-                <meshBasicMaterial
-                  attach="material"
-                  color={
-                    hoveredHandle === ResizeHandleType.LowerLeftTop ||
-                    resizeHandleType === ResizeHandleType.LowerLeftTop
-                      ? HIGHLIGHT_HANDLE_COLOR
-                      : RESIZE_HANDLE_COLOR
-                  }
-                />
-              </Box>
-            )}
-            {!orthographic && (
-              <Box
-                ref={resizeHandleULTopRef}
-                name={ResizeHandleType.UpperLeftTop}
-                args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
-                position={positionULTop}
-                onPointerDown={(e) => {
-                  selectMe(id, e, ActionType.Resize);
-                }}
-                onPointerOver={(e) => {
-                  hoverHandle(e, ResizeHandleType.UpperLeftTop);
-                }}
-                onPointerOut={noHoverHandle}
-              >
-                <meshBasicMaterial
-                  attach="material"
-                  color={
-                    hoveredHandle === ResizeHandleType.UpperLeftTop ||
-                    resizeHandleType === ResizeHandleType.UpperLeftTop
-                      ? HIGHLIGHT_HANDLE_COLOR
-                      : RESIZE_HANDLE_COLOR
-                  }
-                />
-              </Box>
-            )}
-            {!orthographic && (
-              <Box
-                ref={resizeHandleLRTopRef}
-                name={ResizeHandleType.LowerRightTop}
-                args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
-                position={positionLRTop}
-                onPointerDown={(e) => {
-                  selectMe(id, e, ActionType.Resize);
-                }}
-                onPointerOver={(e) => {
-                  hoverHandle(e, ResizeHandleType.LowerRightTop);
-                }}
-                onPointerOut={noHoverHandle}
-              >
-                <meshBasicMaterial
-                  attach="material"
-                  color={
-                    hoveredHandle === ResizeHandleType.LowerRightTop ||
-                    resizeHandleType === ResizeHandleType.LowerRightTop
-                      ? HIGHLIGHT_HANDLE_COLOR
-                      : RESIZE_HANDLE_COLOR
-                  }
-                />
-              </Box>
-            )}
-            {!orthographic && (
-              <Box
-                ref={resizeHandleURTopRef}
-                name={ResizeHandleType.UpperRightTop}
-                args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
-                position={positionURTop}
-                onPointerDown={(e) => {
-                  selectMe(id, e, ActionType.Resize);
-                }}
-                onPointerOver={(e) => {
-                  hoverHandle(e, ResizeHandleType.UpperRightTop);
-                }}
-                onPointerOut={noHoverHandle}
-              >
-                <meshBasicMaterial
-                  attach="material"
-                  color={
-                    hoveredHandle === ResizeHandleType.UpperRightTop ||
-                    resizeHandleType === ResizeHandleType.UpperRightTop
-                      ? HIGHLIGHT_HANDLE_COLOR
-                      : RESIZE_HANDLE_COLOR
-                  }
-                />
-              </Box>
-            )}
-            <Box
-              ref={resizeHandleLLBotRef}
-              name={ResizeHandleType.LowerLeft}
-              args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
-              position={new Vector3(-hx, -hy, resizeHandleSize / 2 - hz)}
-              onPointerDown={(e) => {
-                selectMe(id, e, ActionType.Resize);
-                if (resizeHandleLLBotRef.current) {
-                  setCommonStore((state) => {
-                    const anchor = resizeHandleLLBotRef.current!.localToWorld(new Vector3(lx, ly, 0));
-                    state.resizeAnchor.copy(anchor);
-                  });
-                }
-              }}
-              onPointerOver={(e) => {
-                hoverHandle(e, ResizeHandleType.LowerLeft);
-              }}
-              onPointerOut={noHoverHandle}
-            >
-              <meshBasicMaterial
-                attach="material"
-                color={
-                  hoveredHandle === ResizeHandleType.LowerLeft || resizeHandleType === ResizeHandleType.LowerLeft
-                    ? HIGHLIGHT_HANDLE_COLOR
-                    : RESIZE_HANDLE_COLOR
-                }
-              />
-            </Box>
-            <Box
-              ref={resizeHandleULBotRef}
-              name={ResizeHandleType.UpperLeft}
-              args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
-              position={new Vector3(-hx, hy, resizeHandleSize / 2 - hz)}
-              onPointerDown={(e) => {
-                selectMe(id, e, ActionType.Resize);
-                if (resizeHandleULBotRef.current) {
-                  setCommonStore((state) => {
-                    const anchor = resizeHandleULBotRef.current!.localToWorld(new Vector3(lx, -ly, 0));
-                    state.resizeAnchor.copy(anchor);
-                  });
-                }
-              }}
-              onPointerOver={(e) => {
-                hoverHandle(e, ResizeHandleType.UpperLeft);
-              }}
-              onPointerOut={noHoverHandle}
-            >
-              <meshBasicMaterial
-                attach="material"
-                color={
-                  hoveredHandle === ResizeHandleType.UpperLeft || resizeHandleType === ResizeHandleType.UpperLeft
-                    ? HIGHLIGHT_HANDLE_COLOR
-                    : RESIZE_HANDLE_COLOR
-                }
-              />
-            </Box>
-            <Box
-              ref={resizeHandleLRBotRef}
-              name={ResizeHandleType.LowerRight}
-              args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
-              position={new Vector3(hx, -hy, resizeHandleSize / 2 - hz)}
-              onPointerDown={(e) => {
-                selectMe(id, e, ActionType.Resize);
-                if (resizeHandleLRBotRef.current) {
-                  setCommonStore((state) => {
-                    const anchor = resizeHandleLRBotRef.current!.localToWorld(new Vector3(-lx, ly, 0));
-                    state.resizeAnchor.copy(anchor);
-                  });
-                }
-              }}
-              onPointerOver={(e) => {
-                hoverHandle(e, ResizeHandleType.LowerRight);
-              }}
-              onPointerOut={noHoverHandle}
-            >
-              <meshBasicMaterial
-                attach="material"
-                color={
-                  hoveredHandle === ResizeHandleType.LowerRight || resizeHandleType === ResizeHandleType.LowerRight
-                    ? HIGHLIGHT_HANDLE_COLOR
-                    : RESIZE_HANDLE_COLOR
-                }
-              />
-            </Box>
-            <Box
-              ref={resizeHandleURBotRef}
-              name={ResizeHandleType.UpperRight}
-              args={[resizeHandleSize, resizeHandleSize, resizeHandleSize]}
-              position={new Vector3(hx, hy, resizeHandleSize / 2 - hz)}
-              onPointerDown={(e) => {
-                selectMe(id, e, ActionType.Resize);
-                if (resizeHandleURBotRef.current) {
-                  setCommonStore((state) => {
-                    const anchor = resizeHandleURBotRef.current!.localToWorld(new Vector3(-lx, -ly, 0));
-                    state.resizeAnchor.copy(anchor);
-                  });
-                }
-              }}
-              onPointerOver={(e) => {
-                hoverHandle(e, ResizeHandleType.UpperRight);
-              }}
-              onPointerOut={noHoverHandle}
-            >
-              <meshBasicMaterial
-                attach="material"
-                color={
-                  hoveredHandle === ResizeHandleType.UpperRight || resizeHandleType === ResizeHandleType.UpperRight
-                    ? HIGHLIGHT_HANDLE_COLOR
-                    : RESIZE_HANDLE_COLOR
-                }
-              />
-            </Box>
-
-            {!addedCuboidId && (
-              <>
-                {/* move handles */}
-                <Sphere
-                  ref={moveHandleLowerFaceRef}
-                  args={[moveHandleSize, 6, 6, 0, Math.PI]}
-                  name={MoveHandleType.Lower}
-                  position={positionLowerFace}
-                  onPointerDown={(e) => {
-                    selectMe(id, e, ActionType.Move);
-                  }}
-                  onPointerOver={(e) => {
-                    hoverHandle(e, MoveHandleType.Lower);
-                  }}
-                  onPointerOut={noHoverHandle}
-                >
-                  <meshBasicMaterial
-                    attach="material"
-                    color={
-                      hoveredHandle === MoveHandleType.Lower || moveHandleType === MoveHandleType.Lower
-                        ? HIGHLIGHT_HANDLE_COLOR
-                        : MOVE_HANDLE_COLOR_2
-                    }
-                  />
-                </Sphere>
-                <Sphere
-                  ref={moveHandleUpperFaceRef}
-                  args={[moveHandleSize, 6, 6, 0, Math.PI]}
-                  name={MoveHandleType.Upper}
-                  position={positionUpperFace}
-                  onPointerDown={(e) => {
-                    selectMe(id, e, ActionType.Move);
-                  }}
-                  onPointerOver={(e) => {
-                    hoverHandle(e, MoveHandleType.Upper);
-                  }}
-                  onPointerOut={noHoverHandle}
-                >
-                  <meshBasicMaterial
-                    attach="material"
-                    color={
-                      hoveredHandle === MoveHandleType.Upper || moveHandleType === MoveHandleType.Upper
-                        ? HIGHLIGHT_HANDLE_COLOR
-                        : MOVE_HANDLE_COLOR_2
-                    }
-                  />
-                </Sphere>
-                <Sphere
-                  ref={moveHandleLeftFaceRef}
-                  args={[moveHandleSize, 6, 6, 0, Math.PI]}
-                  name={MoveHandleType.Left}
-                  position={positionLeftFace}
-                  onPointerDown={(e) => {
-                    selectMe(id, e, ActionType.Move);
-                  }}
-                  onPointerOver={(e) => {
-                    hoverHandle(e, MoveHandleType.Left);
-                  }}
-                  onPointerOut={noHoverHandle}
-                >
-                  <meshBasicMaterial
-                    attach="material"
-                    color={
-                      hoveredHandle === MoveHandleType.Left || moveHandleType === MoveHandleType.Left
-                        ? HIGHLIGHT_HANDLE_COLOR
-                        : MOVE_HANDLE_COLOR_1
-                    }
-                  />
-                </Sphere>
-                <Sphere
-                  ref={moveHandleRightFaceRef}
-                  args={[moveHandleSize, 6, 6, 0, Math.PI]}
-                  name={MoveHandleType.Right}
-                  position={positionRightFace}
-                  onPointerDown={(e) => {
-                    selectMe(id, e, ActionType.Move);
-                  }}
-                  onPointerOver={(e) => {
-                    hoverHandle(e, MoveHandleType.Right);
-                  }}
-                  onPointerOut={noHoverHandle}
-                >
-                  <meshBasicMaterial
-                    attach="material"
-                    color={
-                      hoveredHandle === MoveHandleType.Right || moveHandleType === MoveHandleType.Right
-                        ? HIGHLIGHT_HANDLE_COLOR
-                        : MOVE_HANDLE_COLOR_1
-                    }
-                  />
-                </Sphere>
-                <Sphere
-                  ref={moveHandleTopFaceRef}
-                  args={[moveHandleSize, 6, 6, 0, Math.PI]}
-                  name={MoveHandleType.Top}
-                  position={positionTopFace}
-                  onPointerDown={(e) => {
-                    selectMe(id, e, ActionType.Move);
-                  }}
-                  onPointerOver={(e) => {
-                    hoverHandle(e, MoveHandleType.Top);
-                  }}
-                  onPointerOut={noHoverHandle}
-                >
-                  <meshBasicMaterial
-                    attach="material"
-                    color={
-                      hoveredHandle === MoveHandleType.Top || moveHandleType === MoveHandleType.Top
-                        ? HIGHLIGHT_HANDLE_COLOR
-                        : MOVE_HANDLE_COLOR_3
-                    }
-                  />
-                </Sphere>
-
-                {/* rotate handles */}
-                <RotateHandle
-                  id={id}
-                  position={lowerRotateHandlePosition}
-                  color={
-                    hoveredHandle === RotateHandleType.Lower || rotateHandleType === RotateHandleType.Lower
-                      ? HIGHLIGHT_HANDLE_COLOR
-                      : RESIZE_HANDLE_COLOR
-                  }
-                  ratio={ratio}
-                  handleType={RotateHandleType.Lower}
-                  hoverHandle={hoverHandle}
-                  noHoverHandle={noHoverHandle}
-                />
-                <RotateHandle
-                  id={id}
-                  position={upperRotateHandlePosition}
-                  color={
-                    hoveredHandle === RotateHandleType.Upper || rotateHandleType === RotateHandleType.Upper
-                      ? HIGHLIGHT_HANDLE_COLOR
-                      : RESIZE_HANDLE_COLOR
-                  }
-                  ratio={ratio}
-                  handleType={RotateHandleType.Upper}
-                  hoverHandle={hoverHandle}
-                  noHoverHandle={noHoverHandle}
-                />
-              </>
-            )}
-          </>
-        )}
+        {/* handles */}
+        {showHandles && <Handles id={id} args={handleArgs} />}
 
         {(hovered || showLabel) && !selected && (
           <textSprite

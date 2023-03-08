@@ -5,8 +5,9 @@
 import { ElementModel } from './ElementModel';
 import { CuboidTexture } from '../types';
 import { Groupable } from './Groupable';
+import { Stackable } from './Stackable';
 
-export interface CuboidModel extends ElementModel, Groupable {
+export interface CuboidModel extends ElementModel, Groupable, Stackable {
   textureTypes?: CuboidTexture[];
   faceColors?: string[]; // if defined, these colors supersede the color attribute
 }
