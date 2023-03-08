@@ -165,16 +165,17 @@ const LikesPanel = ({ likesArray, openCloudFile }: LikesPanelProps) => {
                     key={record}
                     style={{ cursor: 'pointer' }}
                     onClick={() => {
-                      const s = (record as string).split(', ');
-                      if (s.length > 1) {
+                      const s = record as string;
+                      const i = s.lastIndexOf(', ');
+                      if (i >= 0) {
                         setCommonStore((state) => {
                           state.openModelsMap = false;
                         });
-                        openCloudFile(s[1], s[0]);
+                        openCloudFile(s.substring(i + 2), s.substring(0, i));
                       }
                     }}
                   >
-                    {(record as string).split(', ')[0]}
+                    {(record as string).substring(0, (record as string).lastIndexOf(', '))}
                   </label>
                 )}
               />

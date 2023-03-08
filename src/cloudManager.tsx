@@ -170,7 +170,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     if (firstCallFetchScoreboard.current) {
       firstCallFetchScoreboard.current = false;
     } else {
-      fetchScoreboard().then(() => {
+      fetchPeopleModels().then(() => {
         // what to do?
       });
     }
@@ -423,26 +423,30 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       });
   };
 
-  const fetchScoreboard = async () => {
+  const fetchPeopleModels = async () => {
+    setLoading(true);
     await firebase
       .firestore()
       .collection('board')
-      .doc('contributors')
+      .doc('people')
       .get()
       .then((doc) => {
-        if (doc.exists) {
-          const data = doc.data();
-          if (data) {
-            setCommonStore((state) => {
-              for (const k in data) {
-                state.modelsMapContributors.set(k, data[k]);
-              }
-            });
+        const data = doc.data();
+        if (data) {
+          const peopleModels = new Map<string, Map<string, ModelSite>>();
+          for (const k in data) {
+            peopleModels.set(k, new Map<string, ModelSite>(Object.entries(data[k])));
           }
+          setCommonStore((state) => {
+            state.peopleModels = peopleModels;
+          });
         }
       })
       .catch((error) => {
-        console.log(error);
+        showError(i18n.t('message.CannotLoadModelsOnMap', lang) + ': ' + error);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
@@ -489,7 +493,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                   },
                   () => {
                     uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-                      m.thumbnailUrl = downloadURL;
+                      const m2 = { ...m, thumbnailUrl: downloadURL } as ModelSite;
                       // after we get a download URL for the thumbnail image, we then go on to upload other data
                       const document = collection.doc(Util.getLatLngKey(latitude, longitude));
                       document
@@ -498,16 +502,16 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                           if (doc.exists) {
                             const data = doc.data();
                             if (data && data[modelKey]) {
-                              document.set({ [modelKey]: m }, { merge: true }).then(() => {
+                              document.set({ [modelKey]: m2 }, { merge: true }).then(() => {
                                 showSuccess(i18n.t('menu.file.UpdatedOnModelsMap', lang) + '.');
                               });
                             } else {
-                              document.set({ [modelKey]: m }, { merge: true }).then(() => {
+                              document.set({ [modelKey]: m2 }, { merge: true }).then(() => {
                                 showSuccess(i18n.t('menu.file.PublishedOnModelsMap', lang) + '.');
                               });
                             }
                           } else {
-                            document.set({ [modelKey]: m }, { merge: true }).then(() => {
+                            document.set({ [modelKey]: m2 }, { merge: true }).then(() => {
                               showSuccess(i18n.t('menu.file.PublishedOnModelsMap', lang) + '.');
                             });
                           }
@@ -545,20 +549,17 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
         firebase
           .firestore()
           .collection('board')
-          .doc('contributors')
+          .doc('people')
           .update({
-            [m.author ?? 'Anonymous']: firebase.firestore.FieldValue.arrayUnion(Util.getModelKey(m)),
+            [(m.author ?? 'Anonymous') + '.' + Util.getModelKey(m)]: m,
           })
           .then(() => {
             // update the cache
             setCommonStore((state) => {
-              if (state.modelsMapContributors) {
-                const contributor = state.modelsMapContributors.get(m.author ?? 'Anonymous');
-                if (contributor) {
-                  const modelKey = Util.getModelKey(m);
-                  if (!contributor.includes(modelKey)) {
-                    contributor.push(modelKey);
-                  }
+              if (state.peopleModels) {
+                const models = state.peopleModels.get(m.author ?? 'Anonymous');
+                if (models) {
+                  models.set(Util.getModelKey(m), m);
                 }
               }
             });

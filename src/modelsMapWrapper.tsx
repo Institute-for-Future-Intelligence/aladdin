@@ -61,7 +61,7 @@ const ModelsMapWrapper = ({
   const scoreboardFlag = usePrimitiveStore(Selector.scoreboardFlag);
   const latestModelSite = useStore(Selector.latestModelSite);
   const modelSites = useStore(Selector.modelSites);
-  const contributors = useStore(Selector.modelsMapContributors);
+  const peopleModels = useStore(Selector.peopleModels);
 
   const searchBox = useRef<google.maps.places.SearchBox>();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -213,7 +213,7 @@ const ModelsMapWrapper = ({
               color: 'black',
               bottom: '33px',
               left: '5px',
-              width: '100px',
+              width: '120px',
               height: '200px',
               overflowY: 'auto',
               padding: '6px 6px 6px 6px',
@@ -224,28 +224,28 @@ const ModelsMapWrapper = ({
           >
             <table>
               <tbody>
-                {[...contributors.keys()]
+                {[...peopleModels.keys()]
                   .sort((a, b) => {
-                    const countA = contributors.get(a);
-                    const countB = contributors.get(b);
-                    return (countB ? countB.length : 0) - (countA ? countA.length : 0);
+                    const countA = peopleModels.get(a);
+                    const countB = peopleModels.get(b);
+                    return (countB ? countB.size : 0) - (countA ? countA.size : 0);
                   })
                   .map((key: string, index: number) => {
-                    if (index > 10) return null;
-                    const a = contributors.get(key);
+                    if (index > 20) return null;
+                    const a = peopleModels.get(key);
                     return (
                       <tr
                         key={index}
                         style={{
-                          width: '100px',
+                          width: '120px',
                           background: index % 2 === 0 ? 'lightgoldenrodyellow' : 'lavenderblush',
                         }}
                       >
-                        <td style={{ width: '80px' }}>
-                          <UserOutlined style={{ marginRight: '2px', fontSize: '10px' }} />
+                        <td style={{ width: '100px' }}>
+                          <UserOutlined style={{ marginRight: '4px', fontSize: '10px' }} />
                           {key}
                         </td>
-                        <td>{a?.length}</td>
+                        <td>{a?.size}</td>
                       </tr>
                     );
                   })}
@@ -262,7 +262,7 @@ const ModelsMapWrapper = ({
               color: 'black',
               bottom: '6px',
               left: '5px',
-              width: '100px',
+              width: '120px',
               height: '25px',
               paddingTop: '2px',
               background: 'whitesmoke',
@@ -286,7 +286,7 @@ const ModelsMapWrapper = ({
                 fontSize: '10px',
                 color: 'black',
                 bottom: '6px',
-                left: '108px',
+                left: '128px',
                 height: '25x',
                 padding: '6px 6px 2px 6px',
                 background: 'whitesmoke',
