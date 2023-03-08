@@ -214,7 +214,7 @@ const ModelsMapWrapper = ({
               bottom: '33px',
               left: '5px',
               width: '100px',
-              height: '100px',
+              height: '200px',
               overflowY: 'auto',
               padding: '6px 6px 6px 6px',
               background: 'whitesmoke',
@@ -223,25 +223,33 @@ const ModelsMapWrapper = ({
             }}
           >
             <table>
-              {[...contributors.keys()]
-                .sort((a, b) => {
-                  const countA = contributors.get(a);
-                  const countB = contributors.get(b);
-                  return (countB ? countB.length : 0) - (countA ? countA.length : 0);
-                })
-                .map((key: string, index: number) => {
-                  return (
-                    <tr
-                      style={{ width: '100px', background: index % 2 === 0 ? 'lightgoldenrodyellow' : 'lavenderblush' }}
-                    >
-                      <td style={{ width: '80px' }}>
-                        <UserOutlined style={{ marginRight: '2px', fontSize: '10px' }} />
-                        {key}
-                      </td>
-                      <td>{contributors.get(key)?.length}</td>
-                    </tr>
-                  );
-                })}
+              <tbody>
+                {[...contributors.keys()]
+                  .sort((a, b) => {
+                    const countA = contributors.get(a);
+                    const countB = contributors.get(b);
+                    return (countB ? countB.length : 0) - (countA ? countA.length : 0);
+                  })
+                  .map((key: string, index: number) => {
+                    if (index > 10) return null;
+                    const a = contributors.get(key);
+                    return (
+                      <tr
+                        key={index}
+                        style={{
+                          width: '100px',
+                          background: index % 2 === 0 ? 'lightgoldenrodyellow' : 'lavenderblush',
+                        }}
+                      >
+                        <td style={{ width: '80px' }}>
+                          <UserOutlined style={{ marginRight: '2px', fontSize: '10px' }} />
+                          {key}
+                        </td>
+                        <td>{a?.length}</td>
+                      </tr>
+                    );
+                  })}
+              </tbody>
             </table>
           </div>
         )}

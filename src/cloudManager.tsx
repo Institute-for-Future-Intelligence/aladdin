@@ -541,6 +541,28 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
               }
             });
           });
+        // add to the scoreboard
+        firebase
+          .firestore()
+          .collection('board')
+          .doc('contributors')
+          .update({
+            [m.author ?? 'Anonymous']: firebase.firestore.FieldValue.arrayUnion(Util.getModelKey(m)),
+          })
+          .then(() => {
+            // update the cache
+            setCommonStore((state) => {
+              if (state.modelsMapContributors) {
+                const contributor = state.modelsMapContributors.get(m.author ?? 'Anonymous');
+                if (contributor) {
+                  const modelKey = Util.getModelKey(m);
+                  if (!contributor.includes(modelKey)) {
+                    contributor.push(modelKey);
+                  }
+                }
+              }
+            });
+          });
         // notify info
         firebase
           .firestore()
