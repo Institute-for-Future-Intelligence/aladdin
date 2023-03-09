@@ -5,7 +5,6 @@
 import { CuboidModel } from 'src/models/CuboidModel';
 import { ElementModel } from 'src/models/ElementModel';
 import { isStackableModel } from 'src/models/Stackable';
-import { Euler, Vector3 } from 'three';
 import Cuboid from './cuboid';
 
 export interface CuboidRendererProps {
@@ -14,14 +13,14 @@ export interface CuboidRendererProps {
 }
 
 const CuboidRenderer = ({ elements, cuboidModel }: CuboidRendererProps) => {
-  const { cx, cy, cz, lz, rotation } = cuboidModel;
+  const { cx, cy, lz, rotation } = cuboidModel;
 
   const hz = lz / 2;
 
   const isStackableChild = (e: ElementModel) => isStackableModel(e) && e.parentId === cuboidModel.id;
 
   return (
-    <group position={[cx, cy, hz]} rotation={[0, 0, rotation[2]]}>
+    <group name="Cuboid Wrapper" position={[cx, cy, hz]} rotation={[0, 0, rotation[2]]}>
       <Cuboid {...cuboidModel} />
 
       <group name="Cuboid stackable child group" position={[0, 0, hz]}>

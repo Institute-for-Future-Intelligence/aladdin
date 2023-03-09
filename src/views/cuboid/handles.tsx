@@ -30,14 +30,14 @@ const Handles = ({ id, args }: HandlesProps) => {
 
   const size = useHandleSize();
 
-  const rotateHandleSize = Math.max(1, Math.max(hx, hy) / 4) * 0.3 * size;
+  // const rotateHandleSize = Math.max(1, Math.max(hx, hy) / 4) * size * 2;
 
   const lowerRotateHandlePosition: [x: number, y: number, z: number] = useMemo(() => {
-    return [0, Math.min(-1.2 * hy, -hy - 0.75) - size, RESIZE_HANDLE_SIZE / 2 - hz];
+    return [0, Math.min(-1.2 * hy, -hy - 0.75) - size * 2, RESIZE_HANDLE_SIZE / 2 - hz];
   }, [hy, hz, size]);
 
   const upperRotateHandlePosition: [x: number, y: number, z: number] = useMemo(() => {
-    return [0, Math.max(1.2 * hy, hy + 0.75) + size, RESIZE_HANDLE_SIZE / 2 - hz];
+    return [0, Math.max(1.2 * hy, hy + 0.75) + size * 2, RESIZE_HANDLE_SIZE / 2 - hz];
   }, [hy, hz, size]);
 
   const hoverHandle = useCallback(
@@ -191,7 +191,7 @@ const Handles = ({ id, args }: HandlesProps) => {
               id={id}
               handleType={RotateHandleType.Lower}
               position={lowerRotateHandlePosition}
-              ratio={rotateHandleSize}
+              ratio={size * 4}
               hoverHandle={hoverHandle}
               noHoverHandle={noHoverHandle}
             />
@@ -199,7 +199,7 @@ const Handles = ({ id, args }: HandlesProps) => {
               id={id}
               position={upperRotateHandlePosition}
               handleType={RotateHandleType.Upper}
-              ratio={rotateHandleSize}
+              ratio={size * 4}
               hoverHandle={hoverHandle}
               noHoverHandle={noHoverHandle}
             />

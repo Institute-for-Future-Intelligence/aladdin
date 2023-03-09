@@ -40,11 +40,14 @@ const MoveHandle = ({ handleType, position, size, onPointerOver, onPointerOut }:
 
   const color = hoveredHandle === handleType || movehandleType === handleType ? HIGHLIGHT_HANDLE_COLOR : handleColor;
 
-  const handlePointerDown = () => {
-    useStore.getState().set((state) => {
-      state.moveHandleType = handleType;
-    });
-    useRefStore.getState().setEnableOrbitController(false);
+  const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
+    if (e.intersections.length > 0 && e.intersections[0].eventObject.name === handleType) {
+      useStore.getState().set((state) => {
+        state.moveHandleType = handleType;
+        state.selectedElement = state.elements.find((e) => e.selected) ?? null;
+      });
+      useRefStore.getState().setEnableOrbitController(false);
+    }
   };
 
   return (

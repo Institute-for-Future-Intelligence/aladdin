@@ -91,6 +91,7 @@ import { usePrimitiveStore } from './commonPrimitive';
 import { useDataStore } from './commonData';
 import { GraphState } from './GraphState';
 import { DefaultGraphState } from './DefaultGraphState';
+import { isStackableModel } from 'src/models/Stackable';
 
 enableMapSet();
 
@@ -1373,7 +1374,7 @@ export const useStore = create<CommonStoreState>(
                   e.rotation[0] = x;
                   e.rotation[1] = y;
                   e.rotation[2] = z;
-                } else if (e.parentId === id) {
+                } else if (e.parentId === id && !isStackableModel(e)) {
                   e.rotation[0] = x;
                   e.rotation[1] = y;
                   e.rotation[2] = z;

@@ -100,7 +100,6 @@ const Cuboid = (cuboidModel: CuboidModel) => {
       CuboidTexture.NoTexture,
       CuboidTexture.NoTexture,
     ],
-    stackable = false,
   } = cuboidModel;
 
   const setCommonStore = useStore(Selector.set);
@@ -201,8 +200,8 @@ const Cuboid = (cuboidModel: CuboidModel) => {
     const handlePointerUp = () => {
       grabRef.current = null;
       setShowGrid(false);
+      useRefStore.getState().setEnableOrbitController(true);
     };
-    useRefStore.getState().setEnableOrbitController(true);
     window.addEventListener('pointerup', handlePointerUp);
     return () => {
       window.removeEventListener('pointerup', handlePointerUp);
@@ -1143,7 +1142,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
           uuid={id}
           ref={baseRef}
           args={[lx, ly, lz]}
-          name={'Cuboid'}
+          name={'Cuboid ' + id}
           onContextMenu={handleContextMenu}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}

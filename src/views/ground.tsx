@@ -1309,6 +1309,35 @@ const Ground = () => {
     }
   };
 
+  // ====
+  /** self exclusive */
+  const getFirstIntersectedCuboid = (e: ThreeEvent<PointerEvent>, currId: string) => {
+    return e.intersections.find((intersect) => {
+      const obj = intersect.eventObject;
+      if (!obj.name.includes('Cuboid')) return false;
+      const nameArray = obj.name.split(' ');
+      if (nameArray.length !== 2) return false;
+      return nameArray[1] !== currId;
+    });
+  };
+
+  const getAbsDataOfStackedCuboid = (id: string): { pos: Vector3; rot: number } => {
+    const el = getElementById(id);
+    if (!el) return { pos: new Vector3(), rot: 0 };
+
+    const currPos = new Vector3(el.cx, el.cy);
+    const currRot = el.rotation[2];
+
+    if (el.parentId === 'Ground') {
+      return { pos: currPos, rot: currRot };
+    }
+    const { pos, rot } = getAbsDataOfStackedCuboid(el.parentId);
+    const euler = new Euler(0, 0, rot);
+
+    return { pos: new Vector3().addVectors(currPos.applyEuler(euler), pos), rot: currRot + rot };
+  };
+  // ===
+
   const handleGroundPointerMove = (e: ThreeEvent<PointerEvent>) => {
     if (grabRef.current && grabRef.current.type && !grabRef.current.locked) {
       setRayCast(e);
@@ -1333,9 +1362,45 @@ const Ground = () => {
             if (intersectionPlaneType === IntersectionPlaneType.Horizontal) {
               intersects = ray.intersectObjects([intersectionPlaneRef.current]);
               if (intersects.length > 0) {
-                const p = intersects[0].point;
+                const p = intersects[0].point.clone();
                 if (moveHandleType) {
-                  handleMove(p);
+                  const firstIntersectedCuboidObject = getFirstIntersectedCuboid(e, grabRef.current.id);
+
+                  if (firstIntersectedCuboidObject) {
+                    intersects = ray.intersectObjects([firstIntersectedCuboidObject.eventObject]);
+                    if (intersects.length === 0) return;
+                    p.copy(intersects[0].point);
+                    const newParentId = firstIntersectedCuboidObject.eventObject.name.split(' ')[1];
+                    setCommonStore((state) => {
+                      const cuboid = state.elements.find((e) => e.id === state.selectedElement?.id);
+                      const selectedElement = state.selectedElement;
+                      if (cuboid && selectedElement) {
+                        const { pos: parentAbsPos, rot: parentAbsRot } = getAbsDataOfStackedCuboid(newParentId);
+                        const diff = new Vector3().subVectors(p, parentAbsPos);
+                        diff.applyEuler(new Euler(0, 0, -parentAbsRot));
+                        cuboid.cx = diff.x;
+                        cuboid.cy = diff.y;
+                        if (selectedElement.parentId !== newParentId) {
+                          cuboid.parentId = newParentId;
+                          const { rot: currAbsRot } = getAbsDataOfStackedCuboid(selectedElement.id);
+                          cuboid.rotation[2] = currAbsRot - parentAbsRot;
+                        } else if (cuboid.parentId !== newParentId) {
+                          cuboid.parentId = selectedElement.parentId;
+                          cuboid.rotation[2] = selectedElement.rotation[2];
+                        }
+                      }
+                    });
+                  } else {
+                    setCommonStore((state) => {
+                      const cuboid = state.elements.find((e) => e.id === grabRef.current!.id);
+                      if (cuboid && cuboid.parentId !== 'Ground') {
+                        const { rot: parentAbsRot } = getAbsDataOfStackedCuboid(cuboid.parentId);
+                        cuboid.rotation[2] += parentAbsRot;
+                        cuboid.parentId = 'Ground';
+                      }
+                    });
+                    handleMove(p);
+                  }
                 } else if (resizeHandleType) {
                   handleResize(p);
                 } else if (rotateHandleType) {
@@ -1799,14 +1864,14 @@ const Ground = () => {
       {grabRef.current && intersectionPlaneType !== IntersectionPlaneType.Ground && (
         <Plane
           ref={intersectionPlaneRef}
-          visible={false}
+          // visible={false}
           name={'Ground Intersection Plane'}
           rotation={intersectionPlaneAngle}
           position={intersectionPlanePosition}
           args={[100000, 100000]}
           onPointerMove={handleIntersectionPointerMove}
         >
-          <meshStandardMaterial side={DoubleSide} />
+          <meshStandardMaterial side={DoubleSide} opacity={0.5} transparent />
         </Plane>
       )}
       <Plane
