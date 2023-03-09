@@ -145,6 +145,11 @@ const ModelsMapWrapper = ({
     return count;
   }, [modelSites]);
 
+  const selectAuthor = (author: string | undefined) => {
+    setSelectedAuthor(author);
+    if (author) authorModelsRef.current = peopleModels.get(author);
+  };
+
   return (
     <Container
       ref={containerRef}
@@ -193,6 +198,7 @@ const ModelsMapWrapper = ({
       )}
       {isLoaded ? (
         <ModelsMap
+          selectAuthor={selectAuthor}
           closeMap={close}
           openModel={openCloudFile}
           deleteModel={deleteModelFromMap}
@@ -213,7 +219,13 @@ const ModelsMapWrapper = ({
             mask={false}
             headerStyle={{ height: '10px', background: 'whitesmoke' }}
             bodyStyle={{ padding: '0px 4px 0px 4px' }}
-            title={selectedAuthor}
+            title={
+              selectedAuthor +
+              ': ' +
+              authorModelsRef.current?.size +
+              ' ' +
+              i18n.t((authorModelsRef.current?.size ?? 0) > 1 ? 'word.Models' : 'word.Model', lang)
+            }
             placement="bottom"
             visible={true}
             height={'150px'}
@@ -255,7 +267,7 @@ const ModelsMapWrapper = ({
                                     if (m) {
                                       state.modelsMapLatitude = m.latitude;
                                       state.modelsMapLongitude = m.longitude;
-                                      state.modelsMapZoom = 16;
+                                      state.modelsMapZoom = 17;
                                     }
                                   });
                                 }}
@@ -311,8 +323,7 @@ const ModelsMapWrapper = ({
                           <label
                             style={{ cursor: 'pointer' }}
                             onClick={() => {
-                              setSelectedAuthor(key);
-                              authorModelsRef.current = peopleModels.get(key);
+                              selectAuthor(key);
                             }}
                           >
                             {key}

@@ -43,6 +43,7 @@ import { Util } from '../Util';
 const { Panel } = Collapse;
 
 export interface ModelsMapProps {
+  selectAuthor: (author: string | undefined) => void;
   closeMap: () => void;
   openModel: (model: ModelSite) => void;
   deleteModel: (model: ModelSite, successCallback?: Function) => void;
@@ -50,7 +51,7 @@ export interface ModelsMapProps {
   pinModel: (model: ModelSite, pinned: boolean, successCallback?: Function) => void;
 }
 
-const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel, pinModel }: ModelsMapProps) => {
+const ModelsMap = ({ selectAuthor, closeMap, openModel, deleteModel, likeModel, pinModel }: ModelsMapProps) => {
   const language = useStore(Selector.language);
   const user = useStore.getState().user;
   const setCommonStore = useStore(Selector.set);
@@ -577,7 +578,16 @@ const ModelsMap = ({ closeMap, openModel, deleteModel, likeModel, pinModel }: Mo
                               <div>
                                 {m.description && m.description.trim() !== '' ? m.description : ''}
                                 &nbsp;&mdash;&nbsp; By{' '}
-                                {!m.author || m.author === '' ? i18n.t('word.Anonymous', { lng: language }) : m.author}
+                                <label
+                                  style={{ cursor: 'pointer' }}
+                                  onClick={() => {
+                                    selectAuthor(m.author);
+                                  }}
+                                >
+                                  {!m.author || m.author === ''
+                                    ? i18n.t('word.Anonymous', { lng: language })
+                                    : m.author}
+                                </label>
                                 ,&nbsp;
                                 {m.timeCreated && <ReactTimeago date={new Date(m.timeCreated)} />}
                               </div>

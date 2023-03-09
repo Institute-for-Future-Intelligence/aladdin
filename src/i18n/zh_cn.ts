@@ -31,6 +31,8 @@ export const i18n_zh_cn = {
     },
 
     word: {
+      Model: '模型',
+      Models: '模型',
       Upload: '上传',
       ClickCount: '点击数',
       Share: '分享',

@@ -31,6 +31,8 @@ export const i18n_zh_tw = {
     },
 
     word: {
+      Model: '模型',
+      Models: '模型',
       Upload: '上傳',
       ClickCount: '點擊數',
       Share: '分享',
