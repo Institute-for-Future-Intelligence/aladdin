@@ -10,7 +10,7 @@ import i18n from './i18n/i18n';
 import { Libraries } from '@react-google-maps/api/dist/utils/make-load-script-url';
 import { StandaloneSearchBox, useJsApiLoader } from '@react-google-maps/api';
 import Spinner from './components/spinner';
-import { Checkbox, Drawer, Space } from 'antd';
+import { Affix, Checkbox, Drawer, Space } from 'antd';
 import ModelsMap, { getIconUrl } from './components/modelsMap';
 import { UndoableChangeLocation } from './undo/UndoableChangeLocation';
 import { DEFAULT_ADDRESS } from './constants';
@@ -260,7 +260,7 @@ const ModelsMapWrapper = ({
                           if (!m) return null;
                           return (
                             <td key={index}>
-                              <div style={{ display: 'block' }}>
+                              <div style={{ display: 'block', marginTop: '4px' }}>
                                 <img
                                   alt={m.label}
                                   title={m.label}
@@ -281,32 +281,34 @@ const ModelsMapWrapper = ({
                                     });
                                   }}
                                 />
-                                <img
-                                  alt={m.type}
-                                  src={getIconUrl(m)}
-                                  style={{
-                                    position: 'relative',
-                                    left: '8px',
-                                    bottom: '28px',
-                                    width: '16px',
-                                    height: '16px',
-                                  }}
-                                />
-                                <span
-                                  style={{
-                                    position: 'relative',
-                                    left: '16px',
-                                    bottom: '24px',
-                                    color: 'white',
-                                    fontSize: '8px',
-                                  }}
-                                >
-                                  {m.label
-                                    ? m.label.length > 30
-                                      ? m.label.substring(0, 30) + '...'
-                                      : m.label
-                                    : 'Unknown'}
-                                </span>
+                                <Affix>
+                                  <img
+                                    alt={m.type}
+                                    src={getIconUrl(m)}
+                                    style={{
+                                      position: 'relative',
+                                      left: '8px',
+                                      bottom: '28px',
+                                      width: '16px',
+                                      height: '16px',
+                                    }}
+                                  />
+                                  <span
+                                    style={{
+                                      position: 'relative',
+                                      left: '16px',
+                                      bottom: '24px',
+                                      color: 'white',
+                                      fontSize: '8px',
+                                    }}
+                                  >
+                                    {m.label
+                                      ? m.label.length > 30
+                                        ? m.label.substring(0, 30) + '...'
+                                        : m.label
+                                      : 'Unknown'}
+                                  </span>
+                                </Affix>
                               </div>
                             </td>
                           );
