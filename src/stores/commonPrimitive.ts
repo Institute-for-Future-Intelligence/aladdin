@@ -10,6 +10,7 @@ export interface PrimitiveStoreState {
 
   modelsMapFlag: boolean;
   scoreboardFlag: boolean;
+  showScoreboard: boolean;
   publishOnModelsMapFlag: boolean;
   modelsMapWeatherStations: boolean;
 
@@ -109,6 +110,7 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
 
     modelsMapFlag: false,
     scoreboardFlag: false,
+    showScoreboard: false,
     publishOnModelsMapFlag: false,
     modelsMapWeatherStations: false,
 

@@ -2,7 +2,7 @@
  * @Copyright 2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
@@ -10,7 +10,7 @@ import i18n from './i18n/i18n';
 import { Libraries } from '@react-google-maps/api/dist/utils/make-load-script-url';
 import { StandaloneSearchBox, useJsApiLoader } from '@react-google-maps/api';
 import Spinner from './components/spinner';
-import { Checkbox, Space } from 'antd';
+import { Checkbox, Drawer, Space } from 'antd';
 import ModelsMap from './components/modelsMap';
 import { UndoableChangeLocation } from './undo/UndoableChangeLocation';
 import { DEFAULT_ADDRESS } from './constants';
@@ -58,11 +58,14 @@ const ModelsMapWrapper = ({
   const longitude = modelsMapLongitude !== undefined ? modelsMapLongitude : -71.3488548;
   const address = useStore.getState().modelsMapAddress ?? DEFAULT_ADDRESS;
   const mapWeatherStations = usePrimitiveStore(Selector.modelsMapWeatherStations);
-  const scoreboardFlag = usePrimitiveStore(Selector.scoreboardFlag);
+  const showScoreboard = usePrimitiveStore(Selector.showScoreboard);
   const latestModelSite = useStore(Selector.latestModelSite);
   const modelSites = useStore(Selector.modelSites);
   const peopleModels = useStore(Selector.peopleModels);
 
+  const [selectedAuthor, setSelectedAuthor] = useState<string | undefined>();
+  const [selectedModel, setSelectedModel] = useState<ModelSite | undefined>();
+  const authorModelsRef = useRef<Map<string, ModelSite>>();
   const searchBox = useRef<google.maps.places.SearchBox>();
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -205,7 +208,69 @@ const ModelsMapWrapper = ({
         </Space>
       )}
       <>
-        {scoreboardFlag && (
+        {selectedAuthor && (
+          <Drawer
+            mask={false}
+            headerStyle={{ height: '10px', background: 'whitesmoke' }}
+            bodyStyle={{ padding: '0px 4px 0px 4px' }}
+            title={selectedAuthor}
+            placement="bottom"
+            visible={true}
+            height={'150px'}
+            onClose={() => {
+              setSelectedAuthor(undefined);
+              authorModelsRef.current = undefined;
+              setSelectedModel(undefined);
+            }}
+          >
+            <table>
+              <tbody>
+                <tr>
+                  {authorModelsRef.current &&
+                    [...authorModelsRef.current.keys()]
+                      .sort((a, b) => {
+                        if (!authorModelsRef.current) return 0;
+                        const modelA = authorModelsRef.current.get(a);
+                        const modelB = authorModelsRef.current.get(b);
+                        if (!modelA || !modelB) return 0;
+                        return (modelB.timeCreated ?? 0) - (modelA.timeCreated ?? 0);
+                      })
+                      .map((key: string, index: number) => {
+                        if (authorModelsRef.current) {
+                          const m = authorModelsRef.current.get(key);
+                          if (!m) return null;
+                          return (
+                            <td
+                              key={index}
+                              style={selectedModel === m ? { border: '2px solid red' } : { border: 'none' }}
+                            >
+                              <img
+                                alt={m.label}
+                                title={m.label}
+                                src={m.thumbnailUrl}
+                                style={{ cursor: 'pointer' }}
+                                onClick={() => {
+                                  setSelectedModel(m);
+                                  setCommonStore((state) => {
+                                    if (m) {
+                                      state.modelsMapLatitude = m.latitude;
+                                      state.modelsMapLongitude = m.longitude;
+                                      state.modelsMapZoom = 16;
+                                    }
+                                  });
+                                }}
+                              />
+                            </td>
+                          );
+                        }
+                        return null;
+                      })}
+                </tr>
+              </tbody>
+            </table>
+          </Drawer>
+        )}
+        {showScoreboard && !selectedAuthor && (
           <div
             style={{
               position: 'absolute',
@@ -213,7 +278,7 @@ const ModelsMapWrapper = ({
               color: 'black',
               bottom: '33px',
               left: '5px',
-              width: '120px',
+              width: '150px',
               height: '200px',
               overflowY: 'auto',
               padding: '6px 6px 6px 6px',
@@ -237,13 +302,21 @@ const ModelsMapWrapper = ({
                       <tr
                         key={index}
                         style={{
-                          width: '120px',
+                          width: '150px',
                           background: index % 2 === 0 ? 'lightgoldenrodyellow' : 'lavenderblush',
                         }}
                       >
-                        <td style={{ width: '100px' }}>
+                        <td style={{ width: '120px' }}>
                           <UserOutlined style={{ marginRight: '4px', fontSize: '10px' }} />
-                          {key}
+                          <label
+                            style={{ cursor: 'pointer' }}
+                            onClick={() => {
+                              setSelectedAuthor(key);
+                              authorModelsRef.current = peopleModels.get(key);
+                            }}
+                          >
+                            {key}
+                          </label>
                         </td>
                         <td>{a?.size}</td>
                       </tr>
@@ -262,7 +335,7 @@ const ModelsMapWrapper = ({
               color: 'black',
               bottom: '6px',
               left: '5px',
-              width: '120px',
+              width: '150px',
               height: '25px',
               paddingTop: '2px',
               background: 'whitesmoke',
@@ -272,7 +345,8 @@ const ModelsMapWrapper = ({
             }}
             onClick={() => {
               usePrimitiveStore.setState((state) => {
-                state.scoreboardFlag = !state.scoreboardFlag;
+                if (!state.showScoreboard) state.scoreboardFlag = !state.scoreboardFlag;
+                state.showScoreboard = !state.showScoreboard;
               });
             }}
           >
@@ -287,7 +361,7 @@ const ModelsMapWrapper = ({
                 fontSize: '10px',
                 color: 'black',
                 bottom: '6px',
-                left: '128px',
+                left: '158px',
                 height: '25x',
                 padding: '6px 6px 2px 6px',
                 background: 'whitesmoke',

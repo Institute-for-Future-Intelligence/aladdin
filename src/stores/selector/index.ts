@@ -109,6 +109,8 @@ export const modelsMapFlag = (state: PrimitiveStoreState) => state.modelsMapFlag
 
 export const scoreboardFlag = (state: PrimitiveStoreState) => state.scoreboardFlag;
 
+export const showScoreboard = (state: PrimitiveStoreState) => state.showScoreboard;
+
 export const publishOnModelsMapFlag = (state: PrimitiveStoreState) => state.publishOnModelsMapFlag;
 
 export const listCloudFilesFlag = (state: CommonStoreState) => state.listCloudFilesFlag;

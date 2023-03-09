@@ -519,6 +519,34 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                         .catch((error) => {
                           showError(i18n.t('message.CannotPublishModelOnMap', lang) + ': ' + error);
                         });
+                      // add to the scoreboard
+                      firebase
+                        .firestore()
+                        .collection('board')
+                        .doc('people')
+                        .update({
+                          [(m2.author ?? 'Anonymous') + '.' + Util.getModelKey(m2)]: m2,
+                        })
+                        .then(() => {
+                          // update the cache
+                          setCommonStore((state) => {
+                            if (state.peopleModels) {
+                              const models = state.peopleModels.get(m2.author ?? 'Anonymous');
+                              if (models) {
+                                models.set(Util.getModelKey(m2), m2);
+                              }
+                            }
+                          });
+                        });
+                      // notify info
+                      firebase
+                        .firestore()
+                        .collection('board')
+                        .doc('info')
+                        .set({ latestModel: m2 }, { merge: true })
+                        .then(() => {
+                          // TODO
+                        });
                     });
                   },
                 );
@@ -544,34 +572,6 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                 }
               }
             });
-          });
-        // add to the scoreboard
-        firebase
-          .firestore()
-          .collection('board')
-          .doc('people')
-          .update({
-            [(m.author ?? 'Anonymous') + '.' + Util.getModelKey(m)]: m,
-          })
-          .then(() => {
-            // update the cache
-            setCommonStore((state) => {
-              if (state.peopleModels) {
-                const models = state.peopleModels.get(m.author ?? 'Anonymous');
-                if (models) {
-                  models.set(Util.getModelKey(m), m);
-                }
-              }
-            });
-          });
-        // notify info
-        firebase
-          .firestore()
-          .collection('board')
-          .doc('info')
-          .set({ latestModel: m }, { merge: true })
-          .then(() => {
-            // TODO
           });
       }
     }
