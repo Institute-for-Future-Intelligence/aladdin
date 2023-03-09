@@ -37,7 +37,7 @@ const ColumnWrapper = styled.div`
   right: 0;
   top: 0;
   width: 450px;
-  height: 360px;
+  height: 380px;
   min-width: 400px;
   max-width: 800px;
   min-height: 200px;
@@ -309,7 +309,7 @@ const AccountSettingsPanel = ({ openCloudFile }: { openCloudFile: (userid: strin
 
             <Row gutter={6} style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>
               <Col className="gutter-row" span={6}>
-                {i18n.t('accountSettingsPanel.Published', lang)}
+                {i18n.t('accountSettingsPanel.AllPublished', lang)}
               </Col>
               <Col className="gutter-row" span={18}>
                 <span
@@ -320,6 +320,18 @@ const AccountSettingsPanel = ({ openCloudFile }: { openCloudFile: (userid: strin
                 >
                   {user.published?.length ?? 0}
                 </span>
+              </Col>
+            </Row>
+
+            <Row gutter={6} style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>
+              <Col className="gutter-row" span={6}>
+                {i18n.t('accountSettingsPanel.PublishedUnderAliases', lang)}
+              </Col>
+              <Col className="gutter-row" span={18}>
+                {user.aliases?.map((value, index) => {
+                  if (!user.aliases) return null;
+                  return value + (index < user.aliases.length - 1 ? ', ' : '');
+                })}
               </Col>
             </Row>
 

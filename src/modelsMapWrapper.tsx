@@ -300,6 +300,7 @@ const ModelsMapWrapper = ({
                                       bottom: '24px',
                                       color: 'white',
                                       fontSize: '8px',
+                                      fontWeight: 'bold',
                                     }}
                                   >
                                     {m.label

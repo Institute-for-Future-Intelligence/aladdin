@@ -561,6 +561,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           .doc(user.uid)
           .update({
             published: firebase.firestore.FieldValue.arrayUnion(title),
+            aliases: firebase.firestore.FieldValue.arrayUnion(useStore.getState().modelAuthor),
           })
           .then(() => {
             // update the cache
@@ -569,6 +570,10 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                 if (!state.user.published) state.user.published = [];
                 if (!state.user.published.includes(title)) {
                   state.user.published.push(title);
+                }
+                if (!state.user.aliases) state.user.aliases = [];
+                if (state.modelAuthor && !state.user.aliases.includes(state.modelAuthor)) {
+                  state.user.aliases.push(state.modelAuthor);
                 }
               }
             });

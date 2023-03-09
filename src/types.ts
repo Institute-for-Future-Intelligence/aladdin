@@ -40,6 +40,7 @@ export interface User {
   classID: ClassID;
   likes?: string[];
   published?: string[];
+  aliases?: string[];
 }
 
 export enum FirebaseName {
