@@ -42,6 +42,29 @@ import { Util } from '../Util';
 
 const { Panel } = Collapse;
 
+export const getIconUrl = (site: ModelSite) => {
+  switch (site.type) {
+    case ModelType.PHOTOVOLTAIC:
+      return SolarPanelIcon;
+    case ModelType.PARABOLIC_DISH:
+      return ParabolicDishIcon;
+    case ModelType.PARABOLIC_TROUGH:
+      return ParabolicTroughIcon;
+    case ModelType.FRESNEL_REFLECTOR:
+      return FresnelReflectorIcon;
+    case ModelType.SOLAR_POWER_TOWER:
+      return HeliostatIcon;
+    case ModelType.RESIDENTIAL_BUILDING:
+      return ResidentialBuildingIcon;
+    case 'Building': // backward compatibility
+    case ModelType.COMMERCIAL_BUILDING:
+      return CommercialBuildingIcon;
+    case ModelType.UNDER_CONSTRUCTION:
+      return UnderConstructionIcon;
+  }
+  return undefined;
+};
+
 export interface ModelsMapProps {
   selectAuthor: (author: string | undefined) => void;
   closeMap: () => void;
@@ -390,29 +413,6 @@ const ModelsMap = ({ selectAuthor, closeMap, openModel, deleteModel, likeModel, 
     }
   };
 
-  const getIconUrl = (site: ModelSite) => {
-    switch (site.type) {
-      case ModelType.PHOTOVOLTAIC:
-        return SolarPanelIcon;
-      case ModelType.PARABOLIC_DISH:
-        return ParabolicDishIcon;
-      case ModelType.PARABOLIC_TROUGH:
-        return ParabolicTroughIcon;
-      case ModelType.FRESNEL_REFLECTOR:
-        return FresnelReflectorIcon;
-      case ModelType.SOLAR_POWER_TOWER:
-        return HeliostatIcon;
-      case ModelType.RESIDENTIAL_BUILDING:
-        return ResidentialBuildingIcon;
-      case 'Building': // backward compatibility
-      case ModelType.COMMERCIAL_BUILDING:
-        return CommercialBuildingIcon;
-      case ModelType.UNDER_CONSTRUCTION:
-        return UnderConstructionIcon;
-    }
-    return undefined;
-  };
-
   return (
     <GoogleMap
       mapContainerStyle={{
@@ -580,6 +580,7 @@ const ModelsMap = ({ selectAuthor, closeMap, openModel, deleteModel, likeModel, 
                                 &nbsp;&mdash;&nbsp; By{' '}
                                 <label
                                   style={{ cursor: 'pointer' }}
+                                  title={i18n.t('modelsMap.ShowModelsPublishedByThisAuthor', { lng: language })}
                                   onClick={() => {
                                     selectAuthor(m.author);
                                   }}

@@ -11,7 +11,7 @@ import { Libraries } from '@react-google-maps/api/dist/utils/make-load-script-ur
 import { StandaloneSearchBox, useJsApiLoader } from '@react-google-maps/api';
 import Spinner from './components/spinner';
 import { Checkbox, Drawer, Space } from 'antd';
-import ModelsMap from './components/modelsMap';
+import ModelsMap, { getIconUrl } from './components/modelsMap';
 import { UndoableChangeLocation } from './undo/UndoableChangeLocation';
 import { DEFAULT_ADDRESS } from './constants';
 import { usePrimitiveStore } from './stores/commonPrimitive';
@@ -75,6 +75,18 @@ const ModelsMapWrapper = ({
     // TODO: This doesn't seem to work
     containerRef.current?.focus();
   }, []);
+
+  useEffect(() => {
+    if (selectedAuthor) authorModelsRef.current = peopleModels.get(selectedAuthor);
+  }, [peopleModels]);
+
+  const selectAuthor = (author: string | undefined) => {
+    setSelectedAuthor(author);
+    usePrimitiveStore.setState((state) => {
+      if (!state.showScoreboard) state.scoreboardFlag = !state.scoreboardFlag;
+      if (author) authorModelsRef.current = peopleModels.get(author);
+    });
+  };
 
   const { isLoaded, loadError } = useJsApiLoader({
     id: 'google-map-script',
@@ -145,11 +157,6 @@ const ModelsMapWrapper = ({
     return count;
   }, [modelSites]);
 
-  const selectAuthor = (author: string | undefined) => {
-    setSelectedAuthor(author);
-    if (author) authorModelsRef.current = peopleModels.get(author);
-  };
-
   return (
     <Container
       ref={containerRef}
@@ -218,7 +225,7 @@ const ModelsMapWrapper = ({
           <Drawer
             mask={false}
             headerStyle={{ height: '10px', background: 'whitesmoke' }}
-            bodyStyle={{ padding: '0px 4px 0px 4px' }}
+            bodyStyle={{ padding: '0px 4px 0px 4px', overflowY: 'hidden' }}
             title={
               selectedAuthor +
               ': ' +
@@ -256,22 +263,50 @@ const ModelsMapWrapper = ({
                               key={index}
                               style={selectedModel === m ? { border: '2px solid red' } : { border: 'none' }}
                             >
-                              <img
-                                alt={m.label}
-                                title={m.label}
-                                src={m.thumbnailUrl}
-                                style={{ cursor: 'pointer' }}
-                                onClick={() => {
-                                  setSelectedModel(m);
-                                  setCommonStore((state) => {
-                                    if (m) {
-                                      state.modelsMapLatitude = m.latitude;
-                                      state.modelsMapLongitude = m.longitude;
-                                      state.modelsMapZoom = 17;
-                                    }
-                                  });
-                                }}
-                              />
+                              <div style={{ display: 'block' }}>
+                                <img
+                                  alt={m.label}
+                                  title={m.label}
+                                  src={m.thumbnailUrl}
+                                  style={{ cursor: 'pointer', borderRadius: '10px' }}
+                                  onClick={() => {
+                                    setSelectedModel(m);
+                                    setCommonStore((state) => {
+                                      if (m) {
+                                        state.modelsMapLatitude = m.latitude;
+                                        state.modelsMapLongitude = m.longitude;
+                                        state.modelsMapZoom = 17;
+                                      }
+                                    });
+                                  }}
+                                />
+                                <img
+                                  alt={m.type}
+                                  src={getIconUrl(m)}
+                                  style={{
+                                    position: 'relative',
+                                    left: '8px',
+                                    bottom: '28px',
+                                    width: '16px',
+                                    height: '16px',
+                                  }}
+                                />
+                                <label
+                                  style={{
+                                    position: 'relative',
+                                    left: '16px',
+                                    bottom: '24px',
+                                    color: 'white',
+                                    fontSize: '8px',
+                                  }}
+                                >
+                                  {m.label
+                                    ? m.label.length > 30
+                                      ? m.label.substring(0, 30) + '...'
+                                      : m.label
+                                    : 'Unknown'}
+                                </label>
+                              </div>
                             </td>
                           );
                         }
@@ -323,7 +358,8 @@ const ModelsMapWrapper = ({
                           <label
                             style={{ cursor: 'pointer' }}
                             onClick={() => {
-                              selectAuthor(key);
+                              setSelectedAuthor(key);
+                              authorModelsRef.current = peopleModels.get(key);
                             }}
                           >
                             {key}

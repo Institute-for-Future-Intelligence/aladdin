@@ -1478,6 +1478,7 @@ export const i18n_tr = {
       FromOldestToNewest: 'From oldest to newest',
       FromNewestToOldest: 'From newest to oldest',
       ModelsFoundOnThisSite: 'models found on this site',
+      ShowModelsPublishedByThisAuthor: 'Show the models published by this author',
     },
   },
 };

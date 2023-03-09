@@ -1455,6 +1455,7 @@ export const i18n_zh_tw = {
       FromOldestToNewest: '從早到晚',
       FromNewestToOldest: '從晚到早',
       ModelsFoundOnThisSite: '個模型在此位置',
+      ShowModelsPublishedByThisAuthor: '展示此用戶發布的模型',
     },
   },
 };
