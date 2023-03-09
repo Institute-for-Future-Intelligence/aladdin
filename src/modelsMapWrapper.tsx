@@ -259,16 +259,17 @@ const ModelsMapWrapper = ({
                           const m = authorModelsRef.current.get(key);
                           if (!m) return null;
                           return (
-                            <td
-                              key={index}
-                              style={selectedModel === m ? { border: '2px solid red' } : { border: 'none' }}
-                            >
+                            <td key={index}>
                               <div style={{ display: 'block' }}>
                                 <img
                                   alt={m.label}
                                   title={m.label}
                                   src={m.thumbnailUrl}
-                                  style={{ cursor: 'pointer', borderRadius: '10px' }}
+                                  style={{
+                                    cursor: 'pointer',
+                                    borderRadius: selectedModel === m ? '0' : '10px',
+                                    border: selectedModel === m ? '2px solid red' : 'none',
+                                  }}
                                   onClick={() => {
                                     setSelectedModel(m);
                                     setCommonStore((state) => {
@@ -291,7 +292,7 @@ const ModelsMapWrapper = ({
                                     height: '16px',
                                   }}
                                 />
-                                <label
+                                <span
                                   style={{
                                     position: 'relative',
                                     left: '16px',
@@ -305,7 +306,7 @@ const ModelsMapWrapper = ({
                                       ? m.label.substring(0, 30) + '...'
                                       : m.label
                                     : 'Unknown'}
-                                </label>
+                                </span>
                               </div>
                             </td>
                           );
@@ -355,7 +356,7 @@ const ModelsMapWrapper = ({
                       >
                         <td style={{ width: '120px' }}>
                           <UserOutlined style={{ marginRight: '4px', fontSize: '10px' }} />
-                          <label
+                          <span
                             style={{ cursor: 'pointer' }}
                             onClick={() => {
                               setSelectedAuthor(key);
@@ -363,7 +364,7 @@ const ModelsMapWrapper = ({
                             }}
                           >
                             {key}
-                          </label>
+                          </span>
                         </td>
                         <td>{a?.size}</td>
                       </tr>
@@ -482,11 +483,11 @@ const ModelsMapWrapper = ({
               }}
             >
               {mapWeatherStations ? (
-                <label title={i18n.t('mapPanel.WeatherStationsNote', lang)}>
+                <span title={i18n.t('mapPanel.WeatherStationsNote', lang)}>
                   {i18n.t('mapPanel.WeatherStations', lang)}
-                </label>
+                </span>
               ) : (
-                <label>{i18n.t('mapPanel.WeatherStations', lang)}</label>
+                <span>{i18n.t('mapPanel.WeatherStations', lang)}</span>
               )}
             </Checkbox>
           </Space>

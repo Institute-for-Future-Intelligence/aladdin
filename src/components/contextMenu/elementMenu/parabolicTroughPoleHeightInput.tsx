@@ -267,13 +267,13 @@ const ParabolicTroughPoleHeightInput = ({ setDialogVisible }: { setDialogVisible
             onMouseOut={() => setDragEnabled(false)}
           >
             {i18n.t('solarCollectorMenu.ExtraPoleHeightInAdditionToHalfWidth', lang)}
-            <label style={{ color: 'red', fontWeight: 'bold' }}>
+            <span style={{ color: 'red', fontWeight: 'bold' }}>
               {rejectRef.current
                 ? ': ' +
                   i18n.t('message.NotApplicableToSelectedAction', lang) +
                   (rejectedValue.current !== undefined ? ' (' + rejectedValue.current.toFixed(1) + ')' : '')
                 : ''}
-            </label>
+            </span>
           </div>
         }
         footer={[

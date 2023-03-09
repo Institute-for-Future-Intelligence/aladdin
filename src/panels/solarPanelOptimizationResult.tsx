@@ -331,7 +331,7 @@ const SolarPanelOptimizationResult = () => {
                   }}
                 />
               )}
-              {!buttonEnabled && <label>{hint}</label>}
+              {!buttonEnabled && <span>{hint}</span>}
               <Button
                 type="default"
                 icon={<SaveOutlined />}

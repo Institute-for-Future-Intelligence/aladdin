@@ -56,19 +56,19 @@ const InstructionPanel = () => {
     <Container>
       <ColumnWrapper style={{ color: color, fontSize: '9px' }}>
         {!orthographic && (
-          <label>
+          <span>
             <b>{i18n.t('instructionPanel.Rotate', lang)}</b>: {i18n.t('instructionPanel.DragMouse', lang)}
-          </label>
+          </span>
         )}
-        <label>
+        <span>
           <b>{i18n.t('instructionPanel.Zoom', lang)}</b>: {i18n.t('instructionPanel.MouseWheelOrKeys', lang)}
-        </label>
-        <label>
+        </span>
+        <span>
           <b>{i18n.t('instructionPanel.Pan', lang)}</b>: {i18n.t('instructionPanel.HoldCtrlDragMouse', lang)}
-        </label>
-        <label>
+        </span>
+        <span>
           <b>{i18n.t('instructionPanel.Toggle2D3D', lang)}</b>: {i18n.t('word.Press', lang)} {isMac ? '⌘' : 'Ctrl'}+B
-        </label>
+        </span>
       </ColumnWrapper>
     </Container>
   );

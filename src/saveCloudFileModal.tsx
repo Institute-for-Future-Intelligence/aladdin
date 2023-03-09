@@ -83,7 +83,7 @@ const SaveCloudFileModal = ({
       )}
     >
       <Space direction={'horizontal'}>
-        <label>{i18n.t('word.Title', lang)}:</label>
+        <span>{i18n.t('word.Title', lang)}:</span>
         <Input
           style={{ width: '400px' }}
           placeholder="Title"

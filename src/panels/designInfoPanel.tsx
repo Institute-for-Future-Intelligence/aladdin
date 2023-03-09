@@ -111,7 +111,7 @@ const DesignInfoPanel = ({}: DesignInfoPanelProps) => {
                 width={36}
                 style={{ paddingLeft: '10px', cursor: 'pointer', filter: 'invert(100%) ' }}
               />
-              <label>{solarPanelCount}</label>
+              <span>{solarPanelCount}</span>
             </>
           )}
           {heliostatCount > 0 && (
@@ -129,7 +129,7 @@ const DesignInfoPanel = ({}: DesignInfoPanelProps) => {
                   filter: 'invert(100%) ',
                 }}
               />
-              <label>{heliostatCount}</label>
+              <span>{heliostatCount}</span>
             </>
           )}
           {solarPanelDailyYield > 0 && (
@@ -149,7 +149,7 @@ const DesignInfoPanel = ({}: DesignInfoPanelProps) => {
                   verticalAlign: 'middle',
                 }}
               />
-              <label>{solarPanelDailyYield.toFixed(1) + ' ' + i18n.t('word.kWh', lang)}</label>
+              <span>{solarPanelDailyYield.toFixed(1) + ' ' + i18n.t('word.kWh', lang)}</span>
             </>
           )}
           {!selectedElement && (
@@ -169,7 +169,7 @@ const DesignInfoPanel = ({}: DesignInfoPanelProps) => {
                   verticalAlign: 'middle',
                 }}
               />
-              <label>{sceneRadius * 2 + ' ' + i18n.t('word.MeterAbbreviation', lang)}</label>
+              <span>{sceneRadius * 2 + ' ' + i18n.t('word.MeterAbbreviation', lang)}</span>
             </>
           )}
         </Space>

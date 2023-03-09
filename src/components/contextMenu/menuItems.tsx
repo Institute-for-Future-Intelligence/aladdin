@@ -52,7 +52,7 @@ export const Paste = ({ paddingLeft = '36px', keyName }: { paddingLeft?: string;
   return (
     <Menu.Item key={keyName} onClick={paste} style={{ paddingLeft: paddingLeft }}>
       {i18n.t('word.Paste', { lng: language })}
-      <label style={{ paddingLeft: '4px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+V)</label>
+      <span style={{ paddingLeft: '4px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+V)</span>
     </Menu.Item>
   );
 };
@@ -84,7 +84,7 @@ export const Copy = ({ paddingLeft = '36px', keyName }: { paddingLeft?: string; 
   return (
     <Menu.Item key={keyName} onClick={copyElement} style={{ paddingLeft: paddingLeft }}>
       {i18n.t('word.Copy', { lng: language })}
-      <label style={{ paddingLeft: '4px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+C)</label>
+      <span style={{ paddingLeft: '4px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+C)</span>
     </Menu.Item>
   );
 };
@@ -133,7 +133,7 @@ export const Cut = ({ paddingLeft = '36px', keyName }: { paddingLeft?: string; k
   return (
     <Menu.Item key={keyName} onClick={cut} style={{ paddingLeft: paddingLeft }}>
       {i18n.t('word.Cut', { lng: language })}
-      <label style={{ paddingLeft: '4px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+X)</label>
+      <span style={{ paddingLeft: '4px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+X)</span>
     </Menu.Item>
   );
 };

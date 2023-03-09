@@ -194,9 +194,9 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
           <Header className="handle" style={{ direction: 'ltr' }}>
             <span>
               {i18n.t('sensorPanel.LightSensor', lang) + ': '}
-              <label style={{ fontSize: '10px' }}>
+              <span style={{ fontSize: '10px' }}>
                 {i18n.t('sensorPanel.WeatherDataFrom', lang) + ' ' + city + ' | ' + moment(now).format('MM/DD')}
-              </label>
+              </span>
             </span>
             <span
               style={{ cursor: 'pointer' }}

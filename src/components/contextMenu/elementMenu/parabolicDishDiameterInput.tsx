@@ -292,13 +292,13 @@ const ParabolicDishDiameterInput = ({ setDialogVisible }: { setDialogVisible: (b
             onMouseOut={() => setDragEnabled(false)}
           >
             {i18n.t('parabolicDishMenu.RimDiameter', lang)}
-            <label style={{ color: 'red', fontWeight: 'bold' }}>
+            <span style={{ color: 'red', fontWeight: 'bold' }}>
               {rejectRef.current
                 ? ': ' +
                   i18n.t('message.NotApplicableToSelectedAction', lang) +
                   (rejectedValue.current !== undefined ? ' (' + rejectedValue.current.toFixed(2) + ')' : '')
                 : ''}
-            </label>
+            </span>
           </div>
         }
         footer={[

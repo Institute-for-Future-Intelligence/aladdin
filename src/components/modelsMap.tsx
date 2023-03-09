@@ -486,11 +486,11 @@ const ModelsMap = ({ selectAuthor, closeMap, openModel, deleteModel, likeModel, 
                       }}
                     />
                   )}
-                  <label style={{ fontSize: '10px' }}>
+                  <span style={{ fontSize: '10px' }}>
                     {selectedSite.size} {i18n.t('modelsMap.ModelsFoundOnThisSite', { lng: language })}
-                  </label>
+                  </span>
                   {selectedLocation && (
-                    <label style={{ fontSize: '10px' }}>
+                    <span style={{ fontSize: '10px' }}>
                       &nbsp;&mdash;{' '}
                       {i18n.t('word.Coordinates', { lng: language }) +
                         ': (' +
@@ -498,7 +498,7 @@ const ModelsMap = ({ selectAuthor, closeMap, openModel, deleteModel, likeModel, 
                         '°, ' +
                         selectedLocation.lng().toFixed(LAT_LNG_FRACTION_DIGITS) +
                         '°)'}
-                    </label>
+                    </span>
                   )}
                 </div>
               ) : (
@@ -534,14 +534,14 @@ const ModelsMap = ({ selectAuthor, closeMap, openModel, deleteModel, likeModel, 
                           )}
                           {m.address ?? 'Unknown'}
                           {selectedSite.size === 1 && (
-                            <label style={{ fontSize: '10px', display: 'block', paddingTop: '10px' }}>
+                            <span style={{ fontSize: '10px', display: 'block', paddingTop: '10px' }}>
                               {i18n.t('word.Coordinates', { lng: language }) +
                                 ': (' +
                                 selectedLocation.lat().toFixed(LAT_LNG_FRACTION_DIGITS) +
                                 '°, ' +
                                 selectedLocation.lng().toFixed(LAT_LNG_FRACTION_DIGITS) +
                                 '°)'}
-                            </label>
+                            </span>
                           )}
                         </div>
                       )}
@@ -578,7 +578,7 @@ const ModelsMap = ({ selectAuthor, closeMap, openModel, deleteModel, likeModel, 
                               <div>
                                 {m.description && m.description.trim() !== '' ? m.description : ''}
                                 &nbsp;&mdash;&nbsp; By{' '}
-                                <label
+                                <span
                                   style={{ cursor: 'pointer' }}
                                   title={i18n.t('modelsMap.ShowModelsPublishedByThisAuthor', { lng: language })}
                                   onClick={() => {
@@ -588,7 +588,7 @@ const ModelsMap = ({ selectAuthor, closeMap, openModel, deleteModel, likeModel, 
                                   {!m.author || m.author === ''
                                     ? i18n.t('word.Anonymous', { lng: language })
                                     : m.author}
-                                </label>
+                                </span>
                                 ,&nbsp;
                                 {m.timeCreated && <ReactTimeago date={new Date(m.timeCreated)} />}
                               </div>

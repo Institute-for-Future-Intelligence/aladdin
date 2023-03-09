@@ -162,7 +162,7 @@ const PublishedModelsPanel = ({ publishedModels, openCloudFile }: PublishedModel
                 title={i18n.t('word.Title', lang)}
                 key="title"
                 render={(text, record: any) => (
-                  <label
+                  <span
                     key={record}
                     style={{ cursor: 'pointer' }}
                     onClick={() => {
@@ -175,7 +175,7 @@ const PublishedModelsPanel = ({ publishedModels, openCloudFile }: PublishedModel
                     }}
                   >
                     {record}
-                  </label>
+                  </span>
                 )}
               />
             </Table>

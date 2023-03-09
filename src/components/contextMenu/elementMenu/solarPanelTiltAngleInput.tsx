@@ -403,7 +403,7 @@ const SolarPanelTiltAngleInput = ({
             onMouseOut={() => setDragEnabled(false)}
           >
             {i18n.t('solarPanelMenu.TiltAngle', lang)}
-            <label style={{ color: 'red', fontWeight: 'bold' }}>
+            <span style={{ color: 'red', fontWeight: 'bold' }}>
               {rejectRef.current
                 ? ': ' +
                   i18n.t('message.NotApplicableToSelectedAction', lang) +
@@ -411,7 +411,7 @@ const SolarPanelTiltAngleInput = ({
                     ? ' (' + Util.toDegrees(rejectedValue.current).toFixed(1) + '°)'
                     : '')
                 : ''}
-            </label>
+            </span>
           </div>
         }
         footer={[

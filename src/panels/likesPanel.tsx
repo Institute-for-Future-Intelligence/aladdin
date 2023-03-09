@@ -161,7 +161,7 @@ const LikesPanel = ({ likesArray, openCloudFile }: LikesPanelProps) => {
                 title={i18n.t('word.Title', lang)}
                 key="title"
                 render={(text, record: any) => (
-                  <label
+                  <span
                     key={record}
                     style={{ cursor: 'pointer' }}
                     onClick={() => {
@@ -176,7 +176,7 @@ const LikesPanel = ({ likesArray, openCloudFile }: LikesPanelProps) => {
                     }}
                   >
                     {(record as string).substring(0, (record as string).lastIndexOf(', '))}
-                  </label>
+                  </span>
                 )}
               />
             </Table>

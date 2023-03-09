@@ -312,14 +312,14 @@ const AccountSettingsPanel = ({ openCloudFile }: { openCloudFile: (userid: strin
                 {i18n.t('accountSettingsPanel.Published', lang)}
               </Col>
               <Col className="gutter-row" span={18}>
-                <label
+                <span
                   style={{ cursor: 'pointer' }}
                   onClick={() => {
                     setPrimitiveStore('showPublishedModelsPanel', true);
                   }}
                 >
                   {user.published?.length ?? 0}
-                </label>
+                </span>
               </Col>
             </Row>
 
@@ -328,14 +328,14 @@ const AccountSettingsPanel = ({ openCloudFile }: { openCloudFile: (userid: strin
                 {i18n.t('accountSettingsPanel.Likes', lang)}
               </Col>
               <Col className="gutter-row" span={18}>
-                <label
+                <span
                   style={{ cursor: 'pointer' }}
                   onClick={() => {
                     setPrimitiveStore('showLikesPanel', true);
                   }}
                 >
                   {user.likes?.length ?? 0}
-                </label>
+                </span>
               </Col>
             </Row>
 

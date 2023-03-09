@@ -442,7 +442,7 @@ const SolarPanelOrientationSelection = ({ setDialogVisible }: { setDialogVisible
             onMouseOut={() => setDragEnabled(false)}
           >
             {i18n.t('solarPanelMenu.Orientation', lang)}
-            <label style={{ color: 'red', fontWeight: 'bold' }}>
+            <span style={{ color: 'red', fontWeight: 'bold' }}>
               {rejectRef.current
                 ? ': ' +
                   i18n.t('message.NotApplicableToSelectedAction', lang) +
@@ -454,7 +454,7 @@ const SolarPanelOrientationSelection = ({ setDialogVisible }: { setDialogVisible
                       ')'
                     : '')
                 : ''}
-            </label>
+            </span>
           </div>
         }
         footer={[

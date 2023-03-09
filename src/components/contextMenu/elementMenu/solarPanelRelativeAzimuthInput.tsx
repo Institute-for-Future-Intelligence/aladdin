@@ -417,7 +417,7 @@ const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible
             onMouseOut={() => setDragEnabled(false)}
           >
             {i18n.t('solarCollectorMenu.RelativeAzimuth', lang)}
-            <label style={{ color: 'red', fontWeight: 'bold' }}>
+            <span style={{ color: 'red', fontWeight: 'bold' }}>
               {rejectRef.current
                 ? ': ' +
                   i18n.t('message.NotApplicableToSelectedAction', lang) +
@@ -425,7 +425,7 @@ const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible
                     ? ' (' + Util.toDegrees(rejectedValue.current).toFixed(1) + '°)'
                     : '')
                 : ''}
-            </label>
+            </span>
           </div>
         }
         footer={[

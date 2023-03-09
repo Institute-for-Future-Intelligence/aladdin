@@ -215,7 +215,7 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
       <Row gutter={6} style={{ paddingBottom: '4px' }}>
         <Col className="gutter-row" span={8}>
           {i18n.t('word.Description', lang)}:<br />
-          <label style={{ fontSize: '10px' }}>({i18n.t('word.MaximumCharacters', lang)}: 200)</label>
+          <span style={{ fontSize: '10px' }}>({i18n.t('word.MaximumCharacters', lang)}: 200)</span>
         </Col>
         <Col className="gutter-row" span={16}>
           <TextArea

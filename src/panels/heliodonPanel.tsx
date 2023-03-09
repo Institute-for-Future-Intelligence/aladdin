@@ -330,7 +330,7 @@ const HeliodonPanel = () => {
             </div>
             {heliodon && (
               <div>
-                <label style={{ fontSize: '10px' }}>{i18n.t('heliodonPanel.SunAngles', lang)}</label>
+                <span style={{ fontSize: '10px' }}>{i18n.t('heliodonPanel.SunAngles', lang)}</span>
                 <br />
                 <Switch
                   checked={showSunAngles}
@@ -390,7 +390,7 @@ const HeliodonPanel = () => {
                 </div>
                 {animateSun && (
                   <div>
-                    <label style={{ fontSize: '10px' }}>{i18n.t('heliodonPanel.TwentyFourHours', lang)}</label>
+                    <span style={{ fontSize: '10px' }}>{i18n.t('heliodonPanel.TwentyFourHours', lang)}</span>
                     <br />
                     <Switch
                       checked={animate24Hours}

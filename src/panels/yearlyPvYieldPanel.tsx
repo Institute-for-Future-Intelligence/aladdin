@@ -242,9 +242,9 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
           <Header className="handle" style={{ direction: 'ltr' }}>
             <span>
               {i18n.t('solarPanelYieldPanel.SolarPanelYearlyYield', lang) + ': '}
-              <label style={{ fontSize: '10px' }}>
+              <span style={{ fontSize: '10px' }}>
                 {i18n.t('sensorPanel.WeatherDataFrom', lang) + ' ' + city + ' | ' + now.getFullYear()}
-              </label>
+              </span>
             </span>
             <span
               style={{ cursor: 'pointer' }}

@@ -235,9 +235,9 @@ const YearlyFresnelReflectorYieldPanel = ({ city }: YearlyFresnelReflectorYieldP
           <Header className="handle" style={{ direction: 'ltr' }}>
             <span>
               {i18n.t('fresnelReflectorYieldPanel.FresnelReflectorYearlyYield', lang) + ': '}
-              <label style={{ fontSize: '10px' }}>
+              <span style={{ fontSize: '10px' }}>
                 {i18n.t('sensorPanel.WeatherDataFrom', lang) + ' ' + city + ' | ' + now.getFullYear()}
-              </label>
+              </span>
             </span>
             <span
               style={{ cursor: 'pointer' }}

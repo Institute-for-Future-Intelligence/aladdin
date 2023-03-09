@@ -329,7 +329,7 @@ const MainToolBarButtons = () => {
   const dropdownButton = (overlay: JSX.Element) => {
     return (
       <Dropdown overlay={overlay} trigger={['click']}>
-        <label
+        <span
           title={i18n.t('toolbar.ClickForMoreButtons', lang)}
           style={{
             cursor: 'pointer',
@@ -343,7 +343,7 @@ const MainToolBarButtons = () => {
           }}
         >
           ▼
-        </label>
+        </span>
       </Dropdown>
     );
   };

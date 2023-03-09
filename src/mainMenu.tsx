@@ -791,7 +791,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               }}
             >
               {i18n.t('menu.file.CreateNewFile', lang)}
-              <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+F)</label>
+              <span style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+F)</span>
             </Menu.Item>
           )}
 
@@ -818,7 +818,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               }}
             >
               {i18n.t('menu.file.OpenLocalFile', lang)}
-              <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+O)</label>...
+              <span style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+O)</span>...
             </Menu.Item>
           )}
 
@@ -837,7 +837,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             }}
           >
             {i18n.t('menu.file.SaveAsLocalFile', lang)}
-            <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+S)</label>...
+            <span style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+S)</span>...
           </Menu.Item>
 
           {user.uid && !viewOnly && (
@@ -857,7 +857,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               }}
             >
               {i18n.t('menu.file.OpenCloudFile', lang)}
-              <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+Shift+O)</label>...
+              <span style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+Shift+O)</span>...
             </Menu.Item>
           )}
 
@@ -877,7 +877,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               }}
             >
               {i18n.t('menu.file.SaveCloudFile', lang)}
-              <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+Shift+S)</label>
+              <span style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+Shift+S)</span>
             </Menu.Item>
           )}
 
@@ -922,19 +922,19 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           {selectedElement && (
             <Menu.Item key="copy" onClick={copySelectedElement}>
               {i18n.t('word.Copy', lang)}
-              <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+C)</label>
+              <span style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+C)</span>
             </Menu.Item>
           )}
           {selectedElement && (
             <Menu.Item key="cut" onClick={cutSelectedElement}>
               {i18n.t('word.Cut', lang)}
-              <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+X)</label>
+              <span style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+X)</span>
             </Menu.Item>
           )}
           {readyToPaste && (
             <Menu.Item key="paste" onClick={pasteSelectedElement}>
               {i18n.t('word.Paste', lang)}
-              <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+V)</label>
+              <span style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+V)</span>
             </Menu.Item>
           )}
           {undoManager.hasUndo() && (
@@ -957,7 +957,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               }}
             >
               {i18n.t('menu.edit.Undo', lang) + ': ' + undoManager.getLastUndoName()}
-              <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+Z)</label>
+              <span style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+Z)</span>
             </Menu.Item>
           )}
           {undoManager.hasRedo() && (
@@ -980,7 +980,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               }}
             >
               {i18n.t('menu.edit.Redo', lang) + ': ' + undoManager.getLastRedoName()}
-              <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+Y)</label>
+              <span style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+Y)</span>
             </Menu.Item>
           )}
         </SubMenu>
@@ -1035,7 +1035,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               style={{ paddingLeft: '36px' }}
             >
               {i18n.t('menu.view.ResetView', lang)}
-              <label style={{ paddingLeft: '2px', fontSize: 9 }}>({keyHome})</label>
+              <span style={{ paddingLeft: '2px', fontSize: 9 }}>({keyHome})</span>
             </Menu.Item>
           )}
           <Menu.Item
@@ -1046,7 +1046,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             style={{ paddingLeft: '36px' }}
           >
             {i18n.t('menu.view.ZoomOut', lang)}
-            <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+])</label>
+            <span style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+])</span>
           </Menu.Item>
           <Menu.Item
             key={'zoom-in-view'}
@@ -1056,19 +1056,19 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             style={{ paddingLeft: '36px' }}
           >
             {i18n.t('menu.view.ZoomIn', lang)}
-            <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+[)</label>
+            <span style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+[)</span>
           </Menu.Item>
           <Menu.Item key={'orthographic-check-box'}>
             <Checkbox checked={orthographic} onChange={toggle2DView}>
               {i18n.t('menu.view.TwoDimensionalView', lang)}
-              <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+B)</label>
+              <span style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+B)</span>
             </Checkbox>
           </Menu.Item>
           {!orthographic && (
             <Menu.Item key={'auto-rotate-check-box'}>
               <Checkbox checked={autoRotate} onChange={toggleAutoRotate}>
                 {i18n.t('menu.view.AutoRotate', lang)}
-                <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+M)</label>
+                <span style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+M)</span>
               </Checkbox>
             </Menu.Item>
           )}
@@ -2327,9 +2327,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         <MainMenuContainer>
           <StyledImage src={logo} title={i18n.t('tooltip.clickToOpenMenu', lang)} />
           <LabelContainer>
-            <label style={{ fontSize: '10px', alignContent: 'center', cursor: 'pointer' }}>
+            <span style={{ fontSize: '10px', alignContent: 'center', cursor: 'pointer' }}>
               {i18n.t('menu.mainMenu', lang)}
-            </label>
+            </span>
           </LabelContainer>
         </MainMenuContainer>
       </Dropdown>
