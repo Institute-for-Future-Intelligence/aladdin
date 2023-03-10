@@ -74,7 +74,6 @@ export interface PublishedModelsPanelProps {
 const PublishedModelsPanel = ({ publishedModels, openCloudFile }: PublishedModelsPanelProps) => {
   const language = useStore(Selector.language);
   const user = useStore(Selector.user);
-  const setCommonStore = useStore(Selector.set);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -167,7 +166,7 @@ const PublishedModelsPanel = ({ publishedModels, openCloudFile }: PublishedModel
                     style={{ cursor: 'pointer' }}
                     onClick={() => {
                       if (user.uid) {
-                        setCommonStore((state) => {
+                        usePrimitiveStore.setState((state) => {
                           state.openModelsMap = false;
                         });
                         openCloudFile(user.uid, record);

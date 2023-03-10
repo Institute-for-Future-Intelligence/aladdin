@@ -536,6 +536,7 @@ export const i18n_zh_cn = {
     },
 
     avatarMenu: {
+      MyModelsGallery: '我的模型画廊',
       AccountSettings: '账号设定',
       PrivacyInfo:
         '登录需要采用您的谷歌ID建立或进入您的阿拉丁账户。\n我们只储存一个随机的字符串作为您的ID。\n任何关于您的可辨识的个人信息都没有被收集。\n详情请参考我们的隐私声明：\nhttps://intofuture.org/aladdin-privacy.html',
@@ -1451,6 +1452,7 @@ export const i18n_zh_cn = {
       Justin: '贾斯汀',
     },
     modelsMap: {
+      MyModels: '我的模型',
       TotalNumberOfUserPublishedModels: '用户发布的模型总数',
       FromOldestToNewest: '从早到晚',
       FromNewestToOldest: '从晚到早',

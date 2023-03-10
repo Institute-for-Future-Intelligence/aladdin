@@ -25,6 +25,7 @@ import { HOME_URL } from './constants';
 import ModelsMapWrapper from './modelsMapWrapper';
 import MainToolBar from './mainToolBar';
 import SaveCloudFileModal from './saveCloudFileModal';
+import ModelsGallery from './modelsGallery';
 
 export interface CloudManagerProps {
   viewOnly: boolean;
@@ -33,6 +34,7 @@ export interface CloudManagerProps {
 
 const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const setCommonStore = useStore(Selector.set);
+  const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const language = useStore(Selector.language);
   const user = useStore(Selector.user);
   const latitude = useStore(Selector.world.latitude);
@@ -41,8 +43,9 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const countryCode = useStore(Selector.world.countryCode);
   const exportContent = useStore(Selector.exportContent);
   const showCloudFilePanel = usePrimitiveStore(Selector.showCloudFilePanel);
+  const showModelsGallery = usePrimitiveStore(Selector.showModelsGallery);
   const showAccountSettingsPanel = usePrimitiveStore(Selector.showAccountSettingsPanel);
-  const openModelsMap = useStore(Selector.openModelsMap);
+  const openModelsMap = usePrimitiveStore(Selector.openModelsMap);
   const cloudFile = useStore(Selector.cloudFile);
   const saveCloudFileFlag = useStore(Selector.saveCloudFileFlag);
   const modelsMapFlag = usePrimitiveStore(Selector.modelsMapFlag);
@@ -56,6 +59,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const changed = useStore(Selector.changed);
   const localContentToImportAfterCloudFileUpdate = useStore(Selector.localContentToImportAfterCloudFileUpdate);
   const undoManager = useStore(Selector.undoManager);
+  const peopleModels = useStore(Selector.peopleModels);
 
   const [loading, setLoading] = useState(false);
   const [updateFlag, setUpdateFlag] = useState(false);
@@ -63,6 +67,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const [title, setTitle] = useState<string>(cloudFile ?? 'My Aladdin File');
   const [titleDialogVisible, setTitleDialogVisible] = useState(false);
   const cloudFiles = useRef<CloudFileInfo[] | void>();
+  const authorModelsRef = useRef<Map<string, ModelSite>>();
   const firstCallUpdateCloudFile = useRef<boolean>(true);
   const firstCallFetchModels = useRef<boolean>(true);
   const firstCallFetchScoreboard = useRef<boolean>(true);
@@ -145,6 +150,22 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     //  but we need this for the code to work.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cloudFiles.current]);
+
+  useEffect(() => {
+    authorModelsRef.current = new Map();
+    if (user.aliases && user.aliases.length > 0) {
+      for (const a of user.aliases) {
+        if (a !== user.displayName) {
+          const m = peopleModels.get(a);
+          if (m) authorModelsRef.current = new Map([...authorModelsRef.current, ...m]);
+        }
+      }
+    }
+    if (user.displayName) {
+      const m = peopleModels.get(user.displayName);
+      if (m) authorModelsRef.current = new Map([...authorModelsRef.current, ...m]);
+    }
+  }, [peopleModels, user.displayName, user.aliases]);
 
   useEffect(() => {
     if (firstCallUpdateCloudFile.current) {
@@ -264,6 +285,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     let classID = ClassID.UNKNOWN;
     let likes: string[] = [];
     let published: string[] = [];
+    let aliases: string[] = [];
     const found = await firestore
       .collection('users')
       .get()
@@ -278,6 +300,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
             classID = docData.classID ? (docData.classID as ClassID) : ClassID.UNKNOWN;
             if (docData.likes) likes = docData.likes;
             if (docData.published) published = docData.published;
+            if (docData.aliases) aliases = docData.aliases;
             return true;
           }
         }
@@ -291,6 +314,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
         state.user.classID = classID;
         state.user.likes = likes;
         state.user.published = published;
+        state.user.aliases = aliases;
       });
       usePrimitiveStore.setState((state) => {
         state.userCount = userCount;
@@ -301,6 +325,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       user.classID = classID;
       user.likes = likes;
       user.published = published;
+      user.aliases = aliases;
     } else {
       if (user.uid) {
         firestore
@@ -338,11 +363,13 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           state.user.signFile = false;
           state.user.likes = [];
           state.user.published = [];
+          state.user.aliases = [];
           state.cloudFile = undefined; // if there is a current cloud file
         });
         usePrimitiveStore.setState((state) => {
           state.showCloudFilePanel = false;
           state.showAccountSettingsPanel = false;
+          state.showModelsGallery = false;
         });
       })
       .catch((error) => {
@@ -559,10 +586,16 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           .firestore()
           .collection('users')
           .doc(user.uid)
-          .update({
-            published: firebase.firestore.FieldValue.arrayUnion(title),
-            aliases: firebase.firestore.FieldValue.arrayUnion(useStore.getState().modelAuthor),
-          })
+          .update(
+            useStore.getState().modelAuthor === user.displayName
+              ? {
+                  published: firebase.firestore.FieldValue.arrayUnion(title),
+                }
+              : {
+                  published: firebase.firestore.FieldValue.arrayUnion(title),
+                  aliases: firebase.firestore.FieldValue.arrayUnion(useStore.getState().modelAuthor),
+                },
+          )
           .then(() => {
             // update the cache
             setCommonStore((state) => {
@@ -572,7 +605,11 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                   state.user.published.push(title);
                 }
                 if (!state.user.aliases) state.user.aliases = [];
-                if (state.modelAuthor && !state.user.aliases.includes(state.modelAuthor)) {
+                if (
+                  state.modelAuthor &&
+                  !state.user.aliases.includes(state.modelAuthor) &&
+                  state.modelAuthor !== user.displayName
+                ) {
                   state.user.aliases.push(state.modelAuthor);
                 }
               }
@@ -596,6 +633,22 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
         })
         .catch((error) => {
           showError(i18n.t('message.CannotDeleteModelFromMap', lang) + ': ' + error);
+        });
+      // remove the record from the scoreboard
+      firebase
+        .firestore()
+        .collection('board')
+        .doc('people')
+        .update({
+          [(model.author ?? 'Anonymous') + '.' + Util.getModelKey(model)]: firebase.firestore.FieldValue.delete(),
+        })
+        .then(() => {
+          // also remove the cached record
+          setCommonStore((state) => {
+            if (state.peopleModels) {
+              state.peopleModels.delete(Util.getModelKey(model));
+            }
+          });
         });
       // remove the record in the user's account
       firebase
@@ -1003,6 +1056,17 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           openCloudFile={openCloudFileWithSaveReminder}
           deleteCloudFile={deleteCloudFile}
           renameCloudFile={renameCloudFile}
+        />
+      )}
+      {showModelsGallery && (
+        <ModelsGallery
+          author={undefined}
+          models={authorModelsRef.current}
+          openCloudFile={openCloudFile}
+          close={() => {
+            setPrimitiveStore('showModelsGallery', false);
+            authorModelsRef.current = undefined;
+          }}
         />
       )}
       {showAccountSettingsPanel && <AccountSettingsPanel openCloudFile={openCloudFile} />}

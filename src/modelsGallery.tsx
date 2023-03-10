@@ -2,22 +2,23 @@
  * @Copyright 2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import i18n from './i18n/i18n';
-import { Affix, Drawer } from 'antd';
+import { Drawer } from 'antd';
 import { getIconUrl } from './components/modelsMap';
 import { ModelSite } from './types';
 
 export interface ModelsGalleryProps {
   author: string | undefined;
-  models: Map<string, ModelSite>;
-  openCloudFile: (model: ModelSite) => void;
+  models: Map<string, ModelSite> | undefined;
   close: () => void;
+  openCloudFile?: (userid: string, title: string) => void;
 }
 
-const ModelsGallery = ({ author, models, openCloudFile, close }: ModelsGalleryProps) => {
+const ModelsGallery = ({ author, models, close, openCloudFile }: ModelsGalleryProps) => {
+  const user = useStore(Selector.user);
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
 
@@ -25,17 +26,40 @@ const ModelsGallery = ({ author, models, openCloudFile, close }: ModelsGalleryPr
 
   const lang = { lng: language };
 
-  return (
+  const countModels = useMemo(() => {
+    if (!models) return 0;
+    let count = 0;
+    for (const v of models.values()) {
+      if (!author && v.userid !== user.uid) continue;
+      count++;
+    }
+    return count;
+  }, [models, author]);
+
+  return !models || models.size === undefined || models.size === 0 ? (
+    <Drawer
+      mask={false}
+      headerStyle={{ height: '10px', background: 'whitesmoke' }}
+      bodyStyle={{ padding: '0px 4px 0px 4px', overflowY: 'hidden' }}
+      title={(author ?? i18n.t('modelsMap.MyModels', lang)) + ': 0'}
+      placement="bottom"
+      visible={true}
+      height={'150px'}
+      onClose={() => {
+        close();
+      }}
+    />
+  ) : (
     <Drawer
       mask={false}
       headerStyle={{ height: '10px', background: 'whitesmoke' }}
       bodyStyle={{ padding: '0px 4px 0px 4px', overflowY: 'hidden' }}
       title={
-        (author ?? 'My Models') +
+        (author ?? i18n.t('modelsMap.MyModels', lang)) +
         ': ' +
-        models.size +
+        countModels +
         ' ' +
-        i18n.t((models.size ?? 0) > 1 ? 'word.Models' : 'word.Model', lang)
+        i18n.t((countModels ?? 0) > 1 ? 'word.Models' : 'word.Model', lang)
       }
       placement="bottom"
       visible={true}
@@ -50,30 +74,32 @@ const ModelsGallery = ({ author, models, openCloudFile, close }: ModelsGalleryPr
           <tr>
             {[...models.keys()]
               .sort((a, b) => {
-                if (!models) return 0;
                 const modelA = models.get(a);
                 const modelB = models.get(b);
                 if (!modelA || !modelB) return 0;
                 return (modelB.timeCreated ?? 0) - (modelA.timeCreated ?? 0);
               })
               .map((key: string, index: number) => {
-                if (models) {
-                  const m = models.get(key);
-                  if (!m) return null;
-                  return (
-                    <td key={index}>
-                      <div style={{ display: 'block', marginTop: '4px' }}>
-                        <img
-                          alt={m.label}
-                          title={m.label}
-                          src={m.thumbnailUrl}
-                          style={{
-                            cursor: 'pointer',
-                            borderRadius: selectedModel === m ? '0' : '10px',
-                            border: selectedModel === m ? '2px solid red' : 'none',
-                          }}
-                          onClick={() => {
-                            setSelectedModel(m);
+                const m = models.get(key);
+                if (!m) return null;
+                if (!author && m.userid !== user.uid) return null;
+                return (
+                  <td key={index}>
+                    <div style={{ display: 'block', marginTop: '4px' }}>
+                      <img
+                        alt={m.label}
+                        title={m.label}
+                        src={m.thumbnailUrl}
+                        style={{
+                          cursor: 'pointer',
+                          borderRadius: selectedModel === m ? '0' : '10px',
+                          border: selectedModel === m ? '2px solid red' : 'none',
+                        }}
+                        onClick={() => {
+                          setSelectedModel(m);
+                          if (openCloudFile) {
+                            openCloudFile(m.userid, m.title);
+                          } else {
                             setCommonStore((state) => {
                               if (m) {
                                 state.modelsMapLatitude = m.latitude;
@@ -81,38 +107,37 @@ const ModelsGallery = ({ author, models, openCloudFile, close }: ModelsGalleryPr
                                 state.modelsMapZoom = 17;
                               }
                             });
+                          }
+                        }}
+                      />
+                      <div>
+                        <img
+                          alt={m.type}
+                          src={getIconUrl(m)}
+                          style={{
+                            position: 'relative',
+                            left: '8px',
+                            bottom: '28px',
+                            width: '16px',
+                            height: '16px',
                           }}
                         />
-                        <Affix>
-                          <img
-                            alt={m.type}
-                            src={getIconUrl(m)}
-                            style={{
-                              position: 'relative',
-                              left: '8px',
-                              bottom: '28px',
-                              width: '16px',
-                              height: '16px',
-                            }}
-                          />
-                          <span
-                            style={{
-                              position: 'relative',
-                              left: '16px',
-                              bottom: '24px',
-                              color: 'white',
-                              fontSize: '8px',
-                              fontWeight: 'bold',
-                            }}
-                          >
-                            {m.label ? (m.label.length > 30 ? m.label.substring(0, 30) + '...' : m.label) : 'Unknown'}
-                          </span>
-                        </Affix>
+                        <span
+                          style={{
+                            position: 'relative',
+                            left: '16px',
+                            bottom: '24px',
+                            color: 'white',
+                            fontSize: '8px',
+                            fontWeight: 'bold',
+                          }}
+                        >
+                          {m.label ? (m.label.length > 30 ? m.label.substring(0, 30) + '...' : m.label) : 'Unknown'}
+                        </span>
                       </div>
-                    </td>
-                  );
-                }
-                return null;
+                    </div>
+                  </td>
+                );
               })}
           </tr>
         </tbody>

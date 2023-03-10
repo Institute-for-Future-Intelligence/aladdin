@@ -539,6 +539,7 @@ export const i18n_es = {
     },
 
     avatarMenu: {
+      MyModelsGallery: 'My Models Gallery',
       AccountSettings: 'Configuraciones de la cuenta',
       PrivacyInfo:
         'When you sign in, your Google ID is used to create and access your Aladdin account.\nOnly a random alphanumeric string is stored in our database as a reference.\nNo personally identifiable data such as your name or email is ever gathered.\nFor more information, see our Privacy Policy:\nhttps://intofuture.org/aladdin-privacy.html',
@@ -1474,6 +1475,7 @@ export const i18n_es = {
       Justin: 'Justin',
     },
     modelsMap: {
+      MyModels: 'My Models',
       TotalNumberOfUserPublishedModels: 'Total number of user-published models',
       FromOldestToNewest: 'From oldest to newest',
       FromNewestToOldest: 'From newest to oldest',

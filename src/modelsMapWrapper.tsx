@@ -10,14 +10,15 @@ import i18n from './i18n/i18n';
 import { Libraries } from '@react-google-maps/api/dist/utils/make-load-script-url';
 import { StandaloneSearchBox, useJsApiLoader } from '@react-google-maps/api';
 import Spinner from './components/spinner';
-import { Affix, Checkbox, Drawer, Space } from 'antd';
-import ModelsMap, { getIconUrl } from './components/modelsMap';
+import { Checkbox, Space } from 'antd';
+import ModelsMap from './components/modelsMap';
 import { UndoableChangeLocation } from './undo/UndoableChangeLocation';
 import { DEFAULT_ADDRESS } from './constants';
 import { usePrimitiveStore } from './stores/commonPrimitive';
 import { ModelSite } from './types';
 import ReactCountryFlag from 'react-country-flag';
 import { UserOutlined } from '@ant-design/icons';
+import ModelsGallery from './modelsGallery';
 
 const libraries = ['places'] as Libraries;
 
@@ -64,7 +65,6 @@ const ModelsMapWrapper = ({
   const peopleModels = useStore(Selector.peopleModels);
 
   const [selectedAuthor, setSelectedAuthor] = useState<string | undefined>();
-  const [selectedModel, setSelectedModel] = useState<ModelSite | undefined>();
   const authorModelsRef = useRef<Map<string, ModelSite>>();
   const searchBox = useRef<google.maps.places.SearchBox>();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -95,7 +95,7 @@ const ModelsMapWrapper = ({
   });
 
   const close = () => {
-    setCommonStore((state) => {
+    usePrimitiveStore.setState((state) => {
       state.openModelsMap = false;
     });
   };
@@ -222,104 +222,14 @@ const ModelsMapWrapper = ({
       )}
       <>
         {selectedAuthor && (
-          <Drawer
-            mask={false}
-            headerStyle={{ height: '10px', background: 'whitesmoke' }}
-            bodyStyle={{ padding: '0px 4px 0px 4px', overflowY: 'hidden' }}
-            title={
-              selectedAuthor +
-              ': ' +
-              authorModelsRef.current?.size +
-              ' ' +
-              i18n.t((authorModelsRef.current?.size ?? 0) > 1 ? 'word.Models' : 'word.Model', lang)
-            }
-            placement="bottom"
-            visible={true}
-            height={'150px'}
-            onClose={() => {
+          <ModelsGallery
+            author={selectedAuthor}
+            models={authorModelsRef.current}
+            close={() => {
               setSelectedAuthor(undefined);
               authorModelsRef.current = undefined;
-              setSelectedModel(undefined);
             }}
-          >
-            <table>
-              <tbody>
-                <tr>
-                  {authorModelsRef.current &&
-                    [...authorModelsRef.current.keys()]
-                      .sort((a, b) => {
-                        if (!authorModelsRef.current) return 0;
-                        const modelA = authorModelsRef.current.get(a);
-                        const modelB = authorModelsRef.current.get(b);
-                        if (!modelA || !modelB) return 0;
-                        return (modelB.timeCreated ?? 0) - (modelA.timeCreated ?? 0);
-                      })
-                      .map((key: string, index: number) => {
-                        if (authorModelsRef.current) {
-                          const m = authorModelsRef.current.get(key);
-                          if (!m) return null;
-                          return (
-                            <td key={index}>
-                              <div style={{ display: 'block', marginTop: '4px' }}>
-                                <img
-                                  alt={m.label}
-                                  title={m.label}
-                                  src={m.thumbnailUrl}
-                                  style={{
-                                    cursor: 'pointer',
-                                    borderRadius: selectedModel === m ? '0' : '10px',
-                                    border: selectedModel === m ? '2px solid red' : 'none',
-                                  }}
-                                  onClick={() => {
-                                    setSelectedModel(m);
-                                    setCommonStore((state) => {
-                                      if (m) {
-                                        state.modelsMapLatitude = m.latitude;
-                                        state.modelsMapLongitude = m.longitude;
-                                        state.modelsMapZoom = 17;
-                                      }
-                                    });
-                                  }}
-                                />
-                                <Affix>
-                                  <img
-                                    alt={m.type}
-                                    src={getIconUrl(m)}
-                                    style={{
-                                      position: 'relative',
-                                      left: '8px',
-                                      bottom: '28px',
-                                      width: '16px',
-                                      height: '16px',
-                                    }}
-                                  />
-                                  <span
-                                    style={{
-                                      position: 'relative',
-                                      left: '16px',
-                                      bottom: '24px',
-                                      color: 'white',
-                                      fontSize: '8px',
-                                      fontWeight: 'bold',
-                                    }}
-                                  >
-                                    {m.label
-                                      ? m.label.length > 30
-                                        ? m.label.substring(0, 30) + '...'
-                                        : m.label
-                                      : 'Unknown'}
-                                  </span>
-                                </Affix>
-                              </div>
-                            </td>
-                          );
-                        }
-                        return null;
-                      })}
-                </tr>
-              </tbody>
-            </table>
-          </Drawer>
+          />
         )}
         {showScoreboard && !selectedAuthor && (
           <div

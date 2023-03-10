@@ -102,7 +102,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const countSolarStructuresByType = useStore(Selector.countSolarStructuresByType);
   const selectNone = useStore(Selector.selectNone);
   const addUndoable = useStore(Selector.addUndoable);
-  const openModelsMap = useStore(Selector.openModelsMap);
+  const openModelsMap = usePrimitiveStore(Selector.openModelsMap);
 
   const loggable = useStore.getState().loggable;
   const language = useStore.getState().language;
@@ -162,14 +162,16 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const takeScreenshot = () => {
     if (canvas) {
       saveImage('screenshot.png', canvas.toDataURL('image/png'));
-      setCommonStore((state) => {
-        state.openModelsMap = false;
-        if (loggable) {
+      if (loggable) {
+        setCommonStore((state) => {
           state.actionInfo = {
             name: 'Take Screenshot',
             timestamp: new Date().getTime(),
           };
-        }
+        });
+      }
+      usePrimitiveStore.setState((state) => {
+        state.openModelsMap = false;
       });
     }
   };
@@ -177,7 +179,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const loadFile = (e: any) => {
     const input = getExample(e.key);
     if (input) {
-      setCommonStore((state) => {
+      usePrimitiveStore.setState((state) => {
         state.openModelsMap = false;
       });
       if (!viewOnly && changed) {
@@ -779,7 +781,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   state.objectTypeToAdd = ObjectType.None;
                   state.groupActionMode = false;
                   state.groupMasterId = null;
-                  state.openModelsMap = false; // in case the user uses the keyboard shortcut
                   window.history.pushState({}, document.title, HOME_URL);
                   if (loggable) {
                     state.actionInfo = {
@@ -787,6 +788,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                       timestamp: new Date().getTime(),
                     };
                   }
+                });
+                usePrimitiveStore.setState((state) => {
+                  state.openModelsMap = false;
                 });
               }}
             >
@@ -806,7 +810,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   state.groupActionMode = false;
                   state.groupMasterId = null;
                   state.cloudFile = undefined;
-                  state.openModelsMap = false; // in case the user uses the keyboard shortcut
                   window.history.pushState({}, document.title, HOME_URL);
                   if (loggable) {
                     state.actionInfo = {
@@ -814,6 +817,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                       timestamp: new Date().getTime(),
                     };
                   }
+                });
+                usePrimitiveStore.setState((state) => {
+                  state.openModelsMap = false;
                 });
               }}
             >
@@ -846,13 +852,15 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               onClick={() => {
                 setCommonStore((state) => {
                   state.listCloudFilesFlag = !state.listCloudFilesFlag;
-                  state.openModelsMap = false; // in case the user uses the keyboard shortcut
                   if (loggable) {
                     state.actionInfo = {
                       name: 'List Cloud Files',
                       timestamp: new Date().getTime(),
                     };
                   }
+                });
+                usePrimitiveStore.setState((state) => {
+                  state.openModelsMap = false;
                 });
               }}
             >
@@ -2285,16 +2293,17 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             usePrimitiveStore.setState((state) => {
               state.modelsMapFlag = !state.modelsMapFlag;
               state.modelsMapWeatherStations = false;
-            });
-            setCommonStore((state) => {
               state.openModelsMap = true;
-              if (loggable) {
+              state.showModelsGallery = false;
+            });
+            if (loggable) {
+              setCommonStore((state) => {
                 state.actionInfo = {
                   name: 'Open Models Map',
                   timestamp: new Date().getTime(),
                 };
-              }
-            });
+              });
+            }
           }}
         >
           {i18n.t('menu.ModelsMap', lang)}...

@@ -135,7 +135,6 @@ export interface CommonStoreState {
   latestModelSite?: ModelSite;
   modelSites: Map<string, Map<string, ModelSite>>; // primary key: 'lat, lng', secondary key: 'title, userid'
   peopleModels: Map<string, Map<string, ModelSite>>; // primary key: author, secondary key: 'title, userid'
-  openModelsMap: boolean;
   modelsMapLatitude: number;
   modelsMapLongitude: number;
   modelsMapAddress: string;
@@ -719,7 +718,6 @@ export const useStore = create<CommonStoreState>(
           latestModelSite: undefined,
           modelSites: new Map<string, Map<string, ModelSite>>(),
           peopleModels: new Map<string, Map<string, ModelSite>>(),
-          openModelsMap: false,
           modelsMapLatitude: 42.2844063,
           modelsMapLongitude: -71.3488548,
           modelsMapAddress: DEFAULT_ADDRESS,

@@ -20,7 +20,7 @@ import { useRefStore } from './stores/commonRef';
 import { SolarPanelModel } from './models/SolarPanelModel';
 import { Util } from './Util';
 import { ElementModel } from './models/ElementModel';
-import { FINE_GRID_RATIO, GROUND_ID, UNDO_SHOW_INFO_DURATION } from './constants';
+import { FINE_GRID_RATIO, GROUND_ID, HOME_URL, UNDO_SHOW_INFO_DURATION } from './constants';
 import { RoofUtil } from './views/roof/RoofUtil';
 import { RoofModel } from './models/RoofModel';
 import { spBoundaryCheck, spCollisionCheck } from './views/roof/roofRenderer';
@@ -838,12 +838,19 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
       case 'meta+f': // for Mac
         setCommonStore((state) => {
           state.createNewFileFlag = !state.createNewFileFlag;
+          state.objectTypeToAdd = ObjectType.None;
+          state.groupActionMode = false;
+          state.groupMasterId = null;
+          window.history.pushState({}, document.title, HOME_URL);
           if (loggable) {
             state.actionInfo = {
               name: 'Create New File',
               timestamp: new Date().getTime(),
             };
           }
+        });
+        usePrimitiveStore.setState((state) => {
+          state.openModelsMap = false;
         });
         break;
       case 'ctrl+s':

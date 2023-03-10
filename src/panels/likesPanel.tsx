@@ -73,7 +73,6 @@ export interface LikesPanelProps {
 
 const LikesPanel = ({ likesArray, openCloudFile }: LikesPanelProps) => {
   const language = useStore(Selector.language);
-  const setCommonStore = useStore(Selector.set);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -168,7 +167,7 @@ const LikesPanel = ({ likesArray, openCloudFile }: LikesPanelProps) => {
                       const s = record as string;
                       const i = s.lastIndexOf(', ');
                       if (i >= 0) {
-                        setCommonStore((state) => {
+                        usePrimitiveStore.setState((state) => {
                           state.openModelsMap = false;
                         });
                         openCloudFile(s.substring(i + 2), s.substring(0, i));

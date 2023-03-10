@@ -43,6 +43,7 @@ import PointerStyleController from './pointerStyleController';
 import Loading from './loading';
 import Panels from './panels';
 import Simulations from './simulations';
+import { usePrimitiveStore } from './stores/commonPrimitive';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -61,7 +62,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const axes = useStore(Selector.viewState.axes);
   const theme = useStore(Selector.viewState.theme);
   const groundImage = useStore(Selector.viewState.groundImage);
-  const openModelsMap = useStore(Selector.openModelsMap);
+  const openModelsMap = usePrimitiveStore(Selector.openModelsMap);
   const evolutionMethod = useStore(Selector.evolutionMethod);
   const evolutionaryAlgorithmState = useStore(Selector.evolutionaryAlgorithmState);
 

@@ -33,7 +33,7 @@ export interface MainToolBarProps {
 const MainToolBar = ({ signIn, signOut }: MainToolBarProps) => {
   const language = useStore(Selector.language);
   const user = useStore(Selector.user);
-  const openModelsMap = useStore(Selector.openModelsMap);
+  const openModelsMap = usePrimitiveStore(Selector.openModelsMap);
 
   const lang = { lng: language };
 
@@ -48,6 +48,18 @@ const MainToolBar = ({ signIn, signOut }: MainToolBarProps) => {
         }}
       >
         {i18n.t('avatarMenu.AccountSettings', lang)}
+      </Menu.Item>
+      <Menu.Item
+        key="my-models"
+        onClick={() => {
+          usePrimitiveStore.setState((state) => {
+            state.showModelsGallery = true;
+            state.scoreboardFlag = !state.scoreboardFlag;
+            state.openModelsMap = false;
+          });
+        }}
+      >
+        {i18n.t('avatarMenu.MyModelsGallery', lang)}
       </Menu.Item>
       <Menu.Item key="signOut" onClick={signOut}>
         {i18n.t('avatarMenu.SignOut', lang)}

@@ -75,7 +75,7 @@ export const actionInfo = (state: CommonStoreState) => state.actionInfo;
 
 export const currentUndoable = (state: CommonStoreState) => state.currentUndoable;
 
-export const openModelsMap = (state: CommonStoreState) => state.openModelsMap;
+export const openModelsMap = (state: PrimitiveStoreState) => state.openModelsMap;
 
 export const modelsMapLatitude = (state: CommonStoreState) => state.modelsMapLatitude;
 
@@ -763,6 +763,8 @@ export const enableFineGrid = (state: CommonStoreState) => state.enableFineGrid;
 export const setEnableFineGrid = (state: CommonStoreState) => state.setEnableFineGrid;
 
 export const showCloudFilePanel = (state: PrimitiveStoreState) => state.showCloudFilePanel;
+
+export const showModelsGallery = (state: PrimitiveStoreState) => state.showModelsGallery;
 
 export const showAccountSettingsPanel = (state: PrimitiveStoreState) => state.showAccountSettingsPanel;
 

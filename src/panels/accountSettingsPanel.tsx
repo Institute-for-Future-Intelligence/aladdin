@@ -328,10 +328,12 @@ const AccountSettingsPanel = ({ openCloudFile }: { openCloudFile: (userid: strin
                 {i18n.t('accountSettingsPanel.PublishedUnderAliases', lang)}
               </Col>
               <Col className="gutter-row" span={18}>
-                {user.aliases?.map((value, index) => {
-                  if (!user.aliases) return null;
-                  return value + (index < user.aliases.length - 1 ? ', ' : '');
-                })}
+                <span style={{ fontSize: '10px' }}>
+                  {user.aliases?.map((value, index) => {
+                    if (!user.aliases) return null;
+                    return value + (index < user.aliases.length - 1 ? ', ' : '');
+                  })}
+                </span>
               </Col>
             </Row>
 
