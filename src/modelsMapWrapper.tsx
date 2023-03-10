@@ -53,6 +53,7 @@ const ModelsMapWrapper = ({
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
+  const modelsMapType = useStore(Selector.modelsMapType);
   const modelsMapLatitude = useStore(Selector.modelsMapLatitude);
   const latitude = modelsMapLatitude !== undefined ? modelsMapLatitude : 42.2844063;
   const modelsMapLongitude = useStore(Selector.modelsMapLongitude);
@@ -237,8 +238,8 @@ const ModelsMapWrapper = ({
               color: 'black',
               bottom: '33px',
               left: '5px',
-              width: '150px',
-              height: '300px',
+              width: '180px',
+              height: '360px',
               overflowY: 'auto',
               padding: '6px 6px 6px 6px',
               background: 'whitesmoke',
@@ -246,36 +247,45 @@ const ModelsMapWrapper = ({
               textAlign: 'left',
             }}
           >
-            <table>
-              <tbody>
-                {[...peopleModels.keys()]
-                  .sort((a, b) => {
-                    const countA = peopleModels.get(a);
-                    const countB = peopleModels.get(b);
-                    return (countB ? countB.size : 0) - (countA ? countA.size : 0);
-                  })
-                  .map((key: string, index: number) => {
-                    if (index > 20) return null;
-                    const a = peopleModels.get(key);
-                    if (a?.size === undefined || a?.size === 0) return null;
-                    return (
-                      <tr key={index} style={{ width: '150px' }}>
-                        <td style={{ width: '120px' }}>
-                          <Tag
-                            icon={<UserOutlined />}
-                            color={a?.size > 10 ? 'gold' : a?.size > 5 ? 'lime' : a?.size > 1 ? 'blue' : 'magenta'}
-                            style={{ cursor: 'pointer', fontSize: '9px', fontWeight: 'bold', width: '100px' }}
-                            onClick={() => setSelectedAuthor(key)}
-                          >
-                            {key}
-                          </Tag>
-                        </td>
-                        <td>{a?.size}</td>
-                      </tr>
-                    );
-                  })}
-              </tbody>
-            </table>
+            <Space direction={'vertical'}>
+              <Search
+                title={i18n.t('modelsMap.SearchByPublisher', lang)}
+                allowClear
+                size={'small'}
+                enterButton
+                onSearch={(s) => {}}
+              />
+              <table>
+                <tbody>
+                  {[...peopleModels.keys()]
+                    .sort((a, b) => {
+                      const countA = peopleModels.get(a);
+                      const countB = peopleModels.get(b);
+                      return (countB ? countB.size : 0) - (countA ? countA.size : 0);
+                    })
+                    .map((key: string, index: number) => {
+                      if (index > 20) return null;
+                      const a = peopleModels.get(key);
+                      if (a?.size === undefined || a?.size === 0) return null;
+                      return (
+                        <tr key={index} style={{ width: '180px' }}>
+                          <td style={{ width: '150px' }}>
+                            <Tag
+                              icon={<UserOutlined />}
+                              color={a?.size > 10 ? 'gold' : a?.size > 5 ? 'lime' : a?.size > 1 ? 'blue' : 'magenta'}
+                              style={{ cursor: 'pointer', fontSize: '10px', fontWeight: 'bold', width: '130px' }}
+                              onClick={() => setSelectedAuthor(key)}
+                            >
+                              {key}
+                            </Tag>
+                          </td>
+                          <td>{a?.size}</td>
+                        </tr>
+                      );
+                    })}
+                </tbody>
+              </table>
+            </Space>
           </div>
         )}
         <Space>
@@ -287,7 +297,7 @@ const ModelsMapWrapper = ({
               color: 'black',
               bottom: '6px',
               left: '5px',
-              width: '150px',
+              width: '180px',
               height: '25px',
               paddingTop: '2px',
               background: 'whitesmoke',
@@ -311,13 +321,11 @@ const ModelsMapWrapper = ({
               style={{
                 position: 'absolute',
                 fontSize: '10px',
-                color: 'black',
+                color: modelsMapType === 'roadmap' ? 'black' : 'white',
                 bottom: '6px',
-                left: '158px',
+                left: '188px',
                 height: '25x',
                 padding: '6px 6px 2px 6px',
-                background: 'whitesmoke',
-                boxShadow: '1px 1px 1px 1px gray',
                 cursor: 'pointer',
               }}
               onClick={() => {
