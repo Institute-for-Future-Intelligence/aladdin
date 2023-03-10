@@ -146,7 +146,7 @@ export const DoorMenu = React.memo(() => {
                 });
               }}
             >
-              {i18n.t('doorMenu.Filled', { lng: language })}
+              {i18n.t('doorMenu.Filled', lang)}
             </Checkbox>
           </Menu.Item>
           {renderTypeSubMenu()}

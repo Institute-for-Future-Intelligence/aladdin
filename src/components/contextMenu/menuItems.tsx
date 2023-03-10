@@ -11,8 +11,7 @@ import { Util } from '../../Util';
 import { UndoableDelete } from '../../undo/UndoableDelete';
 import { UndoablePaste } from '../../undo/UndoablePaste';
 import { UndoableCheck } from '../../undo/UndoableCheck';
-import { ActionInfo, ObjectType } from '../../types';
-import { RoofModel } from 'src/models/RoofModel';
+import { ActionInfo } from '../../types';
 
 export const Paste = ({ paddingLeft = '36px', keyName }: { paddingLeft?: string; keyName: string }) => {
   const setCommonStore = useStore(Selector.set);

@@ -101,7 +101,7 @@ const ModelsGallery = ({ author, models, closeCallback, openCloudFile }: ModelsG
         <Space>
           {ascendingOrder ? (
             <LeftCircleOutlined
-              title={i18n.t('modelsMap.FromNewestToOldest', { lng: language })}
+              title={i18n.t('modelsMap.FromNewestToOldest', lang)}
               style={{ cursor: 'pointer', marginLeft: '2px', marginRight: '6px' }}
               onClick={() => {
                 setAscendingOrder(false);
@@ -109,7 +109,7 @@ const ModelsGallery = ({ author, models, closeCallback, openCloudFile }: ModelsG
             />
           ) : (
             <RightCircleOutlined
-              title={i18n.t('modelsMap.FromOldestToNewest', { lng: language })}
+              title={i18n.t('modelsMap.FromOldestToNewest', lang)}
               style={{ cursor: 'pointer', marginLeft: '2px', marginRight: '6px' }}
               onClick={() => {
                 setAscendingOrder(true);
@@ -117,6 +117,7 @@ const ModelsGallery = ({ author, models, closeCallback, openCloudFile }: ModelsG
             />
           )}
           <Search
+            title={'Search by label'}
             allowClear
             size={'small'}
             enterButton

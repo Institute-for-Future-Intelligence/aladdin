@@ -471,7 +471,7 @@ const ModelsMap = ({ selectAuthor, closeMap, openModel, deleteModel, likeModel, 
                 >
                   {ascendingOrder ? (
                     <DownCircleOutlined
-                      title={i18n.t('modelsMap.FromNewestToOldest', { lng: language })}
+                      title={i18n.t('modelsMap.FromNewestToOldest', lang)}
                       style={{ cursor: 'pointer', marginLeft: '2px', marginRight: '6px' }}
                       onClick={() => {
                         setAscendingOrder(false);
@@ -479,7 +479,7 @@ const ModelsMap = ({ selectAuthor, closeMap, openModel, deleteModel, likeModel, 
                     />
                   ) : (
                     <UpCircleOutlined
-                      title={i18n.t('modelsMap.FromOldestToNewest', { lng: language })}
+                      title={i18n.t('modelsMap.FromOldestToNewest', lang)}
                       style={{ cursor: 'pointer', marginLeft: '2px', marginRight: '6px' }}
                       onClick={() => {
                         setAscendingOrder(true);
@@ -487,12 +487,12 @@ const ModelsMap = ({ selectAuthor, closeMap, openModel, deleteModel, likeModel, 
                     />
                   )}
                   <span style={{ fontSize: '10px' }}>
-                    {selectedSite.size} {i18n.t('modelsMap.ModelsFoundOnThisSite', { lng: language })}
+                    {selectedSite.size} {i18n.t('modelsMap.ModelsFoundOnThisSite', lang)}
                   </span>
                   {selectedLocation && (
                     <span style={{ fontSize: '10px' }}>
                       &nbsp;&mdash;{' '}
-                      {i18n.t('word.Coordinates', { lng: language }) +
+                      {i18n.t('word.Coordinates', lang) +
                         ': (' +
                         selectedLocation.lat().toFixed(LAT_LNG_FRACTION_DIGITS) +
                         '°, ' +
@@ -535,7 +535,7 @@ const ModelsMap = ({ selectAuthor, closeMap, openModel, deleteModel, likeModel, 
                           {m.address ?? 'Unknown'}
                           {selectedSite.size === 1 && (
                             <span style={{ fontSize: '10px', display: 'block', paddingTop: '10px' }}>
-                              {i18n.t('word.Coordinates', { lng: language }) +
+                              {i18n.t('word.Coordinates', lang) +
                                 ': (' +
                                 selectedLocation.lat().toFixed(LAT_LNG_FRACTION_DIGITS) +
                                 '°, ' +
@@ -569,7 +569,7 @@ const ModelsMap = ({ selectAuthor, closeMap, openModel, deleteModel, likeModel, 
                               {m.thumbnailUrl && (
                                 <img
                                   alt={m.label}
-                                  title={i18n.t('word.Open', { lng: language })}
+                                  title={i18n.t('word.Open', lang)}
                                   src={m.thumbnailUrl}
                                   style={{ border: '1px solid #222', cursor: 'pointer' }}
                                   onClick={() => openModelSite(m)}
@@ -580,14 +580,12 @@ const ModelsMap = ({ selectAuthor, closeMap, openModel, deleteModel, likeModel, 
                                 &nbsp;&mdash;&nbsp; By{' '}
                                 <span
                                   style={{ cursor: 'pointer' }}
-                                  title={i18n.t('modelsMap.ShowModelsPublishedByThisAuthor', { lng: language })}
+                                  title={i18n.t('modelsMap.ShowModelsPublishedByThisAuthor', lang)}
                                   onClick={() => {
                                     selectAuthor(m.author);
                                   }}
                                 >
-                                  {!m.author || m.author === ''
-                                    ? i18n.t('word.Anonymous', { lng: language })
-                                    : m.author}
+                                  {!m.author || m.author === '' ? i18n.t('word.Anonymous', lang) : m.author}
                                 </span>
                                 ,&nbsp;
                                 {m.timeCreated && <ReactTimeago date={new Date(m.timeCreated)} />}
@@ -602,13 +600,13 @@ const ModelsMap = ({ selectAuthor, closeMap, openModel, deleteModel, likeModel, 
                             {isPinned(m) ? (
                               <PushpinFilled
                                 style={{ cursor: 'pointer' }}
-                                title={i18n.t('word.Unpin', { lng: language })}
+                                title={i18n.t('word.Unpin', lang)}
                                 onClick={() => pinModelSite(m, false)}
                               />
                             ) : (
                               <PushpinOutlined
                                 style={{ cursor: 'pointer' }}
-                                title={i18n.t('word.Pin', { lng: language })}
+                                title={i18n.t('word.Pin', lang)}
                                 onClick={() => pinModelSite(m, true)}
                               />
                             )}
@@ -618,7 +616,7 @@ const ModelsMap = ({ selectAuthor, closeMap, openModel, deleteModel, likeModel, 
                           alt={'Open'}
                           onClick={() => openModelSite(m)}
                           style={{ marginLeft: '10px', cursor: 'pointer' }}
-                          title={i18n.t('word.Open', { lng: language })}
+                          title={i18n.t('word.Open', lang)}
                           src={OpenFileIcon}
                           height={imageSize}
                           width={imageSize}
@@ -627,7 +625,7 @@ const ModelsMap = ({ selectAuthor, closeMap, openModel, deleteModel, likeModel, 
                           alt={'Export link'}
                           onClick={() => shareModelSite(m)}
                           style={{ marginLeft: '5px', cursor: 'pointer' }}
-                          title={i18n.t('word.Share', { lng: language })}
+                          title={i18n.t('word.Share', lang)}
                           src={ExportLinkIcon}
                           height={imageSize}
                           width={imageSize}
@@ -637,7 +635,7 @@ const ModelsMap = ({ selectAuthor, closeMap, openModel, deleteModel, likeModel, 
                             alt={'Delete'}
                             onClick={() => deleteModelSite(m)}
                             style={{ marginLeft: '5px', cursor: 'pointer' }}
-                            title={i18n.t('word.Delete', { lng: language })}
+                            title={i18n.t('word.Delete', lang)}
                             src={DeleteIcon}
                             height={imageSize}
                             width={imageSize}
@@ -650,7 +648,7 @@ const ModelsMap = ({ selectAuthor, closeMap, openModel, deleteModel, likeModel, 
                                 alt={'Like'}
                                 onClick={() => likeModelSite(m)}
                                 style={{ marginLeft: '10px', cursor: 'pointer' }}
-                                title={i18n.t('word.AlreadyLike', { lng: language })}
+                                title={i18n.t('word.AlreadyLike', lang)}
                                 src={RedHeartIcon}
                                 height={imageSize}
                                 width={imageSize}
@@ -660,7 +658,7 @@ const ModelsMap = ({ selectAuthor, closeMap, openModel, deleteModel, likeModel, 
                                 alt={'Like'}
                                 onClick={() => likeModelSite(m)}
                                 style={{ marginLeft: '10px', cursor: 'pointer' }}
-                                title={i18n.t('word.Like', { lng: language })}
+                                title={i18n.t('word.Like', lang)}
                                 src={EmptyHeartIcon}
                                 height={imageSize}
                                 width={imageSize}
@@ -672,7 +670,7 @@ const ModelsMap = ({ selectAuthor, closeMap, openModel, deleteModel, likeModel, 
                             <img
                               alt={'Like'}
                               style={{ marginLeft: '10px', opacity: 0.5 }}
-                              title={i18n.t('word.MustLogInToLike', { lng: language })}
+                              title={i18n.t('word.MustLogInToLike', lang)}
                               src={EmptyHeartIcon}
                               height={imageSize}
                               width={imageSize}
@@ -683,7 +681,7 @@ const ModelsMap = ({ selectAuthor, closeMap, openModel, deleteModel, likeModel, 
                         <img
                           alt={'Click counter'}
                           style={{ marginLeft: '10px' }}
-                          title={i18n.t('word.ClickCount', { lng: language })}
+                          title={i18n.t('word.ClickCount', lang)}
                           src={ClickCountIcon}
                           height={imageSize}
                           width={imageSize}

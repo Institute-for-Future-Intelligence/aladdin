@@ -10,7 +10,7 @@ import i18n from './i18n/i18n';
 import { Libraries } from '@react-google-maps/api/dist/utils/make-load-script-url';
 import { StandaloneSearchBox, useJsApiLoader } from '@react-google-maps/api';
 import Spinner from './components/spinner';
-import { Checkbox, Space, Tag } from 'antd';
+import { Checkbox, Input, Space, Tag } from 'antd';
 import ModelsMap from './components/modelsMap';
 import { UndoableChangeLocation } from './undo/UndoableChangeLocation';
 import { DEFAULT_ADDRESS } from './constants';
@@ -70,6 +70,7 @@ const ModelsMapWrapper = ({
   const searchBox = useRef<google.maps.places.SearchBox>();
 
   const lang = { lng: language };
+  const { Search } = Input;
 
   useEffect(() => {
     if (selectedAuthor) {
