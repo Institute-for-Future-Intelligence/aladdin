@@ -6,18 +6,19 @@ import React, { useMemo, useState } from 'react';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import i18n from './i18n/i18n';
-import { Drawer } from 'antd';
-import { getIconUrl } from './components/modelsMap';
+import { Drawer, Empty, Input, Space } from 'antd';
 import { ModelSite } from './types';
+import { LeftCircleOutlined, RightCircleOutlined } from '@ant-design/icons';
+import { getIconUrl } from './components/modelsMap';
 
 export interface ModelsGalleryProps {
-  author: string | undefined;
+  author: string | undefined; // if undefined, the user is the owner of models
   models: Map<string, ModelSite> | undefined;
-  close: () => void;
+  closeCallback: () => void;
   openCloudFile?: (userid: string, title: string) => void;
 }
 
-const ModelsGallery = ({ author, models, close, openCloudFile }: ModelsGalleryProps) => {
+const ModelsGallery = ({ author, models, closeCallback, openCloudFile }: ModelsGalleryProps) => {
   const user = useStore(Selector.user);
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
@@ -25,18 +26,21 @@ const ModelsGallery = ({ author, models, close, openCloudFile }: ModelsGalleryPr
 
   const [selectedModel, setSelectedModel] = useState<ModelSite | undefined>();
 
+  const { Search } = Input;
   const lang = { lng: language };
 
   const countModels = useMemo(() => {
     if (!models) return 0;
     let count = 0;
     for (const v of models.values()) {
-      if (!author && v.userid !== user.uid) continue;
-      count++;
+      // when author is defined, all the models belong to him/her
+      // when user is undefined, we only count those that belong to the current user
+      if (author || v.userid === user.uid) count++;
     }
     return count;
-  }, [models, author]);
+  }, [models, author, user.uid]);
 
+  // use a dark theme when the map is in the satellite mode to match the color
   const dark = author && modelsMapType !== 'roadmap';
 
   return !models || models.size === undefined || models.size === 0 ? (
@@ -45,20 +49,28 @@ const ModelsGallery = ({ author, models, close, openCloudFile }: ModelsGalleryPr
       headerStyle={{ height: '10px', background: 'whitesmoke' }}
       bodyStyle={{ padding: '0px 4px 0px 4px', overflowY: 'hidden' }}
       style={{ scrollbarColor: dark ? '#6A6B6E' : 'whitesmoke' }}
-      title={(author ?? i18n.t('modelsMap.MyPublishedModels', lang)) + ': 0'}
+      title={(author ?? i18n.t('modelsMap.MyPublishedModels', lang)) + ' (0)'}
       placement="bottom"
       visible={true}
       height={'150px'}
       onClose={() => {
-        close();
+        closeCallback();
       }}
-    />
+    >
+      <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+    </Drawer>
   ) : (
     <Drawer
+      extra={
+        <Space>
+          <Search size={'small'} enterButton />
+          <LeftCircleOutlined style={{ cursor: 'pointer', marginRight: '6px' }} />
+          <RightCircleOutlined style={{ cursor: 'pointer' }} />
+        </Space>
+      }
       mask={false}
       headerStyle={{
-        height: '10px',
-        color: dark ? 'white' : 'black',
+        color: dark ? 'white' : 'black', // doesn't work
         background: dark ? '#6A6B6E' : 'whitesmoke',
         border: 'none',
       }}
@@ -69,7 +81,7 @@ const ModelsGallery = ({ author, models, close, openCloudFile }: ModelsGalleryPr
       height={'150px'}
       onClose={() => {
         setSelectedModel(undefined);
-        close();
+        closeCallback();
       }}
     >
       <table>
@@ -85,6 +97,7 @@ const ModelsGallery = ({ author, models, close, openCloudFile }: ModelsGalleryPr
               .map((key: string, index: number) => {
                 const m = models.get(key);
                 if (!m) return null;
+                // only show the models that belong to the current user when author is undefined
                 if (!author && m.userid !== user.uid) return null;
                 return (
                   <td key={index}>
@@ -102,8 +115,10 @@ const ModelsGallery = ({ author, models, close, openCloudFile }: ModelsGalleryPr
                         onClick={() => {
                           setSelectedModel(m);
                           if (openCloudFile) {
+                            // provided when displaying current user's models
                             openCloudFile(m.userid, m.title);
                           } else {
+                            // go to the location on the map when the map is open
                             setCommonStore((state) => {
                               if (m) {
                                 state.modelsMapLatitude = m.latitude;
@@ -114,6 +129,7 @@ const ModelsGallery = ({ author, models, close, openCloudFile }: ModelsGalleryPr
                           }
                         }}
                       />
+                      {/* the following div is needed to wrap the image and text */}
                       <div>
                         <img
                           alt={m.type}

@@ -65,20 +65,18 @@ const ModelsMapWrapper = ({
   const peopleModels = useStore(Selector.peopleModels);
 
   const [selectedAuthor, setSelectedAuthor] = useState<string | undefined>();
+  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const authorModelsRef = useRef<Map<string, ModelSite>>();
   const searchBox = useRef<google.maps.places.SearchBox>();
-  const containerRef = useRef<HTMLDivElement>(null);
 
   const lang = { lng: language };
 
   useEffect(() => {
-    // TODO: This doesn't seem to work
-    containerRef.current?.focus();
-  }, []);
-
-  useEffect(() => {
-    if (selectedAuthor) authorModelsRef.current = peopleModels.get(selectedAuthor);
-  }, [peopleModels]);
+    if (selectedAuthor) {
+      authorModelsRef.current = peopleModels.get(selectedAuthor);
+      setUpdateFlag(!updateFlag);
+    }
+  }, [peopleModels, selectedAuthor]);
 
   const selectAuthor = (author: string | undefined) => {
     setSelectedAuthor(author);
@@ -159,7 +157,6 @@ const ModelsMapWrapper = ({
 
   return (
     <Container
-      ref={containerRef}
       onKeyDown={(e) => {
         if (e.key === 'Escape') {
           close();
@@ -225,7 +222,7 @@ const ModelsMapWrapper = ({
           <ModelsGallery
             author={selectedAuthor}
             models={authorModelsRef.current}
-            close={() => {
+            closeCallback={() => {
               setSelectedAuthor(undefined);
               authorModelsRef.current = undefined;
             }}
@@ -269,13 +266,7 @@ const ModelsMapWrapper = ({
                       >
                         <td style={{ width: '120px' }}>
                           <UserOutlined style={{ marginRight: '4px', fontSize: '10px' }} />
-                          <span
-                            style={{ cursor: 'pointer' }}
-                            onClick={() => {
-                              setSelectedAuthor(key);
-                              authorModelsRef.current = peopleModels.get(key);
-                            }}
-                          >
+                          <span style={{ cursor: 'pointer' }} onClick={() => setSelectedAuthor(key)}>
                             {key}
                           </span>
                         </td>

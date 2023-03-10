@@ -151,8 +151,9 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cloudFiles.current]);
 
+  // fetch all the models that belong to the current user, including those published under all aliases
   useEffect(() => {
-    authorModelsRef.current = new Map();
+    authorModelsRef.current = new Map<string, ModelSite>();
     if (user.aliases && user.aliases.length > 0) {
       for (const a of user.aliases) {
         if (a !== user.displayName) {
@@ -1063,7 +1064,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           author={undefined}
           models={authorModelsRef.current}
           openCloudFile={openCloudFile}
-          close={() => {
+          closeCallback={() => {
             setPrimitiveStore('showModelsGallery', false);
             authorModelsRef.current = undefined;
           }}

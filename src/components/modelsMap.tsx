@@ -57,7 +57,6 @@ export const getIconUrl = (site: ModelSite) => {
       return HeliostatIcon;
     case ModelType.RESIDENTIAL_BUILDING:
       return ResidentialBuildingIcon;
-    case 'Building': // backward compatibility
     case ModelType.COMMERCIAL_BUILDING:
       return CommercialBuildingIcon;
     case ModelType.UNDER_CONSTRUCTION:
