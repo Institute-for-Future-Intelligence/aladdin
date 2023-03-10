@@ -21,6 +21,7 @@ const ModelsGallery = ({ author, models, close, openCloudFile }: ModelsGalleryPr
   const user = useStore(Selector.user);
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
+  const modelsMapType = useStore(Selector.modelsMapType);
 
   const [selectedModel, setSelectedModel] = useState<ModelSite | undefined>();
 
@@ -36,11 +37,14 @@ const ModelsGallery = ({ author, models, close, openCloudFile }: ModelsGalleryPr
     return count;
   }, [models, author]);
 
+  const dark = author && modelsMapType !== 'roadmap';
+
   return !models || models.size === undefined || models.size === 0 ? (
     <Drawer
       mask={false}
       headerStyle={{ height: '10px', background: 'whitesmoke' }}
       bodyStyle={{ padding: '0px 4px 0px 4px', overflowY: 'hidden' }}
+      style={{ scrollbarColor: dark ? '#6A6B6E' : 'whitesmoke' }}
       title={(author ?? i18n.t('modelsMap.MyPublishedModels', lang)) + ': 0'}
       placement="bottom"
       visible={true}
@@ -52,8 +56,13 @@ const ModelsGallery = ({ author, models, close, openCloudFile }: ModelsGalleryPr
   ) : (
     <Drawer
       mask={false}
-      headerStyle={{ height: '10px', background: 'whitesmoke' }}
-      bodyStyle={{ padding: '0px 4px 0px 4px', overflowY: 'hidden' }}
+      headerStyle={{
+        height: '10px',
+        color: dark ? 'white' : 'black',
+        background: dark ? '#6A6B6E' : 'whitesmoke',
+        border: 'none',
+      }}
+      bodyStyle={{ padding: '0px 4px 0px 4px', overflowY: 'hidden', background: dark ? '#2A2B2E' : 'white' }}
       title={(author ?? i18n.t('modelsMap.MyPublishedModels', lang)) + ' (' + countModels + ')'}
       placement="bottom"
       visible={true}
@@ -87,7 +96,8 @@ const ModelsGallery = ({ author, models, close, openCloudFile }: ModelsGalleryPr
                         style={{
                           cursor: 'pointer',
                           borderRadius: selectedModel === m ? '0' : '10px',
-                          border: selectedModel === m ? '2px solid red' : 'none',
+                          border: selectedModel === m ? '2px solid ' + (dark ? 'goldenrod' : 'red') : 'none',
+                          marginRight: '4px',
                         }}
                         onClick={() => {
                           setSelectedModel(m);
