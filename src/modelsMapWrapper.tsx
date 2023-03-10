@@ -256,6 +256,7 @@ const ModelsMapWrapper = ({
                   .map((key: string, index: number) => {
                     if (index > 20) return null;
                     const a = peopleModels.get(key);
+                    if (a?.size === undefined || a?.size === 0) return null;
                     return (
                       <tr
                         key={index}
