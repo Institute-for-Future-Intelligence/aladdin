@@ -10,7 +10,7 @@ import i18n from './i18n/i18n';
 import { Libraries } from '@react-google-maps/api/dist/utils/make-load-script-url';
 import { StandaloneSearchBox, useJsApiLoader } from '@react-google-maps/api';
 import Spinner from './components/spinner';
-import { Checkbox, Space } from 'antd';
+import { Checkbox, Space, Tag } from 'antd';
 import ModelsMap from './components/modelsMap';
 import { UndoableChangeLocation } from './undo/UndoableChangeLocation';
 import { DEFAULT_ADDRESS } from './constants';
@@ -59,7 +59,7 @@ const ModelsMapWrapper = ({
   const longitude = modelsMapLongitude !== undefined ? modelsMapLongitude : -71.3488548;
   const address = useStore.getState().modelsMapAddress ?? DEFAULT_ADDRESS;
   const mapWeatherStations = usePrimitiveStore(Selector.modelsMapWeatherStations);
-  const showScoreboard = usePrimitiveStore(Selector.showScoreboard);
+  const showLeaderboard = usePrimitiveStore(Selector.showLeaderboard);
   const latestModelSite = useStore(Selector.latestModelSite);
   const modelSites = useStore(Selector.modelSites);
   const peopleModels = useStore(Selector.peopleModels);
@@ -81,7 +81,7 @@ const ModelsMapWrapper = ({
   const selectAuthor = (author: string | undefined) => {
     setSelectedAuthor(author);
     usePrimitiveStore.setState((state) => {
-      if (!state.showScoreboard) state.scoreboardFlag = !state.scoreboardFlag;
+      if (!state.showLeaderboard) state.leaderboardFlag = !state.leaderboardFlag;
       if (author) authorModelsRef.current = peopleModels.get(author);
     });
   };
@@ -228,7 +228,7 @@ const ModelsMapWrapper = ({
             }}
           />
         )}
-        {showScoreboard && !selectedAuthor && (
+        {showLeaderboard && !selectedAuthor && (
           <div
             style={{
               position: 'absolute',
@@ -237,7 +237,7 @@ const ModelsMapWrapper = ({
               bottom: '33px',
               left: '5px',
               width: '150px',
-              height: '200px',
+              height: '300px',
               overflowY: 'auto',
               padding: '6px 6px 6px 6px',
               background: 'whitesmoke',
@@ -258,18 +258,16 @@ const ModelsMapWrapper = ({
                     const a = peopleModels.get(key);
                     if (a?.size === undefined || a?.size === 0) return null;
                     return (
-                      <tr
-                        key={index}
-                        style={{
-                          width: '150px',
-                          background: index % 2 === 0 ? 'lightgoldenrodyellow' : 'lavenderblush',
-                        }}
-                      >
+                      <tr key={index} style={{ width: '150px' }}>
                         <td style={{ width: '120px' }}>
-                          <UserOutlined style={{ marginRight: '4px', fontSize: '10px' }} />
-                          <span style={{ cursor: 'pointer' }} onClick={() => setSelectedAuthor(key)}>
+                          <Tag
+                            icon={<UserOutlined />}
+                            color={a?.size > 10 ? 'gold' : a?.size > 5 ? 'lime' : a?.size > 1 ? 'blue' : 'magenta'}
+                            style={{ cursor: 'pointer', fontSize: '9px', fontWeight: 'bold', width: '100px' }}
+                            onClick={() => setSelectedAuthor(key)}
+                          >
                             {key}
-                          </span>
+                          </Tag>
                         </td>
                         <td>{a?.size}</td>
                       </tr>
@@ -298,12 +296,12 @@ const ModelsMapWrapper = ({
             }}
             onClick={() => {
               usePrimitiveStore.setState((state) => {
-                if (!state.showScoreboard) state.scoreboardFlag = !state.scoreboardFlag;
-                state.showScoreboard = !state.showScoreboard;
+                if (!state.showLeaderboard) state.leaderboardFlag = !state.leaderboardFlag;
+                state.showLeaderboard = !state.showLeaderboard;
               });
             }}
           >
-            {i18n.t('word.Scoreboard', lang)}
+            {i18n.t('word.Leaderboard', lang)}
           </div>
         </Space>
         {latestModelSite && (

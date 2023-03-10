@@ -2292,7 +2292,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           onClick={() => {
             usePrimitiveStore.setState((state) => {
               state.showModelsGallery = true;
-              state.scoreboardFlag = !state.scoreboardFlag;
+              state.leaderboardFlag = !state.leaderboardFlag;
               state.openModelsMap = false;
             });
           }}

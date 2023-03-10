@@ -49,7 +49,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const cloudFile = useStore(Selector.cloudFile);
   const saveCloudFileFlag = useStore(Selector.saveCloudFileFlag);
   const modelsMapFlag = usePrimitiveStore(Selector.modelsMapFlag);
-  const scoreboardFlag = usePrimitiveStore(Selector.scoreboardFlag);
+  const leaderboardFlag = usePrimitiveStore(Selector.leaderboardFlag);
   const publishOnMapFlag = usePrimitiveStore(Selector.publishOnModelsMapFlag);
   const listCloudFilesFlag = useStore(Selector.listCloudFilesFlag);
   const showCloudFileTitleDialog = useStore(Selector.showCloudFileTitleDialog);
@@ -70,7 +70,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const authorModelsRef = useRef<Map<string, ModelSite>>();
   const firstCallUpdateCloudFile = useRef<boolean>(true);
   const firstCallFetchModels = useRef<boolean>(true);
-  const firstCallFetchScoreboard = useRef<boolean>(true);
+  const firstCallFetchLeaderboard = useRef<boolean>(true);
   const firstCallPublishOnMap = useRef<boolean>(true);
   const firstCallListCloudFiles = useRef<boolean>(true);
   const firstAccountSettings = useRef<boolean>(true);
@@ -189,15 +189,15 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   }, [modelsMapFlag]);
 
   useEffect(() => {
-    if (firstCallFetchScoreboard.current) {
-      firstCallFetchScoreboard.current = false;
+    if (firstCallFetchLeaderboard.current) {
+      firstCallFetchLeaderboard.current = false;
     } else {
       fetchPeopleModels().then(() => {
         // what to do?
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scoreboardFlag]);
+  }, [leaderboardFlag]);
 
   useEffect(() => {
     if (firstCallPublishOnMap.current) {
@@ -471,7 +471,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
         }
       })
       .catch((error) => {
-        showError(i18n.t('message.CannotLoadScoreboard', lang) + ': ' + error);
+        showError(i18n.t('message.CannotLoadLeaderboard', lang) + ': ' + error);
       })
       .finally(() => {
         setLoading(false);
@@ -547,7 +547,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                         .catch((error) => {
                           showError(i18n.t('message.CannotPublishModelOnMap', lang) + ': ' + error);
                         });
-                      // add to the scoreboard
+                      // add to the leaderboard
                       firebase
                         .firestore()
                         .collection('board')
@@ -635,7 +635,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
         .catch((error) => {
           showError(i18n.t('message.CannotDeleteModelFromMap', lang) + ': ' + error);
         });
-      // remove the record from the scoreboard
+      // remove the record from the leaderboard
       firebase
         .firestore()
         .collection('board')

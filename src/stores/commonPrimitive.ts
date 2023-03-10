@@ -9,8 +9,8 @@ export interface PrimitiveStoreState {
   setPrimitiveStore: <K extends keyof PrimitiveStoreState, V extends PrimitiveStoreState[K]>(key: K, val: V) => void;
 
   modelsMapFlag: boolean;
-  scoreboardFlag: boolean;
-  showScoreboard: boolean;
+  leaderboardFlag: boolean;
+  showLeaderboard: boolean;
   publishOnModelsMapFlag: boolean;
   modelsMapWeatherStations: boolean;
 
@@ -111,8 +111,8 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
     },
 
     modelsMapFlag: false,
-    scoreboardFlag: false,
-    showScoreboard: false,
+    leaderboardFlag: false,
+    showLeaderboard: false,
     publishOnModelsMapFlag: false,
     modelsMapWeatherStations: false,
 

@@ -182,7 +182,7 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
 
       <Row gutter={6} style={{ paddingBottom: '4px' }}>
         <Col className="gutter-row" span={8}>
-          {i18n.t('word.Author', lang)}:
+          {i18n.t('word.Publisher', lang)}:
         </Col>
         <Col className="gutter-row" span={16}>
           <Input
