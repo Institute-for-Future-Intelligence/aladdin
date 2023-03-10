@@ -472,7 +472,7 @@ const ModelsMap = ({ selectAuthor, closeMap, openModel, deleteModel, likeModel, 
                   {ascendingOrder ? (
                     <DownCircleOutlined
                       title={i18n.t('modelsMap.FromNewestToOldest', { lng: language })}
-                      style={{ marginLeft: '2px', marginRight: '6px' }}
+                      style={{ cursor: 'pointer', marginLeft: '2px', marginRight: '6px' }}
                       onClick={() => {
                         setAscendingOrder(false);
                       }}
@@ -480,7 +480,7 @@ const ModelsMap = ({ selectAuthor, closeMap, openModel, deleteModel, likeModel, 
                   ) : (
                     <UpCircleOutlined
                       title={i18n.t('modelsMap.FromOldestToNewest', { lng: language })}
-                      style={{ marginLeft: '2px', marginRight: '6px' }}
+                      style={{ cursor: 'pointer', marginLeft: '2px', marginRight: '6px' }}
                       onClick={() => {
                         setAscendingOrder(true);
                       }}

@@ -2,7 +2,7 @@
  * @Copyright 2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import i18n from './i18n/i18n';
@@ -24,29 +24,65 @@ const ModelsGallery = ({ author, models, closeCallback, openCloudFile }: ModelsG
   const setCommonStore = useStore(Selector.set);
   const modelsMapType = useStore(Selector.modelsMapType);
 
+  // make an editable copy because models is not mutable
+  const modelsRef = useRef<Map<string, ModelSite>>(models ? new Map(models) : new Map());
+  // set a flag so that we can update when modelsRef changes
+  const [recountFlag, setRecountFlag] = useState<boolean>(false);
   const [selectedModel, setSelectedModel] = useState<ModelSite | undefined>();
+  const [ascendingOrder, setAscendingOrder] = useState<boolean>(false);
 
   const { Search } = Input;
   const lang = { lng: language };
 
+  useEffect(() => {
+    if (models) {
+      modelsRef.current = new Map(models);
+      setRecountFlag(!recountFlag);
+    }
+  }, [models]);
+
   const countModels = useMemo(() => {
-    if (!models) return 0;
     let count = 0;
-    for (const v of models.values()) {
+    for (const v of modelsRef.current.values()) {
       // when author is defined, all the models belong to him/her
       // when user is undefined, we only count those that belong to the current user
       if (author || v.userid === user.uid) count++;
     }
     return count;
-  }, [models, author, user.uid]);
+  }, [modelsRef.current, author, user.uid, recountFlag]);
 
   // use a dark theme when the map is in the satellite mode to match the color
   const dark = author && modelsMapType !== 'roadmap';
 
-  return !models || models.size === undefined || models.size === 0 ? (
+  return modelsRef.current.size === 0 ? (
     <Drawer
+      extra={
+        <Search
+          title={'Search by label'}
+          allowClear
+          size={'small'}
+          enterButton
+          onSearch={(s) => {
+            if (!models) return;
+            modelsRef.current.clear();
+            for (const [k, v] of models) {
+              if (v.label?.toLowerCase().includes(s.toLowerCase())) {
+                modelsRef.current.set(k, v);
+              }
+            }
+            setRecountFlag(!recountFlag);
+          }}
+        />
+      }
       mask={false}
-      headerStyle={{ height: '10px', background: 'whitesmoke' }}
+      headerStyle={{
+        height: '10px',
+        paddingLeft: '1px',
+        paddingRight: '1px',
+        paddingTop: '16px',
+        paddingBottom: '12px',
+        background: 'whitesmoke',
+      }}
       bodyStyle={{ padding: '0px 4px 0px 4px', overflowY: 'hidden' }}
       style={{ scrollbarColor: dark ? '#6A6B6E' : 'whitesmoke' }}
       title={(author ?? i18n.t('modelsMap.MyPublishedModels', lang)) + ' (0)'}
@@ -63,15 +99,49 @@ const ModelsGallery = ({ author, models, closeCallback, openCloudFile }: ModelsG
     <Drawer
       extra={
         <Space>
-          <Search size={'small'} enterButton />
-          <LeftCircleOutlined style={{ cursor: 'pointer', marginRight: '6px' }} />
-          <RightCircleOutlined style={{ cursor: 'pointer' }} />
+          {ascendingOrder ? (
+            <LeftCircleOutlined
+              title={i18n.t('modelsMap.FromNewestToOldest', { lng: language })}
+              style={{ cursor: 'pointer', marginLeft: '2px', marginRight: '6px' }}
+              onClick={() => {
+                setAscendingOrder(false);
+              }}
+            />
+          ) : (
+            <RightCircleOutlined
+              title={i18n.t('modelsMap.FromOldestToNewest', { lng: language })}
+              style={{ cursor: 'pointer', marginLeft: '2px', marginRight: '6px' }}
+              onClick={() => {
+                setAscendingOrder(true);
+              }}
+            />
+          )}
+          <Search
+            allowClear
+            size={'small'}
+            enterButton
+            onSearch={(s) => {
+              if (!models) return;
+              modelsRef.current.clear();
+              for (const [k, v] of models) {
+                if (v.label?.toLowerCase().includes(s.toLowerCase())) {
+                  modelsRef.current.set(k, v);
+                }
+              }
+              setRecountFlag(!recountFlag);
+            }}
+          />
         </Space>
       }
       mask={false}
       headerStyle={{
+        height: '10px', // force it to take minimum height
         color: dark ? 'white' : 'black', // doesn't work
         background: dark ? '#6A6B6E' : 'whitesmoke',
+        paddingLeft: '1px',
+        paddingRight: '1px',
+        paddingTop: '16px',
+        paddingBottom: '12px',
         border: 'none',
       }}
       bodyStyle={{ padding: '0px 4px 0px 4px', overflowY: 'hidden', background: dark ? '#2A2B2E' : 'white' }}
@@ -87,15 +157,15 @@ const ModelsGallery = ({ author, models, closeCallback, openCloudFile }: ModelsG
       <table>
         <tbody>
           <tr>
-            {[...models.keys()]
+            {[...modelsRef.current.keys()]
               .sort((a, b) => {
-                const modelA = models.get(a);
-                const modelB = models.get(b);
+                const modelA = modelsRef.current.get(a);
+                const modelB = modelsRef.current.get(b);
                 if (!modelA || !modelB) return 0;
-                return (modelB.timeCreated ?? 0) - (modelA.timeCreated ?? 0);
+                return (ascendingOrder ? -1 : 1) * ((modelB.timeCreated ?? 0) - (modelA.timeCreated ?? 0));
               })
               .map((key: string, index: number) => {
-                const m = models.get(key);
+                const m = modelsRef.current.get(key);
                 if (!m) return null;
                 // only show the models that belong to the current user when author is undefined
                 if (!author && m.userid !== user.uid) return null;
