@@ -49,18 +49,6 @@ const MainToolBar = ({ signIn, signOut }: MainToolBarProps) => {
       >
         {i18n.t('avatarMenu.AccountSettings', lang)}
       </Menu.Item>
-      <Menu.Item
-        key="my-models"
-        onClick={() => {
-          usePrimitiveStore.setState((state) => {
-            state.showModelsGallery = true;
-            state.scoreboardFlag = !state.scoreboardFlag;
-            state.openModelsMap = false;
-          });
-        }}
-      >
-        {i18n.t('avatarMenu.MyModelsGallery', lang)}
-      </Menu.Item>
       <Menu.Item key="signOut" onClick={signOut}>
         {i18n.t('avatarMenu.SignOut', lang)}
       </Menu.Item>

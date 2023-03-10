@@ -41,7 +41,7 @@ const ModelsGallery = ({ author, models, close, openCloudFile }: ModelsGalleryPr
       mask={false}
       headerStyle={{ height: '10px', background: 'whitesmoke' }}
       bodyStyle={{ padding: '0px 4px 0px 4px', overflowY: 'hidden' }}
-      title={(author ?? i18n.t('modelsMap.MyModels', lang)) + ': 0'}
+      title={(author ?? i18n.t('modelsMap.MyPublishedModels', lang)) + ': 0'}
       placement="bottom"
       visible={true}
       height={'150px'}
@@ -54,13 +54,7 @@ const ModelsGallery = ({ author, models, close, openCloudFile }: ModelsGalleryPr
       mask={false}
       headerStyle={{ height: '10px', background: 'whitesmoke' }}
       bodyStyle={{ padding: '0px 4px 0px 4px', overflowY: 'hidden' }}
-      title={
-        (author ?? i18n.t('modelsMap.MyModels', lang)) +
-        ': ' +
-        countModels +
-        ' ' +
-        i18n.t((countModels ?? 0) > 1 ? 'word.Models' : 'word.Model', lang)
-      }
+      title={(author ?? i18n.t('modelsMap.MyPublishedModels', lang)) + ' (' + countModels + ')'}
       placement="bottom"
       visible={true}
       height={'150px'}

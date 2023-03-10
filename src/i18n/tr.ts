@@ -534,12 +534,12 @@ export const i18n_tr = {
       },
 
       languageSubMenu: 'Dil',
+      ModelsGallery: 'Models Gallery',
       ModelsMap: 'Models Map',
       AboutUs: 'Hakkımızda',
     },
 
     avatarMenu: {
-      MyModelsGallery: 'My Models Gallery',
       AccountSettings: 'Hesap Ayarları',
       PrivacyInfo:
         'Oturum açtığınızda, Aladdin hesabınızı oluşturmak ve hesabınıza erişmek için Google Kimliğiniz kullanılır.\nVeritabanımızda referans olarak yalnızca rastgele bir alfasayısal dize depolanır.\nAdınız veya e-posta adresiniz gibi kişisel olarak tanımlanabilir hiçbir veri toplanmaz.\n Daha fazla bilgi için Gizlilik Politikamıza bakın:\nhttps://intofuture.org/aladdin-privacy.html',
@@ -1280,7 +1280,6 @@ export const i18n_tr = {
 
     cloudFilePanel: {
       MyLikes: 'My Likes',
-      MyPublishedModels: 'My Published Models',
       MyCloudFiles: 'Bulut Dosyalarım',
       GenerateLink: 'Link Oluştur',
       LinkGeneratedInClipBoard: 'Klip Panosunda Oluşturulan Link',
@@ -1476,7 +1475,7 @@ export const i18n_tr = {
       Justin: 'Justin',
     },
     modelsMap: {
-      MyModels: 'My Models',
+      MyPublishedModels: 'My Published Models',
       TotalNumberOfUserPublishedModels: 'Total number of user-published models',
       FromOldestToNewest: 'From oldest to newest',
       FromNewestToOldest: 'From newest to oldest',

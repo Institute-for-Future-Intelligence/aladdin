@@ -131,7 +131,7 @@ const PublishedModelsPanel = ({ publishedModels, openCloudFile }: PublishedModel
         <Container ref={nodeRef}>
           <ColumnWrapper ref={wrapperRef}>
             <Header className="handle" style={{ direction: 'ltr' }}>
-              <span>{i18n.t('cloudFilePanel.MyPublishedModels', lang)}</span>
+              <span>{i18n.t('modelsMap.MyPublishedModels', lang)}</span>
               <span
                 style={{ cursor: 'pointer' }}
                 onMouseDown={() => {

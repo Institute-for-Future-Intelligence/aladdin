@@ -2285,6 +2285,22 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Radio>
         </Radio.Group>
       </SubMenu>
+
+      {user.uid && !viewOnly && (
+        <Menu.Item
+          key="my-models"
+          onClick={() => {
+            usePrimitiveStore.setState((state) => {
+              state.showModelsGallery = true;
+              state.scoreboardFlag = !state.scoreboardFlag;
+              state.openModelsMap = false;
+            });
+          }}
+        >
+          {i18n.t('menu.ModelsGallery', lang)}...
+        </Menu.Item>
+      )}
+
       {/* models map */}
       {!viewOnly && !openModelsMap && (
         <Menu.Item
