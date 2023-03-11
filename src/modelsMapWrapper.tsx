@@ -10,7 +10,7 @@ import i18n from './i18n/i18n';
 import { Libraries } from '@react-google-maps/api/dist/utils/make-load-script-url';
 import { StandaloneSearchBox, useJsApiLoader } from '@react-google-maps/api';
 import Spinner from './components/spinner';
-import { Checkbox, Input, Space, Tag } from 'antd';
+import { Checkbox, Empty, Input, Space, Tag } from 'antd';
 import ModelsMap from './components/modelsMap';
 import { UndoableChangeLocation } from './undo/UndoableChangeLocation';
 import { DEFAULT_ADDRESS } from './constants';
@@ -65,6 +65,8 @@ const ModelsMapWrapper = ({
   const modelSites = useStore(Selector.modelSites);
   const peopleModels = useStore(Selector.peopleModels);
 
+  // make an editable copy because models is not mutable
+  const peopleModelsRef = useRef<Map<string, Map<string, ModelSite>>>(peopleModels ? new Map(peopleModels) : new Map());
   const [selectedAuthor, setSelectedAuthor] = useState<string | undefined>();
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const authorModelsRef = useRef<Map<string, ModelSite>>();
@@ -74,6 +76,7 @@ const ModelsMapWrapper = ({
   const { Search } = Input;
 
   useEffect(() => {
+    peopleModelsRef.current = peopleModels ? new Map(peopleModels) : new Map();
     if (selectedAuthor) {
       authorModelsRef.current = peopleModels.get(selectedAuthor);
       setUpdateFlag(!updateFlag);
@@ -84,7 +87,7 @@ const ModelsMapWrapper = ({
     setSelectedAuthor(author);
     usePrimitiveStore.setState((state) => {
       if (!state.showLeaderboard) state.leaderboardFlag = !state.leaderboardFlag;
-      if (author) authorModelsRef.current = peopleModels.get(author);
+      if (author) authorModelsRef.current = peopleModelsRef.current.get(author);
     });
   };
 
@@ -253,38 +256,51 @@ const ModelsMapWrapper = ({
                 allowClear
                 size={'small'}
                 enterButton
-                onSearch={(s) => {}}
+                onSearch={(s) => {
+                  if (!peopleModels) return;
+                  peopleModelsRef.current.clear();
+                  for (const [k, v] of peopleModels) {
+                    if (k.toLowerCase().includes(s.toLowerCase())) {
+                      peopleModelsRef.current.set(k, v);
+                    }
+                  }
+                  setUpdateFlag(!updateFlag);
+                }}
               />
-              <table>
-                <tbody>
-                  {[...peopleModels.keys()]
-                    .sort((a, b) => {
-                      const countA = peopleModels.get(a);
-                      const countB = peopleModels.get(b);
-                      return (countB ? countB.size : 0) - (countA ? countA.size : 0);
-                    })
-                    .map((key: string, index: number) => {
-                      if (index > 20) return null;
-                      const a = peopleModels.get(key);
-                      if (a?.size === undefined || a?.size === 0) return null;
-                      return (
-                        <tr key={index} style={{ width: '180px' }}>
-                          <td style={{ width: '150px' }}>
-                            <Tag
-                              icon={<UserOutlined />}
-                              color={a?.size > 10 ? 'gold' : a?.size > 5 ? 'lime' : a?.size > 1 ? 'blue' : 'magenta'}
-                              style={{ cursor: 'pointer', fontSize: '10px', fontWeight: 'bold', width: '130px' }}
-                              onClick={() => setSelectedAuthor(key)}
-                            >
-                              {key}
-                            </Tag>
-                          </td>
-                          <td>{a?.size}</td>
-                        </tr>
-                      );
-                    })}
-                </tbody>
-              </table>
+              {peopleModelsRef.current.size === 0 ? (
+                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+              ) : (
+                <table>
+                  <tbody>
+                    {[...peopleModelsRef.current.keys()]
+                      .sort((a, b) => {
+                        const countA = peopleModelsRef.current.get(a);
+                        const countB = peopleModelsRef.current.get(b);
+                        return (countB ? countB.size : 0) - (countA ? countA.size : 0);
+                      })
+                      .map((key: string, index: number) => {
+                        if (index > 20) return null;
+                        const a = peopleModelsRef.current.get(key);
+                        if (a?.size === undefined || a?.size === 0) return null;
+                        return (
+                          <tr key={index} style={{ width: '180px' }}>
+                            <td style={{ width: '150px' }}>
+                              <Tag
+                                icon={<UserOutlined />}
+                                color={a?.size > 10 ? 'gold' : a?.size > 5 ? 'lime' : a?.size > 1 ? 'blue' : 'magenta'}
+                                style={{ cursor: 'pointer', fontSize: '10px', fontWeight: 'bold', width: '130px' }}
+                                onClick={() => setSelectedAuthor(key)}
+                              >
+                                {key}
+                              </Tag>
+                            </td>
+                            <td>{a?.size}</td>
+                          </tr>
+                        );
+                      })}
+                  </tbody>
+                </table>
+              )}
             </Space>
           </div>
         )}
