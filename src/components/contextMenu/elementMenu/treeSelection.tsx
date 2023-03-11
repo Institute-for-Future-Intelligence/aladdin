@@ -1,12 +1,12 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
 import { Select } from 'antd';
-import { useStore } from '../../../stores/common';
+import { CommonStoreState, useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
-import { TreeType } from '../../../types';
+import { ObjectType, TreeType } from '../../../types';
 import AppleImage from '../../../resources/apple_summer.png';
 import BirchImage from '../../../resources/birch_summer.png';
 import CoconutImage from '../../../resources/coconut.png';
@@ -28,12 +28,22 @@ const { Option } = Select;
 const TreeSelection = () => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
-  const updateTreeTypeById = useStore(Selector.updateTreeTypeById);
   const addUndoable = useStore(Selector.addUndoable);
   const tree = useStore.getState().getSelectedElement() as TreeModel;
 
   const [updateFlag, setUpdateFlag] = useState(false);
   const lang = { lng: language };
+
+  const updateTreeTypeById = (id: string, type: TreeType) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Tree && e.id === id) {
+          (e as TreeModel).name = type;
+          break;
+        }
+      }
+    });
+  };
 
   return (
     <Select

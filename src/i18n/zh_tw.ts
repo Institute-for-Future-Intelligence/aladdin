@@ -974,6 +974,7 @@ export const i18n_zh_tw = {
       Texture10: '十號材質',
       SizeOfWall: '牆的尺寸',
       OnlyThisWall: '只這堵牆',
+      AllConnectedWalls: '所有連接的牆',
       AllWallsAboveFoundation: '同一地基上所有的牆',
       AllWalls: '所有的牆',
       Windows: '窗戶',

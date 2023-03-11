@@ -5,7 +5,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Col, Modal, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
-import { useStore } from '../../../stores/common';
+import { CommonStoreState, useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { ParabolicDishModel } from '../../../models/ParabolicDishModel';
 import { ObjectType, ParabolicDishStructureType, Scope } from '../../../types';
@@ -18,9 +18,6 @@ const ParabolicDishStructureTypeInput = ({ setDialogVisible }: { setDialogVisibl
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
-  const updateById = useStore(Selector.updateParabolicDishStructureTypeById);
-  const updateAboveFoundation = useStore(Selector.updateParabolicDishStructureTypeAboveFoundation);
-  const updateForAll = useStore(Selector.updateParabolicDishStructureTypeForAll);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.parabolicDishActionScope);
   const setActionScope = useStore(Selector.setParabolicDishActionScope);
@@ -52,6 +49,43 @@ const ParabolicDishStructureTypeInput = ({ setDialogVisible }: { setDialogVisibl
       setInputStructureType(parabolicDish.structureType);
     }
   }, [parabolicDish]);
+
+  const updateById = (id: string, structureType: number) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.id === id && !e.locked) {
+          if (e.type === ObjectType.ParabolicDish) {
+            (e as ParabolicDishModel).structureType = structureType;
+            break;
+          }
+        }
+      }
+    });
+  };
+
+  const updateAboveFoundation = (foundationId: string, structureType: number) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.foundationId === foundationId && !e.locked) {
+          if (e.type === ObjectType.ParabolicDish) {
+            (e as ParabolicDishModel).structureType = structureType;
+          }
+        }
+      }
+    });
+  };
+
+  const updateForAll = (structureType: number) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (!e.locked) {
+          if (e.type === ObjectType.ParabolicDish) {
+            (e as ParabolicDishModel).structureType = structureType;
+          }
+        }
+      }
+    });
+  };
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);

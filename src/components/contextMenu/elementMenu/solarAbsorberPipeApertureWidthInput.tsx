@@ -5,7 +5,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Col, InputNumber, Modal, Radio, RadioChangeEvent, Row, Space } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
-import { useStore } from 'src/stores/common';
+import { CommonStoreState, useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
 import { ObjectType, Scope, SolarStructure } from 'src/types';
 import i18n from 'src/i18n/i18n';
@@ -13,13 +13,13 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { ZERO_TOLERANCE } from 'src/constants';
+import { SolarAbsorberPipeModel } from '../../../models/SolarAbsorberPipeModel';
 
 const SolarAbsorberPipeApertureWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
-  const updateById = useStore(Selector.updateSolarAbsorberPipeApertureWidthById);
-  const updateForAll = useStore(Selector.updateSolarAbsorberPipeApertureWidthForAll);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.foundationActionScope);
   const setActionScope = useStore(Selector.setFoundationActionScope);
@@ -45,6 +45,35 @@ const SolarAbsorberPipeApertureWidthInput = ({ setDialogVisible }: { setDialogVi
       inputApertureWidthRef.current = absorberPipe.apertureWidth ?? 0.6;
     }
   }, [foundation]);
+
+  const updateById = (id: string, apertureWidth: number) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
+          const f = e as FoundationModel;
+          if (f.solarStructure === SolarStructure.FocusPipe) {
+            if (!f.solarAbsorberPipe) f.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
+            f.solarAbsorberPipe.apertureWidth = apertureWidth;
+          }
+          break;
+        }
+      }
+    });
+  };
+
+  const updateForAll = (apertureWidth: number) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Foundation && !e.locked) {
+          const f = e as FoundationModel;
+          if (f.solarStructure === SolarStructure.FocusPipe) {
+            if (!f.solarAbsorberPipe) f.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
+            f.solarAbsorberPipe.apertureWidth = apertureWidth;
+          }
+        }
+      }
+    });
+  };
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);

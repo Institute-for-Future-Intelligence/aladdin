@@ -43,8 +43,6 @@ export const changed = (state: CommonStoreState) => state.changed;
 
 export const setChanged = (state: CommonStoreState) => state.setChanged;
 
-export const skipChange = (state: CommonStoreState) => state.skipChange;
-
 export const setSkipChange = (state: CommonStoreState) => state.setSkipChange;
 
 export const applyCount = (state: CommonStoreState) => state.applyCount;
@@ -80,8 +78,6 @@ export const openModelsMap = (state: PrimitiveStoreState) => state.openModelsMap
 export const modelsMapLatitude = (state: CommonStoreState) => state.modelsMapLatitude;
 
 export const modelsMapLongitude = (state: CommonStoreState) => state.modelsMapLongitude;
-
-export const modelsMapAddress = (state: CommonStoreState) => state.modelsMapAddress;
 
 export const modelsMapZoom = (state: CommonStoreState) => state.modelsMapZoom;
 
@@ -180,10 +176,6 @@ export const updateSceneRadius = (state: CommonStoreState) => state.updateSceneR
 
 export const sceneRadius = (state: CommonStoreState) => state.sceneRadius;
 
-export const setSceneRadius = (state: CommonStoreState) => state.setSceneRadius;
-
-export const cameraDirection = (state: CommonStoreState) => state.cameraDirection;
-
 export const getCameraDirection = (state: CommonStoreState) => state.getCameraDirection;
 
 export const getElementById = (state: CommonStoreState) => state.getElementById;
@@ -199,8 +191,6 @@ export const getChildrenOfType = (state: CommonStoreState) => state.getChildrenO
 export const selectedElement = (state: CommonStoreState) => state.selectedElement;
 
 export const getSelectedElement = (state: CommonStoreState) => state.getSelectedElement;
-
-export const findNearestSibling = (state: CommonStoreState) => state.findNearestSibling;
 
 export const overlapWithSibling = (state: CommonStoreState) => state.overlapWithSibling;
 
@@ -236,25 +226,17 @@ export const updateElementCzForAll = (state: CommonStoreState) => state.updateEl
 
 export const updateElementLxById = (state: CommonStoreState) => state.updateElementLxById;
 
-export const updateElementLxOnSurface = (state: CommonStoreState) => state.updateElementLxOnSurface;
-
 export const updateElementLxAboveFoundation = (state: CommonStoreState) => state.updateElementLxAboveFoundation;
 
 export const updateElementLxForAll = (state: CommonStoreState) => state.updateElementLxForAll;
 
 export const updateElementLyById = (state: CommonStoreState) => state.updateElementLyById;
 
-export const updateElementLyOnSurface = (state: CommonStoreState) => state.updateElementLyOnSurface;
-
 export const updateElementLyAboveFoundation = (state: CommonStoreState) => state.updateElementLyAboveFoundation;
 
 export const updateElementLyForAll = (state: CommonStoreState) => state.updateElementLyForAll;
 
 export const updateElementLzById = (state: CommonStoreState) => state.updateElementLzById;
-
-export const updateElementLzOnSurface = (state: CommonStoreState) => state.updateElementLzOnSurface;
-
-export const updateElementLzAboveFoundation = (state: CommonStoreState) => state.updateElementLzAboveFoundation;
 
 export const updateElementLzForAll = (state: CommonStoreState) => state.updateElementLzForAll;
 
@@ -292,181 +274,17 @@ export const foundationActionScope = (state: CommonStoreState) => state.foundati
 
 export const setFoundationActionScope = (state: CommonStoreState) => state.setFoundationActionScope;
 
-export const updateFoundationSolarStructureById = (state: CommonStoreState) => state.updateFoundationSolarStructureById;
-
-export const updateFoundationThermostatSetpointById = (state: CommonStoreState) =>
-  state.updateFoundationThermostatSetpointById;
-
-export const updateFoundationTemperatureThresholdById = (state: CommonStoreState) =>
-  state.updateFoundationTemperatureThresholdById;
-
-export const updateSolarAbsorberPipeApertureWidthById = (state: CommonStoreState) =>
-  state.updateSolarAbsorberPipeApertureWidthById;
-
-export const updateSolarAbsorberPipeApertureWidthForAll = (state: CommonStoreState) =>
-  state.updateSolarAbsorberPipeApertureWidthForAll;
-
-export const updateSolarAbsorberPipePoleNumberById = (state: CommonStoreState) =>
-  state.updateSolarAbsorberPipePoleNumberById;
-
-export const updateSolarAbsorberPipePoleNumberForAll = (state: CommonStoreState) =>
-  state.updateSolarAbsorberPipePoleNumberForAll;
-
-export const updateSolarAbsorberPipeHeightById = (state: CommonStoreState) => state.updateSolarAbsorberPipeHeightById;
-
-export const updateSolarAbsorberPipeHeightForAll = (state: CommonStoreState) =>
-  state.updateSolarAbsorberPipeHeightForAll;
-
-export const updateSolarAbsorberPipeAbsorptanceById = (state: CommonStoreState) =>
-  state.updateSolarAbsorberPipeAbsorptanceById;
-
-export const updateSolarAbsorberPipeAbsorptanceForAll = (state: CommonStoreState) =>
-  state.updateSolarAbsorberPipeAbsorptanceForAll;
-
-export const updateSolarAbsorberPipeOpticalEfficiencyById = (state: CommonStoreState) =>
-  state.updateSolarAbsorberPipeOpticalEfficiencyById;
-
-export const updateSolarAbsorberPipeOpticalEfficiencyForAll = (state: CommonStoreState) =>
-  state.updateSolarAbsorberPipeOpticalEfficiencyForAll;
-
-export const updateSolarAbsorberPipeThermalEfficiencyById = (state: CommonStoreState) =>
-  state.updateSolarAbsorberPipeThermalEfficiencyById;
-
-export const updateSolarAbsorberPipeThermalEfficiencyForAll = (state: CommonStoreState) =>
-  state.updateSolarAbsorberPipeThermalEfficiencyForAll;
-
-export const updateSolarAbsorberPipeRelativeLengthById = (state: CommonStoreState) =>
-  state.updateSolarAbsorberPipeRelativeLengthById;
-
-export const updateSolarPowerTowerHeightById = (state: CommonStoreState) => state.updateSolarPowerTowerHeightById;
-
-export const updateSolarPowerTowerHeightForAll = (state: CommonStoreState) => state.updateSolarPowerTowerHeightForAll;
-
-export const updateSolarPowerTowerRadiusById = (state: CommonStoreState) => state.updateSolarPowerTowerRadiusById;
-
-export const updateSolarPowerTowerRadiusForAll = (state: CommonStoreState) => state.updateSolarPowerTowerRadiusForAll;
-
-export const updateSolarPowerTowerReceiverAbsorptanceById = (state: CommonStoreState) =>
-  state.updateSolarPowerTowerReceiverAbsorptanceById;
-
-export const updateSolarPowerTowerReceiverAbsorptanceForAll = (state: CommonStoreState) =>
-  state.updateSolarPowerTowerReceiverAbsorptanceForAll;
-
-export const updateSolarPowerTowerReceiverOpticalEfficiencyById = (state: CommonStoreState) =>
-  state.updateSolarPowerTowerReceiverOpticalEfficiencyById;
-
-export const updateSolarPowerTowerReceiverOpticalEfficiencyForAll = (state: CommonStoreState) =>
-  state.updateSolarPowerTowerReceiverOpticalEfficiencyForAll;
-
-export const updateSolarPowerTowerReceiverThermalEfficiencyById = (state: CommonStoreState) =>
-  state.updateSolarPowerTowerReceiverThermalEfficiencyById;
-
-export const updateSolarPowerTowerReceiverThermalEfficiencyForAll = (state: CommonStoreState) =>
-  state.updateSolarPowerTowerReceiverThermalEfficiencyForAll;
-
-export const updateSolarUpdraftTowerChimneyHeightById = (state: CommonStoreState) =>
-  state.updateSolarUpdraftTowerChimneyHeightById;
-
-export const updateSolarUpdraftTowerChimneyHeightForAll = (state: CommonStoreState) =>
-  state.updateSolarUpdraftTowerChimneyHeightForAll;
-
-export const updateSolarUpdraftTowerChimneyRadiusById = (state: CommonStoreState) =>
-  state.updateSolarUpdraftTowerChimneyRadiusById;
-
-export const updateSolarUpdraftTowerChimneyRadiusForAll = (state: CommonStoreState) =>
-  state.updateSolarUpdraftTowerChimneyRadiusForAll;
-
-export const updateSolarUpdraftTowerCollectorHeightById = (state: CommonStoreState) =>
-  state.updateSolarUpdraftTowerCollectorHeightById;
-
-export const updateSolarUpdraftTowerCollectorHeightForAll = (state: CommonStoreState) =>
-  state.updateSolarUpdraftTowerCollectorHeightForAll;
-
-export const updateSolarUpdraftTowerCollectorRadiusById = (state: CommonStoreState) =>
-  state.updateSolarUpdraftTowerCollectorRadiusById;
-
-export const updateSolarUpdraftTowerCollectorRadiusForAll = (state: CommonStoreState) =>
-  state.updateSolarUpdraftTowerCollectorRadiusForAll;
-
-export const updateSolarUpdraftTowerCollectorTransmissivityById = (state: CommonStoreState) =>
-  state.updateSolarUpdraftTowerCollectorTransmissivityById;
-
-export const updateSolarUpdraftTowerCollectorTransmissivityForAll = (state: CommonStoreState) =>
-  state.updateSolarUpdraftTowerCollectorTransmissivityForAll;
-
-export const updateSolarUpdraftTowerCollectorEmissivityById = (state: CommonStoreState) =>
-  state.updateSolarUpdraftTowerCollectorEmissivityById;
-
-export const updateSolarUpdraftTowerCollectorEmissivityForAll = (state: CommonStoreState) =>
-  state.updateSolarUpdraftTowerCollectorEmissivityForAll;
-
-export const updateSolarUpdraftTowerDischargeCoefficientById = (state: CommonStoreState) =>
-  state.updateSolarUpdraftTowerDischargeCoefficientById;
-
-export const updateSolarUpdraftTowerDischargeCoefficientForAll = (state: CommonStoreState) =>
-  state.updateSolarUpdraftTowerDischargeCoefficientForAll;
-
-export const updateSolarUpdraftTowerTurbineEfficiencyById = (state: CommonStoreState) =>
-  state.updateSolarUpdraftTowerTurbineEfficiencyById;
-
-export const updateSolarUpdraftTowerTurbineEfficiencyForAll = (state: CommonStoreState) =>
-  state.updateSolarUpdraftTowerTurbineEfficiencyForAll;
-
-export const updateFoundationTextureById = (state: CommonStoreState) => state.updateFoundationTextureById;
-
-export const updateFoundationTextureForAll = (state: CommonStoreState) => state.updateFoundationTextureForAll;
-
 export const polygonActionScope = (state: CommonStoreState) => state.polygonActionScope;
 
 export const setPolygonActionScope = (state: CommonStoreState) => state.setPolygonActionScope;
-
-export const deletePolygonVertexByIndex = (state: CommonStoreState) => state.deletePolygonVertexByIndex;
-
-export const insertPolygonVertexBeforeIndex = (state: CommonStoreState) => state.insertPolygonVertexBeforeIndex;
-
-export const insertPolygonVertexAfterIndex = (state: CommonStoreState) => state.insertPolygonVertexAfterIndex;
-
-export const updatePolygonSelectedIndexById = (state: CommonStoreState) => state.updatePolygonSelectedIndexById;
-
-export const updatePolygonFilledById = (state: CommonStoreState) => state.updatePolygonFilledById;
-
-export const updatePolygonLineStyleById = (state: CommonStoreState) => state.updatePolygonLineStyleById;
-
-export const updatePolygonLineStyleOnSurface = (state: CommonStoreState) => state.updatePolygonLineStyleOnSurface;
-
-export const updatePolygonLineStyleAboveFoundation = (state: CommonStoreState) =>
-  state.updatePolygonLineStyleAboveFoundation;
-
-export const updatePolygonLineStyleForAll = (state: CommonStoreState) => state.updatePolygonLineStyleForAll;
 
 export const updatePolygonVertexPositionById = (state: CommonStoreState) => state.updatePolygonVertexPositionById;
 
 export const updatePolygonVerticesById = (state: CommonStoreState) => state.updatePolygonVerticesById;
 
-export const updatePolygonTextureById = (state: CommonStoreState) => state.updatePolygonTextureById;
-
-export const updatePolygonTextureOnSurface = (state: CommonStoreState) => state.updatePolygonTextureOnSurface;
-
-export const updatePolygonTextureAboveFoundation = (state: CommonStoreState) =>
-  state.updatePolygonTextureAboveFoundation;
-
-export const updatePolygonTextureForAll = (state: CommonStoreState) => state.updatePolygonTextureForAll;
-
 export const cuboidActionScope = (state: CommonStoreState) => state.cuboidActionScope;
 
 export const setCuboidActionScope = (state: CommonStoreState) => state.setCuboidActionScope;
-
-export const updateCuboidColorBySide = (state: CommonStoreState) => state.updateCuboidColorBySide;
-
-export const updateCuboidColorById = (state: CommonStoreState) => state.updateCuboidColorById;
-
-export const updateCuboidColorForAll = (state: CommonStoreState) => state.updateCuboidColorForAll;
-
-export const updateCuboidTextureBySide = (state: CommonStoreState) => state.updateCuboidTextureBySide;
-
-export const updateCuboidFacadeTextureById = (state: CommonStoreState) => state.updateCuboidFacadeTextureById;
-
-export const updateCuboidFacadeTextureForAll = (state: CommonStoreState) => state.updateCuboidFacadeTextureForAll;
 
 export const solarPanelActionScope = (state: CommonStoreState) => state.solarPanelActionScope;
 
@@ -477,49 +295,7 @@ export const updateSolarCollectorDailyYieldById = (state: CommonStoreState) => s
 export const updateSolarCollectorYearlyYieldById = (state: CommonStoreState) =>
   state.updateSolarCollectorYearlyYieldById;
 
-export const updateSolarPanelModelById = (state: CommonStoreState) => state.updateSolarPanelModelById;
-
-export const updateSolarPanelModelOnSurface = (state: CommonStoreState) => state.updateSolarPanelModelOnSurface;
-
-export const updateSolarPanelModelAboveFoundation = (state: CommonStoreState) =>
-  state.updateSolarPanelModelAboveFoundation;
-
-export const updateSolarPanelModelForAll = (state: CommonStoreState) => state.updateSolarPanelModelForAll;
-
-export const updateSolarPanelLxById = (state: CommonStoreState) => state.updateSolarPanelLxById;
-
-export const updateSolarPanelLxOnSurface = (state: CommonStoreState) => state.updateSolarPanelLxOnSurface;
-
-export const updateSolarPanelLxAboveFoundation = (state: CommonStoreState) => state.updateSolarPanelLxAboveFoundation;
-
-export const updateSolarPanelLxForAll = (state: CommonStoreState) => state.updateSolarPanelLxForAll;
-
-export const updateSolarPanelLyById = (state: CommonStoreState) => state.updateSolarPanelLyById;
-
-export const updateSolarPanelLyOnSurface = (state: CommonStoreState) => state.updateSolarPanelLyOnSurface;
-
-export const updateSolarPanelLyAboveFoundation = (state: CommonStoreState) => state.updateSolarPanelLyAboveFoundation;
-
-export const updateSolarPanelLyForAll = (state: CommonStoreState) => state.updateSolarPanelLyForAll;
-
-export const updateSolarPanelFrameColorById = (state: CommonStoreState) => state.updateSolarPanelFrameColorById;
-
-export const updateSolarPanelFrameColorOnSurface = (state: CommonStoreState) =>
-  state.updateSolarPanelFrameColorOnSurface;
-
-export const updateSolarPanelFrameColorAboveFoundation = (state: CommonStoreState) =>
-  state.updateSolarPanelFrameColorAboveFoundation;
-
-export const updateSolarPanelFrameColorForAll = (state: CommonStoreState) => state.updateSolarPanelFrameColorForAll;
-
 export const updateSolarPanelTiltAngleById = (state: CommonStoreState) => state.updateSolarPanelTiltAngleById;
-
-export const updateSolarPanelTiltAngleOnSurface = (state: CommonStoreState) => state.updateSolarPanelTiltAngleOnSurface;
-
-export const updateSolarPanelTiltAngleAboveFoundation = (state: CommonStoreState) =>
-  state.updateSolarPanelTiltAngleAboveFoundation;
-
-export const updateSolarPanelTiltAngleForAll = (state: CommonStoreState) => state.updateSolarPanelTiltAngleForAll;
 
 export const updateSolarCollectorDrawSunBeamById = (state: CommonStoreState) =>
   state.updateSolarCollectorDrawSunBeamById;
@@ -542,26 +318,6 @@ export const updateSolarCollectorRelativeAzimuthAboveFoundation = (state: Common
 export const updateSolarCollectorRelativeAzimuthForAll = (state: CommonStoreState) =>
   state.updateSolarCollectorRelativeAzimuthForAll;
 
-export const updateSolarPanelOrientationById = (state: CommonStoreState) => state.updateSolarPanelOrientationById;
-
-export const updateSolarPanelOrientationOnSurface = (state: CommonStoreState) =>
-  state.updateSolarPanelOrientationOnSurface;
-
-export const updateSolarPanelOrientationAboveFoundation = (state: CommonStoreState) =>
-  state.updateSolarPanelOrientationAboveFoundation;
-
-export const updateSolarPanelOrientationForAll = (state: CommonStoreState) => state.updateSolarPanelOrientationForAll;
-
-export const updateSolarPanelTrackerTypeById = (state: CommonStoreState) => state.updateSolarPanelTrackerTypeById;
-
-export const updateSolarPanelTrackerTypeOnSurface = (state: CommonStoreState) =>
-  state.updateSolarPanelTrackerTypeOnSurface;
-
-export const updateSolarPanelTrackerTypeAboveFoundation = (state: CommonStoreState) =>
-  state.updateSolarPanelTrackerTypeAboveFoundation;
-
-export const updateSolarPanelTrackerTypeForAll = (state: CommonStoreState) => state.updateSolarPanelTrackerTypeForAll;
-
 export const updateSolarCollectorPoleHeightById = (state: CommonStoreState) => state.updateSolarCollectorPoleHeightById;
 
 export const updateSolarCollectorPoleHeightOnSurface = (state: CommonStoreState) =>
@@ -572,16 +328,6 @@ export const updateSolarCollectorPoleHeightAboveFoundation = (state: CommonStore
 
 export const updateSolarCollectorPoleHeightForAll = (state: CommonStoreState) =>
   state.updateSolarCollectorPoleHeightForAll;
-
-export const updateSolarPanelPoleSpacingById = (state: CommonStoreState) => state.updateSolarPanelPoleSpacingById;
-
-export const updateSolarPanelPoleSpacingOnSurface = (state: CommonStoreState) =>
-  state.updateSolarPanelPoleSpacingOnSurface;
-
-export const updateSolarPanelPoleSpacingAboveFoundation = (state: CommonStoreState) =>
-  state.updateSolarPanelPoleSpacingAboveFoundation;
-
-export const updateSolarPanelPoleSpacingForAll = (state: CommonStoreState) => state.updateSolarPanelPoleSpacingForAll;
 
 export const updateCspReflectanceById = (state: CommonStoreState) => state.updateCspReflectanceById;
 
@@ -639,15 +385,6 @@ export const parabolicDishActionScope = (state: CommonStoreState) => state.parab
 
 export const setParabolicDishActionScope = (state: CommonStoreState) => state.setParabolicDishActionScope;
 
-export const updateParabolicDishStructureTypeById = (state: CommonStoreState) =>
-  state.updateParabolicDishStructureTypeById;
-
-export const updateParabolicDishStructureTypeAboveFoundation = (state: CommonStoreState) =>
-  state.updateParabolicDishStructureTypeAboveFoundation;
-
-export const updateParabolicDishStructureTypeForAll = (state: CommonStoreState) =>
-  state.updateParabolicDishStructureTypeForAll;
-
 export const updateParabolaLatusRectumById = (state: CommonStoreState) => state.updateParabolaLatusRectumById;
 
 export const updateParabolaLatusRectumAboveFoundation = (state: CommonStoreState) =>
@@ -660,28 +397,6 @@ export const updateModuleLengthById = (state: CommonStoreState) => state.updateM
 export const updateModuleLengthAboveFoundation = (state: CommonStoreState) => state.updateModuleLengthAboveFoundation;
 
 export const updateModuleLengthForAll = (state: CommonStoreState) => state.updateModuleLengthForAll;
-
-export const updateTreeTypeById = (state: CommonStoreState) => state.updateTreeTypeById;
-
-export const updateTreeShowModelById = (state: CommonStoreState) => state.updateTreeShowModelById;
-
-export const updateTreeFlipById = (state: CommonStoreState) => state.updateTreeFlipById;
-
-export const updateFlowerTypeById = (state: CommonStoreState) => state.updateFlowerTypeById;
-
-export const updateFlowerFlipById = (state: CommonStoreState) => state.updateFlowerFlipById;
-
-export const updateHumanNameById = (state: CommonStoreState) => state.updateHumanNameById;
-
-export const updateHumanFlipById = (state: CommonStoreState) => state.updateHumanFlipById;
-
-export const updateHumanObserverById = (state: CommonStoreState) => state.updateHumanObserverById;
-
-export const updateLightColorById = (state: CommonStoreState) => state.updateLightColorById;
-
-export const updateLightIntensityById = (state: CommonStoreState) => state.updateLightIntensityById;
-
-export const updateLightDistanceById = (state: CommonStoreState) => state.updateLightDistanceById;
 
 export const updateInsideLightById = (state: CommonStoreState) => state.updateInsideLightById;
 
@@ -734,8 +449,6 @@ export const countAllOffspringsByTypeAtOnce = (state: CommonStoreState) => state
 
 export const countSolarPanelsOnRack = (state: CommonStoreState) => state.countSolarPanelsOnRack;
 
-export const clearAllSolarPanelYields = (state: CommonStoreState) => state.clearAllSolarPanelYields;
-
 export const selectedElementAngle = (state: CommonStoreState) => state.selectedElementAngle;
 
 export const selectedElementHeight = (state: CommonStoreState) => state.selectedElementHeight;
@@ -779,13 +492,9 @@ export const loadWeatherData = (state: CommonStoreState) => state.loadWeatherDat
 
 export const getWeather = (state: CommonStoreState) => state.getWeather;
 
-export const horizontalSolarRadiationData = (state: CommonStoreState) => state.horizontalSolarRadiationData;
-
 export const loadHorizontalSolarRadiationData = (state: CommonStoreState) => state.loadHorizontalSolarRadiationData;
 
 export const getHorizontalSolarRadiation = (state: CommonStoreState) => state.getHorizontalSolarRadiation;
-
-export const verticalSolarRadiationData = (state: CommonStoreState) => state.verticalSolarRadiationData;
 
 export const loadVerticalSolarRadiationData = (state: CommonStoreState) => state.loadVerticalSolarRadiationData;
 
@@ -1062,11 +771,7 @@ export const deletedRoofId = (state: CommonStoreState) => state.deletedRoofId;
 
 export const groupActionMode = (state: CommonStoreState) => state.groupActionMode;
 
-export const setGroupActionMode = (state: CommonStoreState) => state.setGroupActionMode;
-
 export const groupMasterId = (state: CommonStoreState) => state.groupMasterId;
-
-export const setGroupMasterId = (state: CommonStoreState) => state.setGroupMasterId;
 
 export const groupActionUpdateFlag = (state: CommonStoreState) => state.groupActionUpdateFlag;
 
@@ -1075,8 +780,6 @@ export const addedWindowId = (state: CommonStoreState) => state.addedWindowId;
 export const addedDoorId = (state: CommonStoreState) => state.addedDoorId;
 
 export const updateWallMapOnFoundationFlag = (state: CommonStoreState) => state.updateWallMapOnFoundationFlag;
-
-export const updateWallMapOnFoundation = (state: CommonStoreState) => state.updateWallMapOnFoundation;
 
 export const wallActionScope = (state: CommonStoreState) => state.wallActionScope;
 
@@ -1094,45 +797,11 @@ export const setDoorActionScope = (state: CommonStoreState) => state.setDoorActi
 
 export const setWindowActionScope = (state: CommonStoreState) => state.setWindowActionScope;
 
-export const updateWindowMullionById = (state: CommonStoreState) => state.updateWindowMullionById;
-
-export const updateWindowTypeById = (state: CommonStoreState) => state.updateWindowTypeById;
-
-export const updateWallRelativeAngleById = (state: CommonStoreState) => state.updateWallRelativeAngleById;
-
 export const updateWallLeftJointsById = (state: CommonStoreState) => state.updateWallLeftJointsById;
 
 export const updateWallRightJointsById = (state: CommonStoreState) => state.updateWallRightJointsById;
 
 export const updateWallLeftPointById = (state: CommonStoreState) => state.updateWallLeftPointById;
-
-export const updateWallRightPointById = (state: CommonStoreState) => state.updateWallRightPointById;
-
-export const updateWallTextureById = (state: CommonStoreState) => state.updateWallTextureById;
-
-export const updateWallTextureAboveFoundation = (state: CommonStoreState) => state.updateWallTextureAboveFoundation;
-
-export const updateWallTextureForAll = (state: CommonStoreState) => state.updateWallTextureForAll;
-
-export const updateWallColorById = (state: CommonStoreState) => state.updateWallColorById;
-
-export const updateWallColorAboveFoundation = (state: CommonStoreState) => state.updateWallColorAboveFoundation;
-
-export const updateWallColorForAll = (state: CommonStoreState) => state.updateWallColorForAll;
-
-export const updateWallHeightById = (state: CommonStoreState) => state.updateWallHeightById;
-
-export const updateWallHeightAboveFoundation = (state: CommonStoreState) => state.updateWallHeightAboveFoundation;
-
-export const updateWallHeightForAll = (state: CommonStoreState) => state.updateWallHeightForAll;
-
-export const updateWallThicknessById = (state: CommonStoreState) => state.updateWallThicknessById;
-
-export const updateWallThicknessAboveFoundation = (state: CommonStoreState) => state.updateWallThicknessAboveFoundation;
-
-export const updateWallThicknessForAll = (state: CommonStoreState) => state.updateWallThicknessForAll;
-
-export const updateWallStructureById = (state: CommonStoreState) => state.updateWallStructureById;
 
 export const updateRoofRiseById = (state: CommonStoreState) => state.updateRoofRiseById;
 

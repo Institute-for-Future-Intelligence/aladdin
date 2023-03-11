@@ -996,6 +996,7 @@ export const i18n_es = {
       Texture10: 'Textura 10',
       SizeOfWall: 'Tamaño de la pared',
       OnlyThisWall: 'Solamente esta pared',
+      AllConnectedWalls: 'All Connected Walls',
       AllWallsAboveFoundation: 'Todas las paredes sobre la misma base',
       AllWalls: 'Todo paredes',
       Windows: 'Windows',

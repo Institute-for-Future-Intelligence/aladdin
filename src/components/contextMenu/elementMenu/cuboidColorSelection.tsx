@@ -6,7 +6,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { CompactPicker } from 'react-color';
 import { Button, Col, Modal, Radio, RadioChangeEvent, Row, Space } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
-import { useStore } from '../../../stores/common';
+import { CommonStoreState, useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { ObjectType, Scope } from '../../../types';
 import i18n from '../../../i18n/i18n';
@@ -18,9 +18,6 @@ const CuboidColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
-  const updateCuboidColorBySide = useStore(Selector.updateCuboidColorBySide);
-  const updateCuboidColorById = useStore(Selector.updateCuboidColorById);
-  const updateCuboidColorForAll = useStore(Selector.updateCuboidColorForAll);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.cuboidActionScope);
   const setActionScope = useStore(Selector.setCuboidActionScope);
@@ -48,6 +45,53 @@ const CuboidColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
   useEffect(() => {
     updateSelectedColor();
   }, [cuboid, selectedSideIndex]);
+
+  const updateCuboidColorBySide = (side: number, id: string, color: string) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Cuboid && e.id === id && !e.locked) {
+          const cuboid = e as CuboidModel;
+          if (!cuboid.faceColors) {
+            cuboid.faceColors = new Array<string>(6);
+            cuboid.faceColors.fill(cuboid.color ?? color);
+          }
+          cuboid.faceColors[side] = color;
+          break;
+        }
+      }
+    });
+  };
+
+  const updateCuboidColorById = (id: string, color: string) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Cuboid && e.id === id && !e.locked) {
+          e.color = color;
+          const cuboid = e as CuboidModel;
+          if (!cuboid.faceColors) cuboid.faceColors = new Array<string>(6);
+          for (let i = 0; i < 4; i++) {
+            cuboid.faceColors[i] = color;
+          }
+          break;
+        }
+      }
+    });
+  };
+
+  const updateCuboidColorForAll = (color: string) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Cuboid && !e.locked) {
+          e.color = color;
+          const cuboid = e as CuboidModel;
+          if (!cuboid.faceColors) cuboid.faceColors = new Array<string>(6);
+          for (let i = 0; i < 4; i++) {
+            cuboid.faceColors[i] = color;
+          }
+        }
+      }
+    });
+  };
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);

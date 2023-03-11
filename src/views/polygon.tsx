@@ -17,7 +17,7 @@ import PolygonTexture00 from '../resources/tiny_white_square.png';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { Box, Line, Sphere } from '@react-three/drei';
 import { Euler, Mesh, RepeatWrapping, Shape, TextureLoader, Vector3 } from 'three';
-import { useStore } from '../stores/common';
+import { CommonStoreState, useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import {
@@ -59,7 +59,6 @@ const Polygon = ({
   const language = useStore(Selector.language);
   const getElementById = useStore(Selector.getElementById);
   const selectMe = useStore(Selector.selectMe);
-  const updatePolygonSelectedIndexById = useStore(Selector.updatePolygonSelectedIndexById);
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
 
@@ -86,6 +85,17 @@ const Polygon = ({
   const resizeHandleSize = RESIZE_HANDLE_SIZE * ratio;
   const moveHandleSize = MOVE_HANDLE_RADIUS * ratio;
   const lang = { lng: language };
+
+  const updatePolygonSelectedIndexById = (id: string, index: number) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Polygon && e.id === id) {
+          (e as PolygonModel).selectedIndex = index;
+          break;
+        }
+      }
+    });
+  };
 
   const absoluteVertices = useMemo(() => {
     const av = new Array<Point2>();
@@ -472,7 +482,7 @@ const Polygon = ({
                       const vertexIndex = e.intersections[0].object.userData.vertexIndex;
                       if (vertexIndex !== undefined) {
                         state.contextMenuObjectType = ObjectType.PolygonVertex;
-                        state.updatePolygonSelectedIndexById(polygonModel.id, vertexIndex);
+                        updatePolygonSelectedIndexById(polygonModel.id, vertexIndex);
                       }
                     }
                   });

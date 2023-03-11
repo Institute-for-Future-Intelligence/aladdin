@@ -5,7 +5,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Col, InputNumber, Modal, Radio, RadioChangeEvent, Row, Space } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
-import { useStore } from 'src/stores/common';
+import { CommonStoreState, useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
 import { ObjectType, Scope, SolarStructure } from 'src/types';
 import i18n from 'src/i18n/i18n';
@@ -13,17 +13,17 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { ZERO_TOLERANCE } from 'src/constants';
+import { SolarUpdraftTowerModel } from '../../../models/SolarUpdraftTowerModel';
 
 const SolarUpdraftTowerDischargeCoefficientInput = ({
   setDialogVisible,
 }: {
   setDialogVisible: (b: boolean) => void;
 }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
-  const updateById = useStore(Selector.updateSolarUpdraftTowerDischargeCoefficientById);
-  const updateForAll = useStore(Selector.updateSolarUpdraftTowerDischargeCoefficientForAll);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.foundationActionScope);
   const setActionScope = useStore(Selector.setFoundationActionScope);
@@ -48,6 +48,35 @@ const SolarUpdraftTowerDischargeCoefficientInput = ({
       inputCoefficientRef.current = foundation.solarUpdraftTower?.dischargeCoefficient ?? 0.65;
     }
   }, [foundation]);
+
+  const updateById = (id: string, coefficient: number) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
+          const f = e as FoundationModel;
+          if (f.solarStructure === SolarStructure.UpdraftTower) {
+            if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
+            f.solarUpdraftTower.dischargeCoefficient = coefficient;
+          }
+          break;
+        }
+      }
+    });
+  };
+
+  const updateForAll = (coefficient: number) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Foundation && !e.locked) {
+          const f = e as FoundationModel;
+          if (f.solarStructure === SolarStructure.UpdraftTower) {
+            if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
+            f.solarUpdraftTower.dischargeCoefficient = coefficient;
+          }
+        }
+      }
+    });
+  };
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);

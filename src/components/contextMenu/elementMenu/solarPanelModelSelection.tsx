@@ -5,11 +5,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Col, Input, InputNumber, Modal, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
-import { useStore } from '../../../stores/common';
+import { CommonStoreState, useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { SolarPanelModel } from '../../../models/SolarPanelModel';
 import { SolarPanelNominalSize } from '../../../models/SolarPanelNominalSize';
-import { ObjectType, Scope } from '../../../types';
+import { ObjectType, Orientation, Scope } from '../../../types';
 import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
@@ -22,10 +22,6 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
-  const updateSolarPanelModelById = useStore(Selector.updateSolarPanelModelById);
-  const updateSolarPanelModelOnSurface = useStore(Selector.updateSolarPanelModelOnSurface);
-  const updateSolarPanelModelAboveFoundation = useStore(Selector.updateSolarPanelModelAboveFoundation);
-  const updateSolarPanelModelForAll = useStore(Selector.updateSolarPanelModelForAll);
   const getParent = useStore(Selector.getParent);
   const pvModules = useStore(Selector.pvModules);
   const getPvModule = useStore(Selector.getPvModule);
@@ -73,6 +69,135 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
   useEffect(() => {
     setSelectedPvModel(solarPanel?.pvModelName ?? 'SPR-X21-335-BLK');
   }, [solarPanel]);
+
+  const updateSolarPanelModelById = (id: string, pvModelName: string) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.SolarPanel && e.id === id && !e.locked) {
+          const sp = e as SolarPanelModel;
+          sp.pvModelName = pvModelName;
+          const pvModel = state.pvModules[pvModelName];
+          if (sp.orientation === Orientation.portrait) {
+            // calculate the current x-y layout
+            const nx = Math.max(1, Math.round(sp.lx / pvModel.width));
+            const ny = Math.max(1, Math.round(sp.ly / pvModel.length));
+            sp.lx = nx * pvModel.width;
+            sp.ly = ny * pvModel.length;
+          } else {
+            // calculate the current x-y layout
+            const nx = Math.max(1, Math.round(sp.lx / pvModel.length));
+            const ny = Math.max(1, Math.round(sp.ly / pvModel.width));
+            sp.lx = nx * pvModel.length;
+            sp.ly = ny * pvModel.width;
+          }
+          if (sp.parentType === ObjectType.Wall) {
+          }
+          break;
+        }
+      }
+    });
+  };
+
+  const updateSolarPanelModelAboveFoundation = (foundationId: string, pvModelName: string) => {
+    setCommonStore((state: CommonStoreState) => {
+      const pvModel = state.pvModules[pvModelName];
+      let updateWall = false;
+      for (const e of state.elements) {
+        if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId && !e.locked) {
+          const sp = e as SolarPanelModel;
+          sp.pvModelName = pvModelName;
+          if (sp.orientation === Orientation.portrait) {
+            // calculate the current x-y layout
+            const nx = Math.max(1, Math.round(sp.lx / pvModel.width));
+            const ny = Math.max(1, Math.round(sp.ly / pvModel.length));
+            sp.lx = nx * pvModel.width;
+            sp.ly = ny * pvModel.length;
+          } else {
+            // calculate the current x-y layout
+            const nx = Math.max(1, Math.round(sp.lx / pvModel.length));
+            const ny = Math.max(1, Math.round(sp.ly / pvModel.width));
+            sp.lx = nx * pvModel.length;
+            sp.ly = ny * pvModel.width;
+          }
+          if (sp.parentType === ObjectType.Wall) {
+            updateWall = true;
+          }
+        }
+      }
+      if (updateWall) {
+      }
+    });
+  };
+
+  const updateSolarPanelModelOnSurface = (parentId: string, normal: number[] | undefined, pvModelName: string) => {
+    setCommonStore((state: CommonStoreState) => {
+      const pvModel = state.pvModules[pvModelName];
+      let updateWall = false;
+      for (const e of state.elements) {
+        if (e.type === ObjectType.SolarPanel && !e.locked) {
+          let found;
+          if (normal) {
+            found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
+          } else {
+            found = e.parentId === parentId;
+          }
+          if (found) {
+            const sp = e as SolarPanelModel;
+            sp.pvModelName = pvModelName;
+            if (sp.orientation === Orientation.portrait) {
+              // calculate the current x-y layout
+              const nx = Math.max(1, Math.round(sp.lx / pvModel.width));
+              const ny = Math.max(1, Math.round(sp.ly / pvModel.length));
+              sp.lx = nx * pvModel.width;
+              sp.ly = ny * pvModel.length;
+            } else {
+              // calculate the current x-y layout
+              const nx = Math.max(1, Math.round(sp.lx / pvModel.length));
+              const ny = Math.max(1, Math.round(sp.ly / pvModel.width));
+              sp.lx = nx * pvModel.length;
+              sp.ly = ny * pvModel.width;
+            }
+            if (sp.parentType === ObjectType.Wall) {
+              updateWall = true;
+            }
+          }
+        }
+      }
+      if (updateWall) {
+      }
+    });
+  };
+
+  const updateSolarPanelModelForAll = (pvModelName: string) => {
+    setCommonStore((state: CommonStoreState) => {
+      const pvModel = state.pvModules[pvModelName];
+      let updateWall = false;
+      for (const e of state.elements) {
+        if (e.type === ObjectType.SolarPanel && !e.locked) {
+          const sp = e as SolarPanelModel;
+          sp.pvModelName = pvModelName;
+          if (sp.orientation === Orientation.portrait) {
+            // calculate the current x-y layout
+            const nx = Math.max(1, Math.round(sp.lx / pvModel.width));
+            const ny = Math.max(1, Math.round(sp.ly / pvModel.length));
+            sp.lx = nx * pvModel.width;
+            sp.ly = ny * pvModel.length;
+          } else {
+            // calculate the current x-y layout
+            const nx = Math.max(1, Math.round(sp.lx / pvModel.length));
+            const ny = Math.max(1, Math.round(sp.ly / pvModel.width));
+            sp.lx = nx * pvModel.length;
+            sp.ly = ny * pvModel.width;
+          }
+          if (sp.parentType === ObjectType.Wall) {
+            updateWall = true;
+          }
+        }
+      }
+      if (updateWall) {
+      }
+    });
+  };
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);

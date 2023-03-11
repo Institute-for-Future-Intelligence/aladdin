@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import JaahImage from '../../../resources/jaah.png';
@@ -41,24 +41,38 @@ import JustinImage from '../../../resources/justin.png';
 
 import React, { useState } from 'react';
 import { Select } from 'antd';
-import { HumanName } from '../../../types';
-import { useStore } from '../../../stores/common';
+import { HumanName, ObjectType } from '../../../types';
+import { CommonStoreState, useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { HumanModel } from '../../../models/HumanModel';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import i18n from '../../../i18n/i18n';
+import { HumanData } from '../../../HumanData';
 
 const { Option } = Select;
 
 const HumanSelection = () => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
-  const updateHumanNameById = useStore(Selector.updateHumanNameById);
   const addUndoable = useStore(Selector.addUndoable);
   const human = useStore.getState().getSelectedElement() as HumanModel;
 
   const [updateFlag, setUpdateFlag] = useState(false);
   const lang = { lng: language };
+
+  const updateHumanNameById = (id: string, name: HumanName) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Human && e.id === id) {
+          const human = e as HumanModel;
+          human.name = name;
+          human.lx = HumanData.fetchWidth(name);
+          human.lz = HumanData.fetchHeight(name);
+          break;
+        }
+      }
+    });
+  };
 
   return (
     <Select

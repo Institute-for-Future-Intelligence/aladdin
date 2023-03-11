@@ -5,7 +5,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Col, InputNumber, Modal, Radio, RadioChangeEvent, Row, Space } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
-import { useStore } from '../../../stores/common';
+import { CommonStoreState, useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { SolarPanelModel } from '../../../models/SolarPanelModel';
 import { ObjectType, Scope } from '../../../types';
@@ -27,9 +27,6 @@ const SolarPanelTiltAngleInput = ({
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
   const updateSolarPanelTiltAngleById = useStore(Selector.updateSolarPanelTiltAngleById);
-  const updateSolarPanelTiltAngleOnSurface = useStore(Selector.updateSolarPanelTiltAngleOnSurface);
-  const updateSolarPanelTiltAngleAboveFoundation = useStore(Selector.updateSolarPanelTiltAngleAboveFoundation);
-  const updateSolarPanelTiltAngleForAll = useStore(Selector.updateSolarPanelTiltAngleForAll);
   const getParent = useStore(Selector.getParent);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.solarPanelActionScope);
@@ -64,6 +61,55 @@ const SolarPanelTiltAngleInput = ({
       }
     }
   }, [solarPanel]);
+
+  const updateSolarPanelTiltAngleAboveFoundation = (foundationId: string, tiltAngle: number, isReverse: boolean) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId && !e.locked) {
+          const sp = e as SolarPanelModel;
+          if (sp.parentType === ObjectType.Wall) {
+            sp.tiltAngle = Math.min(0, isReverse ? -tiltAngle : tiltAngle);
+          } else {
+            sp.tiltAngle = tiltAngle;
+          }
+        }
+      }
+    });
+  };
+
+  const updateSolarPanelTiltAngleOnSurface = (parentId: string, normal: number[] | undefined, tiltAngle: number) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.SolarPanel && !e.locked) {
+          let found;
+          if (normal) {
+            found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
+          } else {
+            found = e.parentId === parentId;
+          }
+          if (found) {
+            const sp = e as SolarPanelModel;
+            sp.tiltAngle = tiltAngle;
+          }
+        }
+      }
+    });
+  };
+
+  const updateSolarPanelTiltAngleForAll = (tiltAngle: number, isReverse: boolean) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.SolarPanel && !e.locked) {
+          const sp = e as SolarPanelModel;
+          if (sp.parentType === ObjectType.Wall) {
+            sp.tiltAngle = Math.min(0, isReverse ? -tiltAngle : tiltAngle);
+          } else {
+            sp.tiltAngle = tiltAngle;
+          }
+        }
+      }
+    });
+  };
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);

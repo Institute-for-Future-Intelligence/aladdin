@@ -13,7 +13,7 @@ import Foundation_Texture_07_Menu from '../../../resources/foundation_07_menu.pn
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Col, Modal, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
-import { useStore } from '../../../stores/common';
+import { CommonStoreState, useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { FoundationTexture, ObjectType, Scope } from '../../../types';
 import i18n from '../../../i18n/i18n';
@@ -26,8 +26,6 @@ const FoundationTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
-  const updateFoundationTextureById = useStore(Selector.updateFoundationTextureById);
-  const updateFoundationTextureForAll = useStore(Selector.updateFoundationTextureForAll);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.foundationActionScope);
   const setActionScope = useStore(Selector.setFoundationActionScope);
@@ -59,6 +57,27 @@ const FoundationTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b
       setSelectedTexture(foundation?.textureType ?? FoundationTexture.NoTexture);
     }
   }, [foundation]);
+
+  const updateFoundationTextureById = (id: string, texture: FoundationTexture) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
+          (e as FoundationModel).textureType = texture;
+          break;
+        }
+      }
+    });
+  };
+
+  const updateFoundationTextureForAll = (texture: FoundationTexture) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Foundation && !e.locked) {
+          (e as FoundationModel).textureType = texture;
+        }
+      }
+    });
+  };
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);

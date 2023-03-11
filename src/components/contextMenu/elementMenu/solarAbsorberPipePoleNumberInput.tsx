@@ -5,20 +5,20 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Col, InputNumber, Modal, Radio, RadioChangeEvent, Row, Space } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
-import { useStore } from 'src/stores/common';
+import { CommonStoreState, useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
 import { ObjectType, Scope, SolarStructure } from 'src/types';
 import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { FoundationModel } from 'src/models/FoundationModel';
+import { SolarAbsorberPipeModel } from '../../../models/SolarAbsorberPipeModel';
 
 const SolarAbsorberPipePoleNumberInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
-  const updateById = useStore(Selector.updateSolarAbsorberPipePoleNumberById);
-  const updateForAll = useStore(Selector.updateSolarAbsorberPipePoleNumberForAll);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.foundationActionScope);
   const setActionScope = useStore(Selector.setFoundationActionScope);
@@ -44,6 +44,35 @@ const SolarAbsorberPipePoleNumberInput = ({ setDialogVisible }: { setDialogVisib
       inputPoleNumberRef.current = absorberPipe.poleNumber ?? 5;
     }
   }, [foundation]);
+
+  const updateById = (id: string, poleNumber: number) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
+          const f = e as FoundationModel;
+          if (f.solarStructure === SolarStructure.FocusPipe) {
+            if (!f.solarAbsorberPipe) f.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
+            f.solarAbsorberPipe.poleNumber = poleNumber;
+          }
+          break;
+        }
+      }
+    });
+  };
+
+  const updateForAll = (poleNumber: number) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Foundation && !e.locked) {
+          const f = e as FoundationModel;
+          if (f.solarStructure === SolarStructure.FocusPipe) {
+            if (!f.solarAbsorberPipe) f.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
+            f.solarAbsorberPipe.poleNumber = poleNumber;
+          }
+        }
+      }
+    });
+  };
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);

@@ -5,7 +5,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Col, Modal, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
-import { useStore } from '../../../stores/common';
+import { CommonStoreState, useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { SolarPanelModel } from '../../../models/SolarPanelModel';
 import { ObjectType, Scope, TrackerType } from '../../../types';
@@ -15,13 +15,10 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { Util } from '../../../Util';
 
 const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
-  const updateSolarPanelTrackerTypeById = useStore(Selector.updateSolarPanelTrackerTypeById);
-  const updateSolarPanelTrackerTypeOnSurface = useStore(Selector.updateSolarPanelTrackerTypeOnSurface);
-  const updateSolarPanelTrackerTypeAboveFoundation = useStore(Selector.updateSolarPanelTrackerTypeAboveFoundation);
-  const updateSolarPanelTrackerTypeForAll = useStore(Selector.updateSolarPanelTrackerTypeForAll);
   const getParent = useStore(Selector.getParent);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.solarPanelActionScope);
@@ -54,6 +51,59 @@ const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b
       setSelectedTrackerType(solarPanel.trackerType);
     }
   }, [solarPanel]);
+
+  const updateSolarPanelTrackerTypeById = (id: string, trackerType: TrackerType) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.SolarPanel && e.id === id && !e.locked) {
+          (e as SolarPanelModel).trackerType = trackerType;
+          break;
+        }
+      }
+    });
+  };
+
+  const updateSolarPanelTrackerTypeAboveFoundation = (foundationId: string, trackerType: TrackerType) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId && !e.locked) {
+          (e as SolarPanelModel).trackerType = trackerType;
+        }
+      }
+    });
+  };
+
+  const updateSolarPanelTrackerTypeOnSurface = (
+    parentId: string,
+    normal: number[] | undefined,
+    trackerType: TrackerType,
+  ) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.SolarPanel && !e.locked) {
+          let found;
+          if (normal) {
+            found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
+          } else {
+            found = e.parentId === parentId;
+          }
+          if (found) {
+            (e as SolarPanelModel).trackerType = trackerType;
+          }
+        }
+      }
+    });
+  };
+
+  const updateSolarPanelTrackerTypeForAll = (trackerType: TrackerType) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.SolarPanel && !e.locked) {
+          (e as SolarPanelModel).trackerType = trackerType;
+        }
+      }
+    });
+  };
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);

@@ -7,7 +7,7 @@ import { Checkbox, Input, InputNumber, Menu, Modal, Radio, Space } from 'antd';
 import { Copy, Cut, Lock, Paste } from '../menuItems';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { useStore } from '../../../stores/common';
+import { CommonStoreState, useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { FoundationTexture, ObjectType, SolarStructure } from '../../../types';
 import i18n from '../../../i18n/i18n';
@@ -57,6 +57,7 @@ import {
   useLabelSize,
   useLabelText,
 } from './menuHooks';
+import { HvacSystem } from '../../../models/HvacSystem';
 
 export const FoundationMenu = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
@@ -67,12 +68,9 @@ export const FoundationMenu = React.memo(() => {
   const removeAllElementsOnFoundationByType = useStore(Selector.removeAllElementsOnFoundationByType);
   const updateElementLockById = useStore(Selector.updateElementLockById);
   const updateElementLockByFoundationId = useStore(Selector.updateElementLockByFoundationId);
-  const updateFoundationThermostatSetpointById = useStore(Selector.updateFoundationThermostatSetpointById);
-  const updateFoundationTemperatureThresholdById = useStore(Selector.updateFoundationTemperatureThresholdById);
   const addElement = useStore(Selector.addElement);
   const removeElementById = useStore(Selector.removeElementById);
   const setApplyCount = useStore(Selector.setApplyCount);
-  const updateFoundationSolarStructureById = useStore(Selector.updateFoundationSolarStructureById);
   const language = useStore(Selector.language);
   const elementsToPaste = useStore(Selector.elementsToPaste);
 
@@ -162,6 +160,49 @@ export const FoundationMenu = React.memo(() => {
       }
     }
     return false;
+  };
+
+  const updateFoundationSolarStructureById = (id: string, structure: SolarStructure) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
+          (e as FoundationModel).solarStructure = structure;
+          break;
+        }
+      }
+    });
+  };
+
+  const updateFoundationThermostatSetpointById = (id: string, value: number) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Foundation && e.id === id) {
+          const foundation = e as FoundationModel;
+          if (foundation.hvacSystem) {
+            foundation.hvacSystem.thermostatSetpoint = value;
+          } else {
+            foundation.hvacSystem = { thermostatSetpoint: value, temperatureThreshold: 3 } as HvacSystem;
+          }
+          break;
+        }
+      }
+    });
+  };
+
+  const updateFoundationTemperatureThresholdById = (id: string, value: number) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Foundation && e.id === id) {
+          const foundation = e as FoundationModel;
+          if (foundation.hvacSystem) {
+            foundation.hvacSystem.temperatureThreshold = value;
+          } else {
+            foundation.hvacSystem = { thermostatSetpoint: 20, temperatureThreshold: value } as HvacSystem;
+          }
+          break;
+        }
+      }
+    });
   };
 
   // Do NOT put this in useMemo. Otherwise, it will crash the app.

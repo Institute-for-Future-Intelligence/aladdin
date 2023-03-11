@@ -1,12 +1,12 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
 import { Select } from 'antd';
-import { useStore } from '../../../stores/common';
+import { CommonStoreState, useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
-import { FlowerType } from '../../../types';
+import { FlowerType, ObjectType } from '../../../types';
 import BellflowerImage from '../../../resources/bellflower.png';
 import BoxwoodImage from '../../../resources/boxwood.png';
 import CactusCombo1Image from '../../../resources/cactus_combo_1.png';
@@ -27,18 +27,32 @@ import YellowFlowerImage from '../../../resources/yellow_flower.png';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import i18n from '../../../i18n/i18n';
 import { FlowerModel } from '../../../models/FlowerModel';
+import { FlowerData } from '../../../FlowerData';
 
 const { Option } = Select;
 
 const FlowerSelection = () => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
-  const updateFlowerTypeById = useStore(Selector.updateFlowerTypeById);
   const addUndoable = useStore(Selector.addUndoable);
   const flower = useStore.getState().getSelectedElement() as FlowerModel;
 
   const [updateFlag, setUpdateFlag] = useState(false);
   const lang = { lng: language };
+
+  const updateFlowerTypeById = (id: string, type: FlowerType) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Flower && e.id === id) {
+          const flower = e as FlowerModel;
+          flower.name = type;
+          flower.lx = FlowerData.fetchSpread(type);
+          flower.lz = FlowerData.fetchHeight(type);
+          break;
+        }
+      }
+    });
+  };
 
   return (
     <Select

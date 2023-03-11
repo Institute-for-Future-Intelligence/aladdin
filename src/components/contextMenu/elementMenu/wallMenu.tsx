@@ -76,7 +76,6 @@ export const WallMenu = React.memo(() => {
   const countAllOffspringsByType = useStore(Selector.countAllOffspringsByTypeAtOnce);
   const removeAllChildElementsByType = useStore(Selector.removeAllChildElementsByType);
   const addUndoable = useStore(Selector.addUndoable);
-  const updateWallStructureById = useStore(Selector.updateWallStructureById);
   const updateElementLockById = useStore(Selector.updateElementLockById);
   const updateElementUnlockByParentId = useStore(Selector.updateElementLockByParentId);
   const updateInsideLightsByParentId = useStore(Selector.updateInsideLightsByParentId);
@@ -91,6 +90,21 @@ export const WallMenu = React.memo(() => {
 
   const lang = { lng: language };
   const paddingLeft = '36px';
+
+  const updateWallStructureById = (id: string, structure: WallStructure) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.id === id && e.type === ObjectType.Wall) {
+          const wallModel = e as WallModel;
+          wallModel.wallStructure = structure;
+          if (structure === WallStructure.Stud || structure === WallStructure.Pillar) {
+            wallModel.opacity = 0;
+          }
+          break;
+        }
+      }
+    });
+  };
 
   const legalToPaste = () => {
     const elementsToPaste = useStore.getState().elementsToPaste;

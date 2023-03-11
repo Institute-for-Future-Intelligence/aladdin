@@ -5,7 +5,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Col, Modal, Radio, RadioChangeEvent, Row, Space } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
-import { useStore } from '../../../stores/common';
+import { CommonStoreState, useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { SolarPanelModel } from '../../../models/SolarPanelModel';
 import { ObjectType, Scope } from '../../../types';
@@ -20,10 +20,6 @@ const SolarPanelFrameColorSelection = ({ setDialogVisible }: { setDialogVisible:
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
-  const updateSolarPanelFrameColorById = useStore(Selector.updateSolarPanelFrameColorById);
-  const updateSolarPanelFrameColorOnSurface = useStore(Selector.updateSolarPanelFrameColorOnSurface);
-  const updateSolarPanelFrameColorAboveFoundation = useStore(Selector.updateSolarPanelFrameColorAboveFoundation);
-  const updateSolarPanelFrameColorForAll = useStore(Selector.updateSolarPanelFrameColorForAll);
   const getParent = useStore(Selector.getParent);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.solarPanelActionScope);
@@ -53,6 +49,55 @@ const SolarPanelFrameColorSelection = ({ setDialogVisible }: { setDialogVisible:
       setSelectedColor(solarPanel.frameColor ?? 'white');
     }
   }, [solarPanel]);
+
+  const updateSolarPanelFrameColorById = (id: string, frameColor: string) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.SolarPanel && e.id === id && !e.locked) {
+          (e as SolarPanelModel).frameColor = frameColor;
+          break;
+        }
+      }
+    });
+  };
+
+  const updateSolarPanelFrameColorAboveFoundation = (foundationId: string, frameColor: string) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId && !e.locked) {
+          (e as SolarPanelModel).frameColor = frameColor;
+        }
+      }
+    });
+  };
+
+  const updateSolarPanelFrameColorOnSurface = (parentId: string, normal: number[] | undefined, frameColor: string) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.SolarPanel && !e.locked) {
+          let found;
+          if (normal) {
+            found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
+          } else {
+            found = e.parentId === parentId;
+          }
+          if (found) {
+            (e as SolarPanelModel).frameColor = frameColor;
+          }
+        }
+      }
+    });
+  };
+
+  const updateSolarPanelFrameColorForAll = (frameColor: string) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.SolarPanel && !e.locked) {
+          (e as SolarPanelModel).frameColor = frameColor;
+        }
+      }
+    });
+  };
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);

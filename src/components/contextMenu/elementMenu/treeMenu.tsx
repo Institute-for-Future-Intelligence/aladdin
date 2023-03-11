@@ -4,7 +4,7 @@
 
 import React, { useState } from 'react';
 import { Checkbox, Input, InputNumber, Menu, Space } from 'antd';
-import { useStore } from '../../../stores/common';
+import { CommonStoreState, useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { ObjectType } from '../../../types';
 import TreeSelection from './treeSelection';
@@ -29,8 +29,6 @@ export const TreeMenu = React.memo(() => {
   const language = useStore(Selector.language);
   const updateElementLxById = useStore(Selector.updateElementLxById);
   const updateElementLzById = useStore(Selector.updateElementLzById);
-  const updateTreeShowModelById = useStore(Selector.updateTreeShowModelById);
-  const updateTreeFlipById = useStore(Selector.updateTreeFlipById);
   const tree = useStore((state) => state.elements.find((e) => e.selected && e.type === ObjectType.Tree)) as TreeModel;
   const addUndoable = useStore(Selector.addUndoable);
 
@@ -49,6 +47,28 @@ export const TreeMenu = React.memo(() => {
 
   const lang = { lng: language };
   const editable = !tree?.locked;
+
+  const updateTreeShowModelById = (id: string, showModel: boolean) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Tree && e.id === id) {
+          (e as TreeModel).showModel = showModel;
+          break;
+        }
+      }
+    });
+  };
+
+  const updateTreeFlipById = (id: string, flip: boolean) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Tree && e.id === id) {
+          (e as TreeModel).flip = flip;
+          break;
+        }
+      }
+    });
+  };
 
   const showTreeModel = (on: boolean) => {
     if (!tree) return;

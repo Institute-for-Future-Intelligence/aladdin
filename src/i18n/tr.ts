@@ -996,6 +996,7 @@ export const i18n_tr = {
       Texture10: 'Doku 10',
       SizeOfWall: 'Duvar Boyutu',
       OnlyThisWall: 'Sadece  Seçili Duvar',
+      AllConnectedWalls: 'All Connected Walls',
       AllWallsAboveFoundation: ' Aynı Temel Üzerindeki Tüm Duvarlar',
       AllWalls: 'Tüm Duvarlar',
       Windows: 'Pencereler',

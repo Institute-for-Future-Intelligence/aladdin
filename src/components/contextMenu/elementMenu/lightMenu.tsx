@@ -4,7 +4,7 @@
 
 import React, { useState } from 'react';
 import { Checkbox, InputNumber, Menu, Space } from 'antd';
-import { useStore } from '../../../stores/common';
+import { CommonStoreState, useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { Copy, Cut, Lock } from '../menuItems';
 import i18n from '../../../i18n/i18n';
@@ -20,9 +20,6 @@ export const LightMenu = React.memo(() => {
   const language = useStore(Selector.language);
   const addUndoable = useStore(Selector.addUndoable);
   const getParent = useStore(Selector.getParent);
-  const updateLightColorById = useStore(Selector.updateLightColorById);
-  const updateLightIntensityById = useStore(Selector.updateLightIntensityById);
-  const updateLightDistanceById = useStore(Selector.updateLightDistanceById);
   const updateLightInsideById = useStore(Selector.updateInsideLightById);
   const light = useStore((state) =>
     state.elements.find((e) => e.selected && e.type === ObjectType.Light),
@@ -37,6 +34,39 @@ export const LightMenu = React.memo(() => {
 
   const lang = { lng: language };
   const parent = light.parentId ? getParent(light) : undefined;
+
+  const updateLightColorById = (id: string, color: string) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Light && e.id === id) {
+          (e as LightModel).color = color;
+          break;
+        }
+      }
+    });
+  };
+
+  const updateLightIntensityById = (id: string, intensity: number) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Light && e.id === id) {
+          (e as LightModel).intensity = intensity;
+          break;
+        }
+      }
+    });
+  };
+
+  const updateLightDistanceById = (id: string, distance: number) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Light && e.id === id) {
+          (e as LightModel).distance = distance;
+          break;
+        }
+      }
+    });
+  };
 
   const setIntensity = (value: number) => {
     if (!light) return;

@@ -3,7 +3,7 @@
  */
 
 import React, { useState } from 'react';
-import { useStore } from '../../../stores/common';
+import { CommonStoreState, useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { Copy, Cut, Lock } from '../menuItems';
 import { WindowModel, WindowType } from '../../../models/WindowModel';
@@ -76,8 +76,6 @@ export const WindowMenu = React.memo(() => {
   const language = useStore(Selector.language);
   const addUndoable = useStore(Selector.addUndoable);
   const setApplyCount = useStore(Selector.setApplyCount);
-  const updateWindowMullionById = useStore(Selector.updateWindowMullionById);
-  const updateWindowTypeById = useStore(Selector.updateWindowTypeById);
   const getParent = useStore(Selector.getParent);
 
   const [dataType, setDataType] = useState<WindowDataType | null>(null);
@@ -91,6 +89,30 @@ export const WindowMenu = React.memo(() => {
 
   const lang = { lng: language };
   const parent = window ? getParent(window) : null;
+
+  const updateWindowMullionById = (id: string, mullion: boolean) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Window && e.id === id) {
+          (e as WindowModel).mullion = mullion;
+          state.selectedElement = e;
+          break;
+        }
+      }
+    });
+  };
+
+  const updateWindowTypeById = (id: string, type: WindowType) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Window && e.id === id) {
+          (e as WindowModel).windowType = type;
+          state.selectedElement = e;
+          break;
+        }
+      }
+    });
+  };
 
   const updateWindowFrameById = (id: string, checked: boolean) => {
     setCommonStore((state) => {

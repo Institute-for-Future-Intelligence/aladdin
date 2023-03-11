@@ -973,6 +973,7 @@ export const i18n_zh_cn = {
       Texture10: '十号材质',
       SizeOfWall: '墙的尺寸',
       OnlyThisWall: '只这堵墙',
+      AllConnectedWalls: '所有连接的墙',
       AllWallsAboveFoundation: '同一地基上所有的墙',
       AllWalls: '所有的墙',
       Windows: '窗户',

@@ -17,21 +17,19 @@ import WallTexture10Icon from 'src/resources/wall_10_menu.png';
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Col, Modal, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
-import { useStore } from 'src/stores/common';
+import { CommonStoreState, useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
 import { ObjectType, Scope, WallTexture } from 'src/types';
 import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { WallModel } from 'src/models/WallModel';
+import { Util } from '../../../Util';
 
 const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: () => void }) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
-  const updateWallTextureById = useStore(Selector.updateWallTextureById);
-  const updateWallTextureAboveFoundation = useStore(Selector.updateWallTextureAboveFoundation);
-  const updateWallTextureForAll = useStore(Selector.updateWallTextureForAll);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.wallActionScope);
   const setActionScope = useStore(Selector.setWallActionScope);
@@ -61,6 +59,53 @@ const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: () => vo
     }
   }, [wall]);
 
+  const updateById = (id: string, texture: WallTexture) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Wall && e.id === id && !e.locked) {
+          (e as WallModel).textureType = texture;
+          break;
+        }
+      }
+    });
+  };
+
+  const updateConnectedWalls = (texture: WallTexture) => {
+    const connectedWalls = Util.getAllConnectedWalls(wall);
+    if (connectedWalls.length === 0) return;
+    setCommonStore((state) => {
+      for (const w of connectedWalls) {
+        if (!w.locked) {
+          for (const e of state.elements) {
+            if (e.id === w.id && e.type === ObjectType.Wall) {
+              (e as WallModel).textureType = texture;
+            }
+          }
+        }
+      }
+    });
+  };
+
+  const updateAboveFoundation = (foundationId: string, texture: WallTexture) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Wall && e.foundationId === foundationId && !e.locked) {
+          (e as WallModel).textureType = texture;
+        }
+      }
+    });
+  };
+
+  const updateForAll = (texture: WallTexture) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Wall && !e.locked) {
+          (e as WallModel).textureType = texture;
+        }
+      }
+    });
+  };
+
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);
     setUpdateFlag(!updateFlag);
@@ -83,6 +128,14 @@ const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: () => vo
             value !== (e as WallModel).textureType &&
             !e.locked
           ) {
+            return true;
+          }
+        }
+        break;
+      case Scope.AllConnectedObjects:
+        const connectedWalls = Util.getAllConnectedWalls(wall);
+        for (const e of connectedWalls) {
+          if (value !== e.textureType && !e.locked) {
             return true;
           }
         }
@@ -114,15 +167,15 @@ const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: () => vo
           newValue: value,
           undo: () => {
             for (const [id, texture] of undoableChangeAll.oldValues.entries()) {
-              updateWallTextureById(id, texture as WallTexture);
+              updateById(id, texture as WallTexture);
             }
           },
           redo: () => {
-            updateWallTextureForAll(undoableChangeAll.newValue as WallTexture);
+            updateForAll(undoableChangeAll.newValue as WallTexture);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateWallTextureForAll(value);
+        updateForAll(value);
         setApplyCount(applyCount + 1);
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
@@ -141,12 +194,12 @@ const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: () => vo
             groupId: wall.foundationId,
             undo: () => {
               for (const [id, wt] of undoableChangeAboveFoundation.oldValues.entries()) {
-                updateWallTextureById(id, wt as WallTexture);
+                updateById(id, wt as WallTexture);
               }
             },
             redo: () => {
               if (undoableChangeAboveFoundation.groupId) {
-                updateWallTextureAboveFoundation(
+                updateAboveFoundation(
                   undoableChangeAboveFoundation.groupId,
                   undoableChangeAboveFoundation.newValue as WallTexture,
                 );
@@ -154,7 +207,33 @@ const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: () => vo
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAboveFoundation);
-          updateWallTextureAboveFoundation(wall.foundationId, value);
+          updateAboveFoundation(wall.foundationId, value);
+          setApplyCount(applyCount + 1);
+        }
+        break;
+      case Scope.AllConnectedObjects:
+        if (wall) {
+          const connectedWalls = Util.getAllConnectedWalls(wall);
+          const oldValuesConnectedWalls = new Map<string, WallTexture>();
+          for (const e of connectedWalls) {
+            oldValuesConnectedWalls.set(e.id, e.textureType);
+          }
+          const undoableChangeConnectedWalls = {
+            name: `Set Texture for All Connected Walls`,
+            timestamp: Date.now(),
+            oldValues: oldValuesConnectedWalls,
+            newValue: value,
+            undo: () => {
+              for (const [id, wh] of undoableChangeConnectedWalls.oldValues.entries()) {
+                updateById(id, wh as WallTexture);
+              }
+            },
+            redo: () => {
+              updateConnectedWalls(undoableChangeConnectedWalls.newValue as WallTexture);
+            },
+          } as UndoableChangeGroup;
+          addUndoable(undoableChangeConnectedWalls);
+          updateConnectedWalls(value);
           setApplyCount(applyCount + 1);
         }
         break;
@@ -170,14 +249,14 @@ const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: () => vo
             changedElementId: wall.id,
             changedElementType: wall.type,
             undo: () => {
-              updateWallTextureById(undoableChange.changedElementId, undoableChange.oldValue as WallTexture);
+              updateById(undoableChange.changedElementId, undoableChange.oldValue as WallTexture);
             },
             redo: () => {
-              updateWallTextureById(undoableChange.changedElementId, undoableChange.newValue as WallTexture);
+              updateById(undoableChange.changedElementId, undoableChange.newValue as WallTexture);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateWallTextureById(wall.id, value);
+          updateById(wall.id, value);
           setApplyCount(applyCount + 1);
         }
     }
@@ -407,6 +486,7 @@ const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: () => vo
             <Radio.Group onChange={onScopeChange} value={actionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('wallMenu.OnlyThisWall', lang)}</Radio>
+                <Radio value={Scope.AllConnectedObjects}>{i18n.t('wallMenu.AllConnectedWalls', lang)}</Radio>
                 <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                   {i18n.t('wallMenu.AllWallsAboveFoundation', lang)}
                 </Radio>

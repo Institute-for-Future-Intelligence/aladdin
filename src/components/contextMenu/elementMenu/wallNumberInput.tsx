@@ -12,6 +12,7 @@ import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { WallModel } from '../../../models/WallModel';
+import { Util } from '../../../Util';
 
 interface WallNumberInputProps {
   wall: WallModel;
@@ -86,6 +87,23 @@ const WallNumberInput = ({
     updateActionState(val);
   };
 
+  const updateConnectedWalls = (val: number) => {
+    const connectedWalls = Util.getAllConnectedWalls(wall);
+    if (connectedWalls.length === 0) return;
+    setCommonStore((state) => {
+      for (const w of connectedWalls) {
+        if (!w.locked) {
+          for (const e of state.elements) {
+            if (e.id === w.id && e.type === ObjectType.Wall) {
+              ((e as WallModel)[attributeKey] as number) = val;
+            }
+          }
+        }
+      }
+    });
+    updateActionState(val);
+  };
+
   const updateAboveFoundation = (fId: string, val: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
@@ -129,6 +147,14 @@ const WallNumberInput = ({
             value !== (e as WallModel)[attributeKey] &&
             !e.locked
           ) {
+            return true;
+          }
+        }
+        break;
+      case Scope.AllConnectedObjects:
+        const connectedWalls = Util.getAllConnectedWalls(wall);
+        for (const e of connectedWalls) {
+          if (value !== e[attributeKey] && !e.locked) {
             return true;
           }
         }
@@ -204,25 +230,53 @@ const WallNumberInput = ({
           setApplyCount(applyCount + 1);
         }
         break;
+      case Scope.AllConnectedObjects:
+        if (wall) {
+          const connectedWalls = Util.getAllConnectedWalls(wall);
+          const oldValuesConnectedWalls = new Map<string, number>();
+          for (const e of connectedWalls) {
+            oldValuesConnectedWalls.set(e.id, e[attributeKey] as number);
+          }
+          const undoableChangeConnectedWalls = {
+            name: `Set ${dataType} for All Connected Walls`,
+            timestamp: Date.now(),
+            oldValues: oldValuesConnectedWalls,
+            newValue: value,
+            undo: () => {
+              for (const [id, wh] of undoableChangeConnectedWalls.oldValues.entries()) {
+                updateById(id, wh as number);
+              }
+            },
+            redo: () => {
+              updateConnectedWalls(undoableChangeConnectedWalls.newValue as number);
+            },
+          } as UndoableChangeGroup;
+          addUndoable(undoableChangeConnectedWalls);
+          updateConnectedWalls(value);
+          setApplyCount(applyCount + 1);
+        }
+        break;
       default:
-        const oldValue = wall[attributeKey] as number;
-        const undoableChange = {
-          name: `Set Wall ${dataType}`,
-          timestamp: Date.now(),
-          oldValue: oldValue,
-          newValue: value,
-          changedElementId: wall.id,
-          changedElementType: wall.type,
-          undo: () => {
-            updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
-          },
-          redo: () => {
-            updateById(undoableChange.changedElementId, undoableChange.newValue as number);
-          },
-        } as UndoableChange;
-        addUndoable(undoableChange);
-        updateById(wall.id, value);
-        setApplyCount(applyCount + 1);
+        if (wall) {
+          const oldValue = wall[attributeKey] as number;
+          const undoableChange = {
+            name: `Set Wall ${dataType}`,
+            timestamp: Date.now(),
+            oldValue: oldValue,
+            newValue: value,
+            changedElementId: wall.id,
+            changedElementType: wall.type,
+            undo: () => {
+              updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
+            },
+            redo: () => {
+              updateById(undoableChange.changedElementId, undoableChange.newValue as number);
+            },
+          } as UndoableChange;
+          addUndoable(undoableChange);
+          updateById(wall.id, value);
+          setApplyCount(applyCount + 1);
+        }
     }
   };
 
@@ -322,6 +376,7 @@ const WallNumberInput = ({
             <Radio.Group onChange={onScopeChange} value={actionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('wallMenu.OnlyThisWall', lang)}</Radio>
+                <Radio value={Scope.AllConnectedObjects}>{i18n.t('wallMenu.AllConnectedWalls', lang)}</Radio>
                 <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                   {i18n.t('wallMenu.AllWallsAboveFoundation', lang)}
                 </Radio>

@@ -16,7 +16,7 @@ import CuboidTexture10Icon from '../../../resources/building_facade_10_menu.png'
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Col, Modal, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
-import { useStore } from '../../../stores/common';
+import { CommonStoreState, useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { CuboidTexture, ObjectType, Scope } from '../../../types';
 import i18n from '../../../i18n/i18n';
@@ -28,9 +28,6 @@ const CuboidTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
-  const updateCuboidTextureBySide = useStore(Selector.updateCuboidTextureBySide);
-  const updateCuboidTextureById = useStore(Selector.updateCuboidFacadeTextureById);
-  const updateCuboidTextureForAll = useStore(Selector.updateCuboidFacadeTextureForAll);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.cuboidActionScope);
   const setActionScope = useStore(Selector.setCuboidActionScope);
@@ -69,6 +66,57 @@ const CuboidTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
       );
     }
   }, [cuboid, selectedSideIndex]);
+
+  const updateCuboidTextureBySide = (side: number, id: string, texture: CuboidTexture) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Cuboid && e.id === id && !e.locked) {
+          const cuboid = e as CuboidModel;
+          if (!cuboid.textureTypes) {
+            cuboid.textureTypes = new Array<CuboidTexture>(6);
+            cuboid.textureTypes.fill(CuboidTexture.NoTexture);
+          }
+          cuboid.textureTypes[side] = texture;
+          break;
+        }
+      }
+    });
+  };
+
+  const updateCuboidTextureById = (id: string, texture: CuboidTexture) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Cuboid && e.id === id && !e.locked) {
+          const cuboid = e as CuboidModel;
+          if (!cuboid.textureTypes) {
+            cuboid.textureTypes = new Array<CuboidTexture>(6);
+            cuboid.textureTypes.fill(CuboidTexture.NoTexture);
+          }
+          for (let i = 0; i < 4; i++) {
+            cuboid.textureTypes[i] = texture;
+          }
+          break;
+        }
+      }
+    });
+  };
+
+  const updateCuboidTextureForAll = (texture: CuboidTexture) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Cuboid && !e.locked) {
+          const cuboid = e as CuboidModel;
+          if (!cuboid.textureTypes) {
+            cuboid.textureTypes = new Array<CuboidTexture>(6);
+            cuboid.textureTypes.fill(CuboidTexture.NoTexture);
+          }
+          for (let i = 0; i < 4; i++) {
+            cuboid.textureTypes[i] = texture;
+          }
+        }
+      }
+    });
+  };
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);

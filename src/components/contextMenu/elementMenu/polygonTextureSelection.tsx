@@ -16,7 +16,7 @@ import Polygon_Texture_10_Menu from '../../../resources/polygon_10_menu.png';
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Col, Modal, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
-import { useStore } from '../../../stores/common';
+import { CommonStoreState, useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { ObjectType, PolygonTexture, Scope } from '../../../types';
 import i18n from '../../../i18n/i18n';
@@ -26,14 +26,11 @@ import { PolygonModel } from '../../../models/PolygonModel';
 import { Util } from '../../../Util';
 
 const PolygonTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
   const getParent = useStore(Selector.getParent);
-  const updatePolygonTextureById = useStore(Selector.updatePolygonTextureById);
-  const updatePolygonTextureOnSurface = useStore(Selector.updatePolygonTextureOnSurface);
-  const updatePolygonTextureAboveFoundation = useStore(Selector.updatePolygonTextureAboveFoundation);
-  const updatePolygonTextureForAll = useStore(Selector.updatePolygonTextureForAll);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.polygonActionScope);
   const setActionScope = useStore(Selector.setPolygonActionScope);
@@ -65,6 +62,52 @@ const PolygonTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
       setSelectedTexture(polygon?.textureType ?? PolygonTexture.NoTexture);
     }
   }, [polygon]);
+
+  const updatePolygonTextureById = (id: string, texture: PolygonTexture) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.id === id && e.type === ObjectType.Polygon && !e.locked) {
+          (e as PolygonModel).textureType = texture;
+          break;
+        }
+      }
+    });
+  };
+
+  const updatePolygonTextureOnSurface = (parentId: string, normal: number[] | undefined, texture: PolygonTexture) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (
+          e.type === ObjectType.Polygon &&
+          e.parentId === parentId &&
+          Util.isIdentical(e.normal, normal) &&
+          !e.locked
+        ) {
+          (e as PolygonModel).textureType = texture;
+        }
+      }
+    });
+  };
+
+  const updatePolygonTextureAboveFoundation = (foundationId: string, texture: PolygonTexture) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Polygon && e.foundationId === foundationId && !e.locked) {
+          (e as PolygonModel).textureType = texture;
+        }
+      }
+    });
+  };
+
+  const updatePolygonTextureForAll = (texture: PolygonTexture) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Polygon && !e.locked) {
+          (e as PolygonModel).textureType = texture;
+        }
+      }
+    });
+  };
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);

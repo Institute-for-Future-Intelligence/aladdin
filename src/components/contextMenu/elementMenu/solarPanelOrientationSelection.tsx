@@ -5,7 +5,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Col, Modal, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
-import { useStore } from '../../../stores/common';
+import { CommonStoreState, useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { SolarPanelModel } from '../../../models/SolarPanelModel';
 import { ElementState, ObjectType, Orientation, Scope } from '../../../types';
@@ -24,10 +24,6 @@ const SolarPanelOrientationSelection = ({ setDialogVisible }: { setDialogVisible
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
   const getPvModule = useStore(Selector.getPvModule);
-  const updateSolarPanelOrientationById = useStore(Selector.updateSolarPanelOrientationById);
-  const updateSolarPanelOrientationOnSurface = useStore(Selector.updateSolarPanelOrientationOnSurface);
-  const updateSolarPanelOrientationAboveFoundation = useStore(Selector.updateSolarPanelOrientationAboveFoundation);
-  const updateSolarPanelOrientationForAll = useStore(Selector.updateSolarPanelOrientationForAll);
   const getParent = useStore(Selector.getParent);
   const setElementSize = useStore(Selector.setElementSize);
   const addUndoable = useStore(Selector.addUndoable);
@@ -62,6 +58,88 @@ const SolarPanelOrientationSelection = ({ setDialogVisible }: { setDialogVisible
       setSelectedOrientation(solarPanel.orientation);
     }
   }, [solarPanel]);
+
+  const updateSolarPanelOrientationById = (id: string, orientation: Orientation) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.SolarPanel && e.id === id && !e.locked) {
+          const sp = e as SolarPanelModel;
+          const pvModel = state.pvModules[sp.pvModelName];
+          state.setSolarPanelOrientation(sp, pvModel, orientation);
+          if (sp.parentType === ObjectType.Wall) {
+          }
+          break;
+        }
+      }
+    });
+  };
+
+  const updateSolarPanelOrientationAboveFoundation = (foundationId: string, orientation: Orientation) => {
+    setCommonStore((state: CommonStoreState) => {
+      let updateWall = false;
+      for (const e of state.elements) {
+        if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId && !e.locked) {
+          const sp = e as SolarPanelModel;
+          const pvModel = state.pvModules[sp.pvModelName];
+          state.setSolarPanelOrientation(sp, pvModel, orientation);
+          if (sp.parentType === ObjectType.Wall) {
+            updateWall = true;
+          }
+        }
+      }
+      if (updateWall) {
+      }
+    });
+  };
+
+  const updateSolarPanelOrientationOnSurface = (
+    parentId: string,
+    normal: number[] | undefined,
+    orientation: Orientation,
+  ) => {
+    setCommonStore((state: CommonStoreState) => {
+      let updateWall = false;
+
+      for (const e of state.elements) {
+        if (e.type === ObjectType.SolarPanel && !e.locked) {
+          let found;
+          if (normal) {
+            found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
+          } else {
+            found = e.parentId === parentId;
+          }
+          if (found) {
+            const sp = e as SolarPanelModel;
+            const pvModel = state.pvModules[sp.pvModelName];
+            state.setSolarPanelOrientation(sp, pvModel, orientation);
+            if (sp.parentType === ObjectType.Wall) {
+              updateWall = true;
+            }
+          }
+        }
+      }
+      if (updateWall) {
+      }
+    });
+  };
+
+  const updateSolarPanelOrientationForAll = (orientation: Orientation) => {
+    setCommonStore((state: CommonStoreState) => {
+      let updateWall = false;
+      for (const e of state.elements) {
+        if (e.type === ObjectType.SolarPanel && !e.locked) {
+          const sp = e as SolarPanelModel;
+          const pvModel = state.pvModules[sp.pvModelName];
+          state.setSolarPanelOrientation(sp, pvModel, orientation);
+          if (sp.parentType === ObjectType.Wall) {
+            updateWall = true;
+          }
+        }
+      }
+      if (updateWall) {
+      }
+    });
+  };
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);

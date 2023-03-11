@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import { Checkbox, Menu } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-import { useStore } from '../../../stores/common';
+import { CommonStoreState, useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import i18n from '../../../i18n/i18n';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
@@ -24,8 +24,8 @@ import SolarPanelArrayPsoWizard from './solarPanelArrayPsoWizard';
 import PolygonOpacityInput from './polygonOpacityInput';
 
 export const PolygonMenu = React.memo(() => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
-  const updatePolygonFilledById = useStore(Selector.updatePolygonFilledById);
   const addUndoable = useStore(Selector.addUndoable);
   const elementsToPaste = useStore(Selector.elementsToPaste);
   const setApplyCount = useStore(Selector.setApplyCount);
@@ -48,6 +48,17 @@ export const PolygonMenu = React.memo(() => {
   if (!polygon) return null;
 
   const editable = !polygon?.locked;
+
+  const updatePolygonFilledById = (id: string, filled: boolean) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Polygon && e.id === id) {
+          (e as PolygonModel).filled = filled;
+          break;
+        }
+      }
+    });
+  };
 
   const togglePolygonFilled = (e: CheckboxChangeEvent) => {
     if (polygon) {

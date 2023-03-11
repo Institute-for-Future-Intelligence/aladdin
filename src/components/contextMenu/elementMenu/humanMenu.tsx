@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -7,7 +7,7 @@ import { Checkbox, Menu, Space } from 'antd';
 import HumanSelection from './humanSelection';
 import { Copy, Cut, Lock } from '../menuItems';
 import i18n from '../../../i18n/i18n';
-import { useStore } from '../../../stores/common';
+import { CommonStoreState, useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { HumanModel } from '../../../models/HumanModel';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
@@ -20,8 +20,6 @@ export const HumanMenu = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
   const getParent = useStore(Selector.getParent);
-  const updateHumanObserverById = useStore(Selector.updateHumanObserverById);
-  const updateHumanFlipById = useStore(Selector.updateHumanFlipById);
   const selectNone = useStore(Selector.selectNone);
   const language = useStore(Selector.language);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
@@ -51,6 +49,29 @@ export const HumanMenu = React.memo(() => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [animationFlag]);
+
+  const updateHumanFlipById = (id: string, yes: boolean) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Human && e.id === id) {
+          const human = e as HumanModel;
+          human.flip = yes;
+          break;
+        }
+      }
+    });
+  };
+
+  const updateHumanObserverById = (id: string, yes: boolean) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Human && e.id === id) {
+          (e as HumanModel).observer = yes;
+          break;
+        }
+      }
+    });
+  };
 
   const moveCamera = (x: number, y: number, z: number) => {
     const orbitControlsRef = useRefStore.getState().orbitControlsRef;

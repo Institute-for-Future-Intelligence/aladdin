@@ -16,30 +16,20 @@ import produce, { enableMapSet } from 'immer';
 import {
   ActionInfo,
   ActionType,
-  CuboidTexture,
   DatumEntry,
   ElementState,
   EvolutionMethod,
-  FlowerType,
-  FoundationTexture,
-  HumanName,
-  LineStyle,
   ModelSite,
   ModelType,
   MoveHandleType,
   ObjectType,
   Orientation,
-  ParabolicDishStructureType,
-  PolygonTexture,
   ResizeHandleType,
   RoofHandleType,
   RotateHandleType,
   Scope,
   SolarStructure,
-  TrackerType,
-  TreeType,
   User,
-  WallTexture,
 } from '../types';
 import { devtools, persist } from 'zustand/middleware';
 import { WorldModel } from '../models/WorldModel';
@@ -56,14 +46,12 @@ import { GroundModel } from '../models/GroundModel';
 import { PvModel } from '../models/PvModel';
 import { ThreeEvent } from '@react-three/fiber';
 import { SolarPanelModel } from '../models/SolarPanelModel';
-import { WallModel, WallStructure } from '../models/WallModel';
+import { WallModel } from '../models/WallModel';
 import { Locale } from 'antd/lib/locale-provider';
 import { Undoable } from '../undo/Undoable';
 import { UndoManager } from '../undo/UndoManager';
-import { TreeModel } from '../models/TreeModel';
 import { HumanModel } from '../models/HumanModel';
 import { FoundationModel } from '../models/FoundationModel';
-import { CuboidModel } from '../models/CuboidModel';
 import {
   DEFAULT_ADDRESS,
   DEFAULT_MODEL_MAP_ZOOM,
@@ -77,7 +65,6 @@ import { PolygonModel } from '../models/PolygonModel';
 import { Point2 } from '../models/Point2';
 import { useRefStore } from './commonRef';
 import { showError } from '../helpers';
-import { HumanData } from '../HumanData';
 import { SolarPanelArrayLayoutParams } from './SolarPanelArrayLayoutParams';
 import { DefaultSolarPanelArrayLayoutParams } from './DefaultSolarPanelArrayLayoutParams';
 import { SolarCollector } from '../models/SolarCollector';
@@ -89,9 +76,6 @@ import { ParabolicCollector } from '../models/ParabolicCollector';
 import { FresnelReflectorModel } from '../models/FresnelReflectorModel';
 import { HeliostatModel } from '../models/HeliostatModel';
 import { SolarRadiationData } from '../models/SolarRadiationData';
-import { SolarUpdraftTowerModel } from '../models/SolarUpdraftTowerModel';
-import { SolarAbsorberPipeModel } from '../models/SolarAbsorberPipeModel';
-import { SolarPowerTowerModel } from '../models/SolarPowerTowerModel';
 import { EvolutionaryAlgorithmState } from './EvolutionaryAlgorithmState';
 import { DefaultEvolutionaryAlgorithmState } from './DefaultEvolutionaryAlgorithmState';
 import { RoofModel, RoofStructure } from 'src/models/RoofModel';
@@ -100,13 +84,9 @@ import { DefaultSolarPanelArrayLayoutConstraints } from './DefaultSolarPanelArra
 import { EconomicsParams } from './EconomicsParams';
 import { DefaultEconomicsParams } from './DefaultEconomicsParams';
 import { RoofUtil } from 'src/views/roof/RoofUtil';
-import { FlowerModel } from '../models/FlowerModel';
-import { FlowerData } from '../FlowerData';
-import { WindowModel, WindowType } from '../models/WindowModel';
 import { ActionState } from './ActionState';
 import { DefaultActionState } from './DefaultActionState';
 import { LightModel } from '../models/LightModel';
-import { HvacSystem } from '../models/HvacSystem';
 import { usePrimitiveStore } from './commonPrimitive';
 import { useDataStore } from './commonData';
 import { GraphState } from './GraphState';
@@ -329,138 +309,22 @@ export interface CommonStoreState {
   // for foundations
   foundationActionScope: Scope;
   setFoundationActionScope: (scope: Scope) => void;
-  updateFoundationTextureById: (id: string, texture: FoundationTexture) => void;
-  updateFoundationTextureForAll: (texture: FoundationTexture) => void;
-  updateFoundationSolarStructureById: (id: string, receiver: SolarStructure | undefined) => void;
-  updateFoundationThermostatSetpointById: (id: string, value: number) => void;
-  updateFoundationTemperatureThresholdById: (id: string, value: number) => void;
-
-  // for solar absorber pipes
-  updateSolarAbsorberPipeRelativeLengthById: (id: string, relativeLength: number) => void;
-  updateSolarAbsorberPipeApertureWidthById: (id: string, apertureWidth: number) => void;
-  updateSolarAbsorberPipeApertureWidthForAll: (apertureWidth: number) => void;
-  updateSolarAbsorberPipePoleNumberById: (id: string, poleNumber: number) => void;
-  updateSolarAbsorberPipePoleNumberForAll: (poleNumber: number) => void;
-  updateSolarAbsorberPipeHeightById: (id: string, height: number) => void;
-  updateSolarAbsorberPipeHeightForAll: (height: number) => void;
-  updateSolarAbsorberPipeAbsorptanceById: (id: string, absorptance: number) => void;
-  updateSolarAbsorberPipeAbsorptanceForAll: (absorptance: number) => void;
-  updateSolarAbsorberPipeOpticalEfficiencyById: (id: string, efficiency: number) => void;
-  updateSolarAbsorberPipeOpticalEfficiencyForAll: (efficiency: number) => void;
-  updateSolarAbsorberPipeThermalEfficiencyById: (id: string, efficiency: number) => void;
-  updateSolarAbsorberPipeThermalEfficiencyForAll: (efficiency: number) => void;
-
-  // for solar power towers
-  updateSolarPowerTowerHeightById: (id: string, height: number) => void;
-  updateSolarPowerTowerHeightForAll: (height: number) => void;
-  updateSolarPowerTowerRadiusById: (id: string, radius: number) => void;
-  updateSolarPowerTowerRadiusForAll: (radius: number) => void;
-  updateSolarPowerTowerReceiverAbsorptanceById: (id: string, absorptance: number) => void;
-  updateSolarPowerTowerReceiverAbsorptanceForAll: (absorptance: number) => void;
-  updateSolarPowerTowerReceiverOpticalEfficiencyById: (id: string, efficiency: number) => void;
-  updateSolarPowerTowerReceiverOpticalEfficiencyForAll: (efficiency: number) => void;
-  updateSolarPowerTowerReceiverThermalEfficiencyById: (id: string, efficiency: number) => void;
-  updateSolarPowerTowerReceiverThermalEfficiencyForAll: (efficiency: number) => void;
-
-  // for solar updraft towers
-  updateSolarUpdraftTowerChimneyHeightById: (id: string, height: number) => void;
-  updateSolarUpdraftTowerChimneyHeightForAll: (height: number) => void;
-  updateSolarUpdraftTowerChimneyRadiusById: (id: string, radius: number) => void;
-  updateSolarUpdraftTowerChimneyRadiusForAll: (radius: number) => void;
-  updateSolarUpdraftTowerCollectorHeightById: (id: string, height: number) => void;
-  updateSolarUpdraftTowerCollectorHeightForAll: (height: number) => void;
-  updateSolarUpdraftTowerCollectorRadiusById: (id: string, radius: number) => void;
-  updateSolarUpdraftTowerCollectorRadiusForAll: (radius: number) => void;
-  updateSolarUpdraftTowerCollectorTransmissivityById: (id: string, transmissivity: number) => void;
-  updateSolarUpdraftTowerCollectorTransmissivityForAll: (transmissivity: number) => void;
-  updateSolarUpdraftTowerCollectorEmissivityById: (id: string, emissivity: number) => void;
-  updateSolarUpdraftTowerCollectorEmissivityForAll: (emissivity: number) => void;
-  updateSolarUpdraftTowerDischargeCoefficientById: (id: string, coefficient: number) => void;
-  updateSolarUpdraftTowerDischargeCoefficientForAll: (coefficient: number) => void;
-  updateSolarUpdraftTowerTurbineEfficiencyById: (id: string, efficiency: number) => void;
-  updateSolarUpdraftTowerTurbineEfficiencyForAll: (efficiency: number) => void;
 
   // for cuboids
   cuboidActionScope: Scope;
   setCuboidActionScope: (scope: Scope) => void;
-  updateCuboidColorBySide: (side: number, id: string, color: string) => void;
-  updateCuboidColorById: (id: string, color: string) => void;
-  updateCuboidColorForAll: (color: string) => void;
-  updateCuboidTextureBySide: (side: number, id: string, texture: CuboidTexture) => void;
-  updateCuboidFacadeTextureById: (id: string, texture: CuboidTexture) => void;
-  updateCuboidFacadeTextureForAll: (texture: CuboidTexture) => void;
 
   // for polygons
   polygonActionScope: Scope;
   setPolygonActionScope: (scope: Scope) => void;
-  deletePolygonVertexByIndex: (id: string, index: number) => void;
-  insertPolygonVertexBeforeIndex: (id: string, index: number) => void;
-  insertPolygonVertexAfterIndex: (id: string, index: number) => void;
-  updatePolygonSelectedIndexById: (id: string, index: number) => void;
-  updatePolygonFilledById: (id: string, filled: boolean) => void;
-  updatePolygonLineStyleById: (id: string, style: LineStyle) => void;
-  updatePolygonLineStyleOnSurface: (parentId: string, normal: number[] | undefined, style: LineStyle) => void;
-  updatePolygonLineStyleAboveFoundation: (foundationId: string, style: LineStyle) => void;
-  updatePolygonLineStyleForAll: (style: LineStyle) => void;
   updatePolygonVertexPositionById: (id: string, index: number, x: number, y: number) => void;
   updatePolygonVerticesById: (id: string, vertices: Point2[]) => void;
-  updatePolygonTextureById: (id: string, texture: PolygonTexture) => void;
-  updatePolygonTextureOnSurface: (parentId: string, normal: number[] | undefined, texture: PolygonTexture) => void;
-  updatePolygonTextureAboveFoundation: (foundationId: string, texture: PolygonTexture) => void;
-  updatePolygonTextureForAll: (texture: PolygonTexture) => void;
 
   // for solar panels
   solarPanelActionScope: Scope;
   setSolarPanelActionScope: (scope: Scope) => void;
-
-  updateSolarPanelModelById: (id: string, pvModelName: string) => void;
-  updateSolarPanelModelOnSurface: (parentId: string, normal: number[] | undefined, pvModelName: string) => void;
-  updateSolarPanelModelAboveFoundation: (foundationId: string, pvModelName: string) => void;
-  updateSolarPanelModelForAll: (pvModelName: string) => void;
-
-  updateSolarPanelLxById: (id: string, lx: number) => void;
-  updateSolarPanelLxOnSurface: (parentId: string, normal: number[] | undefined, lx: number) => void;
-  updateSolarPanelLxAboveFoundation: (foundationId: string, lx: number) => void;
-  updateSolarPanelLxForAll: (lx: number) => void;
-
-  updateSolarPanelLyById: (id: string, ly: number) => void;
-  updateSolarPanelLyOnSurface: (parentId: string, normal: number[] | undefined, ly: number) => void;
-  updateSolarPanelLyAboveFoundation: (foundationId: string, ly: number) => void;
-  updateSolarPanelLyForAll: (ly: number) => void;
-
-  updateSolarPanelFrameColorById: (id: string, frameColor: string) => void;
-  updateSolarPanelFrameColorOnSurface: (parentId: string, normal: number[] | undefined, frameColor: string) => void;
-  updateSolarPanelFrameColorAboveFoundation: (foundationId: string, frameColor: string) => void;
-  updateSolarPanelFrameColorForAll: (frameColor: string) => void;
-
   updateSolarPanelTiltAngleById: (id: string, tiltAngle: number) => void;
-  updateSolarPanelTiltAngleOnSurface: (parentId: string, normal: number[] | undefined, tiltAngle: number) => void;
-  updateSolarPanelTiltAngleAboveFoundation: (foundationId: string, tiltAngle: number, isReverse?: boolean) => void;
-  updateSolarPanelTiltAngleForAll: (tiltAngle: number, isReverse?: boolean) => void;
-
   setSolarPanelOrientation: (sp: SolarPanelModel, pvModel: PvModel, orientation: Orientation) => void;
-  updateSolarPanelOrientationById: (id: string, orientation: Orientation) => void;
-  updateSolarPanelOrientationOnSurface: (
-    parentId: string,
-    normal: number[] | undefined,
-    orientation: Orientation,
-  ) => void;
-  updateSolarPanelOrientationAboveFoundation: (foundationId: string, orientation: Orientation) => void;
-  updateSolarPanelOrientationForAll: (orientation: Orientation) => void;
-
-  updateSolarPanelTrackerTypeById: (id: string, trackerType: TrackerType) => void;
-  updateSolarPanelTrackerTypeOnSurface: (
-    parentId: string,
-    normal: number[] | undefined,
-    trackerType: TrackerType,
-  ) => void;
-  updateSolarPanelTrackerTypeAboveFoundation: (foundationId: string, trackerType: TrackerType) => void;
-  updateSolarPanelTrackerTypeForAll: (trackerType: TrackerType) => void;
-
-  updateSolarPanelPoleSpacingById: (id: string, poleSpacing: number) => void;
-  updateSolarPanelPoleSpacingOnSurface: (parentId: string, normal: number[] | undefined, poleSpacing: number) => void;
-  updateSolarPanelPoleSpacingAboveFoundation: (foundationId: string, poleSpacing: number) => void;
-  updateSolarPanelPoleSpacingForAll: (poleSpacing: number) => void;
 
   // for parabolic troughs
   parabolicTroughActionScope: Scope;
@@ -482,12 +346,6 @@ export interface CommonStoreState {
   // for parabolic dishes
   parabolicDishActionScope: Scope;
   setParabolicDishActionScope: (scope: Scope) => void;
-  updateParabolicDishStructureTypeById: (id: string, structureType: ParabolicDishStructureType) => void;
-  updateParabolicDishStructureTypeAboveFoundation: (
-    foundationId: string,
-    structureType: ParabolicDishStructureType,
-  ) => void;
-  updateParabolicDishStructureTypeForAll: (structureType: ParabolicDishStructureType) => void;
 
   // for parabolic troughs and Fresnel reflectors
   updateModuleLengthById: (id: string, moduleLength: number) => void;
@@ -510,8 +368,6 @@ export interface CommonStoreState {
   // for windows
   windowActionScope: Scope;
   setWindowActionScope: (scope: Scope) => void;
-  updateWindowMullionById: (id: string, mullion: boolean) => void;
-  updateWindowTypeById: (id: string, type: WindowType) => void;
 
   // for doors
   doorActionScope: Scope;
@@ -523,44 +379,11 @@ export interface CommonStoreState {
   updateWallLeftPointById: (id: string, point: number[]) => void;
   updateWallRightPointById: (id: string, point: number[]) => void;
 
-  updateWallTextureById: (id: string, texture: WallTexture) => void;
-  updateWallTextureAboveFoundation: (foundationId: string, texture: WallTexture) => void;
-  updateWallTextureForAll: (texture: WallTexture) => void;
-
-  updateWallColorById: (id: string, color: string) => void;
-  updateWallColorAboveFoundation: (foundationId: string, color: string) => void;
-  updateWallColorForAll: (color: string) => void;
-
-  updateWallHeightById: (id: string, height: number) => void;
-  updateWallHeightAboveFoundation: (foundationId: string, height: number) => void;
-  updateWallHeightForAll: (height: number) => void;
-
-  updateWallThicknessById: (id: string, thickness: number) => void;
-  updateWallThicknessAboveFoundation: (foundationId: string, thickness: number) => void;
-  updateWallThicknessForAll: (thickness: number) => void;
-
-  updateWallStructureById: (id: string, structure: WallStructure) => void;
-
   // for roofs
   updateRoofRiseById: (id: string, rise: number) => void;
   updateRoofStructureById: (id: string, structure: RoofStructure) => void;
 
-  // for plants
-  updateTreeTypeById: (id: string, type: TreeType) => void;
-  updateTreeShowModelById: (id: string, showModel: boolean) => void;
-  updateTreeFlipById: (id: string, flip: boolean) => void;
-  updateFlowerTypeById: (id: string, type: FlowerType) => void;
-  updateFlowerFlipById: (id: string, flip: boolean) => void;
-
-  // for humans
-  updateHumanNameById: (id: string, name: HumanName) => void;
-  updateHumanFlipById: (id: string, yes: boolean) => void;
-  updateHumanObserverById: (id: string, yes: boolean) => void;
-
   // for lights
-  updateLightColorById: (id: string, color: string) => void;
-  updateLightIntensityById: (id: string, intensity: number) => void;
-  updateLightDistanceById: (id: string, distance: number) => void;
   updateInsideLightById: (id: string, inside: boolean) => void;
   updateInsideLightsByParentId: (parentId: string, inside: boolean) => void;
 
@@ -912,7 +735,7 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
-          // aabb must be initialized with defined vectors or it may cause problems as it may be used to
+          // aabb must be initialized with defined vectors, or it may cause problems as it may be used to
           // determine the scopes of the axes.
           aabb: new Box3(new Vector3(-10, -10, -10), new Vector3(10, 10, 10)),
           animate24Hours: false,
@@ -1870,699 +1693,11 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
-          updateFoundationTextureById(id, texture) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
-                  (e as FoundationModel).textureType = texture;
-                  break;
-                }
-              }
-            });
-          },
-          updateFoundationTextureForAll(texture) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && !e.locked) {
-                  (e as FoundationModel).textureType = texture;
-                }
-              }
-            });
-          },
-          updateFoundationSolarStructureById(id, structure) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
-                  (e as FoundationModel).solarStructure = structure;
-                  break;
-                }
-              }
-            });
-          },
-          updateFoundationThermostatSetpointById(id, value) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && e.id === id) {
-                  const foundation = e as FoundationModel;
-                  if (foundation.hvacSystem) {
-                    foundation.hvacSystem.thermostatSetpoint = value;
-                  } else {
-                    foundation.hvacSystem = { thermostatSetpoint: value, temperatureThreshold: 3 } as HvacSystem;
-                  }
-                  break;
-                }
-              }
-            });
-          },
-          updateFoundationTemperatureThresholdById(id, value) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && e.id === id) {
-                  const foundation = e as FoundationModel;
-                  if (foundation.hvacSystem) {
-                    foundation.hvacSystem.temperatureThreshold = value;
-                  } else {
-                    foundation.hvacSystem = { thermostatSetpoint: 20, temperatureThreshold: value } as HvacSystem;
-                  }
-                  break;
-                }
-              }
-            });
-          },
-
-          // solar absorber pipe for Fresnel reflectors
-          updateSolarAbsorberPipeRelativeLengthById(id, relativeLength) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.FocusPipe) {
-                    if (!f.solarAbsorberPipe) f.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
-                    f.solarAbsorberPipe.relativeLength = relativeLength;
-                  }
-                  break;
-                }
-              }
-            });
-          },
-          updateSolarAbsorberPipeApertureWidthById(id, apertureWidth) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.FocusPipe) {
-                    if (!f.solarAbsorberPipe) f.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
-                    f.solarAbsorberPipe.apertureWidth = apertureWidth;
-                  }
-                  break;
-                }
-              }
-            });
-          },
-          updateSolarAbsorberPipeApertureWidthForAll(apertureWidth) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.FocusPipe) {
-                    if (!f.solarAbsorberPipe) f.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
-                    f.solarAbsorberPipe.apertureWidth = apertureWidth;
-                  }
-                }
-              }
-            });
-          },
-          updateSolarAbsorberPipePoleNumberById(id, poleNumber) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.FocusPipe) {
-                    if (!f.solarAbsorberPipe) f.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
-                    f.solarAbsorberPipe.poleNumber = poleNumber;
-                  }
-                  break;
-                }
-              }
-            });
-          },
-          updateSolarAbsorberPipePoleNumberForAll(poleNumber) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.FocusPipe) {
-                    if (!f.solarAbsorberPipe) f.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
-                    f.solarAbsorberPipe.poleNumber = poleNumber;
-                  }
-                }
-              }
-            });
-          },
-          updateSolarAbsorberPipeHeightById(id, height) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.FocusPipe) {
-                    if (!f.solarAbsorberPipe) f.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
-                    f.solarAbsorberPipe.absorberHeight = height;
-                  }
-                  break;
-                }
-              }
-            });
-          },
-          updateSolarAbsorberPipeHeightForAll(height) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.FocusPipe) {
-                    if (!f.solarAbsorberPipe) f.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
-                    f.solarAbsorberPipe.absorberHeight = height;
-                  }
-                }
-              }
-            });
-          },
-          updateSolarAbsorberPipeAbsorptanceById(id, absorptance) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.FocusPipe) {
-                    if (!f.solarAbsorberPipe) f.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
-                    f.solarAbsorberPipe.absorberAbsorptance = absorptance;
-                  }
-                  break;
-                }
-              }
-            });
-          },
-          updateSolarAbsorberPipeAbsorptanceForAll(absorptance) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.FocusPipe) {
-                    if (!f.solarAbsorberPipe) f.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
-                    f.solarAbsorberPipe.absorberAbsorptance = absorptance;
-                  }
-                }
-              }
-            });
-          },
-          updateSolarAbsorberPipeOpticalEfficiencyById(id, efficiency) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.FocusPipe) {
-                    if (!f.solarAbsorberPipe) f.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
-                    f.solarAbsorberPipe.absorberOpticalEfficiency = efficiency;
-                  }
-                  break;
-                }
-              }
-            });
-          },
-          updateSolarAbsorberPipeOpticalEfficiencyForAll(efficiency) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.FocusPipe) {
-                    if (!f.solarAbsorberPipe) f.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
-                    f.solarAbsorberPipe.absorberOpticalEfficiency = efficiency;
-                  }
-                }
-              }
-            });
-          },
-          updateSolarAbsorberPipeThermalEfficiencyById(id, efficiency) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.FocusPipe) {
-                    if (!f.solarAbsorberPipe) f.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
-                    f.solarAbsorberPipe.absorberThermalEfficiency = efficiency;
-                  }
-                  break;
-                }
-              }
-            });
-          },
-          updateSolarAbsorberPipeThermalEfficiencyForAll(efficiency) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.FocusPipe) {
-                    if (!f.solarAbsorberPipe) f.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
-                    f.solarAbsorberPipe.absorberThermalEfficiency = efficiency;
-                  }
-                }
-              }
-            });
-          },
-
-          // solar power tower for heliostats
-          updateSolarPowerTowerHeightById(id, height) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.FocusTower) {
-                    if (!f.solarPowerTower) f.solarPowerTower = {} as SolarPowerTowerModel;
-                    f.solarPowerTower.towerHeight = height;
-                  }
-                  break;
-                }
-              }
-            });
-          },
-          updateSolarPowerTowerHeightForAll(height) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.FocusTower) {
-                    if (!f.solarPowerTower) f.solarPowerTower = {} as SolarPowerTowerModel;
-                    f.solarPowerTower.towerHeight = height;
-                  }
-                }
-              }
-            });
-          },
-
-          updateSolarPowerTowerRadiusById(id, radius) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.FocusTower) {
-                    if (!f.solarPowerTower) f.solarPowerTower = {} as SolarPowerTowerModel;
-                    f.solarPowerTower.towerRadius = radius;
-                  }
-                  break;
-                }
-              }
-            });
-          },
-          updateSolarPowerTowerRadiusForAll(radius) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.FocusTower) {
-                    if (!f.solarPowerTower) f.solarPowerTower = {} as SolarPowerTowerModel;
-                    f.solarPowerTower.towerRadius = radius;
-                  }
-                }
-              }
-            });
-          },
-
-          updateSolarPowerTowerReceiverAbsorptanceById(id, absorptance) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.FocusTower) {
-                    if (!f.solarPowerTower) f.solarPowerTower = {} as SolarPowerTowerModel;
-                    f.solarPowerTower.receiverAbsorptance = absorptance;
-                  }
-                  break;
-                }
-              }
-            });
-          },
-          updateSolarPowerTowerReceiverAbsorptanceForAll(absorptance) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.FocusTower) {
-                    if (!f.solarPowerTower) f.solarPowerTower = {} as SolarPowerTowerModel;
-                    f.solarPowerTower.receiverAbsorptance = absorptance;
-                  }
-                }
-              }
-            });
-          },
-          updateSolarPowerTowerReceiverOpticalEfficiencyById(id, efficiency) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.FocusTower) {
-                    if (!f.solarPowerTower) f.solarPowerTower = {} as SolarPowerTowerModel;
-                    f.solarPowerTower.receiverOpticalEfficiency = efficiency;
-                  }
-                  break;
-                }
-              }
-            });
-          },
-          updateSolarPowerTowerReceiverOpticalEfficiencyForAll(efficiency) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.FocusTower) {
-                    if (!f.solarPowerTower) f.solarPowerTower = {} as SolarPowerTowerModel;
-                    f.solarPowerTower.receiverOpticalEfficiency = efficiency;
-                  }
-                }
-              }
-            });
-          },
-          updateSolarPowerTowerReceiverThermalEfficiencyById(id, efficiency) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.FocusTower) {
-                    if (!f.solarPowerTower) f.solarPowerTower = {} as SolarPowerTowerModel;
-                    f.solarPowerTower.receiverThermalEfficiency = efficiency;
-                  }
-                  break;
-                }
-              }
-            });
-          },
-          updateSolarPowerTowerReceiverThermalEfficiencyForAll(efficiency) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.FocusTower) {
-                    if (!f.solarPowerTower) f.solarPowerTower = {} as SolarPowerTowerModel;
-                    f.solarPowerTower.receiverThermalEfficiency = efficiency;
-                  }
-                }
-              }
-            });
-          },
-
-          // solar updraft tower
-          updateSolarUpdraftTowerChimneyHeightById(id, height) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.UpdraftTower) {
-                    if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
-                    f.solarUpdraftTower.chimneyHeight = height;
-                  }
-                  break;
-                }
-              }
-            });
-          },
-          updateSolarUpdraftTowerChimneyHeightForAll(height) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.UpdraftTower) {
-                    if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
-                    f.solarUpdraftTower.chimneyHeight = height;
-                  }
-                }
-              }
-            });
-          },
-          updateSolarUpdraftTowerChimneyRadiusById(id, radius) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.UpdraftTower) {
-                    if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
-                    f.solarUpdraftTower.chimneyRadius = radius;
-                  }
-                  break;
-                }
-              }
-            });
-          },
-          updateSolarUpdraftTowerChimneyRadiusForAll(radius) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.UpdraftTower) {
-                    if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
-                    f.solarUpdraftTower.chimneyRadius = radius;
-                  }
-                }
-              }
-            });
-          },
-          updateSolarUpdraftTowerCollectorHeightById(id, height) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.UpdraftTower) {
-                    if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
-                    f.solarUpdraftTower.collectorHeight = height;
-                  }
-                  break;
-                }
-              }
-            });
-          },
-          updateSolarUpdraftTowerCollectorHeightForAll(height) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.UpdraftTower) {
-                    if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
-                    f.solarUpdraftTower.collectorHeight = height;
-                  }
-                }
-              }
-            });
-          },
-          updateSolarUpdraftTowerCollectorRadiusById(id, radius) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.UpdraftTower) {
-                    if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
-                    f.solarUpdraftTower.collectorRadius = radius;
-                  }
-                  break;
-                }
-              }
-            });
-          },
-          updateSolarUpdraftTowerCollectorRadiusForAll(radius) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.UpdraftTower) {
-                    if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
-                    f.solarUpdraftTower.collectorRadius = radius;
-                  }
-                }
-              }
-            });
-          },
-          updateSolarUpdraftTowerCollectorTransmissivityById(id, transmissivity) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.UpdraftTower) {
-                    if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
-                    f.solarUpdraftTower.collectorTransmissivity = transmissivity;
-                  }
-                  break;
-                }
-              }
-            });
-          },
-          updateSolarUpdraftTowerCollectorTransmissivityForAll(transmissivity) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.UpdraftTower) {
-                    if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
-                    f.solarUpdraftTower.collectorTransmissivity = transmissivity;
-                  }
-                }
-              }
-            });
-          },
-          updateSolarUpdraftTowerCollectorEmissivityById(id, emissivity) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.UpdraftTower) {
-                    if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
-                    f.solarUpdraftTower.collectorEmissivity = emissivity;
-                  }
-                  break;
-                }
-              }
-            });
-          },
-          updateSolarUpdraftTowerCollectorEmissivityForAll(emissivity) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.UpdraftTower) {
-                    if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
-                    f.solarUpdraftTower.collectorEmissivity = emissivity;
-                  }
-                }
-              }
-            });
-          },
-          updateSolarUpdraftTowerDischargeCoefficientById(id, coefficient) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.UpdraftTower) {
-                    if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
-                    f.solarUpdraftTower.dischargeCoefficient = coefficient;
-                  }
-                  break;
-                }
-              }
-            });
-          },
-          updateSolarUpdraftTowerDischargeCoefficientForAll(coefficient) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.UpdraftTower) {
-                    if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
-                    f.solarUpdraftTower.dischargeCoefficient = coefficient;
-                  }
-                }
-              }
-            });
-          },
-          updateSolarUpdraftTowerTurbineEfficiencyById(id, efficiency) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.UpdraftTower) {
-                    if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
-                    f.solarUpdraftTower.turbineEfficiency = efficiency;
-                  }
-                  break;
-                }
-              }
-            });
-          },
-          updateSolarUpdraftTowerTurbineEfficiencyForAll(efficiency) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && !e.locked) {
-                  const f = e as FoundationModel;
-                  if (f.solarStructure === SolarStructure.UpdraftTower) {
-                    if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
-                    f.solarUpdraftTower.turbineEfficiency = efficiency;
-                  }
-                }
-              }
-            });
-          },
-
           // for cuboids
           cuboidActionScope: Scope.OnlyThisSide,
           setCuboidActionScope(scope) {
             immerSet((state: CommonStoreState) => {
               state.cuboidActionScope = scope;
-            });
-          },
-          updateCuboidColorBySide(side, id, color) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Cuboid && e.id === id && !e.locked) {
-                  const cuboid = e as CuboidModel;
-                  if (!cuboid.faceColors) {
-                    cuboid.faceColors = new Array<string>(6);
-                    cuboid.faceColors.fill(cuboid.color ?? color);
-                  }
-                  cuboid.faceColors[side] = color;
-                  break;
-                }
-              }
-            });
-          },
-          updateCuboidColorById(id, color) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Cuboid && e.id === id && !e.locked) {
-                  e.color = color;
-                  const cuboid = e as CuboidModel;
-                  if (!cuboid.faceColors) cuboid.faceColors = new Array<string>(6);
-                  for (let i = 0; i < 4; i++) {
-                    cuboid.faceColors[i] = color;
-                  }
-                  break;
-                }
-              }
-            });
-          },
-          updateCuboidColorForAll(color) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Cuboid && !e.locked) {
-                  e.color = color;
-                  const cuboid = e as CuboidModel;
-                  if (!cuboid.faceColors) cuboid.faceColors = new Array<string>(6);
-                  for (let i = 0; i < 4; i++) {
-                    cuboid.faceColors[i] = color;
-                  }
-                }
-              }
-            });
-          },
-
-          updateCuboidTextureBySide(side, id, texture) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Cuboid && e.id === id && !e.locked) {
-                  const cuboid = e as CuboidModel;
-                  if (!cuboid.textureTypes) {
-                    cuboid.textureTypes = new Array<CuboidTexture>(6);
-                    cuboid.textureTypes.fill(CuboidTexture.NoTexture);
-                  }
-                  cuboid.textureTypes[side] = texture;
-                  break;
-                }
-              }
-            });
-          },
-          updateCuboidFacadeTextureById(id, texture) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Cuboid && e.id === id && !e.locked) {
-                  const cuboid = e as CuboidModel;
-                  if (!cuboid.textureTypes) {
-                    cuboid.textureTypes = new Array<CuboidTexture>(6);
-                    cuboid.textureTypes.fill(CuboidTexture.NoTexture);
-                  }
-                  for (let i = 0; i < 4; i++) {
-                    cuboid.textureTypes[i] = texture;
-                  }
-                  break;
-                }
-              }
-            });
-          },
-          updateCuboidFacadeTextureForAll(texture) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Cuboid && !e.locked) {
-                  const cuboid = e as CuboidModel;
-                  if (!cuboid.textureTypes) {
-                    cuboid.textureTypes = new Array<CuboidTexture>(6);
-                    cuboid.textureTypes.fill(CuboidTexture.NoTexture);
-                  }
-                  for (let i = 0; i < 4; i++) {
-                    cuboid.textureTypes[i] = texture;
-                  }
-                }
-              }
             });
           },
 
@@ -2573,120 +1708,6 @@ export const useStore = create<CommonStoreState>(
               state.polygonActionScope = scope;
             });
           },
-          deletePolygonVertexByIndex(id, index) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Polygon && e.id === id) {
-                  const p = e as PolygonModel;
-                  p.vertices.splice(index, 1);
-                  break;
-                }
-              }
-            });
-          },
-          insertPolygonVertexBeforeIndex(id, index) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Polygon && e.id === id) {
-                  const p = e as PolygonModel;
-                  const n = p.vertices.length;
-                  if (index > 0 && index < n) {
-                    const newX = 0.5 * (p.vertices[index].x + p.vertices[index - 1].x);
-                    const newY = 0.5 * (p.vertices[index].y + p.vertices[index - 1].y);
-                    p.vertices.splice(index, 0, { x: newX, y: newY } as Point2);
-                  } else if (index === 0) {
-                    const newX = 0.5 * (p.vertices[index].x + p.vertices[n - 1].x);
-                    const newY = 0.5 * (p.vertices[index].y + p.vertices[n - 1].y);
-                    p.vertices.splice(n, 0, { x: newX, y: newY } as Point2);
-                  }
-                  break;
-                }
-              }
-            });
-          },
-          insertPolygonVertexAfterIndex(id, index) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Polygon && e.id === id) {
-                  const p = e as PolygonModel;
-                  const n = p.vertices.length;
-                  if (index >= 0 && index < n - 1) {
-                    const newX = 0.5 * (p.vertices[index].x + p.vertices[index + 1].x);
-                    const newY = 0.5 * (p.vertices[index].y + p.vertices[index + 1].y);
-                    p.vertices.splice(index + 1, 0, { x: newX, y: newY } as Point2);
-                  } else if (index === n - 1) {
-                    const newX = 0.5 * (p.vertices[index].x + p.vertices[0].x);
-                    const newY = 0.5 * (p.vertices[index].y + p.vertices[0].y);
-                    p.vertices.splice(n, 0, { x: newX, y: newY } as Point2);
-                  }
-                  break;
-                }
-              }
-            });
-          },
-          updatePolygonSelectedIndexById(id, index) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Polygon && e.id === id) {
-                  (e as PolygonModel).selectedIndex = index;
-                  break;
-                }
-              }
-            });
-          },
-          updatePolygonFilledById(id, filled) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Polygon && e.id === id) {
-                  (e as PolygonModel).filled = filled;
-                  break;
-                }
-              }
-            });
-          },
-          updatePolygonLineStyleById(id, style) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Polygon && e.id === id) {
-                  (e as PolygonModel).lineStyle = style;
-                  break;
-                }
-              }
-            });
-          },
-          updatePolygonLineStyleOnSurface(parentId, normal, style) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (
-                  e.type === ObjectType.Polygon &&
-                  e.parentId === parentId &&
-                  Util.isIdentical(e.normal, normal) &&
-                  !e.locked
-                ) {
-                  (e as PolygonModel).lineStyle = style;
-                }
-              }
-            });
-          },
-          updatePolygonLineStyleAboveFoundation(foundationId, style) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Polygon && e.foundationId === foundationId && !e.locked) {
-                  (e as PolygonModel).lineStyle = style;
-                }
-              }
-            });
-          },
-          updatePolygonLineStyleForAll(style) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Polygon && !e.locked) {
-                  (e as PolygonModel).lineStyle = style;
-                }
-              }
-            });
-          },
-
           updatePolygonVertexPositionById(id, index, x, y) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
@@ -2713,48 +1734,6 @@ export const useStore = create<CommonStoreState>(
               }
             });
           },
-          updatePolygonTextureById(id, texture) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.id === id && e.type === ObjectType.Polygon && !e.locked) {
-                  (e as PolygonModel).textureType = texture;
-                  break;
-                }
-              }
-            });
-          },
-          updatePolygonTextureOnSurface(parentId, normal, texture) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (
-                  e.type === ObjectType.Polygon &&
-                  e.parentId === parentId &&
-                  Util.isIdentical(e.normal, normal) &&
-                  !e.locked
-                ) {
-                  (e as PolygonModel).textureType = texture;
-                }
-              }
-            });
-          },
-          updatePolygonTextureAboveFoundation(foundationId, texture) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Polygon && e.foundationId === foundationId && !e.locked) {
-                  (e as PolygonModel).textureType = texture;
-                }
-              }
-            });
-          },
-          updatePolygonTextureForAll(texture) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Polygon && !e.locked) {
-                  (e as PolygonModel).textureType = texture;
-                }
-              }
-            });
-          },
 
           // for solar panels
           solarPanelActionScope: Scope.OnlyThisObject,
@@ -2763,287 +1742,6 @@ export const useStore = create<CommonStoreState>(
               state.solarPanelActionScope = scope;
             });
           },
-
-          updateSolarPanelModelById(id, pvModelName) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.id === id && !e.locked) {
-                  const sp = e as SolarPanelModel;
-                  sp.pvModelName = pvModelName;
-                  const pvModel = state.pvModules[pvModelName];
-                  if (sp.orientation === Orientation.portrait) {
-                    // calculate the current x-y layout
-                    const nx = Math.max(1, Math.round(sp.lx / pvModel.width));
-                    const ny = Math.max(1, Math.round(sp.ly / pvModel.length));
-                    sp.lx = nx * pvModel.width;
-                    sp.ly = ny * pvModel.length;
-                  } else {
-                    // calculate the current x-y layout
-                    const nx = Math.max(1, Math.round(sp.lx / pvModel.length));
-                    const ny = Math.max(1, Math.round(sp.ly / pvModel.width));
-                    sp.lx = nx * pvModel.length;
-                    sp.ly = ny * pvModel.width;
-                  }
-                  if (sp.parentType === ObjectType.Wall) {
-                  }
-                  break;
-                }
-              }
-            });
-          },
-          updateSolarPanelModelAboveFoundation(foundationId, pvModelName) {
-            immerSet((state: CommonStoreState) => {
-              const pvModel = state.pvModules[pvModelName];
-              let updateWall = false;
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId && !e.locked) {
-                  const sp = e as SolarPanelModel;
-                  sp.pvModelName = pvModelName;
-                  if (sp.orientation === Orientation.portrait) {
-                    // calculate the current x-y layout
-                    const nx = Math.max(1, Math.round(sp.lx / pvModel.width));
-                    const ny = Math.max(1, Math.round(sp.ly / pvModel.length));
-                    sp.lx = nx * pvModel.width;
-                    sp.ly = ny * pvModel.length;
-                  } else {
-                    // calculate the current x-y layout
-                    const nx = Math.max(1, Math.round(sp.lx / pvModel.length));
-                    const ny = Math.max(1, Math.round(sp.ly / pvModel.width));
-                    sp.lx = nx * pvModel.length;
-                    sp.ly = ny * pvModel.width;
-                  }
-                  if (sp.parentType === ObjectType.Wall) {
-                    updateWall = true;
-                  }
-                }
-              }
-              if (updateWall) {
-              }
-            });
-          },
-          updateSolarPanelModelOnSurface(parentId, normal, pvModelName) {
-            immerSet((state: CommonStoreState) => {
-              const pvModel = state.pvModules[pvModelName];
-              let updateWall = false;
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && !e.locked) {
-                  let found;
-                  if (normal) {
-                    found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
-                  } else {
-                    found = e.parentId === parentId;
-                  }
-                  if (found) {
-                    const sp = e as SolarPanelModel;
-                    sp.pvModelName = pvModelName;
-                    if (sp.orientation === Orientation.portrait) {
-                      // calculate the current x-y layout
-                      const nx = Math.max(1, Math.round(sp.lx / pvModel.width));
-                      const ny = Math.max(1, Math.round(sp.ly / pvModel.length));
-                      sp.lx = nx * pvModel.width;
-                      sp.ly = ny * pvModel.length;
-                    } else {
-                      // calculate the current x-y layout
-                      const nx = Math.max(1, Math.round(sp.lx / pvModel.length));
-                      const ny = Math.max(1, Math.round(sp.ly / pvModel.width));
-                      sp.lx = nx * pvModel.length;
-                      sp.ly = ny * pvModel.width;
-                    }
-                    if (sp.parentType === ObjectType.Wall) {
-                      updateWall = true;
-                    }
-                  }
-                }
-              }
-              if (updateWall) {
-              }
-            });
-          },
-          updateSolarPanelModelForAll(pvModelName) {
-            immerSet((state: CommonStoreState) => {
-              const pvModel = state.pvModules[pvModelName];
-              let updateWall = false;
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && !e.locked) {
-                  const sp = e as SolarPanelModel;
-                  sp.pvModelName = pvModelName;
-                  if (sp.orientation === Orientation.portrait) {
-                    // calculate the current x-y layout
-                    const nx = Math.max(1, Math.round(sp.lx / pvModel.width));
-                    const ny = Math.max(1, Math.round(sp.ly / pvModel.length));
-                    sp.lx = nx * pvModel.width;
-                    sp.ly = ny * pvModel.length;
-                  } else {
-                    // calculate the current x-y layout
-                    const nx = Math.max(1, Math.round(sp.lx / pvModel.length));
-                    const ny = Math.max(1, Math.round(sp.ly / pvModel.width));
-                    sp.lx = nx * pvModel.length;
-                    sp.ly = ny * pvModel.width;
-                  }
-                  if (sp.parentType === ObjectType.Wall) {
-                    updateWall = true;
-                  }
-                }
-              }
-              if (updateWall) {
-              }
-            });
-          },
-
-          updateSolarPanelLxById(id, lx) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.id === id && !e.locked) {
-                  const sp = e as SolarPanelModel;
-                  const pv = state.getPvModule(sp.pvModelName);
-                  e.lx = Util.panelizeLx(sp, pv, lx);
-                  break;
-                }
-              }
-            });
-          },
-          updateSolarPanelLxAboveFoundation(foundationId, lx) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId && !e.locked) {
-                  const sp = e as SolarPanelModel;
-                  const pv = state.getPvModule(sp.pvModelName);
-                  e.lx = Util.panelizeLx(sp, pv, lx);
-                }
-              }
-            });
-          },
-          updateSolarPanelLxOnSurface(parentId, normal, lx) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && !e.locked) {
-                  let found;
-                  if (normal) {
-                    found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
-                  } else {
-                    found = e.parentId === parentId;
-                  }
-                  if (found) {
-                    const sp = e as SolarPanelModel;
-                    const pv = state.getPvModule(sp.pvModelName);
-                    e.lx = Util.panelizeLx(sp, pv, lx);
-                  }
-                }
-              }
-            });
-          },
-          updateSolarPanelLxForAll(lx) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && !e.locked) {
-                  const sp = e as SolarPanelModel;
-                  const pv = state.getPvModule(sp.pvModelName);
-                  e.lx = Util.panelizeLx(sp, pv, lx);
-                }
-              }
-            });
-          },
-
-          updateSolarPanelLyById(id, ly) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.id === id && !e.locked) {
-                  const sp = e as SolarPanelModel;
-                  const pv = state.getPvModule(sp.pvModelName);
-                  e.ly = Util.panelizeLy(sp, pv, ly);
-                  break;
-                }
-              }
-            });
-          },
-          updateSolarPanelLyAboveFoundation(foundationId, ly) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId && !e.locked) {
-                  const sp = e as SolarPanelModel;
-                  const pv = state.getPvModule(sp.pvModelName);
-                  e.ly = Util.panelizeLy(sp, pv, ly);
-                }
-              }
-            });
-          },
-          updateSolarPanelLyOnSurface(parentId, normal, ly) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && !e.locked) {
-                  let found;
-                  if (normal) {
-                    found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
-                  } else {
-                    found = e.parentId === parentId;
-                  }
-                  if (found) {
-                    const sp = e as SolarPanelModel;
-                    const pv = state.getPvModule(sp.pvModelName);
-                    e.ly = Util.panelizeLy(sp, pv, ly);
-                  }
-                }
-              }
-            });
-          },
-          updateSolarPanelLyForAll(ly) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && !e.locked) {
-                  const sp = e as SolarPanelModel;
-                  const pv = state.getPvModule(sp.pvModelName);
-                  e.ly = Util.panelizeLy(sp, pv, ly);
-                }
-              }
-            });
-          },
-
-          updateSolarPanelFrameColorById(id, frameColor) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.id === id && !e.locked) {
-                  (e as SolarPanelModel).frameColor = frameColor;
-                  break;
-                }
-              }
-            });
-          },
-          updateSolarPanelFrameColorAboveFoundation(foundationId, frameColor) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId && !e.locked) {
-                  (e as SolarPanelModel).frameColor = frameColor;
-                }
-              }
-            });
-          },
-          updateSolarPanelFrameColorOnSurface(parentId, normal, frameColor) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && !e.locked) {
-                  let found;
-                  if (normal) {
-                    found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
-                  } else {
-                    found = e.parentId === parentId;
-                  }
-                  if (found) {
-                    (e as SolarPanelModel).frameColor = frameColor;
-                  }
-                }
-              }
-            });
-          },
-          updateSolarPanelFrameColorForAll(frameColor) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && !e.locked) {
-                  (e as SolarPanelModel).frameColor = frameColor;
-                }
-              }
-            });
-          },
-
           updateSolarPanelTiltAngleById(id, tiltAngle) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
@@ -3055,53 +1753,6 @@ export const useStore = create<CommonStoreState>(
               }
             });
           },
-          updateSolarPanelTiltAngleAboveFoundation(foundationId, tiltAngle, isReverse) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId && !e.locked) {
-                  const sp = e as SolarPanelModel;
-                  if (sp.parentType === ObjectType.Wall) {
-                    sp.tiltAngle = Math.min(0, isReverse ? -tiltAngle : tiltAngle);
-                  } else {
-                    sp.tiltAngle = tiltAngle;
-                  }
-                }
-              }
-            });
-          },
-          updateSolarPanelTiltAngleOnSurface(parentId, normal, tiltAngle) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && !e.locked) {
-                  let found;
-                  if (normal) {
-                    found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
-                  } else {
-                    found = e.parentId === parentId;
-                  }
-                  if (found) {
-                    const sp = e as SolarPanelModel;
-                    sp.tiltAngle = tiltAngle;
-                  }
-                }
-              }
-            });
-          },
-          updateSolarPanelTiltAngleForAll(tiltAngle, isReverse) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && !e.locked) {
-                  const sp = e as SolarPanelModel;
-                  if (sp.parentType === ObjectType.Wall) {
-                    sp.tiltAngle = Math.min(0, isReverse ? -tiltAngle : tiltAngle);
-                  } else {
-                    sp.tiltAngle = tiltAngle;
-                  }
-                }
-              }
-            });
-          },
-
           setSolarPanelOrientation(sp, pvModel, orientation) {
             sp.orientation = orientation;
             if (sp.orientation === Orientation.portrait) {
@@ -3117,177 +1768,6 @@ export const useStore = create<CommonStoreState>(
               sp.lx = nx * pvModel.length;
               sp.ly = ny * pvModel.width;
             }
-          },
-
-          updateSolarPanelOrientationById(id, orientation) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.id === id && !e.locked) {
-                  const sp = e as SolarPanelModel;
-                  const pvModel = state.pvModules[sp.pvModelName];
-                  state.setSolarPanelOrientation(sp, pvModel, orientation);
-                  if (sp.parentType === ObjectType.Wall) {
-                  }
-                  break;
-                }
-              }
-            });
-          },
-          updateSolarPanelOrientationAboveFoundation(foundationId, orientation) {
-            immerSet((state: CommonStoreState) => {
-              let updateWall = false;
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId && !e.locked) {
-                  const sp = e as SolarPanelModel;
-                  const pvModel = state.pvModules[sp.pvModelName];
-                  state.setSolarPanelOrientation(sp, pvModel, orientation);
-                  if (sp.parentType === ObjectType.Wall) {
-                    updateWall = true;
-                  }
-                }
-              }
-              if (updateWall) {
-              }
-            });
-          },
-          updateSolarPanelOrientationOnSurface(parentId, normal, orientation) {
-            immerSet((state: CommonStoreState) => {
-              let updateWall = false;
-
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && !e.locked) {
-                  let found;
-                  if (normal) {
-                    found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
-                  } else {
-                    found = e.parentId === parentId;
-                  }
-                  if (found) {
-                    const sp = e as SolarPanelModel;
-                    const pvModel = state.pvModules[sp.pvModelName];
-                    state.setSolarPanelOrientation(sp, pvModel, orientation);
-                    if (sp.parentType === ObjectType.Wall) {
-                      updateWall = true;
-                    }
-                  }
-                }
-              }
-              if (updateWall) {
-              }
-            });
-          },
-          updateSolarPanelOrientationForAll(orientation) {
-            immerSet((state: CommonStoreState) => {
-              let updateWall = false;
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && !e.locked) {
-                  const sp = e as SolarPanelModel;
-                  const pvModel = state.pvModules[sp.pvModelName];
-                  state.setSolarPanelOrientation(sp, pvModel, orientation);
-                  if (sp.parentType === ObjectType.Wall) {
-                    updateWall = true;
-                  }
-                }
-              }
-              if (updateWall) {
-              }
-            });
-          },
-
-          updateSolarPanelTrackerTypeById(id, trackerType) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.id === id && !e.locked) {
-                  (e as SolarPanelModel).trackerType = trackerType;
-                  break;
-                }
-              }
-            });
-          },
-          updateSolarPanelTrackerTypeAboveFoundation(foundationId, trackerType) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId && !e.locked) {
-                  (e as SolarPanelModel).trackerType = trackerType;
-                }
-              }
-            });
-          },
-          updateSolarPanelTrackerTypeOnSurface(parentId, normal, trackerType) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && !e.locked) {
-                  let found;
-                  if (normal) {
-                    found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
-                  } else {
-                    found = e.parentId === parentId;
-                  }
-                  if (found) {
-                    (e as SolarPanelModel).trackerType = trackerType;
-                  }
-                }
-              }
-            });
-          },
-          updateSolarPanelTrackerTypeForAll(trackerType) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && !e.locked) {
-                  (e as SolarPanelModel).trackerType = trackerType;
-                }
-              }
-            });
-          },
-
-          updateSolarPanelPoleSpacingById(id, poleSpacing) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.id === id && !e.locked) {
-                  const sp = e as SolarPanelModel;
-                  sp.poleSpacing = poleSpacing;
-                  break;
-                }
-              }
-            });
-          },
-          updateSolarPanelPoleSpacingAboveFoundation(foundationId, poleSpacing) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId && !e.locked) {
-                  const sp = e as SolarPanelModel;
-                  sp.poleSpacing = poleSpacing;
-                }
-              }
-            });
-          },
-          updateSolarPanelPoleSpacingOnSurface(parentId, normal, poleSpacing) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && !e.locked) {
-                  let found;
-                  if (normal) {
-                    found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
-                  } else {
-                    found = e.parentId === parentId;
-                  }
-                  if (found) {
-                    const sp = e as SolarPanelModel;
-                    sp.poleSpacing = poleSpacing;
-                  }
-                }
-              }
-            });
-          },
-          updateSolarPanelPoleSpacingForAll(poleSpacing) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && !e.locked) {
-                  const sp = e as SolarPanelModel;
-                  sp.poleSpacing = poleSpacing;
-                }
-              }
-            });
           },
 
           // for parabolic troughs
@@ -3362,40 +1842,6 @@ export const useStore = create<CommonStoreState>(
           setParabolicDishActionScope(scope) {
             immerSet((state: CommonStoreState) => {
               state.parabolicDishActionScope = scope;
-            });
-          },
-          updateParabolicDishStructureTypeById(id, structureType) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.id === id && !e.locked) {
-                  if (e.type === ObjectType.ParabolicDish) {
-                    (e as ParabolicDishModel).structureType = structureType;
-                    break;
-                  }
-                }
-              }
-            });
-          },
-          updateParabolicDishStructureTypeAboveFoundation(foundationId, structureType) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.foundationId === foundationId && !e.locked) {
-                  if (e.type === ObjectType.ParabolicDish) {
-                    (e as ParabolicDishModel).structureType = structureType;
-                  }
-                }
-              }
-            });
-          },
-          updateParabolicDishStructureTypeForAll(structureType) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (!e.locked) {
-                  if (e.type === ObjectType.ParabolicDish) {
-                    (e as ParabolicDishModel).structureType = structureType;
-                  }
-                }
-              }
             });
           },
 
@@ -3509,28 +1955,6 @@ export const useStore = create<CommonStoreState>(
               state.windowActionScope = scope;
             });
           },
-          updateWindowMullionById(id, mullion) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Window && e.id === id) {
-                  (e as WindowModel).mullion = mullion;
-                  state.selectedElement = e;
-                  break;
-                }
-              }
-            });
-          },
-          updateWindowTypeById(id, type) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Window && e.id === id) {
-                  (e as WindowModel).windowType = type;
-                  state.selectedElement = e;
-                  break;
-                }
-              }
-            });
-          },
 
           // for doors
           doorActionScope: Scope.OnlyThisObject,
@@ -3591,137 +2015,6 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
-          updateWallTextureById(id, texture) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Wall && e.id === id && !e.locked) {
-                  (e as WallModel).textureType = texture;
-                  break;
-                }
-              }
-            });
-          },
-          updateWallTextureAboveFoundation(foundationId, texture) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Wall && e.foundationId === foundationId && !e.locked) {
-                  (e as WallModel).textureType = texture;
-                }
-              }
-            });
-          },
-          updateWallTextureForAll(texture) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Wall && !e.locked) {
-                  (e as WallModel).textureType = texture;
-                }
-              }
-            });
-          },
-
-          updateWallColorById(id, color) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Wall && e.id === id && !e.locked) {
-                  e.color = color;
-                  break;
-                }
-              }
-            });
-          },
-          updateWallColorAboveFoundation(foundationId, color) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Wall && e.foundationId === foundationId && !e.locked) {
-                  e.color = color;
-                }
-              }
-            });
-          },
-          updateWallColorForAll(color) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Wall && !e.locked) {
-                  e.color = color;
-                }
-              }
-            });
-          },
-
-          updateWallHeightById(id, height) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Wall && e.id === id && !e.locked) {
-                  e.lz = height;
-                  break;
-                }
-              }
-            });
-          },
-          updateWallHeightAboveFoundation(foundationId, height) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Wall && e.foundationId === foundationId && !e.locked) {
-                  e.lz = height;
-                }
-              }
-            });
-          },
-          updateWallHeightForAll(height) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Wall && !e.locked) {
-                  e.lz = height;
-                }
-              }
-            });
-          },
-
-          updateWallThicknessById(id, thickness) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.id === id && !e.locked && e.type === ObjectType.Wall) {
-                  (e as WallModel).ly = thickness;
-                  break;
-                }
-              }
-            });
-          },
-          updateWallThicknessAboveFoundation(foundationId, thickness) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Wall && e.foundationId === foundationId && !e.locked) {
-                  (e as WallModel).ly = thickness;
-                }
-              }
-            });
-          },
-          updateWallThicknessForAll(thickness) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Wall && !e.locked) {
-                  (e as WallModel).ly = thickness;
-                }
-              }
-            });
-          },
-
-          updateWallStructureById(id, structure) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.id === id && e.type === ObjectType.Wall) {
-                  const wallModel = e as WallModel;
-                  wallModel.wallStructure = structure;
-                  if (structure === WallStructure.Stud || structure === WallStructure.Pillar) {
-                    wallModel.opacity = 0;
-                  }
-                  break;
-                }
-              }
-            });
-          },
-
           updateRoofRiseById(id, rise) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
@@ -3745,125 +2038,6 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
-          updateTreeTypeById(id, name) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Tree && e.id === id) {
-                  (e as TreeModel).name = name;
-                  break;
-                }
-              }
-            });
-          },
-          updateTreeShowModelById(id, showModel) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Tree && e.id === id) {
-                  (e as TreeModel).showModel = showModel;
-                  break;
-                }
-              }
-            });
-          },
-          updateTreeFlipById(id, flip) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Tree && e.id === id) {
-                  (e as TreeModel).flip = flip;
-                  break;
-                }
-              }
-            });
-          },
-          updateFlowerTypeById(id, name) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Flower && e.id === id) {
-                  const flower = e as FlowerModel;
-                  flower.name = name;
-                  flower.lx = FlowerData.fetchSpread(name);
-                  flower.lz = FlowerData.fetchHeight(name);
-                  break;
-                }
-              }
-            });
-          },
-          updateFlowerFlipById(id, flip) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Flower && e.id === id) {
-                  (e as FlowerModel).flip = flip;
-                  break;
-                }
-              }
-            });
-          },
-
-          updateHumanNameById(id, name) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Human && e.id === id) {
-                  const human = e as HumanModel;
-                  human.name = name;
-                  human.lx = HumanData.fetchWidth(name);
-                  human.lz = HumanData.fetchHeight(name);
-                  break;
-                }
-              }
-            });
-          },
-          updateHumanFlipById(id, yes) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Human && e.id === id) {
-                  const human = e as HumanModel;
-                  human.flip = yes;
-                  break;
-                }
-              }
-            });
-          },
-          updateHumanObserverById(id, yes) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Human && e.id === id) {
-                  (e as HumanModel).observer = yes;
-                  break;
-                }
-              }
-            });
-          },
-
-          updateLightColorById(id, color) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Light && e.id === id) {
-                  (e as LightModel).color = color;
-                  break;
-                }
-              }
-            });
-          },
-          updateLightIntensityById(id, intensity) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Light && e.id === id) {
-                  (e as LightModel).intensity = intensity;
-                  break;
-                }
-              }
-            });
-          },
-          updateLightDistanceById(id, distance) {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Light && e.id === id) {
-                  (e as LightModel).distance = distance;
-                  break;
-                }
-              }
-            });
-          },
           updateInsideLightById(id, inside) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
@@ -5582,16 +3756,13 @@ export const useStore = create<CommonStoreState>(
           selectedElementY: 0,
 
           isAddingElement() {
-            if (
+            return !!(
               get().addedCuboidId ||
               get().addedFoundationId ||
               get().addedWallId ||
               get().addedWindowId ||
               get().addedDoorId
-            ) {
-              return true;
-            }
-            return false;
+            );
           },
 
           addedFoundationId: null,

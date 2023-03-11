@@ -5,7 +5,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Col, InputNumber, Modal, Radio, RadioChangeEvent, Row, Space } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
-import { useStore } from '../../../stores/common';
+import { CommonStoreState, useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { SolarPanelModel } from '../../../models/SolarPanelModel';
 import { ElementState, ObjectType, Orientation, Scope } from '../../../types';
@@ -17,14 +17,11 @@ import { UNIT_VECTOR_POS_Z_ARRAY, ZERO_TOLERANCE } from '../../../constants';
 import { RoofModel } from 'src/models/RoofModel';
 
 const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
   const getPvModule = useStore(Selector.getPvModule);
-  const updateSolarPanelLyById = useStore(Selector.updateSolarPanelLyById);
-  const updateSolarPanelLyOnSurface = useStore(Selector.updateSolarPanelLyOnSurface);
-  const updateSolarPanelLyAboveFoundation = useStore(Selector.updateSolarPanelLyAboveFoundation);
-  const updateSolarPanelLyForAll = useStore(Selector.updateSolarPanelLyForAll);
   const getParent = useStore(Selector.getParent);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.solarPanelActionScope);
@@ -58,6 +55,63 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [solarPanel]);
+
+  const updateSolarPanelLyById = (id: string, ly: number) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.SolarPanel && e.id === id && !e.locked) {
+          const sp = e as SolarPanelModel;
+          const pv = state.getPvModule(sp.pvModelName);
+          e.ly = Util.panelizeLy(sp, pv, ly);
+          break;
+        }
+      }
+    });
+  };
+
+  const updateSolarPanelLyAboveFoundation = (foundationId: string, ly: number) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId && !e.locked) {
+          const sp = e as SolarPanelModel;
+          const pv = state.getPvModule(sp.pvModelName);
+          e.ly = Util.panelizeLy(sp, pv, ly);
+        }
+      }
+    });
+  };
+
+  const updateSolarPanelLyOnSurface = (parentId: string, normal: number[] | undefined, ly: number) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.SolarPanel && !e.locked) {
+          let found;
+          if (normal) {
+            found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
+          } else {
+            found = e.parentId === parentId;
+          }
+          if (found) {
+            const sp = e as SolarPanelModel;
+            const pv = state.getPvModule(sp.pvModelName);
+            e.ly = Util.panelizeLy(sp, pv, ly);
+          }
+        }
+      }
+    });
+  };
+
+  const updateSolarPanelLyForAll = (ly: number) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.SolarPanel && !e.locked) {
+          const sp = e as SolarPanelModel;
+          const pv = state.getPvModule(sp.pvModelName);
+          e.ly = Util.panelizeLy(sp, pv, ly);
+        }
+      }
+    });
+  };
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);

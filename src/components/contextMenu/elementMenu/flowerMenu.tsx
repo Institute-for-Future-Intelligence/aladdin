@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { Checkbox, Menu, Space } from 'antd';
-import { useStore } from '../../../stores/common';
+import { CommonStoreState, useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { Copy, Cut, Lock } from '../menuItems';
 import i18n from '../../../i18n/i18n';
@@ -14,17 +14,28 @@ import { ObjectType } from '../../../types';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
 
 export const FlowerMenu = () => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const flower = useStore((state) =>
     state.elements.find((e) => e.selected && e.type === ObjectType.Flower),
   ) as FlowerModel;
-  const updateFlowerFlipById = useStore(Selector.updateFlowerFlipById);
   const addUndoable = useStore(Selector.addUndoable);
 
   if (!flower) return null;
 
   const lang = { lng: language };
   const editable = !flower?.locked;
+
+  const updateFlowerFlipById = (id: string, flip: boolean) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Flower && e.id === id) {
+          (e as FlowerModel).flip = flip;
+          break;
+        }
+      }
+    });
+  };
 
   return (
     <Menu.ItemGroup>

@@ -5,7 +5,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Col, Modal, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
-import { useStore } from '../../../stores/common';
+import { CommonStoreState, useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { LineStyle, ObjectType, Scope } from '../../../types';
 import i18n from '../../../i18n/i18n';
@@ -15,14 +15,11 @@ import { Util } from '../../../Util';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 
 const PolygonLineStyleSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
   const getParent = useStore(Selector.getParent);
-  const updatePolygonLineStyleById = useStore(Selector.updatePolygonLineStyleById);
-  const updatePolygonLineStyleOnSurface = useStore(Selector.updatePolygonLineStyleOnSurface);
-  const updatePolygonLineStyleAboveFoundation = useStore(Selector.updatePolygonLineStyleAboveFoundation);
-  const updatePolygonLineStyleForAll = useStore(Selector.updatePolygonLineStyleForAll);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.polygonActionScope);
   const setActionScope = useStore(Selector.setPolygonActionScope);
@@ -52,6 +49,52 @@ const PolygonLineStyleSelection = ({ setDialogVisible }: { setDialogVisible: (b:
       setSelectedLineStyle(polygon?.lineStyle ?? LineStyle.Solid);
     }
   }, [polygon]);
+
+  const updatePolygonLineStyleById = (id: string, style: LineStyle) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Polygon && e.id === id) {
+          (e as PolygonModel).lineStyle = style;
+          break;
+        }
+      }
+    });
+  };
+
+  const updatePolygonLineStyleOnSurface = (parentId: string, normal: number[] | undefined, style: LineStyle) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (
+          e.type === ObjectType.Polygon &&
+          e.parentId === parentId &&
+          Util.isIdentical(e.normal, normal) &&
+          !e.locked
+        ) {
+          (e as PolygonModel).lineStyle = style;
+        }
+      }
+    });
+  };
+
+  const updatePolygonLineStyleAboveFoundation = (foundationId: string, style: LineStyle) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Polygon && e.foundationId === foundationId && !e.locked) {
+          (e as PolygonModel).lineStyle = style;
+        }
+      }
+    });
+  };
+
+  const updatePolygonLineStyleForAll = (style: LineStyle) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Polygon && !e.locked) {
+          (e as PolygonModel).lineStyle = style;
+        }
+      }
+    });
+  };
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);
