@@ -20,6 +20,7 @@ import * as Selector from '../../../stores/selector';
 import i18n from '../../../i18n/i18n';
 import { usePrimitiveStore } from '../../../stores/commonPrimitive';
 import { ModelType } from '../../../types';
+import generateRandomAnimal from 'random-animal-name';
 
 const { Option } = Select;
 
@@ -27,11 +28,10 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   const setCommonStore = useStore(Selector.set);
   const loggable = useStore(Selector.loggable);
   const language = useStore(Selector.language);
-  const user = useStore(Selector.user);
 
   const [modelType, setModelType] = useState<ModelType>(useStore.getState().modelType);
   const [modelAuthor, setModelAuthor] = useState<string | null>(
-    useStore.getState().modelAuthor ?? user.displayName ?? null,
+    useStore.getState().modelAuthor ?? generateRandomAnimal(),
   );
   const [modelLabel, setModelLabel] = useState<string | null>(
     useStore.getState().modelLabel ?? useStore.getState().cloudFile ?? null,

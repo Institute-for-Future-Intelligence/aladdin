@@ -10422,6 +10422,11 @@ raf@^3.4.0, raf@^3.4.1:
   dependencies:
     performance-now "^2.1.0"
 
+random-animal-name@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/random-animal-name/-/random-animal-name-0.1.1.tgz#9e1112fb5b8a922308b141a3b3e2011745e0e0c0"
+  integrity sha512-6LtEegc1FzFsD77WF5KmxhXPCbcI33qlAgxd8aHVrwOW595yh3Kkw52dTaqGmLXb05JiRf1ypzUXPKEosTCoAA==
+
 randombytes@^2.0.0, randombytes@^2.0.1, randombytes@^2.0.5, randombytes@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/randombytes/-/randombytes-2.1.0.tgz#df6f84372f0270dc65cdf6291349ab7a473d4f2a"

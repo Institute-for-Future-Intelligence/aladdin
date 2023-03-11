@@ -876,6 +876,9 @@ export const useStore = create<CommonStoreState>(
               state.roofSegmentVerticesMap.clear();
               state.roofSegmentVerticesWithoutOverhangMap.clear();
               state.undoManager.clear();
+              state.modelType = ModelType.UNKNOWN;
+              state.modelLabel = null;
+              state.modelDescription = null;
             });
             usePrimitiveStore.setState((state) => {
               state.showSolarRadiationHeatmap = false;
