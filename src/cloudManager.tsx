@@ -648,6 +648,9 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           setCommonStore((state) => {
             if (state.peopleModels) {
               state.peopleModels.delete(Util.getModelKey(model));
+              usePrimitiveStore.setState((state) => {
+                state.leaderboardFlag = !state.leaderboardFlag;
+              });
             }
           });
         });

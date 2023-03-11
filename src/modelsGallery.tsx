@@ -10,6 +10,7 @@ import { Drawer, Empty, Input, Space } from 'antd';
 import { ModelSite } from './types';
 import { LeftCircleOutlined, RightCircleOutlined } from '@ant-design/icons';
 import { getIconUrl } from './components/modelsMap';
+import ImageLoadFailureIcon from './assets/image_load_failure.png';
 
 export interface ModelsGalleryProps {
   author: string | undefined; // if undefined, the user is the owner of models
@@ -149,7 +150,7 @@ const ModelsGallery = ({ author, models, closeCallback, openCloudFile }: ModelsG
       title={(author ?? i18n.t('modelsMap.MyPublishedModels', lang)) + ' (' + countModels + ')'}
       placement="bottom"
       visible={true}
-      height={'150px'}
+      height={'164px'}
       onClose={() => {
         setSelectedModel(undefined);
         closeCallback();
@@ -174,6 +175,11 @@ const ModelsGallery = ({ author, models, closeCallback, openCloudFile }: ModelsG
                   <td key={index}>
                     <div style={{ display: 'block', marginTop: '4px' }}>
                       <img
+                        height={'100px'}
+                        width={'auto'}
+                        onError={(event) => {
+                          (event.target as HTMLImageElement).src = ImageLoadFailureIcon;
+                        }}
                         alt={m.label}
                         title={m.label}
                         src={m.thumbnailUrl}
