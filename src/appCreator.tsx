@@ -44,6 +44,7 @@ import Loading from './loading';
 import Panels from './panels';
 import Simulations from './simulations';
 import { usePrimitiveStore } from './stores/commonPrimitive';
+import { Button } from 'antd';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -188,6 +189,8 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
 
   console.log('x');
 
+  const isCloudFileOwner = user.uid && new URLSearchParams(window.location.search).get('userid') === user.uid;
+
   return (
     <div className="App">
       {/* Spinner, Simulation and Evolution control panels */}
@@ -234,7 +237,28 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
               width={32}
               style={{ paddingRight: '8px' }}
             />
-            {cloudFile + (changed ? ' *' : '')}
+            {cloudFile + (isCloudFileOwner && changed ? ' *' : '')}
+            {!viewOnly && isCloudFileOwner && changed && (
+              <Button
+                type="primary"
+                size={'small'}
+                style={{ marginLeft: '10px' }}
+                title={i18n.t('menu.file.SaveCloudFile', lang)}
+                onClick={() => {
+                  setCommonStore((state) => {
+                    state.saveCloudFileFlag = !state.saveCloudFileFlag;
+                    if (loggable) {
+                      state.actionInfo = {
+                        name: 'Save Cloud File',
+                        timestamp: new Date().getTime(),
+                      };
+                    }
+                  });
+                }}
+              >
+                {i18n.t('word.Save', lang)}
+              </Button>
+            )}
           </span>
         )}
       </div>
