@@ -193,7 +193,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       firstCallFetchLeaderboard.current = false;
     } else {
       fetchPeopleModels().then(() => {
-        // what to do?
+        fetchLatest();
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -430,7 +430,11 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       .finally(() => {
         setLoading(false);
       });
-    // get latest submission
+    fetchLatest();
+  };
+
+  // get latest submission
+  const fetchLatest = async () => {
     await firebase
       .firestore()
       .collection('board')
@@ -441,7 +445,13 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           const data = doc.data();
           if (data && data.latestModel) {
             setCommonStore((state) => {
-              state.latestModelSite = data.latestModel as ModelSite;
+              // if it has been deleted, don't show
+              let existing = false;
+              const m = data.latestModel as ModelSite;
+              if (m.author) {
+                existing = !!state.peopleModels.get(m.author)?.get(Util.getModelKey(m));
+              }
+              state.latestModelSite = existing ? m : undefined;
             });
           }
         }
