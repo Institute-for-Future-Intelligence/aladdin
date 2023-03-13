@@ -11,19 +11,16 @@ import * as Selector from '../stores/selector';
 import { WeatherModel } from '../models/WeatherModel';
 import { useEffect, useRef } from 'react';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { useDataStore } from '../stores/commonData';
 
-export const useDailyEnergySorter = (
-  now: Date,
-  weather: WeatherModel,
-  hasSolarPanels: boolean,
-  hourlyHeatExchangeArrayMap: Map<string, number[]>,
-  hourlySolarHeatGainArrayMap: Map<string, number[]>,
-  hourlySolarPanelOutputArrayMap: Map<string, number[]>,
-) => {
+export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarPanels: boolean) => {
   const elements = useStore.getState().elements;
   const getFoundation = useStore(Selector.getFoundation);
   const getElementById = useStore(Selector.getElementById);
   const flagOfDailySimulation = usePrimitiveStore(Selector.flagOfDailySimulation);
+  const hourlyHeatExchangeArrayMap = useDataStore(Selector.hourlyHeatExchangeArrayMap);
+  const hourlySolarHeatGainArrayMap = useDataStore(Selector.hourlySolarHeatGainArrayMap);
+  const hourlySolarPanelOutputArrayMap = useDataStore(Selector.hourlySolarPanelOutputArrayMap);
 
   const sum: DatumEntry[] = [];
   const dataLabels: string[] = [];

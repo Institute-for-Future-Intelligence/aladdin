@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import SolarPanelImage from '../assets/solar-panel.png';
@@ -31,6 +31,7 @@ const Container = styled.div`
   padding: 0;
   opacity: 100%;
   user-select: none;
+  tab-index: -1; // set to be not focusable
   z-index: 7; // must be less than other panels
 `;
 

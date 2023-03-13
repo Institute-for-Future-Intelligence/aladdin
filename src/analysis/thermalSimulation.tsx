@@ -61,6 +61,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const setCommonStore = useStore(Selector.set);
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const language = useStore(Selector.language);
+  const loggable = useStore(Selector.loggable);
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
   const getWeather = useStore(Selector.getWeather);
@@ -366,6 +367,14 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         state.showHeatFluxes = true;
       }
     });
+    if (loggable && !runYearlySimulation) {
+      setCommonStore((state) => {
+        state.actionInfo = {
+          name: 'Daily Building Energy Analysis Completed',
+          timestamp: new Date().getTime(),
+        };
+      });
+    }
   };
 
   const calculateDaily = () => {
@@ -511,6 +520,14 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
           });
           showInfo(i18n.t('message.SimulationCompleted', lang));
           simulationCompletedRef.current = true;
+          if (loggable) {
+            setCommonStore((state) => {
+              state.actionInfo = {
+                name: 'Yearly Building Energy Analysis Completed',
+                timestamp: new Date().getTime(),
+              };
+            });
+          }
           return;
         }
         // go to the next month

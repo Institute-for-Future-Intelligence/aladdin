@@ -225,7 +225,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
               fontSize: '14px',
               verticalAlign: 'center',
               userSelect: 'text',
-              color: new URLSearchParams(window.location.search).get('userid') === user.uid ? 'black' : 'gray',
+              color: isCloudFileOwner ? 'black' : 'gray',
             }}
             title={i18n.t('toolbar.CloudFile', lang)}
           >

@@ -18,7 +18,6 @@ import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDailyEnergySorter } from '../analysis/energyHooks';
 import BuildinEnergyGraph from '../components/buildingEnergyGraph';
 import { Util } from '../Util';
-import { useDataStore } from '../stores/commonData';
 import { checkBuilding, CheckStatus } from '../analysis/heatTools';
 
 const Container = styled.div`
@@ -85,9 +84,6 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
   const setCommonStore = useStore(Selector.set);
   const now = new Date(useStore(Selector.world.date));
   const panelRect = useStore(Selector.viewState.yearlyBuildingEnergyPanelRect);
-  const hourlyHeatExchangeArrayMap = useDataStore(Selector.hourlyHeatExchangeArrayMap);
-  const hourlySolarHeatGainArrayMap = useDataStore(Selector.hourlySolarHeatGainArrayMap);
-  const hourlySolarPanelOutputArrayMap = useDataStore(Selector.hourlySolarPanelOutputArrayMap);
   const flagOfDailySimulation = usePrimitiveStore(Selector.flagOfDailySimulation);
   const runYearlySimulation = usePrimitiveStore(Selector.runYearlyThermalSimulation);
   const clearYearlySimulationResultsFlag = usePrimitiveStore(Selector.clearYearlySimulationResultsFlag);
@@ -124,9 +120,6 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
     now,
     weather,
     hasSolarPanels,
-    hourlyHeatExchangeArrayMap,
-    hourlySolarHeatGainArrayMap,
-    hourlySolarPanelOutputArrayMap,
   );
 
   const resultRef = useRef<DatumEntry[]>(new Array(daysPerYear).fill({}));
@@ -488,7 +481,10 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
                     });
                     setCommonStore((state) => {
                       if (loggable) {
-                        state.actionInfo = { name: 'Run Yearly Thermal Simulation', timestamp: new Date().getTime() };
+                        state.actionInfo = {
+                          name: 'Run Yearly Building Energy Analysis',
+                          timestamp: new Date().getTime(),
+                        };
                       }
                     });
                   }, 100);

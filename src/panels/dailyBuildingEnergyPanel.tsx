@@ -19,7 +19,6 @@ import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDailyEnergySorter } from '../analysis/energyHooks';
 import BuildinEnergyGraph from '../components/buildingEnergyGraph';
 import { Util } from '../Util';
-import { useDataStore } from '../stores/commonData';
 import { checkBuilding, CheckStatus } from '../analysis/heatTools';
 
 const Container = styled.div`
@@ -84,9 +83,6 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
   const setCommonStore = useStore(Selector.set);
   const getWeather = useStore(Selector.getWeather);
   const now = new Date(useStore(Selector.world.date));
-  const hourlyHeatExchangeArrayMap = useDataStore(Selector.hourlyHeatExchangeArrayMap);
-  const hourlySolarHeatGainArrayMap = useDataStore(Selector.hourlySolarHeatGainArrayMap);
-  const hourlySolarPanelOutputArrayMap = useDataStore(Selector.hourlySolarPanelOutputArrayMap);
   const panelRect = useStore(Selector.viewState.dailyBuildingEnergyPanelRect);
   const flagOfDailySimulation = usePrimitiveStore(Selector.flagOfDailySimulation);
   const runDailySimulation = usePrimitiveStore(Selector.runDailyThermalSimulation);
@@ -143,9 +139,6 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
     now,
     weather,
     hasSolarPanels,
-    hourlyHeatExchangeArrayMap,
-    hourlySolarHeatGainArrayMap,
-    hourlySolarPanelOutputArrayMap,
   );
 
   useEffect(() => {
@@ -414,7 +407,10 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
                     });
                     setCommonStore((state) => {
                       if (loggable) {
-                        state.actionInfo = { name: 'Run Daily Thermal Simulation', timestamp: new Date().getTime() };
+                        state.actionInfo = {
+                          name: 'Run Daily Building Energy Analysis',
+                          timestamp: new Date().getTime(),
+                        };
                       }
                     });
                   }, 100);

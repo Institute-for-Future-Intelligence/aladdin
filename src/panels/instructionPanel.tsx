@@ -23,6 +23,7 @@ const Container = styled.div`
   padding: 16px;
   opacity: 100%;
   user-select: none;
+  tab-index: -1; // set to be not focusable
   z-index: 7; // must be less than other panels
 `;
 

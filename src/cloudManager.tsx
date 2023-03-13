@@ -182,7 +182,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       firstCallFetchModels.current = false;
     } else {
       fetchModelSites().then(() => {
-        setLoading(false);
+        fetchLatest();
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -240,6 +240,11 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     const title = params.get('title');
     if (userid && title) {
       openCloudFile(userid, title);
+    } else {
+      setCommonStore((state) => {
+        // make sure that the cloud file state is consistent with the URL
+        state.cloudFile = undefined;
+      });
     }
   };
 
@@ -430,7 +435,6 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       .finally(() => {
         setLoading(false);
       });
-    fetchLatest();
   };
 
   // get latest submission
