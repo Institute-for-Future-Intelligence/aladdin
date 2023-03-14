@@ -66,7 +66,6 @@ const { TextArea } = Input;
 
 const StickyNotePanel = () => {
   const language = useStore(Selector.language);
-  const loggable = useStore(Selector.loggable);
   const addUndoable = useStore(Selector.addUndoable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
@@ -167,12 +166,6 @@ const StickyNotePanel = () => {
     setCommonStore((state) => {
       state.viewState.showStickyNotePanel = false;
       state.notes[0] = text;
-      if (loggable) {
-        state.actionInfo = {
-          name: 'Close Sticky Note',
-          timestamp: new Date().getTime(),
-        };
-      }
     });
   };
 

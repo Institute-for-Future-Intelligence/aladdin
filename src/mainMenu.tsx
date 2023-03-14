@@ -297,13 +297,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       if (state.viewState.shadowEnabled) {
         state.updateSceneRadius();
       }
-      if (loggable) {
-        state.actionInfo = {
-          name: 'Show Shadow',
-          result: !shadowEnabled,
-          timestamp: new Date().getTime(),
-        };
-      }
     });
   };
 
@@ -415,13 +408,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
     addUndoable(undoableCheck);
     setCommonStore((state) => {
       state.viewState.showStickyNotePanel = !state.viewState.showStickyNotePanel;
-      if (loggable) {
-        state.actionInfo = {
-          name: 'Show Sticky Note',
-          result: !showStickyNotePanel,
-          timestamp: new Date().getTime(),
-        };
-      }
     });
   };
 
@@ -443,12 +429,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
     addUndoable(undoable);
     setCommonStore((state) => {
       state.viewState.showHeliodonPanel = true;
-      if (loggable) {
-        state.actionInfo = {
-          name: 'Open Sun and Time Settings Panel',
-          timestamp: new Date().getTime(),
-        };
-      }
     });
   };
 
@@ -470,12 +450,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
     addUndoable(undoable);
     setCommonStore((state) => {
       state.viewState.showMapPanel = true;
-      if (loggable) {
-        state.actionInfo = {
-          name: 'Open Maps',
-          timestamp: new Date().getTime(),
-        };
-      }
     });
   };
 
@@ -497,12 +471,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
     addUndoable(undoable);
     setCommonStore((state) => {
       state.viewState.showWeatherPanel = true;
-      if (loggable) {
-        state.actionInfo = {
-          name: 'Open Weather Panel',
-          timestamp: new Date().getTime(),
-        };
-      }
     });
   };
 
@@ -524,12 +492,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
     addUndoable(undoable);
     setCommonStore((state) => {
       state.viewState.showDiurnalTemperaturePanel = true;
-      if (loggable) {
-        state.actionInfo = {
-          name: 'Open Diurnal Temperature Panel',
-          timestamp: new Date().getTime(),
-        };
-      }
     });
   };
 
@@ -553,13 +515,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
     addUndoable(undoableCheck);
     setCommonStore((state) => {
       state.viewState.axes = checked;
-      if (loggable) {
-        state.actionInfo = {
-          name: 'Show Axes',
-          result: checked,
-          timestamp: new Date().getTime(),
-        };
-      }
     });
   };
 
@@ -579,13 +534,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
     set2DView(e.target.checked);
     setCommonStore((state) => {
       state.viewState.autoRotate = false;
-      if (loggable) {
-        state.actionInfo = {
-          name: 'Toggle 2D View',
-          result: !orthographic,
-          timestamp: new Date().getTime(),
-        };
-      }
     });
   };
 
@@ -618,13 +566,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         state.groupActionMode = false;
         state.groupMasterId = null;
         state.viewState.autoRotate = !state.viewState.autoRotate;
-        if (loggable) {
-          state.actionInfo = {
-            name: 'Auto Rotate',
-            result: !autoRotate,
-            timestamp: new Date().getTime(),
-          };
-        }
       });
     }
   };
@@ -673,16 +614,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         },
       } as UndoableDelete;
       addUndoable(undoableCut);
-      if (loggable) {
-        setCommonStore((state) => {
-          state.actionInfo = {
-            name: 'Cut',
-            timestamp: new Date().getTime(),
-            elementId: selectedElement.id,
-            elementType: selectedElement.type,
-          } as ActionInfo;
-        });
-      }
     }
   };
 
@@ -707,14 +638,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           },
         } as UndoablePaste;
         addUndoable(undoablePaste);
-        if (loggable) {
-          setCommonStore((state) => {
-            state.actionInfo = {
-              name: 'Paste',
-              timestamp: new Date().getTime(),
-            } as ActionInfo;
-          });
-        }
       }
     }
   };

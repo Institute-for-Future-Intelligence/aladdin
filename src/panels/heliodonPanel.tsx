@@ -65,7 +65,6 @@ const Header = styled.div`
 
 const HeliodonPanel = () => {
   const language = useStore(Selector.language);
-  const loggable = useStore(Selector.loggable);
   const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
   const dateString = useStore(Selector.world.date);
@@ -218,12 +217,6 @@ const HeliodonPanel = () => {
     addUndoable(undoable);
     setCommonStore((state) => {
       state.viewState.showHeliodonPanel = false;
-      if (loggable) {
-        state.actionInfo = {
-          name: 'Close Sun and Time Settings Panel',
-          timestamp: new Date().getTime(),
-        };
-      }
     });
   };
 

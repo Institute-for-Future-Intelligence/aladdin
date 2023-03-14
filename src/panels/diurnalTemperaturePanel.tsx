@@ -80,7 +80,6 @@ export interface DiurnalTemperaturePanelProps {
 
 const DiurnalTemperaturePanel = ({ city }: DiurnalTemperaturePanelProps) => {
   const language = useStore(Selector.language);
-  const loggable = useStore(Selector.loggable);
   const addUndoable = useStore(Selector.addUndoable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
@@ -229,12 +228,6 @@ const DiurnalTemperaturePanel = ({ city }: DiurnalTemperaturePanelProps) => {
     addUndoable(undoable);
     setCommonStore((state) => {
       state.viewState.showDiurnalTemperaturePanel = false;
-      if (loggable) {
-        state.actionInfo = {
-          name: 'Close Diurnal Temperature Panel',
-          timestamp: new Date().getTime(),
-        };
-      }
     });
   };
 
