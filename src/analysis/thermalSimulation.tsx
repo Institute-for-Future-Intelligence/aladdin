@@ -368,9 +368,18 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       }
     });
     if (loggable && !runYearlySimulation) {
+      const heater = useDataStore.getState().totalBuildingHeater;
+      const ac = useDataStore.getState().totalBuildingAc;
+      const solarPanel = useDataStore.getState().totalBuildingSolarPanel;
       setCommonStore((state) => {
         state.actionInfo = {
           name: 'Daily Building Energy Analysis Completed',
+          result: {
+            Heater: heater.toFixed(2),
+            AC: ac.toFixed(2),
+            SolarPanel: solarPanel.toFixed(2),
+            Net: (heater + ac - solarPanel).toFixed(2),
+          },
           timestamp: new Date().getTime(),
         };
       });
@@ -521,9 +530,18 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
           showInfo(i18n.t('message.SimulationCompleted', lang));
           simulationCompletedRef.current = true;
           if (loggable) {
+            const heater = useDataStore.getState().totalBuildingHeater;
+            const ac = useDataStore.getState().totalBuildingAc;
+            const solarPanel = useDataStore.getState().totalBuildingSolarPanel;
             setCommonStore((state) => {
               state.actionInfo = {
                 name: 'Yearly Building Energy Analysis Completed',
+                result: {
+                  Heater: heater.toFixed(2),
+                  AC: ac.toFixed(2),
+                  SolarPanel: solarPanel.toFixed(2),
+                  Net: (heater + ac - solarPanel).toFixed(2),
+                },
                 timestamp: new Date().getTime(),
               };
             });

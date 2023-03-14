@@ -20,6 +20,7 @@ import { useDailyEnergySorter } from '../analysis/energyHooks';
 import BuildinEnergyGraph from '../components/buildingEnergyGraph';
 import { Util } from '../Util';
 import { checkBuilding, CheckStatus } from '../analysis/heatTools';
+import { useDataStore } from '../stores/commonData';
 
 const Container = styled.div`
   position: fixed;
@@ -89,6 +90,9 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
   const clearDailySimulationResultsFlag = usePrimitiveStore(Selector.clearDailySimulationResultsFlag);
   const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);
   const hasSolarPanels = Util.hasSolarPanels(useStore.getState().elements);
+  const setTotalBuildingHeater = useDataStore(Selector.setTotalBuildingHeater);
+  const setTotalBuildingAc = useDataStore(Selector.setTotalBuildingAc);
+  const setTotalBuildingSolarPanel = useDataStore(Selector.setTotalBuildingSolarPanel);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -202,6 +206,10 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
     setAcSum(sumAc);
     setSolarPanelSum(sumSolarPanel);
     setNetSum(sumHeater + sumAc - sumSolarPanel);
+    // for logger
+    setTotalBuildingHeater(sumHeater);
+    setTotalBuildingAc(sumAc);
+    setTotalBuildingSolarPanel(sumSolarPanel);
     const countBuildings = (Object.keys(sum[0]).length - 1) / (hasSolarPanels ? 4 : 3);
     if (countBuildings > 1) {
       const l = [];

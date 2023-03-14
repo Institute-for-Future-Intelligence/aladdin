@@ -19,6 +19,7 @@ import { useDailyEnergySorter } from '../analysis/energyHooks';
 import BuildinEnergyGraph from '../components/buildingEnergyGraph';
 import { Util } from '../Util';
 import { checkBuilding, CheckStatus } from '../analysis/heatTools';
+import { useDataStore } from '../stores/commonData';
 
 const Container = styled.div`
   position: fixed;
@@ -89,6 +90,9 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
   const clearYearlySimulationResultsFlag = usePrimitiveStore(Selector.clearYearlySimulationResultsFlag);
   const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);
   const hasSolarPanels = Util.hasSolarPanels(useStore.getState().elements);
+  const setTotalBuildingHeater = useDataStore(Selector.setTotalBuildingHeater);
+  const setTotalBuildingAc = useDataStore(Selector.setTotalBuildingAc);
+  const setTotalBuildingSolarPanel = useDataStore(Selector.setTotalBuildingSolarPanel);
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const resizeObserverRef = useRef<ResizeObserver>();
@@ -292,10 +296,17 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
     solarPanelSumRef.current[indexOfMonth] = sumSolarPanel * monthInterval * 30;
     netSumRef.current[indexOfMonth] =
       heaterSumRef.current[indexOfMonth] + acSumRef.current[indexOfMonth] - solarPanelSumRef.current[indexOfMonth];
-    setHeaterSum(heaterSumRef.current.slice(0, indexOfMonth + 1).reduce((pv, cv) => pv + cv, 0));
-    setAcSum(acSumRef.current.slice(0, indexOfMonth + 1).reduce((pv, cv) => pv + cv, 0));
-    setSolarPanelSum(solarPanelSumRef.current.slice(0, indexOfMonth + 1).reduce((pv, cv) => pv + cv, 0));
+    const totalHeater = heaterSumRef.current.slice(0, indexOfMonth + 1).reduce((pv, cv) => pv + cv, 0);
+    setHeaterSum(totalHeater);
+    const totalAc = acSumRef.current.slice(0, indexOfMonth + 1).reduce((pv, cv) => pv + cv, 0);
+    setAcSum(totalAc);
+    const totalSolarPanel = solarPanelSumRef.current.slice(0, indexOfMonth + 1).reduce((pv, cv) => pv + cv, 0);
+    setSolarPanelSum(totalSolarPanel);
     setNetSum(netSumRef.current.slice(0, indexOfMonth + 1).reduce((pv, cv) => pv + cv, 0));
+    // for logger
+    setTotalBuildingHeater(totalHeater);
+    setTotalBuildingAc(totalAc);
+    setTotalBuildingSolarPanel(totalSolarPanel);
   }, [flagOfDailySimulation]);
 
   useEffect(() => {

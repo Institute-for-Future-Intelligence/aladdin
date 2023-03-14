@@ -549,6 +549,12 @@ export const solarPanelLabels = (state: DataStoreState) => state.solarPanelLabel
 
 export const setSolarPanelLabels = (state: DataStoreState) => state.setSolarPanelLabels;
 
+export const setTotalBuildingHeater = (state: DataStoreState) => state.setTotalBuildingHeater;
+
+export const setTotalBuildingAc = (state: DataStoreState) => state.setTotalBuildingAc;
+
+export const setTotalBuildingSolarPanel = (state: DataStoreState) => state.setTotalBuildingSolarPanel;
+
 export const updateRoofFlag = (state: CommonStoreState) => state.updateRoofFlag;
 
 export const updateElementOnRoofFlag = (state: CommonStoreState) => state.updateElementOnRoofFlag;

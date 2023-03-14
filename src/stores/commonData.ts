@@ -98,6 +98,14 @@ export interface DataStoreState {
   hourlySolarPanelOutputArrayMap: Map<string, number[]>;
   setHourlySolarPanelOutputArray: (id: string, data: number[]) => void;
 
+  // for logger: store the calculated total heater, AC, and solar panel results of building energy analysis
+  totalBuildingHeater: number;
+  setTotalBuildingHeater: (heater: number) => void;
+  totalBuildingAc: number;
+  setTotalBuildingAc: (ac: number) => void;
+  totalBuildingSolarPanel: number;
+  setTotalBuildingSolarPanel: (solarPanel: number) => void;
+
   clearDataStore: () => void;
 }
 
@@ -477,6 +485,27 @@ export const useDataStore = create<DataStoreState>((set, get) => {
     setHourlySolarPanelOutputArray(id, data) {
       immerSet((state) => {
         state.hourlySolarPanelOutputArrayMap.set(id, data);
+      });
+    },
+
+    totalBuildingHeater: 0,
+    setTotalBuildingHeater: (heater: number) => {
+      immerSet((state) => {
+        state.totalBuildingHeater = heater;
+      });
+    },
+
+    totalBuildingAc: 0,
+    setTotalBuildingAc: (ac: number) => {
+      immerSet((state) => {
+        state.totalBuildingAc = ac;
+      });
+    },
+
+    totalBuildingSolarPanel: 0,
+    setTotalBuildingSolarPanel: (solarPanel: number) => {
+      immerSet((state) => {
+        state.totalBuildingSolarPanel = solarPanel;
       });
     },
 

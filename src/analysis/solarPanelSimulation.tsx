@@ -197,7 +197,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
         setCommonStore((state) => {
           state.actionInfo = {
             name: 'Static Daily Simulation for Solar Panels Completed',
-            result: { totalYield: totalDailyYield, profit: dailyProfit },
+            result: { totalYield: totalDailyYield.toFixed(2), profit: dailyProfit.toFixed(2) },
             details: dailyYieldArray,
             timestamp: new Date().getTime(),
           };
@@ -248,7 +248,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
             setCommonStore((state) => {
               state.actionInfo = {
                 name: 'Dynamic Daily Simulation for Solar Panels Completed',
-                result: { totalYield: totalDailyYield, profit: dailyProfit },
+                result: { totalYield: totalDailyYield.toFixed(2), profit: dailyProfit.toFixed(2) },
                 details: dailyYieldArray,
                 timestamp: new Date().getTime(),
               };
@@ -478,7 +478,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
         setCommonStore((state) => {
           state.actionInfo = {
             name: 'Static Yearly Simulation for Solar Panels Completed',
-            result: { totalYield: totalYearlyYield, profit: yearlyProfit },
+            result: { totalYield: totalYearlyYield.toFixed(2), profit: yearlyProfit.toFixed(2) },
             details: yearlyYieldArray,
             timestamp: new Date().getTime(),
           };
@@ -529,7 +529,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
               setCommonStore((state) => {
                 state.actionInfo = {
                   name: 'Dynamic Yearly Simulation for Solar Panels Completed',
-                  result: { totalYield: totalYearlyYield, profit: yearlyProfit },
+                  result: { totalYield: totalYearlyYield.toFixed(2), profit: yearlyProfit.toFixed(2) },
                   details: yearlyYieldArray,
                   timestamp: new Date().getTime(),
                 };
