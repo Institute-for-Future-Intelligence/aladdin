@@ -2225,7 +2225,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       )}
 
       {/* models map */}
-      {!viewOnly && !openModelsMap && (
+      {!openModelsMap && (
         <Menu.Item
           key="models-map"
           onClick={() => {

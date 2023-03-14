@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  *
  * @author Charles Xie, Xiaotong Ding
  */
@@ -30,11 +30,24 @@ const App = () => {
   const loadVerticalSolarRadiationData = useStore(Selector.loadVerticalSolarRadiationData);
   const loadPvModules = useStore(Selector.loadPvModules);
 
+  const params = new URLSearchParams(window.location.search);
+  const viewOnly = params.get('viewonly') === 'true';
+  const map = params.get('map') === 'true';
+
   useEffect(() => {
     loadWeatherData();
     loadHorizontalSolarRadiationData();
     loadVerticalSolarRadiationData();
     loadPvModules();
+    usePrimitiveStore.setState((state) => {
+      state.openModelsMap = map;
+      if (map) {
+        state.modelsMapFlag = !state.modelsMapFlag;
+        state.modelsMapWeatherStations = false;
+        state.leaderboardFlag = !state.leaderboardFlag;
+        state.showLeaderboard = true;
+      }
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -59,9 +72,6 @@ const App = () => {
       });
     }
   }, [world, elements]);
-
-  const params = new URLSearchParams(window.location.search);
-  const viewOnly = params.get('viewonly') === 'true';
 
   return (
     <ConfigProvider locale={locale}>

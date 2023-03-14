@@ -1055,7 +1055,16 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   };
 
   return viewOnly ? (
-    <></>
+    <>
+      {openModelsMap && (
+        <ModelsMapWrapper
+          openCloudFile={openCloudFileWithSaveReminderFromMap}
+          deleteModelFromMap={deleteFromModelsMap}
+          likeModelFromMap={likeModelsMap}
+          pinModelFromMap={pinModelsMap}
+        />
+      )}
+    </>
   ) : (
     <>
       {loading && <Spinner />}

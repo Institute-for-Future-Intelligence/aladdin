@@ -79,8 +79,8 @@ const ModelsMapWrapper = ({
     peopleModelsRef.current = peopleModels ? new Map(peopleModels) : new Map();
     if (selectedAuthor) {
       authorModelsRef.current = peopleModels.get(selectedAuthor);
-      setUpdateFlag(!updateFlag);
     }
+    setUpdateFlag(!updateFlag);
   }, [peopleModels, selectedAuthor]);
 
   const selectAuthor = (author: string | undefined) => {
