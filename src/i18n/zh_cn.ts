@@ -1257,6 +1257,7 @@ export const i18n_zh_cn = {
     },
 
     cloudFilePanel: {
+      SearchByTitle: '搜索标题',
       MyLikes: '我喜欢的模型',
       MyCloudFiles: '我的云文件',
       GenerateLink: '生成链接',

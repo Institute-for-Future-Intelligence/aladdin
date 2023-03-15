@@ -1280,6 +1280,7 @@ export const i18n_en = {
     },
 
     cloudFilePanel: {
+      SearchByTitle: 'Search by title',
       MyLikes: 'My Likes',
       MyCloudFiles: 'My Cloud Files',
       GenerateLink: 'Generate Link',

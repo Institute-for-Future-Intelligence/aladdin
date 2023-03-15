@@ -1281,6 +1281,7 @@ export const i18n_tr = {
     },
 
     cloudFilePanel: {
+      SearchByTitle: 'Search by title',
       MyLikes: 'My Likes',
       MyCloudFiles: 'Bulut Dosyalarım',
       GenerateLink: 'Link Oluştur',

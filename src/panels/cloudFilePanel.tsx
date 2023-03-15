@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import ReactDraggable, { DraggableBounds, DraggableData, DraggableEvent, DraggableEventHandler } from 'react-draggable';
-import { Input, Modal, Space, Table } from 'antd';
+import { Input, Modal, Space, Table, Typography } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { HOME_URL } from '../constants';
 import { copyTextToClipboard, showSuccess } from '../helpers';
@@ -75,7 +75,7 @@ const Header = styled.div`
 `;
 
 export interface CloudFilePanelProps {
-  cloudFileArray: any[];
+  cloudFileArray: object[];
   openCloudFile: (userid: string, title: string) => void;
   deleteCloudFile: (userid: string, title: string) => void;
   renameCloudFile: (userid: string, oldTitle: string, newTitle: string) => void;
@@ -99,6 +99,8 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
   const [newTitle, setNewTitle] = useState<string>();
   const [userid, setUserid] = useState<string>();
   const dragRef = useRef<HTMLDivElement | null>(null);
+
+  const { Search } = Input;
   const lang = { lng: language };
 
   // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
@@ -221,7 +223,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
         <Container ref={nodeRef}>
           <ColumnWrapper ref={wrapperRef}>
             <Header className="handle" style={{ direction: 'ltr' }}>
-              <span>{i18n.t('cloudFilePanel.MyCloudFiles', lang)}</span>
+              <span>{i18n.t('cloudFilePanel.MyCloudFiles', lang) + ' (' + cloudFileArray.length + ')'}</span>
               <span
                 style={{ cursor: 'pointer' }}
                 onMouseDown={() => {
@@ -234,11 +236,21 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
                 {i18n.t('word.Close', lang)}
               </span>
             </Header>
+            <span style={{ direction: 'ltr' }}>
+              <Search
+                style={{ width: '300px', paddingTop: '8px', paddingBottom: '8px' }}
+                title={i18n.t('cloudFilePanel.SearchByTitle', lang)}
+                allowClear
+                size={'small'}
+                enterButton
+                onSearch={(s) => {}}
+              />
+            </span>
             <Table
               size={'small'}
               style={{ width: '100%', direction: 'ltr' }}
               dataSource={cloudFileArray}
-              scroll={{ y: 400 }}
+              scroll={{ y: 360 }}
               pagination={{
                 defaultPageSize: 10,
                 showSizeChanger: true,
@@ -246,8 +258,35 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
                 pageSizeOptions: ['10', '20', '50'],
               }}
             >
-              <Column title={i18n.t('word.Title', lang)} dataIndex="title" key="title" width={'50%'} />
-              <Column title={i18n.t('word.Time', lang)} dataIndex="time" key="time" width={'28%'} />
+              <Column
+                title={i18n.t('word.Title', lang)}
+                dataIndex="title"
+                key="title"
+                width={'50%'}
+                sortDirections={['ascend', 'descend', 'ascend']}
+                sorter={(a, b) => {
+                  // @ts-ignore
+                  return a['title'].localeCompare(b['title']);
+                }}
+                render={(title, record) => {
+                  return <Typography.Text style={{ fontSize: '12px' }}>{title}</Typography.Text>;
+                }}
+              />
+              <Column
+                title={i18n.t('word.Time', lang)}
+                dataIndex="time"
+                key="time"
+                width={'28%'}
+                defaultSortOrder={'descend'}
+                sortDirections={['ascend', 'descend', 'ascend']}
+                sorter={(a, b) => {
+                  // @ts-ignore
+                  return a['timestamp'] - b['timestamp'];
+                }}
+                render={(time, record) => {
+                  return <Typography.Text style={{ fontSize: '12px' }}>{time}</Typography.Text>;
+                }}
+              />
               <Column
                 width={'22%'}
                 title={i18n.t('word.Action', lang)}

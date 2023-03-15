@@ -92,8 +92,6 @@ export enum ClassID {
 export interface CloudFileInfo {
   readonly timestamp: number;
   readonly fileName: string;
-  readonly owner: string;
-  readonly email: string;
   readonly uuid: string;
   readonly userid: string;
 }

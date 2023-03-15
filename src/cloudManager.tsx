@@ -137,10 +137,8 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           title: f.fileName,
           time: dayjs(new Date(f.timestamp)).format('MM/DD/YYYY hh:mm a'),
           timestamp: f.timestamp,
-          action: '',
-          email: f.email,
-          owner: f.owner,
           userid: f.userid,
+          action: '',
         });
       });
       arr.sort((a, b) => b.timestamp - a.timestamp);
@@ -950,8 +948,6 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           a.push({
             timestamp: data.timestamp,
             fileName: doc.id,
-            email: user.email,
-            owner: user.displayName,
             userid: user.uid,
             uuid: data.docid,
           } as CloudFileInfo);
