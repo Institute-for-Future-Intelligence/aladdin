@@ -99,6 +99,7 @@ export const i18n_zh_tw = {
       Resume: '繼續',
       Clear: '清空',
       Warning: '警告',
+      Caution: '小心',
       Reminder: '提醒',
       Length: '長度',
       Width: '寬度',
@@ -1264,6 +1265,7 @@ export const i18n_zh_tw = {
       GenerateLink: '生成鏈接',
       LinkGeneratedInClipBoard: '鏈接已經復製到剪貼板',
       DoYouReallyWantToDelete: '您確定刪除此文檔',
+      IfSharedOrPublishedRenamingFileBreaksExistingLinks: '如果此文檔已被分享或發布, 改名會使已有鏈接失效',
     },
 
     accountSettingsPanel: {

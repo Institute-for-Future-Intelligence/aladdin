@@ -99,6 +99,7 @@ export const i18n_es = {
       Resume: 'Resume',
       Clear: 'Limpiar',
       Warning: 'Aviso',
+      Caution: 'Caution',
       Reminder: 'Reminder',
       Length: 'Longitud',
       Width: 'Ancho',
@@ -1286,6 +1287,8 @@ export const i18n_es = {
       GenerateLink: 'Generar enlace',
       LinkGeneratedInClipBoard: 'Se ha generado un enlace en el portapapeles',
       DoYouReallyWantToDelete: 'Estás seguro que quieres eliminar',
+      IfSharedOrPublishedRenamingFileBreaksExistingLinks:
+        'If this file has been shared or published, renaming it breaks existing links',
     },
 
     accountSettingsPanel: {

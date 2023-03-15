@@ -8,7 +8,7 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import ReactDraggable, { DraggableBounds, DraggableData, DraggableEvent, DraggableEventHandler } from 'react-draggable';
 import { Input, Modal, Space, Table, Typography } from 'antd';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { QuestionCircleOutlined, WarningOutlined } from '@ant-design/icons';
 import { HOME_URL } from '../constants';
 import { copyTextToClipboard, showSuccess } from '../helpers';
 import i18n from '../i18n/i18n';
@@ -147,15 +147,14 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
 
   const deleteFile = (userid: string, title: string) => {
     Modal.confirm({
-      title:
-        i18n.t('cloudFilePanel.DoYouReallyWantToDelete', lang) +
-        ' "' +
-        title +
-        '"? ' +
-        i18n.t('word.Warning', lang) +
-        ': ' +
-        i18n.t('message.ThisCannotBeUndone', lang),
-      icon: <ExclamationCircleOutlined />,
+      title: i18n.t('cloudFilePanel.DoYouReallyWantToDelete', lang) + ' "' + title + '"?',
+      content: (
+        <span style={{ color: 'red', fontWeight: 'bold' }}>
+          <WarningOutlined style={{ marginRight: '6px' }} />
+          {i18n.t('word.Warning', lang) + ': ' + i18n.t('message.ThisCannotBeUndone', lang)}
+        </span>
+      ),
+      icon: <QuestionCircleOutlined />,
       onOk: () => {
         deleteCloudFile(userid, title);
         // change the address field of the browser when the cloud file is currently open
@@ -212,14 +211,23 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
           </Draggable>
         )}
       >
-        <Input
-          placeholder="Title"
-          value={newTitle ? newTitle : oldTitle}
-          onPressEnter={renameFile}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setNewTitle(e.target.value);
-          }}
-        />
+        <Space direction={'vertical'} style={{ width: '100%' }}>
+          <Input
+            placeholder="Title"
+            value={newTitle ? newTitle : oldTitle}
+            onPressEnter={renameFile}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              setNewTitle(e.target.value);
+            }}
+          />
+          <span style={{ fontSize: '11px', color: 'red' }}>
+            <WarningOutlined style={{ marginRight: '4px' }} />
+            {i18n.t('word.Caution', lang) +
+              ': ' +
+              i18n.t('cloudFilePanel.IfSharedOrPublishedRenamingFileBreaksExistingLinks', lang)}
+            .
+          </span>
+        </Space>
       </Modal>
       <ReactDraggable
         nodeRef={nodeRef}

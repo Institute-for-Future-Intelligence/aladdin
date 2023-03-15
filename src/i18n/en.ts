@@ -99,6 +99,7 @@ export const i18n_en = {
       Resume: 'Resume',
       Clear: 'Clear',
       Warning: 'Warning',
+      Caution: 'Caution',
       Reminder: 'Reminder',
       Length: 'Length',
       Width: 'Width',
@@ -1286,6 +1287,8 @@ export const i18n_en = {
       GenerateLink: 'Generate Link',
       LinkGeneratedInClipBoard: 'A link has been generated in the clip board',
       DoYouReallyWantToDelete: 'Do you really want to delete',
+      IfSharedOrPublishedRenamingFileBreaksExistingLinks:
+        'If this file has been shared or published, renaming it breaks existing links',
     },
 
     accountSettingsPanel: {

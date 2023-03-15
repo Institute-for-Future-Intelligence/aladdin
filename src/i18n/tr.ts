@@ -99,6 +99,7 @@ export const i18n_tr = {
       Resume: 'Sürdür',
       Clear: 'Temizle',
       Warning: 'Uyarı',
+      Caution: 'Caution',
       Reminder: 'Hatırlatıcı',
       Length: 'Uzunluk',
       Width: 'Genişlik',
@@ -1287,6 +1288,8 @@ export const i18n_tr = {
       GenerateLink: 'Link Oluştur',
       LinkGeneratedInClipBoard: 'Klip Panosunda Oluşturulan Link',
       DoYouReallyWantToDelete: 'Gerçekten silmek istiyor musun?',
+      IfSharedOrPublishedRenamingFileBreaksExistingLinks:
+        'If this file has been shared or published, renaming it breaks existing links',
     },
 
     accountSettingsPanel: {
