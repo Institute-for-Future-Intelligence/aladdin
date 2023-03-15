@@ -16,7 +16,6 @@ import Draggable from 'react-draggable';
 import RenameImage from '../assets/rename.png';
 import DeleteImage from '../assets/delete.png';
 import LinkImage from '../assets/create_link.png';
-import OpenImage from '../assets/open_file.png';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 const { Column } = Table;
@@ -99,6 +98,10 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
   const [newTitle, setNewTitle] = useState<string>();
   const [userid, setUserid] = useState<string>();
   const dragRef = useRef<HTMLDivElement | null>(null);
+  // make an editable copy because models is not mutable
+  const filesRef = useRef<object[]>([...cloudFileArray]);
+  // set a flag so that we can update when modelsRef changes
+  const [recountFlag, setRecountFlag] = useState<boolean>(false);
 
   const { Search } = Input;
   const lang = { lng: language };
@@ -117,6 +120,13 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (cloudFileArray) {
+      filesRef.current = [...cloudFileArray];
+      setRecountFlag(!recountFlag);
+    }
+  }, [cloudFileArray]);
 
   const onDrag: DraggableEventHandler = (e, ui) => {
     setCurPosition({
@@ -223,7 +233,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
         <Container ref={nodeRef}>
           <ColumnWrapper ref={wrapperRef}>
             <Header className="handle" style={{ direction: 'ltr' }}>
-              <span>{i18n.t('cloudFilePanel.MyCloudFiles', lang) + ' (' + cloudFileArray.length + ')'}</span>
+              <span>{i18n.t('cloudFilePanel.MyCloudFiles', lang) + ' (' + filesRef.current.length + ')'}</span>
               <span
                 style={{ cursor: 'pointer' }}
                 onMouseDown={() => {
@@ -238,18 +248,29 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
             </Header>
             <span style={{ direction: 'ltr' }}>
               <Search
-                style={{ width: '300px', paddingTop: '8px', paddingBottom: '8px' }}
+                style={{ width: '50%', paddingTop: '8px', paddingBottom: '8px' }}
                 title={i18n.t('cloudFilePanel.SearchByTitle', lang)}
                 allowClear
                 size={'small'}
                 enterButton
-                onSearch={(s) => {}}
+                onSearch={(s) => {
+                  if (!cloudFileArray) return;
+                  // must create a new array for ant table to update (don't just set length to 0)
+                  filesRef.current = [];
+                  for (const f of cloudFileArray) {
+                    // @ts-ignore
+                    if (f['title']?.toLowerCase().includes(s.toLowerCase())) {
+                      filesRef.current.push(f);
+                    }
+                  }
+                  setRecountFlag(!recountFlag);
+                }}
               />
             </span>
             <Table
               size={'small'}
               style={{ width: '100%', direction: 'ltr' }}
-              dataSource={cloudFileArray}
+              dataSource={filesRef.current}
               scroll={{ y: 360 }}
               pagination={{
                 defaultPageSize: 10,
@@ -262,21 +283,33 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
                 title={i18n.t('word.Title', lang)}
                 dataIndex="title"
                 key="title"
-                width={'50%'}
+                width={'58%'}
                 sortDirections={['ascend', 'descend', 'ascend']}
                 sorter={(a, b) => {
                   // @ts-ignore
                   return a['title'].localeCompare(b['title']);
                 }}
                 render={(title, record) => {
-                  return <Typography.Text style={{ fontSize: '12px' }}>{title}</Typography.Text>;
+                  return (
+                    <Typography.Text style={{ fontSize: '12px', cursor: 'pointer' }} title={i18n.t('word.Open', lang)}>
+                      {title}
+                    </Typography.Text>
+                  );
+                }}
+                onCell={(data, index) => {
+                  return {
+                    onClick: () => {
+                      // @ts-ignore
+                      openCloudFile(data.userid, data.title);
+                    },
+                  };
                 }}
               />
               <Column
                 title={i18n.t('word.Time', lang)}
                 dataIndex="time"
                 key="time"
-                width={'28%'}
+                width={'25%'}
                 defaultSortOrder={'descend'}
                 sortDirections={['ascend', 'descend', 'ascend']}
                 sorter={(a, b) => {
@@ -288,25 +321,11 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
                 }}
               />
               <Column
-                width={'22%'}
+                width={'17%'}
                 title={i18n.t('word.Action', lang)}
                 key="action"
                 render={(text, record: any) => (
                   <Space size="middle">
-                    <img
-                      title={i18n.t('word.Open', lang)}
-                      alt={'Open'}
-                      src={OpenImage}
-                      onClick={() => {
-                        openCloudFile(record.userid, record.title);
-                      }}
-                      height={16}
-                      width={16}
-                      style={{
-                        cursor: 'pointer',
-                        verticalAlign: 'middle',
-                      }}
-                    />
                     <img
                       title={i18n.t('word.Delete', lang)}
                       alt={'Delete'}
