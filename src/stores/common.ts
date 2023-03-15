@@ -609,6 +609,7 @@ export const useStore = create<CommonStoreState>(
               state.cloudFile = title;
               state.currentUndoable = undefined;
               state.actionInfo = undefined;
+              state.sceneRadius = content.sceneRadius ?? 100;
               state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
               state.changed = false;
               state.skipChange = true;
@@ -657,6 +658,7 @@ export const useStore = create<CommonStoreState>(
               email: state.user.signFile ? state.user.email : null,
               world: JSON.parse(JSON.stringify(state.world)),
               elements: elements,
+              sceneRadius: state.sceneRadius,
               view: JSON.parse(JSON.stringify(state.viewState)),
               graphState: JSON.parse(JSON.stringify(state.graphState)),
               evolutionMethod: state.evolutionMethod,
@@ -676,6 +678,7 @@ export const useStore = create<CommonStoreState>(
               state.elements = [];
               state.roofSegmentVerticesMap.clear();
               state.roofSegmentVerticesWithoutOverhangMap.clear();
+              state.sceneRadius = 100;
             });
             useDataStore.setState((state) => {
               state.clearDataStore();
@@ -688,6 +691,7 @@ export const useStore = create<CommonStoreState>(
               // don't create a new instance like this (otherwise some UI elements may not update):
               // state.world = new DefaultWorldModel()
               state.elements = [];
+              state.sceneRadius = 100;
               state.cloudFile = undefined;
               state.changed = true;
               state.skipChange = true;

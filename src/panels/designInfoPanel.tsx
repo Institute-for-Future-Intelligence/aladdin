@@ -106,6 +106,7 @@ const DesignInfoPanel = ({}: DesignInfoPanelProps) => {
           {solarPanelCount > 0 && (
             <>
               <img
+                alt={'Solar panel count'}
                 title={i18n.t('designInfoPanel.NumberOfSelectedSolarPanels', lang)}
                 src={SolarPanelImage}
                 height={24}
@@ -118,6 +119,7 @@ const DesignInfoPanel = ({}: DesignInfoPanelProps) => {
           {heliostatCount > 0 && (
             <>
               <img
+                alt={'Heliostat count'}
                 title={i18n.t('designInfoPanel.NumberOfSelectedHeliostats', lang)}
                 src={HeliostatImage}
                 height={24}

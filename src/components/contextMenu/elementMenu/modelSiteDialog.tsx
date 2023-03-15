@@ -4,6 +4,7 @@
 
 import ResidentialBuildingIcon from '../../../assets/map_residential_building.png';
 import CommercialBuildingIcon from '../../../assets/map_commercial_building.png';
+import SchoolBuildingIcon from '../../../assets/map_school_building.png';
 import SolarPanelIcon from '../../../assets/map_solar_panel.png';
 import ParabolicDishIcon from '../../../assets/map_parabolic_dish.png';
 import ParabolicTroughIcon from '../../../assets/map_parabolic_trough.png';
@@ -156,24 +157,28 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
               <img alt={'Commercial Building'} width={24} src={CommercialBuildingIcon} style={{ marginRight: '8px' }} />
               {i18n.t('word.CommercialBuilding', lang)}
             </Option>
+            <Option key={ModelType.SCHOOL_BUILDING} value={ModelType.SCHOOL_BUILDING}>
+              <img alt={'School Building'} width={24} src={SchoolBuildingIcon} style={{ marginRight: '8px' }} />
+              {i18n.t('word.SchoolBuilding', lang)}
+            </Option>
             <Option key={ModelType.PHOTOVOLTAIC} value={ModelType.PHOTOVOLTAIC}>
-              <img alt={'Building'} width={24} src={SolarPanelIcon} style={{ marginRight: '8px' }} />
+              <img alt={'Photovoltaic'} width={24} src={SolarPanelIcon} style={{ marginRight: '8px' }} />
               {i18n.t('word.Photovoltaic', lang)}
             </Option>
             <Option key={ModelType.PARABOLIC_DISH} value={ModelType.PARABOLIC_DISH}>
-              <img alt={'Building'} width={24} src={ParabolicDishIcon} style={{ marginRight: '8px' }} />
+              <img alt={'Parabolic Dish'} width={24} src={ParabolicDishIcon} style={{ marginRight: '8px' }} />
               {i18n.t('shared.ParabolicDishElement', lang)}
             </Option>
             <Option key={ModelType.PARABOLIC_TROUGH} value={ModelType.PARABOLIC_TROUGH}>
-              <img alt={'Building'} width={24} src={ParabolicTroughIcon} style={{ marginRight: '8px' }} />
+              <img alt={'Parabolic Trough'} width={24} src={ParabolicTroughIcon} style={{ marginRight: '8px' }} />
               {i18n.t('shared.ParabolicTroughElement', lang)}
             </Option>
             <Option key={ModelType.FRESNEL_REFLECTOR} value={ModelType.FRESNEL_REFLECTOR}>
-              <img alt={'Building'} width={24} src={FresnelReflectorIcon} style={{ marginRight: '8px' }} />
+              <img alt={'Fresnel Reflector'} width={24} src={FresnelReflectorIcon} style={{ marginRight: '8px' }} />
               {i18n.t('shared.FresnelReflectorElement', lang)}
             </Option>
             <Option key={ModelType.SOLAR_POWER_TOWER} value={ModelType.SOLAR_POWER_TOWER}>
-              <img alt={'Building'} width={24} src={HeliostatIcon} style={{ marginRight: '8px' }} />
+              <img alt={'Heliostat'} width={24} src={HeliostatIcon} style={{ marginRight: '8px' }} />
               {i18n.t('shared.HeliostatElement', lang)}
             </Option>
           </Select>

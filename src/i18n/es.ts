@@ -145,6 +145,7 @@ export const i18n_es = {
       Building: 'Building',
       ResidentialBuilding: 'Residential Building',
       CommercialBuilding: 'Commercial Building',
+      SchoolBuilding: 'School Building',
       UnderConstruction: 'Under Construction',
       Photovoltaic: 'Photovoltaic',
       Anonymous: 'Anonymous',

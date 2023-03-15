@@ -145,6 +145,7 @@ export const i18n_zh_tw = {
       Building: '建築',
       ResidentialBuilding: '住宅建築',
       CommercialBuilding: '商用建築',
+      SchoolBuilding: '學校建築',
       UnderConstruction: '在建',
       Photovoltaic: '光伏',
       Anonymous: '無名氏',
