@@ -5,6 +5,7 @@
 import ResidentialBuildingIcon from '../assets/map_residential_building.png';
 import CommercialBuildingIcon from '../assets/map_commercial_building.png';
 import SchoolBuildingIcon from '../assets/map_school_building.png';
+import TouristAttractionIcon from '../assets/map_tourist_attraction.png';
 import SolarPanelIcon from '../assets/map_solar_panel.png';
 import ParabolicDishIcon from '../assets/map_parabolic_dish.png';
 import ParabolicTroughIcon from '../assets/map_parabolic_trough.png';
@@ -62,6 +63,8 @@ export const getIconUrl = (site: ModelSite) => {
       return CommercialBuildingIcon;
     case ModelType.SCHOOL_BUILDING:
       return SchoolBuildingIcon;
+    case ModelType.TOURIST_ATTRACTION:
+      return TouristAttractionIcon;
     case ModelType.UNDER_CONSTRUCTION:
       return UnderConstructionIcon;
   }

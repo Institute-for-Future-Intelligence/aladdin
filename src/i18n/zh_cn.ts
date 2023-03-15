@@ -146,6 +146,7 @@ export const i18n_zh_cn = {
       ResidentialBuilding: '住宅建筑',
       CommercialBuilding: '商用建筑',
       SchoolBuilding: '学校建筑',
+      TouristAttraction: '旅游景点',
       UnderConstruction: '在建',
       Photovoltaic: '光伏',
       Anonymous: '无名氏',

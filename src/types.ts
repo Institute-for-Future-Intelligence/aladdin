@@ -112,6 +112,7 @@ export enum ModelType {
   RESIDENTIAL_BUILDING = 'Residential Building',
   COMMERCIAL_BUILDING = 'Commercial Building',
   SCHOOL_BUILDING = 'School Building',
+  TOURIST_ATTRACTION = 'Tourist Attraction',
   PHOTOVOLTAIC = 'Photovoltaic',
   PARABOLIC_DISH = 'Parabolic Dish',
   PARABOLIC_TROUGH = 'Parabolic Trough',

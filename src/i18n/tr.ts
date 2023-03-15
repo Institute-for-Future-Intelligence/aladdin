@@ -146,6 +146,7 @@ export const i18n_tr = {
       ResidentialBuilding: 'Residential Building',
       CommercialBuilding: 'Commercial Building',
       SchoolBuilding: 'School Building',
+      TouristAttraction: 'Tourist Attraction',
       UnderConstruction: 'Under Construction',
       Photovoltaic: 'Photovoltaic',
       Anonymous: 'Anonymous',

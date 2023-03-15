@@ -5,6 +5,7 @@
 import ResidentialBuildingIcon from '../../../assets/map_residential_building.png';
 import CommercialBuildingIcon from '../../../assets/map_commercial_building.png';
 import SchoolBuildingIcon from '../../../assets/map_school_building.png';
+import TouristAttractionIcon from '../../../assets/map_tourist_attraction.png';
 import SolarPanelIcon from '../../../assets/map_solar_panel.png';
 import ParabolicDishIcon from '../../../assets/map_parabolic_dish.png';
 import ParabolicTroughIcon from '../../../assets/map_parabolic_trough.png';
@@ -160,6 +161,10 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
             <Option key={ModelType.SCHOOL_BUILDING} value={ModelType.SCHOOL_BUILDING}>
               <img alt={'School Building'} width={24} src={SchoolBuildingIcon} style={{ marginRight: '8px' }} />
               {i18n.t('word.SchoolBuilding', lang)}
+            </Option>
+            <Option key={ModelType.TOURIST_ATTRACTION} value={ModelType.TOURIST_ATTRACTION}>
+              <img alt={'Tourist Attraction'} width={24} src={TouristAttractionIcon} style={{ marginRight: '8px' }} />
+              {i18n.t('word.TouristAttraction', lang)}
             </Option>
             <Option key={ModelType.PHOTOVOLTAIC} value={ModelType.PHOTOVOLTAIC}>
               <img alt={'Photovoltaic'} width={24} src={SolarPanelIcon} style={{ marginRight: '8px' }} />
