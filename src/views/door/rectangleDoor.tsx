@@ -24,6 +24,7 @@ interface RectangleDoorProps {
   id: string;
   dimension: number[];
   color: string;
+  frameColor: string;
   selected: boolean;
   locked: boolean;
   material: Material;
@@ -92,7 +93,18 @@ const DoorFrame = React.memo(({ dimension, color }: DoorFrameProps) => {
 });
 
 const RectangleDoor = React.memo(
-  ({ id, dimension, color, selected, locked, material, filled, area, showHeatFluxes }: RectangleDoorProps) => {
+  ({
+    id,
+    dimension,
+    color,
+    frameColor,
+    selected,
+    locked,
+    material,
+    filled,
+    area,
+    showHeatFluxes,
+  }: RectangleDoorProps) => {
     const world = useStore.getState().world;
     const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
     const heatFluxColor = useStore(Selector.viewState.heatFluxColor);
@@ -214,7 +226,7 @@ const RectangleDoor = React.memo(
           lineWidth={selected && locked ? 2 : 0.2}
         />
 
-        <DoorFrame dimension={dimension} color={color} />
+        <DoorFrame dimension={dimension} color={frameColor} />
 
         {heatFluxes &&
           heatFluxes.map((v, index) => {

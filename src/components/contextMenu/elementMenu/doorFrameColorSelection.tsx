@@ -1,9 +1,9 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Col, InputNumber, Modal, Radio, Row, Space } from 'antd';
+import { Button, Col, Modal, Radio, Row, Space } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
@@ -11,9 +11,11 @@ import { ObjectType, Scope } from 'src/types';
 import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
-import { DoorModel } from '../../../models/DoorModel';
+import { CompactPicker } from 'react-color';
+import { DoorModel } from 'src/models/DoorModel';
 
-const DoorHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const DoorFrameColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const addUndoable = useStore(Selector.addUndoable);
@@ -23,81 +25,83 @@ const DoorHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
   const getElementById = useStore(Selector.getElementById);
-  const setCommonStore = useStore(Selector.set);
 
   const door = useStore((state) => state.elements.find((e) => e.selected && e.type === ObjectType.Door)) as DoorModel;
 
-  const [inputValue, setInputValue] = useState<number>(door?.volumetricHeatCapacity ?? 0.5);
+  const [selectedColor, setSelectedColor] = useState<string>(door?.frameColor ?? '#ffffff');
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
+  const okButtonRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    okButtonRef.current?.focus();
+  });
 
   const lang = { lng: language };
 
   useEffect(() => {
     if (door) {
-      setInputValue(door?.volumetricHeatCapacity ?? 0.5);
+      setSelectedColor(door?.frameColor ?? '#ffffff');
     }
-  }, [door?.volumetricHeatCapacity]);
+  }, [door]);
 
-  const updateById = (id: string, value: number) => {
+  const updateColorById = (id: string, color: string) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id) {
-          (e as DoorModel).volumetricHeatCapacity = value;
+          if (!e.locked && e.type === ObjectType.Door) {
+            (e as DoorModel).frameColor = color;
+          }
           break;
         }
       }
     });
   };
 
-  const undoInMap = (map: Map<string, number>) => {
-    for (const [id, val] of map.entries()) {
-      updateById(id, val);
-    }
-  };
-
-  const updateInMap = (map: Map<string, number>, value: number) => {
+  const updateColorInMap = (map: Map<string, string>, color: string) => {
     for (const id of map.keys()) {
-      updateById(id, value);
+      updateColorById(id, color as string);
     }
   };
 
-  const needChange = (value: number) => {
+  const undoColorInMap = (map: Map<string, string>) => {
+    for (const [id, color] of map.entries()) {
+      updateColorById(id, color as string);
+    }
+  };
+
+  const needChange = (color: string) => {
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
-          if (e.type === ObjectType.Door && value !== (e as DoorModel).volumetricHeatCapacity && !e.locked) {
-            return true;
+          if (e.type === ObjectType.Door && !e.locked) {
+            if (color !== (e as DoorModel).frameColor) {
+              return true;
+            }
           }
         }
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         for (const e of elements) {
-          if (
-            e.type === ObjectType.Door &&
-            e.foundationId === door.foundationId &&
-            value !== (e as DoorModel).volumetricHeatCapacity &&
-            !e.locked
-          ) {
-            return true;
+          if (e.type === ObjectType.Door && e.foundationId === door.foundationId && !e.locked) {
+            if (color !== (e as DoorModel).frameColor) {
+              return true;
+            }
           }
         }
         break;
       case Scope.OnlyThisSide:
         for (const e of elements) {
-          if (
-            e.type === ObjectType.Door &&
-            e.parentId === door.parentId &&
-            value !== (e as DoorModel).volumetricHeatCapacity &&
-            !e.locked
-          ) {
-            return true;
+          if (e.type === ObjectType.Door && e.parentId === door.parentId && !e.locked) {
+            if (color !== (e as DoorModel).frameColor) {
+              return true;
+            }
           }
         }
         break;
       default:
-        if (value !== door?.volumetricHeatCapacity) {
+        if (color !== door?.frameColor) {
           return true;
         }
         break;
@@ -105,125 +109,120 @@ const DoorHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
     return false;
   };
 
-  const setValue = (value: number) => {
+  const setColor = (value: string) => {
     if (!door) return;
     if (!needChange(value)) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
-        const oldValuesAll = new Map<string, number | undefined>();
-        setCommonStore((state) => {
-          for (const e of state.elements) {
-            if (e.type === ObjectType.Door && !e.locked) {
-              const door = e as DoorModel;
-              oldValuesAll.set(e.id, door.volumetricHeatCapacity ?? 0.5);
-              door.volumetricHeatCapacity = value;
-            }
+        const oldColorsAll = new Map<string, string>();
+        for (const elem of useStore.getState().elements) {
+          if (elem.type === ObjectType.Door && !elem.locked) {
+            oldColorsAll.set(elem.id, (elem as DoorModel).frameColor ?? '#ffffff');
           }
-        });
+        }
         const undoableChangeAll = {
-          name: 'Set Volumetric Heat Capacity for All Doors',
+          name: 'Set Color for All Doors',
           timestamp: Date.now(),
-          oldValues: oldValuesAll,
+          oldValues: oldColorsAll,
           newValue: value,
           undo: () => {
-            undoInMap(undoableChangeAll.oldValues as Map<string, number>);
+            undoColorInMap(undoableChangeAll.oldValues as Map<string, string>);
           },
           redo: () => {
-            updateInMap(undoableChangeAll.oldValues as Map<string, number>, undoableChangeAll.newValue as number);
+            updateColorInMap(undoableChangeAll.oldValues as Map<string, string>, undoableChangeAll.newValue as string);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
+        updateColorInMap(oldColorsAll, value);
         setApplyCount(applyCount + 1);
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (door.foundationId) {
-          const oldValuesAboveFoundation = new Map<string, number | undefined>();
-          setCommonStore((state) => {
-            for (const e of state.elements) {
-              if (e.type === ObjectType.Door && e.foundationId === door.foundationId && !e.locked) {
-                const door = e as DoorModel;
-                oldValuesAboveFoundation.set(e.id, door.volumetricHeatCapacity ?? 0.5);
-                door.volumetricHeatCapacity = value;
-              }
+          const oldColorsAboveFoundation = new Map<string, string>();
+          for (const elem of useStore.getState().elements) {
+            if (elem.type === ObjectType.Door && elem.foundationId === door.foundationId && !door.locked) {
+              oldColorsAboveFoundation.set(elem.id, (elem as DoorModel).frameColor ?? '#ffffff');
             }
-          });
+          }
           const undoableChangeAboveFoundation = {
-            name: 'Set Volumetric Heat Capacity for All Doors Above Foundation',
+            name: 'Set Color for All Doors Above Foundation',
             timestamp: Date.now(),
-            oldValues: oldValuesAboveFoundation,
+            oldValues: oldColorsAboveFoundation,
             newValue: value,
             groupId: door.foundationId,
             undo: () => {
-              undoInMap(undoableChangeAboveFoundation.oldValues as Map<string, number>);
+              undoColorInMap(undoableChangeAboveFoundation.oldValues as Map<string, string>);
             },
             redo: () => {
-              updateInMap(
-                undoableChangeAboveFoundation.oldValues as Map<string, number>,
-                undoableChangeAboveFoundation.newValue as number,
-              );
+              if (undoableChangeAboveFoundation.groupId) {
+                updateColorInMap(
+                  undoableChangeAboveFoundation.oldValues as Map<string, string>,
+                  undoableChangeAboveFoundation.newValue as string,
+                );
+              }
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAboveFoundation);
+          updateColorInMap(oldColorsAboveFoundation, value);
           setApplyCount(applyCount + 1);
         }
         break;
       case Scope.OnlyThisSide:
         if (door.parentId) {
-          const oldValues = new Map<string, number>();
-          setCommonStore((state) => {
-            for (const e of state.elements) {
-              if (e.type === ObjectType.Door && e.parentId === door.parentId && !e.locked) {
-                const door = e as DoorModel;
-                oldValues.set(e.id, door.volumetricHeatCapacity ?? 0.5);
-                door.volumetricHeatCapacity = value;
-              }
+          const oldColorsOnSameWall = new Map<string, string>();
+          for (const elem of useStore.getState().elements) {
+            if (elem.type === ObjectType.Door && elem.parentId === door.parentId && !door.locked) {
+              oldColorsOnSameWall.set(elem.id, (elem as DoorModel).frameColor ?? '#ffffff');
             }
-          });
+          }
           const undoableChangeOnSameWall = {
-            name: 'Set Volumetric Heat Capacity for All Doors On the Same Wall',
+            name: 'Set Color for All Doors On the Same Wall',
             timestamp: Date.now(),
-            oldValues: oldValues,
+            oldValues: oldColorsOnSameWall,
             newValue: value,
             groupId: door.parentId,
             undo: () => {
-              undoInMap(undoableChangeOnSameWall.oldValues as Map<string, number>);
+              undoColorInMap(undoableChangeOnSameWall.oldValues as Map<string, string>);
             },
             redo: () => {
-              updateInMap(
-                undoableChangeOnSameWall.oldValues as Map<string, number>,
-                undoableChangeOnSameWall.newValue as number,
-              );
+              if (undoableChangeOnSameWall.groupId) {
+                updateColorInMap(
+                  undoableChangeOnSameWall.oldValues as Map<string, string>,
+                  undoableChangeOnSameWall.newValue as string,
+                );
+              }
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeOnSameWall);
+          updateColorInMap(oldColorsOnSameWall, value);
           setApplyCount(applyCount + 1);
         }
         break;
       default:
         if (door) {
           const updatedDoor = getElementById(door.id) as DoorModel;
-          const oldValue = updatedDoor.volumetricHeatCapacity ?? door.volumetricHeatCapacity ?? 0.5;
+          const oldColor = (updatedDoor ? updatedDoor.frameColor : door.frameColor) ?? '#ffffff';
           const undoableChange = {
-            name: 'Set Volumetric Heat Capacity of Door',
+            name: 'Set Color of Selected Door',
             timestamp: Date.now(),
-            oldValue: oldValue,
+            oldValue: oldColor,
             newValue: value,
             changedElementId: door.id,
             changedElementType: door.type,
             undo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
+              updateColorById(undoableChange.changedElementId, undoableChange.oldValue as string);
             },
             redo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.newValue as number);
+              updateColorById(undoableChange.changedElementId, undoableChange.newValue as string);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateById(door.id, value);
+          updateColorById(door.id, value);
           setApplyCount(applyCount + 1);
         }
     }
     setCommonStore((state) => {
-      state.actionState.doorVolumetricHeatCapacity = value;
+      state.actionState.doorColor = value;
     });
   };
 
@@ -241,7 +240,9 @@ const DoorHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   };
 
   const close = () => {
-    setInputValue(door?.volumetricHeatCapacity ?? 0.5);
+    if (door?.frameColor) {
+      setSelectedColor(door.frameColor);
+    }
     setDialogVisible(false);
   };
 
@@ -251,19 +252,22 @@ const DoorHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   };
 
   const handleOk = () => {
-    setValue(inputValue);
+    const updatedDoor = getElementById(door.id) as DoorModel;
+    if (updatedDoor && updatedDoor.frameColor !== selectedColor) {
+      setColor(selectedColor);
+    }
     setDialogVisible(false);
     setApplyCount(0);
   };
 
   const handleApply = () => {
-    setValue(inputValue);
+    setColor(selectedColor);
   };
 
   return (
     <>
       <Modal
-        width={550}
+        width={640}
         visible={true}
         title={
           <div
@@ -271,7 +275,7 @@ const DoorHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('word.VolumetricHeatCapacity', lang)}
+            {i18n.t('doorMenu.FrameColor', lang)}
           </div>
         }
         footer={[
@@ -281,7 +285,7 @@ const DoorHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
           <Button key="Cancel" onClick={handleCancel}>
             {i18n.t('word.Cancel', lang)}
           </Button>,
-          <Button key="OK" type="primary" onClick={handleOk}>
+          <Button key="OK" type="primary" ref={okButtonRef} onClick={handleOk}>
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
@@ -296,29 +300,18 @@ const DoorHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
         )}
       >
         <Row gutter={6}>
-          <Col className="gutter-row" span={7}>
-            <InputNumber
-              min={0.01}
-              max={100}
-              style={{ width: 120 }}
-              step={0.05}
-              precision={2}
-              value={inputValue}
-              formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputValue(value)}
-              onPressEnter={handleOk}
+          <Col className="gutter-row" span={11}>
+            <CompactPicker
+              color={selectedColor ?? door?.frameColor ?? '#ffffff'}
+              onChangeComplete={(colorResult) => {
+                setSelectedColor(colorResult.hex);
+              }}
             />
-            <div style={{ paddingTop: '4px', textAlign: 'left', fontSize: '11px' }}>
-              kWh/(m³·℃)
-              <br />
-              <br />
-              {i18n.t('word.Range', lang)}: [0.01, 100]
-            </div>
           </Col>
           <Col
             className="gutter-row"
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={17}
+            span={13}
           >
             <Radio.Group onChange={(e) => setActionScope(e.target.value)} value={actionScope}>
               <Space direction="vertical">
@@ -337,4 +330,4 @@ const DoorHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   );
 };
 
-export default DoorHeatCapacityInput;
+export default DoorFrameColorSelection;

@@ -11,7 +11,7 @@ import i18n from 'src/i18n/i18n';
 import { DoorModel, DoorType } from 'src/models/DoorModel';
 import DoorTextureSelection from './doorTextureSelection';
 import DoorColorSelection from './doorColorSelection';
-import { ObjectType } from 'src/types';
+import { DoorTexture, ObjectType } from 'src/types';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { radioStyle } from './wallMenu';
 import { UndoableChange } from 'src/undo/UndoableChange';
@@ -20,6 +20,8 @@ import DoorUValueInput from './doorUValueInput';
 import DoorWidthInput from './doorWidthInput';
 import DoorHeightInput from './doorHeightInput';
 import DoorHeatCapacityInput from './doorHeatCapacityInput';
+import DoorOpacityInput from './doorOpacityInput';
+import DoorFrameColorSelection from './doorFrameColorSelection';
 
 const getSelectedDoor = (state: CommonStoreState) => {
   for (const el of state.elements) {
@@ -39,9 +41,11 @@ export const DoorMenu = React.memo(() => {
 
   const [textureDialogVisible, setTextureDialogVisible] = useState(false);
   const [colorDialogVisible, setColorDialogVisible] = useState(false);
+  const [frameColorDialogVisible, setFrameColorDialogVisible] = useState(false);
   const [widthDialogVisible, setWidthDialogVisible] = useState(false);
   const [heightDialogVisible, setHeightDialogVisible] = useState(false);
   const [uValueDialogVisible, setUValueDialogVisible] = useState(false);
+  const [opacityDialogVisible, setOpacityDialogVisible] = useState(false);
   const [heatCapacityDialogVisible, setHeatCapacityDialogVisible] = useState(false);
 
   if (!door) return null;
@@ -216,6 +220,28 @@ export const DoorMenu = React.memo(() => {
               >
                 {i18n.t('word.Color', lang)} ...
               </Menu.Item>
+              <Menu.Item
+                key={'door-frame-color'}
+                style={{ paddingLeft: paddingLeft }}
+                onClick={() => {
+                  setApplyCount(0);
+                  setFrameColorDialogVisible(true);
+                }}
+              >
+                {i18n.t('doorMenu.FrameColor', lang)} ...
+              </Menu.Item>
+              {(door.textureType === DoorTexture.Default || door.textureType === DoorTexture.NoTexture) && (
+                <Menu.Item
+                  key={'door-opacity'}
+                  style={{ paddingLeft: paddingLeft }}
+                  onClick={() => {
+                    setApplyCount(0);
+                    setOpacityDialogVisible(true);
+                  }}
+                >
+                  {i18n.t('wallMenu.Opacity', lang)} ...
+                </Menu.Item>
+              )}
             </>
           )}
         </>
@@ -223,6 +249,8 @@ export const DoorMenu = React.memo(() => {
 
       {textureDialogVisible && <DoorTextureSelection setDialogVisible={setTextureDialogVisible} />}
       {colorDialogVisible && <DoorColorSelection setDialogVisible={setColorDialogVisible} />}
+      {frameColorDialogVisible && <DoorFrameColorSelection setDialogVisible={setFrameColorDialogVisible} />}
+      {opacityDialogVisible && <DoorOpacityInput setDialogVisible={setOpacityDialogVisible} />}
     </Menu.ItemGroup>
   );
 });

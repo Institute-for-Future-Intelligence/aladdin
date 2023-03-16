@@ -1145,6 +1145,7 @@ export const i18n_tr = {
       Default: 'Default',
       Arched: 'Arched',
       Filled: 'Filled',
+      FrameColor: 'Frame Color',
     },
 
     siteInfoPanel: {

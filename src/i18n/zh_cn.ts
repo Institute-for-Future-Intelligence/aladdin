@@ -1121,6 +1121,7 @@ export const i18n_zh_cn = {
       Default: '默认',
       Arched: '拱形',
       Filled: '填充',
+      FrameColor: '门框颜色',
     },
 
     siteInfoPanel: {

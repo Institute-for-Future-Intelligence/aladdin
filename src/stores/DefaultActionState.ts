@@ -82,11 +82,13 @@ export class DefaultActionState implements ActionState {
   ceilingRValue: number;
 
   doorColor: string;
+  doorFrameColor: string;
   doorTexture: DoorTexture;
   doorType: DoorType;
   doorArchHeight: number;
   doorFilled: boolean;
   doorUValue: number;
+  doorOpacity: number;
   doorVolumetricHeatCapacity: number;
 
   windowWidth: number;
@@ -206,11 +208,13 @@ export class DefaultActionState implements ActionState {
     this.ceilingRValue = DEFAULT_CEILING_R_VALUE;
 
     this.doorColor = '#ffffff';
+    this.doorFrameColor = '#ffffff';
     this.doorTexture = DoorTexture.Default;
     this.doorType = DoorType.Default;
     this.doorArchHeight = 1;
     this.doorFilled = true;
     this.doorUValue = DEFAULT_DOOR_U_VALUE;
+    this.doorOpacity = 1;
     this.doorVolumetricHeatCapacity = 0.5;
 
     this.windowWidth = 1;

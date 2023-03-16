@@ -25,6 +25,7 @@ interface ArchedDoorProps {
   id: string;
   dimension: number[];
   color: string;
+  frameColor: string;
   selected: boolean;
   locked: boolean;
   material: Material;
@@ -34,7 +35,7 @@ interface ArchedDoorProps {
 }
 
 const ArchedDoor = React.memo(
-  ({ id, dimension, color, selected, locked, material, filled, showHeatFluxes, area }: ArchedDoorProps) => {
+  ({ id, dimension, color, frameColor, selected, locked, material, filled, showHeatFluxes, area }: ArchedDoorProps) => {
     const world = useStore.getState().world;
     const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
     const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);

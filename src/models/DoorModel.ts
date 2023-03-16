@@ -13,6 +13,8 @@ export interface DoorModel extends ElementModel {
 
   archHeight: number;
   filled: boolean;
+  opacity?: number;
+  frameColor?: string;
 }
 
 export enum DoorType {

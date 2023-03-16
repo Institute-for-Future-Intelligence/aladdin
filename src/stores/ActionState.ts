@@ -68,11 +68,13 @@ export interface ActionState {
   ceilingRValue: number;
 
   doorColor: string;
+  doorFrameColor: string;
   doorTexture: DoorTexture;
   doorType: DoorType;
   doorArchHeight: number;
   doorFilled: boolean;
   doorUValue: number;
+  doorOpacity: number;
   doorVolumetricHeatCapacity: number;
 
   windowWidth: number;

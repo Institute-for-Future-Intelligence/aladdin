@@ -18,12 +18,13 @@ import {
   DoubleSide,
   FrontSide,
   MeshBasicMaterial,
+  MeshPhongMaterial,
   MeshStandardMaterial,
   RepeatWrapping,
   Vector3,
 } from 'three';
 import { Plane } from '@react-three/drei';
-import { HALF_PI, INVALID_ELEMENT_COLOR } from 'src/constants';
+import { DEFAULT_WINDOW_SHININESS, HALF_PI, INVALID_ELEMENT_COLOR } from 'src/constants';
 import { RulerOnWall } from '../rulerOnWall';
 import { Util } from '../../Util';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
@@ -103,12 +104,15 @@ const Door = (doorModel: DoorModel) => {
     doorType = DoorType.Default,
     archHeight = 1,
     filled = true,
+    opacity = 1,
+    frameColor = 'white',
   } = doorModel;
 
   const GROUP_NAME = `Door Group ${id}`;
 
   const setCommonStore = useStore(Selector.set);
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
+  const windowShininess = useStore(Selector.viewState.windowShininess);
 
   const selectMe = () => {
     setCommonStore((state) => {
@@ -208,6 +212,7 @@ const Door = (doorModel: DoorModel) => {
             id={id}
             dimension={dimensionData}
             color={color}
+            frameColor={frameColor}
             selected={selected}
             locked={locked}
             material={doorMaterial}
@@ -222,6 +227,7 @@ const Door = (doorModel: DoorModel) => {
             id={id}
             dimension={dimensionData}
             color={color}
+            frameColor={frameColor}
             selected={selected}
             locked={locked}
             material={doorMaterial}
@@ -271,10 +277,25 @@ const Door = (doorModel: DoorModel) => {
       });
     }
     if (textureType === DoorTexture.Default || textureType === DoorTexture.NoTexture) {
-      return new MeshStandardMaterial({ map: texture, color: color, side: FrontSide });
+      if (opacity < 1) {
+        return new MeshPhongMaterial({
+          specular: 'white',
+          shininess: windowShininess ?? DEFAULT_WINDOW_SHININESS,
+          color: color,
+          side: FrontSide,
+          opacity: opacity,
+          transparent: true,
+        });
+      } else {
+        return new MeshStandardMaterial({
+          map: texture,
+          color: color,
+          side: FrontSide,
+        });
+      }
     }
     return new MeshStandardMaterial({ map: texture, side: FrontSide });
-  }, [showSolarRadiationHeatmap, heatmapTexture, color, textureType, texture, filled]);
+  }, [showSolarRadiationHeatmap, heatmapTexture, color, textureType, texture, filled, opacity]);
 
   return (
     <group name={GROUP_NAME} position={[cx, 0, cz]} onPointerDown={handlePointerDown} onContextMenu={handleContextMenu}>
