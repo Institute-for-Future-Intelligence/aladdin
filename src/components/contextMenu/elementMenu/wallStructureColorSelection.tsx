@@ -13,6 +13,7 @@ import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { WallModel } from '../../../models/WallModel';
 import { CompactPicker } from 'react-color';
+import { Util } from '../../../Util';
 
 const WallStructureColorSelection = ({ setDialogVisible }: { setDialogVisible: () => void }) => {
   const setCommonStore = useStore(Selector.set);
@@ -62,6 +63,22 @@ const WallStructureColorSelection = ({ setDialogVisible }: { setDialogVisible: (
     });
   };
 
+  const updateConnectedWalls = (color: string) => {
+    const connectedWalls = Util.getAllConnectedWalls(wall);
+    if (connectedWalls.length === 0) return;
+    setCommonStore((state) => {
+      for (const w of connectedWalls) {
+        if (!w.locked) {
+          for (const e of state.elements) {
+            if (e.id === w.id && e.type === ObjectType.Wall) {
+              (e as WallModel).structureColor = color;
+            }
+          }
+        }
+      }
+    });
+  };
+
   const updateAboveFoundation = (fId: string, color: string) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
@@ -99,6 +116,14 @@ const WallStructureColorSelection = ({ setDialogVisible }: { setDialogVisible: (
             value !== (e as WallModel).structureColor &&
             !e.locked
           ) {
+            return true;
+          }
+        }
+        break;
+      case Scope.AllConnectedObjects:
+        const connectedWalls = Util.getAllConnectedWalls(wall);
+        for (const e of connectedWalls) {
+          if (value !== e.structureColor && !e.locked) {
             return true;
           }
         }
@@ -171,6 +196,32 @@ const WallStructureColorSelection = ({ setDialogVisible }: { setDialogVisible: (
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAboveFoundation);
           updateAboveFoundation(wall.foundationId, value);
+          setApplyCount(applyCount + 1);
+        }
+        break;
+      case Scope.AllConnectedObjects:
+        if (wall) {
+          const connectedWalls = Util.getAllConnectedWalls(wall);
+          const oldValuesConnectedWalls = new Map<string, string>();
+          for (const e of connectedWalls) {
+            oldValuesConnectedWalls.set(e.id, e.color ?? '#ffffff');
+          }
+          const undoableChangeConnectedWalls = {
+            name: `Set Structure Color for All Connected Walls`,
+            timestamp: Date.now(),
+            oldValues: oldValuesConnectedWalls,
+            newValue: value,
+            undo: () => {
+              for (const [id, wh] of undoableChangeConnectedWalls.oldValues.entries()) {
+                updateById(id, wh as string);
+              }
+            },
+            redo: () => {
+              updateConnectedWalls(undoableChangeConnectedWalls.newValue as string);
+            },
+          } as UndoableChangeGroup;
+          addUndoable(undoableChangeConnectedWalls);
+          updateConnectedWalls(value);
           setApplyCount(applyCount + 1);
         }
         break;
@@ -292,6 +343,7 @@ const WallStructureColorSelection = ({ setDialogVisible }: { setDialogVisible: (
             <Radio.Group onChange={onScopeChange} value={actionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('wallMenu.OnlyThisWall', lang)}</Radio>
+                <Radio value={Scope.AllConnectedObjects}>{i18n.t('wallMenu.AllConnectedWalls', lang)}</Radio>
                 <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                   {i18n.t('wallMenu.AllWallsAboveFoundation', lang)}
                 </Radio>

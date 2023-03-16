@@ -12,6 +12,7 @@ import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { WallModel } from '../../../models/WallModel';
+import { Util } from '../../../Util';
 
 const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
@@ -84,6 +85,14 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
           }
         }
         break;
+      case Scope.AllConnectedObjects:
+        const connectedWalls = Util.getAllConnectedWalls(wall);
+        for (const e of connectedWalls) {
+          if (value !== e.volumetricHeatCapacity && !e.locked) {
+            return true;
+          }
+        }
+        break;
       default:
         if (value !== wall?.volumetricHeatCapacity) {
           return true;
@@ -101,9 +110,9 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
         const oldValuesAll = new Map<string, number | undefined>();
         for (const e of elements) {
           if (e.type === ObjectType.Wall && !e.locked) {
-            const wall = e as WallModel;
-            oldValuesAll.set(e.id, wall.volumetricHeatCapacity ?? 0.5);
-            updateById(wall.id, value);
+            const w = e as WallModel;
+            oldValuesAll.set(e.id, w.volumetricHeatCapacity ?? 0.5);
+            updateById(w.id, value);
           }
         }
         const undoableChangeAll = {
@@ -122,13 +131,13 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
         setApplyCount(applyCount + 1);
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
-        if (wall.foundationId) {
+        if (wall?.foundationId) {
           const oldValuesAboveFoundation = new Map<string, number | undefined>();
           for (const e of elements) {
             if (e.type === ObjectType.Wall && e.foundationId === wall.foundationId && !e.locked) {
-              const wall = e as WallModel;
-              oldValuesAboveFoundation.set(e.id, wall.volumetricHeatCapacity ?? 0.5);
-              updateById(wall.id, value);
+              const w = e as WallModel;
+              oldValuesAboveFoundation.set(e.id, w.volumetricHeatCapacity ?? 0.5);
+              updateById(w.id, value);
             }
           }
           const undoableChangeAboveFoundation = {
@@ -148,6 +157,36 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAboveFoundation);
+          setApplyCount(applyCount + 1);
+        }
+        break;
+      case Scope.AllConnectedObjects:
+        if (wall) {
+          const connectedWalls = Util.getAllConnectedWalls(wall);
+          const oldValuesConnectedWalls = new Map<string, number | undefined>();
+          for (const e of connectedWalls) {
+            if (!e.locked) {
+              const w = e as WallModel;
+              oldValuesConnectedWalls.set(e.id, w.volumetricHeatCapacity ?? 0.5);
+              updateById(w.id, value);
+            }
+          }
+          const undoableChangeConnectedWalls = {
+            name: 'Set Volumetric Heat Capacity for All Connected Walls',
+            timestamp: Date.now(),
+            oldValues: oldValuesConnectedWalls,
+            newValue: value,
+            undo: () => {
+              undoInMap(undoableChangeConnectedWalls.oldValues as Map<string, number>);
+            },
+            redo: () => {
+              updateInMap(
+                undoableChangeConnectedWalls.oldValues as Map<string, number>,
+                undoableChangeConnectedWalls.newValue as number,
+              );
+            },
+          } as UndoableChangeGroup;
+          addUndoable(undoableChangeConnectedWalls);
           setApplyCount(applyCount + 1);
         }
         break;
@@ -275,6 +314,7 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
             <Radio.Group onChange={(e) => setActionScope(e.target.value)} value={actionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('wallMenu.OnlyThisWall', lang)}</Radio>
+                <Radio value={Scope.AllConnectedObjects}>{i18n.t('wallMenu.AllConnectedWalls', lang)}</Radio>
                 <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                   {i18n.t('wallMenu.AllWallsAboveFoundation', lang)}
                 </Radio>
