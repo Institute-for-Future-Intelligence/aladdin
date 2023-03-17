@@ -141,7 +141,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const selectedElement = useStore.getState().selectedElement;
 
   const [aboutUs, setAboutUs] = useState(false);
-  const [modelAnnotationDialogVisible, setModelAnnotationDialogVisible] = useState(false);
+  const [modelSiteDialogVisible, setModelSiteDialogVisible] = useState(false);
 
   const lang = { lng: language };
   const isMac = Util.isMac();
@@ -832,14 +832,29 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             </Menu.Item>
           )}
 
-          {user.uid &&
-            cloudFile &&
-            !viewOnly &&
-            new URLSearchParams(window.location.search).get('userid') === user.uid && (
-              <Menu.Item key="publish-on-model-map" onClick={() => setModelAnnotationDialogVisible(true)}>
-                {i18n.t('menu.file.PublishOnModelsMap', lang)}...
-              </Menu.Item>
-            )}
+          {!viewOnly && (
+            <Menu.Item
+              key="publish-on-model-map"
+              onClick={() => {
+                const urlId = new URLSearchParams(window.location.search).get('userid');
+                const matched = urlId === user.uid;
+                const allowed = user.uid && cloudFile && matched;
+                if (allowed) {
+                  setModelSiteDialogVisible(true);
+                } else {
+                  if (!user.uid) {
+                    showInfo(i18n.t('menu.file.YouMustLogInToPublishYourModel', lang) + '.');
+                  } else if (urlId && !matched) {
+                    showInfo(i18n.t('menu.file.YouCannotPublishAModelThatYouDoNotOwn', lang) + '.');
+                  } else {
+                    showInfo(i18n.t('menu.file.YouMustSaveModelOnCloudBeforePublishingIt', lang) + '.');
+                  }
+                }
+              }}
+            >
+              {i18n.t('menu.file.PublishOnModelsMap', lang)}...
+            </Menu.Item>
+          )}
 
           <Menu.Item key="screenshot" onClick={takeScreenshot}>
             {i18n.t('menu.file.TakeScreenshot', lang)}
@@ -2282,7 +2297,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         </MainMenuContainer>
       </Dropdown>
       {aboutUs && <About close={() => setAboutUs(false)} />}
-      {modelAnnotationDialogVisible && <ModelSiteDialog setDialogVisible={setModelAnnotationDialogVisible} />}
+      {modelSiteDialogVisible && <ModelSiteDialog setDialogVisible={setModelSiteDialogVisible} />}
     </>
   );
 };

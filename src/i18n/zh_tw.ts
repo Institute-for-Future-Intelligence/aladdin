@@ -267,6 +267,9 @@ export const i18n_zh_tw = {
         PublishOnModelsMap: '發佈到地圖上',
         PublishedOnModelsMap: '您的模型成功發佈到地圖上',
         UpdatedOnModelsMap: '您的模型更新成功',
+        YouMustLogInToPublishYourModel: '您必須登錄才能發布模型',
+        YouCannotPublishAModelThatYouDoNotOwn: '您不能發布他人的模型',
+        YouMustSaveModelOnCloudBeforePublishingIt: '您必須先把此模型保存在雲端才能發布它',
       },
       editSubMenu: '編輯',
       edit: {

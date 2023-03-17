@@ -1053,6 +1053,7 @@ export class Util {
       case ObjectType.Sensor:
       case ObjectType.Light:
       case ObjectType.SolarPanel:
+      case ObjectType.Polygon:
         return true;
     }
     return false;

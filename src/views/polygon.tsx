@@ -16,7 +16,7 @@ import PolygonTexture00 from '../resources/tiny_white_square.png';
 
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { Box, Line, Sphere } from '@react-three/drei';
-import { Euler, Mesh, RepeatWrapping, Shape, TextureLoader, Vector3 } from 'three';
+import { DoubleSide, Euler, Mesh, RepeatWrapping, Shape, TextureLoader, Vector3 } from 'three';
 import { CommonStoreState, useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { ThreeEvent, useThree } from '@react-three/fiber';
@@ -37,6 +37,7 @@ import { Util } from '../Util';
 import i18n from '../i18n/i18n';
 import { PolygonModel } from '../models/PolygonModel';
 import { Point2 } from '../models/Point2';
+import { WallModel } from '../models/WallModel';
 
 const Polygon = ({
   id,
@@ -58,6 +59,7 @@ const Polygon = ({
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const getElementById = useStore(Selector.getElementById);
+  const getFoundation = useStore(Selector.getFoundation);
   const selectMe = useStore(Selector.selectMe);
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
@@ -103,8 +105,12 @@ const Polygon = ({
       switch (parent.type) {
         case ObjectType.Foundation:
           for (const v of vertices) {
-            const p2 = { x: v.x * parent.lx, y: v.y * parent.ly } as Point2;
-            av.push(p2);
+            av.push({ x: v.x * parent.lx, y: v.y * parent.ly } as Point2);
+          }
+          break;
+        case ObjectType.Wall:
+          for (const v of vertices) {
+            av.push({ x: v.x * parent.lx, y: v.y * parent.lz } as Point2);
           }
           break;
         case ObjectType.Cuboid:
@@ -146,8 +152,17 @@ const Polygon = ({
   }, [parent]);
 
   const polygonModel = getElementById(id) as PolygonModel;
+  const foundation = useMemo(() => {
+    if (parent) {
+      if (parent.type === ObjectType.Foundation) return parent;
+      return getFoundation(parent);
+    }
+  }, [parent]);
 
   const euler = useMemo(() => {
+    if (parent?.type === ObjectType.Wall && foundation) {
+      return new Euler(-HALF_PI, 0, (foundation.rotation[2] ?? 0) + (parent as WallModel).relativeAngle, 'ZXY');
+    }
     const n = new Vector3().fromArray(normal);
     // east face in model coordinate system
     if (Util.isSame(n, UNIT_VECTOR_POS_X)) {
@@ -167,40 +182,62 @@ const Polygon = ({
     }
     // top face
     return new Euler(0, 0, rotation[2], 'ZXY');
-  }, [normal, rotation]);
+  }, [normal, rotation, parent, foundation?.rotation]);
 
   const position = useMemo(() => {
     const p = new Vector3(parent?.cx ?? 0, parent?.cy ?? 0, cz);
-    if (parent && parent.type === ObjectType.Cuboid) {
-      const n = new Vector3().fromArray(normal);
-      let sideFace = false;
-      const shift = new Vector3();
-      if (Util.isSame(n, UNIT_VECTOR_POS_X)) {
-        // east face in model coordinate system
-        sideFace = true;
-        shift.x = parent.lx / 2 + 0.01;
-      } else if (Util.isSame(n, UNIT_VECTOR_NEG_X)) {
-        // west face
-        sideFace = true;
-        shift.x = -parent.lx / 2 - 0.01;
-      } else if (Util.isSame(n, UNIT_VECTOR_POS_Y)) {
-        // north face
-        sideFace = true;
-        shift.y = parent.ly / 2 + 0.01;
-      } else if (Util.isSame(n, UNIT_VECTOR_NEG_Y)) {
-        // south face
-        sideFace = true;
-        shift.y = -parent.ly / 2 - 0.01;
-      }
-      if (sideFace) {
-        shift.applyEuler(new Euler(0, 0, rotation[2]));
-        p.x = parent.cx + shift.x;
-        p.y = parent.cy + shift.y;
-        p.z = parent.cz + shift.z;
+    if (parent) {
+      if (parent.type === ObjectType.Cuboid) {
+        const n = new Vector3().fromArray(normal);
+        let sideFace = false;
+        const shift = new Vector3();
+        if (Util.isSame(n, UNIT_VECTOR_POS_X)) {
+          // east face in model coordinate system
+          sideFace = true;
+          shift.x = parent.lx / 2 + 0.01;
+        } else if (Util.isSame(n, UNIT_VECTOR_NEG_X)) {
+          // west face
+          sideFace = true;
+          shift.x = -parent.lx / 2 - 0.01;
+        } else if (Util.isSame(n, UNIT_VECTOR_POS_Y)) {
+          // north face
+          sideFace = true;
+          shift.y = parent.ly / 2 + 0.01;
+        } else if (Util.isSame(n, UNIT_VECTOR_NEG_Y)) {
+          // south face
+          sideFace = true;
+          shift.y = -parent.ly / 2 - 0.01;
+        }
+        if (sideFace) {
+          shift.applyEuler(new Euler(0, 0, rotation[2]));
+          p.x = parent.cx + shift.x;
+          p.y = parent.cy + shift.y;
+          p.z = parent.cz + shift.z;
+        }
+      } else if (parent.type === ObjectType.Wall) {
+        if (foundation) {
+          const n = new Vector3().fromArray(normal);
+          const shift = new Vector3(parent.cx, parent.cy, cz).add(n.multiplyScalar(0.01));
+          shift.applyEuler(new Euler(0, 0, foundation.rotation[2]));
+          p.x = foundation.cx + shift.x;
+          p.y = foundation.cy + shift.y;
+          p.z = foundation.cz + shift.z;
+        }
       }
     }
     return p;
-  }, [normal, rotation, cz, parent?.cx, parent?.cy, parent?.cz, parent?.lx, parent?.ly, parent?.lz]);
+  }, [
+    normal,
+    rotation,
+    cz,
+    parent?.cx,
+    parent?.cy,
+    parent?.cz,
+    parent?.lx,
+    parent?.ly,
+    parent?.lz,
+    foundation?.rotation,
+  ]);
 
   const points = useMemo(() => {
     const p = new Array<Vector3>();
@@ -372,6 +409,7 @@ const Polygon = ({
             attach="material"
             color={textureType === PolygonTexture.NoTexture ? color : 'white'}
             map={texture}
+            side={DoubleSide}
             transparent={opacity < 1}
             opacity={opacity}
           />

@@ -267,6 +267,9 @@ export const i18n_zh_cn = {
         PublishOnModelsMap: '发布到地图上',
         PublishedOnModelsMap: '您的模型成功发布到地图上',
         UpdatedOnModelsMap: '您的模型更新成功',
+        YouMustLogInToPublishYourModel: '您必须登录才能发布模型',
+        YouCannotPublishAModelThatYouDoNotOwn: '您不能发布他人的模型',
+        YouMustSaveModelOnCloudBeforePublishingIt: '您必须先把此模型保存在云端才能发布它',
       },
       editSubMenu: '编辑',
       edit: {

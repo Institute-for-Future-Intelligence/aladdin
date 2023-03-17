@@ -38,7 +38,7 @@ import {
   RoofType,
 } from './RoofModel';
 import { GROUND_ID } from '../constants';
-import { ShutterProps, WindowModel, WindowType } from './WindowModel';
+import { WindowModel } from './WindowModel';
 import { Point2 } from './Point2';
 import { PolygonModel } from './PolygonModel';
 import { Util } from '../Util';
@@ -47,7 +47,7 @@ import { ParabolicTroughModel } from './ParabolicTroughModel';
 import { ParabolicDishModel } from './ParabolicDishModel';
 import { FresnelReflectorModel } from './FresnelReflectorModel';
 import { HeliostatModel } from './HeliostatModel';
-import { DoorModel, DoorType } from './DoorModel';
+import { DoorModel } from './DoorModel';
 import { WindTurbineModel } from './WindTurbineModel';
 import { FlowerData } from '../FlowerData';
 import { LightModel } from './LightModel';
@@ -449,6 +449,8 @@ export class ElementModelFactory {
         // south and north face
         ry = z;
       }
+    } else if (parent.type === ObjectType.Wall) {
+      ry = z;
     }
     return {
       type: ObjectType.Polygon,
