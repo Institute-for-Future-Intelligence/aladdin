@@ -75,6 +75,7 @@ import {
   UNIT_VECTOR_POS_Y,
   UNIT_VECTOR_POS_Z,
 } from 'src/constants';
+import { PolygonModel } from '../../models/PolygonModel';
 
 export const WALL_OUTSIDE_SURFACE_MESH_NAME = 'Wall Outside Surface';
 
@@ -376,6 +377,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   const addedWindowIdRef = useRef<string | null>(null);
   const invalidElementIdRef = useRef<string | null>(null);
   const elBeingAddedRef = useRef<ElBeingAdded | null>(null);
+
+  const oldVerticesRef = useRef<Point2[]>([]);
 
   const hx = lx / 2;
   const hy = ly / 2;
@@ -1368,6 +1371,22 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         case ObjectType.Light: {
           el.cx = pointer.x / lx;
           el.cz = pointer.z / lz;
+          break;
+        }
+        case ObjectType.Polygon: {
+          if (oldVerticesRef.current.length > 0) {
+            const polygon = el as PolygonModel;
+            const centroid = Util.calculatePolygonCentroid(oldVerticesRef.current);
+            const dx = pointer.x - centroid.x;
+            const dy = pointer.z - centroid.y;
+            const copy = oldVerticesRef.current.map((v) => ({ ...v }));
+            copy.forEach((v: Point2) => {
+              v.x -= dx / lx;
+              v.y -= dy / lz;
+            });
+            polygon.vertices = copy;
+          }
+          break;
         }
       }
     });
@@ -1523,6 +1542,10 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       } else if (isAllowedToSelectMe()) {
         useStore.getState().selectMe(id, e, ActionType.Select);
       }
+    }
+    const selectedElement = getSelectedElement();
+    if (selectedElement?.type === ObjectType.Polygon) {
+      oldVerticesRef.current = (selectedElement as PolygonModel).vertices.map((v) => ({ ...v }));
     }
   }
 

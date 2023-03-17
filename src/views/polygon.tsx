@@ -16,7 +16,7 @@ import PolygonTexture00 from '../resources/tiny_white_square.png';
 
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { Box, Line, Sphere } from '@react-three/drei';
-import { DoubleSide, Euler, Mesh, RepeatWrapping, Shape, TextureLoader, Vector3 } from 'three';
+import { Euler, FrontSide, Mesh, RepeatWrapping, Shape, TextureLoader, Vector3 } from 'three';
 import { CommonStoreState, useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { ThreeEvent, useThree } from '@react-three/fiber';
@@ -38,6 +38,8 @@ import i18n from '../i18n/i18n';
 import { PolygonModel } from '../models/PolygonModel';
 import { Point2 } from '../models/Point2';
 import { WallModel } from '../models/WallModel';
+import { useRefStore } from '../stores/commonRef';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 const Polygon = ({
   id,
@@ -52,6 +54,7 @@ const Polygon = ({
   locked = false,
   showLabel = false,
   parentId,
+  foundationId,
   vertices,
   opacity = 1,
   textureType = PolygonTexture.NoTexture,
@@ -161,7 +164,12 @@ const Polygon = ({
 
   const euler = useMemo(() => {
     if (parent?.type === ObjectType.Wall && foundation) {
-      return new Euler(-HALF_PI, 0, (foundation.rotation[2] ?? 0) + (parent as WallModel).relativeAngle, 'ZXY');
+      return new Euler(
+        -HALF_PI,
+        0,
+        Math.PI + (foundation.rotation[2] ?? 0) + (parent as WallModel).relativeAngle,
+        'ZXY',
+      );
     }
     const n = new Vector3().fromArray(normal);
     // east face in model coordinate system
@@ -409,7 +417,7 @@ const Polygon = ({
             attach="material"
             color={textureType === PolygonTexture.NoTexture ? color : 'white'}
             map={texture}
-            side={DoubleSide}
+            side={FrontSide}
             transparent={opacity < 1}
             opacity={opacity}
           />
@@ -486,6 +494,15 @@ const Polygon = ({
           name={MoveHandleType.Default}
           onPointerDown={(e) => {
             selectMe(id, e, ActionType.Move);
+            useRefStore.getState().setEnableOrbitController(false);
+            usePrimitiveStore.setState((state) => {
+              state.showWallIntersectionPlaneId = parentId;
+              state.oldParentId = parentId;
+              state.oldFoundationId = foundationId;
+            });
+            setCommonStore((state) => {
+              state.moveHandleType = MoveHandleType.Default;
+            });
           }}
           onPointerOver={(e) => {
             hoverHandle(e, MoveHandleType.Default);
