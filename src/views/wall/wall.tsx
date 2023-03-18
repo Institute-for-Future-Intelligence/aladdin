@@ -1575,7 +1575,6 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         }
         moveElement(selectedElement.id, boundedPointer);
       }
-
       // resize element
       else if (useStore.getState().resizeHandleType) {
         const { relativePointer, pointerOnGrid } = getPointer(e, intersectionPlaneRef.current);
@@ -1585,7 +1584,6 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           case ObjectType.Window: {
             const window = selectedElement as WindowModel;
             const boundedPointer = getBoundedPointer(pointerOnGrid, { resizeAnchor });
-
             if (isArchedResize(window)) {
               const { newLz, newCz, newArchHeight } = getArchedResizedData(window, boundedPointer, resizeAnchor);
               const center = new Vector3(window.cx * lx, 0, newCz);
@@ -1621,7 +1619,6 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           case ObjectType.Door: {
             const door = selectedElement as DoorModel;
             const boundedPointer = getBoundedPointer(pointerOnGrid, { resizeAnchor });
-
             if (isArchedResize(door)) {
               const { newLz, newCz, newArchHeight } = getArchedResizedData(door, boundedPointer, resizeAnchor);
               const center = new Vector3(door.cx * lx, 0, newCz);
@@ -1673,7 +1670,6 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
                 sp.color = sp.id === invalidElementIdRef.current ? 'red' : '#fff';
               });
             }
-
             // X direction
             else if (resizeHandleType === ResizeHandleType.Left || resizeHandleType === ResizeHandleType.Right) {
               const nx = Math.max(1, Math.round(Math.abs(relativePointer.x - resizeAnchor.x) / unitX));
@@ -1692,6 +1688,17 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
                 sp.color = sp.id === invalidElementIdRef.current ? 'red' : '#fff';
               });
             }
+            break;
+          }
+          case ObjectType.Polygon: {
+            const polygon = selectedElement as PolygonModel;
+            setCommonStore((state) => {
+              const p = state.elements.find((e) => e.id === polygon.id) as PolygonModel;
+              if (p?.selectedIndex >= 0) {
+                p.vertices[p.selectedIndex].x = pointerOnGrid.x / lx - 0.5;
+                p.vertices[p.selectedIndex].y = pointerOnGrid.z / lz - 0.5;
+              }
+            });
             break;
           }
         }

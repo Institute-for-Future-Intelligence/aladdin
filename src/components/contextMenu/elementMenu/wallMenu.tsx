@@ -220,7 +220,7 @@ export const WallMenu = React.memo(() => {
     );
   };
 
-  const renderSturctureSubMenu = () => {
+  const renderStructureSubMenu = () => {
     if (!wall) {
       return null;
     }
@@ -534,57 +534,59 @@ export const WallMenu = React.memo(() => {
 
           {renderElementsSubMenu()}
 
-          {renderSturctureSubMenu()}
+          {renderStructureSubMenu()}
 
           {renderStructureItems()}
 
-          <Menu.Item
-            style={{ paddingLeft: '36px' }}
-            key={'add-polygon-on-wall'}
-            onClick={() => {
-              if (wall) {
-                const foundation = getFoundation(wall);
-                if (foundation) {
-                  setCommonStore((state) => {
-                    state.objectTypeToAdd = ObjectType.Polygon;
-                  });
-                  const angle = wall.relativeAngle - HALF_PI;
-                  const polygon = ElementModelFactory.makePolygon(
-                    wall,
-                    0,
-                    0,
-                    -0.5,
-                    new Vector3(Math.cos(angle), Math.sin(angle), 0),
-                    [0, 0, 0],
-                  );
-                  setCommonStore((state) => {
-                    state.elements.push(polygon);
-                    state.objectTypeToAdd = ObjectType.None;
-                  });
-                  const undoableAdd = {
-                    name: 'Add',
-                    timestamp: Date.now(),
-                    addedElement: polygon,
-                    undo: () => {
-                      removeElementById(undoableAdd.addedElement.id, false);
-                    },
-                    redo: () => {
-                      setCommonStore((state) => {
-                        state.elements.push(undoableAdd.addedElement);
-                        state.selectedElement = undoableAdd.addedElement;
-                      });
-                    },
-                  } as UndoableAdd;
-                  addUndoable(undoableAdd);
-                  setCommonStore((state) => {
-                    state.objectTypeToAdd = ObjectType.None;
-                  });
+          {wall.wallStructure === WallStructure.Default && (
+            <Menu.Item
+              style={{ paddingLeft: '36px' }}
+              key={'add-polygon-on-wall'}
+              onClick={() => {
+                if (wall) {
+                  const foundation = getFoundation(wall);
+                  if (foundation) {
+                    setCommonStore((state) => {
+                      state.objectTypeToAdd = ObjectType.Polygon;
+                    });
+                    const angle = wall.relativeAngle - HALF_PI;
+                    const polygon = ElementModelFactory.makePolygon(
+                      wall,
+                      0,
+                      0,
+                      -0.5,
+                      new Vector3(Math.cos(angle), Math.sin(angle), 0),
+                      [0, 0, 0],
+                    );
+                    setCommonStore((state) => {
+                      state.elements.push(polygon);
+                      state.objectTypeToAdd = ObjectType.None;
+                    });
+                    const undoableAdd = {
+                      name: 'Add',
+                      timestamp: Date.now(),
+                      addedElement: polygon,
+                      undo: () => {
+                        removeElementById(undoableAdd.addedElement.id, false);
+                      },
+                      redo: () => {
+                        setCommonStore((state) => {
+                          state.elements.push(undoableAdd.addedElement);
+                          state.selectedElement = undoableAdd.addedElement;
+                        });
+                      },
+                    } as UndoableAdd;
+                    addUndoable(undoableAdd);
+                    setCommonStore((state) => {
+                      state.objectTypeToAdd = ObjectType.None;
+                    });
+                  }
                 }
-              }
-            }}
-          >
-            {i18n.t('foundationMenu.AddPolygon', lang)}
-          </Menu.Item>
+              }}
+            >
+              {i18n.t('foundationMenu.AddPolygon', lang)}
+            </Menu.Item>
+          )}
 
           {renderFillSubMenu()}
 

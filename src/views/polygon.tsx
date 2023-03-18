@@ -525,6 +525,15 @@ const Polygon = ({
                 onPointerDown={(e) => {
                   selectMe(id, e, ActionType.Resize);
                   updatePolygonSelectedIndexById(polygonModel.id, i);
+                  useRefStore.getState().setEnableOrbitController(false);
+                  usePrimitiveStore.setState((state) => {
+                    state.showWallIntersectionPlaneId = parentId;
+                    state.oldParentId = parentId;
+                    state.oldFoundationId = foundationId;
+                  });
+                  setCommonStore((state) => {
+                    state.resizeHandleType = ResizeHandleType.Default;
+                  });
                 }}
                 onPointerOver={(e) => {
                   hoverHandle(e, ResizeHandleType.Default);
