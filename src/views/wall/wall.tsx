@@ -1695,8 +1695,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
             setCommonStore((state) => {
               const p = state.elements.find((e) => e.id === polygon.id) as PolygonModel;
               if (p?.selectedIndex >= 0) {
-                p.vertices[p.selectedIndex].x = pointerOnGrid.x / lx - 0.5;
-                p.vertices[p.selectedIndex].y = pointerOnGrid.z / lz - 0.5;
+                p.vertices[p.selectedIndex].x = pointerOnGrid.x / lx;
+                p.vertices[p.selectedIndex].y = pointerOnGrid.z / lz;
               }
             });
             break;
@@ -2197,7 +2197,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
             />
           )}
 
-          {/* intersection planes for childs */}
+          {/* intersection planes for children */}
           {(showIntersectionPlane || showWallIntersectionPlaneId === id) &&
             useStore.getState().selectedElement?.parentId === id && (
               <>

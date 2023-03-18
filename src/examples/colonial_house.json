@@ -1,7 +1,7 @@
 {
-  "docid": "45CU1RXvQYHjz4ZcFPxFKA",
-  "time": "02/03/2023 08:13 pm",
-  "timestamp": 1675473195664,
+  "docid": "iV53wgMZuDkeiC8CoqkVH6",
+  "time": "03/18/2023 03:16 pm",
+  "timestamp": 1679166968836,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -2016,7 +2016,7 @@
       "rightRoofHeight": 3.2841875196772365,
       "centerRoofHeight": [
         0,
-        3.674628280984958
+        3.837098172113132
       ],
       "structureSpacing": 1000,
       "structureWidth": 0.2,
@@ -2029,7 +2029,7 @@
       "type": "Wall",
       "cx": 1.2041263633168442,
       "cy": -0.03460380925524109,
-      "cz": 2.2301039869226305,
+      "cz": 0.8868358655705414,
       "lx": 3.0337664018991246,
       "ly": 0.3,
       "lz": 3.2841875196772365,
@@ -2156,7 +2156,7 @@
         0
       ],
       "relativeAngle": 0,
-      "textureType": "Wall Texture Default",
+      "textureType": "No Wall Texture",
       "color": "#ffffff",
       "normal": [
         0,
@@ -2171,7 +2171,7 @@
       "id": "5ExmWkfAba5nuC3xfHo5vU",
       "parentId": "myXiyVt2NURPnPChDUSnvF",
       "foundationId": "myXiyVt2NURPnPChDUSnvF",
-      "wallStructure": "Pillar",
+      "wallStructure": "Default",
       "opacity": 0,
       "roofId": "kL2csyDhpYU6Tdyq5APXiG",
       "selected": false,
@@ -2179,13 +2179,13 @@
       "rightRoofHeight": 3.2841875196772365,
       "centerRoofHeight": [
         0,
-        3.674628280984958
+        3.837098172113132
       ],
       "structureSpacing": 1000,
       "structureWidth": 0.2,
       "structureColor": "white",
-      "fill": "Full",
-      "unfilledHeight": 0.5,
+      "fill": "Partial",
+      "unfilledHeight": 3.0345157798988875,
       "eavesLength": 0.3
     },
     {
@@ -2255,7 +2255,7 @@
         0,
         1
       ],
-      "rise": 0.39044076130772165,
+      "rise": 0.5529106524358953,
       "ceiling": false
     },
     {
@@ -2482,8 +2482,8 @@
     {
       "type": "Tree",
       "name": "Elm",
-      "cx": 11.81602605501348,
-      "cy": -2.381704209479164,
+      "cx": 11.83592584352487,
+      "cy": 0.1068448514780993,
       "cz": 0,
       "lx": 8.182228289296598,
       "lz": 10.259018050875072,
@@ -2499,7 +2499,8 @@
       ],
       "parentId": "Ground",
       "id": "nHGsDGLUFhyht1nKkbShZS",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Tree",
@@ -2521,7 +2522,8 @@
       ],
       "parentId": "Ground",
       "id": "pYVQihimDYo3cuWwFUxGRV",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -3021,6 +3023,7 @@
       "selected": false
     }
   ],
+  "sceneRadius": 22,
   "view": {
     "dailyPvYieldPanelX": 0,
     "mapPanelY": 0,
@@ -3050,9 +3053,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -10.536250519600543,
-      -19.996444724532147,
-      3.9354778429579325
+      -9.091334937931249,
+      -22.0018942565486,
+      3.3187595774663885
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -3187,5 +3190,9 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
+  "modelType": "Unknown",
+  "modelAuthor": null,
+  "modelLabel": null,
+  "modelDescription": null,
   "notes": []
 }

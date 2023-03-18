@@ -108,6 +108,7 @@ const ElementsRenderer: React.FC = () => {
           default:
             if (e.id) return <React.Fragment key={e.id} />;
         }
+        return null;
       })}
     </group>
   );

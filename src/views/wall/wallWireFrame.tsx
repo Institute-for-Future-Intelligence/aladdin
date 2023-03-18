@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React from 'react';
@@ -72,6 +72,9 @@ const WallWireFrame = React.memo(
         points.push(cr);
       }
       points.push(upperRight, lowerRight);
+      if (fill === WallFill.Partial) {
+        points.push(lowerLeft, lowerRight);
+      }
     }
 
     return (

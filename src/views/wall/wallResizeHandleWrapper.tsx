@@ -253,7 +253,8 @@ const WallResizeHandleWrapper = React.memo(
           setCommonStore((state) => {
             for (const e of state.elements) {
               if (e.id === id && e.type === ObjectType.Wall) {
-                const newUnfilledHeight = Util.clamp(p.z - parentLz, handleSize, e.lz - handleSize);
+                // set the minimum unfilled height to be 0.1
+                const newUnfilledHeight = Util.clamp(p.z - parentLz, 0.1, e.lz - 0.1);
                 (e as WallModel).unfilledHeight = newUnfilledHeight;
                 state.actionState.wallUnfilledHeight = newUnfilledHeight;
                 break;

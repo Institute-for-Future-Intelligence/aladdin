@@ -40,11 +40,10 @@ import { TreeModel } from '../models/TreeModel';
 import { UndoableChange } from '../undo/UndoableChange';
 import { showError } from '../helpers';
 import i18n from '../i18n/i18n';
-import { FoundationModel } from 'src/models/FoundationModel';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { InnerCommonState } from 'src/stores/InnerCommonState';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
-import { Groupable, GroupableModel, isGroupable } from 'src/models/Groupable';
+import { GroupableModel, isGroupable } from 'src/models/Groupable';
 
 const Ground = () => {
   const setCommonStore = useStore(Selector.set);
