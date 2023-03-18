@@ -706,6 +706,8 @@ export class ElementModelCloner {
       ly: door.ly,
       lz: door.lz,
       color: door.color,
+      frameColor: door.frameColor,
+      opacity: door.opacity,
       uValue: door.uValue,
       volumetricHeatCapacity: door.volumetricHeatCapacity,
       textureType: door.textureType,

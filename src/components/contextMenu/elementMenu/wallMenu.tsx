@@ -474,6 +474,7 @@ export const WallMenu = React.memo(() => {
           {renderClearItem(ObjectType.SolarPanel, counterUnlocked.solarPanelCount)}
           {renderClearItem(ObjectType.Sensor, counterUnlocked.sensorCount)}
           {renderClearItem(ObjectType.Light, counterUnlocked.insideLightCount + counterUnlocked.outsideLightCount)}
+          {renderClearItem(ObjectType.Polygon, counterUnlocked.polygonCount)}
           {renderLockItem(ObjectType.Window, counterUnlocked.windowCount)}
           {renderUnlockItem(ObjectType.Window, counterAll.windowCount)}
           {renderLockItem(ObjectType.SolarPanel, counterUnlocked.solarPanelCount)}
@@ -482,6 +483,8 @@ export const WallMenu = React.memo(() => {
           {renderUnlockItem(ObjectType.Sensor, counterAll.sensorCount)}
           {renderInsideLightItem(counterAll.outsideLightCount, true)}
           {renderInsideLightItem(counterAll.insideLightCount, false)}
+          {renderLockItem(ObjectType.Polygon, counterUnlocked.polygonCount)}
+          {renderUnlockItem(ObjectType.Polygon, counterAll.polygonCount)}
         </SubMenu>
       );
     }

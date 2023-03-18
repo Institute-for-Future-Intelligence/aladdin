@@ -48,13 +48,13 @@ export const PolygonMenu = React.memo(() => {
   // be sure to get the updated parent so that this memorized element can move with it
   const parent = useStore((state) => {
     for (const e of state.elements) {
-      if (e.id === polygon.parentId) {
+      if (e.id === polygon?.parentId) {
         return e;
       }
     }
   });
 
-  if (!polygon) return null;
+  if (!polygon || !parent) return null;
 
   const editable = !polygon?.locked;
 
