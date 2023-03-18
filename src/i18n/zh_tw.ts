@@ -31,6 +31,9 @@ export const i18n_zh_tw = {
     },
 
     word: {
+      Text: '文字',
+      FontSize: '字體大小',
+      FontColor: '字體顏色',
       Model: '模型',
       Models: '模型',
       Upload: '上傳',
@@ -754,6 +757,8 @@ export const i18n_zh_tw = {
       Texture08: '八號材質',
       Texture09: '九號材質',
       Texture10: '十號材質',
+      TextBox: '文字框',
+      NoOutline: '無輪廓線',
       Filled: '填充',
       FillTexture: '填充材質',
       FillColor: '填充顏色',

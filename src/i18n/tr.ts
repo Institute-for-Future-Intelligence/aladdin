@@ -31,6 +31,9 @@ export const i18n_tr = {
     },
 
     word: {
+      Text: 'Text',
+      FontSize: 'Font Size',
+      FontColor: 'Font Color',
       Model: 'Model',
       Models: 'Models',
       Upload: 'Upload',
@@ -776,6 +779,8 @@ export const i18n_tr = {
       Texture08: 'Doku 8',
       Texture09: 'Doku 9',
       Texture10: 'Doku 10',
+      TextBox: 'Text Box',
+      NoOutline: 'No Outline',
       Filled: 'Dolgu',
       FillTexture: 'Dolgu Dokusu',
       FillColor: 'Dolgu Rengi',

@@ -15,7 +15,7 @@ import PolygonTexture10 from '../resources/polygon_10.png';
 import PolygonTexture00 from '../resources/tiny_white_square.png';
 
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { Box, Line, Sphere } from '@react-three/drei';
+import { Box, Line, Sphere, Text } from '@react-three/drei';
 import { Euler, FrontSide, Mesh, RepeatWrapping, Shape, TextureLoader, Vector3 } from 'three';
 import { CommonStoreState, useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
@@ -37,7 +37,6 @@ import { Util } from '../Util';
 import i18n from '../i18n/i18n';
 import { PolygonModel } from '../models/PolygonModel';
 import { Point2 } from '../models/Point2';
-import { WallModel } from '../models/WallModel';
 import { useRefStore } from '../stores/commonRef';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 
@@ -48,6 +47,9 @@ const Polygon = ({
   rotation = [0, 0, 0],
   normal = [0, 0, 1],
   color = 'yellow',
+  text,
+  fontSize = 5,
+  fontColor = 'black',
   lineColor = 'black',
   lineWidth = 1,
   selected = false,
@@ -163,13 +165,8 @@ const Polygon = ({
   }, [parent]);
 
   const euler = useMemo(() => {
-    if (parent?.type === ObjectType.Wall && foundation) {
-      return new Euler(
-        -HALF_PI,
-        0,
-        Math.PI + (foundation.rotation[2] ?? 0) + (parent as WallModel).relativeAngle,
-        'ZXY',
-      );
+    if (parent?.type === ObjectType.Wall) {
+      return new Euler(-HALF_PI, 0, Math.PI, 'ZXY');
     }
     const n = new Vector3().fromArray(normal);
     // east face in model coordinate system
@@ -193,9 +190,9 @@ const Polygon = ({
   }, [normal, rotation, parent, foundation?.rotation]);
 
   const position = useMemo(() => {
-    const p = new Vector3(parent?.cx ?? 0, parent?.cy ?? 0, cz);
     if (parent) {
       if (parent.type === ObjectType.Cuboid) {
+        const p = new Vector3(parent?.cx ?? 0, parent?.cy ?? 0, cz);
         const n = new Vector3().fromArray(normal);
         let sideFace = false;
         const shift = new Vector3();
@@ -222,18 +219,13 @@ const Polygon = ({
           p.y = parent.cy + shift.y;
           p.z = parent.cz + shift.z;
         }
+        return p;
       } else if (parent.type === ObjectType.Wall) {
-        if (foundation) {
-          const n = new Vector3().fromArray(normal);
-          const shift = new Vector3(parent.cx, parent.cy, cz).add(n.multiplyScalar(0.01));
-          shift.applyEuler(new Euler(0, 0, foundation.rotation[2]));
-          p.x = foundation.cx + shift.x;
-          p.y = foundation.cy + shift.y;
-          p.z = foundation.cz + shift.z;
-        }
+        // polygon on wall is relative to the wall
+        return new Vector3(0, -0.01, 0);
       }
     }
-    return p;
+    return new Vector3(parent?.cx ?? 0, parent?.cy ?? 0, cz);
   }, [
     normal,
     rotation,
@@ -424,36 +416,51 @@ const Polygon = ({
         </mesh>
       )}
 
+      {text && (
+        <Text
+          scale={[fontSize, fontSize, fontSize]}
+          color={fontColor}
+          position={[centerX, centerY, 0.01]}
+          rotation={[0, 0, Math.PI]}
+          anchorX="center"
+          anchorY="middle"
+        >
+          {text}
+        </Text>
+      )}
+
       {/* wireframe */}
-      <Line
-        points={points}
-        color={locked && selected ? LOCKED_ELEMENT_SELECTION_COLOR : lineColor}
-        lineWidth={lineWidth}
-        dashed={polygonModel.lineStyle && polygonModel.lineStyle !== LineStyle.Solid}
-        dashSize={polygonModel.lineStyle === LineStyle.Dashed ? 0.3 : 0.1}
-        gapSize={0.1}
-        uuid={id}
-        receiveShadow={false}
-        castShadow={false}
-        name={'Polygon Wireframe'}
-        onPointerDown={(e) => {
-          if (e.button === 2) return; // ignore right-click
-          selectMe(id, e);
-        }}
-        onContextMenu={(e) => {
-          if (objectTypeToAdd !== ObjectType.None) return;
-          selectMe(id, e);
-          setCommonStore((state) => {
-            if (e.intersections.length > 0) {
-              const obj = e.intersections[0].object;
-              const intersected = obj.name === 'Polygon Wireframe' && obj.uuid === id;
-              if (intersected) {
-                state.contextMenuObjectType = ObjectType.Polygon;
+      {!polygonModel.noOutline && (
+        <Line
+          points={points}
+          color={locked && selected ? LOCKED_ELEMENT_SELECTION_COLOR : lineColor}
+          lineWidth={lineWidth}
+          dashed={polygonModel.lineStyle && polygonModel.lineStyle !== LineStyle.Solid}
+          dashSize={polygonModel.lineStyle === LineStyle.Dashed ? 0.3 : 0.1}
+          gapSize={0.1}
+          uuid={id}
+          receiveShadow={false}
+          castShadow={false}
+          name={'Polygon Wireframe'}
+          onPointerDown={(e) => {
+            if (e.button === 2) return; // ignore right-click
+            selectMe(id, e);
+          }}
+          onContextMenu={(e) => {
+            if (objectTypeToAdd !== ObjectType.None) return;
+            selectMe(id, e);
+            setCommonStore((state) => {
+              if (e.intersections.length > 0) {
+                const obj = e.intersections[0].object;
+                const intersected = obj.name === 'Polygon Wireframe' && obj.uuid === id;
+                if (intersected) {
+                  state.contextMenuObjectType = ObjectType.Polygon;
+                }
               }
-            }
-          });
-        }}
-      />
+            });
+          }}
+        />
+      )}
       {/* if not filled, add an enlarged, lifted invisible line for easier selection */}
       {!filled && (
         <Line

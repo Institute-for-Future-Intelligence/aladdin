@@ -423,7 +423,15 @@ export class ElementModelFactory {
     } as WindTurbineModel;
   }
 
-  static makePolygon(parent: ElementModel, x: number, y: number, z: number, normal?: Vector3, rotation?: number[]) {
+  static makePolygon(
+    parent: ElementModel,
+    x: number,
+    y: number,
+    z: number,
+    normal?: Vector3,
+    rotation?: number[],
+    parentType?: ObjectType,
+  ) {
     let foundationId;
     switch (parent.type) {
       case ObjectType.Foundation:
@@ -470,6 +478,7 @@ export class ElementModelFactory {
         { x: Math.min(0.5, rx + hx), y: Math.max(-0.5, ry - hy) } as Point2,
       ],
       parentId: parent.id,
+      parentType: parentType,
       foundationId: foundationId,
       selected: true,
       filled: true,

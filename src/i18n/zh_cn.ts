@@ -31,6 +31,9 @@ export const i18n_zh_cn = {
     },
 
     word: {
+      Text: '文字',
+      FontSize: '字体大小',
+      FontColor: '字体颜色',
       Model: '模型',
       Models: '模型',
       Upload: '上传',
@@ -753,6 +756,8 @@ export const i18n_zh_cn = {
       Texture08: '八号材质',
       Texture09: '九号材质',
       Texture10: '十号材质',
+      TextBox: '文字框',
+      NoOutline: '无轮廓线',
       Filled: '填充',
       FillTexture: '填充材质',
       FillColor: '填充颜色',

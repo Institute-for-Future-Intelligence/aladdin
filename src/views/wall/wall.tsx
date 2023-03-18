@@ -76,6 +76,7 @@ import {
   UNIT_VECTOR_POS_Z,
 } from 'src/constants';
 import { PolygonModel } from '../../models/PolygonModel';
+import Polygon from '../polygon';
 
 export const WALL_OUTSIDE_SURFACE_MESH_NAME = 'Wall Outside Surface';
 
@@ -717,6 +718,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     }
 
     for (const e of elementsOnWall) {
+      if (e.type === ObjectType.Polygon) continue;
       if (e.id !== id) {
         const cMinX = p.x - elx / 2; // current element left
         const cMaxX = p.x + elx / 2; // current element right
@@ -1569,7 +1571,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           ignorePadding: selectedElement.type === ObjectType.SolarPanel,
         });
         const [eLx, eLz] = [elementHalfSize[0] * 2, elementHalfSize[1] * 2];
-        checkCollision(selectedElement.id, boundedPointer, eLx, eLz);
+        if (selectedElement.type !== ObjectType.Polygon) checkCollision(selectedElement.id, boundedPointer, eLx, eLz);
         if (selectedElement.type !== ObjectType.SolarPanel) {
           checkOutsideBoundary(selectedElement.id, boundedPointer, eLx, eLz);
         }
@@ -1695,8 +1697,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
             setCommonStore((state) => {
               const p = state.elements.find((e) => e.id === polygon.id) as PolygonModel;
               if (p?.selectedIndex >= 0) {
-                p.vertices[p.selectedIndex].x = pointerOnGrid.x / lx;
-                p.vertices[p.selectedIndex].y = pointerOnGrid.z / lz;
+                p.vertices[p.selectedIndex].x = -pointerOnGrid.x / lx;
+                p.vertices[p.selectedIndex].y = -pointerOnGrid.z / lz;
               }
             });
             break;
@@ -2268,6 +2270,10 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
                     <SolarPanelOnWall {...(e as SolarPanelModel)} cx={e.cx * lx} cz={e.cz * lz} absRotation={r} />
                   </group>
                 );
+              case ObjectType.Polygon: {
+                if (fill === WallFill.Empty) return null;
+                return <Polygon key={e.id} {...(e as PolygonModel)} />;
+              }
               default:
                 return null;
             }

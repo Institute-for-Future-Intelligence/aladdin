@@ -3,7 +3,7 @@
  */
 
 import React, { useState } from 'react';
-import { Checkbox, Menu } from 'antd';
+import { Checkbox, Input, InputNumber, Menu } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { CommonStoreState, useStore } from '../../../stores/common';
@@ -69,6 +69,17 @@ export const PolygonMenu = React.memo(() => {
     });
   };
 
+  const updatePolygonNoOutlineById = (id: string, noOutline: boolean) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Polygon && e.id === id) {
+          (e as PolygonModel).noOutline = noOutline;
+          break;
+        }
+      }
+    });
+  };
+
   const togglePolygonFilled = (e: CheckboxChangeEvent) => {
     if (polygon) {
       const undoableCheck = {
@@ -87,6 +98,65 @@ export const PolygonMenu = React.memo(() => {
       addUndoable(undoableCheck);
       updatePolygonFilledById(polygon.id, e.target.checked);
     }
+  };
+
+  const togglePolygonNoOutline = (e: CheckboxChangeEvent) => {
+    if (polygon) {
+      const undoableCheck = {
+        name: 'No Outline for Polygon',
+        timestamp: Date.now(),
+        checked: !polygon.noOutline,
+        selectedElementId: polygon.id,
+        selectedElementType: ObjectType.Polygon,
+        undo: () => {
+          updatePolygonNoOutlineById(polygon.id, !undoableCheck.checked);
+        },
+        redo: () => {
+          updatePolygonNoOutlineById(polygon.id, undoableCheck.checked);
+        },
+      } as UndoableCheck;
+      addUndoable(undoableCheck);
+      updatePolygonNoOutlineById(polygon.id, e.target.checked);
+    }
+  };
+
+  const setFontSize = (fontSize: number) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === polygon.id) {
+          if (!e.locked && e.type === ObjectType.Polygon) {
+            (e as PolygonModel).fontSize = fontSize;
+          }
+          break;
+        }
+      }
+    });
+  };
+
+  const setFontColor = (fontColor: string) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === polygon.id) {
+          if (!e.locked && e.type === ObjectType.Polygon) {
+            (e as PolygonModel).fontColor = fontColor;
+          }
+          break;
+        }
+      }
+    });
+  };
+
+  const setText = (text: string) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === polygon.id) {
+          if (!e.locked && e.type === ObjectType.Polygon) {
+            (e as PolygonModel).text = text;
+          }
+          break;
+        }
+      }
+    });
   };
 
   const legalToPaste = () => {
@@ -164,6 +234,13 @@ export const PolygonMenu = React.memo(() => {
         <Menu.Item key={'polygon-filled'}>
           <Checkbox checked={!!polygon?.filled} onChange={togglePolygonFilled}>
             {i18n.t('polygonMenu.Filled', lang)}
+          </Checkbox>
+        </Menu.Item>
+      )}
+      {editable && (
+        <Menu.Item key={'polygon-no-outline'}>
+          <Checkbox checked={!!polygon?.noOutline} onChange={togglePolygonNoOutline}>
+            {i18n.t('polygonMenu.NoOutline', lang)}
           </Checkbox>
         </Menu.Item>
       )}
@@ -248,6 +325,44 @@ export const PolygonMenu = React.memo(() => {
             {i18n.t('polygonMenu.Opacity', lang)} ...
           </Menu.Item>
         </>
+      )}
+
+      {editable && (
+        <SubMenu key={'polygon-text'} title={i18n.t('polygonMenu.TextBox', lang)} style={{ paddingLeft: '24px' }}>
+          {/*have to wrap the text field with a Menu so that it can stay open when the user types in it */}
+          <Menu>
+            {/* text */}
+            <Menu.Item key={'polygon-text'} style={{ paddingLeft: '36px', marginTop: 10 }}>
+              <Input
+                addonBefore={i18n.t('word.Text', lang) + ':'}
+                value={polygon.text}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setText(e.target.value)}
+                // onPressEnter={updateLabelText}
+                // onBlur={updateLabelText}
+              />
+            </Menu.Item>
+            {/* font size */}
+            <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'polygon-font-size'}>
+              <InputNumber
+                addonBefore={i18n.t('word.FontSize', lang) + ':'}
+                min={10}
+                max={100}
+                step={1}
+                precision={0}
+                value={polygon.fontSize ?? 5}
+                onChange={(value) => setFontSize(value)}
+              />
+            </Menu.Item>
+            {/* font color */}
+            <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'polygon-font-color'}>
+              <Input
+                addonBefore={i18n.t('word.FontColor', lang) + ':'}
+                value={polygon.fontColor ?? 'black'}
+                onChange={(e) => setFontColor(e.target.value)}
+              />
+            </Menu.Item>
+          </Menu>
+        </SubMenu>
       )}
     </Menu.ItemGroup>
   );

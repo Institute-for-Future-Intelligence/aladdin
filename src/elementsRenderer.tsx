@@ -104,7 +104,12 @@ const ElementsRenderer: React.FC = () => {
           case ObjectType.Roof:
             return <RoofRenderer key={e.id} {...(e as RoofModel)} />;
           case ObjectType.Polygon:
-            return <Polygon key={e.id} {...(e as PolygonModel)} />;
+            switch ((e as PolygonModel).parentType) {
+              case ObjectType.Wall:
+                return null;
+              default:
+                return <Polygon key={e.id} {...(e as PolygonModel)} />;
+            }
           default:
             if (e.id) return <React.Fragment key={e.id} />;
         }

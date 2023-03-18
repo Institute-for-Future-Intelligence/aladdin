@@ -31,6 +31,9 @@ export const i18n_es = {
     },
 
     word: {
+      Text: 'Text',
+      FontSize: 'Font Size',
+      FontColor: 'Font Color',
       Model: 'Model',
       Models: 'Models',
       Upload: 'Upload',
@@ -776,6 +779,8 @@ export const i18n_es = {
       Texture08: 'Textura 8',
       Texture09: 'Textura 9',
       Texture10: 'Textura 10',
+      TextBox: 'Text Box',
+      NoOutline: 'No Outline',
       Filled: 'Rellenar',
       FillTexture: 'Rellenar textura',
       FillColor: 'Rellenar color',

@@ -11,7 +11,7 @@ import { Copy, Cut, Lock, Paste } from '../menuItems';
 import i18n from '../../../i18n/i18n';
 import WallTextureSelection from './wallTextureSelection';
 import WallColorSelection from './wallColorSelection';
-import { WallModel, WallFill, WallStructure } from 'src/models/WallModel';
+import { WallFill, WallModel, WallStructure } from 'src/models/WallModel';
 import { ObjectType, WallTexture } from 'src/types';
 import { ElementCounter } from '../../../stores/ElementCounter';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
@@ -552,14 +552,14 @@ export const WallMenu = React.memo(() => {
                     setCommonStore((state) => {
                       state.objectTypeToAdd = ObjectType.Polygon;
                     });
-                    const angle = wall.relativeAngle - HALF_PI;
                     const polygon = ElementModelFactory.makePolygon(
                       wall,
                       0,
                       0,
-                      -0.5,
-                      new Vector3(Math.cos(angle), Math.sin(angle), 0),
+                      0,
+                      new Vector3(0, 0, 1),
                       [0, 0, 0],
+                      ObjectType.Wall,
                     );
                     setCommonStore((state) => {
                       state.elements.push(polygon);
