@@ -16,7 +16,7 @@ import PolygonTexture00 from '../resources/tiny_white_square.png';
 
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { Box, Line, Sphere, Text } from '@react-three/drei';
-import { Euler, FrontSide, Mesh, RepeatWrapping, Shape, TextureLoader, Vector3 } from 'three';
+import { Color, Euler, FrontSide, Mesh, RepeatWrapping, Shape, TextureLoader, Vector3 } from 'three';
 import { CommonStoreState, useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { ThreeEvent, useThree } from '@react-three/fiber';
@@ -63,6 +63,7 @@ const Polygon = ({
   foundationId,
   vertices,
   opacity = 1,
+  shininess = 0,
   textureType = PolygonTexture.NoTexture,
 }: PolygonModel) => {
   const setCommonStore = useStore(Selector.set);
@@ -409,14 +410,27 @@ const Polygon = ({
           }}
         >
           <shapeBufferGeometry attach="geometry" args={[shape]} />
-          <meshStandardMaterial
-            attach="material"
-            color={textureType === PolygonTexture.NoTexture ? color : 'white'}
-            map={texture}
-            side={FrontSide}
-            transparent={opacity < 1}
-            opacity={opacity}
-          />
+          {shininess === undefined || shininess === 0 ? (
+            <meshStandardMaterial
+              attach="material"
+              color={textureType === PolygonTexture.NoTexture ? color : 'white'}
+              map={texture}
+              side={FrontSide}
+              transparent={opacity < 1}
+              opacity={opacity}
+            />
+          ) : (
+            <meshPhongMaterial
+              attach="material"
+              color={textureType === PolygonTexture.NoTexture ? color : 'white'}
+              map={texture}
+              side={FrontSide}
+              specular={new Color('white')}
+              shininess={shininess}
+              transparent={opacity < 1}
+              opacity={opacity}
+            />
+          )}
         </mesh>
       )}
 

@@ -172,17 +172,20 @@ const GroundMap = ({ width = 400, height = 400 }: { width: number; height: numbe
           undo: () => {
             setCommonStore((state) => {
               state.viewState.mapType = undoableChange.oldValue as string;
+              state.viewState.groundImageType = state.viewState.mapType;
             });
           },
           redo: () => {
             setCommonStore((state) => {
               state.viewState.mapType = undoableChange.newValue as string;
+              state.viewState.groundImageType = state.viewState.mapType;
             });
           },
         } as UndoableChange;
         addUndoable(undoableChange);
         setCommonStore((state) => {
           state.viewState.mapType = typeId;
+          state.viewState.groundImageType = typeId;
         });
       }
     }

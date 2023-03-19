@@ -540,55 +540,53 @@ export const WallMenu = React.memo(() => {
 
           {renderStructureItems()}
 
-          {wall.wallStructure === WallStructure.Default && (
-            <Menu.Item
-              style={{ paddingLeft: '36px' }}
-              key={'add-polygon-on-wall'}
-              onClick={() => {
-                if (wall) {
-                  const foundation = getFoundation(wall);
-                  if (foundation) {
-                    setCommonStore((state) => {
-                      state.objectTypeToAdd = ObjectType.Polygon;
-                    });
-                    const polygon = ElementModelFactory.makePolygon(
-                      wall,
-                      0,
-                      0,
-                      0,
-                      new Vector3(0, 0, 1),
-                      [0, 0, 0],
-                      ObjectType.Wall,
-                    );
-                    setCommonStore((state) => {
-                      state.elements.push(polygon);
-                      state.objectTypeToAdd = ObjectType.None;
-                    });
-                    const undoableAdd = {
-                      name: 'Add',
-                      timestamp: Date.now(),
-                      addedElement: polygon,
-                      undo: () => {
-                        removeElementById(undoableAdd.addedElement.id, false);
-                      },
-                      redo: () => {
-                        setCommonStore((state) => {
-                          state.elements.push(undoableAdd.addedElement);
-                          state.selectedElement = undoableAdd.addedElement;
-                        });
-                      },
-                    } as UndoableAdd;
-                    addUndoable(undoableAdd);
-                    setCommonStore((state) => {
-                      state.objectTypeToAdd = ObjectType.None;
-                    });
-                  }
+          <Menu.Item
+            style={{ paddingLeft: '36px' }}
+            key={'add-polygon-on-wall'}
+            onClick={() => {
+              if (wall) {
+                const foundation = getFoundation(wall);
+                if (foundation) {
+                  setCommonStore((state) => {
+                    state.objectTypeToAdd = ObjectType.Polygon;
+                  });
+                  const polygon = ElementModelFactory.makePolygon(
+                    wall,
+                    0,
+                    0,
+                    0,
+                    new Vector3(0, 0, 1),
+                    [0, 0, 0],
+                    ObjectType.Wall,
+                  );
+                  setCommonStore((state) => {
+                    state.elements.push(polygon);
+                    state.objectTypeToAdd = ObjectType.None;
+                  });
+                  const undoableAdd = {
+                    name: 'Add',
+                    timestamp: Date.now(),
+                    addedElement: polygon,
+                    undo: () => {
+                      removeElementById(undoableAdd.addedElement.id, false);
+                    },
+                    redo: () => {
+                      setCommonStore((state) => {
+                        state.elements.push(undoableAdd.addedElement);
+                        state.selectedElement = undoableAdd.addedElement;
+                      });
+                    },
+                  } as UndoableAdd;
+                  addUndoable(undoableAdd);
+                  setCommonStore((state) => {
+                    state.objectTypeToAdd = ObjectType.None;
+                  });
                 }
-              }}
-            >
-              {i18n.t('foundationMenu.AddPolygon', lang)}
-            </Menu.Item>
-          )}
+              }
+            }}
+          >
+            {i18n.t('foundationMenu.AddPolygon', lang)}
+          </Menu.Item>
 
           {renderFillSubMenu()}
 

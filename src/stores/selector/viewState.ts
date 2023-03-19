@@ -39,6 +39,8 @@ export const autoRotate = (state: CommonStoreState) => state.viewState.autoRotat
 
 export const groundImage = (state: CommonStoreState) => state.viewState.groundImage;
 
+export const groundImageType = (state: CommonStoreState) => state.viewState.groundImageType;
+
 export const groundColor = (state: CommonStoreState) => state.viewState.groundColor;
 
 export const waterSurface = (state: CommonStoreState) => state.viewState.waterSurface;

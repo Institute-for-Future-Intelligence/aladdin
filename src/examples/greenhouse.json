@@ -1,7 +1,7 @@
 {
-  "docid": "a12Z1aJsLwHf8DzkQqUMZt",
-  "time": "02/04/2023 12:58 pm",
-  "timestamp": 1675533539849,
+  "docid": "gj8mmfSE6fqAAUtvXZYGkb",
+  "time": "03/19/2023 02:00 pm",
+  "timestamp": 1679248844823,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -2631,8 +2631,60 @@
       "parentId": "m7AH7DcnoGzAq9kryBy4RS",
       "id": "nfuYXRCdKKX1yeEVfQ1Q8w",
       "selected": false
+    },
+    {
+      "type": "Polygon",
+      "cx": 0,
+      "cy": 0,
+      "cz": 0,
+      "lx": 0.4,
+      "ly": 0.4,
+      "lz": 0.4,
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "vertices": [
+        {
+          "x": -0.19999999999999998,
+          "y": -0.7999999999999999
+        },
+        {
+          "x": -0.19999999999999998,
+          "y": -0.4666666666666666
+        },
+        {
+          "x": 0.20000000000000004,
+          "y": -0.4666666666666666
+        },
+        {
+          "x": 0.20000000000000004,
+          "y": -0.7999999999999999
+        }
+      ],
+      "parentId": "skm8dNPSkFaVkoUwiPNfq1",
+      "parentType": "Wall",
+      "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
+      "selected": false,
+      "filled": true,
+      "selectedIndex": 0,
+      "id": "9M33FqMDNgV3pDjYk2UES3",
+      "text": "Greenhouse",
+      "fontSize": 0.5,
+      "fontColor": "gold",
+      "fontStrokeWidth": 0.01,
+      "noOutline": true,
+      "opacity": 0
     }
   ],
+  "sceneRadius": 15,
   "view": {
     "dailyPvYieldPanelX": 0,
     "mapPanelY": 0,
@@ -2662,9 +2714,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -10.834115279681336,
-      -10.47044765597671,
-      1.7100293532228583
+      -13.969061585407742,
+      -10.143303302147187,
+      2.3881460403679218
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -2713,9 +2765,9 @@
     "shadowEnabled": true,
     "showInstructionPanel": true,
     "panCenter": [
-      -1.0293384013825797,
-      3.0395897771525373,
-      1.359191983050544
+      -1.0306086242769346,
+      3.0389446343818545,
+      1.3437141951705311
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
     "showHeliodonPanel": false,
@@ -2798,5 +2850,9 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
+  "modelType": "Unknown",
+  "modelAuthor": null,
+  "modelLabel": null,
+  "modelDescription": null,
   "notes": []
 }

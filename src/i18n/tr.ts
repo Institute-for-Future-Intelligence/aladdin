@@ -785,6 +785,7 @@ export const i18n_tr = {
       FontStrokeColor: 'Font Stroke Color',
       FontStrokeWidth: 'Font Stroke Width',
       NoOutline: 'No Outline',
+      Shiny: 'Shiny',
       Filled: 'Dolgu',
       FillTexture: 'Dolgu Dokusu',
       FillColor: 'Dolgu Rengi',

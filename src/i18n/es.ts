@@ -785,6 +785,7 @@ export const i18n_es = {
       FontStrokeColor: 'Font Stroke Color',
       FontStrokeWidth: 'Font Stroke Width',
       NoOutline: 'No Outline',
+      Shiny: 'Shiny',
       Filled: 'Rellenar',
       FillTexture: 'Rellenar textura',
       FillColor: 'Rellenar color',

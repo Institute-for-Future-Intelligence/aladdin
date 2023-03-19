@@ -1,8 +1,8 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { useLoader } from '@react-three/fiber';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import { FontLoader, Group, MeshBasicMaterial, TextGeometryParameters } from 'three';
@@ -10,8 +10,12 @@ import compassObj from '../assets/compass.obj';
 import helvetikerFont from '../fonts/helvetiker_regular.typeface.fnt';
 import { useRefStore } from 'src/stores/commonRef';
 import { HALF_PI } from '../constants';
+import { useStore } from '../stores/common';
+import * as Selector from '../stores/selector';
 
 const Compass = () => {
+  const groundImage = useStore(Selector.viewState.groundImage);
+  const groundImageType = useStore(Selector.viewState.groundImageType) ?? 'roadmap';
   const model = useLoader(OBJLoader, compassObj);
   const font = useLoader(FontLoader, helvetikerFont);
   const textGeometryParams = {
@@ -19,8 +23,13 @@ const Compass = () => {
     height: 0.0,
     size: 0.6,
   } as TextGeometryParameters;
-  const textMaterial = new MeshBasicMaterial({ color: 'antiquewhite' });
   const compassMaterial = new MeshBasicMaterial({ color: 'red' });
+
+  const textMaterial = useMemo(() => {
+    return new MeshBasicMaterial({
+      color: groundImage ? (groundImageType !== 'roadmap' ? 'antiquewhite' : 'darkslategrey') : 'darkgrey',
+    });
+  }, [groundImage, groundImageType]);
 
   const compassRef = useRef<Group>(null);
   useEffect(() => {

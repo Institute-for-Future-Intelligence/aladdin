@@ -1,7 +1,7 @@
 {
-  "docid": "xnYaNWQp32TgAydDKsysGZ",
-  "time": "02/05/2023 03:12 pm",
-  "timestamp": 1675627948353,
+  "docid": "aseYqeeyQePpsAzjNKrJj9",
+  "time": "03/19/2023 01:19 pm",
+  "timestamp": 1679246378190,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -1686,7 +1686,7 @@
       "poleSpacing": 3,
       "cx": 0.02669213223982052,
       "cy": 0.08291430106063127,
-      "cz": 7.726383258156051,
+      "cz": 7.726383223578941,
       "lx": 6.232,
       "ly": 8.368,
       "lz": 0.046,
@@ -1822,8 +1822,60 @@
       "id": "j4JYudDCjzNXq8FDPWZEem",
       "selected": false,
       "inside": true
+    },
+    {
+      "type": "Polygon",
+      "cx": 0,
+      "cy": 0,
+      "cz": 0,
+      "lx": 0.4,
+      "ly": 0.4,
+      "lz": 0.4,
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "vertices": [
+        {
+          "x": -0.39094575141857246,
+          "y": -0.6076345062918038
+        },
+        {
+          "x": -0.3475489897325333,
+          "y": -0.5252228219763136
+        },
+        {
+          "x": -0.30415222804649406,
+          "y": -0.6076345062918038
+        },
+        {
+          "x": -0.3475489897325333,
+          "y": -0.690046190607294
+        }
+      ],
+      "parentId": "pPpJHGJ2bGVqLdA1FpXi4V",
+      "parentType": "Wall",
+      "foundationId": "fbqvzYqiEy79jeL8wsadib",
+      "selected": false,
+      "filled": true,
+      "selectedIndex": 0,
+      "id": "it9MDEMzBf4jYFMwSdWCYB",
+      "text": "LAKE INN",
+      "fontSize": 0.6,
+      "fontColor": "white",
+      "noOutline": true,
+      "opacity": 0,
+      "fontStrokeWidth": 0.01
     }
   ],
+  "sceneRadius": 16,
   "view": {
     "dailyPvYieldPanelX": 0,
     "mapPanelY": 0,
@@ -1853,9 +1905,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      19.66411101746247,
-      2.319728376255528,
-      6.745159151214622
+      19.660657731492446,
+      3.006463417408363,
+      7.024968554761996
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -1990,5 +2042,9 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
+  "modelType": "Unknown",
+  "modelAuthor": null,
+  "modelLabel": null,
+  "modelDescription": null,
   "notes": []
 }

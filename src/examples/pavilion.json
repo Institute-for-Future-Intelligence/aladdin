@@ -1,7 +1,7 @@
 {
-  "docid": "89EN3Yppgw5DS2SHqVB3NQ",
-  "time": "02/04/2023 01:02 pm",
-  "timestamp": 1675533729273,
+  "docid": "pBi5xeMeSVt3pt1S6pNqhP",
+  "time": "03/19/2023 01:57 pm",
+  "timestamp": 1679248653859,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -1955,8 +1955,62 @@
       "parentId": "m7AH7DcnoGzAq9kryBy4RS",
       "id": "nctqWUAWcyYHT4SGzerSs4",
       "selected": false
+    },
+    {
+      "type": "Polygon",
+      "cx": 0,
+      "cy": 0,
+      "cz": 0,
+      "lx": 0.4,
+      "ly": 0.4,
+      "lz": 0.4,
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "vertices": [
+        {
+          "x": -0.5,
+          "y": -0.5
+        },
+        {
+          "x": -0.5,
+          "y": -0.25
+        },
+        {
+          "x": 0.5,
+          "y": -0.25
+        },
+        {
+          "x": 0.5,
+          "y": -0.5
+        }
+      ],
+      "parentId": "8XDG3EHsQoX26MhuzwMYUM",
+      "parentType": "Wall",
+      "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
+      "selected": false,
+      "filled": true,
+      "selectedIndex": 2,
+      "id": "bcBZb3U93o5F2jxgHWz66U",
+      "text": "Welcome to Moosehorn State Park",
+      "fontSize": 0.5,
+      "fontColor": "gold",
+      "fontOutlineColor": "white",
+      "fontOutlineWidth": 0,
+      "fontStrokeWidth": 0.01,
+      "noOutline": false,
+      "textureType": "Polygon Texture #9"
     }
   ],
+  "sceneRadius": 19,
   "view": {
     "dailyPvYieldPanelX": 0,
     "mapPanelY": 0,
@@ -1986,9 +2040,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      15.97985297953324,
-      -8.035431687300731,
-      2.3292876283609303
+      17.624223636446942,
+      -6.695533088864225,
+      2.329292013297666
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -2122,5 +2176,9 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
+  "modelType": "Unknown",
+  "modelAuthor": null,
+  "modelLabel": null,
+  "modelDescription": null,
   "notes": []
 }

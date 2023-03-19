@@ -88,6 +88,17 @@ export const PolygonMenu = React.memo(() => {
     });
   };
 
+  const updateShininessById = (id: string, shininess: number) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Polygon && e.id === id) {
+          (e as PolygonModel).shininess = shininess;
+          break;
+        }
+      }
+    });
+  };
+
   const updateTextById = (id: string, value: string) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
@@ -216,6 +227,27 @@ export const PolygonMenu = React.memo(() => {
       } as UndoableCheck;
       addUndoable(undoableCheck);
       updateNoOutlineById(polygon.id, e.target.checked);
+    }
+  };
+
+  const toggleShiny = (e: CheckboxChangeEvent) => {
+    if (polygon) {
+      const shininess = 100;
+      const undoableCheck = {
+        name: 'Shiny Polygon',
+        timestamp: Date.now(),
+        checked: (polygon?.shininess ?? 0) > 0,
+        selectedElementId: polygon.id,
+        selectedElementType: ObjectType.Polygon,
+        undo: () => {
+          updateShininessById(polygon.id, undoableCheck.checked ? 0 : shininess);
+        },
+        redo: () => {
+          updateShininessById(polygon.id, undoableCheck.checked ? shininess : 0);
+        },
+      } as UndoableCheck;
+      addUndoable(undoableCheck);
+      updateShininessById(polygon.id, e.target.checked ? shininess : 0);
     }
   };
 
@@ -441,6 +473,13 @@ export const PolygonMenu = React.memo(() => {
         <Menu.Item key={'polygon-filled'}>
           <Checkbox checked={!!polygon?.filled} onChange={toggleFilled}>
             {i18n.t('polygonMenu.Filled', lang)}
+          </Checkbox>
+        </Menu.Item>
+      )}
+      {editable && polygon.filled && (
+        <Menu.Item key={'polygon-shiny'}>
+          <Checkbox checked={(polygon?.shininess ?? 0) > 0} onChange={toggleShiny}>
+            {i18n.t('polygonMenu.Shiny', lang)}
           </Checkbox>
         </Menu.Item>
       )}

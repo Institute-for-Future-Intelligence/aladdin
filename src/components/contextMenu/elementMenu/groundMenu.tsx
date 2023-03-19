@@ -51,6 +51,7 @@ export const GroundMenu = React.memo(() => {
   const setGroundImage = (checked: boolean) => {
     setCommonStore((state) => {
       state.viewState.groundImage = checked;
+      state.viewState.groundImageType = state.viewState.mapType;
     });
   };
 

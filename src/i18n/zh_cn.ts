@@ -762,6 +762,7 @@ export const i18n_zh_cn = {
       FontStrokeColor: '字体描边颜色',
       FontStrokeWidth: '字体描边线宽',
       NoOutline: '无轮廓线',
+      Shiny: '光泽',
       Filled: '填充',
       FillTexture: '填充材质',
       FillColor: '填充颜色',

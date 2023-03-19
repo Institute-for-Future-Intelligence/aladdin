@@ -30,6 +30,7 @@ export interface ViewState {
   showElevationAngle: boolean;
   showZenithAngle: boolean;
   groundImage: boolean;
+  groundImageType: string;
   groundColor: string;
   waterSurface: boolean;
   solarPanelShininess?: number;

@@ -41,6 +41,7 @@ export class DefaultViewState implements ViewState {
   showElevationAngle: boolean;
   showZenithAngle: boolean;
   groundImage: boolean;
+  groundImageType: string;
   groundColor: string;
   waterSurface: boolean;
   solarPanelShininess: number;
@@ -132,6 +133,7 @@ export class DefaultViewState implements ViewState {
     this.showElevationAngle = true;
     this.showZenithAngle = true;
     this.groundImage = false;
+    this.groundImageType = 'roadmap';
     this.groundColor = '#16A5A5';
     this.waterSurface = false;
     this.solarPanelShininess = DEFAULT_SOLAR_PANEL_SHININESS;
@@ -224,6 +226,7 @@ export class DefaultViewState implements ViewState {
     viewState.showElevationAngle = true;
     viewState.showZenithAngle = true;
     viewState.groundImage = false;
+    viewState.groundImageType = 'roadmap';
     viewState.groundColor = '#16A5A5';
     viewState.waterSurface = false;
     viewState.solarPanelShininess = DEFAULT_SOLAR_PANEL_SHININESS;

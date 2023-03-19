@@ -1,7 +1,7 @@
 {
-  "docid": "n6mgQMcyYnHCSLuudjaBsB",
-  "time": "02/04/2023 02:18 pm",
-  "timestamp": 1675538308023,
+  "docid": "m1j5HqK6ztTDmHotnswvhm",
+  "time": "03/19/2023 01:23 pm",
+  "timestamp": 1679246616189,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -1884,8 +1884,59 @@
       "foundationId": "s7XmQ94X6RJALjEtkckmRw",
       "id": "e5YYaGmX4NkSq53yXqBiSb",
       "selected": false
+    },
+    {
+      "type": "Polygon",
+      "cx": 0,
+      "cy": 0,
+      "cz": 0,
+      "lx": 0.4,
+      "ly": 0.4,
+      "lz": 0.4,
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "vertices": [
+        {
+          "x": -0.4500000000000003,
+          "y": -0.425
+        },
+        {
+          "x": -0.4500000000000003,
+          "y": -0.17499999999999996
+        },
+        {
+          "x": -0.2833333333333334,
+          "y": -0.17499999999999996
+        },
+        {
+          "x": -0.2833333333333334,
+          "y": -0.425
+        }
+      ],
+      "parentId": "1sYogQ8Va73vub552Dsk1p",
+      "parentType": "Wall",
+      "foundationId": "fAfbfM7oEHfq1VBgchFech",
+      "selected": false,
+      "filled": true,
+      "selectedIndex": 3,
+      "id": "mMTWwGXVY6tHrH3tFfFj84",
+      "text": "P",
+      "fontColor": "black",
+      "fontOutlineColor": "white",
+      "fontOutlineWidth": 0.1,
+      "fontSize": 2
     }
   ],
+  "sceneRadius": 106,
   "view": {
     "dailyPvYieldPanelX": 0,
     "mapPanelY": 158,
@@ -1915,9 +1966,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -60.49927780338871,
-      -80.46951351223066,
-      101.06701884770683
+      -13.677779559893043,
+      -87.22834473506032,
+      67.89303797087159
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -1966,9 +2017,9 @@
     "shadowEnabled": true,
     "showInstructionPanel": false,
     "panCenter": [
-      -9.958026327854226,
-      -20.88083011142786,
-      10.018296899347582
+      7.0532361348326695,
+      -29.239499866887954,
+      4.7578192072686045
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
     "showHeliodonPanel": false,
@@ -2178,6 +2229,10 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
+  "modelType": "Unknown",
+  "modelAuthor": null,
+  "modelLabel": null,
+  "modelDescription": null,
   "notes": [
     "Hypothetical solar canopies for a garage"
   ]

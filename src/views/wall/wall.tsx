@@ -2147,16 +2147,19 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
                     <SolarPanelOnWall {...(e as SolarPanelModel)} cx={e.cx * lx} cz={e.cz * lz} absRotation={r} />
                   </group>
                 );
-              case ObjectType.Polygon: {
-                if (fill === WallFill.Empty) return null;
-                return <Polygon key={e.id} {...(e as PolygonModel)} />;
-              }
               default:
                 return null;
             }
           })}
         </>
       )}
+
+      {elementsOnWall.map((e) => {
+        if (e.type === ObjectType.Polygon && fill !== WallFill.Empty) {
+          return <Polygon key={e.id} {...(e as PolygonModel)} />;
+        }
+        return null;
+      })}
 
       {wallStructure === WallStructure.Stud && renderStuds()}
       {wallStructure === WallStructure.Pillar && renderPillars()}

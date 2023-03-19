@@ -1,7 +1,7 @@
 {
-  "docid": "6qdi8GbmVW5VuZ8pVNooD5",
-  "time": "02/04/2023 02:17 pm",
-  "timestamp": 1675538272094,
+  "docid": "smhvUEBkVkGKNFKH9wXerr",
+  "time": "03/19/2023 01:40 pm",
+  "timestamp": 1679247607363,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -122,7 +122,7 @@
       "studSpacing": 20,
       "studColor": "#ffffff",
       "studWidth": 0.2,
-      "structureSpacing": 2,
+      "structureSpacing": 2.1,
       "structureWidth": 0.1,
       "structureColor": "white",
       "fill": "Full",
@@ -304,7 +304,7 @@
       "studSpacing": 100,
       "studColor": "#ffffff",
       "studWidth": 0.2,
-      "structureSpacing": 2,
+      "structureSpacing": 2.1,
       "structureWidth": 0.1,
       "structureColor": "white",
       "fill": "Full",
@@ -480,8 +480,152 @@
       "parentId": "Ground",
       "id": "7y5foXVbpe2pYJ2ZMcNgG1",
       "selected": false
+    },
+    {
+      "type": "Polygon",
+      "cx": -0.054330031344316826,
+      "cy": -0.27967892470948996,
+      "cz": 0,
+      "lx": 0.4,
+      "ly": 0.4,
+      "lz": 0.4,
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "vertices": [
+        {
+          "x": -0.29711331243712213,
+          "y": -0.37645814056822685
+        },
+        {
+          "x": -0.25433003134431686,
+          "y": -0.17645814056822684
+        },
+        {
+          "x": 0.14566996865568319,
+          "y": -0.17645814056822684
+        },
+        {
+          "x": 0.18845324974848848,
+          "y": -0.37645814056822685
+        }
+      ],
+      "parentId": "skm8dNPSkFaVkoUwiPNfq1",
+      "parentType": "Wall",
+      "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
+      "selected": false,
+      "filled": true,
+      "selectedIndex": 3,
+      "id": "jFtAKqea5hrJYqvHqsXVig",
+      "fontColor": "white",
+      "text": "ELM STREET",
+      "fontSize": 0.2,
+      "noOutline": true,
+      "opacity": 0
+    },
+    {
+      "type": "Polygon",
+      "cx": -0.03159943058059205,
+      "cy": -5.551115123125783e-16,
+      "cz": 0.3151039010139313,
+      "lx": 0.4,
+      "ly": 0.4,
+      "lz": 0.4,
+      "filled": true,
+      "noOutline": true,
+      "color": "#ffffff",
+      "opacity": 0,
+      "text": "ELM STREET",
+      "fontSize": 0.2,
+      "fontColor": "white",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "vertices": [
+        {
+          "x": -0.19999999999999996,
+          "y": -0.4200653155418168
+        },
+        {
+          "x": -0.15721671890719469,
+          "y": -0.2200653155418168
+        },
+        {
+          "x": 0.24278328109280536,
+          "y": -0.2200653155418168
+        },
+        {
+          "x": 0.28556656218561066,
+          "y": -0.4200653155418168
+        }
+      ],
+      "parentId": "8XDG3EHsQoX26MhuzwMYUM",
+      "parentType": "Wall",
+      "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
+      "id": "jgt48M3TDZL99Yra6Kyr5Q",
+      "selected": false
+    },
+    {
+      "type": "Human",
+      "name": "Julio",
+      "cx": 0.5178196751817774,
+      "cy": -0.5447731101746882,
+      "cz": 0.02866500802338123,
+      "lx": 0.5,
+      "lz": 1.76,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "m7AH7DcnoGzAq9kryBy4RS",
+      "id": "q3FndYLdQ24MSDvkeE4ifM",
+      "selected": false
+    },
+    {
+      "type": "Human",
+      "name": "June",
+      "cx": -1.7835969899126987,
+      "cy": -1.0262736798633494,
+      "cz": 0.0073300155767722225,
+      "lx": 0.65,
+      "lz": 1.85,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "m7AH7DcnoGzAq9kryBy4RS",
+      "id": "hpYMNr3jwLZFDdiKVSnVAY",
+      "selected": false
     }
   ],
+  "sceneRadius": 11,
   "view": {
     "dailyPvYieldPanelX": 0,
     "mapPanelY": 0,
@@ -511,9 +655,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -4.898987225987274,
-      -9.182628086113693,
-      3.56348747768172
+      -7.4101525299496,
+      -7.1680457550968235,
+      2.8167371698815544
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -653,6 +797,10 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
+  "modelType": "Unknown",
+  "modelAuthor": null,
+  "modelLabel": null,
+  "modelDescription": null,
   "notes": [
     "Solar bus stop"
   ]

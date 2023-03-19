@@ -11,6 +11,7 @@ export interface PolygonModel extends ElementModel {
   filled: boolean;
   noOutline: boolean;
   opacity: number;
+  shininess?: number;
   textureType: PolygonTexture;
   selectedIndex: number;
   lineStyle: LineStyle;
