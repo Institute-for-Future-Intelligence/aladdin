@@ -1,7 +1,7 @@
 {
-  "docid": "sch51NG1ErieiyJCNsnTYE",
-  "time": "02/04/2023 02:00 pm",
-  "timestamp": 1675537212041,
+  "docid": "aFcdxAJVoSdG6nVTA8Pvcp",
+  "time": "03/19/2023 11:02 am",
+  "timestamp": 1679238146116,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -1465,8 +1465,8 @@
     {
       "type": "Human",
       "name": "Julia",
-      "cx": 0.5646159692882855,
-      "cy": -4.835959718984462,
+      "cx": 0.2781860356360548,
+      "cy": -5.386859602824218,
       "cz": 0.05999999865889549,
       "lx": 0.43,
       "lz": 1.71,
@@ -1515,8 +1515,73 @@
       "foundationId": "axj9GVUBNvhnWAa3G8T3wG",
       "id": "fTMHecXmkxoFyi5nVgZruF",
       "filled": false
+    },
+    {
+      "type": "Polygon",
+      "cx": 0,
+      "cy": 0,
+      "cz": 0,
+      "lx": 0.4,
+      "ly": 0.4,
+      "lz": 0.4,
+      "color": "#4d4d4d",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "vertices": [
+        {
+          "x": -0.04428149604161406,
+          "y": -0.35
+        },
+        {
+          "x": -0.06199409445825968,
+          "y": -0.3
+        },
+        {
+          "x": -0.06199409445825968,
+          "y": -0.25
+        },
+        {
+          "x": -0.04428149604161406,
+          "y": -0.2
+        },
+        {
+          "x": 0.05142883345662218,
+          "y": -0.20084745762711861
+        },
+        {
+          "x": 0.07085039366658251,
+          "y": -0.25
+        },
+        {
+          "x": 0.07085039366658251,
+          "y": -0.3
+        },
+        {
+          "x": 0.05313779524993687,
+          "y": -0.35
+        }
+      ],
+      "parentId": "roDDPncXBpNgmNum9aUaov",
+      "parentType": "Wall",
+      "foundationId": "axj9GVUBNvhnWAa3G8T3wG",
+      "selected": false,
+      "filled": true,
+      "selectedIndex": 1,
+      "id": "pTMN5Rfce2g9VdNDy1KZ2d",
+      "text": "DEPOT",
+      "fontSize": 0.3,
+      "fontColor": "gold"
     }
   ],
+  "sceneRadius": 10,
   "view": {
     "dailyPvYieldPanelX": 0,
     "mapPanelY": 0,
@@ -1546,9 +1611,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -4.297487968561387,
-      -16.845745793668158,
-      4.084049378760644
+      -5.021632324681999,
+      -20.82661619898035,
+      3.534737988528561
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -1688,6 +1753,10 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
+  "modelType": "Unknown",
+  "modelAuthor": null,
+  "modelLabel": null,
+  "modelDescription": null,
   "notes": [
     "Monitor roof"
   ]

@@ -22,6 +22,7 @@ import PolygonLineWidthSelection from './polygonLineWidthSelection';
 import SolarPanelArrayGaWizard from './solarPanelArrayGaWizard';
 import SolarPanelArrayPsoWizard from './solarPanelArrayPsoWizard';
 import PolygonOpacityInput from './polygonOpacityInput';
+import { UndoableChange } from '../../../undo/UndoableChange';
 
 export const PolygonMenu = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
@@ -37,6 +38,10 @@ export const PolygonMenu = React.memo(() => {
   const [textContent, setTextContent] = useState<string>(polygon?.text ?? '');
   const [textSize, setTextSize] = useState<number>(polygon?.fontSize ?? 1);
   const [textColor, setTextColor] = useState<string>(polygon?.fontColor ?? 'black');
+  const [textOutlineColor, setTextOutlineColor] = useState<string>(polygon?.fontOutlineColor ?? 'white');
+  const [textOutlineWidth, setTextOutlineWidth] = useState<number>(polygon?.fontOutlineWidth ?? 0);
+  const [textStrokeColor, setTextStrokeColor] = useState<string>(polygon?.fontStrokeColor ?? 'black');
+  const [textStrokeWidth, setTextStrokeWidth] = useState<number>(polygon?.fontStrokeWidth ?? 0);
   const [lineColorDialogVisible, setLineColorDialogVisible] = useState(false);
   const [lineStyleDialogVisible, setLineStyleDialogVisible] = useState(false);
   const [lineWidthDialogVisible, setLineWidthDialogVisible] = useState(false);
@@ -61,7 +66,7 @@ export const PolygonMenu = React.memo(() => {
 
   const editable = !polygon?.locked;
 
-  const updatePolygonFilledById = (id: string, filled: boolean) => {
+  const updateFilledById = (id: string, filled: boolean) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Polygon && e.id === id) {
@@ -72,7 +77,7 @@ export const PolygonMenu = React.memo(() => {
     });
   };
 
-  const updatePolygonNoOutlineById = (id: string, noOutline: boolean) => {
+  const updateNoOutlineById = (id: string, noOutline: boolean) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Polygon && e.id === id) {
@@ -83,7 +88,98 @@ export const PolygonMenu = React.memo(() => {
     });
   };
 
-  const togglePolygonFilled = (e: CheckboxChangeEvent) => {
+  const updateTextById = (id: string, value: string) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === id) {
+          if (!e.locked && e.type === ObjectType.Polygon) {
+            (e as PolygonModel).text = value;
+          }
+          break;
+        }
+      }
+    });
+  };
+
+  const updateFontSizeById = (id: string, value: number) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === id) {
+          if (!e.locked && e.type === ObjectType.Polygon) {
+            (e as PolygonModel).fontSize = value;
+          }
+          break;
+        }
+      }
+    });
+  };
+
+  const updateFontColorById = (id: string, value: string) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === id) {
+          if (!e.locked && e.type === ObjectType.Polygon) {
+            (e as PolygonModel).fontColor = value;
+          }
+          break;
+        }
+      }
+    });
+  };
+
+  const updateFontOutlineWidthById = (id: string, value: number) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === id) {
+          if (!e.locked && e.type === ObjectType.Polygon) {
+            (e as PolygonModel).fontOutlineWidth = value;
+          }
+          break;
+        }
+      }
+    });
+  };
+
+  const updateFontOutlineColorById = (id: string, value: string) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === id) {
+          if (!e.locked && e.type === ObjectType.Polygon) {
+            (e as PolygonModel).fontOutlineColor = value;
+          }
+          break;
+        }
+      }
+    });
+  };
+
+  const updateFontStrokeWidthById = (id: string, value: number) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === id) {
+          if (!e.locked && e.type === ObjectType.Polygon) {
+            (e as PolygonModel).fontStrokeWidth = value;
+          }
+          break;
+        }
+      }
+    });
+  };
+
+  const updateFontStrokeColorById = (id: string, value: string) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === id) {
+          if (!e.locked && e.type === ObjectType.Polygon) {
+            (e as PolygonModel).fontStrokeColor = value;
+          }
+          break;
+        }
+      }
+    });
+  };
+
+  const toggleFilled = (e: CheckboxChangeEvent) => {
     if (polygon) {
       const undoableCheck = {
         name: 'Fill Polygon',
@@ -92,18 +188,18 @@ export const PolygonMenu = React.memo(() => {
         selectedElementId: polygon.id,
         selectedElementType: ObjectType.Polygon,
         undo: () => {
-          updatePolygonFilledById(polygon.id, !undoableCheck.checked);
+          updateFilledById(polygon.id, !undoableCheck.checked);
         },
         redo: () => {
-          updatePolygonFilledById(polygon.id, undoableCheck.checked);
+          updateFilledById(polygon.id, undoableCheck.checked);
         },
       } as UndoableCheck;
       addUndoable(undoableCheck);
-      updatePolygonFilledById(polygon.id, e.target.checked);
+      updateFilledById(polygon.id, e.target.checked);
     }
   };
 
-  const togglePolygonNoOutline = (e: CheckboxChangeEvent) => {
+  const toggleNoOutline = (e: CheckboxChangeEvent) => {
     if (polygon) {
       const undoableCheck = {
         name: 'No Outline for Polygon',
@@ -112,54 +208,162 @@ export const PolygonMenu = React.memo(() => {
         selectedElementId: polygon.id,
         selectedElementType: ObjectType.Polygon,
         undo: () => {
-          updatePolygonNoOutlineById(polygon.id, !undoableCheck.checked);
+          updateNoOutlineById(polygon.id, !undoableCheck.checked);
         },
         redo: () => {
-          updatePolygonNoOutlineById(polygon.id, undoableCheck.checked);
+          updateNoOutlineById(polygon.id, undoableCheck.checked);
         },
       } as UndoableCheck;
       addUndoable(undoableCheck);
-      updatePolygonNoOutlineById(polygon.id, e.target.checked);
+      updateNoOutlineById(polygon.id, e.target.checked);
     }
   };
 
-  const updateFontSize = () => {
-    setCommonStore((state) => {
-      for (const e of state.elements) {
-        if (e.id === polygon.id) {
-          if (!e.locked && e.type === ObjectType.Polygon) {
-            (e as PolygonModel).fontSize = textSize;
-          }
-          break;
-        }
-      }
-    });
+  const changeText = () => {
+    if (polygon) {
+      const undoableChange = {
+        name: 'Set Text for Polygon',
+        timestamp: Date.now(),
+        oldValue: polygon.text ?? '',
+        newValue: textContent,
+        changedElementId: polygon.id,
+        changedElementType: ObjectType.Polygon,
+        undo: () => {
+          updateTextById(polygon.id, undoableChange.oldValue as string);
+        },
+        redo: () => {
+          updateTextById(polygon.id, undoableChange.newValue as string);
+        },
+      } as UndoableChange;
+      addUndoable(undoableChange);
+      updateTextById(polygon.id, textContent);
+    }
   };
 
-  const updateFontColor = () => {
-    setCommonStore((state) => {
-      for (const e of state.elements) {
-        if (e.id === polygon.id) {
-          if (!e.locked && e.type === ObjectType.Polygon) {
-            (e as PolygonModel).fontColor = textColor;
-          }
-          break;
-        }
-      }
-    });
+  const changeFontSize = () => {
+    if (polygon) {
+      const undoableChange = {
+        name: 'Set Font Size for Polygon',
+        timestamp: Date.now(),
+        oldValue: polygon.fontSize ?? 1,
+        newValue: textSize,
+        changedElementId: polygon.id,
+        changedElementType: ObjectType.Polygon,
+        undo: () => {
+          updateFontSizeById(polygon.id, undoableChange.oldValue as number);
+        },
+        redo: () => {
+          updateFontSizeById(polygon.id, undoableChange.newValue as number);
+        },
+      } as UndoableChange;
+      addUndoable(undoableChange);
+      updateFontSizeById(polygon.id, textSize);
+    }
   };
 
-  const updateText = () => {
-    setCommonStore((state) => {
-      for (const e of state.elements) {
-        if (e.id === polygon.id) {
-          if (!e.locked && e.type === ObjectType.Polygon) {
-            (e as PolygonModel).text = textContent;
-          }
-          break;
-        }
-      }
-    });
+  const changeFontColor = () => {
+    if (polygon) {
+      const undoableChange = {
+        name: 'Set Font Color for Polygon',
+        timestamp: Date.now(),
+        oldValue: polygon.fontColor ?? 'black',
+        newValue: textColor,
+        changedElementId: polygon.id,
+        changedElementType: ObjectType.Polygon,
+        undo: () => {
+          updateFontColorById(polygon.id, undoableChange.oldValue as string);
+        },
+        redo: () => {
+          updateFontColorById(polygon.id, undoableChange.newValue as string);
+        },
+      } as UndoableChange;
+      addUndoable(undoableChange);
+      updateFontColorById(polygon.id, textColor);
+    }
+  };
+
+  const changeFontOutlineWidth = () => {
+    if (polygon) {
+      const undoableChange = {
+        name: 'Set Font Outline Width for Polygon',
+        timestamp: Date.now(),
+        oldValue: polygon.fontOutlineWidth ?? 0,
+        newValue: textOutlineWidth,
+        changedElementId: polygon.id,
+        changedElementType: ObjectType.Polygon,
+        undo: () => {
+          updateFontOutlineWidthById(polygon.id, undoableChange.oldValue as number);
+        },
+        redo: () => {
+          updateFontOutlineWidthById(polygon.id, undoableChange.newValue as number);
+        },
+      } as UndoableChange;
+      addUndoable(undoableChange);
+      updateFontOutlineWidthById(polygon.id, textOutlineWidth);
+    }
+  };
+
+  const changeFontOutlineColor = () => {
+    if (polygon) {
+      const undoableChange = {
+        name: 'Set Font Outline Color for Polygon',
+        timestamp: Date.now(),
+        oldValue: polygon.fontOutlineColor ?? 'white',
+        newValue: textOutlineColor,
+        changedElementId: polygon.id,
+        changedElementType: ObjectType.Polygon,
+        undo: () => {
+          updateFontOutlineColorById(polygon.id, undoableChange.oldValue as string);
+        },
+        redo: () => {
+          updateFontOutlineColorById(polygon.id, undoableChange.newValue as string);
+        },
+      } as UndoableChange;
+      addUndoable(undoableChange);
+      updateFontOutlineColorById(polygon.id, textOutlineColor);
+    }
+  };
+
+  const changeFontStrokeWidth = () => {
+    if (polygon) {
+      const undoableChange = {
+        name: 'Set Font Stroke Width for Polygon',
+        timestamp: Date.now(),
+        oldValue: polygon.fontStrokeWidth ?? 0,
+        newValue: textStrokeWidth,
+        changedElementId: polygon.id,
+        changedElementType: ObjectType.Polygon,
+        undo: () => {
+          updateFontStrokeWidthById(polygon.id, undoableChange.oldValue as number);
+        },
+        redo: () => {
+          updateFontStrokeWidthById(polygon.id, undoableChange.newValue as number);
+        },
+      } as UndoableChange;
+      addUndoable(undoableChange);
+      updateFontStrokeWidthById(polygon.id, textStrokeWidth);
+    }
+  };
+
+  const changeFontStrokeColor = () => {
+    if (polygon) {
+      const undoableChange = {
+        name: 'Set Font Stroke Color for Polygon',
+        timestamp: Date.now(),
+        oldValue: polygon.fontStrokeColor ?? 'black',
+        newValue: textStrokeColor,
+        changedElementId: polygon.id,
+        changedElementType: ObjectType.Polygon,
+        undo: () => {
+          updateFontStrokeColorById(polygon.id, undoableChange.oldValue as string);
+        },
+        redo: () => {
+          updateFontStrokeColorById(polygon.id, undoableChange.newValue as string);
+        },
+      } as UndoableChange;
+      addUndoable(undoableChange);
+      updateFontStrokeColorById(polygon.id, textStrokeColor);
+    }
   };
 
   const legalToPaste = () => {
@@ -235,14 +439,14 @@ export const PolygonMenu = React.memo(() => {
       <Lock keyName={'polygon-lock'} />
       {editable && (
         <Menu.Item key={'polygon-filled'}>
-          <Checkbox checked={!!polygon?.filled} onChange={togglePolygonFilled}>
+          <Checkbox checked={!!polygon?.filled} onChange={toggleFilled}>
             {i18n.t('polygonMenu.Filled', lang)}
           </Checkbox>
         </Menu.Item>
       )}
       {editable && (
         <Menu.Item key={'polygon-no-outline'}>
-          <Checkbox checked={!!polygon?.noOutline} onChange={togglePolygonNoOutline}>
+          <Checkbox checked={!!polygon?.noOutline} onChange={toggleNoOutline}>
             {i18n.t('polygonMenu.NoOutline', lang)}
           </Checkbox>
         </Menu.Item>
@@ -335,13 +539,13 @@ export const PolygonMenu = React.memo(() => {
           {/*have to wrap the text field with a Menu so that it can stay open when the user types in it */}
           <Menu>
             {/* text */}
-            <Menu.Item key={'polygon-text'} style={{ paddingLeft: '36px', marginTop: 10 }}>
+            <Menu.Item key={'polygon-text'} style={{ height: '36px', paddingLeft: '36px', marginTop: 10 }}>
               <Input
                 addonBefore={i18n.t('word.Text', lang) + ':'}
                 value={textContent}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTextContent(e.target.value)}
-                onPressEnter={updateText}
-                onBlur={updateText}
+                onPressEnter={changeText}
+                onBlur={changeText}
               />
             </Menu.Item>
             {/* font size */}
@@ -354,8 +558,8 @@ export const PolygonMenu = React.memo(() => {
                 precision={2}
                 value={textSize}
                 onChange={(value) => setTextSize(value)}
-                onPressEnter={updateFontSize}
-                onBlur={updateFontSize}
+                onPressEnter={changeFontSize}
+                onBlur={changeFontSize}
               />
             </Menu.Item>
             {/* font color */}
@@ -364,8 +568,56 @@ export const PolygonMenu = React.memo(() => {
                 addonBefore={i18n.t('word.FontColor', lang) + ':'}
                 value={textColor}
                 onChange={(e) => setTextColor(e.target.value)}
-                onPressEnter={updateFontColor}
-                onBlur={updateFontColor}
+                onPressEnter={changeFontColor}
+                onBlur={changeFontColor}
+              />
+            </Menu.Item>
+            {/* font outline color */}
+            <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'polygon-font-outline-color'}>
+              <Input
+                addonBefore={i18n.t('polygonMenu.FontOutlineColor', lang) + ':'}
+                value={textOutlineColor}
+                onChange={(e) => setTextOutlineColor(e.target.value)}
+                onPressEnter={changeFontOutlineColor}
+                onBlur={changeFontOutlineColor}
+              />
+            </Menu.Item>
+            {/* font outline width */}
+            <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'polygon-font-outline-width'}>
+              <InputNumber
+                addonBefore={i18n.t('polygonMenu.FontOutlineWidth', lang) + ':'}
+                min={0}
+                max={1}
+                step={0.01}
+                precision={2}
+                value={textOutlineWidth}
+                onChange={(value) => setTextOutlineWidth(value)}
+                onPressEnter={changeFontOutlineWidth}
+                onBlur={changeFontOutlineWidth}
+              />
+            </Menu.Item>
+            {/* font stroke color */}
+            <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'polygon-font-stroke-color'}>
+              <Input
+                addonBefore={i18n.t('polygonMenu.FontStrokeColor', lang) + ':'}
+                value={textStrokeColor}
+                onChange={(e) => setTextStrokeColor(e.target.value)}
+                onPressEnter={changeFontStrokeColor}
+                onBlur={changeFontStrokeColor}
+              />
+            </Menu.Item>
+            {/* font stroke width */}
+            <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'polygon-font-stroke-width'}>
+              <InputNumber
+                addonBefore={i18n.t('polygonMenu.FontStrokeWidth', lang) + ':'}
+                min={0}
+                max={1}
+                step={0.01}
+                precision={2}
+                value={textStrokeWidth}
+                onChange={(value) => setTextStrokeWidth(value)}
+                onPressEnter={changeFontStrokeWidth}
+                onBlur={changeFontStrokeWidth}
               />
             </Menu.Item>
           </Menu>

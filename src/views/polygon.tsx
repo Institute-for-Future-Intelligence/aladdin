@@ -50,6 +50,10 @@ const Polygon = ({
   text,
   fontSize = 1,
   fontColor = 'black',
+  fontOutlineWidth = 0,
+  fontOutlineColor = 'white',
+  fontStrokeWidth = 0,
+  fontStrokeColor = 'black',
   lineColor = 'black',
   lineWidth = 1,
   selected = false,
@@ -425,6 +429,10 @@ const Polygon = ({
           rotation={[0, 0, parent?.type === ObjectType.Wall ? Math.PI : 0]}
           anchorX="center"
           anchorY="middle"
+          outlineWidth={fontOutlineWidth}
+          outlineColor={fontOutlineColor}
+          strokeWidth={fontStrokeWidth}
+          strokeColor={fontStrokeColor}
         >
           {text}
         </Text>

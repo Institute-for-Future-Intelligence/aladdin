@@ -34,8 +34,8 @@ import { ElementModelFactory } from 'src/models/ElementModelFactory';
 import { UndoableAdd } from 'src/undo/UndoableAdd';
 import { Sphere } from '@react-three/drei';
 import { useHandleSize } from '../wall/hooks';
-import { addUndoableMove, undoInvalidOperation, WALL_OUTSIDE_SURFACE_MESH_NAME } from '../wall/wall';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
+import { SharedUtil } from '../SharedUtil';
 
 export interface RoofSegmentGroupUserData {
   roofId: string;
@@ -360,17 +360,17 @@ export const handlePointerUp = (event: ThreeEvent<PointerEvent>, roofModel: Roof
               !spBoundaryCheck(solarPanelVertices, boundaryVertices) ||
               !spCollisionCheck(solarPanel, foundation, solarPanelVertices)
             ) {
-              undoInvalidOperation();
+              SharedUtil.undoInvalidOperation();
             } else {
-              addUndoableMove();
+              SharedUtil.addUndoableMove();
             }
             break;
           }
           case ObjectType.Sensor:
-            addUndoableMove();
+            SharedUtil.addUndoableMove();
             break;
           case ObjectType.Light:
-            addUndoableMove();
+            SharedUtil.addUndoableMove();
             break;
         }
       }
@@ -396,7 +396,9 @@ export const handlePointerMove = (event: ThreeEvent<PointerEvent>, id: string) =
         return;
       if (useStore.getState().moveHandleType) {
         const intersectionObjects = event.intersections.filter(
-          (i) => i.eventObject.name.includes('Roof') || i.eventObject.name.includes(WALL_OUTSIDE_SURFACE_MESH_NAME),
+          (i) =>
+            i.eventObject.name.includes('Roof') ||
+            i.eventObject.name.includes(SharedUtil.WALL_OUTSIDE_SURFACE_MESH_NAME),
         );
         const isFirstIntersectedRoof = intersectionObjects[0].eventObject.userData.roofId === id;
 

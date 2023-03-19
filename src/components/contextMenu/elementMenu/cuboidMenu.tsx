@@ -565,7 +565,7 @@ export const CuboidMenu = React.memo(() => {
         {/*have to wrap the text field with a Menu so that it can stay open when the user types in it */}
         <Menu>
           {/* label text */}
-          <Menu.Item key={'cuboid-label-text'} style={{ paddingLeft: '36px' }}>
+          <Menu.Item key={'cuboid-label-text'} style={{ height: '36px', paddingLeft: '36px' }}>
             <Input
               addonBefore={i18n.t('labelSubMenu.LabelText', lang) + ':'}
               value={labelText}

@@ -2,15 +2,15 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useMemo, useState } from 'react';
-import { Color, DoubleSide, Vec2, Vector3 } from 'three';
-import { Box, Plane } from '@react-three/drei';
+import React, { useEffect, useMemo } from 'react';
+import { Color, DoubleSide, Vector3 } from 'three';
+import { Box } from '@react-three/drei';
 import { WindowModel, WindowType } from 'src/models/WindowModel';
 import { useStore } from 'src/stores/common';
 import { MoveHandleType, ObjectType, ResizeHandleType } from 'src/types';
 import * as Selector from 'src/stores/selector';
 import WindowHandleWrapper from './windowHandleWrapper';
-import { DEFAULT_WINDOW_SHININESS, HALF_PI } from 'src/constants';
+import { DEFAULT_WINDOW_SHININESS } from 'src/constants';
 import { ThreeEvent } from '@react-three/fiber';
 import RectangleWindow from './rectangleWindow';
 import ArchedWindow from './archedWindow';
@@ -18,7 +18,6 @@ import { RulerOnWall } from '../rulerOnWall';
 import { Util } from '../../Util';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useRefStore } from 'src/stores/commonRef';
-import { WALL_OUTSIDE_SURFACE_MESH_NAME } from '../wall/wall';
 import { ElementModel } from 'src/models/ElementModel';
 
 export const defaultShutter = { showLeft: false, showRight: false, color: 'grey', width: 0.5 };

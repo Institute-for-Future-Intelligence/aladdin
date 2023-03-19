@@ -18,4 +18,8 @@ export interface PolygonModel extends ElementModel {
   text?: string;
   fontSize?: number;
   fontColor?: string;
+  fontOutlineWidth?: number;
+  fontOutlineColor?: string;
+  fontStrokeWidth?: number;
+  fontStrokeColor?: string;
 }

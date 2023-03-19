@@ -1,7 +1,7 @@
 {
-  "docid": "dyBahPe8kvU9HR2UcsdAba",
-  "time": "03/18/2023 07:55 pm",
-  "timestamp": 1679183728633,
+  "docid": "3kaKPRxjf3jknfpkqDoHNG",
+  "time": "03/19/2023 11:43 am",
+  "timestamp": 1679240582310,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -1998,7 +1998,9 @@
       "foundationId": "axj9GVUBNvhnWAa3G8T3wG",
       "id": "ftttRcX3kuw87x7khedVVv",
       "selected": false,
-      "selectedIndex": 1
+      "selectedIndex": 1,
+      "fontOutlineWidth": 0.04,
+      "fontOutlineColor": "red"
     }
   ],
   "sceneRadius": 24,
@@ -2031,9 +2033,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -5.614373540098983,
-      -28.696853734413644,
-      5.347619061107145
+      -7.283972003449438,
+      -26.68886219090922,
+      4.650005164894021
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,

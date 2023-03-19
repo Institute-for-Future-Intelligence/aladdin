@@ -1623,7 +1623,7 @@ export const FoundationMenu = React.memo(() => {
           {/*have to wrap the text field with a Menu so that it can stay open when the user types in it */}
           <Menu>
             {/* label text */}
-            <Menu.Item key={'foundation-label-text'} style={{ paddingLeft: '36px', marginTop: 10 }}>
+            <Menu.Item key={'foundation-label-text'} style={{ height: '36px', paddingLeft: '36px', marginTop: 10 }}>
               <Input
                 addonBefore={i18n.t('labelSubMenu.LabelText', lang) + ':'}
                 value={labelText}
