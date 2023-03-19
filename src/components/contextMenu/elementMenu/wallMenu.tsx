@@ -24,9 +24,10 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { LightModel } from '../../../models/LightModel';
 import WallRValueInput from './wallRValueInput';
 import WallHeatCapacityInput from './wallHeatCapacityInput';
-import { Vector3 } from 'three';
+import { Euler, Vector3 } from 'three';
 import { UndoableAdd } from '../../../undo/UndoableAdd';
 import { ElementModelFactory } from '../../../models/ElementModelFactory';
+import { FoundationModel } from '../../../models/FoundationModel';
 
 enum DataType {
   Height = 'Height',
@@ -83,7 +84,6 @@ export const WallMenu = React.memo(() => {
   const updateElementUnlockByParentId = useStore(Selector.updateElementLockByParentId);
   const updateInsideLightsByParentId = useStore(Selector.updateInsideLightsByParentId);
   const updateInsideLightById = useStore(Selector.updateInsideLightById);
-  const addElement = useStore(Selector.addElement);
   const removeElementById = useStore(Selector.removeElementById);
   const getFoundation = useStore(Selector.getFoundation);
   const wall = useStore(getSelectedWall);
@@ -520,6 +520,18 @@ export const WallMenu = React.memo(() => {
     }
   };
 
+  const getRelativePosOnWall = (p: Vector3, wall: WallModel, foundation: FoundationModel) => {
+    const { cx, cy, cz } = wall;
+    const wallAbsAngle = foundation ? foundation.rotation[2] + wall.relativeAngle : wall.relativeAngle;
+    if (foundation && wallAbsAngle !== undefined) {
+      const wallAbsPos = Util.wallAbsolutePosition(new Vector3(cx, cy, cz), foundation).setZ(
+        wall.lz / 2 + foundation.lz,
+      );
+      return new Vector3().subVectors(p, wallAbsPos).applyEuler(new Euler(0, 0, -wallAbsAngle));
+    }
+    return new Vector3();
+  };
+
   return (
     <Menu.ItemGroup>
       {renderPaste()}
@@ -547,14 +559,15 @@ export const WallMenu = React.memo(() => {
               if (wall) {
                 const foundation = getFoundation(wall);
                 if (foundation) {
+                  const p = getRelativePosOnWall(useStore.getState().pastePoint, wall, foundation);
                   setCommonStore((state) => {
                     state.objectTypeToAdd = ObjectType.Polygon;
                   });
                   const polygon = ElementModelFactory.makePolygon(
                     wall,
+                    -p.x / wall.lx,
                     0,
-                    0,
-                    0,
+                    -p.z / wall.lz,
                     new Vector3(0, 0, 1),
                     [0, 0, 0],
                     ObjectType.Wall,

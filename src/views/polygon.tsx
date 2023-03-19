@@ -16,7 +16,7 @@ import PolygonTexture00 from '../resources/tiny_white_square.png';
 
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { Box, Line, Sphere, Text } from '@react-three/drei';
-import { Color, Euler, FrontSide, Mesh, RepeatWrapping, Shape, TextureLoader, Vector3 } from 'three';
+import { Color, DoubleSide, Euler, FrontSide, Mesh, RepeatWrapping, Shape, TextureLoader, Vector3 } from 'three';
 import { CommonStoreState, useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { ThreeEvent, useThree } from '@react-three/fiber';
@@ -47,6 +47,7 @@ const Polygon = ({
   rotation = [0, 0, 0],
   normal = [0, 0, 1],
   color = 'yellow',
+  label,
   text,
   fontSize = 1,
   fontColor = 'black',
@@ -54,6 +55,7 @@ const Polygon = ({
   fontOutlineColor = 'white',
   fontStrokeWidth = 0,
   fontStrokeColor = 'black',
+  lineStyle = LineStyle.Solid,
   lineColor = 'black',
   lineWidth = 1,
   selected = false,
@@ -63,12 +65,13 @@ const Polygon = ({
   foundationId,
   vertices,
   opacity = 1,
+  noOutline = false,
   shininess = 0,
+  selectedIndex = -1,
   textureType = PolygonTexture.NoTexture,
 }: PolygonModel) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
-  const getElementById = useStore(Selector.getElementById);
   const getFoundation = useStore(Selector.getFoundation);
   const selectMe = useStore(Selector.selectMe);
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
@@ -149,7 +152,7 @@ const Polygon = ({
       setCenterY(centroid.y);
     }
     return av;
-  }, [vertices, parent]);
+  }, [vertices, parent, normal]);
 
   const cz = useMemo(() => {
     if (parent?.type === ObjectType.Cuboid) {
@@ -159,9 +162,8 @@ const Polygon = ({
       return parent.lz + 0.01;
     }
     return lz / 2 + 0.01;
-  }, [parent]);
+  }, [parent, lz]);
 
-  const polygonModel = getElementById(id) as PolygonModel;
   const foundation = useMemo(() => {
     if (parent) {
       if (parent.type === ObjectType.Foundation) return parent;
@@ -192,7 +194,7 @@ const Polygon = ({
     }
     // top face
     return new Euler(0, 0, rotation[2], 'ZXY');
-  }, [normal, rotation, parent, foundation?.rotation]);
+  }, [normal, rotation, parent]);
 
   const position = useMemo(() => {
     if (parent) {
@@ -353,7 +355,7 @@ const Polygon = ({
       t.wrapT = t.wrapS = RepeatWrapping;
       // Don't know why, but we have to use 1, instead of the actual dimension, to divide as follows
       t.repeat.set(1 / params.x, 1 / params.y);
-      const n = new Vector3().fromArray(polygonModel.normal);
+      const n = new Vector3().fromArray(normal);
       if (Util.isSame(n, UNIT_VECTOR_POS_X)) {
         t.rotation = HALF_PI;
       } else if (Util.isSame(n, UNIT_VECTOR_NEG_X)) {
@@ -363,7 +365,7 @@ const Polygon = ({
       }
       setTexture(t);
     });
-  }, [textureType, absoluteVertices]);
+  }, [textureType, normal]);
   const [texture, setTexture] = useState(textureLoader);
 
   return (
@@ -415,7 +417,7 @@ const Polygon = ({
               attach="material"
               color={textureType === PolygonTexture.NoTexture ? color : 'white'}
               map={texture}
-              side={FrontSide}
+              side={DoubleSide}
               transparent={opacity < 1}
               opacity={opacity}
             />
@@ -453,13 +455,13 @@ const Polygon = ({
       )}
 
       {/* wireframe */}
-      {!polygonModel.noOutline && (
+      {(!noOutline || (locked && selected)) && (
         <Line
           points={points}
           color={locked && selected ? LOCKED_ELEMENT_SELECTION_COLOR : lineColor}
           lineWidth={lineWidth}
-          dashed={polygonModel.lineStyle && polygonModel.lineStyle !== LineStyle.Solid}
-          dashSize={polygonModel.lineStyle === LineStyle.Dashed ? 0.3 : 0.1}
+          dashed={lineStyle && lineStyle !== LineStyle.Solid}
+          dashSize={lineStyle === LineStyle.Dashed ? 0.3 : 0.1}
           gapSize={0.1}
           uuid={id}
           receiveShadow={false}
@@ -554,7 +556,7 @@ const Polygon = ({
                 args={[resizeHandleSize, resizeHandleSize, lz / 2 + (filled ? 0 : 0.1)]}
                 onPointerDown={(e) => {
                   selectMe(id, e, ActionType.Resize);
-                  updatePolygonSelectedIndexById(polygonModel.id, i);
+                  updatePolygonSelectedIndexById(id, i);
                   useRefStore.getState().setEnableOrbitController(false);
                   usePrimitiveStore.setState((state) => {
                     state.showWallIntersectionPlaneId = parentId;
@@ -567,7 +569,7 @@ const Polygon = ({
                 }}
                 onPointerOver={(e) => {
                   hoverHandle(e, ResizeHandleType.Default);
-                  updatePolygonSelectedIndexById(polygonModel.id, i);
+                  updatePolygonSelectedIndexById(id, i);
                 }}
                 onPointerOut={noHoverHandle}
                 onContextMenu={(e) => {
@@ -576,7 +578,7 @@ const Polygon = ({
                       const vertexIndex = e.intersections[0].object.userData.vertexIndex;
                       if (vertexIndex !== undefined) {
                         state.contextMenuObjectType = ObjectType.PolygonVertex;
-                        updatePolygonSelectedIndexById(polygonModel.id, vertexIndex);
+                        updatePolygonSelectedIndexById(id, vertexIndex);
                       }
                     }
                   });
@@ -587,7 +589,7 @@ const Polygon = ({
                   color={
                     (hoveredHandle === ResizeHandleType.Default ||
                       useStore.getState().resizeHandleType === ResizeHandleType.Default) &&
-                    polygonModel.selectedIndex === i
+                    selectedIndex === i
                       ? HIGHLIGHT_HANDLE_COLOR
                       : RESIZE_HANDLE_COLOR
                   }
@@ -610,8 +612,8 @@ const Polygon = ({
           userData={{ unintersectable: true }}
           name={'Label'}
           text={
-            (polygonModel?.label ? polygonModel.label : i18n.t('shared.PolygonElement', lang)) +
-            (polygonModel.locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '')
+            (label ?? i18n.t('shared.PolygonElement', lang)) +
+            (locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '')
           }
           fontSize={20 * ratio}
           fontFace={'Times Roman'}

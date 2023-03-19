@@ -1,7 +1,7 @@
 {
-  "docid": "riYr8X4jNrXnFZvzoKFBTz",
-  "time": "02/04/2023 11:29 am",
-  "timestamp": 1675528152988,
+  "docid": "cTVCCXTRQLYvcw7GpXnkSL",
+  "time": "03/19/2023 05:53 pm",
+  "timestamp": 1679262809852,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -283,7 +283,7 @@
       "roofId": "1iq4TPqH8xr1w2VxMAh8MU",
       "leftRoofHeight": 6,
       "rightRoofHeight": 6,
-      "locked": true,
+      "locked": false,
       "wallStructure": "Default",
       "structureSpacing": 2,
       "structureWidth": 0.1,
@@ -3211,8 +3211,60 @@
       "locked": true,
       "rise": 1.3681252475370629,
       "ceiling": false
+    },
+    {
+      "type": "Polygon",
+      "cx": 0.04278236969738311,
+      "cy": -0.2560980400226438,
+      "cz": 0,
+      "lx": 0.4,
+      "ly": 0.4,
+      "lz": 0.4,
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "vertices": [
+        {
+          "x": -0.08333333333333333,
+          "y": -0.4166666666666667
+        },
+        {
+          "x": -0.08333333333333333,
+          "y": -0.25
+        },
+        {
+          "x": 0.08333333333333333,
+          "y": -0.25
+        },
+        {
+          "x": 0.08333333333333333,
+          "y": -0.4166666666666667
+        }
+      ],
+      "parentId": "beHqET5NN8aNdsuBncMpY7",
+      "parentType": "Wall",
+      "foundationId": "fbqvzYqiEy79jeL8wsadib",
+      "selected": false,
+      "filled": true,
+      "selectedIndex": 1,
+      "id": "ikVqMPzpwnqJzyuQKJnm3R",
+      "text": "1204",
+      "fontColor": "gold",
+      "fontSize": 0.6,
+      "fontStrokeWidth": 0.01,
+      "noOutline": true,
+      "opacity": 0
     }
   ],
+  "sceneRadius": 32,
   "view": {
     "dailyPvYieldPanelX": 0,
     "mapPanelY": 0,
@@ -3242,9 +3294,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      18.706420716059597,
-      17.68594651932354,
-      4.115117570659499
+      19.501570940095977,
+      16.595324789242262,
+      3.2808698282664936
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -3379,5 +3431,9 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
+  "modelType": "Unknown",
+  "modelAuthor": null,
+  "modelLabel": null,
+  "modelDescription": null,
   "notes": []
 }
