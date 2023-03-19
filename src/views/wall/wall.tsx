@@ -1379,12 +1379,12 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           if (oldVerticesRef.current.length > 0) {
             const polygon = el as PolygonModel;
             const centroid = Util.calculatePolygonCentroid(oldVerticesRef.current);
-            const dx = pointer.x - centroid.x;
-            const dy = pointer.z - centroid.y;
+            const dx = -pointer.x / lx - centroid.x;
+            const dy = -pointer.z / lz - centroid.y;
             const copy = oldVerticesRef.current.map((v) => ({ ...v }));
             copy.forEach((v: Point2) => {
-              v.x -= dx / lx;
-              v.y -= dy / lz;
+              v.x += dx;
+              v.y += dy;
             });
             polygon.vertices = copy;
           }
@@ -1545,7 +1545,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         useStore.getState().selectMe(id, e, ActionType.Select);
       }
     }
-    const selectedElement = getSelectedElement();
+    const selectedElement = useStore.getState().selectedElement;
     if (selectedElement?.type === ObjectType.Polygon) {
       oldVerticesRef.current = (selectedElement as PolygonModel).vertices.map((v) => ({ ...v }));
     }
@@ -1693,9 +1693,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
             break;
           }
           case ObjectType.Polygon: {
-            const polygon = selectedElement as PolygonModel;
             setCommonStore((state) => {
-              const p = state.elements.find((e) => e.id === polygon.id) as PolygonModel;
+              const p = state.elements.find((e) => e.id === selectedElement.id) as PolygonModel;
               if (p?.selectedIndex >= 0) {
                 p.vertices[p.selectedIndex].x = -pointerOnGrid.x / lx;
                 p.vertices[p.selectedIndex].y = -pointerOnGrid.z / lz;

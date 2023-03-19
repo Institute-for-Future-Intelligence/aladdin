@@ -26,7 +26,6 @@ import WallRValueInput from './wallRValueInput';
 import WallHeatCapacityInput from './wallHeatCapacityInput';
 import { Vector3 } from 'three';
 import { UndoableAdd } from '../../../undo/UndoableAdd';
-import { HALF_PI } from '../../../constants';
 import { ElementModelFactory } from '../../../models/ElementModelFactory';
 
 enum DataType {

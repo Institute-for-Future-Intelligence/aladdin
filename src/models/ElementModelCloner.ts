@@ -240,6 +240,7 @@ export class ElementModelCloner {
       rotation: polygon.parentId ? [...parent.rotation] : [0, 0, 0],
       vertices: vertices,
       parentId: parent.id,
+      parentType: parent.type,
       foundationId: foundationId,
       id: short.generate() as string,
     } as PolygonModel;
@@ -262,6 +263,9 @@ export class ElementModelCloner {
             [v.x, v.y] = [v.y, v.x];
           }
         }
+      } else if (parent.type === ObjectType.Wall) {
+        x1 = -x;
+        y1 = -(z ?? 0);
       }
       Util.translatePolygonCenterTo(pm, x1, y1);
     }
