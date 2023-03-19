@@ -1,7 +1,7 @@
 {
-  "docid": "cf3mjZBqjAiRTtwveHjDxP",
-  "time": "02/04/2023 12:48 pm",
-  "timestamp": 1675532895763,
+  "docid": "ajKWQmaycMsAtZ5fGcrxas",
+  "time": "03/18/2023 08:01 pm",
+  "timestamp": 1679184108346,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -4459,8 +4459,59 @@
       "foundationId": "x9h6vgTSQ3QLh48G3oYMPN",
       "id": "dpLuhLSSPa19xJpw2Qffsi",
       "selected": false
+    },
+    {
+      "type": "Polygon",
+      "cx": 0,
+      "cy": 0,
+      "cz": 0,
+      "lx": 0.4,
+      "ly": 0.4,
+      "lz": 0.4,
+      "color": "#999999",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "vertices": [
+        {
+          "x": -0.38095238095238093,
+          "y": -0.125
+        },
+        {
+          "x": -0.38095238095238093,
+          "y": 0
+        },
+        {
+          "x": 0.38095238095238093,
+          "y": 0
+        },
+        {
+          "x": 0.38095238095238093,
+          "y": -0.125
+        }
+      ],
+      "parentId": "iF8yBnVR7zKfNKiVQ7M1op",
+      "parentType": "Wall",
+      "foundationId": "x9h6vgTSQ3QLh48G3oYMPN",
+      "selected": false,
+      "filled": true,
+      "selectedIndex": 2,
+      "id": "sQ3Tb8iVwJfm4J6HcRtiJG",
+      "text": "PARADISE FARM",
+      "fontColor": "gold",
+      "fontSize": 1,
+      "noOutline": true,
+      "opacity": 0
     }
   ],
+  "sceneRadius": 49,
   "view": {
     "yearlyParabolicTroughYieldPanelX": 0,
     "dailyParabolicTroughYieldPanelY": 0,
@@ -4470,9 +4521,9 @@
     "enableRotate": true,
     "weatherPanelY": 0,
     "cameraPosition": [
-      42.27919447148249,
-      -23.53787245681578,
-      6.1368392135133325
+      40.76410822131277,
+      -16.432671173690856,
+      7.982285304757434
     ],
     "showYearlyUpdraftTowerYieldPanel": false,
     "showSunAngles": false,
@@ -4640,5 +4691,9 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
+  "modelType": "Unknown",
+  "modelAuthor": null,
+  "modelLabel": null,
+  "modelDescription": null,
   "notes": []
 }

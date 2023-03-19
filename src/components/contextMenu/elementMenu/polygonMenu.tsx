@@ -34,6 +34,9 @@ export const PolygonMenu = React.memo(() => {
     state.elements.find((e) => e.selected && e.type === ObjectType.Polygon),
   ) as PolygonModel;
 
+  const [textContent, setTextContent] = useState<string>(polygon?.text ?? '');
+  const [textSize, setTextSize] = useState<number>(polygon?.fontSize ?? 1);
+  const [textColor, setTextColor] = useState<string>(polygon?.fontColor ?? 'black');
   const [lineColorDialogVisible, setLineColorDialogVisible] = useState(false);
   const [lineStyleDialogVisible, setLineStyleDialogVisible] = useState(false);
   const [lineWidthDialogVisible, setLineWidthDialogVisible] = useState(false);
@@ -120,12 +123,12 @@ export const PolygonMenu = React.memo(() => {
     }
   };
 
-  const setFontSize = (fontSize: number) => {
+  const updateFontSize = () => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === polygon.id) {
           if (!e.locked && e.type === ObjectType.Polygon) {
-            (e as PolygonModel).fontSize = fontSize;
+            (e as PolygonModel).fontSize = textSize;
           }
           break;
         }
@@ -133,12 +136,12 @@ export const PolygonMenu = React.memo(() => {
     });
   };
 
-  const setFontColor = (fontColor: string) => {
+  const updateFontColor = () => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === polygon.id) {
           if (!e.locked && e.type === ObjectType.Polygon) {
-            (e as PolygonModel).fontColor = fontColor;
+            (e as PolygonModel).fontColor = textColor;
           }
           break;
         }
@@ -146,12 +149,12 @@ export const PolygonMenu = React.memo(() => {
     });
   };
 
-  const setText = (text: string) => {
+  const updateText = () => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === polygon.id) {
           if (!e.locked && e.type === ObjectType.Polygon) {
-            (e as PolygonModel).text = text;
+            (e as PolygonModel).text = textContent;
           }
           break;
         }
@@ -335,30 +338,34 @@ export const PolygonMenu = React.memo(() => {
             <Menu.Item key={'polygon-text'} style={{ paddingLeft: '36px', marginTop: 10 }}>
               <Input
                 addonBefore={i18n.t('word.Text', lang) + ':'}
-                value={polygon.text}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setText(e.target.value)}
-                // onPressEnter={updateLabelText}
-                // onBlur={updateLabelText}
+                value={textContent}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTextContent(e.target.value)}
+                onPressEnter={updateText}
+                onBlur={updateText}
               />
             </Menu.Item>
             {/* font size */}
             <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'polygon-font-size'}>
               <InputNumber
                 addonBefore={i18n.t('word.FontSize', lang) + ':'}
-                min={10}
-                max={100}
-                step={1}
-                precision={0}
-                value={polygon.fontSize ?? 5}
-                onChange={(value) => setFontSize(value)}
+                min={0.1}
+                max={5}
+                step={0.01}
+                precision={2}
+                value={textSize}
+                onChange={(value) => setTextSize(value)}
+                onPressEnter={updateFontSize}
+                onBlur={updateFontSize}
               />
             </Menu.Item>
             {/* font color */}
             <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'polygon-font-color'}>
               <Input
                 addonBefore={i18n.t('word.FontColor', lang) + ':'}
-                value={polygon.fontColor ?? 'black'}
-                onChange={(e) => setFontColor(e.target.value)}
+                value={textColor}
+                onChange={(e) => setTextColor(e.target.value)}
+                onPressEnter={updateFontColor}
+                onBlur={updateFontColor}
               />
             </Menu.Item>
           </Menu>

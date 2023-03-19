@@ -1,7 +1,7 @@
 {
-  "docid": "iV53wgMZuDkeiC8CoqkVH6",
-  "time": "03/18/2023 03:16 pm",
-  "timestamp": 1679166968836,
+  "docid": "8PygPF9nt2Xjtyv79r2Fup",
+  "time": "03/18/2023 07:38 pm",
+  "timestamp": 1679182721140,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -48,9 +48,9 @@
     {
       "type": "Human",
       "name": "Jedi",
-      "cx": -0.016854418646676805,
-      "cy": -1.616702559448166,
-      "cz": 0.03284187614917755,
+      "cx": -0.35404550237608445,
+      "cy": -9.031512450493677,
+      "cz": -4.440892098500626e-16,
       "lx": 0.56,
       "lz": 1.75,
       "normal": [
@@ -63,7 +63,7 @@
         0,
         0
       ],
-      "parentId": "myXiyVt2NURPnPChDUSnvF",
+      "parentId": "Ground",
       "id": "3LYQCPYTZ6WYqLSGF4X7Lr",
       "selected": false,
       "ly": 0.56
@@ -2029,7 +2029,7 @@
       "type": "Wall",
       "cx": 1.2041263633168442,
       "cy": -0.03460380925524109,
-      "cz": 0.8868358655705414,
+      "cz": 0.9803491274068566,
       "lx": 3.0337664018991246,
       "ly": 0.3,
       "lz": 3.2841875196772365,
@@ -2185,7 +2185,7 @@
       "structureWidth": 0.2,
       "structureColor": "white",
       "fill": "Partial",
-      "unfilledHeight": 3.0345157798988875,
+      "unfilledHeight": 3.110608215274513,
       "eavesLength": 0.3
     },
     {
@@ -3021,6 +3021,55 @@
       "foundationId": "fbqvzYqiEy79jeL8wsadib",
       "id": "eS9BNDuHjJf4dGFLVwhXwG",
       "selected": false
+    },
+    {
+      "type": "Polygon",
+      "cx": 0,
+      "cy": 0,
+      "cz": 0,
+      "lx": 0.4,
+      "ly": 0.4,
+      "lz": 0.4,
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "vertices": [
+        {
+          "x": -0.21045058100840097,
+          "y": -0.6089786250075502
+        },
+        {
+          "x": -0.21045058100840097,
+          "y": -0.4567339687556626
+        },
+        {
+          "x": 0.21045058100840097,
+          "y": -0.4567339687556626
+        },
+        {
+          "x": 0.21045058100840097,
+          "y": -0.6089786250075502
+        }
+      ],
+      "parentId": "5ExmWkfAba5nuC3xfHo5vU",
+      "parentType": "Wall",
+      "foundationId": "myXiyVt2NURPnPChDUSnvF",
+      "selected": false,
+      "filled": true,
+      "selectedIndex": 2,
+      "id": "19jcnLnazAo68d9SCy19QV",
+      "noOutline": true,
+      "text": "26",
+      "fontSize": 0.35,
+      "fontColor": "gold"
     }
   ],
   "sceneRadius": 22,
@@ -3053,9 +3102,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -9.091334937931249,
-      -22.0018942565486,
-      3.3187595774663885
+      -8.589089368262039,
+      -22.19727501640179,
+      3.487549784384135
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,

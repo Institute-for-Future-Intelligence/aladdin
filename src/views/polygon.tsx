@@ -48,7 +48,7 @@ const Polygon = ({
   normal = [0, 0, 1],
   color = 'yellow',
   text,
-  fontSize = 5,
+  fontSize = 1,
   fontColor = 'black',
   lineColor = 'black',
   lineWidth = 1,
@@ -418,10 +418,11 @@ const Polygon = ({
 
       {text && (
         <Text
-          scale={[fontSize, fontSize, fontSize]}
+          fontSize={fontSize}
+          scale={[1, 1, 1]}
           color={fontColor}
           position={[centerX, centerY, 0.01]}
-          rotation={[0, 0, Math.PI]}
+          rotation={[0, 0, parent?.type === ObjectType.Wall ? Math.PI : 0]}
           anchorX="center"
           anchorY="middle"
         >

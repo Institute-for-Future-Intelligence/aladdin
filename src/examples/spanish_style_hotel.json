@@ -1,7 +1,7 @@
 {
-  "docid": "vJJYJ1HsGKH3n49cWGrCxo",
-  "time": "02/04/2023 12:55 pm",
-  "timestamp": 1675533339769,
+  "docid": "dyBahPe8kvU9HR2UcsdAba",
+  "time": "03/18/2023 07:55 pm",
+  "timestamp": 1679183728633,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -1949,8 +1949,59 @@
       "parentId": "Ground",
       "id": "c8AcvQkEYah3BNHFPjZ6U4",
       "selected": false
+    },
+    {
+      "type": "Polygon",
+      "cx": -0.017136655007615933,
+      "cy": 0,
+      "cz": 0.20700743166887894,
+      "lx": 0.4,
+      "ly": 0.4,
+      "lz": 0.4,
+      "filled": true,
+      "noOutline": true,
+      "color": "#653294",
+      "lineColor": "#e27300",
+      "opacity": 0,
+      "text": "SPANISH TAVERN",
+      "fontSize": 1,
+      "fontColor": "gold",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "vertices": [
+        {
+          "x": -0.10630576997686467,
+          "y": -0.4378316285372531
+        },
+        {
+          "x": -0.10630576997686467,
+          "y": -0.21891581426862655
+        },
+        {
+          "x": 0.13288221247108084,
+          "y": -0.21891581426862655
+        },
+        {
+          "x": 0.13288221247108084,
+          "y": -0.4378316285372531
+        }
+      ],
+      "parentId": "roDDPncXBpNgmNum9aUaov",
+      "foundationId": "axj9GVUBNvhnWAa3G8T3wG",
+      "id": "ftttRcX3kuw87x7khedVVv",
+      "selected": false,
+      "selectedIndex": 1
     }
   ],
+  "sceneRadius": 24,
   "view": {
     "dailyPvYieldPanelX": 0,
     "mapPanelY": 0,
@@ -1980,9 +2031,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -8.799044184275518,
-      -26.08974743708738,
-      6.2896908161368765
+      -5.614373540098983,
+      -28.696853734413644,
+      5.347619061107145
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -2116,5 +2167,9 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
+  "modelType": "Unknown",
+  "modelAuthor": null,
+  "modelLabel": null,
+  "modelDescription": null,
   "notes": []
 }
