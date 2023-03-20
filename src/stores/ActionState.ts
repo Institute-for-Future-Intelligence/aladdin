@@ -93,6 +93,7 @@ export interface ActionState {
   windowColor: string; // frame color
   windowFrame: boolean;
   windowFrameWidth: number;
+  windowSillWidth: number;
   windowType: WindowType;
   windowArchHeight: number;
 

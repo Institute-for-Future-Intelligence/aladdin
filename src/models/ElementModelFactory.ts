@@ -633,6 +633,7 @@ export class ElementModelFactory {
       mullionColor: actionState.windowMullionColor,
       frame: actionState.windowFrame,
       frameWidth: actionState.windowFrameWidth,
+      sillWidth: actionState.windowSillWidth,
       windowType: actionState.windowType,
       archHeight: actionState.windowArchHeight,
       selected: true,

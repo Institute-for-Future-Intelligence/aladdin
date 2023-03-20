@@ -1062,6 +1062,7 @@ export const i18n_zh_tw = {
       ShutterColor: '百葉窗顏色',
       Frame: '邊框',
       FrameWidth: '邊框寬度',
+      SillWidth: '窗台寬度',
       Color: '邊框顔色',
       WindowType: '窗戶種類',
       Default: '默認',

@@ -246,15 +246,13 @@ const Frame = React.memo(({ dimension, frameData, shadowEnabled }: FrameProps) =
   const hx = lx / 2;
   const ah = Math.min(archHeight, lz, hx);
 
-  const { color, width } = frameData;
+  const { color, width, sillWidth } = frameData;
   const material = useMemo(() => <meshStandardMaterial color={color} />, [color]);
 
   const halfWidth = width / 2;
   const depth = halfWidth / 2;
-
   const sillLength = lx + width * 3;
   const sillThickness = width;
-  const sillDepth = width;
 
   const archedFrameShape = useMemo(() => {
     const [x1, x2] = [hx + width, hx];
@@ -323,8 +321,8 @@ const Frame = React.memo(({ dimension, frameData, shadowEnabled }: FrameProps) =
 
       {/* bottom */}
       <Box
-        position={[0, 0, -lz / 2 - sillThickness / 2]}
-        args={[sillLength, sillDepth, sillThickness]}
+        position={[0, 0, -lz / 2 - (sillWidth === 0 ? 0 : sillThickness / 2)]}
+        args={sillWidth === 0 ? [lx + 2 * width, depth, width] : [sillLength, sillWidth ?? width, sillThickness]}
         castShadow={shadowEnabled}
         receiveShadow={shadowEnabled}
       >

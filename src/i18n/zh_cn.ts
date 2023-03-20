@@ -1061,6 +1061,7 @@ export const i18n_zh_cn = {
       ShutterColor: '百叶窗颜色',
       Frame: '边框',
       FrameWidth: '边框宽度',
+      SillWidth: '窗台宽度',
       Color: '边框颜色',
       WindowType: '窗户种类',
       Default: '默认',

@@ -20,6 +20,7 @@ export interface WindowModel extends ElementModel {
   // frameColor is using color
   frame: boolean;
   frameWidth: number;
+  sillWidth: number;
 
   windowType: WindowType;
   archHeight: number;

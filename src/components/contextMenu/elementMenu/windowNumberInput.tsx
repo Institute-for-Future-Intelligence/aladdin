@@ -54,6 +54,7 @@ const WindowNumberInput = ({
     if (parent) {
       if (attributeKey === 'lx') return v * parent.lx;
       if (attributeKey === 'lz') return v * parent.lz;
+      if (attributeKey === 'sillWidth' && v === undefined) return 0.2;
     }
     return v;
   }, [attributeKey, windowModel, parent?.lx, parent?.lz]);
@@ -322,6 +323,9 @@ const WindowNumberInput = ({
           break;
         case WindowDataType.FrameWidth:
           state.actionState.windowFrameWidth = value;
+          break;
+        case WindowDataType.SillWidth:
+          state.actionState.windowSillWidth = value;
           break;
         case WindowDataType.MullionSpacing:
           state.actionState.windowMullionSpacing = value;

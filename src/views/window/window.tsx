@@ -33,6 +33,7 @@ export type MullionDataType = {
 export type FrameDataType = {
   showFrame: boolean;
   width: number;
+  sillWidth: number;
   color: string;
 };
 
@@ -180,6 +181,7 @@ const Window = (windowModel: WindowModel) => {
     frame = false,
     color = 'white',
     frameWidth = 0.1,
+    sillWidth = 0.2,
     windowType = WindowType.Default,
     archHeight,
   } = windowModel;
@@ -333,8 +335,8 @@ const Window = (windowModel: WindowModel) => {
   );
 
   const frameData = useMemo(
-    () => ({ showFrame: frame, width: frameWidth, color } as FrameDataType),
-    [frame, frameWidth, color],
+    () => ({ showFrame: frame, width: frameWidth, color, sillWidth } as FrameDataType),
+    [frame, frameWidth, color, sillWidth],
   );
 
   const wireframeData = useMemo(

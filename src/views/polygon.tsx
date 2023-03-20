@@ -31,6 +31,7 @@ import {
   UNIT_VECTOR_NEG_Y,
   UNIT_VECTOR_POS_X,
   UNIT_VECTOR_POS_Y,
+  UNIT_VECTOR_POS_Z_ARRAY,
 } from '../constants';
 import { ActionType, LineStyle, MoveHandleType, ObjectType, PolygonTexture, ResizeHandleType } from '../types';
 import { Util } from '../Util';
@@ -156,7 +157,9 @@ const Polygon = ({
 
   const cz = useMemo(() => {
     if (parent?.type === ObjectType.Cuboid) {
-      return parent.cz + (parent.lz + lz) / 2 + 0.01;
+      const top = Util.isIdentical(normal, UNIT_VECTOR_POS_Z_ARRAY);
+      // not sure why we need lz here
+      return parent.cz + (parent.lz + (top ? 0 : lz)) / 2 + 0.01;
     }
     if (parent?.type === ObjectType.Foundation) {
       return parent.lz + 0.01;

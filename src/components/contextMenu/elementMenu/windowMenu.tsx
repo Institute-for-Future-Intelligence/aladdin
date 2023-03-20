@@ -27,6 +27,7 @@ export enum WindowDataType {
   MullionSpacing = 'MullionSpacing',
   MullionColor = 'MullionColor',
   FrameWidth = 'FrameWidth',
+  SillWidth = 'SillWidth',
   Width = 'Width',
   Height = 'Height',
 }
@@ -69,6 +70,7 @@ const NumberDialogSettings = {
     digit: 1,
   },
   FrameWidth: { attributeKey: 'frameWidth', range: [0.05, 0.2], step: 0.01, unit: 'word.MeterAbbreviation', digit: 2 },
+  SillWidth: { attributeKey: 'sillWidth', range: [0, 0.5], step: 0.01, unit: 'word.MeterAbbreviation', digit: 2 },
 };
 
 export const WindowMenu = React.memo(() => {
@@ -227,6 +229,7 @@ export const WindowMenu = React.memo(() => {
         <Divider plain style={{ margin: '6px' }} />
 
         {renderMenuItem(WindowDataType.FrameWidth)}
+        {renderMenuItem(WindowDataType.SillWidth)}
         {renderMenuItem(WindowDataType.Color)}
       </SubMenu>
     );
@@ -295,6 +298,7 @@ export const WindowMenu = React.memo(() => {
       case WindowDataType.Height:
       case WindowDataType.MullionSpacing:
       case WindowDataType.MullionWidth:
+      case WindowDataType.SillWidth:
       case WindowDataType.FrameWidth: {
         const setting = NumberDialogSettings[dataType] as NumberDialogSettingType;
         if (dataType === WindowDataType.Width) {

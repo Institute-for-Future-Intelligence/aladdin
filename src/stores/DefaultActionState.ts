@@ -107,6 +107,7 @@ export class DefaultActionState implements ActionState {
   windowShutterWidth: number;
   windowFrame: boolean;
   windowFrameWidth: number;
+  windowSillWidth: number;
   windowType: WindowType;
   windowArchHeight: number;
 
@@ -229,6 +230,7 @@ export class DefaultActionState implements ActionState {
     this.windowMullionColor = '#ffffff';
     this.windowFrame = false;
     this.windowFrameWidth = 0.1;
+    this.windowSillWidth = 0.2;
     this.windowType = WindowType.Default;
     this.windowArchHeight = 1;
     // I worry about this using Shutter objects may cause default to be accidentally overwritten.
