@@ -77,6 +77,7 @@ import {
 import { PolygonModel } from '../../models/PolygonModel';
 import Polygon from '../polygon';
 import { SharedUtil } from '../SharedUtil';
+import { UndoableChange } from '../../undo/UndoableChange';
 
 export const WALL_BLOCK_PLANE = 'Wall Block Plane';
 
@@ -220,6 +221,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   const setCommonStore = useStore(Selector.set);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const selectMe = useStore(Selector.selectMe);
+  const addUndoable = useStore(Selector.addUndoable);
   const isAddingElement = useStore(Selector.isAddingElement);
   const getHeatmap = useDataStore(Selector.getHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
@@ -227,6 +229,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const sunlightDirection = useStore(Selector.sunlightDirection);
   const deletedRoofId = useStore(Selector.deletedRoofId);
+  const updatePolygonVerticesById = useStore(Selector.updatePolygonVerticesById);
 
   // primitive store
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
@@ -253,8 +256,6 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   const addedWindowIdRef = useRef<string | null>(null);
   const invalidElementIdRef = useRef<string | null>(null);
   const elBeingAddedRef = useRef<ElBeingAdded | null>(null);
-
-  const oldVerticesRef = useRef<Point2[]>([]);
 
   const hx = lx / 2;
   const hy = ly / 2;
@@ -785,7 +786,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         });
       },
     } as UndoableAdd;
-    useStore.getState().addUndoable(undoableAdd);
+    addUndoable(undoableAdd);
   }
 
   function handleUndoableResize() {
@@ -822,7 +823,27 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
             setElementPosDms(this.resizedElementId, this.newPosition, this.newDimension, this.newArchHeight);
           },
         } as UndoableResizeElementOnWall;
-        useStore.getState().addUndoable(undoableResize);
+        addUndoable(undoableResize);
+        break;
+      case ObjectType.Polygon:
+        if (newElement.type === ObjectType.Polygon) {
+          const pg = newElement as PolygonModel;
+          const undoableEditPolygon = {
+            name: 'Edit Polygon',
+            timestamp: Date.now(),
+            oldValue: useStore.getState().oldPolygonVertices,
+            newValue: pg.vertices,
+            changedElementId: pg.id,
+            changedElementType: pg.type,
+            undo: () => {
+              updatePolygonVerticesById(undoableEditPolygon.changedElementId, undoableEditPolygon.oldValue as Point2[]);
+            },
+            redo: () => {
+              updatePolygonVerticesById(undoableEditPolygon.changedElementId, undoableEditPolygon.newValue as Point2[]);
+            },
+          } as UndoableChange;
+          addUndoable(undoableEditPolygon);
+        }
         break;
     }
   }
@@ -1254,17 +1275,16 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           break;
         }
         case ObjectType.Polygon: {
-          if (oldVerticesRef.current.length > 0) {
-            const polygon = el as PolygonModel;
-            const centroid = Util.calculatePolygonCentroid(oldVerticesRef.current);
+          if (state.oldPolygonVertices?.length > 0) {
+            const centroid = Util.calculatePolygonCentroid(state.oldPolygonVertices);
             const dx = -pointer.x / lx - centroid.x;
             const dy = -pointer.z / lz - centroid.y;
-            const copy = oldVerticesRef.current.map((v) => ({ ...v }));
+            const copy = state.oldPolygonVertices.map((v) => ({ ...v }));
             copy.forEach((v: Point2) => {
               v.x += dx;
               v.y += dy;
             });
-            polygon.vertices = copy;
+            (el as PolygonModel).vertices = copy;
           }
           break;
         }
@@ -1425,7 +1445,9 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     }
     const selectedElement = useStore.getState().selectedElement;
     if (selectedElement?.type === ObjectType.Polygon) {
-      oldVerticesRef.current = (selectedElement as PolygonModel).vertices.map((v) => ({ ...v }));
+      setCommonStore((state) => {
+        state.oldPolygonVertices = (selectedElement as PolygonModel).vertices.map((v) => ({ ...v }));
+      });
     }
   }
 

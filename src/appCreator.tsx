@@ -63,6 +63,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const axes = useStore(Selector.viewState.axes);
   const theme = useStore(Selector.viewState.theme);
   const groundImage = useStore(Selector.viewState.groundImage);
+  const groundImageType = useStore(Selector.viewState.groundImageType) ?? 'roadmap';
   const openModelsMap = usePrimitiveStore(Selector.openModelsMap);
   const evolutionMethod = useStore(Selector.evolutionMethod);
   const evolutionaryAlgorithmState = useStore(Selector.evolutionaryAlgorithmState);
@@ -271,7 +272,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
             zIndex: 999,
             fontSize: '8px',
             userSelect: 'none',
-            color: 'antiquewhite',
+            color: groundImage ? (groundImageType !== 'roadmap' ? 'antiquewhite' : 'darkslategrey') : 'antiquewhite',
           }}
         >
           <img
@@ -309,7 +310,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
               zIndex: 999,
               fontSize: '10px',
               userSelect: 'none',
-              color: 'antiquewhite',
+              color: groundImage ? (groundImageType !== 'roadmap' ? 'antiquewhite' : 'darkslategrey') : 'antiquewhite',
             }}
           >
             &nbsp;&nbsp; &copy;{new Date().getFullYear()} {i18n.t('name.IFI', lang)}

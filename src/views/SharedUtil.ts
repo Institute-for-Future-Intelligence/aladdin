@@ -8,6 +8,8 @@ import { ObjectType } from '../types';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { Vector3 } from 'three';
 import { UndoableMove } from '../undo/UndoableMove';
+import { PolygonModel } from '../models/PolygonModel';
+import { Point2 } from '../models/Point2';
 
 export class SharedUtil {
   static WALL_OUTSIDE_SURFACE_MESH_NAME = 'Wall Outside Surface';
@@ -52,6 +54,7 @@ export class SharedUtil {
           this.oldParentType,
           this.oldRotation,
           this.oldNormal,
+          this.movedElementType === ObjectType.Polygon ? useStore.getState().oldPolygonVertices : undefined,
         );
       },
       redo() {
@@ -64,6 +67,9 @@ export class SharedUtil {
           this.newParentType,
           this.newRotation,
           this.newNormal,
+          this.movedElementType === ObjectType.Polygon && newElement
+            ? (newElement as PolygonModel).vertices
+            : undefined,
         );
       },
     } as UndoableMove;
@@ -78,11 +84,16 @@ export class SharedUtil {
       parentType?: ObjectType,
       rotation?: number[],
       normal?: Vector3,
+      vertices?: Point2[],
     ) => {
       useStore.getState().set((state) => {
         const el = state.elements.find((e) => e.id === id);
         if (!el) return;
         if (el.type === ObjectType.Polygon) {
+          if (vertices) {
+            const pg = el as PolygonModel;
+            pg.vertices = [...vertices];
+          }
         } else {
           [el.cx, el.cy, el.cz] = [...pos];
         }
@@ -107,7 +118,6 @@ export class SharedUtil {
             if (!oldParent || !newParent) return;
             const absLx = el.lx * newParent.lx;
             const absLz = el.lz * newParent.lz;
-
             el.lx = absLx / oldParent.lx;
             el.lz = absLz / oldParent.lz;
           }
