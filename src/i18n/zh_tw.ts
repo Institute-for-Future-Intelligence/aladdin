@@ -421,6 +421,7 @@ export const i18n_zh_tw = {
         GableAndValleyRoof: '坡谷屋頂',
         ClerestoryRoof: '天窗屋頂',
         MonitorRoof: '採光屋頂',
+        GermanHouse: '德國風格房子',
         AFrameHouse: 'A字形房子',
         AllBasicRoofTypes: '所有的基本屋頂類型',
       },
