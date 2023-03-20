@@ -422,8 +422,8 @@ export const i18n_tr = {
         GableAndValleyRoof: 'Gable and Valley Roof',
         ClerestoryRoof: 'Clerestory Roof',
         MonitorRoof: 'Monitor Roof',
-        GermanHouse: 'German House',
         AFrameHouse: 'A-Frame House',
+        HalfTimberedHouse: 'Half-Timbered House',
         AllBasicRoofTypes: 'Tüm Çatı Tipleri',
       },
 

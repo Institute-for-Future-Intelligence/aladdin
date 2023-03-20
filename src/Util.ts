@@ -1113,8 +1113,13 @@ export class Util {
       return ElementState.OutsideBoundary;
     }
     for (const e of useStore.getState().elements) {
-      // check collision with other elements
-      if (Util.isLegalOnWall(e.type) && e.parentId === elem.parentId && e.id !== elem.id) {
+      // check collision with other elements (except polygons)
+      if (
+        Util.isLegalOnWall(e.type) &&
+        e.type !== ObjectType.Polygon &&
+        e.parentId === elem.parentId &&
+        e.id !== elem.id
+      ) {
         let ehx = e.lx / 2;
         let ehz = e.lz / 2;
         if (parent && e.type === ObjectType.SolarPanel) {

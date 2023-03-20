@@ -1886,8 +1886,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <Menu.Item key="a_frame_house" onClick={loadFile}>
             {i18n.t('menu.buildingDesignTutorials.AFrameHouse', lang)}
           </Menu.Item>
-          <Menu.Item key="german_house" onClick={loadFile}>
-            {i18n.t('menu.buildingDesignTutorials.GermanHouse', lang)}
+          <Menu.Item key="half_timbered_house" onClick={loadFile}>
+            {i18n.t('menu.buildingDesignTutorials.HalfTimberedHouse', lang)}
           </Menu.Item>
           <Menu.Item key="all_roof_types" onClick={loadFile}>
             {i18n.t('menu.buildingDesignTutorials.AllBasicRoofTypes', lang)}
