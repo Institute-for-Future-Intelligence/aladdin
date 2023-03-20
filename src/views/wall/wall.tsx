@@ -224,12 +224,12 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   const addUndoable = useStore(Selector.addUndoable);
   const isAddingElement = useStore(Selector.isAddingElement);
   const getHeatmap = useDataStore(Selector.getHeatmap);
-  const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
+  const updatePolygonVerticesById = useStore(Selector.updatePolygonVerticesById);
 
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const sunlightDirection = useStore(Selector.sunlightDirection);
   const deletedRoofId = useStore(Selector.deletedRoofId);
-  const updatePolygonVerticesById = useStore(Selector.updatePolygonVerticesById);
+  const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
 
   // primitive store
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
@@ -826,24 +826,23 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         addUndoable(undoableResize);
         break;
       case ObjectType.Polygon:
-        if (newElement.type === ObjectType.Polygon) {
-          const pg = newElement as PolygonModel;
-          const undoableEditPolygon = {
-            name: 'Edit Polygon',
-            timestamp: Date.now(),
-            oldValue: useStore.getState().oldPolygonVertices,
-            newValue: pg.vertices,
-            changedElementId: pg.id,
-            changedElementType: pg.type,
-            undo: () => {
-              updatePolygonVerticesById(undoableEditPolygon.changedElementId, undoableEditPolygon.oldValue as Point2[]);
-            },
-            redo: () => {
-              updatePolygonVerticesById(undoableEditPolygon.changedElementId, undoableEditPolygon.newValue as Point2[]);
-            },
-          } as UndoableChange;
-          addUndoable(undoableEditPolygon);
-        }
+        const oldPg = oldElement as PolygonModel;
+        const newPg = newElement as PolygonModel;
+        const undoableEditPolygon = {
+          name: 'Edit Polygon',
+          timestamp: Date.now(),
+          oldValue: [...oldPg.vertices],
+          newValue: [...newPg.vertices],
+          changedElementId: newPg.id,
+          changedElementType: newPg.type,
+          undo() {
+            updatePolygonVerticesById(this.changedElementId, this.oldValue as Point2[]);
+          },
+          redo() {
+            updatePolygonVerticesById(this.changedElementId, this.newValue as Point2[]);
+          },
+        } as UndoableChange;
+        addUndoable(undoableEditPolygon);
         break;
     }
   }
@@ -1275,16 +1274,13 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           break;
         }
         case ObjectType.Polygon: {
-          if (state.oldPolygonVertices?.length > 0) {
-            const centroid = Util.calculatePolygonCentroid(state.oldPolygonVertices);
+          const pg = el as PolygonModel;
+          if (pg.vertices.length > 0) {
+            const centroid = Util.calculatePolygonCentroid(pg.vertices);
             const dx = -pointer.x / lx - centroid.x;
             const dy = -pointer.z / lz - centroid.y;
-            const copy = state.oldPolygonVertices.map((v) => ({ ...v }));
-            copy.forEach((v: Point2) => {
-              v.x += dx;
-              v.y += dy;
-            });
-            (el as PolygonModel).vertices = copy;
+            const newVertices = pg.vertices.map((v) => ({ x: v.x + dx, y: v.y + dy }));
+            (el as PolygonModel).vertices = newVertices;
           }
           break;
         }
@@ -1442,12 +1438,6 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       } else if (isAllowedToSelectMe()) {
         useStore.getState().selectMe(id, e, ActionType.Select);
       }
-    }
-    const selectedElement = useStore.getState().selectedElement;
-    if (selectedElement?.type === ObjectType.Polygon) {
-      setCommonStore((state) => {
-        state.oldPolygonVertices = (selectedElement as PolygonModel).vertices.map((v) => ({ ...v }));
-      });
     }
   }
 

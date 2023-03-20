@@ -319,7 +319,6 @@ export interface CommonStoreState {
   setPolygonActionScope: (scope: Scope) => void;
   updatePolygonVertexPositionById: (id: string, index: number, x: number, y: number) => void;
   updatePolygonVerticesById: (id: string, vertices: Point2[]) => void;
-  oldPolygonVertices: Point2[]; // store old vertices for undo/redo as they may be shared
 
   // for solar panels
   solarPanelActionScope: Scope;
@@ -1739,7 +1738,6 @@ export const useStore = create<CommonStoreState>(
               }
             });
           },
-          oldPolygonVertices: [],
 
           // for solar panels
           solarPanelActionScope: Scope.OnlyThisObject,

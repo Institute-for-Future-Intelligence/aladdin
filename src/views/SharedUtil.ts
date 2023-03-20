@@ -23,6 +23,7 @@ export class SharedUtil {
     if (!newElement || !oldParentId || !oldFoundationId) return;
 
     const isSolarPanel = oldElement.type === ObjectType.SolarPanel;
+    const isPolygon = oldElement.type === ObjectType.Polygon;
     const undoableMove = {
       name: 'Move',
       timestamp: Date.now(),
@@ -54,7 +55,7 @@ export class SharedUtil {
           this.oldParentType,
           this.oldRotation,
           this.oldNormal,
-          this.movedElementType === ObjectType.Polygon ? useStore.getState().oldPolygonVertices : undefined,
+          isPolygon ? (oldElement as PolygonModel).vertices : undefined,
         );
       },
       redo() {
@@ -67,9 +68,7 @@ export class SharedUtil {
           this.newParentType,
           this.newRotation,
           this.newNormal,
-          this.movedElementType === ObjectType.Polygon && newElement
-            ? (newElement as PolygonModel).vertices
-            : undefined,
+          isPolygon ? (newElement as PolygonModel).vertices : undefined,
         );
       },
     } as UndoableMove;
