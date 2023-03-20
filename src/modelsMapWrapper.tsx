@@ -17,7 +17,7 @@ import { DEFAULT_ADDRESS } from './constants';
 import { usePrimitiveStore } from './stores/commonPrimitive';
 import { ModelSite } from './types';
 import ReactCountryFlag from 'react-country-flag';
-import { UserOutlined } from '@ant-design/icons';
+import { VerticalAlignBottomOutlined, VerticalAlignTopOutlined, UserOutlined } from '@ant-design/icons';
 import ModelsGallery from './modelsGallery';
 
 const libraries = ['places'] as Libraries;
@@ -328,6 +328,11 @@ const ModelsMapWrapper = ({
               });
             }}
           >
+            {showLeaderboard ? (
+              <VerticalAlignBottomOutlined title={i18n.t('word.Close', lang)} style={{ marginRight: '8px' }} />
+            ) : (
+              <VerticalAlignTopOutlined title={i18n.t('word.Open', lang)} style={{ marginRight: '8px' }} />
+            )}
             {i18n.t('word.Leaderboard', lang)}
           </div>
         </Space>

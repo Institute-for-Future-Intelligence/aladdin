@@ -424,7 +424,7 @@ export const i18n_es = {
         ClerestoryRoof: 'Clerestory Roof',
         MonitorRoof: 'Monitor Roof',
         AFrameHouse: 'A-Frame House',
-        GermanHouse: 'German House',
+        HalfTimberedHouse: 'Half-Timbered House',
         AllBasicRoofTypes: 'All Basic Roof Types',
       },
 

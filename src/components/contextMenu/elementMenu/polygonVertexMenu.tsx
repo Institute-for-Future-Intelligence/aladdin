@@ -105,7 +105,9 @@ export const PolygonVertexMenu = React.memo(() => {
           insertPolygonVertexAfterIndex(polygon.id, polygon.selectedIndex);
           break;
       }
-      const newVertices = polygon.vertices.map((v) => ({ ...v }));
+      const newVertices = (useStore.getState().getElementById(polygon.id) as PolygonModel).vertices.map((v) => ({
+        ...v,
+      }));
       const undoableChange = {
         name: action,
         timestamp: Date.now(),
