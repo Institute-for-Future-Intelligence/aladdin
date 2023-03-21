@@ -70,6 +70,7 @@ export const useGroupMaster = (elementModel: GroupableModel, groupMasterId: stri
         isGroupable(el) &&
         !el.locked &&
         !baseGroupSetRef.current.has(el.id) &&
+        !Util.isChild(base.id, el.id) &&
         Util.areTwoBasesOverlapped(el, base)
       ) {
         setbaseVertices(el);

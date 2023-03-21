@@ -1658,4 +1658,12 @@ export class Util {
 
     return { pos: new Vector3().addVectors(currPos.applyEuler(euler), pos), rot: currRot + rot };
   };
+
+  /** check is child recursively */
+  static isChild = (currId: string, targetId: string): boolean => {
+    const target = useStore.getState().getElementById(targetId);
+    if (!target) return false;
+    if (target.parentId === currId) return true;
+    return this.isChild(currId, target.parentId);
+  };
 }

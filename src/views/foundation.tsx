@@ -1243,9 +1243,6 @@ const Foundation = (foundationModel: FoundationModel) => {
     if (useStore.getState().objectTypeToAdd !== ObjectType.Window && !isAddingElement()) {
       selectMe(id, e, ActionType.Select);
     }
-    if (useStore.getState().groupActionMode) {
-      useStore.getState().setGroupMasterId(id);
-    }
     const selectedElement = getSelectedElement();
     let bypass = false;
     if (
@@ -1256,6 +1253,9 @@ const Foundation = (foundationModel: FoundationModel) => {
     }
     // no child of this foundation is clicked
     if (selectedElement?.id === id || bypass) {
+      if (useStore.getState().groupActionMode) {
+        useStore.getState().setGroupMasterId(id);
+      }
       if (legalOnFoundation(useStore.getState().objectTypeToAdd)) {
         if (foundationModel) {
           setShowGrid(true);

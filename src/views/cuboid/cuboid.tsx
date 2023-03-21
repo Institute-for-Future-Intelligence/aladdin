@@ -129,11 +129,6 @@ const Cuboid = (cuboidModel: CuboidModel) => {
   const groundImage = useStore(Selector.viewState.groundImage);
   const groupMasterId = useStore(Selector.groupMasterId);
 
-  const { baseGroupSet, groupMasterDimension, groupMasterPosition, groupMasterRotation } = useGroupMaster(
-    cuboidModel,
-    groupMasterId,
-  );
-
   const {
     camera,
     gl: { domElement },
@@ -412,9 +407,6 @@ const Cuboid = (cuboidModel: CuboidModel) => {
     if (!isAddingElement()) {
       selectMe(id, e, ActionType.Select);
     }
-    if (useStore.getState().groupActionMode) {
-      useStore.getState().setGroupMasterId(id);
-    }
     const selectedElement = getSelectedElement();
     let bypass = false;
     if (
@@ -424,6 +416,9 @@ const Cuboid = (cuboidModel: CuboidModel) => {
       bypass = true;
     }
     if (selectedElement?.id === id || bypass) {
+      if (useStore.getState().groupActionMode) {
+        useStore.getState().setGroupMasterId(id);
+      }
       // no child of this cuboid is clicked
       if (legalAddToCuboid(useStore.getState().objectTypeToAdd) && cuboidModel) {
         setShowGrid(true);
@@ -1132,104 +1127,93 @@ const Cuboid = (cuboidModel: CuboidModel) => {
   const showHandles = selected && !locked && !groupMasterId;
 
   return (
-    <>
-      <group ref={groupRef} name={'Cuboid Group ' + id} userData={{ aabb: true }}>
-        {/* draw rectangular cuboid */}
-        <Box
-          castShadow={shadowEnabled}
-          receiveShadow={shadowEnabled}
-          userData={{ simulation: true, stand: true }}
-          uuid={id}
-          ref={baseRef}
-          args={[lx, ly, lz]}
-          name={'Cuboid ' + id}
-          onContextMenu={handleContextMenu}
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-          onPointerOver={handlePointerOver}
-          onPointerOut={handlePointerOut}
-          onPointerEnter={handlePointerEnter}
-        >
-          {materials}
-        </Box>
+    <group ref={groupRef} name={'Cuboid Group ' + id} userData={{ aabb: true }}>
+      {/* draw rectangular cuboid */}
+      <Box
+        castShadow={shadowEnabled}
+        receiveShadow={shadowEnabled}
+        userData={{ simulation: true, stand: true }}
+        uuid={id}
+        ref={baseRef}
+        args={[lx, ly, lz]}
+        name={'Cuboid ' + id}
+        onContextMenu={handleContextMenu}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerOver={handlePointerOver}
+        onPointerOut={handlePointerOut}
+        onPointerEnter={handlePointerEnter}
+      >
+        {materials}
+      </Box>
 
-        {/* intersection plane that goes through the center of the selected solar panel */}
-        {grabRef.current?.type === ObjectType.SolarPanel && onTopSurface && !grabRef.current.locked && (
-          <Plane
-            ref={intersectPlaneRef}
-            name={'Cuboid Intersection Plane'}
-            position={intersectionPlanePosition}
-            args={[lx, ly]}
-            visible={false}
-            onPointerMove={handleSolarPanelPointerMoveOnTopSurface}
-          />
-        )}
-
-        {showGrid && (
-          <>
-            {(useStore.getState().moveHandleType || useStore.getState().resizeHandleType) && (
-              <ElementGrid
-                hx={gridDimensionRef.current.x}
-                hy={gridDimensionRef.current.y}
-                hz={gridDimensionRef.current.z}
-                position={gridPositionRef.current}
-                rotation={gridRotationRef.current}
-              />
-            )}
-            {useStore.getState().rotateHandleType &&
-              grabRef.current &&
-              grabRef.current.type === ObjectType.SolarPanel && (
-                <PolarGrid element={grabRef.current} height={(grabRef.current as SolarPanelModel).poleHeight + hz} />
-              )}
-          </>
-        )}
-
-        {/* ruler */}
-        {selected && <HorizontalRuler element={cuboidModel} verticalLift={moveHandleSize} />}
-
-        {/* wireFrame */}
-        {(!selected || groundImage) && (
-          <Wireframe
-            hx={hx}
-            hy={hy}
-            hz={hz}
-            lineColor={groundImage && orthographic ? 'white' : lineColor}
-            lineWidth={groundImage && orthographic ? lineWidth * 5 : lineWidth}
-          />
-        )}
-
-        {/* highlight with a thick wireframe when it is selected but locked */}
-        {selected && locked && (
-          <Wireframe hx={hx} hy={hy} hz={hz} lineColor={LOCKED_ELEMENT_SELECTION_COLOR} lineWidth={lineWidth * 5} />
-        )}
-
-        {/* handles */}
-        {showHandles && <Handles id={id} args={handleArgs} />}
-
-        {(hovered || showLabel) && !selected && (
-          <textSprite
-            userData={{ unintersectable: true }}
-            name={'Label'}
-            text={labelText}
-            color={cuboidModel?.labelColor ?? 'white'}
-            fontSize={cuboidModel?.labelFontSize ?? 20}
-            fontFace={'Roboto'}
-            textHeight={cuboidModel?.labelSize ?? 0.2}
-            position={[0, 0, hz + (cuboidModel?.labelHeight ?? 0.2)]}
-          />
-        )}
-      </group>
-
-      {selected && !locked && groupMasterId === id && cuboidModel && groupMasterDimension && (
-        <GroupMaster
-          baseGroupSet={baseGroupSet}
-          initalPosition={groupMasterPosition}
-          initalDimension={groupMasterDimension}
-          initalRotation={groupMasterRotation}
+      {/* intersection plane that goes through the center of the selected solar panel */}
+      {grabRef.current?.type === ObjectType.SolarPanel && onTopSurface && !grabRef.current.locked && (
+        <Plane
+          ref={intersectPlaneRef}
+          name={'Cuboid Intersection Plane'}
+          position={intersectionPlanePosition}
+          args={[lx, ly]}
+          visible={false}
+          onPointerMove={handleSolarPanelPointerMoveOnTopSurface}
         />
       )}
-    </>
+
+      {showGrid && (
+        <>
+          {(useStore.getState().moveHandleType || useStore.getState().resizeHandleType) && (
+            <ElementGrid
+              hx={gridDimensionRef.current.x}
+              hy={gridDimensionRef.current.y}
+              hz={gridDimensionRef.current.z}
+              position={gridPositionRef.current}
+              rotation={gridRotationRef.current}
+            />
+          )}
+          {useStore.getState().rotateHandleType &&
+            grabRef.current &&
+            grabRef.current.type === ObjectType.SolarPanel && (
+              <PolarGrid element={grabRef.current} height={(grabRef.current as SolarPanelModel).poleHeight + hz} />
+            )}
+        </>
+      )}
+
+      {/* ruler */}
+      {selected && <HorizontalRuler element={cuboidModel} verticalLift={moveHandleSize} />}
+
+      {/* wireFrame */}
+      {(!selected || groundImage) && (
+        <Wireframe
+          hx={hx}
+          hy={hy}
+          hz={hz}
+          lineColor={groundImage && orthographic ? 'white' : lineColor}
+          lineWidth={groundImage && orthographic ? lineWidth * 5 : lineWidth}
+        />
+      )}
+
+      {/* highlight with a thick wireframe when it is selected but locked */}
+      {selected && locked && (
+        <Wireframe hx={hx} hy={hy} hz={hz} lineColor={LOCKED_ELEMENT_SELECTION_COLOR} lineWidth={lineWidth * 5} />
+      )}
+
+      {/* handles */}
+      {showHandles && <Handles id={id} args={handleArgs} />}
+
+      {(hovered || showLabel) && !selected && (
+        <textSprite
+          userData={{ unintersectable: true }}
+          name={'Label'}
+          text={labelText}
+          color={cuboidModel?.labelColor ?? 'white'}
+          fontSize={cuboidModel?.labelFontSize ?? 20}
+          fontFace={'Roboto'}
+          textHeight={cuboidModel?.labelSize ?? 0.2}
+          position={[0, 0, hz + (cuboidModel?.labelHeight ?? 0.2)]}
+        />
+      )}
+    </group>
   );
 };
 

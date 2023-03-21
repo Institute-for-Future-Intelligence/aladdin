@@ -1016,6 +1016,7 @@ const Ground = () => {
         !element.locked &&
         element.id !== currElem.id &&
         !baseGroupRelPosMapRef.current.has(element.id) &&
+        !Util.isChild(currElem.id, element.id) &&
         Util.areTwoBasesOverlapped(element, currElem)
       ) {
         setBasePosMap(element, pointer);
@@ -1310,8 +1311,7 @@ const Ground = () => {
     }
   };
 
-  // ====
-  /** self and child exclusive */
+  /** self, child exclusive */
   const getFirstIntersectedCuboid = (e: ThreeEvent<PointerEvent>, currId: string) => {
     const firstIntersectedCuboidObject = e.intersections.find((intersect) => {
       const obj = intersect.eventObject;
@@ -1325,16 +1325,8 @@ const Ground = () => {
 
     const firstIntersectedCuboidObjectId = firstIntersectedCuboidObject.eventObject.name.split(' ')[1];
 
-    return isChild(currId, firstIntersectedCuboidObjectId) ? undefined : firstIntersectedCuboidObject;
+    return Util.isChild(currId, firstIntersectedCuboidObjectId) ? undefined : firstIntersectedCuboidObject;
   };
-
-  const isChild = (currId: string, targetId: string): boolean => {
-    const target = getElementById(targetId);
-    if (!target) return false;
-    if (target.parentId === currId) return true;
-    return isChild(currId, target.parentId);
-  };
-  // ===
 
   const handleGroundPointerMove = (e: ThreeEvent<PointerEvent>) => {
     if (grabRef.current && grabRef.current.type && !grabRef.current.locked) {
