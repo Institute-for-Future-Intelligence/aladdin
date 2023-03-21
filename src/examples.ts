@@ -43,6 +43,7 @@ import monitor_roof from './examples/monitor_roof.json';
 import colonial_vs_saltbox from './examples/colonial_vs_saltbox.json';
 import gambrel_roof_vs_mansard_roof from './examples/gambrel_roof_vs_mansard_roof.json';
 import white_house from './examples/white_house.json';
+import bilim_mersin_turkiye from './examples/bilim_mersin_turkiye.json';
 import office_building_01 from './examples/office_building_01.json';
 import hotel_01 from './examples/hotel_01.json';
 import spanish_style_hotel from './examples/spanish_style_hotel.json';
@@ -173,6 +174,9 @@ export const getExample = (name: string) => {
       break;
     case 'white_house':
       input = white_house;
+      break;
+    case 'bilim_mersin_turkiye':
+      input = bilim_mersin_turkiye;
       break;
     case 'south_burlington_high_school':
       input = south_burlington_high_school;

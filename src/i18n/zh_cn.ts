@@ -507,6 +507,7 @@ export const i18n_zh_cn = {
       commercialBuildingsSubMenu: '商用建筑',
       commercialBuildingExamples: {
         WhiteHouse: '白宫',
+        BilimMersinTurkiye: '土耳其梅尔辛科学教育中心',
         SpanishStyleHotel: '西班牙风格旅馆',
         ApartmentBuilding: '公寓楼',
         OfficeBuilding: '办公楼',

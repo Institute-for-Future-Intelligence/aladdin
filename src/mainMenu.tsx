@@ -2080,6 +2080,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             <Menu.Item key="white_house" onClick={loadFile}>
               {i18n.t('menu.commercialBuildingExamples.WhiteHouse', lang)}
             </Menu.Item>
+            <Menu.Item key="bilim_mersin_turkiye" onClick={loadFile}>
+              {i18n.t('menu.commercialBuildingExamples.BilimMersinTurkiye', lang)}
+            </Menu.Item>
             <Menu.Item key="spanish_style_hotel" onClick={loadFile}>
               {i18n.t('menu.commercialBuildingExamples.SpanishStyleHotel', lang)}
             </Menu.Item>

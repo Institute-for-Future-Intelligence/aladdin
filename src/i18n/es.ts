@@ -510,6 +510,7 @@ export const i18n_es = {
       commercialBuildingsSubMenu: 'Commercial Buildings',
       commercialBuildingExamples: {
         WhiteHouse: 'White House',
+        BilimMersinTurkiye: 'BILIM, Mersin, Turkiye',
         SpanishStyleHotel: 'Spanish Style Hotel',
         ApartmentBuilding: 'Apartment Building',
         OfficeBuilding: 'Edificio de oficinas',
