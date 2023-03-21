@@ -1642,4 +1642,20 @@ export class Util {
 
     return array;
   };
+
+  static getWorldDataOfStackedCuboidById = (id: string): { pos: Vector3; rot: number } => {
+    const el = useStore.getState().getElementById(id);
+    if (!el) return { pos: new Vector3(), rot: 0 };
+
+    const currPos = new Vector3(el.cx, el.cy);
+    const currRot = el.rotation[2];
+
+    if (el.parentId === 'Ground') {
+      return { pos: currPos, rot: currRot };
+    }
+    const { pos, rot } = this.getWorldDataOfStackedCuboidById(el.parentId);
+    const euler = new Euler(0, 0, rot);
+
+    return { pos: new Vector3().addVectors(currPos.applyEuler(euler), pos), rot: currRot + rot };
+  };
 }

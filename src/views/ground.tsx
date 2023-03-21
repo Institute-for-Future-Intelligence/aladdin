@@ -47,14 +47,8 @@ import { GroupableModel, isGroupable } from 'src/models/Groupable';
 
 const Ground = () => {
   const setCommonStore = useStore(Selector.set);
-  const language = useStore(Selector.language);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const getChildren = useStore(Selector.getChildren);
-  const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
-  const moveHandleType = useStore(Selector.moveHandleType);
-  const resizeHandleType = useStore(Selector.resizeHandleType);
-  const rotateHandleType = useStore(Selector.rotateHandleType);
-  const resizeAnchor = useStore(Selector.resizeAnchor);
   const setElementPosition = useStore(Selector.setElementPosition);
   const setElementRotation = useStore(Selector.updateElementRotationById);
   const addElement = useStore(Selector.addElement);
@@ -65,14 +59,21 @@ const Ground = () => {
   const getCameraDirection = useStore(Selector.getCameraDirection);
   const getResizeHandlePosition = useStore(Selector.getResizeHandlePosition);
   const addUndoable = useStore(Selector.addUndoable);
+  const updatePolygonVerticesById = useStore(Selector.updatePolygonVerticesById);
+  const updateSceneRadius = useStore(Selector.updateSceneRadius);
+
+  const language = useStore(Selector.language);
+  const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
+  const moveHandleType = useStore(Selector.moveHandleType);
+  const resizeHandleType = useStore(Selector.resizeHandleType);
+  const rotateHandleType = useStore(Selector.rotateHandleType);
+  const resizeAnchor = useStore(Selector.resizeAnchor);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const groundColor = useStore(Selector.viewState.groundColor);
   const waterSurface = useStore(Selector.viewState.waterSurface);
   const groundModel = useStore((state) => state.world.ground);
   const deletedFoundationId = useStore(Selector.deletedFoundationId);
   const deletedCuboidId = useStore(Selector.deletedCuboidId);
-  const updatePolygonVerticesById = useStore(Selector.updatePolygonVerticesById);
-  const updateSceneRadius = useStore(Selector.updateSceneRadius);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const groupMasterId = useStore(Selector.groupMasterId);
 
@@ -1310,31 +1311,28 @@ const Ground = () => {
   };
 
   // ====
-  /** self exclusive */
+  /** self and child exclusive */
   const getFirstIntersectedCuboid = (e: ThreeEvent<PointerEvent>, currId: string) => {
-    return e.intersections.find((intersect) => {
+    const firstIntersectedCuboidObject = e.intersections.find((intersect) => {
       const obj = intersect.eventObject;
       if (!obj.name.includes('Cuboid')) return false;
       const nameArray = obj.name.split(' ');
       if (nameArray.length !== 2) return false;
       return nameArray[1] !== currId;
     });
+
+    if (!firstIntersectedCuboidObject) return undefined;
+
+    const firstIntersectedCuboidObjectId = firstIntersectedCuboidObject.eventObject.name.split(' ')[1];
+
+    return isChild(currId, firstIntersectedCuboidObjectId) ? undefined : firstIntersectedCuboidObject;
   };
 
-  const getAbsDataOfStackedCuboid = (id: string): { pos: Vector3; rot: number } => {
-    const el = getElementById(id);
-    if (!el) return { pos: new Vector3(), rot: 0 };
-
-    const currPos = new Vector3(el.cx, el.cy);
-    const currRot = el.rotation[2];
-
-    if (el.parentId === 'Ground') {
-      return { pos: currPos, rot: currRot };
-    }
-    const { pos, rot } = getAbsDataOfStackedCuboid(el.parentId);
-    const euler = new Euler(0, 0, rot);
-
-    return { pos: new Vector3().addVectors(currPos.applyEuler(euler), pos), rot: currRot + rot };
+  const isChild = (currId: string, targetId: string): boolean => {
+    const target = getElementById(targetId);
+    if (!target) return false;
+    if (target.parentId === currId) return true;
+    return isChild(currId, target.parentId);
   };
   // ===
 
@@ -1375,14 +1373,15 @@ const Ground = () => {
                       const cuboid = state.elements.find((e) => e.id === state.selectedElement?.id);
                       const selectedElement = state.selectedElement;
                       if (cuboid && selectedElement) {
-                        const { pos: parentAbsPos, rot: parentAbsRot } = getAbsDataOfStackedCuboid(newParentId);
+                        const { pos: parentAbsPos, rot: parentAbsRot } =
+                          Util.getWorldDataOfStackedCuboidById(newParentId);
                         const diff = new Vector3().subVectors(p, parentAbsPos);
                         diff.applyEuler(new Euler(0, 0, -parentAbsRot));
                         cuboid.cx = diff.x;
                         cuboid.cy = diff.y;
                         if (selectedElement.parentId !== newParentId) {
                           cuboid.parentId = newParentId;
-                          const { rot: currAbsRot } = getAbsDataOfStackedCuboid(selectedElement.id);
+                          const { rot: currAbsRot } = Util.getWorldDataOfStackedCuboidById(selectedElement.id);
                           cuboid.rotation[2] = currAbsRot - parentAbsRot;
                         } else if (cuboid.parentId !== newParentId) {
                           cuboid.parentId = selectedElement.parentId;
@@ -1394,7 +1393,7 @@ const Ground = () => {
                     setCommonStore((state) => {
                       const cuboid = state.elements.find((e) => e.id === grabRef.current!.id);
                       if (cuboid && cuboid.parentId !== 'Ground') {
-                        const { rot: parentAbsRot } = getAbsDataOfStackedCuboid(cuboid.parentId);
+                        const { rot: parentAbsRot } = Util.getWorldDataOfStackedCuboidById(cuboid.parentId);
                         cuboid.rotation[2] += parentAbsRot;
                         cuboid.parentId = 'Ground';
                       }
@@ -1402,9 +1401,7 @@ const Ground = () => {
                     handleMove(p);
                   }
                 } else if (resizeHandleType) {
-                  handleResize(p);
-                } else if (rotateHandleType) {
-                  handleRotate(p);
+                  // handleResize(p);
                 }
               }
             }
@@ -1522,36 +1519,36 @@ const Ground = () => {
               break;
             }
             case ObjectType.Cuboid:
-              if (Util.isTopResizeHandle(resizeHandleType)) {
-                setCommonStore((state) => {
-                  for (const e of state.elements) {
-                    if (e.id === grabRef.current?.id) {
-                      e.cz = Math.max(0.5, p.z / 2);
-                      e.lz = Math.max(1, p.z);
-                      break;
-                    }
-                  }
-                  state.selectedElementHeight = Math.max(1, p.z);
-                });
-                const cuboidRef = useRefStore.getState().cuboidRef;
-                if (cuboidRef?.current) {
-                  for (const obj of cuboidRef.current.children) {
-                    if (obj.name.includes('Human') || obj.name.includes('Tree') || obj.name.includes('Flower')) {
-                      const absPos = absPosMapRef.current.get(getObjectId(obj));
-                      if (absPos) {
-                        // stand on top face
-                        if (Math.abs(oldDimensionRef.current.z - absPos.z) < 0.01) {
-                          obj.position.setZ(Math.max(p.z / 2, 0.5));
-                        }
-                        // stand on side faces
-                        else {
-                          obj.position.setZ(absPos.z - cuboidRef.current.position.z);
-                        }
-                      }
-                    }
-                  }
-                }
-              }
+              // if (Util.isTopResizeHandle(resizeHandleType)) {
+              //   setCommonStore((state) => {
+              //     for (const e of state.elements) {
+              //       if (e.id === grabRef.current?.id) {
+              //         e.cz = Math.max(0.5, p.z / 2);
+              //         e.lz = Math.max(1, p.z);
+              //         break;
+              //       }
+              //     }
+              //     state.selectedElementHeight = Math.max(1, p.z);
+              //   });
+              //   const cuboidRef = useRefStore.getState().cuboidRef;
+              //   if (cuboidRef?.current) {
+              //     for (const obj of cuboidRef.current.children) {
+              //       if (obj.name.includes('Human') || obj.name.includes('Tree') || obj.name.includes('Flower')) {
+              //         const absPos = absPosMapRef.current.get(getObjectId(obj));
+              //         if (absPos) {
+              //           // stand on top face
+              //           if (Math.abs(oldDimensionRef.current.z - absPos.z) < 0.01) {
+              //             obj.position.setZ(Math.max(p.z / 2, 0.5));
+              //           }
+              //           // stand on side faces
+              //           else {
+              //             obj.position.setZ(absPos.z - cuboidRef.current.position.z);
+              //           }
+              //         }
+              //       }
+              //     }
+              //   }
+              // }
               break;
           }
         }
