@@ -1,7 +1,7 @@
 {
-  "docid": "nngLSCGNjX2LjHZeemnaq7",
-  "time": "02/04/2023 01:25 pm",
-  "timestamp": 1675535142316,
+  "docid": "21TNkEaRQtmkMpHquDpRhe",
+  "time": "03/21/2023 12:30 pm",
+  "timestamp": 1679416202848,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -460,17 +460,17 @@
     },
     {
       "type": "Door",
-      "cx": 4.625929269271485e-18,
+      "cx": -0.029166666666666664,
       "cy": 0,
       "cz": -0.08333333333333333,
-      "lx": 0.16666666666666666,
+      "lx": 0.10833333333333334,
       "ly": 0,
       "lz": 0.8333333333333334,
       "color": "white",
       "uValue": 1.7034779999999998,
-      "textureType": "Door Texture #4",
+      "textureType": "Door Texture #17",
       "filled": true,
-      "doorType": "Default",
+      "doorType": "Arched",
       "archHeight": 1,
       "normal": [
         0,
@@ -824,14 +824,14 @@
       "cx": 4.625929269271485e-18,
       "cy": 0,
       "cz": -0.08333333333333333,
-      "lx": 0.16666666666666666,
+      "lx": 0.10833333333333334,
       "ly": 0,
       "lz": 0.8333333333333334,
       "color": "white",
       "uValue": 1.7034779999999998,
-      "textureType": "Door Texture #4",
+      "textureType": "Door Texture #17",
       "filled": true,
-      "doorType": "Default",
+      "doorType": "Arched",
       "archHeight": 1,
       "normal": [
         0,
@@ -927,6 +927,7 @@
       "label": "Insulated Ceiling"
     }
   ],
+  "sceneRadius": 23,
   "view": {
     "dailyPvYieldPanelX": 0,
     "mapPanelY": 0,
@@ -956,9 +957,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -20.825935508514938,
-      -21.517015691103683,
-      5.712166306286438
+      -19.73331041183491,
+      -15.606053038152623,
+      2.569638957524864
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -1007,9 +1008,9 @@
     "shadowEnabled": true,
     "showInstructionPanel": false,
     "panCenter": [
-      4.250083601310625,
-      0.8431435640707386,
-      0.9827579553092305
+      3.388120187568702,
+      1.9907625161279443,
+      1.1720990830439746
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
     "showHeliodonPanel": false,
@@ -1121,6 +1122,10 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
+  "modelType": "Unknown",
+  "modelAuthor": null,
+  "modelLabel": null,
+  "modelDescription": null,
   "notes": [
     "Thermal envelope vs. building envelope"
   ]

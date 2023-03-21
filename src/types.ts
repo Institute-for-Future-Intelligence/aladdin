@@ -521,6 +521,11 @@ export enum DoorTexture {
   Texture10 = 'Door Texture #10',
   Texture11 = 'Door Texture #11',
   Texture12 = 'Door Texture #12',
+  Texture13 = 'Door Texture #13',
+  Texture14 = 'Door Texture #14',
+  Texture15 = 'Door Texture #15',
+  Texture16 = 'Door Texture #16',
+  Texture17 = 'Door Texture #17',
   NoTexture = 'No Door Texture',
 }
 

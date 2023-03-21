@@ -18,6 +18,11 @@ import DoorTexture09 from 'src/resources/door_09.png';
 import DoorTexture10 from 'src/resources/door_10.png';
 import DoorTexture11 from 'src/resources/door_11.png';
 import DoorTexture12 from 'src/resources/door_12.png';
+import DoorTexture13 from 'src/resources/door_13.png';
+import DoorTexture14 from 'src/resources/door_14.png';
+import DoorTexture15 from 'src/resources/door_15.png';
+import DoorTexture16 from 'src/resources/door_16.png';
+import DoorTexture17 from 'src/resources/door_17.png';
 import { TextureLoader } from 'three';
 import { useThree } from '@react-three/fiber';
 import { useStore } from 'src/stores/common';
@@ -69,6 +74,21 @@ export const useDoorTexture = (textureType: DoorTexture, doorType: DoorType, lx?
         break;
       case DoorTexture.Texture12:
         textureImg = DoorTexture12;
+        break;
+      case DoorTexture.Texture13:
+        textureImg = DoorTexture13;
+        break;
+      case DoorTexture.Texture14:
+        textureImg = DoorTexture14;
+        break;
+      case DoorTexture.Texture15:
+        textureImg = DoorTexture15;
+        break;
+      case DoorTexture.Texture16:
+        textureImg = DoorTexture16;
+        break;
+      case DoorTexture.Texture17:
+        textureImg = DoorTexture17;
         break;
       default:
         textureImg = DoorTexture02;

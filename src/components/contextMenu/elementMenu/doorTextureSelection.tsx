@@ -15,6 +15,11 @@ import DoorTexture09Icon from 'src/resources/door_09.png';
 import DoorTexture10Icon from 'src/resources/door_10.png';
 import DoorTexture11Icon from 'src/resources/door_11.png';
 import DoorTexture12Icon from 'src/resources/door_12.png';
+import DoorTexture13Icon from 'src/resources/door_13.png';
+import DoorTexture14Icon from 'src/resources/door_14.png';
+import DoorTexture15Icon from 'src/resources/door_15.png';
+import DoorTexture16Icon from 'src/resources/door_16.png';
+import DoorTexture17Icon from 'src/resources/door_17.png';
 
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Col, Modal, Radio, Row, Select, Space } from 'antd';
@@ -480,6 +485,61 @@ const DoorTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
                   style={{ paddingRight: '8px' }}
                 />{' '}
                 {i18n.t('doorMenu.Texture12', lang)}
+              </Option>
+
+              <Option key={DoorTexture.Texture13} value={DoorTexture.Texture13}>
+                <img
+                  alt={DoorTexture.Texture13}
+                  src={DoorTexture13Icon}
+                  height={20}
+                  width={40}
+                  style={{ paddingRight: '8px' }}
+                />{' '}
+                {i18n.t('doorMenu.Texture13', lang)}
+              </Option>
+
+              <Option key={DoorTexture.Texture14} value={DoorTexture.Texture14}>
+                <img
+                  alt={DoorTexture.Texture14}
+                  src={DoorTexture14Icon}
+                  height={20}
+                  width={40}
+                  style={{ paddingRight: '8px' }}
+                />{' '}
+                {i18n.t('doorMenu.Texture14', lang)}
+              </Option>
+
+              <Option key={DoorTexture.Texture15} value={DoorTexture.Texture15}>
+                <img
+                  alt={DoorTexture.Texture15}
+                  src={DoorTexture15Icon}
+                  height={20}
+                  width={40}
+                  style={{ paddingRight: '8px' }}
+                />{' '}
+                {i18n.t('doorMenu.Texture15', lang)}
+              </Option>
+
+              <Option key={DoorTexture.Texture16} value={DoorTexture.Texture16}>
+                <img
+                  alt={DoorTexture.Texture16}
+                  src={DoorTexture16Icon}
+                  height={20}
+                  width={40}
+                  style={{ paddingRight: '8px' }}
+                />{' '}
+                {i18n.t('doorMenu.Texture16', lang)}
+              </Option>
+
+              <Option key={DoorTexture.Texture17} value={DoorTexture.Texture17}>
+                <img
+                  alt={DoorTexture.Texture17}
+                  src={DoorTexture17Icon}
+                  height={20}
+                  width={40}
+                  style={{ paddingRight: '8px' }}
+                />{' '}
+                {i18n.t('doorMenu.Texture17', lang)}
               </Option>
             </Select>
           </Col>

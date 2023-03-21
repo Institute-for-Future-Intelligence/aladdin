@@ -1,7 +1,7 @@
 {
-  "docid": "kTUa9iM1xLw58XJqas2pWK",
-  "time": "03/20/2023 09:01 pm",
-  "timestamp": 1679360497134,
+  "docid": "k4Q9dJhsYgy4hHe2g1cgB5",
+  "time": "03/21/2023 12:25 pm",
+  "timestamp": 1679415955756,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -407,10 +407,10 @@
       "cx": 0.00416666666666667,
       "cy": 0,
       "cz": -0.27499999999999997,
-      "lx": 0.17500000000000002,
+      "lx": 0.125,
       "ly": 0,
       "lz": 0.45,
-      "textureType": "Door Texture #4",
+      "textureType": "Door Texture #15",
       "color": "white",
       "selected": false,
       "showLabel": false,
@@ -427,10 +427,10 @@
       "parentId": "beHqET5NN8aNdsuBncMpY7",
       "foundationId": "fbqvzYqiEy79jeL8wsadib",
       "id": "sXi8n3YHx4BKsSMSv4hsZ3",
-      "doorType": "Default",
+      "doorType": "Arched",
       "archHeight": 1,
       "filled": true,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Roof",
@@ -3073,9 +3073,9 @@
       "distance": 6,
       "intensity": 8,
       "color": "#fe9200",
-      "cx": -0.005465449608162843,
+      "cx": 0.004999999999999995,
       "cy": 0,
-      "cz": -0.0483879238122415,
+      "cz": -0.02333333333333333,
       "lx": 0.16,
       "ly": 0.16,
       "lz": 0.08,
@@ -3094,7 +3094,7 @@
       "foundationId": "fbqvzYqiEy79jeL8wsadib",
       "id": "eS9BNDuHjJf4dGFLVwhXwG",
       "selected": false,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Polygon",
@@ -3210,9 +3210,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -8.609922742314618,
-      -20.854270698819533,
-      3.463157252974684
+      -9.973699554897843,
+      -20.362694647064416,
+      2.8187150675653894
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
