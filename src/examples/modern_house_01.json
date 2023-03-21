@@ -1,7 +1,7 @@
 {
-  "docid": "4h5Yuv7EPhBks5AdBdPSrH",
-  "time": "02/04/2023 12:51 pm",
-  "timestamp": 1675533085778,
+  "docid": "9CWDbKY11xF89Km8zryVNC",
+  "time": "03/20/2023 04:15 pm",
+  "timestamp": 1679343313200,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -679,7 +679,7 @@
     {
       "type": "Window",
       "cx": -0.000040953643875444483,
-      "cy": 0.1,
+      "cy": 0.3,
       "cz": -0.2833333333333333,
       "lx": 0.9229950157891724,
       "ly": 0.3,
@@ -718,7 +718,8 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "sillWidth": 0
     },
     {
       "type": "Window",
@@ -2172,8 +2173,85 @@
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
       "id": "iMv2LJEW81uJy7BUGUKL83",
       "selected": false
+    },
+    {
+      "type": "Polygon",
+      "cx": -0.020412282064186955,
+      "cy": -0.023334577896438075,
+      "cz": 0,
+      "lx": 0.4,
+      "ly": 0.4,
+      "lz": 0.4,
+      "color": "#73d8ff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "vertices": [
+        {
+          "x": -0.03636363636363637,
+          "y": -0.08333333333333333
+        },
+        {
+          "x": -0.1272727272727273,
+          "y": -0.08333333333333333
+        },
+        {
+          "x": -0.05454545454545455,
+          "y": -0.03333333333333333
+        },
+        {
+          "x": -0.09090909090909093,
+          "y": 0.049999999999999996
+        },
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 0.09090909090909093,
+          "y": 0.049999999999999996
+        },
+        {
+          "x": 0.05454545454545455,
+          "y": -0.03333333333333333
+        },
+        {
+          "x": 0.1272727272727273,
+          "y": -0.08333333333333333
+        },
+        {
+          "x": 0.03636363636363637,
+          "y": -0.08333333333333333
+        },
+        {
+          "x": 0,
+          "y": -0.16666666666666666
+        }
+      ],
+      "parentId": "o3wqaqdyzHo4XWGr2xqwut",
+      "parentType": "Wall",
+      "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
+      "selected": false,
+      "filled": true,
+      "selectedIndex": 1,
+      "id": "bM2XuLbGojMjjtTq6QbXqK",
+      "lineColor": "#4d4d4d",
+      "noOutline": false,
+      "text": "26",
+      "fontSize": 0.3,
+      "fontColor": "gold",
+      "fontOutlineWidth": 0.01,
+      "lineWidth": 1
     }
   ],
+  "sceneRadius": 14,
   "view": {
     "dailyPvYieldPanelX": 0,
     "mapPanelY": 0,
@@ -2203,8 +2281,8 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      15.787159546699485,
-      -4.342256139127052,
+      16.419538659049408,
+      -5.4246343201988605,
       2.457105139993579
     ],
     "showYearlyHeliostatYieldPanel": false,
@@ -2339,5 +2417,9 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
+  "modelType": "Unknown",
+  "modelAuthor": null,
+  "modelLabel": null,
+  "modelDescription": null,
   "notes": []
 }

@@ -1,7 +1,7 @@
 {
-  "docid": "ajKWQmaycMsAtZ5fGcrxas",
-  "time": "03/18/2023 08:01 pm",
-  "timestamp": 1679184108346,
+  "docid": "uQsuwK6ycJHcLgXCHcuYvs",
+  "time": "03/20/2023 09:33 pm",
+  "timestamp": 1679362401200,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -75,7 +75,8 @@
       "id": "x9h6vgTSQ3QLh48G3oYMPN",
       "lx": 31.424087209321772,
       "cx": 0.2605383705139097,
-      "solarUpdraftTower": {}
+      "solarUpdraftTower": {},
+      "locked": true
     },
     {
       "lx": 23.5,
@@ -130,7 +131,8 @@
       "opacity": 0.5,
       "fill": "Full",
       "unfilledHeight": 0.5,
-      "eavesLength": 0.3
+      "eavesLength": 0.3,
+      "locked": true
     },
     {
       "lz": 12,
@@ -189,7 +191,8 @@
       "opacity": 0.5,
       "fill": "Full",
       "unfilledHeight": 0.5,
-      "eavesLength": 0.3
+      "eavesLength": 0.3,
+      "locked": true
     },
     {
       "cy": 2.3140035386488824,
@@ -248,7 +251,8 @@
       "opacity": 0.5,
       "fill": "Full",
       "unfilledHeight": 0.5,
-      "eavesLength": 0.3
+      "eavesLength": 0.3,
+      "locked": true
     },
     {
       "showLabel": false,
@@ -303,16 +307,17 @@
       "opacity": 0.5,
       "fill": "Full",
       "unfilledHeight": 0.5,
-      "eavesLength": 0.3
+      "eavesLength": 0.3,
+      "locked": true
     },
     {
       "solarPowerTower": {},
       "lx": 29.20195847671534,
       "parentId": "Ground",
       "id": "46TKaVq8pvU97fq25w6FtQ",
-      "cx": 1.2183483284258765,
+      "cx": 1.0262187405527392,
       "lz": 0.1,
-      "cy": -11.45295309599825,
+      "cy": -11.383349626055136,
       "normal": [
         0,
         0,
@@ -328,7 +333,8 @@
         0,
         0
       ],
-      "type": "Foundation"
+      "type": "Foundation",
+      "locked": true
     },
     {
       "cz": 0,
@@ -361,7 +367,7 @@
         6.34147142267982,
         0.1
       ],
-      "textureType": "Wall Texture Default",
+      "textureType": "No Wall Texture",
       "leftRoofHeight": 6.986961603131722,
       "showLabel": false,
       "leftPoint": [
@@ -375,15 +381,16 @@
       "leftJoints": [
         "7N5hq7UW6d1NtoD4SxrS8y"
       ],
-      "color": "#9f0500",
+      "color": "#ffffff",
       "wallStructure": "Default",
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0.5,
-      "fill": "Full",
-      "unfilledHeight": 0.5,
-      "eavesLength": 0.2
+      "fill": "Partial",
+      "unfilledHeight": 6.175009105936305,
+      "eavesLength": 0,
+      "locked": true
     },
     {
       "type": "Wall",
@@ -438,7 +445,8 @@
       "opacity": 0.5,
       "fill": "Full",
       "unfilledHeight": 0.5,
-      "eavesLength": 0.2
+      "eavesLength": 0.2,
+      "locked": true
     },
     {
       "leftJoints": [
@@ -497,7 +505,8 @@
       "opacity": 0.5,
       "fill": "Full",
       "unfilledHeight": 0.5,
-      "eavesLength": 0.2
+      "eavesLength": 0.2,
+      "locked": true
     },
     {
       "foundationId": "46TKaVq8pvU97fq25w6FtQ",
@@ -556,7 +565,8 @@
       "opacity": 0.5,
       "fill": "Full",
       "unfilledHeight": 0.5,
-      "eavesLength": 0.2
+      "eavesLength": 0.2,
+      "locked": true
     },
     {
       "cy": 0,
@@ -598,7 +608,8 @@
       "color": "#4d4d4d",
       "roofStructure": "Default",
       "rise": 0,
-      "ceiling": false
+      "ceiling": false,
+      "locked": true
     },
     {
       "cy": 0.1,
@@ -639,7 +650,8 @@
       "frame": true,
       "frameWidth": 0.1,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "ly": 0.3,
@@ -679,7 +691,8 @@
       "frame": true,
       "frameWidth": 0.1,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "id": "bpUvKGmm3pbG6LoUQVwyUS",
@@ -719,7 +732,8 @@
       "frame": true,
       "frameWidth": 0.1,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "cz": 0.28681928867940926,
@@ -759,7 +773,8 @@
       "frame": true,
       "frameWidth": 0.1,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "rotation": [
@@ -784,7 +799,8 @@
         0,
         0,
         1
-      ]
+      ],
+      "locked": true
     },
     {
       "type": "Wall",
@@ -837,9 +853,10 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0.5,
-      "fill": "Full",
-      "unfilledHeight": 0.5,
-      "eavesLength": 0.4
+      "fill": "Partial",
+      "unfilledHeight": 13.09781600017236,
+      "eavesLength": 0.4,
+      "locked": true
     },
     {
       "leftPoint": [
@@ -892,9 +909,10 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0.5,
-      "fill": "Full",
-      "unfilledHeight": 0.5,
-      "eavesLength": 0.4
+      "fill": "Partial",
+      "unfilledHeight": 13.10125703573121,
+      "eavesLength": 0.4,
+      "locked": true
     },
     {
       "foundationId": "rzzzSn5cSsCh41KW1dZ8o9",
@@ -947,9 +965,10 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0.5,
-      "fill": "Full",
-      "unfilledHeight": 0.5,
-      "eavesLength": 0.4
+      "fill": "Partial",
+      "unfilledHeight": 13.104325113888441,
+      "eavesLength": 0.4,
+      "locked": true
     },
     {
       "ly": 0.3,
@@ -1002,9 +1021,10 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0.5,
-      "fill": "Full",
-      "unfilledHeight": 0.5,
-      "eavesLength": 0.4
+      "fill": "Partial",
+      "unfilledHeight": 13.110251380374818,
+      "eavesLength": 0.4,
+      "locked": true
     },
     {
       "normal": [
@@ -1040,7 +1060,8 @@
       "selected": false,
       "color": "#4d4d4d",
       "rise": 2.4214017411934243,
-      "ceiling": false
+      "ceiling": false,
+      "locked": true
     },
     {
       "cy": 0.1,
@@ -1081,7 +1102,8 @@
       "frame": true,
       "frameWidth": 0.1,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "cz": 0.375,
@@ -1122,7 +1144,8 @@
       "frame": true,
       "frameWidth": 0.1,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "id": "8bXmzpgr9i9JFo2oBsPwmf",
@@ -1163,7 +1186,8 @@
       "frame": true,
       "frameWidth": 0.1,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "cz": -0.1,
@@ -1203,7 +1227,8 @@
       "frame": true,
       "frameWidth": 0.1,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "cz": -0.1,
@@ -1243,7 +1268,8 @@
       "frame": true,
       "frameWidth": 0.1,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "lz": 0.6,
@@ -1283,7 +1309,8 @@
       "frame": true,
       "frameWidth": 0.1,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "selected": false,
@@ -1323,7 +1350,8 @@
       "frame": true,
       "frameWidth": 0.1,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "normal": [
@@ -1363,7 +1391,8 @@
       "frame": true,
       "frameWidth": 0.1,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "ly": 0.3,
@@ -1404,7 +1433,8 @@
       "frame": true,
       "frameWidth": 0.1,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "type": "Window",
@@ -1445,7 +1475,8 @@
       "frame": true,
       "frameWidth": 0.1,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "lx": 0.09523809523809523,
@@ -1486,7 +1517,8 @@
       "frame": true,
       "frameWidth": 0.1,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "lz": 0.09999999999999998,
@@ -1527,7 +1559,8 @@
       "frame": true,
       "frameWidth": 0.1,
       "windowType": "Arched",
-      "archHeight": 1.1999999999999997
+      "archHeight": 1.1999999999999997,
+      "locked": true
     },
     {
       "type": "Tree",
@@ -1549,7 +1582,8 @@
       ],
       "parentId": "Ground",
       "id": "b1PLNbuHYXMSFSk3EuJWpe",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Tree",
@@ -1571,7 +1605,8 @@
       ],
       "parentId": "Ground",
       "id": "7jf8KwAp3jRyyjP9pa5nD6",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Human",
@@ -1594,7 +1629,8 @@
       "parentId": "x9h6vgTSQ3QLh48G3oYMPN",
       "id": "fEgQo63aax49KtqEdPTNhE",
       "selected": false,
-      "ly": 0.42
+      "ly": 0.42,
+      "locked": true
     },
     {
       "type": "Human",
@@ -1617,7 +1653,8 @@
       "parentId": "Ground",
       "id": "4BmWg5mgbRSqHZB7i69JCr",
       "selected": false,
-      "ly": 0.695
+      "ly": 0.695,
+      "locked": true
     },
     {
       "type": "Human",
@@ -1640,7 +1677,8 @@
       "parentId": "Ground",
       "id": "xix4idJ2qyP21RHv281pxk",
       "selected": false,
-      "ly": 0.6
+      "ly": 0.6,
+      "locked": true
     },
     {
       "type": "Human",
@@ -1663,7 +1701,8 @@
       "parentId": "46TKaVq8pvU97fq25w6FtQ",
       "id": "pnZ17fTrUAQjd7ZGBi4LZw",
       "selected": false,
-      "ly": 0.43
+      "ly": 0.43,
+      "locked": true
     },
     {
       "type": "Human",
@@ -1686,7 +1725,8 @@
       "parentId": "Ground",
       "id": "swuHMR6JuNqcRU1q2CGzEB",
       "selected": false,
-      "ly": 2
+      "ly": 2,
+      "locked": true
     },
     {
       "type": "Human",
@@ -1709,7 +1749,8 @@
       "parentId": "x9h6vgTSQ3QLh48G3oYMPN",
       "id": "neJBajzFYG5HwTAskcMmid",
       "selected": false,
-      "ly": 0.65
+      "ly": 0.65,
+      "locked": true
     },
     {
       "type": "Door",
@@ -1738,7 +1779,8 @@
       "color": "white",
       "doorType": "Default",
       "archHeight": 1,
-      "filled": true
+      "filled": true,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -1760,7 +1802,8 @@
       ],
       "parentId": "46TKaVq8pvU97fq25w6FtQ",
       "id": "r3HRWGLTLtPMP6QPxaP2u9",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -1783,7 +1826,8 @@
       "parentId": "46TKaVq8pvU97fq25w6FtQ",
       "id": "eB1sPWxNsgKXNP6CKxK1cQ",
       "selected": false,
-      "flip": true
+      "flip": true,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -1805,7 +1849,8 @@
       ],
       "parentId": "46TKaVq8pvU97fq25w6FtQ",
       "id": "pmPLWWXJMx6px3ffjyd7Xf",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -1827,7 +1872,8 @@
       ],
       "parentId": "46TKaVq8pvU97fq25w6FtQ",
       "id": "rFPmR6A2xwJwzhvMRvDbF4",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -1849,7 +1895,8 @@
       ],
       "parentId": "46TKaVq8pvU97fq25w6FtQ",
       "id": "3tR1Hnu1k94fCkXYFdPNCZ",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -1872,7 +1919,8 @@
       "parentId": "46TKaVq8pvU97fq25w6FtQ",
       "id": "ac3W5UphRDEuZMMMxdg9a8",
       "selected": false,
-      "flip": true
+      "flip": true,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -1894,7 +1942,8 @@
       ],
       "parentId": "46TKaVq8pvU97fq25w6FtQ",
       "id": "3j517SjKVEgfCScaEPmkeg",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -1916,7 +1965,8 @@
       ],
       "parentId": "46TKaVq8pvU97fq25w6FtQ",
       "id": "vLUgsZC1zUxAvajPJX9oRy",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -1938,7 +1988,8 @@
       ],
       "parentId": "46TKaVq8pvU97fq25w6FtQ",
       "id": "kb5KssfCiZkY9jQ5M4fg79",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -1961,7 +2012,8 @@
       "parentId": "46TKaVq8pvU97fq25w6FtQ",
       "id": "rvgmvqqddGgLnhBVWDH5Yi",
       "selected": false,
-      "flip": true
+      "flip": true,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -1983,7 +2035,8 @@
       ],
       "parentId": "46TKaVq8pvU97fq25w6FtQ",
       "id": "whxmnRSL5NJSpdaiWxZBom",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -2005,7 +2058,8 @@
       ],
       "parentId": "46TKaVq8pvU97fq25w6FtQ",
       "id": "hcWpyraDuh7HTi6CTV9t8w",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -2027,7 +2081,8 @@
       ],
       "parentId": "46TKaVq8pvU97fq25w6FtQ",
       "id": "k3fvYn4xsoNn35srPUnKcM",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -2050,7 +2105,8 @@
       "parentId": "46TKaVq8pvU97fq25w6FtQ",
       "id": "rZdFV48y6NMFUVbnDpaSyZ",
       "selected": false,
-      "flip": true
+      "flip": true,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -2072,7 +2128,8 @@
       ],
       "parentId": "46TKaVq8pvU97fq25w6FtQ",
       "id": "codYgSxPq8Vks6hVgvEgs8",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -2094,7 +2151,8 @@
       ],
       "parentId": "46TKaVq8pvU97fq25w6FtQ",
       "id": "bTFFYv3CW8yhDsAPYPTsXV",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -2116,7 +2174,8 @@
       ],
       "parentId": "46TKaVq8pvU97fq25w6FtQ",
       "id": "ctEoy8WqpFPS2x5ac3G3Pw",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -2138,7 +2197,8 @@
       ],
       "parentId": "46TKaVq8pvU97fq25w6FtQ",
       "id": "kGH6RHxnnVioxpEWe4i5gm",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -2160,7 +2220,8 @@
       ],
       "parentId": "46TKaVq8pvU97fq25w6FtQ",
       "id": "q26Eg31XYAcejy2Lefy1u6",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -2182,7 +2243,8 @@
       ],
       "parentId": "46TKaVq8pvU97fq25w6FtQ",
       "id": "5yYM5vzDCoYXugAds8nGWB",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -2204,7 +2266,8 @@
       ],
       "parentId": "x9h6vgTSQ3QLh48G3oYMPN",
       "id": "1EBzai8Qd5Jq4dWcsiq8La",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -2226,7 +2289,8 @@
       ],
       "parentId": "x9h6vgTSQ3QLh48G3oYMPN",
       "id": "o9s9NrSQqGhb4mKxZK73ZY",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -2248,7 +2312,8 @@
       ],
       "parentId": "46TKaVq8pvU97fq25w6FtQ",
       "id": "phZdGJBNMcagm1hqvjyqar",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Tree",
@@ -2270,7 +2335,8 @@
       ],
       "parentId": "Ground",
       "id": "gkQDZPnaSVr9iatjDLPxBD",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Tree",
@@ -2292,7 +2358,8 @@
       ],
       "parentId": "Ground",
       "id": "n7bLUe1p1rbbqq2FsGvzJ1",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Tree",
@@ -2315,7 +2382,8 @@
       "parentId": "Ground",
       "id": "64YqofbhUQNT1AUUrbAQFL",
       "selected": false,
-      "flip": true
+      "flip": true,
+      "locked": true
     },
     {
       "type": "Window",
@@ -2358,7 +2426,8 @@
       "foundationId": "x9h6vgTSQ3QLh48G3oYMPN",
       "id": "2akAYnPawwHe5duAcNSm7B",
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "type": "Window",
@@ -2401,7 +2470,8 @@
       "foundationId": "rzzzSn5cSsCh41KW1dZ8o9",
       "id": "4xy5bj1K9gsNUeeRqMHQ4T",
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "type": "Wall",
@@ -2428,8 +2498,8 @@
         0.1
       ],
       "relativeAngle": 3.141592653589793,
-      "textureType": "Wall Texture Default",
-      "color": "#9f0500",
+      "textureType": "No Wall Texture",
+      "color": "#ffffff",
       "normal": [
         0,
         0,
@@ -2452,9 +2522,10 @@
       "selected": false,
       "leftRoofHeight": 6.986961603131722,
       "rightRoofHeight": 6.986961603131722,
-      "fill": "Full",
-      "unfilledHeight": 0.5,
-      "eavesLength": 0.2
+      "fill": "Partial",
+      "unfilledHeight": 6.886961603131723,
+      "eavesLength": 0,
+      "locked": true
     },
     {
       "type": "Wall",
@@ -2507,7 +2578,8 @@
       "rightRoofHeight": 5,
       "fill": "Full",
       "unfilledHeight": 0.5,
-      "eavesLength": 0.2
+      "eavesLength": 0.2,
+      "locked": true
     },
     {
       "type": "Window",
@@ -2547,7 +2619,8 @@
       },
       "selected": false,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "type": "Window",
@@ -2587,7 +2660,8 @@
       },
       "selected": false,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "type": "Window",
@@ -2627,7 +2701,8 @@
       },
       "selected": false,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "type": "Window",
@@ -2667,7 +2742,8 @@
       },
       "selected": false,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "type": "Window",
@@ -2707,7 +2783,8 @@
       },
       "selected": false,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "type": "Window",
@@ -2747,7 +2824,8 @@
       },
       "selected": false,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "type": "Wall",
@@ -2804,7 +2882,8 @@
       ],
       "fill": "Full",
       "unfilledHeight": 0.5,
-      "eavesLength": 0.2
+      "eavesLength": 0.2,
+      "locked": true
     },
     {
       "type": "Wall",
@@ -2861,7 +2940,8 @@
       ],
       "fill": "Full",
       "unfilledHeight": 0.5,
-      "eavesLength": 0.2
+      "eavesLength": 0.2,
+      "locked": true
     },
     {
       "id": "2edgYQtearj95L9ExcxpR8",
@@ -2902,7 +2982,8 @@
       ],
       "selected": false,
       "rise": 0,
-      "ceiling": false
+      "ceiling": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -2924,7 +3005,8 @@
       ],
       "parentId": "cLT8u6hCPgvgGLYpma7b1F",
       "id": "n7MjXwaqUNnrqr7tttq8Xs",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -2947,7 +3029,8 @@
       ],
       "parentId": "cLT8u6hCPgvgGLYpma7b1F",
       "id": "sV3wDCg6jC5jfbaZPhLEFR",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -2969,7 +3052,8 @@
       ],
       "parentId": "cLT8u6hCPgvgGLYpma7b1F",
       "id": "5qYyouDiycvWuJ5qvpfENM",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -2991,7 +3075,8 @@
       ],
       "parentId": "cLT8u6hCPgvgGLYpma7b1F",
       "id": "d5qiLf7kCJT5AZq7DadTns",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -3013,7 +3098,8 @@
       ],
       "parentId": "cLT8u6hCPgvgGLYpma7b1F",
       "id": "wsrTngfrvFcPA2tZXvJ7x3",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -3036,7 +3122,8 @@
       ],
       "parentId": "cLT8u6hCPgvgGLYpma7b1F",
       "id": "afwAGtRYkrpVQnTg7J7Qth",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -3058,7 +3145,8 @@
       ],
       "parentId": "cLT8u6hCPgvgGLYpma7b1F",
       "id": "qcKnQw96DTDSeCGHYqMA48",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -3080,7 +3168,8 @@
       ],
       "parentId": "cLT8u6hCPgvgGLYpma7b1F",
       "id": "waxy4TUCBpoD2cd6LrtnaA",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -3102,7 +3191,8 @@
       ],
       "parentId": "cLT8u6hCPgvgGLYpma7b1F",
       "id": "nvZw8LLJYkjMh1JGkRLD3K",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -3125,7 +3215,8 @@
       ],
       "parentId": "cLT8u6hCPgvgGLYpma7b1F",
       "id": "cqsNRo9PPkomK9wdkZupc1",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -3147,7 +3238,8 @@
       ],
       "parentId": "cLT8u6hCPgvgGLYpma7b1F",
       "id": "jrx4N63zfhzuthq28WtS35",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -3169,7 +3261,8 @@
       ],
       "parentId": "cLT8u6hCPgvgGLYpma7b1F",
       "id": "mxRRf3jQHxj2YV6RTapCHL",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -3191,7 +3284,8 @@
       ],
       "parentId": "cLT8u6hCPgvgGLYpma7b1F",
       "id": "nTZ7SBUGqeqonpnPNpk3oW",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -3214,7 +3308,8 @@
       ],
       "parentId": "cLT8u6hCPgvgGLYpma7b1F",
       "id": "3dhHbjvLKuWhGK9UjHE6XT",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -3236,7 +3331,8 @@
       ],
       "parentId": "cLT8u6hCPgvgGLYpma7b1F",
       "id": "4GeJePH4hCxCTjZtoXxWto",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -3258,7 +3354,8 @@
       ],
       "parentId": "cLT8u6hCPgvgGLYpma7b1F",
       "id": "7FGr3ZNRc8Yr5eCEbRFCP4",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -3280,7 +3377,8 @@
       ],
       "parentId": "cLT8u6hCPgvgGLYpma7b1F",
       "id": "j6RLkdyyrwF7fa2EzQWxLx",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -3302,7 +3400,8 @@
       ],
       "parentId": "cLT8u6hCPgvgGLYpma7b1F",
       "id": "keYgfjtBV5HoobU1c7o3UJ",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -3324,7 +3423,8 @@
       ],
       "parentId": "cLT8u6hCPgvgGLYpma7b1F",
       "id": "vVnzt8ngpeWWaQC4FjAL4j",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -3346,7 +3446,8 @@
       ],
       "parentId": "cLT8u6hCPgvgGLYpma7b1F",
       "id": "gZMPqGYEq2m24MmNCDDYiG",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -3368,7 +3469,8 @@
       ],
       "parentId": "cLT8u6hCPgvgGLYpma7b1F",
       "id": "6Ub8pCiCnETjVt5AhwfdTF",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -3390,12 +3492,13 @@
       ],
       "parentId": "cLT8u6hCPgvgGLYpma7b1F",
       "id": "66aAYBuCfd3AhjLpHJLkUu",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Foundation",
-      "cx": -0.42984287893313144,
-      "cy": 11.326655904396834,
+      "cx": -0.3396050744252213,
+      "cy": 11.51965967612361,
       "cz": 0.05,
       "lx": 27.18366746665238,
       "ly": 13.555523568838572,
@@ -3415,7 +3518,8 @@
       "solarAbsorberPipe": {},
       "solarPowerTower": {},
       "id": "cLT8u6hCPgvgGLYpma7b1F",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Flower",
@@ -3437,7 +3541,8 @@
       ],
       "parentId": "cLT8u6hCPgvgGLYpma7b1F",
       "id": "ageUa3KUftjZpZZ9K9EjET",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Window",
@@ -3477,7 +3582,8 @@
       },
       "selected": false,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "type": "Window",
@@ -3517,7 +3623,8 @@
       },
       "selected": false,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "type": "Window",
@@ -3557,7 +3664,8 @@
       },
       "selected": false,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "type": "Window",
@@ -3597,7 +3705,8 @@
       },
       "selected": false,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "type": "Window",
@@ -3637,7 +3746,8 @@
       },
       "selected": false,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "type": "Window",
@@ -3677,7 +3787,8 @@
       },
       "selected": false,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "type": "Window",
@@ -3717,7 +3828,8 @@
       },
       "selected": false,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "type": "Window",
@@ -3757,7 +3869,8 @@
       },
       "selected": false,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "type": "Window",
@@ -3797,7 +3910,8 @@
       },
       "selected": false,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "type": "Window",
@@ -3837,7 +3951,8 @@
       },
       "selected": false,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "type": "Window",
@@ -3877,7 +3992,8 @@
       },
       "selected": false,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "type": "Window",
@@ -3917,7 +4033,8 @@
       },
       "selected": false,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "type": "Window",
@@ -3957,7 +4074,8 @@
       },
       "selected": false,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "type": "Window",
@@ -3997,7 +4115,8 @@
       },
       "selected": false,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "type": "Window",
@@ -4037,7 +4156,8 @@
       },
       "selected": false,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "type": "Window",
@@ -4077,7 +4197,8 @@
       },
       "selected": false,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "type": "Window",
@@ -4117,7 +4238,8 @@
       },
       "selected": false,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "type": "Window",
@@ -4157,7 +4279,8 @@
       },
       "selected": false,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "type": "Window",
@@ -4197,7 +4320,8 @@
       },
       "selected": false,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "type": "Window",
@@ -4237,7 +4361,8 @@
       },
       "selected": false,
       "windowType": "Default",
-      "archHeight": 1
+      "archHeight": 1,
+      "locked": true
     },
     {
       "type": "Roof",
@@ -4281,7 +4406,8 @@
         1
       ],
       "rise": 3.934734349134846,
-      "ceiling": false
+      "ceiling": false,
+      "locked": true
     },
     {
       "type": "Window",
@@ -4321,7 +4447,8 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Window",
@@ -4361,7 +4488,8 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Window",
@@ -4401,7 +4529,8 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Light",
@@ -4430,7 +4559,8 @@
       "foundationId": "rzzzSn5cSsCh41KW1dZ8o9",
       "id": "gnMTcek5K3cRDBprwKnFBZ",
       "selected": false,
-      "inside": false
+      "inside": false,
+      "locked": true
     },
     {
       "type": "Light",
@@ -4458,7 +4588,8 @@
       "parentId": "iF8yBnVR7zKfNKiVQ7M1op",
       "foundationId": "x9h6vgTSQ3QLh48G3oYMPN",
       "id": "dpLuhLSSPa19xJpw2Qffsi",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Polygon",
@@ -4508,7 +4639,74 @@
       "fontColor": "gold",
       "fontSize": 1,
       "noOutline": true,
-      "opacity": 0
+      "opacity": 0,
+      "locked": true
+    },
+    {
+      "type": "Door",
+      "cx": 0.02127659574468085,
+      "cy": 0,
+      "cz": -0.2708333333333333,
+      "lx": 0.5531914893617021,
+      "ly": 0,
+      "lz": 0.4583333333333333,
+      "doorType": "Default",
+      "filled": false,
+      "archHeight": 1,
+      "textureType": "No Door Texture",
+      "color": "#ffffff",
+      "uValue": 1,
+      "selected": false,
+      "lineWidth": 0.2,
+      "lineColor": "#000000",
+      "showLabel": false,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "gYxC2R3CWviHFfEMyEPT1K",
+      "foundationId": "x9h6vgTSQ3QLh48G3oYMPN",
+      "id": "9ANMGsRZBmgfHhV2Q1CDCc",
+      "locked": true
+    },
+    {
+      "type": "Door",
+      "cx": -0.02127659574468085,
+      "cy": 0,
+      "cz": -0.2916666666666667,
+      "lx": 0.5531914893617021,
+      "ly": 0,
+      "lz": 0.4166666666666667,
+      "doorType": "Default",
+      "filled": false,
+      "archHeight": 1,
+      "textureType": "No Door Texture",
+      "color": "#ffffff",
+      "uValue": 1,
+      "selected": false,
+      "lineWidth": 0.2,
+      "lineColor": "#000000",
+      "showLabel": false,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "56tPe5zv4S5mhoVrSD2NK7",
+      "foundationId": "x9h6vgTSQ3QLh48G3oYMPN",
+      "id": "vap2L1NkxsVcWyXHMxiu2p",
+      "locked": true
     }
   ],
   "sceneRadius": 49,
@@ -4521,9 +4719,9 @@
     "enableRotate": true,
     "weatherPanelY": 0,
     "cameraPosition": [
-      40.76410822131277,
-      -16.432671173690856,
-      7.982285304757434
+      36.44698175969884,
+      -23.157725400395876,
+      8.691464223773387
     ],
     "showYearlyUpdraftTowerYieldPanel": false,
     "showSunAngles": false,
@@ -4577,9 +4775,9 @@
     "showYearlyHeliostatYieldPanel": false,
     "mapZoom": 18,
     "panCenter": [
-      1.381462648454796,
-      2.1255398035061868,
-      6.136839213513329
+      2.920907149219656,
+      1.0127671698806895,
+      6.354436484809822
     ],
     "visibilityResultsPanelY": 0,
     "showZenithAngle": true,
@@ -4605,7 +4803,7 @@
     "showSolarPanelVisibilityResultsPanel": false,
     "diurnalTemperaturePanelY": 0,
     "yearlyHeliostatYieldPanelY": 0,
-    "cameraZoom": 14.701837812499999,
+    "cameraZoom": 19,
     "dailyFresnelReflectorYieldPanelX": 0,
     "panCenter2D": [
       9.76105549939355,
@@ -4614,7 +4812,7 @@
     ],
     "cameraPosition2D": [
       9.76105549939355,
-      6.983209171276991,
+      6.983209171299203,
       150
     ],
     "yearlyLightSensorPanelX": 0,

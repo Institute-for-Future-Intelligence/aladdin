@@ -1,7 +1,7 @@
 {
-  "docid": "2VpnjMnEvSrutTFi1YVwy9",
-  "time": "02/04/2023 01:45 pm",
-  "timestamp": 1675536340958,
+  "docid": "9B14oeM1KhyvbFXThLqN7V",
+  "time": "03/20/2023 07:46 pm",
+  "timestamp": 1679355999187,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -121,7 +121,7 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5,
+      "opacity": 0,
       "fill": "Full",
       "unfilledHeight": 0.5,
       "eavesLength": 0.2
@@ -294,7 +294,7 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5,
+      "opacity": 0,
       "fill": "Full",
       "unfilledHeight": 0.5,
       "eavesLength": 0.2
@@ -375,8 +375,8 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0.5,
-      "fill": "Full",
-      "unfilledHeight": 0.5,
+      "fill": "Partial",
+      "unfilledHeight": 3.595491643517548,
       "eavesLength": 0.4
     },
     {
@@ -434,8 +434,8 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0.5,
-      "fill": "Full",
-      "unfilledHeight": 0.5,
+      "fill": "Partial",
+      "unfilledHeight": 3.280265921075964,
       "eavesLength": 0.4
     },
     {
@@ -493,8 +493,8 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0.5,
-      "fill": "Full",
-      "unfilledHeight": 0.5,
+      "fill": "Partial",
+      "unfilledHeight": 3.3043765620634487,
       "eavesLength": 0.4
     },
     {
@@ -589,8 +589,8 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0.5,
-      "fill": "Full",
-      "unfilledHeight": 0.5,
+      "fill": "Partial",
+      "unfilledHeight": 3.5697809504114297,
       "eavesLength": 0.4
     },
     {
@@ -1419,7 +1419,8 @@
       "color": "white",
       "doorType": "Default",
       "archHeight": 1,
-      "filled": true
+      "filled": true,
+      "opacity": 1
     },
     {
       "type": "Human",
@@ -1821,9 +1822,9 @@
     {
       "type": "Tree",
       "name": "Magnolia",
-      "cx": -8.921750492715002,
-      "cy": -0.31081319431417676,
-      "cz": 8.881784197001252e-16,
+      "cx": -8.658559512721883,
+      "cy": 0.2268652768492938,
+      "cz": 4.440892098500626e-16,
       "lx": 5.410682322966088,
       "lz": 5.9930306282885,
       "normal": [
@@ -1905,8 +1906,60 @@
       "parentId": "Ground",
       "id": "nQgYQhsWvwPQorjAb4dSNv",
       "selected": false
+    },
+    {
+      "type": "Polygon",
+      "cx": -0.00213352886578518,
+      "cy": -0.2942089556230589,
+      "cz": 0,
+      "lx": 0.4,
+      "ly": 0.4,
+      "lz": 0.4,
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "vertices": [
+        {
+          "x": -0.04166666666666669,
+          "y": -0.13775856472283443
+        },
+        {
+          "x": -0.04166666666666669,
+          "y": -0.00265513883370061
+        },
+        {
+          "x": 0.041666666666666616,
+          "y": -0.00265513883370061
+        },
+        {
+          "x": 0.041666666666666616,
+          "y": -0.13775856472283443
+        }
+      ],
+      "parentId": "cV8MyCuhWAsvEyyFuVqVqg",
+      "parentType": "Wall",
+      "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
+      "selected": false,
+      "filled": true,
+      "selectedIndex": 1,
+      "id": "eYBEchBwdGr5aCP6pHEkhr",
+      "text": "175",
+      "fontSize": 0.3,
+      "fontColor": "gold",
+      "fontStrokeWidth": 0.01,
+      "noOutline": true,
+      "opacity": 0
     }
   ],
+  "sceneRadius": 19,
   "view": {
     "dailyPvYieldPanelX": 0,
     "mapPanelY": 0,
@@ -1936,9 +1989,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -11.881270616798737,
-      -14.290360681519662,
-      2.9017256268017597
+      -7.719730441515545,
+      -15.014639233788555,
+      2.0424843007903584
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -1988,9 +2041,9 @@
     "shadowEnabled": true,
     "showInstructionPanel": true,
     "panCenter": [
-      1.184021997117577,
-      0.23371169718795362,
-      1.8058398771360638
+      1.184022916281868,
+      0.2331786729456065,
+      1.7931309009303589
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
     "showHeliodonPanel": false,
@@ -2073,5 +2126,9 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
+  "modelType": "Unknown",
+  "modelAuthor": null,
+  "modelLabel": null,
+  "modelDescription": null,
   "notes": []
 }

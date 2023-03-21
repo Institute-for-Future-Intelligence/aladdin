@@ -181,7 +181,7 @@ const Window = (windowModel: WindowModel) => {
     frame = false,
     color = 'white',
     frameWidth = 0.1,
-    sillWidth = 0.2,
+    sillWidth = 0.1,
     windowType = WindowType.Default,
     archHeight,
   } = windowModel;

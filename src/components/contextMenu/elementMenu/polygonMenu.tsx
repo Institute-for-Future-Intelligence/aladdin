@@ -574,7 +574,7 @@ export const PolygonMenu = React.memo(() => {
       )}
 
       {editable && (
-        <SubMenu key={'polygon-text'} title={i18n.t('polygonMenu.TextBox', lang)} style={{ paddingLeft: '24px' }}>
+        <SubMenu key={'polygon-text-box'} title={i18n.t('polygonMenu.TextBox', lang)} style={{ paddingLeft: '24px' }}>
           {/*have to wrap the text field with a Menu so that it can stay open when the user types in it */}
           <Menu>
             {/* text */}
