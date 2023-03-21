@@ -1,7 +1,7 @@
 {
-  "docid": "aFcdxAJVoSdG6nVTA8Pvcp",
-  "time": "03/19/2023 11:02 am",
-  "timestamp": 1679238146116,
+  "docid": "4aDAL58XHFYL5qfHvxH7ag",
+  "time": "03/21/2023 09:15 am",
+  "timestamp": 1679404555806,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -512,7 +512,7 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5,
+      "opacity": 0,
       "locked": false,
       "fill": "Full",
       "unfilledHeight": 0.5,
@@ -689,7 +689,7 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5,
+      "opacity": 0,
       "locked": false,
       "fill": "Full",
       "unfilledHeight": 0.5,
@@ -1579,6 +1579,70 @@
       "text": "DEPOT",
       "fontSize": 0.3,
       "fontColor": "gold"
+    },
+    {
+      "type": "Door",
+      "cx": 0,
+      "cy": 0,
+      "cz": -0.31666666666666665,
+      "lx": 0.31146891913311564,
+      "ly": 0,
+      "lz": 0.36666666666666664,
+      "doorType": "Default",
+      "filled": false,
+      "archHeight": 1,
+      "textureType": "Door Texture Default",
+      "color": "#ffffff",
+      "uValue": 1,
+      "selected": false,
+      "lineWidth": 0.2,
+      "lineColor": "#000000",
+      "showLabel": false,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "e5r2Cqz5K28ewHbKWcFnYZ",
+      "foundationId": "3vsEsZfsBjGXDRnpzcE3dE",
+      "id": "trSHy7vD1sqEajCH8ej493"
+    },
+    {
+      "type": "Door",
+      "cx": 0,
+      "cy": 0,
+      "cz": -0.31666666666666665,
+      "lx": 0.31146891913311564,
+      "ly": 0,
+      "lz": 0.36666666666666664,
+      "doorType": "Default",
+      "filled": false,
+      "archHeight": 1,
+      "textureType": "Door Texture Default",
+      "color": "#ffffff",
+      "uValue": 1,
+      "selected": false,
+      "lineWidth": 0.2,
+      "lineColor": "#000000",
+      "showLabel": false,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "11Ltx28CSTVpm6gjZuBH9w",
+      "foundationId": "3vsEsZfsBjGXDRnpzcE3dE",
+      "id": "cf7HkkLcbaZLJwzCBfEgBH"
     }
   ],
   "sceneRadius": 10,
@@ -1611,9 +1675,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -5.021632324681999,
-      -20.82661619898035,
-      3.534737988528561
+      -7.335485572988376,
+      -17.642820069421862,
+      3.809724387059762
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,

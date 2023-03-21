@@ -1,7 +1,7 @@
 {
-  "docid": "53SQVTiMg8nEhUwc63b3r5",
-  "time": "02/04/2023 01:54 pm",
-  "timestamp": 1675536877270,
+  "docid": "mBZy7fPiT1JGoRH5cEMiFB",
+  "time": "03/21/2023 09:25 am",
+  "timestamp": 1679405108902,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -635,7 +635,7 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5,
+      "opacity": 0,
       "fill": "Full",
       "unfilledHeight": 0.5,
       "eavesLength": 0.3
@@ -964,8 +964,8 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0.5,
-      "fill": "Full",
-      "unfilledHeight": 0.5,
+      "fill": "Partial",
+      "unfilledHeight": 4.423886716391337,
       "eavesLength": 0.3
     },
     {
@@ -1017,8 +1017,8 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0.5,
-      "fill": "Full",
-      "unfilledHeight": 0.5,
+      "fill": "Partial",
+      "unfilledHeight": 4.137593329953601,
       "eavesLength": 0.3
     },
     {
@@ -1070,8 +1070,8 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0.5,
-      "fill": "Full",
-      "unfilledHeight": 0.5,
+      "fill": "Partial",
+      "unfilledHeight": 4.005808068482516,
       "eavesLength": 0.3
     },
     {
@@ -1123,37 +1123,9 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0.5,
-      "fill": "Full",
-      "unfilledHeight": 0.5,
+      "fill": "Partial",
+      "unfilledHeight": 3.950942062075448,
       "eavesLength": 0.3
-    },
-    {
-      "type": "Door",
-      "cx": 0,
-      "cy": 0,
-      "cz": -0.1,
-      "lx": 0.25,
-      "ly": 0,
-      "lz": 0.8,
-      "color": "white",
-      "textureType": "Door Texture #5",
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "id": "rHM5nVH8wPTzkwQQrEuzLE",
-      "parentId": "gCfAqTHxYsKYYxNWYw9TWQ",
-      "foundationId": "1hsdTDJQtP791cvdCX88pM",
-      "selected": false,
-      "doorType": "Default",
-      "archHeight": 1,
-      "filled": true
     },
     {
       "type": "Roof",
@@ -2310,6 +2282,7 @@
       "enableGroupMaster": true
     }
   ],
+  "sceneRadius": 27,
   "view": {
     "dailyPvYieldPanelX": 0,
     "mapPanelY": 0,
@@ -2339,9 +2312,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -11.50547521128128,
-      -23.614899214906554,
-      6.397929247852286
+      -21.933458732203793,
+      -21.063814418143867,
+      2.035326701937142
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -2481,6 +2454,10 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
+  "modelType": "Unknown",
+  "modelAuthor": null,
+  "modelLabel": null,
+  "modelDescription": null,
   "notes": [
     "Combination roof vs. bonnet roof"
   ]

@@ -1,7 +1,7 @@
 {
-  "docid": "cQFntaaHiJqTbhbdqwuhLT",
-  "time": "02/04/2023 02:03 pm",
-  "timestamp": 1675537385441,
+  "docid": "iRonP6f82ihBcmjezX6Awd",
+  "time": "03/20/2023 10:32 pm",
+  "timestamp": 1679365946442,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -698,8 +698,8 @@
         0.09026163656372185
       ],
       "relativeAngle": 1.5707963267948961,
-      "textureType": "Wall Texture Default",
-      "color": "#e27300",
+      "textureType": "No Wall Texture",
+      "color": "#ffffff",
       "normal": [
         0,
         0,
@@ -722,8 +722,8 @@
       "selected": false,
       "leftRoofHeight": 4.183499794647806,
       "rightRoofHeight": 4.183499794647806,
-      "fill": "Full",
-      "unfilledHeight": 0.5,
+      "fill": "Partial",
+      "unfilledHeight": 3.5178364017567816,
       "eavesLength": 0.2
     },
     {
@@ -1023,6 +1023,7 @@
       "archHeight": 1
     }
   ],
+  "sceneRadius": 21,
   "view": {
     "dailyPvYieldPanelX": 0,
     "mapPanelY": 0,
@@ -1052,9 +1053,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      10.10094784677706,
-      -27.939690213400574,
-      5.094100247928614
+      13.842271241738974,
+      -28.65293514275273,
+      4.026963629011761
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -1103,9 +1104,9 @@
     "shadowEnabled": true,
     "showInstructionPanel": false,
     "panCenter": [
-      -1.314773820088976,
-      -7.013268109259434,
-      3.838532276527987
+      -1.977021416592465,
+      -10.783837041816236,
+      3.5213876845072543
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
     "showHeliodonPanel": false,
@@ -1194,6 +1195,10 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
+  "modelType": "Unknown",
+  "modelAuthor": null,
+  "modelLabel": null,
+  "modelDescription": null,
   "notes": [
     "A-frame house"
   ]

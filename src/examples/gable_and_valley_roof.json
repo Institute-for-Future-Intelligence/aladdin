@@ -1,7 +1,7 @@
 {
-  "docid": "7vt7yTfzYvXccEh4YQqVnD",
-  "time": "02/04/2023 01:57 pm",
-  "timestamp": 1675537057953,
+  "docid": "g52wsoeGNbD5HWfgziHoGT",
+  "time": "03/20/2023 10:37 pm",
+  "timestamp": 1679366261880,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -116,7 +116,7 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5,
+      "opacity": 0,
       "fill": "Full",
       "unfilledHeight": 0.5,
       "eavesLength": 0.2
@@ -518,8 +518,8 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0.5,
-      "fill": "Full",
-      "unfilledHeight": 0.5,
+      "fill": "Partial",
+      "unfilledHeight": 4.571023197562504,
       "eavesLength": 0.2
     },
     {
@@ -617,8 +617,8 @@
     },
     {
       "type": "Foundation",
-      "cx": 0.029936846961916796,
-      "cy": -2.369466163172972,
+      "cx": 0.2673936561072643,
+      "cy": -2.1537290472929245,
       "cz": 0.05,
       "lx": 14.211391813883525,
       "ly": 9.298675779004126,
@@ -1913,8 +1913,118 @@
       "selected": false,
       "windowType": "Default",
       "archHeight": 1
+    },
+    {
+      "type": "Door",
+      "cx": 0.010226319702456119,
+      "cy": 0,
+      "cz": -0.04661843672800818,
+      "lx": 0.1840737546442102,
+      "ly": 0,
+      "lz": 0.9067631265439836,
+      "doorType": "Default",
+      "filled": false,
+      "archHeight": 1,
+      "textureType": "Door Texture Default",
+      "color": "#ffffff",
+      "uValue": 1,
+      "selected": false,
+      "lineWidth": 0.2,
+      "lineColor": "#000000",
+      "showLabel": false,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "roDDPncXBpNgmNum9aUaov",
+      "foundationId": "axj9GVUBNvhnWAa3G8T3wG",
+      "id": "gzATLqsfJrMh34gEzKYRFp"
+    },
+    {
+      "type": "Door",
+      "cx": -0.0025565799256140214,
+      "cy": 0,
+      "cz": -0.04661843672800818,
+      "lx": 0.28122379181754337,
+      "ly": 0,
+      "lz": 0.9067631265439836,
+      "doorType": "Default",
+      "filled": false,
+      "archHeight": 1,
+      "textureType": "Door Texture Default",
+      "color": "#ffffff",
+      "uValue": 1,
+      "selected": false,
+      "lineWidth": 0.2,
+      "lineColor": "#000000",
+      "showLabel": false,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "beHqET5NN8aNdsuBncMpY7",
+      "foundationId": "fbqvzYqiEy79jeL8wsadib",
+      "id": "4u2Lemg9g24YVU44Rt2Xic"
+    },
+    {
+      "type": "Window",
+      "cx": 0.025565799256140304,
+      "cy": 0.3,
+      "cz": 0.05352146401894522,
+      "lx": 0.10226319702456121,
+      "ly": 0.3,
+      "lz": 0.5352146401894522,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      },
+      "mullion": true,
+      "mullionWidth": 0.06,
+      "mullionSpacing": 0.5,
+      "mullionColor": "#ffffff",
+      "frame": false,
+      "frameWidth": 0.1,
+      "sillWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1,
+      "selected": false,
+      "lineWidth": 0.2,
+      "lineColor": "#000000",
+      "showLabel": false,
+      "color": "#ffffff",
+      "tint": "#73D8FF",
+      "opacity": 0.5,
+      "uValue": 2,
+      "normal": [
+        0,
+        -1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "giYTP9Qg6uJ3yfkS1RoDqG",
+      "foundationId": "fbqvzYqiEy79jeL8wsadib",
+      "id": "bqg8AAYEpwNKgztwidBiEk"
     }
   ],
+  "sceneRadius": 13,
   "view": {
     "dailyPvYieldPanelX": 0,
     "mapPanelY": 0,
@@ -1944,9 +2054,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      1.5753401322636578,
-      -22.20094844201421,
-      8.827200958259043
+      -0.15983195570113484,
+      -24.027736341123376,
+      4.360787447508355
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -1995,9 +2105,9 @@
     "shadowEnabled": true,
     "showInstructionPanel": false,
     "panCenter": [
-      2.221703362425186,
-      -0.6046783117174909,
-      1.9397397757388013
+      0.7022527565646254,
+      -0.2731580826411917,
+      2.1728395733842687
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
     "showHeliodonPanel": false,
@@ -2086,6 +2196,10 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
+  "modelType": "Unknown",
+  "modelAuthor": null,
+  "modelLabel": null,
+  "modelDescription": null,
   "notes": [
     "Gable-and-valley roof"
   ]

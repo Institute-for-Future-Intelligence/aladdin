@@ -1,7 +1,7 @@
 {
-  "docid": "up2HEw4zExeEtf9dk27PSG",
-  "time": "02/04/2023 01:58 pm",
-  "timestamp": 1675537138805,
+  "docid": "bMJss9wDSiSbX1mfBmEzfh",
+  "time": "03/21/2023 09:22 am",
+  "timestamp": 1679404964013,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -546,7 +546,7 @@
         0.0668155844349813
       ],
       "relativeAngle": 0,
-      "textureType": "Wall Texture Default",
+      "textureType": "No Wall Texture",
       "color": "#ffffff",
       "normal": [
         0,
@@ -570,9 +570,9 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0.5,
-      "fill": "Full",
-      "unfilledHeight": 0.5,
-      "eavesLength": 0.2
+      "fill": "Partial",
+      "unfilledHeight": 4.273631578164477,
+      "eavesLength": 0
     },
     {
       "id": "jVi4m1ThhBLxMFASq2GS9v",
@@ -616,8 +616,8 @@
     },
     {
       "type": "Foundation",
-      "cx": -0.7147510859691653,
-      "cy": -6.577250053487834,
+      "cx": -0.7779381167795397,
+      "cy": -6.68974583917691,
       "cz": 0.05,
       "lx": 11.313197651444508,
       "ly": 6.0997112704854475,
@@ -1167,8 +1167,73 @@
       "frameWidth": 0.1,
       "windowType": "Default",
       "archHeight": 1
+    },
+    {
+      "type": "Door",
+      "cx": 0.053695882135493055,
+      "cy": 0,
+      "cz": -0.25,
+      "lx": 0.42956705708394444,
+      "ly": 0,
+      "lz": 0.5,
+      "doorType": "Default",
+      "filled": true,
+      "archHeight": 1,
+      "textureType": "Door Texture Default",
+      "color": "#ffffff",
+      "uValue": 1,
+      "selected": false,
+      "lineWidth": 0.2,
+      "lineColor": "#000000",
+      "showLabel": false,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "qEgP3g76n6YGpTNdaUNRJ5",
+      "foundationId": "3Qmj2gXj2Lmc28MbpT7BdQ",
+      "id": "wpqi2Ry4DwtfWLp7rkgBQh"
+    },
+    {
+      "type": "Door",
+      "cx": 0.026847941067746527,
+      "cy": 0,
+      "cz": -0.25,
+      "lx": 0.48326293921943747,
+      "ly": 0,
+      "lz": 0.5,
+      "doorType": "Default",
+      "filled": false,
+      "archHeight": 1,
+      "textureType": "Door Texture Default",
+      "color": "#ffffff",
+      "uValue": 1,
+      "selected": false,
+      "lineWidth": 0.2,
+      "lineColor": "#000000",
+      "showLabel": false,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "gTaSzURYtieAPQn32pwAn4",
+      "foundationId": "35YTYxrb8rDJ1XNYjgkPTK",
+      "id": "nnyBHsqWtA9kbVTgYsewZw"
     }
   ],
+  "sceneRadius": 21,
   "view": {
     "dailyPvYieldPanelX": 0,
     "mapPanelY": 0,
@@ -1198,9 +1263,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      12.85828295279766,
-      -1.6168160025621496,
-      3.314078892685232
+      14.72301320754612,
+      2.4178470956290345,
+      3.2237280343396395
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -1249,8 +1314,8 @@
     "shadowEnabled": true,
     "showInstructionPanel": false,
     "panCenter": [
-      1.4546119113853049,
-      -7.643960878864888,
+      1.4383511164484704,
+      -7.6519084348386786,
       3.2237280343396377
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
@@ -1340,6 +1405,10 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
+  "modelType": "Unknown",
+  "modelAuthor": null,
+  "modelLabel": null,
+  "modelDescription": null,
   "notes": [
     "Clerestory roof"
   ]

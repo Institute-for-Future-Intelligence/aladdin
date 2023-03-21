@@ -1,7 +1,7 @@
 {
-  "docid": "paqYryLwG4xk1FQPsYwoAA",
-  "time": "02/04/2023 01:56 pm",
-  "timestamp": 1675536966865,
+  "docid": "x2jHtoAGqajWurzC4YYeun",
+  "time": "03/21/2023 09:18 am",
+  "timestamp": 1679404695871,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -94,8 +94,8 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0.5,
-      "fill": "Full",
-      "unfilledHeight": 0.5,
+      "fill": "Partial",
+      "unfilledHeight": 4.002373687472664,
       "eavesLength": 0.2
     },
     {
@@ -151,8 +151,8 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0.5,
-      "fill": "Full",
-      "unfilledHeight": 0.5,
+      "fill": "Partial",
+      "unfilledHeight": 4.140133570272178,
       "eavesLength": 0.2
     },
     {
@@ -208,8 +208,8 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0.5,
-      "fill": "Full",
-      "unfilledHeight": 0.5,
+      "fill": "Partial",
+      "unfilledHeight": 4.224472578525073,
       "eavesLength": 0.2
     },
     {
@@ -261,37 +261,9 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0.5,
-      "fill": "Full",
-      "unfilledHeight": 0.5,
+      "fill": "Partial",
+      "unfilledHeight": 4.224276701112264,
       "eavesLength": 0.2
-    },
-    {
-      "type": "Door",
-      "cx": 0,
-      "cy": 0,
-      "cz": -0.1,
-      "lx": 0.25,
-      "ly": 0,
-      "lz": 0.8,
-      "color": "white",
-      "textureType": "Door Texture #5",
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "id": "cxWtBiYWrAfqHtCP5F2PAW",
-      "parentId": "hndwqtrrygFvfqvBJrvZYu",
-      "foundationId": "3vsEsZfsBjGXDRnpzcE3dE",
-      "selected": false,
-      "doorType": "Default",
-      "archHeight": 1,
-      "filled": true
     },
     {
       "id": "hg8eUTjrNzo4UYNKSxj3Pu",
@@ -429,7 +401,7 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5,
+      "opacity": 0,
       "fill": "Full",
       "unfilledHeight": 0.5,
       "eavesLength": 0.3
@@ -948,7 +920,7 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5,
+      "opacity": 0,
       "fill": "Full",
       "unfilledHeight": 0.5,
       "eavesLength": 0.3
@@ -1289,6 +1261,7 @@
       "archHeight": 1
     }
   ],
+  "sceneRadius": 13,
   "view": {
     "dailyPvYieldPanelX": 0,
     "mapPanelY": 0,
@@ -1318,9 +1291,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -14.038168376223997,
-      -17.215132010441078,
-      2.8665879026873053
+      -11.338611583407145,
+      -19.21464532412801,
+      3.654481767482557
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -1369,9 +1342,9 @@
     "shadowEnabled": true,
     "showInstructionPanel": false,
     "panCenter": [
-      1.0474712570088618,
-      -0.2712432848960137,
-      1.7533219469902794
+      1.0487456427029058,
+      -0.2734216457277161,
+      1.7323277952569063
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
     "showHeliodonPanel": false,
@@ -1460,6 +1433,10 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
+  "modelType": "Unknown",
+  "modelAuthor": null,
+  "modelLabel": null,
+  "modelDescription": null,
   "notes": [
     "Dutch gable roof"
   ]
