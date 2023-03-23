@@ -90,6 +90,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
       CuboidTexture.NoTexture,
       CuboidTexture.NoTexture,
     ],
+    stackable,
   } = cuboidModel;
 
   const setCommonStore = useStore(Selector.set);
@@ -602,7 +603,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
                     setCommonStore((state) => {
                       const sp = state.elements.find((e) => e.id === solarPanel.id);
                       if (!sp) return;
-                      if (isSolarPanelOnTopFace(sp.normal)) {
+                      if (Math.abs(Math.abs(sp.normal[1]) - 1) < 0.01) {
                         sp.cx = relativeCenter.x / lx;
                       } else {
                         sp.cy = relativeCenter.y / ly;
@@ -610,52 +611,6 @@ const Cuboid = (cuboidModel: CuboidModel) => {
                       sp.lx = v.length();
                     });
                   }
-
-                  // const wp = new Vector3(p.x, p.y, p.z);
-                  // const vd = new Vector3().subVectors(wp, useStore.getState().resizeAnchor);
-                  // const vh = new Vector3().subVectors(
-                  //   Util.absoluteCoordinates(solarPanel.cx, solarPanel.cy, solarPanel.cz, cuboidModel),
-                  //   useStore.getState().resizeAnchor,
-                  // );
-                  // if (normal && Math.abs(normal.z - 1) < ZERO_TOLERANCE) {
-                  //   vh.setZ(0);
-                  // }
-                  // const vhd = vd.projectOnVector(vh);
-                  // const d = vhd.length();
-                  // const pvModel = getPvModule(solarPanel.pvModelName);
-                  // let newLx = solarPanel.lx;
-                  // let newLy = solarPanel.ly;
-                  // if (solarPanel.orientation === Orientation.portrait) {
-                  //   if (
-                  //     useStore.getState().resizeHandleType === ResizeHandleType.Left ||
-                  //     useStore.getState().resizeHandleType === ResizeHandleType.Right
-                  //   ) {
-                  //     const nx = Math.max(1, Math.ceil((d - pvModel.width / 2) / pvModel.width));
-                  //     newLx = nx * pvModel.width;
-                  //   } else {
-                  //     const ny = Math.max(1, Math.ceil((d - pvModel.length / 2) / pvModel.length));
-                  //     newLy = ny * pvModel.length;
-                  //   }
-                  // } else {
-                  //   if (
-                  //     useStore.getState().resizeHandleType === ResizeHandleType.Left ||
-                  //     useStore.getState().resizeHandleType === ResizeHandleType.Right
-                  //   ) {
-                  //     const nx = Math.max(1, Math.ceil((d - pvModel.length / 2) / pvModel.length));
-                  //     newLx = nx * pvModel.length;
-                  //   } else {
-                  //     const ny = Math.max(1, Math.ceil((d - pvModel.width / 2) / pvModel.width));
-                  //     newLy = ny * pvModel.width;
-                  //   }
-                  // }
-                  // const wc = new Vector3().addVectors(
-                  //   useStore.getState().resizeAnchor,
-                  //   vhd.normalize().multiplyScalar(d / 2),
-                  // );
-                  // const rc = Util.relativeCoordinates(wc.x, wc.y, wc.z, cuboidModel);
-                  // // TODO: check vertical surfaces
-                  // setElementSize(solarPanel.id, newLx, newLy);
-                  // setElementPosition(solarPanel.id, rc.x, rc.y);
                   break;
                 case ObjectType.Polygon:
                   if (useStore.getState().resizeHandleType === ResizeHandleType.Default) {
@@ -1184,7 +1139,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
       <Box
         castShadow={shadowEnabled}
         receiveShadow={shadowEnabled}
-        userData={{ simulation: true, stand: true }}
+        userData={{ simulation: true, stand: true, stackable: stackable }}
         uuid={id}
         ref={baseRef}
         args={[lx, ly, lz]}

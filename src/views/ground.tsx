@@ -44,6 +44,7 @@ import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { InnerCommonState } from 'src/stores/InnerCommonState';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { GroupableModel, isGroupable } from 'src/models/Groupable';
+import { CuboidModel } from 'src/models/CuboidModel';
 
 const Ground = () => {
   const setCommonStore = useStore(Selector.set);
@@ -1340,13 +1341,13 @@ const Ground = () => {
   };
 
   /** self, child exclusive */
-  const getFirstIntersectedCuboid = (e: ThreeEvent<PointerEvent>, currId: string) => {
+  const getFirstStackableCuboid = (e: ThreeEvent<PointerEvent>, currId: string) => {
     const firstIntersectedCuboidObject = e.intersections.find((intersect) => {
       const obj = intersect.eventObject;
       if (!obj.name.includes('Cuboid')) return false;
       const nameArray = obj.name.split(' ');
       if (nameArray.length !== 2) return false;
-      return nameArray[1] !== currId;
+      return nameArray[1] !== currId && obj.userData.stackable;
     });
 
     if (!firstIntersectedCuboidObject) return undefined;
@@ -1382,7 +1383,7 @@ const Ground = () => {
               if (intersects.length > 0) {
                 const p = intersects[0].point.clone();
                 if (moveHandleType) {
-                  const firstIntersectedCuboidObject = getFirstIntersectedCuboid(e, grabRef.current.id);
+                  const firstIntersectedCuboidObject = getFirstStackableCuboid(e, grabRef.current.id);
 
                   if (firstIntersectedCuboidObject) {
                     intersects = ray.intersectObjects([firstIntersectedCuboidObject.eventObject]);
@@ -1883,7 +1884,7 @@ const Ground = () => {
       {grabRef.current && intersectionPlaneType !== IntersectionPlaneType.Ground && (
         <Plane
           ref={intersectionPlaneRef}
-          // visible={false}
+          visible={false}
           name={'Ground Intersection Plane'}
           rotation={intersectionPlaneAngle}
           position={intersectionPlanePosition}
