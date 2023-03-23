@@ -161,10 +161,9 @@ const Handles = ({ id, args }: HandlesProps) => {
   // pointer down events
   const handleBottomResizeHandlePointerDown = (e: ThreeEvent<PointerEvent>) => {
     if (e.intersections.length > 0 && e.intersections[0].object.name === e.object.name) {
-      setIntersectionPlaneData({ position: new Vector3(0, 0, -hz), rotation: new Euler() });
-
       const cuboid = getElementById(id);
-      if (cuboid) {
+      if (cuboid && cuboid.parentId !== 'Ground') {
+        setIntersectionPlaneData({ position: new Vector3(0, 0, -hz), rotation: new Euler() });
         const { pos: parentWorldPos, rot: parentWorldRot } = Util.getWorldDataOfStackedCuboidById(cuboid.parentId);
         parentWorldPosition.current = parentWorldPos;
         parentWorldRotation.current = parentWorldRot;

@@ -108,8 +108,12 @@ export class ElementModelFactory {
     let foundationId;
     switch (parent.type) {
       case ObjectType.Foundation:
+        foundationId = parent.id;
+        parentType = ObjectType.Foundation;
+        break;
       case ObjectType.Cuboid:
         foundationId = parent.id;
+        parentType = ObjectType.Cuboid;
         break;
       case ObjectType.Wall:
       case ObjectType.Roof:

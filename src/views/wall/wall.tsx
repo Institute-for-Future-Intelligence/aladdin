@@ -962,15 +962,6 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     return closestPoint;
   }
 
-  function getSolarPanelUnit(solarPanel: SolarPanelModel) {
-    const pvModel = useStore.getState().getPvModule(solarPanel.pvModelName);
-    if (solarPanel.orientation === Orientation.landscape) {
-      return [pvModel.length, pvModel.width];
-    } else {
-      return [pvModel.width, pvModel.length];
-    }
-  }
-
   function getDiagonalResizedData(e: ThreeEvent<PointerEvent>, pointer: Vector3, anchor: Vector3) {
     const diagonal = new Vector3().subVectors(anchor, pointer);
     const center = new Vector3().addVectors(anchor, pointer).divideScalar(2);
@@ -1543,7 +1534,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           }
           case ObjectType.SolarPanel: {
             const solarPanel = selectedElement as SolarPanelModel;
-            const [unitX, unitY] = getSolarPanelUnit(solarPanel);
+            const [unitX, unitY] = getSolarPanelUnitLength(solarPanel);
             // Z direction
             if (resizeHandleType === ResizeHandleType.Lower || resizeHandleType === ResizeHandleType.Upper) {
               const ny = Math.max(1, Math.round(Math.abs(relativePointer.z - resizeAnchor.z) / unitY));
@@ -2355,5 +2346,14 @@ const HeatFlux = ({ wallModel }: HeatFluxProps) => {
     </>
   );
 };
+
+export function getSolarPanelUnitLength(solarPanel: SolarPanelModel) {
+  const pvModel = useStore.getState().getPvModule(solarPanel.pvModelName);
+  if (solarPanel.orientation === Orientation.landscape) {
+    return [pvModel.length, pvModel.width];
+  } else {
+    return [pvModel.width, pvModel.length];
+  }
+}
 
 export default React.memo(Wall);

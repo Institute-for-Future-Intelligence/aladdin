@@ -10,6 +10,9 @@ import { useStore } from 'src/stores/common';
 import Cuboid from './cuboid';
 import * as Selector from '../../stores/selector';
 import { useGroupMaster } from '../hooks';
+import { ObjectType } from 'src/types';
+import SolarPanelOnCuboid from '../solarPanel/solarPanelOnCuboid';
+import { SolarPanelModel } from 'src/models/SolarPanelModel';
 
 export interface CuboidRendererProps {
   elements: ElementModel[];
@@ -35,11 +38,30 @@ const CuboidRenderer = ({ elements, cuboidModel }: CuboidRendererProps) => {
     <>
       <group name="Cuboid Wrapper" position={[cx, cy, hz]} rotation={[0, 0, rotation[2]]}>
         <Cuboid {...cuboidModel} />
-        <group name="Cuboid stackable child group" position={[0, 0, hz]}>
+
+        <group name="Cuboid Child Group">
           {elements.map((e) => {
             if (isStackableChild(e)) {
-              return <CuboidRenderer key={e.id} elements={elements} cuboidModel={e as CuboidModel} />;
-            } else {
+              return (
+                <group key={e.id} name="Cuboid Stackable Child" position={[0, 0, hz]}>
+                  <CuboidRenderer elements={elements} cuboidModel={e as CuboidModel} />
+                </group>
+              );
+            } else if (e.parentId === cuboidModel.id) {
+              switch (e.type) {
+                case ObjectType.SolarPanel: {
+                  const { lx, ly, lz } = cuboidModel;
+                  return (
+                    <SolarPanelOnCuboid
+                      key={e.id}
+                      {...(e as SolarPanelModel)}
+                      cx={e.cx * lx}
+                      cy={e.cy * ly}
+                      cz={e.cz * lz}
+                    />
+                  );
+                }
+              }
               return null;
             }
           })}

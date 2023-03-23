@@ -89,6 +89,7 @@ const ElementsRenderer: React.FC = () => {
             switch ((e as SolarPanelModel).parentType) {
               case ObjectType.Roof:
               case ObjectType.Wall:
+              case ObjectType.Cuboid:
                 return null;
               default:
                 return <SolarPanel key={e.id} {...(e as SolarPanelModel)} />;

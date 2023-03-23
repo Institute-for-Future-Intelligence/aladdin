@@ -1196,8 +1196,9 @@ export class Util {
         v.sub(parentPos).applyEuler(new Euler(0, 0, -(parent as WallModel).relativeAngle - grandParent.rotation[2]));
       }
     } else {
-      v.set(x - parent.cx, y - parent.cy, z - parent.cz);
-      v.applyEuler(new Euler().fromArray(parent.rotation.map((a) => -a)));
+      const { pos, rot } = Util.getWorldDataOfStackedCuboidById(parent.id);
+      v.set(x - pos.x, y - pos.y, z - pos.z);
+      v.applyEuler(new Euler(0, 0, -rot));
     }
     v.x /= parent.lx;
     v.y /= parent.ly;
@@ -1643,20 +1644,25 @@ export class Util {
     return array;
   };
 
-  static getWorldDataOfStackedCuboidById = (id: string): { pos: Vector3; rot: number } => {
+  static getWorldDataOfStackedCuboidById = (id: string): { pos: Vector3; rot: number; topZ: number } => {
     const el = useStore.getState().getElementById(id);
-    if (!el) return { pos: new Vector3(), rot: 0 };
+    if (!el) return { pos: new Vector3(), rot: 0, topZ: 0 };
 
-    const currPos = new Vector3(el.cx, el.cy);
+    const currPos = new Vector3(el.cx, el.cy, el.cz);
     const currRot = el.rotation[2];
+    const currTopZ = el.lz;
 
     if (el.parentId === 'Ground') {
-      return { pos: currPos, rot: currRot };
+      return { pos: currPos, rot: currRot, topZ: currTopZ };
     }
-    const { pos, rot } = this.getWorldDataOfStackedCuboidById(el.parentId);
-    const euler = new Euler(0, 0, rot);
+    const { pos: worldPos, rot: worldRot, topZ: worldTopZ } = this.getWorldDataOfStackedCuboidById(el.parentId);
+    const euler = new Euler(0, 0, worldRot);
 
-    return { pos: new Vector3().addVectors(currPos.applyEuler(euler), pos), rot: currRot + rot };
+    return {
+      pos: new Vector3().addVectors(currPos.applyEuler(euler), worldPos.clone().setZ(worldTopZ)),
+      rot: currRot + worldRot,
+      topZ: currTopZ + worldTopZ,
+    };
   };
 
   /** check is child recursively */

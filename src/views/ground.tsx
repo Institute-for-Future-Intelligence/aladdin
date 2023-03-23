@@ -107,6 +107,7 @@ const Ground = () => {
   const baseGroupRelPosMapRef = useRef<Map<string, Vector3>>(new Map());
   const baseGroupOldPosMapRef = useRef<Map<string, number[]>>(new Map());
   const foundationGroupNewPosMapRef = useRef<Map<string, number[]>>(new Map());
+  const moveHandleWorldDiffV3Ref = useRef(new Vector3());
 
   const lang = { lng: language };
 
@@ -1174,6 +1175,33 @@ const Ground = () => {
               if (isGroupable(selectedElement)) {
                 handleGroupMaster(e, selectedElement as GroupableModel);
               }
+              const moveHandleType = useStore.getState().moveHandleType;
+              if (moveHandleType) {
+                const { rot } = Util.getWorldDataOfStackedCuboidById(selectedElement.id);
+                const euler = new Euler(0, 0, rot);
+                switch (useStore.getState().moveHandleType) {
+                  case MoveHandleType.Right: {
+                    moveHandleWorldDiffV3Ref.current.set(-selectedElement.lx / 2, 0, 0).applyEuler(euler);
+                    break;
+                  }
+                  case MoveHandleType.Left: {
+                    moveHandleWorldDiffV3Ref.current.set(selectedElement.lx / 2, 0, 0).applyEuler(euler);
+                    break;
+                  }
+                  case MoveHandleType.Lower: {
+                    moveHandleWorldDiffV3Ref.current.set(0, selectedElement.ly / 2, 0).applyEuler(euler);
+                    break;
+                  }
+                  case MoveHandleType.Upper: {
+                    moveHandleWorldDiffV3Ref.current.set(0, -selectedElement.ly / 2, 0).applyEuler(euler);
+                    break;
+                  }
+                  default: {
+                    moveHandleWorldDiffV3Ref.current.set(0, 0, 0);
+                    break;
+                  }
+                }
+              }
               // getting ready for resizing even though it may not happen
               absPosMapRef.current.clear();
               const cuboidCenter = new Vector3(selectedElement.cx, selectedElement.cy, selectedElement.cz);
@@ -1359,7 +1387,7 @@ const Ground = () => {
                   if (firstIntersectedCuboidObject) {
                     intersects = ray.intersectObjects([firstIntersectedCuboidObject.eventObject]);
                     if (intersects.length === 0) return;
-                    p.copy(intersects[0].point);
+                    p.copy(intersects[0].point).add(moveHandleWorldDiffV3Ref.current);
                     const newParentId = firstIntersectedCuboidObject.eventObject.name.split(' ')[1];
                     setCommonStore((state) => {
                       const cuboid = state.elements.find((e) => e.id === state.selectedElement?.id);
@@ -1393,7 +1421,9 @@ const Ground = () => {
                     handleMove(p);
                   }
                 } else if (resizeHandleType) {
-                  // handleResize(p);
+                  if (grabRef.current.parentId === 'Ground') {
+                    handleResize(p);
+                  }
                 }
               }
             }

@@ -592,3 +592,5 @@ export interface OldRooftopElementData {
   rotation: number[];
   normal: number[];
 }
+
+export type BoxArgs = [width?: number | undefined, height?: number | undefined, depth?: number | undefined];

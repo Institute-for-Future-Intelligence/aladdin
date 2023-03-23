@@ -142,20 +142,21 @@ const SolarPanel = ({
           }
           break;
         case ObjectType.Cuboid:
+          const { pos, rot } = Util.getWorldDataOfStackedCuboidById(parent.id);
           if (Util.isZero(rotation[2])) {
-            cx = parent.cx + cx * parent.lx;
-            cy = parent.cy + cy * parent.ly;
+            cx = pos.x + cx * parent.lx;
+            cy = pos.y + cy * parent.ly;
           } else {
             // we must rotate the real length, not normalized length
             const v = new Vector3(cx * parent.lx, cy * parent.ly, cz * parent.lz);
             v.applyAxisAngle(UNIT_VECTOR_POS_Z, rotation[2]);
-            cx = parent.cx + v.x;
-            cy = parent.cy + v.y;
+            cx = pos.x + v.x;
+            cy = pos.y + v.y;
           }
           if (Util.isSame(panelNormal, UNIT_VECTOR_POS_Z)) {
             cz = poleHeight + lz / 2 + parent.lz;
           } else {
-            cz = parent.cz + cz * parent.lz;
+            cz = pos.z + cz * parent.lz;
           }
           break;
       }
