@@ -120,6 +120,24 @@ export const CuboidMenu = React.memo(() => {
         </Checkbox>
       </Menu.Item>
 
+      <Menu.Item key={'stackable'}>
+        <Checkbox
+          checked={cuboid.stackable}
+          onChange={(e) => {
+            setCommonStore((state) => {
+              for (const e of state.elements) {
+                if (e.id === cuboid.id) {
+                  (e as CuboidModel).stackable = !(e as CuboidModel).stackable;
+                  break;
+                }
+              }
+            });
+          }}
+        >
+          {i18n.t('cuboidMenu.Stackable', { lng: language })}
+        </Checkbox>
+      </Menu.Item>
+
       {counterUnlocked.gotSome() && (
         <SubMenu key={'clear'} title={i18n.t('word.Clear', lang)} style={{ paddingLeft: '24px' }}>
           {counterUnlocked.sensorCount > 0 && (
