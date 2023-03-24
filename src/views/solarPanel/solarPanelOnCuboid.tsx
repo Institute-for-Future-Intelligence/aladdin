@@ -162,6 +162,7 @@ const SolarPanelOnCuboid = (solarPanelModel: SolarPanelModel) => {
     selected && !locked && trackerType === TrackerType.NO_TRACKER && isTop && Math.abs(actualPoleHeight) > 0.1;
   const showPoles = actualPoleHeight > 0 && isTop;
 
+  // handle pointer up
   useEffect(() => {
     const handlePointerUp = () => {
       useRefStore.getState().setEnableOrbitController(true);
@@ -204,6 +205,12 @@ const SolarPanelOnCuboid = (solarPanelModel: SolarPanelModel) => {
     domElement.style.cursor = 'default';
   };
 
+  const getRotateHandleColor = (rotateHandleType: RotateHandleType) => {
+    return hoveredHandle === rotateHandleType || useStore.getState().rotateHandleType === rotateHandleType
+      ? HIGHLIGHT_HANDLE_COLOR
+      : RESIZE_HANDLE_COLOR;
+  };
+
   return (
     <group name="Solar Panel Group" position={[cx, cy, actualPoleHeight + cz]} rotation={groupRotation}>
       <SolarPanelBoxGroup
@@ -219,12 +226,7 @@ const SolarPanelOnCuboid = (solarPanelModel: SolarPanelModel) => {
           <RotateHandle
             id={id}
             position={[0, -hy - rotateHandleSize / 2, actualPoleHeight]}
-            color={
-              hoveredHandle === RotateHandleType.Upper ||
-              useStore.getState().rotateHandleType === RotateHandleType.Upper
-                ? HIGHLIGHT_HANDLE_COLOR
-                : RESIZE_HANDLE_COLOR
-            }
+            color={getRotateHandleColor(RotateHandleType.Upper)}
             ratio={rotateHandleSize}
             handleType={RotateHandleType.Upper}
             hoverHandle={hoverHandle}
@@ -233,12 +235,7 @@ const SolarPanelOnCuboid = (solarPanelModel: SolarPanelModel) => {
           <RotateHandle
             id={id}
             position={[0, hy + rotateHandleSize / 2, actualPoleHeight]}
-            color={
-              hoveredHandle === RotateHandleType.Lower ||
-              useStore.getState().rotateHandleType === RotateHandleType.Lower
-                ? HIGHLIGHT_HANDLE_COLOR
-                : RESIZE_HANDLE_COLOR
-            }
+            color={getRotateHandleColor(RotateHandleType.Lower)}
             ratio={rotateHandleSize}
             handleType={RotateHandleType.Lower}
             hoverHandle={hoverHandle}

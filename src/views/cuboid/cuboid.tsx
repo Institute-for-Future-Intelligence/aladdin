@@ -673,7 +673,10 @@ const Cuboid = (cuboidModel: CuboidModel) => {
         if (useStore.getState().moveHandleType) {
           p = Util.relativeCoordinates(p.x, p.y, p.z - solarPanel.poleHeight, cuboidModel);
           setElementPosition(solarPanel.id, p.x, p.y, p.z);
-        } else if (useStore.getState().rotateHandleType) {
+        } else if (
+          useStore.getState().rotateHandleType &&
+          useStore.getState().rotateHandleType !== RotateHandleType.Tilt
+        ) {
           const pr = worldRotationRef.current; //parent rotation
           const pc = new Vector2(worldPositionRef.current.x, worldPositionRef.current.y); //world parent center
           const cc = new Vector2(cuboidModel.lx * solarPanel.cx, cuboidModel.ly * solarPanel.cy) //local current center
