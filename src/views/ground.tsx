@@ -1078,6 +1078,16 @@ const Ground = () => {
         state.moveHandleType = null;
         state.resizeHandleType = ResizeHandleType.LowerRight;
         state.resizeAnchor.copy(intersects[0].point);
+
+        if (grabRef.current) {
+          const firstIntersectedCuboidObject = getFirstStackableCuboid(e, grabRef.current?.id);
+          if (firstIntersectedCuboidObject) {
+            const intersects = ray.intersectObjects([firstIntersectedCuboidObject.eventObject]);
+            if (intersects.length !== 0) {
+              state.resizeAnchor.copy(intersects[0].point);
+            }
+          }
+        }
       });
       isSettingCuboidStartPointRef.current = false;
       isSettingCuboidEndPointRef.current = true;
@@ -1382,9 +1392,8 @@ const Ground = () => {
               intersects = ray.intersectObjects([intersectionPlaneRef.current]);
               if (intersects.length > 0) {
                 const p = intersects[0].point.clone();
+                const firstIntersectedCuboidObject = getFirstStackableCuboid(e, grabRef.current.id);
                 if (moveHandleType) {
-                  const firstIntersectedCuboidObject = getFirstStackableCuboid(e, grabRef.current.id);
-
                   if (firstIntersectedCuboidObject) {
                     intersects = ray.intersectObjects([firstIntersectedCuboidObject.eventObject]);
                     if (intersects.length === 0) return;
@@ -1422,7 +1431,8 @@ const Ground = () => {
                     handleMove(p);
                   }
                 } else if (resizeHandleType) {
-                  if (grabRef.current.parentId === 'Ground') {
+                  const cuboid = getElementById(grabRef.current.id);
+                  if (cuboid && cuboid.parentId === 'Ground') {
                     handleResize(p);
                   }
                 }
@@ -1471,9 +1481,39 @@ const Ground = () => {
       // setting start point
       if (grabRef.current && (isSettingFoundationStartPointRef.current || isSettingCuboidStartPointRef.current)) {
         setRayCast(e);
-        const intersects = ray.intersectObjects([groundPlaneRef.current]);
+        let intersects = ray.intersectObjects([groundPlaneRef.current]);
         const p = intersects[0].point;
-        setElementPosition(grabRef.current.id, p.x, p.y);
+
+        const firstIntersectedCuboidObject = getFirstStackableCuboid(e, grabRef.current.id);
+
+        if (firstIntersectedCuboidObject) {
+          intersects = ray.intersectObjects([firstIntersectedCuboidObject.eventObject]);
+          if (intersects.length === 0) return;
+          p.copy(intersects[0].point);
+          const newParentId = firstIntersectedCuboidObject.eventObject.name.split(' ')[1];
+          setCommonStore((state) => {
+            const cuboid = state.elements.find((e) => e.id === grabRef.current?.id);
+            if (cuboid) {
+              const { pos: parentAbsPos, rot: parentAbsRot } = Util.getWorldDataOfStackedCuboidById(newParentId);
+              const diff = new Vector3().subVectors(p, parentAbsPos);
+              diff.applyEuler(new Euler(0, 0, -parentAbsRot));
+              cuboid.cx = diff.x;
+              cuboid.cy = diff.y;
+              cuboid.parentId = newParentId;
+              cuboid.rotation[2] = -parentAbsRot;
+            }
+          });
+        } else {
+          setCommonStore((state) => {
+            const cuboid = state.elements.find((e) => e.id === grabRef.current?.id);
+            if (cuboid && cuboid.parentId !== 'Ground') {
+              const { rot: parentAbsRot } = Util.getWorldDataOfStackedCuboidById(cuboid.parentId);
+              cuboid.rotation[2] += parentAbsRot;
+              cuboid.parentId = 'Ground';
+            }
+          });
+          setElementPosition(grabRef.current.id, p.x, p.y);
+        }
       }
     }
   };

@@ -119,21 +119,15 @@ const Handles = ({ id, args }: HandlesProps) => {
 
       const p = pointer.clone().setZ(0);
       const anchor = useStore.getState().resizeAnchor.clone().setZ(0);
-      const distance = anchor.distanceTo(p);
-      const angle = Math.atan2(p.x - anchor.x, p.y - anchor.y) + (cuboidWorldRotation.current ?? 0);
-      const newLx = Math.abs(distance * Math.sin(angle));
-      const newLy = Math.abs(distance * Math.cos(angle));
-      const worldCenter = new Vector3().addVectors(p, anchor).multiplyScalar(0.5);
 
-      if (parentWorldPosition.current !== null && parentWorldRotation.current !== null) {
-        const center = new Vector3()
-          .subVectors(worldCenter, parentWorldPosition.current)
-          .applyEuler(new Euler(0, 0, -parentWorldRotation.current));
-        cuboid.cx = center.x;
-        cuboid.cy = center.y;
-      }
-      cuboid.lx = newLx;
-      cuboid.ly = newLy;
+      const v = new Vector3().subVectors(p, anchor).applyEuler(new Euler(0, 0, -(cuboidWorldRotation.current ?? 0)));
+      const worldCenter = new Vector3().addVectors(p, anchor).multiplyScalar(0.5);
+      const { pos, rot } = Util.getWorldDataOfStackedCuboidById(cuboid.parentId);
+      const center = new Vector3().subVectors(worldCenter, pos).applyEuler(new Euler(0, 0, -rot));
+      cuboid.cx = center.x;
+      cuboid.cy = center.y;
+      cuboid.lx = Math.abs(v.x);
+      cuboid.ly = Math.abs(v.y);
     });
   };
 
@@ -160,7 +154,10 @@ const Handles = ({ id, args }: HandlesProps) => {
 
   // pointer down events
   const handleBottomResizeHandlePointerDown = (e: ThreeEvent<PointerEvent>) => {
-    if (e.intersections.length > 0 && e.intersections[0].object.name === e.object.name) {
+    if (
+      (e.intersections.length > 0 && e.intersections[0].object.name === e.object.name) ||
+      useStore.getState().addedCuboidId
+    ) {
       const cuboid = getElementById(id);
       if (cuboid && cuboid.parentId !== 'Ground') {
         setIntersectionPlaneData({ position: new Vector3(0, 0, -hz), rotation: new Euler() });
