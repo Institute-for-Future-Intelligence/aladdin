@@ -1302,6 +1302,8 @@ const Foundation = (foundationModel: FoundationModel) => {
               oldAzimuthRef.current = wall.relativeAngle;
               oldJointsRef.current = [[...wall.leftJoints], [...wall.rightJoints]];
               oldPointRef.current = [[...wall.leftPoint], [...wall.rightPoint]];
+              wallNewLeftJointIdRef.current = wall.leftJoints[0];
+              wallNewRightJointIdRef.current = wall.rightJoints[0];
               wallMapOnFoundation.current.clear();
               for (const e of useStore.getState().elements) {
                 if (e.type === ObjectType.Wall && e.parentId === id) {
