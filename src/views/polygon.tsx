@@ -97,6 +97,16 @@ const Polygon = ({
       }
     }
   });
+
+  // if any
+  const cuboidWorldPosition = new Vector3();
+  const cuboidWorldRotation = new Euler();
+  if (parent?.type === ObjectType.Cuboid) {
+    const { pos, rot } = Util.getWorldDataOfStackedCuboidById(parent.id);
+    cuboidWorldPosition.copy(pos);
+    cuboidWorldRotation.set(0, 0, rot);
+  }
+
   const ratio = parent ? Math.max(1, Math.max(parent.lx, parent.ly) / 24) : 1;
   const resizeHandleSize = RESIZE_HANDLE_SIZE * ratio;
   const moveHandleSize = MOVE_HANDLE_RADIUS * ratio;
@@ -155,54 +165,55 @@ const Polygon = ({
     return av;
   }, [vertices, parent, normal]);
 
-  const cz = useMemo(() => {
+  const getCz = () => {
     if (parent?.type === ObjectType.Cuboid) {
       const top = Util.isIdentical(normal, UNIT_VECTOR_POS_Z_ARRAY);
       // not sure why we need lz here
-      return parent.cz + (parent.lz + (top ? 0 : lz)) / 2 + 0.01;
+      return cuboidWorldPosition.z + (parent.lz + (top ? 0 : lz)) / 2 + 0.01;
     }
     if (parent?.type === ObjectType.Foundation) {
       return parent.lz + 0.01;
     }
     return lz / 2 + 0.01;
-  }, [parent, lz]);
+  };
 
-  const foundation = useMemo(() => {
-    if (parent) {
-      if (parent.type === ObjectType.Foundation) return parent;
-      return getFoundation(parent);
-    }
-  }, [parent]);
+  const cz = getCz();
 
-  const euler = useMemo(() => {
+  const getEuler = () => {
     if (parent?.type === ObjectType.Wall) {
       return new Euler(-HALF_PI, 0, Math.PI, 'ZXY');
     }
     const n = new Vector3().fromArray(normal);
+    let r = rotation[2];
+    if (parent?.type === ObjectType.Cuboid) {
+      r = cuboidWorldRotation.z;
+    }
     // east face in model coordinate system
     if (Util.isSame(n, UNIT_VECTOR_POS_X)) {
-      return new Euler(0, HALF_PI, rotation[2], 'ZXY');
+      return new Euler(0, HALF_PI, r, 'ZXY');
     }
     // west face
     if (Util.isSame(n, UNIT_VECTOR_NEG_X)) {
-      return new Euler(0, -HALF_PI, rotation[2], 'ZXY');
+      return new Euler(0, -HALF_PI, r, 'ZXY');
     }
     // north face
     if (Util.isSame(n, UNIT_VECTOR_POS_Y)) {
-      return new Euler(-HALF_PI, 0, rotation[2], 'ZXY');
+      return new Euler(-HALF_PI, 0, r, 'ZXY');
     }
     // south face
     if (Util.isSame(n, UNIT_VECTOR_NEG_Y)) {
-      return new Euler(HALF_PI, 0, rotation[2], 'ZXY');
+      return new Euler(HALF_PI, 0, r, 'ZXY');
     }
     // top face
-    return new Euler(0, 0, rotation[2], 'ZXY');
-  }, [normal, rotation, parent]);
+    return new Euler(0, 0, r, 'ZXY');
+  };
 
-  const position = useMemo(() => {
+  const euler = getEuler();
+
+  const getPosition = () => {
     if (parent) {
       if (parent.type === ObjectType.Cuboid) {
-        const p = new Vector3(parent?.cx ?? 0, parent?.cy ?? 0, cz);
+        const p = new Vector3(cuboidWorldPosition.x, cuboidWorldPosition.y, cz);
         const n = new Vector3().fromArray(normal);
         let sideFace = false;
         const shift = new Vector3();
@@ -224,10 +235,10 @@ const Polygon = ({
           shift.y = -parent.ly / 2 - 0.01;
         }
         if (sideFace) {
-          shift.applyEuler(new Euler(0, 0, rotation[2]));
-          p.x = parent.cx + shift.x;
-          p.y = parent.cy + shift.y;
-          p.z = parent.cz + shift.z;
+          shift.applyEuler(cuboidWorldRotation);
+          p.x = cuboidWorldPosition.x + shift.x;
+          p.y = cuboidWorldPosition.y + shift.y;
+          p.z = cuboidWorldPosition.z + shift.z;
         }
         return p;
       } else if (parent.type === ObjectType.Wall) {
@@ -236,18 +247,9 @@ const Polygon = ({
       }
     }
     return new Vector3(parent?.cx ?? 0, parent?.cy ?? 0, cz);
-  }, [
-    normal,
-    rotation,
-    cz,
-    parent?.cx,
-    parent?.cy,
-    parent?.cz,
-    parent?.lx,
-    parent?.ly,
-    parent?.lz,
-    foundation?.rotation,
-  ]);
+  };
+
+  const position = getPosition();
 
   const points = useMemo(() => {
     const p = new Array<Vector3>();
@@ -628,4 +630,4 @@ const Polygon = ({
   );
 };
 
-export default React.memo(Polygon);
+export default Polygon;

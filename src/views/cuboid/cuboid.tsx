@@ -615,9 +615,11 @@ const Cuboid = (cuboidModel: CuboidModel) => {
                 case ObjectType.Polygon:
                   if (useStore.getState().resizeHandleType === ResizeHandleType.Default) {
                     // first, reverse the rotation of p.x and p.y around the center of the cuboid
-                    let q = new Vector3(p.x - cuboidModel.cx, p.y - cuboidModel.cy, 0).applyEuler(
-                      new Euler(0, 0, -cuboidModel.rotation[2], 'ZXY'),
-                    );
+                    let q = new Vector3(
+                      p.x - worldPositionRef.current.x,
+                      p.y - worldPositionRef.current.y,
+                      0,
+                    ).applyEuler(new Euler(0, 0, -worldRotationRef.current, 'ZXY'));
                     // then do the vertex on each face in the de-rotated coordinate system
                     const polygon = grabRef.current as PolygonModel;
                     const n = new Vector3().fromArray(polygon.normal);
@@ -626,22 +628,22 @@ const Cuboid = (cuboidModel: CuboidModel) => {
                       // east face
                       lx = cuboidModel.lz;
                       ly = cuboidModel.ly;
-                      q.x = lx - p.z - cuboidModel.cz;
+                      q.x = -p.z + worldPositionRef.current.z;
                     } else if (Util.isSame(n, UNIT_VECTOR_NEG_X)) {
                       // west face
                       lx = cuboidModel.lz;
                       ly = cuboidModel.ly;
-                      q.x = p.z - cuboidModel.cz;
+                      q.x = p.z - worldPositionRef.current.z;
                     } else if (Util.isSame(n, UNIT_VECTOR_POS_Y)) {
                       // north face
                       lx = cuboidModel.lx;
                       ly = cuboidModel.lz;
-                      q.y = ly - p.z - cuboidModel.cz;
+                      q.y = -p.z + worldPositionRef.current.z;
                     } else if (Util.isSame(n, UNIT_VECTOR_NEG_Y)) {
                       // south face
                       lx = cuboidModel.lx;
                       ly = cuboidModel.lz;
-                      q.y = p.z - cuboidModel.cz;
+                      q.y = p.z - worldPositionRef.current.z;
                     } else {
                       // top face
                       lx = cuboidModel.lx;

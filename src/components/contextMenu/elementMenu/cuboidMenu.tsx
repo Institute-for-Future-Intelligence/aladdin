@@ -38,6 +38,7 @@ import {
   useLabelSize,
   useLabelText,
 } from './menuHooks';
+import { Util } from 'src/Util';
 
 export const CuboidMenu = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
@@ -528,7 +529,7 @@ export const CuboidMenu = React.memo(() => {
             setCommonStore((state) => {
               state.objectTypeToAdd = ObjectType.Polygon;
             });
-            const position = new Vector3(cuboid.cx, cuboid.cy, cuboid.cz);
+            const { pos: position } = Util.getWorldDataOfStackedCuboidById(cuboid.id);
             let normal;
             switch (selectedSideIndex) {
               case 0:
