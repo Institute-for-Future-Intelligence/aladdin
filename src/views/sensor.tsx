@@ -28,32 +28,34 @@ import { WallModel } from '../models/WallModel';
 import { FoundationModel } from '../models/FoundationModel';
 import { useRefStore } from 'src/stores/commonRef';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
+import { getRotationFromNormal } from './solarPanel/solarPanelOnCuboid';
 
-const Sensor = ({
-  id,
-  cx,
-  cy,
-  cz,
-  lx = 1,
-  ly = 1,
-  lz = 0.1,
-  rotation = [0, 0, 0],
-  normal = [0, 0, 1],
-  color = 'white',
-  lineColor = 'black',
-  lineWidth = 0.1,
-  selected = false,
-  locked = false,
-  showLabel = false,
-  parentId,
-  foundationId,
-  light = true,
-  heatFlux = false,
-}: SensorModel) => {
+const Sensor = (sensorModel: SensorModel) => {
+  let {
+    id,
+    cx,
+    cy,
+    cz,
+    lx = 1,
+    ly = 1,
+    lz = 0.1,
+    rotation = [0, 0, 0],
+    normal = [0, 0, 1],
+    color = 'white',
+    lineColor = 'black',
+    lineWidth = 0.1,
+    selected = false,
+    locked = false,
+    showLabel = false,
+    parentId,
+    foundationId,
+    light = true,
+    heatFlux = false,
+  } = sensorModel;
+
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
-  const getElementById = useStore(Selector.getElementById);
   const selectMe = useStore(Selector.selectMe);
 
   const {
@@ -98,20 +100,6 @@ const Sensor = ({
             cy = parent.cy + v.y;
           }
           break;
-        case ObjectType.Cuboid:
-          if (Util.isZero(rotation[2])) {
-            cx = parent.cx + cx * parent.lx;
-            cy = parent.cy + cy * parent.ly;
-            cz = parent.cz + cz * parent.lz;
-          } else {
-            // we must rotate the real length, not normalized length
-            const v = new Vector3(cx * parent.lx, cy * parent.ly, cz * parent.lz);
-            v.applyAxisAngle(UNIT_VECTOR_POS_Z, rotation[2]);
-            cx = parent.cx + v.x;
-            cy = parent.cy + v.y;
-            cz = parent.cz + v.z;
-          }
-          break;
         case ObjectType.Wall:
           if (foundation?.type === ObjectType.Foundation) {
             const absoluteCoordinates = Util.absoluteCoordinates(cx, cy, cz, parent, foundation as FoundationModel);
@@ -132,7 +120,6 @@ const Sensor = ({
     }
   }
   const hz = lz / 2;
-  const sensorModel = getElementById(id) as SensorModel;
 
   const euler = useMemo(() => {
     if (parent?.type === ObjectType.Wall) {
@@ -147,6 +134,9 @@ const Sensor = ({
         foundation ? foundation.rotation[2] + rotation[2] : rotation[2],
         'ZXY',
       );
+    }
+    if (parent?.type === ObjectType.Cuboid) {
+      return getRotationFromNormal(normal);
     }
     // the normal below seems to be relative to its parent
     const n = new Vector3().fromArray(normal);

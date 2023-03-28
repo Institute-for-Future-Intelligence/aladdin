@@ -398,6 +398,37 @@ const Cuboid = (cuboidModel: CuboidModel) => {
 
   const onTopSurface = Util.isIdentical(grabRef.current?.normal, UNIT_VECTOR_POS_Z_ARRAY);
 
+  const handleAddElement = (e: ThreeEvent<PointerEvent>) => {
+    const intersection = e.intersections[0];
+    const objectToAdd = useStore.getState().objectTypeToAdd;
+    if (objectToAdd === ObjectType.SolarPanel) {
+      const pointer = intersection.point;
+      const { pos, rot } = Util.getWorldDataOfStackedCuboidById(id);
+      const diff = new Vector3().subVectors(pointer, pos).applyEuler(new Euler(0, 0, -rot));
+      const addedElement = ElementModelFactory.makeSolarPanel(
+        cuboidModel,
+        useStore.getState().getPvModule(useStore.getState().actionState.solarPanelModelName ?? 'SPR-X21-335-BLK'),
+        diff.x / lx,
+        diff.y / ly,
+        diff.z / lz,
+        useStore.getState().actionState.solarPanelOrientation ?? Orientation.landscape,
+        useStore.getState().actionState.solarPanelPoleHeight ?? 1,
+        useStore.getState().actionState.solarPanelPoleSpacing ?? 3,
+        useStore.getState().actionState.solarPanelTiltAngle ?? 0,
+        useStore.getState().actionState.solarPanelRelativeAzimuth ?? 0,
+        intersection.face?.normal,
+        [0, 0, 0],
+        useStore.getState().actionState.solarPanelFrameColor ?? 'white',
+      );
+      setCommonStore((state) => {
+        state.elements.push(addedElement);
+      });
+      return addedElement;
+    } else {
+      return addElement(cuboidModel, intersection.point, intersection.face?.normal);
+    }
+  };
+
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
     if (e.button === 2) return; // ignore right-click
     if (!isAddingElement()) {
@@ -418,45 +449,27 @@ const Cuboid = (cuboidModel: CuboidModel) => {
       // no child of this cuboid is clicked
       if (legalAddToCuboid(useStore.getState().objectTypeToAdd) && cuboidModel) {
         setShowGrid(true);
-        const intersection = e.intersections[0];
-        // const addedElement = addElement(cuboidModel, intersection.point, intersection.face?.normal);
-        const pointer = intersection.point;
-        const { pos, rot } = Util.getWorldDataOfStackedCuboidById(id);
-        const diff = new Vector3().subVectors(pointer, pos).applyEuler(new Euler(0, 0, -rot));
-        const addedElement = ElementModelFactory.makeSolarPanel(
-          cuboidModel,
-          useStore.getState().getPvModule(useStore.getState().actionState.solarPanelModelName ?? 'SPR-X21-335-BLK'),
-          diff.x / lx,
-          diff.y / ly,
-          diff.z / lz,
-          useStore.getState().actionState.solarPanelOrientation ?? Orientation.landscape,
-          useStore.getState().actionState.solarPanelPoleHeight ?? 1,
-          useStore.getState().actionState.solarPanelPoleSpacing ?? 3,
-          useStore.getState().actionState.solarPanelTiltAngle ?? 0,
-          useStore.getState().actionState.solarPanelRelativeAzimuth ?? 0,
-          intersection.face?.normal,
-          [0, 0, 0],
-          useStore.getState().actionState.solarPanelFrameColor ?? 'white',
-        );
-        const undoableAdd = {
-          name: 'Add',
-          timestamp: Date.now(),
-          addedElement: addedElement,
-          undo: () => {
-            removeElementById(undoableAdd.addedElement.id, false);
-          },
-          redo: () => {
-            setCommonStore((state) => {
-              state.elements.push(undoableAdd.addedElement);
-              state.selectedElement = undoableAdd.addedElement;
-            });
-          },
-        } as UndoableAdd;
-        addUndoable(undoableAdd);
-        setCommonStore((state) => {
-          state.objectTypeToAdd = ObjectType.None;
-          state.elements.push(addedElement);
-        });
+        const addedElement = handleAddElement(e);
+        if (addedElement) {
+          const undoableAdd = {
+            name: 'Add',
+            timestamp: Date.now(),
+            addedElement: addedElement,
+            undo: () => {
+              removeElementById(undoableAdd.addedElement.id, false);
+            },
+            redo: () => {
+              setCommonStore((state) => {
+                state.elements.push(undoableAdd.addedElement);
+                state.selectedElement = undoableAdd.addedElement;
+              });
+            },
+          } as UndoableAdd;
+          addUndoable(undoableAdd);
+          setCommonStore((state) => {
+            state.objectTypeToAdd = ObjectType.None;
+          });
+        }
       } else {
         useRefStore.getState().selectNone();
         useRefStore.setState((state) => {

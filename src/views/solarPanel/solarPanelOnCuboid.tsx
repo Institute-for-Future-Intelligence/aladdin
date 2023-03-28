@@ -835,7 +835,7 @@ const Sunbeam = React.memo(({ sunDirection }: SumbeamProps) => {
   );
 });
 
-function getRotationFromNormal(normal: number[]) {
+export function getRotationFromNormal(normal: number[]) {
   const [x, y, z] = normal;
   if (z === 1) {
     return new Euler(0, 0, 0);
@@ -849,13 +849,13 @@ function getRotationFromNormal(normal: number[]) {
   return new Euler();
 }
 
+export function isSolarPanelOnTopFace(normal: number[]) {
+  return Math.abs(normal[2] - 1) < 0.01;
+}
+
 function getWorldRotationZ(parentId: string, selfRotation: number) {
   const { rot } = Util.getWorldDataOfStackedCuboidById(parentId);
   return rot + selfRotation;
-}
-
-export function isSolarPanelOnTopFace(normal: number[]) {
-  return Math.abs(normal[2] - 1) < 0.01;
 }
 
 export default React.memo(SolarPanelOnCuboid);

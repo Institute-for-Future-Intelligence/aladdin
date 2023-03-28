@@ -556,6 +556,7 @@ export class ElementModelFactory {
       rotation: rotation ? rotation : [0, 0, 0],
       parentId: parent.id,
       foundationId: foundationId,
+      parentType: parent.type,
       id: short.generate() as string,
     } as SensorModel;
   }
@@ -600,6 +601,7 @@ export class ElementModelFactory {
       rotation: rotation ? rotation : [0, 0, 0],
       parentId: parent.id,
       foundationId: foundationId,
+      parentType: parent.type,
       id: short.generate() as string,
     } as LightModel;
   }

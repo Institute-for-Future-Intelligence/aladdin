@@ -13,6 +13,10 @@ import { useGroupMaster } from '../hooks';
 import { ObjectType } from 'src/types';
 import SolarPanelOnCuboid from '../solarPanel/solarPanelOnCuboid';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
+import Sensor from '../sensor';
+import { SensorModel } from 'src/models/SensorModel';
+import Light from '../light';
+import { LightModel } from 'src/models/LightModel';
 
 export interface CuboidRendererProps {
   elements: ElementModel[];
@@ -48,9 +52,9 @@ const CuboidRenderer = ({ elements, cuboidModel }: CuboidRendererProps) => {
                 </group>
               );
             } else if (e.parentId === cuboidModel.id) {
+              const { lx, ly, lz } = cuboidModel;
               switch (e.type) {
                 case ObjectType.SolarPanel: {
-                  const { lx, ly, lz } = cuboidModel;
                   return (
                     <SolarPanelOnCuboid
                       key={e.id}
@@ -61,8 +65,15 @@ const CuboidRenderer = ({ elements, cuboidModel }: CuboidRendererProps) => {
                     />
                   );
                 }
+                case ObjectType.Sensor: {
+                  return <Sensor key={e.id} {...(e as SensorModel)} cx={e.cx * lx} cy={e.cy * ly} cz={e.cz * lz} />;
+                }
+                case ObjectType.Light: {
+                  return <Light key={e.id} {...(e as LightModel)} cx={e.cx * lx} cy={e.cy * ly} cz={e.cz * lz} />;
+                }
+                default:
+                  return null;
               }
-              return null;
             }
           })}
         </group>

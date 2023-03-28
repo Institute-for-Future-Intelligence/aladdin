@@ -71,10 +71,20 @@ const ElementsRenderer: React.FC = () => {
         switch (e.type) {
           case ObjectType.Foundation:
             return <Foundation key={e.id} {...(e as FoundationModel)} />;
-          case ObjectType.Sensor:
-            return <Sensor key={e.id} {...(e as SensorModel)} />;
-          case ObjectType.Light:
-            return <Light key={e.id} {...(e as LightModel)} />;
+          case ObjectType.Sensor: {
+            const sensor = e as SensorModel;
+            if (sensor.parentType === ObjectType.Cuboid) {
+              return null;
+            }
+            return <Sensor key={e.id} {...sensor} />;
+          }
+          case ObjectType.Light: {
+            const light = e as LightModel;
+            if (light.parentType === ObjectType.Cuboid) {
+              return null;
+            }
+            return <Light key={e.id} {...light} />;
+          }
           case ObjectType.Cuboid:
             // only base cuboid will be rendered here
             if (e.parentId !== 'Ground') return null;
