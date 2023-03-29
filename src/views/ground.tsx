@@ -279,9 +279,12 @@ const Ground = () => {
               intersectionObjGroup.add(elementRef.current); // attach to Group
               setParentIdById(getObjectId(intersectionObjGroup), getObjectId(elementRef.current));
             }
-            elementParentRotation.set(0, 0, -intersectionObjGroup.rotation.z);
+            const { rot: intersectionObjGroupWorldRotation } = Util.getWorldDataOfStackedCuboidById(
+              getObjectId(intersectionObjGroup),
+            );
+            elementParentRotation.set(0, 0, -intersectionObjGroupWorldRotation);
             const relPos = new Vector3()
-              .subVectors(intersection.point, intersectionObjGroup.position)
+              .subVectors(intersection.point, intersectionObjGroup.localToWorld(new Vector3()))
               .applyEuler(elementParentRotation);
             elementRef.current.position.copy(relPos); // relative abs position
             invalidate();
@@ -754,7 +757,9 @@ const Ground = () => {
           const intersectionObjId = getObjectId(intersection.object);
           const intersectionObjGroup = intersection.object.parent;
           if (intersectionObjGroup) {
-            const relPos = new Vector3().subVectors(p, intersectionObjGroup.position).applyEuler(elementParentRotation);
+            const relPos = new Vector3()
+              .subVectors(p, intersectionObjGroup.localToWorld(new Vector3()))
+              .applyEuler(elementParentRotation);
             handleSetElementState(elem.id, intersectionObjId, relPos);
             newPositionRef.current.set(relPos.x, relPos.y, relPos.z);
             newHumanOrPlantParentId = intersectionObjId;
@@ -1215,28 +1220,29 @@ const Ground = () => {
               }
               // getting ready for resizing even though it may not happen
               absPosMapRef.current.clear();
-              const cuboidCenter = new Vector3(selectedElement.cx, selectedElement.cy, selectedElement.cz);
+              const { pos, rot } = Util.getWorldDataOfStackedCuboidById(selectedElement.id);
+              const cuboidCenter = new Vector3(pos.x, pos.y, pos.z);
               const cuboidChildren = getChildren(selectedElement.id);
               if (cuboidChildren.length > 0) {
-                const a = selectedElement.rotation[2];
                 for (const e of cuboidChildren) {
                   switch (e.type) {
                     case ObjectType.Tree:
                     case ObjectType.Flower:
                     case ObjectType.Human: {
-                      const centerAbsPos = new Vector3(e.cx, e.cy, e.cz).applyEuler(new Euler(0, 0, a));
+                      const centerAbsPos = new Vector3(e.cx, e.cy, e.cz).applyEuler(new Euler(0, 0, rot));
                       centerAbsPos.add(cuboidCenter);
                       absPosMapRef.current.set(e.id, centerAbsPos);
                       break;
                     }
                     case ObjectType.SolarPanel:
+                    case ObjectType.Light:
                     case ObjectType.Sensor:
                       if (Util.isIdentical(e.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
                         const centerAbsPos = new Vector3(
                           e.cx * selectedElement.lx,
                           e.cy * selectedElement.ly,
                           e.cz * selectedElement.lz,
-                        ).applyEuler(new Euler(0, 0, a));
+                        ).applyEuler(new Euler(0, 0, rot));
                         centerAbsPos.add(cuboidCenter);
                         absPosMapRef.current.set(e.id, centerAbsPos);
                       }
@@ -1249,7 +1255,7 @@ const Ground = () => {
                           const vertexAbsPos = new Vector2(
                             v.x * selectedElement.lx,
                             v.y * selectedElement.ly,
-                          ).rotateAround(ORIGIN_VECTOR2, a);
+                          ).rotateAround(ORIGIN_VECTOR2, rot);
                           vertexAbsPos.add(new Vector2(cuboidCenter.x, cuboidCenter.y));
                           vertexAbsPosArray.push(vertexAbsPos);
                         }
@@ -1651,36 +1657,43 @@ const Ground = () => {
   //   return new Vector3(x, y, v.z);
   // };
 
-  const handleHumanAndPlantPositionFixedOnParent = (object: Object3D | null | undefined, lx: number, ly: number) => {
+  const handleHumanAndPlantPositionFixedOnParent = (
+    object: Object3D | null | undefined,
+    parentId: string,
+    lx: number,
+    ly: number,
+  ) => {
     if (!object) return;
-    for (const obj of object.children) {
-      if (obj.name.includes('Human') || obj.name.includes('Tree') || obj.name.includes('Flower')) {
-        const worldPos = absPosMapRef.current.get(getObjectId(obj));
+    for (const child of object.children) {
+      if (child.name.includes('Human') || child.name.includes('Tree') || child.name.includes('Flower')) {
+        const childId = getObjectId(child);
+        const worldPos = absPosMapRef.current.get(childId);
         if (worldPos) {
+          const { rot: parentWorldRotation } = Util.getWorldDataOfStackedCuboidById(parentId);
           // top face
-          if (Math.abs(oldDimensionRef.current.z / 2 - obj.position.z) < 0.01) {
+          if (Math.abs(oldDimensionRef.current.z / 2 - child.position.z) < 0.01) {
             const relativePos = new Vector3()
-              .subVectors(worldPos, object.position)
-              .applyEuler(new Euler(0, 0, -object.rotation.z));
-            obj.position.setX(relativePos.x);
-            obj.position.setY(relativePos.y);
+              .subVectors(worldPos, object.localToWorld(new Vector3()))
+              .applyEuler(new Euler(0, 0, -parentWorldRotation));
+            child.position.setX(relativePos.x);
+            child.position.setY(relativePos.y);
           }
           // side face
           else {
             const relativePos = new Vector3()
               .subVectors(worldPos, oldPositionRef.current)
-              .applyEuler(new Euler(0, 0, -object.rotation.z));
-            const d = new Vector3().subVectors(object.position, oldPositionRef.current);
+              .applyEuler(new Euler(0, 0, -parentWorldRotation));
+            const d = new Vector3().subVectors(object.localToWorld(new Vector3()), oldPositionRef.current);
             const v = new Vector3().subVectors(relativePos, d);
             // west and east face
             if (Math.abs(relativePos.x / oldDimensionRef.current.x) > 0.49) {
-              obj.position.setX((relativePos.x > 0 ? lx : -lx) / 2);
-              obj.position.setY(v.y);
+              child.position.setX((relativePos.x > 0 ? lx : -lx) / 2);
+              child.position.setY(v.y);
             }
             // north and south face
             else if (Math.abs(relativePos.y / oldDimensionRef.current.y) > 0.49) {
-              obj.position.setX(v.x);
-              obj.position.setY((relativePos.y > 0 ? ly : -ly) / 2);
+              child.position.setX(v.x);
+              child.position.setY((relativePos.y > 0 ? ly : -ly) / 2);
             }
           }
         }
@@ -1857,11 +1870,11 @@ const Ground = () => {
     switch (grabRef.current.type) {
       case ObjectType.Foundation:
         const foundationRef = useRefStore.getState().foundationRef;
-        handleHumanAndPlantPositionFixedOnParent(foundationRef?.current, lx, ly);
+        handleHumanAndPlantPositionFixedOnParent(foundationRef?.current, grabRef.current.id, lx, ly);
         break;
       case ObjectType.Cuboid:
         const cuboidRef = useRefStore.getState().cuboidRef;
-        handleHumanAndPlantPositionFixedOnParent(cuboidRef?.current, lx, ly);
+        handleHumanAndPlantPositionFixedOnParent(cuboidRef?.current, grabRef.current.id, lx, ly);
         break;
     }
   };

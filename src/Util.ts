@@ -47,6 +47,7 @@ import { RoofUtil } from './views/roof/RoofUtil';
 import { FoundationModel } from './models/FoundationModel';
 import { WindowModel, WindowType } from './models/WindowModel';
 import { DoorModel, DoorType } from './models/DoorModel';
+import { CUBOID_STACKABLE_CHILD, CUBOID_WRAPPER_NAME } from './views/cuboid';
 
 export class Util {
   static getLatLngKey(lat: number, lng: number): string {
@@ -1282,8 +1283,25 @@ export class Util {
   static getObjectChildById(object: Object3D | null | undefined, id: string): Object3D | null {
     if (object) {
       for (const obj of object.children) {
-        if (obj.name.includes(`${id}`)) {
+        if (obj.name === CUBOID_WRAPPER_NAME) {
+          const child = this.getStackCuboidObjectById(obj, id);
+          if (child) return child;
+        } else if (obj.name.includes(id)) {
           return obj;
+        }
+      }
+    }
+    return null;
+  }
+
+  static getStackCuboidObjectById(wrapper: Object3D | null | undefined, id: string): Object3D | null {
+    if (wrapper) {
+      for (const child of wrapper.children) {
+        if (child.name.includes(id)) {
+          return child;
+        }
+        if (child.name === CUBOID_STACKABLE_CHILD) {
+          return this.getStackCuboidObjectById(child.children[0], id);
         }
       }
     }

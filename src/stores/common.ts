@@ -2115,10 +2115,11 @@ export const useStore = create<CommonStoreState>(
                 case ObjectType.Human: {
                   const position = new Vector3().copy(p);
                   if (parentId !== GROUND_ID) {
-                    const parentModel = parent as ElementModel;
+                    const { rot: parentWorldRotation, pos: parentWorldPosition } =
+                      Util.getWorldDataOfStackedCuboidById(parentId);
                     position
-                      .sub(new Vector3(parentModel.cx, parentModel.cy, parentModel.cz))
-                      .applyEuler(new Euler(0, 0, -parentModel.rotation[2]));
+                      .sub(new Vector3(parentWorldPosition.x, parentWorldPosition.y, parentWorldPosition.z))
+                      .applyEuler(new Euler(0, 0, -parentWorldRotation));
                   }
                   const human = ElementModelFactory.makeHuman(
                     state.actionState.humanName,
@@ -2134,10 +2135,11 @@ export const useStore = create<CommonStoreState>(
                 case ObjectType.Tree: {
                   const position = new Vector3().copy(p);
                   if (parentId !== GROUND_ID) {
-                    const parentModel = parent as ElementModel;
+                    const { rot: parentWorldRotation, pos: parentWorldPosition } =
+                      Util.getWorldDataOfStackedCuboidById(parentId);
                     position
-                      .sub(new Vector3(parentModel.cx, parentModel.cy, parentModel.cz))
-                      .applyEuler(new Euler(0, 0, -parentModel.rotation[2]));
+                      .sub(new Vector3(parentWorldPosition.x, parentWorldPosition.y, parentWorldPosition.z))
+                      .applyEuler(new Euler(0, 0, -parentWorldRotation));
                   }
                   const tree = ElementModelFactory.makeTree(
                     state.actionState.treeType,
@@ -2155,10 +2157,11 @@ export const useStore = create<CommonStoreState>(
                 case ObjectType.Flower: {
                   const position = new Vector3().copy(p);
                   if (parentId !== GROUND_ID) {
-                    const parentModel = parent as ElementModel;
+                    const { rot: parentWorldRotation, pos: parentWorldPosition } =
+                      Util.getWorldDataOfStackedCuboidById(parentId);
                     position
-                      .sub(new Vector3(parentModel.cx, parentModel.cy, parentModel.cz))
-                      .applyEuler(new Euler(0, 0, -parentModel.rotation[2]));
+                      .sub(new Vector3(parentWorldPosition.x, parentWorldPosition.y, parentWorldPosition.z))
+                      .applyEuler(new Euler(0, 0, -parentWorldRotation));
                   }
                   const flower = ElementModelFactory.makeFlower(
                     state.actionState.flowerType,

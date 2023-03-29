@@ -17,11 +17,17 @@ import Sensor from '../sensor';
 import { SensorModel } from 'src/models/SensorModel';
 import Light from '../light';
 import { LightModel } from 'src/models/LightModel';
+import Human from '../human';
+import { HumanModel } from 'src/models/HumanModel';
 
 export interface CuboidRendererProps {
   elements: ElementModel[];
   cuboidModel: CuboidModel;
 }
+
+export const CUBOID_WRAPPER_NAME = 'Cuboid Wrapper';
+
+export const CUBOID_STACKABLE_CHILD = 'Cuboid Stackable Child';
 
 const CuboidRenderer = ({ elements, cuboidModel }: CuboidRendererProps) => {
   const { id, cx, cy, lz, rotation, selected, locked } = cuboidModel;
@@ -40,43 +46,41 @@ const CuboidRenderer = ({ elements, cuboidModel }: CuboidRendererProps) => {
 
   return (
     <>
-      <group name="Cuboid Wrapper" position={[cx, cy, hz]} rotation={[0, 0, rotation[2]]}>
+      <group name={CUBOID_WRAPPER_NAME} position={[cx, cy, hz]} rotation={[0, 0, rotation[2]]}>
         <Cuboid {...cuboidModel} />
 
-        <group name="Cuboid Child Group">
-          {elements.map((e) => {
-            if (isStackableChild(e)) {
-              return (
-                <group key={e.id} name="Cuboid Stackable Child" position={[0, 0, hz]}>
-                  <CuboidRenderer elements={elements} cuboidModel={e as CuboidModel} />
-                </group>
-              );
-            } else if (e.parentId === cuboidModel.id) {
-              const { lx, ly, lz } = cuboidModel;
-              switch (e.type) {
-                case ObjectType.SolarPanel: {
-                  return (
-                    <SolarPanelOnCuboid
-                      key={e.id}
-                      {...(e as SolarPanelModel)}
-                      cx={e.cx * lx}
-                      cy={e.cy * ly}
-                      cz={e.cz * lz}
-                    />
-                  );
-                }
-                case ObjectType.Sensor: {
-                  return <Sensor key={e.id} {...(e as SensorModel)} cx={e.cx * lx} cy={e.cy * ly} cz={e.cz * lz} />;
-                }
-                case ObjectType.Light: {
-                  return <Light key={e.id} {...(e as LightModel)} cx={e.cx * lx} cy={e.cy * ly} cz={e.cz * lz} />;
-                }
-                default:
-                  return null;
+        {elements.map((e) => {
+          if (isStackableChild(e)) {
+            return (
+              <group key={e.id} name="Cuboid Stackable Child" position={[0, 0, hz]}>
+                <CuboidRenderer elements={elements} cuboidModel={e as CuboidModel} />
+              </group>
+            );
+          } else if (e.parentId === cuboidModel.id) {
+            const { lx, ly, lz } = cuboidModel;
+            switch (e.type) {
+              case ObjectType.SolarPanel: {
+                return (
+                  <SolarPanelOnCuboid
+                    key={e.id}
+                    {...(e as SolarPanelModel)}
+                    cx={e.cx * lx}
+                    cy={e.cy * ly}
+                    cz={e.cz * lz}
+                  />
+                );
               }
+              case ObjectType.Sensor: {
+                return <Sensor key={e.id} {...(e as SensorModel)} cx={e.cx * lx} cy={e.cy * ly} cz={e.cz * lz} />;
+              }
+              case ObjectType.Light: {
+                return <Light key={e.id} {...(e as LightModel)} cx={e.cx * lx} cy={e.cy * ly} cz={e.cz * lz} />;
+              }
+              default:
+                return null;
             }
-          })}
-        </group>
+          }
+        })}
       </group>
 
       {showGroupMaster && (

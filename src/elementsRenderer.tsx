@@ -61,7 +61,7 @@ const ElementsRenderer: React.FC = () => {
     }
   }, [loadingFile]);
 
-  // console.log(groupRef)
+  console.log(groupRef);
   // console.log(elements);
   console.debug(elements);
 
