@@ -24,6 +24,17 @@ export class RoofUtil {
       .normalize();
   }
 
+  static isTypeRoof(type: ObjectType) {
+    return (
+      type === ObjectType.Roof ||
+      type === ObjectType.PyramidRoof ||
+      type === ObjectType.HipRoof ||
+      type === ObjectType.GableRoof ||
+      type === ObjectType.GambrelRoof ||
+      type === ObjectType.MansardRoof
+    );
+  }
+
   static getIntersectionPoint(v1: Vector3, v2: Vector3, v3: Vector3, v4: Vector3) {
     if (Math.abs(v1.x - v2.x) < 0.001 && Math.abs(v3.x - v4.x) < 0.001) {
       return v2.clone();

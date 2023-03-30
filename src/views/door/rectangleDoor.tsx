@@ -209,15 +209,16 @@ const RectangleDoor = React.memo(
         )}
 
         {filled && (
-          <Plane
+          <mesh
             name={`Door plane inside`}
-            args={[lx, lz]}
             position={[0, 0.1, 0]}
             rotation={[-HALF_PI, 0, Math.PI]}
             material={material}
             castShadow={shadowEnabled && filled}
             receiveShadow={shadowEnabled && filled}
-          />
+          >
+            <shapeBufferGeometry args={[doorShape]} />
+          </mesh>
         )}
 
         <DoorWireFrame

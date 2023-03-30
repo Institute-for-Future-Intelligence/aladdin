@@ -1774,11 +1774,12 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   }
 
   function handleWallSideSurfacePointerDown(e: ThreeEvent<PointerEvent>) {
+    const objectTypeToAdd = useStore.getState().objectTypeToAdd;
     if (
       !isSettingElementStartPoint() &&
       !isAddingElement() &&
       isFirstIntersectedObject(e) &&
-      useStore.getState().objectTypeToAdd === ObjectType.None
+      objectTypeToAdd === ObjectType.None
     ) {
       if (useStore.getState().groupActionMode) {
         setCommonStore((state) => {
@@ -1791,6 +1792,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       } else if (isAllowedToSelectMe()) {
         useStore.getState().selectMe(id, e, ActionType.Select);
       }
+    } else if (RoofUtil.isTypeRoof(objectTypeToAdd)) {
+      handleWallBodyPointerDown(e);
     }
   }
 
