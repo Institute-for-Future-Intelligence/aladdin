@@ -1365,10 +1365,14 @@ const Ground = () => {
     return isDescendancy(parent, targetId);
   };
 
+  const isHumanOrPlant = (type: ObjectType) => {
+    return type === ObjectType.Human || type === ObjectType.Tree || type === ObjectType.Flower;
+  };
+
   const handleTempHumanPlantChild = (state: CommonStoreState, parentId: string) => {
     if (state.tempHumanPlant.length === 0) {
       const temp = state.elements.filter((e) => {
-        return e.type === ObjectType.Human && isDescendancy(e, parentId);
+        return isHumanOrPlant(e.type) && isDescendancy(e, parentId);
       });
       state.tempHumanPlant = temp;
       const set = new Set(temp.map((e) => e.id));

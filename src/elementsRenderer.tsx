@@ -64,7 +64,6 @@ const ElementsRenderer: React.FC = () => {
   // console.log(groupRef);
   // console.log(elements);
   console.debug(elements);
-  console.log('temp array', useStore.getState().tempHumanPlant);
 
   return (
     <group ref={groupRef} name={'Content'}>

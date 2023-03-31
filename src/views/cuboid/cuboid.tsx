@@ -204,7 +204,6 @@ const Cuboid = (cuboidModel: CuboidModel) => {
       setCommonStore((state) => {
         state.elements.push(...state.tempHumanPlant);
         state.tempHumanPlant = [];
-        console.log('push back');
       });
     }
   }, []);

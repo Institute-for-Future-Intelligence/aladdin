@@ -49,9 +49,11 @@ const Flower = ({
     }
   });
   const removeElementById = useStore(Selector.removeElementById);
-  if (!isRender) {
-    removeElementById(id, false);
-  }
+  useEffect(() => {
+    if (!isRender) {
+      removeElementById(id, false);
+    }
+  }, [isRender]);
 
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
@@ -69,7 +71,6 @@ const Flower = ({
   const { gl } = useThree();
 
   const contentRef = useRefStore((state) => state.contentRef);
-  const parentRef = useRef<Object3D | null>(null);
   const groupRef = useRef<Group>(null);
   const flowerRef = useRef<Mesh>(null);
   const interactionMeshRef = useRef<Mesh>(null);
@@ -99,6 +100,14 @@ const Flower = ({
       }
     }
   }, [fileChangedState]);
+
+  // attach parent dom element if parent is not Ground
+  useEffect(() => {
+    const parentObject = getParentObject();
+    if (parentObject && groupRef.current) {
+      parentObject.add(groupRef.current);
+    }
+  }, [contentRef]);
 
   const textureLoader = useMemo(() => {
     return new TextureLoader().load(FlowerData.fetchTextureImage(name, noLeaves), (texture) => {
@@ -158,30 +167,10 @@ const Flower = ({
     gl.domElement.style.cursor = useStore.getState().addedCuboidId ? 'crosshair' : 'default';
   }, []);
 
-  useEffect(() => {
-    parentRef.current = getParentObject();
-    if (parentRef.current && groupRef.current) {
-      parentRef.current.add(groupRef.current);
-    }
-  }, [contentRef]);
-
-  useEffect(() => {
-    parentRef.current = getParentObject();
-    invalidate();
-  }, [parentId]);
-
-  const getObjectId = (obj: Object3D) => {
-    return obj.name.split(' ')[2];
-  };
-
   // return null if parent is Ground
   const getParentObject = () => {
     if (parentId !== GROUND_ID && contentRef?.current) {
-      for (const object of contentRef.current.children) {
-        if (parentId === getObjectId(object)) {
-          return object;
-        }
-      }
+      return Util.getObjectChildById(contentRef.current, parentId);
     }
     return null;
   };
@@ -194,23 +183,19 @@ const Flower = ({
     return FlowerData.fetchHeight(name);
   }, [name]);
 
-  const worldPosition = useMemo(() => new Vector3(), []);
-  const parentRotation = useMemo(() => new Euler(), []);
-
   useFrame(({ camera }) => {
     // rotation
     if (groupRef.current) {
+      const { rot: parentWorldRotation } = Util.getWorldDataOfStackedCuboidById(parentId);
+
       if (!orthographic) {
         if (flowerRef.current && interactionPlaneRef.current) {
           const { x: cameraX, y: cameraY } = camera.position;
           const { x: currX, y: currY } = groupRef.current.position;
-          if (parentRef.current) {
-            parentRotation.set(0, 0, parentRef.current.rotation.z);
-            worldPosition.addVectors(
-              groupRef.current.position.clone().applyEuler(parentRotation),
-              parentRef.current.position,
-            );
-            const e = Math.atan2(cameraX - worldPosition.x, cameraY - worldPosition.y) + parentRotation.z;
+          const parentObject = getParentObject();
+          if (parentObject) {
+            const worldPosition = groupRef.current.localToWorld(new Vector3());
+            const e = Math.atan2(cameraX - worldPosition.x, cameraY - worldPosition.y) + parentWorldRotation;
             flowerRef.current.rotation.set(HALF_PI, -e, 0);
             interactionPlaneRef.current.rotation.set(-HALF_PI, e, 0);
           } else {

@@ -70,15 +70,14 @@ const Human = ({
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
   const selectMe = useStore(Selector.selectMe);
   const getElementById = useStore(Selector.getElementById);
-  // const moveHandleType = useStore(Selector.moveHandleType);
-  // const hoveredHandle = useStore(Selector.hoveredHandle);
+  const moveHandleType = useStore(Selector.moveHandleType);
+  const hoveredHandle = useStore(Selector.hoveredHandle);
 
   const { gl } = useThree();
   const [hovered, setHovered] = useState(false);
   const [updateFlag, setUpdateFlag] = useState(false);
 
   const contentRef = useRefStore((state) => state.contentRef);
-  // const parentRef = useRef<Object3D | null>(null);
   const groupRef = useRef<Group>(null);
   const planeRef = useRef<Mesh>(null);
 
@@ -149,11 +148,6 @@ const Human = ({
       parentObject.add(groupRef.current);
     }
   }, [contentRef]);
-
-  // useEffect(() => {
-  //   parentRef.current = getParentObject();
-  //   invalidate();
-  // }, [parentId]);
 
   // return null if parent is Ground
   const getParentObject = () => {
@@ -346,14 +340,14 @@ const Human = ({
             }}
             onPointerLeave={noHoverHandle}
           >
-            {/* <meshBasicMaterial
+            <meshBasicMaterial
               attach="material"
               color={
                 hoveredHandle === MoveHandleType.Default || moveHandleType === MoveHandleType.Default
                   ? HIGHLIGHT_HANDLE_COLOR
                   : MOVE_HANDLE_COLOR_1
               }
-            /> */}
+            />
           </Sphere>
         )}
         {hovered && !selected && (
