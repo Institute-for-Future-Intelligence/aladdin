@@ -200,6 +200,16 @@ const Cuboid = (cuboidModel: CuboidModel) => {
   }, []);
 
   useEffect(() => {
+    if (useStore.getState().tempHumanPlant.length > 0) {
+      setCommonStore((state) => {
+        state.elements.push(...state.tempHumanPlant);
+        state.tempHumanPlant = [];
+        console.log('push back');
+      });
+    }
+  }, []);
+
+  useEffect(() => {
     if (cuboidModel && showSolarRadiationHeatmap) {
       const maxValue = solarRadiationHeatmapMaxValue ?? 5;
       const heatmapTop = getHeatmap(cuboidModel.id + '-top');

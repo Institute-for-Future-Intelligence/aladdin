@@ -3,7 +3,7 @@
  */
 
 import React, { RefObject, useEffect, useMemo, useRef } from 'react';
-import { useStore } from '../stores/common';
+import { CommonStoreState, useStore } from '../stores/common';
 import { useRefStore } from '../stores/commonRef';
 import * as Selector from '../stores/selector';
 import { Plane } from '@react-three/drei';
@@ -1356,6 +1356,26 @@ const Ground = () => {
     }
   };
 
+  const isDescendancy = (child: ElementModel, targetId: string): boolean => {
+    const parentId = child.parentId;
+    if (!parentId || parentId === 'Ground') return false;
+    const parent = getElementById(parentId);
+    if (!parent) return false;
+    if (parent.id === targetId) return true;
+    return isDescendancy(parent, targetId);
+  };
+
+  const handleTempHumanPlantChild = (state: CommonStoreState, parentId: string) => {
+    if (state.tempHumanPlant.length === 0) {
+      const temp = state.elements.filter((e) => {
+        return e.type === ObjectType.Human && isDescendancy(e, parentId);
+      });
+      state.tempHumanPlant = temp;
+      const set = new Set(temp.map((e) => e.id));
+      state.elements = state.elements.filter((e) => !set.has(e.id));
+    }
+  };
+
   /** self, child exclusive */
   const getFirstStackableCuboid = (e: ThreeEvent<PointerEvent>, currId: string) => {
     const firstIntersectedCuboidObject = e.intersections.find((intersect) => {
@@ -1416,11 +1436,17 @@ const Ground = () => {
                         cuboid.cx = diff.x;
                         cuboid.cy = diff.y;
                         if (selectedElement.parentId !== newParentId) {
-                          cuboid.parentId = newParentId;
+                          if (cuboid.parentId !== newParentId) {
+                            handleTempHumanPlantChild(state, cuboid.id);
+                            cuboid.parentId = newParentId;
+                          }
                           const { rot: currAbsRot } = Util.getWorldDataOfStackedCuboidById(selectedElement.id);
                           cuboid.rotation[2] = currAbsRot - parentAbsRot;
                         } else if (cuboid.parentId !== newParentId) {
-                          cuboid.parentId = selectedElement.parentId;
+                          if (cuboid.parentId !== selectedElement.parentId) {
+                            handleTempHumanPlantChild(state, cuboid.id);
+                            cuboid.parentId = selectedElement.parentId;
+                          }
                           cuboid.rotation[2] = selectedElement.rotation[2];
                         }
                       }
@@ -1429,9 +1455,12 @@ const Ground = () => {
                     setCommonStore((state) => {
                       const cuboid = state.elements.find((e) => e.id === grabRef.current!.id);
                       if (cuboid && cuboid.parentId !== 'Ground') {
+                        if (cuboid.parentId !== 'Ground') {
+                          handleTempHumanPlantChild(state, cuboid.id);
+                          cuboid.parentId = 'Ground';
+                        }
                         const { rot: parentAbsRot } = Util.getWorldDataOfStackedCuboidById(cuboid.parentId);
                         cuboid.rotation[2] += parentAbsRot;
-                        cuboid.parentId = 'Ground';
                       }
                     });
                     handleMove(p);
@@ -1524,32 +1553,32 @@ const Ground = () => {
     }
   };
 
-  const handleGroundPointerOut = () => {
-    const addedFoundationID = useStore.getState().addedFoundationId;
-    const addedCuboidID = useStore.getState().addedCuboidId;
-    if (addedFoundationID) {
-      removeElementById(addedFoundationID, false);
-      setCommonStore((state) => {
-        state.objectTypeToAdd = ObjectType.Foundation;
-        state.addedFoundationId = null;
-      });
-      useRefStore.getState().setEnableOrbitController(true);
-      grabRef.current = null;
-      isSettingFoundationStartPointRef.current = false;
-      isSettingFoundationEndPointRef.current = false;
-    }
-    if (addedCuboidID) {
-      removeElementById(addedCuboidID, false);
-      setCommonStore((state) => {
-        state.objectTypeToAdd = ObjectType.Cuboid;
-        state.addedCuboidId = null;
-      });
-      useRefStore.getState().setEnableOrbitController(true);
-      grabRef.current = null;
-      isSettingCuboidStartPointRef.current = false;
-      isSettingCuboidEndPointRef.current = false;
-    }
-  };
+  // const handleGroundPointerOut = () => {
+  //   const addedFoundationID = useStore.getState().addedFoundationId;
+  //   const addedCuboidID = useStore.getState().addedCuboidId;
+  //   if (addedFoundationID) {
+  //     removeElementById(addedFoundationID, false);
+  //     setCommonStore((state) => {
+  //       state.objectTypeToAdd = ObjectType.Foundation;
+  //       state.addedFoundationId = null;
+  //     });
+  //     useRefStore.getState().setEnableOrbitController(true);
+  //     grabRef.current = null;
+  //     isSettingFoundationStartPointRef.current = false;
+  //     isSettingFoundationEndPointRef.current = false;
+  //   }
+  //   if (addedCuboidID) {
+  //     removeElementById(addedCuboidID, false);
+  //     setCommonStore((state) => {
+  //       state.objectTypeToAdd = ObjectType.Cuboid;
+  //       state.addedCuboidId = null;
+  //     });
+  //     useRefStore.getState().setEnableOrbitController(true);
+  //     grabRef.current = null;
+  //     isSettingCuboidStartPointRef.current = false;
+  //     isSettingCuboidEndPointRef.current = false;
+  //   }
+  // };
 
   const handleIntersectionPointerMove = (e: ThreeEvent<PointerEvent>) => {
     if (grabRef.current && grabRef.current.type && !grabRef.current.locked) {
