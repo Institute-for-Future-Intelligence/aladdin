@@ -52,7 +52,7 @@ const CuboidRenderer = ({ elements, cuboidModel }: CuboidRendererProps) => {
         {elements.map((e) => {
           if (isStackableChild(e)) {
             return (
-              <group key={e.id} name="Cuboid Stackable Child" position={[0, 0, hz]}>
+              <group key={e.id} name={CUBOID_STACKABLE_CHILD} position={[0, 0, hz]}>
                 <CuboidRenderer elements={elements} cuboidModel={e as CuboidModel} />
               </group>
             );

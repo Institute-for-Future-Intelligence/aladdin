@@ -1442,15 +1442,15 @@ const Ground = () => {
                         if (selectedElement.parentId !== newParentId) {
                           if (cuboid.parentId !== newParentId) {
                             handleTempHumanPlantChild(state, cuboid.id);
-                            cuboid.parentId = newParentId;
                           }
                           const { rot: currAbsRot } = Util.getWorldDataOfStackedCuboidById(selectedElement.id);
                           cuboid.rotation[2] = currAbsRot - parentAbsRot;
+                          cuboid.parentId = newParentId;
                         } else if (cuboid.parentId !== newParentId) {
                           if (cuboid.parentId !== selectedElement.parentId) {
                             handleTempHumanPlantChild(state, cuboid.id);
-                            cuboid.parentId = selectedElement.parentId;
                           }
+                          cuboid.parentId = selectedElement.parentId;
                           cuboid.rotation[2] = selectedElement.rotation[2];
                         }
                       }
@@ -1461,10 +1461,10 @@ const Ground = () => {
                       if (cuboid && cuboid.parentId !== 'Ground') {
                         if (cuboid.parentId !== 'Ground') {
                           handleTempHumanPlantChild(state, cuboid.id);
-                          cuboid.parentId = 'Ground';
                         }
                         const { rot: parentAbsRot } = Util.getWorldDataOfStackedCuboidById(cuboid.parentId);
                         cuboid.rotation[2] += parentAbsRot;
+                        cuboid.parentId = 'Ground';
                       }
                     });
                     handleMove(p);

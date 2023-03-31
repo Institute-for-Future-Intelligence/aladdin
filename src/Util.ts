@@ -1282,12 +1282,12 @@ export class Util {
 
   static getObjectChildById(object: Object3D | null | undefined, id: string): Object3D | null {
     if (object) {
-      for (const obj of object.children) {
-        if (obj.name === CUBOID_WRAPPER_NAME) {
-          const child = this.getStackCuboidObjectById(obj, id);
+      for (const children of object.children) {
+        if (children.name === CUBOID_WRAPPER_NAME) {
+          const child = this.getStackCuboidObjectById(children, id);
           if (child) return child;
-        } else if (obj.name.includes(id)) {
-          return obj;
+        } else if (children.name.includes(id)) {
+          return children;
         }
       }
     }
@@ -1301,7 +1301,8 @@ export class Util {
           return child;
         }
         if (child.name === CUBOID_STACKABLE_CHILD) {
-          return this.getStackCuboidObjectById(child.children[0], id);
+          const c = this.getStackCuboidObjectById(child.children[0], id);
+          if (c) return c;
         }
       }
     }
