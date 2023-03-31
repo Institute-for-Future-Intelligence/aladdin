@@ -97,6 +97,7 @@ const Ground = () => {
   const oldRotationRef = useRef<number[]>([0, 0, 1]);
   const newRotationRef = useRef<number[]>([0, 0, 1]);
   const oldHumanOrPlantParentIdRef = useRef<string | null>(null);
+  const oldCuoidParentIdRef = useRef<string | null>(null);
   const absPosMapRef = useRef<Map<string, Vector3>>(new Map());
   const polygonsAbsPosMapRef = useRef<Map<string, Vector2[]>>(new Map());
   const wallsAbsPosMapRef = useRef<Map<string, WallAbsPos>>(new Map());
@@ -209,7 +210,7 @@ const Ground = () => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         // don't set parentId for foundations or cuboids as their parents are allowed to be ground only (for now)
-        if (e.id === elementId && !Util.isFoundationOrCuboid(e)) {
+        if (e.id === elementId && e.type !== ObjectType.Foundation) {
           e.parentId = parentId;
           break;
         }
@@ -841,6 +842,9 @@ const Ground = () => {
           } as UndoableMoveFoundationGroup;
           addUndoable(undoableMove);
         } else {
+          const isCuboid = elem.type === ObjectType.Cuboid;
+          const oldParentId = isCuboid ? oldCuoidParentIdRef.current : oldHumanOrPlantParentIdRef.current;
+          const newParentId = isCuboid ? elem.parentId : newHumanOrPlantParentId;
           const undoableMove = {
             name: 'Move',
             timestamp: Date.now(),
@@ -852,8 +856,8 @@ const Ground = () => {
             newCx: newPositionRef.current.x,
             newCy: newPositionRef.current.y,
             newCz: newPositionRef.current.z,
-            oldParentId: oldHumanOrPlantParentIdRef.current,
-            newParentId: newHumanOrPlantParentId,
+            oldParentId: oldParentId,
+            newParentId: newParentId,
             undo: () => {
               setElementPosition(
                 undoableMove.movedElementId,
@@ -862,7 +866,9 @@ const Ground = () => {
                 undoableMove.oldCz,
               );
               setParentIdById(undoableMove.oldParentId, undoableMove.movedElementId);
-              attachToGroup(undoableMove.oldParentId, undoableMove.newParentId, undoableMove.movedElementId);
+              if (undoableMove.movedElementType && isHumanOrPlant(undoableMove.movedElementType)) {
+                attachToGroup(undoableMove.oldParentId, undoableMove.newParentId, undoableMove.movedElementId);
+              }
             },
             redo: () => {
               setElementPosition(
@@ -872,7 +878,9 @@ const Ground = () => {
                 undoableMove.newCz,
               );
               setParentIdById(undoableMove.newParentId, undoableMove.movedElementId);
-              attachToGroup(undoableMove.newParentId, undoableMove.oldParentId, undoableMove.movedElementId);
+              if (undoableMove.movedElementType && isHumanOrPlant(undoableMove.movedElementType)) {
+                attachToGroup(undoableMove.newParentId, undoableMove.oldParentId, undoableMove.movedElementId);
+              }
             },
           } as UndoableMove;
           addUndoable(undoableMove);
@@ -1191,6 +1199,7 @@ const Ground = () => {
               if (isGroupable(selectedElement)) {
                 handleGroupMaster(e, selectedElement as GroupableModel);
               }
+              oldCuoidParentIdRef.current = selectedElement.parentId;
               const moveHandleType = useStore.getState().moveHandleType;
               if (moveHandleType) {
                 const { rot } = Util.getWorldDataOfStackedCuboidById(selectedElement.id);
