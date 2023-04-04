@@ -534,8 +534,9 @@ export class Util {
   }
 
   static fetchFoundationVertexCoordinates(foundation: ElementModel): Point2[] {
-    const xc = foundation.cx;
-    const yc = foundation.cy;
+    const { pos } = Util.getWorldDataOfStackedCuboidById(foundation.id);
+    const xc = pos.x;
+    const yc = pos.y;
     const cosaz = Math.cos(foundation.rotation[2]);
     const sinaz = Math.sin(foundation.rotation[2]);
     const rx = foundation.lx * 0.5;
@@ -1074,6 +1075,15 @@ export class Util {
         return true;
     }
     return false;
+  }
+
+  static isDescendancyOf(child: ElementModel, targetId: string): boolean {
+    const parentId = child.parentId;
+    if (!parentId || parentId === 'Ground') return false;
+    const parent = useStore.getState().getElementById(parentId);
+    if (!parent) return false;
+    if (parent.id === targetId) return true;
+    return this.isDescendancyOf(parent, targetId);
   }
 
   // p is relative position on wall
@@ -1685,10 +1695,18 @@ export class Util {
   };
 
   /** check is child recursively */
-  static isChild = (currId: string, targetId: string): boolean => {
-    const target = useStore.getState().getElementById(targetId);
-    if (!target) return false;
-    if (target.parentId === currId) return true;
-    return this.isChild(currId, target.parentId);
+  static isChild = (baseId: string, childId: string, checkLock = false): boolean => {
+    const child = useStore.getState().getElementById(childId);
+    if (!child) return false;
+    if (checkLock && child.locked) return false;
+    if (child.parentId === baseId) return true;
+    return this.isChild(baseId, child.parentId, checkLock);
+  };
+
+  static getBaseId = (id: string): string | null => {
+    const el = useStore.getState().getElementById(id);
+    if (!el) return null;
+    if (el.parentId === 'Ground') return el.id;
+    return this.getBaseId(el.parentId);
   };
 }

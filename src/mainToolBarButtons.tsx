@@ -109,11 +109,13 @@ const MainToolBarButtons = () => {
       } else {
         if (state.selectedElement) {
           if (isGroupable(state.selectedElement)) {
-            state.groupMasterId = state.selectedElement.id;
+            const baseId = Util.getBaseId(state.selectedElement.id);
+            state.groupMasterId = baseId;
           } else {
-            state.groupMasterId = state.selectedElement.foundationId ?? null;
+            const baseId = Util.getBaseId(state.selectedElement.foundationId ?? state.selectedElement.parentId);
+            state.groupMasterId = baseId;
             for (const e of state.elements) {
-              e.selected = e.id === state.selectedElement.foundationId;
+              e.selected = e.id === baseId;
             }
           }
         } else {

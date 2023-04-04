@@ -17,8 +17,6 @@ import Sensor from '../sensor';
 import { SensorModel } from 'src/models/SensorModel';
 import Light from '../light';
 import { LightModel } from 'src/models/LightModel';
-import Human from '../human';
-import { HumanModel } from 'src/models/HumanModel';
 
 export interface CuboidRendererProps {
   elements: ElementModel[];
@@ -30,17 +28,21 @@ export const CUBOID_WRAPPER_NAME = 'Cuboid Wrapper';
 export const CUBOID_STACKABLE_CHILD = 'Cuboid Stackable Child';
 
 const CuboidRenderer = ({ elements, cuboidModel }: CuboidRendererProps) => {
-  const { id, cx, cy, lz, rotation, selected, locked } = cuboidModel;
+  const { id, parentId, cx, cy, lz, rotation, selected, locked } = cuboidModel;
 
   const groupMasterId = useStore(Selector.groupMasterId);
 
-  const { baseGroupSet, groupMasterDimension, groupMasterPosition, groupMasterRotation } = useGroupMaster(
-    cuboidModel,
-    groupMasterId,
-  );
+  const { baseGroupSet, childCuboidSet, groupMasterDimension, groupMasterPosition, groupMasterRotation } =
+    useGroupMaster(cuboidModel, groupMasterId);
 
   const hz = lz / 2;
-  const showGroupMaster = selected && !locked && groupMasterId === id && cuboidModel && groupMasterDimension;
+  const showGroupMaster = !!(
+    parentId === 'Ground' &&
+    !locked &&
+    groupMasterId === id &&
+    cuboidModel &&
+    groupMasterDimension
+  );
 
   const isStackableChild = (e: ElementModel) => isStackableModel(e) && e.parentId === cuboidModel.id;
 
@@ -86,6 +88,7 @@ const CuboidRenderer = ({ elements, cuboidModel }: CuboidRendererProps) => {
       {showGroupMaster && (
         <GroupMaster
           baseGroupSet={baseGroupSet}
+          childCuboidSet={childCuboidSet}
           initalPosition={groupMasterPosition}
           initalDimension={groupMasterDimension}
           initalRotation={groupMasterRotation}

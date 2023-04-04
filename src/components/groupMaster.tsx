@@ -18,9 +18,11 @@ import { UndoableResizeBuildingXY, UndoableResizeBuildingZ } from 'src/undo/Undo
 import { useHandleSize } from 'src/views/wall/hooks';
 import { RoofModel } from 'src/models/RoofModel';
 import { isGroupable } from 'src/models/Groupable';
+import { Util } from 'src/Util';
 
 interface GroupMasterProps {
   baseGroupSet: Set<string>;
+  childCuboidSet: Set<string>;
   initalPosition: number[];
   initalDimension: number[];
   initalRotation: number;
@@ -109,11 +111,17 @@ const RotateHandle = ({ args, handleType }: HandleProps) => {
   );
 };
 
-const GroupMaster = ({ baseGroupSet, initalPosition, initalDimension, initalRotation }: GroupMasterProps) => {
+const GroupMaster = ({
+  baseGroupSet,
+  childCuboidSet,
+  initalPosition,
+  initalDimension,
+  initalRotation,
+}: GroupMasterProps) => {
   const [cx, cy, cz] = initalPosition;
   const [lx, ly, lz] = initalDimension;
   const aspectRatio = lx === 0 ? 1 : ly / lx;
-  const lockAspectRatio = baseGroupSet.size > 1 ? true : false;
+  const lockAspectRatio = baseGroupSet.size > 1;
 
   const intersectionPlaneRef = useRef<Mesh>(null);
   const intersectionPlanePositionRef = useRef(new Vector3());
@@ -121,10 +129,10 @@ const GroupMaster = ({ baseGroupSet, initalPosition, initalDimension, initalRota
   const resizeAnchorRef = useRef(new Vector2());
   const elementHeightMapRef = useRef<Map<string, number>>(new Map());
   const wallRelPointsMapRef = useRef<Map<string, Vector2[]>>(new Map<string, Vector2[]>());
-  const foundatonRelPosMapRef = useRef<Map<string, Vector3>>(new Map());
-  const foundatonRotationMapRef = useRef<Map<string, number>>(new Map());
-  const foundationPosRatioMapRef = useRef<Map<string, number[]>>(new Map()); // 2d
-  const foundationDmsRatioMapRef = useRef<Map<string, number[]>>(new Map()); // 2d
+  const baseRelPosMapRef = useRef<Map<string, Vector3>>(new Map());
+  const baseRotationMapRef = useRef<Map<string, number>>(new Map());
+  const basePosRatioMapRef = useRef<Map<string, number[]>>(new Map()); // 2d
+  const baseDmsRatioMapRef = useRef<Map<string, number[]>>(new Map()); // 2d
   const resizerCenterRelPosRef = useRef(new Vector3());
   const pointerDownRef = useRef(false); // for performance reason
 
@@ -335,16 +343,26 @@ const GroupMaster = ({ baseGroupSet, initalPosition, initalDimension, initalRota
       setCommonStore((state) => {
         for (const elem of state.elements) {
           if (isGroupable(elem) && baseGroupSet.has(elem.id)) {
-            const posRatio = foundationPosRatioMapRef.current.get(elem.id);
-            const dmsRatio = foundationDmsRatioMapRef.current.get(elem.id);
+            const posRatio = basePosRatioMapRef.current.get(elem.id);
+            const dmsRatio = baseDmsRatioMapRef.current.get(elem.id);
             if (posRatio && dmsRatio) {
               const newLx = dmsRatio[0] * lx;
               const newLy = dmsRatio[1] * ly;
 
-              elem.cx = posRatio[0] * lx + center.x;
-              elem.cy = posRatio[1] * ly + center.y;
               elem.lx = newLx;
               elem.ly = newLy;
+
+              if (elem.parentId !== 'Ground') {
+                const { pos, rot } = Util.getWorldDataOfStackedCuboidById(elem.parentId);
+                const relativeCenter = new Vector3(posRatio[0] * lx + center.x, posRatio[1] * ly + center.y)
+                  .sub(pos)
+                  .applyEuler(new Euler(0, 0, -rot));
+                elem.cx = relativeCenter.x;
+                elem.cy = relativeCenter.y;
+              } else {
+                elem.cx = posRatio[0] * lx + center.x;
+                elem.cy = posRatio[1] * ly + center.y;
+              }
 
               for (const e of state.elements) {
                 if (e.type === ObjectType.Wall && e.foundationId === elem.id) {
@@ -443,12 +461,12 @@ const GroupMaster = ({ baseGroupSet, initalPosition, initalDimension, initalRota
     const offset = Math.abs(r) > Math.PI ? -TWO_PI : 0;
     const rotateAngle = r + offset;
     const euler = new Euler(0, 0, rotateAngle);
-    const groupSize = foundatonRotationMapRef.current.size;
+    const groupSize = baseRotationMapRef.current.size;
     setCommonStore((state) => {
       for (const elem of state.elements) {
-        if (isGroupable(elem) && baseGroupSet.has(elem.id)) {
-          const oldCenter = foundatonRelPosMapRef.current.get(elem.id);
-          const oldRotation = groupSize !== 1 ? foundatonRotationMapRef.current.get(elem.id) : 0;
+        if (isGroupable(elem) && baseGroupSet.has(elem.id) && !childCuboidSet.has(elem.id)) {
+          const oldCenter = baseRelPosMapRef.current.get(elem.id);
+          const oldRotation = groupSize !== 1 ? baseRotationMapRef.current.get(elem.id) : 0;
           if (oldCenter && oldRotation !== undefined) {
             const newCenter = oldCenter.clone().applyEuler(euler);
             elem.cx = resizerCenter.x + newCenter.x;
@@ -456,8 +474,8 @@ const GroupMaster = ({ baseGroupSet, initalPosition, initalDimension, initalRota
             elem.rotation = [0, 0, oldRotation + rotateAngle];
           }
         }
-        if (baseGroupSet.has(elem.parentId)) {
-          const oldRotation = groupSize !== 1 ? foundatonRotationMapRef.current.get(elem.parentId) : 0;
+        if (elem.type !== ObjectType.Cuboid && baseGroupSet.has(elem.parentId)) {
+          const oldRotation = groupSize !== 1 ? baseRotationMapRef.current.get(elem.parentId) : 0;
           if (oldRotation !== undefined) {
             elem.rotation = [0, 0, oldRotation + rotateAngle];
           }
@@ -468,11 +486,12 @@ const GroupMaster = ({ baseGroupSet, initalPosition, initalDimension, initalRota
   };
 
   const pointerDownBottomResizeHandle = (x: number, y: number) => {
-    resizeAnchorRef.current.set(x, y).rotateAround(zeroVector2, rotation).add(new Vector2(position.x, position.y));
+    const positionV2 = new Vector2(position.x, position.y);
+    resizeAnchorRef.current.set(x, y).rotateAround(zeroVector2, rotation).add(positionV2);
     setOperation(Operation.ResizeXY);
 
-    foundationPosRatioMapRef.current.clear();
-    foundationDmsRatioMapRef.current.clear();
+    basePosRatioMapRef.current.clear();
+    baseDmsRatioMapRef.current.clear();
     wallRelPointsMapRef.current.clear();
     foundatonOldDataMapRef.current.clear();
     wallOldPointsMapRef.current.clear();
@@ -480,11 +499,9 @@ const GroupMaster = ({ baseGroupSet, initalPosition, initalDimension, initalRota
     const [currLx, currLy] = [hx * 2, hy * 2];
     for (const elem of useStore.getState().elements) {
       if (isGroupable(elem) && baseGroupSet.has(elem.id)) {
-        foundationPosRatioMapRef.current.set(elem.id, [
-          (elem.cx - position.x) / currLx,
-          (elem.cy - position.y) / currLy,
-        ]);
-        foundationDmsRatioMapRef.current.set(elem.id, [elem.lx / currLx, elem.ly / currLy]);
+        const { pos } = Util.getWorldDataOfStackedCuboidById(elem.id);
+        basePosRatioMapRef.current.set(elem.id, [(pos.x - position.x) / currLx, (pos.y - position.y) / currLy]);
+        baseDmsRatioMapRef.current.set(elem.id, [elem.lx / currLx, elem.ly / currLy]);
         foundatonOldDataMapRef.current.set(elem.id, [elem.cx, elem.cy, elem.lx, elem.ly]);
       } else if (elem.type === ObjectType.Wall && elem.foundationId && baseGroupSet.has(elem.foundationId)) {
         const w = elem as WallModel;
@@ -571,7 +588,7 @@ const GroupMaster = ({ baseGroupSet, initalPosition, initalDimension, initalRota
         if (isGroupable(elem) && baseGroupSet.has(elem.id)) {
           const c = new Vector3(elem.cx, elem.cy);
           const v = new Vector3().subVectors(c, p);
-          foundatonRelPosMapRef.current.set(elem.id, v);
+          baseRelPosMapRef.current.set(elem.id, v);
           foundatonOldDataMapRef.current.set(elem.id, [elem.cx, elem.cy, elem.cz, elem.rotation[2]]);
         }
       }
@@ -591,8 +608,8 @@ const GroupMaster = ({ baseGroupSet, initalPosition, initalDimension, initalRota
         if (isGroupable(elem) && baseGroupSet.has(elem.id)) {
           const elemCenter = new Vector3(elem.cx, elem.cy);
           const v = new Vector3().subVectors(elemCenter, resizerCenter);
-          foundatonRelPosMapRef.current.set(elem.id, v);
-          foundatonRotationMapRef.current.set(elem.id, elem.rotation[2]);
+          baseRelPosMapRef.current.set(elem.id, v);
+          baseRotationMapRef.current.set(elem.id, elem.rotation[2]);
           foundatonOldDataMapRef.current.set(elem.id, [elem.cx, elem.cy, elem.cz, elem.rotation[2]]);
         }
         if (baseGroupSet.has(elem.parentId)) {
@@ -629,9 +646,7 @@ const GroupMaster = ({ baseGroupSet, initalPosition, initalDimension, initalRota
   };
 
   const handleIntersectionPlanePointerMove = (event: ThreeEvent<PointerEvent>) => {
-    if (!intersectionPlaneRef.current || !pointerDownRef.current) {
-      return;
-    }
+    if (!intersectionPlaneRef.current || !pointerDownRef.current) return;
     setRayCast(event);
     const intersects = ray.intersectObjects([intersectionPlaneRef.current]);
     if (intersects.length > 0) {
@@ -651,8 +666,8 @@ const GroupMaster = ({ baseGroupSet, initalPosition, initalDimension, initalRota
           setPosition(new Vector3().addVectors(p.clone().setZ(0), resizerCenterRelPosRef.current));
           setCommonStore((state) => {
             for (const elem of state.elements) {
-              if (isGroupable(elem) && baseGroupSet.has(elem.id)) {
-                const v = foundatonRelPosMapRef.current.get(elem.id);
+              if (isGroupable(elem) && baseGroupSet.has(elem.id) && !childCuboidSet.has(elem.id)) {
+                const v = baseRelPosMapRef.current.get(elem.id);
                 if (v) {
                   elem.cx = p.x + v.x;
                   elem.cy = p.y + v.y;
@@ -673,7 +688,7 @@ const GroupMaster = ({ baseGroupSet, initalPosition, initalDimension, initalRota
   const resizeHandleY = hy + handleSize * 4;
 
   return (
-    <group name={'Building Resizer'} position={position} rotation={[0, 0, rotation]}>
+    <group name={'Group Master'} position={position} rotation={[0, 0, rotation]}>
       <group name={'Resize Handle Group'} onPointerDown={handleResizeHandlesPointerDown}>
         <ResizeHandle args={[hx, hy, bottomHanldeZ, handleSize]} handleType={ResizeHandleType.UpperRight} />
         <ResizeHandle args={[-hx, hy, bottomHanldeZ, handleSize]} handleType={ResizeHandleType.UpperLeft} />

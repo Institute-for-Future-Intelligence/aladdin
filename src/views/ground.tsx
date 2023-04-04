@@ -1017,7 +1017,8 @@ const Ground = () => {
   };
 
   const setBasePosMap = (element: ElementModel, pointer: Vector3) => {
-    const center = new Vector3(element.cx, element.cy);
+    const { pos } = Util.getWorldDataOfStackedCuboidById(element.id);
+    const center = new Vector3(pos.x, pos.y);
     const diff = new Vector3().subVectors(center, pointer);
     baseGroupRelPosMapRef.current.set(element.id, diff);
     baseGroupOldPosMapRef.current.set(element.id, [element.cx, element.cy, element.cz]);
@@ -1032,6 +1033,7 @@ const Ground = () => {
         element.id !== currElem.id &&
         !baseGroupRelPosMapRef.current.has(element.id) &&
         !Util.isChild(currElem.id, element.id) &&
+        !Util.isChild(element.id, currElem.id) &&
         Util.areTwoBasesOverlapped(element, currElem)
       ) {
         setBasePosMap(element, pointer);
@@ -1114,6 +1116,7 @@ const Ground = () => {
         state.selectedElement = null;
         InnerCommonState.selectNone(state);
         state.contextMenuObjectType = null;
+        state.groupMasterId = null;
       });
       if (legalOnGround(objectTypeToAdd)) {
         const position = e.intersections[0].point;
@@ -1365,15 +1368,6 @@ const Ground = () => {
     }
   };
 
-  const isDescendancy = (child: ElementModel, targetId: string): boolean => {
-    const parentId = child.parentId;
-    if (!parentId || parentId === 'Ground') return false;
-    const parent = getElementById(parentId);
-    if (!parent) return false;
-    if (parent.id === targetId) return true;
-    return isDescendancy(parent, targetId);
-  };
-
   const isHumanOrPlant = (type: ObjectType) => {
     return type === ObjectType.Human || type === ObjectType.Tree || type === ObjectType.Flower;
   };
@@ -1381,7 +1375,7 @@ const Ground = () => {
   const handleTempHumanPlantChild = (state: CommonStoreState, parentId: string) => {
     if (state.tempHumanPlant.length === 0) {
       const temp = state.elements.filter((e) => {
-        return isHumanOrPlant(e.type) && isDescendancy(e, parentId);
+        return isHumanOrPlant(e.type) && Util.isDescendancyOf(e, parentId);
       });
       state.tempHumanPlant = temp;
       const set = new Set(temp.map((e) => e.id));
@@ -1389,7 +1383,7 @@ const Ground = () => {
     }
   };
 
-  /** self, child exclusive */
+  /** self, child and group Master group exclusive */
   const getFirstStackableCuboid = (e: ThreeEvent<PointerEvent>, currId: string) => {
     const firstIntersectedCuboidObject = e.intersections.find((intersect) => {
       const obj = intersect.eventObject;
@@ -1402,6 +1396,8 @@ const Ground = () => {
     if (!firstIntersectedCuboidObject) return undefined;
 
     const firstIntersectedCuboidObjectId = firstIntersectedCuboidObject.eventObject.name.split(' ')[1];
+
+    if (baseGroupRelPosMapRef.current.has(firstIntersectedCuboidObjectId)) return undefined;
 
     return Util.isChild(currId, firstIntersectedCuboidObjectId) ? undefined : firstIntersectedCuboidObject;
   };
@@ -1439,6 +1435,7 @@ const Ground = () => {
                     p.copy(intersects[0].point).add(moveHandleWorldDiffV3Ref.current);
                     const newParentId = firstIntersectedCuboidObject.eventObject.name.split(' ')[1];
                     setCommonStore((state) => {
+                      // todo: move grouped cuboid
                       const cuboid = state.elements.find((e) => e.id === state.selectedElement?.id);
                       const selectedElement = state.selectedElement;
                       if (cuboid && selectedElement) {
@@ -1532,35 +1529,39 @@ const Ground = () => {
         let intersects = ray.intersectObjects([groundPlaneRef.current]);
         const p = intersects[0].point;
 
-        const firstIntersectedCuboidObject = getFirstStackableCuboid(e, grabRef.current.id);
-
-        if (firstIntersectedCuboidObject) {
-          intersects = ray.intersectObjects([firstIntersectedCuboidObject.eventObject]);
-          if (intersects.length === 0) return;
-          p.copy(intersects[0].point);
-          const newParentId = firstIntersectedCuboidObject.eventObject.name.split(' ')[1];
-          setCommonStore((state) => {
-            const cuboid = state.elements.find((e) => e.id === grabRef.current?.id);
-            if (cuboid) {
-              const { pos: parentAbsPos, rot: parentAbsRot } = Util.getWorldDataOfStackedCuboidById(newParentId);
-              const diff = new Vector3().subVectors(p, parentAbsPos);
-              diff.applyEuler(new Euler(0, 0, -parentAbsRot));
-              cuboid.cx = diff.x;
-              cuboid.cy = diff.y;
-              cuboid.parentId = newParentId;
-              cuboid.rotation[2] = -parentAbsRot;
-            }
-          });
-        } else {
-          setCommonStore((state) => {
-            const cuboid = state.elements.find((e) => e.id === grabRef.current?.id);
-            if (cuboid && cuboid.parentId !== 'Ground') {
-              const { rot: parentAbsRot } = Util.getWorldDataOfStackedCuboidById(cuboid.parentId);
-              cuboid.rotation[2] += parentAbsRot;
-              cuboid.parentId = 'Ground';
-            }
-          });
+        if (grabRef.current.type === ObjectType.Foundation) {
           setElementPosition(grabRef.current.id, p.x, p.y);
+        } else if (grabRef.current.type === ObjectType.Cuboid) {
+          const firstIntersectedCuboidObject = getFirstStackableCuboid(e, grabRef.current.id);
+
+          if (firstIntersectedCuboidObject) {
+            intersects = ray.intersectObjects([firstIntersectedCuboidObject.eventObject]);
+            if (intersects.length === 0) return;
+            p.copy(intersects[0].point);
+            const newParentId = firstIntersectedCuboidObject.eventObject.name.split(' ')[1];
+            setCommonStore((state) => {
+              const cuboid = state.elements.find((e) => e.id === grabRef.current?.id);
+              if (cuboid) {
+                const { pos: parentAbsPos, rot: parentAbsRot } = Util.getWorldDataOfStackedCuboidById(newParentId);
+                const diff = new Vector3().subVectors(p, parentAbsPos);
+                diff.applyEuler(new Euler(0, 0, -parentAbsRot));
+                cuboid.cx = diff.x;
+                cuboid.cy = diff.y;
+                cuboid.parentId = newParentId;
+                cuboid.rotation[2] = -parentAbsRot;
+              }
+            });
+          } else {
+            setCommonStore((state) => {
+              const cuboid = state.elements.find((e) => e.id === grabRef.current?.id);
+              if (cuboid && cuboid.parentId !== 'Ground') {
+                const { rot: parentAbsRot } = Util.getWorldDataOfStackedCuboidById(cuboid.parentId);
+                cuboid.rotation[2] += parentAbsRot;
+                cuboid.parentId = 'Ground';
+              }
+            });
+            setElementPosition(grabRef.current.id, p.x, p.y);
+          }
         }
       }
     }

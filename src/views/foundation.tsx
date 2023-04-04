@@ -146,10 +146,8 @@ const Foundation = (foundationModel: FoundationModel) => {
   const getHeatmap = useDataStore(Selector.getHeatmap);
   const groupMasterId = useStore(Selector.groupMasterId);
 
-  const { baseGroupSet, groupMasterDimension, groupMasterPosition, groupMasterRotation } = useGroupMaster(
-    foundationModel,
-    groupMasterId,
-  );
+  const { baseGroupSet, childCuboidSet, groupMasterDimension, groupMasterPosition, groupMasterRotation } =
+    useGroupMaster(foundationModel, groupMasterId);
 
   const {
     camera,
@@ -3188,6 +3186,7 @@ const Foundation = (foundationModel: FoundationModel) => {
       {selected && !locked && groupMasterId === id && foundationModel && groupMasterDimension && (
         <GroupMaster
           baseGroupSet={baseGroupSet}
+          childCuboidSet={childCuboidSet}
           initalPosition={groupMasterPosition}
           initalDimension={groupMasterDimension}
           initalRotation={groupMasterRotation}

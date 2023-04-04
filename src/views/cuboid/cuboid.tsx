@@ -453,7 +453,8 @@ const Cuboid = (cuboidModel: CuboidModel) => {
     }
     if (selectedElement?.id === id || bypass) {
       if (useStore.getState().groupActionMode) {
-        useStore.getState().setGroupMasterId(id);
+        const baseId = Util.getBaseId(id);
+        useStore.getState().setGroupMasterId(baseId);
       }
       // no child of this cuboid is clicked
       if (legalAddToCuboid(useStore.getState().objectTypeToAdd) && cuboidModel) {
