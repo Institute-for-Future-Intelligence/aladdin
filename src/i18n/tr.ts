@@ -1182,6 +1182,7 @@ export const i18n_tr = {
       NumberOfSelectedSolarPanels: 'Seçilen güneş paneli sayısı',
       ElectricityGeneratedDailyBySolarPanels: 'Güneş panellerinin günlük elektrik üretimi',
       SceneDiameter: 'Scene diameter',
+      BuildingArea: 'Building area',
     },
 
     visualizationControlPanel: {

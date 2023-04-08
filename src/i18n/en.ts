@@ -1181,6 +1181,7 @@ export const i18n_en = {
       NumberOfSelectedSolarPanels: 'Number of selected solar panels',
       ElectricityGeneratedDailyBySolarPanels: 'Electricity generated daily by these solar panels',
       SceneDiameter: 'Scene diameter',
+      BuildingArea: 'Building area',
     },
 
     visualizationControlPanel: {

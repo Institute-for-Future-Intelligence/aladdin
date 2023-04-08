@@ -48,15 +48,15 @@ import { WindowModel, WindowType } from './models/WindowModel';
 import { DoorModel, DoorType } from './models/DoorModel';
 
 export class Util {
-  static getLatLngKey(lat: number, lng: number) {
+  static getLatLngKey(lat: number, lng: number): string {
     return lat.toFixed(LAT_LNG_FRACTION_DIGITS) + ', ' + lng.toFixed(LAT_LNG_FRACTION_DIGITS);
   }
 
-  static getModelKey(model: ModelSite) {
+  static getModelKey(model: ModelSite): string {
     return model.title + ', ' + model.userid;
   }
 
-  static resizeCanvas(canvas: HTMLCanvasElement, newWidth: number, newHeight?: number) {
+  static resizeCanvas(canvas: HTMLCanvasElement, newWidth: number, newHeight?: number): HTMLCanvasElement {
     const resizedCanvas = document.createElement('canvas');
     resizedCanvas.width = newWidth;
     resizedCanvas.height = newHeight ? newHeight : (newWidth * canvas.height) / canvas.width;
@@ -94,11 +94,11 @@ export class Util {
     }
   }
 
-  static getTriangleArea(a: Vector3, b: Vector3, c: Vector3) {
+  static getTriangleArea(a: Vector3, b: Vector3, c: Vector3): number {
     return new Triangle(a, b, c).getArea();
   }
 
-  static getPolygonArea(vertices: Point2[]) {
+  static getPolygonArea(vertices: Point2[]): number {
     let total = 0;
     for (let i = 0, l = vertices.length; i < l; i++) {
       const addX = vertices[i].x;
@@ -111,7 +111,17 @@ export class Util {
     return Math.abs(total) * 0.5;
   }
 
-  static isCompleteBuilding(foundation: FoundationModel, elements: ElementModel[]) {
+  static getBuildingArea(foundation: FoundationModel, elements: ElementModel[]): number {
+    let area = 0;
+    for (const e of elements) {
+      if (e.type === ObjectType.Roof && e.foundationId === foundation.id) {
+        area += Util.calculateBuildingArea(e as RoofModel);
+      }
+    }
+    return area;
+  }
+
+  static isCompleteBuilding(foundation: FoundationModel, elements: ElementModel[]): boolean {
     // check roof first
     let hasRoof = false;
     for (const e of elements) {
@@ -153,31 +163,31 @@ export class Util {
     return true;
   }
 
-  static calculateBuildingArea(roof: RoofModel) {
+  static calculateBuildingArea(roof: RoofModel): number {
     const wallPoints = Util.getWallPointsOfRoof(roof);
     return Util.getPolygonArea(wallPoints);
   }
 
-  static toUValueInUS(uValueInSI: number) {
+  static toUValueInUS(uValueInSI: number): number {
     return uValueInSI / 5.67826;
   }
 
-  static toUValueInSI(uValueInUS: number) {
+  static toUValueInSI(uValueInUS: number): number {
     return uValueInUS * 5.67826;
   }
 
-  static toRValueInUS(rValueInSI: number) {
+  static toRValueInUS(rValueInSI: number): number {
     return rValueInSI * 5.67826;
   }
 
-  static toRValueInSI(rValueInUS: number) {
+  static toRValueInSI(rValueInUS: number): number {
     return rValueInUS / 5.67826;
   }
 
   static WATER_TEXTURE = Util.fetchWaterTexture(100, 100);
   static WHITE_TEXTURE = Util.fetchWhiteTexture(2, 2);
 
-  static fetchWaterTexture(w: number, h: number): CanvasTexture | null {
+  static fetchWaterTexture(w: number, h: number): CanvasTexture {
     const canvas = document.createElement('canvas') as HTMLCanvasElement;
     canvas.width = w;
     canvas.height = h;
@@ -193,7 +203,7 @@ export class Util {
     return new CanvasTexture(canvas);
   }
 
-  static fetchWhiteTexture(w: number, h: number): CanvasTexture | null {
+  static fetchWhiteTexture(w: number, h: number): CanvasTexture {
     const canvas = document.createElement('canvas') as HTMLCanvasElement;
     canvas.width = w;
     canvas.height = h;
@@ -215,7 +225,7 @@ export class Util {
     return objects;
   }
 
-  static fetchSimulationElements(obj: Object3D, arr: Object3D[]) {
+  static fetchSimulationElements(obj: Object3D, arr: Object3D[]): void {
     if (obj.userData['simulation']) {
       arr.push(obj);
     }
@@ -226,7 +236,7 @@ export class Util {
     }
   }
 
-  static getSimulationElements(obj: Object3D, arr: Object3D[], id?: string) {
+  static getSimulationElements(obj: Object3D, arr: Object3D[], id?: string): void {
     if (obj.userData['simulation'] && obj.uuid !== id) {
       arr.push(obj);
     }
@@ -405,7 +415,8 @@ export class Util {
     }
     return count;
   }
-  static countAllSolarPanelDailyYields() {
+
+  static countAllSolarPanelDailyYields(): number {
     let total = 0;
     for (const e of useStore.getState().elements) {
       if (e.type === ObjectType.SolarPanel) {
@@ -415,7 +426,7 @@ export class Util {
     return total;
   }
 
-  static countAllSolarPanels() {
+  static countAllSolarPanels(): number {
     let count = 0;
     for (const e of useStore.getState().elements) {
       if (e.type === ObjectType.SolarPanel) {
@@ -437,7 +448,7 @@ export class Util {
   }
 
   // special case as a rack may have many solar panels
-  static countAllChildSolarPanels(parentId: string, excludeLocked?: boolean) {
+  static countAllChildSolarPanels(parentId: string, excludeLocked?: boolean): number {
     let count = 0;
     const elements = useStore.getState().elements;
     if (excludeLocked) {
@@ -464,7 +475,7 @@ export class Util {
     return count;
   }
 
-  static countAllChildSolarPanelDailyYields(parentId: string) {
+  static countAllChildSolarPanelDailyYields(parentId: string): number {
     let total = 0;
     for (const e of useStore.getState().elements) {
       if (e.type === ObjectType.SolarPanel && e.parentId === parentId) {
@@ -474,7 +485,7 @@ export class Util {
     return total;
   }
 
-  static countAllChildElementsByType(parentId: string, type: ObjectType, excludeLocked?: boolean) {
+  static countAllChildElementsByType(parentId: string, type: ObjectType, excludeLocked?: boolean): number {
     let count = 0;
     const elements = useStore.getState().elements;
     if (excludeLocked) {
@@ -643,7 +654,7 @@ export class Util {
 
   // ray-casting algorithm based on
   // https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html/pnpoly.html
-  static isPointInside(x: number, y: number, vertices: Point2[]) {
+  static isPointInside(x: number, y: number, vertices: Point2[]): boolean {
     let inside = false;
     for (let i = 0, j = vertices.length - 1; i < vertices.length; j = i++) {
       const xi = vertices[i].x;
@@ -905,14 +916,14 @@ export class Util {
     return Math.abs(x) < ZERO_TOLERANCE;
   }
 
-  static deleteElement(a: any[], e: any) {
+  static deleteElement(a: any[], e: any): void {
     const i = a.indexOf(e, 0);
     if (i > -1) {
       a.splice(i, 1);
     }
   }
 
-  static fixElements(elements: ElementModel[]) {
+  static fixElements(elements: ElementModel[]): void {
     const found: ElementModel[] = [];
     for (const e of elements) {
       if (!e.type) {
@@ -951,11 +962,15 @@ export class Util {
     );
   }
 
-  static isTopResizeHandleOfWall(handle: MoveHandleType | ResizeHandleType | RotateHandleType | RoofHandleType | null) {
+  static isTopResizeHandleOfWall(
+    handle: MoveHandleType | ResizeHandleType | RotateHandleType | RoofHandleType | null,
+  ): boolean {
     return handle === ResizeHandleType.UpperLeft || handle === ResizeHandleType.UpperRight;
   }
 
-  static isRiseHandleOfRoof(handle: MoveHandleType | ResizeHandleType | RotateHandleType | RoofHandleType | null) {
+  static isRiseHandleOfRoof(
+    handle: MoveHandleType | ResizeHandleType | RotateHandleType | RoofHandleType | null,
+  ): boolean {
     return handle === RoofHandleType.Top || handle === RoofHandleType.Mid || handle === RoofHandleType.TopMid;
   }
 
@@ -1046,7 +1061,7 @@ export class Util {
     return type === ObjectType.FresnelReflector || type === ObjectType.Heliostat;
   }
 
-  static isLegalOnWall(type: ObjectType) {
+  static isLegalOnWall(type: ObjectType): boolean {
     switch (type) {
       case ObjectType.Window:
       case ObjectType.Door:
@@ -1060,7 +1075,7 @@ export class Util {
   }
 
   // p is relative position on wall
-  static isElementInsideWall(p: Vector3, wlx: number, wlz: number, boundingPoints: Point2[]) {
+  static isElementInsideWall(p: Vector3, wlx: number, wlz: number, boundingPoints: Point2[]): boolean {
     const hx = wlx / 2;
     const hz = wlz / 2;
     for (let i = -1; i <= 1; i += 2) {
@@ -1148,7 +1163,7 @@ export class Util {
     return ElementState.Valid;
   }
 
-  static checkElementOnRoofState(sp: SolarPanelModel, roof: RoofModel) {
+  static checkElementOnRoofState(sp: SolarPanelModel, roof: RoofModel): ElementState {
     if (sp.foundationId) {
       const foundation = useStore.getState().getElementById(sp.foundationId);
       if (foundation) {
@@ -1292,12 +1307,12 @@ export class Util {
   }
 
   // returns the maximum of a 2D array
-  static getArrayMax2D(array2d: number[][]) {
+  static getArrayMax2D(array2d: number[][]): number {
     return Util.getArrayMax(array2d.map(Util.getArrayMax));
   }
 
   // returns the minimum of a 2D array
-  static getArrayMin2D(array2d: number[][]) {
+  static getArrayMin2D(array2d: number[][]): number {
     return Util.getArrayMin(array2d.map(Util.getArrayMin));
   }
 
@@ -1333,7 +1348,7 @@ export class Util {
   }
 
   // https://en.wikipedia.org/wiki/Leap_year
-  static daysInYear(date: Date) {
+  static daysInYear(date: Date): number {
     const year = date.getFullYear();
     return (year % 4 === 0 && year % 100 > 0) || year % 400 === 0 ? 366 : 365;
   }
@@ -1384,7 +1399,7 @@ export class Util {
     return Math.min(Math.max(num, min), max);
   }
 
-  static distanceFromPointToLine2D(p: Vector3, l1: Vector3, l2: Vector3) {
+  static distanceFromPointToLine2D(p: Vector3, l1: Vector3, l2: Vector3): number {
     const [x, y] = [p.x, p.y];
     const [x1, y1] = [l1.x, l1.y];
     const [x2, y2] = [l2.x, l2.y];
@@ -1419,7 +1434,7 @@ export class Util {
     return Math.sqrt(dx * dx + dy * dy);
   }
 
-  static mapVector3ToPoint2(v: Vector3) {
+  static mapVector3ToPoint2(v: Vector3): Point2 {
     return { x: v.x, y: v.y } as Point2;
   }
 

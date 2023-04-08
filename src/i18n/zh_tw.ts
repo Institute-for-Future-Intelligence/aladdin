@@ -1159,6 +1159,7 @@ export const i18n_zh_tw = {
       NumberOfSelectedSolarPanels: '選中的光伏板總數',
       ElectricityGeneratedDailyBySolarPanels: '這些光伏板的日發電量',
       SceneDiameter: '場景直徑',
+      BuildingArea: '建築面積',
     },
 
     visualizationControlPanel: {

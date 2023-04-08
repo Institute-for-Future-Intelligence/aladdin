@@ -4,6 +4,9 @@
 
 import SolarPanelImage from '../assets/solar-panel.png';
 import HeliostatImage from '../assets/heliostat.png';
+import LightBulbImage from '../assets/light_bulb.png';
+import DiameterImage from '../assets/diameter.png';
+import AreaImage from '../assets/area.png';
 
 import React from 'react';
 import { useStore } from '../stores/common';
@@ -13,9 +16,8 @@ import { Space } from 'antd';
 import i18n from '../i18n/i18n';
 import { ObjectType } from '../types';
 import { SolarPanelModel } from '../models/SolarPanelModel';
-import LightBulbImage from '../assets/light_bulb.png';
-import DiameterImage from '../assets/diameter.png';
 import { Util } from 'src/Util';
+import { FoundationModel } from '../models/FoundationModel';
 
 const Container = styled.div`
   position: absolute;
@@ -55,6 +57,7 @@ const ColumnWrapper = styled.div`
 export interface DesignInfoPanelProps {}
 
 const DesignInfoPanel = ({}: DesignInfoPanelProps) => {
+  const elements = useStore(Selector.elements);
   const countElementsByType = useStore(Selector.countElementsByType);
   const countSolarPanelsOnRack = useStore(Selector.countSolarPanelsOnRack);
   const getParent = useStore(Selector.getParent);
@@ -98,6 +101,12 @@ const DesignInfoPanel = ({}: DesignInfoPanelProps) => {
   const filter = daytime
     ? 'invert(85%) sepia(45%) saturate(335%) hue-rotate(329deg) brightness(100%) contrast(101%)'
     : 'invert(95%) sepia(7%) saturate(1598%) hue-rotate(312deg) brightness(106%) contrast(96%)';
+
+  // Do NOT put this in useMemo. Otherwise, it will crash the app.
+  const isBuilding =
+    selectedElement &&
+    selectedElement.type === ObjectType.Foundation &&
+    Util.isCompleteBuilding(selectedElement as FoundationModel, elements);
 
   return (
     <Container>
@@ -173,6 +182,31 @@ const DesignInfoPanel = ({}: DesignInfoPanelProps) => {
                 }}
               />
               <span>{sceneRadius * 2 + ' ' + i18n.t('word.MeterAbbreviation', lang)}</span>
+            </>
+          )}
+          {isBuilding && (
+            <>
+              <img
+                title={i18n.t('designInfoPanel.BuildingArea', lang)}
+                alt={'Area'}
+                src={AreaImage}
+                height={20}
+                width={20}
+                style={{
+                  filter: filter,
+                  marginLeft: '10px',
+                  marginTop: '4px',
+                  marginBottom: '4px',
+                  cursor: 'pointer',
+                  verticalAlign: 'middle',
+                }}
+              />
+              <span>
+                {Util.getBuildingArea(selectedElement as FoundationModel, elements).toFixed(2) +
+                  ' ' +
+                  i18n.t('word.MeterAbbreviation', lang)}
+                <sup>2</sup>
+              </span>
             </>
           )}
         </Space>
