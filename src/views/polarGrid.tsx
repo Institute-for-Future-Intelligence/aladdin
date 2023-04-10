@@ -23,6 +23,7 @@ export const PolarGrid = ({ element, height }: { element: ElementModel; height?:
 
   const [position, setPosition] = useState<Vector3>();
   const [radius, setRadius] = useState<number>(10);
+  const [rotation, setRotation] = useState(0);
 
   useEffect(() => {
     if (rotateHandle || hoveredHandle) {
@@ -38,6 +39,12 @@ export const PolarGrid = ({ element, height }: { element: ElementModel; height?:
           break;
         case ObjectType.Foundation:
           setPosition(new Vector3(cx, cy, groundImage ? 0.1 : 0));
+          break;
+        case ObjectType.Cuboid:
+          const { pos } = Util.getWorldDataOfStackedCuboidById(element.id);
+          const { rot } = Util.getWorldDataOfStackedCuboidById(element.parentId);
+          setPosition(new Vector3(pos.x, pos.y, pos.z - element.lz / 2 + 0.2));
+          setRotation(rot);
           break;
         default:
           setPosition(new Vector3(cx, cy, groundImage ? 0.2 : 0));
@@ -71,7 +78,7 @@ export const PolarGrid = ({ element, height }: { element: ElementModel; height?:
   return (
     <>
       {position && (
-        <group position={position} rotation={[HALF_PI, 0, 0]} name={'Polar Auxiliary'}>
+        <group position={position} rotation={[HALF_PI, rotation, 0]} name={'Polar Auxiliary'}>
           <polarGridHelper args={[radius, 24, 6, 120, color, color]} userData={{ unintersectable: true }} />
           <Ring
             args={[radius * 0.98, radius, 24, 1, HALF_PI, angle]}

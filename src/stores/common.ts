@@ -844,41 +844,27 @@ export const useStore = create<CommonStoreState>(
             const v = new Vector2();
             switch (type) {
               case ObjectType.Cuboid:
+                const { pos, rot } = Util.getWorldDataOfStackedCuboidById(e.id);
+                p = pos.clone();
                 switch (handleType) {
                   case ResizeHandleType.LowerLeftTop:
                     v.set(-lx / 2, -ly / 2);
-                    p.z = lz / 2;
+                    p.z -= lz / 2;
                     break;
                   case ResizeHandleType.LowerRightTop:
                     v.set(lx / 2, -ly / 2);
-                    p.z = lz / 2;
+                    p.z -= lz / 2;
                     break;
                   case ResizeHandleType.UpperLeftTop:
                     v.set(-lx / 2, ly / 2);
-                    p.z = lz / 2;
+                    p.z -= lz / 2;
                     break;
                   case ResizeHandleType.UpperRightTop:
                     v.set(lx / 2, ly / 2);
-                    p.z = lz / 2;
-                    break;
-                  case ResizeHandleType.LowerLeft:
-                    v.set(-lx / 2, -ly / 2);
-                    p.z = -lz / 2;
-                    break;
-                  case ResizeHandleType.LowerRight:
-                    v.set(lx / 2, -ly / 2);
-                    p.z = -lz / 2;
-                    break;
-                  case ResizeHandleType.UpperLeft:
-                    v.set(-lx / 2, ly / 2);
-                    p.z = -lz / 2;
-                    break;
-                  case ResizeHandleType.UpperRight:
-                    v.set(lx / 2, ly / 2);
-                    p.z = -lz / 2;
+                    p.z -= lz / 2;
                     break;
                 }
-                v.rotateAround(ORIGIN_VECTOR2, rotation[2]);
+                v.rotateAround(ORIGIN_VECTOR2, rot);
                 p.x += v.x;
                 p.y += v.y;
                 break;

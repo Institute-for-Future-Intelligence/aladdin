@@ -58,7 +58,11 @@ export const VerticalRuler = ({ element }: { element: ElementModel }) => {
       const handlePos = getResizeHandlePosition(element, resizeHandleType);
       const cameraDir = getCameraDirection();
       const rotation = -Math.atan2(cameraDir.x, cameraDir.y) + Math.PI;
-      setPosition(new Vector3(handlePos.x, handlePos.y, 0));
+      if (element.type === ObjectType.Cuboid) {
+        setPosition(new Vector3(handlePos.x, handlePos.y, handlePos.z));
+      } else {
+        setPosition(new Vector3(handlePos.x, handlePos.y, 0));
+      }
       setRotation(new Euler(HALF_PI, 0, rotation, 'ZXY'));
     }
   }, [resizeHandleType, element]);
@@ -79,6 +83,14 @@ export const VerticalRuler = ({ element }: { element: ElementModel }) => {
         const cameraDir = getCameraDirection();
         const rotation = -Math.atan2(cameraDir.x, cameraDir.y) + Math.PI;
         setPosition(new Vector3(selectedElementX, selectedElementY, 0));
+        setRotation(new Euler(HALF_PI, 0, rotation, 'ZXY'));
+      }
+    } else if (element.type === ObjectType.Cuboid) {
+      if (Util.isTopResizeHandle(hoveredHandle)) {
+        const handlePos = getResizeHandlePosition(updatedElement ?? element, hoveredHandle as ResizeHandleType);
+        const cameraDir = getCameraDirection();
+        const rotation = -Math.atan2(cameraDir.x, cameraDir.y) + Math.PI;
+        setPosition(new Vector3(handlePos.x, handlePos.y, handlePos.z));
         setRotation(new Euler(HALF_PI, 0, rotation, 'ZXY'));
       }
     } else {

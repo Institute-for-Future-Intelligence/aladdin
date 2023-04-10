@@ -70,6 +70,7 @@ const Handles = ({ id, args }: HandlesProps) => {
             state.hoveredHandle = handle;
             const cm = getElementById(id);
             if (cm) {
+              state.selectedElementAngle = cm.rotation[2];
               state.selectedElementHeight = cm.lz;
             }
           });
@@ -109,6 +110,7 @@ const Handles = ({ id, args }: HandlesProps) => {
       if (!cuboid) return;
       cuboid.lz = newLz;
       cuboid.cz = newLz / 2;
+      state.selectedElementHeight = newLz;
     });
   };
 
