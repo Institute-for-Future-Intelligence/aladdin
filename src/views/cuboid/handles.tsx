@@ -242,31 +242,35 @@ const Handles = ({ id, args }: HandlesProps) => {
       )}
 
       {/* bottom resize handles */}
-      <group name="Bottom Resize Handle Group" onPointerDown={handleBottomResizeHandlePointerDown}>
+      <group
+        name="Bottom Resize Handle Group"
+        position={[0, 0, -hz + size / 2]}
+        onPointerDown={handleBottomResizeHandlePointerDown}
+      >
         <ResizeHandle
           handleType={ResizeHandleType.UpperLeft}
-          position={[-hx, hy, -hz]}
+          position={[-hx, hy, 0]}
           size={size}
           onPointerOver={hoverHandle}
           onPointerOut={noHoverHandle}
         />
         <ResizeHandle
           handleType={ResizeHandleType.UpperRight}
-          position={[hx, hy, -hz]}
+          position={[hx, hy, 0]}
           size={size}
           onPointerOver={hoverHandle}
           onPointerOut={noHoverHandle}
         />
         <ResizeHandle
           handleType={ResizeHandleType.LowerLeft}
-          position={[-hx, -hy, -hz]}
+          position={[-hx, -hy, 0]}
           size={size}
           onPointerOver={hoverHandle}
           onPointerOut={noHoverHandle}
         />
         <ResizeHandle
           handleType={ResizeHandleType.LowerRight}
-          position={[hx, -hy, -hz]}
+          position={[hx, -hy, 0]}
           size={size}
           onPointerOver={hoverHandle}
           onPointerOut={noHoverHandle}
