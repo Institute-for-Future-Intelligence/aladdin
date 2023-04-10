@@ -2481,29 +2481,19 @@ export const useStore = create<CommonStoreState>(
               }
               if (cut) {
                 for (const child of state.elements) {
-                  if (child.parentId === id) {
+                  if (Util.isChild(id, child.id)) {
                     state.elementsToPaste.push(child);
-                    for (const grandchild of state.elements) {
-                      if (grandchild.parentId === child.id) {
-                        state.elementsToPaste.push(grandchild);
-                      }
-                    }
                   }
                 }
               } else {
                 for (const child of state.elements) {
-                  if (child.parentId === id) {
+                  if (Util.isChild(id, child.id)) {
                     state.deletedElements.push(child);
-                    for (const grandchild of state.elements) {
-                      if (grandchild.parentId === child.id) {
-                        state.deletedElements.push(grandchild);
-                      }
-                    }
                   }
                 }
               }
               state.elements = state.elements.filter((e) => {
-                if (e.id === id || e.parentId === id || e.foundationId === id) {
+                if (e.id === id || e.parentId === id || e.foundationId === id || Util.isChild(id, e.id)) {
                   if (e.type === ObjectType.Roof) {
                     state.roofSegmentVerticesMap.delete(e.id);
                     state.roofSegmentVerticesWithoutOverhangMap.delete(e.id);
@@ -2765,27 +2755,27 @@ export const useStore = create<CommonStoreState>(
           copyCutElements() {
             const copiedElements: ElementModel[] = [];
             immerSet((state: CommonStoreState) => {
-              const map = new Map<ElementModel, ElementModel>();
+              const map = new Map<string, ElementModel>(); // oldId => newElement
               const elementsMapOldToNew = new Map<string, string>();
               const elementsMapNewToOld = new Map<string, string>();
               for (let i = 0; i < state.elementsToPaste.length; i++) {
                 const oldElem = state.elementsToPaste[i];
-                let e: ElementModel | null = null;
+                let newElem: ElementModel | null = null;
                 if (i === 0) {
                   // the first element is the parent
-                  e = ElementModelCloner.clone(state.getParent(oldElem), oldElem, oldElem.cx, oldElem.cy, oldElem.cz);
+                  newElem = ElementModelCloner.clone(
+                    state.getParent(oldElem),
+                    oldElem,
+                    oldElem.cx,
+                    oldElem.cy,
+                    oldElem.cz,
+                  );
                 } else {
-                  let oldParent = null;
-                  for (const c of state.elementsToPaste) {
-                    if (oldElem.parentId === c.id) {
-                      oldParent = c;
-                      break;
-                    }
-                  }
+                  const oldParent = state.elementsToPaste.find((el) => el.id === oldElem.parentId);
                   if (oldParent) {
-                    const newParent = map.get(oldParent);
+                    const newParent = map.get(oldParent.id);
                     if (newParent) {
-                      e = ElementModelCloner.clone(
+                      newElem = ElementModelCloner.clone(
                         newParent,
                         oldElem,
                         oldElem.cx,
@@ -2796,11 +2786,11 @@ export const useStore = create<CommonStoreState>(
                     }
                   }
                 }
-                if (e) {
-                  map.set(oldElem, e);
-                  elementsMapOldToNew.set(oldElem.id, e.id);
-                  elementsMapNewToOld.set(e.id, oldElem.id);
-                  copiedElements.push(e);
+                if (newElem) {
+                  map.set(oldElem.id, newElem);
+                  elementsMapOldToNew.set(oldElem.id, newElem.id);
+                  elementsMapNewToOld.set(newElem.id, oldElem.id);
+                  copiedElements.push(newElem);
                 }
               }
               for (const e of copiedElements) {
@@ -2855,17 +2845,17 @@ export const useStore = create<CommonStoreState>(
                 // only the parent element is included in elementsToPaste when copied,
                 // so we have to copy its children and grandchildren from existing elements
                 let m = state.pastePoint;
-                const elem = state.elementsToPaste[0];
+                const elemToPaste = state.elementsToPaste[0];
                 let newParent = state.selectedElement;
-                const oldParent = state.getParent(elem);
+                const oldParent = state.getParent(elemToPaste);
                 if (newParent) {
                   if (newParent.type === ObjectType.Polygon) {
                     // paste action of polygon is passed to its parent
                     const q = state.getParent(newParent);
                     if (q) {
                       newParent = q;
-                      elem.parentId = newParent.id;
-                      if (Util.isPositionRelative(elem.type)) {
+                      elemToPaste.parentId = newParent.id;
+                      if (Util.isPositionRelative(elemToPaste.type)) {
                         m = Util.relativeCoordinates(m.x, m.y, m.z, newParent);
                       }
                     }
@@ -2881,24 +2871,27 @@ export const useStore = create<CommonStoreState>(
                         m.setZ(m.z - foundation.lz);
                       }
                     }
+                  } else if (newParent.type === ObjectType.Cuboid) {
+                    if (elemToPaste.type === ObjectType.Cuboid) {
+                      const { pos } = Util.getWorldDataOfStackedCuboidById(newParent.id);
+                      m.sub(pos);
+                    } else if (Util.isPositionRelative(elemToPaste.type)) {
+                      m = Util.relativeCoordinates(m.x, m.y, m.z, newParent);
+                    }
+                    elemToPaste.parentId = newParent.id;
                   } else {
                     // if the old parent is ground, it has no type definition, but we use it to check its type
                     if (oldParent && oldParent.type) {
-                      // TODO: At this point, a cuboid can only be a child of the ground. Note that we may make
-                      // cuboids children of others in the future.
-                      if (!Util.isFoundationOrCuboid(elem)) {
-                        elem.parentId = newParent.id;
-                      }
-                      if (Util.isPositionRelative(elem.type)) {
-                        m = Util.relativeCoordinates(m.x, m.y, m.z, newParent);
+                      if (elemToPaste.type !== ObjectType.Foundation) {
+                        elemToPaste.parentId = newParent.id;
                       }
                     }
                   }
-                  if (elem.type === ObjectType.Wall) {
+                  if (elemToPaste.type === ObjectType.Wall) {
                     m.set(m.x * newParent.lx, m.y * newParent.ly, 0);
                   }
                 }
-                const e = ElementModelCloner.clone(newParent, elem, m.x, m.y, m.z, false, state.pasteNormal);
+                const e = ElementModelCloner.clone(newParent, elemToPaste, m.x, m.y, m.z, false, state.pasteNormal);
                 if (e) {
                   if (state.pasteNormal) {
                     e.normal = state.pasteNormal.toArray();
@@ -2906,12 +2899,59 @@ export const useStore = create<CommonStoreState>(
                   const lang = { lng: state.language };
                   let approved = false;
                   switch (e.type) {
-                    case ObjectType.Foundation:
                     case ObjectType.Cuboid: {
+                      const getAllchild = (el: ElementModel) => {
+                        const res: ElementModel[] = [];
+                        for (const e of get().elements) {
+                          if (e.parentId === el.id) {
+                            res.push(e);
+                            switch (e.type) {
+                              case ObjectType.Cuboid:
+                              case ObjectType.Foundation:
+                              case ObjectType.Wall:
+                              case ObjectType.Roof:
+                                res.push(...getAllchild(e));
+                            }
+                          }
+                        }
+                        return res;
+                      };
+                      const child = getAllchild(elemToPaste);
+                      const elementMap = new Map<string, ElementModel>(); // oldId -> newModel
+                      pastedElements.push(e);
+                      elementMap.set(elemToPaste.id, e);
+
+                      for (const c of child) {
+                        const parent = elementMap.get(c.parentId);
+                        if (parent) {
+                          const newChild = ElementModelCloner.clone(
+                            parent,
+                            c,
+                            c.cx,
+                            c.cy,
+                            c.cz,
+                            c.type === ObjectType.Polygon,
+                          );
+                          if (newChild) {
+                            if (e.normal) {
+                              newChild.normal = [...c.normal];
+                            }
+                            pastedElements.push(newChild);
+                            elementMap.set(c.id, newChild);
+                          }
+                        }
+                      }
+                      state.elements.push(...pastedElements);
+                      state.elementsToPaste = [e];
+                      approved = false;
+
+                      break;
+                    }
+                    case ObjectType.Foundation: {
                       const elementsMapNewToOld = new Map<string, string>();
                       const elementsMapOldToNew = new Map<string, string>();
                       for (const child of state.elements) {
-                        if (child.parentId === elem.id) {
+                        if (child.parentId === elemToPaste.id) {
                           const newChild = ElementModelCloner.clone(
                             e,
                             child,
@@ -3077,7 +3117,7 @@ export const useStore = create<CommonStoreState>(
                       w.leftPoint = center.clone().add(vlx.applyEuler(euler)).toArray();
                       w.rightPoint = center.clone().add(vrx.applyEuler(euler)).toArray();
                       for (const child of state.elements) {
-                        if (child.parentId === elem.id) {
+                        if (child.parentId === elemToPaste.id) {
                           const newChild = ElementModelCloner.clone(
                             e,
                             child,
@@ -3146,11 +3186,21 @@ export const useStore = create<CommonStoreState>(
                 const m = state.pastePoint;
                 const cutElements = state.copyCutElements();
                 if (cutElements.length > 0) {
+                  if (cutElements[0].type === ObjectType.Cuboid) {
+                    const newParent = state.selectedElement;
+                    if (newParent && newParent.type === ObjectType.Cuboid) {
+                      const { pos } = Util.getWorldDataOfStackedCuboidById(newParent.id);
+                      m.sub(pos);
+                      cutElements[0].parentId = newParent.id;
+                    }
+                  }
                   cutElements[0].cx = m.x;
                   cutElements[0].cy = m.y;
                   cutElements[0].cz = m.z;
-                  if (cutElements[0].type === ObjectType.Cuboid || cutElements[0].type === ObjectType.Foundation) {
+                  if (cutElements[0].type === ObjectType.Foundation) {
                     cutElements[0].cz += cutElements[0].lz / 2;
+                  } else if (cutElements[0].type === ObjectType.Cuboid) {
+                    cutElements[0].cz = cutElements[0].lz / 2;
                   }
                   state.elements.push(...cutElements);
                   pastedElements.push(...cutElements);
@@ -3408,8 +3458,64 @@ export const useStore = create<CommonStoreState>(
                       state.elementsToPaste = [polygon];
                       approved = true;
                       break;
-                    case ObjectType.Foundation:
                     case ObjectType.Cuboid:
+                      e.cx += e.lx;
+                      if (state.elementsToPaste.length === 1) {
+                        const getAllchild = (el: ElementModel) => {
+                          const res: ElementModel[] = [];
+                          for (const e of get().elements) {
+                            if (e.parentId === el.id) {
+                              res.push(e);
+                              switch (e.type) {
+                                case ObjectType.Cuboid:
+                                case ObjectType.Foundation:
+                                case ObjectType.Wall:
+                                case ObjectType.Roof:
+                                  res.push(...getAllchild(e));
+                              }
+                            }
+                          }
+                          return res;
+                        };
+                        const child = getAllchild(elem);
+                        const elementMap = new Map<string, ElementModel>(); // oldId -> newModel
+                        pastedElements.push(e);
+                        elementMap.set(elem.id, e);
+
+                        for (const c of child) {
+                          const parent = elementMap.get(c.parentId);
+                          if (parent) {
+                            const newChild = ElementModelCloner.clone(
+                              parent,
+                              c,
+                              c.cx,
+                              c.cy,
+                              c.cz,
+                              c.type === ObjectType.Polygon,
+                            );
+                            if (newChild) {
+                              if (e.normal) {
+                                newChild.normal = [...c.normal];
+                              }
+                              pastedElements.push(newChild);
+                              elementMap.set(c.id, newChild);
+                            }
+                          }
+                        }
+                        state.elements.push(...pastedElements);
+                        state.elementsToPaste = [e];
+                      } else if (state.elementsToPaste.length > 1) {
+                        const cutElements = state.copyCutElements();
+                        if (cutElements.length > 0) {
+                          cutElements[0].cx += cutElements[0].lx;
+                          state.elements.push(...cutElements);
+                          state.elementsToPaste = [...cutElements];
+                          pastedElements.push(...cutElements);
+                        }
+                      }
+                      approved = false;
+                      break;
+                    case ObjectType.Foundation:
                       e.cx += e.lx;
                       if (state.elementsToPaste.length === 1) {
                         // When copying from an existing container, elementsToPaste stores only the container.

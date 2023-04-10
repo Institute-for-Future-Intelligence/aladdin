@@ -1199,7 +1199,7 @@ const Ground = () => {
               oldHumanOrPlantParentIdRef.current = selectedElement.parentId;
               break;
             case ObjectType.Cuboid:
-              if (isGroupable(selectedElement)) {
+              if (isGroupable(selectedElement) && selectedElement.parentId === 'Ground') {
                 handleGroupMaster(e, selectedElement as GroupableModel);
               }
               oldCuoidParentIdRef.current = selectedElement.parentId;
@@ -1429,7 +1429,9 @@ const Ground = () => {
                 const p = intersects[0].point.clone();
                 const firstIntersectedCuboidObject = getFirstStackableCuboid(e, grabRef.current.id);
                 if (moveHandleType) {
-                  if (firstIntersectedCuboidObject) {
+                  if (baseGroupRelPosMapRef.current.size > 1) {
+                    handleMove(p);
+                  } else if (firstIntersectedCuboidObject) {
                     intersects = ray.intersectObjects([firstIntersectedCuboidObject.eventObject]);
                     if (intersects.length === 0) return;
                     p.copy(intersects[0].point).add(moveHandleWorldDiffV3Ref.current);

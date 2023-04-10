@@ -137,7 +137,8 @@ export class ElementModelCloner {
         clone = ElementModelCloner.cloneFoundation(e as FoundationModel, x, y);
         break;
       case ObjectType.Cuboid:
-        clone = ElementModelCloner.cloneCuboid(e as CuboidModel, x, y);
+        const parentId = parent ? parent.id : 'Ground';
+        clone = ElementModelCloner.cloneCuboid(parentId, e as CuboidModel, x, y);
         break;
     }
     return clone;
@@ -341,6 +342,7 @@ export class ElementModelCloner {
       case ObjectType.Foundation:
       case ObjectType.Cuboid:
         foundationId = parent.id;
+        parentType = parent.type;
         break;
       case ObjectType.Wall:
         foundationId = parent.parentId;
@@ -586,7 +588,7 @@ export class ElementModelCloner {
     } as FoundationModel;
   }
 
-  private static cloneCuboid(cuboid: CuboidModel, x: number, y: number) {
+  private static cloneCuboid(parentId: string, cuboid: CuboidModel, x: number, y: number) {
     return {
       type: ObjectType.Cuboid,
       cx: x,
@@ -609,7 +611,9 @@ export class ElementModelCloner {
           ],
       normal: [...cuboid.normal],
       rotation: [...cuboid.rotation],
-      parentId: cuboid.parentId,
+      stackable: cuboid.stackable,
+      enableGroupMaster: cuboid.enableGroupMaster,
+      parentId: parentId,
       id: short.generate() as string,
     } as CuboidModel;
   }

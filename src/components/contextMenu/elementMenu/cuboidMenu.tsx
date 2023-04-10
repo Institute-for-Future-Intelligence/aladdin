@@ -87,7 +87,8 @@ export const CuboidMenu = React.memo(() => {
         e.type === ObjectType.Flower ||
         e.type === ObjectType.Polygon ||
         e.type === ObjectType.Sensor ||
-        e.type === ObjectType.SolarPanel
+        e.type === ObjectType.SolarPanel ||
+        e.type === ObjectType.Cuboid
       ) {
         return true;
       }
