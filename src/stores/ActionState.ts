@@ -36,6 +36,7 @@ export interface ActionState {
   cuboidHeight: number;
   cuboidFaceColors: string[];
   cuboidFaceTextures: CuboidTexture[];
+  cuboidStackable: boolean;
 
   wallHeight: number;
   wallThickness: number;

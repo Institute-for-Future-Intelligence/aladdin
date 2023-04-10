@@ -129,7 +129,9 @@ export const CuboidMenu = React.memo(() => {
             setCommonStore((state) => {
               for (const e of state.elements) {
                 if (e.id === cuboid.id) {
-                  (e as CuboidModel).stackable = !(e as CuboidModel).stackable;
+                  const stackable = !(e as CuboidModel).stackable;
+                  (e as CuboidModel).stackable = stackable;
+                  state.actionState.cuboidStackable = stackable;
                   break;
                 }
               }

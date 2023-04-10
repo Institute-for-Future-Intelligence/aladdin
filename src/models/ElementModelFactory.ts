@@ -184,6 +184,7 @@ export class ElementModelFactory {
         CuboidTexture.NoTexture,
         CuboidTexture.NoTexture,
       ],
+      stackable: useStore.getState().actionState.cuboidStackable,
       normal: [0, 0, 1],
       rotation: [0, 0, 0],
       parentId: GROUND_ID,
