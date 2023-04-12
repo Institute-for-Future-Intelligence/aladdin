@@ -21,7 +21,7 @@ import { useStore } from '../../stores/common';
 import { useRefStore } from '../../stores/commonRef';
 import * as Selector from '../../stores/selector';
 import { CuboidModel } from '../../models/CuboidModel';
-import { ThreeEvent, useThree } from '@react-three/fiber';
+import { invalidate, ThreeEvent, useThree } from '@react-three/fiber';
 import {
   ActionType,
   CuboidTexture,
@@ -346,6 +346,10 @@ const Cuboid = (cuboidModel: CuboidModel) => {
     });
   }, [textureTypes[4], lx, ly]);
   const [textureTop, setTextureTop] = useState(textureLoaderTop);
+
+  useEffect(() => {
+    invalidate();
+  }, [...textureTypes]);
 
   const legalOnCuboid = (type: ObjectType) => {
     switch (type) {
