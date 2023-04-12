@@ -22,7 +22,7 @@ import { useRefStore } from 'src/stores/commonRef';
 import { useThree } from '@react-three/fiber';
 import { Point2 } from 'src/models/Point2';
 import { Util } from 'src/Util';
-import { ActionType, ObjectType, RoofHandleType, RoofTexture } from 'src/types';
+import { ActionType, ObjectType, ResizeHandleType, RoofHandleType, RoofTexture } from 'src/types';
 import {
   addUndoableResizeRoofRise,
   handleContextMenu,
@@ -890,6 +890,10 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
             useRefStore.getState().setEnableOrbitController(false);
             isPointerDownRef.current = true;
             oldRiseRef.current = rise;
+            setCommonStore((state) => {
+              state.resizeHandleType = ResizeHandleType.Top;
+              state.selectedElementHeight = topZ + roofModel.thickness;
+            });
           }}
           onPointerUp={() => {
             setShowIntersectionPlane(false);
@@ -899,8 +903,8 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
             setCommonStore((state) => {
               state.hoveredHandle = RoofHandleType.Top;
               state.selectedElementHeight = topZ + roofModel.thickness;
-              state.selectedElementX = cx;
-              state.selectedElementY = cy;
+              state.selectedElementX = centerPoint.x;
+              state.selectedElementY = centerPoint.y;
             });
           }}
         />
@@ -935,12 +939,12 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
                   thickness,
                 );
                 // the vertical ruler needs to display the latest rise when the handle is being dragged
-                useStore.getState().updateRoofRiseById(id, riseInnerState);
+                useStore.getState().updateRoofRiseById(id, riseInnerState, topZ + roofModel.thickness);
               }
             }
           }}
           onPointerUp={(e) => {
-            useStore.getState().updateRoofRiseById(id, riseInnerState);
+            useStore.getState().updateRoofRiseById(id, riseInnerState, topZ + roofModel.thickness);
             addUndoableResizeRoofRise(id, oldRiseRef.current, riseInnerState);
             setShowIntersectionPlane(false);
             useRefStore.getState().setEnableOrbitController(true);

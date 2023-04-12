@@ -44,7 +44,7 @@ import {
   RoofSegmentGroupUserData,
 } from './roofRenderer';
 import { UnoableResizeGableRoofRidge } from 'src/undo/UndoableResize';
-import { ActionType, ObjectType, RoofHandleType, RoofTexture } from 'src/types';
+import { ActionType, ObjectType, ResizeHandleType, RoofHandleType, RoofTexture } from 'src/types';
 import { Util } from 'src/Util';
 import { Point2 } from 'src/models/Point2';
 import { RoofUtil } from './RoofUtil';
@@ -997,13 +997,17 @@ const GableRoof = (roofModel: GableRoofModel) => {
               }
               setRoofHandleType(RoofHandleType.Mid);
               useRefStore.getState().setEnableOrbitController(false);
+              setCommonStore((state) => {
+                state.resizeHandleType = ResizeHandleType.Top;
+                state.selectedElementHeight = topZ + roofModel.thickness;
+              });
             }}
             onPointerOver={() => {
               setCommonStore((state) => {
                 state.hoveredHandle = RoofHandleType.Mid;
                 state.selectedElementHeight = topZ + roofModel.thickness;
-                state.selectedElementX = cx + ridgeMidPoint.x;
-                state.selectedElementY = cy + ridgeMidPoint.y;
+                state.selectedElementX = ridgeMidPoint.x;
+                state.selectedElementY = ridgeMidPoint.y;
               });
             }}
           />
@@ -1117,7 +1121,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
                       }
                     }
                     // the vertical ruler needs to display the latest rise when the handle is being dragged
-                    useStore.getState().updateRoofRiseById(id, riseInnerState);
+                    useStore.getState().updateRoofRiseById(id, riseInnerState, topZ + roofModel.thickness);
                     break;
                   }
                 }
@@ -1146,7 +1150,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
             setShowIntersectionPlane(false);
             setRoofHandleType(RoofHandleType.Null);
             useRefStore.getState().setEnableOrbitController(true);
-            useStore.getState().updateRoofRiseById(id, riseInnerState);
+            useStore.getState().updateRoofRiseById(id, riseInnerState, topZ + roofModel.thickness);
             updateRooftopElements(foundation, id, roofSegments, centroid, topZ, thickness);
           }}
         >

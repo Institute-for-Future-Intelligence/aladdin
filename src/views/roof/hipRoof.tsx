@@ -11,7 +11,7 @@ import { WallModel } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
 import { useRefStore } from 'src/stores/commonRef';
 import * as Selector from 'src/stores/selector';
-import { ActionType, ObjectType, RoofHandleType, RoofTexture } from 'src/types';
+import { ActionType, ObjectType, ResizeHandleType, RoofHandleType, RoofTexture } from 'src/types';
 import { UndoableResizeHipRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import { CanvasTexture, DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
@@ -556,13 +556,17 @@ const HipRoof = (roofModel: HipRoofModel) => {
               }
               setRoofHandleType(RoofHandleType.Mid);
               useRefStore.getState().setEnableOrbitController(false);
+              setCommonStore((state) => {
+                state.resizeHandleType = ResizeHandleType.Top;
+                state.selectedElementHeight = topZ + roofModel.thickness;
+              });
             }}
             onPointerOver={() => {
               setCommonStore((state) => {
                 state.hoveredHandle = RoofHandleType.Mid;
                 state.selectedElementHeight = topZ + roofModel.thickness;
-                state.selectedElementX = cx;
-                state.selectedElementY = cy;
+                state.selectedElementX = centroid2D.x;
+                state.selectedElementY = centroid2D.y;
               });
             }}
           />
@@ -651,7 +655,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
                     const newRise = Math.max(0, point.z - foundation.lz - 0.3 - highestWallHeight);
                     setRiseInnerState(newRise);
                     // the vertical ruler needs to display the latest rise when the handle is being dragged
-                    useStore.getState().updateRoofRiseById(id, riseInnerState);
+                    useStore.getState().updateRoofRiseById(id, riseInnerState, topZ + roofModel.thickness);
                     break;
                   }
                 }

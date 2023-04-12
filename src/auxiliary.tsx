@@ -6,13 +6,12 @@ import React, { useEffect, useState } from 'react';
 import { HALF_PI } from './constants';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
-import { ObjectType, ResizeHandleType, RotateHandleType } from './types';
+import { MoveHandleType, ObjectType, ResizeHandleType, RoofHandleType, RotateHandleType } from './types';
 import { PolarGrid } from './views/polarGrid';
 import { VerticalRuler } from './views/verticalRuler';
 import { Util } from './Util';
 
 export const Auxiliary = () => {
-  const element = useStore(Selector.selectedElement);
   const moveHandleType = useStore(Selector.moveHandleType);
   const rotateHandleType = useStore(Selector.rotateHandleType);
   const resizeHandleType = useStore(Selector.resizeHandleType);
@@ -22,8 +21,14 @@ export const Auxiliary = () => {
   const addedCuboidId = useStore(Selector.addedCuboidId);
   const addedFoundationId = useStore(Selector.addedFoundationId);
 
+  const element = useStore((state) => {
+    if (state.selectedElement) {
+      const selectedElementId = state.selectedElement.id;
+      return state.elements.find((e) => e.id === selectedElementId);
+    }
+  });
+
   const [showGrid, setShowGrid] = useState(false);
-  const [showVerticalRuler, setShowVerticalRuler] = useState(false);
   const [gridSize, setGridSize] = useState(2 * sceneRadius);
   const [gridDivisions, setDivisions] = useState(2 * sceneRadius);
 
@@ -41,10 +46,8 @@ export const Auxiliary = () => {
         (resizeHandleType === ResizeHandleType.UpperLeft && element?.type === ObjectType.Wall) ||
         (resizeHandleType === ResizeHandleType.UpperRight && element?.type === ObjectType.Wall);
       setShowGrid(!changeHeight);
-      setShowVerticalRuler(changeHeight);
     } else {
       setShowGrid(false);
-      setShowVerticalRuler(false);
     }
   }, [resizeHandleType]);
 
@@ -60,7 +63,23 @@ export const Auxiliary = () => {
     );
   };
 
-  const hoverRotationHandle = hoveredHandle === RotateHandleType.Lower || hoveredHandle === RotateHandleType.Upper;
+  const showPolarGridByHover = hoveredHandle === RotateHandleType.Lower || hoveredHandle === RotateHandleType.Upper;
+
+  const showVerticalRulerHelper = (
+    handle: MoveHandleType | ResizeHandleType | RotateHandleType | RoofHandleType | null,
+  ) => {
+    return (
+      Util.isTopResizeHandle(handle) ||
+      (element?.type === ObjectType.Wall && Util.isTopResizeHandleOfWall(handle)) ||
+      (element?.type === ObjectType.Roof && Util.isRiseHandleOfRoof(handle))
+    );
+  };
+
+  const handle = resizeHandleType ?? hoveredHandle;
+
+  const showVerticalRuler = showVerticalRulerHelper(handle);
+
+  if (!element) return null;
 
   return (
     <>
@@ -69,12 +88,8 @@ export const Auxiliary = () => {
         addedFoundationId) && (
         <gridHelper rotation={[HALF_PI, 0, 0]} name={'Grid'} args={[gridSize, gridDivisions, 'gray', '#444444']} />
       )}
-      {(rotateHandleType || hoverRotationHandle) && element && legalOnGround() && <PolarGrid element={element} />}
-      {(showVerticalRuler ||
-        Util.isTopResizeHandle(hoveredHandle) ||
-        (element?.type === ObjectType.Wall && Util.isTopResizeHandleOfWall(hoveredHandle)) ||
-        (element?.type === ObjectType.Roof && Util.isRiseHandleOfRoof(hoveredHandle))) &&
-        element && <VerticalRuler element={element} />}
+      {(rotateHandleType || showPolarGridByHover) && element && legalOnGround() && <PolarGrid element={element} />}
+      {showVerticalRuler && <VerticalRuler element={element} />}
     </>
   );
 };

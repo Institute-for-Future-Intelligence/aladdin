@@ -176,6 +176,8 @@ export const updateSceneRadius = (state: CommonStoreState) => state.updateSceneR
 
 export const sceneRadius = (state: CommonStoreState) => state.sceneRadius;
 
+export const cameraDirection = (state: CommonStoreState) => state.cameraDirection;
+
 export const getCameraDirection = (state: CommonStoreState) => state.getCameraDirection;
 
 export const getElementById = (state: CommonStoreState) => state.getElementById;

@@ -231,10 +231,10 @@ export const addUndoableResizeRoofRise = (elemId: string, oldRise: number, newRi
     oldRise: oldRise,
     newRise: newRise,
     undo: () => {
-      useStore.getState().updateRoofRiseById(undoable.resizedElementId, undoable.oldRise);
+      useStore.getState().updateRoofRiseById(undoable.resizedElementId, undoable.oldRise, 0);
     },
     redo: () => {
-      useStore.getState().updateRoofRiseById(undoable.resizedElementId, undoable.newRise);
+      useStore.getState().updateRoofRiseById(undoable.resizedElementId, undoable.newRise, 0);
     },
   } as UndoableResizeRoofRise;
   useStore.getState().addUndoable(undoable);
@@ -541,6 +541,9 @@ export const RoofHandle = ({ position, onPointerDown, onPointerUp, onPointerOver
           }
         }
         hoveredRef.current = false;
+        setCommonStore((state) => {
+          state.hoveredHandle = null;
+        });
       }}
       onPointerDown={(e) => {
         if (isFirstHandle(e)) {

@@ -381,7 +381,7 @@ export interface CommonStoreState {
   updateWallRightPointById: (id: string, point: number[]) => void;
 
   // for roofs
-  updateRoofRiseById: (id: string, rise: number) => void;
+  updateRoofRiseById: (id: string, rise: number, topZ?: number) => void;
   updateRoofStructureById: (id: string, structure: RoofStructure) => void;
 
   // for lights
@@ -837,62 +837,73 @@ export const useStore = create<CommonStoreState>(
 
           selectedSideIndex: -1,
 
-          getResizeHandlePosition(e, handleType) {
-            const { cx, cy, lx, ly, lz, rotation, type, parentId } = e;
-            let p = new Vector3(cx, cy, 0);
-            // FIXME: It seems the x, y components above are absolute, but the z component is relative.
-            const v = new Vector2();
+          getResizeHandlePosition(el, handleType) {
+            const { cx, cy, lx, ly, lz, type, parentId } = el;
+            const p = new Vector3(cx, cy, 0);
             switch (type) {
-              case ObjectType.Cuboid:
-                const { pos, rot } = Util.getWorldDataOfStackedCuboidById(e.id);
-                p = pos.clone();
+              case ObjectType.Cuboid: {
+                const v = new Vector2();
                 switch (handleType) {
                   case ResizeHandleType.LowerLeftTop:
                     v.set(-lx / 2, -ly / 2);
-                    p.z -= lz / 2;
                     break;
                   case ResizeHandleType.LowerRightTop:
                     v.set(lx / 2, -ly / 2);
-                    p.z -= lz / 2;
                     break;
                   case ResizeHandleType.UpperLeftTop:
                     v.set(-lx / 2, ly / 2);
-                    p.z -= lz / 2;
                     break;
                   case ResizeHandleType.UpperRightTop:
                     v.set(lx / 2, ly / 2);
-                    p.z -= lz / 2;
                     break;
                 }
+                const { pos, rot } = Util.getWorldDataOfStackedCuboidById(el.id);
                 v.rotateAround(ORIGIN_VECTOR2, rot);
-                p.x += v.x;
-                p.y += v.y;
+                p.set(pos.x + v.x, pos.y + v.y, pos.z - lz / 2);
                 break;
-              case ObjectType.Wall:
-                const elements = get().elements;
-                let parent: ElementModel | null = null;
-                const wall = e as WallModel;
-                for (const e of elements) {
-                  if (e.id === parentId) {
-                    parent = e;
-                    break;
-                  }
-                }
+              }
+              case ObjectType.Wall: {
+                const wall = el as WallModel;
+                const parent = get().elements.find((e) => e.id === parentId);
                 if (parent) {
-                  const parentPosition = new Vector3(parent.cx, parent.cy, parent.cz);
+                  const parentPosition = new Vector3(parent.cx, parent.cy, parent.lz);
+                  const parentRotation = new Euler(0, 0, parent.rotation[2]);
+                  const handlePostion = new Vector3();
                   switch (handleType) {
                     case ResizeHandleType.UpperLeft: {
-                      const handleRelativePos = new Vector3(wall.leftPoint[0], wall.leftPoint[1], wall.leftPoint[2]);
-                      p.addVectors(parentPosition, handleRelativePos);
+                      handlePostion.fromArray(wall.leftPoint).setZ(0);
                       break;
                     }
                     case ResizeHandleType.UpperRight: {
-                      const handleRelativePos = new Vector3(wall.rightPoint[0], wall.rightPoint[1], wall.rightPoint[2]);
-                      p.addVectors(parentPosition, handleRelativePos);
+                      handlePostion.fromArray(wall.rightPoint).setZ(0);
                       break;
                     }
                   }
+                  p.copy(handlePostion.applyEuler(parentRotation).add(parentPosition));
                 }
+                break;
+              }
+              case ObjectType.Roof: {
+                const parent = get().elements.find((e) => e.id === parentId);
+                if (parent) {
+                  const parentPosition = new Vector3(parent.cx, parent.cy, parent.lz);
+                  const parentRotation = new Euler(0, 0, parent.rotation[2]);
+                  const handlePostion = new Vector3(get().selectedElementX, get().selectedElementY)
+                    .applyEuler(parentRotation)
+                    .add(parentPosition);
+                  p.set(handlePostion.x, handlePostion.y, parent.lz);
+                }
+                break;
+              }
+              case ObjectType.Tree: {
+                const parent = get().elements.find((e) => e.id === parentId);
+                if (parent) {
+                  const parentPosition = new Vector3(parent.cx, parent.cy, parent.cz + parent.lz / 2);
+                  const parentRotation = new Euler(0, 0, parent.rotation[2]);
+                  p.copy(new Vector3(el.cx, el.cy, parent.lz).applyEuler(parentRotation).add(parentPosition));
+                }
+                break;
+              }
             }
             return p;
           },
@@ -2010,12 +2021,15 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
-          updateRoofRiseById(id, rise) {
+          updateRoofRiseById(id, rise, topZ) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.id === id && e.type === ObjectType.Roof) {
                   (e as RoofModel).rise = rise;
                   state.actionState.roofRise = rise;
+                  if (topZ !== undefined) {
+                    state.selectedElementHeight = topZ;
+                  }
                   break;
                 }
               }

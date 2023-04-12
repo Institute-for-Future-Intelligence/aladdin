@@ -20,7 +20,7 @@ import { WallModel } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
 import { useRefStore } from 'src/stores/commonRef';
 import * as Selector from 'src/stores/selector';
-import { ActionType, ObjectType, RoofHandleType, RoofTexture } from 'src/types';
+import { ActionType, ObjectType, ResizeHandleType, RoofHandleType, RoofTexture } from 'src/types';
 import { UnoableResizeMansardRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import { CanvasTexture, DoubleSide, Euler, Float32BufferAttribute, Mesh, Shape, Vector3 } from 'three';
@@ -885,13 +885,17 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
               }
               setRoofHandleType(RoofHandleType.Top);
               useRefStore.getState().setEnableOrbitController(false);
+              setCommonStore((state) => {
+                state.resizeHandleType = ResizeHandleType.Top;
+                state.selectedElementHeight = topZ + roofModel.thickness;
+              });
             }}
             onPointerOver={() => {
               setCommonStore((state) => {
                 state.hoveredHandle = RoofHandleType.Top;
                 state.selectedElementHeight = topZ + roofModel.thickness;
-                state.selectedElementX = cx;
-                state.selectedElementY = cy;
+                state.selectedElementX = centroid.x;
+                state.selectedElementY = centroid.y;
               });
             }}
           />
@@ -947,7 +951,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
                     const newRise = Math.max(0, pointer.z - foundation.lz - 0.6 - highestWallHeight);
                     setRiseInnerState(newRise);
                     // the vertical ruler needs to display the latest rise when the handle is being dragged
-                    useStore.getState().updateRoofRiseById(id, riseInnerState);
+                    useStore.getState().updateRoofRiseById(id, riseInnerState, topZ + roofModel.thickness);
                     break;
                   }
                   case RoofHandleType.Ridge: {
