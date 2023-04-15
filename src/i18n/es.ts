@@ -225,8 +225,8 @@ export const i18n_es = {
       CancelSimulation: 'Cancel simulation',
       PauseSimulation: 'Pause simulation',
       ResumeSimulation: 'Resume simulation',
-      SimulationWillNotStartDueToErrors: 'Simulation will not start due to errors.',
-      SimulationWillStartDespiteErrors: 'Simulation will start despite errors.',
+      SimulationWillNotStartDueToErrors: 'Simulation will not start due to errors',
+      SimulationWillStartDespiteWarnings: 'Simulation will start despite warnings.',
       EvolutionStarted: 'Evolution started.',
       EvolutionCompleted: 'Evolution completed.',
       EvolutionAborted: 'Evolution aborted.',
@@ -244,6 +244,9 @@ export const i18n_es = {
       WallsAreNotPerpendicular: 'Walls are not perpendicular.',
       WallsAreNotConnected: 'Walls are not connected.',
       WallsNumebrNeedToBeFour: 'The number of walls needs to be four.',
+      BuildingContainsEmptyWall: 'Building contains one or more empty wall.',
+      BuildingRoofMissing: 'Building has a missing roof.',
+      UnknownErrors: 'Unknown errors.',
     },
 
     menu: {

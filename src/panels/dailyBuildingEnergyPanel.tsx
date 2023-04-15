@@ -6,7 +6,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { DatumEntry, GraphDataType } from '../types';
+import { BuildingCompletionStatus, DatumEntry, GraphDataType } from '../types';
 import moment from 'moment';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space } from 'antd';
@@ -393,17 +393,31 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
                   const elements = useStore.getState().elements;
                   const countElementsByType = useStore.getState().countElementsByType;
                   const getChildrenOfType = useStore.getState().getChildrenOfType;
-                  const status = checkBuilding(elements, countElementsByType, getChildrenOfType);
-                  if (status === CheckStatus.NO_BUILDING) {
+                  const checkResult = checkBuilding(elements, countElementsByType, getChildrenOfType);
+                  if (checkResult.status === CheckStatus.NO_BUILDING) {
                     showInfo(i18n.t('analysisManager.NoBuildingForAnalysis', lang));
                     return;
                   }
-                  if (status === CheckStatus.AT_LEAST_ONE_BAD_NO_GOOD) {
-                    showError(i18n.t('message.SimulationWillNotStartDueToErrors', lang));
+                  if (checkResult.status === CheckStatus.AT_LEAST_ONE_BAD_NO_GOOD) {
+                    let errorType = '';
+                    switch (checkResult.buildingCompletion) {
+                      case BuildingCompletionStatus.WALL_DISJOINED:
+                        errorType = i18n.t('message.WallsAreNotConnected', lang);
+                        break;
+                      case BuildingCompletionStatus.WALL_EMPTY:
+                        errorType = i18n.t('message.BuildingContainsEmptyWall', lang);
+                        break;
+                      case BuildingCompletionStatus.ROOF_MISSING:
+                        errorType = i18n.t('message.BuildingRoofMissing', lang);
+                        break;
+                      default:
+                        errorType = i18n.t('message.UnknownErrors', lang);
+                    }
+                    showError(i18n.t('message.SimulationWillNotStartDueToErrors', lang) + ': ' + errorType);
                     return;
                   }
-                  if (status === CheckStatus.AT_LEAST_ONE_BAD_AT_LEAST_ONE_GOOD) {
-                    showWarning(i18n.t('message.SimulationWillStartDespiteErrors', lang));
+                  if (checkResult.status === CheckStatus.AT_LEAST_ONE_BAD_AT_LEAST_ONE_GOOD) {
+                    showWarning(i18n.t('message.SimulationWillStartDespiteWarnings', lang));
                   }
                   showInfo(i18n.t('message.SimulationStarted', lang));
                   // give it 0.1 second for the info to show up

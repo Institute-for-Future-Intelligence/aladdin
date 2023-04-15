@@ -22,6 +22,7 @@ import { CanvasTexture, Color, Euler, Object3D, Quaternion, Scene, Triangle, Vec
 import { ElementModel } from './models/ElementModel';
 import { SolarPanelModel } from './models/SolarPanelModel';
 import {
+  BuildingCompletionStatus,
   ElementState,
   ModelSite,
   MoveHandleType,
@@ -121,7 +122,7 @@ export class Util {
     return area;
   }
 
-  static isCompleteBuilding(foundation: FoundationModel, elements: ElementModel[]): boolean {
+  static getBuildingCompletionStatus(foundation: FoundationModel, elements: ElementModel[]): BuildingCompletionStatus {
     // check roof first
     let hasRoof = false;
     for (const e of elements) {
@@ -132,7 +133,7 @@ export class Util {
         }
       }
     }
-    if (!hasRoof) return false;
+    if (!hasRoof) return BuildingCompletionStatus.ROOF_MISSING;
     // check walls now
     let emptyWall = false;
     for (const e of elements) {
@@ -146,7 +147,7 @@ export class Util {
         }
       }
     }
-    if (emptyWall) return false;
+    if (emptyWall) return BuildingCompletionStatus.WALL_EMPTY;
     // check if the walls are joined
     const walls: WallModel[] = [];
     for (const e of elements) {
@@ -156,11 +157,11 @@ export class Util {
     }
     if (walls.length > 0) {
       for (const w of walls) {
-        if (!w.leftJoints || w.leftJoints.length === 0) return false;
-        if (!w.rightJoints || w.rightJoints.length === 0) return false;
+        if (!w.leftJoints || w.leftJoints.length === 0) return BuildingCompletionStatus.WALL_DISJOINED;
+        if (!w.rightJoints || w.rightJoints.length === 0) return BuildingCompletionStatus.WALL_DISJOINED;
       }
     }
-    return true;
+    return BuildingCompletionStatus.COMPLETE;
   }
 
   static calculateBuildingArea(roof: RoofModel): number {
@@ -1489,10 +1490,10 @@ export class Util {
 
   // get the points for all the walls under a roof
   static getWallPointsOfRoof(roof: RoofModel, wallModel?: WallModel) {
-    const array = [];
-
     let wall = wallModel ?? (useStore.getState().getElementById(roof.wallsId[0]) as WallModel);
+    if (!wall) return [];
     const startWall = wall;
+    const array = [];
 
     while (wall && (!wall.roofId || wall.roofId === roof.id)) {
       array.push({ x: wall.leftPoint[0], y: wall.leftPoint[1], eave: wall.eavesLength ?? 0 });
@@ -1512,7 +1513,7 @@ export class Util {
 
     array.reverse();
 
-    wall = useStore.getState().getElementById(startWall.rightJoints[0]) as WallModel;
+    wall = useStore.getState().getElementById(startWall?.rightJoints[0]) as WallModel;
     while (wall && (!wall.roofId || wall.roofId === roof.id)) {
       array.push({ x: wall.leftPoint[0], y: wall.leftPoint[1], eave: wall.eavesLength ?? 0 });
       if (wall.rightJoints[0] && wall.rightJoints[0] !== startWall.id) {

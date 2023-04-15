@@ -123,6 +123,13 @@ export enum ModelType {
   SOLAR_POWER_TOWER = 'Solar Power Tower',
 }
 
+export enum BuildingCompletionStatus {
+  COMPLETE,
+  ROOF_MISSING,
+  WALL_DISJOINED,
+  WALL_EMPTY,
+}
+
 export enum DesignProblem {
   SOLAR_PANEL_TILT_ANGLE = 'Solar Panel Tilt Angle',
   SOLAR_PANEL_ARRAY = 'Solar Panel Array',

@@ -290,8 +290,9 @@ const ModelsMapWrapper = ({
                                 color={a?.size > 10 ? 'gold' : a?.size > 5 ? 'lime' : a?.size > 1 ? 'blue' : 'magenta'}
                                 style={{ cursor: 'pointer', fontSize: '10px', fontWeight: 'bold', width: '130px' }}
                                 onClick={() => setSelectedAuthor(key)}
+                                title={key}
                               >
-                                {key}
+                                {key.length > 16 ? key.substring(0, 15) + '...' : key}
                               </Tag>
                             </td>
                             <td>{a?.size}</td>

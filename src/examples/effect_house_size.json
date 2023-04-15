@@ -919,7 +919,7 @@
       150
     ],
     "theme": "Default",
-    "showDesignInfoPanel": false,
+    "showDesignInfoPanel": true,
     "weatherPanelX": 0,
     "dailyParabolicTroughYieldPanelX": 0,
     "mapWeatherStations": false,

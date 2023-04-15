@@ -14,7 +14,7 @@ import * as Selector from '../stores/selector';
 import styled from 'styled-components';
 import { Space } from 'antd';
 import i18n from '../i18n/i18n';
-import { ObjectType } from '../types';
+import { BuildingCompletionStatus, ObjectType } from '../types';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { Util } from 'src/Util';
 import { FoundationModel } from '../models/FoundationModel';
@@ -106,7 +106,8 @@ const DesignInfoPanel = ({}: DesignInfoPanelProps) => {
   const isBuilding =
     selectedElement &&
     selectedElement.type === ObjectType.Foundation &&
-    Util.isCompleteBuilding(selectedElement as FoundationModel, elements);
+    Util.getBuildingCompletionStatus(selectedElement as FoundationModel, elements) ===
+      BuildingCompletionStatus.COMPLETE;
 
   return (
     <Container>

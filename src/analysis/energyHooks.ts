@@ -3,7 +3,7 @@
  */
 
 import { adjustEnergyUsage, computeOutsideTemperature } from './heatTools';
-import { DatumEntry, EnergyUsage, ObjectType } from '../types';
+import { BuildingCompletionStatus, DatumEntry, EnergyUsage, ObjectType } from '../types';
 import { Util } from '../Util';
 import { FoundationModel } from '../models/FoundationModel';
 import { useStore } from '../stores/common';
@@ -46,7 +46,7 @@ export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarP
           const exchange = hourlyHeatExchangeArrayMap.get(e.id);
           if (exchange) {
             const f = e.type === ObjectType.Foundation ? (e as FoundationModel) : getFoundation(e);
-            if (f && Util.isCompleteBuilding(f, elements)) {
+            if (f && Util.getBuildingCompletionStatus(f, elements) === BuildingCompletionStatus.COMPLETE) {
               let energyUsage = energy.get(f.id);
               if (!energyUsage) {
                 energyUsage = hasSolarPanels
@@ -73,7 +73,8 @@ export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarP
       // deal with the solar heat gain through windows and electricity generation through solar panels
       for (const e of elements) {
         if (e.type === ObjectType.Foundation) {
-          if (!Util.isCompleteBuilding(e as FoundationModel, elements)) continue;
+          if (Util.getBuildingCompletionStatus(e as FoundationModel, elements) !== BuildingCompletionStatus.COMPLETE)
+            continue;
           const energyUsage = energy.get(e.id);
           if (energyUsage) {
             const h = hourlySolarHeatGainArrayMap.get(e.id);
@@ -106,7 +107,7 @@ export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarP
             const elem = getElementById(key);
             if (elem && elem.type === ObjectType.Foundation) {
               const f = elem as FoundationModel;
-              if (Util.isCompleteBuilding(f, elements)) {
+              if (Util.getBuildingCompletionStatus(f, elements) === BuildingCompletionStatus.COMPLETE) {
                 const setpoint = f.hvacSystem?.thermostatSetpoint ?? 20;
                 const threshold = f.hvacSystem?.temperatureThreshold ?? 3;
                 const id = value.label && value.label !== '' ? value.label : index.toString();
@@ -154,7 +155,7 @@ export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarP
             const elem = getElementById(key);
             if (elem && elem.type === ObjectType.Foundation) {
               const f = elem as FoundationModel;
-              if (Util.isCompleteBuilding(f, elements)) {
+              if (Util.getBuildingCompletionStatus(f, elements) === BuildingCompletionStatus.COMPLETE) {
                 const setpoint = f.hvacSystem?.thermostatSetpoint ?? 20;
                 const threshold = f.hvacSystem?.temperatureThreshold ?? 3;
                 let adjustedHeat = Math.abs(

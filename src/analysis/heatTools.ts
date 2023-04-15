@@ -5,7 +5,7 @@
 import { DAILY_LAG_IN_MINUTES, MINUTES_OF_DAY, OMEGA_DAY, OMEGA_YEAR, YEARLY_LAG_IN_DAYS } from './analysisConstants';
 import { Util } from '../Util';
 import { SunMinutes } from './SunMinutes';
-import { DiurnalTemperatureModel, ObjectType } from '../types';
+import { BuildingCompletionStatus, DiurnalTemperatureModel, ObjectType } from '../types';
 import { ElementModel } from '../models/ElementModel';
 import { FoundationModel } from '../models/FoundationModel';
 
@@ -16,29 +16,44 @@ export enum CheckStatus {
   OK = 0,
 }
 
+export interface CheckResult {
+  status: CheckStatus;
+  buildingCompletion?: BuildingCompletionStatus;
+}
+
 export const U_VALUE_OPENNING = 50;
 
-export const checkBuilding = (elements: ElementModel[], countElementsByType: Function, getChildrenOfType: Function) => {
+export const checkBuilding = (
+  elements: ElementModel[],
+  countElementsByType: Function,
+  getChildrenOfType: Function,
+): CheckResult => {
   const foundationCount = countElementsByType(ObjectType.Foundation);
-  if (foundationCount === 0) return CheckStatus.NO_BUILDING;
+  if (foundationCount === 0) return { status: CheckStatus.NO_BUILDING } as CheckResult;
   let atLeastOneGood = false;
   let atLeastOneBad = false;
+  let errorType = undefined;
   for (const e of elements) {
     if (e.type === ObjectType.Foundation) {
       const f = e as FoundationModel;
       const walls = getChildrenOfType(ObjectType.Wall, f.id);
       if (walls.length > 0) {
-        if (Util.isCompleteBuilding(f, elements)) {
+        const completionStatus = Util.getBuildingCompletionStatus(f, elements);
+        if (completionStatus === BuildingCompletionStatus.COMPLETE) {
           atLeastOneGood = true;
         } else {
           atLeastOneBad = true;
+          errorType = completionStatus;
         }
+      } else {
+        atLeastOneBad = true;
       }
     }
   }
-  if (atLeastOneBad && !atLeastOneGood) return CheckStatus.AT_LEAST_ONE_BAD_NO_GOOD;
-  if (atLeastOneBad && atLeastOneGood) return CheckStatus.AT_LEAST_ONE_BAD_AT_LEAST_ONE_GOOD;
-  return CheckStatus.OK;
+  if (atLeastOneBad && !atLeastOneGood)
+    return { status: CheckStatus.AT_LEAST_ONE_BAD_NO_GOOD, buildingCompletion: errorType } as CheckResult;
+  if (atLeastOneBad && atLeastOneGood) return { status: CheckStatus.AT_LEAST_ONE_BAD_AT_LEAST_ONE_GOOD } as CheckResult;
+  return { status: CheckStatus.OK } as CheckResult;
 };
 
 // use the darkness of color to approximate light absorption

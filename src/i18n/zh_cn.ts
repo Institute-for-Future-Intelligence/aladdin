@@ -224,8 +224,8 @@ export const i18n_zh_cn = {
       CancelSimulation: '取消模拟',
       PauseSimulation: '暂停模拟',
       ResumeSimulation: '继续模拟',
-      SimulationWillNotStartDueToErrors: '由于错误模拟无法运行。',
-      SimulationWillStartDespiteErrors: '发现错误，但模拟仍然将运行。',
+      SimulationWillNotStartDueToErrors: '由于错误模拟无法运行',
+      SimulationWillStartDespiteWarnings: '发现问题，但模拟仍然将运行。',
       EvolutionStarted: '演化开始。',
       EvolutionCompleted: '演化结束。',
       EvolutionAborted: '演化取消。',
@@ -241,7 +241,10 @@ export const i18n_zh_cn = {
       WallsAreNotAtSameHeight: '墙体高度不同。',
       WallsAreNotPerpendicular: '墙体不垂直。',
       WallsAreNotConnected: '墙体不相连。',
-      WallsNumebrNeedToBeFour: '墙体数量必须为4。',
+      WallsNumebrNeedToBeFour: '墙体数量必须为四个。',
+      BuildingContainsEmptyWall: '建筑物有空墙。',
+      BuildingRoofMissing: '建筑物没有屋顶。',
+      UnknownErrors: '未知错误。',
     },
 
     menu: {
