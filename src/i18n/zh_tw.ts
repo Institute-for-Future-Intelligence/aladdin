@@ -749,7 +749,7 @@ export const i18n_zh_tw = {
       AllSidesOfThisCuboid: '這個長方體所有的側面',
       AllSidesOfAllCuboids: '所有的長方體所有的側面',
       AddPolygon: '添加多邊形',
-      Stackable: 'Stackable',
+      Stackable: '可堆砌',
     },
 
     polygonMenu: {
