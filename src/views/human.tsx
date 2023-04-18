@@ -160,7 +160,7 @@ const Human = ({
   useFrame(({ camera }) => {
     // rotation
     if (groupRef.current) {
-      const { rot: parentWorldRotation, pos: parentWorldPosition } = Util.getWorldDataOfStackedCuboidById(parentId);
+      const { rot: parentWorldRotation, pos: parentWorldPosition } = Util.getWorldDataById(parentId);
       if (!orthographic) {
         const { x: cameraX, y: cameraY } = camera.position;
         const { x: currX, y: currY } = groupRef.current.localToWorld(new Vector3());

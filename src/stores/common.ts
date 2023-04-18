@@ -857,7 +857,7 @@ export const useStore = create<CommonStoreState>(
                     v.set(lx / 2, ly / 2);
                     break;
                 }
-                const { pos, rot } = Util.getWorldDataOfStackedCuboidById(el.id);
+                const { pos, rot } = Util.getWorldDataById(el.id);
                 v.rotateAround(ORIGIN_VECTOR2, rot);
                 p.set(pos.x + v.x, pos.y + v.y, pos.z - lz / 2);
                 break;
@@ -2119,8 +2119,7 @@ export const useStore = create<CommonStoreState>(
                 case ObjectType.Human: {
                   const position = new Vector3().copy(p);
                   if (parentId !== GROUND_ID) {
-                    const { rot: parentWorldRotation, pos: parentWorldPosition } =
-                      Util.getWorldDataOfStackedCuboidById(parentId);
+                    const { rot: parentWorldRotation, pos: parentWorldPosition } = Util.getWorldDataById(parentId);
                     position
                       .sub(new Vector3(parentWorldPosition.x, parentWorldPosition.y, parentWorldPosition.z))
                       .applyEuler(new Euler(0, 0, -parentWorldRotation));
@@ -2139,8 +2138,7 @@ export const useStore = create<CommonStoreState>(
                 case ObjectType.Tree: {
                   const position = new Vector3().copy(p);
                   if (parentId !== GROUND_ID) {
-                    const { rot: parentWorldRotation, pos: parentWorldPosition } =
-                      Util.getWorldDataOfStackedCuboidById(parentId);
+                    const { rot: parentWorldRotation, pos: parentWorldPosition } = Util.getWorldDataById(parentId);
                     position
                       .sub(new Vector3(parentWorldPosition.x, parentWorldPosition.y, parentWorldPosition.z))
                       .applyEuler(new Euler(0, 0, -parentWorldRotation));
@@ -2161,8 +2159,7 @@ export const useStore = create<CommonStoreState>(
                 case ObjectType.Flower: {
                   const position = new Vector3().copy(p);
                   if (parentId !== GROUND_ID) {
-                    const { rot: parentWorldRotation, pos: parentWorldPosition } =
-                      Util.getWorldDataOfStackedCuboidById(parentId);
+                    const { rot: parentWorldRotation, pos: parentWorldPosition } = Util.getWorldDataById(parentId);
                     position
                       .sub(new Vector3(parentWorldPosition.x, parentWorldPosition.y, parentWorldPosition.z))
                       .applyEuler(new Euler(0, 0, -parentWorldRotation));
@@ -2873,7 +2870,7 @@ export const useStore = create<CommonStoreState>(
                     }
                   } else if (newParent.type === ObjectType.Cuboid) {
                     if (elemToPaste.type === ObjectType.Cuboid) {
-                      const { pos } = Util.getWorldDataOfStackedCuboidById(newParent.id);
+                      const { pos } = Util.getWorldDataById(newParent.id);
                       m.sub(pos);
                     } else if (Util.isPositionRelative(elemToPaste.type)) {
                       m = Util.relativeCoordinates(m.x, m.y, m.z, newParent);
@@ -3189,7 +3186,7 @@ export const useStore = create<CommonStoreState>(
                   if (cutElements[0].type === ObjectType.Cuboid) {
                     const newParent = state.selectedElement;
                     if (newParent && newParent.type === ObjectType.Cuboid) {
-                      const { pos } = Util.getWorldDataOfStackedCuboidById(newParent.id);
+                      const { pos } = Util.getWorldDataById(newParent.id);
                       m.sub(pos);
                       cutElements[0].parentId = newParent.id;
                     }

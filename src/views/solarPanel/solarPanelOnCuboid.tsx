@@ -265,7 +265,7 @@ const SolarPanelOnCuboid = (solarPanelModel: SolarPanelModel) => {
                 pointerDown.current = true;
                 // const sp = getElementById(id) as SolarPanelModel;
                 oldTiltAngleRef.current = tiltAngle;
-                const { rot } = Util.getWorldDataOfStackedCuboidById(parentId);
+                const { rot } = Util.getWorldDataById(parentId);
                 parentWorldRotationRef.current = rot;
               }
               setCommonStore((state) => {
@@ -854,7 +854,7 @@ export function isSolarPanelOnTopFace(normal: number[]) {
 }
 
 function getWorldRotationZ(parentId: string, selfRotation: number) {
-  const { rot } = Util.getWorldDataOfStackedCuboidById(parentId);
+  const { rot } = Util.getWorldDataById(parentId);
   return rot + selfRotation;
 }
 

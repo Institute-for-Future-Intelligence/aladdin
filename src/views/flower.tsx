@@ -186,7 +186,7 @@ const Flower = ({
   useFrame(({ camera }) => {
     // rotation
     if (groupRef.current) {
-      const { rot: parentWorldRotation } = Util.getWorldDataOfStackedCuboidById(parentId);
+      const { rot: parentWorldRotation } = Util.getWorldDataById(parentId);
 
       if (!orthographic) {
         if (flowerRef.current && interactionPlaneRef.current) {

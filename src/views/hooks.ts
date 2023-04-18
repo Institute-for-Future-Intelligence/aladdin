@@ -52,7 +52,7 @@ export const useGroupMaster = (elementModel: GroupableModel, groupMasterId: stri
     const hx = base.lx / 2;
     const hy = base.ly / 2;
     const zero = new Vector2();
-    const { pos, rot } = Util.getWorldDataOfStackedCuboidById(base.id);
+    const { pos, rot } = Util.getWorldDataById(base.id);
     const center = new Vector2(pos.x, pos.y);
     const v1 = new Vector2(hx, hy);
     const v2 = new Vector2(-hx, hy);
@@ -113,14 +113,14 @@ export const useGroupMaster = (elementModel: GroupableModel, groupMasterId: stri
       } else if (elem.type === ObjectType.Cuboid && Util.isChild(elementModel.id, elem.id, true)) {
         setbaseVertices(elem);
         childCuboidSetRef.current.add(elem.id);
-        const { topZ } = Util.getWorldDataOfStackedCuboidById(elem.id);
+        const { topZ } = Util.getWorldDataById(elem.id);
         maxTopZ = Math.max(maxTopZ, topZ);
       }
     }
 
     if (baseGroupSetRef.current.size > 1) {
       const bound = Util.calculatePolygonBounds(baseVerticesRef.current);
-      const { pos: parentWorldPos, topZ: parentTopZ } = Util.getWorldDataOfStackedCuboidById(elementModel.parentId);
+      const { pos: parentWorldPos, topZ: parentTopZ } = Util.getWorldDataById(elementModel.parentId);
       const boundCenterWorldPos = new Vector3(bound.x + bound.width / 2, bound.y + bound.height / 2);
       const relativePosition = new Vector3().subVectors(boundCenterWorldPos, parentWorldPos).setZ(0);
       setGroupMasterDimension([bound.width, bound.height, maxTopZ - parentTopZ]);
@@ -156,11 +156,11 @@ export const useGroupMaster = (elementModel: GroupableModel, groupMasterId: stri
       }
       // cuboids
       else if (elem.type === ObjectType.Cuboid && baseGroupSetRef.current.has(elem.id)) {
-        const { topZ } = Util.getWorldDataOfStackedCuboidById(elem.id);
+        const { topZ } = Util.getWorldDataById(elem.id);
         maxBaseZ = Math.max(maxBaseZ, topZ);
       }
     }
-    const { pos: parentWorldPos, topZ: parentTopZ } = Util.getWorldDataOfStackedCuboidById(elementModel.parentId);
+    const { pos: parentWorldPos, topZ: parentTopZ } = Util.getWorldDataById(elementModel.parentId);
     const boundCenterWorldPos = new Vector3(bound.x + bound.width / 2, bound.y + bound.height / 2);
     const relativePosition = new Vector3().subVectors(boundCenterWorldPos, parentWorldPos).setZ(0);
     setGroupMasterDimension([bound.width, bound.height, Math.max(maxChildHeight, maxBaseZ)]);

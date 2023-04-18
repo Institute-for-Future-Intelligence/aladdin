@@ -534,7 +534,7 @@ export class Util {
   }
 
   static fetchFoundationVertexCoordinates(foundation: ElementModel): Point2[] {
-    const { pos } = Util.getWorldDataOfStackedCuboidById(foundation.id);
+    const { pos } = Util.getWorldDataById(foundation.id);
     const xc = pos.x;
     const yc = pos.y;
     const cosaz = Math.cos(foundation.rotation[2]);
@@ -1207,7 +1207,7 @@ export class Util {
         v.sub(parentPos).applyEuler(new Euler(0, 0, -(parent as WallModel).relativeAngle - grandParent.rotation[2]));
       }
     } else {
-      const { pos, rot } = Util.getWorldDataOfStackedCuboidById(parent.id);
+      const { pos, rot } = Util.getWorldDataById(parent.id);
       v.set(x - pos.x, y - pos.y, z - pos.z);
       v.applyEuler(new Euler(0, 0, -rot));
     }
@@ -1673,7 +1673,7 @@ export class Util {
     return array;
   };
 
-  static getWorldDataOfStackedCuboidById = (id: string): { pos: Vector3; rot: number; topZ: number } => {
+  static getWorldDataById = (id: string): { pos: Vector3; rot: number; topZ: number } => {
     const el = useStore.getState().getElementById(id);
     if (!el) return { pos: new Vector3(), rot: 0, topZ: 0 };
 
@@ -1684,7 +1684,7 @@ export class Util {
     if (el.parentId === 'Ground') {
       return { pos: currPos, rot: currRot, topZ: currTopZ };
     }
-    const { pos: worldPos, rot: worldRot, topZ: worldTopZ } = this.getWorldDataOfStackedCuboidById(el.parentId);
+    const { pos: worldPos, rot: worldRot, topZ: worldTopZ } = this.getWorldDataById(el.parentId);
     const euler = new Euler(0, 0, worldRot);
 
     return {

@@ -532,7 +532,7 @@ export const CuboidMenu = React.memo(() => {
             setCommonStore((state) => {
               state.objectTypeToAdd = ObjectType.Polygon;
             });
-            const { pos: position } = Util.getWorldDataOfStackedCuboidById(cuboid.id);
+            const { pos: position } = Util.getWorldDataById(cuboid.id);
             let normal;
             switch (selectedSideIndex) {
               case 0:

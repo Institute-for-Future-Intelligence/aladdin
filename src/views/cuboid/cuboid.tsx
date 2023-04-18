@@ -416,7 +416,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
     const objectToAdd = useStore.getState().objectTypeToAdd;
     if (objectToAdd === ObjectType.SolarPanel) {
       const pointer = intersection.point;
-      const { pos, rot } = Util.getWorldDataOfStackedCuboidById(id);
+      const { pos, rot } = Util.getWorldDataById(id);
       const diff = new Vector3().subVectors(pointer, pos).applyEuler(new Euler(0, 0, -rot));
       const addedElement = ElementModelFactory.makeSolarPanel(
         cuboidModel,
@@ -495,7 +495,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
       if (selectedElement && selectedElement.parentId === id) {
         if (legalOnCuboid(selectedElement.type)) {
           setShowGrid(true);
-          const { rot, pos } = Util.getWorldDataOfStackedCuboidById(id);
+          const { rot, pos } = Util.getWorldDataById(id);
           worldPositionRef.current.copy(pos);
           worldRotationRef.current = rot;
           grabRef.current = selectedElement;

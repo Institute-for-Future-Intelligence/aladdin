@@ -499,7 +499,7 @@ const GroupMaster = ({
     const [currLx, currLy] = [hx * 2, hy * 2];
     for (const elem of useStore.getState().elements) {
       if (isGroupable(elem) && baseGroupSet.has(elem.id)) {
-        const { pos } = Util.getWorldDataOfStackedCuboidById(elem.id);
+        const { pos } = Util.getWorldDataById(elem.id);
         basePosRatioMapRef.current.set(elem.id, [(pos.x - position.x) / currLx, (pos.y - position.y) / currLy]);
         baseDmsRatioMapRef.current.set(elem.id, [elem.lx / currLx, elem.ly / currLy]);
         foundatonOldDataMapRef.current.set(elem.id, [elem.cx, elem.cy, elem.lx, elem.ly]);

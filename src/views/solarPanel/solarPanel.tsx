@@ -142,7 +142,7 @@ const SolarPanel = ({
           }
           break;
         case ObjectType.Cuboid:
-          const { pos, rot } = Util.getWorldDataOfStackedCuboidById(parent.id);
+          const { pos, rot } = Util.getWorldDataById(parent.id);
           if (Util.isZero(rotation[2])) {
             cx = pos.x + cx * parent.lx;
             cy = pos.y + cy * parent.ly;

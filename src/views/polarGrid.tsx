@@ -41,8 +41,8 @@ export const PolarGrid = ({ element, height }: { element: ElementModel; height?:
           setPosition(new Vector3(cx, cy, groundImage ? 0.1 : 0));
           break;
         case ObjectType.Cuboid:
-          const { pos } = Util.getWorldDataOfStackedCuboidById(element.id);
-          const { rot } = Util.getWorldDataOfStackedCuboidById(element.parentId);
+          const { pos } = Util.getWorldDataById(element.id);
+          const { rot } = Util.getWorldDataById(element.parentId);
           setPosition(new Vector3(pos.x, pos.y, pos.z - element.lz / 2 + 0.2));
           setRotation(rot);
           break;

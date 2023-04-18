@@ -229,7 +229,7 @@ const Tree = ({
   useFrame(({ camera }) => {
     // rotation
     if (solidTreeRef.current && groupRef.current && shadowTreeRef.current && interactionPlaneRef.current) {
-      const { rot: parentWorldRotation, pos: parentWorldPosition } = Util.getWorldDataOfStackedCuboidById(parentId);
+      const { rot: parentWorldRotation, pos: parentWorldPosition } = Util.getWorldDataById(parentId);
       const { x: cameraX, y: cameraY } = camera.position;
       const { x: currX, y: currY } = groupRef.current.position;
       const { x: sunlightX, y: sunlightY } = useStore.getState().sunlightDirection;

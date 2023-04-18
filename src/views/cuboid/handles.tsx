@@ -124,7 +124,7 @@ const Handles = ({ id, args }: HandlesProps) => {
 
       const v = new Vector3().subVectors(p, anchor).applyEuler(new Euler(0, 0, -(cuboidWorldRotation.current ?? 0)));
       const worldCenter = new Vector3().addVectors(p, anchor).multiplyScalar(0.5);
-      const { pos, rot } = Util.getWorldDataOfStackedCuboidById(cuboid.parentId);
+      const { pos, rot } = Util.getWorldDataById(cuboid.parentId);
       const center = new Vector3().subVectors(worldCenter, pos).applyEuler(new Euler(0, 0, -rot));
       cuboid.cx = center.x;
       cuboid.cy = center.y;
@@ -163,7 +163,7 @@ const Handles = ({ id, args }: HandlesProps) => {
       const cuboid = getElementById(id);
       if (cuboid && cuboid.parentId !== 'Ground') {
         setIntersectionPlaneData({ position: new Vector3(0, 0, -hz), rotation: new Euler() });
-        const { pos: parentWorldPos, rot: parentWorldRot } = Util.getWorldDataOfStackedCuboidById(cuboid.parentId);
+        const { pos: parentWorldPos, rot: parentWorldRot } = Util.getWorldDataById(cuboid.parentId);
         parentWorldPosition.current = parentWorldPos;
         parentWorldRotation.current = parentWorldRot;
         cuboidWorldRotation.current = parentWorldRot + cuboid.rotation[2];

@@ -102,7 +102,7 @@ const Polygon = ({
   const cuboidWorldPosition = new Vector3();
   const cuboidWorldRotation = new Euler();
   if (parent?.type === ObjectType.Cuboid) {
-    const { pos, rot } = Util.getWorldDataOfStackedCuboidById(parent.id);
+    const { pos, rot } = Util.getWorldDataById(parent.id);
     cuboidWorldPosition.copy(pos);
     cuboidWorldRotation.set(0, 0, rot);
   }
