@@ -1027,6 +1027,7 @@ const Ground = () => {
     for (const element of useStore.getState().elements) {
       if (
         isGroupable(element) &&
+        element.parentId === 'Ground' &&
         !element.locked &&
         element.id !== currElem.id &&
         !baseGroupRelPosMapRef.current.has(element.id) &&

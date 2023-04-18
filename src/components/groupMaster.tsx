@@ -340,7 +340,9 @@ const GroupMaster = ({
 
       setPosition(new Vector3(center.x, center.y));
       setDimension(lx, ly);
+
       setCommonStore((state) => {
+        const tempWorldDataMap = new Map<string, { pos: Vector3; rot: number }>();
         for (const elem of state.elements) {
           if (isGroupable(elem) && baseGroupSet.has(elem.id)) {
             const posRatio = basePosRatioMapRef.current.get(elem.id);
@@ -353,15 +355,21 @@ const GroupMaster = ({
               elem.ly = newLy;
 
               if (elem.parentId !== 'Ground') {
-                const { pos, rot } = Util.getWorldDataOfStackedCuboidById(elem.parentId);
-                const relativeCenter = new Vector3(posRatio[0] * lx + center.x, posRatio[1] * ly + center.y)
-                  .sub(pos)
-                  .applyEuler(new Euler(0, 0, -rot));
-                elem.cx = relativeCenter.x;
-                elem.cy = relativeCenter.y;
+                const parentWorldData = tempWorldDataMap.get(elem.parentId);
+                if (parentWorldData) {
+                  const { pos, rot } = parentWorldData;
+                  const worldCenter = new Vector3(posRatio[0] * lx + center.x, posRatio[1] * ly + center.y);
+                  const relativeCenter = worldCenter.clone().sub(pos).applyEuler(new Euler(0, 0, -rot));
+                  elem.cx = relativeCenter.x;
+                  elem.cy = relativeCenter.y;
+                  tempWorldDataMap.set(elem.id, { pos: worldCenter.clone(), rot: elem.rotation[2] + rot });
+                }
               } else {
-                elem.cx = posRatio[0] * lx + center.x;
-                elem.cy = posRatio[1] * ly + center.y;
+                const newCx = posRatio[0] * lx + center.x;
+                const newCy = posRatio[1] * ly + center.y;
+                elem.cx = newCx;
+                elem.cy = newCy;
+                tempWorldDataMap.set(elem.id, { pos: new Vector3(newCx, newCy), rot: elem.rotation[2] });
               }
 
               for (const e of state.elements) {
