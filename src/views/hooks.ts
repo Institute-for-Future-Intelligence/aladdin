@@ -78,7 +78,7 @@ export const useGroupMaster = (elementModel: GroupableModel, groupMasterId: stri
 
   const checkOverlapWithAllBases = (base: ElementModel) => {
     for (const el of useStore.getState().elements) {
-      if (isGroupable(el) && !el.locked && !baseGroupSetRef.current.has(el.id)) {
+      if (isGroupable(el) && el.parentId === 'Ground' && !el.locked && !baseGroupSetRef.current.has(el.id)) {
         const isUnlockedChild = Util.isChild(base.id, el.id, true);
 
         if (isUnlockedChild) {

@@ -108,7 +108,7 @@ const Ground = () => {
   const isHumanOrPlantMovedRef = useRef(false);
   const baseGroupRelPosMapRef = useRef<Map<string, Vector3>>(new Map());
   const baseGroupOldPosMapRef = useRef<Map<string, number[]>>(new Map());
-  const foundationGroupNewPosMapRef = useRef<Map<string, number[]>>(new Map());
+  const baseGroupNewPosMapRef = useRef<Map<string, number[]>>(new Map());
   const moveHandleWorldDiffV3Ref = useRef(new Vector3());
 
   const lang = { lng: language };
@@ -707,10 +707,10 @@ const Ground = () => {
     return ray.intersectObjects([groundPlaneRef.current!]).length === 0;
   };
 
-  const updateFoundationGroupPosition = (map: Map<string, number[]>) => {
+  const updateBaseGroupPosition = (map: Map<string, number[]>) => {
     setCommonStore((state) => {
       for (const elem of state.elements) {
-        if (elem.type === ObjectType.Foundation && map.has(elem.id)) {
+        if (map.has(elem.id)) {
           const pos = map.get(elem.id);
           if (pos) {
             elem.cx = pos[0];
@@ -820,25 +820,26 @@ const Ground = () => {
         showError(i18n.t('message.CannotMoveObjectTooFar', lang));
       } else {
         if (baseGroupRelPosMapRef.current.size > 1) {
-          foundationGroupNewPosMapRef.current.clear();
+          baseGroupNewPosMapRef.current.clear();
           for (const elem of useStore.getState().elements) {
-            if (elem.type === ObjectType.Foundation && baseGroupOldPosMapRef.current.has(elem.id)) {
-              foundationGroupNewPosMapRef.current.set(elem.id, [elem.cx, elem.cy, elem.cz]);
+            if (baseGroupOldPosMapRef.current.has(elem.id)) {
+              baseGroupNewPosMapRef.current.set(elem.id, [elem.cx, elem.cy, elem.cz]);
             }
           }
           const undoableMove = {
             name: 'Move Foundation Group',
             timestamp: Date.now(),
             oldPositionMap: new Map(baseGroupOldPosMapRef.current),
-            newPositionMap: new Map(foundationGroupNewPosMapRef.current),
+            newPositionMap: new Map(baseGroupNewPosMapRef.current),
             undo: () => {
-              updateFoundationGroupPosition(undoableMove.oldPositionMap);
+              updateBaseGroupPosition(undoableMove.oldPositionMap);
             },
             redo: () => {
-              updateFoundationGroupPosition(undoableMove.newPositionMap);
+              updateBaseGroupPosition(undoableMove.newPositionMap);
             },
           } as UndoableMoveFoundationGroup;
           addUndoable(undoableMove);
+          console.log(undoableMove);
         } else {
           const isCuboid = elem.type === ObjectType.Cuboid;
           const oldParentId = isCuboid ? oldCuoidParentIdRef.current : oldHumanOrPlantParentIdRef.current;
@@ -854,6 +855,8 @@ const Ground = () => {
             newCx: newPositionRef.current.x,
             newCy: newPositionRef.current.y,
             newCz: newPositionRef.current.z,
+            oldRotation: [...oldRotationRef.current],
+            newRotation: [...elem.rotation],
             oldParentId: oldParentId,
             newParentId: newParentId,
             undo: () => {
@@ -863,6 +866,10 @@ const Ground = () => {
                 undoableMove.oldCy,
                 undoableMove.oldCz,
               );
+              setCommonStore((state) => {
+                const e = state.elements.find((e) => e.id === undoableMove.movedElementId);
+                if (e && undoableMove.oldRotation) e.rotation = [...undoableMove.oldRotation];
+              });
               setParentIdById(undoableMove.oldParentId, undoableMove.movedElementId);
               if (undoableMove.movedElementType && isHumanOrPlant(undoableMove.movedElementType)) {
                 attachToGroup(undoableMove.oldParentId, undoableMove.newParentId, undoableMove.movedElementId);
@@ -875,6 +882,10 @@ const Ground = () => {
                 undoableMove.newCy,
                 undoableMove.newCz,
               );
+              setCommonStore((state) => {
+                const e = state.elements.find((e) => e.id === undoableMove.movedElementId);
+                if (e && undoableMove.newRotation) e.rotation = [...undoableMove.newRotation];
+              });
               setParentIdById(undoableMove.newParentId, undoableMove.movedElementId);
               if (undoableMove.movedElementType && isHumanOrPlant(undoableMove.movedElementType)) {
                 attachToGroup(undoableMove.newParentId, undoableMove.oldParentId, undoableMove.movedElementId);
