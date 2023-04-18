@@ -4,10 +4,10 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import MoveHandle from 'src/components/moveHandle';
 import ResizeHandle from 'src/components/resizeHandle';
 import RotateHandle from 'src/components/rotateHandle';
-import { HALF_PI, ORIGIN_VECTOR3, RESIZE_HANDLE_SIZE, TWO_PI } from 'src/constants';
+import { HALF_PI, RESIZE_HANDLE_SIZE, TWO_PI } from 'src/constants';
 import { useStore } from 'src/stores/common';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
-import { MoveHandleType, ResizeHandleType, RotateHandleType } from 'src/types';
+import { MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from 'src/types';
 import { Util } from 'src/Util';
 import { Euler, Mesh, Vector3 } from 'three';
 import * as Selector from '../../stores/selector';
@@ -42,6 +42,7 @@ const Handles = ({ id, args }: HandlesProps) => {
   const cuboidWorldRotation = useRef<number | null>(null);
   const parentWorldRotation = useRef<number | null>(null);
   const parentWorldPosition = useRef<Vector3 | null>(null);
+  const childPositionMap = useRef<Map<string, Vector3>>(new Map());
 
   const intersectionPlaneRef = useRef<Mesh>(null);
 
@@ -128,8 +129,31 @@ const Handles = ({ id, args }: HandlesProps) => {
       const center = new Vector3().subVectors(worldCenter, pos).applyEuler(new Euler(0, 0, -rot));
       cuboid.cx = center.x;
       cuboid.cy = center.y;
-      cuboid.lx = Math.abs(v.x);
-      cuboid.ly = Math.abs(v.y);
+      const newLx = Math.abs(v.x);
+      const newLy = Math.abs(v.y);
+      cuboid.lx = newLx;
+      cuboid.ly = newLy;
+
+      const currWorldPosition = new Vector3(center.x, center.y, cuboid.cz).applyEuler(new Euler(0, 0, rot)).add(pos);
+      const currWorldRotation = cuboid.rotation[2] + rot;
+      if (childPositionMap.current.size > 0) {
+        for (const e of state.elements) {
+          const childWorldPosition = childPositionMap.current.get(e.id);
+          if (childWorldPosition) {
+            const relPos = childWorldPosition
+              .clone()
+              .sub(currWorldPosition)
+              .applyEuler(new Euler(0, 0, -currWorldRotation));
+            if (e.type === ObjectType.Cuboid) {
+              e.cx = relPos.x;
+              e.cy = relPos.y;
+            } else {
+              e.cx = relPos.x / newLx;
+              e.cy = relPos.y / newLy;
+            }
+          }
+        }
+      }
     });
   };
 
@@ -167,6 +191,26 @@ const Handles = ({ id, args }: HandlesProps) => {
         parentWorldPosition.current = parentWorldPos;
         parentWorldRotation.current = parentWorldRot;
         cuboidWorldRotation.current = parentWorldRot + cuboid.rotation[2];
+        const cuboidWorldPosition = new Vector3(cuboid.cx, cuboid.cy, cuboid.cz)
+          .applyEuler(new Euler(0, 0, parentWorldRot))
+          .add(parentWorldPos);
+
+        const children = useStore
+          .getState()
+          .elements.filter(
+            (e) => e.parentId === cuboid.id && (e.type === ObjectType.Cuboid || Util.isIdentical(e.normal, [0, 0, 1])),
+          );
+        childPositionMap.current.clear();
+        for (const child of children) {
+          const worldPos = new Vector3();
+          if (child.type === ObjectType.Cuboid) {
+            worldPos.set(child.cx, child.cy, child.cz);
+          } else {
+            worldPos.set(child.cx * cuboid.lx, child.cy * cuboid.ly, 0);
+          }
+          worldPos.applyEuler(new Euler(0, 0, cuboidWorldRotation.current)).add(cuboidWorldPosition);
+          childPositionMap.current.set(child.id, worldPos);
+        }
       }
     }
   };

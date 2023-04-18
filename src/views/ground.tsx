@@ -1236,6 +1236,12 @@ const Ground = () => {
               if (cuboidChildren.length > 0) {
                 for (const e of cuboidChildren) {
                   switch (e.type) {
+                    case ObjectType.Cuboid: {
+                      const centerAbsPos = new Vector3(e.cx, e.cy, e.cz).applyEuler(new Euler(0, 0, rot));
+                      centerAbsPos.add(cuboidCenter);
+                      absPosMapRef.current.set(e.id, centerAbsPos);
+                      break;
+                    }
                     case ObjectType.Tree:
                     case ObjectType.Flower:
                     case ObjectType.Human: {
@@ -1873,6 +1879,17 @@ const Ground = () => {
                   }
                 }
                 break;
+              case ObjectType.Cuboid: {
+                const centerAbsPos = absPosMapRef.current.get(e.id);
+                if (centerAbsPos) {
+                  const relativePos = new Vector2()
+                    .subVectors(new Vector2(centerAbsPos.x, centerAbsPos.y), center)
+                    .rotateAround(ORIGIN_VECTOR2, -grabRef.current!.rotation[2]);
+                  e.cx = relativePos.x;
+                  e.cy = relativePos.y;
+                }
+                break;
+              }
               case ObjectType.Polygon:
                 if (Util.isIdentical(e.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
                   const polygon = e as PolygonModel;
