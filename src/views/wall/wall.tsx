@@ -15,7 +15,6 @@ import {
   Raycaster,
   RepeatWrapping,
   Shape,
-  TextureLoader,
   Vector2,
   Vector3,
 } from 'three';
@@ -368,23 +367,23 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     [leftPoint, rightPoint, ly, parapet.copingsWidth],
   );
   const leftWallPointDataToParapet = useMemo(() => {
-    if (!leftWall) return null;
+    if (!leftWall || !leftWall.parapet) return null;
     return {
       leftPoint: leftWall.leftPoint,
       rightPoint: leftWall.rightPoint,
       ly: leftWall.ly,
       copingsWidth: leftWall.parapet.copingsWidth,
     };
-  }, [leftWall?.leftPoint, leftWall?.rightPoint, leftWall?.ly, leftWall?.parapet.copingsWidth]);
+  }, [leftWall?.leftPoint, leftWall?.rightPoint, leftWall?.ly, leftWall?.parapet?.copingsWidth]);
   const rightWallPointDataToParapet = useMemo(() => {
-    if (!rightWall) return null;
+    if (!rightWall || !rightWall.parapet) return null;
     return {
       leftPoint: rightWall.leftPoint,
       rightPoint: rightWall.rightPoint,
       ly: rightWall.ly,
       copingsWidth: rightWall.parapet.copingsWidth,
     };
-  }, [rightWall?.leftPoint, rightWall?.rightPoint, rightWall?.ly, rightWall?.parapet.copingsWidth]);
+  }, [rightWall?.leftPoint, rightWall?.rightPoint, rightWall?.ly, rightWall?.parapet?.copingsWidth]);
 
   // effects
   useEffect(() => {

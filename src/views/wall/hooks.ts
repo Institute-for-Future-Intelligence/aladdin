@@ -25,6 +25,7 @@ import { RepeatWrapping, TextureLoader, Vector3 } from 'three';
 import { ObjectType, WallTexture } from 'src/types';
 import { RoofModel } from 'src/models/RoofModel';
 import { invalidate } from '@react-three/fiber';
+import { DEFAULT_PARAPET_SETTINGS } from './parapet';
 
 export const useElements = (id: string, leftWallId?: string, rightWallId?: string, roofId?: string) => {
   const isElementTriggerWallChange = (elem: ElementModel) => {
@@ -74,7 +75,8 @@ export const useUpdataOldFiles = (wallModel: WallModel) => {
       wallModel.opacity === undefined ||
       wallModel.fill === undefined ||
       wallModel.unfilledHeight === undefined ||
-      wallModel.eavesLength === undefined
+      wallModel.eavesLength === undefined ||
+      wallModel.parapet === undefined
     ) {
       useStore.getState().set((state) => {
         for (const e of state.elements) {
@@ -108,6 +110,9 @@ export const useUpdataOldFiles = (wallModel: WallModel) => {
               } else {
                 wall.eavesLength = 0.3;
               }
+            }
+            if (wall.parapet === undefined) {
+              wall.parapet = { ...DEFAULT_PARAPET_SETTINGS };
             }
             break;
           }
