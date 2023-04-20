@@ -1065,6 +1065,12 @@ export const i18n_es = {
       Partial: 'Partial',
       Empty: 'Empty',
       EavesLength: 'Eaves Overhang Length',
+      Parapet: 'Parapet',
+      ParapetColor: 'Parapet Color',
+      ParapetTexture: 'Parapet Texture',
+      ParapetHeight: 'Parapet Height',
+      CopingHeight: 'Coping Height',
+      CopingWidth: 'Coping Width',
     },
 
     windowMenu: {

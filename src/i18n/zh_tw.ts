@@ -1043,6 +1043,12 @@ export const i18n_zh_tw = {
       Partial: '部分',
       Empty: '空白',
       EavesLength: '屋簷延伸長度',
+      Parapet: 'Parapet',
+      ParapetColor: 'Parapet 颜色',
+      ParapetTexture: 'Parapet 材質',
+      ParapetHeight: 'Parapet 高度',
+      CopingHeight: '頂蓋高度',
+      CopingWidth: '頂蓋寬度',
     },
 
     windowMenu: {

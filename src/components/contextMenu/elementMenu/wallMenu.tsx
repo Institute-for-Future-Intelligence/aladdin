@@ -3,7 +3,7 @@
  */
 
 import React, { useState } from 'react';
-import { Menu, Modal, Radio } from 'antd';
+import { Checkbox, Divider, Menu, Modal, Radio } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { CommonStoreState, useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
@@ -11,7 +11,7 @@ import { Copy, Cut, Lock, Paste } from '../menuItems';
 import i18n from '../../../i18n/i18n';
 import WallTextureSelection from './wallTextureSelection';
 import WallColorSelection from './wallColorSelection';
-import { WallFill, WallModel, WallStructure } from 'src/models/WallModel';
+import { ParapetArgs, WallFill, WallModel, WallStructure } from 'src/models/WallModel';
 import { ObjectType, WallTexture } from 'src/types';
 import { ElementCounter } from '../../../stores/ElementCounter';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
@@ -28,6 +28,10 @@ import { Euler, Vector3 } from 'three';
 import { UndoableAdd } from '../../../undo/UndoableAdd';
 import { ElementModelFactory } from '../../../models/ElementModelFactory';
 import { FoundationModel } from '../../../models/FoundationModel';
+import { UndoableCheck } from 'src/undo/UndoableCheck';
+import WallParapetNumberInput from './wallParapetNumberInput';
+import WallParapetColorSelection from './wallParapetColorSelection';
+import WallParapetTextureSelection from './wallParapetTextureSelection';
 
 enum DataType {
   Height = 'Height',
@@ -39,10 +43,22 @@ enum DataType {
   Color = 'Color',
   Texture = 'Texture',
   EavesLength = 'EavesLength',
+  ParapetColor = 'ParapetColor',
+  ParapetTexture = 'ParapetTexture',
+  ParapetHeight = 'ParapetHeight',
+  CopingHeight = 'CopingHeight',
+  CopingWidth = 'CopingWidth',
 }
 
 type NumberDialogSettingType = {
   attributeKey: keyof WallModel;
+  range: [min: number, max: number];
+  step: number;
+  unit?: string;
+};
+
+type ParapetNumberDialogSettingType = {
+  attributeKey: keyof ParapetArgs;
   range: [min: number, max: number];
   step: number;
   unit?: string;
@@ -55,6 +71,14 @@ const DialogSetting = {
   StructureWidth: { attributeKey: 'structureWidth', range: [0.01, 1], step: 0.1, unit: 'word.MeterAbbreviation' },
   Thickness: { attributeKey: 'ly', range: [0.1, 1], step: 0.01, unit: 'word.MeterAbbreviation' },
   EavesLength: { attributeKey: 'eavesLength', range: [0, 5], step: 0.01, unit: '' }, // todo:
+  ParapetHeight: { attributeKey: 'parapetHeight', range: [0, 5], step: 0.01, unit: 'word.MeterAbbreviation' },
+  CopingHeight: { attributeKey: 'copingHeight', range: [0, 1], step: 0.01, unit: 'word.MeterAbbreviation' },
+  CopingWidth: { attributeKey: 'copingWidth', range: [0, 3], step: 0.01, unit: 'word.MeterAbbreviation' },
+};
+const ParapetDialogSetting = {
+  ParapetHeight: { attributeKey: 'parapetHeight', range: [0, 5], step: 0.01, unit: 'word.MeterAbbreviation' },
+  CopingHeight: { attributeKey: 'copingHeight', range: [0, 1], step: 0.01, unit: 'word.MeterAbbreviation' },
+  CopingWidth: { attributeKey: 'copingWidth', range: [0, 3], step: 0.01, unit: 'word.MeterAbbreviation' },
 };
 
 export const radioStyle = {
@@ -96,6 +120,14 @@ export const WallMenu = React.memo(() => {
 
   const lang = { lng: language };
   const paddingLeft = '36px';
+
+  const updateParapetDisplayById = (id: string, display: boolean) => {
+    setCommonStore((state) => {
+      const wall = state.elements.find((e) => e.id === id && e.type === ObjectType.Wall) as WallModel;
+      if (!wall) return;
+      wall.parapet.display = display;
+    });
+  };
 
   const updateWallStructureById = (id: string, structure: WallStructure) => {
     setCommonStore((state: CommonStoreState) => {
@@ -175,6 +207,51 @@ export const WallMenu = React.memo(() => {
       return null;
     }
     return <Paste keyName={'wall-paste'} />;
+  };
+
+  const renderParapetSubMenu = () => {
+    if (!wall) return null;
+
+    return (
+      <SubMenu key={'wall-parapet'} title={i18n.t('wallMenu.Parapet', lang)} style={{ paddingLeft: '24px' }}>
+        <Menu.Item key={'parapet'}>
+          <Checkbox
+            checked={wall.parapet.display}
+            onChange={(e) => {
+              const checked = e.target.checked;
+              const undoableCheck = {
+                name: 'Parapet',
+                timestamp: Date.now(),
+                checked: checked,
+                selectedElementId: wall.id,
+                selectedElementType: wall.type,
+                undo: () => {
+                  updateParapetDisplayById(wall.id, !undoableCheck.checked);
+                },
+                redo: () => {
+                  updateParapetDisplayById(wall.id, undoableCheck.checked);
+                },
+              } as UndoableCheck;
+              addUndoable(undoableCheck);
+              updateParapetDisplayById(wall.id, checked);
+              setCommonStore((state) => {
+                state.actionState.wallParapet.display = checked;
+              });
+            }}
+          >
+            {i18n.t('wallMenu.Parapet', { lng: language })}
+          </Checkbox>
+        </Menu.Item>
+
+        <Divider plain style={{ margin: '6px' }} />
+
+        {renderMenuItem(DataType.ParapetColor)}
+        {renderMenuItem(DataType.ParapetTexture)}
+        {renderMenuItem(DataType.ParapetHeight)}
+        {renderMenuItem(DataType.CopingHeight)}
+        {renderMenuItem(DataType.CopingWidth)}
+      </SubMenu>
+    );
   };
 
   const renderFillSubMenu = () => {
@@ -497,7 +574,7 @@ export const WallMenu = React.memo(() => {
       case DataType.Thickness:
       case DataType.StructureSpacing:
       case DataType.StructureWidth:
-      case DataType.EavesLength:
+      case DataType.EavesLength: {
         const setting = DialogSetting[dataType] as NumberDialogSettingType;
         if (!setting) return null;
         return (
@@ -511,12 +588,34 @@ export const WallMenu = React.memo(() => {
             unit={setting.unit ? i18n.t(setting.unit, lang) : undefined}
           />
         );
+      }
+      case DataType.ParapetHeight:
+      case DataType.CopingHeight:
+      case DataType.CopingWidth: {
+        const setting = ParapetDialogSetting[dataType] as ParapetNumberDialogSettingType;
+        if (!setting) return null;
+        return (
+          <WallParapetNumberInput
+            wall={wall!}
+            dataType={dataType}
+            attributeKey={setting.attributeKey}
+            range={setting.range}
+            step={setting.step}
+            setDialogVisible={() => setDataType(null)}
+            unit={setting.unit ? i18n.t(setting.unit, lang) : undefined}
+          />
+        );
+      }
       case DataType.Color:
         return <WallColorSelection setDialogVisible={() => setDataType(null)} />;
       case DataType.StructureColor:
         return <WallStructureColorSelection setDialogVisible={() => setDataType(null)} />;
+      case DataType.ParapetColor:
+        return <WallParapetColorSelection setDialogVisible={() => setDataType(null)} />;
       case DataType.Texture:
         return <WallTextureSelection setDialogVisible={() => setDataType(null)} />;
+      case DataType.ParapetTexture:
+        return <WallParapetTextureSelection setDialogVisible={() => setDataType(null)} />;
     }
   };
 
@@ -547,6 +646,8 @@ export const WallMenu = React.memo(() => {
           {renderDialogs()}
 
           {renderElementsSubMenu()}
+
+          {renderParapetSubMenu()}
 
           {renderStructureSubMenu()}
 
