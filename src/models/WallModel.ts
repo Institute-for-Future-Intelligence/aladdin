@@ -43,8 +43,8 @@ export interface ParapetArgs {
   color: string;
   textureType: WallTexture;
   parapetHeight: number;
-  copingWidth: number;
-  copingHeight: number;
+  copingsWidth: number;
+  copingsHeight: number;
 }
 
 export enum WallFill {

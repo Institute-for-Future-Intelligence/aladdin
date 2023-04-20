@@ -1069,8 +1069,8 @@ export const i18n_en = {
       ParapetColor: 'Parapet Color',
       ParapetTexture: 'Parapet Texture',
       ParapetHeight: 'Parapet Height',
-      CopingHeight: 'Coping Height',
-      CopingWidth: 'Coping Width',
+      CopingsHeight: 'Copings Height',
+      CopingsWidth: 'Copings Width',
     },
 
     windowMenu: {

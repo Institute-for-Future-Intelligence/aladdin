@@ -11,8 +11,8 @@ export const DEFAULT_PARAPET_SETTINGS: ParapetArgs = {
   color: 'white',
   textureType: WallTexture.NoTexture,
   parapetHeight: 1,
-  copingWidth: 0.5,
-  copingHeight: 0.1,
+  copingsWidth: 0.5,
+  copingsHeight: 0.1,
 };
 
 export interface WallData {
@@ -28,7 +28,7 @@ export interface WallPointData {
   leftPoint: number[];
   rightPoint: number[];
   ly: number;
-  copingWidth: number;
+  copingsWidth: number;
 }
 
 export interface ParapetProps {
@@ -44,13 +44,13 @@ type WallPoints = {
   rightPoint: Vector3;
 };
 
-type CopingPoints = {
+type CopingsPoints = {
   innerPoints: WallPoints;
   outerPoints: WallPoints;
 };
 
 const Parapet = ({ args, wallData, currWallPointData, leftWallPointData, rightWallPointData }: ParapetProps) => {
-  const { display, color, textureType, parapetHeight, copingWidth, copingHeight } = args;
+  const { display, color, textureType, parapetHeight, copingsWidth, copingsHeight } = args;
   const { cx, cy, hx, hy, hz, angle } = wallData;
 
   const texture = useWallTexture(textureType);
@@ -82,29 +82,29 @@ const Parapet = ({ args, wallData, currWallPointData, leftWallPointData, rightWa
     return shape;
   }, [hx, currWallPointData, leftWallPointData, rightWallPointData]);
 
-  const copingShape = useMemo(() => {
+  const copingsShape = useMemo(() => {
     const shape = new Shape();
 
-    const outerLeft = new Vector3(-hx, hy - copingWidth / 2);
-    const outerRight = new Vector3(hx, hy - copingWidth / 2);
-    const innerRight = new Vector3(hx, hy + copingWidth / 2);
-    const innerLeft = new Vector3(-hx, hy + copingWidth / 2);
+    const outerLeft = new Vector3(-hx, hy - copingsWidth / 2);
+    const outerRight = new Vector3(hx, hy - copingsWidth / 2);
+    const innerRight = new Vector3(hx, hy + copingsWidth / 2);
+    const innerLeft = new Vector3(-hx, hy + copingsWidth / 2);
 
     if (rightWallPointData || leftWallPointData) {
-      const currWallCopingPoints = getCopingPoints(currWallPointData);
+      const currWallCopingsPoints = getCopingsPoints(currWallPointData);
 
       if (rightWallPointData && isSamePoint(currWallPointData.rightPoint, rightWallPointData.leftPoint)) {
-        const copingInterSectionPoints = getCopingIntersectionPoints(currWallCopingPoints, rightWallPointData);
-        if (copingInterSectionPoints) {
-          outerRight.copy(copingInterSectionPoints.outerIntersection);
-          innerRight.copy(copingInterSectionPoints.innerIntersection);
+        const copingsInterSectionPoints = getCopingsIntersectionPoints(currWallCopingsPoints, rightWallPointData);
+        if (copingsInterSectionPoints) {
+          outerRight.copy(copingsInterSectionPoints.outerIntersection);
+          innerRight.copy(copingsInterSectionPoints.innerIntersection);
         }
       }
       if (leftWallPointData && isSamePoint(currWallPointData.leftPoint, leftWallPointData.rightPoint)) {
-        const copingInterSectionPoints = getCopingIntersectionPoints(currWallCopingPoints, leftWallPointData);
-        if (copingInterSectionPoints) {
-          outerLeft.copy(copingInterSectionPoints.outerIntersection);
-          innerLeft.copy(copingInterSectionPoints.innerIntersection);
+        const copingsInterSectionPoints = getCopingsIntersectionPoints(currWallCopingsPoints, leftWallPointData);
+        if (copingsInterSectionPoints) {
+          outerLeft.copy(copingsInterSectionPoints.outerIntersection);
+          innerLeft.copy(copingsInterSectionPoints.innerIntersection);
         }
       }
     }
@@ -115,24 +115,24 @@ const Parapet = ({ args, wallData, currWallPointData, leftWallPointData, rightWa
     shape.lineTo(innerLeft.x, innerLeft.y);
     shape.closePath();
     return shape;
-  }, [hy, copingWidth, currWallPointData, leftWallPointData, rightWallPointData]);
+  }, [hy, copingsWidth, currWallPointData, leftWallPointData, rightWallPointData]);
 
-  function getCopingIntersectionPoints(currCopingPoints: CopingPoints, sideWallPointData: WallPointData) {
-    const sideWallCopingPoints = getCopingPoints(sideWallPointData);
+  function getCopingsIntersectionPoints(currCopingsPoints: CopingsPoints, sideWallPointData: WallPointData) {
+    const sideWallCopingsPoints = getCopingsPoints(sideWallPointData);
 
     const outerIntersection = getIntersectionPoint(
-      currCopingPoints.outerPoints.leftPoint,
-      currCopingPoints.outerPoints.rightPoint,
-      sideWallCopingPoints.outerPoints.leftPoint,
-      sideWallCopingPoints.outerPoints.rightPoint,
+      currCopingsPoints.outerPoints.leftPoint,
+      currCopingsPoints.outerPoints.rightPoint,
+      sideWallCopingsPoints.outerPoints.leftPoint,
+      sideWallCopingsPoints.outerPoints.rightPoint,
     );
     if (!outerIntersection) return null;
 
     const innerIntersection = getIntersectionPoint(
-      currCopingPoints.innerPoints.leftPoint,
-      currCopingPoints.innerPoints.rightPoint,
-      sideWallCopingPoints.innerPoints.leftPoint,
-      sideWallCopingPoints.innerPoints.rightPoint,
+      currCopingsPoints.innerPoints.leftPoint,
+      currCopingsPoints.innerPoints.rightPoint,
+      sideWallCopingsPoints.innerPoints.leftPoint,
+      sideWallCopingsPoints.innerPoints.rightPoint,
     );
     if (!innerIntersection) return null;
 
@@ -167,10 +167,10 @@ const Parapet = ({ args, wallData, currWallPointData, leftWallPointData, rightWa
         <meshStandardMaterial color={color} map={texture} />
       </Extrude>
 
-      {/* top coping */}
+      {/* top copings */}
       <Extrude
         position={[0, 0, parapetHeight]}
-        args={[copingShape, { steps: 1, depth: copingHeight, bevelEnabled: false }]}
+        args={[copingsShape, { steps: 1, depth: copingsHeight, bevelEnabled: false }]}
       >
         <meshStandardMaterial color={color} />
       </Extrude>
@@ -178,9 +178,9 @@ const Parapet = ({ args, wallData, currWallPointData, leftWallPointData, rightWa
   );
 };
 
-function getCopingPoints(wallPointData: WallPointData): CopingPoints {
-  const innerOffset = (wallPointData.ly + wallPointData.copingWidth) / 2;
-  const outerOffset = (wallPointData.ly - wallPointData.copingWidth) / 2;
+function getCopingsPoints(wallPointData: WallPointData): CopingsPoints {
+  const innerOffset = (wallPointData.ly + wallPointData.copingsWidth) / 2;
+  const outerOffset = (wallPointData.ly - wallPointData.copingsWidth) / 2;
   return {
     innerPoints: getWallPointsAfterOffset(wallPointData, innerOffset),
     outerPoints: getWallPointsAfterOffset(wallPointData, outerOffset),

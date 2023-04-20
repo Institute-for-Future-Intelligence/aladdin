@@ -53,11 +53,11 @@ const WallParapetNumberInput = ({
   const updateActionState = (value: number) => {
     setCommonStore((state) => {
       switch (attributeKey) {
-        case 'copingHeight':
-          state.actionState.wallParapet.copingHeight = value;
+        case 'copingsHeight':
+          state.actionState.wallParapet.copingsHeight = value;
           break;
-        case 'copingWidth':
-          state.actionState.wallParapet.copingWidth = value;
+        case 'copingsWidth':
+          state.actionState.wallParapet.copingsWidth = value;
           break;
         case 'parapetHeight':
           state.actionState.wallParapet.parapetHeight = value;

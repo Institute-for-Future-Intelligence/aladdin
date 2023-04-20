@@ -1046,8 +1046,8 @@ export const i18n_zh_cn = {
       ParapetColor: 'Parapet 颜色',
       ParapetTexture: 'Parapet 材质',
       ParapetHeight: 'Parapet 高度',
-      CopingHeight: '顶盖高度',
-      CopingWidth: '顶盖宽度',
+      CopingsHeight: '顶盖高度',
+      CopingsWidth: '顶盖宽度',
     },
 
     windowMenu: {

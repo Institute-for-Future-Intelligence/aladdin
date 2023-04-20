@@ -46,8 +46,8 @@ enum DataType {
   ParapetColor = 'ParapetColor',
   ParapetTexture = 'ParapetTexture',
   ParapetHeight = 'ParapetHeight',
-  CopingHeight = 'CopingHeight',
-  CopingWidth = 'CopingWidth',
+  CopingsHeight = 'CopingsHeight',
+  CopingsWidth = 'CopingsWidth',
 }
 
 type NumberDialogSettingType = {
@@ -72,13 +72,13 @@ const DialogSetting = {
   Thickness: { attributeKey: 'ly', range: [0.1, 1], step: 0.01, unit: 'word.MeterAbbreviation' },
   EavesLength: { attributeKey: 'eavesLength', range: [0, 5], step: 0.01, unit: '' }, // todo:
   ParapetHeight: { attributeKey: 'parapetHeight', range: [0, 5], step: 0.01, unit: 'word.MeterAbbreviation' },
-  CopingHeight: { attributeKey: 'copingHeight', range: [0, 1], step: 0.01, unit: 'word.MeterAbbreviation' },
-  CopingWidth: { attributeKey: 'copingWidth', range: [0, 3], step: 0.01, unit: 'word.MeterAbbreviation' },
+  CopingsHeight: { attributeKey: 'copingsHeight', range: [0, 1], step: 0.01, unit: 'word.MeterAbbreviation' },
+  CopingsWidth: { attributeKey: 'copingsWidth', range: [0, 3], step: 0.01, unit: 'word.MeterAbbreviation' },
 };
 const ParapetDialogSetting = {
   ParapetHeight: { attributeKey: 'parapetHeight', range: [0, 5], step: 0.01, unit: 'word.MeterAbbreviation' },
-  CopingHeight: { attributeKey: 'copingHeight', range: [0, 1], step: 0.01, unit: 'word.MeterAbbreviation' },
-  CopingWidth: { attributeKey: 'copingWidth', range: [0, 3], step: 0.01, unit: 'word.MeterAbbreviation' },
+  CopingsHeight: { attributeKey: 'copingsHeight', range: [0, 1], step: 0.01, unit: 'word.MeterAbbreviation' },
+  CopingsWidth: { attributeKey: 'copingsWidth', range: [0, 3], step: 0.01, unit: 'word.MeterAbbreviation' },
 };
 
 export const radioStyle = {
@@ -248,8 +248,8 @@ export const WallMenu = React.memo(() => {
         {renderMenuItem(DataType.ParapetColor)}
         {renderMenuItem(DataType.ParapetTexture)}
         {renderMenuItem(DataType.ParapetHeight)}
-        {renderMenuItem(DataType.CopingHeight)}
-        {renderMenuItem(DataType.CopingWidth)}
+        {renderMenuItem(DataType.CopingsHeight)}
+        {renderMenuItem(DataType.CopingsWidth)}
       </SubMenu>
     );
   };
@@ -590,8 +590,8 @@ export const WallMenu = React.memo(() => {
         );
       }
       case DataType.ParapetHeight:
-      case DataType.CopingHeight:
-      case DataType.CopingWidth: {
+      case DataType.CopingsHeight:
+      case DataType.CopingsWidth: {
         const setting = ParapetDialogSetting[dataType] as ParapetNumberDialogSettingType;
         if (!setting) return null;
         return (
