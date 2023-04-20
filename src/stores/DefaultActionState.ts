@@ -16,7 +16,7 @@ import {
   TreeType,
   WallTexture,
 } from '../types';
-import { WallStructure } from '../models/WallModel';
+import { ParapetArgs, WallStructure } from '../models/WallModel';
 import { defaultShutter } from '../views/window/window';
 import { WindowType } from 'src/models/WindowModel';
 import { RoofStructure } from '../models/RoofModel';
@@ -29,6 +29,7 @@ import {
   DEFAULT_WALL_R_VALUE,
   DEFAULT_WINDOW_U_VALUE,
 } from '../constants';
+import { DEFAULT_PARAPET_SETTINGS } from 'src/views/wall/parapet';
 
 export class DefaultActionState implements ActionState {
   // Needed for immer drafting to work properly: https://immerjs.github.io/immer/docs/complex-objects
@@ -65,6 +66,7 @@ export class DefaultActionState implements ActionState {
   wallVolumetricHeatCapacity: number;
   wallUnfilledHeight: number;
   wallEavesLength: number;
+  wallParapet: ParapetArgs;
 
   roofColor: string;
   roofSideColor: string;
@@ -193,6 +195,7 @@ export class DefaultActionState implements ActionState {
     this.wallVolumetricHeatCapacity = 0.5;
     this.wallUnfilledHeight = 0.5;
     this.wallEavesLength = 0.3;
+    this.wallParapet = DEFAULT_PARAPET_SETTINGS;
 
     this.roofColor = '#454769';
     this.roofSideColor = '#ffffff';

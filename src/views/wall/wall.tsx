@@ -65,6 +65,7 @@ import { PolygonModel } from '../../models/PolygonModel';
 import Polygon from '../polygon';
 import { SharedUtil } from '../SharedUtil';
 import { UndoableChange } from '../../undo/UndoableChange';
+import Parapet, { DEFAULT_PARAPET_SETTINGS } from './parapet';
 
 export const WALL_BLOCK_PLANE = 'Wall Block Plane';
 
@@ -126,6 +127,9 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     opacity = 0.5,
     fill = WallFill.Full,
     unfilledHeight = 0.5,
+    parapet = DEFAULT_PARAPET_SETTINGS,
+    leftPoint,
+    rightPoint,
   } = wallModel;
 
   leftRoofHeight = leftJoints.length > 0 ? leftRoofHeight : lz;
@@ -349,6 +353,38 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
 
     return arr;
   }, [wallStructure, structureWidth, structureSpacing, lx, ly, lz]);
+
+  const wallDataToParapet = useMemo(
+    () => ({ cx, cy, hx, hy, hz, angle: relativeAngle }),
+    [cx, cy, hx, hy, hz, relativeAngle],
+  );
+  const currWallPointDataToParapet = useMemo(
+    () => ({
+      leftPoint,
+      rightPoint,
+      ly,
+      copingWidth: parapet.copingWidth,
+    }),
+    [leftPoint, rightPoint, ly, parapet.copingWidth],
+  );
+  const leftWallPointDataToParapet = useMemo(() => {
+    if (!leftWall) return null;
+    return {
+      leftPoint: leftWall.leftPoint,
+      rightPoint: leftWall.rightPoint,
+      ly: leftWall.ly,
+      copingWidth: leftWall.parapet.copingWidth,
+    };
+  }, [leftWall?.leftPoint, leftWall?.rightPoint, leftWall?.ly, leftWall?.parapet.copingWidth]);
+  const rightWallPointDataToParapet = useMemo(() => {
+    if (!rightWall) return null;
+    return {
+      leftPoint: rightWall.leftPoint,
+      rightPoint: rightWall.rightPoint,
+      ly: rightWall.ly,
+      copingWidth: rightWall.parapet.copingWidth,
+    };
+  }, [rightWall?.leftPoint, rightWall?.rightPoint, rightWall?.ly, rightWall?.parapet.copingWidth]);
 
   // effects
   useEffect(() => {
@@ -2085,6 +2121,15 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
 
       {wallStructure === WallStructure.Stud && renderStuds()}
       {wallStructure === WallStructure.Pillar && renderPillars()}
+
+      {/* parapet */}
+      <Parapet
+        args={parapet}
+        wallData={wallDataToParapet}
+        currWallPointData={currWallPointDataToParapet}
+        leftWallPointData={leftWallPointDataToParapet}
+        rightWallPointData={rightWallPointDataToParapet}
+      />
 
       {/* wireFrame */}
       {(wallStructure === WallStructure.Default || (locked && selected)) && (

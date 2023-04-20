@@ -34,6 +34,17 @@ export interface WallModel extends ElementModel {
   unfilledHeight: number;
 
   eavesLength: number;
+
+  parapet: ParapetArgs;
+}
+
+export interface ParapetArgs {
+  display: boolean;
+  color: string;
+  textureType: WallTexture;
+  parapetHeight: number;
+  copingWidth: number;
+  copingHeight: number;
 }
 
 export enum WallFill {

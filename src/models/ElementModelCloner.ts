@@ -627,6 +627,7 @@ export class ElementModelCloner {
       lx: wall.lx,
       ly: wall.ly,
       lz: wall.lz,
+      parapet: { ...wall.parapet },
       eavesLength: wall.eavesLength ?? 0,
       rValue: wall.rValue,
       volumetricHeatCapacity: wall.volumetricHeatCapacity,
