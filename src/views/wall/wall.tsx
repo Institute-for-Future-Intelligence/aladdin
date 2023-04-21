@@ -376,24 +376,36 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   );
 
   const leftWallPointDataToParapet = useMemo(() => {
-    if (!leftWall || !leftWall.parapet) return null;
+    if (!leftWall || !leftWall.parapet || !leftWall.parapet.display) return null;
     return {
       leftPoint: leftWall.leftPoint,
       rightPoint: leftWall.rightPoint,
       ly: leftWall.ly,
       copingsWidth: leftWall.parapet.copingsWidth,
     };
-  }, [leftWall?.leftPoint, leftWall?.rightPoint, leftWall?.ly, leftWall?.parapet?.copingsWidth]);
+  }, [
+    leftWall?.leftPoint,
+    leftWall?.rightPoint,
+    leftWall?.ly,
+    leftWall?.parapet?.copingsWidth,
+    leftWall?.parapet?.display,
+  ]);
 
   const rightWallPointDataToParapet = useMemo(() => {
-    if (!rightWall || !rightWall.parapet) return null;
+    if (!rightWall || !rightWall.parapet || !rightWall.parapet.display) return null;
     return {
       leftPoint: rightWall.leftPoint,
       rightPoint: rightWall.rightPoint,
       ly: rightWall.ly,
       copingsWidth: rightWall.parapet.copingsWidth,
     };
-  }, [rightWall?.leftPoint, rightWall?.rightPoint, rightWall?.ly, rightWall?.parapet?.copingsWidth]);
+  }, [
+    rightWall?.leftPoint,
+    rightWall?.rightPoint,
+    rightWall?.ly,
+    rightWall?.parapet?.copingsWidth,
+    rightWall?.parapet?.display,
+  ]);
 
   // effects
   useEffect(() => {
