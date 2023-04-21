@@ -20,7 +20,6 @@ export interface WallData {
   cy: number;
   hx: number;
   hy: number;
-  hz: number;
   angle: number;
 }
 
@@ -51,7 +50,8 @@ type CopingsPoints = {
 
 const Parapet = ({ args, wallData, currWallPointData, leftWallPointData, rightWallPointData }: ParapetProps) => {
   const { display, color, textureType, parapetHeight, copingsWidth, copingsHeight } = args;
-  const { cx, cy, hx, hy, hz, angle } = wallData;
+  const { cx, cy, hx, hy, angle } = wallData;
+  const bodyHeight = parapetHeight - copingsHeight;
 
   const texture = useWallTexture(textureType);
 
@@ -84,6 +84,7 @@ const Parapet = ({ args, wallData, currWallPointData, leftWallPointData, rightWa
 
   const copingsShape = useMemo(() => {
     const shape = new Shape();
+    if (copingsWidth === 0) return shape;
 
     const outerLeft = new Vector3(-hx, hy - copingsWidth / 2);
     const outerRight = new Vector3(hx, hy - copingsWidth / 2);
@@ -161,15 +162,16 @@ const Parapet = ({ args, wallData, currWallPointData, leftWallPointData, rightWa
   if (!display) return null;
 
   return (
-    <group name={'Parapet Group'} position={[0, 0, hz]}>
+    <group name={'Parapet Group'}>
       {/* body */}
-      <Extrude args={[bodyShape, { steps: 1, depth: parapetHeight, bevelEnabled: false }]}>
+      <Extrude name={'Body Extrude Mesh'} args={[bodyShape, { steps: 1, depth: bodyHeight, bevelEnabled: false }]}>
         <meshStandardMaterial color={color} map={texture} />
       </Extrude>
 
       {/* top copings */}
       <Extrude
-        position={[0, 0, parapetHeight]}
+        name={'Copings Exturde Mesh'}
+        position={[0, 0, bodyHeight]}
         args={[copingsShape, { steps: 1, depth: copingsHeight, bevelEnabled: false }]}
       >
         <meshStandardMaterial color={color} />

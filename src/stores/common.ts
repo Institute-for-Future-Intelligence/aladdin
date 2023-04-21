@@ -182,7 +182,7 @@ export interface CommonStoreState {
   getElementById: (id: string) => ElementModel | null;
   getParent: (child: ElementModel) => ElementModel | null;
   getFoundation: (elem: ElementModel) => FoundationModel | null;
-  selectMe: (id: string, e: ThreeEvent<MouseEvent>, action?: ActionType) => void;
+  selectMe: (id: string, e: ThreeEvent<MouseEvent>, action?: ActionType, select?: boolean) => void;
   selectNone: () => void;
   setElementPosition: (id: string, x: number, y: number, z?: number) => void;
   setElementNormal: (id: string, x: number, y: number, z: number) => void;
@@ -943,13 +943,13 @@ export const useStore = create<CommonStoreState>(
             });
             useRefStore.getState().selectNone();
           },
-          selectMe(id, e, action) {
+          selectMe(id, e, action, select) {
             const setEnableOrbitController = useRefStore.getState().setEnableOrbitController;
             if (e.intersections.length > 0) {
               const intersectableObjects = e.intersections.filter(
                 (obj) => !obj.eventObject.name.startsWith('Wall Intersection Plane'),
               );
-              if (intersectableObjects[0].object === e.eventObject) {
+              if (intersectableObjects[0].object === e.eventObject || select) {
                 immerSet((state) => {
                   for (const elem of state.elements) {
                     if (elem.id === id) {

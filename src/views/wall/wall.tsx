@@ -65,6 +65,7 @@ import Polygon from '../polygon';
 import { SharedUtil } from '../SharedUtil';
 import { UndoableChange } from '../../undo/UndoableChange';
 import Parapet, { DEFAULT_PARAPET_SETTINGS } from './parapet';
+import { RoofModel } from 'src/models/RoofModel';
 
 export const WALL_BLOCK_PLANE = 'Wall Block Plane';
 
@@ -149,6 +150,12 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   const sunlightDirection = useStore(Selector.sunlightDirection);
   const deletedRoofId = useStore(Selector.deletedRoofId);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
+  const roofRise = useStore((state) => {
+    if (!roofId) return 0;
+    const roof = state.elements.find((e) => e.id === roofId) as RoofModel;
+    if (!roof) return 0;
+    return roof.rise;
+  });
 
   // primitive store
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
@@ -189,6 +196,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   const realUnfilledHeight = fill === WallFill.Partial ? unfilledHeight : 0;
   const bottomZ = -hz + realUnfilledHeight;
   const castShadow = shadowEnabled && !transparent;
+  const showParapet = isShowParapet();
+  const parapetZ = Math.max(wallLeftHeight, wallRightHeight);
 
   const mouse = useMemo(() => new Vector2(), []);
   const ray = useMemo(() => new Raycaster(), []);
@@ -353,10 +362,9 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     return arr;
   }, [wallStructure, structureWidth, structureSpacing, lx, ly, lz]);
 
-  const wallDataToParapet = useMemo(
-    () => ({ cx, cy, hx, hy, hz, angle: relativeAngle }),
-    [cx, cy, hx, hy, hz, relativeAngle],
-  );
+  // parapet
+  const wallDataToParapet = useMemo(() => ({ cx, cy, hx, hy, angle: relativeAngle }), [cx, cy, hx, hy, relativeAngle]);
+
   const currWallPointDataToParapet = useMemo(
     () => ({
       leftPoint,
@@ -366,6 +374,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     }),
     [leftPoint, rightPoint, ly, parapet.copingsWidth],
   );
+
   const leftWallPointDataToParapet = useMemo(() => {
     if (!leftWall || !leftWall.parapet) return null;
     return {
@@ -375,6 +384,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       copingsWidth: leftWall.parapet.copingsWidth,
     };
   }, [leftWall?.leftPoint, leftWall?.rightPoint, leftWall?.ly, leftWall?.parapet?.copingsWidth]);
+
   const rightWallPointDataToParapet = useMemo(() => {
     if (!rightWall || !rightWall.parapet) return null;
     return {
@@ -447,6 +457,17 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       });
     }
   }, [deletedRoofId]);
+
+  function isShowParapet() {
+    if (!roofId) return true;
+    if (leftRoofHeight === undefined && rightRoofHeight === undefined) {
+      return Math.abs(roofRise) < 0.01;
+    }
+    if (leftRoofHeight !== undefined && rightRoofHeight !== undefined) {
+      return Math.abs(roofRise) < 0.01 && Math.abs(leftRoofHeight - rightRoofHeight) < 0.01;
+    }
+    return false;
+  }
 
   function drawWallShape(
     shape: Shape,
@@ -1770,6 +1791,30 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     }
   }
 
+  function handleParapetPointerDown(e: ThreeEvent<PointerEvent>) {
+    if (e.intersections.length > 0 && e.intersections[0].eventObject === e.eventObject) {
+      if (useStore.getState().groupActionMode) {
+        setCommonStore((state) => {
+          for (const e of state.elements) {
+            e.selected = e.id === parentId;
+          }
+          state.groupMasterId = parentId;
+        });
+        e.stopPropagation();
+      } else if (isAllowedToSelectMe()) {
+        selectMe(id, e, ActionType.Select, true);
+      }
+    }
+  }
+
+  function handleParapetContextMenu(e: ThreeEvent<MouseEvent>) {
+    setCommonStore((state) => {
+      if (e.intersections.length > 0 && e.intersections[0].eventObject === e.eventObject) {
+        state.contextMenuObjectType = ObjectType.Wall;
+      }
+    });
+  }
+
   function renderStuds() {
     let [wallCenterPos, wallCenterHeight] = centerRoofHeight ?? [0, (wallLeftHeight + wallRightHeight) / 2];
     wallCenterPos = wallCenterPos * lx;
@@ -2122,13 +2167,22 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       {wallStructure === WallStructure.Pillar && renderPillars()}
 
       {/* parapet */}
-      <Parapet
-        args={parapet}
-        wallData={wallDataToParapet}
-        currWallPointData={currWallPointDataToParapet}
-        leftWallPointData={leftWallPointDataToParapet}
-        rightWallPointData={rightWallPointDataToParapet}
-      />
+      {showParapet && (
+        <group
+          name={'Wall Parapet Group'}
+          position={[0, 0, parapetZ - hz]}
+          onContextMenu={handleParapetContextMenu}
+          onPointerDown={handleParapetPointerDown}
+        >
+          <Parapet
+            args={parapet}
+            wallData={wallDataToParapet}
+            currWallPointData={currWallPointDataToParapet}
+            leftWallPointData={leftWallPointDataToParapet}
+            rightWallPointData={rightWallPointDataToParapet}
+          />
+        </group>
+      )}
 
       {/* wireFrame */}
       {(wallStructure === WallStructure.Default || (locked && selected)) && (
