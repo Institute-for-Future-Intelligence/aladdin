@@ -471,14 +471,16 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   }, [deletedRoofId]);
 
   function isShowParapet() {
-    if (!roofId) return true;
-    if (leftRoofHeight === undefined && rightRoofHeight === undefined) {
-      return Math.abs(roofRise) < 0.01;
-    }
-    if (leftRoofHeight !== undefined && rightRoofHeight !== undefined) {
-      return Math.abs(roofRise) < 0.01 && Math.abs(leftRoofHeight - rightRoofHeight) < 0.01;
-    }
-    return false;
+    // remove check for now
+    // if (!roofId) return true;
+    // if (leftRoofHeight === undefined && rightRoofHeight === undefined) {
+    //   return Math.abs(roofRise) < 0.01;
+    // }
+    // if (leftRoofHeight !== undefined && rightRoofHeight !== undefined) {
+    //   return Math.abs(roofRise) < 0.01 && Math.abs(leftRoofHeight - rightRoofHeight) < 0.01;
+    // }
+    // return false;
+    return true;
   }
 
   function drawWallShape(
