@@ -15,6 +15,7 @@ interface WallWireFrameProps {
   hz: number;
   fill: WallFill;
   unfilledHeight: number;
+  showParapet: boolean;
   leftHeight?: number;
   rightHeight?: number;
   center?: number[];
@@ -30,6 +31,7 @@ const WallWireFrame = React.memo(
     hz,
     fill,
     unfilledHeight,
+    showParapet = false,
     leftHeight = 2 * hz,
     rightHeight = 2 * hz,
     center,
@@ -57,6 +59,8 @@ const WallWireFrame = React.memo(
     if (orthographic) {
       lineWidth = 2;
       points.push(upperLeft, upperRight);
+    } else if (showParapet) {
+      points.push(upperLeft, lowerLeft, lowerRight, upperRight);
     } else {
       points.push(lowerLeft, upperLeft);
       if (centerLeft) {

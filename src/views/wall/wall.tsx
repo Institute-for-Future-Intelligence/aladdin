@@ -150,12 +150,12 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   const sunlightDirection = useStore(Selector.sunlightDirection);
   const deletedRoofId = useStore(Selector.deletedRoofId);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
-  const roofRise = useStore((state) => {
-    if (!roofId) return 0;
-    const roof = state.elements.find((e) => e.id === roofId) as RoofModel;
-    if (!roof) return 0;
-    return roof.rise;
-  });
+  // const roofRise = useStore((state) => {
+  //   if (!roofId) return 0;
+  //   const roof = state.elements.find((e) => e.id === roofId) as RoofModel;
+  //   if (!roof) return 0;
+  //   return roof.rise;
+  // });
 
   // primitive store
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
@@ -2207,6 +2207,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           hz={hz}
           fill={fill}
           unfilledHeight={unfilledHeight}
+          showParapet={parapet.display && showParapet}
           leftHeight={leftRoofHeight}
           rightHeight={rightRoofHeight}
           center={centerRoofHeight}
