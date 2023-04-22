@@ -480,7 +480,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     //   return Math.abs(roofRise) < 0.01 && Math.abs(leftRoofHeight - rightRoofHeight) < 0.01;
     // }
     // return false;
-    return true;
+    return parapet.display;
   }
 
   function drawWallShape(
@@ -2051,7 +2051,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           </mesh>
 
           {/* top surface */}
-          {!roofId && (
+          {!roofId && !showParapet && (
             <mesh
               name={'Top Wall'}
               ref={topSurfaceRef}
@@ -2207,7 +2207,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           hz={hz}
           fill={fill}
           unfilledHeight={unfilledHeight}
-          showParapet={parapet.display && showParapet}
+          showParapet={showParapet}
           leftHeight={leftRoofHeight}
           rightHeight={rightRoofHeight}
           center={centerRoofHeight}

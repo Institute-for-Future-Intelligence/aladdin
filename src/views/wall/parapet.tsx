@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Extrude } from '@react-three/drei';
+import { Extrude, Line } from '@react-three/drei';
 import { HALF_PI, ZERO_TOLERANCE } from 'src/constants';
 import { ParapetArgs } from 'src/models/WallModel';
 import { WallTexture } from 'src/types';
@@ -55,6 +55,36 @@ const Parapet = ({ args, wallData, currWallPointData, leftWallPointData, rightWa
 
   const texture = useWallTexture(textureType);
 
+  const copingsPoints = useMemo(() => {
+    const outerLeft = new Vector3(-hx, hy - copingsWidth / 2);
+    const outerRight = new Vector3(hx, hy - copingsWidth / 2);
+    const innerRight = new Vector3(hx, hy + copingsWidth / 2);
+    const innerLeft = new Vector3(-hx, hy + copingsWidth / 2);
+
+    const points = [outerLeft, outerRight, innerRight, innerLeft];
+
+    if (rightWallPointData || leftWallPointData) {
+      const currWallCopingsPoints = getCopingsPoints(currWallPointData);
+
+      if (rightWallPointData && isSamePoint(currWallPointData.rightPoint, rightWallPointData.leftPoint)) {
+        const copingsInterSectionPoints = getCopingsIntersectionPoints(currWallCopingsPoints, rightWallPointData);
+        if (copingsInterSectionPoints) {
+          outerRight.copy(copingsInterSectionPoints.outerIntersection);
+          innerRight.copy(copingsInterSectionPoints.innerIntersection);
+        }
+      }
+      if (leftWallPointData && isSamePoint(currWallPointData.leftPoint, leftWallPointData.rightPoint)) {
+        const copingsInterSectionPoints = getCopingsIntersectionPoints(currWallCopingsPoints, leftWallPointData);
+        if (copingsInterSectionPoints) {
+          outerLeft.copy(copingsInterSectionPoints.outerIntersection);
+          innerLeft.copy(copingsInterSectionPoints.innerIntersection);
+        }
+      }
+    }
+
+    return points;
+  }, [hy, copingsWidth, currWallPointData, leftWallPointData, rightWallPointData]);
+
   const bodyShape = useMemo(() => {
     const shape = new Shape();
 
@@ -86,29 +116,7 @@ const Parapet = ({ args, wallData, currWallPointData, leftWallPointData, rightWa
     const shape = new Shape();
     if (copingsWidth === 0) return shape;
 
-    const outerLeft = new Vector3(-hx, hy - copingsWidth / 2);
-    const outerRight = new Vector3(hx, hy - copingsWidth / 2);
-    const innerRight = new Vector3(hx, hy + copingsWidth / 2);
-    const innerLeft = new Vector3(-hx, hy + copingsWidth / 2);
-
-    if (rightWallPointData || leftWallPointData) {
-      const currWallCopingsPoints = getCopingsPoints(currWallPointData);
-
-      if (rightWallPointData && isSamePoint(currWallPointData.rightPoint, rightWallPointData.leftPoint)) {
-        const copingsInterSectionPoints = getCopingsIntersectionPoints(currWallCopingsPoints, rightWallPointData);
-        if (copingsInterSectionPoints) {
-          outerRight.copy(copingsInterSectionPoints.outerIntersection);
-          innerRight.copy(copingsInterSectionPoints.innerIntersection);
-        }
-      }
-      if (leftWallPointData && isSamePoint(currWallPointData.leftPoint, leftWallPointData.rightPoint)) {
-        const copingsInterSectionPoints = getCopingsIntersectionPoints(currWallCopingsPoints, leftWallPointData);
-        if (copingsInterSectionPoints) {
-          outerLeft.copy(copingsInterSectionPoints.outerIntersection);
-          innerLeft.copy(copingsInterSectionPoints.innerIntersection);
-        }
-      }
-    }
+    const [outerLeft, outerRight, innerRight, innerLeft] = copingsPoints;
 
     shape.moveTo(outerLeft.x, outerLeft.y);
     shape.lineTo(outerRight.x, outerRight.y);
@@ -116,7 +124,14 @@ const Parapet = ({ args, wallData, currWallPointData, leftWallPointData, rightWa
     shape.lineTo(innerLeft.x, innerLeft.y);
     shape.closePath();
     return shape;
-  }, [hy, copingsWidth, currWallPointData, leftWallPointData, rightWallPointData]);
+  }, [hy, copingsWidth, copingsPoints]);
+
+  const copingsWireframePoints = useMemo(() => {
+    return copingsPoints.map((v) => v.toArray() as [number, number, number]);
+  }, [hy, copingsPoints]);
+
+  const bodyHorizontalWireframePoints = useMemo(() => [new Vector3(-hx, 0, 0), new Vector3(hx, 0, 0)], [hx]);
+  const bodyVerticalWireframePoints = useMemo(() => [new Vector3(), new Vector3(0, 0, bodyHeight)], [bodyHeight]);
 
   function getCopingsIntersectionPoints(currCopingsPoints: CopingsPoints, sideWallPointData: WallPointData) {
     const sideWallCopingsPoints = getCopingsPoints(sideWallPointData);
@@ -168,7 +183,12 @@ const Parapet = ({ args, wallData, currWallPointData, leftWallPointData, rightWa
         <meshStandardMaterial color={color} map={texture} />
       </Extrude>
 
-      {/* top copings */}
+      {/* body wireframe */}
+      <Line position={[hx, 0, 0]} points={bodyVerticalWireframePoints} color={'black'} lineWidth={0.2} />
+      <Line position={[-hx, 0, 0]} points={bodyVerticalWireframePoints} color={'black'} lineWidth={0.2} />
+      <Line position={[0, 0, bodyHeight]} points={bodyHorizontalWireframePoints} color={'black'} lineWidth={0.2} />
+
+      {/* copings */}
       <Extrude
         name={'Copings Exturde Mesh'}
         position={[0, 0, bodyHeight]}
@@ -176,6 +196,15 @@ const Parapet = ({ args, wallData, currWallPointData, leftWallPointData, rightWa
       >
         <meshStandardMaterial color={color} />
       </Extrude>
+
+      {/* copings wireframe */}
+      <Line
+        position={[0, 0, bodyHeight + copingsHeight]}
+        points={copingsWireframePoints}
+        color={'black'}
+        lineWidth={0.2}
+      />
+      <Line position={[0, 0, bodyHeight]} points={copingsWireframePoints} color={'black'} lineWidth={0.2} />
     </group>
   );
 };
