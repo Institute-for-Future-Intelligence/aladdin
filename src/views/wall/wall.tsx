@@ -1203,7 +1203,6 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       boundedPointer.setZ(Util.clamp(pointer.z, boundingMinZ + botHeight, boundingMaxZ));
     } else {
       const boundedShape = getBoundedShape(elHx, elHz, boundingMinX, boundingMaxX, padding);
-      s.current = boundedShape;
       const pointer2D = new Vector2(pointer.x, pointer.z);
 
       let maxY = Infinity;
