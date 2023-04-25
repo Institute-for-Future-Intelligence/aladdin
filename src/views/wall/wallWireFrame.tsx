@@ -14,7 +14,8 @@ interface WallWireFrameProps {
   hx: number;
   hz: number;
   fill: WallFill;
-  unfilledHeight: number;
+  leftUnfilledHeight: number;
+  rightUnfilledHeight: number;
   showParapet: boolean;
   leftHeight?: number;
   rightHeight?: number;
@@ -30,7 +31,8 @@ const WallWireFrame = React.memo(
     hx,
     hz,
     fill,
-    unfilledHeight,
+    leftUnfilledHeight,
+    rightUnfilledHeight,
     showParapet = false,
     leftHeight = 2 * hz,
     rightHeight = 2 * hz,
@@ -42,12 +44,12 @@ const WallWireFrame = React.memo(
 
     const lowerLeft: [number, number, number] = [
       -hx,
-      -hz + 0.001 + (fill === WallFill.Partial ? unfilledHeight : 0),
+      -hz + 0.001 + (fill === WallFill.Partial ? leftUnfilledHeight : 0),
       0.001,
     ];
     const lowerRight: [number, number, number] = [
       hx,
-      -hz + 0.001 + (fill === WallFill.Partial ? unfilledHeight : 0),
+      -hz + 0.001 + (fill === WallFill.Partial ? rightUnfilledHeight : 0),
       0.001,
     ];
     const upperLeft: [number, number, number] = [-hx, leftHeight - hz - 0.001, 0.001];

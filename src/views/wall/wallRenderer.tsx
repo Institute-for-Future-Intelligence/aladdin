@@ -31,7 +31,8 @@ const WallRenderer = (wallModel: WallModel) => {
     fill,
     selected,
     locked,
-    unfilledHeight,
+    leftUnfilledHeight,
+    rightUnfilledHeight,
     leftJoints,
     rightJoints,
   } = wallModel;
@@ -79,7 +80,8 @@ const WallRenderer = (wallModel: WallModel) => {
             absAngle={relativeAngle + foundation.rotation[2]}
             x={hx}
             z={hz}
-            unfilledHeight={unfilledHeight}
+            leftUnfilledHeight={leftUnfilledHeight}
+            rightUnfilledHeight={rightUnfilledHeight}
             fill={fill}
             highLight={highLight}
             leftJoints={leftJoints}

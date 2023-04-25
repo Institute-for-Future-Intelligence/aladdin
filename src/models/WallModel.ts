@@ -31,11 +31,15 @@ export interface WallModel extends ElementModel {
   volumetricHeatCapacity: number;
 
   fill: WallFill;
-  unfilledHeight: number;
+  leftUnfilledHeight: number;
+  rightUnfilledHeight: number;
 
   eavesLength: number;
 
   parapet: ParapetArgs;
+
+  // old property
+  unfilledHeight?: number;
 }
 
 export interface ParapetArgs {

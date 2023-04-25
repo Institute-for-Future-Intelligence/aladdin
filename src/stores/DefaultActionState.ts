@@ -64,7 +64,6 @@ export class DefaultActionState implements ActionState {
   wallOpacity: number;
   wallRValue: number;
   wallVolumetricHeatCapacity: number;
-  wallUnfilledHeight: number;
   wallEavesLength: number;
   wallParapet: ParapetArgs;
 
@@ -193,7 +192,6 @@ export class DefaultActionState implements ActionState {
     this.wallOpacity = 0.5;
     this.wallRValue = DEFAULT_WALL_R_VALUE;
     this.wallVolumetricHeatCapacity = 0.5;
-    this.wallUnfilledHeight = 0.5;
     this.wallEavesLength = 0.3;
     this.wallParapet = DEFAULT_PARAPET_SETTINGS;
 
