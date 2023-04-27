@@ -16,6 +16,8 @@ import { useHandleSize } from './hooks';
 import { Util } from 'src/Util';
 import { UndoableResizeWallHeight } from 'src/undo/UndoableResize';
 import { RoofModel, RoofType } from 'src/models/RoofModel';
+import { ElementModel } from 'src/models/ElementModel';
+import { Point2 } from 'src/models/Point2';
 
 interface ResizeHandlesProps {
   x: number;
@@ -115,6 +117,7 @@ const WallResizeHandleWrapper = React.memo(
     const oldHeightsRef = useRef<number[]>([z * 2, leftUnfilledHeight, rightUnfilledHeight]);
     const leftWallLzRef = useRef<number | null>(null);
     const rightWallLzRef = useRef<number | null>(null);
+    const childElements = useRef<ElementModel[]>([]);
 
     const roofType = useMemo(() => {
       if (!roofId) return null;
@@ -158,6 +161,78 @@ const WallResizeHandleWrapper = React.memo(
       }
     };
 
+    const getChildElements = () => {
+      childElements.current = useStore.getState().elements.filter((e) => e.parentId === id);
+    };
+
+    const getWallShapePoints = (wall: WallModel, newLeftUnfilledHeight: number, newRightUnfilledHeight: number) => {
+      const {
+        lx,
+        lz,
+        roofId,
+        leftRoofHeight,
+        rightRoofHeight,
+        centerLeftRoofHeight,
+        centerRightRoofHeight,
+        centerRoofHeight,
+      } = wall;
+      const [hx, hy] = [lx / 2, lz / 2];
+
+      const points: Point2[] = [];
+
+      // from lower left, counter-clockwise
+      points.push({ x: -hx, y: -hy + newLeftUnfilledHeight }, { x: hx, y: -hy + newRightUnfilledHeight });
+
+      if (!roofId) {
+        points.push({ x: hx, y: hy }, { x: -hx, y: hy });
+      } else {
+        if (rightRoofHeight) {
+          points.push({ x: hx, y: -hy + rightRoofHeight });
+        } else {
+          points.push({ x: hx, y: hy });
+        }
+        if (centerRightRoofHeight) {
+          points.push({ x: centerRightRoofHeight[0] * lx, y: -hy + centerRightRoofHeight[1] });
+        }
+        if (centerRoofHeight) {
+          points.push({ x: centerRoofHeight[0] * lx, y: -hy + centerRoofHeight[1] });
+        }
+        if (centerLeftRoofHeight) {
+          points.push({ x: centerLeftRoofHeight[0] * lx, y: -hy + centerLeftRoofHeight[1] });
+        }
+        if (leftRoofHeight) {
+          points.push({ x: -hx, y: -hy + leftRoofHeight });
+        } else {
+          points.push({ x: -hx, y: hy });
+        }
+      }
+
+      return points;
+    };
+
+    const isValid = (wall: WallModel, newLeftUnfilledHeight: number, newRightUnfilledHeight: number) => {
+      const wallShapePoints = getWallShapePoints(wall, newLeftUnfilledHeight, newRightUnfilledHeight);
+
+      if (childElements.current.length > 0) {
+        for (const el of childElements.current) {
+          let { cx, cz, lx, ly, lz } = el;
+          cx *= wall.lx;
+          cz *= wall.lz;
+          if (el.type !== ObjectType.SolarPanel) {
+            lx *= wall.lx;
+            lz *= wall.lz;
+          } else {
+            lz = ly;
+          }
+          if (!Util.isElementInsideWall(new Vector3(cx, 0, cz), lx, lz, wallShapePoints)) {
+            return false;
+          }
+        }
+      }
+
+      return true;
+    };
+
     const resetJointedWallLz = () => {
       leftWallLzRef.current = null;
       rightWallLzRef.current = null;
@@ -184,12 +259,14 @@ const WallResizeHandleWrapper = React.memo(
         case ResizeHandleType.WallPartialResizeLeft: {
           setIntersectionPlane(-x);
           getJointedWallLz();
+          getChildElements();
           break;
         }
         case ResizeHandleType.UpperRight:
         case ResizeHandleType.WallPartialResizeRight: {
           setIntersectionPlane(x);
           getJointedWallLz();
+          getChildElements();
           break;
         }
         default:
@@ -275,9 +352,13 @@ const WallResizeHandleWrapper = React.memo(
                     }
                   }
                 }
-                wall.leftUnfilledHeight = newUnfilledHeight;
-                if (state.enableFineGrid) {
-                  wall.rightUnfilledHeight = newUnfilledHeight;
+                if (
+                  isValid(wall, newUnfilledHeight, state.enableFineGrid ? newUnfilledHeight : wall.rightUnfilledHeight)
+                ) {
+                  wall.leftUnfilledHeight = newUnfilledHeight;
+                  if (state.enableFineGrid) {
+                    wall.rightUnfilledHeight = newUnfilledHeight;
+                  }
                 }
                 break;
               }
@@ -302,9 +383,13 @@ const WallResizeHandleWrapper = React.memo(
                     }
                   }
                 }
-                wall.rightUnfilledHeight = newUnfilledHeight;
-                if (state.enableFineGrid) {
-                  wall.leftUnfilledHeight = newUnfilledHeight;
+                if (
+                  isValid(wall, state.enableFineGrid ? newUnfilledHeight : wall.leftUnfilledHeight, newUnfilledHeight)
+                ) {
+                  wall.rightUnfilledHeight = newUnfilledHeight;
+                  if (state.enableFineGrid) {
+                    wall.leftUnfilledHeight = newUnfilledHeight;
+                  }
                 }
                 break;
               }
