@@ -44,7 +44,6 @@ import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { InnerCommonState } from 'src/stores/InnerCommonState';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { GroupableModel, isGroupable } from 'src/models/Groupable';
-import { CuboidModel } from 'src/models/CuboidModel';
 
 const Ground = () => {
   const setCommonStore = useStore(Selector.set);
@@ -2002,6 +2001,10 @@ const Ground = () => {
         break;
     }
   };
+
+  // const [e0, e1] = useStore((state) => state.elements.slice(0, 2));
+
+  // console.log('ground');
 
   return (
     <>

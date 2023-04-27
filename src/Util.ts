@@ -1562,7 +1562,8 @@ export class Util {
       lz,
       relativeAngle,
       fill,
-      unfilledHeight,
+      leftUnfilledHeight,
+      rightUnfilledHeight,
       leftRoofHeight,
       centerLeftRoofHeight,
       centerRoofHeight,
@@ -1588,8 +1589,8 @@ export class Util {
     const x = lx / 2;
     const y = lz / 2;
     if (fill === WallFill.Partial) {
-      points.push({ x: -x + leftOffset, y: -y + unfilledHeight });
-      points.push({ x: x - rightOffset, y: -y + unfilledHeight });
+      points.push({ x: -x + leftOffset, y: -y + leftUnfilledHeight });
+      points.push({ x: x - rightOffset, y: -y + rightUnfilledHeight });
     } else {
       points.push({ x: -x + leftOffset, y: -y });
       points.push({ x: x - rightOffset, y: -y });

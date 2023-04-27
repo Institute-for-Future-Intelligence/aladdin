@@ -49,7 +49,6 @@ export interface ActionState {
   wallStructureColor: string;
   wallRValue: number;
   wallVolumetricHeatCapacity: number;
-  wallUnfilledHeight: number;
   wallEavesLength: number;
   wallParapet: ParapetArgs;
 

@@ -16,6 +16,8 @@ import { useHandleSize } from './hooks';
 import { Util } from 'src/Util';
 import { UndoableResizeWallHeight } from 'src/undo/UndoableResize';
 import { RoofModel, RoofType } from 'src/models/RoofModel';
+import { ElementModel } from 'src/models/ElementModel';
+import { Point2 } from 'src/models/Point2';
 
 interface ResizeHandlesProps {
   x: number;
@@ -34,7 +36,8 @@ interface WallResizeHandleWarpperProps {
   absAngle: number;
   highLight: boolean;
   fill: WallFill;
-  unfilledHeight: number;
+  leftUnfilledHeight: number;
+  rightUnfilledHeight: number;
   leftJoints: string[];
   rightJoints: string[];
 }
@@ -94,7 +97,8 @@ const WallResizeHandleWrapper = React.memo(
     x,
     z,
     absAngle,
-    unfilledHeight,
+    leftUnfilledHeight,
+    rightUnfilledHeight,
     fill,
     highLight,
     leftJoints,
@@ -110,9 +114,10 @@ const WallResizeHandleWrapper = React.memo(
 
     const intersectionPlaneRef = useRef<Mesh>(null);
     const pointerDownRef = useRef(false);
-    const oldHeightsRef = useRef<number[]>([z * 2, unfilledHeight]);
+    const oldHeightsRef = useRef<number[]>([z * 2, leftUnfilledHeight, rightUnfilledHeight]);
     const leftWallLzRef = useRef<number | null>(null);
     const rightWallLzRef = useRef<number | null>(null);
+    const childElements = useRef<ElementModel[]>([]);
 
     const roofType = useMemo(() => {
       if (!roofId) return null;
@@ -134,12 +139,13 @@ const WallResizeHandleWrapper = React.memo(
     };
 
     const updateUndoChange = (id: string, vals: number[]) => {
-      const [lz, unfilledHeight] = vals;
+      const [lz, leftUnfilledHeight, rightUnfilledHeight] = vals;
       setCommonStore((state) => {
         for (const e of state.elements) {
           if (e.id === id && e.type === ObjectType.Wall) {
             e.lz = lz;
-            (e as WallModel).unfilledHeight = unfilledHeight;
+            (e as WallModel).leftUnfilledHeight = leftUnfilledHeight;
+            (e as WallModel).rightUnfilledHeight = rightUnfilledHeight;
             break;
           }
         }
@@ -153,6 +159,78 @@ const WallResizeHandleWrapper = React.memo(
           if (e.id === rightJoints[0]) rightWallLzRef.current = e.lz;
         });
       }
+    };
+
+    const getChildElements = () => {
+      childElements.current = useStore.getState().elements.filter((e) => e.parentId === id);
+    };
+
+    const getWallShapePoints = (wall: WallModel, newLeftUnfilledHeight: number, newRightUnfilledHeight: number) => {
+      const {
+        lx,
+        lz,
+        roofId,
+        leftRoofHeight,
+        rightRoofHeight,
+        centerLeftRoofHeight,
+        centerRightRoofHeight,
+        centerRoofHeight,
+      } = wall;
+      const [hx, hy] = [lx / 2, lz / 2];
+
+      const points: Point2[] = [];
+
+      // from lower left, counter-clockwise
+      points.push({ x: -hx, y: -hy + newLeftUnfilledHeight }, { x: hx, y: -hy + newRightUnfilledHeight });
+
+      if (!roofId) {
+        points.push({ x: hx, y: hy }, { x: -hx, y: hy });
+      } else {
+        if (rightRoofHeight) {
+          points.push({ x: hx, y: -hy + rightRoofHeight });
+        } else {
+          points.push({ x: hx, y: hy });
+        }
+        if (centerRightRoofHeight) {
+          points.push({ x: centerRightRoofHeight[0] * lx, y: -hy + centerRightRoofHeight[1] });
+        }
+        if (centerRoofHeight) {
+          points.push({ x: centerRoofHeight[0] * lx, y: -hy + centerRoofHeight[1] });
+        }
+        if (centerLeftRoofHeight) {
+          points.push({ x: centerLeftRoofHeight[0] * lx, y: -hy + centerLeftRoofHeight[1] });
+        }
+        if (leftRoofHeight) {
+          points.push({ x: -hx, y: -hy + leftRoofHeight });
+        } else {
+          points.push({ x: -hx, y: hy });
+        }
+      }
+
+      return points;
+    };
+
+    const isValid = (wall: WallModel, newLeftUnfilledHeight: number, newRightUnfilledHeight: number) => {
+      const wallShapePoints = getWallShapePoints(wall, newLeftUnfilledHeight, newRightUnfilledHeight);
+
+      if (childElements.current.length > 0) {
+        for (const el of childElements.current) {
+          let { cx, cz, lx, ly, lz } = el;
+          cx *= wall.lx;
+          cz *= wall.lz;
+          if (el.type !== ObjectType.SolarPanel) {
+            lx *= wall.lx;
+            lz *= wall.lz;
+          } else {
+            lz = ly;
+          }
+          if (!Util.isElementInsideWall(new Vector3(cx, 0, cz), lx, lz, wallShapePoints)) {
+            return false;
+          }
+        }
+      }
+
+      return true;
     };
 
     const resetJointedWallLz = () => {
@@ -181,12 +259,14 @@ const WallResizeHandleWrapper = React.memo(
         case ResizeHandleType.WallPartialResizeLeft: {
           setIntersectionPlane(-x);
           getJointedWallLz();
+          getChildElements();
           break;
         }
         case ResizeHandleType.UpperRight:
         case ResizeHandleType.WallPartialResizeRight: {
           setIntersectionPlane(x);
           getJointedWallLz();
+          getChildElements();
           break;
         }
         default:
@@ -198,7 +278,7 @@ const WallResizeHandleWrapper = React.memo(
       });
       useRefStore.getState().setEnableOrbitController(false);
       pointerDownRef.current = true;
-      oldHeightsRef.current = [z * 2, unfilledHeight];
+      oldHeightsRef.current = [z * 2, leftUnfilledHeight, rightUnfilledHeight];
     };
 
     const handlePointerMove = (e: ThreeEvent<PointerEvent>) => {
@@ -208,7 +288,8 @@ const WallResizeHandleWrapper = React.memo(
         case ResizeHandleType.UpperLeft:
         case ResizeHandleType.UpperRight: {
           setCommonStore((state) => {
-            let newLz = Math.max(handleSize, p.z - parentLz);
+            const minZ = fill === WallFill.Partial ? Math.max(leftUnfilledHeight, rightUnfilledHeight) : 0;
+            let newLz = Math.max(minZ + handleSize, p.z - parentLz);
             if (roofType === null || roofType === RoofType.Gable || roofType === RoofType.Gambrel) {
               if (leftWallLzRef.current || rightWallLzRef.current) {
                 const leftDiff = Math.abs(newLz - (leftWallLzRef.current ?? Infinity));
@@ -224,8 +305,11 @@ const WallResizeHandleWrapper = React.memo(
                   const wall = e as WallModel;
                   wall.lz = newLz;
                   wall.cz = newLz / 2;
-                  if (newLz < wall.unfilledHeight + handleSize) {
-                    wall.unfilledHeight = newLz - handleSize;
+                  if (newLz < wall.leftUnfilledHeight + handleSize) {
+                    wall.leftUnfilledHeight = newLz - handleSize;
+                  }
+                  if (newLz < wall.rightUnfilledHeight + handleSize) {
+                    wall.rightUnfilledHeight = newLz - handleSize;
                   }
                   break;
                 }
@@ -236,8 +320,11 @@ const WallResizeHandleWrapper = React.memo(
                   const wall = e as WallModel;
                   wall.lz = newLz;
                   wall.cz = newLz / 2;
-                  if (newLz < wall.unfilledHeight + handleSize) {
-                    wall.unfilledHeight = newLz - handleSize;
+                  if (newLz < wall.leftUnfilledHeight + handleSize) {
+                    wall.leftUnfilledHeight = newLz - handleSize;
+                  }
+                  if (newLz < wall.rightUnfilledHeight + handleSize) {
+                    wall.rightUnfilledHeight = newLz - handleSize;
                   }
                 }
               }
@@ -248,15 +335,62 @@ const WallResizeHandleWrapper = React.memo(
           });
           break;
         }
-        case ResizeHandleType.WallPartialResizeLeft:
+        case ResizeHandleType.WallPartialResizeLeft: {
+          setCommonStore((state) => {
+            for (const e of state.elements) {
+              if (e.id === id && e.type === ObjectType.Wall) {
+                const wall = e as WallModel;
+                let newUnfilledHeight = Util.clamp(p.z - parentLz, 0.1, e.lz - handleSize);
+                if (wall.leftJoints.length > 0) {
+                  const leftWall = state.elements.find(
+                    (e) => e.id === wall.leftJoints[0] && e.type === ObjectType.Wall,
+                  ) as WallModel;
+                  if (leftWall && leftWall.fill === WallFill.Partial) {
+                    const leftWallRightUnfilledHeight = leftWall.rightUnfilledHeight;
+                    if (Math.abs(newUnfilledHeight - leftWallRightUnfilledHeight) < 0.5) {
+                      newUnfilledHeight = leftWallRightUnfilledHeight;
+                    }
+                  }
+                }
+                if (
+                  isValid(wall, newUnfilledHeight, state.enableFineGrid ? newUnfilledHeight : wall.rightUnfilledHeight)
+                ) {
+                  wall.leftUnfilledHeight = newUnfilledHeight;
+                  if (state.enableFineGrid) {
+                    wall.rightUnfilledHeight = newUnfilledHeight;
+                  }
+                }
+                break;
+              }
+            }
+          });
+          break;
+        }
         case ResizeHandleType.WallPartialResizeRight: {
           setCommonStore((state) => {
             for (const e of state.elements) {
               if (e.id === id && e.type === ObjectType.Wall) {
-                // set the minimum unfilled height to be 0.1
-                const newUnfilledHeight = Util.clamp(p.z - parentLz, 0.1, e.lz - 0.1);
-                (e as WallModel).unfilledHeight = newUnfilledHeight;
-                state.actionState.wallUnfilledHeight = newUnfilledHeight;
+                const wall = e as WallModel;
+                let newUnfilledHeight = Util.clamp(p.z - parentLz, 0.1, e.lz - handleSize);
+                if (wall.rightJoints.length > 0) {
+                  const rightWall = state.elements.find(
+                    (e) => e.id === wall.rightJoints[0] && e.type === ObjectType.Wall,
+                  ) as WallModel;
+                  if (rightWall && rightWall.fill === WallFill.Partial) {
+                    const rightWallLeftUnfilledHeight = rightWall.leftUnfilledHeight;
+                    if (Math.abs(newUnfilledHeight - rightWallLeftUnfilledHeight) < 0.5) {
+                      newUnfilledHeight = rightWallLeftUnfilledHeight;
+                    }
+                  }
+                }
+                if (
+                  isValid(wall, state.enableFineGrid ? newUnfilledHeight : wall.leftUnfilledHeight, newUnfilledHeight)
+                ) {
+                  wall.rightUnfilledHeight = newUnfilledHeight;
+                  if (state.enableFineGrid) {
+                    wall.leftUnfilledHeight = newUnfilledHeight;
+                  }
+                }
                 break;
               }
             }
@@ -278,7 +412,7 @@ const WallResizeHandleWrapper = React.memo(
         resizedElementId: id,
         resizedElementType: ObjectType.Wall,
         oldHeights: [...oldHeightsRef.current],
-        newHeights: [z * 2, unfilledHeight],
+        newHeights: [z * 2, leftUnfilledHeight, rightUnfilledHeight],
         undo() {
           updateUndoChange(this.resizedElementId, this.oldHeights);
         },
@@ -289,7 +423,6 @@ const WallResizeHandleWrapper = React.memo(
       useStore.getState().addUndoable(undoableChangeHeight);
       setCommonStore((state) => {
         state.actionState.wallHeight = z * 2;
-        state.actionState.wallUnfilledHeight = unfilledHeight;
         state.resizeHandleType = null;
       });
     };
@@ -333,14 +466,14 @@ const WallResizeHandleWrapper = React.memo(
                 <>
                   <WallResizeHandle
                     x={-x}
-                    z={-z + unfilledHeight}
+                    z={-z + leftUnfilledHeight}
                     handleType={ResizeHandleType.WallPartialResizeLeft}
                     highLight={highLight}
                     handleSize={handleSize}
                   />
                   <WallResizeHandle
                     x={x}
-                    z={-z + unfilledHeight}
+                    z={-z + rightUnfilledHeight}
                     handleType={ResizeHandleType.WallPartialResizeRight}
                     highLight={highLight}
                     handleSize={handleSize}
