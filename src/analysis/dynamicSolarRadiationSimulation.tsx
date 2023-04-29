@@ -466,13 +466,23 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     const normalWest = UNIT_VECTOR_NEG_X.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, cuboid.rotation[2]);
     const normalEast = UNIT_VECTOR_POS_X.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, cuboid.rotation[2]);
 
+    const parent = getParent(cuboid);
+    let cx = cuboid.cx;
+    let cy = cuboid.cy;
+    let cz = cuboid.cz;
+    if (parent && parent.type === ObjectType.Cuboid) {
+      const worldData = Util.getWorldDataById(cuboid.id);
+      cx = worldData.pos.x;
+      cy = worldData.pos.y;
+      cz = worldData.pos.z;
+    }
     const vec = new Vector3();
-    const center2d = new Vector2(cuboid.cx, cuboid.cy);
+    const center2d = new Vector2(cx, cy);
     const v2 = new Vector2();
-    const southY = cuboid.cy - cuboid.ly / 2;
-    const northY = cuboid.cy + cuboid.ly / 2;
-    const westX = cuboid.cx - cuboid.lx / 2;
-    const eastX = cuboid.cx + cuboid.lx / 2;
+    const southY = cy - ly / 2;
+    const northY = cy + ly / 2;
+    const westX = cx - lx / 2;
+    const eastX = cx + lx / 2;
 
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
 
@@ -484,15 +494,16 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       peakRadiation,
     );
     let dot = normalTop.dot(sunDirection);
-    let uc = cuboid.cx - lx / 2;
-    let vc = cuboid.cy - ly / 2;
+    let uc = cx - lx / 2;
+    let vc = cy - ly / 2;
+    const topZ = cz + lz / 2;
     for (let u = 0; u < nx; u++) {
       for (let v = 0; v < ny; v++) {
         cellOutputsTop[u][v] += indirectRadiation;
         if (dot > 0) {
           v2.set(uc + (u + 0.5) * dx, vc + (v + 0.5) * dy);
           v2.rotateAround(center2d, cuboid.rotation[2]);
-          vec.set(v2.x, v2.y, lz);
+          vec.set(v2.x, v2.y, topZ);
           if (!inShadow(cuboid.id, vec, sunDirection)) {
             // direct radiation
             cellOutputsTop[u][v] += dot * peakRadiation;
@@ -502,8 +513,8 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     }
 
     // south face
-    uc = cuboid.cx - lx / 2;
-    vc = cuboid.cz - lz / 2;
+    uc = cx - lx / 2;
+    vc = cz - lz / 2;
     indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, now.getMonth(), normalSouth, peakRadiation);
     dot = normalSouth.dot(sunDirection);
     for (let u = 0; u < nx; u++) {
@@ -540,8 +551,8 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     }
 
     // west face
-    uc = cuboid.cy - ly / 2;
-    vc = cuboid.cz - lz / 2;
+    uc = cy - ly / 2;
+    vc = cz - lz / 2;
     indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, now.getMonth(), normalWest, peakRadiation);
     dot = normalWest.dot(sunDirection);
     for (let u = 0; u < ny; u++) {
