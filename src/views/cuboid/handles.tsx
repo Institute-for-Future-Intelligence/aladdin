@@ -325,38 +325,34 @@ const Handles = ({ id, args }: HandlesProps) => {
           onPointerOver={hoverHandle}
           onPointerOut={noHoverHandle}
         />
-        {orthographic && (
-          <>
-            <ResizeHandle
-              handleType={ResizeHandleType.Left}
-              position={[-hx, 0, 0]}
-              size={size}
-              onPointerOver={hoverHandle}
-              onPointerOut={noHoverHandle}
-            />
-            <ResizeHandle
-              handleType={ResizeHandleType.Right}
-              position={[hx, 0, 0]}
-              size={size}
-              onPointerOver={hoverHandle}
-              onPointerOut={noHoverHandle}
-            />
-            <ResizeHandle
-              handleType={ResizeHandleType.Upper}
-              position={[0, hy, 0]}
-              size={size}
-              onPointerOver={hoverHandle}
-              onPointerOut={noHoverHandle}
-            />
-            <ResizeHandle
-              handleType={ResizeHandleType.Lower}
-              position={[0, -hy, 0]}
-              size={size}
-              onPointerOver={hoverHandle}
-              onPointerOut={noHoverHandle}
-            />
-          </>
-        )}
+        <ResizeHandle
+          handleType={ResizeHandleType.Left}
+          position={[-hx, 0, 0]}
+          size={size}
+          onPointerOver={hoverHandle}
+          onPointerOut={noHoverHandle}
+        />
+        <ResizeHandle
+          handleType={ResizeHandleType.Right}
+          position={[hx, 0, 0]}
+          size={size}
+          onPointerOver={hoverHandle}
+          onPointerOut={noHoverHandle}
+        />
+        <ResizeHandle
+          handleType={ResizeHandleType.Upper}
+          position={[0, hy, 0]}
+          size={size}
+          onPointerOver={hoverHandle}
+          onPointerOut={noHoverHandle}
+        />
+        <ResizeHandle
+          handleType={ResizeHandleType.Lower}
+          position={[0, -hy, 0]}
+          size={size}
+          onPointerOver={hoverHandle}
+          onPointerOut={noHoverHandle}
+        />
       </group>
 
       {/* top resize handles */}
@@ -397,38 +393,34 @@ const Handles = ({ id, args }: HandlesProps) => {
       {showMoveAndRotateHandles && (
         <>
           {/* move handles */}
-          {!orthographic && (
-            <>
-              <MoveHandle
-                handleType={MoveHandleType.Lower}
-                position={[0, -hy, -hz]}
-                size={size}
-                onPointerOver={hoverHandle}
-                onPointerOut={noHoverHandle}
-              />
-              <MoveHandle
-                handleType={MoveHandleType.Upper}
-                position={[0, hy, -hz]}
-                size={size}
-                onPointerOver={hoverHandle}
-                onPointerOut={noHoverHandle}
-              />
-              <MoveHandle
-                handleType={MoveHandleType.Left}
-                position={[-hx, 0, -hz]}
-                size={size}
-                onPointerOver={hoverHandle}
-                onPointerOut={noHoverHandle}
-              />
-              <MoveHandle
-                handleType={MoveHandleType.Right}
-                position={[hx, 0, -hz]}
-                size={size}
-                onPointerOver={hoverHandle}
-                onPointerOut={noHoverHandle}
-              />
-            </>
-          )}
+          <MoveHandle
+            handleType={MoveHandleType.Lower}
+            position={[0, -hy - size * 1.2, -hz]}
+            size={size}
+            onPointerOver={hoverHandle}
+            onPointerOut={noHoverHandle}
+          />
+          <MoveHandle
+            handleType={MoveHandleType.Upper}
+            position={[0, hy + size * 1.2, -hz]}
+            size={size}
+            onPointerOver={hoverHandle}
+            onPointerOut={noHoverHandle}
+          />
+          <MoveHandle
+            handleType={MoveHandleType.Left}
+            position={[-hx - size * 1.2, 0, -hz]}
+            size={size}
+            onPointerOver={hoverHandle}
+            onPointerOut={noHoverHandle}
+          />
+          <MoveHandle
+            handleType={MoveHandleType.Right}
+            position={[hx + size * 1.2, 0, -hz]}
+            size={size}
+            onPointerOver={hoverHandle}
+            onPointerOut={noHoverHandle}
+          />
           <MoveHandle
             handleType={MoveHandleType.Top}
             position={[0, 0, hz]}

@@ -54,7 +54,7 @@ const MoveHandle = ({ handleType, position, size, onPointerOver, onPointerOut }:
     <Sphere
       ref={handleRef}
       name={handleType}
-      args={[size, 6, 6, 0, Math.PI]}
+      args={[size / 2, 6, 6, 0, Math.PI]}
       position={[cx, cy, cz]}
       onPointerDown={handlePointerDown}
       onPointerOver={(e) => {
