@@ -560,9 +560,11 @@ const CuboidHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
             <Radio.Group onChange={onScopeChange} value={actionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('cuboidMenu.OnlyThisCuboid', lang)}</Radio>
-                <Radio value={Scope.AllObjectsOfThisTypeOnSurface}>
-                  {i18n.t('cuboidMenu.AllCuboidsOnSameSurface', lang)}
-                </Radio>
+                {cuboid.parentId !== GROUND_ID && (
+                  <Radio value={Scope.AllObjectsOfThisTypeOnSurface}>
+                    {i18n.t('cuboidMenu.AllCuboidsOnSameSurface', lang)}
+                  </Radio>
+                )}
                 <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                   {i18n.t('cuboidMenu.AllCuboidsAboveSameBase', lang)}
                 </Radio>

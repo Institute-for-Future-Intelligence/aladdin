@@ -1394,6 +1394,7 @@ export const useStore = create<CommonStoreState>(
                     e.rotation[2] = z;
                   }
                 } else {
+                  // FIXME: I don't understand the logic below
                   const parent = state.getParent(e);
                   if (parent && !parent.locked && parent.type === type) {
                     e.rotation[0] = x;
