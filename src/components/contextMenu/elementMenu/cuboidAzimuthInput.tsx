@@ -13,12 +13,13 @@ import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { Util } from '../../../Util';
 import { CuboidModel } from '../../../models/CuboidModel';
-import { ZERO_TOLERANCE } from '../../../constants';
+import { GROUND_ID, ZERO_TOLERANCE } from '../../../constants';
 
 const CuboidAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
+  const getParent = useStore(Selector.getParent);
   const updateElementRotationById = useStore(Selector.updateElementRotationById);
   const updateElementRotationForAll = useStore(Selector.updateElementRotationForAll);
   const addUndoable = useStore(Selector.addUndoable);
@@ -52,11 +53,63 @@ const CuboidAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
     setUpdateFlag(!updateFlag);
   };
 
+  const updateOnSurface = (value: number) => {
+    const parent = getParent(cuboid);
+    if (parent) {
+      for (const e of elements) {
+        if (e.type === ObjectType.Cuboid && !e.locked && e.parentId === parent.id) {
+          updateElementRotationById(e.id, 0, 0, -value);
+        }
+      }
+    }
+  };
+
+  const updateAboveBase = (value: number) => {
+    const baseId = Util.getBaseId(cuboid?.id);
+    if (baseId) {
+      for (const e of elements) {
+        if (e.type === ObjectType.Cuboid && !e.locked && Util.getBaseId(e.id) === baseId) {
+          updateElementRotationById(e.id, 0, 0, -value);
+        }
+      }
+    }
+  };
+
   const needChange = (azimuth: number) => {
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Cuboid && !e.locked) {
+            const c = e as CuboidModel;
+            if (Math.abs(-c.rotation[2] - azimuth) > ZERO_TOLERANCE) {
+              return true;
+            }
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeAboveFoundation:
+        const baseId = Util.getBaseId(cuboid?.id);
+        if (baseId && baseId !== GROUND_ID) {
+          for (const e of elements) {
+            if (e.type === ObjectType.Cuboid && e.parentId && e.parentId !== GROUND_ID && !e.locked) {
+              const c = e as CuboidModel;
+              if (baseId === Util.getBaseId(c.id)) {
+                if (Math.abs(-c.rotation[2] - azimuth) > ZERO_TOLERANCE) {
+                  return true;
+                }
+              }
+            }
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeOnSurface:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Cuboid &&
+            e.parentId !== GROUND_ID &&
+            e.parentId === cuboid?.parentId &&
+            !e.locked
+          ) {
             const c = e as CuboidModel;
             if (Math.abs(-c.rotation[2] - azimuth) > ZERO_TOLERANCE) {
               return true;
@@ -76,7 +129,7 @@ const CuboidAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
     if (!cuboid) return;
     if (!needChange(value)) return;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllObjectsOfThisType: {
         const oldAzimuthsAll = new Map<string, number>();
         for (const elem of elements) {
           if (elem.type === ObjectType.Cuboid) {
@@ -101,6 +154,60 @@ const CuboidAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
         updateElementRotationForAll(ObjectType.Cuboid, 0, 0, -value);
         setApplyCount(applyCount + 1);
         break;
+      }
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
+        const oldAzimuthsAll = new Map<string, number>();
+        const baseId = Util.getBaseId(cuboid.id);
+        for (const elem of elements) {
+          if (elem.type === ObjectType.Cuboid && Util.getBaseId(elem.id) === baseId) {
+            oldAzimuthsAll.set(elem.id, -elem.rotation[2]);
+          }
+        }
+        const undoableChangeAll = {
+          name: 'Set Azimuth for All Cuboids Above Base',
+          timestamp: Date.now(),
+          oldValues: oldAzimuthsAll,
+          newValue: value,
+          undo: () => {
+            for (const [id, az] of undoableChangeAll.oldValues.entries()) {
+              updateElementRotationById(id, 0, 0, -(az as number));
+            }
+          },
+          redo: () => {
+            updateElementRotationForAll(ObjectType.Cuboid, 0, 0, -(undoableChangeAll.newValue as number));
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeAll);
+        updateAboveBase(value);
+        setApplyCount(applyCount + 1);
+        break;
+      }
+      case Scope.AllObjectsOfThisTypeOnSurface: {
+        const oldAzimuthsAll = new Map<string, number>();
+        for (const elem of elements) {
+          if (elem.type === ObjectType.Cuboid && elem.parentId === cuboid.parentId) {
+            oldAzimuthsAll.set(elem.id, -elem.rotation[2]);
+          }
+        }
+        const undoableChangeAll = {
+          name: 'Set Azimuth for All Cuboids on Surface',
+          timestamp: Date.now(),
+          oldValues: oldAzimuthsAll,
+          newValue: value,
+          undo: () => {
+            for (const [id, az] of undoableChangeAll.oldValues.entries()) {
+              updateElementRotationById(id, 0, 0, -(az as number));
+            }
+          },
+          redo: () => {
+            updateElementRotationForAll(ObjectType.Cuboid, 0, 0, -(undoableChangeAll.newValue as number));
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeAll);
+        updateOnSurface(value);
+        setApplyCount(applyCount + 1);
+        break;
+      }
       default:
         // cuboid via selected element may be outdated, make sure that we get the latest
         const c = getElementById(cuboid.id);
@@ -228,6 +335,12 @@ const CuboidAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
             <Radio.Group onChange={onScopeChange} value={actionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('cuboidMenu.OnlyThisCuboid', lang)}</Radio>
+                <Radio value={Scope.AllObjectsOfThisTypeOnSurface}>
+                  {i18n.t('cuboidMenu.AllCuboidsOnSameSurface', lang)}
+                </Radio>
+                <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
+                  {i18n.t('cuboidMenu.AllCuboidsAboveSameBase', lang)}
+                </Radio>
                 <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('cuboidMenu.AllCuboids', lang)}</Radio>
               </Space>
             </Radio.Group>

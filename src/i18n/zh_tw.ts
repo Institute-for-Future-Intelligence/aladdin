@@ -744,6 +744,8 @@ export const i18n_zh_tw = {
       Flowers: '花草',
       DoYouReallyWantToRemoveAllFlowersOnCuboid: '你確定刪除此長方體表面上所有非固定的花草嗎',
       OnlyThisCuboid: '只這個長方體',
+      AllCuboidsOnSameSurface: '同一表面上所有的長方體',
+      AllCuboidsAboveSameBase: '同一地基上所有的長方體',
       AllCuboids: '所有的長方體',
       OnlyThisSide: '只這個表面',
       AllSidesOfThisCuboid: '這個長方體所有的側面',

@@ -23,6 +23,7 @@ const CuboidHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getParent = useStore(Selector.getParent);
   const getElementById = useStore(Selector.getElementById);
   const updateElementLzById = useStore(Selector.updateElementLzById);
   const updateElementCzById = useStore(Selector.updateElementCzById);
@@ -69,11 +70,65 @@ const CuboidHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
     updateElementCzById(id, value / 2);
   };
 
+  const updateLzAndCzOnSurface = (value: number) => {
+    const parent = getParent(cuboid);
+    if (parent) {
+      for (const e of elements) {
+        if (e.type === ObjectType.Cuboid && !e.locked && e.parentId === parent.id) {
+          updateElementLzById(e.id, value);
+          updateElementCzById(e.id, value / 2);
+        }
+      }
+    }
+  };
+
+  const updateLzAndCzAboveBase = (value: number) => {
+    const baseId = Util.getBaseId(cuboid?.id);
+    if (baseId) {
+      for (const e of elements) {
+        if (e.type === ObjectType.Cuboid && !e.locked && Util.getBaseId(e.id) === baseId) {
+          updateElementLzById(e.id, value);
+          updateElementCzById(e.id, value / 2);
+        }
+      }
+    }
+  };
+
   const needChange = (lz: number) => {
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Cuboid && !e.locked) {
+            const c = e as CuboidModel;
+            if (Math.abs(c.lz - lz) > ZERO_TOLERANCE) {
+              return true;
+            }
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeAboveFoundation:
+        const baseId = Util.getBaseId(cuboid?.id);
+        if (baseId && baseId !== GROUND_ID) {
+          for (const e of elements) {
+            if (e.type === ObjectType.Cuboid && e.parentId && e.parentId !== GROUND_ID && !e.locked) {
+              const c = e as CuboidModel;
+              if (baseId === Util.getBaseId(c.id)) {
+                if (Math.abs(c.lz - lz) > ZERO_TOLERANCE) {
+                  return true;
+                }
+              }
+            }
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeOnSurface:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Cuboid &&
+            e.parentId !== GROUND_ID &&
+            e.parentId === cuboid?.parentId &&
+            !e.locked
+          ) {
             const c = e as CuboidModel;
             if (Math.abs(c.lz - lz) > ZERO_TOLERANCE) {
               return true;
@@ -186,15 +241,11 @@ const CuboidHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
     if (!cuboid) return;
     if (!needChange(value)) return;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllObjectsOfThisType: {
         const oldLzsAll = new Map<string, number>();
         for (const elem of elements) {
           if (elem.type === ObjectType.Cuboid) {
             oldLzsAll.set(elem.id, elem.lz);
-          }
-        }
-        for (const elem of elements) {
-          if (elem.type === ObjectType.Cuboid) {
             updateCzOfChildren(elem, value);
           }
         }
@@ -245,6 +296,116 @@ const CuboidHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
         updateElementCzForAll(ObjectType.Cuboid, value / 2);
         setApplyCount(applyCount + 1);
         break;
+      }
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
+        const oldLzsAll = new Map<string, number>();
+        const baseId = Util.getBaseId(cuboid.id);
+        for (const elem of elements) {
+          if (elem.type === ObjectType.Cuboid && Util.getBaseId(elem.id) === baseId) {
+            oldLzsAll.set(elem.id, elem.lz);
+            updateCzOfChildren(elem, value);
+          }
+        }
+        const undoableChangeAll = {
+          name: 'Set Height for All Cuboids Above Same Base',
+          timestamp: Date.now(),
+          oldValues: oldLzsAll,
+          newValue: value,
+          oldChildrenPositionsMap: new Map(oldChildrenPositionsMapRef.current),
+          newChildrenPositionsMap: new Map(newChildrenPositionsMapRef.current),
+          oldChildrenParentIdMap: new Map(oldChildrenParentIdMapRef.current),
+          newChildrenParentIdMap: new Map(newChildrenParentIdMapRef.current),
+          undo: () => {
+            for (const [id, lz] of undoableChangeAll.oldValues.entries()) {
+              updateLzAndCz(id, lz as number);
+            }
+            if (undoableChangeAll.oldChildrenPositionsMap && undoableChangeAll.oldChildrenPositionsMap.size > 0) {
+              for (const [id, ps] of undoableChangeAll.oldChildrenPositionsMap.entries()) {
+                setElementPosition(id, ps.x, ps.y, ps.z);
+                const oldParentId = undoableChangeAll.oldChildrenParentIdMap?.get(id);
+                const newParentId = undoableChangeAll.newChildrenParentIdMap?.get(id);
+                if (oldParentId && newParentId && oldParentId !== newParentId) {
+                  attachToObjectGroup(oldParentId, newParentId, id);
+                  setParentIdById(oldParentId, id);
+                }
+              }
+            }
+          },
+          redo: () => {
+            const newCz = undoableChangeAll.newValue as number;
+            updateLzAndCzAboveBase(newCz);
+            if (undoableChangeAll.newChildrenPositionsMap && undoableChangeAll.newChildrenPositionsMap.size > 0) {
+              for (const [id, ps] of undoableChangeAll.newChildrenPositionsMap.entries()) {
+                setElementPosition(id, ps.x, ps.y, ps.z);
+                const oldParentId = undoableChangeAll.oldChildrenParentIdMap?.get(id);
+                const newParentId = undoableChangeAll.newChildrenParentIdMap?.get(id);
+                if (oldParentId && newParentId && oldParentId !== newParentId) {
+                  attachToObjectGroup(newParentId, oldParentId, id);
+                  setParentIdById(newParentId, id);
+                }
+              }
+            }
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeAll);
+        updateLzAndCzAboveBase(value);
+        setApplyCount(applyCount + 1);
+        break;
+      }
+      case Scope.AllObjectsOfThisTypeOnSurface: {
+        const oldLzsAll = new Map<string, number>();
+        for (const elem of elements) {
+          if (elem.type === ObjectType.Cuboid && elem.parentId === cuboid.parentId) {
+            oldLzsAll.set(elem.id, elem.lz);
+            updateCzOfChildren(elem, value);
+          }
+        }
+        const undoableChangeAll = {
+          name: 'Set Height for All Cuboids on Same Surface',
+          timestamp: Date.now(),
+          oldValues: oldLzsAll,
+          newValue: value,
+          oldChildrenPositionsMap: new Map(oldChildrenPositionsMapRef.current),
+          newChildrenPositionsMap: new Map(newChildrenPositionsMapRef.current),
+          oldChildrenParentIdMap: new Map(oldChildrenParentIdMapRef.current),
+          newChildrenParentIdMap: new Map(newChildrenParentIdMapRef.current),
+          undo: () => {
+            for (const [id, lz] of undoableChangeAll.oldValues.entries()) {
+              updateLzAndCz(id, lz as number);
+            }
+            if (undoableChangeAll.oldChildrenPositionsMap && undoableChangeAll.oldChildrenPositionsMap.size > 0) {
+              for (const [id, ps] of undoableChangeAll.oldChildrenPositionsMap.entries()) {
+                setElementPosition(id, ps.x, ps.y, ps.z);
+                const oldParentId = undoableChangeAll.oldChildrenParentIdMap?.get(id);
+                const newParentId = undoableChangeAll.newChildrenParentIdMap?.get(id);
+                if (oldParentId && newParentId && oldParentId !== newParentId) {
+                  attachToObjectGroup(oldParentId, newParentId, id);
+                  setParentIdById(oldParentId, id);
+                }
+              }
+            }
+          },
+          redo: () => {
+            const newCz = undoableChangeAll.newValue as number;
+            updateLzAndCzOnSurface(newCz);
+            if (undoableChangeAll.newChildrenPositionsMap && undoableChangeAll.newChildrenPositionsMap.size > 0) {
+              for (const [id, ps] of undoableChangeAll.newChildrenPositionsMap.entries()) {
+                setElementPosition(id, ps.x, ps.y, ps.z);
+                const oldParentId = undoableChangeAll.oldChildrenParentIdMap?.get(id);
+                const newParentId = undoableChangeAll.newChildrenParentIdMap?.get(id);
+                if (oldParentId && newParentId && oldParentId !== newParentId) {
+                  attachToObjectGroup(newParentId, oldParentId, id);
+                  setParentIdById(newParentId, id);
+                }
+              }
+            }
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeAll);
+        updateLzAndCzOnSurface(value);
+        setApplyCount(applyCount + 1);
+        break;
+      }
       default:
         // cuboid via selected element may be outdated, make sure that we get the latest
         const c = getElementById(cuboid.id);
@@ -399,6 +560,12 @@ const CuboidHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
             <Radio.Group onChange={onScopeChange} value={actionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('cuboidMenu.OnlyThisCuboid', lang)}</Radio>
+                <Radio value={Scope.AllObjectsOfThisTypeOnSurface}>
+                  {i18n.t('cuboidMenu.AllCuboidsOnSameSurface', lang)}
+                </Radio>
+                <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
+                  {i18n.t('cuboidMenu.AllCuboidsAboveSameBase', lang)}
+                </Radio>
                 <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('cuboidMenu.AllCuboids', lang)}</Radio>
               </Space>
             </Radio.Group>

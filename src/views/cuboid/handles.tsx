@@ -1,3 +1,7 @@
+/*
+ * @Copyright 2023. Institute for Future Intelligence, Inc.
+ */
+
 import { Plane } from '@react-three/drei';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
@@ -272,7 +276,7 @@ const Handles = ({ id, args }: HandlesProps) => {
   };
 
   return (
-    <React.Fragment>
+    <>
       {/* intersection plane */}
       {showIntersectionPlane && (
         <Plane
@@ -321,6 +325,38 @@ const Handles = ({ id, args }: HandlesProps) => {
           onPointerOver={hoverHandle}
           onPointerOut={noHoverHandle}
         />
+        {orthographic && (
+          <>
+            <ResizeHandle
+              handleType={ResizeHandleType.Left}
+              position={[-hx, 0, 0]}
+              size={size}
+              onPointerOver={hoverHandle}
+              onPointerOut={noHoverHandle}
+            />
+            <ResizeHandle
+              handleType={ResizeHandleType.Right}
+              position={[hx, 0, 0]}
+              size={size}
+              onPointerOver={hoverHandle}
+              onPointerOut={noHoverHandle}
+            />
+            <ResizeHandle
+              handleType={ResizeHandleType.Upper}
+              position={[0, hy, 0]}
+              size={size}
+              onPointerOver={hoverHandle}
+              onPointerOut={noHoverHandle}
+            />
+            <ResizeHandle
+              handleType={ResizeHandleType.Lower}
+              position={[0, -hy, 0]}
+              size={size}
+              onPointerOver={hoverHandle}
+              onPointerOut={noHoverHandle}
+            />
+          </>
+        )}
       </group>
 
       {/* top resize handles */}
@@ -359,45 +395,47 @@ const Handles = ({ id, args }: HandlesProps) => {
 
       {/* move and rotate handles */}
       {showMoveAndRotateHandles && (
-        <React.Fragment>
+        <>
           {/* move handles */}
-          <React.Fragment>
-            <MoveHandle
-              handleType={MoveHandleType.Lower}
-              position={[0, -hy, -hz]}
-              size={size}
-              onPointerOver={hoverHandle}
-              onPointerOut={noHoverHandle}
-            />
-            <MoveHandle
-              handleType={MoveHandleType.Upper}
-              position={[0, hy, -hz]}
-              size={size}
-              onPointerOver={hoverHandle}
-              onPointerOut={noHoverHandle}
-            />
-            <MoveHandle
-              handleType={MoveHandleType.Left}
-              position={[-hx, 0, -hz]}
-              size={size}
-              onPointerOver={hoverHandle}
-              onPointerOut={noHoverHandle}
-            />
-            <MoveHandle
-              handleType={MoveHandleType.Right}
-              position={[hx, 0, -hz]}
-              size={size}
-              onPointerOver={hoverHandle}
-              onPointerOut={noHoverHandle}
-            />
-            <MoveHandle
-              handleType={MoveHandleType.Top}
-              position={[0, 0, hz]}
-              size={size}
-              onPointerOver={hoverHandle}
-              onPointerOut={noHoverHandle}
-            />
-          </React.Fragment>
+          {!orthographic && (
+            <>
+              <MoveHandle
+                handleType={MoveHandleType.Lower}
+                position={[0, -hy, -hz]}
+                size={size}
+                onPointerOver={hoverHandle}
+                onPointerOut={noHoverHandle}
+              />
+              <MoveHandle
+                handleType={MoveHandleType.Upper}
+                position={[0, hy, -hz]}
+                size={size}
+                onPointerOver={hoverHandle}
+                onPointerOut={noHoverHandle}
+              />
+              <MoveHandle
+                handleType={MoveHandleType.Left}
+                position={[-hx, 0, -hz]}
+                size={size}
+                onPointerOver={hoverHandle}
+                onPointerOut={noHoverHandle}
+              />
+              <MoveHandle
+                handleType={MoveHandleType.Right}
+                position={[hx, 0, -hz]}
+                size={size}
+                onPointerOver={hoverHandle}
+                onPointerOut={noHoverHandle}
+              />
+            </>
+          )}
+          <MoveHandle
+            handleType={MoveHandleType.Top}
+            position={[0, 0, hz]}
+            size={size}
+            onPointerOver={hoverHandle}
+            onPointerOut={noHoverHandle}
+          />
 
           {/* rotate handles */}
           <group name="Cuboid Rotate Handle Group" onPointerDown={handleRotateHandlePointerDown}>
@@ -418,9 +456,9 @@ const Handles = ({ id, args }: HandlesProps) => {
               noHoverHandle={noHoverHandle}
             />
           </group>
-        </React.Fragment>
+        </>
       )}
-    </React.Fragment>
+    </>
   );
 };
 

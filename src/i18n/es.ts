@@ -766,6 +766,8 @@ export const i18n_es = {
       DoYouReallyWantToRemoveAllFlowersOnCuboid:
         'Do you really want to remove all the flowers on this cuboid that are not locked',
       OnlyThisCuboid: 'Solamente este cuboide',
+      AllCuboidsOnSameSurface: 'All Cuboids on Same Surface',
+      AllCuboidsAboveSameBase: 'All Cuboids above Same Base',
       AllCuboids: 'Todos los cuboides',
       OnlyThisSide: 'Solamente este lado',
       AllSidesOfThisCuboid: 'Todos los lados en este cuboide',
