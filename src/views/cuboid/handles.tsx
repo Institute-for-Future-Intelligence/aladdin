@@ -8,7 +8,7 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import MoveHandle from 'src/components/moveHandle';
 import ResizeHandle from 'src/components/resizeHandle';
 import RotateHandle from 'src/components/rotateHandle';
-import { HALF_PI, RESIZE_HANDLE_SIZE, TWO_PI } from 'src/constants';
+import { GROUND_ID, HALF_PI, RESIZE_HANDLE_SIZE, TWO_PI } from 'src/constants';
 import { useStore } from 'src/stores/common';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import { MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from 'src/types';
@@ -104,7 +104,7 @@ const Handles = ({ id, args }: HandlesProps) => {
     if (!el) return 0;
 
     const rotation = el.rotation[2];
-    if (el.parentId === 'Ground') return rotation;
+    if (el.parentId === GROUND_ID) return rotation;
 
     return rotation + getWorldRotation(el.parentId);
   };
@@ -161,6 +161,80 @@ const Handles = ({ id, args }: HandlesProps) => {
     });
   };
 
+  const resizeLx = (pointer: Vector3) => {
+    setCommonStore((state) => {
+      const cuboid = state.elements.find((e) => e.id === id);
+      if (!cuboid) return;
+
+      const p = pointer.clone().setZ(0);
+      const anchor = useStore.getState().resizeAnchor.clone().setZ(0);
+
+      const v = new Vector3().subVectors(p, anchor).applyEuler(new Euler(0, 0, -(cuboidWorldRotation.current ?? 0)));
+      const worldCenter = new Vector3().addVectors(p, anchor).multiplyScalar(0.5);
+      const { pos, rot } = Util.getWorldDataById(cuboid.parentId);
+      const center = new Vector3().subVectors(worldCenter, pos).applyEuler(new Euler(0, 0, -rot));
+      cuboid.cx = center.x;
+      const newLx = Math.abs(v.x);
+      cuboid.lx = newLx;
+
+      const currWorldPosition = new Vector3(center.x, center.y, cuboid.cz).applyEuler(new Euler(0, 0, rot)).add(pos);
+      const currWorldRotation = cuboid.rotation[2] + rot;
+      if (childPositionMap.current.size > 0) {
+        for (const e of state.elements) {
+          const childWorldPosition = childPositionMap.current.get(e.id);
+          if (childWorldPosition) {
+            const relPos = childWorldPosition
+              .clone()
+              .sub(currWorldPosition)
+              .applyEuler(new Euler(0, 0, -currWorldRotation));
+            if (e.type === ObjectType.Cuboid) {
+              e.cx = relPos.x;
+            } else {
+              e.cx = relPos.x / newLx;
+            }
+          }
+        }
+      }
+    });
+  };
+
+  const resizeLy = (pointer: Vector3) => {
+    setCommonStore((state) => {
+      const cuboid = state.elements.find((e) => e.id === id);
+      if (!cuboid) return;
+
+      const p = pointer.clone().setZ(0);
+      const anchor = useStore.getState().resizeAnchor.clone().setZ(0);
+
+      const v = new Vector3().subVectors(p, anchor).applyEuler(new Euler(0, 0, -(cuboidWorldRotation.current ?? 0)));
+      const worldCenter = new Vector3().addVectors(p, anchor).multiplyScalar(0.5);
+      const { pos, rot } = Util.getWorldDataById(cuboid.parentId);
+      const center = new Vector3().subVectors(worldCenter, pos).applyEuler(new Euler(0, 0, -rot));
+      cuboid.cy = center.y;
+      const newLy = Math.abs(v.y);
+      cuboid.ly = newLy;
+
+      const currWorldPosition = new Vector3(center.x, center.y, cuboid.cz).applyEuler(new Euler(0, 0, rot)).add(pos);
+      const currWorldRotation = cuboid.rotation[2] + rot;
+      if (childPositionMap.current.size > 0) {
+        for (const e of state.elements) {
+          const childWorldPosition = childPositionMap.current.get(e.id);
+          if (childWorldPosition) {
+            const relPos = childWorldPosition
+              .clone()
+              .sub(currWorldPosition)
+              .applyEuler(new Euler(0, 0, -currWorldRotation));
+            if (e.type === ObjectType.Cuboid) {
+              e.cy = relPos.y;
+            } else {
+              e.cy = relPos.y / newLy;
+            }
+          }
+        }
+      }
+    });
+  };
+
   const resizeLz = (pointer: Vector3) => {
     if (cuboidWorldBottomHeight.current !== null) {
       const newLz = Math.max(1, pointer.z - cuboidWorldBottomHeight.current);
@@ -189,7 +263,7 @@ const Handles = ({ id, args }: HandlesProps) => {
       useStore.getState().addedCuboidId
     ) {
       const cuboid = getElementById(id);
-      if (cuboid && cuboid.parentId !== 'Ground') {
+      if (cuboid && cuboid.parentId !== GROUND_ID) {
         setIntersectionPlaneData({ position: new Vector3(0, 0, -hz), rotation: new Euler() });
         const { pos: parentWorldPos, rot: parentWorldRot } = Util.getWorldDataById(cuboid.parentId);
         parentWorldPosition.current = parentWorldPos;
@@ -250,9 +324,14 @@ const Handles = ({ id, args }: HandlesProps) => {
       if (intersections.length) {
         const pointer = intersections[0].point;
         // resize
-        if (useStore.getState().resizeHandleType) {
-          if (Util.isTopResizeHandle(useStore.getState().resizeHandleType)) {
+        const resizeHandleType = useStore.getState().resizeHandleType;
+        if (resizeHandleType) {
+          if (Util.isTopResizeHandle(resizeHandleType)) {
             resizeLz(pointer);
+          } else if (Util.isXResizeHandle(resizeHandleType)) {
+            resizeLx(pointer);
+          } else if (Util.isYResizeHandle(resizeHandleType)) {
+            resizeLy(pointer);
           } else {
             resizeXY(pointer);
           }

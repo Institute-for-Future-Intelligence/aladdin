@@ -20,6 +20,7 @@ import { Vector3 } from 'three';
 import {
   DEFAULT_CEILING_R_VALUE,
   DEFAULT_GROUND_FLOOR_R_VALUE,
+  GROUND_ID,
   UNIT_VECTOR_NEG_X,
   UNIT_VECTOR_NEG_Y,
   UNIT_VECTOR_POS_X,
@@ -137,7 +138,7 @@ export class ElementModelCloner {
         clone = ElementModelCloner.cloneFoundation(e as FoundationModel, x, y);
         break;
       case ObjectType.Cuboid:
-        const parentId = parent ? parent.id : 'Ground';
+        const parentId = parent ? parent.id : GROUND_ID;
         clone = ElementModelCloner.cloneCuboid(parentId, e as CuboidModel, x, y);
         break;
     }

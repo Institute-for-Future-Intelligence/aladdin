@@ -17,6 +17,7 @@ import Sensor from '../sensor';
 import { SensorModel } from 'src/models/SensorModel';
 import Light from '../light';
 import { LightModel } from 'src/models/LightModel';
+import { GROUND_ID } from '../../constants';
 
 export interface CuboidRendererProps {
   elements: ElementModel[];
@@ -37,7 +38,7 @@ const CuboidRenderer = ({ elements, cuboidModel }: CuboidRendererProps) => {
 
   const hz = lz / 2;
   const showGroupMaster = !!(
-    parentId === 'Ground' &&
+    parentId === GROUND_ID &&
     !locked &&
     groupMasterId === id &&
     cuboidModel &&

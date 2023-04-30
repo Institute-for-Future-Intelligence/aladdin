@@ -10,7 +10,14 @@ import { MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from '
 import { useRefStore } from 'src/stores/commonRef';
 import { useStore } from 'src/stores/common';
 import * as Selector from '../stores/selector';
-import { HALF_PI, HIGHLIGHT_HANDLE_COLOR, RESIZE_HANDLE_COLOR, RESIZE_HANDLE_SIZE, TWO_PI } from 'src/constants';
+import {
+  GROUND_ID,
+  HALF_PI,
+  HIGHLIGHT_HANDLE_COLOR,
+  RESIZE_HANDLE_COLOR,
+  RESIZE_HANDLE_SIZE,
+  TWO_PI,
+} from 'src/constants';
 import { WallModel } from 'src/models/WallModel';
 import Wireframe from './wireframe';
 import { UndoableMoveFoundationGroup } from 'src/undo/UndoableMove';
@@ -354,7 +361,7 @@ const GroupMaster = ({
               elem.lx = newLx;
               elem.ly = newLy;
 
-              if (elem.parentId !== 'Ground') {
+              if (elem.parentId !== GROUND_ID) {
                 const parentWorldData = tempWorldDataMap.get(elem.parentId);
                 if (parentWorldData) {
                   const { pos, rot } = parentWorldData;

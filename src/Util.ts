@@ -4,6 +4,7 @@
 
 import {
   FINE_GRID_SCALE,
+  GROUND_ID,
   HALF_PI,
   LAT_LNG_FRACTION_DIGITS,
   NORMAL_GRID_SCALE,
@@ -965,6 +966,20 @@ export class Util {
     );
   }
 
+  static isXResizeHandle(
+    handle: MoveHandleType | ResizeHandleType | RotateHandleType | RoofHandleType | null,
+  ): boolean {
+    // unfortunately, I cannot find a better way to tell the type of enum variable
+    return handle === ResizeHandleType.Left || handle === ResizeHandleType.Right;
+  }
+
+  static isYResizeHandle(
+    handle: MoveHandleType | ResizeHandleType | RotateHandleType | RoofHandleType | null,
+  ): boolean {
+    // unfortunately, I cannot find a better way to tell the type of enum variable
+    return handle === ResizeHandleType.Upper || handle === ResizeHandleType.Lower;
+  }
+
   static isTopResizeHandleOfWall(
     handle: MoveHandleType | ResizeHandleType | RotateHandleType | RoofHandleType | null,
   ): boolean {
@@ -1079,7 +1094,7 @@ export class Util {
 
   static isDescendancyOf(child: ElementModel, targetId: string): boolean {
     const parentId = child.parentId;
-    if (!parentId || parentId === 'Ground') return false;
+    if (!parentId || parentId === GROUND_ID) return false;
     const parent = useStore.getState().getElementById(parentId);
     if (!parent) return false;
     if (parent.id === targetId) return true;
@@ -1682,7 +1697,7 @@ export class Util {
     const currRot = el.rotation[2];
     const currTopZ = el.lz;
 
-    if (el.parentId === 'Ground') {
+    if (el.parentId === GROUND_ID) {
       return { pos: currPos, rot: currRot, topZ: currTopZ };
     }
     const { pos: worldPos, rot: worldRot, topZ: worldTopZ } = this.getWorldDataById(el.parentId);
@@ -1707,7 +1722,7 @@ export class Util {
   static getBaseId = (id: string): string | null => {
     const el = useStore.getState().getElementById(id);
     if (!el) return null;
-    if (el.parentId === 'Ground') return el.id;
+    if (el.parentId === GROUND_ID) return el.id;
     return this.getBaseId(el.parentId);
   };
 }

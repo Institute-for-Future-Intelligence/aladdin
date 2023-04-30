@@ -169,6 +169,10 @@ const Ground = () => {
       intersectionPlaneAngle.set(0, 0, 0);
     } else if (
       Util.isMoveHandle(moveHandleType) ||
+      resizeHandleType === ResizeHandleType.Left ||
+      resizeHandleType === ResizeHandleType.Right ||
+      resizeHandleType === ResizeHandleType.Lower ||
+      resizeHandleType === ResizeHandleType.Upper ||
       resizeHandleType === ResizeHandleType.LowerLeft ||
       (resizeHandleType === ResizeHandleType.UpperLeft && grabRef.current.type !== ObjectType.Wall) ||
       resizeHandleType === ResizeHandleType.LowerRight ||
@@ -1037,7 +1041,7 @@ const Ground = () => {
     for (const element of useStore.getState().elements) {
       if (
         isGroupable(element) &&
-        element.parentId === 'Ground' &&
+        element.parentId === GROUND_ID &&
         !element.locked &&
         element.id !== currElem.id &&
         !baseGroupRelPosMapRef.current.has(element.id) &&
@@ -1208,7 +1212,7 @@ const Ground = () => {
               oldHumanOrPlantParentIdRef.current = selectedElement.parentId;
               break;
             case ObjectType.Cuboid:
-              if (isGroupable(selectedElement) && selectedElement.parentId === 'Ground') {
+              if (isGroupable(selectedElement) && selectedElement.parentId === GROUND_ID) {
                 handleGroupMaster(e, selectedElement as GroupableModel);
               }
               oldCuoidParentIdRef.current = selectedElement.parentId;
@@ -1480,20 +1484,20 @@ const Ground = () => {
                   } else {
                     setCommonStore((state) => {
                       const cuboid = state.elements.find((e) => e.id === grabRef.current!.id);
-                      if (cuboid && cuboid.parentId !== 'Ground') {
-                        if (cuboid.parentId !== 'Ground') {
+                      if (cuboid && cuboid.parentId !== GROUND_ID) {
+                        if (cuboid.parentId !== GROUND_ID) {
                           handleTempHumanPlantChild(state, cuboid.id);
                         }
                         const { rot: parentAbsRot } = Util.getWorldDataById(cuboid.parentId);
                         cuboid.rotation[2] += parentAbsRot;
-                        cuboid.parentId = 'Ground';
+                        cuboid.parentId = GROUND_ID;
                       }
                     });
                     handleMove(p);
                   }
                 } else if (resizeHandleType) {
                   const cuboid = getElementById(grabRef.current.id);
-                  if (cuboid && cuboid.parentId === 'Ground') {
+                  if (cuboid && cuboid.parentId === GROUND_ID) {
                     handleResize(p);
                   }
                 }
@@ -1570,10 +1574,10 @@ const Ground = () => {
           } else {
             setCommonStore((state) => {
               const cuboid = state.elements.find((e) => e.id === grabRef.current?.id);
-              if (cuboid && cuboid.parentId !== 'Ground') {
+              if (cuboid && cuboid.parentId !== GROUND_ID) {
                 const { rot: parentAbsRot } = Util.getWorldDataById(cuboid.parentId);
                 cuboid.rotation[2] += parentAbsRot;
-                cuboid.parentId = 'Ground';
+                cuboid.parentId = GROUND_ID;
               }
             });
             setElementPosition(grabRef.current.id, p.x, p.y);
@@ -1582,33 +1586,6 @@ const Ground = () => {
       }
     }
   };
-
-  // const handleGroundPointerOut = () => {
-  //   const addedFoundationID = useStore.getState().addedFoundationId;
-  //   const addedCuboidID = useStore.getState().addedCuboidId;
-  //   if (addedFoundationID) {
-  //     removeElementById(addedFoundationID, false);
-  //     setCommonStore((state) => {
-  //       state.objectTypeToAdd = ObjectType.Foundation;
-  //       state.addedFoundationId = null;
-  //     });
-  //     useRefStore.getState().setEnableOrbitController(true);
-  //     grabRef.current = null;
-  //     isSettingFoundationStartPointRef.current = false;
-  //     isSettingFoundationEndPointRef.current = false;
-  //   }
-  //   if (addedCuboidID) {
-  //     removeElementById(addedCuboidID, false);
-  //     setCommonStore((state) => {
-  //       state.objectTypeToAdd = ObjectType.Cuboid;
-  //       state.addedCuboidId = null;
-  //     });
-  //     useRefStore.getState().setEnableOrbitController(true);
-  //     grabRef.current = null;
-  //     isSettingCuboidStartPointRef.current = false;
-  //     isSettingCuboidEndPointRef.current = false;
-  //   }
-  // };
 
   const handleIntersectionPointerMove = (e: ThreeEvent<PointerEvent>) => {
     if (grabRef.current && grabRef.current.type && !grabRef.current.locked) {
@@ -1835,10 +1812,27 @@ const Ground = () => {
               } else {
                 // any size is okay for a childless parent
                 if (lx > 0.49 && ly > 0.49) {
-                  e.lx = lx;
-                  e.ly = ly;
-                  e.cx = center.x;
-                  e.cy = center.y;
+                  switch (resizeHandleType) {
+                    case ResizeHandleType.Lower:
+                    case ResizeHandleType.Upper:
+                      e.ly = ly;
+                      e.cy = center.y;
+                      break;
+                    case ResizeHandleType.Left:
+                    case ResizeHandleType.Right:
+                      e.lx = lx;
+                      e.cx = center.x;
+                      break;
+                    case ResizeHandleType.LowerLeft:
+                    case ResizeHandleType.LowerRight:
+                    case ResizeHandleType.UpperLeft:
+                    case ResizeHandleType.UpperRight:
+                      e.lx = lx;
+                      e.ly = ly;
+                      e.cx = center.x;
+                      e.cy = center.y;
+                      break;
+                  }
                   sizeOk = true;
                 }
               }
@@ -2001,10 +1995,6 @@ const Ground = () => {
         break;
     }
   };
-
-  // const [e0, e1] = useStore((state) => state.elements.slice(0, 2));
-
-  // console.log('ground');
 
   return (
     <>

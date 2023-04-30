@@ -21,14 +21,14 @@ interface ResizeHandleProps {
 }
 
 const ResizeHandle = ({ handleType, position, size, onPointerOver, onPointerOut }: ResizeHandleProps) => {
-  const resizehandleType = useStore(Selector.resizeHandleType);
+  const resizeHandleType = useStore(Selector.resizeHandleType);
   const hoveredHandle = useStore(Selector.hoveredHandle);
 
   const handleRef = useRef<Mesh>();
 
   const [cx, cy, cz] = position;
   const color =
-    hoveredHandle === handleType || resizehandleType === handleType ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR;
+    hoveredHandle === handleType || resizeHandleType === handleType ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR;
 
   const handlePointerDown = () => {
     if (handleRef.current) {

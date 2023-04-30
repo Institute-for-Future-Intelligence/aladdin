@@ -38,6 +38,7 @@ import Light from './views/light';
 import { LightModel } from './models/LightModel';
 import WallRenderer from './views/wall/wallRenderer';
 import CuboidRenderer from './views/cuboid';
+import { GROUND_ID } from './constants';
 
 const ElementsRenderer: React.FC = () => {
   const elements = useStore(Selector.elements);
@@ -87,7 +88,7 @@ const ElementsRenderer: React.FC = () => {
           }
           case ObjectType.Cuboid:
             // only base cuboid will be rendered here
-            if (e.parentId !== 'Ground') return null;
+            if (e.parentId !== GROUND_ID) return null;
             return <CuboidRenderer key={e.id} elements={elements} cuboidModel={e as CuboidModel} />;
           case ObjectType.Human:
             return <Human key={e.id} {...(e as HumanModel)} />;

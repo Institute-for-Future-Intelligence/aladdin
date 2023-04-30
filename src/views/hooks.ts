@@ -9,6 +9,7 @@ import { ObjectType } from 'src/types';
 import { Util } from 'src/Util';
 import { Vector2, Vector3 } from 'three';
 import * as Selector from '../stores/selector';
+import { GROUND_ID } from '../constants';
 
 export const useGroupMaster = (elementModel: GroupableModel, groupMasterId: string | null) => {
   const { id, cx, cy, lx, ly, lz, selected, enableGroupMaster } = elementModel;
@@ -78,7 +79,7 @@ export const useGroupMaster = (elementModel: GroupableModel, groupMasterId: stri
 
   const checkOverlapWithAllBases = (base: ElementModel) => {
     for (const el of useStore.getState().elements) {
-      if (isGroupable(el) && el.parentId === 'Ground' && !el.locked && !baseGroupSetRef.current.has(el.id)) {
+      if (isGroupable(el) && el.parentId === GROUND_ID && !el.locked && !baseGroupSetRef.current.has(el.id)) {
         const isUnlockedChild = Util.isChild(base.id, el.id, true);
 
         if (isUnlockedChild) {
