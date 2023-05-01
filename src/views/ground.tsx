@@ -1925,8 +1925,23 @@ const Ground = () => {
                   const rightPointRelativePos = new Vector2()
                     .subVectors(rightPointAbsPos, center)
                     .rotateAround(ORIGIN_VECTOR2, a);
-                  e.cx = centerPointRelativePos.x;
-                  e.cy = centerPointRelativePos.y;
+                  switch (resizeHandleType) {
+                    case ResizeHandleType.Lower:
+                    case ResizeHandleType.Upper:
+                      e.cy = centerPointRelativePos.y;
+                      break;
+                    case ResizeHandleType.Left:
+                    case ResizeHandleType.Right:
+                      e.cx = centerPointRelativePos.x;
+                      break;
+                    case ResizeHandleType.LowerLeft:
+                    case ResizeHandleType.LowerRight:
+                    case ResizeHandleType.UpperLeft:
+                    case ResizeHandleType.UpperRight:
+                      e.cx = centerPointRelativePos.x;
+                      e.cy = centerPointRelativePos.y;
+                      break;
+                  }
                   wall.leftPoint = [leftPointRelativePos.x, leftPointRelativePos.y, grabRef.current!.lz];
                   wall.rightPoint = [rightPointRelativePos.x, rightPointRelativePos.y, grabRef.current!.lz];
                 }
@@ -1943,8 +1958,23 @@ const Ground = () => {
                     const relativePos = new Vector2()
                       .subVectors(new Vector2(centerAbsPos.x, centerAbsPos.y), center)
                       .rotateAround(ORIGIN_VECTOR2, -grabRef.current!.rotation[2]);
-                    e.cx = relativePos.x / lx;
-                    e.cy = relativePos.y / ly;
+                    switch (resizeHandleType) {
+                      case ResizeHandleType.Lower:
+                      case ResizeHandleType.Upper:
+                        e.cy = relativePos.y / ly;
+                        break;
+                      case ResizeHandleType.Left:
+                      case ResizeHandleType.Right:
+                        e.cx = relativePos.x / lx;
+                        break;
+                      case ResizeHandleType.LowerLeft:
+                      case ResizeHandleType.LowerRight:
+                      case ResizeHandleType.UpperLeft:
+                      case ResizeHandleType.UpperRight:
+                        e.cx = relativePos.x / lx;
+                        e.cy = relativePos.y / ly;
+                        break;
+                    }
                   }
                 }
                 break;
@@ -1954,8 +1984,23 @@ const Ground = () => {
                   const relativePos = new Vector2()
                     .subVectors(new Vector2(centerAbsPos.x, centerAbsPos.y), center)
                     .rotateAround(ORIGIN_VECTOR2, -grabRef.current!.rotation[2]);
-                  e.cx = relativePos.x;
-                  e.cy = relativePos.y;
+                  switch (resizeHandleType) {
+                    case ResizeHandleType.Lower:
+                    case ResizeHandleType.Upper:
+                      e.cy = relativePos.y;
+                      break;
+                    case ResizeHandleType.Left:
+                    case ResizeHandleType.Right:
+                      e.cx = relativePos.x;
+                      break;
+                    case ResizeHandleType.LowerLeft:
+                    case ResizeHandleType.LowerRight:
+                    case ResizeHandleType.UpperLeft:
+                    case ResizeHandleType.UpperRight:
+                      e.cx = relativePos.x;
+                      e.cy = relativePos.y;
+                      break;
+                  }
                 }
                 break;
               }
@@ -1987,8 +2032,23 @@ const Ground = () => {
               const relativePos = new Vector2()
                 .subVectors(new Vector2(centerAbsPos.x, centerAbsPos.y), center)
                 .rotateAround(ORIGIN_VECTOR2, -grabRef.current!.rotation[2]);
-              e.cx = relativePos.x / lx;
-              e.cy = relativePos.y / ly;
+              switch (resizeHandleType) {
+                case ResizeHandleType.Lower:
+                case ResizeHandleType.Upper:
+                  e.cy = relativePos.y / ly;
+                  break;
+                case ResizeHandleType.Left:
+                case ResizeHandleType.Right:
+                  e.cx = relativePos.x / lx;
+                  break;
+                case ResizeHandleType.LowerLeft:
+                case ResizeHandleType.LowerRight:
+                case ResizeHandleType.UpperLeft:
+                case ResizeHandleType.UpperRight:
+                  e.cx = relativePos.x / lx;
+                  e.cy = relativePos.y / ly;
+                  break;
+              }
             }
           }
         }
