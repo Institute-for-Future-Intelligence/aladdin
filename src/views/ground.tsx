@@ -1779,8 +1779,23 @@ const Ground = () => {
                         const rightPointRelativePos = new Vector2()
                           .subVectors(rightPointAbsPos, center)
                           .rotateAround(ORIGIN_VECTOR2, a);
-                        childClone.cx = centerPointRelativePos.x;
-                        childClone.cy = centerPointRelativePos.y;
+                        switch (resizeHandleType) {
+                          case ResizeHandleType.Lower:
+                          case ResizeHandleType.Upper:
+                            childClone.cy = centerPointRelativePos.y;
+                            break;
+                          case ResizeHandleType.Left:
+                          case ResizeHandleType.Right:
+                            childClone.cx = centerPointRelativePos.x;
+                            break;
+                          case ResizeHandleType.LowerLeft:
+                          case ResizeHandleType.LowerRight:
+                          case ResizeHandleType.UpperLeft:
+                          case ResizeHandleType.UpperRight:
+                            childClone.cx = centerPointRelativePos.x;
+                            childClone.cy = centerPointRelativePos.y;
+                            break;
+                        }
                         childClone.leftPoint = [leftPointRelativePos.x, leftPointRelativePos.y, e.lz];
                         childClone.rightPoint = [rightPointRelativePos.x, rightPointRelativePos.y, e.lz];
                       }
@@ -1791,22 +1806,71 @@ const Ground = () => {
                         const relativePos = new Vector2()
                           .subVectors(new Vector2(centerAbsPos.x, centerAbsPos.y), center)
                           .rotateAround(ORIGIN_VECTOR2, a);
-                        childClone.cx = relativePos.x / lx;
-                        childClone.cy = relativePos.y / ly;
+                        switch (resizeHandleType) {
+                          case ResizeHandleType.Lower:
+                          case ResizeHandleType.Upper:
+                            childClone.cy = relativePos.y / ly;
+                            break;
+                          case ResizeHandleType.Left:
+                          case ResizeHandleType.Right:
+                            childClone.cx = relativePos.x / lx;
+                            break;
+                          case ResizeHandleType.LowerLeft:
+                          case ResizeHandleType.LowerRight:
+                          case ResizeHandleType.UpperLeft:
+                          case ResizeHandleType.UpperRight:
+                            childClone.cx = relativePos.x / lx;
+                            childClone.cy = relativePos.y / ly;
+                            break;
+                        }
                       }
                     }
                   }
                 }
                 const parentClone = JSON.parse(JSON.stringify(e)) as ElementModel;
-                parentClone.lx = lx;
-                parentClone.ly = ly;
-                parentClone.cx = center.x;
-                parentClone.cy = center.y;
+                switch (resizeHandleType) {
+                  case ResizeHandleType.Lower:
+                  case ResizeHandleType.Upper:
+                    parentClone.ly = ly;
+                    parentClone.cy = center.y;
+                    break;
+                  case ResizeHandleType.Left:
+                  case ResizeHandleType.Right:
+                    parentClone.lx = lx;
+                    parentClone.cx = center.x;
+                    break;
+                  case ResizeHandleType.LowerLeft:
+                  case ResizeHandleType.LowerRight:
+                  case ResizeHandleType.UpperLeft:
+                  case ResizeHandleType.UpperRight:
+                    parentClone.lx = lx;
+                    parentClone.ly = ly;
+                    parentClone.cx = center.x;
+                    parentClone.cy = center.y;
+                    break;
+                }
                 if (Util.doesParentContainAllChildren(parentClone, childrenClone)) {
-                  e.lx = lx;
-                  e.ly = ly;
-                  e.cx = center.x;
-                  e.cy = center.y;
+                  switch (resizeHandleType) {
+                    case ResizeHandleType.Lower:
+                    case ResizeHandleType.Upper:
+                      e.ly = ly;
+                      e.cy = center.y;
+                      break;
+                    case ResizeHandleType.Left:
+                    case ResizeHandleType.Right:
+                      e.lx = lx;
+                      e.cx = center.x;
+                      break;
+                    case ResizeHandleType.LowerLeft:
+                    case ResizeHandleType.LowerRight:
+                    case ResizeHandleType.UpperLeft:
+                    case ResizeHandleType.UpperRight:
+                      e.lx = lx;
+                      e.ly = ly;
+                      e.cx = center.x;
+                      e.cy = center.y;
+                      break;
+                  }
                   sizeOk = true;
                 }
               } else {

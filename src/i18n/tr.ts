@@ -775,6 +775,7 @@ export const i18n_tr = {
       AllSidesOfAllCuboids: 'Bütün Kübik Yüzeyleri ',
       AddPolygon: 'Poligon Ekle',
       Stackable: 'Stackable',
+      GroupMaster: 'Group Master',
     },
 
     polygonMenu: {

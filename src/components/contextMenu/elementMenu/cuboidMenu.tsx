@@ -118,7 +118,7 @@ export const CuboidMenu = React.memo(() => {
             });
           }}
         >
-          {i18n.t('foundationMenu.GroupMaster', { lng: language })}
+          {i18n.t('cuboidMenu.GroupMaster', { lng: language })}
         </Checkbox>
       </Menu.Item>
 

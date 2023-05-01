@@ -752,6 +752,7 @@ export const i18n_zh_cn = {
       AllSidesOfAllCuboids: '所有的长方体所有的侧面',
       AddPolygon: '添加多边形',
       Stackable: '可堆砌',
+      GroupMaster: '主长方体',
     },
 
     polygonMenu: {
