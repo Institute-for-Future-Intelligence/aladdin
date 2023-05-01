@@ -97,7 +97,7 @@ const CameraController = () => {
       }
       if (orthCameraRef.current) {
         // old files have no cameraPosition2D and panCenter2D: 12/19/2021
-        const cameraPosition2D = getVector(viewState.cameraPosition2D ?? [0, 0, 150]).setZ(150);
+        const cameraPosition2D = getVector(viewState.cameraPosition2D ?? [0, 0, 1000]).setZ(1000);
         const panCenter2D = getVector(viewState.panCenter2D ?? [0, 0, 0]);
         orthCameraRef.current.position.copy(cameraPosition2D);
         orthCameraRef.current.rotation.set(0, 0, 0);
