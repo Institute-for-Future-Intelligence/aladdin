@@ -58,6 +58,7 @@ import ocean_front from './examples/ocean_front.json';
 import egyptian_pyramids from './examples/egyptian_pyramids.json';
 import mayan_pyramid from './examples/mayan_pyramid.json';
 import si_o_se_pol from './examples/si_o_se_pol.json';
+import stacked_cuboids from './examples/stacked_cuboids.json';
 import vegetative_buffer_01 from './examples/vegetative_buffer_01.json';
 import effect_tilt_angle_solar_panel from './examples/effect_tilt_angle_solar_panel.json';
 import effect_azimuth_solar_panel from './examples/effect_azimuth_solar_panel.json';
@@ -399,6 +400,9 @@ export const getExample = (name: string) => {
       break;
     case 'si_o_se_pol':
       input = si_o_se_pol;
+      break;
+    case 'stacked_cuboids':
+      input = stacked_cuboids;
       break;
     case 'barn_house':
       input = barn_house;

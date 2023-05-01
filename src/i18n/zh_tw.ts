@@ -535,6 +535,7 @@ export const i18n_zh_tw = {
         EgyptianPyramids: '埃及金字塔',
         MayanPyramid: '瑪雅金字塔',
         SiOSePol: '三十三孔橋',
+        StackedCuboids: '堆砌長方體',
       },
 
       artificialIntelligenceSubMenu: '人工智慧',

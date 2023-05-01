@@ -537,6 +537,7 @@ export const i18n_tr = {
         EgyptianPyramids: 'Egyptian Pyramids',
         MayanPyramid: 'Mayan Pyramid',
         SiOSePol: 'Si-o-se-pol',
+        StackedCuboids: 'Stacked Cuboids',
       },
 
       artificialIntelligenceSubMenu: 'Yapay Zeka',

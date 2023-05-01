@@ -2158,6 +2158,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             <Menu.Item key="si_o_se_pol" onClick={loadFile}>
               {i18n.t('menu.otherBuildingExamples.SiOSePol', lang)}
             </Menu.Item>
+            <Menu.Item key="stacked_cuboids" onClick={loadFile}>
+              {i18n.t('menu.otherBuildingExamples.StackedCuboids', lang)}
+            </Menu.Item>
           </SubMenu>
           <SubMenu key={'building_complexes'} title={i18n.t('menu.buildingComplexesSubMenu', lang)}>
             <Menu.Item key="south_burlington_high_school" onClick={loadFile}>
