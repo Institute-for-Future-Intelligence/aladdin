@@ -1085,7 +1085,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
         <ModelsGallery
           author={undefined}
           models={authorModelsRef.current}
-          openCloudFile={openCloudFile}
+          openCloudFile={openCloudFileWithSaveReminder}
           closeCallback={() => {
             setPrimitiveStore('showModelsGallery', false);
             authorModelsRef.current = undefined;
