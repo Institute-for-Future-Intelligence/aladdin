@@ -160,17 +160,11 @@ const Human = ({
   useFrame(({ camera }) => {
     // rotation
     if (groupRef.current) {
-      const { rot: parentWorldRotation, pos: parentWorldPosition } = Util.getWorldDataById(parentId);
+      const { rot: parentWorldRotation } = Util.getWorldDataById(parentId);
       if (!orthographic) {
         const { x: cameraX, y: cameraY } = camera.position;
         const { x: currX, y: currY } = groupRef.current.localToWorld(new Vector3());
-        const parentObject = getParentObject();
-        if (parentObject) {
-          const r = -Math.atan2(cameraX - parentWorldPosition.x, cameraY - parentWorldPosition.y) - parentWorldRotation;
-          groupRef.current.rotation.set(0, 0, r);
-        } else {
-          groupRef.current.rotation.set(0, 0, -Math.atan2(cameraX - currX, cameraY - currY));
-        }
+        groupRef.current.rotation.set(0, 0, -Math.atan2(cameraX - currX, cameraY - currY) - parentWorldRotation);
       } else {
         groupRef.current.rotation.set(HALF_PI, Math.PI - parentWorldRotation, 0);
       }

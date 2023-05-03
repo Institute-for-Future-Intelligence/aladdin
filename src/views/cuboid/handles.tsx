@@ -27,6 +27,12 @@ type IntersectionPlaneData = {
   rotation: Euler;
 };
 
+enum CuboidFace {
+  Top = 'Top',
+  NS = 'NS',
+  EW = 'EW',
+}
+
 const Handles = ({ id, args }: HandlesProps) => {
   const [hx, hy, hz] = args;
 
@@ -47,6 +53,7 @@ const Handles = ({ id, args }: HandlesProps) => {
   const parentWorldRotation = useRef<number | null>(null);
   const parentWorldPosition = useRef<Vector3 | null>(null);
   const childPositionMap = useRef<Map<string, Vector3>>(new Map());
+  const childSideMap = useRef<Map<string, [string, number]>>(new Map());
 
   const intersectionPlaneRef = useRef<Mesh>(null);
 
@@ -119,6 +126,20 @@ const Handles = ({ id, args }: HandlesProps) => {
     });
   };
 
+  const isHumanOrPlant = (type: string) => {
+    switch (type) {
+      case ObjectType.Human:
+      case ObjectType.Flower:
+      case ObjectType.Tree:
+        return true;
+    }
+    return false;
+  };
+
+  const isAbsPosChildType = (type: string) => {
+    return isHumanOrPlant(type) || type === ObjectType.Cuboid;
+  };
+
   const resizeXY = (pointer: Vector3) => {
     setCommonStore((state) => {
       const cuboid = state.elements.find((e) => e.id === id);
@@ -148,7 +169,22 @@ const Handles = ({ id, args }: HandlesProps) => {
               .clone()
               .sub(currWorldPosition)
               .applyEuler(new Euler(0, 0, -currWorldRotation));
-            if (e.type === ObjectType.Cuboid) {
+            if (isHumanOrPlant(e.type)) {
+              const c = childSideMap.current.get(e.id);
+              if (c) {
+                const [face, sign] = c;
+                if (face === CuboidFace.Top) {
+                  e.cx = relPos.x;
+                  e.cy = relPos.y;
+                } else if (face === CuboidFace.NS) {
+                  e.cx = relPos.x;
+                  e.cy = Math.sign(sign) * (newLy / 2);
+                } else if (face === CuboidFace.EW) {
+                  e.cx = Math.sign(sign) * (newLx / 2);
+                  e.cy = relPos.y;
+                }
+              }
+            } else if (e.type === ObjectType.Cuboid) {
               e.cx = relPos.x;
               e.cy = relPos.y;
             } else {
@@ -187,7 +223,19 @@ const Handles = ({ id, args }: HandlesProps) => {
               .clone()
               .sub(currWorldPosition)
               .applyEuler(new Euler(0, 0, -currWorldRotation));
-            if (e.type === ObjectType.Cuboid) {
+            if (isHumanOrPlant(e.type)) {
+              const c = childSideMap.current.get(e.id);
+              if (c) {
+                const [face, sign] = c;
+                if (face === CuboidFace.Top) {
+                  e.cx = relPos.x;
+                } else if (face === CuboidFace.NS) {
+                  e.cx = relPos.x;
+                } else if (face === CuboidFace.EW) {
+                  e.cx = Math.sign(sign) * (newLx / 2);
+                }
+              }
+            } else if (e.type === ObjectType.Cuboid) {
               e.cx = relPos.x;
             } else {
               e.cx = relPos.x / newLx;
@@ -224,7 +272,19 @@ const Handles = ({ id, args }: HandlesProps) => {
               .clone()
               .sub(currWorldPosition)
               .applyEuler(new Euler(0, 0, -currWorldRotation));
-            if (e.type === ObjectType.Cuboid) {
+            if (isHumanOrPlant(e.type)) {
+              const c = childSideMap.current.get(e.id);
+              if (c) {
+                const [face, sign] = c;
+                if (face === CuboidFace.Top) {
+                  e.cy = relPos.y;
+                } else if (face === CuboidFace.NS) {
+                  e.cy = Math.sign(sign) * (newLy / 2);
+                } else if (face === CuboidFace.EW) {
+                  e.cy = relPos.y;
+                }
+              }
+            } else if (e.type === ObjectType.Cuboid) {
               e.cy = relPos.y;
             } else {
               e.cy = relPos.y / newLy;
@@ -238,7 +298,21 @@ const Handles = ({ id, args }: HandlesProps) => {
   const resizeLz = (pointer: Vector3) => {
     if (cuboidWorldBottomHeight.current !== null) {
       const newLz = Math.max(1, pointer.z - cuboidWorldBottomHeight.current);
-      setCuboidHeight(id, newLz);
+      setCommonStore((state) => {
+        for (const e of state.elements) {
+          if (e.id === id) {
+            e.lz = newLz;
+            e.cz = newLz / 2;
+            state.selectedElementHeight = newLz;
+          }
+          if (e.parentId === id && isHumanOrPlant(e.type)) {
+            const c = childSideMap.current.get(e.id);
+            if (c && c[0] === CuboidFace.Top) {
+              e.cz = newLz / 2;
+            }
+          }
+        }
+      });
     }
   };
 
@@ -276,12 +350,22 @@ const Handles = ({ id, args }: HandlesProps) => {
         const children = useStore
           .getState()
           .elements.filter(
-            (e) => e.parentId === cuboid.id && (e.type === ObjectType.Cuboid || Util.isIdentical(e.normal, [0, 0, 1])),
+            (e) => e.parentId === cuboid.id && (isAbsPosChildType(e.type) || Util.isIdentical(e.normal, [0, 0, 1])),
           );
         childPositionMap.current.clear();
+        childSideMap.current.clear();
         for (const child of children) {
           const worldPos = new Vector3();
-          if (child.type === ObjectType.Cuboid) {
+          if (isHumanOrPlant(child.type)) {
+            worldPos.set(child.cx, child.cy, child.cz);
+            if (Math.abs(child.cz - hz) < 0.01) {
+              childSideMap.current.set(child.id, [CuboidFace.Top, 1]);
+            } else if (Math.abs(Math.abs(child.cx) - hx) < 0.01) {
+              childSideMap.current.set(child.id, [CuboidFace.EW, Math.sign(child.cx)]);
+            } else {
+              childSideMap.current.set(child.id, [CuboidFace.NS, Math.sign(child.cy)]);
+            }
+          } else if (child.type === ObjectType.Cuboid) {
             worldPos.set(child.cx, child.cy, child.cz);
           } else {
             worldPos.set(child.cx * cuboid.lx, child.cy * cuboid.ly, 0);
@@ -301,6 +385,16 @@ const Handles = ({ id, args }: HandlesProps) => {
       setIntersectionPlaneData({ position: handleObject.position.clone(), rotation: new Euler(-HALF_PI, rotation, 0) });
       const topHandleWorldPosition = handleObject.localToWorld(new Vector3());
       cuboidWorldBottomHeight.current = topHandleWorldPosition.z - hz * 2;
+      const children = useStore.getState().elements.filter((e) => e.parentId === id && isHumanOrPlant(e.type));
+
+      childSideMap.current.clear();
+      for (const child of children) {
+        const worldPos = new Vector3();
+        worldPos.set(child.cx, child.cy, child.cz);
+        if (Math.abs(child.cz - hz) < 0.01) {
+          childSideMap.current.set(child.id, [CuboidFace.Top, 1]);
+        }
+      }
     }
   };
 

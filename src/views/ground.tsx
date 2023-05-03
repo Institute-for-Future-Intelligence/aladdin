@@ -588,65 +588,53 @@ const Ground = () => {
       state.updateSceneRadius();
       state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
       // set ref children state
-      for (const e of state.elements) {
-        if (Util.isPlantOrHuman(e)) {
-          if (e.parentId === elem.id) {
-            oldChildrenParentIdMapRef.current.set(e.id, elem.id);
-            if (Util.isResizingVertical(useStore.getState().resizeHandleType)) {
-              // stand on top face
-              if (Math.abs(oldDimensionRef.current.z / 2 - e.cz) < 0.01) {
-                e.cz = elem.lz / 2;
-              }
-              // stand on side faces
-              else {
-                const newRelZ = e.cz + oldPositionRef.current.z - elem.cz;
-                if (Math.abs(newRelZ) > elem.lz / 2) {
-                  handleDetachParent(elem, e);
-                } else {
-                  e.cz = newRelZ;
-                }
-              }
-            } else {
-              // top face
-              if (Math.abs(oldDimensionRef.current.z / 2 - e.cz) < 0.01) {
-                // fixed position
-                const newRelativePos = new Vector3(e.cx, e.cy, e.cz)
-                  .applyEuler(new Euler(0, 0, elem.rotation[2]))
-                  .add(oldPositionRef.current)
-                  .sub(newPositionRef.current)
-                  .applyEuler(new Euler(0, 0, -elem.rotation[2]));
-                // detach parent dom if falls on ground
-                if (
-                  Math.abs(newRelativePos.x) > Math.abs(newDimensionRef.current.x / 2) + 0.01 ||
-                  Math.abs(newRelativePos.y) > Math.abs(newDimensionRef.current.y / 2) + 0.01
-                ) {
-                  handleDetachParent(elem, e);
-                } else {
-                  e.cx = newRelativePos.x;
-                  e.cy = newRelativePos.y;
-                }
-              }
-              // side faces
-              else {
-                const oldRelativePos = new Vector3(e.cx, e.cy, e.cz);
-                const d = new Vector3().subVectors(newPositionRef.current, oldPositionRef.current);
-                const v = new Vector3().subVectors(oldRelativePos, d);
-                // west and east face
-                if (Math.abs(oldRelativePos.x / oldDimensionRef.current.x) > 0.49) {
-                  if (Math.abs(v.y) > elem.ly / 2 + 0.5) {
+      if (elem.parentId === GROUND_ID) {
+        for (const e of state.elements) {
+          if (Util.isPlantOrHuman(e)) {
+            if (e.parentId === elem.id) {
+              oldChildrenParentIdMapRef.current.set(e.id, elem.id);
+              if (!Util.isResizingVertical(useStore.getState().resizeHandleType)) {
+                // top face
+                if (Math.abs(oldDimensionRef.current.z / 2 - e.cz) < 0.01) {
+                  // fixed position
+                  const newRelativePos = new Vector3(e.cx, e.cy, e.cz)
+                    .applyEuler(new Euler(0, 0, elem.rotation[2]))
+                    .add(oldPositionRef.current)
+                    .sub(newPositionRef.current)
+                    .applyEuler(new Euler(0, 0, -elem.rotation[2]));
+                  // detach parent dom if falls on ground
+                  if (
+                    Math.abs(newRelativePos.x) > Math.abs(newDimensionRef.current.x / 2) + 0.01 ||
+                    Math.abs(newRelativePos.y) > Math.abs(newDimensionRef.current.y / 2) + 0.01
+                  ) {
                     handleDetachParent(elem, e);
                   } else {
-                    e.cx = (oldRelativePos.x > 0 ? elem.lx : -elem.lx) / 2;
-                    e.cy = v.y;
+                    e.cx = newRelativePos.x;
+                    e.cy = newRelativePos.y;
                   }
                 }
-                // north and south face
-                else if (Math.abs(oldRelativePos.y / oldDimensionRef.current.y) > 0.49) {
-                  if (Math.abs(v.x) > elem.lx / 2 + 0.5) {
-                    handleDetachParent(elem, e);
-                  } else {
-                    e.cx = v.x;
-                    e.cy = (oldRelativePos.y > 0 ? elem.ly : -elem.ly) / 2;
+                // side faces
+                else {
+                  const oldRelativePos = new Vector3(e.cx, e.cy, e.cz);
+                  const d = new Vector3().subVectors(newPositionRef.current, oldPositionRef.current);
+                  const v = new Vector3().subVectors(oldRelativePos, d);
+                  // west and east face
+                  if (Math.abs(oldRelativePos.x / oldDimensionRef.current.x) > 0.49) {
+                    if (Math.abs(v.y) > elem.ly / 2 + 0.5) {
+                      handleDetachParent(elem, e);
+                    } else {
+                      e.cx = (oldRelativePos.x > 0 ? elem.lx : -elem.lx) / 2;
+                      e.cy = v.y;
+                    }
+                  }
+                  // north and south face
+                  else if (Math.abs(oldRelativePos.y / oldDimensionRef.current.y) > 0.49) {
+                    if (Math.abs(v.x) > elem.lx / 2 + 0.5) {
+                      handleDetachParent(elem, e);
+                    } else {
+                      e.cx = v.x;
+                      e.cy = (oldRelativePos.y > 0 ? elem.ly : -elem.ly) / 2;
+                    }
                   }
                 }
               }
@@ -1623,38 +1611,6 @@ const Ground = () => {
               handlePlantOrHumanRefMove(useRefStore.getState().humanRef, e);
               break;
             }
-            case ObjectType.Cuboid:
-              // if (Util.isTopResizeHandle(resizeHandleType)) {
-              //   setCommonStore((state) => {
-              //     for (const e of state.elements) {
-              //       if (e.id === grabRef.current?.id) {
-              //         e.cz = Math.max(0.5, p.z / 2);
-              //         e.lz = Math.max(1, p.z);
-              //         break;
-              //       }
-              //     }
-              //     state.selectedElementHeight = Math.max(1, p.z);
-              //   });
-              //   const cuboidRef = useRefStore.getState().cuboidRef;
-              //   if (cuboidRef?.current) {
-              //     for (const obj of cuboidRef.current.children) {
-              //       if (obj.name.includes('Human') || obj.name.includes('Tree') || obj.name.includes('Flower')) {
-              //         const absPos = absPosMapRef.current.get(getObjectId(obj));
-              //         if (absPos) {
-              //           // stand on top face
-              //           if (Math.abs(oldDimensionRef.current.z - absPos.z) < 0.01) {
-              //             obj.position.setZ(Math.max(p.z / 2, 0.5));
-              //           }
-              //           // stand on side faces
-              //           else {
-              //             obj.position.setZ(absPos.z - cuboidRef.current.position.z);
-              //           }
-              //         }
-              //       }
-              //     }
-              //   }
-              // }
-              break;
           }
         }
       }
@@ -1695,9 +1651,10 @@ const Ground = () => {
 
   const handleHumanAndPlantPositionFixedOnParent = (
     object: Object3D | null | undefined,
-    parentId: string,
     lx: number,
     ly: number,
+    parentWorldPosition: Vector3,
+    parentWorldRotation: number,
   ) => {
     if (!object) return;
     for (const child of object.children) {
@@ -1705,11 +1662,10 @@ const Ground = () => {
         const childId = getObjectId(child);
         const worldPos = absPosMapRef.current.get(childId);
         if (worldPos) {
-          const { rot: parentWorldRotation } = Util.getWorldDataById(parentId);
           // top face
           if (Math.abs(oldDimensionRef.current.z / 2 - child.position.z) < 0.01) {
             const relativePos = new Vector3()
-              .subVectors(worldPos, object.localToWorld(new Vector3()))
+              .subVectors(worldPos, parentWorldPosition)
               .applyEuler(new Euler(0, 0, -parentWorldRotation));
             child.position.setX(relativePos.x);
             child.position.setY(relativePos.y);
@@ -1719,7 +1675,7 @@ const Ground = () => {
             const relativePos = new Vector3()
               .subVectors(worldPos, oldPositionRef.current)
               .applyEuler(new Euler(0, 0, -parentWorldRotation));
-            const d = new Vector3().subVectors(object.localToWorld(new Vector3()), oldPositionRef.current);
+            const d = new Vector3().subVectors(parentWorldPosition, oldPositionRef.current);
             const v = new Vector3().subVectors(relativePos, d);
             // west and east face
             if (Math.abs(relativePos.x / oldDimensionRef.current.x) > 0.49) {
@@ -2058,11 +2014,27 @@ const Ground = () => {
     switch (grabRef.current.type) {
       case ObjectType.Foundation:
         const foundationRef = useRefStore.getState().foundationRef;
-        handleHumanAndPlantPositionFixedOnParent(foundationRef?.current, grabRef.current.id, lx, ly);
+        if (foundationRef?.current) {
+          handleHumanAndPlantPositionFixedOnParent(
+            foundationRef?.current,
+            lx,
+            ly,
+            foundationRef.current.position,
+            grabRef.current.rotation[2],
+          );
+        }
         break;
       case ObjectType.Cuboid:
         const cuboidRef = useRefStore.getState().cuboidRef;
-        handleHumanAndPlantPositionFixedOnParent(cuboidRef?.current, grabRef.current.id, lx, ly);
+        if (cuboidRef?.current && cuboidRef.current.parent) {
+          handleHumanAndPlantPositionFixedOnParent(
+            cuboidRef?.current,
+            lx,
+            ly,
+            cuboidRef.current.parent.position,
+            grabRef.current.rotation[2],
+          );
+        }
         break;
     }
   };
