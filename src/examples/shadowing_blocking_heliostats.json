@@ -1,7 +1,7 @@
 {
-  "docid": "k6wAWsKFrh7MUUMVt7Bvyz",
-  "time": "02/03/2023 04:09 pm",
-  "timestamp": 1675458565019,
+  "docid": "79keFPiCZ97NG3faHSxjcx",
+  "time": "05/07/2023 07:48 pm",
+  "timestamp": 1683503328546,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -150,7 +150,7 @@
       "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "id": "3qHYF54uoRjqCcVSRMJa3K",
       "selected": false,
-      "dailyYield": 22.07549342325896,
+      "dailyYield": 22.075493423258955,
       "yearlyYield": 341.6536704139208,
       "label": "4",
       "labelHeight": 2,
@@ -256,7 +256,7 @@
       "selected": false,
       "drawSunBeam": true,
       "label": "2",
-      "dailyYield": 14.058256815685132,
+      "dailyYield": 14.05825681568513,
       "labelHeight": 2,
       "labelSize": 2
     },
@@ -290,11 +290,12 @@
       "selected": false,
       "drawSunBeam": true,
       "label": "1",
-      "dailyYield": 11.010081200524052,
+      "dailyYield": 11.010081200524054,
       "labelSize": 2,
       "labelHeight": 2
     }
   ],
+  "sceneRadius": 63,
   "view": {
     "yearlyPvYieldPanelX": -25,
     "autoRotate": false,
@@ -332,9 +333,9 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "hybrid",
     "cameraPosition": [
-      -61.209597915228606,
-      -1.3390540628971292,
-      21.648385283960568
+      -56.03492924888614,
+      -3.1393903550330142,
+      35.62950235618159
     ],
     "panCenter": [
       -1.9088390832554354,
@@ -349,21 +350,21 @@
     "cameraPosition2D": [
       8.410285062152344,
       12.466838396919735,
-      50.00001246725564
+      150
     ],
     "panCenter2D": [
       8.410285062152344,
       12.466888399142201,
       0.000012467288726847116
     ],
-    "solarRadiationHeatMapMaxValue": 6,
-    "showDailyHeliostatYieldPanel": true,
+    "solarRadiationHeatMapMaxValue": 9,
+    "showDailyHeliostatYieldPanel": false,
     "dailyHeliostatYieldPanelX": null,
     "dailyHeliostatYieldPanelY": null,
     "showYearlyHeliostatYieldPanel": false,
     "dailyHeliostatYieldPanelRect": {
-      "x": 0,
-      "y": 0,
+      "x": -5,
+      "y": 30,
       "width": 600,
       "height": 400
     },
@@ -373,7 +374,8 @@
       "y": 0,
       "width": 397,
       "height": 62
-    }
+    },
+    "solarRadiationHeatMapReflectionOnly": true
   },
   "graphState": {
     "dailyParabolicDishIndividualOutputs": false,
@@ -442,6 +444,10 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
+  "modelType": "Unknown",
+  "modelAuthor": null,
+  "modelLabel": null,
+  "modelDescription": null,
   "notes": [
     "Shadowing and blocking among heliostats"
   ]
