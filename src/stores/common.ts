@@ -636,6 +636,13 @@ export const useStore = create<CommonStoreState>(
               state.deletedRoofId = null;
               state.actionState = new DefaultActionState();
               // state.loadingFile = false;
+              // TODO: fix these bugs that are tentatively corrected here
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && e.parentId !== GROUND_ID) {
+                  console.log('Error: ' + e.parentId + ' is not ground!');
+                  e.parentId = GROUND_ID;
+                }
+              }
             });
             usePrimitiveStore.setState((state) => {
               state.showSolarRadiationHeatmap = false;
