@@ -115,8 +115,8 @@ export const useUpdataOldFiles = (wallModel: WallModel) => {
               wall.leftTopPartialResizeHandleHeight === undefined ||
               wall.rightTopPartialResizeHandleHeight === undefined
             ) {
-              wall.leftTopPartialResizeHandleHeight = wall.lz - 0.5;
-              wall.rightTopPartialResizeHandleHeight = wall.lz - 0.5;
+              wall.leftTopPartialResizeHandleHeight = wall.lz;
+              wall.rightTopPartialResizeHandleHeight = wall.lz;
             }
             if (wall.eavesLength === undefined) {
               const roof = state.elements.find((e) => e.id === wall.roofId && e.type === ObjectType.Roof) as RoofModel;
