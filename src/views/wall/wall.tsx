@@ -103,7 +103,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     cy,
     lx = 1,
     ly = 0.5,
-    lz = 4,
+    lz = 5,
     relativeAngle,
     leftJoints,
     rightJoints,
@@ -128,6 +128,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     fill = WallFill.Full,
     leftUnfilledHeight = 0.5,
     rightUnfilledHeight = 0.5,
+    leftTopPartialResizeHandleHeight = lz - 0.5,
+    rightTopPartialResizeHandleHeight = lz - 0.5,
     parapet = DEFAULT_PARAPET_SETTINGS,
     leftPoint,
     rightPoint,
@@ -194,11 +196,14 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   const night = sunlightDirection.z <= 0;
   const wallLeftHeight = leftRoofHeight ?? lz;
   const wallRightHeight = rightRoofHeight ?? lz;
-  const realLeftUnfilledHeight = fill === WallFill.Partial ? leftUnfilledHeight : 0;
-  const realRightUnfilledHeight = fill === WallFill.Partial ? rightUnfilledHeight : 0;
+  const isPartial = fill == WallFill.Partial;
+  const realLeftUnfilledHeight = isPartial ? leftUnfilledHeight : 0;
+  const realRightUnfilledHeight = isPartial ? rightUnfilledHeight : 0;
+  const realWallLeftHeight = isPartial ? leftTopPartialResizeHandleHeight : wallLeftHeight;
+  const realWallRightHeight = isPartial ? rightTopPartialResizeHandleHeight : wallRightHeight;
   const castShadow = shadowEnabled && !transparent;
   const showParapet = isShowParapet();
-  const parapetZ = Math.max(wallLeftHeight, wallRightHeight);
+  const parapetZ = Math.max(realWallLeftHeight, realWallRightHeight);
 
   const mouse = useMemo(() => new Vector2(), []);
   const ray = useMemo(() => new Raycaster(), []);
@@ -252,6 +257,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     fill,
     leftUnfilledHeight,
     rightUnfilledHeight,
+    realWallLeftHeight,
+    realWallRightHeight,
     elementsOnWall,
     leftRoofHeight,
     rightRoofHeight,
@@ -262,7 +269,23 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
 
   const insideWallShape = useMemo(() => {
     const wallShape = new Shape();
-    drawWallShape(wallShape, lx, lz, 0, 0, leftOffset, rightOffset);
+
+    if (fill === WallFill.Partial) {
+      const hy = lz / 2;
+
+      wallShape.moveTo(-hx + leftOffset, -hy + leftUnfilledHeight); // lower left
+      wallShape.lineTo(hx - rightOffset, -hy + rightUnfilledHeight); // lower right
+
+      const dh = realWallRightHeight - realWallLeftHeight;
+      const rightOffsetHeight = ((lx - rightOffset) * dh) / lx;
+      const leftOffsetHeight = (leftOffset * dh) / lx;
+
+      wallShape.lineTo(hx - rightOffset, -hy + realWallLeftHeight + rightOffsetHeight); // top right
+      wallShape.lineTo(-hx + leftOffset, -hy + realWallLeftHeight + leftOffsetHeight); // top left
+      wallShape.closePath();
+    } else {
+      drawWallShape(wallShape, lx, lz, 0, 0, leftOffset, rightOffset);
+    }
 
     elementsOnWall.forEach((w) => {
       if (w.type === ObjectType.Window && w.id !== invalidElementIdRef.current && w.lx > 0 && w.lz > 0) {
@@ -292,6 +315,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     fill,
     leftUnfilledHeight,
     rightUnfilledHeight,
+    realWallLeftHeight,
+    realWallRightHeight,
     leftOffset,
     rightOffset,
     elementsOnWall,
@@ -302,19 +327,51 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     centerRightRoofHeight,
   ]);
 
+  const topSurfaceHeight = useMemo(() => {
+    if (!isPartial) return hz;
+    return (leftTopPartialResizeHandleHeight + rightTopPartialResizeHandleHeight) / 2 - hz;
+  }, [hz, isPartial, leftTopPartialResizeHandleHeight, rightTopPartialResizeHandleHeight]);
+
+  const topSurfaceRotationY = useMemo(() => {
+    const dh = rightTopPartialResizeHandleHeight - leftTopPartialResizeHandleHeight;
+    if (!isPartial || Math.abs(dh) < 0.01) return 0;
+    return Math.atan2(dh, lx);
+  }, [lx, isPartial, leftTopPartialResizeHandleHeight, rightTopPartialResizeHandleHeight]);
+
   const topWallShape = useMemo(() => {
     const shape = new Shape();
-    drawTopSurface(shape, lx, ly, leftOffset, rightOffset);
-    return shape;
-  }, [lx, ly, leftOffset, rightOffset]);
+    if (!isPartial || Math.abs(topSurfaceRotationY) < 0.0001) {
+      drawTopSurface(shape, lx, ly, leftOffset, rightOffset);
+      return shape;
+    } else {
+      const hx = lx / 2;
+      const hy = ly / 2;
+      const t = Math.cos(topSurfaceRotationY);
+      const tHx = hx / t;
+      const tInnerLeftHx = (hx - leftOffset) / t;
+      const tInnerRightHx = (hx - rightOffset) / t;
+
+      shape.moveTo(-tHx, -hy);
+      shape.lineTo(tHx, -hy);
+      shape.lineTo(tInnerRightHx, hy);
+      shape.lineTo(-tInnerLeftHx, hy);
+      shape.closePath();
+
+      return shape;
+    }
+  }, [lx, ly, leftOffset, rightOffset, isPartial, topSurfaceRotationY]);
 
   const outerWallPoints2D = useMemo(() => {
     const points: Point2[] = [];
     const x = lx / 2;
     const y = lz / 2;
     if (fill === WallFill.Partial) {
-      points.push({ x: -x + leftOffset, y: -y + leftUnfilledHeight });
-      points.push({ x: x - rightOffset, y: -y + rightUnfilledHeight });
+      points.push({ x: -x + leftOffset, y: -y + realLeftUnfilledHeight });
+      points.push({ x: x - rightOffset, y: -y + realRightUnfilledHeight });
+      points.push({ x: x - rightOffset, y: -y + realWallRightHeight });
+      points.push({ x: -x + leftOffset, y: -y + realWallLeftHeight });
+
+      return points;
     } else {
       points.push({ x: -x, y: -y });
       points.push({ x: x, y: -y });
@@ -336,8 +393,10 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     lx,
     lz,
     fill,
-    leftUnfilledHeight,
-    rightUnfilledHeight,
+    realLeftUnfilledHeight,
+    realRightUnfilledHeight,
+    realWallLeftHeight,
+    realWallRightHeight,
     leftRoofHeight,
     rightRoofHeight,
     centerRoofHeight,
@@ -511,41 +570,43 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     if (fill === WallFill.Partial) {
       shape.moveTo(cx - hx + leftOffset, cy - hy + leftUnfilledHeight); // lower left
       shape.lineTo(cx + hx - rightOffset, cy - hy + rightUnfilledHeight); // lower right
-    } else {
-      shape.moveTo(cx - hx + leftOffset, cy - hy); // lower left
-      if (drawDoorShape) {
-        const doors = elementsOnWall
-          .filter((e) => e.type === ObjectType.Door)
-          .sort((a, b) => a.cx - b.cx) as DoorModel[];
-        for (const door of doors) {
-          if (door.id !== invalidElementIdRef.current) {
-            const [dcx, dcy, dlx, dly] = [door.cx * lx, door.cz * ly, door.lx * lx, door.lz * lz];
-            if (door.doorType === DoorType.Default) {
-              shape.lineTo(cx + dcx - dlx / 2, cy - hy);
+      shape.lineTo(cx + hx - rightOffset, cy - hy + realWallRightHeight); // top right
+      shape.lineTo(cx - hx + leftOffset, cy - hy + realWallLeftHeight); // top left
+      shape.closePath();
+      return;
+    }
+
+    shape.moveTo(cx - hx + leftOffset, cy - hy); // lower left
+    if (drawDoorShape) {
+      const doors = elementsOnWall.filter((e) => e.type === ObjectType.Door).sort((a, b) => a.cx - b.cx) as DoorModel[];
+      for (const door of doors) {
+        if (door.id !== invalidElementIdRef.current) {
+          const [dcx, dcy, dlx, dly] = [door.cx * lx, door.cz * ly, door.lx * lx, door.lz * lz];
+          if (door.doorType === DoorType.Default) {
+            shape.lineTo(cx + dcx - dlx / 2, cy - hy);
+            shape.lineTo(cx + dcx - dlx / 2, cy - hy + dly);
+            shape.lineTo(cx + dcx + dlx / 2, cy - hy + dly);
+            shape.lineTo(cx + dcx + dlx / 2, cy - hy);
+          } else {
+            const ah = Math.min(door.archHeight, dly, dlx / 2);
+            shape.lineTo(cx + dcx - dlx / 2, cy - hy);
+            if (ah > 0.1) {
+              shape.lineTo(cx + dcx - dlx / 2, cy - hy + dly / 2 - ah);
+              const r = ah / 2 + dlx ** 2 / (8 * ah);
+              const [cX, cY] = [dcx, cy + dcy + dly / 2 - r];
+              const endAngle = Math.acos(Math.min(dlx / 2 / r, 1));
+              const startAngle = Math.PI - endAngle;
+              shape.absarc(cX, cY, r, startAngle, endAngle, true);
+            } else {
               shape.lineTo(cx + dcx - dlx / 2, cy - hy + dly);
               shape.lineTo(cx + dcx + dlx / 2, cy - hy + dly);
-              shape.lineTo(cx + dcx + dlx / 2, cy - hy);
-            } else {
-              const ah = Math.min(door.archHeight, dly, dlx / 2);
-              shape.lineTo(cx + dcx - dlx / 2, cy - hy);
-              if (ah > 0.1) {
-                shape.lineTo(cx + dcx - dlx / 2, cy - hy + dly / 2 - ah);
-                const r = ah / 2 + dlx ** 2 / (8 * ah);
-                const [cX, cY] = [dcx, cy + dcy + dly / 2 - r];
-                const endAngle = Math.acos(Math.min(dlx / 2 / r, 1));
-                const startAngle = Math.PI - endAngle;
-                shape.absarc(cX, cY, r, startAngle, endAngle, true);
-              } else {
-                shape.lineTo(cx + dcx - dlx / 2, cy - hy + dly);
-                shape.lineTo(cx + dcx + dlx / 2, cy - hy + dly);
-              }
-              shape.lineTo(cx + dcx + dlx / 2, cy - hy);
             }
+            shape.lineTo(cx + dcx + dlx / 2, cy - hy);
           }
         }
       }
-      shape.lineTo(cx + hx - rightOffset, cy - hy); // lower right
     }
+    shape.lineTo(cx + hx - rightOffset, cy - hy); // lower right
 
     if (roofId) {
       if (rightRoofHeight) {
@@ -1043,7 +1104,12 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   }
 
   function isRectWall() {
-    if (fill === WallFill.Partial && leftUnfilledHeight !== rightUnfilledHeight) return false;
+    if (
+      fill === WallFill.Partial &&
+      (leftUnfilledHeight !== rightUnfilledHeight ||
+        leftTopPartialResizeHandleHeight !== rightTopPartialResizeHandleHeight)
+    )
+      return false;
     if (!roofId) return true;
     if (leftRoofHeight !== rightRoofHeight) return false;
     if (centerRoofHeight !== undefined || centerLeftRoofHeight !== undefined || centerRightRoofHeight !== undefined)
@@ -1198,9 +1264,11 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
 
     const boundedPointer = pointer.clone();
     if (isRectWall()) {
-      const botHeight = fill === WallFill.Partial ? leftUnfilledHeight : 0;
+      const botHeight = isPartial ? leftUnfilledHeight : 0;
+      const topHeight = lz - (isPartial ? leftTopPartialResizeHandleHeight : lz);
       boundedPointer.setX(Util.clamp(pointer.x, boundingMinX, boundingMaxX));
-      boundedPointer.setZ(Util.clamp(pointer.z, boundingMinZ + botHeight, boundingMaxZ));
+      boundedPointer.setZ(Util.clamp(pointer.z, boundingMinZ + botHeight, boundingMaxZ - topHeight));
+      return boundedPointer;
     } else {
       const boundedShape = getBoundedShape(elHx, elHz, boundingMinX, boundingMaxX, padding);
       const pointer2D = new Vector2(pointer.x, pointer.z);
@@ -1209,10 +1277,17 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       let minY = -Infinity;
       if (options?.resizeAnchor) {
         const anchorX = options.resizeAnchor.x;
-        const roofPoints = getRoofPoints().reverse(); // from left to right.
-        for (let i = 1; i < roofPoints.length; i++) {
-          const start = roofPoints[i - 1];
-          const end = roofPoints[i];
+        const points: Vector3[] = [];
+
+        if (isPartial) {
+          points.push(new Vector3(-hx, -hz + realWallLeftHeight), new Vector3(hx, -hz + realWallRightHeight));
+        } else {
+          const roofPoints = getRoofPoints().reverse(); // from left to right.
+          points.push(...roofPoints);
+        }
+        for (let i = 1; i < points.length; i++) {
+          const start = points[i - 1];
+          const end = points[i];
           if (anchorX >= start.x && anchorX <= end.x) {
             const k = (end.y - start.y) / (end.x - start.x);
             const b = -k * start.x + start.y;
@@ -1306,12 +1381,20 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     // right
     edgesPoints.push({ start: new Vector3(boundingMaxX, botRightPoint.y), end: new Vector3(boundingMaxX, hz) });
 
-    const roofPoints = getRoofPoints();
-    for (let i = 1; i < roofPoints.length; i++) {
-      const start = roofPoints[i - 1].clone();
-      const end = roofPoints[i].clone();
-      offsetWallEdgePoints(start, end, elHx, elHz, padding);
-      edgesPoints.push({ start, end });
+    if (isPartial) {
+      // top edge
+      const topRightPoint = new Vector3(hx, -hz + realWallRightHeight);
+      const topLeftPoint = new Vector3(-hx, -hz + realWallLeftHeight);
+      offsetWallEdgePoints(topRightPoint, topLeftPoint, elHx, elHz, padding);
+      edgesPoints.push({ start: topRightPoint.clone(), end: topLeftPoint.clone() });
+    } else {
+      const roofPoints = getRoofPoints();
+      for (let i = 1; i < roofPoints.length; i++) {
+        const start = roofPoints[i - 1].clone();
+        const end = roofPoints[i].clone();
+        offsetWallEdgePoints(start, end, elHx, elHz, padding);
+        edgesPoints.push({ start, end });
+      }
     }
 
     const shape = new Shape();
@@ -1852,25 +1935,27 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   }
 
   function renderStuds() {
-    let [wallCenterPos, wallCenterHeight] = centerRoofHeight ?? [0, (wallLeftHeight + wallRightHeight) / 2];
+    let [wallCenterPos, wallCenterHeight] = centerRoofHeight ?? [0, (realWallLeftHeight + realWallRightHeight) / 2];
     wallCenterPos = wallCenterPos * lx;
 
     const leftX = wallCenterPos + hx;
-    const leftLength = Math.hypot(leftX, wallCenterHeight - wallLeftHeight);
-    const leftRotationY = -Math.atan2(wallCenterHeight - wallLeftHeight, leftX);
+    const leftLength = Math.hypot(leftX, wallCenterHeight - realWallLeftHeight);
+    const leftRotationY = -Math.atan2(wallCenterHeight - realWallLeftHeight, leftX);
 
     const rightX = hx - wallCenterPos;
-    const rightLength = Math.hypot(rightX, wallRightHeight - wallCenterHeight);
-    const rightRotationY = -Math.atan2(wallRightHeight - wallCenterHeight, rightX);
+    const rightLength = Math.hypot(rightX, realWallRightHeight - wallCenterHeight);
+    const rightRotationY = -Math.atan2(realWallRightHeight - wallCenterHeight, rightX);
 
     return (
       <group name={`wall stud group ${id}`}>
         {structureUnitArray.map(([pos, y], idx) => {
           let height;
           if (pos < wallCenterPos) {
-            height = ((pos + hx) * (wallCenterHeight - wallLeftHeight)) / (wallCenterPos + hx) + wallLeftHeight - y;
+            height =
+              ((pos + hx) * (wallCenterHeight - realWallLeftHeight)) / (wallCenterPos + hx) + realWallLeftHeight - y;
           } else {
-            height = ((pos - hx) * (wallCenterHeight - wallRightHeight)) / (wallCenterPos - hx) + wallRightHeight - y;
+            height =
+              ((pos - hx) * (wallCenterHeight - realWallRightHeight)) / (wallCenterPos - hx) + realWallRightHeight - y;
           }
 
           return (
@@ -1889,7 +1974,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         })}
         <Box
           args={[leftLength, ly, ly]}
-          position={[-hx + leftX / 2, hy, (wallLeftHeight + wallCenterHeight) / 2 - hz - ly / 2]}
+          position={[-hx + leftX / 2, hy, (realWallLeftHeight + wallCenterHeight) / 2 - hz - ly / 2]}
           rotation={[0, leftRotationY, 0]}
           castShadow={shadowEnabled}
           receiveShadow={shadowEnabled}
@@ -1900,7 +1985,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         </Box>
         <Box
           args={[rightLength, ly, ly]}
-          position={[hx - rightX / 2, hy, (wallRightHeight + wallCenterHeight) / 2 - hz - ly / 2]}
+          position={[hx - rightX / 2, hy, (realWallRightHeight + wallCenterHeight) / 2 - hz - ly / 2]}
           rotation={[0, rightRotationY, 0]}
           castShadow={shadowEnabled}
           receiveShadow={shadowEnabled}
@@ -1914,16 +1999,16 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   }
 
   function renderPillars() {
-    let [wallCenterPos, wallCenterHeight] = centerRoofHeight ?? [0, (wallLeftHeight + wallRightHeight) / 2];
+    let [wallCenterPos, wallCenterHeight] = centerRoofHeight ?? [0, (realWallLeftHeight + realWallRightHeight) / 2];
     wallCenterPos = wallCenterPos * lx;
 
     const leftX = wallCenterPos + hx;
-    const leftLength = Math.hypot(leftX, wallCenterHeight - wallLeftHeight);
-    const leftRotationY = -Math.atan2(wallCenterHeight - wallLeftHeight, leftX);
+    const leftLength = Math.hypot(leftX, wallCenterHeight - realWallLeftHeight);
+    const leftRotationY = -Math.atan2(wallCenterHeight - realWallLeftHeight, leftX);
 
     const rightX = hx - wallCenterPos;
-    const rightLength = Math.hypot(rightX, wallRightHeight - wallCenterHeight);
-    const rightRotationY = -Math.atan2(wallRightHeight - wallCenterHeight, rightX);
+    const rightLength = Math.hypot(rightX, realWallRightHeight - wallCenterHeight);
+    const rightRotationY = -Math.atan2(realWallRightHeight - wallCenterHeight, rightX);
 
     const topBarThicnkess = ly;
 
@@ -1932,9 +2017,11 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         {structureUnitArray.map(([pos, y], idx) => {
           let height;
           if (pos < wallCenterPos) {
-            height = ((pos + hx) * (wallCenterHeight - wallLeftHeight)) / (wallCenterPos + hx) + wallLeftHeight - y;
+            height =
+              ((pos + hx) * (wallCenterHeight - realWallLeftHeight)) / (wallCenterPos + hx) + realWallLeftHeight - y;
           } else {
-            height = ((pos - hx) * (wallCenterHeight - wallRightHeight)) / (wallCenterPos - hx) + wallRightHeight - y;
+            height =
+              ((pos - hx) * (wallCenterHeight - realWallRightHeight)) / (wallCenterPos - hx) + realWallRightHeight - y;
           }
           return (
             <Cylinder
@@ -1953,7 +2040,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         })}
         <Box
           args={[leftLength, structureWidth, topBarThicnkess]}
-          position={[-hx + leftX / 2, hy, (wallLeftHeight + wallCenterHeight) / 2 - hz - topBarThicnkess / 2]}
+          position={[-hx + leftX / 2, hy, (realWallLeftHeight + wallCenterHeight) / 2 - hz - topBarThicnkess / 2]}
           rotation={[0, leftRotationY, 0]}
           castShadow={shadowEnabled}
           receiveShadow={shadowEnabled}
@@ -1964,7 +2051,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         </Box>
         <Box
           args={[rightLength, structureWidth, topBarThicnkess]}
-          position={[hx - rightX / 2, hy, (wallRightHeight + wallCenterHeight) / 2 - hz - topBarThicnkess / 2]}
+          position={[hx - rightX / 2, hy, (realWallRightHeight + wallCenterHeight) / 2 - hz - topBarThicnkess / 2]}
           rotation={[0, rightRotationY, 0]}
           castShadow={shadowEnabled}
           receiveShadow={shadowEnabled}
@@ -2061,12 +2148,13 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           </mesh>
 
           {/* top surface */}
-          {!roofId && !showParapet && (
+          {(!roofId || isPartial) && !showParapet && (
             <mesh
               name={'Top Wall'}
               ref={topSurfaceRef}
               material={whiteMaterialDouble}
-              position={[0, hy, hz]}
+              position={[0, hy, topSurfaceHeight]}
+              rotation={[0, -topSurfaceRotationY, 0]}
               castShadow={castShadow}
               receiveShadow={shadowEnabled}
               onPointerDown={handleWallSideSurfacePointerDown}
@@ -2081,9 +2169,13 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           {/* side surfaces */}
           {leftOffset === 0 && (
             <Plane
-              args={[wallLeftHeight - realLeftUnfilledHeight, ly]}
+              args={[realWallLeftHeight - realLeftUnfilledHeight, ly]}
               material={whiteMaterialDouble}
-              position={[-hx + 0.01, hy, -hz + realLeftUnfilledHeight + (wallLeftHeight - realLeftUnfilledHeight) / 2]}
+              position={[
+                -hx + 0.01,
+                hy,
+                -hz + realLeftUnfilledHeight + (realWallLeftHeight - realLeftUnfilledHeight) / 2,
+              ]}
               rotation={[0, HALF_PI, 0]}
               castShadow={castShadow}
               receiveShadow={shadowEnabled}
@@ -2092,12 +2184,12 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           )}
           {rightOffset === 0 && (
             <Plane
-              args={[wallRightHeight - realRightUnfilledHeight, ly]}
+              args={[realWallRightHeight - realRightUnfilledHeight, ly]}
               material={whiteMaterialDouble}
               position={[
                 hx - 0.01,
                 hy,
-                -hz + realRightUnfilledHeight + (wallRightHeight - realRightUnfilledHeight) / 2,
+                -hz + realRightUnfilledHeight + (realWallRightHeight - realRightUnfilledHeight) / 2,
               ]}
               rotation={[0, HALF_PI, 0]}
               castShadow={castShadow}
@@ -2223,8 +2315,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           leftUnfilledHeight={leftUnfilledHeight}
           rightUnfilledHeight={rightUnfilledHeight}
           showParapet={showParapet}
-          leftHeight={leftRoofHeight}
-          rightHeight={rightRoofHeight}
+          leftHeight={realWallLeftHeight}
+          rightHeight={realWallRightHeight}
           center={centerRoofHeight}
           centerLeft={centerLeftRoofHeight}
           centerRight={centerRightRoofHeight}

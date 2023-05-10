@@ -76,6 +76,8 @@ export const useUpdataOldFiles = (wallModel: WallModel) => {
       wallModel.fill === undefined ||
       wallModel.leftUnfilledHeight === undefined ||
       wallModel.rightUnfilledHeight === undefined ||
+      wallModel.leftTopPartialResizeHandleHeight === undefined ||
+      wallModel.rightTopPartialResizeHandleHeight === undefined ||
       wallModel.eavesLength === undefined ||
       wallModel.parapet === undefined
     ) {
@@ -108,6 +110,13 @@ export const useUpdataOldFiles = (wallModel: WallModel) => {
               const val = wall.unfilledHeight ?? 0.5;
               wall.leftUnfilledHeight = val;
               wall.rightUnfilledHeight = val;
+            }
+            if (
+              wall.leftTopPartialResizeHandleHeight === undefined ||
+              wall.rightTopPartialResizeHandleHeight === undefined
+            ) {
+              wall.leftTopPartialResizeHandleHeight = wall.lz - 0.5;
+              wall.rightTopPartialResizeHandleHeight = wall.lz - 0.5;
             }
             if (wall.eavesLength === undefined) {
               const roof = state.elements.find((e) => e.id === wall.roofId && e.type === ObjectType.Roof) as RoofModel;

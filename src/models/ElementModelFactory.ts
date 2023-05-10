@@ -508,6 +508,8 @@ export class ElementModelFactory {
       fill: WallFill.Full,
       leftUnfilledHeight: 0.5,
       rightUnfilledHeight: 0.5,
+      leftTopPartialResizeHandleHeight: actionState.wallHeight - 0.5,
+      rightTopPartialResizeHandleHeight: actionState.wallHeight - 0.5,
       relativeAngle: 0,
       leftPoint: [],
       rightPoint: [],

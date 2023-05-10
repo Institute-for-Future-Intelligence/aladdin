@@ -635,6 +635,8 @@ export class ElementModelCloner {
       fill: wall.fill,
       leftUnfilledHeight: wall.leftUnfilledHeight,
       rightUnfilledHeight: wall.rightUnfilledHeight,
+      leftTopPartialResizeHandleHeight: wall.leftTopPartialResizeHandleHeight,
+      rightTopPartialResizeHandleHeight: wall.rightTopPartialResizeHandleHeight,
       leftJoints: [],
       rightJoints: [],
       leftPoint: [...wall.leftPoint],

@@ -33,6 +33,8 @@ const WallRenderer = (wallModel: WallModel) => {
     locked,
     leftUnfilledHeight,
     rightUnfilledHeight,
+    leftTopPartialResizeHandleHeight,
+    rightTopPartialResizeHandleHeight,
     leftJoints,
     rightJoints,
   } = wallModel;
@@ -82,6 +84,8 @@ const WallRenderer = (wallModel: WallModel) => {
             z={hz}
             leftUnfilledHeight={leftUnfilledHeight}
             rightUnfilledHeight={rightUnfilledHeight}
+            leftTopPartialResizeHandleHeight={leftTopPartialResizeHandleHeight}
+            rightTopPartialResizeHandleHeight={rightTopPartialResizeHandleHeight}
             fill={fill}
             highLight={highLight}
             leftJoints={leftJoints}

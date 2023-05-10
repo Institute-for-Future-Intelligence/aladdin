@@ -319,6 +319,8 @@ export enum ResizeHandleType {
   Arch = 'Resize Handle Arch',
   WallPartialResizeLeft = 'Wall Partial Resize Handle Left',
   WallPartialResizeRight = 'Wall Partial Resize Handle Right',
+  WallPartialResizeLeftTop = 'Wall Partial Resize Handle Left Top',
+  WallPartialResizeRightTop = 'Wall Partial Resize Handle Right Top',
 }
 
 export enum RotateHandleType {

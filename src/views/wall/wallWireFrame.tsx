@@ -63,6 +63,8 @@ const WallWireFrame = React.memo(
       points.push(upperLeft, upperRight);
     } else if (showParapet) {
       points.push(upperLeft, lowerLeft, lowerRight, upperRight);
+    } else if (fill === WallFill.Partial) {
+      points.push(lowerLeft, upperLeft, upperRight, lowerRight, lowerLeft, lowerRight);
     } else {
       points.push(lowerLeft, upperLeft);
       if (centerLeft) {
@@ -78,9 +80,6 @@ const WallWireFrame = React.memo(
         points.push(cr);
       }
       points.push(upperRight, lowerRight);
-      if (fill === WallFill.Partial) {
-        points.push(lowerLeft, lowerRight);
-      }
     }
 
     return (
