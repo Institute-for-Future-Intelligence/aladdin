@@ -278,12 +278,12 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     const ly = lz;
     const hy = lz / 2;
 
-    wallShape.moveTo(-hx + leftOffset, -hy + leftUnfilledHeight); // lower left
-
     // lower edge, from left to right
     if (isPartial) {
-      wallShape.lineTo(hx - rightOffset, -hy + rightUnfilledHeight);
+      wallShape.moveTo(-hx + leftOffset, -hy + leftUnfilledHeight); // lower left
+      wallShape.lineTo(hx - rightOffset, -hy + rightUnfilledHeight); // lower right
     } else {
+      wallShape.moveTo(-hx + leftOffset, -hy); // lower left
       const doors = elementsOnWall.filter((e) => e.type === ObjectType.Door).sort((a, b) => a.cx - b.cx) as DoorModel[];
       for (const door of doors) {
         if (door.id !== invalidElementIdRef.current) {
@@ -311,6 +311,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           }
         }
       }
+      wallShape.lineTo(hx - rightOffset, -hy); // lower right
     }
 
     // upper edge, from right to left
