@@ -199,8 +199,13 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   const isPartial = fill == WallFill.Partial;
   const realLeftUnfilledHeight = isPartial ? leftUnfilledHeight : 0;
   const realRightUnfilledHeight = isPartial ? rightUnfilledHeight : 0;
-  const realWallLeftHeight = isPartial ? leftTopPartialResizeHandleHeight : wallLeftHeight;
-  const realWallRightHeight = isPartial ? rightTopPartialResizeHandleHeight : wallRightHeight;
+  const realWallLeftHeight = isPartial ? Math.min(wallLeftHeight, leftTopPartialResizeHandleHeight) : wallLeftHeight;
+  const realWallRightHeight = isPartial
+    ? Math.min(wallRightHeight, rightTopPartialResizeHandleHeight)
+    : wallRightHeight;
+  const isTopPartial =
+    isPartial &&
+    (!Util.isZero(wallLeftHeight - realWallLeftHeight) || !Util.isZero(wallRightHeight - realWallRightHeight));
   const castShadow = shadowEnabled && !transparent;
   const showParapet = isShowParapet();
   const parapetZ = Math.max(realWallLeftHeight, realWallRightHeight);
@@ -270,22 +275,38 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   const insideWallShape = useMemo(() => {
     const wallShape = new Shape();
 
-    if (fill === WallFill.Partial) {
-      const hy = lz / 2;
+    const hy = lz / 2;
 
-      wallShape.moveTo(-hx + leftOffset, -hy + leftUnfilledHeight); // lower left
-      wallShape.lineTo(hx - rightOffset, -hy + rightUnfilledHeight); // lower right
+    wallShape.moveTo(-hx + leftOffset, -hy + leftUnfilledHeight); // lower left
+    wallShape.lineTo(hx - rightOffset, -hy + rightUnfilledHeight); // lower right
 
+    if (isTopPartial) {
       const dh = realWallRightHeight - realWallLeftHeight;
       const rightOffsetHeight = ((lx - rightOffset) * dh) / lx;
       const leftOffsetHeight = (leftOffset * dh) / lx;
 
-      wallShape.lineTo(hx - rightOffset, -hy + realWallLeftHeight + rightOffsetHeight); // top right
-      wallShape.lineTo(-hx + leftOffset, -hy + realWallLeftHeight + leftOffsetHeight); // top left
-      wallShape.closePath();
+      wallShape.lineTo(hx - rightOffset, -hy + realWallLeftHeight + rightOffsetHeight); // upper right
+      wallShape.lineTo(-hx + leftOffset, -hy + realWallLeftHeight + leftOffsetHeight); // upper left
+    } else if (roofId) {
+      if (rightRoofHeight) {
+        wallShape.lineTo(hx - rightOffset, rightRoofHeight - hy);
+      } else {
+        wallShape.lineTo(hx - rightOffset, hy); // upper right
+      }
+      centerRightRoofHeight && wallShape.lineTo(centerRightRoofHeight[0] * lx, centerRightRoofHeight[1] - hy);
+      centerRoofHeight && wallShape.lineTo(centerRoofHeight[0] * lx, centerRoofHeight[1] - hy);
+      centerLeftRoofHeight && wallShape.lineTo(centerLeftRoofHeight[0] * lx, centerLeftRoofHeight[1] - hy);
+      if (leftRoofHeight) {
+        wallShape.lineTo(-hx + leftOffset, leftRoofHeight - hy);
+      } else {
+        wallShape.lineTo(-hx + leftOffset, hy); // upper left
+      }
     } else {
-      drawWallShape(wallShape, lx, lz, 0, 0, leftOffset, rightOffset);
+      wallShape.lineTo(hx - rightOffset, hy); // upper right
+      wallShape.lineTo(-hx + leftOffset, hy); // upper left
     }
+
+    wallShape.closePath();
 
     elementsOnWall.forEach((w) => {
       if (w.type === ObjectType.Window && w.id !== invalidElementIdRef.current && w.lx > 0 && w.lz > 0) {
@@ -320,6 +341,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     leftOffset,
     rightOffset,
     elementsOnWall,
+    roofId,
     leftRoofHeight,
     rightRoofHeight,
     centerRoofHeight,
@@ -329,14 +351,14 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
 
   const topSurfaceHeight = useMemo(() => {
     if (!isPartial) return hz;
-    return (leftTopPartialResizeHandleHeight + rightTopPartialResizeHandleHeight) / 2 - hz;
-  }, [hz, isPartial, leftTopPartialResizeHandleHeight, rightTopPartialResizeHandleHeight]);
+    return (realWallLeftHeight + realWallRightHeight) / 2 - hz;
+  }, [hz, isPartial, realWallLeftHeight, realWallRightHeight]);
 
   const topSurfaceRotationY = useMemo(() => {
-    const dh = rightTopPartialResizeHandleHeight - leftTopPartialResizeHandleHeight;
+    const dh = realWallRightHeight - realWallLeftHeight;
     if (!isPartial || Math.abs(dh) < 0.01) return 0;
     return Math.atan2(dh, lx);
-  }, [lx, isPartial, leftTopPartialResizeHandleHeight, rightTopPartialResizeHandleHeight]);
+  }, [lx, isPartial, realWallLeftHeight, realWallRightHeight]);
 
   const topWallShape = useMemo(() => {
     const shape = new Shape();
@@ -365,28 +387,31 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     const points: Point2[] = [];
     const x = lx / 2;
     const y = lz / 2;
-    if (fill === WallFill.Partial) {
+
+    if (isPartial) {
       points.push({ x: -x + leftOffset, y: -y + realLeftUnfilledHeight });
       points.push({ x: x - rightOffset, y: -y + realRightUnfilledHeight });
-      points.push({ x: x - rightOffset, y: -y + realWallRightHeight });
-      points.push({ x: -x + leftOffset, y: -y + realWallLeftHeight });
-
-      return points;
     } else {
       points.push({ x: -x, y: -y });
       points.push({ x: x, y: -y });
     }
-    rightRoofHeight ? points.push({ x: x, y: rightRoofHeight - y }) : points.push({ x: x, y: y });
-    if (centerRightRoofHeight) {
-      points.push({ x: centerRightRoofHeight[0] * lx, y: centerRightRoofHeight[1] - y });
+
+    if (isTopPartial) {
+      points.push({ x: -x + leftOffset, y: -y + realWallRightHeight });
+      points.push({ x: x - rightOffset, y: -y + realWallLeftHeight });
+    } else {
+      rightRoofHeight ? points.push({ x: x, y: rightRoofHeight - y }) : points.push({ x: x, y: y });
+      if (centerRightRoofHeight) {
+        points.push({ x: centerRightRoofHeight[0] * lx, y: centerRightRoofHeight[1] - y });
+      }
+      if (centerRoofHeight) {
+        points.push({ x: centerRoofHeight[0] * lx, y: centerRoofHeight[1] - y });
+      }
+      if (centerLeftRoofHeight) {
+        points.push({ x: centerLeftRoofHeight[0] * lx, y: centerLeftRoofHeight[1] - y });
+      }
+      leftRoofHeight ? points.push({ x: -x, y: leftRoofHeight - y }) : points.push({ x: -x, y: y });
     }
-    if (centerRoofHeight) {
-      points.push({ x: centerRoofHeight[0] * lx, y: centerRoofHeight[1] - y });
-    }
-    if (centerLeftRoofHeight) {
-      points.push({ x: centerLeftRoofHeight[0] * lx, y: centerLeftRoofHeight[1] - y });
-    }
-    leftRoofHeight ? points.push({ x: -x, y: leftRoofHeight - y }) : points.push({ x: -x, y: y });
 
     return points;
   }, [
@@ -567,16 +592,14 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     const hx = lx / 2;
     const hy = ly / 2;
 
-    if (fill === WallFill.Partial) {
-      shape.moveTo(cx - hx + leftOffset, cy - hy + leftUnfilledHeight); // lower left
-      shape.lineTo(cx + hx - rightOffset, cy - hy + rightUnfilledHeight); // lower right
-      shape.lineTo(cx + hx - rightOffset, cy - hy + realWallRightHeight); // top right
-      shape.lineTo(cx - hx + leftOffset, cy - hy + realWallLeftHeight); // top left
-      shape.closePath();
-      return;
+    // lower left
+    if (isPartial) {
+      shape.moveTo(cx - hx + leftOffset, cy - hy + leftUnfilledHeight);
+    } else {
+      shape.moveTo(cx - hx + leftOffset, cy - hy);
     }
 
-    shape.moveTo(cx - hx + leftOffset, cy - hy); // lower left
+    // doors
     if (drawDoorShape) {
       const doors = elementsOnWall.filter((e) => e.type === ObjectType.Door).sort((a, b) => a.cx - b.cx) as DoorModel[];
       for (const door of doors) {
@@ -606,9 +629,19 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         }
       }
     }
-    shape.lineTo(cx + hx - rightOffset, cy - hy); // lower right
 
-    if (roofId) {
+    // lower right
+    if (isPartial) {
+      shape.lineTo(cx + hx - rightOffset, cy - hy + rightUnfilledHeight);
+    } else {
+      shape.lineTo(cx + hx - rightOffset, cy - hy);
+    }
+
+    // top edges
+    if (isTopPartial) {
+      shape.lineTo(cx + hx - rightOffset, cy - hy + realWallRightHeight); // top right
+      shape.lineTo(cx - hx + leftOffset, cy - hy + realWallLeftHeight); // top left
+    } else if (roofId) {
       if (rightRoofHeight) {
         shape.lineTo(cx + hx - rightOffset, rightRoofHeight - hy);
       } else {
@@ -1105,7 +1138,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
 
   function isRectWall() {
     if (
-      fill === WallFill.Partial &&
+      isTopPartial &&
       (leftUnfilledHeight !== rightUnfilledHeight ||
         leftTopPartialResizeHandleHeight !== rightTopPartialResizeHandleHeight)
     )
@@ -1265,7 +1298,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     const boundedPointer = pointer.clone();
     if (isRectWall()) {
       const botHeight = isPartial ? leftUnfilledHeight : 0;
-      const topHeight = lz - (isPartial ? leftTopPartialResizeHandleHeight : lz);
+      const topHeight = lz - (isPartial ? realWallLeftHeight : lz);
       boundedPointer.setX(Util.clamp(pointer.x, boundingMinX, boundingMaxX));
       boundedPointer.setZ(Util.clamp(pointer.z, boundingMinZ + botHeight, boundingMaxZ - topHeight));
       return boundedPointer;
@@ -1279,7 +1312,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         const anchorX = options.resizeAnchor.x;
         const points: Vector3[] = [];
 
-        if (isPartial) {
+        if (isTopPartial) {
           points.push(new Vector3(-hx, -hz + realWallLeftHeight), new Vector3(hx, -hz + realWallRightHeight));
         } else {
           const roofPoints = getRoofPoints().reverse(); // from left to right.
@@ -1381,7 +1414,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     // right
     edgesPoints.push({ start: new Vector3(boundingMaxX, botRightPoint.y), end: new Vector3(boundingMaxX, hz) });
 
-    if (isPartial) {
+    if (isTopPartial) {
       // top edge
       const topRightPoint = new Vector3(hx, -hz + realWallRightHeight);
       const topLeftPoint = new Vector3(-hx, -hz + realWallLeftHeight);
@@ -2148,7 +2181,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           </mesh>
 
           {/* top surface */}
-          {(!roofId || isPartial) && !showParapet && (
+          {(!roofId || isTopPartial) && !showParapet && (
             <mesh
               name={'Top Wall'}
               ref={topSurfaceRef}
@@ -2312,6 +2345,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           hx={hx}
           hz={hz}
           fill={fill}
+          isTopPartial={isTopPartial}
           leftUnfilledHeight={leftUnfilledHeight}
           rightUnfilledHeight={rightUnfilledHeight}
           showParapet={showParapet}

@@ -14,6 +14,7 @@ interface WallWireFrameProps {
   hx: number;
   hz: number;
   fill: WallFill;
+  isTopPartial: boolean;
   leftUnfilledHeight: number;
   rightUnfilledHeight: number;
   showParapet: boolean;
@@ -31,6 +32,7 @@ const WallWireFrame = React.memo(
     hx,
     hz,
     fill,
+    isTopPartial,
     leftUnfilledHeight,
     rightUnfilledHeight,
     showParapet = false,
@@ -63,8 +65,8 @@ const WallWireFrame = React.memo(
       points.push(upperLeft, upperRight);
     } else if (showParapet) {
       points.push(upperLeft, lowerLeft, lowerRight, upperRight);
-    } else if (fill === WallFill.Partial) {
-      points.push(lowerLeft, upperLeft, upperRight, lowerRight, lowerLeft, lowerRight);
+    } else if (isTopPartial) {
+      points.push(lowerLeft, upperLeft, upperRight, lowerRight, lowerLeft);
     } else {
       points.push(lowerLeft, upperLeft);
       if (centerLeft) {

@@ -25,6 +25,7 @@ interface ResizeHandlesProps {
   handleType: ResizeHandleType;
   highLight: boolean;
   handleSize: number;
+  partial?: boolean;
 }
 
 interface WallResizeHandleWarpperProps {
@@ -44,7 +45,9 @@ interface WallResizeHandleWarpperProps {
   rightJoints: string[];
 }
 
-const WallResizeHandle = React.memo(({ x, z, handleType, highLight, handleSize }: ResizeHandlesProps) => {
+const PARTIAL_RESIZE_HANDLE_COLOR = '#ADD8E6';
+
+const WallResizeHandle = React.memo(({ x, z, handleType, highLight, handleSize, partial }: ResizeHandlesProps) => {
   const setCommonStore = useStore(Selector.set);
   const resizeHandleType = useStore(Selector.resizeHandleType);
   const addedWallID = useStore(Selector.addedWallId);
@@ -57,6 +60,8 @@ const WallResizeHandle = React.memo(({ x, z, handleType, highLight, handleSize }
     handleType === resizeHandleType ||
     (addedWallID && (handleType === ResizeHandleType.LowerRight || handleType === ResizeHandleType.UpperRight))
       ? HIGHLIGHT_HANDLE_COLOR
+      : partial
+      ? PARTIAL_RESIZE_HANDLE_COLOR
       : RESIZE_HANDLE_COLOR;
 
   let lx = handleSize,
@@ -64,6 +69,10 @@ const WallResizeHandle = React.memo(({ x, z, handleType, highLight, handleSize }
     lz = handleSize;
   if (handleType === ResizeHandleType.LowerRight || handleType === ResizeHandleType.LowerLeft) {
     lx = handleSize * 1.7;
+  } else if (partial) {
+    lx *= 0.75;
+    ly = handleSize / 2;
+    lz = handleSize * 2.5;
   } else {
     ly = handleSize / 2;
     lz = handleSize * 1.7;
@@ -143,13 +152,22 @@ const WallResizeHandleWrapper = React.memo(
     };
 
     const updateUndoChange = (id: string, vals: number[]) => {
-      const [lz, leftUnfilledHeight, rightUnfilledHeight] = vals;
+      const [
+        lz,
+        leftUnfilledHeight,
+        rightUnfilledHeight,
+        leftTopPartialResizeHandleHeight,
+        rightTopPartialResizeHandleHeight,
+      ] = vals;
       setCommonStore((state) => {
         for (const e of state.elements) {
           if (e.id === id && e.type === ObjectType.Wall) {
+            const wall = e as WallModel;
             e.lz = lz;
-            (e as WallModel).leftUnfilledHeight = leftUnfilledHeight;
-            (e as WallModel).rightUnfilledHeight = rightUnfilledHeight;
+            wall.leftUnfilledHeight = leftUnfilledHeight;
+            wall.rightUnfilledHeight = rightUnfilledHeight;
+            wall.leftTopPartialResizeHandleHeight = leftTopPartialResizeHandleHeight;
+            wall.rightTopPartialResizeHandleHeight = rightTopPartialResizeHandleHeight;
             break;
           }
         }
@@ -307,7 +325,13 @@ const WallResizeHandleWrapper = React.memo(
       });
       useRefStore.getState().setEnableOrbitController(false);
       pointerDownRef.current = true;
-      oldHeightsRef.current = [z * 2, leftUnfilledHeight, rightUnfilledHeight];
+      oldHeightsRef.current = [
+        z * 2,
+        leftUnfilledHeight,
+        rightUnfilledHeight,
+        leftTopPartialResizeHandleHeight,
+        rightTopPartialResizeHandleHeight,
+      ];
     };
 
     const handlePointerMove = (e: ThreeEvent<PointerEvent>) => {
@@ -537,7 +561,13 @@ const WallResizeHandleWrapper = React.memo(
         resizedElementId: id,
         resizedElementType: ObjectType.Wall,
         oldHeights: [...oldHeightsRef.current],
-        newHeights: [z * 2, leftUnfilledHeight, rightUnfilledHeight],
+        newHeights: [
+          z * 2,
+          leftUnfilledHeight,
+          rightUnfilledHeight,
+          leftTopPartialResizeHandleHeight,
+          rightTopPartialResizeHandleHeight,
+        ],
         undo() {
           updateUndoChange(this.resizedElementId, this.oldHeights);
         },
@@ -595,6 +625,7 @@ const WallResizeHandleWrapper = React.memo(
                     handleType={ResizeHandleType.WallPartialResizeLeft}
                     highLight={highLight}
                     handleSize={handleSize}
+                    partial
                   />
                   <WallResizeHandle
                     x={x}
@@ -602,6 +633,7 @@ const WallResizeHandleWrapper = React.memo(
                     handleType={ResizeHandleType.WallPartialResizeRight}
                     highLight={highLight}
                     handleSize={handleSize}
+                    partial
                   />
                   <WallResizeHandle
                     x={-x}
@@ -609,6 +641,7 @@ const WallResizeHandleWrapper = React.memo(
                     handleType={ResizeHandleType.WallPartialResizeLeftTop}
                     highLight={highLight}
                     handleSize={handleSize}
+                    partial
                   />
                   <WallResizeHandle
                     x={x}
@@ -616,6 +649,7 @@ const WallResizeHandleWrapper = React.memo(
                     handleType={ResizeHandleType.WallPartialResizeRightTop}
                     highLight={highLight}
                     handleSize={handleSize}
+                    partial
                   />
                 </>
               )}

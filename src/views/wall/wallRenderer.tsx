@@ -51,6 +51,16 @@ const WallRenderer = (wallModel: WallModel) => {
 
   if (!foundation) return null;
 
+  const isPartial = fill == WallFill.Partial;
+  const leftRoofHeight = leftJoints.length > 0 ? wallModel.leftRoofHeight : lz;
+  const rightRoofHeight = rightJoints.length > 0 ? wallModel.rightRoofHeight : lz;
+  const wallLeftHeight = leftRoofHeight ?? lz;
+  const wallRightHeight = rightRoofHeight ?? lz;
+  const realWallLeftHeight = isPartial ? Math.min(wallLeftHeight, leftTopPartialResizeHandleHeight) : wallLeftHeight;
+  const realWallRightHeight = isPartial
+    ? Math.min(wallRightHeight, rightTopPartialResizeHandleHeight)
+    : wallRightHeight;
+
   const wallAbsPosition = Util.wallAbsolutePosition(new Vector3(cx, cy), foundation).setZ(hz + foundation.lz);
   const wallAbsAngle = foundation.rotation[2] + relativeAngle;
   const highLight = lx === 0;
@@ -84,8 +94,8 @@ const WallRenderer = (wallModel: WallModel) => {
             z={hz}
             leftUnfilledHeight={leftUnfilledHeight}
             rightUnfilledHeight={rightUnfilledHeight}
-            leftTopPartialResizeHandleHeight={leftTopPartialResizeHandleHeight}
-            rightTopPartialResizeHandleHeight={rightTopPartialResizeHandleHeight}
+            leftTopPartialResizeHandleHeight={realWallLeftHeight}
+            rightTopPartialResizeHandleHeight={realWallRightHeight}
             fill={fill}
             highLight={highLight}
             leftJoints={leftJoints}
