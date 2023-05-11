@@ -275,11 +275,45 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   const insideWallShape = useMemo(() => {
     const wallShape = new Shape();
 
+    const ly = lz;
     const hy = lz / 2;
 
     wallShape.moveTo(-hx + leftOffset, -hy + leftUnfilledHeight); // lower left
-    wallShape.lineTo(hx - rightOffset, -hy + rightUnfilledHeight); // lower right
 
+    // lower edge, from left to right
+    if (isPartial) {
+      wallShape.lineTo(hx - rightOffset, -hy + rightUnfilledHeight);
+    } else {
+      const doors = elementsOnWall.filter((e) => e.type === ObjectType.Door).sort((a, b) => a.cx - b.cx) as DoorModel[];
+      for (const door of doors) {
+        if (door.id !== invalidElementIdRef.current) {
+          const [dcx, dcy, dlx, dly] = [door.cx * lx, door.cz * ly, door.lx * lx, door.lz * ly];
+          if (door.doorType === DoorType.Default) {
+            wallShape.lineTo(dcx - dlx / 2, -hy);
+            wallShape.lineTo(dcx - dlx / 2, -hy + dly);
+            wallShape.lineTo(dcx + dlx / 2, -hy + dly);
+            wallShape.lineTo(dcx + dlx / 2, -hy);
+          } else {
+            const ah = Math.min(door.archHeight, dly, dlx / 2);
+            wallShape.lineTo(dcx - dlx / 2, -hy);
+            if (ah > 0.1) {
+              wallShape.lineTo(dcx - dlx / 2, -hy + dly / 2 - ah);
+              const r = ah / 2 + dlx ** 2 / (8 * ah);
+              const [cX, cY] = [dcx, dcy + dly / 2 - r];
+              const endAngle = Math.acos(Math.min(dlx / 2 / r, 1));
+              const startAngle = Math.PI - endAngle;
+              wallShape.absarc(cX, cY, r, startAngle, endAngle, true);
+            } else {
+              wallShape.lineTo(dcx - dlx / 2, -hy + dly);
+              wallShape.lineTo(dcx + dlx / 2, -hy + dly);
+            }
+            wallShape.lineTo(dcx + dlx / 2, -hy);
+          }
+        }
+      }
+    }
+
+    // upper edge, from right to left
     if (isTopPartial) {
       const dh = realWallRightHeight - realWallLeftHeight;
       const rightOffsetHeight = ((lx - rightOffset) * dh) / lx;
