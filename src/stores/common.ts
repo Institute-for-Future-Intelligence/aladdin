@@ -3444,6 +3444,7 @@ export const useStore = create<CommonStoreState>(
                       }
                       break;
                     case ObjectType.Sensor:
+                    case ObjectType.Light:
                       if (e.parentId) {
                         const parent = state.getParent(e);
                         if (parent) {
