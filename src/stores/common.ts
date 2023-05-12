@@ -2889,6 +2889,9 @@ export const useStore = create<CommonStoreState>(
                     if (oldParent && oldParent.type) {
                       if (elemToPaste.type !== ObjectType.Foundation) {
                         elemToPaste.parentId = newParent.id;
+                        if (Util.isPositionRelative(elemToPaste.type)) {
+                          m = Util.relativeCoordinates(m.x, m.y, m.z, newParent);
+                        }
                       }
                     }
                   }
