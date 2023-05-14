@@ -2400,19 +2400,21 @@ export const useStore = create<CommonStoreState>(
           pastePoint: new Vector3(),
           pasteNormal: undefined,
           copyElementById(id) {
+            const copied: ElementModel[] = [];
             immerSet((state: CommonStoreState) => {
+              state.elementsToPaste = [];
               for (const e of state.elements) {
-                if (e.id === id) {
+                if (e.id === id || Util.isChild(id, e.id)) {
                   if (e.type === ObjectType.Polygon) {
                     // set cx and cy for polygon for pasting (otherwise, they may be unset)
                     const centroid = Util.calculatePolygonCentroid((e as PolygonModel).vertices);
                     e.cx = centroid.x;
                     e.cy = centroid.y;
                   }
-                  state.elementsToPaste = [e];
-                  break;
+                  copied.push(e);
                 }
               }
+              state.elementsToPaste = copied;
             });
           },
           removeElementById(id, cut) {
