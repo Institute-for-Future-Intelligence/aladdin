@@ -3591,7 +3591,7 @@ export const useStore = create<CommonStoreState>(
                         }
                         state.elements.push(...pastedElements);
                         state.elements.push(e);
-                        //state.elementsToPaste = [e];
+                        state.elementsToPaste = [e];
                         for (const e of state.elements) {
                           // search new roof
                           if (e.type === ObjectType.Roof) {
