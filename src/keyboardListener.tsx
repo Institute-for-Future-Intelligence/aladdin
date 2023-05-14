@@ -134,10 +134,10 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
   }, [keyDown, keyUp]);
 
   const removeElement = (elemId: string, cut: boolean) => {
-    removeElementById(elemId, cut);
     if (canvas) {
       canvas.style.cursor = 'default'; // if an element is deleted but the cursor is not default
     }
+    return removeElementById(elemId, cut);
   };
 
   const toggle2DView = () => {
@@ -723,8 +723,8 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
       case 'ctrl+x':
       case 'meta+x': // for Mac
         if (selectedElement) {
-          removeElement(selectedElement.id, true);
-          const cutElements = copyCutElements();
+          const cutElements = removeElement(selectedElement.id, true);
+          // const cutElements = copyCutElements();
           const undoableCut = {
             name: 'Cut',
             timestamp: Date.now(),

@@ -398,7 +398,7 @@ export interface CommonStoreState {
   deletedElements: ElementModel[]; // this is for undoing deletion
   clearDeletedElements: () => void;
   copyElementById: (id: string) => void;
-  removeElementById: (id: string, cut: boolean) => void; // set cut to false for deletion
+  removeElementById: (id: string, cut: boolean) => ElementModel[]; // set cut to false for deletion
   copyCutElements: () => ElementModel[];
   pasteElementsToPoint: () => ElementModel[];
   pasteElementsByKey: () => ElementModel[];
@@ -2416,6 +2416,7 @@ export const useStore = create<CommonStoreState>(
             });
           },
           removeElementById(id, cut) {
+            const removed = get().elements.filter((e) => e.id === id || Util.isChild(id, e.id));
             immerSet((state: CommonStoreState) => {
               for (const elem of state.elements) {
                 if (elem.id === id) {
@@ -2510,6 +2511,7 @@ export const useStore = create<CommonStoreState>(
               });
               state.selectedElement = null;
             });
+            return removed;
           },
           removeElementsByType(type) {
             immerSet((state: CommonStoreState) => {
