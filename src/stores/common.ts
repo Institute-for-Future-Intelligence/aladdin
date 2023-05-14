@@ -2768,26 +2768,38 @@ export const useStore = create<CommonStoreState>(
                 let newElem: ElementModel | null = null;
                 if (i === 0) {
                   // the first element is the parent
-                  newElem = ElementModelCloner.clone(
-                    state.getParent(oldElem),
-                    oldElem,
-                    oldElem.cx,
-                    oldElem.cy,
-                    oldElem.cz,
-                  );
+                  if (state.getElementById(oldElem.id)) {
+                    // make a clone with a new ID if the old ID is in the elements
+                    newElem = ElementModelCloner.clone(
+                      state.getParent(oldElem),
+                      oldElem,
+                      oldElem.cx,
+                      oldElem.cy,
+                      oldElem.cz,
+                    );
+                  } else {
+                    // preserve the ID if it is not in the elements
+                    newElem = JSON.parse(JSON.stringify(oldElem));
+                  }
                 } else {
                   const oldParent = state.elementsToPaste.find((el) => el.id === oldElem.parentId);
                   if (oldParent) {
                     const newParent = map.get(oldParent.id);
                     if (newParent) {
-                      newElem = ElementModelCloner.clone(
-                        newParent,
-                        oldElem,
-                        oldElem.cx,
-                        oldElem.cy,
-                        oldElem.cz,
-                        oldElem.type === ObjectType.Polygon,
-                      );
+                      if (state.getElementById(oldElem.id)) {
+                        // make a clone with a new ID if the old ID is in the elements
+                        newElem = ElementModelCloner.clone(
+                          newParent,
+                          oldElem,
+                          oldElem.cx,
+                          oldElem.cy,
+                          oldElem.cz,
+                          oldElem.type === ObjectType.Polygon,
+                        );
+                      } else {
+                        // preserve the ID if it is not in the elements
+                        newElem = JSON.parse(JSON.stringify(oldElem));
+                      }
                     }
                   }
                 }
