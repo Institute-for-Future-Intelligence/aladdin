@@ -363,7 +363,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
   };
 
   useEffect(() => {
-    if (!isFirstMountRef.current) {
+    if (!isFirstMountRef.current || useStore.getState().addedRoofId === id) {
       if (currentWallArray.length === 4) {
         for (let i = 0; i < currentWallArray.length; i++) {
           const { lh, rh } = RoofUtil.getWallHeight(currentWallArray, i);
