@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React from 'react';
@@ -95,13 +95,11 @@ export const Cut = ({ paddingLeft = '36px', keyName }: { paddingLeft?: string; k
   const selectedElement = useStore(Selector.selectedElement);
   const getElementById = useStore(Selector.getElementById);
   const addUndoable = useStore(Selector.addUndoable);
-  const copyCutElements = useStore(Selector.copyCutElements);
   const isMac = Util.isMac();
 
   const cut = () => {
     if (selectedElement) {
-      removeElementById(selectedElement.id, true);
-      const cutElements = copyCutElements();
+      const cutElements = removeElementById(selectedElement.id, true);
       const undoableCut = {
         name: 'Cut',
         timestamp: Date.now(),

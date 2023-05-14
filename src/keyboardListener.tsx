@@ -57,7 +57,6 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
   const localFileDialogRequested = useStore(Selector.localFileDialogRequested);
   const cameraPosition = useStore(Selector.viewState.cameraPosition);
   const panCenter = useStore(Selector.viewState.panCenter);
-  const copyCutElements = useStore(Selector.copyCutElements);
   const overlapWithSibling = useStore(Selector.overlapWithSibling);
 
   const [keyPressed, setKeyPressed] = useState(false);

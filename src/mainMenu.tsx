@@ -93,7 +93,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const pasteElements = useStore(Selector.pasteElementsByKey);
   const copyElementById = useStore(Selector.copyElementById);
   const removeElementById = useStore(Selector.removeElementById);
-  const copyCutElements = useStore(Selector.copyCutElements);
   const getElementById = useStore(Selector.getElementById);
   const importContent = useStore(Selector.importContent);
   const countObservers = useStore(Selector.countObservers);
@@ -588,8 +587,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
 
   const cutSelectedElement = () => {
     if (selectedElement) {
-      removeElementById(selectedElement.id, true);
-      const cutElements = copyCutElements();
+      const cutElements = removeElementById(selectedElement.id, true);
       const undoableCut = {
         name: 'Cut',
         timestamp: Date.now(),

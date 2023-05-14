@@ -427,8 +427,6 @@ export const pasteElementsByKey = (state: CommonStoreState) => state.pasteElemen
 
 export const elementsToPaste = (state: CommonStoreState) => state.elementsToPaste;
 
-export const copyCutElements = (state: CommonStoreState) => state.copyCutElements;
-
 export const selectMe = (state: CommonStoreState) => state.selectMe;
 
 export const selectNone = (state: CommonStoreState) => state.selectNone;
