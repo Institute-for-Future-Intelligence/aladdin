@@ -35,8 +35,8 @@ import { SolarRadiation } from './SolarRadiation';
 import {
   DEFAULT_CEILING_R_VALUE,
   DEFAULT_DOOR_U_VALUE,
-  DEFAULT_GROUND_FLOOR_R_VALUE,
   DEFAULT_FOUNDATION_SLAB_DEPTH,
+  DEFAULT_GROUND_FLOOR_R_VALUE,
   DEFAULT_ROOF_R_VALUE,
   DEFAULT_WALL_R_VALUE,
   DEFAULT_WINDOW_U_VALUE,
@@ -779,12 +779,13 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const calculateWall = (wall: WallModel) => {
     const foundation = getFoundation(wall);
     if (foundation) {
-      const full = wall.fill === WallFill.Full && wall.wallStructure === WallStructure.Default;
+      const filled = wall.fill !== WallFill.Empty && wall.wallStructure === WallStructure.Default;
       const setpoint = foundation.hvacSystem?.thermostatSetpoint ?? 20;
-      const wallVertices = Util.getWallVertices(wall, 0);
-      let area = Util.getPolygonArea(wallVertices);
-      const rectangularWall = wallVertices.length === 4;
-      if (full) {
+      if (filled) {
+        const partial = wall.fill === WallFill.Partial && !Util.isPartialWallFull(wall);
+        const wallVertices = partial ? Util.getPartialWallVertices(wall, 0) : Util.getWallVertices(wall, 0);
+        const rectangularWall = wallVertices.length === 4;
+        let area = Util.getPolygonArea(wallVertices);
         const windows = getChildrenOfType(ObjectType.Window, wall.id);
         const doors = getChildrenOfType(ObjectType.Door, wall.id);
         const absorption = getLightAbsorption(wall);
@@ -851,6 +852,8 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
           (((deltaT * area) / (wall.rValue ?? DEFAULT_WALL_R_VALUE)) * 0.001) / timesPerHour,
         );
       } else {
+        const wallVertices = Util.getWallVertices(wall, 0);
+        const area = Util.getPolygonArea(wallVertices);
         const deltaT = currentOutsideTemperatureRef.current - setpoint;
         // use a large U-value for an open wall (not meant to be accurate, but as an indicator of something wrong)
         updateHeatExchangeNow(wall.id, (deltaT * area * U_VALUE_OPENNING * 0.001) / timesPerHour);

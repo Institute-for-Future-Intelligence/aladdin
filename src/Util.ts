@@ -1512,6 +1512,16 @@ export class Util {
     return vertices;
   }
 
+  // check if a partial wall is effectively full
+  static isPartialWallFull(wall: WallModel): boolean {
+    return (
+      Util.isZero((wall.leftRoofHeight ?? wall.lz) - wall.leftTopPartialHeight) &&
+      Util.isZero((wall.rightRoofHeight ?? wall.lz) - wall.rightTopPartialHeight) &&
+      Util.isZero(wall.leftUnfilledHeight) &&
+      Util.isZero(wall.rightUnfilledHeight)
+    );
+  }
+
   // get the relative 2D vertices of a partial wall (a quad)
   static getPartialWallVertices(wall: WallModel, margin: number): Point2[] {
     const hx = wall.lx / 2;
