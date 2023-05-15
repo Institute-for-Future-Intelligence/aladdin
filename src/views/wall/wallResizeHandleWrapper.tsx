@@ -166,8 +166,8 @@ const WallResizeHandleWrapper = React.memo(
             e.lz = lz;
             wall.leftUnfilledHeight = leftUnfilledHeight;
             wall.rightUnfilledHeight = rightUnfilledHeight;
-            wall.leftTopPartialResizeHandleHeight = leftTopPartialResizeHandleHeight;
-            wall.rightTopPartialResizeHandleHeight = rightTopPartialResizeHandleHeight;
+            wall.leftTopPartialHeight = leftTopPartialResizeHandleHeight;
+            wall.rightTopPartialHeight = rightTopPartialResizeHandleHeight;
             break;
           }
         }
@@ -358,11 +358,11 @@ const WallResizeHandleWrapper = React.memo(
                   const wall = e as WallModel;
                   wall.lz = newLz;
                   wall.cz = newLz / 2;
-                  if (newLz < wall.leftTopPartialResizeHandleHeight) {
-                    wall.leftTopPartialResizeHandleHeight = newLz;
+                  if (newLz < wall.leftTopPartialHeight) {
+                    wall.leftTopPartialHeight = newLz;
                   }
-                  if (newLz < wall.rightTopPartialResizeHandleHeight) {
-                    wall.rightTopPartialResizeHandleHeight = newLz;
+                  if (newLz < wall.rightTopPartialHeight) {
+                    wall.rightTopPartialHeight = newLz;
                   }
                   break;
                 }
@@ -373,11 +373,11 @@ const WallResizeHandleWrapper = React.memo(
                   const wall = e as WallModel;
                   wall.lz = newLz;
                   wall.cz = newLz / 2;
-                  if (newLz < wall.leftTopPartialResizeHandleHeight) {
-                    wall.leftTopPartialResizeHandleHeight = newLz;
+                  if (newLz < wall.leftTopPartialHeight) {
+                    wall.leftTopPartialHeight = newLz;
                   }
-                  if (newLz < wall.rightTopPartialResizeHandleHeight) {
-                    wall.rightTopPartialResizeHandleHeight = newLz;
+                  if (newLz < wall.rightTopPartialHeight) {
+                    wall.rightTopPartialHeight = newLz;
                   }
                 }
               }
@@ -393,11 +393,7 @@ const WallResizeHandleWrapper = React.memo(
             for (const e of state.elements) {
               if (e.id === id && e.type === ObjectType.Wall) {
                 const wall = e as WallModel;
-                let newUnfilledHeight = Util.clamp(
-                  p.z - parentLz,
-                  0,
-                  wall.leftTopPartialResizeHandleHeight - handleSize,
-                );
+                let newUnfilledHeight = Util.clamp(p.z - parentLz, 0, wall.leftTopPartialHeight - handleSize);
                 if (wall.leftJoints.length > 0) {
                   const leftWall = state.elements.find(
                     (e) => e.id === wall.leftJoints[0] && e.type === ObjectType.Wall,
@@ -414,8 +410,8 @@ const WallResizeHandleWrapper = React.memo(
                     wall,
                     newUnfilledHeight,
                     state.enableFineGrid ? newUnfilledHeight : wall.rightUnfilledHeight,
-                    wall.leftTopPartialResizeHandleHeight,
-                    wall.rightTopPartialResizeHandleHeight,
+                    wall.leftTopPartialHeight,
+                    wall.rightTopPartialHeight,
                   )
                 ) {
                   wall.leftUnfilledHeight = newUnfilledHeight;
@@ -434,11 +430,7 @@ const WallResizeHandleWrapper = React.memo(
             for (const e of state.elements) {
               if (e.id === id && e.type === ObjectType.Wall) {
                 const wall = e as WallModel;
-                let newUnfilledHeight = Util.clamp(
-                  p.z - parentLz,
-                  0,
-                  wall.rightTopPartialResizeHandleHeight - handleSize,
-                );
+                let newUnfilledHeight = Util.clamp(p.z - parentLz, 0, wall.rightTopPartialHeight - handleSize);
                 if (wall.rightJoints.length > 0) {
                   const rightWall = state.elements.find(
                     (e) => e.id === wall.rightJoints[0] && e.type === ObjectType.Wall,
@@ -455,8 +447,8 @@ const WallResizeHandleWrapper = React.memo(
                     wall,
                     state.enableFineGrid ? newUnfilledHeight : wall.leftUnfilledHeight,
                     newUnfilledHeight,
-                    wall.leftTopPartialResizeHandleHeight,
-                    wall.rightTopPartialResizeHandleHeight,
+                    wall.leftTopPartialHeight,
+                    wall.rightTopPartialHeight,
                   )
                 ) {
                   wall.rightUnfilledHeight = newUnfilledHeight;
@@ -484,7 +476,7 @@ const WallResizeHandleWrapper = React.memo(
                   (e) => e.id === wall.leftJoints[0] && e.type === ObjectType.Wall,
                 ) as WallModel;
                 if (leftWall && leftWall.fill === WallFill.Partial) {
-                  const leftWallPartialResizeRightTop = leftWall.rightTopPartialResizeHandleHeight;
+                  const leftWallPartialResizeRightTop = leftWall.rightTopPartialHeight;
                   if (Math.abs(newTopPartialResizeHandleHeight - leftWallPartialResizeRightTop) < 0.5) {
                     newTopPartialResizeHandleHeight = leftWallPartialResizeRightTop;
                   }
@@ -496,12 +488,12 @@ const WallResizeHandleWrapper = React.memo(
                   wall.leftUnfilledHeight,
                   wall.rightUnfilledHeight,
                   newTopPartialResizeHandleHeight,
-                  state.enableFineGrid ? newTopPartialResizeHandleHeight : wall.rightTopPartialResizeHandleHeight,
+                  state.enableFineGrid ? newTopPartialResizeHandleHeight : wall.rightTopPartialHeight,
                 )
               ) {
-                wall.leftTopPartialResizeHandleHeight = newTopPartialResizeHandleHeight;
+                wall.leftTopPartialHeight = newTopPartialResizeHandleHeight;
                 if (state.enableFineGrid) {
-                  wall.rightTopPartialResizeHandleHeight = newTopPartialResizeHandleHeight;
+                  wall.rightTopPartialHeight = newTopPartialResizeHandleHeight;
                 }
               }
             }
@@ -522,7 +514,7 @@ const WallResizeHandleWrapper = React.memo(
                   (e) => e.id === wall.rightJoints[0] && e.type === ObjectType.Wall,
                 ) as WallModel;
                 if (rightWall && rightWall.fill === WallFill.Partial) {
-                  const rightWallPartialResizeLeftTop = rightWall.leftTopPartialResizeHandleHeight;
+                  const rightWallPartialResizeLeftTop = rightWall.leftTopPartialHeight;
                   if (Math.abs(newTopPartialResizeHandleHeight - rightWallPartialResizeLeftTop) < 0.5) {
                     newTopPartialResizeHandleHeight = rightWallPartialResizeLeftTop;
                   }
@@ -533,13 +525,13 @@ const WallResizeHandleWrapper = React.memo(
                   wall,
                   wall.leftUnfilledHeight,
                   wall.rightUnfilledHeight,
-                  state.enableFineGrid ? newTopPartialResizeHandleHeight : wall.leftTopPartialResizeHandleHeight,
+                  state.enableFineGrid ? newTopPartialResizeHandleHeight : wall.leftTopPartialHeight,
                   newTopPartialResizeHandleHeight,
                 )
               ) {
-                wall.rightTopPartialResizeHandleHeight = newTopPartialResizeHandleHeight;
+                wall.rightTopPartialHeight = newTopPartialResizeHandleHeight;
                 if (state.enableFineGrid) {
-                  wall.leftTopPartialResizeHandleHeight = newTopPartialResizeHandleHeight;
+                  wall.leftTopPartialHeight = newTopPartialResizeHandleHeight;
                 }
               }
             }

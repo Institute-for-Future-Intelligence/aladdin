@@ -1,1 +1,3149 @@
-{"docid":"stLbuVGfE2K8DrmoYsFg9w","time":"02/04/2023 02:04 pm","timestamp":1675537455512,"userid":"QWecNcxhyvP6j6sBN11hBsfZDau1","owner":null,"email":null,"world":{"solarRadiationHeatmapGridCellSize":0.5,"date":"4/22/2022, 10:00:00 AM","cspTimesPerHour":4,"noAnimationForHeatmapSimulation":false,"cspGridCellSize":0.5,"dustLoss":0.05,"address":"Natick, MA","cspDaysPerYear":4,"ground":{"thermalDiffusivity":0.05,"albedo":0.3,"snowReflectionFactors":[0,0,0,0,0,0,0,0,0,0,0,0]},"daysPerYear":12,"latitude":42.2844063,"noAnimationForSensorDataCollection":false,"timesPerHour":4,"discretization":"Approximate","airAttenuationCoefficient":0.01,"noAnimationForSolarPanelSimulation":false,"solarPanelVisibilityGridCellSize":0.2,"pvGridCellSize":0.5,"name":"default","longitude":-71.3488548},"elements":[{"ly":14.613120903558068,"solarUpdraftTower":{},"parentId":"Ground","cx":-0.06554753263096413,"id":"m7AH7DcnoGzAq9kryBy4RS","cy":-7.418371930827338,"type":"Foundation","solarPowerTower":{},"lx":18.159918676696766,"lz":0.1,"solarAbsorberPipe":{},"normal":[0,0,1],"selected":false,"rotation":[0,0,0],"cz":0.05},{"id":"2u4Fe7xnA6kkXXVGrQ4eyJ","selected":false,"cz":2.2408122612280286,"lx":12,"relativeAngle":3.141592653589793,"lz":4,"roofId":"pNA4YvnHKpbgLLZoVdn8iH","ly":0.3,"rightPoint":[-5.300056602144494,5.6732245690928105,0.1],"leftJoints":["8XDG3EHsQoX26MhuzwMYUM"],"rotation":[0,0,0],"textureType":"Wall Texture Default","leftPoint":[6.699943397855505,5.67322456909281,0.1],"type":"Wall","rightRoofHeight":4,"normal":[0,0,1],"parentId":"m7AH7DcnoGzAq9kryBy4RS","leftRoofHeight":4,"showLabel":false,"foundationId":"m7AH7DcnoGzAq9kryBy4RS","cx":0.6999433978555056,"windows":[],"rightJoints":["skm8dNPSkFaVkoUwiPNfq1"],"cy":5.6732245690928105,"color":"#ffffff","wallStructure":"Default","structureSpacing":2,"structureWidth":0.1,"structureColor":"white","opacity":0.5,"fill":"Full","eavesLength":0.2,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":4,"rightTopPartialResizeHandleHeight":4},{"type":"Wall","windows":[],"parentId":"m7AH7DcnoGzAq9kryBy4RS","cx":6.699943397855504,"leftPoint":[6.6999433978555025,-4.3267754309071895,0.1],"cy":0.6732245690928105,"leftRoofHeight":4,"foundationId":"m7AH7DcnoGzAq9kryBy4RS","selected":false,"rightPoint":[6.699943397855506,5.6732245690928105,0.1],"ly":0.3,"id":"8XDG3EHsQoX26MhuzwMYUM","showLabel":false,"lx":10,"normal":[0,0,1],"lz":4,"leftJoints":["cV8MyCuhWAsvEyyFuVqVqg"],"cz":2.2301039869226305,"rotation":[0,0,0],"rightJoints":["2u4Fe7xnA6kkXXVGrQ4eyJ"],"relativeAngle":1.5707963267948963,"textureType":"Wall Texture Default","rightRoofHeight":4,"roofId":"pNA4YvnHKpbgLLZoVdn8iH","color":"#ffffff","wallStructure":"Default","structureSpacing":2,"structureWidth":0.1,"structureColor":"white","opacity":0.5,"fill":"Full","eavesLength":0.2,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":4,"rightTopPartialResizeHandleHeight":4},{"lx":10,"windows":[],"lz":4,"id":"skm8dNPSkFaVkoUwiPNfq1","roofId":"pNA4YvnHKpbgLLZoVdn8iH","selected":false,"cy":0.6732245690928105,"cz":2.228839888904333,"showLabel":false,"leftJoints":["2u4Fe7xnA6kkXXVGrQ4eyJ"],"rightPoint":[-5.300056602144494,-4.3267754309071895,0.1],"normal":[0,0,1],"rotation":[0,0,0],"textureType":"Wall Texture Default","rightRoofHeight":4,"parentId":"m7AH7DcnoGzAq9kryBy4RS","relativeAngle":4.71238898038469,"foundationId":"m7AH7DcnoGzAq9kryBy4RS","leftPoint":[-5.300056602144493,5.6732245690928105,0.1],"rightJoints":["cV8MyCuhWAsvEyyFuVqVqg"],"type":"Wall","leftRoofHeight":4,"ly":0.3,"cx":-5.300056602144494,"color":"#ffffff","wallStructure":"Default","structureSpacing":2,"structureWidth":0.1,"structureColor":"white","opacity":0.5,"fill":"Full","eavesLength":0.2,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":4,"rightTopPartialResizeHandleHeight":4},{"showLabel":false,"cx":0.6999433978555061,"parentId":"m7AH7DcnoGzAq9kryBy4RS","rightPoint":[6.699943397855506,-4.3267754309071895,0.1],"cz":2.268765007024547,"textureType":"Wall Texture Default","cy":-4.3267754309071895,"id":"cV8MyCuhWAsvEyyFuVqVqg","windows":[],"foundationId":"m7AH7DcnoGzAq9kryBy4RS","leftJoints":["skm8dNPSkFaVkoUwiPNfq1"],"rightJoints":["8XDG3EHsQoX26MhuzwMYUM"],"selected":false,"type":"Wall","roofId":"pNA4YvnHKpbgLLZoVdn8iH","leftPoint":[-5.300056602144494,-4.3267754309071895,0.1],"normal":[0,0,1],"ly":0.3,"lz":4,"leftRoofHeight":4,"relativeAngle":0,"rotation":[0,0,0],"rightRoofHeight":4,"lx":12,"color":"#ffffff","wallStructure":"Default","structureSpacing":2,"structureWidth":0.1,"structureColor":"white","opacity":0.5,"fill":"Full","eavesLength":0.2,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":4,"rightTopPartialResizeHandleHeight":4},{"type":"Wall","cx":0.6999433978555056,"cy":5.6732245690928105,"cz":2.2408122612280286,"lx":12,"ly":0.3,"lz":4,"leftJoints":["pPpJHGJ2bGVqLdA1FpXi4V"],"rightJoints":["2RETAxyRMzZBEQkBGms56R"],"leftPoint":[6.699943397855505,5.67322456909281,0.1],"rightPoint":[-5.300056602144494,5.6732245690928105,0.1],"relativeAngle":3.141592653589793,"textureType":"Wall Texture Default","color":"#ffffff","normal":[0,0,1],"rotation":[0,0,0],"id":"giYTP9Qg6uJ3yfkS1RoDqG","parentId":"fbqvzYqiEy79jeL8wsadib","foundationId":"fbqvzYqiEy79jeL8wsadib","selected":false,"roofId":"1iq4TPqH8xr1w2VxMAh8MU","leftRoofHeight":4,"rightRoofHeight":4,"wallStructure":"Default","structureSpacing":2,"structureWidth":0.1,"structureColor":"white","opacity":0.5,"fill":"Full","eavesLength":0.2,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":4,"rightTopPartialResizeHandleHeight":4},{"type":"Wall","cx":6.699943397855504,"cy":0.6732245690928105,"cz":2.2301039869226305,"lx":10,"ly":0.3,"lz":4,"leftJoints":["beHqET5NN8aNdsuBncMpY7"],"rightJoints":["giYTP9Qg6uJ3yfkS1RoDqG"],"leftPoint":[6.6999433978555025,-4.3267754309071895,0.1],"rightPoint":[6.699943397855506,5.6732245690928105,0.1],"relativeAngle":1.5707963267948963,"textureType":"Wall Texture Default","color":"#ffffff","normal":[0,0,1],"rotation":[0,0,0],"id":"pPpJHGJ2bGVqLdA1FpXi4V","parentId":"fbqvzYqiEy79jeL8wsadib","foundationId":"fbqvzYqiEy79jeL8wsadib","selected":false,"roofId":"1iq4TPqH8xr1w2VxMAh8MU","leftRoofHeight":4,"rightRoofHeight":4,"centerRoofHeight":[0,6],"wallStructure":"Default","structureSpacing":2,"structureWidth":0.1,"structureColor":"white","opacity":0.5,"fill":"Full","eavesLength":0.2,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":4,"rightTopPartialResizeHandleHeight":4},{"type":"Wall","cx":-5.300056602144494,"cy":0.6732245690928105,"cz":2.228839888904333,"lx":10,"ly":0.3,"lz":4,"leftJoints":["giYTP9Qg6uJ3yfkS1RoDqG"],"rightJoints":["beHqET5NN8aNdsuBncMpY7"],"leftPoint":[-5.300056602144493,5.6732245690928105,0.1],"rightPoint":[-5.300056602144494,-4.3267754309071895,0.1],"relativeAngle":4.71238898038469,"textureType":"Wall Texture Default","color":"#ffffff","normal":[0,0,1],"rotation":[0,0,0],"id":"2RETAxyRMzZBEQkBGms56R","parentId":"fbqvzYqiEy79jeL8wsadib","foundationId":"fbqvzYqiEy79jeL8wsadib","selected":false,"roofId":"1iq4TPqH8xr1w2VxMAh8MU","leftRoofHeight":4,"rightRoofHeight":4,"centerRoofHeight":[0,6],"wallStructure":"Default","structureSpacing":2,"structureWidth":0.1,"structureColor":"white","opacity":0.5,"fill":"Full","eavesLength":0.2,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":4,"rightTopPartialResizeHandleHeight":4},{"type":"Wall","cx":0.6999433978555061,"cy":-4.3267754309071895,"cz":2.268765007024547,"lx":12,"ly":0.3,"lz":4,"leftJoints":["2RETAxyRMzZBEQkBGms56R"],"rightJoints":["pPpJHGJ2bGVqLdA1FpXi4V"],"leftPoint":[-5.300056602144494,-4.3267754309071895,0.1],"rightPoint":[6.699943397855506,-4.3267754309071895,0.1],"relativeAngle":0,"textureType":"Wall Texture Default","color":"#ffffff","normal":[0,0,1],"rotation":[0,0,0],"id":"beHqET5NN8aNdsuBncMpY7","parentId":"fbqvzYqiEy79jeL8wsadib","foundationId":"fbqvzYqiEy79jeL8wsadib","selected":false,"roofId":"1iq4TPqH8xr1w2VxMAh8MU","leftRoofHeight":4,"rightRoofHeight":4,"wallStructure":"Default","structureSpacing":2,"structureWidth":0.1,"structureColor":"white","opacity":0.5,"fill":"Full","eavesLength":0.2,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":4,"rightTopPartialResizeHandleHeight":4},{"type":"Foundation","cx":-18.384386246268818,"cy":-7.395598164511793,"cz":0.05,"lx":18.159918676696766,"ly":14.613120903558068,"lz":0.1,"normal":[0,0,1],"rotation":[0,0,0],"parentId":"Ground","solarUpdraftTower":{},"solarAbsorberPipe":{},"solarPowerTower":{},"id":"fbqvzYqiEy79jeL8wsadib","selected":false},{"type":"Roof","cx":0,"cy":0,"cz":0,"lx":0,"ly":0,"lz":0,"thickness":0.2,"roofType":"Hip","wallsId":["2u4Fe7xnA6kkXXVGrQ4eyJ"],"textureType":"Roof Texture Default","color":"#999999","selected":false,"showLabel":false,"normal":[0,0,1],"rotation":[0,0,0],"parentId":"m7AH7DcnoGzAq9kryBy4RS","foundationId":"m7AH7DcnoGzAq9kryBy4RS","id":"pNA4YvnHKpbgLLZoVdn8iH","leftRidgeLength":6,"rightRidgeLength":6,"rise":2,"ceiling":false},{"type":"Roof","cx":0,"cy":0,"cz":0,"lx":0,"ly":0,"lz":0,"thickness":0.2,"roofType":"Gable","wallsId":["beHqET5NN8aNdsuBncMpY7"],"textureType":"Roof Texture Default","color":"#999999","selected":false,"showLabel":false,"normal":[0,0,1],"rotation":[0,0,0],"parentId":"fbqvzYqiEy79jeL8wsadib","foundationId":"fbqvzYqiEy79jeL8wsadib","id":"1iq4TPqH8xr1w2VxMAh8MU","ridgeLeftPoint":[0,1],"ridgeRightPoint":[0,1],"rise":2,"ceiling":false},{"type":"Wall","cx":0.6999433978555056,"cy":5.6732245690928105,"cz":2.2408122612280286,"lx":12,"ly":0.3,"lz":4,"leftJoints":["1k67G1W1gvb3E7EbmbG1h1"],"rightJoints":["uytQSeUom5oDsFC3PKa7q8"],"leftPoint":[6.699943397855505,5.67322456909281,0.1],"rightPoint":[-5.300056602144494,5.6732245690928105,0.1],"relativeAngle":3.141592653589793,"textureType":"Wall Texture Default","color":"#ffffff","normal":[0,0,1],"rotation":[0,0,0],"id":"u1AdedeCmmKa3QYfwjJ4ya","parentId":"1rAGH78b5nt7cXyGU9vNRV","foundationId":"1rAGH78b5nt7cXyGU9vNRV","selected":false,"roofId":"45NB7k7GYboywbxoXsYHLH","leftRoofHeight":4,"rightRoofHeight":4,"wallStructure":"Default","structureSpacing":2,"structureWidth":0.1,"structureColor":"white","opacity":0.5,"fill":"Full","eavesLength":0.2,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":4,"rightTopPartialResizeHandleHeight":4},{"type":"Wall","cx":6.699943397855504,"cy":0.6732245690928105,"cz":2.2301039869226305,"lx":10,"ly":0.3,"lz":4,"leftJoints":["tKvexMf8zrvPgydcZb5VYA"],"rightJoints":["u1AdedeCmmKa3QYfwjJ4ya"],"leftPoint":[6.6999433978555025,-4.3267754309071895,0.1],"rightPoint":[6.699943397855506,5.6732245690928105,0.1],"relativeAngle":1.5707963267948963,"textureType":"Wall Texture Default","color":"#ffffff","normal":[0,0,1],"rotation":[0,0,0],"id":"1k67G1W1gvb3E7EbmbG1h1","parentId":"1rAGH78b5nt7cXyGU9vNRV","foundationId":"1rAGH78b5nt7cXyGU9vNRV","selected":false,"roofId":"45NB7k7GYboywbxoXsYHLH","leftRoofHeight":4,"rightRoofHeight":4,"wallStructure":"Default","structureSpacing":2,"structureWidth":0.1,"structureColor":"white","opacity":0.5,"fill":"Full","eavesLength":0.2,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":4,"rightTopPartialResizeHandleHeight":4},{"type":"Wall","cx":-5.300056602144494,"cy":0.6732245690928105,"cz":2.228839888904333,"lx":10,"ly":0.3,"lz":4,"leftJoints":["u1AdedeCmmKa3QYfwjJ4ya"],"rightJoints":["tKvexMf8zrvPgydcZb5VYA"],"leftPoint":[-5.300056602144493,5.6732245690928105,0.1],"rightPoint":[-5.300056602144494,-4.3267754309071895,0.1],"relativeAngle":4.71238898038469,"textureType":"Wall Texture Default","color":"#ffffff","normal":[0,0,1],"rotation":[0,0,0],"id":"uytQSeUom5oDsFC3PKa7q8","parentId":"1rAGH78b5nt7cXyGU9vNRV","foundationId":"1rAGH78b5nt7cXyGU9vNRV","selected":false,"roofId":"45NB7k7GYboywbxoXsYHLH","leftRoofHeight":4,"rightRoofHeight":4,"wallStructure":"Default","structureSpacing":2,"structureWidth":0.1,"structureColor":"white","opacity":0.5,"fill":"Full","eavesLength":0.2,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":4,"rightTopPartialResizeHandleHeight":4},{"type":"Wall","cx":0.6999433978555061,"cy":-4.3267754309071895,"cz":2.268765007024547,"lx":12,"ly":0.3,"lz":4,"leftJoints":["uytQSeUom5oDsFC3PKa7q8"],"rightJoints":["1k67G1W1gvb3E7EbmbG1h1"],"leftPoint":[-5.300056602144494,-4.3267754309071895,0.1],"rightPoint":[6.699943397855506,-4.3267754309071895,0.1],"relativeAngle":0,"textureType":"Wall Texture Default","color":"#ffffff","normal":[0,0,1],"rotation":[0,0,0],"id":"tKvexMf8zrvPgydcZb5VYA","parentId":"1rAGH78b5nt7cXyGU9vNRV","foundationId":"1rAGH78b5nt7cXyGU9vNRV","selected":false,"roofId":"45NB7k7GYboywbxoXsYHLH","leftRoofHeight":4,"rightRoofHeight":4,"wallStructure":"Default","structureSpacing":2,"structureWidth":0.1,"structureColor":"white","opacity":0.5,"fill":"Full","eavesLength":0.2,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":4,"rightTopPartialResizeHandleHeight":4},{"type":"Foundation","cx":18.191904297849153,"cy":-7.416985047669567,"cz":0.05,"lx":18.159918676696766,"ly":14.613120903558068,"lz":0.1,"normal":[0,0,1],"rotation":[0,0,0],"parentId":"Ground","solarUpdraftTower":{},"solarAbsorberPipe":{},"solarPowerTower":{},"id":"1rAGH78b5nt7cXyGU9vNRV","selected":false},{"type":"Roof","cx":0,"cy":0,"cz":0,"lx":0,"ly":0,"lz":0,"thickness":0.2,"roofType":"Hip","wallsId":["tKvexMf8zrvPgydcZb5VYA"],"textureType":"Roof Texture Default","color":"#999999","selected":false,"showLabel":false,"normal":[0,0,1],"rotation":[0,0,0],"parentId":"1rAGH78b5nt7cXyGU9vNRV","foundationId":"1rAGH78b5nt7cXyGU9vNRV","id":"45NB7k7GYboywbxoXsYHLH","leftRidgeLength":3,"rightRidgeLength":3,"rise":2,"ceiling":false},{"type":"Wall","cx":0.6999433978555056,"cy":5.6732245690928105,"cz":2.2408122612280286,"lx":12,"ly":0.3,"lz":5,"leftJoints":["xyaukKZz7A3TN7punm6ojQ"],"rightJoints":["t8gz6AKc17wrcW6oGcJkRc"],"leftPoint":[6.699943397855505,5.67322456909281,0.1],"rightPoint":[-5.300056602144494,5.6732245690928105,0.1],"relativeAngle":3.141592653589793,"textureType":"Wall Texture Default","color":"#ffffff","normal":[0,0,1],"rotation":[0,0,0],"id":"tjjt6SvCacxyrjW8mL7Kcd","parentId":"fWm5hggYktD39sKer9AZNn","foundationId":"fWm5hggYktD39sKer9AZNn","roofId":"hajPbexieJRPqTV4EDojfw","leftRoofHeight":5,"rightRoofHeight":5,"selected":false,"wallStructure":"Default","structureSpacing":2,"structureWidth":0.1,"structureColor":"white","opacity":0.5,"fill":"Full","eavesLength":0.2,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":5,"rightTopPartialResizeHandleHeight":5},{"type":"Wall","cx":6.699943397855504,"cy":0.6732245690928105,"cz":2.2301039869226305,"lx":10,"ly":0.3,"lz":5,"leftJoints":["eyn92Pbtw4rxGsusMErN7b"],"rightJoints":["tjjt6SvCacxyrjW8mL7Kcd"],"leftPoint":[6.6999433978555025,-4.3267754309071895,0.1],"rightPoint":[6.699943397855506,5.6732245690928105,0.1],"relativeAngle":1.5707963267948963,"textureType":"Wall Texture Default","color":"#ffffff","normal":[0,0,1],"rotation":[0,0,0],"id":"xyaukKZz7A3TN7punm6ojQ","parentId":"fWm5hggYktD39sKer9AZNn","foundationId":"fWm5hggYktD39sKer9AZNn","roofId":"hajPbexieJRPqTV4EDojfw","leftRoofHeight":5,"rightRoofHeight":5,"selected":false,"wallStructure":"Default","structureSpacing":2,"structureWidth":0.1,"structureColor":"white","opacity":0.5,"fill":"Full","eavesLength":0.2,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":5,"rightTopPartialResizeHandleHeight":5},{"type":"Wall","cx":-5.300056602144494,"cy":0.6732245690928105,"cz":2.228839888904333,"lx":10,"ly":0.3,"lz":5,"leftJoints":["tjjt6SvCacxyrjW8mL7Kcd"],"rightJoints":["eyn92Pbtw4rxGsusMErN7b"],"leftPoint":[-5.300056602144493,5.6732245690928105,0.1],"rightPoint":[-5.300056602144494,-4.3267754309071895,0.1],"relativeAngle":4.71238898038469,"textureType":"Wall Texture Default","color":"#ffffff","normal":[0,0,1],"rotation":[0,0,0],"id":"t8gz6AKc17wrcW6oGcJkRc","parentId":"fWm5hggYktD39sKer9AZNn","foundationId":"fWm5hggYktD39sKer9AZNn","roofId":"hajPbexieJRPqTV4EDojfw","leftRoofHeight":5,"rightRoofHeight":5,"selected":false,"wallStructure":"Default","structureSpacing":2,"structureWidth":0.1,"structureColor":"white","opacity":0.5,"fill":"Full","eavesLength":0.2,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":5,"rightTopPartialResizeHandleHeight":5},{"type":"Wall","cx":0.6999433978555061,"cy":-4.3267754309071895,"cz":2.268765007024547,"lx":12,"ly":0.3,"lz":5,"leftJoints":["t8gz6AKc17wrcW6oGcJkRc"],"rightJoints":["xyaukKZz7A3TN7punm6ojQ"],"leftPoint":[-5.300056602144494,-4.3267754309071895,0.1],"rightPoint":[6.699943397855506,-4.3267754309071895,0.1],"relativeAngle":0,"textureType":"Wall Texture Default","color":"#ffffff","normal":[0,0,1],"rotation":[0,0,0],"id":"eyn92Pbtw4rxGsusMErN7b","parentId":"fWm5hggYktD39sKer9AZNn","foundationId":"fWm5hggYktD39sKer9AZNn","roofId":"hajPbexieJRPqTV4EDojfw","leftRoofHeight":5,"rightRoofHeight":5,"selected":false,"wallStructure":"Default","structureSpacing":2,"structureWidth":0.1,"structureColor":"white","opacity":0.5,"fill":"Full","eavesLength":0.2,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":5,"rightTopPartialResizeHandleHeight":5},{"type":"Foundation","cx":-18.349437375856816,"cy":7.358577960859719,"cz":0.05,"lx":18.159918676696766,"ly":14.613120903558068,"lz":0.1,"normal":[0,0,1],"rotation":[0,0,0],"parentId":"Ground","solarUpdraftTower":{},"solarAbsorberPipe":{},"solarPowerTower":{},"id":"fWm5hggYktD39sKer9AZNn","selected":false},{"type":"Wall","cx":0.6999433978555056,"cy":5.6732245690928105,"cz":2.2408122612280286,"lx":12,"ly":0.3,"lz":4,"leftJoints":["7pDL5vuaWkaSp6xPdGtoFv"],"rightJoints":["jRzTPUopsCw4wfe1XwNMiY"],"leftPoint":[6.699943397855505,5.67322456909281,0.1],"rightPoint":[-5.300056602144494,5.6732245690928105,0.1],"relativeAngle":3.141592653589793,"textureType":"Wall Texture Default","color":"#ffffff","normal":[0,0,1],"rotation":[0,0,0],"id":"ak7Cpd4phQ5SWBAYKo1UCe","parentId":"w5VAS3XZUgKoYjMsuPJ9cq","foundationId":"w5VAS3XZUgKoYjMsuPJ9cq","roofId":"jKe65v2XQs93jh4Da9kMiu","leftRoofHeight":4,"rightRoofHeight":4,"selected":false,"wallStructure":"Default","structureSpacing":2,"structureWidth":0.1,"structureColor":"white","opacity":0.5,"fill":"Full","eavesLength":0.2,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":4,"rightTopPartialResizeHandleHeight":4},{"type":"Wall","cx":6.699943397855504,"cy":0.6732245690928105,"cz":2.2301039869226305,"lx":10,"ly":0.3,"lz":4,"leftJoints":["f2RfmPbQBbQQB9B9qxgaGp"],"rightJoints":["ak7Cpd4phQ5SWBAYKo1UCe"],"leftPoint":[6.6999433978555025,-4.3267754309071895,0.1],"rightPoint":[6.699943397855506,5.6732245690928105,0.1],"relativeAngle":1.5707963267948963,"textureType":"Wall Texture Default","color":"#ffffff","normal":[0,0,1],"rotation":[0,0,0],"id":"7pDL5vuaWkaSp6xPdGtoFv","parentId":"w5VAS3XZUgKoYjMsuPJ9cq","foundationId":"w5VAS3XZUgKoYjMsuPJ9cq","roofId":"jKe65v2XQs93jh4Da9kMiu","leftRoofHeight":4,"rightRoofHeight":4,"selected":false,"wallStructure":"Default","structureSpacing":2,"structureWidth":0.1,"structureColor":"white","opacity":0.5,"fill":"Full","eavesLength":0.2,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":4,"rightTopPartialResizeHandleHeight":4},{"type":"Wall","cx":-5.300056602144494,"cy":0.6732245690928105,"cz":2.228839888904333,"lx":10,"ly":0.3,"lz":4,"leftJoints":["ak7Cpd4phQ5SWBAYKo1UCe"],"rightJoints":["f2RfmPbQBbQQB9B9qxgaGp"],"leftPoint":[-5.300056602144493,5.6732245690928105,0.1],"rightPoint":[-5.300056602144494,-4.3267754309071895,0.1],"relativeAngle":4.71238898038469,"textureType":"Wall Texture Default","color":"#ffffff","normal":[0,0,1],"rotation":[0,0,0],"id":"jRzTPUopsCw4wfe1XwNMiY","parentId":"w5VAS3XZUgKoYjMsuPJ9cq","foundationId":"w5VAS3XZUgKoYjMsuPJ9cq","roofId":"jKe65v2XQs93jh4Da9kMiu","leftRoofHeight":4,"rightRoofHeight":4,"selected":false,"wallStructure":"Default","structureSpacing":2,"structureWidth":0.1,"structureColor":"white","opacity":0.5,"fill":"Full","eavesLength":0.2,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":4,"rightTopPartialResizeHandleHeight":4},{"type":"Wall","cx":0.6999433978555061,"cy":-4.3267754309071895,"cz":2.268765007024547,"lx":12,"ly":0.3,"lz":4,"leftJoints":["jRzTPUopsCw4wfe1XwNMiY"],"rightJoints":["7pDL5vuaWkaSp6xPdGtoFv"],"leftPoint":[-5.300056602144494,-4.3267754309071895,0.1],"rightPoint":[6.699943397855506,-4.3267754309071895,0.1],"relativeAngle":0,"textureType":"Wall Texture Default","color":"#ffffff","normal":[0,0,1],"rotation":[0,0,0],"id":"f2RfmPbQBbQQB9B9qxgaGp","parentId":"w5VAS3XZUgKoYjMsuPJ9cq","foundationId":"w5VAS3XZUgKoYjMsuPJ9cq","roofId":"jKe65v2XQs93jh4Da9kMiu","leftRoofHeight":4,"rightRoofHeight":4,"selected":false,"wallStructure":"Default","structureSpacing":2,"structureWidth":0.1,"structureColor":"white","opacity":0.5,"fill":"Full","eavesLength":0.2,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":4,"rightTopPartialResizeHandleHeight":4},{"type":"Foundation","cx":18.357286683609985,"cy":7.35579151072247,"cz":0.05,"lx":18.159918676696766,"ly":14.613120903558068,"lz":0.1,"normal":[0,0,1],"rotation":[0,0,0],"parentId":"Ground","solarUpdraftTower":{},"solarAbsorberPipe":{},"solarPowerTower":{},"id":"w5VAS3XZUgKoYjMsuPJ9cq","selected":false},{"type":"Wall","cx":0.6999433978555056,"cy":5.6732245690928105,"cz":2.2408122612280286,"lx":12,"ly":0.3,"lz":3,"leftJoints":["3nk4fctTxNug3tQ2458FKw"],"rightJoints":["dc91yXxYZexfAFXVg2fpn6"],"leftPoint":[6.699943397855505,5.67322456909281,0.1],"rightPoint":[-5.300056602144494,5.6732245690928105,0.1],"relativeAngle":3.141592653589793,"textureType":"Wall Texture Default","color":"#ffffff","normal":[0,0,1],"rotation":[0,0,0],"id":"pwXdeCrfH255xyNxeKZFmq","parentId":"d6fjBvqj48Q3knutrPvQzj","foundationId":"d6fjBvqj48Q3knutrPvQzj","roofId":"ptuJ1uXn6Mmb8yfPchYi2c","leftRoofHeight":3,"rightRoofHeight":3,"selected":false,"wallStructure":"Default","structureSpacing":2,"structureWidth":0.1,"structureColor":"white","opacity":0.5,"fill":"Full","eavesLength":0.2,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":3,"rightTopPartialResizeHandleHeight":3},{"type":"Wall","cx":6.699943397855504,"cy":0.6732245690928105,"cz":2.2301039869226305,"lx":10,"ly":0.3,"lz":3,"leftJoints":["m39f5UsRB2FwBXUr7e5PvG"],"rightJoints":["pwXdeCrfH255xyNxeKZFmq"],"leftPoint":[6.6999433978555025,-4.3267754309071895,0.1],"rightPoint":[6.699943397855506,5.6732245690928105,0.1],"relativeAngle":1.5707963267948963,"textureType":"Wall Texture Default","color":"#ffffff","normal":[0,0,1],"rotation":[0,0,0],"id":"3nk4fctTxNug3tQ2458FKw","parentId":"d6fjBvqj48Q3knutrPvQzj","foundationId":"d6fjBvqj48Q3knutrPvQzj","roofId":"ptuJ1uXn6Mmb8yfPchYi2c","leftRoofHeight":3,"rightRoofHeight":3,"centerRoofHeight":[0,6.780964087966274],"selected":false,"centerLeftRoofHeight":[-0.35,4.890482043983138],"centerRightRoofHeight":[0.35,4.890482043983138],"wallStructure":"Default","structureSpacing":2,"structureWidth":0.1,"structureColor":"white","opacity":0.5,"fill":"Full","eavesLength":0.2,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":3,"rightTopPartialResizeHandleHeight":3},{"type":"Wall","cx":-5.300056602144494,"cy":0.6732245690928105,"cz":2.228839888904333,"lx":10,"ly":0.3,"lz":3,"leftJoints":["pwXdeCrfH255xyNxeKZFmq"],"rightJoints":["m39f5UsRB2FwBXUr7e5PvG"],"leftPoint":[-5.300056602144493,5.6732245690928105,0.1],"rightPoint":[-5.300056602144494,-4.3267754309071895,0.1],"relativeAngle":4.71238898038469,"textureType":"Wall Texture Default","color":"#ffffff","normal":[0,0,1],"rotation":[0,0,0],"id":"dc91yXxYZexfAFXVg2fpn6","parentId":"d6fjBvqj48Q3knutrPvQzj","foundationId":"d6fjBvqj48Q3knutrPvQzj","roofId":"ptuJ1uXn6Mmb8yfPchYi2c","leftRoofHeight":3,"rightRoofHeight":3,"centerRoofHeight":[0,6.780964087966274],"selected":false,"centerLeftRoofHeight":[-0.35,4.890482043983138],"centerRightRoofHeight":[0.35,4.890482043983138],"wallStructure":"Default","structureSpacing":2,"structureWidth":0.1,"structureColor":"white","opacity":0.5,"fill":"Full","eavesLength":0.2,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":3,"rightTopPartialResizeHandleHeight":3},{"type":"Wall","cx":0.6999433978555061,"cy":-4.3267754309071895,"cz":2.268765007024547,"lx":12,"ly":0.3,"lz":3,"leftJoints":["dc91yXxYZexfAFXVg2fpn6"],"rightJoints":["3nk4fctTxNug3tQ2458FKw"],"leftPoint":[-5.300056602144494,-4.3267754309071895,0.1],"rightPoint":[6.699943397855506,-4.3267754309071895,0.1],"relativeAngle":0,"textureType":"Wall Texture Default","color":"#ffffff","normal":[0,0,1],"rotation":[0,0,0],"id":"m39f5UsRB2FwBXUr7e5PvG","parentId":"d6fjBvqj48Q3knutrPvQzj","foundationId":"d6fjBvqj48Q3knutrPvQzj","roofId":"ptuJ1uXn6Mmb8yfPchYi2c","leftRoofHeight":3,"rightRoofHeight":3,"selected":false,"wallStructure":"Default","structureSpacing":2,"structureWidth":0.1,"structureColor":"white","opacity":0.5,"fill":"Full","eavesLength":0.2,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":3,"rightTopPartialResizeHandleHeight":3},{"type":"Foundation","cx":-0.2822234132630961,"cy":-22.249672711420477,"cz":0.05,"lx":18.159918676696766,"ly":14.613120903558068,"lz":0.1,"normal":[0,0,1],"rotation":[0,0,0],"parentId":"Ground","solarUpdraftTower":{},"solarAbsorberPipe":{},"solarPowerTower":{},"id":"d6fjBvqj48Q3knutrPvQzj","selected":false},{"type":"Roof","cx":0,"cy":0,"cz":0,"lx":0,"ly":0,"lz":0,"thickness":0.2,"roofType":"Pyramid","wallsId":["xyaukKZz7A3TN7punm6ojQ","tjjt6SvCacxyrjW8mL7Kcd","t8gz6AKc17wrcW6oGcJkRc","eyn92Pbtw4rxGsusMErN7b"],"textureType":"Roof Texture Default","color":"#999999","selected":false,"lineWidth":0.2,"lineColor":"black","showLabel":false,"normal":[0,0,1],"rotation":[0,0,0],"parentId":"fWm5hggYktD39sKer9AZNn","foundationId":"fWm5hggYktD39sKer9AZNn","id":"hajPbexieJRPqTV4EDojfw","rise":0,"ceiling":false},{"type":"Roof","cx":0,"cy":0,"cz":0,"lx":0,"ly":0,"lz":0,"thickness":0.2,"roofType":"Pyramid","wallsId":["f2RfmPbQBbQQB9B9qxgaGp","7pDL5vuaWkaSp6xPdGtoFv","ak7Cpd4phQ5SWBAYKo1UCe","jRzTPUopsCw4wfe1XwNMiY"],"textureType":"Roof Texture Default","color":"#999999","selected":false,"lineWidth":0.2,"lineColor":"black","showLabel":false,"normal":[0,0,1],"rotation":[0,0,0],"parentId":"w5VAS3XZUgKoYjMsuPJ9cq","foundationId":"w5VAS3XZUgKoYjMsuPJ9cq","id":"jKe65v2XQs93jh4Da9kMiu","rise":3.592861140197524,"ceiling":false},{"type":"Roof","cx":0,"cy":0,"cz":0,"lx":0,"ly":0,"lz":0,"thickness":0.2,"roofType":"Gambrel","wallsId":["m39f5UsRB2FwBXUr7e5PvG"],"textureType":"Roof Texture Default","color":"#999999","selected":false,"lineWidth":0.2,"lineColor":"black","showLabel":false,"normal":[0,0,1],"rotation":[0,0,0],"parentId":"d6fjBvqj48Q3knutrPvQzj","foundationId":"d6fjBvqj48Q3knutrPvQzj","id":"ptuJ1uXn6Mmb8yfPchYi2c","rise":3.7809640879662743,"ceiling":false,"frontRidgePoint":[0.35,0.5],"backRidgePoint":[0.35,0.5],"topRidgePoint":[0,1]},{"type":"Wall","cx":0.6999433978555056,"cy":5.6732245690928105,"cz":2.2408122612280286,"lx":12,"ly":0.3,"lz":3,"leftJoints":["ixC5APwNiRHyp3q8fcpSip"],"rightJoints":["8hSDdsDC58WwCVch1EWVeh"],"leftPoint":[6.699943397855505,5.67322456909281,0.1],"rightPoint":[-5.300056602144494,5.6732245690928105,0.1],"relativeAngle":3.141592653589793,"textureType":"Wall Texture Default","color":"#ffffff","normal":[0,0,1],"rotation":[0,0,0],"id":"ozFwLmFwWhU6vEeaiRMgLF","parentId":"upLMjkz3yhg33F3y5iosoh","foundationId":"upLMjkz3yhg33F3y5iosoh","roofId":"nUUEKM9A4b42WTe8cCbmi9","leftRoofHeight":3,"rightRoofHeight":3,"selected":false,"wallStructure":"Default","structureSpacing":2,"structureWidth":0.1,"structureColor":"white","opacity":0.5,"fill":"Full","eavesLength":0.1,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":3,"rightTopPartialResizeHandleHeight":3},{"type":"Wall","cx":6.699943397855504,"cy":0.6732245690928105,"cz":2.2301039869226305,"lx":10,"ly":0.3,"lz":3,"leftJoints":["qjuHirmyC29jd4cf1J7Ub1"],"rightJoints":["ozFwLmFwWhU6vEeaiRMgLF"],"leftPoint":[6.6999433978555025,-4.3267754309071895,0.1],"rightPoint":[6.699943397855506,5.6732245690928105,0.1],"relativeAngle":1.5707963267948963,"textureType":"Wall Texture Default","color":"#ffffff","normal":[0,0,1],"rotation":[0,0,0],"id":"ixC5APwNiRHyp3q8fcpSip","parentId":"upLMjkz3yhg33F3y5iosoh","foundationId":"upLMjkz3yhg33F3y5iosoh","roofId":"nUUEKM9A4b42WTe8cCbmi9","leftRoofHeight":3,"rightRoofHeight":3,"selected":false,"wallStructure":"Default","structureSpacing":2,"structureWidth":0.1,"structureColor":"white","opacity":0.5,"fill":"Full","eavesLength":0.1,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":3,"rightTopPartialResizeHandleHeight":3},{"type":"Wall","cx":-5.300056602144494,"cy":0.6732245690928105,"cz":2.228839888904333,"lx":10,"ly":0.3,"lz":3,"leftJoints":["ozFwLmFwWhU6vEeaiRMgLF"],"rightJoints":["qjuHirmyC29jd4cf1J7Ub1"],"leftPoint":[-5.300056602144493,5.6732245690928105,0.1],"rightPoint":[-5.300056602144494,-4.3267754309071895,0.1],"relativeAngle":4.71238898038469,"textureType":"Wall Texture Default","color":"#ffffff","normal":[0,0,1],"rotation":[0,0,0],"id":"8hSDdsDC58WwCVch1EWVeh","parentId":"upLMjkz3yhg33F3y5iosoh","foundationId":"upLMjkz3yhg33F3y5iosoh","roofId":"nUUEKM9A4b42WTe8cCbmi9","leftRoofHeight":3,"rightRoofHeight":3,"selected":false,"wallStructure":"Default","structureSpacing":2,"structureWidth":0.1,"structureColor":"white","opacity":0.5,"fill":"Full","eavesLength":0.1,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":3,"rightTopPartialResizeHandleHeight":3},{"type":"Wall","cx":0.6999433978555061,"cy":-4.3267754309071895,"cz":2.268765007024547,"lx":12,"ly":0.3,"lz":3,"leftJoints":["8hSDdsDC58WwCVch1EWVeh"],"rightJoints":["ixC5APwNiRHyp3q8fcpSip"],"leftPoint":[-5.300056602144494,-4.3267754309071895,0.1],"rightPoint":[6.699943397855506,-4.3267754309071895,0.1],"relativeAngle":0,"textureType":"Wall Texture Default","color":"#ffffff","normal":[0,0,1],"rotation":[0,0,0],"id":"qjuHirmyC29jd4cf1J7Ub1","parentId":"upLMjkz3yhg33F3y5iosoh","foundationId":"upLMjkz3yhg33F3y5iosoh","roofId":"nUUEKM9A4b42WTe8cCbmi9","leftRoofHeight":3,"rightRoofHeight":3,"selected":false,"wallStructure":"Default","structureSpacing":2,"structureWidth":0.1,"structureColor":"white","opacity":0.5,"fill":"Full","eavesLength":0.1,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":3,"rightTopPartialResizeHandleHeight":3},{"type":"Foundation","cx":18.14821865757634,"cy":-22.28587145270979,"cz":0.05,"lx":18.159918676696766,"ly":14.613120903558068,"lz":0.1,"normal":[0,0,1],"rotation":[0,0,0],"parentId":"Ground","solarUpdraftTower":{},"solarAbsorberPipe":{},"solarPowerTower":{},"id":"upLMjkz3yhg33F3y5iosoh","selected":false},{"type":"Roof","cx":0,"cy":0,"cz":0,"lx":0,"ly":0,"lz":0,"thickness":0.2,"roofType":"Mansard","wallsId":["qjuHirmyC29jd4cf1J7Ub1"],"textureType":"Roof Texture Default","color":"#999999","selected":false,"lineWidth":0.2,"lineColor":"black","showLabel":false,"normal":[0,0,1],"rotation":[0,0,0],"parentId":"upLMjkz3yhg33F3y5iosoh","foundationId":"upLMjkz3yhg33F3y5iosoh","id":"nUUEKM9A4b42WTe8cCbmi9","rise":2.4252724498654796,"ceiling":false},{"type":"Wall","cx":0.6999433978555056,"cy":5.6732245690928105,"cz":2.2408122612280286,"lx":12,"ly":0.3,"lz":3,"leftJoints":["igxQHaerDScxsfB5TgVZU4"],"rightJoints":["fisK6kExsrNY6Pqi3iQHme"],"leftPoint":[6.699943397855505,5.67322456909281,0.1],"rightPoint":[-5.300056602144494,5.6732245690928105,0.1],"relativeAngle":3.141592653589793,"textureType":"Wall Texture Default","color":"#ffffff","normal":[0,0,1],"rotation":[0,0,0],"id":"3gfx2QQjNJN8MdstGfbwGN","parentId":"8FvPN2owsgTQ83kbYPEi1w","foundationId":"8FvPN2owsgTQ83kbYPEi1w","roofId":"ue2dCEQjJdM2ogHcYaDLus","leftRoofHeight":3,"rightRoofHeight":3,"selected":false,"wallStructure":"Default","structureSpacing":2,"structureWidth":0.1,"structureColor":"white","opacity":0.5,"fill":"Full","eavesLength":0.2,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":3,"rightTopPartialResizeHandleHeight":3},{"type":"Wall","cx":6.699943397855504,"cy":0.6732245690928105,"cz":2.2301039869226305,"lx":10,"ly":0.3,"lz":3,"leftJoints":["ayZDPKzE28H2j3EL6h6FST"],"rightJoints":["3gfx2QQjNJN8MdstGfbwGN"],"leftPoint":[6.6999433978555025,-4.3267754309071895,0.1],"rightPoint":[6.699943397855506,5.6732245690928105,0.1],"relativeAngle":1.5707963267948963,"textureType":"Wall Texture Default","color":"#ffffff","normal":[0,0,1],"rotation":[0,0,0],"id":"igxQHaerDScxsfB5TgVZU4","parentId":"8FvPN2owsgTQ83kbYPEi1w","foundationId":"8FvPN2owsgTQ83kbYPEi1w","roofId":"ue2dCEQjJdM2ogHcYaDLus","leftRoofHeight":3,"rightRoofHeight":3,"centerRoofHeight":[0.15368124011044487,5.976337025346289],"selected":false,"wallStructure":"Default","structureSpacing":2,"structureWidth":0.1,"structureColor":"white","opacity":0.5,"fill":"Full","eavesLength":0.2,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":3,"rightTopPartialResizeHandleHeight":3},{"type":"Wall","cx":-5.300056602144494,"cy":0.6732245690928105,"cz":2.228839888904333,"lx":10,"ly":0.3,"lz":3,"leftJoints":["3gfx2QQjNJN8MdstGfbwGN"],"rightJoints":["ayZDPKzE28H2j3EL6h6FST"],"leftPoint":[-5.300056602144493,5.6732245690928105,0.1],"rightPoint":[-5.300056602144494,-4.3267754309071895,0.1],"relativeAngle":4.71238898038469,"textureType":"Wall Texture Default","color":"#ffffff","normal":[0,0,1],"rotation":[0,0,0],"id":"fisK6kExsrNY6Pqi3iQHme","parentId":"8FvPN2owsgTQ83kbYPEi1w","foundationId":"8FvPN2owsgTQ83kbYPEi1w","roofId":"ue2dCEQjJdM2ogHcYaDLus","leftRoofHeight":3,"rightRoofHeight":3,"centerRoofHeight":[-0.15368124011044487,5.976337025346289],"selected":false,"wallStructure":"Default","structureSpacing":2,"structureWidth":0.1,"structureColor":"white","opacity":0.5,"fill":"Full","eavesLength":0.2,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":3,"rightTopPartialResizeHandleHeight":3},{"type":"Wall","cx":0.6999433978555061,"cy":-4.3267754309071895,"cz":2.268765007024547,"lx":12,"ly":0.3,"lz":3,"leftJoints":["fisK6kExsrNY6Pqi3iQHme"],"rightJoints":["igxQHaerDScxsfB5TgVZU4"],"leftPoint":[-5.300056602144494,-4.3267754309071895,0.1],"rightPoint":[6.699943397855506,-4.3267754309071895,0.1],"relativeAngle":0,"textureType":"Wall Texture Default","color":"#ffffff","normal":[0,0,1],"rotation":[0,0,0],"id":"ayZDPKzE28H2j3EL6h6FST","parentId":"8FvPN2owsgTQ83kbYPEi1w","foundationId":"8FvPN2owsgTQ83kbYPEi1w","roofId":"ue2dCEQjJdM2ogHcYaDLus","leftRoofHeight":3,"rightRoofHeight":3,"selected":false,"wallStructure":"Default","structureSpacing":2,"structureWidth":0.1,"structureColor":"white","opacity":0.5,"fill":"Full","eavesLength":0.2,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":3,"rightTopPartialResizeHandleHeight":3},{"id":"ue2dCEQjJdM2ogHcYaDLus","type":"Roof","cx":0,"cy":0,"cz":0,"lx":0,"ly":0,"lz":0,"color":"#999999","normal":[0,0,1],"rotation":[0,0,0],"parentId":"8FvPN2owsgTQ83kbYPEi1w","foundationId":"8FvPN2owsgTQ83kbYPEi1w","roofType":"Gable","textureType":"Roof Texture Default","thickness":0.2,"wallsId":["ayZDPKzE28H2j3EL6h6FST"],"ridgeLeftPoint":[-0.15368124011044487,1],"ridgeRightPoint":[0.15368124011044487,1],"selected":false,"rise":2.9763370253462886,"ceiling":false},{"type":"Foundation","cx":-18.3917853849947,"cy":-22.23021238337839,"cz":0.05,"lx":18.159918676696766,"ly":14.613120903558068,"lz":0.1,"normal":[0,0,1],"rotation":[0,0,0],"parentId":"Ground","solarUpdraftTower":{},"solarAbsorberPipe":{},"solarPowerTower":{},"id":"8FvPN2owsgTQ83kbYPEi1w","selected":false},{"type":"Wall","cx":0.6999433978555056,"cy":5.6732245690928105,"cz":2.2408122612280286,"lx":12,"ly":0.3,"lz":5.846129172584467,"leftJoints":["7uVMbtndXyFhLg9N8igxZL"],"rightJoints":["satrCacXQzxtUPDa8WeKn7"],"leftPoint":[6.699943397855505,5.67322456909281,0.1],"rightPoint":[-5.300056602144494,5.6732245690928105,0.1],"relativeAngle":3.141592653589793,"textureType":"Wall Texture Default","color":"#ffffff","normal":[0,0,1],"rotation":[0,0,0],"id":"uNqL4MKdnpapHVSi9J1K8T","parentId":"e6BPbJvDHWVEFn61HvpPWK","foundationId":"e6BPbJvDHWVEFn61HvpPWK","roofId":"iNBeHL8TpJ75nDzdH6Ar6c","leftRoofHeight":5.846129172584467,"rightRoofHeight":5.846129172584467,"selected":false,"wallStructure":"Default","structureSpacing":2,"structureWidth":0.1,"structureColor":"white","opacity":0.5,"fill":"Full","eavesLength":0.2,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":5.846129172584467,"rightTopPartialResizeHandleHeight":5.846129172584467},{"type":"Wall","cx":6.699943397855504,"cy":0.6732245690928105,"cz":2.2301039869226305,"lx":10,"ly":0.3,"lz":3,"leftJoints":["5u61LU9xBr7HzdGUCwG4J6"],"rightJoints":["uNqL4MKdnpapHVSi9J1K8T"],"leftPoint":[6.6999433978555025,-4.3267754309071895,0.1],"rightPoint":[6.699943397855506,5.6732245690928105,0.1],"relativeAngle":1.5707963267948963,"textureType":"Wall Texture Default","color":"#ffffff","normal":[0,0,1],"rotation":[0,0,0],"id":"7uVMbtndXyFhLg9N8igxZL","parentId":"e6BPbJvDHWVEFn61HvpPWK","foundationId":"e6BPbJvDHWVEFn61HvpPWK","roofId":"iNBeHL8TpJ75nDzdH6Ar6c","leftRoofHeight":3,"rightRoofHeight":5.846129172584467,"centerRoofHeight":[0.5,5.846129172584467],"selected":false,"wallStructure":"Default","structureSpacing":2,"structureWidth":0.1,"structureColor":"white","opacity":0.5,"fill":"Full","eavesLength":0.2,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":3,"rightTopPartialResizeHandleHeight":3},{"type":"Wall","cx":-5.300056602144494,"cy":0.6732245690928105,"cz":2.228839888904333,"lx":10,"ly":0.3,"lz":3,"leftJoints":["uNqL4MKdnpapHVSi9J1K8T"],"rightJoints":["5u61LU9xBr7HzdGUCwG4J6"],"leftPoint":[-5.300056602144493,5.6732245690928105,0.1],"rightPoint":[-5.300056602144494,-4.3267754309071895,0.1],"relativeAngle":4.71238898038469,"textureType":"Wall Texture Default","color":"#ffffff","normal":[0,0,1],"rotation":[0,0,0],"id":"satrCacXQzxtUPDa8WeKn7","parentId":"e6BPbJvDHWVEFn61HvpPWK","foundationId":"e6BPbJvDHWVEFn61HvpPWK","roofId":"iNBeHL8TpJ75nDzdH6Ar6c","leftRoofHeight":5.846129172584467,"rightRoofHeight":3,"centerRoofHeight":[-0.5,5.846129172584467],"selected":false,"wallStructure":"Default","structureSpacing":2,"structureWidth":0.1,"structureColor":"white","opacity":0.5,"fill":"Full","eavesLength":0.2,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":3,"rightTopPartialResizeHandleHeight":3},{"type":"Wall","cx":0.6999433978555061,"cy":-4.3267754309071895,"cz":2.268765007024547,"lx":12,"ly":0.3,"lz":3,"leftJoints":["satrCacXQzxtUPDa8WeKn7"],"rightJoints":["7uVMbtndXyFhLg9N8igxZL"],"leftPoint":[-5.300056602144494,-4.3267754309071895,0.1],"rightPoint":[6.699943397855506,-4.3267754309071895,0.1],"relativeAngle":0,"textureType":"Wall Texture Default","color":"#ffffff","normal":[0,0,1],"rotation":[0,0,0],"id":"5u61LU9xBr7HzdGUCwG4J6","parentId":"e6BPbJvDHWVEFn61HvpPWK","foundationId":"e6BPbJvDHWVEFn61HvpPWK","roofId":"iNBeHL8TpJ75nDzdH6Ar6c","leftRoofHeight":3,"rightRoofHeight":3,"selected":false,"wallStructure":"Default","structureSpacing":2,"structureWidth":0.1,"structureColor":"white","opacity":0.5,"fill":"Full","eavesLength":0.2,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":3,"rightTopPartialResizeHandleHeight":3},{"id":"iNBeHL8TpJ75nDzdH6Ar6c","type":"Roof","cx":0,"cy":0,"cz":0,"lx":0,"ly":0,"lz":0,"color":"#999999","normal":[0,0,1],"rotation":[0,0,0],"parentId":"e6BPbJvDHWVEFn61HvpPWK","foundationId":"e6BPbJvDHWVEFn61HvpPWK","roofType":"Gable","textureType":"Roof Texture Default","thickness":0.2,"wallsId":["5u61LU9xBr7HzdGUCwG4J6"],"ridgeLeftPoint":[-0.5,1],"ridgeRightPoint":[0.5,1],"selected":false,"rise":0,"ceiling":false},{"type":"Foundation","cx":0.04736842105263009,"cy":7.4416382171024535,"cz":0.05,"lx":18.159918676696766,"ly":14.613120903558068,"lz":0.1,"normal":[0,0,1],"rotation":[0,0,0],"parentId":"Ground","solarUpdraftTower":{},"solarAbsorberPipe":{},"solarPowerTower":{},"id":"e6BPbJvDHWVEFn61HvpPWK","selected":false}],"view":{"dailyPvYieldPanelX":0,"mapPanelY":0,"dailyFresnelReflectorYieldPanelX":0,"panCenter2D":[-0.052631578947368425,0,0],"yearlyHeliostatYieldPanelY":0,"mapPanelX":0,"yearlyHeliostatYieldPanelX":0,"cameraPosition2D":[-0.052631578947368425,-0.000020000888987681265,150],"theme":"Default","showDesignInfoPanel":false,"weatherPanelX":0,"dailyParabolicTroughYieldPanelX":0,"mapWeatherStations":false,"stickyNotePanelX":0,"showDailyHeliostatYieldPanel":false,"mapZoom":18,"showYearlyParabolicTroughYieldPanel":false,"dailyHeliostatYieldPanelX":0,"showDailyParabolicDishYieldPanel":false,"cameraPosition":[-28.363486288062674,-49.79716924665453,24.823194309796552],"showYearlyHeliostatYieldPanel":false,"orthographic":false,"dailyHeliostatYieldPanelY":0,"dailyParabolicTroughYieldPanelY":0,"heliodonPanelY":0,"yearlyParabolicTroughYieldPanelY":0,"showWeatherPanel":false,"groundImage":false,"yearlyLightSensorPanelX":0,"ambientLightIntensity":0.1,"yearlyFresnelReflectorYieldPanelX":0,"enableRotate":true,"dailyLightSensorPanelX":0,"heliodon":false,"solarRadiationHeatMapReflectionOnly":false,"cameraZoom":15.47561875,"mapType":"roadmap","showMapPanel":false,"yearlyParabolicDishYieldPanelY":0,"showSiteInfoPanel":true,"showDailyParabolicTroughYieldPanel":false,"showDailyFresnelReflectorYieldPanel":false,"showYearlyLightSensorPanel":false,"autoRotate":false,"heliodonPanelX":0,"showStickyNotePanel":false,"showDailyLightSensorPanel":false,"visibilityResultsPanelX":0,"yearlyPvYieldPanelY":0,"showDailyPvYieldPanel":false,"visibilityResultsPanelY":0,"showSunAngles":false,"dailyFresnelReflectorYieldPanelY":0,"weatherPanelY":0,"dailyLightSensorPanelY":0,"groundColor":"#0c797d","mapTilt":0,"showYearlyPvYieldPanel":false,"dailyParabolicDishYieldPanelY":0,"yearlyLightSensorPanelY":0,"yearlyParabolicTroughYieldPanelX":0,"dailyPvYieldPanelY":0,"yearlyPvYieldPanelX":0,"yearlyParabolicDishYieldPanelX":0,"shadowEnabled":true,"showInstructionPanel":true,"panCenter":[-6.81693136261614,-15.495725419499871,0],"yearlyFresnelReflectorYieldPanelY":0,"showHeliodonPanel":false,"axes":false,"solarRadiationHeatMapMaxValue":5,"dailyParabolicDishYieldPanelX":0,"showSolarPanelVisibilityResultsPanel":false,"stickyNotePanelY":0,"showYearlyParabolicDishYieldPanel":false,"showYearlyFresnelReflectorYieldPanel":false},"graphState":{"dailyPvIndividualOutputs":false,"yearlyPvIndividualOutputs":false,"dailyParabolicDishIndividualOutputs":false,"yearlyParabolicDishIndividualOutputs":false,"dailyParabolicTroughIndividualOutputs":false,"yearlyParabolicTroughIndividualOutputs":false,"dailyFresnelReflectorIndividualOutputs":false,"yearlyFresnelReflectorIndividualOutputs":false,"dailyHeliostatIndividualOutputs":false,"yearlyHeliostatIndividualOutputs":false,"dailyUpdraftTowerIndividualOutputs":false,"yearlyUpdraftTowerIndividualOutputs":false},"evolutionMethod":1,"solarPanelArrayLayoutParams":{"pvModelName":"SPR-X21-335-BLK","rowAxis":"Zonal","orientation":"Landscape","tiltAngle":0,"rowsPerRack":1,"interRowSpacing":2,"poleHeight":1,"poleSpacing":3},"solarPanelArrayLayoutConstraints":{"minimumInterRowSpacing":2,"maximumInterRowSpacing":10,"minimumRowsPerRack":1,"maximumRowsPerRack":6,"minimumTiltAngle":-1.5707963267948966,"maximumTiltAngle":1.5707963267948966,"poleHeight":1,"poleSpacing":5,"orientation":"Landscape","pvModelName":"CS6X-355P-FG","rowAxis":"Zonal"},"evolutionaryAlgorithmState":{"geneticAlgorithmParams":{"problem":"Solar Panel Tilt Angle","objectiveFunctionType":1,"selectionMethod":1,"searchMethod":1,"populationSize":20,"maximumGenerations":5,"selectionRate":0.5,"crossoverRate":0.5,"mutationRate":0.1,"convergenceThreshold":0.01,"localSearchRadius":0.1},"particleSwarmOptimizationParams":{"problem":"Solar Panel Tilt Angle","objectiveFunctionType":1,"searchMethod":1,"swarmSize":20,"maximumSteps":5,"vmax":0.01,"inertia":0.8,"cognitiveCoefficient":0.1,"socialCoefficient":0.1,"convergenceThreshold":0.01,"localSearchRadius":0.1}},"economicsParams":{"projectLifeSpan":25,"electricitySellingPrice":0.25,"operationalCostPerUnit":0.15},"notes":[]}
+{
+  "docid": "stLbuVGfE2K8DrmoYsFg9w",
+  "time": "02/04/2023 02:04 pm",
+  "timestamp": 1675537455512,
+  "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
+  "owner": null,
+  "email": null,
+  "world": {
+    "solarRadiationHeatmapGridCellSize": 0.5,
+    "date": "4/22/2022, 10:00:00 AM",
+    "cspTimesPerHour": 4,
+    "noAnimationForHeatmapSimulation": false,
+    "cspGridCellSize": 0.5,
+    "dustLoss": 0.05,
+    "address": "Natick, MA",
+    "cspDaysPerYear": 4,
+    "ground": {
+      "thermalDiffusivity": 0.05,
+      "albedo": 0.3,
+      "snowReflectionFactors": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "daysPerYear": 12,
+    "latitude": 42.2844063,
+    "noAnimationForSensorDataCollection": false,
+    "timesPerHour": 4,
+    "discretization": "Approximate",
+    "airAttenuationCoefficient": 0.01,
+    "noAnimationForSolarPanelSimulation": false,
+    "solarPanelVisibilityGridCellSize": 0.2,
+    "pvGridCellSize": 0.5,
+    "name": "default",
+    "longitude": -71.3488548
+  },
+  "elements": [
+    {
+      "ly": 14.613120903558068,
+      "solarUpdraftTower": {},
+      "parentId": "Ground",
+      "cx": -0.06554753263096413,
+      "id": "m7AH7DcnoGzAq9kryBy4RS",
+      "cy": -7.418371930827338,
+      "type": "Foundation",
+      "solarPowerTower": {},
+      "lx": 18.159918676696766,
+      "lz": 0.1,
+      "solarAbsorberPipe": {},
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "selected": false,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "cz": 0.05
+    },
+    {
+      "id": "2u4Fe7xnA6kkXXVGrQ4eyJ",
+      "selected": false,
+      "cz": 2.2408122612280286,
+      "lx": 12,
+      "relativeAngle": 3.141592653589793,
+      "lz": 4,
+      "roofId": "pNA4YvnHKpbgLLZoVdn8iH",
+      "ly": 0.3,
+      "rightPoint": [
+        -5.300056602144494,
+        5.6732245690928105,
+        0.1
+      ],
+      "leftJoints": [
+        "8XDG3EHsQoX26MhuzwMYUM"
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "textureType": "Wall Texture Default",
+      "leftPoint": [
+        6.699943397855505,
+        5.67322456909281,
+        0.1
+      ],
+      "type": "Wall",
+      "rightRoofHeight": 4,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "parentId": "m7AH7DcnoGzAq9kryBy4RS",
+      "leftRoofHeight": 4,
+      "showLabel": false,
+      "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
+      "cx": 0.6999433978555056,
+      "windows": [],
+      "rightJoints": [
+        "skm8dNPSkFaVkoUwiPNfq1"
+      ],
+      "cy": 5.6732245690928105,
+      "color": "#ffffff",
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5,
+      "fill": "Full",
+      "eavesLength": 0.2,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 4,
+      "rightTopPartialHeight": 4
+    },
+    {
+      "type": "Wall",
+      "windows": [],
+      "parentId": "m7AH7DcnoGzAq9kryBy4RS",
+      "cx": 6.699943397855504,
+      "leftPoint": [
+        6.6999433978555025,
+        -4.3267754309071895,
+        0.1
+      ],
+      "cy": 0.6732245690928105,
+      "leftRoofHeight": 4,
+      "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
+      "selected": false,
+      "rightPoint": [
+        6.699943397855506,
+        5.6732245690928105,
+        0.1
+      ],
+      "ly": 0.3,
+      "id": "8XDG3EHsQoX26MhuzwMYUM",
+      "showLabel": false,
+      "lx": 10,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "lz": 4,
+      "leftJoints": [
+        "cV8MyCuhWAsvEyyFuVqVqg"
+      ],
+      "cz": 2.2301039869226305,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "rightJoints": [
+        "2u4Fe7xnA6kkXXVGrQ4eyJ"
+      ],
+      "relativeAngle": 1.5707963267948963,
+      "textureType": "Wall Texture Default",
+      "rightRoofHeight": 4,
+      "roofId": "pNA4YvnHKpbgLLZoVdn8iH",
+      "color": "#ffffff",
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5,
+      "fill": "Full",
+      "eavesLength": 0.2,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 4,
+      "rightTopPartialHeight": 4
+    },
+    {
+      "lx": 10,
+      "windows": [],
+      "lz": 4,
+      "id": "skm8dNPSkFaVkoUwiPNfq1",
+      "roofId": "pNA4YvnHKpbgLLZoVdn8iH",
+      "selected": false,
+      "cy": 0.6732245690928105,
+      "cz": 2.228839888904333,
+      "showLabel": false,
+      "leftJoints": [
+        "2u4Fe7xnA6kkXXVGrQ4eyJ"
+      ],
+      "rightPoint": [
+        -5.300056602144494,
+        -4.3267754309071895,
+        0.1
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "textureType": "Wall Texture Default",
+      "rightRoofHeight": 4,
+      "parentId": "m7AH7DcnoGzAq9kryBy4RS",
+      "relativeAngle": 4.71238898038469,
+      "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
+      "leftPoint": [
+        -5.300056602144493,
+        5.6732245690928105,
+        0.1
+      ],
+      "rightJoints": [
+        "cV8MyCuhWAsvEyyFuVqVqg"
+      ],
+      "type": "Wall",
+      "leftRoofHeight": 4,
+      "ly": 0.3,
+      "cx": -5.300056602144494,
+      "color": "#ffffff",
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5,
+      "fill": "Full",
+      "eavesLength": 0.2,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 4,
+      "rightTopPartialHeight": 4
+    },
+    {
+      "showLabel": false,
+      "cx": 0.6999433978555061,
+      "parentId": "m7AH7DcnoGzAq9kryBy4RS",
+      "rightPoint": [
+        6.699943397855506,
+        -4.3267754309071895,
+        0.1
+      ],
+      "cz": 2.268765007024547,
+      "textureType": "Wall Texture Default",
+      "cy": -4.3267754309071895,
+      "id": "cV8MyCuhWAsvEyyFuVqVqg",
+      "windows": [],
+      "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
+      "leftJoints": [
+        "skm8dNPSkFaVkoUwiPNfq1"
+      ],
+      "rightJoints": [
+        "8XDG3EHsQoX26MhuzwMYUM"
+      ],
+      "selected": false,
+      "type": "Wall",
+      "roofId": "pNA4YvnHKpbgLLZoVdn8iH",
+      "leftPoint": [
+        -5.300056602144494,
+        -4.3267754309071895,
+        0.1
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "ly": 0.3,
+      "lz": 4,
+      "leftRoofHeight": 4,
+      "relativeAngle": 0,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "rightRoofHeight": 4,
+      "lx": 12,
+      "color": "#ffffff",
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5,
+      "fill": "Full",
+      "eavesLength": 0.2,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 4,
+      "rightTopPartialHeight": 4
+    },
+    {
+      "type": "Wall",
+      "cx": 0.6999433978555056,
+      "cy": 5.6732245690928105,
+      "cz": 2.2408122612280286,
+      "lx": 12,
+      "ly": 0.3,
+      "lz": 4,
+      "leftJoints": [
+        "pPpJHGJ2bGVqLdA1FpXi4V"
+      ],
+      "rightJoints": [
+        "2RETAxyRMzZBEQkBGms56R"
+      ],
+      "leftPoint": [
+        6.699943397855505,
+        5.67322456909281,
+        0.1
+      ],
+      "rightPoint": [
+        -5.300056602144494,
+        5.6732245690928105,
+        0.1
+      ],
+      "relativeAngle": 3.141592653589793,
+      "textureType": "Wall Texture Default",
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "giYTP9Qg6uJ3yfkS1RoDqG",
+      "parentId": "fbqvzYqiEy79jeL8wsadib",
+      "foundationId": "fbqvzYqiEy79jeL8wsadib",
+      "selected": false,
+      "roofId": "1iq4TPqH8xr1w2VxMAh8MU",
+      "leftRoofHeight": 4,
+      "rightRoofHeight": 4,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5,
+      "fill": "Full",
+      "eavesLength": 0.2,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 4,
+      "rightTopPartialHeight": 4
+    },
+    {
+      "type": "Wall",
+      "cx": 6.699943397855504,
+      "cy": 0.6732245690928105,
+      "cz": 2.2301039869226305,
+      "lx": 10,
+      "ly": 0.3,
+      "lz": 4,
+      "leftJoints": [
+        "beHqET5NN8aNdsuBncMpY7"
+      ],
+      "rightJoints": [
+        "giYTP9Qg6uJ3yfkS1RoDqG"
+      ],
+      "leftPoint": [
+        6.6999433978555025,
+        -4.3267754309071895,
+        0.1
+      ],
+      "rightPoint": [
+        6.699943397855506,
+        5.6732245690928105,
+        0.1
+      ],
+      "relativeAngle": 1.5707963267948963,
+      "textureType": "Wall Texture Default",
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "pPpJHGJ2bGVqLdA1FpXi4V",
+      "parentId": "fbqvzYqiEy79jeL8wsadib",
+      "foundationId": "fbqvzYqiEy79jeL8wsadib",
+      "selected": false,
+      "roofId": "1iq4TPqH8xr1w2VxMAh8MU",
+      "leftRoofHeight": 4,
+      "rightRoofHeight": 4,
+      "centerRoofHeight": [
+        0,
+        6
+      ],
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5,
+      "fill": "Full",
+      "eavesLength": 0.2,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 4,
+      "rightTopPartialHeight": 4
+    },
+    {
+      "type": "Wall",
+      "cx": -5.300056602144494,
+      "cy": 0.6732245690928105,
+      "cz": 2.228839888904333,
+      "lx": 10,
+      "ly": 0.3,
+      "lz": 4,
+      "leftJoints": [
+        "giYTP9Qg6uJ3yfkS1RoDqG"
+      ],
+      "rightJoints": [
+        "beHqET5NN8aNdsuBncMpY7"
+      ],
+      "leftPoint": [
+        -5.300056602144493,
+        5.6732245690928105,
+        0.1
+      ],
+      "rightPoint": [
+        -5.300056602144494,
+        -4.3267754309071895,
+        0.1
+      ],
+      "relativeAngle": 4.71238898038469,
+      "textureType": "Wall Texture Default",
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "2RETAxyRMzZBEQkBGms56R",
+      "parentId": "fbqvzYqiEy79jeL8wsadib",
+      "foundationId": "fbqvzYqiEy79jeL8wsadib",
+      "selected": false,
+      "roofId": "1iq4TPqH8xr1w2VxMAh8MU",
+      "leftRoofHeight": 4,
+      "rightRoofHeight": 4,
+      "centerRoofHeight": [
+        0,
+        6
+      ],
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5,
+      "fill": "Full",
+      "eavesLength": 0.2,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 4,
+      "rightTopPartialHeight": 4
+    },
+    {
+      "type": "Wall",
+      "cx": 0.6999433978555061,
+      "cy": -4.3267754309071895,
+      "cz": 2.268765007024547,
+      "lx": 12,
+      "ly": 0.3,
+      "lz": 4,
+      "leftJoints": [
+        "2RETAxyRMzZBEQkBGms56R"
+      ],
+      "rightJoints": [
+        "pPpJHGJ2bGVqLdA1FpXi4V"
+      ],
+      "leftPoint": [
+        -5.300056602144494,
+        -4.3267754309071895,
+        0.1
+      ],
+      "rightPoint": [
+        6.699943397855506,
+        -4.3267754309071895,
+        0.1
+      ],
+      "relativeAngle": 0,
+      "textureType": "Wall Texture Default",
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "beHqET5NN8aNdsuBncMpY7",
+      "parentId": "fbqvzYqiEy79jeL8wsadib",
+      "foundationId": "fbqvzYqiEy79jeL8wsadib",
+      "selected": false,
+      "roofId": "1iq4TPqH8xr1w2VxMAh8MU",
+      "leftRoofHeight": 4,
+      "rightRoofHeight": 4,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5,
+      "fill": "Full",
+      "eavesLength": 0.2,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 4,
+      "rightTopPartialHeight": 4
+    },
+    {
+      "type": "Foundation",
+      "cx": -18.384386246268818,
+      "cy": -7.395598164511793,
+      "cz": 0.05,
+      "lx": 18.159918676696766,
+      "ly": 14.613120903558068,
+      "lz": 0.1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "fbqvzYqiEy79jeL8wsadib",
+      "selected": false
+    },
+    {
+      "type": "Roof",
+      "cx": 0,
+      "cy": 0,
+      "cz": 0,
+      "lx": 0,
+      "ly": 0,
+      "lz": 0,
+      "thickness": 0.2,
+      "roofType": "Hip",
+      "wallsId": [
+        "2u4Fe7xnA6kkXXVGrQ4eyJ"
+      ],
+      "textureType": "Roof Texture Default",
+      "color": "#999999",
+      "selected": false,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "m7AH7DcnoGzAq9kryBy4RS",
+      "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
+      "id": "pNA4YvnHKpbgLLZoVdn8iH",
+      "leftRidgeLength": 6,
+      "rightRidgeLength": 6,
+      "rise": 2,
+      "ceiling": false
+    },
+    {
+      "type": "Roof",
+      "cx": 0,
+      "cy": 0,
+      "cz": 0,
+      "lx": 0,
+      "ly": 0,
+      "lz": 0,
+      "thickness": 0.2,
+      "roofType": "Gable",
+      "wallsId": [
+        "beHqET5NN8aNdsuBncMpY7"
+      ],
+      "textureType": "Roof Texture Default",
+      "color": "#999999",
+      "selected": false,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "fbqvzYqiEy79jeL8wsadib",
+      "foundationId": "fbqvzYqiEy79jeL8wsadib",
+      "id": "1iq4TPqH8xr1w2VxMAh8MU",
+      "ridgeLeftPoint": [
+        0,
+        1
+      ],
+      "ridgeRightPoint": [
+        0,
+        1
+      ],
+      "rise": 2,
+      "ceiling": false
+    },
+    {
+      "type": "Wall",
+      "cx": 0.6999433978555056,
+      "cy": 5.6732245690928105,
+      "cz": 2.2408122612280286,
+      "lx": 12,
+      "ly": 0.3,
+      "lz": 4,
+      "leftJoints": [
+        "1k67G1W1gvb3E7EbmbG1h1"
+      ],
+      "rightJoints": [
+        "uytQSeUom5oDsFC3PKa7q8"
+      ],
+      "leftPoint": [
+        6.699943397855505,
+        5.67322456909281,
+        0.1
+      ],
+      "rightPoint": [
+        -5.300056602144494,
+        5.6732245690928105,
+        0.1
+      ],
+      "relativeAngle": 3.141592653589793,
+      "textureType": "Wall Texture Default",
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "u1AdedeCmmKa3QYfwjJ4ya",
+      "parentId": "1rAGH78b5nt7cXyGU9vNRV",
+      "foundationId": "1rAGH78b5nt7cXyGU9vNRV",
+      "selected": false,
+      "roofId": "45NB7k7GYboywbxoXsYHLH",
+      "leftRoofHeight": 4,
+      "rightRoofHeight": 4,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5,
+      "fill": "Full",
+      "eavesLength": 0.2,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 4,
+      "rightTopPartialHeight": 4
+    },
+    {
+      "type": "Wall",
+      "cx": 6.699943397855504,
+      "cy": 0.6732245690928105,
+      "cz": 2.2301039869226305,
+      "lx": 10,
+      "ly": 0.3,
+      "lz": 4,
+      "leftJoints": [
+        "tKvexMf8zrvPgydcZb5VYA"
+      ],
+      "rightJoints": [
+        "u1AdedeCmmKa3QYfwjJ4ya"
+      ],
+      "leftPoint": [
+        6.6999433978555025,
+        -4.3267754309071895,
+        0.1
+      ],
+      "rightPoint": [
+        6.699943397855506,
+        5.6732245690928105,
+        0.1
+      ],
+      "relativeAngle": 1.5707963267948963,
+      "textureType": "Wall Texture Default",
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "1k67G1W1gvb3E7EbmbG1h1",
+      "parentId": "1rAGH78b5nt7cXyGU9vNRV",
+      "foundationId": "1rAGH78b5nt7cXyGU9vNRV",
+      "selected": false,
+      "roofId": "45NB7k7GYboywbxoXsYHLH",
+      "leftRoofHeight": 4,
+      "rightRoofHeight": 4,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5,
+      "fill": "Full",
+      "eavesLength": 0.2,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 4,
+      "rightTopPartialHeight": 4
+    },
+    {
+      "type": "Wall",
+      "cx": -5.300056602144494,
+      "cy": 0.6732245690928105,
+      "cz": 2.228839888904333,
+      "lx": 10,
+      "ly": 0.3,
+      "lz": 4,
+      "leftJoints": [
+        "u1AdedeCmmKa3QYfwjJ4ya"
+      ],
+      "rightJoints": [
+        "tKvexMf8zrvPgydcZb5VYA"
+      ],
+      "leftPoint": [
+        -5.300056602144493,
+        5.6732245690928105,
+        0.1
+      ],
+      "rightPoint": [
+        -5.300056602144494,
+        -4.3267754309071895,
+        0.1
+      ],
+      "relativeAngle": 4.71238898038469,
+      "textureType": "Wall Texture Default",
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "uytQSeUom5oDsFC3PKa7q8",
+      "parentId": "1rAGH78b5nt7cXyGU9vNRV",
+      "foundationId": "1rAGH78b5nt7cXyGU9vNRV",
+      "selected": false,
+      "roofId": "45NB7k7GYboywbxoXsYHLH",
+      "leftRoofHeight": 4,
+      "rightRoofHeight": 4,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5,
+      "fill": "Full",
+      "eavesLength": 0.2,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 4,
+      "rightTopPartialHeight": 4
+    },
+    {
+      "type": "Wall",
+      "cx": 0.6999433978555061,
+      "cy": -4.3267754309071895,
+      "cz": 2.268765007024547,
+      "lx": 12,
+      "ly": 0.3,
+      "lz": 4,
+      "leftJoints": [
+        "uytQSeUom5oDsFC3PKa7q8"
+      ],
+      "rightJoints": [
+        "1k67G1W1gvb3E7EbmbG1h1"
+      ],
+      "leftPoint": [
+        -5.300056602144494,
+        -4.3267754309071895,
+        0.1
+      ],
+      "rightPoint": [
+        6.699943397855506,
+        -4.3267754309071895,
+        0.1
+      ],
+      "relativeAngle": 0,
+      "textureType": "Wall Texture Default",
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "tKvexMf8zrvPgydcZb5VYA",
+      "parentId": "1rAGH78b5nt7cXyGU9vNRV",
+      "foundationId": "1rAGH78b5nt7cXyGU9vNRV",
+      "selected": false,
+      "roofId": "45NB7k7GYboywbxoXsYHLH",
+      "leftRoofHeight": 4,
+      "rightRoofHeight": 4,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5,
+      "fill": "Full",
+      "eavesLength": 0.2,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 4,
+      "rightTopPartialHeight": 4
+    },
+    {
+      "type": "Foundation",
+      "cx": 18.191904297849153,
+      "cy": -7.416985047669567,
+      "cz": 0.05,
+      "lx": 18.159918676696766,
+      "ly": 14.613120903558068,
+      "lz": 0.1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "1rAGH78b5nt7cXyGU9vNRV",
+      "selected": false
+    },
+    {
+      "type": "Roof",
+      "cx": 0,
+      "cy": 0,
+      "cz": 0,
+      "lx": 0,
+      "ly": 0,
+      "lz": 0,
+      "thickness": 0.2,
+      "roofType": "Hip",
+      "wallsId": [
+        "tKvexMf8zrvPgydcZb5VYA"
+      ],
+      "textureType": "Roof Texture Default",
+      "color": "#999999",
+      "selected": false,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "1rAGH78b5nt7cXyGU9vNRV",
+      "foundationId": "1rAGH78b5nt7cXyGU9vNRV",
+      "id": "45NB7k7GYboywbxoXsYHLH",
+      "leftRidgeLength": 3,
+      "rightRidgeLength": 3,
+      "rise": 2,
+      "ceiling": false
+    },
+    {
+      "type": "Wall",
+      "cx": 0.6999433978555056,
+      "cy": 5.6732245690928105,
+      "cz": 2.2408122612280286,
+      "lx": 12,
+      "ly": 0.3,
+      "lz": 5,
+      "leftJoints": [
+        "xyaukKZz7A3TN7punm6ojQ"
+      ],
+      "rightJoints": [
+        "t8gz6AKc17wrcW6oGcJkRc"
+      ],
+      "leftPoint": [
+        6.699943397855505,
+        5.67322456909281,
+        0.1
+      ],
+      "rightPoint": [
+        -5.300056602144494,
+        5.6732245690928105,
+        0.1
+      ],
+      "relativeAngle": 3.141592653589793,
+      "textureType": "Wall Texture Default",
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "tjjt6SvCacxyrjW8mL7Kcd",
+      "parentId": "fWm5hggYktD39sKer9AZNn",
+      "foundationId": "fWm5hggYktD39sKer9AZNn",
+      "roofId": "hajPbexieJRPqTV4EDojfw",
+      "leftRoofHeight": 5,
+      "rightRoofHeight": 5,
+      "selected": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5,
+      "fill": "Full",
+      "eavesLength": 0.2,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 5,
+      "rightTopPartialHeight": 5
+    },
+    {
+      "type": "Wall",
+      "cx": 6.699943397855504,
+      "cy": 0.6732245690928105,
+      "cz": 2.2301039869226305,
+      "lx": 10,
+      "ly": 0.3,
+      "lz": 5,
+      "leftJoints": [
+        "eyn92Pbtw4rxGsusMErN7b"
+      ],
+      "rightJoints": [
+        "tjjt6SvCacxyrjW8mL7Kcd"
+      ],
+      "leftPoint": [
+        6.6999433978555025,
+        -4.3267754309071895,
+        0.1
+      ],
+      "rightPoint": [
+        6.699943397855506,
+        5.6732245690928105,
+        0.1
+      ],
+      "relativeAngle": 1.5707963267948963,
+      "textureType": "Wall Texture Default",
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "xyaukKZz7A3TN7punm6ojQ",
+      "parentId": "fWm5hggYktD39sKer9AZNn",
+      "foundationId": "fWm5hggYktD39sKer9AZNn",
+      "roofId": "hajPbexieJRPqTV4EDojfw",
+      "leftRoofHeight": 5,
+      "rightRoofHeight": 5,
+      "selected": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5,
+      "fill": "Full",
+      "eavesLength": 0.2,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 5,
+      "rightTopPartialHeight": 5
+    },
+    {
+      "type": "Wall",
+      "cx": -5.300056602144494,
+      "cy": 0.6732245690928105,
+      "cz": 2.228839888904333,
+      "lx": 10,
+      "ly": 0.3,
+      "lz": 5,
+      "leftJoints": [
+        "tjjt6SvCacxyrjW8mL7Kcd"
+      ],
+      "rightJoints": [
+        "eyn92Pbtw4rxGsusMErN7b"
+      ],
+      "leftPoint": [
+        -5.300056602144493,
+        5.6732245690928105,
+        0.1
+      ],
+      "rightPoint": [
+        -5.300056602144494,
+        -4.3267754309071895,
+        0.1
+      ],
+      "relativeAngle": 4.71238898038469,
+      "textureType": "Wall Texture Default",
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "t8gz6AKc17wrcW6oGcJkRc",
+      "parentId": "fWm5hggYktD39sKer9AZNn",
+      "foundationId": "fWm5hggYktD39sKer9AZNn",
+      "roofId": "hajPbexieJRPqTV4EDojfw",
+      "leftRoofHeight": 5,
+      "rightRoofHeight": 5,
+      "selected": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5,
+      "fill": "Full",
+      "eavesLength": 0.2,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 5,
+      "rightTopPartialHeight": 5
+    },
+    {
+      "type": "Wall",
+      "cx": 0.6999433978555061,
+      "cy": -4.3267754309071895,
+      "cz": 2.268765007024547,
+      "lx": 12,
+      "ly": 0.3,
+      "lz": 5,
+      "leftJoints": [
+        "t8gz6AKc17wrcW6oGcJkRc"
+      ],
+      "rightJoints": [
+        "xyaukKZz7A3TN7punm6ojQ"
+      ],
+      "leftPoint": [
+        -5.300056602144494,
+        -4.3267754309071895,
+        0.1
+      ],
+      "rightPoint": [
+        6.699943397855506,
+        -4.3267754309071895,
+        0.1
+      ],
+      "relativeAngle": 0,
+      "textureType": "Wall Texture Default",
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "eyn92Pbtw4rxGsusMErN7b",
+      "parentId": "fWm5hggYktD39sKer9AZNn",
+      "foundationId": "fWm5hggYktD39sKer9AZNn",
+      "roofId": "hajPbexieJRPqTV4EDojfw",
+      "leftRoofHeight": 5,
+      "rightRoofHeight": 5,
+      "selected": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5,
+      "fill": "Full",
+      "eavesLength": 0.2,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 5,
+      "rightTopPartialHeight": 5
+    },
+    {
+      "type": "Foundation",
+      "cx": -18.349437375856816,
+      "cy": 7.358577960859719,
+      "cz": 0.05,
+      "lx": 18.159918676696766,
+      "ly": 14.613120903558068,
+      "lz": 0.1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "fWm5hggYktD39sKer9AZNn",
+      "selected": false
+    },
+    {
+      "type": "Wall",
+      "cx": 0.6999433978555056,
+      "cy": 5.6732245690928105,
+      "cz": 2.2408122612280286,
+      "lx": 12,
+      "ly": 0.3,
+      "lz": 4,
+      "leftJoints": [
+        "7pDL5vuaWkaSp6xPdGtoFv"
+      ],
+      "rightJoints": [
+        "jRzTPUopsCw4wfe1XwNMiY"
+      ],
+      "leftPoint": [
+        6.699943397855505,
+        5.67322456909281,
+        0.1
+      ],
+      "rightPoint": [
+        -5.300056602144494,
+        5.6732245690928105,
+        0.1
+      ],
+      "relativeAngle": 3.141592653589793,
+      "textureType": "Wall Texture Default",
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "ak7Cpd4phQ5SWBAYKo1UCe",
+      "parentId": "w5VAS3XZUgKoYjMsuPJ9cq",
+      "foundationId": "w5VAS3XZUgKoYjMsuPJ9cq",
+      "roofId": "jKe65v2XQs93jh4Da9kMiu",
+      "leftRoofHeight": 4,
+      "rightRoofHeight": 4,
+      "selected": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5,
+      "fill": "Full",
+      "eavesLength": 0.2,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 4,
+      "rightTopPartialHeight": 4
+    },
+    {
+      "type": "Wall",
+      "cx": 6.699943397855504,
+      "cy": 0.6732245690928105,
+      "cz": 2.2301039869226305,
+      "lx": 10,
+      "ly": 0.3,
+      "lz": 4,
+      "leftJoints": [
+        "f2RfmPbQBbQQB9B9qxgaGp"
+      ],
+      "rightJoints": [
+        "ak7Cpd4phQ5SWBAYKo1UCe"
+      ],
+      "leftPoint": [
+        6.6999433978555025,
+        -4.3267754309071895,
+        0.1
+      ],
+      "rightPoint": [
+        6.699943397855506,
+        5.6732245690928105,
+        0.1
+      ],
+      "relativeAngle": 1.5707963267948963,
+      "textureType": "Wall Texture Default",
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "7pDL5vuaWkaSp6xPdGtoFv",
+      "parentId": "w5VAS3XZUgKoYjMsuPJ9cq",
+      "foundationId": "w5VAS3XZUgKoYjMsuPJ9cq",
+      "roofId": "jKe65v2XQs93jh4Da9kMiu",
+      "leftRoofHeight": 4,
+      "rightRoofHeight": 4,
+      "selected": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5,
+      "fill": "Full",
+      "eavesLength": 0.2,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 4,
+      "rightTopPartialHeight": 4
+    },
+    {
+      "type": "Wall",
+      "cx": -5.300056602144494,
+      "cy": 0.6732245690928105,
+      "cz": 2.228839888904333,
+      "lx": 10,
+      "ly": 0.3,
+      "lz": 4,
+      "leftJoints": [
+        "ak7Cpd4phQ5SWBAYKo1UCe"
+      ],
+      "rightJoints": [
+        "f2RfmPbQBbQQB9B9qxgaGp"
+      ],
+      "leftPoint": [
+        -5.300056602144493,
+        5.6732245690928105,
+        0.1
+      ],
+      "rightPoint": [
+        -5.300056602144494,
+        -4.3267754309071895,
+        0.1
+      ],
+      "relativeAngle": 4.71238898038469,
+      "textureType": "Wall Texture Default",
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "jRzTPUopsCw4wfe1XwNMiY",
+      "parentId": "w5VAS3XZUgKoYjMsuPJ9cq",
+      "foundationId": "w5VAS3XZUgKoYjMsuPJ9cq",
+      "roofId": "jKe65v2XQs93jh4Da9kMiu",
+      "leftRoofHeight": 4,
+      "rightRoofHeight": 4,
+      "selected": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5,
+      "fill": "Full",
+      "eavesLength": 0.2,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 4,
+      "rightTopPartialHeight": 4
+    },
+    {
+      "type": "Wall",
+      "cx": 0.6999433978555061,
+      "cy": -4.3267754309071895,
+      "cz": 2.268765007024547,
+      "lx": 12,
+      "ly": 0.3,
+      "lz": 4,
+      "leftJoints": [
+        "jRzTPUopsCw4wfe1XwNMiY"
+      ],
+      "rightJoints": [
+        "7pDL5vuaWkaSp6xPdGtoFv"
+      ],
+      "leftPoint": [
+        -5.300056602144494,
+        -4.3267754309071895,
+        0.1
+      ],
+      "rightPoint": [
+        6.699943397855506,
+        -4.3267754309071895,
+        0.1
+      ],
+      "relativeAngle": 0,
+      "textureType": "Wall Texture Default",
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "f2RfmPbQBbQQB9B9qxgaGp",
+      "parentId": "w5VAS3XZUgKoYjMsuPJ9cq",
+      "foundationId": "w5VAS3XZUgKoYjMsuPJ9cq",
+      "roofId": "jKe65v2XQs93jh4Da9kMiu",
+      "leftRoofHeight": 4,
+      "rightRoofHeight": 4,
+      "selected": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5,
+      "fill": "Full",
+      "eavesLength": 0.2,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 4,
+      "rightTopPartialHeight": 4
+    },
+    {
+      "type": "Foundation",
+      "cx": 18.357286683609985,
+      "cy": 7.35579151072247,
+      "cz": 0.05,
+      "lx": 18.159918676696766,
+      "ly": 14.613120903558068,
+      "lz": 0.1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "w5VAS3XZUgKoYjMsuPJ9cq",
+      "selected": false
+    },
+    {
+      "type": "Wall",
+      "cx": 0.6999433978555056,
+      "cy": 5.6732245690928105,
+      "cz": 2.2408122612280286,
+      "lx": 12,
+      "ly": 0.3,
+      "lz": 3,
+      "leftJoints": [
+        "3nk4fctTxNug3tQ2458FKw"
+      ],
+      "rightJoints": [
+        "dc91yXxYZexfAFXVg2fpn6"
+      ],
+      "leftPoint": [
+        6.699943397855505,
+        5.67322456909281,
+        0.1
+      ],
+      "rightPoint": [
+        -5.300056602144494,
+        5.6732245690928105,
+        0.1
+      ],
+      "relativeAngle": 3.141592653589793,
+      "textureType": "Wall Texture Default",
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "pwXdeCrfH255xyNxeKZFmq",
+      "parentId": "d6fjBvqj48Q3knutrPvQzj",
+      "foundationId": "d6fjBvqj48Q3knutrPvQzj",
+      "roofId": "ptuJ1uXn6Mmb8yfPchYi2c",
+      "leftRoofHeight": 3,
+      "rightRoofHeight": 3,
+      "selected": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5,
+      "fill": "Full",
+      "eavesLength": 0.2,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 3,
+      "rightTopPartialHeight": 3
+    },
+    {
+      "type": "Wall",
+      "cx": 6.699943397855504,
+      "cy": 0.6732245690928105,
+      "cz": 2.2301039869226305,
+      "lx": 10,
+      "ly": 0.3,
+      "lz": 3,
+      "leftJoints": [
+        "m39f5UsRB2FwBXUr7e5PvG"
+      ],
+      "rightJoints": [
+        "pwXdeCrfH255xyNxeKZFmq"
+      ],
+      "leftPoint": [
+        6.6999433978555025,
+        -4.3267754309071895,
+        0.1
+      ],
+      "rightPoint": [
+        6.699943397855506,
+        5.6732245690928105,
+        0.1
+      ],
+      "relativeAngle": 1.5707963267948963,
+      "textureType": "Wall Texture Default",
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "3nk4fctTxNug3tQ2458FKw",
+      "parentId": "d6fjBvqj48Q3knutrPvQzj",
+      "foundationId": "d6fjBvqj48Q3knutrPvQzj",
+      "roofId": "ptuJ1uXn6Mmb8yfPchYi2c",
+      "leftRoofHeight": 3,
+      "rightRoofHeight": 3,
+      "centerRoofHeight": [
+        0,
+        6.780964087966274
+      ],
+      "selected": false,
+      "centerLeftRoofHeight": [
+        -0.35,
+        4.890482043983138
+      ],
+      "centerRightRoofHeight": [
+        0.35,
+        4.890482043983138
+      ],
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5,
+      "fill": "Full",
+      "eavesLength": 0.2,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 3,
+      "rightTopPartialHeight": 3
+    },
+    {
+      "type": "Wall",
+      "cx": -5.300056602144494,
+      "cy": 0.6732245690928105,
+      "cz": 2.228839888904333,
+      "lx": 10,
+      "ly": 0.3,
+      "lz": 3,
+      "leftJoints": [
+        "pwXdeCrfH255xyNxeKZFmq"
+      ],
+      "rightJoints": [
+        "m39f5UsRB2FwBXUr7e5PvG"
+      ],
+      "leftPoint": [
+        -5.300056602144493,
+        5.6732245690928105,
+        0.1
+      ],
+      "rightPoint": [
+        -5.300056602144494,
+        -4.3267754309071895,
+        0.1
+      ],
+      "relativeAngle": 4.71238898038469,
+      "textureType": "Wall Texture Default",
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "dc91yXxYZexfAFXVg2fpn6",
+      "parentId": "d6fjBvqj48Q3knutrPvQzj",
+      "foundationId": "d6fjBvqj48Q3knutrPvQzj",
+      "roofId": "ptuJ1uXn6Mmb8yfPchYi2c",
+      "leftRoofHeight": 3,
+      "rightRoofHeight": 3,
+      "centerRoofHeight": [
+        0,
+        6.780964087966274
+      ],
+      "selected": false,
+      "centerLeftRoofHeight": [
+        -0.35,
+        4.890482043983138
+      ],
+      "centerRightRoofHeight": [
+        0.35,
+        4.890482043983138
+      ],
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5,
+      "fill": "Full",
+      "eavesLength": 0.2,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 3,
+      "rightTopPartialHeight": 3
+    },
+    {
+      "type": "Wall",
+      "cx": 0.6999433978555061,
+      "cy": -4.3267754309071895,
+      "cz": 2.268765007024547,
+      "lx": 12,
+      "ly": 0.3,
+      "lz": 3,
+      "leftJoints": [
+        "dc91yXxYZexfAFXVg2fpn6"
+      ],
+      "rightJoints": [
+        "3nk4fctTxNug3tQ2458FKw"
+      ],
+      "leftPoint": [
+        -5.300056602144494,
+        -4.3267754309071895,
+        0.1
+      ],
+      "rightPoint": [
+        6.699943397855506,
+        -4.3267754309071895,
+        0.1
+      ],
+      "relativeAngle": 0,
+      "textureType": "Wall Texture Default",
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "m39f5UsRB2FwBXUr7e5PvG",
+      "parentId": "d6fjBvqj48Q3knutrPvQzj",
+      "foundationId": "d6fjBvqj48Q3knutrPvQzj",
+      "roofId": "ptuJ1uXn6Mmb8yfPchYi2c",
+      "leftRoofHeight": 3,
+      "rightRoofHeight": 3,
+      "selected": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5,
+      "fill": "Full",
+      "eavesLength": 0.2,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 3,
+      "rightTopPartialHeight": 3
+    },
+    {
+      "type": "Foundation",
+      "cx": -0.2822234132630961,
+      "cy": -22.249672711420477,
+      "cz": 0.05,
+      "lx": 18.159918676696766,
+      "ly": 14.613120903558068,
+      "lz": 0.1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "d6fjBvqj48Q3knutrPvQzj",
+      "selected": false
+    },
+    {
+      "type": "Roof",
+      "cx": 0,
+      "cy": 0,
+      "cz": 0,
+      "lx": 0,
+      "ly": 0,
+      "lz": 0,
+      "thickness": 0.2,
+      "roofType": "Pyramid",
+      "wallsId": [
+        "xyaukKZz7A3TN7punm6ojQ",
+        "tjjt6SvCacxyrjW8mL7Kcd",
+        "t8gz6AKc17wrcW6oGcJkRc",
+        "eyn92Pbtw4rxGsusMErN7b"
+      ],
+      "textureType": "Roof Texture Default",
+      "color": "#999999",
+      "selected": false,
+      "lineWidth": 0.2,
+      "lineColor": "black",
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "fWm5hggYktD39sKer9AZNn",
+      "foundationId": "fWm5hggYktD39sKer9AZNn",
+      "id": "hajPbexieJRPqTV4EDojfw",
+      "rise": 0,
+      "ceiling": false
+    },
+    {
+      "type": "Roof",
+      "cx": 0,
+      "cy": 0,
+      "cz": 0,
+      "lx": 0,
+      "ly": 0,
+      "lz": 0,
+      "thickness": 0.2,
+      "roofType": "Pyramid",
+      "wallsId": [
+        "f2RfmPbQBbQQB9B9qxgaGp",
+        "7pDL5vuaWkaSp6xPdGtoFv",
+        "ak7Cpd4phQ5SWBAYKo1UCe",
+        "jRzTPUopsCw4wfe1XwNMiY"
+      ],
+      "textureType": "Roof Texture Default",
+      "color": "#999999",
+      "selected": false,
+      "lineWidth": 0.2,
+      "lineColor": "black",
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "w5VAS3XZUgKoYjMsuPJ9cq",
+      "foundationId": "w5VAS3XZUgKoYjMsuPJ9cq",
+      "id": "jKe65v2XQs93jh4Da9kMiu",
+      "rise": 3.592861140197524,
+      "ceiling": false
+    },
+    {
+      "type": "Roof",
+      "cx": 0,
+      "cy": 0,
+      "cz": 0,
+      "lx": 0,
+      "ly": 0,
+      "lz": 0,
+      "thickness": 0.2,
+      "roofType": "Gambrel",
+      "wallsId": [
+        "m39f5UsRB2FwBXUr7e5PvG"
+      ],
+      "textureType": "Roof Texture Default",
+      "color": "#999999",
+      "selected": false,
+      "lineWidth": 0.2,
+      "lineColor": "black",
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "d6fjBvqj48Q3knutrPvQzj",
+      "foundationId": "d6fjBvqj48Q3knutrPvQzj",
+      "id": "ptuJ1uXn6Mmb8yfPchYi2c",
+      "rise": 3.7809640879662743,
+      "ceiling": false,
+      "frontRidgePoint": [
+        0.35,
+        0.5
+      ],
+      "backRidgePoint": [
+        0.35,
+        0.5
+      ],
+      "topRidgePoint": [
+        0,
+        1
+      ]
+    },
+    {
+      "type": "Wall",
+      "cx": 0.6999433978555056,
+      "cy": 5.6732245690928105,
+      "cz": 2.2408122612280286,
+      "lx": 12,
+      "ly": 0.3,
+      "lz": 3,
+      "leftJoints": [
+        "ixC5APwNiRHyp3q8fcpSip"
+      ],
+      "rightJoints": [
+        "8hSDdsDC58WwCVch1EWVeh"
+      ],
+      "leftPoint": [
+        6.699943397855505,
+        5.67322456909281,
+        0.1
+      ],
+      "rightPoint": [
+        -5.300056602144494,
+        5.6732245690928105,
+        0.1
+      ],
+      "relativeAngle": 3.141592653589793,
+      "textureType": "Wall Texture Default",
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "ozFwLmFwWhU6vEeaiRMgLF",
+      "parentId": "upLMjkz3yhg33F3y5iosoh",
+      "foundationId": "upLMjkz3yhg33F3y5iosoh",
+      "roofId": "nUUEKM9A4b42WTe8cCbmi9",
+      "leftRoofHeight": 3,
+      "rightRoofHeight": 3,
+      "selected": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5,
+      "fill": "Full",
+      "eavesLength": 0.1,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 3,
+      "rightTopPartialHeight": 3
+    },
+    {
+      "type": "Wall",
+      "cx": 6.699943397855504,
+      "cy": 0.6732245690928105,
+      "cz": 2.2301039869226305,
+      "lx": 10,
+      "ly": 0.3,
+      "lz": 3,
+      "leftJoints": [
+        "qjuHirmyC29jd4cf1J7Ub1"
+      ],
+      "rightJoints": [
+        "ozFwLmFwWhU6vEeaiRMgLF"
+      ],
+      "leftPoint": [
+        6.6999433978555025,
+        -4.3267754309071895,
+        0.1
+      ],
+      "rightPoint": [
+        6.699943397855506,
+        5.6732245690928105,
+        0.1
+      ],
+      "relativeAngle": 1.5707963267948963,
+      "textureType": "Wall Texture Default",
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "ixC5APwNiRHyp3q8fcpSip",
+      "parentId": "upLMjkz3yhg33F3y5iosoh",
+      "foundationId": "upLMjkz3yhg33F3y5iosoh",
+      "roofId": "nUUEKM9A4b42WTe8cCbmi9",
+      "leftRoofHeight": 3,
+      "rightRoofHeight": 3,
+      "selected": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5,
+      "fill": "Full",
+      "eavesLength": 0.1,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 3,
+      "rightTopPartialHeight": 3
+    },
+    {
+      "type": "Wall",
+      "cx": -5.300056602144494,
+      "cy": 0.6732245690928105,
+      "cz": 2.228839888904333,
+      "lx": 10,
+      "ly": 0.3,
+      "lz": 3,
+      "leftJoints": [
+        "ozFwLmFwWhU6vEeaiRMgLF"
+      ],
+      "rightJoints": [
+        "qjuHirmyC29jd4cf1J7Ub1"
+      ],
+      "leftPoint": [
+        -5.300056602144493,
+        5.6732245690928105,
+        0.1
+      ],
+      "rightPoint": [
+        -5.300056602144494,
+        -4.3267754309071895,
+        0.1
+      ],
+      "relativeAngle": 4.71238898038469,
+      "textureType": "Wall Texture Default",
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "8hSDdsDC58WwCVch1EWVeh",
+      "parentId": "upLMjkz3yhg33F3y5iosoh",
+      "foundationId": "upLMjkz3yhg33F3y5iosoh",
+      "roofId": "nUUEKM9A4b42WTe8cCbmi9",
+      "leftRoofHeight": 3,
+      "rightRoofHeight": 3,
+      "selected": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5,
+      "fill": "Full",
+      "eavesLength": 0.1,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 3,
+      "rightTopPartialHeight": 3
+    },
+    {
+      "type": "Wall",
+      "cx": 0.6999433978555061,
+      "cy": -4.3267754309071895,
+      "cz": 2.268765007024547,
+      "lx": 12,
+      "ly": 0.3,
+      "lz": 3,
+      "leftJoints": [
+        "8hSDdsDC58WwCVch1EWVeh"
+      ],
+      "rightJoints": [
+        "ixC5APwNiRHyp3q8fcpSip"
+      ],
+      "leftPoint": [
+        -5.300056602144494,
+        -4.3267754309071895,
+        0.1
+      ],
+      "rightPoint": [
+        6.699943397855506,
+        -4.3267754309071895,
+        0.1
+      ],
+      "relativeAngle": 0,
+      "textureType": "Wall Texture Default",
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "qjuHirmyC29jd4cf1J7Ub1",
+      "parentId": "upLMjkz3yhg33F3y5iosoh",
+      "foundationId": "upLMjkz3yhg33F3y5iosoh",
+      "roofId": "nUUEKM9A4b42WTe8cCbmi9",
+      "leftRoofHeight": 3,
+      "rightRoofHeight": 3,
+      "selected": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5,
+      "fill": "Full",
+      "eavesLength": 0.1,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 3,
+      "rightTopPartialHeight": 3
+    },
+    {
+      "type": "Foundation",
+      "cx": 18.14821865757634,
+      "cy": -22.28587145270979,
+      "cz": 0.05,
+      "lx": 18.159918676696766,
+      "ly": 14.613120903558068,
+      "lz": 0.1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "upLMjkz3yhg33F3y5iosoh",
+      "selected": false
+    },
+    {
+      "type": "Roof",
+      "cx": 0,
+      "cy": 0,
+      "cz": 0,
+      "lx": 0,
+      "ly": 0,
+      "lz": 0,
+      "thickness": 0.2,
+      "roofType": "Mansard",
+      "wallsId": [
+        "qjuHirmyC29jd4cf1J7Ub1"
+      ],
+      "textureType": "Roof Texture Default",
+      "color": "#999999",
+      "selected": false,
+      "lineWidth": 0.2,
+      "lineColor": "black",
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "upLMjkz3yhg33F3y5iosoh",
+      "foundationId": "upLMjkz3yhg33F3y5iosoh",
+      "id": "nUUEKM9A4b42WTe8cCbmi9",
+      "rise": 2.4252724498654796,
+      "ceiling": false
+    },
+    {
+      "type": "Wall",
+      "cx": 0.6999433978555056,
+      "cy": 5.6732245690928105,
+      "cz": 2.2408122612280286,
+      "lx": 12,
+      "ly": 0.3,
+      "lz": 3,
+      "leftJoints": [
+        "igxQHaerDScxsfB5TgVZU4"
+      ],
+      "rightJoints": [
+        "fisK6kExsrNY6Pqi3iQHme"
+      ],
+      "leftPoint": [
+        6.699943397855505,
+        5.67322456909281,
+        0.1
+      ],
+      "rightPoint": [
+        -5.300056602144494,
+        5.6732245690928105,
+        0.1
+      ],
+      "relativeAngle": 3.141592653589793,
+      "textureType": "Wall Texture Default",
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "3gfx2QQjNJN8MdstGfbwGN",
+      "parentId": "8FvPN2owsgTQ83kbYPEi1w",
+      "foundationId": "8FvPN2owsgTQ83kbYPEi1w",
+      "roofId": "ue2dCEQjJdM2ogHcYaDLus",
+      "leftRoofHeight": 3,
+      "rightRoofHeight": 3,
+      "selected": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5,
+      "fill": "Full",
+      "eavesLength": 0.2,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 3,
+      "rightTopPartialHeight": 3
+    },
+    {
+      "type": "Wall",
+      "cx": 6.699943397855504,
+      "cy": 0.6732245690928105,
+      "cz": 2.2301039869226305,
+      "lx": 10,
+      "ly": 0.3,
+      "lz": 3,
+      "leftJoints": [
+        "ayZDPKzE28H2j3EL6h6FST"
+      ],
+      "rightJoints": [
+        "3gfx2QQjNJN8MdstGfbwGN"
+      ],
+      "leftPoint": [
+        6.6999433978555025,
+        -4.3267754309071895,
+        0.1
+      ],
+      "rightPoint": [
+        6.699943397855506,
+        5.6732245690928105,
+        0.1
+      ],
+      "relativeAngle": 1.5707963267948963,
+      "textureType": "Wall Texture Default",
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "igxQHaerDScxsfB5TgVZU4",
+      "parentId": "8FvPN2owsgTQ83kbYPEi1w",
+      "foundationId": "8FvPN2owsgTQ83kbYPEi1w",
+      "roofId": "ue2dCEQjJdM2ogHcYaDLus",
+      "leftRoofHeight": 3,
+      "rightRoofHeight": 3,
+      "centerRoofHeight": [
+        0.15368124011044487,
+        5.976337025346289
+      ],
+      "selected": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5,
+      "fill": "Full",
+      "eavesLength": 0.2,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 3,
+      "rightTopPartialHeight": 3
+    },
+    {
+      "type": "Wall",
+      "cx": -5.300056602144494,
+      "cy": 0.6732245690928105,
+      "cz": 2.228839888904333,
+      "lx": 10,
+      "ly": 0.3,
+      "lz": 3,
+      "leftJoints": [
+        "3gfx2QQjNJN8MdstGfbwGN"
+      ],
+      "rightJoints": [
+        "ayZDPKzE28H2j3EL6h6FST"
+      ],
+      "leftPoint": [
+        -5.300056602144493,
+        5.6732245690928105,
+        0.1
+      ],
+      "rightPoint": [
+        -5.300056602144494,
+        -4.3267754309071895,
+        0.1
+      ],
+      "relativeAngle": 4.71238898038469,
+      "textureType": "Wall Texture Default",
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "fisK6kExsrNY6Pqi3iQHme",
+      "parentId": "8FvPN2owsgTQ83kbYPEi1w",
+      "foundationId": "8FvPN2owsgTQ83kbYPEi1w",
+      "roofId": "ue2dCEQjJdM2ogHcYaDLus",
+      "leftRoofHeight": 3,
+      "rightRoofHeight": 3,
+      "centerRoofHeight": [
+        -0.15368124011044487,
+        5.976337025346289
+      ],
+      "selected": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5,
+      "fill": "Full",
+      "eavesLength": 0.2,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 3,
+      "rightTopPartialHeight": 3
+    },
+    {
+      "type": "Wall",
+      "cx": 0.6999433978555061,
+      "cy": -4.3267754309071895,
+      "cz": 2.268765007024547,
+      "lx": 12,
+      "ly": 0.3,
+      "lz": 3,
+      "leftJoints": [
+        "fisK6kExsrNY6Pqi3iQHme"
+      ],
+      "rightJoints": [
+        "igxQHaerDScxsfB5TgVZU4"
+      ],
+      "leftPoint": [
+        -5.300056602144494,
+        -4.3267754309071895,
+        0.1
+      ],
+      "rightPoint": [
+        6.699943397855506,
+        -4.3267754309071895,
+        0.1
+      ],
+      "relativeAngle": 0,
+      "textureType": "Wall Texture Default",
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "ayZDPKzE28H2j3EL6h6FST",
+      "parentId": "8FvPN2owsgTQ83kbYPEi1w",
+      "foundationId": "8FvPN2owsgTQ83kbYPEi1w",
+      "roofId": "ue2dCEQjJdM2ogHcYaDLus",
+      "leftRoofHeight": 3,
+      "rightRoofHeight": 3,
+      "selected": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5,
+      "fill": "Full",
+      "eavesLength": 0.2,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 3,
+      "rightTopPartialHeight": 3
+    },
+    {
+      "id": "ue2dCEQjJdM2ogHcYaDLus",
+      "type": "Roof",
+      "cx": 0,
+      "cy": 0,
+      "cz": 0,
+      "lx": 0,
+      "ly": 0,
+      "lz": 0,
+      "color": "#999999",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "8FvPN2owsgTQ83kbYPEi1w",
+      "foundationId": "8FvPN2owsgTQ83kbYPEi1w",
+      "roofType": "Gable",
+      "textureType": "Roof Texture Default",
+      "thickness": 0.2,
+      "wallsId": [
+        "ayZDPKzE28H2j3EL6h6FST"
+      ],
+      "ridgeLeftPoint": [
+        -0.15368124011044487,
+        1
+      ],
+      "ridgeRightPoint": [
+        0.15368124011044487,
+        1
+      ],
+      "selected": false,
+      "rise": 2.9763370253462886,
+      "ceiling": false
+    },
+    {
+      "type": "Foundation",
+      "cx": -18.3917853849947,
+      "cy": -22.23021238337839,
+      "cz": 0.05,
+      "lx": 18.159918676696766,
+      "ly": 14.613120903558068,
+      "lz": 0.1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "8FvPN2owsgTQ83kbYPEi1w",
+      "selected": false
+    },
+    {
+      "type": "Wall",
+      "cx": 0.6999433978555056,
+      "cy": 5.6732245690928105,
+      "cz": 2.2408122612280286,
+      "lx": 12,
+      "ly": 0.3,
+      "lz": 5.846129172584467,
+      "leftJoints": [
+        "7uVMbtndXyFhLg9N8igxZL"
+      ],
+      "rightJoints": [
+        "satrCacXQzxtUPDa8WeKn7"
+      ],
+      "leftPoint": [
+        6.699943397855505,
+        5.67322456909281,
+        0.1
+      ],
+      "rightPoint": [
+        -5.300056602144494,
+        5.6732245690928105,
+        0.1
+      ],
+      "relativeAngle": 3.141592653589793,
+      "textureType": "Wall Texture Default",
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "uNqL4MKdnpapHVSi9J1K8T",
+      "parentId": "e6BPbJvDHWVEFn61HvpPWK",
+      "foundationId": "e6BPbJvDHWVEFn61HvpPWK",
+      "roofId": "iNBeHL8TpJ75nDzdH6Ar6c",
+      "leftRoofHeight": 5.846129172584467,
+      "rightRoofHeight": 5.846129172584467,
+      "selected": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5,
+      "fill": "Full",
+      "eavesLength": 0.2,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 5.846129172584467,
+      "rightTopPartialHeight": 5.846129172584467
+    },
+    {
+      "type": "Wall",
+      "cx": 6.699943397855504,
+      "cy": 0.6732245690928105,
+      "cz": 2.2301039869226305,
+      "lx": 10,
+      "ly": 0.3,
+      "lz": 3,
+      "leftJoints": [
+        "5u61LU9xBr7HzdGUCwG4J6"
+      ],
+      "rightJoints": [
+        "uNqL4MKdnpapHVSi9J1K8T"
+      ],
+      "leftPoint": [
+        6.6999433978555025,
+        -4.3267754309071895,
+        0.1
+      ],
+      "rightPoint": [
+        6.699943397855506,
+        5.6732245690928105,
+        0.1
+      ],
+      "relativeAngle": 1.5707963267948963,
+      "textureType": "Wall Texture Default",
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "7uVMbtndXyFhLg9N8igxZL",
+      "parentId": "e6BPbJvDHWVEFn61HvpPWK",
+      "foundationId": "e6BPbJvDHWVEFn61HvpPWK",
+      "roofId": "iNBeHL8TpJ75nDzdH6Ar6c",
+      "leftRoofHeight": 3,
+      "rightRoofHeight": 5.846129172584467,
+      "centerRoofHeight": [
+        0.5,
+        5.846129172584467
+      ],
+      "selected": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5,
+      "fill": "Full",
+      "eavesLength": 0.2,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 3,
+      "rightTopPartialHeight": 3
+    },
+    {
+      "type": "Wall",
+      "cx": -5.300056602144494,
+      "cy": 0.6732245690928105,
+      "cz": 2.228839888904333,
+      "lx": 10,
+      "ly": 0.3,
+      "lz": 3,
+      "leftJoints": [
+        "uNqL4MKdnpapHVSi9J1K8T"
+      ],
+      "rightJoints": [
+        "5u61LU9xBr7HzdGUCwG4J6"
+      ],
+      "leftPoint": [
+        -5.300056602144493,
+        5.6732245690928105,
+        0.1
+      ],
+      "rightPoint": [
+        -5.300056602144494,
+        -4.3267754309071895,
+        0.1
+      ],
+      "relativeAngle": 4.71238898038469,
+      "textureType": "Wall Texture Default",
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "satrCacXQzxtUPDa8WeKn7",
+      "parentId": "e6BPbJvDHWVEFn61HvpPWK",
+      "foundationId": "e6BPbJvDHWVEFn61HvpPWK",
+      "roofId": "iNBeHL8TpJ75nDzdH6Ar6c",
+      "leftRoofHeight": 5.846129172584467,
+      "rightRoofHeight": 3,
+      "centerRoofHeight": [
+        -0.5,
+        5.846129172584467
+      ],
+      "selected": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5,
+      "fill": "Full",
+      "eavesLength": 0.2,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 3,
+      "rightTopPartialHeight": 3
+    },
+    {
+      "type": "Wall",
+      "cx": 0.6999433978555061,
+      "cy": -4.3267754309071895,
+      "cz": 2.268765007024547,
+      "lx": 12,
+      "ly": 0.3,
+      "lz": 3,
+      "leftJoints": [
+        "satrCacXQzxtUPDa8WeKn7"
+      ],
+      "rightJoints": [
+        "7uVMbtndXyFhLg9N8igxZL"
+      ],
+      "leftPoint": [
+        -5.300056602144494,
+        -4.3267754309071895,
+        0.1
+      ],
+      "rightPoint": [
+        6.699943397855506,
+        -4.3267754309071895,
+        0.1
+      ],
+      "relativeAngle": 0,
+      "textureType": "Wall Texture Default",
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "5u61LU9xBr7HzdGUCwG4J6",
+      "parentId": "e6BPbJvDHWVEFn61HvpPWK",
+      "foundationId": "e6BPbJvDHWVEFn61HvpPWK",
+      "roofId": "iNBeHL8TpJ75nDzdH6Ar6c",
+      "leftRoofHeight": 3,
+      "rightRoofHeight": 3,
+      "selected": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5,
+      "fill": "Full",
+      "eavesLength": 0.2,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 3,
+      "rightTopPartialHeight": 3
+    },
+    {
+      "id": "iNBeHL8TpJ75nDzdH6Ar6c",
+      "type": "Roof",
+      "cx": 0,
+      "cy": 0,
+      "cz": 0,
+      "lx": 0,
+      "ly": 0,
+      "lz": 0,
+      "color": "#999999",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "e6BPbJvDHWVEFn61HvpPWK",
+      "foundationId": "e6BPbJvDHWVEFn61HvpPWK",
+      "roofType": "Gable",
+      "textureType": "Roof Texture Default",
+      "thickness": 0.2,
+      "wallsId": [
+        "5u61LU9xBr7HzdGUCwG4J6"
+      ],
+      "ridgeLeftPoint": [
+        -0.5,
+        1
+      ],
+      "ridgeRightPoint": [
+        0.5,
+        1
+      ],
+      "selected": false,
+      "rise": 0,
+      "ceiling": false
+    },
+    {
+      "type": "Foundation",
+      "cx": 0.04736842105263009,
+      "cy": 7.4416382171024535,
+      "cz": 0.05,
+      "lx": 18.159918676696766,
+      "ly": 14.613120903558068,
+      "lz": 0.1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "e6BPbJvDHWVEFn61HvpPWK",
+      "selected": false
+    }
+  ],
+  "view": {
+    "dailyPvYieldPanelX": 0,
+    "mapPanelY": 0,
+    "dailyFresnelReflectorYieldPanelX": 0,
+    "panCenter2D": [
+      -0.052631578947368425,
+      0,
+      0
+    ],
+    "yearlyHeliostatYieldPanelY": 0,
+    "mapPanelX": 0,
+    "yearlyHeliostatYieldPanelX": 0,
+    "cameraPosition2D": [
+      -0.052631578947368425,
+      -0.000020000888987681265,
+      150
+    ],
+    "theme": "Default",
+    "showDesignInfoPanel": false,
+    "weatherPanelX": 0,
+    "dailyParabolicTroughYieldPanelX": 0,
+    "mapWeatherStations": false,
+    "stickyNotePanelX": 0,
+    "showDailyHeliostatYieldPanel": false,
+    "mapZoom": 18,
+    "showYearlyParabolicTroughYieldPanel": false,
+    "dailyHeliostatYieldPanelX": 0,
+    "showDailyParabolicDishYieldPanel": false,
+    "cameraPosition": [
+      -28.363486288062674,
+      -49.79716924665453,
+      24.823194309796552
+    ],
+    "showYearlyHeliostatYieldPanel": false,
+    "orthographic": false,
+    "dailyHeliostatYieldPanelY": 0,
+    "dailyParabolicTroughYieldPanelY": 0,
+    "heliodonPanelY": 0,
+    "yearlyParabolicTroughYieldPanelY": 0,
+    "showWeatherPanel": false,
+    "groundImage": false,
+    "yearlyLightSensorPanelX": 0,
+    "ambientLightIntensity": 0.1,
+    "yearlyFresnelReflectorYieldPanelX": 0,
+    "enableRotate": true,
+    "dailyLightSensorPanelX": 0,
+    "heliodon": false,
+    "solarRadiationHeatMapReflectionOnly": false,
+    "cameraZoom": 15.47561875,
+    "mapType": "roadmap",
+    "showMapPanel": false,
+    "yearlyParabolicDishYieldPanelY": 0,
+    "showSiteInfoPanel": true,
+    "showDailyParabolicTroughYieldPanel": false,
+    "showDailyFresnelReflectorYieldPanel": false,
+    "showYearlyLightSensorPanel": false,
+    "autoRotate": false,
+    "heliodonPanelX": 0,
+    "showStickyNotePanel": false,
+    "showDailyLightSensorPanel": false,
+    "visibilityResultsPanelX": 0,
+    "yearlyPvYieldPanelY": 0,
+    "showDailyPvYieldPanel": false,
+    "visibilityResultsPanelY": 0,
+    "showSunAngles": false,
+    "dailyFresnelReflectorYieldPanelY": 0,
+    "weatherPanelY": 0,
+    "dailyLightSensorPanelY": 0,
+    "groundColor": "#0c797d",
+    "mapTilt": 0,
+    "showYearlyPvYieldPanel": false,
+    "dailyParabolicDishYieldPanelY": 0,
+    "yearlyLightSensorPanelY": 0,
+    "yearlyParabolicTroughYieldPanelX": 0,
+    "dailyPvYieldPanelY": 0,
+    "yearlyPvYieldPanelX": 0,
+    "yearlyParabolicDishYieldPanelX": 0,
+    "shadowEnabled": true,
+    "showInstructionPanel": true,
+    "panCenter": [
+      -6.81693136261614,
+      -15.495725419499871,
+      0
+    ],
+    "yearlyFresnelReflectorYieldPanelY": 0,
+    "showHeliodonPanel": false,
+    "axes": false,
+    "solarRadiationHeatMapMaxValue": 5,
+    "dailyParabolicDishYieldPanelX": 0,
+    "showSolarPanelVisibilityResultsPanel": false,
+    "stickyNotePanelY": 0,
+    "showYearlyParabolicDishYieldPanel": false,
+    "showYearlyFresnelReflectorYieldPanel": false
+  },
+  "graphState": {
+    "dailyPvIndividualOutputs": false,
+    "yearlyPvIndividualOutputs": false,
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": false,
+    "yearlyHeliostatIndividualOutputs": false,
+    "dailyUpdraftTowerIndividualOutputs": false,
+    "yearlyUpdraftTowerIndividualOutputs": false
+  },
+  "evolutionMethod": 1,
+  "solarPanelArrayLayoutParams": {
+    "pvModelName": "SPR-X21-335-BLK",
+    "rowAxis": "Zonal",
+    "orientation": "Landscape",
+    "tiltAngle": 0,
+    "rowsPerRack": 1,
+    "interRowSpacing": 2,
+    "poleHeight": 1,
+    "poleSpacing": 3
+  },
+  "solarPanelArrayLayoutConstraints": {
+    "minimumInterRowSpacing": 2,
+    "maximumInterRowSpacing": 10,
+    "minimumRowsPerRack": 1,
+    "maximumRowsPerRack": 6,
+    "minimumTiltAngle": -1.5707963267948966,
+    "maximumTiltAngle": 1.5707963267948966,
+    "poleHeight": 1,
+    "poleSpacing": 5,
+    "orientation": "Landscape",
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal"
+  },
+  "evolutionaryAlgorithmState": {
+    "geneticAlgorithmParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "selectionMethod": 1,
+      "searchMethod": 1,
+      "populationSize": 20,
+      "maximumGenerations": 5,
+      "selectionRate": 0.5,
+      "crossoverRate": 0.5,
+      "mutationRate": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    },
+    "particleSwarmOptimizationParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "searchMethod": 1,
+      "swarmSize": 20,
+      "maximumSteps": 5,
+      "vmax": 0.01,
+      "inertia": 0.8,
+      "cognitiveCoefficient": 0.1,
+      "socialCoefficient": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    }
+  },
+  "economicsParams": {
+    "projectLifeSpan": 25,
+    "electricitySellingPrice": 0.25,
+    "operationalCostPerUnit": 0.15
+  },
+  "notes": []
+}

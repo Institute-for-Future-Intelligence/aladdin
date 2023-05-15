@@ -1512,6 +1512,17 @@ export class Util {
     return vertices;
   }
 
+  // get the relative 2D vertices of a partial wall (a quad)
+  static getPartialWallVertices(wall: WallModel, margin: number): Point2[] {
+    const hx = wall.lx / 2;
+    const hz = wall.lz / 2;
+    const lowerLeft = { x: -hx - margin, y: wall.leftUnfilledHeight - hz - margin } as Point2;
+    const lowerRight = { x: hx + margin, y: wall.rightUnfilledHeight - hz - margin } as Point2;
+    const upperLeft = { x: -hx - margin, y: wall.leftTopPartialHeight - hz + margin } as Point2;
+    const upperRight = { x: hx + margin, y: wall.rightTopPartialHeight - hz + margin } as Point2;
+    return [upperLeft, lowerLeft, lowerRight, upperRight];
+  }
+
   // get the highest point of a wall (can be a quad, pentagon, or heptagon)
   static getHighestPointOfWall(wall: WallModel): number {
     let h = wall.lz;

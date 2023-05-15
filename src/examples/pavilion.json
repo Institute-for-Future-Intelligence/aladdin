@@ -135,8 +135,8 @@
       },
       "leftUnfilledHeight": 0.5,
       "rightUnfilledHeight": 0.5,
-      "leftTopPartialResizeHandleHeight": 3.5,
-      "rightTopPartialResizeHandleHeight": 3.5
+      "leftTopPartialHeight": 3.5,
+      "rightTopPartialHeight": 3.5
     },
     {
       "type": "Wall",
@@ -201,8 +201,8 @@
       },
       "leftUnfilledHeight": 0.5,
       "rightUnfilledHeight": 0.5,
-      "leftTopPartialResizeHandleHeight": 3.5,
-      "rightTopPartialResizeHandleHeight": 3.5
+      "leftTopPartialHeight": 3.5,
+      "rightTopPartialHeight": 3.5
     },
     {
       "lx": 10,
@@ -267,8 +267,8 @@
       },
       "leftUnfilledHeight": 0.5,
       "rightUnfilledHeight": 0.5,
-      "leftTopPartialResizeHandleHeight": 3.5,
-      "rightTopPartialResizeHandleHeight": 3.5
+      "leftTopPartialHeight": 3.5,
+      "rightTopPartialHeight": 3.5
     },
     {
       "showLabel": false,
@@ -333,8 +333,8 @@
       },
       "leftUnfilledHeight": 0.5,
       "rightUnfilledHeight": 0.5,
-      "leftTopPartialResizeHandleHeight": 3.5,
-      "rightTopPartialResizeHandleHeight": 3.5
+      "leftTopPartialHeight": 3.5,
+      "rightTopPartialHeight": 3.5
     },
     {
       "type": "Human",
@@ -420,8 +420,8 @@
       },
       "leftUnfilledHeight": 0.5,
       "rightUnfilledHeight": 0.5,
-      "leftTopPartialResizeHandleHeight": 7.149013269649758,
-      "rightTopPartialResizeHandleHeight": 7.149013269649758
+      "leftTopPartialHeight": 7.149013269649758,
+      "rightTopPartialHeight": 7.149013269649758
     },
     {
       "type": "Wall",
@@ -484,8 +484,8 @@
       },
       "leftUnfilledHeight": 0.5,
       "rightUnfilledHeight": 0.5,
-      "leftTopPartialResizeHandleHeight": 7.149013269649758,
-      "rightTopPartialResizeHandleHeight": 7.149013269649758
+      "leftTopPartialHeight": 7.149013269649758,
+      "rightTopPartialHeight": 7.149013269649758
     },
     {
       "type": "Wall",
@@ -548,8 +548,8 @@
       },
       "leftUnfilledHeight": 0.5,
       "rightUnfilledHeight": 0.5,
-      "leftTopPartialResizeHandleHeight": 7.149013269649758,
-      "rightTopPartialResizeHandleHeight": 7.149013269649758
+      "leftTopPartialHeight": 7.149013269649758,
+      "rightTopPartialHeight": 7.149013269649758
     },
     {
       "type": "Wall",
@@ -612,8 +612,8 @@
       },
       "leftUnfilledHeight": 0.5,
       "rightUnfilledHeight": 0.5,
-      "leftTopPartialResizeHandleHeight": 7.149013269649758,
-      "rightTopPartialResizeHandleHeight": 7.149013269649758
+      "leftTopPartialHeight": 7.149013269649758,
+      "rightTopPartialHeight": 7.149013269649758
     },
     {
       "type": "Foundation",
@@ -795,8 +795,8 @@
       },
       "leftUnfilledHeight": 0.5,
       "rightUnfilledHeight": 0.5,
-      "leftTopPartialResizeHandleHeight": 0.5,
-      "rightTopPartialResizeHandleHeight": 0.5
+      "leftTopPartialHeight": 0.5,
+      "rightTopPartialHeight": 0.5
     },
     {
       "type": "Wall",
@@ -851,8 +851,8 @@
       },
       "leftUnfilledHeight": 0.5,
       "rightUnfilledHeight": 0.5,
-      "leftTopPartialResizeHandleHeight": 0.5,
-      "rightTopPartialResizeHandleHeight": 0.5
+      "leftTopPartialHeight": 0.5,
+      "rightTopPartialHeight": 0.5
     },
     {
       "type": "Wall",
@@ -907,8 +907,8 @@
       },
       "leftUnfilledHeight": 0.5,
       "rightUnfilledHeight": 0.5,
-      "leftTopPartialResizeHandleHeight": 0.5,
-      "rightTopPartialResizeHandleHeight": 0.5
+      "leftTopPartialHeight": 0.5,
+      "rightTopPartialHeight": 0.5
     },
     {
       "type": "Wall",
@@ -963,8 +963,8 @@
       },
       "leftUnfilledHeight": 0.5,
       "rightUnfilledHeight": 0.5,
-      "leftTopPartialResizeHandleHeight": 0.5,
-      "rightTopPartialResizeHandleHeight": 0.5
+      "leftTopPartialHeight": 0.5,
+      "rightTopPartialHeight": 0.5
     },
     {
       "type": "Wall",
@@ -1019,8 +1019,8 @@
       },
       "leftUnfilledHeight": 0.5,
       "rightUnfilledHeight": 0.5,
-      "leftTopPartialResizeHandleHeight": 0.5,
-      "rightTopPartialResizeHandleHeight": 0.5
+      "leftTopPartialHeight": 0.5,
+      "rightTopPartialHeight": 0.5
     },
     {
       "type": "Door",

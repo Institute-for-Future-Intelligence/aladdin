@@ -33,8 +33,8 @@ export interface WallModel extends ElementModel {
   fill: WallFill;
   leftUnfilledHeight: number;
   rightUnfilledHeight: number;
-  leftTopPartialResizeHandleHeight: number;
-  rightTopPartialResizeHandleHeight: number;
+  leftTopPartialHeight: number;
+  rightTopPartialHeight: number;
 
   eavesLength: number;
 

@@ -1,1 +1,700 @@
-{"docid":"rSjWfLHkJUuBXYDJVZ7K7Z","time":"02/03/2023 07:07 pm","timestamp":1675469237287,"userid":"QWecNcxhyvP6j6sBN11hBsfZDau1","owner":null,"email":null,"world":{"solarRadiationHeatmapGridCellSize":0.5,"date":"12/22/2023, 12:00:00 PM","cspTimesPerHour":4,"noAnimationForHeatmapSimulation":false,"cspGridCellSize":0.5,"dustLoss":0.05,"address":"Denver, CO, USA","cspDaysPerYear":4,"ground":{"thermalDiffusivity":0.05,"albedo":0.3,"snowReflectionFactors":[0,0,0,0,0,0,0,0,0,0,0,0]},"daysPerYear":12,"latitude":39.7392358,"noAnimationForSensorDataCollection":false,"timesPerHour":1,"discretization":"Approximate","airAttenuationCoefficient":0.01,"noAnimationForSolarPanelSimulation":false,"solarPanelVisibilityGridCellSize":0.2,"pvGridCellSize":0.5,"name":"default","longitude":-104.990251,"diurnalTemperatureModel":2},"elements":[{"type":"Human","name":"Jack","cx":-0.8479752220394552,"cy":-6.151925396723704,"cz":0,"lx":0.42,"lz":1.8,"normal":[0,1,0],"rotation":[0,0,0],"parentId":"Ground","id":"3LYQCPYTZ6WYqLSGF4X7Lr","selected":false,"ly":0.42},{"type":"Foundation","cx":-0.00341839393728538,"cy":0.6271804028246559,"cz":0.05,"lx":10,"ly":8,"lz":0.1,"normal":[0,0,1],"rotation":[0,0,0],"parentId":"Ground","solarUpdraftTower":{},"solarAbsorberPipe":{},"solarPowerTower":{},"hvacSystem":{"thermostatSetpoint":20,"temperatureThreshold":4},"id":"iFATUUjMA7c8wHKwioiCvi","selected":false,"label":"","showLabel":false,"labelHeight":8.5,"labelSize":0.8,"rValue":5.283308619189682},{"type":"Wall","cx":-2.220446049250313e-16,"cy":2.5,"cz":2.2408122612280286,"lx":8,"ly":0.2,"lz":2.7,"rValue":2.13,"volumetricHeatCapacity":0.1,"fill":"Full","leftJoints":["xi9Zz1pobWAhkAdtkZFZBZ"],"rightJoints":["wugyuZMsPdNUQJ1PdoxEGD"],"leftPoint":[3.9999999999999996,2.5,0],"rightPoint":[-4,2.5,0],"relativeAngle":3.141592653589793,"textureType":"No Wall Texture","color":"#cccccc","normal":[0,0,1],"rotation":[0,0,0],"id":"s4gNJy8vD8tdJGQTaw6DQj","parentId":"iFATUUjMA7c8wHKwioiCvi","foundationId":"iFATUUjMA7c8wHKwioiCvi","wallStructure":"Default","structureSpacing":2,"structureColor":"white","structureWidth":0.1,"opacity":0.5,"roofId":"vBPx8vrh1SNvECDHWBPRBR","leftRoofHeight":2.7,"rightRoofHeight":2.7,"selected":false,"eavesLength":0,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":2.7,"rightTopPartialResizeHandleHeight":2.7},{"type":"Wall","cx":3.999999999999999,"cy":-0.49999999999999956,"cz":2.2301039869226305,"lx":5.999999999999999,"ly":0.2,"lz":2.7,"rValue":2.13,"volumetricHeatCapacity":0.1,"fill":"Full","leftJoints":["py4fscALBHuoNNVWKoXS9c"],"rightJoints":["s4gNJy8vD8tdJGQTaw6DQj"],"leftPoint":[3.9999999999999982,-3.499999999999999,0],"rightPoint":[4,2.5,0],"relativeAngle":1.5707963267948963,"textureType":"No Wall Texture","color":"#cccccc","normal":[0,0,1],"rotation":[0,0,0],"id":"xi9Zz1pobWAhkAdtkZFZBZ","parentId":"iFATUUjMA7c8wHKwioiCvi","foundationId":"iFATUUjMA7c8wHKwioiCvi","wallStructure":"Default","structureSpacing":2,"structureColor":"white","structureWidth":0.1,"opacity":0.5,"roofId":"vBPx8vrh1SNvECDHWBPRBR","leftRoofHeight":2.7,"rightRoofHeight":2.7,"selected":false,"eavesLength":0,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":2.7,"rightTopPartialResizeHandleHeight":2.7},{"type":"Wall","cx":2.220446049250313e-16,"cy":-3.4999999999999996,"cz":2.268765007024547,"lx":8,"ly":0.2,"lz":2.7,"rValue":2.13,"volumetricHeatCapacity":0.1,"fill":"Full","leftJoints":["wugyuZMsPdNUQJ1PdoxEGD"],"rightJoints":["xi9Zz1pobWAhkAdtkZFZBZ"],"leftPoint":[-3.9999999999999996,-3.499999999999999,0],"rightPoint":[4,-3.5,0],"relativeAngle":0,"textureType":"No Wall Texture","color":"#cccccc","normal":[0,0,1],"rotation":[0,0,0],"id":"py4fscALBHuoNNVWKoXS9c","parentId":"iFATUUjMA7c8wHKwioiCvi","foundationId":"iFATUUjMA7c8wHKwioiCvi","wallStructure":"Default","structureSpacing":2,"structureColor":"white","structureWidth":0.1,"opacity":0.5,"roofId":"vBPx8vrh1SNvECDHWBPRBR","leftRoofHeight":2.7,"rightRoofHeight":2.7,"selected":false,"eavesLength":1,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":2.7,"rightTopPartialResizeHandleHeight":2.7},{"type":"Wall","cx":-4.000000000000001,"cy":-0.49999999999999956,"cz":2.228839888904333,"lx":5.999999999999999,"ly":0.2,"lz":2.7,"rValue":2.13,"volumetricHeatCapacity":0.1,"fill":"Full","leftJoints":["s4gNJy8vD8tdJGQTaw6DQj"],"rightJoints":["py4fscALBHuoNNVWKoXS9c"],"leftPoint":[-4,2.5,0],"rightPoint":[-4.000000000000002,-3.499999999999999,0],"relativeAngle":4.71238898038469,"textureType":"No Wall Texture","color":"#cccccc","normal":[0,0,1],"rotation":[0,0,0],"id":"wugyuZMsPdNUQJ1PdoxEGD","parentId":"iFATUUjMA7c8wHKwioiCvi","foundationId":"iFATUUjMA7c8wHKwioiCvi","wallStructure":"Default","structureSpacing":2,"structureColor":"white","structureWidth":0.1,"opacity":0.5,"roofId":"vBPx8vrh1SNvECDHWBPRBR","leftRoofHeight":2.7,"rightRoofHeight":2.7,"selected":false,"eavesLength":0,"parapet":{"display":false,"color":"white","textureType":"No Wall Texture","parapetHeight":1,"copingsWidth":0.5,"copingsHeight":0.1},"leftUnfilledHeight":0.5,"rightUnfilledHeight":0.5,"leftTopPartialResizeHandleHeight":2.7,"rightTopPartialResizeHandleHeight":2.7},{"type":"Window","cx":-0.25,"cy":0.3,"cz":0,"lx":0.375,"ly":0.2,"lz":0.7407407407407407,"shutter":{"showLeft":false,"showRight":false,"color":"#009ce0","width":0.5},"mullion":true,"mullionWidth":0.06,"mullionSpacing":0.6,"mullionColor":"#cccccc","frame":true,"frameWidth":0.1,"windowType":"Default","archHeight":1,"selected":false,"lineWidth":0.2,"lineColor":"#000000","showLabel":false,"color":"#cccccc","tint":"#73D8FF","opacity":0.21,"uValue":1.98,"normal":[0,0,1],"rotation":[0,0,0],"parentId":"py4fscALBHuoNNVWKoXS9c","foundationId":"iFATUUjMA7c8wHKwioiCvi","id":"5cYjXS4vMUpWUASfp6LsaY"},{"type":"Window","cx":0.25,"cy":0.3,"cz":0,"lx":0.375,"ly":0.2,"lz":0.7407407407407407,"uValue":1.98,"mullion":true,"mullionWidth":0.06,"mullionSpacing":0.6,"mullionColor":"#cccccc","frame":true,"frameWidth":0.1,"windowType":"Default","archHeight":1,"color":"#cccccc","normal":[0,0,1],"rotation":[0,0,0],"id":"edHVWga9uF8kxRK4efRqds","parentId":"py4fscALBHuoNNVWKoXS9c","foundationId":"iFATUUjMA7c8wHKwioiCvi","tint":"#73D8FF","opacity":0.21,"shutter":{"showLeft":false,"showRight":false,"color":"#009ce0","width":0.5},"selected":false},{"type":"Roof","cx":0,"cy":0,"cz":0,"lx":0,"ly":0,"lz":0,"rise":0,"thickness":0.1,"rValue":4,"roofType":"Pyramid","roofStructure":"Default","wallsId":["s4gNJy8vD8tdJGQTaw6DQj","wugyuZMsPdNUQJ1PdoxEGD","py4fscALBHuoNNVWKoXS9c","xi9Zz1pobWAhkAdtkZFZBZ"],"textureType":"No Roof Texture","color":"#4d4d4d","sideColor":"#4d4d4d","selected":false,"lineWidth":0.2,"lineColor":"#000000","showLabel":false,"normal":[0,0,1],"rotation":[0,0,0],"parentId":"iFATUUjMA7c8wHKwioiCvi","foundationId":"iFATUUjMA7c8wHKwioiCvi","id":"vBPx8vrh1SNvECDHWBPRBR","volumetricHeatCapacity":0.1,"ceiling":false}],"view":{"dailyPvYieldPanelX":0,"mapPanelY":0,"dailyFresnelReflectorYieldPanelX":0,"panCenter2D":[12.940867975227082,3.763083016970702,0.000003785257595501958],"yearlyHeliostatYieldPanelY":0,"mapPanelX":0,"yearlyHeliostatYieldPanelX":0,"cameraPosition2D":[12.940867975227082,3.7629330102992693,150],"theme":"Default","showDesignInfoPanel":false,"weatherPanelX":0,"dailyParabolicTroughYieldPanelX":0,"mapWeatherStations":false,"stickyNotePanelX":0,"showDailyHeliostatYieldPanel":false,"mapZoom":18,"showYearlyParabolicTroughYieldPanel":false,"dailyHeliostatYieldPanelX":0,"showDailyParabolicDishYieldPanel":false,"cameraPosition":[10.826418732519464,-13.023829528886234,2.75514975469418],"showYearlyHeliostatYieldPanel":false,"orthographic":false,"dailyHeliostatYieldPanelY":0,"dailyParabolicTroughYieldPanelY":0,"heliodonPanelY":713,"yearlyParabolicTroughYieldPanelY":0,"showWeatherPanel":false,"groundImage":false,"yearlyLightSensorPanelX":0,"ambientLightIntensity":0.1,"yearlyFresnelReflectorYieldPanelX":0,"enableRotate":true,"dailyLightSensorPanelX":0,"heliodon":false,"solarRadiationHeatMapReflectionOnly":false,"cameraZoom":41.010920913500534,"mapType":"roadmap","showMapPanel":false,"yearlyParabolicDishYieldPanelY":0,"showSiteInfoPanel":true,"showDailyParabolicTroughYieldPanel":false,"showDailyFresnelReflectorYieldPanel":false,"showYearlyLightSensorPanel":false,"autoRotate":false,"heliodonPanelX":-1192,"showStickyNotePanel":true,"showDailyLightSensorPanel":false,"visibilityResultsPanelX":0,"yearlyPvYieldPanelY":0,"showDailyPvYieldPanel":false,"visibilityResultsPanelY":0,"showSunAngles":false,"dailyFresnelReflectorYieldPanelY":0,"weatherPanelY":0,"dailyLightSensorPanelY":0,"groundColor":"#16a5a5","mapTilt":0,"showYearlyPvYieldPanel":false,"dailyParabolicDishYieldPanelY":0,"yearlyLightSensorPanelY":0,"yearlyParabolicTroughYieldPanelX":0,"dailyPvYieldPanelY":0,"yearlyPvYieldPanelX":0,"yearlyParabolicDishYieldPanelX":0,"shadowEnabled":true,"showInstructionPanel":false,"panCenter":[3.447654823068404,9.854417213021707,0.03152947137006695],"yearlyFresnelReflectorYieldPanelY":0,"showHeliodonPanel":false,"axes":true,"solarRadiationHeatMapMaxValue":5.5,"dailyParabolicDishYieldPanelX":0,"showSolarPanelVisibilityResultsPanel":false,"stickyNotePanelY":0,"showYearlyParabolicDishYieldPanel":false,"showYearlyFresnelReflectorYieldPanel":false,"showDailyBuildingEnergyPanel":false,"directLightIntensity":1,"dailyBuildingEnergyPanelRect":{"x":-168,"y":465,"width":600,"height":360},"showDiurnalTemperaturePanel":false,"diurnalTemperaturePanelRect":{"x":0,"y":0,"width":600,"height":400},"showYearlyBuildingEnergyPanel":true,"yearlyBuildingEnergyPanelRect":{"x":-32,"y":11,"width":775,"height":342},"weatherPanelRect":{"x":0,"y":0,"width":500,"height":500},"stickyNotePanelRect":{"x":-4,"y":0,"width":200,"height":60}},"graphState":{"dailyPvIndividualOutputs":false,"yearlyPvIndividualOutputs":false,"dailyParabolicDishIndividualOutputs":false,"yearlyParabolicDishIndividualOutputs":false,"dailyParabolicTroughIndividualOutputs":false,"yearlyParabolicTroughIndividualOutputs":false,"dailyFresnelReflectorIndividualOutputs":false,"yearlyFresnelReflectorIndividualOutputs":false,"dailyHeliostatIndividualOutputs":false,"yearlyHeliostatIndividualOutputs":false,"dailyUpdraftTowerIndividualOutputs":false,"yearlyUpdraftTowerIndividualOutputs":false},"evolutionMethod":1,"solarPanelArrayLayoutParams":{"pvModelName":"SPR-X21-335-BLK","rowAxis":"Zonal","orientation":"Landscape","tiltAngle":0,"rowsPerRack":1,"interRowSpacing":2,"poleHeight":1,"poleSpacing":3},"solarPanelArrayLayoutConstraints":{"minimumInterRowSpacing":2,"maximumInterRowSpacing":10,"minimumRowsPerRack":1,"maximumRowsPerRack":6,"minimumTiltAngle":-1.5707963267948966,"maximumTiltAngle":1.5707963267948966,"poleHeight":1,"poleSpacing":5,"orientation":"Landscape","pvModelName":"CS6X-355P-FG","rowAxis":"Zonal"},"evolutionaryAlgorithmState":{"geneticAlgorithmParams":{"problem":"Solar Panel Tilt Angle","objectiveFunctionType":1,"selectionMethod":1,"searchMethod":1,"populationSize":20,"maximumGenerations":5,"selectionRate":0.5,"crossoverRate":0.5,"mutationRate":0.1,"convergenceThreshold":0.01,"localSearchRadius":0.1},"particleSwarmOptimizationParams":{"problem":"Solar Panel Tilt Angle","objectiveFunctionType":1,"searchMethod":1,"swarmSize":20,"maximumSteps":5,"vmax":0.01,"inertia":0.8,"cognitiveCoefficient":0.1,"socialCoefficient":0.1,"convergenceThreshold":0.01,"localSearchRadius":0.1}},"economicsParams":{"projectLifeSpan":25,"electricitySellingPrice":0.25,"operationalCostPerUnit":0.15},"notes":["BESTEST Case 610"]}
+{
+  "docid": "rSjWfLHkJUuBXYDJVZ7K7Z",
+  "time": "02/03/2023 07:07 pm",
+  "timestamp": 1675469237287,
+  "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
+  "owner": null,
+  "email": null,
+  "world": {
+    "solarRadiationHeatmapGridCellSize": 0.5,
+    "date": "12/22/2023, 12:00:00 PM",
+    "cspTimesPerHour": 4,
+    "noAnimationForHeatmapSimulation": false,
+    "cspGridCellSize": 0.5,
+    "dustLoss": 0.05,
+    "address": "Denver, CO, USA",
+    "cspDaysPerYear": 4,
+    "ground": {
+      "thermalDiffusivity": 0.05,
+      "albedo": 0.3,
+      "snowReflectionFactors": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "daysPerYear": 12,
+    "latitude": 39.7392358,
+    "noAnimationForSensorDataCollection": false,
+    "timesPerHour": 1,
+    "discretization": "Approximate",
+    "airAttenuationCoefficient": 0.01,
+    "noAnimationForSolarPanelSimulation": false,
+    "solarPanelVisibilityGridCellSize": 0.2,
+    "pvGridCellSize": 0.5,
+    "name": "default",
+    "longitude": -104.990251,
+    "diurnalTemperatureModel": 2
+  },
+  "elements": [
+    {
+      "type": "Human",
+      "name": "Jack",
+      "cx": -0.8479752220394552,
+      "cy": -6.151925396723704,
+      "cz": 0,
+      "lx": 0.42,
+      "lz": 1.8,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "3LYQCPYTZ6WYqLSGF4X7Lr",
+      "selected": false,
+      "ly": 0.42
+    },
+    {
+      "type": "Foundation",
+      "cx": -0.00341839393728538,
+      "cy": 0.6271804028246559,
+      "cz": 0.05,
+      "lx": 10,
+      "ly": 8,
+      "lz": 0.1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "hvacSystem": {
+        "thermostatSetpoint": 20,
+        "temperatureThreshold": 4
+      },
+      "id": "iFATUUjMA7c8wHKwioiCvi",
+      "selected": false,
+      "label": "",
+      "showLabel": false,
+      "labelHeight": 8.5,
+      "labelSize": 0.8,
+      "rValue": 5.283308619189682
+    },
+    {
+      "type": "Wall",
+      "cx": -2.220446049250313e-16,
+      "cy": 2.5,
+      "cz": 2.2408122612280286,
+      "lx": 8,
+      "ly": 0.2,
+      "lz": 2.7,
+      "rValue": 2.13,
+      "volumetricHeatCapacity": 0.1,
+      "fill": "Full",
+      "leftJoints": [
+        "xi9Zz1pobWAhkAdtkZFZBZ"
+      ],
+      "rightJoints": [
+        "wugyuZMsPdNUQJ1PdoxEGD"
+      ],
+      "leftPoint": [
+        3.9999999999999996,
+        2.5,
+        0
+      ],
+      "rightPoint": [
+        -4,
+        2.5,
+        0
+      ],
+      "relativeAngle": 3.141592653589793,
+      "textureType": "No Wall Texture",
+      "color": "#cccccc",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "s4gNJy8vD8tdJGQTaw6DQj",
+      "parentId": "iFATUUjMA7c8wHKwioiCvi",
+      "foundationId": "iFATUUjMA7c8wHKwioiCvi",
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureColor": "white",
+      "structureWidth": 0.1,
+      "opacity": 0.5,
+      "roofId": "vBPx8vrh1SNvECDHWBPRBR",
+      "leftRoofHeight": 2.7,
+      "rightRoofHeight": 2.7,
+      "selected": false,
+      "eavesLength": 0,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 2.7,
+      "rightTopPartialHeight": 2.7
+    },
+    {
+      "type": "Wall",
+      "cx": 3.999999999999999,
+      "cy": -0.49999999999999956,
+      "cz": 2.2301039869226305,
+      "lx": 5.999999999999999,
+      "ly": 0.2,
+      "lz": 2.7,
+      "rValue": 2.13,
+      "volumetricHeatCapacity": 0.1,
+      "fill": "Full",
+      "leftJoints": [
+        "py4fscALBHuoNNVWKoXS9c"
+      ],
+      "rightJoints": [
+        "s4gNJy8vD8tdJGQTaw6DQj"
+      ],
+      "leftPoint": [
+        3.9999999999999982,
+        -3.499999999999999,
+        0
+      ],
+      "rightPoint": [
+        4,
+        2.5,
+        0
+      ],
+      "relativeAngle": 1.5707963267948963,
+      "textureType": "No Wall Texture",
+      "color": "#cccccc",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "xi9Zz1pobWAhkAdtkZFZBZ",
+      "parentId": "iFATUUjMA7c8wHKwioiCvi",
+      "foundationId": "iFATUUjMA7c8wHKwioiCvi",
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureColor": "white",
+      "structureWidth": 0.1,
+      "opacity": 0.5,
+      "roofId": "vBPx8vrh1SNvECDHWBPRBR",
+      "leftRoofHeight": 2.7,
+      "rightRoofHeight": 2.7,
+      "selected": false,
+      "eavesLength": 0,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 2.7,
+      "rightTopPartialHeight": 2.7
+    },
+    {
+      "type": "Wall",
+      "cx": 2.220446049250313e-16,
+      "cy": -3.4999999999999996,
+      "cz": 2.268765007024547,
+      "lx": 8,
+      "ly": 0.2,
+      "lz": 2.7,
+      "rValue": 2.13,
+      "volumetricHeatCapacity": 0.1,
+      "fill": "Full",
+      "leftJoints": [
+        "wugyuZMsPdNUQJ1PdoxEGD"
+      ],
+      "rightJoints": [
+        "xi9Zz1pobWAhkAdtkZFZBZ"
+      ],
+      "leftPoint": [
+        -3.9999999999999996,
+        -3.499999999999999,
+        0
+      ],
+      "rightPoint": [
+        4,
+        -3.5,
+        0
+      ],
+      "relativeAngle": 0,
+      "textureType": "No Wall Texture",
+      "color": "#cccccc",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "py4fscALBHuoNNVWKoXS9c",
+      "parentId": "iFATUUjMA7c8wHKwioiCvi",
+      "foundationId": "iFATUUjMA7c8wHKwioiCvi",
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureColor": "white",
+      "structureWidth": 0.1,
+      "opacity": 0.5,
+      "roofId": "vBPx8vrh1SNvECDHWBPRBR",
+      "leftRoofHeight": 2.7,
+      "rightRoofHeight": 2.7,
+      "selected": false,
+      "eavesLength": 1,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 2.7,
+      "rightTopPartialHeight": 2.7
+    },
+    {
+      "type": "Wall",
+      "cx": -4.000000000000001,
+      "cy": -0.49999999999999956,
+      "cz": 2.228839888904333,
+      "lx": 5.999999999999999,
+      "ly": 0.2,
+      "lz": 2.7,
+      "rValue": 2.13,
+      "volumetricHeatCapacity": 0.1,
+      "fill": "Full",
+      "leftJoints": [
+        "s4gNJy8vD8tdJGQTaw6DQj"
+      ],
+      "rightJoints": [
+        "py4fscALBHuoNNVWKoXS9c"
+      ],
+      "leftPoint": [
+        -4,
+        2.5,
+        0
+      ],
+      "rightPoint": [
+        -4.000000000000002,
+        -3.499999999999999,
+        0
+      ],
+      "relativeAngle": 4.71238898038469,
+      "textureType": "No Wall Texture",
+      "color": "#cccccc",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "wugyuZMsPdNUQJ1PdoxEGD",
+      "parentId": "iFATUUjMA7c8wHKwioiCvi",
+      "foundationId": "iFATUUjMA7c8wHKwioiCvi",
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureColor": "white",
+      "structureWidth": 0.1,
+      "opacity": 0.5,
+      "roofId": "vBPx8vrh1SNvECDHWBPRBR",
+      "leftRoofHeight": 2.7,
+      "rightRoofHeight": 2.7,
+      "selected": false,
+      "eavesLength": 0,
+      "parapet": {
+        "display": false,
+        "color": "white",
+        "textureType": "No Wall Texture",
+        "parapetHeight": 1,
+        "copingsWidth": 0.5,
+        "copingsHeight": 0.1
+      },
+      "leftUnfilledHeight": 0.5,
+      "rightUnfilledHeight": 0.5,
+      "leftTopPartialHeight": 2.7,
+      "rightTopPartialHeight": 2.7
+    },
+    {
+      "type": "Window",
+      "cx": -0.25,
+      "cy": 0.3,
+      "cz": 0,
+      "lx": 0.375,
+      "ly": 0.2,
+      "lz": 0.7407407407407407,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "#009ce0",
+        "width": 0.5
+      },
+      "mullion": true,
+      "mullionWidth": 0.06,
+      "mullionSpacing": 0.6,
+      "mullionColor": "#cccccc",
+      "frame": true,
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1,
+      "selected": false,
+      "lineWidth": 0.2,
+      "lineColor": "#000000",
+      "showLabel": false,
+      "color": "#cccccc",
+      "tint": "#73D8FF",
+      "opacity": 0.21,
+      "uValue": 1.98,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "py4fscALBHuoNNVWKoXS9c",
+      "foundationId": "iFATUUjMA7c8wHKwioiCvi",
+      "id": "5cYjXS4vMUpWUASfp6LsaY"
+    },
+    {
+      "type": "Window",
+      "cx": 0.25,
+      "cy": 0.3,
+      "cz": 0,
+      "lx": 0.375,
+      "ly": 0.2,
+      "lz": 0.7407407407407407,
+      "uValue": 1.98,
+      "mullion": true,
+      "mullionWidth": 0.06,
+      "mullionSpacing": 0.6,
+      "mullionColor": "#cccccc",
+      "frame": true,
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1,
+      "color": "#cccccc",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "edHVWga9uF8kxRK4efRqds",
+      "parentId": "py4fscALBHuoNNVWKoXS9c",
+      "foundationId": "iFATUUjMA7c8wHKwioiCvi",
+      "tint": "#73D8FF",
+      "opacity": 0.21,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "#009ce0",
+        "width": 0.5
+      },
+      "selected": false
+    },
+    {
+      "type": "Roof",
+      "cx": 0,
+      "cy": 0,
+      "cz": 0,
+      "lx": 0,
+      "ly": 0,
+      "lz": 0,
+      "rise": 0,
+      "thickness": 0.1,
+      "rValue": 4,
+      "roofType": "Pyramid",
+      "roofStructure": "Default",
+      "wallsId": [
+        "s4gNJy8vD8tdJGQTaw6DQj",
+        "wugyuZMsPdNUQJ1PdoxEGD",
+        "py4fscALBHuoNNVWKoXS9c",
+        "xi9Zz1pobWAhkAdtkZFZBZ"
+      ],
+      "textureType": "No Roof Texture",
+      "color": "#4d4d4d",
+      "sideColor": "#4d4d4d",
+      "selected": false,
+      "lineWidth": 0.2,
+      "lineColor": "#000000",
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "iFATUUjMA7c8wHKwioiCvi",
+      "foundationId": "iFATUUjMA7c8wHKwioiCvi",
+      "id": "vBPx8vrh1SNvECDHWBPRBR",
+      "volumetricHeatCapacity": 0.1,
+      "ceiling": false
+    }
+  ],
+  "view": {
+    "dailyPvYieldPanelX": 0,
+    "mapPanelY": 0,
+    "dailyFresnelReflectorYieldPanelX": 0,
+    "panCenter2D": [
+      12.940867975227082,
+      3.763083016970702,
+      0.000003785257595501958
+    ],
+    "yearlyHeliostatYieldPanelY": 0,
+    "mapPanelX": 0,
+    "yearlyHeliostatYieldPanelX": 0,
+    "cameraPosition2D": [
+      12.940867975227082,
+      3.7629330102992693,
+      150
+    ],
+    "theme": "Default",
+    "showDesignInfoPanel": false,
+    "weatherPanelX": 0,
+    "dailyParabolicTroughYieldPanelX": 0,
+    "mapWeatherStations": false,
+    "stickyNotePanelX": 0,
+    "showDailyHeliostatYieldPanel": false,
+    "mapZoom": 18,
+    "showYearlyParabolicTroughYieldPanel": false,
+    "dailyHeliostatYieldPanelX": 0,
+    "showDailyParabolicDishYieldPanel": false,
+    "cameraPosition": [
+      10.826418732519464,
+      -13.023829528886234,
+      2.75514975469418
+    ],
+    "showYearlyHeliostatYieldPanel": false,
+    "orthographic": false,
+    "dailyHeliostatYieldPanelY": 0,
+    "dailyParabolicTroughYieldPanelY": 0,
+    "heliodonPanelY": 713,
+    "yearlyParabolicTroughYieldPanelY": 0,
+    "showWeatherPanel": false,
+    "groundImage": false,
+    "yearlyLightSensorPanelX": 0,
+    "ambientLightIntensity": 0.1,
+    "yearlyFresnelReflectorYieldPanelX": 0,
+    "enableRotate": true,
+    "dailyLightSensorPanelX": 0,
+    "heliodon": false,
+    "solarRadiationHeatMapReflectionOnly": false,
+    "cameraZoom": 41.010920913500534,
+    "mapType": "roadmap",
+    "showMapPanel": false,
+    "yearlyParabolicDishYieldPanelY": 0,
+    "showSiteInfoPanel": true,
+    "showDailyParabolicTroughYieldPanel": false,
+    "showDailyFresnelReflectorYieldPanel": false,
+    "showYearlyLightSensorPanel": false,
+    "autoRotate": false,
+    "heliodonPanelX": -1192,
+    "showStickyNotePanel": true,
+    "showDailyLightSensorPanel": false,
+    "visibilityResultsPanelX": 0,
+    "yearlyPvYieldPanelY": 0,
+    "showDailyPvYieldPanel": false,
+    "visibilityResultsPanelY": 0,
+    "showSunAngles": false,
+    "dailyFresnelReflectorYieldPanelY": 0,
+    "weatherPanelY": 0,
+    "dailyLightSensorPanelY": 0,
+    "groundColor": "#16a5a5",
+    "mapTilt": 0,
+    "showYearlyPvYieldPanel": false,
+    "dailyParabolicDishYieldPanelY": 0,
+    "yearlyLightSensorPanelY": 0,
+    "yearlyParabolicTroughYieldPanelX": 0,
+    "dailyPvYieldPanelY": 0,
+    "yearlyPvYieldPanelX": 0,
+    "yearlyParabolicDishYieldPanelX": 0,
+    "shadowEnabled": true,
+    "showInstructionPanel": false,
+    "panCenter": [
+      3.447654823068404,
+      9.854417213021707,
+      0.03152947137006695
+    ],
+    "yearlyFresnelReflectorYieldPanelY": 0,
+    "showHeliodonPanel": false,
+    "axes": true,
+    "solarRadiationHeatMapMaxValue": 5.5,
+    "dailyParabolicDishYieldPanelX": 0,
+    "showSolarPanelVisibilityResultsPanel": false,
+    "stickyNotePanelY": 0,
+    "showYearlyParabolicDishYieldPanel": false,
+    "showYearlyFresnelReflectorYieldPanel": false,
+    "showDailyBuildingEnergyPanel": false,
+    "directLightIntensity": 1,
+    "dailyBuildingEnergyPanelRect": {
+      "x": -168,
+      "y": 465,
+      "width": 600,
+      "height": 360
+    },
+    "showDiurnalTemperaturePanel": false,
+    "diurnalTemperaturePanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 600,
+      "height": 400
+    },
+    "showYearlyBuildingEnergyPanel": true,
+    "yearlyBuildingEnergyPanelRect": {
+      "x": -32,
+      "y": 11,
+      "width": 775,
+      "height": 342
+    },
+    "weatherPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 500,
+      "height": 500
+    },
+    "stickyNotePanelRect": {
+      "x": -4,
+      "y": 0,
+      "width": 200,
+      "height": 60
+    }
+  },
+  "graphState": {
+    "dailyPvIndividualOutputs": false,
+    "yearlyPvIndividualOutputs": false,
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": false,
+    "yearlyHeliostatIndividualOutputs": false,
+    "dailyUpdraftTowerIndividualOutputs": false,
+    "yearlyUpdraftTowerIndividualOutputs": false
+  },
+  "evolutionMethod": 1,
+  "solarPanelArrayLayoutParams": {
+    "pvModelName": "SPR-X21-335-BLK",
+    "rowAxis": "Zonal",
+    "orientation": "Landscape",
+    "tiltAngle": 0,
+    "rowsPerRack": 1,
+    "interRowSpacing": 2,
+    "poleHeight": 1,
+    "poleSpacing": 3
+  },
+  "solarPanelArrayLayoutConstraints": {
+    "minimumInterRowSpacing": 2,
+    "maximumInterRowSpacing": 10,
+    "minimumRowsPerRack": 1,
+    "maximumRowsPerRack": 6,
+    "minimumTiltAngle": -1.5707963267948966,
+    "maximumTiltAngle": 1.5707963267948966,
+    "poleHeight": 1,
+    "poleSpacing": 5,
+    "orientation": "Landscape",
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal"
+  },
+  "evolutionaryAlgorithmState": {
+    "geneticAlgorithmParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "selectionMethod": 1,
+      "searchMethod": 1,
+      "populationSize": 20,
+      "maximumGenerations": 5,
+      "selectionRate": 0.5,
+      "crossoverRate": 0.5,
+      "mutationRate": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    },
+    "particleSwarmOptimizationParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "searchMethod": 1,
+      "swarmSize": 20,
+      "maximumSteps": 5,
+      "vmax": 0.01,
+      "inertia": 0.8,
+      "cognitiveCoefficient": 0.1,
+      "socialCoefficient": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    }
+  },
+  "economicsParams": {
+    "projectLifeSpan": 25,
+    "electricitySellingPrice": 0.25,
+    "operationalCostPerUnit": 0.15
+  },
+  "notes": [
+    "BESTEST Case 610"
+  ]
+}

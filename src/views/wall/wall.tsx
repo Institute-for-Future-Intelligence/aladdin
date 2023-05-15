@@ -128,8 +128,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     fill = WallFill.Full,
     leftUnfilledHeight = 0.5,
     rightUnfilledHeight = 0.5,
-    leftTopPartialResizeHandleHeight = lz,
-    rightTopPartialResizeHandleHeight = lz,
+    leftTopPartialHeight = lz,
+    rightTopPartialHeight = lz,
     parapet = DEFAULT_PARAPET_SETTINGS,
     leftPoint,
     rightPoint,
@@ -199,10 +199,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   const isPartial = fill == WallFill.Partial;
   const realLeftUnfilledHeight = isPartial ? leftUnfilledHeight : 0;
   const realRightUnfilledHeight = isPartial ? rightUnfilledHeight : 0;
-  const realWallLeftHeight = isPartial ? Math.min(wallLeftHeight, leftTopPartialResizeHandleHeight) : wallLeftHeight;
-  const realWallRightHeight = isPartial
-    ? Math.min(wallRightHeight, rightTopPartialResizeHandleHeight)
-    : wallRightHeight;
+  const realWallLeftHeight = isPartial ? Math.min(wallLeftHeight, leftTopPartialHeight) : wallLeftHeight;
+  const realWallRightHeight = isPartial ? Math.min(wallRightHeight, rightTopPartialHeight) : wallRightHeight;
   const isTopPartial =
     isPartial &&
     (!Util.isZero(wallLeftHeight - realWallLeftHeight) || !Util.isZero(wallRightHeight - realWallRightHeight));
@@ -1172,11 +1170,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   }
 
   function isRectWall() {
-    if (
-      isTopPartial &&
-      (leftUnfilledHeight !== rightUnfilledHeight ||
-        leftTopPartialResizeHandleHeight !== rightTopPartialResizeHandleHeight)
-    )
+    if (isTopPartial && (leftUnfilledHeight !== rightUnfilledHeight || leftTopPartialHeight !== rightTopPartialHeight))
       return false;
     if (!roofId) return true;
     if (leftRoofHeight !== rightRoofHeight) return false;
