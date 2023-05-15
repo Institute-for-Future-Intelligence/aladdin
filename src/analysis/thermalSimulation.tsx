@@ -783,15 +783,17 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       const setpoint = foundation.hvacSystem?.thermostatSetpoint ?? 20;
       if (filled) {
         const partial = wall.fill === WallFill.Partial && !Util.isPartialWallFull(wall);
-        const wallVertices = partial ? Util.getPartialWallVertices(wall, 0) : Util.getWallVertices(wall, 0);
-        const rectangularWall = wallVertices.length === 4;
-        let area = Util.getPolygonArea(wallVertices);
+        const frameVertices = Util.getWallVertices(wall, 0);
+        const partialWallVertices = partial ? Util.getPartialWallVertices(wall, 0) : frameVertices;
+        const frameArea = Util.getPolygonArea(frameVertices);
+        let filledArea = partial ? Util.getPolygonArea(partialWallVertices) : frameArea;
         const windows = getChildrenOfType(ObjectType.Window, wall.id);
         const doors = getChildrenOfType(ObjectType.Door, wall.id);
         const absorption = getLightAbsorption(wall);
         let totalSolarHeat = 0;
         // when the sun is out
         if (sunDirectionRef.current && sunDirectionRef.current.z > 0) {
+          const rectangular = (partial ? partialWallVertices.length : frameVertices.length) === 4;
           const solarPanels = getChildrenOfType(ObjectType.SolarPanel, wall.id);
           const results = SolarRadiation.computeWallSolarRadiationEnergy(
             now,
@@ -802,7 +804,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
             windows,
             doors,
             solarPanels,
-            rectangularWall ? 0 : 1,
+            rectangular ? 0 : 1,
             elevation,
             distanceToClosestObject,
           );
@@ -833,24 +835,26 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         }
         if (windows && windows.length > 0) {
           for (const w of windows) {
-            area -= Util.getWindowArea(w as WindowModel, wall);
+            filledArea -= Util.getWindowArea(w as WindowModel, wall);
           }
         }
         if (doors && doors.length > 0) {
           for (const d of doors) {
-            area -= d.lx * d.lz * wall.lx * wall.lz;
+            filledArea -= d.lx * d.lz * wall.lx * wall.lz;
           }
         }
         const extraT =
           Util.isZero(totalSolarHeat) || Util.isZero(absorption)
             ? 0
-            : (totalSolarHeat * absorption) / ((wall.volumetricHeatCapacity ?? 0.5) * area * wall.ly);
+            : (totalSolarHeat * absorption) / ((wall.volumetricHeatCapacity ?? 0.5) * filledArea * wall.ly);
         const deltaT = currentOutsideTemperatureRef.current + extraT - setpoint;
         // U is the inverse of R with SI units of W/(m^2⋅K), we convert the energy unit to kWh here
-        updateHeatExchangeNow(
-          wall.id,
-          (((deltaT * area) / (wall.rValue ?? DEFAULT_WALL_R_VALUE)) * 0.001) / timesPerHour,
-        );
+        let heatExchange = (((deltaT * filledArea) / (wall.rValue ?? DEFAULT_WALL_R_VALUE)) * 0.001) / timesPerHour;
+        if (partial) {
+          // use a large U-value for the open area (not meant to be accurate, but as an indicator of something wrong)
+          heatExchange += (deltaT * (frameArea - filledArea) * U_VALUE_OPENNING * 0.001) / timesPerHour;
+        }
+        updateHeatExchangeNow(wall.id, heatExchange);
       } else {
         const wallVertices = Util.getWallVertices(wall, 0);
         const area = Util.getPolygonArea(wallVertices);
