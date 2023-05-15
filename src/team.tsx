@@ -119,7 +119,8 @@ const Team = ({ top, height, color }: TeamProps) => {
           color: color,
         }}
       >
-        {i18n.t('aboutUs.Translators', lang)}: {Language.Spanish} (Alex Barco), {Language.Turkish} (Hasan Bircan)
+        {i18n.t('aboutUs.Translators', lang)}: {Language.Ukrainian} (Andriy Kashyrskyy), {Language.Spanish} (Alex
+        Barco), {Language.Turkish} (Hasan Bircan)
         <br />
         <br />
         {i18n.t('aboutUs.Acknowledgment', lang)}: {i18n.t('aboutUs.FundingInformation', lang)}{' '}

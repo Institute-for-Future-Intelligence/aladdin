@@ -7,6 +7,7 @@ import zhTW from 'antd/lib/locale/zh_TW';
 import esES from 'antd/lib/locale/es_ES';
 import trTR from 'antd/lib/locale/tr_TR';
 import enUS from 'antd/lib/locale/en_US';
+import ukUA from 'antd/lib/locale/uk_UA';
 
 import React, { useMemo, useState } from 'react';
 import { useStore } from './stores/common';
@@ -2235,6 +2236,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                 case 'tr':
                   state.locale = trTR;
                   break;
+                case 'ua':
+                  state.locale = ukUA;
+                  break;
                 default:
                   state.locale = enUS;
               }
@@ -2255,6 +2259,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Radio>
           <Radio style={radioStyle} value={'tr'}>
             {Language.Turkish}
+          </Radio>
+          <Radio style={radioStyle} value={'ua'}>
+            {Language.Ukrainian}
           </Radio>
         </Radio.Group>
       </SubMenu>

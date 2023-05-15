@@ -238,6 +238,7 @@ export enum Language {
   ChineseTraditional = '繁体中文',
   Turkish = 'Türkçe',
   Spanish = 'Español',
+  Ukrainian = 'Українська',
 }
 
 export enum ObjectType {
