@@ -1382,7 +1382,7 @@ const Ground = () => {
   const handleTempHumanPlantChild = (state: CommonStoreState, parentId: string) => {
     if (state.tempHumanPlant.length === 0) {
       const temp = state.elements.filter((e) => {
-        return isHumanOrPlant(e.type) && Util.isDescendancyOf(e, parentId);
+        return isHumanOrPlant(e.type) && Util.isDescendantOf(e, parentId);
       });
       state.tempHumanPlant = temp;
       const set = new Set(temp.map((e) => e.id));

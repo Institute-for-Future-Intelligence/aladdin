@@ -1092,13 +1092,13 @@ export class Util {
     return false;
   }
 
-  static isDescendancyOf(child: ElementModel, targetId: string): boolean {
+  static isDescendantOf(child: ElementModel, targetId: string): boolean {
     const parentId = child.parentId;
     if (!parentId || parentId === GROUND_ID) return false;
     const parent = useStore.getState().getElementById(parentId);
     if (!parent) return false;
     if (parent.id === targetId) return true;
-    return this.isDescendancyOf(parent, targetId);
+    return Util.isDescendantOf(parent, targetId);
   }
 
   // p is relative position on wall
@@ -1309,7 +1309,7 @@ export class Util {
     if (object) {
       for (const children of object.children) {
         if (children.name === CUBOID_WRAPPER_NAME) {
-          const child = this.getStackCuboidObjectById(children, id);
+          const child = Util.getStackCuboidObjectById(children, id);
           if (child) return child;
         } else if (children.name.includes(id)) {
           return children;
@@ -1326,7 +1326,7 @@ export class Util {
           return child;
         }
         if (child.name === CUBOID_STACKABLE_CHILD) {
-          const c = this.getStackCuboidObjectById(child.children[0], id);
+          const c = Util.getStackCuboidObjectById(child.children[0], id);
           if (c) return c;
         }
       }
@@ -1524,6 +1524,7 @@ export class Util {
 
   // get the relative 2D vertices of a partial wall (a quad)
   static getPartialWallVertices(wall: WallModel, margin: number): Point2[] {
+    if (Util.isPartialWallFull(wall)) return Util.getWallVertices(wall, margin);
     const hx = wall.lx / 2;
     const hz = wall.lz / 2;
     const lowerLeft = { x: -hx - margin, y: wall.leftUnfilledHeight - hz - margin } as Point2;
@@ -1721,7 +1722,7 @@ export class Util {
     if (el.parentId === GROUND_ID) {
       return { pos: currPos, rot: currRot, topZ: currTopZ };
     }
-    const { pos: worldPos, rot: worldRot, topZ: worldTopZ } = this.getWorldDataById(el.parentId);
+    const { pos: worldPos, rot: worldRot, topZ: worldTopZ } = Util.getWorldDataById(el.parentId);
     const euler = new Euler(0, 0, worldRot);
 
     return {
@@ -1737,13 +1738,13 @@ export class Util {
     if (!child) return false;
     if (checkLock && child.locked) return false;
     if (child.parentId === baseId) return true;
-    return this.isChild(baseId, child.parentId, checkLock);
+    return Util.isChild(baseId, child.parentId, checkLock);
   };
 
   static getBaseId = (id: string): string | null => {
     const el = useStore.getState().getElementById(id);
     if (!el) return null;
     if (el.parentId === GROUND_ID) return el.id;
-    return this.getBaseId(el.parentId);
+    return Util.getBaseId(el.parentId);
   };
 }
