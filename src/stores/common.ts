@@ -2402,7 +2402,7 @@ export const useStore = create<CommonStoreState>(
           copyElementById(id) {
             immerSet((state: CommonStoreState) => {
               state.elementsToPaste = [];
-              const copied: ElementModel[] = [];
+              // make sure that the first element to paste is the current one when it may be a parent
               for (const e of state.elements) {
                 if (e.id === id) {
                   if (e.type === ObjectType.Polygon) {
@@ -2411,7 +2411,7 @@ export const useStore = create<CommonStoreState>(
                     e.cx = centroid.x;
                     e.cy = centroid.y;
                   }
-                  copied.push(e);
+                  state.elementsToPaste.push(e);
                   break;
                 }
               }
@@ -2423,10 +2423,9 @@ export const useStore = create<CommonStoreState>(
                     e.cx = centroid.x;
                     e.cy = centroid.y;
                   }
-                  copied.push(e);
+                  state.elementsToPaste.push(e);
                 }
               }
-              state.elementsToPaste = copied;
             });
           },
           removeElementById(id, cut) {
