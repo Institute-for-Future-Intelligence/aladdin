@@ -2400,11 +2400,23 @@ export const useStore = create<CommonStoreState>(
           pastePoint: new Vector3(),
           pasteNormal: undefined,
           copyElementById(id) {
-            const copied: ElementModel[] = [];
             immerSet((state: CommonStoreState) => {
               state.elementsToPaste = [];
+              const copied: ElementModel[] = [];
               for (const e of state.elements) {
-                if (e.id === id || Util.isChild(id, e.id)) {
+                if (e.id === id) {
+                  if (e.type === ObjectType.Polygon) {
+                    // set cx and cy for polygon for pasting (otherwise, they may be unset)
+                    const centroid = Util.calculatePolygonCentroid((e as PolygonModel).vertices);
+                    e.cx = centroid.x;
+                    e.cy = centroid.y;
+                  }
+                  copied.push(e);
+                  break;
+                }
+              }
+              for (const e of state.elements) {
+                if (Util.isChild(id, e.id)) {
                   if (e.type === ObjectType.Polygon) {
                     // set cx and cy for polygon for pasting (otherwise, they may be unset)
                     const centroid = Util.calculatePolygonCentroid((e as PolygonModel).vertices);
@@ -2763,99 +2775,99 @@ export const useStore = create<CommonStoreState>(
           // note that the case of deletion is treated differently because the deleted elements cannot be pasted.
           copyCutElements() {
             const copiedElements: ElementModel[] = [];
-            immerSet((state: CommonStoreState) => {
-              const map = new Map<string, ElementModel>(); // oldId => newElement
-              const elementsMapOldToNew = new Map<string, string>();
-              const elementsMapNewToOld = new Map<string, string>();
-              for (let i = 0; i < state.elementsToPaste.length; i++) {
-                const oldElem = state.elementsToPaste[i];
-                let newElem: ElementModel | null = null;
-                if (i === 0) {
-                  // the first element is the parent
-                  if (state.getElementById(oldElem.id)) {
-                    // make a clone with a new ID if the old ID is in the elements
-                    newElem = ElementModelCloner.clone(
-                      state.getParent(oldElem),
-                      oldElem,
-                      oldElem.cx,
-                      oldElem.cy,
-                      oldElem.cz,
-                    );
-                  } else {
-                    // preserve the ID if it is not in the elements
-                    newElem = JSON.parse(JSON.stringify(oldElem));
-                  }
+
+            const map = new Map<string, ElementModel>(); // oldId => newElement
+            const elementsMapOldToNew = new Map<string, string>();
+            const elementsMapNewToOld = new Map<string, string>();
+            for (let i = 0; i < get().elementsToPaste.length; i++) {
+              const oldElem = get().elementsToPaste[i];
+              let newElem: ElementModel | null = null;
+              if (i === 0) {
+                // the first element is the parent
+                if (get().getElementById(oldElem.id)) {
+                  // make a clone with a new ID if the old ID is in the elements
+                  newElem = ElementModelCloner.clone(
+                    get().getParent(oldElem),
+                    oldElem,
+                    oldElem.cx,
+                    oldElem.cy,
+                    oldElem.cz,
+                  );
                 } else {
-                  const oldParent = state.elementsToPaste.find((el) => el.id === oldElem.parentId);
-                  if (oldParent) {
-                    const newParent = map.get(oldParent.id);
-                    if (newParent) {
-                      if (state.getElementById(oldElem.id)) {
-                        // make a clone with a new ID if the old ID is in the elements
-                        newElem = ElementModelCloner.clone(
-                          newParent,
-                          oldElem,
-                          oldElem.cx,
-                          oldElem.cy,
-                          oldElem.cz,
-                          oldElem.type === ObjectType.Polygon,
-                        );
-                      } else {
-                        // preserve the ID if it is not in the elements
-                        newElem = JSON.parse(JSON.stringify(oldElem));
-                      }
-                    }
-                  }
+                  // preserve the ID if it is not in the elements
+                  newElem = JSON.parse(JSON.stringify(oldElem));
                 }
-                if (newElem) {
-                  map.set(oldElem.id, newElem);
-                  elementsMapOldToNew.set(oldElem.id, newElem.id);
-                  elementsMapNewToOld.set(newElem.id, oldElem.id);
-                  copiedElements.push(newElem);
-                }
-              }
-              for (const e of copiedElements) {
-                // search new roof
-                if (e.type === ObjectType.Roof) {
-                  const oldRoofId = elementsMapNewToOld.get(e.id);
-                  if (oldRoofId) {
-                    for (const o of state.elementsToPaste) {
-                      if (o.id === oldRoofId) {
-                        (e as RoofModel).wallsId = (o as RoofModel).wallsId.map(
-                          (v) => elementsMapOldToNew.get(v) as string,
-                        );
-                      }
-                    }
-                  }
-                }
-                // search new wall
-                if (e.type === ObjectType.Wall) {
-                  const oldWallId = elementsMapNewToOld.get(e.id);
-                  if (oldWallId) {
-                    for (const o of state.elementsToPaste) {
-                      if (o.id === oldWallId && o.type === ObjectType.Wall) {
-                        const w = o as WallModel;
-                        const left = elementsMapOldToNew.get(w.leftJoints[0]);
-                        if (left) {
-                          (e as WallModel).leftJoints = [left];
-                        }
-                        const right = elementsMapOldToNew.get(w.rightJoints[0]);
-                        if (right) {
-                          (e as WallModel).rightJoints = [right];
-                        }
-                        if (w.roofId) {
-                          const roofId = elementsMapOldToNew.get(w.roofId as string);
-                          if (roofId) {
-                            (e as WallModel).roofId = roofId;
-                          }
-                        }
-                        break;
-                      }
+              } else {
+                const oldParent = get().elementsToPaste.find((el) => el.id === oldElem.parentId);
+                if (oldParent) {
+                  const newParent = map.get(oldParent.id);
+                  if (newParent) {
+                    if (get().getElementById(oldElem.id)) {
+                      // make a clone with a new ID if the old ID is in the elements
+                      newElem = ElementModelCloner.clone(
+                        newParent,
+                        oldElem,
+                        oldElem.cx,
+                        oldElem.cy,
+                        oldElem.cz,
+                        oldElem.type === ObjectType.Polygon,
+                      );
+                    } else {
+                      // preserve the ID if it is not in the elements
+                      newElem = JSON.parse(JSON.stringify(oldElem));
                     }
                   }
                 }
               }
-            });
+              if (newElem) {
+                map.set(oldElem.id, newElem);
+                elementsMapOldToNew.set(oldElem.id, newElem.id);
+                elementsMapNewToOld.set(newElem.id, oldElem.id);
+                copiedElements.push(newElem);
+              }
+            }
+            for (const e of copiedElements) {
+              // search new roof
+              if (e.type === ObjectType.Roof) {
+                const oldRoofId = elementsMapNewToOld.get(e.id);
+                if (oldRoofId) {
+                  for (const o of get().elementsToPaste) {
+                    if (o.id === oldRoofId) {
+                      (e as RoofModel).wallsId = (o as RoofModel).wallsId.map(
+                        (v) => elementsMapOldToNew.get(v) as string,
+                      );
+                    }
+                  }
+                }
+              }
+              // search new wall
+              if (e.type === ObjectType.Wall) {
+                const oldWallId = elementsMapNewToOld.get(e.id);
+                if (oldWallId) {
+                  for (const o of get().elementsToPaste) {
+                    if (o.id === oldWallId && o.type === ObjectType.Wall) {
+                      const w = o as WallModel;
+                      const left = elementsMapOldToNew.get(w.leftJoints[0]);
+                      if (left) {
+                        (e as WallModel).leftJoints = [left];
+                      }
+                      const right = elementsMapOldToNew.get(w.rightJoints[0]);
+                      if (right) {
+                        (e as WallModel).rightJoints = [right];
+                      }
+                      if (w.roofId) {
+                        const roofId = elementsMapOldToNew.get(w.roofId as string);
+                        if (roofId) {
+                          (e as WallModel).roofId = roofId;
+                        }
+                      }
+                      break;
+                    }
+                  }
+                }
+              }
+            }
+
             return copiedElements;
           },
 
