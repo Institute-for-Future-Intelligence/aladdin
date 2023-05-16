@@ -2424,7 +2424,11 @@ const HeatFlux = ({ wallModel }: HeatFluxProps) => {
     const heat = hourlyHeatExchangeArrayMap.get(id);
     if (!heat) return undefined;
     const sum = heat.reduce((a, b) => a + b, 0);
-    let area = Util.getPolygonArea(Util.getWallVertices(wallModel, 0));
+    const partial = wallModel.fill === WallFill.Partial && !Util.isPartialWallFull(wallModel);
+    const frameVertices = Util.getWallVertices(wallModel, 0);
+    const partialWallVertices = partial ? Util.getPartialWallVertices(wallModel, 0) : frameVertices;
+    const frameArea = Util.getPolygonArea(frameVertices);
+    let area = partial ? Util.getPolygonArea(partialWallVertices) : frameArea;
     if (area === 0) return undefined;
     const windows = getChildrenOfType(ObjectType.Window, id);
     const doors = getChildrenOfType(ObjectType.Door, id);
