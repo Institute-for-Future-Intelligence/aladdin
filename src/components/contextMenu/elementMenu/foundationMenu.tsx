@@ -129,6 +129,8 @@ export const FoundationMenu = React.memo(() => {
 
   if (!foundation) return null;
 
+  const [hvacId, setHvacId] = useState<string | undefined>(foundation.hvacSystem?.id);
+
   const selectedSolarStructure = foundation?.solarStructure ?? SolarStructure.None;
   const counterAll = foundation ? countAllOffspringsByType(foundation.id, true) : new ElementCounter();
   const counterUnlocked = foundation ? countAllOffspringsByType(foundation.id, false) : new ElementCounter();
@@ -203,6 +205,41 @@ export const FoundationMenu = React.memo(() => {
         }
       }
     });
+  };
+
+  const updateHvacIdByFoundationId = (id: string, value: string | undefined) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Foundation && e.id === id) {
+          const foundation = e as FoundationModel;
+          if (foundation.hvacSystem) {
+            foundation.hvacSystem.id = value;
+          } else {
+            foundation.hvacSystem = { thermostatSetpoint: 20, temperatureThreshold: 3, id: value } as HvacSystem;
+          }
+          break;
+        }
+      }
+    });
+  };
+
+  const updateHvacId = (value: string | undefined) => {
+    const oldValue = foundation.hvacSystem?.id;
+    const newValue = value;
+    const undoableChange = {
+      name: 'Change HVAC ID',
+      timestamp: Date.now(),
+      oldValue: oldValue,
+      newValue: newValue,
+      undo: () => {
+        updateHvacIdByFoundationId(foundation.id, undoableChange.oldValue as string | undefined);
+      },
+      redo: () => {
+        updateHvacIdByFoundationId(foundation.id, undoableChange.newValue as string | undefined);
+      },
+    } as UndoableChange;
+    addUndoable(undoableChange);
+    updateHvacIdByFoundationId(foundation.id, newValue);
   };
 
   // Do NOT put this in useMemo. Otherwise, it will crash the app.
@@ -1148,6 +1185,16 @@ export const FoundationMenu = React.memo(() => {
           style={{ paddingLeft: '24px' }}
         >
           <Menu>
+            <Menu.Item key={'hvac-system-id'} style={{ height: '36px', paddingLeft: '18px', marginTop: 10 }}>
+              <Space style={{ width: '40px', paddingLeft: '0px', textAlign: 'left' }}>{'ID:'}</Space>
+              <Input
+                style={{ width: '180px' }}
+                value={hvacId}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setHvacId(e.target.value)}
+                onPressEnter={() => updateHvacId(hvacId)}
+                onBlur={() => updateHvacId(hvacId)}
+              />
+            </Menu.Item>
             <Menu.Item key={'thermostat-temperature'}>
               <Space style={{ width: '160px' }}>{i18n.t('word.ThermostatSetpoint', lang) + ':'}</Space>
               <InputNumber

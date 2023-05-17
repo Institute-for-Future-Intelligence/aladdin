@@ -1,8 +1,14 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 export interface HvacSystem {
+  /*
+   If an ID is defined, the HVAC systems on different foundations can be grouped into a single one
+   for heat transfer calculation.
+  */
+  id?: string;
+
   thermostatSetpoint: number;
 
   /*
