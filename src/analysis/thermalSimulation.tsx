@@ -858,11 +858,13 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         }
         updateHeatExchangeNow(wall.id, heatExchange);
       } else {
-        const wallVertices = Util.getWallVertices(wall, 0);
-        const area = Util.getPolygonArea(wallVertices);
-        const deltaT = currentOutsideTemperatureRef.current - setpoint;
-        // use a large U-value for an open wall (not meant to be accurate, but as an indicator of something wrong)
-        updateHeatExchangeNow(wall.id, (deltaT * area * U_VALUE_OPENNING * 0.001) / timesPerHour);
+        if (wall.openToOutside) {
+          const wallVertices = Util.getWallVertices(wall, 0);
+          const area = Util.getPolygonArea(wallVertices);
+          const deltaT = currentOutsideTemperatureRef.current - setpoint;
+          // use a large U-value for an open wall (not meant to be accurate, but as an indicator of something wrong)
+          updateHeatExchangeNow(wall.id, (deltaT * area * U_VALUE_OPENNING * 0.001) / timesPerHour);
+        }
       }
     }
   };
