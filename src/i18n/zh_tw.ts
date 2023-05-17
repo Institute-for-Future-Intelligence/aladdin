@@ -1046,6 +1046,7 @@ export const i18n_zh_tw = {
       Full: '全部',
       Partial: '部分',
       Empty: '空白',
+      OpenToOutside: '對外面開放',
       EavesLength: '屋簷延伸長度',
       Parapet: '女牆',
       ParapetColor: '女牆颜色',

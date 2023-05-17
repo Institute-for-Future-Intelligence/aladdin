@@ -850,9 +850,11 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         const deltaT = currentOutsideTemperatureRef.current + extraT - setpoint;
         // U is the inverse of R with SI units of W/(m^2⋅K), we convert the energy unit to kWh here
         let heatExchange = (((deltaT * filledArea) / (wall.rValue ?? DEFAULT_WALL_R_VALUE)) * 0.001) / timesPerHour;
-        if (partial) {
+        if (partial && wall.openToOutside) {
           // use a large U-value for the open area (not meant to be accurate, but as an indicator of something wrong)
-          //heatExchange += ((currentOutsideTemperatureRef.current - setpoint) * (frameArea - filledArea) * U_VALUE_OPENNING * 0.001) / timesPerHour;
+          heatExchange +=
+            ((currentOutsideTemperatureRef.current - setpoint) * (frameArea - filledArea) * U_VALUE_OPENNING * 0.001) /
+            timesPerHour;
         }
         updateHeatExchangeNow(wall.id, heatExchange);
       } else {

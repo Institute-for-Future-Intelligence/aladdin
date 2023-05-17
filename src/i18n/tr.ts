@@ -1069,6 +1069,7 @@ export const i18n_tr = {
       Full: 'Full',
       Partial: 'Partial',
       Empty: 'Empty',
+      OpenToOutside: 'Open to Outside',
       EavesLength: 'Eaves Overhang Length',
       Parapet: 'Parapet',
       ParapetColor: 'Parapet Color',

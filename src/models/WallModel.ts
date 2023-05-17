@@ -36,6 +36,10 @@ export interface WallModel extends ElementModel {
   leftTopPartialHeight: number;
   rightTopPartialHeight: number;
 
+  // When a wall is not full (partial or empty), is it open to the outside?
+  // If so, this would result in a lot of heat exchange. By default, it is not.
+  openToOutside?: boolean;
+
   eavesLength: number;
 
   parapet: ParapetArgs;

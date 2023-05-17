@@ -191,6 +191,17 @@ export const WallMenu = React.memo(() => {
     });
   };
 
+  const updateOpenToOutsideById = (id: string, open: boolean) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === id && e.type === ObjectType.Wall) {
+          (e as WallModel).openToOutside = open;
+          break;
+        }
+      }
+    });
+  };
+
   const renderCopy = () => <Copy keyName={'wall-copy'} />;
 
   const renderLock = () => <Lock keyName={'wall-lock'} />;
@@ -260,38 +271,67 @@ export const WallMenu = React.memo(() => {
     }
     return (
       <SubMenu key={'wall-fill-selection'} title={i18n.t('wallMenu.Fill', lang)} style={{ paddingLeft: '24px' }}>
-        <Radio.Group
-          value={wall.fill}
-          style={{ height: '75px' }}
-          onChange={(e) => {
-            const undoableChange = {
-              name: 'Select Wall Fill',
-              timestamp: Date.now(),
-              oldValue: wall.fill,
-              newValue: e.target.value,
-              changedElementId: wall.id,
-              changedElementType: wall.type,
-              undo: () => {
-                updateWallFillById(undoableChange.changedElementId, undoableChange.oldValue as WallFill);
-              },
-              redo: () => {
-                updateWallFillById(undoableChange.changedElementId, undoableChange.newValue as WallFill);
-              },
-            } as UndoableChange;
-            addUndoable(undoableChange);
-            updateWallFillById(wall.id, e.target.value);
-          }}
-        >
-          <Radio style={radioStyle} value={WallFill.Full}>
-            {i18n.t('wallMenu.Full', lang)}
-          </Radio>
-          <Radio style={radioStyle} value={WallFill.Partial}>
-            {i18n.t('wallMenu.Partial', lang)}
-          </Radio>
-          <Radio style={radioStyle} value={WallFill.Empty}>
-            {i18n.t('wallMenu.Empty', lang)}
-          </Radio>
-        </Radio.Group>
+        <Menu.Item style={{ paddingLeft: '0px' }}>
+          <Radio.Group
+            value={wall.fill}
+            style={{ height: '75px' }}
+            onChange={(e) => {
+              const undoableChange = {
+                name: 'Select Wall Fill',
+                timestamp: Date.now(),
+                oldValue: wall.fill,
+                newValue: e.target.value,
+                changedElementId: wall.id,
+                changedElementType: wall.type,
+                undo: () => {
+                  updateWallFillById(undoableChange.changedElementId, undoableChange.oldValue as WallFill);
+                },
+                redo: () => {
+                  updateWallFillById(undoableChange.changedElementId, undoableChange.newValue as WallFill);
+                },
+              } as UndoableChange;
+              addUndoable(undoableChange);
+              updateWallFillById(wall.id, e.target.value);
+            }}
+          >
+            <Radio style={radioStyle} value={WallFill.Full}>
+              {i18n.t('wallMenu.Full', lang)}
+            </Radio>
+            <Radio style={radioStyle} value={WallFill.Partial}>
+              {i18n.t('wallMenu.Partial', lang)}
+            </Radio>
+            <Radio style={radioStyle} value={WallFill.Empty}>
+              {i18n.t('wallMenu.Empty', lang)}
+            </Radio>
+          </Radio.Group>
+        </Menu.Item>
+        {wall.fill !== WallFill.Full && (
+          <Menu.Item style={{ paddingLeft: '10px' }}>
+            <Checkbox
+              checked={!!wall.openToOutside}
+              onChange={(e) => {
+                const undoableChange = {
+                  name: 'Set Open to Outside',
+                  timestamp: Date.now(),
+                  oldValue: !!wall.openToOutside,
+                  newValue: e.target.checked,
+                  changedElementId: wall.id,
+                  changedElementType: wall.type,
+                  undo: () => {
+                    updateOpenToOutsideById(undoableChange.changedElementId, undoableChange.oldValue as boolean);
+                  },
+                  redo: () => {
+                    updateOpenToOutsideById(undoableChange.changedElementId, undoableChange.newValue as boolean);
+                  },
+                } as UndoableChange;
+                addUndoable(undoableChange);
+                updateOpenToOutsideById(wall.id, e.target.checked);
+              }}
+            >
+              {i18n.t('wallMenu.OpenToOutside', lang)}
+            </Checkbox>
+          </Menu.Item>
+        )}
       </SubMenu>
     );
   };
