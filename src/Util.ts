@@ -137,19 +137,21 @@ export class Util {
     }
     if (!hasRoof) return BuildingCompletionStatus.ROOF_MISSING;
     // check walls now
-    let emptyWall = false;
-    for (const e of elements) {
-      if (e.type === ObjectType.Wall) {
-        if (e.foundationId === foundation.id) {
-          const wall = e as WallModel;
-          if (wall.fill === WallFill.Empty) {
-            emptyWall = true;
-            break;
-          }
-        }
-      }
-    }
-    if (emptyWall) return BuildingCompletionStatus.WALL_EMPTY;
+
+    // let emptyWall = false;
+    // for (const e of elements) {
+    //   if (e.type === ObjectType.Wall) {
+    //     if (e.foundationId === foundation.id) {
+    //       const wall = e as WallModel;
+    //       if (wall.fill === WallFill.Empty) {
+    //         emptyWall = true;
+    //         break;
+    //       }
+    //     }
+    //   }
+    // }
+    // if (emptyWall) return BuildingCompletionStatus.WALL_EMPTY;
+
     // check if the walls are joined
     const walls: WallModel[] = [];
     for (const e of elements) {

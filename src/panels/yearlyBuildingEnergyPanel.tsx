@@ -16,7 +16,7 @@ import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDailyEnergySorter } from '../analysis/energyHooks';
-import BuildinEnergyGraph from '../components/buildingEnergyGraph';
+import BuildingEnergyGraph from '../components/buildingEnergyGraph';
 import { Util } from '../Util';
 import { checkBuilding, CheckStatus } from '../analysis/heatTools';
 import { useDataStore } from '../stores/commonData';
@@ -163,14 +163,22 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
   useEffect(() => {
     const indexOfMonth = now.getMonth() / monthInterval;
     const countBuildings = (Object.keys(sum[0]).length - 1) / (hasSolarPanels ? 4 : 3);
+    tooltipHeaterBreakdown.current = '';
+    tooltipAcBreakdown.current = '';
+    tooltipNetBreakdown.current = '';
+    tooltipSolarPanelBreakdown.current = '';
     if (countBuildings > 1) {
       const heaterMap = new Map<string, number>();
       const acMap = new Map<string, number>();
       const solarPanelMap = new Map<string, number>();
       const netMap = new Map<string, number>();
       for (const h of sum) {
+        let i = 0;
         for (let j = 0; j < countBuildings; j++) {
-          const id = dataLabels[j] ?? j + 1;
+          // If the data label is not set, we will give it a default label by its index,
+          // but some labels may be set, so we have to use an incrementer here.
+          if (!dataLabels[j]) i++;
+          const id = dataLabels[j] ?? i;
           let heater = heaterMap.get(id);
           if (heater === undefined) heater = 0;
           heater += h['Heater ' + id] as number;
@@ -194,8 +202,12 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
       const datum: DatumEntry = {};
       datum['Month'] = MONTHS[now.getMonth()];
       const l = [];
+      let i = 0;
       for (let index = 0; index < countBuildings; index++) {
-        const id = dataLabels[index] ?? index + 1;
+        // If the data label is not set, we will give it a default label by its index,
+        // but some labels may be set, so we have to use an incrementer here.
+        if (!dataLabels[index]) i++;
+        const id = dataLabels[index] ?? i;
         if (hasSolarPanels) {
           l.push('Heater ' + id, 'AC ' + id, 'Solar ' + id, 'Net ' + id);
           datum['Solar ' + id] = (solarPanelMap.get(id) ?? 0) * 30;
@@ -208,16 +220,16 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
       }
       setLabels(l);
       resultRef.current[indexOfMonth] = datum;
-      tooltipHeaterBreakdown.current = '';
-      tooltipAcBreakdown.current = '';
-      tooltipSolarPanelBreakdown.current = '';
-      tooltipNetBreakdown.current = '';
+      i = 0;
       for (let index = 0; index < countBuildings; index++) {
+        // If the data label is not set, we will give it a default label by its index,
+        // but some labels may be set, so we have to use an incrementer here.
+        if (!dataLabels[index]) i++;
         let totalHeater = 0;
         let totalAc = 0;
         let totalSolarPanel = 0;
         let totalNet = 0;
-        const id = dataLabels[index] ?? index + 1;
+        const id = dataLabels[index] ?? i;
         for (const res of resultRef.current) {
           totalHeater += res['Heater ' + id] as number;
           totalAc += res['AC ' + id] as number;
@@ -241,35 +253,46 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
       let heater = 0;
       let ac = 0;
       let net = 0;
+      let bid = '';
+      for (const k in sum[0]) {
+        if (k.startsWith('Heater')) {
+          if (k.length > 6) bid = ' ' + k.substring(6).trim();
+          break;
+        }
+      }
+      const heaterId = 'Heater' + bid;
+      const acId = 'AC' + bid;
+      const netId = 'Net' + bid;
       if (hasSolarPanels) {
+        const solarId = 'Solar' + bid;
         let solarPanel = 0;
-        setLabels(['Heater', 'AC', 'Solar', 'Net']);
+        setLabels([heaterId, acId, solarId, netId]);
         for (const h of sum) {
-          heater += h['Heater'] as number;
-          ac += h['AC'] as number;
-          solarPanel += h['Solar'] as number;
-          net += h['Net'] as number;
+          heater += h[heaterId] as number;
+          ac += h[acId] as number;
+          solarPanel += h[solarId] as number;
+          net += h[netId] as number;
         }
-        resultRef.current[indexOfMonth] = {
-          Month: MONTHS[now.getMonth()],
-          Heater: 30 * heater,
-          AC: 30 * ac,
-          Solar: 30 * solarPanel,
-          Net: 30 * net,
-        } as DatumEntry;
+        const datum: DatumEntry = {};
+        datum['Month'] = MONTHS[now.getMonth()];
+        datum[heaterId] = 30 * heater;
+        datum[acId] = 30 * ac;
+        datum[solarId] = 30 * solarPanel;
+        datum[netId] = 30 * net;
+        resultRef.current[indexOfMonth] = datum;
       } else {
-        setLabels(['Heater', 'AC', 'Net']);
+        setLabels([heaterId, acId, netId]);
         for (const h of sum) {
-          heater += h['Heater'] as number;
-          ac += h['AC'] as number;
-          net += h['Net'] as number;
+          heater += h[heaterId] as number;
+          ac += h[acId] as number;
+          net += h[netId] as number;
         }
-        resultRef.current[indexOfMonth] = {
-          Month: MONTHS[now.getMonth()],
-          Heater: 30 * heater,
-          AC: 30 * ac,
-          Net: 30 * net,
-        } as DatumEntry;
+        const datum: DatumEntry = {};
+        datum['Month'] = MONTHS[now.getMonth()];
+        datum[heaterId] = 30 * heater;
+        datum[acId] = 30 * ac;
+        datum[netId] = 30 * net;
+        resultRef.current[indexOfMonth] = datum;
       }
     }
     setData([...resultRef.current]);
@@ -419,7 +442,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
               {i18n.t('word.Close', lang)}
             </span>
           </Header>
-          <BuildinEnergyGraph
+          <BuildingEnergyGraph
             type={GraphDataType.YearlyBuildingEnergy}
             dataSource={data}
             hasSolarPanels={hasSolarPanels}

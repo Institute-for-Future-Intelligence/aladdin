@@ -2,7 +2,7 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Checkbox, Input, InputNumber, Menu, Modal, Radio, Space } from 'antd';
 import { Copy, Cut, Lock, Paste } from '../menuItems';
 import SubMenu from 'antd/lib/menu/SubMenu';
@@ -127,6 +127,10 @@ export const FoundationMenu = React.memo(() => {
   const setLabelColor = useLabelColor(foundation);
   const setLabelHeight = useLabelHeight(foundation);
 
+  useEffect(() => {
+    if (foundation) setHvacId(foundation.hvacSystem?.id);
+  }, [foundation]);
+
   if (!foundation) return null;
 
   const [hvacId, setHvacId] = useState<string | undefined>(foundation.hvacSystem?.id);
@@ -225,7 +229,7 @@ export const FoundationMenu = React.memo(() => {
 
   const updateHvacId = (value: string | undefined) => {
     const oldValue = foundation.hvacSystem?.id;
-    const newValue = value;
+    const newValue = value && value.trim().length > 0 ? value : undefined;
     const undoableChange = {
       name: 'Change HVAC ID',
       timestamp: Date.now(),
@@ -1190,7 +1194,11 @@ export const FoundationMenu = React.memo(() => {
               <Input
                 style={{ width: '180px' }}
                 value={hvacId}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setHvacId(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  let s: string | undefined = e.target.value;
+                  if (s.trim().length === 0) s = undefined;
+                  setHvacId(s);
+                }}
                 onPressEnter={() => updateHvacId(hvacId)}
                 onBlur={() => updateHvacId(hvacId)}
               />

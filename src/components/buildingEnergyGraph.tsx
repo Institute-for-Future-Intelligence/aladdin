@@ -22,7 +22,7 @@ import { CurveType } from 'recharts/types/shape/Curve';
 import BuildingEnergyGraphMenu from './buildingEnergyGraphMenu';
 import { PRESET_COLORS } from '../constants';
 
-export interface BuildinEnergyGraphProps {
+export interface BuildingEnergyGraphProps {
   type: GraphDataType;
   hasSolarPanels: boolean;
   dataSource: DatumEntry[];
@@ -41,7 +41,7 @@ export interface BuildinEnergyGraphProps {
   symbolCount?: number;
 }
 
-const BuildinEnergyGraph = ({
+const BuildingEnergyGraph = ({
   type,
   dataSource,
   hasSolarPanels,
@@ -58,8 +58,9 @@ const BuildinEnergyGraph = ({
   referenceX,
   fractionDigits = 2,
   symbolCount = 12,
-}: BuildinEnergyGraphProps) => {
+}: BuildingEnergyGraphProps) => {
   const [buildingCount, setBuildingCount] = useState<number>(0);
+  const [buildingId, setBuildingId] = useState<string | undefined>();
   const [horizontalGridLines, setHorizontalGridLines] = useState<boolean>(true);
   const [verticalGridLines, setVerticalGridLines] = useState<boolean>(true);
   const [legendDataKey, setLegendDataKey] = useState<string | null>(null);
@@ -79,7 +80,17 @@ const BuildinEnergyGraph = ({
     if (buildingCount !== len) {
       setBuildingCount(len);
     }
-  }, [buildingCount, dataSource]);
+    if (len === 1) {
+      if (dataSource[0]) {
+        for (const k in dataSource[0]) {
+          if (k.startsWith('Heater')) {
+            setBuildingId(k.length > 6 ? k.substring(6).trim() : undefined);
+            break;
+          }
+        }
+      }
+    }
+  }, [dataSource]);
 
   const getRepresentations = useMemo(() => {
     const representations = [];
@@ -88,7 +99,7 @@ const BuildinEnergyGraph = ({
     const barStrokeColor = 'gray';
     const barStrokeWidth = 1;
     for (let i = 0; i < buildingCount; i++) {
-      let name = buildingCount > 1 ? labels[i * n] : 'Heater';
+      let name = buildingCount > 1 ? labels[i * n] : buildingId ? 'Heater ' + buildingId : 'Heater';
       representations.push(
         <Bar
           key={i * n}
@@ -102,7 +113,7 @@ const BuildinEnergyGraph = ({
           stackId={'stack' + i}
         />,
       );
-      name = buildingCount > 1 ? labels[i * n + 1] : 'AC';
+      name = buildingCount > 1 ? labels[i * n + 1] : buildingId ? 'AC ' + buildingId : 'AC';
       representations.push(
         <Bar
           key={i * n + 1}
@@ -117,7 +128,7 @@ const BuildinEnergyGraph = ({
         />,
       );
       if (hasSolarPanels) {
-        name = buildingCount > 1 ? labels[i * n + 2] : 'Solar';
+        name = buildingCount > 1 ? labels[i * n + 2] : buildingId ? 'Solar ' + buildingId : 'Solar';
         representations.push(
           <Bar
             key={i * n + 2}
@@ -135,7 +146,7 @@ const BuildinEnergyGraph = ({
     }
     const m = n - 1;
     for (let i = 0; i < buildingCount; i++) {
-      let name = buildingCount > 1 ? labels[i * n + m] : 'Net';
+      let name = buildingCount > 1 ? labels[i * n + m] : buildingId ? 'Net' + buildingId : 'Net';
       const opacity = legendDataKey === null ? 1 : legendDataKey === name ? 1 : 0.25;
       const symbol = createSymbol(SYMBOLS[i], symbolSize, symbolCount, opacity);
       if (i === 0) defaultSymbol = symbol;
@@ -154,7 +165,7 @@ const BuildinEnergyGraph = ({
       );
     }
     return representations;
-  }, [type, curveType, labels, buildingCount, lineWidth, symbolCount, symbolSize, legendDataKey]);
+  }, [type, curveType, labels, buildingCount, buildingId, lineWidth, symbolCount, symbolSize, legendDataKey]);
 
   // @ts-ignore
   const onMouseDown = (e) => {};
@@ -263,4 +274,4 @@ const BuildinEnergyGraph = ({
   );
 };
 
-export default BuildinEnergyGraph;
+export default BuildingEnergyGraph;

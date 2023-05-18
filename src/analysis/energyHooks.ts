@@ -53,8 +53,14 @@ export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarP
                   ? ({ heater: 0, ac: 0, geothermal: 0, solarPanel: 0, label: f.label?.trim() } as EnergyUsage)
                   : ({ heater: 0, ac: 0, geothermal: 0, label: f.label?.trim() } as EnergyUsage);
                 energy.set(f.id, energyUsage);
-                if (f.label && f.label.length > 0 && !dataLabels.includes(f.label)) {
-                  dataLabels.push(f.label);
+                if (f.hvacSystem?.id) {
+                  if (f.hvacSystem.id && f.hvacSystem.id.length > 0 && !dataLabels.includes(f.hvacSystem.id)) {
+                    dataLabels.push(f.hvacSystem.id);
+                  }
+                } else {
+                  if (f.label && f.label.length > 0 && !dataLabels.includes(f.label)) {
+                    dataLabels.push(f.label);
+                  }
                 }
               }
               if (e.type === ObjectType.Foundation) {
@@ -110,7 +116,8 @@ export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarP
               if (Util.getBuildingCompletionStatus(f, elements) === BuildingCompletionStatus.COMPLETE) {
                 const setpoint = f.hvacSystem?.thermostatSetpoint ?? 20;
                 const threshold = f.hvacSystem?.temperatureThreshold ?? 3;
-                const id = value.label && value.label !== '' ? value.label : index.toString();
+                const id = f.hvacSystem?.id ?? (value.label && value.label !== '' ? value.label : index.toString());
+                if (id === index.toString()) index++;
                 let adjustedHeat = Math.abs(
                   adjustEnergyUsage(outsideTemperatureRange, value.heater, setpoint, threshold),
                 );
@@ -122,12 +129,32 @@ export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarP
                   adjustedAc += value.geothermal;
                   if (adjustedAc < 0) adjustedAc = 0;
                 }
-                datum['Heater ' + id] = adjustedHeat;
-                datum['AC ' + id] = adjustedAc;
-                if (value.solarPanel !== undefined) {
-                  datum['Solar ' + id] = -value.solarPanel;
+                const heaterId = 'Heater ' + id;
+                if (datum[heaterId]) {
+                  datum[heaterId] = (datum[heaterId] as number) + adjustedHeat;
+                } else {
+                  datum[heaterId] = adjustedHeat;
                 }
-                datum['Net ' + id] = adjustedHeat + adjustedAc - (value.solarPanel ?? 0);
+                const acId = 'AC ' + id;
+                if (datum[acId]) {
+                  datum[acId] = (datum[acId] as number) + adjustedAc;
+                } else {
+                  datum[acId] = adjustedAc;
+                }
+                if (value.solarPanel !== undefined) {
+                  const solarId = 'Solar ' + id;
+                  if (datum[solarId]) {
+                    datum[solarId] = (datum[solarId] as number) - value.solarPanel;
+                  } else {
+                    datum[solarId] = -value.solarPanel;
+                  }
+                }
+                const netId = 'Net ' + id;
+                if (datum[netId]) {
+                  datum[netId] = (datum[netId] as number) + adjustedHeat + adjustedAc - (value.solarPanel ?? 0);
+                } else {
+                  datum[netId] = adjustedHeat + adjustedAc - (value.solarPanel ?? 0);
+                }
                 let x = sumHeaterMapRef.current.get(id);
                 if (x === undefined) x = 0;
                 x += adjustedHeat;
@@ -145,7 +172,6 @@ export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarP
               }
             }
           }
-          index++;
         }
       } else {
         for (const key of energy.keys()) {

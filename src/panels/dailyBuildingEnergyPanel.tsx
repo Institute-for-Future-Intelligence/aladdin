@@ -17,7 +17,7 @@ import { Rectangle } from '../models/Rectangle';
 import { FLOATING_WINDOW_OPACITY } from '../constants';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDailyEnergySorter } from '../analysis/energyHooks';
-import BuildinEnergyGraph from '../components/buildingEnergyGraph';
+import BuildingEnergyGraph from '../components/buildingEnergyGraph';
 import { Util } from '../Util';
 import { checkBuilding, CheckStatus } from '../analysis/heatTools';
 import { useDataStore } from '../stores/commonData';
@@ -213,8 +213,12 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
     const countBuildings = (Object.keys(sum[0]).length - 1) / (hasSolarPanels ? 4 : 3);
     if (countBuildings > 1) {
       const l = [];
+      let i = 0;
       for (let index = 0; index < countBuildings; index++) {
-        const id = dataLabels[index] ?? index + 1;
+        // If the data label is not set, we will give it a default label by its index,
+        // but some labels may be set, so we have to use an incrementer here.
+        if (!dataLabels[index]) i++;
+        const id = dataLabels[index] ?? i;
         if (hasSolarPanels) {
           l.push('Heater ' + id, 'AC ' + id, 'Solar ' + id, 'Net ' + id);
         } else {
@@ -341,7 +345,7 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
               {i18n.t('word.Close', lang)}
             </span>
           </Header>
-          <BuildinEnergyGraph
+          <BuildingEnergyGraph
             type={GraphDataType.DailyBuildingEnergy}
             dataSource={data}
             hasSolarPanels={hasSolarPanels}
