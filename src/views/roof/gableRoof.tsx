@@ -424,8 +424,8 @@ const GableRoof = (roofModel: GableRoofModel) => {
 
   const getWallHeight = (arr: WallModel[], i: number) => {
     const w = arr[i];
-    let lh = 0;
-    let rh = 0;
+    let lh;
+    let rh;
     if (i === 0 || i === 2) {
       lh = w.lz;
       rh = w.lz;
@@ -835,7 +835,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
     isFirstMountRef.current = false;
   }, []);
 
-  const updateSegmentVerticesWithoutOverhangeMap = () => {
+  const updateSegmentVerticesWithoutOverhangMap = () => {
     const segmentVertices: Vector3[][] = [];
     // shed roof
     if (isShed) {
@@ -860,7 +860,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
   };
 
   useUpdateSegmentVerticesMap(id, centroid, roofSegments);
-  useUpdateSegmentVerticesWithoutOverhangMap(updateSegmentVerticesWithoutOverhangeMap);
+  useUpdateSegmentVerticesWithoutOverhangMap(updateSegmentVerticesWithoutOverhangMap);
 
   const selectMe = useStore(Selector.selectMe);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);

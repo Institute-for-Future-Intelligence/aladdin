@@ -390,7 +390,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
     isFirstMountRef.current = false;
   }, []);
 
-  const updateSegmentVerticesWithoutOverhangeMap = () => {
+  const updateSegmentVerticesWithoutOverhangMap = () => {
     const segmentVertices: Vector3[][] = [];
     for (let i = 0; i < 4; i++) {
       const wall = currentWallArray[i];
@@ -420,7 +420,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
   };
 
   useUpdateSegmentVerticesMap(id, new Vector3(centroid2D.x, centroid2D.y, topZ), roofSegments);
-  useUpdateSegmentVerticesWithoutOverhangMap(updateSegmentVerticesWithoutOverhangeMap);
+  useUpdateSegmentVerticesWithoutOverhangMap(updateSegmentVerticesWithoutOverhangMap);
 
   const selectMe = useStore(Selector.selectMe);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
@@ -507,6 +507,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
           <FlatRoof
             id={id}
             roofSegments={roofSegments}
+            center={new Vector3(centroid2D.x, centroid2D.y, topZ)}
             thickness={thickness}
             lineWidth={lineWidth}
             lineColor={lineColor}

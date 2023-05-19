@@ -192,7 +192,7 @@ export class RoofUtil {
   }
 
   static getSegmentVertices(roofSegments: RoofSegmentProps[], segmentIdx: number, pointer: Vector3) {
-    // return orders matter: couter clockwise
+    // return orders matter: counterclockwise
     const [wallLeft, wallRight, ridgeRight, ridgeLeft] = roofSegments[segmentIdx].points;
     if (roofSegments[segmentIdx].points.length === 6) {
       return [wallRight, ridgeRight, wallLeft];
@@ -233,7 +233,7 @@ export class RoofUtil {
   }
 
   static getSegmentNormal(vertices: Vector3[]) {
-    // order matters for cross product, counter clockwise, v1 is shared vertice
+    // order matters for cross product, counterclockwise, v1 is shared vertex
     const [v1, v2, v3] = vertices;
     return new Vector3().crossVectors(new Vector3().subVectors(v1, v2), new Vector3().subVectors(v1, v3)).normalize();
   }
@@ -265,7 +265,7 @@ export class RoofUtil {
       const rotation = RoofUtil.getRotationFromNormal(normal);
       return { segmentIdx, segmentVertices, normal, rotation };
     }
-    // mansard roof top surface
+    // mansard rooftop surface
     return { segmentIdx: -1, segmentVertices: null, normal: new Vector3(0, 0, 1), rotation: [0, 0, 0] };
   }
 
@@ -416,8 +416,8 @@ export class RoofUtil {
 
   static getWallHeight(arr: WallModel[], i: number) {
     const w = arr[i];
-    let lh = 0;
-    let rh = 0;
+    let lh;
+    let rh;
     if (i === 0) {
       lh = Math.max(w.lz, arr[arr.length - 1].lz);
       rh = Math.max(w.lz, arr[i + 1].lz);

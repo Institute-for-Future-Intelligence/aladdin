@@ -55,7 +55,7 @@ const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
 const zVector3 = new Vector3(0, 0, 1);
 
-const MansardRoofWirefram = React.memo(({ roofSegments, thickness, lineWidth, lineColor }: RoofWireframeProps) => {
+const MansardRoofWireframe = React.memo(({ roofSegments, thickness, lineWidth, lineColor }: RoofWireframeProps) => {
   const wallPoints = useMemo(
     () => roofSegments.reduce((arr, segment) => arr.concat(segment.points[1]), [roofSegments[0].points[0]]),
     [roofSegments],
@@ -240,7 +240,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
     return Number.isNaN(height) ? 0 : height;
   };
 
-  const addUnoableResizeRidge = (elemId: string, type: RoofHandleType, oldVal: number, newVal: number) => {
+  const addUndoableResizeRidge = (elemId: string, type: RoofHandleType, oldVal: number, newVal: number) => {
     const undoable = {
       name: 'Resize Mansard Roof Ridge',
       timestamp: Date.now(),
@@ -512,7 +512,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
     }
   }, []);
 
-  const updateSegmentVerticesWithoutOverhangeMap = () => {
+  const updateSegmentVerticesWithoutOverhangMap = () => {
     const segmentVertices: Vector3[][] = [];
 
     for (let i = 0; i < currentWallArray.length; i++) {
@@ -562,7 +562,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
     roofSegments,
     ridgePoints.map((ridge) => ridge.leftPoint.clone().add(thicknessVector)),
   );
-  useUpdateSegmentVerticesWithoutOverhangMap(updateSegmentVerticesWithoutOverhangeMap);
+  useUpdateSegmentVerticesWithoutOverhangMap(updateSegmentVerticesWithoutOverhangMap);
 
   const world = useStore.getState().world;
   const selectMe = useStore(Selector.selectMe);
@@ -856,7 +856,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
           </>
         )}
         {roofSegments.length > 0 && (
-          <MansardRoofWirefram
+          <MansardRoofWireframe
             roofSegments={roofSegments}
             thickness={thickness}
             lineColor={lineColor}
@@ -986,7 +986,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
                 break;
               }
               case RoofHandleType.Ridge: {
-                addUnoableResizeRidge(id, roofHandleType, oldWidth.current, width);
+                addUndoableResizeRidge(id, roofHandleType, oldWidth.current, width);
                 break;
               }
             }

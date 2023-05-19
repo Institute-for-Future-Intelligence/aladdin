@@ -32,7 +32,7 @@ import { useDataStore } from '../../stores/commonData';
 import { useRefStore } from 'src/stores/commonRef';
 import { ElementModel } from 'src/models/ElementModel';
 
-interface DoorHandleWapperProps {
+interface DoorHandleWrapperProps {
   dimension: number[];
   doorType: DoorType;
 }
@@ -45,7 +45,7 @@ type ArgsType = [x: number, y: number, z: number];
 
 const sealPlanesMaterial = new MeshStandardMaterial({ color: 'white', side: FrontSide });
 
-const DoorHandleWapper = React.memo(({ dimension, doorType }: DoorHandleWapperProps) => {
+const DoorHandleWrapper = React.memo(({ dimension, doorType }: DoorHandleWrapperProps) => {
   const [hx, hy, hz] = dimension.map((val) => val / 2);
   const isAddingNewDoor = hx === 0 && hz === 0;
 
@@ -303,7 +303,7 @@ const Door = (doorModel: DoorModel) => {
 
       {selected && <RulerOnWall element={doorModel} />}
 
-      {selected && !locked && <DoorHandleWapper dimension={dimensionData} doorType={doorType} />}
+      {selected && !locked && <DoorHandleWrapper dimension={dimensionData} doorType={doorType} />}
 
       <DoorSealPlanes dimension={dimensionData} />
     </group>

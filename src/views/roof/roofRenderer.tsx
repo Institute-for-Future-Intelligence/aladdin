@@ -468,12 +468,12 @@ export const RoofHandle = ({ position, onPointerDown, onPointerUp, onPointerOver
 
   const pointerDownRef = useRef(false);
   const hoveredRef = useRef(false);
-  const havefiredEvent = useRef(false);
+  const haveFiredEvent = useRef(false);
   const handleRef = useRef<Mesh>();
 
   const [color, setColor] = useState('white');
 
-  const setHightLight = (b: boolean) => {
+  const setHeightLight = (b: boolean) => {
     if (b) {
       setColor(HIGHLIGHT_HANDLE_COLOR);
       gl.domElement.style.cursor = 'pointer';
@@ -486,11 +486,11 @@ export const RoofHandle = ({ position, onPointerDown, onPointerUp, onPointerOver
   useEffect(() => {
     const handlePointerUp = () => {
       if (hoveredRef.current) {
-        havefiredEvent.current = true;
+        haveFiredEvent.current = true;
       }
 
       if (!hoveredRef.current && pointerDownRef.current) {
-        setHightLight(false);
+        setHeightLight(false);
       }
       pointerDownRef.current = false;
     };
@@ -519,10 +519,10 @@ export const RoofHandle = ({ position, onPointerDown, onPointerUp, onPointerOver
       position={position}
       onPointerMove={(e) => {
         if (isFirstHandle(e)) {
-          havefiredEvent.current = false;
+          haveFiredEvent.current = false;
           if (!hoveredRef.current) {
             hoveredRef.current = true;
-            setHightLight(true);
+            setHeightLight(true);
           }
         } else {
           setColor('white');
@@ -530,14 +530,14 @@ export const RoofHandle = ({ position, onPointerDown, onPointerUp, onPointerOver
       }}
       // this will fire once after pointerup when hovered
       onPointerOut={(e) => {
-        if (havefiredEvent.current) {
+        if (haveFiredEvent.current) {
           return;
         }
         if (!pointerDownRef.current) {
           if (e.intersections.length > 0 && e.intersections[0].eventObject.name === 'Roof Handle') {
             setColor('white');
           } else {
-            setHightLight(false);
+            setHeightLight(false);
           }
         }
         hoveredRef.current = false;

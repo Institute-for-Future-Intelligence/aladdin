@@ -22,7 +22,6 @@ import { useDataStore } from '../../stores/commonData';
 import { Cone, Line } from '@react-three/drei';
 import { Point2 } from '../../models/Point2';
 import { RoofType } from '../../models/RoofModel';
-import { CSG } from 'three-csg-ts';
 
 export const RoofSegment = ({
   id,
@@ -295,7 +294,7 @@ export const BufferRoofSegment = React.memo(
       const uvs: number[] = [];
 
       let vertexIndex = 0;
-      let matierialIndex = 0;
+      let materialIndex = 0;
 
       /*
        7----6
@@ -397,9 +396,7 @@ export const BufferRoofSegment = React.memo(
       // const res = CSG.subtract(ref.current, holeMesh);
       // geometry.copy(res.geometry);
 
-      const groupsNumber = geometry.groups.length;
-
-      return groupsNumber;
+      return geometry.groups.length;
 
       function addPositions(points: Vector3[]) {
         for (const point of points) {
@@ -449,7 +446,7 @@ export const BufferRoofSegment = React.memo(
       }
 
       function addGroup(verticesNumber: number) {
-        geometry.addGroup(vertexIndex, verticesNumber, matierialIndex++);
+        geometry.addGroup(vertexIndex, verticesNumber, materialIndex++);
         vertexIndex += verticesNumber;
       }
 

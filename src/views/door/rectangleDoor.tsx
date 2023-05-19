@@ -3,7 +3,7 @@
  */
 
 import React, { useMemo, useRef } from 'react';
-import { Box, Cone, Line, Plane } from '@react-three/drei';
+import { Box, Cone, Line } from '@react-three/drei';
 import {
   DEFAULT_HEAT_FLUX_COLOR,
   DEFAULT_HEAT_FLUX_DENSITY_FACTOR,

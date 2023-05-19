@@ -131,9 +131,9 @@ export const FoundationMenu = React.memo(() => {
     if (foundation) setHvacId(foundation.hvacSystem?.id);
   }, [foundation]);
 
-  if (!foundation) return null;
+  const [hvacId, setHvacId] = useState<string | undefined>(foundation?.hvacSystem?.id);
 
-  const [hvacId, setHvacId] = useState<string | undefined>(foundation.hvacSystem?.id);
+  if (!foundation) return null;
 
   const selectedSolarStructure = foundation?.solarStructure ?? SolarStructure.None;
   const counterAll = foundation ? countAllOffspringsByType(foundation.id, true) : new ElementCounter();

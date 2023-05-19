@@ -58,6 +58,7 @@ const zVector3 = new Vector3(0, 0, 1);
 interface FlatRoofProps {
   id: string;
   roofSegments: RoofSegmentProps[];
+  center: Vector3;
   thickness: number;
   lineWidth: number;
   lineColor: string;
@@ -70,6 +71,7 @@ interface FlatRoofProps {
 export const FlatRoof = ({
   id,
   roofSegments,
+  center,
   thickness,
   lineColor,
   lineWidth,
@@ -103,8 +105,8 @@ export const FlatRoof = ({
     if (!segments) return undefined;
     const vectors: Vector3[][] = [];
     for (const seg of segments) {
-      const z0 = seg[0].z;
-      const s = seg.map((v) => new Vector3(v.x, v.y, v.z - z0 + thickness));
+      const s = seg.map((v) => v.clone().sub(center ?? new Vector3()));
+      // const s = seg.map((v) => v.clone().sub(centroid).add(new Vector3(0, 0, thickness)));
       const cellSize = DEFAULT_HEAT_FLUX_DENSITY_FACTOR * (world.solarRadiationHeatmapGridCellSize ?? 0.5);
       const s0 = s[0].clone();
       const s1 = s[1].clone();
@@ -606,13 +608,13 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
   useEffect(() => {
     if (!isFirstMountRef.current) {
       if (currentWallArray.length >= 2 && needUpdateWallsId(currentWallArray, prevWallsIdSet)) {
-        const newWallsIdAray = currentWallArray.map((v) => v.id);
-        const newWallsIdSet = new Set(newWallsIdAray);
+        const newWallsIdArray = currentWallArray.map((v) => v.id);
+        const newWallsIdSet = new Set(newWallsIdArray);
         setCommonStore((state) => {
           for (const e of state.elements) {
             if (e.type === ObjectType.Roof) {
               if (e.id === id) {
-                (e as RoofModel).wallsId = newWallsIdAray;
+                (e as RoofModel).wallsId = newWallsIdArray;
               }
             } else if (e.type === ObjectType.Wall) {
               if (prevWallsIdSet.has(e.id) && !newWallsIdSet.has(e.id)) {
@@ -761,7 +763,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
     }
   }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
 
-  const updateSegmentVerticesWithoutOverhangeMap = () => {
+  const updateSegmentVerticesWithoutOverhangMap = () => {
     const segmentVertices: Vector3[][] = [];
     for (let i = 0; i < currentWallArray.length; i++) {
       const w = currentWallArray[i];
@@ -796,7 +798,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
     useStore.getState().setRoofSegmentVerticesWithoutOverhang(id, segmentVertices);
   };
 
-  useUpdateSegmentVerticesWithoutOverhangMap(updateSegmentVerticesWithoutOverhangeMap);
+  useUpdateSegmentVerticesWithoutOverhangMap(updateSegmentVerticesWithoutOverhangMap);
 
   // used for move rooftop elements between different roofs, passed to handlePointerMove in roofRenderer
   const userData: RoofSegmentGroupUserData = {
@@ -832,6 +834,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
           <FlatRoof
             id={id}
             roofSegments={roofSegments}
+            center={centerPointV3}
             thickness={thickness}
             lineWidth={lineWidth}
             lineColor={lineColor}

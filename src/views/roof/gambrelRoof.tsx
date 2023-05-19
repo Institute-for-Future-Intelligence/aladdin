@@ -43,7 +43,7 @@ import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
 import Ceiling from './ceiling';
 
-const GambrelRoofWirefram = React.memo(({ roofSegments, thickness, lineWidth, lineColor }: RoofWireframeProps) => {
+const GambrelRoofWireframe = React.memo(({ roofSegments, thickness, lineWidth, lineColor }: RoofWireframeProps) => {
   if (roofSegments.length === 0) {
     return null;
   }
@@ -216,7 +216,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
     });
   };
 
-  const handleUnoableResizeRidge = (elemId: string, type: RoofHandleType, oldVal: number[], newVal: number[]) => {
+  const handleUndoableResizeRidge = (elemId: string, type: RoofHandleType, oldVal: number[], newVal: number[]) => {
     const undoable = {
       name: 'Resize Gambrel Roof Ridge',
       timestamp: Date.now(),
@@ -286,8 +286,8 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
 
   const getWallHeight = (arr: WallModel[], i: number) => {
     const w = arr[i];
-    let lh = 0;
-    let rh = 0;
+    let lh;
+    let rh;
     if (i === 0 || i === 2) {
       lh = w.lz;
       rh = w.lz;
@@ -364,7 +364,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
   const roofSegments = useMemo(() => {
     const segments: RoofSegmentProps[] = [];
 
-    if (currentWallArray.length != 4) {
+    if (currentWallArray.length !== 4) {
       return segments;
     }
 
@@ -529,7 +529,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
       leftWallRightPointAfterOffset.clone().sub(centroid),
     ).setZ(backRidgeRightPointV3.z);
 
-    const backSideLenght = new Vector3(backWall.cx, backWall.cy).sub(topRidgeMidPointV3.clone().setZ(0)).length();
+    const backSideLength = new Vector3(backWall.cx, backWall.cy).sub(topRidgeMidPointV3.clone().setZ(0)).length();
 
     const backTopPoints: Vector3[] = [];
     backTopPoints.push(
@@ -544,7 +544,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
       topRidgeLeftPointAfterOverhang.clone().add(thicknessVector),
       topRidgeRightPointAfterOverhang.clone().add(thicknessVector),
     );
-    segments.push({ points: backTopPoints, angle: backAngle, length: backSideLenght });
+    segments.push({ points: backTopPoints, angle: backAngle, length: backSideLength });
 
     // back side
     const backSidePoints: Vector3[] = [];
@@ -560,7 +560,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
       backRidgeRightPointAfterOverhang.clone().add(thicknessVector),
       backRidgeLeftPointAfterOverhang.clone().add(thicknessVector),
     );
-    segments.push({ points: backSidePoints, angle: backAngle, length: backSideLenght });
+    segments.push({ points: backSidePoints, angle: backAngle, length: backSideLength });
 
     return segments;
   }, [currentWallArray, topZ, thickness]);
@@ -635,7 +635,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
     isFirstMountRef.current = false;
   }, []);
 
-  const updateSegmentVerticesWithoutOverhangeMap = () => {
+  const updateSegmentVerticesWithoutOverhangMap = () => {
     const segmentVertices: Vector3[][] = [];
 
     const wallPoints = currentWallArray.map(
@@ -658,7 +658,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
   };
 
   useUpdateSegmentVerticesMap(id, centroid, roofSegments);
-  useUpdateSegmentVerticesWithoutOverhangMap(updateSegmentVerticesWithoutOverhangeMap);
+  useUpdateSegmentVerticesWithoutOverhangMap(updateSegmentVerticesWithoutOverhangMap);
 
   const selectMe = useStore(Selector.selectMe);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
@@ -731,7 +731,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
             />
           );
         })}
-        <GambrelRoofWirefram
+        <GambrelRoofWireframe
           roofSegments={roofSegments}
           thickness={thickness}
           lineColor={lineColor}
@@ -1086,17 +1086,17 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
               }
               case RoofHandleType.TopLeft:
               case RoofHandleType.TopRight: {
-                handleUnoableResizeRidge(id, roofHandleType, oldRidgeVal.current, topRidgePoint);
+                handleUndoableResizeRidge(id, roofHandleType, oldRidgeVal.current, topRidgePoint);
                 break;
               }
               case RoofHandleType.FrontLeft:
               case RoofHandleType.FrontRight: {
-                handleUnoableResizeRidge(id, roofHandleType, oldRidgeVal.current, frontRidgePoint);
+                handleUndoableResizeRidge(id, roofHandleType, oldRidgeVal.current, frontRidgePoint);
                 break;
               }
               case RoofHandleType.BackLeft:
               case RoofHandleType.BackRight: {
-                handleUnoableResizeRidge(id, roofHandleType, oldRidgeVal.current, backRidgePoint);
+                handleUndoableResizeRidge(id, roofHandleType, oldRidgeVal.current, backRidgePoint);
                 break;
               }
             }
