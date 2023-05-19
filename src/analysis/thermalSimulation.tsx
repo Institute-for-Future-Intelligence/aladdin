@@ -225,7 +225,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         hourlyHeatExchangeArrayMapRef.current.get(e.id)?.fill(0);
       }
       if (e.type === ObjectType.Roof) {
-        for (const key of solarHeatmapRef.current.keys()) {
+        for (const key of hourlyHeatExchangeArrayMapRef.current.keys()) {
           if (key !== e.id && key.startsWith(e.id)) {
             hourlyHeatExchangeArrayMapRef.current.get(key)?.fill(0);
           }
