@@ -105,8 +105,7 @@ export const FlatRoof = ({
     if (!segments) return undefined;
     const vectors: Vector3[][] = [];
     for (const seg of segments) {
-      const s = seg.map((v) => v.clone().sub(center ?? new Vector3()));
-      // const s = seg.map((v) => v.clone().sub(centroid).add(new Vector3(0, 0, thickness)));
+      const s = seg.map((v) => v.clone().sub(center));
       const cellSize = DEFAULT_HEAT_FLUX_DENSITY_FACTOR * (world.solarRadiationHeatmapGridCellSize ?? 0.5);
       const s0 = s[0].clone();
       const s1 = s[1].clone();

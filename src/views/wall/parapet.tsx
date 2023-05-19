@@ -190,7 +190,7 @@ const Parapet = ({ args, wallData, currWallPointData, leftWallPointData, rightWa
 
       {/* copings */}
       <Extrude
-        name={'Copings Exturde Mesh'}
+        name={'Copings Extrude Mesh'}
         position={[0, 0, bodyHeight]}
         args={[copingsShape, { steps: 1, depth: copingsHeight, bevelEnabled: false }]}
       >

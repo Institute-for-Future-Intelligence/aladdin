@@ -36,7 +36,7 @@ import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { PvModel } from 'src/models/PvModel';
 import { ElementModel } from 'src/models/ElementModel';
 
-interface SumbeamProps {
+interface SunbeamProps {
   drawSunbeam: boolean;
   absRotation: number;
   tiltAngle: number;
@@ -46,7 +46,7 @@ interface LabelProps {
   sp: SolarPanelModelOnWall;
 }
 
-interface TiltHanldeProps {
+interface TiltHandleProps {
   tiltAngle: number;
   handleSize: number;
   initPointerDown: () => void;
@@ -54,7 +54,7 @@ interface TiltHanldeProps {
   handlePointerUp: () => void;
 }
 
-const Sunbeam = React.memo(({ drawSunbeam, absRotation, tiltAngle }: SumbeamProps) => {
+const Sunbeam = React.memo(({ drawSunbeam, absRotation, tiltAngle }: SunbeamProps) => {
   const normalVector = new Vector3(0, 0, 1);
 
   const date = useStore(Selector.world.date);
@@ -174,7 +174,7 @@ const TiltHandle = ({
   initPointerDown,
   handlePointerMove,
   handlePointerUp,
-}: TiltHanldeProps) => {
+}: TiltHandleProps) => {
   const { gl } = useThree();
   const [color, setColor] = useState(RESIZE_HANDLE_COLOR);
   const [showTiltAngle, setShowTiltAngle] = useState(false);

@@ -3,10 +3,10 @@
  */
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { DoubleSide, Euler, Group, Mesh, Object3D, RepeatWrapping, TextureLoader, Vector3 } from 'three';
+import { DoubleSide, Group, Mesh, RepeatWrapping, TextureLoader, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { invalidate, ThreeEvent, useFrame, useThree } from '@react-three/fiber';
+import { ThreeEvent, useFrame, useThree } from '@react-three/fiber';
 import { Billboard, Line, Plane, Sphere } from '@react-three/drei';
 import {
   GROUND_ID,

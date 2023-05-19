@@ -241,7 +241,7 @@ export const i18n_zh_cn = {
       WallsAreNotAtSameHeight: '墙体高度不同。',
       WallsAreNotPerpendicular: '墙体不垂直。',
       WallsAreNotConnected: '墙体不相连。',
-      WallsNumebrNeedToBeFour: '墙体数量必须为四个。',
+      WallsNumberNeedToBeFour: '墙体数量必须为四个。',
       BuildingContainsEmptyWall: '建筑物有空墙。',
       BuildingRoofMissing: '建筑物没有屋顶。',
       UnknownErrors: '未知错误。',

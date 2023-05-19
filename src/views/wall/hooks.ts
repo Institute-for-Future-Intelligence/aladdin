@@ -64,7 +64,7 @@ export const useElements = (id: string, leftWallId?: string, rightWallId?: strin
   return { elementsOnWall, leftWall, rightWall };
 };
 
-export const useUpdataOldFiles = (wallModel: WallModel) => {
+export const useUpdateOldFiles = (wallModel: WallModel) => {
   const fileChanged = useStore(Selector.fileChanged);
   useEffect(() => {
     if (
@@ -139,7 +139,7 @@ export const useHandleSize = (size = 0.3) => {
   const cameraPosition = useStore((state) => state.viewState.cameraPosition);
   const cameraZoom = useStore((state) => state.viewState.cameraZoom);
 
-  let handleSize = size;
+  let handleSize;
 
   if (orthographic) {
     handleSize = Math.max(size, 15 / cameraZoom);

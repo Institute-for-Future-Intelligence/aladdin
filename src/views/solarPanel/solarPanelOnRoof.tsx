@@ -61,7 +61,7 @@ interface RotateHandleProps {
   initPointerDown: () => void;
 }
 
-interface TiltHanldeProps {
+interface TiltHandleProps {
   rotationZ: number;
   tiltAngle: number;
   handleSize: number;
@@ -70,7 +70,7 @@ interface TiltHanldeProps {
   handlePointerUp: () => void;
 }
 
-interface SumbeamProps {
+interface SunbeamProps {
   drawSunbeam: boolean;
   rotation: number[];
   normal: number[];
@@ -210,7 +210,7 @@ const TiltHandle = ({
   initPointerDown,
   handlePointerMove,
   handlePointerUp,
-}: TiltHanldeProps) => {
+}: TiltHandleProps) => {
   const { gl } = useThree();
   const [color, setColor] = useState(RESIZE_HANDLE_COLOR);
   const [showTiltAngle, setShowTiltAngle] = useState(false);
@@ -313,7 +313,7 @@ const TiltHandle = ({
   );
 };
 
-const Sunbeam = React.memo(({ drawSunbeam, rotation, normal, relativeEuler, fRotation }: SumbeamProps) => {
+const Sunbeam = React.memo(({ drawSunbeam, rotation, normal, relativeEuler, fRotation }: SunbeamProps) => {
   const euler = new Euler().fromArray([...rotation, 'ZXY']);
 
   const normalVector = useMemo(() => {
@@ -603,7 +603,7 @@ const SolarPanelOnRoof = ({
     });
   };
 
-  // add pointerup eventlistener
+  // add pointerup event listener
   useEffect(() => {
     const handlePointerUp = () => {
       if (pointerDownRef.current && (useStore.getState().rotateHandleType || useStore.getState().resizeHandleType)) {
@@ -697,11 +697,11 @@ const SolarPanelOnRoof = ({
                 switch (state.resizeHandleType) {
                   case ResizeHandleType.Left:
                   case ResizeHandleType.Right: {
-                    const unitLenght =
+                    const unitLength =
                       (e as SolarPanelModel).orientation === Orientation.landscape ? pvModel.length : pvModel.width;
                     const dx = Math.abs(r.x);
-                    const nx = Math.max(1, Math.ceil((dx - unitLenght / 2) / unitLenght));
-                    const lx = nx * unitLenght;
+                    const nx = Math.max(1, Math.ceil((dx - unitLength / 2) / unitLength));
+                    const lx = nx * unitLength;
                     const v = new Vector3((Math.sign(r.x) * lx) / 2, 0, 0).applyEuler(
                       new Euler(0, 0, rotation[2] + foundationModel.rotation[2] + azimuth),
                     );
@@ -719,10 +719,10 @@ const SolarPanelOnRoof = ({
                     const dy = Math.abs(r.y);
                     const dz = Math.abs(r.z);
                     const dl = Math.hypot(dy, dz);
-                    const unitLenght =
+                    const unitLength =
                       (e as SolarPanelModel).orientation === Orientation.landscape ? pvModel.width : pvModel.length;
-                    const nl = Math.max(1, Math.ceil((dl - unitLenght / 2) / unitLenght));
-                    const l = nl * unitLenght;
+                    const nl = Math.max(1, Math.ceil((dl - unitLength / 2) / unitLength));
+                    const l = nl * unitLength;
                     const v = new Vector3(0, (l * Math.sign(r.y)) / 2, 0).applyEuler(
                       new Euler(rotation[0], rotation[1], rotation[2] + foundationModel.rotation[2] + azimuth, 'ZXY'),
                     );

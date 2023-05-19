@@ -28,7 +28,7 @@ interface ResizeHandlesProps {
   partial?: boolean;
 }
 
-interface WallResizeHandleWarpperProps {
+interface WallResizeHandleWrapperProps {
   id: string;
   parentLz: number;
   roofId: string | null | undefined;
@@ -116,7 +116,7 @@ const WallResizeHandleWrapper = React.memo(
     highLight,
     leftJoints,
     rightJoints,
-  }: WallResizeHandleWarpperProps) => {
+  }: WallResizeHandleWrapperProps) => {
     const setCommonStore = useStore(Selector.set);
     const orthographic = useStore(Selector.viewState.orthographic);
 
@@ -151,14 +151,14 @@ const WallResizeHandleWrapper = React.memo(
       setShowIntersectionPlane(true);
     };
 
-    const updateUndoChange = (id: string, vals: number[]) => {
+    const updateUndoChange = (id: string, values: number[]) => {
       const [
         lz,
         leftUnfilledHeight,
         rightUnfilledHeight,
         leftTopPartialResizeHandleHeight,
         rightTopPartialResizeHandleHeight,
-      ] = vals;
+      ] = values;
       setCommonStore((state) => {
         for (const e of state.elements) {
           if (e.id === id && e.type === ObjectType.Wall) {

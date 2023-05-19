@@ -22,7 +22,7 @@ interface MoveHandleProps {
 }
 
 const MoveHandle = ({ handleType, position, size, onPointerOver, onPointerOut }: MoveHandleProps) => {
-  const movehandleType = useStore(Selector.moveHandleType);
+  const moveHandleType = useStore(Selector.moveHandleType);
   const hoveredHandle = useStore(Selector.hoveredHandle);
 
   const handleRef = useRef<Mesh>();
@@ -38,7 +38,7 @@ const MoveHandle = ({ handleType, position, size, onPointerOver, onPointerOut }:
     handleColor = MOVE_HANDLE_COLOR_1;
   }
 
-  const color = hoveredHandle === handleType || movehandleType === handleType ? HIGHLIGHT_HANDLE_COLOR : handleColor;
+  const color = hoveredHandle === handleType || moveHandleType === handleType ? HIGHLIGHT_HANDLE_COLOR : handleColor;
 
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
     if (e.intersections.length > 0 && e.intersections[0].eventObject.name === handleType) {

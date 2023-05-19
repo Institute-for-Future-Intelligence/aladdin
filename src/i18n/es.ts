@@ -243,7 +243,7 @@ export const i18n_es = {
       WallsAreNotAtSameHeight: 'Walls are not at the same height.',
       WallsAreNotPerpendicular: 'Walls are not perpendicular.',
       WallsAreNotConnected: 'Walls are not connected.',
-      WallsNumebrNeedToBeFour: 'The number of walls needs to be four.',
+      WallsNumberNeedToBeFour: 'The number of walls needs to be four.',
       BuildingContainsEmptyWall: 'Building contains one or more empty wall.',
       BuildingRoofMissing: 'Building has a missing roof.',
       UnknownErrors: 'Unknown errors.',

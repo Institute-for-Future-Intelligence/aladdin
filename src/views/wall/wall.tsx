@@ -196,7 +196,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   const night = sunlightDirection.z <= 0;
   const wallLeftHeight = leftRoofHeight ?? lz;
   const wallRightHeight = rightRoofHeight ?? lz;
-  const isPartial = fill == WallFill.Partial;
+  const isPartial = fill === WallFill.Partial;
   const realLeftUnfilledHeight = isPartial ? leftUnfilledHeight : 0;
   const realRightUnfilledHeight = isPartial ? rightUnfilledHeight : 0;
   const realWallLeftHeight = isPartial ? Math.min(wallLeftHeight, leftTopPartialHeight) : wallLeftHeight;
@@ -1148,7 +1148,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       return false;
     }
     if (rect && count !== 4) {
-      showError(i18n.t('message.WallsNumebrNeedToBeFour', lang));
+      showError(i18n.t('message.WallsNumberNeedToBeFour', lang));
       return false;
     }
     return true;
@@ -2072,7 +2072,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     const rightLength = Math.hypot(rightX, realWallRightHeight - wallCenterHeight);
     const rightRotationY = -Math.atan2(realWallRightHeight - wallCenterHeight, rightX);
 
-    const topBarThicnkess = ly;
+    const topBarThickness = ly;
 
     return (
       <group name={`wall pillar group ${id}`} position={[0, -ly / 2, 0]}>
@@ -2101,8 +2101,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           );
         })}
         <Box
-          args={[leftLength, structureWidth, topBarThicnkess]}
-          position={[-hx + leftX / 2, hy, (realWallLeftHeight + wallCenterHeight) / 2 - hz - topBarThicnkess / 2]}
+          args={[leftLength, structureWidth, topBarThickness]}
+          position={[-hx + leftX / 2, hy, (realWallLeftHeight + wallCenterHeight) / 2 - hz - topBarThickness / 2]}
           rotation={[0, leftRotationY, 0]}
           castShadow={shadowEnabled}
           receiveShadow={shadowEnabled}
@@ -2112,8 +2112,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           <meshStandardMaterial color={structureColor} />
         </Box>
         <Box
-          args={[rightLength, structureWidth, topBarThicnkess]}
-          position={[hx - rightX / 2, hy, (realWallRightHeight + wallCenterHeight) / 2 - hz - topBarThicnkess / 2]}
+          args={[rightLength, structureWidth, topBarThickness]}
+          position={[hx - rightX / 2, hy, (realWallRightHeight + wallCenterHeight) / 2 - hz - topBarThickness / 2]}
           rotation={[0, rightRotationY, 0]}
           castShadow={shadowEnabled}
           receiveShadow={shadowEnabled}

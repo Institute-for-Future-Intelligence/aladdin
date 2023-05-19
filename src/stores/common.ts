@@ -875,18 +875,18 @@ export const useStore = create<CommonStoreState>(
                 if (parent) {
                   const parentPosition = new Vector3(parent.cx, parent.cy, parent.lz);
                   const parentRotation = new Euler(0, 0, parent.rotation[2]);
-                  const handlePostion = new Vector3();
+                  const handlePosition = new Vector3();
                   switch (handleType) {
                     case ResizeHandleType.UpperLeft: {
-                      handlePostion.fromArray(wall.leftPoint).setZ(0);
+                      handlePosition.fromArray(wall.leftPoint).setZ(0);
                       break;
                     }
                     case ResizeHandleType.UpperRight: {
-                      handlePostion.fromArray(wall.rightPoint).setZ(0);
+                      handlePosition.fromArray(wall.rightPoint).setZ(0);
                       break;
                     }
                   }
-                  p.copy(handlePostion.applyEuler(parentRotation).add(parentPosition));
+                  p.copy(handlePosition.applyEuler(parentRotation).add(parentPosition));
                 }
                 break;
               }
@@ -895,10 +895,10 @@ export const useStore = create<CommonStoreState>(
                 if (parent) {
                   const parentPosition = new Vector3(parent.cx, parent.cy, parent.lz);
                   const parentRotation = new Euler(0, 0, parent.rotation[2]);
-                  const handlePostion = new Vector3(get().selectedElementX, get().selectedElementY)
+                  const handlePosition = new Vector3(get().selectedElementX, get().selectedElementY)
                     .applyEuler(parentRotation)
                     .add(parentPosition);
-                  p.set(handlePostion.x, handlePostion.y, parent.lz);
+                  p.set(handlePosition.x, handlePosition.y, parent.lz);
                 }
                 break;
               }
@@ -2935,7 +2935,7 @@ export const useStore = create<CommonStoreState>(
                   let approved = false;
                   switch (e.type) {
                     case ObjectType.Cuboid: {
-                      const getAllchild = (el: ElementModel) => {
+                      const getAllChildren = (el: ElementModel) => {
                         const res: ElementModel[] = [];
                         for (const e of get().elements) {
                           if (e.parentId === el.id) {
@@ -2945,13 +2945,13 @@ export const useStore = create<CommonStoreState>(
                               case ObjectType.Foundation:
                               case ObjectType.Wall:
                               case ObjectType.Roof:
-                                res.push(...getAllchild(e));
+                                res.push(...getAllChildren(e));
                             }
                           }
                         }
                         return res;
                       };
-                      const child = getAllchild(elemToPaste);
+                      const child = getAllChildren(elemToPaste);
                       const elementMap = new Map<string, ElementModel>(); // oldId -> newModel
                       pastedElements.push(e);
                       elementMap.set(elemToPaste.id, e);
@@ -3497,7 +3497,7 @@ export const useStore = create<CommonStoreState>(
                     case ObjectType.Cuboid:
                       e.cx += e.lx;
                       if (state.elementsToPaste.length === 1) {
-                        const getAllchild = (el: ElementModel) => {
+                        const getAllChildren = (el: ElementModel) => {
                           const res: ElementModel[] = [];
                           for (const e of get().elements) {
                             if (e.parentId === el.id) {
@@ -3507,13 +3507,13 @@ export const useStore = create<CommonStoreState>(
                                 case ObjectType.Foundation:
                                 case ObjectType.Wall:
                                 case ObjectType.Roof:
-                                  res.push(...getAllchild(e));
+                                  res.push(...getAllChildren(e));
                               }
                             }
                           }
                           return res;
                         };
-                        const child = getAllchild(elem);
+                        const child = getAllChildren(elem);
                         const elementMap = new Map<string, ElementModel>(); // oldId -> newModel
                         pastedElements.push(e);
                         elementMap.set(elem.id, e);

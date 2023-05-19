@@ -46,7 +46,7 @@ interface SolarPanelBoxGroupProps {
   panelRotation: Euler;
 }
 
-interface SumbeamProps {
+interface SunbeamProps {
   sunDirection: Vector3;
 }
 
@@ -788,7 +788,7 @@ const SolarPanelBoxGroup = ({ solarPanelModel, groupRotation, panelRotation }: S
   );
 };
 
-const Sunbeam = React.memo(({ sunDirection }: SumbeamProps) => {
+const Sunbeam = React.memo(({ sunDirection }: SunbeamProps) => {
   const sceneRadius = useStore(Selector.sceneRadius);
 
   const sunBeamLength = useMemo(() => Math.max(100, 10 * sceneRadius), [sceneRadius]);

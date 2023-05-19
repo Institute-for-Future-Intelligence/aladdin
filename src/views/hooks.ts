@@ -1,4 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
+/*
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ */
+
+import { useEffect, useRef, useState } from 'react';
 import { ElementModel } from 'src/models/ElementModel';
 import { GroupableModel, isGroupable } from 'src/models/Groupable';
 import { Point2 } from 'src/models/Point2';
@@ -31,7 +35,7 @@ export const useGroupMaster = (elementModel: GroupableModel, groupMasterId: stri
       childCuboidSetRef.current.clear();
       baseVerticesRef.current = [];
 
-      setbaseVertices(elementModel);
+      setBaseVertices(elementModel);
       if (elementModel.enableGroupMaster) {
         checkOverlapWithAllBases(elementModel);
         if (baseGroupSetRef.current.size > 1) {
@@ -49,7 +53,7 @@ export const useGroupMaster = (elementModel: GroupableModel, groupMasterId: stri
     }
   }, [groupMasterId, buildingResizerUpdateFlag, enableGroupMaster]);
 
-  const setbaseVertices = (base: ElementModel) => {
+  const setBaseVertices = (base: ElementModel) => {
     const hx = base.lx / 2;
     const hy = base.ly / 2;
     const zero = new Vector2();
@@ -85,7 +89,7 @@ export const useGroupMaster = (elementModel: GroupableModel, groupMasterId: stri
         if (isUnlockedChild) {
           setAllChildBases(el);
         } else if (Util.areTwoBasesOverlapped(el, base)) {
-          setbaseVertices(el);
+          setBaseVertices(el);
           checkOverlapWithAllBases(el);
         }
       }
@@ -112,7 +116,7 @@ export const useGroupMaster = (elementModel: GroupableModel, groupMasterId: stri
           maxHeight = Math.max(maxHeight, (elem as RoofModel).rise + (map.get(elem.id) ?? 0));
         }
       } else if (elem.type === ObjectType.Cuboid && Util.isChild(elementModel.id, elem.id, true)) {
-        setbaseVertices(elem);
+        setBaseVertices(elem);
         childCuboidSetRef.current.add(elem.id);
         const { topZ } = Util.getWorldDataById(elem.id);
         maxTopZ = Math.max(maxTopZ, topZ);
@@ -140,7 +144,7 @@ export const useGroupMaster = (elementModel: GroupableModel, groupMasterId: stri
     let maxBaseZ = lz;
     const map = new Map<string, number>(); // roofId -> maxWallHeight
     for (const elem of useStore.getState().elements) {
-      // childs
+      // children
       if (elem.foundationId && baseGroupSetRef.current.has(elem.foundationId)) {
         if (elem.type === ObjectType.Wall) {
           const wall = elem as WallModel;

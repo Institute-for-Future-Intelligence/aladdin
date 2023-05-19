@@ -403,7 +403,7 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
                     return;
                   }
                   if (checkResult.status === CheckStatus.AT_LEAST_ONE_BAD_NO_GOOD) {
-                    let errorType = '';
+                    let errorType;
                     switch (checkResult.buildingCompletion) {
                       case BuildingCompletionStatus.WALL_DISJOINED:
                         errorType = i18n.t('message.WallsAreNotConnected', lang);

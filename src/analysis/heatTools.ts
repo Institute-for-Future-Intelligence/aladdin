@@ -21,7 +21,7 @@ export interface CheckResult {
   buildingCompletion?: BuildingCompletionStatus;
 }
 
-export const U_VALUE_OPENNING = 50;
+export const U_VALUE_OPENING = 50;
 
 export const checkBuilding = (
   elements: ElementModel[],
@@ -215,14 +215,14 @@ export const getGroundTemperatureAtMinute = (
   los: number[],
   his: number[],
   highestTemperatureTimeInMinutes: number,
-  airTemperatrureFluctuationAmplitudeOfDay: number,
+  airTemperatureFluctuationAmplitudeOfDay: number,
   thermalDiffusivity: number,
   depth: number,
 ): number => {
   return (
     calculateTemperatureOnDay(latitude, day, los, his, thermalDiffusivity, depth) -
     Math.exp(-depth * Math.sqrt(OMEGA_DAY / (2.0 * thermalDiffusivity))) *
-      airTemperatrureFluctuationAmplitudeOfDay *
+      airTemperatureFluctuationAmplitudeOfDay *
       Math.cos(OMEGA_DAY * (minute - (highestTemperatureTimeInMinutes - 720) - DAILY_LAG_IN_MINUTES))
   );
 };

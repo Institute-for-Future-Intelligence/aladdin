@@ -9,14 +9,14 @@ import { Util } from 'src/Util';
 import { Vector3 } from 'three';
 import EmptyWall from './emptyWall';
 import Wall from './wall';
-import WallMoveHandleWarpper from './wallMoveHandleWrapper';
+import WallMoveHandleWrapper from './wallMoveHandleWrapper';
 import WallResizeHandleWrapper from './wallResizeHandleWrapper';
-import { useUpdataOldFiles } from './hooks';
+import { useUpdateOldFiles } from './hooks';
 import { ObjectType } from 'src/types';
 import { FoundationModel } from 'src/models/FoundationModel';
 
 const WallRenderer = (wallModel: WallModel) => {
-  useUpdataOldFiles(wallModel);
+  useUpdateOldFiles(wallModel);
 
   const {
     id,
@@ -82,7 +82,7 @@ const WallRenderer = (wallModel: WallModel) => {
       {/* handles */}
       {selected && !locked && (
         <>
-          {lx > 0.5 && <WallMoveHandleWarpper ply={ly} phz={hz} />}
+          {lx > 0.5 && <WallMoveHandleWrapper ply={ly} phz={hz} />}
           <WallResizeHandleWrapper
             id={id}
             parentLz={foundation.lz}

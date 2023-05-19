@@ -89,7 +89,7 @@ export const Shutter = ({ cx, cz = 0, lx, lz, color, showLeft, showRight, spacin
   );
 };
 
-const useUpdataOldFiles = (windowModel: WindowModel) => {
+const useUpdateOldFiles = (windowModel: WindowModel) => {
   const fileChanged = useStore(Selector.fileChanged);
   useEffect(() => {
     if (
@@ -188,7 +188,7 @@ const Window = (windowModel: WindowModel) => {
 
   const GROUP_NAME = `${WINDOW_GROUP_NAME} ${id}`;
 
-  useUpdataOldFiles(windowModel);
+  useUpdateOldFiles(windowModel);
 
   const setCommonStore = useStore(Selector.set);
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);

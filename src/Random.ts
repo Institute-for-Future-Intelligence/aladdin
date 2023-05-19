@@ -26,7 +26,7 @@ export class Random {
     return r;
   }
 
-  // return a random number in a poisson distribution with the specified lamba.
+  // return a random number in a poisson distribution with the specified lambda.
   public static poisson(lambda: number): number {
     let x = 0,
       p = Math.exp(-lambda),

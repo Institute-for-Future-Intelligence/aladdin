@@ -96,7 +96,7 @@ const Ground = () => {
   const oldRotationRef = useRef<number[]>([0, 0, 1]);
   const newRotationRef = useRef<number[]>([0, 0, 1]);
   const oldHumanOrPlantParentIdRef = useRef<string | null>(null);
-  const oldCuoidParentIdRef = useRef<string | null>(null);
+  const oldCuboidParentIdRef = useRef<string | null>(null);
   const absPosMapRef = useRef<Map<string, Vector3>>(new Map());
   const polygonsAbsPosMapRef = useRef<Map<string, Vector2[]>>(new Map());
   const wallsAbsPosMapRef = useRef<Map<string, WallAbsPos>>(new Map());
@@ -669,9 +669,9 @@ const Ground = () => {
           }
         }
         if (elem.type === ObjectType.Foundation) {
-          const solarsPanelOnRoof = getSolarPanelsOnRoof(elem.id);
-          if (solarsPanelOnRoof.length > 0) {
-            for (const e of solarsPanelOnRoof) {
+          const solarPanelsOnRoof = getSolarPanelsOnRoof(elem.id);
+          if (solarPanelsOnRoof.length > 0) {
+            for (const e of solarPanelsOnRoof) {
               const centerRelPos = new Vector3(e.cx, e.cy);
               newChildrenPositionsMapRef.current.set(e.id, centerRelPos);
             }
@@ -833,7 +833,7 @@ const Ground = () => {
           console.log(undoableMove);
         } else {
           const isCuboid = elem.type === ObjectType.Cuboid;
-          const oldParentId = isCuboid ? oldCuoidParentIdRef.current : oldHumanOrPlantParentIdRef.current;
+          const oldParentId = isCuboid ? oldCuboidParentIdRef.current : oldHumanOrPlantParentIdRef.current;
           const newParentId = isCuboid ? elem.parentId : newHumanOrPlantParentId;
           const undoableMove = {
             name: 'Move',
@@ -1179,9 +1179,9 @@ const Ground = () => {
               }
             }
             if (selectedElement.type === ObjectType.Foundation) {
-              const solarsPanelOnRoof = getSolarPanelsOnRoof(selectedElement.id);
-              if (solarsPanelOnRoof.length > 0) {
-                for (const e of solarsPanelOnRoof) {
+              const solarPanelsOnRoof = getSolarPanelsOnRoof(selectedElement.id);
+              if (solarPanelsOnRoof.length > 0) {
+                for (const e of solarPanelsOnRoof) {
                   const centerRelPos = new Vector3(e.cx, e.cy);
                   oldChildrenPositionsMapRef.current.set(e.id, centerRelPos);
                 }
@@ -1203,7 +1203,7 @@ const Ground = () => {
               if (isGroupable(selectedElement) && selectedElement.parentId === GROUND_ID) {
                 handleGroupMaster(e, selectedElement as GroupableModel);
               }
-              oldCuoidParentIdRef.current = selectedElement.parentId;
+              oldCuboidParentIdRef.current = selectedElement.parentId;
               const moveHandleType = useStore.getState().moveHandleType;
               if (moveHandleType) {
                 const { rot } = Util.getWorldDataById(selectedElement.id);
@@ -1358,9 +1358,9 @@ const Ground = () => {
                   }
                 }
               }
-              const solarsPanelOnRoof = getSolarPanelsOnRoof(selectedElement.id);
-              if (solarsPanelOnRoof.length > 0) {
-                for (const e of solarsPanelOnRoof) {
+              const solarPanelsOnRoof = getSolarPanelsOnRoof(selectedElement.id);
+              if (solarPanelsOnRoof.length > 0) {
+                for (const e of solarPanelsOnRoof) {
                   const centerAbsPos = new Vector3(e.cx * selectedElement.lx, e.cy * selectedElement.ly).applyEuler(
                     new Euler(0, 0, selectedElement.rotation[2]),
                   );

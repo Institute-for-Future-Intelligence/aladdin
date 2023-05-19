@@ -1058,7 +1058,7 @@ const Foundation = (foundationModel: FoundationModel) => {
     });
   };
 
-  const handleUnoableMoveWall = (wall: WallModel, newAngle: number, newJoints: string[][]) => {
+  const handleUndoableMoveWall = (wall: WallModel, newAngle: number, newJoints: string[][]) => {
     const undoableMove = {
       name: 'Move Wall',
       timestamp: Date.now(),
@@ -1560,7 +1560,7 @@ const Foundation = (foundationModel: FoundationModel) => {
 
             checkWallLoop(wall.id);
 
-            handleUnoableMoveWall(wall, newAngle, [[...newLeftJoints], [...newRightJoints]]);
+            handleUndoableMoveWall(wall, newAngle, [[...newLeftJoints], [...newRightJoints]]);
 
             flipCurrWallRef.current = false;
             flipLeftHandSideWallRef.current = false;
@@ -1818,7 +1818,7 @@ const Foundation = (foundationModel: FoundationModel) => {
 
   const alignPointer = (anchor: Vector3, p: Vector3, handle: ResizeHandleType, targetId?: string | null) => {
     const [alignedToWallX, alignedToWallY] = alignToWall(p);
-    const [alignedToAxisX, alignedToAxisY] = alignToAxis(anchor, p, handle); // cooridnate after align to axis
+    const [alignedToAxisX, alignedToAxisY] = alignToAxis(anchor, p, handle); // coordinates after align to axis
 
     const alignedX = getClosestAlignedPoint(p.x, alignedToWallX, alignedToAxisX);
     const alignedY = getClosestAlignedPoint(p.y, alignedToWallY, alignedToAxisY);

@@ -18,7 +18,7 @@ import {
   getGroundTemperatureAtMinute,
   getLightAbsorption,
   getOutsideTemperatureAtMinute,
-  U_VALUE_OPENNING,
+  U_VALUE_OPENING,
 } from './heatTools';
 import {
   computeDeclinationAngle,
@@ -770,7 +770,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         } else {
           const deltaT = currentOutsideTemperatureRef.current - setpoint;
           // use a large U-value for an open door (not meant to be accurate, but as an indicator of something wrong)
-          updateHeatExchangeNow(door.id, (deltaT * area * U_VALUE_OPENNING * 0.001) / timesPerHour);
+          updateHeatExchangeNow(door.id, (deltaT * area * U_VALUE_OPENING * 0.001) / timesPerHour);
         }
       }
     }
@@ -853,7 +853,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         if (partial && wall.openToOutside) {
           // use a large U-value for the open area (not meant to be accurate, but as an indicator of something wrong)
           heatExchange +=
-            ((currentOutsideTemperatureRef.current - setpoint) * (frameArea - filledArea) * U_VALUE_OPENNING * 0.001) /
+            ((currentOutsideTemperatureRef.current - setpoint) * (frameArea - filledArea) * U_VALUE_OPENING * 0.001) /
             timesPerHour;
         }
         updateHeatExchangeNow(wall.id, heatExchange);
@@ -863,7 +863,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
           const area = Util.getPolygonArea(wallVertices);
           const deltaT = currentOutsideTemperatureRef.current - setpoint;
           // use a large U-value for an open wall (not meant to be accurate, but as an indicator of something wrong)
-          updateHeatExchangeNow(wall.id, (deltaT * area * U_VALUE_OPENNING * 0.001) / timesPerHour);
+          updateHeatExchangeNow(wall.id, (deltaT * area * U_VALUE_OPENING * 0.001) / timesPerHour);
         }
       }
     }

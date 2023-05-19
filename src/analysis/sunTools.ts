@@ -108,7 +108,7 @@ export const calculatePeakRadiation = (
   altitude: number,
   airMassType: AirMass,
 ) => {
-  // don't use the 1.1 prefactor as we consider diffuse radiation in the ASHRAE model
+  // don't use the 1.1 factor as we consider diffuse radiation in the ASHRAE model
   return (
     getExtraterrestrialRadiation(dayOfYear) *
     Math.pow(0.7, Math.pow(computeAirMass(airMassType, sunDirection, altitude), 0.678))

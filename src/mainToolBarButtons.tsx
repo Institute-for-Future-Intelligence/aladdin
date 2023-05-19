@@ -109,8 +109,7 @@ const MainToolBarButtons = () => {
       } else {
         if (state.selectedElement) {
           if (isGroupable(state.selectedElement)) {
-            const baseId = Util.getBaseId(state.selectedElement.id);
-            state.groupMasterId = baseId;
+            state.groupMasterId = Util.getBaseId(state.selectedElement.id);
           } else {
             const baseId = Util.getBaseId(state.selectedElement.foundationId ?? state.selectedElement.parentId);
             state.groupMasterId = baseId;
@@ -316,6 +315,7 @@ const MainToolBarButtons = () => {
         />
         {(objectTypeToAdd === objectType || addedElemId) && needLock && actionModeLock && (
           <img
+            alt={'Tiny lock'}
             src={TinyLockImage}
             style={{
               marginLeft: '-2px', // this is used to overlay the images a bit

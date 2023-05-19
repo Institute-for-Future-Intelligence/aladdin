@@ -3,10 +3,8 @@
  */
 
 import React, { useRef, useState } from 'react';
-import { Mesh, Vector3 } from 'three';
+import { Mesh } from 'three';
 import { Box } from '@react-three/drei';
-import { useRefStore } from 'src/stores/commonRef';
-import { useStore } from 'src/stores/common';
 import { MoveHandleType, ResizeHandleType } from 'src/types';
 import { WindowType } from 'src/models/WindowModel';
 import WindowResizeHandle from './windowResizeHandle';
