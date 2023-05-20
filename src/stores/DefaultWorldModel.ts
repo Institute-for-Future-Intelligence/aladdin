@@ -10,7 +10,7 @@ import { WorldModel } from '../models/WorldModel';
 import { GroundModel } from '../models/GroundModel';
 import { HumanModel } from '../models/HumanModel';
 import short from 'short-uuid';
-import { DEFAULT_ADDRESS, GROUND_ID } from '../constants';
+import { DEFAULT_ADDRESS, DEFAULT_LEAF_OFF_DAY, DEFAULT_LEAF_OUT_DAY, GROUND_ID } from '../constants';
 import { HumanData } from '../HumanData';
 import { immerable } from 'immer';
 
@@ -27,6 +27,8 @@ export class DefaultWorldModel implements WorldModel {
   longitude: number;
   address: string;
   countryCode: string;
+  leafDayOfYear1?: number;
+  leafDayOfYear2?: number;
   airAttenuationCoefficient: number;
   airConvectiveCoefficient: number;
   timesPerHour: number;
@@ -67,6 +69,10 @@ export class DefaultWorldModel implements WorldModel {
       thermalDiffusivity: 0.05,
       snowReflectionFactors: new Array(12).fill(0),
     } as GroundModel;
+
+    // The default values are for Natick, MA
+    this.leafDayOfYear1 = DEFAULT_LEAF_OUT_DAY;
+    this.leafDayOfYear2 = DEFAULT_LEAF_OFF_DAY;
 
     this.airAttenuationCoefficient = 0.01;
     this.airConvectiveCoefficient = 5;

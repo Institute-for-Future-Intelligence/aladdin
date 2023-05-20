@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import AppleSpringImage from './resources/apple_spring.png';
@@ -109,197 +109,104 @@ export class TreeData {
   }
 
   // month is from 1 to 12
-  static fetchTextureImage(name: string, month: number, latitude: number) {
+  static fetchTextureImage(name: string, dayOfYear: number, latitude: number, leafOutDay: number, leafOffDay: number) {
     let textureImg;
+    const lastDayOfSpring = 150;
+    const lastDayOfSummer = 270;
+    const northernHemisphere = latitude > 0;
     switch (name) {
       case TreeType.Apple:
-        if (latitude > 0) {
-          if (month >= 12 || month <= 3) {
-            textureImg = AppleWinterImage;
-          } else if (month > 3 && month <= 5) {
-            textureImg = AppleSpringImage;
-          } else if (month > 5 && month <= 9) {
-            textureImg = AppleSummerImage;
-          } else {
-            textureImg = AppleFallImage;
-          }
+        if (dayOfYear >= leafOffDay || dayOfYear <= leafOutDay) {
+          textureImg = northernHemisphere ? AppleWinterImage : AppleSummerImage;
+        } else if (dayOfYear > leafOutDay && dayOfYear <= lastDayOfSpring) {
+          textureImg = northernHemisphere ? AppleSpringImage : AppleFallImage;
+        } else if (dayOfYear > lastDayOfSpring && dayOfYear <= lastDayOfSummer) {
+          textureImg = northernHemisphere ? AppleSummerImage : AppleWinterImage;
         } else {
-          if (month >= 12 || month <= 3) {
-            textureImg = AppleSummerImage;
-          } else if (month > 3 && month <= 5) {
-            textureImg = AppleFallImage;
-          } else if (month > 5 && month <= 9) {
-            textureImg = AppleWinterImage;
-          } else {
-            textureImg = AppleSpringImage;
-          }
+          textureImg = northernHemisphere ? AppleFallImage : AppleSpringImage;
         }
         break;
       case TreeType.Birch:
-        if (latitude > 0) {
-          if (month >= 12 || month <= 3) {
-            textureImg = BirchWinterImage;
-          } else if (month > 3 && month <= 5) {
-            textureImg = BirchSpringImage;
-          } else if (month > 5 && month <= 9) {
-            textureImg = BirchSummerImage;
-          } else {
-            textureImg = BirchFallImage;
-          }
+        if (dayOfYear >= leafOffDay || dayOfYear <= leafOutDay) {
+          textureImg = northernHemisphere ? BirchWinterImage : BirchSummerImage;
+        } else if (dayOfYear > leafOutDay && dayOfYear <= lastDayOfSpring) {
+          textureImg = northernHemisphere ? BirchSpringImage : BirchFallImage;
+        } else if (dayOfYear > lastDayOfSpring && dayOfYear <= lastDayOfSummer) {
+          textureImg = northernHemisphere ? BirchSummerImage : BirchWinterImage;
         } else {
-          if (month >= 12 || month <= 3) {
-            textureImg = BirchSummerImage;
-          } else if (month > 3 && month <= 5) {
-            textureImg = BirchFallImage;
-          } else if (month > 5 && month <= 9) {
-            textureImg = BirchWinterImage;
-          } else {
-            textureImg = BirchSpringImage;
-          }
+          textureImg = northernHemisphere ? BirchFallImage : BirchSpringImage;
         }
         break;
       case TreeType.Coconut:
         textureImg = CoconutImage;
         break;
       case TreeType.Dogwood:
-        if (latitude > 0) {
-          if (month >= 12 || month <= 3) {
-            textureImg = DogwoodWinterImage;
-          } else if (month > 3 && month <= 5) {
-            textureImg = DogwoodSpringImage;
-          } else if (month > 5 && month <= 9) {
-            textureImg = DogwoodSummerImage;
-          } else {
-            textureImg = DogwoodFallImage;
-          }
+        if (dayOfYear >= leafOffDay || dayOfYear <= leafOutDay) {
+          textureImg = northernHemisphere ? DogwoodWinterImage : DogwoodSummerImage;
+        } else if (dayOfYear > leafOutDay && dayOfYear <= lastDayOfSpring) {
+          textureImg = northernHemisphere ? DogwoodSpringImage : DogwoodFallImage;
+        } else if (dayOfYear > lastDayOfSpring && dayOfYear <= lastDayOfSummer) {
+          textureImg = northernHemisphere ? DogwoodSummerImage : DogwoodWinterImage;
         } else {
-          if (month >= 12 || month <= 3) {
-            textureImg = DogwoodSummerImage;
-          } else if (month > 3 && month <= 5) {
-            textureImg = DogwoodFallImage;
-          } else if (month > 5 && month <= 9) {
-            textureImg = DogwoodWinterImage;
-          } else {
-            textureImg = DogwoodSpringImage;
-          }
+          textureImg = northernHemisphere ? DogwoodFallImage : DogwoodSpringImage;
         }
         break;
       case TreeType.Elm:
-        if (latitude > 0) {
-          if (month >= 12 || month <= 3) {
-            textureImg = ElmWinterImage;
-          } else if (month > 3 && month <= 5) {
-            textureImg = ElmSpringImage;
-          } else if (month > 5 && month <= 9) {
-            textureImg = ElmSummerImage;
-          } else {
-            textureImg = ElmFallImage;
-          }
+        if (dayOfYear >= leafOffDay || dayOfYear <= leafOutDay) {
+          textureImg = northernHemisphere ? ElmWinterImage : ElmSummerImage;
+        } else if (dayOfYear > leafOutDay && dayOfYear <= lastDayOfSpring) {
+          textureImg = northernHemisphere ? ElmSpringImage : ElmFallImage;
+        } else if (dayOfYear > lastDayOfSpring && dayOfYear <= lastDayOfSummer) {
+          textureImg = northernHemisphere ? ElmSummerImage : ElmWinterImage;
         } else {
-          if (month >= 12 || month <= 3) {
-            textureImg = ElmSummerImage;
-          } else if (month > 3 && month <= 5) {
-            textureImg = ElmFallImage;
-          } else if (month > 5 && month <= 9) {
-            textureImg = ElmWinterImage;
-          } else {
-            textureImg = ElmSpringImage;
-          }
+          textureImg = northernHemisphere ? ElmFallImage : ElmSpringImage;
         }
         break;
       case TreeType.FanPalm:
         textureImg = FanPalmImage;
         break;
       case TreeType.Linden:
-        if (latitude > 0) {
-          if (month >= 12 || month <= 3) {
-            textureImg = LindenWinterImage;
-          } else if (month > 3 && month <= 5) {
-            textureImg = LindenSpringImage;
-          } else if (month > 5 && month <= 9) {
-            textureImg = LindenSummerImage;
-          } else {
-            textureImg = LindenFallImage;
-          }
+        if (dayOfYear >= leafOffDay || dayOfYear <= leafOutDay) {
+          textureImg = northernHemisphere ? LindenWinterImage : LindenSummerImage;
+        } else if (dayOfYear > leafOutDay && dayOfYear <= lastDayOfSpring) {
+          textureImg = northernHemisphere ? LindenSpringImage : LindenFallImage;
+        } else if (dayOfYear > lastDayOfSpring && dayOfYear <= lastDayOfSummer) {
+          textureImg = northernHemisphere ? LindenSummerImage : LindenWinterImage;
         } else {
-          if (month >= 12 || month <= 3) {
-            textureImg = LindenSummerImage;
-          } else if (month > 3 && month <= 5) {
-            textureImg = LindenFallImage;
-          } else if (month > 5 && month <= 9) {
-            textureImg = LindenWinterImage;
-          } else {
-            textureImg = LindenSpringImage;
-          }
+          textureImg = northernHemisphere ? LindenFallImage : LindenSpringImage;
         }
         break;
       case TreeType.Magnolia:
-        if (latitude > 0) {
-          if (month >= 12 || month <= 3) {
-            textureImg = MagnoliaWinterImage;
-          } else if (month > 3 && month <= 5) {
-            textureImg = MagnoliaSpringImage;
-          } else if (month > 5 && month <= 9) {
-            textureImg = MagnoliaSummerImage;
-          } else {
-            textureImg = MagnoliaFallImage;
-          }
+        if (dayOfYear >= leafOffDay || dayOfYear <= leafOutDay) {
+          textureImg = northernHemisphere ? MagnoliaWinterImage : MagnoliaSummerImage;
+        } else if (dayOfYear > leafOutDay && dayOfYear <= lastDayOfSpring) {
+          textureImg = northernHemisphere ? MagnoliaSpringImage : MagnoliaFallImage;
+        } else if (dayOfYear > lastDayOfSpring && dayOfYear <= lastDayOfSummer) {
+          textureImg = northernHemisphere ? MagnoliaSummerImage : MagnoliaWinterImage;
         } else {
-          if (month >= 12 || month <= 3) {
-            textureImg = MagnoliaSummerImage;
-          } else if (month > 3 && month <= 5) {
-            textureImg = MagnoliaFallImage;
-          } else if (month > 5 && month <= 9) {
-            textureImg = MagnoliaWinterImage;
-          } else {
-            textureImg = MagnoliaSpringImage;
-          }
+          textureImg = northernHemisphere ? MagnoliaFallImage : MagnoliaSpringImage;
         }
         break;
       case TreeType.Maple:
-        if (latitude > 0) {
-          if (month >= 12 || month <= 3) {
-            textureImg = MapleWinterImage;
-          } else if (month > 3 && month <= 5) {
-            textureImg = MapleSpringImage;
-          } else if (month > 5 && month <= 9) {
-            textureImg = MapleSummerImage;
-          } else {
-            textureImg = MapleFallImage;
-          }
+        if (dayOfYear >= leafOffDay || dayOfYear <= leafOutDay) {
+          textureImg = northernHemisphere ? MapleWinterImage : MapleSummerImage;
+        } else if (dayOfYear > leafOutDay && dayOfYear <= lastDayOfSpring) {
+          textureImg = northernHemisphere ? MapleSpringImage : MapleFallImage;
+        } else if (dayOfYear > lastDayOfSpring && dayOfYear <= lastDayOfSummer) {
+          textureImg = northernHemisphere ? MapleSummerImage : MapleWinterImage;
         } else {
-          if (month >= 12 || month <= 3) {
-            textureImg = MapleSummerImage;
-          } else if (month > 3 && month <= 5) {
-            textureImg = MapleFallImage;
-          } else if (month > 5 && month <= 9) {
-            textureImg = MapleWinterImage;
-          } else {
-            textureImg = MapleSpringImage;
-          }
+          textureImg = northernHemisphere ? MapleFallImage : MapleSpringImage;
         }
         break;
       case TreeType.Oak:
-        if (latitude > 0) {
-          if (month >= 12 || month <= 3) {
-            textureImg = OakWinterImage;
-          } else if (month > 3 && month <= 5) {
-            textureImg = OakSpringImage;
-          } else if (month > 5 && month <= 9) {
-            textureImg = OakSummerImage;
-          } else {
-            textureImg = OakFallImage;
-          }
+        if (dayOfYear >= leafOffDay || dayOfYear <= leafOutDay) {
+          textureImg = northernHemisphere ? OakWinterImage : OakSummerImage;
+        } else if (dayOfYear > leafOutDay && dayOfYear <= lastDayOfSpring) {
+          textureImg = northernHemisphere ? OakSpringImage : OakFallImage;
+        } else if (dayOfYear > lastDayOfSpring && dayOfYear <= lastDayOfSummer) {
+          textureImg = northernHemisphere ? OakSummerImage : OakWinterImage;
         } else {
-          if (month >= 12 || month <= 3) {
-            textureImg = OakSummerImage;
-          } else if (month > 3 && month <= 5) {
-            textureImg = OakFallImage;
-          } else if (month > 5 && month <= 9) {
-            textureImg = OakWinterImage;
-          } else {
-            textureImg = OakSpringImage;
-          }
+          textureImg = northernHemisphere ? OakFallImage : OakSpringImage;
         }
         break;
       case TreeType.Spruce:

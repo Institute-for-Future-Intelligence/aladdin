@@ -10,6 +10,10 @@ export const longitude = (state: CommonStoreState) => state.world.longitude;
 
 export const date = (state: CommonStoreState) => state.world.date;
 
+export const leafDayOfYear1 = (state: CommonStoreState) => state.world.leafDayOfYear1;
+
+export const leafDayOfYear2 = (state: CommonStoreState) => state.world.leafDayOfYear2;
+
 export const ground = (state: CommonStoreState) => state.world.ground;
 
 export const address = (state: CommonStoreState) => state.world.address;

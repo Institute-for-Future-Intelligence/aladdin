@@ -15,6 +15,11 @@ export interface WorldModel {
   ground: GroundModel;
   diurnalTemperatureModel: DiurnalTemperatureModel;
 
+  // for northern hemisphere, date > leafDate1 && date < leafDate2 is the leaf season
+  // for southern hemisphere, date < leafDate1 || date > leafDate2 is the leaf season
+  leafDayOfYear1?: number;
+  leafDayOfYear2?: number;
+
   // the minutes of the day when the air temperature reaches the highest
   highestTemperatureTimeInMinutes: number;
 

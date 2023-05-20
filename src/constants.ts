@@ -44,6 +44,8 @@ export const DEFAULT_MODEL_MAP_ZOOM = 10;
 export const LAT_LNG_FRACTION_DIGITS = 4;
 
 export const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+export const DEFAULT_LEAF_OUT_DAY = 105;
+export const DEFAULT_LEAF_OFF_DAY = 320;
 
 export const DEFAULT_SKY_RADIUS = 5000;
 export const DEFAULT_FOV = 45;

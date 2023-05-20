@@ -9,6 +9,8 @@ import * as Selector from '../stores/selector';
 import { ThreeEvent, useFrame, useThree } from '@react-three/fiber';
 import { Billboard, Line, Plane, Sphere } from '@react-three/drei';
 import {
+  DEFAULT_LEAF_OFF_DAY,
+  DEFAULT_LEAF_OUT_DAY,
   GROUND_ID,
   HALF_PI,
   HIGHLIGHT_HANDLE_COLOR,
@@ -60,12 +62,13 @@ const Flower = ({
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
   const date = useStore(Selector.world.date);
   const latitude = useStore(Selector.world.latitude);
+  const leafDayOfYear1 = useStore(Selector.world.leafDayOfYear1) ?? DEFAULT_LEAF_OUT_DAY;
+  const leafDayOfYear2 = useStore(Selector.world.leafDayOfYear2) ?? DEFAULT_LEAF_OFF_DAY;
   const selectMe = useStore(Selector.selectMe);
   const getElementById = useStore(Selector.getElementById);
   const moveHandleType = useStore(Selector.moveHandleType);
   const hoveredHandle = useStore(Selector.hoveredHandle);
 
-  const now = new Date(date);
   const [hovered, setHovered] = useState(false);
   const [updateFlag, setUpdateFlag] = useState(false);
   const { gl } = useThree();
@@ -77,10 +80,14 @@ const Flower = ({
   const interactionPlaneRef = useRef<Mesh>(null);
 
   const flowerModel = getElementById(id) as FlowerModel;
-  const month = now.getMonth() + 1;
-  // TODO: This needs to depend on location more accurately
-  const noLeaves = latitude > 0 ? month < 4 || month > 10 : month >= 4 && month <= 10;
   const lang = { lng: language };
+
+  const noLeaves = useMemo(() => {
+    const dayOfYear = Util.dayOfYear(new Date(date));
+    return latitude > 0
+      ? dayOfYear < leafDayOfYear1 || dayOfYear > leafDayOfYear2
+      : dayOfYear >= leafDayOfYear1 && dayOfYear <= leafDayOfYear2;
+  }, [date, leafDayOfYear1, leafDayOfYear2, latitude]);
 
   const fileChangedRef = useRef(false);
   const fileChangedState = useStore(Selector.fileChanged);

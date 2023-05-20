@@ -18,6 +18,8 @@ import * as Selector from '../stores/selector';
 import { ThreeEvent, useFrame, useThree } from '@react-three/fiber';
 import { Billboard, Box, Cone, Line, Plane, Sphere } from '@react-three/drei';
 import {
+  DEFAULT_LEAF_OFF_DAY,
+  DEFAULT_LEAF_OUT_DAY,
   GROUND_ID,
   HALF_PI,
   HIGHLIGHT_HANDLE_COLOR,
@@ -75,6 +77,8 @@ const Tree = ({
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
   const date = useStore(Selector.world.date);
   const latitude = useStore(Selector.world.latitude);
+  const leafDayOfYear1 = useStore(Selector.world.leafDayOfYear1) ?? DEFAULT_LEAF_OUT_DAY;
+  const leafDayOfYear2 = useStore(Selector.world.leafDayOfYear2) ?? DEFAULT_LEAF_OFF_DAY;
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const selectMe = useStore(Selector.selectMe);
   const getElementById = useStore(Selector.getElementById);
@@ -82,7 +86,6 @@ const Tree = ({
   const resizeHandleType = useStore(Selector.resizeHandleType);
   const hoveredHandle = useStore(Selector.hoveredHandle);
 
-  const now = new Date(date);
   const [hovered, setHovered] = useState(false);
   const [updateFlag, setUpdateFlag] = useState(false);
   const { gl } = useThree();
@@ -101,15 +104,19 @@ const Tree = ({
 
   const lang = { lng: language };
   const treeModel = getElementById(id) as TreeModel;
-  const month = now.getMonth() + 1;
 
-  // TODO: This needs to depend on location more accurately
+  const dayOfYear = useMemo(() => {
+    return Util.dayOfYear(new Date(date));
+  }, [date]);
+
   const noLeaves = useMemo(() => {
     return (
       !TreeData.isEvergreen(treeModel ? treeModel.name : TreeType.Dogwood) &&
-      (latitude > 0 ? month < 4 || month > 10 : month >= 4 && month <= 10)
+      (latitude > 0
+        ? dayOfYear < leafDayOfYear1 || dayOfYear > leafDayOfYear2
+        : dayOfYear >= leafDayOfYear1 && dayOfYear <= leafDayOfYear2)
     );
-  }, [month, latitude, treeModel?.name]);
+  }, [dayOfYear, leafDayOfYear1, leafDayOfYear2, latitude, treeModel?.name]);
 
   const fileChangedRef = useRef(false);
   const fileChangedState = useStore(Selector.fileChanged);
@@ -139,15 +146,18 @@ const Tree = ({
   }, [contentRef]);
 
   const textureLoader = useMemo(() => {
-    return new TextureLoader().load(TreeData.fetchTextureImage(name, month, latitude), (texture) => {
-      if (flip) {
-        texture.wrapS = RepeatWrapping;
-        texture.repeat.x = -1;
-      }
-      setTexture(texture);
-      setUpdateFlag(!updateFlag);
-    });
-  }, [name, month, latitude, flip]);
+    return new TextureLoader().load(
+      TreeData.fetchTextureImage(name, dayOfYear, latitude, leafDayOfYear1, leafDayOfYear2),
+      (texture) => {
+        if (flip) {
+          texture.wrapS = RepeatWrapping;
+          texture.repeat.x = -1;
+        }
+        setTexture(texture);
+        setUpdateFlag(!updateFlag);
+      },
+    );
+  }, [name, dayOfYear, latitude, flip]);
   const [texture, setTexture] = useState(textureLoader);
 
   const labelText = useMemo(() => {
