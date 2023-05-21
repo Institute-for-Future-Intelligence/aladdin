@@ -157,7 +157,7 @@ const Tree = ({
         setUpdateFlag(!updateFlag);
       },
     );
-  }, [name, dayOfYear, latitude, flip]);
+  }, [name, dayOfYear, latitude, flip, leafDayOfYear1, leafDayOfYear2]);
   const [texture, setTexture] = useState(textureLoader);
 
   const labelText = useMemo(() => {

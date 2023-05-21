@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React from 'react';
@@ -16,6 +16,7 @@ import { UndoableRemoveAll } from '../../../undo/UndoableRemoveAll';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
+import { DEFAULT_LEAF_OFF_DAY, DEFAULT_LEAF_OUT_DAY } from '../../../constants';
 
 export const GroundMenu = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
@@ -25,7 +26,9 @@ export const GroundMenu = React.memo(() => {
   const updateElementLockById = useStore(Selector.updateElementLockById);
   const updateAllElementLocks = useStore(Selector.updateAllElementLocks);
   const addUndoable = useStore(Selector.addUndoable);
-
+  const latitude = useStore(Selector.world.latitude);
+  const leafDayOfYear1 = useStore(Selector.world.leafDayOfYear1) ?? DEFAULT_LEAF_OUT_DAY;
+  const leafDayOfYear2 = useStore(Selector.world.leafDayOfYear2) ?? DEFAULT_LEAF_OFF_DAY;
   const albedo = useStore((state) => state.world.ground.albedo);
   const groundColor = useStore(Selector.viewState.groundColor);
   const groundImage = useStore(Selector.viewState.groundImage);
@@ -82,6 +85,8 @@ export const GroundMenu = React.memo(() => {
     }
     return false;
   };
+
+  const northHemisphere = latitude > 0;
 
   return (
     <Menu.ItemGroup>
@@ -392,6 +397,87 @@ export const GroundMenu = React.memo(() => {
           />
         </SubMenu>
       )}
+
+      <SubMenu
+        key={'vegetation'}
+        title={i18n.t('groundMenu.Vegetation', { lng: language })}
+        style={{ paddingLeft: '24px' }}
+      >
+        <Menu>
+          <Menu.Item style={{ height: '36px', paddingLeft: '6px', marginTop: 10 }} key={'leaf-out-day'}>
+            <InputNumber
+              addonBefore={i18n.t(northHemisphere ? 'groundMenu.LeafOutDay' : 'groundMenu.LeafOffDay', lang)}
+              addonAfter={'(1-150)'}
+              style={{ width: '300px' }}
+              min={1}
+              max={150}
+              step={1}
+              precision={0}
+              value={leafDayOfYear1}
+              onChange={(value) => {
+                const oldDay = leafDayOfYear1;
+                const newDay = value;
+                const undoableChange = {
+                  name: 'Set Leaf Day 1',
+                  timestamp: Date.now(),
+                  oldValue: oldDay,
+                  newValue: newDay,
+                  undo: () => {
+                    setCommonStore((state) => {
+                      state.world.leafDayOfYear1 = undoableChange.oldValue as number;
+                    });
+                  },
+                  redo: () => {
+                    setCommonStore((state) => {
+                      state.world.leafDayOfYear1 = undoableChange.newValue as number;
+                    });
+                  },
+                } as UndoableChange;
+                addUndoable(undoableChange);
+                setCommonStore((state) => {
+                  state.world.leafDayOfYear1 = newDay as number;
+                });
+              }}
+            />
+          </Menu.Item>
+          <Menu.Item style={{ height: '36px', paddingLeft: '6px', marginTop: 0 }} key={'leaf-shed-day'}>
+            <InputNumber
+              addonBefore={i18n.t(northHemisphere ? 'groundMenu.LeafOffDay' : 'groundMenu.LeafOutDay', lang)}
+              addonAfter={'(215-365)'}
+              style={{ width: '300px' }}
+              min={215}
+              max={365}
+              step={1}
+              precision={0}
+              value={leafDayOfYear2}
+              onChange={(value) => {
+                const oldDay = leafDayOfYear2;
+                const newDay = value;
+                const undoableChange = {
+                  name: 'Set Leaf Day 2',
+                  timestamp: Date.now(),
+                  oldValue: oldDay,
+                  newValue: newDay,
+                  undo: () => {
+                    setCommonStore((state) => {
+                      state.world.leafDayOfYear2 = undoableChange.oldValue as number;
+                    });
+                  },
+                  redo: () => {
+                    setCommonStore((state) => {
+                      state.world.leafDayOfYear2 = undoableChange.newValue as number;
+                    });
+                  },
+                } as UndoableChange;
+                addUndoable(undoableChange);
+                setCommonStore((state) => {
+                  state.world.leafDayOfYear2 = newDay as number;
+                });
+              }}
+            />
+          </Menu.Item>
+        </Menu>
+      </SubMenu>
 
       <Menu>
         <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'ground-albedo'}>

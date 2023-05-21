@@ -588,6 +588,9 @@ export const i18n_en = {
     },
 
     groundMenu: {
+      Vegetation: 'Vegetation',
+      LeafOutDay: 'Leaf-Out Day',
+      LeafOffDay: 'Leaf-Off Day',
       Albedo: 'Albedo',
       ImageOnGround: 'Image on Ground',
       WaterSurface: 'Water Surface',

@@ -593,6 +593,9 @@ export const i18n_ua = {
     },
 
     groundMenu: {
+      Vegetation: 'Vegetation',
+      LeafOutDay: 'Leaf-Out Day',
+      LeafOffDay: 'Leaf-Off Day',
       Albedo: 'Albedo',
       ImageOnGround: 'Image on Ground',
       WaterSurface: 'Water Surface',
@@ -1073,6 +1076,7 @@ export const i18n_ua = {
       Full: 'Full',
       Partial: 'Partial',
       Empty: 'Empty',
+      OpenToOutside: 'Open to Outside',
       EavesLength: 'Eaves Overhang Length',
       Parapet: 'Parapet',
       ParapetColor: 'Parapet Color',

@@ -111,8 +111,8 @@ export class TreeData {
   // month is from 1 to 12
   static fetchTextureImage(name: string, dayOfYear: number, latitude: number, leafOutDay: number, leafOffDay: number) {
     let textureImg;
-    const lastDayOfSpring = 150;
-    const lastDayOfSummer = 270;
+    const lastDayOfSpring = leafOutDay + 30;
+    const lastDayOfSummer = leafOffDay - 30;
     const northernHemisphere = latitude > 0;
     switch (name) {
       case TreeType.Apple:

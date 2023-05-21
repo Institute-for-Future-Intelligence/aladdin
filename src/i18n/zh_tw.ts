@@ -586,6 +586,9 @@ export const i18n_zh_tw = {
     },
 
     groundMenu: {
+      Vegetation: '植被',
+      LeafOutDay: '樹葉長出的日子',
+      LeafOffDay: '樹葉脫落的日子',
       Albedo: '反照率',
       ImageOnGround: '地面顯示圖像',
       WaterSurface: '水面',
