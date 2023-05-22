@@ -24,6 +24,9 @@ export interface WindowModel extends ElementModel {
 
   windowType: WindowType;
   archHeight: number;
+
+  // Is this window inside a building? If yes, this will be no heat exchange. By default, it is not.
+  interior?: boolean;
 }
 
 export interface ShutterProps {

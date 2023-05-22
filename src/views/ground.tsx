@@ -1075,38 +1075,41 @@ const Ground = () => {
     if (isSettingFoundationStartPointRef.current) {
       setRayCast(e);
       const intersects = ray.intersectObjects([groundPlaneRef.current]);
-      useRefStore.getState().setEnableOrbitController(false);
-      setCommonStore((state) => {
-        state.moveHandleType = null;
-        state.resizeHandleType = ResizeHandleType.LowerRight;
-        state.resizeAnchor.copy(intersects[0].point);
-      });
-      isSettingFoundationStartPointRef.current = false;
-      isSettingFoundationEndPointRef.current = true;
+      if (intersects.length > 0) {
+        useRefStore.getState().setEnableOrbitController(false);
+        setCommonStore((state) => {
+          state.moveHandleType = null;
+          state.resizeHandleType = ResizeHandleType.LowerRight;
+          state.resizeAnchor.copy(intersects[0].point);
+        });
+        isSettingFoundationStartPointRef.current = false;
+        isSettingFoundationEndPointRef.current = true;
+      }
       return;
     }
     // adding cuboid start point
     if (isSettingCuboidStartPointRef.current) {
       setRayCast(e);
       const intersects = ray.intersectObjects([groundPlaneRef.current]);
-      useRefStore.getState().setEnableOrbitController(false);
-      setCommonStore((state) => {
-        state.moveHandleType = null;
-        state.resizeHandleType = ResizeHandleType.LowerRight;
-        state.resizeAnchor.copy(intersects[0].point);
-
-        if (grabRef.current) {
-          const firstIntersectedCuboidObject = getFirstStackableCuboid(e, grabRef.current?.id);
-          if (firstIntersectedCuboidObject) {
-            const intersects = ray.intersectObjects([firstIntersectedCuboidObject.eventObject]);
-            if (intersects.length !== 0) {
-              state.resizeAnchor.copy(intersects[0].point);
+      if (intersects.length > 0) {
+        useRefStore.getState().setEnableOrbitController(false);
+        setCommonStore((state) => {
+          state.moveHandleType = null;
+          state.resizeHandleType = ResizeHandleType.LowerRight;
+          state.resizeAnchor.copy(intersects[0].point);
+          if (grabRef.current) {
+            const firstIntersectedCuboidObject = getFirstStackableCuboid(e, grabRef.current?.id);
+            if (firstIntersectedCuboidObject) {
+              const intersects = ray.intersectObjects([firstIntersectedCuboidObject.eventObject]);
+              if (intersects.length > 0) {
+                state.resizeAnchor.copy(intersects[0].point);
+              }
             }
           }
-        }
-      });
-      isSettingCuboidStartPointRef.current = false;
-      isSettingCuboidEndPointRef.current = true;
+        });
+        isSettingCuboidStartPointRef.current = false;
+        isSettingCuboidEndPointRef.current = true;
+      }
       return;
     }
 
@@ -1502,31 +1505,33 @@ const Ground = () => {
       if (objectTypeToAdd !== ObjectType.None) {
         setRayCast(e);
         const intersects = ray.intersectObjects([groundPlaneRef.current]);
-        const p = intersects[0].point;
-        switch (objectTypeToAdd) {
-          case ObjectType.Foundation: {
-            const foundation = addElement(groundModel, p);
-            if (foundation) {
-              setCommonStore((state) => {
-                state.addedFoundationId = foundation.id;
-                state.objectTypeToAdd = ObjectType.None;
-              });
-              grabRef.current = foundation;
-              isSettingFoundationStartPointRef.current = true;
+        if (intersects.length > 0) {
+          const p = intersects[0].point;
+          switch (objectTypeToAdd) {
+            case ObjectType.Foundation: {
+              const foundation = addElement(groundModel, p);
+              if (foundation) {
+                setCommonStore((state) => {
+                  state.addedFoundationId = foundation.id;
+                  state.objectTypeToAdd = ObjectType.None;
+                });
+                grabRef.current = foundation;
+                isSettingFoundationStartPointRef.current = true;
+              }
+              break;
             }
-            break;
-          }
-          case ObjectType.Cuboid: {
-            const cuboid = addElement(groundModel, p);
-            if (cuboid) {
-              setCommonStore((state) => {
-                state.addedCuboidId = cuboid.id;
-                state.objectTypeToAdd = ObjectType.None;
-              });
-              grabRef.current = cuboid;
-              isSettingCuboidStartPointRef.current = true;
+            case ObjectType.Cuboid: {
+              const cuboid = addElement(groundModel, p);
+              if (cuboid) {
+                setCommonStore((state) => {
+                  state.addedCuboidId = cuboid.id;
+                  state.objectTypeToAdd = ObjectType.None;
+                });
+                grabRef.current = cuboid;
+                isSettingCuboidStartPointRef.current = true;
+              }
+              break;
             }
-            break;
           }
         }
       }
@@ -1535,13 +1540,12 @@ const Ground = () => {
       if (grabRef.current && (isSettingFoundationStartPointRef.current || isSettingCuboidStartPointRef.current)) {
         setRayCast(e);
         let intersects = ray.intersectObjects([groundPlaneRef.current]);
+        if (intersects.length === 0) return;
         const p = intersects[0].point;
-
         if (grabRef.current.type === ObjectType.Foundation) {
           setElementPosition(grabRef.current.id, p.x, p.y);
         } else if (grabRef.current.type === ObjectType.Cuboid) {
           const firstIntersectedCuboidObject = getFirstStackableCuboid(e, grabRef.current.id);
-
           if (firstIntersectedCuboidObject) {
             intersects = ray.intersectObjects([firstIntersectedCuboidObject.eventObject]);
             if (intersects.length === 0) return;

@@ -1108,6 +1108,7 @@ export const i18n_es = {
       WindowType: 'Window Type',
       Default: 'Default',
       Arched: 'Arched',
+      Interior: 'Interior',
     },
 
     roofMenu: {
@@ -1187,6 +1188,7 @@ export const i18n_es = {
       Arched: 'Arched',
       Filled: 'Filled',
       FrameColor: 'Frame Color',
+      Interior: 'Interior',
     },
 
     siteInfoPanel: {

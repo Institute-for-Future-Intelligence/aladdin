@@ -75,6 +75,17 @@ export const DoorMenu = React.memo(() => {
     });
   };
 
+  const updateInteriorById = (id: string, interior: boolean) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === id && e.type === ObjectType.Door) {
+          (e as DoorModel).interior = interior;
+          break;
+        }
+      }
+    });
+  };
+
   const renderTypeSubMenu = () => {
     if (!door) {
       return null;
@@ -151,6 +162,31 @@ export const DoorMenu = React.memo(() => {
               }}
             >
               {i18n.t('doorMenu.Filled', lang)}
+            </Checkbox>
+          </Menu.Item>
+          <Menu.Item style={{ paddingLeft: '10px' }}>
+            <Checkbox
+              checked={!!door.interior}
+              onChange={(e) => {
+                const undoableChange = {
+                  name: 'Set Door Interior',
+                  timestamp: Date.now(),
+                  oldValue: !!door?.interior,
+                  newValue: e.target.checked,
+                  changedElementId: door.id,
+                  changedElementType: door.type,
+                  undo: () => {
+                    updateInteriorById(undoableChange.changedElementId, undoableChange.oldValue as boolean);
+                  },
+                  redo: () => {
+                    updateInteriorById(undoableChange.changedElementId, undoableChange.newValue as boolean);
+                  },
+                } as UndoableChange;
+                addUndoable(undoableChange);
+                updateInteriorById(door.id, e.target.checked);
+              }}
+            >
+              {i18n.t('doorMenu.Interior', lang)}
             </Checkbox>
           </Menu.Item>
           {renderTypeSubMenu()}

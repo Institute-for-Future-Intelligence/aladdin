@@ -1182,93 +1182,91 @@ export const FoundationMenu = React.memo(() => {
         {i18n.t('foundationMenu.AddPolygon', lang)}
       </Menu.Item>
 
-      {editable && (
-        <SubMenu
-          key={'building-hvac-system'}
-          title={i18n.t('word.BuildingHVACSystem', lang)}
-          style={{ paddingLeft: '24px' }}
-        >
-          <Menu>
-            <Menu.Item key={'hvac-system-id'} style={{ height: '36px', paddingLeft: '18px', marginTop: 10 }}>
-              <Space style={{ width: '40px', paddingLeft: '0px', textAlign: 'left' }}>{'ID:'}</Space>
-              <Input
-                style={{ width: '180px' }}
-                value={hvacId}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  let s: string | undefined = e.target.value;
-                  if (s.trim().length === 0) s = undefined;
-                  setHvacId(s);
-                }}
-                onPressEnter={() => updateHvacId(hvacId)}
-                onBlur={() => updateHvacId(hvacId)}
-              />
-            </Menu.Item>
-            <Menu.Item key={'thermostat-temperature'}>
-              <Space style={{ width: '160px' }}>{i18n.t('word.ThermostatSetpoint', lang) + ':'}</Space>
-              <InputNumber
-                min={0}
-                max={30}
-                step={1}
-                style={{ width: 60 }}
-                precision={1}
-                value={foundation.hvacSystem?.thermostatSetpoint ?? 20}
-                onChange={(value) => {
-                  const oldValue = foundation.hvacSystem?.thermostatSetpoint ?? 20;
-                  const newValue = value;
-                  const undoableChange = {
-                    name: 'Change Thermostat Setpoint',
-                    timestamp: Date.now(),
-                    oldValue: oldValue,
-                    newValue: newValue,
-                    undo: () => {
-                      updateFoundationThermostatSetpointById(foundation.id, undoableChange.oldValue as number);
-                    },
-                    redo: () => {
-                      updateFoundationThermostatSetpointById(foundation.id, undoableChange.newValue as number);
-                    },
-                  } as UndoableChange;
-                  addUndoable(undoableChange);
-                  updateFoundationThermostatSetpointById(foundation.id, newValue);
-                }}
-              />
-              <Space style={{ paddingLeft: '10px' }}>°C</Space>
-            </Menu.Item>
+      <SubMenu
+        key={'building-hvac-system'}
+        title={i18n.t('word.BuildingHVACSystem', lang)}
+        style={{ paddingLeft: '24px' }}
+      >
+        <Menu>
+          <Menu.Item key={'hvac-system-id'} style={{ height: '36px', paddingLeft: '18px', marginTop: 10 }}>
+            <Space style={{ width: '40px', paddingLeft: '0px', textAlign: 'left' }}>{'ID:'}</Space>
+            <Input
+              style={{ width: '180px' }}
+              value={hvacId}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                let s: string | undefined = e.target.value;
+                if (s.trim().length === 0) s = undefined;
+                setHvacId(s);
+              }}
+              onPressEnter={() => updateHvacId(hvacId)}
+              onBlur={() => updateHvacId(hvacId)}
+            />
+          </Menu.Item>
+          <Menu.Item key={'thermostat-temperature'}>
+            <Space style={{ width: '160px' }}>{i18n.t('word.ThermostatSetpoint', lang) + ':'}</Space>
+            <InputNumber
+              min={0}
+              max={30}
+              step={1}
+              style={{ width: 60 }}
+              precision={1}
+              value={foundation.hvacSystem?.thermostatSetpoint ?? 20}
+              onChange={(value) => {
+                const oldValue = foundation.hvacSystem?.thermostatSetpoint ?? 20;
+                const newValue = value;
+                const undoableChange = {
+                  name: 'Change Thermostat Setpoint',
+                  timestamp: Date.now(),
+                  oldValue: oldValue,
+                  newValue: newValue,
+                  undo: () => {
+                    updateFoundationThermostatSetpointById(foundation.id, undoableChange.oldValue as number);
+                  },
+                  redo: () => {
+                    updateFoundationThermostatSetpointById(foundation.id, undoableChange.newValue as number);
+                  },
+                } as UndoableChange;
+                addUndoable(undoableChange);
+                updateFoundationThermostatSetpointById(foundation.id, newValue);
+              }}
+            />
+            <Space style={{ paddingLeft: '10px' }}>°C</Space>
+          </Menu.Item>
 
-            <Menu.Item key={'tolerance-threshold'}>
-              <Space title={i18n.t('word.TemperatureToleranceThresholdExplanation', lang)} style={{ width: '160px' }}>
-                {i18n.t('word.TemperatureToleranceThreshold', lang) + ':'}
-              </Space>
-              <InputNumber
-                min={0}
-                max={30}
-                step={1}
-                style={{ width: 60 }}
-                precision={1}
-                value={foundation.hvacSystem?.temperatureThreshold ?? 3}
-                onChange={(value) => {
-                  const oldValue = foundation.hvacSystem?.temperatureThreshold ?? 3;
-                  const newValue = value;
-                  const undoableChange = {
-                    name: 'Change Temperature Tolerance Threshold',
-                    timestamp: Date.now(),
-                    oldValue: oldValue,
-                    newValue: newValue,
-                    undo: () => {
-                      updateFoundationTemperatureThresholdById(foundation.id, undoableChange.oldValue as number);
-                    },
-                    redo: () => {
-                      updateFoundationTemperatureThresholdById(foundation.id, undoableChange.newValue as number);
-                    },
-                  } as UndoableChange;
-                  addUndoable(undoableChange);
-                  updateFoundationTemperatureThresholdById(foundation.id, newValue);
-                }}
-              />
-              <Space style={{ paddingLeft: '10px' }}>°C</Space>
-            </Menu.Item>
-          </Menu>
-        </SubMenu>
-      )}
+          <Menu.Item key={'tolerance-threshold'}>
+            <Space title={i18n.t('word.TemperatureToleranceThresholdExplanation', lang)} style={{ width: '160px' }}>
+              {i18n.t('word.TemperatureToleranceThreshold', lang) + ':'}
+            </Space>
+            <InputNumber
+              min={0}
+              max={30}
+              step={1}
+              style={{ width: 60 }}
+              precision={1}
+              value={foundation.hvacSystem?.temperatureThreshold ?? 3}
+              onChange={(value) => {
+                const oldValue = foundation.hvacSystem?.temperatureThreshold ?? 3;
+                const newValue = value;
+                const undoableChange = {
+                  name: 'Change Temperature Tolerance Threshold',
+                  timestamp: Date.now(),
+                  oldValue: oldValue,
+                  newValue: newValue,
+                  undo: () => {
+                    updateFoundationTemperatureThresholdById(foundation.id, undoableChange.oldValue as number);
+                  },
+                  redo: () => {
+                    updateFoundationTemperatureThresholdById(foundation.id, undoableChange.newValue as number);
+                  },
+                } as UndoableChange;
+                addUndoable(undoableChange);
+                updateFoundationTemperatureThresholdById(foundation.id, newValue);
+              }}
+            />
+            <Space style={{ paddingLeft: '10px' }}>°C</Space>
+          </Menu.Item>
+        </Menu>
+      </SubMenu>
 
       {editable && (
         <SubMenu

@@ -127,6 +127,17 @@ export const WindowMenu = React.memo(() => {
     });
   };
 
+  const updateInteriorById = (id: string, interior: boolean) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === id && e.type === ObjectType.Window) {
+          (e as WindowModel).interior = interior;
+          break;
+        }
+      }
+    });
+  };
+
   const renderCut = () => {
     if (!window || window.locked) {
       return null;
@@ -331,6 +342,31 @@ export const WindowMenu = React.memo(() => {
 
       {!window.locked && (
         <>
+          <Menu.Item style={{ paddingLeft: '10px' }}>
+            <Checkbox
+              checked={!!window.interior}
+              onChange={(e) => {
+                const undoableChange = {
+                  name: 'Set Window Interior',
+                  timestamp: Date.now(),
+                  oldValue: !!window?.interior,
+                  newValue: e.target.checked,
+                  changedElementId: window.id,
+                  changedElementType: window.type,
+                  undo: () => {
+                    updateInteriorById(undoableChange.changedElementId, undoableChange.oldValue as boolean);
+                  },
+                  redo: () => {
+                    updateInteriorById(undoableChange.changedElementId, undoableChange.newValue as boolean);
+                  },
+                } as UndoableChange;
+                addUndoable(undoableChange);
+                updateInteriorById(window.id, e.target.checked);
+              }}
+            >
+              {i18n.t('windowMenu.Interior', lang)}
+            </Checkbox>
+          </Menu.Item>
           {renderMenuItem(WindowDataType.Width)}
           {renderMenuItem(WindowDataType.Height)}
           {renderMenuItem(WindowDataType.Opacity)}

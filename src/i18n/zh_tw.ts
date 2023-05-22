@@ -1086,6 +1086,7 @@ export const i18n_zh_tw = {
       WindowType: '窗戶種類',
       Default: '默認',
       Arched: '拱形',
+      Interior: '内窗',
     },
 
     roofMenu: {
@@ -1165,6 +1166,7 @@ export const i18n_zh_tw = {
       Arched: '拱形',
       Filled: '填充',
       FrameColor: '門框顏色',
+      Interior: '內門',
     },
 
     siteInfoPanel: {

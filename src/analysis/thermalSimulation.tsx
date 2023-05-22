@@ -667,6 +667,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   };
 
   const calculateWindow = (window: WindowModel) => {
+    if (window.interior) return;
     const foundation = getFoundation(window);
     if (foundation) {
       const parent = getParent(window);
@@ -684,6 +685,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   };
 
   const calculateSolarHeatGain = (window: WindowModel) => {
+    if (window.interior) return;
     const foundation = getFoundation(window);
     if (foundation) {
       const parent = getParent(window);
@@ -716,6 +718,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   };
 
   const calculateDoor = (door: DoorModel) => {
+    if (door.interior) return;
     const foundation = getFoundation(door);
     if (foundation) {
       const parent = getParent(door);
