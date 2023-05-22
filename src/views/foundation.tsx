@@ -1315,6 +1315,7 @@ const Foundation = (foundationModel: FoundationModel) => {
 
     if (isSettingWallStartPointRef.current && addedWallIdRef.current && baseRef.current) {
       const intersects = ray.intersectObjects([baseRef.current]);
+      if (intersects.length === 0) return;
       let p = Util.wallRelativePosition(intersects[0].point, foundationModel);
 
       if (wallAuxToWallArray[0].position) {
