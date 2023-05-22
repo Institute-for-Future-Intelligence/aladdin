@@ -96,7 +96,9 @@ export class SolarPanelArrayOptimizerPso extends OptimizerPso {
         const firstParticle: Particle = this.swarm.particles[0];
         // calculate the particle positions of the initial solar panels
         firstParticle.position[0] =
-          (sp1.tiltAngle - this.minimumTiltAngle) / (this.maximumTiltAngle - this.minimumTiltAngle);
+          this.maximumTiltAngle === this.minimumTiltAngle
+            ? 0
+            : (sp1.tiltAngle - this.minimumTiltAngle) / (this.maximumTiltAngle - this.minimumTiltAngle);
 
         const sp2 = initialSolarPanels[1];
         const interRowSpacing =
@@ -104,7 +106,10 @@ export class SolarPanelArrayOptimizerPso extends OptimizerPso {
             ? Math.abs(sp1.cx - sp2.cx) * this.foundation.lx
             : Math.abs(sp1.cy - sp2.cy) * this.foundation.ly;
         let normalizedInterRowSpacing =
-          (interRowSpacing - this.minimumInterRowSpacing) / (this.maximumInterRowSpacing - this.minimumInterRowSpacing);
+          this.maximumInterRowSpacing === this.minimumInterRowSpacing
+            ? 0
+            : (interRowSpacing - this.minimumInterRowSpacing) /
+              (this.maximumInterRowSpacing - this.minimumInterRowSpacing);
         if (normalizedInterRowSpacing < 0) normalizedInterRowSpacing = 0;
         else if (normalizedInterRowSpacing > 1) normalizedInterRowSpacing = 1;
         firstParticle.position[1] = normalizedInterRowSpacing;
@@ -114,7 +119,9 @@ export class SolarPanelArrayOptimizerPso extends OptimizerPso {
           Math.round(sp1.ly / (sp1.orientation === Orientation.portrait ? pvModel.length : pvModel.width)),
         );
         let normalizedRowsPerRack =
-          (rowsPerRack - this.minimumRowsPerRack) / (this.maximumRowsPerRack - this.minimumRowsPerRack);
+          this.maximumRowsPerRack === this.minimumRowsPerRack
+            ? 0
+            : (rowsPerRack - this.minimumRowsPerRack) / (this.maximumRowsPerRack - this.minimumRowsPerRack);
         if (normalizedRowsPerRack < 0) normalizedRowsPerRack = 0;
         else if (normalizedRowsPerRack > 1) normalizedRowsPerRack = 1;
         firstParticle.position[2] = normalizedRowsPerRack;

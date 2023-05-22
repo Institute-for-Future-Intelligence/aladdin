@@ -103,7 +103,10 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
       if (initialSolarPanels.length > 1) {
         const firstBorn: Individual = this.population.individuals[0];
         // calculate the genes of the initial solar panels
-        let gene1 = (sp1.tiltAngle - this.minimumTiltAngle) / (this.maximumTiltAngle - this.minimumTiltAngle);
+        let gene1 =
+          this.maximumTiltAngle === this.minimumTiltAngle
+            ? 0
+            : (sp1.tiltAngle - this.minimumTiltAngle) / (this.maximumTiltAngle - this.minimumTiltAngle);
         firstBorn.setGene(0, gene1);
 
         const sp2 = initialSolarPanels[1];
@@ -112,7 +115,10 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
             ? Math.abs(sp1.cx - sp2.cx) * this.foundation.lx
             : Math.abs(sp1.cy - sp2.cy) * this.foundation.ly;
         let gene2 =
-          (interRowSpacing - this.minimumInterRowSpacing) / (this.maximumInterRowSpacing - this.minimumInterRowSpacing);
+          this.maximumInterRowSpacing === this.minimumInterRowSpacing
+            ? 0
+            : (interRowSpacing - this.minimumInterRowSpacing) /
+              (this.maximumInterRowSpacing - this.minimumInterRowSpacing);
         if (gene2 < 0) gene2 = 0;
         else if (gene2 > 1) gene2 = 1;
         firstBorn.setGene(1, gene2);
@@ -121,7 +127,10 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
           1,
           Math.round(sp1.ly / (sp1.orientation === Orientation.portrait ? pvModel.length : pvModel.width)),
         );
-        let gene3 = (rowsPerRack - this.minimumRowsPerRack) / (this.maximumRowsPerRack - this.minimumRowsPerRack);
+        let gene3 =
+          this.maximumRowsPerRack === this.minimumRowsPerRack
+            ? 0
+            : (rowsPerRack - this.minimumRowsPerRack) / (this.maximumRowsPerRack - this.minimumRowsPerRack);
         if (gene3 < 0) gene3 = 0;
         else if (gene3 > 1) gene3 = 1;
         firstBorn.setGene(2, gene3);

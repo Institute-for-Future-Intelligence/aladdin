@@ -618,39 +618,39 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
                     maximumInterRowSpacingRef.current = value[1];
                     setUpdateFlag(!updateFlag);
                   }}
-                  min={2}
+                  min={1}
                   max={10}
                   defaultValue={[minimumInterRowSpacingRef.current, maximumInterRowSpacingRef.current]}
                   marks={{
-                    2: {
+                    1: {
                       style: {
                         fontSize: '10px',
                       },
-                      label: '2m',
+                      label: '1m',
                     },
-                    4: {
+                    3: {
                       style: {
                         fontSize: '10px',
                       },
-                      label: '4m',
+                      label: '3m',
                     },
-                    6: {
+                    5: {
                       style: {
                         fontSize: '10px',
                       },
-                      label: '6m',
+                      label: '5m',
                     },
-                    8: {
+                    7: {
                       style: {
                         fontSize: '10px',
                       },
-                      label: '8m',
+                      label: '7m',
                     },
-                    10: {
+                    9: {
                       style: {
                         fontSize: '10px',
                       },
-                      label: '10m',
+                      label: '9m',
                     },
                   }}
                 />
