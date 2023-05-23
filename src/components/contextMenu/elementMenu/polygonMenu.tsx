@@ -2,7 +2,7 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Checkbox, Input, InputNumber, Menu } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
@@ -61,6 +61,18 @@ export const PolygonMenu = React.memo(() => {
       }
     }
   });
+
+  useEffect(() => {
+    if (polygon) {
+      setTextContent(polygon.text ?? '');
+      setTextSize(polygon.fontSize ?? 1);
+      setTextColor(polygon.fontColor ?? 'black');
+      setTextOutlineColor(polygon.fontOutlineColor ?? 'white');
+      setTextOutlineWidth(polygon.fontOutlineWidth ?? 0);
+      setTextStrokeColor(polygon.fontStrokeColor ?? 'black');
+      setTextStrokeWidth(polygon.fontStrokeWidth ?? 0);
+    }
+  }, [polygon]);
 
   if (!polygon || !parent) return null;
 

@@ -36,7 +36,7 @@ const ColumnWrapper = styled.div`
   align-content: flex-start;
   align-items: flex-start;
   margin: auto;
-  width: 300px;
+  width: 310px;
   padding-bottom: 10px;
   display: flex;
   font-size: 12px;

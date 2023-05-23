@@ -73,7 +73,6 @@ const Polygon = ({
 }: PolygonModel) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
-  const getFoundation = useStore(Selector.getFoundation);
   const selectMe = useStore(Selector.selectMe);
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
