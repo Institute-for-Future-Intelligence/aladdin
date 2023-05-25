@@ -183,8 +183,7 @@ export class RoofUtil {
   }
 
   static onSegment(vertices: Vector3[], cx: number, cy: number): boolean {
-    const points = vertices.slice(0, 4);
-    return Util.isPointInside(cx, cy, points.map(Util.mapVector3ToPoint2));
+    return Util.isPointInside(cx, cy, vertices.map(Util.mapVector3ToPoint2));
   }
 
   // less compute but easier to appear bugs

@@ -2,7 +2,7 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Checkbox, InputNumber, Menu, Modal, Space } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
@@ -36,7 +36,8 @@ export const GroundMenu = React.memo(() => {
   const language = useStore(Selector.language);
   const elementsToPaste = useStore(Selector.elementsToPaste);
 
-  const elementCount = countAllElements();
+  const [elementCount, setElementCount] = useState<number>(0);
+  const [recountFlag, setRecountFlag] = useState<boolean>(false);
   const treeCount = countElementsByType(ObjectType.Tree, true);
   const flowerCount = countElementsByType(ObjectType.Flower, true);
   const humanCount = countElementsByType(ObjectType.Human, true);
@@ -44,6 +45,10 @@ export const GroundMenu = React.memo(() => {
   const cuboidCount = countElementsByType(ObjectType.Cuboid, true);
 
   const lang = { lng: language };
+
+  useEffect(() => {
+    setElementCount(countAllElements());
+  }, [recountFlag]);
 
   const setWaterSurface = (checked: boolean) => {
     setCommonStore((state) => {
@@ -274,6 +279,7 @@ export const GroundMenu = React.memo(() => {
                 oldLocks.set(elem.id, !!elem.locked);
               }
               updateAllElementLocks(true);
+              setRecountFlag(!recountFlag);
               const undoableLockAllElements = {
                 name: 'Lock All Elements',
                 timestamp: Date.now(),
@@ -302,6 +308,7 @@ export const GroundMenu = React.memo(() => {
                 oldLocks.set(elem.id, !!elem.locked);
               }
               updateAllElementLocks(false);
+              setRecountFlag(!recountFlag);
               const undoableLockAllElements = {
                 name: 'Lock All Elements',
                 timestamp: Date.now(),
