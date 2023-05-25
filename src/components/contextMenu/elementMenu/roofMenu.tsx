@@ -257,10 +257,13 @@ export const RoofMenu = React.memo(() => {
           style={{ paddingLeft: '24px' }}
         >
           {renderClearItem(ObjectType.SolarPanel, counterUnlocked.solarPanelCount)}
+          {renderClearItem(ObjectType.Window, counterUnlocked.windowCount)}
           {renderClearItem(ObjectType.Sensor, counterUnlocked.sensorCount)}
           {renderClearItem(ObjectType.Light, counterUnlocked.insideLightCount + counterUnlocked.outsideLightCount)}
           {renderLockItem(ObjectType.SolarPanel, counterUnlocked.solarPanelCount)}
           {renderUnlockItem(ObjectType.SolarPanel, counterAll.solarPanelCount)}
+          {renderLockItem(ObjectType.Window, counterUnlocked.windowCount)}
+          {renderUnlockItem(ObjectType.Window, counterAll.windowCount)}
           {renderLockItem(ObjectType.Sensor, counterUnlocked.sensorCount)}
           {renderUnlockItem(ObjectType.Sensor, counterAll.sensorCount)}
           {renderInsideLightItem(counterAll.outsideLightCount, true)}
