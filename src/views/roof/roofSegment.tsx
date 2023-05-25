@@ -202,18 +202,16 @@ export const RoofSegment = ({
     return vectors;
   }, [showHeatFluxes, heatFluxScaleFactor]);
 
-  const windows: WindowData[] = useStore((state) =>
-    state.elements
-      .filter((e) => e.parentId === id && e.type === ObjectType.Window)
-      .map((e) => {
-        const w = e as WindowModel;
-        return {
-          dimension: new Vector3(w.lx, w.lz, w.ly * 2),
-          position: new Vector3(w.cx, w.cy, w.cz).sub(centroid),
-          rotation: new Euler().fromArray([...w.rotation, 'ZXY']),
-        };
-      }),
-  );
+  const windows: WindowData[] = useStore((state) => state.elements)
+    .filter((e) => e.parentId === id && e.type === ObjectType.Window)
+    .map((e) => {
+      const w = e as WindowModel;
+      return {
+        dimension: new Vector3(w.lx, w.lz, w.ly * 2),
+        position: new Vector3(w.cx, w.cy, w.cz).sub(centroid),
+        rotation: new Euler().fromArray([...w.rotation, 'ZXY']),
+      };
+    });
 
   return (
     <>

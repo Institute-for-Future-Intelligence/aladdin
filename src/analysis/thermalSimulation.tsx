@@ -47,6 +47,7 @@ import { SolarPanelModel } from '../models/SolarPanelModel';
 import { PvModel } from '../models/PvModel';
 import { SunMinutes } from './SunMinutes';
 import { useDataStore } from '../stores/commonData';
+import { RoofUtil } from '../views/roof/RoofUtil';
 
 interface ThermalSimulationProps {
   city: string | null;
@@ -1219,10 +1220,23 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     if (roof.roofType !== RoofType.Mansard) throw new Error('roof is not mansard');
     const n = segmentsWithoutOverhang.length;
     if (n === 0) return;
+    const windows = getChildrenOfType(ObjectType.Window, roof.id);
     const totalAreas: number[] = [];
     for (let i = 0; i < n - 1; i++) {
       const s = segmentsWithoutOverhang[i];
-      totalAreas.push(Util.getTriangleArea(s[0], s[1], s[2]) + Util.getTriangleArea(s[2], s[3], s[0]));
+      let a = Util.getTriangleArea(s[0], s[1], s[2]) + Util.getTriangleArea(s[2], s[3], s[0]);
+      if (windows.length > 0) {
+        // start from end so that we can remove the found window from the array to avoid waste calculation
+        for (let iw = windows.length - 1; iw >= 0; iw--) {
+          const w = windows[iw];
+          if (RoofUtil.onSegment(s, w.cx, w.cy)) {
+            a -= w.lx * w.lz;
+            windows.splice(iw, 1);
+          }
+        }
+        if (a < 0) a = 0; // just in case
+      }
+      totalAreas.push(a);
     }
     // the last segment may not be a quad
     const s = segmentsWithoutOverhang[n - 1];
@@ -1230,7 +1244,18 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     for (const p of s) {
       points.push({ x: p.x, y: p.y } as Point2);
     }
-    totalAreas.push(Util.getPolygonArea(points));
+    let a = Util.getPolygonArea(points);
+    if (windows.length > 0) {
+      for (let iw = windows.length - 1; iw >= 0; iw--) {
+        const w = windows[iw];
+        if (RoofUtil.onSegment(s, w.cx, w.cy)) {
+          a -= w.lx * w.lz;
+          windows.splice(iw, 1);
+        }
+      }
+      if (a < 0) a = 0; // just in case
+    }
+    totalAreas.push(a);
     const absorption = getLightAbsorption(roof);
     const totalSolarHeats: number[] = Array(n).fill(0);
     // when the sun is out

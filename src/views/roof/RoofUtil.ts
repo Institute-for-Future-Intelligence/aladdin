@@ -171,8 +171,8 @@ export class RoofUtil {
     return true;
   }
 
-  // solar panel related
-  static getSegmentIdx(roofSegments: RoofSegmentProps[], posRelToCentroid: Vector3) {
+  // for solar panels and skylight windows on a roof segment
+  static getSegmentIdx(roofSegments: RoofSegmentProps[], posRelToCentroid: Vector3): number {
     for (let i = 0; i < roofSegments.length; i++) {
       const points = roofSegments[i].points.slice(0, 4);
       if (Util.isPointInside(posRelToCentroid.x, posRelToCentroid.y, points.map(Util.mapVector3ToPoint2))) {
@@ -181,6 +181,12 @@ export class RoofUtil {
     }
     return -1;
   }
+
+  static onSegment(vertices: Vector3[], cx: number, cy: number): boolean {
+    const points = vertices.slice(0, 4);
+    return Util.isPointInside(cx, cy, points.map(Util.mapVector3ToPoint2));
+  }
+
   // less compute but easier to appear bugs
   static getSegmentIdxFromPointerEvent(e: ThreeEvent<PointerEvent>) {
     for (const intersection of e.intersections) {
