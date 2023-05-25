@@ -77,6 +77,8 @@ import { InnerCommonState } from 'src/stores/InnerCommonState';
 import produce from 'immer';
 import { useDataStore } from '../stores/commonData';
 import { useGroupMaster } from './hooks';
+import { WindowModel } from 'src/models/WindowModel';
+import Window from './window/window';
 
 interface WallAuxiliaryType {
   show: boolean;
@@ -2720,7 +2722,9 @@ const Foundation = (foundationModel: FoundationModel) => {
 
   const isValidOnRoof = (e: ElementModel) => {
     return (
-      e.type === ObjectType.SolarPanel && (e as SolarPanelModel).parentType === ObjectType.Roof && e.foundationId === id
+      e.foundationId === id &&
+      ((e.type === ObjectType.SolarPanel && (e as SolarPanelModel).parentType === ObjectType.Roof) ||
+        (e.type === ObjectType.Window && (e as WindowModel).parentType === ObjectType.Roof))
     );
   };
 
@@ -3169,18 +3173,23 @@ const Foundation = (foundationModel: FoundationModel) => {
         {solarStructure === SolarStructure.UpdraftTower && <SolarUpdraftTower foundation={foundationModel} />}
       </group>
 
-      <group position={[cx, cy, hz]} rotation={[0, 0, rotation[2]]}>
+      <group name={'Elements On Building'} position={[cx, cy, hz]} rotation={[0, 0, rotation[2]]}>
         {elementsOnBuilding.map((e) => {
-          return (
-            <SolarPanelOnRoof
-              key={e.id}
-              {...(e as SolarPanelModel)}
-              cx={e.cx * lx}
-              cy={e.cy * ly}
-              cz={e.cz + hz}
-              foundationModel={foundationModel}
-            />
-          );
+          switch (e.type) {
+            case ObjectType.SolarPanel:
+              return (
+                <SolarPanelOnRoof
+                  key={e.id}
+                  {...(e as SolarPanelModel)}
+                  cx={e.cx * lx}
+                  cy={e.cy * ly}
+                  cz={e.cz + hz}
+                  foundationModel={foundationModel}
+                />
+              );
+            case ObjectType.Window:
+              return <Window key={e.id} {...(e as WindowModel)} cz={e.cz + hz} />;
+          }
         })}
       </group>
 

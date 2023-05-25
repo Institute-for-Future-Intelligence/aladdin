@@ -34,6 +34,7 @@ import {
   HipRoofModel,
   MansardRoofModel,
   PyramidRoofModel,
+  RoofModel,
   RoofStructure,
   RoofType,
 } from './RoofModel';
@@ -611,15 +612,29 @@ export class ElementModelFactory {
     } as LightModel;
   }
 
-  static makeWindow(parent: ElementModel, cx: number, cz: number) {
+  static makeWindow(
+    parent: ElementModel,
+    cx: number,
+    cy: number,
+    cz: number,
+    parentType: ObjectType,
+    rotation?: number[],
+    lx = 0,
+    lz = 0,
+  ) {
     let foundationId;
+    let ly = 0;
     switch (parent.type) {
       case ObjectType.Cuboid:
         foundationId = parent.id;
         break;
       case ObjectType.Wall:
+        foundationId = parent.parentId;
+        ly = parent.ly;
+        break;
       case ObjectType.Roof:
         foundationId = parent.parentId;
+        ly = (parent as RoofModel).thickness;
         break;
     }
     const actionState = useStore.getState().actionState;
@@ -632,11 +647,11 @@ export class ElementModelFactory {
     return {
       type: ObjectType.Window,
       cx: cx,
-      cy: 0.1,
+      cy: cy,
       cz: cz,
-      lx: 0,
-      ly: parent.ly,
-      lz: 0,
+      lx: lx,
+      ly: ly,
+      lz: lz,
       shutter: shutter,
       mullion: actionState.windowMullion,
       mullionWidth: actionState.windowMullionWidth,
@@ -656,8 +671,9 @@ export class ElementModelFactory {
       opacity: actionState.windowOpacity !== undefined ? actionState.windowOpacity : 0.5,
       uValue: actionState.windowUValue ?? 0.5,
       normal: [0, -1, 0],
-      rotation: [0, 0, 0],
+      rotation: rotation ? [...rotation] : [0, 0, 0],
       parentId: parent.id,
+      parentType: parentType,
       foundationId: foundationId,
       id: short.generate() as string,
     } as WindowModel;

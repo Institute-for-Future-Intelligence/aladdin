@@ -3,7 +3,7 @@
  */
 
 import React, { useMemo, useRef } from 'react';
-import { Euler, FrontSide, MeshStandardMaterial, Vector3 } from 'three';
+import { DoubleSide, Euler, FrontSide, MeshStandardMaterial, Vector3 } from 'three';
 import { Box, Cone, Cylinder, Line, Plane } from '@react-three/drei';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
@@ -55,7 +55,7 @@ interface WireframeProps {
 
 type ArgsType = [x: number, y: number, z: number];
 
-const sealPlanesMaterial = new MeshStandardMaterial({ color: 'white', side: FrontSide });
+const sealPlanesMaterial = new MeshStandardMaterial({ color: 'white', side: DoubleSide });
 
 const Mullion = React.memo(({ dimension, mullionData, shadowEnabled }: MullionProps) => {
   const [lx, ly, lz] = dimension;
@@ -339,7 +339,7 @@ const RectangleWindow = ({
 
   return (
     <>
-      <group name={'Rectangle Window Plane Group'} position={[0, cy, 0]}>
+      <group name={'Rectangle Window Plane Group'} position={[0, 0.3 * ly, 0]}>
         <Plane name={'Window Glass Plane'} args={[lx, lz]} rotation={[HALF_PI, 0, 0]}>
           {glassMaterial}
         </Plane>
@@ -361,7 +361,7 @@ const RectangleWindow = ({
         spacing={frameData.showFrame ? frameData.width / 2 : 0}
       />
 
-      <Wireframe cy={cy} dimension={dimension} wireframeData={wireframeData} />
+      <Wireframe cy={0.3 * ly} dimension={dimension} wireframeData={wireframeData} />
 
       {renderSealPlane([ly, lz], [-lx / 2, ly / 2, 0], [HALF_PI, HALF_PI, 0])}
       {renderSealPlane([ly, lz], [lx / 2, ly / 2, 0], [HALF_PI, -HALF_PI, 0])}

@@ -2,6 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
+import { ObjectType } from 'src/types';
 import { ElementModel } from './ElementModel';
 
 export interface WindowModel extends ElementModel {
@@ -24,6 +25,8 @@ export interface WindowModel extends ElementModel {
 
   windowType: WindowType;
   archHeight: number;
+
+  parentType?: ObjectType.Wall | ObjectType.Roof;
 
   // Is this window inside a building? If yes, this will be no heat exchange. By default, it is not.
   interior?: boolean;

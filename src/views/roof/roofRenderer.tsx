@@ -134,6 +134,32 @@ const handleAddElementOnRoof = (
       }
       break;
     }
+    case ObjectType.Window: {
+      const roof = useStore.getState().getElementById(roofId);
+      if (roof && foundation && e.intersections[0]) {
+        const pointer = getPointerOnRoof(e);
+        const posRelToFoundation = new Vector3()
+          .subVectors(pointer, new Vector3(foundation.cx, foundation.cy))
+          .applyEuler(new Euler(0, 0, -foundation.rotation[2]));
+        const posRelToCentroid = posRelToFoundation.clone().sub(ridgeMidPoint);
+        const { normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
+        const newElement = ElementModelFactory.makeWindow(
+          roof,
+          posRelToFoundation.x,
+          posRelToFoundation.y,
+          posRelToFoundation.z - foundation.lz,
+          ObjectType.Roof,
+          rotation,
+          0.5,
+          0.5,
+        );
+        useStore.getState().set((state) => {
+          state.elements.push(newElement);
+          if (!state.actionModeLock) state.objectTypeToAdd = ObjectType.None;
+        });
+      }
+      break;
+    }
     case ObjectType.Sensor: {
       const roof = useStore.getState().getElementById(roofId);
       if (roof?.type === ObjectType.Roof) {
@@ -280,6 +306,7 @@ export const updateRooftopElements = (
   h: number,
   thickness: number,
 ) => {
+  if (foundation === null) return;
   useStore.getState().set((state) => {
     if (foundation === null) return;
     for (const e of state.elements) {
@@ -290,12 +317,26 @@ export const updateRooftopElements = (
           const { segmentVertices, normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
           let z;
           if (segmentVertices) {
-            z = RoofUtil.getRooftopZ(segmentVertices, posRelToCentroid, h + thickness);
+            z = RoofUtil.getRooftopElementZ(segmentVertices, posRelToCentroid, h + thickness);
           } else {
             z = h + thickness;
           }
           if (normal && rotation && z !== undefined) {
             e.normal = normal.toArray();
+            e.rotation = [...rotation];
+            e.cz = z;
+          }
+        } else if (e.type === ObjectType.Window) {
+          const posRelToFoundation = new Vector3(e.cx, e.cy, e.cz + foundation.lz);
+          const posRelToCentroid = posRelToFoundation.clone().sub(centroid);
+          const { segmentVertices, normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
+          let z;
+          if (segmentVertices) {
+            z = RoofUtil.getRooftopElementZ(segmentVertices, posRelToCentroid, h + thickness);
+          } else {
+            z = h + thickness;
+          }
+          if (normal && rotation && z !== undefined) {
             e.rotation = [...rotation];
             e.cz = z;
           }
@@ -305,7 +346,7 @@ export const updateRooftopElements = (
           const { segmentVertices, normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
           let z;
           if (segmentVertices) {
-            z = RoofUtil.getRooftopZ(segmentVertices, posRelToCentroid, h + thickness);
+            z = RoofUtil.getRooftopElementZ(segmentVertices, posRelToCentroid, h + thickness);
           } else {
             z = h + thickness;
           }

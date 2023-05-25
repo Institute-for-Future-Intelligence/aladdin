@@ -1466,6 +1466,7 @@ const RoofSegment = ({
             heatmap={heatmaps[index]}
             transparent={transparent}
             opacity={_opacity}
+            windows={[]}
           />
         </>
       )}

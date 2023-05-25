@@ -3,14 +3,14 @@
  */
 
 import React, { useEffect, useMemo } from 'react';
-import { Color, DoubleSide, Vector3 } from 'three';
+import { Color, DoubleSide, Euler, Vector3 } from 'three';
 import { Box } from '@react-three/drei';
 import { WindowModel, WindowType } from 'src/models/WindowModel';
 import { useStore } from 'src/stores/common';
 import { MoveHandleType, ObjectType, ResizeHandleType } from 'src/types';
 import * as Selector from 'src/stores/selector';
 import WindowHandleWrapper from './windowHandleWrapper';
-import { DEFAULT_WINDOW_SHININESS } from 'src/constants';
+import { DEFAULT_WINDOW_SHININESS, HALF_PI } from 'src/constants';
 import { ThreeEvent } from '@react-three/fiber';
 import RectangleWindow from './rectangleWindow';
 import ArchedWindow from './archedWindow';
@@ -167,6 +167,7 @@ const Window = (windowModel: WindowModel) => {
     lx,
     ly,
     lz,
+    rotation,
     selected,
     locked,
     lineWidth = 0.2,
@@ -184,6 +185,7 @@ const Window = (windowModel: WindowModel) => {
     sillWidth = 0.1,
     windowType = WindowType.Default,
     archHeight,
+    parentType = ObjectType.Wall,
   } = windowModel;
 
   const GROUP_NAME = `${WINDOW_GROUP_NAME} ${id}`;
@@ -299,6 +301,15 @@ const Window = (windowModel: WindowModel) => {
     }
   };
 
+  const euler = useMemo(() => {
+    if (parentType === ObjectType.Roof) {
+      const [x, y, z] = rotation;
+      return new Euler().fromArray([x - HALF_PI, y, z, 'ZXY']);
+    } else {
+      return new Euler();
+    }
+  }, [parentType, rotation]);
+
   const glassMaterial = useMemo(
     () => (
       <meshPhongMaterial
@@ -385,7 +396,8 @@ const Window = (windowModel: WindowModel) => {
     <group
       key={id}
       name={GROUP_NAME}
-      position={[cx, 0, cz]}
+      position={[cx, cy, cz]}
+      rotation={euler}
       onPointerDown={handlePointerDown}
       onContextMenu={handleContextMenu}
       onPointerMove={() => {
@@ -398,7 +410,18 @@ const Window = (windowModel: WindowModel) => {
       {selected && <RulerOnWall element={windowModel} />}
 
       {/* handles */}
-      {selected && !locked && <WindowHandleWrapper lx={lx} lz={lz} windowType={windowType} />}
+      {selected && !locked && (
+        <WindowHandleWrapper
+          id={id}
+          parentId={parentId}
+          foundationId={foundationId}
+          lx={lx}
+          lz={lz}
+          rotation={rotation}
+          windowType={windowType}
+          parentType={parentType}
+        />
+      )}
     </group>
   );
 };

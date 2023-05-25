@@ -7,7 +7,16 @@ import { useTransparent } from './hooks';
 import { RoofSegmentProps } from './roofRenderer';
 import * as Selector from 'src/stores/selector';
 import { useStore } from 'src/stores/common';
-import { CanvasTexture, Euler, Float32BufferAttribute, Mesh, Texture, Vector2, Vector3 } from 'three';
+import {
+  BoxBufferGeometry,
+  CanvasTexture,
+  Euler,
+  Float32BufferAttribute,
+  Mesh,
+  Texture,
+  Vector2,
+  Vector3,
+} from 'three';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { Util } from '../../Util';
 import {
@@ -22,6 +31,15 @@ import { useDataStore } from '../../stores/commonData';
 import { Cone, Line } from '@react-three/drei';
 import { Point2 } from '../../models/Point2';
 import { RoofType } from '../../models/RoofModel';
+import { CSG } from 'three-csg-ts';
+import { ObjectType } from 'src/types';
+import { WindowModel } from 'src/models/WindowModel';
+
+type WindowData = {
+  dimension: Vector3;
+  position: Vector3;
+  rotation: Euler;
+};
 
 export const RoofSegment = ({
   id,
@@ -184,6 +202,19 @@ export const RoofSegment = ({
     return vectors;
   }, [showHeatFluxes, heatFluxScaleFactor]);
 
+  const windows: WindowData[] = useStore((state) =>
+    state.elements
+      .filter((e) => e.parentId === id && e.type === ObjectType.Window)
+      .map((e) => {
+        const w = e as WindowModel;
+        return {
+          dimension: new Vector3(w.lx, w.lz, w.ly * 2),
+          position: new Vector3(w.cx, w.cy, w.cz).sub(centroid),
+          rotation: new Euler().fromArray([...w.rotation, 'ZXY']),
+        };
+      }),
+  );
+
   return (
     <>
       <BufferRoofSegment
@@ -196,6 +227,7 @@ export const RoofSegment = ({
         heatmap={heatmap}
         transparent={transparent}
         opacity={opacity}
+        windows={windows}
       />
 
       {overhangLines &&
@@ -257,10 +289,22 @@ interface BufferRoofSegmentProps {
   heatmap?: CanvasTexture;
   transparent: boolean;
   opacity: number;
+  windows: WindowData[];
 }
 
 export const BufferRoofSegment = React.memo(
-  ({ id, index, segment, color, sideColor, texture, heatmap, transparent, opacity }: BufferRoofSegmentProps) => {
+  ({
+    id,
+    index,
+    segment,
+    color,
+    sideColor,
+    texture,
+    heatmap,
+    transparent,
+    opacity,
+    windows,
+  }: BufferRoofSegmentProps) => {
     const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
     const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
 
@@ -271,7 +315,18 @@ export const BufferRoofSegment = React.memo(
     const isTri = points.length === 6;
     const isQuad = points.length === 8;
 
-    // const holeMesh = useMemo(() => new Mesh(new BoxBufferGeometry(0.5, 0.5, 5), new MeshBasicMaterial()), []);
+    const holeMeshes = useMemo(
+      () =>
+        windows.map((window) => {
+          const { dimension, position, rotation } = window;
+          const holeMesh = new Mesh(new BoxBufferGeometry(dimension.x, dimension.y, dimension.z));
+          holeMesh.position.copy(position);
+          holeMesh.rotation.copy(rotation);
+          holeMesh.updateMatrix();
+          return holeMesh;
+        }),
+      [windows],
+    );
 
     const materialGroupNumber = render() ?? 6;
 
@@ -390,11 +445,25 @@ export const BufferRoofSegment = React.memo(
       geometry.computeVertexNormals();
       geometry.computeBoundingSphere(); // add this to update hit test.
 
-      // TODO: add window here
-      // holeMesh.position.set(0, -2, 0);
-      // holeMesh.updateMatrix();
-      // const res = CSG.subtract(ref.current, holeMesh);
-      // geometry.copy(res.geometry);
+      if (windows.length > 0) {
+        const operationBuffer: Mesh[] = [];
+
+        // don't know why single variable not working, have to use array to save last operated mesh
+        for (let i = 0; i < holeMeshes.length; i++) {
+          const holeMesh = holeMeshes[i];
+          if (i === 0) {
+            operationBuffer.push(CSG.subtract(ref.current, holeMesh));
+          } else {
+            operationBuffer.push(CSG.subtract(operationBuffer[i - 1], holeMesh));
+          }
+        }
+
+        const resultMesh = operationBuffer.pop();
+
+        if (resultMesh) {
+          geometry.copy(resultMesh.geometry);
+        }
+      }
 
       return geometry.groups.length;
 

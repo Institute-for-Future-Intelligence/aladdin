@@ -15,6 +15,8 @@ interface WindowResizeHandleProps {
   handleType: ResizeHandleType;
 }
 
+export const WINDOW_RESIZE_HANDLE_SIZE = 0.2;
+
 const WindowResizeHandle = ({ x, z, handleType }: WindowResizeHandleProps) => {
   const setCommonStore = useStore(Selector.set);
   const resizeHandleType = useStore(Selector.resizeHandleType);
@@ -35,7 +37,7 @@ const WindowResizeHandle = ({ x, z, handleType }: WindowResizeHandleProps) => {
     <Box
       ref={handleRef}
       name={handleType}
-      args={[0.2, 0.2, 0.2]}
+      args={[WINDOW_RESIZE_HANDLE_SIZE, WINDOW_RESIZE_HANDLE_SIZE, WINDOW_RESIZE_HANDLE_SIZE]}
       position={[x, 0, z]}
       onPointerEnter={() => {
         setColor('red');
