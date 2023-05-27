@@ -674,7 +674,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       const parent = getParent(window);
       if (parent) {
         const setpoint = foundation.hvacSystem?.thermostatSetpoint ?? 20;
-        const area = Util.getWindowArea(window, parent);
+        const area = Util.getWindowArea(window, RoofUtil.isTypeRoof(parent.type) ? undefined : parent);
         const deltaT = currentOutsideTemperatureRef.current - setpoint;
         // convert heat exchange to kWh
         updateHeatExchangeNow(
