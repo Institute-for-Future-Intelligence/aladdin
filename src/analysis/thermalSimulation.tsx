@@ -692,6 +692,10 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       const parent = getParent(window);
       if (parent) {
         let totalSolarHeat = 0;
+        if (RoofUtil.isTypeRoof(parent.type)) {
+          // TODO: compute solar radiation through skylight windows
+          return;
+        }
         // when the sun is out
         if (sunDirectionRef.current && sunDirectionRef.current.z > 0) {
           const results = SolarRadiation.computeWindowSolarRadiationEnergy(
