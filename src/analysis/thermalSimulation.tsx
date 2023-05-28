@@ -693,29 +693,58 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       if (parent) {
         let totalSolarHeat = 0;
         if (RoofUtil.isTypeRoof(parent.type)) {
-          // TODO: compute solar radiation through skylight windows
-          return;
-        }
-        // when the sun is out
-        if (sunDirectionRef.current && sunDirectionRef.current.z > 0) {
-          const results = SolarRadiation.computeWindowSolarRadiationEnergy(
-            now,
-            world,
-            sunDirectionRef.current,
-            window,
-            parent as WallModel,
-            foundation,
-            elevation,
-            distanceToClosestObject,
-          );
-          for (let i = 0; i < results.intensity.length; i++) {
-            for (let j = 0; j < results.intensity[i].length; j++) {
-              results.intensity[i][j] *= scaleFactorRef.current; // for solar heatmap generation
-              totalSolarHeat += results.intensity[i][j] * results.unitArea; // for energy calculation
+          const segmentsWithoutOverhang = getRoofSegmentVerticesWithoutOverhang(parent.id);
+          if (!segmentsWithoutOverhang) return;
+          // go over roof segments
+          for (let i = 0; i < segmentsWithoutOverhang.length; i++) {
+            if (RoofUtil.onSegment(segmentsWithoutOverhang[i], window.cx, window.cy)) {
+              // when the sun is out
+              if (sunDirectionRef.current && sunDirectionRef.current.z > 0) {
+                // compute solar radiation through skylight windows
+                const results = SolarRadiation.computeRoofWindowSolarRadiationEnergy(
+                  now,
+                  world,
+                  sunDirectionRef.current,
+                  window,
+                  parent as RoofModel,
+                  foundation,
+                  elevation,
+                  distanceToClosestObject,
+                );
+                for (let i = 0; i < results.intensity.length; i++) {
+                  for (let j = 0; j < results.intensity[i].length; j++) {
+                    results.intensity[i][j] *= scaleFactorRef.current; // for solar heatmap generation
+                    totalSolarHeat += results.intensity[i][j] * results.unitArea; // for energy calculation
+                  }
+                }
+                // how much solar energy can go through the window (SHGC)
+                totalSolarHeat *= 1 - window.opacity;
+              }
+              break;
             }
           }
-          // how much solar energy can go through the window (SHGC)
-          totalSolarHeat *= 1 - window.opacity;
+        } else {
+          // when the sun is out
+          if (sunDirectionRef.current && sunDirectionRef.current.z > 0) {
+            const results = SolarRadiation.computeWallWindowSolarRadiationEnergy(
+              now,
+              world,
+              sunDirectionRef.current,
+              window,
+              parent as WallModel,
+              foundation,
+              elevation,
+              distanceToClosestObject,
+            );
+            for (let i = 0; i < results.intensity.length; i++) {
+              for (let j = 0; j < results.intensity[i].length; j++) {
+                results.intensity[i][j] *= scaleFactorRef.current; // for solar heatmap generation
+                totalSolarHeat += results.intensity[i][j] * results.unitArea; // for energy calculation
+              }
+            }
+            // how much solar energy can go through the window (SHGC)
+            totalSolarHeat *= 1 - window.opacity;
+          }
         }
         updateSolarHeatGainNow(foundation.id, totalSolarHeat / timesPerHour);
       }

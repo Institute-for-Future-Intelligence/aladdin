@@ -474,9 +474,9 @@ export class SolarRadiation {
     return true;
   }
 
-  // return an array that represents solar energy radiated onto the discretized cells of a window,
+  // return an array that represents solar energy radiated onto the discretized cells of a window on a wall,
   // along with the unit area
-  static computeWindowSolarRadiationEnergy(
+  static computeWallWindowSolarRadiationEnergy(
     now: Date,
     world: WorldModel,
     sunDirection: Vector3,
@@ -502,6 +502,82 @@ export class SolarRadiation {
     const normal = new Vector3(Math.cos(absWallAngle - HALF_PI), Math.sin(absWallAngle - HALF_PI), 0);
     const dxcos = dx * Math.cos(absWallAngle);
     const dxsin = dx * Math.sin(absWallAngle);
+    const v = new Vector3();
+    const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
+    const indirectRadiation = calculateDiffuseAndReflectedRadiation(
+      world.ground,
+      now.getMonth(),
+      normal,
+      peakRadiation,
+    );
+    const dot = normal.dot(sunDirection);
+    const intensity: number[][] = Array(nx)
+      .fill(0)
+      .map(() => Array(nz).fill(0));
+    if (window.windowType === WindowType.Arched) {
+      for (let kx = 0; kx < nx; kx++) {
+        for (let kz = 0; kz < nz; kz++) {
+          const kx2 = kx - nx / 2 + 0.5;
+          const kz2 = kz - nz / 2 + 0.5;
+          v.set(absWindowPos.x + kx2 * dxcos, absWindowPos.y + kx2 * dxsin, absWindowPos.z + kz2 * dz);
+          if (SolarRadiation.pointWithinArch(v, lx, lz, window.archHeight, absWindowPos)) {
+            intensity[kx][kz] += indirectRadiation;
+            if (dot > 0) {
+              if (distanceToClosestObject(window.id, v, sunDirection) < 0) {
+                // direct radiation
+                intensity[kx][kz] += dot * peakRadiation;
+              }
+            }
+          }
+        }
+      }
+    } else {
+      for (let kx = 0; kx < nx; kx++) {
+        for (let kz = 0; kz < nz; kz++) {
+          intensity[kx][kz] += indirectRadiation;
+          if (dot > 0) {
+            const kx2 = kx - nx / 2 + 0.5;
+            const kz2 = kz - nz / 2 + 0.5;
+            v.set(absWindowPos.x + kx2 * dxcos, absWindowPos.y + kx2 * dxsin, absWindowPos.z + kz2 * dz);
+            if (distanceToClosestObject(window.id, v, sunDirection) < 0) {
+              // direct radiation
+              intensity[kx][kz] += dot * peakRadiation;
+            }
+          }
+        }
+      }
+    }
+    return { intensity: intensity, unitArea: dx * dz };
+  }
+
+  // return an array that represents solar energy radiated onto the discretized cells of a window on a roof,
+  // along with the unit area
+  static computeRoofWindowSolarRadiationEnergy(
+    now: Date,
+    world: WorldModel,
+    sunDirection: Vector3,
+    window: WindowModel,
+    roof: RoofModel,
+    foundation: FoundationModel,
+    elevation: number,
+    distanceToClosestObject: Function,
+  ): { intensity: number[][]; unitArea: number } {
+    const dayOfYear = Util.dayOfYear(now);
+    const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
+    const lx = window.lx;
+    const lz = window.lz;
+    const nx = Math.max(2, Math.round(lx / cellSize));
+    const nz = Math.max(2, Math.round(lz / cellSize));
+    const dx = lx / nx;
+    const dz = lz / nz;
+    const absRoofAngle = foundation.rotation[2] + roof.rotation[2];
+    const absRoofPos = Util.wallAbsolutePosition(new Vector3(roof.cx, roof.cy, roof.cz), foundation).setZ(
+      roof.lz / 2 + foundation.lz,
+    );
+    const absWindowPos = absRoofPos.clone().add(new Vector3(window.cx * roof.lx, 0, window.cz * roof.lz));
+    const normal = new Vector3(Math.cos(absRoofAngle - HALF_PI), Math.sin(absRoofAngle - HALF_PI), 0);
+    const dxcos = dx * Math.cos(absRoofAngle);
+    const dxsin = dx * Math.sin(absRoofAngle);
     const v = new Vector3();
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
     const indirectRadiation = calculateDiffuseAndReflectedRadiation(
