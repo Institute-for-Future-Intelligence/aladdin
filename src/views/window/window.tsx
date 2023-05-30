@@ -372,6 +372,7 @@ const Window = (windowModel: WindowModel) => {
             glassMaterial={glassMaterial}
             showHeatFluxes={showHeatFluxes}
             area={Util.getWindowArea(windowModel)}
+            empty={!!windowModel.empty}
           />
         );
       case WindowType.Arched:
@@ -387,6 +388,7 @@ const Window = (windowModel: WindowModel) => {
             glassMaterial={glassMaterial}
             showHeatFluxes={showHeatFluxes}
             area={Util.getWindowArea(windowModel)}
+            empty={!!windowModel.empty}
           />
         );
     }

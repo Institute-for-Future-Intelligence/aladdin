@@ -33,6 +33,7 @@ interface ArchedWindowProps {
   glassMaterial: JSX.Element;
   showHeatFluxes: boolean;
   area: number;
+  empty: boolean;
 }
 interface MullionProps {
   dimension: number[];
@@ -436,6 +437,7 @@ const ArchedWindow = ({
   glassMaterial,
   showHeatFluxes,
   area,
+  empty,
 }: ArchedWindowProps) => {
   const world = useStore.getState().world;
   const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
@@ -560,16 +562,18 @@ const ArchedWindow = ({
 
   return (
     <>
-      <group name={'Arched Window Plane Group'} position={[0, cy, 0]}>
-        <mesh name={'Window Glass mesh'} rotation={[HALF_PI, 0, 0]}>
-          <shapeBufferGeometry args={[glassShape]} />
-          {glassMaterial}
-        </mesh>
+      {!empty && (
+        <group name={'Arched Window Plane Group'} position={[0, cy, 0]}>
+          <mesh name={'Window Glass mesh'} rotation={[HALF_PI, 0, 0]}>
+            <shapeBufferGeometry args={[glassShape]} />
+            {glassMaterial}
+          </mesh>
 
-        {mullionData.showMullion && archHeight !== undefined && (
-          <Mullion dimension={dimension} mullionData={mullionData} shadowEnabled={shadowEnabled} />
-        )}
-      </group>
+          {mullionData.showMullion && archHeight !== undefined && (
+            <Mullion dimension={dimension} mullionData={mullionData} shadowEnabled={shadowEnabled} />
+          )}
+        </group>
+      )}
 
       {frameData.showFrame && <Frame dimension={dimension} frameData={frameData} shadowEnabled={shadowEnabled} />}
 

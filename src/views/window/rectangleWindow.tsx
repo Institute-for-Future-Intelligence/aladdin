@@ -33,6 +33,7 @@ interface RectangleWindowProps {
   glassMaterial: JSX.Element;
   showHeatFluxes: boolean;
   area: number;
+  empty: boolean;
 }
 
 interface MullionProps {
@@ -259,6 +260,7 @@ const RectangleWindow = ({
   glassMaterial,
   showHeatFluxes,
   area,
+  empty,
 }: RectangleWindowProps) => {
   const world = useStore.getState().world;
   const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
@@ -338,15 +340,17 @@ const RectangleWindow = ({
 
   return (
     <>
-      <group name={'Rectangle Window Plane Group'} position={[0, 0.3 * ly, 0]}>
-        <Plane name={'Window Glass Plane'} args={[lx, lz]} rotation={[HALF_PI, 0, 0]}>
-          {glassMaterial}
-        </Plane>
+      {!empty && (
+        <group name={'Rectangle Window Plane Group'} position={[0, 0.3 * ly, 0]}>
+          <Plane name={'Window Glass Plane'} args={[lx, lz]} rotation={[HALF_PI, 0, 0]}>
+            {glassMaterial}
+          </Plane>
 
-        {mullionData.showMullion && (
-          <Mullion dimension={dimension} mullionData={mullionData} shadowEnabled={shadowEnabled} />
-        )}
-      </group>
+          {mullionData.showMullion && (
+            <Mullion dimension={dimension} mullionData={mullionData} shadowEnabled={shadowEnabled} />
+          )}
+        </group>
+      )}
 
       {frameData.showFrame && <Frame dimension={dimension} frameData={frameData} shadowEnabled={shadowEnabled} />}
 
