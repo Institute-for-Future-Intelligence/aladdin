@@ -490,6 +490,7 @@ export class SolarRadiation {
     const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
     const lx = window.lx * wall.lx;
     const lz = window.lz * wall.lz;
+    // FIXME: when lx / cellSize is small, this discretization gives inaccurate results
     const nx = Math.max(2, Math.round(lx / cellSize));
     const nz = Math.max(2, Math.round(lz / cellSize));
     const dx = lx / nx;
@@ -566,18 +567,17 @@ export class SolarRadiation {
     const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
     const lx = window.lx;
     const lz = window.lz;
+    // FIXME: when lx / cellSize is small, this discretization gives inaccurate results
     const nx = Math.max(2, Math.round(lx / cellSize));
     const nz = Math.max(2, Math.round(lz / cellSize));
     const dx = lx / nx;
     const dz = lz / nz;
-    const absRoofAngle = foundation.rotation[2] + roof.rotation[2];
-    const absRoofPos = Util.wallAbsolutePosition(new Vector3(roof.cx, roof.cy, roof.cz), foundation).setZ(
-      roof.lz / 2 + foundation.lz,
-    );
-    const absWindowPos = absRoofPos.clone().add(new Vector3(window.cx * roof.lx, 0, window.cz * roof.lz));
-    const normal = new Vector3(Math.cos(absRoofAngle - HALF_PI), Math.sin(absRoofAngle - HALF_PI), 0);
-    const dxcos = dx * Math.cos(absRoofAngle);
-    const dxsin = dx * Math.sin(absRoofAngle);
+    const position = new Vector3(window.cx, window.cy, window.cz).applyEuler(new Euler(0, 0, foundation.rotation[2]));
+    position.x += foundation.cx;
+    position.y += foundation.cy;
+    position.z += foundation.lz;
+    const euler = new Euler(window.rotation[0], window.rotation[1], window.rotation[2] + foundation.rotation[2], 'ZXY');
+    const normal = new Vector3(0, 0, 1).applyEuler(euler);
     const v = new Vector3();
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
     const indirectRadiation = calculateDiffuseAndReflectedRadiation(
@@ -595,8 +595,10 @@ export class SolarRadiation {
         for (let kz = 0; kz < nz; kz++) {
           const kx2 = kx - nx / 2 + 0.5;
           const kz2 = kz - nz / 2 + 0.5;
-          v.set(absWindowPos.x + kx2 * dxcos, absWindowPos.y + kx2 * dxsin, absWindowPos.z + kz2 * dz);
-          if (SolarRadiation.pointWithinArch(v, lx, lz, window.archHeight, absWindowPos)) {
+          const dis = new Vector3(kx2, kz2, 0);
+          dis.applyEuler(euler);
+          v.set(position.x + dis.x, position.y + dis.y, position.z + dis.z);
+          if (SolarRadiation.pointWithinArch(v, lx, lz, window.archHeight, position)) {
             intensity[kx][kz] += indirectRadiation;
             if (dot > 0) {
               if (distanceToClosestObject(window.id, v, sunDirection) < 0) {
@@ -614,7 +616,9 @@ export class SolarRadiation {
           if (dot > 0) {
             const kx2 = kx - nx / 2 + 0.5;
             const kz2 = kz - nz / 2 + 0.5;
-            v.set(absWindowPos.x + kx2 * dxcos, absWindowPos.y + kx2 * dxsin, absWindowPos.z + kz2 * dz);
+            const dis = new Vector3(kx2, kz2, 0);
+            dis.applyEuler(euler);
+            v.set(position.x + dis.x, position.y + dis.y, position.z + dis.z);
             if (distanceToClosestObject(window.id, v, sunDirection) < 0) {
               // direct radiation
               intensity[kx][kz] += dot * peakRadiation;
