@@ -142,7 +142,7 @@ export const DoorMenu = React.memo(() => {
               onChange={(e) => {
                 const checked = e.target.checked;
                 const undoableCheck = {
-                  name: 'Door filled',
+                  name: 'Filled Door',
                   timestamp: Date.now(),
                   checked: checked,
                   selectedElementId: door.id,
@@ -168,22 +168,22 @@ export const DoorMenu = React.memo(() => {
             <Checkbox
               checked={!!door.interior}
               onChange={(e) => {
-                const undoableChange = {
-                  name: 'Set Door Interior',
+                const checked = e.target.checked;
+                const undoableCheck = {
+                  name: 'Interior Door',
                   timestamp: Date.now(),
-                  oldValue: !!door?.interior,
-                  newValue: e.target.checked,
-                  changedElementId: door.id,
-                  changedElementType: door.type,
+                  checked: checked,
+                  selectedElementId: door.id,
+                  selectedElementType: door.type,
                   undo: () => {
-                    updateInteriorById(undoableChange.changedElementId, undoableChange.oldValue as boolean);
+                    updateInteriorById(door.id, !undoableCheck.checked);
                   },
                   redo: () => {
-                    updateInteriorById(undoableChange.changedElementId, undoableChange.newValue as boolean);
+                    updateInteriorById(door.id, undoableCheck.checked);
                   },
-                } as UndoableChange;
-                addUndoable(undoableChange);
-                updateInteriorById(door.id, e.target.checked);
+                } as UndoableCheck;
+                addUndoable(undoableCheck);
+                updateInteriorById(door.id, checked);
               }}
             >
               {i18n.t('doorMenu.Interior', lang)}

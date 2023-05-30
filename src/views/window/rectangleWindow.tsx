@@ -3,7 +3,7 @@
  */
 
 import React, { useMemo, useRef } from 'react';
-import { DoubleSide, Euler, FrontSide, MeshStandardMaterial, Vector3 } from 'three';
+import { DoubleSide, Euler, MeshStandardMaterial, Vector3 } from 'three';
 import { Box, Cone, Cylinder, Line, Plane } from '@react-three/drei';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
@@ -271,7 +271,6 @@ const RectangleWindow = ({
   const heatFluxArrowEuler = useRef<Euler>();
 
   const [lx, ly, lz] = dimension;
-  const [cx, cy, cz] = position;
 
   const heatFluxes: Vector3[][] | undefined = useMemo(() => {
     if (!showHeatFluxes) return undefined;

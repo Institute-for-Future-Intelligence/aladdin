@@ -1087,6 +1087,7 @@ export const i18n_zh_tw = {
       Default: '默認',
       Arched: '拱形',
       Interior: '内窗',
+      Empty: '空白',
     },
 
     roofMenu: {

@@ -1109,6 +1109,7 @@ export const i18n_en = {
       Default: 'Default',
       Arched: 'Arched',
       Interior: 'Interior',
+      Empty: 'Empty',
     },
 
     roofMenu: {

@@ -97,6 +97,7 @@ export interface ActionState {
   windowSillWidth: number;
   windowType: WindowType;
   windowArchHeight: number;
+  windowEmpty: boolean;
 
   solarPanelModelName: string;
   solarPanelOrientation: Orientation;

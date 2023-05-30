@@ -28,6 +28,9 @@ export interface WindowModel extends ElementModel {
 
   parentType?: ObjectType.Wall | ObjectType.Roof;
 
+  // if empty, it is a hole on its parent (roof or window)
+  empty?: boolean;
+
   // Is this window inside a building? If yes, this will be no heat exchange. By default, it is not.
   interior?: boolean;
 }

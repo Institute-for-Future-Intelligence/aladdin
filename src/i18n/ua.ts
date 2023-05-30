@@ -213,7 +213,8 @@ export const i18n_ua = {
       CannotPasteOutsideBoundary: 'Не можна вставити за межі межі.',
       CannotPasteBecauseOfOverlap: 'Не можна вставити через перекриття.',
       CannotMoveObjectTooFar: "Не можна перемістити об'єкт дуже далеко.",
-      ExistingSolarPanelsWillBeRemovedBeforeApplyingNewLayout: 'Існуючі сонячні панелі будуть видалені перед застосуванням нового макету.',
+      ExistingSolarPanelsWillBeRemovedBeforeApplyingNewLayout:
+        'Існуючі сонячні панелі будуть видалені перед застосуванням нового макету.',
       DoYouWantToContinue: 'Бажаєте продовжити?',
       SolarPanelsCannotIntersectWithGround: 'Сонячні панелі не можуть перетинатися з землею.',
       SolarPanelsCannotOverlapWithOneAnother: 'Сонячні панелі не можуть накладатися одна на одну.',
@@ -450,7 +451,8 @@ export const i18n_ua = {
         EffectOfLatusRectumOfParabolicTrough: 'Вплив прямої лінії на параболічному канаті',
         FocusSunlightWithParabolicDish: 'Фокусування сонячного світла за допомогою параболічного диска',
         LinearFresnelReflectors: 'Лінійні френельські відбивачі',
-        EffectOfAbsorberPipeHeightForLinearFresnelReflectors: 'Вплив висоти поглинаючої трубки на лінійні френельські відбивачі',
+        EffectOfAbsorberPipeHeightForLinearFresnelReflectors:
+          'Вплив висоти поглинаючої трубки на лінійні френельські відбивачі',
         EffectOfAzimuthOfLinearFresnelReflectors: 'Вплив азимуту на лінійні френельські відбивачі',
         LinearFresnelReflectorsWithTwoAbsorbers: 'Лінійні френельські відбивачі з двома поглинаючими елементами',
         CosineEfficiencyOfHeliostats: 'Косинусна ефективність геліостатів',
@@ -1108,6 +1110,7 @@ export const i18n_ua = {
       Default: 'Типове',
       Arched: 'Аркове',
       Interior: "Інтер'єр",
+      Empty: 'Порожнє',
     },
 
     roofMenu: {

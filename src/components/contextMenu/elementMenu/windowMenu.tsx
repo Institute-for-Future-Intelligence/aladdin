@@ -127,6 +127,17 @@ export const WindowMenu = React.memo(() => {
     });
   };
 
+  const updateEmptyWindowById = (id: string, empty: boolean) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === id && e.type === ObjectType.Window) {
+          (e as WindowModel).empty = empty;
+          break;
+        }
+      }
+    });
+  };
+
   const updateInteriorById = (id: string, interior: boolean) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
@@ -342,26 +353,54 @@ export const WindowMenu = React.memo(() => {
 
       {!window.locked && (
         <>
+          <Menu.Item key={'window-empty'}>
+            <Checkbox
+              checked={!!window.empty}
+              onChange={(e) => {
+                const checked = e.target.checked;
+                const undoableCheck = {
+                  name: 'Empty Window',
+                  timestamp: Date.now(),
+                  checked: checked,
+                  selectedElementId: window.id,
+                  selectedElementType: window.type,
+                  undo: () => {
+                    updateEmptyWindowById(window.id, !undoableCheck.checked);
+                  },
+                  redo: () => {
+                    updateEmptyWindowById(window.id, undoableCheck.checked);
+                  },
+                } as UndoableCheck;
+                addUndoable(undoableCheck);
+                updateEmptyWindowById(window.id, checked);
+                setCommonStore((state) => {
+                  state.actionState.windowEmpty = checked;
+                });
+              }}
+            >
+              {i18n.t('windowMenu.Empty', lang)}
+            </Checkbox>
+          </Menu.Item>
           <Menu.Item style={{ paddingLeft: '10px' }}>
             <Checkbox
               checked={!!window.interior}
               onChange={(e) => {
-                const undoableChange = {
-                  name: 'Set Window Interior',
+                const checked = e.target.checked;
+                const undoableCheck = {
+                  name: 'Interior Window',
                   timestamp: Date.now(),
-                  oldValue: !!window?.interior,
-                  newValue: e.target.checked,
-                  changedElementId: window.id,
-                  changedElementType: window.type,
+                  checked: checked,
+                  selectedElementId: window.id,
+                  selectedElementType: window.type,
                   undo: () => {
-                    updateInteriorById(undoableChange.changedElementId, undoableChange.oldValue as boolean);
+                    updateInteriorById(window.id, !undoableCheck.checked);
                   },
                   redo: () => {
-                    updateInteriorById(undoableChange.changedElementId, undoableChange.newValue as boolean);
+                    updateInteriorById(window.id, undoableCheck.checked);
                   },
-                } as UndoableChange;
-                addUndoable(undoableChange);
-                updateInteriorById(window.id, e.target.checked);
+                } as UndoableCheck;
+                addUndoable(undoableCheck);
+                updateInteriorById(window.id, checked);
               }}
             >
               {i18n.t('windowMenu.Interior', lang)}

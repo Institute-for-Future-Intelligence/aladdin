@@ -112,6 +112,7 @@ export class DefaultActionState implements ActionState {
   windowSillWidth: number;
   windowType: WindowType;
   windowArchHeight: number;
+  windowEmpty: boolean;
 
   solarPanelModelName: string;
   solarPanelOrientation: Orientation;
@@ -241,6 +242,7 @@ export class DefaultActionState implements ActionState {
     this.windowShutterRight = defaultShutter.showRight;
     this.windowShutterColor = defaultShutter.color;
     this.windowShutterWidth = defaultShutter.width;
+    this.windowEmpty = true;
 
     this.solarPanelModelName = 'SPR-X21-335-BLK';
     this.solarPanelOrientation = Orientation.landscape;
