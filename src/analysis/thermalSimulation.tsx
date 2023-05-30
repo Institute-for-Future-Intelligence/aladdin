@@ -677,10 +677,15 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         const area = Util.getWindowArea(window, RoofUtil.isTypeRoof(parent.type) ? undefined : parent);
         const deltaT = currentOutsideTemperatureRef.current - setpoint;
         // convert heat exchange to kWh
-        updateHeatExchangeNow(
-          window.id,
-          (deltaT * area * (window.uValue ?? DEFAULT_WINDOW_U_VALUE) * 0.001) / timesPerHour,
-        );
+        if (window.empty) {
+          // use a large U-value for an open door (not meant to be accurate, but as an indicator of something wrong)
+          updateHeatExchangeNow(window.id, (deltaT * area * U_VALUE_OPENING * 0.001) / timesPerHour);
+        } else {
+          updateHeatExchangeNow(
+            window.id,
+            (deltaT * area * (window.uValue ?? DEFAULT_WINDOW_U_VALUE) * 0.001) / timesPerHour,
+          );
+        }
       }
     }
   };
@@ -718,7 +723,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
                   }
                 }
                 // how much solar energy can go through the window (SHGC)
-                totalSolarHeat *= 1 - window.opacity;
+                totalSolarHeat *= window.empty ? 1 : 1 - window.opacity;
               }
               break;
             }
@@ -743,7 +748,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
               }
             }
             // how much solar energy can go through the window (SHGC)
-            totalSolarHeat *= 1 - window.opacity;
+            totalSolarHeat *= window.empty ? 1 : 1 - window.opacity;
           }
         }
         updateSolarHeatGainNow(foundation.id, totalSolarHeat / timesPerHour);
