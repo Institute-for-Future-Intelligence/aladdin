@@ -73,6 +73,18 @@ const WallResizeHandle = React.memo(({ x, z, handleType, highLight, handleSize, 
     lx *= 0.75;
     ly = handleSize / 2;
     lz = handleSize * 2.5;
+    const offset = lz / 4;
+    if (
+      handleType === ResizeHandleType.WallPartialResizeLeft ||
+      handleType === ResizeHandleType.WallPartialResizeRight
+    ) {
+      z -= offset;
+    } else if (
+      handleType === ResizeHandleType.WallPartialResizeLeftTop ||
+      handleType === ResizeHandleType.WallPartialResizeRightTop
+    ) {
+      z += offset;
+    }
   } else {
     ly = handleSize / 2;
     lz = handleSize * 1.7;
@@ -466,11 +478,7 @@ const WallResizeHandleWrapper = React.memo(
           setCommonStore((state) => {
             const wall = state.elements.find((e) => e.id === id && e.type === ObjectType.Wall) as WallModel;
             if (wall) {
-              let newTopPartialResizeHandleHeight = Util.clamp(
-                p.z - parentLz,
-                wall.leftUnfilledHeight + handleSize,
-                wall.lz,
-              );
+              let newTopPartialResizeHandleHeight = Util.clamp(p.z - parentLz, wall.leftUnfilledHeight, wall.lz);
               if (wall.leftJoints.length > 0) {
                 const leftWall = state.elements.find(
                   (e) => e.id === wall.leftJoints[0] && e.type === ObjectType.Wall,
@@ -504,11 +512,7 @@ const WallResizeHandleWrapper = React.memo(
           setCommonStore((state) => {
             const wall = state.elements.find((e) => e.id === id && e.type === ObjectType.Wall) as WallModel;
             if (wall) {
-              let newTopPartialResizeHandleHeight = Util.clamp(
-                p.z - parentLz,
-                wall.rightUnfilledHeight + handleSize,
-                wall.lz,
-              );
+              let newTopPartialResizeHandleHeight = Util.clamp(p.z - parentLz, wall.rightUnfilledHeight, wall.lz);
               if (wall.rightJoints.length > 0) {
                 const rightWall = state.elements.find(
                   (e) => e.id === wall.rightJoints[0] && e.type === ObjectType.Wall,
