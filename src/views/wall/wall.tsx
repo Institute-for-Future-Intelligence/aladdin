@@ -430,8 +430,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     }
 
     if (isTopPartial) {
-      points.push({ x: -x + leftOffset, y: -y + realWallRightHeight });
-      points.push({ x: x - rightOffset, y: -y + realWallLeftHeight });
+      points.push({ x: x - rightOffset, y: -y + realWallRightHeight });
+      points.push({ x: -x + leftOffset, y: -y + realWallLeftHeight });
     } else {
       rightRoofHeight ? points.push({ x: x, y: rightRoofHeight - y }) : points.push({ x: x, y: y });
       if (centerRightRoofHeight) {
@@ -1170,7 +1170,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   }
 
   function isRectWall() {
-    if (isTopPartial && (leftUnfilledHeight !== rightUnfilledHeight || leftTopPartialHeight !== rightTopPartialHeight))
+    if (isTopPartial || leftUnfilledHeight !== rightUnfilledHeight || leftTopPartialHeight !== rightTopPartialHeight)
       return false;
     if (!roofId) return true;
     if (leftRoofHeight !== rightRoofHeight) return false;
