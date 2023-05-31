@@ -393,7 +393,7 @@ const WallResizeHandleWrapper = React.memo(
             for (const e of state.elements) {
               if (e.id === id && e.type === ObjectType.Wall) {
                 const wall = e as WallModel;
-                let newUnfilledHeight = Util.clamp(p.z - parentLz, 0, wall.leftTopPartialHeight - handleSize);
+                let newUnfilledHeight = Util.clamp(p.z - parentLz, 0, wall.leftTopPartialHeight);
                 if (wall.leftJoints.length > 0) {
                   const leftWall = state.elements.find(
                     (e) => e.id === wall.leftJoints[0] && e.type === ObjectType.Wall,
@@ -430,7 +430,7 @@ const WallResizeHandleWrapper = React.memo(
             for (const e of state.elements) {
               if (e.id === id && e.type === ObjectType.Wall) {
                 const wall = e as WallModel;
-                let newUnfilledHeight = Util.clamp(p.z - parentLz, 0, wall.rightTopPartialHeight - handleSize);
+                let newUnfilledHeight = Util.clamp(p.z - parentLz, 0, wall.rightTopPartialHeight);
                 if (wall.rightJoints.length > 0) {
                   const rightWall = state.elements.find(
                     (e) => e.id === wall.rightJoints[0] && e.type === ObjectType.Wall,
