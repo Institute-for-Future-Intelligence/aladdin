@@ -185,7 +185,7 @@ const Window = (windowModel: WindowModel) => {
     sillWidth = 0.1,
     windowType = WindowType.Default,
     archHeight,
-    parentType = ObjectType.Wall,
+    parentType = ObjectType.Wall, // undefined is wall
   } = windowModel;
 
   const GROUP_NAME = `${WINDOW_GROUP_NAME} ${id}`;
@@ -331,7 +331,13 @@ const Window = (windowModel: WindowModel) => {
     return [lx, ly, lz];
   }, [lx, ly, lz, archHeight]);
 
-  const positionData = useMemo(() => [cx, cy, cz], [cx, cy, cz]);
+  const positionData = useMemo(() => {
+    if (parentType === ObjectType.Roof) {
+      return [cx, 0.05, cz];
+    } else {
+      return [cx, cy, cz];
+    }
+  }, [cx, cy, cz, parentType]);
 
   const mullionData = useMemo(
     () =>
@@ -394,11 +400,13 @@ const Window = (windowModel: WindowModel) => {
     }
   };
 
+  const positionY = parentType === ObjectType.Roof ? cy : 0;
+
   return (
     <group
       key={id}
       name={GROUP_NAME}
-      position={[cx, cy, cz]}
+      position={[cx, positionY, cz]}
       rotation={euler}
       onPointerDown={handlePointerDown}
       onContextMenu={handleContextMenu}

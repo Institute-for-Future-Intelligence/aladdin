@@ -273,6 +273,7 @@ const RectangleWindow = ({
   const heatFluxArrowEuler = useRef<Euler>();
 
   const [lx, ly, lz] = dimension;
+  const [cx, cy, cz] = position;
 
   const heatFluxes: Vector3[][] | undefined = useMemo(() => {
     if (!showHeatFluxes) return undefined;
@@ -341,7 +342,7 @@ const RectangleWindow = ({
   return (
     <>
       {!empty && (
-        <group name={'Rectangle Window Plane Group'} position={[0, 0.3 * ly, 0]}>
+        <group name={'Rectangle Window Plane Group'} position={[0, cy, 0]}>
           <Plane name={'Window Glass Plane'} args={[lx, lz]} rotation={[HALF_PI, 0, 0]}>
             {glassMaterial}
           </Plane>
@@ -364,7 +365,7 @@ const RectangleWindow = ({
         spacing={frameData.showFrame ? frameData.width / 2 : 0}
       />
 
-      <Wireframe cy={0.3 * ly} dimension={dimension} wireframeData={wireframeData} />
+      <Wireframe cy={cy} dimension={dimension} wireframeData={wireframeData} />
 
       {renderSealPlane([ly, lz], [-lx / 2, ly / 2, 0], [HALF_PI, HALF_PI, 0])}
       {renderSealPlane([ly, lz], [lx / 2, ly / 2, 0], [HALF_PI, -HALF_PI, 0])}

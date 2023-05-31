@@ -1388,7 +1388,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         case ObjectType.Window: {
           el.cx = pointer.x / lx;
           el.cz = pointer.z / lz;
-          el.cy = el.id === invalidElementIdRef.current ? -0.01 : 0;
+          el.cy = el.id === invalidElementIdRef.current ? -0.01 : 0.3;
           (el as WindowModel).tint =
             el.id === invalidElementIdRef.current ? 'red' : (state.selectedElement as WindowModel).tint; // usePrimitiveStore.getState().oldWindowTint ?? '#73D8FF';
           break;
@@ -1631,7 +1631,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
                 w.lz = newLz / lz;
                 w.cz = newCz / lz;
                 w.archHeight = newArchHeight;
-                w.cy = w.id === invalidElementIdRef.current ? -0.01 : 0;
+                w.cy = w.id === invalidElementIdRef.current ? -0.01 : 0.3;
                 w.tint = w.id === invalidElementIdRef.current ? 'red' : window.tint;
               });
             } else {
@@ -1646,7 +1646,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
                 w.lz = dimensionXZ.z / lz;
                 w.cx = positionXZ.x / lx;
                 w.cz = positionXZ.z / lz;
-                w.cy = w.id === invalidElementIdRef.current ? -0.01 : 0;
+                w.cy = w.id === invalidElementIdRef.current ? -0.01 : 0.3;
                 w.tint = w.id === invalidElementIdRef.current ? 'red' : window.tint;
               });
             }
@@ -2338,6 +2338,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         </>
       )}
 
+      {/* polygon */}
       {elementsOnWall.map((e) => {
         if (e.type === ObjectType.Polygon && fill !== WallFill.Empty) {
           return <Polygon key={e.id} {...(e as PolygonModel)} />;
