@@ -69,10 +69,21 @@ const isWindowInsideSegment = (center: Vector3, lx: number, ly: number, rotation
   return true;
 };
 
-const getResizeAnchor = (event: ThreeEvent<PointerEvent>, rotation: number[], lx: number, lz: number) => {
+const getResizeAnchor = (
+  event: ThreeEvent<PointerEvent>,
+  foundationId: string | undefined,
+  rotation: number[],
+  lx: number,
+  lz: number,
+) => {
+  if (!foundationId) return null;
+  const foundationModel = useStore
+    .getState()
+    .elements.find((e) => e.id === foundationId && e.type === ObjectType.Foundation);
+  if (!foundationModel) return null;
   const worldPosition = event.object.localToWorld(new Vector3());
   const [a, b, c] = rotation;
-  const euler = new Euler().fromArray([a - HALF_PI, b, c, 'ZXY']);
+  const euler = new Euler().fromArray([a - HALF_PI, b, c + foundationModel.rotation[2], 'ZXY']);
   const v = new Vector3(lx, 0, lz).applyEuler(euler);
   return new Vector3().addVectors(worldPosition, v);
 };
@@ -218,19 +229,19 @@ const WindowHandleWrapper = ({
         break;
       }
       case ResizeHandleType.LowerLeft: {
-        resizeAnchorWorldPosRef.current = getResizeAnchor(event, rotation, lx, lz);
+        resizeAnchorWorldPosRef.current = getResizeAnchor(event, foundationId, rotation, lx, lz);
         break;
       }
       case ResizeHandleType.LowerRight: {
-        resizeAnchorWorldPosRef.current = getResizeAnchor(event, rotation, -lx, lz);
+        resizeAnchorWorldPosRef.current = getResizeAnchor(event, foundationId, rotation, -lx, lz);
         break;
       }
       case ResizeHandleType.UpperLeft: {
-        resizeAnchorWorldPosRef.current = getResizeAnchor(event, rotation, lx, -lz);
+        resizeAnchorWorldPosRef.current = getResizeAnchor(event, foundationId, rotation, lx, -lz);
         break;
       }
       case ResizeHandleType.UpperRight: {
-        resizeAnchorWorldPosRef.current = getResizeAnchor(event, rotation, -lx, -lz);
+        resizeAnchorWorldPosRef.current = getResizeAnchor(event, foundationId, rotation, -lx, -lz);
         break;
       }
       default:
