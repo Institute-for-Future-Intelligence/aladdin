@@ -44,6 +44,7 @@ import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { InnerCommonState } from 'src/stores/InnerCommonState';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { GroupableModel, isGroupable } from 'src/models/Groupable';
+import { WindowModel } from 'src/models/WindowModel';
 
 const Ground = () => {
   const setCommonStore = useStore(Selector.set);
@@ -366,7 +367,7 @@ const Ground = () => {
                   if (e.id === id) {
                     e.cx = p.x;
                     e.cy = p.y;
-                    if (e.type !== ObjectType.SolarPanel || (e as SolarPanelModel).parentType !== ObjectType.Roof) {
+                    if (!isRoofTopElement(e)) {
                       e.cz = p.z;
                     }
                     if (e.type === ObjectType.Wall) {
@@ -669,9 +670,9 @@ const Ground = () => {
           }
         }
         if (elem.type === ObjectType.Foundation) {
-          const solarPanelsOnRoof = getSolarPanelsOnRoof(elem.id);
-          if (solarPanelsOnRoof.length > 0) {
-            for (const e of solarPanelsOnRoof) {
+          const elementsOnRoof = getRooftopChildren(elem.id);
+          if (elementsOnRoof.length > 0) {
+            for (const e of elementsOnRoof) {
               const centerRelPos = new Vector3(e.cx, e.cy);
               newChildrenPositionsMapRef.current.set(e.id, centerRelPos);
             }
@@ -1057,15 +1058,19 @@ const Ground = () => {
     }
   };
 
-  const getSolarPanelsOnRoof = (fId: string) => {
-    return useStore
-      .getState()
-      .elements.filter(
-        (e) =>
-          e.type === ObjectType.SolarPanel &&
-          e.foundationId === fId &&
-          (e as SolarPanelModel).parentType === ObjectType.Roof,
-      );
+  // todo: should add sensor and light
+  const isRoofTopElement = (e: ElementModel) => {
+    if (e.type === ObjectType.SolarPanel && (e as SolarPanelModel).parentType === ObjectType.Roof) return true;
+    if (e.type === ObjectType.Window && (e as WindowModel).parentType === ObjectType.Roof) return true;
+  };
+
+  const getRooftopChildren = (fId: string) => {
+    return useStore.getState().elements.filter((e) => {
+      if (e.foundationId !== fId) return false;
+      if (e.type === ObjectType.SolarPanel && (e as SolarPanelModel).parentType === ObjectType.Roof) return true;
+      if (e.type === ObjectType.Window && (e as WindowModel).parentType === ObjectType.Roof) return true;
+      if (e.type === ObjectType.Sensor || e.type === ObjectType.Light) return true;
+    });
   };
 
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
@@ -1182,9 +1187,10 @@ const Ground = () => {
               }
             }
             if (selectedElement.type === ObjectType.Foundation) {
-              const solarPanelsOnRoof = getSolarPanelsOnRoof(selectedElement.id);
-              if (solarPanelsOnRoof.length > 0) {
-                for (const e of solarPanelsOnRoof) {
+              const elementsOnRoof = getRooftopChildren(selectedElement.id);
+              if (elementsOnRoof.length > 0) {
+                for (const e of elementsOnRoof) {
+                  // skylight window position is absolute to foundation
                   const centerRelPos = new Vector3(e.cx, e.cy);
                   oldChildrenPositionsMapRef.current.set(e.id, centerRelPos);
                 }
@@ -1361,14 +1367,22 @@ const Ground = () => {
                   }
                 }
               }
-              const solarPanelsOnRoof = getSolarPanelsOnRoof(selectedElement.id);
-              if (solarPanelsOnRoof.length > 0) {
-                for (const e of solarPanelsOnRoof) {
-                  const centerAbsPos = new Vector3(e.cx * selectedElement.lx, e.cy * selectedElement.ly).applyEuler(
-                    new Euler(0, 0, selectedElement.rotation[2]),
-                  );
-                  centerAbsPos.add(foundationCenter);
-                  absPosMapRef.current.set(e.id, centerAbsPos);
+              const elementsOnRoof = getRooftopChildren(selectedElement.id);
+              if (elementsOnRoof.length > 0) {
+                const euler = new Euler(0, 0, selectedElement.rotation[2]);
+                for (const e of elementsOnRoof) {
+                  // skylight window position is absolute to foundation
+                  if (e.type === ObjectType.Window) {
+                    const centerAbsPos = new Vector3(e.cx, e.cy).applyEuler(euler);
+                    centerAbsPos.add(foundationCenter);
+                    absPosMapRef.current.set(e.id, centerAbsPos);
+                  } else {
+                    const centerAbsPos = new Vector3(e.cx * selectedElement.lx, e.cy * selectedElement.ly).applyEuler(
+                      euler,
+                    );
+                    centerAbsPos.add(foundationCenter);
+                    absPosMapRef.current.set(e.id, centerAbsPos);
+                  }
                 }
               }
               break;
@@ -2009,6 +2023,20 @@ const Ground = () => {
                   e.cy = relativePos.y / ly;
                   break;
               }
+            }
+          }
+          if (
+            e.foundationId === grabRef.current.id &&
+            e.type === ObjectType.Window &&
+            (e as WindowModel).parentType === ObjectType.Roof
+          ) {
+            const centerPos = absPosMapRef.current.get(e.id);
+            if (centerPos) {
+              const relPosToFoundation = new Vector2()
+                .subVectors(new Vector2(centerPos.x, centerPos.y), center)
+                .rotateAround(ORIGIN_VECTOR2, -grabRef.current!.rotation[2]);
+              e.cx = relPosToFoundation.x;
+              e.cy = relPosToFoundation.y;
             }
           }
         }
