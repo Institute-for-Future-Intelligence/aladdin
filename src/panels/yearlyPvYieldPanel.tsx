@@ -12,12 +12,19 @@ import { FLOATING_WINDOW_OPACITY, MONTHS } from '../constants';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space, Switch } from 'antd';
 import { screenshot, showInfo } from '../helpers';
-import { CaretRightOutlined, ReloadOutlined, SaveOutlined, UnorderedListOutlined } from '@ant-design/icons';
+import {
+  CameraOutlined,
+  CaretRightOutlined,
+  ReloadOutlined,
+  SaveOutlined,
+  UnorderedListOutlined,
+} from '@ant-design/icons';
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 import { Util } from 'src/Util';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
+import { saveAs } from 'file-saver';
 
 const Container = styled.div`
   position: fixed;
@@ -357,7 +364,7 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
                   />
                   <Button
                     type="default"
-                    icon={<SaveOutlined />}
+                    icon={<CameraOutlined />}
                     title={i18n.t('word.SaveAsImage', lang)}
                     onClick={() => {
                       screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-pv-yield', {}).then(() => {
@@ -373,6 +380,37 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
                       });
                     }}
                   />
+                  {yearlyYield && yearlyYield.length > 0 && (
+                    <Button
+                      type="default"
+                      icon={<SaveOutlined />}
+                      title={i18n.t('word.SaveAsCsv', lang)}
+                      onClick={() => {
+                        let csvContent = '';
+                        for (const k of Object.keys(yearlyYield[0])) {
+                          csvContent += k + ', ';
+                        }
+                        csvContent += '\n';
+                        for (const o of yearlyYield) {
+                          for (const v of Object.values(o)) {
+                            csvContent += v + ', ';
+                          }
+                          csvContent += '\n';
+                        }
+                        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
+                        saveAs(blob, 'yearly-pv-yield.csv');
+                        showInfo(i18n.t('message.CsvFileSaved', lang));
+                        if (loggable) {
+                          setCommonStore((state) => {
+                            state.actionInfo = {
+                              name: 'Export Solar Panel Yearly Yield Data as CSV',
+                              timestamp: new Date().getTime(),
+                            };
+                          });
+                        }
+                      }}
+                    />
+                  )}
                 </>
               )}
             </Space>

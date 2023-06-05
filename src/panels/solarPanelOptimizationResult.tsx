@@ -9,7 +9,7 @@ import * as Selector from '../stores/selector';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space } from 'antd';
 import { screenshot, showInfo } from '../helpers';
-import { RightCircleOutlined, SaveOutlined } from '@ant-design/icons';
+import { CameraOutlined, RightCircleOutlined, SaveOutlined } from '@ant-design/icons';
 import i18n from '../i18n/i18n';
 import EvolutionBiaxialLineGraph from '../components/evolutionBiaxialLineGraph';
 import { DesignProblem, EvolutionMethod, ObjectiveFunctionType, ObjectType } from '../types';
@@ -334,7 +334,7 @@ const SolarPanelOptimizationResult = () => {
               {!buttonEnabled && <span>{hint}</span>}
               <Button
                 type="default"
-                icon={<SaveOutlined />}
+                icon={<CameraOutlined />}
                 title={i18n.t('word.SaveAsImage', lang)}
                 onClick={() => {
                   screenshot(

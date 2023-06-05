@@ -10,7 +10,7 @@ import { BuildingCompletionStatus, DatumEntry, GraphDataType } from '../types';
 import moment from 'moment';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space } from 'antd';
-import { ReloadOutlined, CaretRightOutlined, SaveOutlined } from '@ant-design/icons';
+import { ReloadOutlined, CaretRightOutlined, SaveOutlined, CameraOutlined } from '@ant-design/icons';
 import { screenshot, showError, showInfo, showWarning } from '../helpers';
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
@@ -444,7 +444,7 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
               />
               <Button
                 type="default"
-                icon={<SaveOutlined />}
+                icon={<CameraOutlined />}
                 title={i18n.t('word.SaveAsImage', lang)}
                 onClick={() => {
                   screenshot('line-graph-' + labelX + '-' + labelY, 'daily-building-energy', {}).then(() => {
