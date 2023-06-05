@@ -11,8 +11,14 @@ import { ChartType, GraphDataType, ObjectType } from '../types';
 import { FLOATING_WINDOW_OPACITY, MONTHS } from '../constants';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space, Switch } from 'antd';
-import { screenshot, showInfo } from '../helpers';
-import { CaretRightOutlined, ReloadOutlined, SaveOutlined, UnorderedListOutlined } from '@ant-design/icons';
+import { saveCsv, screenshot, showInfo } from '../helpers';
+import {
+  CameraOutlined,
+  CaretRightOutlined,
+  ReloadOutlined,
+  SaveOutlined,
+  UnorderedListOutlined,
+} from '@ant-design/icons';
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
@@ -340,14 +346,41 @@ const YearlyFresnelReflectorYieldPanel = ({ city }: YearlyFresnelReflectorYieldP
               />
               <Button
                 type="default"
-                icon={<SaveOutlined />}
+                icon={<CameraOutlined />}
                 title={i18n.t('word.SaveAsImage', lang)}
                 onClick={() => {
                   screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-fresnel-reflector-yield', {}).then(() => {
                     showInfo(i18n.t('message.ScreenshotSaved', lang));
+                    if (loggable) {
+                      setCommonStore((state) => {
+                        state.actionInfo = {
+                          name: 'Take Screenshot of Yearly Fresnel Reflector Yield Graph',
+                          timestamp: new Date().getTime(),
+                        };
+                      });
+                    }
                   });
                 }}
               />
+              {yearlyYield && yearlyYield.length > 0 && (
+                <Button
+                  type="default"
+                  icon={<SaveOutlined />}
+                  title={i18n.t('word.SaveAsCsv', lang)}
+                  onClick={() => {
+                    saveCsv(yearlyYield, 'yearly-fresnel-reflector-yield.csv');
+                    showInfo(i18n.t('message.CsvFileSaved', lang));
+                    if (loggable) {
+                      setCommonStore((state) => {
+                        state.actionInfo = {
+                          name: 'Export Yearly Fresnel Reflector Yield Result as CSV',
+                          timestamp: new Date().getTime(),
+                        };
+                      });
+                    }
+                  }}
+                />
+              )}
             </Space>
           )}
         </ColumnWrapper>

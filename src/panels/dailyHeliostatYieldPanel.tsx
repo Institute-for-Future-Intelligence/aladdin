@@ -11,8 +11,14 @@ import { ChartType, GraphDataType, ObjectType } from '../types';
 import moment from 'moment';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space, Switch } from 'antd';
-import { screenshot, showInfo } from '../helpers';
-import { CaretRightOutlined, ReloadOutlined, SaveOutlined, UnorderedListOutlined } from '@ant-design/icons';
+import { saveCsv, screenshot, showInfo } from '../helpers';
+import {
+  CameraOutlined,
+  CaretRightOutlined,
+  ReloadOutlined,
+  SaveOutlined,
+  UnorderedListOutlined,
+} from '@ant-design/icons';
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 import { FLOATING_WINDOW_OPACITY } from '../constants';
@@ -336,14 +342,41 @@ const DailyHeliostatYieldPanel = ({ city }: DailyHeliostatYieldPanelProps) => {
               />
               <Button
                 type="default"
-                icon={<SaveOutlined />}
+                icon={<CameraOutlined />}
                 title={i18n.t('word.SaveAsImage', lang)}
                 onClick={() => {
                   screenshot('line-graph-' + labelX + '-' + labelY, 'daily-heliostat-yield', {}).then(() => {
                     showInfo(i18n.t('message.ScreenshotSaved', lang));
+                    if (loggable) {
+                      setCommonStore((state) => {
+                        state.actionInfo = {
+                          name: 'Take Screenshot of Daily Heliostat Yield Graph',
+                          timestamp: new Date().getTime(),
+                        };
+                      });
+                    }
                   });
                 }}
               />
+              {dailyYield && dailyYield.length > 0 && (
+                <Button
+                  type="default"
+                  icon={<SaveOutlined />}
+                  title={i18n.t('word.SaveAsCsv', lang)}
+                  onClick={() => {
+                    saveCsv(dailyYield, 'daily-heliostat-yield.csv');
+                    showInfo(i18n.t('message.CsvFileSaved', lang));
+                    if (loggable) {
+                      setCommonStore((state) => {
+                        state.actionInfo = {
+                          name: 'Export Daily Heliostat Yield Result as CSV',
+                          timestamp: new Date().getTime(),
+                        };
+                      });
+                    }
+                  }}
+                />
+              )}
             </Space>
           )}
         </ColumnWrapper>

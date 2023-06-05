@@ -11,8 +11,8 @@ import { ChartType, GraphDataType, SolarStructure } from '../types';
 import moment from 'moment';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space } from 'antd';
-import { screenshot, showInfo } from '../helpers';
-import { CaretRightOutlined, ReloadOutlined, SaveOutlined } from '@ant-design/icons';
+import { saveCsv, screenshot, showInfo } from '../helpers';
+import { CameraOutlined, CaretRightOutlined, ReloadOutlined, SaveOutlined } from '@ant-design/icons';
 import i18n from '../i18n/i18n';
 import SutBiaxialLineGraph from '../components/sutBiaxialLineGraph';
 import { Rectangle } from '../models/Rectangle';
@@ -324,14 +324,41 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
               />
               <Button
                 type="default"
-                icon={<SaveOutlined />}
+                icon={<CameraOutlined />}
                 title={i18n.t('word.SaveAsImage', lang)}
                 onClick={() => {
                   screenshot('line-graph-' + labelHour + '-' + labelYield, 'daily-updraft-tower-yield', {}).then(() => {
                     showInfo(i18n.t('message.ScreenshotSaved', lang));
+                    if (loggable) {
+                      setCommonStore((state) => {
+                        state.actionInfo = {
+                          name: 'Take Screenshot of Daily Updraft Tower Yield Graph',
+                          timestamp: new Date().getTime(),
+                        };
+                      });
+                    }
                   });
                 }}
               />
+              {dailyYield && dailyYield.length > 0 && (
+                <Button
+                  type="default"
+                  icon={<SaveOutlined />}
+                  title={i18n.t('word.SaveAsCsv', lang)}
+                  onClick={() => {
+                    saveCsv(dailyYield, 'daily-updraft-tower-yield.csv');
+                    showInfo(i18n.t('message.CsvFileSaved', lang));
+                    if (loggable) {
+                      setCommonStore((state) => {
+                        state.actionInfo = {
+                          name: 'Export Daily Updraft Tower Yield Result as CSV',
+                          timestamp: new Date().getTime(),
+                        };
+                      });
+                    }
+                  }}
+                />
+              )}
             </Space>
           )}
         </ColumnWrapper>

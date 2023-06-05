@@ -1,1 +1,454 @@
-{"docid":"gHMiemdnJcFMUxpQfVjjPt","time":"05/08/2023 09:52 am","timestamp":1683553944140,"userid":"QWecNcxhyvP6j6sBN11hBsfZDau1","owner":null,"email":null,"world":{"latitude":33.4483771,"solarPanelGridCellSize":0.5,"timesPerHour":4,"longitude":-112.0740373,"ground":{"albedo":0.3,"thermalDiffusivity":0.05,"snowReflectionFactors":[0,0,0,0,0,0,0,0,0,0,0,0]},"address":"Phoenix, AZ, USA","date":"3/22/2022, 12:00:00 PM","name":"default","orthographic":false,"cameraZoom":35.16173831821251,"solarRadiationHeatmapGridCellSize":1},"elements":[{"cy":-0.1414833283176331,"normal":[0,0,1],"lz":0.1,"ly":100,"id":"of4fAMi2p9MKmo6JDUYnfX","type":"Foundation","cx":-0.06913665374106212,"cz":0.05,"rotation":[0,0,0],"lx":48,"selected":false,"parentId":"Ground","solarStructure":2,"locked":false,"solarPowerTower":{"towerHeight":20}},{"type":"Human","name":"Jack","cx":3.2193530626125146,"cy":-2.9734078597551292,"cz":0.05000000074505806,"normal":[0,1,0],"rotation":[0,0,0],"parentId":"of4fAMi2p9MKmo6JDUYnfX","id":"qnU7wNUFWabF7Yh9Ri8Vn5","selected":false,"lx":0.6,"ly":0.6,"lz":1.8},{"type":"Heliostat","reflectance":0.9,"relativeAzimuth":0,"tiltAngle":0,"drawSunBeam":true,"poleHeight":0.2,"poleRadius":0.1,"cx":0.0016316459694108918,"cy":0.056499757261125036,"cz":0.5000000074505806,"lx":4,"ly":6,"lz":0.1,"showLabel":true,"normal":[0,0,1],"rotation":[0,0,0],"parentId":"of4fAMi2p9MKmo6JDUYnfX","foundationId":"of4fAMi2p9MKmo6JDUYnfX","id":"9caRxtuWoQpc52Rcvx4m2Y","selected":false,"dailyYield":28.86248835017146,"yearlyYield":311.4614380820491,"label":"6","labelHeight":2,"labelSize":2},{"type":"Heliostat","reflectance":0.9,"relativeAzimuth":0,"tiltAngle":0,"drawSunBeam":true,"poleHeight":0.2,"poleRadius":0.1,"cx":0.001226078643743118,"cy":0.16634053951298922,"cz":0.5000000074505806,"lx":4,"ly":6,"lz":0.1,"showLabel":true,"normal":[0,0,1],"rotation":[0,0,0],"parentId":"of4fAMi2p9MKmo6JDUYnfX","foundationId":"of4fAMi2p9MKmo6JDUYnfX","id":"3qHYF54uoRjqCcVSRMJa3K","selected":false,"dailyYield":22.075493423258955,"yearlyYield":341.6536704139208,"label":"4","labelHeight":2,"labelSize":2},{"type":"Heliostat","cx":0.0015794497286664832,"cy":0.22263738972537034,"cz":0.5000000074505806,"lx":4,"ly":6,"lz":0.1,"reflectance":0.9,"tiltAngle":0,"relativeAzimuth":0,"poleRadius":0.1,"poleHeight":0.2,"showLabel":true,"normal":[0,0,1],"rotation":[0,0,0],"parentId":"of4fAMi2p9MKmo6JDUYnfX","foundationId":"of4fAMi2p9MKmo6JDUYnfX","id":"g1F68TNqBqLxmye4TdM9aX","selected":false,"drawSunBeam":true,"dailyYield":17.32894620185682,"yearlyYield":285.77957159626914,"label":"3","labelHeight":2,"labelSize":2},{"type":"Heliostat","cx":0.001581112158779376,"cy":0.10634795978781855,"cz":0.5000000074505806,"lx":4,"ly":6,"lz":0.1,"reflectance":0.9,"tiltAngle":0,"relativeAzimuth":0,"poleRadius":0.1,"poleHeight":0.2,"showLabel":true,"normal":[0,0,1],"rotation":[0,0,0],"parentId":"of4fAMi2p9MKmo6JDUYnfX","foundationId":"of4fAMi2p9MKmo6JDUYnfX","id":"hdPEQL9d6tCZYhADdWFZfX","selected":false,"drawSunBeam":true,"dailyYield":21.79675399494804,"yearlyYield":347.0340046876023,"label":"5","labelHeight":2,"labelSize":2},{"type":"Heliostat","cx":0.0009487537946118556,"cy":0.2775217218176491,"cz":0.5000000074505806,"lx":4,"ly":6,"lz":0.1,"reflectance":0.9,"tiltAngle":0,"relativeAzimuth":0,"poleRadius":0.1,"poleHeight":0.2,"showLabel":true,"normal":[0,0,1],"rotation":[0,0,0],"parentId":"of4fAMi2p9MKmo6JDUYnfX","foundationId":"of4fAMi2p9MKmo6JDUYnfX","id":"orwNVrz2FK5fQamnSTQ7NK","selected":false,"drawSunBeam":true,"label":"2","dailyYield":14.05825681568513,"labelHeight":2,"labelSize":2},{"type":"Heliostat","cx":0.00207089526046105,"cy":0.32972836846468156,"cz":0.5000000074505806,"lx":4,"ly":6,"lz":0.1,"reflectance":0.9,"tiltAngle":0,"relativeAzimuth":0,"poleRadius":0.1,"poleHeight":0.2,"showLabel":true,"normal":[0,0,1],"rotation":[0,0,0],"parentId":"of4fAMi2p9MKmo6JDUYnfX","foundationId":"of4fAMi2p9MKmo6JDUYnfX","id":"7KyZAKPiHLomhbx7U5u64Y","selected":false,"drawSunBeam":true,"label":"1","dailyYield":11.010081200524054,"labelSize":2,"labelHeight":2}],"sceneRadius":63,"view":{"yearlyPvYieldPanelX":-25,"autoRotate":false,"mapZoom":19,"axes":true,"theme":"Default","showSiteInfoPanel":true,"showDesignInfoPanel":true,"showWeatherPanel":false,"groundPanelX":0,"dailyPvYieldPanelX":-4,"dailyLightSensorPanelY":232,"showDailyLightSensorPanel":false,"mapTilt":0,"yearlyPvYieldPanelY":16,"yearlyLightSensorPanelX":0,"showGroundPanel":false,"showHeliodonPanel":false,"heliodon":false,"weatherPanelY":0,"heliodonPanelX":-1205,"dailyPvYieldPanelY":3,"mapWeatherStations":false,"yearlyLightSensorPanelY":0,"showPvDailyYieldPanel":true,"showYearlyPvYieldPanel":false,"dailyLightSensorPanelX":-240,"weatherPanelX":0,"heliodonPanelY":17,"groundColor":"#16a5a5","groundPanelY":0,"groundImage":false,"showDailyPvYieldPanel":false,"shadowEnabled":true,"showYearlyLightSensorPanel":false,"mapType":"hybrid","cameraPosition":[-56.03492924888614,-3.1393903550330142,35.62950235618159],"panCenter":[-1.9088390832554354,-2.9523520368213196,7.55643283741026],"orthographic":false,"enableRotate":true,"cameraZoom":10.266841665590098,"showInstructionPanel":false,"showMapPanel":false,"cameraPosition2D":[8.410285062152344,12.466838396919735,150],"panCenter2D":[8.410285062152344,12.466888399142201,0.000012467288726847116],"solarRadiationHeatMapMaxValue":9,"showDailyHeliostatYieldPanel":true,"dailyHeliostatYieldPanelX":null,"dailyHeliostatYieldPanelY":null,"showYearlyHeliostatYieldPanel":false,"dailyHeliostatYieldPanelRect":{"x":6,"y":-5,"width":531,"height":342},"showStickyNotePanel":true,"stickyNotePanelRect":{"x":0,"y":0,"width":397,"height":62},"solarRadiationHeatMapReflectionOnly":true},"graphState":{"dailyParabolicDishIndividualOutputs":false,"yearlyParabolicDishIndividualOutputs":false,"dailyParabolicTroughIndividualOutputs":false,"yearlyParabolicTroughIndividualOutputs":false,"dailyFresnelReflectorIndividualOutputs":false,"yearlyFresnelReflectorIndividualOutputs":false,"dailyHeliostatIndividualOutputs":true,"yearlyHeliostatIndividualOutputs":false},"evolutionMethod":1,"solarPanelArrayLayoutParams":{"pvModelName":"CS6X-355P-FG","rowAxis":"Zonal","orientation":"Landscape","tiltAngle":0,"rowsPerRack":1,"interRowSpacing":2,"poleHeight":1,"poleSpacing":3},"solarPanelArrayLayoutConstraints":{"minimumInterRowSpacing":2,"maximumInterRowSpacing":10,"minimumRowsPerRack":1,"maximumRowsPerRack":6,"minimumTiltAngle":-1.5707963267948966,"maximumTiltAngle":1.5707963267948966,"poleHeight":1,"poleSpacing":5,"orientation":"Landscape","pvModelName":"CS6X-355P-FG","rowAxis":"Zonal"},"evolutionaryAlgorithmState":{"geneticAlgorithmParams":{"problem":"Solar Panel Tilt Angle","objectiveFunctionType":1,"selectionMethod":1,"searchMethod":1,"populationSize":20,"maximumGenerations":5,"selectionRate":0.5,"crossoverRate":0.5,"mutationRate":0.1,"convergenceThreshold":0.01,"localSearchRadius":0.1},"particleSwarmOptimizationParams":{"problem":"Solar Panel Tilt Angle","objectiveFunctionType":1,"searchMethod":1,"swarmSize":20,"maximumSteps":5,"vmax":0.01,"inertia":0.8,"cognitiveCoefficient":0.1,"socialCoefficient":0.1,"convergenceThreshold":0.01,"localSearchRadius":0.1}},"economicsParams":{"projectLifeSpan":25,"electricitySellingPrice":0.25,"operationalCostPerUnit":0.15},"modelType":"Unknown","modelAuthor":null,"modelLabel":null,"modelDescription":null,"notes":["Shadowing and blocking among heliostats"]}
+{
+  "docid": "gHMiemdnJcFMUxpQfVjjPt",
+  "time": "05/08/2023 09:52 am",
+  "timestamp": 1683553944140,
+  "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
+  "owner": null,
+  "email": null,
+  "world": {
+    "latitude": 33.4483771,
+    "solarPanelGridCellSize": 0.5,
+    "timesPerHour": 4,
+    "longitude": -112.0740373,
+    "ground": {
+      "albedo": 0.3,
+      "thermalDiffusivity": 0.05,
+      "snowReflectionFactors": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "address": "Phoenix, AZ, USA",
+    "date": "3/22/2022, 12:00:00 PM",
+    "name": "default",
+    "orthographic": false,
+    "cameraZoom": 35.16173831821251,
+    "solarRadiationHeatmapGridCellSize": 1
+  },
+  "elements": [
+    {
+      "cy": -0.1414833283176331,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "lz": 0.1,
+      "ly": 100,
+      "id": "of4fAMi2p9MKmo6JDUYnfX",
+      "type": "Foundation",
+      "cx": -0.06913665374106212,
+      "cz": 0.05,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "lx": 48,
+      "selected": false,
+      "parentId": "Ground",
+      "solarStructure": 2,
+      "locked": false,
+      "solarPowerTower": {
+        "towerHeight": 20
+      }
+    },
+    {
+      "type": "Human",
+      "name": "Jack",
+      "cx": 3.2193530626125146,
+      "cy": -2.9734078597551292,
+      "cz": 0.05000000074505806,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "qnU7wNUFWabF7Yh9Ri8Vn5",
+      "selected": false,
+      "lx": 0.6,
+      "ly": 0.6,
+      "lz": 1.8
+    },
+    {
+      "type": "Heliostat",
+      "reflectance": 0.9,
+      "relativeAzimuth": 0,
+      "tiltAngle": 0,
+      "drawSunBeam": true,
+      "poleHeight": 0.2,
+      "poleRadius": 0.1,
+      "cx": 0.0016316459694108918,
+      "cy": 0.056499757261125036,
+      "cz": 0.5000000074505806,
+      "lx": 4,
+      "ly": 6,
+      "lz": 0.1,
+      "showLabel": true,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "9caRxtuWoQpc52Rcvx4m2Y",
+      "selected": false,
+      "dailyYield": 28.86248835017146,
+      "yearlyYield": 311.4614380820491,
+      "label": "F",
+      "labelHeight": 2,
+      "labelSize": 2
+    },
+    {
+      "type": "Heliostat",
+      "reflectance": 0.9,
+      "relativeAzimuth": 0,
+      "tiltAngle": 0,
+      "drawSunBeam": true,
+      "poleHeight": 0.2,
+      "poleRadius": 0.1,
+      "cx": 0.001226078643743118,
+      "cy": 0.16634053951298922,
+      "cz": 0.5000000074505806,
+      "lx": 4,
+      "ly": 6,
+      "lz": 0.1,
+      "showLabel": true,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "3qHYF54uoRjqCcVSRMJa3K",
+      "selected": false,
+      "dailyYield": 22.075493423258955,
+      "yearlyYield": 341.6536704139208,
+      "label": "D",
+      "labelHeight": 2,
+      "labelSize": 2
+    },
+    {
+      "type": "Heliostat",
+      "cx": 0.0015794497286664832,
+      "cy": 0.22263738972537034,
+      "cz": 0.5000000074505806,
+      "lx": 4,
+      "ly": 6,
+      "lz": 0.1,
+      "reflectance": 0.9,
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "poleRadius": 0.1,
+      "poleHeight": 0.2,
+      "showLabel": true,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "g1F68TNqBqLxmye4TdM9aX",
+      "selected": false,
+      "drawSunBeam": true,
+      "dailyYield": 17.32894620185682,
+      "yearlyYield": 285.77957159626914,
+      "label": "C",
+      "labelHeight": 2,
+      "labelSize": 2
+    },
+    {
+      "type": "Heliostat",
+      "cx": 0.001581112158779376,
+      "cy": 0.10634795978781855,
+      "cz": 0.5000000074505806,
+      "lx": 4,
+      "ly": 6,
+      "lz": 0.1,
+      "reflectance": 0.9,
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "poleRadius": 0.1,
+      "poleHeight": 0.2,
+      "showLabel": true,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "hdPEQL9d6tCZYhADdWFZfX",
+      "selected": false,
+      "drawSunBeam": true,
+      "dailyYield": 21.79675399494804,
+      "yearlyYield": 347.0340046876023,
+      "label": "E",
+      "labelHeight": 2,
+      "labelSize": 2
+    },
+    {
+      "type": "Heliostat",
+      "cx": 0.0009487537946118556,
+      "cy": 0.2775217218176491,
+      "cz": 0.5000000074505806,
+      "lx": 4,
+      "ly": 6,
+      "lz": 0.1,
+      "reflectance": 0.9,
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "poleRadius": 0.1,
+      "poleHeight": 0.2,
+      "showLabel": true,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "orwNVrz2FK5fQamnSTQ7NK",
+      "selected": false,
+      "drawSunBeam": true,
+      "label": "B",
+      "dailyYield": 14.05825681568513,
+      "labelHeight": 2,
+      "labelSize": 2
+    },
+    {
+      "type": "Heliostat",
+      "cx": 0.00207089526046105,
+      "cy": 0.32972836846468156,
+      "cz": 0.5000000074505806,
+      "lx": 4,
+      "ly": 6,
+      "lz": 0.1,
+      "reflectance": 0.9,
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "poleRadius": 0.1,
+      "poleHeight": 0.2,
+      "showLabel": true,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "7KyZAKPiHLomhbx7U5u64Y",
+      "selected": false,
+      "drawSunBeam": true,
+      "label": "A",
+      "dailyYield": 11.010081200524054,
+      "labelSize": 2,
+      "labelHeight": 2
+    }
+  ],
+  "sceneRadius": 63,
+  "view": {
+    "yearlyPvYieldPanelX": -25,
+    "autoRotate": false,
+    "mapZoom": 19,
+    "axes": true,
+    "theme": "Default",
+    "showSiteInfoPanel": true,
+    "showDesignInfoPanel": true,
+    "showWeatherPanel": false,
+    "groundPanelX": 0,
+    "dailyPvYieldPanelX": -4,
+    "dailyLightSensorPanelY": 232,
+    "showDailyLightSensorPanel": false,
+    "mapTilt": 0,
+    "yearlyPvYieldPanelY": 16,
+    "yearlyLightSensorPanelX": 0,
+    "showGroundPanel": false,
+    "showHeliodonPanel": false,
+    "heliodon": false,
+    "weatherPanelY": 0,
+    "heliodonPanelX": -1205,
+    "dailyPvYieldPanelY": 3,
+    "mapWeatherStations": false,
+    "yearlyLightSensorPanelY": 0,
+    "showPvDailyYieldPanel": true,
+    "showYearlyPvYieldPanel": false,
+    "dailyLightSensorPanelX": -240,
+    "weatherPanelX": 0,
+    "heliodonPanelY": 17,
+    "groundColor": "#16a5a5",
+    "groundPanelY": 0,
+    "groundImage": false,
+    "showDailyPvYieldPanel": false,
+    "shadowEnabled": true,
+    "showYearlyLightSensorPanel": false,
+    "mapType": "hybrid",
+    "cameraPosition": [
+      -56.03492924888614,
+      -3.1393903550330142,
+      35.62950235618159
+    ],
+    "panCenter": [
+      -1.9088390832554354,
+      -2.9523520368213196,
+      7.55643283741026
+    ],
+    "orthographic": false,
+    "enableRotate": true,
+    "cameraZoom": 10.266841665590098,
+    "showInstructionPanel": false,
+    "showMapPanel": false,
+    "cameraPosition2D": [
+      8.410285062152344,
+      12.466838396919735,
+      150
+    ],
+    "panCenter2D": [
+      8.410285062152344,
+      12.466888399142201,
+      0.000012467288726847116
+    ],
+    "solarRadiationHeatMapMaxValue": 9,
+    "showDailyHeliostatYieldPanel": true,
+    "dailyHeliostatYieldPanelX": null,
+    "dailyHeliostatYieldPanelY": null,
+    "showYearlyHeliostatYieldPanel": false,
+    "dailyHeliostatYieldPanelRect": {
+      "x": 6,
+      "y": -5,
+      "width": 531,
+      "height": 342
+    },
+    "showStickyNotePanel": true,
+    "stickyNotePanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 397,
+      "height": 62
+    },
+    "solarRadiationHeatMapReflectionOnly": true
+  },
+  "graphState": {
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": true,
+    "yearlyHeliostatIndividualOutputs": false
+  },
+  "evolutionMethod": 1,
+  "solarPanelArrayLayoutParams": {
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal",
+    "orientation": "Landscape",
+    "tiltAngle": 0,
+    "rowsPerRack": 1,
+    "interRowSpacing": 2,
+    "poleHeight": 1,
+    "poleSpacing": 3
+  },
+  "solarPanelArrayLayoutConstraints": {
+    "minimumInterRowSpacing": 2,
+    "maximumInterRowSpacing": 10,
+    "minimumRowsPerRack": 1,
+    "maximumRowsPerRack": 6,
+    "minimumTiltAngle": -1.5707963267948966,
+    "maximumTiltAngle": 1.5707963267948966,
+    "poleHeight": 1,
+    "poleSpacing": 5,
+    "orientation": "Landscape",
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal"
+  },
+  "evolutionaryAlgorithmState": {
+    "geneticAlgorithmParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "selectionMethod": 1,
+      "searchMethod": 1,
+      "populationSize": 20,
+      "maximumGenerations": 5,
+      "selectionRate": 0.5,
+      "crossoverRate": 0.5,
+      "mutationRate": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    },
+    "particleSwarmOptimizationParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "searchMethod": 1,
+      "swarmSize": 20,
+      "maximumSteps": 5,
+      "vmax": 0.01,
+      "inertia": 0.8,
+      "cognitiveCoefficient": 0.1,
+      "socialCoefficient": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    }
+  },
+  "economicsParams": {
+    "projectLifeSpan": 25,
+    "electricitySellingPrice": 0.25,
+    "operationalCostPerUnit": 0.15
+  },
+  "modelType": "Unknown",
+  "modelAuthor": null,
+  "modelLabel": null,
+  "modelDescription": null,
+  "notes": [
+    "Shadowing and blocking among heliostats"
+  ]
+}

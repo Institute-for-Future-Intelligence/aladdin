@@ -1,9 +1,11 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import { message } from 'antd';
 import html2canvas from 'html2canvas';
+import { saveAs } from 'file-saver';
+import { DatumEntry } from './types';
 
 export const visitIFI = () => {
   window.open('https://intofuture.org', '_blank');
@@ -158,4 +160,20 @@ export const screenshot = async (elementId: string, name: string, options: {}) =
   } else {
     throw new Error(`Cannot find element with ID ${elementId}`);
   }
+};
+
+export const saveCsv = (data: DatumEntry[], fileName: string) => {
+  let content = '';
+  for (const k of Object.keys(data[0])) {
+    content += k + ', ';
+  }
+  content += '\n';
+  for (const o of data) {
+    for (const v of Object.values(o)) {
+      content += v + ', ';
+    }
+    content += '\n';
+  }
+  const blob = new Blob([content], { type: 'text/csv;charset=utf-8' });
+  saveAs(blob, fileName);
 };

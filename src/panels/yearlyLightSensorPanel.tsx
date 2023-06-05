@@ -12,8 +12,8 @@ import { FLOATING_WINDOW_OPACITY, MONTHS } from '../constants';
 import BarGraph from '../components/barGraph';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space, Switch } from 'antd';
-import { CaretRightOutlined, ReloadOutlined, SaveOutlined } from '@ant-design/icons';
-import { screenshot, showInfo } from '../helpers';
+import { CameraOutlined, CaretRightOutlined, ReloadOutlined, SaveOutlined } from '@ant-design/icons';
+import { saveCsv, screenshot, showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
@@ -327,7 +327,7 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
               />
               <Button
                 type="default"
-                icon={<SaveOutlined />}
+                icon={<CameraOutlined />}
                 title={i18n.t('word.SaveAsImage', lang)}
                 onClick={() => {
                   screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-light-sensor', {}).then(() => {
@@ -343,6 +343,25 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
                   });
                 }}
               />
+              {sensorData && sensorData.length > 0 && (
+                <Button
+                  type="default"
+                  icon={<SaveOutlined />}
+                  title={i18n.t('word.SaveAsCsv', lang)}
+                  onClick={() => {
+                    saveCsv(sensorData, 'yearly-light-sensor.csv');
+                    showInfo(i18n.t('message.CsvFileSaved', lang));
+                    if (loggable) {
+                      setCommonStore((state) => {
+                        state.actionInfo = {
+                          name: 'Export Yearly Light Sensor Result as CSV',
+                          timestamp: new Date().getTime(),
+                        };
+                      });
+                    }
+                  }}
+                />
+              )}
             </Space>
           </Space>
         </ColumnWrapper>

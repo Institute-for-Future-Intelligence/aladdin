@@ -11,7 +11,7 @@ import { FLOATING_WINDOW_OPACITY, MONTHS } from '../constants';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space } from 'antd';
 import { CameraOutlined, CaretRightOutlined, ReloadOutlined, SaveOutlined } from '@ant-design/icons';
-import { screenshot, showError, showInfo, showWarning } from '../helpers';
+import { saveCsv, screenshot, showError, showInfo, showWarning } from '../helpers';
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
@@ -556,6 +556,25 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
                   });
                 }}
               />
+              {resultRef.current && resultRef.current.length > 0 && (
+                <Button
+                  type="default"
+                  icon={<SaveOutlined />}
+                  title={i18n.t('word.SaveAsCsv', lang)}
+                  onClick={() => {
+                    saveCsv(resultRef.current, 'yearly-building-energy.csv');
+                    showInfo(i18n.t('message.CsvFileSaved', lang));
+                    if (loggable) {
+                      setCommonStore((state) => {
+                        state.actionInfo = {
+                          name: 'Export Yearly Building Energy Result as CSV',
+                          timestamp: new Date().getTime(),
+                        };
+                      });
+                    }
+                  }}
+                />
+              )}
             </Space>
           )}
         </ColumnWrapper>

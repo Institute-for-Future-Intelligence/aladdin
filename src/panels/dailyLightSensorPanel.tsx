@@ -11,8 +11,8 @@ import { ChartType, GraphDataType, ObjectType } from '../types';
 import moment from 'moment';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space } from 'antd';
-import { CaretRightOutlined, ReloadOutlined, SaveOutlined } from '@ant-design/icons';
-import { screenshot, showInfo } from '../helpers';
+import { CameraOutlined, CaretRightOutlined, ReloadOutlined, SaveOutlined } from '@ant-design/icons';
+import { saveCsv, screenshot, showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 import { FLOATING_WINDOW_OPACITY } from '../constants';
@@ -255,7 +255,7 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
             />
             <Button
               type="default"
-              icon={<SaveOutlined />}
+              icon={<CameraOutlined />}
               title={i18n.t('word.SaveAsImage', lang)}
               onClick={() => {
                 screenshot('line-graph-' + labelX + '-' + labelY, 'daily-light-sensor', {}).then(() => {
@@ -271,6 +271,25 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
                 });
               }}
             />
+            {sensorData && sensorData.length > 0 && (
+              <Button
+                type="default"
+                icon={<SaveOutlined />}
+                title={i18n.t('word.SaveAsCsv', lang)}
+                onClick={() => {
+                  saveCsv(sensorData, 'daily-light-sensor.csv');
+                  showInfo(i18n.t('message.CsvFileSaved', lang));
+                  if (loggable) {
+                    setCommonStore((state) => {
+                      state.actionInfo = {
+                        name: 'Export Daily Light Sensor Result as CSV',
+                        timestamp: new Date().getTime(),
+                      };
+                    });
+                  }
+                }}
+              />
+            )}
           </Space>
         </ColumnWrapper>
       </Container>

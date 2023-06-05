@@ -11,8 +11,8 @@ import { ChartType, GraphDataType, SolarStructure } from '../types';
 import { FLOATING_WINDOW_OPACITY, MONTHS } from '../constants';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space } from 'antd';
-import { screenshot, showInfo } from '../helpers';
-import { CaretRightOutlined, ReloadOutlined, SaveOutlined } from '@ant-design/icons';
+import { saveCsv, screenshot, showInfo } from '../helpers';
+import { CameraOutlined, CaretRightOutlined, ReloadOutlined, SaveOutlined } from '@ant-design/icons';
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
@@ -306,14 +306,41 @@ const YearlySolarUpdraftTowerYieldPanel = ({ city }: YearlySolarUpdraftTowerYiel
               />
               <Button
                 type="default"
-                icon={<SaveOutlined />}
+                icon={<CameraOutlined />}
                 title={i18n.t('word.SaveAsImage', lang)}
                 onClick={() => {
                   screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-updraft-tower-yield', {}).then(() => {
                     showInfo(i18n.t('message.ScreenshotSaved', lang));
+                    if (loggable) {
+                      setCommonStore((state) => {
+                        state.actionInfo = {
+                          name: 'Take Screenshot of Yearly Updraft Tower Yield Graph',
+                          timestamp: new Date().getTime(),
+                        };
+                      });
+                    }
                   });
                 }}
               />
+              {yearlyYield && yearlyYield.length > 0 && (
+                <Button
+                  type="default"
+                  icon={<SaveOutlined />}
+                  title={i18n.t('word.SaveAsCsv', lang)}
+                  onClick={() => {
+                    saveCsv(yearlyYield, 'yearly-updraft-tower-yield.csv');
+                    showInfo(i18n.t('message.CsvFileSaved', lang));
+                    if (loggable) {
+                      setCommonStore((state) => {
+                        state.actionInfo = {
+                          name: 'Export Yearly Updraft Tower Yield Result as CSV',
+                          timestamp: new Date().getTime(),
+                        };
+                      });
+                    }
+                  }}
+                />
+              )}
             </Space>
           )}
         </ColumnWrapper>
