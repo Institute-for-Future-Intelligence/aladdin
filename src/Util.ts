@@ -280,7 +280,7 @@ export class Util {
   // Area of an arch given height and radius: https://keisan.casio.com/exec/system/14407397055469
   static getWindowArea(window: WindowModel, parent?: ElementModel): number {
     if (parent) {
-      // if parent is set, window dimension is relative to it
+      // if parent is set, window dimension is relative to it (e.g., when it is on a wall)
       if (window.windowType === WindowType.Arched && window.archHeight > 0) {
         const hx = 0.5 * window.lx * parent.lx;
         const lz = window.lz * parent.lz;
@@ -292,7 +292,7 @@ export class Util {
       }
       return window.lx * window.lz * parent.lx * parent.lz;
     } else {
-      // if parent is not set, window dimension is absolute
+      // if parent is not set, window dimension is absolute (e.g., when it is on a roof)
       if (window.windowType === WindowType.Arched && window.archHeight > 0) {
         const hx = 0.5 * window.lx;
         const lz = window.lz;

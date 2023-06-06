@@ -1085,7 +1085,7 @@ export const i18n_es = {
 
     windowMenu: {
       OnlyThisWindow: 'Only This Window',
-      AllWindowsOnWall: 'All Windows on the Same Wall',
+      AllWindowsOnSurface: 'All Windows on the Same Surface',
       AllWindowsAboveFoundation: 'All Windows Above the Same Foundation',
       AllWindows: 'All Windows',
       Width: 'Ancho',

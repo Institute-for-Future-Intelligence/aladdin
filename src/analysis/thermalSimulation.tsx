@@ -674,7 +674,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       const parent = getParent(window);
       if (parent) {
         const setpoint = foundation.hvacSystem?.thermostatSetpoint ?? 20;
-        const area = Util.getWindowArea(window, RoofUtil.isTypeRoof(parent.type) ? undefined : parent);
+        const area = Util.getWindowArea(window, window.parentType === ObjectType.Roof ? undefined : parent);
         const deltaT = currentOutsideTemperatureRef.current - setpoint;
         // convert heat exchange to kWh
         if (window.empty) {
@@ -697,7 +697,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       const parent = getParent(window);
       if (parent) {
         let totalSolarHeat = 0;
-        if (RoofUtil.isTypeRoof(parent.type)) {
+        if (window.parentType === ObjectType.Roof) {
           const segmentsWithoutOverhang = getRoofSegmentVerticesWithoutOverhang(parent.id);
           if (!segmentsWithoutOverhang) return;
           // go over roof segments

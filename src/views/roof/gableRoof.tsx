@@ -745,7 +745,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
   // set position and rotation
   const foundation = useStore((state) => {
     for (const e of state.elements) {
-      if (e.id === parentId && e.type == ObjectType.Foundation) {
+      if (e.id === parentId && e.type === ObjectType.Foundation) {
         return e as FoundationModel;
       }
     }
@@ -1194,7 +1194,7 @@ const RoofSegment = ({
   opacity?: number;
 }) => {
   const world = useStore.getState().world;
-  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
+  const getChildrenOfType = useStore(Selector.getChildrenOfType);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const showHeatFluxes = usePrimitiveStore(Selector.showHeatFluxes);
   const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
@@ -1239,7 +1239,7 @@ const RoofSegment = ({
     const [wallLeft, wallRight, ridgeRight, ridgeLeft, wallLeftAfterOverhang] = points;
     const thickness = wallLeftAfterOverhang.z - wallLeft.z;
     const thicknessVector = new Vector3(0, 0, thickness + 0.1);
-    for (const [i, seg] of segments.entries()) {
+    for (const seg of segments.values()) {
       let p: Vector3[] = [];
       p.push(seg[0].clone().sub(centroid).add(thicknessVector));
       p.push(seg[1].clone().sub(centroid).add(thicknessVector));
@@ -1269,6 +1269,18 @@ const RoofSegment = ({
     if (!s) return undefined;
     let area = Util.getTriangleArea(s[0], s[1], s[2]) + Util.getTriangleArea(s[2], s[3], s[0]);
     if (area === 0) return undefined;
+    let windows = getChildrenOfType(ObjectType.Window, id);
+    const segmentsWithoutOverhang = getRoofSegmentVerticesWithoutOverhang(id);
+    if (segmentsWithoutOverhang && segmentsWithoutOverhang[index]) {
+      windows = windows.filter((w) => RoofUtil.onSegment(segmentsWithoutOverhang[index], w.cx, w.cy));
+    }
+    if (windows && windows.length > 0) {
+      console.log(area);
+      for (const w of windows) {
+        area -= Util.getWindowArea(w as WindowModel, undefined);
+      }
+      console.log(area);
+    }
     const cellSize = DEFAULT_HEAT_FLUX_DENSITY_FACTOR * (world.solarRadiationHeatmapGridCellSize ?? 0.5);
     const s0 = s[0].clone();
     const s1 = s[1].clone();
@@ -1320,7 +1332,7 @@ const RoofSegment = ({
       }
     }
     return vectors;
-  }, [showHeatFluxes, heatFluxScaleFactor]);
+  }, [showHeatFluxes, heatFluxScaleFactor, centroid, points]);
 
   const windows: WindowData[] = useStore((state) => state.elements)
     .filter((e) => e.parentId === id && e.type === ObjectType.Window)
@@ -1459,7 +1471,7 @@ const RoofSegment = ({
       }
     }
     invalidate();
-  }, [points, angle, length, currWall, show, showSolarRadiationHeatmap]);
+  }, [points, angle, length, currWall, show, showSolarRadiationHeatmap, roofStructure]);
 
   // FIXME: Bulk mesh can be null if it is not initialized. Refreshing the page fixes the problem.
 

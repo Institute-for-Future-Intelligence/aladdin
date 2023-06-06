@@ -27,13 +27,13 @@ const DoorWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =
   const getParent = useStore(Selector.getParent);
 
   const door = useStore((state) => state.elements.find((e) => e.selected && e.type === ObjectType.Door)) as DoorModel;
-  const parent = door ? getParent(door) : null;
 
   const currentValue = useMemo(() => {
     const v = door ? door.lx : 1;
+    const parent = door ? getParent(door) : null;
     if (parent) return v * parent.lx;
     return v;
-  }, [door?.lx, parent?.lx]);
+  }, [door?.lx]);
 
   const [inputValue, setInputValue] = useState<number>(currentValue);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -44,15 +44,18 @@ const DoorWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =
 
   useEffect(() => {
     if (door) {
-      setInputValue(door?.lx * (parent ? parent.lx : 1) ?? 1);
+      const parent = getParent(door);
+      setInputValue(door.lx * (parent ? parent.lx : 1) ?? 1);
     }
   }, [door?.lx]);
 
   const updateById = (id: string, value: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
-        if (e.id === id) {
-          (e as DoorModel).lx = parent ? value / parent.lx : value;
+        if (e.id === id && e.type === ObjectType.Door) {
+          const d = e as DoorModel;
+          const parent = getParent(d);
+          d.lx = parent ? value / parent.lx : value;
           break;
         }
       }
@@ -72,33 +75,34 @@ const DoorWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =
   };
 
   const needChange = (value: number) => {
-    const lx = parent ? value / parent.lx : value;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
-          if (e.type === ObjectType.Door && lx !== e.lx && !e.locked) {
-            return true;
+          if (e.type === ObjectType.Door && !e.locked) {
+            const parent = getParent(e);
+            if (parent && value !== e.lx * parent.lx) return true;
           }
         }
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         for (const e of elements) {
-          if (e.type === ObjectType.Door && e.foundationId === door.foundationId && lx !== e.lx && !e.locked) {
-            return true;
+          if (e.type === ObjectType.Door && e.foundationId === door.foundationId && !e.locked) {
+            const parent = getParent(e);
+            if (parent && value !== e.lx * parent.lx) return true;
           }
         }
         break;
       case Scope.OnlyThisSide:
         for (const e of elements) {
-          if (e.type === ObjectType.Door && e.parentId === door.parentId && lx !== e.lx && !e.locked) {
-            return true;
+          if (e.type === ObjectType.Door && e.parentId === door.parentId && !e.locked) {
+            const parent = getParent(e);
+            if (parent && value !== e.lx * parent.lx) return true;
           }
         }
         break;
       default:
-        if (lx !== door?.lx) {
-          return true;
-        }
+        const parent = getParent(door);
+        if (parent && value !== door.lx * parent.lx) return true;
         break;
     }
     return false;
@@ -113,9 +117,10 @@ const DoorWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =
         setCommonStore((state) => {
           for (const e of state.elements) {
             if (e.type === ObjectType.Door && !e.locked) {
-              const door = e as DoorModel;
-              oldValuesAll.set(e.id, door.lx * (parent ? parent.lx : 1));
-              door.lx = parent ? value / parent.lx : value;
+              const d = e as DoorModel;
+              const parent = d ? getParent(d) : null;
+              oldValuesAll.set(e.id, d.lx * (parent ? parent.lx : 1));
+              d.lx = parent ? value / parent.lx : value;
             }
           }
         });
@@ -140,9 +145,10 @@ const DoorWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =
           setCommonStore((state) => {
             for (const e of state.elements) {
               if (e.type === ObjectType.Door && e.foundationId === door.foundationId && !e.locked) {
-                const door = e as DoorModel;
-                oldValuesAboveFoundation.set(e.id, door.lx * (parent ? parent.lx : 1));
-                door.lx = parent ? value / parent.lx : value;
+                const d = e as DoorModel;
+                const parent = d ? getParent(d) : null;
+                oldValuesAboveFoundation.set(e.id, d.lx * (parent ? parent.lx : 1));
+                d.lx = parent ? value / parent.lx : value;
               }
             }
           });
@@ -172,9 +178,10 @@ const DoorWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =
           setCommonStore((state) => {
             for (const e of state.elements) {
               if (e.type === ObjectType.Door && e.parentId === door.parentId && !e.locked) {
-                const door = e as DoorModel;
-                oldValues.set(e.id, door.lx * (parent ? parent.lx : 1));
-                door.lx = parent ? value / parent.lx : value;
+                const d = e as DoorModel;
+                const parent = d ? getParent(d) : null;
+                oldValues.set(e.id, d.lx * (parent ? parent.lx : 1));
+                d.lx = parent ? value / parent.lx : value;
               }
             }
           });
@@ -201,6 +208,7 @@ const DoorWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =
       default:
         if (door) {
           const updatedDoor = getElementById(door.id) as DoorModel;
+          const parent = door ? getParent(updatedDoor) : null;
           const oldValue = (updatedDoor.lx ?? door.lx ?? 0.1) * (parent ? parent.lx : 1);
           const undoableChange = {
             name: 'Set Door Width',
@@ -256,6 +264,7 @@ const DoorWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =
     setValue(inputValue);
   };
 
+  const parent = door ? getParent(door) : null;
   const max = parent && door ? 2 * parent.lx * Math.min(Math.abs(0.5 - door.cx), Math.abs(-0.5 - door.cx)) : 100;
 
   return (

@@ -331,7 +331,14 @@ export const WindowMenu = React.memo(() => {
         const setting = NumberDialogSettings[dataType] as NumberDialogSettingType;
         if (dataType === WindowDataType.Width) {
           setting.range[1] =
-            parent && window ? 2 * parent.lx * Math.min(Math.abs(0.5 - window.cx), Math.abs(-0.5 - window.cx)) : 100;
+            parent && window && window.parentType !== ObjectType.Roof
+              ? 2 * parent.lx * Math.min(Math.abs(0.5 - window.cx), Math.abs(-0.5 - window.cx))
+              : 100;
+        } else if (dataType === WindowDataType.Height) {
+          setting.range[1] =
+            parent && window && window.parentType !== ObjectType.Roof
+              ? 2 * parent.lz * Math.min(Math.abs(0.5 - window.cz), Math.abs(-0.5 - window.cz))
+              : 100;
         }
         if (!setting) return null;
         return (

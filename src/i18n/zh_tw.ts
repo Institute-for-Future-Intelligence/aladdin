@@ -1063,7 +1063,7 @@ export const i18n_zh_tw = {
 
     windowMenu: {
       OnlyThisWindow: '只這個窗戶',
-      AllWindowsOnWall: '同一面牆上所有的窗戶',
+      AllWindowsOnSurface: '同一表面上所有的窗戶',
       AllWindowsAboveFoundation: '同一地基上所有的窗戶',
       AllWindows: '所有的窗戶',
       Width: '寬度',

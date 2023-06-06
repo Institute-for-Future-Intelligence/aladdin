@@ -27,13 +27,13 @@ const DoorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   const getParent = useStore(Selector.getParent);
 
   const door = useStore((state) => state.elements.find((e) => e.selected && e.type === ObjectType.Door)) as DoorModel;
-  const parent = door ? getParent(door) : null;
 
   const currentValue = useMemo(() => {
     const v = door ? door.lz : 1;
+    const parent = door ? getParent(door) : null;
     if (parent) return v * parent.lz;
     return v;
-  }, [door?.lz, parent?.lz]);
+  }, [door?.lz]);
 
   const [inputValue, setInputValue] = useState<number>(currentValue);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -44,17 +44,19 @@ const DoorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
 
   useEffect(() => {
     if (door) {
-      setInputValue(door?.lz * (parent ? parent.lz : 1) ?? 2);
+      const parent = getParent(door);
+      setInputValue(door.lz * (parent ? parent.lz : 1) ?? 2);
     }
-  }, [door?.lz, parent?.lz]);
+  }, [door?.lz]);
 
   const updateById = (id: string, value: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
-        if (e.id === id) {
-          const door = e as DoorModel;
-          door.lz = parent ? value / parent.lz : value;
-          if (parent) door.cz = -(parent.lz - value) / (2 * parent.lz);
+        if (e.id === id && e.type === ObjectType.Door) {
+          const d = e as DoorModel;
+          const parent = getParent(d);
+          d.lz = parent ? value / parent.lz : value;
+          if (parent) d.cz = -(parent.lz - value) / (2 * parent.lz);
           break;
         }
       }
@@ -74,33 +76,34 @@ const DoorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   };
 
   const needChange = (value: number) => {
-    const lz = parent ? value / parent.lz : value;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
-          if (e.type === ObjectType.Door && lz !== e.lz && !e.locked) {
-            return true;
+          if (e.type === ObjectType.Door && !e.locked) {
+            const parent = getParent(e);
+            if (parent && value !== e.lz * parent.lz) return true;
           }
         }
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         for (const e of elements) {
-          if (e.type === ObjectType.Door && e.foundationId === door.foundationId && lz !== e.lz && !e.locked) {
-            return true;
+          if (e.type === ObjectType.Door && e.foundationId === door.foundationId && !e.locked) {
+            const parent = getParent(e);
+            if (parent && value !== e.lz * parent.lz) return true;
           }
         }
         break;
       case Scope.OnlyThisSide:
         for (const e of elements) {
-          if (e.type === ObjectType.Door && e.parentId === door.parentId && lz !== e.lz && !e.locked) {
-            return true;
+          if (e.type === ObjectType.Door && e.parentId === door.parentId && !e.locked) {
+            const parent = getParent(e);
+            if (parent && value !== e.lz * parent.lz) return true;
           }
         }
         break;
       default:
-        if (lz !== door?.lz) {
-          return true;
-        }
+        const parent = getParent(door);
+        if (parent && value !== door.lz * parent.lz) return true;
         break;
     }
     return false;
@@ -115,10 +118,11 @@ const DoorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
         setCommonStore((state) => {
           for (const e of state.elements) {
             if (e.type === ObjectType.Door && !e.locked) {
-              const door = e as DoorModel;
-              oldValuesAll.set(e.id, door.lz * (parent ? parent.lz : 1));
-              door.lz = parent ? value / parent.lz : value;
-              if (parent) door.cz = -(parent.lz - value) / (2 * parent.lz);
+              const d = e as DoorModel;
+              const parent = d ? getParent(d) : null;
+              oldValuesAll.set(e.id, d.lz * (parent ? parent.lz : 1));
+              d.lz = parent ? value / parent.lz : value;
+              if (parent) d.cz = -(parent.lz - value) / (2 * parent.lz);
             }
           }
         });
@@ -143,10 +147,11 @@ const DoorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
           setCommonStore((state) => {
             for (const e of state.elements) {
               if (e.type === ObjectType.Door && e.foundationId === door.foundationId && !e.locked) {
-                const door = e as DoorModel;
-                oldValuesAboveFoundation.set(e.id, door.lz * (parent ? parent.lz : 1));
-                door.lz = parent ? value / parent.lz : value;
-                if (parent) door.cz = -(parent.lz - value) / (2 * parent.lz);
+                const d = e as DoorModel;
+                const parent = d ? getParent(d) : null;
+                oldValuesAboveFoundation.set(e.id, d.lz * (parent ? parent.lz : 1));
+                d.lz = parent ? value / parent.lz : value;
+                if (parent) d.cz = -(parent.lz - value) / (2 * parent.lz);
               }
             }
           });
@@ -176,10 +181,11 @@ const DoorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
           setCommonStore((state) => {
             for (const e of state.elements) {
               if (e.type === ObjectType.Door && e.parentId === door.parentId && !e.locked) {
-                const door = e as DoorModel;
-                oldValues.set(e.id, door.lz * (parent ? parent.lz : 1));
-                door.lz = parent ? value / parent.lz : value;
-                if (parent) door.cz = -(parent.lz - value) / (2 * parent.lz);
+                const d = e as DoorModel;
+                const parent = d ? getParent(d) : null;
+                oldValues.set(e.id, d.lz * (parent ? parent.lz : 1));
+                d.lz = parent ? value / parent.lz : value;
+                if (parent) d.cz = -(parent.lz - value) / (2 * parent.lz);
               }
             }
           });
@@ -206,6 +212,7 @@ const DoorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
       default:
         if (door) {
           const updatedDoor = getElementById(door.id) as DoorModel;
+          const parent = door ? getParent(updatedDoor) : null;
           const oldValue = (updatedDoor.lz ?? door.lz ?? 0.2) * (parent ? parent.lz : 1);
           const undoableChange = {
             name: 'Set Door Height',
@@ -261,6 +268,9 @@ const DoorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
     setValue(inputValue);
   };
 
+  const parent = getParent(door);
+  const max = parent?.lz ?? 20;
+
   return (
     <>
       <Modal
@@ -300,7 +310,7 @@ const DoorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
           <Col className="gutter-row" span={6}>
             <InputNumber
               min={0.1}
-              max={20}
+              max={max}
               style={{ width: 120 }}
               step={0.1}
               precision={2}
@@ -310,8 +320,7 @@ const DoorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
               onPressEnter={handleOk}
             />
             <div style={{ paddingTop: '4px', textAlign: 'left', fontSize: '11px' }}>
-              {i18n.t('word.Range', lang)}: [0.1, 20]
-              {i18n.t('word.MeterAbbreviation', lang)}
+              {i18n.t('word.Range', lang)}: [0.1, {max.toFixed(1)}]{i18n.t('word.MeterAbbreviation', lang)}
             </div>
           </Col>
           <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>

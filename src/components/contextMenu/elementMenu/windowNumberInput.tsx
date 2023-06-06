@@ -48,16 +48,19 @@ const WindowNumberInput = ({
   const setCommonStore = useStore(Selector.set);
   const getParent = useStore(Selector.getParent);
 
-  const parent = getParent(windowModel);
   const currentValue = useMemo(() => {
     const v = windowModel[attributeKey] as number;
+    const parent = getParent(windowModel);
     if (parent) {
-      if (attributeKey === 'lx') return v * parent.lx;
-      if (attributeKey === 'lz') return v * parent.lz;
-      if (attributeKey === 'sillWidth' && v === undefined) return 0.2;
+      // roof windows have absolute size
+      if (windowModel.parentType !== ObjectType.Roof) {
+        if (attributeKey === 'lx') return v * parent.lx;
+        if (attributeKey === 'lz') return v * parent.lz;
+      }
     }
+    if (attributeKey === 'sillWidth' && v === undefined) return 0.2;
     return v;
-  }, [attributeKey, windowModel, parent?.lx, parent?.lz]);
+  }, [attributeKey, windowModel]);
 
   const [inputValue, setInputValue] = useState<number>(currentValue);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -67,9 +70,15 @@ const WindowNumberInput = ({
   const lang = { lng: language };
 
   const setAttribute = (window: WindowModel, attributeKey: keyof WindowModel, value: number) => {
+    const parent = getParent(window);
     if (parent && (attributeKey === 'lx' || attributeKey === 'lz')) {
-      // width and height are relative to the parent
-      (window[attributeKey] as number) = value / parent[attributeKey];
+      if (window.parentType === ObjectType.Roof) {
+        // width and height are absolute when the parent is a roof
+        (window[attributeKey] as number) = value;
+      } else {
+        // width and height are relative to the parent when it is not a roof
+        (window[attributeKey] as number) = value / parent[attributeKey];
+      }
     } else {
       (window[attributeKey] as number) = value;
     }
@@ -127,48 +136,80 @@ const WindowNumberInput = ({
   };
 
   const needChange = (value: number) => {
-    if (parent) {
-      if (attributeKey === 'lx') {
-        value /= parent.lx;
-      } else if (attributeKey === 'lz') {
-        value /= parent.lz;
-      }
-    }
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
-          if (e.type === ObjectType.Window && value !== (e as WindowModel)[attributeKey] && !e.locked) {
-            return true;
+          if (e.type === ObjectType.Window && !e.locked) {
+            const w = e as WindowModel;
+            const parent = getParent(w);
+            if (parent && w.parentType !== ObjectType.Roof) {
+              // on a wall
+              if (attributeKey === 'lx') {
+                if (value !== w[attributeKey] * parent.lx) return true;
+              } else if (attributeKey === 'lz') {
+                if (value !== w[attributeKey] * parent.lz) return true;
+              } else {
+                if (value !== w[attributeKey]) return true;
+              }
+            } else {
+              if (value !== w[attributeKey]) return true;
+            }
           }
         }
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         for (const e of elements) {
-          if (
-            e.type === ObjectType.Window &&
-            e.foundationId === windowModel.foundationId &&
-            value !== (e as WindowModel)[attributeKey] &&
-            !e.locked
-          ) {
-            return true;
+          if (e.type === ObjectType.Window && e.foundationId === windowModel.foundationId && !e.locked) {
+            const w = e as WindowModel;
+            const parent = getParent(w);
+            if (parent && w.parentType !== ObjectType.Roof) {
+              // on a wall
+              if (attributeKey === 'lx') {
+                if (value !== w[attributeKey] * parent.lx) return true;
+              } else if (attributeKey === 'lz') {
+                if (value !== w[attributeKey] * parent.lz) return true;
+              } else {
+                if (value !== w[attributeKey]) return true;
+              }
+            } else {
+              if (value !== w[attributeKey]) return true;
+            }
           }
         }
         break;
       case Scope.OnlyThisSide:
         for (const e of elements) {
-          if (
-            e.type === ObjectType.Window &&
-            e.parentId === windowModel.parentId &&
-            value !== (e as WindowModel)[attributeKey] &&
-            !e.locked
-          ) {
-            return true;
+          if (e.type === ObjectType.Window && e.parentId === windowModel.parentId && !e.locked) {
+            const w = e as WindowModel;
+            const parent = getParent(w);
+            if (parent && w.parentType !== ObjectType.Roof) {
+              // on a wall
+              if (attributeKey === 'lx') {
+                if (value !== w[attributeKey] * parent.lx) return true;
+              } else if (attributeKey === 'lz') {
+                if (value !== w[attributeKey] * parent.lz) return true;
+              } else {
+                if (value !== w[attributeKey]) return true;
+              }
+            } else {
+              if (value !== w[attributeKey]) return true;
+            }
           }
         }
         break;
       default:
-        if (value !== windowModel[attributeKey]) {
-          return true;
+        const parent = getParent(windowModel);
+        if (parent && windowModel.parentType !== ObjectType.Roof) {
+          // on a wall
+          if (attributeKey === 'lx') {
+            if (value !== windowModel[attributeKey] * parent.lx) return true;
+          } else if (attributeKey === 'lz') {
+            if (value !== windowModel[attributeKey] * parent.lz) return true;
+          } else {
+            if (value !== windowModel[attributeKey]) return true;
+          }
+        } else {
+          if (value !== windowModel[attributeKey]) return true;
         }
         break;
     }
@@ -184,8 +225,9 @@ const WindowNumberInput = ({
         for (const e of elements) {
           if (e.type === ObjectType.Window && !e.locked) {
             const window = e as WindowModel;
+            const parent = getParent(window);
             let oldValue = window[attributeKey] as number;
-            if (parent) {
+            if (parent && window.parentType !== ObjectType.Roof) {
               if (attributeKey === 'lx') {
                 oldValue *= parent.lx;
               } else if (attributeKey === 'lz') {
@@ -217,8 +259,9 @@ const WindowNumberInput = ({
           for (const e of elements) {
             if (e.type === ObjectType.Window && e.foundationId === windowModel.foundationId && !e.locked) {
               const window = e as WindowModel;
+              const parent = getParent(window);
               let oldValue = window[attributeKey] as number;
-              if (parent) {
+              if (parent && window.parentType !== ObjectType.Roof) {
                 if (attributeKey === 'lx') {
                   oldValue *= parent.lx;
                 } else if (attributeKey === 'lz') {
@@ -252,8 +295,9 @@ const WindowNumberInput = ({
           for (const e of elements) {
             if (e.type === ObjectType.Window && e.parentId === windowModel.parentId && !e.locked) {
               const window = e as WindowModel;
+              const parent = getParent(window);
               let oldValue = window[attributeKey] as number;
-              if (parent) {
+              if (parent && window.parentType !== ObjectType.Roof) {
                 if (attributeKey === 'lx') {
                   oldValue *= parent.lx;
                 } else if (attributeKey === 'lz') {
@@ -263,20 +307,20 @@ const WindowNumberInput = ({
               oldValuesOnSameWall.set(e.id, oldValue);
             }
           }
-          const undoableChangeOnSameWall = {
-            name: `Set ${dataType} for All Windows On the Same Wall`,
+          const undoableChangeOnSameParent = {
+            name: `Set ${dataType} for All Windows On the Same Parent`,
             timestamp: Date.now(),
             oldValues: oldValuesOnSameWall,
             newValue: value,
             groupId: windowModel.parentId,
             undo: () => {
-              undoInMap(undoableChangeOnSameWall.oldValues as Map<string, number>);
+              undoInMap(undoableChangeOnSameParent.oldValues as Map<string, number>);
             },
             redo: () => {
-              updateOnSameWall(windowModel.parentId, undoableChangeOnSameWall.newValue as number);
+              updateOnSameWall(windowModel.parentId, undoableChangeOnSameParent.newValue as number);
             },
           } as UndoableChangeGroup;
-          addUndoable(undoableChangeOnSameWall);
+          addUndoable(undoableChangeOnSameParent);
           updateOnSameWall(windowModel.parentId, value);
           setApplyCount(applyCount + 1);
         }
@@ -284,7 +328,8 @@ const WindowNumberInput = ({
       default:
         if (windowModel) {
           let oldValue = windowModel[attributeKey] as number;
-          if (parent) {
+          const parent = getParent(windowModel);
+          if (parent && windowModel.parentType !== ObjectType.Roof) {
             if (attributeKey === 'lx') {
               oldValue *= parent.lx;
             } else if (attributeKey === 'lz') {
@@ -435,7 +480,7 @@ const WindowNumberInput = ({
             <Radio.Group onChange={(e) => setActionScope(e.target.value)} value={actionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('windowMenu.OnlyThisWindow', lang)}</Radio>
-                <Radio value={Scope.OnlyThisSide}>{i18n.t('windowMenu.AllWindowsOnWall', lang)}</Radio>
+                <Radio value={Scope.OnlyThisSide}>{i18n.t('windowMenu.AllWindowsOnSurface', lang)}</Radio>
                 <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                   {i18n.t('windowMenu.AllWindowsAboveFoundation', lang)}
                 </Radio>

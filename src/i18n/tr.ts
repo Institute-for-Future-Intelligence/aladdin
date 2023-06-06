@@ -1086,7 +1086,7 @@ export const i18n_tr = {
 
     windowMenu: {
       OnlyThisWindow: 'Sadece Bu Pencere',
-      AllWindowsOnWall: 'Aynı Duvardaki Tüm Pencereler',
+      AllWindowsOnSurface: 'All Windows on the Same Surface',
       AllWindowsAboveFoundation: 'Aynı Temelin Üzerindeki Tüm Pencereler',
       AllWindows: 'Tüm Pencereler',
       Width: 'Genişlik',

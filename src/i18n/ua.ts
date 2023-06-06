@@ -1086,7 +1086,7 @@ export const i18n_ua = {
 
     windowMenu: {
       OnlyThisWindow: 'Тільки це вікно',
-      AllWindowsOnWall: 'Всі вікна на цій стіні',
+      AllWindowsOnSurface: 'All Windows on the Same Surface',
       AllWindowsAboveFoundation: 'Всі вікна над однією фундаментом',
       AllWindows: 'Всі вікна',
       Width: 'Ширина',
