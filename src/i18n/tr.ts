@@ -1111,6 +1111,7 @@ export const i18n_tr = {
       WindowType: 'Window Type',
       Default: 'Default',
       Arched: 'Arched',
+      Triangle: 'Triangle',
       Interior: 'Interior',
       Empty: 'Empty',
     },

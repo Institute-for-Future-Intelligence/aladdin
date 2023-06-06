@@ -11,8 +11,11 @@ import {
   BoxBufferGeometry,
   CanvasTexture,
   Euler,
+  ExtrudeBufferGeometry,
   Float32BufferAttribute,
   Mesh,
+  Shape,
+  ShapeBufferGeometry,
   Texture,
   Vector2,
   Vector3,
@@ -34,11 +37,14 @@ import { RoofType } from '../../models/RoofModel';
 import { CSG } from 'three-csg-ts';
 import { ObjectType } from 'src/types';
 import { WindowModel } from 'src/models/WindowModel';
+import { WindowType } from 'src/models/WindowModel';
 
-type WindowData = {
+export type WindowData = {
   dimension: Vector3;
   position: Vector3;
   rotation: Euler;
+  windowType: WindowType;
+  topX?: number;
 };
 
 export const RoofSegment = ({
@@ -210,6 +216,8 @@ export const RoofSegment = ({
         dimension: new Vector3(w.lx, w.lz, w.ly * 2),
         position: new Vector3(w.cx, w.cy, w.cz).sub(centroid),
         rotation: new Euler().fromArray([...w.rotation, 'ZXY']),
+        windowType: w.windowType,
+        topX: w.triangleTopX,
       };
     });
 
@@ -316,12 +324,33 @@ export const BufferRoofSegment = React.memo(
     const holeMeshes = useMemo(
       () =>
         windows.map((window) => {
-          const { dimension, position, rotation } = window;
-          const holeMesh = new Mesh(new BoxBufferGeometry(dimension.x, dimension.y, dimension.z));
-          holeMesh.position.copy(position);
-          holeMesh.rotation.copy(rotation);
-          holeMesh.updateMatrix();
-          return holeMesh;
+          const { dimension, position, rotation, windowType, topX } = window;
+          if (windowType === WindowType.Tirangle) {
+            // triangle window
+            const shape = new Shape();
+            const [hx, hy, tx] = [dimension.x / 2, dimension.y / 2, (topX ?? 0) * dimension.x];
+
+            shape.moveTo(-hx, -hy);
+            shape.lineTo(hx, -hy);
+            shape.lineTo(tx, hy);
+            shape.closePath();
+
+            const holeMesh = new Mesh(
+              new ExtrudeBufferGeometry([shape], { steps: 1, depth: dimension.z, bevelEnabled: false }),
+            );
+            const offset = new Vector3(0, 0, -dimension.z).applyEuler(rotation);
+            holeMesh.position.copy(position.clone().add(offset));
+            holeMesh.rotation.copy(rotation);
+            holeMesh.updateMatrix();
+            return holeMesh;
+          } else {
+            // rectangle window
+            const holeMesh = new Mesh(new BoxBufferGeometry(dimension.x, dimension.y, dimension.z));
+            holeMesh.position.copy(position);
+            holeMesh.rotation.copy(rotation);
+            holeMesh.updateMatrix();
+            return holeMesh;
+          }
         }),
       [windows],
     );

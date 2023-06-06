@@ -2,7 +2,7 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { DoubleSide, Euler, Mesh, Vector3 } from 'three';
 import { Box, Plane } from '@react-three/drei';
 import { MoveHandleType, ObjectType, ResizeHandleType } from 'src/types';
@@ -26,6 +26,7 @@ interface WindowHandleWrapperProps {
   foundationId?: string;
   lx: number;
   lz: number;
+  triangleTopX: number;
   rotation: number[];
   windowType: WindowType;
   parentType: ObjectType;
@@ -52,11 +53,18 @@ const getPosRelToFoundation = (p: Vector3, foundation: FoundationModel) => {
     .applyEuler(new Euler(0, 0, -foundation.rotation[2]));
 };
 
-const isWindowInsideSegment = (center: Vector3, lx: number, ly: number, rotation: number[], vertices: Vector3[]) => {
+const isRectWindowInsideSegment = (
+  center: Vector3,
+  lx: number,
+  ly: number,
+  rotation: number[],
+  vertices: Vector3[],
+) => {
   const [hx, hy] = [lx / 2, ly / 2];
   const [a, b, c] = rotation;
   const euler = new Euler().fromArray([a - HALF_PI, b, c, 'ZXY']);
   const boundaryPoint2 = vertices.map((v) => ({ x: v.x, y: v.y }));
+
   for (let i = -1; i <= 1; i += 2) {
     for (let j = -1; j <= 1; j += 2) {
       const v = new Vector3(hx * i, 0, hy * j).applyEuler(euler);
@@ -66,6 +74,31 @@ const isWindowInsideSegment = (center: Vector3, lx: number, ly: number, rotation
       }
     }
   }
+  return true;
+};
+
+const isTriWindowInsideSegment = (
+  center: Vector3,
+  lx: number,
+  ly: number,
+  topX: number,
+  rotation: number[],
+  vertices: Vector3[],
+) => {
+  const [hx, hy] = [lx / 2, ly / 2];
+  const [a, b, c] = rotation;
+  const euler = new Euler().fromArray([a - HALF_PI, b, c, 'ZXY']);
+  const boundaryPoint2 = vertices.map((v) => ({ x: v.x, y: v.y }));
+
+  const lowerLeftVertex = new Vector3().addVectors(center, new Vector3(-hx, 0, -hy).applyEuler(euler));
+  if (!Util.isPointInside(lowerLeftVertex.x, lowerLeftVertex.y, boundaryPoint2)) return false;
+
+  const lowerRightVertex = new Vector3().addVectors(center, new Vector3(hx, 0, -hy).applyEuler(euler));
+  if (!Util.isPointInside(lowerRightVertex.x, lowerRightVertex.y, boundaryPoint2)) return false;
+
+  const topVertex = new Vector3().addVectors(center, new Vector3(topX * lx, 0, hy).applyEuler(euler));
+  if (!Util.isPointInside(topVertex.x, topVertex.y, boundaryPoint2)) return false;
+
   return true;
 };
 
@@ -168,6 +201,7 @@ const WindowHandleWrapper = ({
   foundationId,
   lx,
   lz,
+  triangleTopX,
   rotation,
   windowType,
   parentType,
@@ -186,6 +220,8 @@ const WindowHandleWrapper = ({
   const resizeAnchorWorldPosRef = useRef<Vector3 | null>(null);
 
   const [showIntersectionPlane, setShowIntersectionPlane] = useState(false);
+
+  const triangleTopXAbs = useMemo(() => lx * triangleTopX, [lx, triangleTopX]);
 
   const setCommonStore = useStore(Selector.set);
 
@@ -244,12 +280,15 @@ const WindowHandleWrapper = ({
         resizeAnchorWorldPosRef.current = getResizeAnchor(event, foundationId, rotation, -lx, -lz);
         break;
       }
+      case ResizeHandleType.Upper:
+        break;
       default:
         return;
     }
 
     setRefDataForPointerMove(handleType);
     setShowIntersectionPlane(true);
+    useRefStore.getState().setEnableOrbitController(false);
   };
 
   const handlePointerMove = (event: ThreeEvent<PointerEvent>) => {
@@ -294,9 +333,31 @@ const WindowHandleWrapper = ({
         const window = state.elements.find((e) => e.id === id && e.type === ObjectType.Window) as WindowModel;
         if (!window) return;
         const segmentVertices = useStore.getState().getRoofSegmentVertices(parentId);
-        if (segmentVertices) {
-          const vertices = segmentVertices[segmentIdx];
-          if (isWindowInsideSegment(newPosition, window.lx, window.lz, window.rotation, vertices)) {
+        if (!segmentVertices) return;
+        const vertices = segmentVertices[segmentIdx];
+        if (!vertices) return;
+
+        if (window.windowType === WindowType.Tirangle) {
+          if (
+            isTriWindowInsideSegment(
+              newPosition,
+              window.lx,
+              window.lz,
+              window.triangleTopX ?? 0,
+              window.rotation,
+              vertices,
+            )
+          ) {
+            window.cx = newPosition.x;
+            window.cy = newPosition.y;
+            window.cz = newPosition.z;
+            window.rotation = [...rotation];
+            if (dataOnRoof && dataOnRoof.segmentIdx !== currRoofSegmentIdxRef.current) {
+              currRoofSegmentIdxRef.current = dataOnRoof.segmentIdx;
+            }
+          }
+        } else {
+          if (isRectWindowInsideSegment(newPosition, window.lx, window.lz, window.rotation, vertices)) {
             window.cx = newPosition.x;
             window.cy = newPosition.y;
             window.cz = newPosition.z;
@@ -318,13 +379,62 @@ const WindowHandleWrapper = ({
       const { newLx, newLz, newCenter } = getNewResizedData(anchorRelToFoundation, pointerRelToFoundation, rotation[2]);
 
       const segmentVertices = useStore.getState().getRoofSegmentVertices(parentId);
-      if (segmentVertices) {
-        const vertices = segmentVertices[segmentIdx];
+      if (!segmentVertices) return;
+      const vertices = segmentVertices[segmentIdx];
+      if (!vertices) return;
 
-        if (vertices && isWindowInsideSegment(newCenter, newLx, newLz, rotation, vertices)) {
+      if (windowType === WindowType.Tirangle) {
+        if (isTriWindowInsideSegment(newCenter, newLx, newLz, triangleTopX, rotation, vertices)) {
+          setResizedData(id, newCenter, newLx, newLz, foundation.lz);
+        }
+      } else {
+        if (isRectWindowInsideSegment(newCenter, newLx, newLz, rotation, vertices)) {
           setResizedData(id, newCenter, newLx, newLz, foundation.lz);
         }
       }
+    } else if (handleTypeRef.current === ResizeHandleType.Upper) {
+      const pointerOnIntersectionPlane = getPointerOnIntersectionPlane(event);
+      const segmentIdx = currRoofSegmentIdxRef.current;
+
+      if (!pointerOnIntersectionPlane || segmentIdx === null) return;
+      const pointerRelToFoundation = getPosRelToFoundation(pointerOnIntersectionPlane, foundation);
+
+      setCommonStore((state) => {
+        const window = state.elements.find((e) => e.id === id) as WindowModel;
+        if (!window) return;
+
+        const segmentVertices = useStore.getState().getRoofSegmentVertices(parentId);
+        if (!segmentVertices) return;
+        const vertices = segmentVertices[segmentIdx];
+        if (!vertices) return;
+
+        const whx = window.lx / 2;
+
+        const centerPoint = new Vector3(window.cx, window.cy, window.cz);
+        const euler = new Euler().fromArray([...window.rotation, 'ZXY']);
+        const lowerLeftPoint = new Vector3(-whx, -window.lz / 2, 0).applyEuler(euler).add(centerPoint);
+        const lowerRightPoint = new Vector3(whx, -window.lz / 2, 0).applyEuler(euler).add(centerPoint);
+
+        const botCenter = new Vector3().addVectors(lowerLeftPoint, lowerRightPoint).divideScalar(2);
+        const botToCenterNormal = new Vector3().subVectors(centerPoint, botCenter).normalize();
+
+        const pointerRelToLowerLeft = new Vector3().subVectors(pointerRelToFoundation, lowerLeftPoint);
+        const botNormal = new Vector3().subVectors(lowerRightPoint, lowerLeftPoint).normalize();
+        const topXRelToLeft = pointerRelToLowerLeft
+          .projectOnVector(botNormal)
+          .applyEuler(new Euler(0, 0, -window.rotation[2]));
+        const newTriangleTopX = Util.clamp((topXRelToLeft.x - whx) / window.lx, -0.5, 0.5);
+
+        const newLz2D = RoofUtil.getDistance(lowerLeftPoint, lowerRightPoint, pointerRelToFoundation);
+        const newLz = Math.hypot(newLz2D, pointerRelToFoundation.z - lowerLeftPoint.z);
+        const newCenter = new Vector3().addVectors(botCenter, botToCenterNormal.multiplyScalar(newLz / 2));
+
+        if (isTriWindowInsideSegment(newCenter, window.lx, newLz, newTriangleTopX, rotation, vertices)) {
+          window.lz = newLz;
+          [window.cx, window.cy, window.cz] = newCenter.toArray();
+          window.triangleTopX = newTriangleTopX;
+        }
+      });
     }
   };
 
@@ -337,6 +447,7 @@ const WindowHandleWrapper = ({
     currRoofSegmentIdxRef.current = null;
     resizeAnchorWorldPosRef.current = null;
     setShowIntersectionPlane(false);
+    useRefStore.getState().setEnableOrbitController(true);
   };
 
   return (
@@ -344,8 +455,14 @@ const WindowHandleWrapper = ({
       <group name={'Handle Wrapper'} onPointerDown={handlePointerDown}>
         {!isSettingNewWindow && (
           <>
-            <WindowResizeHandle x={-lx / 2} z={lz / 2} handleType={ResizeHandleType.UpperLeft} />
-            <WindowResizeHandle x={lx / 2} z={lz / 2} handleType={ResizeHandleType.UpperRight} />
+            {windowType !== WindowType.Tirangle ? (
+              <>
+                <WindowResizeHandle x={-lx / 2} z={lz / 2} handleType={ResizeHandleType.UpperLeft} />
+                <WindowResizeHandle x={lx / 2} z={lz / 2} handleType={ResizeHandleType.UpperRight} />
+              </>
+            ) : (
+              <WindowResizeHandle x={triangleTopXAbs} z={lz / 2} handleType={ResizeHandleType.Upper} />
+            )}
             <WindowResizeHandle x={-lx / 2} z={-lz / 2} handleType={ResizeHandleType.LowerLeft} />
             <WindowResizeHandle x={lx / 2} z={-lz / 2} handleType={ResizeHandleType.LowerRight} />
 

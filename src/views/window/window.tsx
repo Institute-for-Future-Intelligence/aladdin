@@ -19,6 +19,7 @@ import { Util } from '../../Util';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useRefStore } from 'src/stores/commonRef';
 import { ElementModel } from 'src/models/ElementModel';
+import TriangleWindow from './triangleWindow';
 
 export const defaultShutter = { showLeft: false, showRight: false, color: 'grey', width: 0.5 };
 
@@ -186,6 +187,7 @@ const Window = (windowModel: WindowModel) => {
     windowType = WindowType.Default,
     archHeight,
     parentType = ObjectType.Wall, // undefined is wall
+    triangleTopX = 0,
   } = windowModel;
 
   const GROUP_NAME = `${WINDOW_GROUP_NAME} ${id}`;
@@ -397,6 +399,17 @@ const Window = (windowModel: WindowModel) => {
             empty={!!windowModel.empty}
           />
         );
+      case WindowType.Tirangle:
+        return (
+          <TriangleWindow
+            dimension={dimensionData}
+            topX={triangleTopX}
+            position={positionData}
+            glassMaterial={glassMaterial}
+            empty={!!windowModel.empty}
+            wireframeData={wireframeData}
+          />
+        );
     }
   };
 
@@ -427,6 +440,7 @@ const Window = (windowModel: WindowModel) => {
           foundationId={foundationId}
           lx={lx}
           lz={lz}
+          triangleTopX={triangleTopX}
           rotation={rotation}
           windowType={windowType}
           parentType={parentType}

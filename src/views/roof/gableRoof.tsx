@@ -62,8 +62,9 @@ import { CSG } from 'three-csg-ts';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { FoundationModel } from '../../models/FoundationModel';
 import { useDataStore } from '../../stores/commonData';
-import { BufferRoofSegment } from './roofSegment';
+import { BufferRoofSegment, WindowData } from './roofSegment';
 import Ceiling from './ceiling';
+import { WindowModel } from 'src/models/WindowModel';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -1321,6 +1322,19 @@ const RoofSegment = ({
     return vectors;
   }, [showHeatFluxes, heatFluxScaleFactor]);
 
+  const windows: WindowData[] = useStore((state) => state.elements)
+    .filter((e) => e.parentId === id && e.type === ObjectType.Window)
+    .map((e) => {
+      const w = e as WindowModel;
+      return {
+        dimension: new Vector3(w.lx, w.lz, w.ly * 2),
+        position: new Vector3(w.cx, w.cy, w.cz).sub(centroid),
+        rotation: new Euler().fromArray([...w.rotation, 'ZXY']),
+        windowType: w.windowType,
+        topX: w.triangleTopX,
+      };
+    });
+
   useEffect(() => {
     const [wallLeft, wallRight, ridgeRight, ridgeLeft, wallLeftAfterOverhang] = points;
     const thickness = wallLeftAfterOverhang.z - wallLeft.z;
@@ -1466,7 +1480,7 @@ const RoofSegment = ({
             heatmap={heatmaps[index]}
             transparent={transparent}
             opacity={_opacity}
-            windows={[]}
+            windows={windows}
           />
         </>
       )}

@@ -58,7 +58,7 @@ export class RoofUtil {
     return new Vector3(x0, y0);
   }
 
-  // distance from point p3 to line formed by p1 and p2
+  /** distance from point p3 to line formed by p1 and p2 in 2D */
   static getDistance(p1: Vector3, p2: Vector3, p3: Vector3) {
     const A = p2.y - p1.y;
     if (A === 0) {

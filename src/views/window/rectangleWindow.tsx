@@ -367,10 +367,10 @@ const RectangleWindow = ({
 
       <Wireframe cy={cy} dimension={dimension} wireframeData={wireframeData} />
 
-      {renderSealPlane([ly, lz], [-lx / 2, ly / 2, 0], [HALF_PI, HALF_PI, 0])}
-      {renderSealPlane([ly, lz], [lx / 2, ly / 2, 0], [HALF_PI, -HALF_PI, 0])}
-      {renderSealPlane([lx, ly], [0, ly / 2, lz / 2], [Math.PI, 0, 0])}
-      {renderSealPlane([lx, ly], [0, ly / 2, -lz / 2])}
+      {renderSealPlane([ly, lz], [-lx / 2 + 0.001, ly / 2, 0], [HALF_PI, HALF_PI, 0])}
+      {renderSealPlane([ly, lz], [lx / 2 - 0.0001, ly / 2, 0], [HALF_PI, -HALF_PI, 0])}
+      {renderSealPlane([lx, ly], [0, ly / 2, lz / 2 - 0.001], [Math.PI, 0, 0])}
+      {renderSealPlane([lx, ly], [0, ly / 2, -lz / 2 + 0.001])}
 
       {heatFluxes &&
         heatFluxes.map((v, index) => {

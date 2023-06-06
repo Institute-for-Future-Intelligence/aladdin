@@ -1088,6 +1088,7 @@ export const i18n_zh_tw = {
       WindowType: '窗戶種類',
       Default: '默認',
       Arched: '拱形',
+      Triangle: '三角形',
       Interior: '内窗',
       Empty: '空白',
     },
