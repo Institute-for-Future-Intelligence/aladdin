@@ -325,7 +325,7 @@ export const BufferRoofSegment = React.memo(
       () =>
         windows.map((window) => {
           const { dimension, position, rotation, windowType, topX } = window;
-          if (windowType === WindowType.Tirangle) {
+          if (windowType === WindowType.Polygonal) {
             // triangle window
             const shape = new Shape();
             const [hx, hy, tx] = [dimension.x / 2, dimension.y / 2, (topX ?? 0) * dimension.x];

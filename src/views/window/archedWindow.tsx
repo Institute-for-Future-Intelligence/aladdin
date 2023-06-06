@@ -34,6 +34,7 @@ interface ArchedWindowProps {
   showHeatFluxes: boolean;
   area: number;
   empty: boolean;
+  interior: boolean;
 }
 interface MullionProps {
   dimension: number[];
@@ -438,6 +439,7 @@ const ArchedWindow = ({
   showHeatFluxes,
   area,
   empty,
+  interior,
 }: ArchedWindowProps) => {
   const world = useStore.getState().world;
   const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
@@ -470,7 +472,7 @@ const ArchedWindow = ({
   };
 
   const heatFluxes: Vector3[][] | undefined = useMemo(() => {
-    if (!showHeatFluxes) return undefined;
+    if (!showHeatFluxes || interior) return undefined;
     const heat = hourlyHeatExchangeArrayMap.get(id);
     if (!heat) return undefined;
     const sum = heat.reduce((a, b) => a + b, 0);

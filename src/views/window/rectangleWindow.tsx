@@ -34,6 +34,7 @@ interface RectangleWindowProps {
   showHeatFluxes: boolean;
   area: number;
   empty: boolean;
+  interior: boolean;
 }
 
 interface MullionProps {
@@ -261,6 +262,7 @@ const RectangleWindow = ({
   showHeatFluxes,
   area,
   empty,
+  interior,
 }: RectangleWindowProps) => {
   const world = useStore.getState().world;
   const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
@@ -276,7 +278,7 @@ const RectangleWindow = ({
   const [cx, cy, cz] = position;
 
   const heatFluxes: Vector3[][] | undefined = useMemo(() => {
-    if (!showHeatFluxes) return undefined;
+    if (!showHeatFluxes || interior) return undefined;
     const heat = hourlyHeatExchangeArrayMap.get(id);
     if (!heat) return undefined;
     const sum = heat.reduce((a, b) => a + b, 0);

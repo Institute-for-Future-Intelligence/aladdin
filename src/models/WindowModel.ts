@@ -48,6 +48,6 @@ export interface ShutterProps {
 export enum WindowType {
   Default = 'Default',
   Arched = 'Arched',
-  Circle = 'Circle',
-  Tirangle = 'Triangle',
+  Circular = 'Circular',
+  Polygonal = 'Polygonal',
 }

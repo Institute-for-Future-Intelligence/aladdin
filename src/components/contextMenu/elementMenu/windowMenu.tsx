@@ -296,8 +296,8 @@ export const WindowMenu = React.memo(() => {
             {i18n.t('windowMenu.Arched', lang)}
           </Radio>
           {window.parentType === ObjectType.Roof && (
-            <Radio style={radioStyle} value={WindowType.Tirangle}>
-              {i18n.t('windowMenu.Triangle', lang)}
+            <Radio style={radioStyle} value={WindowType.Polygonal}>
+              {i18n.t('windowMenu.Polygonal', lang)}
             </Radio>
           )}
         </Radio.Group>

@@ -1,27 +1,36 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2023. Institute for Future Intelligence, Inc.
  */
 
 import { Cylinder, Plane } from '@react-three/drei';
 import React, { useMemo } from 'react';
 import { HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
 import { useStore } from 'src/stores/common';
-import { DoubleSide, Material, MeshStandardMaterial, Shape } from 'three';
+import { DoubleSide, MeshStandardMaterial, Shape } from 'three';
 import * as Selector from 'src/stores/selector';
 import { WireframeDataType } from './window';
 
-interface TriangleWindowProps {
+interface PolygonalWindowProps {
   dimension: number[];
   position: number[];
   topX: number;
   glassMaterial: JSX.Element;
   empty: boolean;
+  interior: boolean;
   wireframeData: WireframeDataType;
 }
 
 const sealPlanesMaterial = new MeshStandardMaterial({ color: 'white', side: DoubleSide });
 
-const TriangleWindow = ({ dimension, topX, position, glassMaterial, empty, wireframeData }: TriangleWindowProps) => {
+const PolygonalWindow = ({
+  dimension,
+  topX,
+  position,
+  glassMaterial,
+  empty,
+  interior,
+  wireframeData,
+}: PolygonalWindowProps) => {
   const [cx, cy, cz] = position;
   const [lx, ly, lz] = dimension;
   const [hx, hy, hz] = dimension.map((v) => v / 2);
@@ -129,4 +138,4 @@ const TriangleWindow = ({ dimension, topX, position, glassMaterial, empty, wiref
   );
 };
 
-export default React.memo(TriangleWindow);
+export default React.memo(PolygonalWindow);

@@ -1110,7 +1110,7 @@ export const i18n_en = {
       WindowType: 'Window Type',
       Default: 'Default',
       Arched: 'Arched',
-      Triangle: 'Triangle',
+      Polygonal: 'Polygonal',
       Interior: 'Interior',
       Empty: 'Empty',
     },

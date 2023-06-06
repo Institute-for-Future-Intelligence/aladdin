@@ -337,7 +337,7 @@ const WindowHandleWrapper = ({
         const vertices = segmentVertices[segmentIdx];
         if (!vertices) return;
 
-        if (window.windowType === WindowType.Tirangle) {
+        if (window.windowType === WindowType.Polygonal) {
           if (
             isTriWindowInsideSegment(
               newPosition,
@@ -383,7 +383,7 @@ const WindowHandleWrapper = ({
       const vertices = segmentVertices[segmentIdx];
       if (!vertices) return;
 
-      if (windowType === WindowType.Tirangle) {
+      if (windowType === WindowType.Polygonal) {
         if (isTriWindowInsideSegment(newCenter, newLx, newLz, triangleTopX, rotation, vertices)) {
           setResizedData(id, newCenter, newLx, newLz, foundation.lz);
         }
@@ -455,7 +455,7 @@ const WindowHandleWrapper = ({
       <group name={'Handle Wrapper'} onPointerDown={handlePointerDown}>
         {!isSettingNewWindow && (
           <>
-            {windowType !== WindowType.Tirangle ? (
+            {windowType !== WindowType.Polygonal ? (
               <>
                 <WindowResizeHandle x={-lx / 2} z={lz / 2} handleType={ResizeHandleType.UpperLeft} />
                 <WindowResizeHandle x={lx / 2} z={lz / 2} handleType={ResizeHandleType.UpperRight} />

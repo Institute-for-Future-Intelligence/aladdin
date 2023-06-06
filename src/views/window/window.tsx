@@ -19,7 +19,7 @@ import { Util } from '../../Util';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useRefStore } from 'src/stores/commonRef';
 import { ElementModel } from 'src/models/ElementModel';
-import TriangleWindow from './triangleWindow';
+import TriangleWindow from './polygonalWindow';
 
 export const defaultShutter = { showLeft: false, showRight: false, color: 'grey', width: 0.5 };
 
@@ -381,6 +381,7 @@ const Window = (windowModel: WindowModel) => {
             showHeatFluxes={showHeatFluxes}
             area={Util.getWindowArea(windowModel)}
             empty={!!windowModel.empty}
+            interior={!!windowModel.interior}
           />
         );
       case WindowType.Arched:
@@ -397,9 +398,10 @@ const Window = (windowModel: WindowModel) => {
             showHeatFluxes={showHeatFluxes}
             area={Util.getWindowArea(windowModel)}
             empty={!!windowModel.empty}
+            interior={!!windowModel.interior}
           />
         );
-      case WindowType.Tirangle:
+      case WindowType.Polygonal:
         return (
           <TriangleWindow
             dimension={dimensionData}
@@ -407,6 +409,7 @@ const Window = (windowModel: WindowModel) => {
             position={positionData}
             glassMaterial={glassMaterial}
             empty={!!windowModel.empty}
+            interior={!!windowModel.interior}
             wireframeData={wireframeData}
           />
         );

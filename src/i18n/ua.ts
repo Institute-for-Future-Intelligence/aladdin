@@ -1111,7 +1111,7 @@ export const i18n_ua = {
       WindowType: 'Тип вікна',
       Default: 'Типове',
       Arched: 'Аркове',
-      Triangle: 'Triangle',
+      Polygonal: 'Polygonal',
       Interior: "Інтер'єр",
       Empty: 'Порожнє',
     },

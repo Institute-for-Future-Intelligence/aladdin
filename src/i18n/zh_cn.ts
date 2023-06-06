@@ -1087,7 +1087,7 @@ export const i18n_zh_cn = {
       WindowType: '窗户种类',
       Default: '默认',
       Arched: '拱形',
-      Triangle: '三角形',
+      Polygonal: '多边形',
       Interior: '内窗',
       Empty: '空白',
     },
