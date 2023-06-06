@@ -13,7 +13,7 @@ import { WireframeDataType } from './window';
 interface PolygonalWindowProps {
   dimension: number[];
   position: number[];
-  topX: number;
+  polygonTop: number[];
   glassMaterial: JSX.Element;
   empty: boolean;
   interior: boolean;
@@ -22,9 +22,12 @@ interface PolygonalWindowProps {
 
 const sealPlanesMaterial = new MeshStandardMaterial({ color: 'white', side: DoubleSide });
 
+const CYLINDER_RADIAL_SEGMENTS = 3;
+const CYLINDER_HEIGHT_SEGMENTS = 1;
+
 const PolygonalWindow = ({
   dimension,
-  topX,
+  polygonTop,
   position,
   glassMaterial,
   empty,
@@ -34,13 +37,14 @@ const PolygonalWindow = ({
   const [cx, cy, cz] = position;
   const [lx, ly, lz] = dimension;
   const [hx, hy, hz] = dimension.map((v) => v / 2);
+  const [topX, topH] = polygonTop;
   const { lineWidth, lineColor, selected, locked, opacity } = wireframeData;
 
   const absTopX = topX * lx;
-  const rightSealPlaneLength = Math.hypot(lz, hx - absTopX);
-  const rightSealPlaneRotaion = Math.asin(lz / rightSealPlaneLength);
-  const leftSealPlaneLength = Math.hypot(lz, hx + absTopX);
-  const leftSealPlaneRotation = -Math.asin(lz / leftSealPlaneLength);
+  const topRightSealPlaneLength = Math.hypot(topH, hx - absTopX);
+  const topRightSealPlaneRotaion = Math.asin(topH / topRightSealPlaneLength);
+  const topLeftSealPlaneLength = Math.hypot(topH, hx + absTopX);
+  const topLeftSealPlaneRotation = -Math.asin(topH / topLeftSealPlaneLength);
 
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
 
@@ -48,15 +52,17 @@ const PolygonalWindow = ({
     const shape = new Shape();
     const hx = lx / 2;
     const hz = lz / 2;
-    const tx = topX * lx;
+    const tx = topX * lx; // abs
 
     shape.moveTo(-hx, -hz);
     shape.lineTo(hx, -hz);
-    shape.lineTo(tx, hz);
+    shape.lineTo(hx, hz);
+    shape.lineTo(tx, hz + topH);
+    shape.lineTo(-hx, hz);
     shape.closePath();
 
     return shape;
-  }, [lx, lz, topX]);
+  }, [lx, lz, topX, topH]);
 
   const wireframeMaterial = useMemo(() => {
     if (selected && locked) {
@@ -82,16 +88,29 @@ const PolygonalWindow = ({
     }
   }, [cy, ly, selected, locked]);
 
-  const renderWireframeLine = (cx: number, length: number) => {
+  const renderWireframeLine = (length: number, offset = 0) => {
     return (
       <Cylinder
         args={[wireframeWidth, wireframeWidth, length, 3, 1]}
-        position={[cx, wireframeCy, 0]}
+        position={[offset, wireframeCy, 0]}
         rotation={[0, 0, HALF_PI]}
         material={wireframeMaterial}
       />
     );
   };
+
+  const renderSealPlane = (length: number, offset = 0) => {
+    return (
+      <Plane
+        args={[length, ly]}
+        position={[offset, 0, 0]}
+        material={sealPlanesMaterial}
+        receiveShadow={shadowEnabled}
+        castShadow={shadowEnabled}
+      />
+    );
+  };
+
   return (
     <>
       {!empty && (
@@ -101,38 +120,29 @@ const PolygonalWindow = ({
         </mesh>
       )}
 
-      <group position={[0, hy, -hz + 0.01]}>
-        <Plane
-          name={'Window Seal Plane Bottom'}
-          args={[lx, ly]}
-          material={sealPlanesMaterial}
-          receiveShadow={shadowEnabled}
-          castShadow={shadowEnabled}
-        />
-        {renderWireframeLine(0, lx)}
+      <group position={[0, hy, -hz + 0.001]}>
+        {renderSealPlane(lx)}
+        {renderWireframeLine(lx)}
       </group>
 
-      <group position={[hx, hy, -hz - 0.01]} rotation={[0, rightSealPlaneRotaion, 0]}>
-        <Plane
-          name={'Window Seal Plane Right'}
-          args={[rightSealPlaneLength, ly]}
-          position={[-rightSealPlaneLength / 2, 0, 0]}
-          material={sealPlanesMaterial}
-          receiveShadow={shadowEnabled}
-          castShadow={shadowEnabled}
-        />
-        {renderWireframeLine(-rightSealPlaneLength / 2, rightSealPlaneLength)}
+      <group position={[-hx + 0.001, hy, 0]} rotation={[0, HALF_PI, 0]}>
+        {renderSealPlane(lz)}
+        {renderWireframeLine(lz)}
       </group>
-      <group position={[-lx / 2, hy, -hz - 0.01]} rotation={[0, leftSealPlaneRotation, 0]}>
-        <Plane
-          name={'Window Seal Plane Left'}
-          args={[leftSealPlaneLength, ly]}
-          position={[leftSealPlaneLength / 2, 0, 0]}
-          material={sealPlanesMaterial}
-          receiveShadow={shadowEnabled}
-          castShadow={shadowEnabled}
-        />
-        {renderWireframeLine(leftSealPlaneLength / 2, leftSealPlaneLength)}
+
+      <group position={[hx - 0.001, hy, 0]} rotation={[0, -HALF_PI, 0]}>
+        {renderSealPlane(lz)}
+        {renderWireframeLine(lz)}
+      </group>
+
+      <group position={[-hx + 0.001, hy, hz - 0.01]} rotation={[0, topLeftSealPlaneRotation, 0]}>
+        {renderSealPlane(topLeftSealPlaneLength, topLeftSealPlaneLength / 2)}
+        {renderWireframeLine(topLeftSealPlaneLength, topLeftSealPlaneLength / 2)}
+      </group>
+
+      <group position={[hx - 0.001, hy, hz - 0.01]} rotation={[0, topRightSealPlaneRotaion, 0]}>
+        {renderSealPlane(topRightSealPlaneLength, -topRightSealPlaneLength / 2)}
+        {renderWireframeLine(topRightSealPlaneLength, -topRightSealPlaneLength / 2)}
       </group>
     </>
   );

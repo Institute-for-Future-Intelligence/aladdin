@@ -19,7 +19,7 @@ import { Util } from '../../Util';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useRefStore } from 'src/stores/commonRef';
 import { ElementModel } from 'src/models/ElementModel';
-import TriangleWindow from './polygonalWindow';
+import PolygonalWindow from './polygonalWindow';
 
 export const defaultShutter = { showLeft: false, showRight: false, color: 'grey', width: 0.5 };
 
@@ -187,7 +187,7 @@ const Window = (windowModel: WindowModel) => {
     windowType = WindowType.Default,
     archHeight,
     parentType = ObjectType.Wall, // undefined is wall
-    triangleTopX = 0,
+    polygonTop = [0, 0.5],
   } = windowModel;
 
   const GROUP_NAME = `${WINDOW_GROUP_NAME} ${id}`;
@@ -403,9 +403,9 @@ const Window = (windowModel: WindowModel) => {
         );
       case WindowType.Polygonal:
         return (
-          <TriangleWindow
+          <PolygonalWindow
             dimension={dimensionData}
-            topX={triangleTopX}
+            polygonTop={polygonTop}
             position={positionData}
             glassMaterial={glassMaterial}
             empty={!!windowModel.empty}
@@ -443,7 +443,7 @@ const Window = (windowModel: WindowModel) => {
           foundationId={foundationId}
           lx={lx}
           lz={lz}
-          triangleTopX={triangleTopX}
+          polygonTop={polygonTop}
           rotation={rotation}
           windowType={windowType}
           parentType={parentType}

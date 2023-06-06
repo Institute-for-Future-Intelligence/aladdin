@@ -26,7 +26,7 @@ interface WindowHandleWrapperProps {
   foundationId?: string;
   lx: number;
   lz: number;
-  triangleTopX: number;
+  polygonTop: number[];
   rotation: number[];
   windowType: WindowType;
   parentType: ObjectType;
@@ -77,11 +77,12 @@ const isRectWindowInsideSegment = (
   return true;
 };
 
-const isTriWindowInsideSegment = (
+const isPolygonalWindowInsideSegment = (
   center: Vector3,
   lx: number,
   ly: number,
   topX: number,
+  topH: number,
   rotation: number[],
   vertices: Vector3[],
 ) => {
@@ -90,14 +91,10 @@ const isTriWindowInsideSegment = (
   const euler = new Euler().fromArray([a - HALF_PI, b, c, 'ZXY']);
   const boundaryPoint2 = vertices.map((v) => ({ x: v.x, y: v.y }));
 
-  const lowerLeftVertex = new Vector3().addVectors(center, new Vector3(-hx, 0, -hy).applyEuler(euler));
-  if (!Util.isPointInside(lowerLeftVertex.x, lowerLeftVertex.y, boundaryPoint2)) return false;
-
-  const lowerRightVertex = new Vector3().addVectors(center, new Vector3(hx, 0, -hy).applyEuler(euler));
-  if (!Util.isPointInside(lowerRightVertex.x, lowerRightVertex.y, boundaryPoint2)) return false;
-
-  const topVertex = new Vector3().addVectors(center, new Vector3(topX * lx, 0, hy).applyEuler(euler));
+  const topVertex = new Vector3().addVectors(center, new Vector3(topX * lx, 0, hy + topH).applyEuler(euler));
   if (!Util.isPointInside(topVertex.x, topVertex.y, boundaryPoint2)) return false;
+
+  if (!isRectWindowInsideSegment(center, lx, ly, rotation, vertices)) return false;
 
   return true;
 };
@@ -201,7 +198,7 @@ const WindowHandleWrapper = ({
   foundationId,
   lx,
   lz,
-  triangleTopX,
+  polygonTop,
   rotation,
   windowType,
   parentType,
@@ -221,7 +218,10 @@ const WindowHandleWrapper = ({
 
   const [showIntersectionPlane, setShowIntersectionPlane] = useState(false);
 
-  const triangleTopXAbs = useMemo(() => lx * triangleTopX, [lx, triangleTopX]);
+  const [hx, hz] = [lx / 2, lz / 2];
+  const [topX, topH] = polygonTop;
+
+  const absTopX = useMemo(() => lx * topX, [lx, topX]);
 
   const setCommonStore = useStore(Selector.set);
 
@@ -338,15 +338,9 @@ const WindowHandleWrapper = ({
         if (!vertices) return;
 
         if (window.windowType === WindowType.Polygonal) {
+          const [topX, topH] = window.polygonTop ?? [0, 0.5];
           if (
-            isTriWindowInsideSegment(
-              newPosition,
-              window.lx,
-              window.lz,
-              window.triangleTopX ?? 0,
-              window.rotation,
-              vertices,
-            )
+            isPolygonalWindowInsideSegment(newPosition, window.lx, window.lz, topX, topH, window.rotation, vertices)
           ) {
             window.cx = newPosition.x;
             window.cy = newPosition.y;
@@ -384,7 +378,8 @@ const WindowHandleWrapper = ({
       if (!vertices) return;
 
       if (windowType === WindowType.Polygonal) {
-        if (isTriWindowInsideSegment(newCenter, newLx, newLz, triangleTopX, rotation, vertices)) {
+        const [topX, topH] = polygonTop;
+        if (isPolygonalWindowInsideSegment(newCenter, newLx, newLz, topX, topH, rotation, vertices)) {
           setResizedData(id, newCenter, newLx, newLz, foundation.lz);
         }
       } else {
@@ -408,31 +403,27 @@ const WindowHandleWrapper = ({
         const vertices = segmentVertices[segmentIdx];
         if (!vertices) return;
 
-        const whx = window.lx / 2;
+        const [whx, whz] = [window.lx / 2, window.lz / 2];
 
         const centerPoint = new Vector3(window.cx, window.cy, window.cz);
         const euler = new Euler().fromArray([...window.rotation, 'ZXY']);
-        const lowerLeftPoint = new Vector3(-whx, -window.lz / 2, 0).applyEuler(euler).add(centerPoint);
-        const lowerRightPoint = new Vector3(whx, -window.lz / 2, 0).applyEuler(euler).add(centerPoint);
-
-        const botCenter = new Vector3().addVectors(lowerLeftPoint, lowerRightPoint).divideScalar(2);
-        const botToCenterNormal = new Vector3().subVectors(centerPoint, botCenter).normalize();
+        const lowerLeftPoint = new Vector3(-whx, -whz, 0).applyEuler(euler).add(centerPoint);
+        const lowerRightPoint = new Vector3(whx, -whz, 0).applyEuler(euler).add(centerPoint);
 
         const pointerRelToLowerLeft = new Vector3().subVectors(pointerRelToFoundation, lowerLeftPoint);
         const botNormal = new Vector3().subVectors(lowerRightPoint, lowerLeftPoint).normalize();
         const topXRelToLeft = pointerRelToLowerLeft
           .projectOnVector(botNormal)
           .applyEuler(new Euler(0, 0, -window.rotation[2]));
-        const newTriangleTopX = Util.clamp((topXRelToLeft.x - whx) / window.lx, -0.5, 0.5);
+        const newTopX = Util.clamp((topXRelToLeft.x - whx) / window.lx, -0.5, 0.5);
 
-        const newLz2D = RoofUtil.getDistance(lowerLeftPoint, lowerRightPoint, pointerRelToFoundation);
-        const newLz = Math.hypot(newLz2D, pointerRelToFoundation.z - lowerLeftPoint.z);
-        const newCenter = new Vector3().addVectors(botCenter, botToCenterNormal.multiplyScalar(newLz / 2));
+        const topToBotDist2D = RoofUtil.getDistance(lowerLeftPoint, lowerRightPoint, pointerRelToFoundation);
+        const topToBotDist = Math.hypot(topToBotDist2D, pointerRelToFoundation.z - lowerLeftPoint.z);
+        const newTopH = Math.max(0, topToBotDist - window.lz);
 
-        if (isTriWindowInsideSegment(newCenter, window.lx, newLz, newTriangleTopX, rotation, vertices)) {
-          window.lz = newLz;
-          [window.cx, window.cy, window.cz] = newCenter.toArray();
-          window.triangleTopX = newTriangleTopX;
+        const windowCenter = new Vector3(window.cx, window.cy, window.cz);
+        if (isPolygonalWindowInsideSegment(windowCenter, window.lx, window.lz, newTopX, newTopH, rotation, vertices)) {
+          window.polygonTop = [newTopX, newTopH];
         }
       });
     }
@@ -455,19 +446,16 @@ const WindowHandleWrapper = ({
       <group name={'Handle Wrapper'} onPointerDown={handlePointerDown}>
         {!isSettingNewWindow && (
           <>
-            {windowType !== WindowType.Polygonal ? (
-              <>
-                <WindowResizeHandle x={-lx / 2} z={lz / 2} handleType={ResizeHandleType.UpperLeft} />
-                <WindowResizeHandle x={lx / 2} z={lz / 2} handleType={ResizeHandleType.UpperRight} />
-              </>
-            ) : (
-              <WindowResizeHandle x={triangleTopXAbs} z={lz / 2} handleType={ResizeHandleType.Upper} />
+            {windowType === WindowType.Polygonal && (
+              <WindowResizeHandle x={absTopX} z={hz + topH} handleType={ResizeHandleType.Upper} />
             )}
-            <WindowResizeHandle x={-lx / 2} z={-lz / 2} handleType={ResizeHandleType.LowerLeft} />
-            <WindowResizeHandle x={lx / 2} z={-lz / 2} handleType={ResizeHandleType.LowerRight} />
+            <WindowResizeHandle x={-hx} z={hz} handleType={ResizeHandleType.UpperLeft} />
+            <WindowResizeHandle x={hx} z={hz} handleType={ResizeHandleType.UpperRight} />
+            <WindowResizeHandle x={-hx} z={-hz} handleType={ResizeHandleType.LowerLeft} />
+            <WindowResizeHandle x={hx} z={-hz} handleType={ResizeHandleType.LowerRight} />
 
             {/* arch resize handle */}
-            {windowType === WindowType.Arched && <ArchResizeHandle z={lz / 2} />}
+            {windowType === WindowType.Arched && <ArchResizeHandle z={hz} />}
           </>
         )}
         <WindowMoveHandle handleType={MoveHandleType.Mid} />

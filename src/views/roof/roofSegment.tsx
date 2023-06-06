@@ -44,7 +44,7 @@ export type WindowData = {
   position: Vector3;
   rotation: Euler;
   windowType: WindowType;
-  topX?: number;
+  topPosition?: number[];
 };
 
 export const RoofSegment = ({
@@ -217,7 +217,7 @@ export const RoofSegment = ({
         position: new Vector3(w.cx, w.cy, w.cz).sub(centroid),
         rotation: new Euler().fromArray([...w.rotation, 'ZXY']),
         windowType: w.windowType,
-        topX: w.triangleTopX,
+        topPosition: w.polygonTop,
       };
     });
 
@@ -324,15 +324,18 @@ export const BufferRoofSegment = React.memo(
     const holeMeshes = useMemo(
       () =>
         windows.map((window) => {
-          const { dimension, position, rotation, windowType, topX } = window;
+          const { dimension, position, rotation, windowType, topPosition } = window;
           if (windowType === WindowType.Polygonal) {
             // triangle window
             const shape = new Shape();
-            const [hx, hy, tx] = [dimension.x / 2, dimension.y / 2, (topX ?? 0) * dimension.x];
+            const [topX, topH] = topPosition ?? [0, 0.5];
+            const [hx, hy, tx] = [dimension.x / 2, dimension.y / 2, topX * dimension.x];
 
             shape.moveTo(-hx, -hy);
             shape.lineTo(hx, -hy);
-            shape.lineTo(tx, hy);
+            shape.lineTo(hx, hy);
+            shape.lineTo(tx, hy + topH);
+            shape.lineTo(-hx, hy);
             shape.closePath();
 
             const holeMesh = new Mesh(

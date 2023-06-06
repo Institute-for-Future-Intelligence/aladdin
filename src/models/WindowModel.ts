@@ -28,8 +28,8 @@ export interface WindowModel extends ElementModel {
 
   parentType?: ObjectType.Wall | ObjectType.Roof;
 
-  // triangle window top vertex X position relative to lx, [-0.5, 0.5]
-  triangleTopX?: number;
+  // polygonal window top vertex position [x, h], x is relative to center(from -0.5 to 0.5), h is absolute
+  polygonTop?: number[];
 
   // if empty, it is a hole on its parent (roof or window)
   empty?: boolean;
