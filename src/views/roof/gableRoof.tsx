@@ -1275,11 +1275,9 @@ const RoofSegment = ({
       windows = windows.filter((w) => RoofUtil.onSegment(segmentsWithoutOverhang[index], w.cx, w.cy));
     }
     if (windows && windows.length > 0) {
-      console.log(area);
       for (const w of windows) {
-        area -= Util.getWindowArea(w as WindowModel, undefined);
+        area -= Util.getWindowArea(w as WindowModel);
       }
-      console.log(area);
     }
     const cellSize = DEFAULT_HEAT_FLUX_DENSITY_FACTOR * (world.solarRadiationHeatmapGridCellSize ?? 0.5);
     const s0 = s[0].clone();
@@ -1316,19 +1314,35 @@ const RoofSegment = ({
     heatFluxArrowEuler.current = Util.getEuler(UNIT_VECTOR_POS_Z, normal, 'YXZ', -Math.sign(intensity) * HALF_PI);
     const vectors: Vector3[][] = [];
     const origin = new Vector3();
+    const cosine = Math.abs(normal.y) / Math.hypot(normal.y, normal.z);
     for (let p = 0; p < m; p++) {
       const dmp = dm.clone().multiplyScalar(p);
       for (let q = 0; q < n; q++) {
         origin.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
-        const v: Vector3[] = [];
-        if (intensity < 0) {
-          v.push(origin.clone());
-          v.push(origin.clone().add(normal.clone().multiplyScalar(-intensity)));
-        } else {
-          v.push(origin.clone());
-          v.push(origin.clone().add(normal.clone().multiplyScalar(intensity)));
+        let isRoof = true;
+        if (windows && windows.length > 0) {
+          for (const w of windows) {
+            const wx = w.cx - centroid.x;
+            const wy = w.cy - centroid.y;
+            const hx = w.lx / 2;
+            const hy = (w.lz * cosine) / 2; // this applies only to gable roofs, not generalizable to other types of roofs
+            if (origin.x >= wx - hx && origin.x <= wx + hx && origin.y >= wy - hy && origin.y <= wy + hy) {
+              isRoof = false;
+              break;
+            }
+          }
         }
-        vectors.push(v);
+        if (isRoof) {
+          const v: Vector3[] = [];
+          if (intensity < 0) {
+            v.push(origin.clone());
+            v.push(origin.clone().add(normal.clone().multiplyScalar(-intensity)));
+          } else {
+            v.push(origin.clone());
+            v.push(origin.clone().add(normal.clone().multiplyScalar(intensity)));
+          }
+          vectors.push(v);
+        }
       }
     }
     return vectors;
