@@ -1173,9 +1173,22 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       throw new Error('roof is not gable or gambrel');
     const n = segmentsWithoutOverhang.length;
     if (n === 0) return;
+    const windows = getChildrenOfType(ObjectType.Window, roof.id);
     const totalAreas: number[] = [];
     for (const s of segmentsWithoutOverhang) {
-      totalAreas.push(Util.getTriangleArea(s[0], s[1], s[2]) + Util.getTriangleArea(s[2], s[3], s[0]));
+      let a = Util.getTriangleArea(s[0], s[1], s[2]) + Util.getTriangleArea(s[2], s[3], s[0]);
+      if (windows.length > 0) {
+        // start from end so that we can remove the found window from the array to avoid waste calculation
+        for (let iw = windows.length - 1; iw >= 0; iw--) {
+          const w = windows[iw];
+          if (RoofUtil.onSegment(s, w.cx, w.cy)) {
+            a -= w.lx * w.lz;
+            windows.splice(iw, 1);
+          }
+        }
+        if (a < 0) a = 0; // just in case
+      }
+      totalAreas.push(a);
     }
     const absorption = getLightAbsorption(roof);
     const totalSolarHeats: number[] = Array(n).fill(0);
