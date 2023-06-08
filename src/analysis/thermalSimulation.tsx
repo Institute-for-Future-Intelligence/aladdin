@@ -987,16 +987,32 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         }
       }
     }
+    const windows = getChildrenOfType(ObjectType.Window, roof.id);
     const totalAreas: number[] = [];
     if (flat) {
-      let totalArea = 0;
+      let a = 0;
       for (const s of segmentsWithoutOverhang) {
-        totalArea += Util.getTriangleArea(s[0], s[1], s[2]);
+        a += Util.getTriangleArea(s[0], s[1], s[2]);
       }
-      totalAreas.push(totalArea);
+      if (windows.length > 0) {
+        for (const w of windows) {
+          a -= w.lx * w.lz;
+        }
+        if (a < 0) a = 0; // just in case
+      }
+      totalAreas.push(a);
     } else {
       for (const s of segmentsWithoutOverhang) {
-        totalAreas.push(Util.getTriangleArea(s[0], s[1], s[2]));
+        let a = Util.getTriangleArea(s[0], s[1], s[2]);
+        if (windows.length > 0) {
+          for (const w of windows) {
+            if (RoofUtil.onSegment(s, w.cx, w.cy)) {
+              a -= w.lx * w.lz;
+            }
+          }
+          if (a < 0) a = 0; // just in case
+        }
+        totalAreas.push(a);
       }
     }
     const absorption = getLightAbsorption(roof);
@@ -1004,6 +1020,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     const totalSolarHeats: number[] = Array(m).fill(0);
     // when the sun is out
     if (sunDirectionRef.current && sunDirectionRef.current.z > 0) {
+      const solarPanels = getChildrenOfType(ObjectType.SolarPanel, roof.id);
       const results = SolarRadiation.computePyramidRoofSolarRadiationEnergy(
         now,
         world,
@@ -1013,6 +1030,8 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         true,
         segmentsWithoutOverhang,
         foundation,
+        windows,
+        solarPanels,
         elevation,
         distanceToClosestObject,
       );
@@ -1030,6 +1049,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       if (runDailySimulation) {
         const segments = getRoofSegmentVertices(roof.id);
         if (segments) {
+          const solarPanels = getChildrenOfType(ObjectType.SolarPanel, roof.id);
           const heatmapResults = SolarRadiation.computePyramidRoofSolarRadiationEnergy(
             now,
             world,
@@ -1039,6 +1059,8 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
             false,
             segments,
             foundation,
+            windows,
+            solarPanels,
             elevation,
             distanceToClosestObject,
           );
@@ -1083,18 +1105,30 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     if (roof.roofType !== RoofType.Hip) throw new Error('roof is not hip');
     const n = segmentsWithoutOverhang.length;
     if (n === 0) return;
+    const windows = getChildrenOfType(ObjectType.Window, roof.id);
     const totalAreas: number[] = [];
     for (const s of segmentsWithoutOverhang) {
+      let a = 0;
       if (s.length === 3) {
-        totalAreas.push(Util.getTriangleArea(s[0], s[1], s[2]));
+        a = Util.getTriangleArea(s[0], s[1], s[2]);
       } else if (s.length === 4) {
-        totalAreas.push(Util.getTriangleArea(s[0], s[1], s[2]) + Util.getTriangleArea(s[2], s[3], s[0]));
+        a = Util.getTriangleArea(s[0], s[1], s[2]) + Util.getTriangleArea(s[2], s[3], s[0]);
       }
+      if (windows.length > 0) {
+        for (const w of windows) {
+          if (RoofUtil.onSegment(s, w.cx, w.cy)) {
+            a -= w.lx * w.lz;
+          }
+        }
+        if (a < 0) a = 0; // just in case
+      }
+      totalAreas.push(a);
     }
     const absorption = getLightAbsorption(roof);
     const totalSolarHeats: number[] = Array(n).fill(0);
     // when the sun is out
     if (sunDirectionRef.current && sunDirectionRef.current.z > 0) {
+      const solarPanels = getChildrenOfType(ObjectType.SolarPanel, roof.id);
       const results = SolarRadiation.computeHipRoofSolarRadiationEnergy(
         now,
         world,
@@ -1103,6 +1137,8 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         true,
         segmentsWithoutOverhang,
         foundation,
+        windows,
+        solarPanels,
         elevation,
         distanceToClosestObject,
       );
@@ -1120,6 +1156,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       if (runDailySimulation) {
         const segments = getRoofSegmentVertices(roof.id);
         if (segments) {
+          const solarPanels = getChildrenOfType(ObjectType.SolarPanel, roof.id);
           const heatmapResults = SolarRadiation.computeHipRoofSolarRadiationEnergy(
             now,
             world,
@@ -1128,6 +1165,8 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
             false,
             segments,
             foundation,
+            windows,
+            solarPanels,
             elevation,
             distanceToClosestObject,
           );

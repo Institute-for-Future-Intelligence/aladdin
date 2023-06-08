@@ -9,9 +9,9 @@ import { GroundModel } from '../models/GroundModel';
 import { TWO_PI, UNIT_VECTOR_POS_Z } from '../constants';
 import { SunMinutes } from './SunMinutes';
 
-// If a surface is covered by a thin structure such as a solar panel,
-// it receives no indirect light if the distance is shorter than this threshold.
-export const AMBIENT_LIGHT_THRESHOLD = 0.1;
+// An object receives no indirect solar radiation if its distance to the nearest object
+// in the light path is shorter than this threshold.
+export const AMBIENT_LIGHT_THRESHOLD = 0.5;
 
 // This is used to offset a roof by default in solar radiation calculation
 export const ROOFTOP_SOLAR_PANEL_OFFSET = 0.1;
