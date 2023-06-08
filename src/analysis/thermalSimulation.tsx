@@ -1183,8 +1183,8 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
             a -= w.lx * w.lz;
           }
         }
+        if (a < 0) a = 0; // just in case
       }
-      if (a < 0) a = 0; // just in case
       totalAreas.push(a);
     }
     const absorption = getLightAbsorption(roof);
@@ -1279,12 +1279,9 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       const s = segmentsWithoutOverhang[i];
       let a = Util.getTriangleArea(s[0], s[1], s[2]) + Util.getTriangleArea(s[2], s[3], s[0]);
       if (windows.length > 0) {
-        // start from end so that we can remove the found window from the array to avoid waste calculation
-        for (let iw = windows.length - 1; iw >= 0; iw--) {
-          const w = windows[iw];
+        for (const w of windows) {
           if (RoofUtil.onSegment(s, w.cx, w.cy)) {
             a -= w.lx * w.lz;
-            windows.splice(iw, 1);
           }
         }
         if (a < 0) a = 0; // just in case
@@ -1313,6 +1310,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     const totalSolarHeats: number[] = Array(n).fill(0);
     // when the sun is out
     if (sunDirectionRef.current && sunDirectionRef.current.z > 0) {
+      const solarPanels = getChildrenOfType(ObjectType.SolarPanel, roof.id);
       const results = SolarRadiation.computeMansardRoofSolarRadiationEnergy(
         now,
         world,
@@ -1321,6 +1319,8 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         true,
         segmentsWithoutOverhang,
         foundation,
+        windows,
+        solarPanels,
         elevation,
         distanceToClosestObject,
       );
@@ -1338,6 +1338,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       if (runDailySimulation) {
         const segments = getRoofSegmentVertices(roof.id);
         if (segments) {
+          const solarPanels = getChildrenOfType(ObjectType.SolarPanel, roof.id);
           const heatmapResults = SolarRadiation.computeMansardRoofSolarRadiationEnergy(
             now,
             world,
@@ -1346,6 +1347,8 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
             false,
             segments,
             foundation,
+            windows,
+            solarPanels,
             elevation,
             distanceToClosestObject,
           );

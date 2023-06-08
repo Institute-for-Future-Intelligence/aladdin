@@ -15,7 +15,6 @@ import {
   Float32BufferAttribute,
   Mesh,
   Shape,
-  ShapeBufferGeometry,
   Texture,
   Vector2,
   Vector3,
@@ -38,6 +37,7 @@ import { CSG } from 'three-csg-ts';
 import { ObjectType } from 'src/types';
 import { WindowModel } from 'src/models/WindowModel';
 import { WindowType } from 'src/models/WindowModel';
+import { RoofUtil } from './RoofUtil';
 
 export type WindowData = {
   dimension: Vector3;
@@ -70,6 +70,7 @@ export const RoofSegment = ({
   texture: Texture;
   heatmap?: CanvasTexture;
 }) => {
+  const getChildrenOfType = useStore(Selector.getChildrenOfType);
   const showHeatFluxes = usePrimitiveStore(Selector.showHeatFluxes);
   const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
   const heatFluxColor = useStore(Selector.viewState.heatFluxColor);
@@ -180,28 +181,55 @@ export const RoofSegment = ({
     heatFluxArrowLength.current = normal.clone().multiplyScalar(0.1);
     const vectors: Vector3[][] = [];
     const origin = new Vector3();
-    const area =
+    let area =
       s.length === 4
         ? Util.getTriangleArea(s[0], s[1], s[2]) + Util.getTriangleArea(s[2], s[3], s[0])
         : Util.getTriangleArea(s[0], s[1], s[2]);
     if (area === 0) return undefined;
+    let windows = getChildrenOfType(ObjectType.Window, id);
+    const segmentsWithoutOverhang = getRoofSegmentVerticesWithoutOverhang(id);
+    if (segmentsWithoutOverhang && segmentsWithoutOverhang[index]) {
+      windows = windows.filter((w) => RoofUtil.onSegment(segmentsWithoutOverhang[index], w.cx, w.cy));
+    }
+    if (windows && windows.length > 0) {
+      for (const w of windows) {
+        area -= Util.getWindowArea(w as WindowModel);
+      }
+    }
     const intensity = (sum / area) * (heatFluxScaleFactor ?? DEFAULT_HEAT_FLUX_SCALE_FACTOR);
     heatFluxArrowHead.current = intensity < 0 ? 1 : 0;
     heatFluxArrowEuler.current = Util.getEuler(UNIT_VECTOR_POS_Z, normal, 'YXZ', -Math.sign(intensity) * HALF_PI);
+    let isRoof;
     for (let p = 0; p < m; p++) {
       const dmp = dm.clone().multiplyScalar(p);
       for (let q = 0; q < n; q++) {
         origin.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
-        if (Util.isPointInside(origin.x, origin.y, projectedVertices)) {
-          const v: Vector3[] = [];
-          if (intensity < 0) {
-            v.push(origin.clone());
-            v.push(origin.clone().add(normal.clone().multiplyScalar(-intensity)));
-          } else {
-            v.push(origin.clone());
-            v.push(origin.clone().add(normal.clone().multiplyScalar(intensity)));
+        isRoof = true;
+        if (windows && windows.length > 0) {
+          // add the centroid back as the vertices of the window are not relative to it
+          const ox = origin.x + centroid.x;
+          const oy = origin.y + centroid.y;
+          for (const w of windows) {
+            const vertices = RoofUtil.getRelativeWindowVerticesOnRoof(w as WindowModel);
+            const points = Util.getPoints(vertices);
+            if (Util.isPointInside(ox, oy, points)) {
+              isRoof = false;
+              break;
+            }
           }
-          vectors.push(v);
+        }
+        if (isRoof) {
+          if (Util.isPointInside(origin.x, origin.y, projectedVertices)) {
+            const v: Vector3[] = [];
+            if (intensity < 0) {
+              v.push(origin.clone());
+              v.push(origin.clone().add(normal.clone().multiplyScalar(-intensity)));
+            } else {
+              v.push(origin.clone());
+              v.push(origin.clone().add(normal.clone().multiplyScalar(intensity)));
+            }
+            vectors.push(v);
+          }
         }
       }
     }
