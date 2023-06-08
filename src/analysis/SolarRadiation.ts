@@ -23,6 +23,7 @@ import { WindowModel, WindowType } from '../models/WindowModel';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { Discretization, ObjectType, Orientation, ShadeTolerance, TrackerType } from '../types';
 import { PvModel } from '../models/PvModel';
+import { RoofUtil } from '../views/roof/RoofUtil';
 
 export class SolarRadiation {
   // return the output energy density of a solar panel (need to be multiplied by area, weather factor, etc.)
@@ -291,6 +292,7 @@ export class SolarRadiation {
     const heatmap: number[][] = Array(nx)
       .fill(0)
       .map(() => Array(nz).fill(0));
+    let isWall;
     for (let kx = 0; kx < nx; kx++) {
       for (let kz = 0; kz < nz; kz++) {
         const kx2 = kx - nx / 2 + 0.5;
@@ -299,7 +301,7 @@ export class SolarRadiation {
         const insidePolygonWithMargin = Util.isPointInside(p.x, p.y, polygonWithMargin);
         if (insidePolygonWithMargin) {
           v.set(absPos.x + kx2 * dxcos, absPos.y + kx2 * dxsin, absPos.z + kz2 * dz);
-          let isWall = true;
+          isWall = true;
           if (windows && windows.length > 0) {
             for (const w of windows) {
               if (w.type !== ObjectType.Window) continue;
@@ -931,6 +933,8 @@ export class SolarRadiation {
     withoutOverhang: boolean,
     segments: Vector3[][],
     foundation: FoundationModel,
+    windows: ElementModel[],
+    solarPanels: ElementModel[],
     elevation: number,
     distanceToClosestObject: Function,
   ): { segmentIntensities: number[][][]; segmentUnitArea: number[] } {
@@ -989,18 +993,32 @@ export class SolarRadiation {
         peakRadiation,
       );
       const dot = normal.dot(sunDirection);
+      let isRoof;
       for (let p = 0; p < m; p++) {
         const dmp = dm.clone().multiplyScalar(p);
         for (let q = 0; q < n; q++) {
           v.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
-          const distance = distanceToClosestObject(uuid, v, sunDirection);
-          if (distance > AMBIENT_LIGHT_THRESHOLD || distance < 0) {
-            // roof may be covered by solar panels
-            intensity[p][q] += indirectRadiation;
+          isRoof = true;
+          if (windows && windows.length > 0) {
+            for (const w of windows) {
+              const vertices = RoofUtil.getAbsoluteWindowVerticesOnRoof(w as WindowModel, foundation);
+              const points = Util.getPoints(vertices);
+              if (Util.isPointInside(v.x, v.y, points)) {
+                isRoof = false;
+                break;
+              }
+            }
           }
-          if (dot > 0 && distance < 0) {
-            // direct radiation
-            intensity[p][q] += dot * peakRadiation;
+          if (isRoof) {
+            const distance = distanceToClosestObject(uuid, v, sunDirection);
+            if (distance > AMBIENT_LIGHT_THRESHOLD || distance < 0) {
+              // roof may be covered by solar panels
+              intensity[p][q] += indirectRadiation;
+            }
+            if (dot > 0 && distance < 0) {
+              // direct radiation
+              intensity[p][q] += dot * peakRadiation;
+            }
           }
         }
       }

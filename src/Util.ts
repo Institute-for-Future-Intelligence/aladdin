@@ -674,6 +674,14 @@ export class Util {
     return inside;
   }
 
+  static getPoints(vertices: Vector3[]): Point2[] {
+    const points: Point2[] = [];
+    for (const v of vertices) {
+      points.push({ x: v.x, y: v.y } as Point2);
+    }
+    return points;
+  }
+
   static polygonIntersections(a: Point2, b: Point2, vertices: Point2[]): Point2[] {
     const intersections = new Array<Point2>();
     let v1: Point2, v2: Point2, p: Point2 | undefined;

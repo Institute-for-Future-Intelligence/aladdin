@@ -15,6 +15,8 @@ import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
 import { RoofModel, RoofType } from 'src/models/RoofModel';
 import { WALL_PADDING } from '../wall/wall';
+import { WindowModel } from '../../models/WindowModel';
+import { FoundationModel } from '../../models/FoundationModel';
 
 export class RoofUtil {
   // roof related
@@ -361,7 +363,22 @@ export class RoofUtil {
     }
   }
 
-  static getSolarPanelVerticesOnRoof(sp: SolarPanelModel, foundation: ElementModel) {
+  static getAbsoluteWindowVerticesOnRoof(window: WindowModel, foundation: FoundationModel): Vector3[] {
+    const vertices: Vector3[] = [];
+    const center = new Vector3(window.cx, window.cy, window.cz);
+    const foundationCenter = new Vector3(foundation.cx, foundation.cy, foundation.lz);
+    for (let i = -1; i <= 1; i += 2) {
+      for (let j = -1; j <= 1; j += 2) {
+        const vertex = new Vector3((window.lx / 2) * i, (window.lz / 2) * j * i, 0);
+        vertex.applyEuler(new Euler(window.rotation[0], window.rotation[1], window.rotation[2], 'ZXY')).add(center);
+        vertex.applyEuler(new Euler(0, 0, foundation.rotation[2], 'ZXY')).add(foundationCenter);
+        vertices.push(vertex);
+      }
+    }
+    return vertices;
+  }
+
+  static getSolarPanelVerticesOnRoof(sp: SolarPanelModel, foundation: ElementModel): Vector3[] {
     const vertices: Vector3[] = [];
     const center = new Vector3(sp.cx * foundation.lx, sp.cy * foundation.ly, sp.cz + foundation.lz);
     for (let i = -1; i <= 1; i += 2) {
@@ -380,7 +397,7 @@ export class RoofUtil {
   }
 
   // state check
-  static rooftopSPBoundaryCheck(solarPanelVertices: Vector3[], wallVertices: Point2[]) {
+  static rooftopSPBoundaryCheck(solarPanelVertices: Vector3[], wallVertices: Point2[]): boolean {
     for (const vertex of solarPanelVertices) {
       if (!Util.isPointInside(vertex.x, vertex.y, wallVertices)) {
         return false;
