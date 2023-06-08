@@ -45,7 +45,9 @@ const RoofThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
       for (const e of state.elements) {
         if (e.id === id) {
           (e as RoofModel).thickness = value;
-          break;
+        }
+        if (e.parentId === id && e.type === ObjectType.Window) {
+          e.ly = value;
         }
       }
     });
