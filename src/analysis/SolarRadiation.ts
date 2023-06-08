@@ -1009,6 +1009,16 @@ export class SolarRadiation {
               }
             }
           }
+          if (solarPanels && solarPanels.length > 0) {
+            for (const sp of solarPanels) {
+              const vertices = RoofUtil.getAbsoluteSolarPanelVerticesOnRoof(sp as SolarPanelModel, foundation);
+              const points = Util.getPoints(vertices);
+              if (Util.isPointInside(v.x, v.y, points)) {
+                isRoof = false;
+                break;
+              }
+            }
+          }
           if (isRoof) {
             const distance = distanceToClosestObject(uuid, v, sunDirection);
             if (distance > AMBIENT_LIGHT_THRESHOLD || distance < 0) {

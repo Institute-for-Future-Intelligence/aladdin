@@ -1314,7 +1314,6 @@ const RoofSegment = ({
     heatFluxArrowEuler.current = Util.getEuler(UNIT_VECTOR_POS_Z, normal, 'YXZ', -Math.sign(intensity) * HALF_PI);
     const vectors: Vector3[][] = [];
     const origin = new Vector3();
-    const cosine = Math.abs(normal.y) / Math.hypot(normal.y, normal.z);
     let isRoof;
     for (let p = 0; p < m; p++) {
       const dmp = dm.clone().multiplyScalar(p);
@@ -1322,12 +1321,13 @@ const RoofSegment = ({
         origin.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
         isRoof = true;
         if (windows && windows.length > 0) {
+          // add the centroid back as the vertices of the window are not relative to it
+          const ox = origin.x + centroid.x;
+          const oy = origin.y + centroid.y;
           for (const w of windows) {
-            const wx = w.cx - centroid.x;
-            const wy = w.cy - centroid.y;
-            const hx = w.lx / 2;
-            const hy = (w.lz * cosine) / 2; // this applies only to gable roofs, not generalizable to other types of roofs
-            if (origin.x >= wx - hx && origin.x <= wx + hx && origin.y >= wy - hy && origin.y <= wy + hy) {
+            const vertices = RoofUtil.getRelativeWindowVerticesOnRoof(w as WindowModel);
+            const points = Util.getPoints(vertices);
+            if (Util.isPointInside(ox, oy, points)) {
               isRoof = false;
               break;
             }

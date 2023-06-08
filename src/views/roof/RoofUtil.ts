@@ -378,14 +378,47 @@ export class RoofUtil {
     return vertices;
   }
 
+  static getRelativeWindowVerticesOnRoof(window: WindowModel): Vector3[] {
+    const vertices: Vector3[] = [];
+    const center = new Vector3(window.cx, window.cy, window.cz);
+    for (let i = -1; i <= 1; i += 2) {
+      for (let j = -1; j <= 1; j += 2) {
+        const vertex = new Vector3((window.lx / 2) * i, (window.lz / 2) * j * i, 0);
+        vertex.applyEuler(new Euler(window.rotation[0], window.rotation[1], window.rotation[2], 'ZXY')).add(center);
+        vertices.push(vertex);
+      }
+    }
+    return vertices;
+  }
+
+  static getAbsoluteSolarPanelVerticesOnRoof(sp: SolarPanelModel, foundation: FoundationModel): Vector3[] {
+    const vertices: Vector3[] = [];
+    const center = new Vector3(sp.cx * foundation.lx, sp.cy * foundation.ly, sp.cz);
+    const foundationCenter = new Vector3(foundation.cx, foundation.cy, foundation.lz);
+    for (let i = -1; i <= 1; i += 2) {
+      for (let j = -1; j <= 1; j += 2) {
+        const vertex = new Vector3((sp.lx / 2) * i, (sp.ly / 2) * j * i, 0);
+        if (sp.rotation[0] === 0) {
+          // has pole
+          vertex.applyEuler(new Euler(sp.tiltAngle, 0, sp.relativeAzimuth, 'ZXY')).add(center);
+        } else {
+          vertex.applyEuler(new Euler(sp.rotation[0], sp.rotation[1], sp.rotation[2], 'ZXY')).add(center);
+        }
+        vertex.applyEuler(new Euler(0, 0, foundation.rotation[2], 'ZXY')).add(foundationCenter);
+        vertices.push(vertex);
+      }
+    }
+    return vertices;
+  }
+
   static getSolarPanelVerticesOnRoof(sp: SolarPanelModel, foundation: ElementModel): Vector3[] {
     const vertices: Vector3[] = [];
     const center = new Vector3(sp.cx * foundation.lx, sp.cy * foundation.ly, sp.cz + foundation.lz);
     for (let i = -1; i <= 1; i += 2) {
       for (let j = -1; j <= 1; j += 2) {
         const vertex = new Vector3((sp.lx / 2) * i, (sp.ly / 2) * j * i, 0);
-        // has pole
         if (sp.rotation[0] === 0) {
+          // has pole
           vertex.applyEuler(new Euler(sp.tiltAngle, 0, sp.relativeAzimuth, 'ZXY')).add(center);
         } else {
           vertex.applyEuler(new Euler(sp.rotation[0], sp.rotation[1], sp.rotation[2], 'ZXY')).add(center);
@@ -406,7 +439,7 @@ export class RoofUtil {
     return true;
   }
 
-  static rooftopSPCollisionCheck(sp: SolarPanelModel, foundation: ElementModel, spVertices: Vector3[]) {
+  static rooftopSPCollisionCheck(sp: SolarPanelModel, foundation: ElementModel, spVertices: Vector3[]): boolean {
     for (const elem of useStore.getState().elements) {
       if (elem.type === sp.type && elem.parentId === sp.parentId && elem.id !== sp.id) {
         const sp2Vertices = RoofUtil.getSolarPanelVerticesOnRoof(elem as SolarPanelModel, foundation);
