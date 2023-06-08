@@ -411,6 +411,8 @@ const Window = (windowModel: WindowModel) => {
             empty={!!windowModel.empty}
             interior={!!windowModel.interior}
             wireframeData={wireframeData}
+            frameData={frameData}
+            shutter={shutter}
           />
         );
     }

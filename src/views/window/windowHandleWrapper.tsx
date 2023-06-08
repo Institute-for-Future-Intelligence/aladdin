@@ -405,7 +405,7 @@ const WindowHandleWrapper = ({
 
         const [whx, whz] = [window.lx / 2, window.lz / 2];
 
-        const centerPoint = new Vector3(window.cx, window.cy, window.cz);
+        const centerPoint = new Vector3(window.cx, window.cy, window.cz + foundation.lz / 2);
         const euler = new Euler().fromArray([...window.rotation, 'ZXY']);
         const lowerLeftPoint = new Vector3(-whx, -whz, 0).applyEuler(euler).add(centerPoint);
         const lowerRightPoint = new Vector3(whx, -whz, 0).applyEuler(euler).add(centerPoint);
@@ -413,6 +413,7 @@ const WindowHandleWrapper = ({
         const pointerRelToLowerLeft = new Vector3().subVectors(pointerRelToFoundation, lowerLeftPoint);
         const botNormal = new Vector3().subVectors(lowerRightPoint, lowerLeftPoint).normalize();
         const topXRelToLeft = pointerRelToLowerLeft
+          .clone()
           .projectOnVector(botNormal)
           .applyEuler(new Euler(0, 0, -window.rotation[2]));
         const newTopX = Util.clamp((topXRelToLeft.x - whx) / window.lx, -0.5, 0.5);
@@ -447,7 +448,7 @@ const WindowHandleWrapper = ({
         {!isSettingNewWindow && (
           <>
             {windowType === WindowType.Polygonal && (
-              <WindowResizeHandle x={absTopX} z={hz + topH} handleType={ResizeHandleType.Upper} />
+              <WindowResizeHandle x={absTopX} z={hz + topH} handleType={ResizeHandleType.Upper} scale={[0.5, 1, 1.5]} />
             )}
             <WindowResizeHandle x={-hx} z={hz} handleType={ResizeHandleType.UpperLeft} />
             <WindowResizeHandle x={hx} z={hz} handleType={ResizeHandleType.UpperRight} />
