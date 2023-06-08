@@ -1315,11 +1315,12 @@ const RoofSegment = ({
     const vectors: Vector3[][] = [];
     const origin = new Vector3();
     const cosine = Math.abs(normal.y) / Math.hypot(normal.y, normal.z);
+    let isRoof;
     for (let p = 0; p < m; p++) {
       const dmp = dm.clone().multiplyScalar(p);
       for (let q = 0; q < n; q++) {
         origin.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
-        let isRoof = true;
+        isRoof = true;
         if (windows && windows.length > 0) {
           for (const w of windows) {
             const wx = w.cx - centroid.x;

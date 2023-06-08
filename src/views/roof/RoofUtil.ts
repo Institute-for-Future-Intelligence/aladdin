@@ -1,3 +1,7 @@
+/*
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ */
+
 import { Euler, Vector3 } from 'three';
 import { ThreeEvent } from '@react-three/fiber';
 import { Util } from 'src/Util';

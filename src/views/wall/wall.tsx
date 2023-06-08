@@ -2463,13 +2463,14 @@ const HeatFlux = ({ wallModel }: HeatFluxProps) => {
     );
     const vectors: Vector3[][] = [];
     const polygon = Util.getWallVertices(wallModel, 0);
+    let isWall;
     for (let kx = 0; kx < nx; kx++) {
       for (let kz = 0; kz < nz; kz++) {
         const v: Vector3[] = [];
         const rx = (kx - nx / 2 + 0.5) * dx;
         const rz = (kz - nz / 2 + 0.5) * dz + halfDif;
         if (Util.isPointInside(rx, rz, polygon)) {
-          let isWall = true;
+          isWall = true;
           if (windows && windows.length > 0) {
             for (const w of windows) {
               if (w.type !== ObjectType.Window) continue;
