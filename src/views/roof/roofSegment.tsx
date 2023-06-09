@@ -38,12 +38,14 @@ import { ObjectType } from 'src/types';
 import { WindowModel } from 'src/models/WindowModel';
 import { WindowType } from 'src/models/WindowModel';
 import { RoofUtil } from './RoofUtil';
+import { getArchedWindowShape } from '../window/archedWindow';
 
 export type WindowData = {
   dimension: Vector3;
   position: Vector3;
   rotation: Euler;
   windowType: WindowType;
+  archHeight: number;
   topPosition?: number[];
 };
 
@@ -245,6 +247,7 @@ export const RoofSegment = ({
         position: new Vector3(w.cx, w.cy, w.cz).sub(centroid),
         rotation: new Euler().fromArray([...w.rotation, 'ZXY']),
         windowType: w.windowType,
+        archHeight: w.archHeight,
         topPosition: w.polygonTop,
       };
     });
@@ -352,7 +355,7 @@ export const BufferRoofSegment = React.memo(
     const holeMeshes = useMemo(
       () =>
         windows.map((window) => {
-          const { dimension, position, rotation, windowType, topPosition } = window;
+          const { dimension, position, rotation, windowType, archHeight, topPosition } = window;
           if (windowType === WindowType.Polygonal) {
             // triangle window
             const shape = new Shape();
@@ -366,6 +369,16 @@ export const BufferRoofSegment = React.memo(
             shape.lineTo(-hx, hy);
             shape.closePath();
 
+            const holeMesh = new Mesh(
+              new ExtrudeBufferGeometry([shape], { steps: 1, depth: dimension.z, bevelEnabled: false }),
+            );
+            const offset = new Vector3(0, 0, -dimension.z).applyEuler(rotation);
+            holeMesh.position.copy(position.clone().add(offset));
+            holeMesh.rotation.copy(rotation);
+            holeMesh.updateMatrix();
+            return holeMesh;
+          } else if (windowType === WindowType.Arched) {
+            const shape = getArchedWindowShape(dimension.x, dimension.y, archHeight);
             const holeMesh = new Mesh(
               new ExtrudeBufferGeometry([shape], { steps: 1, depth: dimension.z, bevelEnabled: false }),
             );

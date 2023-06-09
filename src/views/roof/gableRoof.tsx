@@ -1358,6 +1358,7 @@ const RoofSegment = ({
         position: new Vector3(w.cx, w.cy, w.cz).sub(centroid),
         rotation: new Euler().fromArray([...w.rotation, 'ZXY']),
         windowType: w.windowType,
+        archHeight: w.archHeight,
         topPosition: w.polygonTop,
       };
     });

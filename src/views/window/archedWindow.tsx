@@ -529,26 +529,7 @@ const ArchedWindow = ({
   );
   const shutterPosZ = useMemo(() => -Math.min(archHeight, lz, lx / 2) / 2, [lz, shutterHeight]);
 
-  const glassShape = useMemo(() => {
-    const s = new Shape();
-    const hx = lx / 2;
-    const hz = lz / 2;
-    const ah = Math.min(archHeight, lz, hx);
-    s.moveTo(-hx, -hz);
-    s.lineTo(hx, -hz);
-    s.lineTo(hx, hz - ah);
-    if (ah > 0) {
-      const r = ah / 2 + lx ** 2 / (8 * ah);
-      const [cX, cY] = [0, hz - r];
-      const startAngle = Math.acos(Math.min(1, hx / r));
-      const endAngle = Math.PI - startAngle;
-      s.absarc(cX, cY, r, startAngle, endAngle, false);
-    } else {
-      s.lineTo(-hx, hz);
-    }
-    s.closePath();
-    return s;
-  }, [lx, lz]);
+  const glassShape = useMemo(() => getArchedWindowShape(lx, lz, archHeight), [lx, lz, archHeight]);
 
   const renderSealPlane = (args: [width: number, height: number], position: ArgsType, rotation?: ArgsType) => (
     <Plane
@@ -624,6 +605,27 @@ const ArchedWindow = ({
         })}
     </>
   );
+};
+
+export const getArchedWindowShape = (lx: number, lz: number, archHeight: number) => {
+  const s = new Shape();
+  const hx = lx / 2;
+  const hz = lz / 2;
+  const ah = Math.min(archHeight, lz, hx);
+  s.moveTo(-hx, -hz);
+  s.lineTo(hx, -hz);
+  s.lineTo(hx, hz - ah);
+  if (ah > 0) {
+    const r = ah / 2 + lx ** 2 / (8 * ah);
+    const [cX, cY] = [0, hz - r];
+    const startAngle = Math.acos(Math.min(1, hx / r));
+    const endAngle = Math.PI - startAngle;
+    s.absarc(cX, cY, r, startAngle, endAngle, false);
+  } else {
+    s.lineTo(-hx, hz);
+  }
+  s.closePath();
+  return s;
 };
 
 export default React.memo(ArchedWindow);

@@ -99,25 +99,6 @@ const isPolygonalWindowInsideSegment = (
   return true;
 };
 
-const getResizeAnchor = (
-  event: ThreeEvent<PointerEvent>,
-  foundationId: string | undefined,
-  rotation: number[],
-  lx: number,
-  lz: number,
-) => {
-  if (!foundationId) return null;
-  const foundationModel = useStore
-    .getState()
-    .elements.find((e) => e.id === foundationId && e.type === ObjectType.Foundation);
-  if (!foundationModel) return null;
-  const worldPosition = event.object.localToWorld(new Vector3());
-  const [a, b, c] = rotation;
-  const euler = new Euler().fromArray([a - HALF_PI, b, c + foundationModel.rotation[2], 'ZXY']);
-  const v = new Vector3(lx, 0, lz).applyEuler(euler);
-  return new Vector3().addVectors(worldPosition, v);
-};
-
 const getDataOnRoof = (e: ThreeEvent<PointerEvent>, windowId: string, roofId: string) => {
   if (e.intersections.length > 0) {
     for (const intersection of e.intersections) {
@@ -225,6 +206,19 @@ const WindowHandleWrapper = ({
 
   const setCommonStore = useStore(Selector.set);
 
+  const getResizeAnchor = (event: ThreeEvent<PointerEvent>, lx: number, lz: number) => {
+    if (!foundationId) return null;
+    const foundationModel = useStore
+      .getState()
+      .elements.find((e) => e.id === foundationId && e.type === ObjectType.Foundation);
+    if (!foundationModel) return null;
+    const worldPosition = event.object.localToWorld(new Vector3());
+    const [a, b, c] = rotation;
+    const euler = new Euler().fromArray([a - HALF_PI, b, c + foundationModel.rotation[2], 'ZXY']);
+    const v = new Vector3(lx, 0, lz).applyEuler(euler);
+    return new Vector3().addVectors(worldPosition, v);
+  };
+
   const setRefDataForPointerMove = (handleType: HandleType) => {
     const windowModel = useStore
       .getState()
@@ -265,24 +259,30 @@ const WindowHandleWrapper = ({
         break;
       }
       case ResizeHandleType.LowerLeft: {
-        resizeAnchorWorldPosRef.current = getResizeAnchor(event, foundationId, rotation, lx, lz);
+        resizeAnchorWorldPosRef.current = getResizeAnchor(event, lx, lz);
         break;
       }
       case ResizeHandleType.LowerRight: {
-        resizeAnchorWorldPosRef.current = getResizeAnchor(event, foundationId, rotation, -lx, lz);
+        resizeAnchorWorldPosRef.current = getResizeAnchor(event, -lx, lz);
         break;
       }
       case ResizeHandleType.UpperLeft: {
-        resizeAnchorWorldPosRef.current = getResizeAnchor(event, foundationId, rotation, lx, -lz);
+        resizeAnchorWorldPosRef.current = getResizeAnchor(event, lx, -lz);
         break;
       }
       case ResizeHandleType.UpperRight: {
-        resizeAnchorWorldPosRef.current = getResizeAnchor(event, foundationId, rotation, -lx, -lz);
+        resizeAnchorWorldPosRef.current = getResizeAnchor(event, -lx, -lz);
+        break;
+      }
+      case ResizeHandleType.Arch: {
+        resizeAnchorWorldPosRef.current = getResizeAnchor(event, 0, -lz);
         break;
       }
       case ResizeHandleType.Upper:
+        // use break to avoid default return
         break;
       default:
+        // just in case handle type is not correct
         return;
     }
 
@@ -426,6 +426,31 @@ const WindowHandleWrapper = ({
         if (isPolygonalWindowInsideSegment(windowCenter, window.lx, window.lz, newTopX, newTopH, rotation, vertices)) {
           window.polygonTop = [newTopX, newTopH];
         }
+      });
+    } else if (handleTypeRef.current === ResizeHandleType.Arch) {
+      const pointerOnIntersectionPlane = getPointerOnIntersectionPlane(event);
+      const anchorWorldPos = resizeAnchorWorldPosRef.current;
+      if (!pointerOnIntersectionPlane || !anchorWorldPos) return;
+
+      const pointerRelToFoundation = getPosRelToFoundation(pointerOnIntersectionPlane, foundation);
+      const anchorRelToFoundation = getPosRelToFoundation(anchorWorldPos, foundation);
+      let { newLz, newCenter } = getNewResizedData(anchorRelToFoundation, pointerRelToFoundation, rotation[2]);
+
+      setCommonStore((state) => {
+        const window = state.elements.find((e) => e.id === id && e.type === ObjectType.Window) as WindowModel;
+        if (!window) return;
+
+        const ah = Math.min(window.archHeight, window.lz, window.lx / 2);
+        const rectHeight = window.lz - ah;
+
+        if (newLz > rectHeight && newLz < window.lx / 2 + rectHeight) {
+          window.cy = newCenter.y;
+          window.cz = newCenter.z - foundation.lz / 2;
+        }
+        newLz = Util.clamp(newLz, rectHeight, window.lx / 2 + rectHeight);
+        const newArchHeight = newLz - rectHeight;
+        window.lz = newLz;
+        window.archHeight = newArchHeight;
       });
     }
   };
