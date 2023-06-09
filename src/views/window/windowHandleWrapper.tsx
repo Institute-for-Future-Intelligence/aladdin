@@ -49,7 +49,7 @@ const getPointerOnIntersectionPlane = (e: ThreeEvent<PointerEvent>) => {
 
 const getPosRelToFoundation = (p: Vector3, foundation: FoundationModel) => {
   return new Vector3()
-    .subVectors(p, new Vector3(foundation.cx, foundation.cy, foundation.cz))
+    .subVectors(p, new Vector3(foundation.cx, foundation.cy, foundation.lz))
     .applyEuler(new Euler(0, 0, -foundation.rotation[2]));
 };
 
@@ -139,13 +139,13 @@ const getNewResizedData = (anchor: Vector3, pointer: Vector3, r: number) => {
   return { newLx, newLz, newCenter };
 };
 
-const setResizedData = (id: string, center: Vector3, lx: number, lz: number, fLz: number) => {
+const setResizedData = (id: string, center: Vector3, lx: number, lz: number) => {
   useStore.getState().set((state) => {
     const window = state.elements.find((e) => e.id === id && e.type === ObjectType.Window);
     if (!window) return;
     window.cx = center.x;
     window.cy = center.y;
-    window.cz = center.z - fLz / 2;
+    window.cz = center.z;
     window.lx = lx;
     window.lz = lz;
   });
@@ -380,11 +380,11 @@ const WindowHandleWrapper = ({
       if (windowType === WindowType.Polygonal) {
         const [topX, topH] = polygonTop;
         if (isPolygonalWindowInsideSegment(newCenter, newLx, newLz, topX, topH, rotation, vertices)) {
-          setResizedData(id, newCenter, newLx, newLz, foundation.lz);
+          setResizedData(id, newCenter, newLx, newLz);
         }
       } else {
         if (isRectWindowInsideSegment(newCenter, newLx, newLz, rotation, vertices)) {
-          setResizedData(id, newCenter, newLx, newLz, foundation.lz);
+          setResizedData(id, newCenter, newLx, newLz);
         }
       }
     } else if (handleTypeRef.current === ResizeHandleType.Upper) {
@@ -405,7 +405,7 @@ const WindowHandleWrapper = ({
 
         const [whx, whz] = [window.lx / 2, window.lz / 2];
 
-        const centerPoint = new Vector3(window.cx, window.cy, window.cz + foundation.lz / 2);
+        const centerPoint = new Vector3(window.cx, window.cy, window.cz);
         const euler = new Euler().fromArray([...window.rotation, 'ZXY']);
         const lowerLeftPoint = new Vector3(-whx, -whz, 0).applyEuler(euler).add(centerPoint);
         const lowerRightPoint = new Vector3(whx, -whz, 0).applyEuler(euler).add(centerPoint);
@@ -445,7 +445,7 @@ const WindowHandleWrapper = ({
 
         if (newLz > rectHeight && newLz < window.lx / 2 + rectHeight) {
           window.cy = newCenter.y;
-          window.cz = newCenter.z - foundation.lz / 2;
+          window.cz = newCenter.z;
         }
         newLz = Util.clamp(newLz, rectHeight, window.lx / 2 + rectHeight);
         const newArchHeight = newLz - rectHeight;

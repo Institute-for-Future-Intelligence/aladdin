@@ -3173,7 +3173,7 @@ const Foundation = (foundationModel: FoundationModel) => {
         {solarStructure === SolarStructure.UpdraftTower && <SolarUpdraftTower foundation={foundationModel} />}
       </group>
 
-      <group name={'Elements On Building'} position={[cx, cy, hz]} rotation={[0, 0, rotation[2]]}>
+      <group name={'Elements On Building'} position={[cx, cy, lz]} rotation={[0, 0, rotation[2]]}>
         {elementsOnBuilding.map((e) => {
           switch (e.type) {
             case ObjectType.SolarPanel:
@@ -3183,12 +3183,12 @@ const Foundation = (foundationModel: FoundationModel) => {
                   {...(e as SolarPanelModel)}
                   cx={e.cx * lx}
                   cy={e.cy * ly}
-                  cz={e.cz + hz}
+                  cz={e.cz}
                   foundationModel={foundationModel}
                 />
               );
             case ObjectType.Window:
-              return <Window key={e.id} {...(e as WindowModel)} cz={e.cz + hz} />;
+              return <Window key={e.id} {...(e as WindowModel)} cz={e.cz} />;
           }
         })}
       </group>
