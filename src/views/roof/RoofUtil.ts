@@ -15,7 +15,7 @@ import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
 import { RoofModel, RoofType } from 'src/models/RoofModel';
 import { WALL_PADDING } from '../wall/wall';
-import { WindowModel } from '../../models/WindowModel';
+import { WindowModel, WindowType } from '../../models/WindowModel';
 import { FoundationModel } from '../../models/FoundationModel';
 
 export class RoofUtil {
@@ -375,6 +375,12 @@ export class RoofUtil {
         vertices.push(vertex);
       }
     }
+    if (window.windowType === WindowType.Polygonal && window.polygonTop) {
+      const vertex = new Vector3(window.lx * window.polygonTop[0], window.lz / 2 + window.polygonTop[1], 0);
+      vertex.applyEuler(new Euler(window.rotation[0], window.rotation[1], window.rotation[2], 'ZXY')).add(center);
+      vertex.applyEuler(new Euler(0, 0, foundation.rotation[2], 'ZXY')).add(foundationCenter);
+      vertices.push(vertex);
+    }
     return vertices;
   }
 
@@ -387,6 +393,11 @@ export class RoofUtil {
         vertex.applyEuler(new Euler(window.rotation[0], window.rotation[1], window.rotation[2], 'ZXY')).add(center);
         vertices.push(vertex);
       }
+    }
+    if (window.windowType === WindowType.Polygonal && window.polygonTop) {
+      const vertex = new Vector3(window.lx * window.polygonTop[0], window.lz / 2 + window.polygonTop[1], 0);
+      vertex.applyEuler(new Euler(window.rotation[0], window.rotation[1], window.rotation[2], 'ZXY')).add(center);
+      vertices.push(vertex);
     }
     return vertices;
   }

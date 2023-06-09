@@ -54,6 +54,7 @@ import { FlowerData } from '../FlowerData';
 import { LightModel } from './LightModel';
 import { HvacSystem } from './HvacSystem';
 import { useStore } from 'src/stores/common';
+import { RoofUtil } from '../views/roof/RoofUtil';
 
 export class ElementModelFactory {
   static makeHuman(name: HumanName, parentId: string, x: number, y: number, z?: number) {
@@ -659,7 +660,7 @@ export class ElementModelFactory {
       mullionColor: actionState.windowMullionColor,
       frame: actionState.windowFrame,
       frameWidth: actionState.windowFrameWidth,
-      sillWidth: actionState.windowSillWidth,
+      sillWidth: RoofUtil.isTypeRoof(parentType) ? 0 : actionState.windowSillWidth,
       windowType: actionState.windowType,
       archHeight: actionState.windowArchHeight,
       selected: true,
