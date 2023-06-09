@@ -603,44 +603,45 @@ const SolarPanelOnRoof = ({
     });
   };
 
-  // add pointerup event listener
-  useEffect(() => {
-    const handlePointerUp = () => {
-      if (pointerDownRef.current && (useStore.getState().rotateHandleType || useStore.getState().resizeHandleType)) {
-        const roof = getElementById(parentId) as RoofModel;
-        if (roof && foundationId) {
-          const sp = getElementById(id) as SolarPanelModel;
-          const foundation = getElementById(foundationId) as FoundationModel;
+  const handlePointerUp = () => {
+    if (pointerDownRef.current) {
+      const roof = getElementById(parentId) as RoofModel;
+      if (roof && foundationId) {
+        const sp = getElementById(id) as SolarPanelModel;
+        const foundation = getElementById(foundationId) as FoundationModel;
 
-          if (sp && foundation) {
-            const boundaryVertices = RoofUtil.getRoofBoundaryVertices(roof);
-            const solarPanelVertices = RoofUtil.getSolarPanelVerticesOnRoof(sp, foundation);
-            if (
-              !spBoundaryCheck(solarPanelVertices, boundaryVertices) ||
-              !spCollisionCheck(sp, foundation, solarPanelVertices)
-            ) {
-              undoOperation();
-            } else {
-              AddUndoableOperation(sp);
-            }
+        if (sp && foundation) {
+          const boundaryVertices = RoofUtil.getRoofBoundaryVertices(roof);
+          const solarPanelVertices = RoofUtil.getSolarPanelVerticesOnRoof(sp, foundation);
+          if (
+            !spBoundaryCheck(solarPanelVertices, boundaryVertices) ||
+            !spCollisionCheck(sp, foundation, solarPanelVertices)
+          ) {
+            undoOperation();
+          } else {
+            AddUndoableOperation(sp);
           }
         }
-        useRefStore.getState().setEnableOrbitController(true);
-        pointerDownRef.current = false;
-        setShowIntersectionPlane(false);
-        setCommonStore((state) => {
-          state.moveHandleType = null;
-          state.resizeHandleType = null;
-          state.rotateHandleType = null;
-          state.updateElementOnRoofFlag = !state.updateElementOnRoofFlag;
-        });
       }
-    };
-    window.addEventListener('pointerup', handlePointerUp);
-    return () => {
-      window.removeEventListener('pointerup', handlePointerUp);
-    };
-  }, []);
+      useRefStore.getState().setEnableOrbitController(true);
+      pointerDownRef.current = false;
+      setShowIntersectionPlane(false);
+      setCommonStore((state) => {
+        state.moveHandleType = null;
+        state.resizeHandleType = null;
+        state.rotateHandleType = null;
+        state.updateElementOnRoofFlag = !state.updateElementOnRoofFlag;
+      });
+    }
+  };
+
+  // add pointerup event listener
+  // useEffect(() => {
+  //   window.addEventListener('pointerup', handlePointerUp);
+  //   return () => {
+  //     window.removeEventListener('pointerup', handlePointerUp);
+  //   };
+  // }, []);
 
   const baseSize = Math.max(1, (lx + ly) / 16);
   const moveHandleSize = MOVE_HANDLE_RADIUS * baseSize * 2;
@@ -1095,6 +1096,7 @@ const SolarPanelOnRoof = ({
           args={[1000, 1000]}
           visible={false}
           onPointerMove={intersectionPlanePointerMove}
+          onPointerUp={handlePointerUp}
         />
       )}
 
