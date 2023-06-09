@@ -115,7 +115,9 @@ const Frame = React.memo(({ dimension, polygonTop, frameData, shadowEnabled }: F
         position={[0, depth / 2, 0]}
         rotation={[HALF_PI, 0, 0]}
         args={[shape, { steps: 1, depth: depth, bevelEnabled: false }]}
-      />
+      >
+        {material}
+      </Extrude>
       {/* bottom */}
       <Box
         position={[0, 0, -lz / 2 - (sillWidth === 0 ? 0 : sillThickness / 2)]}
