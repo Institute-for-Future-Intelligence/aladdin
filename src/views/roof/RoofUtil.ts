@@ -380,6 +380,11 @@ export class RoofUtil {
           vertices.push(vertex);
         }
       }
+      // approximate the arc with a triangle (arch height is included in window.lz)
+      const vertex = new Vector3(0, window.lz / 2, 0);
+      vertex.applyEuler(new Euler(window.rotation[0], window.rotation[1], window.rotation[2], 'ZXY')).add(center);
+      vertex.applyEuler(new Euler(0, 0, foundation.rotation[2], 'ZXY')).add(foundationCenter);
+      vertices.push(vertex);
     } else {
       for (let i = -1; i <= 1; i += 2) {
         for (let j = -1; j <= 1; j += 2) {
@@ -389,18 +394,12 @@ export class RoofUtil {
           vertices.push(vertex);
         }
       }
-    }
-    if (window.windowType === WindowType.Polygonal && window.polygonTop) {
-      const vertex = new Vector3(window.lx * window.polygonTop[0], window.lz / 2 + window.polygonTop[1], 0);
-      vertex.applyEuler(new Euler(window.rotation[0], window.rotation[1], window.rotation[2], 'ZXY')).add(center);
-      vertex.applyEuler(new Euler(0, 0, foundation.rotation[2], 'ZXY')).add(foundationCenter);
-      vertices.push(vertex);
-    } else if (window.windowType === WindowType.Arched) {
-      // arch height is included in window.lz
-      const vertex = new Vector3(0, window.lz / 2, 0);
-      vertex.applyEuler(new Euler(window.rotation[0], window.rotation[1], window.rotation[2], 'ZXY')).add(center);
-      vertex.applyEuler(new Euler(0, 0, foundation.rotation[2], 'ZXY')).add(foundationCenter);
-      vertices.push(vertex);
+      if (window.windowType === WindowType.Polygonal && window.polygonTop) {
+        const vertex = new Vector3(window.lx * window.polygonTop[0], window.lz / 2 + window.polygonTop[1], 0);
+        vertex.applyEuler(new Euler(window.rotation[0], window.rotation[1], window.rotation[2], 'ZXY')).add(center);
+        vertex.applyEuler(new Euler(0, 0, foundation.rotation[2], 'ZXY')).add(foundationCenter);
+        vertices.push(vertex);
+      }
     }
     return vertices;
   }
@@ -420,6 +419,10 @@ export class RoofUtil {
           vertices.push(vertex);
         }
       }
+      // approximate the arc with a triangle (arch height is included in window.lz)
+      const vertex = new Vector3(0, window.lz / 2, 0);
+      vertex.applyEuler(new Euler(window.rotation[0], window.rotation[1], window.rotation[2], 'ZXY')).add(center);
+      vertices.push(vertex);
     } else {
       for (let i = -1; i <= 1; i += 2) {
         for (let j = -1; j <= 1; j += 2) {
@@ -428,16 +431,11 @@ export class RoofUtil {
           vertices.push(vertex);
         }
       }
-    }
-    if (window.windowType === WindowType.Polygonal && window.polygonTop) {
-      const vertex = new Vector3(window.lx * window.polygonTop[0], window.lz / 2 + window.polygonTop[1], 0);
-      vertex.applyEuler(new Euler(window.rotation[0], window.rotation[1], window.rotation[2], 'ZXY')).add(center);
-      vertices.push(vertex);
-    } else if (window.windowType === WindowType.Arched) {
-      // arch height is included in window.lz
-      const vertex = new Vector3(0, window.lz / 2, 0);
-      vertex.applyEuler(new Euler(window.rotation[0], window.rotation[1], window.rotation[2], 'ZXY')).add(center);
-      vertices.push(vertex);
+      if (window.windowType === WindowType.Polygonal && window.polygonTop) {
+        const vertex = new Vector3(window.lx * window.polygonTop[0], window.lz / 2 + window.polygonTop[1], 0);
+        vertex.applyEuler(new Euler(window.rotation[0], window.rotation[1], window.rotation[2], 'ZXY')).add(center);
+        vertices.push(vertex);
+      }
     }
     return vertices;
   }
