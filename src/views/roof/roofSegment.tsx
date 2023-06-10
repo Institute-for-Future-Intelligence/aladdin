@@ -191,7 +191,11 @@ export const RoofSegment = ({
     let windows = getChildrenOfType(ObjectType.Window, id);
     const segmentsWithoutOverhang = getRoofSegmentVerticesWithoutOverhang(id);
     if (segmentsWithoutOverhang && segmentsWithoutOverhang[index]) {
-      windows = windows.filter((w) => RoofUtil.onSegment(segmentsWithoutOverhang[index], w.cx, w.cy));
+      windows = windows.filter((e) => {
+        const w = e as WindowModel;
+        const wcy = w.cy + (w.windowType === WindowType.Polygonal && w.polygonTop ? w.polygonTop[1] / 2 : 0);
+        return RoofUtil.onSegment(segmentsWithoutOverhang[index], e.cx, wcy);
+      });
     }
     if (windows && windows.length > 0) {
       for (const w of windows) {
