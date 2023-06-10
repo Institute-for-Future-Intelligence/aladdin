@@ -367,16 +367,37 @@ export class RoofUtil {
     const vertices: Vector3[] = [];
     const center = new Vector3(window.cx, window.cy, window.cz);
     const foundationCenter = new Vector3(foundation.cx, foundation.cy, foundation.lz);
-    for (let i = -1; i <= 1; i += 2) {
-      for (let j = -1; j <= 1; j += 2) {
-        const vertex = new Vector3((window.lx / 2) * i, (window.lz / 2) * j * i, 0);
-        vertex.applyEuler(new Euler(window.rotation[0], window.rotation[1], window.rotation[2], 'ZXY')).add(center);
-        vertex.applyEuler(new Euler(0, 0, foundation.rotation[2], 'ZXY')).add(foundationCenter);
-        vertices.push(vertex);
+    if (window.windowType === WindowType.Arched) {
+      const ah = Math.min(window.archHeight, window.lx / 2, window.lz);
+      for (let i = -1; i <= 1; i += 2) {
+        for (let j = -1; j <= 1; j += 2) {
+          const vertex =
+            i * j > 0
+              ? new Vector3((window.lx / 2) * i, (window.lz / 2 - ah) * j * i, 0)
+              : new Vector3((window.lx / 2) * i, (window.lz / 2) * j * i, 0);
+          vertex.applyEuler(new Euler(window.rotation[0], window.rotation[1], window.rotation[2], 'ZXY')).add(center);
+          vertex.applyEuler(new Euler(0, 0, foundation.rotation[2], 'ZXY')).add(foundationCenter);
+          vertices.push(vertex);
+        }
+      }
+    } else {
+      for (let i = -1; i <= 1; i += 2) {
+        for (let j = -1; j <= 1; j += 2) {
+          const vertex = new Vector3((window.lx / 2) * i, (window.lz / 2) * j * i, 0);
+          vertex.applyEuler(new Euler(window.rotation[0], window.rotation[1], window.rotation[2], 'ZXY')).add(center);
+          vertex.applyEuler(new Euler(0, 0, foundation.rotation[2], 'ZXY')).add(foundationCenter);
+          vertices.push(vertex);
+        }
       }
     }
     if (window.windowType === WindowType.Polygonal && window.polygonTop) {
       const vertex = new Vector3(window.lx * window.polygonTop[0], window.lz / 2 + window.polygonTop[1], 0);
+      vertex.applyEuler(new Euler(window.rotation[0], window.rotation[1], window.rotation[2], 'ZXY')).add(center);
+      vertex.applyEuler(new Euler(0, 0, foundation.rotation[2], 'ZXY')).add(foundationCenter);
+      vertices.push(vertex);
+    } else if (window.windowType === WindowType.Arched) {
+      // arch height is included in window.lz
+      const vertex = new Vector3(0, window.lz / 2, 0);
       vertex.applyEuler(new Euler(window.rotation[0], window.rotation[1], window.rotation[2], 'ZXY')).add(center);
       vertex.applyEuler(new Euler(0, 0, foundation.rotation[2], 'ZXY')).add(foundationCenter);
       vertices.push(vertex);
@@ -387,15 +408,34 @@ export class RoofUtil {
   static getRelativeWindowVerticesOnRoof(window: WindowModel): Vector3[] {
     const vertices: Vector3[] = [];
     const center = new Vector3(window.cx, window.cy, window.cz);
-    for (let i = -1; i <= 1; i += 2) {
-      for (let j = -1; j <= 1; j += 2) {
-        const vertex = new Vector3((window.lx / 2) * i, (window.lz / 2) * j * i, 0);
-        vertex.applyEuler(new Euler(window.rotation[0], window.rotation[1], window.rotation[2], 'ZXY')).add(center);
-        vertices.push(vertex);
+    if (window.windowType === WindowType.Arched) {
+      const ah = Math.min(window.archHeight, window.lx / 2, window.lz);
+      for (let i = -1; i <= 1; i += 2) {
+        for (let j = -1; j <= 1; j += 2) {
+          const vertex =
+            i * j > 0
+              ? new Vector3((window.lx / 2) * i, (window.lz / 2 - ah) * j * i, 0)
+              : new Vector3((window.lx / 2) * i, (window.lz / 2) * j * i, 0);
+          vertex.applyEuler(new Euler(window.rotation[0], window.rotation[1], window.rotation[2], 'ZXY')).add(center);
+          vertices.push(vertex);
+        }
+      }
+    } else {
+      for (let i = -1; i <= 1; i += 2) {
+        for (let j = -1; j <= 1; j += 2) {
+          const vertex = new Vector3((window.lx / 2) * i, (window.lz / 2) * j * i, 0);
+          vertex.applyEuler(new Euler(window.rotation[0], window.rotation[1], window.rotation[2], 'ZXY')).add(center);
+          vertices.push(vertex);
+        }
       }
     }
     if (window.windowType === WindowType.Polygonal && window.polygonTop) {
       const vertex = new Vector3(window.lx * window.polygonTop[0], window.lz / 2 + window.polygonTop[1], 0);
+      vertex.applyEuler(new Euler(window.rotation[0], window.rotation[1], window.rotation[2], 'ZXY')).add(center);
+      vertices.push(vertex);
+    } else if (window.windowType === WindowType.Arched) {
+      // arch height is included in window.lz
+      const vertex = new Vector3(0, window.lz / 2, 0);
       vertex.applyEuler(new Euler(window.rotation[0], window.rotation[1], window.rotation[2], 'ZXY')).add(center);
       vertices.push(vertex);
     }
