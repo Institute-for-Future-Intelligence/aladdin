@@ -2,17 +2,30 @@
  * @Copyright 2023. Institute for Future Intelligence, Inc.
  */
 
-import { Box, Cylinder, Extrude, Plane, Tube } from '@react-three/drei';
-import React, { useMemo } from 'react';
-import { HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
+import { Box, Cone, Cylinder, Extrude, Line, Plane } from '@react-three/drei';
+import React, { useMemo, useRef } from 'react';
+import {
+  DEFAULT_HEAT_FLUX_COLOR,
+  DEFAULT_HEAT_FLUX_DENSITY_FACTOR,
+  DEFAULT_HEAT_FLUX_SCALE_FACTOR,
+  DEFAULT_HEAT_FLUX_WIDTH,
+  HALF_PI,
+  LOCKED_ELEMENT_SELECTION_COLOR,
+  UNIT_VECTOR_POS_Y,
+  UNIT_VECTOR_POS_Z,
+} from 'src/constants';
 import { useStore } from 'src/stores/common';
 import { DoubleSide, Euler, MeshStandardMaterial, Shape, Vector3 } from 'three';
 import * as Selector from 'src/stores/selector';
 import { FrameDataType, Shutter, WireframeDataType } from './window';
 import { RoofUtil } from '../roof/RoofUtil';
 import { ShutterProps } from 'src/models/WindowModel';
+import { useDataStore } from '../../stores/commonData';
+import { Util } from '../../Util';
+import { Point2 } from '../../models/Point2';
 
 interface PolygonalWindowProps {
+  id: string;
   dimension: number[];
   position: number[];
   polygonTop: number[];
@@ -22,6 +35,8 @@ interface PolygonalWindowProps {
   wireframeData: WireframeDataType;
   frameData: FrameDataType;
   shutter: ShutterProps;
+  area: number;
+  showHeatFluxes: boolean;
 }
 
 interface FrameProps {
@@ -132,6 +147,7 @@ const Frame = React.memo(({ dimension, polygonTop, frameData, shadowEnabled }: F
 });
 
 const PolygonalWindow = ({
+  id,
   dimension,
   polygonTop,
   position,
@@ -141,7 +157,18 @@ const PolygonalWindow = ({
   wireframeData,
   frameData,
   shutter,
+  area,
+  showHeatFluxes,
 }: PolygonalWindowProps) => {
+  const world = useStore.getState().world;
+  const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
+  const heatFluxColor = useStore(Selector.viewState.heatFluxColor);
+  const heatFluxWidth = useStore(Selector.viewState.heatFluxWidth);
+  const hourlyHeatExchangeArrayMap = useDataStore(Selector.hourlyHeatExchangeArrayMap);
+
+  const heatFluxArrowHead = useRef<number>(0);
+  const heatFluxArrowEuler = useRef<Euler>();
+
   const [cx, cy, cz] = position;
   const [lx, ly, lz] = dimension;
   const [hx, hy, hz] = dimension.map((v) => v / 2);
@@ -155,6 +182,72 @@ const PolygonalWindow = ({
   const topLeftRotation = -Math.asin(topH / topLeftLength);
 
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
+
+  const pointWithinPolygon = (x: number, z: number) => {
+    const hx = 0.5 * lx;
+    const hz = 0.5 * (lz + polygonTop[1]);
+    const shiftZ = polygonTop[1];
+    const points: Point2[] = [
+      { x: -hx, y: -hz } as Point2,
+      { x: hx, y: -hz } as Point2,
+      { x: hx, y: hz - shiftZ } as Point2,
+      { x: lx * polygonTop[0], y: hz } as Point2,
+      { x: -hx, y: hz - shiftZ } as Point2,
+    ];
+    return Util.isPointInside(x, z, points);
+  };
+
+  const heatFluxes: Vector3[][] | undefined = useMemo(() => {
+    if (!showHeatFluxes || interior) return undefined;
+    const heat = hourlyHeatExchangeArrayMap.get(id);
+    if (!heat) return undefined;
+    const sum = heat.reduce((a, b) => a + b, 0);
+    if (area === 0) return undefined;
+    const cellSize = DEFAULT_HEAT_FLUX_DENSITY_FACTOR * (world.solarRadiationHeatmapGridCellSize ?? 0.5);
+    const bz = lz + polygonTop[1];
+    const nx = Math.max(2, Math.round(lx / cellSize));
+    const nz = Math.max(2, Math.round(bz / cellSize));
+    const dx = lx / nx;
+    const dz = bz / nz;
+    const intensity = (sum / area) * (heatFluxScaleFactor ?? DEFAULT_HEAT_FLUX_SCALE_FACTOR);
+    heatFluxArrowHead.current = intensity < 0 ? 1 : 0;
+    heatFluxArrowEuler.current = Util.getEuler(
+      UNIT_VECTOR_POS_Z,
+      UNIT_VECTOR_POS_Y,
+      'YXZ',
+      Math.sign(intensity) * HALF_PI,
+    );
+    const vectors: Vector3[][] = [];
+    const shiftZ = polygonTop[1] / 2;
+    if (intensity < 0) {
+      for (let kx = 0; kx < nx; kx++) {
+        for (let kz = 0; kz < nz; kz++) {
+          const v: Vector3[] = [];
+          const rx = (kx - nx / 2 + 0.5) * dx;
+          const rz = (kz - nz / 2 + 0.5) * dz;
+          if (pointWithinPolygon(rx, rz)) {
+            v.push(new Vector3(rx, 0, rz + shiftZ));
+            v.push(new Vector3(rx, intensity, rz + shiftZ));
+            vectors.push(v);
+          }
+        }
+      }
+    } else {
+      for (let kx = 0; kx < nx; kx++) {
+        for (let kz = 0; kz < nz; kz++) {
+          const v: Vector3[] = [];
+          const rx = (kx - nx / 2 + 0.5) * dx;
+          const rz = (kz - nz / 2 + 0.5) * dz;
+          if (pointWithinPolygon(rx, rz)) {
+            v.push(new Vector3(rx, 0, rz + shiftZ));
+            v.push(new Vector3(rx, -intensity, rz + shiftZ));
+            vectors.push(v);
+          }
+        }
+      }
+    }
+    return vectors;
+  }, [id, dimension, showHeatFluxes, heatFluxScaleFactor]);
 
   const shutterLength = useMemo(() => shutter.width * lx, [lx, shutter]);
   const shutterPosX = useMemo(
@@ -272,6 +365,32 @@ const PolygonalWindow = ({
         {renderSealPlane(topRightLength, -topRightLength / 2)}
         {renderWireframeLine(topRightLength, -topRightLength / 2)}
       </group>
+
+      {heatFluxes &&
+        heatFluxes.map((v, index) => {
+          return (
+            <React.Fragment key={index}>
+              <Line
+                points={v}
+                name={'Heat Flux ' + index}
+                lineWidth={heatFluxWidth ?? DEFAULT_HEAT_FLUX_WIDTH}
+                color={heatFluxColor ?? DEFAULT_HEAT_FLUX_COLOR}
+              />
+              ;
+              <Cone
+                userData={{ unintersectable: true }}
+                position={v[heatFluxArrowHead.current]
+                  .clone()
+                  .add(new Vector3(0, heatFluxArrowHead.current === 0 ? -0.1 : 0.1, 0))}
+                args={[0.06, 0.2, 4, 1]}
+                name={'Normal Vector Arrow Head'}
+                rotation={heatFluxArrowEuler.current ?? [0, 0, 0]}
+              >
+                <meshBasicMaterial attach="material" color={heatFluxColor ?? DEFAULT_HEAT_FLUX_COLOR} />
+              </Cone>
+            </React.Fragment>
+          );
+        })}
     </>
   );
 };

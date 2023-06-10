@@ -289,6 +289,10 @@ export class Util {
         const startAngle = Math.acos(Math.min(hx / r, 1));
         const extent = Math.PI - startAngle * 2;
         return 0.5 * extent * r * r - hx * (r - ah) + (lz - ah) * hx * 2;
+      } else if (window.windowType === WindowType.Polygonal && window.polygonTop) {
+        let a = window.lx * window.lz * parent.lx * parent.lz;
+        a += (window.lx * parent.lx * window.polygonTop[1]) / 2;
+        return a;
       }
       return window.lx * window.lz * parent.lx * parent.lz;
     } else {
@@ -301,6 +305,10 @@ export class Util {
         const startAngle = Math.acos(Math.min(hx / r, 1));
         const extent = Math.PI - startAngle * 2;
         return 0.5 * extent * r * r - hx * (r - ah) + (lz - ah) * hx * 2;
+      } else if (window.windowType === WindowType.Polygonal && window.polygonTop) {
+        let a = window.lx * window.lz;
+        a += (window.lx * window.polygonTop[1]) / 2;
+        return a;
       }
       return window.lx * window.lz;
     }
@@ -659,7 +667,6 @@ export class Util {
   }
 
   // ray-casting algorithm based on
-  // https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html/pnpoly.html
   static isPointInside(x: number, y: number, vertices: Point2[]): boolean {
     let inside = false;
     for (let i = 0, j = vertices.length - 1; i < vertices.length; j = i++) {

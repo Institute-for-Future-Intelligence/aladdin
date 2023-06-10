@@ -404,6 +404,7 @@ const Window = (windowModel: WindowModel) => {
       case WindowType.Polygonal:
         return (
           <PolygonalWindow
+            id={windowModel.id}
             dimension={dimensionData}
             polygonTop={polygonTop}
             position={positionData}
@@ -413,6 +414,8 @@ const Window = (windowModel: WindowModel) => {
             wireframeData={wireframeData}
             frameData={frameData}
             shutter={shutter}
+            showHeatFluxes={showHeatFluxes}
+            area={Util.getWindowArea(windowModel)}
           />
         );
     }
