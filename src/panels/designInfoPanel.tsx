@@ -106,6 +106,7 @@ const DesignInfoPanel = ({}: DesignInfoPanelProps) => {
   const isBuilding =
     selectedElement &&
     selectedElement.type === ObjectType.Foundation &&
+    !(selectedElement as FoundationModel).notBuilding &&
     Util.getBuildingCompletionStatus(selectedElement as FoundationModel, elements) ===
       BuildingCompletionStatus.COMPLETE;
 

@@ -13,6 +13,8 @@ import { Groupable } from './Groupable';
 export interface FoundationModel extends ElementModel, Groupable {
   textureType: FoundationTexture;
 
+  notBuilding?: boolean;
+
   solarStructure?: SolarStructure;
 
   // tower for heliostats

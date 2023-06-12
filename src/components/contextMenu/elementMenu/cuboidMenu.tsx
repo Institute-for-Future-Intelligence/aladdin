@@ -27,7 +27,6 @@ import {
   UNIT_VECTOR_POS_Y,
   UNIT_VECTOR_POS_Z,
 } from '../../../constants';
-import { Vector3 } from 'three';
 import { ElementCounter } from '../../../stores/ElementCounter';
 import {
   useLabel,
@@ -39,6 +38,7 @@ import {
   useLabelText,
 } from './menuHooks';
 import { Util } from 'src/Util';
+import { UndoableCheck } from '../../../undo/UndoableCheck';
 
 export const CuboidMenu = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
@@ -96,6 +96,18 @@ export const CuboidMenu = React.memo(() => {
     return false;
   };
 
+  const toggleGroupMaster = () => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === cuboid.id) {
+          (e as CuboidModel).enableGroupMaster = !(e as CuboidModel).enableGroupMaster;
+          break;
+        }
+      }
+      state.groupActionUpdateFlag = !state.groupActionUpdateFlag;
+    });
+  };
+
   return (
     <Menu.ItemGroup>
       {legalToPaste() && <Paste keyName={'cuboid-paste'} />}
@@ -107,15 +119,17 @@ export const CuboidMenu = React.memo(() => {
         <Checkbox
           checked={cuboid.enableGroupMaster}
           onChange={(e) => {
-            setCommonStore((state) => {
-              for (const e of state.elements) {
-                if (e.id === cuboid.id) {
-                  (e as CuboidModel).enableGroupMaster = !(e as CuboidModel).enableGroupMaster;
-                  break;
-                }
-              }
-              state.groupActionUpdateFlag = !state.groupActionUpdateFlag;
-            });
+            const undoableCheck = {
+              name: 'Group Master',
+              timestamp: Date.now(),
+              checked: e.target.checked,
+              selectedElementId: cuboid.id,
+              selectedElementType: cuboid.type,
+              undo: () => toggleGroupMaster(),
+              redo: () => toggleGroupMaster(),
+            } as UndoableCheck;
+            addUndoable(undoableCheck);
+            toggleGroupMaster();
           }}
         >
           {i18n.t('cuboidMenu.GroupMaster', { lng: language })}

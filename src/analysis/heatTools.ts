@@ -36,6 +36,7 @@ export const checkBuilding = (
   for (const e of elements) {
     if (e.type === ObjectType.Foundation) {
       const f = e as FoundationModel;
+      if (f.notBuilding) continue;
       const walls = getChildrenOfType(ObjectType.Wall, f.id);
       if (walls.length > 0) {
         const completionStatus = Util.getBuildingCompletionStatus(f, elements);
