@@ -1548,7 +1548,24 @@ export class Util {
     const lowerRight = { x: hx + margin, y: wall.rightUnfilledHeight - hz - margin } as Point2;
     const upperLeft = { x: -hx - margin, y: wall.leftTopPartialHeight - hz + margin } as Point2;
     const upperRight = { x: hx + margin, y: wall.rightTopPartialHeight - hz + margin } as Point2;
-    return [upperLeft, lowerLeft, lowerRight, upperRight];
+    const vertices: Point2[] = [];
+    vertices.push(upperLeft, lowerLeft, lowerRight, upperRight);
+    if (wall.centerRightRoofHeight) {
+      vertices.push({
+        x: wall.centerRightRoofHeight[0] * wall.lx,
+        y: wall.centerRightRoofHeight[1] - hz + margin,
+      } as Point2);
+    }
+    if (wall.centerRoofHeight) {
+      vertices.push({ x: wall.centerRoofHeight[0] * wall.lx, y: wall.centerRoofHeight[1] - hz + margin } as Point2);
+    }
+    if (wall.centerLeftRoofHeight) {
+      vertices.push({
+        x: wall.centerLeftRoofHeight[0] * wall.lx,
+        y: wall.centerLeftRoofHeight[1] - hz + margin,
+      } as Point2);
+    }
+    return vertices;
   }
 
   // get the highest point of a wall (can be a quad, pentagon, or heptagon)

@@ -2462,7 +2462,7 @@ const HeatFlux = ({ wallModel }: HeatFluxProps) => {
       Math.sign(intensity) * HALF_PI,
     );
     const vectors: Vector3[][] = [];
-    const polygon = Util.getWallVertices(wallModel, 0);
+    const polygon = partial ? Util.getPartialWallVertices(wallModel, 0) : Util.getWallVertices(wallModel, 0);
     let isWall;
     for (let kx = 0; kx < nx; kx++) {
       for (let kz = 0; kz < nz; kz++) {

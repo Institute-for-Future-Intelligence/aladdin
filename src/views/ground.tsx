@@ -831,7 +831,6 @@ const Ground = () => {
             },
           } as UndoableMoveFoundationGroup;
           addUndoable(undoableMove);
-          console.log(undoableMove);
         } else {
           const isCuboid = elem.type === ObjectType.Cuboid;
           const oldParentId = isCuboid ? oldCuboidParentIdRef.current : oldHumanOrPlantParentIdRef.current;
