@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/aladdin/static/css/main.c1ee157d.chunk.css",
-    "main.js": "/aladdin/static/js/main.a270761f.chunk.js",
-    "main.js.map": "/aladdin/static/js/main.a270761f.chunk.js.map",
+    "main.js": "/aladdin/static/js/main.a0f86a6a.chunk.js",
+    "main.js.map": "/aladdin/static/js/main.a0f86a6a.chunk.js.map",
     "runtime-main.js": "/aladdin/static/js/runtime-main.b3c25317.js",
     "runtime-main.js.map": "/aladdin/static/js/runtime-main.b3c25317.js.map",
     "static/css/2.447301e6.chunk.css": "/aladdin/static/css/2.447301e6.chunk.css",
@@ -204,6 +204,6 @@
     "static/css/2.447301e6.chunk.css",
     "static/js/2.43ceed09.chunk.js",
     "static/css/main.c1ee157d.chunk.css",
-    "static/js/main.a270761f.chunk.js"
+    "static/js/main.a0f86a6a.chunk.js"
   ]
 }
