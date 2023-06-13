@@ -337,3 +337,10 @@ export const useUpdateOldRoofFiles = (roofModel: RoofModel, highestWallHeight: n
     }
   }, [fileChanged]);
 };
+
+export const useUpdateAfterMounted = () => {
+  const [, setUpdate] = useState(false);
+  useEffect(() => {
+    setUpdate((b) => !b);
+  }, []);
+};

@@ -5,19 +5,11 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { PyramidRoofModel, RoofModel } from 'src/models/RoofModel';
 import { useStore } from 'src/stores/common';
-import { CanvasTexture, Euler, FrontSide, Mesh, Raycaster, RepeatWrapping, Shape, Vector2, Vector3 } from 'three';
+import { CanvasTexture, Euler, Mesh, Raycaster, RepeatWrapping, Vector2, Vector3 } from 'three';
 import * as Selector from 'src/stores/selector';
 import { WallModel } from 'src/models/WallModel';
-import { Cone, Extrude, Line, Plane } from '@react-three/drei';
-import {
-  DEFAULT_HEAT_FLUX_COLOR,
-  DEFAULT_HEAT_FLUX_DENSITY_FACTOR,
-  DEFAULT_HEAT_FLUX_SCALE_FACTOR,
-  DEFAULT_HEAT_FLUX_WIDTH,
-  HALF_PI,
-  HALF_PI_Z_EULER,
-  TWO_PI,
-} from 'src/constants';
+import { Line, Plane } from '@react-three/drei';
+import { HALF_PI, HALF_PI_Z_EULER, TWO_PI } from 'src/constants';
 import { useRefStore } from 'src/stores/commonRef';
 import { useThree } from '@react-three/fiber';
 import { Point2 } from 'src/models/Point2';
@@ -40,7 +32,6 @@ import {
   useMultiCurrWallArray,
   useRoofHeight,
   useRoofTexture,
-  useTransparent,
   useUpdateOldRoofFiles,
   useUpdateSegmentVerticesMap,
   useUpdateSegmentVerticesWithoutOverhangMap,
@@ -49,249 +40,12 @@ import RoofSegment from './roofSegment';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
 import Ceiling from './ceiling';
+import FlatRoof from './flatRoof';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
 const zeroVector = new Vector3();
 const zVector3 = new Vector3(0, 0, 1);
-
-interface FlatRoofProps {
-  id: string;
-  roofSegments: RoofSegmentProps[];
-  center: Vector3;
-  thickness: number;
-  lineWidth: number;
-  lineColor: string;
-  sideColor: string;
-  color: string;
-  textureType: RoofTexture;
-  heatmap: CanvasTexture | null;
-}
-
-export const FlatRoof = ({
-  id,
-  roofSegments,
-  center,
-  thickness,
-  lineColor,
-  lineWidth,
-  sideColor,
-  color,
-  textureType,
-  heatmap,
-}: FlatRoofProps) => {
-  const world = useStore.getState().world;
-  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
-  const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
-  const showHeatFluxes = usePrimitiveStore(Selector.showHeatFluxes);
-  const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
-  const heatFluxColor = useStore(Selector.viewState.heatFluxColor);
-  const heatFluxWidth = useStore(Selector.viewState.heatFluxWidth);
-  const getRoofSegmentVerticesWithoutOverhang = useStore(Selector.getRoofSegmentVerticesWithoutOverhang);
-  const hourlyHeatExchangeArrayMap = useDataStore.getState().hourlyHeatExchangeArrayMap;
-
-  const heatFluxArrowHead = useRef<number>(0);
-  const heatFluxArrowLength = useRef<Vector3>();
-  const heatFluxArrowEuler = useRef<Euler>();
-
-  const { transparent, opacity } = useTransparent();
-
-  const heatFluxes: Vector3[][] | undefined = useMemo(() => {
-    if (!showHeatFluxes) return undefined;
-    const heat = hourlyHeatExchangeArrayMap.get(id);
-    if (!heat) return undefined;
-    const sum = heat.reduce((a, b) => a + b, 0);
-    const segments = getRoofSegmentVerticesWithoutOverhang(id);
-    if (!segments) return undefined;
-    const vectors: Vector3[][] = [];
-    for (const seg of segments) {
-      const s = seg.map((v) => v.clone().sub(center));
-      const cellSize = DEFAULT_HEAT_FLUX_DENSITY_FACTOR * (world.solarRadiationHeatmapGridCellSize ?? 0.5);
-      const s0 = s[0].clone();
-      const s1 = s[1].clone();
-      const s2 = s[2].clone();
-      const v10 = new Vector3().subVectors(s1, s0);
-      const v20 = new Vector3().subVectors(s2, s0);
-      const v21 = new Vector3().subVectors(s2, s1);
-      const length10 = v10.length();
-      // find the distance from top to the edge: https://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
-      const distance = new Vector3().crossVectors(v20, v21).length() / length10;
-      const m = Math.max(2, Math.floor(length10 / cellSize));
-      const n = Math.max(2, Math.floor(distance / cellSize));
-      v10.normalize();
-      v20.normalize();
-      v21.normalize();
-      // find the normal vector of the quad
-      const normal = new Vector3().crossVectors(v20, v21).normalize();
-      // find the incremental vector going along the bottom edge (half of length)
-      const dm = v10.multiplyScalar((0.5 * length10) / m);
-      // find the incremental vector going from bottom to top (half of length)
-      const dn = new Vector3()
-        .crossVectors(normal, v10)
-        .normalize()
-        .multiplyScalar((0.5 * distance) / n);
-      // find the starting point of the grid (shift half of length in both directions)
-      const v0 = s0.clone().add(dm).add(dn).add(new Vector3(0, 0, thickness));
-      // double half-length to full-length for the increment vectors in both directions
-      dm.multiplyScalar(2);
-      dn.multiplyScalar(2);
-      heatFluxArrowLength.current = normal.clone().multiplyScalar(0.1);
-      const origin = new Vector3();
-      const vertices = new Array<Point2>();
-      for (const p of s) {
-        vertices.push({ x: p.x, y: p.y } as Point2);
-      }
-      const area = Util.getPolygonArea(vertices);
-      if (area === 0) return undefined;
-      const intensity = (sum / area) * (heatFluxScaleFactor ?? DEFAULT_HEAT_FLUX_SCALE_FACTOR);
-      heatFluxArrowHead.current = intensity < 0 ? 1 : 0;
-      heatFluxArrowEuler.current = new Euler(-Math.sign(intensity) * HALF_PI, 0, 0);
-      for (let p = 0; p < m; p++) {
-        const dmp = dm.clone().multiplyScalar(p);
-        for (let q = 0; q < n; q++) {
-          origin.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
-          if (Util.isPointInside(origin.x, origin.y, vertices)) {
-            const v: Vector3[] = [];
-            if (intensity < 0) {
-              v.push(origin.clone());
-              v.push(origin.clone().add(normal.clone().multiplyScalar(-intensity)));
-            } else {
-              v.push(origin.clone());
-              v.push(origin.clone().add(normal.clone().multiplyScalar(intensity)));
-            }
-            vectors.push(v);
-          }
-        }
-      }
-    }
-    return vectors;
-  }, [showHeatFluxes, heatFluxScaleFactor]);
-
-  const wireFramePoints = useMemo(() => {
-    // this can still be triggered when the roof is deleted because all walls are removed
-    if (roofSegments.length === 0) return [new Vector3()];
-    const startPoint = roofSegments[0].points[0];
-    const points = [startPoint];
-    for (const segment of roofSegments) {
-      const rightPoint = segment.points[1];
-      points.push(rightPoint);
-    }
-    return points;
-  }, [roofSegments]);
-
-  const shape = useMemo(() => {
-    const s = new Shape();
-    // this can still be triggered when the roof is deleted because all walls are removed
-    if (roofSegments.length === 0) return s;
-    const startPoint = roofSegments[0].points[0];
-    s.moveTo(startPoint.x, startPoint.y);
-    for (const segment of roofSegments) {
-      const rightPoint = segment.points[1];
-      s.lineTo(rightPoint.x, rightPoint.y);
-    }
-    return s;
-  }, [roofSegments]);
-
-  const thicknessVector = useMemo(() => {
-    return new Vector3(0, 0, thickness);
-  }, [thickness]);
-
-  const periphery = <Line points={wireFramePoints} lineWidth={lineWidth} color={lineColor} />;
-  const texture = useRoofTexture(textureType);
-
-  return (
-    <>
-      {/*special case: the whole roof segment has no texture and only one color */}
-      {textureType === RoofTexture.NoTexture && color && color === sideColor ? (
-        <Extrude
-          args={[shape, { steps: 1, depth: thickness, bevelEnabled: false }]}
-          uuid={id}
-          name={'Pyramid Flat Roof Extrude'}
-          castShadow={shadowEnabled && !transparent}
-          receiveShadow={shadowEnabled}
-          userData={{ simulation: true }}
-        >
-          {showSolarRadiationHeatmap && heatmap ? (
-            <meshBasicMaterial attach="material" map={heatmap} />
-          ) : (
-            <meshStandardMaterial color={color} transparent={transparent} opacity={opacity} />
-          )}
-        </Extrude>
-      ) : (
-        <>
-          <mesh
-            uuid={id}
-            name={'Pyramid Flat Roof Surface'}
-            castShadow={shadowEnabled && !transparent}
-            receiveShadow={shadowEnabled}
-            userData={{ simulation: true }}
-            position={[0, 0, thickness + 0.01]}
-          >
-            <shapeBufferGeometry args={[shape]}></shapeBufferGeometry>
-            {showSolarRadiationHeatmap && heatmap ? (
-              <meshBasicMaterial attach="material" map={heatmap} color={'white'} side={FrontSide} />
-            ) : (
-              <meshStandardMaterial
-                map={texture}
-                color={color}
-                transparent={transparent}
-                opacity={opacity}
-                side={FrontSide}
-              />
-            )}
-          </mesh>
-          {!showSolarRadiationHeatmap && (
-            <Extrude
-              args={[shape, { steps: 1, depth: thickness, bevelEnabled: false }]}
-              castShadow={shadowEnabled}
-              receiveShadow={shadowEnabled}
-            >
-              <meshStandardMaterial color={sideColor ?? 'white'} transparent={transparent} opacity={opacity} />
-            </Extrude>
-          )}
-        </>
-      )}
-
-      {/* wireframe */}
-      {periphery}
-      <group position={[0, 0, thickness]}>
-        {periphery}
-        {wireFramePoints.map((point, idx) => {
-          const points = [point.clone().sub(thicknessVector), point];
-          return <Line key={idx} points={points} lineWidth={lineWidth} color={lineColor} />;
-        })}
-      </group>
-
-      {heatFluxes &&
-        heatFluxes.map((v, index) => {
-          return (
-            <React.Fragment key={index}>
-              <Line
-                points={v}
-                name={'Heat Flux ' + index}
-                lineWidth={heatFluxWidth ?? DEFAULT_HEAT_FLUX_WIDTH}
-                color={heatFluxColor ?? DEFAULT_HEAT_FLUX_COLOR}
-              />
-              ;
-              <Cone
-                userData={{ unintersectable: true }}
-                position={
-                  heatFluxArrowLength.current
-                    ? v[heatFluxArrowHead.current].clone().add(heatFluxArrowLength.current)
-                    : v[0]
-                }
-                args={[0.06, 0.2, 4, 1]}
-                name={'Normal Vector Arrow Head'}
-                rotation={heatFluxArrowEuler.current ?? [0, 0, 0]}
-              >
-                <meshBasicMaterial attach="material" color={heatFluxColor ?? DEFAULT_HEAT_FLUX_COLOR} />
-              </Cone>
-            </React.Fragment>
-          );
-        })}
-    </>
-  );
-};
 
 const PyramidRoofWireframe = React.memo(({ roofSegments, thickness, lineWidth, lineColor }: RoofWireframeProps) => {
   if (roofSegments.length === 0) {

@@ -39,8 +39,8 @@ import RoofSegment from './roofSegment';
 import { RoofUtil } from './RoofUtil';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
-import { FlatRoof } from './pyramidRoof';
 import Ceiling from './ceiling';
+import FlatRoof from './flatRoof';
 
 const HipRoofWireframe = React.memo(({ roofSegments, thickness, lineWidth, lineColor }: RoofWireframeProps) => {
   if (roofSegments.length === 0) {
