@@ -139,7 +139,7 @@ const handleAddElementOnRoof = (
       if (roof && foundation && e.intersections[0]) {
         const pointer = getPointerOnRoof(e);
         const posRelToFoundation = new Vector3()
-          .subVectors(pointer, new Vector3(foundation.cx, foundation.cy))
+          .subVectors(pointer, new Vector3(foundation.cx, foundation.cy, foundation.lz))
           .applyEuler(new Euler(0, 0, -foundation.rotation[2]));
         const posRelToCentroid = posRelToFoundation.clone().sub(ridgeMidPoint);
         const { normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
@@ -147,7 +147,7 @@ const handleAddElementOnRoof = (
           roof,
           posRelToFoundation.x,
           posRelToFoundation.y,
-          posRelToFoundation.z - foundation.lz,
+          posRelToFoundation.z,
           ObjectType.Roof,
           rotation,
           0.5,

@@ -107,9 +107,9 @@ const getDataOnRoof = (e: ThreeEvent<PointerEvent>, windowId: string, roofId: st
         eventObjectName.includes('Window') &&
         eventObjectName.includes(windowId) &&
         intersection.object.name !== INTERSECTION_PLANE_NAME
-      ) {
+      )
         return null;
-      }
+
       if (eventObjectName.includes('Roof') && eventObjectName.includes(roofId)) {
         const pointer = intersection.point.clone();
         const segmentIdx = Number.parseInt(intersection.object.name.split(' ').pop() ?? '-1');
@@ -330,12 +330,15 @@ const WindowHandleWrapper = ({
       }
 
       setCommonStore((state) => {
-        const window = state.elements.find((e) => e.id === id && e.type === ObjectType.Window) as WindowModel;
-        if (!window) return;
         const segmentVertices = useStore.getState().getRoofSegmentVertices(parentId);
         if (!segmentVertices) return;
-        const vertices = segmentVertices[segmentIdx];
+        // mansard top surface idx is -1, and its vertices is the last in the arrary
+        const idx = segmentIdx === -1 ? segmentVertices.length - 1 : segmentIdx;
+        const vertices = segmentVertices[idx];
         if (!vertices) return;
+
+        const window = state.elements.find((e) => e.id === id && e.type === ObjectType.Window) as WindowModel;
+        if (!window) return;
 
         if (window.windowType === WindowType.Polygonal) {
           const [topX, topH] = window.polygonTop ?? [0, 0.5];
@@ -374,7 +377,8 @@ const WindowHandleWrapper = ({
 
       const segmentVertices = useStore.getState().getRoofSegmentVertices(parentId);
       if (!segmentVertices) return;
-      const vertices = segmentVertices[segmentIdx];
+      const idx = segmentIdx === -1 ? segmentVertices.length - 1 : segmentIdx;
+      const vertices = segmentVertices[idx];
       if (!vertices) return;
 
       if (windowType === WindowType.Polygonal) {

@@ -268,6 +268,7 @@ export class RoofUtil {
     return -(D + A * pos.x + B * pos.y) / C + roofHeight;
   }
 
+  // return triangulated vertices
   static computeState(roofSegments: RoofSegmentProps[], posRelToCentroid: Vector3) {
     const segmentIdx = RoofUtil.getSegmentIdx(roofSegments, posRelToCentroid);
     if (segmentIdx !== -1) {
@@ -275,9 +276,10 @@ export class RoofUtil {
       const normal = RoofUtil.getSegmentNormal(segmentVertices);
       const rotation = RoofUtil.getRotationFromNormal(normal);
       return { segmentIdx, segmentVertices, normal, rotation };
+    } else {
+      // mansard rooftop surface
+      return { segmentIdx: -1, segmentVertices: null, normal: new Vector3(0, 0, 1), rotation: [0, 0, 0] };
     }
-    // mansard rooftop surface
-    return { segmentIdx: -1, segmentVertices: null, normal: new Vector3(0, 0, 1), rotation: [0, 0, 0] };
   }
 
   // todo: need to add roofId to each wall when adding roof

@@ -3,7 +3,7 @@
  */
 
 import { Cone, Extrude, Line, Plane } from '@react-three/drei';
-import { useThree } from '@react-three/fiber';
+import { invalidate, useThree } from '@react-three/fiber';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   DEFAULT_HEAT_FLUX_COLOR,
@@ -23,7 +23,18 @@ import * as Selector from 'src/stores/selector';
 import { ActionType, ObjectType, ResizeHandleType, RoofHandleType, RoofTexture } from 'src/types';
 import { UnoableResizeMansardRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
-import { CanvasTexture, DoubleSide, Euler, Float32BufferAttribute, Mesh, Shape, Vector3 } from 'three';
+import {
+  BoxBufferGeometry,
+  CanvasTexture,
+  DoubleSide,
+  Euler,
+  ExtrudeBufferGeometry,
+  Float32BufferAttribute,
+  Material,
+  Mesh,
+  Shape,
+  Vector3,
+} from 'three';
 import {
   useMultiCurrWallArray,
   useRoofTexture,
@@ -50,10 +61,56 @@ import { RoofUtil } from './RoofUtil';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
 import Ceiling from './ceiling';
+import { CSG } from 'three-csg-ts';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
 const zVector3 = new Vector3(0, 0, 1);
+
+interface TopExtrude {
+  topRidgeShape: Shape;
+  thickness: number;
+  holeMeshes: Mesh<BoxBufferGeometry, Material | Material[]>[];
+  shadowEnabled: boolean;
+  children: JSX.Element;
+}
+
+const TopExtrude = ({ topRidgeShape, thickness, holeMeshes, shadowEnabled, children }: TopExtrude) => {
+  const ref = useRef<Mesh>(null);
+
+  if (ref.current) {
+    const geometry = new ExtrudeBufferGeometry(topRidgeShape, { steps: 1, depth: thickness, bevelEnabled: false });
+
+    ref.current.geometry = geometry;
+    ref.current.updateMatrix();
+
+    if (holeMeshes.length > 0) {
+      const operationBuffer: Mesh[] = [];
+
+      for (let i = 0; i < holeMeshes.length; i++) {
+        const holeMesh = holeMeshes[i];
+        if (i === 0) {
+          operationBuffer.push(CSG.subtract(ref.current, holeMesh));
+        } else {
+          operationBuffer.push(CSG.subtract(operationBuffer[i - 1], holeMesh));
+        }
+      }
+
+      const resultMesh = operationBuffer.pop();
+
+      if (resultMesh) {
+        ref.current.geometry = resultMesh.geometry;
+        ref.current.updateMatrix();
+      }
+    }
+  }
+
+  return (
+    <mesh ref={ref} castShadow={shadowEnabled} receiveShadow={shadowEnabled}>
+      {children}
+    </mesh>
+  );
+};
 
 const MansardRoofWireframe = React.memo(({ roofSegments, thickness, lineWidth, lineColor }: RoofWireframeProps) => {
   const wallPoints = useMemo(
@@ -434,16 +491,17 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
   }, [currentWallArray, topZ, width, thickness]);
 
   const topRidgeShape = useMemo(() => {
-    const s = new Shape();
+    const shape = new Shape();
     if (ridgePoints.length > 0) {
       const startPoint = ridgePoints[0].leftPoint.clone().sub(centroid);
-      s.moveTo(startPoint.x, startPoint.y);
+      shape.moveTo(startPoint.x, startPoint.y);
       for (const point of ridgePoints) {
         const rightPoint = point.rightPoint.clone().sub(centroid);
-        s.lineTo(rightPoint.x, rightPoint.y);
+        shape.lineTo(rightPoint.x, rightPoint.y);
       }
+      shape.closePath();
     }
-    return s;
+    return shape;
   }, [currentWallArray, ridgePoints]);
 
   useEffect(() => {
@@ -570,6 +628,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const getHeatmap = useDataStore(Selector.getHeatmap);
   const [heatmapTextures, setHeatmapTextures] = useState<CanvasTexture[]>([]);
+  const [updateFlag, setUpdateFlag] = useState(false);
 
   const showHeatFluxes = usePrimitiveStore(Selector.showHeatFluxes);
   const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
@@ -687,8 +746,10 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
         geo.computeVertexNormals();
         geo.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
       }
+    } else if (showSolarRadiationHeatmap) {
+      setUpdateFlag(!updateFlag);
     }
-  }, [topRidgeShape, showSolarRadiationHeatmap]);
+  }, [topRidgeShape, showSolarRadiationHeatmap, updateFlag]);
 
   const heatFluxes: Vector3[][] | undefined = useMemo(() => {
     if (!showHeatFluxes) return undefined;
@@ -774,6 +835,22 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
   };
   const topLayerColor = textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white';
 
+  const windows = useStore((state) => state.elements).filter((e) => e.type === ObjectType.Window && e.parentId === id);
+
+  const holeMeshes = useMemo(
+    () =>
+      windows.map((window) => {
+        const holeMesh = new Mesh(new BoxBufferGeometry(window.lx, window.lz, window.ly * 2));
+        const [a, b, c] = window.rotation;
+        const position = new Vector3(window.cx, window.cy, window.cz).sub(centroid);
+        holeMesh.position.copy(position);
+        holeMesh.rotation.set(a, b, c);
+        holeMesh.updateMatrix();
+        return holeMesh;
+      }),
+    [windows, centroid, thickness],
+  );
+
   return (
     <group position={[cx, cy, cz + 0.01]} rotation={[0, 0, rotationZ]} name={`Mansard Roof Group ${id}`}>
       <group
@@ -824,37 +901,29 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
           </Extrude>
         ) : (
           <>
-            <mesh
-              uuid={id + '-' + roofSegments.length}
-              ref={topSurfaceMeshRef}
-              name={'Mansard Roof Top Surface'}
-              position={[0, 0, thickness]}
-              receiveShadow={shadowEnabled}
-              userData={{ simulation: true }}
-            >
-              {showSolarRadiationHeatmap && heatmapTextures.length === roofSegments.length + 1 ? (
-                <meshBasicMaterial map={heatmapTextures[roofSegments.length]} color={'white'} side={DoubleSide} />
-              ) : (
-                <meshStandardMaterial
-                  color={topLayerColor}
-                  map={texture}
-                  transparent={transparent}
-                  opacity={opacity}
-                  side={DoubleSide}
-                />
-              )}
-            </mesh>
-            {!showSolarRadiationHeatmap && (
-              <Extrude
-                args={[topRidgeShape, { steps: 1, depth: thickness, bevelEnabled: false }]}
-                castShadow={shadowEnabled && !transparent}
+            {showSolarRadiationHeatmap && heatmapTextures.length === roofSegments.length + 1 && (
+              <mesh
+                uuid={id + '-' + roofSegments.length}
+                ref={topSurfaceMeshRef}
+                name={'Mansard Roof Top Surface'}
+                position={[0, 0, thickness]}
                 receiveShadow={shadowEnabled}
+                userData={{ simulation: true }}
               >
-                <meshStandardMaterial color={'white'} transparent={transparent} opacity={opacity} />
-              </Extrude>
+                <meshBasicMaterial map={heatmapTextures[roofSegments.length]} color={'white'} side={DoubleSide} />
+              </mesh>
             )}
+            <TopExtrude
+              topRidgeShape={topRidgeShape}
+              thickness={thickness}
+              holeMeshes={holeMeshes}
+              shadowEnabled={shadowEnabled}
+            >
+              <meshStandardMaterial map={texture} color={topLayerColor} transparent={transparent} opacity={opacity} />
+            </TopExtrude>
           </>
         )}
+        {/* wireframe */}
         {roofSegments.length > 0 && (
           <MansardRoofWireframe
             roofSegments={roofSegments}
