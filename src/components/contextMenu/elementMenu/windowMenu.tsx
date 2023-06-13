@@ -414,6 +414,9 @@ export const WindowMenu = React.memo(() => {
                 } as UndoableCheck;
                 addUndoable(undoableCheck);
                 updateInteriorById(window.id, checked);
+                setCommonStore((state) => {
+                  state.actionState.windowInterior = checked;
+                });
               }}
             >
               {i18n.t('windowMenu.Interior', lang)}

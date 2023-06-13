@@ -662,6 +662,8 @@ export class ElementModelFactory {
       frameWidth: actionState.windowFrameWidth,
       sillWidth: RoofUtil.isTypeRoof(parentType) ? 0 : actionState.windowSillWidth,
       windowType: actionState.windowType,
+      empty: actionState.windowEmpty,
+      interior: actionState.windowInterior,
       archHeight: actionState.windowArchHeight,
       selected: true,
       lineWidth: 0.2,
