@@ -553,6 +553,7 @@ export const i18n_ua = {
         FitchburgSolarFarmGenerativeDesign: 'Генеративний дизайн сонячної ферми у Фітчбургу',
       },
       languageSubMenu: 'Мова',
+      publicSubMenu: 'Public',
       ModelsGallery: 'Галерея моделей',
       ModelsMap: 'Карта моделей',
       AboutUs: 'Про нас',

@@ -552,6 +552,7 @@ export const i18n_en = {
       },
 
       languageSubMenu: 'Language',
+      publicSubMenu: 'Public',
       ModelsGallery: 'Models Gallery',
       ModelsMap: 'Models Map',
       AboutUs: 'About Us',

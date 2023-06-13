@@ -2215,6 +2215,48 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         </SubMenu>
       </SubMenu>
 
+      <SubMenu key={'public'} title={i18n.t('menu.publicSubMenu', lang)}>
+        {user.uid && !viewOnly && (
+          <Menu.Item
+            key="my-models"
+            onClick={() => {
+              usePrimitiveStore.setState((state) => {
+                state.showModelsGallery = true;
+                state.leaderboardFlag = !state.leaderboardFlag;
+                state.openModelsMap = false;
+              });
+            }}
+          >
+            {i18n.t('menu.ModelsGallery', lang)}...
+          </Menu.Item>
+        )}
+
+        {/* models map */}
+        {!openModelsMap && (
+          <Menu.Item
+            key="models-map"
+            onClick={() => {
+              usePrimitiveStore.setState((state) => {
+                state.modelsMapFlag = !state.modelsMapFlag;
+                state.modelsMapWeatherStations = false;
+                state.openModelsMap = true;
+                state.showModelsGallery = false;
+              });
+              if (loggable) {
+                setCommonStore((state) => {
+                  state.actionInfo = {
+                    name: 'Open Models Map',
+                    timestamp: new Date().getTime(),
+                  };
+                });
+              }
+            }}
+          >
+            {i18n.t('menu.ModelsMap', lang)}...
+          </Menu.Item>
+        )}
+      </SubMenu>
+
       {/*language menu*/}
       <SubMenu key={'language'} title={i18n.t('menu.languageSubMenu', lang)}>
         <Radio.Group
@@ -2266,45 +2308,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         </Radio.Group>
       </SubMenu>
 
-      {user.uid && !viewOnly && (
-        <Menu.Item
-          key="my-models"
-          onClick={() => {
-            usePrimitiveStore.setState((state) => {
-              state.showModelsGallery = true;
-              state.leaderboardFlag = !state.leaderboardFlag;
-              state.openModelsMap = false;
-            });
-          }}
-        >
-          {i18n.t('menu.ModelsGallery', lang)}...
-        </Menu.Item>
-      )}
-
-      {/* models map */}
-      {!openModelsMap && (
-        <Menu.Item
-          key="models-map"
-          onClick={() => {
-            usePrimitiveStore.setState((state) => {
-              state.modelsMapFlag = !state.modelsMapFlag;
-              state.modelsMapWeatherStations = false;
-              state.openModelsMap = true;
-              state.showModelsGallery = false;
-            });
-            if (loggable) {
-              setCommonStore((state) => {
-                state.actionInfo = {
-                  name: 'Open Models Map',
-                  timestamp: new Date().getTime(),
-                };
-              });
-            }
-          }}
-        >
-          {i18n.t('menu.ModelsMap', lang)}...
-        </Menu.Item>
-      )}
       {/* about window */}
       <Menu.Item
         key="about"

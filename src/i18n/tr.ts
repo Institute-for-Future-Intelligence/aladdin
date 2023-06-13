@@ -552,6 +552,7 @@ export const i18n_tr = {
       },
 
       languageSubMenu: 'Dil',
+      publicSubMenu: 'Public',
       ModelsGallery: 'Models Gallery',
       ModelsMap: 'Models Map',
       AboutUs: 'Hakkımızda',

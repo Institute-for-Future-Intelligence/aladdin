@@ -550,6 +550,7 @@ export const i18n_zh_tw = {
       },
 
       languageSubMenu: '語言',
+      publicSubMenu: '公共',
       ModelsGallery: '模型畫廊',
       ModelsMap: '模型地圖',
       AboutUs: '關於我們',
