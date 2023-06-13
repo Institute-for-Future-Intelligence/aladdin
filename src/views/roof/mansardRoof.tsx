@@ -852,7 +852,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
   );
 
   return (
-    <group position={[cx, cy, cz + 0.01]} rotation={[0, 0, rotationZ]} name={`Mansard Roof Group ${id}`}>
+    <group position={[cx, cy, cz]} rotation={[0, 0, rotationZ]} name={`Mansard Roof Group ${id}`}>
       <group
         name={`Mansard Roof Segments Group ${id}`}
         position={[centroid.x, centroid.y, centroid.z]}
