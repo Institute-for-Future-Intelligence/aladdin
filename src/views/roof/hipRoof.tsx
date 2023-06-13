@@ -457,7 +457,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
   const topLayerColor = textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white';
 
   return (
-    <group position={[cx, cy, cz + 0.01]} rotation={[0, 0, rotation]} name={`Hip Roof Group ${id}`}>
+    <group position={[cx, cy, cz]} rotation={[0, 0, rotation]} name={`Hip Roof Group ${id}`}>
       {/* roof segment group */}
       <group
         name={`Hip Roof Segments Group ${id}`}

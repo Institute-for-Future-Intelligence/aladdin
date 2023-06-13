@@ -695,7 +695,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
   const topLayerColor = textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white';
 
   return (
-    <group position={[cx, cy, cz + 0.01]} rotation={[0, 0, rotation]} name={`Gambrel Roof Group ${id}`}>
+    <group position={[cx, cy, cz]} rotation={[0, 0, rotation]} name={`Gambrel Roof Group ${id}`}>
       {/* roof segments */}
       <group
         name={`Gambrel Roof Segments Group ${id}`}
