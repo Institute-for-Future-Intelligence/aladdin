@@ -261,6 +261,11 @@ export const i18n_es = {
       },
       mainMenu: 'Menu principal',
       cloudMenu: 'Menú en la nube',
+      projectSubMenu: 'Project',
+      project: {
+        CreateNewProject: 'Create New Project',
+        OpenProject: 'Open Project',
+      },
       fileSubMenu: 'Archivo',
       file: {
         CreateNewFile: 'Crear nuevo archivo',

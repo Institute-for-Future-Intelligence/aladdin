@@ -861,6 +861,52 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         </SubMenu>
       )}
 
+      {/* project menu */}
+      {!openModelsMap && (
+        <SubMenu key={'project'} title={i18n.t('menu.projectSubMenu', lang)}>
+          {!viewOnly && (
+            <Menu.Item
+              key="create-new-project"
+              onClick={() => {
+                setCommonStore((state) => {
+                  if (loggable) {
+                    state.actionInfo = {
+                      name: 'Create New Project',
+                      timestamp: new Date().getTime(),
+                    };
+                  }
+                });
+                usePrimitiveStore.setState((state) => {
+                  state.openModelsMap = false;
+                });
+              }}
+            >
+              {i18n.t('menu.project.CreateNewProject', lang)}
+            </Menu.Item>
+          )}
+          {!viewOnly && (
+            <Menu.Item
+              key="open-project"
+              onClick={() => {
+                undoManager.clear();
+                setCommonStore((state) => {
+                  if (loggable) {
+                    state.actionInfo = {
+                      name: 'Open Project',
+                      timestamp: new Date().getTime(),
+                    };
+                  }
+                });
+                usePrimitiveStore.setState((state) => {
+                  state.openModelsMap = false;
+                });
+              }}
+            >
+              {i18n.t('menu.project.OpenProject', lang)}
+            </Menu.Item>
+          )}
+        </SubMenu>
+      )}
       {/* edit menu */}
       {(selectedElement || readyToPaste || undoManager.hasUndo() || undoManager.hasRedo()) && !openModelsMap && (
         <SubMenu key={'edit'} title={i18n.t('menu.editSubMenu', lang)}>
@@ -1305,7 +1351,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   return;
                 }
                 if (checkResult.status === CheckStatus.AT_LEAST_ONE_BAD_NO_GOOD) {
-                  let errorType = '';
+                  let errorType;
                   switch (checkResult.buildingCompletion) {
                     case BuildingCompletionStatus.WALL_DISJOINED:
                       errorType = i18n.t('message.WallsAreNotConnected', lang);
@@ -1351,7 +1397,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   return;
                 }
                 if (checkResult.status === CheckStatus.AT_LEAST_ONE_BAD_NO_GOOD) {
-                  let errorType = '';
+                  let errorType;
                   switch (checkResult.buildingCompletion) {
                     case BuildingCompletionStatus.WALL_DISJOINED:
                       errorType = i18n.t('message.WallsAreNotConnected', lang);

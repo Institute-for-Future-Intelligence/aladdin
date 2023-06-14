@@ -260,6 +260,11 @@ export const i18n_tr = {
       },
       mainMenu: 'Ana Menü',
       cloudMenu: 'Bulut Menüsü',
+      projectSubMenu: 'Project',
+      project: {
+        CreateNewProject: 'Create New Project',
+        OpenProject: 'Open Project',
+      },
       fileSubMenu: 'Dosya',
       file: {
         CreateNewFile: 'Yeni Dosya Oluştur',

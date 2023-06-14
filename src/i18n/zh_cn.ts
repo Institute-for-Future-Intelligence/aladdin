@@ -259,6 +259,11 @@ export const i18n_zh_cn = {
       },
       mainMenu: '主菜单',
       cloudMenu: '云菜单',
+      projectSubMenu: '项目',
+      project: {
+        CreateNewProject: '创建新项目',
+        OpenProject: '打开项目',
+      },
       fileSubMenu: '文件',
       file: {
         CreateNewFile: '创建新文件',

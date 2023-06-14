@@ -262,6 +262,11 @@ export const i18n_ua = {
       },
       mainMenu: 'Головне Меню',
       cloudMenu: 'Меню Хмарного Середовища',
+      projectSubMenu: 'Project',
+      project: {
+        CreateNewProject: 'Create New Project',
+        OpenProject: 'Open Project',
+      },
       fileSubMenu: 'Файл',
       file: {
         CreateNewFile: 'Створити новий',
