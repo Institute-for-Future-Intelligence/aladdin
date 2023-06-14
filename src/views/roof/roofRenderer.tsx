@@ -84,7 +84,11 @@ const addUndoableAddSolarPanel = (elem: ElementModel) => {
 const getPointerOnRoof = (e: ThreeEvent<PointerEvent>) => {
   for (const intersection of e.intersections) {
     if (intersection.eventObject.name.includes('Roof Segments Group')) {
-      return intersection.point;
+      if (intersection.object.name.includes('Flat roof')) {
+        return intersection.point.clone().setZ(intersection.point.z - 0.01);
+      } else {
+        return intersection.point;
+      }
     }
   }
   return e.intersections[0].point;
@@ -153,6 +157,7 @@ const handleAddElementOnRoof = (
           0.5,
           0.5,
         );
+        console.log('new element', newElement);
         useStore.getState().set((state) => {
           state.elements.push(newElement);
           if (!state.actionModeLock) state.objectTypeToAdd = ObjectType.None;

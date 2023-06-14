@@ -55,7 +55,7 @@ const getPosRelToFoundation = (p: Vector3, foundation: FoundationModel) => {
     .applyEuler(new Euler(0, 0, -foundation.rotation[2]));
 };
 
-const isRectWindowInsideSegment = (
+const isRectWindowInsideVertices = (
   center: Vector3,
   lx: number,
   ly: number,
@@ -79,7 +79,7 @@ const isRectWindowInsideSegment = (
   return true;
 };
 
-const isPolygonalWindowInsideSegment = (
+const isPolygonalWindowInsideVertices = (
   center: Vector3,
   lx: number,
   ly: number,
@@ -96,7 +96,7 @@ const isPolygonalWindowInsideSegment = (
   const topVertex = new Vector3().addVectors(center, new Vector3(topX * lx, 0, hy + topH).applyEuler(euler));
   if (!Util.isPointInside(topVertex.x, topVertex.y, boundaryPoint2)) return false;
 
-  if (!isRectWindowInsideSegment(center, lx, ly, rotation, vertices)) return false;
+  if (!isRectWindowInsideVertices(center, lx, ly, rotation, vertices)) return false;
 
   return true;
 };
@@ -151,6 +151,10 @@ const setResizedData = (id: string, center: Vector3, lx: number, lz: number) => 
     window.lx = lx;
     window.lz = lz;
   });
+};
+
+const getRoofBoundaryVertices = (roofSegments: RoofSegmentProps[], roofCentroid: Vector3) => {
+  return roofSegments.map((segment) => segment.points[0].clone().add(roofCentroid));
 };
 
 export const ArchResizeHandle = ({ z }: { z: number }) => {
@@ -296,13 +300,18 @@ const WindowHandleWrapper = ({
   };
 
   const handlePointerMove = (event: ThreeEvent<PointerEvent>) => {
-    if (handleTypeRef.current === null || !foundationModelRef.current) return;
+    if (
+      handleTypeRef.current === null ||
+      !foundationModelRef.current ||
+      !roofModelRef.current ||
+      !roofSegmentsRef.current ||
+      !roofCentroidRef.current
+    )
+      return;
 
     const foundation = foundationModelRef.current;
 
     if (handleTypeRef.current === MoveHandleType.Mid) {
-      if (!roofModelRef.current || !roofSegmentsRef.current || !roofCentroidRef.current) return;
-
       const roof = roofModelRef.current;
       const dataOnRoof = getDataOnRoof(event, id, parentId);
       const pointer = new Vector3();
@@ -312,12 +321,34 @@ const WindowHandleWrapper = ({
         if (!pointerOnIntersectionPlane) return;
         pointer.copy(pointerOnIntersectionPlane);
         const newPosition = getPosRelToFoundation(pointer, foundation);
+        const boundaryVertices = getRoofBoundaryVertices(roofSegmentsRef.current, roofCentroidRef.current);
         setCommonStore((state) => {
           const window = state.elements.find((e) => e.id === id && e.type === ObjectType.Window) as WindowModel;
           if (!window) return;
-          window.cx = newPosition.x;
-          window.cy = newPosition.y;
-          window.cz = newPosition.z;
+          if (window.windowType === WindowType.Polygonal) {
+            const [topX, topH] = window.polygonTop ?? [0, 0.5];
+            if (
+              isPolygonalWindowInsideVertices(
+                newPosition,
+                window.lx,
+                window.lz,
+                topX,
+                topH,
+                window.rotation,
+                boundaryVertices,
+              )
+            ) {
+              window.cx = newPosition.x;
+              window.cy = newPosition.y;
+              window.cz = newPosition.z;
+            }
+          } else {
+            if (isRectWindowInsideVertices(newPosition, window.lx, window.lz, window.rotation, boundaryVertices)) {
+              window.cx = newPosition.x;
+              window.cy = newPosition.y;
+              window.cz = newPosition.z;
+            }
+          }
         });
       } else {
         // segment changed
@@ -360,7 +391,7 @@ const WindowHandleWrapper = ({
           if (window.windowType === WindowType.Polygonal) {
             const [topX, topH] = window.polygonTop ?? [0, 0.5];
             if (
-              isPolygonalWindowInsideSegment(newPosition, window.lx, window.lz, topX, topH, window.rotation, vertices)
+              isPolygonalWindowInsideVertices(newPosition, window.lx, window.lz, topX, topH, window.rotation, vertices)
             ) {
               window.cx = newPosition.x;
               window.cy = newPosition.y;
@@ -371,7 +402,7 @@ const WindowHandleWrapper = ({
               }
             }
           } else {
-            if (isRectWindowInsideSegment(newPosition, window.lx, window.lz, window.rotation, vertices)) {
+            if (isRectWindowInsideVertices(newPosition, window.lx, window.lz, window.rotation, vertices)) {
               window.cx = newPosition.x;
               window.cy = newPosition.y;
               window.cz = newPosition.z;
@@ -395,7 +426,17 @@ const WindowHandleWrapper = ({
 
       const roof = roofModelRef.current;
       if (roof && roof.rise < 0.01) {
-        setResizedData(id, newCenter, newLx, newLz);
+        const boundaryVertices = getRoofBoundaryVertices(roofSegmentsRef.current, roofCentroidRef.current);
+        if (windowType === WindowType.Polygonal) {
+          const [topX, topH] = polygonTop;
+          if (isPolygonalWindowInsideVertices(newCenter, newLx, newLz, topX, topH, rotation, boundaryVertices)) {
+            setResizedData(id, newCenter, newLx, newLz);
+          }
+        } else {
+          if (isRectWindowInsideVertices(newCenter, newLx, newLz, rotation, boundaryVertices)) {
+            setResizedData(id, newCenter, newLx, newLz);
+          }
+        }
       } else {
         const segmentVertices = useStore.getState().getRoofSegmentVertices(parentId);
         if (!segmentVertices) return;
@@ -405,11 +446,11 @@ const WindowHandleWrapper = ({
 
         if (windowType === WindowType.Polygonal) {
           const [topX, topH] = polygonTop;
-          if (isPolygonalWindowInsideSegment(newCenter, newLx, newLz, topX, topH, rotation, vertices)) {
+          if (isPolygonalWindowInsideVertices(newCenter, newLx, newLz, topX, topH, rotation, vertices)) {
             setResizedData(id, newCenter, newLx, newLz);
           }
         } else {
-          if (isRectWindowInsideSegment(newCenter, newLx, newLz, rotation, vertices)) {
+          if (isRectWindowInsideVertices(newCenter, newLx, newLz, rotation, vertices)) {
             setResizedData(id, newCenter, newLx, newLz);
           }
         }
@@ -450,10 +491,24 @@ const WindowHandleWrapper = ({
         const newTopH = Math.max(0, topToBotDist - window.lz);
 
         const windowCenter = new Vector3(window.cx, window.cy, window.cz);
+
         if (roofModelRef.current && roofModelRef.current.rise < 0.01) {
-          window.polygonTop = [newTopX, newTopH];
+          const boundaryVertices = getRoofBoundaryVertices(roofSegmentsRef.current!, roofCentroidRef.current!);
+          if (
+            isPolygonalWindowInsideVertices(
+              windowCenter,
+              window.lx,
+              window.lz,
+              newTopX,
+              newTopH,
+              rotation,
+              boundaryVertices,
+            )
+          ) {
+            window.polygonTop = [newTopX, newTopH];
+          }
         } else if (
-          isPolygonalWindowInsideSegment(windowCenter, window.lx, window.lz, newTopX, newTopH, rotation, vertices)
+          isPolygonalWindowInsideVertices(windowCenter, window.lx, window.lz, newTopX, newTopH, rotation, vertices)
         ) {
           window.polygonTop = [newTopX, newTopH];
         }
