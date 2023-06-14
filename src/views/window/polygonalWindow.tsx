@@ -256,19 +256,9 @@ const PolygonalWindow = ({
   );
 
   const glassShape = useMemo(() => {
-    const shape = new Shape();
-    const hx = lx / 2;
-    const hz = lz / 2;
+    const [hx, hz] = [lx / 2, lz / 2];
     const tx = topX * lx; // abs
-
-    shape.moveTo(-hx, -hz);
-    shape.lineTo(hx, -hz);
-    shape.lineTo(hx, hz);
-    shape.lineTo(tx, hz + topH);
-    shape.lineTo(-hx, hz);
-    shape.closePath();
-
-    return shape;
+    return getPolygonWindowShape(hx, hz, tx, topH);
   }, [lx, lz, topX, topH]);
 
   const wireframeMaterial = useMemo(() => {
@@ -393,6 +383,17 @@ const PolygonalWindow = ({
         })}
     </>
   );
+};
+
+export const getPolygonWindowShape = (hx: number, hy: number, tx: number, th: number, cx = 0, cy = 0) => {
+  const shape = new Shape();
+  shape.moveTo(cx - hx, cy - hy);
+  shape.lineTo(cx + hx, cy - hy);
+  shape.lineTo(cx + hx, cy + hy);
+  shape.lineTo(cx + tx, cy + hy + th);
+  shape.lineTo(cx - hx, cy + hy);
+  shape.closePath();
+  return shape;
 };
 
 export default React.memo(PolygonalWindow);

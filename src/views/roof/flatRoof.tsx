@@ -4,6 +4,7 @@
 
 import {
   BoxBufferGeometry,
+  BufferGeometry,
   CanvasTexture,
   Euler,
   ExtrudeBufferGeometry,
@@ -33,13 +34,16 @@ import { Point2 } from 'src/models/Point2';
 import { Util } from 'src/Util';
 import { Cone, Line } from '@react-three/drei';
 import React from 'react';
+import { WindowModel, WindowType } from 'src/models/WindowModel';
+import { getPolygonWindowShape } from '../window/polygonalWindow';
+import { getArchedWindowShape } from '../window/archedWindow';
 
 interface TopExtrudeProps {
   uuid?: string;
   simulation?: boolean;
   shape: Shape;
   thickness: number;
-  holeMeshes: Mesh<BoxBufferGeometry, Material | Material[]>[];
+  holeMeshes: Mesh<BufferGeometry, Material | Material[]>[];
   castShadow: boolean;
   receiveShadow: boolean;
   children: JSX.Element;
@@ -141,7 +145,9 @@ const FlatRoof = ({
 
   const { transparent, opacity } = useTransparent();
 
-  const windows = useStore((state) => state.elements).filter((e) => e.type === ObjectType.Window && e.parentId === id);
+  const windows = useStore((state) => state.elements).filter(
+    (e) => e.type === ObjectType.Window && e.parentId === id,
+  ) as WindowModel[];
 
   const heatFluxes: Vector3[][] | undefined = useMemo(() => {
     if (!showHeatFluxes) return undefined;
@@ -226,6 +232,13 @@ const FlatRoof = ({
     return points;
   }, [roofSegments]);
 
+  const thicknessVector = useMemo(() => {
+    return new Vector3(0, 0, thickness);
+  }, [thickness]);
+
+  const periphery = <Line points={wireFramePoints} lineWidth={lineWidth} color={lineColor} />;
+  const texture = useRoofTexture(textureType);
+
   const shape = useMemo(() => {
     const shape = new Shape();
     // this can still be triggered when the roof is deleted because all walls are removed
@@ -237,41 +250,92 @@ const FlatRoof = ({
       shape.lineTo(rightPoint.x, rightPoint.y);
     }
     shape.closePath();
+    return shape;
+  }, [roofSegments, center]);
+
+  const shapeWithHoles = useMemo(() => {
+    const shape = new Shape();
+    if (roofSegments.length === 0) return shape;
+    const startPoint = roofSegments[0].points[0];
+    shape.moveTo(startPoint.x, startPoint.y);
+    for (const segment of roofSegments) {
+      const rightPoint = segment.points[1];
+      shape.lineTo(rightPoint.x, rightPoint.y);
+    }
+    shape.closePath();
 
     if (windows.length > 0) {
       for (const window of windows) {
-        const hole = new Shape();
         const c = new Vector3(window.cx, window.cy, window.cz).sub(center);
-        const [hx, hy] = [window.lx / 2, window.lz / 2];
-        hole.moveTo(c.x - hx, c.y - hy);
-        hole.lineTo(c.x + hx, c.y - hy);
-        hole.lineTo(c.x + hx, c.y + hy);
-        hole.lineTo(c.x - hx, c.y + hy);
-        hole.closePath();
-        shape.holes.push(hole);
+        switch (window.windowType) {
+          case WindowType.Polygonal: {
+            const [topX, topH] = window.polygonTop ?? [0, 0.5];
+            const [hx, hy, tx] = [window.lx / 2, window.lz / 2, topX * window.lx];
+            const hole = getPolygonWindowShape(hx, hy, tx, topH, c.x, c.y);
+            shape.holes.push(hole);
+            break;
+          }
+          case WindowType.Arched: {
+            const hole = getArchedWindowShape(window.lx, window.lz, window.archHeight, c.x, c.y);
+            shape.holes.push(hole);
+            break;
+          }
+          default: {
+            const hole = new Shape();
+            const [hx, hy] = [window.lx / 2, window.lz / 2];
+            hole.moveTo(c.x - hx, c.y - hy);
+            hole.lineTo(c.x + hx, c.y - hy);
+            hole.lineTo(c.x + hx, c.y + hy);
+            hole.lineTo(c.x - hx, c.y + hy);
+            hole.closePath();
+            shape.holes.push(hole);
+          }
+        }
       }
     }
 
     return shape;
-  }, [roofSegments, windows, center]);
-
-  const thicknessVector = useMemo(() => {
-    return new Vector3(0, 0, thickness);
-  }, [thickness]);
-
-  const periphery = <Line points={wireFramePoints} lineWidth={lineWidth} color={lineColor} />;
-  const texture = useRoofTexture(textureType);
+  }, [roofSegments, center, windows]);
 
   const holeMeshes = useMemo(
     () =>
       windows.map((window) => {
-        const holeMesh = new Mesh(new BoxBufferGeometry(window.lx, window.lz, window.ly * 2));
         const [a, b, c] = window.rotation;
-        const position = new Vector3(window.cx, window.cy, window.cz);
-        holeMesh.position.copy(position);
-        holeMesh.rotation.set(a, b, c);
-        holeMesh.updateMatrix();
-        return holeMesh;
+        const position = new Vector3(window.cx, window.cy, window.cz).sub(center);
+        const euler = new Euler().fromArray([...window.rotation, 'ZXY']);
+        switch (window.windowType) {
+          case WindowType.Polygonal: {
+            const [topX, topH] = window.polygonTop ?? [0, 0.5];
+            const [hx, hy, tx] = [window.lx / 2, window.lz / 2, topX * window.lx];
+            const shape = getPolygonWindowShape(hx, hy, tx, topH);
+            const holeMesh = new Mesh(
+              new ExtrudeBufferGeometry([shape], { steps: 1, depth: window.ly, bevelEnabled: false }),
+            );
+            const offset = new Vector3(0, 0, -window.ly).applyEuler(euler);
+            holeMesh.position.copy(position.clone().add(offset));
+            holeMesh.rotation.copy(euler);
+            holeMesh.updateMatrix();
+            return holeMesh;
+          }
+          case WindowType.Arched: {
+            const shape = getArchedWindowShape(window.lx, window.lz, window.archHeight);
+            const holeMesh = new Mesh(
+              new ExtrudeBufferGeometry([shape], { steps: 1, depth: window.ly, bevelEnabled: false }),
+            );
+            const offset = new Vector3(0, 0, -window.ly).applyEuler(euler);
+            holeMesh.position.copy(position.clone().add(offset));
+            holeMesh.rotation.copy(euler);
+            holeMesh.updateMatrix();
+            return holeMesh;
+          }
+          default: {
+            const holeMesh = new Mesh(new BoxBufferGeometry(window.lx, window.lz, window.ly * 2));
+            holeMesh.position.copy(position);
+            holeMesh.rotation.set(a, b, c);
+            holeMesh.updateMatrix();
+            return holeMesh;
+          }
+        }
       }),
     [windows, thickness],
   );
@@ -305,7 +369,7 @@ const FlatRoof = ({
             position={[0, 0, thickness + 0.001]}
             receiveShadow={shadowEnabled}
           >
-            <shapeBufferGeometry args={[shape]} />
+            <shapeBufferGeometry args={[shapeWithHoles]} />
             {showHeatmap ? (
               <meshBasicMaterial map={heatmap} side={FrontSide} />
             ) : (

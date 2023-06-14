@@ -607,17 +607,17 @@ const ArchedWindow = ({
   );
 };
 
-export const getArchedWindowShape = (lx: number, lz: number, archHeight: number) => {
+export const getArchedWindowShape = (lx: number, lz: number, archHeight: number, cx = 0, cy = 0) => {
   const s = new Shape();
   const hx = lx / 2;
   const hz = lz / 2;
-  const ah = Math.min(archHeight, lz, hx);
-  s.moveTo(-hx, -hz);
-  s.lineTo(hx, -hz);
-  s.lineTo(hx, hz - ah);
+  const ah = Math.min(archHeight, lz, hx) + 0.01;
+  s.moveTo(cx - hx, cy - hz);
+  s.lineTo(cx + hx, cy - hz);
+  s.lineTo(cx + hx, cy + hz - ah);
   if (ah > 0) {
     const r = ah / 2 + lx ** 2 / (8 * ah);
-    const [cX, cY] = [0, hz - r];
+    const [cX, cY] = [cx, cy + hz - r];
     const startAngle = Math.acos(Math.min(1, hx / r));
     const endAngle = Math.PI - startAngle;
     s.absarc(cX, cY, r, startAngle, endAngle, false);

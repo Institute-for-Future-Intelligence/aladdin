@@ -39,6 +39,7 @@ import { WindowModel } from 'src/models/WindowModel';
 import { WindowType } from 'src/models/WindowModel';
 import { RoofUtil } from './RoofUtil';
 import { getArchedWindowShape } from '../window/archedWindow';
+import { getPolygonWindowShape } from '../window/polygonalWindow';
 
 export type WindowData = {
   dimension: Vector3;
@@ -362,17 +363,10 @@ export const BufferRoofSegment = React.memo(
           const { dimension, position, rotation, windowType, archHeight, topPosition } = window;
           if (windowType === WindowType.Polygonal) {
             // triangle window
-            const shape = new Shape();
             const [topX, topH] = topPosition ?? [0, 0.5];
             const [hx, hy, tx] = [dimension.x / 2, dimension.y / 2, topX * dimension.x];
 
-            shape.moveTo(-hx, -hy);
-            shape.lineTo(hx, -hy);
-            shape.lineTo(hx, hy);
-            shape.lineTo(tx, hy + topH);
-            shape.lineTo(-hx, hy);
-            shape.closePath();
-
+            const shape = getPolygonWindowShape(hx, hy, tx, topH);
             const holeMesh = new Mesh(
               new ExtrudeBufferGeometry([shape], { steps: 1, depth: dimension.z, bevelEnabled: false }),
             );
