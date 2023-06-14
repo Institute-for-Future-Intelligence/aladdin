@@ -24,6 +24,7 @@ import {
   MoveHandleType,
   ObjectType,
   Orientation,
+  ProjectType,
   ResizeHandleType,
   RoofHandleType,
   RotateHandleType,
@@ -108,6 +109,9 @@ export interface CommonStoreState {
   modelAuthor: string | null;
   modelLabel: string | null;
   modelDescription: string | null;
+  projectType: ProjectType;
+  projectTitle: string | null;
+  projectDescription: string | null;
   notes: string[];
   user: User;
   language: string;
@@ -536,6 +540,9 @@ export const useStore = create<CommonStoreState>(
           modelAuthor: null,
           modelLabel: null,
           modelDescription: null,
+          projectType: ProjectType.SOLAR_FARM_DESIGN,
+          projectTitle: null,
+          projectDescription: null,
           notes: [],
           user: {} as User,
           language: 'en',

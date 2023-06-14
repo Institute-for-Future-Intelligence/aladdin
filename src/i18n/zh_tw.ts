@@ -175,6 +175,8 @@ export const i18n_zh_tw = {
       LightElement: '電燈',
       ElementLocked: '固定',
       ModelType: '模型類别',
+      ProjectType: '類别',
+      SolarFarmDesign: '太陽能農場設計',
     },
 
     message: {
@@ -263,6 +265,7 @@ export const i18n_zh_tw = {
       project: {
         CreateNewProject: '創建新項目',
         OpenProject: '打開項目',
+        YouMustLogInToCreateProject: '您必須登錄才能創建項目',
       },
       fileSubMenu: '文檔',
       file: {

@@ -109,6 +109,10 @@ export interface ActionInfo {
   readonly steps?: number;
 }
 
+export enum ProjectType {
+  SOLAR_FARM_DESIGN = 'Solar Farm Design',
+}
+
 export enum ModelType {
   UNKNOWN = 'Unknown',
   UNDER_CONSTRUCTION = 'Under Construction',

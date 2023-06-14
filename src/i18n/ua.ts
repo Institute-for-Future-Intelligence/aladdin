@@ -176,6 +176,8 @@ export const i18n_ua = {
       LightElement: 'Світло',
       ElementLocked: 'Заблоковано',
       ModelType: 'Тип моделі',
+      ProjectType: 'Type',
+      SolarFarmDesign: 'Solar Farm Design',
     },
 
     message: {
@@ -266,6 +268,7 @@ export const i18n_ua = {
       project: {
         CreateNewProject: 'Create New Project',
         OpenProject: 'Open Project',
+        YouMustLogInToCreateProject: 'You must log in to create a new project',
       },
       fileSubMenu: 'Файл',
       file: {

@@ -39,6 +39,7 @@ import { usePrimitiveStore } from './stores/commonPrimitive';
 import { getExample } from './examples';
 import { checkBuilding, CheckStatus } from './analysis/heatTools';
 import ModelSiteDialog from './components/contextMenu/elementMenu/modelSiteDialog';
+import CreateNewProjectDialog from './components/contextMenu/elementMenu/createNewProjectDialog';
 
 const { SubMenu } = Menu;
 
@@ -142,6 +143,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
 
   const [aboutUs, setAboutUs] = useState(false);
   const [modelSiteDialogVisible, setModelSiteDialogVisible] = useState(false);
+  const [createNewProjectDialogVisible, setCreateNewProjectDialogVisible] = useState(false);
 
   const lang = { lng: language };
   const isMac = Util.isMac();
@@ -868,7 +870,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             <Menu.Item
               key="create-new-project"
               onClick={() => {
+                if (!user.uid) {
+                  showInfo(i18n.t('menu.project.YouMustLogInToCreateProject', lang) + '.');
+                  return;
+                }
                 setCommonStore((state) => {
+                  setCreateNewProjectDialogVisible(true);
                   if (loggable) {
                     state.actionInfo = {
                       name: 'Create New Project',
@@ -2389,6 +2396,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       </Dropdown>
       {aboutUs && <About close={() => setAboutUs(false)} />}
       {modelSiteDialogVisible && <ModelSiteDialog setDialogVisible={setModelSiteDialogVisible} />}
+      {createNewProjectDialogVisible && <CreateNewProjectDialog setDialogVisible={setCreateNewProjectDialogVisible} />}
     </>
   );
 };

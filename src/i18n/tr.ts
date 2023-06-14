@@ -175,6 +175,8 @@ export const i18n_tr = {
       LightElement: 'Light',
       ElementLocked: 'Kilitli',
       ModelType: 'Model Type',
+      ProjectType: 'Type',
+      SolarFarmDesign: 'Solar Farm Design',
     },
 
     message: {
@@ -264,6 +266,7 @@ export const i18n_tr = {
       project: {
         CreateNewProject: 'Create New Project',
         OpenProject: 'Open Project',
+        YouMustLogInToCreateProject: 'You must log in to create a new project',
       },
       fileSubMenu: 'Dosya',
       file: {
