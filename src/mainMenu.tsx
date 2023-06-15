@@ -895,7 +895,10 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             <Menu.Item
               key="open-project"
               onClick={() => {
-                undoManager.clear();
+                if (!user.uid) {
+                  showInfo(i18n.t('menu.project.YouMustLogInToOpenProject', lang) + '.');
+                  return;
+                }
                 setCommonStore((state) => {
                   if (loggable) {
                     state.actionInfo = {
