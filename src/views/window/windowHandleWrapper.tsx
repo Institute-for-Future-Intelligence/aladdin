@@ -447,7 +447,7 @@ const WindowHandleWrapper = ({
         if (windowType === WindowType.Polygonal) {
           const [topX, topH] = polygonTop;
           if (isPolygonalWindowInsideVertices(newCenter, newLx, newLz, topX, topH, rotation, vertices)) {
-            setResizedData(id, newCenter, newLx, newLz);
+            setResizedData(id, newCenter, newLx, Math.max(0.001, newLz));
           }
         } else {
           if (isRectWindowInsideVertices(newCenter, newLx, newLz, rotation, vertices)) {
