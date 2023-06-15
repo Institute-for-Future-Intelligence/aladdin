@@ -10,7 +10,7 @@ import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 
 export interface CloudFileSaveModalProps {
-  saveToCloud: (title: string, silent: boolean) => void;
+  saveToCloud: (title: string, silent: boolean, checkExistence: boolean) => void;
   isLoading: () => boolean;
   setTitle: (title: string) => void;
   getTitle: () => string;
@@ -62,7 +62,7 @@ const SaveCloudFileModal = ({
       }
       visible={isTitleDialogVisible()}
       onOk={() => {
-        saveToCloud(getTitle(), false);
+        saveToCloud(getTitle(), false, true);
         setCommonStore((state) => {
           state.showCloudFileTitleDialogFlag = !state.showCloudFileTitleDialogFlag;
           state.showCloudFileTitleDialog = false;
@@ -89,7 +89,7 @@ const SaveCloudFileModal = ({
           placeholder="Title"
           value={getTitle()}
           onPressEnter={() => {
-            saveToCloud(getTitle(), false);
+            saveToCloud(getTitle(), false, true);
           }}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             setTitle(e.target.value);

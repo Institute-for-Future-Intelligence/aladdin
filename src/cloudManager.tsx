@@ -14,7 +14,7 @@ import 'firebase/auth';
 import 'firebase/firestore';
 import 'firebase/storage';
 import { showError, showInfo, showSuccess } from './helpers';
-import { ClassID, CloudFileInfo, FirebaseName, ModelSite, ObjectType, SchoolID, User } from './types';
+import { ClassID, CloudFileInfo, FirebaseName, ModelSite, ObjectType, ProjectInfo, SchoolID, User } from './types';
 import CloudFilePanel from './panels/cloudFilePanel';
 import Spinner from './components/spinner';
 import AccountSettingsPanel from './panels/accountSettingsPanel';
@@ -68,6 +68,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const [title, setTitle] = useState<string>(cloudFile ?? 'My Aladdin File');
   const [titleDialogVisible, setTitleDialogVisible] = useState(false);
   const cloudFiles = useRef<CloudFileInfo[] | void>();
+  const myProjects = useRef<ProjectInfo[] | void>();
   const authorModelsRef = useRef<Map<string, ModelSite>>();
   const firstCallUpdateCloudFile = useRef<boolean>(true);
   const firstCallFetchModels = useRef<boolean>(true);
@@ -795,65 +796,159 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       const type = useStore.getState().projectType;
       const title = useStore.getState().projectTitle;
       const description = useStore.getState().projectDescription;
-      console.log(type, title, description);
+      const timestamp = new Date().getTime();
+      if (title && description) {
+        const t = title.trim();
+        if (t.length > 0) {
+          fetchMyProjects().then(() => {
+            let exist = false;
+            if (myProjects.current) {
+              for (const p of myProjects.current) {
+                if (p.title === t) {
+                  exist = true;
+                }
+              }
+            }
+            if (exist) {
+              showInfo(i18n.t('message.TitleUsedChooseDifferentOne', lang) + ': ' + t);
+            } else {
+              if (user && user.uid) {
+                try {
+                  const doc = firebase.firestore().collection('users').doc(user.uid);
+                  if (doc) {
+                    doc
+                      .collection('projects')
+                      .doc(t)
+                      .set({ timestamp, type, description })
+                      .then(() => {})
+                      .catch((error) => {
+                        showError(i18n.t('message.CannotCreateNewProject', lang) + ': ' + error);
+                      })
+                      .finally(() => {
+                        setLoading(false);
+                      });
+                  }
+                } catch (error) {
+                  showError(i18n.t('message.CannotCreateNewProject', lang) + ': ' + error);
+                  setLoading(false);
+                }
+              }
+            }
+          });
+        }
+      }
     }
   };
+  const fetchMyProjects = async () => {
+    if (!user.uid) return;
+    setLoading(true);
+    // fetch owner's projects from the cloud
+    myProjects.current = await firebase
+      .firestore()
+      .collection('users')
+      .doc(user.uid)
+      .collection('projects')
+      .get()
+      .then((querySnapshot) => {
+        const a: ProjectInfo[] = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          a.push({
+            title: doc.id,
+            timestamp: data.timestamp,
+            description: data.description,
+            type: data.type,
+          } as ProjectInfo);
+        });
+        return a;
+      })
+      .catch((error) => {
+        showError(i18n.t('message.CannotOpenYourProjects', lang) + ': ' + error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
 
-  const saveToCloud = (title: string, silent: boolean) => {
+  const saveToCloud = (title: string, silent: boolean, checkExistence: boolean) => {
     const t = title.trim();
     if (t.length > 0) {
       if (user.uid) {
         setLoading(true);
-        try {
-          const doc = firebase.firestore().collection('users').doc(user.uid);
-          if (doc) {
-            if (localContentToImportAfterCloudFileUpdate) {
-              setCommonStore((state) => {
-                state.loadingFile = true;
-              });
+        if (checkExistence) {
+          fetchMyCloudFiles().then(() => {
+            let exist = false;
+            if (cloudFiles.current) {
+              for (const p of cloudFiles.current) {
+                if (p.fileName === t) {
+                  exist = true;
+                }
+              }
             }
-            doc
-              .collection('files')
-              .doc(t)
-              .set(exportContent())
-              .then(() => {
-                if (!silent) {
-                  setCommonStore((state) => {
-                    state.cloudFile = t;
-                    state.changed = false;
-                  });
-                }
-                if (localContentToImportAfterCloudFileUpdate) {
-                  if (localContentToImportAfterCloudFileUpdate === 'CREATE_NEW_FILE') {
-                    createEmptyFile();
-                  } else {
-                    importContent(localContentToImportAfterCloudFileUpdate);
-                  }
-                } else {
-                  const newUrl = HOME_URL + '?client=web&userid=' + user.uid + '&title=' + encodeURIComponent(title);
-                  window.history.pushState({}, document.title, newUrl);
-                }
-                if (showCloudFilePanel) {
-                  fetchMyCloudFiles().then(() => {
-                    setUpdateFlag(!updateFlag);
-                  });
-                }
-              })
-              .catch((error) => {
-                showError(i18n.t('message.CannotSaveYourFileToCloud', lang) + ': ' + error);
-              })
-              .finally(() => {
-                setLoading(false);
-              });
-          }
-        } catch (error) {
-          showError(i18n.t('message.CannotSaveYourFileToCloud', lang) + ': ' + error);
-          setLoading(false);
+            if (exist) {
+              showInfo(i18n.t('message.TitleUsedChooseDifferentOne', lang) + ': ' + t);
+            } else {
+              saveToCloudWithoutCheckingExistence(t, silent);
+            }
+          });
+        } else {
+          saveToCloudWithoutCheckingExistence(t, silent);
         }
       }
       setTitleDialogVisible(false);
     } else {
       showError(i18n.t('menu.file.SavingAbortedMustHaveValidTitle', lang) + '.');
+    }
+  };
+
+  const saveToCloudWithoutCheckingExistence = (title: string, silent: boolean) => {
+    if (user.uid) {
+      try {
+        const doc = firebase.firestore().collection('users').doc(user.uid);
+        if (doc) {
+          if (localContentToImportAfterCloudFileUpdate) {
+            setCommonStore((state) => {
+              state.loadingFile = true;
+            });
+          }
+          doc
+            .collection('files')
+            .doc(title)
+            .set(exportContent())
+            .then(() => {
+              if (!silent) {
+                setCommonStore((state) => {
+                  state.cloudFile = title;
+                  state.changed = false;
+                });
+              }
+              if (localContentToImportAfterCloudFileUpdate) {
+                if (localContentToImportAfterCloudFileUpdate === 'CREATE_NEW_FILE') {
+                  createEmptyFile();
+                } else {
+                  importContent(localContentToImportAfterCloudFileUpdate);
+                }
+              } else {
+                const newUrl = HOME_URL + '?client=web&userid=' + user.uid + '&title=' + encodeURIComponent(title);
+                window.history.pushState({}, document.title, newUrl);
+              }
+              if (showCloudFilePanel) {
+                fetchMyCloudFiles().then(() => {
+                  setUpdateFlag(!updateFlag);
+                });
+              }
+            })
+            .catch((error) => {
+              showError(i18n.t('message.CannotSaveYourFileToCloud', lang) + ': ' + error);
+            })
+            .finally(() => {
+              setLoading(false);
+            });
+        }
+      } catch (error) {
+        showError(i18n.t('message.CannotSaveYourFileToCloud', lang) + ': ' + error);
+        setLoading(false);
+      }
     }
   };
 
@@ -864,7 +959,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
         icon: <ExclamationCircleOutlined />,
         onOk: () => {
           if (cloudFile) {
-            saveToCloud(cloudFile, true);
+            saveToCloud(cloudFile, true, false);
             openCloudFile(userid, title);
           } else {
             setCommonStore((state) => {
@@ -891,7 +986,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
         icon: <ExclamationCircleOutlined />,
         onOk: () => {
           if (cloudFile) {
-            saveToCloud(cloudFile, true);
+            saveToCloud(cloudFile, true, false);
             openCloudFile(model.userid, model.title);
             countClicksModelsMap(model);
           } else {
@@ -1066,7 +1161,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
 
   const updateCloudFile = () => {
     if (cloudFile) {
-      saveToCloud(cloudFile, false);
+      saveToCloud(cloudFile, false, false);
       setTitle(cloudFile);
     }
   };

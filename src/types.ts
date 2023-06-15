@@ -99,6 +99,13 @@ export interface CloudFileInfo {
   readonly userid: string;
 }
 
+export interface ProjectInfo {
+  readonly timestamp: number;
+  readonly title: string;
+  readonly description: string;
+  readonly type: ProjectType;
+}
+
 export interface ActionInfo {
   readonly timestamp: number;
   readonly name: string;
