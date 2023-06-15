@@ -266,6 +266,7 @@ export const i18n_zh_tw = {
         CreateNewProject: '創建新項目',
         OpenProject: '打開項目',
         YouMustLogInToCreateProject: '您必須登錄才能創建項目',
+        YouMustLogInToOpenProject: '您必須登錄才能打開項目',
       },
       fileSubMenu: '文檔',
       file: {

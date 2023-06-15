@@ -268,6 +268,7 @@ export const i18n_es = {
         CreateNewProject: 'Create New Project',
         OpenProject: 'Open Project',
         YouMustLogInToCreateProject: 'You must log in to create a new project',
+        YouMustLogInToOpenProject: 'You must log in to open a project',
       },
       fileSubMenu: 'Archivo',
       file: {
