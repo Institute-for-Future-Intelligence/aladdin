@@ -18,7 +18,7 @@ import {
   RESIZE_HANDLE_SIZE,
   TWO_PI,
 } from 'src/constants';
-import { WallModel } from 'src/models/WallModel';
+import { WallFill, WallModel } from 'src/models/WallModel';
 import Wireframe from './wireframe';
 import { UndoableMoveFoundationGroup } from 'src/undo/UndoableMove';
 import { UndoableResizeBuildingXY, UndoableResizeBuildingZ } from 'src/undo/UndoableResizeBuilding';
@@ -48,6 +48,13 @@ enum Operation {
   RotateLower = 'Rotate Lower',
   Null = 'Null',
 }
+
+export type PartialWallHeight = {
+  upperLeft: number;
+  upperRight: number;
+  lowerLeft: number;
+  lowerRight: number;
+};
 
 const zeroVector2 = new Vector2();
 
@@ -136,6 +143,7 @@ const GroupMaster = ({
   const resizeAnchorRef = useRef(new Vector2());
   const elementHeightMapRef = useRef<Map<string, number>>(new Map());
   const wallRelPointsMapRef = useRef<Map<string, Vector2[]>>(new Map<string, Vector2[]>());
+  const partialWallHeightMapRef = useRef<Map<string, PartialWallHeight>>(new Map());
   const baseRelPosMapRef = useRef<Map<string, Vector3>>(new Map());
   const baseRotationMapRef = useRef<Map<string, number>>(new Map());
   const basePosRatioMapRef = useRef<Map<string, number[]>>(new Map()); // 2d
@@ -147,6 +155,7 @@ const GroupMaster = ({
   const foundatonOldDataMapRef = useRef<Map<string, number[]>>(new Map());
   const wallOldPointsMapRef = useRef<Map<string, number[]>>(new Map());
   const elementOldHeightMapRef = useRef<Map<string, number>>(new Map());
+  const oldPartialWallHeightMapRef = useRef<Map<string, PartialWallHeight>>(new Map());
 
   const [position, setPosition] = useState<Vector3>(new Vector3(cx, cy, cz));
   const [rotation, setRotation] = useState<number>(initalRotation);
@@ -221,11 +230,24 @@ const GroupMaster = ({
     });
   };
 
-  const updateUndoableResizeZ = (map: Map<string, number>) => {
+  const updateUndoableResizeZ = (
+    heightMap: Map<string, number>,
+    partialWallHeightMap: Map<string, PartialWallHeight>,
+  ) => {
     setCommonStore((state) => {
       for (const elem of state.elements) {
-        if (map.has(elem.id)) {
-          elem.lz = map.get(elem.id)!;
+        if (heightMap.has(elem.id)) {
+          elem.lz = heightMap.get(elem.id)!;
+        }
+        if (elem.type === ObjectType.Wall && partialWallHeightMap.has(elem.id)) {
+          const w = elem as WallModel;
+          const partialWallHeight = partialWallHeightMap.get(w.id);
+          if (partialWallHeight) {
+            w.leftTopPartialHeight = partialWallHeight.upperLeft;
+            w.rightTopPartialHeight = partialWallHeight.upperRight;
+            w.leftUnfilledHeight = partialWallHeight.lowerLeft;
+            w.rightUnfilledHeight = partialWallHeight.lowerRight;
+          }
         }
       }
       state.groupActionUpdateFlag = !state.groupActionUpdateFlag;
@@ -302,22 +324,35 @@ const GroupMaster = ({
   };
 
   const addUndoableReseizeZ = () => {
-    const newMap = new Map<string, number>();
+    const newHeightMap = new Map<string, number>();
+    const newPartialWallHeightMap = new Map<string, PartialWallHeight>();
+
     for (const elem of useStore.getState().elements) {
       if (elementOldHeightMapRef.current.has(elem.id)) {
-        newMap.set(elem.id, elem.lz);
+        newHeightMap.set(elem.id, elem.lz);
+      }
+      if (elem.type === ObjectType.Wall && oldPartialWallHeightMapRef.current.has(elem.id)) {
+        const w = elem as WallModel;
+        newPartialWallHeightMap.set(w.id, {
+          lowerLeft: w.leftUnfilledHeight,
+          lowerRight: w.rightUnfilledHeight,
+          upperLeft: w.leftTopPartialHeight,
+          upperRight: w.rightTopPartialHeight,
+        });
       }
     }
     const undoableResizeZ = {
       name: 'Resize Building Z',
       timestamp: Date.now(),
       oldElementHeightMap: new Map(elementOldHeightMapRef.current),
-      newElementHeightMap: new Map(newMap),
+      newElementHeightMap: new Map(newHeightMap),
+      oldPartialWallHeightMap: new Map(oldPartialWallHeightMapRef.current),
+      newPartialWallHeightMap: new Map(newPartialWallHeightMap),
       undo: () => {
-        updateUndoableResizeZ(undoableResizeZ.oldElementHeightMap);
+        updateUndoableResizeZ(undoableResizeZ.oldElementHeightMap, undoableResizeZ.oldPartialWallHeightMap);
       },
       redo: () => {
-        updateUndoableResizeZ(undoableResizeZ.newElementHeightMap);
+        updateUndoableResizeZ(undoableResizeZ.newElementHeightMap, undoableResizeZ.newPartialWallHeightMap);
       },
     } as UndoableResizeBuildingZ;
     addUndoable(undoableResizeZ);
@@ -443,9 +478,7 @@ const GroupMaster = ({
   };
 
   const resizeZ = (p: Vector3) => {
-    if (p.z < 0.1) {
-      return;
-    }
+    if (p.z < 0.1) return;
     const height = p.z;
     setHeight(height);
     setCommonStore((state) => {
@@ -453,6 +486,16 @@ const GroupMaster = ({
         if (elementHeightMapRef.current.has(elem.id)) {
           if (elem.type === ObjectType.Wall) {
             elem.lz = height * elementHeightMapRef.current.get(elem.id)!;
+            const w = elem as WallModel;
+            if (w.fill === WallFill.Partial) {
+              const partialWallHeight = partialWallHeightMapRef.current.get(w.id);
+              if (partialWallHeight) {
+                w.leftTopPartialHeight = height * partialWallHeight.upperLeft;
+                w.rightTopPartialHeight = height * partialWallHeight.upperRight;
+                w.leftUnfilledHeight = height * partialWallHeight.lowerLeft;
+                w.rightUnfilledHeight = height * partialWallHeight.lowerRight;
+              }
+            }
           } else if (elem.type === ObjectType.Roof) {
             (elem as RoofModel).rise = height * elementHeightMapRef.current.get(elem.id)!;
           } else if (elem.type === ObjectType.Cuboid) {
@@ -539,11 +582,29 @@ const GroupMaster = ({
 
     elementHeightMapRef.current.clear();
     elementOldHeightMapRef.current.clear();
+    partialWallHeightMapRef.current.clear();
+    oldPartialWallHeightMapRef.current.clear();
+
     for (const elem of useStore.getState().elements) {
       if (elem.foundationId && baseGroupSet.has(elem.foundationId)) {
         if (elem.type === ObjectType.Wall) {
           elementHeightMapRef.current.set(elem.id, elem.lz / height);
           elementOldHeightMapRef.current.set(elem.id, elem.lz);
+          const w = elem as WallModel;
+          if (w.fill === WallFill.Partial) {
+            oldPartialWallHeightMapRef.current.set(w.id, {
+              upperLeft: w.leftTopPartialHeight,
+              upperRight: w.rightTopPartialHeight,
+              lowerLeft: w.leftUnfilledHeight,
+              lowerRight: w.rightUnfilledHeight,
+            });
+            partialWallHeightMapRef.current.set(w.id, {
+              upperLeft: w.leftTopPartialHeight / height,
+              upperRight: w.rightTopPartialHeight / height,
+              lowerLeft: w.leftUnfilledHeight / height,
+              lowerRight: w.rightUnfilledHeight / height,
+            });
+          }
         } else if (elem.type === ObjectType.Roof) {
           elementHeightMapRef.current.set(elem.id, (elem as RoofModel).rise / height);
           elementOldHeightMapRef.current.set(elem.id, (elem as RoofModel).rise);
