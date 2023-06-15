@@ -157,7 +157,6 @@ const handleAddElementOnRoof = (
           0.5,
           0.5,
         );
-        console.log('new element', newElement);
         useStore.getState().set((state) => {
           state.elements.push(newElement);
           if (!state.actionModeLock) state.objectTypeToAdd = ObjectType.None;

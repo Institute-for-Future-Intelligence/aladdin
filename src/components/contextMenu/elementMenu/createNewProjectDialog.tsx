@@ -56,7 +56,7 @@ const CreateNewProjectDialog = ({ setDialogVisible }: { setDialogVisible: (b: bo
 
   const onOkClick = () => {
     usePrimitiveStore.setState((state) => {
-      state.saveProjectFlag = !state.saveProjectFlag;
+      state.createProjectFlag = !state.createProjectFlag;
     });
     setCommonStore((state) => {
       state.projectType = projectType;

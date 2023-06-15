@@ -60,6 +60,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const localContentToImportAfterCloudFileUpdate = useStore(Selector.localContentToImportAfterCloudFileUpdate);
   const undoManager = useStore(Selector.undoManager);
   const peopleModels = useStore(Selector.peopleModels);
+  const createProjectFlag = usePrimitiveStore(Selector.createProjectFlag);
 
   const [loading, setLoading] = useState(false);
   const [updateFlag, setUpdateFlag] = useState(false);
@@ -72,6 +73,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const firstCallFetchModels = useRef<boolean>(true);
   const firstCallFetchLeaderboard = useRef<boolean>(true);
   const firstCallPublishOnMap = useRef<boolean>(true);
+  const firstCallCreateProject = useRef<boolean>(true);
   const firstCallListCloudFiles = useRef<boolean>(true);
   const firstAccountSettings = useRef<boolean>(true);
 
@@ -205,6 +207,15 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [publishOnMapFlag]);
+
+  useEffect(() => {
+    if (firstCallCreateProject.current) {
+      firstCallCreateProject.current = false;
+    } else {
+      createNewProject();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [createProjectFlag]);
 
   useEffect(() => {
     if (firstCallListCloudFiles.current) {
@@ -757,7 +768,8 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     }
   };
 
-  // TODO: unfortunately, this throws an error for users who do not log in
+  // TODO:
+  // unfortunately, this throws an error for users who do not log in
   // because of write access is only granted to registered users who log in.
   const countClicksModelsMap = (model: ModelSite) => {
     // pass if there is no user currently logged in
@@ -775,6 +787,15 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
         .catch((error) => {
           // ignore
         });
+    }
+  };
+
+  const createNewProject = () => {
+    if (user && user.uid) {
+      const type = useStore.getState().projectType;
+      const title = useStore.getState().projectTitle;
+      const description = useStore.getState().projectDescription;
+      console.log(type, title, description);
     }
   };
 

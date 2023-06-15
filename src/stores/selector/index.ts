@@ -101,6 +101,8 @@ export const peopleModels = (state: CommonStoreState) => state.peopleModels;
 
 export const saveCloudFileFlag = (state: CommonStoreState) => state.saveCloudFileFlag;
 
+export const createProjectFlag = (state: PrimitiveStoreState) => state.createProjectFlag;
+
 export const modelsMapFlag = (state: PrimitiveStoreState) => state.modelsMapFlag;
 
 export const leaderboardFlag = (state: PrimitiveStoreState) => state.leaderboardFlag;

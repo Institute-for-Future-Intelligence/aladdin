@@ -62,9 +62,9 @@ export const RESIZE_HANDLE_COLOR = 'white';
 export const HIGHLIGHT_HANDLE_COLOR = 'red';
 export const LOCKED_ELEMENT_SELECTION_COLOR = 'yellow';
 
-export const FINE_GRID_RATIO = 5;
+export const GRID_RATIO = 5;
 export const FINE_GRID_SCALE = 0.1;
-export const NORMAL_GRID_SCALE = FINE_GRID_RATIO * FINE_GRID_SCALE;
+export const NORMAL_GRID_SCALE = GRID_RATIO * FINE_GRID_SCALE;
 
 // solar panel texture
 export const RESOLUTION = 250;

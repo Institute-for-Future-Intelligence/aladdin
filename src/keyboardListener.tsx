@@ -20,7 +20,7 @@ import { useRefStore } from './stores/commonRef';
 import { SolarPanelModel } from './models/SolarPanelModel';
 import { Util } from './Util';
 import { ElementModel } from './models/ElementModel';
-import { FINE_GRID_RATIO, GROUND_ID, HOME_URL, UNDO_SHOW_INFO_DURATION } from './constants';
+import { GRID_RATIO, GROUND_ID, HOME_URL, UNDO_SHOW_INFO_DURATION } from './constants';
 import { RoofUtil } from './views/roof/RoofUtil';
 import { RoofModel } from './models/RoofModel';
 import { spBoundaryCheck, spCollisionCheck } from './views/roof/roofRenderer';
@@ -294,16 +294,16 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
               movedElementId: selectedElement.id,
               movedElementType: selectedElement.type,
               undo: () => {
-                updateElementCxById(
-                  undoableMoveLeft.movedElementId,
-                  selectedElement.cx - undoableMoveLeft.displacement,
-                );
+                const elem = useStore.getState().getElementById(undoableMoveLeft.movedElementId);
+                if (elem) {
+                  updateElementCxById(elem.id, elem.cx - undoableMoveLeft.displacement);
+                }
               },
               redo: () => {
-                updateElementCxById(
-                  undoableMoveLeft.movedElementId,
-                  selectedElement.cx + undoableMoveLeft.displacement,
-                );
+                const elem = useStore.getState().getElementById(undoableMoveLeft.movedElementId);
+                if (elem) {
+                  updateElementCxById(elem.id, elem.cx + undoableMoveLeft.displacement);
+                }
               },
             } as UndoableMoveInX;
             addUndoable(undoableMoveLeft);
@@ -318,14 +318,14 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
           timestamp: Date.now(),
           displacement: displacement,
           undo: () => {
-            for (const e of elements) {
+            for (const e of useStore.getState().elements) {
               if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
                 updateElementCxById(e.id, e.cx - undoableMoveAllLeft.displacement);
               }
             }
           },
           redo: () => {
-            for (const e of elements) {
+            for (const e of useStore.getState().elements) {
               if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
                 updateElementCxById(e.id, e.cx + undoableMoveAllLeft.displacement);
               }
@@ -399,16 +399,16 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
               movedElementId: selectedElement.id,
               movedElementType: selectedElement.type,
               undo: () => {
-                updateElementCxById(
-                  undoableMoveRight.movedElementId,
-                  selectedElement.cx - undoableMoveRight.displacement,
-                );
+                const elem = useStore.getState().getElementById(undoableMoveRight.movedElementId);
+                if (elem) {
+                  updateElementCxById(elem.id, elem.cx - undoableMoveRight.displacement);
+                }
               },
               redo: () => {
-                updateElementCxById(
-                  undoableMoveRight.movedElementId,
-                  selectedElement.cx + undoableMoveRight.displacement,
-                );
+                const elem = useStore.getState().getElementById(undoableMoveRight.movedElementId);
+                if (elem) {
+                  updateElementCxById(elem.id, elem.cx + undoableMoveRight.displacement);
+                }
               },
             } as UndoableMoveInX;
             addUndoable(undoableMoveRight);
@@ -423,14 +423,14 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
           timestamp: Date.now(),
           displacement: displacement,
           undo: () => {
-            for (const e of elements) {
+            for (const e of useStore.getState().elements) {
               if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
                 updateElementCxById(e.id, e.cx - undoableMoveAllRight.displacement);
               }
             }
           },
           redo: () => {
-            for (const e of elements) {
+            for (const e of useStore.getState().elements) {
               if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
                 updateElementCxById(e.id, e.cx + undoableMoveAllRight.displacement);
               }
@@ -504,10 +504,16 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
               movedElementId: selectedElement.id,
               movedElementType: selectedElement.type,
               undo: () => {
-                updateElementCyById(undoableMoveUp.movedElementId, selectedElement.cy - undoableMoveUp.displacement);
+                const elem = useStore.getState().getElementById(undoableMoveUp.movedElementId);
+                if (elem) {
+                  updateElementCyById(elem.id, elem.cy - undoableMoveUp.displacement);
+                }
               },
               redo: () => {
-                updateElementCyById(undoableMoveUp.movedElementId, selectedElement.cy + undoableMoveUp.displacement);
+                const elem = useStore.getState().getElementById(undoableMoveUp.movedElementId);
+                if (elem) {
+                  updateElementCyById(elem.id, elem.cy + undoableMoveUp.displacement);
+                }
               },
             } as UndoableMoveInY;
             addUndoable(undoableMoveUp);
@@ -522,20 +528,20 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
           timestamp: Date.now(),
           displacement: displacement,
           undo: () => {
-            for (const e of elements) {
+            for (const e of useStore.getState().elements) {
               if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
                 updateElementCyById(e.id, e.cy - undoableMoveAllUp.displacement);
               }
             }
           },
           redo: () => {
-            for (const e of elements) {
+            for (const e of useStore.getState().elements) {
               if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
                 updateElementCyById(e.id, e.cy + undoableMoveAllUp.displacement);
               }
             }
           },
-        } as UndoableMoveInX;
+        } as UndoableMoveInY;
         addUndoable(undoableMoveAllUp);
         for (const e of elements) {
           if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
@@ -603,16 +609,16 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
               movedElementId: selectedElement.id,
               movedElementType: selectedElement.type,
               undo: () => {
-                updateElementCyById(
-                  undoableMoveDown.movedElementId,
-                  selectedElement.cy - undoableMoveDown.displacement,
-                );
+                const elem = useStore.getState().getElementById(undoableMoveDown.movedElementId);
+                if (elem) {
+                  updateElementCyById(elem.id, elem.cy - undoableMoveDown.displacement);
+                }
               },
               redo: () => {
-                updateElementCyById(
-                  undoableMoveDown.movedElementId,
-                  selectedElement.cy + undoableMoveDown.displacement,
-                );
+                const elem = useStore.getState().getElementById(undoableMoveDown.movedElementId);
+                if (elem) {
+                  updateElementCyById(elem.id, elem.cy + undoableMoveDown.displacement);
+                }
               },
             } as UndoableMoveInY;
             addUndoable(undoableMoveDown);
@@ -627,20 +633,20 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
           timestamp: Date.now(),
           displacement: displacement,
           undo: () => {
-            for (const e of elements) {
+            for (const e of useStore.getState().elements) {
               if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
                 updateElementCyById(e.id, e.cy - undoableMoveAllDown.displacement);
               }
             }
           },
           redo: () => {
-            for (const e of elements) {
+            for (const e of useStore.getState().elements) {
               if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
                 updateElementCyById(e.id, e.cy + undoableMoveAllDown.displacement);
               }
             }
           },
-        } as UndoableMoveInX;
+        } as UndoableMoveInY;
         addUndoable(undoableMoveAllDown);
         for (const e of elements) {
           if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
@@ -659,41 +665,41 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
         moveLeft(step);
         break;
       case 'shift+left':
-        moveLeft(step / FINE_GRID_RATIO);
+        moveLeft(step / GRID_RATIO);
         break;
       case 'ctrl+shift+left':
       case 'meta+shift+left':
-        moveLeft(step * FINE_GRID_RATIO);
+        moveLeft(step * GRID_RATIO);
         break;
       case 'right':
         moveRight(step);
         break;
       case 'shift+right':
-        moveRight(step / FINE_GRID_RATIO);
+        moveRight(step / GRID_RATIO);
         break;
       case 'ctrl+shift+right':
       case 'meta+shift+right':
-        moveRight(step * FINE_GRID_RATIO);
+        moveRight(step * GRID_RATIO);
         break;
       case 'down':
         moveDown(step);
         break;
       case 'shift+down':
-        moveDown(step / FINE_GRID_RATIO);
+        moveDown(step / GRID_RATIO);
         break;
       case 'ctrl+shift+down':
       case 'meta+shift+down':
-        moveDown(step * FINE_GRID_RATIO);
+        moveDown(step * GRID_RATIO);
         break;
       case 'up':
         moveUp(step);
         break;
       case 'shift+up':
-        moveUp(step / FINE_GRID_RATIO);
+        moveUp(step / GRID_RATIO);
         break;
       case 'ctrl+shift+up':
       case 'meta+shift+up':
-        moveUp(step * FINE_GRID_RATIO);
+        moveUp(step * GRID_RATIO);
         break;
       case 'ctrl+[':
       case 'meta+[': // for Mac
