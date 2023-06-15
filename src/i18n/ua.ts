@@ -192,6 +192,7 @@ export const i18n_ua = {
       CannotCreateNewProject: 'Cannot create new project',
       CannotOpenYourProjects: 'Cannot open your projects',
       TitleUsedChooseDifferentOne: 'This title has been used. Choose a different one',
+      CloudFileWithTitleExistsDoYouWantToOverwrite: 'A cloud file with the title exists. Do you want to overwrite it?',
       CloudFileNotFound: 'Файл у хмарі не знайдено',
       CannotLoadModelsOnMap: 'Не вдається завантажити моделі на карту',
       CannotLoadLeaderboard: 'Не вдається завантажити таблицю лідерів',

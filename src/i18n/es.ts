@@ -191,6 +191,7 @@ export const i18n_es = {
       CannotCreateNewProject: 'Cannot create new project',
       CannotOpenYourProjects: 'Cannot open your projects',
       TitleUsedChooseDifferentOne: 'This title has been used. Choose a different one',
+      CloudFileWithTitleExistsDoYouWantToOverwrite: 'A cloud file with the title exists. Do you want to overwrite it?',
       CloudFileNotFound: 'The cloud file was not found',
       CannotLoadModelsOnMap: 'Cannot load models on map',
       CannotLoadLeaderboard: 'Cannot load leaderboard',

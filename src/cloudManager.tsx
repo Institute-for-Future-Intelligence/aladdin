@@ -19,7 +19,7 @@ import CloudFilePanel from './panels/cloudFilePanel';
 import Spinner from './components/spinner';
 import AccountSettingsPanel from './panels/accountSettingsPanel';
 import i18n from './i18n/i18n';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Util } from './Util';
 import { HOME_URL } from './constants';
 import ModelsMapWrapper from './modelsMapWrapper';
@@ -806,6 +806,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
               for (const p of myProjects.current) {
                 if (p.title === t) {
                   exist = true;
+                  break;
                 }
               }
             }
@@ -839,6 +840,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       }
     }
   };
+
   const fetchMyProjects = async () => {
     if (!user.uid) return;
     setLoading(true);
@@ -882,11 +884,26 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
               for (const p of cloudFiles.current) {
                 if (p.fileName === t) {
                   exist = true;
+                  break;
                 }
               }
             }
             if (exist) {
-              showInfo(i18n.t('message.TitleUsedChooseDifferentOne', lang) + ': ' + t);
+              Modal.confirm({
+                title: i18n.t('message.CloudFileWithTitleExistsDoYouWantToOverwrite', lang),
+                icon: <QuestionCircleOutlined />,
+                onOk: () => {
+                  saveToCloudWithoutCheckingExistence(t, silent);
+                },
+                onCancel: () => {
+                  setCommonStore((state) => {
+                    state.showCloudFileTitleDialogFlag = !state.showCloudFileTitleDialogFlag;
+                    state.showCloudFileTitleDialog = true;
+                  });
+                },
+                okText: i18n.t('word.Yes', lang),
+                cancelText: i18n.t('word.No', lang),
+              });
             } else {
               saveToCloudWithoutCheckingExistence(t, silent);
             }
