@@ -17,7 +17,7 @@ import * as Selector from 'src/stores/selector';
 import { RoofUtil } from '../roof/RoofUtil';
 import { useRefStore } from 'src/stores/commonRef';
 import { RoofSegmentGroupUserData, RoofSegmentProps } from '../roof/roofRenderer';
-import { RoofModel } from 'src/models/RoofModel';
+import { RoofModel, RoofType } from 'src/models/RoofModel';
 import { Util } from 'src/Util';
 
 interface WindowHandleWrapperProps {
@@ -299,6 +299,11 @@ const WindowHandleWrapper = ({
     useRefStore.getState().setEnableOrbitController(false);
   };
 
+  const isFlatRoof = (roof: RoofModel) => {
+    if (roof.roofType === RoofType.Gable) return false;
+    return Math.abs(roof.rise) < 0.001;
+  };
+
   const handlePointerMove = (event: ThreeEvent<PointerEvent>) => {
     if (
       handleTypeRef.current === null ||
@@ -316,7 +321,7 @@ const WindowHandleWrapper = ({
       const dataOnRoof = getDataOnRoof(event, id, parentId);
       const pointer = new Vector3();
 
-      if (roof.rise < 0.01) {
+      if (isFlatRoof(roof)) {
         const pointerOnIntersectionPlane = getPointerOnIntersectionPlane(event);
         if (!pointerOnIntersectionPlane) return;
         pointer.copy(pointerOnIntersectionPlane);
@@ -425,7 +430,7 @@ const WindowHandleWrapper = ({
       const { newLx, newLz, newCenter } = getNewResizedData(anchorRelToFoundation, pointerRelToFoundation, rotation[2]);
 
       const roof = roofModelRef.current;
-      if (roof && roof.rise < 0.01) {
+      if (roof && isFlatRoof(roof)) {
         const boundaryVertices = getRoofBoundaryVertices(roofSegmentsRef.current, roofCentroidRef.current);
         if (windowType === WindowType.Polygonal) {
           const [topX, topH] = polygonTop;
@@ -492,7 +497,7 @@ const WindowHandleWrapper = ({
 
         const windowCenter = new Vector3(window.cx, window.cy, window.cz);
 
-        if (roofModelRef.current && roofModelRef.current.rise < 0.01) {
+        if (roofModelRef.current && isFlatRoof(roofModelRef.current)) {
           const boundaryVertices = getRoofBoundaryVertices(roofSegmentsRef.current!, roofCentroidRef.current!);
           if (
             isPolygonalWindowInsideVertices(
