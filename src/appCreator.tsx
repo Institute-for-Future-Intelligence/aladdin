@@ -246,15 +246,17 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
                 style={{ marginLeft: '10px' }}
                 title={i18n.t('menu.file.SaveCloudFile', lang)}
                 onClick={() => {
-                  setCommonStore((state) => {
+                  usePrimitiveStore.setState((state) => {
                     state.saveCloudFileFlag = !state.saveCloudFileFlag;
-                    if (loggable) {
+                  });
+                  if (loggable) {
+                    setCommonStore((state) => {
                       state.actionInfo = {
                         name: 'Save Cloud File',
                         timestamp: new Date().getTime(),
                       };
-                    }
-                  });
+                    });
+                  }
                 }}
               >
                 {i18n.t('word.Save', lang)}

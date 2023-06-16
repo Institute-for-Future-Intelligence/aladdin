@@ -1331,13 +1331,22 @@ export const i18n_zh_tw = {
     },
 
     cloudFilePanel: {
-      SearchByTitle: '搜索標題',
+      SearchByTitle: '按標題搜索',
       MyLikes: '我喜歡的模型',
       MyCloudFiles: '我的雲文件',
       GenerateLink: '生成鏈接',
       LinkGeneratedInClipBoard: '鏈接已經復製到剪貼板',
       DoYouReallyWantToDelete: '您確定刪除此文檔',
       IfSharedOrPublishedRenamingFileBreaksExistingLinks: '如果此文檔已被分享或發布, 改名會使已有鏈接失效',
+    },
+
+    projectPanel: {
+      SearchByTitle: '按標題搜索',
+      MyProjects: '我的項目',
+      GenerateProjectLink: '生成項目鏈接',
+      ProjectLinkGeneratedInClipBoard: '項目鏈接已經復製到剪貼板',
+      DoYouReallyWantToDeleteProject: '您確定刪除項目',
+      IfSharedOrPublishedRenamingProjectBreaksExistingLinks: '如果此項目已被分享或發布, 改名會使已有鏈接失效',
     },
 
     accountSettingsPanel: {

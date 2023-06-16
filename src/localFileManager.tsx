@@ -11,6 +11,7 @@ import i18n from './i18n/i18n';
 import { Button, Input, Modal } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { usePrimitiveStore } from './stores/commonPrimitive';
 
 export interface LocalFileManagerProps {
   viewOnly: boolean;
@@ -23,7 +24,7 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
   const createNewFileFlag = useStore(Selector.createNewFileFlag);
   const openLocalFileFlag = useStore(Selector.openLocalFileFlag);
   const saveLocalFileFlag = useStore(Selector.saveLocalFileFlag);
-  const saveLocalFileDialogVisible = useStore(Selector.saveLocalFileDialogVisible);
+  const saveLocalFileDialogVisible = usePrimitiveStore(Selector.saveLocalFileDialogVisible);
   const exportContent = useStore(Selector.exportContent);
   const importContent = useStore(Selector.importContent);
   const changed = useStore(Selector.changed);
@@ -78,6 +79,8 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
           if (cloudFile) {
             setCommonStore((state) => {
               state.localContentToImportAfterCloudFileUpdate = 'CREATE_NEW_FILE';
+            });
+            usePrimitiveStore.setState((state) => {
               state.saveCloudFileFlag = !state.saveCloudFileFlag;
             });
           } else {
@@ -151,6 +154,8 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
               if (cloudFile) {
                 setCommonStore((state) => {
                   state.localContentToImportAfterCloudFileUpdate = input;
+                });
+                usePrimitiveStore.setState((state) => {
                   state.saveCloudFileFlag = !state.saveCloudFileFlag;
                 });
               }
@@ -200,7 +205,7 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
   const performOkAction = () => {
     setConfirmLoading(true);
     if (writeLocalFile()) {
-      setCommonStore((state) => {
+      usePrimitiveStore.setState((state) => {
         state.saveLocalFileDialogVisible = false;
       });
     }
@@ -208,7 +213,7 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
   };
 
   const performCancelAction = () => {
-    setCommonStore((state) => {
+    usePrimitiveStore.setState((state) => {
       state.saveLocalFileDialogVisible = false;
     });
   };

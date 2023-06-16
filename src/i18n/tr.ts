@@ -1364,6 +1364,16 @@ export const i18n_tr = {
         'If this file has been shared or published, renaming it breaks existing links',
     },
 
+    projectPanel: {
+      SearchByTitle: 'Search by title',
+      MyProjects: 'My Projects',
+      GenerateProjectLink: 'Generate Project Link',
+      ProjectLinkGeneratedInClipBoard: 'A link to the project has been generated in the clip board',
+      DoYouReallyWantToDeleteProject: 'Do you really want to delete Project',
+      IfSharedOrPublishedRenamingProjectBreaksExistingLinks:
+        'If this project has been shared or published, renaming it breaks existing links',
+    },
+
     accountSettingsPanel: {
       MyAccountSettings: 'Hesap Ayarlarım',
       MyID: 'Bilgilerim',

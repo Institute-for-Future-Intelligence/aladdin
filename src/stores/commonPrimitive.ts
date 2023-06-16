@@ -8,6 +8,10 @@ import create from 'zustand';
 export interface PrimitiveStoreState {
   setPrimitiveStore: <K extends keyof PrimitiveStoreState, V extends PrimitiveStoreState[K]>(key: K, val: V) => void;
 
+  saveCloudFileFlag: boolean;
+  listCloudFilesFlag: boolean;
+  saveLocalFileDialogVisible: boolean;
+
   modelsMapFlag: boolean;
   leaderboardFlag: boolean;
   showLeaderboard: boolean;
@@ -15,6 +19,8 @@ export interface PrimitiveStoreState {
   modelsMapWeatherStations: boolean;
 
   createProjectFlag: boolean;
+  listProjectsFlag: boolean;
+  showProjectPanel: boolean;
 
   userCount: number;
   showCloudFilePanel: boolean;
@@ -112,6 +118,10 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
       });
     },
 
+    saveCloudFileFlag: false,
+    listCloudFilesFlag: false,
+    saveLocalFileDialogVisible: false,
+
     modelsMapFlag: false,
     leaderboardFlag: false,
     showLeaderboard: false,
@@ -119,6 +129,8 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
     modelsMapWeatherStations: false,
 
     createProjectFlag: false,
+    listProjectsFlag: false,
+    showProjectPanel: false,
 
     userCount: 0,
     showCloudFilePanel: false,

@@ -26,6 +26,7 @@ import ModelsMapWrapper from './modelsMapWrapper';
 import MainToolBar from './mainToolBar';
 import SaveCloudFileModal from './saveCloudFileModal';
 import ModelsGallery from './modelsGallery';
+import ProjectPanel from './panels/projectPanel';
 
 export interface CloudManagerProps {
   viewOnly: boolean;
@@ -43,15 +44,16 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const countryCode = useStore(Selector.world.countryCode);
   const exportContent = useStore(Selector.exportContent);
   const showCloudFilePanel = usePrimitiveStore(Selector.showCloudFilePanel);
+  const showProjectPanel = usePrimitiveStore(Selector.showProjectPanel);
   const showModelsGallery = usePrimitiveStore(Selector.showModelsGallery);
   const showAccountSettingsPanel = usePrimitiveStore(Selector.showAccountSettingsPanel);
   const openModelsMap = usePrimitiveStore(Selector.openModelsMap);
   const cloudFile = useStore(Selector.cloudFile);
-  const saveCloudFileFlag = useStore(Selector.saveCloudFileFlag);
+  const saveCloudFileFlag = usePrimitiveStore(Selector.saveCloudFileFlag);
   const modelsMapFlag = usePrimitiveStore(Selector.modelsMapFlag);
   const leaderboardFlag = usePrimitiveStore(Selector.leaderboardFlag);
   const publishOnMapFlag = usePrimitiveStore(Selector.publishOnModelsMapFlag);
-  const listCloudFilesFlag = useStore(Selector.listCloudFilesFlag);
+  const listCloudFilesFlag = usePrimitiveStore(Selector.listCloudFilesFlag);
   const showCloudFileTitleDialog = useStore(Selector.showCloudFileTitleDialog);
   const showCloudFileTitleDialogFlag = useStore(Selector.showCloudFileTitleDialogFlag);
   const importContent = useStore(Selector.importContent);
@@ -61,10 +63,12 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const undoManager = useStore(Selector.undoManager);
   const peopleModels = useStore(Selector.peopleModels);
   const createProjectFlag = usePrimitiveStore(Selector.createProjectFlag);
+  const listProjectsFlag = usePrimitiveStore(Selector.listProjectsFlag);
 
   const [loading, setLoading] = useState(false);
   const [updateFlag, setUpdateFlag] = useState(false);
   const [cloudFileArray, setCloudFileArray] = useState<any[]>([]);
+  const [projectArray, setProjectArray] = useState<any[]>([]);
   const [title, setTitle] = useState<string>(cloudFile ?? 'My Aladdin File');
   const [titleDialogVisible, setTitleDialogVisible] = useState(false);
   const cloudFiles = useRef<CloudFileInfo[] | void>();
@@ -75,6 +79,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const firstCallFetchLeaderboard = useRef<boolean>(true);
   const firstCallPublishOnMap = useRef<boolean>(true);
   const firstCallCreateProject = useRef<boolean>(true);
+  const firstCallListProjects = useRef<boolean>(true);
   const firstCallListCloudFiles = useRef<boolean>(true);
   const firstAccountSettings = useRef<boolean>(true);
 
@@ -152,6 +157,24 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cloudFiles.current]);
 
+  useEffect(() => {
+    if (myProjects.current) {
+      const arr: any[] = [];
+      myProjects.current.forEach((f, i) => {
+        arr.push({
+          key: i.toString(),
+          title: f.title,
+          time: dayjs(new Date(f.timestamp)).format('MM/DD/YYYY hh:mm a'),
+          timestamp: f.timestamp,
+          action: '',
+        });
+      });
+      arr.sort((a, b) => b.timestamp - a.timestamp);
+      setProjectArray(arr);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [myProjects.current]);
+
   // fetch all the models that belong to the current user, including those published under all aliases
   useEffect(() => {
     authorModelsRef.current = new Map<string, ModelSite>();
@@ -217,6 +240,15 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createProjectFlag]);
+
+  useEffect(() => {
+    if (firstCallListProjects.current) {
+      firstCallListProjects.current = false;
+    } else {
+      listMyProjects();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [listProjectsFlag]);
 
   useEffect(() => {
     if (firstCallListCloudFiles.current) {
@@ -876,6 +908,16 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       });
   };
 
+  const listMyProjects = () => {
+    if (user.uid) {
+      fetchMyProjects().then(() => {
+        usePrimitiveStore.setState((state) => {
+          state.showProjectPanel = true;
+        });
+      });
+    }
+  };
+
   const saveToCloud = (title: string, silent: boolean, checkExistence: boolean) => {
     const t = title.trim();
     if (t.length > 0) {
@@ -1216,6 +1258,14 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           openCloudFile={openCloudFileWithSaveReminder}
           deleteCloudFile={deleteCloudFile}
           renameCloudFile={renameCloudFile}
+        />
+      )}
+      {showProjectPanel && myProjects.current && (
+        <ProjectPanel
+          projectArray={projectArray}
+          openProject={() => {}}
+          deleteProject={() => {}}
+          renameProject={() => {}}
         />
       )}
       {showModelsGallery && (

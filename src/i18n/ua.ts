@@ -1365,6 +1365,16 @@ export const i18n_ua = {
         'Якщо цей файл було відкрито або опубліковано, зміна його назви порушить наявні посилання',
     },
 
+    projectPanel: {
+      SearchByTitle: 'Пошук за назвою',
+      MyProjects: 'My Projects',
+      GenerateProjectLink: 'Generate Project Link',
+      ProjectLinkGeneratedInClipBoard: 'A link to the project has been generated in the clip board',
+      DoYouReallyWantToDeleteProject: 'Do you really want to delete Project',
+      IfSharedOrPublishedRenamingProjectBreaksExistingLinks:
+        'If this project has been shared or published, renaming it breaks existing links',
+    },
+
     accountSettingsPanel: {
       MyAccountSettings: 'Мої налаштування облікового запису',
       MyID: 'Моє 🆔',

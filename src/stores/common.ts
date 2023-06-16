@@ -481,7 +481,6 @@ export interface CommonStoreState {
   createNewFileFlag: boolean;
   openLocalFileFlag: boolean;
   saveLocalFileFlag: boolean;
-  saveLocalFileDialogVisible: boolean;
   enableFineGrid: boolean;
   setEnableFineGrid: (b: boolean) => void;
 
@@ -491,8 +490,6 @@ export interface CommonStoreState {
   showCloudFileTitleDialog: boolean;
   // we have to use the sure flip of an additional flag to ensure it triggers useEffect hook
   showCloudFileTitleDialogFlag: boolean;
-  saveCloudFileFlag: boolean;
-  listCloudFilesFlag: boolean;
   localContentToImportAfterCloudFileUpdate: any;
 
   solarPanelArrayLayoutParams: SolarPanelArrayLayoutParams;
@@ -3986,7 +3983,6 @@ export const useStore = create<CommonStoreState>(
           createNewFileFlag: false,
           openLocalFileFlag: false,
           saveLocalFileFlag: false,
-          saveLocalFileDialogVisible: false,
           localFileDialogRequested: false,
           pvModelDialogVisible: false,
           loggable: false,
@@ -3994,8 +3990,6 @@ export const useStore = create<CommonStoreState>(
           currentUndoable: undefined,
           showCloudFileTitleDialog: false,
           showCloudFileTitleDialogFlag: false,
-          saveCloudFileFlag: false,
-          listCloudFilesFlag: false,
           localContentToImportAfterCloudFileUpdate: undefined,
 
           enableFineGrid: false,

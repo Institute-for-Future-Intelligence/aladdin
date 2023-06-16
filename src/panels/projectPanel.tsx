@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -73,14 +73,14 @@ const Header = styled.div`
   }
 `;
 
-export interface CloudFilePanelProps {
-  cloudFileArray: object[];
-  openCloudFile: (userid: string, title: string) => void;
-  deleteCloudFile: (userid: string, title: string) => void;
-  renameCloudFile: (userid: string, oldTitle: string, newTitle: string) => void;
+export interface ProjectPanelProps {
+  projectArray: object[];
+  openProject: (userid: string, title: string) => void;
+  deleteProject: (userid: string, title: string) => void;
+  renameProject: (userid: string, oldTitle: string, newTitle: string) => void;
 }
 
-const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, renameCloudFile }: CloudFilePanelProps) => {
+const ProjectPanel = ({ projectArray, openProject, deleteProject, renameProject }: ProjectPanelProps) => {
   const language = useStore(Selector.language);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
@@ -98,9 +98,9 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
   const [newTitle, setNewTitle] = useState<string>();
   const [userid, setUserid] = useState<string>();
   const dragRef = useRef<HTMLDivElement | null>(null);
-  // make an editable copy because the file array is not mutable
-  const filesRef = useRef<object[]>([...cloudFileArray]);
-  // set a flag so that we can update when filesRef changes
+  // make an editable copy because the project array is not mutable
+  const projectsRef = useRef<object[]>([...projectArray]);
+  // set a flag so that we can update when projectsRef changes
   const [recountFlag, setRecountFlag] = useState<boolean>(false);
 
   const { Search } = Input;
@@ -122,11 +122,11 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
   }, []);
 
   useEffect(() => {
-    if (cloudFileArray) {
-      filesRef.current = [...cloudFileArray];
+    if (projectArray) {
+      projectsRef.current = [...projectArray];
       setRecountFlag(!recountFlag);
     }
-  }, [cloudFileArray]);
+  }, [projectArray]);
 
   const onDrag: DraggableEventHandler = (e, ui) => {
     setCurPosition({
@@ -141,13 +141,13 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
 
   const closePanel = () => {
     usePrimitiveStore.setState((state) => {
-      state.showCloudFilePanel = false;
+      state.showProjectPanel = false;
     });
   };
 
-  const deleteFile = (userid: string, title: string) => {
+  const confirmDeleteProject = (userid: string, title: string) => {
     Modal.confirm({
-      title: i18n.t('cloudFilePanel.DoYouReallyWantToDelete', lang) + ' "' + title + '"?',
+      title: i18n.t('projectPanel.DoYouReallyWantToDeleteProject', lang) + ' "' + title + '"?',
       content: (
         <span style={{ color: 'red', fontWeight: 'bold' }}>
           <WarningOutlined style={{ marginRight: '6px' }} />
@@ -156,19 +156,14 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
       ),
       icon: <QuestionCircleOutlined />,
       onOk: () => {
-        deleteCloudFile(userid, title);
-        // change the address field of the browser when the cloud file is currently open
-        const params = new URLSearchParams(window.location.search);
-        if (params.get('title') === title && params.get('userid') === userid) {
-          window.history.pushState({}, document.title, HOME_URL);
-        }
+        deleteProject(userid, title);
       },
     });
   };
 
-  const renameFile = () => {
+  const changeProjectTitle = () => {
     if (userid && oldTitle && newTitle) {
-      renameCloudFile(userid, oldTitle, newTitle);
+      renameProject(userid, oldTitle, newTitle);
       setNewTitle(undefined);
     }
     setRenameDialogVisible(false);
@@ -200,7 +195,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
           </div>
         }
         visible={renameDialogVisible}
-        onOk={renameFile}
+        onOk={changeProjectTitle}
         onCancel={() => {
           setRenameDialogVisible(false);
           setNewTitle(undefined);
@@ -215,7 +210,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
           <Input
             placeholder="Title"
             value={newTitle ? newTitle : oldTitle}
-            onPressEnter={renameFile}
+            onPressEnter={changeProjectTitle}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               setNewTitle(e.target.value);
             }}
@@ -224,7 +219,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
             <WarningOutlined style={{ marginRight: '4px' }} />
             {i18n.t('word.Caution', lang) +
               ': ' +
-              i18n.t('cloudFilePanel.IfSharedOrPublishedRenamingFileBreaksExistingLinks', lang)}
+              i18n.t('projectPanel.IfSharedOrPublishedRenamingProjectBreaksExistingLinks', lang)}
             .
           </span>
         </Space>
@@ -241,7 +236,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
         <Container ref={nodeRef}>
           <ColumnWrapper ref={wrapperRef}>
             <Header className="handle" style={{ direction: 'ltr' }}>
-              <span>{i18n.t('cloudFilePanel.MyCloudFiles', lang) + ' (' + filesRef.current.length + ')'}</span>
+              <span>{i18n.t('projectPanel.MyProjects', lang) + ' (' + projectsRef.current.length + ')'}</span>
               <span
                 style={{ cursor: 'pointer' }}
                 onMouseDown={() => {
@@ -257,18 +252,18 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
             <span style={{ direction: 'ltr' }}>
               <Search
                 style={{ width: '50%', paddingTop: '8px', paddingBottom: '8px' }}
-                title={i18n.t('cloudFilePanel.SearchByTitle', lang)}
+                title={i18n.t('projectPanel.SearchByTitle', lang)}
                 allowClear
                 size={'small'}
                 enterButton
                 onSearch={(s) => {
-                  if (!cloudFileArray) return;
+                  if (!projectArray) return;
                   // must create a new array for ant table to update (don't just set length to 0)
-                  filesRef.current = [];
-                  for (const f of cloudFileArray) {
+                  projectsRef.current = [];
+                  for (const f of projectArray) {
                     // @ts-ignore
                     if (f['title']?.toLowerCase().includes(s.toLowerCase())) {
-                      filesRef.current.push(f);
+                      projectsRef.current.push(f);
                     }
                   }
                   setRecountFlag(!recountFlag);
@@ -278,7 +273,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
             <Table
               size={'small'}
               style={{ width: '100%', direction: 'ltr' }}
-              dataSource={filesRef.current}
+              dataSource={projectsRef.current}
               scroll={{ y: 360 }}
               pagination={{
                 defaultPageSize: 10,
@@ -311,7 +306,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
                       if (selection && selection.toString().length > 0) return;
                       // only proceed when no text is selected
                       // @ts-ignore
-                      openCloudFile(data.userid, data.title);
+                      openProject(data.userid, data.title);
                     },
                   };
                 }}
@@ -342,7 +337,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
                       alt={'Delete'}
                       src={DeleteImage}
                       onClick={() => {
-                        deleteFile(record.userid, record.title);
+                        confirmDeleteProject(record.userid, record.title);
                       }}
                       height={16}
                       width={16}
@@ -368,7 +363,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
                       }}
                     />
                     <img
-                      title={i18n.t('cloudFilePanel.GenerateLink', lang)}
+                      title={i18n.t('projectPanel.GenerateProjectLink', lang)}
                       alt={'Link'}
                       src={LinkImage}
                       onClick={() => {
@@ -379,7 +374,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
                           '&title=' +
                           encodeURIComponent(record.title);
                         copyTextToClipboard(url);
-                        showSuccess(i18n.t('cloudFilePanel.LinkGeneratedInClipBoard', lang) + '.');
+                        showSuccess(i18n.t('projectPanel.ProjectLinkGeneratedInClipBoard', lang) + '.');
                       }}
                       height={16}
                       width={16}
@@ -399,4 +394,4 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
   );
 };
 
-export default React.memo(CloudFilePanel);
+export default React.memo(ProjectPanel);

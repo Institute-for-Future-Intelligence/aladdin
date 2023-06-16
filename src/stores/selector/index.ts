@@ -99,9 +99,11 @@ export const modelSites = (state: CommonStoreState) => state.modelSites;
 
 export const peopleModels = (state: CommonStoreState) => state.peopleModels;
 
-export const saveCloudFileFlag = (state: CommonStoreState) => state.saveCloudFileFlag;
+export const saveCloudFileFlag = (state: PrimitiveStoreState) => state.saveCloudFileFlag;
 
 export const createProjectFlag = (state: PrimitiveStoreState) => state.createProjectFlag;
+
+export const listProjectsFlag = (state: PrimitiveStoreState) => state.listProjectsFlag;
 
 export const modelsMapFlag = (state: PrimitiveStoreState) => state.modelsMapFlag;
 
@@ -111,7 +113,7 @@ export const showLeaderboard = (state: PrimitiveStoreState) => state.showLeaderb
 
 export const publishOnModelsMapFlag = (state: PrimitiveStoreState) => state.publishOnModelsMapFlag;
 
-export const listCloudFilesFlag = (state: CommonStoreState) => state.listCloudFilesFlag;
+export const listCloudFilesFlag = (state: PrimitiveStoreState) => state.listCloudFilesFlag;
 
 export const localContentToImportAfterCloudFileUpdate = (state: CommonStoreState) =>
   state.localContentToImportAfterCloudFileUpdate;
@@ -124,7 +126,7 @@ export const openLocalFileFlag = (state: CommonStoreState) => state.openLocalFil
 
 export const saveLocalFileFlag = (state: CommonStoreState) => state.saveLocalFileFlag;
 
-export const saveLocalFileDialogVisible = (state: CommonStoreState) => state.saveLocalFileDialogVisible;
+export const saveLocalFileDialogVisible = (state: PrimitiveStoreState) => state.saveLocalFileDialogVisible;
 
 export const fileChanged = (state: CommonStoreState) => state.fileChanged;
 
@@ -478,6 +480,8 @@ export const enableFineGrid = (state: CommonStoreState) => state.enableFineGrid;
 export const setEnableFineGrid = (state: CommonStoreState) => state.setEnableFineGrid;
 
 export const showCloudFilePanel = (state: PrimitiveStoreState) => state.showCloudFilePanel;
+
+export const showProjectPanel = (state: PrimitiveStoreState) => state.showProjectPanel;
 
 export const showModelsGallery = (state: PrimitiveStoreState) => state.showModelsGallery;
 

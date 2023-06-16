@@ -860,39 +860,46 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
         break;
       case 'ctrl+s':
       case 'meta+s': // for Mac
-        setCommonStore((state) => {
+        usePrimitiveStore.setState((state) => {
           state.saveLocalFileDialogVisible = true;
-          if (loggable) {
+        });
+        if (loggable) {
+          setCommonStore((state) => {
             state.actionInfo = {
               name: 'Save Local File',
               timestamp: new Date().getTime(),
             };
-          }
-        });
+          });
+        }
         break;
       case 'ctrl+shift+o':
       case 'meta+shift+o': // for Mac
-        setCommonStore((state) => {
+        usePrimitiveStore.setState((state) => {
           state.listCloudFilesFlag = !state.listCloudFilesFlag;
-          if (loggable) {
+          state.openModelsMap = false;
+        });
+        if (loggable) {
+          setCommonStore((state) => {
             state.actionInfo = {
               name: 'List Cloud Files',
               timestamp: new Date().getTime(),
             };
-          }
-        });
+          });
+        }
         break;
       case 'ctrl+shift+s':
       case 'meta+shift+s': // for Mac
-        setCommonStore((state) => {
+        usePrimitiveStore.setState((state) => {
           state.saveCloudFileFlag = !state.saveCloudFileFlag;
-          if (loggable) {
+        });
+        if (loggable) {
+          setCommonStore((state) => {
             state.actionInfo = {
               name: 'Save Cloud File',
               timestamp: new Date().getTime(),
             };
-          }
-        });
+          });
+        }
         break;
       case 'alt+backspace':
       case 'delete':

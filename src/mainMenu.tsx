@@ -230,6 +230,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
     if (cloudFile) {
       setCommonStore((state) => {
         state.localContentToImportAfterCloudFileUpdate = input;
+      });
+      usePrimitiveStore.setState((state) => {
         state.saveCloudFileFlag = !state.saveCloudFileFlag;
       });
     } else {
@@ -755,15 +757,17 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <Menu.Item
             key="save-local-file"
             onClick={() => {
-              setCommonStore((state) => {
+              usePrimitiveStore.setState((state) => {
                 state.saveLocalFileDialogVisible = true;
-                if (loggable) {
+              });
+              if (loggable) {
+                setCommonStore((state) => {
                   state.actionInfo = {
                     name: 'Save as Local File',
                     timestamp: new Date().getTime(),
                   };
-                }
-              });
+                });
+              }
             }}
           >
             {i18n.t('menu.file.SaveAsLocalFile', lang)}
@@ -774,18 +778,18 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             <Menu.Item
               key="open-cloud-file"
               onClick={() => {
-                setCommonStore((state) => {
+                usePrimitiveStore.setState((state) => {
                   state.listCloudFilesFlag = !state.listCloudFilesFlag;
-                  if (loggable) {
+                  state.openModelsMap = false;
+                });
+                if (loggable) {
+                  setCommonStore((state) => {
                     state.actionInfo = {
                       name: 'List Cloud Files',
                       timestamp: new Date().getTime(),
                     };
-                  }
-                });
-                usePrimitiveStore.setState((state) => {
-                  state.openModelsMap = false;
-                });
+                  });
+                }
               }}
             >
               {i18n.t('menu.file.OpenCloudFile', lang)}
@@ -797,15 +801,17 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             <Menu.Item
               key="save-cloud-file"
               onClick={() => {
-                setCommonStore((state) => {
+                usePrimitiveStore.setState((state) => {
                   state.saveCloudFileFlag = !state.saveCloudFileFlag;
-                  if (loggable) {
+                });
+                if (loggable) {
+                  setCommonStore((state) => {
                     state.actionInfo = {
                       name: 'Save Cloud File',
                       timestamp: new Date().getTime(),
                     };
-                  }
-                });
+                  });
+                }
               }}
             >
               {i18n.t('menu.file.SaveCloudFile', lang)}
@@ -864,59 +870,57 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       )}
 
       {/* project menu */}
-      {!openModelsMap && (
+      {!openModelsMap && !viewOnly && user.uid && (
         <SubMenu key={'project'} title={i18n.t('menu.projectSubMenu', lang)}>
-          {!viewOnly && (
-            <Menu.Item
-              key="create-new-project"
-              onClick={() => {
-                if (!user.uid) {
-                  showInfo(i18n.t('menu.project.YouMustLogInToCreateProject', lang) + '.');
-                  return;
-                }
+          <Menu.Item
+            key="create-new-project"
+            onClick={() => {
+              if (!user.uid) {
+                showInfo(i18n.t('menu.project.YouMustLogInToCreateProject', lang) + '.');
+                return;
+              }
+              setCreateNewProjectDialogVisible(true);
+              usePrimitiveStore.setState((state) => {
+                state.openModelsMap = false;
+              });
+              if (loggable) {
                 setCommonStore((state) => {
-                  setCreateNewProjectDialogVisible(true);
-                  if (loggable) {
-                    state.actionInfo = {
-                      name: 'Create New Project',
-                      timestamp: new Date().getTime(),
-                    };
-                  }
+                  state.actionInfo = {
+                    name: 'Create New Project',
+                    timestamp: new Date().getTime(),
+                  };
                 });
-                usePrimitiveStore.setState((state) => {
-                  state.openModelsMap = false;
-                });
-              }}
-            >
-              {i18n.t('menu.project.CreateNewProject', lang)}
-            </Menu.Item>
-          )}
-          {!viewOnly && (
-            <Menu.Item
-              key="open-project"
-              onClick={() => {
-                if (!user.uid) {
-                  showInfo(i18n.t('menu.project.YouMustLogInToOpenProject', lang) + '.');
-                  return;
-                }
+              }
+            }}
+          >
+            {i18n.t('menu.project.CreateNewProject', lang)}
+          </Menu.Item>
+          <Menu.Item
+            key="list-project"
+            onClick={() => {
+              if (!user.uid) {
+                showInfo(i18n.t('menu.project.YouMustLogInToOpenProject', lang) + '.');
+                return;
+              }
+              usePrimitiveStore.setState((state) => {
+                state.listProjectsFlag = !state.listProjectsFlag;
+                state.openModelsMap = false;
+              });
+              if (loggable) {
                 setCommonStore((state) => {
-                  if (loggable) {
-                    state.actionInfo = {
-                      name: 'Open Project',
-                      timestamp: new Date().getTime(),
-                    };
-                  }
+                  state.actionInfo = {
+                    name: 'Open Projects',
+                    timestamp: new Date().getTime(),
+                  };
                 });
-                usePrimitiveStore.setState((state) => {
-                  state.openModelsMap = false;
-                });
-              }}
-            >
-              {i18n.t('menu.project.OpenProject', lang)}
-            </Menu.Item>
-          )}
+              }
+            }}
+          >
+            {i18n.t('menu.project.OpenProject', lang)}
+          </Menu.Item>
         </SubMenu>
       )}
+
       {/* edit menu */}
       {(selectedElement || readyToPaste || undoManager.hasUndo() || undoManager.hasRedo()) && !openModelsMap && (
         <SubMenu key={'edit'} title={i18n.t('menu.editSubMenu', lang)}>
