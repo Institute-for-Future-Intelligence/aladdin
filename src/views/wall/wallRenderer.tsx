@@ -95,6 +95,8 @@ const WallRenderer = (wallModel: WallModel) => {
             leftTopPartialResizeHandleHeight={realWallLeftHeight}
             rightTopPartialResizeHandleHeight={realWallRightHeight}
             fill={fill}
+            wallLeftHeight={wallLeftHeight}
+            wallRightHeight={wallRightHeight}
             highLight={highLight}
             leftJoints={leftJoints}
             rightJoints={rightJoints}

@@ -37,6 +37,8 @@ interface WallResizeHandleWrapperProps {
   absAngle: number;
   highLight: boolean;
   fill: WallFill;
+  wallLeftHeight: number;
+  wallRightHeight: number;
   leftUnfilledHeight: number;
   rightUnfilledHeight: number;
   leftTopPartialResizeHandleHeight: number;
@@ -125,6 +127,8 @@ const WallResizeHandleWrapper = React.memo(
     leftTopPartialResizeHandleHeight,
     rightTopPartialResizeHandleHeight,
     fill,
+    wallLeftHeight,
+    wallRightHeight,
     highLight,
     leftJoints,
     rightJoints,
@@ -203,8 +207,8 @@ const WallResizeHandleWrapper = React.memo(
       wall: WallModel,
       leftUnfilledHeight: number,
       rightUnfilledHeight: number,
-      leftTopPartialResizeHandleHeight: number,
-      rightTopPartialResizeHandleHeight: number,
+      leftTopPartialHeight: number,
+      rightTopPartialHeight: number,
     ) => {
       const {
         lx,
@@ -216,6 +220,14 @@ const WallResizeHandleWrapper = React.memo(
         centerRightRoofHeight,
         centerRoofHeight,
       } = wall;
+
+      const isPartial = fill === WallFill.Partial;
+      const realWallLeftHeight = isPartial ? Math.min(wallLeftHeight, leftTopPartialHeight) : wallLeftHeight;
+      const realWallRightHeight = isPartial ? Math.min(wallRightHeight, rightTopPartialHeight) : wallRightHeight;
+      const isTopPartial =
+        isPartial &&
+        (!Util.isZero(wallLeftHeight - realWallLeftHeight) || !Util.isZero(wallRightHeight - realWallRightHeight));
+
       const [hx, hy] = [lx / 2, lz / 2];
 
       const points: Point2[] = [];
@@ -223,11 +235,8 @@ const WallResizeHandleWrapper = React.memo(
       // from lower left, counter-clockwise
       points.push({ x: -hx, y: -hy + leftUnfilledHeight }, { x: hx, y: -hy + rightUnfilledHeight });
 
-      if (fill === WallFill.Partial) {
-        points.push(
-          { x: hx, y: -hy + rightTopPartialResizeHandleHeight },
-          { x: -hx, y: -hy + leftTopPartialResizeHandleHeight },
-        );
+      if (isTopPartial) {
+        points.push({ x: hx, y: -hy + realWallRightHeight }, { x: -hx, y: -hy + realWallLeftHeight });
       } else if (!roofId) {
         points.push({ x: hx, y: hy }, { x: -hx, y: hy });
       } else {
@@ -255,7 +264,7 @@ const WallResizeHandleWrapper = React.memo(
       return points;
     };
 
-    const isValid = (
+    const isPartialWallValid = (
       wall: WallModel,
       leftUnfilledHeight: number,
       rightUnfilledHeight: number,
@@ -418,7 +427,7 @@ const WallResizeHandleWrapper = React.memo(
                   }
                 }
                 if (
-                  isValid(
+                  isPartialWallValid(
                     wall,
                     newUnfilledHeight,
                     state.enableFineGrid ? newUnfilledHeight : wall.rightUnfilledHeight,
@@ -455,7 +464,7 @@ const WallResizeHandleWrapper = React.memo(
                   }
                 }
                 if (
-                  isValid(
+                  isPartialWallValid(
                     wall,
                     state.enableFineGrid ? newUnfilledHeight : wall.leftUnfilledHeight,
                     newUnfilledHeight,
@@ -491,7 +500,7 @@ const WallResizeHandleWrapper = React.memo(
                 }
               }
               if (
-                isValid(
+                isPartialWallValid(
                   wall,
                   wall.leftUnfilledHeight,
                   wall.rightUnfilledHeight,
@@ -525,7 +534,7 @@ const WallResizeHandleWrapper = React.memo(
                 }
               }
               if (
-                isValid(
+                isPartialWallValid(
                   wall,
                   wall.leftUnfilledHeight,
                   wall.rightUnfilledHeight,
