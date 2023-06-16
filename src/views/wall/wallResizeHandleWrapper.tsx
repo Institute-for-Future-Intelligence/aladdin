@@ -377,14 +377,17 @@ const WallResizeHandleWrapper = React.memo(
               for (const e of state.elements) {
                 if (e.type === ObjectType.Wall && e.id === id) {
                   const wall = e as WallModel;
+                  if (wall.fill === WallFill.Partial) {
+                    newLz = Math.max(newLz, wall.leftTopPartialHeight, wall.rightTopPartialHeight);
+                  }
                   wall.lz = newLz;
                   wall.cz = newLz / 2;
-                  if (newLz < wall.leftTopPartialHeight) {
-                    wall.leftTopPartialHeight = newLz;
-                  }
-                  if (newLz < wall.rightTopPartialHeight) {
-                    wall.rightTopPartialHeight = newLz;
-                  }
+                  // if (newLz < wall.leftTopPartialHeight) {
+                  //   wall.leftTopPartialHeight = newLz;
+                  // }
+                  // if (newLz < wall.rightTopPartialHeight) {
+                  //   wall.rightTopPartialHeight = newLz;
+                  // }
                   break;
                 }
               }
@@ -392,14 +395,17 @@ const WallResizeHandleWrapper = React.memo(
               for (const e of state.elements) {
                 if (e.type === ObjectType.Wall && (e as WallModel).roofId === roofId) {
                   const wall = e as WallModel;
+                  if (wall.fill === WallFill.Partial) {
+                    newLz = Math.max(newLz, wall.leftTopPartialHeight, wall.rightTopPartialHeight);
+                  }
                   wall.lz = newLz;
                   wall.cz = newLz / 2;
-                  if (newLz < wall.leftTopPartialHeight) {
-                    wall.leftTopPartialHeight = newLz;
-                  }
-                  if (newLz < wall.rightTopPartialHeight) {
-                    wall.rightTopPartialHeight = newLz;
-                  }
+                  // if (newLz < wall.leftTopPartialHeight) {
+                  //   wall.leftTopPartialHeight = newLz;
+                  // }
+                  // if (newLz < wall.rightTopPartialHeight) {
+                  //   wall.rightTopPartialHeight = newLz;
+                  // }
                 }
               }
             }
