@@ -26,6 +26,7 @@ import { useHandleSize } from 'src/views/wall/hooks';
 import { RoofModel } from 'src/models/RoofModel';
 import { isGroupable } from 'src/models/Groupable';
 import { Util } from 'src/Util';
+import { WindowModel } from 'src/models/WindowModel';
 
 interface GroupMasterProps {
   baseGroupSet: Set<string>;
@@ -144,6 +145,7 @@ const GroupMaster = ({
   const elementHeightMapRef = useRef<Map<string, number>>(new Map());
   const wallRelPointsMapRef = useRef<Map<string, Vector2[]>>(new Map<string, Vector2[]>());
   const partialWallHeightMapRef = useRef<Map<string, PartialWallHeight>>(new Map());
+  const skylightRelPosMapRef = useRef<Map<string, number[]>>(new Map());
   const baseRelPosMapRef = useRef<Map<string, Vector3>>(new Map());
   const baseRotationMapRef = useRef<Map<string, number>>(new Map());
   const basePosRatioMapRef = useRef<Map<string, number[]>>(new Map()); // 2d
@@ -156,6 +158,7 @@ const GroupMaster = ({
   const wallOldPointsMapRef = useRef<Map<string, number[]>>(new Map());
   const elementOldHeightMapRef = useRef<Map<string, number>>(new Map());
   const oldPartialWallHeightMapRef = useRef<Map<string, PartialWallHeight>>(new Map());
+  const oldSkyligthPosMapRef = useRef<Map<string, number[]>>(new Map());
 
   const [position, setPosition] = useState<Vector3>(new Vector3(cx, cy, cz));
   const [rotation, setRotation] = useState<number>(initalRotation);
@@ -207,22 +210,40 @@ const GroupMaster = ({
     event.stopPropagation();
   };
 
-  const updateUndoableResizeXY = (foundationDataMap: Map<string, number[]>, wallPointsMap: Map<string, number[]>) => {
+  const updateUndoableResizeXY = (
+    foundationDataMap: Map<string, number[]>,
+    wallPointsMap: Map<string, number[]>,
+    skyligthPosMap: Map<string, number[]>,
+  ) => {
     setCommonStore((state) => {
       for (const elem of state.elements) {
         if (isGroupable(elem) && foundationDataMap.has(elem.id)) {
           [elem.cx, elem.cy, elem.lx, elem.ly] = foundationDataMap.get(elem.id)!;
-        } else if (elem.type === ObjectType.Wall && wallPointsMap.has(elem.id)) {
-          const points = wallPointsMap.get(elem.id)!;
-          const w = elem as WallModel;
-          const leftPoint = points.slice(0, 3);
-          const rightPoint = points.slice(3);
-          w.cx = (leftPoint[0] + rightPoint[0]) / 2;
-          w.cy = (leftPoint[1] + rightPoint[1]) / 2;
-          w.lx = Math.sqrt(Math.pow(leftPoint[0] - rightPoint[0], 2) + Math.pow(leftPoint[1] - rightPoint[1], 2));
-          w.relativeAngle = Math.atan2(rightPoint[1] - leftPoint[1], rightPoint[0] - leftPoint[0]);
-          w.leftPoint = [...leftPoint];
-          w.rightPoint = [...rightPoint];
+        } else if (foundationDataMap.has(elem.parentId)) {
+          switch (elem.type) {
+            case ObjectType.Wall: {
+              const points = wallPointsMap.get(elem.id);
+              if (!points) continue;
+              const w = elem as WallModel;
+              const leftPoint = points.slice(0, 3);
+              const rightPoint = points.slice(3);
+              w.cx = (leftPoint[0] + rightPoint[0]) / 2;
+              w.cy = (leftPoint[1] + rightPoint[1]) / 2;
+              w.lx = Math.hypot(leftPoint[0] - rightPoint[0] + (leftPoint[1] - rightPoint[1]));
+              w.relativeAngle = Math.atan2(rightPoint[1] - leftPoint[1], rightPoint[0] - leftPoint[0]);
+              w.leftPoint = [...leftPoint];
+              w.rightPoint = [...rightPoint];
+              break;
+            }
+            case ObjectType.Window: {
+              const window = elem as WindowModel;
+              if (window.parentType !== ObjectType.Roof) continue;
+              const position = skyligthPosMap.get(elem.id);
+              if (!position) continue;
+              [window.cx, window.cy] = position;
+              break;
+            }
+          }
         }
       }
       state.groupActionUpdateFlag = !state.groupActionUpdateFlag;
@@ -298,12 +319,17 @@ const GroupMaster = ({
   const addUndoableResizeXY = () => {
     const foundationNewDataMap = new Map<string, number[]>();
     const wallNewPointsMap = new Map<string, number[]>();
+    const newSkylightPosMap = new Map<string, number[]>();
     for (const elem of useStore.getState().elements) {
       if (isGroupable(elem) && foundatonOldDataMapRef.current.has(elem.id)) {
         foundationNewDataMap.set(elem.id, [elem.cx, elem.cy, elem.lx, elem.ly]);
-      } else if (elem.type === ObjectType.Wall && wallOldPointsMapRef.current.has(elem.id)) {
+      } else if (wallOldPointsMapRef.current.has(elem.id)) {
         const w = elem as WallModel;
         wallNewPointsMap.set(elem.id, [...w.leftPoint, ...w.rightPoint]);
+      } else if (oldSkyligthPosMapRef.current.has(elem.id)) {
+        const window = elem as WindowModel;
+        if (window.parentType !== ObjectType.Roof) continue;
+        newSkylightPosMap.set(window.id, [window.cx, window.cy]);
       }
     }
     const undoableReizeXY = {
@@ -313,11 +339,21 @@ const GroupMaster = ({
       newFoundationDataMap: new Map(foundationNewDataMap),
       oldWallPointsMap: new Map(wallOldPointsMapRef.current),
       newWallPointsMap: new Map(wallNewPointsMap),
+      oldSkylightPosMap: new Map(oldSkyligthPosMapRef.current),
+      newSkylightPosMap: new Map(newSkylightPosMap),
       undo: () => {
-        updateUndoableResizeXY(undoableReizeXY.oldFoundationDataMap, undoableReizeXY.oldWallPointsMap);
+        updateUndoableResizeXY(
+          undoableReizeXY.oldFoundationDataMap,
+          undoableReizeXY.oldWallPointsMap,
+          undoableReizeXY.oldSkylightPosMap,
+        );
       },
       redo: () => {
-        updateUndoableResizeXY(undoableReizeXY.newFoundationDataMap, undoableReizeXY.newWallPointsMap);
+        updateUndoableResizeXY(
+          undoableReizeXY.newFoundationDataMap,
+          undoableReizeXY.newWallPointsMap,
+          undoableReizeXY.newSkylightPosMap,
+        );
       },
     } as UndoableResizeBuildingXY;
     addUndoable(undoableReizeXY);
@@ -415,21 +451,32 @@ const GroupMaster = ({
               }
 
               for (const e of state.elements) {
-                if (e.type === ObjectType.Wall && e.foundationId === elem.id) {
-                  const wall = e as WallModel;
-                  const relativePosition = wallRelPointsMapRef.current.get(wall.id);
-                  if (relativePosition) {
-                    const [leftRelPoint, rightRelPoint] = relativePosition;
-                    const leftPoint = [leftRelPoint.x * newLx, leftRelPoint.y * newLy, elem.lz];
-                    const rightPoint = [rightRelPoint.x * newLx, rightRelPoint.y * newLy, elem.lz];
-                    wall.cx = (leftPoint[0] + rightPoint[0]) / 2;
-                    wall.cy = (leftPoint[1] + rightPoint[1]) / 2;
-                    wall.lx = Math.sqrt(
-                      Math.pow(leftPoint[0] - rightPoint[0], 2) + Math.pow(leftPoint[1] - rightPoint[1], 2),
-                    );
-                    wall.relativeAngle = Math.atan2(rightPoint[1] - leftPoint[1], rightPoint[0] - leftPoint[0]);
-                    wall.leftPoint = [...leftPoint];
-                    wall.rightPoint = [...rightPoint];
+                if (e.foundationId === elem.id) {
+                  switch (e.type) {
+                    case ObjectType.Wall: {
+                      const wall = e as WallModel;
+                      const relativePosition = wallRelPointsMapRef.current.get(wall.id);
+                      if (!relativePosition) continue;
+                      const [leftRelPoint, rightRelPoint] = relativePosition;
+                      const leftPoint = [leftRelPoint.x * newLx, leftRelPoint.y * newLy, elem.lz];
+                      const rightPoint = [rightRelPoint.x * newLx, rightRelPoint.y * newLy, elem.lz];
+                      wall.cx = (leftPoint[0] + rightPoint[0]) / 2;
+                      wall.cy = (leftPoint[1] + rightPoint[1]) / 2;
+                      wall.lx = Math.hypot(leftPoint[0] - rightPoint[0] + (leftPoint[1] - rightPoint[1]));
+                      wall.relativeAngle = Math.atan2(rightPoint[1] - leftPoint[1], rightPoint[0] - leftPoint[0]);
+                      wall.leftPoint = [...leftPoint];
+                      wall.rightPoint = [...rightPoint];
+                      break;
+                    }
+                    case ObjectType.Window: {
+                      const window = e as WindowModel;
+                      if (window.parentType !== ObjectType.Roof) continue;
+                      const relativePosition = skylightRelPosMapRef.current.get(window.id);
+                      if (!relativePosition) continue;
+                      window.cx = relativePosition[0] * newLx;
+                      window.cy = relativePosition[1] * newLy;
+                      break;
+                    }
                   }
                 }
               }
@@ -453,21 +500,33 @@ const GroupMaster = ({
             elem.ly = ly;
             elem.cx = center.x;
             elem.cy = center.y;
-          } else if (elem.type === ObjectType.Wall && baseGroupSet.has(elem.parentId)) {
-            const wall = elem as WallModel;
-            const relativePosition = wallRelPointsMapRef.current.get(wall.id);
-            if (relativePosition) {
-              const [leftRelPoint, rightRelPoint] = relativePosition;
-              const leftPoint = [leftRelPoint.x * lx, leftRelPoint.y * ly, 0];
-              const rightPoint = [rightRelPoint.x * lx, rightRelPoint.y * ly, 0];
-              wall.cx = (leftPoint[0] + rightPoint[0]) / 2;
-              wall.cy = (leftPoint[1] + rightPoint[1]) / 2;
-              wall.lx = Math.sqrt(
-                Math.pow(leftPoint[0] - rightPoint[0], 2) + Math.pow(leftPoint[1] - rightPoint[1], 2),
-              );
-              wall.relativeAngle = Math.atan2(rightPoint[1] - leftPoint[1], rightPoint[0] - leftPoint[0]);
-              wall.leftPoint = [...leftPoint];
-              wall.rightPoint = [...rightPoint];
+          }
+          // child elements
+          else if (elem.foundationId && baseGroupSet.has(elem.foundationId)) {
+            switch (elem.type) {
+              case ObjectType.Wall: {
+                const wall = elem as WallModel;
+                const relativePosition = wallRelPointsMapRef.current.get(wall.id);
+                if (!relativePosition) continue;
+                const [leftRelPoint, rightRelPoint] = relativePosition;
+                const leftPoint = [leftRelPoint.x * lx, leftRelPoint.y * ly, 0];
+                const rightPoint = [rightRelPoint.x * lx, rightRelPoint.y * ly, 0];
+                wall.cx = (leftPoint[0] + rightPoint[0]) / 2;
+                wall.cy = (leftPoint[1] + rightPoint[1]) / 2;
+                wall.lx = Math.hypot(leftPoint[0] - rightPoint[0], leftPoint[1] - rightPoint[1]);
+                wall.relativeAngle = Math.atan2(rightPoint[1] - leftPoint[1], rightPoint[0] - leftPoint[0]);
+                wall.leftPoint = [...leftPoint];
+                wall.rightPoint = [...rightPoint];
+                break;
+              }
+              case ObjectType.Window: {
+                const window = elem as WindowModel;
+                if (window.parentType !== ObjectType.Roof) continue;
+                const relativePosition = skylightRelPosMapRef.current.get(window.id);
+                if (!relativePosition) continue;
+                window.cx = relativePosition[0] * lx;
+                window.cy = relativePosition[1] * ly;
+              }
             }
           }
         }
@@ -553,22 +612,41 @@ const GroupMaster = ({
     wallRelPointsMapRef.current.clear();
     foundatonOldDataMapRef.current.clear();
     wallOldPointsMapRef.current.clear();
+    skylightRelPosMapRef.current.clear();
+    oldSkyligthPosMapRef.current.clear();
 
     const [currLx, currLy] = [hx * 2, hy * 2];
     for (const elem of useStore.getState().elements) {
+      // base elements
       if (isGroupable(elem) && baseGroupSet.has(elem.id)) {
         const { pos } = Util.getWorldDataById(elem.id);
         basePosRatioMapRef.current.set(elem.id, [(pos.x - position.x) / currLx, (pos.y - position.y) / currLy]);
         baseDmsRatioMapRef.current.set(elem.id, [elem.lx / currLx, elem.ly / currLy]);
         foundatonOldDataMapRef.current.set(elem.id, [elem.cx, elem.cy, elem.lx, elem.ly]);
-      } else if (elem.type === ObjectType.Wall && elem.foundationId && baseGroupSet.has(elem.foundationId)) {
-        const w = elem as WallModel;
-        const f = getElementById(elem.foundationId);
-        if (f) {
-          const leftPointRelative = new Vector2(w.leftPoint[0] / f.lx, w.leftPoint[1] / f.ly);
-          const rightPointRelative = new Vector2(w.rightPoint[0] / f.lx, w.rightPoint[1] / f.ly);
-          wallRelPointsMapRef.current.set(w.id, [leftPointRelative, rightPointRelative]);
-          wallOldPointsMapRef.current.set(w.id, [...w.leftPoint, ...w.rightPoint]);
+      }
+      // child elements
+      else if (elem.foundationId && baseGroupSet.has(elem.foundationId)) {
+        const foundation = getElementById(elem.foundationId);
+        if (!foundation) continue;
+        switch (elem.type) {
+          case ObjectType.Wall: {
+            const wall = elem as WallModel;
+            const leftPointRelative = new Vector2(wall.leftPoint[0] / foundation.lx, wall.leftPoint[1] / foundation.ly);
+            const rightPointRelative = new Vector2(
+              wall.rightPoint[0] / foundation.lx,
+              wall.rightPoint[1] / foundation.ly,
+            );
+            wallRelPointsMapRef.current.set(wall.id, [leftPointRelative, rightPointRelative]);
+            wallOldPointsMapRef.current.set(wall.id, [...wall.leftPoint, ...wall.rightPoint]);
+            break;
+          }
+          case ObjectType.Window: {
+            const window = elem as WindowModel;
+            if (window.parentType !== ObjectType.Roof) continue;
+            skylightRelPosMapRef.current.set(window.id, [window.cx / foundation.lx, window.cy / foundation.ly]);
+            oldSkyligthPosMapRef.current.set(window.id, [window.cx, window.cy]);
+            break;
+          }
         }
       }
     }

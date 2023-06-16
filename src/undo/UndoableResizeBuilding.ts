@@ -10,6 +10,8 @@ export interface UndoableResizeBuildingXY extends Undoable {
   newFoundationDataMap: Map<string, number[]>;
   oldWallPointsMap: Map<string, number[]>;
   newWallPointsMap: Map<string, number[]>;
+  oldSkylightPosMap: Map<string, number[]>;
+  newSkylightPosMap: Map<string, number[]>;
 }
 
 export interface UndoableResizeBuildingZ extends Undoable {
