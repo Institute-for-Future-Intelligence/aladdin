@@ -57,3 +57,11 @@ export interface UndoableMoveWall extends Undoable {
   newAngle: number;
   flippedWallSide: FlippedWallSide;
 }
+
+export interface UndoableMoveSkylight extends Undoable {
+  id: string;
+  oldPosition: number[];
+  newPosition: number[];
+  oldRotation: number[];
+  newRotation: number[];
+}

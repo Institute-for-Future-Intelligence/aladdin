@@ -123,3 +123,19 @@ export interface UnoableResizeSolarPanelOnRoof extends Undoable {
   oldNor: number[];
   newNor: number[];
 }
+
+export interface UndoableResizeSkylight extends Undoable {
+  id: string;
+  oldPosition: number[];
+  newPosition: number[];
+  oldDimension: number[];
+  newDimension: number[];
+  oldArchHeight?: number | null;
+  newArchHeight?: number | null;
+}
+
+export interface UndoableResizeSkylightPolygonTop extends Undoable {
+  id: string;
+  oldPolygonTop: number[];
+  newPolygonTop: number[];
+}

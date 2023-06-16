@@ -19,6 +19,8 @@ import { useRefStore } from 'src/stores/commonRef';
 import { RoofSegmentGroupUserData, RoofSegmentProps } from '../roof/roofRenderer';
 import { RoofModel, RoofType } from 'src/models/RoofModel';
 import { Util } from 'src/Util';
+import { UndoableMoveSkylight } from 'src/undo/UndoableMove';
+import { UndoableResizeSkylight, UndoableResizeSkylightPolygonTop } from 'src/undo/UndoableResize';
 
 interface WindowHandleWrapperProps {
   id: string;
@@ -157,6 +159,35 @@ const getRoofBoundaryVertices = (roofSegments: RoofSegmentProps[], roofCentroid:
   return roofSegments.map((segment) => segment.points[0].clone().add(roofCentroid));
 };
 
+const setUndoableMove = (id: string, position: number[], rotation: number[]) => {
+  useStore.getState().set((state) => {
+    const window = state.elements.find((e) => e.id === id && e.type === ObjectType.Window) as WindowModel;
+    if (!window) return;
+    [window.cx, window.cy, window.cz] = position;
+    window.rotation = [...rotation];
+  });
+};
+
+const setUndoableResize = (id: string, position: number[], dimension: number[], archHeight?: number | null) => {
+  useStore.getState().set((state) => {
+    const window = state.elements.find((e) => e.id === id && e.type === ObjectType.Window) as WindowModel;
+    if (!window) return;
+    [window.cx, window.cy, window.cz] = position;
+    [window.lx, window.ly, window.lz] = dimension;
+    if (archHeight !== undefined && archHeight !== null) {
+      window.archHeight = archHeight;
+    }
+  });
+};
+
+const setUndoableResizePolygonTop = (id: string, polygonTop: number[]) => {
+  useStore.getState().set((state) => {
+    const window = state.elements.find((e) => e.id === id && e.type === ObjectType.Window) as WindowModel;
+    if (!window) return;
+    window.polygonTop = [...polygonTop];
+  });
+};
+
 export const ArchResizeHandle = ({ z }: { z: number }) => {
   const ref = useRef<Mesh>();
 
@@ -191,6 +222,7 @@ const WindowHandleWrapper = ({
   parentType,
 }: WindowHandleWrapperProps) => {
   const addedWindowId = useStore((state) => state.addedWindowId);
+  const addUndoable = useStore(Selector.addUndoable);
 
   const isSettingNewWindow = addedWindowId === id;
   const isOnRoof = parentType === ObjectType.Roof;
@@ -202,6 +234,12 @@ const WindowHandleWrapper = ({
   const roofCentroidRef = useRef<Vector3 | undefined | null>(null);
   const currRoofSegmentIdxRef = useRef<number | null>(null);
   const resizeAnchorWorldPosRef = useRef<Vector3 | null>(null);
+
+  const oldPositionRef = useRef<number[] | null>(null);
+  const oldRotationRef = useRef<number[] | null>(null);
+  const oldDimensionRef = useRef<number[] | null>(null);
+  const oldArchHeight = useRef<number | null>(null);
+  const oldPolygonTop = useRef<number[] | null>(null);
 
   const [showIntersectionPlane, setShowIntersectionPlane] = useState(false);
 
@@ -225,7 +263,7 @@ const WindowHandleWrapper = ({
     return new Vector3().addVectors(worldPosition, v);
   };
 
-  const setRefDataForPointerMove = (handleType: HandleType) => {
+  const setRefDataBeforePointerMove = (handleType: HandleType) => {
     const windowModel = useStore
       .getState()
       .elements.find((e) => e.id === id && e.type === ObjectType.Window) as WindowModel;
@@ -254,6 +292,87 @@ const WindowHandleWrapper = ({
     currRoofSegmentIdxRef.current = RoofUtil.getSegmentIdx(roofSegments, posRelToCentroid);
     roofCentroidRef.current = centroid;
     roofSegmentsRef.current = roofSegments;
+
+    oldPositionRef.current = [windowModel.cx, windowModel.cy, windowModel.cz];
+    oldDimensionRef.current = [windowModel.lx, windowModel.ly, windowModel.lz];
+    oldRotationRef.current = [...windowModel.rotation];
+    oldArchHeight.current = windowModel.archHeight;
+    oldPolygonTop.current = windowModel.polygonTop ?? null;
+  };
+
+  const addUndoableMove = () => {
+    if (!oldPositionRef.current || !oldRotationRef.current) return;
+    const window = useStore.getState().elements.find((e) => e.id === id && e.type === ObjectType.Window) as WindowModel;
+    if (!window) return;
+
+    const undoable = {
+      name: 'Move skylight',
+      timestamp: Date.now(),
+      id: window.id,
+      oldPosition: [...oldPositionRef.current],
+      newPosition: [window.cx, window.cy, window.cz],
+      oldRotation: [...oldRotationRef.current],
+      newRotation: [...window.rotation],
+      undo() {
+        setUndoableMove(undoable.id, undoable.oldPosition, undoable.oldRotation);
+      },
+      redo() {
+        setUndoableMove(undoable.id, undoable.newPosition, undoable.newRotation);
+      },
+    } as UndoableMoveSkylight;
+
+    addUndoable(undoable);
+  };
+
+  const addUndoableResize = () => {
+    if (!oldDimensionRef.current || !oldPositionRef.current) return;
+    const window = useStore.getState().elements.find((e) => e.id === id && e.type === ObjectType.Window) as WindowModel;
+    if (!window) return;
+
+    const undoable = {
+      name: 'Resize skylight',
+      timestamp: Date.now(),
+      id: window.id,
+      oldPosition: [...oldPositionRef.current],
+      newPosition: [window.cx, window.cy, window.cz],
+      oldDimension: [...oldDimensionRef.current],
+      newDimension: [window.lx, window.ly, window.lz],
+      oldArchHeight: oldArchHeight.current,
+      newArchHeight: window.archHeight,
+      undo() {
+        setUndoableResize(this.id, this.oldPosition, this.oldDimension, this.oldArchHeight);
+      },
+      redo() {
+        setUndoableResize(this.id, this.newPosition, this.newDimension, this.newArchHeight);
+      },
+    } as UndoableResizeSkylight;
+    addUndoable(undoable);
+  };
+
+  const addUndoableReizePolygonTop = () => {
+    if (!oldPolygonTop.current) return;
+    const window = useStore.getState().elements.find((e) => e.id === id && e.type === ObjectType.Window) as WindowModel;
+    if (!window) return;
+
+    const undoable = {
+      name: 'Resize skylight top vertex',
+      timestamp: Date.now(),
+      id: window.id,
+      oldPolygonTop: [...oldPolygonTop.current],
+      newPolygonTop: window.polygonTop ?? [0, 0.5],
+      undo() {
+        setUndoableResizePolygonTop(this.id, this.oldPolygonTop);
+      },
+      redo() {
+        setUndoableResizePolygonTop(this.id, this.newPolygonTop);
+      },
+    } as UndoableResizeSkylightPolygonTop;
+    addUndoable(undoable);
+  };
+
+  const isFlatRoof = (roof: RoofModel) => {
+    if (roof.roofType === RoofType.Gable) return false;
+    return Math.abs(roof.rise) < 0.001;
   };
 
   const handlePointerDown = (event: ThreeEvent<PointerEvent>) => {
@@ -294,14 +413,9 @@ const WindowHandleWrapper = ({
         return;
     }
 
-    setRefDataForPointerMove(handleType);
+    setRefDataBeforePointerMove(handleType);
     setShowIntersectionPlane(true);
     useRefStore.getState().setEnableOrbitController(false);
-  };
-
-  const isFlatRoof = (roof: RoofModel) => {
-    if (roof.roofType === RoofType.Gable) return false;
-    return Math.abs(roof.rise) < 0.001;
   };
 
   const handlePointerMove = (event: ThreeEvent<PointerEvent>) => {
@@ -562,6 +676,21 @@ const WindowHandleWrapper = ({
   };
 
   const handlePointerUp = () => {
+    if (handleTypeRef.current === MoveHandleType.Mid) {
+      addUndoableMove();
+    } else if (isResizeHandle(handleTypeRef.current)) {
+      addUndoableResize();
+    } else if (handleTypeRef.current === ResizeHandleType.Upper) {
+      addUndoableReizePolygonTop();
+    } else if (handleTypeRef.current === ResizeHandleType.Arch) {
+      addUndoableResize();
+    }
+    oldPositionRef.current = null;
+    oldDimensionRef.current = null;
+    oldRotationRef.current = null;
+    oldArchHeight.current = null;
+    oldPolygonTop.current = null;
+
     handleTypeRef.current = null;
     foundationModelRef.current = null;
     roofModelRef.current = null;

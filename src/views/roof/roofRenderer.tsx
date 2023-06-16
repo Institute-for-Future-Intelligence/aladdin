@@ -63,9 +63,9 @@ interface RoofHandleProps {
   onPointerOver?: (event: ThreeEvent<PointerEvent>) => void;
 }
 
-const addUndoableAddSolarPanel = (elem: ElementModel) => {
+const addUndoableAddRooftopElement = (elem: ElementModel) => {
   const undoableAdd = {
-    name: 'Add Solar Panel on Roof',
+    name: `Add ${elem.type} on Roof`,
     timestamp: Date.now(),
     addedElement: elem,
     undo: () => {
@@ -134,7 +134,7 @@ const handleAddElementOnRoof = (
           state.elements.push(newElement);
           if (!state.actionModeLock) state.objectTypeToAdd = ObjectType.None;
         });
-        addUndoableAddSolarPanel(newElement);
+        addUndoableAddRooftopElement(newElement);
       }
       break;
     }
@@ -161,6 +161,7 @@ const handleAddElementOnRoof = (
           state.elements.push(newElement);
           if (!state.actionModeLock) state.objectTypeToAdd = ObjectType.None;
         });
+        addUndoableAddRooftopElement(newElement);
       }
       break;
     }
@@ -186,7 +187,7 @@ const handleAddElementOnRoof = (
             state.elements.push(newElement);
             if (!state.actionModeLock) state.objectTypeToAdd = ObjectType.None;
           });
-          addUndoableAddSolarPanel(newElement);
+          addUndoableAddRooftopElement(newElement);
         }
       }
       break;
@@ -218,7 +219,7 @@ const handleAddElementOnRoof = (
             state.elements.push(newElement);
             if (!state.actionModeLock) state.objectTypeToAdd = ObjectType.None;
           });
-          addUndoableAddSolarPanel(newElement);
+          addUndoableAddRooftopElement(newElement);
         }
       }
       break;
