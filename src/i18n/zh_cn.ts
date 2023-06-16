@@ -191,6 +191,7 @@ export const i18n_zh_cn = {
       CannotCreateNewProject: '无法创建新项目',
       CannotOpenYourProjects: '无法打开您的项目列表',
       TitleUsedChooseDifferentOne: '此标题已经被使用, 请采用不同的标题',
+      CloudFileWithTitleExistsDoYouWantToOverwrite: '使用此标题的云文件已经存在，您确定要覆盖它吗？',
       CloudFileNotFound: '找不到此云端文件',
       CannotLoadModelsOnMap: '无法下载地图上的模型',
       CannotLoadLeaderboard: '无法下载排行榜',
