@@ -3,7 +3,7 @@
  */
 
 import React, { useRef, useState } from 'react';
-import { Input, Modal, Space } from 'antd';
+import { Button, Input, Modal, Space } from 'antd';
 import i18n from './i18n/i18n';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from './stores/common';
@@ -48,6 +48,22 @@ const SaveCloudFileModal = ({
     }
   };
 
+  const onOk = () => {
+    saveToCloud(getTitle(), false, true);
+    setCommonStore((state) => {
+      state.showCloudFileTitleDialogFlag = !state.showCloudFileTitleDialogFlag;
+      state.showCloudFileTitleDialog = false;
+    });
+  };
+
+  const onCancel = () => {
+    setTitleDialogVisible(false);
+    setCommonStore((state) => {
+      state.showCloudFileTitleDialogFlag = !state.showCloudFileTitleDialogFlag;
+      state.showCloudFileTitleDialog = false;
+    });
+  };
+
   return (
     <Modal
       width={500}
@@ -61,21 +77,16 @@ const SaveCloudFileModal = ({
         </div>
       }
       visible={isTitleDialogVisible()}
-      onOk={() => {
-        saveToCloud(getTitle(), false, true);
-        setCommonStore((state) => {
-          state.showCloudFileTitleDialogFlag = !state.showCloudFileTitleDialogFlag;
-          state.showCloudFileTitleDialog = false;
-        });
-      }}
+      footer={[
+        <Button key="Cancel" onClick={onCancel}>
+          {i18n.t('word.Cancel', lang)}
+        </Button>,
+        <Button key="OK" type="primary" onClick={onOk} disabled={!getTitle()}>
+          {i18n.t('word.OK', lang)}
+        </Button>,
+      ]}
       confirmLoading={isLoading()}
-      onCancel={() => {
-        setTitleDialogVisible(false);
-        setCommonStore((state) => {
-          state.showCloudFileTitleDialogFlag = !state.showCloudFileTitleDialogFlag;
-          state.showCloudFileTitleDialog = false;
-        });
-      }}
+      onCancel={onCancel}
       modalRender={(modal) => (
         <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
           <div ref={dragRef}>{modal}</div>
@@ -88,9 +99,7 @@ const SaveCloudFileModal = ({
           style={{ width: '400px' }}
           placeholder="Title"
           value={getTitle()}
-          onPressEnter={() => {
-            saveToCloud(getTitle(), false, true);
-          }}
+          onPressEnter={onOk}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             setTitle(e.target.value);
           }}

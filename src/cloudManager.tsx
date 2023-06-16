@@ -836,7 +836,11 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
               }
             }
           });
+        } else {
+          showError(i18n.t('message.CannotCreateNewProjectWithoutTitle', lang) + '.');
         }
+      } else {
+        showError(i18n.t('message.CannotCreateNewProjectWithoutTitle', lang) + '.');
       }
     }
   };

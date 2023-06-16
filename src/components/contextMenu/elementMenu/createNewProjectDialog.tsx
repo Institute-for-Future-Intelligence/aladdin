@@ -2,7 +2,7 @@
  * @Copyright 2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Button, Col, Input, Modal, Row, Select } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from '../../../stores/common';
@@ -26,15 +26,9 @@ const CreateNewProjectDialog = ({ setDialogVisible }: { setDialogVisible: (b: bo
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
-  const okButtonRef = useRef<HTMLElement | null>(null);
-  const okButtonClickedRef = useRef<boolean>(false);
 
   const { TextArea } = Input;
   const lang = { lng: language };
-
-  useEffect(() => {
-    okButtonRef.current?.focus();
-  }, []);
 
   const onStart = (event: DraggableEvent, uiData: DraggableData) => {
     if (dragRef.current) {
@@ -51,7 +45,6 @@ const CreateNewProjectDialog = ({ setDialogVisible }: { setDialogVisible: (b: bo
 
   const onCancelClick = () => {
     setDialogVisible(false);
-    okButtonClickedRef.current = false;
   };
 
   const onOkClick = () => {
@@ -92,7 +85,7 @@ const CreateNewProjectDialog = ({ setDialogVisible }: { setDialogVisible: (b: bo
         <Button key="Cancel" onClick={onCancelClick}>
           {i18n.t('word.Cancel', lang)}
         </Button>,
-        <Button key="OK" type="primary" ref={okButtonRef} onClick={onOkClick}>
+        <Button key="OK" type="primary" onClick={onOkClick} disabled={!projectTitle}>
           {i18n.t('word.OK', lang)}
         </Button>,
       ]}

@@ -43,7 +43,6 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
   const okButtonRef = useRef<HTMLElement | null>(null);
-  const okButtonClickedRef = useRef<boolean>(false);
 
   const { TextArea } = Input;
   const lang = { lng: language };
@@ -67,7 +66,6 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
 
   const onCancelClick = () => {
     setDialogVisible(false);
-    okButtonClickedRef.current = false;
   };
 
   const onOkClick = () => {
@@ -109,7 +107,7 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
         <Button key="Cancel" onClick={onCancelClick}>
           {i18n.t('word.Cancel', lang)}
         </Button>,
-        <Button key="OK" type="primary" ref={okButtonRef} onClick={onOkClick}>
+        <Button key="OK" type="primary" ref={okButtonRef} onClick={onOkClick} disabled={!modelAuthor || !modelLabel}>
           {i18n.t('word.OK', lang)}
         </Button>,
       ]}

@@ -189,6 +189,7 @@ export const i18n_zh_tw = {
       CannotSaveYourAccountSettings: '您的賬號設定無法保存',
       CannotSaveYourFileToCloud: '無法保存您的文檔到雲端',
       CannotCreateNewProject: '無法創建新項目',
+      CannotCreateNewProjectWithoutTitle: '沒有標題, 無法創建新項目',
       CannotOpenYourProjects: '無法打開您的項目列表',
       TitleUsedChooseDifferentOne: '此標題已經被使用, 請採用不同的標題',
       CloudFileWithTitleExistsDoYouWantToOverwrite: '使用此標題的雲文檔已經存在，您確定要覆蓋它嗎？',

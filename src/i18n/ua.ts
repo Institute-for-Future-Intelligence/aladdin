@@ -190,9 +190,11 @@ export const i18n_ua = {
       CannotSaveYourAccountSettings: 'Не вдається зберегти налаштування облікового запису',
       CannotSaveYourFileToCloud: 'Не вдається зберегти ваш файл у хмарному середовищі',
       CannotCreateNewProject: 'Не вдається створити новий проєкт',
+      CannotCreateNewProjectWithoutTitle: 'Cannot create a new project without a title',
       CannotOpenYourProjects: 'Не вдається відкрити ваші проєкти',
       TitleUsedChooseDifferentOne: 'Ця назва була використана. Виберіть іншу',
-      CloudFileWithTitleExistsDoYouWantToOverwrite: 'Хмарний файл з такою ж назвою вже існує. Ви хочете перезаписати його?',
+      CloudFileWithTitleExistsDoYouWantToOverwrite:
+        'Хмарний файл з такою ж назвою вже існує. Ви хочете перезаписати його?',
       CloudFileNotFound: 'Файл у хмарному середовищі не знайдено',
       CannotLoadModelsOnMap: 'Не вдається завантажити моделі на карту',
       CannotLoadLeaderboard: 'Не вдається завантажити таблицю лідерів',
@@ -293,7 +295,8 @@ export const i18n_ua = {
         UpdatedOnModelsMap: 'Ваша модель була оновлена на карті моделей',
         YouMustLogInToPublishYourModel: 'Вам потрібно увійти в систему, щоб опублікувати свою модель',
         YouCannotPublishAModelThatYouDoNotOwn: 'Ви не можете опублікувати модель, якою не володієте',
-        YouMustSaveModelOnCloudBeforePublishingIt: 'Вам потрібно зберегти модель у хмарному середовищі перед її публікацією',
+        YouMustSaveModelOnCloudBeforePublishingIt:
+          'Вам потрібно зберегти модель у хмарному середовищі перед її публікацією',
       },
       editSubMenu: 'Редагувати',
       edit: {
@@ -403,8 +406,7 @@ export const i18n_ua = {
       solarUpdraftTower: {
         AnalyzeDailyYield: 'Аналізувати щоденний дохід',
         AnalyzeYearlyYield: 'Аналізувати щорічний дохід',
-        SolarUpdraftTowerSimulationNoAnimation:
-          'Немає анімації симулювати сонячну вежу з використаним повітрям',
+        SolarUpdraftTowerSimulationNoAnimation: 'Немає анімації симулювати сонячну вежу з використаним повітрям',
       },
 
       tutorialsSubMenu: 'Посібники',

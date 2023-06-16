@@ -243,7 +243,7 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
                 <Button key="Cancel" onClick={performCancelAction}>
                   {i18n.t('word.Cancel', lang)}
                 </Button>,
-                <Button key="OK" type="primary" onClick={performOkAction}>
+                <Button key="OK" type="primary" onClick={performOkAction} disabled={!localFileName}>
                   {i18n.t('word.OK', lang)}
                 </Button>,
               ]
@@ -251,7 +251,7 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
                 <Button key="Cancel" onClick={performCancelAction}>
                   {i18n.t('word.Cancel', lang)}
                 </Button>,
-                <Button key="OK" type="primary" onClick={performOkAction}>
+                <Button key="OK" type="primary" onClick={performOkAction} disabled={!localFileName}>
                   {i18n.t('word.OK', lang)}
                 </Button>,
               ]
