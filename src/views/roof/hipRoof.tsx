@@ -629,7 +629,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
                     const d = new Vector3().subVectors(p, midPointVector).x;
 
                     setLeftRidgeLengthCurr(
-                      Math.max(Math.min(-d, currentWallArray[0].lx / 2), -rightRidgeLengthCurr + 0.1),
+                      Util.clamp(-d, -rightRidgeLengthCurr + 0.1, currentWallArray[0].lx / 2 - 0.01),
                     );
                     break;
                   }
@@ -650,7 +650,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
 
                     if (currentWallArray[0]) {
                       setRightRidgeLengthCurr(
-                        Math.max(Math.min(d, currentWallArray[0].lx / 2), -leftRidgeLengthCurr + 0.1),
+                        Util.clamp(d, -leftRidgeLengthCurr + 0.1, currentWallArray[0].lx / 2 - 0.01),
                       );
                     }
                     break;
