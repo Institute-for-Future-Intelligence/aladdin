@@ -204,8 +204,8 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
           const roof = e as RoofModel;
           const segments = getRoofSegmentVertices(roof.id);
           if (segments && segments.length > 0) {
-            if (roof.roofType === RoofType.Pyramid) {
-              // if this is a pyramid, check if the roof is flat or not
+            if (roof.roofType === RoofType.Pyramid || roof.roofType === RoofType.Mansard) {
+              // check if the roof is flat or not
               let flat = true;
               const h0 = segments[0][0].z;
               for (const s of segments) {
@@ -932,6 +932,57 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
     // send heat map data to common store for visualization
     if (flat) {
+      // obtain the bounding rectangle
+      let minX = Number.MAX_VALUE;
+      let minY = Number.MAX_VALUE;
+      let maxX = -Number.MAX_VALUE;
+      let maxY = -Number.MAX_VALUE;
+      for (const s of segments) {
+        for (const v of s) {
+          const v2 = v.clone().applyEuler(euler);
+          if (v2.x > maxX) maxX = v2.x;
+          else if (v2.x < minX) minX = v2.x;
+          if (v2.y > maxY) maxY = v2.y;
+          else if (v2.y < minY) minY = v2.y;
+        }
+      }
+      minX += foundation.cx;
+      minY += foundation.cy;
+      maxX += foundation.cx;
+      maxY += foundation.cy;
+      const nx = Math.max(2, Math.round((maxX - minX) / cellSize));
+      const ny = Math.max(2, Math.round((maxY - minY) / cellSize));
+      const dx = (maxX - minX) / nx;
+      const dy = (maxY - minY) / ny;
+      let cellOutputs = cellOutputsMapRef.current.get(roof.id);
+      if (!cellOutputs || cellOutputs.length !== nx || cellOutputs[0].length !== ny) {
+        cellOutputs = Array(nx)
+          .fill(0)
+          .map(() => Array(ny).fill(0));
+        cellOutputsMapRef.current.set(roof.id, cellOutputs);
+      }
+      const v0 = new Vector3(minX + cellSize / 2, minY + cellSize / 2, foundation.lz + h0 + ROOFTOP_SOLAR_PANEL_OFFSET);
+      const v = new Vector3(0, 0, v0.z);
+      const indirectRadiation = calculateDiffuseAndReflectedRadiation(
+        world.ground,
+        now.getMonth(),
+        UNIT_VECTOR_POS_Z,
+        peakRadiation,
+      );
+      const dot = UNIT_VECTOR_POS_Z.dot(sunDirection);
+      for (let p = 0; p < nx; p++) {
+        v.x = v0.x + p * dx;
+        for (let q = 0; q < ny; q++) {
+          cellOutputs[p][q] += indirectRadiation;
+          if (dot > 0) {
+            v.y = v0.y + q * dy;
+            if (!inShadow(roof.id, v, sunDirection)) {
+              // direct radiation
+              cellOutputs[p][q] += dot * peakRadiation;
+            }
+          }
+        }
+      }
     } else {
       for (const [index, s] of segments.entries()) {
         const uuid = roof.id + '-' + index;
