@@ -485,6 +485,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
                   id={id}
                   key={index}
                   index={index}
+                  foundationId={roofModel.foundationId}
                   roofType={roofType}
                   segment={segment}
                   centroid={new Vector3(centroid2D.x, centroid2D.y, topZ)}
@@ -506,6 +507,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
         ) : (
           <FlatRoof
             id={id}
+            foundationId={roofModel.foundationId}
             roofSegments={roofSegments}
             center={new Vector3(centroid2D.x, centroid2D.y, topZ)}
             thickness={thickness}

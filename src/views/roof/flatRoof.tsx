@@ -37,6 +37,7 @@ import React from 'react';
 import { WindowModel, WindowType } from 'src/models/WindowModel';
 import { getPolygonWindowShape } from '../window/polygonalWindow';
 import { getArchedWindowShape } from '../window/archedWindow';
+import { FoundationModel } from '../../models/FoundationModel';
 
 interface TopExtrudeProps {
   uuid?: string;
@@ -51,6 +52,7 @@ interface TopExtrudeProps {
 
 interface FlatRoofProps {
   id: string;
+  foundationId?: string;
   roofSegments: RoofSegmentProps[];
   center: Vector3;
   thickness: number;
@@ -119,6 +121,7 @@ export const TopExtrude = ({
 
 const FlatRoof = ({
   id,
+  foundationId,
   roofSegments,
   center,
   thickness,
@@ -130,6 +133,7 @@ const FlatRoof = ({
   heatmap,
 }: FlatRoofProps) => {
   const world = useStore.getState().world;
+  const getElementById = useStore(Selector.getElementById);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const showHeatFluxes = usePrimitiveStore(Selector.showHeatFluxes);
@@ -151,6 +155,10 @@ const FlatRoof = ({
 
   const heatFluxes: Vector3[][] | undefined = useMemo(() => {
     if (!showHeatFluxes) return undefined;
+    if (foundationId) {
+      const foundation = getElementById(foundationId);
+      if ((foundation as FoundationModel).notBuilding) return undefined;
+    }
     const heat = hourlyHeatExchangeArrayMap.get(id);
     if (!heat) return undefined;
     const sum = heat.reduce((a, b) => a + b, 0);

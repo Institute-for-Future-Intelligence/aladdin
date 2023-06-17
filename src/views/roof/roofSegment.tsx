@@ -14,7 +14,6 @@ import {
   ExtrudeBufferGeometry,
   Float32BufferAttribute,
   Mesh,
-  Shape,
   Texture,
   Vector2,
   Vector3,
@@ -40,6 +39,7 @@ import { WindowType } from 'src/models/WindowModel';
 import { RoofUtil } from './RoofUtil';
 import { getArchedWindowShape } from '../window/archedWindow';
 import { getPolygonWindowShape } from '../window/polygonalWindow';
+import { FoundationModel } from '../../models/FoundationModel';
 
 export type WindowData = {
   dimension: Vector3;
@@ -53,6 +53,7 @@ export type WindowData = {
 export const RoofSegment = ({
   id,
   index,
+  foundationId,
   roofType,
   segment,
   centroid,
@@ -64,6 +65,7 @@ export const RoofSegment = ({
 }: {
   id: string;
   index: number;
+  foundationId?: string;
   roofType: RoofType;
   segment: RoofSegmentProps;
   centroid: Vector3;
@@ -74,6 +76,7 @@ export const RoofSegment = ({
   heatmap?: CanvasTexture;
 }) => {
   const getChildrenOfType = useStore(Selector.getChildrenOfType);
+  const getElementById = useStore(Selector.getElementById);
   const showHeatFluxes = usePrimitiveStore(Selector.showHeatFluxes);
   const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
   const heatFluxColor = useStore(Selector.viewState.heatFluxColor);
@@ -139,6 +142,10 @@ export const RoofSegment = ({
 
   const heatFluxes: Vector3[][] | undefined = useMemo(() => {
     if (!showHeatFluxes) return undefined;
+    if (foundationId) {
+      const foundation = getElementById(foundationId);
+      if ((foundation as FoundationModel).notBuilding) return undefined;
+    }
     const heat = hourlyHeatExchangeArrayMap.get(id + '-' + index);
     if (!heat) return undefined;
     const sum = heat.reduce((a, b) => a + b, 0);

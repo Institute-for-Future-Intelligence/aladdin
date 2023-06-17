@@ -924,6 +924,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
               key={i}
               index={i}
               id={id}
+              foundationId={roofModel.foundationId}
               points={points}
               centroid={centroid}
               angle={isFlat ? arr[0].angle : angle}
@@ -1165,6 +1166,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
 const RoofSegment = ({
   index,
   id,
+  foundationId,
   points,
   centroid,
   angle,
@@ -1180,6 +1182,7 @@ const RoofSegment = ({
 }: {
   index: number;
   id: string;
+  foundationId?: string;
   points: Vector3[];
   centroid: Vector3;
   angle: number;
@@ -1194,6 +1197,7 @@ const RoofSegment = ({
   opacity?: number;
 }) => {
   const world = useStore.getState().world;
+  const getElementById = useStore(Selector.getElementById);
   const getChildrenOfType = useStore(Selector.getChildrenOfType);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const showHeatFluxes = usePrimitiveStore(Selector.showHeatFluxes);
@@ -1258,6 +1262,10 @@ const RoofSegment = ({
 
   const heatFluxes: Vector3[][] | undefined = useMemo(() => {
     if (!showHeatFluxes) return undefined;
+    if (foundationId) {
+      const foundation = getElementById(foundationId);
+      if ((foundation as FoundationModel).notBuilding) return undefined;
+    }
     const heat = hourlyHeatExchangeArrayMap.get(id + '-' + index);
     if (!heat) return undefined;
     const sum = heat.reduce((a, b) => a + b, 0);

@@ -720,6 +720,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
               id={id}
               key={index}
               index={index}
+              foundationId={roofModel.foundationId}
               roofType={roofType}
               segment={segment}
               centroid={centroid}

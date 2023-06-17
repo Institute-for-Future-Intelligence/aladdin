@@ -586,6 +586,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
         {isFlatRoof ? (
           <FlatRoof
             id={id}
+            foundationId={roofModel.foundationId}
             roofSegments={roofSegments}
             center={centerPointV3}
             thickness={thickness}
@@ -608,6 +609,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
                       <RoofSegment
                         id={id}
                         index={index}
+                        foundationId={roofModel.foundationId}
                         roofType={roofType}
                         segment={segment}
                         centroid={new Vector3(centerPoint.x, centerPoint.y, topZ)}

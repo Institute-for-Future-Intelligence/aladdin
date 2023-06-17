@@ -62,6 +62,7 @@ import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
 import Ceiling from './ceiling';
 import FlatRoof, { TopExtrude } from './flatRoof';
+import { FoundationModel } from '../../models/FoundationModel';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -708,6 +709,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
 
   const heatFluxes: Vector3[][] | undefined = useMemo(() => {
     if (!showHeatFluxes) return undefined;
+    if (foundation && (foundation as FoundationModel).notBuilding) return undefined;
     const heat = hourlyHeatExchangeArrayMap.get(id + '-' + roofSegments.length);
     if (!heat) return undefined;
     const sum = heat.reduce((a, b) => a + b, 0);
@@ -832,6 +834,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
         {isFlat ? (
           <FlatRoof
             id={id}
+            foundationId={roofModel.foundationId}
             roofSegments={roofSegments}
             center={new Vector3(centroid.x, centroid.y, topZ)}
             thickness={thickness}
@@ -850,6 +853,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
                   id={id}
                   key={index}
                   index={index}
+                  foundationId={roofModel.foundationId}
                   roofType={roofType}
                   segment={segment}
                   centroid={centroid}
