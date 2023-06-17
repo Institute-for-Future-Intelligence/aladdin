@@ -209,7 +209,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
   const getWallPoint = (wallArray: WallModel[]) => {
     const arr: Point2[] = [];
     for (const w of wallArray) {
-      if (w.leftPoint[0] && w.leftPoint[1]) {
+      if (w.leftPoint[0] !== undefined && w.leftPoint[1] !== undefined) {
         arr.push({ x: w.leftPoint[0], y: w.leftPoint[1] });
       }
     }

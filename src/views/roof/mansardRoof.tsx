@@ -188,7 +188,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
     const arr: Point2[] = [];
     const length = wallArray.length;
     for (const w of wallArray) {
-      if (w.leftPoint[0] && w.leftPoint[1]) {
+      if (w.leftPoint[0] !== undefined && w.leftPoint[1] !== undefined) {
         arr.push({ x: w.leftPoint[0], y: w.leftPoint[1] });
       }
     }
