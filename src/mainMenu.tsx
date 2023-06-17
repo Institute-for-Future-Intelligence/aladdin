@@ -1388,6 +1388,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                 showInfo(i18n.t('message.SimulationStarted', lang));
                 // give it 0.1 second for the info to show up
                 setTimeout(() => {
+                  selectNone();
                   if (loggable) {
                     setCommonStore((state) => {
                       state.actionInfo = { name: 'Analyze Daily Building Energy', timestamp: new Date().getTime() };
@@ -1434,6 +1435,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                 showInfo(i18n.t('message.SimulationStarted', lang));
                 // give it 0.1 second for the info to show up
                 setTimeout(() => {
+                  selectNone();
                   usePrimitiveStore.setState((state) => {
                     state.runYearlyThermalSimulation = true;
                     state.simulationInProgress = true;

@@ -82,6 +82,7 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
   const loggable = useStore(Selector.loggable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
+  const selectNone = useStore(Selector.selectNone);
   const getWeather = useStore(Selector.getWeather);
   const now = new Date(useStore(Selector.world.date));
   const panelRect = useStore(Selector.viewState.dailyBuildingEnergyPanelRect);
@@ -426,6 +427,7 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
                   showInfo(i18n.t('message.SimulationStarted', lang));
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
+                    selectNone();
                     usePrimitiveStore.setState((state) => {
                       state.runDailyThermalSimulation = true;
                       state.pauseDailyThermalSimulation = false;

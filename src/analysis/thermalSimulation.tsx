@@ -1105,6 +1105,17 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     if (roof.roofType !== RoofType.Hip) throw new Error('roof is not hip');
     const n = segmentsWithoutOverhang.length;
     if (n === 0) return;
+    // check if the roof is flat or not
+    let flat = true;
+    const h0 = segmentsWithoutOverhang[0][0].z;
+    for (const s of segmentsWithoutOverhang) {
+      for (const v of s) {
+        if (Math.abs(v.z - h0) > 0.01) {
+          flat = false;
+          break;
+        }
+      }
+    }
     const windows = getChildrenOfType(ObjectType.Window, roof.id);
     const totalAreas: number[] = [];
     for (const s of segmentsWithoutOverhang) {
@@ -1125,7 +1136,8 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       totalAreas.push(a);
     }
     const absorption = getLightAbsorption(roof);
-    const totalSolarHeats: number[] = Array(n).fill(0);
+    const m = flat ? 1 : n;
+    const totalSolarHeats: number[] = Array(m).fill(0);
     // when the sun is out
     if (sunDirectionRef.current && sunDirectionRef.current.z > 0) {
       const solarPanels = getChildrenOfType(ObjectType.SolarPanel, roof.id);
@@ -1142,7 +1154,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         elevation,
         distanceToClosestObject,
       );
-      for (let k = 0; k < n; k++) {
+      for (let k = 0; k < m; k++) {
         const seg = results.segmentIntensities[k];
         const unitArea = results.segmentUnitArea[k];
         for (let i = 0; i < seg.length; i++) {
@@ -1170,14 +1182,14 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
             elevation,
             distanceToClosestObject,
           );
-          for (let k = 0; k < n; k++) {
+          for (let k = 0; k < m; k++) {
             const seg = heatmapResults.segmentIntensities[k];
             for (let i = 0; i < seg.length; i++) {
               for (let j = 0; j < seg[i].length; j++) {
                 seg[i][j] *= scaleFactorRef.current;
               }
             }
-            const uid = roof.id + '-' + k;
+            const uid = m === 1 ? roof.id : roof.id + '-' + k;
             const solarHeatmap = solarHeatmapRef.current.get(uid);
             if (!solarHeatmap) {
               solarHeatmapRef.current.set(uid, [...seg]);
@@ -1192,9 +1204,9 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         }
       }
     }
-    const extraT: number[] = Array(n).fill(0);
+    const extraT: number[] = Array(m).fill(0);
     const results: RoofSegmentResult[] = [];
-    for (let k = 0; k < n; k++) {
+    for (let k = 0; k < m; k++) {
       if (totalSolarHeats[k] !== 0) {
         extraT[k] =
           (totalSolarHeats[k] * absorption) / ((roof.volumetricHeatCapacity ?? 0.5) * totalAreas[k] * roof.thickness);
@@ -1312,6 +1324,17 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     if (roof.roofType !== RoofType.Mansard) throw new Error('roof is not mansard');
     const n = segmentsWithoutOverhang.length;
     if (n === 0) return;
+    // check if the roof is flat or not
+    let flat = true;
+    const h0 = segmentsWithoutOverhang[0][0].z;
+    for (const s of segmentsWithoutOverhang) {
+      for (const v of s) {
+        if (Math.abs(v.z - h0) > 0.01) {
+          flat = false;
+          break;
+        }
+      }
+    }
     const windows = getChildrenOfType(ObjectType.Window, roof.id);
     const totalAreas: number[] = [];
     for (let i = 0; i < n - 1; i++) {
@@ -1346,7 +1369,8 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     }
     totalAreas.push(a);
     const absorption = getLightAbsorption(roof);
-    const totalSolarHeats: number[] = Array(n).fill(0);
+    const m = flat ? 1 : n;
+    const totalSolarHeats: number[] = Array(m).fill(0);
     // when the sun is out
     if (sunDirectionRef.current && sunDirectionRef.current.z > 0) {
       const solarPanels = getChildrenOfType(ObjectType.SolarPanel, roof.id);
@@ -1363,7 +1387,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         elevation,
         distanceToClosestObject,
       );
-      for (let k = 0; k < n; k++) {
+      for (let k = 0; k < m; k++) {
         const seg = results.segmentIntensities[k];
         const unitArea = results.segmentUnitArea[k];
         for (let i = 0; i < seg.length; i++) {
@@ -1391,14 +1415,15 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
             elevation,
             distanceToClosestObject,
           );
-          for (let k = 0; k < n; k++) {
+          for (let k = 0; k < m; k++) {
             const seg = heatmapResults.segmentIntensities[k];
             for (let i = 0; i < seg.length; i++) {
               for (let j = 0; j < seg[i].length; j++) {
                 seg[i][j] *= scaleFactorRef.current;
               }
             }
-            const uid = roof.id + '-' + k;
+            // if the length is one, it is a flat roof
+            const uid = m === 1 ? roof.id : roof.id + '-' + k;
             const solarHeatmap = solarHeatmapRef.current.get(uid);
             if (!solarHeatmap) {
               solarHeatmapRef.current.set(uid, [...seg]);
@@ -1413,9 +1438,9 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         }
       }
     }
-    const extraT: number[] = Array(n).fill(0);
+    const extraT: number[] = Array(m).fill(0);
     const results: RoofSegmentResult[] = [];
-    for (let k = 0; k < n; k++) {
+    for (let k = 0; k < m; k++) {
       if (totalSolarHeats[k] !== 0) {
         extraT[k] =
           (totalSolarHeats[k] * absorption) / ((roof.volumetricHeatCapacity ?? 0.5) * totalAreas[k] * roof.thickness);
