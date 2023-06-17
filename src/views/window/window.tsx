@@ -231,6 +231,7 @@ const Window = (windowModel: WindowModel) => {
         case ResizeHandleType.LowerLeft:
         case ResizeHandleType.LowerRight:
         case ResizeHandleType.Arch:
+        case ResizeHandleType.Upper:
           return true;
       }
     }
@@ -287,6 +288,10 @@ const Window = (windowModel: WindowModel) => {
         }
         case ResizeHandleType.Arch: {
           onClickResizeHandle(handleType, new Vector3(0, 0, 0));
+          break;
+        }
+        case ResizeHandleType.Upper: {
+          onClickResizeHandle(handleType, new Vector3(0, 0, lz / 2));
           break;
         }
       }

@@ -239,12 +239,17 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         // old files don't have windowType
         if (window.windowType) {
           switch (window.windowType) {
-            case WindowType.Default:
-              drawRectWindow(windowShape, wlx, wly, wcx, wcy);
-              break;
             case WindowType.Arched:
               drawArchWindow(windowShape, wlx, wly, wcx, wcy, window.archHeight);
               break;
+            case WindowType.Polygonal: {
+              const [tx, th] = window.polygonTop ?? [0, 0.5];
+              drawPolygonalWindow(windowShape, wlx, wly, wcx, wcy, tx * wlx, th);
+              break;
+            }
+            case WindowType.Default:
+            default:
+              drawRectWindow(windowShape, wlx, wly, wcx, wcy);
           }
         } else {
           drawRectWindow(windowShape, wlx, wly, wcx, wcy);
@@ -349,11 +354,17 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         // old files don't have windowType
         if (window.windowType) {
           switch (window.windowType) {
-            case WindowType.Default:
-              drawRectWindow(windowShape, wlx, wly, wcx, wcy);
-              break;
             case WindowType.Arched:
               drawArchWindow(windowShape, wlx, wly, wcx, wcy, window.archHeight);
+              break;
+            case WindowType.Polygonal: {
+              const [tx, th] = window.polygonTop ?? [0, 0.5];
+              drawPolygonalWindow(windowShape, wlx, wly, wcx, wcy, tx * wlx, th);
+              break;
+            }
+            case WindowType.Default:
+            default:
+              drawRectWindow(windowShape, wlx, wly, wcx, wcy);
               break;
           }
         } else {
@@ -823,6 +834,16 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     shape.closePath();
   }
 
+  function drawPolygonalWindow(shape: Shape, lx: number, ly: number, cx: number, cy: number, tx: number, th: number) {
+    const [hx, hy] = [lx / 2, ly / 2];
+    shape.moveTo(cx - hx, cy - hy);
+    shape.lineTo(cx + hx, cy - hy);
+    shape.lineTo(cx + hx, cy + hy);
+    shape.lineTo(cx + tx, cy + hy + th);
+    shape.lineTo(cx - hx, cy + hy);
+    shape.closePath();
+  }
+
   function snapToNormalGrid(v: Vector3) {
     const x = parseFloat((Math.round(v.x / NORMAL_GRID_SCALE) * NORMAL_GRID_SCALE).toFixed(1));
     const z = parseFloat((Math.round(v.z / NORMAL_GRID_SCALE) * NORMAL_GRID_SCALE).toFixed(1));
@@ -876,7 +897,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     return Math.abs(angle - Math.PI / 2) < PERPENDICULAR_THRESHOLD;
   }
 
-  function setElementPosDms(id: string, pos: number[], dms: number[], archHeight?: number) {
+  function setElementPosDms(id: string, pos: number[], dms: number[], archHeight?: number, polygonTop?: number[]) {
     useStore.getState().set((state) => {
       for (const e of state.elements) {
         if (e.id === id) {
@@ -889,10 +910,24 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               (e as DoorModel).archHeight = archHeight;
             }
           }
+          if (polygonTop !== undefined && e.type === ObjectType.Window) {
+            const w = e as WindowModel;
+            if (w.windowType === WindowType.Polygonal) {
+              w.polygonTop = [...polygonTop];
+            }
+          }
           break;
         }
       }
     });
+  }
+
+  function hasPolygonTop(elem: ElementModel) {
+    return (
+      elem.type === ObjectType.Window &&
+      (elem as WindowModel).windowType === WindowType.Polygonal &&
+      (elem as WindowModel).polygonTop
+    );
   }
 
   function handleUndoableAdd(elem: ElementModel) {
@@ -941,11 +976,25 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
             newElement.type === ObjectType.Window || newElement.type === ObjectType.Door
               ? (newElement as WindowModel).archHeight
               : undefined,
+          oldPolygonTop: hasPolygonTop(oldElement) ? [...(oldElement as WindowModel).polygonTop!] : undefined,
+          newPolygonTop: hasPolygonTop(newElement) ? [...(newElement as WindowModel).polygonTop!] : undefined,
           undo() {
-            setElementPosDms(this.resizedElementId, this.oldPosition, this.oldDimension, this.oldArchHeight);
+            setElementPosDms(
+              this.resizedElementId,
+              this.oldPosition,
+              this.oldDimension,
+              this.oldArchHeight,
+              this.oldPolygonTop,
+            );
           },
           redo() {
-            setElementPosDms(this.resizedElementId, this.newPosition, this.newDimension, this.newArchHeight);
+            setElementPosDms(
+              this.resizedElementId,
+              this.newPosition,
+              this.newDimension,
+              this.newArchHeight,
+              this.newPolygonTop,
+            );
           },
         } as UndoableResizeElementOnWall;
         addUndoable(undoableResize);
@@ -1592,6 +1641,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     invalidElementIdRef.current = null;
   }
 
+  // pointer move
   function handleIntersectionPlanePointerMove(e: ThreeEvent<PointerEvent>) {
     const selectedElement = useStore.getState().selectedElement ?? getSelectedElement();
     if (selectedElement?.parentId === wallModel.id) {
@@ -1633,6 +1683,16 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
                 w.archHeight = newArchHeight;
                 w.cy = w.id === invalidElementIdRef.current ? -0.01 : 0.3;
                 w.tint = w.id === invalidElementIdRef.current ? 'red' : window.tint;
+              });
+            } else if (resizeHandleType === ResizeHandleType.Upper) {
+              // polygonal top vertex
+              // todo: add collision and boundary check
+              setCommonStore((state) => {
+                const w = state.elements.find((e) => e.id === window.id) as WindowModel;
+                if (!w) return;
+                const tx = Util.clamp((pointerOnGrid.x - resizeAnchor.x) / (w.lx * lx), -0.5, 0.5);
+                const th = Math.max(0, pointerOnGrid.z - resizeAnchor.z);
+                w.polygonTop = [tx, th];
               });
             } else {
               const { dimensionXZ, positionXZ } = getDiagonalResizedData(e, boundedPointer, resizeAnchor);

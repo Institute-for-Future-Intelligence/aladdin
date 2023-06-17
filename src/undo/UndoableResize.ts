@@ -44,8 +44,10 @@ export interface UndoableResizeElementOnWall extends Undoable {
   newPosition: number[];
   oldDimension: number[];
   newDimension: number[];
-  oldArchHeight: number | undefined;
-  newArchHeight: number | undefined;
+  oldArchHeight?: number;
+  newArchHeight?: number;
+  oldPolygonTop?: number[];
+  newPolygonTop?: number[];
 }
 
 export interface UndoableResizeWall extends Undoable {
