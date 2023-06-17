@@ -569,7 +569,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
   };
 
   const { transparent, opacity } = useTransparent();
-  useUpdateSegmentVerticesMap(
+  const updateSegmentVertices = useUpdateSegmentVerticesMap(
     id,
     centroid,
     roofSegments,
@@ -597,8 +597,6 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
   const heatFluxArrowHead = useRef<number>(0);
   const heatFluxArrowLength = useRef<Vector3>();
   const heatFluxArrowEuler = useRef<Euler>();
-
-  const updateSegmentVertices = useUpdateSegmentVerticesMap(id, centroid, roofSegments);
 
   useEffect(() => {
     if (showSolarRadiationHeatmap) {
