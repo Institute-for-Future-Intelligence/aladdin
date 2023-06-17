@@ -2,8 +2,8 @@
  * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
-import { Cone, Extrude, Line, Plane } from '@react-three/drei';
-import { invalidate, useThree } from '@react-three/fiber';
+import { Cone, Line, Plane } from '@react-three/drei';
+import { useThree } from '@react-three/fiber';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   DEFAULT_HEAT_FLUX_COLOR,
@@ -28,33 +28,31 @@ import {
   CanvasTexture,
   DoubleSide,
   Euler,
-  ExtrudeBufferGeometry,
   Float32BufferAttribute,
-  Material,
   Mesh,
   Shape,
   Vector3,
 } from 'three';
 import {
   useMultiCurrWallArray,
+  useRoofHeight,
   useRoofTexture,
   useTransparent,
-  useUpdateSegmentVerticesMap,
-  useRoofHeight,
   useUpdateOldRoofFiles,
+  useUpdateSegmentVerticesMap,
   useUpdateSegmentVerticesWithoutOverhangMap,
 } from './hooks';
 import {
   addUndoableResizeRoofRise,
-  RoofSegmentProps,
   handleContextMenu,
   handlePointerDown,
   handlePointerMove,
   handlePointerUp,
   RoofHandle,
+  RoofSegmentGroupUserData,
+  RoofSegmentProps,
   RoofWireframeProps,
   updateRooftopElements,
-  RoofSegmentGroupUserData,
 } from './roofRenderer';
 import RoofSegment from './roofSegment';
 import { RoofUtil } from './RoofUtil';
@@ -172,7 +170,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
 
   const foundation = useStore((state) => {
     for (const e of state.elements) {
-      if (e.id === parentId) {
+      if (e.id === parentId && e.type === ObjectType.Foundation) {
         return e;
       }
     }
@@ -702,7 +700,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
         geo.computeVertexNormals();
         geo.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
       }
-    } else if (showSolarRadiationHeatmap) {
+    } else if (showSolarRadiationHeatmap && !updateFlag) {
       setUpdateFlag(!updateFlag);
     }
   }, [topRidgeShape, showSolarRadiationHeatmap, updateFlag]);
@@ -834,7 +832,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
         {isFlat ? (
           <FlatRoof
             id={id}
-            foundationId={roofModel.foundationId}
+            foundationModel={foundation as FoundationModel}
             roofSegments={roofSegments}
             center={new Vector3(centroid.x, centroid.y, topZ)}
             thickness={thickness}
@@ -853,7 +851,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
                   id={id}
                   key={index}
                   index={index}
-                  foundationId={roofModel.foundationId}
+                  foundationModel={foundation as FoundationModel}
                   roofType={roofType}
                   segment={segment}
                   centroid={centroid}

@@ -53,7 +53,7 @@ export type WindowData = {
 export const RoofSegment = ({
   id,
   index,
-  foundationId,
+  foundationModel,
   roofType,
   segment,
   centroid,
@@ -65,7 +65,7 @@ export const RoofSegment = ({
 }: {
   id: string;
   index: number;
-  foundationId?: string;
+  foundationModel: FoundationModel | null;
   roofType: RoofType;
   segment: RoofSegmentProps;
   centroid: Vector3;
@@ -76,7 +76,6 @@ export const RoofSegment = ({
   heatmap?: CanvasTexture;
 }) => {
   const getChildrenOfType = useStore(Selector.getChildrenOfType);
-  const getElementById = useStore(Selector.getElementById);
   const showHeatFluxes = usePrimitiveStore(Selector.showHeatFluxes);
   const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
   const heatFluxColor = useStore(Selector.viewState.heatFluxColor);
@@ -142,10 +141,7 @@ export const RoofSegment = ({
 
   const heatFluxes: Vector3[][] | undefined = useMemo(() => {
     if (!showHeatFluxes) return undefined;
-    if (foundationId) {
-      const foundation = getElementById(foundationId);
-      if ((foundation as FoundationModel).notBuilding) return undefined;
-    }
+    if (foundationModel && foundationModel.notBuilding) return undefined;
     const heat = hourlyHeatExchangeArrayMap.get(id + '-' + index);
     if (!heat) return undefined;
     const sum = heat.reduce((a, b) => a + b, 0);
@@ -667,7 +663,7 @@ export const BufferRoofSegment = React.memo(
           if (i !== 0) {
             return <SideSurfaceMaterial key={'side' + i} />;
           } else if (showSolarRadiationHeatmap) {
-            return <HeatMapMaterial key={'heat map' + i} />;
+            return <HeatMapMaterial key={'heatmap' + i} />;
           } else {
             return <TopLayerMaterial key={'texture' + i} />;
           }

@@ -916,126 +916,140 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     if (!foundation) throw new Error('foundation of wall not found');
     const segments = getRoofSegmentVertices(roof.id);
     if (!segments || segments.length === 0) return;
+    // check if the roof is flat or not
+    let flat = true;
+    const h0 = segments[0][0].z;
+    for (const s of segments) {
+      for (const v of s) {
+        if (Math.abs(v.z - h0) > 0.01) {
+          flat = false;
+          break;
+        }
+      }
+    }
     const dayOfYear = Util.dayOfYear(now);
     const euler = new Euler(0, 0, foundation.rotation[2], 'ZYX');
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
     // send heat map data to common store for visualization
-    for (const [index, s] of segments.entries()) {
-      const uuid = roof.id + '-' + index;
-      if (index === segments.length - 1) {
-        // top surface
-        // obtain the bounding rectangle
-        let minX = Number.MAX_VALUE;
-        let minY = Number.MAX_VALUE;
-        let maxX = -Number.MAX_VALUE;
-        let maxY = -Number.MAX_VALUE;
-        for (const v of s) {
-          const v2 = v.clone().applyEuler(euler);
-          if (v2.x > maxX) maxX = v2.x;
-          else if (v2.x < minX) minX = v2.x;
-          if (v2.y > maxY) maxY = v2.y;
-          else if (v2.y < minY) minY = v2.y;
-        }
-        minX += foundation.cx;
-        minY += foundation.cy;
-        maxX += foundation.cx;
-        maxY += foundation.cy;
-        const h0 = s[0].z;
-        const nx = Math.max(2, Math.round((maxX - minX) / cellSize));
-        const ny = Math.max(2, Math.round((maxY - minY) / cellSize));
-        const dx = (maxX - minX) / nx;
-        const dy = (maxY - minY) / ny;
-        let cellOutputs = cellOutputsMapRef.current.get(uuid);
-        if (!cellOutputs || cellOutputs.length !== nx || cellOutputs[0].length !== ny) {
-          cellOutputs = Array(nx)
-            .fill(0)
-            .map(() => Array(ny).fill(0));
-          cellOutputsMapRef.current.set(uuid, cellOutputs);
-        }
-        const v0 = new Vector3(
-          minX + cellSize / 2,
-          minY + cellSize / 2,
-          foundation.lz + h0 + ROOFTOP_SOLAR_PANEL_OFFSET,
-        );
-        const v = new Vector3(0, 0, v0.z);
-        const indirectRadiation = calculateDiffuseAndReflectedRadiation(
-          world.ground,
-          now.getMonth(),
-          UNIT_VECTOR_POS_Z,
-          peakRadiation,
-        );
-        const dot = UNIT_VECTOR_POS_Z.dot(sunDirection);
-        for (let p = 0; p < nx; p++) {
-          v.x = v0.x + p * dx;
-          for (let q = 0; q < ny; q++) {
-            cellOutputs[p][q] += indirectRadiation;
-            if (dot > 0) {
-              v.y = v0.y + q * dy;
-              if (!inShadow(uuid, v, sunDirection)) {
-                // direct radiation
-                cellOutputs[p][q] += dot * peakRadiation;
+    if (flat) {
+    } else {
+      for (const [index, s] of segments.entries()) {
+        const uuid = roof.id + '-' + index;
+        if (index === segments.length - 1) {
+          // top surface
+          // obtain the bounding rectangle
+          let minX = Number.MAX_VALUE;
+          let minY = Number.MAX_VALUE;
+          let maxX = -Number.MAX_VALUE;
+          let maxY = -Number.MAX_VALUE;
+          for (const v of s) {
+            const v2 = v.clone().applyEuler(euler);
+            if (v2.x > maxX) maxX = v2.x;
+            else if (v2.x < minX) minX = v2.x;
+            if (v2.y > maxY) maxY = v2.y;
+            else if (v2.y < minY) minY = v2.y;
+          }
+          minX += foundation.cx;
+          minY += foundation.cy;
+          maxX += foundation.cx;
+          maxY += foundation.cy;
+          const h0 = s[0].z;
+          const nx = Math.max(2, Math.round((maxX - minX) / cellSize));
+          const ny = Math.max(2, Math.round((maxY - minY) / cellSize));
+          const dx = (maxX - minX) / nx;
+          const dy = (maxY - minY) / ny;
+          let cellOutputs = cellOutputsMapRef.current.get(uuid);
+          if (!cellOutputs || cellOutputs.length !== nx || cellOutputs[0].length !== ny) {
+            cellOutputs = Array(nx)
+              .fill(0)
+              .map(() => Array(ny).fill(0));
+            cellOutputsMapRef.current.set(uuid, cellOutputs);
+          }
+          const v0 = new Vector3(
+            minX + cellSize / 2,
+            minY + cellSize / 2,
+            foundation.lz + h0 + ROOFTOP_SOLAR_PANEL_OFFSET,
+          );
+          const v = new Vector3(0, 0, v0.z);
+          const indirectRadiation = calculateDiffuseAndReflectedRadiation(
+            world.ground,
+            now.getMonth(),
+            UNIT_VECTOR_POS_Z,
+            peakRadiation,
+          );
+          const dot = UNIT_VECTOR_POS_Z.dot(sunDirection);
+          for (let p = 0; p < nx; p++) {
+            v.x = v0.x + p * dx;
+            for (let q = 0; q < ny; q++) {
+              cellOutputs[p][q] += indirectRadiation;
+              if (dot > 0) {
+                v.y = v0.y + q * dy;
+                if (!inShadow(uuid, v, sunDirection)) {
+                  // direct radiation
+                  cellOutputs[p][q] += dot * peakRadiation;
+                }
               }
             }
           }
-        }
-      } else {
-        const s0 = s[0].clone().applyEuler(euler);
-        const s1 = s[1].clone().applyEuler(euler);
-        const s2 = s[2].clone().applyEuler(euler);
-        const v10 = new Vector3().subVectors(s1, s0);
-        const v20 = new Vector3().subVectors(s2, s0);
-        const v21 = new Vector3().subVectors(s2, s1);
-        const length10 = v10.length();
-        // find the distance from top to the edge: https://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
-        const distance = new Vector3().crossVectors(v20, v21).length() / length10;
-        const m = Math.max(2, Math.round(length10 / cellSize));
-        const n = Math.max(2, Math.round(distance / cellSize));
-        let cellOutputs = cellOutputsMapRef.current.get(uuid);
-        if (!cellOutputs || cellOutputs.length !== m || cellOutputs[0].length !== n) {
-          cellOutputs = Array(m)
-            .fill(0)
-            .map(() => Array(n).fill(0));
-          cellOutputsMapRef.current.set(uuid, cellOutputs);
-        }
-        v10.normalize();
-        v20.normalize();
-        v21.normalize();
-        // find the normal vector of the quad
-        const normal = new Vector3().crossVectors(v20, v21).normalize();
-        // find the incremental vector going along the bottom edge (half of length)
-        const dm = v10.multiplyScalar((0.5 * length10) / m);
-        // find the incremental vector going from bottom to top (half of length)
-        const dn = new Vector3()
-          .crossVectors(normal, v10)
-          .normalize()
-          .multiplyScalar((0.5 * distance) / n);
-        // find the starting point of the grid (shift half of length in both directions)
-        const v0 = new Vector3(
-          foundation.cx + s0.x,
-          foundation.cy + s0.y,
-          foundation.lz + s0.z + ROOFTOP_SOLAR_PANEL_OFFSET,
-        );
-        v0.add(dm).add(dn);
-        // double half-length to full-length for the increment vectors in both directions
-        dm.multiplyScalar(2);
-        dn.multiplyScalar(2);
-        const v = new Vector3();
-        const indirectRadiation = calculateDiffuseAndReflectedRadiation(
-          world.ground,
-          now.getMonth(),
-          normal,
-          peakRadiation,
-        );
-        const dot = normal.dot(sunDirection);
-        for (let p = 0; p < m; p++) {
-          const dmp = dm.clone().multiplyScalar(p);
-          for (let q = 0; q < n; q++) {
-            cellOutputs[p][q] += indirectRadiation;
-            if (dot > 0) {
-              v.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
-              if (!inShadow(uuid, v, sunDirection)) {
-                // direct radiation
-                cellOutputs[p][q] += dot * peakRadiation;
+        } else {
+          const s0 = s[0].clone().applyEuler(euler);
+          const s1 = s[1].clone().applyEuler(euler);
+          const s2 = s[2].clone().applyEuler(euler);
+          const v10 = new Vector3().subVectors(s1, s0);
+          const v20 = new Vector3().subVectors(s2, s0);
+          const v21 = new Vector3().subVectors(s2, s1);
+          const length10 = v10.length();
+          // find the distance from top to the edge: https://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
+          const distance = new Vector3().crossVectors(v20, v21).length() / length10;
+          const m = Math.max(2, Math.round(length10 / cellSize));
+          const n = Math.max(2, Math.round(distance / cellSize));
+          let cellOutputs = cellOutputsMapRef.current.get(uuid);
+          if (!cellOutputs || cellOutputs.length !== m || cellOutputs[0].length !== n) {
+            cellOutputs = Array(m)
+              .fill(0)
+              .map(() => Array(n).fill(0));
+            cellOutputsMapRef.current.set(uuid, cellOutputs);
+          }
+          v10.normalize();
+          v20.normalize();
+          v21.normalize();
+          // find the normal vector of the quad
+          const normal = new Vector3().crossVectors(v20, v21).normalize();
+          // find the incremental vector going along the bottom edge (half of length)
+          const dm = v10.multiplyScalar((0.5 * length10) / m);
+          // find the incremental vector going from bottom to top (half of length)
+          const dn = new Vector3()
+            .crossVectors(normal, v10)
+            .normalize()
+            .multiplyScalar((0.5 * distance) / n);
+          // find the starting point of the grid (shift half of length in both directions)
+          const v0 = new Vector3(
+            foundation.cx + s0.x,
+            foundation.cy + s0.y,
+            foundation.lz + s0.z + ROOFTOP_SOLAR_PANEL_OFFSET,
+          );
+          v0.add(dm).add(dn);
+          // double half-length to full-length for the increment vectors in both directions
+          dm.multiplyScalar(2);
+          dn.multiplyScalar(2);
+          const v = new Vector3();
+          const indirectRadiation = calculateDiffuseAndReflectedRadiation(
+            world.ground,
+            now.getMonth(),
+            normal,
+            peakRadiation,
+          );
+          const dot = normal.dot(sunDirection);
+          for (let p = 0; p < m; p++) {
+            const dmp = dm.clone().multiplyScalar(p);
+            for (let q = 0; q < n; q++) {
+              cellOutputs[p][q] += indirectRadiation;
+              if (dot > 0) {
+                v.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
+                if (!inShadow(uuid, v, sunDirection)) {
+                  // direct radiation
+                  cellOutputs[p][q] += dot * peakRadiation;
+                }
               }
             }
           }

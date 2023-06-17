@@ -924,7 +924,6 @@ const GableRoof = (roofModel: GableRoofModel) => {
               key={i}
               index={i}
               id={id}
-              foundationId={roofModel.foundationId}
               points={points}
               centroid={centroid}
               angle={isFlat ? arr[0].angle : angle}
@@ -937,6 +936,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
               glassTint={glassTint}
               opacity={opacity}
               currWall={i === 0 ? currentWallArray[0] : currentWallArray[2]}
+              foundation={foundation}
             />
           );
         })}
@@ -1166,7 +1166,6 @@ const GableRoof = (roofModel: GableRoofModel) => {
 const RoofSegment = ({
   index,
   id,
-  foundationId,
   points,
   centroid,
   angle,
@@ -1176,13 +1175,13 @@ const RoofSegment = ({
   color = 'white',
   sideColor,
   currWall,
+  foundation,
   roofStructure,
   glassTint,
   opacity = 0.5,
 }: {
   index: number;
   id: string;
-  foundationId?: string;
   points: Vector3[];
   centroid: Vector3;
   angle: number;
@@ -1192,6 +1191,7 @@ const RoofSegment = ({
   color: string | undefined;
   sideColor: string | undefined;
   currWall: WallModel;
+  foundation: FoundationModel | null;
   roofStructure?: RoofStructure;
   glassTint?: string;
   opacity?: number;
@@ -1262,10 +1262,7 @@ const RoofSegment = ({
 
   const heatFluxes: Vector3[][] | undefined = useMemo(() => {
     if (!showHeatFluxes) return undefined;
-    if (foundationId) {
-      const foundation = getElementById(foundationId);
-      if ((foundation as FoundationModel).notBuilding) return undefined;
-    }
+    if (foundation && foundation.notBuilding) return undefined;
     const heat = hourlyHeatExchangeArrayMap.get(id + '-' + index);
     if (!heat) return undefined;
     const sum = heat.reduce((a, b) => a + b, 0);

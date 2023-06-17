@@ -41,6 +41,7 @@ import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
 import Ceiling from './ceiling';
 import FlatRoof from './flatRoof';
+import { FoundationModel } from '../../models/FoundationModel';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -586,7 +587,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
         {isFlatRoof ? (
           <FlatRoof
             id={id}
-            foundationId={roofModel.foundationId}
+            foundationModel={foundation as FoundationModel}
             roofSegments={roofSegments}
             center={centerPointV3}
             thickness={thickness}
@@ -609,7 +610,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
                       <RoofSegment
                         id={id}
                         index={index}
-                        foundationId={roofModel.foundationId}
+                        foundationModel={foundation as FoundationModel}
                         roofType={roofType}
                         segment={segment}
                         centroid={new Vector3(centerPoint.x, centerPoint.y, topZ)}

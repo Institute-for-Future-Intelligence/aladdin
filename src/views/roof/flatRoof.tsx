@@ -16,7 +16,7 @@ import {
 } from 'three';
 import { RoofSegmentProps } from './roofRenderer';
 import { ObjectType, RoofTexture } from 'src/types';
-import { useMemo, useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { CSG } from 'three-csg-ts';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
@@ -33,7 +33,6 @@ import {
 import { Point2 } from 'src/models/Point2';
 import { Util } from 'src/Util';
 import { Cone, Line } from '@react-three/drei';
-import React from 'react';
 import { WindowModel, WindowType } from 'src/models/WindowModel';
 import { getPolygonWindowShape } from '../window/polygonalWindow';
 import { getArchedWindowShape } from '../window/archedWindow';
@@ -52,7 +51,7 @@ interface TopExtrudeProps {
 
 interface FlatRoofProps {
   id: string;
-  foundationId?: string;
+  foundationModel: FoundationModel | null;
   roofSegments: RoofSegmentProps[];
   center: Vector3;
   thickness: number;
@@ -77,9 +76,7 @@ export const TopExtrude = ({
   const ref = useRef<Mesh>(null);
 
   if (ref.current) {
-    const geometry = new ExtrudeBufferGeometry(shape, { steps: 1, depth: thickness, bevelEnabled: false });
-
-    ref.current.geometry = geometry;
+    ref.current.geometry = new ExtrudeBufferGeometry(shape, { steps: 1, depth: thickness, bevelEnabled: false });
     ref.current.updateMatrix();
 
     if (holeMeshes.length > 0) {
@@ -121,7 +118,7 @@ export const TopExtrude = ({
 
 const FlatRoof = ({
   id,
-  foundationId,
+  foundationModel,
   roofSegments,
   center,
   thickness,
@@ -133,7 +130,6 @@ const FlatRoof = ({
   heatmap,
 }: FlatRoofProps) => {
   const world = useStore.getState().world;
-  const getElementById = useStore(Selector.getElementById);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const showHeatFluxes = usePrimitiveStore(Selector.showHeatFluxes);
@@ -155,10 +151,7 @@ const FlatRoof = ({
 
   const heatFluxes: Vector3[][] | undefined = useMemo(() => {
     if (!showHeatFluxes) return undefined;
-    if (foundationId) {
-      const foundation = getElementById(foundationId);
-      if ((foundation as FoundationModel).notBuilding) return undefined;
-    }
+    if (foundationModel && foundationModel.notBuilding) return undefined;
     const heat = hourlyHeatExchangeArrayMap.get(id);
     if (!heat) return undefined;
     const sum = heat.reduce((a, b) => a + b, 0);

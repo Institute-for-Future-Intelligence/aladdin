@@ -18,30 +18,31 @@ import { Util } from 'src/Util';
 import { CanvasTexture, DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
 import {
   addUndoableResizeRoofRise,
-  RoofSegmentProps,
   handleContextMenu,
   handlePointerDown,
   handlePointerMove,
   handlePointerUp,
   RoofHandle,
+  RoofSegmentGroupUserData,
+  RoofSegmentProps,
   RoofWireframeProps,
   updateRooftopElements,
-  RoofSegmentGroupUserData,
 } from './roofRenderer';
 import { ActionType, ObjectType, ResizeHandleType, RoofHandleType, RoofTexture } from 'src/types';
 import { RoofUtil } from './RoofUtil';
 import {
   useCurrWallArray,
-  useUpdateSegmentVerticesMap,
   useRoofHeight,
-  useUpdateOldRoofFiles,
-  useUpdateSegmentVerticesWithoutOverhangMap,
   useRoofTexture,
+  useUpdateOldRoofFiles,
+  useUpdateSegmentVerticesMap,
+  useUpdateSegmentVerticesWithoutOverhangMap,
 } from './hooks';
 import RoofSegment from './roofSegment';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
 import Ceiling from './ceiling';
+import { FoundationModel } from '../../models/FoundationModel';
 
 const GambrelRoofWireframe = React.memo(({ roofSegments, thickness, lineWidth, lineColor }: RoofWireframeProps) => {
   if (roofSegments.length === 0) {
@@ -177,7 +178,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
   // set position and rotation
   const foundation = useStore((state) => {
     for (const e of state.elements) {
-      if (e.id === parentId) {
+      if (e.id === parentId && e.type === ObjectType.Foundation) {
         return e;
       }
     }
@@ -720,7 +721,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
               id={id}
               key={index}
               index={index}
-              foundationId={roofModel.foundationId}
+              foundationModel={foundation as FoundationModel}
               roofType={roofType}
               segment={segment}
               centroid={centroid}

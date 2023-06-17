@@ -17,23 +17,23 @@ import { Util } from 'src/Util';
 import { CanvasTexture, DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
 import {
   useCurrWallArray,
-  useUpdateSegmentVerticesMap,
   useRoofHeight,
-  useUpdateOldRoofFiles,
-  useUpdateSegmentVerticesWithoutOverhangMap,
   useRoofTexture,
+  useUpdateOldRoofFiles,
+  useUpdateSegmentVerticesMap,
+  useUpdateSegmentVerticesWithoutOverhangMap,
 } from './hooks';
 import {
   addUndoableResizeRoofRise,
-  RoofSegmentProps,
   handleContextMenu,
   handlePointerDown,
   handlePointerMove,
   handlePointerUp,
   RoofHandle,
+  RoofSegmentGroupUserData,
+  RoofSegmentProps,
   RoofWireframeProps,
   updateRooftopElements,
-  RoofSegmentGroupUserData,
 } from './roofRenderer';
 import RoofSegment from './roofSegment';
 import { RoofUtil } from './RoofUtil';
@@ -41,6 +41,7 @@ import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
 import Ceiling from './ceiling';
 import FlatRoof from './flatRoof';
+import { FoundationModel } from '../../models/FoundationModel';
 
 const HipRoofWireframe = React.memo(({ roofSegments, thickness, lineWidth, lineColor }: RoofWireframeProps) => {
   if (roofSegments.length === 0) {
@@ -115,7 +116,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
   // set position and rotation
   const foundation = useStore((state) => {
     for (const e of state.elements) {
-      if (e.id === parentId) {
+      if (e.id === parentId && e.type === ObjectType.Foundation) {
         return e;
       }
     }
@@ -485,7 +486,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
                   id={id}
                   key={index}
                   index={index}
-                  foundationId={roofModel.foundationId}
+                  foundationModel={foundation as FoundationModel}
                   roofType={roofType}
                   segment={segment}
                   centroid={new Vector3(centroid2D.x, centroid2D.y, topZ)}
@@ -507,7 +508,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
         ) : (
           <FlatRoof
             id={id}
-            foundationId={roofModel.foundationId}
+            foundationModel={foundation as FoundationModel}
             roofSegments={roofSegments}
             center={new Vector3(centroid2D.x, centroid2D.y, topZ)}
             thickness={thickness}

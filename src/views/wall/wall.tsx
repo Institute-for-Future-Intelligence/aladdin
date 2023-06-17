@@ -65,7 +65,6 @@ import Polygon from '../polygon';
 import { SharedUtil } from '../SharedUtil';
 import { UndoableChange } from '../../undo/UndoableChange';
 import Parapet, { DEFAULT_PARAPET_SETTINGS } from './parapet';
-import { RoofModel } from 'src/models/RoofModel';
 
 export const WALL_BLOCK_PLANE = 'Wall Block Plane';
 
@@ -2459,17 +2458,19 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         )}
 
       {/* heat flux */}
-      <HeatFlux wallModel={wallModel} />
+      <HeatFlux wallModel={wallModel} foundationModel={foundationModel} />
     </>
   );
 };
 
 interface HeatFluxProps {
   wallModel: WallModel;
+  foundationModel: FoundationModel;
 }
 
-const HeatFlux = ({ wallModel }: HeatFluxProps) => {
+const HeatFlux = ({ wallModel, foundationModel }: HeatFluxProps) => {
   const { id, lx, lz } = wallModel;
+  const getFoundation = useStore(Selector.getFoundation);
   const getChildrenOfType = useStore(Selector.getChildrenOfType);
   const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
   const heatFluxColor = useStore(Selector.viewState.heatFluxColor);
@@ -2482,6 +2483,7 @@ const HeatFlux = ({ wallModel }: HeatFluxProps) => {
 
   const heatFluxes: Vector3[][] | undefined = useMemo(() => {
     if (!showHeatFluxes) return undefined;
+    if (foundationModel && foundationModel.notBuilding) return undefined;
     const heat = hourlyHeatExchangeArrayMap.get(id);
     if (!heat) return undefined;
     const sum = heat.reduce((a, b) => a + b, 0);
