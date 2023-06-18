@@ -20,6 +20,7 @@ import * as Selector from 'src/stores/selector';
 import { Cone, Line } from '@react-three/drei';
 import { Util } from '../../Util';
 import { useDataStore } from '../../stores/commonData';
+import { FoundationModel } from '../../models/FoundationModel';
 
 interface ArchedDoorProps {
   id: string;
@@ -32,10 +33,23 @@ interface ArchedDoorProps {
   filled: boolean;
   showHeatFluxes: boolean;
   area: number;
+  foundation: FoundationModel | null;
 }
 
 const ArchedDoor = React.memo(
-  ({ id, dimension, color, frameColor, selected, locked, material, filled, showHeatFluxes, area }: ArchedDoorProps) => {
+  ({
+    id,
+    dimension,
+    color,
+    frameColor,
+    selected,
+    locked,
+    material,
+    filled,
+    showHeatFluxes,
+    area,
+    foundation,
+  }: ArchedDoorProps) => {
     const world = useStore.getState().world;
     const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
     const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
@@ -67,6 +81,7 @@ const ArchedDoor = React.memo(
 
     const heatFluxes: Vector3[][] | undefined = useMemo(() => {
       if (!showHeatFluxes) return undefined;
+      if (foundation && foundation.notBuilding) return undefined;
       const heat = hourlyHeatExchangeArrayMap.get(id);
       if (!heat) return undefined;
       const sum = heat.reduce((a, b) => a + b, 0);

@@ -195,6 +195,7 @@ const Window = (windowModel: WindowModel) => {
   useUpdateOldFiles(windowModel);
 
   const setCommonStore = useStore(Selector.set);
+  const getFoundation = useStore(Selector.getFoundation);
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const windowShininess = useStore(Selector.viewState.windowShininess);
 
@@ -387,6 +388,7 @@ const Window = (windowModel: WindowModel) => {
             area={Util.getWindowArea(windowModel)}
             empty={!!windowModel.empty}
             interior={!!windowModel.interior}
+            foundation={getFoundation(windowModel)}
           />
         );
       case WindowType.Arched:
@@ -404,6 +406,7 @@ const Window = (windowModel: WindowModel) => {
             area={Util.getWindowArea(windowModel)}
             empty={!!windowModel.empty}
             interior={!!windowModel.interior}
+            foundation={getFoundation(windowModel)}
           />
         );
       case WindowType.Polygonal:
@@ -421,6 +424,7 @@ const Window = (windowModel: WindowModel) => {
             shutter={shutter}
             showHeatFluxes={showHeatFluxes}
             area={Util.getWindowArea(windowModel)}
+            foundation={getFoundation(windowModel)}
           />
         );
     }

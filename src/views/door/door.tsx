@@ -198,6 +198,7 @@ const Door = (doorModel: DoorModel) => {
     }
   };
 
+  const getFoundation = useStore(Selector.getFoundation);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const showHeatFluxes = usePrimitiveStore(Selector.showHeatFluxes);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
@@ -219,6 +220,7 @@ const Door = (doorModel: DoorModel) => {
             filled={filled}
             showHeatFluxes={showHeatFluxes}
             area={Util.getDoorArea(doorModel)}
+            foundation={getFoundation(doorModel)}
           />
         );
       case DoorType.Arched:
@@ -234,6 +236,7 @@ const Door = (doorModel: DoorModel) => {
             filled={filled}
             showHeatFluxes={showHeatFluxes}
             area={Util.getDoorArea(doorModel)}
+            foundation={getFoundation(doorModel)}
           />
         );
     }

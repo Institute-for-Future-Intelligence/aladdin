@@ -21,6 +21,7 @@ import { FrameDataType, MullionDataType, Shutter, WireframeDataType } from './wi
 import { ShutterProps } from 'src/models/WindowModel';
 import { Util } from '../../Util';
 import { useDataStore } from '../../stores/commonData';
+import { FoundationModel } from '../../models/FoundationModel';
 
 interface RectangleWindowProps {
   id: string;
@@ -35,6 +36,7 @@ interface RectangleWindowProps {
   area: number;
   empty: boolean;
   interior: boolean;
+  foundation: FoundationModel | null;
 }
 
 interface MullionProps {
@@ -263,6 +265,7 @@ const RectangleWindow = ({
   area,
   empty,
   interior,
+  foundation,
 }: RectangleWindowProps) => {
   const world = useStore.getState().world;
   const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
@@ -279,6 +282,7 @@ const RectangleWindow = ({
 
   const heatFluxes: Vector3[][] | undefined = useMemo(() => {
     if (!showHeatFluxes || interior) return undefined;
+    if (foundation && foundation.notBuilding) return undefined;
     const heat = hourlyHeatExchangeArrayMap.get(id);
     if (!heat) return undefined;
     const sum = heat.reduce((a, b) => a + b, 0);

@@ -2470,7 +2470,6 @@ interface HeatFluxProps {
 
 const HeatFlux = ({ wallModel, foundationModel }: HeatFluxProps) => {
   const { id, lx, lz } = wallModel;
-  const getFoundation = useStore(Selector.getFoundation);
   const getChildrenOfType = useStore(Selector.getChildrenOfType);
   const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
   const heatFluxColor = useStore(Selector.viewState.heatFluxColor);

@@ -21,6 +21,7 @@ import { FrameDataType, MullionDataType, Shutter, WireframeDataType } from './wi
 import { ShutterProps } from 'src/models/WindowModel';
 import { Util } from '../../Util';
 import { useDataStore } from '../../stores/commonData';
+import { FoundationModel } from '../../models/FoundationModel';
 
 interface ArchedWindowProps {
   id: string;
@@ -35,7 +36,9 @@ interface ArchedWindowProps {
   area: number;
   empty: boolean;
   interior: boolean;
+  foundation: FoundationModel | null;
 }
+
 interface MullionProps {
   dimension: number[];
   mullionData: MullionDataType;
@@ -440,6 +443,7 @@ const ArchedWindow = ({
   area,
   empty,
   interior,
+  foundation,
 }: ArchedWindowProps) => {
   const world = useStore.getState().world;
   const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
@@ -473,6 +477,7 @@ const ArchedWindow = ({
 
   const heatFluxes: Vector3[][] | undefined = useMemo(() => {
     if (!showHeatFluxes || interior) return undefined;
+    if (foundation && foundation.notBuilding) return undefined;
     const heat = hourlyHeatExchangeArrayMap.get(id);
     if (!heat) return undefined;
     const sum = heat.reduce((a, b) => a + b, 0);

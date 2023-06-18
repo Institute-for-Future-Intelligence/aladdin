@@ -23,6 +23,7 @@ import { ShutterProps } from 'src/models/WindowModel';
 import { useDataStore } from '../../stores/commonData';
 import { Util } from '../../Util';
 import { Point2 } from '../../models/Point2';
+import { FoundationModel } from '../../models/FoundationModel';
 
 interface PolygonalWindowProps {
   id: string;
@@ -37,6 +38,7 @@ interface PolygonalWindowProps {
   shutter: ShutterProps;
   area: number;
   showHeatFluxes: boolean;
+  foundation: FoundationModel | null;
 }
 
 interface FrameProps {
@@ -159,6 +161,7 @@ const PolygonalWindow = ({
   shutter,
   area,
   showHeatFluxes,
+  foundation,
 }: PolygonalWindowProps) => {
   const world = useStore.getState().world;
   const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
@@ -199,6 +202,7 @@ const PolygonalWindow = ({
 
   const heatFluxes: Vector3[][] | undefined = useMemo(() => {
     if (!showHeatFluxes || interior) return undefined;
+    if (foundation && foundation.notBuilding) return undefined;
     const heat = hourlyHeatExchangeArrayMap.get(id);
     if (!heat) return undefined;
     const sum = heat.reduce((a, b) => a + b, 0);
