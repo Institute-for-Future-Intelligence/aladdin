@@ -1117,8 +1117,8 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       }
     }
     const m = flat ? 1 : n;
+    const areas: number[] = [];
     const windows = getChildrenOfType(ObjectType.Window, roof.id);
-    const totalAreas: number[] = [];
     for (const s of segmentsWithoutOverhang) {
       let a = 0;
       if (s.length === 3) {
@@ -1134,8 +1134,9 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         }
         if (a < 0) a = 0; // just in case
       }
-      totalAreas.push(a);
+      areas.push(a);
     }
+    const totalAreas: number[] = flat ? [areas.reduce((x, y) => x + y, 0)] : areas;
     const absorption = getLightAbsorption(roof);
     const totalSolarHeats: number[] = Array(m).fill(0);
     // when the sun is out
@@ -1146,6 +1147,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         world,
         sunDirectionRef.current,
         roof,
+        flat,
         true,
         segmentsWithoutOverhang,
         foundation,
@@ -1174,6 +1176,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
             world,
             sunDirectionRef.current,
             roof,
+            flat,
             false,
             segments,
             foundation,

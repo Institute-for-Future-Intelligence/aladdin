@@ -804,6 +804,7 @@ export class SolarRadiation {
     world: WorldModel,
     sunDirection: Vector3,
     roof: RoofModel,
+    flat: boolean,
     withoutOverhang: boolean,
     segments: Vector3[][],
     foundation: FoundationModel,
@@ -818,109 +819,171 @@ export class SolarRadiation {
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
     const segmentIntensities: number[][][] = [];
     const segmentUnitAreas: number[] = [];
-    for (const [index, s] of segments.entries()) {
-      const uuid = roof.id + '-' + index;
-      const s0 = s[0].clone().applyEuler(euler);
-      const s1 = s[1].clone().applyEuler(euler);
-      const s2 = s[2].clone().applyEuler(euler);
-      const v10 = new Vector3().subVectors(s1, s0);
-      const v20 = new Vector3().subVectors(s2, s0);
-      const v21 = new Vector3().subVectors(s2, s1);
-      const length10 = v10.length();
-      // find the distance from top to the edge: https://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
-      const distance = new Vector3().crossVectors(v20, v21).length() / length10;
-      const m = Math.max(2, Math.round(length10 / cellSize));
-      const n = Math.max(2, Math.round(distance / cellSize));
-      const intensity: number[][] = Array(m)
+    if (flat) {
+      // obtain the bounding rectangle
+      let minX = Number.MAX_VALUE;
+      let minY = Number.MAX_VALUE;
+      let maxX = -Number.MAX_VALUE;
+      let maxY = -Number.MAX_VALUE;
+      for (const s of segments) {
+        for (const v of s) {
+          const v2 = v.clone().applyEuler(euler);
+          if (v2.x > maxX) maxX = v2.x;
+          else if (v2.x < minX) minX = v2.x;
+          if (v2.y > maxY) maxY = v2.y;
+          else if (v2.y < minY) minY = v2.y;
+        }
+      }
+      minX += foundation.cx;
+      minY += foundation.cy;
+      maxX += foundation.cx;
+      maxY += foundation.cy;
+      const nx = Math.max(2, Math.round((maxX - minX) / cellSize));
+      const ny = Math.max(2, Math.round((maxY - minY) / cellSize));
+      const dx = (maxX - minX) / nx;
+      const dy = (maxY - minY) / ny;
+      const intensity: number[][] = Array(nx)
         .fill(0)
-        .map(() => Array(n).fill(0));
+        .map(() => Array(ny).fill(0));
       segmentIntensities.push(intensity);
-      v10.normalize();
-      // find the position of the top point relative to the first edge point
-      const m2 = (m * v20.dot(v10)) / length10;
-      v20.normalize();
-      v21.normalize();
-      // find the normal vector of the quad
-      // (must normalize the cross product of two normalized vectors as it is not automatically normalized)
-      const normal = new Vector3().crossVectors(v20, v21).normalize();
-      // find the incremental vector going along the bottom edge (half-length)
-      const dm = v10.multiplyScalar((0.5 * length10) / m);
-      // find the incremental vector going from bottom to top (half-length)
-      const dn = new Vector3()
-        .crossVectors(normal, v10)
-        .normalize()
-        .multiplyScalar((0.5 * distance) / n);
-      const v = new Vector3();
-      // find the starting point of the grid (shift half of length in both directions)
+      segmentUnitAreas.push(dx * dy);
+      const h0 = segments[0][0].z;
       // we have to add roof thickness since the segment vertices without overhang are from the inside surface
       const v0 = new Vector3(
-        foundation.cx + s0.x,
-        foundation.cy + s0.y,
-        foundation.lz + s0.z + ROOFTOP_SOLAR_PANEL_OFFSET + (withoutOverhang ? roof.thickness : 0),
+        minX + cellSize / 2,
+        minY + cellSize / 2,
+        foundation.lz + h0 + ROOFTOP_SOLAR_PANEL_OFFSET + (withoutOverhang ? roof.thickness : 0),
       );
-      v0.add(dm).add(dn);
-      // double half-length to full-length for the increment vectors in both directions
-      dm.multiplyScalar(2);
-      dn.multiplyScalar(2);
-      segmentUnitAreas.push(dm.length() * dn.length());
+      const v = new Vector3(0, 0, v0.z);
       const indirectRadiation = calculateDiffuseAndReflectedRadiation(
         world.ground,
         now.getMonth(),
-        normal,
+        UNIT_VECTOR_POS_Z,
         peakRadiation,
       );
-      const dot = normal.dot(sunDirection);
-      const projectedVertices: Point2[] = [];
-      for (const t of s) {
-        projectedVertices.push({ x: t.x, y: t.y } as Point2);
-      }
-      if (index % 2 === 0) {
-        // even number (0, 2) are quads, odd number (1, 3) are triangles
-        for (let p = 0; p < m; p++) {
-          const dmp = dm.clone().multiplyScalar(p);
-          for (let q = 0; q < n; q++) {
-            v.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
-            let within = true;
-            if (withoutOverhang) {
-              within = Util.isPointInside(v.x, v.y, projectedVertices);
+      const dot = UNIT_VECTOR_POS_Z.dot(sunDirection);
+      for (let p = 0; p < nx; p++) {
+        v.x = v0.x + p * dx;
+        for (let q = 0; q < ny; q++) {
+          v.y = v0.y + q * dy;
+          // TODO: Check if this works when windows on flat roofs are implemented
+          if (SolarRadiation.isPointRoof(v, windows, solarPanels, foundation)) {
+            const distance = distanceToClosestObject(roof.id, v, sunDirection);
+            if (distance > AMBIENT_LIGHT_THRESHOLD || distance < 0) {
+              intensity[p][q] += indirectRadiation;
             }
-            if (within) {
-              if (SolarRadiation.isPointRoof(v, windows, solarPanels, foundation)) {
-                const distance = distanceToClosestObject(uuid, v, sunDirection);
-                if (distance > AMBIENT_LIGHT_THRESHOLD || distance < 0) {
-                  intensity[p][q] += indirectRadiation;
-                }
-                if (dot > 0 && distance < 0) {
-                  // direct radiation
-                  intensity[p][q] += dot * peakRadiation;
+            if (dot > 0 && distance < 0) {
+              // direct radiation
+              intensity[p][q] += dot * peakRadiation;
+            }
+          }
+        }
+      }
+    } else {
+      for (const [index, s] of segments.entries()) {
+        const uuid = roof.id + '-' + index;
+        const s0 = s[0].clone().applyEuler(euler);
+        const s1 = s[1].clone().applyEuler(euler);
+        const s2 = s[2].clone().applyEuler(euler);
+        const v10 = new Vector3().subVectors(s1, s0);
+        const v20 = new Vector3().subVectors(s2, s0);
+        const v21 = new Vector3().subVectors(s2, s1);
+        const length10 = v10.length();
+        // find the distance from top to the edge: https://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
+        const distance = new Vector3().crossVectors(v20, v21).length() / length10;
+        const m = Math.max(2, Math.round(length10 / cellSize));
+        const n = Math.max(2, Math.round(distance / cellSize));
+        const intensity: number[][] = Array(m)
+          .fill(0)
+          .map(() => Array(n).fill(0));
+        segmentIntensities.push(intensity);
+        v10.normalize();
+        // find the position of the top point relative to the first edge point
+        const m2 = (m * v20.dot(v10)) / length10;
+        v20.normalize();
+        v21.normalize();
+        // find the normal vector of the quad
+        // (must normalize the cross product of two normalized vectors as it is not automatically normalized)
+        const normal = new Vector3().crossVectors(v20, v21).normalize();
+        // find the incremental vector going along the bottom edge (half-length)
+        const dm = v10.multiplyScalar((0.5 * length10) / m);
+        // find the incremental vector going from bottom to top (half-length)
+        const dn = new Vector3()
+          .crossVectors(normal, v10)
+          .normalize()
+          .multiplyScalar((0.5 * distance) / n);
+        const v = new Vector3();
+        // find the starting point of the grid (shift half of length in both directions)
+        // we have to add roof thickness since the segment vertices without overhang are from the inside surface
+        const v0 = new Vector3(
+          foundation.cx + s0.x,
+          foundation.cy + s0.y,
+          foundation.lz + s0.z + ROOFTOP_SOLAR_PANEL_OFFSET + (withoutOverhang ? roof.thickness : 0),
+        );
+        v0.add(dm).add(dn);
+        // double half-length to full-length for the increment vectors in both directions
+        dm.multiplyScalar(2);
+        dn.multiplyScalar(2);
+        segmentUnitAreas.push(dm.length() * dn.length());
+        const indirectRadiation = calculateDiffuseAndReflectedRadiation(
+          world.ground,
+          now.getMonth(),
+          normal,
+          peakRadiation,
+        );
+        const dot = normal.dot(sunDirection);
+        const projectedVertices: Point2[] = [];
+        for (const t of s) {
+          projectedVertices.push({ x: t.x, y: t.y } as Point2);
+        }
+        if (index % 2 === 0) {
+          // even number (0, 2) are quads, odd number (1, 3) are triangles
+          for (let p = 0; p < m; p++) {
+            const dmp = dm.clone().multiplyScalar(p);
+            for (let q = 0; q < n; q++) {
+              v.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
+              let within = true;
+              if (withoutOverhang) {
+                within = Util.isPointInside(v.x, v.y, projectedVertices);
+              }
+              if (within) {
+                if (SolarRadiation.isPointRoof(v, windows, solarPanels, foundation)) {
+                  const distance = distanceToClosestObject(uuid, v, sunDirection);
+                  if (distance > AMBIENT_LIGHT_THRESHOLD || distance < 0) {
+                    intensity[p][q] += indirectRadiation;
+                  }
+                  if (dot > 0 && distance < 0) {
+                    // direct radiation
+                    intensity[p][q] += dot * peakRadiation;
+                  }
                 }
               }
             }
           }
-        }
-      } else {
-        const relativePolygon: Point2[] = [];
-        const margin = 0.01;
-        relativePolygon.push({ x: -margin, y: -margin } as Point2);
-        relativePolygon.push({ x: m + margin, y: -margin } as Point2);
-        relativePolygon.push({ x: m2, y: n + margin } as Point2);
-        for (let p = 0; p < m; p++) {
-          const dmp = dm.clone().multiplyScalar(p);
-          for (let q = 0; q < n; q++) {
-            let within = true;
-            if (withoutOverhang) {
-              within = Util.isPointInside(p, q, relativePolygon);
-            }
-            if (within) {
-              v.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
-              if (SolarRadiation.isPointRoof(v, windows, solarPanels, foundation)) {
-                const distance = distanceToClosestObject(uuid, v, sunDirection);
-                if (distance > AMBIENT_LIGHT_THRESHOLD || distance < 0) {
-                  intensity[p][q] += indirectRadiation;
-                }
-                if (dot > 0 && distance < 0) {
-                  // direct radiation
-                  intensity[p][q] += dot * peakRadiation;
+        } else {
+          const relativePolygon: Point2[] = [];
+          const margin = 0.01;
+          relativePolygon.push({ x: -margin, y: -margin } as Point2);
+          relativePolygon.push({ x: m + margin, y: -margin } as Point2);
+          relativePolygon.push({ x: m2, y: n + margin } as Point2);
+          for (let p = 0; p < m; p++) {
+            const dmp = dm.clone().multiplyScalar(p);
+            for (let q = 0; q < n; q++) {
+              let within = true;
+              if (withoutOverhang) {
+                within = Util.isPointInside(p, q, relativePolygon);
+              }
+              if (within) {
+                v.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
+                if (SolarRadiation.isPointRoof(v, windows, solarPanels, foundation)) {
+                  const distance = distanceToClosestObject(uuid, v, sunDirection);
+                  if (distance > AMBIENT_LIGHT_THRESHOLD || distance < 0) {
+                    intensity[p][q] += indirectRadiation;
+                  }
+                  if (dot > 0 && distance < 0) {
+                    // direct radiation
+                    intensity[p][q] += dot * peakRadiation;
+                  }
                 }
               }
             }

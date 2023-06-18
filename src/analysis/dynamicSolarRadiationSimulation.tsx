@@ -204,7 +204,11 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
           const roof = e as RoofModel;
           const segments = getRoofSegmentVertices(roof.id);
           if (segments && segments.length > 0) {
-            if (roof.roofType === RoofType.Pyramid || roof.roofType === RoofType.Mansard) {
+            if (
+              roof.roofType === RoofType.Pyramid ||
+              roof.roofType === RoofType.Mansard ||
+              roof.roofType === RoofType.Hip
+            ) {
               // check if the roof is flat or not
               let flat = true;
               const h0 = segments[0][0].z;
