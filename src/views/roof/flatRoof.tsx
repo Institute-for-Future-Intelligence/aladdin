@@ -37,6 +37,7 @@ import { WindowModel, WindowType } from 'src/models/WindowModel';
 import { getPolygonWindowShape } from '../window/polygonalWindow';
 import { getArchedWindowShape } from '../window/archedWindow';
 import { FoundationModel } from '../../models/FoundationModel';
+import { RoofType } from '../../models/RoofModel';
 
 interface TopExtrudeProps {
   uuid?: string;
@@ -52,6 +53,7 @@ interface TopExtrudeProps {
 interface FlatRoofProps {
   id: string;
   foundationModel: FoundationModel | null;
+  roofType: RoofType;
   roofSegments: RoofSegmentProps[];
   center: Vector3;
   thickness: number;
@@ -119,6 +121,7 @@ export const TopExtrude = ({
 const FlatRoof = ({
   id,
   foundationModel,
+  roofType,
   roofSegments,
   center,
   thickness,
@@ -157,64 +160,77 @@ const FlatRoof = ({
     const sum = heat.reduce((a, b) => a + b, 0);
     const segments = getRoofSegmentVerticesWithoutOverhang(id);
     if (!segments) return undefined;
+    const seg: Vector3[] = [];
+    switch (roofType) {
+      case RoofType.Hip:
+      case RoofType.Pyramid:
+        for (const s of segments) {
+          seg.push(s[0]);
+        }
+        break;
+      case RoofType.Mansard:
+        for (const [i, s] of segments.entries()) {
+          if (i === segments.length - 1) continue;
+          seg.push(s[0]);
+        }
+        break;
+    }
     const vectors: Vector3[][] = [];
-    for (const seg of segments) {
-      const s = seg.map((v) => v.clone().sub(center));
-      const cellSize = DEFAULT_HEAT_FLUX_DENSITY_FACTOR * (world.solarRadiationHeatmapGridCellSize ?? 0.5);
-      const s0 = s[0].clone();
-      const s1 = s[1].clone();
-      const s2 = s[2].clone();
-      const v10 = new Vector3().subVectors(s1, s0);
-      const v20 = new Vector3().subVectors(s2, s0);
-      const v21 = new Vector3().subVectors(s2, s1);
-      const length10 = v10.length();
-      // find the distance from top to the edge: https://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
-      const distance = new Vector3().crossVectors(v20, v21).length() / length10;
-      const m = Math.max(2, Math.floor(length10 / cellSize));
-      const n = Math.max(2, Math.floor(distance / cellSize));
-      v10.normalize();
-      v20.normalize();
-      v21.normalize();
-      // find the normal vector of the quad
-      const normal = new Vector3().crossVectors(v20, v21).normalize();
-      // find the incremental vector going along the bottom edge (half of length)
-      const dm = v10.multiplyScalar((0.5 * length10) / m);
-      // find the incremental vector going from bottom to top (half of length)
-      const dn = new Vector3()
-        .crossVectors(normal, v10)
-        .normalize()
-        .multiplyScalar((0.5 * distance) / n);
-      // find the starting point of the grid (shift half of length in both directions)
-      const v0 = s0.clone().add(dm).add(dn).add(new Vector3(0, 0, thickness));
-      // double half-length to full-length for the increment vectors in both directions
-      dm.multiplyScalar(2);
-      dn.multiplyScalar(2);
-      heatFluxArrowLength.current = normal.clone().multiplyScalar(0.1);
-      const origin = new Vector3();
-      const vertices = new Array<Point2>();
-      for (const p of s) {
-        vertices.push({ x: p.x, y: p.y } as Point2);
-      }
-      const area = Util.getPolygonArea(vertices);
-      if (area === 0) return undefined;
-      const intensity = (sum / area) * (heatFluxScaleFactor ?? DEFAULT_HEAT_FLUX_SCALE_FACTOR);
-      heatFluxArrowHead.current = intensity < 0 ? 1 : 0;
-      heatFluxArrowEuler.current = new Euler(-Math.sign(intensity) * HALF_PI, 0, 0);
-      for (let p = 0; p < m; p++) {
-        const dmp = dm.clone().multiplyScalar(p);
-        for (let q = 0; q < n; q++) {
-          origin.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
-          if (Util.isPointInside(origin.x, origin.y, vertices)) {
-            const v: Vector3[] = [];
-            if (intensity < 0) {
-              v.push(origin.clone());
-              v.push(origin.clone().add(normal.clone().multiplyScalar(-intensity)));
-            } else {
-              v.push(origin.clone());
-              v.push(origin.clone().add(normal.clone().multiplyScalar(intensity)));
-            }
-            vectors.push(v);
+    const s = seg.map((v) => v.clone().sub(center));
+    const cellSize = DEFAULT_HEAT_FLUX_DENSITY_FACTOR * (world.solarRadiationHeatmapGridCellSize ?? 0.5);
+    const s0 = s[0].clone();
+    const s1 = s[1].clone();
+    const s2 = s[2].clone();
+    const v10 = new Vector3().subVectors(s1, s0);
+    const v20 = new Vector3().subVectors(s2, s0);
+    const v21 = new Vector3().subVectors(s2, s1);
+    const length10 = v10.length();
+    // find the distance from top to the edge: https://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
+    const distance = new Vector3().crossVectors(v20, v21).length() / length10;
+    const m = Math.max(2, Math.floor(length10 / cellSize));
+    const n = Math.max(2, Math.floor(distance / cellSize));
+    v10.normalize();
+    v20.normalize();
+    v21.normalize();
+    // find the normal vector of the quad
+    const normal = new Vector3().crossVectors(v20, v21).normalize();
+    // find the incremental vector going along the bottom edge (half of length)
+    const dm = v10.multiplyScalar((0.5 * length10) / m);
+    // find the incremental vector going from bottom to top (half of length)
+    const dn = new Vector3()
+      .crossVectors(normal, v10)
+      .normalize()
+      .multiplyScalar((0.5 * distance) / n);
+    // find the starting point of the grid (shift half of length in both directions)
+    const v0 = s0.clone().add(dm).add(dn).add(new Vector3(0, 0, thickness));
+    // double half-length to full-length for the increment vectors in both directions
+    dm.multiplyScalar(2);
+    dn.multiplyScalar(2);
+    heatFluxArrowLength.current = normal.clone().multiplyScalar(0.1);
+    const origin = new Vector3();
+    const vertices = new Array<Point2>();
+    for (const p of s) {
+      vertices.push({ x: p.x, y: p.y } as Point2);
+    }
+    const area = Util.getPolygonArea(vertices);
+    if (area === 0) return undefined;
+    const intensity = (sum / area) * (heatFluxScaleFactor ?? DEFAULT_HEAT_FLUX_SCALE_FACTOR);
+    heatFluxArrowHead.current = intensity < 0 ? 1 : 0;
+    heatFluxArrowEuler.current = new Euler(-Math.sign(intensity) * HALF_PI, 0, 0);
+    for (let p = 0; p < m; p++) {
+      const dmp = dm.clone().multiplyScalar(p);
+      for (let q = 0; q < n; q++) {
+        origin.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
+        if (Util.isPointInside(origin.x, origin.y, vertices)) {
+          const v: Vector3[] = [];
+          if (intensity < 0) {
+            v.push(origin.clone());
+            v.push(origin.clone().add(normal.clone().multiplyScalar(-intensity)));
+          } else {
+            v.push(origin.clone());
+            v.push(origin.clone().add(normal.clone().multiplyScalar(intensity)));
           }
+          vectors.push(v);
         }
       }
     }

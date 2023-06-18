@@ -987,6 +987,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         }
       }
     }
+    const m = flat ? 1 : n;
     const windows = getChildrenOfType(ObjectType.Window, roof.id);
     const totalAreas: number[] = [];
     if (flat) {
@@ -1016,7 +1017,6 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       }
     }
     const absorption = getLightAbsorption(roof);
-    const m = flat ? 1 : n;
     const totalSolarHeats: number[] = Array(m).fill(0);
     // when the sun is out
     if (sunDirectionRef.current && sunDirectionRef.current.z > 0) {
@@ -1116,6 +1116,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         }
       }
     }
+    const m = flat ? 1 : n;
     const windows = getChildrenOfType(ObjectType.Window, roof.id);
     const totalAreas: number[] = [];
     for (const s of segmentsWithoutOverhang) {
@@ -1136,7 +1137,6 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       totalAreas.push(a);
     }
     const absorption = getLightAbsorption(roof);
-    const m = flat ? 1 : n;
     const totalSolarHeats: number[] = Array(m).fill(0);
     // when the sun is out
     if (sunDirectionRef.current && sunDirectionRef.current.z > 0) {
@@ -1335,8 +1335,9 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         }
       }
     }
+    const m = flat ? 1 : n;
+    const areas: number[] = [];
     const windows = getChildrenOfType(ObjectType.Window, roof.id);
-    const totalAreas: number[] = [];
     for (let i = 0; i < n - 1; i++) {
       const s = segmentsWithoutOverhang[i];
       let a = Util.getTriangleArea(s[0], s[1], s[2]) + Util.getTriangleArea(s[2], s[3], s[0]);
@@ -1348,7 +1349,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         }
         if (a < 0) a = 0; // just in case
       }
-      totalAreas.push(a);
+      areas.push(a);
     }
     // the last segment may not be a quad
     const s = segmentsWithoutOverhang[n - 1];
@@ -1367,9 +1368,9 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       }
       if (a < 0) a = 0; // just in case
     }
-    totalAreas.push(a);
+    areas.push(a);
+    const totalAreas: number[] = flat ? [areas.reduce((x, y) => x + y, 0)] : areas;
     const absorption = getLightAbsorption(roof);
-    const m = flat ? 1 : n;
     const totalSolarHeats: number[] = Array(m).fill(0);
     // when the sun is out
     if (sunDirectionRef.current && sunDirectionRef.current.z > 0) {

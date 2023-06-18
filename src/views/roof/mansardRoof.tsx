@@ -872,6 +872,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
           <FlatRoof
             id={id}
             foundationModel={foundation as FoundationModel}
+            roofType={roofType}
             roofSegments={roofSegments}
             center={new Vector3(centroid.x, centroid.y, topZ)}
             thickness={thickness}

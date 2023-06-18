@@ -588,6 +588,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
           <FlatRoof
             id={id}
             foundationModel={foundation as FoundationModel}
+            roofType={roofType}
             roofSegments={roofSegments}
             center={centerPointV3}
             thickness={thickness}
