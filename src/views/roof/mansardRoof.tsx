@@ -925,12 +925,12 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
                     name={'Mansard Roof Top Surface'}
                     position={[0, 0, thickness]}
                     receiveShadow={shadowEnabled}
-                    userData={{ simulation: true }}
                   >
                     <meshBasicMaterial map={heatmapTextures[roofSegments.length]} color={'white'} side={DoubleSide} />
                   </mesh>
                 )}
                 <TopExtrude
+                  simulation={true}
                   shape={topRidgeShape}
                   thickness={thickness}
                   holeMeshes={holeMeshes}
