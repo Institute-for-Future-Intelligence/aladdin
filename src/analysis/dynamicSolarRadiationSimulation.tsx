@@ -802,9 +802,9 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         for (const v of s) {
           const v2 = v.clone().applyEuler(euler);
           if (v2.x > maxX) maxX = v2.x;
-          else if (v2.x < minX) minX = v2.x;
+          if (v2.x < minX) minX = v2.x;
           if (v2.y > maxY) maxY = v2.y;
-          else if (v2.y < minY) minY = v2.y;
+          if (v2.y < minY) minY = v2.y; // don't use else if!!!
         }
       }
       minX += foundation.cx;
@@ -945,9 +945,9 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         for (const v of s) {
           const v2 = v.clone().applyEuler(euler);
           if (v2.x > maxX) maxX = v2.x;
-          else if (v2.x < minX) minX = v2.x;
+          if (v2.x < minX) minX = v2.x;
           if (v2.y > maxY) maxY = v2.y;
-          else if (v2.y < minY) minY = v2.y;
+          if (v2.y < minY) minY = v2.y;
         }
       }
       minX += foundation.cx;
@@ -1000,9 +1000,9 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
           for (const v of s) {
             const v2 = v.clone().applyEuler(euler);
             if (v2.x > maxX) maxX = v2.x;
-            else if (v2.x < minX) minX = v2.x;
+            if (v2.x < minX) minX = v2.x;
             if (v2.y > maxY) maxY = v2.y;
-            else if (v2.y < minY) minY = v2.y;
+            if (v2.y < minY) minY = v2.y;
           }
           minX += foundation.cx;
           minY += foundation.cy;
@@ -1224,9 +1224,9 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         for (const v of s) {
           const v2 = v.clone().applyEuler(euler);
           if (v2.x > maxX) maxX = v2.x;
-          else if (v2.x < minX) minX = v2.x;
+          if (v2.x < minX) minX = v2.x;
           if (v2.y > maxY) maxY = v2.y;
-          else if (v2.y < minY) minY = v2.y;
+          if (v2.y < minY) minY = v2.y;
         }
       }
       minX += foundation.cx;

@@ -479,9 +479,9 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
                 for (const v of s) {
                   const v2 = v.clone().applyEuler(euler);
                   if (v2.x > maxX) maxX = v2.x;
-                  else if (v2.x < minX) minX = v2.x;
+                  if (v2.x < minX) minX = v2.x;
                   if (v2.y > maxY) maxY = v2.y;
-                  else if (v2.y < minY) minY = v2.y;
+                  if (v2.y < minY) minY = v2.y;
                 }
               }
               const dx = maxX - minX;
