@@ -2778,7 +2778,6 @@ export const useStore = create<CommonStoreState>(
           // note that the case of deletion is treated differently because the deleted elements cannot be pasted.
           copyCutElements() {
             const copiedElements: ElementModel[] = [];
-
             const map = new Map<string, ElementModel>(); // oldId => newElement
             const elementsMapOldToNew = new Map<string, string>();
             const elementsMapNewToOld = new Map<string, string>();

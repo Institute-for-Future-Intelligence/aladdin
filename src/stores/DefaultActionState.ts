@@ -89,6 +89,7 @@ export class DefaultActionState implements ActionState {
   doorType: DoorType;
   doorArchHeight: number;
   doorFilled: boolean;
+  doorInterior: boolean;
   doorUValue: number;
   doorOpacity: number;
   doorVolumetricHeatCapacity: number;
@@ -219,6 +220,7 @@ export class DefaultActionState implements ActionState {
     this.doorType = DoorType.Default;
     this.doorArchHeight = 1;
     this.doorFilled = true;
+    this.doorInterior = false;
     this.doorUValue = DEFAULT_DOOR_U_VALUE;
     this.doorOpacity = 1;
     this.doorVolumetricHeatCapacity = 0.5;

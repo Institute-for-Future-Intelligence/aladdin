@@ -184,6 +184,9 @@ export const DoorMenu = React.memo(() => {
                 } as UndoableCheck;
                 addUndoable(undoableCheck);
                 updateInteriorById(door.id, checked);
+                setCommonStore((state) => {
+                  state.actionState.doorInterior = checked;
+                });
               }}
             >
               {i18n.t('doorMenu.Interior', lang)}

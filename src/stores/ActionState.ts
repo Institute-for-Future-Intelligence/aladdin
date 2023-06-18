@@ -74,6 +74,7 @@ export interface ActionState {
   doorType: DoorType;
   doorArchHeight: number;
   doorFilled: boolean;
+  doorInterior: boolean;
   doorUValue: number;
   doorOpacity: number;
   doorVolumetricHeatCapacity: number;

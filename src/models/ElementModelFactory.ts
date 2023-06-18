@@ -703,6 +703,7 @@ export class ElementModelFactory {
       lz: 0,
       doorType: actionState.doorType,
       filled: actionState.doorFilled,
+      interior: actionState.doorInterior,
       archHeight: actionState.doorArchHeight,
       textureType: actionState.doorTexture ?? DoorTexture.Default,
       color: actionState.doorColor ?? '#ffffff',

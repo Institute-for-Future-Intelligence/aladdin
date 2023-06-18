@@ -701,6 +701,8 @@ export class ElementModelCloner {
       tint: window.tint,
       opacity: window.opacity,
       shutter: { ...window.shutter },
+      empty: window.empty,
+      interior: window.interior,
     } as WindowModel;
   }
 
@@ -730,6 +732,7 @@ export class ElementModelCloner {
       volumetricHeatCapacity: door.volumetricHeatCapacity,
       textureType: door.textureType,
       filled: door.filled,
+      interior: door.interior,
       doorType: door.doorType,
       archHeight: door.archHeight,
       normal: [...door.normal],
