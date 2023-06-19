@@ -183,7 +183,7 @@ const FlatRoof = ({
     if (!heat) return undefined;
     const sum = heat.reduce((a, b) => a + b, 0);
     const segments = getRoofSegmentVerticesWithoutOverhang(id);
-    if (!segments) return undefined;
+    if (!segments || !segments[0]) return undefined;
     const vectors: Vector3[][] = [];
     const s = segments[0].map((v) => v.clone().sub(center));
     const cellSize = DEFAULT_HEAT_FLUX_DENSITY_FACTOR * (world.solarRadiationHeatmapGridCellSize ?? 0.5);

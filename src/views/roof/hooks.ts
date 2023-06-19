@@ -248,6 +248,9 @@ export const useUpdateSegmentVerticesMap = (
 
     let vertices: Vector3[][] = [];
 
+    // FIXME
+    // In the following, the vertices are relative to the foundation only in terms of position.
+    // To get the absolute coordinates, we must apply the foundation's orientation.
     if (isFlat) {
       if (roofType === RoofType.Gambrel) {
         vertices.push(getRoofPointsOfGambrelRoof(roofSegments).map(relToFoundation));

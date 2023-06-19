@@ -1267,7 +1267,7 @@ const RoofSegment = ({
     if (!heat) return undefined;
     const sum = heat.reduce((a, b) => a + b, 0);
     const segments = getRoofSegmentVerticesWithoutOverhang(id);
-    if (!segments) return undefined;
+    if (!segments || !segments[index]) return undefined;
     const [wallLeft, wallRight, ridgeRight, ridgeLeft, wallLeftAfterOverhang] = points;
     const thickness = wallLeftAfterOverhang.z - wallLeft.z;
     const s = segments[index].map((v) => v.clone().sub(centroid).add(new Vector3(0, 0, thickness)));

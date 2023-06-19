@@ -764,7 +764,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
     if (!heat) return undefined;
     const sum = heat.reduce((a, b) => a + b, 0);
     const segments = getRoofSegmentVerticesWithoutOverhang(id);
-    if (!segments) return undefined;
+    if (!segments || !segments[roofSegments.length]) return undefined;
     const s = segments[roofSegments.length].map((v) =>
       v
         .clone()
