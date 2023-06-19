@@ -65,6 +65,30 @@ interface FlatRoofProps {
   heatmap: CanvasTexture | null;
 }
 
+const drawShapeOfGambrelRoof = (shape: Shape, roofSegments: RoofSegmentProps[]) => {
+  const [frontSide, frontTop, backTop, backSide] = roofSegments;
+  shape.moveTo(frontSide.points[0].x, frontSide.points[0].y);
+  shape.lineTo(frontSide.points[1].x, frontSide.points[1].y);
+  shape.lineTo(backSide.points[0].x, backSide.points[1].y);
+  shape.lineTo(backSide.points[1].x, backSide.points[1].y);
+  shape.closePath();
+};
+
+export const getRoofPointsOfGambrelRoof = (roofSegments: RoofSegmentProps[], array?: Vector3[]) => {
+  const arr: Vector3[] = [];
+  const [frontSide, frontTop, backTop, backSide] = roofSegments;
+  arr.push(frontSide.points[0].clone());
+  arr.push(frontSide.points[1].clone());
+  arr.push(backSide.points[0].clone());
+  arr.push(backSide.points[1].clone());
+  if (array) {
+    array.push(...arr);
+    return array;
+  } else {
+    return arr;
+  }
+};
+
 export const TopExtrude = ({
   uuid,
   shape,
@@ -240,14 +264,18 @@ const FlatRoof = ({
   const wireFramePoints = useMemo(() => {
     // this can still be triggered when the roof is deleted because all walls are removed
     if (roofSegments.length === 0) return [new Vector3()];
-    const startPoint = roofSegments[0].points[0];
-    const points = [startPoint];
-    for (const segment of roofSegments) {
-      const rightPoint = segment.points[1];
-      points.push(rightPoint);
+    const points: Vector3[] = [];
+    if (roofType === RoofType.Gambrel) {
+      getRoofPointsOfGambrelRoof(roofSegments, points);
+    } else {
+      points.push(roofSegments[0].points[0]);
+      for (const segment of roofSegments) {
+        const rightPoint = segment.points[1];
+        points.push(rightPoint);
+      }
     }
     return points;
-  }, [roofSegments]);
+  }, [roofSegments, roofType]);
 
   const thicknessVector = useMemo(() => {
     return new Vector3(0, 0, thickness);
@@ -260,26 +288,34 @@ const FlatRoof = ({
     const shape = new Shape();
     // this can still be triggered when the roof is deleted because all walls are removed
     if (roofSegments.length === 0) return shape;
-    const startPoint = roofSegments[0].points[0];
-    shape.moveTo(startPoint.x, startPoint.y);
-    for (const segment of roofSegments) {
-      const rightPoint = segment.points[1];
-      shape.lineTo(rightPoint.x, rightPoint.y);
+    if (roofType === RoofType.Gambrel) {
+      drawShapeOfGambrelRoof(shape, roofSegments);
+    } else {
+      const startPoint = roofSegments[0].points[0];
+      shape.moveTo(startPoint.x, startPoint.y);
+      for (const segment of roofSegments) {
+        const rightPoint = segment.points[1];
+        shape.lineTo(rightPoint.x, rightPoint.y);
+      }
+      shape.closePath();
     }
-    shape.closePath();
     return shape;
-  }, [roofSegments, center]);
+  }, [roofSegments, center, roofType]);
 
   const shapeWithHoles = useMemo(() => {
     const shape = new Shape();
     if (roofSegments.length === 0) return shape;
-    const startPoint = roofSegments[0].points[0];
-    shape.moveTo(startPoint.x, startPoint.y);
-    for (const segment of roofSegments) {
-      const rightPoint = segment.points[1];
-      shape.lineTo(rightPoint.x, rightPoint.y);
+    if (roofType === RoofType.Gambrel) {
+      drawShapeOfGambrelRoof(shape, roofSegments);
+    } else {
+      const startPoint = roofSegments[0].points[0];
+      shape.moveTo(startPoint.x, startPoint.y);
+      for (const segment of roofSegments) {
+        const rightPoint = segment.points[1];
+        shape.lineTo(rightPoint.x, rightPoint.y);
+      }
+      shape.closePath();
     }
-    shape.closePath();
 
     if (windows.length > 0) {
       for (const window of windows) {
@@ -312,7 +348,7 @@ const FlatRoof = ({
     }
 
     return shape;
-  }, [roofSegments, center, windows]);
+  }, [roofSegments, center, windows, roofType]);
 
   const holeMeshes = useMemo(
     () =>

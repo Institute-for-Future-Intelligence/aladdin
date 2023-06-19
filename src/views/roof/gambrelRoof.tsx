@@ -43,6 +43,7 @@ import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
 import Ceiling from './ceiling';
 import { FoundationModel } from '../../models/FoundationModel';
+import FlatRoof from './flatRoof';
 
 const GambrelRoofWireframe = React.memo(({ roofSegments, thickness, lineWidth, lineColor }: RoofWireframeProps) => {
   if (roofSegments.length === 0) {
@@ -715,30 +716,49 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
           handleContextMenu(e, id);
         }}
       >
-        {roofSegments.map((segment, index, arr) => {
-          return (
-            <RoofSegment
-              id={id}
-              key={index}
-              index={index}
-              foundationModel={foundation as FoundationModel}
-              roofType={roofType}
-              segment={segment}
-              centroid={centroid}
+        {riseInnerState > 0 ? (
+          <>
+            {roofSegments.map((segment, index, arr) => {
+              return (
+                <RoofSegment
+                  id={id}
+                  key={index}
+                  index={index}
+                  foundationModel={foundation as FoundationModel}
+                  roofType={roofType}
+                  segment={segment}
+                  centroid={centroid}
+                  thickness={thickness}
+                  color={topLayerColor}
+                  sideColor={sideColor}
+                  texture={texture}
+                  heatmap={heatmapTextures && index < heatmapTextures.length ? heatmapTextures[index] : undefined}
+                />
+              );
+            })}
+            <GambrelRoofWireframe
+              roofSegments={roofSegments}
               thickness={thickness}
-              color={topLayerColor}
-              sideColor={sideColor}
-              texture={texture}
-              heatmap={heatmapTextures && index < heatmapTextures.length ? heatmapTextures[index] : undefined}
+              lineColor={lineColor}
+              lineWidth={lineWidth}
             />
-          );
-        })}
-        <GambrelRoofWireframe
-          roofSegments={roofSegments}
-          thickness={thickness}
-          lineColor={lineColor}
-          lineWidth={lineWidth}
-        />
+          </>
+        ) : (
+          <FlatRoof
+            id={id}
+            foundationModel={foundation as FoundationModel}
+            roofType={roofType}
+            roofSegments={roofSegments}
+            center={new Vector3(centroid.x, centroid.y, topZ)}
+            thickness={thickness}
+            lineWidth={lineWidth}
+            lineColor={lineColor}
+            sideColor={sideColor}
+            color={topLayerColor}
+            textureType={textureType}
+            heatmap={null}
+          />
+        )}
       </group>
 
       {/* ceiling */}

@@ -21,6 +21,7 @@ import { RoofModel, RoofType } from 'src/models/RoofModel';
 import { Util } from 'src/Util';
 import { UndoableMoveSkylight } from 'src/undo/UndoableMove';
 import { UndoableResizeSkylight, UndoableResizeSkylightPolygonTop } from 'src/undo/UndoableResize';
+import { getRoofPointsOfGambrelRoof } from '../roof/flatRoof';
 
 interface WindowHandleWrapperProps {
   id: string;
@@ -155,8 +156,12 @@ const setResizedData = (id: string, center: Vector3, lx: number, lz: number) => 
   });
 };
 
-const getRoofBoundaryVertices = (roofSegments: RoofSegmentProps[], roofCentroid: Vector3) => {
-  return roofSegments.map((segment) => segment.points[0].clone().add(roofCentroid));
+const getRoofBoundaryVertices = (roofSegments: RoofSegmentProps[], roofCentroid: Vector3, roofType: RoofType) => {
+  if (roofType === RoofType.Gambrel) {
+    return getRoofPointsOfGambrelRoof(roofSegments).map((v) => v.add(roofCentroid));
+  } else {
+    return roofSegments.map((segment) => segment.points[0].clone().add(roofCentroid));
+  }
 };
 
 const setUndoableMove = (id: string, position: number[], rotation: number[]) => {
@@ -440,7 +445,11 @@ const WindowHandleWrapper = ({
         if (!pointerOnIntersectionPlane) return;
         pointer.copy(pointerOnIntersectionPlane);
         const newPosition = getPosRelToFoundation(pointer, foundation);
-        const boundaryVertices = getRoofBoundaryVertices(roofSegmentsRef.current, roofCentroidRef.current);
+        const boundaryVertices = getRoofBoundaryVertices(
+          roofSegmentsRef.current,
+          roofCentroidRef.current,
+          roof.roofType,
+        );
         setCommonStore((state) => {
           const window = state.elements.find((e) => e.id === id && e.type === ObjectType.Window) as WindowModel;
           if (!window) return;
@@ -545,7 +554,11 @@ const WindowHandleWrapper = ({
 
       const roof = roofModelRef.current;
       if (roof && isFlatRoof(roof)) {
-        const boundaryVertices = getRoofBoundaryVertices(roofSegmentsRef.current, roofCentroidRef.current);
+        const boundaryVertices = getRoofBoundaryVertices(
+          roofSegmentsRef.current,
+          roofCentroidRef.current,
+          roof.roofType,
+        );
         if (windowType === WindowType.Polygonal) {
           const [topX, topH] = polygonTop;
           if (isPolygonalWindowInsideVertices(newCenter, newLx, newLz, topX, topH, rotation, boundaryVertices)) {
@@ -612,7 +625,11 @@ const WindowHandleWrapper = ({
         const windowCenter = new Vector3(window.cx, window.cy, window.cz);
 
         if (roofModelRef.current && isFlatRoof(roofModelRef.current)) {
-          const boundaryVertices = getRoofBoundaryVertices(roofSegmentsRef.current!, roofCentroidRef.current!);
+          const boundaryVertices = getRoofBoundaryVertices(
+            roofSegmentsRef.current!,
+            roofCentroidRef.current!,
+            roofModelRef.current.roofType,
+          );
           if (
             isPolygonalWindowInsideVertices(
               windowCenter,
