@@ -69,7 +69,7 @@ const drawShapeOfGambrelRoof = (shape: Shape, roofSegments: RoofSegmentProps[]) 
   const [frontSide, frontTop, backTop, backSide] = roofSegments;
   shape.moveTo(frontSide.points[0].x, frontSide.points[0].y);
   shape.lineTo(frontSide.points[1].x, frontSide.points[1].y);
-  shape.lineTo(backSide.points[0].x, backSide.points[1].y);
+  shape.lineTo(backSide.points[0].x, backSide.points[0].y);
   shape.lineTo(backSide.points[1].x, backSide.points[1].y);
   shape.closePath();
 };
