@@ -1119,11 +1119,18 @@ export class Util {
   }
 
   // p is relative position on wall
-  static isElementInsideWall(p: Vector3, wlx: number, wlz: number, boundingPoints: Point2[]): boolean {
+  static isElementInsideWall(
+    p: Vector3,
+    wlx: number,
+    wlz: number,
+    boundingPoints: Point2[],
+    isDoor?: boolean,
+  ): boolean {
     const hx = wlx / 2;
     const hz = wlz / 2;
     for (let i = -1; i <= 1; i += 2) {
       for (let j = -1; j <= 1; j += 2) {
+        if (isDoor && j === -1) continue;
         const x = p.x + hx * i;
         const y = p.z + hz * j;
         if (!Util.isPointInside(x, y, boundingPoints)) {
@@ -1167,6 +1174,7 @@ export class Util {
         parent.lx * hx * 2,
         parent.lz * hz * 2,
         Util.getWallInnerSideShapePoints(parent as WallModel),
+        elem.type === ObjectType.Door,
       )
     ) {
       return ElementState.OutsideBoundary;

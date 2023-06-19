@@ -290,7 +290,7 @@ const WallResizeHandleWrapper = React.memo(
           } else {
             lz = ly;
           }
-          if (!Util.isElementInsideWall(new Vector3(cx, 0, cz), lx, lz, wallShapePoints)) {
+          if (!Util.isElementInsideWall(new Vector3(cx, 0, cz), lx, lz, wallShapePoints, el.type === ObjectType.Door)) {
             return false;
           }
         }

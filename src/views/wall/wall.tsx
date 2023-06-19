@@ -590,11 +590,12 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
             if (elementsOnWall.length > 0) {
               const wallPoints = RoofUtil.getWallPoints2D(wall);
               elementsOnWall.forEach((e) => {
+                const isDoor = e.type === ObjectType.Door;
                 const isSolarPanel = e.type === ObjectType.SolarPanel;
                 const eLx = isSolarPanel ? e.lx - 0.01 : e.lx * lx;
                 const eLz = isSolarPanel ? e.ly - 0.01 : e.lz * lz;
                 const center = new Vector3(e.cx * lx, 0, e.cz * lz);
-                if (!Util.isElementInsideWall(center, eLx, eLz, wallPoints)) {
+                if (!Util.isElementInsideWall(center, eLx, eLz, wallPoints, isDoor)) {
                   invalidateIdSet.add(e.id);
                 }
               });
@@ -766,8 +767,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     return true; // no collision
   }
 
-  function checkOutsideBoundary(id: string, center: Vector3, eLx: number, eLz: number) {
-    if (!Util.isElementInsideWall(center, eLx, eLz, outerWallPoints2D)) {
+  function checkOutsideBoundary(id: string, center: Vector3, eLx: number, eLz: number, isDoor?: boolean) {
+    if (!Util.isElementInsideWall(center, eLx, eLz, outerWallPoints2D, isDoor)) {
       invalidElementIdRef.current = id;
     }
   }
@@ -1718,7 +1719,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               const { newLz, newCz, newArchHeight } = getArchedResizedData(door, boundedPointer, resizeAnchor);
               const center = new Vector3(door.cx * lx, 0, newCz);
               checkCollision(door.id, center, door.lx * lx, newLz);
-              checkOutsideBoundary(door.id, center, door.lx * lx, newLz);
+              checkOutsideBoundary(door.id, center, door.lx * lx, newLz, true);
               setCommonStore((state) => {
                 const d = state.elements.find((e) => e.id === door.id) as DoorModel;
                 if (!d) return;
@@ -1731,7 +1732,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               const { dimensionXZ, positionXZ } = getDiagonalResizedData(e, boundedPointer, resizeAnchor);
               const center = new Vector3(positionXZ.x, 0, positionXZ.z);
               checkCollision(door.id, center, dimensionXZ.x, dimensionXZ.z);
-              checkOutsideBoundary(door.id, center, dimensionXZ.x, dimensionXZ.z);
+              checkOutsideBoundary(door.id, center, dimensionXZ.x, dimensionXZ.z, true);
               setCommonStore((state) => {
                 const d = state.elements.find((e) => e.id === door.id) as DoorModel;
                 if (!d) return;
