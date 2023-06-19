@@ -250,11 +250,11 @@ export const useUpdateSegmentVerticesMap = (
 
     if (isFlat) {
       if (roofType === RoofType.Gambrel) {
-        vertices.push(getRoofPointsOfGambrelRoof(roofSegments));
+        vertices.push(getRoofPointsOfGambrelRoof(roofSegments).map(relToFoundation));
       } else {
         const points: Vector3[] = [];
         for (const segment of roofSegments) {
-          points.push(segment.points[1]);
+          points.push(segment.points[1].clone().add(centroid));
         }
         vertices.push(points);
       }

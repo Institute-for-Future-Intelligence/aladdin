@@ -183,7 +183,6 @@ const FlatRoof = ({
     if (!heat) return undefined;
     const sum = heat.reduce((a, b) => a + b, 0);
     const segments = getRoofSegmentVerticesWithoutOverhang(id);
-    console.log('seg', segments);
     if (!segments) return undefined;
     const vectors: Vector3[][] = [];
     const s = segments[0].map((v) => v.clone().sub(center));
