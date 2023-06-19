@@ -149,6 +149,8 @@ const HipRoof = (roofModel: HipRoofModel) => {
   const isFirstMountRef = useRef(true);
   const oldRiseRef = useRef(rise);
 
+  const isFlat = riseInnerState < 0.01;
+
   useEffect(() => {
     if (!isFirstMountRef.current) {
       setLeftRidgeLengthCurr(leftRidgeLength);
@@ -417,13 +419,23 @@ const HipRoof = (roofModel: HipRoofModel) => {
           break;
       }
     }
-    useStore.getState().setRoofSegmentVerticesWithoutOverhang(id, segmentVertices);
+    if (isFlat) {
+      const seg: Vector3[] = [];
+      for (const segment of segmentVertices) {
+        seg.push(segment[0].clone());
+      }
+      useStore.getState().setRoofSegmentVerticesWithoutOverhang(id, [seg]);
+    } else {
+      useStore.getState().setRoofSegmentVerticesWithoutOverhang(id, segmentVertices);
+    }
   };
 
   const updateSegmentVertices = useUpdateSegmentVerticesMap(
     id,
     new Vector3(centroid2D.x, centroid2D.y, topZ),
     roofSegments,
+    isFlat,
+    RoofType.Hip,
   );
   useUpdateSegmentVerticesWithoutOverhangMap(updateSegmentVerticesWithoutOverhangMap);
 
@@ -520,7 +532,22 @@ const HipRoof = (roofModel: HipRoofModel) => {
           handleContextMenu(e, id);
         }}
       >
-        {riseInnerState > 0 ? (
+        {isFlat ? (
+          <FlatRoof
+            id={id}
+            foundationModel={foundation as FoundationModel}
+            roofType={roofType}
+            roofSegments={roofSegments}
+            center={new Vector3(centroid2D.x, centroid2D.y, topZ)}
+            thickness={thickness}
+            lineWidth={lineWidth}
+            lineColor={lineColor}
+            sideColor={sideColor}
+            color={topLayerColor}
+            textureType={textureType}
+            heatmap={flatHeatmapTexture}
+          />
+        ) : (
           <>
             {roofSegments.map((segment, index, arr) => {
               return (
@@ -548,21 +575,6 @@ const HipRoof = (roofModel: HipRoofModel) => {
               lineWidth={lineWidth}
             />
           </>
-        ) : (
-          <FlatRoof
-            id={id}
-            foundationModel={foundation as FoundationModel}
-            roofType={roofType}
-            roofSegments={roofSegments}
-            center={new Vector3(centroid2D.x, centroid2D.y, topZ)}
-            thickness={thickness}
-            lineWidth={lineWidth}
-            lineColor={lineColor}
-            sideColor={sideColor}
-            color={topLayerColor}
-            textureType={textureType}
-            heatmap={flatHeatmapTexture}
-          />
         )}
       </group>
 

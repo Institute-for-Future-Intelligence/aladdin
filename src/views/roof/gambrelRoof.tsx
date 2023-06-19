@@ -176,6 +176,8 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
   const isPointerDownRef = useRef(false);
   const isFirstMountRef = useRef(true);
 
+  const isFlat = riseInnerState < 0.01;
+
   // set position and rotation
   const foundation = useStore((state) => {
     for (const e of state.elements) {
@@ -656,10 +658,14 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
     segmentVertices.push([ridgeTLPoint, ridgeTRPoint, ridgeBLPoint, ridgeBRPoint]);
     segmentVertices.push([wallPoints[2], wallPoints[3], ridgeBRPoint, ridgeBLPoint]);
 
-    useStore.getState().setRoofSegmentVerticesWithoutOverhang(id, segmentVertices);
+    if (isFlat) {
+      useStore.getState().setRoofSegmentVerticesWithoutOverhang(id, [wallPoints]);
+    } else {
+      useStore.getState().setRoofSegmentVerticesWithoutOverhang(id, segmentVertices);
+    }
   };
 
-  useUpdateSegmentVerticesMap(id, centroid, roofSegments);
+  useUpdateSegmentVerticesMap(id, centroid, roofSegments, isFlat, RoofType.Gambrel);
   useUpdateSegmentVerticesWithoutOverhangMap(updateSegmentVerticesWithoutOverhangMap);
 
   const selectMe = useStore(Selector.selectMe);
@@ -716,7 +722,22 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
           handleContextMenu(e, id);
         }}
       >
-        {riseInnerState > 0 ? (
+        {isFlat ? (
+          <FlatRoof
+            id={id}
+            foundationModel={foundation as FoundationModel}
+            roofType={roofType}
+            roofSegments={roofSegments}
+            center={new Vector3(centroid.x, centroid.y, topZ)}
+            thickness={thickness}
+            lineWidth={lineWidth}
+            lineColor={lineColor}
+            sideColor={sideColor}
+            color={topLayerColor}
+            textureType={textureType}
+            heatmap={null}
+          />
+        ) : (
           <>
             {roofSegments.map((segment, index, arr) => {
               return (
@@ -743,21 +764,6 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
               lineWidth={lineWidth}
             />
           </>
-        ) : (
-          <FlatRoof
-            id={id}
-            foundationModel={foundation as FoundationModel}
-            roofType={roofType}
-            roofSegments={roofSegments}
-            center={new Vector3(centroid.x, centroid.y, topZ)}
-            thickness={thickness}
-            lineWidth={lineWidth}
-            lineColor={lineColor}
-            sideColor={sideColor}
-            color={topLayerColor}
-            textureType={textureType}
-            heatmap={null}
-          />
         )}
       </group>
 

@@ -860,7 +860,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
     useStore.getState().setRoofSegmentVerticesWithoutOverhang(id, segmentVertices);
   };
 
-  useUpdateSegmentVerticesMap(id, centroid, roofSegments);
+  useUpdateSegmentVerticesMap(id, centroid, roofSegments, false, RoofType.Gable);
   useUpdateSegmentVerticesWithoutOverhangMap(updateSegmentVerticesWithoutOverhangMap);
 
   const selectMe = useStore(Selector.selectMe);

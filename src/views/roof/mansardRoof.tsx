@@ -169,6 +169,8 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
   const isPointerDownRef = useRef(false);
   const { gl, camera } = useThree();
 
+  const isFlat = riseInnerState < 0.01;
+
   const foundation = useStore((state) => {
     for (const e of state.elements) {
       if (e.id === parentId && e.type === ObjectType.Foundation) {
@@ -565,7 +567,16 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
     }
     const ridgeVertices = ridgePoints.map((ridge) => ridge.leftPoint.clone());
     segmentVertices.push(ridgeVertices);
-    useStore.getState().setRoofSegmentVerticesWithoutOverhang(id, segmentVertices);
+
+    if (isFlat) {
+      const seg: Vector3[] = [];
+      for (const segment of segmentVertices.slice(0, -1)) {
+        seg.push(segment[0].clone());
+      }
+      useStore.getState().setRoofSegmentVerticesWithoutOverhang(id, [seg]);
+    } else {
+      useStore.getState().setRoofSegmentVerticesWithoutOverhang(id, segmentVertices);
+    }
   };
 
   const { transparent, opacity } = useTransparent();
@@ -573,6 +584,8 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
     id,
     centroid,
     roofSegments,
+    isFlat,
+    RoofType.Mansard,
     ridgePoints.map((ridge) => ridge.leftPoint.clone().add(thicknessVector)),
   );
   useUpdateSegmentVerticesWithoutOverhangMap(updateSegmentVerticesWithoutOverhangMap);
@@ -847,7 +860,6 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
 
   const noTextureAndOneColor = textureType === RoofTexture.NoTexture && color && color === sideColor;
   const castShadow = shadowEnabled && !transparent;
-  const isFlat = riseInnerState < 0.01;
 
   return (
     <group position={[cx, cy, cz]} rotation={[0, 0, rotationZ]} name={`Mansard Roof Group ${id}`}>

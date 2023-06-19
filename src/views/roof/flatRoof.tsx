@@ -183,24 +183,10 @@ const FlatRoof = ({
     if (!heat) return undefined;
     const sum = heat.reduce((a, b) => a + b, 0);
     const segments = getRoofSegmentVerticesWithoutOverhang(id);
+    console.log('seg', segments);
     if (!segments) return undefined;
-    const seg: Vector3[] = [];
-    switch (roofType) {
-      case RoofType.Hip:
-      case RoofType.Pyramid:
-        for (const s of segments) {
-          seg.push(s[0]);
-        }
-        break;
-      case RoofType.Mansard:
-        for (const [i, s] of segments.entries()) {
-          if (i === segments.length - 1) continue;
-          seg.push(s[0]);
-        }
-        break;
-    }
     const vectors: Vector3[][] = [];
-    const s = seg.map((v) => v.clone().sub(center));
+    const s = segments[0].map((v) => v.clone().sub(center));
     const cellSize = DEFAULT_HEAT_FLUX_DENSITY_FACTOR * (world.solarRadiationHeatmapGridCellSize ?? 0.5);
     const s0 = s[0].clone();
     const s1 = s[1].clone();

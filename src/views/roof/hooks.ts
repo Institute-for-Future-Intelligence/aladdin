@@ -23,6 +23,7 @@ import { RoofSegmentProps } from './roofRenderer';
 import { RoofUtil } from './RoofUtil';
 import { GambrelRoofModel, RoofModel, RoofType } from 'src/models/RoofModel';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
+import { getRoofPointsOfGambrelRoof } from './flatRoof';
 
 export const useRoofTexture = (textureType: RoofTexture) => {
   const textureLoader = useMemo(() => {
@@ -234,6 +235,8 @@ export const useUpdateSegmentVerticesMap = (
   roofId: string,
   centroid: Vector3,
   roofSegments: RoofSegmentProps[],
+  isFlat: boolean,
+  roofType: RoofType,
   mansardTop?: Vector3[],
 ) => {
   const runDynamicSimulation = usePrimitiveStore(Selector.runDynamicSimulation);
@@ -242,21 +245,36 @@ export const useUpdateSegmentVerticesMap = (
 
   const updateSegmentVertices = () => {
     const relToFoundation = (v: Vector3) => v.clone().add(centroid);
-    const vertices = roofSegments.map((segment) => {
-      const points = segment.points;
-      // triangle segment
-      if (points.length === 6) {
-        return points.slice(3).map(relToFoundation);
-      }
-      // quad segment
-      else if (points.length === 8) {
-        return points.slice(4).map(relToFoundation);
+
+    let vertices: Vector3[][] = [];
+
+    if (isFlat) {
+      if (roofType === RoofType.Gambrel) {
+        vertices.push(getRoofPointsOfGambrelRoof(roofSegments));
       } else {
-        throw new Error('Invalid Roof segment data');
+        const points: Vector3[] = [];
+        for (const segment of roofSegments) {
+          points.push(segment.points[1]);
+        }
+        vertices.push(points);
       }
-    });
-    if (mansardTop) {
-      vertices.push(mansardTop);
+    } else {
+      for (const segment of roofSegments) {
+        const points = segment.points;
+        // triangle segment
+        if (points.length === 6) {
+          vertices.push(points.slice(3).map(relToFoundation));
+        }
+        // quad segment
+        else if (points.length === 8) {
+          vertices.push(points.slice(4).map(relToFoundation));
+        } else {
+          throw new Error('Invalid Roof segment data');
+        }
+      }
+      if (mansardTop) {
+        vertices.push(mansardTop);
+      }
     }
     useStore.getState().set((state) => {
       state.roofSegmentVerticesMap.set(roofId, vertices);

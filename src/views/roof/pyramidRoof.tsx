@@ -3,7 +3,7 @@
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { PyramidRoofModel, RoofModel } from 'src/models/RoofModel';
+import { PyramidRoofModel, RoofModel, RoofType } from 'src/models/RoofModel';
 import { useStore } from 'src/stores/common';
 import { CanvasTexture, Euler, Mesh, Raycaster, RepeatWrapping, Vector2, Vector3 } from 'three';
 import * as Selector from 'src/stores/selector';
@@ -455,7 +455,13 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
   const [flatHeatmapTexture, setFlatHeatmapTexture] = useState<CanvasTexture | null>(null);
   const selectMe = useStore(Selector.selectMe);
 
-  const updateSegmentVertices = useUpdateSegmentVerticesMap(id, centerPointV3, roofSegments);
+  const updateSegmentVertices = useUpdateSegmentVerticesMap(
+    id,
+    centerPointV3,
+    roofSegments,
+    isFlatRoof,
+    RoofType.Pyramid,
+  );
 
   useEffect(() => {
     if (showSolarRadiationHeatmap) {
@@ -549,7 +555,15 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
       segmentVertices.push([leftPoint, rightPoint, centerPointV3.clone()]);
     }
 
-    useStore.getState().setRoofSegmentVerticesWithoutOverhang(id, segmentVertices);
+    if (isFlatRoof) {
+      const seg: Vector3[] = [];
+      for (const segment of segmentVertices) {
+        seg.push(segment[0].clone());
+      }
+      useStore.getState().setRoofSegmentVerticesWithoutOverhang(id, [seg]);
+    } else {
+      useStore.getState().setRoofSegmentVerticesWithoutOverhang(id, segmentVertices);
+    }
   };
 
   useUpdateSegmentVerticesWithoutOverhangMap(updateSegmentVerticesWithoutOverhangMap);
