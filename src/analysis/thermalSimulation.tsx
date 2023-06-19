@@ -948,8 +948,10 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         roofSegmentResults = calculateHipRoof(roof, segmentsWithoutOverhang, foundation);
         break;
       case RoofType.Gable:
-      case RoofType.Gambrel:
         roofSegmentResults = calculateGableRoof(roof, segmentsWithoutOverhang, foundation);
+        break;
+      case RoofType.Gambrel:
+        roofSegmentResults = calculateGambrelRoof(roof, segmentsWithoutOverhang, foundation);
         break;
       case RoofType.Mansard:
         roofSegmentResults = calculateMansardRoof(roof, segmentsWithoutOverhang, foundation);
@@ -1223,8 +1225,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   };
 
   const calculateGableRoof = (roof: RoofModel, segmentsWithoutOverhang: Vector3[][], foundation: FoundationModel) => {
-    if (roof.roofType !== RoofType.Gable && roof.roofType !== RoofType.Gambrel)
-      throw new Error('roof is not gable or gambrel');
+    if (roof.roofType !== RoofType.Gable) throw new Error('roof is not gable');
     const n = segmentsWithoutOverhang.length;
     if (n === 0) return;
     const windows = getChildrenOfType(ObjectType.Window, roof.id);
@@ -1311,6 +1312,120 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     const extraT: number[] = Array(n).fill(0);
     const results: RoofSegmentResult[] = [];
     for (let k = 0; k < n; k++) {
+      if (totalSolarHeats[k] !== 0) {
+        extraT[k] =
+          (totalSolarHeats[k] * absorption) / ((roof.volumetricHeatCapacity ?? 0.5) * totalAreas[k] * roof.thickness);
+      }
+      results.push({
+        surfaceTemperature: currentOutsideTemperatureRef.current + extraT[k],
+        totalArea: totalAreas[k],
+      } as RoofSegmentResult);
+    }
+    return results;
+  };
+
+  const calculateGambrelRoof = (roof: RoofModel, segmentsWithoutOverhang: Vector3[][], foundation: FoundationModel) => {
+    if (roof.roofType !== RoofType.Gambrel) throw new Error('roof is not gambrel');
+    const n = segmentsWithoutOverhang.length;
+    if (n === 0) return;
+    // check if the roof is flat or not
+    let flat = true;
+    const h0 = segmentsWithoutOverhang[0][0].z;
+    for (const s of segmentsWithoutOverhang) {
+      for (const v of s) {
+        if (Math.abs(v.z - h0) > 0.01) {
+          flat = false;
+          break;
+        }
+      }
+    }
+    const m = flat ? 1 : n;
+    const areas: number[] = [];
+    const windows = getChildrenOfType(ObjectType.Window, roof.id);
+    for (const s of segmentsWithoutOverhang) {
+      let a = Util.getTriangleArea(s[0], s[1], s[2]) + Util.getTriangleArea(s[2], s[3], s[0]);
+      if (windows.length > 0) {
+        for (const w of windows) {
+          if (RoofUtil.onSegment(s, w.cx, w.cy)) {
+            a -= w.lx * w.lz;
+          }
+        }
+        if (a < 0) a = 0; // just in case
+      }
+      areas.push(a);
+    }
+    const totalAreas: number[] = flat ? [areas.reduce((x, y) => x + y, 0)] : areas;
+    const absorption = getLightAbsorption(roof);
+    const totalSolarHeats: number[] = Array(m).fill(0);
+    // when the sun is out
+    if (sunDirectionRef.current && sunDirectionRef.current.z > 0) {
+      const solarPanels = getChildrenOfType(ObjectType.SolarPanel, roof.id);
+      const results = SolarRadiation.computeGambrelRoofSolarRadiationEnergy(
+        now,
+        world,
+        sunDirectionRef.current,
+        roof,
+        true,
+        segmentsWithoutOverhang,
+        foundation,
+        windows,
+        solarPanels,
+        elevation,
+        distanceToClosestObject,
+      );
+      for (let k = 0; k < m; k++) {
+        const seg = results.segmentIntensities[k];
+        const unitArea = results.segmentUnitArea[k];
+        for (let i = 0; i < seg.length; i++) {
+          for (let j = 0; j < seg[i].length; j++) {
+            seg[i][j] *= scaleFactorRef.current;
+            totalSolarHeats[k] += seg[i][j] * unitArea; // for energy calculation
+          }
+        }
+      }
+      // sum up the solar radiation intensity for generating the solar heatmap for the entire roof (with overhang)
+      if (runDailySimulation) {
+        const segments = getRoofSegmentVertices(roof.id);
+        if (segments) {
+          const heatmapResults = SolarRadiation.computeGambrelRoofSolarRadiationEnergy(
+            now,
+            world,
+            sunDirectionRef.current,
+            roof,
+            false,
+            segments,
+            foundation,
+            windows,
+            solarPanels,
+            elevation,
+            distanceToClosestObject,
+          );
+          for (let k = 0; k < m; k++) {
+            const seg = heatmapResults.segmentIntensities[k];
+            for (let i = 0; i < seg.length; i++) {
+              for (let j = 0; j < seg[i].length; j++) {
+                seg[i][j] *= scaleFactorRef.current;
+              }
+            }
+            // if the length is one, it is a flat roof
+            const uid = m === 1 ? roof.id : roof.id + '-' + k;
+            const solarHeatmap = solarHeatmapRef.current.get(uid);
+            if (!solarHeatmap) {
+              solarHeatmapRef.current.set(uid, [...seg]);
+            } else {
+              for (let i = 0; i < solarHeatmap.length; i++) {
+                for (let j = 0; j < solarHeatmap[i].length; j++) {
+                  solarHeatmap[i][j] += seg[i][j];
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    const extraT: number[] = Array(m).fill(0);
+    const results: RoofSegmentResult[] = [];
+    for (let k = 0; k < m; k++) {
       if (totalSolarHeats[k] !== 0) {
         extraT[k] =
           (totalSolarHeats[k] * absorption) / ((roof.volumetricHeatCapacity ?? 0.5) * totalAreas[k] * roof.thickness);

@@ -15,7 +15,7 @@ import { useRefStore } from 'src/stores/commonRef';
 import * as Selector from 'src/stores/selector';
 import { UnoableResizeGambrelRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
-import { CanvasTexture, DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
+import { CanvasTexture, DoubleSide, Euler, Mesh, Raycaster, RepeatWrapping, Vector2, Vector3 } from 'three';
 import {
   addUndoableResizeRoofRise,
   handleContextMenu,
@@ -665,30 +665,68 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
     }
   };
 
-  useUpdateSegmentVerticesMap(id, centroid, roofSegments, isFlat, RoofType.Gambrel);
+  const updateSegmentVertices = useUpdateSegmentVerticesMap(id, centroid, roofSegments, isFlat, RoofType.Gambrel);
   useUpdateSegmentVerticesWithoutOverhangMap(updateSegmentVerticesWithoutOverhangMap);
 
   const selectMe = useStore(Selector.selectMe);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const getHeatmap = useDataStore(Selector.getHeatmap);
+  const [flatHeatmapTexture, setFlatHeatmapTexture] = useState<CanvasTexture | null>(null);
   const [heatmapTextures, setHeatmapTextures] = useState<CanvasTexture[]>([]);
 
   useEffect(() => {
     if (showSolarRadiationHeatmap) {
-      const n = roofSegments.length;
-      if (n > 0) {
-        const textures = [];
-        for (let i = 0; i < n; i++) {
-          const heatmap = getHeatmap(id + '-' + i);
-          if (heatmap) {
-            const t = Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5);
-            if (t) {
-              textures.push(t);
+      if (isFlat) {
+        const heatmap = getHeatmap(id);
+        if (heatmap) {
+          const t = Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5);
+          if (t) {
+            // obtain the bounding rectangle
+            const segmentVertices = updateSegmentVertices();
+            if (segmentVertices && segmentVertices.length > 0 && foundation) {
+              const euler = new Euler(0, 0, foundation.rotation[2], 'ZYX');
+              let minX = Number.MAX_VALUE;
+              let minY = Number.MAX_VALUE;
+              let maxX = -Number.MAX_VALUE;
+              let maxY = -Number.MAX_VALUE;
+              for (const s of segmentVertices) {
+                for (const v of s) {
+                  const v2 = v.clone().applyEuler(euler);
+                  if (v2.x > maxX) maxX = v2.x;
+                  if (v2.x < minX) minX = v2.x;
+                  if (v2.y > maxY) maxY = v2.y;
+                  if (v2.y < minY) minY = v2.y;
+                }
+              }
+              const dx = maxX - minX;
+              const dy = maxY - minY;
+              const vcx = (minX + maxX) / 2;
+              const vcy = (minY + maxY) / 2;
+              t.wrapT = t.wrapS = RepeatWrapping;
+              t.offset.set(-minX / dx, -minY / dy);
+              t.center.set(vcx / dx, vcy / dy);
+              t.rotation = -foundation.rotation[2];
+              t.repeat.set(1 / dx, 1 / dy);
             }
+            setFlatHeatmapTexture(t);
           }
         }
-        setHeatmapTextures(textures);
+      } else {
+        const n = roofSegments.length;
+        if (n > 0) {
+          const textures = [];
+          for (let i = 0; i < n; i++) {
+            const heatmap = getHeatmap(id + '-' + i);
+            if (heatmap) {
+              const t = Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5);
+              if (t) {
+                textures.push(t);
+              }
+            }
+          }
+          setHeatmapTextures(textures);
+        }
       }
     }
   }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
@@ -735,7 +773,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
             sideColor={sideColor}
             color={topLayerColor}
             textureType={textureType}
-            heatmap={null}
+            heatmap={flatHeatmapTexture}
           />
         ) : (
           <>
