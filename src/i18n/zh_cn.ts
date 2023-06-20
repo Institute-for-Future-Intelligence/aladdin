@@ -1339,7 +1339,7 @@ export const i18n_zh_cn = {
       IfSharedOrPublishedRenamingFileBreaksExistingLinks: '如果此文件已被分享或发布, 改名会使已有链接失效',
     },
 
-    projectPanel: {
+    projectsPanel: {
       SearchByTitle: '按标题搜索',
       MyProjects: '我的项目',
       GenerateProjectLink: '生成项目链接',

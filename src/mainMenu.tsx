@@ -903,13 +903,13 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                 return;
               }
               usePrimitiveStore.setState((state) => {
-                state.listProjectsFlag = !state.listProjectsFlag;
+                state.showProjectsFlag = !state.showProjectsFlag;
                 state.openModelsMap = false;
               });
               if (loggable) {
                 setCommonStore((state) => {
                   state.actionInfo = {
-                    name: 'Open Projects',
+                    name: 'Open Project',
                     timestamp: new Date().getTime(),
                   };
                 });

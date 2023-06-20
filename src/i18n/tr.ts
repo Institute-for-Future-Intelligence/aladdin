@@ -1364,7 +1364,7 @@ export const i18n_tr = {
         'If this file has been shared or published, renaming it breaks existing links',
     },
 
-    projectPanel: {
+    projectsPanel: {
       SearchByTitle: 'Search by title',
       MyProjects: 'My Projects',
       GenerateProjectLink: 'Generate Project Link',

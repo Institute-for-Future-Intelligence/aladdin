@@ -73,14 +73,14 @@ const Header = styled.div`
   }
 `;
 
-export interface ProjectPanelProps {
-  projectArray: object[];
+export interface ProjectsPanelProps {
+  projects: object[];
   openProject: (userid: string, title: string) => void;
   deleteProject: (userid: string, title: string) => void;
   renameProject: (userid: string, oldTitle: string, newTitle: string) => void;
 }
 
-const ProjectPanel = ({ projectArray, openProject, deleteProject, renameProject }: ProjectPanelProps) => {
+const ProjectsPanel = ({ projects, openProject, deleteProject, renameProject }: ProjectsPanelProps) => {
   const language = useStore(Selector.language);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
@@ -99,7 +99,7 @@ const ProjectPanel = ({ projectArray, openProject, deleteProject, renameProject 
   const [userid, setUserid] = useState<string>();
   const dragRef = useRef<HTMLDivElement | null>(null);
   // make an editable copy because the project array is not mutable
-  const projectsRef = useRef<object[]>([...projectArray]);
+  const projectsRef = useRef<object[]>([...projects]);
   // set a flag so that we can update when projectsRef changes
   const [recountFlag, setRecountFlag] = useState<boolean>(false);
 
@@ -122,11 +122,11 @@ const ProjectPanel = ({ projectArray, openProject, deleteProject, renameProject 
   }, []);
 
   useEffect(() => {
-    if (projectArray) {
-      projectsRef.current = [...projectArray];
+    if (projects) {
+      projectsRef.current = [...projects];
       setRecountFlag(!recountFlag);
     }
-  }, [projectArray]);
+  }, [projects]);
 
   const onDrag: DraggableEventHandler = (e, ui) => {
     setCurPosition({
@@ -141,13 +141,13 @@ const ProjectPanel = ({ projectArray, openProject, deleteProject, renameProject 
 
   const closePanel = () => {
     usePrimitiveStore.setState((state) => {
-      state.showProjectPanel = false;
+      state.showProjectsPanel = false;
     });
   };
 
   const confirmDeleteProject = (userid: string, title: string) => {
     Modal.confirm({
-      title: i18n.t('projectPanel.DoYouReallyWantToDeleteProject', lang) + ' "' + title + '"?',
+      title: i18n.t('projectsPanel.DoYouReallyWantToDeleteProject', lang) + ' "' + title + '"?',
       content: (
         <span style={{ color: 'red', fontWeight: 'bold' }}>
           <WarningOutlined style={{ marginRight: '6px' }} />
@@ -219,7 +219,7 @@ const ProjectPanel = ({ projectArray, openProject, deleteProject, renameProject 
             <WarningOutlined style={{ marginRight: '4px' }} />
             {i18n.t('word.Caution', lang) +
               ': ' +
-              i18n.t('projectPanel.IfSharedOrPublishedRenamingProjectBreaksExistingLinks', lang)}
+              i18n.t('projectsPanel.IfSharedOrPublishedRenamingProjectBreaksExistingLinks', lang)}
             .
           </span>
         </Space>
@@ -236,7 +236,7 @@ const ProjectPanel = ({ projectArray, openProject, deleteProject, renameProject 
         <Container ref={nodeRef}>
           <ColumnWrapper ref={wrapperRef}>
             <Header className="handle" style={{ direction: 'ltr' }}>
-              <span>{i18n.t('projectPanel.MyProjects', lang) + ' (' + projectsRef.current.length + ')'}</span>
+              <span>{i18n.t('projectsPanel.MyProjects', lang) + ' (' + projectsRef.current.length + ')'}</span>
               <span
                 style={{ cursor: 'pointer' }}
                 onMouseDown={() => {
@@ -252,15 +252,15 @@ const ProjectPanel = ({ projectArray, openProject, deleteProject, renameProject 
             <span style={{ direction: 'ltr' }}>
               <Search
                 style={{ width: '50%', paddingTop: '8px', paddingBottom: '8px' }}
-                title={i18n.t('projectPanel.SearchByTitle', lang)}
+                title={i18n.t('projectsPanel.SearchByTitle', lang)}
                 allowClear
                 size={'small'}
                 enterButton
                 onSearch={(s) => {
-                  if (!projectArray) return;
+                  if (!projects) return;
                   // must create a new array for ant table to update (don't just set length to 0)
                   projectsRef.current = [];
-                  for (const f of projectArray) {
+                  for (const f of projects) {
                     // @ts-ignore
                     if (f['title']?.toLowerCase().includes(s.toLowerCase())) {
                       projectsRef.current.push(f);
@@ -286,7 +286,7 @@ const ProjectPanel = ({ projectArray, openProject, deleteProject, renameProject 
                 title={i18n.t('word.Title', lang)}
                 dataIndex="title"
                 key="title"
-                width={'58%'}
+                width={'40%'}
                 sortDirections={['ascend', 'descend', 'ascend']}
                 sorter={(a, b) => {
                   // @ts-ignore
@@ -309,6 +309,15 @@ const ProjectPanel = ({ projectArray, openProject, deleteProject, renameProject 
                       openProject(data.userid, data.title);
                     },
                   };
+                }}
+              />
+              <Column
+                title={i18n.t('word.Description', lang)}
+                dataIndex="description"
+                key="description"
+                width={'18%'}
+                render={(description, record) => {
+                  return <Typography.Text style={{ fontSize: '12px' }}>{description}</Typography.Text>;
                 }}
               />
               <Column
@@ -363,7 +372,7 @@ const ProjectPanel = ({ projectArray, openProject, deleteProject, renameProject 
                       }}
                     />
                     <img
-                      title={i18n.t('projectPanel.GenerateProjectLink', lang)}
+                      title={i18n.t('projectsPanel.GenerateProjectLink', lang)}
                       alt={'Link'}
                       src={LinkImage}
                       onClick={() => {
@@ -374,7 +383,7 @@ const ProjectPanel = ({ projectArray, openProject, deleteProject, renameProject 
                           '&title=' +
                           encodeURIComponent(record.title);
                         copyTextToClipboard(url);
-                        showSuccess(i18n.t('projectPanel.ProjectLinkGeneratedInClipBoard', lang) + '.');
+                        showSuccess(i18n.t('projectsPanel.ProjectLinkGeneratedInClipBoard', lang) + '.');
                       }}
                       height={16}
                       width={16}
@@ -394,4 +403,4 @@ const ProjectPanel = ({ projectArray, openProject, deleteProject, renameProject 
   );
 };
 
-export default React.memo(ProjectPanel);
+export default React.memo(ProjectsPanel);

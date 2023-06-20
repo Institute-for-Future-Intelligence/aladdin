@@ -1365,7 +1365,7 @@ export const i18n_ua = {
         'Якщо цей файл було відкрито або опубліковано, зміна його назви порушить наявні посилання',
     },
 
-    projectPanel: {
+    projectsPanel: {
       SearchByTitle: 'Пошук за назвою',
       MyProjects: 'My Projects',
       GenerateProjectLink: 'Generate Project Link',

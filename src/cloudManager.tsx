@@ -26,7 +26,7 @@ import ModelsMapWrapper from './modelsMapWrapper';
 import MainToolBar from './mainToolBar';
 import SaveCloudFileModal from './saveCloudFileModal';
 import ModelsGallery from './modelsGallery';
-import ProjectPanel from './panels/projectPanel';
+import ProjectsPanel from './panels/projectsPanel';
 
 export interface CloudManagerProps {
   viewOnly: boolean;
@@ -44,7 +44,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const countryCode = useStore(Selector.world.countryCode);
   const exportContent = useStore(Selector.exportContent);
   const showCloudFilePanel = usePrimitiveStore(Selector.showCloudFilePanel);
-  const showProjectPanel = usePrimitiveStore(Selector.showProjectPanel);
+  const showProjectsPanel = usePrimitiveStore(Selector.showProjectsPanel);
   const showModelsGallery = usePrimitiveStore(Selector.showModelsGallery);
   const showAccountSettingsPanel = usePrimitiveStore(Selector.showAccountSettingsPanel);
   const openModelsMap = usePrimitiveStore(Selector.openModelsMap);
@@ -63,7 +63,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const undoManager = useStore(Selector.undoManager);
   const peopleModels = useStore(Selector.peopleModels);
   const createProjectFlag = usePrimitiveStore(Selector.createProjectFlag);
-  const listProjectsFlag = usePrimitiveStore(Selector.listProjectsFlag);
+  const showProjectsFlag = usePrimitiveStore(Selector.showProjectsFlag);
 
   const [loading, setLoading] = useState(false);
   const [updateFlag, setUpdateFlag] = useState(false);
@@ -166,6 +166,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           title: f.title,
           time: dayjs(new Date(f.timestamp)).format('MM/DD/YYYY hh:mm a'),
           timestamp: f.timestamp,
+          description: f.description,
           action: '',
         });
       });
@@ -248,7 +249,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       listMyProjects();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [listProjectsFlag]);
+  }, [showProjectsFlag]);
 
   useEffect(() => {
     if (firstCallListCloudFiles.current) {
@@ -912,7 +913,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     if (user.uid) {
       fetchMyProjects().then(() => {
         usePrimitiveStore.setState((state) => {
-          state.showProjectPanel = true;
+          state.showProjectsPanel = true;
         });
       });
     }
@@ -1260,9 +1261,9 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           renameCloudFile={renameCloudFile}
         />
       )}
-      {showProjectPanel && myProjects.current && (
-        <ProjectPanel
-          projectArray={projectArray}
+      {showProjectsPanel && myProjects.current && (
+        <ProjectsPanel
+          projects={projectArray}
           openProject={() => {}}
           deleteProject={() => {}}
           renameProject={() => {}}

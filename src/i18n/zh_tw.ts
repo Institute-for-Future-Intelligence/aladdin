@@ -1340,7 +1340,7 @@ export const i18n_zh_tw = {
       IfSharedOrPublishedRenamingFileBreaksExistingLinks: '如果此文檔已被分享或發布, 改名會使已有鏈接失效',
     },
 
-    projectPanel: {
+    projectsPanel: {
       SearchByTitle: '按標題搜索',
       MyProjects: '我的項目',
       GenerateProjectLink: '生成項目鏈接',

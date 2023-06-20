@@ -19,8 +19,8 @@ export interface PrimitiveStoreState {
   modelsMapWeatherStations: boolean;
 
   createProjectFlag: boolean;
-  listProjectsFlag: boolean;
-  showProjectPanel: boolean;
+  showProjectsFlag: boolean;
+  showProjectsPanel: boolean;
 
   userCount: number;
   showCloudFilePanel: boolean;
@@ -129,8 +129,8 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
     modelsMapWeatherStations: false,
 
     createProjectFlag: false,
-    listProjectsFlag: false,
-    showProjectPanel: false,
+    showProjectsFlag: false,
+    showProjectsPanel: false,
 
     userCount: 0,
     showCloudFilePanel: false,
