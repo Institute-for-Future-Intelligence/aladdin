@@ -995,7 +995,11 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     if (flat) {
       let a = 0;
       for (const s of segmentsWithoutOverhang) {
-        a += Util.getTriangleArea(s[0], s[1], s[2]);
+        const points: Point2[] = [];
+        for (const v of s) {
+          points.push(Util.mapVector3ToPoint2(v));
+        }
+        a += Util.getPolygonArea(points);
       }
       if (windows.length > 0) {
         for (const w of windows) {
