@@ -18,6 +18,8 @@ import { UndoableResizeWallHeight } from 'src/undo/UndoableResize';
 import { RoofModel, RoofType } from 'src/models/RoofModel';
 import { ElementModel } from 'src/models/ElementModel';
 import { Point2 } from 'src/models/Point2';
+import { WindowModel, WindowType } from 'src/models/WindowModel';
+import { DEFAULT_POLYGONTOP } from '../window/window';
 
 interface ResizeHandlesProps {
   x: number;
@@ -289,6 +291,14 @@ const WallResizeHandleWrapper = React.memo(
             lz *= wall.lz;
           } else {
             lz = ly;
+          }
+          if (el.type === ObjectType.Window && (el as WindowModel).windowType === WindowType.Polygonal) {
+            const [tx, th] = (el as WindowModel).polygonTop ?? DEFAULT_POLYGONTOP;
+            const px = cx + tx * lx;
+            const pz = cz + lz / 2 + th;
+            if (!Util.isPointInside(px, pz, wallShapePoints)) {
+              return false;
+            }
           }
           if (!Util.isElementInsideWall(new Vector3(cx, 0, cz), lx, lz, wallShapePoints, el.type === ObjectType.Door)) {
             return false;

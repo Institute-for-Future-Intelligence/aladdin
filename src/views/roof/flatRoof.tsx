@@ -38,6 +38,7 @@ import { getPolygonWindowShape } from '../window/polygonalWindow';
 import { getArchedWindowShape } from '../window/archedWindow';
 import { FoundationModel } from '../../models/FoundationModel';
 import { RoofType } from '../../models/RoofModel';
+import { DEFAULT_POLYGONTOP } from '../window/window';
 
 interface TopExtrudeProps {
   uuid?: string;
@@ -307,7 +308,7 @@ const FlatRoof = ({
         const c = new Vector3(window.cx, window.cy, window.cz).sub(center);
         switch (window.windowType) {
           case WindowType.Polygonal: {
-            const [topX, topH] = window.polygonTop ?? [0, 0.5];
+            const [topX, topH] = window.polygonTop ?? DEFAULT_POLYGONTOP;
             const [hx, hy, tx] = [window.lx / 2, window.lz / 2, topX * window.lx];
             const hole = getPolygonWindowShape(hx, hy, tx, topH, c.x, c.y);
             shape.holes.push(hole);
@@ -343,7 +344,7 @@ const FlatRoof = ({
         const euler = new Euler().fromArray([...window.rotation, 'ZXY']);
         switch (window.windowType) {
           case WindowType.Polygonal: {
-            const [topX, topH] = window.polygonTop ?? [0, 0.5];
+            const [topX, topH] = window.polygonTop ?? DEFAULT_POLYGONTOP;
             const [hx, hy, tx] = [window.lx / 2, window.lz / 2, topX * window.lx];
             const shape = getPolygonWindowShape(hx, hy, tx, topH);
             const holeMesh = new Mesh(

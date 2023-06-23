@@ -30,7 +30,7 @@ import { WallFill, WallModel, WallStructure } from 'src/models/WallModel';
 import { ElementModelFactory } from 'src/models/ElementModelFactory';
 import { Point2 } from 'src/models/Point2';
 import { ElementGrid } from '../elementGrid';
-import Window, { WINDOW_GROUP_NAME } from '../window/window';
+import Window, { DEFAULT_POLYGONTOP, WINDOW_GROUP_NAME } from '../window/window';
 import WallWireFrame from './wallWireFrame';
 import * as Selector from 'src/stores/selector';
 import { UndoableAdd } from 'src/undo/UndoableAdd';
@@ -242,7 +242,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               drawArchWindow(windowShape, wlx, wly, wcx, wcy, window.archHeight);
               break;
             case WindowType.Polygonal: {
-              const [tx, th] = window.polygonTop ?? [0, 0.5];
+              const [tx, th] = window.polygonTop ?? DEFAULT_POLYGONTOP;
               drawPolygonalWindow(windowShape, wlx, wly, wcx, wcy, tx * wlx, th);
               break;
             }
@@ -357,7 +357,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               drawArchWindow(windowShape, wlx, wly, wcx, wcy, window.archHeight);
               break;
             case WindowType.Polygonal: {
-              const [tx, th] = window.polygonTop ?? [0, 0.5];
+              const [tx, th] = window.polygonTop ?? DEFAULT_POLYGONTOP;
               drawPolygonalWindow(windowShape, wlx, wly, wcx, wcy, tx * wlx, th);
               break;
             }
@@ -718,7 +718,80 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     return new Vector3();
   }
 
-  function checkCollision(id: string, p: Vector3, elx: number, elz: number) {
+  function getElementVerticesOnWall(e: ElementModel) {
+    const vertices: Point2[] = [];
+
+    for (let i = -1; i <= 1; i += 2) {
+      for (let j = -1; j <= 1; j += 2) {
+        const [signX, signY] = [i, i * j];
+        switch (e.type) {
+          case ObjectType.Window: {
+            const [cx, cy] = [e.cx * lx, e.cz * lz];
+            const [hlx, hly] = [(e.lx * lx) / 2, (e.lz * lz) / 2];
+            const x = cx + signX * hlx;
+            const y = cy + signY * hly;
+            vertices.push({ x, y } as Point2);
+            break;
+          }
+          case ObjectType.Door: {
+            const [cx, cy] = [e.cx * lx, e.cz * lz];
+            const [hlx, hly] = [(e.lx * lx) / 2, (e.lz * lz) / 2];
+            const x = cx + signX * hlx;
+            const y = cy + signY * hly;
+            vertices.push({ x, y } as Point2);
+            break;
+          }
+          case ObjectType.SolarPanel: {
+            const [cx, cy] = [e.cx * lx, e.cz * lz];
+            const [hlx, hly] = [e.lx / 2, e.ly / 2];
+            const x = cx + signX * hlx;
+            const y = cy + signY * hly;
+            vertices.push({ x, y } as Point2);
+          }
+        }
+      }
+    }
+
+    if (e.type === ObjectType.Window && (e as WindowModel).windowType === WindowType.Polygonal) {
+      const window = e as WindowModel;
+      const [topX, topH] = window.polygonTop ?? [0, 0];
+      vertices.push({ x: e.cx * lx + topX * e.lx * lx, y: e.cz * lz + (e.lz * lz) / 2 + topH } as Point2);
+    }
+
+    return vertices;
+  }
+
+  function getWallBoundary(wall: WallModel, margin = 0): Point2[] {
+    if (!isPartial) return Util.getWallVertices(wall, margin);
+    const hx = wall.lx / 2;
+    const hz = wall.lz / 2;
+    const lowerLeft = { x: -hx - margin, y: wall.leftUnfilledHeight - hz - margin } as Point2;
+    const lowerRight = { x: hx + margin, y: wall.rightUnfilledHeight - hz - margin } as Point2;
+    const upperLeft = { x: -hx - margin, y: wall.leftTopPartialHeight - hz + margin } as Point2;
+    const upperRight = { x: hx + margin, y: wall.rightTopPartialHeight - hz + margin } as Point2;
+    const vertices: Point2[] = [];
+    vertices.push(upperLeft, lowerLeft, lowerRight, upperRight);
+    if (!isTopPartial) {
+      if (wall.centerRightRoofHeight) {
+        vertices.push({
+          x: wall.centerRightRoofHeight[0] * wall.lx,
+          y: wall.centerRightRoofHeight[1] - hz + margin,
+        } as Point2);
+      }
+      if (wall.centerRoofHeight) {
+        vertices.push({ x: wall.centerRoofHeight[0] * wall.lx, y: wall.centerRoofHeight[1] - hz + margin } as Point2);
+      }
+      if (wall.centerLeftRoofHeight) {
+        vertices.push({
+          x: wall.centerLeftRoofHeight[0] * wall.lx,
+          y: wall.centerLeftRoofHeight[1] - hz + margin,
+        } as Point2);
+      }
+    }
+    return vertices;
+  }
+
+  function checkCollision(id: string, p: Vector3, elx: number, elz: number, polygonTop?: number[]) {
     if (elx < 0.1 || elz < 0.1) {
       invalidElementIdRef.current = id;
       return false;
@@ -729,48 +802,69 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       return false;
     }
 
-    for (const e of elementsOnWall) {
-      if (e.type === ObjectType.Polygon) continue;
-      if (e.id !== id) {
-        const cMinX = p.x - elx / 2; // current element left
-        const cMaxX = p.x + elx / 2; // current element right
-        const cMinZ = p.z - elz / 2; // current element bot
-        const cMaxZ = p.z + elz / 2; // current element up
-        switch (e.type) {
-          case ObjectType.Door:
-          case ObjectType.Window: {
-            const tMinX = e.cx * lx - (e.lx * lx) / 2; // target element left
-            const tMaxX = e.cx * lx + (e.lx * lx) / 2; // target element right
-            const tMinZ = e.cz * lz - (e.lz * lz) / 2; // target element bot
-            const tMaxZ = e.cz * lz + (e.lz * lz) / 2; // target element up
-            if (collisionHelper([tMinX, tMaxX, tMinZ, tMaxZ, cMinX, cMaxX, cMinZ, cMaxZ], -0.05)) {
-              invalidElementIdRef.current = id;
-              return false;
-            }
-            break;
-          }
-          case ObjectType.SolarPanel: {
-            const tMinX = e.cx * lx - e.lx / 2; // target element left
-            const tMaxX = e.cx * lx + e.lx / 2; // target element right
-            const tMinZ = e.cz * lz - e.ly / 2; // target element bot
-            const tMaxZ = e.cz * lz + e.ly / 2; // target element up
-            if (collisionHelper([tMinX, tMaxX, tMinZ, tMaxZ, cMinX, cMaxX, cMinZ, cMaxZ], 0.1)) {
-              invalidElementIdRef.current = id;
-              return false;
-            }
-            break;
+    const margin = 0.1;
+    elx += margin;
+    elz += margin;
+
+    for (const el of elementsOnWall) {
+      if (el.id === id || el.type === ObjectType.Polygon) continue;
+
+      // target element vertices
+      const targetVertices = getElementVerticesOnWall(el);
+      const currentVertices: Point2[] = [];
+
+      // check if current element vertices inside target element vertices
+      for (let i = -1; i <= 1; i += 2) {
+        for (let j = -1; j <= 1; j += 2) {
+          const pointX = p.x + (i * elx) / 2;
+          const pointY = p.z + (i * j * elz) / 2;
+          currentVertices.push({ x: pointX, y: pointY });
+          if (Util.isPointInside(pointX, pointY, targetVertices)) {
+            invalidElementIdRef.current = id;
+            return false;
           }
         }
       }
+      if (polygonTop) {
+        const [topX, topH] = polygonTop;
+        const pointX = p.x + topX * elx;
+        const pointY = p.z + elz / 2 + topH;
+        currentVertices.push({ x: pointX, y: pointY });
+        if (Util.isPointInside(pointX, pointY, targetVertices)) {
+          invalidElementIdRef.current = id;
+          return false;
+        }
+      }
+
+      // check if target element vertices inside current element vertices
+      for (const targetVertex of targetVertices) {
+        if (Util.isPointInside(targetVertex.x, targetVertex.y, currentVertices)) {
+          invalidElementIdRef.current = id;
+          return false;
+        }
+      }
     }
+
     invalidElementIdRef.current = null;
     return true; // no collision
   }
 
-  function checkOutsideBoundary(id: string, center: Vector3, eLx: number, eLz: number, isDoor?: boolean) {
+  function checkInsideBoundary(id: string, center: Vector3, eLx: number, eLz: number, isDoor?: boolean) {
     if (!Util.isElementInsideWall(center, eLx, eLz, outerWallPoints2D, isDoor)) {
       invalidElementIdRef.current = id;
+      return false;
     }
+    return true;
+  }
+
+  function checkPolygonTopInsideBoundary(center: Vector3, wLx: number, wLz: number, polygonTop: number[]) {
+    const [tx, th] = polygonTop;
+    const topPointX = center.x + wLx * tx;
+    const topPointY = center.z + wLz / 2 + th;
+    if (!Util.isPointInside(topPointX, topPointY, getWallBoundary(wallModel, 0))) {
+      return false;
+    }
+    return true;
   }
 
   function setRayCast(e: PointerEvent) {
@@ -1655,9 +1749,25 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           ignorePadding: selectedElement.type === ObjectType.SolarPanel,
         });
         const [eLx, eLz] = [elementHalfSize[0] * 2, elementHalfSize[1] * 2];
-        if (selectedElement.type !== ObjectType.Polygon) checkCollision(selectedElement.id, boundedPointer, eLx, eLz);
         if (selectedElement.type !== ObjectType.SolarPanel) {
-          checkOutsideBoundary(selectedElement.id, boundedPointer, eLx, eLz);
+          checkInsideBoundary(selectedElement.id, boundedPointer, eLx, eLz);
+        }
+        if (selectedElement.type !== ObjectType.Polygon) {
+          let isInside = true;
+          let polygonTop: number[] | undefined = undefined;
+          if (
+            selectedElement.type === ObjectType.Window &&
+            (selectedElement as WindowModel).windowType === WindowType.Polygonal
+          ) {
+            polygonTop = (selectedElement as WindowModel).polygonTop ?? DEFAULT_POLYGONTOP;
+            isInside = checkPolygonTopInsideBoundary(boundedPointer, eLx, eLz, polygonTop);
+          }
+          const isvalid = checkCollision(selectedElement.id, boundedPointer, eLx, eLz, polygonTop);
+          if (isInside && isvalid) {
+            invalidElementIdRef.current = null;
+          } else {
+            invalidElementIdRef.current = selectedElement.id;
+          }
         }
         moveElement(selectedElement.id, boundedPointer);
       }
@@ -1674,7 +1784,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               const { newLz, newCz, newArchHeight } = getArchedResizedData(window, boundedPointer, resizeAnchor);
               const center = new Vector3(window.cx * lx, 0, newCz);
               checkCollision(window.id, center, window.lx * lx, newLz);
-              checkOutsideBoundary(window.id, center, window.lx * lx, newLz);
+              checkInsideBoundary(window.id, center, window.lx * lx, newLz);
               setCommonStore((state) => {
                 const w = state.elements.find((e) => e.id === window.id) as WindowModel;
                 if (!w) return;
@@ -1686,19 +1796,42 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               });
             } else if (resizeHandleType === ResizeHandleType.Upper) {
               // polygonal top vertex
-              // todo: add collision and boundary check
+              // todo: add boundary check
+              const center = new Vector3(window.cx * lx, 0, window.cz * lz);
+              const [wlx, wlz] = [window.lx * lx, window.lz * lz];
+              const tx = Util.clamp((pointerOnGrid.x - resizeAnchor.x) / wlx, -0.5, 0.5);
+              const th = Math.max(0, pointerOnGrid.z - resizeAnchor.z);
+              const newPolygonTop = [tx, th];
+              if (
+                !checkCollision(window.id, center, wlx, wlz, newPolygonTop) ||
+                !checkPolygonTopInsideBoundary(center, wlx, wlz, newPolygonTop)
+              ) {
+                invalidElementIdRef.current = window.id;
+              }
               setCommonStore((state) => {
                 const w = state.elements.find((e) => e.id === window.id) as WindowModel;
                 if (!w) return;
-                const tx = Util.clamp((pointerOnGrid.x - resizeAnchor.x) / (w.lx * lx), -0.5, 0.5);
-                const th = Math.max(0, pointerOnGrid.z - resizeAnchor.z);
-                w.polygonTop = [tx, th];
+                w.polygonTop = [...newPolygonTop];
+                w.cy = w.id === invalidElementIdRef.current ? -0.01 : 0.3;
+                w.tint = w.id === invalidElementIdRef.current ? 'red' : window.tint;
               });
             } else {
               const { dimensionXZ, positionXZ } = getDiagonalResizedData(e, boundedPointer, resizeAnchor);
               const center = new Vector3(positionXZ.x, 0, positionXZ.z);
-              checkCollision(window.id, center, dimensionXZ.x, dimensionXZ.z);
-              checkOutsideBoundary(window.id, center, dimensionXZ.x, dimensionXZ.z);
+              let isPolygonTopInside = true;
+              let polygonTop: number[] | undefined = undefined;
+              if (window.windowType === WindowType.Polygonal) {
+                polygonTop = window.polygonTop ?? DEFAULT_POLYGONTOP;
+                isPolygonTopInside = checkPolygonTopInsideBoundary(center, dimensionXZ.x, dimensionXZ.z, polygonTop);
+              }
+              if (
+                !checkCollision(window.id, center, dimensionXZ.x, dimensionXZ.z, polygonTop) ||
+                !isPolygonTopInside ||
+                !checkInsideBoundary(window.id, center, dimensionXZ.x, dimensionXZ.z)
+              ) {
+                invalidElementIdRef.current = window.id;
+              }
+
               setCommonStore((state) => {
                 const w = state.elements.find((e) => e.id === window.id) as WindowModel;
                 if (!w) return;
@@ -1719,7 +1852,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               const { newLz, newCz, newArchHeight } = getArchedResizedData(door, boundedPointer, resizeAnchor);
               const center = new Vector3(door.cx * lx, 0, newCz);
               checkCollision(door.id, center, door.lx * lx, newLz);
-              checkOutsideBoundary(door.id, center, door.lx * lx, newLz, true);
+              checkInsideBoundary(door.id, center, door.lx * lx, newLz, true);
               setCommonStore((state) => {
                 const d = state.elements.find((e) => e.id === door.id) as DoorModel;
                 if (!d) return;
@@ -1732,7 +1865,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               const { dimensionXZ, positionXZ } = getDiagonalResizedData(e, boundedPointer, resizeAnchor);
               const center = new Vector3(positionXZ.x, 0, positionXZ.z);
               checkCollision(door.id, center, dimensionXZ.x, dimensionXZ.z);
-              checkOutsideBoundary(door.id, center, dimensionXZ.x, dimensionXZ.z, true);
+              checkInsideBoundary(door.id, center, dimensionXZ.x, dimensionXZ.z, true);
               setCommonStore((state) => {
                 const d = state.elements.find((e) => e.id === door.id) as DoorModel;
                 if (!d) return;

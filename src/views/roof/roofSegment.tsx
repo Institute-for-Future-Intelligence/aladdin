@@ -40,6 +40,7 @@ import { RoofUtil } from './RoofUtil';
 import { getArchedWindowShape } from '../window/archedWindow';
 import { getPolygonWindowShape } from '../window/polygonalWindow';
 import { FoundationModel } from '../../models/FoundationModel';
+import { DEFAULT_POLYGONTOP } from '../window/window';
 
 export type WindowData = {
   dimension: Vector3;
@@ -366,7 +367,7 @@ export const BufferRoofSegment = React.memo(
           const { dimension, position, rotation, windowType, archHeight, topPosition } = window;
           if (windowType === WindowType.Polygonal) {
             // triangle window
-            const [topX, topH] = topPosition ?? [0, 0.5];
+            const [topX, topH] = topPosition ?? DEFAULT_POLYGONTOP;
             const [hx, hy, tx] = [dimension.x / 2, dimension.y / 2, topX * dimension.x];
 
             const shape = getPolygonWindowShape(hx, hy, tx, topH);

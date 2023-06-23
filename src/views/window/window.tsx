@@ -157,6 +157,8 @@ const useUpdateOldFiles = (windowModel: WindowModel) => {
 
 export const WINDOW_GROUP_NAME = 'Window Group';
 
+export const DEFAULT_POLYGONTOP = [0, 0.5];
+
 const Window = (windowModel: WindowModel) => {
   const {
     id,
@@ -187,7 +189,7 @@ const Window = (windowModel: WindowModel) => {
     windowType = WindowType.Default,
     archHeight,
     parentType = ObjectType.Wall, // undefined is wall
-    polygonTop = [0, 0.5],
+    polygonTop = DEFAULT_POLYGONTOP,
   } = windowModel;
 
   const GROUP_NAME = `${WINDOW_GROUP_NAME} ${id}`;
