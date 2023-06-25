@@ -131,6 +131,7 @@ export class DefaultActionState implements ActionState {
   parabolicDishRimDiameter: number;
   parabolicDishLatusRectum: number;
   parabolicDishPoleHeight: number;
+  parabolicDishPoleRadius: number;
   parabolicDishReceiverStructure: ParabolicDishStructureType;
 
   parabolicTroughReflectance: number;
@@ -264,6 +265,7 @@ export class DefaultActionState implements ActionState {
     this.parabolicDishRimDiameter = 4;
     this.parabolicDishLatusRectum = 8;
     this.parabolicDishPoleHeight = 0.2;
+    this.parabolicDishPoleRadius = 0.1;
     this.parabolicDishReceiverStructure = ParabolicDishStructureType.CentralPole;
 
     this.parabolicTroughReflectance = 0.9;

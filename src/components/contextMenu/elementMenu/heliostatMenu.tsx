@@ -118,7 +118,7 @@ export const HeliostatMenu = React.memo(() => {
 
           {poleRadiusDialogVisible && <HeliostatPoleRadiusInput setDialogVisible={setPoleRadiusDialogVisible} />}
           <Menu.Item
-            key={'heliostat-pole-height'}
+            key={'heliostat-pole-radius'}
             style={{ paddingLeft: '36px' }}
             onClick={() => {
               setApplyCount(0);

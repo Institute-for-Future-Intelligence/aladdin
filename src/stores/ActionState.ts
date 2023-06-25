@@ -116,6 +116,7 @@ export interface ActionState {
   parabolicDishRimDiameter: number;
   parabolicDishLatusRectum: number;
   parabolicDishPoleHeight: number;
+  parabolicDishPoleRadius: number;
   parabolicDishReceiverStructure: ParabolicDishStructureType;
 
   parabolicTroughReflectance: number;

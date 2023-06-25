@@ -29,6 +29,7 @@ import {
   useLabelText,
 } from './menuHooks';
 import SubMenu from 'antd/lib/menu/SubMenu';
+import ParabolicDishPoleRadiusInput from './parabolicDishPoleRadiusInput';
 
 export const ParabolicDishMenu = React.memo(() => {
   const language = useStore(Selector.language);
@@ -44,6 +45,7 @@ export const ParabolicDishMenu = React.memo(() => {
   const [latusRectumDialogVisible, setLatusRectumDialogVisible] = useState(false);
   const [diameterDialogVisible, setDiameterDialogVisible] = useState(false);
   const [poleHeightDialogVisible, setPoleHeightDialogVisible] = useState(false);
+  const [poleRadiusDialogVisible, setPoleRadiusDialogVisible] = useState(false);
   const [reflectanceDialogVisible, setReflectanceDialogVisible] = useState(false);
   const [absorptanceDialogVisible, setAbsorptanceDialogVisible] = useState(false);
   const [opticalEfficiencyDialogVisible, setOpticalEfficiencyDialogVisible] = useState(false);
@@ -141,6 +143,18 @@ export const ParabolicDishMenu = React.memo(() => {
             }}
           >
             {i18n.t('solarCollectorMenu.ExtraPoleHeight', lang)} ...
+          </Menu.Item>
+
+          {poleRadiusDialogVisible && <ParabolicDishPoleRadiusInput setDialogVisible={setPoleRadiusDialogVisible} />}
+          <Menu.Item
+            key={'parabolic-dish-pole-radius'}
+            style={{ paddingLeft: '36px' }}
+            onClick={() => {
+              setApplyCount(0);
+              setPoleRadiusDialogVisible(true);
+            }}
+          >
+            {i18n.t('solarCollectorMenu.PoleRadius', lang)} ...
           </Menu.Item>
 
           {/* reflectance */}

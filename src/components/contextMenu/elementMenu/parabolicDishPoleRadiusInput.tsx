@@ -7,14 +7,14 @@ import { Button, Col, InputNumber, Modal, Radio, RadioChangeEvent, Row, Space } 
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
+import { ParabolicDishModel } from '../../../models/ParabolicDishModel';
 import { ObjectType, Scope } from '../../../types';
 import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { ZERO_TOLERANCE } from '../../../constants';
-import { HeliostatModel } from '../../../models/HeliostatModel';
 
-const HeliostatPoleRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const ParabolicDishPoleRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
@@ -24,29 +24,29 @@ const HeliostatPoleRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b: 
   const updatePoleRadiusForAll = useStore(Selector.updateSolarCollectorPoleRadiusForAll);
   const getParent = useStore(Selector.getParent);
   const addUndoable = useStore(Selector.addUndoable);
-  const actionScope = useStore(Selector.heliostatActionScope);
-  const setActionScope = useStore(Selector.setHeliostatActionScope);
+  const actionScope = useStore(Selector.parabolicDishActionScope);
+  const setActionScope = useStore(Selector.setParabolicDishActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const heliostat = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.Heliostat),
-  ) as HeliostatModel;
+  const parabolicDish = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.ParabolicDish),
+  ) as ParabolicDishModel;
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
-  const inputPoleRadiusRef = useRef<number>(heliostat?.poleRadius ?? 0.1);
+  const inputPoleRadiusRef = useRef<number>(parabolicDish?.poleRadius ?? 0.1);
 
   const lang = { lng: language };
 
   useEffect(() => {
-    if (heliostat) {
-      inputPoleRadiusRef.current = heliostat.poleRadius;
+    if (parabolicDish) {
+      inputPoleRadiusRef.current = parabolicDish.poleRadius;
     }
-  }, [heliostat]);
+  }, [parabolicDish]);
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);
@@ -57,9 +57,9 @@ const HeliostatPoleRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b: 
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
-          if (e.type === ObjectType.Heliostat && !e.locked) {
-            const hs = e as HeliostatModel;
-            if (Math.abs(hs.poleRadius - poleRadius) > ZERO_TOLERANCE) {
+          if (e.type === ObjectType.ParabolicDish && !e.locked) {
+            const pt = e as ParabolicDishModel;
+            if (Math.abs(pt.poleRadius - poleRadius) > ZERO_TOLERANCE) {
               return true;
             }
           }
@@ -67,21 +67,21 @@ const HeliostatPoleRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b: 
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         for (const e of elements) {
-          if (e.type === ObjectType.Heliostat && e.foundationId === heliostat?.foundationId && !e.locked) {
-            const hs = e as HeliostatModel;
-            if (Math.abs(hs.poleRadius - poleRadius) > ZERO_TOLERANCE) {
+          if (e.type === ObjectType.ParabolicDish && e.foundationId === parabolicDish?.foundationId && !e.locked) {
+            const pt = e as ParabolicDishModel;
+            if (Math.abs(pt.poleRadius - poleRadius) > ZERO_TOLERANCE) {
               return true;
             }
           }
         }
         break;
       case Scope.AllObjectsOfThisTypeOnSurface:
-        const parent = getParent(heliostat);
+        const parent = getParent(parabolicDish);
         if (parent) {
           for (const e of elements) {
-            if (e.type === ObjectType.Heliostat && e.parentId === heliostat.parentId && !e.locked) {
-              const hs = e as HeliostatModel;
-              if (Math.abs(hs.poleRadius - poleRadius) > ZERO_TOLERANCE) {
+            if (e.type === ObjectType.ParabolicDish && e.parentId === parabolicDish.parentId && !e.locked) {
+              const pt = e as ParabolicDishModel;
+              if (Math.abs(pt.poleRadius - poleRadius) > ZERO_TOLERANCE) {
                 return true;
               }
             }
@@ -89,7 +89,7 @@ const HeliostatPoleRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b: 
         }
         break;
       default:
-        if (Math.abs(heliostat?.poleRadius - poleRadius) > ZERO_TOLERANCE) {
+        if (Math.abs(parabolicDish?.poleRadius - poleRadius) > ZERO_TOLERANCE) {
           return true;
         }
     }
@@ -97,18 +97,18 @@ const HeliostatPoleRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b: 
   };
 
   const setPoleRadius = (value: number) => {
-    if (!heliostat) return;
+    if (!parabolicDish) return;
     if (!needChange(value)) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         const oldValuesAll = new Map<string, number>();
         for (const elem of elements) {
-          if (elem.type === ObjectType.Heliostat) {
-            oldValuesAll.set(elem.id, (elem as HeliostatModel).poleRadius);
+          if (elem.type === ObjectType.ParabolicDish) {
+            oldValuesAll.set(elem.id, (elem as ParabolicDishModel).poleRadius);
           }
         }
         const undoableChangeAll = {
-          name: 'Set Pole Radius for All Heliostats',
+          name: 'Set Pole Radius for All Parabolic Dishes',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
@@ -118,27 +118,27 @@ const HeliostatPoleRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b: 
             }
           },
           redo: () => {
-            updatePoleRadiusForAll(ObjectType.Heliostat, undoableChangeAll.newValue as number);
+            updatePoleRadiusForAll(ObjectType.ParabolicDish, undoableChangeAll.newValue as number);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updatePoleRadiusForAll(ObjectType.Heliostat, value);
+        updatePoleRadiusForAll(ObjectType.ParabolicDish, value);
         setApplyCount(applyCount + 1);
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
-        if (heliostat.foundationId) {
+        if (parabolicDish.foundationId) {
           const oldValuesAboveFoundation = new Map<string, number>();
           for (const elem of elements) {
-            if (elem.type === ObjectType.Heliostat && elem.foundationId === heliostat.foundationId) {
-              oldValuesAboveFoundation.set(elem.id, (elem as HeliostatModel).poleRadius);
+            if (elem.type === ObjectType.ParabolicDish && elem.foundationId === parabolicDish.foundationId) {
+              oldValuesAboveFoundation.set(elem.id, (elem as ParabolicDishModel).poleRadius);
             }
           }
           const undoableChangeAboveFoundation = {
-            name: 'Set Pole Radius for All Heliostats Above Foundation',
+            name: 'Set Pole Radius for All Parabolic Dishes Above Foundation',
             timestamp: Date.now(),
             oldValues: oldValuesAboveFoundation,
             newValue: value,
-            groupId: heliostat.foundationId,
+            groupId: parabolicDish.foundationId,
             undo: () => {
               for (const [id, ph] of undoableChangeAboveFoundation.oldValues.entries()) {
                 updatePoleRadiusById(id, ph as number);
@@ -147,7 +147,7 @@ const HeliostatPoleRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b: 
             redo: () => {
               if (undoableChangeAboveFoundation.groupId) {
                 updatePoleRadiusAboveFoundation(
-                  ObjectType.Heliostat,
+                  ObjectType.ParabolicDish,
                   undoableChangeAboveFoundation.groupId,
                   undoableChangeAboveFoundation.newValue as number,
                 );
@@ -155,21 +155,20 @@ const HeliostatPoleRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b: 
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAboveFoundation);
-          updatePoleRadiusAboveFoundation(ObjectType.Heliostat, heliostat.foundationId, value);
+          updatePoleRadiusAboveFoundation(ObjectType.ParabolicDish, parabolicDish.foundationId, value);
           setApplyCount(applyCount + 1);
         }
         break;
       default:
-        // selected element may be outdated, make sure that we get the latest
-        const h = getElementById(heliostat.id) as HeliostatModel;
-        const oldPoleRadius = h ? h.poleRadius : heliostat.poleRadius;
+        const p = getElementById(parabolicDish.id) as ParabolicDishModel;
+        const oldValue = p ? p.poleRadius : parabolicDish.poleRadius;
         const undoableChange = {
-          name: 'Set Heliostat Pole Radius',
+          name: 'Set Parabolic Dish Pole Radius',
           timestamp: Date.now(),
-          oldValue: oldPoleRadius,
+          oldValue: oldValue,
           newValue: value,
-          changedElementId: heliostat.id,
-          changedElementType: heliostat.type,
+          changedElementId: parabolicDish.id,
+          changedElementType: parabolicDish.type,
           undo: () => {
             updatePoleRadiusById(undoableChange.changedElementId, undoableChange.oldValue as number);
           },
@@ -178,11 +177,11 @@ const HeliostatPoleRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b: 
           },
         } as UndoableChange;
         addUndoable(undoableChange);
-        updatePoleRadiusById(heliostat.id, value);
+        updatePoleRadiusById(parabolicDish.id, value);
         setApplyCount(applyCount + 1);
     }
     setCommonStore((state) => {
-      state.actionState.heliostatPoleRadius = value;
+      state.actionState.parabolicDishPoleRadius = value;
     });
     setUpdateFlag(!updateFlag);
   };
@@ -201,7 +200,7 @@ const HeliostatPoleRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b: 
   };
 
   const close = () => {
-    inputPoleRadiusRef.current = heliostat.poleRadius;
+    inputPoleRadiusRef.current = parabolicDish.poleRadius;
     setDialogVisible(false);
   };
 
@@ -216,7 +215,7 @@ const HeliostatPoleRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b: 
     setApplyCount(0);
   };
 
-  return heliostat?.type === ObjectType.Heliostat ? (
+  return parabolicDish?.type === ObjectType.ParabolicDish ? (
     <>
       <Modal
         width={600}
@@ -285,11 +284,11 @@ const HeliostatPoleRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b: 
           >
             <Radio.Group onChange={onScopeChange} value={actionScope}>
               <Space direction="vertical">
-                <Radio value={Scope.OnlyThisObject}>{i18n.t('heliostatMenu.OnlyThisHeliostat', lang)}</Radio>
+                <Radio value={Scope.OnlyThisObject}>{i18n.t('parabolicDishMenu.OnlyThisParabolicDish', lang)}</Radio>
                 <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
-                  {i18n.t('heliostatMenu.AllHeliostatsAboveFoundation', lang)}
+                  {i18n.t('parabolicDishMenu.AllParabolicDishesAboveFoundation', lang)}
                 </Radio>
-                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('heliostatMenu.AllHeliostats', lang)}</Radio>
+                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('parabolicDishMenu.AllParabolicDishes', lang)}</Radio>
               </Space>
             </Radio.Group>
           </Col>
@@ -301,4 +300,4 @@ const HeliostatPoleRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b: 
   );
 };
 
-export default HeliostatPoleRadiusInput;
+export default ParabolicDishPoleRadiusInput;
