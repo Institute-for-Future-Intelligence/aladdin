@@ -933,6 +933,7 @@ export const i18n_en = {
       RelativeAzimuth: 'Relative Azimuth',
       Pole: 'Pole',
       PoleHeight: 'Pole Height',
+      PoleRadius: 'Pole Radius',
       ExtraPoleHeight: 'Extra Pole Height',
       ExtraPoleHeightInAdditionToHalfWidth: 'Extra Pole Height in Addition to Half Width',
       DrawSunBeam: 'Draw Sun Beam',

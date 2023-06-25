@@ -280,6 +280,17 @@ export interface CommonStoreState {
   ) => void;
   updateSolarCollectorPoleHeightAboveFoundation: (type: ObjectType, foundationId: string, poleHeight: number) => void;
   updateSolarCollectorPoleHeightForAll: (type: ObjectType, poleHeight: number) => void;
+
+  updateSolarCollectorPoleRadiusById: (id: string, poleRadius: number) => void;
+  updateSolarCollectorPoleRadiusOnSurface: (
+    type: ObjectType,
+    parentId: string,
+    normal: number[] | undefined,
+    poleRadius: number,
+  ) => void;
+  updateSolarCollectorPoleRadiusAboveFoundation: (type: ObjectType, foundationId: string, poleRadius: number) => void;
+  updateSolarCollectorPoleRadiusForAll: (type: ObjectType, poleRadius: number) => void;
+
   updateSolarCollectorDailyYieldById: (id: string, dailyYield: number) => void;
   updateSolarCollectorYearlyYieldById: (id: string, yearlyYield: number) => void;
 
@@ -1557,6 +1568,56 @@ export const useStore = create<CommonStoreState>(
               }
             });
           },
+
+          updateSolarCollectorPoleRadiusById(id, poleRadius) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.id === id && !e.locked && Util.isSolarCollector(e)) {
+                  (e as SolarCollector).poleRadius = poleRadius;
+                  break;
+                }
+              }
+            });
+          },
+          updateSolarCollectorPoleRadiusAboveFoundation(type, foundationId, poleRadius) {
+            if (!Util.isSolarCollectorType(type)) return;
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.foundationId === foundationId && !e.locked && e.type === type) {
+                  (e as SolarCollector).poleRadius = poleRadius;
+                }
+              }
+            });
+          },
+          updateSolarCollectorPoleRadiusOnSurface(type, parentId, normal, poleRadius) {
+            if (!Util.isSolarCollectorType(type)) return;
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (!e.locked && e.type === type) {
+                  let found;
+                  if (normal) {
+                    found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
+                  } else {
+                    found = e.parentId === parentId;
+                  }
+                  if (found) {
+                    (e as SolarCollector).poleRadius = poleRadius;
+                  }
+                }
+              }
+            });
+          },
+          updateSolarCollectorPoleRadiusForAll(type, poleRadius) {
+            if (!Util.isSolarCollectorType(type)) return;
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === type && !e.locked) {
+                  (e as SolarCollector).poleRadius = poleRadius;
+                }
+              }
+            });
+          },
+
           updateSolarCollectorDailyYieldById(id, dailyYield) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {

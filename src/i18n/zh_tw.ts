@@ -909,10 +909,11 @@ export const i18n_zh_tw = {
 
     solarCollectorMenu: {
       RelativeAzimuth: '相對方位角',
-      Pole: '支架',
-      PoleHeight: '支架高度',
-      ExtraPoleHeight: '額外的支架高度',
-      ExtraPoleHeightInAdditionToHalfWidth: '寬度一半額外的支架高度',
+      Pole: '支柱',
+      PoleHeight: '支柱高度',
+      PoleRadius: '支柱半徑',
+      ExtraPoleHeight: '額外的支柱高度',
+      ExtraPoleHeightInAdditionToHalfWidth: '寬度一半額外的支柱高度',
       DrawSunBeam: '顯示光束',
     },
 

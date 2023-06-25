@@ -335,6 +335,17 @@ export const updateSolarCollectorPoleHeightAboveFoundation = (state: CommonStore
 export const updateSolarCollectorPoleHeightForAll = (state: CommonStoreState) =>
   state.updateSolarCollectorPoleHeightForAll;
 
+export const updateSolarCollectorPoleRadiusById = (state: CommonStoreState) => state.updateSolarCollectorPoleRadiusById;
+
+export const updateSolarCollectorPoleRadiusOnSurface = (state: CommonStoreState) =>
+  state.updateSolarCollectorPoleRadiusOnSurface;
+
+export const updateSolarCollectorPoleRadiusAboveFoundation = (state: CommonStoreState) =>
+  state.updateSolarCollectorPoleRadiusAboveFoundation;
+
+export const updateSolarCollectorPoleRadiusForAll = (state: CommonStoreState) =>
+  state.updateSolarCollectorPoleRadiusForAll;
+
 export const updateCspReflectanceById = (state: CommonStoreState) => state.updateCspReflectanceById;
 
 export const updateCspReflectanceAboveFoundation = (state: CommonStoreState) =>

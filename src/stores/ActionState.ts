@@ -136,6 +136,7 @@ export interface ActionState {
   heliostatTower: string;
   heliostatReflectance: number;
   heliostatPoleHeight: number;
+  heliostatPoleRadius: number;
   heliostatWidth: number;
   heliostatLength: number;
 

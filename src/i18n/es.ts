@@ -933,6 +933,7 @@ export const i18n_es = {
       RelativeAzimuth: 'Azimut relativa',
       Pole: 'Pole',
       PoleHeight: 'Altura del poste',
+      PoleRadius: 'Pole Radius',
       ExtraPoleHeight: 'Extra Pole Height',
       ExtraPoleHeightInAdditionToHalfWidth: 'Extra Pole Height in Addition to Half Width',
       DrawSunBeam: 'Dibujar rayo del sol',

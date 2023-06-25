@@ -935,6 +935,7 @@ export const i18n_ua = {
       RelativeAzimuth: 'Відносний азимут',
       Pole: 'Стовп',
       PoleHeight: 'Висота стовпа',
+      PoleRadius: 'Pole Radius',
       ExtraPoleHeight: 'Додаткова висота стовпа',
       ExtraPoleHeightInAdditionToHalfWidth: 'Додаткова висота стовпа на додаток до половини ширини',
       DrawSunBeam: 'Намалювати промінь сонця',

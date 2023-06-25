@@ -151,6 +151,7 @@ export class DefaultActionState implements ActionState {
   heliostatTower: string;
   heliostatReflectance: number;
   heliostatPoleHeight: number;
+  heliostatPoleRadius: number;
   heliostatWidth: number;
   heliostatLength: number;
 
@@ -283,6 +284,7 @@ export class DefaultActionState implements ActionState {
     this.heliostatTower = 'None';
     this.heliostatReflectance = 0.9;
     this.heliostatPoleHeight = 0.2;
+    this.heliostatPoleRadius = 0.1;
     this.heliostatWidth = 4;
     this.heliostatLength = 2;
 

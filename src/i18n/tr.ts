@@ -933,6 +933,7 @@ export const i18n_tr = {
       RelativeAzimuth: 'Göreceli Azimut Açısı',
       Pole: 'Pole',
       PoleHeight: 'Direk Yüksekliği',
+      PoleRadius: 'Pole Radius',
       ExtraPoleHeight: 'Ekstra Direk Yüksekliği',
       ExtraPoleHeightInAdditionToHalfWidth: 'Yarım Genişliğe Ek Ekstra Direk Yüksekliği',
       DrawSunBeam: 'Güneş Işını Çiz',

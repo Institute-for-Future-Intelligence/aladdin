@@ -26,6 +26,7 @@ import {
   useLabelText,
 } from './menuHooks';
 import SubMenu from 'antd/lib/menu/SubMenu';
+import HeliostatPoleRadiusInput from './heliostatPoleRadiusInput';
 
 export const HeliostatMenu = React.memo(() => {
   const language = useStore(Selector.language);
@@ -38,6 +39,7 @@ export const HeliostatMenu = React.memo(() => {
   const [widthDialogVisible, setWidthDialogVisible] = useState(false);
   const [lengthDialogVisible, setLengthDialogVisible] = useState(false);
   const [poleHeightDialogVisible, setPoleHeightDialogVisible] = useState(false);
+  const [poleRadiusDialogVisible, setPoleRadiusDialogVisible] = useState(false);
   const [reflectanceDialogVisible, setReflectanceDialogVisible] = useState(false);
   const [sunBeamDialogVisible, setSunBeamDialogVisible] = useState(false);
   const [towerDialogVisible, setTowerDialogVisible] = useState(false);
@@ -112,6 +114,18 @@ export const HeliostatMenu = React.memo(() => {
             }}
           >
             {i18n.t('solarCollectorMenu.ExtraPoleHeight', lang)} ...
+          </Menu.Item>
+
+          {poleRadiusDialogVisible && <HeliostatPoleRadiusInput setDialogVisible={setPoleRadiusDialogVisible} />}
+          <Menu.Item
+            key={'heliostat-pole-height'}
+            style={{ paddingLeft: '36px' }}
+            onClick={() => {
+              setApplyCount(0);
+              setPoleRadiusDialogVisible(true);
+            }}
+          >
+            {i18n.t('solarCollectorMenu.PoleRadius', lang)} ...
           </Menu.Item>
 
           {/* reflectance */}
