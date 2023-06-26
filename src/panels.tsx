@@ -66,6 +66,7 @@ const Panels = () => {
   const showDailyBuildingEnergyPanel = useStore(Selector.viewState.showDailyBuildingEnergyPanel);
   const showYearlyBuildingEnergyPanel = useStore(Selector.viewState.showYearlyBuildingEnergyPanel);
   const showEvolutionPanel = useStore(Selector.viewState.showEvolutionPanel);
+  const projectView = useStore(Selector.viewState.projectView);
   const worldLatitude = useStore(Selector.world.latitude);
   const worldLongitude = useStore(Selector.world.longitude);
   const getClosestCity = useStore(Selector.getClosestCity);
@@ -85,7 +86,7 @@ const Panels = () => {
       {showStickyNotePanel && <StickyNotePanel />}
       {showSiteInfoPanel && <SiteInfoPanel city={city} />}
       {showDesignInfoPanel && <DesignInfoPanel />}
-      {showInstructionPanel && <InstructionPanel />}
+      {showInstructionPanel && !projectView && <InstructionPanel />}
       {showWeatherPanel && (
         <WeatherPanel city={city} graphs={[GraphDataType.MonthlyTemperatures, GraphDataType.SunshineHours]} />
       )}

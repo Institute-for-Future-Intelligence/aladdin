@@ -826,13 +826,13 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
 
   const createNewProject = () => {
     if (user && user.uid) {
-      const type = useStore.getState().projectType;
       const title = useStore.getState().projectTitle;
-      const description = useStore.getState().projectDescription;
-      const timestamp = new Date().getTime();
-      if (title && description) {
+      if (title) {
         const t = title.trim();
         if (t.length > 0) {
+          const type = useStore.getState().projectType;
+          const description = useStore.getState().projectDescription;
+          const timestamp = new Date().getTime();
           fetchMyProjects().then(() => {
             let exist = false;
             if (myProjects.current) {
@@ -917,6 +917,12 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
         });
       });
     }
+  };
+
+  const openProject = (userid: string, title: string) => {
+    setCommonStore((state) => {
+      state.viewState.projectView = true;
+    });
   };
 
   const saveToCloud = (title: string, silent: boolean, checkExistence: boolean) => {
@@ -1264,7 +1270,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       {showProjectsPanel && myProjects.current && (
         <ProjectsPanel
           projects={projectArray}
-          openProject={() => {}}
+          openProject={openProject}
           deleteProject={() => {}}
           renameProject={() => {}}
         />

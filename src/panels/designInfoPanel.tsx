@@ -37,11 +37,15 @@ const Container = styled.div`
   z-index: 7; // must be less than other panels
 `;
 
-const ColumnWrapper = styled.div`
+interface ColumnWrapperProps {
+  projectView: boolean;
+}
+
+const ColumnWrapper = styled.div<ColumnWrapperProps>`
   background: #282c34;
   position: absolute;
   top: 0;
-  left: calc(100vw / 2 - 120px);
+  left: ${(p) => (p.projectView ? 'calc(3 * 100vw / 4 - 120px)' : 'calc(100vw / 2 - 120px)')};
   align-self: center;
   alignment: center;
   align-content: center;
@@ -54,9 +58,7 @@ const ColumnWrapper = styled.div`
   opacity: 100%;
 `;
 
-export interface DesignInfoPanelProps {}
-
-const DesignInfoPanel = ({}: DesignInfoPanelProps) => {
+const DesignInfoPanel = () => {
   const elements = useStore(Selector.elements);
   const countElementsByType = useStore(Selector.countElementsByType);
   const countSolarPanelsOnRack = useStore(Selector.countSolarPanelsOnRack);
@@ -64,6 +66,7 @@ const DesignInfoPanel = ({}: DesignInfoPanelProps) => {
   const language = useStore(Selector.language);
   const sunlightDirection = useStore(Selector.sunlightDirection);
   const sceneRadius = useStore(Selector.sceneRadius);
+  const projectView = useStore(Selector.viewState.projectView);
 
   const selectedElement = useStore((state) => {
     if (state.selectedElement === null) return null;
@@ -112,7 +115,7 @@ const DesignInfoPanel = ({}: DesignInfoPanelProps) => {
 
   return (
     <Container>
-      <ColumnWrapper>
+      <ColumnWrapper projectView={projectView}>
         <Space direction={'horizontal'} style={{ color: color, fontSize: '10px' }}>
           {solarPanelCount > 0 && (
             <>

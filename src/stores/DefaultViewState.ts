@@ -17,6 +17,8 @@ export class DefaultViewState implements ViewState {
   // Needed for immer drafting to work properly: https://immerjs.github.io/immer/docs/complex-objects
   [immerable] = true;
 
+  projectView: boolean;
+
   orthographic: boolean;
   enableRotate: boolean;
   directLightIntensity: number;
@@ -109,6 +111,8 @@ export class DefaultViewState implements ViewState {
   mapTilt: number;
 
   constructor() {
+    this.projectView = false;
+
     this.orthographic = false;
     this.enableRotate = true;
     this.directLightIntensity = 1;
@@ -202,6 +206,8 @@ export class DefaultViewState implements ViewState {
   }
 
   static resetViewState(viewState: ViewState) {
+    viewState.projectView = false;
+
     viewState.orthographic = false;
     viewState.enableRotate = true;
     viewState.cameraPosition = [5, -30, 1];

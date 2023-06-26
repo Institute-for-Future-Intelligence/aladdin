@@ -34,10 +34,14 @@ const Container = styled.div`
   z-index: 7; // must be less than other panels
 `;
 
-const ColumnWrapper = styled.div`
+interface ColumnWrapperProps {
+  projectView: boolean;
+}
+
+const ColumnWrapper = styled.div<ColumnWrapperProps>`
   position: absolute;
   top: 0;
-  left: calc(100vw / 2 - 100vw / 4);
+  left: ${(p) => (p.projectView ? 'calc(100vw / 2)' : 'calc(100vw / 4)')};
   align-self: center;
   alignment: center;
   align-content: center;
@@ -64,6 +68,7 @@ const SiteInfoPanel = ({ city }: SiteInfoPanelProps) => {
   const weatherData = useStore(Selector.weatherData);
   const sunlightDirection = useStore(Selector.sunlightDirection);
   const highestTemperatureTimeInMinutes = useStore(Selector.world.highestTemperatureTimeInMinutes) ?? 900;
+  const projectView = useStore(Selector.viewState.projectView);
 
   const [dailyTemperatures, setDailyTemperatures] = useState({ low: 0, high: 20 });
   const [currentTemperature, setCurrentTemperature] = useState<number>(10);
@@ -102,7 +107,7 @@ const SiteInfoPanel = ({ city }: SiteInfoPanelProps) => {
 
   return (
     <Container>
-      <ColumnWrapper>
+      <ColumnWrapper projectView={projectView}>
         <Space direction={'horizontal'} style={{ color: color, fontSize: '10px' }}>
           <img
             title={i18n.t('word.Location', lang)}

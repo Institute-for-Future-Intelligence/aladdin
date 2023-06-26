@@ -45,6 +45,7 @@ import Panels from './panels';
 import Simulations from './simulations';
 import { usePrimitiveStore } from './stores/commonPrimitive';
 import { Button } from 'antd';
+import ProjectViewPanel from './panels/projectViewPanel';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -60,6 +61,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
   const sceneRadius = useStore(Selector.sceneRadius);
   const cloudFile = useStore(Selector.cloudFile);
+  const projectView = useStore(Selector.viewState.projectView);
   const axes = useStore(Selector.viewState.axes);
   const theme = useStore(Selector.viewState.theme);
   const groundImage = useStore(Selector.viewState.groundImage);
@@ -265,7 +267,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
           </span>
         )}
       </div>
-      {viewOnly ? (
+      {viewOnly || projectView ? (
         <div
           style={{
             position: 'absolute',
@@ -274,7 +276,12 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
             zIndex: 999,
             fontSize: '8px',
             userSelect: 'none',
-            color: groundImage ? (groundImageType !== 'roadmap' ? 'antiquewhite' : 'darkslategrey') : 'antiquewhite',
+            color:
+              groundImage || projectView
+                ? groundImageType !== 'roadmap'
+                  ? 'antiquewhite'
+                  : 'darkslategrey'
+                : 'antiquewhite',
           }}
         >
           <img
@@ -334,13 +341,14 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       <CloudManager viewOnly={viewOnly} canvas={canvasRef.current} />
       <Panels />
       <DropdownContextMenu>
-        <div>
+        <div style={{ display: 'flex' }}>
+          {projectView && <ProjectViewPanel />}
           <Canvas
             ref={canvasRef}
             shadows={true}
             gl={{ preserveDrawingBuffer: true, logarithmicDepthBuffer: true }}
             frameloop={'demand'}
-            style={{ height: 'calc(100vh - 72px)', backgroundColor: 'black' }}
+            style={{ height: 'calc(100vh - 72px)', width: projectView ? '50%' : '100%', backgroundColor: 'black' }}
           >
             <PointerStyleController />
             <CameraController />
