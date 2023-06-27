@@ -57,24 +57,6 @@ const ModelsGallery = ({ author, models, closeCallback, openCloudFile }: ModelsG
 
   return modelsRef.current.size === 0 ? (
     <Drawer
-      extra={
-        <Search
-          title={i18n.t('modelsMap.SearchByLabel', lang)}
-          allowClear
-          size={'small'}
-          enterButton
-          onSearch={(s) => {
-            if (!models) return;
-            modelsRef.current.clear();
-            for (const [k, v] of models) {
-              if (v.label?.toLowerCase().includes(s.toLowerCase())) {
-                modelsRef.current.set(k, v);
-              }
-            }
-            setRecountFlag(!recountFlag);
-          }}
-        />
-      }
       mask={false}
       headerStyle={{
         height: '40px',

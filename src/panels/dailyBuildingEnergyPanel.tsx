@@ -9,7 +9,7 @@ import * as Selector from '../stores/selector';
 import { BuildingCompletionStatus, DatumEntry, GraphDataType } from '../types';
 import moment from 'moment';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
-import { Button, Space } from 'antd';
+import { Button, Popover, Space } from 'antd';
 import { ReloadOutlined, CaretRightOutlined, SaveOutlined, CameraOutlined } from '@ant-design/icons';
 import { saveCsv, screenshot, showError, showInfo, showWarning } from '../helpers';
 import i18n from '../i18n/i18n';
@@ -116,10 +116,10 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
 
   const lang = { lng: language };
   const weather = getWeather(city ?? 'Boston MA, USA');
-  const tooltipHeaterBreakdown = useRef<string>('');
-  const tooltipAcBreakdown = useRef<string>('');
-  const tooltipSolarPanelBreakdown = useRef<string>('');
-  const tooltipNetBreakdown = useRef<string>('');
+  const tooltipHeaterBreakdown = useRef<string[]>([]);
+  const tooltipAcBreakdown = useRef<string[]>([]);
+  const tooltipSolarPanelBreakdown = useRef<string[]>([]);
+  const tooltipNetBreakdown = useRef<string[]>([]);
 
   useEffect(() => {
     if (runDailySimulation) {
@@ -153,43 +153,43 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
     let sumSolarPanel = 0;
     const multiple = sumHeaterMap.size > 1;
     if (sumHeaterMap) {
-      tooltipHeaterBreakdown.current = '';
+      tooltipHeaterBreakdown.current = [];
       for (const key of sumHeaterMap.keys()) {
         const val = sumHeaterMap.get(key);
         if (val) {
           sumHeater += val;
           if (multiple) {
-            tooltipHeaterBreakdown.current += key + ': ' + val.toFixed(2) + ' ' + i18n.t('word.kWh', lang) + '\n';
+            tooltipHeaterBreakdown.current.push(key + ': ' + val.toFixed(2) + ' ' + i18n.t('word.kWh', lang));
           }
         }
       }
     }
     if (sumAcMap) {
-      tooltipAcBreakdown.current = '';
+      tooltipAcBreakdown.current = [];
       for (const key of sumAcMap.keys()) {
         const val = sumAcMap.get(key);
         if (val) {
           sumAc += val;
           if (multiple) {
-            tooltipAcBreakdown.current += key + ': ' + val.toFixed(2) + ' ' + i18n.t('word.kWh', lang) + '\n';
+            tooltipAcBreakdown.current.push(key + ': ' + val.toFixed(2) + ' ' + i18n.t('word.kWh', lang));
           }
         }
       }
     }
     if (sumSolarPanelMap && sumSolarPanelMap.size > 0) {
-      tooltipSolarPanelBreakdown.current = '';
+      tooltipSolarPanelBreakdown.current = [];
       for (const key of sumSolarPanelMap.keys()) {
         const val = sumSolarPanelMap.get(key);
         if (val) {
           sumSolarPanel += val;
           if (multiple) {
-            tooltipSolarPanelBreakdown.current += key + ': ' + val.toFixed(2) + ' ' + i18n.t('word.kWh', lang) + '\n';
+            tooltipSolarPanelBreakdown.current.push(key + ': ' + val.toFixed(2) + ' ' + i18n.t('word.kWh', lang));
           }
         }
       }
     }
     if (sumHeaterMap && sumAcMap && sumSolarPanelMap) {
-      tooltipNetBreakdown.current = '';
+      tooltipNetBreakdown.current = [];
       for (const key of sumHeaterMap.keys()) {
         let net = 0;
         const heater = sumHeaterMap.get(key);
@@ -199,7 +199,7 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
         if (ac) net += ac;
         if (solarPanel) net -= solarPanel;
         if (multiple) {
-          tooltipNetBreakdown.current += key + ': ' + net.toFixed(2) + ' ' + i18n.t('word.kWh', lang) + '\n';
+          tooltipNetBreakdown.current.push(key + ': ' + net.toFixed(2) + ' ' + i18n.t('word.kWh', lang));
         }
       }
     }
@@ -364,32 +364,56 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
           />
           {!simulationInProgress && (
             <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
-              <Space
-                title={tooltipHeaterBreakdown.current}
-                style={{ cursor: tooltipHeaterBreakdown.current === '' ? 'default' : 'help' }}
-              >
-                {i18n.t('buildingEnergyPanel.Heater', lang) + ': ' + heaterSum.toFixed(1)}
-              </Space>
-              <Space
-                title={tooltipAcBreakdown.current}
-                style={{ cursor: tooltipAcBreakdown.current === '' ? 'default' : 'help' }}
-              >
-                {i18n.t('buildingEnergyPanel.AC', lang) + ': ' + acSum.toFixed(1)}
-              </Space>
-              {solarPanelSum !== 0 && (
-                <Space
-                  title={tooltipSolarPanelBreakdown.current}
-                  style={{ cursor: tooltipSolarPanelBreakdown.current === '' ? 'default' : 'help' }}
-                >
-                  {i18n.t('buildingEnergyPanel.SolarPanel', lang) + ': ' + solarPanelSum.toFixed(1)}
+              {tooltipHeaterBreakdown.current.length === 0 ? (
+                <Space style={{ cursor: 'default' }}>
+                  {i18n.t('buildingEnergyPanel.Heater', lang) + ': ' + heaterSum.toFixed(1)}
                 </Space>
+              ) : (
+                <Popover
+                  content={tooltipHeaterBreakdown.current.map((e) => (
+                    <div>{e}</div>
+                  ))}
+                >
+                  <Space style={{ cursor: 'help' }}>
+                    {i18n.t('buildingEnergyPanel.Heater', lang) + ': ' + heaterSum.toFixed(1)}
+                  </Space>
+                </Popover>
               )}
-              <Space
-                title={tooltipNetBreakdown.current}
-                style={{ cursor: tooltipNetBreakdown.current === '' ? 'default' : 'help' }}
+              {tooltipAcBreakdown.current.length === 0 ? (
+                <Space style={{ cursor: 'default' }}>
+                  {i18n.t('buildingEnergyPanel.AC', lang) + ': ' + acSum.toFixed(1)}
+                </Space>
+              ) : (
+                <Popover
+                  content={tooltipAcBreakdown.current.map((e) => (
+                    <div>{e}</div>
+                  ))}
+                >
+                  <Space style={{ cursor: 'help' }}>
+                    {i18n.t('buildingEnergyPanel.AC', lang) + ': ' + acSum.toFixed(1)}
+                  </Space>
+                </Popover>
+              )}
+              {solarPanelSum !== 0 && (
+                <Popover
+                  content={tooltipSolarPanelBreakdown.current.map((e) => (
+                    <div>{e}</div>
+                  ))}
+                >
+                  <Space style={{ cursor: tooltipSolarPanelBreakdown.current.length === 0 ? 'default' : 'help' }}>
+                    {i18n.t('buildingEnergyPanel.SolarPanel', lang) + ': ' + solarPanelSum.toFixed(1)}
+                  </Space>
+                </Popover>
+              )}
+              <Popover
+                content={tooltipNetBreakdown.current.map((e) => (
+                  <div>{e}</div>
+                ))}
               >
-                {i18n.t('buildingEnergyPanel.Net', lang) + ': ' + netSum.toFixed(1)}
-              </Space>
+                <Space style={{ cursor: tooltipNetBreakdown.current.length === 0 ? 'default' : 'help' }}>
+                  {i18n.t('buildingEnergyPanel.Net', lang) + ': ' + netSum.toFixed(1)}
+                </Space>
+              </Popover>
               <Button
                 type="default"
                 icon={emptyGraph ? <CaretRightOutlined /> : <ReloadOutlined />}
