@@ -93,6 +93,7 @@ import { useDataStore } from './commonData';
 import { GraphState } from './GraphState';
 import { DefaultGraphState } from './DefaultGraphState';
 import { isStackableModel } from 'src/models/Stackable';
+import { WindowModel } from 'src/models/WindowModel';
 
 enableMapSet();
 
@@ -2959,12 +2960,13 @@ export const useStore = create<CommonStoreState>(
                     if (newParent.parentId) {
                       const foundation = state.getElementById(newParent.parentId);
                       if (foundation) {
-                        m.sub(new Vector3(foundation.cx, foundation.cy)).applyEuler(
+                        m.sub(new Vector3(foundation.cx, foundation.cy, foundation.lz)).applyEuler(
                           new Euler(0, 0, -foundation.rotation[2]),
                         );
-                        m.setX(m.x / foundation.lx);
-                        m.setY(m.y / foundation.ly);
-                        m.setZ(m.z - foundation.lz);
+                        if (elemToPaste.type !== ObjectType.Window) {
+                          m.setX(m.x / foundation.lx);
+                          m.setY(m.y / foundation.ly);
+                        }
                       }
                     }
                   } else if (newParent.type === ObjectType.Cuboid) {
@@ -2975,6 +2977,8 @@ export const useStore = create<CommonStoreState>(
                       m = Util.relativeCoordinates(m.x, m.y, m.z, newParent);
                     }
                     elemToPaste.parentId = newParent.id;
+                  } else if (newParent.type === ObjectType.Wall) {
+                    m = Util.relativeCoordinates(m.x, m.y, m.z, newParent);
                   } else {
                     // if the old parent is ground, it has no type definition, but we use it to check its type
                     if (oldParent && oldParent.type) {
@@ -2990,7 +2994,16 @@ export const useStore = create<CommonStoreState>(
                     m.set(m.x * newParent.lx, m.y * newParent.ly, 0);
                   }
                 }
-                const e = ElementModelCloner.clone(newParent, elemToPaste, m.x, m.y, m.z, false, state.pasteNormal);
+                const e = ElementModelCloner.clone(
+                  newParent,
+                  elemToPaste,
+                  m.x,
+                  m.y,
+                  m.z,
+                  false,
+                  state.pasteNormal,
+                  oldParent,
+                );
                 if (e) {
                   if (state.pasteNormal) {
                     e.normal = state.pasteNormal.toArray();
@@ -3167,7 +3180,7 @@ export const useStore = create<CommonStoreState>(
                             );
                             const boundaryVertices = RoofUtil.getRoofBoundaryVertices(newParent as RoofModel);
 
-                            if (!RoofUtil.rooftopSPBoundaryCheck(solarPanelVertices, boundaryVertices)) {
+                            if (!RoofUtil.rooftopElementBoundaryCheck(solarPanelVertices, boundaryVertices)) {
                               showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
                               break;
                             }
@@ -3240,7 +3253,7 @@ export const useStore = create<CommonStoreState>(
                     }
                     case ObjectType.Door:
                     case ObjectType.Window: {
-                      if (newParent) {
+                      if (newParent?.type === ObjectType.Wall) {
                         switch (Util.checkElementOnWallState(e, newParent)) {
                           case ElementState.Valid:
                             approved = true;
@@ -3252,6 +3265,20 @@ export const useStore = create<CommonStoreState>(
                             showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
                             break;
                         }
+                      } else if (newParent?.type === ObjectType.Roof) {
+                        const windowVertices = RoofUtil.getWindowVerticesOnRoof(e as WindowModel);
+                        const boundaryVertices = RoofUtil.getRoofSegmentBoundary(newParent.id, m);
+                        if (!boundaryVertices) break;
+                        if (!RoofUtil.rooftopElementBoundaryCheck(windowVertices, boundaryVertices)) {
+                          showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
+                          break;
+                        }
+                        if (!RoofUtil.rooftopWindowCollisionCheck(e.id, windowVertices, newParent.id)) {
+                          showError(i18n.t('message.CannotPasteBecauseOfOverlap', lang));
+                          break;
+                        }
+                        approved = true;
+                        state.updateElementOnRoofFlag = !state.updateElementOnRoofFlag;
                       }
                       break;
                     }
@@ -3324,35 +3351,87 @@ export const useStore = create<CommonStoreState>(
                       if (parent) {
                         const hx = e.lx / 2;
                         e.cx += hx * 3;
-                        // searching +x direction
-                        while (e.cx + hx < 0.5) {
-                          if (Util.checkElementOnWallState(e, parent) === ElementState.Valid) {
-                            state.elements.push(e);
-                            // state.elementsToPaste = [e];
-                            approved = true;
-                            break;
-                          } else {
-                            e.cx += hx;
-                          }
+                        const rot = RoofUtil.getRotationOnRoof(parent.id, new Vector3(e.cx, e.cy));
+                        if (rot) {
+                          e.rotation = [...rot];
                         }
-                        // searching -x direction
-                        if (!approved) {
-                          e.cx = elem.cx - hx * 3;
-                          while (e.cx - hx > -0.5) {
+                        // searching +x direction
+                        if (parent.type === ObjectType.Wall) {
+                          while (e.cx + hx < 0.5) {
                             if (Util.checkElementOnWallState(e, parent) === ElementState.Valid) {
                               state.elements.push(e);
-                              state.elementsToPaste = [e];
+                              // state.elementsToPaste = [e];
                               approved = true;
                               break;
                             } else {
-                              e.cx -= hx;
+                              e.cx += hx;
+                            }
+                          }
+                        } else if (parent.type === ObjectType.Roof) {
+                          let windowVertices = RoofUtil.getWindowVerticesOnRoof(e as WindowModel);
+                          const boundaryVertices = RoofUtil.getRoofBoundaryVertices(parent as RoofModel);
+                          while (RoofUtil.rooftopElementBoundaryCheck(windowVertices, boundaryVertices)) {
+                            if (RoofUtil.rooftopWindowCollisionCheck(e.id, windowVertices, parent.id)) {
+                              state.elements.push(e);
+                              approved = true;
+                              break;
+                            } else {
+                              e.cx += hx;
+                              const rot = RoofUtil.getRotationOnRoof(parent.id, new Vector3(e.cx, e.cy));
+                              if (rot) {
+                                e.rotation = [...rot];
+                              }
+                              windowVertices = RoofUtil.getWindowVerticesOnRoof(e as WindowModel);
+                            }
+                          }
+                        }
+
+                        // searching -x direction
+                        if (!approved) {
+                          e.cx = elem.cx - hx * 3;
+                          const rot = RoofUtil.getRotationOnRoof(parent.id, new Vector3(e.cx, e.cy));
+                          if (rot) {
+                            e.rotation = [...rot];
+                          }
+                          if (parent.type === ObjectType.Wall) {
+                            while (e.cx - hx > -0.5) {
+                              if (parent.type === ObjectType.Wall) {
+                                if (Util.checkElementOnWallState(e, parent) === ElementState.Valid) {
+                                  state.elements.push(e);
+                                  // state.elementsToPaste = [e];
+                                  approved = true;
+                                  break;
+                                } else {
+                                  e.cx -= hx;
+                                }
+                              }
+                            }
+                          } else if (parent.type === ObjectType.Roof) {
+                            let windowVertices = RoofUtil.getWindowVerticesOnRoof(e as WindowModel);
+                            const boundaryVertices = RoofUtil.getRoofBoundaryVertices(parent as RoofModel);
+                            while (RoofUtil.rooftopElementBoundaryCheck(windowVertices, boundaryVertices)) {
+                              if (RoofUtil.rooftopWindowCollisionCheck(e.id, windowVertices, parent.id)) {
+                                state.elements.push(e);
+                                // state.elementsToPaste = [e];
+                                approved = true;
+                                break;
+                              } else {
+                                e.cx -= hx;
+                                const rot = RoofUtil.getRotationOnRoof(parent.id, new Vector3(e.cx, e.cy));
+                                if (rot) {
+                                  e.rotation = [...rot];
+                                }
+                                windowVertices = RoofUtil.getWindowVerticesOnRoof(e as WindowModel);
+                              }
                             }
                           }
                         }
                         if (!approved) {
                           const lang = { lng: state.language };
                           showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
-                        } else {
+                        }
+                        if (parent.type === ObjectType.Roof && approved) {
+                          state.updateElementOnRoofFlag = !state.updateElementOnRoofFlag;
                         }
                       }
                       break;
@@ -3425,7 +3504,7 @@ export const useStore = create<CommonStoreState>(
                                     foundation,
                                   );
                                   if (
-                                    RoofUtil.rooftopSPBoundaryCheck(solarPanelVertices, boundaryVertices) &&
+                                    RoofUtil.rooftopElementBoundaryCheck(solarPanelVertices, boundaryVertices) &&
                                     RoofUtil.rooftopSPCollisionCheck(
                                       e as SolarPanelModel,
                                       foundation,
@@ -3447,7 +3526,7 @@ export const useStore = create<CommonStoreState>(
                                       foundation,
                                     );
                                     if (
-                                      RoofUtil.rooftopSPBoundaryCheck(solarPanelVertices, boundaryVertices) &&
+                                      RoofUtil.rooftopElementBoundaryCheck(solarPanelVertices, boundaryVertices) &&
                                       RoofUtil.rooftopSPCollisionCheck(
                                         e as SolarPanelModel,
                                         foundation,

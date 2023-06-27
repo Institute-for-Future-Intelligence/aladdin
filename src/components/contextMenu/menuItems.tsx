@@ -40,6 +40,7 @@ export const Paste = ({ paddingLeft = '36px', keyName }: { paddingLeft?: string;
             setCommonStore((state) => {
               state.elements.push(...undoablePaste.pastedElements);
               state.selectedElement = undoablePaste.pastedElements[0];
+              state.updateElementOnRoofFlag = !state.updateElementOnRoofFlag;
             });
           },
         } as UndoablePaste;

@@ -45,6 +45,7 @@ export class ElementModelCloner {
     z?: number,
     noMove?: boolean,
     normal?: Vector3,
+    oldParent?: ElementModel | null,
   ) {
     let clone = null;
     switch (e.type) {
@@ -110,7 +111,7 @@ export class ElementModelCloner {
       case ObjectType.Window:
         if (parent) {
           // must have a parent
-          clone = ElementModelCloner.cloneWindow(parent, e as WindowModel, x, y, z);
+          clone = ElementModelCloner.cloneWindow(parent, e as WindowModel, x, y, z, oldParent);
         }
         break;
       case ObjectType.Door:
@@ -663,25 +664,51 @@ export class ElementModelCloner {
     } as WallModel;
   }
 
-  private static cloneWindow(parent: ElementModel, window: WindowModel, x: number, y: number, z?: number) {
+  private static cloneWindow(
+    parent: ElementModel,
+    window: WindowModel,
+    x: number,
+    y: number,
+    z?: number,
+    oldParent?: ElementModel | null,
+  ) {
     let foundationId;
+    let [lx, ly, lz] = [window.lx, parent.ly, window.lz];
+    let cy = 0.1;
+    let rotation = [...window.rotation];
     switch (parent.type) {
       case ObjectType.Cuboid:
         foundationId = parent.id;
         break;
       case ObjectType.Wall:
+        foundationId = parent.parentId;
+        rotation = [0, -1, 0];
+        break;
       case ObjectType.Roof:
         foundationId = parent.parentId;
+        cy = y;
+        ly = (parent as RoofModel).thickness;
         break;
+    }
+
+    // copy from wall to roof
+    if (oldParent?.type === ObjectType.Wall && parent.type === ObjectType.Roof) {
+      lx = window.lx * oldParent.lx;
+      lz = window.lz * oldParent.lz;
+    }
+    // copy from roof to wall
+    else if (oldParent?.type === ObjectType.Roof && parent.type === ObjectType.Wall) {
+      lx = window.lx / parent.lx;
+      lz = window.lz / parent.lz;
     }
     return {
       type: ObjectType.Window,
       cx: x,
-      cy: 0.1,
+      cy: cy,
       cz: z,
-      lx: window.lx,
-      ly: parent.ly,
-      lz: window.lz,
+      lx: lx,
+      ly: ly,
+      lz: lz,
       uValue: window.uValue,
       mullion: window.mullion,
       mullionWidth: window.mullionWidth,
@@ -693,8 +720,8 @@ export class ElementModelCloner {
       windowType: window.windowType,
       archHeight: window.archHeight,
       color: window.color,
-      normal: [...window.normal],
-      rotation: [...window.rotation],
+      normal: [0, 0, 0],
+      rotation: rotation,
       id: short.generate() as string,
       parentId: parent.id,
       foundationId: foundationId,
@@ -703,6 +730,8 @@ export class ElementModelCloner {
       shutter: { ...window.shutter },
       empty: window.empty,
       interior: window.interior,
+      parentType: parent.type,
+      polygonTop: window.polygonTop,
     } as WindowModel;
   }
 

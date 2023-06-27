@@ -17,6 +17,7 @@ import { RoofModel, RoofType } from 'src/models/RoofModel';
 import { WALL_PADDING } from '../wall/wall';
 import { WindowModel, WindowType } from '../../models/WindowModel';
 import { FoundationModel } from '../../models/FoundationModel';
+import { DEFAULT_POLYGONTOP } from '../window/window';
 
 export class RoofUtil {
   // roof related
@@ -330,6 +331,10 @@ export class RoofUtil {
   static getRoofBoundaryVertices(roof: RoofModel) {
     const segments = useStore.getState().roofSegmentVerticesMap.get(roof.id);
     if (!segments) throw new Error();
+    // flat roof
+    if (roof.roofType !== RoofType.Gable && roof.rise < 0.01) {
+      return segments[0].map((v) => ({ x: v.x, y: v.y } as Point2));
+    }
     switch (roof.roofType) {
       case RoofType.Gable: {
         if (segments.length === 1) {
@@ -480,11 +485,56 @@ export class RoofUtil {
     return vertices;
   }
 
+  static getWindowVerticesOnRoof(window: WindowModel, margin = 0): Vector3[] {
+    const vertices: Vector3[] = [];
+    const center = new Vector3(window.cx, window.cy, window.cz);
+    const [hx, hy] = [window.lx / 2 + margin, window.lz / 2 + margin];
+    for (let i = -1; i <= 1; i += 2) {
+      for (let j = -1; j <= 1; j += 2) {
+        const vertex = new Vector3(i * hx, i * j * hy);
+        vertex.applyEuler(new Euler().fromArray([...window.rotation, 'ZXY'])).add(center);
+        vertices.push(vertex);
+      }
+    }
+    if (window.windowType === WindowType.Polygonal) {
+      const [tx, th] = window.polygonTop ?? DEFAULT_POLYGONTOP;
+      const vertex = new Vector3(tx * window.lx, window.lz + th).add(center);
+      vertices.push(vertex);
+    }
+    return vertices;
+  }
+
   // state check
-  static rooftopSPBoundaryCheck(solarPanelVertices: Vector3[], wallVertices: Point2[]): boolean {
-    for (const vertex of solarPanelVertices) {
-      if (!Util.isPointInside(vertex.x, vertex.y, wallVertices)) {
+  static rooftopElementBoundaryCheck(elementVertices: Vector3[], boundaryVertices: Point2[]): boolean {
+    for (const vertex of elementVertices) {
+      if (!Util.isPointInside(vertex.x, vertex.y, boundaryVertices)) {
         return false;
+      }
+    }
+    return true;
+  }
+
+  static rooftopWindowCollisionCheck(currId: string, currVertices: Vector3[], roofId: string) {
+    const targetElementsVertices: Vector3[][] = [];
+    for (const el of useStore.getState().elements) {
+      if (el.parentId === roofId && el.id !== currId) {
+        const vertices = RoofUtil.getWindowVerticesOnRoof(el as WindowModel);
+        targetElementsVertices.push(vertices);
+      }
+    }
+
+    for (const targetVertices of targetElementsVertices) {
+      // check if current element vertices inside other(target) element
+      for (const currentVertex of currVertices) {
+        if (Util.isPointInside(currentVertex.x, currentVertex.y, targetVertices)) {
+          return false;
+        }
+      }
+      // check if other element vertices inside current element
+      for (const targetVertex of targetVertices) {
+        if (Util.isPointInside(targetVertex.x, targetVertex.y, currVertices)) {
+          return false;
+        }
       }
     }
     return true;
@@ -566,4 +616,29 @@ export class RoofUtil {
   }
 
   static isFirstIntersectRoof(event: ThreeEvent<PointerEvent>, id: string) {}
+
+  /** position is relative to foundation */
+  static getRotationOnRoof(roofId: string, position: Vector3) {
+    const segments = useStore.getState().getRoofSegmentVertices(roofId);
+    if (!segments) return null;
+    for (const segment of segments) {
+      if (Util.isPointInside(position.x, position.y, segment)) {
+        const normal = RoofUtil.getSegmentNormal(segment);
+        const rotation = RoofUtil.getRotationFromNormal(normal);
+        return rotation;
+      }
+    }
+    return null;
+  }
+
+  static getRoofSegmentBoundary(roofId: string, position: Vector3) {
+    const segments = useStore.getState().getRoofSegmentVertices(roofId);
+    if (!segments) return null;
+    for (const segment of segments) {
+      if (Util.isPointInside(position.x, position.y, segment)) {
+        return segment;
+      }
+    }
+    return null;
+  }
 }

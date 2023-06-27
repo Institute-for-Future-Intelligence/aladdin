@@ -273,7 +273,7 @@ export const addUndoableResizeRoofRise = (elemId: string, oldRise: number, newRi
 
 export const spBoundaryCheck = (solarPanelVertices: Vector3[], wallVertices: Point2[]) => {
   const lang = { lng: useStore.getState().language };
-  if (RoofUtil.rooftopSPBoundaryCheck(solarPanelVertices, wallVertices)) {
+  if (RoofUtil.rooftopElementBoundaryCheck(solarPanelVertices, wallVertices)) {
     return true;
   } else {
     if (useStore.getState().moveHandleType || useStore.getState().viewState.orthographic) {

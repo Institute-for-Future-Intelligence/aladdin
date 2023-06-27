@@ -76,6 +76,7 @@ export const RoofMenu = React.memo(() => {
     if (elementsToPaste && elementsToPaste.length > 0) {
       const e = elementsToPaste[0];
       switch (e.type) {
+        case ObjectType.Window:
         case ObjectType.SolarPanel:
         case ObjectType.Sensor:
         case ObjectType.Light:

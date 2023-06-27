@@ -1221,7 +1221,7 @@ export class Util {
       if (foundation) {
         const solarPanelVertices = RoofUtil.getSolarPanelVerticesOnRoof(sp as SolarPanelModel, foundation);
         const wallVertices = RoofUtil.getRoofBoundaryVertices(roof);
-        if (!RoofUtil.rooftopSPBoundaryCheck(solarPanelVertices, wallVertices)) {
+        if (!RoofUtil.rooftopElementBoundaryCheck(solarPanelVertices, wallVertices)) {
           return ElementState.OutsideBoundary;
         }
         if (!RoofUtil.rooftopSPCollisionCheck(sp as SolarPanelModel, foundation, solarPanelVertices)) {
