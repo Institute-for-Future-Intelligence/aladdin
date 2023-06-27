@@ -20,7 +20,7 @@ export interface PrimitiveStoreState {
 
   createProjectFlag: boolean;
   showProjectsFlag: boolean;
-  showProjectsPanel: boolean;
+  showProjectListPanel: boolean;
 
   userCount: number;
   showCloudFilePanel: boolean;
@@ -130,7 +130,7 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
 
     createProjectFlag: false,
     showProjectsFlag: false,
-    showProjectsPanel: false,
+    showProjectListPanel: false,
 
     userCount: 0,
     showCloudFilePanel: false,

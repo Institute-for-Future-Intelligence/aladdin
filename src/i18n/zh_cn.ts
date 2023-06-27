@@ -1340,13 +1340,17 @@ export const i18n_zh_cn = {
       IfSharedOrPublishedRenamingFileBreaksExistingLinks: '如果此文件已被分享或发布, 改名会使已有链接失效',
     },
 
-    projectsPanel: {
+    projectListPanel: {
       SearchByTitle: '按标题搜索',
       MyProjects: '我的项目',
       GenerateProjectLink: '生成项目链接',
       ProjectLinkGeneratedInClipBoard: '项目链接已经复制到剪贴板',
       DoYouReallyWantToDeleteProject: '您确定删除项目',
       IfSharedOrPublishedRenamingProjectBreaksExistingLinks: '如果此项目已被分享或发布, 改名会使已有链接失效',
+    },
+
+    projectPanel: {
+      Project: '项目',
     },
 
     accountSettingsPanel: {

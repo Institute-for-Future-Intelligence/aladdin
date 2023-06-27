@@ -1365,7 +1365,7 @@ export const i18n_tr = {
         'If this file has been shared or published, renaming it breaks existing links',
     },
 
-    projectsPanel: {
+    projectListPanel: {
       SearchByTitle: 'Search by title',
       MyProjects: 'My Projects',
       GenerateProjectLink: 'Generate Project Link',
@@ -1373,6 +1373,10 @@ export const i18n_tr = {
       DoYouReallyWantToDeleteProject: 'Do you really want to delete Project',
       IfSharedOrPublishedRenamingProjectBreaksExistingLinks:
         'If this project has been shared or published, renaming it breaks existing links',
+    },
+
+    projectPanel: {
+      Project: 'Project',
     },
 
     accountSettingsPanel: {

@@ -73,14 +73,14 @@ const Header = styled.div`
   }
 `;
 
-export interface ProjectsPanelProps {
+export interface ProjectListPanelProps {
   projects: object[];
   openProject: (userid: string, title: string) => void;
   deleteProject: (userid: string, title: string) => void;
   renameProject: (userid: string, oldTitle: string, newTitle: string) => void;
 }
 
-const ProjectsPanel = ({ projects, openProject, deleteProject, renameProject }: ProjectsPanelProps) => {
+const ProjectListPanel = ({ projects, openProject, deleteProject, renameProject }: ProjectListPanelProps) => {
   const language = useStore(Selector.language);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
@@ -141,13 +141,13 @@ const ProjectsPanel = ({ projects, openProject, deleteProject, renameProject }: 
 
   const closePanel = () => {
     usePrimitiveStore.setState((state) => {
-      state.showProjectsPanel = false;
+      state.showProjectListPanel = false;
     });
   };
 
   const confirmDeleteProject = (userid: string, title: string) => {
     Modal.confirm({
-      title: i18n.t('projectsPanel.DoYouReallyWantToDeleteProject', lang) + ' "' + title + '"?',
+      title: i18n.t('projectListPanel.DoYouReallyWantToDeleteProject', lang) + ' "' + title + '"?',
       content: (
         <span style={{ color: 'red', fontWeight: 'bold' }}>
           <WarningOutlined style={{ marginRight: '6px' }} />
@@ -219,7 +219,7 @@ const ProjectsPanel = ({ projects, openProject, deleteProject, renameProject }: 
             <WarningOutlined style={{ marginRight: '4px' }} />
             {i18n.t('word.Caution', lang) +
               ': ' +
-              i18n.t('projectsPanel.IfSharedOrPublishedRenamingProjectBreaksExistingLinks', lang)}
+              i18n.t('projectListPanel.IfSharedOrPublishedRenamingProjectBreaksExistingLinks', lang)}
             .
           </span>
         </Space>
@@ -236,7 +236,7 @@ const ProjectsPanel = ({ projects, openProject, deleteProject, renameProject }: 
         <Container ref={nodeRef}>
           <ColumnWrapper ref={wrapperRef}>
             <Header className="handle" style={{ direction: 'ltr' }}>
-              <span>{i18n.t('projectsPanel.MyProjects', lang) + ' (' + projectsRef.current.length + ')'}</span>
+              <span>{i18n.t('projectListPanel.MyProjects', lang) + ' (' + projectsRef.current.length + ')'}</span>
               <span
                 style={{ cursor: 'pointer' }}
                 onMouseDown={() => {
@@ -252,7 +252,7 @@ const ProjectsPanel = ({ projects, openProject, deleteProject, renameProject }: 
             <span style={{ direction: 'ltr' }}>
               <Search
                 style={{ width: '50%', paddingTop: '8px', paddingBottom: '8px' }}
-                title={i18n.t('projectsPanel.SearchByTitle', lang)}
+                title={i18n.t('projectListPanel.SearchByTitle', lang)}
                 allowClear
                 size={'small'}
                 enterButton
@@ -372,7 +372,7 @@ const ProjectsPanel = ({ projects, openProject, deleteProject, renameProject }: 
                       }}
                     />
                     <img
-                      title={i18n.t('projectsPanel.GenerateProjectLink', lang)}
+                      title={i18n.t('projectListPanel.GenerateProjectLink', lang)}
                       alt={'Link'}
                       src={LinkImage}
                       onClick={() => {
@@ -383,7 +383,7 @@ const ProjectsPanel = ({ projects, openProject, deleteProject, renameProject }: 
                           '&title=' +
                           encodeURIComponent(record.title);
                         copyTextToClipboard(url);
-                        showSuccess(i18n.t('projectsPanel.ProjectLinkGeneratedInClipBoard', lang) + '.');
+                        showSuccess(i18n.t('projectListPanel.ProjectLinkGeneratedInClipBoard', lang) + '.');
                       }}
                       height={16}
                       width={16}
@@ -403,4 +403,4 @@ const ProjectsPanel = ({ projects, openProject, deleteProject, renameProject }: 
   );
 };
 
-export default React.memo(ProjectsPanel);
+export default React.memo(ProjectListPanel);

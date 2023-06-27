@@ -45,7 +45,7 @@ import Panels from './panels';
 import Simulations from './simulations';
 import { usePrimitiveStore } from './stores/commonPrimitive';
 import { Button } from 'antd';
-import ProjectViewPanel from './panels/projectViewPanel';
+import ProjectViewPanel from './panels/projectPanel';
 
 export interface AppCreatorProps {
   viewOnly: boolean;

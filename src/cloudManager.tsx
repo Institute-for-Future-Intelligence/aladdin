@@ -26,7 +26,7 @@ import ModelsMapWrapper from './modelsMapWrapper';
 import MainToolBar from './mainToolBar';
 import SaveCloudFileModal from './saveCloudFileModal';
 import ModelsGallery from './modelsGallery';
-import ProjectsPanel from './panels/projectsPanel';
+import ProjectListPanel from './panels/projectListPanel';
 
 export interface CloudManagerProps {
   viewOnly: boolean;
@@ -44,7 +44,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const countryCode = useStore(Selector.world.countryCode);
   const exportContent = useStore(Selector.exportContent);
   const showCloudFilePanel = usePrimitiveStore(Selector.showCloudFilePanel);
-  const showProjectsPanel = usePrimitiveStore(Selector.showProjectsPanel);
+  const showProjectListPanel = usePrimitiveStore(Selector.showProjectListPanel);
   const showModelsGallery = usePrimitiveStore(Selector.showModelsGallery);
   const showAccountSettingsPanel = usePrimitiveStore(Selector.showAccountSettingsPanel);
   const openModelsMap = usePrimitiveStore(Selector.openModelsMap);
@@ -913,7 +913,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     if (user.uid) {
       fetchMyProjects().then(() => {
         usePrimitiveStore.setState((state) => {
-          state.showProjectsPanel = true;
+          state.showProjectListPanel = true;
         });
       });
     }
@@ -921,6 +921,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
 
   const openProject = (userid: string, title: string) => {
     setCommonStore((state) => {
+      state.projectTitle = title;
       state.viewState.projectView = true;
     });
   };
@@ -1267,8 +1268,8 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           renameCloudFile={renameCloudFile}
         />
       )}
-      {showProjectsPanel && myProjects.current && (
-        <ProjectsPanel
+      {showProjectListPanel && myProjects.current && (
+        <ProjectListPanel
           projects={projectArray}
           openProject={openProject}
           deleteProject={() => {}}

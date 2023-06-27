@@ -492,7 +492,13 @@ export const setEnableFineGrid = (state: CommonStoreState) => state.setEnableFin
 
 export const showCloudFilePanel = (state: PrimitiveStoreState) => state.showCloudFilePanel;
 
-export const showProjectsPanel = (state: PrimitiveStoreState) => state.showProjectsPanel;
+export const projectType = (state: CommonStoreState) => state.projectType;
+
+export const projectTitle = (state: CommonStoreState) => state.projectTitle;
+
+export const projectDescription = (state: CommonStoreState) => state.projectDescription;
+
+export const showProjectListPanel = (state: PrimitiveStoreState) => state.showProjectListPanel;
 
 export const showModelsGallery = (state: PrimitiveStoreState) => state.showModelsGallery;
 
