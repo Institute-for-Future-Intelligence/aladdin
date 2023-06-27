@@ -103,7 +103,7 @@ const CreateNewProjectDialog = ({ setDialogVisible }: { setDialogVisible: (b: bo
     >
       <Row gutter={6} style={{ paddingBottom: '4px' }}>
         <Col className="gutter-row" span={8}>
-          {i18n.t('shared.ProjectType', lang) + ':'}
+          {i18n.t('projectPanel.ProjectType', lang) + ':'}
         </Col>
         <Col className="gutter-row" span={16}>
           <Select
@@ -114,7 +114,7 @@ const CreateNewProjectDialog = ({ setDialogVisible }: { setDialogVisible: (b: bo
             }}
           >
             <Option key={ProjectType.SOLAR_FARM_DESIGN} value={ProjectType.SOLAR_FARM_DESIGN}>
-              {i18n.t('shared.SolarFarmDesign', lang)}
+              {i18n.t('projectPanel.SolarFarmDesign', lang)}
             </Option>
           </Select>
         </Col>

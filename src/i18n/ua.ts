@@ -32,6 +32,7 @@ export const i18n_ua = {
     },
 
     word: {
+      Type: 'Type',
       Text: 'Текст',
       FontSize: 'Розмір Шрифту',
       FontColor: 'Колір Шрифту',
@@ -176,8 +177,6 @@ export const i18n_ua = {
       LightElement: 'Світло',
       ElementLocked: 'Заблоковано',
       ModelType: 'Тип моделі',
-      ProjectType: 'Тип проєкту',
-      SolarFarmDesign: 'Дизайн Cонячної Ферми',
     },
 
     message: {
@@ -192,6 +191,8 @@ export const i18n_ua = {
       CannotCreateNewProject: 'Не вдається створити новий проєкт',
       CannotCreateNewProjectWithoutTitle: 'Cannot create a new project without a title',
       CannotOpenYourProjects: 'Не вдається відкрити ваші проєкти',
+      CannotDeleteProject: 'Cannot delete the project',
+      CannotRenameProject: 'Cannot rename the project',
       TitleUsedChooseDifferentOne: 'Ця назва була використана. Виберіть іншу',
       CloudFileWithTitleExistsDoYouWantToOverwrite:
         'Хмарний файл з такою ж назвою вже існує. Ви хочете перезаписати його?',
@@ -1378,6 +1379,8 @@ export const i18n_ua = {
 
     projectPanel: {
       Project: 'Project',
+      ProjectType: 'Тип проєкту',
+      SolarFarmDesign: 'Дизайн Cонячної Ферми',
     },
 
     accountSettingsPanel: {

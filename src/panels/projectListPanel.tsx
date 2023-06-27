@@ -17,6 +17,7 @@ import RenameImage from '../assets/rename.png';
 import DeleteImage from '../assets/delete.png';
 import LinkImage from '../assets/create_link.png';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { ProjectType } from '../types';
 
 const { Column } = Table;
 
@@ -75,9 +76,9 @@ const Header = styled.div`
 
 export interface ProjectListPanelProps {
   projects: object[];
-  openProject: (userid: string, title: string) => void;
-  deleteProject: (userid: string, title: string) => void;
-  renameProject: (userid: string, oldTitle: string, newTitle: string) => void;
+  openProject: (userid: string, title: string, type: ProjectType, description: string) => void;
+  deleteProject: (title: string) => void;
+  renameProject: (oldTitle: string, newTitle: string) => void;
 }
 
 const ProjectListPanel = ({ projects, openProject, deleteProject, renameProject }: ProjectListPanelProps) => {
@@ -145,7 +146,7 @@ const ProjectListPanel = ({ projects, openProject, deleteProject, renameProject 
     });
   };
 
-  const confirmDeleteProject = (userid: string, title: string) => {
+  const confirmDeleteProject = (title: string) => {
     Modal.confirm({
       title: i18n.t('projectListPanel.DoYouReallyWantToDeleteProject', lang) + ' "' + title + '"?',
       content: (
@@ -156,14 +157,14 @@ const ProjectListPanel = ({ projects, openProject, deleteProject, renameProject 
       ),
       icon: <QuestionCircleOutlined />,
       onOk: () => {
-        deleteProject(userid, title);
+        deleteProject(title);
       },
     });
   };
 
   const changeProjectTitle = () => {
-    if (userid && oldTitle && newTitle) {
-      renameProject(userid, oldTitle, newTitle);
+    if (oldTitle && newTitle) {
+      renameProject(oldTitle, newTitle);
       setNewTitle(undefined);
     }
     setRenameDialogVisible(false);
@@ -272,7 +273,7 @@ const ProjectListPanel = ({ projects, openProject, deleteProject, renameProject 
             </span>
             <Table
               size={'small'}
-              style={{ width: '100%', direction: 'ltr' }}
+              style={{ width: '100%', direction: 'ltr', verticalAlign: 'top' }}
               dataSource={projectsRef.current}
               scroll={{ y: 360 }}
               pagination={{
@@ -283,10 +284,19 @@ const ProjectListPanel = ({ projects, openProject, deleteProject, renameProject 
               }}
             >
               <Column
+                title={i18n.t('word.Type', lang)}
+                dataIndex="type"
+                key="type"
+                width={'25%'}
+                render={(type, record) => {
+                  return <Typography.Text style={{ fontSize: '12px', verticalAlign: 'top' }}>{type}</Typography.Text>;
+                }}
+              />
+              <Column
                 title={i18n.t('word.Title', lang)}
                 dataIndex="title"
                 key="title"
-                width={'40%'}
+                width={'33%'}
                 sortDirections={['ascend', 'descend', 'ascend']}
                 sorter={(a, b) => {
                   // @ts-ignore
@@ -294,7 +304,10 @@ const ProjectListPanel = ({ projects, openProject, deleteProject, renameProject 
                 }}
                 render={(title, record) => {
                   return (
-                    <Typography.Text style={{ fontSize: '12px', cursor: 'pointer' }} title={i18n.t('word.Open', lang)}>
+                    <Typography.Text
+                      style={{ fontSize: '12px', cursor: 'pointer', verticalAlign: 'top' }}
+                      title={i18n.t('word.Open', lang)}
+                    >
                       {title}
                     </Typography.Text>
                   );
@@ -306,18 +319,9 @@ const ProjectListPanel = ({ projects, openProject, deleteProject, renameProject 
                       if (selection && selection.toString().length > 0) return;
                       // only proceed when no text is selected
                       // @ts-ignore
-                      openProject(data.userid, data.title);
+                      openProject(data.userid, data.title, data.type, data.description);
                     },
                   };
-                }}
-              />
-              <Column
-                title={i18n.t('word.Description', lang)}
-                dataIndex="description"
-                key="description"
-                width={'18%'}
-                render={(description, record) => {
-                  return <Typography.Text style={{ fontSize: '12px' }}>{description}</Typography.Text>;
                 }}
               />
               <Column
@@ -332,7 +336,7 @@ const ProjectListPanel = ({ projects, openProject, deleteProject, renameProject 
                   return a['timestamp'] - b['timestamp'];
                 }}
                 render={(time, record) => {
-                  return <Typography.Text style={{ fontSize: '12px' }}>{time}</Typography.Text>;
+                  return <Typography.Text style={{ fontSize: '12px', verticalAlign: 'top' }}>{time}</Typography.Text>;
                 }}
               />
               <Column
@@ -340,13 +344,13 @@ const ProjectListPanel = ({ projects, openProject, deleteProject, renameProject 
                 title={i18n.t('word.Action', lang)}
                 key="action"
                 render={(text, record: any) => (
-                  <Space size="middle">
+                  <Space size="middle" style={{ verticalAlign: 'top' }}>
                     <img
                       title={i18n.t('word.Delete', lang)}
                       alt={'Delete'}
                       src={DeleteImage}
                       onClick={() => {
-                        confirmDeleteProject(record.userid, record.title);
+                        confirmDeleteProject(record.title);
                       }}
                       height={16}
                       width={16}

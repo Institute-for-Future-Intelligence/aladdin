@@ -6,7 +6,7 @@ import React from 'react';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import styled from 'styled-components';
-import { Space } from 'antd';
+import { Descriptions } from 'antd';
 import i18n from '../i18n/i18n';
 import { CloseOutlined } from '@ant-design/icons';
 
@@ -46,7 +46,6 @@ const ColumnWrapper = styled.div`
 `;
 
 const Header = styled.div`
-  border-radius: 10px 10px 0 0;
   width: 100%;
   height: 24px;
   padding: 10px;
@@ -68,6 +67,8 @@ const ProjectPanel = () => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const projectTitle = useStore(Selector.projectTitle);
+  const projectDescription = useStore(Selector.projectDescription);
+  const projectType = useStore(Selector.projectType);
 
   const lang = { lng: language };
 
@@ -94,7 +95,12 @@ const ProjectPanel = () => {
             <CloseOutlined title={i18n.t('word.Close', lang)} />
           </span>
         </Header>
-        <Space>Project</Space>
+        <Descriptions style={{ paddingLeft: '10px', paddingTop: '8px' }}>
+          <Descriptions.Item label={'Type'}>{projectType}</Descriptions.Item>
+        </Descriptions>
+        <Descriptions style={{ paddingLeft: '10px' }}>
+          <Descriptions.Item label={'Description'}>{projectDescription}</Descriptions.Item>
+        </Descriptions>
       </ColumnWrapper>
     </Container>
   );

@@ -31,6 +31,7 @@ export const i18n_tr = {
     },
 
     word: {
+      Type: 'Type',
       Text: 'Text',
       FontSize: 'Font Size',
       FontColor: 'Font Color',
@@ -175,8 +176,6 @@ export const i18n_tr = {
       LightElement: 'Light',
       ElementLocked: 'Kilitli',
       ModelType: 'Model Type',
-      ProjectType: 'Type',
-      SolarFarmDesign: 'Solar Farm Design',
     },
 
     message: {
@@ -191,6 +190,8 @@ export const i18n_tr = {
       CannotCreateNewProject: 'Cannot create a new project',
       CannotCreateNewProjectWithoutTitle: 'Cannot create a new project without a title',
       CannotOpenYourProjects: 'Cannot open your projects',
+      CannotDeleteProject: 'Cannot delete the project',
+      CannotRenameProject: 'Cannot rename the project',
       TitleUsedChooseDifferentOne: 'This title has been used. Choose a different one',
       CloudFileWithTitleExistsDoYouWantToOverwrite: 'A cloud file with the title exists. Do you want to overwrite it?',
       CloudFileNotFound: 'Bulut dosyası bulunamadı',
@@ -1377,6 +1378,8 @@ export const i18n_tr = {
 
     projectPanel: {
       Project: 'Project',
+      ProjectType: 'Type',
+      SolarFarmDesign: 'Solar Farm Design',
     },
 
     accountSettingsPanel: {

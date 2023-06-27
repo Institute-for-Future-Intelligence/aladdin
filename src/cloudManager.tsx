@@ -14,7 +14,17 @@ import 'firebase/auth';
 import 'firebase/firestore';
 import 'firebase/storage';
 import { showError, showInfo, showSuccess } from './helpers';
-import { ClassID, CloudFileInfo, FirebaseName, ModelSite, ObjectType, ProjectInfo, SchoolID, User } from './types';
+import {
+  ClassID,
+  CloudFileInfo,
+  FirebaseName,
+  ModelSite,
+  ObjectType,
+  ProjectInfo,
+  ProjectType,
+  SchoolID,
+  User,
+} from './types';
 import CloudFilePanel from './panels/cloudFilePanel';
 import Spinner from './components/spinner';
 import AccountSettingsPanel from './panels/accountSettingsPanel';
@@ -167,6 +177,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           time: dayjs(new Date(f.timestamp)).format('MM/DD/YYYY hh:mm a'),
           timestamp: f.timestamp,
           description: f.description,
+          type: f.type,
           action: '',
         });
       });
@@ -919,11 +930,87 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     }
   };
 
-  const openProject = (userid: string, title: string) => {
+  const openProject = (userid: string, title: string, type: ProjectType, description: string) => {
     setCommonStore((state) => {
       state.projectTitle = title;
+      state.projectType = type;
+      state.projectDescription = description;
       state.viewState.projectView = true;
     });
+  };
+
+  const deleteProject = (title: string) => {
+    if (!user.uid) return;
+    firebase
+      .firestore()
+      .collection('users')
+      .doc(user.uid)
+      .collection('projects')
+      .doc(title)
+      .delete()
+      .then(() => {
+        setProjectArray(
+          projectArray.filter((e) => {
+            return e.title !== title;
+          }),
+        );
+        setCommonStore((state) => {
+          if (title === state.projectTitle) {
+            state.projectTitle = null;
+            state.viewState.projectView = false;
+          }
+        });
+      })
+      .catch((error) => {
+        showError(i18n.t('message.CannotDeleteProject', lang) + ': ' + error);
+      });
+  };
+
+  const renameProject = (oldTitle: string, newTitle: string) => {
+    if (!user.uid) return;
+    const files = firebase.firestore().collection('users').doc(user.uid).collection('projects');
+    files
+      .doc(oldTitle)
+      .get()
+      .then((doc) => {
+        if (doc && doc.exists) {
+          const data = doc.data();
+          if (data) {
+            files
+              .doc(newTitle)
+              .set(data)
+              .then(() => {
+                files
+                  .doc(oldTitle)
+                  .delete()
+                  .then(() => {
+                    // TODO
+                  });
+                for (const f of projectArray) {
+                  if (f.title === oldTitle) {
+                    f.title = newTitle;
+                    break;
+                  }
+                }
+                setProjectArray([...projectArray]);
+                setCommonStore((state) => {
+                  if (state.projectTitle === oldTitle) {
+                    state.projectTitle = newTitle;
+                  }
+                });
+                // change the address field of the browser when the project is currently open
+                // const params = new URLSearchParams(window.location.search);
+                // if (params.get('title') === oldTitle && params.get('userid') === user.uid) {
+                //   const newUrl = HOME_URL + '?client=web&userid=' + user.uid + '&title=' + encodeURIComponent(newTitle);
+                //   window.history.pushState({}, document.title, newUrl);
+                // }
+              });
+          }
+        }
+      })
+      .catch((error) => {
+        showError(i18n.t('message.CannotRenameProject', lang) + ': ' + error);
+      });
   };
 
   const saveToCloud = (title: string, silent: boolean, checkExistence: boolean) => {
@@ -1272,8 +1359,8 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
         <ProjectListPanel
           projects={projectArray}
           openProject={openProject}
-          deleteProject={() => {}}
-          renameProject={() => {}}
+          deleteProject={deleteProject}
+          renameProject={renameProject}
         />
       )}
       {showModelsGallery && (

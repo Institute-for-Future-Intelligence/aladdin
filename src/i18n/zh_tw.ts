@@ -31,6 +31,7 @@ export const i18n_zh_tw = {
     },
 
     word: {
+      Type: '類别',
       Text: '文字',
       FontSize: '字體大小',
       FontColor: '字體顏色',
@@ -175,8 +176,6 @@ export const i18n_zh_tw = {
       LightElement: '電燈',
       ElementLocked: '固定',
       ModelType: '模型類别',
-      ProjectType: '類别',
-      SolarFarmDesign: '太陽能農場設計',
     },
 
     message: {
@@ -191,6 +190,8 @@ export const i18n_zh_tw = {
       CannotCreateNewProject: '無法創建新項目',
       CannotCreateNewProjectWithoutTitle: '沒有標題, 無法創建新項目',
       CannotOpenYourProjects: '無法打開您的項目列表',
+      CannotDeleteProject: '無法刪除項目',
+      CannotRenameProject: '無法給項目改名',
       TitleUsedChooseDifferentOne: '此標題已經被使用, 請採用不同的標題',
       CloudFileWithTitleExistsDoYouWantToOverwrite: '使用此標題的雲文檔已經存在，您確定要覆蓋它嗎？',
       CloudFileNotFound: '找不到此云端文檔',
@@ -1352,6 +1353,8 @@ export const i18n_zh_tw = {
 
     projectPanel: {
       Project: '項目',
+      ProjectType: '類别',
+      SolarFarmDesign: '太陽能農場設計',
     },
 
     accountSettingsPanel: {
