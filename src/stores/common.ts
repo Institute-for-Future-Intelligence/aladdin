@@ -3266,6 +3266,10 @@ export const useStore = create<CommonStoreState>(
                             break;
                         }
                       } else if (newParent?.type === ObjectType.Roof) {
+                        const rotation = RoofUtil.getRotationOnRoof(newParent.id, m);
+                        if (rotation) {
+                          e.rotation = [...rotation];
+                        }
                         const windowVertices = RoofUtil.getWindowVerticesOnRoof(e as WindowModel);
                         const boundaryVertices = RoofUtil.getRoofSegmentBoundary(newParent.id, m);
                         if (!boundaryVertices) break;
@@ -3278,7 +3282,6 @@ export const useStore = create<CommonStoreState>(
                           break;
                         }
                         approved = true;
-                        state.updateElementOnRoofFlag = !state.updateElementOnRoofFlag;
                       }
                       break;
                     }
@@ -3351,10 +3354,6 @@ export const useStore = create<CommonStoreState>(
                       if (parent) {
                         const hx = e.lx / 2;
                         e.cx += hx * 3;
-                        const rot = RoofUtil.getRotationOnRoof(parent.id, new Vector3(e.cx, e.cy));
-                        if (rot) {
-                          e.rotation = [...rot];
-                        }
                         // searching +x direction
                         if (parent.type === ObjectType.Wall) {
                           while (e.cx + hx < 0.5) {
@@ -3368,20 +3367,30 @@ export const useStore = create<CommonStoreState>(
                             }
                           }
                         } else if (parent.type === ObjectType.Roof) {
+                          const rot = RoofUtil.getRotationOnRoof(parent.id, new Vector3(e.cx, e.cy));
+                          if (rot) {
+                            e.rotation = [...rot];
+                          }
                           let windowVertices = RoofUtil.getWindowVerticesOnRoof(e as WindowModel);
-                          const boundaryVertices = RoofUtil.getRoofBoundaryVertices(parent as RoofModel);
-                          while (RoofUtil.rooftopElementBoundaryCheck(windowVertices, boundaryVertices)) {
-                            if (RoofUtil.rooftopWindowCollisionCheck(e.id, windowVertices, parent.id)) {
+                          let segmentVertices = RoofUtil.getRoofSegmentBoundary(parent.id, new Vector3(e.cx, e.cy));
+                          const roofVertices = RoofUtil.getRoofBoundaryVertices(parent as RoofModel);
+                          while (RoofUtil.rooftopElementBoundaryCheck(windowVertices, roofVertices)) {
+                            if (
+                              segmentVertices &&
+                              RoofUtil.rooftopElementBoundaryCheck(windowVertices, segmentVertices) &&
+                              RoofUtil.rooftopWindowCollisionCheck(e.id, windowVertices, parent.id)
+                            ) {
                               state.elements.push(e);
                               approved = true;
                               break;
                             } else {
-                              e.cx += hx;
+                              e.cx += hx / 2;
                               const rot = RoofUtil.getRotationOnRoof(parent.id, new Vector3(e.cx, e.cy));
                               if (rot) {
                                 e.rotation = [...rot];
                               }
                               windowVertices = RoofUtil.getWindowVerticesOnRoof(e as WindowModel);
+                              segmentVertices = RoofUtil.getRoofSegmentBoundary(parent.id, new Vector3(e.cx, e.cy));
                             }
                           }
                         }
@@ -3408,11 +3417,15 @@ export const useStore = create<CommonStoreState>(
                             }
                           } else if (parent.type === ObjectType.Roof) {
                             let windowVertices = RoofUtil.getWindowVerticesOnRoof(e as WindowModel);
-                            const boundaryVertices = RoofUtil.getRoofBoundaryVertices(parent as RoofModel);
-                            while (RoofUtil.rooftopElementBoundaryCheck(windowVertices, boundaryVertices)) {
-                              if (RoofUtil.rooftopWindowCollisionCheck(e.id, windowVertices, parent.id)) {
+                            let segmentVertices = RoofUtil.getRoofSegmentBoundary(parent.id, new Vector3(e.cx, e.cy));
+                            const roofVertices = RoofUtil.getRoofBoundaryVertices(parent as RoofModel);
+                            while (RoofUtil.rooftopElementBoundaryCheck(windowVertices, roofVertices)) {
+                              if (
+                                segmentVertices &&
+                                RoofUtil.rooftopElementBoundaryCheck(windowVertices, segmentVertices) &&
+                                RoofUtil.rooftopWindowCollisionCheck(e.id, windowVertices, parent.id)
+                              ) {
                                 state.elements.push(e);
-                                // state.elementsToPaste = [e];
                                 approved = true;
                                 break;
                               } else {
@@ -3422,6 +3435,7 @@ export const useStore = create<CommonStoreState>(
                                   e.rotation = [...rot];
                                 }
                                 windowVertices = RoofUtil.getWindowVerticesOnRoof(e as WindowModel);
+                                segmentVertices = RoofUtil.getRoofSegmentBoundary(parent.id, new Vector3(e.cx, e.cy));
                               }
                             }
                           }
