@@ -395,25 +395,39 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
                 </Popover>
               )}
               {solarPanelSum !== 0 && (
+                <>
+                  {tooltipSolarPanelBreakdown.current.length === 0 ? (
+                    <Space style={{ cursor: 'default' }}>
+                      {i18n.t('buildingEnergyPanel.SolarPanel', lang) + ': ' + solarPanelSum.toFixed(1)}
+                    </Space>
+                  ) : (
+                    <Popover
+                      content={tooltipSolarPanelBreakdown.current.map((e) => (
+                        <div>{e}</div>
+                      ))}
+                    >
+                      <Space style={{ cursor: 'help' }}>
+                        {i18n.t('buildingEnergyPanel.SolarPanel', lang) + ': ' + solarPanelSum.toFixed(1)}
+                      </Space>
+                    </Popover>
+                  )}
+                </>
+              )}
+              {tooltipNetBreakdown.current.length === 0 ? (
+                <Space style={{ cursor: 'default' }}>
+                  {i18n.t('buildingEnergyPanel.Net', lang) + ': ' + netSum.toFixed(1)}
+                </Space>
+              ) : (
                 <Popover
-                  content={tooltipSolarPanelBreakdown.current.map((e) => (
+                  content={tooltipNetBreakdown.current.map((e) => (
                     <div>{e}</div>
                   ))}
                 >
-                  <Space style={{ cursor: tooltipSolarPanelBreakdown.current.length === 0 ? 'default' : 'help' }}>
-                    {i18n.t('buildingEnergyPanel.SolarPanel', lang) + ': ' + solarPanelSum.toFixed(1)}
+                  <Space style={{ cursor: 'help' }}>
+                    {i18n.t('buildingEnergyPanel.Net', lang) + ': ' + netSum.toFixed(1)}
                   </Space>
                 </Popover>
               )}
-              <Popover
-                content={tooltipNetBreakdown.current.map((e) => (
-                  <div>{e}</div>
-                ))}
-              >
-                <Space style={{ cursor: tooltipNetBreakdown.current.length === 0 ? 'default' : 'help' }}>
-                  {i18n.t('buildingEnergyPanel.Net', lang) + ': ' + netSum.toFixed(1)}
-                </Space>
-              </Popover>
               <Button
                 type="default"
                 icon={emptyGraph ? <CaretRightOutlined /> : <ReloadOutlined />}
