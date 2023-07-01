@@ -10,7 +10,7 @@ import * as Selector from '../stores/selector';
 import { ChartType, GraphDataType, ObjectType } from '../types';
 import moment from 'moment';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
-import { Button, Space, Switch } from 'antd';
+import { Button, Space, Switch, Popover, Row, Col } from 'antd';
 import { saveCsv, screenshot, showInfo } from '../helpers';
 import {
   CameraOutlined,
@@ -208,13 +208,6 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
 
   const labelX = i18n.t('word.Hour', lang);
   const labelY = i18n.t('solarPanelYieldPanel.YieldPerHour', lang);
-  let totalTooltip = '';
-  if (individualOutputs) {
-    panelSumRef.current.forEach((value, key) => (totalTooltip += key + ': ' + value.toFixed(3) + '\n'));
-    totalTooltip += '——————————\n';
-    totalTooltip += i18n.t('word.Total', lang) + ': ' + sum.toFixed(3) + ' ' + i18n.t('word.kWh', lang);
-  }
-
   const solarPanelNumber = Util.countAllSolarPanels();
   const totalProfit = sum * economics.electricitySellingPrice - solarPanelNumber * economics.operationalCostPerUnit;
   const emptyGraph = dailyYield && dailyYield[0] ? Object.keys(dailyYield[0]).length === 0 : true;
@@ -275,10 +268,27 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
           />
           {!simulationInProgress && (
             <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
-              {individualOutputs && solarPanelCount > 1 ? (
-                <Space title={totalTooltip} style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
-                  {i18n.t('solarPanelYieldPanel.HoverForBreakdown', lang)}
-                </Space>
+              {individualOutputs && solarPanelCount > 1 && panelSumRef.current.size > 0 ? (
+                <Popover
+                  title={[...panelSumRef.current.entries()].map((e, i) => (
+                    <React.Fragment key={i}>
+                      <Row>
+                        <Col span={7} style={{ textAlign: 'right', paddingRight: '8px' }}>
+                          {e[0] + ' : '}
+                        </Col>
+                        <Col span={8}>{e[1].toFixed(3)}</Col>
+                      </Row>
+                      {i === panelSumRef.current.size - 1 && <hr></hr>}
+                      {i === panelSumRef.current.size - 1 && (
+                        <div>{i18n.t('word.Total', lang) + ': ' + sum.toFixed(3) + ' ' + i18n.t('word.kWh', lang)}</div>
+                      )}
+                    </React.Fragment>
+                  ))}
+                >
+                  <Space style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
+                    {i18n.t('solarPanelYieldPanel.HoverForBreakdown', lang)}
+                  </Space>
+                </Popover>
               ) : (
                 <>
                   <Space style={{ cursor: 'default' }}>
