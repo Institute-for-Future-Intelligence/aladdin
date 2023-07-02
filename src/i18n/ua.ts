@@ -177,6 +177,7 @@ export const i18n_ua = {
       LightElement: 'Світло',
       ElementLocked: 'Заблоковано',
       ModelType: 'Тип моделі',
+      OutputBreakdown: 'Breakdown',
     },
 
     message: {
@@ -1288,7 +1289,6 @@ export const i18n_ua = {
       YieldPerHour: 'Дохід за годину',
       DailyTotal: 'Щоденний загальний',
       YearlyTotal: 'Річний загальний',
-      HoverForBreakdown: 'Наведіть для аналізу',
       ShowOutputsOfIndividualSolarPanels: 'Показати дохід окремих сонячних панелей',
       Profit: 'Прибуток',
     },
@@ -1300,7 +1300,6 @@ export const i18n_ua = {
       YieldPerHour: 'Дохід за годину',
       DailyTotal: 'Щоденний загальний',
       YearlyTotal: 'Річний загальний',
-      HoverForBreakdown: 'Наведіть для аналізу',
       ShowOutputsOfIndividualParabolicTroughs: 'Показати дохід окремих параболічних сонячних колекторів',
     },
 
@@ -1311,7 +1310,6 @@ export const i18n_ua = {
       YieldPerHour: 'Дохід за годину',
       DailyTotal: 'Щоденний загальний',
       YearlyTotal: 'Річний загальний',
-      HoverForBreakdown: 'Наведіть для аналізу',
       ShowOutputsOfIndividualParabolicDishes: 'Показати дохід окремих параболічних тарілок',
     },
 
@@ -1322,7 +1320,6 @@ export const i18n_ua = {
       YieldPerHour: 'Дохід за годину',
       DailyTotal: 'Щоденний загальний',
       YearlyTotal: 'Річний загальний',
-      HoverForBreakdown: 'Наведіть для аналізу',
       ShowOutputsOfIndividualFresnelReflectors: 'Показати дохід окремих відбивачів Френеля',
     },
 
@@ -1333,7 +1330,6 @@ export const i18n_ua = {
       YieldPerHour: 'Дохід за годину',
       DailyTotal: 'Щоденний загальний',
       YearlyTotal: 'Річний загальний',
-      HoverForBreakdown: 'Наведіть для аналізу',
       ShowOutputsOfIndividualHeliostats: 'Показати дохід окремих геліостатів',
     },
 
@@ -1346,7 +1342,6 @@ export const i18n_ua = {
       YieldPerHour: 'Дохід за годину',
       DailyTotal: 'Щоденний загальний',
       YearlyTotal: 'Річний загальний',
-      HoverForBreakdown: 'Наведіть для аналізу',
       ShowOutputsOfIndividualUpdraftTowers: 'Показати дохід окремих сонячних веж',
     },
 

@@ -278,26 +278,32 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
                         </Col>
                         <Col span={8}>{e[1].toFixed(3)}</Col>
                       </Row>
-                      {i === panelSumRef.current.size - 1 && <hr></hr>}
                       {i === panelSumRef.current.size - 1 && (
-                        <div>{i18n.t('word.Total', lang) + ': ' + sum.toFixed(3) + ' ' + i18n.t('word.kWh', lang)}</div>
+                        <>
+                          <hr></hr>
+                          <div>
+                            {i18n.t('word.Total', lang) + ': ' + sum.toFixed(3) + ' ' + i18n.t('word.kWh', lang)}
+                          </div>
+                        </>
                       )}
                     </React.Fragment>
                   ))}
                 >
                   <Space style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
-                    {i18n.t('solarPanelYieldPanel.HoverForBreakdown', lang)}
+                    {i18n.t('shared.OutputBreakdown', lang)}
                   </Space>
                 </Popover>
               ) : (
                 <>
-                  <Space style={{ cursor: 'default' }}>
-                    {i18n.t('solarPanelYieldPanel.DailyTotal', lang) +
-                      ': ' +
-                      sum.toFixed(3) +
-                      ' ' +
-                      i18n.t('word.kWh', lang)}
-                  </Space>
+                  {sum > 0 && (
+                    <Space style={{ cursor: 'default' }}>
+                      {i18n.t('solarPanelYieldPanel.DailyTotal', lang) +
+                        ': ' +
+                        sum.toFixed(3) +
+                        ' ' +
+                        i18n.t('word.kWh', lang)}
+                    </Space>
+                  )}
                   {sum > 0 && (
                     <Space>{'| ' + i18n.t('solarPanelYieldPanel.Profit', lang) + ': $' + totalProfit.toFixed(2)}</Space>
                   )}

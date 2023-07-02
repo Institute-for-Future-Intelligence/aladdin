@@ -287,7 +287,7 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
             <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
               {towerCount > 1 ? (
                 <Space title={totalTooltip} style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
-                  {i18n.t('updraftTowerYieldPanel.HoverForBreakdown', lang)}
+                  {i18n.t('shared.OutputBreakdown', lang)}
                 </Space>
               ) : (
                 <Space style={{ cursor: 'default' }}>

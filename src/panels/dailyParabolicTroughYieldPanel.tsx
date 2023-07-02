@@ -273,7 +273,7 @@ const DailyParabolicTroughYieldPanel = ({ city }: DailyParabolicTroughYieldPanel
             <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
               {individualOutputs && parabolicTroughCount > 1 ? (
                 <Space title={totalTooltip} style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
-                  {i18n.t('parabolicTroughYieldPanel.HoverForBreakdown', lang)}
+                  {i18n.t('shared.OutputBreakdown', lang)}
                 </Space>
               ) : (
                 <Space style={{ cursor: 'default' }}>

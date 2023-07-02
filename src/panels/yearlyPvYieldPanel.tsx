@@ -10,7 +10,7 @@ import * as Selector from '../stores/selector';
 import { ChartType, GraphDataType, ObjectType } from '../types';
 import { FLOATING_WINDOW_OPACITY, MONTHS } from '../constants';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
-import { Button, Space, Switch } from 'antd';
+import { Button, Space, Switch, Popover, Row, Col } from 'antd';
 import { saveCsv, screenshot, showInfo } from '../helpers';
 import {
   CameraOutlined,
@@ -209,18 +209,9 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
 
   const labelX = i18n.t('word.Month', lang);
   const labelY = i18n.t('solarPanelYieldPanel.Yield', lang);
-  const yearScaleFactor = 12 / daysPerYear;
-  let totalTooltip = '';
-  if (individualOutputs) {
-    panelSumRef.current.forEach(
-      (value, key) => (totalTooltip += key + ': ' + (value * yearScaleFactor).toFixed(2) + '\n'),
-    );
-    totalTooltip += '——————————\n';
-    totalTooltip +=
-      i18n.t('word.Total', lang) + ': ' + (sum * yearScaleFactor).toFixed(2) + ' ' + i18n.t('word.kWh', lang);
-  }
 
   const solarPanelNumber = Util.countAllSolarPanels();
+  const yearScaleFactor = 12 / daysPerYear;
   const totalYield = sum * yearScaleFactor;
   const totalProfit =
     totalYield * economics.electricitySellingPrice - solarPanelNumber * economics.operationalCostPerUnit * 365;
@@ -281,19 +272,42 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
           />
           {!simulationInProgress && (
             <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
-              {individualOutputs && solarPanelCount > 1 ? (
-                <Space title={totalTooltip} style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
-                  {i18n.t('solarPanelYieldPanel.HoverForBreakdown', lang)}
-                </Space>
+              {individualOutputs && solarPanelCount > 1 && panelSumRef.current.size > 0 ? (
+                <Popover
+                  title={[...panelSumRef.current.entries()].map((e, i) => (
+                    <React.Fragment key={i}>
+                      <Row>
+                        <Col span={7} style={{ textAlign: 'right', paddingRight: '8px' }}>
+                          {e[0] + ' : '}
+                        </Col>
+                        <Col span={8}>{(e[1] * yearScaleFactor).toFixed(2)}</Col>
+                      </Row>
+                      {i === panelSumRef.current.size - 1 && (
+                        <>
+                          <hr></hr>
+                          <div>
+                            {i18n.t('word.Total', lang) + ': ' + totalYield.toFixed(2) + ' ' + i18n.t('word.kWh', lang)}
+                          </div>
+                        </>
+                      )}
+                    </React.Fragment>
+                  ))}
+                >
+                  <Space style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
+                    {i18n.t('shared.OutputBreakdown', lang)}
+                  </Space>
+                </Popover>
               ) : (
                 <>
-                  <Space>
-                    {i18n.t('solarPanelYieldPanel.YearlyTotal', lang) +
-                      ': ' +
-                      totalYield.toFixed(2) +
-                      ' ' +
-                      i18n.t('word.kWh', lang)}
-                  </Space>
+                  {totalYield > 0 && (
+                    <Space>
+                      {i18n.t('solarPanelYieldPanel.YearlyTotal', lang) +
+                        ': ' +
+                        totalYield.toFixed(2) +
+                        ' ' +
+                        i18n.t('word.kWh', lang)}
+                    </Space>
+                  )}
                   {totalYield > 0 && (
                     <Space>{'| ' + i18n.t('solarPanelYieldPanel.Profit', lang) + ': $' + totalProfit.toFixed(2)}</Space>
                   )}

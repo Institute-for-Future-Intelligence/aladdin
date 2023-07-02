@@ -276,7 +276,7 @@ const YearlyFresnelReflectorYieldPanel = ({ city }: YearlyFresnelReflectorYieldP
             <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
               {individualOutputs && fresnelReflectorCount > 1 ? (
                 <Space title={totalTooltip} style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
-                  {i18n.t('fresnelReflectorYieldPanel.HoverForBreakdown', lang)}
+                  {i18n.t('shared.OutputBreakdown', lang)}
                 </Space>
               ) : (
                 <Space>

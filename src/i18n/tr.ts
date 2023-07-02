@@ -176,6 +176,7 @@ export const i18n_tr = {
       LightElement: 'Light',
       ElementLocked: 'Kilitli',
       ModelType: 'Model Type',
+      OutputBreakdown: 'Breakdown',
     },
 
     message: {
@@ -1287,7 +1288,6 @@ export const i18n_tr = {
       YieldPerHour: 'Saatlik Üretim',
       DailyTotal: 'Günlük Toplam',
       YearlyTotal: 'Yıllık Toplam',
-      HoverForBreakdown: 'Detaylı bilgi için fareyi üzerine getiriniz',
       ShowOutputsOfIndividualSolarPanels: 'Herbir güneş panelinin üretimini göster',
       Profit: 'Kazanç',
     },
@@ -1299,7 +1299,6 @@ export const i18n_tr = {
       YieldPerHour: 'Saatlik Üretim',
       DailyTotal: 'Günlük Toplam',
       YearlyTotal: 'Yıllık Toplam',
-      HoverForBreakdown: 'Detaylı bilgi için fareyi üzerine getiriniz',
       ShowOutputsOfIndividualParabolicTroughs: 'Herbir parabolik oluğun üretimini göster',
     },
 
@@ -1310,7 +1309,6 @@ export const i18n_tr = {
       YieldPerHour: 'Saatlik Üretim',
       DailyTotal: 'Günlük Toplam',
       YearlyTotal: 'Yıllık Toplam',
-      HoverForBreakdown: 'Detaylı bilgi için fareyi üzerine getiriniz',
       ShowOutputsOfIndividualParabolicDishes: 'Herbir parabolik çanağın üretimini göster',
     },
 
@@ -1321,7 +1319,6 @@ export const i18n_tr = {
       YieldPerHour: 'Saatlik Üretim',
       DailyTotal: 'Günlük Toplam',
       YearlyTotal: 'Yıllık Toplam',
-      HoverForBreakdown: 'Detaylı bilgi için fareyi üzerine getiriniz',
       ShowOutputsOfIndividualFresnelReflectors: 'Herbir Fresnel yansıtıcısının üretimini göster',
     },
 
@@ -1332,7 +1329,6 @@ export const i18n_tr = {
       YieldPerHour: 'Saatlik Üretim',
       DailyTotal: 'Günlük Toplam',
       YearlyTotal: 'Yıllık Toplam',
-      HoverForBreakdown: 'Detaylı bilgi için fareyi üzerine getiriniz',
       ShowOutputsOfIndividualHeliostats: 'Herbir heliostatın üretimini göster',
     },
 
@@ -1345,7 +1341,6 @@ export const i18n_tr = {
       YieldPerHour: 'Saatlik Üretim',
       DailyTotal: 'Günlük Toplam',
       YearlyTotal: 'Yıllık Toplam',
-      HoverForBreakdown: 'Detaylı bilgi için fareyi üzerine getiriniz',
       ShowOutputsOfIndividualUpdraftTowers: 'Herbir updraft kulesinin üretimini göster',
     },
 

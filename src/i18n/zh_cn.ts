@@ -176,6 +176,7 @@ export const i18n_zh_cn = {
       LightElement: '电灯',
       ElementLocked: '固定',
       ModelType: '模型类别',
+      OutputBreakdown: '分列发电量',
     },
 
     message: {
@@ -1263,7 +1264,6 @@ export const i18n_zh_cn = {
       YieldPerHour: '每小时发电量',
       DailyTotal: '日发电总量',
       YearlyTotal: '年发电总量',
-      HoverForBreakdown: '在此停留鼠标分列发电量',
       ShowOutputsOfIndividualSolarPanels: '显示每行光伏板单独发电量',
       Profit: '利润',
     },
@@ -1275,7 +1275,6 @@ export const i18n_zh_cn = {
       YieldPerHour: '每小时发电量',
       DailyTotal: '日发电总量',
       YearlyTotal: '年发电总量',
-      HoverForBreakdown: '在此停留鼠标分列发电量',
       ShowOutputsOfIndividualParabolicTroughs: '显示每行抛物线槽单独发电量',
     },
 
@@ -1286,7 +1285,6 @@ export const i18n_zh_cn = {
       YieldPerHour: '每小时发电量',
       DailyTotal: '日发电总量',
       YearlyTotal: '年发电总量',
-      HoverForBreakdown: '在此停留鼠标分列发电量',
       ShowOutputsOfIndividualParabolicDishes: '显示每个抛物线碟单独发电量',
     },
 
@@ -1297,7 +1295,6 @@ export const i18n_zh_cn = {
       YieldPerHour: '每小时发电量',
       DailyTotal: '日发电总量',
       YearlyTotal: '年发电总量',
-      HoverForBreakdown: '在此停留鼠标分列发电量',
       ShowOutputsOfIndividualFresnelReflectors: '显示每个菲涅耳反射镜单独发电量',
     },
 
@@ -1308,7 +1305,6 @@ export const i18n_zh_cn = {
       YieldPerHour: '每小时发电量',
       DailyTotal: '日发电总量',
       YearlyTotal: '年发电总量',
-      HoverForBreakdown: '在此停留鼠标分列发电量',
       ShowOutputsOfIndividualHeliostats: '显示每个定日镜单独发电量',
     },
 
@@ -1321,7 +1317,6 @@ export const i18n_zh_cn = {
       YieldPerHour: '每小时发电量',
       DailyTotal: '日发电总量',
       YearlyTotal: '年发电总量',
-      HoverForBreakdown: '在此停留鼠标分列发电量',
       ShowOutputsOfIndividualUpdraftTowers: '显示每个太阳能上升气流塔单独发电量',
     },
 

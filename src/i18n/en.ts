@@ -176,6 +176,7 @@ export const i18n_en = {
       LightElement: 'Light',
       ElementLocked: 'Locked',
       ModelType: 'Model Type',
+      OutputBreakdown: 'Breakdown',
     },
 
     message: {
@@ -1286,7 +1287,6 @@ export const i18n_en = {
       YieldPerHour: 'Yield per Hour',
       DailyTotal: 'Daily Total',
       YearlyTotal: 'Yearly Total',
-      HoverForBreakdown: 'Hover for breakdown',
       ShowOutputsOfIndividualSolarPanels: 'Show outputs of individual solar panels',
       Profit: 'Profit',
     },
@@ -1298,7 +1298,6 @@ export const i18n_en = {
       YieldPerHour: 'Yield per Hour',
       DailyTotal: 'Daily Total',
       YearlyTotal: 'Yearly Total',
-      HoverForBreakdown: 'Hover for breakdown',
       ShowOutputsOfIndividualParabolicTroughs: 'Show outputs of individual parabolic troughs',
     },
 
@@ -1309,7 +1308,6 @@ export const i18n_en = {
       YieldPerHour: 'Yield per Hour',
       DailyTotal: 'Daily Total',
       YearlyTotal: 'Yearly Total',
-      HoverForBreakdown: 'Hover for breakdown',
       ShowOutputsOfIndividualParabolicDishes: 'Show outputs of individual parabolic dishes',
     },
 
@@ -1320,7 +1318,6 @@ export const i18n_en = {
       YieldPerHour: 'Yield per Hour',
       DailyTotal: 'Daily Total',
       YearlyTotal: 'Yearly Total',
-      HoverForBreakdown: 'Hover for breakdown',
       ShowOutputsOfIndividualFresnelReflectors: 'Show outputs of individual Fresnel feflectors',
     },
 
@@ -1331,7 +1328,6 @@ export const i18n_en = {
       YieldPerHour: 'Yield per Hour',
       DailyTotal: 'Daily Total',
       YearlyTotal: 'Yearly Total',
-      HoverForBreakdown: 'Hover for breakdown',
       ShowOutputsOfIndividualHeliostats: 'Show outputs of individual heliostats',
     },
 
@@ -1344,7 +1340,6 @@ export const i18n_en = {
       YieldPerHour: 'Yield per Hour',
       DailyTotal: 'Daily Total',
       YearlyTotal: 'Yearly Total',
-      HoverForBreakdown: 'Hover for breakdown',
       ShowOutputsOfIndividualUpdraftTowers: 'Show outputs of individual updraft towers',
     },
 
