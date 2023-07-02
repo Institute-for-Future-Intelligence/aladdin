@@ -272,16 +272,16 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
                 <Popover
                   title={[...panelSumRef.current.entries()].map((e, i) => (
                     <React.Fragment key={i}>
-                      <Row>
-                        <Col span={7} style={{ textAlign: 'right', paddingRight: '8px' }}>
-                          {e[0] + ' : '}
+                      <Row style={{ textAlign: 'right' }}>
+                        <Col span={12} style={{ textAlign: 'right', paddingRight: '8px' }}>
+                          {e[0] + ': '}
                         </Col>
                         <Col span={8}>{e[1].toFixed(3)}</Col>
                       </Row>
                       {i === panelSumRef.current.size - 1 && (
                         <>
                           <hr></hr>
-                          <div>
+                          <div style={{ textAlign: 'right' }}>
                             {i18n.t('word.Total', lang) + ': ' + sum.toFixed(3) + ' ' + i18n.t('word.kWh', lang)}
                           </div>
                         </>

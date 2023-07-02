@@ -276,16 +276,16 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
                 <Popover
                   title={[...panelSumRef.current.entries()].map((e, i) => (
                     <React.Fragment key={i}>
-                      <Row>
-                        <Col span={7} style={{ textAlign: 'right', paddingRight: '8px' }}>
-                          {e[0] + ' : '}
+                      <Row style={{ textAlign: 'right' }}>
+                        <Col span={12} style={{ textAlign: 'right', paddingRight: '8px' }}>
+                          {e[0] + ': '}
                         </Col>
                         <Col span={8}>{(e[1] * yearScaleFactor).toFixed(2)}</Col>
                       </Row>
                       {i === panelSumRef.current.size - 1 && (
                         <>
                           <hr></hr>
-                          <div>
+                          <div style={{ textAlign: 'right' }}>
                             {i18n.t('word.Total', lang) + ': ' + totalYield.toFixed(2) + ' ' + i18n.t('word.kWh', lang)}
                           </div>
                         </>
