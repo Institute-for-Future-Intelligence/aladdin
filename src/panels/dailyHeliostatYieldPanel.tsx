@@ -10,7 +10,7 @@ import * as Selector from '../stores/selector';
 import { ChartType, GraphDataType, ObjectType } from '../types';
 import moment from 'moment';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
-import { Button, Space, Switch } from 'antd';
+import { Button, Col, Row, Space, Switch, Popover } from 'antd';
 import { saveCsv, screenshot, showInfo } from '../helpers';
 import {
   CameraOutlined,
@@ -207,12 +207,6 @@ const DailyHeliostatYieldPanel = ({ city }: DailyHeliostatYieldPanelProps) => {
 
   const labelX = i18n.t('word.Hour', lang);
   const labelY = i18n.t('heliostatYieldPanel.YieldPerHour', lang);
-  let totalTooltip = '';
-  if (individualOutputs) {
-    heliostatSumRef.current.forEach((value, key) => (totalTooltip += key + ': ' + value.toFixed(2) + '\n'));
-    totalTooltip += '——————————\n';
-    totalTooltip += i18n.t('word.Total', lang) + ': ' + sum.toFixed(2) + ' ' + i18n.t('word.kWh', lang);
-  }
   const emptyGraph = dailyYield && dailyYield[0] ? Object.keys(dailyYield[0]).length === 0 : true;
 
   return (
@@ -271,10 +265,31 @@ const DailyHeliostatYieldPanel = ({ city }: DailyHeliostatYieldPanelProps) => {
           />
           {!simulationInProgress && (
             <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
-              {individualOutputs && heliostatCount > 1 ? (
-                <Space title={totalTooltip} style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
-                  {i18n.t('shared.OutputBreakdown', lang)}
-                </Space>
+              {individualOutputs && heliostatCount > 1 && heliostatSumRef.current.size > 0 ? (
+                <Popover
+                  title={[...heliostatSumRef.current.entries()].map((e, i) => (
+                    <React.Fragment key={i}>
+                      <Row style={{ textAlign: 'right' }}>
+                        <Col span={12} style={{ textAlign: 'right', paddingRight: '8px' }}>
+                          {e[0] + ': '}
+                        </Col>
+                        <Col span={8}>{e[1].toFixed(3)}</Col>
+                      </Row>
+                      {i === heliostatSumRef.current.size - 1 && (
+                        <>
+                          <hr></hr>
+                          <div style={{ textAlign: 'right' }}>
+                            {i18n.t('word.Total', lang) + ': ' + sum.toFixed(3) + ' ' + i18n.t('word.kWh', lang)}
+                          </div>
+                        </>
+                      )}
+                    </React.Fragment>
+                  ))}
+                >
+                  <Space style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
+                    {i18n.t('shared.OutputBreakdown', lang)}
+                  </Space>
+                </Popover>
               ) : (
                 <Space style={{ cursor: 'default' }}>
                   {i18n.t('heliostatYieldPanel.DailyTotal', lang)}:{sum.toFixed(2)} {i18n.t('word.kWh', lang)}

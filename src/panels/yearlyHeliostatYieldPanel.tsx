@@ -10,7 +10,7 @@ import * as Selector from '../stores/selector';
 import { ChartType, GraphDataType, ObjectType } from '../types';
 import { FLOATING_WINDOW_OPACITY, MONTHS } from '../constants';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
-import { Button, Space, Switch } from 'antd';
+import { Button, Col, Row, Space, Switch, Popover } from 'antd';
 import { saveCsv, screenshot, showInfo } from '../helpers';
 import {
   CameraOutlined,
@@ -208,15 +208,6 @@ const YearlyHeliostatYieldPanel = ({ city }: YearlyHeliostatYieldPanelProps) => 
   const labelX = i18n.t('word.Month', lang);
   const labelY = i18n.t('heliostatYieldPanel.Yield', lang);
   const yearScaleFactor = 12 / daysPerYear;
-  let totalTooltip = '';
-  if (individualOutputs) {
-    heliostatSumRef.current.forEach(
-      (value, key) => (totalTooltip += key + ': ' + (value * yearScaleFactor).toFixed(2) + '\n'),
-    );
-    totalTooltip += '——————————\n';
-    totalTooltip +=
-      i18n.t('word.Total', lang) + ': ' + (sum * yearScaleFactor).toFixed(2) + ' ' + i18n.t('word.kWh', lang);
-  }
   const emptyGraph = yearlyYield && yearlyYield[0] ? Object.keys(yearlyYield[0]).length === 0 : true;
 
   return (
@@ -274,10 +265,35 @@ const YearlyHeliostatYieldPanel = ({ city }: YearlyHeliostatYieldPanelProps) => 
           />
           {!simulationInProgress && (
             <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
-              {individualOutputs && heliostatCount > 1 ? (
-                <Space title={totalTooltip} style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
-                  {i18n.t('shared.OutputBreakdown', lang)}
-                </Space>
+              {individualOutputs && heliostatCount > 1 && heliostatSumRef.current.size > 0 ? (
+                <Popover
+                  title={[...heliostatSumRef.current.entries()].map((e, i) => (
+                    <React.Fragment key={i}>
+                      <Row style={{ textAlign: 'right' }}>
+                        <Col span={12} style={{ textAlign: 'right', paddingRight: '8px' }}>
+                          {e[0] + ': '}
+                        </Col>
+                        <Col span={8}>{(e[1] * yearScaleFactor).toFixed(2)}</Col>
+                      </Row>
+                      {i === heliostatSumRef.current.size - 1 && (
+                        <>
+                          <hr></hr>
+                          <div style={{ textAlign: 'right' }}>
+                            {i18n.t('word.Total', lang) +
+                              ': ' +
+                              (sum * yearScaleFactor).toFixed(2) +
+                              ' ' +
+                              i18n.t('word.kWh', lang)}
+                          </div>
+                        </>
+                      )}
+                    </React.Fragment>
+                  ))}
+                >
+                  <Space style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
+                    {i18n.t('shared.OutputBreakdown', lang)}
+                  </Space>
+                </Popover>
               ) : (
                 <Space>
                   {i18n.t('heliostatYieldPanel.YearlyTotal', lang)}:{(sum * yearScaleFactor).toFixed(2)}{' '}

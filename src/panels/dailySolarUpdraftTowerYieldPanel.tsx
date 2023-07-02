@@ -10,7 +10,7 @@ import * as Selector from '../stores/selector';
 import { ChartType, GraphDataType, SolarStructure } from '../types';
 import moment from 'moment';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
-import { Button, Space } from 'antd';
+import { Button, Col, Row, Space, Popover } from 'antd';
 import { saveCsv, screenshot, showInfo } from '../helpers';
 import { CameraOutlined, CaretRightOutlined, ReloadOutlined, SaveOutlined } from '@ant-design/icons';
 import i18n from '../i18n/i18n';
@@ -205,12 +205,6 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
   const labelYield = i18n.t('updraftTowerYieldPanel.YieldPerHour', lang);
   const labelTemperature = i18n.t('updraftTowerYieldPanel.ChimneyAirTemperature', lang);
   const labelSpeed = i18n.t('updraftTowerYieldPanel.ChimneyWindSpeed', lang);
-  let totalTooltip = '';
-  if (towerCount > 1) {
-    towerSumRef.current.forEach((value, key) => (totalTooltip += key + ': ' + value.toFixed(2) + '\n'));
-    totalTooltip += '——————————\n';
-    totalTooltip += i18n.t('word.Total', lang) + ': ' + sum.toFixed(2) + ' ' + i18n.t('word.kWh', lang);
-  }
   const emptyGraph = dailyYield && dailyYield[0] ? Object.keys(dailyYield[0]).length === 0 : true;
 
   return (
@@ -285,10 +279,31 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
           />
           {!simulationInProgress && (
             <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
-              {towerCount > 1 ? (
-                <Space title={totalTooltip} style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
-                  {i18n.t('shared.OutputBreakdown', lang)}
-                </Space>
+              {towerCount > 1 && towerSumRef.current.size > 0 ? (
+                <Popover
+                  title={[...towerSumRef.current.entries()].map((e, i) => (
+                    <React.Fragment key={i}>
+                      <Row style={{ textAlign: 'right' }}>
+                        <Col span={12} style={{ textAlign: 'right', paddingRight: '8px' }}>
+                          {e[0] + ': '}
+                        </Col>
+                        <Col span={8}>{e[1].toFixed(3)}</Col>
+                      </Row>
+                      {i === towerSumRef.current.size - 1 && (
+                        <>
+                          <hr></hr>
+                          <div style={{ textAlign: 'right' }}>
+                            {i18n.t('word.Total', lang) + ': ' + sum.toFixed(3) + ' ' + i18n.t('word.kWh', lang)}
+                          </div>
+                        </>
+                      )}
+                    </React.Fragment>
+                  ))}
+                >
+                  <Space style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
+                    {i18n.t('shared.OutputBreakdown', lang)}
+                  </Space>
+                </Popover>
               ) : (
                 <Space style={{ cursor: 'default' }}>
                   {i18n.t('updraftTowerYieldPanel.DailyTotal', lang)}:{sum.toFixed(2)} {i18n.t('word.kWh', lang)}
