@@ -315,7 +315,7 @@ const WallResizeHandleWrapper = React.memo(
     };
 
     const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
-      if (useStore.getState().addedWallId) return;
+      if (useStore.getState().addedWallId || e.object !== e.intersections[0]?.object) return;
 
       const resizeHandleObject = e.object;
       switch (resizeHandleObject.name) {
@@ -408,14 +408,12 @@ const WallResizeHandleWrapper = React.memo(
                   if (wall.fill === WallFill.Partial) {
                     newLz = Math.max(newLz, wall.leftTopPartialHeight, wall.rightTopPartialHeight);
                   }
-                  wall.lz = newLz;
-                  wall.cz = newLz / 2;
-                  // if (newLz < wall.leftTopPartialHeight) {
-                  //   wall.leftTopPartialHeight = newLz;
-                  // }
-                  // if (newLz < wall.rightTopPartialHeight) {
-                  //   wall.rightTopPartialHeight = newLz;
-                  // }
+                }
+              }
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Wall && (e as WallModel).roofId === roofId) {
+                  e.lz = newLz;
+                  e.cz = newLz / 2;
                 }
               }
             }
