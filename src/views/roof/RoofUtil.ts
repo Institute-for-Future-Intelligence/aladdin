@@ -18,9 +18,16 @@ import { WALL_PADDING } from '../wall/wall';
 import { WindowModel, WindowType } from '../../models/WindowModel';
 import { FoundationModel } from '../../models/FoundationModel';
 import { DEFAULT_POLYGONTOP } from '../window/window';
+import { ComposedWall } from './hooks';
 
 export class RoofUtil {
   // roof related
+
+  static getNewWallNormal(wall: ComposedWall) {
+    return new Vector3().subVectors(wall.leftPoint, wall.rightPoint).applyEuler(HALF_PI_Z_EULER).normalize();
+  }
+
+  // to be deleted
   static getWallNormal(wall: WallModel) {
     return new Vector3()
       .subVectors(
@@ -574,6 +581,38 @@ export class RoofUtil {
     return true;
   }
 
+  static getNewWallHeight(arr: ComposedWall[], i: number) {
+    const w = arr[i];
+    let lh;
+    let rh;
+    if (i === 0) {
+      lh = Math.max(w.lz, arr[arr.length - 1].lz);
+      rh = Math.max(w.lz, arr[i + 1].lz);
+    } else if (i === arr.length - 1) {
+      lh = Math.max(w.lz, arr[i - 1].lz);
+      rh = Math.max(w.lz, arr[0].lz);
+    } else {
+      lh = Math.max(w.lz, arr[i - 1].lz);
+      rh = Math.max(w.lz, arr[i + 1].lz);
+    }
+    return { lh, rh };
+  }
+
+  static getNewHighestWallHeight(composedWallArray: ComposedWall[] | null, ignoreSide?: boolean) {
+    if (composedWallArray === null) return 0;
+
+    let maxWallHeight = 0;
+    if (ignoreSide && composedWallArray.length === 4) {
+      return Math.max(composedWallArray[0].lz, composedWallArray[2].lz);
+    }
+    for (let i = 0; i < composedWallArray.length; i++) {
+      const { lh, rh } = RoofUtil.getNewWallHeight(composedWallArray, i);
+      maxWallHeight = Math.max(maxWallHeight, lh, rh);
+    }
+    return maxWallHeight;
+  }
+
+  // to be deleted
   static getWallHeight(arr: WallModel[], i: number) {
     const w = arr[i];
     let lh;
@@ -598,7 +637,7 @@ export class RoofUtil {
     }
     for (let i = 0; i < currentWallArray.length; i++) {
       const { lh, rh } = RoofUtil.getWallHeight(currentWallArray, i);
-      maxWallHeight = Math.max(maxWallHeight, Math.max(lh, rh));
+      maxWallHeight = Math.max(maxWallHeight, lh, rh);
     }
     return maxWallHeight;
   }

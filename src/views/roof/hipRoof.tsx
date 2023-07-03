@@ -16,7 +16,11 @@ import { UndoableResizeHipRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import { CanvasTexture, DoubleSide, Euler, Mesh, Raycaster, RepeatWrapping, Vector2, Vector3 } from 'three';
 import {
+  ComposedWall,
+  useComposedWallArray,
   useCurrWallArray,
+  useIsFirstMount,
+  useNewRoofHeight,
   useRoofHeight,
   useRoofTexture,
   useUpdateOldRoofFiles,
@@ -130,7 +134,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
     rotation = foundation.rotation[2];
   }
 
-  const currentWallArray = useCurrWallArray(wallsId[0]);
+  const composedWalls = useComposedWallArray(wallsId[0], foundation?.id);
   const texture = useRoofTexture(textureType);
 
   const [enableIntersectionPlane, setEnableIntersectionPlane] = useState(false);
@@ -138,7 +142,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
   const [leftRidgeLengthCurr, setLeftRidgeLengthCurr] = useState(leftRidgeLength);
   const [rightRidgeLengthCurr, setRightRidgeLengthCurr] = useState(rightRidgeLength);
 
-  const { highestWallHeight, topZ, riseInnerState, setRiseInnerState } = useRoofHeight(currentWallArray, rise);
+  const { highestWallHeight, topZ, riseInnerState, setRiseInnerState } = useNewRoofHeight(composedWalls, rise);
   useUpdateOldRoofFiles(roofModel, highestWallHeight);
 
   const intersectionPlaneRef = useRef<Mesh>(null);
@@ -146,28 +150,29 @@ const HipRoof = (roofModel: HipRoofModel) => {
   const ray = useMemo(() => new Raycaster(), []);
   const mouse = useMemo(() => new Vector2(), []);
   const isPointerDownRef = useRef(false);
-  const isFirstMountRef = useRef(true);
   const oldRiseRef = useRef(rise);
+
+  const isFirstMount = useIsFirstMount();
 
   const isFlat = riseInnerState < 0.01;
 
   useEffect(() => {
-    if (!isFirstMountRef.current) {
+    if (!isFirstMount) {
       setLeftRidgeLengthCurr(leftRidgeLength);
     }
-  }, [leftRidgeLength]);
+  }, [leftRidgeLength, isFirstMount]);
 
   useEffect(() => {
-    if (!isFirstMountRef.current) {
+    if (!isFirstMount) {
       setRightRidgeLengthCurr(rightRidgeLength);
     }
-  }, [rightRidgeLength]);
+  }, [rightRidgeLength, isFirstMount]);
 
   useEffect(() => {
-    if (!isFirstMountRef.current) {
+    if (!isFirstMount) {
       updateRooftopElements(foundation, id, roofSegments, ridgeMidPoint, topZ, thickness);
     }
-  }, [updateElementOnRoofFlag, topZ, thickness]);
+  }, [updateElementOnRoofFlag, topZ, thickness, isFirstMount]);
 
   const setHipRoofRidgeLength = (elemId: string, leftRidge: number, rightRidge: number) => {
     setCommonStore((state) => {
@@ -208,24 +213,21 @@ const HipRoof = (roofModel: HipRoofModel) => {
     useStore.getState().addUndoable(undoable);
   };
 
-  const getWallPoint = (wallArray: WallModel[]) => {
+  const getWallsPoint2 = (wallArray: ComposedWall[]) => {
     const arr: Point2[] = [];
     for (const w of wallArray) {
-      if (w.leftPoint[0] !== undefined && w.leftPoint[1] !== undefined) {
-        arr.push({ x: w.leftPoint[0], y: w.leftPoint[1] });
-      }
+      arr.push({ x: w.leftPoint.x, y: w.leftPoint.y });
     }
     return arr;
   };
 
   const centroid2D = useMemo(() => {
-    if (currentWallArray.length !== 4) {
-      return new Vector2();
-    }
-    const points = getWallPoint(currentWallArray);
+    if (composedWalls === null) return new Vector2();
+
+    const points = getWallsPoint2(composedWalls);
     const p = Util.calculatePolygonCentroid(points);
     return new Vector2(p.x, p.y);
-  }, [currentWallArray]);
+  }, [composedWalls]);
 
   const ridgeLeftPoint = useMemo(() => {
     const vector = new Vector3();
@@ -263,20 +265,15 @@ const HipRoof = (roofModel: HipRoofModel) => {
   };
 
   const getOverhangHeight = () => {
-    const [frontWall, rightWall, backWall, leftWall] = currentWallArray;
-    const wallPoint0 = new Vector3(frontWall.leftPoint[0], frontWall.leftPoint[1]);
-    const wallPoint1 = new Vector3(frontWall.rightPoint[0], frontWall.rightPoint[1]);
-    const wallPoint2 = new Vector3(backWall.leftPoint[0], backWall.leftPoint[1]);
-    const wallPoint3 = new Vector3(backWall.rightPoint[0], backWall.rightPoint[1]);
+    if (composedWalls === null) return 0;
 
-    const wallPoints = [wallPoint0, wallPoint1, wallPoint2, wallPoint3];
+    const wallPoints = composedWalls.map((w) => w.leftPoint);
     const ridges = [ridgeLeftPoint, ridgeRightPoint, ridgeRightPoint, ridgeLeftPoint];
 
     let height = Infinity;
 
     for (let i = 0; i < 4; i++) {
-      const w = currentWallArray[i];
-      // const { lh, rh } = RoofUtil.getWallHeight(currentWallArray, i);
+      const w = composedWalls[i];
       const dLeft = RoofUtil.getDistance(wallPoints[i], wallPoints[(i + 1) % 4], ridges[i]);
       const overhangHeightLeft = Math.min(((w.eavesLength ?? 0) / dLeft) * (ridges[i].z - w.lz), w.lz);
       const dRight = RoofUtil.getDistance(wallPoints[i], wallPoints[(i + 1) % 4], ridges[(i + 1) % 4]);
@@ -288,32 +285,32 @@ const HipRoof = (roofModel: HipRoofModel) => {
   };
 
   const overhangs = useMemo(() => {
-    return currentWallArray.map((wall) => RoofUtil.getWallNormal(wall).multiplyScalar(wall.eavesLength ?? 0));
-  }, [currentWallArray]);
+    if (composedWalls === null) return [] as Vector3[];
+    return composedWalls.map((wall) => RoofUtil.getNewWallNormal(wall).multiplyScalar(wall.eavesLength));
+  }, [composedWalls]);
 
   const thicknessVector = useMemo(() => {
     return zVector3.clone().multiplyScalar(thickness);
   }, [thickness]);
 
   const wallPointsAfterOffset = useMemo(() => {
-    return currentWallArray.map((wall, idx) => ({
-      leftPoint: new Vector3(wall.leftPoint[0], wall.leftPoint[1]).add(overhangs[idx]),
-      rightPoint: new Vector3(wall.rightPoint[0], wall.rightPoint[1]).add(overhangs[idx]),
+    if (composedWalls === null) return null;
+    return composedWalls.map((wall, idx) => ({
+      leftPoint: wall.leftPoint.clone().add(overhangs[idx]),
+      rightPoint: wall.rightPoint.clone().add(overhangs[idx]),
     }));
-  }, [overhangs]);
+  }, [composedWalls, overhangs]);
 
   const roofSegments = useMemo(() => {
     const segments: RoofSegmentProps[] = [];
-    if (currentWallArray.length !== 4) {
-      return segments;
-    }
+    if (composedWalls === null || wallPointsAfterOffset === null) return segments;
 
     const overhangHeight = getOverhangHeight();
 
     for (let i = 0; i < 4; i++) {
       const points: Vector3[] = [];
-      const wall = currentWallArray[i];
-      const { lh, rh } = RoofUtil.getWallHeight(currentWallArray, i);
+      const wall = composedWalls[i];
+      const { lh, rh } = RoofUtil.getNewWallHeight(composedWalls, i);
 
       const wallLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
         wallPointsAfterOffset[(i + 3) % 4].leftPoint,
@@ -333,31 +330,32 @@ const HipRoof = (roofModel: HipRoofModel) => {
         .setZ(rh - overhangHeight)
         .sub(ridgeMidPoint);
 
+      const wallCenter = new Vector3().addVectors(wall.leftPoint, wall.rightPoint).divideScalar(2);
       const ridgeLeft = ridgeLeftPoint.clone().sub(ridgeMidPoint);
       const ridgeRight = ridgeRightPoint.clone().sub(ridgeMidPoint);
       let length = 0;
       switch (i) {
         case 0:
-          length = new Vector3(wall.cx, wall.cy).sub(ridgeMidPoint.clone().setZ(0)).length();
+          length = wallCenter.clone().sub(ridgeMidPoint.clone().setZ(0)).length();
           makeSegment(points, wallLeftPointAfterOverhang, wallRightPointAfterOverhang, ridgeRight, ridgeLeft);
           break;
         case 1:
-          length = new Vector3(wall.cx, wall.cy).sub(ridgeRightPoint.clone().setZ(0)).length();
+          length = wallCenter.clone().sub(ridgeRightPoint.clone().setZ(0)).length();
           makeSegment(points, wallLeftPointAfterOverhang, wallRightPointAfterOverhang, ridgeRight);
           break;
         case 2:
-          length = new Vector3(wall.cx, wall.cy).sub(ridgeMidPoint.clone().setZ(0)).length();
+          length = wallCenter.clone().sub(ridgeMidPoint.clone().setZ(0)).length();
           makeSegment(points, wallLeftPointAfterOverhang, wallRightPointAfterOverhang, ridgeLeft, ridgeRight);
           break;
         case 3:
-          length = new Vector3(wall.cx, wall.cy).sub(ridgeLeftPoint.clone().setZ(0)).length();
+          length = wallCenter.clone().sub(ridgeLeftPoint.clone().setZ(0)).length();
           makeSegment(points, wallLeftPointAfterOverhang, wallRightPointAfterOverhang, ridgeLeft);
           break;
       }
       segments.push({ points, angle: -wall.relativeAngle, length });
     }
     return segments;
-  }, [currentWallArray, ridgeLeftPoint, ridgeRightPoint, topZ, thickness]);
+  }, [composedWalls, ridgeLeftPoint, ridgeRightPoint, topZ, thickness]);
 
   const setRayCast = (e: PointerEvent) => {
     mouse.x = (e.offsetX / gl.domElement.clientWidth) * 2 - 1;
@@ -366,41 +364,35 @@ const HipRoof = (roofModel: HipRoofModel) => {
   };
 
   useEffect(() => {
-    if (!isFirstMountRef.current || useStore.getState().addedRoofId === id) {
-      if (currentWallArray.length === 4) {
-        for (let i = 0; i < currentWallArray.length; i++) {
-          const { lh, rh } = RoofUtil.getWallHeight(currentWallArray, i);
+    if (!isFirstMount || useStore.getState().addedRoofId === id) {
+      if (composedWalls === null) {
+        removeElementById(id, false, false);
+      } else {
+        for (let i = 0; i < composedWalls.length; i++) {
+          const wallsIdSet = new Set(composedWalls[i].wallsId);
           setCommonStore((state) => {
             for (const e of state.elements) {
-              if (e.id === currentWallArray[i].id && e.type === ObjectType.Wall) {
-                const w = e as WallModel;
-                w.roofId = id;
-                w.leftRoofHeight = lh;
-                w.rightRoofHeight = rh;
-                break;
+              if (e.type === ObjectType.Wall && wallsIdSet.has(e.id)) {
+                (e as WallModel).roofId = id;
               }
             }
           });
         }
         updateRooftopElements(foundation, id, roofSegments, ridgeMidPoint, topZ, thickness);
-      } else {
-        removeElementById(id, false);
       }
     }
-  }, [currentWallArray]);
-
-  useEffect(() => {
-    isFirstMountRef.current = false;
-  }, []);
+  }, [composedWalls, isFirstMount]);
 
   const updateSegmentVerticesWithoutOverhangMap = () => {
+    if (!composedWalls) return;
+
     const segmentVertices: Vector3[][] = [];
     for (let i = 0; i < 4; i++) {
-      const wall = currentWallArray[i];
-      const { lh, rh } = RoofUtil.getWallHeight(currentWallArray, i);
+      const wall = composedWalls[i];
+      const { lh, rh } = RoofUtil.getNewWallHeight(composedWalls, i);
 
-      const wallLeftPoint = new Vector3(wall.leftPoint[0], wall.leftPoint[1]).setZ(lh);
-      const wallRightPoint = new Vector3(wall.rightPoint[0], wall.rightPoint[1]).setZ(rh);
+      const wallLeftPoint = wall.leftPoint.clone().setZ(lh);
+      const wallRightPoint = wall.rightPoint.clone().setZ(rh);
       const ridgeLPoint = ridgeLeftPoint.clone();
       const ridgeRPoint = ridgeRightPoint.clone();
 
@@ -512,6 +504,8 @@ const HipRoof = (roofModel: HipRoofModel) => {
   };
   const topLayerColor = textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white';
 
+  if (composedWalls === null) return null;
+
   return (
     <group position={[cx, cy, cz]} rotation={[0, 0, rotation]} name={`Hip Roof Group ${id}`}>
       {/* roof segment group */}
@@ -579,7 +573,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
       </group>
 
       {/* ceiling */}
-      {ceiling && riseInnerState > 0 && <Ceiling currWallArray={currentWallArray} />}
+      {/* {ceiling && riseInnerState > 0 && <Ceiling currWallArray={currentWallArray} />} */}
 
       {/* handles */}
       {selected && !locked && (
@@ -591,10 +585,10 @@ const HipRoof = (roofModel: HipRoofModel) => {
               isPointerDownRef.current = true;
               setEnableIntersectionPlane(true);
               intersectionPlanePosition.set(ridgeLeftPoint.x, ridgeLeftPoint.y, topZ);
-              if (foundation && currentWallArray[0]) {
+              if (foundation && composedWalls[0]) {
                 const dir = useStore.getState().cameraDirection;
                 const rX = Math.atan2(dir.z, dir.y);
-                const rZ = currentWallArray[0].relativeAngle;
+                const rZ = composedWalls[0].relativeAngle;
                 intersectionPlaneRotation.set(-HALF_PI - rX, 0, rZ, 'ZXY');
               }
               setRoofHandleType(RoofHandleType.Left);
@@ -637,10 +631,10 @@ const HipRoof = (roofModel: HipRoofModel) => {
               isPointerDownRef.current = true;
               setEnableIntersectionPlane(true);
               intersectionPlanePosition.set(ridgeRightPoint.x, ridgeRightPoint.y, topZ);
-              if (foundation && currentWallArray[0]) {
+              if (foundation && composedWalls[0]) {
                 const dir = useStore.getState().cameraDirection;
                 const rX = Math.atan2(dir.z, dir.y);
-                const rZ = currentWallArray[0].relativeAngle;
+                const rZ = composedWalls[0].relativeAngle;
                 intersectionPlaneRotation.set(-HALF_PI - rX, 0, rZ, 'ZXY');
               }
               setRoofHandleType(RoofHandleType.Right);
@@ -668,6 +662,8 @@ const HipRoof = (roofModel: HipRoofModel) => {
                 if (point.z < 0.001) {
                   return;
                 }
+                const composedWall = composedWalls[0];
+                const length = new Vector3().subVectors(composedWall.rightPoint, composedWall.leftPoint).length();
                 switch (roofHandleType) {
                   case RoofHandleType.Left: {
                     const midPointVector = ridgeMidPoint
@@ -683,10 +679,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
                       .applyEuler(new Euler(0, 0, -intersectionPlaneRotation.z));
 
                     const d = new Vector3().subVectors(p, midPointVector).x;
-
-                    setLeftRidgeLengthCurr(
-                      Util.clamp(-d, -rightRidgeLengthCurr + 0.1, currentWallArray[0].lx / 2 - 0.01),
-                    );
+                    setLeftRidgeLengthCurr(Util.clamp(-d, -rightRidgeLengthCurr + 0.1, length / 2 - 0.01));
                     break;
                   }
                   case RoofHandleType.Right: {
@@ -704,11 +697,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
 
                     const d = new Vector3().subVectors(p, midPointVector).x;
 
-                    if (currentWallArray[0]) {
-                      setRightRidgeLengthCurr(
-                        Util.clamp(d, -leftRidgeLengthCurr + 0.1, currentWallArray[0].lx / 2 - 0.01),
-                      );
-                    }
+                    setRightRidgeLengthCurr(Util.clamp(d, -leftRidgeLengthCurr + 0.1, length / 2 - 0.01));
                     break;
                   }
                   case RoofHandleType.Mid: {

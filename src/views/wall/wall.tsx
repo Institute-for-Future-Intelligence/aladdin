@@ -2001,7 +2001,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           break;
         }
         case ObjectType.HipRoof: {
-          if (!roofId && isValidToAddRoof(true, true)) {
+          if (!roofId && isValidToAddRoof(false, true)) {
             newElement = ElementModelFactory.makeHipRoof([wallModel.id], foundationModel, lx / 2);
           }
           break;

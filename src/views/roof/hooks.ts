@@ -24,6 +24,16 @@ import { RoofUtil } from './RoofUtil';
 import { GambrelRoofModel, RoofModel, RoofType } from 'src/models/RoofModel';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { getRoofPointsOfGambrelRoof } from './flatRoof';
+import shallow from 'zustand/shallow';
+
+export type ComposedWall = {
+  leftPoint: Vector3;
+  rightPoint: Vector3;
+  relativeAngle: number;
+  lz: number;
+  eavesLength: number;
+  wallsId: string[];
+};
 
 export const useRoofTexture = (textureType: RoofTexture) => {
   const textureLoader = useMemo(() => {
@@ -215,6 +225,113 @@ export const useMultiCurrWallArray = (fId: string | undefined, roofId: string, w
   return { currentWallArray, isLoopRef };
 };
 
+export const useComposedWallArray = (wId: string, fId?: string) => {
+  const wallsOnSameFoundation = useStore(
+    (state) => state.elements.filter((e) => e.foundationId === fId && e.type === ObjectType.Wall),
+    shallow,
+  );
+
+  const getWallOnSameFoundation = (id: string) => wallsOnSameFoundation.find((e) => e.id === id) as WallModel;
+
+  const wallMap = new Map<string, WallModel>();
+  const rotationMap = new Map<string, WallModel[]>();
+  const startWall: WallModel | null = getWallOnSameFoundation(wId);
+  let wall: WallModel | null = startWall;
+  let count = 0;
+  let isLoop = false;
+
+  while (wall && wall.type === ObjectType.Wall && count < 100) {
+    wallMap.set(wall.id, wall);
+    const rotation = wall.relativeAngle.toFixed(1);
+    if (rotationMap.has(rotation)) {
+      rotationMap.get(rotation)?.push(wall);
+    } else {
+      rotationMap.set(rotation, [wall]);
+    }
+    if (wall.rightJoints.length !== 0) {
+      wall = getWallOnSameFoundation(wall.rightJoints[0]);
+      if (wall && wall.id === startWall.id) {
+        isLoop = true;
+        break;
+      }
+      count++;
+    } else {
+      wall = null;
+    }
+  }
+
+  const composedWallsArray = useMemo(() => {
+    if (!isLoop || rotationMap.size !== 4) return null;
+    const arr: ComposedWall[] = [];
+    for (const [rot, walls] of rotationMap) {
+      // check connection
+      let count = 0;
+      for (const wall of walls) {
+        const lw = wallMap.get(wall.leftJoints[0]);
+        const rw = wallMap.get(wall.rightJoints[0]);
+        if (lw && lw.relativeAngle.toFixed(1) !== rot) {
+          count++;
+        }
+        if (rw && rw.relativeAngle.toFixed(1) !== rot) {
+          count++;
+        }
+        if (count > 2) break;
+      }
+      if (count !== 2) return null;
+
+      let leftMostWall: WallModel | null = null;
+      let rightMostWall: WallModel | null = null;
+      let highestLz = 0;
+      let longestEavesLength = -1;
+      for (const wall of walls) {
+        const lw = wallMap.get(wall.leftJoints[0]);
+        const rw = wallMap.get(wall.rightJoints[0]);
+        highestLz = Math.max(highestLz, wall.lz);
+        longestEavesLength = Math.max(longestEavesLength, wall.eavesLength);
+        if (lw && lw.relativeAngle.toFixed(1) !== rot) {
+          leftMostWall = wall;
+        }
+        if (rw && rw.relativeAngle.toFixed(1) !== rot) {
+          rightMostWall = wall;
+        }
+      }
+
+      if (leftMostWall && rightMostWall && highestLz > 0 && longestEavesLength !== -1) {
+        arr.push({
+          leftPoint: new Vector3().fromArray(leftMostWall.leftPoint),
+          rightPoint: new Vector3().fromArray(rightMostWall.rightPoint),
+          relativeAngle: leftMostWall.relativeAngle,
+          lz: highestLz,
+          eavesLength: longestEavesLength,
+          wallsId: walls.map((w) => w.id),
+        });
+      }
+    }
+    if (arr.length !== 4) return null;
+    return arr;
+  }, [wallsOnSameFoundation]);
+
+  return composedWallsArray;
+};
+
+export const useNewRoofHeight = (composedWallArray: ComposedWall[] | null, rise: number, isGabled?: boolean) => {
+  const highestWallHeight = useMemo(
+    () => RoofUtil.getNewHighestWallHeight(composedWallArray, isGabled),
+    [composedWallArray],
+  );
+
+  const [riseInnerState, setRiseInnerState] = useState(rise); // height from top to maxWallHeight
+  const topZ = highestWallHeight + riseInnerState; // height from top to foundation
+  useEffect(() => {
+    if (rise !== riseInnerState) {
+      setRiseInnerState(rise);
+    }
+  }, [rise]);
+
+  return { highestWallHeight, topZ, riseInnerState, setRiseInnerState };
+};
+
+// to be deleted
 export const useRoofHeight = (currentWallArray: WallModel[], rise: number, ignoreSide?: boolean) => {
   const highestWallHeight = useMemo(
     () => RoofUtil.getHighestWallHeight(currentWallArray, ignoreSide),
@@ -364,4 +481,12 @@ export const useUpdateAfterMounted = () => {
   useEffect(() => {
     setUpdate((b) => !b);
   }, []);
+};
+
+export const useIsFirstMount = () => {
+  const isFirstMountRef = useRef(true);
+  useEffect(() => {
+    isFirstMountRef.current = false;
+  }, []);
+  return isFirstMountRef.current;
 };
