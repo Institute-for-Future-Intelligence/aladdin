@@ -6,7 +6,7 @@ import React from 'react';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import styled from 'styled-components';
-import { Descriptions } from 'antd';
+import { Collapse, Descriptions } from 'antd';
 import i18n from '../i18n/i18n';
 import { CloseOutlined } from '@ant-design/icons';
 
@@ -82,7 +82,15 @@ const ProjectPanel = () => {
     <Container>
       <ColumnWrapper>
         <Header className="handle">
-          <span>{i18n.t('projectPanel.Project', lang) + ': ' + projectTitle} </span>
+          <span>
+            {i18n.t('projectPanel.Project', lang) +
+              ': ' +
+              projectTitle +
+              ' | ' +
+              i18n.t('projectPanel.ProjectType', lang) +
+              ': ' +
+              projectType}
+          </span>
           <span
             style={{ cursor: 'pointer' }}
             onMouseDown={() => {
@@ -95,12 +103,13 @@ const ProjectPanel = () => {
             <CloseOutlined title={i18n.t('word.Close', lang)} />
           </span>
         </Header>
-        <Descriptions style={{ paddingLeft: '10px', paddingTop: '8px' }}>
-          <Descriptions.Item label={'Type'}>{projectType}</Descriptions.Item>
-        </Descriptions>
-        <Descriptions style={{ paddingLeft: '10px' }}>
-          <Descriptions.Item label={'Description'}>{projectDescription}</Descriptions.Item>
-        </Descriptions>
+        <Collapse>
+          <Collapse.Panel key={'1'} header={i18n.t('projectPanel.ProjectDescription', lang)}>
+            <Descriptions style={{ paddingLeft: '10px', textAlign: 'left' }}>
+              <Descriptions.Item>{projectDescription}</Descriptions.Item>
+            </Descriptions>
+          </Collapse.Panel>
+        </Collapse>
       </ColumnWrapper>
     </Container>
   );

@@ -31,6 +31,7 @@ export const i18n_zh_cn = {
     },
 
     word: {
+      Information: '信息',
       Type: '类别',
       Text: '文字',
       FontSize: '字体大小',
@@ -1348,6 +1349,7 @@ export const i18n_zh_cn = {
     projectPanel: {
       Project: '项目',
       ProjectType: '类别',
+      ProjectDescription: '描述',
       SolarFarmDesign: '太阳能农场设计',
     },
 

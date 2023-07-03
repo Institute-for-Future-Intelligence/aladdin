@@ -31,6 +31,7 @@ export const i18n_es = {
     },
 
     word: {
+      Information: 'Information',
       Type: 'Type',
       Text: 'Text',
       FontSize: 'Font Size',
@@ -1373,6 +1374,7 @@ export const i18n_es = {
     projectPanel: {
       Project: 'Project',
       ProjectType: 'Type',
+      ProjectDescription: 'Description',
       SolarFarmDesign: 'Solar Farm Design',
     },
 

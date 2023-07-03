@@ -32,6 +32,7 @@ export const i18n_ua = {
     },
 
     word: {
+      Information: 'Information',
       Type: 'Type',
       Text: 'Текст',
       FontSize: 'Розмір Шрифту',
@@ -1375,6 +1376,7 @@ export const i18n_ua = {
     projectPanel: {
       Project: 'Project',
       ProjectType: 'Тип проєкту',
+      ProjectDescription: 'Description',
       SolarFarmDesign: 'Дизайн Cонячної Ферми',
     },
 
