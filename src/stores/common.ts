@@ -17,6 +17,7 @@ import {
   ActionInfo,
   ActionType,
   DatumEntry,
+  Design,
   ElementState,
   EvolutionMethod,
   ModelSite,
@@ -114,6 +115,7 @@ export interface CommonStoreState {
   projectType: ProjectType;
   projectTitle: string | null;
   projectDescription: string | null;
+  projectDesigns: Design[] | null;
   notes: string[];
   user: User;
   language: string;
@@ -554,6 +556,7 @@ export const useStore = create<CommonStoreState>(
           projectType: ProjectType.SOLAR_FARM_DESIGN,
           projectTitle: null,
           projectDescription: null,
+          projectDesigns: null,
           notes: [],
           user: {} as User,
           language: 'en',

@@ -17,7 +17,7 @@ import RenameImage from '../assets/rename.png';
 import DeleteImage from '../assets/delete.png';
 import LinkImage from '../assets/create_link.png';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
-import { ProjectType } from '../types';
+import { Design, ProjectType } from '../types';
 
 const { Column } = Table;
 
@@ -76,7 +76,13 @@ const Header = styled.div`
 
 export interface ProjectListPanelProps {
   projects: object[];
-  openProject: (userid: string, title: string, type: ProjectType, description: string) => void;
+  openProject: (
+    userid: string,
+    title: string,
+    type: ProjectType,
+    description: string,
+    designs: Design[] | null,
+  ) => void;
   deleteProject: (title: string) => void;
   renameProject: (oldTitle: string, newTitle: string) => void;
 }
@@ -319,7 +325,7 @@ const ProjectListPanel = ({ projects, openProject, deleteProject, renameProject 
                       if (selection && selection.toString().length > 0) return;
                       // only proceed when no text is selected
                       // @ts-ignore
-                      openProject(data.userid, data.title, data.type, data.description);
+                      openProject(data.userid, data.title, data.type, data.description, data.designs);
                     },
                   };
                 }}

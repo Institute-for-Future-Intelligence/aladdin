@@ -10,6 +10,7 @@ import { Collapse, Descriptions, Button } from 'antd';
 import i18n from '../i18n/i18n';
 import { CloseOutlined, DeleteOutlined, ImportOutlined } from '@ant-design/icons';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import ImageLoadFailureIcon from '../assets/image_load_failure.png';
 
 const Container = styled.div`
   position: relative;
@@ -38,7 +39,7 @@ const ColumnWrapper = styled.div`
   left: 0;
   top: 0;
   width: 100%;
-  height: 100%
+  height: 100%;
   border: 2px solid gainsboro;
   display: flex;
   flex-direction: column;
@@ -69,6 +70,7 @@ const ProjectGallery = () => {
   const language = useStore(Selector.language);
   const projectTitle = useStore(Selector.projectTitle);
   const projectDescription = useStore(Selector.projectDescription);
+  const projectDesigns = useStore(Selector.projectDesigns);
   const projectType = useStore(Selector.projectType);
 
   const lang = { lng: language };
@@ -81,7 +83,7 @@ const ProjectGallery = () => {
 
   const curateCurrentDesign = () => {
     usePrimitiveStore.setState((state) => {
-      state.designTitle = 'sss';
+      state.designTitle = 'ppp';
       state.curateDesignToProjectFlag = !state.curateDesignToProjectFlag;
     });
   };
@@ -119,7 +121,7 @@ const ProjectGallery = () => {
             </Descriptions>
           </Collapse.Panel>
         </Collapse>
-        <div style={{ marginTop: '10px' }}>
+        <div style={{ marginTop: '10px', marginBottom: '10px' }}>
           <Button style={{ marginRight: '10px' }} onClick={curateCurrentDesign}>
             <ImportOutlined title={i18n.t('projectPanel.CurateCurrentDesign', lang)} />
             {i18n.t('projectPanel.CurateCurrentDesign', lang)}
@@ -129,6 +131,60 @@ const ProjectGallery = () => {
             {i18n.t('projectPanel.RemoveSelectedDesign', lang)}
           </Button>
         </div>
+        {projectDesigns && (
+          <table style={{ border: '0px solid gray' }}>
+            <tbody>
+              <tr>
+                {projectDesigns.map((design, index) => {
+                  return (
+                    <td key={index}>
+                      <div style={{ display: 'block', marginTop: '4px' }}>
+                        <img
+                          width={'200px'}
+                          height={'auto'}
+                          onError={(event) => {
+                            (event.target as HTMLImageElement).src = ImageLoadFailureIcon;
+                          }}
+                          alt={design.title}
+                          title={design.title}
+                          src={design.thumbnailUrl}
+                          style={{
+                            cursor: 'pointer',
+                            // borderRadius: selectedModel === design ? '0' : '10px',
+                            // border: selectedModel === design ? '2px solid ' + (dark ? 'goldenrod' : 'red') : 'none',
+                            marginRight: '4px',
+                          }}
+                          onClick={() => {
+                            // setSelectedModel(design);
+                          }}
+                        />
+                        {/* the following div is needed to wrap the image and text */}
+                        <div>
+                          <span
+                            style={{
+                              position: 'relative',
+                              left: '-90px',
+                              bottom: '24px',
+                              color: 'white',
+                              fontSize: '8px',
+                              fontWeight: 'bold',
+                            }}
+                          >
+                            {design.title
+                              ? design.title.length > 30
+                                ? design.title.substring(0, 30) + '...'
+                                : design.title
+                              : 'Unknown'}
+                          </span>
+                        </div>
+                      </div>
+                    </td>
+                  );
+                })}
+              </tr>
+            </tbody>
+          </table>
+        )}
       </ColumnWrapper>
     </Container>
   );

@@ -70,6 +70,11 @@ export interface ModelSite {
   hashtags?: string;
 }
 
+export interface Design {
+  title: string;
+  thumbnailUrl: string;
+}
+
 export enum SchoolID {
   UNKNOWN = 'UNKNOWN SCHOOL',
   SCHOOL1 = 'SCHOOL 1',
@@ -104,6 +109,7 @@ export interface ProjectInfo {
   readonly title: string;
   readonly description: string;
   readonly type: ProjectType;
+  readonly designs: Design[] | null;
 }
 
 export interface ActionInfo {

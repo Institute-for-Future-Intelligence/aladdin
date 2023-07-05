@@ -17,6 +17,7 @@ import { showError, showInfo, showSuccess } from './helpers';
 import {
   ClassID,
   CloudFileInfo,
+  Design,
   FirebaseName,
   ModelSite,
   ObjectType,
@@ -180,6 +181,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           timestamp: f.timestamp,
           description: f.description,
           type: f.type,
+          designs: f.designs,
           action: '',
         });
       });
@@ -919,6 +921,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
             timestamp: data.timestamp,
             description: data.description,
             type: data.type,
+            designs: data.designs,
           } as ProjectInfo);
         });
         return a;
@@ -941,11 +944,18 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     }
   };
 
-  const openProject = (userid: string, title: string, type: ProjectType, description: string) => {
+  const openProject = (
+    userid: string,
+    title: string,
+    type: ProjectType,
+    description: string,
+    designs: Design[] | null,
+  ) => {
     setCommonStore((state) => {
       state.projectTitle = title;
       state.projectType = type;
       state.projectDescription = description;
+      state.projectDesigns = designs;
       state.projectView = true;
     });
   };
@@ -1047,7 +1057,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                 icon: <QuestionCircleOutlined />,
                 onOk: () => {
                   saveToCloudWithoutCheckingExistence(ft, true);
-                  addFileToProject(projectTitle, ft);
+                  addDesignToProject(projectTitle, ft);
                 },
                 onCancel: () => {
                   setCommonStore((state) => {
@@ -1060,7 +1070,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
               });
             } else {
               saveToCloudWithoutCheckingExistence(ft, true);
-              addFileToProject(projectTitle, ft);
+              addDesignToProject(projectTitle, ft);
             }
           });
         } else {
@@ -1073,26 +1083,56 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     }
   };
 
-  const addFileToProject = (projectTitle: string, fileTitle: string) => {
-    if (!user.uid) return;
-    try {
-      const doc = firebase.firestore().collection('users').doc(user.uid);
-      if (doc) {
-        doc
-          .collection('projects')
-          .doc(projectTitle)
-          .update({ designs: firebase.firestore.FieldValue.arrayUnion(fileTitle) })
-          .then(() => {})
-          .catch((error) => {
-            showError(i18n.t('message.CannotAddDesignToProject', lang) + ': ' + error);
-          })
-          .finally(() => {
-            setLoading(false);
-          });
-      }
-    } catch (error) {
-      showError(i18n.t('message.CannotAddDesignToProject', lang) + ': ' + error);
-      setLoading(false);
+  const addDesignToProject = (projectTitle: string, fileTitle: string) => {
+    // first we upload a thumbnail of the design to Firestore Cloud Storage
+    const storageRef = firebase.storage().ref();
+    if (canvas) {
+      const thumbnail = Util.resizeCanvas(canvas, 200);
+      thumbnail.toBlob((blob) => {
+        if (blob) {
+          const metadata = { contentType: 'image/png' };
+          const uploadTask = storageRef.child('images/' + projectTitle + ' ' + fileTitle + '.png').put(blob, metadata);
+          // Listen for state changes, errors, and completion of the upload.
+          uploadTask.on(
+            firebase.storage.TaskEvent.STATE_CHANGED,
+            (snapshot) => {
+              const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              if (progress > 0) {
+                showInfo(i18n.t('word.Upload', lang) + ': ' + progress + '%');
+              }
+            },
+            (error) => {
+              showError('Storage: ' + error);
+            },
+            () => {
+              uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                if (!user.uid) return;
+                // after we get a download URL for the thumbnail image, we then go on to upload other data
+                const design = { title: fileTitle, thumbnailUrl: downloadURL } as Design;
+                try {
+                  const doc = firebase.firestore().collection('users').doc(user.uid);
+                  if (doc) {
+                    doc
+                      .collection('projects')
+                      .doc(projectTitle)
+                      .update({ designs: firebase.firestore.FieldValue.arrayUnion(design) })
+                      .then(() => {})
+                      .catch((error) => {
+                        showError(i18n.t('message.CannotAddDesignToProject', lang) + ': ' + error);
+                      })
+                      .finally(() => {
+                        setLoading(false);
+                      });
+                  }
+                } catch (error) {
+                  showError(i18n.t('message.CannotAddDesignToProject', lang) + ': ' + error);
+                  setLoading(false);
+                }
+              });
+            },
+          );
+        }
+      });
     }
   };
 
