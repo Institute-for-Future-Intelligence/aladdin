@@ -45,7 +45,7 @@ import Panels from './panels';
 import Simulations from './simulations';
 import { usePrimitiveStore } from './stores/commonPrimitive';
 import { Button } from 'antd';
-import ProjectViewPanel from './panels/projectPanel';
+import ProjectGallery from './panels/projectGallery';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -342,7 +342,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       <Panels />
       <DropdownContextMenu>
         <div style={{ display: 'flex' }}>
-          {projectView && <ProjectViewPanel />}
+          {projectView && <ProjectGallery />}
           <Canvas
             ref={canvasRef}
             shadows={true}

@@ -64,7 +64,7 @@ const Header = styled.div`
   }
 `;
 
-const ProjectPanel = () => {
+const ProjectGallery = () => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const projectTitle = useStore(Selector.projectTitle);
@@ -134,4 +134,4 @@ const ProjectPanel = () => {
   );
 };
 
-export default React.memo(ProjectPanel);
+export default React.memo(ProjectGallery);
