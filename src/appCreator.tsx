@@ -61,7 +61,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
   const sceneRadius = useStore(Selector.sceneRadius);
   const cloudFile = useStore(Selector.cloudFile);
-  const projectView = useStore(Selector.viewState.projectView);
+  const projectView = useStore(Selector.projectView);
   const axes = useStore(Selector.viewState.axes);
   const theme = useStore(Selector.viewState.theme);
   const groundImage = useStore(Selector.viewState.groundImage);

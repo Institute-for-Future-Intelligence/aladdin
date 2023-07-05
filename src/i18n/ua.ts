@@ -195,6 +195,7 @@ export const i18n_ua = {
       CannotOpenYourProjects: 'Не вдається відкрити ваші проєкти',
       CannotDeleteProject: 'Cannot delete the project',
       CannotRenameProject: 'Cannot rename the project',
+      CannotAddDesignToProject: 'Cannot add this design to the project',
       TitleUsedChooseDifferentOne: 'Ця назва була використана. Виберіть іншу',
       CloudFileWithTitleExistsDoYouWantToOverwrite:
         'Хмарний файл з такою ж назвою вже існує. Ви хочете перезаписати його?',
@@ -1378,6 +1379,8 @@ export const i18n_ua = {
       ProjectType: 'Тип проєкту',
       ProjectDescription: 'Description',
       SolarFarmDesign: 'Дизайн Cонячної Ферми',
+      CurateCurrentDesign: 'Curate Current Design',
+      RemoveSelectedDesign: 'Remove Selected Design',
     },
 
     accountSettingsPanel: {

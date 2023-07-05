@@ -110,6 +110,7 @@ export interface CommonStoreState {
   modelAuthor: string | null;
   modelLabel: string | null;
   modelDescription: string | null;
+  projectView: boolean;
   projectType: ProjectType;
   projectTitle: string | null;
   projectDescription: string | null;
@@ -549,6 +550,7 @@ export const useStore = create<CommonStoreState>(
           modelAuthor: null,
           modelLabel: null,
           modelDescription: null,
+          projectView: false,
           projectType: ProjectType.SOLAR_FARM_DESIGN,
           projectTitle: null,
           projectDescription: null,
@@ -4185,6 +4187,7 @@ export const useStore = create<CommonStoreState>(
           'modelAuthor',
           'modelLabel',
           'modelDescription',
+          'projectView',
           'projectType',
           'projectTitle',
           'projectDescription',

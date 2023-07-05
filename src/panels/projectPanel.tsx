@@ -6,9 +6,10 @@ import React from 'react';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import styled from 'styled-components';
-import { Collapse, Descriptions } from 'antd';
+import { Collapse, Descriptions, Button } from 'antd';
 import i18n from '../i18n/i18n';
-import { CloseOutlined } from '@ant-design/icons';
+import { CloseOutlined, DeleteOutlined, ImportOutlined } from '@ant-design/icons';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 const Container = styled.div`
   position: relative;
@@ -74,7 +75,14 @@ const ProjectPanel = () => {
 
   const closeProject = () => {
     setCommonStore((state) => {
-      state.viewState.projectView = false;
+      state.projectView = false;
+    });
+  };
+
+  const curateCurrentDesign = () => {
+    usePrimitiveStore.setState((state) => {
+      state.designTitle = 'sss';
+      state.curateDesignToProjectFlag = !state.curateDesignToProjectFlag;
     });
   };
 
@@ -82,15 +90,7 @@ const ProjectPanel = () => {
     <Container>
       <ColumnWrapper>
         <Header className="handle">
-          <span>
-            {i18n.t('projectPanel.Project', lang) +
-              ': ' +
-              projectTitle +
-              ' | ' +
-              i18n.t('projectPanel.ProjectType', lang) +
-              ': ' +
-              projectType}
-          </span>
+          <span>{i18n.t('projectPanel.Project', lang) + ': ' + projectTitle}</span>
           <span
             style={{ cursor: 'pointer' }}
             onMouseDown={() => {
@@ -104,12 +104,31 @@ const ProjectPanel = () => {
           </span>
         </Header>
         <Collapse>
-          <Collapse.Panel key={'1'} header={i18n.t('projectPanel.ProjectDescription', lang)}>
+          <Collapse.Panel
+            key={'1'}
+            header={
+              i18n.t('projectPanel.ProjectDescription', lang) +
+              ' | ' +
+              i18n.t('projectPanel.ProjectType', lang) +
+              ': ' +
+              projectType
+            }
+          >
             <Descriptions style={{ paddingLeft: '10px', textAlign: 'left' }}>
               <Descriptions.Item>{projectDescription}</Descriptions.Item>
             </Descriptions>
           </Collapse.Panel>
         </Collapse>
+        <div style={{ marginTop: '10px' }}>
+          <Button style={{ marginRight: '10px' }} onClick={curateCurrentDesign}>
+            <ImportOutlined title={i18n.t('projectPanel.CurateCurrentDesign', lang)} />
+            {i18n.t('projectPanel.CurateCurrentDesign', lang)}
+          </Button>
+          <Button>
+            <DeleteOutlined title={i18n.t('projectPanel.RemoveSelectedDesign', lang)} />
+            {i18n.t('projectPanel.RemoveSelectedDesign', lang)}
+          </Button>
+        </div>
       </ColumnWrapper>
     </Container>
   );

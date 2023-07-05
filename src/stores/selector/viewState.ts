@@ -4,8 +4,6 @@
 
 import { CommonStoreState } from '../common';
 
-export const projectView = (state: CommonStoreState) => state.viewState.projectView;
-
 export const shadowEnabled = (state: CommonStoreState) => state.viewState.shadowEnabled;
 
 export const solarPanelShininess = (state: CommonStoreState) => state.viewState.solarPanelShininess;

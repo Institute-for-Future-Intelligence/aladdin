@@ -194,6 +194,7 @@ export const i18n_en = {
       CannotOpenYourProjects: 'Cannot open your projects',
       CannotDeleteProject: 'Cannot delete the project',
       CannotRenameProject: 'Cannot rename the project',
+      CannotAddDesignToProject: 'Cannot add this design to the project',
       TitleUsedChooseDifferentOne: 'This title has been used. Choose a different one',
       CloudFileWithTitleExistsDoYouWantToOverwrite: 'A cloud file with the title exists. Do you want to overwrite it?',
       CloudFileNotFound: 'The cloud file was not found',
@@ -1376,6 +1377,8 @@ export const i18n_en = {
       ProjectType: 'Type',
       ProjectDescription: 'Description',
       SolarFarmDesign: 'Solar Farm Design',
+      CurateCurrentDesign: 'Curate Current Design',
+      RemoveSelectedDesign: 'Remove Selected Design',
     },
 
     accountSettingsPanel: {

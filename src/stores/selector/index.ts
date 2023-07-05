@@ -103,6 +103,8 @@ export const saveCloudFileFlag = (state: PrimitiveStoreState) => state.saveCloud
 
 export const createProjectFlag = (state: PrimitiveStoreState) => state.createProjectFlag;
 
+export const curateDesignToProjectFlag = (state: PrimitiveStoreState) => state.curateDesignToProjectFlag;
+
 export const showProjectsFlag = (state: PrimitiveStoreState) => state.showProjectsFlag;
 
 export const modelsMapFlag = (state: PrimitiveStoreState) => state.modelsMapFlag;
@@ -491,6 +493,8 @@ export const enableFineGrid = (state: CommonStoreState) => state.enableFineGrid;
 export const setEnableFineGrid = (state: CommonStoreState) => state.setEnableFineGrid;
 
 export const showCloudFilePanel = (state: PrimitiveStoreState) => state.showCloudFilePanel;
+
+export const projectView = (state: CommonStoreState) => state.projectView;
 
 export const projectType = (state: CommonStoreState) => state.projectType;
 

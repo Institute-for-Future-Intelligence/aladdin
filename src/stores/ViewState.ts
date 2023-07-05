@@ -5,8 +5,6 @@
 import { Rectangle } from '../models/Rectangle';
 
 export interface ViewState {
-  projectView: boolean;
-
   orthographic: boolean;
   enableRotate: boolean;
   directLightIntensity: number;

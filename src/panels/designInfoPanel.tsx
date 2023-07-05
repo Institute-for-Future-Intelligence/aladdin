@@ -7,7 +7,6 @@ import HeliostatImage from '../assets/heliostat.png';
 import LightBulbImage from '../assets/light_bulb.png';
 import DiameterImage from '../assets/diameter.png';
 import AreaImage from '../assets/area.png';
-
 import React from 'react';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
@@ -66,7 +65,7 @@ const DesignInfoPanel = () => {
   const language = useStore(Selector.language);
   const sunlightDirection = useStore(Selector.sunlightDirection);
   const sceneRadius = useStore(Selector.sceneRadius);
-  const projectView = useStore(Selector.viewState.projectView);
+  const projectView = useStore(Selector.projectView);
 
   const selectedElement = useStore((state) => {
     if (state.selectedElement === null) return null;

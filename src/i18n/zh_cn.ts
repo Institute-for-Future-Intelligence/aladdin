@@ -194,6 +194,7 @@ export const i18n_zh_cn = {
       CannotOpenYourProjects: '无法打开您的项目列表',
       CannotDeleteProject: '无法删除项目',
       CannotRenameProject: '无法给项目改名',
+      CannotAddDesignToProject: '无法把此设计加到项目里',
       TitleUsedChooseDifferentOne: '此标题已经被使用, 请采用不同的标题',
       CloudFileWithTitleExistsDoYouWantToOverwrite: '使用此标题的云文件已经存在，您确定要覆盖它吗？',
       CloudFileNotFound: '找不到此云端文件',
@@ -1351,6 +1352,8 @@ export const i18n_zh_cn = {
       ProjectType: '类别',
       ProjectDescription: '描述',
       SolarFarmDesign: '太阳能农场设计',
+      CurateCurrentDesign: '收藏当前设计',
+      RemoveSelectedDesign: '删除选中设计',
     },
 
     accountSettingsPanel: {

@@ -73,6 +73,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const undoManager = useStore(Selector.undoManager);
   const peopleModels = useStore(Selector.peopleModels);
   const createProjectFlag = usePrimitiveStore(Selector.createProjectFlag);
+  const curateDesignToProjectFlag = usePrimitiveStore(Selector.curateDesignToProjectFlag);
   const showProjectsFlag = usePrimitiveStore(Selector.showProjectsFlag);
 
   const [loading, setLoading] = useState(false);
@@ -89,6 +90,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const firstCallFetchLeaderboard = useRef<boolean>(true);
   const firstCallPublishOnMap = useRef<boolean>(true);
   const firstCallCreateProject = useRef<boolean>(true);
+  const firstCallCurateDesign = useRef<boolean>(true);
   const firstCallListProjects = useRef<boolean>(true);
   const firstCallListCloudFiles = useRef<boolean>(true);
   const firstAccountSettings = useRef<boolean>(true);
@@ -252,6 +254,15 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createProjectFlag]);
+
+  useEffect(() => {
+    if (firstCallCurateDesign.current) {
+      firstCallCurateDesign.current = false;
+    } else {
+      curateDesignToProject();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [curateDesignToProjectFlag]);
 
   useEffect(() => {
     if (firstCallListProjects.current) {
@@ -935,7 +946,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       state.projectTitle = title;
       state.projectType = type;
       state.projectDescription = description;
-      state.viewState.projectView = true;
+      state.projectView = true;
     });
   };
 
@@ -957,7 +968,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
         setCommonStore((state) => {
           if (title === state.projectTitle) {
             state.projectTitle = null;
-            state.viewState.projectView = false;
+            state.projectView = false;
           }
         });
       })
@@ -1011,6 +1022,78 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       .catch((error) => {
         showError(i18n.t('message.CannotRenameProject', lang) + ': ' + error);
       });
+  };
+
+  const curateDesignToProject = () => {
+    const ft = usePrimitiveStore.getState().designTitle?.trim();
+    if (ft && ft.length > 0) {
+      if (user.uid) {
+        const projectTitle = useStore.getState().projectTitle;
+        if (projectTitle) {
+          setLoading(true);
+          fetchMyCloudFiles().then(() => {
+            let exist = false;
+            if (cloudFiles.current) {
+              for (const p of cloudFiles.current) {
+                if (p.fileName === ft) {
+                  exist = true;
+                  break;
+                }
+              }
+            }
+            if (exist) {
+              Modal.confirm({
+                title: i18n.t('message.CloudFileWithTitleExistsDoYouWantToOverwrite', lang),
+                icon: <QuestionCircleOutlined />,
+                onOk: () => {
+                  saveToCloudWithoutCheckingExistence(ft, true);
+                  addFileToProject(projectTitle, ft);
+                },
+                onCancel: () => {
+                  setCommonStore((state) => {
+                    state.showCloudFileTitleDialogFlag = !state.showCloudFileTitleDialogFlag;
+                    state.showCloudFileTitleDialog = true;
+                  });
+                },
+                okText: i18n.t('word.Yes', lang),
+                cancelText: i18n.t('word.No', lang),
+              });
+            } else {
+              saveToCloudWithoutCheckingExistence(ft, true);
+              addFileToProject(projectTitle, ft);
+            }
+          });
+        } else {
+          showError(i18n.t('menu.file.SavingAbortedMustHaveValidTitle', lang) + '.');
+        }
+      }
+      setTitleDialogVisible(false);
+    } else {
+      showError(i18n.t('menu.file.SavingAbortedMustHaveValidTitle', lang) + '.');
+    }
+  };
+
+  const addFileToProject = (projectTitle: string, fileTitle: string) => {
+    if (!user.uid) return;
+    try {
+      const doc = firebase.firestore().collection('users').doc(user.uid);
+      if (doc) {
+        doc
+          .collection('projects')
+          .doc(projectTitle)
+          .update({ designs: firebase.firestore.FieldValue.arrayUnion(fileTitle) })
+          .then(() => {})
+          .catch((error) => {
+            showError(i18n.t('message.CannotAddDesignToProject', lang) + ': ' + error);
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      }
+    } catch (error) {
+      showError(i18n.t('message.CannotAddDesignToProject', lang) + ': ' + error);
+      setLoading(false);
+    }
   };
 
   const saveToCloud = (title: string, silent: boolean, checkExistence: boolean) => {
