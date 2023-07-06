@@ -1292,39 +1292,10 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
 
   const openCloudFile = (userid: string, title: string, popState?: boolean) => {
     if (userid && title) {
-      undoManager.clear();
       setLoading(true);
-      setCommonStore((state) => {
-        state.loadingFile = true;
+      openCloudFileTest(userid, title, popState, viewOnly).finally(() => {
+        setLoading(false);
       });
-      firebase
-        .firestore()
-        .collection('users')
-        .doc(userid)
-        .collection('files')
-        .doc(title)
-        .get()
-        .then((doc) => {
-          const data = doc.data();
-          if (data) {
-            importContent(data, title);
-          } else {
-            showInfo(i18n.t('message.CloudFileNotFound', lang) + ': ' + title);
-            setCommonStore((state) => {
-              state.cloudFile = undefined;
-            });
-          }
-          if (!popState && !viewOnly) {
-            const newUrl = HOME_URL + '?client=web&userid=' + userid + '&title=' + encodeURIComponent(title);
-            window.history.pushState({}, document.title, newUrl);
-          }
-        })
-        .catch((error) => {
-          showError(i18n.t('message.CannotOpenCloudFile', lang) + ': ' + error);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
     }
   };
 
@@ -1508,6 +1479,42 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       )}
     </>
   );
+};
+
+export const openCloudFileTest = (userid: string, title: string, popState?: boolean, viewOnly?: boolean) => {
+  const language = useStore.getState().language;
+  const lang = { lng: language };
+
+  useStore.getState().undoManager.clear();
+  useStore.getState().set((state) => {
+    state.loadingFile = true;
+  });
+
+  return firebase
+    .firestore()
+    .collection('users')
+    .doc(userid)
+    .collection('files')
+    .doc(title)
+    .get()
+    .then((doc) => {
+      const data = doc.data();
+      if (data) {
+        useStore.getState().importContent(data, title);
+      } else {
+        showInfo(i18n.t('message.CloudFileNotFound', lang) + ': ' + title);
+        useStore.getState().set((state) => {
+          state.cloudFile = undefined;
+        });
+      }
+      if (!popState && !viewOnly) {
+        const newUrl = HOME_URL + '?client=web&userid=' + userid + '&title=' + encodeURIComponent(title);
+        window.history.pushState({}, document.title, newUrl);
+      }
+    })
+    .catch((error) => {
+      showError(i18n.t('message.CannotOpenCloudFile', lang) + ': ' + error);
+    });
 };
 
 export default React.memo(CloudManager);
