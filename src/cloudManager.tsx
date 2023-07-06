@@ -1293,7 +1293,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const openCloudFile = (userid: string, title: string, popState?: boolean) => {
     if (userid && title) {
       setLoading(true);
-      openCloudFileTest(userid, title, popState, viewOnly).finally(() => {
+      loadDataFromFirebase(userid, title, popState, viewOnly).finally(() => {
         setLoading(false);
       });
     }
@@ -1481,7 +1481,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   );
 };
 
-export const openCloudFileTest = (userid: string, title: string, popState?: boolean, viewOnly?: boolean) => {
+export const loadDataFromFirebase = (userid: string, title: string, popState?: boolean, viewOnly?: boolean) => {
   const language = useStore.getState().language;
   const lang = { lng: language };
 

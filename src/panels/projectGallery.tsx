@@ -66,12 +66,13 @@ const Header = styled.div`
 `;
 
 export interface ProjectGalleryProps {
-  openCloudFile?: (userid: string, title: string) => void;
+  openCloudFile?: (userid: string, title: string, popState?: boolean) => void;
   author?: string; // if undefined, the user is the owner of models
 }
 
 const ProjectGallery = ({ openCloudFile, author }: ProjectGalleryProps) => {
   const setCommonStore = useStore(Selector.set);
+  const user = useStore(Selector.user);
   const language = useStore(Selector.language);
   const projectTitle = useStore(Selector.projectTitle);
   const projectDescription = useStore(Selector.projectDescription);
@@ -160,6 +161,9 @@ const ProjectGallery = ({ openCloudFile, author }: ProjectGalleryProps) => {
                             marginRight: '4px',
                           }}
                           onClick={() => {
+                            if (user.uid && openCloudFile) {
+                              openCloudFile(user.uid, design.title, true);
+                            }
                             // setSelectedModel(design);
                           }}
                         />

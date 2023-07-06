@@ -21,7 +21,7 @@ import AcceptCookie from './acceptCookie';
 import GroundImage from './views/groundImage';
 import DropdownContextMenu from './components/contextMenu';
 import { DesignProblem, EvolutionMethod } from './types';
-import CloudManager from './cloudManager';
+import CloudManager, { loadDataFromFirebase } from './cloudManager';
 import ActionLogger from './actionLogger';
 import Lights from './lights';
 import { Auxiliary } from './auxiliary';
@@ -342,7 +342,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       <Panels />
       <DropdownContextMenu>
         <div style={{ display: 'flex' }}>
-          {projectView && <ProjectGallery openCloudFile={undefined} />}
+          {projectView && <ProjectGallery openCloudFile={loadDataFromFirebase} />}
           <Canvas
             ref={canvasRef}
             shadows={true}
