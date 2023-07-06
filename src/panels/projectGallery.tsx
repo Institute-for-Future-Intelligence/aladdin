@@ -2,7 +2,7 @@
  * @Copyright 2023. Institute for Future Intelligence, Inc.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import styled from 'styled-components';
@@ -11,6 +11,7 @@ import i18n from '../i18n/i18n';
 import { CloseOutlined, DeleteOutlined, ImportOutlined } from '@ant-design/icons';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import ImageLoadFailureIcon from '../assets/image_load_failure.png';
+import { Design } from '../types';
 
 const Container = styled.div`
   position: relative;
@@ -79,17 +80,20 @@ const ProjectGallery = ({ openCloudFile, author }: ProjectGalleryProps) => {
   const projectDesigns = useStore(Selector.projectDesigns);
   const projectType = useStore(Selector.projectType);
 
+  const [selectedDesign, setSelectedDesign] = useState<Design | undefined>();
+
   const lang = { lng: language };
 
   const closeProject = () => {
     setCommonStore((state) => {
       state.projectView = false;
     });
+    setSelectedDesign(undefined);
   };
 
   const curateCurrentDesign = () => {
     usePrimitiveStore.setState((state) => {
-      state.designTitle = 'ppp';
+      state.designTitle = 'house 4';
       state.curateDesignToProjectFlag = !state.curateDesignToProjectFlag;
     });
   };
@@ -156,15 +160,15 @@ const ProjectGallery = ({ openCloudFile, author }: ProjectGalleryProps) => {
                           src={design.thumbnailUrl}
                           style={{
                             cursor: 'pointer',
-                            // borderRadius: selectedModel === design ? '0' : '10px',
-                            // border: selectedModel === design ? '2px solid ' + (dark ? 'goldenrod' : 'red') : 'none',
+                            borderRadius: selectedDesign === design ? '0' : '10px',
+                            border: selectedDesign === design ? '2px solid red' : 'none',
                             marginRight: '4px',
                           }}
                           onClick={() => {
+                            setSelectedDesign(design);
                             if (user.uid && openCloudFile) {
                               openCloudFile(user.uid, design.title, true);
                             }
-                            // setSelectedModel(design);
                           }}
                         />
                         {/* the following div is needed to wrap the image and text */}
