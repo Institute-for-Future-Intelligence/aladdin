@@ -342,7 +342,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       <Panels />
       <DropdownContextMenu>
         <div style={{ display: 'flex' }}>
-          {projectView && <ProjectGallery />}
+          {projectView && <ProjectGallery openCloudFile={undefined} />}
           <Canvas
             ref={canvasRef}
             shadows={true}

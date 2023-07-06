@@ -65,7 +65,12 @@ const Header = styled.div`
   }
 `;
 
-const ProjectGallery = () => {
+export interface ProjectGalleryProps {
+  openCloudFile?: (userid: string, title: string) => void;
+  author?: string; // if undefined, the user is the owner of models
+}
+
+const ProjectGallery = ({ openCloudFile, author }: ProjectGalleryProps) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const projectTitle = useStore(Selector.projectTitle);
