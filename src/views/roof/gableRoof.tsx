@@ -49,7 +49,11 @@ import { Util } from 'src/Util';
 import { Point2 } from 'src/models/Point2';
 import { RoofUtil } from './RoofUtil';
 import {
+  ComposedWall,
+  useComposedWallArray,
   useCurrWallArray,
+  useIsFirstMount,
+  useNewRoofHeight,
   useRoofHeight,
   useRoofTexture,
   useTransparent,
@@ -82,7 +86,7 @@ interface RafterUnitProps {
 interface RafterProps {
   ridgeLeftPoint: Vector3;
   ridgeRightPoint: Vector3;
-  wallArray: WallModel[];
+  wallArray: ComposedWall[];
   overhang: number;
   isShed: boolean;
   height: number;
@@ -152,12 +156,8 @@ const Rafter = ({
     [ridgeLeftPoint, rightWall.eavesLength],
   );
 
-  const frontWallLeftPoint = frontWall
-    ? new Vector3(frontWall.leftPoint[0], frontWall.leftPoint[1], frontWall.lz)
-    : new Vector3();
-  const backWallRightPoint = backWall
-    ? new Vector3(backWall.rightPoint[0], backWall.rightPoint[1], backWall.lz)
-    : new Vector3();
+  const frontWallLeftPoint = frontWall.leftPoint.clone().setZ(frontWall.lz);
+  const backWallRightPoint = backWall.rightPoint.clone().setZ(backWall.lz);
 
   const array = useMemo(() => {
     if (wallArray.length < 4) {
@@ -165,16 +165,16 @@ const Rafter = ({
     }
 
     const frontWallUnitVector = new Vector3()
-      .subVectors(new Vector3(frontWall.rightPoint[0], frontWall.rightPoint[1], frontWall.lz), frontWallLeftPoint)
+      .subVectors(new Vector3(frontWall.rightPoint.x, frontWall.rightPoint.y, frontWall.lz), frontWallLeftPoint)
       .normalize();
 
     const backWallUnitVector = new Vector3()
-      .subVectors(new Vector3(backWall.leftPoint[0], backWall.leftPoint[1], backWall.lz), backWallRightPoint)
+      .subVectors(new Vector3(backWall.leftPoint.x, backWall.leftPoint.y, backWall.lz), backWallRightPoint)
       .normalize();
 
     const ridgeLength = ridgeLeftPoint.distanceTo(ridgeRightPoint);
-    const frontWallLength = frontWall.lx;
-    const backWallLength = backWall.lx;
+    const frontWallLength = new Vector3().subVectors(frontWall.leftPoint, frontWall.rightPoint).length();
+    const backWallLength = new Vector3().subVectors(backWall.leftPoint, backWall.rightPoint).length();
 
     const offset = width;
     const number = Math.floor((Math.min(ridgeLength, frontWallLength, backWallLength) - width) / spacing) + 2;
@@ -335,9 +335,26 @@ const GableRoof = (roofModel: GableRoofModel) => {
   const ray = useMemo(() => new Raycaster(), []);
   const mouse = useMemo(() => new Vector2(), []);
 
-  const currentWallArray = useCurrWallArray(wallsId[0]);
+  // set position and rotation
+  const foundation = useStore((state) => {
+    for (const e of state.elements) {
+      if (e.id === parentId && e.type === ObjectType.Foundation) {
+        return e as FoundationModel;
+      }
+    }
+    return null;
+  });
+  let rotation = 0;
+  if (foundation) {
+    cx = foundation.cx;
+    cy = foundation.cy;
+    cz = foundation.lz;
+    rotation = foundation.rotation[2];
+  }
 
-  const { highestWallHeight, topZ, riseInnerState, setRiseInnerState } = useRoofHeight(currentWallArray, rise, true);
+  const composedWalls = useComposedWallArray(wallsId[0], parentId);
+
+  const { highestWallHeight, topZ, riseInnerState, setRiseInnerState } = useNewRoofHeight(composedWalls, rise, true);
   useUpdateOldRoofFiles(roofModel, highestWallHeight);
 
   const [showIntersectionPlane, setShowIntersectionPlane] = useState(false);
@@ -350,13 +367,14 @@ const GableRoof = (roofModel: GableRoofModel) => {
   const oldRidgeRight = useRef<number>(ridgeRightPoint[0]);
   const oldRiseRef = useRef(rise);
   const isPointerDownRef = useRef(false);
-  const isFirstMountRef = useRef(true);
+
+  const isFirstMount = useIsFirstMount();
 
   useEffect(() => {
-    if (!isFirstMountRef.current) {
+    if (!isFirstMount) {
       updateRooftopElements(foundation, id, roofSegments, centroid, topZ, thickness);
     }
-  }, [updateElementOnRoofFlag, topZ, thickness, ridgeLeftPoint, ridgeRightPoint]);
+  }, [updateElementOnRoofFlag, topZ, thickness, ridgeLeftPoint, ridgeRightPoint, isFirstMount]);
 
   const updateRoofTopRidge = (elemId: string, left: number, right: number) => {
     setCommonStore((state) => {
@@ -402,28 +420,32 @@ const GableRoof = (roofModel: GableRoofModel) => {
     ray.setFromCamera(mouse, camera);
   };
 
-  const getRelPos = (foundation: ElementModel, wall: WallModel, point: Vector3) => {
+  const getRelPos = (foundation: ElementModel, wall: ComposedWall, point: Vector3) => {
     const foundationCenter = new Vector2(foundation.cx, foundation.cy);
-    const wallAbsCenter = new Vector2(wall.cx, wall.cy)
+    const wallCenter = new Vector3().addVectors(wall.leftPoint, wall.rightPoint).divideScalar(2);
+    const wallLength = new Vector3().subVectors(wall.leftPoint, wall.rightPoint).length();
+    const wallAbsCenter = new Vector2(wallCenter.x, wallCenter.y)
       .rotateAround(zeroVector2, foundation.rotation[2])
       .add(foundationCenter);
     const wallAbsAngle = foundation.rotation[2] + wall.relativeAngle;
     const p = new Vector2(point.x, point.y).sub(wallAbsCenter).rotateAround(zeroVector2, -wallAbsAngle);
-    const x = p.x / wall.lx;
+    const x = p.x / wallLength;
     return Math.min(Math.abs(x), 0.5) * (x >= 0 ? 1 : -1);
   };
 
-  const getRidgePoint = (wall: WallModel, px: number, ph: number) => {
+  const getRidgePoint = (wall: ComposedWall, px: number, ph: number) => {
     if (!wall) {
       return new Vector3();
     }
+    const lx = new Vector3().subVectors(wall.leftPoint, wall.rightPoint).length();
+    const center = new Vector3().addVectors(wall.leftPoint, wall.rightPoint).divideScalar(2);
     const e = new Euler(0, 0, wall.relativeAngle);
-    const v = new Vector3(px * wall.lx, 0, 0);
+    const v = new Vector3(px * lx, 0, 0);
     const height = ph * riseInnerState + highestWallHeight;
-    return new Vector3(wall.cx, wall.cy, height).add(v.applyEuler(e));
+    return new Vector3(center.x, center.y, height).add(v.applyEuler(e));
   };
 
-  const getWallHeight = (arr: WallModel[], i: number) => {
+  const getWallHeight = (arr: ComposedWall[], i: number) => {
     const w = arr[i];
     let lh;
     let rh;
@@ -438,16 +460,6 @@ const GableRoof = (roofModel: GableRoofModel) => {
       rh = arr[0].lz;
     }
     return { lh, rh };
-  };
-
-  const getWallPoint = (wallArray: WallModel[]) => {
-    const arr: Point2[] = [];
-    for (const w of wallArray) {
-      if (w.leftPoint[0] !== undefined && w.leftPoint[1] !== undefined) {
-        arr.push({ x: w.leftPoint[0], y: w.leftPoint[1] });
-      }
-    }
-    return arr;
   };
 
   const getShiftedArr = <T,>(array: T[], idx: number) => {
@@ -468,25 +480,25 @@ const GableRoof = (roofModel: GableRoofModel) => {
   };
 
   const centroid = useMemo(() => {
-    if (currentWallArray.length !== 4) {
-      return new Vector3();
-    }
-    const points = getWallPoint(currentWallArray);
+    if (composedWalls === null) return new Vector3();
+    const points = composedWalls.map((w) => ({ x: w.leftPoint.x, y: w.leftPoint.y } as Point2));
     const p = Util.calculatePolygonCentroid(points);
     return new Vector3(p.x, p.y, topZ);
-  }, [currentWallArray, topZ]);
+  }, [composedWalls, topZ]);
 
   const ridgeLeftPointV3 = useMemo(() => {
-    const wall = currentWallArray[3];
+    if (composedWalls === null) return new Vector3();
+    const leftComposedWall = composedWalls[3];
     const [x, h] = ridgeLeftPoint; // percent
-    return getRidgePoint(wall, x, h);
-  }, [currentWallArray, topZ, ridgeLeftPoint]);
+    return getRidgePoint(leftComposedWall, x, h);
+  }, [composedWalls, topZ, ridgeLeftPoint]);
 
   const ridgeRightPointV3 = useMemo(() => {
-    const wall = currentWallArray[1];
+    if (composedWalls === null) return new Vector3();
+    const rightComposedWall = composedWalls[1];
     const [x, h] = ridgeRightPoint; // percent
-    return getRidgePoint(wall, x, h);
-  }, [currentWallArray, topZ, ridgeRightPoint]);
+    return getRidgePoint(rightComposedWall, x, h);
+  }, [composedWalls, topZ, ridgeRightPoint]);
 
   const ridgeMidPoint = useMemo(() => {
     return new Vector3(
@@ -497,8 +509,9 @@ const GableRoof = (roofModel: GableRoofModel) => {
   }, [ridgeLeftPointV3, ridgeRightPointV3]);
 
   const overhangs = useMemo(() => {
-    return currentWallArray.map((wall) => RoofUtil.getWallNormal(wall).multiplyScalar(wall.eavesLength ?? 0));
-  }, [currentWallArray]);
+    if (!composedWalls || composedWalls.length !== 4) return null;
+    return composedWalls.map((wall) => RoofUtil.getNewWallNormal(wall).multiplyScalar(wall.eavesLength));
+  }, [composedWalls]);
 
   const thicknessVector = useMemo(() => {
     return zVector3.clone().multiplyScalar(thickness);
@@ -507,26 +520,20 @@ const GableRoof = (roofModel: GableRoofModel) => {
   const roofSegments = useMemo(() => {
     const segments: RoofSegmentProps[] = [];
 
-    if (currentWallArray.length !== 4) {
-      return segments;
-    }
+    if (!composedWalls || composedWalls.length !== 4 || !overhangs) return segments;
 
     // shed roof
     if (isShed) {
       const points: Vector3[] = [];
-      const idx = currentWallArray[3].centerRoofHeight && currentWallArray[3].centerRoofHeight[0] < 0 ? 0 : 2;
-
-      const shiftedWallArray = getShiftedArr(currentWallArray, idx);
+      const idx = ridgeLeftPoint[0] < 0 ? 0 : 2;
+      const shiftedWallArray = getShiftedArr(composedWalls, idx);
       const shiftedOverhangs = getShiftedArr(overhangs, idx);
-
       const [frontWall, rightWall, backWall, leftWall] = shiftedWallArray;
       const [frontOverhang, rightOverhang, backOverhang, leftOverhang] = shiftedOverhangs;
-
-      const wallPoint0 = new Vector3(frontWall.leftPoint[0], frontWall.leftPoint[1]);
-      const wallPoint1 = new Vector3(frontWall.rightPoint[0], frontWall.rightPoint[1]);
-      const wallPoint2 = new Vector3(backWall.leftPoint[0], backWall.leftPoint[1]);
-      const wallPoint3 = new Vector3(backWall.rightPoint[0], backWall.rightPoint[1]);
-
+      const wallPoint0 = frontWall.leftPoint;
+      const wallPoint1 = frontWall.rightPoint;
+      const wallPoint2 = backWall.leftPoint;
+      const wallPoint3 = backWall.rightPoint;
       const frontWallLeftPointAfterOffset = wallPoint0.clone().add(frontOverhang);
       const frontWallRightPointAfterOffset = wallPoint1.clone().add(frontOverhang);
       const leftWallLeftPointAfterOffset = wallPoint3.clone().add(leftOverhang);
@@ -535,22 +542,16 @@ const GableRoof = (roofModel: GableRoofModel) => {
       const rightWallRightPointAfterOffset = wallPoint2.clone().add(rightOverhang);
       const backWallLeftPointAfterOffset = wallPoint2.clone().add(backOverhang);
       const backWallRightPointAfterOffset = wallPoint3.clone().add(backOverhang);
-
       const { lh: frontWallLh, rh: frontWallRh } = getWallHeight(shiftedWallArray, 0);
       const { lh: backWallLh, rh: backWallRh } = getWallHeight(shiftedWallArray, 2);
-
       const d0 = RoofUtil.getDistance(wallPoint0, wallPoint1, wallPoint3);
       const overhangHeight0 = Math.min(((frontWall.eavesLength ?? 0) / d0) * (topZ - frontWallLh), frontWallLh);
-
       const d1 = RoofUtil.getDistance(wallPoint0, wallPoint1, wallPoint2);
       const overhangHeight1 = Math.min(((frontWall.eavesLength ?? 0) / d1) * (topZ - frontWallRh), frontWallRh);
-
       const d2 = RoofUtil.getDistance(wallPoint2, wallPoint3, wallPoint1);
       const overhangHeight2 = Math.min(((backWall.eavesLength ?? 0) / d2) * (topZ - frontWallRh), backWallLh);
-
       const d3 = RoofUtil.getDistance(wallPoint2, wallPoint3, wallPoint0);
       const overhangHeight3 = Math.min(((backWall.eavesLength ?? 0) / d3) * (topZ - frontWallLh), backWallRh);
-
       const frontWallLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
         leftWallLeftPointAfterOffset,
         leftWallRightPointAfterOffset,
@@ -559,7 +560,6 @@ const GableRoof = (roofModel: GableRoofModel) => {
       )
         .setZ(frontWallLh - overhangHeight0)
         .sub(centroid);
-
       const frontWallRightPointAfterOverhang = RoofUtil.getIntersectionPoint(
         frontWallLeftPointAfterOffset,
         frontWallRightPointAfterOffset,
@@ -568,7 +568,6 @@ const GableRoof = (roofModel: GableRoofModel) => {
       )
         .setZ(frontWallRh - overhangHeight1)
         .sub(centroid);
-
       const backWallLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
         rightWallLeftPointAfterOffset,
         rightWallRightPointAfterOffset,
@@ -577,7 +576,6 @@ const GableRoof = (roofModel: GableRoofModel) => {
       )
         .setZ(topZ + overhangHeight2)
         .sub(centroid);
-
       const backWallRightPointAfterOverhang = RoofUtil.getIntersectionPoint(
         backWallLeftPointAfterOffset,
         backWallRightPointAfterOffset,
@@ -586,7 +584,6 @@ const GableRoof = (roofModel: GableRoofModel) => {
       )
         .setZ(topZ + overhangHeight3)
         .sub(centroid);
-
       points.push(
         frontWallLeftPointAfterOverhang,
         frontWallRightPointAfterOverhang,
@@ -599,28 +596,23 @@ const GableRoof = (roofModel: GableRoofModel) => {
         backWallLeftPointAfterOverhang.clone().add(thicknessVector),
         backWallRightPointAfterOverhang.clone().add(thicknessVector),
       );
-
-      const length = new Vector3(frontWall.cx, frontWall.cy).sub(ridgeMidPoint.clone().setZ(0)).length();
+      const frontWallCenter = new Vector3().addVectors(frontWall.leftPoint, frontWall.rightPoint).divideScalar(2);
+      const length = frontWallCenter.clone().sub(ridgeMidPoint.clone().setZ(0)).length();
       segments.push({ points, angle: -frontWall.relativeAngle, length });
     }
     // gable roof
     else {
-      const [frontWall, rightWall, backWall, leftWall] = currentWallArray;
+      const [frontWall, rightWall, backWall, leftWall] = composedWalls;
       const [frontOverhang, rightOverhang, backOverhang, leftOverhang] = overhangs;
 
-      const wallPoint0 = new Vector3(frontWall.leftPoint[0], frontWall.leftPoint[1]);
-      const wallPoint1 = new Vector3(frontWall.rightPoint[0], frontWall.rightPoint[1]);
-      const wallPoint2 = new Vector3(backWall.leftPoint[0], backWall.leftPoint[1]);
-      const wallPoint3 = new Vector3(backWall.rightPoint[0], backWall.rightPoint[1]);
-
-      const frontWallLeftPointAfterOffset = wallPoint0.clone().add(frontOverhang);
-      const frontWallRightPointAfterOffset = wallPoint1.clone().add(frontOverhang);
-      const leftWallLeftPointAfterOffset = wallPoint3.clone().add(leftOverhang);
-      const leftWallRightPointAfterOffset = wallPoint0.clone().add(leftOverhang);
-      const rightWallLeftPointAfterOffset = wallPoint1.clone().add(rightOverhang);
-      const rightWallRightPointAfterOffset = wallPoint2.clone().add(rightOverhang);
-      const backWallLeftPointAfterOffset = wallPoint2.clone().add(backOverhang);
-      const backWallRightPointAfterOffset = wallPoint3.clone().add(backOverhang);
+      const frontWallLeftPointAfterOffset = frontWall.leftPoint.clone().add(frontOverhang);
+      const frontWallRightPointAfterOffset = frontWall.rightPoint.clone().add(frontOverhang);
+      const leftWallLeftPointAfterOffset = backWall.rightPoint.clone().add(leftOverhang);
+      const leftWallRightPointAfterOffset = frontWall.leftPoint.clone().add(leftOverhang);
+      const rightWallLeftPointAfterOffset = frontWall.rightPoint.clone().add(rightOverhang);
+      const rightWallRightPointAfterOffset = backWall.leftPoint.clone().add(rightOverhang);
+      const backWallLeftPointAfterOffset = backWall.leftPoint.clone().add(backOverhang);
+      const backWallRightPointAfterOffset = backWall.rightPoint.clone().add(backOverhang);
 
       const ridgeLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
         ridgeLeftPointV3,
@@ -642,15 +634,15 @@ const GableRoof = (roofModel: GableRoofModel) => {
 
       // front
       const frontPoints: Vector3[] = [];
-      const { lh: frontWallLh, rh: frontWallRh } = getWallHeight(currentWallArray, 0);
+      const { lh: frontWallLh, rh: frontWallRh } = getWallHeight(composedWalls, 0);
 
-      const d0 = RoofUtil.getDistance(wallPoint0, wallPoint1, ridgeLeftPointV3);
+      const d0 = RoofUtil.getDistance(frontWall.leftPoint, frontWall.rightPoint, ridgeLeftPointV3);
       const overhangHeight0 = Math.min(
         ((frontWall.eavesLength ?? 0) / d0) * (ridgeLeftPointV3.z - frontWallLh),
         frontWallLh,
       );
 
-      const d1 = RoofUtil.getDistance(wallPoint0, wallPoint1, ridgeRightPointV3);
+      const d1 = RoofUtil.getDistance(frontWall.leftPoint, frontWall.rightPoint, ridgeRightPointV3);
       const overhangHeight1 = Math.min(
         ((frontWall.eavesLength ?? 0) / d1) * (ridgeRightPointV3.z - frontWallRh),
         frontWallRh,
@@ -687,19 +679,20 @@ const GableRoof = (roofModel: GableRoofModel) => {
         ridgeLeftPointAfterOverhang.clone().add(thicknessVector),
       );
 
-      const frontLength = new Vector3(frontWall.cx, frontWall.cy).sub(centroid.clone().setZ(0)).length();
+      const frontWallCenter = new Vector3().addVectors(frontWall.leftPoint, frontWall.rightPoint).divideScalar(2);
+      const frontLength = frontWallCenter.clone().sub(centroid.clone().setZ(0)).length();
       segments.push({ points: frontPoints, angle: -frontWall.relativeAngle, length: frontLength });
 
       // back
       const backPoints: Vector3[] = [];
-      const { lh: backWallLh, rh: backWallRh } = getWallHeight(currentWallArray, 2);
-      const d2 = RoofUtil.getDistance(wallPoint2, wallPoint3, ridgeRightPointV3);
+      const { lh: backWallLh, rh: backWallRh } = getWallHeight(composedWalls, 2);
+      const d2 = RoofUtil.getDistance(backWall.leftPoint, backWall.rightPoint, ridgeRightPointV3);
       const overhangHeight2 = Math.min(
         ((backWall.eavesLength ?? 0) / d2) * (ridgeRightPointV3.z - backWallLh),
         backWallLh,
       );
 
-      const d3 = RoofUtil.getDistance(wallPoint2, wallPoint3, ridgeLeftPointV3);
+      const d3 = RoofUtil.getDistance(backWall.leftPoint, backWall.rightPoint, ridgeLeftPointV3);
       const overhangHeight3 = Math.min(
         ((backWall.eavesLength ?? 0) / d3) * (ridgeLeftPointV3.z - backWallRh),
         backWallRh,
@@ -736,123 +729,171 @@ const GableRoof = (roofModel: GableRoofModel) => {
         ridgeRightPointAfterOverhang.clone().add(thicknessVector),
       );
 
-      const backLength = new Vector3(backWall.cx, backWall.cy).sub(centroid.clone().setZ(0)).length();
+      const backWallCenter = new Vector3().addVectors(backWall.leftPoint, backWall.rightPoint).divideScalar(2);
+      const backLength = backWallCenter.clone().sub(centroid.clone().setZ(0)).length();
       segments.push({ points: backPoints, angle: -backWall.relativeAngle, length: backLength });
     }
     return segments;
-  }, [currentWallArray, ridgeLeftPointV3, ridgeRightPointV3, topZ, thickness]);
+  }, [composedWalls, ridgeLeftPointV3, ridgeRightPointV3, topZ, thickness]);
 
-  // set position and rotation
-  const foundation = useStore((state) => {
-    for (const e of state.elements) {
-      if (e.id === parentId && e.type === ObjectType.Foundation) {
-        return e as FoundationModel;
-      }
+  const getY = (k: number, b: number, x: number) => {
+    return k * x + b;
+  };
+
+  const updateGabledWall = (composedWalls: ComposedWall[], index: number, ridgePoint: number[]) => {
+    const composedWall = composedWalls[index];
+    const length = new Vector3().subVectors(composedWall.leftPoint, composedWall.rightPoint).length();
+    const ridgeX = (ridgePoint[0] + 0.5) * length;
+    const { lh, rh } = getWallHeight(composedWalls, index);
+    const leftHalfK = (ridgePoint[1] * (topZ - lh)) / ridgeX;
+    const leftHalfB = lh;
+    const rightHalfK = -(ridgePoint[1] * (topZ - rh)) / (length - ridgeX);
+    const rightHalfB = rh - rightHalfK * length;
+
+    const wallPointsX = composedWall.wallsId.reduce(
+      (acc, currId) => {
+        const wall = useStore.getState().elements.find((e) => e.id === currId) as WallModel;
+        if (!wall) return acc;
+        return [...acc, wall.lx + acc[acc.length - 1]];
+      },
+      [0],
+    );
+
+    const wallPointsXMap = new Map<string, number[]>();
+    for (let i = 0; i < composedWall.wallsId.length; i++) {
+      const id = composedWall.wallsId[i];
+      const points = [wallPointsX[i], wallPointsX[i + 1]];
+      wallPointsXMap.set(id, points);
     }
-    return null;
-  });
-  let rotation = 0;
-  if (foundation) {
-    cx = foundation.cx;
-    cy = foundation.cy;
-    cz = foundation.lz;
-    rotation = foundation.rotation[2];
-  }
 
-  useEffect(() => {
-    if (!isFirstMountRef.current || useStore.getState().addedRoofId === id) {
-      if (currentWallArray.length === 4) {
-        setCommonStore((state) => {
-          for (const e of state.elements) {
-            if (e.type !== ObjectType.Wall) continue;
-            const w = e as WallModel;
-            switch (e.id) {
-              case currentWallArray[0].id: {
-                const { lh, rh } = getWallHeight(currentWallArray, 0);
-                w.roofId = id;
-                if (ridgeLeftPoint[0] === 0.5) {
-                  w.leftRoofHeight = topZ;
-                  w.rightRoofHeight = topZ;
-                  w.centerRoofHeight = undefined;
-                } else {
-                  w.leftRoofHeight = lh;
-                  w.rightRoofHeight = rh;
-                }
-                break;
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (wallPointsXMap.has(e.id)) {
+          const pointsX = wallPointsXMap.get(e.id);
+          if (pointsX) {
+            const [leftX, rightX] = pointsX;
+            const wall = e as WallModel;
+            wall.roofId = id;
+
+            if (leftX < ridgeX) {
+              wall.leftRoofHeight = getY(leftHalfK, leftHalfB, leftX);
+            } else if (leftX === ridgeX) {
+              wall.leftRoofHeight = getY(rightHalfK, rightHalfB, leftX);
+              if (wall.centerRoofHeight) {
+                wall.centerRoofHeight[0] = -0.5;
+                wall.centerRoofHeight[1] = topZ;
+              } else {
+                wall.centerRoofHeight = [-0.5, topZ];
               }
-              case currentWallArray[1].id: {
-                const { lh, rh } = getWallHeight(currentWallArray, 1);
-                w.roofId = id;
-                w.leftRoofHeight = lh;
-                w.rightRoofHeight = rh;
-                if (w.centerRoofHeight) {
-                  w.centerRoofHeight[0] = ridgeRightPoint[0];
-                } else {
-                  w.centerRoofHeight = [...ridgeRightPoint];
-                }
-                w.centerRoofHeight[1] = topZ;
-                break;
+            } else {
+              wall.leftRoofHeight = getY(rightHalfK, rightHalfB, leftX);
+              wall.centerRoofHeight = undefined;
+            }
+
+            if (rightX < ridgeX) {
+              wall.rightRoofHeight = getY(leftHalfK, leftHalfB, rightX);
+              wall.centerRoofHeight = undefined;
+            } else if (rightX === ridgeX) {
+              wall.rightRoofHeight = getY(leftHalfK, leftHalfB, rightX);
+              if (wall.centerRoofHeight) {
+                wall.centerRoofHeight[0] = 0.5;
+                wall.centerRoofHeight[1] = topZ;
+              } else {
+                wall.centerRoofHeight = [0.5, topZ];
               }
-              case currentWallArray[2].id: {
-                const { lh, rh } = getWallHeight(currentWallArray, 2);
-                w.roofId = id;
-                if (ridgeLeftPoint[0] === -0.5) {
-                  w.leftRoofHeight = topZ;
-                  w.rightRoofHeight = topZ;
-                  w.centerRoofHeight = undefined;
-                } else {
-                  w.leftRoofHeight = lh;
-                  w.rightRoofHeight = rh;
-                }
-                break;
-              }
-              case currentWallArray[3].id: {
-                const { lh, rh } = getWallHeight(currentWallArray, 3);
-                w.roofId = id;
-                w.leftRoofHeight = lh;
-                w.rightRoofHeight = rh;
-                if (w.centerRoofHeight) {
-                  w.centerRoofHeight[0] = ridgeLeftPoint[0];
-                } else {
-                  w.centerRoofHeight = [...ridgeLeftPoint];
-                }
-                w.centerRoofHeight[1] = topZ;
-                break;
+            } else {
+              wall.rightRoofHeight = getY(rightHalfK, rightHalfB, rightX);
+            }
+            if (leftX < ridgeX && rightX > ridgeX) {
+              if (wall.centerRoofHeight) {
+                wall.centerRoofHeight[0] = (ridgeX - leftX) / wall.lx - 0.5;
+                wall.centerRoofHeight[1] = topZ;
+              } else {
+                wall.centerRoofHeight = [(ridgeX - leftX) / wall.lx - 0.5, topZ];
               }
             }
           }
-        });
-        updateRooftopElements(foundation, id, roofSegments, centroid, topZ, thickness);
+        }
+      }
+    });
+  };
+
+  const updateWalls = (composedWalls: ComposedWall[]) => {
+    const [frontWall, rightWall, backWall, leftWall] = composedWalls;
+
+    // left and right side
+    updateGabledWall(composedWalls, 1, ridgeRightPoint);
+    updateGabledWall(composedWalls, 3, ridgeLeftPoint);
+
+    // front and back side
+    const frontWallsIdSet = new Set(frontWall.wallsId);
+    const backWallsIdSet = new Set(backWall.wallsId);
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Wall && e.foundationId === parentId) {
+          if (frontWallsIdSet.has(e.id)) {
+            const w = e as WallModel;
+            w.roofId = id;
+            if (ridgeLeftPoint[0] === 0.5) {
+              w.leftRoofHeight = topZ;
+              w.rightRoofHeight = topZ;
+              w.centerRoofHeight = undefined;
+            } else {
+              const { lh, rh } = getWallHeight(composedWalls, 0);
+              w.leftRoofHeight = lh;
+              w.rightRoofHeight = rh;
+            }
+          } else if (backWallsIdSet.has(e.id)) {
+            const w = e as WallModel;
+            w.roofId = id;
+            if (ridgeLeftPoint[0] === -0.5) {
+              w.leftRoofHeight = topZ;
+              w.rightRoofHeight = topZ;
+              w.centerRoofHeight = undefined;
+            } else {
+              const { lh, rh } = getWallHeight(composedWalls, 2);
+              w.leftRoofHeight = lh;
+              w.rightRoofHeight = rh;
+            }
+          }
+        }
+      }
+    });
+  };
+
+  useEffect(() => {
+    if (!isFirstMount || useStore.getState().addedRoofId === id) {
+      if (!composedWalls || composedWalls.length !== 4) {
+        removeElementById(id, false, false);
       } else {
-        removeElementById(id, false);
+        updateWalls(composedWalls);
+        updateRooftopElements(foundation, id, roofSegments, centroid, topZ, thickness);
       }
       if (useStore.getState().addedRoofId === id) {
         useStore.getState().setAddedRoofId(null);
       }
     }
-  }, [currentWallArray, topZ, ridgeLeftPoint, ridgeRightPoint]);
-
-  useEffect(() => {
-    isFirstMountRef.current = false;
-  }, []);
+  }, [composedWalls, topZ, ridgeLeftPoint, ridgeRightPoint, isFirstMount]);
 
   const updateSegmentVerticesWithoutOverhangMap = () => {
+    if (!composedWalls || composedWalls.length !== 4) return;
+
     const segmentVertices: Vector3[][] = [];
     // shed roof
     if (isShed) {
-      const idx = currentWallArray[3].centerRoofHeight && currentWallArray[3].centerRoofHeight[0] < 0 ? 0 : 2;
+      const idx = ridgeLeftPoint[0] < 0 ? 0 : 2;
 
-      const shiftedWallArray = getShiftedArr(currentWallArray, idx);
+      const shiftedWallArray = getShiftedArr(composedWalls, idx);
 
       const wallPoints = shiftedWallArray.map(
-        (w, i, arr) => new Vector3(w.leftPoint[0], w.leftPoint[1], getWallHeight(arr, i).lh),
+        (w, i, arr) => new Vector3(w.leftPoint.x, w.leftPoint.y, getWallHeight(arr, i).lh),
       );
       segmentVertices.push(wallPoints);
     }
     // gable roof
     else {
-      const wallPoints = currentWallArray.map(
-        (w, i, arr) => new Vector3(w.leftPoint[0], w.leftPoint[1], getWallHeight(arr, i).lh),
+      const wallPoints = composedWalls.map(
+        (w, i, arr) => new Vector3(w.leftPoint.x, w.leftPoint.y, getWallHeight(arr, i).lh),
       );
       segmentVertices.push([wallPoints[0], wallPoints[1], ridgeRightPointV3.clone(), ridgeLeftPointV3.clone()]);
       segmentVertices.push([wallPoints[2], wallPoints[3], ridgeLeftPointV3.clone(), ridgeRightPointV3.clone()]);
@@ -919,6 +960,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
         {roofSegments.map((segment, i, arr) => {
           const { points, angle, length } = segment;
           const isFlat = Math.abs(points[0].z) < 0.1;
+          if (!composedWalls) return null;
           return (
             <RoofSegment
               key={i}
@@ -935,7 +977,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
               roofStructure={roofStructure}
               glassTint={glassTint}
               opacity={opacity}
-              currWall={i === 0 ? currentWallArray[0] : currentWallArray[2]}
+              relativeAngle={i === 0 ? composedWalls[0].relativeAngle : composedWalls[2].relativeAngle}
               foundation={foundation}
             />
           );
@@ -953,12 +995,12 @@ const GableRoof = (roofModel: GableRoofModel) => {
       </group>
 
       {/* ceiling */}
-      {ceiling && riseInnerState > 0 && currentWallArray[0].lz === currentWallArray[2].lz && (
+      {/* {ceiling && riseInnerState > 0 && currentWallArray[0].lz === currentWallArray[2].lz && (
         <Ceiling currWallArray={currentWallArray} />
-      )}
+      )} */}
 
       {/* rafter */}
-      {roofStructure === RoofStructure.Rafter && (
+      {roofStructure === RoofStructure.Rafter && composedWalls && composedWalls.length === 4 && (
         <group
           onContextMenu={(e) => {
             handleContextMenu(e, id);
@@ -970,7 +1012,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
           <Rafter
             ridgeLeftPoint={ridgeLeftPointV3}
             ridgeRightPoint={ridgeRightPointV3}
-            wallArray={currentWallArray}
+            wallArray={composedWalls}
             overhang={0}
             isShed={isShed}
             height={thickness}
@@ -1022,10 +1064,10 @@ const GableRoof = (roofModel: GableRoofModel) => {
               oldRidgeRight.current = ridgeRightPoint[0];
               setShowIntersectionPlane(true);
               intersectionPlanePosition.set(ridgeLeftPointV3.x, ridgeLeftPointV3.y, topZ);
-              if (foundation && currentWallArray[3]) {
+              if (foundation && composedWalls && composedWalls[3]) {
                 const dir = new Vector3().subVectors(ridgeLeftPointV3, camera.position).normalize();
                 const rX = Math.atan2(dir.z, Math.hypot(dir.x, dir.y));
-                const rZ = currentWallArray[3].relativeAngle;
+                const rZ = composedWalls[3].relativeAngle;
                 intersectionPlaneRotation.set(-HALF_PI + rX, 0, rZ, 'ZXY');
               }
               setRoofHandleType(RoofHandleType.Left);
@@ -1040,10 +1082,10 @@ const GableRoof = (roofModel: GableRoofModel) => {
               oldRidgeRight.current = ridgeRightPoint[0];
               setShowIntersectionPlane(true);
               intersectionPlanePosition.set(ridgeRightPointV3.x, ridgeRightPointV3.y, topZ);
-              if (foundation && currentWallArray[1]) {
+              if (foundation && composedWalls && composedWalls[1]) {
                 const dir = new Vector3().subVectors(ridgeRightPointV3, camera.position).normalize();
                 const rX = Math.atan2(dir.z, Math.hypot(dir.x, dir.y));
-                const rZ = currentWallArray[1].relativeAngle;
+                const rZ = composedWalls[1].relativeAngle;
                 intersectionPlaneRotation.set(-HALF_PI + rX, 0, rZ, 'ZXY');
               }
               setRoofHandleType(RoofHandleType.Right);
@@ -1063,7 +1105,13 @@ const GableRoof = (roofModel: GableRoofModel) => {
           position={intersectionPlanePosition}
           rotation={intersectionPlaneRotation}
           onPointerMove={(e) => {
-            if (intersectionPlaneRef.current && isPointerDownRef.current && foundation) {
+            if (
+              intersectionPlaneRef.current &&
+              isPointerDownRef.current &&
+              foundation &&
+              composedWalls &&
+              composedWalls.length === 4
+            ) {
               setRayCast(e);
               const intersects = ray.intersectObjects([intersectionPlaneRef.current]);
               if (intersects[0]) {
@@ -1073,54 +1121,59 @@ const GableRoof = (roofModel: GableRoofModel) => {
                 }
                 switch (roofHandleType) {
                   case RoofHandleType.Left: {
-                    const wall = currentWallArray[3];
+                    const wall = composedWalls[3];
                     if (wall) {
                       let x = getRelPos(foundation, wall, point);
                       if (Math.abs(x) >= 0.45 && Math.abs(x) < 0.5) {
                         x = 0.45 * Math.sign(x);
                       }
-                      if (RoofUtil.isRoofValid(id, currentWallArray[3].id, currentWallArray[1].id, [x, topZ])) {
-                        updateRoofTopRidge(id, x, -x);
-                      }
+                      // if (RoofUtil.isRoofValid(id, currentWallArray[3].id, currentWallArray[1].id, [x, topZ])) {
+                      //   updateRoofTopRidge(id, x, -x);
+                      // }
+                      updateRoofTopRidge(id, x, -x);
                     }
                     break;
                   }
                   case RoofHandleType.Right: {
-                    const wall = currentWallArray[1];
+                    const wall = composedWalls[1];
                     if (wall) {
                       let x = getRelPos(foundation, wall, point);
                       if (Math.abs(x) >= 0.45 && Math.abs(x) < 0.5) {
                         x = 0.45 * Math.sign(x);
                       }
-                      if (RoofUtil.isRoofValid(id, currentWallArray[1].id, currentWallArray[3].id, [x, topZ])) {
-                        updateRoofTopRidge(id, -x, x);
-                      }
+                      // if (RoofUtil.isRoofValid(id, composedWalls[1].id, composedWalls[3].id, [x, topZ])) {
+                      //   updateRoofTopRidge(id, -x, x);
+                      // }
+                      updateRoofTopRidge(id, -x, x);
                     }
                     break;
                   }
                   case RoofHandleType.Mid: {
                     if (isShed) {
-                      if (currentWallArray.length === 4 && currentWallArray[3].centerRoofHeight !== undefined) {
-                        const newRise = Math.max(0, point.z - foundation.lz - 0.3 - highestWallHeight);
-                        if (
-                          RoofUtil.isRoofValid(id, currentWallArray[3].id, currentWallArray[1].id, [
-                            ridgeLeftPoint[0],
-                            newRise + highestWallHeight,
-                          ])
-                        ) {
-                          setRiseInnerState(newRise);
-                        }
-                      }
+                      // if (currentWallArray.length === 4 && currentWallArray[3].centerRoofHeight !== undefined) {
+                      //   const newRise = Math.max(0, point.z - foundation.lz - 0.3 - highestWallHeight);
+                      //   if (
+                      //     RoofUtil.isRoofValid(id, currentWallArray[3].id, currentWallArray[1].id, [
+                      //       ridgeLeftPoint[0],
+                      //       newRise + highestWallHeight,
+                      //     ])
+                      //   ) {
+                      //     setRiseInnerState(newRise);
+                      //   }
+                      // }
+                      const newRise = Math.max(0, point.z - foundation.lz - 0.3 - highestWallHeight);
+                      setRiseInnerState(newRise);
                     } else {
                       const newRise = point.z - foundation.lz - 0.3 - highestWallHeight;
-                      if (
-                        RoofUtil.isRoofValid(id, currentWallArray[3].id, currentWallArray[1].id, [
-                          ridgeLeftPoint[0],
-                          newRise + highestWallHeight,
-                        ])
-                      ) {
-                        setRiseInnerState(newRise);
-                      }
+                      // if (
+                      //   RoofUtil.isRoofValid(id, currentWallArray[3].id, currentWallArray[1].id, [
+                      //     ridgeLeftPoint[0],
+                      //     newRise + highestWallHeight,
+                      //   ])
+                      // ) {
+                      //   setRiseInnerState(newRise);
+                      // }
+                      setRiseInnerState(newRise);
                     }
                     // the vertical ruler needs to display the latest rise when the handle is being dragged
                     useStore.getState().updateRoofRiseById(id, riseInnerState, topZ + roofModel.thickness);
@@ -1174,7 +1227,7 @@ const RoofSegment = ({
   heatmaps,
   color = 'white',
   sideColor,
-  currWall,
+  relativeAngle,
   foundation,
   roofStructure,
   glassTint,
@@ -1190,7 +1243,7 @@ const RoofSegment = ({
   heatmaps: CanvasTexture[];
   color: string | undefined;
   sideColor: string | undefined;
-  currWall: WallModel;
+  relativeAngle: number;
   foundation: FoundationModel | null;
   roofStructure?: RoofStructure;
   glassTint?: string;
@@ -1227,11 +1280,11 @@ const RoofSegment = ({
     return v1.clone().setZ(0).distanceTo(v2.clone().setZ(0)) > 2;
   };
 
-  const isNorthWest = (wall: WallModel) => {
+  const isNorthWest = (relativeAngle: number) => {
     return (
-      Math.abs(wall.relativeAngle) < Math.PI / 4 ||
-      Math.abs(wall.relativeAngle - Math.PI * 2) < Math.PI / 4 ||
-      Math.abs(wall.relativeAngle - Math.PI) < Math.PI / 4
+      Math.abs(relativeAngle) < Math.PI / 4 ||
+      Math.abs(relativeAngle - Math.PI * 2) < Math.PI / 4 ||
+      Math.abs(relativeAngle - Math.PI) < Math.PI / 4
     );
   };
 
@@ -1454,7 +1507,7 @@ const RoofSegment = ({
         const resMesh = CSG.subtract(bulkMeshRef.current, holeMesh);
         bulkMeshRef.current.geometry = resMesh.geometry;
 
-        if (isNorthWest(currWall)) {
+        if (isNorthWest(relativeAngle)) {
           const lx = wl.distanceTo(wr);
           const ly = wallLeft.distanceTo(ridgeLeft);
 
@@ -1496,7 +1549,7 @@ const RoofSegment = ({
       }
     }
     invalidate();
-  }, [points, angle, length, currWall, show, showSolarRadiationHeatmap, roofStructure]);
+  }, [points, angle, length, relativeAngle, show, showSolarRadiationHeatmap, roofStructure]);
 
   // FIXME: Bulk mesh can be null if it is not initialized. Refreshing the page fixes the problem.
 

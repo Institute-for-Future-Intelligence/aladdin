@@ -1995,7 +1995,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           break;
         }
         case ObjectType.GableRoof: {
-          if (!roofId && isValidToAddRoof(true, false)) {
+          if (!roofId && isValidToAddRoof(false, false)) {
             newElement = ElementModelFactory.makeGableRoof([wallModel.id], foundationModel);
           }
           break;

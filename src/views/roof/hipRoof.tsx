@@ -134,7 +134,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
     rotation = foundation.rotation[2];
   }
 
-  const composedWalls = useComposedWallArray(wallsId[0], foundation?.id);
+  const composedWalls = useComposedWallArray(wallsId[0], parentId);
   const texture = useRoofTexture(textureType);
 
   const [enableIntersectionPlane, setEnableIntersectionPlane] = useState(false);

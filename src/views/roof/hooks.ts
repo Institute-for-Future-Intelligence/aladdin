@@ -225,7 +225,7 @@ export const useMultiCurrWallArray = (fId: string | undefined, roofId: string, w
   return { currentWallArray, isLoopRef };
 };
 
-export const useComposedWallArray = (wId: string, fId?: string) => {
+export const useComposedWallArray = (wId: string, fId: string) => {
   const wallsOnSameFoundation = useStore(
     (state) => state.elements.filter((e) => e.foundationId === fId && e.type === ObjectType.Wall),
     shallow,
