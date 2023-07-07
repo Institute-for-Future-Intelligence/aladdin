@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import styled from 'styled-components';
-import { Collapse, Descriptions, Button } from 'antd';
+import { Collapse, Descriptions, Button, List } from 'antd';
 import i18n from '../i18n/i18n';
 import { CloseOutlined, DeleteOutlined, ImportOutlined } from '@ant-design/icons';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
@@ -17,8 +17,8 @@ const Container = styled.div`
   position: relative;
   top: 0;
   left: 0;
-  width: 50%;
-  height: calc(100vh - 72px);
+  width: 100%;
+  height: 100%;
   margin: 0;
   display: flex;
   justify-content: center;
@@ -44,7 +44,7 @@ const ColumnWrapper = styled.div`
   border: 2px solid gainsboro;
   display: flex;
   flex-direction: column;
-  overflow-x: auto;
+  overflow-x: hidden;
   overflow-y: hidden;
 `;
 
@@ -93,7 +93,7 @@ const ProjectGallery = ({ openCloudFile, author }: ProjectGalleryProps) => {
 
   const curateCurrentDesign = () => {
     usePrimitiveStore.setState((state) => {
-      state.designTitle = 'house 4';
+      state.designTitle = 'house 3';
       state.curateDesignToProjectFlag = !state.curateDesignToProjectFlag;
     });
   };
@@ -142,61 +142,57 @@ const ProjectGallery = ({ openCloudFile, author }: ProjectGalleryProps) => {
           </Button>
         </div>
         {projectDesigns && (
-          <table style={{ border: '0px solid gray' }}>
-            <tbody>
-              <tr>
-                {projectDesigns.map((design, index) => {
-                  return (
-                    <td key={index}>
-                      <div style={{ display: 'block', marginTop: '4px' }}>
-                        <img
-                          width={'200px'}
-                          height={'auto'}
-                          onError={(event) => {
-                            (event.target as HTMLImageElement).src = ImageLoadFailureIcon;
-                          }}
-                          alt={design.title}
-                          title={design.title}
-                          src={design.thumbnailUrl}
-                          style={{
-                            cursor: 'pointer',
-                            borderRadius: selectedDesign === design ? '0' : '10px',
-                            border: selectedDesign === design ? '2px solid red' : 'none',
-                            marginRight: '4px',
-                          }}
-                          onClick={() => {
-                            setSelectedDesign(design);
-                            if (user.uid && openCloudFile) {
-                              openCloudFile(user.uid, design.title, true);
-                            }
-                          }}
-                        />
-                        {/* the following div is needed to wrap the image and text */}
-                        <div>
-                          <span
-                            style={{
-                              position: 'relative',
-                              left: '-90px',
-                              bottom: '24px',
-                              color: 'white',
-                              fontSize: '8px',
-                              fontWeight: 'bold',
-                            }}
-                          >
-                            {design.title
-                              ? design.title.length > 30
-                                ? design.title.substring(0, 30) + '...'
-                                : design.title
-                              : 'Unknown'}
-                          </span>
-                        </div>
-                      </div>
-                    </td>
-                  );
-                })}
-              </tr>
-            </tbody>
-          </table>
+          <List
+            style={{ width: '100%' }}
+            grid={{ column: 3, gutter: 4 }}
+            dataSource={projectDesigns}
+            renderItem={(design) => (
+              <List.Item>
+                <img
+                  width={'200px'}
+                  height={'auto'}
+                  onError={(event: any) => {
+                    (event.target as HTMLImageElement).src = ImageLoadFailureIcon;
+                  }}
+                  alt={design.title}
+                  title={design.title}
+                  src={design.thumbnailUrl}
+                  style={{
+                    cursor: 'pointer',
+                    borderRadius: selectedDesign === design ? '0' : '10px',
+                    border: selectedDesign === design ? '2px solid red' : 'none',
+                    marginLeft: '4px',
+                    marginRight: '4px',
+                  }}
+                  onClick={() => {
+                    setSelectedDesign(design);
+                    if (user.uid && openCloudFile) {
+                      openCloudFile(user.uid, design.title, true);
+                    }
+                  }}
+                />
+                {/* the following div is needed to wrap the image and text */}
+                <div>
+                  <span
+                    style={{
+                      position: 'relative',
+                      left: '-90px',
+                      bottom: '24px',
+                      color: 'white',
+                      fontSize: '8px',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    {design.title
+                      ? design.title.length > 30
+                        ? design.title.substring(0, 30) + '...'
+                        : design.title
+                      : 'Unknown'}
+                  </span>
+                </div>
+              </List.Item>
+            )}
+          />
         )}
       </ColumnWrapper>
     </Container>

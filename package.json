@@ -28,6 +28,7 @@
     "random-animal-name": "^0.1.1",
     "react": "^17.0.2",
     "react-beforeunload": "^2.5.2",
+    "react-split-pane": "^0.1.92",
     "react-color": "^2.19.3",
     "react-cookie-consent": "^6.3.0",
     "react-country-flag": "^3.0.2",

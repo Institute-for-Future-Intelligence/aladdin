@@ -46,6 +46,7 @@ import Simulations from './simulations';
 import { usePrimitiveStore } from './stores/commonPrimitive';
 import { Button } from 'antd';
 import ProjectGallery from './panels/projectGallery';
+import SplitPane from 'react-split-pane';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -342,47 +343,55 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       <Panels />
       <DropdownContextMenu>
         <div style={{ display: 'flex' }}>
-          {projectView && <ProjectGallery openCloudFile={loadDataFromFirebase} />}
-          <Canvas
-            ref={canvasRef}
-            shadows={true}
-            gl={{ preserveDrawingBuffer: true, logarithmicDepthBuffer: true }}
-            frameloop={'demand'}
-            style={{ height: 'calc(100vh - 72px)', width: projectView ? '50%' : '100%', backgroundColor: 'black' }}
+          <SplitPane
+            split={'vertical'}
+            minSize={projectView ? '25%' : 0}
+            defaultSize={projectView ? '50%' : 0}
+            style={{ height: 'calc(100vh - 72px)' }}
+            resizerStyle={{ cursor: 'col-resize', width: '6px', minWidth: '6px', background: 'lightgray' }}
           >
-            <PointerStyleController />
-            <CameraController />
-            <Lights />
-            <Ground />
-            <Auxiliary />
-            {/* somehow we have to use two suspense wrappers as follows */}
-            <Suspense fallback={null}>
-              <ElementsRenderer />
-            </Suspense>
-            <Suspense fallback={null}>
-              {axes && <Axes />}
-              <Sky theme={theme} />
-              <Heliodon />
-              {groundImage && <GroundImage />}
-              {/* <Obj/> */}
-            </Suspense>
-            <SceneRadiusCalculator />
-            <Simulations />
-            {evolutionMethod === EvolutionMethod.GENETIC_ALGORITHM &&
-              evolutionaryAlgorithmState.geneticAlgorithmParams.problem === DesignProblem.SOLAR_PANEL_TILT_ANGLE && (
-                <SolarPanelTiltAngleGa />
-              )}
-            {evolutionMethod === EvolutionMethod.GENETIC_ALGORITHM &&
-              evolutionaryAlgorithmState.geneticAlgorithmParams.problem === DesignProblem.SOLAR_PANEL_ARRAY && (
-                <SolarPanelArrayGa />
-              )}
-            {evolutionMethod === EvolutionMethod.PARTICLE_SWARM_OPTIMIZATION &&
-              evolutionaryAlgorithmState.particleSwarmOptimizationParams.problem ===
-                DesignProblem.SOLAR_PANEL_TILT_ANGLE && <SolarPanelTiltAnglePso />}
-            {evolutionMethod === EvolutionMethod.PARTICLE_SWARM_OPTIMIZATION &&
-              evolutionaryAlgorithmState.particleSwarmOptimizationParams.problem ===
-                DesignProblem.SOLAR_PANEL_ARRAY && <SolarPanelArrayPso />}
-          </Canvas>
+            <ProjectGallery openCloudFile={loadDataFromFirebase} />
+            <Canvas
+              ref={canvasRef}
+              shadows={true}
+              gl={{ preserveDrawingBuffer: true, logarithmicDepthBuffer: true }}
+              frameloop={'demand'}
+              style={{ height: '100%', width: '100%', backgroundColor: 'black' }}
+            >
+              <PointerStyleController />
+              <CameraController />
+              <Lights />
+              <Ground />
+              <Auxiliary />
+              {/* somehow we have to use two suspense wrappers as follows */}
+              <Suspense fallback={null}>
+                <ElementsRenderer />
+              </Suspense>
+              <Suspense fallback={null}>
+                {axes && <Axes />}
+                <Sky theme={theme} />
+                <Heliodon />
+                {groundImage && <GroundImage />}
+                {/* <Obj/> */}
+              </Suspense>
+              <SceneRadiusCalculator />
+              <Simulations />
+              {evolutionMethod === EvolutionMethod.GENETIC_ALGORITHM &&
+                evolutionaryAlgorithmState.geneticAlgorithmParams.problem === DesignProblem.SOLAR_PANEL_TILT_ANGLE && (
+                  <SolarPanelTiltAngleGa />
+                )}
+              {evolutionMethod === EvolutionMethod.GENETIC_ALGORITHM &&
+                evolutionaryAlgorithmState.geneticAlgorithmParams.problem === DesignProblem.SOLAR_PANEL_ARRAY && (
+                  <SolarPanelArrayGa />
+                )}
+              {evolutionMethod === EvolutionMethod.PARTICLE_SWARM_OPTIMIZATION &&
+                evolutionaryAlgorithmState.particleSwarmOptimizationParams.problem ===
+                  DesignProblem.SOLAR_PANEL_TILT_ANGLE && <SolarPanelTiltAnglePso />}
+              {evolutionMethod === EvolutionMethod.PARTICLE_SWARM_OPTIMIZATION &&
+                evolutionaryAlgorithmState.particleSwarmOptimizationParams.problem ===
+                  DesignProblem.SOLAR_PANEL_ARRAY && <SolarPanelArrayPso />}
+            </Canvas>
+          </SplitPane>
           <KeyboardListener
             canvas={canvasRef.current}
             set2DView={set2DView}
