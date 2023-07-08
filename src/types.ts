@@ -110,6 +110,7 @@ export interface ProjectInfo {
   readonly description: string;
   readonly type: ProjectType;
   readonly designs: Design[] | null;
+  readonly counter: number;
 }
 
 export interface ActionInfo {

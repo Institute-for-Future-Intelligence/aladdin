@@ -93,7 +93,6 @@ const ProjectGallery = ({ openCloudFile, author }: ProjectGalleryProps) => {
 
   const curateCurrentDesign = () => {
     usePrimitiveStore.setState((state) => {
-      state.designTitle = 'house 3';
       state.curateDesignToProjectFlag = !state.curateDesignToProjectFlag;
     });
   };

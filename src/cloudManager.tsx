@@ -38,6 +38,7 @@ import MainToolBar from './mainToolBar';
 import SaveCloudFileModal from './saveCloudFileModal';
 import ModelsGallery from './modelsGallery';
 import ProjectListPanel from './panels/projectListPanel';
+import FieldValue = firebase.firestore.FieldValue;
 
 export interface CloudManagerProps {
   viewOnly: boolean;
@@ -71,7 +72,6 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const createEmptyFile = useStore(Selector.createEmptyFile);
   const changed = useStore(Selector.changed);
   const localContentToImportAfterCloudFileUpdate = useStore(Selector.localContentToImportAfterCloudFileUpdate);
-  const undoManager = useStore(Selector.undoManager);
   const peopleModels = useStore(Selector.peopleModels);
   const createProjectFlag = usePrimitiveStore(Selector.createProjectFlag);
   const curateDesignToProjectFlag = usePrimitiveStore(Selector.curateDesignToProjectFlag);
@@ -182,6 +182,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           description: f.description,
           type: f.type,
           designs: f.designs,
+          counter: f.counter,
           action: '',
         });
       });
@@ -857,6 +858,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           const type = useStore.getState().projectType;
           const description = useStore.getState().projectDescription;
           const timestamp = new Date().getTime();
+          const counter = 0;
           fetchMyProjects().then(() => {
             let exist = false;
             if (myProjects.current) {
@@ -877,7 +879,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                     doc
                       .collection('projects')
                       .doc(t)
-                      .set({ timestamp, type, description })
+                      .set({ timestamp, type, description, counter })
                       .then(() => {})
                       .catch((error) => {
                         showError(i18n.t('message.CannotCreateNewProject', lang) + ': ' + error);
@@ -922,6 +924,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
             description: data.description,
             type: data.type,
             designs: data.designs,
+            counter: data.counter ?? 0,
           } as ProjectInfo);
         });
         return a;
@@ -950,12 +953,14 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     type: ProjectType,
     description: string,
     designs: Design[] | null,
+    designCounter: number,
   ) => {
     setCommonStore((state) => {
       state.projectTitle = title;
       state.projectType = type;
       state.projectDescription = description;
       state.projectDesigns = designs;
+      state.projectDesignCounter = designCounter;
       state.projectView = true;
     });
   };
@@ -1035,51 +1040,44 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   };
 
   const curateDesignToProject = () => {
-    const ft = usePrimitiveStore.getState().designTitle?.trim();
-    if (ft && ft.length > 0) {
-      if (user.uid) {
-        const projectTitle = useStore.getState().projectTitle;
-        if (projectTitle) {
-          setLoading(true);
-          fetchMyCloudFiles().then(() => {
-            let exist = false;
-            if (cloudFiles.current) {
-              for (const p of cloudFiles.current) {
-                if (p.fileName === ft) {
-                  exist = true;
-                  break;
-                }
-              }
+    const projectTitle = useStore.getState().projectTitle;
+    if (projectTitle && user.uid) {
+      const counter = useStore.getState().projectDesignCounter ?? 0;
+      const ft = projectTitle + ' ' + counter;
+      setLoading(true);
+      fetchMyCloudFiles().then(() => {
+        let exist = false;
+        if (cloudFiles.current) {
+          for (const p of cloudFiles.current) {
+            if (p.fileName === ft) {
+              exist = true;
+              break;
             }
-            if (exist) {
-              Modal.confirm({
-                title: i18n.t('message.CloudFileWithTitleExistsDoYouWantToOverwrite', lang),
-                icon: <QuestionCircleOutlined />,
-                onOk: () => {
-                  saveToCloudWithoutCheckingExistence(ft, true);
-                  addDesignToProject(projectTitle, ft);
-                },
-                onCancel: () => {
-                  setCommonStore((state) => {
-                    state.showCloudFileTitleDialogFlag = !state.showCloudFileTitleDialogFlag;
-                    state.showCloudFileTitleDialog = true;
-                  });
-                },
-                okText: i18n.t('word.Yes', lang),
-                cancelText: i18n.t('word.No', lang),
-              });
-            } else {
+          }
+        }
+        if (exist) {
+          Modal.confirm({
+            title: i18n.t('message.CloudFileWithTitleExistsDoYouWantToOverwrite', lang),
+            icon: <QuestionCircleOutlined />,
+            onOk: () => {
               saveToCloudWithoutCheckingExistence(ft, true);
               addDesignToProject(projectTitle, ft);
-            }
+            },
+            onCancel: () => {
+              setCommonStore((state) => {
+                state.showCloudFileTitleDialogFlag = !state.showCloudFileTitleDialogFlag;
+                state.showCloudFileTitleDialog = true;
+              });
+            },
+            okText: i18n.t('word.Yes', lang),
+            cancelText: i18n.t('word.No', lang),
           });
         } else {
-          showError(i18n.t('menu.file.SavingAbortedMustHaveValidTitle', lang) + '.');
+          saveToCloudWithoutCheckingExistence(ft, true);
+          addDesignToProject(projectTitle, ft);
         }
-      }
+      });
       setTitleDialogVisible(false);
-    } else {
-      showError(i18n.t('menu.file.SavingAbortedMustHaveValidTitle', lang) + '.');
     }
   };
 
@@ -1115,13 +1113,19 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                     doc
                       .collection('projects')
                       .doc(projectTitle)
-                      .update({ designs: firebase.firestore.FieldValue.arrayUnion(design) })
+                      .update({
+                        designs: firebase.firestore.FieldValue.arrayUnion(design),
+                        counter: FieldValue.increment(1),
+                      })
                       .then(() => {})
                       .catch((error) => {
                         showError(i18n.t('message.CannotAddDesignToProject', lang) + ': ' + error);
                       })
                       .finally(() => {
                         setLoading(false);
+                        setCommonStore((state) => {
+                          state.projectDesigns?.push(design);
+                        });
                       });
                   }
                 } catch (error) {

@@ -116,6 +116,7 @@ export interface CommonStoreState {
   projectTitle: string | null;
   projectDescription: string | null;
   projectDesigns: Design[] | null;
+  projectDesignCounter: number;
   notes: string[];
   user: User;
   language: string;
@@ -557,6 +558,7 @@ export const useStore = create<CommonStoreState>(
           projectTitle: null,
           projectDescription: null,
           projectDesigns: null,
+          projectDesignCounter: 0,
           notes: [],
           user: {} as User,
           language: 'en',

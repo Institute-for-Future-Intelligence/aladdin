@@ -47,6 +47,7 @@ import { usePrimitiveStore } from './stores/commonPrimitive';
 import { Button } from 'antd';
 import ProjectGallery from './panels/projectGallery';
 import SplitPane from 'react-split-pane';
+import { throttle } from 'lodash';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -72,6 +73,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const evolutionaryAlgorithmState = useStore(Selector.evolutionaryAlgorithmState);
 
   const [initializing, setInitializing] = useState<boolean>(true);
+  const [canvasRelativeWidth, setCanvasRelativeWidth] = useState<number>(50);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const lang = { lng: language };
@@ -194,6 +196,52 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   console.log('x');
 
   const isCloudFileOwner = user.uid && new URLSearchParams(window.location.search).get('userid') === user.uid;
+
+  const createCanvas = () => {
+    return (
+      <Canvas
+        ref={canvasRef}
+        shadows={true}
+        gl={{ preserveDrawingBuffer: true, logarithmicDepthBuffer: true }}
+        frameloop={'demand'}
+        style={{ height: '100%', width: '100%', backgroundColor: 'black' }}
+      >
+        <PointerStyleController />
+        <CameraController />
+        <Lights />
+        <Ground />
+        <Auxiliary />
+        {/* somehow we have to use two suspense wrappers as follows */}
+        <Suspense fallback={null}>
+          <ElementsRenderer />
+        </Suspense>
+        <Suspense fallback={null}>
+          {axes && <Axes />}
+          <Sky theme={theme} />
+          <Heliodon />
+          {groundImage && <GroundImage />}
+          {/* <Obj/> */}
+        </Suspense>
+        <SceneRadiusCalculator />
+        <Simulations />
+        {evolutionMethod === EvolutionMethod.GENETIC_ALGORITHM &&
+          evolutionaryAlgorithmState.geneticAlgorithmParams.problem === DesignProblem.SOLAR_PANEL_TILT_ANGLE && (
+            <SolarPanelTiltAngleGa />
+          )}
+        {evolutionMethod === EvolutionMethod.GENETIC_ALGORITHM &&
+          evolutionaryAlgorithmState.geneticAlgorithmParams.problem === DesignProblem.SOLAR_PANEL_ARRAY && (
+            <SolarPanelArrayGa />
+          )}
+        {evolutionMethod === EvolutionMethod.PARTICLE_SWARM_OPTIMIZATION &&
+          evolutionaryAlgorithmState.particleSwarmOptimizationParams.problem ===
+            DesignProblem.SOLAR_PANEL_TILT_ANGLE && <SolarPanelTiltAnglePso />}
+        {evolutionMethod === EvolutionMethod.PARTICLE_SWARM_OPTIMIZATION &&
+          evolutionaryAlgorithmState.particleSwarmOptimizationParams.problem === DesignProblem.SOLAR_PANEL_ARRAY && (
+            <SolarPanelArrayPso />
+          )}
+      </Canvas>
+    );
+  };
 
   return (
     <div className="App">
@@ -342,55 +390,30 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       <CloudManager viewOnly={viewOnly} canvas={canvasRef.current} />
       <Panels />
       <DropdownContextMenu>
-        <div style={{ display: 'flex' }}>
+        <div>
           <SplitPane
             split={'vertical'}
-            minSize={projectView ? '25%' : 0}
             defaultSize={projectView ? '50%' : 0}
-            style={{ height: 'calc(100vh - 72px)' }}
-            resizerStyle={{ cursor: 'col-resize', width: '6px', minWidth: '6px', background: 'lightgray' }}
+            onChange={throttle((size) => {
+              setCanvasRelativeWidth(Math.round(100 - (size / window.innerWidth) * 100));
+            }, 10)}
+            style={{ height: 'calc(100vh - 72px)', display: 'flex' }}
+            pane1Style={{
+              width: projectView ? 100 - canvasRelativeWidth + '%' : '0',
+              minWidth: projectView ? '25%' : 0,
+              maxWidth: projectView ? '75%' : 0,
+            }}
+            pane2Style={{ width: projectView ? canvasRelativeWidth + '%' : '100%' }}
+            resizerStyle={{
+              cursor: 'col-resize',
+              width: projectView ? '6px' : 0,
+              minWidth: projectView ? '6px' : 0,
+              maxWidth: projectView ? '6px' : 0,
+              background: 'lightgray',
+            }}
           >
             <ProjectGallery openCloudFile={loadDataFromFirebase} />
-            <Canvas
-              ref={canvasRef}
-              shadows={true}
-              gl={{ preserveDrawingBuffer: true, logarithmicDepthBuffer: true }}
-              frameloop={'demand'}
-              style={{ height: '100%', width: '100%', backgroundColor: 'black' }}
-            >
-              <PointerStyleController />
-              <CameraController />
-              <Lights />
-              <Ground />
-              <Auxiliary />
-              {/* somehow we have to use two suspense wrappers as follows */}
-              <Suspense fallback={null}>
-                <ElementsRenderer />
-              </Suspense>
-              <Suspense fallback={null}>
-                {axes && <Axes />}
-                <Sky theme={theme} />
-                <Heliodon />
-                {groundImage && <GroundImage />}
-                {/* <Obj/> */}
-              </Suspense>
-              <SceneRadiusCalculator />
-              <Simulations />
-              {evolutionMethod === EvolutionMethod.GENETIC_ALGORITHM &&
-                evolutionaryAlgorithmState.geneticAlgorithmParams.problem === DesignProblem.SOLAR_PANEL_TILT_ANGLE && (
-                  <SolarPanelTiltAngleGa />
-                )}
-              {evolutionMethod === EvolutionMethod.GENETIC_ALGORITHM &&
-                evolutionaryAlgorithmState.geneticAlgorithmParams.problem === DesignProblem.SOLAR_PANEL_ARRAY && (
-                  <SolarPanelArrayGa />
-                )}
-              {evolutionMethod === EvolutionMethod.PARTICLE_SWARM_OPTIMIZATION &&
-                evolutionaryAlgorithmState.particleSwarmOptimizationParams.problem ===
-                  DesignProblem.SOLAR_PANEL_TILT_ANGLE && <SolarPanelTiltAnglePso />}
-              {evolutionMethod === EvolutionMethod.PARTICLE_SWARM_OPTIMIZATION &&
-                evolutionaryAlgorithmState.particleSwarmOptimizationParams.problem ===
-                  DesignProblem.SOLAR_PANEL_ARRAY && <SolarPanelArrayPso />}
-            </Canvas>
+            {createCanvas()}
           </SplitPane>
           <KeyboardListener
             canvas={canvasRef.current}

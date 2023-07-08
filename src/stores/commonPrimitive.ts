@@ -22,7 +22,6 @@ export interface PrimitiveStoreState {
   curateDesignToProjectFlag: boolean;
   showProjectsFlag: boolean;
   showProjectListPanel: boolean;
-  designTitle: string | null;
 
   userCount: number;
   showCloudFilePanel: boolean;
@@ -134,7 +133,6 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
     curateDesignToProjectFlag: false,
     showProjectsFlag: false,
     showProjectListPanel: false,
-    designTitle: null,
 
     userCount: 0,
     showCloudFilePanel: false,

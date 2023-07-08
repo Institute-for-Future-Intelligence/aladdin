@@ -504,6 +504,8 @@ export const projectDescription = (state: CommonStoreState) => state.projectDesc
 
 export const projectDesigns = (state: CommonStoreState) => state.projectDesigns;
 
+export const projectDesignCounter = (state: CommonStoreState) => state.projectDesignCounter;
+
 export const showProjectListPanel = (state: PrimitiveStoreState) => state.showProjectListPanel;
 
 export const showModelsGallery = (state: PrimitiveStoreState) => state.showModelsGallery;
