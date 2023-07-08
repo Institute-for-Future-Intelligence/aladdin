@@ -195,6 +195,7 @@ export const i18n_en = {
       CannotDeleteProject: 'Cannot delete the project',
       CannotRenameProject: 'Cannot rename the project',
       CannotAddDesignToProject: 'Cannot add this design to the project',
+      CannotRemoveDesignFromProject: 'Cannot remove this design from the project',
       TitleUsedChooseDifferentOne: 'This title has been used. Choose a different one',
       CloudFileWithTitleExistsDoYouWantToOverwrite: 'A cloud file with the title exists. Do you want to overwrite it?',
       CloudFileNotFound: 'The cloud file was not found',

@@ -880,7 +880,11 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                       .collection('projects')
                       .doc(t)
                       .set({ timestamp, type, description, counter })
-                      .then(() => {})
+                      .then(() => {
+                        setCommonStore((state) => {
+                          state.projectView = true;
+                        });
+                      })
                       .catch((error) => {
                         showError(i18n.t('message.CannotCreateNewProject', lang) + ': ' + error);
                       })
@@ -1125,6 +1129,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                         setLoading(false);
                         setCommonStore((state) => {
                           state.projectDesigns?.push(design);
+                          state.projectDesignCounter++;
                         });
                       });
                   }
@@ -1483,6 +1488,25 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       )}
     </>
   );
+};
+
+export const removeDesignFromProject = (userid: string, projectTitle: string, design: Design) => {
+  const language = useStore.getState().language;
+  const lang = { lng: language };
+
+  return firebase
+    .firestore()
+    .collection('users')
+    .doc(userid)
+    .collection('projects')
+    .doc(projectTitle)
+    .update({
+      designs: firebase.firestore.FieldValue.arrayRemove(design),
+    })
+    .then(() => {})
+    .catch((error) => {
+      showError(i18n.t('message.CannotRemoveDesignFromProject', lang) + ': ' + error);
+    });
 };
 
 export const loadDataFromFirebase = (userid: string, title: string, popState?: boolean, viewOnly?: boolean) => {

@@ -21,7 +21,7 @@ import AcceptCookie from './acceptCookie';
 import GroundImage from './views/groundImage';
 import DropdownContextMenu from './components/contextMenu';
 import { DesignProblem, EvolutionMethod } from './types';
-import CloudManager, { loadDataFromFirebase } from './cloudManager';
+import CloudManager, { loadDataFromFirebase, removeDesignFromProject } from './cloudManager';
 import ActionLogger from './actionLogger';
 import Lights from './lights';
 import { Auxiliary } from './auxiliary';
@@ -409,12 +409,14 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
               width: projectView ? '6px' : 0,
               minWidth: projectView ? '6px' : 0,
               maxWidth: projectView ? '6px' : 0,
-              background: 'lightgray',
+              // background: 'lightgray',
+              backgroundImage: 'linear-gradient(to right, white, gray)',
             }}
           >
             <ProjectGallery
               width={(1 - canvasRelativeWidth * 0.01) * window.innerWidth}
               openCloudFile={loadDataFromFirebase}
+              deleteDesign={removeDesignFromProject}
             />
             {createCanvas()}
           </SplitPane>

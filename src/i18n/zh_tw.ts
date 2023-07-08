@@ -195,6 +195,7 @@ export const i18n_zh_tw = {
       CannotDeleteProject: '無法刪除項目',
       CannotRenameProject: '無法給項目改名',
       CannotAddDesignToProject: '無法把此設計加到項目裡',
+      CannotRemoveDesignFromProject: '無法把此設計從項目裡刪除',
       TitleUsedChooseDifferentOne: '此標題已經被使用, 請採用不同的標題',
       CloudFileWithTitleExistsDoYouWantToOverwrite: '使用此標題的雲文檔已經存在，您確定要覆蓋它嗎？',
       CloudFileNotFound: '找不到此云端文檔',

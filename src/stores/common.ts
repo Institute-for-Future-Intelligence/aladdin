@@ -4197,6 +4197,7 @@ export const useStore = create<CommonStoreState>(
           'projectTitle',
           'projectDescription',
           'projectDesigns',
+          'projectDesignCounter',
           'notes',
           'user',
           'sceneRadius',

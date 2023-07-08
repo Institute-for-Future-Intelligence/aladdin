@@ -69,10 +69,11 @@ const Header = styled.div`
 export interface ProjectGalleryProps {
   width: number;
   openCloudFile?: (userid: string, title: string, popState?: boolean) => void;
+  deleteDesign?: (userid: string, projectTitle: string, design: Design) => void;
   author?: string; // if undefined, the user is the owner of models
 }
 
-const ProjectGallery = ({ width, openCloudFile, author }: ProjectGalleryProps) => {
+const ProjectGallery = ({ width, openCloudFile, deleteDesign, author }: ProjectGalleryProps) => {
   const setCommonStore = useStore(Selector.set);
   const user = useStore(Selector.user);
   const language = useStore(Selector.language);
@@ -96,6 +97,26 @@ const ProjectGallery = ({ width, openCloudFile, author }: ProjectGalleryProps) =
     usePrimitiveStore.setState((state) => {
       state.curateDesignToProjectFlag = !state.curateDesignToProjectFlag;
     });
+  };
+
+  const removeSelectedDesign = () => {
+    if (user.uid && projectTitle && deleteDesign && selectedDesign) {
+      deleteDesign(user.uid, projectTitle, selectedDesign);
+      setCommonStore((state) => {
+        if (state.projectDesigns) {
+          let index = -1;
+          for (const [i, e] of state.projectDesigns.entries()) {
+            if (e.title === selectedDesign.title) {
+              index = i;
+              break;
+            }
+          }
+          if (index >= 0) {
+            state.projectDesigns?.splice(index, 1);
+          }
+        }
+      });
+    }
   };
 
   const imageWidth = Math.round(width / 4 - 6);
@@ -138,7 +159,7 @@ const ProjectGallery = ({ width, openCloudFile, author }: ProjectGalleryProps) =
             <ImportOutlined title={i18n.t('projectPanel.CurateCurrentDesign', lang)} />
             {i18n.t('projectPanel.CurateCurrentDesign', lang)}
           </Button>
-          <Button>
+          <Button onClick={removeSelectedDesign}>
             <DeleteOutlined title={i18n.t('projectPanel.RemoveSelectedDesign', lang)} />
             {i18n.t('projectPanel.RemoveSelectedDesign', lang)}
           </Button>
@@ -149,7 +170,7 @@ const ProjectGallery = ({ width, openCloudFile, author }: ProjectGalleryProps) =
             grid={{ column: 4, gutter: 4 }}
             dataSource={projectDesigns}
             renderItem={(design, index) => (
-              <List.Item style={{ marginBottom: '-16px' }}>
+              <List.Item style={{ marginBottom: '-8px' }}>
                 <img
                   width={imageWidth + 'px'}
                   height={'auto'}
@@ -173,24 +194,22 @@ const ProjectGallery = ({ width, openCloudFile, author }: ProjectGalleryProps) =
                     }
                   }}
                 />
-                {/* the following div is needed to wrap the image and text */}
-                <div>
-                  <span
-                    style={{
-                      position: 'relative',
-                      left: -(imageWidth / 2 - 20) + 'px',
-                      bottom: '24px',
-                      color: 'white',
-                      fontSize: '8px',
-                      fontWeight: 'bold',
-                    }}
-                  >
-                    {design.title
-                      ? design.title.length > 30
-                        ? design.title.substring(0, 30) + '...'
-                        : design.title
-                      : 'Unknown'}
-                  </span>
+                <div
+                  style={{
+                    position: 'relative',
+                    left: '8px',
+                    textAlign: 'left',
+                    bottom: '18px',
+                    color: 'white',
+                    fontSize: '8px',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  {design.title
+                    ? design.title.length > 30
+                      ? design.title.substring(0, 30) + '...'
+                      : design.title
+                    : 'Unknown'}
                 </div>
               </List.Item>
             )}
