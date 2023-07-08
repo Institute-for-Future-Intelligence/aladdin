@@ -67,11 +67,12 @@ const Header = styled.div`
 `;
 
 export interface ProjectGalleryProps {
+  width: number;
   openCloudFile?: (userid: string, title: string, popState?: boolean) => void;
   author?: string; // if undefined, the user is the owner of models
 }
 
-const ProjectGallery = ({ openCloudFile, author }: ProjectGalleryProps) => {
+const ProjectGallery = ({ width, openCloudFile, author }: ProjectGalleryProps) => {
   const setCommonStore = useStore(Selector.set);
   const user = useStore(Selector.user);
   const language = useStore(Selector.language);
@@ -96,6 +97,8 @@ const ProjectGallery = ({ openCloudFile, author }: ProjectGalleryProps) => {
       state.curateDesignToProjectFlag = !state.curateDesignToProjectFlag;
     });
   };
+
+  const imageWidth = Math.round(width / 4 - 6);
 
   return (
     <Container>
@@ -143,12 +146,12 @@ const ProjectGallery = ({ openCloudFile, author }: ProjectGalleryProps) => {
         {projectDesigns && (
           <List
             style={{ width: '100%' }}
-            grid={{ column: 3, gutter: 4 }}
+            grid={{ column: 4, gutter: 4 }}
             dataSource={projectDesigns}
-            renderItem={(design) => (
-              <List.Item>
+            renderItem={(design, index) => (
+              <List.Item style={{ marginBottom: '-16px' }}>
                 <img
-                  width={'200px'}
+                  width={imageWidth + 'px'}
                   height={'auto'}
                   onError={(event: any) => {
                     (event.target as HTMLImageElement).src = ImageLoadFailureIcon;
@@ -160,8 +163,8 @@ const ProjectGallery = ({ openCloudFile, author }: ProjectGalleryProps) => {
                     cursor: 'pointer',
                     borderRadius: selectedDesign === design ? '0' : '10px',
                     border: selectedDesign === design ? '2px solid red' : 'none',
-                    marginLeft: '4px',
-                    marginRight: '4px',
+                    paddingLeft: index % 4 === 0 ? '4px' : 0,
+                    paddingRight: index % 4 === 3 ? '4px' : 0,
                   }}
                   onClick={() => {
                     setSelectedDesign(design);
@@ -175,7 +178,7 @@ const ProjectGallery = ({ openCloudFile, author }: ProjectGalleryProps) => {
                   <span
                     style={{
                       position: 'relative',
-                      left: '-90px',
+                      left: -(imageWidth / 2 - 20) + 'px',
                       bottom: '24px',
                       color: 'white',
                       fontSize: '8px',

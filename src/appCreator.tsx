@@ -396,7 +396,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
             defaultSize={projectView ? '50%' : 0}
             onChange={throttle((size) => {
               setCanvasRelativeWidth(Math.round(100 - (size / window.innerWidth) * 100));
-            }, 10)}
+            }, 50)}
             style={{ height: 'calc(100vh - 72px)', display: 'flex' }}
             pane1Style={{
               width: projectView ? 100 - canvasRelativeWidth + '%' : '0',
@@ -412,7 +412,10 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
               background: 'lightgray',
             }}
           >
-            <ProjectGallery openCloudFile={loadDataFromFirebase} />
+            <ProjectGallery
+              width={(1 - canvasRelativeWidth * 0.01) * window.innerWidth}
+              openCloudFile={loadDataFromFirebase}
+            />
             {createCanvas()}
           </SplitPane>
           <KeyboardListener
