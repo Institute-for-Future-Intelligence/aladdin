@@ -11,7 +11,8 @@ import i18n from '../i18n/i18n';
 import { CloseOutlined, DeleteOutlined, ImportOutlined } from '@ant-design/icons';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import ImageLoadFailureIcon from '../assets/image_load_failure.png';
-import { Design } from '../types';
+import { DatumEntry, Design } from '../types';
+import { ParallelCoordinates } from '../components/parallelCoordinates';
 
 const Container = styled.div`
   position: relative;
@@ -62,6 +63,14 @@ const Header = styled.div`
 const SubHeader = styled.div`
   width: 100%;
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const SubContainer = styled.div`
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   justify-content: space-between;
   align-items: center;
 `;
@@ -119,7 +128,14 @@ const ProjectGallery = ({ width, openCloudFile, deleteDesign, author }: ProjectG
     }
   };
 
-  const imageWidth = Math.round(width / 4 - 6);
+  const imageWidth = Math.round(width / 4 - 12);
+  const data: DatumEntry[] = [];
+  data.push({ a: 1, b: 4, c: 1, d: 8, e: 4, group: 'x' } as DatumEntry);
+  data.push({ a: 7, b: 1, c: 2, d: 1, e: 3, group: 'x' } as DatumEntry);
+  data.push({ a: 4, b: 5, c: 7, d: 6, e: 1, group: 'y' } as DatumEntry);
+  data.push({ a: 2, b: 1, c: 2, d: 4, e: 7, group: 'y' } as DatumEntry);
+  data.push({ a: 3, b: 2, c: 6, d: 2, e: 4, group: 'y' } as DatumEntry);
+  const variables: string[] = ['a', 'b', 'c', 'd', 'e'];
 
   return (
     <Container>
@@ -186,53 +202,65 @@ const ProjectGallery = ({ width, openCloudFile, deleteDesign, author }: ProjectG
           </Collapse.Panel>
         </Collapse>
         {projectDesigns && (
-          <List
-            style={{ width: '100%', paddingLeft: '4px', paddingRight: '4px' }}
-            grid={{ column: 4, gutter: 4 }}
-            dataSource={projectDesigns}
-            renderItem={(design, index) => (
-              <List.Item style={{ marginBottom: '-8px' }}>
-                <img
-                  width={imageWidth + 'px'}
-                  height={'auto'}
-                  onError={(event: any) => {
-                    (event.target as HTMLImageElement).src = ImageLoadFailureIcon;
-                  }}
-                  alt={design.title}
-                  title={design.title}
-                  src={design.thumbnailUrl}
-                  style={{
-                    cursor: 'pointer',
-                    borderRadius: selectedDesign === design ? '0' : '10px',
-                    border: selectedDesign === design ? '2px solid red' : 'none',
-                  }}
-                  onClick={() => {
-                    setSelectedDesign(design);
-                    if (user.uid && openCloudFile) {
-                      openCloudFile(user.uid, design.title, true);
-                    }
-                  }}
-                />
-                <div
-                  style={{
-                    position: 'relative',
-                    left: '8px',
-                    textAlign: 'left',
-                    bottom: '18px',
-                    color: 'white',
-                    fontSize: '8px',
-                    fontWeight: 'bold',
-                  }}
-                >
-                  {design.title
-                    ? design.title.length > 30
-                      ? design.title.substring(0, 30) + '...'
-                      : design.title
-                    : 'Unknown'}
-                </div>
-              </List.Item>
-            )}
-          />
+          <SubContainer>
+            <List
+              style={{
+                width: '100%',
+                height: 'calc(100% - 240px)',
+                paddingLeft: '4px',
+                paddingRight: '4px',
+                overflowX: 'hidden',
+                overflowY: 'auto',
+              }}
+              grid={{ column: 4, gutter: 2 }}
+              dataSource={projectDesigns}
+              renderItem={(design, index) => (
+                <List.Item style={{ marginBottom: '-6px' }}>
+                  <img
+                    width={imageWidth + 'px'}
+                    height={'auto'}
+                    onError={(event: any) => {
+                      (event.target as HTMLImageElement).src = ImageLoadFailureIcon;
+                    }}
+                    alt={design.title}
+                    title={design.title}
+                    src={design.thumbnailUrl}
+                    style={{
+                      cursor: 'pointer',
+                      borderRadius: selectedDesign === design ? '0' : '10px',
+                      border: selectedDesign === design ? '2px solid red' : 'none',
+                    }}
+                    onClick={() => {
+                      setSelectedDesign(design);
+                      if (user.uid && openCloudFile) {
+                        openCloudFile(user.uid, design.title, true);
+                      }
+                    }}
+                  />
+                  <div
+                    style={{
+                      position: 'relative',
+                      left: '8px',
+                      textAlign: 'left',
+                      bottom: '18px',
+                      color: 'white',
+                      fontSize: '8px',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    {design.title
+                      ? design.title.length > 30
+                        ? design.title.substring(0, 30) + '...'
+                        : design.title
+                      : 'Unknown'}
+                  </div>
+                </List.Item>
+              )}
+            />
+            <div style={{ paddingBottom: '100px' }}>
+              <ParallelCoordinates width={width} height={200} data={data} variables={variables} />
+            </div>
+          </SubContainer>
         )}
       </ColumnWrapper>
     </Container>
