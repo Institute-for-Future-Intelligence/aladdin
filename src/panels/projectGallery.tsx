@@ -57,13 +57,13 @@ const Header = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+`;
 
-  svg.icon {
-    height: 16px;
-    width: 16px;
-    padding: 8px;
-    fill: #666;
-  }
+const SubHeader = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 export interface ProjectGalleryProps {
@@ -124,7 +124,7 @@ const ProjectGallery = ({ width, openCloudFile, deleteDesign, author }: ProjectG
   return (
     <Container>
       <ColumnWrapper>
-        <Header className="handle">
+        <Header>
           <span>{i18n.t('projectPanel.Project', lang) + ': ' + projectTitle}</span>
           <span
             style={{ cursor: 'pointer' }}
@@ -140,13 +140,44 @@ const ProjectGallery = ({ width, openCloudFile, deleteDesign, author }: ProjectG
         </Header>
         <Collapse>
           <Collapse.Panel
+            style={{ backgroundColor: 'white' }}
             key={'1'}
             header={
-              i18n.t('projectPanel.ProjectDescription', lang) +
-              ' | ' +
-              i18n.t('projectPanel.ProjectType', lang) +
-              ': ' +
-              projectType
+              <SubHeader>
+                <span>
+                  {i18n.t('projectPanel.ProjectDescription', lang) +
+                    ' | ' +
+                    i18n.t('projectPanel.ProjectType', lang) +
+                    ': ' +
+                    projectType}
+                </span>
+                <span>
+                  <Button
+                    style={{ border: 'none', padding: '4px' }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      curateCurrentDesign();
+                    }}
+                  >
+                    <ImportOutlined
+                      style={{ fontSize: '24px', color: 'gray' }}
+                      title={i18n.t('projectPanel.CurateCurrentDesign', lang)}
+                    />
+                  </Button>
+                  <Button
+                    style={{ border: 'none', padding: '4px' }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeSelectedDesign();
+                    }}
+                  >
+                    <DeleteOutlined
+                      style={{ fontSize: '24px', color: 'gray' }}
+                      title={i18n.t('projectPanel.RemoveSelectedDesign', lang)}
+                    />
+                  </Button>
+                </span>
+              </SubHeader>
             }
           >
             <Descriptions style={{ paddingLeft: '10px', textAlign: 'left' }}>
@@ -154,19 +185,9 @@ const ProjectGallery = ({ width, openCloudFile, deleteDesign, author }: ProjectG
             </Descriptions>
           </Collapse.Panel>
         </Collapse>
-        <div style={{ marginTop: '10px', marginBottom: '10px' }}>
-          <Button style={{ marginRight: '10px' }} onClick={curateCurrentDesign}>
-            <ImportOutlined title={i18n.t('projectPanel.CurateCurrentDesign', lang)} />
-            {i18n.t('projectPanel.CurateCurrentDesign', lang)}
-          </Button>
-          <Button onClick={removeSelectedDesign}>
-            <DeleteOutlined title={i18n.t('projectPanel.RemoveSelectedDesign', lang)} />
-            {i18n.t('projectPanel.RemoveSelectedDesign', lang)}
-          </Button>
-        </div>
         {projectDesigns && (
           <List
-            style={{ width: '100%' }}
+            style={{ width: '100%', paddingLeft: '4px', paddingRight: '4px' }}
             grid={{ column: 4, gutter: 4 }}
             dataSource={projectDesigns}
             renderItem={(design, index) => (
@@ -184,8 +205,6 @@ const ProjectGallery = ({ width, openCloudFile, deleteDesign, author }: ProjectG
                     cursor: 'pointer',
                     borderRadius: selectedDesign === design ? '0' : '10px',
                     border: selectedDesign === design ? '2px solid red' : 'none',
-                    paddingLeft: index % 4 === 0 ? '4px' : 0,
-                    paddingRight: index % 4 === 3 ? '4px' : 0,
                   }}
                   onClick={() => {
                     setSelectedDesign(design);
