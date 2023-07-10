@@ -316,7 +316,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
           </span>
         )}
       </div>
-      {viewOnly || projectView ? (
+      {viewOnly ? (
         <div
           style={{
             position: 'absolute',
@@ -348,7 +348,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
           <img
             alt="IFI Logo"
             src={ifiLogo}
-            height="40px"
+            height={projectView ? '24px' : '40px'}
             style={{
               position: 'absolute',
               cursor: 'pointer',
@@ -364,11 +364,17 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
             style={{
               position: 'absolute',
               bottom: '4px',
-              left: '44px',
+              left: projectView ? '24px' : '44px',
               zIndex: 999,
               fontSize: '10px',
               userSelect: 'none',
-              color: groundImage ? (groundImageType !== 'roadmap' ? 'antiquewhite' : 'darkslategrey') : 'antiquewhite',
+              color: groundImage
+                ? groundImageType !== 'roadmap'
+                  ? 'antiquewhite'
+                  : 'darkslategrey'
+                : projectView
+                ? 'darkslategrey'
+                : 'antiquewhite',
             }}
           >
             &nbsp;&nbsp; &copy;{new Date().getFullYear()} {i18n.t('name.IFI', lang)}
@@ -409,12 +415,11 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
               width: projectView ? '6px' : 0,
               minWidth: projectView ? '6px' : 0,
               maxWidth: projectView ? '6px' : 0,
-              // background: 'lightgray',
               backgroundImage: 'linear-gradient(to right, white, gray)',
             }}
           >
             <ProjectGallery
-              width={(1 - canvasRelativeWidth * 0.01) * window.innerWidth}
+              relativeWidth={1 - canvasRelativeWidth * 0.01}
               openCloudFile={loadDataFromFirebase}
               deleteDesign={removeDesignFromProject}
             />

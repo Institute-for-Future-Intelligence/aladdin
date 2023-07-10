@@ -6,6 +6,7 @@ import * as d3Scale from 'd3-scale';
 import * as d3Shape from 'd3-shape';
 import { VerticalAxis } from './VerticalAxis';
 import { DatumEntry } from '../types';
+import React from 'react';
 
 const MARGIN = { top: 60, right: 40, bottom: 30, left: 40 };
 
@@ -20,7 +21,7 @@ type ParallelCoordinatesProps = {
 
 type YScale = d3Scale.ScaleLinear<number, number>;
 
-export const ParallelCoordinates = ({ width, height, data, variables }: ParallelCoordinatesProps) => {
+const ParallelCoordinates = ({ width, height, data, variables }: ParallelCoordinatesProps) => {
   const boundsWidth = width - MARGIN.right - MARGIN.left;
   const boundsHeight = height - MARGIN.top - MARGIN.bottom;
 
@@ -64,7 +65,7 @@ export const ParallelCoordinates = ({ width, height, data, variables }: Parallel
     const yScale = yScales[variable];
     return (
       <g key={i} transform={'translate(' + xScale(variable) + ',0)'}>
-        <VerticalAxis yScale={yScale} pixelsPerTick={40} name={variable} />
+        <VerticalAxis yScale={yScale} tickLength={40} name={variable} />
       </g>
     );
   });
@@ -78,3 +79,5 @@ export const ParallelCoordinates = ({ width, height, data, variables }: Parallel
     </svg>
   );
 };
+
+export default React.memo(ParallelCoordinates);

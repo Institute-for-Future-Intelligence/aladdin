@@ -883,6 +883,8 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                       .then(() => {
                         setCommonStore((state) => {
                           state.projectView = true;
+                          state.projectDesignCounter = 0;
+                          state.projectDesigns = [];
                         });
                       })
                       .catch((error) => {

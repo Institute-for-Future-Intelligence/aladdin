@@ -6,24 +6,24 @@ import { useMemo } from 'react';
 import { ScaleLinear } from 'd3-scale';
 
 type VerticalAxisProps = {
-  yScale: ScaleLinear<number, number>;
-  pixelsPerTick: number;
   name: string;
+  yScale: ScaleLinear<number, number>;
+  tickLength: number;
 };
 
-const TICK_LENGTH = 3;
+const DEFAULT_TICK_LENGTH = 5;
 
-export const VerticalAxis = ({ yScale, pixelsPerTick, name }: VerticalAxisProps) => {
+export const VerticalAxis = ({ yScale, tickLength, name }: VerticalAxisProps) => {
   const range = yScale.range();
 
   const ticks = useMemo(() => {
     const height = range[0] - range[1];
-    const numberOfTicksTarget = Math.floor(height / pixelsPerTick);
-    return yScale.ticks(numberOfTicksTarget).map((value) => ({
+    const numberOfTicks = Math.floor(height / tickLength);
+    return yScale.ticks(numberOfTicks).map((value) => ({
       value,
       yOffset: yScale(value),
     }));
-  }, [yScale, pixelsPerTick]);
+  }, [yScale, tickLength]);
 
   return (
     <>
@@ -46,7 +46,7 @@ export const VerticalAxis = ({ yScale, pixelsPerTick, name }: VerticalAxisProps)
       {/* Ticks and labels */}
       {ticks.map(({ value, yOffset }) => (
         <g key={value} transform={`translate(0, ${yOffset})`} shapeRendering={'crispEdges'}>
-          <line x1={-TICK_LENGTH} x2={0} stroke="black" strokeWidth={0.5} />
+          <line x1={-DEFAULT_TICK_LENGTH} x2={0} stroke="black" strokeWidth={1} />
           <text
             key={value}
             style={{

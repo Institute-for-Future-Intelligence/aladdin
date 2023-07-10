@@ -2,7 +2,7 @@
  * @Copyright 2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import styled from 'styled-components';
@@ -12,14 +12,14 @@ import { CloseOutlined, DeleteOutlined, ImportOutlined } from '@ant-design/icons
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import ImageLoadFailureIcon from '../assets/image_load_failure.png';
 import { DatumEntry, Design } from '../types';
-import { ParallelCoordinates } from '../components/parallelCoordinates';
+import ParallelCoordinates from '../components/parallelCoordinates';
 
 const Container = styled.div`
   position: relative;
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: calc(100% - 30px);
   margin: 0;
   display: flex;
   justify-content: center;
@@ -27,7 +27,7 @@ const Container = styled.div`
   alignment: center;
   align-content: center;
   align-items: center;
-  padding: 0;
+  padding-bottom: 30px;
   opacity: 100%;
   user-select: none;
   tab-index: -1; // set to be not focusable
@@ -42,7 +42,7 @@ const ColumnWrapper = styled.div`
   top: 0;
   width: 100%;
   height: 100%;
-  border: 2px solid gainsboro;
+  border: none;
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
@@ -76,13 +76,13 @@ const SubContainer = styled.div`
 `;
 
 export interface ProjectGalleryProps {
-  width: number;
+  relativeWidth: number;
   openCloudFile?: (userid: string, title: string, popState?: boolean) => void;
   deleteDesign?: (userid: string, projectTitle: string, design: Design) => void;
   author?: string; // if undefined, the user is the owner of models
 }
 
-const ProjectGallery = ({ width, openCloudFile, deleteDesign, author }: ProjectGalleryProps) => {
+const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, author }: ProjectGalleryProps) => {
   const setCommonStore = useStore(Selector.set);
   const user = useStore(Selector.user);
   const language = useStore(Selector.language);
@@ -92,8 +92,20 @@ const ProjectGallery = ({ width, openCloudFile, deleteDesign, author }: ProjectG
   const projectType = useStore(Selector.projectType);
 
   const [selectedDesign, setSelectedDesign] = useState<Design | undefined>();
+  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
 
   const lang = { lng: language };
+
+  useEffect(() => {
+    const handleResize = () => {
+      setUpdateFlag(!updateFlag);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [updateFlag]);
 
   const closeProject = () => {
     setCommonStore((state) => {
@@ -128,7 +140,8 @@ const ProjectGallery = ({ width, openCloudFile, deleteDesign, author }: ProjectG
     }
   };
 
-  const imageWidth = Math.round(width / 4 - 12);
+  const totalHeight = window.innerHeight;
+  const imageWidth = Math.round((relativeWidth * window.innerWidth) / 4 - 12);
   const data: DatumEntry[] = [];
   data.push({ a: 1, b: 4, c: 1, d: 8, e: 4, group: 'x' } as DatumEntry);
   data.push({ a: 7, b: 1, c: 2, d: 1, e: 3, group: 'x' } as DatumEntry);
@@ -154,9 +167,9 @@ const ProjectGallery = ({ width, openCloudFile, deleteDesign, author }: ProjectG
             <CloseOutlined title={i18n.t('word.Close', lang)} />
           </span>
         </Header>
-        <Collapse>
+        <Collapse style={{ backgroundColor: 'white', border: 'none' }}>
           <Collapse.Panel
-            style={{ backgroundColor: 'white' }}
+            style={{ backgroundColor: 'white', border: 'none' }}
             key={'1'}
             header={
               <SubHeader>
@@ -206,7 +219,7 @@ const ProjectGallery = ({ width, openCloudFile, deleteDesign, author }: ProjectG
             <List
               style={{
                 width: '100%',
-                height: 'calc(100% - 240px)',
+                height: totalHeight / 2 - 40,
                 paddingLeft: '4px',
                 paddingRight: '4px',
                 overflowX: 'hidden',
@@ -257,9 +270,12 @@ const ProjectGallery = ({ width, openCloudFile, deleteDesign, author }: ProjectG
                 </List.Item>
               )}
             />
-            <div style={{ paddingBottom: '100px' }}>
-              <ParallelCoordinates width={width} height={200} data={data} variables={variables} />
-            </div>
+            <ParallelCoordinates
+              width={relativeWidth * window.innerWidth}
+              height={totalHeight / 2 - 120}
+              data={data}
+              variables={variables}
+            />
           </SubContainer>
         )}
       </ColumnWrapper>
