@@ -112,7 +112,8 @@ export interface CommonStoreState {
   modelLabel: string | null;
   modelDescription: string | null;
   projectView: boolean;
-  projectType: ProjectType;
+  projectType: ProjectType; // this belongs to a project
+  designProjectType: ProjectType | null; // this belongs to a design of a project
   projectTitle: string | null;
   projectDescription: string | null;
   projectDesigns: Design[] | null;
@@ -555,6 +556,7 @@ export const useStore = create<CommonStoreState>(
           modelDescription: null,
           projectView: false,
           projectType: ProjectType.SOLAR_FARM_DESIGN,
+          designProjectType: null,
           projectTitle: null,
           projectDescription: null,
           projectDesigns: null,
@@ -634,6 +636,7 @@ export const useStore = create<CommonStoreState>(
               state.modelAuthor = content.modelAuthor ?? null;
               state.modelLabel = content.modelLabel ?? null;
               state.modelDescription = content.modelDescription ?? null;
+              state.designProjectType = content.designProjectType ?? null;
               state.cloudFile = title;
               state.currentUndoable = undefined;
               state.actionInfo = undefined;
@@ -705,6 +708,7 @@ export const useStore = create<CommonStoreState>(
               modelAuthor: state.modelAuthor,
               modelLabel: state.modelLabel,
               modelDescription: state.modelDescription,
+              designProjectType: state.designProjectType,
               notes: state.notes,
             };
           },
@@ -741,6 +745,7 @@ export const useStore = create<CommonStoreState>(
               state.modelType = ModelType.UNKNOWN;
               state.modelLabel = null;
               state.modelDescription = null;
+              state.designProjectType = null;
             });
             usePrimitiveStore.setState((state) => {
               state.showSolarRadiationHeatmap = false;
@@ -4194,6 +4199,7 @@ export const useStore = create<CommonStoreState>(
           'modelDescription',
           'projectView',
           'projectType',
+          'designProjectType',
           'projectTitle',
           'projectDescription',
           'projectDesigns',

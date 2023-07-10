@@ -230,6 +230,7 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, author }: 
               renderItem={(design, index) => (
                 <List.Item style={{ marginBottom: '-6px' }}>
                   <img
+                    loading={'lazy'}
                     width={imageWidth + 'px'}
                     height={'auto'}
                     onError={(event: any) => {

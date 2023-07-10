@@ -157,6 +157,7 @@ const ModelsGallery = ({ author, models, closeCallback, openCloudFile }: ModelsG
                   <td key={index}>
                     <div style={{ display: 'block', marginTop: '4px' }}>
                       <img
+                        loading={'lazy'}
                         height={'100px'}
                         width={'auto'}
                         onError={(event) => {

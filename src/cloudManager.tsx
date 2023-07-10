@@ -1066,6 +1066,9 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
             title: i18n.t('message.CloudFileWithTitleExistsDoYouWantToOverwrite', lang),
             icon: <QuestionCircleOutlined />,
             onOk: () => {
+              setCommonStore((state) => {
+                state.designProjectType = state.projectType;
+              });
               saveToCloudWithoutCheckingExistence(ft, true);
               addDesignToProject(projectTitle, ft);
             },
@@ -1079,6 +1082,9 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
             cancelText: i18n.t('word.No', lang),
           });
         } else {
+          setCommonStore((state) => {
+            state.designProjectType = state.projectType;
+          });
           saveToCloudWithoutCheckingExistence(ft, true);
           addDesignToProject(projectTitle, ft);
         }
