@@ -1378,7 +1378,7 @@ export const i18n_ua = {
       Project: 'Project',
       ProjectType: 'Тип проєкту',
       ProjectDescription: 'Description',
-      SolarFarmDesign: 'Дизайн Cонячної Ферми',
+      SolarPanelArray: 'Solar Panel Array',
       CurateCurrentDesign: 'Curate Current Design',
       RemoveSelectedDesign: 'Remove Selected Design',
     },

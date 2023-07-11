@@ -9,7 +9,7 @@ import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import i18n from '../../../i18n/i18n';
 import { usePrimitiveStore } from '../../../stores/commonPrimitive';
-import { ProjectType } from '../../../types';
+import { DesignProblem } from '../../../types';
 
 const { Option } = Select;
 
@@ -18,8 +18,8 @@ const CreateNewProjectDialog = ({ setDialogVisible }: { setDialogVisible: (b: bo
   const loggable = useStore(Selector.loggable);
   const language = useStore(Selector.language);
 
-  const [projectType, setProjectType] = useState<ProjectType>(
-    useStore.getState().projectType ?? ProjectType.SOLAR_FARM_DESIGN,
+  const [projectType, setProjectType] = useState<DesignProblem>(
+    useStore.getState().projectType ?? DesignProblem.SOLAR_PANEL_ARRAY,
   );
   const [projectTitle, setProjectTitle] = useState<string | null>(useStore.getState().projectTitle);
   const [projectDescription, setProjectDescription] = useState<string | null>(useStore.getState().projectDescription);
@@ -113,8 +113,8 @@ const CreateNewProjectDialog = ({ setDialogVisible }: { setDialogVisible: (b: bo
               setProjectType(value);
             }}
           >
-            <Option key={ProjectType.SOLAR_FARM_DESIGN} value={ProjectType.SOLAR_FARM_DESIGN}>
-              {i18n.t('projectPanel.SolarFarmDesign', lang)}
+            <Option key={DesignProblem.SOLAR_PANEL_ARRAY} value={DesignProblem.SOLAR_PANEL_ARRAY}>
+              {i18n.t('projectPanel.SolarPanelArray', lang)}
             </Option>
           </Select>
         </Col>

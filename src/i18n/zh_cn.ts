@@ -1352,7 +1352,7 @@ export const i18n_zh_cn = {
       Project: '项目',
       ProjectType: '类别',
       ProjectDescription: '描述',
-      SolarFarmDesign: '太阳能农场设计',
+      SolarPanelArray: '光伏板阵列设计',
       CurateCurrentDesign: '收藏当前设计',
       RemoveSelectedDesign: '删除选中设计',
     },

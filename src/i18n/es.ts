@@ -1377,7 +1377,7 @@ export const i18n_es = {
       Project: 'Project',
       ProjectType: 'Type',
       ProjectDescription: 'Description',
-      SolarFarmDesign: 'Solar Farm Design',
+      SolarPanelArray: 'Solar Panel Array',
       CurateCurrentDesign: 'Curate Current Design',
       RemoveSelectedDesign: 'Remove Selected Design',
     },

@@ -108,7 +108,7 @@ export interface ProjectInfo {
   readonly timestamp: number;
   readonly title: string;
   readonly description: string;
-  readonly type: ProjectType;
+  readonly type: DesignProblem;
   readonly designs: Design[] | null;
   readonly counter: number;
 }
@@ -121,10 +121,6 @@ export interface ActionInfo {
   readonly result?: any;
   readonly details?: any;
   readonly steps?: number;
-}
-
-export enum ProjectType {
-  SOLAR_FARM_DESIGN = 'Solar Farm Design',
 }
 
 export enum ModelType {

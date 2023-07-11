@@ -22,7 +22,7 @@ import {
   ModelSite,
   ObjectType,
   ProjectInfo,
-  ProjectType,
+  DesignProblem,
   SchoolID,
   User,
 } from './types';
@@ -956,7 +956,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const openProject = (
     userid: string,
     title: string,
-    type: ProjectType,
+    type: DesignProblem,
     description: string,
     designs: Design[] | null,
     designCounter: number,

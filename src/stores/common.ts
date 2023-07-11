@@ -18,6 +18,7 @@ import {
   ActionType,
   DatumEntry,
   Design,
+  DesignProblem,
   ElementState,
   EvolutionMethod,
   ModelSite,
@@ -25,7 +26,6 @@ import {
   MoveHandleType,
   ObjectType,
   Orientation,
-  ProjectType,
   ResizeHandleType,
   RoofHandleType,
   RotateHandleType,
@@ -112,8 +112,8 @@ export interface CommonStoreState {
   modelLabel: string | null;
   modelDescription: string | null;
   projectView: boolean;
-  projectType: ProjectType; // this belongs to a project
-  designProjectType: ProjectType | null; // this belongs to a design of a project
+  projectType: DesignProblem; // this belongs to a project
+  designProjectType: DesignProblem | null; // this belongs to a design of a project
   projectTitle: string | null;
   projectDescription: string | null;
   projectDesigns: Design[] | null;
@@ -555,7 +555,7 @@ export const useStore = create<CommonStoreState>(
           modelLabel: null,
           modelDescription: null,
           projectView: false,
-          projectType: ProjectType.SOLAR_FARM_DESIGN,
+          projectType: DesignProblem.SOLAR_PANEL_ARRAY,
           designProjectType: null,
           projectTitle: null,
           projectDescription: null,

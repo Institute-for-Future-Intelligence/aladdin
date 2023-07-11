@@ -17,7 +17,7 @@ import RenameImage from '../assets/rename.png';
 import DeleteImage from '../assets/delete.png';
 import LinkImage from '../assets/create_link.png';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
-import { Design, ProjectType } from '../types';
+import { Design, DesignProblem } from '../types';
 
 const { Column } = Table;
 
@@ -79,7 +79,7 @@ export interface ProjectListPanelProps {
   openProject: (
     userid: string,
     title: string,
-    type: ProjectType,
+    type: DesignProblem,
     description: string,
     designs: Design[] | null,
     designCounter: number,
