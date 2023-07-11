@@ -310,6 +310,7 @@ export const updateRooftopElements = (
   centroid: Vector3,
   h: number,
   thickness: number,
+  isFlatGambrel?: boolean,
 ) => {
   if (foundation === null) return;
   useStore.getState().set((state) => {
@@ -319,7 +320,11 @@ export const updateRooftopElements = (
         if (e.type === ObjectType.SolarPanel) {
           const posRelToFoundation = new Vector3(e.cx * foundation.lx, e.cy * foundation.ly, e.cz + foundation.lz);
           const posRelToCentroid = posRelToFoundation.clone().sub(centroid);
-          const { segmentVertices, normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
+          const { segmentVertices, normal, rotation } = RoofUtil.computeState(
+            roofSegments,
+            posRelToCentroid,
+            isFlatGambrel,
+          );
           let z;
           if (segmentVertices) {
             z = RoofUtil.getRooftopElementZ(segmentVertices, posRelToCentroid, h + thickness);
@@ -334,7 +339,11 @@ export const updateRooftopElements = (
         } else if (e.type === ObjectType.Window) {
           const posRelToFoundation = new Vector3(e.cx, e.cy, e.cz + foundation.lz);
           const posRelToCentroid = posRelToFoundation.clone().sub(centroid);
-          const { segmentVertices, normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
+          const { segmentVertices, normal, rotation } = RoofUtil.computeState(
+            roofSegments,
+            posRelToCentroid,
+            isFlatGambrel,
+          );
           let z;
           if (segmentVertices) {
             z = RoofUtil.getRooftopElementZ(segmentVertices, posRelToCentroid, h + thickness);
@@ -348,7 +357,11 @@ export const updateRooftopElements = (
         } else if (e.type === ObjectType.Sensor || e.type === ObjectType.Light) {
           const posRelToFoundation = new Vector3(e.cx * foundation.lx, e.cy * foundation.ly, e.cz + foundation.lz);
           const posRelToCentroid = posRelToFoundation.clone().sub(centroid);
-          const { segmentVertices, normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
+          const { segmentVertices, normal, rotation } = RoofUtil.computeState(
+            roofSegments,
+            posRelToCentroid,
+            isFlatGambrel,
+          );
           let z;
           if (segmentVertices) {
             z = RoofUtil.getRooftopElementZ(segmentVertices, posRelToCentroid, h + thickness);

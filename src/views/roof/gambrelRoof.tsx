@@ -806,9 +806,9 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
 
   useEffect(() => {
     if (!isFirstMountRef.current) {
-      updateRooftopElements(foundation, id, roofSegments, centroid, topZ, thickness);
+      updateRooftopElements(foundation, id, roofSegments, centroid, topZ, thickness, isFlat);
     }
-  }, [composedWalls, updateElementOnRoofFlag, topZ, thickness, topRidgePoint, frontRidgePoint, backRidgePoint]);
+  }, [composedWalls, updateElementOnRoofFlag, topZ, thickness, topRidgePoint, frontRidgePoint, backRidgePoint, isFlat]);
 
   useEffect(() => {
     isFirstMountRef.current = false;
@@ -992,24 +992,6 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
       {selected && !locked && (
         <group position={[centroid.x, centroid.y, centroid.z + thickness]}>
           <RoofHandle
-            position={[topRidgeLeftPointV3.x, topRidgeLeftPointV3.y, topRidgeLeftPointV3.z]}
-            onPointerDown={() => {
-              isPointerDownRef.current = true;
-              oldRidgeVal.current = [...topRidgePoint];
-              setInterSectionPlane(topRidgeLeftPointV3, composedWalls[3]);
-              setRoofHandleType(RoofHandleType.TopLeft);
-            }}
-          />
-          <RoofHandle
-            position={[topRidgeRightPointV3.x, topRidgeRightPointV3.y, topRidgeRightPointV3.z]}
-            onPointerDown={() => {
-              isPointerDownRef.current = true;
-              oldRidgeVal.current = [...topRidgePoint];
-              setInterSectionPlane(topRidgeRightPointV3, composedWalls[1]);
-              setRoofHandleType(RoofHandleType.TopRight);
-            }}
-          />
-          <RoofHandle
             position={[topRidgeMidPointV3.x, topRidgeMidPointV3.y, topRidgeMidPointV3.z]}
             onPointerDown={(e) => {
               selectMe(roofModel.id, e, ActionType.Select);
@@ -1037,44 +1019,65 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
               });
             }}
           />
+          {!isFlat && (
+            <>
+              <RoofHandle
+                position={[topRidgeLeftPointV3.x, topRidgeLeftPointV3.y, topRidgeLeftPointV3.z]}
+                onPointerDown={() => {
+                  isPointerDownRef.current = true;
+                  oldRidgeVal.current = [...topRidgePoint];
+                  setInterSectionPlane(topRidgeLeftPointV3, composedWalls[3]);
+                  setRoofHandleType(RoofHandleType.TopLeft);
+                }}
+              />
+              <RoofHandle
+                position={[topRidgeRightPointV3.x, topRidgeRightPointV3.y, topRidgeRightPointV3.z]}
+                onPointerDown={() => {
+                  isPointerDownRef.current = true;
+                  oldRidgeVal.current = [...topRidgePoint];
+                  setInterSectionPlane(topRidgeRightPointV3, composedWalls[1]);
+                  setRoofHandleType(RoofHandleType.TopRight);
+                }}
+              />
+              <RoofHandle
+                position={[frontRidgeLeftPointV3.x, frontRidgeLeftPointV3.y, frontRidgeLeftPointV3.z]}
+                onPointerDown={() => {
+                  isPointerDownRef.current = true;
+                  oldRidgeVal.current = [...frontRidgePoint];
+                  setInterSectionPlane(frontRidgeLeftPointV3, composedWalls[3]);
+                  setRoofHandleType(RoofHandleType.FrontLeft);
+                }}
+              />
+              <RoofHandle
+                position={[frontRidgeRightPointV3.x, frontRidgeRightPointV3.y, frontRidgeRightPointV3.z]}
+                onPointerDown={() => {
+                  isPointerDownRef.current = true;
+                  oldRidgeVal.current = [...frontRidgePoint];
+                  setInterSectionPlane(frontRidgeRightPointV3, composedWalls[1]);
+                  setRoofHandleType(RoofHandleType.FrontRight);
+                }}
+              />
 
-          <RoofHandle
-            position={[frontRidgeLeftPointV3.x, frontRidgeLeftPointV3.y, frontRidgeLeftPointV3.z]}
-            onPointerDown={() => {
-              isPointerDownRef.current = true;
-              oldRidgeVal.current = [...frontRidgePoint];
-              setInterSectionPlane(frontRidgeLeftPointV3, composedWalls[3]);
-              setRoofHandleType(RoofHandleType.FrontLeft);
-            }}
-          />
-          <RoofHandle
-            position={[frontRidgeRightPointV3.x, frontRidgeRightPointV3.y, frontRidgeRightPointV3.z]}
-            onPointerDown={() => {
-              isPointerDownRef.current = true;
-              oldRidgeVal.current = [...frontRidgePoint];
-              setInterSectionPlane(frontRidgeRightPointV3, composedWalls[1]);
-              setRoofHandleType(RoofHandleType.FrontRight);
-            }}
-          />
-
-          <RoofHandle
-            position={[backRidgeLeftPointV3.x, backRidgeLeftPointV3.y, backRidgeLeftPointV3.z]}
-            onPointerDown={() => {
-              isPointerDownRef.current = true;
-              oldRidgeVal.current = [...backRidgePoint];
-              setInterSectionPlane(backRidgeLeftPointV3, composedWalls[1]);
-              setRoofHandleType(RoofHandleType.BackLeft);
-            }}
-          />
-          <RoofHandle
-            position={[backRidgeRightPointV3.x, backRidgeRightPointV3.y, backRidgeRightPointV3.z]}
-            onPointerDown={() => {
-              isPointerDownRef.current = true;
-              oldRidgeVal.current = [...backRidgePoint];
-              setInterSectionPlane(backRidgeRightPointV3, composedWalls[3]);
-              setRoofHandleType(RoofHandleType.BackRight);
-            }}
-          />
+              <RoofHandle
+                position={[backRidgeLeftPointV3.x, backRidgeLeftPointV3.y, backRidgeLeftPointV3.z]}
+                onPointerDown={() => {
+                  isPointerDownRef.current = true;
+                  oldRidgeVal.current = [...backRidgePoint];
+                  setInterSectionPlane(backRidgeLeftPointV3, composedWalls[1]);
+                  setRoofHandleType(RoofHandleType.BackLeft);
+                }}
+              />
+              <RoofHandle
+                position={[backRidgeRightPointV3.x, backRidgeRightPointV3.y, backRidgeRightPointV3.z]}
+                onPointerDown={() => {
+                  isPointerDownRef.current = true;
+                  oldRidgeVal.current = [...backRidgePoint];
+                  setInterSectionPlane(backRidgeRightPointV3, composedWalls[3]);
+                  setRoofHandleType(RoofHandleType.BackRight);
+                }}
+              />
+            </>
+          )}
         </group>
       )}
 
@@ -1222,7 +1225,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
                     break;
                   }
                 }
-                updateRooftopElements(foundation, id, roofSegments, centroid, topZ, thickness);
+                updateRooftopElements(foundation, id, roofSegments, centroid, topZ, thickness, isFlat);
               }
             }
           }}
@@ -1253,7 +1256,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
             setRoofHandleType(RoofHandleType.Null);
             useRefStore.getState().setEnableOrbitController(true);
             useStore.getState().updateRoofRiseById(id, riseInnerState, topZ + roofModel.thickness);
-            updateRooftopElements(foundation, id, roofSegments, centroid, topZ, thickness);
+            updateRooftopElements(foundation, id, roofSegments, centroid, topZ, thickness, isFlat);
           }}
         >
           <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0.5} />

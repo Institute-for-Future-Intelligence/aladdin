@@ -277,8 +277,11 @@ export class RoofUtil {
   }
 
   // return triangulated vertices
-  static computeState(roofSegments: RoofSegmentProps[], posRelToCentroid: Vector3) {
+  static computeState(roofSegments: RoofSegmentProps[], posRelToCentroid: Vector3, isFlatGambrel?: boolean) {
     const segmentIdx = RoofUtil.getSegmentIdx(roofSegments, posRelToCentroid);
+    if (isFlatGambrel) {
+      return { segmentIdx: -1, segmentVertices: null, normal: new Vector3(0, 0, 1), rotation: [0, 0, 0] };
+    }
     if (segmentIdx !== -1) {
       const segmentVertices = RoofUtil.getSegmentVertices(roofSegments, segmentIdx, posRelToCentroid);
       const normal = RoofUtil.getSegmentNormal(segmentVertices);

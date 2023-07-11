@@ -253,6 +253,8 @@ const FlatRoof = ({
     const points: Vector3[] = [];
     if (roofType === RoofType.Gambrel) {
       getRoofPointsOfGambrelRoof(roofSegments, points);
+      const maxZ = points.reduce((prev, curr) => Math.max(prev, curr.z), 0);
+      points.forEach((p) => p.setZ(maxZ));
     } else {
       points.push(roofSegments[0].points[0]);
       for (const segment of roofSegments) {
