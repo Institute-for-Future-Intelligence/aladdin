@@ -314,9 +314,9 @@ export const useComposedWallArray = (wId: string, fId: string) => {
   return composedWallsArray;
 };
 
-export const useNewRoofHeight = (composedWallArray: ComposedWall[] | null, rise: number, isGabled?: boolean) => {
+export const useComposedRoofHeight = (composedWallArray: ComposedWall[] | null, rise: number, isGabled?: boolean) => {
   const highestWallHeight = useMemo(
-    () => RoofUtil.getNewHighestWallHeight(composedWallArray, isGabled),
+    () => RoofUtil.getHighestComposedWallHeight(composedWallArray, isGabled),
     [composedWallArray],
   );
 
@@ -331,7 +331,6 @@ export const useNewRoofHeight = (composedWallArray: ComposedWall[] | null, rise:
   return { highestWallHeight, topZ, riseInnerState, setRiseInnerState };
 };
 
-// to be deleted
 export const useRoofHeight = (currentWallArray: WallModel[], rise: number, ignoreSide?: boolean) => {
   const highestWallHeight = useMemo(
     () => RoofUtil.getHighestWallHeight(currentWallArray, ignoreSide),

@@ -20,7 +20,7 @@ import {
   useComposedWallArray,
   useCurrWallArray,
   useIsFirstMount,
-  useNewRoofHeight,
+  useComposedRoofHeight,
   useRoofHeight,
   useRoofTexture,
   useUpdateOldRoofFiles,
@@ -142,7 +142,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
   const [leftRidgeLengthCurr, setLeftRidgeLengthCurr] = useState(leftRidgeLength);
   const [rightRidgeLengthCurr, setRightRidgeLengthCurr] = useState(rightRidgeLength);
 
-  const { highestWallHeight, topZ, riseInnerState, setRiseInnerState } = useNewRoofHeight(composedWalls, rise);
+  const { highestWallHeight, topZ, riseInnerState, setRiseInnerState } = useComposedRoofHeight(composedWalls, rise);
   useUpdateOldRoofFiles(roofModel, highestWallHeight);
 
   const intersectionPlaneRef = useRef<Mesh>(null);
@@ -286,7 +286,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
 
   const overhangs = useMemo(() => {
     if (composedWalls === null) return [] as Vector3[];
-    return composedWalls.map((wall) => RoofUtil.getNewWallNormal(wall).multiplyScalar(wall.eavesLength));
+    return composedWalls.map((wall) => RoofUtil.getComposedWallNormal(wall).multiplyScalar(wall.eavesLength));
   }, [composedWalls]);
 
   const thicknessVector = useMemo(() => {
@@ -310,7 +310,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
     for (let i = 0; i < 4; i++) {
       const points: Vector3[] = [];
       const wall = composedWalls[i];
-      const { lh, rh } = RoofUtil.getNewWallHeight(composedWalls, i);
+      const { lh, rh } = RoofUtil.getComposedWallHeight(composedWalls, i);
 
       const wallLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
         wallPointsAfterOffset[(i + 3) % 4].leftPoint,
@@ -389,7 +389,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
     const segmentVertices: Vector3[][] = [];
     for (let i = 0; i < 4; i++) {
       const wall = composedWalls[i];
-      const { lh, rh } = RoofUtil.getNewWallHeight(composedWalls, i);
+      const { lh, rh } = RoofUtil.getComposedWallHeight(composedWalls, i);
 
       const wallLeftPoint = wall.leftPoint.clone().setZ(lh);
       const wallRightPoint = wall.rightPoint.clone().setZ(rh);

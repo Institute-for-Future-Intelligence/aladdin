@@ -53,7 +53,7 @@ import {
   useComposedWallArray,
   useCurrWallArray,
   useIsFirstMount,
-  useNewRoofHeight,
+  useComposedRoofHeight,
   useRoofHeight,
   useRoofTexture,
   useTransparent,
@@ -354,7 +354,11 @@ const GableRoof = (roofModel: GableRoofModel) => {
 
   const composedWalls = useComposedWallArray(wallsId[0], parentId);
 
-  const { highestWallHeight, topZ, riseInnerState, setRiseInnerState } = useNewRoofHeight(composedWalls, rise, true);
+  const { highestWallHeight, topZ, riseInnerState, setRiseInnerState } = useComposedRoofHeight(
+    composedWalls,
+    rise,
+    true,
+  );
   useUpdateOldRoofFiles(roofModel, highestWallHeight);
 
   const [showIntersectionPlane, setShowIntersectionPlane] = useState(false);
@@ -480,7 +484,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
   };
 
   const centroid = useMemo(() => {
-    if (composedWalls === null) return new Vector3();
+    if (composedWalls === null || composedWalls.length !== 4) return new Vector3();
     const points = composedWalls.map((w) => ({ x: w.leftPoint.x, y: w.leftPoint.y } as Point2));
     const p = Util.calculatePolygonCentroid(points);
     return new Vector3(p.x, p.y, topZ);
@@ -510,7 +514,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
 
   const overhangs = useMemo(() => {
     if (!composedWalls || composedWalls.length !== 4) return null;
-    return composedWalls.map((wall) => RoofUtil.getNewWallNormal(wall).multiplyScalar(wall.eavesLength));
+    return composedWalls.map((wall) => RoofUtil.getComposedWallNormal(wall).multiplyScalar(wall.eavesLength));
   }, [composedWalls]);
 
   const thicknessVector = useMemo(() => {

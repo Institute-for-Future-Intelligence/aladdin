@@ -23,7 +23,7 @@ import { ComposedWall } from './hooks';
 export class RoofUtil {
   // roof related
 
-  static getNewWallNormal(wall: ComposedWall) {
+  static getComposedWallNormal(wall: ComposedWall) {
     return new Vector3().subVectors(wall.leftPoint, wall.rightPoint).applyEuler(HALF_PI_Z_EULER).normalize();
   }
 
@@ -581,7 +581,7 @@ export class RoofUtil {
     return true;
   }
 
-  static getNewWallHeight(arr: ComposedWall[], i: number) {
+  static getComposedWallHeight(arr: ComposedWall[], i: number) {
     const w = arr[i];
     let lh;
     let rh;
@@ -598,7 +598,7 @@ export class RoofUtil {
     return { lh, rh };
   }
 
-  static getNewHighestWallHeight(composedWallArray: ComposedWall[] | null, ignoreSide?: boolean) {
+  static getHighestComposedWallHeight(composedWallArray: ComposedWall[] | null, ignoreSide?: boolean) {
     if (composedWallArray === null) return 0;
 
     let maxWallHeight = 0;
@@ -606,7 +606,7 @@ export class RoofUtil {
       return Math.max(composedWallArray[0].lz, composedWallArray[2].lz);
     }
     for (let i = 0; i < composedWallArray.length; i++) {
-      const { lh, rh } = RoofUtil.getNewWallHeight(composedWallArray, i);
+      const { lh, rh } = RoofUtil.getComposedWallHeight(composedWallArray, i);
       maxWallHeight = Math.max(maxWallHeight, lh, rh);
     }
     return maxWallHeight;
@@ -679,5 +679,13 @@ export class RoofUtil {
       }
     }
     return null;
+  }
+
+  static getComposedWallLength(wall: ComposedWall) {
+    return new Vector3().subVectors(wall.leftPoint, wall.rightPoint).length();
+  }
+
+  static getComposedWallCenter(wall: ComposedWall) {
+    return new Vector3().addVectors(wall.leftPoint, wall.rightPoint).divideScalar(2);
   }
 }
