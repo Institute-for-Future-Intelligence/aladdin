@@ -794,7 +794,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
           updateFrontAndBackWall(composedWalls);
         }
       } else {
-        removeElementById(id, false);
+        removeElementById(id, false, false);
       }
       if (useStore.getState().addedRoofId === id) {
         useStore.getState().setAddedRoofId(null);
