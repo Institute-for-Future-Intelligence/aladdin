@@ -8,11 +8,14 @@ import * as Selector from '../stores/selector';
 import styled from 'styled-components';
 import { Collapse, Descriptions, Button, List } from 'antd';
 import i18n from '../i18n/i18n';
-import { CloseOutlined, DeleteOutlined, ImportOutlined } from '@ant-design/icons';
+import { CameraOutlined, CloseOutlined, DeleteOutlined, ImportOutlined } from '@ant-design/icons';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
-import ImageLoadFailureIcon from '../assets/image_load_failure.png';
+import ImageLoadFailureIcon from '../assets/image_fail_try_again.png';
 import { DatumEntry, Design } from '../types';
 import ParallelCoordinates from '../components/parallelCoordinates';
+//@ts-ignore
+import { saveSvgAsPng } from 'save-svg-as-png';
+import { showInfo } from '../helpers';
 
 const Container = styled.div`
   position: relative;
@@ -67,12 +70,20 @@ const SubHeader = styled.div`
   align-items: center;
 `;
 
+const DesignSpaceHeader = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 6px;
+`;
+
 const SubContainer = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
 `;
 
 export interface ProjectGalleryProps {
@@ -219,7 +230,7 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, author }: 
             <List
               style={{
                 width: '100%',
-                height: totalHeight / 2 - 40,
+                height: totalHeight / 2 - 80,
                 paddingLeft: '4px',
                 paddingRight: '4px',
                 overflowX: 'hidden',
@@ -227,7 +238,7 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, author }: 
               }}
               grid={{ column: 4, gutter: 2 }}
               dataSource={projectDesigns}
-              renderItem={(design, index) => (
+              renderItem={(design) => (
                 <List.Item style={{ marginBottom: '-6px' }}>
                   <img
                     loading={'lazy'}
@@ -244,10 +255,14 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, author }: 
                       borderRadius: selectedDesign === design ? '0' : '10px',
                       border: selectedDesign === design ? '2px solid red' : 'none',
                     }}
-                    onClick={() => {
+                    onClick={(event) => {
                       setSelectedDesign(design);
                       if (user.uid && openCloudFile) {
                         openCloudFile(user.uid, design.title, true);
+                      }
+                      const target = event.target as HTMLImageElement;
+                      if (target.src === ImageLoadFailureIcon) {
+                        target.src = design.thumbnailUrl;
                       }
                     }}
                   />
@@ -271,7 +286,27 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, author }: 
                 </List.Item>
               )}
             />
+            <DesignSpaceHeader>
+              <span style={{ paddingLeft: '20px' }}>{i18n.t('projectPanel.DesignSpaceVisualization', lang)}</span>
+              <Button
+                style={{ border: 'none', paddingRight: '20px' }}
+                onClick={() => {
+                  const d = document.getElementById('design-space');
+                  if (d) {
+                    saveSvgAsPng(d, 'design-space-' + projectTitle + '.png').then(() => {
+                      showInfo(i18n.t('message.ScreenshotSaved', lang));
+                    });
+                  }
+                }}
+              >
+                <CameraOutlined
+                  style={{ fontSize: '24px', color: 'gray' }}
+                  title={i18n.t('projectPanel.DesignSpaceScreenshot', lang)}
+                />
+              </Button>
+            </DesignSpaceHeader>
             <ParallelCoordinates
+              id={'design-space'}
               width={relativeWidth * window.innerWidth}
               height={totalHeight / 2 - 120}
               data={data}

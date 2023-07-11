@@ -1,6 +1,6 @@
 {
   "name": "aladdin",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "private": true,
   "homepage": "https://institute-for-future-intelligence.github.io/aladdin",
   "dependencies": {
@@ -41,6 +41,7 @@
     "react-share": "^4.4.0",
     "react-timeago": "^7.1.0",
     "recharts": "^2.1.6",
+    "save-svg-as-png": "^1.4.17",
     "short-uuid": "^4.2.0",
     "styled-components": "^5.3.3",
     "three": "^0.128.0",

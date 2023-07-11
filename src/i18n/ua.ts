@@ -1381,6 +1381,8 @@ export const i18n_ua = {
       SolarPanelArray: 'Solar Panel Array',
       CurateCurrentDesign: 'Curate Current Design',
       RemoveSelectedDesign: 'Remove Selected Design',
+      DesignSpaceVisualization: 'Design Space Visualization',
+      DesignSpaceScreenshot: 'Design space screenshot',
     },
 
     accountSettingsPanel: {

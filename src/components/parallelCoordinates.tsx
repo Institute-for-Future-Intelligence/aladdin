@@ -13,6 +13,7 @@ const MARGIN = { top: 60, right: 40, bottom: 30, left: 40 };
 const COLORS = ['#e0ac2b', '#e85252', '#6689c6', '#9a6fb0', '#a53253', '#69b3a2'];
 
 type ParallelCoordinatesProps = {
+  id: string;
   width: number;
   height: number;
   data: DatumEntry[];
@@ -21,7 +22,7 @@ type ParallelCoordinatesProps = {
 
 type YScale = d3Scale.ScaleLinear<number, number>;
 
-const ParallelCoordinates = ({ width, height, data, variables }: ParallelCoordinatesProps) => {
+const ParallelCoordinates = ({ id, width, height, data, variables }: ParallelCoordinatesProps) => {
   const boundsWidth = width - MARGIN.right - MARGIN.left;
   const boundsHeight = height - MARGIN.top - MARGIN.bottom;
 
@@ -71,7 +72,7 @@ const ParallelCoordinates = ({ width, height, data, variables }: ParallelCoordin
   });
 
   return (
-    <svg width={width} height={height}>
+    <svg id={id} width={width} height={height}>
       <g width={boundsWidth} height={boundsHeight} transform={`translate(${[MARGIN.left, MARGIN.top].join(',')})`}>
         {allLines}
         {allAxes}
