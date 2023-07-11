@@ -469,13 +469,12 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
           </TabPane>
 
           <TabPane tab={i18n.t('optimizationMenu.Variables', lang)} key="2">
-            <Row gutter={6} style={{ paddingBottom: '0px' }}>
+            <Row gutter={6}>
               <Col className="gutter-row" span={12}>
                 {i18n.t('optimizationMenu.TiltAngleRange', lang) + ':'}
               </Col>
               <Col className="gutter-row" span={12}>
                 <Slider
-                  style={{ paddingBottom: 0, paddingTop: 0, marginTop: '10px', marginBottom: '10px' }}
                   range
                   onChange={(value) => {
                     minimumTiltAngleRef.current = Util.toRadians(value[0]);
@@ -524,13 +523,13 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
               </Col>
             </Row>
 
-            <Row gutter={6} style={{ paddingBottom: '0px', paddingTop: '6px' }}>
+            <Row gutter={6}>
               <Col className="gutter-row" span={12}>
                 {i18n.t('optimizationMenu.RowsPerRackRange', lang) + ':'}
               </Col>
               <Col className="gutter-row" span={12}>
                 <Slider
-                  style={{ paddingBottom: 0, paddingTop: 0, marginTop: '10px', marginBottom: '10px' }}
+                  // style={{ paddingBottom: 0, paddingTop: 0, marginTop: '10px', marginBottom: '10px' }}
                   range
                   onChange={(value) => {
                     minimumRowsPerRackRef.current = value[0];
@@ -600,13 +599,12 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
               </Col>
             </Row>
 
-            <Row gutter={6} style={{ paddingBottom: '0px', paddingTop: '6px' }}>
+            <Row gutter={6}>
               <Col className="gutter-row" span={12}>
                 {i18n.t('optimizationMenu.InterRowSpacingRange', lang) + ':'}
               </Col>
               <Col className="gutter-row" span={12}>
                 <Slider
-                  style={{ paddingBottom: 0, paddingTop: 0, marginTop: '10px', marginBottom: '2px' }}
                   range
                   onChange={(value) => {
                     minimumInterRowSpacingRef.current = value[0];

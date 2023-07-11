@@ -4,9 +4,9 @@
 
 import * as d3Scale from 'd3-scale';
 import * as d3Shape from 'd3-shape';
-import { VerticalAxis } from './VerticalAxis';
 import { DatumEntry } from '../types';
 import React from 'react';
+import VerticalAxis from './verticalAxis';
 
 const MARGIN = { top: 60, right: 40, bottom: 30, left: 40 };
 

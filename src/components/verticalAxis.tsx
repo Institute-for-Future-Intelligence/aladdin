@@ -2,7 +2,7 @@
  * @Copyright 2023. Institute for Future Intelligence, Inc.
  */
 
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { ScaleLinear } from 'd3-scale';
 
 type VerticalAxisProps = {
@@ -13,7 +13,7 @@ type VerticalAxisProps = {
 
 const DEFAULT_TICK_LENGTH = 5;
 
-export const VerticalAxis = ({ yScale, tickLength, name }: VerticalAxisProps) => {
+const VerticalAxis = ({ yScale, tickLength, name }: VerticalAxisProps) => {
   const range = yScale.range();
 
   const ticks = useMemo(() => {
@@ -63,3 +63,5 @@ export const VerticalAxis = ({ yScale, tickLength, name }: VerticalAxisProps) =>
     </>
   );
 };
+
+export default React.memo(VerticalAxis);
