@@ -17,12 +17,24 @@ type ParallelCoordinatesProps = {
   width: number;
   height: number;
   data: DatumEntry[];
+  types: string[];
+  minima: number[];
+  maxima: number[];
   variables: string[];
 };
 
 type YScale = d3Scale.ScaleLinear<number, number>;
 
-const ParallelCoordinates = ({ id, width, height, data, variables }: ParallelCoordinatesProps) => {
+const ParallelCoordinates = ({
+  id,
+  width,
+  height,
+  data,
+  types,
+  minima,
+  maxima,
+  variables,
+}: ParallelCoordinatesProps) => {
   const boundsWidth = width - MARGIN.right - MARGIN.left;
   const boundsHeight = height - MARGIN.top - MARGIN.bottom;
 
@@ -32,9 +44,12 @@ const ParallelCoordinates = ({ id, width, height, data, variables }: ParallelCoo
   const xScale = d3Scale.scalePoint<string>().range([0, boundsWidth]).domain(variables).padding(0);
 
   // Compute the yScales: 1 scale per variable
-  let yScales: { [name: string]: YScale } = {};
-  variables.forEach((variable) => {
-    yScales[variable] = d3Scale.scaleLinear().range([boundsHeight, 0]).domain([0, 8]);
+  const yScales: { [name: string]: YScale } = {};
+  variables.forEach((variable, index) => {
+    yScales[variable] = d3Scale
+      .scaleLinear()
+      .range([boundsHeight, 0])
+      .domain([minima[index] ?? 0, maxima[index] ?? 1]);
   });
 
   // Color Scale
@@ -66,7 +81,7 @@ const ParallelCoordinates = ({ id, width, height, data, variables }: ParallelCoo
     const yScale = yScales[variable];
     return (
       <g key={i} transform={'translate(' + xScale(variable) + ',0)'}>
-        <VerticalAxis yScale={yScale} tickLength={40} name={variable} />
+        <VerticalAxis yScale={yScale} tickLength={40} type={types[i] ?? 'number'} name={variable} />
       </g>
     );
   });

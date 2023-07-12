@@ -2,7 +2,7 @@
  * @Copyright 2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import styled from 'styled-components';
@@ -11,11 +11,12 @@ import i18n from '../i18n/i18n';
 import { CameraOutlined, CloseOutlined, DeleteOutlined, ImportOutlined } from '@ant-design/icons';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import ImageLoadFailureIcon from '../assets/image_fail_try_again.png';
-import { DatumEntry, Design } from '../types';
+import { DatumEntry, Design, DesignProblem, Orientation } from '../types';
 import ParallelCoordinates from '../components/parallelCoordinates';
 //@ts-ignore
 import { saveSvgAsPng } from 'save-svg-as-png';
 import { showInfo } from '../helpers';
+import { Util } from '../Util';
 
 const Container = styled.div`
   position: relative;
@@ -76,6 +77,7 @@ const DesignSpaceHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   padding-top: 6px;
+  background: whitesmoke;
 `;
 
 const SubContainer = styled.div`
@@ -84,6 +86,7 @@ const SubContainer = styled.div`
   flex-direction: column;
   justify-content: space-between;
   align-items: flex-start;
+  background: whitesmoke;
 `;
 
 export interface ProjectGalleryProps {
@@ -101,6 +104,7 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, author }: 
   const projectDescription = useStore(Selector.projectDescription);
   const projectDesigns = useStore(Selector.projectDesigns);
   const projectType = useStore(Selector.projectType);
+  const solarPanelArrayLayoutConstraints = useStore(Selector.solarPanelArrayLayoutConstraints);
 
   const [selectedDesign, setSelectedDesign] = useState<Design | undefined>();
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
@@ -153,13 +157,54 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, author }: 
 
   const totalHeight = window.innerHeight;
   const imageWidth = Math.round((relativeWidth * window.innerWidth) / 4 - 12);
-  const data: DatumEntry[] = [];
-  data.push({ a: 1, b: 4, c: 1, d: 8, e: 4, group: 'x' } as DatumEntry);
-  data.push({ a: 7, b: 1, c: 2, d: 1, e: 3, group: 'x' } as DatumEntry);
-  data.push({ a: 4, b: 5, c: 7, d: 6, e: 1, group: 'y' } as DatumEntry);
-  data.push({ a: 2, b: 1, c: 2, d: 4, e: 7, group: 'y' } as DatumEntry);
-  data.push({ a: 3, b: 2, c: 6, d: 2, e: 4, group: 'y' } as DatumEntry);
-  const variables: string[] = ['a', 'b', 'c', 'd', 'e'];
+
+  const variables: string[] =
+    projectType === DesignProblem.SOLAR_PANEL_ARRAY
+      ? ['RowWidth', 'TiltAngle', 'InterRowSpacing', 'Orientation', 'PoleHeight']
+      : [];
+  const types: string[] =
+    projectType === DesignProblem.SOLAR_PANEL_ARRAY ? ['number', 'number', 'number', 'boolean', 'number'] : [];
+  const data: DatumEntry[] = useMemo(() => {
+    const data: DatumEntry[] = [];
+    if (projectDesigns) {
+      if (projectType === DesignProblem.SOLAR_PANEL_ARRAY) {
+        for (const design of projectDesigns) {
+          data.push({
+            RowWidth: design.rowsPerRack,
+            TiltAngle: Util.toDegrees(design.tiltAngle),
+            InterRowSpacing: design.interRowSpacing,
+            PoleHeight: design.poleHeight,
+            Orientation: design.orientation === Orientation.landscape ? 0 : 1,
+            group: 'a',
+          } as DatumEntry);
+        }
+      }
+    }
+    return data;
+  }, [projectDesigns, projectType]);
+
+  const minima: number[] = useMemo(() => {
+    return projectType === DesignProblem.SOLAR_PANEL_ARRAY && solarPanelArrayLayoutConstraints
+      ? [
+          solarPanelArrayLayoutConstraints.minimumRowsPerRack,
+          Util.toDegrees(solarPanelArrayLayoutConstraints.minimumTiltAngle),
+          solarPanelArrayLayoutConstraints.minimumInterRowSpacing,
+          0,
+          0,
+        ]
+      : [1, 0, 1, 0, 0];
+  }, [solarPanelArrayLayoutConstraints, projectType]);
+  const maxima: number[] = useMemo(() => {
+    return projectType === DesignProblem.SOLAR_PANEL_ARRAY && solarPanelArrayLayoutConstraints
+      ? [
+          solarPanelArrayLayoutConstraints.maximumRowsPerRack,
+          Util.toDegrees(solarPanelArrayLayoutConstraints.maximumTiltAngle),
+          solarPanelArrayLayoutConstraints.maximumInterRowSpacing,
+          1,
+          4,
+        ]
+      : [10, 90, 10, 1, 5];
+  }, [solarPanelArrayLayoutConstraints, projectType]);
 
   return (
     <Container>
@@ -289,7 +334,7 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, author }: 
             <DesignSpaceHeader>
               <span style={{ paddingLeft: '20px' }}>{i18n.t('projectPanel.DesignSpaceVisualization', lang)}</span>
               <Button
-                style={{ border: 'none', paddingRight: '20px' }}
+                style={{ border: 'none', paddingRight: '20px', background: 'whitesmoke' }}
                 onClick={() => {
                   const d = document.getElementById('design-space');
                   if (d) {
@@ -310,6 +355,9 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, author }: 
               width={relativeWidth * window.innerWidth}
               height={totalHeight / 2 - 120}
               data={data}
+              types={types}
+              minima={minima}
+              maxima={maxima}
               variables={variables}
             />
           </SubContainer>

@@ -18,11 +18,11 @@ import {
   ClassID,
   CloudFileInfo,
   Design,
+  DesignProblem,
   FirebaseName,
   ModelSite,
   ObjectType,
   ProjectInfo,
-  DesignProblem,
   SchoolID,
   User,
 } from './types';
@@ -1118,7 +1118,16 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
               uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
                 if (!user.uid) return;
                 // after we get a download URL for the thumbnail image, we then go on to upload other data
-                const design = { title: fileTitle, thumbnailUrl: downloadURL } as Design;
+                const projectType = useStore.getState().projectType;
+                let design = { title: fileTitle, thumbnailUrl: downloadURL } as Design;
+                switch (projectType) {
+                  case DesignProblem.SOLAR_PANEL_ARRAY:
+                    design = { ...design, ...useStore.getState().solarPanelArrayLayoutParams };
+                    break;
+                  case DesignProblem.SOLAR_PANEL_TILT_ANGLE:
+                    // TODO: Each row has a different tilt angle
+                    break;
+                }
                 try {
                   const doc = firebase.firestore().collection('users').doc(user.uid);
                   if (doc) {

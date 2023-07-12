@@ -73,6 +73,7 @@ export interface ModelSite {
 export interface Design {
   title: string;
   thumbnailUrl: string;
+  [key: string]: any;
 }
 
 export enum SchoolID {
