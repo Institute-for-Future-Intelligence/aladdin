@@ -53,9 +53,9 @@ const VerticalAxis = ({ yScale, tickLength, name, type }: VerticalAxisProps) => 
             key={value}
             style={{
               fontSize: '10px',
-              textAnchor: 'middle',
+              textAnchor: 'start',
               alignmentBaseline: 'central',
-              transform: 'translateX(-10px)',
+              transform: 'translateX(-25px)',
             }}
           >
             {value}

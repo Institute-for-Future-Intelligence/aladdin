@@ -161,10 +161,12 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, author }: 
 
   const variables: string[] =
     projectType === DesignProblem.SOLAR_PANEL_ARRAY
-      ? ['RowWidth', 'TiltAngle', 'InterRowSpacing', 'Orientation', 'PoleHeight']
+      ? ['RowWidth', 'TiltAngle', 'InterRowSpacing', 'Orientation', 'PoleHeight', 'PanelCount', 'DailyYield']
       : [];
   const types: string[] =
-    projectType === DesignProblem.SOLAR_PANEL_ARRAY ? ['number', 'number', 'number', 'boolean', 'number'] : [];
+    projectType === DesignProblem.SOLAR_PANEL_ARRAY
+      ? ['number', 'number', 'number', 'boolean', 'number', 'number', 'number']
+      : [];
   const data: DatumEntry[] = useMemo(() => {
     const data: DatumEntry[] = [];
     if (projectDesigns) {
@@ -176,6 +178,8 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, author }: 
             InterRowSpacing: design.interRowSpacing,
             PoleHeight: design.poleHeight,
             Orientation: design.orientation === Orientation.landscape ? 0 : 1,
+            PanelCount: design.panelCount,
+            DailyYield: design.dailyYield,
             group: 'default',
             selected: selectedDesign === design,
             hovered: hoveredDesign === design,
@@ -194,8 +198,10 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, author }: 
           solarPanelArrayLayoutConstraints.minimumInterRowSpacing,
           0,
           0,
+          0,
+          0,
         ]
-      : [1, 0, 1, 0, 0];
+      : [1, 0, 1, 0, 0, 0, 0];
   }, [solarPanelArrayLayoutConstraints, projectType]);
   const maxima: number[] = useMemo(() => {
     return projectType === DesignProblem.SOLAR_PANEL_ARRAY && solarPanelArrayLayoutConstraints
@@ -205,8 +211,10 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, author }: 
           solarPanelArrayLayoutConstraints.maximumInterRowSpacing,
           1,
           4,
+          300,
+          500,
         ]
-      : [10, 90, 10, 1, 5];
+      : [10, 90, 10, 1, 5, 300, 500];
   }, [solarPanelArrayLayoutConstraints, projectType]);
 
   return (
