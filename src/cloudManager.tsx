@@ -1066,9 +1066,6 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
             title: i18n.t('message.CloudFileWithTitleExistsDoYouWantToOverwrite', lang),
             icon: <QuestionCircleOutlined />,
             onOk: () => {
-              setCommonStore((state) => {
-                state.designProjectType = state.projectType;
-              });
               saveToCloudWithoutCheckingExistence(ft, true);
               addDesignToProject(projectTitle, ft);
             },
@@ -1082,9 +1079,6 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
             cancelText: i18n.t('word.No', lang),
           });
         } else {
-          setCommonStore((state) => {
-            state.designProjectType = state.projectType;
-          });
           saveToCloudWithoutCheckingExistence(ft, true);
           addDesignToProject(projectTitle, ft);
         }
@@ -1118,9 +1112,9 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
               uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
                 if (!user.uid) return;
                 // after we get a download URL for the thumbnail image, we then go on to upload other data
-                const projectType = useStore.getState().projectType;
+                const designProjectType = useStore.getState().designProjectType;
                 let design = { title: fileTitle, thumbnailUrl: downloadURL } as Design;
-                switch (projectType) {
+                switch (designProjectType) {
                   case DesignProblem.SOLAR_PANEL_ARRAY:
                     design = { ...design, ...useStore.getState().solarPanelArrayLayoutParams };
                     break;
@@ -1147,6 +1141,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                         setCommonStore((state) => {
                           state.projectDesigns?.push(design);
                           state.projectDesignCounter++;
+                          state.designProjectType = state.projectType;
                         });
                       });
                   }
