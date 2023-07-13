@@ -47,12 +47,86 @@ import { useDataStore } from '../../stores/commonData';
 import Ceiling from './ceiling';
 import { FoundationModel } from '../../models/FoundationModel';
 import FlatRoof from './flatRoof';
+import { WindowModel, WindowType } from 'src/models/WindowModel';
+import { DEFAULT_POLYGONTOP } from '../window/window';
 
 type RoofEdge = {
   start: number;
   end: number;
   k: number;
   b: number;
+};
+
+export type WallHeights = {
+  left: number;
+  centerLeft?: number[] | null;
+  center?: number[] | null;
+  centerRight?: number[] | null;
+  right: number;
+};
+
+export const getWallShapePoints = (lx: number, lz: number, wallHeights: WallHeights) => {
+  const { left, right, center, centerLeft, centerRight } = wallHeights;
+  const [hx, hz] = [lx / 2, lz / 2];
+  const points: Point2[] = [
+    { x: -hx, y: left - hz },
+    { x: -hx, y: -hz },
+    { x: hx, y: -hz },
+    { x: hx, y: right - hz },
+  ];
+  if (centerRight) {
+    const [crX, crY] = centerRight;
+    points.push({ x: crX * lx, y: crY - hz });
+  }
+  if (center) {
+    const [cX, cY] = center;
+    points.push({ x: cX * lx, y: cY - hz });
+  }
+  if (centerLeft) {
+    const [clX, clY] = centerLeft;
+    points.push({ x: clX * lx, y: clY - hz });
+  }
+  return points;
+};
+
+export const isRoofValid = (wallHeightsMap: Map<string, WallHeights>, foundationId: string) => {
+  for (const e of useStore.getState().elements) {
+    if (e.type === ObjectType.Wall && e.foundationId === foundationId && wallHeightsMap.has(e.id)) {
+      const wallHeights = wallHeightsMap.get(e.id);
+      if (wallHeights) {
+        const wall = e as WallModel;
+        const wallShapePoints = getWallShapePoints(wall.lx, wall.lz, wallHeights);
+
+        for (const child of useStore.getState().elements) {
+          if (child.parentId === wall.id) {
+            let { cx, cz, lx, ly, lz } = child;
+            cx *= wall.lx;
+            cz *= wall.lz;
+            if (child.type !== ObjectType.SolarPanel) {
+              lx *= wall.lx;
+              lz *= wall.lz;
+            } else {
+              lz = ly;
+            }
+            if (child.type === ObjectType.Window && (child as WindowModel).windowType === WindowType.Polygonal) {
+              const [tx, th] = (child as WindowModel).polygonTop ?? DEFAULT_POLYGONTOP;
+              const px = cx + tx * lx;
+              const pz = cz + lz / 2 + th;
+              if (!Util.isPointInside(px, pz, wallShapePoints)) {
+                return false;
+              }
+            }
+            if (
+              !Util.isElementInsideWall(new Vector3(cx, 0, cz), lx, lz, wallShapePoints, child.type === ObjectType.Door)
+            ) {
+              return false;
+            }
+          }
+        }
+      }
+    }
+  }
+  return true;
 };
 
 const GambrelRoofWireframe = React.memo(({ roofSegments, thickness, lineWidth, lineColor }: RoofWireframeProps) => {
@@ -602,6 +676,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
   const getRoofSideEdges = (
     composedWalls: ComposedWall[],
     index: number,
+    topZ: number,
     leftBaseHeight: number,
     rightBaseHeight: number,
     leftPoint: number[],
@@ -639,130 +714,6 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
     return null;
   };
 
-  const updateSideWall = (composedWalls: ComposedWall[], index: number) => {
-    if (index !== 1 && index !== 3) return;
-    const isLeftSide = index === 3;
-    const { lh, rh } = getWallHeight(composedWalls, index);
-    const leftPoint = isLeftSide ? backRidgePoint : frontRidgePoint;
-    const rightPoint = isLeftSide ? frontRidgePoint : backRidgePoint;
-    const midPoint = isLeftSide ? topRidgePoint : [-topRidgePoint[0], topRidgePoint[1]];
-
-    const roofEdges = getRoofSideEdges(composedWalls, index, lh, rh, leftPoint, midPoint, rightPoint);
-    const roofPointsX = roofEdges.slice(1).map((edge) => edge.start);
-
-    const composedWall = composedWalls[index];
-    const wallPointsX = composedWall.wallsId.reduce(
-      (acc, currId) => {
-        const wall = useStore.getState().elements.find((e) => e.id === currId) as WallModel;
-        if (!wall) return acc;
-        return [...acc, wall.lx + acc[acc.length - 1]];
-      },
-      [0],
-    );
-
-    const wallPointsXMap = new Map<string, number[]>();
-    for (let i = 0; i < composedWall.wallsId.length; i++) {
-      const id = composedWall.wallsId[i];
-      const points = [wallPointsX[i], wallPointsX[i + 1]];
-      wallPointsXMap.set(id, points);
-    }
-
-    setCommonStore((state) => {
-      for (const e of state.elements) {
-        if (e.type === ObjectType.Wall && e.foundationId === parentId && wallPointsXMap.has(e.id)) {
-          const wall = e as WallModel;
-          wall.roofId = id;
-
-          const wallPointsX = wallPointsXMap.get(e.id);
-          if (wallPointsX) {
-            const [wallStartX, wallEndX] = wallPointsX;
-            const wallStartY = getYOnEdge(roofEdges, wallStartX);
-            const wallEndY = getYOnEdge(roofEdges, wallEndX);
-
-            if (wallStartY !== null && wallEndY !== null) {
-              const wallLength = wallEndX - wallStartX;
-              const wallCenterX = (wallStartX + wallEndX) / 2;
-
-              const roofHeights: number[][] = [];
-              for (const roofPointX of roofPointsX) {
-                if (roofPointX >= wallStartX && roofPointX <= wallEndX) {
-                  const x = (roofPointX - wallCenterX) / wallLength;
-                  const y = getYOnEdge(roofEdges, roofPointX);
-                  if (y !== null) {
-                    roofHeights.push([x, y]);
-                  }
-                }
-              }
-
-              if (roofHeights.length < 3) {
-                wall.centerRightRoofHeight = undefined;
-              }
-              if (roofHeights.length < 2) {
-                wall.centerRoofHeight = undefined;
-              }
-              if (roofHeights.length < 1) {
-                wall.centerLeftRoofHeight = undefined;
-              }
-              for (let i = 0; i < roofHeights.length; i++) {
-                const [x, y] = roofHeights[i];
-                if (i === 0) {
-                  if (wall.centerLeftRoofHeight) {
-                    wall.centerLeftRoofHeight[0] = x;
-                    wall.centerLeftRoofHeight[1] = y;
-                  } else {
-                    wall.centerLeftRoofHeight = [x, y];
-                  }
-                } else if (i === 1) {
-                  if (wall.centerRoofHeight) {
-                    wall.centerRoofHeight[0] = x;
-                    wall.centerRoofHeight[1] = y;
-                  } else {
-                    wall.centerRoofHeight = [x, y];
-                  }
-                } else if (i === 2) {
-                  if (wall.centerRightRoofHeight) {
-                    wall.centerRightRoofHeight[0] = x;
-                    wall.centerRightRoofHeight[1] = y;
-                  } else {
-                    wall.centerRightRoofHeight = [x, y];
-                  }
-                }
-              }
-
-              wall.leftRoofHeight = wallStartY;
-              wall.rightRoofHeight = wallEndY;
-            }
-          }
-        }
-      }
-    });
-  };
-
-  const updateFrontAndBackWall = (composedWalls: ComposedWall[]) => {
-    const frontWallsIdSet = new Set(composedWalls[0].wallsId);
-    const backWallsIdSet = new Set(composedWalls[2].wallsId);
-
-    setCommonStore((state) => {
-      for (const e of state.elements) {
-        if (e.type === ObjectType.Wall && e.foundationId === parentId) {
-          if (frontWallsIdSet.has(e.id)) {
-            const wall = e as WallModel;
-            const { lh, rh } = getWallHeight(composedWalls, 0);
-            wall.roofId = id;
-            wall.leftRoofHeight = lh;
-            wall.rightRoofHeight = rh;
-          } else if (backWallsIdSet.has(e.id)) {
-            const wall = e as WallModel;
-            const { lh, rh } = getWallHeight(composedWalls, 2);
-            wall.roofId = id;
-            wall.leftRoofHeight = lh;
-            wall.rightRoofHeight = rh;
-          }
-        }
-      }
-    });
-  };
-
   const updateFlatRoofWalls = (composedWalls: ComposedWall[]) => {
     const idSet = new Set<string>();
     for (const composedWall of composedWalls) {
@@ -782,6 +733,166 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
     });
   };
 
+  const setSideWallHeightsMap = (
+    map: Map<string, WallHeights>,
+    composedWalls: ComposedWall[],
+    index: number,
+    topZ: number,
+    frontRidgePoint: number[],
+    topRidgePoint: number[],
+    backRidgePoint: number[],
+  ) => {
+    if (index !== 1 && index !== 3) return;
+    const isLeftSide = index === 3;
+    const { lh, rh } = getWallHeight(composedWalls, index);
+    const leftPoint = isLeftSide ? backRidgePoint : frontRidgePoint;
+    const rightPoint = isLeftSide ? frontRidgePoint : backRidgePoint;
+    const midPoint = isLeftSide ? topRidgePoint : [-topRidgePoint[0], topRidgePoint[1]];
+
+    const roofEdges = getRoofSideEdges(composedWalls, index, topZ, lh, rh, leftPoint, midPoint, rightPoint);
+    const roofPointsX = roofEdges.slice(1).map((edge) => edge.start);
+
+    const composedWall = composedWalls[index];
+    const wallPointsX = composedWall.wallsId.reduce(
+      (acc, currId) => {
+        const wall = useStore.getState().elements.find((e) => e.id === currId) as WallModel;
+        if (!wall) return acc;
+        return [...acc, wall.lx + acc[acc.length - 1]];
+      },
+      [0],
+    );
+
+    for (let i = 0; i < composedWall.wallsId.length; i++) {
+      const id = composedWall.wallsId[i];
+      const [wallStartX, wallEndX] = [wallPointsX[i], wallPointsX[i + 1]];
+      const wallStartY = getYOnEdge(roofEdges, wallStartX);
+      const wallEndY = getYOnEdge(roofEdges, wallEndX);
+
+      if (wallStartY !== null && wallEndY !== null) {
+        const wallLength = wallEndX - wallStartX;
+        const wallCenterX = (wallStartX + wallEndX) / 2;
+
+        const wallHeights: WallHeights = {
+          left: wallStartY,
+          right: wallEndY,
+        };
+
+        for (let i = 0; i < roofPointsX.length; i++) {
+          const roofPointX = roofPointsX[i];
+          if (roofPointX >= wallStartX && roofPointX <= wallEndX) {
+            const x = (roofPointX - wallCenterX) / wallLength;
+            const y = getYOnEdge(roofEdges, roofPointX);
+            if (y !== null) {
+              if (i === 0) {
+                wallHeights.centerLeft = [x, y];
+              } else if (i === 1) {
+                wallHeights.center = [x, y];
+              } else if (i === 2) {
+                wallHeights.centerRight = [x, y];
+              }
+            }
+          }
+        }
+
+        map.set(id, wallHeights);
+      }
+    }
+
+    return map;
+  };
+
+  const getSideWallHeightsMap = (
+    composedWalls: ComposedWall[],
+    topZ: number,
+    frontRidgePoint: number[],
+    topRidgePoint: number[],
+    backRidgePoint: number[],
+  ) => {
+    const map = new Map<string, WallHeights>();
+    setSideWallHeightsMap(map, composedWalls, 1, topZ, frontRidgePoint, topRidgePoint, backRidgePoint);
+    setSideWallHeightsMap(map, composedWalls, 3, topZ, frontRidgePoint, topRidgePoint, backRidgePoint);
+    return map;
+  };
+
+  const updateWalls = (
+    composedWalls: ComposedWall[],
+    topZ: number,
+    frontRidgePoint: number[],
+    topRidgePoint: number[],
+    backRidgePoint: number[],
+  ) => {
+    const frontWallsIdSet = new Set(composedWalls[0].wallsId);
+    const backWallsIdSet = new Set(composedWalls[2].wallsId);
+    const sideWallHeightsMap = getSideWallHeightsMap(
+      composedWalls,
+      topZ,
+      frontRidgePoint,
+      topRidgePoint,
+      backRidgePoint,
+    );
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Wall && e.foundationId === parentId) {
+          if (frontWallsIdSet.has(e.id)) {
+            const wall = e as WallModel;
+            const { lh, rh } = getWallHeight(composedWalls, 0);
+            wall.roofId = id;
+            wall.leftRoofHeight = lh;
+            wall.rightRoofHeight = rh;
+          } else if (backWallsIdSet.has(e.id)) {
+            const wall = e as WallModel;
+            const { lh, rh } = getWallHeight(composedWalls, 2);
+            wall.roofId = id;
+            wall.leftRoofHeight = lh;
+            wall.rightRoofHeight = rh;
+          } else if (sideWallHeightsMap.has(e.id)) {
+            const wallHeights = sideWallHeightsMap.get(e.id);
+            if (wallHeights) {
+              const wall = e as WallModel;
+              const { left, right, center, centerLeft, centerRight } = wallHeights;
+              wall.roofId = id;
+              wall.leftRoofHeight = left;
+              wall.rightRoofHeight = right;
+              if (centerLeft) {
+                const [x, y] = centerLeft;
+                if (wall.centerLeftRoofHeight) {
+                  wall.centerLeftRoofHeight[0] = x;
+                  wall.centerLeftRoofHeight[1] = y;
+                } else {
+                  wall.centerLeftRoofHeight = [x, y];
+                }
+              } else {
+                wall.centerLeftRoofHeight = undefined;
+              }
+              if (center) {
+                const [x, y] = center;
+                if (wall.centerRoofHeight) {
+                  wall.centerRoofHeight[0] = x;
+                  wall.centerRoofHeight[1] = y;
+                } else {
+                  wall.centerRoofHeight = [x, y];
+                }
+              } else {
+                wall.centerRoofHeight = undefined;
+              }
+              if (centerRight) {
+                const [x, y] = centerRight;
+                if (wall.centerRightRoofHeight) {
+                  wall.centerRightRoofHeight[0] = x;
+                  wall.centerRightRoofHeight[1] = y;
+                } else {
+                  wall.centerRightRoofHeight = [x, y];
+                }
+              } else {
+                wall.centerRightRoofHeight = undefined;
+              }
+            }
+          }
+        }
+      }
+    });
+  };
+
   // update walls
   useEffect(() => {
     if (!isFirstMountRef.current || useStore.getState().addedRoofId === id) {
@@ -789,9 +900,8 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
         if (isFlat) {
           updateFlatRoofWalls(composedWalls);
         } else {
-          updateSideWall(composedWalls, 1);
-          updateSideWall(composedWalls, 3);
-          updateFrontAndBackWall(composedWalls);
+          // update caused by changing wall height
+          updateWalls(composedWalls, topZ, frontRidgePoint, topRidgePoint, backRidgePoint);
         }
       } else {
         removeElementById(id, false, false);
@@ -800,7 +910,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
         useStore.getState().setAddedRoofId(null);
       }
     }
-  }, [composedWalls, topZ, thickness, topRidgePoint, frontRidgePoint, backRidgePoint, isFlat]);
+  }, [composedWalls, topZ, isFlat, frontRidgePoint, topRidgePoint, backRidgePoint]);
 
   const updateElementOnRoofFlag = useStore(Selector.updateElementOnRoofFlag);
 
@@ -1107,121 +1217,184 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
                 switch (roofHandleType) {
                   case RoofHandleType.TopMid: {
                     const newRise = Math.max(0, point.z - foundation.lz - 0.3 - highestWallHeight);
-                    setRiseInnerState(newRise);
-                    // if (
-                    //   RoofUtil.isRoofValid(id, currentWallArray[3].id, currentWallArray[1].id, [
-                    //     topRidgePoint[0],
-                    //     newRise + highestWallHeight,
-                    //   ])
-                    // ) {
-                    //   setRiseInnerState(newRise);
-                    // }
-                    // the vertical ruler needs to display the latest rise when the handle is being dragged
-                    useStore.getState().updateRoofRiseById(id, riseInnerState, topZ + roofModel.thickness);
+                    const newTopZ = highestWallHeight + newRise;
+                    const sideWallHeightsMap = getSideWallHeightsMap(
+                      composedWalls,
+                      newTopZ,
+                      frontRidgePoint,
+                      topRidgePoint,
+                      backRidgePoint,
+                    );
+                    // check if new height no confilc with childs on walls
+                    if (isRoofValid(sideWallHeightsMap, parentId)) {
+                      setRiseInnerState(newRise);
+                      // the vertical ruler needs to display the latest rise when the handle is being dragged
+                      useStore.getState().updateRoofRiseById(id, riseInnerState, newTopZ + roofModel.thickness);
+                    }
                     break;
                   }
                   case RoofHandleType.FrontLeft: {
-                    setCommonStore((state) => {
-                      if (foundation && composedWalls && composedWalls.length === 4) {
-                        const roof = state.elements.find((e) => isThisIdAndType(e)) as GambrelRoofModel;
-                        if (!roof) return;
-                        const px = Util.clamp(
-                          getRelPos(foundation, composedWalls[3], point),
-                          topRidgePoint[0] + 0.05,
-                          0.45,
-                        );
-                        const hDiff = topZ - composedWalls[0].lz;
-                        const pz = Util.clamp((point.z - foundation.lz - composedWalls[0].lz) / hDiff, 0, 1);
-                        // todo: check valid
-                        roof.frontRidgePoint = [px, pz];
+                    if (foundation && composedWalls && composedWalls.length === 4) {
+                      const px = Util.clamp(
+                        getRelPos(foundation, composedWalls[3], point),
+                        topRidgePoint[0] + 0.05,
+                        0.45,
+                      );
+                      const hDiff = topZ - composedWalls[0].lz;
+                      const pz = Util.clamp((point.z - foundation.lz - composedWalls[0].lz) / hDiff, 0, 1);
+                      const newFrontRidgePoint = [px, pz];
+
+                      const sideWallHeightsMap = getSideWallHeightsMap(
+                        composedWalls,
+                        topZ,
+                        newFrontRidgePoint,
+                        topRidgePoint,
+                        backRidgePoint,
+                      );
+                      if (isRoofValid(sideWallHeightsMap, parentId)) {
+                        setCommonStore((state) => {
+                          const roof = state.elements.find((e) => isThisIdAndType(e)) as GambrelRoofModel;
+                          if (!roof) return;
+                          roof.frontRidgePoint[0] = newFrontRidgePoint[0];
+                          roof.frontRidgePoint[1] = newFrontRidgePoint[1];
+                        });
                       }
-                    });
+                    }
                     break;
                   }
                   case RoofHandleType.FrontRight: {
-                    setCommonStore((state) => {
-                      if (foundation && composedWalls && composedWalls.length === 4) {
-                        const roof = state.elements.find((e) => isThisIdAndType(e)) as GambrelRoofModel;
-                        if (!roof) return;
-                        const px = Util.clamp(
-                          getRelPos(foundation, composedWalls[1], point),
-                          -0.45,
-                          -topRidgePoint[0] - 0.05,
-                        );
-                        const hDiff = topZ - composedWalls[0].lz;
-                        const pz = Util.clamp((point.z - foundation.lz - composedWalls[0].lz) / hDiff, 0, 1);
-                        // todo: check valid
-                        roof.frontRidgePoint = [-px, pz];
+                    if (foundation && composedWalls && composedWalls.length === 4) {
+                      const px = Util.clamp(
+                        getRelPos(foundation, composedWalls[1], point),
+                        -0.45,
+                        -topRidgePoint[0] - 0.05,
+                      );
+                      const hDiff = topZ - composedWalls[0].lz;
+                      const pz = Util.clamp((point.z - foundation.lz - composedWalls[0].lz) / hDiff, 0, 1);
+                      const newFrontRidgePoint = [-px, pz];
+
+                      const sideWallHeightsMap = getSideWallHeightsMap(
+                        composedWalls,
+                        topZ,
+                        newFrontRidgePoint,
+                        topRidgePoint,
+                        backRidgePoint,
+                      );
+                      if (isRoofValid(sideWallHeightsMap, parentId)) {
+                        setCommonStore((state) => {
+                          const roof = state.elements.find((e) => isThisIdAndType(e)) as GambrelRoofModel;
+                          if (!roof) return;
+                          roof.frontRidgePoint = [...newFrontRidgePoint];
+                        });
                       }
-                    });
+                    }
                     break;
                   }
                   case RoofHandleType.TopLeft: {
-                    setCommonStore((state) => {
-                      if (foundation && composedWalls && composedWalls.length === 4) {
-                        const roof = state.elements.find((e) => isThisIdAndType(e)) as GambrelRoofModel;
-                        if (!roof) return;
-                        const px = Util.clamp(
-                          getRelPos(foundation, composedWalls[3], point),
-                          -backRidgePoint[0] + 0.05,
-                          frontRidgePoint[0] - 0.05,
-                        );
-                        // todo: check valid
-                        roof.topRidgePoint[0] = px;
+                    if (foundation && composedWalls && composedWalls.length === 4) {
+                      const px = Util.clamp(
+                        getRelPos(foundation, composedWalls[3], point),
+                        -backRidgePoint[0] + 0.05,
+                        frontRidgePoint[0] - 0.05,
+                      );
+                      const newTopRidgePoint = [px, topRidgePoint[1]];
+
+                      const sideWallHeightsMap = getSideWallHeightsMap(
+                        composedWalls,
+                        topZ,
+                        frontRidgePoint,
+                        newTopRidgePoint,
+                        backRidgePoint,
+                      );
+                      if (isRoofValid(sideWallHeightsMap, parentId)) {
+                        setCommonStore((state) => {
+                          const roof = state.elements.find((e) => isThisIdAndType(e)) as GambrelRoofModel;
+                          if (!roof) return;
+                          roof.topRidgePoint = [...newTopRidgePoint];
+                        });
                       }
-                    });
+                    }
                     break;
                   }
                   case RoofHandleType.TopRight: {
-                    setCommonStore((state) => {
-                      if (foundation && composedWalls && composedWalls.length === 4) {
-                        const roof = state.elements.find((e) => isThisIdAndType(e)) as GambrelRoofModel;
-                        if (!roof) return;
-                        const px = Util.clamp(
-                          getRelPos(foundation, composedWalls[1], point),
-                          -frontRidgePoint[0] + 0.05,
-                          backRidgePoint[0] - 0.05,
-                        );
-                        // todo: check valid
-                        roof.topRidgePoint[0] = -px;
+                    if (foundation && composedWalls && composedWalls.length === 4) {
+                      const px = Util.clamp(
+                        getRelPos(foundation, composedWalls[1], point),
+                        -frontRidgePoint[0] + 0.05,
+                        backRidgePoint[0] - 0.05,
+                      );
+                      const newTopRidgePoint = [-px, topRidgePoint[1]];
+
+                      const sideWallHeightsMap = getSideWallHeightsMap(
+                        composedWalls,
+                        topZ,
+                        frontRidgePoint,
+                        newTopRidgePoint,
+                        backRidgePoint,
+                      );
+                      if (isRoofValid(sideWallHeightsMap, parentId)) {
+                        setCommonStore((state) => {
+                          const roof = state.elements.find((e) => isThisIdAndType(e)) as GambrelRoofModel;
+                          if (!roof) return;
+                          roof.topRidgePoint = [...newTopRidgePoint];
+                        });
                       }
-                    });
+                    }
                     break;
                   }
                   case RoofHandleType.BackLeft: {
-                    setCommonStore((state) => {
-                      if (foundation && composedWalls && composedWalls.length === 4) {
-                        const roof = state.elements.find((e) => isThisIdAndType(e)) as GambrelRoofModel;
-                        if (!roof) return;
-                        const px = Util.clamp(
-                          getRelPos(foundation, composedWalls[1], point),
-                          -topRidgePoint[0] + 0.05,
-                          0.45,
-                        );
-                        const hDiff = topZ - composedWalls[2].lz;
-                        const pz = Util.clamp((point.z - foundation.lz - composedWalls[2].lz) / hDiff, 0, 1);
-                        // todo: check valid
-                        roof.backRidgePoint = [px, pz];
+                    if (foundation && composedWalls && composedWalls.length === 4) {
+                      const px = Util.clamp(
+                        getRelPos(foundation, composedWalls[1], point),
+                        -topRidgePoint[0] + 0.05,
+                        0.45,
+                      );
+                      const hDiff = topZ - composedWalls[2].lz;
+                      const pz = Util.clamp((point.z - foundation.lz - composedWalls[2].lz) / hDiff, 0, 1);
+                      const newBackRidgePoint = [px, pz];
+                      const sideWallHeightsMap = getSideWallHeightsMap(
+                        composedWalls,
+                        topZ,
+                        frontRidgePoint,
+                        topRidgePoint,
+                        newBackRidgePoint,
+                      );
+                      if (isRoofValid(sideWallHeightsMap, parentId)) {
+                        setCommonStore((state) => {
+                          const roof = state.elements.find((e) => isThisIdAndType(e)) as GambrelRoofModel;
+                          if (!roof) return;
+                          roof.backRidgePoint = [...newBackRidgePoint];
+                        });
                       }
-                    });
+                    }
                     break;
                   }
                   case RoofHandleType.BackRight: {
-                    setCommonStore((state) => {
-                      if (foundation && composedWalls && composedWalls.length === 4) {
-                        const roof = state.elements.find((e) => isThisIdAndType(e)) as GambrelRoofModel;
-                        if (!roof) return;
-                        const px = Util.clamp(
-                          getRelPos(foundation, composedWalls[3], point),
-                          -0.45,
-                          topRidgePoint[0] - 0.05,
-                        );
-                        const hDiff = topZ - composedWalls[2].lz;
-                        const pz = Util.clamp((point.z - foundation.lz - composedWalls[2].lz) / hDiff, 0, 1);
-                        // todo: check valid
-                        roof.backRidgePoint = [-px, pz];
+                    if (foundation && composedWalls && composedWalls.length === 4) {
+                      const px = Util.clamp(
+                        getRelPos(foundation, composedWalls[3], point),
+                        -0.45,
+                        topRidgePoint[0] - 0.05,
+                      );
+                      const hDiff = topZ - composedWalls[2].lz;
+                      const pz = Util.clamp((point.z - foundation.lz - composedWalls[2].lz) / hDiff, 0, 1);
+                      const newBackRidgePoint = [-px, pz];
+
+                      const sideWallHeightsMap = getSideWallHeightsMap(
+                        composedWalls,
+                        topZ,
+                        frontRidgePoint,
+                        topRidgePoint,
+                        newBackRidgePoint,
+                      );
+                      if (isRoofValid(sideWallHeightsMap, parentId)) {
+                        setCommonStore((state) => {
+                          const roof = state.elements.find((e) => isThisIdAndType(e)) as GambrelRoofModel;
+                          if (!roof) return;
+                          roof.backRidgePoint = [...newBackRidgePoint];
+                        });
                       }
-                    });
+                    }
                     break;
                   }
                 }

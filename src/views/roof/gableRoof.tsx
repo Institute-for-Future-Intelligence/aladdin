@@ -69,6 +69,7 @@ import { useDataStore } from '../../stores/commonData';
 import { BufferRoofSegment, WindowData } from './roofSegment';
 import Ceiling from './ceiling';
 import { WindowModel, WindowType } from 'src/models/WindowModel';
+import { WallHeights, isRoofValid } from './gambrelRoof';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -744,7 +745,13 @@ const GableRoof = (roofModel: GableRoofModel) => {
     return k * x + b;
   };
 
-  const updateGabledWall = (composedWalls: ComposedWall[], index: number, ridgePoint: number[]) => {
+  const setGabledWallHeightsMap = (
+    map: Map<string, WallHeights>,
+    composedWalls: ComposedWall[],
+    index: number,
+    topZ: number,
+    ridgePoint: number[],
+  ) => {
     const composedWall = composedWalls[index];
     const length = new Vector3().subVectors(composedWall.leftPoint, composedWall.rightPoint).length();
     const ridgeX = (ridgePoint[0] + 0.5) * length;
@@ -763,75 +770,64 @@ const GableRoof = (roofModel: GableRoofModel) => {
       [0],
     );
 
-    const wallPointsXMap = new Map<string, number[]>();
     for (let i = 0; i < composedWall.wallsId.length; i++) {
       const id = composedWall.wallsId[i];
-      const points = [wallPointsX[i], wallPointsX[i + 1]];
-      wallPointsXMap.set(id, points);
+      const [leftX, rightX] = [wallPointsX[i], wallPointsX[i + 1]];
+      const wallLength = rightX - leftX;
+
+      const wallHeights: WallHeights = { left: 0, right: 0 };
+      if (leftX < ridgeX) {
+        wallHeights.left = getY(leftHalfK, leftHalfB, leftX);
+      } else if (leftX === ridgeX) {
+        wallHeights.left = getY(rightHalfK, rightHalfB, leftX);
+        wallHeights.center = [-0.5, topZ];
+      } else {
+        wallHeights.left = getY(rightHalfK, rightHalfB, leftX);
+        wallHeights.center = undefined;
+      }
+
+      if (rightX < ridgeX) {
+        wallHeights.right = getY(leftHalfK, leftHalfB, rightX);
+        wallHeights.center = undefined;
+      } else if (rightX === ridgeX) {
+        wallHeights.right = getY(leftHalfK, leftHalfB, rightX);
+        wallHeights.center = [0.5, topZ];
+      } else {
+        wallHeights.right = getY(rightHalfK, rightHalfB, rightX);
+      }
+      if (leftX < ridgeX && rightX > ridgeX) {
+        wallHeights.center = [(ridgeX - leftX) / wallLength - 0.5, topZ];
+      }
+
+      map.set(id, wallHeights);
     }
 
-    setCommonStore((state) => {
-      for (const e of state.elements) {
-        if (wallPointsXMap.has(e.id)) {
-          const pointsX = wallPointsXMap.get(e.id);
-          if (pointsX) {
-            const [leftX, rightX] = pointsX;
-            const wall = e as WallModel;
-            wall.roofId = id;
-
-            if (leftX < ridgeX) {
-              wall.leftRoofHeight = getY(leftHalfK, leftHalfB, leftX);
-            } else if (leftX === ridgeX) {
-              wall.leftRoofHeight = getY(rightHalfK, rightHalfB, leftX);
-              if (wall.centerRoofHeight) {
-                wall.centerRoofHeight[0] = -0.5;
-                wall.centerRoofHeight[1] = topZ;
-              } else {
-                wall.centerRoofHeight = [-0.5, topZ];
-              }
-            } else {
-              wall.leftRoofHeight = getY(rightHalfK, rightHalfB, leftX);
-              wall.centerRoofHeight = undefined;
-            }
-
-            if (rightX < ridgeX) {
-              wall.rightRoofHeight = getY(leftHalfK, leftHalfB, rightX);
-              wall.centerRoofHeight = undefined;
-            } else if (rightX === ridgeX) {
-              wall.rightRoofHeight = getY(leftHalfK, leftHalfB, rightX);
-              if (wall.centerRoofHeight) {
-                wall.centerRoofHeight[0] = 0.5;
-                wall.centerRoofHeight[1] = topZ;
-              } else {
-                wall.centerRoofHeight = [0.5, topZ];
-              }
-            } else {
-              wall.rightRoofHeight = getY(rightHalfK, rightHalfB, rightX);
-            }
-            if (leftX < ridgeX && rightX > ridgeX) {
-              if (wall.centerRoofHeight) {
-                wall.centerRoofHeight[0] = (ridgeX - leftX) / wall.lx - 0.5;
-                wall.centerRoofHeight[1] = topZ;
-              } else {
-                wall.centerRoofHeight = [(ridgeX - leftX) / wall.lx - 0.5, topZ];
-              }
-            }
-          }
-        }
-      }
-    });
+    return map;
   };
 
-  const updateWalls = (composedWalls: ComposedWall[]) => {
+  const getGabledWallsHeightsMap = (
+    composedWalls: ComposedWall[],
+    topZ: number,
+    ridgeLeftPoint: number[],
+    ridgeRightPoint: number[],
+  ) => {
+    const map = new Map<string, WallHeights>();
+    setGabledWallHeightsMap(map, composedWalls, 1, topZ, ridgeRightPoint);
+    setGabledWallHeightsMap(map, composedWalls, 3, topZ, ridgeLeftPoint);
+    return map;
+  };
+
+  const updateWalls = (
+    composedWalls: ComposedWall[],
+    topZ: number,
+    ridgeLeftPoint: number[],
+    ridgeRightPoint: number[],
+  ) => {
     const [frontWall, rightWall, backWall, leftWall] = composedWalls;
 
-    // left and right side
-    updateGabledWall(composedWalls, 1, ridgeRightPoint);
-    updateGabledWall(composedWalls, 3, ridgeLeftPoint);
-
-    // front and back side
     const frontWallsIdSet = new Set(frontWall.wallsId);
     const backWallsIdSet = new Set(backWall.wallsId);
+    const gabledWallsHeightsMap = getGabledWallsHeightsMap(composedWalls, topZ, ridgeLeftPoint, ridgeRightPoint);
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Wall && e.foundationId === parentId) {
@@ -859,6 +855,26 @@ const GableRoof = (roofModel: GableRoofModel) => {
               w.leftRoofHeight = lh;
               w.rightRoofHeight = rh;
             }
+          } else if (gabledWallsHeightsMap.has(e.id)) {
+            const gabledWallHeights = gabledWallsHeightsMap.get(e.id);
+            if (gabledWallHeights) {
+              const wall = e as WallModel;
+              const { left, right, center } = gabledWallHeights;
+              wall.roofId = id;
+              wall.leftRoofHeight = left;
+              wall.rightRoofHeight = right;
+              if (center) {
+                const [x, h] = center;
+                if (wall.centerRoofHeight) {
+                  wall.centerRoofHeight[0] = x;
+                  wall.centerRoofHeight[1] = h;
+                } else {
+                  wall.centerRoofHeight = [x, h];
+                }
+              } else {
+                wall.centerRoofHeight = undefined;
+              }
+            }
           }
         }
       }
@@ -870,7 +886,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
       if (!composedWalls || composedWalls.length !== 4) {
         removeElementById(id, false, false);
       } else {
-        updateWalls(composedWalls);
+        updateWalls(composedWalls, topZ, ridgeLeftPoint, ridgeRightPoint);
         updateRooftopElements(foundation, id, roofSegments, centroid, topZ, thickness);
       }
       if (useStore.getState().addedRoofId === id) {
@@ -1131,10 +1147,17 @@ const GableRoof = (roofModel: GableRoofModel) => {
                       if (Math.abs(x) >= 0.45 && Math.abs(x) < 0.5) {
                         x = 0.45 * Math.sign(x);
                       }
-                      // if (RoofUtil.isRoofValid(id, currentWallArray[3].id, currentWallArray[1].id, [x, topZ])) {
-                      //   updateRoofTopRidge(id, x, -x);
-                      // }
-                      updateRoofTopRidge(id, x, -x);
+                      const newRidgeLeftPoint = [x, ridgeLeftPoint[1]];
+                      const newRidgeRightPoint = [-x, ridgeRightPoint[1]];
+                      const gabledWallsHeightsMap = getGabledWallsHeightsMap(
+                        composedWalls,
+                        topZ,
+                        newRidgeLeftPoint,
+                        newRidgeRightPoint,
+                      );
+                      if (isRoofValid(gabledWallsHeightsMap, parentId)) {
+                        updateRoofTopRidge(id, x, -x);
+                      }
                     }
                     break;
                   }
@@ -1145,42 +1168,39 @@ const GableRoof = (roofModel: GableRoofModel) => {
                       if (Math.abs(x) >= 0.45 && Math.abs(x) < 0.5) {
                         x = 0.45 * Math.sign(x);
                       }
-                      // if (RoofUtil.isRoofValid(id, composedWalls[1].id, composedWalls[3].id, [x, topZ])) {
-                      //   updateRoofTopRidge(id, -x, x);
-                      // }
-                      updateRoofTopRidge(id, -x, x);
+                      const newRidgeLeftPoint = [-x, ridgeLeftPoint[1]];
+                      const newRidgeRightPoint = [x, ridgeRightPoint[1]];
+                      const gabledWallsHeightsMap = getGabledWallsHeightsMap(
+                        composedWalls,
+                        topZ,
+                        newRidgeLeftPoint,
+                        newRidgeRightPoint,
+                      );
+                      if (isRoofValid(gabledWallsHeightsMap, parentId)) {
+                        updateRoofTopRidge(id, -x, x);
+                      }
                     }
                     break;
                   }
                   case RoofHandleType.Mid: {
+                    let newRise: number;
                     if (isShed) {
-                      // if (currentWallArray.length === 4 && currentWallArray[3].centerRoofHeight !== undefined) {
-                      //   const newRise = Math.max(0, point.z - foundation.lz - 0.3 - highestWallHeight);
-                      //   if (
-                      //     RoofUtil.isRoofValid(id, currentWallArray[3].id, currentWallArray[1].id, [
-                      //       ridgeLeftPoint[0],
-                      //       newRise + highestWallHeight,
-                      //     ])
-                      //   ) {
-                      //     setRiseInnerState(newRise);
-                      //   }
-                      // }
-                      const newRise = Math.max(0, point.z - foundation.lz - 0.3 - highestWallHeight);
-                      setRiseInnerState(newRise);
+                      newRise = Math.max(0, point.z - foundation.lz - 0.3 - highestWallHeight);
                     } else {
-                      const newRise = point.z - foundation.lz - 0.3 - highestWallHeight;
-                      // if (
-                      //   RoofUtil.isRoofValid(id, currentWallArray[3].id, currentWallArray[1].id, [
-                      //     ridgeLeftPoint[0],
-                      //     newRise + highestWallHeight,
-                      //   ])
-                      // ) {
-                      //   setRiseInnerState(newRise);
-                      // }
-                      setRiseInnerState(newRise);
+                      newRise = point.z - foundation.lz - 0.3 - highestWallHeight;
                     }
-                    // the vertical ruler needs to display the latest rise when the handle is being dragged
-                    useStore.getState().updateRoofRiseById(id, riseInnerState, topZ + roofModel.thickness);
+                    const newTopZ = highestWallHeight + newRise;
+                    const gabledWallsHeightsMap = getGabledWallsHeightsMap(
+                      composedWalls,
+                      newTopZ,
+                      ridgeLeftPoint,
+                      ridgeRightPoint,
+                    );
+                    if (isRoofValid(gabledWallsHeightsMap, parentId)) {
+                      setRiseInnerState(newRise);
+                      // the vertical ruler needs to display the latest rise when the handle is being dragged
+                      useStore.getState().updateRoofRiseById(id, riseInnerState, topZ + roofModel.thickness);
+                    }
                     break;
                   }
                 }
