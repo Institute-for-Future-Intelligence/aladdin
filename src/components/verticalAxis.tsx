@@ -35,7 +35,8 @@ const VerticalAxis = ({ yScale, tickLength, name, type }: VerticalAxisProps) => 
         style={{
           fontSize: '11px',
           textAnchor: 'middle',
-          fill: 'black',
+          fill: 'dimgray',
+          // rotate: '-10deg',
         }}
       >
         {name}

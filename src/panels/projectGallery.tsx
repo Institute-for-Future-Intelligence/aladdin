@@ -36,7 +36,7 @@ const Container = styled.div`
   user-select: none;
   tab-index: -1; // set to be not focusable
   z-index: 7; // must be less than other panels
-  background: whitesmoke;
+  background: white;
 `;
 
 const ColumnWrapper = styled.div`
@@ -77,7 +77,7 @@ const DesignSpaceHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   padding-top: 6px;
-  background: whitesmoke;
+  background: white;
 `;
 
 const SubContainer = styled.div`
@@ -86,7 +86,7 @@ const SubContainer = styled.div`
   flex-direction: column;
   justify-content: space-between;
   align-items: flex-start;
-  background: whitesmoke;
+  background: white;
 `;
 
 export interface ProjectGalleryProps {
@@ -107,6 +107,7 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, author }: 
   const solarPanelArrayLayoutConstraints = useStore(Selector.solarPanelArrayLayoutConstraints);
 
   const [selectedDesign, setSelectedDesign] = useState<Design | undefined>();
+  const [hoveredDesign, setHoveredDesign] = useState<Design | undefined>();
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
 
   const lang = { lng: language };
@@ -175,13 +176,15 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, author }: 
             InterRowSpacing: design.interRowSpacing,
             PoleHeight: design.poleHeight,
             Orientation: design.orientation === Orientation.landscape ? 0 : 1,
-            group: 'a',
+            group: 'default',
+            selected: selectedDesign === design,
+            hovered: hoveredDesign === design,
           } as DatumEntry);
         }
       }
     }
     return data;
-  }, [projectDesigns, projectType]);
+  }, [projectDesigns, projectType, hoveredDesign, selectedDesign]);
 
   const minima: number[] = useMemo(() => {
     return projectType === DesignProblem.SOLAR_PANEL_ARRAY && solarPanelArrayLayoutConstraints
@@ -284,7 +287,15 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, author }: 
               grid={{ column: 4, gutter: 2 }}
               dataSource={projectDesigns}
               renderItem={(design) => (
-                <List.Item style={{ marginBottom: '-6px' }}>
+                <List.Item
+                  style={{ marginBottom: '-6px' }}
+                  onMouseOver={() => {
+                    setHoveredDesign(design);
+                  }}
+                  onMouseLeave={() => {
+                    setHoveredDesign(undefined);
+                  }}
+                >
                   <img
                     loading={'lazy'}
                     width={imageWidth + 'px'}
@@ -293,22 +304,36 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, author }: 
                       (event.target as HTMLImageElement).src = ImageLoadFailureIcon;
                     }}
                     alt={design.title}
-                    title={design.title}
+                    title={
+                      selectedDesign === design
+                        ? i18n.t('projectPanel.SingleClickToDeselectDoubleClickToOpen', lang)
+                        : i18n.t('projectPanel.SingleClickToSelectDoubleClickToOpen', lang)
+                    }
                     src={design.thumbnailUrl}
                     style={{
                       cursor: 'pointer',
                       borderRadius: selectedDesign === design ? '0' : '10px',
                       border: selectedDesign === design ? '2px solid red' : 'none',
                     }}
-                    onClick={(event) => {
-                      setSelectedDesign(design);
-                      if (user.uid && openCloudFile) {
-                        openCloudFile(user.uid, design.title, true);
-                      }
+                    onDoubleClick={(event) => {
                       const target = event.target as HTMLImageElement;
                       if (target.src === ImageLoadFailureIcon) {
                         target.src = design.thumbnailUrl;
                       }
+                      setSelectedDesign(design);
+                      if (user.uid && openCloudFile) {
+                        openCloudFile(user.uid, design.title, true);
+                      }
+                    }}
+                    onClick={(event) => {
+                      const target = event.target as HTMLImageElement;
+                      if (target.src === ImageLoadFailureIcon) {
+                        target.src = design.thumbnailUrl;
+                      }
+                      setSelectedDesign(design !== selectedDesign ? design : undefined);
+                    }}
+                    onContextMenu={(event) => {
+                      event.stopPropagation();
                     }}
                   />
                   <div
@@ -334,7 +359,7 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, author }: 
             <DesignSpaceHeader>
               <span style={{ paddingLeft: '20px' }}>{i18n.t('projectPanel.DesignSpaceVisualization', lang)}</span>
               <Button
-                style={{ border: 'none', paddingRight: '20px', background: 'whitesmoke' }}
+                style={{ border: 'none', paddingRight: '20px', background: 'white' }}
                 onClick={() => {
                   const d = document.getElementById('design-space');
                   if (d) {

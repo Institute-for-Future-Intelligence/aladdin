@@ -190,7 +190,7 @@ export enum LineWidth {
 }
 
 export interface DatumEntry {
-  [key: string]: number | undefined | string;
+  [key: string]: number | undefined | string | boolean;
 }
 
 export interface EnergyUsage {

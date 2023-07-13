@@ -1383,6 +1383,8 @@ export const i18n_tr = {
       RemoveSelectedDesign: 'Remove Selected Design',
       DesignSpaceVisualization: 'Design Space Visualization',
       DesignSpaceScreenshot: 'Design space screenshot',
+      SingleClickToSelectDoubleClickToOpen: 'Single-click to select, double-click to open.',
+      SingleClickToDeselectDoubleClickToOpen: 'Single-click to deselect, double-click to open.',
     },
 
     accountSettingsPanel: {

@@ -1357,6 +1357,8 @@ export const i18n_zh_cn = {
       RemoveSelectedDesign: '删除选中设计',
       DesignSpaceVisualization: '设计空间可视化',
       DesignSpaceScreenshot: '设计空间截图',
+      SingleClickToSelectDoubleClickToOpen: '单击选择，双击打开。',
+      SingleClickToDeselectDoubleClickToOpen: '单击取消选择，双击打开。',
     },
 
     accountSettingsPanel: {

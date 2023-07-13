@@ -73,7 +73,16 @@ const ParallelCoordinates = ({
       return undefined;
     }
 
-    return <path key={i} d={d} stroke={colorScale(series.group as string)} fill="none" />;
+    return (
+      <path
+        key={i}
+        d={d}
+        stroke={series.hovered ? 'red' : colorScale(series.group as string)}
+        fill="none"
+        strokeWidth={series.selected ? 3 : 1}
+        strokeDasharray={series.hovered ? '5,3' : 'none'}
+      />
+    );
   });
 
   // Compute Axes

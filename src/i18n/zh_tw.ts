@@ -1358,6 +1358,8 @@ export const i18n_zh_tw = {
       RemoveSelectedDesign: '刪除選中設計',
       DesignSpaceVisualization: '設計空間可視化',
       DesignSpaceScreenshot: '設計空間截圖',
+      SingleClickToSelectDoubleClickToOpen: '單擊選擇，雙擊打開。',
+      SingleClickToDeselectDoubleClickToOpen: '單擊取消選擇，雙擊打開。',
     },
 
     accountSettingsPanel: {
