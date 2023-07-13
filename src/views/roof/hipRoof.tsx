@@ -222,7 +222,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
   };
 
   const centroid2D = useMemo(() => {
-    if (composedWalls === null) return new Vector2();
+    if (composedWalls === null || composedWalls.length !== 4) return new Vector2();
 
     const points = getWallsPoint2(composedWalls);
     const p = Util.calculatePolygonCentroid(points);
@@ -265,7 +265,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
   };
 
   const getOverhangHeight = () => {
-    if (composedWalls === null) return 0;
+    if (composedWalls === null || composedWalls.length !== 4) return 0;
 
     const wallPoints = composedWalls.map((w) => w.leftPoint);
     const ridges = [ridgeLeftPoint, ridgeRightPoint, ridgeRightPoint, ridgeLeftPoint];
@@ -285,7 +285,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
   };
 
   const overhangs = useMemo(() => {
-    if (composedWalls === null) return [] as Vector3[];
+    if (composedWalls === null || composedWalls.length !== 4) return [] as Vector3[];
     return composedWalls.map((wall) => RoofUtil.getComposedWallNormal(wall).multiplyScalar(wall.eavesLength));
   }, [composedWalls]);
 
@@ -294,7 +294,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
   }, [thickness]);
 
   const wallPointsAfterOffset = useMemo(() => {
-    if (composedWalls === null) return null;
+    if (composedWalls === null || composedWalls.length !== 4) return null;
     return composedWalls.map((wall, idx) => ({
       leftPoint: wall.leftPoint.clone().add(overhangs[idx]),
       rightPoint: wall.rightPoint.clone().add(overhangs[idx]),
@@ -303,7 +303,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
 
   const roofSegments = useMemo(() => {
     const segments: RoofSegmentProps[] = [];
-    if (composedWalls === null || wallPointsAfterOffset === null) return segments;
+    if (composedWalls === null || composedWalls.length !== 4 || wallPointsAfterOffset === null) return segments;
 
     const overhangHeight = getOverhangHeight();
 
@@ -365,7 +365,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
 
   useEffect(() => {
     if (!isFirstMount || useStore.getState().addedRoofId === id) {
-      if (composedWalls === null) {
+      if (composedWalls === null || composedWalls.length !== 4) {
         removeElementById(id, false, false);
       } else {
         for (let i = 0; i < composedWalls.length; i++) {
@@ -504,7 +504,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
   };
   const topLayerColor = textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white';
 
-  if (composedWalls === null) return null;
+  if (composedWalls === null || composedWalls.length !== 4) return null;
 
   return (
     <group position={[cx, cy, cz]} rotation={[0, 0, rotation]} name={`Hip Roof Group ${id}`}>
