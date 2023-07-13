@@ -461,6 +461,15 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
     return shape;
   }, [currentWallArray, ridgePoints]);
 
+  const ceilingPoints = useMemo(() => {
+    const points: Vector3[] = [];
+    points.push(new Vector3().fromArray(currentWallArray[0].leftPoint));
+    for (const wall of currentWallArray) {
+      points.push(new Vector3().fromArray(wall.rightPoint));
+    }
+    return points;
+  }, [currentWallArray]);
+
   useEffect(() => {
     if (ridgeWidth !== width) {
       setWidth(ridgeWidth);
@@ -973,7 +982,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
       </group>
 
       {/* ceiling */}
-      {ceiling && riseInnerState > 0 && <Ceiling currWallArray={currentWallArray} />}
+      {ceiling && riseInnerState > 0 && <Ceiling points={ceilingPoints} cz={currentWallArray[0].lz} />}
 
       {/* handles */}
       {selected && !locked && (

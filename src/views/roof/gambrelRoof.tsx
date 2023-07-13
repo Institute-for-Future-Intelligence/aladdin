@@ -660,6 +660,11 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
     return segments;
   }, [composedWalls, topZ, thickness, topRidgePoint, frontRidgePoint, backRidgePoint]);
 
+  const ceilingPoints = useMemo(() => {
+    if (!composedWalls || composedWalls.length !== 4) return null;
+    return composedWalls.map((wall) => wall.leftPoint);
+  }, [composedWalls]);
+
   const getEdgeLine = (startPoint: Vector2, endPoint: Vector2) => {
     const dx = endPoint.x - startPoint.x;
     const dy = endPoint.y - startPoint.y;
@@ -1094,9 +1099,9 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
       </group>
 
       {/* ceiling */}
-      {/* {ceiling && currentWallArray[0].lz === currentWallArray[2].lz && riseInnerState > 0 && (
-        <Ceiling currWallArray={currentWallArray} />
-      )} */}
+      {ceiling && riseInnerState > 0 && composedWalls[0].lz === composedWalls[2].lz && ceilingPoints && (
+        <Ceiling cz={composedWalls[0].lz} points={ceilingPoints} />
+      )}
 
       {/* handles */}
       {selected && !locked && (

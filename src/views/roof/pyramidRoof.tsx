@@ -344,6 +344,15 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
     return segments;
   }, [currentWallArray, updateRoofFlag, centerPoint, thickness]);
 
+  const ceilingPoints = useMemo(() => {
+    const points: Vector3[] = [];
+    points.push(new Vector3().fromArray(currentWallArray[0].leftPoint));
+    for (const wall of currentWallArray) {
+      points.push(new Vector3().fromArray(wall.rightPoint));
+    }
+    return points;
+  }, [currentWallArray]);
+
   // set position and rotation
   const foundation = getElementById(parentId);
   let rotation = 0;
@@ -651,7 +660,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
       </group>
 
       {/* ceiling */}
-      {ceiling && riseInnerState > 0 && <Ceiling currWallArray={currentWallArray} />}
+      {ceiling && riseInnerState > 0 && <Ceiling points={ceilingPoints} cz={currentWallArray[0].lz} />}
 
       {/* handle */}
       {selected && !locked && (

@@ -5,28 +5,26 @@
 import { Extrude } from '@react-three/drei';
 import React from 'react';
 import { WallModel } from 'src/models/WallModel';
-import { DoubleSide, Shape } from 'three';
+import { DoubleSide, Shape, Vector3 } from 'three';
 
 interface CeilingProps {
-  currWallArray: WallModel[];
+  cz: number;
+  points: Vector3[];
 }
 
-const Ceiling = ({ currWallArray }: CeilingProps) => {
-  const points = currWallArray.map((wall) => wall.rightPoint);
-  const wall0 = currWallArray[0];
-
+const Ceiling = ({ cz, points }: CeilingProps) => {
   const shape = new Shape();
 
-  shape.moveTo(wall0.leftPoint[0], wall0.leftPoint[1]);
+  shape.moveTo(points[0].x, points[0].y);
 
-  for (const [x, y] of points) {
+  for (const { x, y } of points) {
     shape.lineTo(x, y);
   }
 
   shape.closePath();
 
   return (
-    <Extrude scale={0.99} position={[0, 0, wall0.lz]} args={[shape, { steps: 1, depth: 0.1, bevelEnabled: false }]}>
+    <Extrude scale={0.99} position={[0, 0, cz]} args={[shape, { steps: 1, depth: 0.1, bevelEnabled: false }]}>
       <meshStandardMaterial side={DoubleSide} color={'white'} />
     </Extrude>
   );

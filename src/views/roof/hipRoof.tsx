@@ -357,6 +357,11 @@ const HipRoof = (roofModel: HipRoofModel) => {
     return segments;
   }, [composedWalls, ridgeLeftPoint, ridgeRightPoint, topZ, thickness]);
 
+  const ceilingPoints = useMemo(() => {
+    if (!composedWalls || composedWalls.length !== 4) return null;
+    return composedWalls.map((wall) => wall.leftPoint);
+  }, [composedWalls]);
+
   const setRayCast = (e: PointerEvent) => {
     mouse.x = (e.offsetX / gl.domElement.clientWidth) * 2 - 1;
     mouse.y = -(e.offsetY / gl.domElement.clientHeight) * 2 + 1;
@@ -573,7 +578,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
       </group>
 
       {/* ceiling */}
-      {/* {ceiling && riseInnerState > 0 && <Ceiling currWallArray={currentWallArray} />} */}
+      {ceiling && riseInnerState > 0 && ceilingPoints && <Ceiling cz={composedWalls[0].lz} points={ceilingPoints} />}
 
       {/* handles */}
       {selected && !locked && (

@@ -741,6 +741,11 @@ const GableRoof = (roofModel: GableRoofModel) => {
     return segments;
   }, [composedWalls, ridgeLeftPointV3, ridgeRightPointV3, topZ, thickness]);
 
+  const ceilingPoints = useMemo(() => {
+    if (!composedWalls || composedWalls.length !== 4) return null;
+    return composedWalls.map((wall) => wall.leftPoint);
+  }, [composedWalls]);
+
   const getY = (k: number, b: number, x: number) => {
     return k * x + b;
   };
@@ -957,6 +962,8 @@ const GableRoof = (roofModel: GableRoofModel) => {
     roofSegments: roofSegments,
   };
 
+  if (composedWalls === null || composedWalls.length !== 4) return null;
+
   return (
     <group position={[cx, cy, cz]} rotation={[0, 0, rotation]} name={`Gable Roof Group ${id}`}>
       {/* roof segments group */}
@@ -1015,9 +1022,9 @@ const GableRoof = (roofModel: GableRoofModel) => {
       </group>
 
       {/* ceiling */}
-      {/* {ceiling && riseInnerState > 0 && currentWallArray[0].lz === currentWallArray[2].lz && (
-        <Ceiling currWallArray={currentWallArray} />
-      )} */}
+      {ceiling && riseInnerState > 0 && composedWalls[0].lz === composedWalls[2].lz && ceilingPoints && (
+        <Ceiling cz={composedWalls[0].lz} points={ceilingPoints} />
+      )}
 
       {/* rafter */}
       {roofStructure === RoofStructure.Rafter && composedWalls && composedWalls.length === 4 && (
