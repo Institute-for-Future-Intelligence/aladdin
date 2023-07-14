@@ -1118,7 +1118,14 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                   case DesignProblem.SOLAR_PANEL_ARRAY:
                     const panelCount = Util.countAllSolarPanels();
                     const dailyYield = Util.countAllSolarPanelDailyYields();
-                    design = { panelCount, dailyYield, ...design, ...useStore.getState().solarPanelArrayLayoutParams };
+                    const yearlyYield = Util.countAllSolarPanelYearlyYields();
+                    design = {
+                      panelCount,
+                      dailyYield,
+                      yearlyYield,
+                      ...design,
+                      ...useStore.getState().solarPanelArrayLayoutParams,
+                    };
                     break;
                   case DesignProblem.SOLAR_PANEL_TILT_ANGLE:
                     // TODO: Each row has a different tilt angle

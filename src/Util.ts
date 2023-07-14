@@ -439,6 +439,16 @@ export class Util {
     return total;
   }
 
+  static countAllSolarPanelYearlyYields(): number {
+    let total = 0;
+    for (const e of useStore.getState().elements) {
+      if (e.type === ObjectType.SolarPanel) {
+        total += (e as SolarPanelModel).yearlyYield ?? 0;
+      }
+    }
+    return total;
+  }
+
   static countAllSolarPanels(): number {
     let count = 0;
     for (const e of useStore.getState().elements) {

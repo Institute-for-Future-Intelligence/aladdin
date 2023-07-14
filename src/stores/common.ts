@@ -297,6 +297,7 @@ export interface CommonStoreState {
   updateSolarCollectorPoleRadiusAboveFoundation: (type: ObjectType, foundationId: string, poleRadius: number) => void;
   updateSolarCollectorPoleRadiusForAll: (type: ObjectType, poleRadius: number) => void;
 
+  clearAllSolarCollectorYields: () => void;
   updateSolarCollectorDailyYieldById: (id: string, dailyYield: number) => void;
   updateSolarCollectorYearlyYieldById: (id: string, yearlyYield: number) => void;
 
@@ -435,7 +436,6 @@ export interface CommonStoreState {
   countAllElements: (excludeLocked?: boolean) => number;
   countAllOffspringsByTypeAtOnce: (ancestorId: string, includingLocked: boolean) => ElementCounter;
   countSolarPanelsOnRack: (id: string) => number;
-  clearAllSolarPanelYields: () => void;
   removeAllChildElementsByType: (parentId: string, type: ObjectType) => void;
   removeAllElementsOnFoundationByType: (foundationId: string, type: ObjectType) => void;
 
@@ -1631,6 +1631,18 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
+          // this should be called if any of the solar collectors changes
+          clearAllSolarCollectorYields() {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (Util.isSolarCollector(e)) {
+                  const sc = e as SolarCollector;
+                  sc.dailyYield = 0;
+                  sc.yearlyYield = 0;
+                }
+              }
+            });
+          },
           updateSolarCollectorDailyYieldById(id, dailyYield) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
@@ -2835,18 +2847,6 @@ export const useStore = create<CommonStoreState>(
               }
             }
             return count;
-          },
-          // this should be called if any of the solar panels changes
-          clearAllSolarPanelYields() {
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel) {
-                  const sp = e as SolarPanelModel;
-                  sp.dailyYield = 0;
-                  sp.yearlyYield = 0;
-                }
-              }
-            });
           },
 
           // must copy the elements because they may be pasted multiple times.

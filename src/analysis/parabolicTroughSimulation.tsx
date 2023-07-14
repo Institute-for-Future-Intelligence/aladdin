@@ -407,7 +407,7 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
         if (e.type === ObjectType.ParabolicTrough) {
           const output = yearlyOutputsMapRef.current.get(e.id);
           if (output) {
-            updateYearlyYield(e.id, output.reduce((a, b) => a + b, 0) * monthInterval);
+            updateYearlyYield(e.id, output.reduce((a, b) => a + b, 0) * monthInterval * daysOfMonth);
             resultArr.push(output);
             index++;
             labels.push(e.label ?? 'Trough' + index);
@@ -431,7 +431,7 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
         if (e.type === ObjectType.ParabolicTrough) {
           const output = yearlyOutputsMapRef.current.get(e.id);
           if (output) {
-            updateYearlyYield(e.id, output.reduce((a, b) => a + b, 0) * monthInterval);
+            updateYearlyYield(e.id, output.reduce((a, b) => a + b, 0) * monthInterval * daysOfMonth);
             resultArr.push(output);
           }
         }

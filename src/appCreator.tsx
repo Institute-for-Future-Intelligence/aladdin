@@ -396,13 +396,15 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       <CloudManager viewOnly={viewOnly} canvas={canvasRef.current} />
       <Panels />
       <DropdownContextMenu>
-        <div>
+        {/* must specify the height here for the floating window to have correct boundary check*/}
+        <div style={{ height: 'calc(100vh - 72px)' }}>
           <SplitPane
             split={'vertical'}
             defaultSize={projectView ? '50%' : 0}
             onChange={throttle((size) => {
               setCanvasRelativeWidth(Math.round(100 - (size / window.innerWidth) * 100));
             }, 5)}
+            // must specify the height again for the split pane to resize correctly with the window
             style={{ height: 'calc(100vh - 72px)', display: 'flex' }}
             pane1Style={{
               width: projectView ? 100 - canvasRelativeWidth + '%' : '0',
