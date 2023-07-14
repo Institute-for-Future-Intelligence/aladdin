@@ -10,11 +10,13 @@ type VerticalAxisProps = {
   yScale: ScaleLinear<number, number>;
   tickLength: number;
   type: string;
+  min: number;
+  max: number;
 };
 
 const DEFAULT_TICK_LENGTH = 5;
 
-const VerticalAxis = ({ yScale, tickLength, name, type }: VerticalAxisProps) => {
+const VerticalAxis = ({ yScale, tickLength, name, type, min, max }: VerticalAxisProps) => {
   const range = yScale.range();
 
   const ticks = useMemo(() => {
@@ -31,19 +33,19 @@ const VerticalAxis = ({ yScale, tickLength, name, type }: VerticalAxisProps) => 
       {/* Title */}
       <text
         x={0}
-        y={-25}
+        y={-15}
         style={{
-          fontSize: '11px',
+          fontSize: '10px',
           textAnchor: 'middle',
           fill: 'dimgray',
-          // rotate: '-10deg',
+          // rotate: '-15deg',
         }}
       >
         {name}
       </text>
 
       {/* Vertical line */}
-      <line x1={0} x2={0} y1={0} y2={yScale(range[1])} stroke="black" strokeWidth={2} />
+      <line x1={0} x2={0} y1={yScale(min)} y2={yScale(max)} stroke="black" strokeWidth={2} />
 
       {/* Ticks and labels */}
       {ticks.map(({ value, yOffset }) => (

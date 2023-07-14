@@ -105,6 +105,7 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, author }: 
   const projectDesigns = useStore(Selector.projectDesigns);
   const projectType = useStore(Selector.projectType);
   const solarPanelArrayLayoutConstraints = useStore(Selector.solarPanelArrayLayoutConstraints);
+  const economicsParams = useStore(Selector.economicsParams);
 
   const [selectedDesign, setSelectedDesign] = useState<Design | undefined>();
   const [hoveredDesign, setHoveredDesign] = useState<Design | undefined>();
@@ -161,11 +162,24 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, author }: 
 
   const variables: string[] =
     projectType === DesignProblem.SOLAR_PANEL_ARRAY
-      ? ['RowWidth', 'TiltAngle', 'InterRowSpacing', 'Orientation', 'PoleHeight', 'PanelCount', 'DailyYield']
+      ? ['rowWidth', 'tiltAngle', 'interRowSpacing', 'orientation', 'poleHeight', 'panelCount', 'yield', 'profit']
+      : [];
+  const titles: string[] =
+    projectType === DesignProblem.SOLAR_PANEL_ARRAY
+      ? [
+          'Row Width (m)',
+          'Tilt Angle (°)',
+          'Inter-Row Spacing (m)',
+          'Orientation',
+          'Pole Height (m)',
+          'Panel Count',
+          'Yield (MWh)',
+          'Profit ($K)',
+        ]
       : [];
   const types: string[] =
     projectType === DesignProblem.SOLAR_PANEL_ARRAY
-      ? ['number', 'number', 'number', 'boolean', 'number', 'number', 'number']
+      ? ['number', 'number', 'number', 'boolean', 'number', 'number', 'number', 'number']
       : [];
   const data: DatumEntry[] = useMemo(() => {
     const data: DatumEntry[] = [];
@@ -173,13 +187,17 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, author }: 
       if (projectType === DesignProblem.SOLAR_PANEL_ARRAY) {
         for (const design of projectDesigns) {
           data.push({
-            RowWidth: design.rowsPerRack,
-            TiltAngle: Util.toDegrees(design.tiltAngle),
-            InterRowSpacing: design.interRowSpacing,
-            PoleHeight: design.poleHeight,
-            Orientation: design.orientation === Orientation.landscape ? 0 : 1,
-            PanelCount: design.panelCount,
-            DailyYield: design.dailyYield,
+            rowWidth: design.rowsPerRack,
+            tiltAngle: Util.toDegrees(design.tiltAngle),
+            interRowSpacing: design.interRowSpacing,
+            poleHeight: design.poleHeight,
+            orientation: design.orientation === Orientation.landscape ? 0 : 1,
+            panelCount: design.panelCount,
+            yield: design.yearlyYield * 0.001,
+            profit:
+              (design.yearlyYield * economicsParams.electricitySellingPrice -
+                design.panelCount * economicsParams.operationalCostPerUnit * 365) *
+              0.001,
             group: 'default',
             selected: selectedDesign === design,
             hovered: hoveredDesign === design,
@@ -200,8 +218,9 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, author }: 
           0,
           0,
           0,
+          -10,
         ]
-      : [1, 0, 1, 0, 0, 0, 0];
+      : [1, 0, 1, 0, 0, 0, 0, -10];
   }, [solarPanelArrayLayoutConstraints, projectType]);
   const maxima: number[] = useMemo(() => {
     return projectType === DesignProblem.SOLAR_PANEL_ARRAY && solarPanelArrayLayoutConstraints
@@ -213,9 +232,18 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, author }: 
           4,
           300,
           500,
+          10,
         ]
-      : [10, 90, 10, 1, 5, 300, 500];
+      : [10, 90, 10, 1, 5, 300, 500, 10];
   }, [solarPanelArrayLayoutConstraints, projectType]);
+
+  const hover = (i: number) => {
+    if (projectDesigns) {
+      if (i >= 0 && i < projectDesigns.length) {
+        setHoveredDesign(projectDesigns[i]);
+      }
+    }
+  };
 
   return (
     <Container>
@@ -292,7 +320,7 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, author }: 
                 overflowX: 'hidden',
                 overflowY: 'auto',
               }}
-              grid={{ column: 4, gutter: 2 }}
+              grid={{ column: 4, gutter: 1 }}
               dataSource={projectDesigns}
               renderItem={(design) => (
                 <List.Item
@@ -319,9 +347,15 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, author }: 
                     }
                     src={design.thumbnailUrl}
                     style={{
+                      padding: '1px',
                       cursor: 'pointer',
                       borderRadius: selectedDesign === design ? '0' : '10px',
-                      border: selectedDesign === design ? '2px solid red' : 'none',
+                      border:
+                        hoveredDesign === design
+                          ? '2px dashed gray'
+                          : selectedDesign === design
+                          ? '2px solid red'
+                          : 'none',
                     }}
                     onDoubleClick={(event) => {
                       const target = event.target as HTMLImageElement;
@@ -392,6 +426,8 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, author }: 
               minima={minima}
               maxima={maxima}
               variables={variables}
+              titles={titles}
+              hover={hover}
             />
           </SubContainer>
         )}

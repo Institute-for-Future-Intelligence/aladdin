@@ -8,7 +8,7 @@ import { DatumEntry } from '../types';
 import React from 'react';
 import VerticalAxis from './verticalAxis';
 
-const MARGIN = { top: 60, right: 40, bottom: 30, left: 40 };
+const MARGIN = { top: 30, right: 55, bottom: 30, left: 55 };
 
 const COLORS = ['#e0ac2b', '#e85252', '#6689c6', '#9a6fb0', '#a53253', '#69b3a2'];
 
@@ -21,6 +21,8 @@ type ParallelCoordinatesProps = {
   minima: number[];
   maxima: number[];
   variables: string[];
+  titles: string[];
+  hover: Function;
 };
 
 type YScale = d3Scale.ScaleLinear<number, number>;
@@ -34,6 +36,8 @@ const ParallelCoordinates = ({
   minima,
   maxima,
   variables,
+  titles,
+  hover,
 }: ParallelCoordinatesProps) => {
   const boundsWidth = width - MARGIN.right - MARGIN.left;
   const boundsHeight = height - MARGIN.top - MARGIN.bottom;
@@ -61,7 +65,8 @@ const ParallelCoordinates = ({
   const allLines = data.map((series, i) => {
     const allCoordinates = variables.map((variable) => {
       const yScale = yScales[variable];
-      const x = xScale(variable) ?? 0; // I don't understand the type of scalePoint. IMO x cannot be undefined since I'm passing it something of type Variable.
+      // I don't understand the type of scalePoint. IMO x cannot be undefined since I'm passing it something of type Variable.
+      const x = xScale(variable) ?? 0;
       const y = yScale(series[variable] as number);
       const coordinate: [number, number] = [x, y];
       return coordinate;
@@ -75,6 +80,9 @@ const ParallelCoordinates = ({
 
     return (
       <path
+        onMouseOver={() => {
+          hover(i);
+        }}
         key={i}
         d={d}
         stroke={series.hovered ? 'red' : colorScale(series.group as string)}
@@ -90,7 +98,14 @@ const ParallelCoordinates = ({
     const yScale = yScales[variable];
     return (
       <g key={i} transform={'translate(' + xScale(variable) + ',0)'}>
-        <VerticalAxis yScale={yScale} tickLength={40} type={types[i] ?? 'number'} name={variable} />
+        <VerticalAxis
+          yScale={yScale}
+          tickLength={40}
+          type={types[i] ?? 'number'}
+          name={titles[i]}
+          min={minima[i]}
+          max={maxima[i]}
+        />
       </g>
     );
   });
