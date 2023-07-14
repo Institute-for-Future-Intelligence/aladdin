@@ -347,15 +347,12 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, author }: 
                     }
                     src={design.thumbnailUrl}
                     style={{
+                      transition: '.5s ease',
+                      opacity: hoveredDesign === design ? 0.5 : 1,
                       padding: '1px',
                       cursor: 'pointer',
                       borderRadius: selectedDesign === design ? '0' : '10px',
-                      border:
-                        hoveredDesign === design
-                          ? '2px dashed gray'
-                          : selectedDesign === design
-                          ? '2px solid red'
-                          : 'none',
+                      border: selectedDesign === design ? '2px solid red' : 'none',
                     }}
                     onDoubleClick={(event) => {
                       const target = event.target as HTMLImageElement;
