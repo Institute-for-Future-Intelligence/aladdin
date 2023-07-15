@@ -467,8 +467,8 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
                 </Space>
               ) : (
                 <Popover
-                  content={tooltipHeaterBreakdown.current.map((e) => (
-                    <div>{e}</div>
+                  content={tooltipHeaterBreakdown.current.map((e, i) => (
+                    <div key={i}>{e}</div>
                   ))}
                 >
                   <Space style={{ cursor: 'help' }}>
@@ -482,8 +482,8 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
                 </Space>
               ) : (
                 <Popover
-                  content={tooltipAcBreakdown.current.map((e) => (
-                    <div>{e}</div>
+                  content={tooltipAcBreakdown.current.map((e, i) => (
+                    <div key={i}>{e}</div>
                   ))}
                 >
                   <Space style={{ cursor: 'help' }}>
@@ -499,8 +499,8 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
                     </Space>
                   ) : (
                     <Popover
-                      content={tooltipSolarPanelBreakdown.current.map((e) => (
-                        <div>{e}</div>
+                      content={tooltipSolarPanelBreakdown.current.map((e, i) => (
+                        <div key={i}>{e}</div>
                       ))}
                     >
                       <Space style={{ cursor: 'help' }}>
@@ -516,8 +516,8 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
                 </Space>
               ) : (
                 <Popover
-                  content={tooltipNetBreakdown.current.map((e) => (
-                    <div>{e}</div>
+                  content={tooltipNetBreakdown.current.map((e, i) => (
+                    <div key={i}>{e}</div>
                   ))}
                 >
                   <Space style={{ cursor: 'help' }}>
