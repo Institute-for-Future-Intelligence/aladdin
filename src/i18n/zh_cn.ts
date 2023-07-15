@@ -192,6 +192,7 @@ export const i18n_zh_cn = {
       CannotCreateNewProject: '无法创建新项目',
       CannotCreateNewProjectWithoutTitle: '没有标题, 无法创建新项目',
       CannotOpenYourProjects: '无法打开您的项目列表',
+      CannotOpenProject: '无法打开项目',
       CannotDeleteProject: '无法删除项目',
       CannotRenameProject: '无法给项目改名',
       CannotAddDesignToProject: '无法把此设计加到项目里',

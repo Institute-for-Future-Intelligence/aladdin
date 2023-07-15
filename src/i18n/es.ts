@@ -192,6 +192,7 @@ export const i18n_es = {
       CannotCreateNewProject: 'Cannot create a new project',
       CannotCreateNewProjectWithoutTitle: 'Cannot create a new project without a title',
       CannotOpenYourProjects: 'Cannot open your projects',
+      CannotOpenProject: 'Cannot open the project',
       CannotDeleteProject: 'Cannot delete the project',
       CannotRenameProject: 'Cannot rename the project',
       CannotAddDesignToProject: 'Cannot add this design to the project',

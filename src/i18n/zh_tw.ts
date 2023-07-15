@@ -192,6 +192,7 @@ export const i18n_zh_tw = {
       CannotCreateNewProject: '無法創建新項目',
       CannotCreateNewProjectWithoutTitle: '沒有標題, 無法創建新項目',
       CannotOpenYourProjects: '無法打開您的項目列表',
+      CannotOpenProject: '無法打開項目',
       CannotDeleteProject: '無法刪除項目',
       CannotRenameProject: '無法給項目改名',
       CannotAddDesignToProject: '無法把此設計加到項目裡',

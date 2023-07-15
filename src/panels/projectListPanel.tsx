@@ -77,7 +77,6 @@ const Header = styled.div`
 export interface ProjectListPanelProps {
   projects: object[];
   openProject: (
-    userid: string,
     title: string,
     type: DesignProblem,
     description: string,
@@ -90,6 +89,7 @@ export interface ProjectListPanelProps {
 
 const ProjectListPanel = ({ projects, openProject, deleteProject, renameProject }: ProjectListPanelProps) => {
   const language = useStore(Selector.language);
+  const user = useStore(Selector.user);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -104,7 +104,6 @@ const ProjectListPanel = ({ projects, openProject, deleteProject, renameProject 
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const [oldTitle, setOldTitle] = useState<string>();
   const [newTitle, setNewTitle] = useState<string>();
-  const [userid, setUserid] = useState<string>();
   const dragRef = useRef<HTMLDivElement | null>(null);
   // make an editable copy because the project array is not mutable
   const projectsRef = useRef<object[]>([...projects]);
@@ -295,7 +294,7 @@ const ProjectListPanel = ({ projects, openProject, deleteProject, renameProject 
                 dataIndex="type"
                 key="type"
                 width={'25%'}
-                render={(type, record) => {
+                render={(type) => {
                   return <Typography.Text style={{ fontSize: '12px', verticalAlign: 'top' }}>{type}</Typography.Text>;
                 }}
               />
@@ -309,7 +308,7 @@ const ProjectListPanel = ({ projects, openProject, deleteProject, renameProject 
                   // @ts-ignore
                   return a['title'].localeCompare(b['title']);
                 }}
-                render={(title, record) => {
+                render={(title) => {
                   return (
                     <Typography.Text
                       style={{ fontSize: '12px', cursor: 'pointer', verticalAlign: 'top' }}
@@ -319,14 +318,14 @@ const ProjectListPanel = ({ projects, openProject, deleteProject, renameProject 
                     </Typography.Text>
                   );
                 }}
-                onCell={(data, index) => {
+                onCell={(data) => {
                   return {
                     onClick: () => {
                       const selection = window.getSelection();
                       if (selection && selection.toString().length > 0) return;
                       // only proceed when no text is selected
                       // @ts-ignore
-                      openProject(data.userid, data.title, data.type, data.description, data.designs, data.counter);
+                      openProject(data.title, data.type, data.description, data.designs, data.counter);
                     },
                   };
                 }}
@@ -342,7 +341,7 @@ const ProjectListPanel = ({ projects, openProject, deleteProject, renameProject 
                   // @ts-ignore
                   return a['timestamp'] - b['timestamp'];
                 }}
-                render={(time, record) => {
+                render={(time) => {
                   return <Typography.Text style={{ fontSize: '12px', verticalAlign: 'top' }}>{time}</Typography.Text>;
                 }}
               />
@@ -372,7 +371,6 @@ const ProjectListPanel = ({ projects, openProject, deleteProject, renameProject 
                       src={RenameImage}
                       onClick={() => {
                         setOldTitle(record.title);
-                        setUserid(record.userid);
                         setRenameDialogVisible(true);
                       }}
                       height={16}
@@ -388,11 +386,7 @@ const ProjectListPanel = ({ projects, openProject, deleteProject, renameProject 
                       src={LinkImage}
                       onClick={() => {
                         const url =
-                          HOME_URL +
-                          '?client=web&userid=' +
-                          record.userid +
-                          '&title=' +
-                          encodeURIComponent(record.title);
+                          HOME_URL + '?client=web&userid=' + user.uid + '&project=' + encodeURIComponent(record.title);
                         copyTextToClipboard(url);
                         showSuccess(i18n.t('projectListPanel.ProjectLinkGeneratedInClipBoard', lang) + '.');
                       }}

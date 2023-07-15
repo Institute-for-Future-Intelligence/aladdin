@@ -306,8 +306,13 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     const params = new URLSearchParams(window.location.search);
     const userid = params.get('userid');
     const title = params.get('title');
-    if (userid && title) {
-      openCloudFile(userid, title);
+    const project = params.get('project');
+    if (userid) {
+      if (title) {
+        openCloudFile(userid, title);
+      } else if (project) {
+        fetchProject(userid, project);
+      }
     } else {
       setCommonStore((state) => {
         // make sure that the cloud file state is consistent with the URL
@@ -943,6 +948,39 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       });
   };
 
+  const fetchProject = async (userid: string, project: string) => {
+    setLoading(true);
+    await firebase
+      .firestore()
+      .collection('users')
+      .doc(userid)
+      .collection('projects')
+      .doc(project)
+      .get()
+      .then((doc) => {
+        const data = doc.data();
+        if (data) {
+          const pi = {
+            title: doc.id,
+            timestamp: data.timestamp,
+            description: data.description,
+            type: data.type,
+            designs: data.designs,
+            counter: data.counter ?? 0,
+          } as ProjectInfo;
+          openProject(pi.title, pi.type, pi.description, pi.designs, pi.counter);
+        } else {
+          showError(i18n.t('message.CannotOpenProject', lang) + ': ' + project);
+        }
+      })
+      .catch((error) => {
+        showError(i18n.t('message.CannotOpenProject', lang) + ': ' + error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
   const listMyProjects = () => {
     if (user.uid) {
       fetchMyProjects().then(() => {
@@ -954,7 +992,6 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   };
 
   const openProject = (
-    userid: string,
     title: string,
     type: DesignProblem,
     description: string,

@@ -193,6 +193,7 @@ export const i18n_ua = {
       CannotCreateNewProject: 'Не вдається створити новий проєкт',
       CannotCreateNewProjectWithoutTitle: 'Cannot create a new project without a title',
       CannotOpenYourProjects: 'Не вдається відкрити ваші проєкти',
+      CannotOpenProject: 'Cannot open the project',
       CannotDeleteProject: 'Cannot delete the project',
       CannotRenameProject: 'Cannot rename the project',
       CannotAddDesignToProject: 'Cannot add this design to the project',
