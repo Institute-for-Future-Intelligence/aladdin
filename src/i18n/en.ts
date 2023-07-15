@@ -1380,7 +1380,7 @@ export const i18n_en = {
       SolarPanelArray: 'Solar Panel Array',
       CurateCurrentDesign: 'Curate Current Design',
       RemoveSelectedDesign: 'Remove Selected Design',
-      DesignSpaceVisualization: 'Design Space Visualization',
+      DesignSolutionDistributionInProblemSpace: 'Design Solution Distribution in Problem Space',
       DesignSpaceScreenshot: 'Design space screenshot',
       SingleClickToSelectDoubleClickToOpen: 'Single-click to select, double-click to open.',
       SingleClickToDeselectDoubleClickToOpen: 'Single-click to deselect, double-click to open.',

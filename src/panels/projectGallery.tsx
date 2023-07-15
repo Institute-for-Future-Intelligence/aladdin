@@ -167,7 +167,7 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, author }: 
   const titles: string[] =
     projectType === DesignProblem.SOLAR_PANEL_ARRAY
       ? [
-          'Row Width (m)',
+          'Row Width (panel)',
           'Tilt Angle (°)',
           'Inter-Row Spacing (m)',
           'Orientation',
@@ -396,7 +396,9 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, author }: 
               )}
             />
             <DesignSpaceHeader>
-              <span style={{ paddingLeft: '20px' }}>{i18n.t('projectPanel.DesignSpaceVisualization', lang)}</span>
+              <span style={{ paddingLeft: '20px' }}>
+                {i18n.t('projectPanel.DesignSolutionDistributionInProblemSpace', lang)}
+              </span>
               <Button
                 style={{ border: 'none', paddingRight: '20px', background: 'white' }}
                 onClick={() => {

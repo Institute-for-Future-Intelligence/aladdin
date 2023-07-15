@@ -1355,7 +1355,7 @@ export const i18n_zh_cn = {
       SolarPanelArray: '光伏板阵列设计',
       CurateCurrentDesign: '收藏当前设计',
       RemoveSelectedDesign: '删除选中设计',
-      DesignSpaceVisualization: '设计空间可视化',
+      DesignSolutionDistributionInProblemSpace: '设计方案在问题空间里的分布',
       DesignSpaceScreenshot: '设计空间截图',
       SingleClickToSelectDoubleClickToOpen: '单击选择，双击打开。',
       SingleClickToDeselectDoubleClickToOpen: '单击取消选择，双击打开。',
