@@ -17,6 +17,7 @@ import ParallelCoordinates from '../components/parallelCoordinates';
 import { saveSvgAsPng } from 'save-svg-as-png';
 import { showInfo } from '../helpers';
 import { Util } from '../Util';
+import { ProjectUtil } from './ProjectUtil';
 
 const Container = styled.div`
   position: relative;
@@ -160,27 +161,12 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, author }: 
   const totalHeight = window.innerHeight;
   const imageWidth = Math.round((relativeWidth * window.innerWidth) / 4 - 12);
 
-  const variables: string[] =
-    projectType === DesignProblem.SOLAR_PANEL_ARRAY
-      ? ['rowWidth', 'tiltAngle', 'interRowSpacing', 'orientation', 'poleHeight', 'panelCount', 'yield', 'profit']
-      : [];
-  const titles: string[] =
-    projectType === DesignProblem.SOLAR_PANEL_ARRAY
-      ? [
-          'Row Width (panel)',
-          'Tilt Angle (°)',
-          'Inter-Row Spacing (m)',
-          'Orientation',
-          'Pole Height (m)',
-          'Panel Count',
-          'Yield (MWh)',
-          'Profit ($K)',
-        ]
-      : [];
-  const types: string[] =
-    projectType === DesignProblem.SOLAR_PANEL_ARRAY
-      ? ['number', 'number', 'number', 'boolean', 'number', 'number', 'number', 'number']
-      : [];
+  const variables: string[] = ProjectUtil.getVariables(projectType);
+  const titles: string[] = ProjectUtil.getTitles(projectType);
+  const units: string[] = ProjectUtil.getUnits(projectType);
+  const digits: number[] = ProjectUtil.getDigits(projectType);
+  const types: string[] = ProjectUtil.getTypes(projectType);
+
   const data: DatumEntry[] = useMemo(() => {
     const data: DatumEntry[] = [];
     if (projectDesigns) {
@@ -426,7 +412,10 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, author }: 
               maxima={maxima}
               variables={variables}
               titles={titles}
+              units={units}
+              digits={digits}
               hover={hover}
+              hoveredIndex={projectDesigns && hoveredDesign ? projectDesigns.indexOf(hoveredDesign) : -1}
             />
           </SubContainer>
         )}

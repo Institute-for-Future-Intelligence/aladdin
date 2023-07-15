@@ -4,19 +4,40 @@
 
 import React, { useMemo } from 'react';
 import { ScaleLinear } from 'd3-scale';
+import i18n from '../i18n/i18n';
+import { useStore } from '../stores/common';
+import * as Selector from '../stores/selector';
 
 type VerticalAxisProps = {
+  variable: string;
   name: string;
+  unit: string;
   yScale: ScaleLinear<number, number>;
   tickLength: number;
   type: string;
+  digits: number;
   min: number;
   max: number;
+  value?: number;
 };
 
 const DEFAULT_TICK_LENGTH = 5;
 
-const VerticalAxis = ({ yScale, tickLength, name, type, min, max }: VerticalAxisProps) => {
+const VerticalAxis = ({
+  yScale,
+  tickLength,
+  variable,
+  name,
+  unit,
+  type,
+  digits,
+  min,
+  max,
+  value,
+}: VerticalAxisProps) => {
+  const language = useStore(Selector.language);
+  const lang = { lng: language };
+
   const range = yScale.range();
 
   const ticks = useMemo(() => {
@@ -33,16 +54,36 @@ const VerticalAxis = ({ yScale, tickLength, name, type, min, max }: VerticalAxis
       {/* Title */}
       <text
         x={0}
-        y={-15}
+        y={-20}
         style={{
           fontSize: '10px',
           textAnchor: 'middle',
           fill: 'dimgray',
-          // rotate: '-15deg',
         }}
       >
         {name}
       </text>
+      {value !== undefined && (
+        <text
+          x={0}
+          y={-8}
+          style={{
+            fontSize: '9px',
+            textAnchor: 'middle',
+            fill: 'dimgray',
+          }}
+        >
+          {variable === 'profit'
+            ? value.toLocaleString('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                maximumFractionDigits: 3,
+              })
+            : (variable === 'orientation'
+                ? i18n.t(value === 0 ? 'solarPanelMenu.Landscape' : 'solarPanelMenu.Portrait', lang)
+                : value.toFixed(digits)) + (unit !== '' ? unit : '')}
+        </text>
+      )}
 
       {/* Vertical line */}
       <line x1={0} x2={0} y1={yScale(min)} y2={yScale(max)} stroke="black" strokeWidth={2} />

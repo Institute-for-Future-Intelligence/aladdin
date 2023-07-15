@@ -832,6 +832,9 @@ export const i18n_zh_cn = {
       SolarPanelArrayMargin: '边缘余地',
       SolarPanelArrayPoleHeight: '支架高度',
       SolarPanelArrayPoleSpacing: '支柱间隔',
+      SolarPanelArrayPanelCount: '光伏板总数',
+      SolarPanelArrayYield: '发电量',
+      SolarPanelArrayProfit: '利润',
       LayoutNotAcceptedCheckYourParameters: '恕不能采用此布局。请检查您的参数设置。',
     },
 

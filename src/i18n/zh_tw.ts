@@ -833,6 +833,9 @@ export const i18n_zh_tw = {
       SolarPanelArrayMargin: '邊緣餘地',
       SolarPanelArrayPoleHeight: '支架高度',
       SolarPanelArrayPoleSpacing: '支柱間隔',
+      SolarPanelArrayPanelCount: '光伏板總數',
+      SolarPanelArrayYield: '發電量',
+      SolarPanelArrayProfit: '利潤',
       LayoutNotAcceptedCheckYourParameters: '恕不能採用此佈局。請檢查您的參數設置。',
     },
 

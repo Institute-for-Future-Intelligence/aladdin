@@ -855,6 +855,9 @@ export const i18n_tr = {
       SolarPanelArrayMargin: 'Margin',
       SolarPanelArrayPoleHeight: 'Direk Yükseklik',
       SolarPanelArrayPoleSpacing: 'Direk Aralık',
+      SolarPanelArrayPanelCount: 'Panel Count',
+      SolarPanelArrayYield: 'Yield',
+      SolarPanelArrayProfit: 'Profit',
       LayoutNotAcceptedCheckYourParameters: 'Bu yerleşim düzeni uygulanamaz. Lütfen parametrelerinizi kontrol edin.',
     },
 

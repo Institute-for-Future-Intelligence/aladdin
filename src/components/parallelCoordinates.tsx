@@ -22,7 +22,10 @@ type ParallelCoordinatesProps = {
   maxima: number[];
   variables: string[];
   titles: string[];
+  units: string[];
+  digits: number[];
   hover: Function;
+  hoveredIndex: number;
 };
 
 type YScale = d3Scale.ScaleLinear<number, number>;
@@ -37,7 +40,10 @@ const ParallelCoordinates = ({
   maxima,
   variables,
   titles,
+  units,
+  digits,
   hover,
+  hoveredIndex,
 }: ParallelCoordinatesProps) => {
   const boundsWidth = width - MARGIN.right - MARGIN.left;
   const boundsHeight = height - MARGIN.top - MARGIN.bottom;
@@ -102,9 +108,13 @@ const ParallelCoordinates = ({
           yScale={yScale}
           tickLength={40}
           type={types[i] ?? 'number'}
+          variable={variables[i]}
           name={titles[i]}
+          unit={units[i]}
+          digits={digits[i]}
           min={minima[i]}
           max={maxima[i]}
+          value={hoveredIndex >= 0 ? (data[hoveredIndex][variable] as number) : undefined}
         />
       </g>
     );

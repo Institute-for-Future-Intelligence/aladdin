@@ -856,6 +856,9 @@ export const i18n_ua = {
       SolarPanelArrayMargin: 'Відступ',
       SolarPanelArrayPoleHeight: 'Висота стовпа',
       SolarPanelArrayPoleSpacing: 'Інтервал між стовпами',
+      SolarPanelArrayPanelCount: 'Panel Count',
+      SolarPanelArrayYield: 'Yield',
+      SolarPanelArrayProfit: 'Profit',
       LayoutNotAcceptedCheckYourParameters: 'Це розташування не приймається. Будь ласка, перевірте ваші параметри.',
     },
 
