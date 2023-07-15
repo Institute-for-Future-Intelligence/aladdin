@@ -41,6 +41,7 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
   const params = useStore(Selector.evolutionaryAlgorithmState).particleSwarmOptimizationParams;
   const constraints = useStore(Selector.solarPanelArrayLayoutConstraints);
   const particleSwarmOptimizationWizardSelectedTab = useStore(Selector.particleSwarmOptimizationWizardSelectedTab);
+  const economicsParams = useStore(Selector.economicsParams);
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -96,6 +97,8 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
       : constraints.poleSpacing ?? 3,
   );
   const marginRef = useRef<number>(constraints.margin ?? 0);
+  const electricitySellingPriceRef = useRef<number>(economicsParams.electricitySellingPrice);
+  const operationalCostPerUnitRef = useRef<number>(economicsParams.operationalCostPerUnit);
 
   const onStart = (event: DraggableEvent, uiData: DraggableData) => {
     if (dragRef.current) {
@@ -141,6 +144,8 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
       state.solarPanelArrayLayoutConstraints.rowAxis = rowAxisRef.current;
       state.solarPanelArrayLayoutConstraints.orientation = orientationRef.current;
       state.solarPanelArrayLayoutConstraints.margin = marginRef.current;
+      state.economicsParams.operationalCostPerUnit = operationalCostPerUnitRef.current;
+      state.economicsParams.electricitySellingPrice = electricitySellingPriceRef.current;
     });
   };
 
@@ -835,7 +840,7 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
               </Col>
             </Row>
 
-            <Row gutter={6} style={{ paddingBottom: '0px', paddingTop: '6px' }}>
+            <Row gutter={6} style={{ paddingBottom: '0px', paddingTop: '12px' }}>
               <Col className="gutter-row" span={12}>
                 {i18n.t('solarPanelMenu.PoleSpacing', lang) + ':'}
               </Col>
@@ -880,6 +885,108 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
                         fontSize: '10px',
                       },
                       label: '10m',
+                    },
+                  }}
+                />
+              </Col>
+            </Row>
+
+            <Row gutter={6} style={{ paddingBottom: '0px', paddingTop: '12px' }}>
+              <Col className="gutter-row" span={12}>
+                {i18n.t('economicsPanel.OperationalCostPerUnit', lang) + ':'}
+              </Col>
+              <Col className="gutter-row" span={12}>
+                <Slider
+                  style={{ paddingBottom: 0, paddingTop: 0, marginTop: '16px', marginBottom: '16px' }}
+                  onChange={(value) => {
+                    operationalCostPerUnitRef.current = value;
+                    setUpdateFlag(!updateFlag);
+                  }}
+                  min={0.1}
+                  max={1}
+                  step={0.01}
+                  defaultValue={operationalCostPerUnitRef.current}
+                  marks={{
+                    0.1: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: '10¢',
+                    },
+                    0.3: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: '30¢',
+                    },
+                    0.5: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: '50¢',
+                    },
+                    0.7: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: '70¢',
+                    },
+                    0.9: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: '90¢',
+                    },
+                  }}
+                />
+              </Col>
+            </Row>
+
+            <Row gutter={6} style={{ paddingBottom: '0px', paddingTop: '12px' }}>
+              <Col className="gutter-row" span={12}>
+                {i18n.t('economicsPanel.ElectricitySellingPrice', lang) + ':'}
+              </Col>
+              <Col className="gutter-row" span={12}>
+                <Slider
+                  style={{ paddingBottom: 0, paddingTop: 0, marginTop: '16px', marginBottom: '16px' }}
+                  onChange={(value) => {
+                    electricitySellingPriceRef.current = value;
+                    setUpdateFlag(!updateFlag);
+                  }}
+                  min={0.1}
+                  max={1}
+                  step={0.01}
+                  defaultValue={electricitySellingPriceRef.current}
+                  marks={{
+                    0.1: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: '10¢',
+                    },
+                    0.3: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: '30¢',
+                    },
+                    0.5: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: '50¢',
+                    },
+                    0.7: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: '70¢',
+                    },
+                    0.9: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: '90¢',
                     },
                   }}
                 />

@@ -78,6 +78,7 @@ const DesignSpaceHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   padding-top: 6px;
+  padding-bottom: 6px;
   background: white;
 `;
 
@@ -217,10 +218,10 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, author }: 
           1,
           4,
           300,
-          500,
+          100,
           10,
         ]
-      : [10, 90, 10, 1, 5, 300, 500, 10];
+      : [10, 90, 10, 1, 5, 300, 100, 10];
   }, [solarPanelArrayLayoutConstraints, projectType]);
 
   const hover = (i: number) => {

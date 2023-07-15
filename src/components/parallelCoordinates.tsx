@@ -8,7 +8,7 @@ import { DatumEntry } from '../types';
 import React from 'react';
 import VerticalAxis from './verticalAxis';
 
-const MARGIN = { top: 30, right: 55, bottom: 30, left: 55 };
+const MARGIN = { top: 30, right: 55, bottom: 36, left: 55 };
 
 const COLORS = ['#e0ac2b', '#e85252', '#6689c6', '#9a6fb0', '#a53253', '#69b3a2'];
 
@@ -121,7 +121,14 @@ const ParallelCoordinates = ({
   });
 
   return (
-    <svg id={id} width={width} height={height}>
+    <svg
+      id={id}
+      width={width}
+      height={height}
+      onContextMenu={(event) => {
+        event.stopPropagation();
+      }}
+    >
       <g width={boundsWidth} height={boundsHeight} transform={`translate(${[MARGIN.left, MARGIN.top].join(',')})`}>
         {allLines}
         {allAxes}
