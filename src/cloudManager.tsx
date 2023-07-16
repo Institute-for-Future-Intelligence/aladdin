@@ -327,7 +327,8 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     if (userid) {
       if (title) {
         openCloudFile(userid, title);
-      } else if (project) {
+      }
+      if (project) {
         setLoading(true);
         fetchProject(userid, project).finally(() => {
           setLoading(false);

@@ -8,16 +8,17 @@ import * as Selector from '../stores/selector';
 import styled from 'styled-components';
 import { Collapse, Descriptions, Button, List } from 'antd';
 import i18n from '../i18n/i18n';
-import { CameraOutlined, CloseOutlined, DeleteOutlined, ImportOutlined } from '@ant-design/icons';
+import { CameraOutlined, CloseOutlined, DeleteOutlined, ImportOutlined, LinkOutlined } from '@ant-design/icons';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import ImageLoadFailureIcon from '../assets/image_fail_try_again.png';
 import { DatumEntry, Design, DesignProblem, Orientation } from '../types';
 import ParallelCoordinates from '../components/parallelCoordinates';
 //@ts-ignore
 import { saveSvgAsPng } from 'save-svg-as-png';
-import { showInfo } from '../helpers';
+import { copyTextToClipboard, showInfo, showSuccess } from '../helpers';
 import { Util } from '../Util';
 import { ProjectUtil } from './ProjectUtil';
+import { HOME_URL } from '../constants';
 
 const Container = styled.div`
   position: relative;
@@ -101,6 +102,7 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
   const setCommonStore = useStore(Selector.set);
   const user = useStore(Selector.user);
   const language = useStore(Selector.language);
+  const cloudFile = useStore(Selector.cloudFile);
   const projectOwner = useStore(Selector.projectOwner);
   const projectTitle = useStore(Selector.projectTitle);
   const projectDescription = useStore(Selector.projectDescription);
@@ -114,6 +116,17 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
 
   const lang = { lng: language };
+
+  useEffect(() => {
+    if (projectDesigns) {
+      for (const design of projectDesigns) {
+        if (design.title === cloudFile) {
+          setSelectedDesign(design);
+          break;
+        }
+      }
+    }
+  }, [cloudFile, projectDesigns]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -274,32 +287,56 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
                 </span>
                 <span>
                   {user.uid === projectOwner && (
-                    <Button
-                      style={{ border: 'none', padding: '4px' }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        curateCurrentDesign();
-                      }}
-                    >
-                      <ImportOutlined
-                        style={{ fontSize: '24px', color: 'gray' }}
-                        title={i18n.t('projectPanel.CurateCurrentDesign', lang)}
-                      />
-                    </Button>
-                  )}
-                  {user.uid === projectOwner && (
-                    <Button
-                      style={{ border: 'none', padding: '4px' }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        removeSelectedDesign();
-                      }}
-                    >
-                      <DeleteOutlined
-                        style={{ fontSize: '24px', color: 'gray' }}
-                        title={i18n.t('projectPanel.RemoveSelectedDesign', lang)}
-                      />
-                    </Button>
+                    <>
+                      <Button
+                        style={{ border: 'none', padding: '4px' }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          curateCurrentDesign();
+                        }}
+                      >
+                        <ImportOutlined
+                          style={{ fontSize: '24px', color: 'gray' }}
+                          title={i18n.t('projectPanel.CurateCurrentDesign', lang)}
+                        />
+                      </Button>
+                      <Button
+                        style={{ border: 'none', padding: '4px' }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          removeSelectedDesign();
+                        }}
+                      >
+                        <DeleteOutlined
+                          style={{ fontSize: '24px', color: 'gray' }}
+                          title={i18n.t('projectPanel.RemoveSelectedDesign', lang)}
+                        />
+                      </Button>
+                      <Button
+                        style={{ border: 'none', padding: '4px' }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (projectTitle) {
+                            let url =
+                              HOME_URL +
+                              '?client=web&userid=' +
+                              user.uid +
+                              '&project=' +
+                              encodeURIComponent(projectTitle);
+                            if (selectedDesign) {
+                              url += '&title=' + selectedDesign.title;
+                            }
+                            copyTextToClipboard(url);
+                            showSuccess(i18n.t('projectListPanel.ProjectLinkGeneratedInClipBoard', lang) + '.');
+                          }
+                        }}
+                      >
+                        <LinkOutlined
+                          style={{ fontSize: '24px', color: 'gray' }}
+                          title={i18n.t('projectListPanel.GenerateProjectLink', lang)}
+                        />
+                      </Button>
+                    </>
                   )}
                 </span>
               </SubHeader>
