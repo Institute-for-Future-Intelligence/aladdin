@@ -4,68 +4,56 @@
 
 import { DesignProblem } from '../types';
 import i18n from '../i18n/i18n';
-import { useStore } from '../stores/common';
 
 export class ProjectUtil {
-  static lang = { lng: useStore.getState().language };
-
-  static SOLAR_PANEL_ARRAY_PROPS = {
-    titles: [
-      i18n.t('polygonMenu.SolarPanelArrayRowWidth', ProjectUtil.lang),
-      i18n.t('polygonMenu.SolarPanelArrayTiltAngle', ProjectUtil.lang),
-      i18n.t('polygonMenu.SolarPanelArrayInterRowSpacing', ProjectUtil.lang),
-      i18n.t('polygonMenu.SolarPanelArrayOrientation', ProjectUtil.lang),
-      i18n.t('polygonMenu.SolarPanelArrayPoleHeight', ProjectUtil.lang),
-      i18n.t('polygonMenu.SolarPanelArrayPanelCount', ProjectUtil.lang),
-      i18n.t('polygonMenu.SolarPanelArrayYield', ProjectUtil.lang),
-      i18n.t('polygonMenu.SolarPanelArrayProfit', ProjectUtil.lang),
-    ],
-    variables: [
-      'rowWidth',
-      'tiltAngle',
-      'interRowSpacing',
-      'orientation',
-      'poleHeight',
-      'panelCount',
-      'yield',
-      'profit',
-    ],
-    types: ['number', 'number', 'number', 'boolean', 'number', 'number', 'number', 'number'],
-    digits: [0, 1, 1, 0, 1, 0, 1, 1],
-    units: [
-      ' ' + i18n.t('solarPanelMenu.Panels', ProjectUtil.lang),
-      '°',
-      ' ' + i18n.t('word.MeterAbbreviation', ProjectUtil.lang),
-      '',
-      ' ' + i18n.t('word.MeterAbbreviation', ProjectUtil.lang),
-      '',
-      ' MWh',
-      'K',
-    ],
-  };
-
-  static getTitles(projectType: DesignProblem): string[] {
-    if (projectType === DesignProblem.SOLAR_PANEL_ARRAY) return ProjectUtil.SOLAR_PANEL_ARRAY_PROPS.titles;
+  static getTitles(projectType: DesignProblem, lang: { lng: string }): string[] {
+    if (projectType === DesignProblem.SOLAR_PANEL_ARRAY) {
+      return [
+        i18n.t('polygonMenu.SolarPanelArrayRowWidth', lang),
+        i18n.t('polygonMenu.SolarPanelArrayTiltAngle', lang),
+        i18n.t('polygonMenu.SolarPanelArrayInterRowSpacing', lang),
+        i18n.t('polygonMenu.SolarPanelArrayOrientation', lang),
+        i18n.t('polygonMenu.SolarPanelArrayPoleHeight', lang),
+        i18n.t('polygonMenu.SolarPanelArrayPanelCount', lang),
+        i18n.t('polygonMenu.SolarPanelArrayYield', lang),
+        i18n.t('polygonMenu.SolarPanelArrayProfit', lang),
+      ];
+    }
     return [];
   }
 
   static getVariables(projectType: DesignProblem): string[] {
-    if (projectType === DesignProblem.SOLAR_PANEL_ARRAY) return ProjectUtil.SOLAR_PANEL_ARRAY_PROPS.variables;
+    if (projectType === DesignProblem.SOLAR_PANEL_ARRAY) {
+      return ['rowWidth', 'tiltAngle', 'interRowSpacing', 'orientation', 'poleHeight', 'panelCount', 'yield', 'profit'];
+    }
     return [];
   }
 
   static getTypes(projectType: DesignProblem): string[] {
-    if (projectType === DesignProblem.SOLAR_PANEL_ARRAY) return ProjectUtil.SOLAR_PANEL_ARRAY_PROPS.types;
+    if (projectType === DesignProblem.SOLAR_PANEL_ARRAY) {
+      return ['number', 'number', 'number', 'boolean', 'number', 'number', 'number', 'number'];
+    }
     return [];
   }
 
   static getDigits(projectType: DesignProblem): number[] {
-    if (projectType === DesignProblem.SOLAR_PANEL_ARRAY) return ProjectUtil.SOLAR_PANEL_ARRAY_PROPS.digits;
+    if (projectType === DesignProblem.SOLAR_PANEL_ARRAY) return [0, 1, 1, 0, 1, 0, 1, 1];
     return [];
   }
 
-  static getUnits(projectType: DesignProblem): string[] {
-    if (projectType === DesignProblem.SOLAR_PANEL_ARRAY) return ProjectUtil.SOLAR_PANEL_ARRAY_PROPS.units;
+  static getUnits(projectType: DesignProblem, lang: { lng: string }): string[] {
+    if (projectType === DesignProblem.SOLAR_PANEL_ARRAY) {
+      return [
+        ' ' + i18n.t('solarPanelMenu.Panels', lang),
+        '°',
+        ' ' + i18n.t('word.MeterAbbreviation', lang),
+        '',
+        ' ' + i18n.t('word.MeterAbbreviation', lang),
+        '',
+        ' MWh',
+        'K',
+      ];
+    }
     return [];
   }
 }

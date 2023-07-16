@@ -166,8 +166,8 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
   const imageWidth = Math.round((relativeWidth * window.innerWidth) / 4 - 12);
 
   const variables: string[] = ProjectUtil.getVariables(projectType);
-  const titles: string[] = ProjectUtil.getTitles(projectType);
-  const units: string[] = ProjectUtil.getUnits(projectType);
+  const titles: string[] = useMemo(() => ProjectUtil.getTitles(projectType, lang), [lang]);
+  const units: string[] = useMemo(() => ProjectUtil.getUnits(projectType, lang), [lang]);
   const digits: number[] = ProjectUtil.getDigits(projectType);
   const types: string[] = ProjectUtil.getTypes(projectType);
 
