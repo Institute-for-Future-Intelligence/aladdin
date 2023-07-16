@@ -361,8 +361,8 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
                         target.src = design.thumbnailUrl;
                       }
                       setSelectedDesign(design);
-                      if (user.uid && openCloudFile) {
-                        openCloudFile(user.uid, design.title, true);
+                      if (projectOwner && openCloudFile) {
+                        openCloudFile(projectOwner, design.title, true);
                       }
                     }}
                     onClick={(event) => {
@@ -397,9 +397,7 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
               )}
             />
             <DesignSpaceHeader>
-              <span style={{ paddingLeft: '20px' }}>
-                {i18n.t('projectPanel.DesignSolutionDistributionInProblemSpace', lang)}
-              </span>
+              <span style={{ paddingLeft: '20px' }}>{i18n.t('projectPanel.DistributionInSolutionSpace', lang)}</span>
               <Button
                 style={{ border: 'none', paddingRight: '20px', background: 'white' }}
                 onClick={() => {

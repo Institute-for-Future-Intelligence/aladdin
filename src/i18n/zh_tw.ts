@@ -1362,7 +1362,7 @@ export const i18n_zh_tw = {
       SolarPanelArray: '光伏板陣列設計',
       CurateCurrentDesign: '收藏當前設計',
       RemoveSelectedDesign: '刪除選中設計',
-      DesignSolutionDistributionInProblemSpace: '設計方案在問題空間裡的分佈',
+      DistributionInSolutionSpace: '方案在設計空間裡的分佈',
       DesignSpaceScreenshot: '設計空間截圖',
       SingleClickToSelectDoubleClickToOpen: '單擊選擇，雙擊打開。',
       SingleClickToDeselectDoubleClickToOpen: '單擊取消選擇，雙擊打開。',
