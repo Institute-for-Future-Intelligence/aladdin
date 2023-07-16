@@ -325,14 +325,18 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     const title = params.get('title');
     const project = params.get('project');
     if (userid) {
-      if (title) {
-        openCloudFile(userid, title);
-      }
       if (project) {
         setLoading(true);
         fetchProject(userid, project).finally(() => {
           setLoading(false);
         });
+        if (title) {
+          openCloudFile(userid, title, true);
+        }
+      } else {
+        if (title) {
+          openCloudFile(userid, title);
+        }
       }
     } else {
       setCommonStore((state) => {
