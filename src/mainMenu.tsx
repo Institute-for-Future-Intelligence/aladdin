@@ -140,10 +140,13 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const cameraPosition = useStore.getState().viewState.cameraPosition;
   const panCenter = useStore.getState().viewState.panCenter;
   const selectedElement = useStore.getState().selectedElement;
+  const projectOwner = useStore.getState().projectOwner;
+  const projectTitle = useStore.getState().projectTitle;
 
   const [aboutUs, setAboutUs] = useState(false);
   const [modelSiteDialogVisible, setModelSiteDialogVisible] = useState(false);
   const [createNewProjectDialogVisible, setCreateNewProjectDialogVisible] = useState(false);
+  const [saveProjectAsDialogVisible, setSaveProjectAsDialogVisible] = useState(false);
 
   const lang = { lng: language };
   const isMac = Util.isMac();
@@ -893,7 +896,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               }
             }}
           >
-            {i18n.t('menu.project.CreateNewProject', lang)}
+            {i18n.t('menu.project.CreateNewProject', lang)}...
           </Menu.Item>
           <Menu.Item
             key="list-project"
@@ -916,8 +919,29 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               }
             }}
           >
-            {i18n.t('menu.project.OpenProject', lang)}
+            {i18n.t('menu.project.OpenProject', lang)}...
           </Menu.Item>
+          {projectTitle && projectOwner === user.uid && (
+            <Menu.Item
+              key="save-project-as"
+              onClick={() => {
+                setSaveProjectAsDialogVisible(true);
+                usePrimitiveStore.setState((state) => {
+                  state.openModelsMap = false;
+                });
+                if (loggable) {
+                  setCommonStore((state) => {
+                    state.actionInfo = {
+                      name: 'Save Project As',
+                      timestamp: new Date().getTime(),
+                    };
+                  });
+                }
+              }}
+            >
+              {i18n.t('menu.project.SaveProjectAs', lang)}...
+            </Menu.Item>
+          )}
         </SubMenu>
       )}
 
@@ -2405,7 +2429,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       </Dropdown>
       {aboutUs && <About close={() => setAboutUs(false)} />}
       {modelSiteDialogVisible && <ModelSiteDialog setDialogVisible={setModelSiteDialogVisible} />}
-      {createNewProjectDialogVisible && <CreateNewProjectDialog setDialogVisible={setCreateNewProjectDialogVisible} />}
+      {createNewProjectDialogVisible && (
+        <CreateNewProjectDialog saveAs={false} setDialogVisible={setCreateNewProjectDialogVisible} />
+      )}
+      {saveProjectAsDialogVisible && (
+        <CreateNewProjectDialog saveAs={true} setDialogVisible={setSaveProjectAsDialogVisible} />
+      )}
     </>
   );
 };

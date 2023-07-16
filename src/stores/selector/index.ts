@@ -103,6 +103,8 @@ export const saveCloudFileFlag = (state: PrimitiveStoreState) => state.saveCloud
 
 export const createProjectFlag = (state: PrimitiveStoreState) => state.createProjectFlag;
 
+export const saveProjectFlag = (state: PrimitiveStoreState) => state.saveProjectFlag;
+
 export const curateDesignToProjectFlag = (state: PrimitiveStoreState) => state.curateDesignToProjectFlag;
 
 export const showProjectsFlag = (state: PrimitiveStoreState) => state.showProjectsFlag;

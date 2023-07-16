@@ -19,6 +19,7 @@ export interface PrimitiveStoreState {
   modelsMapWeatherStations: boolean;
 
   createProjectFlag: boolean;
+  saveProjectFlag: boolean;
   curateDesignToProjectFlag: boolean;
   showProjectsFlag: boolean;
   showProjectListPanel: boolean;
@@ -130,6 +131,7 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
     modelsMapWeatherStations: false,
 
     createProjectFlag: false,
+    saveProjectFlag: false,
     curateDesignToProjectFlag: false,
     showProjectsFlag: false,
     showProjectListPanel: false,

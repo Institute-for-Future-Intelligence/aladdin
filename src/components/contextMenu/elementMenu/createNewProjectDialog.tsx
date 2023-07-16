@@ -13,7 +13,13 @@ import { DesignProblem } from '../../../types';
 
 const { Option } = Select;
 
-const CreateNewProjectDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const CreateNewProjectDialog = ({
+  saveAs,
+  setDialogVisible,
+}: {
+  saveAs: boolean;
+  setDialogVisible: (b: boolean) => void;
+}) => {
   const setCommonStore = useStore(Selector.set);
   const loggable = useStore(Selector.loggable);
   const language = useStore(Selector.language);
@@ -49,7 +55,11 @@ const CreateNewProjectDialog = ({ setDialogVisible }: { setDialogVisible: (b: bo
 
   const onOkClick = () => {
     usePrimitiveStore.setState((state) => {
-      state.createProjectFlag = !state.createProjectFlag;
+      if (saveAs) {
+        state.saveProjectFlag = !state.saveProjectFlag;
+      } else {
+        state.createProjectFlag = !state.createProjectFlag;
+      }
     });
     setCommonStore((state) => {
       state.projectType = projectType;
@@ -78,7 +88,7 @@ const CreateNewProjectDialog = ({ setDialogVisible }: { setDialogVisible: (b: bo
           onMouseOver={() => setDragEnabled(true)}
           onMouseOut={() => setDragEnabled(false)}
         >
-          {i18n.t('menu.project.CreateNewProject', lang)}
+          {i18n.t(saveAs ? 'menu.project.SaveProjectAs' : 'menu.project.CreateNewProject', lang)}
         </div>
       }
       footer={[

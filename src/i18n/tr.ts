@@ -278,6 +278,7 @@ export const i18n_tr = {
       project: {
         CreateNewProject: 'Create New Project',
         OpenProject: 'Open Project',
+        SaveProjectAs: 'Save Project As',
         YouMustLogInToCreateProject: 'You must log in to create a new project',
         YouMustLogInToOpenProject: 'You must log in to open a project',
       },

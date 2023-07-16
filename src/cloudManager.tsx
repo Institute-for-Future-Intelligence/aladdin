@@ -74,6 +74,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const localContentToImportAfterCloudFileUpdate = useStore(Selector.localContentToImportAfterCloudFileUpdate);
   const peopleModels = useStore(Selector.peopleModels);
   const createProjectFlag = usePrimitiveStore(Selector.createProjectFlag);
+  const saveProjectFlag = usePrimitiveStore(Selector.saveProjectFlag);
   const curateDesignToProjectFlag = usePrimitiveStore(Selector.curateDesignToProjectFlag);
   const showProjectsFlag = usePrimitiveStore(Selector.showProjectsFlag);
 
@@ -91,6 +92,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const firstCallFetchLeaderboard = useRef<boolean>(true);
   const firstCallPublishOnMap = useRef<boolean>(true);
   const firstCallCreateProject = useRef<boolean>(true);
+  const firstCallSaveProject = useRef<boolean>(true);
   const firstCallCurateDesign = useRef<boolean>(true);
   const firstCallListProjects = useRef<boolean>(true);
   const firstCallListCloudFiles = useRef<boolean>(true);
@@ -224,7 +226,9 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       firstCallFetchModels.current = false;
     } else {
       fetchModelSites().then(() => {
-        fetchLatest();
+        fetchLatest().then(() => {
+          // ignore for now
+        });
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -235,7 +239,9 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       firstCallFetchLeaderboard.current = false;
     } else {
       fetchPeopleModels().then(() => {
-        fetchLatest();
+        fetchLatest().then(() => {
+          // ignore for now
+        });
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -254,10 +260,19 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     if (firstCallCreateProject.current) {
       firstCallCreateProject.current = false;
     } else {
-      createNewProject();
+      createNewProject(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createProjectFlag]);
+
+  useEffect(() => {
+    if (firstCallSaveProject.current) {
+      firstCallSaveProject.current = false;
+    } else {
+      createNewProject(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [saveProjectFlag]);
 
   useEffect(() => {
     if (firstCallCurateDesign.current) {
@@ -288,6 +303,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
 
   useEffect(() => {
     setTitleDialogVisible(showCloudFileTitleDialog);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showCloudFileTitleDialogFlag]);
 
   useEffect(() => {
@@ -453,6 +469,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           state.showCloudFilePanel = false;
           state.showAccountSettingsPanel = false;
           state.showModelsGallery = false;
+          state.showProjectListPanel = false;
         });
       })
       .catch((error) => {
@@ -858,7 +875,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     }
   };
 
-  const createNewProject = () => {
+  const createNewProject = (saveAs: boolean) => {
     if (user && user.uid) {
       const title = useStore.getState().projectTitle;
       if (title) {
@@ -867,7 +884,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           const type = useStore.getState().projectType;
           const description = useStore.getState().projectDescription;
           const timestamp = new Date().getTime();
-          const counter = 0;
+          const counter = saveAs ? useStore.getState().projectDesignCounter : 0;
           fetchMyProjects().then(() => {
             let exist = false;
             if (myProjects.current) {
@@ -888,12 +905,22 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                     doc
                       .collection('projects')
                       .doc(t)
-                      .set({ owner: user.uid, timestamp, type, description, counter, designs: [] })
+                      .set({
+                        owner: user.uid,
+                        timestamp,
+                        type,
+                        description,
+                        counter,
+                        designs: saveAs ? useStore.getState().projectDesigns : [],
+                      })
                       .then(() => {
                         setCommonStore((state) => {
                           state.projectView = true;
-                          state.projectDesignCounter = 0;
-                          state.projectDesigns = [];
+                          state.projectOwner = user.uid;
+                          if (!saveAs) {
+                            state.projectDesignCounter = 0;
+                            state.projectDesigns = [];
+                          }
                         });
                       })
                       .catch((error) => {
@@ -901,6 +928,11 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                       })
                       .finally(() => {
                         setLoading(false);
+                        if (showProjectListPanel) {
+                          fetchMyProjects().then(() => {
+                            setUpdateFlag(!updateFlag);
+                          });
+                        }
                       });
                   }
                 } catch (error) {
@@ -1030,6 +1062,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
         setCommonStore((state) => {
           if (title === state.projectTitle) {
             state.projectTitle = null;
+            state.projectDescription = null;
             state.projectView = false;
           }
         });

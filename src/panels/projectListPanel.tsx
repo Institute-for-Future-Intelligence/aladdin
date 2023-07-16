@@ -23,8 +23,8 @@ const { Column } = Table;
 
 const Container = styled.div`
   position: fixed;
-  top: 80px;
-  right: 24px;
+  top: 90px;
+  right: 40px;
   display: flex;
   justify-content: center;
   align-items: center;

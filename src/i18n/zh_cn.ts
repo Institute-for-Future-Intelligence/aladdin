@@ -277,6 +277,7 @@ export const i18n_zh_cn = {
       project: {
         CreateNewProject: '创建新项目',
         OpenProject: '打开项目',
+        SaveProjectAs: '另存项目为',
         YouMustLogInToCreateProject: '您必须登录才能创建项目',
         YouMustLogInToOpenProject: '您必须登录才能打开项目',
       },

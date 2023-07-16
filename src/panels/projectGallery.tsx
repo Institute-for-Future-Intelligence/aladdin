@@ -129,6 +129,9 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
   const closeProject = () => {
     setCommonStore((state) => {
       state.projectView = false;
+      state.projectTitle = null;
+      state.projectDescription = null;
+      state.projectOwner = null;
     });
     setSelectedDesign(undefined);
   };
@@ -236,7 +239,14 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
     <Container>
       <ColumnWrapper>
         <Header>
-          <span>{i18n.t('projectPanel.Project', lang) + ': ' + projectTitle}</span>
+          <span>
+            {i18n.t('projectPanel.Project', lang) +
+              ': ' +
+              projectTitle +
+              (projectOwner === user.uid
+                ? ''
+                : ' (' + i18n.t('word.Owner', lang) + ': ' + projectOwner?.substring(0, 4) + '***)')}
+          </span>
           <span
             style={{ cursor: 'pointer' }}
             onMouseDown={() => {
