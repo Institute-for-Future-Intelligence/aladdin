@@ -197,6 +197,7 @@ export const i18n_ua = {
       CannotDeleteProject: 'Cannot delete the project',
       CannotRenameProject: 'Cannot rename the project',
       CannotAddDesignToProject: 'Cannot add this design to the project',
+      CannotAddDesignToProjectOwnedByOthers: 'Cannot add this design to a project owned by others',
       TitleUsedChooseDifferentOne: 'Ця назва була використана. Виберіть іншу',
       CloudFileWithTitleExistsDoYouWantToOverwrite:
         'Хмарний файл з такою ж назвою вже існує. Ви хочете перезаписати його?',

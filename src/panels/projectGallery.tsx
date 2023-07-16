@@ -95,13 +95,13 @@ export interface ProjectGalleryProps {
   relativeWidth: number;
   openCloudFile?: (userid: string, title: string, popState?: boolean) => void;
   deleteDesign?: (userid: string, projectTitle: string, design: Design) => void;
-  author?: string; // if undefined, the user is the owner of models
 }
 
-const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, author }: ProjectGalleryProps) => {
+const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectGalleryProps) => {
   const setCommonStore = useStore(Selector.set);
   const user = useStore(Selector.user);
   const language = useStore(Selector.language);
+  const projectOwner = useStore(Selector.projectOwner);
   const projectTitle = useStore(Selector.projectTitle);
   const projectDescription = useStore(Selector.projectDescription);
   const projectDesigns = useStore(Selector.projectDesigns);
@@ -263,30 +263,34 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, author }: 
                     projectType}
                 </span>
                 <span>
-                  <Button
-                    style={{ border: 'none', padding: '4px' }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      curateCurrentDesign();
-                    }}
-                  >
-                    <ImportOutlined
-                      style={{ fontSize: '24px', color: 'gray' }}
-                      title={i18n.t('projectPanel.CurateCurrentDesign', lang)}
-                    />
-                  </Button>
-                  <Button
-                    style={{ border: 'none', padding: '4px' }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      removeSelectedDesign();
-                    }}
-                  >
-                    <DeleteOutlined
-                      style={{ fontSize: '24px', color: 'gray' }}
-                      title={i18n.t('projectPanel.RemoveSelectedDesign', lang)}
-                    />
-                  </Button>
+                  {user.uid === projectOwner && (
+                    <Button
+                      style={{ border: 'none', padding: '4px' }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        curateCurrentDesign();
+                      }}
+                    >
+                      <ImportOutlined
+                        style={{ fontSize: '24px', color: 'gray' }}
+                        title={i18n.t('projectPanel.CurateCurrentDesign', lang)}
+                      />
+                    </Button>
+                  )}
+                  {user.uid === projectOwner && (
+                    <Button
+                      style={{ border: 'none', padding: '4px' }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeSelectedDesign();
+                      }}
+                    >
+                      <DeleteOutlined
+                        style={{ fontSize: '24px', color: 'gray' }}
+                        title={i18n.t('projectPanel.RemoveSelectedDesign', lang)}
+                      />
+                    </Button>
+                  )}
                 </span>
               </SubHeader>
             }

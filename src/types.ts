@@ -106,6 +106,7 @@ export interface CloudFileInfo {
 }
 
 export interface ProjectInfo {
+  readonly owner: string;
   readonly timestamp: number;
   readonly title: string;
   readonly description: string;

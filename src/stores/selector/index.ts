@@ -498,6 +498,8 @@ export const projectView = (state: CommonStoreState) => state.projectView;
 
 export const projectType = (state: CommonStoreState) => state.projectType;
 
+export const projectOwner = (state: CommonStoreState) => state.projectOwner;
+
 export const projectTitle = (state: CommonStoreState) => state.projectTitle;
 
 export const projectDescription = (state: CommonStoreState) => state.projectDescription;

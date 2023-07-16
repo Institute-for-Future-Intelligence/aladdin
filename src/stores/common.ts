@@ -114,6 +114,7 @@ export interface CommonStoreState {
   projectView: boolean;
   projectType: DesignProblem; // this belongs to a project
   designProjectType: DesignProblem | null; // this belongs to a design of a project
+  projectOwner: string | null;
   projectTitle: string | null;
   projectDescription: string | null;
   projectDesigns: Design[] | null;
@@ -557,6 +558,7 @@ export const useStore = create<CommonStoreState>(
           projectView: false,
           projectType: DesignProblem.SOLAR_PANEL_ARRAY,
           designProjectType: null,
+          projectOwner: null,
           projectTitle: null,
           projectDescription: null,
           projectDesigns: null,
@@ -4200,6 +4202,7 @@ export const useStore = create<CommonStoreState>(
           'projectView',
           'projectType',
           'designProjectType',
+          'projectOwner',
           'projectTitle',
           'projectDescription',
           'projectDesigns',

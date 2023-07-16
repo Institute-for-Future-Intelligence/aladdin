@@ -176,6 +176,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       myProjects.current.forEach((f, i) => {
         arr.push({
           key: i.toString(),
+          owner: f.owner,
           title: f.title,
           time: dayjs(new Date(f.timestamp)).format('MM/DD/YYYY hh:mm a'),
           timestamp: f.timestamp,
@@ -311,7 +312,10 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       if (title) {
         openCloudFile(userid, title);
       } else if (project) {
-        fetchProject(userid, project);
+        setLoading(true);
+        fetchProject(userid, project).finally(() => {
+          setLoading(false);
+        });
       }
     } else {
       setCommonStore((state) => {
@@ -884,7 +888,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                     doc
                       .collection('projects')
                       .doc(t)
-                      .set({ timestamp, type, description, counter })
+                      .set({ owner: user.uid, timestamp, type, description, counter, designs: [] })
                       .then(() => {
                         setCommonStore((state) => {
                           state.projectView = true;
@@ -930,11 +934,12 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
         querySnapshot.forEach((doc) => {
           const data = doc.data();
           a.push({
+            owner: user.uid,
             title: doc.id,
             timestamp: data.timestamp,
             description: data.description,
             type: data.type,
-            designs: data.designs,
+            designs: data.designs ?? [],
             counter: data.counter ?? 0,
           } as ProjectInfo);
         });
@@ -949,7 +954,6 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   };
 
   const fetchProject = async (userid: string, project: string) => {
-    setLoading(true);
     await firebase
       .firestore()
       .collection('users')
@@ -961,6 +965,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
         const data = doc.data();
         if (data) {
           const pi = {
+            owner: userid,
             title: doc.id,
             timestamp: data.timestamp,
             description: data.description,
@@ -968,16 +973,13 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
             designs: data.designs,
             counter: data.counter ?? 0,
           } as ProjectInfo;
-          openProject(pi.title, pi.type, pi.description, pi.designs, pi.counter);
+          openProject(pi.owner, pi.title, pi.type, pi.description, pi.designs, pi.counter);
         } else {
           showError(i18n.t('message.CannotOpenProject', lang) + ': ' + project);
         }
       })
       .catch((error) => {
         showError(i18n.t('message.CannotOpenProject', lang) + ': ' + error);
-      })
-      .finally(() => {
-        setLoading(false);
       });
   };
 
@@ -992,6 +994,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   };
 
   const openProject = (
+    owner: string,
     title: string,
     type: DesignProblem,
     description: string,
@@ -999,6 +1002,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     designCounter: number,
   ) => {
     setCommonStore((state) => {
+      state.projectOwner = owner;
       state.projectTitle = title;
       state.projectType = type;
       state.projectDescription = description;
@@ -1084,43 +1088,48 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
 
   const curateDesignToProject = () => {
     const projectTitle = useStore.getState().projectTitle;
-    if (projectTitle && user.uid) {
-      const counter = useStore.getState().projectDesignCounter ?? 0;
-      const ft = projectTitle + ' ' + counter;
-      setLoading(true);
-      fetchMyCloudFiles().then(() => {
-        let exist = false;
-        if (cloudFiles.current) {
-          for (const p of cloudFiles.current) {
-            if (p.fileName === ft) {
-              exist = true;
-              break;
+    const projectOwner = useStore.getState().projectOwner;
+    if (user.uid !== projectOwner) {
+      showInfo(i18n.t('message.CannotAddDesignToProjectOwnedByOthers', lang));
+    } else {
+      if (projectTitle) {
+        const counter = useStore.getState().projectDesignCounter ?? 0;
+        const ft = projectTitle + ' ' + counter;
+        setLoading(true);
+        fetchMyCloudFiles().then(() => {
+          let exist = false;
+          if (cloudFiles.current) {
+            for (const p of cloudFiles.current) {
+              if (p.fileName === ft) {
+                exist = true;
+                break;
+              }
             }
           }
-        }
-        if (exist) {
-          Modal.confirm({
-            title: i18n.t('message.CloudFileWithTitleExistsDoYouWantToOverwrite', lang),
-            icon: <QuestionCircleOutlined />,
-            onOk: () => {
-              saveToCloudWithoutCheckingExistence(ft, true);
-              addDesignToProject(projectTitle, ft);
-            },
-            onCancel: () => {
-              setCommonStore((state) => {
-                state.showCloudFileTitleDialogFlag = !state.showCloudFileTitleDialogFlag;
-                state.showCloudFileTitleDialog = true;
-              });
-            },
-            okText: i18n.t('word.Yes', lang),
-            cancelText: i18n.t('word.No', lang),
-          });
-        } else {
-          saveToCloudWithoutCheckingExistence(ft, true);
-          addDesignToProject(projectTitle, ft);
-        }
-      });
-      setTitleDialogVisible(false);
+          if (exist) {
+            Modal.confirm({
+              title: i18n.t('message.CloudFileWithTitleExistsDoYouWantToOverwrite', lang),
+              icon: <QuestionCircleOutlined />,
+              onOk: () => {
+                saveToCloudWithoutCheckingExistence(ft, true);
+                addDesignToProject(projectTitle, ft);
+              },
+              onCancel: () => {
+                setCommonStore((state) => {
+                  state.showCloudFileTitleDialogFlag = !state.showCloudFileTitleDialogFlag;
+                  state.showCloudFileTitleDialog = true;
+                });
+              },
+              okText: i18n.t('word.Yes', lang),
+              cancelText: i18n.t('word.No', lang),
+            });
+          } else {
+            saveToCloudWithoutCheckingExistence(ft, true);
+            addDesignToProject(projectTitle, ft);
+          }
+        });
+        setTitleDialogVisible(false);
+      }
     }
   };
 
