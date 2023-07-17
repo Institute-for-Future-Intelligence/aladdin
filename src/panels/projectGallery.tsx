@@ -179,8 +179,8 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
   const imageWidth = Math.round((relativeWidth * window.innerWidth) / 4 - 12);
 
   const variables: string[] = ProjectUtil.getVariables(projectType);
-  const titles: string[] = useMemo(() => ProjectUtil.getTitles(projectType, lang), [lang]);
-  const units: string[] = useMemo(() => ProjectUtil.getUnits(projectType, lang), [lang]);
+  const titles: string[] = useMemo(() => ProjectUtil.getTitles(projectType, lang), [projectType, lang]);
+  const units: string[] = useMemo(() => ProjectUtil.getUnits(projectType, lang), [projectType, lang]);
   const digits: number[] = ProjectUtil.getDigits(projectType);
   const types: string[] = ProjectUtil.getTypes(projectType);
 
@@ -189,19 +189,19 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
     if (projectDesigns) {
       if (projectType === DesignProblem.SOLAR_PANEL_ARRAY) {
         for (const design of projectDesigns) {
+          const unitCost = design.unitCost !== undefined ? design.unitCost : economicsParams.operationalCostPerUnit;
+          const sellingPrice =
+            design.sellingPrice !== undefined ? design.sellingPrice : economicsParams.electricitySellingPrice;
           data.push({
             rowWidth: design.rowsPerRack,
             tiltAngle: Util.toDegrees(design.tiltAngle),
             interRowSpacing: design.interRowSpacing,
             orientation: design.orientation === Orientation.landscape ? 0 : 1,
-            unitCost: economicsParams.operationalCostPerUnit,
-            sellingPrice: economicsParams.electricitySellingPrice,
+            unitCost,
+            sellingPrice,
             panelCount: design.panelCount,
             yield: design.yearlyYield * 0.001,
-            profit:
-              (design.yearlyYield * economicsParams.electricitySellingPrice -
-                design.panelCount * economicsParams.operationalCostPerUnit * 365) *
-              0.001,
+            profit: (design.yearlyYield * sellingPrice - design.panelCount * unitCost * 365) * 0.001,
             group: 'default',
             selected: selectedDesign === design,
             hovered: hoveredDesign === design,
@@ -210,7 +210,7 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
       }
     }
     return data;
-  }, [projectDesigns, projectType, hoveredDesign, selectedDesign]);
+  }, [projectDesigns, projectType, hoveredDesign, selectedDesign, economicsParams]);
 
   const minima: number[] = useMemo(() => {
     return projectType === DesignProblem.SOLAR_PANEL_ARRAY && solarPanelArrayLayoutConstraints

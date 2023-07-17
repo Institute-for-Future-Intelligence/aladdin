@@ -1203,7 +1203,12 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                     const panelCount = Util.countAllSolarPanels();
                     const dailyYield = Util.countAllSolarPanelDailyYields();
                     const yearlyYield = Util.countAllSolarPanelYearlyYields();
+                    const economicParams = useStore.getState().economicsParams;
+                    const unitCost = economicParams.operationalCostPerUnit;
+                    const sellingPrice = economicParams.electricitySellingPrice;
                     design = {
+                      unitCost,
+                      sellingPrice,
                       panelCount,
                       dailyYield,
                       yearlyYield,
