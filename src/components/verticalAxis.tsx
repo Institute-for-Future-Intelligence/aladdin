@@ -73,12 +73,12 @@ const VerticalAxis = ({
             fill: 'dimgray',
           }}
         >
-          {variable === 'profit'
+          {variable === 'profit' || variable === 'unitCost' || variable === 'sellingPrice'
             ? value.toLocaleString('en-US', {
                 style: 'currency',
                 currency: 'USD',
                 maximumFractionDigits: 3,
-              })
+              }) + (variable === 'profit' ? 'K' : '')
             : (variable === 'orientation'
                 ? i18n.t(value === 0 ? 'solarPanelMenu.Landscape' : 'solarPanelMenu.Portrait', lang)
                 : value.toFixed(digits)) + (unit !== '' ? unit : '')}

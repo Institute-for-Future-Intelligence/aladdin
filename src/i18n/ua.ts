@@ -851,6 +851,7 @@ export const i18n_ua = {
       SolarPanelArrayTiltAngle: 'Кут нахилу',
       SolarPanelArrayRowWidth: 'Ширина ряду',
       SolarPanelArrayInterRowSpacing: 'Міжрядковий інтервал',
+      SolarPanelArrayRowSpacing: 'Row Spacing',
       SolarPanelArrayRowAxis: 'Вісь ряду',
       SolarPanelArrayLeftRightRowAxis: 'Наліво-Направо (відносне)',
       SolarPanelArrayUpDownRowAxis: 'Вгору-Вниз (відносне)',
@@ -1422,6 +1423,8 @@ export const i18n_ua = {
       EconomicsParameters: 'Параметри економіки',
       ElectricitySellingPrice: 'Ціна продажу електроенергії',
       OperationalCostPerUnit: 'Операційні витрати за одиницю',
+      SellingPrice: 'Selling Price',
+      UnitCost: 'Unit Cost',
     },
 
     yearlyLightSensorPanel: {

@@ -850,6 +850,7 @@ export const i18n_es = {
       SolarPanelArrayTiltAngle: 'Tilt Angle',
       SolarPanelArrayRowWidth: 'Row Width',
       SolarPanelArrayInterRowSpacing: 'Inter-Row Spacing',
+      SolarPanelArrayRowSpacing: 'Row Spacing',
       SolarPanelArrayRowAxis: 'Row Axis',
       SolarPanelArrayLeftRightRowAxis: 'Left-Right (Relative)',
       SolarPanelArrayUpDownRowAxis: 'Up-Down (Relative)',
@@ -1421,6 +1422,8 @@ export const i18n_es = {
       EconomicsParameters: 'Economics Parameters',
       ElectricitySellingPrice: 'Electricity Selling Price',
       OperationalCostPerUnit: 'Operational Cost per Unit',
+      SellingPrice: 'Selling Price',
+      UnitCost: 'Unit Cost',
     },
 
     yearlyLightSensorPanel: {

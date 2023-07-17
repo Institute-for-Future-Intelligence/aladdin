@@ -193,8 +193,9 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
             rowWidth: design.rowsPerRack,
             tiltAngle: Util.toDegrees(design.tiltAngle),
             interRowSpacing: design.interRowSpacing,
-            poleHeight: design.poleHeight,
             orientation: design.orientation === Orientation.landscape ? 0 : 1,
+            unitCost: economicsParams.operationalCostPerUnit,
+            sellingPrice: economicsParams.electricitySellingPrice,
             panelCount: design.panelCount,
             yield: design.yearlyYield * 0.001,
             profit:
@@ -217,11 +218,12 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
           solarPanelArrayLayoutConstraints.minimumRowsPerRack,
           Util.toDegrees(solarPanelArrayLayoutConstraints.minimumTiltAngle),
           solarPanelArrayLayoutConstraints.minimumInterRowSpacing,
-          0,
-          0,
-          0,
-          0,
-          -10,
+          0, // orientation
+          0.1, // unit cost
+          0.1, // electricity selling price
+          0, // panel count
+          0, // electricity output in MWh
+          -10, // profit in $1,000
         ]
       : [1, 0, 1, 0, 0, 0, 0, -10];
   }, [solarPanelArrayLayoutConstraints, projectType]);
@@ -231,11 +233,12 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
           solarPanelArrayLayoutConstraints.maximumRowsPerRack,
           Util.toDegrees(solarPanelArrayLayoutConstraints.maximumTiltAngle),
           solarPanelArrayLayoutConstraints.maximumInterRowSpacing,
-          1,
-          4,
-          300,
-          100,
-          10,
+          1, // orientation
+          1.0, // unit cost
+          0.5, // electricity selling price
+          300, // panel count
+          100, // electricity output in MWh
+          10, // profit in $1,000
         ]
       : [10, 90, 10, 1, 5, 300, 100, 10];
   }, [solarPanelArrayLayoutConstraints, projectType]);

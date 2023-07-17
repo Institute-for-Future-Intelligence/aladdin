@@ -827,6 +827,7 @@ export const i18n_zh_cn = {
       SolarPanelArrayTiltAngle: '倾斜角度',
       SolarPanelArrayRowWidth: '行宽度',
       SolarPanelArrayInterRowSpacing: '行间距',
+      SolarPanelArrayRowSpacing: '行间距',
       SolarPanelArrayRowAxis: '行轴方向',
       SolarPanelArrayLeftRightRowAxis: '左右方向(相对)',
       SolarPanelArrayUpDownRowAxis: '上下方向(相对)',
@@ -1396,6 +1397,8 @@ export const i18n_zh_cn = {
       EconomicsParameters: '经济学参数',
       ElectricitySellingPrice: '销售电价',
       OperationalCostPerUnit: '单位运行成本',
+      SellingPrice: '销售电价',
+      UnitCost: '单位成本',
     },
 
     yearlyLightSensorPanel: {

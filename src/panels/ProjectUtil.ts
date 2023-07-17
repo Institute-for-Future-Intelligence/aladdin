@@ -11,9 +11,10 @@ export class ProjectUtil {
       return [
         i18n.t('polygonMenu.SolarPanelArrayRowWidth', lang),
         i18n.t('polygonMenu.SolarPanelArrayTiltAngle', lang),
-        i18n.t('polygonMenu.SolarPanelArrayInterRowSpacing', lang),
+        i18n.t('polygonMenu.SolarPanelArrayRowSpacing', lang),
         i18n.t('polygonMenu.SolarPanelArrayOrientation', lang),
-        i18n.t('polygonMenu.SolarPanelArrayPoleHeight', lang),
+        i18n.t('economicsPanel.UnitCost', lang),
+        i18n.t('economicsPanel.SellingPrice', lang),
         i18n.t('polygonMenu.SolarPanelArrayPanelCount', lang),
         i18n.t('polygonMenu.SolarPanelArrayYield', lang),
         i18n.t('polygonMenu.SolarPanelArrayProfit', lang),
@@ -24,20 +25,30 @@ export class ProjectUtil {
 
   static getVariables(projectType: DesignProblem): string[] {
     if (projectType === DesignProblem.SOLAR_PANEL_ARRAY) {
-      return ['rowWidth', 'tiltAngle', 'interRowSpacing', 'orientation', 'poleHeight', 'panelCount', 'yield', 'profit'];
+      return [
+        'rowWidth',
+        'tiltAngle',
+        'interRowSpacing',
+        'orientation',
+        'unitCost',
+        'sellingPrice',
+        'panelCount',
+        'yield',
+        'profit',
+      ];
     }
     return [];
   }
 
   static getTypes(projectType: DesignProblem): string[] {
     if (projectType === DesignProblem.SOLAR_PANEL_ARRAY) {
-      return ['number', 'number', 'number', 'boolean', 'number', 'number', 'number', 'number'];
+      return ['number', 'number', 'number', 'boolean', 'number', 'number', 'number', 'number', 'number'];
     }
     return [];
   }
 
   static getDigits(projectType: DesignProblem): number[] {
-    if (projectType === DesignProblem.SOLAR_PANEL_ARRAY) return [0, 1, 1, 0, 1, 0, 1, 1];
+    if (projectType === DesignProblem.SOLAR_PANEL_ARRAY) return [0, 1, 1, 0, 2, 1, 0, 1, 1];
     return [];
   }
 
@@ -48,7 +59,8 @@ export class ProjectUtil {
         '°',
         ' ' + i18n.t('word.MeterAbbreviation', lang),
         '',
-        ' ' + i18n.t('word.MeterAbbreviation', lang),
+        '',
+        '',
         '',
         ' MWh',
         'K',

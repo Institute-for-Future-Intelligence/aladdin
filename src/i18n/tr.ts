@@ -850,6 +850,7 @@ export const i18n_tr = {
       SolarPanelArrayTiltAngle: 'Eğim Açısı',
       SolarPanelArrayRowWidth: 'Dizi Sıra Genişliği',
       SolarPanelArrayInterRowSpacing: 'Dizi Sıra Arası Boşluk',
+      SolarPanelArrayRowSpacing: 'Row Spacing',
       SolarPanelArrayRowAxis: 'Dizi Sıra Ekseni',
       SolarPanelArrayLeftRightRowAxis: 'Left-Right (Relative)',
       SolarPanelArrayUpDownRowAxis: 'Up-Down (Relative)',
@@ -1422,6 +1423,8 @@ export const i18n_tr = {
       EconomicsParameters: 'Ekonomik Parametreler',
       ElectricitySellingPrice: 'Elektrik Satış Fiyatı',
       OperationalCostPerUnit: 'Birim Başına İşletme Maliyeti',
+      SellingPrice: 'Selling Price',
+      UnitCost: 'Unit Cost',
     },
 
     yearlyLightSensorPanel: {
