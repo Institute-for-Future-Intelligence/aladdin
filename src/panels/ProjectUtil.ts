@@ -6,65 +6,90 @@ import { DesignProblem } from '../types';
 import i18n from '../i18n/i18n';
 
 export class ProjectUtil {
-  static getTitles(projectType: DesignProblem, lang: { lng: string }): string[] {
+  static getVariables(projectType: DesignProblem, visibleMap?: Map<string, boolean>): string[] {
     if (projectType === DesignProblem.SOLAR_PANEL_ARRAY) {
-      return [
-        i18n.t('polygonMenu.SolarPanelArrayRowWidth', lang),
-        i18n.t('polygonMenu.SolarPanelArrayTiltAngle', lang),
-        i18n.t('polygonMenu.SolarPanelArrayRowSpacing', lang),
-        i18n.t('polygonMenu.SolarPanelArrayOrientation', lang),
-        i18n.t('economicsPanel.UnitCost', lang),
-        i18n.t('economicsPanel.SellingPrice', lang),
-        i18n.t('polygonMenu.SolarPanelArrayPanelCount', lang),
-        i18n.t('polygonMenu.SolarPanelArrayYield', lang),
-        i18n.t('polygonMenu.SolarPanelArrayProfit', lang),
-      ];
+      const array: string[] = [];
+      if (!visibleMap || visibleMap.get('rowWidth')) array.push('rowWidth');
+      if (!visibleMap || visibleMap.get('tiltAngle')) array.push('tiltAngle');
+      if (!visibleMap || visibleMap.get('interRowSpacing')) array.push('interRowSpacing');
+      if (!visibleMap || visibleMap.get('orientation')) array.push('orientation');
+      if (!visibleMap || visibleMap.get('unitCost')) array.push('unitCost');
+      if (!visibleMap || visibleMap.get('sellingPrice')) array.push('sellingPrice');
+      if (!visibleMap || visibleMap.get('panelCount')) array.push('panelCount');
+      if (!visibleMap || visibleMap.get('yield')) array.push('yield');
+      if (!visibleMap || visibleMap.get('profit')) array.push('profit');
+      return array;
     }
     return [];
   }
 
-  static getVariables(projectType: DesignProblem): string[] {
+  static getTitles(projectType: DesignProblem, lang: { lng: string }, visibleMap?: Map<string, boolean>): string[] {
     if (projectType === DesignProblem.SOLAR_PANEL_ARRAY) {
-      return [
-        'rowWidth',
-        'tiltAngle',
-        'interRowSpacing',
-        'orientation',
-        'unitCost',
-        'sellingPrice',
-        'panelCount',
-        'yield',
-        'profit',
-      ];
+      const array: string[] = [];
+      if (!visibleMap || visibleMap.get('rowWidth')) array.push(i18n.t('polygonMenu.SolarPanelArrayRowWidth', lang));
+      if (!visibleMap || visibleMap.get('tiltAngle')) array.push(i18n.t('polygonMenu.SolarPanelArrayTiltAngle', lang));
+      if (!visibleMap || visibleMap.get('interRowSpacing'))
+        array.push(i18n.t('polygonMenu.SolarPanelArrayRowSpacing', lang));
+      if (!visibleMap || visibleMap.get('orientation'))
+        array.push(i18n.t('polygonMenu.SolarPanelArrayOrientation', lang));
+      if (!visibleMap || visibleMap.get('unitCost')) array.push(i18n.t('economicsPanel.UnitCost', lang));
+      if (!visibleMap || visibleMap.get('sellingPrice')) array.push(i18n.t('economicsPanel.SellingPrice', lang));
+      if (!visibleMap || visibleMap.get('panelCount'))
+        array.push(i18n.t('polygonMenu.SolarPanelArrayPanelCount', lang));
+      if (!visibleMap || visibleMap.get('yield')) array.push(i18n.t('polygonMenu.SolarPanelArrayYield', lang));
+      if (!visibleMap || visibleMap.get('profit')) array.push(i18n.t('polygonMenu.SolarPanelArrayProfit', lang));
+      return array;
     }
     return [];
   }
 
-  static getTypes(projectType: DesignProblem): string[] {
+  static getTypes(projectType: DesignProblem, visibleMap?: Map<string, boolean>): string[] {
     if (projectType === DesignProblem.SOLAR_PANEL_ARRAY) {
-      return ['number', 'number', 'number', 'boolean', 'number', 'number', 'number', 'number', 'number'];
+      const array: string[] = [];
+      if (!visibleMap || visibleMap.get('rowWidth')) array.push('number');
+      if (!visibleMap || visibleMap.get('tiltAngle')) array.push('number');
+      if (!visibleMap || visibleMap.get('interRowSpacing')) array.push('number');
+      if (!visibleMap || visibleMap.get('orientation')) array.push('boolean');
+      if (!visibleMap || visibleMap.get('unitCost')) array.push('number');
+      if (!visibleMap || visibleMap.get('sellingPrice')) array.push('number');
+      if (!visibleMap || visibleMap.get('panelCount')) array.push('number');
+      if (!visibleMap || visibleMap.get('yield')) array.push('number');
+      if (!visibleMap || visibleMap.get('profit')) array.push('number');
+      return array;
     }
     return [];
   }
 
-  static getDigits(projectType: DesignProblem): number[] {
-    if (projectType === DesignProblem.SOLAR_PANEL_ARRAY) return [0, 1, 1, 0, 2, 1, 0, 1, 1];
+  static getDigits(projectType: DesignProblem, visibleMap?: Map<string, boolean>): number[] {
+    if (projectType === DesignProblem.SOLAR_PANEL_ARRAY) {
+      const array: number[] = [];
+      if (!visibleMap || visibleMap.get('rowWidth')) array.push(0);
+      if (!visibleMap || visibleMap.get('tiltAngle')) array.push(1);
+      if (!visibleMap || visibleMap.get('interRowSpacing')) array.push(1);
+      if (!visibleMap || visibleMap.get('orientation')) array.push(0);
+      if (!visibleMap || visibleMap.get('unitCost')) array.push(2);
+      if (!visibleMap || visibleMap.get('sellingPrice')) array.push(2);
+      if (!visibleMap || visibleMap.get('panelCount')) array.push(0);
+      if (!visibleMap || visibleMap.get('yield')) array.push(1);
+      if (!visibleMap || visibleMap.get('profit')) array.push(1);
+      return array;
+    }
     return [];
   }
 
-  static getUnits(projectType: DesignProblem, lang: { lng: string }): string[] {
+  static getUnits(projectType: DesignProblem, lang: { lng: string }, visibleMap?: Map<string, boolean>): string[] {
     if (projectType === DesignProblem.SOLAR_PANEL_ARRAY) {
-      return [
-        ' ' + i18n.t('solarPanelMenu.Panels', lang),
-        '°',
-        ' ' + i18n.t('word.MeterAbbreviation', lang),
-        '',
-        '',
-        '',
-        '',
-        ' MWh',
-        'K',
-      ];
+      const array: string[] = [];
+      if (!visibleMap || visibleMap.get('rowWidth')) array.push(' ' + i18n.t('solarPanelMenu.Panels', lang));
+      if (!visibleMap || visibleMap.get('tiltAngle')) array.push('°');
+      if (!visibleMap || visibleMap.get('interRowSpacing')) array.push(' ' + i18n.t('word.MeterAbbreviation', lang));
+      if (!visibleMap || visibleMap.get('orientation')) array.push('');
+      if (!visibleMap || visibleMap.get('unitCost')) array.push('');
+      if (!visibleMap || visibleMap.get('sellingPrice')) array.push('');
+      if (!visibleMap || visibleMap.get('panelCount')) array.push('');
+      if (!visibleMap || visibleMap.get('yield')) array.push(' MWh');
+      if (!visibleMap || visibleMap.get('profit')) array.push('K');
+      return array;
     }
     return [];
   }

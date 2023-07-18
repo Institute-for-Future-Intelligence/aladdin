@@ -74,8 +74,7 @@ const ParallelCoordinates = ({
       // I don't understand the type of scalePoint. IMO x cannot be undefined since I'm passing it something of type Variable.
       const x = xScale(variable) ?? 0;
       const y = yScale(series[variable] as number);
-      const coordinate: [number, number] = [x, y];
-      return coordinate;
+      return [x, y] as [number, number];
     });
 
     const d = lineGenerator(allCoordinates);

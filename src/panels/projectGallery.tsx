@@ -115,7 +115,9 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
   const [hoveredDesign, setHoveredDesign] = useState<Design | undefined>();
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
 
-  const lang = { lng: language };
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
 
   useEffect(() => {
     if (projectDesigns) {
@@ -178,11 +180,29 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
   const totalHeight = window.innerHeight;
   const imageWidth = Math.round((relativeWidth * window.innerWidth) / 4 - 12);
 
-  const variables: string[] = ProjectUtil.getVariables(projectType);
-  const titles: string[] = useMemo(() => ProjectUtil.getTitles(projectType, lang), [projectType, lang]);
-  const units: string[] = useMemo(() => ProjectUtil.getUnits(projectType, lang), [projectType, lang]);
-  const digits: number[] = ProjectUtil.getDigits(projectType);
-  const types: string[] = ProjectUtil.getTypes(projectType);
+  const allVariables: string[] = ProjectUtil.getVariables(projectType);
+  const visibleMap: Map<string, boolean> = useMemo(() => {
+    const map = new Map<string, boolean>();
+    for (const v of allVariables) {
+      map.set(v, v !== 'orientation');
+    }
+    return map;
+  }, [allVariables]);
+
+  const variables: string[] = useMemo(
+    () => ProjectUtil.getVariables(projectType, visibleMap),
+    [projectType, visibleMap],
+  );
+  const titles: string[] = useMemo(
+    () => ProjectUtil.getTitles(projectType, lang, visibleMap),
+    [projectType, lang, visibleMap],
+  );
+  const units: string[] = useMemo(
+    () => ProjectUtil.getUnits(projectType, lang, visibleMap),
+    [projectType, lang, visibleMap],
+  );
+  const digits: number[] = useMemo(() => ProjectUtil.getDigits(projectType, visibleMap), [projectType, visibleMap]);
+  const types: string[] = useMemo(() => ProjectUtil.getTypes(projectType, visibleMap), [projectType, visibleMap]);
 
   const data: DatumEntry[] = useMemo(() => {
     const data: DatumEntry[] = [];
@@ -192,56 +212,64 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
           const unitCost = design.unitCost !== undefined ? design.unitCost : economicsParams.operationalCostPerUnit;
           const sellingPrice =
             design.sellingPrice !== undefined ? design.sellingPrice : economicsParams.electricitySellingPrice;
-          data.push({
-            rowWidth: design.rowsPerRack,
-            tiltAngle: Util.toDegrees(design.tiltAngle),
-            interRowSpacing: design.interRowSpacing,
-            orientation: design.orientation === Orientation.landscape ? 0 : 1,
-            unitCost,
-            sellingPrice,
-            panelCount: design.panelCount,
-            yield: design.yearlyYield * 0.001,
-            profit: (design.yearlyYield * sellingPrice - design.panelCount * unitCost * 365) * 0.001,
-            group: 'default',
-            selected: selectedDesign === design,
-            hovered: hoveredDesign === design,
-          } as DatumEntry);
+          const d = {} as DatumEntry;
+          if (visibleMap.get('rowWidth')) d['rowWidth'] = design.rowsPerRack;
+          if (visibleMap.get('tiltAngle')) d['tiltAngle'] = Util.toDegrees(design.tiltAngle);
+          if (visibleMap.get('interRowSpacing')) d['interRowSpacing'] = design.interRowSpacing;
+          if (visibleMap.get('orientation')) d['orientation'] = design.orientation === Orientation.landscape ? 0 : 1;
+          if (visibleMap.get('unitCost')) d['unitCost'] = unitCost;
+          if (visibleMap.get('sellingPrice')) d['sellingPrice'] = sellingPrice;
+          if (visibleMap.get('panelCount')) d['panelCount'] = design.panelCount;
+          if (visibleMap.get('yield')) d['yield'] = design.yearlyYield * 0.001;
+          if (visibleMap.get('profit'))
+            d['profit'] = (design.yearlyYield * sellingPrice - design.panelCount * unitCost * 365) * 0.001;
+          d['group'] = 'default';
+          d['selected'] = selectedDesign === design;
+          d['hovered'] = hoveredDesign === design;
+          data.push(d);
         }
       }
     }
     return data;
-  }, [projectDesigns, projectType, hoveredDesign, selectedDesign, economicsParams]);
+  }, [projectDesigns, projectType, hoveredDesign, selectedDesign, economicsParams, visibleMap]);
 
   const minima: number[] = useMemo(() => {
-    return projectType === DesignProblem.SOLAR_PANEL_ARRAY && solarPanelArrayLayoutConstraints
-      ? [
-          solarPanelArrayLayoutConstraints.minimumRowsPerRack,
-          Util.toDegrees(solarPanelArrayLayoutConstraints.minimumTiltAngle),
-          solarPanelArrayLayoutConstraints.minimumInterRowSpacing,
-          0, // orientation
-          0.1, // unit cost
-          0.1, // electricity selling price
-          0, // panel count
-          0, // electricity output in MWh
-          -10, // profit in $1,000
-        ]
-      : [1, 0, 1, 0, 0, 0, 0, -10];
-  }, [solarPanelArrayLayoutConstraints, projectType]);
+    if (projectType === DesignProblem.SOLAR_PANEL_ARRAY && solarPanelArrayLayoutConstraints) {
+      const array: number[] = [];
+      if (!visibleMap || visibleMap.get('rowWidth')) array.push(solarPanelArrayLayoutConstraints.minimumRowsPerRack);
+      if (!visibleMap || visibleMap.get('tiltAngle'))
+        array.push(Util.toDegrees(solarPanelArrayLayoutConstraints.minimumTiltAngle));
+      if (!visibleMap || visibleMap.get('interRowSpacing'))
+        array.push(solarPanelArrayLayoutConstraints.minimumInterRowSpacing);
+      if (!visibleMap || visibleMap.get('orientation')) array.push(0);
+      if (!visibleMap || visibleMap.get('unitCost')) array.push(0.1);
+      if (!visibleMap || visibleMap.get('sellingPrice')) array.push(0.1);
+      if (!visibleMap || visibleMap.get('panelCount')) array.push(0);
+      if (!visibleMap || visibleMap.get('yield')) array.push(0); // electricity output in MWh
+      if (!visibleMap || visibleMap.get('profit')) array.push(-10); // profit in $1,000
+      return array;
+    }
+    return [1, 0, 1, 0, 0, 0, 0, -10];
+  }, [solarPanelArrayLayoutConstraints, projectType, visibleMap]);
+
   const maxima: number[] = useMemo(() => {
-    return projectType === DesignProblem.SOLAR_PANEL_ARRAY && solarPanelArrayLayoutConstraints
-      ? [
-          solarPanelArrayLayoutConstraints.maximumRowsPerRack,
-          Util.toDegrees(solarPanelArrayLayoutConstraints.maximumTiltAngle),
-          solarPanelArrayLayoutConstraints.maximumInterRowSpacing,
-          1, // orientation
-          1.0, // unit cost
-          0.5, // electricity selling price
-          300, // panel count
-          100, // electricity output in MWh
-          10, // profit in $1,000
-        ]
-      : [10, 90, 10, 1, 5, 300, 100, 10];
-  }, [solarPanelArrayLayoutConstraints, projectType]);
+    if (projectType === DesignProblem.SOLAR_PANEL_ARRAY && solarPanelArrayLayoutConstraints) {
+      const array: number[] = [];
+      if (!visibleMap || visibleMap.get('rowWidth')) array.push(solarPanelArrayLayoutConstraints.maximumRowsPerRack);
+      if (!visibleMap || visibleMap.get('tiltAngle'))
+        array.push(Util.toDegrees(solarPanelArrayLayoutConstraints.maximumTiltAngle));
+      if (!visibleMap || visibleMap.get('interRowSpacing'))
+        array.push(solarPanelArrayLayoutConstraints.maximumInterRowSpacing);
+      if (!visibleMap || visibleMap.get('orientation')) array.push(1);
+      if (!visibleMap || visibleMap.get('unitCost')) array.push(1);
+      if (!visibleMap || visibleMap.get('sellingPrice')) array.push(0.5);
+      if (!visibleMap || visibleMap.get('panelCount')) array.push(300);
+      if (!visibleMap || visibleMap.get('yield')) array.push(100); // electricity output in MWh
+      if (!visibleMap || visibleMap.get('profit')) array.push(10); // profit in $1,000
+      return array;
+    }
+    return [10, 90, 10, 1, 5, 300, 100, 10];
+  }, [solarPanelArrayLayoutConstraints, projectType, visibleMap]);
 
   const hover = (i: number) => {
     if (projectDesigns) {
