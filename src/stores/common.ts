@@ -118,6 +118,7 @@ export interface CommonStoreState {
   projectTitle: string | null;
   projectDescription: string | null;
   projectDesigns: Design[] | null;
+  projectHiddenParameters: string[];
   projectDesignCounter: number;
   notes: string[];
   user: User;
@@ -562,6 +563,7 @@ export const useStore = create<CommonStoreState>(
           projectTitle: null,
           projectDescription: null,
           projectDesigns: null,
+          projectHiddenParameters: [],
           projectDesignCounter: 0,
           notes: [],
           user: {} as User,
@@ -4206,6 +4208,7 @@ export const useStore = create<CommonStoreState>(
           'projectTitle',
           'projectDescription',
           'projectDesigns',
+          'projectHiddenParameters',
           'projectDesignCounter',
           'notes',
           'user',

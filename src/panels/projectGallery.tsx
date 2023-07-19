@@ -114,6 +114,7 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
   const projectTitle = useStore(Selector.projectTitle);
   const projectDescription = useStore(Selector.projectDescription);
   const projectDesigns = useStore(Selector.projectDesigns);
+  const projectHiddenParameters = useStore(Selector.projectHiddenParameters);
   const projectType = useStore(Selector.projectType);
   const solarPanelArrayLayoutConstraints = useStore(Selector.solarPanelArrayLayoutConstraints);
   const economicsParams = useStore(Selector.economicsParams);
@@ -121,7 +122,7 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
   const [selectedDesign, setSelectedDesign] = useState<Design | undefined>();
   const [hoveredDesign, setHoveredDesign] = useState<Design | undefined>();
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
-  const [updateVisibleMapFlag, setUpdateVisibleMapFlag] = useState<boolean>(false);
+  const [updateHiddenFlag, setUpdateHiddenFlag] = useState<boolean>(false);
 
   const lang = useMemo(() => {
     return { lng: language };
@@ -188,34 +189,25 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
   const totalHeight = window.innerHeight;
   const imageWidth = Math.round((relativeWidth * window.innerWidth) / 4 - 12);
 
-  const allVariables: string[] = useMemo(() => ProjectUtil.getVariables(projectType), [projectType]);
-  const visibleMap: Map<string, boolean> = useMemo(() => {
-    const map = new Map<string, boolean>();
-    for (const v of allVariables) {
-      map.set(v, true);
-    }
-    return map;
-  }, [allVariables]);
-
   const variables: string[] = useMemo(
-    () => ProjectUtil.getVariables(projectType, visibleMap),
-    [projectType, visibleMap, updateVisibleMapFlag],
+    () => ProjectUtil.getVariables(projectType, projectHiddenParameters),
+    [projectType, projectHiddenParameters, updateHiddenFlag],
   );
   const titles: string[] = useMemo(
-    () => ProjectUtil.getTitles(projectType, lang, visibleMap),
-    [projectType, lang, visibleMap, updateVisibleMapFlag],
+    () => ProjectUtil.getTitles(projectType, lang, projectHiddenParameters),
+    [projectType, lang, projectHiddenParameters, updateHiddenFlag],
   );
   const units: string[] = useMemo(
-    () => ProjectUtil.getUnits(projectType, lang, visibleMap),
-    [projectType, lang, visibleMap, updateVisibleMapFlag],
+    () => ProjectUtil.getUnits(projectType, lang, projectHiddenParameters),
+    [projectType, lang, projectHiddenParameters, updateHiddenFlag],
   );
   const digits: number[] = useMemo(
-    () => ProjectUtil.getDigits(projectType, visibleMap),
-    [projectType, visibleMap, updateVisibleMapFlag],
+    () => ProjectUtil.getDigits(projectType, projectHiddenParameters),
+    [projectType, projectHiddenParameters, updateHiddenFlag],
   );
   const types: string[] = useMemo(
-    () => ProjectUtil.getTypes(projectType, visibleMap),
-    [projectType, visibleMap, updateVisibleMapFlag],
+    () => ProjectUtil.getTypes(projectType, projectHiddenParameters),
+    [projectType, projectHiddenParameters, updateHiddenFlag],
   );
 
   const data: DatumEntry[] = useMemo(() => {
@@ -227,15 +219,17 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
           const sellingPrice =
             design.sellingPrice !== undefined ? design.sellingPrice : economicsParams.electricitySellingPrice;
           const d = {} as DatumEntry;
-          if (visibleMap.get('rowWidth')) d['rowWidth'] = design.rowsPerRack;
-          if (visibleMap.get('tiltAngle')) d['tiltAngle'] = Util.toDegrees(design.tiltAngle);
-          if (visibleMap.get('interRowSpacing')) d['interRowSpacing'] = design.interRowSpacing;
-          if (visibleMap.get('orientation')) d['orientation'] = design.orientation === Orientation.landscape ? 0 : 1;
-          if (visibleMap.get('unitCost')) d['unitCost'] = unitCost;
-          if (visibleMap.get('sellingPrice')) d['sellingPrice'] = sellingPrice;
-          if (visibleMap.get('panelCount')) d['panelCount'] = design.panelCount;
-          if (visibleMap.get('yield')) d['yield'] = design.yearlyYield * 0.001;
-          if (visibleMap.get('profit'))
+          if (!projectHiddenParameters.includes('rowWidth')) d['rowWidth'] = design.rowsPerRack;
+          if (!projectHiddenParameters.includes('tiltAngle')) d['tiltAngle'] = Util.toDegrees(design.tiltAngle);
+          if (!projectHiddenParameters.includes('interRowSpacing')) d['interRowSpacing'] = design.interRowSpacing;
+          if (!projectHiddenParameters.includes('orientation'))
+            d['orientation'] = design.orientation === Orientation.landscape ? 0 : 1;
+          if (!projectHiddenParameters.includes('poleHeight')) d['poleHeight'] = design.poleHeight;
+          if (!projectHiddenParameters.includes('unitCost')) d['unitCost'] = unitCost;
+          if (!projectHiddenParameters.includes('sellingPrice')) d['sellingPrice'] = sellingPrice;
+          if (!projectHiddenParameters.includes('panelCount')) d['panelCount'] = design.panelCount;
+          if (!projectHiddenParameters.includes('yield')) d['yield'] = design.yearlyYield * 0.001;
+          if (!projectHiddenParameters.includes('profit'))
             d['profit'] = (design.yearlyYield * sellingPrice - design.panelCount * unitCost * 365) * 0.001;
           d['group'] = 'default';
           d['selected'] = selectedDesign === design;
@@ -245,55 +239,68 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
       }
     }
     return data;
-  }, [projectDesigns, projectType, hoveredDesign, selectedDesign, economicsParams, visibleMap, updateVisibleMapFlag]);
+  }, [
+    projectDesigns,
+    projectType,
+    hoveredDesign,
+    selectedDesign,
+    economicsParams,
+    projectHiddenParameters,
+    updateHiddenFlag,
+  ]);
 
   const minima: number[] = useMemo(() => {
     if (projectType === DesignProblem.SOLAR_PANEL_ARRAY && solarPanelArrayLayoutConstraints) {
       const array: number[] = [];
-      if (!visibleMap || visibleMap.get('rowWidth')) array.push(solarPanelArrayLayoutConstraints.minimumRowsPerRack);
-      if (!visibleMap || visibleMap.get('tiltAngle'))
+      if (!projectHiddenParameters.includes('rowWidth'))
+        array.push(solarPanelArrayLayoutConstraints.minimumRowsPerRack);
+      if (!projectHiddenParameters.includes('tiltAngle'))
         array.push(Util.toDegrees(solarPanelArrayLayoutConstraints.minimumTiltAngle));
-      if (!visibleMap || visibleMap.get('interRowSpacing'))
+      if (!projectHiddenParameters.includes('interRowSpacing'))
         array.push(solarPanelArrayLayoutConstraints.minimumInterRowSpacing);
-      if (!visibleMap || visibleMap.get('orientation')) array.push(0);
-      if (!visibleMap || visibleMap.get('unitCost')) array.push(0.1);
-      if (!visibleMap || visibleMap.get('sellingPrice')) array.push(0.1);
-      if (!visibleMap || visibleMap.get('panelCount')) array.push(0);
-      if (!visibleMap || visibleMap.get('yield')) array.push(0); // electricity output in MWh
-      if (!visibleMap || visibleMap.get('profit')) array.push(-10); // profit in $1,000
+      if (!projectHiddenParameters.includes('orientation')) array.push(0);
+      if (!projectHiddenParameters.includes('poleHeight')) array.push(0);
+      if (!projectHiddenParameters.includes('unitCost')) array.push(0.1);
+      if (!projectHiddenParameters.includes('sellingPrice')) array.push(0.1);
+      if (!projectHiddenParameters.includes('panelCount')) array.push(0);
+      if (!projectHiddenParameters.includes('yield')) array.push(0); // electricity output in MWh
+      if (!projectHiddenParameters.includes('profit')) array.push(-10); // profit in $1,000
       return array;
     }
-    return [1, 0, 1, 0, 0, 0, 0, -10];
-  }, [solarPanelArrayLayoutConstraints, projectType, visibleMap, updateVisibleMapFlag]);
+    return [];
+  }, [solarPanelArrayLayoutConstraints, projectType, projectHiddenParameters, updateHiddenFlag]);
 
   const maxima: number[] = useMemo(() => {
     if (projectType === DesignProblem.SOLAR_PANEL_ARRAY && solarPanelArrayLayoutConstraints) {
       const array: number[] = [];
-      if (!visibleMap || visibleMap.get('rowWidth')) array.push(solarPanelArrayLayoutConstraints.maximumRowsPerRack);
-      if (!visibleMap || visibleMap.get('tiltAngle'))
+      if (!projectHiddenParameters.includes('rowWidth'))
+        array.push(solarPanelArrayLayoutConstraints.maximumRowsPerRack);
+      if (!projectHiddenParameters.includes('tiltAngle'))
         array.push(Util.toDegrees(solarPanelArrayLayoutConstraints.maximumTiltAngle));
-      if (!visibleMap || visibleMap.get('interRowSpacing'))
+      if (!projectHiddenParameters.includes('interRowSpacing'))
         array.push(solarPanelArrayLayoutConstraints.maximumInterRowSpacing);
-      if (!visibleMap || visibleMap.get('orientation')) array.push(1);
-      if (!visibleMap || visibleMap.get('unitCost')) array.push(1);
-      if (!visibleMap || visibleMap.get('sellingPrice')) array.push(0.5);
-      if (!visibleMap || visibleMap.get('panelCount')) array.push(300);
-      if (!visibleMap || visibleMap.get('yield')) array.push(100); // electricity output in MWh
-      if (!visibleMap || visibleMap.get('profit')) array.push(10); // profit in $1,000
+      if (!projectHiddenParameters.includes('orientation')) array.push(1);
+      if (!projectHiddenParameters.includes('poleHeight')) array.push(5);
+      if (!projectHiddenParameters.includes('unitCost')) array.push(1);
+      if (!projectHiddenParameters.includes('sellingPrice')) array.push(0.5);
+      if (!projectHiddenParameters.includes('panelCount')) array.push(300);
+      if (!projectHiddenParameters.includes('yield')) array.push(100); // electricity output in MWh
+      if (!projectHiddenParameters.includes('profit')) array.push(10); // profit in $1,000
       return array;
     }
-    return [10, 90, 10, 1, 5, 300, 100, 10];
-  }, [solarPanelArrayLayoutConstraints, projectType, visibleMap, updateVisibleMapFlag]);
+    return [];
+  }, [solarPanelArrayLayoutConstraints, projectType, projectHiddenParameters, updateHiddenFlag]);
 
-  const rowWidthSelectionRef = useRef<boolean>(!!visibleMap.get('rowWidth'));
-  const tiltAngleSelectionRef = useRef<boolean>(!!visibleMap.get('tiltAngle'));
-  const rowSpacingSelectionRef = useRef<boolean>(!!visibleMap.get('interRowSpacing'));
-  const orientationSelectionRef = useRef<boolean>(!!visibleMap.get('orientation'));
-  const unitCostSelectionRef = useRef<boolean>(!!visibleMap.get('unitCost'));
-  const sellingPriceSelectionRef = useRef<boolean>(!!visibleMap.get('sellingPrice'));
-  const panelCountSelectionRef = useRef<boolean>(!!visibleMap.get('panelCount'));
-  const yieldSelectionRef = useRef<boolean>(!!visibleMap.get('yield'));
-  const profitSelectionRef = useRef<boolean>(!!visibleMap.get('profit'));
+  const rowWidthSelectionRef = useRef<boolean>(!projectHiddenParameters.includes('rowWidth'));
+  const tiltAngleSelectionRef = useRef<boolean>(!projectHiddenParameters.includes('tiltAngle'));
+  const rowSpacingSelectionRef = useRef<boolean>(!projectHiddenParameters.includes('interRowSpacing'));
+  const orientationSelectionRef = useRef<boolean>(!projectHiddenParameters.includes('orientation'));
+  const poleHeightSelectionRef = useRef<boolean>(!projectHiddenParameters.includes('poleHeight'));
+  const unitCostSelectionRef = useRef<boolean>(!projectHiddenParameters.includes('unitCost'));
+  const sellingPriceSelectionRef = useRef<boolean>(!projectHiddenParameters.includes('sellingPrice'));
+  const panelCountSelectionRef = useRef<boolean>(!projectHiddenParameters.includes('panelCount'));
+  const yieldSelectionRef = useRef<boolean>(!projectHiddenParameters.includes('yield'));
+  const profitSelectionRef = useRef<boolean>(!projectHiddenParameters.includes('profit'));
 
   const hover = (i: number) => {
     if (projectDesigns) {
@@ -301,6 +308,20 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
         setHoveredDesign(projectDesigns[i]);
       }
     }
+  };
+
+  const selectParameter = (selected: boolean, parameter: string) => {
+    setCommonStore((state) => {
+      if (selected) {
+        if (state.projectHiddenParameters.includes(parameter)) {
+          state.projectHiddenParameters.splice(state.projectHiddenParameters.indexOf(parameter), 1);
+        }
+      } else {
+        if (!state.projectHiddenParameters.includes(parameter)) {
+          state.projectHiddenParameters.push(parameter);
+        }
+      }
+    });
   };
 
   return (
@@ -498,8 +519,8 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
                         <Checkbox
                           onChange={(e) => {
                             rowWidthSelectionRef.current = e.target.checked;
-                            visibleMap.set('rowWidth', rowWidthSelectionRef.current);
-                            setUpdateVisibleMapFlag(!updateVisibleMapFlag);
+                            selectParameter(rowWidthSelectionRef.current, 'rowWidth');
+                            setUpdateHiddenFlag(!updateHiddenFlag);
                           }}
                           checked={rowWidthSelectionRef.current}
                         >
@@ -509,8 +530,8 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
                         <Checkbox
                           onChange={(e) => {
                             tiltAngleSelectionRef.current = e.target.checked;
-                            visibleMap.set('tiltAngle', tiltAngleSelectionRef.current);
-                            setUpdateVisibleMapFlag(!updateVisibleMapFlag);
+                            selectParameter(tiltAngleSelectionRef.current, 'tiltAngle');
+                            setUpdateHiddenFlag(!updateHiddenFlag);
                           }}
                           checked={tiltAngleSelectionRef.current}
                         >
@@ -520,8 +541,8 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
                         <Checkbox
                           onChange={(e) => {
                             rowSpacingSelectionRef.current = e.target.checked;
-                            visibleMap.set('interRowSpacing', rowSpacingSelectionRef.current);
-                            setUpdateVisibleMapFlag(!updateVisibleMapFlag);
+                            selectParameter(rowSpacingSelectionRef.current, 'interRowSpacing');
+                            setUpdateHiddenFlag(!updateHiddenFlag);
                           }}
                           checked={rowSpacingSelectionRef.current}
                         >
@@ -531,8 +552,8 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
                         <Checkbox
                           onChange={(e) => {
                             orientationSelectionRef.current = e.target.checked;
-                            visibleMap.set('orientation', orientationSelectionRef.current);
-                            setUpdateVisibleMapFlag(!updateVisibleMapFlag);
+                            selectParameter(orientationSelectionRef.current, 'orientation');
+                            setUpdateHiddenFlag(!updateHiddenFlag);
                           }}
                           checked={orientationSelectionRef.current}
                         >
@@ -541,9 +562,20 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
                         <br />
                         <Checkbox
                           onChange={(e) => {
+                            poleHeightSelectionRef.current = e.target.checked;
+                            selectParameter(poleHeightSelectionRef.current, 'poleHeight');
+                            setUpdateHiddenFlag(!updateHiddenFlag);
+                          }}
+                          checked={poleHeightSelectionRef.current}
+                        >
+                          {i18n.t('polygonMenu.SolarPanelArrayPoleHeight', lang)}
+                        </Checkbox>
+                        <br />
+                        <Checkbox
+                          onChange={(e) => {
                             unitCostSelectionRef.current = e.target.checked;
-                            visibleMap.set('unitCost', unitCostSelectionRef.current);
-                            setUpdateVisibleMapFlag(!updateVisibleMapFlag);
+                            selectParameter(unitCostSelectionRef.current, 'unitCost');
+                            setUpdateHiddenFlag(!updateHiddenFlag);
                           }}
                           checked={unitCostSelectionRef.current}
                         >
@@ -553,8 +585,8 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
                         <Checkbox
                           onChange={(e) => {
                             sellingPriceSelectionRef.current = e.target.checked;
-                            visibleMap.set('sellingPrice', sellingPriceSelectionRef.current);
-                            setUpdateVisibleMapFlag(!updateVisibleMapFlag);
+                            selectParameter(sellingPriceSelectionRef.current, 'sellingPrice');
+                            setUpdateHiddenFlag(!updateHiddenFlag);
                           }}
                           checked={sellingPriceSelectionRef.current}
                         >
@@ -564,8 +596,8 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
                         <Checkbox
                           onChange={(e) => {
                             panelCountSelectionRef.current = e.target.checked;
-                            visibleMap.set('panelCount', panelCountSelectionRef.current);
-                            setUpdateVisibleMapFlag(!updateVisibleMapFlag);
+                            selectParameter(panelCountSelectionRef.current, 'panelCount');
+                            setUpdateHiddenFlag(!updateHiddenFlag);
                           }}
                           checked={panelCountSelectionRef.current}
                         >
@@ -575,8 +607,8 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
                         <Checkbox
                           onChange={(e) => {
                             yieldSelectionRef.current = e.target.checked;
-                            visibleMap.set('yield', yieldSelectionRef.current);
-                            setUpdateVisibleMapFlag(!updateVisibleMapFlag);
+                            selectParameter(yieldSelectionRef.current, 'yield');
+                            setUpdateHiddenFlag(!updateHiddenFlag);
                           }}
                           checked={yieldSelectionRef.current}
                         >
@@ -586,8 +618,8 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
                         <Checkbox
                           onChange={(e) => {
                             profitSelectionRef.current = e.target.checked;
-                            visibleMap.set('profit', profitSelectionRef.current);
-                            setUpdateVisibleMapFlag(!updateVisibleMapFlag);
+                            selectParameter(profitSelectionRef.current, 'profit');
+                            setUpdateHiddenFlag(!updateHiddenFlag);
                           }}
                           checked={profitSelectionRef.current}
                         >

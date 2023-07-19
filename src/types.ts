@@ -112,6 +112,7 @@ export interface ProjectInfo {
   readonly description: string;
   readonly type: DesignProblem;
   readonly designs: Design[] | null;
+  readonly hiddenParameters: string[] | null;
   readonly counter: number;
 }
 
