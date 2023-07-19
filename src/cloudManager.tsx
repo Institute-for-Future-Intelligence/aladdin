@@ -187,6 +187,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           description: f.description,
           type: f.type,
           designs: f.designs,
+          hiddenParameters: f.hiddenParameters ?? [],
           counter: f.counter,
           action: '',
         });
@@ -919,6 +920,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                         description,
                         counter,
                         designs: saveAs ? useStore.getState().projectDesigns : [],
+                        hiddenParameters: saveAs ? useStore.getState().projectHiddenParameters : [],
                       })
                       .then(() => {
                         setCommonStore((state) => {
@@ -927,6 +929,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                           if (!saveAs) {
                             state.projectDesignCounter = 0;
                             state.projectDesigns = [];
+                            state.projectHiddenParameters = [];
                           }
                         });
                       })
@@ -979,6 +982,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
             description: data.description,
             type: data.type,
             designs: data.designs ?? [],
+            hiddenParameters: data.hiddenParameters ?? [],
             counter: data.counter ?? 0,
           } as ProjectInfo);
         });
@@ -1010,9 +1014,10 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
             description: data.description,
             type: data.type,
             designs: data.designs,
+            hiddenParameters: data.hiddenParameters,
             counter: data.counter ?? 0,
           } as ProjectInfo;
-          openProject(pi.owner, pi.title, pi.type, pi.description, pi.designs, pi.counter);
+          openProject(pi.owner, pi.title, pi.type, pi.description, pi.designs, pi.hiddenParameters, pi.counter);
         } else {
           showError(i18n.t('message.CannotOpenProject', lang) + ': ' + project);
         }
@@ -1038,6 +1043,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     type: DesignProblem,
     description: string,
     designs: Design[] | null,
+    hiddenParameters: string[] | null,
     designCounter: number,
   ) => {
     setCommonStore((state) => {
@@ -1046,6 +1052,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       state.projectType = type;
       state.projectDescription = description;
       state.projectDesigns = designs;
+      state.projectHiddenParameters = hiddenParameters ?? [];
       state.projectDesignCounter = designCounter;
       state.projectView = true;
     });

@@ -516,6 +516,8 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
                   <Popover
                     content={
                       <div>
+                        <label>{i18n.t('projectPanel.CustomizeDesignSpace', lang)}</label>
+                        <hr />
                         <Checkbox
                           onChange={(e) => {
                             rowWidthSelectionRef.current = e.target.checked;
@@ -629,10 +631,7 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
                     }
                   >
                     <Button style={{ border: 'none', paddingRight: 0, background: 'white' }} onClick={() => {}}>
-                      <BarChartOutlined
-                        style={{ fontSize: '24px', color: 'gray' }}
-                        title={i18n.t('projectPanel.CustomizeDesignSpace', lang)}
-                      />
+                      <BarChartOutlined style={{ fontSize: '24px', color: 'gray' }} />
                     </Button>
                   </Popover>
                 )}

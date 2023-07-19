@@ -82,6 +82,7 @@ export interface ProjectListPanelProps {
     type: DesignProblem,
     description: string,
     designs: Design[] | null,
+    hiddenParameters: string[] | null,
     designCounter: number,
   ) => void;
   deleteProject: (title: string) => void;
@@ -328,7 +329,15 @@ const ProjectListPanel = ({ projects, openProject, deleteProject, renameProject 
                       if (selection && selection.toString().length > 0) return;
                       // only proceed when no text is selected
                       // @ts-ignore
-                      openProject(data.owner, data.title, data.type, data.description, data.designs, data.counter);
+                      openProject(
+                        data.owner,
+                        data.title,
+                        data.type,
+                        data.description,
+                        data.designs,
+                        data.hiddenParameters,
+                        data.counter,
+                      );
                     },
                   };
                 }}
