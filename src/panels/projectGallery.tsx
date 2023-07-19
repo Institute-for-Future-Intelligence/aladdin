@@ -2,13 +2,20 @@
  * @Copyright 2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import styled from 'styled-components';
-import { Collapse, Descriptions, Button, List } from 'antd';
+import { Collapse, Descriptions, Button, List, Popover, Checkbox } from 'antd';
 import i18n from '../i18n/i18n';
-import { CameraOutlined, CloseOutlined, DeleteOutlined, ImportOutlined, LinkOutlined } from '@ant-design/icons';
+import {
+  BarChartOutlined,
+  CameraOutlined,
+  CloseOutlined,
+  DeleteOutlined,
+  ImportOutlined,
+  LinkOutlined,
+} from '@ant-design/icons';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import ImageLoadFailureIcon from '../assets/image_fail_try_again.png';
 import { DatumEntry, Design, DesignProblem, Orientation } from '../types';
@@ -114,6 +121,7 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
   const [selectedDesign, setSelectedDesign] = useState<Design | undefined>();
   const [hoveredDesign, setHoveredDesign] = useState<Design | undefined>();
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
+  const [updateVisibleMapFlag, setUpdateVisibleMapFlag] = useState<boolean>(false);
 
   const lang = useMemo(() => {
     return { lng: language };
@@ -180,29 +188,35 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
   const totalHeight = window.innerHeight;
   const imageWidth = Math.round((relativeWidth * window.innerWidth) / 4 - 12);
 
-  const allVariables: string[] = ProjectUtil.getVariables(projectType);
+  const allVariables: string[] = useMemo(() => ProjectUtil.getVariables(projectType), [projectType]);
   const visibleMap: Map<string, boolean> = useMemo(() => {
     const map = new Map<string, boolean>();
     for (const v of allVariables) {
-      map.set(v, v !== 'orientation');
+      map.set(v, true);
     }
     return map;
   }, [allVariables]);
 
   const variables: string[] = useMemo(
     () => ProjectUtil.getVariables(projectType, visibleMap),
-    [projectType, visibleMap],
+    [projectType, visibleMap, updateVisibleMapFlag],
   );
   const titles: string[] = useMemo(
     () => ProjectUtil.getTitles(projectType, lang, visibleMap),
-    [projectType, lang, visibleMap],
+    [projectType, lang, visibleMap, updateVisibleMapFlag],
   );
   const units: string[] = useMemo(
     () => ProjectUtil.getUnits(projectType, lang, visibleMap),
-    [projectType, lang, visibleMap],
+    [projectType, lang, visibleMap, updateVisibleMapFlag],
   );
-  const digits: number[] = useMemo(() => ProjectUtil.getDigits(projectType, visibleMap), [projectType, visibleMap]);
-  const types: string[] = useMemo(() => ProjectUtil.getTypes(projectType, visibleMap), [projectType, visibleMap]);
+  const digits: number[] = useMemo(
+    () => ProjectUtil.getDigits(projectType, visibleMap),
+    [projectType, visibleMap, updateVisibleMapFlag],
+  );
+  const types: string[] = useMemo(
+    () => ProjectUtil.getTypes(projectType, visibleMap),
+    [projectType, visibleMap, updateVisibleMapFlag],
+  );
 
   const data: DatumEntry[] = useMemo(() => {
     const data: DatumEntry[] = [];
@@ -231,7 +245,7 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
       }
     }
     return data;
-  }, [projectDesigns, projectType, hoveredDesign, selectedDesign, economicsParams, visibleMap]);
+  }, [projectDesigns, projectType, hoveredDesign, selectedDesign, economicsParams, visibleMap, updateVisibleMapFlag]);
 
   const minima: number[] = useMemo(() => {
     if (projectType === DesignProblem.SOLAR_PANEL_ARRAY && solarPanelArrayLayoutConstraints) {
@@ -250,7 +264,7 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
       return array;
     }
     return [1, 0, 1, 0, 0, 0, 0, -10];
-  }, [solarPanelArrayLayoutConstraints, projectType, visibleMap]);
+  }, [solarPanelArrayLayoutConstraints, projectType, visibleMap, updateVisibleMapFlag]);
 
   const maxima: number[] = useMemo(() => {
     if (projectType === DesignProblem.SOLAR_PANEL_ARRAY && solarPanelArrayLayoutConstraints) {
@@ -269,7 +283,17 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
       return array;
     }
     return [10, 90, 10, 1, 5, 300, 100, 10];
-  }, [solarPanelArrayLayoutConstraints, projectType, visibleMap]);
+  }, [solarPanelArrayLayoutConstraints, projectType, visibleMap, updateVisibleMapFlag]);
+
+  const rowWidthSelectionRef = useRef<boolean>(!!visibleMap.get('rowWidth'));
+  const tiltAngleSelectionRef = useRef<boolean>(!!visibleMap.get('tiltAngle'));
+  const rowSpacingSelectionRef = useRef<boolean>(!!visibleMap.get('interRowSpacing'));
+  const orientationSelectionRef = useRef<boolean>(!!visibleMap.get('orientation'));
+  const unitCostSelectionRef = useRef<boolean>(!!visibleMap.get('unitCost'));
+  const sellingPriceSelectionRef = useRef<boolean>(!!visibleMap.get('sellingPrice'));
+  const panelCountSelectionRef = useRef<boolean>(!!visibleMap.get('panelCount'));
+  const yieldSelectionRef = useRef<boolean>(!!visibleMap.get('yield'));
+  const profitSelectionRef = useRef<boolean>(!!visibleMap.get('profit'));
 
   const hover = (i: number) => {
     if (projectDesigns) {
@@ -466,22 +490,137 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
             />
             <DesignSpaceHeader>
               <span style={{ paddingLeft: '20px' }}>{i18n.t('projectPanel.DistributionInSolutionSpace', lang)}</span>
-              <Button
-                style={{ border: 'none', paddingRight: '20px', background: 'white' }}
-                onClick={() => {
-                  const d = document.getElementById('design-space');
-                  if (d) {
-                    saveSvgAsPng(d, 'design-space-' + projectTitle + '.png').then(() => {
-                      showInfo(i18n.t('message.ScreenshotSaved', lang));
-                    });
-                  }
-                }}
-              >
-                <CameraOutlined
-                  style={{ fontSize: '24px', color: 'gray' }}
-                  title={i18n.t('projectPanel.DesignSpaceScreenshot', lang)}
-                />
-              </Button>
+              <span>
+                {projectType === DesignProblem.SOLAR_PANEL_ARRAY && (
+                  <Popover
+                    content={
+                      <div>
+                        <Checkbox
+                          onChange={(e) => {
+                            rowWidthSelectionRef.current = e.target.checked;
+                            visibleMap.set('rowWidth', rowWidthSelectionRef.current);
+                            setUpdateVisibleMapFlag(!updateVisibleMapFlag);
+                          }}
+                          checked={rowWidthSelectionRef.current}
+                        >
+                          {i18n.t('polygonMenu.SolarPanelArrayRowWidth', lang)}
+                        </Checkbox>
+                        <br />
+                        <Checkbox
+                          onChange={(e) => {
+                            tiltAngleSelectionRef.current = e.target.checked;
+                            visibleMap.set('tiltAngle', tiltAngleSelectionRef.current);
+                            setUpdateVisibleMapFlag(!updateVisibleMapFlag);
+                          }}
+                          checked={tiltAngleSelectionRef.current}
+                        >
+                          {i18n.t('polygonMenu.SolarPanelArrayTiltAngle', lang)}
+                        </Checkbox>
+                        <br />
+                        <Checkbox
+                          onChange={(e) => {
+                            rowSpacingSelectionRef.current = e.target.checked;
+                            visibleMap.set('interRowSpacing', rowSpacingSelectionRef.current);
+                            setUpdateVisibleMapFlag(!updateVisibleMapFlag);
+                          }}
+                          checked={rowSpacingSelectionRef.current}
+                        >
+                          {i18n.t('polygonMenu.SolarPanelArrayRowSpacing', lang)}
+                        </Checkbox>
+                        <br />
+                        <Checkbox
+                          onChange={(e) => {
+                            orientationSelectionRef.current = e.target.checked;
+                            visibleMap.set('orientation', orientationSelectionRef.current);
+                            setUpdateVisibleMapFlag(!updateVisibleMapFlag);
+                          }}
+                          checked={orientationSelectionRef.current}
+                        >
+                          {i18n.t('polygonMenu.SolarPanelArrayOrientation', lang)}
+                        </Checkbox>
+                        <br />
+                        <Checkbox
+                          onChange={(e) => {
+                            unitCostSelectionRef.current = e.target.checked;
+                            visibleMap.set('unitCost', unitCostSelectionRef.current);
+                            setUpdateVisibleMapFlag(!updateVisibleMapFlag);
+                          }}
+                          checked={unitCostSelectionRef.current}
+                        >
+                          {i18n.t('economicsPanel.UnitCost', lang)}
+                        </Checkbox>
+                        <br />
+                        <Checkbox
+                          onChange={(e) => {
+                            sellingPriceSelectionRef.current = e.target.checked;
+                            visibleMap.set('sellingPrice', sellingPriceSelectionRef.current);
+                            setUpdateVisibleMapFlag(!updateVisibleMapFlag);
+                          }}
+                          checked={sellingPriceSelectionRef.current}
+                        >
+                          {i18n.t('economicsPanel.SellingPrice', lang)}
+                        </Checkbox>
+                        <br />
+                        <Checkbox
+                          onChange={(e) => {
+                            panelCountSelectionRef.current = e.target.checked;
+                            visibleMap.set('panelCount', panelCountSelectionRef.current);
+                            setUpdateVisibleMapFlag(!updateVisibleMapFlag);
+                          }}
+                          checked={panelCountSelectionRef.current}
+                        >
+                          {i18n.t('polygonMenu.SolarPanelArrayPanelCount', lang)}
+                        </Checkbox>
+                        <br />
+                        <Checkbox
+                          onChange={(e) => {
+                            yieldSelectionRef.current = e.target.checked;
+                            visibleMap.set('yield', yieldSelectionRef.current);
+                            setUpdateVisibleMapFlag(!updateVisibleMapFlag);
+                          }}
+                          checked={yieldSelectionRef.current}
+                        >
+                          {i18n.t('polygonMenu.SolarPanelArrayYield', lang)}
+                        </Checkbox>
+                        <br />
+                        <Checkbox
+                          onChange={(e) => {
+                            profitSelectionRef.current = e.target.checked;
+                            visibleMap.set('profit', profitSelectionRef.current);
+                            setUpdateVisibleMapFlag(!updateVisibleMapFlag);
+                          }}
+                          checked={profitSelectionRef.current}
+                        >
+                          {i18n.t('polygonMenu.SolarPanelArrayProfit', lang)}
+                        </Checkbox>
+                      </div>
+                    }
+                  >
+                    <Button style={{ border: 'none', paddingRight: 0, background: 'white' }} onClick={() => {}}>
+                      <BarChartOutlined
+                        style={{ fontSize: '24px', color: 'gray' }}
+                        title={i18n.t('projectPanel.CustomizeDesignSpace', lang)}
+                      />
+                    </Button>
+                  </Popover>
+                )}
+                <Button
+                  style={{ border: 'none', paddingRight: '20px', background: 'white' }}
+                  onClick={() => {
+                    const d = document.getElementById('design-space');
+                    if (d) {
+                      saveSvgAsPng(d, 'design-space-' + projectTitle + '.png').then(() => {
+                        showInfo(i18n.t('message.ScreenshotSaved', lang));
+                      });
+                    }
+                  }}
+                >
+                  <CameraOutlined
+                    style={{ fontSize: '24px', color: 'gray' }}
+                    title={i18n.t('projectPanel.DesignSpaceScreenshot', lang)}
+                  />
+                </Button>
+              </span>
             </DesignSpaceHeader>
             <ParallelCoordinates
               id={'design-space'}

@@ -1388,6 +1388,7 @@ export const i18n_es = {
       CurateCurrentDesign: 'Curate Current Design',
       RemoveSelectedDesign: 'Remove Selected Design',
       DistributionInSolutionSpace: 'Distribution in the Solution Space',
+      CustomizeDesignSpace: 'Customize design space',
       DesignSpaceScreenshot: 'Design space screenshot',
       SingleClickToSelectDoubleClickToOpen: 'Single-click to select, double-click to open.',
       SingleClickToDeselectDoubleClickToOpen: 'Single-click to deselect, double-click to open.',
