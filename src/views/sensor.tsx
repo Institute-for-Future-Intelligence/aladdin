@@ -65,7 +65,9 @@ const Sensor = (sensorModel: SensorModel) => {
   const baseRef = useRef<Mesh>();
   const handleRef = useRef<Mesh>();
 
-  const lang = { lng: language };
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
 
   // be sure to get the updated parent so that this memorized element can move with it
   const parent = useStore((state) => {

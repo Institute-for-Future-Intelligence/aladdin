@@ -25,12 +25,15 @@ export const RulerOnWall = ({ element }: RulerOnWallProps) => {
   const rulerLineWidth = 1;
   const rulerTickMarkWidth = 0.5;
   const color = element.lineColor ?? 'white';
-  const lang = { lng: language };
   const labelBackgroundColor = 'darkorchid';
   const ratio = Math.max(0.25, (hx + hz) / 32);
   const rulerOffset = 0.25;
   const fontSize = 30;
   const yOffset = -0.1;
+
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
 
   // lower-left to upper-left
   const ll2ul = useMemo(() => {

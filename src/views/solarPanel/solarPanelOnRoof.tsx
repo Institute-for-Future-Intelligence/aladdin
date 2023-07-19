@@ -392,9 +392,12 @@ const Label = ({ id }: LabelProps) => {
   useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
   const language = useStore(Selector.language);
-  const lang = { lng: language };
 
-  const sp = getElementById(id) as SolarPanelModel;
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
+
+  const sp = useMemo(() => getElementById(id) as SolarPanelModel, [id]);
 
   if (!sp || !sp.foundationId) {
     return null;

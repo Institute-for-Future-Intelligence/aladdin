@@ -57,12 +57,15 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
   const getRoofSegmentVertices = useStore(Selector.getRoofSegmentVertices);
 
   const { scene } = useThree();
-  const lang = { lng: language };
-  const weather = getWeather(city ?? 'Boston MA, USA');
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
+  const weather = useMemo(() => getWeather(city ?? 'Boston MA, USA'), [city]);
+  const now = useMemo(() => new Date(world.date), [world.date]);
+
   const elevation = city ? weather?.elevation : 0;
   const interval = 60 / world.timesPerHour;
   const ray = useMemo(() => new Raycaster(), []);
-  const now = new Date(world.date);
   const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
   const objectsRef = useRef<Object3D[]>([]); // reuse array in intersection detection
   const intersectionsRef = useRef<Intersection[]>([]); // reuse array in intersection detection

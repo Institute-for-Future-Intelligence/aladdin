@@ -203,7 +203,9 @@ const Foundation = (foundationModel: FoundationModel) => {
   const oldPointRef = useRef<number[][]>([]);
   const newPointRef = useRef<number[][]>([]);
 
-  const lang = { lng: language };
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
   const mouse = useMemo(() => new Vector2(), []);
   const ray = useMemo(() => new Raycaster(), []);
   const hx = lx / 2;

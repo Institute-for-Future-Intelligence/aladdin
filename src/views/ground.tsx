@@ -111,7 +111,9 @@ const Ground = () => {
   const baseGroupNewPosMapRef = useRef<Map<string, number[]>>(new Map());
   const moveHandleWorldDiffV3Ref = useRef(new Vector3());
 
-  const lang = { lng: language };
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
 
   // add pointer up event to window
   useEffect(() => {

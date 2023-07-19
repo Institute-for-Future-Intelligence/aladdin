@@ -116,9 +116,12 @@ const Label = ({ sp }: LabelProps) => {
   useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
   const language = useStore(Selector.language);
-  const lang = { lng: language };
 
-  if (!sp.foundationId) {
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
+
+  if (!sp.foundationId || !sp.parentId) {
     return null;
   }
 

@@ -2,7 +2,7 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useStore } from './stores/common';
 import { usePrimitiveStore } from './stores/commonPrimitive';
 import * as Selector from './stores/selector';
@@ -98,7 +98,9 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const firstCallListCloudFiles = useRef<boolean>(true);
   const firstAccountSettings = useRef<boolean>(true);
 
-  const lang = { lng: language };
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
 
   useEffect(() => {
     const config = {

@@ -148,8 +148,11 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const [createNewProjectDialogVisible, setCreateNewProjectDialogVisible] = useState(false);
   const [saveProjectAsDialogVisible, setSaveProjectAsDialogVisible] = useState(false);
 
-  const lang = { lng: language };
-  const isMac = Util.isMac();
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
+
+  const isMac = useMemo(() => Util.isMac(), []);
 
   const keyHome = useMemo(() => {
     const os = Util.getOS();

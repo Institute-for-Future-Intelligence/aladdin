@@ -115,7 +115,10 @@ const SolarPanel = ({
   const sunBeamLength = Math.max(100, 10 * sceneRadius);
   const panelNormal = new Vector3().fromArray(normal);
   const pvModel = pvModules[pvModelName] as PvModel;
-  const lang = { lng: language };
+
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
 
   // be sure to get the updated parent so that this memorized element can move with it
   const parent = useStore((state) => {

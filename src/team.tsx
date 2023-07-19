@@ -2,7 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import i18n from './i18n/i18n';
@@ -16,7 +16,11 @@ export interface TeamProps {
 
 const Team = ({ top, height, color }: TeamProps) => {
   const language = useStore(Selector.language);
-  const lang = { lng: language };
+
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
+
   const linePos = top + 56 + 'px';
   const top100 = top + 100 + 'px';
   const top200 = top + 205 + 'px';

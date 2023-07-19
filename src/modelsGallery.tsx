@@ -33,7 +33,9 @@ const ModelsGallery = ({ author, models, closeCallback, openCloudFile }: ModelsG
   const [ascendingOrder, setAscendingOrder] = useState<boolean>(false);
 
   const { Search } = Input;
-  const lang = { lng: language };
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
 
   useEffect(() => {
     if (models) {

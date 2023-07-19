@@ -85,7 +85,9 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
   const newChildrenParentIdMapRef = useRef<Map<string, string>>(new Map<string, string>());
   const oldHumanOrTreeParentIdRef = useRef<string | null>(null);
 
-  const lang = { lng: language };
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
   const ray = useMemo(() => new Raycaster(), []);
   const elementParentRotation = useMemo(() => new Euler(), []);
 

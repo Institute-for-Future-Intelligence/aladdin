@@ -2,7 +2,7 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { ActionInfo, ObjectType } from './types';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
@@ -65,7 +65,10 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
   const [keyUp, setKeyUp] = useState(false);
 
   const moveStepAbsolute = 0.1;
-  const lang = { lng: language };
+
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
 
   const handleKeys = [
     'left',

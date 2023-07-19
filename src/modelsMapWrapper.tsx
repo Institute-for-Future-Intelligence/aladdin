@@ -72,7 +72,10 @@ const ModelsMapWrapper = ({
   const authorModelsRef = useRef<Map<string, ModelSite>>();
   const searchBox = useRef<google.maps.places.SearchBox>();
 
-  const lang = { lng: language };
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
+
   const { Search } = Input;
 
   useEffect(() => {

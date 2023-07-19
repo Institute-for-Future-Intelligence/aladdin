@@ -2,7 +2,7 @@
  * @Copyright 2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
@@ -112,7 +112,9 @@ const ProjectListPanel = ({ projects, openProject, deleteProject, renameProject 
   const [recountFlag, setRecountFlag] = useState<boolean>(false);
 
   const { Search } = Input;
-  const lang = { lng: language };
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
 
   // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
   useEffect(() => {

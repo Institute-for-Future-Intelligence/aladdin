@@ -460,7 +460,10 @@ const SolarPanelBoxGroup = ({ solarPanelModel, groupRotation, panelRotation }: S
   const solarPanelShininess = useStore(Selector.viewState.solarPanelShininess);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
 
-  const lang = { lng: language };
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
+
   const isTop = isSolarPanelOnTopFace(normal);
   const actualTiltAngle = isTop ? tiltAngle : 0;
   const actualRelativeAzimuth = isTop ? relativeAzimuth : 0;

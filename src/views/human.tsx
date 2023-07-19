@@ -63,7 +63,7 @@ const Human = ({
     if (!isRender) {
       removeElementById(id, false);
     }
-  }, [isRender]);
+  }, [isRender, id]);
 
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
@@ -81,8 +81,11 @@ const Human = ({
   const groupRef = useRef<Group>(null);
   const planeRef = useRef<Mesh>(null);
 
-  const lang = { lng: language };
-  const humanModel = getElementById(id) as HumanModel;
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
+
+  const humanModel = useMemo(() => getElementById(id) as HumanModel, [id]);
 
   const fileChangedRef = useRef(false);
   const fileChangedState = useStore(Selector.fileChanged);

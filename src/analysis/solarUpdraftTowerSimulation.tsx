@@ -59,15 +59,18 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
   const cellSize = world.sutGridCellSize ?? 1;
 
   const { scene } = useThree();
-  const lang = { lng: language };
-  const weather = getWeather(city ?? 'Boston MA, USA');
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
+  const weather = useMemo(() => getWeather(city ?? 'Boston MA, USA'), [city]);
+  const now = useMemo(() => new Date(world.date), [world.date]);
+
   const elevation = city ? getWeather(city)?.elevation : 0;
   const timesPerHour = world.sutTimesPerHour ?? 4;
   const minuteInterval = 60 / timesPerHour;
   const daysPerYear = world.sutDaysPerYear ?? 6;
   const monthInterval = 12 / daysPerYear;
   const ray = useMemo(() => new Raycaster(), []);
-  const now = new Date(world.date);
   const objectsRef = useRef<Object3D[]>([]);
   const intersectionsRef = useRef<Intersection[]>([]); // reuse array in intersection detection
   const requestRef = useRef<number>(0);

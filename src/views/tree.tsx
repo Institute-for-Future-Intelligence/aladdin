@@ -102,8 +102,10 @@ const Tree = ({
   const resizeHandleLowerRef = useRef<Mesh>();
   const resizeHandleUpperRef = useRef<Mesh>();
 
-  const lang = { lng: language };
-  const treeModel = getElementById(id) as TreeModel;
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
+  const treeModel = useMemo(() => getElementById(id) as TreeModel, [id]);
 
   const dayOfYear = useMemo(() => {
     return Util.dayOfYear(new Date(date));

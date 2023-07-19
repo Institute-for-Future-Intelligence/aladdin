@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { Avatar, Button, Dropdown, Menu, Space } from 'antd';
 import MainToolBarButtons from './mainToolBarButtons';
 import i18n from './i18n/i18n';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import { usePrimitiveStore } from './stores/commonPrimitive';
@@ -35,7 +35,9 @@ const MainToolBar = ({ signIn, signOut }: MainToolBarProps) => {
   const user = useStore(Selector.user);
   const openModelsMap = usePrimitiveStore(Selector.openModelsMap);
 
-  const lang = { lng: language };
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
 
   const avatarMenu = (
     <Menu triggerSubMenuAction={'click'}>

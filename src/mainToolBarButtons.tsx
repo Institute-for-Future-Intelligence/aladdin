@@ -30,7 +30,7 @@ import ClearImage from './assets/clear.png';
 import HeliodonImage from './assets/heliodon.png';
 import AnalyzeImage from './assets/analyze.png';
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import { Dropdown, Menu, Modal } from 'antd';
@@ -87,7 +87,10 @@ const MainToolBarButtons = () => {
   const [category1Flag, setCategory1Flag] = useState<ObjectType>(ObjectType.Foundation);
   const [category2Flag, setCategory2Flag] = useState<ObjectType>(ObjectType.Wall);
   const [category3Flag, setCategory3Flag] = useState<ObjectType>(ObjectType.SolarPanel);
-  const lang = { lng: language };
+
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
 
   // CSS filter generator of color: https://codepen.io/sosuke/pen/Pjoqqp
   const defaultFilter = 'invert(41%) sepia(0%) saturate(0%) hue-rotate(224deg) brightness(93%) contrast(81%)';

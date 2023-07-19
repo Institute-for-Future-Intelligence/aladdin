@@ -79,8 +79,11 @@ const Flower = ({
   const interactionMeshRef = useRef<Mesh>(null);
   const interactionPlaneRef = useRef<Mesh>(null);
 
-  const flowerModel = getElementById(id) as FlowerModel;
-  const lang = { lng: language };
+  const flowerModel = useMemo(() => getElementById(id) as FlowerModel, [id]);
+
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
 
   const noLeaves = useMemo(() => {
     const dayOfYear = Util.dayOfYear(new Date(date));

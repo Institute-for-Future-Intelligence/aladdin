@@ -4,7 +4,7 @@
  * @author Charles Xie, Xiaotong Ding
  */
 
-import React, { Suspense, useEffect, useRef, useState } from 'react';
+import React, { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { useStore } from './stores/common';
 import * as Selector from 'src/stores/selector';
 import { Canvas } from '@react-three/fiber';
@@ -76,7 +76,10 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const [canvasRelativeWidth, setCanvasRelativeWidth] = useState<number>(50);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const lang = { lng: language };
+
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
 
   useEffect(() => {
     setInitializing(false);

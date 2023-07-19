@@ -47,15 +47,18 @@ const HeliostatSimulation = ({ city }: HeliostatSimulationProps) => {
   const showDailyHeliostatYieldPanel = useStore(Selector.viewState.showDailyHeliostatYieldPanel);
 
   const { scene } = useThree();
-  const lang = { lng: language };
-  const weather = getWeather(city ?? 'Boston MA, USA');
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
+  const weather = useMemo(() => getWeather(city ?? 'Boston MA, USA'), [city]);
+  const now = useMemo(() => new Date(world.date), [world.date]);
+
   const elevation = city ? weather?.elevation : 0;
   const timesPerHour = world.cspTimesPerHour ?? 4;
   const minuteInterval = 60 / timesPerHour;
   const daysPerYear = world.cspDaysPerYear ?? 6;
   const monthInterval = 12 / daysPerYear;
   const ray = useMemo(() => new Raycaster(), []);
-  const now = new Date(world.date);
   const dustLoss = world.dustLoss ?? 0.05;
   const cellSize = world.cspGridCellSize ?? 0.5;
   const objectsRef = useRef<Object3D[]>([]);

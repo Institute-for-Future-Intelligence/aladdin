@@ -96,7 +96,6 @@ const ParabolicDish = ({
   const pointerDown = useRef<boolean>(false);
 
   const sunBeamLength = Math.max(100, 10 * sceneRadius);
-  const lang = { lng: language };
   const radialSegments = 32;
   const depthSegments = 8;
   const night = sunlightDirection.z <= 0;
@@ -105,6 +104,10 @@ const ParabolicDish = ({
   const hy = ly / 2;
   const hz = lz / 2;
   const actualPoleHeight = poleHeight + hx;
+
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
 
   // be sure to get the updated parent so that this memorized element can move with it
   const parent = useStore((state) => {
@@ -141,7 +144,7 @@ const ParabolicDish = ({
   const positionUL = new Vector3(-hx, hy, hz + depth);
   const positionLR = new Vector3(hx, -hy, hz + depth);
   const positionUR = new Vector3(hx, hy, hz + depth);
-  const dish = getElementById(id) as ParabolicDishModel;
+  const dish = useMemo(() => getElementById(id) as ParabolicDishModel, [id]);
   const glowTexture = useTexture(GlowImage);
   const haloRadius = receiverRadius + 1;
 
@@ -217,7 +220,7 @@ const ParabolicDish = ({
   const sunDirection = useMemo(() => {
     return getSunDirection(new Date(date), latitude);
   }, [date, latitude]);
-  const rot = getElementById(parentId)?.rotation[2];
+  const rot = useMemo(() => getElementById(parentId)?.rotation[2], [parentId]);
   const rotatedSunDirection = rot ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot) : sunDirection;
 
   const relativeEuler = useMemo(() => {

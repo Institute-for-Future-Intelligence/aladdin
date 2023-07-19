@@ -109,7 +109,10 @@ const Polygon = ({
   const ratio = parent ? Math.max(1, Math.max(parent.lx, parent.ly) / 24) : 1;
   const resizeHandleSize = RESIZE_HANDLE_SIZE * ratio;
   const moveHandleSize = MOVE_HANDLE_RADIUS * ratio;
-  const lang = { lng: language };
+
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
 
   const updatePolygonSelectedIndexById = (id: string, index: number) => {
     setCommonStore((state: CommonStoreState) => {

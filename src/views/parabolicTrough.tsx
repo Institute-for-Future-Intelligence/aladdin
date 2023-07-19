@@ -87,9 +87,12 @@ const ParabolicTrough = ({
   const pointerDown = useRef<boolean>(false);
 
   const sunBeamLength = Math.max(100, 10 * sceneRadius);
-  const lang = { lng: language };
   const parabolaSegments = 16;
   const night = sunlightDirection.z <= 0;
+
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
 
   const hx = lx / 2;
   const hy = ly / 2;
@@ -130,7 +133,7 @@ const ParabolicTrough = ({
   const positionUL = new Vector3(-hx, hy, hz + depth);
   const positionLR = new Vector3(hx, -hy, hz + depth);
   const positionUR = new Vector3(hx, hy, hz + depth);
-  const trough = getElementById(id) as ParabolicTroughModel;
+  const trough = useMemo(() => getElementById(id) as ParabolicTroughModel, [id]);
 
   useEffect(() => {
     if (trough && showSolarRadiationHeatmap) {
@@ -208,7 +211,7 @@ const ParabolicTrough = ({
   const sunDirection = useMemo(() => {
     return getSunDirection(new Date(date), latitude);
   }, [date, latitude]);
-  const rot = getElementById(parentId)?.rotation[2];
+  const rot = useMemo(() => getElementById(parentId)?.rotation[2], [parentId]);
   const rotatedSunDirection = rot ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot) : sunDirection;
 
   const relativeEuler = useMemo(() => {

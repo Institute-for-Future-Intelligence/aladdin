@@ -156,7 +156,10 @@ const Cuboid = (cuboidModel: CuboidModel) => {
   const worldPositionRef = useRef<Vector3>(new Vector3());
   const worldRotationRef = useRef<number>(0);
 
-  const lang = { lng: language };
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
+
   const hx = lx / 2;
   const hy = ly / 2;
   const hz = lz / 2;

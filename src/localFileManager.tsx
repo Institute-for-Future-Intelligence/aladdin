@@ -2,7 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import { saveAs } from 'file-saver';
@@ -32,7 +32,6 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
   const user = useStore(Selector.user);
   const createEmptyFile = useStore(Selector.createEmptyFile);
 
-  const lang = { lng: language };
   const firstNewCall = useRef<boolean>(true);
   const firstSaveCall = useRef<boolean>(true);
   const firstOpenCall = useRef<boolean>(true);
@@ -40,6 +39,10 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
+
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
 
   useEffect(() => {
     if (firstNewCall.current) {

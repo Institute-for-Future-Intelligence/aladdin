@@ -85,7 +85,9 @@ const FresnelReflector = ({
   const pointerDown = useRef<boolean>(false);
 
   const sunBeamLength = Math.max(100, 10 * sceneRadius);
-  const lang = { lng: language };
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
 
   const hx = lx / 2;
   const hy = ly / 2;
@@ -123,7 +125,7 @@ const FresnelReflector = ({
   const positionUL = new Vector3(-hx, hy, hz);
   const positionLR = new Vector3(hx, -hy, hz);
   const positionUR = new Vector3(hx, hy, hz);
-  const fresnelReflector = getElementById(id) as FresnelReflectorModel;
+  const fresnelReflector = useMemo(() => getElementById(id) as FresnelReflectorModel, [id]);
 
   useEffect(() => {
     if (fresnelReflector && showSolarRadiationHeatmap) {

@@ -47,7 +47,9 @@ const WindTurbine = ({
   const moveHandleRef = useRef<Mesh>();
   const pointerDown = useRef<boolean>(false);
 
-  const lang = { lng: language };
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
 
   // be sure to get the updated parent so that this memorized element can move with it
   const parent = useStore((state) => {
@@ -76,7 +78,7 @@ const WindTurbine = ({
     }
   }
 
-  const turbine = getElementById(id) as WindTurbineModel;
+  const turbine = useMemo(() => getElementById(id) as WindTurbineModel, [id]);
 
   useEffect(() => {
     const handlePointerUp = () => {

@@ -27,9 +27,12 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
   const rulerLineWidth = 1;
   const rulerTickMarkWidth = 0.5;
   const color = element.lineColor ?? 'white';
-  const lang = { lng: language };
   const labelBackgroundColor = 'darkorchid';
   const ratio = Math.max(1, (hx + hy) / 32);
+
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
 
   const rulerOffset = useMemo(() => {
     switch (element.type) {

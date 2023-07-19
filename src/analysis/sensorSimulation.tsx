@@ -58,15 +58,18 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
   const noAnimation = useStore(Selector.world.noAnimationForSensorDataCollection);
 
   const { scene } = useThree();
-  const lang = { lng: language };
-  const weather = getWeather(city ?? 'Boston MA, USA');
-  const measuredHorizontalRadiation = getHorizontalSolarRadiation(city ?? 'Boston MA, USA');
-  const measuredVerticalRadiation = getVerticalSolarRadiation(city ?? 'Boston MA, USA');
-  const elevation = city ? getWeather(city)?.elevation : 0;
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
+  const weather = useMemo(() => getWeather(city ?? 'Boston MA, USA'), [city]);
+  const now = useMemo(() => new Date(world.date), [world.date]);
+  const measuredHorizontalRadiation = useMemo(() => getHorizontalSolarRadiation(city ?? 'Boston MA, USA'), [city]);
+  const measuredVerticalRadiation = useMemo(() => getVerticalSolarRadiation(city ?? 'Boston MA, USA'), [city]);
+
+  const elevation = city ? weather?.elevation : 0;
   const timesPerHour = world.timesPerHour ?? 4;
   const minuteInterval = 60 / timesPerHour;
   const ray = useMemo(() => new Raycaster(), []);
-  const now = new Date(world.date);
   const objectsRef = useRef<Object3D[]>([]);
   const intersectionsRef = useRef<Intersection[]>([]); // reuse array in intersection detection
   const requestRef = useRef<number>(0);

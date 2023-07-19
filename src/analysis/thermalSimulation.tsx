@@ -106,11 +106,14 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const scaleFactorRef = useRef<number>(0);
   const solarHeatmapRef = useRef<Map<string, number[][]>>(new Map<string, number[][]>());
 
-  const lang = { lng: language };
-  const weather = getWeather(city ?? 'Boston MA, USA');
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
+  const weather = useMemo(() => getWeather(city ?? 'Boston MA, USA'), [city]);
+  const now = useMemo(() => new Date(world.date), [world.date]);
+
   const elevation = city ? weather?.elevation : 0;
   const dustLoss = world.dustLoss ?? 0.05;
-  const now = new Date(world.date);
   const timesPerHour = world.timesPerHour ?? 4;
   const minuteInterval = 60 / timesPerHour;
   const daysPerYear = world.daysPerYear ?? 6;

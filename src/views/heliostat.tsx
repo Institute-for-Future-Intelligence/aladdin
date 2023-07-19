@@ -67,7 +67,9 @@ const Heliostat = ({
   const pointerDown = useRef<boolean>(false);
 
   const sunBeamLength = Math.max(100, 10 * sceneRadius);
-  const lang = { lng: language };
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
 
   const hx = lx / 2;
   const hy = ly / 2;
@@ -101,7 +103,7 @@ const Heliostat = ({
     }
   }
 
-  const heliostat = getElementById(id) as HeliostatModel;
+  const heliostat = useMemo(() => getElementById(id) as HeliostatModel, [id]);
 
   useEffect(() => {
     if (heliostat && showSolarRadiationHeatmap) {
