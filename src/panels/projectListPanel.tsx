@@ -322,22 +322,14 @@ const ProjectListPanel = ({ projects, openProject, deleteProject, renameProject 
                     </Typography.Text>
                   );
                 }}
-                onCell={(data) => {
+                onCell={(r) => {
                   return {
                     onClick: () => {
                       const selection = window.getSelection();
                       if (selection && selection.toString().length > 0) return;
                       // only proceed when no text is selected
                       // @ts-ignore
-                      openProject(
-                        data.owner,
-                        data.title,
-                        data.type,
-                        data.description,
-                        data.designs,
-                        data.hiddenParameters,
-                        data.counter,
-                      );
+                      openProject(r.owner, r.title, r.type, r.description, r.designs, r.hiddenParameters, r.counter);
                     },
                   };
                 }}
