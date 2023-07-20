@@ -531,6 +531,7 @@ export const i18n_ua = {
         Cathedral2: 'Собор 2',
         Mosque1: 'Мечеть 1',
         AdobeTaosHouse: 'Будинок з адобе в стилі Taos',
+        RanchHouse: 'Ranch House',
         BonnetHouse: 'Будинок в стилі Bonnet',
         BarnStyleHouse: 'Будинок у стилі амбара',
         ModernHouse: 'Сучасний будинок',

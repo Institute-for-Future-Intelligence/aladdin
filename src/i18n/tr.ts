@@ -529,6 +529,7 @@ export const i18n_tr = {
         Cathedral2: 'Cathedral 2',
         Mosque1: 'Mosque 1',
         AdobeTaosHouse: 'Adobe Taos House',
+        RanchHouse: 'Ranch House',
         BonnetHouse: 'Bonnet House',
         BarnStyleHouse: 'Çiftlik Evi',
         ModernHouse: 'Modern House',

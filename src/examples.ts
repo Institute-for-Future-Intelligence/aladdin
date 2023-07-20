@@ -21,6 +21,7 @@ import mansard_roof_with_dormers from './examples/mansard_roof_with_dormers.json
 import t_shaped_house from './examples/t_shaped_house.json';
 import cape_cod_with_garage from './examples/cape_cod_with_garage.json';
 import adobe_taos_house from './examples/adobe_taos_house.json';
+import ranch_house from './examples/ranch_house.json';
 import bonnet_house from './examples/bonnet_house.json';
 import barn_house from './examples/barn_house.json';
 import modern_house_01 from './examples/modern_house_01.json';
@@ -406,6 +407,9 @@ export const getExample = (name: string) => {
       break;
     case 'barn_house':
       input = barn_house;
+      break;
+    case 'ranch_house':
+      input = ranch_house;
       break;
     case 'bonnet_house':
       input = bonnet_house;

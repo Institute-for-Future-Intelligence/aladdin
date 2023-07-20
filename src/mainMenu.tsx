@@ -2182,6 +2182,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             <Menu.Item key="adobe_taos_house" onClick={loadFile}>
               {i18n.t('menu.residentialBuildingExamples.AdobeTaosHouse', lang)}
             </Menu.Item>
+            <Menu.Item key="ranch_house" onClick={loadFile}>
+              {i18n.t('menu.residentialBuildingExamples.RanchHouse', lang)}
+            </Menu.Item>
             <Menu.Item key="bonnet_house" onClick={loadFile}>
               {i18n.t('menu.residentialBuildingExamples.BonnetHouse', lang)}
             </Menu.Item>
