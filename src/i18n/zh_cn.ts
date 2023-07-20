@@ -198,6 +198,7 @@ export const i18n_zh_cn = {
       CannotAddDesignToProject: '无法把此设计加到项目里',
       CannotAddDesignToProjectOwnedByOthers: '不能把此设计加到别人的项目里',
       CannotRemoveDesignFromProject: '无法把此设计从项目里删除',
+      CannotUpdateProject: '无法更新项目',
       TitleUsedChooseDifferentOne: '此标题已经被使用, 请采用不同的标题',
       CloudFileWithTitleExistsDoYouWantToOverwrite: '使用此标题的云文件已经存在，您确定要覆盖它吗？',
       CloudFileNotFound: '找不到此云端文件',

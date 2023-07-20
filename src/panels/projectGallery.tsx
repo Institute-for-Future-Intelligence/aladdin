@@ -103,9 +103,10 @@ export interface ProjectGalleryProps {
   relativeWidth: number;
   openCloudFile?: (userid: string, title: string, popState?: boolean) => void;
   deleteDesign?: (userid: string, projectTitle: string, design: Design) => void;
+  updateProject?: (userid: string, projectTitle: string, hiddenParameter: string, add: boolean) => void;
 }
 
-const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectGalleryProps) => {
+const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, updateProject }: ProjectGalleryProps) => {
   const setCommonStore = useStore(Selector.set);
   const user = useStore(Selector.user);
   const language = useStore(Selector.language);
@@ -302,6 +303,20 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
   const yieldSelectionRef = useRef<boolean>(!projectHiddenParameters.includes('yield'));
   const profitSelectionRef = useRef<boolean>(!projectHiddenParameters.includes('profit'));
 
+  useEffect(() => {
+    rowWidthSelectionRef.current = !projectHiddenParameters.includes('rowWidth');
+    tiltAngleSelectionRef.current = !projectHiddenParameters.includes('tiltAngle');
+    rowSpacingSelectionRef.current = !projectHiddenParameters.includes('interRowSpacing');
+    orientationSelectionRef.current = !projectHiddenParameters.includes('orientation');
+    poleHeightSelectionRef.current = !projectHiddenParameters.includes('poleHeight');
+    unitCostSelectionRef.current = !projectHiddenParameters.includes('unitCost');
+    sellingPriceSelectionRef.current = !projectHiddenParameters.includes('sellingPrice');
+    panelCountSelectionRef.current = !projectHiddenParameters.includes('panelCount');
+    yieldSelectionRef.current = !projectHiddenParameters.includes('yield');
+    profitSelectionRef.current = !projectHiddenParameters.includes('profit');
+    setUpdateFlag(!updateFlag);
+  }, [projectHiddenParameters]);
+
   const hover = (i: number) => {
     if (projectDesigns) {
       if (i >= 0 && i < projectDesigns.length) {
@@ -311,6 +326,11 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign }: ProjectG
   };
 
   const selectParameter = (selected: boolean, parameter: string) => {
+    if (updateProject) {
+      if (user.uid && projectOwner === user.uid && projectTitle) {
+        updateProject(user.uid, projectTitle, parameter, !selected);
+      }
+    }
     setCommonStore((state) => {
       if (selected) {
         if (state.projectHiddenParameters.includes(parameter)) {
