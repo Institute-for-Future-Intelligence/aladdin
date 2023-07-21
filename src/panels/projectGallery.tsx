@@ -80,7 +80,7 @@ const SubHeader = styled.div`
   align-items: center;
 `;
 
-const DesignSpaceHeader = styled.div`
+const SolutionSpaceHeader = styled.div`
   width: 100%;
   display: flex;
   justify-content: space-between;
@@ -529,14 +529,14 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, updateProj
                 </List.Item>
               )}
             />
-            <DesignSpaceHeader>
+            <SolutionSpaceHeader>
               <span style={{ paddingLeft: '20px' }}>{i18n.t('projectPanel.DistributionInSolutionSpace', lang)}</span>
               <span>
                 {projectType === DesignProblem.SOLAR_PANEL_ARRAY && (
                   <Popover
                     content={
                       <div>
-                        <label>{i18n.t('projectPanel.CustomizeDesignSpace', lang)}</label>
+                        <label style={{ fontWeight: 'bold' }}>{i18n.t('projectPanel.ChooseSolutionSpace', lang)}</label>
                         <hr />
                         <Checkbox
                           onChange={(e) => {
@@ -546,7 +546,9 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, updateProj
                           }}
                           checked={rowWidthSelectionRef.current}
                         >
-                          {i18n.t('polygonMenu.SolarPanelArrayRowWidth', lang)}
+                          <span style={{ fontSize: '12px' }}>
+                            {i18n.t('polygonMenu.SolarPanelArrayRowWidth', lang)}
+                          </span>
                         </Checkbox>
                         <br />
                         <Checkbox
@@ -557,7 +559,9 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, updateProj
                           }}
                           checked={tiltAngleSelectionRef.current}
                         >
-                          {i18n.t('polygonMenu.SolarPanelArrayTiltAngle', lang)}
+                          <span style={{ fontSize: '12px' }}>
+                            {i18n.t('polygonMenu.SolarPanelArrayTiltAngle', lang)}
+                          </span>
                         </Checkbox>
                         <br />
                         <Checkbox
@@ -568,7 +572,9 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, updateProj
                           }}
                           checked={rowSpacingSelectionRef.current}
                         >
-                          {i18n.t('polygonMenu.SolarPanelArrayRowSpacing', lang)}
+                          <span style={{ fontSize: '12px' }}>
+                            {i18n.t('polygonMenu.SolarPanelArrayRowSpacing', lang)}
+                          </span>
                         </Checkbox>
                         <br />
                         <Checkbox
@@ -579,7 +585,9 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, updateProj
                           }}
                           checked={orientationSelectionRef.current}
                         >
-                          {i18n.t('polygonMenu.SolarPanelArrayOrientation', lang)}
+                          <span style={{ fontSize: '12px' }}>
+                            {i18n.t('polygonMenu.SolarPanelArrayOrientation', lang)}
+                          </span>
                         </Checkbox>
                         <br />
                         <Checkbox
@@ -590,7 +598,9 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, updateProj
                           }}
                           checked={poleHeightSelectionRef.current}
                         >
-                          {i18n.t('polygonMenu.SolarPanelArrayPoleHeight', lang)}
+                          <span style={{ fontSize: '12px' }}>
+                            {i18n.t('polygonMenu.SolarPanelArrayPoleHeight', lang)}
+                          </span>
                         </Checkbox>
                         <br />
                         <Checkbox
@@ -601,7 +611,7 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, updateProj
                           }}
                           checked={unitCostSelectionRef.current}
                         >
-                          {i18n.t('economicsPanel.UnitCost', lang)}
+                          <span style={{ fontSize: '12px' }}>{i18n.t('economicsPanel.UnitCost', lang)}</span>
                         </Checkbox>
                         <br />
                         <Checkbox
@@ -612,7 +622,7 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, updateProj
                           }}
                           checked={sellingPriceSelectionRef.current}
                         >
-                          {i18n.t('economicsPanel.SellingPrice', lang)}
+                          <span style={{ fontSize: '12px' }}>{i18n.t('economicsPanel.SellingPrice', lang)}</span>
                         </Checkbox>
                         <br />
                         <Checkbox
@@ -623,7 +633,9 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, updateProj
                           }}
                           checked={panelCountSelectionRef.current}
                         >
-                          {i18n.t('polygonMenu.SolarPanelArrayPanelCount', lang)}
+                          <span style={{ fontSize: '12px' }}>
+                            {i18n.t('polygonMenu.SolarPanelArrayPanelCount', lang)}
+                          </span>
                         </Checkbox>
                         <br />
                         <Checkbox
@@ -634,7 +646,7 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, updateProj
                           }}
                           checked={yieldSelectionRef.current}
                         >
-                          {i18n.t('polygonMenu.SolarPanelArrayYield', lang)}
+                          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayYield', lang)}</span>
                         </Checkbox>
                         <br />
                         <Checkbox
@@ -645,7 +657,7 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, updateProj
                           }}
                           checked={profitSelectionRef.current}
                         >
-                          {i18n.t('polygonMenu.SolarPanelArrayProfit', lang)}
+                          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayProfit', lang)}</span>
                         </Checkbox>
                       </div>
                     }
@@ -668,11 +680,11 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, updateProj
                 >
                   <CameraOutlined
                     style={{ fontSize: '24px', color: 'gray' }}
-                    title={i18n.t('projectPanel.DesignSpaceScreenshot', lang)}
+                    title={i18n.t('projectPanel.SolutionSpaceScreenshot', lang)}
                   />
                 </Button>
               </span>
-            </DesignSpaceHeader>
+            </SolutionSpaceHeader>
             <ParallelCoordinates
               id={'design-space'}
               width={relativeWidth * window.innerWidth}
