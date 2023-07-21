@@ -258,7 +258,14 @@ const GroupMaster = ({
     setCommonStore((state) => {
       for (const elem of state.elements) {
         if (heightMap.has(elem.id)) {
-          elem.lz = heightMap.get(elem.id)!;
+          const height = heightMap.get(elem.id);
+          if (height !== undefined) {
+            if (elem.type === ObjectType.Roof) {
+              (elem as RoofModel).rise = height;
+            } else {
+              elem.lz = height;
+            }
+          }
         }
         if (elem.type === ObjectType.Wall && partialWallHeightMap.has(elem.id)) {
           const w = elem as WallModel;
@@ -365,7 +372,11 @@ const GroupMaster = ({
 
     for (const elem of useStore.getState().elements) {
       if (elementOldHeightMapRef.current.has(elem.id)) {
-        newHeightMap.set(elem.id, elem.lz);
+        if (elem.type === ObjectType.Roof) {
+          newHeightMap.set(elem.id, (elem as RoofModel).rise);
+        } else {
+          newHeightMap.set(elem.id, elem.lz);
+        }
       }
       if (elem.type === ObjectType.Wall && oldPartialWallHeightMapRef.current.has(elem.id)) {
         const w = elem as WallModel;
