@@ -2,16 +2,34 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import { OrthographicCamera, PerspectiveCamera } from '@react-three/drei';
-import { Camera, useFrame, useThree } from '@react-three/fiber';
-import React, { useEffect, useMemo, useRef } from 'react';
-import { Vector3 } from 'three';
+import { Box, OrbitControls, OrthographicCamera, PerspectiveCamera } from '@react-three/drei';
+import { Camera, invalidate, useFrame, useThree } from '@react-three/fiber';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Euler, Mesh, QuadraticBezierCurve, Quaternion, Vector3 } from 'three';
 import { DEFAULT_FAR, DEFAULT_FOV, HALF_PI } from './constants';
 import { MyOrbitControls } from './js/MyOrbitControls';
 import { useStore } from './stores/common';
 import { usePrimitiveStore } from './stores/commonPrimitive';
 import { useRefStore } from './stores/commonRef';
 import * as Selector from './stores/selector';
+import FirstPersonViewControls from './firstPersonViewControls';
+
+const getCameraDirection = (cam: Camera) => {
+  const dir = new Vector3().subVectors(cam.localToWorld(new Vector3(0, 0, 1000)), cam.position);
+  if (dir.x === 0 && dir.y === 0) {
+    cam.getWorldDirection(dir);
+  }
+  return dir;
+};
+
+export const setCompassRotation = (camera: Camera) => {
+  const compassRef = useRefStore.getState().compassRef;
+  if (compassRef?.current) {
+    const dircXY = getCameraDirection(camera).normalize();
+    const rotationZ = (-Math.PI * 17) / 18 + Math.atan2(dircXY.x, dircXY.y);
+    compassRef.current.rotation.set(-Math.PI / 3, 0, rotationZ);
+  }
+};
 
 const CameraController = () => {
   const setCommonStore = useStore(Selector.set);
@@ -22,13 +40,14 @@ const CameraController = () => {
   const sceneRadius = useStore(Selector.sceneRadius);
   const cameraPosition = useStore(Selector.viewState.cameraPosition);
   const cameraZoom = useStore(Selector.viewState.cameraZoom);
+  const firstPersonView = useStore(Selector.viewState.firstPersonView);
 
   const cameraPositionLength = Math.hypot(cameraPosition[0], cameraPosition[1], cameraPosition[2]);
   const panRadius = (orthographic ? cameraZoom * 50 : cameraPositionLength * 10) * sceneRadius;
   const minPan = useMemo(() => new Vector3(-panRadius, -panRadius, 0), [panRadius]);
   const maxPan = useMemo(() => new Vector3(panRadius, panRadius, panRadius / 2), [panRadius]);
 
-  const { gl, invalidate, get, set } = useThree();
+  const { gl, invalidate, get, set, camera } = useThree();
 
   const initialOrbitCamera = useMemo(() => {
     const camera = get().camera;
@@ -110,7 +129,7 @@ const CameraController = () => {
       }
       orbitControlRef.current.update();
     }
-    handleElementRotation();
+    setCompassRotation(get().camera);
   }, [fileChanged]);
 
   // switch camera
@@ -132,7 +151,7 @@ const CameraController = () => {
       orbitControl.target.copy(getVector(viewState.panCenter ?? [0, 0, 0]));
       set({ camera: persCam });
     }
-    handleElementRotation();
+    setCompassRotation(get().camera);
   }, [orthographic]);
 
   // camera zoom in 2D view (no need to do this in 3D view)
@@ -152,12 +171,13 @@ const CameraController = () => {
   const render = () => {
     invalidate();
     if (!useStore.getState().viewState.orthographic) {
-      handleElementRotation();
+      setCompassRotation(get().camera);
       if (orbitControlRef.current) {
         orbitControlRef.current.target.clamp(minPan, maxPan);
       }
     }
   };
+
   const onInteractionStart = () => {
     usePrimitiveStore.setState((state) => {
       state.duringCameraInteraction = true;
@@ -191,14 +211,6 @@ const CameraController = () => {
     });
   };
 
-  const getCameraDirection = (cam: Camera) => {
-    const dir = new Vector3().subVectors(cam.localToWorld(new Vector3(0, 0, 1000)), cam.position);
-    if (dir.x === 0 && dir.y === 0) {
-      cam.getWorldDirection(dir);
-    }
-    return dir;
-  };
-
   const getVector = (n: number[] | Vector3) => {
     if (n && Array.isArray(n)) {
       return new Vector3(n[0], n[1], n[2]);
@@ -222,24 +234,17 @@ const CameraController = () => {
 
   // on mount
   useEffect(() => {
-    handleElementRotation();
+    setCompassRotation(get().camera);
   }, [compassMounted]);
 
-  // set element whose rotation is related to camera position
-  const handleElementRotation = () => {
-    // compass
-    const compassRef = useRefStore.getState().compassRef;
-    if (compassRef?.current) {
-      const dircXY = getCameraDirection(get().camera);
-      const rotationZ = (-Math.PI * 17) / 18 + Math.atan2(dircXY.x, dircXY.y);
-      compassRef.current.rotation.set(-Math.PI / 3, 0, rotationZ);
-    }
-  };
-
+  const enabldeFirstPersonControls = firstPersonView && !orthographic;
   return (
     <>
       <PerspectiveCamera ref={persCameraRef} fov={DEFAULT_FOV} far={DEFAULT_FAR} up={[0, 0, 1]} />
       <OrthographicCamera ref={orthCameraRef} up={[0, 0, 1]} />
+
+      {enabldeFirstPersonControls && <FirstPersonViewControls />}
+
       <myOrbitControls
         ref={orbitControlRef}
         args={[initialOrbitCamera, initialOrbitDomElement]}
@@ -252,6 +257,7 @@ const CameraController = () => {
         minAzimuthAngle={-Infinity}
         maxPolarAngle={HALF_PI}
         minPolarAngle={0}
+        enabled={!enabldeFirstPersonControls}
       />
     </>
   );

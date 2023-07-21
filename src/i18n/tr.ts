@@ -310,6 +310,7 @@ export const i18n_tr = {
       },
       viewSubMenu: 'Görünüm',
       view: {
+        FirstPersonView: 'First Person View',
         TwoDimensionalView: '2D',
         ResetView: 'Yenile',
         ZoomIn: 'Yaklaş',

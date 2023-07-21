@@ -15,7 +15,7 @@ import Ground from './views/ground';
 import Heliodon from './views/heliodonWrapper';
 import ifiLogo from './assets/ifi-logo.png';
 import MainMenu from './mainMenu';
-import { VERSION } from './constants';
+import { DEFAULT_FAR, DEFAULT_FOV, VERSION } from './constants';
 import { visitHomepage, visitIFI } from './helpers';
 import AcceptCookie from './acceptCookie';
 import GroundImage from './views/groundImage';
@@ -193,6 +193,19 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
     setCommonStore((state) => {
       state.viewState.orthographic = selected;
       state.viewState.enableRotate = !selected;
+      if (selected) {
+        state.viewState.firstPersonView = false;
+      }
+    });
+  };
+
+  const setFirstPersonView = (selected: boolean) => {
+    setCommonStore((state) => {
+      state.viewState.firstPersonView = selected;
+      state.viewState.enableRotate = !selected;
+      if (selected) {
+        state.viewState.orthographic = false;
+      }
     });
   };
 
@@ -208,6 +221,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
         gl={{ preserveDrawingBuffer: true, logarithmicDepthBuffer: true }}
         frameloop={'demand'}
         style={{ height: '100%', width: '100%', backgroundColor: 'black' }}
+        camera={{ fov: DEFAULT_FOV, far: DEFAULT_FAR, up: [0, 0, 1] }}
       >
         <PointerStyleController />
         <CameraController />
@@ -392,6 +406,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       <MainMenu
         viewOnly={viewOnly}
         canvas={canvasRef.current}
+        setFirstPersonView={setFirstPersonView}
         set2DView={set2DView}
         resetView={resetView}
         zoomView={zoomView}

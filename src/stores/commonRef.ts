@@ -6,6 +6,7 @@ import { RefObject } from 'react';
 import { MyOrbitControls } from 'src/js/MyOrbitControls';
 import { Group } from 'three';
 import create from 'zustand';
+import { useStore } from './common';
 
 export interface RefStoreState {
   setEnableOrbitController: (b: boolean) => void;
@@ -23,6 +24,9 @@ export interface RefStoreState {
 export const useRefStore = create<RefStoreState>((set, get) => {
   return {
     setEnableOrbitController: (b: boolean) => {
+      if (useStore.getState().viewState.firstPersonView) {
+        return;
+      }
       set((state) => {
         if (state.orbitControlsRef?.current) {
           state.orbitControlsRef.current.enabled = b;

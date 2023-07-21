@@ -1,10 +1,11 @@
 import {
   Euler,
   EventDispatcher,
+  Quaternion,
   Vector3
 } from 'three';
 
-const _euler = new Euler( 0, 0, 0, 'YXZ' );
+const _euler = new Euler( 0, 0, 0, 'ZXY' );
 const _vector = new Vector3();
 
 const _changeEvent = { type: 'change' };
@@ -15,12 +16,13 @@ const _PI_2 = Math.PI / 2;
 
 class MyPointerLockControls extends EventDispatcher {
 
-  constructor( camera, domElement ) {
+  constructor( camera, domElement, setLock ) {
 
     super();
 
     this.camera = camera;
     this.domElement = domElement;
+    this.setLock = setLock;
 
     this.isLocked = false;
 
@@ -34,6 +36,10 @@ class MyPointerLockControls extends EventDispatcher {
     this._onMouseMove = onMouseMove.bind( this );
     this._onPointerlockChange = onPointerlockChange.bind( this );
     this._onPointerlockError = onPointerlockError.bind( this );
+
+    this.camera.rotation.x = _PI_2 - 0.01;
+    this.reverse = false;
+    this.oldZ = 0;
 
     this.connect();
 
@@ -124,11 +130,25 @@ function onMouseMove( event ) {
   const camera = this.camera;
   _euler.setFromQuaternion( camera.quaternion );
 
-  _euler.y -= movementX * 0.002 * this.pointerSpeed;
-  _euler.x -= movementY * 0.002 * this.pointerSpeed;
+  if (Math.abs(Math.abs(_euler.z - this.oldZ) - Math.PI) < 0.01) {
 
-  _euler.x = Math.max( _PI_2 - this.maxPolarAngle, Math.min( _PI_2 - this.minPolarAngle, _euler.x ) );
+    this.reverse = !this.reverse;
 
+  } 
+
+  if ( this.reverse ) {
+
+    _euler.x += movementY * 0.002 * this.pointerSpeed;
+    _euler.z -= movementX * 0.002 * this.pointerSpeed;
+
+  } else {
+
+    _euler.x -= movementY * 0.002 * this.pointerSpeed;
+    _euler.z -= movementX * 0.002 * this.pointerSpeed;
+
+  }
+
+  this.oldZ = _euler.z;
   camera.quaternion.setFromEuler( _euler );
 
   this.dispatchEvent( _changeEvent );
@@ -143,11 +163,15 @@ function onPointerlockChange() {
 
     this.isLocked = true;
 
+    this.setLock(true);
+
   } else {
 
     this.dispatchEvent( _unlockEvent );
 
     this.isLocked = false;
+
+    this.setLock(false);
 
   }
 

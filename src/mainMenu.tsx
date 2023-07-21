@@ -83,13 +83,14 @@ const LabelContainer = styled.div`
 
 export interface MainMenuProps {
   viewOnly: boolean;
+  setFirstPersonView: (selected: boolean) => void;
   set2DView: (selected: boolean) => void;
   resetView: () => void;
   zoomView: (scale: number) => void;
   canvas?: HTMLCanvasElement | null;
 }
 
-const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenuProps) => {
+const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setFirstPersonView, canvas }: MainMenuProps) => {
   const setCommonStore = useStore(Selector.set);
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const pasteElements = useStore(Selector.pasteElementsByKey);
@@ -113,6 +114,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const solarPanelVisibilityGridCellSize = useStore(Selector.world.solarPanelVisibilityGridCellSize);
   const solarRadiationHeatmapGridCellSize = useStore(Selector.world.solarRadiationHeatmapGridCellSize);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
+  const firstPersonView = useStore.getState().viewState.firstPersonView;
   const orthographic = useStore.getState().viewState.orthographic;
   const autoRotate = useStore.getState().viewState.autoRotate;
   const showSiteInfoPanel = useStore.getState().viewState.showSiteInfoPanel;
@@ -525,6 +527,24 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
     addUndoable(undoableCheck);
     setCommonStore((state) => {
       state.viewState.axes = checked;
+    });
+  };
+
+  const toggleFirstPersonView = (e: CheckboxChangeEvent) => {
+    const undoableCheck = {
+      name: 'Toggle First Person View',
+      timestamp: Date.now(),
+      checked: !orthographic,
+      undo: () => {
+        setFirstPersonView(!undoableCheck.checked);
+      },
+      redo: () => {
+        setFirstPersonView(undoableCheck.checked);
+      },
+    } as UndoableCheck;
+    setFirstPersonView(e.target.checked);
+    setCommonStore((state) => {
+      state.viewState.autoRotate = false;
     });
   };
 
@@ -1089,6 +1109,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           >
             {i18n.t('menu.view.ZoomIn', lang)}
             <span style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+[)</span>
+          </Menu.Item>
+          <Menu.Item key={'first-person-view-check-box'}>
+            <Checkbox checked={firstPersonView} onChange={toggleFirstPersonView}>
+              {i18n.t('menu.view.FirstPersonView', lang)}
+              <span style={{ paddingLeft: '2px', fontSize: 9 }}></span>
+            </Checkbox>
           </Menu.Item>
           <Menu.Item key={'orthographic-check-box'}>
             <Checkbox checked={orthographic} onChange={toggle2DView}>

@@ -311,6 +311,7 @@ export const i18n_en = {
       },
       viewSubMenu: 'View',
       view: {
+        FirstPersonView: 'First Person View',
         TwoDimensionalView: '2D View',
         ResetView: 'Reset',
         ZoomIn: 'Zoom In',

@@ -143,6 +143,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
   };
 
   const toggle2DView = () => {
+    if (useStore.getState().viewState.firstPersonView) return;
     const undoableCheck = {
       name: 'Set 2D View',
       timestamp: Date.now(),
