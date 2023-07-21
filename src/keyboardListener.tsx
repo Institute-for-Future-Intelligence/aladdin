@@ -715,7 +715,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
         break;
       case 'ctrl+c':
       case 'meta+c': // for Mac
-        if (selectedElement) {
+        if (selectedElement && selectedElement.type !== ObjectType.Roof) {
           copyElementById(selectedElement.id);
           if (loggable) {
             setCommonStore((state) => {
@@ -731,7 +731,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
         break;
       case 'ctrl+x':
       case 'meta+x': // for Mac
-        if (selectedElement) {
+        if (selectedElement && selectedElement.type !== ObjectType.Roof) {
           const cutElements = removeElement(selectedElement.id, true);
           // const cutElements = copyCutElements();
           const undoableCut = {
