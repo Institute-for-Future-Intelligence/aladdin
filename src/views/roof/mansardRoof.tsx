@@ -479,17 +479,15 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
   useEffect(() => {
     if (!isFirstMountRef.current || useStore.getState().addedRoofId === id) {
       if (currentWallArray.length > 1) {
-        let minHeight = 0;
         for (let i = 0; i < currentWallArray.length; i++) {
-          const { lh, rh } = RoofUtil.getWallHeight(currentWallArray, i);
-          minHeight = Math.max(minHeight, Math.max(lh, rh));
           setCommonStore((state) => {
             for (const e of state.elements) {
               if (e.id === currentWallArray[i].id && e.type === ObjectType.Wall) {
                 const w = e as WallModel;
                 w.roofId = id;
-                w.leftRoofHeight = lh;
-                w.rightRoofHeight = rh;
+                // some old files set wall's roof height, which should not
+                w.leftRoofHeight = undefined;
+                w.rightRoofHeight = undefined;
                 break;
               }
             }

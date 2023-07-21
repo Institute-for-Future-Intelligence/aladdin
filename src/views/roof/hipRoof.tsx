@@ -378,7 +378,11 @@ const HipRoof = (roofModel: HipRoofModel) => {
           setCommonStore((state) => {
             for (const e of state.elements) {
               if (e.type === ObjectType.Wall && wallsIdSet.has(e.id)) {
-                (e as WallModel).roofId = id;
+                const wall = e as WallModel;
+                wall.roofId = id;
+                // some old files set wall's roof height, which should not
+                wall.leftRoofHeight = undefined;
+                wall.rightRoofHeight = undefined;
               }
             }
           });

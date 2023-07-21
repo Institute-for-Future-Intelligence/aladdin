@@ -397,14 +397,14 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
     if (!isFirstMountRef.current || useStore.getState().addedRoofId === id) {
       if (currentWallArray.length > 1) {
         for (let i = 0; i < currentWallArray.length; i++) {
-          const { lh, rh } = RoofUtil.getWallHeight(currentWallArray, i);
           setCommonStore((state) => {
             for (const e of state.elements) {
               if (e.id === currentWallArray[i].id && e.type === ObjectType.Wall) {
                 const w = e as WallModel;
                 w.roofId = id;
-                w.leftRoofHeight = lh;
-                w.rightRoofHeight = rh;
+                // some old files set wall's roof height, which should not
+                w.leftRoofHeight = undefined;
+                w.rightRoofHeight = undefined;
                 break;
               }
             }
