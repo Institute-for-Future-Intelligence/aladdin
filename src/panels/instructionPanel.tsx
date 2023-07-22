@@ -48,6 +48,7 @@ const InstructionPanel = () => {
   const language = useStore(Selector.language);
   const sunlightDirection = useStore(Selector.sunlightDirection);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
+  const navigation = useStore(Selector.viewState.navigationView) ?? false;
   const lang = { lng: language };
   const color = sunlightDirection.y > 0 ? 'navajowhite' : 'antiquewhite';
 
@@ -68,7 +69,12 @@ const InstructionPanel = () => {
           <b>{i18n.t('instructionPanel.Pan', lang)}</b>: {i18n.t('instructionPanel.HoldCtrlDragMouse', lang)}
         </span>
         <span>
-          <b>{i18n.t('instructionPanel.Toggle2D3D', lang)}</b>: {i18n.t('word.Press', lang)} {isMac ? '⌘' : 'Ctrl'}+B
+          <b>{i18n.t(orthographic ? 'instructionPanel.Exit2DMode' : 'instructionPanel.Enter2DMode', lang)}</b>:{' '}
+          {i18n.t('word.Press', lang)} {isMac ? '⌘' : 'Ctrl'}+B
+        </span>
+        <span>
+          <b>{i18n.t(navigation ? 'instructionPanel.DisableNavigation' : 'instructionPanel.EnableNavigation', lang)}</b>
+          : {i18n.t('word.Press', lang)} {isMac ? '⌘' : 'Ctrl'}+Q
         </span>
       </ColumnWrapper>
     </Container>

@@ -449,6 +449,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
           <KeyboardListener
             canvas={canvasRef.current}
             set2DView={set2DView}
+            setNavigationView={setNavigationView}
             resetView={resetView}
             zoomView={zoomView}
           />

@@ -29,11 +29,12 @@ import { usePrimitiveStore } from './stores/commonPrimitive';
 export interface KeyboardListenerProps {
   canvas?: HTMLCanvasElement | null;
   set2DView: (selected: boolean) => void;
+  setNavigationView: (selected: boolean) => void;
   resetView: () => void;
   zoomView: (scale: number) => void;
 }
 
-const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardListenerProps) => {
+const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoomView }: KeyboardListenerProps) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const loggable = useStore(Selector.loggable);
@@ -42,6 +43,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
   const undoManager = useStore(Selector.undoManager);
   const addUndoable = useStore(Selector.addUndoable);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
+  const navigation = useStore(Selector.viewState.navigationView);
   const autoRotate = useStore(Selector.viewState.autoRotate);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const getElementById = useStore(Selector.getElementById);
@@ -71,7 +73,6 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
   }, [language]);
 
   const handleKeys = [
-    'ctrl+q', // navigation controls
     'left',
     'up',
     'right',
@@ -110,6 +111,8 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
     'meta+y',
     'ctrl+m',
     'meta+m',
+    'ctrl+q', // navigation controls
+    'meta+q',
     'ctrl+b',
     'meta+b',
     'shift',
@@ -158,6 +161,26 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
     } as UndoableCheck;
     addUndoable(undoableCheck);
     set2DView(!orthographic);
+    setCommonStore((state) => {
+      state.viewState.autoRotate = false;
+    });
+  };
+
+  const toggleNatigationView = () => {
+    if (useStore.getState().viewState.orthographic) return;
+    const undoableCheck = {
+      name: 'Set Navigation View',
+      timestamp: Date.now(),
+      checked: !navigation,
+      undo: () => {
+        setNavigationView(!undoableCheck.checked);
+      },
+      redo: () => {
+        setNavigationView(undoableCheck.checked);
+      },
+    } as UndoableCheck;
+    addUndoable(undoableCheck);
+    setNavigationView(!navigation);
     setCommonStore((state) => {
       state.viewState.autoRotate = false;
     });
@@ -666,19 +689,6 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
     const selectedElement = getSelectedElement();
     const step = 1;
     switch (keyName) {
-      // navigation controls
-      case 'ctrl+q': {
-        setCommonStore((state) => {
-          const enabled = !state.viewState.navigationView;
-          state.viewState.navigationView = enabled;
-          state.viewState.enableRotate = !enabled;
-          if (enabled) {
-            state.viewState.orthographic = false;
-          }
-        });
-
-        break;
-      }
       case 'left':
         moveLeft(step);
         break;
@@ -851,6 +861,10 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
       case 'ctrl+b':
       case 'meta+b':
         toggle2DView();
+        break;
+      case 'ctrl+q':
+      case 'meta+q':
+        toggleNatigationView();
         break;
       case 'f4':
       case 'ctrl+m':

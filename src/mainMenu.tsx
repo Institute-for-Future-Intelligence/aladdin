@@ -534,7 +534,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
     const undoableCheck = {
       name: 'Toggle Navigation View',
       timestamp: Date.now(),
-      checked: !orthographic,
+      checked: e.target.checked,
       undo: () => {
         setNavigationView(!undoableCheck.checked);
       },
@@ -542,6 +542,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
         setNavigationView(undoableCheck.checked);
       },
     } as UndoableCheck;
+    addUndoable(undoableCheck);
     setNavigationView(e.target.checked);
     setCommonStore((state) => {
       state.viewState.autoRotate = false;
@@ -552,7 +553,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
     const undoableCheck = {
       name: 'Toggle 2D View',
       timestamp: Date.now(),
-      checked: !orthographic,
+      checked: e.target.checked,
       undo: () => {
         set2DView(!undoableCheck.checked);
       },
@@ -1113,7 +1114,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
           <Menu.Item key={'navigation-view-check-box'}>
             <Checkbox checked={navigationView} onChange={toggleNavigationView}>
               {i18n.t('menu.view.NavigationView', lang)}
-              <span style={{ paddingLeft: '2px', fontSize: 9 }}></span>
+              <span style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+Q)</span>
             </Checkbox>
           </Menu.Item>
           <Menu.Item key={'orthographic-check-box'}>
