@@ -2,17 +2,16 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import { Box, OrbitControls, OrthographicCamera, PerspectiveCamera } from '@react-three/drei';
-import { Camera, invalidate, useFrame, useThree } from '@react-three/fiber';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Euler, Mesh, QuadraticBezierCurve, Quaternion, Vector3 } from 'three';
+import { OrthographicCamera, PerspectiveCamera } from '@react-three/drei';
+import { Camera, useFrame, useThree } from '@react-three/fiber';
+import React, { useEffect, useMemo, useRef } from 'react';
+import { Vector3 } from 'three';
 import { DEFAULT_FAR, DEFAULT_FOV, HALF_PI } from './constants';
 import { MyOrbitControls } from './js/MyOrbitControls';
 import { useStore } from './stores/common';
 import { usePrimitiveStore } from './stores/commonPrimitive';
 import { useRefStore } from './stores/commonRef';
 import * as Selector from './stores/selector';
-import FirstPersonViewControls from './firstPersonViewControls';
 
 const getCameraDirection = (cam: Camera) => {
   const dir = new Vector3().subVectors(cam.localToWorld(new Vector3(0, 0, 1000)), cam.position);
@@ -42,6 +41,7 @@ const CameraController = () => {
   const cameraZoom = useStore(Selector.viewState.cameraZoom);
   const firstPersonView = useStore(Selector.viewState.firstPersonView);
 
+  const enabldeFirstPersonControls = firstPersonView && !orthographic;
   const cameraPositionLength = Math.hypot(cameraPosition[0], cameraPosition[1], cameraPosition[2]);
   const panRadius = (orthographic ? cameraZoom * 50 : cameraPositionLength * 10) * sceneRadius;
   const minPan = useMemo(() => new Vector3(-panRadius, -panRadius, 0), [panRadius]);
@@ -237,8 +237,6 @@ const CameraController = () => {
     setCompassRotation(get().camera);
   }, [compassMounted]);
 
-  const enabldeFirstPersonControls = firstPersonView && !orthographic;
-
   // key event
   useEffect(() => {
     if (!orbitControlRef.current) return;
@@ -257,7 +255,7 @@ const CameraController = () => {
     if (enabldeFirstPersonControls) {
       const camera = get().camera;
       camera.position.z = 3;
-      camera.lookAt(0, 0, 3);
+      camera.lookAt(0, 0, 2);
     } else {
       orbitControlRef.current.update();
     }
@@ -267,9 +265,6 @@ const CameraController = () => {
     <>
       <PerspectiveCamera ref={persCameraRef} fov={DEFAULT_FOV} far={DEFAULT_FAR} up={[0, 0, 1]} />
       <OrthographicCamera ref={orthCameraRef} up={[0, 0, 1]} />
-
-      {/* {enabldeFirstPersonControls && <FirstPersonViewControls />} */}
-
       <myOrbitControls
         ref={orbitControlRef}
         args={[initialOrbitCamera, initialOrbitDomElement]}

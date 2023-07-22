@@ -136,6 +136,9 @@ class MyOrbitControls extends EventDispatcher {
       domElement.addEventListener( 'keydown', onKeyDown );
       this._domElementKeyEvents = domElement;
 
+      reverse = false;
+      oldZ = 0
+
     };
 
     this.removeKeyEvents = function () {
@@ -542,7 +545,7 @@ class MyOrbitControls extends EventDispatcher {
         if ( Math.abs( Math.abs( _euler.z - oldZ ) - Math.PI ) < 0.01 ) {
 
           reverse = !reverse;
-      
+
         } 
 
         if ( reverse ) {
@@ -554,6 +557,8 @@ class MyOrbitControls extends EventDispatcher {
           _euler.x += 0.01 * distance;
 
         }
+
+        _euler.x = Math.max(0.1, _euler.x);
 
         oldZ = _euler.z;
 
