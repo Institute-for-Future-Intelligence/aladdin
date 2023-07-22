@@ -76,6 +76,16 @@ const InstructionPanel = () => {
           <b>{i18n.t(navigation ? 'instructionPanel.DisableNavigation' : 'instructionPanel.EnableNavigation', lang)}</b>
           : {i18n.t('word.Press', lang)} {isMac ? '⌘' : 'Ctrl'}+Q
         </span>
+        {navigation && (
+          <>
+            <span>
+              <b>{i18n.t('instructionPanel.Move', lang)}</b>: {i18n.t('instructionPanel.MoveInstruction', lang)}
+            </span>
+            <span>
+              <b>{i18n.t('instructionPanel.Turn', lang)}</b>: {i18n.t('instructionPanel.TurnInstruction', lang)}
+            </span>
+          </>
+        )}
       </ColumnWrapper>
     </Container>
   );

@@ -8,6 +8,9 @@ import create from 'zustand';
 export interface PrimitiveStoreState {
   setPrimitiveStore: <K extends keyof PrimitiveStoreState, V extends PrimitiveStoreState[K]>(key: K, val: V) => void;
 
+  showEconomicsPanel: boolean;
+  showNavigationPanel: boolean;
+
   saveCloudFileFlag: boolean;
   listCloudFilesFlag: boolean;
   saveLocalFileDialogVisible: boolean;
@@ -99,6 +102,9 @@ export interface PrimitiveStoreState {
 
   duringCameraInteraction: boolean;
 
+  navigationMoveSpeed: number;
+  navigationTurnSpeed: number;
+
   // element being deleted by esc when adding
   elementBeingCanceledId: string | null;
 
@@ -119,6 +125,9 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
         }
       });
     },
+
+    showEconomicsPanel: false,
+    showNavigationPanel: false,
 
     saveCloudFileFlag: false,
     listCloudFilesFlag: false,
@@ -210,6 +219,9 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
     showHeatFluxes: false,
 
     duringCameraInteraction: false,
+
+    navigationMoveSpeed: 3,
+    navigationTurnSpeed: 3,
 
     elementBeingCanceledId: null,
 

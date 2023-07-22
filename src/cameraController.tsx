@@ -40,6 +40,8 @@ const CameraController = () => {
   const cameraPosition = useStore(Selector.viewState.cameraPosition);
   const cameraZoom = useStore(Selector.viewState.cameraZoom);
   const navigationView = useStore(Selector.viewState.navigationView);
+  const navigationMoveSpeed = usePrimitiveStore(Selector.navigationMoveSpeed);
+  const navigationTurnSpeed = usePrimitiveStore(Selector.navigationTurnSpeed);
 
   const enabldeNavigationControls = navigationView && !orthographic;
   const cameraPositionLength = Math.hypot(cameraPosition[0], cameraPosition[1], cameraPosition[2]);
@@ -277,7 +279,8 @@ const CameraController = () => {
         minAzimuthAngle={-Infinity}
         maxPolarAngle={HALF_PI}
         minPolarAngle={0}
-        navigationSpeed={3}
+        moveSpeed={navigationMoveSpeed ?? 3}
+        turnSpeed={navigationTurnSpeed ?? 3}
       />
     </>
   );

@@ -60,6 +60,8 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
   const cameraPosition = useStore(Selector.viewState.cameraPosition);
   const panCenter = useStore(Selector.viewState.panCenter);
   const overlapWithSibling = useStore(Selector.overlapWithSibling);
+  const minimumNavigationMoveSpeed = useStore(Selector.minimumNavigationMoveSpeed);
+  const minimumNavigationTurnSpeed = useStore(Selector.minimumNavigationTurnSpeed);
 
   const [keyPressed, setKeyPressed] = useState(false);
   const [keyName, setKeyName] = useState<string | null>(null);
@@ -147,7 +149,7 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
   };
 
   const toggle2DView = () => {
-    if (useStore.getState().viewState.navigationView) return;
+    if (navigation) return;
     const undoableCheck = {
       name: 'Set 2D View',
       timestamp: Date.now(),
@@ -167,7 +169,7 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
   };
 
   const toggleNatigationView = () => {
-    if (useStore.getState().viewState.orthographic) return;
+    if (orthographic) return;
     const undoableCheck = {
       name: 'Set Navigation View',
       timestamp: Date.now(),
@@ -187,36 +189,35 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
   };
 
   const toggleAutoRotate = () => {
-    if (!orthographic) {
-      const undoableCheck = {
-        name: 'Auto Rotate',
-        timestamp: Date.now(),
-        checked: !autoRotate,
-        undo: () => {
-          setCommonStore((state) => {
-            state.objectTypeToAdd = ObjectType.None;
-            state.groupActionMode = false;
-            state.groupMasterId = null;
-            state.viewState.autoRotate = !undoableCheck.checked;
-          });
-        },
-        redo: () => {
-          setCommonStore((state) => {
-            state.objectTypeToAdd = ObjectType.None;
-            state.groupActionMode = false;
-            state.groupMasterId = null;
-            state.viewState.autoRotate = undoableCheck.checked;
-          });
-        },
-      } as UndoableCheck;
-      addUndoable(undoableCheck);
-      setCommonStore((state) => {
-        state.objectTypeToAdd = ObjectType.None;
-        state.groupActionMode = false;
-        state.groupMasterId = null;
-        state.viewState.autoRotate = !state.viewState.autoRotate;
-      });
-    }
+    if (orthographic) return;
+    const undoableCheck = {
+      name: 'Auto Rotate',
+      timestamp: Date.now(),
+      checked: !autoRotate,
+      undo: () => {
+        setCommonStore((state) => {
+          state.objectTypeToAdd = ObjectType.None;
+          state.groupActionMode = false;
+          state.groupMasterId = null;
+          state.viewState.autoRotate = !undoableCheck.checked;
+        });
+      },
+      redo: () => {
+        setCommonStore((state) => {
+          state.objectTypeToAdd = ObjectType.None;
+          state.groupActionMode = false;
+          state.groupMasterId = null;
+          state.viewState.autoRotate = undoableCheck.checked;
+        });
+      },
+    } as UndoableCheck;
+    addUndoable(undoableCheck);
+    setCommonStore((state) => {
+      state.objectTypeToAdd = ObjectType.None;
+      state.groupActionMode = false;
+      state.groupMasterId = null;
+      state.viewState.autoRotate = !state.viewState.autoRotate;
+    });
   };
 
   const isNewPositionOk = (elem: ElementModel, cx: number, cy: number) => {
@@ -1012,6 +1013,12 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
         }
         break;
       case 'shift':
+        if (navigation) {
+          usePrimitiveStore.setState((state) => {
+            state.navigationMoveSpeed = 5 * minimumNavigationMoveSpeed;
+            state.navigationTurnSpeed = 5 * minimumNavigationTurnSpeed;
+          });
+        }
         setEnableFineGrid(true);
         break;
       case 'esc': {
@@ -1051,6 +1058,12 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
   const handleKeyUp = () => {
     switch (keyName) {
       case 'shift':
+        if (navigation) {
+          usePrimitiveStore.setState((state) => {
+            state.navigationMoveSpeed = minimumNavigationMoveSpeed;
+            state.navigationTurnSpeed = minimumNavigationTurnSpeed;
+          });
+        }
         setEnableFineGrid(false);
         break;
       case 'ctrl+o':

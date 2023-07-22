@@ -135,6 +135,9 @@ export interface CommonStoreState {
   modelsMapType: string;
   modelsMapTilt: number;
 
+  minimumNavigationMoveSpeed: number;
+  minimumNavigationTurnSpeed: number;
+
   roofSegmentVerticesMap: Map<string, Vector3[][]>; // key: roofId, val: [segmentIndex][vertex]
   getRoofSegmentVertices: (id: string) => Vector3[][] | undefined;
   roofSegmentVerticesWithoutOverhangMap: Map<string, Vector3[][]>;
@@ -580,6 +583,9 @@ export const useStore = create<CommonStoreState>(
           modelsMapType: 'roadmap',
           modelsMapTilt: 0,
 
+          minimumNavigationMoveSpeed: 3,
+          minimumNavigationTurnSpeed: 3,
+
           tempHumanPlant: [],
 
           roofSegmentVerticesMap: new Map<string, Vector3[][]>(),
@@ -658,6 +664,8 @@ export const useStore = create<CommonStoreState>(
               state.evolutionaryAlgorithmState =
                 content.evolutionaryAlgorithmState ?? new DefaultEvolutionaryAlgorithmState();
               state.economicsParams = content.economicsParams ?? new DefaultEconomicsParams();
+              state.minimumNavigationMoveSpeed = content.minimumNavigationMoveSpeed ?? 3;
+              state.minimumNavigationTurnSpeed = content.minimumNavigationTurnSpeed ?? 3;
               // clear existing data, if any
               state.fittestIndividualResults.length = 0;
               state.roofSegmentVerticesMap = new Map<string, Vector3[][]>();
@@ -681,6 +689,8 @@ export const useStore = create<CommonStoreState>(
               state.simulationPaused = false;
               state.clearDailySimulationResultsFlag = !state.clearDailySimulationResultsFlag;
               state.clearYearlySimulationResultsFlag = !state.clearYearlySimulationResultsFlag;
+              state.navigationMoveSpeed = content.minimumNavigationMoveSpeed ?? 3;
+              state.navigationTurnSpeed = content.minimumNavigationTurnSpeed ?? 3;
             });
             useDataStore.setState((state) => {
               state.clearDataStore();
@@ -714,6 +724,8 @@ export const useStore = create<CommonStoreState>(
               modelDescription: state.modelDescription,
               designProjectType: state.designProjectType,
               notes: state.notes,
+              minimumNavigationMoveSpeed: state.minimumNavigationMoveSpeed,
+              minimumNavigationTurnSpeed: state.minimumNavigationTurnSpeed,
             };
           },
           clearContent() {
@@ -750,6 +762,8 @@ export const useStore = create<CommonStoreState>(
               state.modelLabel = null;
               state.modelDescription = null;
               state.designProjectType = null;
+              state.minimumNavigationMoveSpeed = 3;
+              state.minimumNavigationTurnSpeed = 3;
             });
             usePrimitiveStore.setState((state) => {
               state.showSolarRadiationHeatmap = false;
@@ -4221,6 +4235,8 @@ export const useStore = create<CommonStoreState>(
           'evolutionaryAlgorithmState',
           'geneticAlgorithmWizardSelectedTab',
           'particleSwarmOptimizationWizardSelectedTab',
+          'minimumNavigationMoveSpeed',
+          'minimumNavigationTurnSpeed',
         ],
       },
     ),

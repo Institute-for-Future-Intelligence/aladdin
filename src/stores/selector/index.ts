@@ -12,6 +12,18 @@ export const user = (state: CommonStoreState) => state.user;
 
 export const userCount = (state: PrimitiveStoreState) => state.userCount;
 
+export const showEconomicsPanel = (state: PrimitiveStoreState) => state.showEconomicsPanel;
+
+export const showNavigationPanel = (state: PrimitiveStoreState) => state.showNavigationPanel;
+
+export const minimumNavigationMoveSpeed = (state: CommonStoreState) => state.minimumNavigationMoveSpeed;
+
+export const minimumNavigationTurnSpeed = (state: CommonStoreState) => state.minimumNavigationTurnSpeed;
+
+export const navigationMoveSpeed = (state: PrimitiveStoreState) => state.navigationMoveSpeed;
+
+export const navigationTurnSpeed = (state: PrimitiveStoreState) => state.navigationTurnSpeed;
+
 export const getHeatmap = (state: DataStoreState) => state.getHeatmap;
 
 export const setHeatmap = (state: DataStoreState) => state.setHeatmap;

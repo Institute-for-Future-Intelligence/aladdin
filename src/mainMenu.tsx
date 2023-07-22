@@ -123,7 +123,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
   const showMapPanel = useStore.getState().viewState.showMapPanel;
   const showWeatherPanel = useStore.getState().viewState.showWeatherPanel;
   const showDiurnalTemperaturePanel = useStore.getState().viewState.showDiurnalTemperaturePanel;
-  const showEconomicsPanel = useStore.getState().viewState.showEconomicsPanel;
+  const showEconomicsPanel = usePrimitiveStore.getState().showEconomicsPanel;
+  const showNavigationPanel = usePrimitiveStore.getState().showNavigationPanel;
   const showStickyNotePanel = useStore.getState().viewState.showStickyNotePanel;
   const showHeliodonPanel = useStore.getState().viewState.showHeliodonPanel;
   const shadowEnabled = useStore.getState().viewState.shadowEnabled;
@@ -1186,18 +1187,40 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
             <Menu.Item
               key={'economics-panel-menu-item'}
               onClick={() => {
-                setCommonStore((state) => {
-                  state.viewState.showEconomicsPanel = true;
-                  if (loggable) {
+                usePrimitiveStore.setState((state) => {
+                  state.showEconomicsPanel = true;
+                });
+                if (loggable) {
+                  setCommonStore((state) => {
                     state.actionInfo = {
                       name: 'Open Economics Panel',
                       timestamp: new Date().getTime(),
                     };
-                  }
-                });
+                  });
+                }
               }}
             >
               {i18n.t('economicsPanel.EconomicsParameters', lang)}...
+            </Menu.Item>
+          )}
+          {!showNavigationPanel && (
+            <Menu.Item
+              key={'navigation-panel-menu-item'}
+              onClick={() => {
+                usePrimitiveStore.setState((state) => {
+                  state.showNavigationPanel = true;
+                });
+                if (loggable) {
+                  setCommonStore((state) => {
+                    state.actionInfo = {
+                      name: 'Open Navigation Panel',
+                      timestamp: new Date().getTime(),
+                    };
+                  });
+                }
+              }}
+            >
+              {i18n.t('navigationPanel.NavigationParameters', lang)}...
             </Menu.Item>
           )}
         </SubMenu>

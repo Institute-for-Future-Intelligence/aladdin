@@ -1261,6 +1261,10 @@ export const i18n_en = {
       Exit2DMode: 'Exit 2D mode',
       EnableNavigation: 'Enable navigation',
       DisableNavigation: 'Disable navigation',
+      Move: 'Move',
+      MoveInstruction: 'Press W/A/S/D keys',
+      Turn: 'Turn',
+      TurnInstruction: 'Press arrow keys',
       ResetView: 'Reset',
       AutoRotate: 'Auto rotate',
       StartOrStop: 'Press F4 to start or stop',
@@ -1431,6 +1435,12 @@ export const i18n_en = {
       OperationalCostPerUnit: 'Operational Cost per Unit',
       SellingPrice: 'Selling Price',
       UnitCost: 'Unit Cost',
+    },
+
+    navigationPanel: {
+      NavigationParameters: 'Navigation Parameters',
+      MinimumMoveSpeed: 'Minimum Move Speed',
+      MinimumTurnSpeed: 'Minimum Turn Speed',
     },
 
     yearlyLightSensorPanel: {

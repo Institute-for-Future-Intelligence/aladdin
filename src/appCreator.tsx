@@ -61,6 +61,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const changed = useStore(Selector.changed);
   const addUndoable = useStore(Selector.addUndoable);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
+  const navigation = useStore(Selector.viewState.navigationView) ?? false;
   const sceneRadius = useStore(Selector.sceneRadius);
   const cloudFile = useStore(Selector.cloudFile);
   const projectView = useStore(Selector.projectView);
@@ -100,6 +101,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
         state.loggable = false;
       }
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const zoomView = (scale: number) => {
@@ -200,6 +202,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   };
 
   const setNavigationView = (selected: boolean) => {
+    if (navigation === selected) return;
     setCommonStore((state) => {
       state.viewState.navigationView = selected;
       state.viewState.enableRotate = !selected;

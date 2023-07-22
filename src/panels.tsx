@@ -36,6 +36,7 @@ import { usePrimitiveStore } from './stores/commonPrimitive';
 import { useStore } from './stores/common';
 import * as Selector from 'src/stores/selector';
 import { GraphDataType } from './types';
+import NavigationPanel from './panels/navigationPanel';
 
 const Panels = () => {
   const showSiteInfoPanel = useStore(Selector.viewState.showSiteInfoPanel);
@@ -46,7 +47,8 @@ const Panels = () => {
   const showStickyNotePanel = useStore(Selector.viewState.showStickyNotePanel);
   const showWeatherPanel = useStore(Selector.viewState.showWeatherPanel);
   const showDiurnalTemperaturePanel = useStore(Selector.viewState.showDiurnalTemperaturePanel);
-  const showEconomicsPanel = useStore(Selector.viewState.showEconomicsPanel);
+  const showEconomicsPanel = usePrimitiveStore(Selector.showEconomicsPanel);
+  const showNavigationPanel = usePrimitiveStore(Selector.showNavigationPanel);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const showDailyLightSensorPanel = useStore(Selector.viewState.showDailyLightSensorPanel);
   const showYearlyLightSensorPanel = useStore(Selector.viewState.showYearlyLightSensorPanel);
@@ -70,7 +72,6 @@ const Panels = () => {
   const worldLatitude = useStore(Selector.world.latitude);
   const worldLongitude = useStore(Selector.world.longitude);
   const getClosestCity = useStore(Selector.getClosestCity);
-  const setCommonStore = useStore(Selector.set);
 
   const [city, setCity] = useState<string>('Boston MA, USA');
 
@@ -94,8 +95,17 @@ const Panels = () => {
       {showEconomicsPanel && (
         <EconomicsPanel
           setDialogVisible={(visible) => {
-            setCommonStore((state) => {
-              state.viewState.showEconomicsPanel = visible;
+            usePrimitiveStore.setState((state) => {
+              state.showEconomicsPanel = visible;
+            });
+          }}
+        />
+      )}
+      {showNavigationPanel && (
+        <NavigationPanel
+          setDialogVisible={(visible) => {
+            usePrimitiveStore.setState((state) => {
+              state.showNavigationPanel = visible;
             });
           }}
         />

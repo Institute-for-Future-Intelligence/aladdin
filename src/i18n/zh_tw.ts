@@ -1239,6 +1239,10 @@ export const i18n_zh_tw = {
       Exit2DMode: '退出二維模式',
       EnableNavigation: '進入導航模式',
       DisableNavigation: '退出導航模式',
+      Move: '移動',
+      MoveInstruction: '按下W/A/S/D鍵',
+      Turn: '拐彎',
+      TurnInstruction: '按下方向鍵',
       ResetView: '重置視角',
       AutoRotate: '自動旋轉',
       StartOrStop: '按F4鍵啟動或停止',
@@ -1407,6 +1411,12 @@ export const i18n_zh_tw = {
       OperationalCostPerUnit: '單位運行成本',
       SellingPrice: '銷售電價',
       UnitCost: '單位成本',
+    },
+
+    navigationPanel: {
+      NavigationParameters: '導航模式參數',
+      MinimumMoveSpeed: '最小移動速度',
+      MinimumTurnSpeed: '最小拐彎速度',
     },
 
     yearlyLightSensorPanel: {

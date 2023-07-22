@@ -1263,6 +1263,10 @@ export const i18n_ua = {
       Exit2DMode: 'Exit 2D mode',
       EnableNavigation: 'Enable navigation',
       DisableNavigation: 'Disable navigation',
+      Move: 'Move',
+      MoveInstruction: 'Press W/A/S/D keys',
+      Turn: 'Turn',
+      TurnInstruction: 'Press arrow keys',
       ResetView: 'Скинути',
       AutoRotate: 'Автоматичний поворот',
       StartOrStop: 'Натисніть F4, щоб почати або зупинити',
@@ -1433,6 +1437,12 @@ export const i18n_ua = {
       OperationalCostPerUnit: 'Операційні витрати за одиницю',
       SellingPrice: 'Selling Price',
       UnitCost: 'Unit Cost',
+    },
+
+    navigationPanel: {
+      NavigationParameters: 'Navigation Parameters',
+      MinimumMoveSpeed: 'Minimum Move Speed',
+      MinimumTurnSpeed: 'Minimum Turn Speed',
     },
 
     yearlyLightSensorPanel: {
