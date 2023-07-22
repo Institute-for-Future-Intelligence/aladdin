@@ -71,6 +71,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
   }, [language]);
 
   const handleKeys = [
+    'ctrl+q', // first person controls
     'left',
     'up',
     'right',
@@ -665,6 +666,19 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
     const selectedElement = getSelectedElement();
     const step = 1;
     switch (keyName) {
+      // first person controls
+      case 'ctrl+q': {
+        setCommonStore((state) => {
+          const enabled = !state.viewState.firstPersonView;
+          state.viewState.firstPersonView = enabled;
+          state.viewState.enableRotate = !enabled;
+          if (enabled) {
+            state.viewState.orthographic = false;
+          }
+        });
+
+        break;
+      }
       case 'left':
         moveLeft(step);
         break;

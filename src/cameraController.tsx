@@ -238,12 +238,37 @@ const CameraController = () => {
   }, [compassMounted]);
 
   const enabldeFirstPersonControls = firstPersonView && !orthographic;
+
+  // key event
+  useEffect(() => {
+    if (!orbitControlRef.current) return;
+
+    if (enabldeFirstPersonControls) {
+      orbitControlRef.current.listenToKeyEvents(window);
+    } else {
+      orbitControlRef.current.removeKeyEvents();
+    }
+  }, [enabldeFirstPersonControls]);
+
+  //switch to first person controls
+  useEffect(() => {
+    if (!orbitControlRef.current) return;
+
+    if (enabldeFirstPersonControls) {
+      const camera = get().camera;
+      camera.position.z = 3;
+      camera.lookAt(0, 0, 3);
+    } else {
+      orbitControlRef.current.update();
+    }
+  }, [enabldeFirstPersonControls]);
+
   return (
     <>
       <PerspectiveCamera ref={persCameraRef} fov={DEFAULT_FOV} far={DEFAULT_FAR} up={[0, 0, 1]} />
       <OrthographicCamera ref={orthCameraRef} up={[0, 0, 1]} />
 
-      {enabldeFirstPersonControls && <FirstPersonViewControls />}
+      {/* {enabldeFirstPersonControls && <FirstPersonViewControls />} */}
 
       <myOrbitControls
         ref={orbitControlRef}
@@ -257,7 +282,6 @@ const CameraController = () => {
         minAzimuthAngle={-Infinity}
         maxPolarAngle={HALF_PI}
         minPolarAngle={0}
-        enabled={!enabldeFirstPersonControls}
       />
     </>
   );

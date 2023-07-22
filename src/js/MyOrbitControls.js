@@ -1,4 +1,5 @@
 import {
+  Euler,
   EventDispatcher,
   MOUSE,
   Quaternion,
@@ -82,7 +83,16 @@ class MyOrbitControls extends EventDispatcher {
     this.autoRotateSpeed = 2.0; // 30 seconds per orbit when fps is 60
 
     // The four arrow keys
-    this.keys = { LEFT: 'ArrowLeft', UP: 'ArrowUp', RIGHT: 'ArrowRight', BOTTOM: 'ArrowDown' };
+    this.keys = { 
+      MOVE_LEFT: 'KeyA', 
+      MOVE_RIGHT: 'KeyD', 
+      MOVE_FORWARD: 'KeyW', 
+      MOVE_BACKWARD: 'KeyS', 
+      ROTATE_LEFT: 'ArrowLeft', 
+      ROTATE_UP: 'ArrowUp', 
+      ROTATE_RIGHT: 'ArrowRight', 
+      ROTATE_DOWN: 'ArrowDown' 
+    };
 
     // Mouse buttons
     this.mouseButtons = { LEFT: MOUSE.ROTATE, MIDDLE: MOUSE.DOLLY, RIGHT: MOUSE.PAN };
@@ -126,6 +136,16 @@ class MyOrbitControls extends EventDispatcher {
       this._domElementKeyEvents = domElement;
 
     };
+
+    this.removeKeyEvents = function () {
+
+      if ( scope._domElementKeyEvents !== null ) {
+
+        scope._domElementKeyEvents.removeEventListener( 'keydown', onKeyDown );
+
+      }
+
+    }
 
     this.saveState = function () {
 
@@ -358,6 +378,10 @@ class MyOrbitControls extends EventDispatcher {
     const pointers = [];
     const pointerPositions = {};
 
+    // first person 
+    let reverse = false;
+    let oldZ = 0;
+
     function getAutoRotationAngle() {
 
       return 2 * Math.PI / 60 / 60 * scope.autoRotateSpeed;
@@ -463,6 +487,103 @@ class MyOrbitControls extends EventDispatcher {
 
     }();
 
+    const moveForward = function() {
+
+      const _vector = new Vector3();
+
+      return function moveForward( distance ) {
+
+        const camera = scope.object;
+
+        _vector.setFromMatrixColumn( camera.matrix, 0 );
+    
+        _vector.crossVectors( camera.up, _vector );
+
+        _vector.multiplyScalar( distance * 0.1 );
+
+        camera.position.add(_vector)
+        
+        scope.dispatchEvent( _changeEvent );
+
+      }
+
+    }();
+
+    const moveRight = function() {
+
+      const _vector = new Vector3();
+
+      return function moveRight( distance ) {
+
+        const camera = scope.object;
+    
+        _vector.setFromMatrixColumn( camera.matrix, 0 );
+    
+        _vector.multiplyScalar( distance * 0.1 );
+
+        camera.position.add( _vector );
+
+        scope.dispatchEvent( _changeEvent );
+    
+      }
+    }();
+
+    const spinUp = function() {
+
+      const _euler = new Euler( 0, 0, 0, 'ZXY' );
+
+      return function spinUp( distance ) {
+
+        const camera = scope.object;
+
+        _euler.setFromQuaternion( camera.quaternion );
+
+        if ( Math.abs( Math.abs( _euler.z - oldZ ) - Math.PI ) < 0.01 ) {
+
+          reverse = !reverse;
+      
+        } 
+
+        if ( reverse ) {
+
+          _euler.x -= 0.01 * distance;
+
+        } else {
+
+          _euler.x += 0.01 * distance;
+
+        }
+
+        oldZ = _euler.z;
+
+        camera.quaternion.setFromEuler( _euler );
+
+        scope.dispatchEvent( _changeEvent );
+
+      } 
+
+    }();
+
+    const spinRight = function() {
+
+      const _euler = new Euler( 0, 0, 0, 'ZXY' );
+
+      return function rotateRight( distance ) {
+
+        const camera = scope.object;
+
+        _euler.setFromQuaternion( camera.quaternion );
+
+        _euler.z -= 0.01 * distance;
+
+        camera.quaternion.setFromEuler( _euler );
+
+        scope.dispatchEvent( _changeEvent );
+
+      }
+
+    }();
+    
     function dollyOut( dollyScale ) {
 
       if ( scope.object.isPerspectiveCamera ) {
@@ -603,24 +724,36 @@ class MyOrbitControls extends EventDispatcher {
 
       switch ( event.code ) {
 
-        case scope.keys.UP:
-          pan( 0, scope.keyPanSpeed );
-          needsUpdate = true;
+        case scope.keys.MOVE_FORWARD:
+          moveForward(1);
           break;
 
-        case scope.keys.BOTTOM:
-          pan( 0, - scope.keyPanSpeed );
-          needsUpdate = true;
+        case scope.keys.MOVE_BACKWARD:
+          moveForward(-1);
           break;
 
-        case scope.keys.LEFT:
-          pan( scope.keyPanSpeed, 0 );
-          needsUpdate = true;
+        case scope.keys.MOVE_RIGHT:
+          moveRight(1);
           break;
 
-        case scope.keys.RIGHT:
-          pan( - scope.keyPanSpeed, 0 );
-          needsUpdate = true;
+        case scope.keys.MOVE_LEFT:
+          moveRight(-1);
+          break;
+
+        case scope.keys.ROTATE_UP:
+          spinUp(1);
+          break;
+
+        case scope.keys.ROTATE_DOWN:
+          spinUp(-1);
+          break;
+
+        case scope.keys.ROTATE_LEFT:
+          spinRight( -1 );
+          break;
+
+        case scope.keys.ROTATE_RIGHT:
+          spinRight( 1 );
           break;
 
       }
