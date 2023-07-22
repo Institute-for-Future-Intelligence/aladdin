@@ -83,6 +83,7 @@ class MyOrbitControls extends EventDispatcher {
     this.autoRotateSpeed = 2.0; // 30 seconds per orbit when fps is 60
 
     // The four arrow keys
+    this.firstPersonMoveSpeed = 1;
     this.keys = { 
       MOVE_LEFT: 'KeyA', 
       MOVE_RIGHT: 'KeyD', 
@@ -725,35 +726,35 @@ class MyOrbitControls extends EventDispatcher {
       switch ( event.code ) {
 
         case scope.keys.MOVE_FORWARD:
-          moveForward(1);
+          moveForward(scope.firstPersonMoveSpeed);
           break;
 
         case scope.keys.MOVE_BACKWARD:
-          moveForward(-1);
+          moveForward(-scope.firstPersonMoveSpeed);
           break;
 
         case scope.keys.MOVE_RIGHT:
-          moveRight(1);
+          moveRight(scope.firstPersonMoveSpeed);
           break;
 
         case scope.keys.MOVE_LEFT:
-          moveRight(-1);
+          moveRight(-scope.firstPersonMoveSpeed);
           break;
 
         case scope.keys.ROTATE_UP:
-          spinUp(1);
+          spinUp(scope.firstPersonMoveSpeed);
           break;
 
         case scope.keys.ROTATE_DOWN:
-          spinUp(-1);
+          spinUp(-scope.firstPersonMoveSpeed);
           break;
 
         case scope.keys.ROTATE_LEFT:
-          spinRight( -1 );
+          spinRight( -scope.firstPersonMoveSpeed );
           break;
 
         case scope.keys.ROTATE_RIGHT:
-          spinRight( 1 );
+          spinRight( scope.firstPersonMoveSpeed );
           break;
 
       }

@@ -282,6 +282,7 @@ const CameraController = () => {
         minAzimuthAngle={-Infinity}
         maxPolarAngle={HALF_PI}
         minPolarAngle={0}
+        firstPersonMoveSpeed={3}
       />
     </>
   );
