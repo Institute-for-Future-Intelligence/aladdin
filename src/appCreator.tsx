@@ -39,7 +39,7 @@ import SolarPanelTiltAngleGa from './ai/ga/solarPanelTiltAngleGa';
 import SolarPanelArrayGa from './ai/ga/solarPanelArrayGa';
 import SolarPanelTiltAnglePso from './ai/pso/solarPanelTiltAnglePso';
 import SolarPanelArrayPso from './ai/pso/solarPanelArrayPso';
-import PointerStyleController from './pointerStyleController';
+import NavigationController from './navigationController';
 import Loading from './loading';
 import Panels from './panels';
 import Simulations from './simulations';
@@ -194,14 +194,14 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       state.viewState.orthographic = selected;
       state.viewState.enableRotate = !selected;
       if (selected) {
-        state.viewState.firstPersonView = false;
+        state.viewState.navigationView = false;
       }
     });
   };
 
-  const setFirstPersonView = (selected: boolean) => {
+  const setNavigationView = (selected: boolean) => {
     setCommonStore((state) => {
-      state.viewState.firstPersonView = selected;
+      state.viewState.navigationView = selected;
       state.viewState.enableRotate = !selected;
       if (selected) {
         state.viewState.orthographic = false;
@@ -223,7 +223,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
         style={{ height: '100%', width: '100%', backgroundColor: 'black' }}
         camera={{ fov: DEFAULT_FOV, far: DEFAULT_FAR, up: [0, 0, 1] }}
       >
-        <PointerStyleController />
+        <NavigationController />
         <CameraController />
         <Lights />
         <Ground />
@@ -406,7 +406,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       <MainMenu
         viewOnly={viewOnly}
         canvas={canvasRef.current}
-        setFirstPersonView={setFirstPersonView}
+        setNavigationView={setNavigationView}
         set2DView={set2DView}
         resetView={resetView}
         zoomView={zoomView}

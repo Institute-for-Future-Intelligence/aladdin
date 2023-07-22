@@ -4,7 +4,7 @@
 
 import { CommonStoreState } from '../common';
 
-export const firstPersonView = (state: CommonStoreState) => state.viewState.firstPersonView;
+export const navigationView = (state: CommonStoreState) => state.viewState.navigationView;
 
 export const shadowEnabled = (state: CommonStoreState) => state.viewState.shadowEnabled;
 

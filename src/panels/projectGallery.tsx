@@ -6,7 +6,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import styled from 'styled-components';
-import { Collapse, Descriptions, Button, List, Popover, Checkbox } from 'antd';
+import { Collapse, Button, Input, List, Popover, Checkbox } from 'antd';
 import i18n from '../i18n/i18n';
 import {
   BarChartOutlined,
@@ -26,6 +26,8 @@ import { copyTextToClipboard, showInfo, showSuccess } from '../helpers';
 import { Util } from '../Util';
 import { ProjectUtil } from './ProjectUtil';
 import { HOME_URL } from '../constants';
+
+const { TextArea } = Input;
 
 const Container = styled.div`
   position: relative;
@@ -124,6 +126,8 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, updateProj
   const [hoveredDesign, setHoveredDesign] = useState<Design | undefined>();
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [updateHiddenFlag, setUpdateHiddenFlag] = useState<boolean>(false);
+
+  const descriptionTextAreaEditableRef = useRef<boolean>(false);
 
   const lang = useMemo(() => {
     return { lng: language };
@@ -438,9 +442,20 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, updateProj
               </SubHeader>
             }
           >
-            <Descriptions style={{ paddingLeft: '10px', textAlign: 'left' }}>
-              <Descriptions.Item>{projectDescription}</Descriptions.Item>
-            </Descriptions>
+            <TextArea
+              bordered={descriptionTextAreaEditableRef.current}
+              readOnly={!descriptionTextAreaEditableRef.current}
+              value={projectDescription ?? undefined}
+              onDoubleClick={() => {
+                descriptionTextAreaEditableRef.current = !descriptionTextAreaEditableRef.current;
+                setUpdateFlag(!updateFlag);
+              }}
+              style={{
+                paddingLeft: '10px',
+                textAlign: 'left',
+                resize: descriptionTextAreaEditableRef.current ? 'vertical' : 'none',
+              }}
+            />
           </Collapse.Panel>
         </Collapse>
         {projectDesigns && (

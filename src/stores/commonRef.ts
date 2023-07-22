@@ -24,7 +24,7 @@ export interface RefStoreState {
 export const useRefStore = create<RefStoreState>((set, get) => {
   return {
     setEnableOrbitController: (b: boolean) => {
-      if (useStore.getState().viewState.firstPersonView) {
+      if (useStore.getState().viewState.navigationView) {
         return;
       }
       set((state) => {

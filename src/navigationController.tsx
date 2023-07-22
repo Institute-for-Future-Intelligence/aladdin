@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2023. Institute for Future Intelligence, Inc.
  *
  */
 
@@ -9,7 +9,7 @@ import { ObjectType } from './types';
 import * as Selector from 'src/stores/selector';
 import { useThree } from '@react-three/fiber';
 
-export const PointerStyleController = () => {
+export const NavigationController = () => {
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
   const addedFoundationId = useStore(Selector.addedFoundationId);
   const addedCuboidId = useStore(Selector.addedCuboidId);
@@ -21,4 +21,4 @@ export const PointerStyleController = () => {
   return null;
 };
 
-export default React.memo(PointerStyleController);
+export default React.memo(NavigationController);

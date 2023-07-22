@@ -5,7 +5,7 @@
 import { Rectangle } from '../models/Rectangle';
 
 export interface ViewState {
-  firstPersonView: boolean;
+  navigationView: boolean;
   orthographic: boolean;
   enableRotate: boolean;
   directLightIntensity: number;

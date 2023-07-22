@@ -314,7 +314,7 @@ export const i18n_ua = {
       },
       viewSubMenu: 'Перегляд',
       view: {
-        FirstPersonView: 'First Person View',
+        NavigationView: 'Navigation View',
         TwoDimensionalView: '2D Вигляд',
         ResetView: 'Скинути',
         ZoomIn: 'Збільшити масштаб',

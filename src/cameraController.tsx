@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import { OrthographicCamera, PerspectiveCamera } from '@react-three/drei';
@@ -39,9 +39,9 @@ const CameraController = () => {
   const sceneRadius = useStore(Selector.sceneRadius);
   const cameraPosition = useStore(Selector.viewState.cameraPosition);
   const cameraZoom = useStore(Selector.viewState.cameraZoom);
-  const firstPersonView = useStore(Selector.viewState.firstPersonView);
+  const navigationView = useStore(Selector.viewState.navigationView);
 
-  const enabldeFirstPersonControls = firstPersonView && !orthographic;
+  const enabldeNavigationControls = navigationView && !orthographic;
   const cameraPositionLength = Math.hypot(cameraPosition[0], cameraPosition[1], cameraPosition[2]);
   const panRadius = (orthographic ? cameraZoom * 50 : cameraPositionLength * 10) * sceneRadius;
   const minPan = useMemo(() => new Vector3(-panRadius, -panRadius, 0), [panRadius]);
@@ -241,25 +241,25 @@ const CameraController = () => {
   useEffect(() => {
     if (!orbitControlRef.current) return;
 
-    if (enabldeFirstPersonControls) {
+    if (enabldeNavigationControls) {
       orbitControlRef.current.listenToKeyEvents(window);
     } else {
       orbitControlRef.current.removeKeyEvents();
     }
-  }, [enabldeFirstPersonControls]);
+  }, [enabldeNavigationControls]);
 
-  //switch to first person controls
+  //switch to navigation controls
   useEffect(() => {
     if (!orbitControlRef.current) return;
 
-    if (enabldeFirstPersonControls) {
+    if (enabldeNavigationControls) {
       const camera = get().camera;
       camera.position.z = 3;
       camera.lookAt(0, 0, 2);
     } else {
       orbitControlRef.current.update();
     }
-  }, [enabldeFirstPersonControls]);
+  }, [enabldeNavigationControls]);
 
   return (
     <>
@@ -277,7 +277,7 @@ const CameraController = () => {
         minAzimuthAngle={-Infinity}
         maxPolarAngle={HALF_PI}
         minPolarAngle={0}
-        firstPersonMoveSpeed={3}
+        navigationSpeed={3}
       />
     </>
   );

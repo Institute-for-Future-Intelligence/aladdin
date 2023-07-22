@@ -311,7 +311,7 @@ export const i18n_es = {
       },
       viewSubMenu: 'Vista',
       view: {
-        FirstPersonView: 'First Person View',
+        NavigationView: 'Navigation View',
         TwoDimensionalView: 'Vista 2D',
         ResetView: 'Resetear',
         ZoomIn: 'Acercar',

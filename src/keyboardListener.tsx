@@ -71,7 +71,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
   }, [language]);
 
   const handleKeys = [
-    'ctrl+q', // first person controls
+    'ctrl+q', // navigation controls
     'left',
     'up',
     'right',
@@ -144,7 +144,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
   };
 
   const toggle2DView = () => {
-    if (useStore.getState().viewState.firstPersonView) return;
+    if (useStore.getState().viewState.navigationView) return;
     const undoableCheck = {
       name: 'Set 2D View',
       timestamp: Date.now(),
@@ -666,11 +666,11 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
     const selectedElement = getSelectedElement();
     const step = 1;
     switch (keyName) {
-      // first person controls
+      // navigation controls
       case 'ctrl+q': {
         setCommonStore((state) => {
-          const enabled = !state.viewState.firstPersonView;
-          state.viewState.firstPersonView = enabled;
+          const enabled = !state.viewState.navigationView;
+          state.viewState.navigationView = enabled;
           state.viewState.enableRotate = !enabled;
           if (enabled) {
             state.viewState.orthographic = false;

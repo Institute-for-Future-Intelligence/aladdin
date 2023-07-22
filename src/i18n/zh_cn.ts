@@ -309,7 +309,7 @@ export const i18n_zh_cn = {
       },
       viewSubMenu: '视界',
       view: {
-        FirstPersonView: '第一人称视角',
+        NavigationView: '导航模式',
         TwoDimensionalView: '二维模式',
         ResetView: '重置视角',
         ZoomIn: '放大',

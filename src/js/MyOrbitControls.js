@@ -83,16 +83,16 @@ class MyOrbitControls extends EventDispatcher {
     this.autoRotateSpeed = 2.0; // 30 seconds per orbit when fps is 60
 
     // The four arrow keys
-    this.firstPersonMoveSpeed = 1;
-    this.keys = { 
-      MOVE_LEFT: 'KeyA', 
-      MOVE_RIGHT: 'KeyD', 
-      MOVE_FORWARD: 'KeyW', 
-      MOVE_BACKWARD: 'KeyS', 
-      ROTATE_LEFT: 'ArrowLeft', 
-      ROTATE_UP: 'ArrowUp', 
-      ROTATE_RIGHT: 'ArrowRight', 
-      ROTATE_DOWN: 'ArrowDown' 
+    this.navigationSpeed = 1;
+    this.keys = {
+      MOVE_LEFT: 'KeyA',
+      MOVE_RIGHT: 'KeyD',
+      MOVE_FORWARD: 'KeyW',
+      MOVE_BACKWARD: 'KeyS',
+      ROTATE_LEFT: 'ArrowLeft',
+      ROTATE_UP: 'ArrowUp',
+      ROTATE_RIGHT: 'ArrowRight',
+      ROTATE_DOWN: 'ArrowDown'
     };
 
     // Mouse buttons
@@ -382,7 +382,7 @@ class MyOrbitControls extends EventDispatcher {
     const pointers = [];
     const pointerPositions = {};
 
-    // first person 
+    // navigation
     let reverse = false;
     let oldZ = 0;
 
@@ -500,13 +500,13 @@ class MyOrbitControls extends EventDispatcher {
         const camera = scope.object;
 
         _vector.setFromMatrixColumn( camera.matrix, 0 );
-    
+
         _vector.crossVectors( camera.up, _vector );
 
         _vector.multiplyScalar( distance * 0.1 );
 
         camera.position.add(_vector)
-        
+
         scope.dispatchEvent( _changeEvent );
 
       }
@@ -520,15 +520,15 @@ class MyOrbitControls extends EventDispatcher {
       return function moveRight( distance ) {
 
         const camera = scope.object;
-    
+
         _vector.setFromMatrixColumn( camera.matrix, 0 );
-    
+
         _vector.multiplyScalar( distance * 0.1 );
 
         camera.position.add( _vector );
 
         scope.dispatchEvent( _changeEvent );
-    
+
       }
     }();
 
@@ -546,7 +546,7 @@ class MyOrbitControls extends EventDispatcher {
 
           reverse = !reverse;
 
-        } 
+        }
 
         if ( reverse ) {
 
@@ -566,7 +566,7 @@ class MyOrbitControls extends EventDispatcher {
 
         scope.dispatchEvent( _changeEvent );
 
-      } 
+      }
 
     }();
 
@@ -589,7 +589,7 @@ class MyOrbitControls extends EventDispatcher {
       }
 
     }();
-    
+
     function dollyOut( dollyScale ) {
 
       if ( scope.object.isPerspectiveCamera ) {
@@ -731,35 +731,35 @@ class MyOrbitControls extends EventDispatcher {
       switch ( event.code ) {
 
         case scope.keys.MOVE_FORWARD:
-          moveForward(scope.firstPersonMoveSpeed);
+          moveForward(scope.navigationSpeed);
           break;
 
         case scope.keys.MOVE_BACKWARD:
-          moveForward(-scope.firstPersonMoveSpeed);
+          moveForward(-scope.navigationSpeed);
           break;
 
         case scope.keys.MOVE_RIGHT:
-          moveRight(scope.firstPersonMoveSpeed);
+          moveRight(scope.navigationSpeed);
           break;
 
         case scope.keys.MOVE_LEFT:
-          moveRight(-scope.firstPersonMoveSpeed);
+          moveRight(-scope.navigationSpeed);
           break;
 
         case scope.keys.ROTATE_UP:
-          spinUp(scope.firstPersonMoveSpeed);
+          spinUp(scope.navigationSpeed);
           break;
 
         case scope.keys.ROTATE_DOWN:
-          spinUp(-scope.firstPersonMoveSpeed);
+          spinUp(-scope.navigationSpeed);
           break;
 
         case scope.keys.ROTATE_LEFT:
-          spinRight( -scope.firstPersonMoveSpeed );
+          spinRight( -scope.navigationSpeed );
           break;
 
         case scope.keys.ROTATE_RIGHT:
-          spinRight( scope.firstPersonMoveSpeed );
+          spinRight( scope.navigationSpeed );
           break;
 
       }

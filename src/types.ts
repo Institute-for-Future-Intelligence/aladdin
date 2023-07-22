@@ -5,7 +5,6 @@
 import { extend, Object3DNode } from '@react-three/fiber';
 import TextSprite from 'three-spritetext';
 import { MyOrbitControls } from './js/MyOrbitControls';
-import { MyPointerLockControls } from './js/MyPointerLockControls';
 import { ParabolicCylinderGeometry } from './js/ParabolicCylinderGeometry';
 import { ParaboloidGeometry } from './js/ParaboloidGeometry';
 import { ConvexGeometry } from './js/ConvexGeometry';
@@ -14,7 +13,6 @@ import { Vector2 } from 'three';
 // Extend makes these JSX elements (with the first character lower-cased)
 extend({ TextSprite });
 extend({ MyOrbitControls });
-extend({ MyPointerLockControls });
 extend({ ParabolicCylinderGeometry });
 extend({ ParaboloidGeometry });
 extend({ ConvexGeometry });
@@ -24,7 +22,6 @@ declare global {
     interface IntrinsicElements {
       textSprite: Object3DNode<TextSprite, typeof TextSprite>;
       myOrbitControls: Object3DNode<MyOrbitControls, typeof MyOrbitControls>;
-      myPointerLockControls: Object3DNode<MyPointerLockControls, typeof MyPointerLockControls>;
       parabolicCylinderGeometry: Object3DNode<ParabolicCylinderGeometry, typeof ParabolicCylinderGeometry>;
       paraboloidGeometry: Object3DNode<ParaboloidGeometry, typeof ParaboloidGeometry>;
       convexGeometry: Object3DNode<ConvexGeometry, typeof ConvexGeometry>;
