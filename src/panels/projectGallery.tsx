@@ -9,12 +9,15 @@ import styled from 'styled-components';
 import { Collapse, Button, Input, List, Popover, Checkbox } from 'antd';
 import i18n from '../i18n/i18n';
 import {
-  BarChartOutlined,
+  LineChartOutlined,
   CameraOutlined,
   CloseOutlined,
   DeleteOutlined,
+  EditFilled,
+  EditOutlined,
   ImportOutlined,
   LinkOutlined,
+  UploadOutlined,
 } from '@ant-design/icons';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import ImageLoadFailureIcon from '../assets/image_fail_try_again.png';
@@ -137,6 +140,7 @@ const ProjectGallery = ({
   const descriptionTextAreaEditableRef = useRef<boolean>(false);
   const descriptionRef = useRef<string | null>(projectDescription);
   const descriptionChangedRef = useRef<boolean>(false);
+  const descriptionExpandedRef = useRef<boolean>(false);
 
   const lang = useMemo(() => {
     return { lng: language };
@@ -361,6 +365,17 @@ const ProjectGallery = ({
     });
   };
 
+  const isProjectDesign = useMemo(() => {
+    if (cloudFile && projectDesigns) {
+      for (const design of projectDesigns) {
+        if (cloudFile === design.title) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }, [cloudFile, projectDesigns]);
+
   return (
     <Container>
       <ColumnWrapper>
@@ -385,7 +400,13 @@ const ProjectGallery = ({
             <CloseOutlined title={i18n.t('word.Close', lang)} />
           </span>
         </Header>
-        <Collapse style={{ backgroundColor: 'white', border: 'none' }}>
+        <Collapse
+          style={{ backgroundColor: 'white', border: 'none' }}
+          onChange={(e) => {
+            descriptionExpandedRef.current = e.length > 0;
+            setUpdateFlag(!updateFlag);
+          }}
+        >
           <Collapse.Panel
             style={{ backgroundColor: 'white', border: 'none' }}
             key={'1'}
@@ -401,6 +422,28 @@ const ProjectGallery = ({
                 <span>
                   {user.uid === projectOwner && (
                     <>
+                      {descriptionExpandedRef.current && (
+                        <Button
+                          style={{ border: 'none', padding: '4px' }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            descriptionTextAreaEditableRef.current = !descriptionTextAreaEditableRef.current;
+                            setUpdateFlag(!updateFlag);
+                          }}
+                        >
+                          {descriptionTextAreaEditableRef.current ? (
+                            <EditFilled
+                              style={{ fontSize: '24px', color: 'gray' }}
+                              title={i18n.t('projectPanel.MakeDescriptionNonEditable', lang)}
+                            />
+                          ) : (
+                            <EditOutlined
+                              style={{ fontSize: '24px', color: 'gray' }}
+                              title={i18n.t('projectPanel.MakeDescriptionEditable', lang)}
+                            />
+                          )}
+                        </Button>
+                      )}
                       <Button
                         style={{ border: 'none', padding: '4px' }}
                         onClick={(e) => {
@@ -413,42 +456,59 @@ const ProjectGallery = ({
                           title={i18n.t('projectPanel.CurateCurrentDesign', lang)}
                         />
                       </Button>
-                      <Button
-                        style={{ border: 'none', padding: '4px' }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          removeSelectedDesign();
-                        }}
-                      >
-                        <DeleteOutlined
-                          style={{ fontSize: '24px', color: 'gray' }}
-                          title={i18n.t('projectPanel.RemoveSelectedDesign', lang)}
-                        />
-                      </Button>
-                      <Button
-                        style={{ border: 'none', padding: '4px' }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (projectTitle) {
-                            let url =
-                              HOME_URL +
-                              '?client=web&userid=' +
-                              user.uid +
-                              '&project=' +
-                              encodeURIComponent(projectTitle);
-                            if (selectedDesign) {
-                              url += '&title=' + selectedDesign.title;
+                      {isProjectDesign && (
+                        <Button
+                          style={{ border: 'none', padding: '4px' }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                          }}
+                        >
+                          <UploadOutlined
+                            style={{ fontSize: '24px', color: 'gray' }}
+                            title={i18n.t('projectPanel.UpdateSelectedDesign', lang)}
+                          />
+                        </Button>
+                      )}
+                      {selectedDesign && (
+                        <Button
+                          style={{ border: 'none', padding: '4px' }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            removeSelectedDesign();
+                          }}
+                        >
+                          <DeleteOutlined
+                            style={{ fontSize: '24px', color: 'gray' }}
+                            title={i18n.t('projectPanel.RemoveSelectedDesign', lang)}
+                          />
+                        </Button>
+                      )}
+                      {selectedDesign && (
+                        <Button
+                          style={{ border: 'none', padding: '4px' }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (projectTitle) {
+                              let url =
+                                HOME_URL +
+                                '?client=web&userid=' +
+                                user.uid +
+                                '&project=' +
+                                encodeURIComponent(projectTitle);
+                              if (selectedDesign) {
+                                url += '&title=' + selectedDesign.title;
+                              }
+                              copyTextToClipboard(url);
+                              showSuccess(i18n.t('projectListPanel.ProjectLinkGeneratedInClipBoard', lang) + '.');
                             }
-                            copyTextToClipboard(url);
-                            showSuccess(i18n.t('projectListPanel.ProjectLinkGeneratedInClipBoard', lang) + '.');
-                          }
-                        }}
-                      >
-                        <LinkOutlined
-                          style={{ fontSize: '24px', color: 'gray' }}
-                          title={i18n.t('projectListPanel.GenerateProjectLink', lang)}
-                        />
-                      </Button>
+                          }}
+                        >
+                          <LinkOutlined
+                            style={{ fontSize: '24px', color: 'gray' }}
+                            title={i18n.t('projectListPanel.GenerateProjectLink', lang)}
+                          />
+                        </Button>
+                      )}
                     </>
                   )}
                 </span>
@@ -456,6 +516,11 @@ const ProjectGallery = ({
             }
           >
             <TextArea
+              title={
+                descriptionTextAreaEditableRef.current
+                  ? undefined
+                  : i18n.t('projectPanel.DoubleClickToMakeDescriptionEditable', lang)
+              }
               bordered={descriptionTextAreaEditableRef.current}
               readOnly={!descriptionTextAreaEditableRef.current}
               value={descriptionRef.current ?? undefined}
@@ -711,7 +776,7 @@ const ProjectGallery = ({
                     }
                   >
                     <Button style={{ border: 'none', paddingRight: 0, background: 'white' }} onClick={() => {}}>
-                      <BarChartOutlined style={{ fontSize: '24px', color: 'gray' }} />
+                      <LineChartOutlined style={{ fontSize: '24px', color: 'gray' }} />
                     </Button>
                   </Popover>
                 )}
