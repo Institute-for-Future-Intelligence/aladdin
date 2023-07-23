@@ -21,7 +21,12 @@ import AcceptCookie from './acceptCookie';
 import GroundImage from './views/groundImage';
 import DropdownContextMenu from './components/contextMenu';
 import { DesignProblem, EvolutionMethod } from './types';
-import CloudManager, { loadDataFromFirebase, removeDesignFromProject, updateProject } from './cloudManager';
+import CloudManager, {
+  loadDataFromFirebase,
+  removeDesignFromProject,
+  updateProjectDescription,
+  updateProjectParameters,
+} from './cloudManager';
 import ActionLogger from './actionLogger';
 import Lights from './lights';
 import { Auxiliary } from './auxiliary';
@@ -445,7 +450,8 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
               relativeWidth={1 - canvasRelativeWidth * 0.01}
               openCloudFile={loadDataFromFirebase}
               deleteDesign={removeDesignFromProject}
-              updateProject={updateProject}
+              updateProjectDescription={updateProjectDescription}
+              updateProjectParameters={updateProjectParameters}
             />
             {createCanvas()}
           </SplitPane>

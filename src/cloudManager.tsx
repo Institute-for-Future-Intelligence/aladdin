@@ -1628,7 +1628,12 @@ export const removeDesignFromProject = (userid: string, projectTitle: string, de
     });
 };
 
-export const updateProject = (userid: string, projectTitle: string, hiddenParameter: string, add: boolean) => {
+export const updateProjectParameters = (
+  userid: string,
+  projectTitle: string,
+  hiddenParameter: string,
+  add: boolean,
+) => {
   const language = useStore.getState().language;
   const lang = { lng: language };
 
@@ -1643,6 +1648,23 @@ export const updateProject = (userid: string, projectTitle: string, hiddenParame
         ? firebase.firestore.FieldValue.arrayUnion(hiddenParameter)
         : firebase.firestore.FieldValue.arrayRemove(hiddenParameter),
     })
+    .then(() => {})
+    .catch((error) => {
+      showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
+    });
+};
+
+export const updateProjectDescription = (userid: string, projectTitle: string, description: string | null) => {
+  const language = useStore.getState().language;
+  const lang = { lng: language };
+
+  return firebase
+    .firestore()
+    .collection('users')
+    .doc(userid)
+    .collection('projects')
+    .doc(projectTitle)
+    .update({ description })
     .then(() => {})
     .catch((error) => {
       showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);

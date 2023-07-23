@@ -105,10 +105,17 @@ export interface ProjectGalleryProps {
   relativeWidth: number;
   openCloudFile?: (userid: string, title: string, popState?: boolean) => void;
   deleteDesign?: (userid: string, projectTitle: string, design: Design) => void;
-  updateProject?: (userid: string, projectTitle: string, hiddenParameter: string, add: boolean) => void;
+  updateProjectDescription?: (userid: string, projectTitle: string, description: string | null) => void;
+  updateProjectParameters?: (userid: string, projectTitle: string, hiddenParameter: string, add: boolean) => void;
 }
 
-const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, updateProject }: ProjectGalleryProps) => {
+const ProjectGallery = ({
+  relativeWidth,
+  openCloudFile,
+  deleteDesign,
+  updateProjectDescription,
+  updateProjectParameters,
+}: ProjectGalleryProps) => {
   const setCommonStore = useStore(Selector.set);
   const user = useStore(Selector.user);
   const language = useStore(Selector.language);
@@ -128,6 +135,8 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, updateProj
   const [updateHiddenFlag, setUpdateHiddenFlag] = useState<boolean>(false);
 
   const descriptionTextAreaEditableRef = useRef<boolean>(false);
+  const descriptionRef = useRef<string | null>(projectDescription);
+  const descriptionChangedRef = useRef<boolean>(false);
 
   const lang = useMemo(() => {
     return { lng: language };
@@ -321,6 +330,10 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, updateProj
     setUpdateFlag(!updateFlag);
   }, [projectHiddenParameters]);
 
+  useEffect(() => {
+    descriptionRef.current = projectDescription;
+  }, [projectDescription]);
+
   const hover = (i: number) => {
     if (projectDesigns) {
       if (i >= 0 && i < projectDesigns.length) {
@@ -330,9 +343,9 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, updateProj
   };
 
   const selectParameter = (selected: boolean, parameter: string) => {
-    if (updateProject) {
+    if (updateProjectParameters) {
       if (user.uid && projectOwner === user.uid && projectTitle) {
-        updateProject(user.uid, projectTitle, parameter, !selected);
+        updateProjectParameters(user.uid, projectTitle, parameter, !selected);
       }
     }
     setCommonStore((state) => {
@@ -445,9 +458,29 @@ const ProjectGallery = ({ relativeWidth, openCloudFile, deleteDesign, updateProj
             <TextArea
               bordered={descriptionTextAreaEditableRef.current}
               readOnly={!descriptionTextAreaEditableRef.current}
-              value={projectDescription ?? undefined}
+              value={descriptionRef.current ?? undefined}
               onDoubleClick={() => {
                 descriptionTextAreaEditableRef.current = !descriptionTextAreaEditableRef.current;
+                setUpdateFlag(!updateFlag);
+              }}
+              onChange={(e) => {
+                descriptionRef.current = e.target.value;
+                descriptionChangedRef.current = true;
+                setCommonStore((state) => {
+                  state.projectDescription = e.target.value;
+                });
+                setUpdateFlag(!updateFlag);
+              }}
+              onBlur={() => {
+                descriptionTextAreaEditableRef.current = false;
+                if (descriptionChangedRef.current) {
+                  if (updateProjectDescription) {
+                    if (user.uid && projectOwner === user.uid && projectTitle) {
+                      updateProjectDescription(user.uid, projectTitle, descriptionRef.current);
+                    }
+                  }
+                  descriptionChangedRef.current = false;
+                }
                 setUpdateFlag(!updateFlag);
               }}
               style={{

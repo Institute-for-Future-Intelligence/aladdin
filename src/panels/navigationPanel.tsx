@@ -99,7 +99,7 @@ const NavigationPanel = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
         },
       } as UndoableChange;
       addUndoable(undoableChange);
-      setMinimumTurnSpeed(newMoveSpeed);
+      setMinimumTurnSpeed(newTurnSpeed);
     }
   };
 
@@ -183,7 +183,7 @@ const NavigationPanel = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
         <Col className="gutter-row" span={8}>
           <InputNumber
             min={1}
-            max={10}
+            max={5}
             style={{ width: '100%' }}
             precision={0}
             value={minimumTurnSpeedRef.current}
