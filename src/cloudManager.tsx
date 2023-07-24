@@ -38,7 +38,6 @@ import MainToolBar from './mainToolBar';
 import SaveCloudFileModal from './saveCloudFileModal';
 import ModelsGallery from './modelsGallery';
 import ProjectListPanel from './panels/projectListPanel';
-import FieldValue = firebase.firestore.FieldValue;
 import { loadCloudFile } from './cloudUtil';
 
 export interface CloudManagerProps {
@@ -1238,7 +1237,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                       .doc(projectTitle)
                       .update({
                         designs: firebase.firestore.FieldValue.arrayUnion(design),
-                        counter: FieldValue.increment(1),
+                        counter: firebase.firestore.FieldValue.increment(1),
                       })
                       .then(() => {})
                       .catch((error) => {
