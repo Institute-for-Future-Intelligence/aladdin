@@ -1188,7 +1188,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       thumbnail.toBlob((blob) => {
         if (blob) {
           const metadata = { contentType: 'image/png' };
-          const uploadTask = storageRef.child('images/' + projectTitle + ' ' + fileTitle + '.png').put(blob, metadata);
+          const uploadTask = storageRef.child('images/' + fileTitle + '.png').put(blob, metadata);
           // Listen for state changes, errors, and completion of the upload.
           uploadTask.on(
             firebase.storage.TaskEvent.STATE_CHANGED,
@@ -1671,6 +1671,145 @@ export const updateProjectDescription = (userid: string, projectTitle: string, d
     });
 };
 
+export const updateProjectDesign = (
+  userid: string,
+  projectTitle: string,
+  designTitle: string,
+  canvas: HTMLCanvasElement | null,
+) => {
+  const setCommonStore = useStore.getState().set;
+  const exportContent = useStore.getState().exportContent;
+  const language = useStore.getState().language;
+  const lang = { lng: language };
+
+  return firebase
+    .firestore()
+    .collection('users')
+    .doc(userid)
+    .collection('files')
+    .doc(designTitle)
+    .set(exportContent())
+    .then(() => {
+      setCommonStore((state) => {
+        state.changed = false;
+      });
+      // first we upload a thumbnail of the design to Firestore Cloud Storage
+      const storageRef = firebase.storage().ref();
+      if (canvas) {
+        const thumbnail = Util.resizeCanvas(canvas, 200);
+        thumbnail.toBlob((blob) => {
+          if (blob) {
+            const metadata = { contentType: 'image/png' };
+            const uploadTask = storageRef.child('images/' + designTitle + '.png').put(blob, metadata);
+            // Listen for state changes, errors, and completion of the upload.
+            uploadTask.on(
+              firebase.storage.TaskEvent.STATE_CHANGED,
+              (snapshot) => {
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                if (progress > 0) {
+                  showInfo(i18n.t('word.Upload', lang) + ': ' + progress + '%');
+                }
+              },
+              (error) => {
+                showError('Storage: ' + error);
+              },
+              () => {
+                uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                  if (!userid) return;
+                  // after we get a new download URL for the thumbnail image, we then go on to upload other data
+                  // Firestore doesn't have a way to modify an element of an array
+                  // So we have to read the entire design array first
+                  firebase
+                    .firestore()
+                    .collection('users')
+                    .doc(userid)
+                    .collection('projects')
+                    .doc(projectTitle)
+                    .get()
+                    .then((doc) => {
+                      if (doc.exists) {
+                        const data = doc.data();
+                        if (data) {
+                          const updatedDesigns: Design[] = [];
+                          updatedDesigns.push(...data.designs);
+                          // create an updated design
+                          const designProjectType = useStore.getState().designProjectType;
+                          let design = { title: designTitle, thumbnailUrl: downloadURL } as Design;
+                          switch (designProjectType) {
+                            case DesignProblem.SOLAR_PANEL_ARRAY:
+                              const panelCount = Util.countAllSolarPanels();
+                              const dailyYield = Util.countAllSolarPanelDailyYields();
+                              const yearlyYield = Util.countAllSolarPanelYearlyYields();
+                              const economicParams = useStore.getState().economicsParams;
+                              const unitCost = economicParams.operationalCostPerUnit;
+                              const sellingPrice = economicParams.electricitySellingPrice;
+                              design = {
+                                unitCost,
+                                sellingPrice,
+                                panelCount,
+                                dailyYield,
+                                yearlyYield,
+                                ...design,
+                                ...useStore.getState().solarPanelArrayLayoutParams,
+                              };
+                              break;
+                            case DesignProblem.SOLAR_PANEL_TILT_ANGLE:
+                              // TODO: Each row has a different tilt angle
+                              break;
+                          }
+                          let index = -1;
+                          for (const [i, d] of updatedDesigns.entries()) {
+                            if (d.title === design.title) {
+                              index = i;
+                              break;
+                            }
+                          }
+                          if (index >= 0) {
+                            updatedDesigns[index] = design;
+                          }
+                          setCommonStore((state) => {
+                            state.projectDesigns = updatedDesigns;
+                          });
+                          try {
+                            const doc = firebase.firestore().collection('users').doc(userid);
+                            if (doc) {
+                              doc
+                                .collection('projects')
+                                .doc(projectTitle)
+                                .update({
+                                  designs: updatedDesigns,
+                                })
+                                .then(() => {})
+                                .catch((error) => {
+                                  showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
+                                })
+                                .finally(() => {});
+                            }
+                          } catch (error) {
+                            showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
+                          }
+                        }
+                      }
+                    })
+                    .catch((error) => {
+                      showError(i18n.t('message.CannotFetchProjectData', lang) + ': ' + error);
+                    })
+                    .finally(() => {});
+                });
+              },
+            );
+          }
+        });
+      }
+    })
+    .catch((error) => {
+      showError(i18n.t('message.CannotSaveYourFileToCloud', lang) + ': ' + error);
+    })
+    .finally(() => {
+      // TODO
+    });
+};
+
 export const loadDataFromFirebase = (userid: string, title: string, popState?: boolean, viewOnly?: boolean) => {
   const language = useStore.getState().language;
   const lang = { lng: language };
@@ -1704,6 +1843,11 @@ export const loadDataFromFirebase = (userid: string, title: string, popState?: b
     })
     .catch((error) => {
       showError(i18n.t('message.CannotOpenCloudFile', lang) + ': ' + error);
+    })
+    .finally(() => {
+      useStore.getState().set((state) => {
+        state.loadingFile = false;
+      });
     });
 };
 

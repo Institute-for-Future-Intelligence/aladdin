@@ -25,6 +25,7 @@ import CloudManager, {
   loadDataFromFirebase,
   removeDesignFromProject,
   updateProjectDescription,
+  updateProjectDesign,
   updateProjectParameters,
 } from './cloudManager';
 import ActionLogger from './actionLogger';
@@ -447,11 +448,13 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
             }}
           >
             <ProjectGallery
+              canvas={canvasRef.current}
               relativeWidth={1 - canvasRelativeWidth * 0.01}
               openCloudFile={loadDataFromFirebase}
               deleteDesign={removeDesignFromProject}
               updateProjectDescription={updateProjectDescription}
               updateProjectParameters={updateProjectParameters}
+              updateProjectDesign={updateProjectDesign}
             />
             {createCanvas()}
           </SplitPane>

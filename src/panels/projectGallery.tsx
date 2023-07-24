@@ -106,18 +106,27 @@ const SubContainer = styled.div`
 
 export interface ProjectGalleryProps {
   relativeWidth: number;
+  canvas: HTMLCanvasElement | null;
   openCloudFile?: (userid: string, title: string, popState?: boolean) => void;
   deleteDesign?: (userid: string, projectTitle: string, design: Design) => void;
   updateProjectDescription?: (userid: string, projectTitle: string, description: string | null) => void;
   updateProjectParameters?: (userid: string, projectTitle: string, hiddenParameter: string, add: boolean) => void;
+  updateProjectDesign?: (
+    userid: string,
+    projectTitle: string,
+    designTitle: string,
+    canvas: HTMLCanvasElement | null,
+  ) => void;
 }
 
 const ProjectGallery = ({
   relativeWidth,
+  canvas,
   openCloudFile,
   deleteDesign,
   updateProjectDescription,
   updateProjectParameters,
+  updateProjectDesign,
 }: ProjectGalleryProps) => {
   const setCommonStore = useStore(Selector.set);
   const user = useStore(Selector.user);
@@ -461,6 +470,9 @@ const ProjectGallery = ({
                           style={{ border: 'none', padding: '4px' }}
                           onClick={(e) => {
                             e.stopPropagation();
+                            if (canvas && updateProjectDesign && user.uid && projectTitle && cloudFile) {
+                              updateProjectDesign(user.uid, projectTitle, cloudFile, canvas);
+                            }
                           }}
                         >
                           <UploadOutlined

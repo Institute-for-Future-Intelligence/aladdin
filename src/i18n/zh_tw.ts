@@ -199,6 +199,7 @@ export const i18n_zh_tw = {
       CannotAddDesignToProjectOwnedByOthers: '不能把此設計加到別人的項目裡',
       CannotRemoveDesignFromProject: '無法把此設計從項目裡刪除',
       CannotUpdateProject: '無法更新項目',
+      CannotFetchProjectData: '無法取得項目數據',
       TitleUsedChooseDifferentOne: '此標題已經被使用, 請採用不同的標題',
       CloudFileWithTitleExistsDoYouWantToOverwrite: '使用此標題的雲文檔已經存在，您確定要覆蓋它嗎？',
       CloudFileNotFound: '找不到此云端文檔',

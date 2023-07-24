@@ -199,6 +199,7 @@ export const i18n_es = {
       CannotAddDesignToProjectOwnedByOthers: 'Cannot add this design to a project owned by others',
       CannotRemoveDesignFromProject: 'Cannot remove this design from the project',
       CannotUpdateProject: 'Cannot update the project',
+      CannotFetchProjectData: 'Cannot fetch project data',
       TitleUsedChooseDifferentOne: 'This title has been used. Choose a different one',
       CloudFileWithTitleExistsDoYouWantToOverwrite: 'A cloud file with the title exists. Do you want to overwrite it?',
       CloudFileNotFound: 'The cloud file was not found',
