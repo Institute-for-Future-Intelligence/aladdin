@@ -78,6 +78,34 @@ export const updateProjectDescription = (userid: string, projectTitle: string, d
     });
 };
 
+export const createDesign = (title: string, thumbnailUrl: string): Design => {
+  const designProjectType = useStore.getState().designProjectType;
+  let design = { title, thumbnailUrl } as Design;
+  switch (designProjectType) {
+    case DesignProblem.SOLAR_PANEL_ARRAY:
+      const panelCount = Util.countAllSolarPanels();
+      const dailyYield = Util.countAllSolarPanelDailyYields();
+      const yearlyYield = Util.countAllSolarPanelYearlyYields();
+      const economicParams = useStore.getState().economicsParams;
+      const unitCost = economicParams.operationalCostPerUnit;
+      const sellingPrice = economicParams.electricitySellingPrice;
+      design = {
+        unitCost,
+        sellingPrice,
+        panelCount,
+        dailyYield,
+        yearlyYield,
+        ...design,
+        ...useStore.getState().solarPanelArrayLayoutParams,
+      };
+      break;
+    case DesignProblem.SOLAR_PANEL_TILT_ANGLE:
+      // TODO: Each row has a different tilt angle
+      break;
+  }
+  return design;
+};
+
 export const updateProjectDesign = (
   userid: string,
   projectTitle: string,
@@ -86,7 +114,7 @@ export const updateProjectDesign = (
 ) => {
   const lang = { lng: useStore.getState().language };
 
-  // first we update the design file
+  // First we update the design file by overwriting it with the current content
   return firebase
     .firestore()
     .collection('users')
@@ -98,15 +126,15 @@ export const updateProjectDesign = (
       useStore.getState().set((state) => {
         state.changed = false;
       });
-      // first we upload a thumbnail of the design to Firestore Cloud Storage
-      const storageRef = firebase.storage().ref();
+      // Then we upload an updated thumbnail from the current design canvas to Firestore Storage
       if (canvas) {
+        const storageRef = firebase.storage().ref();
         const thumbnail = Util.resizeCanvas(canvas, 200);
         thumbnail.toBlob((blob) => {
           if (blob) {
             const metadata = { contentType: 'image/png' };
             const uploadTask = storageRef.child('images/' + designTitle + '.png').put(blob, metadata);
-            // Listen for state changes, errors, and completion of the upload.
+            // Listen for state changes, errors, and completion of the upload
             uploadTask.on(
               firebase.storage.TaskEvent.STATE_CHANGED,
               (snapshot) => {
@@ -121,9 +149,9 @@ export const updateProjectDesign = (
               () => {
                 uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
                   if (!userid) return;
-                  // after we get a new download URL for the thumbnail image, we then go on to upload other data
-                  // Firestore doesn't have a way to modify an element of an array
-                  // So we have to read the entire design array first
+                  // After we get a new download URL for the thumbnail image, we then go on to upload other data
+                  // Since Firestore doesn't have a way to modify just an element of an array,
+                  // we have to download a copy of the entire design array first, modify it, and then upload it back
                   firebase
                     .firestore()
                     .collection('users')
@@ -137,31 +165,9 @@ export const updateProjectDesign = (
                         if (data) {
                           const updatedDesigns: Design[] = [];
                           updatedDesigns.push(...data.designs);
-                          // create an updated design
-                          const designProjectType = useStore.getState().designProjectType;
-                          let design = { title: designTitle, thumbnailUrl: downloadURL } as Design;
-                          switch (designProjectType) {
-                            case DesignProblem.SOLAR_PANEL_ARRAY:
-                              const panelCount = Util.countAllSolarPanels();
-                              const dailyYield = Util.countAllSolarPanelDailyYields();
-                              const yearlyYield = Util.countAllSolarPanelYearlyYields();
-                              const economicParams = useStore.getState().economicsParams;
-                              const unitCost = economicParams.operationalCostPerUnit;
-                              const sellingPrice = economicParams.electricitySellingPrice;
-                              design = {
-                                unitCost,
-                                sellingPrice,
-                                panelCount,
-                                dailyYield,
-                                yearlyYield,
-                                ...design,
-                                ...useStore.getState().solarPanelArrayLayoutParams,
-                              };
-                              break;
-                            case DesignProblem.SOLAR_PANEL_TILT_ANGLE:
-                              // TODO: Each row has a different tilt angle
-                              break;
-                          }
+                          // Create an updated design from the current parameters and results
+                          const design = createDesign(designTitle, downloadURL);
+                          // Get the index of the design to be modified by the title
                           let index = -1;
                           for (const [i, d] of updatedDesigns.entries()) {
                             if (d.title === design.title) {
@@ -169,37 +175,39 @@ export const updateProjectDesign = (
                               break;
                             }
                           }
+                          // If found, update the design in the array
                           if (index >= 0) {
                             updatedDesigns[index] = design;
                           }
-                          useStore.getState().set((state) => {
-                            state.projectDesigns = updatedDesigns;
-                          });
-                          try {
-                            const doc = firebase.firestore().collection('users').doc(userid);
-                            if (doc) {
-                              doc
-                                .collection('projects')
-                                .doc(projectTitle)
-                                .update({
-                                  designs: updatedDesigns,
-                                })
-                                .then(() => {})
-                                .catch((error) => {
-                                  showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
-                                })
-                                .finally(() => {});
-                            }
-                          } catch (error) {
-                            showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
-                          }
+                          // Finally, upload the updated design array back to Firestore
+                          firebase
+                            .firestore()
+                            .collection('users')
+                            .doc(userid)
+                            .collection('projects')
+                            .doc(projectTitle)
+                            .update({ designs: updatedDesigns })
+                            .then(() => {
+                              // ignore
+                            })
+                            .catch((error) => {
+                              showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
+                            })
+                            .finally(() => {
+                              // Update the cached array in the local storage via the common store
+                              useStore.getState().set((state) => {
+                                state.projectDesigns = updatedDesigns;
+                              });
+                            });
                         }
                       }
                     })
                     .catch((error) => {
                       showError(i18n.t('message.CannotFetchProjectData', lang) + ': ' + error);
                     })
-                    .finally(() => {});
+                    .finally(() => {
+                      // ignore
+                    });
                 });
               },
             );
@@ -211,7 +219,7 @@ export const updateProjectDesign = (
       showError(i18n.t('message.CannotSaveYourFileToCloud', lang) + ': ' + error);
     })
     .finally(() => {
-      // TODO
+      // ignore
     });
 };
 

@@ -1241,7 +1241,7 @@ export const i18n_zh_cn = {
       EnableNavigation: '進入导航模式',
       DisableNavigation: '退出导航模式',
       Move: '移动',
-      MoveInstruction: '按下W/A/S/D键',
+      MoveInstruction: '按下W/A/S/D/Z/X键',
       Turn: '拐弯',
       TurnInstruction: '按下方向键',
       ResetView: '重置视角',

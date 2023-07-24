@@ -1242,7 +1242,7 @@ export const i18n_zh_tw = {
       EnableNavigation: '進入導航模式',
       DisableNavigation: '退出導航模式',
       Move: '移動',
-      MoveInstruction: '按下W/A/S/D鍵',
+      MoveInstruction: '按下W/A/S/D/Z/X鍵',
       Turn: '拐彎',
       TurnInstruction: '按下方向鍵',
       ResetView: '重置視角',

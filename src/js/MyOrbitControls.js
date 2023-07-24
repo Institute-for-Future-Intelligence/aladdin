@@ -91,7 +91,7 @@ class MyOrbitControls extends EventDispatcher {
       MOVE_FORWARD: 'KeyW',
       MOVE_BACKWARD: 'KeyS',
       MOVE_UP: 'KeyZ',
-      MOEV_DOWN: 'KeyX',
+      MOVE_DOWN: 'KeyX',
       ROTATE_LEFT: 'ArrowLeft',
       ROTATE_UP: 'ArrowUp',
       ROTATE_RIGHT: 'ArrowRight',
@@ -767,7 +767,7 @@ class MyOrbitControls extends EventDispatcher {
           moveUp(scope.moveSpeed);
           break;
 
-        case scope.keys.MOEV_DOWN:
+        case scope.keys.MOVE_DOWN:
           moveUp(-scope.moveSpeed);
           break;
 

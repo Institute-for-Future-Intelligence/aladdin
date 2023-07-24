@@ -1264,7 +1264,7 @@ export const i18n_es = {
       EnableNavigation: 'Enable navigation',
       DisableNavigation: 'Disable navigation',
       Move: 'Move',
-      MoveInstruction: 'Press W/A/S/D keys',
+      MoveInstruction: 'Press W/A/S/D/Z/X keys',
       Turn: 'Turn',
       TurnInstruction: 'Press arrow keys',
       ResetView: 'Reset',

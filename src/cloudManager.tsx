@@ -38,7 +38,7 @@ import MainToolBar from './mainToolBar';
 import SaveCloudFileModal from './saveCloudFileModal';
 import ModelsGallery from './modelsGallery';
 import ProjectListPanel from './panels/projectListPanel';
-import { loadCloudFile } from './cloudUtil';
+import { createDesign, loadCloudFile } from './cloudUtil';
 
 export interface CloudManagerProps {
   viewOnly: boolean;
@@ -1205,57 +1205,31 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
               uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
                 if (!user.uid) return;
                 // after we get a download URL for the thumbnail image, we then go on to upload other data
-                const designProjectType = useStore.getState().designProjectType;
-                let design = { title: fileTitle, thumbnailUrl: downloadURL } as Design;
-                switch (designProjectType) {
-                  case DesignProblem.SOLAR_PANEL_ARRAY:
-                    const panelCount = Util.countAllSolarPanels();
-                    const dailyYield = Util.countAllSolarPanelDailyYields();
-                    const yearlyYield = Util.countAllSolarPanelYearlyYields();
-                    const economicParams = useStore.getState().economicsParams;
-                    const unitCost = economicParams.operationalCostPerUnit;
-                    const sellingPrice = economicParams.electricitySellingPrice;
-                    design = {
-                      unitCost,
-                      sellingPrice,
-                      panelCount,
-                      dailyYield,
-                      yearlyYield,
-                      ...design,
-                      ...useStore.getState().solarPanelArrayLayoutParams,
-                    };
-                    break;
-                  case DesignProblem.SOLAR_PANEL_TILT_ANGLE:
-                    // TODO: Each row has a different tilt angle
-                    break;
-                }
-                try {
-                  const doc = firebase.firestore().collection('users').doc(user.uid);
-                  if (doc) {
-                    doc
-                      .collection('projects')
-                      .doc(projectTitle)
-                      .update({
-                        designs: firebase.firestore.FieldValue.arrayUnion(design),
-                        counter: firebase.firestore.FieldValue.increment(1),
-                      })
-                      .then(() => {})
-                      .catch((error) => {
-                        showError(i18n.t('message.CannotAddDesignToProject', lang) + ': ' + error);
-                      })
-                      .finally(() => {
-                        setLoading(false);
-                        setCommonStore((state) => {
-                          state.projectDesigns?.push(design);
-                          state.projectDesignCounter++;
-                          state.designProjectType = state.projectType;
-                        });
-                      });
-                  }
-                } catch (error) {
-                  showError(i18n.t('message.CannotAddDesignToProject', lang) + ': ' + error);
-                  setLoading(false);
-                }
+                const design = createDesign(fileTitle, downloadURL);
+                firebase
+                  .firestore()
+                  .collection('users')
+                  .doc(user.uid)
+                  .collection('projects')
+                  .doc(projectTitle)
+                  .update({
+                    designs: firebase.firestore.FieldValue.arrayUnion(design),
+                    counter: firebase.firestore.FieldValue.increment(1),
+                  })
+                  .then(() => {
+                    // ignore
+                  })
+                  .catch((error) => {
+                    showError(i18n.t('message.CannotAddDesignToProject', lang) + ': ' + error);
+                  })
+                  .finally(() => {
+                    setLoading(false);
+                    setCommonStore((state) => {
+                      state.projectDesigns?.push(design);
+                      state.projectDesignCounter++;
+                      state.designProjectType = state.projectType;
+                    });
+                  });
               });
             },
           );
