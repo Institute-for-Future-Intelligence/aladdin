@@ -488,7 +488,7 @@ export const selectedElementX = (state: CommonStoreState) => state.selectedEleme
 
 export const selectedElementY = (state: CommonStoreState) => state.selectedElementY;
 
-export const loadingFile = (state: CommonStoreState) => state.loadingFile;
+export const waiting = (state: PrimitiveStoreState) => state.waiting;
 
 export const simulationInProgress = (state: PrimitiveStoreState) => state.simulationInProgress;
 

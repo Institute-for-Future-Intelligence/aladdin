@@ -8,6 +8,8 @@ import create from 'zustand';
 export interface PrimitiveStoreState {
   setPrimitiveStore: <K extends keyof PrimitiveStoreState, V extends PrimitiveStoreState[K]>(key: K, val: V) => void;
 
+  waiting: boolean;
+
   showEconomicsPanel: boolean;
   showNavigationPanel: boolean;
 
@@ -125,6 +127,8 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
         }
       });
     },
+
+    waiting: false,
 
     showEconomicsPanel: false,
     showNavigationPanel: false,

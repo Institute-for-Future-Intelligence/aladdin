@@ -23,11 +23,11 @@ import DropdownContextMenu from './components/contextMenu';
 import { DesignProblem, EvolutionMethod } from './types';
 import CloudManager from './cloudManager';
 import {
-  loadDataFromFirebase,
+  loadCloudFile,
   removeDesignFromProject,
   updateProjectDescription,
   updateProjectDesign,
-  updateProjectParameters,
+  updateProjectHiddenParameters,
 } from './cloudUtil';
 import ActionLogger from './actionLogger';
 import Lights from './lights';
@@ -47,7 +47,7 @@ import SolarPanelArrayGa from './ai/ga/solarPanelArrayGa';
 import SolarPanelTiltAnglePso from './ai/pso/solarPanelTiltAnglePso';
 import SolarPanelArrayPso from './ai/pso/solarPanelArrayPso';
 import NavigationController from './navigationController';
-import Loading from './loading';
+import Waiting from './waiting';
 import Panels from './panels';
 import Simulations from './simulations';
 import { usePrimitiveStore } from './stores/commonPrimitive';
@@ -273,7 +273,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   return (
     <div className="App">
       {/* Spinner, Simulation and Evolution control panels */}
-      <Loading initializing={initializing} />
+      <Waiting initializing={initializing} />
 
       <div
         style={{
@@ -451,10 +451,10 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
             <ProjectGallery
               canvas={canvasRef.current}
               relativeWidth={1 - canvasRelativeWidth * 0.01}
-              openCloudFile={loadDataFromFirebase}
+              openCloudFile={loadCloudFile}
               deleteDesign={removeDesignFromProject}
               updateProjectDescription={updateProjectDescription}
-              updateProjectParameters={updateProjectParameters}
+              updateProjectParameters={updateProjectHiddenParameters}
               updateProjectDesign={updateProjectDesign}
             />
             {createCanvas()}

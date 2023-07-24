@@ -39,7 +39,7 @@ import SaveCloudFileModal from './saveCloudFileModal';
 import ModelsGallery from './modelsGallery';
 import ProjectListPanel from './panels/projectListPanel';
 import FieldValue = firebase.firestore.FieldValue;
-import { loadDataFromFirebase } from './cloudUtil';
+import { loadCloudFile } from './cloudUtil';
 
 export interface CloudManagerProps {
   viewOnly: boolean;
@@ -1317,8 +1317,8 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
         const doc = firebase.firestore().collection('users').doc(user.uid);
         if (doc) {
           if (localContentToImportAfterCloudFileUpdate) {
-            setCommonStore((state) => {
-              state.loadingFile = true;
+            usePrimitiveStore.setState((state) => {
+              state.waiting = true;
             });
           }
           doc
@@ -1422,7 +1422,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const openCloudFile = (userid: string, title: string, popState?: boolean) => {
     if (userid && title) {
       setLoading(true);
-      loadDataFromFirebase(userid, title, popState, viewOnly).finally(() => {
+      loadCloudFile(userid, title, popState, viewOnly).finally(() => {
         setLoading(false);
       });
     }

@@ -497,7 +497,6 @@ export interface CommonStoreState {
   setGroupMasterId: (id: string | null) => void;
   groupActionUpdateFlag: boolean;
 
-  loadingFile: boolean;
   locale: Locale;
   localFileName: string;
   createNewFileFlag: boolean;
@@ -673,7 +672,6 @@ export const useStore = create<CommonStoreState>(
               state.undoManager.clear();
               state.deletedRoofId = null;
               state.actionState = new DefaultActionState();
-              // state.loadingFile = false;
               // TODO: fix these bugs that are tentatively corrected here
               for (const e of state.elements) {
                 if (e.type === ObjectType.Foundation && e.parentId !== GROUND_ID) {
@@ -4162,7 +4160,6 @@ export const useStore = create<CommonStoreState>(
           },
           groupActionUpdateFlag: false,
 
-          loadingFile: false,
           locale: enUS,
           localFileName: 'aladdin.ala',
           createNewFileFlag: false,

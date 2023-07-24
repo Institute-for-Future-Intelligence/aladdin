@@ -9,10 +9,10 @@ import i18n from './i18n/i18n';
 import { HOME_URL } from './constants';
 import { Design, DesignProblem } from './types';
 import { Util } from './Util';
+import { usePrimitiveStore } from './stores/commonPrimitive';
 
 export const removeDesignFromProject = (userid: string, projectTitle: string, design: Design) => {
-  const language = useStore.getState().language;
-  const lang = { lng: language };
+  const lang = { lng: useStore.getState().language };
 
   return firebase
     .firestore()
@@ -23,20 +23,21 @@ export const removeDesignFromProject = (userid: string, projectTitle: string, de
     .update({
       designs: firebase.firestore.FieldValue.arrayRemove(design),
     })
-    .then(() => {})
+    .then(() => {
+      showInfo(i18n.t('message.DesignRemovedFromProject', lang) + '.');
+    })
     .catch((error) => {
       showError(i18n.t('message.CannotRemoveDesignFromProject', lang) + ': ' + error);
     });
 };
 
-export const updateProjectParameters = (
+export const updateProjectHiddenParameters = (
   userid: string,
   projectTitle: string,
   hiddenParameter: string,
-  add: boolean,
+  add: boolean, // true is to add, false is to remove
 ) => {
-  const language = useStore.getState().language;
-  const lang = { lng: language };
+  const lang = { lng: useStore.getState().language };
 
   return firebase
     .firestore()
@@ -49,15 +50,16 @@ export const updateProjectParameters = (
         ? firebase.firestore.FieldValue.arrayUnion(hiddenParameter)
         : firebase.firestore.FieldValue.arrayRemove(hiddenParameter),
     })
-    .then(() => {})
+    .then(() => {
+      // ignore
+    })
     .catch((error) => {
       showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
     });
 };
 
 export const updateProjectDescription = (userid: string, projectTitle: string, description: string | null) => {
-  const language = useStore.getState().language;
-  const lang = { lng: language };
+  const lang = { lng: useStore.getState().language };
 
   return firebase
     .firestore()
@@ -66,7 +68,9 @@ export const updateProjectDescription = (userid: string, projectTitle: string, d
     .collection('projects')
     .doc(projectTitle)
     .update({ description })
-    .then(() => {})
+    .then(() => {
+      // ignore
+    })
     .catch((error) => {
       showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
     });
@@ -78,20 +82,18 @@ export const updateProjectDesign = (
   designTitle: string,
   canvas: HTMLCanvasElement | null,
 ) => {
-  const setCommonStore = useStore.getState().set;
-  const exportContent = useStore.getState().exportContent;
-  const language = useStore.getState().language;
-  const lang = { lng: language };
+  const lang = { lng: useStore.getState().language };
 
+  // first we update the design file
   return firebase
     .firestore()
     .collection('users')
     .doc(userid)
     .collection('files')
     .doc(designTitle)
-    .set(exportContent())
+    .set(useStore.getState().exportContent())
     .then(() => {
-      setCommonStore((state) => {
+      useStore.getState().set((state) => {
         state.changed = false;
       });
       // first we upload a thumbnail of the design to Firestore Cloud Storage
@@ -168,7 +170,7 @@ export const updateProjectDesign = (
                           if (index >= 0) {
                             updatedDesigns[index] = design;
                           }
-                          setCommonStore((state) => {
+                          useStore.getState().set((state) => {
                             state.projectDesigns = updatedDesigns;
                           });
                           try {
@@ -211,13 +213,12 @@ export const updateProjectDesign = (
     });
 };
 
-export const loadDataFromFirebase = (userid: string, title: string, popState?: boolean, viewOnly?: boolean) => {
-  const language = useStore.getState().language;
-  const lang = { lng: language };
+export const loadCloudFile = (userid: string, title: string, popState?: boolean, viewOnly?: boolean) => {
+  const lang = { lng: useStore.getState().language };
 
   useStore.getState().undoManager.clear();
-  useStore.getState().set((state) => {
-    state.loadingFile = true;
+  usePrimitiveStore.setState((state) => {
+    state.waiting = true;
   });
 
   return firebase
@@ -246,8 +247,8 @@ export const loadDataFromFirebase = (userid: string, title: string, popState?: b
       showError(i18n.t('message.CannotOpenCloudFile', lang) + ': ' + error);
     })
     .finally(() => {
-      useStore.getState().set((state) => {
-        state.loadingFile = false;
+      usePrimitiveStore.setState((state) => {
+        state.waiting = false;
       });
     });
 };

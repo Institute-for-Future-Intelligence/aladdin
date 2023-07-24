@@ -198,6 +198,7 @@ export const i18n_ua = {
       CannotRenameProject: 'Cannot rename the project',
       CannotAddDesignToProject: 'Cannot add this design to the project',
       CannotAddDesignToProjectOwnedByOthers: 'Cannot add this design to a project owned by others',
+      DesignRemovedFromProject: 'The design was successfully removed from the project',
       CannotRemoveDesignFromProject: 'Cannot remove this design from the project',
       CannotUpdateProject: 'Cannot update the project',
       CannotFetchProjectData: 'Cannot fetch project data',

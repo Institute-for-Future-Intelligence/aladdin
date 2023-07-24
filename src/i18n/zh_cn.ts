@@ -197,6 +197,7 @@ export const i18n_zh_cn = {
       CannotRenameProject: '无法给项目改名',
       CannotAddDesignToProject: '无法把此设计加到项目里',
       CannotAddDesignToProjectOwnedByOthers: '不能把此设计加到别人的项目里',
+      DesignRemovedFromProject: '设计被成功地从项目里删除',
       CannotRemoveDesignFromProject: '无法把此设计从项目里删除',
       CannotUpdateProject: '无法更新项目',
       CannotFetchProjectData: '无法取得项目数据',

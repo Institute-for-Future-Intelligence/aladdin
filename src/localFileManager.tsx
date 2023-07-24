@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -141,8 +141,8 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
     const fileDialog = document.getElementById('file-dialog') as HTMLInputElement;
     fileDialog.onchange = () => {
       if (fileDialog.files && fileDialog.files.length > 0) {
-        setCommonStore((state) => {
-          state.loadingFile = true;
+        usePrimitiveStore.setState((state) => {
+          state.waiting = true;
         });
         const reader = new FileReader();
         reader.readAsText(fileDialog.files[0]);

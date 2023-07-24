@@ -12,8 +12,8 @@ import EvolutionControlPanel from './panels/evolutionControlPanel';
 import Spinner from './components/spinner';
 import { usePrimitiveStore } from './stores/commonPrimitive';
 
-export default React.memo(function Loading({ initializing }: { initializing: boolean }) {
-  const loadingFile = useStore(Selector.loadingFile);
+export default React.memo(function Waiting({ initializing }: { initializing: boolean }) {
+  const waiting = usePrimitiveStore(Selector.waiting);
   const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);
   const evolutionInProgress = usePrimitiveStore(Selector.evolutionInProgress);
   const simulationPaused = usePrimitiveStore(Selector.simulationPaused);
@@ -37,7 +37,7 @@ export default React.memo(function Loading({ initializing }: { initializing: boo
 
   return (
     <>
-      {(initializing || loadingFile || simulationInProgress || evolutionInProgress) && (
+      {(initializing || waiting || simulationInProgress || evolutionInProgress) && (
         <>
           {simulationInProgress &&
             ((!noAnimationForHeatmapSimulation && runDynamicSimulation) ||

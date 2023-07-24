@@ -199,8 +199,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
           icon: <ExclamationCircleOutlined />,
           onOk: () => saveAndImport(input),
           onCancel: () => {
-            setCommonStore((state) => {
-              state.loadingFile = true;
+            usePrimitiveStore.setState((state) => {
+              state.waiting = true;
             });
             // give it a brief moment for this modal to close
             // this may also put the function call to the last in the event queue
@@ -212,8 +212,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
           cancelText: i18n.t('word.No', lang),
         });
       } else {
-        setCommonStore((state) => {
-          state.loadingFile = true;
+        usePrimitiveStore.setState((state) => {
+          state.waiting = true;
         });
         // give it a brief moment for the loading spinner to show
         // this may also put the function call to the last in the event queue
