@@ -3,7 +3,7 @@
  */
 
 import { useStore } from './stores/common';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
 import { showError, showInfo } from './helpers';
 import i18n from './i18n/i18n';
 import { HOME_URL } from './constants';
