@@ -21,13 +21,14 @@ import AcceptCookie from './acceptCookie';
 import GroundImage from './views/groundImage';
 import DropdownContextMenu from './components/contextMenu';
 import { DesignProblem, EvolutionMethod } from './types';
-import CloudManager, {
+import CloudManager from './cloudManager';
+import {
   loadDataFromFirebase,
   removeDesignFromProject,
   updateProjectDescription,
   updateProjectDesign,
   updateProjectParameters,
-} from './cloudManager';
+} from './cloudUtil';
 import ActionLogger from './actionLogger';
 import Lights from './lights';
 import { Auxiliary } from './auxiliary';
