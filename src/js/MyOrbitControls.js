@@ -90,6 +90,8 @@ class MyOrbitControls extends EventDispatcher {
       MOVE_RIGHT: 'KeyD',
       MOVE_FORWARD: 'KeyW',
       MOVE_BACKWARD: 'KeyS',
+      MOVE_UP: 'KeyZ',
+      MOEV_DOWN: 'KeyX',
       ROTATE_LEFT: 'ArrowLeft',
       ROTATE_UP: 'ArrowUp',
       ROTATE_RIGHT: 'ArrowRight',
@@ -492,6 +494,28 @@ class MyOrbitControls extends EventDispatcher {
 
     }();
 
+    const moveUp = function() {
+
+      const _vector = new Vector3();
+
+      return function moveUp( distance ) {
+
+        const camera = scope.object;
+
+        _vector.setFromMatrixColumn( camera.matrix, 1 );
+
+        _vector.multiplyScalar( distance * 0.1 );
+
+        camera.position.add(_vector)
+
+        camera.position.z = Math.max(0, camera.position.z);
+
+        scope.dispatchEvent( _changeEvent );
+
+      }
+
+    }();
+
     const moveForward = function() {
 
       const _vector = new Vector3();
@@ -737,6 +761,14 @@ class MyOrbitControls extends EventDispatcher {
 
         case scope.keys.MOVE_BACKWARD:
           moveForward(-scope.moveSpeed);
+          break;
+
+        case scope.keys.MOVE_UP:
+          moveUp(scope.moveSpeed);
+          break;
+
+        case scope.keys.MOEV_DOWN:
+          moveUp(-scope.moveSpeed);
           break;
 
         case scope.keys.MOVE_RIGHT:
