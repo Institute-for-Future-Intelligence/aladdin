@@ -770,6 +770,27 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
                     state.elements.push(e);
                   }
                   state.selectedElement = undoableCut.deletedElements[0];
+                  if (undoableCut.deletedElements[0].type === ObjectType.Wall) {
+                    const wall = undoableCut.deletedElements[0] as WallModel;
+                    let leftWallId: string | null = null;
+                    let rightWallId: string | null = null;
+                    if (wall.leftJoints.length > 0) {
+                      leftWallId = wall.leftJoints[0];
+                    }
+                    if (wall.rightJoints.length > 0) {
+                      rightWallId = wall.rightJoints[0];
+                    }
+                    if (leftWallId || rightWallId) {
+                      for (const e of state.elements) {
+                        if (e.id === leftWallId && e.type === ObjectType.Wall) {
+                          (e as WallModel).rightJoints[0] = wall.id;
+                        }
+                        if (e.id === rightWallId && e.type === ObjectType.Wall) {
+                          (e as WallModel).leftJoints[0] = wall.id;
+                        }
+                      }
+                    }
+                  }
                 }
               });
             },
