@@ -2891,6 +2891,15 @@ export const useStore = create<CommonStoreState>(
                   // preserve the ID if it is not in the elements
                   newElem = JSON.parse(JSON.stringify(oldElem));
                 }
+                if (newElem?.type === ObjectType.Wall) {
+                  const w = newElem as WallModel;
+                  w.roofId = undefined;
+                  w.leftRoofHeight = undefined;
+                  w.rightRoofHeight = undefined;
+                  w.centerLeftRoofHeight = undefined;
+                  w.centerRightRoofHeight = undefined;
+                  w.centerRoofHeight = undefined;
+                }
               } else {
                 const oldParent = get().elementsToPaste.find((el) => el.id === oldElem.parentId);
                 if (oldParent) {
@@ -3258,6 +3267,12 @@ export const useStore = create<CommonStoreState>(
                       const euler = new Euler(0, 0, w.relativeAngle);
                       w.leftPoint = center.clone().add(vlx.applyEuler(euler)).toArray();
                       w.rightPoint = center.clone().add(vrx.applyEuler(euler)).toArray();
+                      w.roofId = undefined;
+                      w.leftRoofHeight = undefined;
+                      w.rightRoofHeight = undefined;
+                      w.centerLeftRoofHeight = undefined;
+                      w.centerRightRoofHeight = undefined;
+                      w.centerRoofHeight = undefined;
                       for (const child of state.elements) {
                         if (child.parentId === elemToPaste.id) {
                           const newChild = ElementModelCloner.clone(
@@ -3342,7 +3357,7 @@ export const useStore = create<CommonStoreState>(
               } else if (state.elementsToPaste.length > 1) {
                 // when a parent with children is cut, the removed children are no longer in elements array,
                 // so we have to restore them from elementsToPaste.
-                const m = state.pastePoint;
+                let m = state.pastePoint;
                 const cutElements = state.copyCutElements();
                 if (cutElements.length > 0) {
                   if (cutElements[0].type === ObjectType.Cuboid) {
@@ -3351,6 +3366,14 @@ export const useStore = create<CommonStoreState>(
                       const { pos } = Util.getWorldDataById(newParent.id);
                       m.sub(pos);
                       cutElements[0].parentId = newParent.id;
+                    }
+                  } else if (cutElements[0].type === ObjectType.Wall) {
+                    const newParent = state.selectedElement;
+                    if (newParent && newParent.type === ObjectType.Foundation) {
+                      m = Util.relativeCoordinates(m.x, m.y, m.z, newParent);
+                      m.set(m.x * newParent.lx, m.y * newParent.ly, 0);
+                      cutElements[0].parentId = newParent.id;
+                      cutElements[0].foundationId = newParent.id;
                     }
                   }
                   cutElements[0].cx = m.x;
@@ -3855,6 +3878,12 @@ export const useStore = create<CommonStoreState>(
                         const euler = new Euler(0, 0, w.relativeAngle);
                         w.leftPoint = center.clone().add(vlx.applyEuler(euler)).toArray();
                         w.rightPoint = center.clone().add(vrx.applyEuler(euler)).toArray();
+                        w.roofId = undefined;
+                        w.leftRoofHeight = undefined;
+                        w.rightRoofHeight = undefined;
+                        w.centerLeftRoofHeight = undefined;
+                        w.centerRightRoofHeight = undefined;
+                        w.centerRoofHeight = undefined;
                         for (const child of state.elements) {
                           if (child.parentId === elem.id) {
                             const newChild = ElementModelCloner.clone(
