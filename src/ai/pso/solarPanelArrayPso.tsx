@@ -243,18 +243,37 @@ const SolarPanelArrayPso = () => {
               ? i18n.t('message.ConvergenceThresholdHasBeenReached', lang)
               : i18n.t('message.MaximumNumberOfStepsHasBeenReached', lang)),
         );
-        if (loggable && optimizerRef.current) {
+        if (optimizerRef.current) {
           const bestPosition = optimizerRef.current.swarm.bestPositionOfSwarm;
           const fitness = optimizerRef.current.swarm.bestFitness;
           if (bestPosition && fitness) {
+            const tiltAngle =
+              bestPosition[0] * (constraints.maximumTiltAngle - constraints.minimumTiltAngle) +
+              constraints.minimumTiltAngle;
+            const interRowSpacing =
+              bestPosition[1] * (constraints.maximumInterRowSpacing - constraints.minimumInterRowSpacing) +
+              constraints.minimumInterRowSpacing;
+            const rowsPerRack = Math.floor(
+              bestPosition[2] * (constraints.maximumRowsPerRack - constraints.minimumRowsPerRack) +
+                constraints.minimumRowsPerRack,
+            );
             setCommonStore((state) => {
-              state.actionInfo = {
-                name: 'Particle Swarm Optimization for Solar Panel Array Layout Completed',
-                result: optimizerRef.current?.particleToString(bestPosition, fitness),
-                steps: optimizerRef.current?.outsideStepCounter,
-                timestamp: new Date().getTime(),
-              };
+              state.solarPanelArrayLayoutParams.tiltAngle = tiltAngle;
+              state.solarPanelArrayLayoutParams.interRowSpacing = interRowSpacing;
+              state.solarPanelArrayLayoutParams.rowsPerRack = rowsPerRack;
+              state.solarPanelArrayLayoutParams.orientation = constraints.orientation;
+              state.solarPanelArrayLayoutParams.poleHeight = constraints.poleHeight;
             });
+            if (loggable) {
+              setCommonStore((state) => {
+                state.actionInfo = {
+                  name: 'Particle Swarm Optimization for Solar Panel Array Layout Completed',
+                  result: optimizerRef.current?.particleToString(bestPosition, fitness),
+                  steps: optimizerRef.current?.outsideStepCounter,
+                  timestamp: new Date().getTime(),
+                };
+              });
+            }
           }
         }
         return;

@@ -246,17 +246,36 @@ const SolarPanelArrayGa = () => {
               ? i18n.t('message.ConvergenceThresholdHasBeenReached', lang)
               : i18n.t('message.MaximumNumberOfGenerationsHasBeenReached', lang)),
         );
-        if (loggable && optimizerRef.current) {
+        if (optimizerRef.current) {
           const best = optimizerRef.current.population.getFittest();
           if (best) {
+            const tiltAngle =
+              best.getGene(0) * (constraints.maximumTiltAngle - constraints.minimumTiltAngle) +
+              constraints.minimumTiltAngle;
+            const interRowSpacing =
+              best.getGene(1) * (constraints.maximumInterRowSpacing - constraints.minimumInterRowSpacing) +
+              constraints.minimumInterRowSpacing;
+            const rowsPerRack = Math.floor(
+              best.getGene(2) * (constraints.maximumRowsPerRack - constraints.minimumRowsPerRack) +
+                constraints.minimumRowsPerRack,
+            );
             setCommonStore((state) => {
-              state.actionInfo = {
-                name: 'Genetic Algorithm for Solar Panel Array Layout Completed',
-                result: optimizerRef.current?.individualToString(best),
-                steps: optimizerRef.current?.outsideGenerationCounter,
-                timestamp: new Date().getTime(),
-              };
+              state.solarPanelArrayLayoutParams.tiltAngle = tiltAngle;
+              state.solarPanelArrayLayoutParams.interRowSpacing = interRowSpacing;
+              state.solarPanelArrayLayoutParams.rowsPerRack = rowsPerRack;
+              state.solarPanelArrayLayoutParams.orientation = constraints.orientation;
+              state.solarPanelArrayLayoutParams.poleHeight = constraints.poleHeight;
             });
+            if (loggable) {
+              setCommonStore((state) => {
+                state.actionInfo = {
+                  name: 'Genetic Algorithm for Solar Panel Array Layout Completed',
+                  result: optimizerRef.current?.individualToString(best),
+                  steps: optimizerRef.current?.outsideGenerationCounter,
+                  timestamp: new Date().getTime(),
+                };
+              });
+            }
           }
         }
         return;
