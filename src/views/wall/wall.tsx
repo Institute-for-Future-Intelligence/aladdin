@@ -65,6 +65,7 @@ import Polygon from '../polygon';
 import { SharedUtil } from '../SharedUtil';
 import { UndoableChange } from '../../undo/UndoableChange';
 import Parapet, { DEFAULT_PARAPET_SETTINGS } from './parapet';
+import { InnerCommonState } from 'src/stores/InnerCommonState';
 
 export const WALL_BLOCK_PLANE = 'Wall Block Plane';
 
@@ -1735,8 +1736,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         state.addedDoorId = null;
         state.addedWindowId = null;
         state.moveHandleType = null;
-        if (!state.actionModeLock) {
-          state.objectTypeToAdd = ObjectType.None;
+        if (state.actionModeLock && elBeingAddedRef.current) {
+          state.objectTypeToAdd = elBeingAddedRef.current.type;
         }
       });
       elBeingAddedRef.current = null;
@@ -1955,6 +1956,9 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         // remove new element directly
         setCommonStore((state) => {
           state.elements.pop();
+          if (state.actionModeLock && elBeingAddedRef.current) {
+            state.objectTypeToAdd = elBeingAddedRef.current.type;
+          }
         });
         elBeingAddedRef.current = null;
       } else if (useStore.getState().moveHandleType || useStore.getState().resizeHandleType) {
@@ -1965,6 +1969,9 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         if (elBeingAddedRef.current.status === ElBeingAddedStatus.SettingStartPoint) {
           setCommonStore((state) => {
             state.elements.pop();
+            if (state.actionModeLock && elBeingAddedRef.current) {
+              state.objectTypeToAdd = elBeingAddedRef.current.type;
+            }
           });
           elBeingAddedRef.current = null;
         } else if (elBeingAddedRef.current.status === ElBeingAddedStatus.SettingEndPoint) {
@@ -1973,8 +1980,17 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           if (newElement.lx * lx < 0.1 || newElement.lz * lz < 0.1) {
             setCommonStore((state) => {
               state.elements.pop();
+              if (state.actionModeLock && elBeingAddedRef.current) {
+                state.objectTypeToAdd = elBeingAddedRef.current.type;
+              }
             });
           } else {
+            setCommonStore((state) => {
+              if (state.actionModeLock && elBeingAddedRef.current) {
+                state.objectTypeToAdd = elBeingAddedRef.current.type;
+                InnerCommonState.selectNone(state);
+              }
+            });
             handleUndoableAdd(newElement);
           }
           elBeingAddedRef.current = null;
