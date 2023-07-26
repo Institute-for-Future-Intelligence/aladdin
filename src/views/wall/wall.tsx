@@ -1728,6 +1728,21 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     }
   }
 
+  function handleWallBodyPointerUp() {
+    if (elBeingAddedRef.current && elBeingAddedRef.current.status === ElBeingAddedStatus.SettingStartPoint) {
+      setCommonStore((state) => {
+        state.elements.pop();
+        state.addedDoorId = null;
+        state.addedWindowId = null;
+        state.moveHandleType = null;
+        if (!state.actionModeLock) {
+          state.objectTypeToAdd = ObjectType.None;
+        }
+      });
+      elBeingAddedRef.current = null;
+    }
+  }
+
   function handleWallBodyPointerOut() {
     if (isSettingElementStartPoint()) {
       resetToAddingNewObjectStatus(elBeingAddedRef.current);
@@ -2348,6 +2363,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
             }}
             onPointerMove={handleWallBodyPointMove}
             onPointerDown={handleWallBodyPointerDown}
+            onPointerUp={handleWallBodyPointerUp}
             onPointerOut={handleWallBodyPointerOut}
           >
             <shapeBufferGeometry args={[outsideWallShape]} />

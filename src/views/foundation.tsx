@@ -1438,7 +1438,22 @@ const Foundation = (foundationModel: FoundationModel) => {
     switch (elem.type) {
       case ObjectType.Wall: {
         const wall = elem as WallModel;
-        if (isSettingWallEndPointRef.current && addedWallIdRef.current && baseRef.current) {
+        if (isSettingWallStartPointRef.current) {
+          setCommonStore((state) => {
+            state.elements.pop();
+            state.addedWallId = null;
+            if (state.actionModeLock) {
+              state.objectTypeToAdd = ObjectType.Wall;
+              InnerCommonState.selectNone(state);
+            }
+          });
+          if (addedWallIdRef.current) {
+            wallMapOnFoundation.current.delete(addedWallIdRef.current);
+          }
+          addedWallIdRef.current = null;
+          isSettingWallStartPointRef.current = false;
+          isSettingWallEndPointRef.current = false;
+        } else if (isSettingWallEndPointRef.current && addedWallIdRef.current && baseRef.current) {
           useRefStore.getState().setEnableOrbitController(true);
           setCommonStore((state) => {
             if (state.actionModeLock) {
