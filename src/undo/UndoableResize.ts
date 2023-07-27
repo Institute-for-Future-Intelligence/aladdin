@@ -71,6 +71,8 @@ export interface UndoableResizeWallHeight extends Undoable {
   resizedElementType: ObjectType;
   oldHeights: number[];
   newHeights: number[];
+  oldSameBuildingWallsHeightMap: Map<string, number>;
+  newSameBuildingWallsHeightMap: Map<string, number>;
 }
 
 export interface UndoableResizeRoofRise extends Undoable {

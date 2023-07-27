@@ -146,6 +146,7 @@ const WallResizeHandleWrapper = React.memo(
     const intersectionPlaneRef = useRef<Mesh>(null);
     const pointerDownRef = useRef(false);
     const oldHeightsRef = useRef<number[]>([z * 2, leftUnfilledHeight, rightUnfilledHeight]);
+    const oldSameBuildingWallsHeightMapRef = useRef<Map<string, number>>(new Map()); // for same roofId
     const leftWallLzRef = useRef<number | null>(null);
     const rightWallLzRef = useRef<number | null>(null);
     const childElements = useRef<ElementModel[]>([]);
@@ -169,7 +170,7 @@ const WallResizeHandleWrapper = React.memo(
       setShowIntersectionPlane(true);
     };
 
-    const updateUndoChange = (id: string, values: number[]) => {
+    const updateUndoChange = (id: string, values: number[], sameBuildingWallsHeightMap: Map<string, number>) => {
       const [
         lz,
         leftUnfilledHeight,
@@ -186,18 +187,34 @@ const WallResizeHandleWrapper = React.memo(
             wall.rightUnfilledHeight = rightUnfilledHeight;
             wall.leftTopPartialHeight = leftTopPartialResizeHandleHeight;
             wall.rightTopPartialHeight = rightTopPartialResizeHandleHeight;
-            break;
+          } else if (e.type === ObjectType.Wall && sameBuildingWallsHeightMap.has(e.id)) {
+            const height = sameBuildingWallsHeightMap.get(e.id);
+            if (height !== undefined) {
+              e.lz = height;
+              e.cz = height / 2;
+            }
           }
         }
       });
     };
 
-    const getJointedWallLz = () => {
+    const getConnectedWallsHeight = () => {
+      if (!roofId) return;
+
       if (leftJoints.length > 0 || rightJoints.length > 0) {
-        useStore.getState().elements.forEach((e) => {
-          if (e.id === leftJoints[0]) leftWallLzRef.current = e.lz;
-          if (e.id === rightJoints[0]) rightWallLzRef.current = e.lz;
-        });
+        if (roofType === RoofType.Gable || roofType === RoofType.Gambrel) {
+          useStore.getState().elements.forEach((e) => {
+            if (e.id === leftJoints[0]) leftWallLzRef.current = e.lz;
+            if (e.id === rightJoints[0]) rightWallLzRef.current = e.lz;
+          });
+        } else {
+          oldSameBuildingWallsHeightMapRef.current.clear();
+          useStore.getState().elements.forEach((e) => {
+            if (e.type === ObjectType.Wall && (e as WallModel).roofId === roofId) {
+              oldSameBuildingWallsHeightMapRef.current.set(e.id, e.lz);
+            }
+          });
+        }
       }
     };
 
@@ -335,7 +352,7 @@ const WallResizeHandleWrapper = React.memo(
         case ResizeHandleType.WallPartialResizeLeft:
         case ResizeHandleType.WallPartialResizeLeftTop: {
           setIntersectionPlane(-x);
-          getJointedWallLz();
+          getConnectedWallsHeight();
           getChildElements();
           break;
         }
@@ -343,7 +360,7 @@ const WallResizeHandleWrapper = React.memo(
         case ResizeHandleType.WallPartialResizeRight:
         case ResizeHandleType.WallPartialResizeRightTop: {
           setIntersectionPlane(x);
-          getJointedWallLz();
+          getConnectedWallsHeight();
           getChildElements();
           break;
         }
@@ -574,6 +591,15 @@ const WallResizeHandleWrapper = React.memo(
       resetJointedWallLz();
       pointerDownRef.current = false;
 
+      const newSameBuildingWallsHeightMap = new Map<string, number>();
+      if (roofId && roofType !== RoofType.Gable && roofType !== RoofType.Gambrel) {
+        useStore.getState().elements.forEach((e) => {
+          if (e.type === ObjectType.Wall && (e as WallModel).roofId === roofId) {
+            newSameBuildingWallsHeightMap.set(e.id, e.lz);
+          }
+        });
+      }
+
       const undoableChangeHeight = {
         name: 'Change Wall Height',
         timestamp: Date.now(),
@@ -587,11 +613,13 @@ const WallResizeHandleWrapper = React.memo(
           leftTopPartialResizeHandleHeight,
           rightTopPartialResizeHandleHeight,
         ],
+        oldSameBuildingWallsHeightMap: new Map(oldSameBuildingWallsHeightMapRef.current),
+        newSameBuildingWallsHeightMap: newSameBuildingWallsHeightMap,
         undo() {
-          updateUndoChange(this.resizedElementId, this.oldHeights);
+          updateUndoChange(this.resizedElementId, this.oldHeights, this.oldSameBuildingWallsHeightMap);
         },
         redo() {
-          updateUndoChange(this.resizedElementId, this.newHeights);
+          updateUndoChange(this.resizedElementId, this.newHeights, this.newSameBuildingWallsHeightMap);
         },
       } as UndoableResizeWallHeight;
       useStore.getState().addUndoable(undoableChangeHeight);
