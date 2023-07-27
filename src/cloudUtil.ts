@@ -78,10 +78,9 @@ export const updateProjectDescription = (userid: string, projectTitle: string, d
     });
 };
 
-export const createDesign = (title: string, thumbnailUrl: string): Design => {
-  const designProjectType = useStore.getState().designProjectType;
+export const createDesign = (type: string, title: string, thumbnailUrl: string): Design => {
   let design = { title, thumbnailUrl } as Design;
-  switch (designProjectType) {
+  switch (type) {
     case DesignProblem.SOLAR_PANEL_ARRAY:
       const panelCount = Util.countAllSolarPanels();
       const dailyYield = Util.countAllSolarPanelDailyYields();
@@ -114,6 +113,7 @@ export const createDesignTitle = (projectTitle: string, designTitle: string) => 
 
 export const updateProjectDesign = (
   userid: string,
+  projectType: string,
   projectTitle: string,
   designTitle: string,
   canvas: HTMLCanvasElement | null,
@@ -174,7 +174,7 @@ export const updateProjectDesign = (
                           const updatedDesigns: Design[] = [];
                           updatedDesigns.push(...data.designs);
                           // Create an updated design from the current parameters and results
-                          const design = createDesign(designTitle, downloadURL);
+                          const design = createDesign(projectType, designTitle, downloadURL);
                           // Get the index of the design to be modified by the title
                           let index = -1;
                           for (const [i, d] of updatedDesigns.entries()) {

@@ -113,6 +113,7 @@ export interface ProjectGalleryProps {
   updateProjectParameters?: (userid: string, projectTitle: string, hiddenParameter: string, add: boolean) => void;
   updateProjectDesign?: (
     userid: string,
+    projectType: string,
     projectTitle: string,
     designTitle: string,
     canvas: HTMLCanvasElement | null,
@@ -471,7 +472,7 @@ const ProjectGallery = ({
                           onClick={(e) => {
                             e.stopPropagation();
                             if (canvas && updateProjectDesign && user.uid && projectTitle && cloudFile) {
-                              updateProjectDesign(user.uid, projectTitle, cloudFile, canvas);
+                              updateProjectDesign(user.uid, projectType, projectTitle, cloudFile, canvas);
                             }
                           }}
                         >

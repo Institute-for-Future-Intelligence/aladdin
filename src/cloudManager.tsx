@@ -1134,6 +1134,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   };
 
   const curateDesignToProject = () => {
+    const projectType = useStore.getState().projectType;
     const projectTitle = useStore.getState().projectTitle;
     const projectOwner = useStore.getState().projectOwner;
     if (user.uid !== projectOwner) {
@@ -1158,7 +1159,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
               title: i18n.t('message.CloudFileWithTitleExistsDoYouWantToOverwrite', lang),
               icon: <QuestionCircleOutlined />,
               onOk: () => {
-                addDesignToProject(projectTitle, ft);
+                addDesignToProject(projectType, projectTitle, ft);
               },
               onCancel: () => {
                 setCommonStore((state) => {
@@ -1170,7 +1171,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
               cancelText: i18n.t('word.No', lang),
             });
           } else {
-            addDesignToProject(projectTitle, ft);
+            addDesignToProject(projectType, projectTitle, ft);
           }
         });
         setTitleDialogVisible(false);
@@ -1178,7 +1179,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     }
   };
 
-  const addDesignToProject = (projectTitle: string, designTitle: string) => {
+  const addDesignToProject = (projectType: string, projectTitle: string, designTitle: string) => {
     // first we upload a thumbnail of the design to Firestore Cloud Storage
     const storageRef = firebase.storage().ref();
     if (canvas) {
@@ -1205,7 +1206,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
               uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
                 if (!user.uid) return;
                 // after we get a download URL for the thumbnail image, we then go on to upload other data
-                const design = createDesign(designTitle, downloadURL);
+                const design = createDesign(projectType, designTitle, downloadURL);
                 firebase
                   .firestore()
                   .collection('users')
@@ -1217,19 +1218,18 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                     counter: firebase.firestore.FieldValue.increment(1),
                   })
                   .then(() => {
-                    // ignore
+                    setCommonStore((state) => {
+                      state.projectDesigns?.push(design);
+                      state.projectDesignCounter++;
+                      state.designProjectType = state.projectType;
+                    });
                   })
                   .catch((error) => {
                     showError(i18n.t('message.CannotAddDesignToProject', lang) + ': ' + error);
                   })
                   .finally(() => {
+                    saveToCloudWithoutCheckingExistence(designTitle, true);
                     setLoading(false);
-                    setCommonStore((state) => {
-                      state.projectDesigns?.push(design);
-                      state.projectDesignCounter++;
-                      state.designProjectType = state.projectType;
-                      saveToCloudWithoutCheckingExistence(designTitle, true);
-                    });
                   });
               });
             },
