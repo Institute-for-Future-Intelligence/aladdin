@@ -105,10 +105,58 @@ export const createDesign = (type: string, title: string, thumbnailUrl: string):
   return design;
 };
 
+export const changeDesignTitles = (projectTitle: string, projectDesigns: Design[] | null): Design[] | null => {
+  if (!projectDesigns) return null;
+  const newDesigns: Design[] = [];
+  for (const design of projectDesigns) {
+    const copy = { ...design };
+    copy.title = createDesignTitle(projectTitle, design.title);
+    newDesigns.push(copy);
+  }
+  return newDesigns;
+};
+
 export const createDesignTitle = (projectTitle: string, designTitle: string) => {
   if (designTitle.includes(projectTitle)) return designTitle;
   const index = designTitle.lastIndexOf(' ');
   return projectTitle + '' + designTitle.substring(index);
+};
+
+export const copyDesign = (userid: string, original: string, copy: string) => {
+  const lang = { lng: useStore.getState().language };
+
+  firebase
+    .firestore()
+    .collection('users')
+    .doc(userid)
+    .collection('files')
+    .doc(original)
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+        const data = doc.data();
+        if (data) {
+          firebase
+            .firestore()
+            .collection('users')
+            .doc(userid)
+            .collection('files')
+            .doc(copy)
+            .set(data)
+            .then(() => {
+              showInfo(i18n.t('message.CloudFileCopied', lang) + ': ' + copy);
+            })
+            .catch((error) => {
+              showError(i18n.t('message.CannotWriteCloudFile', lang) + ': ' + error);
+            });
+        }
+      } else {
+        showError(i18n.t('message.CannotReadCloudFile', lang));
+      }
+    })
+    .catch((error) => {
+      showError(i18n.t('message.CannotReadCloudFile', lang) + ': ' + error);
+    });
 };
 
 export const updateProjectDesign = (

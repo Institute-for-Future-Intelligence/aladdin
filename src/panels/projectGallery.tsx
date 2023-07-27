@@ -509,7 +509,7 @@ const ProjectGallery = ({
                                 '&project=' +
                                 encodeURIComponent(projectTitle);
                               if (selectedDesign) {
-                                url += '&title=' + selectedDesign.title;
+                                url += '&title=' + encodeURIComponent(selectedDesign.title);
                               }
                               copyTextToClipboard(url);
                               showSuccess(i18n.t('projectListPanel.ProjectLinkGeneratedInClipBoard', lang) + '.');

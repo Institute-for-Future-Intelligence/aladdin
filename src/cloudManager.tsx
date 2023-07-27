@@ -38,7 +38,7 @@ import MainToolBar from './mainToolBar';
 import SaveCloudFileModal from './saveCloudFileModal';
 import ModelsGallery from './modelsGallery';
 import ProjectListPanel from './panels/projectListPanel';
-import { createDesign, createDesignTitle, loadCloudFile } from './cloudUtil';
+import { changeDesignTitles, copyDesign, createDesign, createDesignTitle, loadCloudFile } from './cloudUtil';
 
 export interface CloudManagerProps {
   viewOnly: boolean;
@@ -910,6 +910,16 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                 try {
                   const doc = firebase.firestore().collection('users').doc(user.uid);
                   if (doc) {
+                    let designsWithNewTitles: Design[] = [];
+                    if (saveAs) {
+                      const designs = useStore.getState().projectDesigns;
+                      designsWithNewTitles = changeDesignTitles(title, designs) ?? [];
+                      if (designs && designsWithNewTitles) {
+                        for (const [i, d] of designs.entries()) {
+                          copyDesign(user.uid, d.title, designsWithNewTitles[i].title);
+                        }
+                      }
+                    }
                     doc
                       .collection('projects')
                       .doc(t)
@@ -919,14 +929,16 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                         type,
                         description,
                         counter,
-                        designs: saveAs ? useStore.getState().projectDesigns : [],
+                        designs: designsWithNewTitles,
                         hiddenParameters: saveAs ? useStore.getState().projectHiddenParameters : [],
                       })
                       .then(() => {
                         setCommonStore((state) => {
                           state.projectView = true;
                           state.projectOwner = user.uid;
-                          if (!saveAs) {
+                          if (saveAs) {
+                            state.projectDesigns = designsWithNewTitles;
+                          } else {
                             state.projectDesignCounter = 0;
                             state.projectDesigns = [];
                             state.projectHiddenParameters = [];

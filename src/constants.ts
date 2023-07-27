@@ -4,7 +4,7 @@
 
 import { Color, Euler, Vector2, Vector3 } from 'three';
 
-export const VERSION = '1.2.0';
+export const VERSION = '1.2.1';
 
 export const isProd = process.env.NODE_ENV === 'production';
 
