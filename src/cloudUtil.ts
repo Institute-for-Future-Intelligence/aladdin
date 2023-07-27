@@ -106,6 +106,12 @@ export const createDesign = (title: string, thumbnailUrl: string): Design => {
   return design;
 };
 
+export const createDesignTitle = (projectTitle: string, designTitle: string) => {
+  if (designTitle.includes(projectTitle)) return designTitle;
+  const index = designTitle.lastIndexOf(' ');
+  return projectTitle + '' + designTitle.substring(index);
+};
+
 export const updateProjectDesign = (
   userid: string,
   projectTitle: string,
@@ -133,7 +139,9 @@ export const updateProjectDesign = (
         thumbnail.toBlob((blob) => {
           if (blob) {
             const metadata = { contentType: 'image/png' };
-            const uploadTask = storageRef.child('images/' + designTitle + '.png').put(blob, metadata);
+            const uploadTask = storageRef
+              .child('images/' + createDesignTitle(projectTitle, designTitle) + '.png')
+              .put(blob, metadata);
             // Listen for state changes, errors, and completion of the upload
             uploadTask.on(
               firebase.storage.TaskEvent.STATE_CHANGED,

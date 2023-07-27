@@ -38,7 +38,7 @@ import MainToolBar from './mainToolBar';
 import SaveCloudFileModal from './saveCloudFileModal';
 import ModelsGallery from './modelsGallery';
 import ProjectListPanel from './panels/projectListPanel';
-import { createDesign, loadCloudFile } from './cloudUtil';
+import { createDesign, createDesignTitle, loadCloudFile } from './cloudUtil';
 
 export interface CloudManagerProps {
   viewOnly: boolean;
@@ -1178,7 +1178,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     }
   };
 
-  const addDesignToProject = (projectTitle: string, fileTitle: string) => {
+  const addDesignToProject = (projectTitle: string, designTitle: string) => {
     // first we upload a thumbnail of the design to Firestore Cloud Storage
     const storageRef = firebase.storage().ref();
     if (canvas) {
@@ -1186,7 +1186,9 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       thumbnail.toBlob((blob) => {
         if (blob) {
           const metadata = { contentType: 'image/png' };
-          const uploadTask = storageRef.child('images/' + fileTitle + '.png').put(blob, metadata);
+          const uploadTask = storageRef
+            .child('images/' + createDesignTitle(projectTitle, designTitle) + '.png')
+            .put(blob, metadata);
           // Listen for state changes, errors, and completion of the upload.
           uploadTask.on(
             firebase.storage.TaskEvent.STATE_CHANGED,
@@ -1203,7 +1205,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
               uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
                 if (!user.uid) return;
                 // after we get a download URL for the thumbnail image, we then go on to upload other data
-                const design = createDesign(fileTitle, downloadURL);
+                const design = createDesign(designTitle, downloadURL);
                 firebase
                   .firestore()
                   .collection('users')
@@ -1226,8 +1228,8 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                       state.projectDesigns?.push(design);
                       state.projectDesignCounter++;
                       state.designProjectType = state.projectType;
+                      saveToCloudWithoutCheckingExistence(designTitle, true);
                     });
-                    saveToCloudWithoutCheckingExistence(fileTitle, true);
                   });
               });
             },
