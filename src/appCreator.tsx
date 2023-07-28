@@ -84,6 +84,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const [canvasRelativeWidth, setCanvasRelativeWidth] = useState<number>(50);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const imagesRef = useRef<Map<string, HTMLImageElement>>(new Map<string, HTMLImageElement>());
 
   const lang = useMemo(() => {
     return { lng: language };
@@ -421,7 +422,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
         resetView={resetView}
         zoomView={zoomView}
       />
-      <CloudManager viewOnly={viewOnly} canvas={canvasRef.current} />
+      <CloudManager viewOnly={viewOnly} canvas={canvasRef.current} images={imagesRef.current} />
       <Panels />
       <DropdownContextMenu>
         {/* must specify the height here for the floating window to have correct boundary check*/}
@@ -448,15 +449,20 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
               backgroundImage: 'linear-gradient(to right, white, gray)',
             }}
           >
-            <ProjectGallery
-              canvas={canvasRef.current}
-              relativeWidth={1 - canvasRelativeWidth * 0.01}
-              openCloudFile={loadCloudFile}
-              deleteDesign={removeDesignFromProject}
-              updateProjectDescription={updateProjectDescription}
-              updateProjectParameters={updateProjectHiddenParameters}
-              updateProjectDesign={updateProjectDesign}
-            />
+            {projectView ? (
+              <ProjectGallery
+                canvas={canvasRef.current}
+                images={imagesRef.current}
+                relativeWidth={1 - canvasRelativeWidth * 0.01}
+                openCloudFile={loadCloudFile}
+                deleteDesign={removeDesignFromProject}
+                updateProjectDescription={updateProjectDescription}
+                updateProjectParameters={updateProjectHiddenParameters}
+                updateProjectDesign={updateProjectDesign}
+              />
+            ) : (
+              <></>
+            )}
             {createCanvas()}
           </SplitPane>
           <KeyboardListener

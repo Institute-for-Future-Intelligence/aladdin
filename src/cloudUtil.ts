@@ -12,6 +12,7 @@ import { HOME_URL } from './constants';
 import { Design, DesignProblem } from './types';
 import { Util } from './Util';
 import { usePrimitiveStore } from './stores/commonPrimitive';
+import html2canvas from 'html2canvas';
 
 export const removeDesignFromProject = (userid: string, projectTitle: string, design: Design) => {
   const lang = { lng: useStore.getState().language };
@@ -116,6 +117,50 @@ export const changeDesignTitles = (projectTitle: string, projectDesigns: Design[
   return newDesigns;
 };
 
+export const uploadImages = (
+  images: Map<string, HTMLImageElement>,
+  designs: Design[],
+  designsWithNewTitles: Design[],
+) => {
+  const lang = { lng: useStore.getState().language };
+  for (const [i, d] of designs.entries()) {
+    const image = images.get(d.title);
+    if (image) {
+      html2canvas(image, { allowTaint: true, foreignObjectRendering: true }).then((canvas) => {
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const metadata = { contentType: 'image/png' };
+            const uploadTask = firebase
+              .storage()
+              .ref()
+              .child('images/' + designsWithNewTitles[i].title + '.png')
+              .put(blob, metadata);
+            // Listen for state changes, errors, and completion of the upload
+            uploadTask.on(
+              firebase.storage.TaskEvent.STATE_CHANGED,
+              (snapshot) => {
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                if (progress > 0) {
+                  showInfo(i18n.t('word.Upload', lang) + ': ' + progress + '%');
+                }
+              },
+              (error) => {
+                showError('Storage: ' + error);
+                console.log(error);
+              },
+              () => {
+                uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                  // designsWithNewTitles[i].thumbnailUrl = downloadURL;
+                });
+              },
+            );
+          }
+        });
+      });
+    }
+  }
+};
+
 export const createDesignTitle = (projectTitle: string, designTitle: string) => {
   if (designTitle.includes(projectTitle)) return designTitle;
   const index = designTitle.lastIndexOf(' ');
@@ -124,7 +169,6 @@ export const createDesignTitle = (projectTitle: string, designTitle: string) => 
 
 export const copyDesign = (userid: string, original: string, copy: string) => {
   const lang = { lng: useStore.getState().language };
-
   firebase
     .firestore()
     .collection('users')

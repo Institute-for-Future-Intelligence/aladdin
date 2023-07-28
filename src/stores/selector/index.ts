@@ -526,6 +526,8 @@ export const projectDesignCounter = (state: CommonStoreState) => state.projectDe
 
 export const showProjectListPanel = (state: PrimitiveStoreState) => state.showProjectListPanel;
 
+export const projectImagesUpdateFlag = (state: PrimitiveStoreState) => state.projectImagesUpdateFlag;
+
 export const showModelsGallery = (state: PrimitiveStoreState) => state.showModelsGallery;
 
 export const showAccountSettingsPanel = (state: PrimitiveStoreState) => state.showAccountSettingsPanel;

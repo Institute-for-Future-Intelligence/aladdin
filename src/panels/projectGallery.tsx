@@ -107,6 +107,7 @@ const SubContainer = styled.div`
 export interface ProjectGalleryProps {
   relativeWidth: number;
   canvas: HTMLCanvasElement | null;
+  images: Map<string, HTMLImageElement>;
   openCloudFile?: (userid: string, title: string, popState?: boolean) => void;
   deleteDesign?: (userid: string, projectTitle: string, design: Design) => void;
   updateProjectDescription?: (userid: string, projectTitle: string, description: string | null) => void;
@@ -123,6 +124,7 @@ export interface ProjectGalleryProps {
 const ProjectGallery = ({
   relativeWidth,
   canvas,
+  images,
   openCloudFile,
   deleteDesign,
   updateProjectDescription,
@@ -186,6 +188,11 @@ const ProjectGallery = ({
       state.projectOwner = null;
     });
     setSelectedDesign(undefined);
+    // clear the cached images for the previously open project
+    // images?.clear();
+    usePrimitiveStore.setState((state) => {
+      state.projectImagesUpdateFlag = !state.projectImagesUpdateFlag;
+    });
   };
 
   const curateCurrentDesign = () => {
@@ -593,11 +600,17 @@ const ProjectGallery = ({
                   }}
                 >
                   <img
-                    loading={'lazy'}
+                    loading={'eager'}
                     width={imageWidth + 'px'}
                     height={'auto'}
                     onError={(event: any) => {
                       (event.target as HTMLImageElement).src = ImageLoadFailureIcon;
+                    }}
+                    onLoad={(event) => {
+                      images.set(design.title, event.target as HTMLImageElement);
+                      usePrimitiveStore.setState((state) => {
+                        state.projectImagesUpdateFlag = !state.projectImagesUpdateFlag;
+                      });
                     }}
                     alt={design.title}
                     title={

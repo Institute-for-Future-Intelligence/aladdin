@@ -38,14 +38,22 @@ import MainToolBar from './mainToolBar';
 import SaveCloudFileModal from './saveCloudFileModal';
 import ModelsGallery from './modelsGallery';
 import ProjectListPanel from './panels/projectListPanel';
-import { changeDesignTitles, copyDesign, createDesign, createDesignTitle, loadCloudFile } from './cloudUtil';
+import {
+  changeDesignTitles,
+  copyDesign,
+  createDesign,
+  createDesignTitle,
+  loadCloudFile,
+  uploadImages,
+} from './cloudUtil';
 
 export interface CloudManagerProps {
   viewOnly: boolean;
   canvas?: HTMLCanvasElement | null;
+  images?: Map<string, HTMLImageElement>;
 }
 
-const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
+const CloudManager = ({ viewOnly = false, canvas, images }: CloudManagerProps) => {
   const setCommonStore = useStore(Selector.set);
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const language = useStore(Selector.language);
@@ -919,6 +927,9 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                           copyDesign(user.uid, d.title, designsWithNewTitles[i].title);
                         }
                       }
+                      if (images && designs) {
+                        uploadImages(images, designs, designsWithNewTitles);
+                      }
                     }
                     doc
                       .collection('projects')
@@ -947,6 +958,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                       })
                       .catch((error) => {
                         showError(i18n.t('message.CannotCreateNewProject', lang) + ': ' + error);
+                        console.log(error);
                       })
                       .finally(() => {
                         setLoading(false);
@@ -960,6 +972,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                 } catch (error) {
                   showError(i18n.t('message.CannotCreateNewProject', lang) + ': ' + error);
                   setLoading(false);
+                  console.log(error);
                 }
               }
             }
@@ -1067,6 +1080,9 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       state.projectHiddenParameters = hiddenParameters ?? [];
       state.projectDesignCounter = designCounter;
       state.projectView = true;
+    });
+    usePrimitiveStore.setState((state) => {
+      state.projectImagesUpdateFlag = !state.projectImagesUpdateFlag;
     });
   };
 
