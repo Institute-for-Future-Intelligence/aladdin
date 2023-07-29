@@ -121,6 +121,8 @@ export const curateDesignToProjectFlag = (state: PrimitiveStoreState) => state.c
 
 export const showProjectsFlag = (state: PrimitiveStoreState) => state.showProjectsFlag;
 
+export const updateProjectsFlag = (state: PrimitiveStoreState) => state.updateProjectsFlag;
+
 export const modelsMapFlag = (state: PrimitiveStoreState) => state.modelsMapFlag;
 
 export const leaderboardFlag = (state: PrimitiveStoreState) => state.leaderboardFlag;

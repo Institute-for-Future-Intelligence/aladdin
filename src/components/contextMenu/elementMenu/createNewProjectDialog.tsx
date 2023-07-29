@@ -70,7 +70,7 @@ const CreateNewProjectDialog = ({
     if (loggable) {
       setCommonStore((state) => {
         state.actionInfo = {
-          name: 'Create New Project',
+          name: saveAs ? 'Save as Project' : 'Create New Project',
           timestamp: new Date().getTime(),
         };
       });

@@ -12,7 +12,6 @@ import { HOME_URL } from './constants';
 import { Design, DesignProblem } from './types';
 import { Util } from './Util';
 import { usePrimitiveStore } from './stores/commonPrimitive';
-import html2canvas from 'html2canvas';
 
 export const removeDesignFromProject = (userid: string, projectTitle: string, design: Design) => {
   const lang = { lng: useStore.getState().language };
@@ -79,8 +78,8 @@ export const updateProjectDescription = (userid: string, projectTitle: string, d
     });
 };
 
-export const createDesign = (type: string, title: string, thumbnailUrl: string): Design => {
-  let design = { title, thumbnailUrl } as Design;
+export const createDesign = (type: string, title: string, thumbnail: string): Design => {
+  let design = { title, thumbnail } as Design;
   switch (type) {
     case DesignProblem.SOLAR_PANEL_ARRAY:
       const panelCount = Util.countAllSolarPanels();
@@ -117,54 +116,21 @@ export const changeDesignTitles = (projectTitle: string, projectDesigns: Design[
   return newDesigns;
 };
 
-export const uploadImages = (
-  images: Map<string, HTMLImageElement>,
-  designs: Design[],
-  designsWithNewTitles: Design[],
-) => {
-  const lang = { lng: useStore.getState().language };
-  for (const [i, d] of designs.entries()) {
-    const image = images.get(d.title);
-    if (image) {
-      html2canvas(image, { allowTaint: true, foreignObjectRendering: true }).then((canvas) => {
-        canvas.toBlob((blob) => {
-          if (blob) {
-            const metadata = { contentType: 'image/png' };
-            const uploadTask = firebase
-              .storage()
-              .ref()
-              .child('images/' + designsWithNewTitles[i].title + '.png')
-              .put(blob, metadata);
-            // Listen for state changes, errors, and completion of the upload
-            uploadTask.on(
-              firebase.storage.TaskEvent.STATE_CHANGED,
-              (snapshot) => {
-                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                if (progress > 0) {
-                  showInfo(i18n.t('word.Upload', lang) + ': ' + progress + '%');
-                }
-              },
-              (error) => {
-                showError('Storage: ' + error);
-                console.log(error);
-              },
-              () => {
-                uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-                  // designsWithNewTitles[i].thumbnailUrl = downloadURL;
-                });
-              },
-            );
-          }
-        });
-      });
-    }
-  }
-};
-
 export const createDesignTitle = (projectTitle: string, designTitle: string) => {
   if (designTitle.includes(projectTitle)) return designTitle;
   const index = designTitle.lastIndexOf(' ');
   return projectTitle + '' + designTitle.substring(index);
+};
+
+export const getImageData = (image: HTMLImageElement) => {
+  const c = document.createElement('canvas');
+  c.width = image.width;
+  c.height = image.height;
+  const ctx = c.getContext('2d');
+  if (ctx) {
+    ctx.drawImage(image, 1, 1); // 1 is for padding
+  }
+  return c.toDataURL();
 };
 
 export const copyDesign = (userid: string, original: string, copy: string) => {
@@ -226,100 +192,64 @@ export const updateProjectDesign = (
       });
       // Then we upload an updated thumbnail from the current design canvas to Firestore Storage
       if (canvas) {
-        const storageRef = firebase.storage().ref();
-        const thumbnail = Util.resizeCanvas(canvas, 200);
-        thumbnail.toBlob((blob) => {
-          if (blob) {
-            const metadata = { contentType: 'image/png' };
-            const uploadTask = storageRef
-              .child('images/' + createDesignTitle(projectTitle, designTitle) + '.png')
-              .put(blob, metadata);
-            // Listen for state changes, errors, and completion of the upload
-            uploadTask.on(
-              firebase.storage.TaskEvent.STATE_CHANGED,
-              (snapshot) => {
-                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                if (progress > 0) {
-                  showInfo(i18n.t('word.Upload', lang) + ': ' + progress + '%');
+        const thumbnail = Util.resizeCanvas(canvas, 200).toDataURL();
+        firebase
+          .firestore()
+          .collection('users')
+          .doc(userid)
+          .collection('projects')
+          .doc(projectTitle)
+          .get()
+          .then((doc) => {
+            if (doc.exists) {
+              const data = doc.data();
+              if (data) {
+                const updatedDesigns: Design[] = [];
+                updatedDesigns.push(...data.designs);
+                // Create an updated design from the current parameters and results
+                const design = createDesign(projectType, designTitle, thumbnail);
+                // Get the index of the design to be modified by the title
+                let index = -1;
+                for (const [i, d] of updatedDesigns.entries()) {
+                  if (d.title === design.title) {
+                    index = i;
+                    break;
+                  }
                 }
-              },
-              (error) => {
-                showError('Storage: ' + error);
-              },
-              () => {
-                uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-                  if (!userid) return;
-                  // After we get a new download URL for the thumbnail image, we then go on to upload other data
-                  // Since Firestore doesn't have a way to modify just an element of an array,
-                  // we have to download a copy of the entire design array first, modify it, and then upload it back
-                  firebase
-                    .firestore()
-                    .collection('users')
-                    .doc(userid)
-                    .collection('projects')
-                    .doc(projectTitle)
-                    .get()
-                    .then((doc) => {
-                      if (doc.exists) {
-                        const data = doc.data();
-                        if (data) {
-                          const updatedDesigns: Design[] = [];
-                          updatedDesigns.push(...data.designs);
-                          // Create an updated design from the current parameters and results
-                          const design = createDesign(projectType, designTitle, downloadURL);
-                          // Get the index of the design to be modified by the title
-                          let index = -1;
-                          for (const [i, d] of updatedDesigns.entries()) {
-                            if (d.title === design.title) {
-                              index = i;
-                              break;
-                            }
-                          }
-                          // If found, update the design in the array
-                          if (index >= 0) {
-                            updatedDesigns[index] = design;
-                          }
-                          // Finally, upload the updated design array back to Firestore
-                          firebase
-                            .firestore()
-                            .collection('users')
-                            .doc(userid)
-                            .collection('projects')
-                            .doc(projectTitle)
-                            .update({ designs: updatedDesigns })
-                            .then(() => {
-                              // ignore
-                            })
-                            .catch((error) => {
-                              showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
-                            })
-                            .finally(() => {
-                              // Update the cached array in the local storage via the common store
-                              useStore.getState().set((state) => {
-                                state.projectDesigns = updatedDesigns;
-                              });
-                            });
-                        }
-                      }
-                    })
-                    .catch((error) => {
-                      showError(i18n.t('message.CannotFetchProjectData', lang) + ': ' + error);
-                    })
-                    .finally(() => {
-                      // ignore
+                // If found, update the design in the array
+                if (index >= 0) {
+                  updatedDesigns[index] = design;
+                }
+                // Finally, upload the updated design array back to Firestore
+                firebase
+                  .firestore()
+                  .collection('users')
+                  .doc(userid)
+                  .collection('projects')
+                  .doc(projectTitle)
+                  .update({ designs: updatedDesigns })
+                  .then(() => {
+                    // ignore
+                  })
+                  .catch((error) => {
+                    showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
+                  })
+                  .finally(() => {
+                    // Update the cached array in the local storage via the common store
+                    useStore.getState().set((state) => {
+                      state.projectDesigns = updatedDesigns;
                     });
-                });
-              },
-            );
-          }
-        });
+                  });
+              }
+            }
+          })
+          .catch((error) => {
+            showError(i18n.t('message.CannotFetchProjectData', lang) + ': ' + error);
+          })
+          .finally(() => {
+            // ignore
+          });
       }
-    })
-    .catch((error) => {
-      showError(i18n.t('message.CannotSaveYourFileToCloud', lang) + ': ' + error);
-    })
-    .finally(() => {
-      // ignore
     });
 };
 

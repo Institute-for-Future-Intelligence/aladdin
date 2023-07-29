@@ -618,7 +618,7 @@ const ProjectGallery = ({
                         ? i18n.t('projectPanel.SingleClickToDeselectDoubleClickToOpen', lang)
                         : i18n.t('projectPanel.SingleClickToSelectDoubleClickToOpen', lang)
                     }
-                    src={design.thumbnailUrl}
+                    src={design.thumbnail}
                     style={{
                       transition: '.5s ease',
                       opacity: hoveredDesign === design ? 0.5 : 1,

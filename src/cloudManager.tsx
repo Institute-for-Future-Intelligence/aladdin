@@ -38,14 +38,7 @@ import MainToolBar from './mainToolBar';
 import SaveCloudFileModal from './saveCloudFileModal';
 import ModelsGallery from './modelsGallery';
 import ProjectListPanel from './panels/projectListPanel';
-import {
-  changeDesignTitles,
-  copyDesign,
-  createDesign,
-  createDesignTitle,
-  loadCloudFile,
-  uploadImages,
-} from './cloudUtil';
+import { changeDesignTitles, copyDesign, createDesign, getImageData, loadCloudFile } from './cloudUtil';
 
 export interface CloudManagerProps {
   viewOnly: boolean;
@@ -85,6 +78,7 @@ const CloudManager = ({ viewOnly = false, canvas, images }: CloudManagerProps) =
   const saveProjectFlag = usePrimitiveStore(Selector.saveProjectFlag);
   const curateDesignToProjectFlag = usePrimitiveStore(Selector.curateDesignToProjectFlag);
   const showProjectsFlag = usePrimitiveStore(Selector.showProjectsFlag);
+  const updateProjectsFlag = usePrimitiveStore(Selector.updateProjectsFlag);
 
   const [loading, setLoading] = useState(false);
   const [updateFlag, setUpdateFlag] = useState(false);
@@ -100,9 +94,10 @@ const CloudManager = ({ viewOnly = false, canvas, images }: CloudManagerProps) =
   const firstCallFetchLeaderboard = useRef<boolean>(true);
   const firstCallPublishOnMap = useRef<boolean>(true);
   const firstCallCreateProject = useRef<boolean>(true);
-  const firstCallSaveProject = useRef<boolean>(true);
+  const firstCallSaveAsProject = useRef<boolean>(true);
   const firstCallCurateDesign = useRef<boolean>(true);
   const firstCallListProjects = useRef<boolean>(true);
+  const firstCallUpdateProjects = useRef<boolean>(true);
   const firstCallListCloudFiles = useRef<boolean>(true);
   const firstAccountSettings = useRef<boolean>(true);
 
@@ -271,16 +266,16 @@ const CloudManager = ({ viewOnly = false, canvas, images }: CloudManagerProps) =
     if (firstCallCreateProject.current) {
       firstCallCreateProject.current = false;
     } else {
-      createNewProject(false);
+      createNewProject();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createProjectFlag]);
 
   useEffect(() => {
-    if (firstCallSaveProject.current) {
-      firstCallSaveProject.current = false;
+    if (firstCallSaveAsProject.current) {
+      firstCallSaveAsProject.current = false;
     } else {
-      createNewProject(true);
+      saveAsProject();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [saveProjectFlag]);
@@ -298,10 +293,19 @@ const CloudManager = ({ viewOnly = false, canvas, images }: CloudManagerProps) =
     if (firstCallListProjects.current) {
       firstCallListProjects.current = false;
     } else {
-      listMyProjects();
+      listMyProjects(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showProjectsFlag]);
+
+  useEffect(() => {
+    if (firstCallUpdateProjects.current) {
+      firstCallUpdateProjects.current = false;
+    } else {
+      listMyProjects(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [updateProjectsFlag]);
 
   useEffect(() => {
     if (firstCallListCloudFiles.current) {
@@ -891,7 +895,7 @@ const CloudManager = ({ viewOnly = false, canvas, images }: CloudManagerProps) =
     }
   };
 
-  const createNewProject = (saveAs: boolean) => {
+  const createNewProject = () => {
     if (user && user.uid) {
       const title = useStore.getState().projectTitle;
       if (title) {
@@ -900,7 +904,84 @@ const CloudManager = ({ viewOnly = false, canvas, images }: CloudManagerProps) =
           const type = useStore.getState().projectType;
           const description = useStore.getState().projectDescription;
           const timestamp = new Date().getTime();
-          const counter = saveAs ? useStore.getState().projectDesignCounter : 0;
+          const counter = 0;
+          fetchMyProjects().then(() => {
+            let exist = false;
+            if (myProjects.current) {
+              for (const p of myProjects.current) {
+                if (p.title === t) {
+                  exist = true;
+                  break;
+                }
+              }
+            }
+            if (exist) {
+              showInfo(i18n.t('message.TitleUsedChooseDifferentOne', lang) + ': ' + t);
+            } else {
+              if (user && user.uid) {
+                try {
+                  const doc = firebase.firestore().collection('users').doc(user.uid);
+                  if (doc) {
+                    doc
+                      .collection('projects')
+                      .doc(t)
+                      .set({
+                        owner: user.uid,
+                        timestamp,
+                        type,
+                        description,
+                        counter,
+                        designs: [],
+                        hiddenParameters: [],
+                      })
+                      .then(() => {
+                        setCommonStore((state) => {
+                          state.projectView = true;
+                          state.projectOwner = user.uid;
+                          state.projectDesignCounter = 0;
+                          state.projectDesigns = [];
+                          state.projectHiddenParameters = [];
+                        });
+                      })
+                      .catch((error) => {
+                        showError(i18n.t('message.CannotCreateNewProject', lang) + ': ' + error);
+                      })
+                      .finally(() => {
+                        setLoading(false);
+                        if (showProjectListPanel) {
+                          fetchMyProjects().then(() => {
+                            setUpdateFlag(!updateFlag);
+                          });
+                        }
+                      });
+                  }
+                } catch (error) {
+                  showError(i18n.t('message.CannotCreateNewProject', lang) + ': ' + error);
+                  setLoading(false);
+                  console.log(error);
+                }
+              }
+            }
+          });
+        } else {
+          showError(i18n.t('message.CannotCreateNewProjectWithoutTitle', lang) + '.');
+        }
+      } else {
+        showError(i18n.t('message.CannotCreateNewProjectWithoutTitle', lang) + '.');
+      }
+    }
+  };
+
+  const saveAsProject = () => {
+    if (user && user.uid) {
+      const title = useStore.getState().projectTitle;
+      if (title) {
+        const t = title.trim();
+        if (t.length > 0) {
+          const type = useStore.getState().projectType;
+          const description = useStore.getState().projectDescription;
+          const timestamp = new Date().getTime();
+          const counter = useStore.getState().projectDesignCounter;
           fetchMyProjects().then(() => {
             let exist = false;
             if (myProjects.current) {
@@ -919,60 +1000,57 @@ const CloudManager = ({ viewOnly = false, canvas, images }: CloudManagerProps) =
                   const doc = firebase.firestore().collection('users').doc(user.uid);
                   if (doc) {
                     let designsWithNewTitles: Design[] = [];
-                    if (saveAs) {
-                      const designs = useStore.getState().projectDesigns;
-                      designsWithNewTitles = changeDesignTitles(title, designs) ?? [];
-                      if (designs && designsWithNewTitles) {
-                        for (const [i, d] of designs.entries()) {
-                          copyDesign(user.uid, d.title, designsWithNewTitles[i].title);
-                        }
+                    const designs = useStore.getState().projectDesigns;
+                    designsWithNewTitles = changeDesignTitles(title, designs) ?? [];
+                    if (designs && designsWithNewTitles) {
+                      for (const [i, d] of designs.entries()) {
+                        copyDesign(user.uid, d.title, designsWithNewTitles[i].title);
                       }
-                      if (images && designs) {
-                        uploadImages(images, designs, designsWithNewTitles);
+                      if (images) {
+                        console.log(t, images);
+                        for (const [i, d] of designs.entries()) {
+                          const image = images.get(d.title);
+                          if (image) {
+                            designsWithNewTitles[i].thumbnail = getImageData(image);
+                          }
+                        }
+                        doc
+                          .collection('projects')
+                          .doc(t)
+                          .set({
+                            owner: user.uid,
+                            timestamp,
+                            type,
+                            description,
+                            counter,
+                            designs: designsWithNewTitles,
+                            hiddenParameters: useStore.getState().projectHiddenParameters,
+                          })
+                          .then(() => {
+                            setCommonStore((state) => {
+                              state.projectView = true;
+                              state.projectOwner = user.uid;
+                              state.projectDesigns = designsWithNewTitles;
+                            });
+                          })
+                          .catch((error) => {
+                            showError(i18n.t('message.CannotCreateNewProject', lang) + ': ' + error);
+                            console.log(error);
+                          })
+                          .finally(() => {
+                            setLoading(false);
+                            if (showProjectListPanel) {
+                              fetchMyProjects().then(() => {
+                                setUpdateFlag(!updateFlag);
+                              });
+                            }
+                          });
                       }
                     }
-                    doc
-                      .collection('projects')
-                      .doc(t)
-                      .set({
-                        owner: user.uid,
-                        timestamp,
-                        type,
-                        description,
-                        counter,
-                        designs: designsWithNewTitles,
-                        hiddenParameters: saveAs ? useStore.getState().projectHiddenParameters : [],
-                      })
-                      .then(() => {
-                        setCommonStore((state) => {
-                          state.projectView = true;
-                          state.projectOwner = user.uid;
-                          if (saveAs) {
-                            state.projectDesigns = designsWithNewTitles;
-                          } else {
-                            state.projectDesignCounter = 0;
-                            state.projectDesigns = [];
-                            state.projectHiddenParameters = [];
-                          }
-                        });
-                      })
-                      .catch((error) => {
-                        showError(i18n.t('message.CannotCreateNewProject', lang) + ': ' + error);
-                        console.log(error);
-                      })
-                      .finally(() => {
-                        setLoading(false);
-                        if (showProjectListPanel) {
-                          fetchMyProjects().then(() => {
-                            setUpdateFlag(!updateFlag);
-                          });
-                        }
-                      });
                   }
                 } catch (error) {
                   showError(i18n.t('message.CannotCreateNewProject', lang) + ': ' + error);
                   setLoading(false);
-                  console.log(error);
                 }
               }
             }
@@ -1052,12 +1130,14 @@ const CloudManager = ({ viewOnly = false, canvas, images }: CloudManagerProps) =
       });
   };
 
-  const listMyProjects = () => {
+  const listMyProjects = (show: boolean) => {
     if (user.uid) {
       fetchMyProjects().then(() => {
-        usePrimitiveStore.setState((state) => {
-          state.showProjectListPanel = true;
-        });
+        if (show) {
+          usePrimitiveStore.setState((state) => {
+            state.showProjectListPanel = true;
+          });
+        }
       });
     }
   };
@@ -1083,6 +1163,7 @@ const CloudManager = ({ viewOnly = false, canvas, images }: CloudManagerProps) =
     });
     usePrimitiveStore.setState((state) => {
       state.projectImagesUpdateFlag = !state.projectImagesUpdateFlag;
+      state.updateProjectsFlag = !state.updateProjectsFlag;
     });
   };
 
@@ -1208,63 +1289,34 @@ const CloudManager = ({ viewOnly = false, canvas, images }: CloudManagerProps) =
   };
 
   const addDesignToProject = (projectType: string, projectTitle: string, designTitle: string) => {
-    // first we upload a thumbnail of the design to Firestore Cloud Storage
-    const storageRef = firebase.storage().ref();
-    if (canvas) {
-      const thumbnail = Util.resizeCanvas(canvas, 200);
-      thumbnail.toBlob((blob) => {
-        if (blob) {
-          const metadata = { contentType: 'image/png' };
-          const uploadTask = storageRef
-            .child('images/' + createDesignTitle(projectTitle, designTitle) + '.png')
-            .put(blob, metadata);
-          // Listen for state changes, errors, and completion of the upload.
-          uploadTask.on(
-            firebase.storage.TaskEvent.STATE_CHANGED,
-            (snapshot) => {
-              const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-              if (progress > 0) {
-                showInfo(i18n.t('word.Upload', lang) + ': ' + progress + '%');
-              }
-            },
-            (error) => {
-              showError('Storage: ' + error);
-            },
-            () => {
-              uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-                if (!user.uid) return;
-                // after we get a download URL for the thumbnail image, we then go on to upload other data
-                const design = createDesign(projectType, designTitle, downloadURL);
-                firebase
-                  .firestore()
-                  .collection('users')
-                  .doc(user.uid)
-                  .collection('projects')
-                  .doc(projectTitle)
-                  .update({
-                    designs: firebase.firestore.FieldValue.arrayUnion(design),
-                    counter: firebase.firestore.FieldValue.increment(1),
-                  })
-                  .then(() => {
-                    setCommonStore((state) => {
-                      state.projectDesigns?.push(design);
-                      state.projectDesignCounter++;
-                      state.designProjectType = state.projectType;
-                    });
-                  })
-                  .catch((error) => {
-                    showError(i18n.t('message.CannotAddDesignToProject', lang) + ': ' + error);
-                  })
-                  .finally(() => {
-                    saveToCloudWithoutCheckingExistence(designTitle, true);
-                    setLoading(false);
-                  });
-              });
-            },
-          );
-        }
+    if (!user.uid || !canvas) return;
+    // create a thumbnail image of the design in Base64 format
+    const thumbnail = Util.resizeCanvas(canvas, 200).toDataURL();
+    const design = createDesign(projectType, designTitle, thumbnail);
+    firebase
+      .firestore()
+      .collection('users')
+      .doc(user.uid)
+      .collection('projects')
+      .doc(projectTitle)
+      .update({
+        designs: firebase.firestore.FieldValue.arrayUnion(design),
+        counter: firebase.firestore.FieldValue.increment(1),
+      })
+      .then(() => {
+        setCommonStore((state) => {
+          state.projectDesigns?.push(design);
+          state.projectDesignCounter++;
+          state.designProjectType = state.projectType;
+        });
+      })
+      .catch((error) => {
+        showError(i18n.t('message.CannotAddDesignToProject', lang) + ': ' + error);
+      })
+      .finally(() => {
+        saveToCloudWithoutCheckingExistence(designTitle, true);
+        setLoading(false);
       });
-    }
   };
 
   const saveToCloud = (title: string, silent: boolean, checkExistence: boolean) => {

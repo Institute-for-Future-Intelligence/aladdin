@@ -69,7 +69,7 @@ export interface ModelSite {
 
 export interface Design {
   title: string;
-  thumbnailUrl: string;
+  thumbnail: string;
   [key: string]: any;
 }
 
