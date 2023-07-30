@@ -1192,67 +1192,93 @@ const CloudManager = ({ viewOnly = false, canvas, projectImages }: CloudManagerP
       });
   };
 
-  // TODO: Do we want to also rename the designs?
   const renameProject = (oldTitle: string, newTitle: string) => {
-    if (!user.uid) return;
-    const files = firebase.firestore().collection('users').doc(user.uid).collection('projects');
-    files
-      .doc(oldTitle)
-      .get()
-      .then((doc) => {
-        if (doc && doc.exists) {
-          const data = doc.data();
-          if (data) {
-            files
-              .doc(newTitle)
-              .set(data)
-              .then(() => {
-                files
-                  .doc(oldTitle)
-                  .delete()
-                  .then(() => {
-                    // TODO
-                  });
-                if (myProjects.current) {
-                  const newArray: ProjectInfo[] = [];
-                  for (const p of myProjects.current) {
-                    if (p.title === oldTitle) {
-                      newArray.push({
-                        owner: p.owner,
-                        timestamp: p.timestamp,
-                        title: newTitle,
-                        description: p.description,
-                        type: p.type,
-                        designs: p.designs,
-                        hiddenParameters: p.hiddenParameters,
-                        counter: p.counter,
-                      } as ProjectInfo);
-                    } else {
-                      newArray.push(p);
-                    }
-                  }
-                  myProjects.current = newArray;
-                  setUpdateFlag(!updateFlag);
-                }
-                setCommonStore((state) => {
-                  if (state.projectTitle === oldTitle) {
-                    state.projectTitle = newTitle;
-                  }
-                });
-                // TODO
-                // change the address field of the browser when the project is currently open
-                // const params = new URLSearchParams(window.location.search);
-                // if (params.get('title') === oldTitle && params.get('userid') === user.uid) {
-                //   const newUrl = HOME_URL + '?client=web&userid=' + user.uid + '&title=' + encodeURIComponent(newTitle);
-                //   window.history.pushState({}, document.title, newUrl);
-                // }
-              });
+    // check if the new project title is already taken
+    fetchMyProjects().then(() => {
+      let exist = false;
+      if (myProjects.current) {
+        for (const p of myProjects.current) {
+          if (p.title === newTitle) {
+            exist = true;
+            break;
           }
         }
-      })
-      .catch((error) => {
-        showError(i18n.t('message.CannotRenameProject', lang) + ': ' + error);
-      });
+      }
+      if (exist) {
+        showInfo(i18n.t('message.TitleUsedChooseDifferentOne', lang) + ': ' + newTitle);
+      } else {
+        if (!user.uid) return;
+        const files = firebase.firestore().collection('users').doc(user.uid).collection('projects');
+        files
+          .doc(oldTitle)
+          .get()
+          .then((doc) => {
+            if (doc && doc.exists) {
+              const data = doc.data();
+              if (data && user.uid) {
+                const newData = { ...data };
+                if (data.designs && data.designs.length > 0) {
+                  const newDesigns: Design[] = changeDesignTitles(newTitle, data.designs) ?? [];
+                  for (const [i, d] of data.designs.entries()) {
+                    copyDesign(d.title, newDesigns[i].title, data.owner, user.uid);
+                  }
+                  newData.designs = newDesigns;
+                  setCommonStore((state) => {
+                    state.projectDesigns = newDesigns;
+                  });
+                }
+                files
+                  .doc(newTitle)
+                  .set(newData)
+                  .then(() => {
+                    files
+                      .doc(oldTitle)
+                      .delete()
+                      .then(() => {
+                        // TODO
+                      });
+                    if (myProjects.current) {
+                      const newArray: ProjectInfo[] = [];
+                      for (const p of myProjects.current) {
+                        if (p.title === oldTitle) {
+                          newArray.push({
+                            owner: p.owner,
+                            timestamp: p.timestamp,
+                            title: newTitle,
+                            description: p.description,
+                            type: p.type,
+                            designs: p.designs,
+                            hiddenParameters: p.hiddenParameters,
+                            counter: p.counter,
+                          } as ProjectInfo);
+                        } else {
+                          newArray.push(p);
+                        }
+                      }
+                      myProjects.current = newArray;
+                      setUpdateFlag(!updateFlag);
+                    }
+                    setCommonStore((state) => {
+                      if (state.projectTitle === oldTitle) {
+                        state.projectTitle = newTitle;
+                      }
+                    });
+                    // TODO
+                    // change the address field of the browser when the project is currently open
+                    // const params = new URLSearchParams(window.location.search);
+                    // if (params.get('title') === oldTitle && params.get('userid') === user.uid) {
+                    //   const newUrl = HOME_URL + '?client=web&userid=' + user.uid + '&title=' + encodeURIComponent(newTitle);
+                    //   window.history.pushState({}, document.title, newUrl);
+                    // }
+                  });
+              }
+            }
+          })
+          .catch((error) => {
+            showError(i18n.t('message.CannotRenameProject', lang) + ': ' + error);
+          });
+      }
+    });
   };
 
   const curateDesignToProject = () => {

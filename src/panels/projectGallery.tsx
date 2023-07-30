@@ -473,7 +473,7 @@ const ProjectGallery = ({
                           title={i18n.t('projectPanel.CurateCurrentDesign', lang)}
                         />
                       </Button>
-                      {isProjectDesign && (
+                      {isProjectDesign && selectedDesign && (
                         <Button
                           style={{ border: 'none', padding: '4px' }}
                           onClick={(e) => {
@@ -495,6 +495,7 @@ const ProjectGallery = ({
                           onClick={(e) => {
                             e.stopPropagation();
                             removeSelectedDesign();
+                            setSelectedDesign(undefined);
                           }}
                         >
                           <DeleteOutlined
