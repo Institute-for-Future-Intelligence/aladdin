@@ -25,6 +25,9 @@ export const removeDesignFromProject = (userid: string, projectTitle: string, de
     })
     .then(() => {
       showInfo(i18n.t('message.DesignRemovedFromProject', lang) + '.');
+      usePrimitiveStore.setState((state) => {
+        state.updateProjectsFlag = !state.updateProjectsFlag;
+      });
     })
     .catch((error) => {
       showError(i18n.t('message.CannotRemoveDesignFromProject', lang) + ': ' + error);

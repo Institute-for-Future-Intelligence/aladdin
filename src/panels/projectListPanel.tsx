@@ -176,6 +176,7 @@ const ProjectListPanel = ({ projects, openProject, deleteProject, renameProject 
     if (oldTitle && newTitle) {
       renameProject(oldTitle, newTitle);
       setNewTitle(undefined);
+      setRecountFlag(!recountFlag);
     }
     setRenameDialogVisible(false);
   };

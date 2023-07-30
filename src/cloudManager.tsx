@@ -1192,7 +1192,7 @@ const CloudManager = ({ viewOnly = false, canvas, projectImages }: CloudManagerP
       });
   };
 
-  // TODO: Also rename the designs
+  // TODO: Do we want to also rename the designs?
   const renameProject = (oldTitle: string, newTitle: string) => {
     if (!user.uid) return;
     const files = firebase.firestore().collection('users').doc(user.uid).collection('projects');
@@ -1213,13 +1213,27 @@ const CloudManager = ({ viewOnly = false, canvas, projectImages }: CloudManagerP
                   .then(() => {
                     // TODO
                   });
-                for (const f of projectArray) {
-                  if (f.title === oldTitle) {
-                    f.title = newTitle;
-                    break;
+                if (myProjects.current) {
+                  const newArray: ProjectInfo[] = [];
+                  for (const p of myProjects.current) {
+                    if (p.title === oldTitle) {
+                      newArray.push({
+                        owner: p.owner,
+                        timestamp: p.timestamp,
+                        title: newTitle,
+                        description: p.description,
+                        type: p.type,
+                        designs: p.designs,
+                        hiddenParameters: p.hiddenParameters,
+                        counter: p.counter,
+                      } as ProjectInfo);
+                    } else {
+                      newArray.push(p);
+                    }
                   }
+                  myProjects.current = newArray;
+                  setUpdateFlag(!updateFlag);
                 }
-                setProjectArray([...projectArray]);
                 setCommonStore((state) => {
                   if (state.projectTitle === oldTitle) {
                     state.projectTitle = newTitle;
