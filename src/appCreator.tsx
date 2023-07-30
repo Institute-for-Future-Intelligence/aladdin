@@ -22,13 +22,13 @@ import GroundImage from './views/groundImage';
 import DropdownContextMenu from './components/contextMenu';
 import { DesignProblem, EvolutionMethod } from './types';
 import CloudManager from './cloudManager';
+import { loadCloudFile } from './cloudFileUtil';
 import {
-  loadCloudFile,
   removeDesignFromProject,
   updateProjectDescription,
   updateProjectDesign,
   updateProjectHiddenParameters,
-} from './cloudUtil';
+} from './cloudProjectUtil';
 import ActionLogger from './actionLogger';
 import Lights from './lights';
 import { Auxiliary } from './auxiliary';
@@ -422,7 +422,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
         resetView={resetView}
         zoomView={zoomView}
       />
-      <CloudManager viewOnly={viewOnly} canvas={canvasRef.current} images={imagesRef.current} />
+      <CloudManager viewOnly={viewOnly} canvas={canvasRef.current} projectImages={imagesRef.current} />
       <Panels />
       <DropdownContextMenu>
         {/* must specify the height here for the floating window to have correct boundary check*/}

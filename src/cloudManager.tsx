@@ -38,15 +38,16 @@ import MainToolBar from './mainToolBar';
 import SaveCloudFileModal from './saveCloudFileModal';
 import ModelsGallery from './modelsGallery';
 import ProjectListPanel from './panels/projectListPanel';
-import { changeDesignTitles, copyDesign, createDesign, getImageData, loadCloudFile } from './cloudUtil';
+import { loadCloudFile } from './cloudFileUtil';
+import { changeDesignTitles, copyDesign, createDesign, getImageData } from './cloudProjectUtil';
 
 export interface CloudManagerProps {
   viewOnly: boolean;
   canvas?: HTMLCanvasElement | null;
-  images?: Map<string, HTMLImageElement>;
+  projectImages?: Map<string, HTMLImageElement>;
 }
 
-const CloudManager = ({ viewOnly = false, canvas, images }: CloudManagerProps) => {
+const CloudManager = ({ viewOnly = false, canvas, projectImages }: CloudManagerProps) => {
   const setCommonStore = useStore(Selector.set);
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const language = useStore(Selector.language);
@@ -896,178 +897,167 @@ const CloudManager = ({ viewOnly = false, canvas, images }: CloudManagerProps) =
   };
 
   const createNewProject = () => {
-    if (user && user.uid) {
-      const title = useStore.getState().projectTitle;
-      if (title) {
-        const t = title.trim();
-        if (t.length > 0) {
+    if (!user || !user.uid) return;
+    const title = useStore.getState().projectTitle;
+    if (!title) {
+      showError(i18n.t('message.CannotCreateNewProjectWithoutTitle', lang) + '.');
+      return;
+    }
+    const t = title.trim();
+    if (t.length === 0) {
+      showError(i18n.t('message.CannotCreateNewProjectWithoutTitle', lang) + '.');
+      return;
+    }
+    // check if the project title is already used
+    fetchMyProjects().then(() => {
+      let exist = false;
+      if (myProjects.current) {
+        for (const p of myProjects.current) {
+          if (p.title === t) {
+            exist = true;
+            break;
+          }
+        }
+      }
+      if (exist) {
+        showInfo(i18n.t('message.TitleUsedChooseDifferentOne', lang) + ': ' + t);
+      } else {
+        if (user && user.uid) {
           const type = useStore.getState().projectType;
           const description = useStore.getState().projectDescription;
           const timestamp = new Date().getTime();
           const counter = 0;
-          fetchMyProjects().then(() => {
-            let exist = false;
-            if (myProjects.current) {
-              for (const p of myProjects.current) {
-                if (p.title === t) {
-                  exist = true;
-                  break;
-                }
+          firebase
+            .firestore()
+            .collection('users')
+            .doc(user.uid)
+            .collection('projects')
+            .doc(t)
+            .set({
+              owner: user.uid,
+              timestamp,
+              type,
+              description,
+              counter,
+              designs: [],
+              hiddenParameters: [],
+            })
+            .then(() => {
+              setCommonStore((state) => {
+                state.projectView = true;
+                // update the local copy as well
+                state.projectOwner = user.uid;
+                state.projectDesignCounter = 0;
+                state.projectDesigns = [];
+                state.projectHiddenParameters = [];
+              });
+            })
+            .catch((error) => {
+              showError(i18n.t('message.CannotCreateNewProject', lang) + ': ' + error);
+            })
+            .finally(() => {
+              setLoading(false);
+              // if the project list panel is open, update it
+              if (showProjectListPanel) {
+                fetchMyProjects().then(() => {
+                  setUpdateFlag(!updateFlag);
+                });
               }
-            }
-            if (exist) {
-              showInfo(i18n.t('message.TitleUsedChooseDifferentOne', lang) + ': ' + t);
-            } else {
-              if (user && user.uid) {
-                try {
-                  const doc = firebase.firestore().collection('users').doc(user.uid);
-                  if (doc) {
-                    doc
-                      .collection('projects')
-                      .doc(t)
-                      .set({
-                        owner: user.uid,
-                        timestamp,
-                        type,
-                        description,
-                        counter,
-                        designs: [],
-                        hiddenParameters: [],
-                      })
-                      .then(() => {
-                        setCommonStore((state) => {
-                          state.projectView = true;
-                          state.projectOwner = user.uid;
-                          state.projectDesignCounter = 0;
-                          state.projectDesigns = [];
-                          state.projectHiddenParameters = [];
-                        });
-                      })
-                      .catch((error) => {
-                        showError(i18n.t('message.CannotCreateNewProject', lang) + ': ' + error);
-                      })
-                      .finally(() => {
-                        setLoading(false);
-                        if (showProjectListPanel) {
-                          fetchMyProjects().then(() => {
-                            setUpdateFlag(!updateFlag);
-                          });
-                        }
-                      });
-                  }
-                } catch (error) {
-                  showError(i18n.t('message.CannotCreateNewProject', lang) + ': ' + error);
-                  setLoading(false);
-                  console.log(error);
-                }
-              }
-            }
-          });
-        } else {
-          showError(i18n.t('message.CannotCreateNewProjectWithoutTitle', lang) + '.');
+            });
         }
-      } else {
-        showError(i18n.t('message.CannotCreateNewProjectWithoutTitle', lang) + '.');
       }
-    }
+    });
   };
 
   const saveAsProject = () => {
-    if (user && user.uid) {
-      const title = useStore.getState().projectTitle;
-      if (title) {
-        const t = title.trim();
-        if (t.length > 0) {
-          const type = useStore.getState().projectType;
-          const description = useStore.getState().projectDescription;
-          const timestamp = new Date().getTime();
-          const counter = useStore.getState().projectDesignCounter;
-          fetchMyProjects().then(() => {
-            let exist = false;
-            if (myProjects.current) {
-              for (const p of myProjects.current) {
-                if (p.title === t) {
-                  exist = true;
-                  break;
-                }
-              }
-            }
-            if (exist) {
-              showInfo(i18n.t('message.TitleUsedChooseDifferentOne', lang) + ': ' + t);
-            } else {
-              if (user && user.uid) {
-                try {
-                  const doc = firebase.firestore().collection('users').doc(user.uid);
-                  if (doc) {
-                    let designsWithNewTitles: Design[] = [];
-                    const designs = useStore.getState().projectDesigns;
-                    designsWithNewTitles = changeDesignTitles(title, designs) ?? [];
-                    if (designs && designsWithNewTitles) {
-                      for (const [i, d] of designs.entries()) {
-                        copyDesign(user.uid, d.title, designsWithNewTitles[i].title);
-                      }
-                      if (images) {
-                        console.log(t, images);
-                        for (const [i, d] of designs.entries()) {
-                          const image = images.get(d.title);
-                          if (image) {
-                            designsWithNewTitles[i].thumbnail = getImageData(image);
-                          }
-                        }
-                        doc
-                          .collection('projects')
-                          .doc(t)
-                          .set({
-                            owner: user.uid,
-                            timestamp,
-                            type,
-                            description,
-                            counter,
-                            designs: designsWithNewTitles,
-                            hiddenParameters: useStore.getState().projectHiddenParameters,
-                          })
-                          .then(() => {
-                            setCommonStore((state) => {
-                              state.projectView = true;
-                              state.projectOwner = user.uid;
-                              state.projectDesigns = designsWithNewTitles;
-                            });
-                          })
-                          .catch((error) => {
-                            showError(i18n.t('message.CannotCreateNewProject', lang) + ': ' + error);
-                            console.log(error);
-                          })
-                          .finally(() => {
-                            setLoading(false);
-                            if (showProjectListPanel) {
-                              fetchMyProjects().then(() => {
-                                setUpdateFlag(!updateFlag);
-                              });
-                            }
-                          });
-                      }
-                    }
-                  }
-                } catch (error) {
-                  showError(i18n.t('message.CannotCreateNewProject', lang) + ': ' + error);
-                  setLoading(false);
-                }
-              }
-            }
-          });
-        } else {
-          showError(i18n.t('message.CannotCreateNewProjectWithoutTitle', lang) + '.');
-        }
-      } else {
-        showError(i18n.t('message.CannotCreateNewProjectWithoutTitle', lang) + '.');
-      }
+    if (!user || !user.uid) return;
+    const title = useStore.getState().projectTitle;
+    if (!title) {
+      showError(i18n.t('message.CannotCreateNewProjectWithoutTitle', lang) + '.');
+      return;
     }
+    const t = title.trim();
+    if (t.length === 0) {
+      showError(i18n.t('message.CannotCreateNewProjectWithoutTitle', lang) + '.');
+      return;
+    }
+    // check if the project title is already taken
+    fetchMyProjects().then(() => {
+      let exist = false;
+      if (myProjects.current) {
+        for (const p of myProjects.current) {
+          if (p.title === t) {
+            exist = true;
+            break;
+          }
+        }
+      }
+      if (exist) {
+        showInfo(i18n.t('message.TitleUsedChooseDifferentOne', lang) + ': ' + t);
+      } else {
+        if (user && user.uid) {
+          const designs = useStore.getState().projectDesigns;
+          if (designs) {
+            const type = useStore.getState().projectType;
+            const description = useStore.getState().projectDescription;
+            const timestamp = new Date().getTime();
+            const counter = useStore.getState().projectDesignCounter;
+            const newDesigns: Design[] = changeDesignTitles(t, designs) ?? [];
+            for (const [i, d] of designs.entries()) {
+              copyDesign(user.uid, d.title, newDesigns[i].title);
+            }
+            if (projectImages && projectImages.size > 0) {
+              console.log(t, projectImages);
+              for (const [i, d] of designs.entries()) {
+                const image = projectImages.get(d.title);
+                if (image) {
+                  newDesigns[i].thumbnail = getImageData(image);
+                }
+              }
+              firebase
+                .firestore()
+                .collection('users')
+                .doc(user.uid)
+                .collection('projects')
+                .doc(t)
+                .set({
+                  owner: user.uid,
+                  timestamp,
+                  type,
+                  description,
+                  counter,
+                  designs: newDesigns,
+                  hiddenParameters: useStore.getState().projectHiddenParameters,
+                })
+                .then(() => {
+                  setCommonStore((state) => {
+                    state.projectView = true;
+                    state.projectOwner = user.uid;
+                    state.projectDesigns = newDesigns;
+                  });
+                })
+                .catch((error) => {
+                  showError(i18n.t('message.CannotCreateNewProject', lang) + ': ' + error);
+                })
+                .finally(() => {
+                  setLoading(false);
+                  if (showProjectListPanel) {
+                    fetchMyProjects().then(() => {
+                      setUpdateFlag(!updateFlag);
+                    });
+                  }
+                });
+            }
+          }
+        }
+      }
+    });
   };
 
+  // fetch owner's projects from the cloud
   const fetchMyProjects = async () => {
     if (!user.uid) return;
     setLoading(true);
-    // fetch owner's projects from the cloud
     myProjects.current = await firebase
       .firestore()
       .collection('users')
@@ -1186,6 +1176,10 @@ const CloudManager = ({ viewOnly = false, canvas, images }: CloudManagerProps) =
           if (title === state.projectTitle) {
             state.projectTitle = null;
             state.projectDescription = null;
+            state.projectDesignCounter = 0;
+            state.projectDesigns = null;
+            state.projectHiddenParameters = [];
+            state.designProjectType = null;
             state.projectView = false;
           }
         });
@@ -1195,6 +1189,7 @@ const CloudManager = ({ viewOnly = false, canvas, images }: CloudManagerProps) =
       });
   };
 
+  // TODO: Also rename the designs
   const renameProject = (oldTitle: string, newTitle: string) => {
     if (!user.uid) return;
     const files = firebase.firestore().collection('users').doc(user.uid).collection('projects');
@@ -1227,6 +1222,7 @@ const CloudManager = ({ viewOnly = false, canvas, images }: CloudManagerProps) =
                     state.projectTitle = newTitle;
                   }
                 });
+                // TODO
                 // change the address field of the browser when the project is currently open
                 // const params = new URLSearchParams(window.location.search);
                 // if (params.get('title') === oldTitle && params.get('userid') === user.uid) {
@@ -1243,47 +1239,16 @@ const CloudManager = ({ viewOnly = false, canvas, images }: CloudManagerProps) =
   };
 
   const curateDesignToProject = () => {
-    const projectType = useStore.getState().projectType;
-    const projectTitle = useStore.getState().projectTitle;
     const projectOwner = useStore.getState().projectOwner;
     if (user.uid !== projectOwner) {
       showInfo(i18n.t('message.CannotAddDesignToProjectOwnedByOthers', lang));
     } else {
+      const projectTitle = useStore.getState().projectTitle;
       if (projectTitle) {
-        const counter = useStore.getState().projectDesignCounter ?? 0;
-        const ft = projectTitle + ' ' + counter;
         setLoading(true);
-        fetchMyCloudFiles().then(() => {
-          let exist = false;
-          if (cloudFiles.current) {
-            for (const p of cloudFiles.current) {
-              if (p.fileName === ft) {
-                exist = true;
-                break;
-              }
-            }
-          }
-          if (exist) {
-            Modal.confirm({
-              title: i18n.t('message.CloudFileWithTitleExistsDoYouWantToOverwrite', lang),
-              icon: <QuestionCircleOutlined />,
-              onOk: () => {
-                addDesignToProject(projectType, projectTitle, ft);
-              },
-              onCancel: () => {
-                setCommonStore((state) => {
-                  state.showCloudFileTitleDialogFlag = !state.showCloudFileTitleDialogFlag;
-                  state.showCloudFileTitleDialog = true;
-                });
-              },
-              okText: i18n.t('word.Yes', lang),
-              cancelText: i18n.t('word.No', lang),
-            });
-          } else {
-            addDesignToProject(projectType, projectTitle, ft);
-          }
-        });
-        setTitleDialogVisible(false);
+        const projectType = useStore.getState().projectType;
+        const counter = useStore.getState().projectDesignCounter ?? 0;
+        addDesignToProject(projectType, projectTitle, projectTitle + ' ' + counter);
       }
     }
   };
@@ -1291,6 +1256,7 @@ const CloudManager = ({ viewOnly = false, canvas, images }: CloudManagerProps) =
   const addDesignToProject = (projectType: string, projectTitle: string, designTitle: string) => {
     if (!user.uid || !canvas) return;
     // create a thumbnail image of the design in Base64 format
+    // (don't create a PNG and then store in Firebase storage as I can't get the blob data correctly)
     const thumbnail = Util.resizeCanvas(canvas, 200).toDataURL();
     const design = createDesign(projectType, designTitle, thumbnail);
     firebase
@@ -1306,113 +1272,116 @@ const CloudManager = ({ viewOnly = false, canvas, images }: CloudManagerProps) =
       .then(() => {
         setCommonStore((state) => {
           state.projectDesigns?.push(design);
+          // increment the local counter to be consistent with the database counter
           state.projectDesignCounter++;
+          // store the project type in the design for linking it with the right type of project later
           state.designProjectType = state.projectType;
         });
+        // regardless of where the design is, make a copy on the cloud
+        saveToCloudWithoutCheckingExistence(designTitle, true, true);
       })
       .catch((error) => {
         showError(i18n.t('message.CannotAddDesignToProject', lang) + ': ' + error);
       })
       .finally(() => {
-        saveToCloudWithoutCheckingExistence(designTitle, true);
         setLoading(false);
       });
   };
 
   const saveToCloud = (title: string, silent: boolean, checkExistence: boolean) => {
+    if (!user.uid) return;
     const t = title.trim();
-    if (t.length > 0) {
-      if (user.uid) {
-        setLoading(true);
-        if (checkExistence) {
-          fetchMyCloudFiles().then(() => {
-            let exist = false;
-            if (cloudFiles.current) {
-              for (const p of cloudFiles.current) {
-                if (p.fileName === t) {
-                  exist = true;
-                  break;
-                }
-              }
+    if (t.length === 0) {
+      showError(i18n.t('menu.file.SavingAbortedMustHaveValidTitle', lang) + '.');
+      return;
+    }
+    setLoading(true);
+    if (checkExistence) {
+      fetchMyCloudFiles().then(() => {
+        let exist = false;
+        if (cloudFiles.current) {
+          for (const p of cloudFiles.current) {
+            if (p.fileName === t) {
+              exist = true;
+              break;
             }
-            if (exist) {
-              Modal.confirm({
-                title: i18n.t('message.CloudFileWithTitleExistsDoYouWantToOverwrite', lang),
-                icon: <QuestionCircleOutlined />,
-                onOk: () => {
-                  saveToCloudWithoutCheckingExistence(t, silent);
-                },
-                onCancel: () => {
-                  setCommonStore((state) => {
-                    state.showCloudFileTitleDialogFlag = !state.showCloudFileTitleDialogFlag;
-                    state.showCloudFileTitleDialog = true;
-                  });
-                },
-                okText: i18n.t('word.Yes', lang),
-                cancelText: i18n.t('word.No', lang),
-              });
-            } else {
+          }
+        }
+        if (exist) {
+          Modal.confirm({
+            title: i18n.t('message.CloudFileWithTitleExistsDoYouWantToOverwrite', lang),
+            icon: <QuestionCircleOutlined />,
+            onOk: () => {
               saveToCloudWithoutCheckingExistence(t, silent);
-            }
+            },
+            onCancel: () => {
+              setCommonStore((state) => {
+                state.showCloudFileTitleDialogFlag = !state.showCloudFileTitleDialogFlag;
+                state.showCloudFileTitleDialog = true;
+              });
+            },
+            okText: i18n.t('word.Yes', lang),
+            cancelText: i18n.t('word.No', lang),
           });
         } else {
           saveToCloudWithoutCheckingExistence(t, silent);
         }
-      }
-      setTitleDialogVisible(false);
+      });
     } else {
-      showError(i18n.t('menu.file.SavingAbortedMustHaveValidTitle', lang) + '.');
+      saveToCloudWithoutCheckingExistence(t, silent);
     }
+    setTitleDialogVisible(false);
   };
 
-  const saveToCloudWithoutCheckingExistence = (title: string, silent: boolean) => {
-    if (user.uid) {
-      try {
-        const doc = firebase.firestore().collection('users').doc(user.uid);
-        if (doc) {
-          if (localContentToImportAfterCloudFileUpdate) {
-            usePrimitiveStore.setState((state) => {
-              state.waiting = true;
-            });
-          }
-          doc
-            .collection('files')
-            .doc(title)
-            .set(exportContent())
-            .then(() => {
-              if (!silent) {
-                setCommonStore((state) => {
-                  state.cloudFile = title;
-                  state.changed = false;
-                });
-              }
-              if (localContentToImportAfterCloudFileUpdate) {
-                if (localContentToImportAfterCloudFileUpdate === 'CREATE_NEW_FILE') {
-                  createEmptyFile();
-                } else {
-                  importContent(localContentToImportAfterCloudFileUpdate);
-                }
+  const saveToCloudWithoutCheckingExistence = (title: string, silent: boolean, noUrlUpdate?: boolean) => {
+    if (!user.uid) return;
+    try {
+      const doc = firebase.firestore().collection('users').doc(user.uid);
+      if (doc) {
+        if (localContentToImportAfterCloudFileUpdate) {
+          usePrimitiveStore.setState((state) => {
+            state.waiting = true;
+          });
+        }
+        doc
+          .collection('files')
+          .doc(title)
+          .set(exportContent())
+          .then(() => {
+            if (!silent) {
+              setCommonStore((state) => {
+                state.cloudFile = title;
+                state.changed = false;
+              });
+            }
+            if (localContentToImportAfterCloudFileUpdate) {
+              if (localContentToImportAfterCloudFileUpdate === 'CREATE_NEW_FILE') {
+                createEmptyFile();
               } else {
+                importContent(localContentToImportAfterCloudFileUpdate);
+              }
+            } else {
+              if (!noUrlUpdate) {
                 const newUrl = HOME_URL + '?client=web&userid=' + user.uid + '&title=' + encodeURIComponent(title);
                 window.history.pushState({}, document.title, newUrl);
               }
-              if (showCloudFilePanel) {
-                fetchMyCloudFiles().then(() => {
-                  setUpdateFlag(!updateFlag);
-                });
-              }
-            })
-            .catch((error) => {
-              showError(i18n.t('message.CannotSaveYourFileToCloud', lang) + ': ' + error);
-            })
-            .finally(() => {
-              setLoading(false);
-            });
-        }
-      } catch (error) {
-        showError(i18n.t('message.CannotSaveYourFileToCloud', lang) + ': ' + error);
-        setLoading(false);
+            }
+            if (showCloudFilePanel) {
+              fetchMyCloudFiles().then(() => {
+                setUpdateFlag(!updateFlag);
+              });
+            }
+          })
+          .catch((error) => {
+            showError(i18n.t('message.CannotSaveYourFileToCloud', lang) + ': ' + error);
+          })
+          .finally(() => {
+            setLoading(false);
+          });
       }
+    } catch (error) {
+      showError(i18n.t('message.CannotSaveYourFileToCloud', lang) + ': ' + error);
+      setLoading(false);
     }
   };
 
@@ -1514,13 +1483,12 @@ const CloudManager = ({ viewOnly = false, canvas, images }: CloudManagerProps) =
   };
 
   const listMyCloudFiles = () => {
-    if (user.uid) {
-      fetchMyCloudFiles().then(() => {
-        usePrimitiveStore.setState((state) => {
-          state.showCloudFilePanel = true;
-        });
+    if (!user.uid) return;
+    fetchMyCloudFiles().then(() => {
+      usePrimitiveStore.setState((state) => {
+        state.showCloudFilePanel = true;
       });
-    }
+    });
   };
 
   const deleteCloudFile = (userid: string, title: string) => {

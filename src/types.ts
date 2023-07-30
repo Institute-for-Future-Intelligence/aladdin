@@ -69,7 +69,7 @@ export interface ModelSite {
 
 export interface Design {
   title: string;
-  thumbnail: string;
+  thumbnail: string; // PNG Base64 data
   [key: string]: any;
 }
 

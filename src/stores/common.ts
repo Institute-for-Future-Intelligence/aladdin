@@ -119,7 +119,7 @@ export interface CommonStoreState {
   projectDescription: string | null;
   projectDesigns: Design[] | null;
   projectHiddenParameters: string[];
-  projectDesignCounter: number;
+  projectDesignCounter: number; // for generating non-repeating design title
   notes: string[];
   user: User;
   language: string;
