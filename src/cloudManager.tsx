@@ -304,6 +304,7 @@ const CloudManager = ({ viewOnly = false, canvas, projectImages }: CloudManagerP
       firstCallUpdateProjects.current = false;
     } else {
       listMyProjects(false);
+      setUpdateFlag(!updateFlag);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateProjectsFlag]);
@@ -1007,7 +1008,6 @@ const CloudManager = ({ viewOnly = false, canvas, projectImages }: CloudManagerP
               copyDesign(user.uid, d.title, newDesigns[i].title);
             }
             if (projectImages && projectImages.size > 0) {
-              console.log(t, projectImages);
               for (const [i, d] of designs.entries()) {
                 const image = projectImages.get(d.title);
                 if (image) {
@@ -1141,6 +1141,7 @@ const CloudManager = ({ viewOnly = false, canvas, projectImages }: CloudManagerP
     hiddenParameters: string[] | null,
     designCounter: number,
   ) => {
+    projectImages?.clear();
     setCommonStore((state) => {
       state.projectOwner = owner;
       state.projectTitle = title;
@@ -1167,11 +1168,12 @@ const CloudManager = ({ viewOnly = false, canvas, projectImages }: CloudManagerP
       .doc(title)
       .delete()
       .then(() => {
-        setProjectArray(
-          projectArray.filter((e) => {
+        if (myProjects.current) {
+          myProjects.current = myProjects.current.filter((e) => {
             return e.title !== title;
-          }),
-        );
+          });
+          setUpdateFlag(!updateFlag);
+        }
         setCommonStore((state) => {
           if (title === state.projectTitle) {
             state.projectTitle = null;

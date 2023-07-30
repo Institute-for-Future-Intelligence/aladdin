@@ -10,6 +10,7 @@ import { showError, showInfo } from './helpers';
 import i18n from './i18n/i18n';
 import { Design, DesignProblem } from './types';
 import { Util } from './Util';
+import { usePrimitiveStore } from './stores/commonPrimitive';
 
 export const removeDesignFromProject = (userid: string, projectTitle: string, design: Design) => {
   const lang = { lng: useStore.getState().language };
@@ -236,6 +237,9 @@ export const updateProjectDesign = (
                       // Update the cached array in the local storage via the common store
                       useStore.getState().set((state) => {
                         state.projectDesigns = updatedDesigns;
+                      });
+                      usePrimitiveStore.setState((state) => {
+                        state.updateProjectsFlag = !state.updateProjectsFlag;
                       });
                     });
                 }

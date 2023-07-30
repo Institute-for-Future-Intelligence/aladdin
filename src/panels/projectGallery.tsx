@@ -189,7 +189,7 @@ const ProjectGallery = ({
     });
     setSelectedDesign(undefined);
     // clear the cached images for the previously open project
-    // images?.clear();
+    images?.clear();
     usePrimitiveStore.setState((state) => {
       state.projectImagesUpdateFlag = !state.projectImagesUpdateFlag;
     });
@@ -618,7 +618,9 @@ const ProjectGallery = ({
                         ? i18n.t('projectPanel.SingleClickToDeselectDoubleClickToOpen', lang)
                         : i18n.t('projectPanel.SingleClickToSelectDoubleClickToOpen', lang)
                     }
-                    src={design.thumbnail}
+                    src={
+                      design.thumbnail?.startsWith('data:image/png;base64') ? design.thumbnail : ImageLoadFailureIcon
+                    }
                     style={{
                       transition: '.5s ease',
                       opacity: hoveredDesign === design ? 0.5 : 1,
