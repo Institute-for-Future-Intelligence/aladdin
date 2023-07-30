@@ -135,12 +135,12 @@ export const getImageData = (image: HTMLImageElement) => {
   return c.toDataURL();
 };
 
-export const copyDesign = (userid: string, original: string, copy: string) => {
+export const copyDesign = (original: string, copy: string, owner: string | null, userid: string) => {
   const lang = { lng: useStore.getState().language };
   firebase
     .firestore()
     .collection('users')
-    .doc(userid)
+    .doc(owner ?? userid)
     .collection('files')
     .doc(original)
     .get()

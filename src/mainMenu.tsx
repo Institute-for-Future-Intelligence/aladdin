@@ -946,7 +946,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
           >
             {i18n.t('menu.project.OpenProject', lang)}...
           </Menu.Item>
-          {projectTitle && projectOwner === user.uid && (
+          {projectTitle && user.uid && (
             <Menu.Item
               key="save-project-as"
               onClick={() => {

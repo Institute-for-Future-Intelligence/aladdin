@@ -1000,12 +1000,13 @@ const CloudManager = ({ viewOnly = false, canvas, projectImages }: CloudManagerP
           const designs = useStore.getState().projectDesigns;
           if (designs) {
             const type = useStore.getState().projectType;
+            const owner = useStore.getState().projectOwner;
             const description = useStore.getState().projectDescription;
             const timestamp = new Date().getTime();
             const counter = useStore.getState().projectDesignCounter;
             const newDesigns: Design[] = changeDesignTitles(t, designs) ?? [];
             for (const [i, d] of designs.entries()) {
-              copyDesign(user.uid, d.title, newDesigns[i].title);
+              copyDesign(d.title, newDesigns[i].title, owner, user.uid);
             }
             if (projectImages && projectImages.size > 0) {
               for (const [i, d] of designs.entries()) {
