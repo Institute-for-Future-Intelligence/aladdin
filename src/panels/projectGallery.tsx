@@ -108,7 +108,7 @@ export interface ProjectGalleryProps {
   relativeWidth: number;
   canvas: HTMLCanvasElement | null;
   images: Map<string, HTMLImageElement>;
-  openCloudFile?: (userid: string, title: string, popState?: boolean) => void;
+  openCloudFile?: (userid: string, title: string, ofProject: boolean, popState?: boolean) => void;
   deleteDesign?: (userid: string, projectTitle: string, design: Design) => void;
   updateProjectDescription?: (userid: string, projectTitle: string, description: string | null) => void;
   updateProjectParameters?: (userid: string, projectTitle: string, hiddenParameter: string, add: boolean) => void;
@@ -636,7 +636,7 @@ const ProjectGallery = ({
                       }
                       setSelectedDesign(design);
                       if (projectOwner && openCloudFile) {
-                        openCloudFile(projectOwner, design.title, true);
+                        openCloudFile(projectOwner, design.title, true, true);
                       }
                     }}
                     onClick={(event) => {

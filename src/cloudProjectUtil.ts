@@ -141,7 +141,7 @@ export const copyDesign = (original: string, copy: string, owner: string | null,
     .firestore()
     .collection('users')
     .doc(owner ?? userid)
-    .collection('files')
+    .collection('designs')
     .doc(original)
     .get()
     .then((doc) => {
@@ -152,7 +152,7 @@ export const copyDesign = (original: string, copy: string, owner: string | null,
             .firestore()
             .collection('users')
             .doc(userid)
-            .collection('files')
+            .collection('designs')
             .doc(copy)
             .set(data)
             .then(() => {
@@ -184,7 +184,7 @@ export const updateProjectDesign = (
     .firestore()
     .collection('users')
     .doc(userid)
-    .collection('files')
+    .collection('designs')
     .doc(designTitle)
     .set(useStore.getState().exportContent())
     .then(() => {

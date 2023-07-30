@@ -1336,7 +1336,7 @@ const CloudManager = ({ viewOnly = false, canvas, projectImages }: CloudManagerP
     setTitleDialogVisible(false);
   };
 
-  const saveToCloudWithoutCheckingExistence = (title: string, silent: boolean, noUrlUpdate?: boolean) => {
+  const saveToCloudWithoutCheckingExistence = (title: string, silent: boolean, ofProject?: boolean) => {
     if (!user.uid) return;
     try {
       const doc = firebase.firestore().collection('users').doc(user.uid);
@@ -1347,7 +1347,7 @@ const CloudManager = ({ viewOnly = false, canvas, projectImages }: CloudManagerP
           });
         }
         doc
-          .collection('files')
+          .collection(ofProject ? 'designs' : 'files')
           .doc(title)
           .set(exportContent())
           .then(() => {
@@ -1364,7 +1364,7 @@ const CloudManager = ({ viewOnly = false, canvas, projectImages }: CloudManagerP
                 importContent(localContentToImportAfterCloudFileUpdate);
               }
             } else {
-              if (!noUrlUpdate) {
+              if (!ofProject) {
                 const newUrl = HOME_URL + '?client=web&userid=' + user.uid + '&title=' + encodeURIComponent(title);
                 window.history.pushState({}, document.title, newUrl);
               }
@@ -1448,7 +1448,7 @@ const CloudManager = ({ viewOnly = false, canvas, projectImages }: CloudManagerP
   const openCloudFile = (userid: string, title: string, popState?: boolean) => {
     if (userid && title) {
       setLoading(true);
-      loadCloudFile(userid, title, popState, viewOnly).finally(() => {
+      loadCloudFile(userid, title, false, popState, viewOnly).finally(() => {
         setLoading(false);
       });
     }

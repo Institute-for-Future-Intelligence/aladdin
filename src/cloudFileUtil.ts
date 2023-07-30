@@ -11,7 +11,13 @@ import i18n from './i18n/i18n';
 import { HOME_URL } from './constants';
 import { usePrimitiveStore } from './stores/commonPrimitive';
 
-export const loadCloudFile = (userid: string, title: string, popState?: boolean, viewOnly?: boolean) => {
+export const loadCloudFile = (
+  userid: string,
+  title: string,
+  ofProject: boolean,
+  popState?: boolean,
+  viewOnly?: boolean,
+) => {
   const lang = { lng: useStore.getState().language };
 
   useStore.getState().undoManager.clear();
@@ -23,7 +29,7 @@ export const loadCloudFile = (userid: string, title: string, popState?: boolean,
     .firestore()
     .collection('users')
     .doc(userid)
-    .collection('files')
+    .collection(ofProject ? 'designs' : 'files')
     .doc(title)
     .get()
     .then((doc) => {
