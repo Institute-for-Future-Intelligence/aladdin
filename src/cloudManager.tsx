@@ -1650,7 +1650,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       {showProjectListPanel && myProjects.current && (
         <ProjectListPanel
           projects={projectArray}
-          setProject={setProjectState}
+          setProjectState={setProjectState}
           deleteProject={deleteProject}
           renameProject={renameProject}
         />
