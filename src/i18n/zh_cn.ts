@@ -1386,6 +1386,8 @@ export const i18n_zh_cn = {
       CurateCurrentDesign: '收藏当前设计',
       UpdateSelectedDesign: '更新选中设计',
       RemoveSelectedDesign: '删除选中设计',
+      DefaultOrder: '默认',
+      SelectPropertyToSort: '按照选择的性质排序',
       DistributionInSolutionSpace: '方案在设计空间里的分布',
       ChooseSolutionSpace: '选择设计空间',
       ChooseDataColoring: '选择数据着色',
