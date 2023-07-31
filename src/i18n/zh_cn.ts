@@ -492,6 +492,11 @@ export const i18n_zh_cn = {
         SolarUpdraftTower: '太阳能上升气流塔',
       },
 
+      generativeDesignSubMenu: '生成式设计',
+      generativeDesignTutorials: {
+        SimpleSolarFarmGenerativeDesign: '简单太阳能农场的生成式设计',
+      },
+
       examplesSubMenu: '例子',
 
       solarEnergySubMenu: '太阳能',

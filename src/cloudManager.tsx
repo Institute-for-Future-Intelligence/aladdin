@@ -39,15 +39,14 @@ import SaveCloudFileModal from './saveCloudFileModal';
 import ModelsGallery from './modelsGallery';
 import ProjectListPanel from './panels/projectListPanel';
 import { loadCloudFile } from './cloudFileUtil';
-import { changeDesignTitles, copyDesign, createDesign, getImageData } from './cloudProjectUtil';
+import { changeDesignTitles, copyDesign, createDesign, fetchProject, getImageData } from './cloudProjectUtil';
 
 export interface CloudManagerProps {
   viewOnly: boolean;
   canvas?: HTMLCanvasElement | null;
-  projectImages?: Map<string, HTMLImageElement>;
 }
 
-const CloudManager = ({ viewOnly = false, canvas, projectImages }: CloudManagerProps) => {
+const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const setCommonStore = useStore(Selector.set);
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const language = useStore(Selector.language);
@@ -344,11 +343,11 @@ const CloudManager = ({ viewOnly = false, canvas, projectImages }: CloudManagerP
     if (userid) {
       if (project) {
         setLoading(true);
-        fetchProject(userid, project).finally(() => {
+        fetchProject(userid, project, setProjectState).finally(() => {
           setLoading(false);
         });
         if (title) {
-          openCloudFile(userid, title, true);
+          openDesignFile(userid, title);
         }
       } else {
         if (title) {
@@ -1008,6 +1007,7 @@ const CloudManager = ({ viewOnly = false, canvas, projectImages }: CloudManagerP
             for (const [i, d] of designs.entries()) {
               copyDesign(d.title, newDesigns[i].title, owner, user.uid);
             }
+            const projectImages = useStore.getState().projectImages;
             if (projectImages && projectImages.size > 0) {
               for (const [i, d] of designs.entries()) {
                 const image = projectImages.get(d.title);
@@ -1090,37 +1090,6 @@ const CloudManager = ({ viewOnly = false, canvas, projectImages }: CloudManagerP
       });
   };
 
-  const fetchProject = async (userid: string, project: string) => {
-    await firebase
-      .firestore()
-      .collection('users')
-      .doc(userid)
-      .collection('projects')
-      .doc(project)
-      .get()
-      .then((doc) => {
-        const data = doc.data();
-        if (data) {
-          const pi = {
-            owner: userid,
-            title: doc.id,
-            timestamp: data.timestamp,
-            description: data.description,
-            type: data.type,
-            designs: data.designs,
-            hiddenParameters: data.hiddenParameters,
-            counter: data.counter ?? 0,
-          } as ProjectInfo;
-          openProject(pi.owner, pi.title, pi.type, pi.description, pi.designs, pi.hiddenParameters, pi.counter);
-        } else {
-          showError(i18n.t('message.CannotOpenProject', lang) + ': ' + project);
-        }
-      })
-      .catch((error) => {
-        showError(i18n.t('message.CannotOpenProject', lang) + ': ' + error);
-      });
-  };
-
   const listMyProjects = (show: boolean) => {
     if (user.uid) {
       fetchMyProjects().then(() => {
@@ -1131,32 +1100,6 @@ const CloudManager = ({ viewOnly = false, canvas, projectImages }: CloudManagerP
         }
       });
     }
-  };
-
-  const openProject = (
-    owner: string,
-    title: string,
-    type: DesignProblem,
-    description: string,
-    designs: Design[] | null,
-    hiddenParameters: string[] | null,
-    designCounter: number,
-  ) => {
-    projectImages?.clear();
-    setCommonStore((state) => {
-      state.projectOwner = owner;
-      state.projectTitle = title;
-      state.projectType = type;
-      state.projectDescription = description;
-      state.projectDesigns = designs;
-      state.projectHiddenParameters = hiddenParameters ?? [];
-      state.projectDesignCounter = designCounter;
-      state.projectView = true;
-    });
-    usePrimitiveStore.setState((state) => {
-      state.projectImagesUpdateFlag = !state.projectImagesUpdateFlag;
-      state.updateProjectsFlag = !state.updateProjectsFlag;
-    });
   };
 
   const deleteProject = (title: string) => {
@@ -1305,6 +1248,41 @@ const CloudManager = ({ viewOnly = false, canvas, projectImages }: CloudManagerP
           });
       }
     });
+  };
+
+  const setProjectState = (
+    owner: string,
+    title: string,
+    type: DesignProblem,
+    description: string,
+    designs: Design[] | null,
+    hiddenParameters: string[] | null,
+    designCounter: number,
+  ) => {
+    setCommonStore((state) => {
+      state.projectOwner = owner;
+      state.projectTitle = title;
+      state.projectType = type;
+      state.projectDescription = description;
+      state.projectDesigns = designs;
+      state.projectImages.clear();
+      state.projectHiddenParameters = hiddenParameters ?? [];
+      state.projectDesignCounter = designCounter;
+      state.projectView = true;
+    });
+    usePrimitiveStore.setState((state) => {
+      state.projectImagesUpdateFlag = !state.projectImagesUpdateFlag;
+      state.updateProjectsFlag = !state.updateProjectsFlag;
+    });
+  };
+
+  const openDesignFile = (userid: string, title: string) => {
+    if (userid && title) {
+      setLoading(true);
+      loadCloudFile(userid, title, true, true, viewOnly).finally(() => {
+        setLoading(false);
+      });
+    }
   };
 
   const curateDesignToProject = () => {
@@ -1672,7 +1650,7 @@ const CloudManager = ({ viewOnly = false, canvas, projectImages }: CloudManagerP
       {showProjectListPanel && myProjects.current && (
         <ProjectListPanel
           projects={projectArray}
-          openProject={openProject}
+          setProjectState={setProjectState}
           deleteProject={deleteProject}
           renameProject={renameProject}
         />

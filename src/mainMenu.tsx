@@ -17,7 +17,15 @@ import logo from './assets/magic-lamp.png';
 import 'antd/dist/antd.css';
 import About from './about';
 import { saveImage, showError, showInfo, showWarning } from './helpers';
-import { ActionInfo, BuildingCompletionStatus, Language, ObjectType, SolarStructure } from './types';
+import {
+  ActionInfo,
+  BuildingCompletionStatus,
+  Design,
+  DesignProblem,
+  Language,
+  ObjectType,
+  SolarStructure,
+} from './types';
 import * as Selector from './stores/selector';
 import i18n from './i18n/i18n';
 import { Util } from './Util';
@@ -40,6 +48,8 @@ import { getExample } from './examples';
 import { checkBuilding, CheckStatus } from './analysis/heatTools';
 import ModelSiteDialog from './components/contextMenu/elementMenu/modelSiteDialog';
 import CreateNewProjectDialog from './components/contextMenu/elementMenu/createNewProjectDialog';
+import { fetchProject } from './cloudProjectUtil';
+import { loadCloudFile } from './cloudFileUtil';
 
 const { SubMenu } = Menu;
 
@@ -143,7 +153,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
   const cameraPosition = useStore.getState().viewState.cameraPosition;
   const panCenter = useStore.getState().viewState.panCenter;
   const selectedElement = useStore.getState().selectedElement;
-  const projectOwner = useStore.getState().projectOwner;
   const projectTitle = useStore.getState().projectTitle;
 
   const [aboutUs, setAboutUs] = useState(false);
@@ -221,6 +230,58 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
           importContent(input);
         }, 10);
       }
+      if (loggable) {
+        setCommonStore((state) => {
+          state.actionInfo = {
+            name: 'Open Example: ' + e.key,
+            timestamp: new Date().getTime(),
+          };
+        });
+      }
+      if (!viewOnly) {
+        window.history.pushState({}, document.title, HOME_URL);
+      }
+    }
+  };
+
+  const setProjectState = (
+    owner: string,
+    title: string,
+    type: DesignProblem,
+    description: string,
+    designs: Design[] | null,
+    hiddenParameters: string[] | null,
+    designCounter: number,
+  ) => {
+    setCommonStore((state) => {
+      state.projectOwner = owner;
+      state.projectTitle = title;
+      state.projectType = type;
+      state.projectDescription = description;
+      state.projectDesigns = designs;
+      state.projectImages.clear();
+      state.projectHiddenParameters = hiddenParameters ?? [];
+      state.projectDesignCounter = designCounter;
+      state.projectView = true;
+    });
+    usePrimitiveStore.setState((state) => {
+      state.projectImagesUpdateFlag = !state.projectImagesUpdateFlag;
+      state.updateProjectsFlag = !state.updateProjectsFlag;
+    });
+  };
+
+  const loadProject = (e: any) => {
+    const title = e.key;
+    const owner = process.env.REACT_APP_EXAMPLE_PROJECT_OWNER;
+    if (title && owner) {
+      fetchProject(owner, title, setProjectState).then(() => {
+        loadCloudFile(owner, title + ' 0', true, true, viewOnly).then(() => {
+          // ignore
+        });
+      });
+      usePrimitiveStore.setState((state) => {
+        state.openModelsMap = false;
+      });
       if (loggable) {
         setCommonStore((state) => {
           state.actionInfo = {
@@ -2135,6 +2196,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
         <SubMenu key={'other-types-of-solar-power'} title={i18n.t('menu.otherTypesOfSolarPowerSubMenu', lang)}>
           <Menu.Item key="solar_updraft_tower" onClick={loadFile}>
             {i18n.t('menu.otherTypesOfSolarPowerTutorials.SolarUpdraftTower', lang)}
+          </Menu.Item>
+        </SubMenu>
+        {/* generative design */}
+        <SubMenu key={'generative-design'} title={i18n.t('menu.generativeDesignSubMenu', lang)}>
+          <Menu.Item key="Simple Solar Farm" onClick={loadProject}>
+            {i18n.t('menu.generativeDesignTutorials.SimpleSolarFarmGenerativeDesign', lang)}
           </Menu.Item>
         </SubMenu>
       </SubMenu>

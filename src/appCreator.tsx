@@ -84,7 +84,6 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const [canvasRelativeWidth, setCanvasRelativeWidth] = useState<number>(50);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const imagesRef = useRef<Map<string, HTMLImageElement>>(new Map<string, HTMLImageElement>());
 
   const lang = useMemo(() => {
     return { lng: language };
@@ -422,7 +421,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
         resetView={resetView}
         zoomView={zoomView}
       />
-      <CloudManager viewOnly={viewOnly} canvas={canvasRef.current} projectImages={imagesRef.current} />
+      <CloudManager viewOnly={viewOnly} canvas={canvasRef.current} />
       <Panels />
       <DropdownContextMenu>
         {/* must specify the height here for the floating window to have correct boundary check*/}
@@ -452,7 +451,6 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
             {projectView ? (
               <ProjectGallery
                 canvas={canvasRef.current}
-                images={imagesRef.current}
                 relativeWidth={1 - canvasRelativeWidth * 0.01}
                 openCloudFile={loadCloudFile}
                 deleteDesign={removeDesignFromProject}

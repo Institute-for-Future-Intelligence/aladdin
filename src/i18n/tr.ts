@@ -495,6 +495,11 @@ export const i18n_tr = {
         SolarUpdraftTower: 'Solar Updraft Kulesi',
       },
 
+      generativeDesignSubMenu: 'Generative Design',
+      generativeDesignTutorials: {
+        SimpleSolarFarmGenerativeDesign: 'Simple Solar Farm Generative Design',
+      },
+
       examplesSubMenu: 'Örnekler',
 
       solarEnergySubMenu: 'Güneş Enerjisi',

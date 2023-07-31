@@ -498,6 +498,11 @@ export const i18n_ua = {
         SolarUpdraftTower: 'Сонячна вежа з використаним повітрям',
       },
 
+      generativeDesignSubMenu: 'Generative Design',
+      generativeDesignTutorials: {
+        SimpleSolarFarmGenerativeDesign: 'Simple Solar Farm Generative Design',
+      },
+
       examplesSubMenu: 'Приклади',
 
       solarEnergySubMenu: 'Сонячна енергія',

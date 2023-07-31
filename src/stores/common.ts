@@ -119,6 +119,7 @@ export interface CommonStoreState {
   projectDescription: string | null;
   projectDesigns: Design[] | null;
   projectHiddenParameters: string[];
+  projectImages: Map<string, HTMLImageElement>;
   projectDesignCounter: number; // for generating non-repeating design title
   notes: string[];
   user: User;
@@ -566,6 +567,7 @@ export const useStore = create<CommonStoreState>(
           projectDescription: null,
           projectDesigns: null,
           projectHiddenParameters: [],
+          projectImages: new Map<string, HTMLImageElement>(),
           projectDesignCounter: 0,
           notes: [],
           user: {} as User,

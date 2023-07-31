@@ -8,9 +8,41 @@ import 'firebase/firestore';
 import 'firebase/storage';
 import { showError, showInfo } from './helpers';
 import i18n from './i18n/i18n';
-import { Design, DesignProblem } from './types';
+import { Design, DesignProblem, ProjectInfo } from './types';
 import { Util } from './Util';
 import { usePrimitiveStore } from './stores/commonPrimitive';
+
+export const fetchProject = async (userid: string, project: string, setProjectState: Function) => {
+  const lang = { lng: useStore.getState().language };
+  await firebase
+    .firestore()
+    .collection('users')
+    .doc(userid)
+    .collection('projects')
+    .doc(project)
+    .get()
+    .then((doc) => {
+      const data = doc.data();
+      if (data) {
+        const pi = {
+          owner: userid,
+          title: doc.id,
+          timestamp: data.timestamp,
+          description: data.description,
+          type: data.type,
+          designs: data.designs,
+          hiddenParameters: data.hiddenParameters,
+          counter: data.counter ?? 0,
+        } as ProjectInfo;
+        setProjectState(pi.owner, pi.title, pi.type, pi.description, pi.designs, pi.hiddenParameters, pi.counter);
+      } else {
+        showError(i18n.t('message.CannotOpenProject', lang) + ': ' + project);
+      }
+    })
+    .catch((error) => {
+      showError(i18n.t('message.CannotOpenProject', lang) + ': ' + error);
+    });
+};
 
 export const removeDesignFromProject = (userid: string, projectTitle: string, design: Design) => {
   const lang = { lng: useStore.getState().language };

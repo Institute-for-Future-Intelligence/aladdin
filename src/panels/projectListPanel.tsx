@@ -76,7 +76,7 @@ const Header = styled.div`
 
 export interface ProjectListPanelProps {
   projects: object[];
-  openProject: (
+  setProjectState: (
     owner: string,
     title: string,
     type: DesignProblem,
@@ -89,7 +89,7 @@ export interface ProjectListPanelProps {
   renameProject: (oldTitle: string, newTitle: string) => void;
 }
 
-const ProjectListPanel = ({ projects, openProject, deleteProject, renameProject }: ProjectListPanelProps) => {
+const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProject }: ProjectListPanelProps) => {
   const language = useStore(Selector.language);
   const user = useStore(Selector.user);
 
@@ -330,7 +330,15 @@ const ProjectListPanel = ({ projects, openProject, deleteProject, renameProject 
                       if (selection && selection.toString().length > 0) return;
                       // only proceed when no text is selected
                       // @ts-ignore
-                      openProject(r.owner, r.title, r.type, r.description, r.designs, r.hiddenParameters, r.counter);
+                      setProjectState(
+                        r.owner,
+                        r.title,
+                        r.type,
+                        r.description,
+                        r.designs,
+                        r.hiddenParameters,
+                        r.counter,
+                      );
                     },
                   };
                 }}

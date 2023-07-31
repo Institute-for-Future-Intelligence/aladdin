@@ -495,6 +495,11 @@ export const i18n_en = {
         SolarUpdraftTower: 'Solar Updraft Tower',
       },
 
+      generativeDesignSubMenu: 'Generative Design',
+      generativeDesignTutorials: {
+        SimpleSolarFarmGenerativeDesign: 'Simple Solar Farm Generative Design',
+      },
+
       examplesSubMenu: 'Examples',
 
       solarEnergySubMenu: 'Solar Energy',
