@@ -24,10 +24,28 @@ export const removeDesignFromProject = (userid: string, projectTitle: string, de
       designs: firebase.firestore.FieldValue.arrayRemove(design),
     })
     .then(() => {
-      showInfo(i18n.t('message.DesignRemovedFromProject', lang) + '.');
       usePrimitiveStore.setState((state) => {
         state.updateProjectsFlag = !state.updateProjectsFlag;
       });
+      // also delete the design
+      firebase
+        .firestore()
+        .collection('users')
+        .doc(userid)
+        .collection('designs')
+        .doc(design.title)
+        .delete()
+        .then(() => {
+          useStore.setState((state) => {
+            if (design.title === state.cloudFile) {
+              state.cloudFile = undefined;
+            }
+          });
+          showInfo(i18n.t('message.DesignRemovedFromProject', lang) + '.');
+        })
+        .catch((error) => {
+          showError(i18n.t('message.CannotDeleteCloudFile', lang) + ': ' + error);
+        });
     })
     .catch((error) => {
       showError(i18n.t('message.CannotRemoveDesignFromProject', lang) + ': ' + error);

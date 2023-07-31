@@ -1169,7 +1169,33 @@ const CloudManager = ({ viewOnly = false, canvas, projectImages }: CloudManagerP
       .doc(title)
       .delete()
       .then(() => {
-        if (myProjects.current) {
+        if (myProjects.current && user.uid) {
+          // also delete the designs of the deleted project
+          for (const p of myProjects.current) {
+            if (p.title === title && p.designs) {
+              for (const d of p.designs) {
+                setCommonStore((state) => {
+                  if (d.title === state.cloudFile) {
+                    state.cloudFile = undefined;
+                  }
+                });
+                firebase
+                  .firestore()
+                  .collection('users')
+                  .doc(user.uid)
+                  .collection('designs')
+                  .doc(d.title)
+                  .delete()
+                  .then(() => {
+                    // ignore
+                  })
+                  .catch((error) => {
+                    showError(i18n.t('message.CannotDeleteCloudFile', lang) + ': ' + error);
+                  });
+              }
+              break;
+            }
+          }
           myProjects.current = myProjects.current.filter((e) => {
             return e.title !== title;
           });
