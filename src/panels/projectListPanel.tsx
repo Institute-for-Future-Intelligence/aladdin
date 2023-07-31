@@ -331,13 +331,19 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
                       // only proceed when no text is selected
                       // @ts-ignore
                       setProjectState(
+                        // @ts-ignore
                         r.owner,
+                        // @ts-ignore
                         r.title,
+                        // @ts-ignore
                         r.type,
                         // @ts-ignore
                         r.description,
+                        // @ts-ignore
                         r.designs,
+                        // @ts-ignore
                         r.hiddenParameters,
+                        // @ts-ignore
                         r.counter,
                       );
                     },
