@@ -123,6 +123,8 @@ export interface CommonStoreState {
   projectHiddenParameters: string[];
   projectImages: Map<string, HTMLImageElement>;
   projectDesignCounter: number; // for generating non-repeating design title
+  projectSelectedProperty: string | null;
+  projectSortDescending: boolean | null;
   notes: string[];
   user: User;
   language: string;
@@ -572,6 +574,8 @@ export const useStore = create<CommonStoreState>(
           projectHiddenParameters: [],
           projectImages: new Map<string, HTMLImageElement>(),
           projectDesignCounter: 0,
+          projectSelectedProperty: null,
+          projectSortDescending: null,
           notes: [],
           user: {} as User,
           language: 'en',
@@ -4256,6 +4260,8 @@ export const useStore = create<CommonStoreState>(
           'projectDesigns',
           'projectHiddenParameters',
           'projectDesignCounter',
+          'projectSelectedProperty',
+          'projectSortDescending',
           'notes',
           'user',
           'sceneRadius',

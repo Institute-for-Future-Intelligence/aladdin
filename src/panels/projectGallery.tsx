@@ -9,8 +9,6 @@ import styled from 'styled-components';
 import { Button, Checkbox, Collapse, Input, List, Popover, Radio } from 'antd';
 import i18n from '../i18n/i18n';
 import {
-  ArrowDownOutlined,
-  ArrowUpOutlined,
   BgColorsOutlined,
   CameraOutlined,
   CloseOutlined,
@@ -145,6 +143,8 @@ const ProjectGallery = ({
   const projectDescription = useStore(Selector.projectDescription);
   const projectDesigns = useStore(Selector.projectDesigns);
   const projectDataColoring = useStore(Selector.projectDataColoring);
+  const projectSelectedProperty = useStore(Selector.projectSelectedProperty);
+  const projectSortDescending = useStore(Selector.projectSortDescending);
   const projectHiddenParameters = useStore(Selector.projectHiddenParameters);
   const projectType = useStore(Selector.projectType);
   const solarPanelArrayLayoutConstraints = useStore(Selector.solarPanelArrayLayoutConstraints);
@@ -160,7 +160,6 @@ const ProjectGallery = ({
   const descriptionChangedRef = useRef<boolean>(false);
   const descriptionExpandedRef = useRef<boolean>(false);
   const dataColoringSelectionRef = useRef<DataColoring>(projectDataColoring ?? DataColoring.ALL);
-  const sortingPropertySelectionRef = useRef<string>('defaultOrder');
 
   const lang = useMemo(() => {
     return { lng: language };
@@ -488,85 +487,25 @@ const ProjectGallery = ({
                           title={i18n.t('projectPanel.CurateCurrentDesign', lang)}
                         />
                       </Button>
-                      {projectDesigns && projectDesigns.length > 1 && (
-                        <>
-                          <Popover
-                            content={
-                              <div>
-                                <label style={{ fontWeight: 'bold' }}>
-                                  <ArrowDownOutlined /> {i18n.t('projectPanel.SelectPropertyToSort', lang)}
-                                </label>
-                                <hr />
-                                <Radio.Group
-                                  onChange={(e) => {
-                                    e.stopPropagation();
-                                    sortingPropertySelectionRef.current = e.target.value;
-                                    setUpdateFlag(!updateFlag);
-                                  }}
-                                  value={sortingPropertySelectionRef.current}
-                                >
-                                  <Radio style={{ fontSize: '12px' }} value={'defaultOrder'}>
-                                    {i18n.t('projectPanel.DefaultOrder', lang)}
-                                  </Radio>
-                                  <br />
-                                  <Radio style={{ fontSize: '12px' }} value={'rowWidth'}>
-                                    {i18n.t('polygonMenu.SolarPanelArrayRowWidth', lang)}
-                                  </Radio>
-                                  <br />
-                                  <Radio style={{ fontSize: '12px' }} value={'tiltAngle'}>
-                                    {i18n.t('polygonMenu.SolarPanelArrayTiltAngle', lang)}
-                                  </Radio>
-                                </Radio.Group>
-                              </div>
-                            }
-                          >
-                            <Button
-                              style={{ border: 'none', padding: '4px' }}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                              }}
-                            >
-                              <SortAscendingOutlined style={{ fontSize: '24px', color: 'gray' }} />
-                            </Button>
-                          </Popover>
-                          <Popover
-                            content={
-                              <div>
-                                <label style={{ fontWeight: 'bold' }}>
-                                  <ArrowUpOutlined /> {i18n.t('projectPanel.SelectPropertyToSort', lang)}
-                                </label>
-                                <hr />
-                                <Radio.Group
-                                  onChange={(e) => {
-                                    setUpdateFlag(!updateFlag);
-                                  }}
-                                  value={sortingPropertySelectionRef.current}
-                                >
-                                  <Radio style={{ fontSize: '12px' }} value={'defaultOrder'}>
-                                    {i18n.t('projectPanel.DefaultOrder', lang)}
-                                  </Radio>
-                                  <br />
-                                  <Radio style={{ fontSize: '12px' }} value={'rowWidth'}>
-                                    {i18n.t('polygonMenu.SolarPanelArrayRowWidth', lang)}
-                                  </Radio>
-                                  <br />
-                                  <Radio style={{ fontSize: '12px' }} value={'tiltAngle'}>
-                                    {i18n.t('polygonMenu.SolarPanelArrayTiltAngle', lang)}
-                                  </Radio>
-                                </Radio.Group>
-                              </div>
-                            }
-                          >
-                            <Button
-                              style={{ border: 'none', padding: '4px' }}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                              }}
-                            >
-                              <SortDescendingOutlined style={{ fontSize: '24px', color: 'gray' }} />
-                            </Button>
-                          </Popover>
-                        </>
+                      {projectDesigns && projectDesigns.length > 1 && projectSelectedProperty && (
+                        <Button
+                          style={{ border: 'none', padding: '4px' }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                          }}
+                        >
+                          {projectSortDescending ? (
+                            <SortDescendingOutlined
+                              style={{ fontSize: '24px', color: 'gray' }}
+                              title={i18n.t('projectPanel.SortDesignsBySelectedProperty', lang)}
+                            />
+                          ) : (
+                            <SortAscendingOutlined
+                              style={{ fontSize: '24px', color: 'gray' }}
+                              title={i18n.t('projectPanel.SortDesignsBySelectedProperty', lang)}
+                            />
+                          )}
+                        </Button>
                       )}
                       {isProjectDesign && selectedDesign && (
                         <Button

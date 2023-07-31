@@ -528,7 +528,9 @@ export const projectImages = (state: CommonStoreState) => state.projectImages;
 
 export const projectHiddenParameters = (state: CommonStoreState) => state.projectHiddenParameters;
 
-export const projectDesignCounter = (state: CommonStoreState) => state.projectDesignCounter;
+export const projectSelectedProperty = (state: CommonStoreState) => state.projectSelectedProperty;
+
+export const projectSortDescending = (state: CommonStoreState) => state.projectSortDescending;
 
 export const showProjectListPanel = (state: PrimitiveStoreState) => state.showProjectListPanel;
 
