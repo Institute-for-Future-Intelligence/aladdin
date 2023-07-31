@@ -522,6 +522,8 @@ export const projectDescription = (state: CommonStoreState) => state.projectDesc
 
 export const projectDesigns = (state: CommonStoreState) => state.projectDesigns;
 
+export const projectDataColoring = (state: CommonStoreState) => state.projectDataColoring;
+
 export const projectImages = (state: CommonStoreState) => state.projectImages;
 
 export const projectHiddenParameters = (state: CommonStoreState) => state.projectHiddenParameters;

@@ -17,7 +17,7 @@ import RenameImage from '../assets/rename.png';
 import DeleteImage from '../assets/delete.png';
 import LinkImage from '../assets/create_link.png';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
-import { Design, DesignProblem } from '../types';
+import { DataColoring, Design, DesignProblem } from '../types';
 
 const { Column } = Table;
 
@@ -81,6 +81,7 @@ export interface ProjectListPanelProps {
     title: string,
     type: DesignProblem,
     description: string,
+    dataColoring: DataColoring,
     designs: Design[] | null,
     hiddenParameters: string[] | null,
     designCounter: number,
@@ -339,6 +340,8 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
                         r.type,
                         // @ts-ignore
                         r.description,
+                        // @ts-ignore
+                        r.dataColoring,
                         // @ts-ignore
                         r.designs,
                         // @ts-ignore

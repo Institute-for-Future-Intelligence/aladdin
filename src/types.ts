@@ -102,6 +102,12 @@ export interface CloudFileInfo {
   readonly userid: string;
 }
 
+export enum DataColoring {
+  ALL = 0,
+  INDIVIDUALS = 1,
+  GROUPS = 2,
+}
+
 export interface ProjectInfo {
   readonly owner: string;
   readonly timestamp: number;
@@ -111,6 +117,7 @@ export interface ProjectInfo {
   readonly designs: Design[] | null;
   readonly hiddenParameters: string[] | null;
   readonly counter: number;
+  readonly dataColoring: DataColoring;
 }
 
 export interface ActionInfo {

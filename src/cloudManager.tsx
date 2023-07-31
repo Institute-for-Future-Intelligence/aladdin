@@ -17,6 +17,7 @@ import { showError, showInfo, showSuccess } from './helpers';
 import {
   ClassID,
   CloudFileInfo,
+  DataColoring,
   Design,
   DesignProblem,
   FirebaseName,
@@ -188,6 +189,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           time: dayjs(new Date(f.timestamp)).format('MM/DD/YYYY hh:mm a'),
           timestamp: f.timestamp,
           description: f.description,
+          dataColoring: f.dataColoring,
           type: f.type,
           designs: f.designs,
           hiddenParameters: f.hiddenParameters ?? [],
@@ -1074,6 +1076,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
             title: doc.id,
             timestamp: data.timestamp,
             description: data.description,
+            dataColoring: data.dataColoring,
             type: data.type,
             designs: data.designs ?? [],
             hiddenParameters: data.hiddenParameters ?? [],
@@ -1255,6 +1258,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     title: string,
     type: DesignProblem,
     description: string,
+    dataColoring: DataColoring,
     designs: Design[] | null,
     hiddenParameters: string[] | null,
     designCounter: number,
@@ -1264,6 +1268,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       state.projectTitle = title;
       state.projectType = type;
       state.projectDescription = description;
+      state.projectDataColoring = dataColoring;
       state.projectDesigns = designs;
       state.projectImages.clear();
       state.projectHiddenParameters = hiddenParameters ?? [];

@@ -10,7 +10,20 @@ import VerticalAxis from './verticalAxis';
 
 const MARGIN = { top: 30, right: 55, bottom: 36, left: 55 };
 
-const COLORS = ['#e0ac2b', '#e85252', '#6689c6', '#9a6fb0', '#a53253', '#69b3a2'];
+const COLORS = [
+  '#e0ac2b',
+  '#e85252',
+  '#6689c6',
+  '#9a6fb0',
+  '#a53253',
+  '#69b3a2',
+  '#556b2f',
+  '#8b008b',
+  '#ff1493',
+  '#d2691e',
+  '#2f4f4f',
+  '#dc143c',
+];
 
 type ParallelCoordinatesProps = {
   id: string;

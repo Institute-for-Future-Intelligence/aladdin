@@ -16,6 +16,7 @@ import produce, { enableMapSet } from 'immer';
 import {
   ActionInfo,
   ActionType,
+  DataColoring,
   DatumEntry,
   Design,
   DesignProblem,
@@ -117,6 +118,7 @@ export interface CommonStoreState {
   projectOwner: string | null;
   projectTitle: string | null;
   projectDescription: string | null;
+  projectDataColoring: DataColoring | null;
   projectDesigns: Design[] | null;
   projectHiddenParameters: string[];
   projectImages: Map<string, HTMLImageElement>;
@@ -565,6 +567,7 @@ export const useStore = create<CommonStoreState>(
           projectOwner: null,
           projectTitle: null,
           projectDescription: null,
+          projectDataColoring: null,
           projectDesigns: null,
           projectHiddenParameters: [],
           projectImages: new Map<string, HTMLImageElement>(),
@@ -4249,6 +4252,7 @@ export const useStore = create<CommonStoreState>(
           'projectOwner',
           'projectTitle',
           'projectDescription',
+          'projectDataColoring',
           'projectDesigns',
           'projectHiddenParameters',
           'projectDesignCounter',

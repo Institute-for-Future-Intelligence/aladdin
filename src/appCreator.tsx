@@ -25,6 +25,7 @@ import CloudManager from './cloudManager';
 import { loadCloudFile } from './cloudFileUtil';
 import {
   removeDesignFromProject,
+  updateProjectDataColoring,
   updateProjectDescription,
   updateProjectDesign,
   updateProjectHiddenParameters,
@@ -455,6 +456,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
                 openCloudFile={loadCloudFile}
                 deleteDesign={removeDesignFromProject}
                 updateProjectDescription={updateProjectDescription}
+                updateProjectDataColoring={updateProjectDataColoring}
                 updateProjectParameters={updateProjectHiddenParameters}
                 updateProjectDesign={updateProjectDesign}
               />

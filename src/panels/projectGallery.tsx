@@ -6,22 +6,23 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import styled from 'styled-components';
-import { Collapse, Button, Input, List, Popover, Checkbox } from 'antd';
+import { Button, Checkbox, Collapse, Input, List, Popover, Radio } from 'antd';
 import i18n from '../i18n/i18n';
 import {
-  LineChartOutlined,
+  BgColorsOutlined,
   CameraOutlined,
   CloseOutlined,
   DeleteOutlined,
   EditFilled,
   EditOutlined,
   ImportOutlined,
+  LineChartOutlined,
   LinkOutlined,
   UploadOutlined,
 } from '@ant-design/icons';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import ImageLoadFailureIcon from '../assets/image_fail_try_again.png';
-import { DatumEntry, Design, DesignProblem, Orientation } from '../types';
+import { DataColoring, DatumEntry, Design, DesignProblem, Orientation } from '../types';
 import ParallelCoordinates from '../components/parallelCoordinates';
 //@ts-ignore
 import { saveSvgAsPng } from 'save-svg-as-png';
@@ -110,6 +111,7 @@ export interface ProjectGalleryProps {
   openCloudFile?: (userid: string, title: string, ofProject: boolean, popState?: boolean) => void;
   deleteDesign?: (userid: string, projectTitle: string, design: Design) => void;
   updateProjectDescription?: (userid: string, projectTitle: string, description: string | null) => void;
+  updateProjectDataColoring?: (userid: string, projectTitle: string, dataColoring: DataColoring) => void;
   updateProjectParameters?: (userid: string, projectTitle: string, hiddenParameter: string, add: boolean) => void;
   updateProjectDesign?: (
     userid: string,
@@ -126,6 +128,7 @@ const ProjectGallery = ({
   openCloudFile,
   deleteDesign,
   updateProjectDescription,
+  updateProjectDataColoring,
   updateProjectParameters,
   updateProjectDesign,
 }: ProjectGalleryProps) => {
@@ -137,6 +140,7 @@ const ProjectGallery = ({
   const projectTitle = useStore(Selector.projectTitle);
   const projectDescription = useStore(Selector.projectDescription);
   const projectDesigns = useStore(Selector.projectDesigns);
+  const projectDataColoring = useStore(Selector.projectDataColoring);
   const projectHiddenParameters = useStore(Selector.projectHiddenParameters);
   const projectType = useStore(Selector.projectType);
   const solarPanelArrayLayoutConstraints = useStore(Selector.solarPanelArrayLayoutConstraints);
@@ -151,6 +155,7 @@ const ProjectGallery = ({
   const descriptionRef = useRef<string | null>(projectDescription);
   const descriptionChangedRef = useRef<boolean>(false);
   const descriptionExpandedRef = useRef<boolean>(false);
+  const dataColoringSelectionRef = useRef<DataColoring>(projectDataColoring ?? DataColoring.ALL);
 
   const lang = useMemo(() => {
     return { lng: language };
@@ -270,7 +275,7 @@ const ProjectGallery = ({
           if (!projectHiddenParameters.includes('yield')) d['yield'] = design.yearlyYield * 0.001;
           if (!projectHiddenParameters.includes('profit'))
             d['profit'] = (design.yearlyYield * sellingPrice - design.panelCount * unitCost * 365) * 0.001;
-          d['group'] = 'default';
+          d['group'] = projectDataColoring === DataColoring.INDIVIDUALS ? design.title : 'default';
           d['selected'] = selectedDesign === design;
           d['hovered'] = hoveredDesign === design;
           data.push(d);
@@ -285,6 +290,7 @@ const ProjectGallery = ({
     selectedDesign,
     economicsParams,
     projectHiddenParameters,
+    projectDataColoring,
     updateHiddenFlag,
   ]);
 
@@ -815,6 +821,41 @@ const ProjectGallery = ({
                     </Button>
                   </Popover>
                 )}
+                <Popover
+                  content={
+                    <div>
+                      <label style={{ fontWeight: 'bold' }}>{i18n.t('projectPanel.ChooseDataColoring', lang)}</label>
+                      <hr />
+                      <Radio.Group
+                        onChange={(e) => {
+                          dataColoringSelectionRef.current = e.target.value;
+                          if (updateProjectDataColoring) {
+                            if (user.uid && projectOwner === user.uid && projectTitle) {
+                              updateProjectDataColoring(user.uid, projectTitle, dataColoringSelectionRef.current);
+                            }
+                          }
+                          setCommonStore((state) => {
+                            state.projectDataColoring = dataColoringSelectionRef.current;
+                          });
+                          setUpdateFlag(!updateFlag);
+                        }}
+                        value={dataColoringSelectionRef.current}
+                      >
+                        <Radio style={{ fontSize: '12px' }} value={DataColoring.ALL}>
+                          {i18n.t('projectPanel.SameColorForAllDesigns', lang)}
+                        </Radio>
+                        <br />
+                        <Radio style={{ fontSize: '12px' }} value={DataColoring.INDIVIDUALS}>
+                          {i18n.t('projectPanel.OneColorForEachDesign', lang)}
+                        </Radio>
+                      </Radio.Group>
+                    </div>
+                  }
+                >
+                  <Button style={{ border: 'none', paddingRight: 0, background: 'white' }} onClick={() => {}}>
+                    <BgColorsOutlined style={{ fontSize: '24px', color: 'gray' }} />
+                  </Button>
+                </Popover>
                 <Button
                   style={{ border: 'none', paddingRight: '20px', background: 'white' }}
                   onClick={() => {

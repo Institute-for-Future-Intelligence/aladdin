@@ -20,6 +20,7 @@ import { saveImage, showError, showInfo, showWarning } from './helpers';
 import {
   ActionInfo,
   BuildingCompletionStatus,
+  DataColoring,
   Design,
   DesignProblem,
   Language,
@@ -249,6 +250,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
     title: string,
     type: DesignProblem,
     description: string,
+    dataColoring: DataColoring,
     designs: Design[] | null,
     hiddenParameters: string[] | null,
     designCounter: number,
@@ -258,6 +260,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
       state.projectTitle = title;
       state.projectType = type;
       state.projectDescription = description;
+      state.projectDataColoring = dataColoring;
       state.projectDesigns = designs;
       state.projectImages.clear();
       state.projectHiddenParameters = hiddenParameters ?? [];

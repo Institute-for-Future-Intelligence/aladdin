@@ -8,7 +8,7 @@ import 'firebase/firestore';
 import 'firebase/storage';
 import { showError, showInfo } from './helpers';
 import i18n from './i18n/i18n';
-import { Design, DesignProblem, ProjectInfo } from './types';
+import { Design, DesignProblem, DataColoring, ProjectInfo } from './types';
 import { Util } from './Util';
 import { usePrimitiveStore } from './stores/commonPrimitive';
 
@@ -29,12 +29,22 @@ export const fetchProject = async (userid: string, project: string, setProjectSt
           title: doc.id,
           timestamp: data.timestamp,
           description: data.description,
+          dataColoring: data.dataColoring ?? DataColoring.ALL,
           type: data.type,
           designs: data.designs,
           hiddenParameters: data.hiddenParameters,
           counter: data.counter ?? 0,
         } as ProjectInfo;
-        setProjectState(pi.owner, pi.title, pi.type, pi.description, pi.designs, pi.hiddenParameters, pi.counter);
+        setProjectState(
+          pi.owner,
+          pi.title,
+          pi.type,
+          pi.description,
+          pi.dataColoring,
+          pi.designs,
+          pi.hiddenParameters,
+          pi.counter,
+        );
       } else {
         showError(i18n.t('message.CannotOpenProject', lang) + ': ' + project);
       }
@@ -119,6 +129,23 @@ export const updateProjectDescription = (userid: string, projectTitle: string, d
     .collection('projects')
     .doc(projectTitle)
     .update({ description })
+    .then(() => {
+      // ignore
+    })
+    .catch((error) => {
+      showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
+    });
+};
+
+export const updateProjectDataColoring = (userid: string, projectTitle: string, dataColoring: DataColoring) => {
+  const lang = { lng: useStore.getState().language };
+  return firebase
+    .firestore()
+    .collection('users')
+    .doc(userid)
+    .collection('projects')
+    .doc(projectTitle)
+    .update({ dataColoring })
     .then(() => {
       // ignore
     })
