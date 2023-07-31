@@ -14,6 +14,7 @@ type VerticalAxisProps = {
   unit: string;
   yScale: ScaleLinear<number, number>;
   tickLength: number;
+  tickIntegers: boolean;
   type: string;
   digits: number;
   min: number;
@@ -26,6 +27,7 @@ const DEFAULT_TICK_LENGTH = 5;
 const VerticalAxis = ({
   yScale,
   tickLength,
+  tickIntegers,
   variable,
   name,
   unit,
@@ -43,7 +45,10 @@ const VerticalAxis = ({
   const ticks = useMemo(() => {
     const height = range[0] - range[1];
     const numberOfTicks = type === 'number' ? Math.floor(height / tickLength) : 1;
-    return yScale.ticks(numberOfTicks).map((value) => ({
+    const ticks = tickIntegers
+      ? yScale.ticks(numberOfTicks).filter((tick) => Number.isInteger(tick))
+      : yScale.ticks(numberOfTicks);
+    return ticks.map((value) => ({
       value,
       yOffset: yScale(value),
     }));

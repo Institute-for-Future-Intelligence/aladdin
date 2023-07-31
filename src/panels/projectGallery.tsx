@@ -240,6 +240,10 @@ const ProjectGallery = ({
     () => ProjectUtil.getDigits(projectType, projectHiddenParameters),
     [projectType, projectHiddenParameters, updateHiddenFlag],
   );
+  const tickIntegers: boolean[] = useMemo(
+    () => ProjectUtil.getTickIntegers(projectType, projectHiddenParameters),
+    [projectType, projectHiddenParameters, updateHiddenFlag],
+  );
   const types: string[] = useMemo(
     () => ProjectUtil.getTypes(projectType, projectHiddenParameters),
     [projectType, projectHiddenParameters, updateHiddenFlag],
@@ -841,6 +845,7 @@ const ProjectGallery = ({
               titles={titles}
               units={units}
               digits={digits}
+              tickIntegers={tickIntegers}
               hover={hover}
               hoveredIndex={projectDesigns && hoveredDesign ? projectDesigns.indexOf(hoveredDesign) : -1}
             />

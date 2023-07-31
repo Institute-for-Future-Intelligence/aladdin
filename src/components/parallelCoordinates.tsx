@@ -24,6 +24,7 @@ type ParallelCoordinatesProps = {
   titles: string[];
   units: string[];
   digits: number[];
+  tickIntegers: boolean[];
   hover: Function;
   hoveredIndex: number;
 };
@@ -42,6 +43,7 @@ const ParallelCoordinates = ({
   titles,
   units,
   digits,
+  tickIntegers,
   hover,
   hoveredIndex,
 }: ParallelCoordinatesProps) => {
@@ -106,6 +108,7 @@ const ParallelCoordinates = ({
         <VerticalAxis
           yScale={yScale}
           tickLength={40}
+          tickIntegers={tickIntegers[i]}
           type={types[i] ?? 'number'}
           variable={variables[i]}
           name={titles[i]}

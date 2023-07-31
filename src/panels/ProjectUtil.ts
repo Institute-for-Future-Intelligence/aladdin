@@ -78,6 +78,24 @@ export class ProjectUtil {
     return [];
   }
 
+  static getTickIntegers(projectType: DesignProblem, hidden: string[]): boolean[] {
+    if (projectType === DesignProblem.SOLAR_PANEL_ARRAY) {
+      const a: boolean[] = [];
+      if (!hidden.includes('rowWidth')) a.push(true);
+      if (!hidden.includes('tiltAngle')) a.push(false);
+      if (!hidden.includes('interRowSpacing')) a.push(false);
+      if (!hidden.includes('orientation')) a.push(true);
+      if (!hidden.includes('poleHeight')) a.push(false);
+      if (!hidden.includes('unitCost')) a.push(false);
+      if (!hidden.includes('sellingPrice')) a.push(false);
+      if (!hidden.includes('panelCount')) a.push(true);
+      if (!hidden.includes('yield')) a.push(false);
+      if (!hidden.includes('profit')) a.push(false);
+      return a;
+    }
+    return [];
+  }
+
   static getUnits(projectType: DesignProblem, l: { lng: string }, hidden: string[]): string[] {
     if (projectType === DesignProblem.SOLAR_PANEL_ARRAY) {
       const a: string[] = [];
