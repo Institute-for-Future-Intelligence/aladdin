@@ -85,10 +85,11 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const [updateFlag, setUpdateFlag] = useState(false);
   const [cloudFileArray, setCloudFileArray] = useState<any[]>([]);
   const [projectArray, setProjectArray] = useState<any[]>([]);
+  const [updateProjectArrayFlag, setUpdateProjectArrayFlag] = useState(false);
   const [title, setTitle] = useState<string>(cloudFile ?? 'My Aladdin File');
   const [titleDialogVisible, setTitleDialogVisible] = useState(false);
   const cloudFiles = useRef<CloudFileInfo[] | void>();
-  const myProjects = useRef<ProjectInfo[] | void>();
+  const myProjects = useRef<ProjectInfo[] | void>(); // Not sure why I need to use ref to store this
   const authorModelsRef = useRef<Map<string, ModelSite>>();
   const firstCallUpdateCloudFile = useRef<boolean>(true);
   const firstCallFetchModels = useRef<boolean>(true);
@@ -203,7 +204,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       setProjectArray(arr);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [myProjects.current]);
+  }, [myProjects.current, updateProjectArrayFlag]);
 
   // fetch all the models that belong to the current user, including those published under all aliases
   useEffect(() => {
@@ -913,7 +914,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       return;
     }
     // check if the project title is already used
-    fetchMyProjects().then(() => {
+    fetchMyProjects(false).then(() => {
       let exist = false;
       if (myProjects.current) {
         for (const p of myProjects.current) {
@@ -963,13 +964,13 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
               showError(i18n.t('message.CannotCreateNewProject', lang) + ': ' + error);
             })
             .finally(() => {
-              setLoading(false);
               // if the project list panel is open, update it
               if (showProjectListPanel) {
-                fetchMyProjects().then(() => {
+                fetchMyProjects(false).then(() => {
                   setUpdateFlag(!updateFlag);
                 });
               }
+              setLoading(false);
             });
         }
       }
@@ -989,7 +990,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       return;
     }
     // check if the project title is already taken
-    fetchMyProjects().then(() => {
+    fetchMyProjects(false).then(() => {
       let exist = false;
       if (myProjects.current) {
         for (const p of myProjects.current) {
@@ -1054,12 +1055,12 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                   showError(i18n.t('message.CannotCreateNewProject', lang) + ': ' + error);
                 })
                 .finally(() => {
-                  setLoading(false);
                   if (showProjectListPanel) {
-                    fetchMyProjects().then(() => {
+                    fetchMyProjects(false).then(() => {
                       setUpdateFlag(!updateFlag);
                     });
                   }
+                  setLoading(false);
                 });
             }
           }
@@ -1069,9 +1070,9 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   };
 
   // fetch owner's projects from the cloud
-  const fetchMyProjects = async () => {
+  const fetchMyProjects = async (silent: boolean) => {
     if (!user.uid) return;
-    setLoading(true);
+    if (!silent) setLoading(true);
     myProjects.current = await firebase
       .firestore()
       .collection('users')
@@ -1102,18 +1103,19 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
         showError(i18n.t('message.CannotOpenYourProjects', lang) + ': ' + error);
       })
       .finally(() => {
-        setLoading(false);
+        if (!silent) setLoading(false);
       });
   };
 
   const listMyProjects = (show: boolean) => {
     if (user.uid) {
-      fetchMyProjects().then(() => {
+      fetchMyProjects(!show).then(() => {
         if (show) {
           usePrimitiveStore.setState((state) => {
             state.showProjectListPanel = true;
           });
         }
+        setUpdateProjectArrayFlag(!updateProjectArrayFlag);
       });
     }
   };
@@ -1182,7 +1184,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
 
   const renameProject = (oldTitle: string, newTitle: string) => {
     // check if the new project title is already taken
-    fetchMyProjects().then(() => {
+    fetchMyProjects(false).then(() => {
       let exist = false;
       if (myProjects.current) {
         for (const p of myProjects.current) {

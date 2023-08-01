@@ -139,6 +139,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
   const descriptionChangedRef = useRef<boolean>(false);
   const descriptionExpandedRef = useRef<boolean>(false);
   const dataColoringSelectionRef = useRef<DataColoring>(projectInfo.dataColoring ?? DataColoring.ALL);
+  const parameterSelectionChangedRef = useRef<boolean>(false);
 
   const lang = useMemo(() => {
     return { lng: language };
@@ -345,6 +346,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
 
   const selectParameter = (selected: boolean, parameter: string) => {
     if (user.uid && projectInfo.owner === user.uid && projectInfo.title) {
+      parameterSelectionChangedRef.current = true;
       updateHiddenParameters(user.uid, projectInfo.title, parameter, !selected).then(() => {
         setCommonStore((state) => {
           if (state.projectInfo.hiddenParameters) {
@@ -682,6 +684,16 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
               <span>
                 {projectInfo.type === DesignProblem.SOLAR_PANEL_ARRAY && (
                   <Popover
+                    onVisibleChange={(visible) => {
+                      if (parameterSelectionChangedRef.current) {
+                        if (!visible) {
+                          usePrimitiveStore.setState((state) => {
+                            state.updateProjectsFlag = !state.updateProjectsFlag;
+                          });
+                        }
+                        parameterSelectionChangedRef.current = false;
+                      }
+                    }}
                     content={
                       <div>
                         <label style={{ fontWeight: 'bold' }}>{i18n.t('projectPanel.ChooseSolutionSpace', lang)}</label>
@@ -828,6 +840,9 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                               () => {
                                 setCommonStore((state) => {
                                   state.projectInfo.dataColoring = dataColoringSelectionRef.current;
+                                });
+                                usePrimitiveStore.setState((state) => {
+                                  state.updateProjectsFlag = !state.updateProjectsFlag;
                                 });
                                 setUpdateFlag(!updateFlag);
                               },

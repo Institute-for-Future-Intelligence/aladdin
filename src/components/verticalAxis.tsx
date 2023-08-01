@@ -8,6 +8,7 @@ import i18n from '../i18n/i18n';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { updateSelectedProperty } from '../cloudProjectUtil';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 type VerticalAxisProps = {
   variable: string;
@@ -71,6 +72,9 @@ const VerticalAxis = ({
             ).then(() => {
               setCommonStore((state) => {
                 state.projectInfo.selectedProperty = state.projectInfo.selectedProperty !== variable ? variable : null;
+              });
+              usePrimitiveStore.setState((state) => {
+                state.updateProjectsFlag = !state.updateProjectsFlag;
               });
             });
           }
