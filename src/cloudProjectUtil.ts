@@ -84,7 +84,7 @@ export const removeDesignFromProject = (userid: string, projectTitle: string, de
     });
 };
 
-export const updateProjectHiddenParameters = (
+export const updateHiddenParameters = (
   userid: string,
   projectTitle: string,
   hiddenParameter: string,
@@ -110,7 +110,7 @@ export const updateProjectHiddenParameters = (
     });
 };
 
-export const updateProjectDescription = (userid: string, projectTitle: string, description: string | null) => {
+export const updateDescription = (userid: string, projectTitle: string, description: string | null) => {
   const lang = { lng: useStore.getState().language };
   return firebase
     .firestore()
@@ -127,7 +127,7 @@ export const updateProjectDescription = (userid: string, projectTitle: string, d
     });
 };
 
-export const updateProjectDataColoring = (userid: string, projectTitle: string, dataColoring: DataColoring) => {
+export const updateDataColoring = (userid: string, projectTitle: string, dataColoring: DataColoring) => {
   const lang = { lng: useStore.getState().language };
   return firebase
     .firestore()
@@ -136,6 +136,23 @@ export const updateProjectDataColoring = (userid: string, projectTitle: string, 
     .collection('projects')
     .doc(projectTitle)
     .update({ dataColoring })
+    .then(() => {
+      // ignore
+    })
+    .catch((error) => {
+      showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
+    });
+};
+
+export const updateSelectedProperty = (userid: string, projectTitle: string, selectedProperty: string | null) => {
+  const lang = { lng: useStore.getState().language };
+  return firebase
+    .firestore()
+    .collection('users')
+    .doc(userid)
+    .collection('projects')
+    .doc(projectTitle)
+    .update({ selectedProperty })
     .then(() => {
       // ignore
     })
@@ -241,7 +258,7 @@ export const copyDesign = (original: string, copy: string, owner: string | null,
     });
 };
 
-export const updateProjectDesign = (
+export const updateDesign = (
   userid: string,
   projectType: string,
   projectTitle: string,

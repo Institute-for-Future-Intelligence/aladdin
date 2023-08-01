@@ -7,6 +7,7 @@ import { ScaleLinear } from 'd3-scale';
 import i18n from '../i18n/i18n';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
+import { updateSelectedProperty } from '../cloudProjectUtil';
 
 type VerticalAxisProps = {
   variable: string;
@@ -38,6 +39,7 @@ const VerticalAxis = ({
   value,
 }: VerticalAxisProps) => {
   const setCommonStore = useStore(Selector.set);
+  const user = useStore(Selector.user);
   const language = useStore(Selector.language);
   const projectInfo = useStore(Selector.projectInfo);
   const lang = { lng: language };
@@ -61,13 +63,17 @@ const VerticalAxis = ({
       {/* Title */}
       <text
         onClick={(e) => {
-          setCommonStore((state) => {
-            if (state.projectInfo.selectedProperty !== variable) {
-              state.projectInfo.selectedProperty = variable;
-            } else {
-              state.projectInfo.selectedProperty = null;
-            }
-          });
+          if (user.uid && projectInfo.title) {
+            updateSelectedProperty(
+              user.uid,
+              projectInfo.title,
+              projectInfo.selectedProperty !== variable ? variable : null,
+            ).then(() => {
+              setCommonStore((state) => {
+                state.projectInfo.selectedProperty = state.projectInfo.selectedProperty !== variable ? variable : null;
+              });
+            });
+          }
         }}
         x={0}
         y={-20}

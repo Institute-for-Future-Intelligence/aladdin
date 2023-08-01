@@ -32,6 +32,14 @@ import { copyTextToClipboard, showInfo, showSuccess } from '../helpers';
 import { Util } from '../Util';
 import { ProjectUtil } from './ProjectUtil';
 import { HOME_URL } from '../constants';
+import {
+  removeDesignFromProject,
+  updateDataColoring,
+  updateDescription,
+  updateDesign,
+  updateHiddenParameters,
+} from '../cloudProjectUtil';
+import { loadCloudFile } from '../cloudFileUtil';
 
 const { TextArea } = Input;
 
@@ -110,30 +118,9 @@ const SubContainer = styled.div`
 export interface ProjectGalleryProps {
   relativeWidth: number;
   canvas: HTMLCanvasElement | null;
-  openCloudFile?: (userid: string, title: string, ofProject: boolean, popState?: boolean) => void;
-  deleteDesign?: (userid: string, projectTitle: string, design: Design) => void;
-  updateProjectDescription?: (userid: string, projectTitle: string, description: string | null) => void;
-  updateProjectDataColoring?: (userid: string, projectTitle: string, dataColoring: DataColoring) => void;
-  updateProjectParameters?: (userid: string, projectTitle: string, hiddenParameter: string, add: boolean) => void;
-  updateProjectDesign?: (
-    userid: string,
-    projectType: string,
-    projectTitle: string,
-    designTitle: string,
-    canvas: HTMLCanvasElement | null,
-  ) => void;
 }
 
-const ProjectGallery = ({
-  relativeWidth,
-  canvas,
-  openCloudFile,
-  deleteDesign,
-  updateProjectDescription,
-  updateProjectDataColoring,
-  updateProjectParameters,
-  updateProjectDesign,
-}: ProjectGalleryProps) => {
+const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
   const setCommonStore = useStore(Selector.set);
   const user = useStore(Selector.user);
   const language = useStore(Selector.language);
@@ -201,22 +188,23 @@ const ProjectGallery = ({
   };
 
   const removeSelectedDesign = () => {
-    if (user.uid && projectInfo.title && deleteDesign && selectedDesign) {
-      deleteDesign(user.uid, projectInfo.title, selectedDesign);
-      // delete the local copy as well
-      setCommonStore((state) => {
-        if (state.projectInfo.designs) {
-          let index = -1;
-          for (const [i, e] of state.projectInfo.designs.entries()) {
-            if (e.title === selectedDesign.title) {
-              index = i;
-              break;
+    if (user.uid && projectInfo.title && selectedDesign) {
+      removeDesignFromProject(user.uid, projectInfo.title, selectedDesign).then(() => {
+        // delete the local copy as well
+        setCommonStore((state) => {
+          if (state.projectInfo.designs) {
+            let index = -1;
+            for (const [i, e] of state.projectInfo.designs.entries()) {
+              if (e.title === selectedDesign.title) {
+                index = i;
+                break;
+              }
+            }
+            if (index >= 0) {
+              state.projectInfo.designs.splice(index, 1);
             }
           }
-          if (index >= 0) {
-            state.projectInfo.designs.splice(index, 1);
-          }
-        }
+        });
       });
     }
   };
@@ -356,24 +344,23 @@ const ProjectGallery = ({
   };
 
   const selectParameter = (selected: boolean, parameter: string) => {
-    if (updateProjectParameters) {
-      if (user.uid && projectInfo.owner === user.uid && projectInfo.title) {
-        updateProjectParameters(user.uid, projectInfo.title, parameter, !selected);
-      }
+    if (user.uid && projectInfo.owner === user.uid && projectInfo.title) {
+      updateHiddenParameters(user.uid, projectInfo.title, parameter, !selected).then(() => {
+        setCommonStore((state) => {
+          if (state.projectInfo.hiddenParameters) {
+            if (selected) {
+              if (state.projectInfo.hiddenParameters.includes(parameter)) {
+                state.projectInfo.hiddenParameters.splice(state.projectInfo.hiddenParameters.indexOf(parameter), 1);
+              }
+            } else {
+              if (!state.projectInfo.hiddenParameters.includes(parameter)) {
+                state.projectInfo.hiddenParameters.push(parameter);
+              }
+            }
+          }
+        });
+      });
     }
-    setCommonStore((state) => {
-      if (state.projectInfo.hiddenParameters) {
-        if (selected) {
-          if (state.projectInfo.hiddenParameters.includes(parameter)) {
-            state.projectInfo.hiddenParameters.splice(state.projectInfo.hiddenParameters.indexOf(parameter), 1);
-          }
-        } else {
-          if (!state.projectInfo.hiddenParameters.includes(parameter)) {
-            state.projectInfo.hiddenParameters.push(parameter);
-          }
-        }
-      }
-    });
   };
 
   const isProjectDesign = useMemo(() => {
@@ -492,8 +479,12 @@ const ProjectGallery = ({
                           style={{ border: 'none', padding: '4px' }}
                           onClick={(e) => {
                             e.stopPropagation();
-                            if (canvas && updateProjectDesign && user.uid && projectInfo.title && cloudFile) {
-                              updateProjectDesign(user.uid, projectInfo.type, projectInfo.title, cloudFile, canvas);
+                            if (canvas && user.uid && projectInfo.title && cloudFile) {
+                              updateDesign(user.uid, projectInfo.type, projectInfo.title, cloudFile, canvas).then(
+                                () => {
+                                  setUpdateFlag(!updateFlag);
+                                },
+                              );
                             }
                           }}
                         >
@@ -574,14 +565,13 @@ const ProjectGallery = ({
               onBlur={() => {
                 descriptionTextAreaEditableRef.current = false;
                 if (descriptionChangedRef.current) {
-                  if (updateProjectDescription) {
-                    if (user.uid && projectInfo.owner === user.uid && projectInfo.title) {
-                      updateProjectDescription(user.uid, projectInfo.title, descriptionRef.current);
-                    }
+                  if (user.uid && projectInfo.owner === user.uid && projectInfo.title) {
+                    updateDescription(user.uid, projectInfo.title, descriptionRef.current).then(() => {
+                      descriptionChangedRef.current = false;
+                      setUpdateFlag(!updateFlag);
+                    });
                   }
-                  descriptionChangedRef.current = false;
                 }
-                setUpdateFlag(!updateFlag);
               }}
               style={{
                 paddingLeft: '10px',
@@ -652,8 +642,8 @@ const ProjectGallery = ({
                         target.src = design.thumbnailUrl;
                       }
                       setSelectedDesign(design);
-                      if (projectInfo.owner && openCloudFile) {
-                        openCloudFile(projectInfo.owner, design.title, true, true);
+                      if (projectInfo.owner) {
+                        loadCloudFile(projectInfo.owner, design.title, true, true);
                       }
                     }}
                     onClick={(event) => {
@@ -833,15 +823,16 @@ const ProjectGallery = ({
                       <Radio.Group
                         onChange={(e) => {
                           dataColoringSelectionRef.current = e.target.value;
-                          if (updateProjectDataColoring) {
-                            if (user.uid && projectInfo.owner === user.uid && projectInfo.title) {
-                              updateProjectDataColoring(user.uid, projectInfo.title, dataColoringSelectionRef.current);
-                            }
+                          if (user.uid && projectInfo.owner === user.uid && projectInfo.title) {
+                            updateDataColoring(user.uid, projectInfo.title, dataColoringSelectionRef.current).then(
+                              () => {
+                                setCommonStore((state) => {
+                                  state.projectInfo.dataColoring = dataColoringSelectionRef.current;
+                                });
+                                setUpdateFlag(!updateFlag);
+                              },
+                            );
                           }
-                          setCommonStore((state) => {
-                            state.projectInfo.dataColoring = dataColoringSelectionRef.current;
-                          });
-                          setUpdateFlag(!updateFlag);
                         }}
                         value={projectInfo.dataColoring ?? DataColoring.ALL}
                       >

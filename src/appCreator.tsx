@@ -22,14 +22,6 @@ import GroundImage from './views/groundImage';
 import DropdownContextMenu from './components/contextMenu';
 import { DesignProblem, EvolutionMethod } from './types';
 import CloudManager from './cloudManager';
-import { loadCloudFile } from './cloudFileUtil';
-import {
-  removeDesignFromProject,
-  updateProjectDataColoring,
-  updateProjectDescription,
-  updateProjectDesign,
-  updateProjectHiddenParameters,
-} from './cloudProjectUtil';
 import ActionLogger from './actionLogger';
 import Lights from './lights';
 import { Auxiliary } from './auxiliary';
@@ -450,16 +442,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
             }}
           >
             {projectView ? (
-              <ProjectGallery
-                canvas={canvasRef.current}
-                relativeWidth={1 - canvasRelativeWidth * 0.01}
-                openCloudFile={loadCloudFile}
-                deleteDesign={removeDesignFromProject}
-                updateProjectDescription={updateProjectDescription}
-                updateProjectDataColoring={updateProjectDataColoring}
-                updateProjectParameters={updateProjectHiddenParameters}
-                updateProjectDesign={updateProjectDesign}
-              />
+              <ProjectGallery canvas={canvasRef.current} relativeWidth={1 - canvasRelativeWidth * 0.01} />
             ) : (
               <></>
             )}
