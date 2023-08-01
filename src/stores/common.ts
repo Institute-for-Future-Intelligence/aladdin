@@ -27,6 +27,7 @@ import {
   MoveHandleType,
   ObjectType,
   Orientation,
+  ProjectInfo,
   ResizeHandleType,
   RoofHandleType,
   RotateHandleType,
@@ -113,18 +114,9 @@ export interface CommonStoreState {
   modelLabel: string | null;
   modelDescription: string | null;
   projectView: boolean;
-  projectType: DesignProblem; // this belongs to a project
-  designProjectType: DesignProblem | null; // this belongs to a design of a project
-  projectOwner: string | null;
-  projectTitle: string | null;
-  projectDescription: string | null;
-  projectDataColoring: DataColoring | null;
-  projectDesigns: Design[] | null;
-  projectHiddenParameters: string[];
+  projectInfo: ProjectInfo;
   projectImages: Map<string, HTMLImageElement>;
-  projectDesignCounter: number; // for generating non-repeating design title
-  projectSelectedProperty: string | null;
-  projectSortDescending: boolean | null;
+  designProjectType: DesignProblem | null; // this belongs to a design of a project
   notes: string[];
   user: User;
   language: string;
@@ -550,6 +542,7 @@ export const useStore = create<CommonStoreState>(
           },
           world: defaultWorldModel,
           elements: defaultElements,
+          user: {} as User,
           viewState: new DefaultViewState(),
           actionState: new DefaultActionState(),
           graphState: new DefaultGraphState(),
@@ -564,20 +557,21 @@ export const useStore = create<CommonStoreState>(
           modelLabel: null,
           modelDescription: null,
           projectView: false,
-          projectType: DesignProblem.SOLAR_PANEL_ARRAY,
-          designProjectType: null,
-          projectOwner: null,
-          projectTitle: null,
-          projectDescription: null,
-          projectDataColoring: null,
-          projectDesigns: null,
-          projectHiddenParameters: [],
+          projectInfo: {
+            owner: null,
+            title: null,
+            description: null,
+            type: DesignProblem.SOLAR_PANEL_ARRAY,
+            designs: new Array<Design>(),
+            hiddenParameters: new Array<string>(),
+            counter: 0,
+            dataColoring: DataColoring.ALL,
+            selectedProperty: null,
+            sortDescending: false,
+          } as ProjectInfo,
           projectImages: new Map<string, HTMLImageElement>(),
-          projectDesignCounter: 0,
-          projectSelectedProperty: null,
-          projectSortDescending: null,
+          designProjectType: null,
           notes: [],
-          user: {} as User,
           language: 'en',
           floatingWindowOpacity: FLOATING_WINDOW_OPACITY,
           cloudFile: undefined,
@@ -4251,17 +4245,8 @@ export const useStore = create<CommonStoreState>(
           'modelLabel',
           'modelDescription',
           'projectView',
-          'projectType',
+          'projectInfo',
           'designProjectType',
-          'projectOwner',
-          'projectTitle',
-          'projectDescription',
-          'projectDataColoring',
-          'projectDesigns',
-          'projectHiddenParameters',
-          'projectDesignCounter',
-          'projectSelectedProperty',
-          'projectSortDescending',
           'notes',
           'user',
           'sceneRadius',

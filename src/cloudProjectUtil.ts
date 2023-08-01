@@ -306,7 +306,7 @@ export const updateProjectDesign = (
                     .finally(() => {
                       // Update the cached array in the local storage via the common store
                       useStore.getState().set((state) => {
-                        state.projectDesigns = updatedDesigns;
+                        state.projectInfo.designs = updatedDesigns;
                       });
                       usePrimitiveStore.setState((state) => {
                         state.updateProjectsFlag = !state.updateProjectsFlag;

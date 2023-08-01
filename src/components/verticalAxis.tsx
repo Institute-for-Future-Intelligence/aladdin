@@ -39,7 +39,7 @@ const VerticalAxis = ({
 }: VerticalAxisProps) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
-  const projectSelectedProperty = useStore(Selector.projectSelectedProperty);
+  const projectInfo = useStore(Selector.projectInfo);
   const lang = { lng: language };
 
   const range = yScale.range();
@@ -62,10 +62,10 @@ const VerticalAxis = ({
       <text
         onClick={(e) => {
           setCommonStore((state) => {
-            if (state.projectSelectedProperty !== variable) {
-              state.projectSelectedProperty = variable;
+            if (state.projectInfo.selectedProperty !== variable) {
+              state.projectInfo.selectedProperty = variable;
             } else {
-              state.projectSelectedProperty = null;
+              state.projectInfo.selectedProperty = null;
             }
           });
         }}
@@ -75,7 +75,7 @@ const VerticalAxis = ({
           fontSize: '10px',
           textAnchor: 'middle',
           fill: 'dimgray',
-          fontWeight: projectSelectedProperty === variable ? 'bold' : 'normal',
+          fontWeight: projectInfo.selectedProperty === variable ? 'bold' : 'normal',
         }}
       >
         {name}
@@ -103,7 +103,7 @@ const VerticalAxis = ({
       )}
 
       {/* Vertical line */}
-      {projectSelectedProperty === variable && (
+      {projectInfo.selectedProperty === variable && (
         <line x1={0} x2={0} y1={yScale(min)} y2={yScale(max)} stroke="gold" strokeWidth={8} strokeOpacity={0.5} />
       )}
       <line x1={0} x2={0} y1={yScale(min)} y2={yScale(max)} stroke="black" strokeWidth={2} />

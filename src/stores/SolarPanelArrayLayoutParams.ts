@@ -13,5 +13,5 @@ export interface SolarPanelArrayLayoutParams {
   interRowSpacing: number;
   poleHeight: number;
   poleSpacing: number;
-  margin?: number;
+  margin: number;
 }

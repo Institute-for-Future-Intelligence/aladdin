@@ -17,7 +17,9 @@ import { showError, showInfo, showSuccess } from './helpers';
 import {
   ClassID,
   CloudFileInfo,
+  DataColoring,
   Design,
+  DesignProblem,
   FirebaseName,
   ModelSite,
   ObjectType,
@@ -188,6 +190,8 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           timestamp: f.timestamp,
           description: f.description,
           dataColoring: f.dataColoring,
+          selectedProperty: f.selectedProperty,
+          sortDescending: f.sortDescending,
           type: f.type,
           designs: f.designs,
           hiddenParameters: f.hiddenParameters ?? [],
@@ -275,7 +279,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     if (firstCallSaveAsProject.current) {
       firstCallSaveAsProject.current = false;
     } else {
-      saveAsProject();
+      saveProjectAs();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [saveProjectFlag]);
@@ -898,7 +902,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
 
   const createNewProject = () => {
     if (!user || !user.uid) return;
-    const title = useStore.getState().projectTitle;
+    const title = useStore.getState().projectInfo.title;
     if (!title) {
       showError(i18n.t('message.CannotCreateNewProjectWithoutTitle', lang) + '.');
       return;
@@ -923,8 +927,8 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
         showInfo(i18n.t('message.TitleUsedChooseDifferentOne', lang) + ': ' + t);
       } else {
         if (user && user.uid) {
-          const type = useStore.getState().projectType;
-          const description = useStore.getState().projectDescription;
+          const type = useStore.getState().projectInfo.type ?? DesignProblem.SOLAR_PANEL_ARRAY;
+          const description = useStore.getState().projectInfo.description ?? null;
           const timestamp = new Date().getTime();
           const counter = 0;
           firebase
@@ -946,10 +950,13 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
               setCommonStore((state) => {
                 state.projectView = true;
                 // update the local copy as well
-                state.projectOwner = user.uid;
-                state.projectDesignCounter = 0;
-                state.projectDesigns = [];
-                state.projectHiddenParameters = [];
+                state.projectInfo.owner = user.uid;
+                state.projectInfo.counter = 0;
+                state.projectInfo.dataColoring = DataColoring.ALL;
+                state.projectInfo.selectedProperty = null;
+                state.projectInfo.sortDescending = false;
+                state.projectInfo.designs = [];
+                state.projectInfo.hiddenParameters = [];
               });
             })
             .catch((error) => {
@@ -969,9 +976,9 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     });
   };
 
-  const saveAsProject = () => {
+  const saveProjectAs = () => {
     if (!user || !user.uid) return;
-    const title = useStore.getState().projectTitle;
+    const title = useStore.getState().projectInfo.title;
     if (!title) {
       showError(i18n.t('message.CannotCreateNewProjectWithoutTitle', lang) + '.');
       return;
@@ -996,13 +1003,16 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
         showInfo(i18n.t('message.TitleUsedChooseDifferentOne', lang) + ': ' + t);
       } else {
         if (user && user.uid) {
-          const designs = useStore.getState().projectDesigns;
+          const designs = useStore.getState().projectInfo.designs;
           if (designs) {
-            const type = useStore.getState().projectType;
-            const owner = useStore.getState().projectOwner;
-            const description = useStore.getState().projectDescription;
+            const type = useStore.getState().projectInfo.type;
+            const owner = useStore.getState().projectInfo.owner;
+            const description = useStore.getState().projectInfo.description;
             const timestamp = new Date().getTime();
-            const counter = useStore.getState().projectDesignCounter;
+            const counter = useStore.getState().projectInfo.counter;
+            const dataColoring = useStore.getState().projectInfo.dataColoring;
+            const selectedProperty = useStore.getState().projectInfo.selectedProperty;
+            const sortDescending = useStore.getState().projectInfo.sortDescending;
             const newDesigns: Design[] = changeDesignTitles(t, designs) ?? [];
             for (const [i, d] of designs.entries()) {
               copyDesign(d.title, newDesigns[i].title, owner, user.uid);
@@ -1027,14 +1037,17 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                   type,
                   description,
                   counter,
+                  dataColoring,
+                  selectedProperty,
+                  sortDescending,
                   designs: newDesigns,
-                  hiddenParameters: useStore.getState().projectHiddenParameters,
+                  hiddenParameters: useStore.getState().projectInfo.hiddenParameters,
                 })
                 .then(() => {
                   setCommonStore((state) => {
                     state.projectView = true;
-                    state.projectOwner = user.uid;
-                    state.projectDesigns = newDesigns;
+                    state.projectInfo.owner = user.uid;
+                    state.projectInfo.designs = newDesigns;
                   });
                 })
                 .catch((error) => {
@@ -1075,6 +1088,8 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
             timestamp: data.timestamp,
             description: data.description,
             dataColoring: data.dataColoring,
+            selectedProperty: data.selectedProperty,
+            sortDescending: data.sortDescending,
             type: data.type,
             designs: data.designs ?? [],
             hiddenParameters: data.hiddenParameters ?? [],
@@ -1146,12 +1161,15 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           setUpdateFlag(!updateFlag);
         }
         setCommonStore((state) => {
-          if (title === state.projectTitle) {
-            state.projectTitle = null;
-            state.projectDescription = null;
-            state.projectDesignCounter = 0;
-            state.projectDesigns = null;
-            state.projectHiddenParameters = [];
+          if (title === state.projectInfo.title) {
+            state.projectInfo.title = null;
+            state.projectInfo.description = null;
+            state.projectInfo.dataColoring = DataColoring.ALL;
+            state.projectInfo.selectedProperty = null;
+            state.projectInfo.sortDescending = false;
+            state.projectInfo.counter = 0;
+            state.projectInfo.designs = null;
+            state.projectInfo.hiddenParameters = [];
             state.designProjectType = null;
             state.projectView = false;
           }
@@ -1194,7 +1212,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                   }
                   newData.designs = newDesigns;
                   setCommonStore((state) => {
-                    state.projectDesigns = newDesigns;
+                    state.projectInfo.designs = newDesigns;
                   });
                 }
                 files
@@ -1229,8 +1247,8 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                       setUpdateFlag(!updateFlag);
                     }
                     setCommonStore((state) => {
-                      if (state.projectTitle === oldTitle) {
-                        state.projectTitle = newTitle;
+                      if (state.projectInfo.title === oldTitle) {
+                        state.projectInfo.title = newTitle;
                       }
                     });
                     // TODO
@@ -1253,15 +1271,8 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
 
   const setProjectState = (projectInfo: ProjectInfo) => {
     setCommonStore((state) => {
-      state.projectOwner = projectInfo.owner;
-      state.projectTitle = projectInfo.title;
-      state.projectType = projectInfo.type;
-      state.projectDescription = projectInfo.description;
-      state.projectDataColoring = projectInfo.dataColoring;
-      state.projectDesigns = projectInfo.designs;
+      state.projectInfo = { ...projectInfo };
       state.projectImages.clear();
-      state.projectHiddenParameters = projectInfo.hiddenParameters ?? [];
-      state.projectDesignCounter = projectInfo.counter;
       state.projectView = true;
     });
     usePrimitiveStore.setState((state) => {
@@ -1280,15 +1291,15 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   };
 
   const curateDesignToProject = () => {
-    const projectOwner = useStore.getState().projectOwner;
+    const projectOwner = useStore.getState().projectInfo.owner;
     if (user.uid !== projectOwner) {
       showInfo(i18n.t('message.CannotAddDesignToProjectOwnedByOthers', lang));
     } else {
-      const projectTitle = useStore.getState().projectTitle;
+      const projectTitle = useStore.getState().projectInfo.title;
       if (projectTitle) {
         setLoading(true);
-        const projectType = useStore.getState().projectType;
-        const counter = useStore.getState().projectDesignCounter ?? 0;
+        const projectType = useStore.getState().projectInfo.type ?? DesignProblem.SOLAR_PANEL_ARRAY;
+        const counter = useStore.getState().projectInfo.counter ?? 0;
         addDesignToProject(projectType, projectTitle, projectTitle + ' ' + counter);
       }
     }
@@ -1312,11 +1323,11 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       })
       .then(() => {
         setCommonStore((state) => {
-          state.projectDesigns?.push(design);
+          state.projectInfo.designs?.push(design);
           // increment the local counter to be consistent with the database counter
-          state.projectDesignCounter++;
+          state.projectInfo.counter++;
           // store the project type in the design for linking it with the right type of project later
-          state.designProjectType = state.projectType;
+          state.designProjectType = state.projectInfo.type;
         });
         // regardless of where the design is, make a copy on the cloud
         saveToCloudWithoutCheckingExistence(designTitle, true, true);

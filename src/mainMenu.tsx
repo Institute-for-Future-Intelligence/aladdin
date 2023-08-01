@@ -145,7 +145,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
   const cameraPosition = useStore.getState().viewState.cameraPosition;
   const panCenter = useStore.getState().viewState.panCenter;
   const selectedElement = useStore.getState().selectedElement;
-  const projectTitle = useStore.getState().projectTitle;
+  const projectInfo = useStore.getState().projectInfo;
+  const projectView = useStore.getState().projectView;
 
   const [aboutUs, setAboutUs] = useState(false);
   const [modelSiteDialogVisible, setModelSiteDialogVisible] = useState(false);
@@ -238,15 +239,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
 
   const setProjectState = (projectInfo: ProjectInfo) => {
     setCommonStore((state) => {
-      state.projectOwner = projectInfo.owner;
-      state.projectTitle = projectInfo.title;
-      state.projectType = projectInfo.type;
-      state.projectDescription = projectInfo.description;
-      state.projectDataColoring = projectInfo.dataColoring;
-      state.projectDesigns = projectInfo.designs;
+      state.projectInfo = { ...projectInfo };
       state.projectImages.clear();
-      state.projectHiddenParameters = projectInfo.hiddenParameters ?? [];
-      state.projectDesignCounter = projectInfo.counter;
       state.projectView = true;
     });
     usePrimitiveStore.setState((state) => {
@@ -992,7 +986,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
           >
             {i18n.t('menu.project.OpenProject', lang)}...
           </Menu.Item>
-          {projectTitle && user.uid && (
+          {projectView && projectInfo.title && user.uid && (
             <Menu.Item
               key="save-project-as"
               onClick={() => {

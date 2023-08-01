@@ -355,9 +355,6 @@ export const updateSolarCollectorPoleHeightForAll = (state: CommonStoreState) =>
 
 export const updateSolarCollectorPoleRadiusById = (state: CommonStoreState) => state.updateSolarCollectorPoleRadiusById;
 
-export const updateSolarCollectorPoleRadiusOnSurface = (state: CommonStoreState) =>
-  state.updateSolarCollectorPoleRadiusOnSurface;
-
 export const updateSolarCollectorPoleRadiusAboveFoundation = (state: CommonStoreState) =>
   state.updateSolarCollectorPoleRadiusAboveFoundation;
 
@@ -486,10 +483,6 @@ export const selectedElementAngle = (state: CommonStoreState) => state.selectedE
 
 export const selectedElementHeight = (state: CommonStoreState) => state.selectedElementHeight;
 
-export const selectedElementX = (state: CommonStoreState) => state.selectedElementX;
-
-export const selectedElementY = (state: CommonStoreState) => state.selectedElementY;
-
 export const waiting = (state: PrimitiveStoreState) => state.waiting;
 
 export const simulationInProgress = (state: PrimitiveStoreState) => state.simulationInProgress;
@@ -510,31 +503,11 @@ export const setEnableFineGrid = (state: CommonStoreState) => state.setEnableFin
 
 export const showCloudFilePanel = (state: PrimitiveStoreState) => state.showCloudFilePanel;
 
+export const projectInfo = (state: CommonStoreState) => state.projectInfo;
+
 export const projectView = (state: CommonStoreState) => state.projectView;
 
-export const projectType = (state: CommonStoreState) => state.projectType;
-
-export const projectOwner = (state: CommonStoreState) => state.projectOwner;
-
-export const projectTitle = (state: CommonStoreState) => state.projectTitle;
-
-export const projectDescription = (state: CommonStoreState) => state.projectDescription;
-
-export const projectDesigns = (state: CommonStoreState) => state.projectDesigns;
-
-export const projectDataColoring = (state: CommonStoreState) => state.projectDataColoring;
-
-export const projectImages = (state: CommonStoreState) => state.projectImages;
-
-export const projectHiddenParameters = (state: CommonStoreState) => state.projectHiddenParameters;
-
-export const projectSelectedProperty = (state: CommonStoreState) => state.projectSelectedProperty;
-
-export const projectSortDescending = (state: CommonStoreState) => state.projectSortDescending;
-
 export const showProjectListPanel = (state: PrimitiveStoreState) => state.showProjectListPanel;
-
-export const projectImagesUpdateFlag = (state: PrimitiveStoreState) => state.projectImagesUpdateFlag;
 
 export const showModelsGallery = (state: PrimitiveStoreState) => state.showModelsGallery;
 

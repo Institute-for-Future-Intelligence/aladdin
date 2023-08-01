@@ -138,15 +138,7 @@ const ProjectGallery = ({
   const user = useStore(Selector.user);
   const language = useStore(Selector.language);
   const cloudFile = useStore(Selector.cloudFile);
-  const projectOwner = useStore(Selector.projectOwner);
-  const projectTitle = useStore(Selector.projectTitle);
-  const projectDescription = useStore(Selector.projectDescription);
-  const projectDesigns = useStore(Selector.projectDesigns);
-  const projectDataColoring = useStore(Selector.projectDataColoring);
-  const projectSelectedProperty = useStore(Selector.projectSelectedProperty);
-  const projectSortDescending = useStore(Selector.projectSortDescending);
-  const projectHiddenParameters = useStore(Selector.projectHiddenParameters);
-  const projectType = useStore(Selector.projectType);
+  const projectInfo = useStore(Selector.projectInfo);
   const solarPanelArrayLayoutConstraints = useStore(Selector.solarPanelArrayLayoutConstraints);
   const economicsParams = useStore(Selector.economicsParams);
 
@@ -156,25 +148,25 @@ const ProjectGallery = ({
   const [updateHiddenFlag, setUpdateHiddenFlag] = useState<boolean>(false);
 
   const descriptionTextAreaEditableRef = useRef<boolean>(false);
-  const descriptionRef = useRef<string | null>(projectDescription);
+  const descriptionRef = useRef<string | null>(projectInfo.description ?? null);
   const descriptionChangedRef = useRef<boolean>(false);
   const descriptionExpandedRef = useRef<boolean>(false);
-  const dataColoringSelectionRef = useRef<DataColoring>(projectDataColoring ?? DataColoring.ALL);
+  const dataColoringSelectionRef = useRef<DataColoring>(projectInfo.dataColoring ?? DataColoring.ALL);
 
   const lang = useMemo(() => {
     return { lng: language };
   }, [language]);
 
   useEffect(() => {
-    if (projectDesigns) {
-      for (const design of projectDesigns) {
+    if (projectInfo.designs) {
+      for (const design of projectInfo.designs) {
         if (design.title === cloudFile) {
           setSelectedDesign(design);
           break;
         }
       }
     }
-  }, [cloudFile, projectDesigns]);
+  }, [cloudFile, projectInfo.designs]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -190,15 +182,13 @@ const ProjectGallery = ({
   const closeProject = () => {
     setCommonStore((state) => {
       state.projectView = false;
-      state.projectTitle = null;
-      state.projectDescription = null;
-      state.projectOwner = null;
-    });
-    setSelectedDesign(undefined);
-    // clear the cached images for the previously open project
-    setCommonStore((state) => {
+      state.projectInfo.title = null;
+      state.projectInfo.description = null;
+      state.projectInfo.owner = null;
+      // clear the cached images for the previously open project
       state.projectImages.clear();
     });
+    setSelectedDesign(undefined);
     usePrimitiveStore.setState((state) => {
       state.projectImagesUpdateFlag = !state.projectImagesUpdateFlag;
     });
@@ -211,19 +201,20 @@ const ProjectGallery = ({
   };
 
   const removeSelectedDesign = () => {
-    if (user.uid && projectTitle && deleteDesign && selectedDesign) {
-      deleteDesign(user.uid, projectTitle, selectedDesign);
+    if (user.uid && projectInfo.title && deleteDesign && selectedDesign) {
+      deleteDesign(user.uid, projectInfo.title, selectedDesign);
+      // delete the local copy as well
       setCommonStore((state) => {
-        if (state.projectDesigns) {
+        if (state.projectInfo.designs) {
           let index = -1;
-          for (const [i, e] of state.projectDesigns.entries()) {
+          for (const [i, e] of state.projectInfo.designs.entries()) {
             if (e.title === selectedDesign.title) {
               index = i;
               break;
             }
           }
           if (index >= 0) {
-            state.projectDesigns?.splice(index, 1);
+            state.projectInfo.designs.splice(index, 1);
           }
         }
       });
@@ -233,53 +224,40 @@ const ProjectGallery = ({
   const totalHeight = window.innerHeight;
   const imageWidth = Math.round((relativeWidth * window.innerWidth) / 4 - 12);
 
-  const variables: string[] = useMemo(
-    () => ProjectUtil.getVariables(projectType, projectHiddenParameters),
-    [projectType, projectHiddenParameters, updateHiddenFlag],
-  );
-  const titles: string[] = useMemo(
-    () => ProjectUtil.getTitles(projectType, lang, projectHiddenParameters),
-    [projectType, lang, projectHiddenParameters, updateHiddenFlag],
-  );
-  const units: string[] = useMemo(
-    () => ProjectUtil.getUnits(projectType, lang, projectHiddenParameters),
-    [projectType, lang, projectHiddenParameters, updateHiddenFlag],
-  );
-  const digits: number[] = useMemo(
-    () => ProjectUtil.getDigits(projectType, projectHiddenParameters),
-    [projectType, projectHiddenParameters, updateHiddenFlag],
-  );
-  const tickIntegers: boolean[] = useMemo(
-    () => ProjectUtil.getTickIntegers(projectType, projectHiddenParameters),
-    [projectType, projectHiddenParameters, updateHiddenFlag],
-  );
-  const types: string[] = useMemo(
-    () => ProjectUtil.getTypes(projectType, projectHiddenParameters),
-    [projectType, projectHiddenParameters, updateHiddenFlag],
+  const [variables, titles, units, digits, tickIntegers, types] = useMemo(
+    () => [
+      ProjectUtil.getVariables(projectInfo.type, projectInfo.hiddenParameters ?? []),
+      ProjectUtil.getVariables(projectInfo.type, projectInfo.hiddenParameters ?? []),
+      ProjectUtil.getUnits(projectInfo.type, lang, projectInfo.hiddenParameters ?? []),
+      ProjectUtil.getDigits(projectInfo.type, projectInfo.hiddenParameters ?? []),
+      ProjectUtil.getTickIntegers(projectInfo.type, projectInfo.hiddenParameters ?? []),
+      ProjectUtil.getTypes(projectInfo.type, projectInfo.hiddenParameters ?? []),
+    ],
+    [projectInfo.type, projectInfo.hiddenParameters, updateHiddenFlag, lang],
   );
 
   const data: DatumEntry[] = useMemo(() => {
     const data: DatumEntry[] = [];
-    if (projectDesigns) {
-      if (projectType === DesignProblem.SOLAR_PANEL_ARRAY) {
-        for (const design of projectDesigns) {
+    if (projectInfo.designs) {
+      if (projectInfo.type === DesignProblem.SOLAR_PANEL_ARRAY) {
+        for (const design of projectInfo.designs) {
           const unitCost = design.unitCost !== undefined ? design.unitCost : economicsParams.operationalCostPerUnit;
           const sellingPrice =
             design.sellingPrice !== undefined ? design.sellingPrice : economicsParams.electricitySellingPrice;
           const d = {} as DatumEntry;
-          if (!projectHiddenParameters.includes('rowWidth')) d['rowWidth'] = design.rowsPerRack;
-          if (!projectHiddenParameters.includes('tiltAngle')) d['tiltAngle'] = Util.toDegrees(design.tiltAngle);
-          if (!projectHiddenParameters.includes('interRowSpacing')) d['interRowSpacing'] = design.interRowSpacing;
-          if (!projectHiddenParameters.includes('orientation'))
+          if (!projectInfo.hiddenParameters?.includes('rowWidth')) d['rowWidth'] = design.rowsPerRack;
+          if (!projectInfo.hiddenParameters?.includes('tiltAngle')) d['tiltAngle'] = Util.toDegrees(design.tiltAngle);
+          if (!projectInfo.hiddenParameters?.includes('interRowSpacing')) d['interRowSpacing'] = design.interRowSpacing;
+          if (!projectInfo.hiddenParameters?.includes('orientation'))
             d['orientation'] = design.orientation === Orientation.landscape ? 0 : 1;
-          if (!projectHiddenParameters.includes('poleHeight')) d['poleHeight'] = design.poleHeight;
-          if (!projectHiddenParameters.includes('unitCost')) d['unitCost'] = unitCost;
-          if (!projectHiddenParameters.includes('sellingPrice')) d['sellingPrice'] = sellingPrice;
-          if (!projectHiddenParameters.includes('panelCount')) d['panelCount'] = design.panelCount;
-          if (!projectHiddenParameters.includes('yield')) d['yield'] = design.yearlyYield * 0.001;
-          if (!projectHiddenParameters.includes('profit'))
+          if (!projectInfo.hiddenParameters?.includes('poleHeight')) d['poleHeight'] = design.poleHeight;
+          if (!projectInfo.hiddenParameters?.includes('unitCost')) d['unitCost'] = unitCost;
+          if (!projectInfo.hiddenParameters?.includes('sellingPrice')) d['sellingPrice'] = sellingPrice;
+          if (!projectInfo.hiddenParameters?.includes('panelCount')) d['panelCount'] = design.panelCount;
+          if (!projectInfo.hiddenParameters?.includes('yield')) d['yield'] = design.yearlyYield * 0.001;
+          if (!projectInfo.hiddenParameters?.includes('profit'))
             d['profit'] = (design.yearlyYield * sellingPrice - design.panelCount * unitCost * 365) * 0.001;
-          d['group'] = projectDataColoring === DataColoring.INDIVIDUALS ? design.title : 'default';
+          d['group'] = projectInfo.dataColoring === DataColoring.INDIVIDUALS ? design.title : 'default';
           d['selected'] = selectedDesign === design;
           d['hovered'] = hoveredDesign === design;
           data.push(d);
@@ -288,124 +266,126 @@ const ProjectGallery = ({
     }
     return data;
   }, [
-    projectDesigns,
-    projectType,
+    projectInfo.designs,
+    projectInfo.type,
     hoveredDesign,
     selectedDesign,
     economicsParams,
-    projectHiddenParameters,
-    projectDataColoring,
+    projectInfo.hiddenParameters,
+    projectInfo.dataColoring,
     updateHiddenFlag,
   ]);
 
   const minima: number[] = useMemo(() => {
-    if (projectType === DesignProblem.SOLAR_PANEL_ARRAY && solarPanelArrayLayoutConstraints) {
+    if (projectInfo.type === DesignProblem.SOLAR_PANEL_ARRAY && solarPanelArrayLayoutConstraints) {
       const array: number[] = [];
-      if (!projectHiddenParameters.includes('rowWidth'))
+      if (!projectInfo.hiddenParameters?.includes('rowWidth'))
         array.push(solarPanelArrayLayoutConstraints.minimumRowsPerRack);
-      if (!projectHiddenParameters.includes('tiltAngle'))
+      if (!projectInfo.hiddenParameters?.includes('tiltAngle'))
         array.push(Util.toDegrees(solarPanelArrayLayoutConstraints.minimumTiltAngle));
-      if (!projectHiddenParameters.includes('interRowSpacing'))
+      if (!projectInfo.hiddenParameters?.includes('interRowSpacing'))
         array.push(solarPanelArrayLayoutConstraints.minimumInterRowSpacing);
-      if (!projectHiddenParameters.includes('orientation')) array.push(0);
-      if (!projectHiddenParameters.includes('poleHeight')) array.push(0);
-      if (!projectHiddenParameters.includes('unitCost')) array.push(0.1);
-      if (!projectHiddenParameters.includes('sellingPrice')) array.push(0.1);
-      if (!projectHiddenParameters.includes('panelCount')) array.push(0);
-      if (!projectHiddenParameters.includes('yield')) array.push(0); // electricity output in MWh
-      if (!projectHiddenParameters.includes('profit')) array.push(-10); // profit in $1,000
+      if (!projectInfo.hiddenParameters?.includes('orientation')) array.push(0);
+      if (!projectInfo.hiddenParameters?.includes('poleHeight')) array.push(0);
+      if (!projectInfo.hiddenParameters?.includes('unitCost')) array.push(0.1);
+      if (!projectInfo.hiddenParameters?.includes('sellingPrice')) array.push(0.1);
+      if (!projectInfo.hiddenParameters?.includes('panelCount')) array.push(0);
+      if (!projectInfo.hiddenParameters?.includes('yield')) array.push(0); // electricity output in MWh
+      if (!projectInfo.hiddenParameters?.includes('profit')) array.push(-10); // profit in $1,000
       return array;
     }
     return [];
-  }, [solarPanelArrayLayoutConstraints, projectType, projectHiddenParameters, updateHiddenFlag]);
+  }, [solarPanelArrayLayoutConstraints, projectInfo.type, projectInfo.hiddenParameters, updateHiddenFlag]);
 
   const maxima: number[] = useMemo(() => {
-    if (projectType === DesignProblem.SOLAR_PANEL_ARRAY && solarPanelArrayLayoutConstraints) {
+    if (projectInfo.type === DesignProblem.SOLAR_PANEL_ARRAY && solarPanelArrayLayoutConstraints) {
       const array: number[] = [];
-      if (!projectHiddenParameters.includes('rowWidth'))
+      if (!projectInfo.hiddenParameters?.includes('rowWidth'))
         array.push(solarPanelArrayLayoutConstraints.maximumRowsPerRack);
-      if (!projectHiddenParameters.includes('tiltAngle'))
+      if (!projectInfo.hiddenParameters?.includes('tiltAngle'))
         array.push(Util.toDegrees(solarPanelArrayLayoutConstraints.maximumTiltAngle));
-      if (!projectHiddenParameters.includes('interRowSpacing'))
+      if (!projectInfo.hiddenParameters?.includes('interRowSpacing'))
         array.push(solarPanelArrayLayoutConstraints.maximumInterRowSpacing);
-      if (!projectHiddenParameters.includes('orientation')) array.push(1);
-      if (!projectHiddenParameters.includes('poleHeight')) array.push(5);
-      if (!projectHiddenParameters.includes('unitCost')) array.push(1);
-      if (!projectHiddenParameters.includes('sellingPrice')) array.push(0.5);
-      if (!projectHiddenParameters.includes('panelCount')) array.push(300);
-      if (!projectHiddenParameters.includes('yield')) array.push(100); // electricity output in MWh
-      if (!projectHiddenParameters.includes('profit')) array.push(10); // profit in $1,000
+      if (!projectInfo.hiddenParameters?.includes('orientation')) array.push(1);
+      if (!projectInfo.hiddenParameters?.includes('poleHeight')) array.push(5);
+      if (!projectInfo.hiddenParameters?.includes('unitCost')) array.push(1);
+      if (!projectInfo.hiddenParameters?.includes('sellingPrice')) array.push(0.5);
+      if (!projectInfo.hiddenParameters?.includes('panelCount')) array.push(300);
+      if (!projectInfo.hiddenParameters?.includes('yield')) array.push(100); // electricity output in MWh
+      if (!projectInfo.hiddenParameters?.includes('profit')) array.push(10); // profit in $1,000
       return array;
     }
     return [];
-  }, [solarPanelArrayLayoutConstraints, projectType, projectHiddenParameters, updateHiddenFlag]);
+  }, [solarPanelArrayLayoutConstraints, projectInfo.type, projectInfo.hiddenParameters, updateHiddenFlag]);
 
-  const rowWidthSelectionRef = useRef<boolean>(!projectHiddenParameters.includes('rowWidth'));
-  const tiltAngleSelectionRef = useRef<boolean>(!projectHiddenParameters.includes('tiltAngle'));
-  const rowSpacingSelectionRef = useRef<boolean>(!projectHiddenParameters.includes('interRowSpacing'));
-  const orientationSelectionRef = useRef<boolean>(!projectHiddenParameters.includes('orientation'));
-  const poleHeightSelectionRef = useRef<boolean>(!projectHiddenParameters.includes('poleHeight'));
-  const unitCostSelectionRef = useRef<boolean>(!projectHiddenParameters.includes('unitCost'));
-  const sellingPriceSelectionRef = useRef<boolean>(!projectHiddenParameters.includes('sellingPrice'));
-  const panelCountSelectionRef = useRef<boolean>(!projectHiddenParameters.includes('panelCount'));
-  const yieldSelectionRef = useRef<boolean>(!projectHiddenParameters.includes('yield'));
-  const profitSelectionRef = useRef<boolean>(!projectHiddenParameters.includes('profit'));
+  const rowWidthSelectionRef = useRef<boolean>(!projectInfo.hiddenParameters?.includes('rowWidth'));
+  const tiltAngleSelectionRef = useRef<boolean>(!projectInfo.hiddenParameters?.includes('tiltAngle'));
+  const rowSpacingSelectionRef = useRef<boolean>(!projectInfo.hiddenParameters?.includes('interRowSpacing'));
+  const orientationSelectionRef = useRef<boolean>(!projectInfo.hiddenParameters?.includes('orientation'));
+  const poleHeightSelectionRef = useRef<boolean>(!projectInfo.hiddenParameters?.includes('poleHeight'));
+  const unitCostSelectionRef = useRef<boolean>(!projectInfo.hiddenParameters?.includes('unitCost'));
+  const sellingPriceSelectionRef = useRef<boolean>(!projectInfo.hiddenParameters?.includes('sellingPrice'));
+  const panelCountSelectionRef = useRef<boolean>(!projectInfo.hiddenParameters?.includes('panelCount'));
+  const yieldSelectionRef = useRef<boolean>(!projectInfo.hiddenParameters?.includes('yield'));
+  const profitSelectionRef = useRef<boolean>(!projectInfo.hiddenParameters?.includes('profit'));
 
   useEffect(() => {
-    rowWidthSelectionRef.current = !projectHiddenParameters.includes('rowWidth');
-    tiltAngleSelectionRef.current = !projectHiddenParameters.includes('tiltAngle');
-    rowSpacingSelectionRef.current = !projectHiddenParameters.includes('interRowSpacing');
-    orientationSelectionRef.current = !projectHiddenParameters.includes('orientation');
-    poleHeightSelectionRef.current = !projectHiddenParameters.includes('poleHeight');
-    unitCostSelectionRef.current = !projectHiddenParameters.includes('unitCost');
-    sellingPriceSelectionRef.current = !projectHiddenParameters.includes('sellingPrice');
-    panelCountSelectionRef.current = !projectHiddenParameters.includes('panelCount');
-    yieldSelectionRef.current = !projectHiddenParameters.includes('yield');
-    profitSelectionRef.current = !projectHiddenParameters.includes('profit');
+    rowWidthSelectionRef.current = !projectInfo.hiddenParameters?.includes('rowWidth');
+    tiltAngleSelectionRef.current = !projectInfo.hiddenParameters?.includes('tiltAngle');
+    rowSpacingSelectionRef.current = !projectInfo.hiddenParameters?.includes('interRowSpacing');
+    orientationSelectionRef.current = !projectInfo.hiddenParameters?.includes('orientation');
+    poleHeightSelectionRef.current = !projectInfo.hiddenParameters?.includes('poleHeight');
+    unitCostSelectionRef.current = !projectInfo.hiddenParameters?.includes('unitCost');
+    sellingPriceSelectionRef.current = !projectInfo.hiddenParameters?.includes('sellingPrice');
+    panelCountSelectionRef.current = !projectInfo.hiddenParameters?.includes('panelCount');
+    yieldSelectionRef.current = !projectInfo.hiddenParameters?.includes('yield');
+    profitSelectionRef.current = !projectInfo.hiddenParameters?.includes('profit');
     setUpdateFlag(!updateFlag);
-  }, [projectHiddenParameters]);
+  }, [projectInfo.hiddenParameters]);
 
   useEffect(() => {
-    descriptionRef.current = projectDescription;
-  }, [projectDescription]);
+    descriptionRef.current = projectInfo.description;
+  }, [projectInfo.description]);
 
   const hover = (i: number) => {
-    if (projectDesigns) {
-      if (i >= 0 && i < projectDesigns.length) {
-        setHoveredDesign(projectDesigns[i]);
+    if (projectInfo.designs) {
+      if (i >= 0 && i < projectInfo.designs.length) {
+        setHoveredDesign(projectInfo.designs[i]);
       }
     }
   };
 
   const selectParameter = (selected: boolean, parameter: string) => {
     if (updateProjectParameters) {
-      if (user.uid && projectOwner === user.uid && projectTitle) {
-        updateProjectParameters(user.uid, projectTitle, parameter, !selected);
+      if (user.uid && projectInfo.owner === user.uid && projectInfo.title) {
+        updateProjectParameters(user.uid, projectInfo.title, parameter, !selected);
       }
     }
     setCommonStore((state) => {
-      if (selected) {
-        if (state.projectHiddenParameters.includes(parameter)) {
-          state.projectHiddenParameters.splice(state.projectHiddenParameters.indexOf(parameter), 1);
-        }
-      } else {
-        if (!state.projectHiddenParameters.includes(parameter)) {
-          state.projectHiddenParameters.push(parameter);
+      if (state.projectInfo.hiddenParameters) {
+        if (selected) {
+          if (state.projectInfo.hiddenParameters.includes(parameter)) {
+            state.projectInfo.hiddenParameters.splice(state.projectInfo.hiddenParameters.indexOf(parameter), 1);
+          }
+        } else {
+          if (!state.projectInfo.hiddenParameters.includes(parameter)) {
+            state.projectInfo.hiddenParameters.push(parameter);
+          }
         }
       }
     });
   };
 
   const isProjectDesign = useMemo(() => {
-    if (cloudFile && projectDesigns) {
-      for (const design of projectDesigns) {
+    if (cloudFile && projectInfo.designs) {
+      for (const design of projectInfo.designs) {
         if (cloudFile === design.title) {
           return true;
         }
       }
     }
     return false;
-  }, [cloudFile, projectDesigns]);
+  }, [cloudFile, projectInfo.designs]);
 
   return (
     <Container>
@@ -414,10 +394,10 @@ const ProjectGallery = ({
           <span>
             {i18n.t('projectPanel.Project', lang) +
               ': ' +
-              projectTitle +
-              (projectOwner === user.uid
+              projectInfo.title +
+              (projectInfo.owner === user.uid
                 ? ''
-                : ' (' + i18n.t('word.Owner', lang) + ': ' + projectOwner?.substring(0, 4) + '***)')}
+                : ' (' + i18n.t('word.Owner', lang) + ': ' + projectInfo.owner?.substring(0, 4) + '***)')}
           </span>
           <span
             style={{ cursor: 'pointer' }}
@@ -448,10 +428,10 @@ const ProjectGallery = ({
                     ' | ' +
                     i18n.t('projectPanel.ProjectType', lang) +
                     ': ' +
-                    projectType}
+                    projectInfo.type}
                 </span>
                 <span>
-                  {user.uid === projectOwner && (
+                  {user.uid === projectInfo.owner && (
                     <>
                       {descriptionExpandedRef.current && (
                         <Button
@@ -487,14 +467,14 @@ const ProjectGallery = ({
                           title={i18n.t('projectPanel.CurateCurrentDesign', lang)}
                         />
                       </Button>
-                      {projectDesigns && projectDesigns.length > 1 && projectSelectedProperty && (
+                      {projectInfo.designs && projectInfo.designs.length > 1 && projectInfo.selectedProperty && (
                         <Button
                           style={{ border: 'none', padding: '4px' }}
                           onClick={(e) => {
                             e.stopPropagation();
                           }}
                         >
-                          {projectSortDescending ? (
+                          {projectInfo.sortDescending ? (
                             <SortDescendingOutlined
                               style={{ fontSize: '24px', color: 'gray' }}
                               title={i18n.t('projectPanel.SortDesignsBySelectedProperty', lang)}
@@ -512,8 +492,8 @@ const ProjectGallery = ({
                           style={{ border: 'none', padding: '4px' }}
                           onClick={(e) => {
                             e.stopPropagation();
-                            if (canvas && updateProjectDesign && user.uid && projectTitle && cloudFile) {
-                              updateProjectDesign(user.uid, projectType, projectTitle, cloudFile, canvas);
+                            if (canvas && updateProjectDesign && user.uid && projectInfo.title && cloudFile) {
+                              updateProjectDesign(user.uid, projectInfo.type, projectInfo.title, cloudFile, canvas);
                             }
                           }}
                         >
@@ -543,13 +523,13 @@ const ProjectGallery = ({
                           style={{ border: 'none', padding: '4px' }}
                           onClick={(e) => {
                             e.stopPropagation();
-                            if (projectTitle) {
+                            if (projectInfo.title) {
                               let url =
                                 HOME_URL +
                                 '?client=web&userid=' +
                                 user.uid +
                                 '&project=' +
-                                encodeURIComponent(projectTitle);
+                                encodeURIComponent(projectInfo.title);
                               if (selectedDesign) {
                                 url += '&title=' + encodeURIComponent(selectedDesign.title);
                               }
@@ -587,7 +567,7 @@ const ProjectGallery = ({
                 descriptionRef.current = e.target.value;
                 descriptionChangedRef.current = true;
                 setCommonStore((state) => {
-                  state.projectDescription = e.target.value;
+                  state.projectInfo.description = e.target.value;
                 });
                 setUpdateFlag(!updateFlag);
               }}
@@ -595,8 +575,8 @@ const ProjectGallery = ({
                 descriptionTextAreaEditableRef.current = false;
                 if (descriptionChangedRef.current) {
                   if (updateProjectDescription) {
-                    if (user.uid && projectOwner === user.uid && projectTitle) {
-                      updateProjectDescription(user.uid, projectTitle, descriptionRef.current);
+                    if (user.uid && projectInfo.owner === user.uid && projectInfo.title) {
+                      updateProjectDescription(user.uid, projectInfo.title, descriptionRef.current);
                     }
                   }
                   descriptionChangedRef.current = false;
@@ -611,7 +591,7 @@ const ProjectGallery = ({
             />
           </Collapse.Panel>
         </Collapse>
-        {projectDesigns && (
+        {projectInfo.designs && (
           <SubContainer>
             <List
               style={{
@@ -623,7 +603,7 @@ const ProjectGallery = ({
                 overflowY: 'auto',
               }}
               grid={{ column: 4, gutter: 1 }}
-              dataSource={projectDesigns}
+              dataSource={projectInfo.designs}
               renderItem={(design) => (
                 <List.Item
                   style={{ marginBottom: '-6px' }}
@@ -672,8 +652,8 @@ const ProjectGallery = ({
                         target.src = design.thumbnailUrl;
                       }
                       setSelectedDesign(design);
-                      if (projectOwner && openCloudFile) {
-                        openCloudFile(projectOwner, design.title, true, true);
+                      if (projectInfo.owner && openCloudFile) {
+                        openCloudFile(projectInfo.owner, design.title, true, true);
                       }
                     }}
                     onClick={(event) => {
@@ -710,7 +690,7 @@ const ProjectGallery = ({
             <SolutionSpaceHeader>
               <span style={{ paddingLeft: '20px' }}>{i18n.t('projectPanel.DistributionInSolutionSpace', lang)}</span>
               <span>
-                {projectType === DesignProblem.SOLAR_PANEL_ARRAY && (
+                {projectInfo.type === DesignProblem.SOLAR_PANEL_ARRAY && (
                   <Popover
                     content={
                       <div>
@@ -854,16 +834,16 @@ const ProjectGallery = ({
                         onChange={(e) => {
                           dataColoringSelectionRef.current = e.target.value;
                           if (updateProjectDataColoring) {
-                            if (user.uid && projectOwner === user.uid && projectTitle) {
-                              updateProjectDataColoring(user.uid, projectTitle, dataColoringSelectionRef.current);
+                            if (user.uid && projectInfo.owner === user.uid && projectInfo.title) {
+                              updateProjectDataColoring(user.uid, projectInfo.title, dataColoringSelectionRef.current);
                             }
                           }
                           setCommonStore((state) => {
-                            state.projectDataColoring = dataColoringSelectionRef.current;
+                            state.projectInfo.dataColoring = dataColoringSelectionRef.current;
                           });
                           setUpdateFlag(!updateFlag);
                         }}
-                        value={projectDataColoring}
+                        value={projectInfo.dataColoring ?? DataColoring.ALL}
                       >
                         <Radio style={{ fontSize: '12px' }} value={DataColoring.ALL}>
                           {i18n.t('projectPanel.SameColorForAllDesigns', lang)}
@@ -885,7 +865,7 @@ const ProjectGallery = ({
                   onClick={() => {
                     const d = document.getElementById('design-space');
                     if (d) {
-                      saveSvgAsPng(d, 'design-space-' + projectTitle + '.png').then(() => {
+                      saveSvgAsPng(d, 'design-space-' + projectInfo.title + '.png').then(() => {
                         showInfo(i18n.t('message.ScreenshotSaved', lang));
                       });
                     }
@@ -912,7 +892,7 @@ const ProjectGallery = ({
               digits={digits}
               tickIntegers={tickIntegers}
               hover={hover}
-              hoveredIndex={projectDesigns && hoveredDesign ? projectDesigns.indexOf(hoveredDesign) : -1}
+              hoveredIndex={projectInfo.designs && hoveredDesign ? projectInfo.designs.indexOf(hoveredDesign) : -1}
             />
           </SubContainer>
         )}

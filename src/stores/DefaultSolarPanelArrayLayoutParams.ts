@@ -18,7 +18,7 @@ export class DefaultSolarPanelArrayLayoutParams implements SolarPanelArrayLayout
   interRowSpacing: number;
   poleHeight: number;
   poleSpacing: number;
-  margin?: number;
+  margin: number;
 
   constructor() {
     this.pvModelName = 'CS6X-355P-FG';
@@ -29,5 +29,6 @@ export class DefaultSolarPanelArrayLayoutParams implements SolarPanelArrayLayout
     this.interRowSpacing = 2;
     this.poleHeight = 1;
     this.poleSpacing = 3;
+    this.margin = 0;
   }
 }

@@ -25,10 +25,12 @@ const CreateNewProjectDialog = ({
   const language = useStore(Selector.language);
 
   const [projectType, setProjectType] = useState<DesignProblem>(
-    useStore.getState().projectType ?? DesignProblem.SOLAR_PANEL_ARRAY,
+    useStore.getState().projectInfo.type ?? DesignProblem.SOLAR_PANEL_ARRAY,
   );
-  const [projectTitle, setProjectTitle] = useState<string | null>(useStore.getState().projectTitle);
-  const [projectDescription, setProjectDescription] = useState<string | null>(useStore.getState().projectDescription);
+  const [projectTitle, setProjectTitle] = useState<string | null>(useStore.getState().projectInfo.title);
+  const [projectDescription, setProjectDescription] = useState<string | null>(
+    useStore.getState().projectInfo.description,
+  );
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
@@ -62,15 +64,14 @@ const CreateNewProjectDialog = ({
       }
     });
     setCommonStore((state) => {
-      state.projectType = projectType;
-      state.projectTitle = projectTitle;
-      state.projectDescription = projectDescription;
-      state.changed = true;
+      state.projectInfo.type = projectType;
+      state.projectInfo.title = projectTitle;
+      state.projectInfo.description = projectDescription;
     });
     if (loggable) {
       setCommonStore((state) => {
         state.actionInfo = {
-          name: saveAs ? 'Save as Project' : 'Create New Project',
+          name: saveAs ? 'Save Project as' : 'Create New Project',
           timestamp: new Date().getTime(),
         };
       });

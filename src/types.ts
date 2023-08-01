@@ -109,15 +109,17 @@ export enum DataColoring {
 }
 
 export interface ProjectInfo {
-  readonly owner: string;
-  readonly timestamp: number;
-  readonly title: string;
-  readonly description: string;
-  readonly type: DesignProblem;
-  readonly designs: Design[] | null;
-  readonly hiddenParameters: string[] | null;
-  readonly counter: number;
-  readonly dataColoring: DataColoring;
+  owner: string | null;
+  timestamp: number;
+  title: string | null;
+  description: string | null;
+  type: DesignProblem;
+  designs: Design[] | null;
+  hiddenParameters: string[] | null;
+  counter: number;
+  dataColoring: DataColoring;
+  selectedProperty: string | null;
+  sortDescending: boolean | null;
 }
 
 export interface ActionInfo {
