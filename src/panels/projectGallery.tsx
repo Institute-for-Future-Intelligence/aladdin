@@ -863,7 +863,7 @@ const ProjectGallery = ({
                           });
                           setUpdateFlag(!updateFlag);
                         }}
-                        value={dataColoringSelectionRef.current}
+                        value={projectDataColoring}
                       >
                         <Radio style={{ fontSize: '12px' }} value={DataColoring.ALL}>
                           {i18n.t('projectPanel.SameColorForAllDesigns', lang)}

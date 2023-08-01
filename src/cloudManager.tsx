@@ -17,9 +17,7 @@ import { showError, showInfo, showSuccess } from './helpers';
 import {
   ClassID,
   CloudFileInfo,
-  DataColoring,
   Design,
-  DesignProblem,
   FirebaseName,
   ModelSite,
   ObjectType,
@@ -1253,26 +1251,17 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     });
   };
 
-  const setProjectState = (
-    owner: string,
-    title: string,
-    type: DesignProblem,
-    description: string,
-    dataColoring: DataColoring,
-    designs: Design[] | null,
-    hiddenParameters: string[] | null,
-    designCounter: number,
-  ) => {
+  const setProjectState = (projectInfo: ProjectInfo) => {
     setCommonStore((state) => {
-      state.projectOwner = owner;
-      state.projectTitle = title;
-      state.projectType = type;
-      state.projectDescription = description;
-      state.projectDataColoring = dataColoring;
-      state.projectDesigns = designs;
+      state.projectOwner = projectInfo.owner;
+      state.projectTitle = projectInfo.title;
+      state.projectType = projectInfo.type;
+      state.projectDescription = projectInfo.description;
+      state.projectDataColoring = projectInfo.dataColoring;
+      state.projectDesigns = projectInfo.designs;
       state.projectImages.clear();
-      state.projectHiddenParameters = hiddenParameters ?? [];
-      state.projectDesignCounter = designCounter;
+      state.projectHiddenParameters = projectInfo.hiddenParameters ?? [];
+      state.projectDesignCounter = projectInfo.counter;
       state.projectView = true;
     });
     usePrimitiveStore.setState((state) => {

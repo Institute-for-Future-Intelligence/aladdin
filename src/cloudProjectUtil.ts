@@ -24,7 +24,7 @@ export const fetchProject = async (userid: string, project: string, setProjectSt
     .then((doc) => {
       const data = doc.data();
       if (data) {
-        const pi = {
+        setProjectState({
           owner: userid,
           title: doc.id,
           timestamp: data.timestamp,
@@ -34,17 +34,7 @@ export const fetchProject = async (userid: string, project: string, setProjectSt
           designs: data.designs,
           hiddenParameters: data.hiddenParameters,
           counter: data.counter ?? 0,
-        } as ProjectInfo;
-        setProjectState(
-          pi.owner,
-          pi.title,
-          pi.type,
-          pi.description,
-          pi.dataColoring,
-          pi.designs,
-          pi.hiddenParameters,
-          pi.counter,
-        );
+        } as ProjectInfo);
       } else {
         showError(i18n.t('message.CannotOpenProject', lang) + ': ' + project);
       }

@@ -17,7 +17,7 @@ import RenameImage from '../assets/rename.png';
 import DeleteImage from '../assets/delete.png';
 import LinkImage from '../assets/create_link.png';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
-import { DataColoring, Design, DesignProblem } from '../types';
+import { ProjectInfo } from '../types';
 
 const { Column } = Table;
 
@@ -76,16 +76,7 @@ const Header = styled.div`
 
 export interface ProjectListPanelProps {
   projects: object[];
-  setProjectState: (
-    owner: string,
-    title: string,
-    type: DesignProblem,
-    description: string,
-    dataColoring: DataColoring,
-    designs: Design[] | null,
-    hiddenParameters: string[] | null,
-    designCounter: number,
-  ) => void;
+  setProjectState: (projectInfo: ProjectInfo) => void;
   deleteProject: (title: string) => void;
   renameProject: (oldTitle: string, newTitle: string) => void;
 }
@@ -330,25 +321,7 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
                       const selection = window.getSelection();
                       if (selection && selection.toString().length > 0) return;
                       // only proceed when no text is selected
-                      // @ts-ignore
-                      setProjectState(
-                        // @ts-ignore
-                        r.owner,
-                        // @ts-ignore
-                        r.title,
-                        // @ts-ignore
-                        r.type,
-                        // @ts-ignore
-                        r.description,
-                        // @ts-ignore
-                        r.dataColoring,
-                        // @ts-ignore
-                        r.designs,
-                        // @ts-ignore
-                        r.hiddenParameters,
-                        // @ts-ignore
-                        r.counter,
-                      );
+                      setProjectState(r as ProjectInfo);
                     },
                   };
                 }}
