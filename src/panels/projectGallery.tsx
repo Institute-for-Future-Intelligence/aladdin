@@ -140,10 +140,41 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
   const descriptionExpandedRef = useRef<boolean>(false);
   const dataColoringSelectionRef = useRef<DataColoring>(projectInfo.dataColoring ?? DataColoring.ALL);
   const parameterSelectionChangedRef = useRef<boolean>(false);
+  const projectDesigns = useRef<Design[]>(projectInfo.designs ?? []); // store sorted designs
 
   const lang = useMemo(() => {
     return { lng: language };
   }, [language]);
+
+  useEffect(() => {
+    projectDesigns.current = [];
+    if (projectInfo.designs) {
+      for (const design of projectInfo.designs) {
+        projectDesigns.current.push(design);
+      }
+      const p = projectInfo.selectedProperty;
+      if (p) {
+        const prefix = projectInfo.sortDescending ? 1 : -1;
+        projectDesigns.current.sort((a, b) => {
+          if (p) {
+            // first handle special cases
+            if (p === 'yield' && 'yearlyYield' in a && 'yearlyYield' in b) {
+              return prefix * (a['yearlyYield'] - b['yearlyYield']);
+            }
+            if (p === 'profit') {
+              return prefix * (Util.calculateProfit(a) - Util.calculateProfit(b));
+            }
+            if (p in a && p in b) {
+              return prefix * (a[p] - b[p]);
+            }
+            return 0;
+          }
+          return 0;
+        });
+      }
+      setUpdateFlag(!updateFlag);
+    }
+  }, [projectInfo.designs, projectInfo.sortDescending, projectInfo.selectedProperty]);
 
   useEffect(() => {
     if (projectInfo.designs) {
@@ -216,7 +247,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
   const [variables, titles, units, digits, tickIntegers, types] = useMemo(
     () => [
       ProjectUtil.getVariables(projectInfo.type, projectInfo.hiddenParameters ?? []),
-      ProjectUtil.getVariables(projectInfo.type, projectInfo.hiddenParameters ?? []),
+      ProjectUtil.getTitles(projectInfo.type, lang, projectInfo.hiddenParameters ?? []),
       ProjectUtil.getUnits(projectInfo.type, lang, projectInfo.hiddenParameters ?? []),
       ProjectUtil.getDigits(projectInfo.type, projectInfo.hiddenParameters ?? []),
       ProjectUtil.getTickIntegers(projectInfo.type, projectInfo.hiddenParameters ?? []),
@@ -230,9 +261,6 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
     if (projectInfo.designs) {
       if (projectInfo.type === DesignProblem.SOLAR_PANEL_ARRAY) {
         for (const design of projectInfo.designs) {
-          const unitCost = design.unitCost !== undefined ? design.unitCost : economicsParams.operationalCostPerUnit;
-          const sellingPrice =
-            design.sellingPrice !== undefined ? design.sellingPrice : economicsParams.electricitySellingPrice;
           const d = {} as DatumEntry;
           if (!projectInfo.hiddenParameters?.includes('rowWidth')) d['rowWidth'] = design.rowsPerRack;
           if (!projectInfo.hiddenParameters?.includes('tiltAngle')) d['tiltAngle'] = Util.toDegrees(design.tiltAngle);
@@ -240,12 +268,11 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
           if (!projectInfo.hiddenParameters?.includes('orientation'))
             d['orientation'] = design.orientation === Orientation.landscape ? 0 : 1;
           if (!projectInfo.hiddenParameters?.includes('poleHeight')) d['poleHeight'] = design.poleHeight;
-          if (!projectInfo.hiddenParameters?.includes('unitCost')) d['unitCost'] = unitCost;
-          if (!projectInfo.hiddenParameters?.includes('sellingPrice')) d['sellingPrice'] = sellingPrice;
+          if (!projectInfo.hiddenParameters?.includes('unitCost')) d['unitCost'] = design.unitCost;
+          if (!projectInfo.hiddenParameters?.includes('sellingPrice')) d['sellingPrice'] = design.sellingPrice;
           if (!projectInfo.hiddenParameters?.includes('panelCount')) d['panelCount'] = design.panelCount;
           if (!projectInfo.hiddenParameters?.includes('yield')) d['yield'] = design.yearlyYield * 0.001;
-          if (!projectInfo.hiddenParameters?.includes('profit'))
-            d['profit'] = (design.yearlyYield * sellingPrice - design.panelCount * unitCost * 365) * 0.001;
+          if (!projectInfo.hiddenParameters?.includes('profit')) d['profit'] = Util.calculateProfit(design);
           d['group'] = projectInfo.dataColoring === DataColoring.INDIVIDUALS ? design.title : 'default';
           d['selected'] = selectedDesign === design;
           d['hovered'] = hoveredDesign === design;
@@ -469,12 +496,12 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                           {projectInfo.sortDescending ? (
                             <SortDescendingOutlined
                               style={{ fontSize: '24px', color: 'gray' }}
-                              title={i18n.t('projectPanel.SortDesignsBySelectedProperty', lang)}
+                              title={i18n.t('projectPanel.ClickToFlipSortingOrder', lang)}
                             />
                           ) : (
                             <SortAscendingOutlined
                               style={{ fontSize: '24px', color: 'gray' }}
-                              title={i18n.t('projectPanel.SortDesignsBySelectedProperty', lang)}
+                              title={i18n.t('projectPanel.ClickToFlipSortingOrder', lang)}
                             />
                           )}
                         </Button>
@@ -586,7 +613,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
             />
           </Collapse.Panel>
         </Collapse>
-        {projectInfo.designs && (
+        {projectDesigns.current.length > 0 && (
           <SubContainer>
             <List
               style={{
@@ -598,7 +625,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                 overflowY: 'auto',
               }}
               grid={{ column: 4, gutter: 1 }}
-              dataSource={projectInfo.designs}
+              dataSource={projectDesigns.current}
               renderItem={(design) => (
                 <List.Item
                   style={{ marginBottom: '-6px' }}

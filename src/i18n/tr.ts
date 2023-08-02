@@ -1412,7 +1412,7 @@ export const i18n_tr = {
       CurateCurrentDesign: 'Curate current design',
       UpdateSelectedDesign: 'Update selected design',
       RemoveSelectedDesign: 'Remove selected design',
-      SortDesignsBySelectedProperty: 'Sort designs by selected property',
+      ClickToFlipSortingOrder: 'Click to flip the sorting order',
       DistributionInSolutionSpace: 'Distribution in the Solution Space',
       ChooseSolutionSpace: 'Choose solution space',
       ChooseDataColoring: 'Choose data coloring',

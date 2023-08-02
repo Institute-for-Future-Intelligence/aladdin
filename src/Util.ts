@@ -24,6 +24,7 @@ import { ElementModel } from './models/ElementModel';
 import { SolarPanelModel } from './models/SolarPanelModel';
 import {
   BuildingCompletionStatus,
+  Design,
   ElementState,
   ModelSite,
   MoveHandleType,
@@ -51,6 +52,11 @@ import { DoorModel, DoorType } from './models/DoorModel';
 import { CUBOID_STACKABLE_CHILD, CUBOID_WRAPPER_NAME } from './views/cuboid';
 
 export class Util {
+  // calculate the annual profit in 1,000 dollars
+  static calculateProfit(design: Design): number {
+    return (design.yearlyYield * design.sellingPrice - design.panelCount * design.unitCost * 365) * 0.001;
+  }
+
   static getLatLngKey(lat: number, lng: number): string {
     return lat.toFixed(LAT_LNG_FRACTION_DIGITS) + ', ' + lng.toFixed(LAT_LNG_FRACTION_DIGITS);
   }

@@ -1387,7 +1387,7 @@ export const i18n_zh_tw = {
       CurateCurrentDesign: '收藏當前設計',
       UpdateSelectedDesign: '更新選中設計',
       RemoveSelectedDesign: '刪除選中設計',
-      SortDesignsBySelectedProperty: '按照選擇的性質排序設計',
+      ClickToFlipSortingOrder: '點擊逆轉排序方向',
       DistributionInSolutionSpace: '方案在設計空間裡的分佈',
       ChooseSolutionSpace: '選擇設計空間',
       ChooseDataColoring: '選擇數據著色',
