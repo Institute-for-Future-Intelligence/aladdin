@@ -158,8 +158,14 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
         projectDesigns.current.sort((a, b) => {
           if (p) {
             // first handle special cases
+            if (p === 'rowWidth' && 'rowsPerRack' in a && 'rowsPerRack' in b) {
+              return prefix * (a['rowsPerRack'] - b['rowsPerRack']);
+            }
             if (p === 'yield' && 'yearlyYield' in a && 'yearlyYield' in b) {
               return prefix * (a['yearlyYield'] - b['yearlyYield']);
+            }
+            if (p === 'orientation') {
+              return prefix * ((a[p] === 'Landscape' ? 0 : 1) - (b[p] === 'Landscape' ? 0 : 1));
             }
             if (p === 'profit') {
               return prefix * (Util.calculateProfit(a) - Util.calculateProfit(b));
@@ -494,12 +500,12 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                           }}
                         >
                           {projectInfo.sortDescending ? (
-                            <SortDescendingOutlined
+                            <SortAscendingOutlined
                               style={{ fontSize: '24px', color: 'gray' }}
                               title={i18n.t('projectPanel.ClickToFlipSortingOrder', lang)}
                             />
                           ) : (
-                            <SortAscendingOutlined
+                            <SortDescendingOutlined
                               style={{ fontSize: '24px', color: 'gray' }}
                               title={i18n.t('projectPanel.ClickToFlipSortingOrder', lang)}
                             />
@@ -675,7 +681,9 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                       }
                       setSelectedDesign(design);
                       if (projectInfo.owner) {
-                        loadCloudFile(projectInfo.owner, design.title, true, true);
+                        loadCloudFile(projectInfo.owner, design.title, true, true).then(() => {
+                          // ignore
+                        });
                       }
                     }}
                     onClick={(event) => {
