@@ -463,6 +463,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
 
   const ceilingPoints = useMemo(() => {
     const points: Vector3[] = [];
+    if (currentWallArray.length === 0) return points;
     points.push(new Vector3().fromArray(currentWallArray[0].leftPoint));
     for (const wall of currentWallArray) {
       points.push(new Vector3().fromArray(wall.rightPoint));
@@ -494,7 +495,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
           });
         }
       } else {
-        removeElementById(id, false);
+        removeElementById(id, false, false, true);
       }
       if (useStore.getState().addedRoofId === id) {
         useStore.getState().setAddedRoofId(null);

@@ -2,7 +2,7 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Checkbox, Menu } from 'antd';
 import { useStore } from '../../stores/common';
 import * as Selector from '../../stores/selector';
@@ -11,7 +11,10 @@ import { Util } from '../../Util';
 import { UndoableDelete } from '../../undo/UndoableDelete';
 import { UndoablePaste } from '../../undo/UndoablePaste';
 import { UndoableCheck } from '../../undo/UndoableCheck';
-import { ActionInfo } from '../../types';
+import { ActionInfo, ObjectType } from '../../types';
+import { showInfo } from 'src/helpers';
+import { WallModel } from 'src/models/WallModel';
+import { useRefStore } from 'src/stores/commonRef';
 
 export const Paste = ({ paddingLeft = '36px', keyName }: { paddingLeft?: string; keyName: string }) => {
   const setCommonStore = useStore(Selector.set);
@@ -94,37 +97,67 @@ export const Cut = ({ paddingLeft = '36px', keyName }: { paddingLeft?: string; k
   const language = useStore(Selector.language);
   const removeElementById = useStore(Selector.removeElementById);
   const selectedElement = useStore(Selector.selectedElement);
-  const getElementById = useStore(Selector.getElementById);
   const addUndoable = useStore(Selector.addUndoable);
   const isMac = Util.isMac();
 
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
+
   const cut = () => {
-    if (selectedElement) {
+    if (!selectedElement || selectedElement.type === ObjectType.Roof) return;
+    if (selectedElement.locked) {
+      showInfo(i18n.t('message.ThisElementIsLocked', lang));
+    } else {
       const cutElements = removeElementById(selectedElement.id, true);
-      const undoableCut = {
-        name: 'Cut',
-        timestamp: Date.now(),
-        deletedElements: cutElements,
-        undo: () => {
-          setCommonStore((state) => {
-            if (undoableCut.deletedElements && undoableCut.deletedElements.length > 0) {
-              for (const e of undoableCut.deletedElements) {
-                state.elements.push(e);
+      if (cutElements.length === 0) return;
+
+      if (Util.ifNeedListenToAutoDeletion(cutElements[0])) {
+        useRefStore.getState().setListenToAutoDeletionByCut(true);
+      } else {
+        const undoableCut = {
+          name: 'Cut',
+          timestamp: Date.now(),
+          deletedElements: cutElements,
+          undo: () => {
+            setCommonStore((state) => {
+              if (undoableCut.deletedElements && undoableCut.deletedElements.length > 0) {
+                for (const e of undoableCut.deletedElements) {
+                  state.elements.push(e);
+                }
+                state.selectedElement = undoableCut.deletedElements[0];
+                if (undoableCut.deletedElements[0].type === ObjectType.Wall) {
+                  const wall = undoableCut.deletedElements[0] as WallModel;
+                  let leftWallId: string | null = null;
+                  let rightWallId: string | null = null;
+                  if (wall.leftJoints.length > 0) {
+                    leftWallId = wall.leftJoints[0];
+                  }
+                  if (wall.rightJoints.length > 0) {
+                    rightWallId = wall.rightJoints[0];
+                  }
+                  if (leftWallId || rightWallId) {
+                    for (const e of state.elements) {
+                      if (e.id === leftWallId && e.type === ObjectType.Wall) {
+                        (e as WallModel).rightJoints[0] = wall.id;
+                      }
+                      if (e.id === rightWallId && e.type === ObjectType.Wall) {
+                        (e as WallModel).leftJoints[0] = wall.id;
+                      }
+                    }
+                  }
+                }
               }
-              state.selectedElement = undoableCut.deletedElements[0];
+            });
+          },
+          redo: () => {
+            if (undoableCut.deletedElements && undoableCut.deletedElements.length > 0) {
+              removeElementById(undoableCut.deletedElements[0].id, true);
             }
-          });
-        },
-        redo: () => {
-          if (undoableCut.deletedElements && undoableCut.deletedElements.length > 0) {
-            const elem = getElementById(undoableCut.deletedElements[0].id);
-            if (elem) {
-              removeElementById(elem.id, true);
-            }
-          }
-        },
-      } as UndoableDelete;
-      addUndoable(undoableCut);
+          },
+        } as UndoableDelete;
+        addUndoable(undoableCut);
+      }
     }
   };
 

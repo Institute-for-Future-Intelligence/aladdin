@@ -2,7 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import { RefObject } from 'react';
+import { RefObject, useRef } from 'react';
 import { MyOrbitControls } from 'src/js/MyOrbitControls';
 import { Group } from 'three';
 import create from 'zustand';
@@ -19,6 +19,10 @@ export interface RefStoreState {
   flowerRef: RefObject<Group> | null;
   foundationRef: RefObject<Group> | null;
   cuboidRef: RefObject<Group> | null;
+  listenToAutoDeletionByDeleteRef: React.MutableRefObject<boolean> | null;
+  listenToAutoDeletionByCutRef: React.MutableRefObject<boolean> | null;
+  setListenToAutoDeletionByDelete: (b: boolean) => void;
+  setListenToAutoDeletionByCut: (b: boolean) => void;
 }
 
 export const useRefStore = create<RefStoreState>((set, get) => {
@@ -48,5 +52,19 @@ export const useRefStore = create<RefStoreState>((set, get) => {
     flowerRef: null,
     foundationRef: null,
     cuboidRef: null,
+    listenToAutoDeletionByCutRef: null,
+    listenToAutoDeletionByDeleteRef: null,
+    setListenToAutoDeletionByCut: (b: boolean) => {
+      const listenToAutoDeletionByCutRef = get().listenToAutoDeletionByCutRef;
+      if (listenToAutoDeletionByCutRef) {
+        listenToAutoDeletionByCutRef.current = b;
+      }
+    },
+    setListenToAutoDeletionByDelete: (b: boolean) => {
+      const listenToAutoDeletionByDeleteRef = get().listenToAutoDeletionByDeleteRef;
+      if (listenToAutoDeletionByDeleteRef) {
+        listenToAutoDeletionByDeleteRef.current = b;
+      }
+    },
   };
 });

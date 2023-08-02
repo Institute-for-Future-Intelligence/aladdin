@@ -43,7 +43,7 @@ import { useStore } from './stores/common';
 import { SolarCollector } from './models/SolarCollector';
 import { Rectangle } from './models/Rectangle';
 import platform from 'platform';
-import { RoofModel } from './models/RoofModel';
+import { RoofModel, RoofType } from './models/RoofModel';
 import { RoofUtil } from './views/roof/RoofUtil';
 import { FoundationModel } from './models/FoundationModel';
 import { WindowModel, WindowType } from './models/WindowModel';
@@ -1798,5 +1798,29 @@ export class Util {
     if (!el) return null;
     if (el.parentId === GROUND_ID) return el.id;
     return Util.getBaseId(el.parentId);
+  };
+
+  static ifNeedListenToAutoDeletion = (el: ElementModel) => {
+    if (el.type !== ObjectType.Wall) return false;
+
+    const wall = el as WallModel;
+    if (!wall.roofId) return false;
+
+    const roof = useStore.getState().getElementById(wall.roofId) as RoofModel;
+    if (!roof) return false;
+
+    switch (roof.roofType) {
+      case RoofType.Hip:
+      case RoofType.Gable:
+      case RoofType.Gambrel:
+        return true;
+      case RoofType.Pyramid:
+      case RoofType.Mansard: {
+        if (roof.wallsId.length === 0) return false;
+        return roof.wallsId[0] === wall.id;
+      }
+      default:
+        return false;
+    }
   };
 }

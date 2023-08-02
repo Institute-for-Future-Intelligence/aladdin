@@ -900,20 +900,18 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
 
   // update walls
   useEffect(() => {
-    if (!isFirstMountRef.current || useStore.getState().addedRoofId === id) {
-      if (composedWalls && composedWalls.length === 4) {
-        if (isFlat) {
-          updateFlatRoofWalls(composedWalls);
-        } else {
-          // update caused by changing wall height
-          updateWalls(composedWalls, topZ, frontRidgePoint, topRidgePoint, backRidgePoint);
-        }
+    if (composedWalls && composedWalls.length === 4) {
+      if (isFlat) {
+        updateFlatRoofWalls(composedWalls);
       } else {
-        removeElementById(id, false, false);
+        // update caused by changing wall height
+        updateWalls(composedWalls, topZ, frontRidgePoint, topRidgePoint, backRidgePoint);
       }
-      if (useStore.getState().addedRoofId === id) {
-        useStore.getState().setAddedRoofId(null);
-      }
+    } else {
+      removeElementById(id, false, false, true);
+    }
+    if (useStore.getState().addedRoofId === id) {
+      useStore.getState().setAddedRoofId(null);
     }
   }, [composedWalls, topZ, isFlat, frontRidgePoint, topRidgePoint, backRidgePoint]);
 

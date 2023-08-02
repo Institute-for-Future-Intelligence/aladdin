@@ -7,6 +7,7 @@ import { Vector2, Vector3 } from 'three';
 import { Point2 } from '../models/Point2';
 import { FlippedWallSide } from './UndoableAdd';
 import { ObjectType } from '../types';
+import { ElementModel } from 'src/models/ElementModel';
 
 export interface UndoableResize extends Undoable {
   oldCx: number;
@@ -64,6 +65,7 @@ export interface UndoableResizeWall extends Undoable {
   oldPoint: number[][];
   newPoint: number[][];
   flippedWallSide: FlippedWallSide;
+  autoDeletedElement: ElementModel[];
 }
 
 export interface UndoableResizeWallHeight extends Undoable {

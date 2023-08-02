@@ -152,6 +152,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const sunlightDirection = useStore(Selector.sunlightDirection);
   const deletedRoofId = useStore(Selector.deletedRoofId);
+  const autoDeletedRoof = useStore(Selector.autoDeletedRoof);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   // const roofRise = useStore((state) => {
   //   if (!roofId) return 0;
@@ -574,7 +575,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
 
   useEffect(() => {
-    if (deletedRoofId === roofId) {
+    if (!roofId) return;
+    if (deletedRoofId === roofId || autoDeletedRoof?.id === roofId) {
       useStore.getState().set((state) => {
         const invalidateIdSet = new Set<string>();
 
@@ -598,6 +600,11 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
                 const center = new Vector3(e.cx * lx, 0, e.cz * lz);
                 if (!Util.isElementInsideWall(center, eLx, eLz, wallPoints, isDoor)) {
                   invalidateIdSet.add(e.id);
+                  if (state.autoDeletedChild) {
+                    state.autoDeletedChild.push(e);
+                  } else {
+                    state.autoDeletedChild = [e];
+                  }
                 }
               });
             }
@@ -606,10 +613,14 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         }
         if (invalidateIdSet.size > 0) {
           state.elements = state.elements.filter((e) => !invalidateIdSet.has(e.id));
+        } else {
+          if (state.autoDeletedChild === null) {
+            state.autoDeletedChild = [];
+          }
         }
       });
     }
-  }, [deletedRoofId]);
+  }, [roofId, deletedRoofId, autoDeletedRoof]);
 
   function isShowParapet() {
     // remove check for now

@@ -422,7 +422,7 @@ export interface CommonStoreState {
   deletedElements: ElementModel[]; // this is for undoing deletion
   clearDeletedElements: () => void;
   copyElementById: (id: string) => void;
-  removeElementById: (id: string, cut: boolean, selectNone?: boolean) => ElementModel[]; // set cut to false for deletion
+  removeElementById: (id: string, cut: boolean, selectNone?: boolean, auto?: boolean) => ElementModel[]; // set cut to false for deletion
   copyCutElements: () => ElementModel[];
   pasteElementsToPoint: () => ElementModel[];
   pasteElementsByKey: () => ElementModel[];
@@ -487,6 +487,10 @@ export interface CommonStoreState {
   addedRoofId: string | null;
   deletedRoofId: string | null;
   setAddedRoofId: (id: string | null) => void;
+
+  autoDeletedRoof: RoofModel | null;
+  autoDeletedChild: ElementModel[] | null; // [] means checked but no element, null means haven't check yet.
+  getAutoDeletedElements: () => ElementModel[] | null;
 
   groupActionMode: boolean;
   setGroupActionMode: (b: boolean) => void;
@@ -674,6 +678,8 @@ export const useStore = create<CommonStoreState>(
               state.roofSegmentVerticesWithoutOverhangMap = new Map<string, Vector3[][]>();
               state.undoManager.clear();
               state.deletedRoofId = null;
+              state.autoDeletedRoof = null;
+              state.autoDeletedChild = null;
               state.actionState = new DefaultActionState();
               // TODO: fix these bugs that are tentatively corrected here
               for (const e of state.elements) {
@@ -2100,7 +2106,7 @@ export const useStore = create<CommonStoreState>(
           updateWallLeftJointsById(id, joints) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.Wall && e.id === id && !e.locked) {
+                if (e.type === ObjectType.Wall && e.id === id) {
                   (e as WallModel).leftJoints = joints;
                   break;
                 }
@@ -2110,7 +2116,7 @@ export const useStore = create<CommonStoreState>(
           updateWallRightJointsById(id, joints) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.Wall && e.id === id && !e.locked) {
+                if (e.type === ObjectType.Wall && e.id === id) {
                   (e as WallModel).rightJoints = joints;
                   break;
                 }
@@ -2537,7 +2543,7 @@ export const useStore = create<CommonStoreState>(
               }
             });
           },
-          removeElementById(id, cut, selectNone = true) {
+          removeElementById(id, cut, selectNone = true, autoDeleted) {
             const removed = get().elements.filter((e) => e.id === id || Util.isChild(id, e.id));
             immerSet((state: CommonStoreState) => {
               for (const elem of state.elements) {
@@ -2551,7 +2557,7 @@ export const useStore = create<CommonStoreState>(
                       elem.cy = centroid.y;
                     }
                     state.elementsToPaste = [elem];
-                  } else {
+                  } else if (!autoDeleted) {
                     state.deletedElements = [elem];
                   }
                   elem.selected = false;
@@ -2560,6 +2566,9 @@ export const useStore = create<CommonStoreState>(
                       state.deletedRoofId = elem.id;
                       state.roofSegmentVerticesMap.delete(id);
                       state.roofSegmentVerticesWithoutOverhangMap.delete(id);
+                      if (autoDeleted) {
+                        state.autoDeletedRoof = elem as RoofModel;
+                      }
                       break;
                     }
                     case ObjectType.Wall: {
@@ -2577,19 +2586,11 @@ export const useStore = create<CommonStoreState>(
                           (e as WallModel).rightJoints = [];
                         } else if (e.id === rightWallId) {
                           (e as WallModel).leftJoints = [];
-                        } else if (e.id === currentWall.roofId) {
-                          const rm = e as RoofModel;
-                          rm.wallsId = rm.wallsId.filter((v) => v !== currentWall.id);
-                          if (rm.wallsId.length === 0) {
-                            state.deletedRoofId = e.id;
-                          }
                         }
                       }
-                      for (const e of state.elements) {
-                        if (e.type === ObjectType.Roof && (e as RoofModel).wallsId.length === 0) {
-                          state.elements = state.elements.filter((x) => x.id !== e.id);
-                        }
-                      }
+                      state.elements = state.elements.filter(
+                        (e) => !(e.type === ObjectType.Roof && (e as RoofModel).wallsId.length === 0),
+                      );
                       state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
                       state.updateRoofFlag = !state.updateRoofFlag;
                       state.deletedWallId = elem.id;
@@ -2607,16 +2608,28 @@ export const useStore = create<CommonStoreState>(
                   break;
                 }
               }
-              if (cut) {
+              if (autoDeleted) {
                 for (const child of state.elements) {
                   if (Util.isChild(id, child.id)) {
-                    state.elementsToPaste.push(child);
+                    if (state.autoDeletedChild) {
+                      state.autoDeletedChild.push(child);
+                    } else {
+                      state.autoDeletedChild = [child];
+                    }
                   }
                 }
               } else {
-                for (const child of state.elements) {
-                  if (Util.isChild(id, child.id)) {
-                    state.deletedElements.push(child);
+                if (cut) {
+                  for (const child of state.elements) {
+                    if (Util.isChild(id, child.id)) {
+                      state.elementsToPaste.push(child);
+                    }
+                  }
+                } else {
+                  for (const child of state.elements) {
+                    if (Util.isChild(id, child.id)) {
+                      state.deletedElements.push(child);
+                    }
                   }
                 }
               }
@@ -4169,6 +4182,19 @@ export const useStore = create<CommonStoreState>(
 
           addedRoofId: null,
           deletedRoofId: null,
+          autoDeletedRoof: null,
+          autoDeletedChild: null,
+          getAutoDeletedElements() {
+            const autoDeletedRoof = get().autoDeletedRoof;
+            const autoDeletedChild = get().autoDeletedChild;
+
+            if (!autoDeletedRoof || !autoDeletedChild) return null;
+
+            const arr: ElementModel[] = [];
+
+            arr.push(autoDeletedRoof, ...autoDeletedChild);
+            return arr;
+          },
           setAddedRoofId(id: string | null) {
             immerSet((state) => {
               state.addedRoofId = id;

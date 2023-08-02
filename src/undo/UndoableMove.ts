@@ -6,6 +6,7 @@ import { Undoable } from './Undoable';
 import { Vector3 } from 'three';
 import { ObjectType } from '../types';
 import { FlippedWallSide } from './UndoableAdd';
+import { ElementModel } from 'src/models/ElementModel';
 
 export interface UndoableMove extends Undoable {
   oldCx: number;
@@ -56,6 +57,7 @@ export interface UndoableMoveWall extends Undoable {
   oldAngle: number;
   newAngle: number;
   flippedWallSide: FlippedWallSide;
+  autoDeletedElements: ElementModel[];
 }
 
 export interface UndoableMoveSkylight extends Undoable {

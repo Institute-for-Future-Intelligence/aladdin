@@ -9,7 +9,7 @@ import trTR from 'antd/lib/locale/tr_TR';
 import enUS from 'antd/lib/locale/en_US';
 import ukUA from 'antd/lib/locale/uk_UA';
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { useStore } from './stores/common';
 import styled from 'styled-components';
 import { Checkbox, Dropdown, InputNumber, Menu, Modal, Radio, Space, Switch } from 'antd';
@@ -42,6 +42,7 @@ import ModelSiteDialog from './components/contextMenu/elementMenu/modelSiteDialo
 import CreateNewProjectDialog from './components/contextMenu/elementMenu/createNewProjectDialog';
 import { fetchProject } from './cloudProjectUtil';
 import { loadCloudFile } from './cloudFileUtil';
+import { WallModel } from './models/WallModel';
 
 const { SubMenu } = Menu;
 
@@ -659,32 +660,59 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
   };
 
   const cutSelectedElement = () => {
-    if (selectedElement) {
+    if (!selectedElement || selectedElement.type === ObjectType.Roof) return;
+    if (selectedElement.locked) {
+      showInfo(i18n.t('message.ThisElementIsLocked', lang));
+    } else {
       const cutElements = removeElementById(selectedElement.id, true);
-      const undoableCut = {
-        name: 'Cut',
-        timestamp: Date.now(),
-        deletedElements: cutElements,
-        undo: () => {
-          setCommonStore((state) => {
-            if (undoableCut.deletedElements && undoableCut.deletedElements.length > 0) {
-              for (const e of undoableCut.deletedElements) {
-                state.elements.push(e);
+      if (cutElements.length === 0) return;
+
+      if (Util.ifNeedListenToAutoDeletion(cutElements[0])) {
+        useRefStore.getState().setListenToAutoDeletionByCut(true);
+      } else {
+        const undoableCut = {
+          name: 'Cut',
+          timestamp: Date.now(),
+          deletedElements: cutElements,
+          undo: () => {
+            setCommonStore((state) => {
+              if (undoableCut.deletedElements && undoableCut.deletedElements.length > 0) {
+                for (const e of undoableCut.deletedElements) {
+                  state.elements.push(e);
+                }
+                state.selectedElement = undoableCut.deletedElements[0];
+                if (undoableCut.deletedElements[0].type === ObjectType.Wall) {
+                  const wall = undoableCut.deletedElements[0] as WallModel;
+                  let leftWallId: string | null = null;
+                  let rightWallId: string | null = null;
+                  if (wall.leftJoints.length > 0) {
+                    leftWallId = wall.leftJoints[0];
+                  }
+                  if (wall.rightJoints.length > 0) {
+                    rightWallId = wall.rightJoints[0];
+                  }
+                  if (leftWallId || rightWallId) {
+                    for (const e of state.elements) {
+                      if (e.id === leftWallId && e.type === ObjectType.Wall) {
+                        (e as WallModel).rightJoints[0] = wall.id;
+                      }
+                      if (e.id === rightWallId && e.type === ObjectType.Wall) {
+                        (e as WallModel).leftJoints[0] = wall.id;
+                      }
+                    }
+                  }
+                }
               }
-              state.selectedElement = undoableCut.deletedElements[0];
+            });
+          },
+          redo: () => {
+            if (undoableCut.deletedElements && undoableCut.deletedElements.length > 0) {
+              removeElementById(undoableCut.deletedElements[0].id, true);
             }
-          });
-        },
-        redo: () => {
-          if (undoableCut.deletedElements && undoableCut.deletedElements.length > 0) {
-            const elem = getElementById(undoableCut.deletedElements[0].id);
-            if (elem) {
-              removeElementById(elem.id, true);
-            }
-          }
-        },
-      } as UndoableDelete;
-      addUndoable(undoableCut);
+          },
+        } as UndoableDelete;
+        addUndoable(undoableCut);
+      }
     }
   };
 

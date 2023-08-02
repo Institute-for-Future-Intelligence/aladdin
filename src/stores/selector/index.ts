@@ -807,6 +807,10 @@ export const deletedWallId = (state: CommonStoreState) => state.deletedWallId;
 
 export const deletedRoofId = (state: CommonStoreState) => state.deletedRoofId;
 
+export const autoDeletedRoof = (state: CommonStoreState) => state.autoDeletedRoof;
+
+export const autoDeletedChild = (state: CommonStoreState) => state.autoDeletedChild;
+
 export const groupActionMode = (state: CommonStoreState) => state.groupActionMode;
 
 export const groupMasterId = (state: CommonStoreState) => state.groupMasterId;

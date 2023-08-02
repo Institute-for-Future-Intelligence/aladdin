@@ -887,18 +887,16 @@ const GableRoof = (roofModel: GableRoofModel) => {
   };
 
   useEffect(() => {
-    if (!isFirstMount || useStore.getState().addedRoofId === id) {
-      if (!composedWalls || composedWalls.length !== 4) {
-        removeElementById(id, false, false);
-      } else {
-        updateWalls(composedWalls, topZ, ridgeLeftPoint, ridgeRightPoint);
-        updateRooftopElements(foundation, id, roofSegments, centroid, topZ, thickness);
-      }
-      if (useStore.getState().addedRoofId === id) {
-        useStore.getState().setAddedRoofId(null);
-      }
+    if (!composedWalls || composedWalls.length !== 4) {
+      removeElementById(id, false, false, true);
+    } else {
+      updateWalls(composedWalls, topZ, ridgeLeftPoint, ridgeRightPoint);
+      updateRooftopElements(foundation, id, roofSegments, centroid, topZ, thickness);
     }
-  }, [composedWalls, topZ, ridgeLeftPoint, ridgeRightPoint, isFirstMount]);
+    if (useStore.getState().addedRoofId === id) {
+      useStore.getState().setAddedRoofId(null);
+    }
+  }, [composedWalls, topZ, ridgeLeftPoint, ridgeRightPoint]);
 
   const updateSegmentVerticesWithoutOverhangMap = () => {
     if (!composedWalls || composedWalls.length !== 4) return;

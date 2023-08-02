@@ -346,6 +346,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
 
   const ceilingPoints = useMemo(() => {
     const points: Vector3[] = [];
+    if (currentWallArray.length === 0) return points;
     points.push(new Vector3().fromArray(currentWallArray[0].leftPoint));
     for (const wall of currentWallArray) {
       points.push(new Vector3().fromArray(wall.rightPoint));
@@ -412,7 +413,8 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
         }
         updateRooftopElements(foundation, id, roofSegments, centerPointV3, topZ, thickness);
       } else {
-        removeElementById(id, false);
+        removeElementById(id, false, false, true);
+        console.log('REMOVED!!!');
       }
     }
   }, [currentWallArray, updateRoofFlag]);

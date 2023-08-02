@@ -371,7 +371,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
   useEffect(() => {
     if (!isFirstMount || useStore.getState().addedRoofId === id) {
       if (composedWalls === null || composedWalls.length !== 4) {
-        removeElementById(id, false, false);
+        removeElementById(id, false, false, true);
       } else {
         for (let i = 0; i < composedWalls.length; i++) {
           const wallsIdSet = new Set(composedWalls[i].wallsId);

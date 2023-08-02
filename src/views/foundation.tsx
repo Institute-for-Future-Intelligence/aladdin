@@ -79,6 +79,8 @@ import { useDataStore } from '../stores/commonData';
 import { useGroupMaster } from './hooks';
 import { WindowModel } from 'src/models/WindowModel';
 import Window from './window/window';
+import { debounce } from 'lodash';
+import { RoofModel, RoofType } from 'src/models/RoofModel';
 
 interface WallAuxiliaryType {
   show: boolean;
@@ -221,6 +223,13 @@ const Foundation = (foundationModel: FoundationModel) => {
   const moveHandleSize = MOVE_HANDLE_RADIUS * ratio;
   const rotateHandleSize = 0.6 * ratio;
 
+  // for undo auto deletion
+  type UndoMoveWall = { wall: WallModel; newAngle: number; newJoints: string[][] };
+  const listenToAutoDeletionRef = useRef(false);
+  const undoableMoveWallArgsRef = useRef<UndoMoveWall | null>(null);
+  const autoDeletedRoof = useStore(Selector.autoDeletedRoof);
+  const autoDeletedChild = useStore(Selector.autoDeletedChild);
+
   // experimental wall handle size, may useful for foundation handles too
   const wallHandleSize = useHandleSize();
 
@@ -302,6 +311,205 @@ const Foundation = (foundationModel: FoundationModel) => {
       }
     }
   }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue, solarRadiationHeatmapReflectionOnly]);
+
+  // for undo auto deletion
+  useEffect(() => {
+    if (!listenToAutoDeletionRef.current || !useStore.getState().getAutoDeletedElements()) return;
+    handleUndoMoveWallWithAutoDeletion();
+  }, [autoDeletedRoof, autoDeletedChild]);
+
+  const handleUndoMoveWallWithAutoDeletion = debounce(() => {
+    if (!undoableMoveWallArgsRef.current) return;
+
+    const autoDeletedElements = useStore.getState().getAutoDeletedElements();
+    if (!autoDeletedElements) return;
+
+    const { wall, newAngle, newJoints } = undoableMoveWallArgsRef.current;
+    const undoableMove = {
+      name: 'Move Wall',
+      timestamp: Date.now(),
+      id: wall.id,
+      oldPoints: [[...oldPointRef.current[0]], [...oldPointRef.current[1]]],
+      newPoints: [[...wall.leftPoint], [...wall.rightPoint]],
+      oldJoints: [[...oldJointsRef.current[0]], [...oldJointsRef.current[1]]],
+      newJoints: [[...newJoints[0]], [...newJoints[1]]],
+      oldAngle: oldAzimuthRef.current,
+      newAngle: newAngle,
+      flippedWallSide: flippedWallSide.current,
+      autoDeletedElements: [...autoDeletedElements],
+      undo() {
+        switch (this.flippedWallSide) {
+          case FlippedWallSide.loop:
+            flipWallLoop(this.id);
+            break;
+          case FlippedWallSide.left:
+            const lw = getElementById(this.newJoints[0][0]) as WallModel;
+            if (lw) {
+              flipWallsClockwise(lw);
+            }
+            break;
+          case FlippedWallSide.right:
+            const rw = getElementById(this.newJoints[1][0]) as WallModel;
+            if (rw) {
+              flipWallsCounterClockwise(rw);
+            }
+            break;
+        }
+        const [oldLeftJoints, oldRightJoints] = this.oldJoints;
+        const [newLeftJoints, newRightJoints] = this.newJoints;
+        setCommonStore((state) => {
+          for (const e of state.elements) {
+            if (e.id === this.id) {
+              const [leftPoint, rightPoint] = this.oldPoints;
+              e.cx = (leftPoint[0] + rightPoint[0]) / 2;
+              e.cy = (leftPoint[1] + rightPoint[1]) / 2;
+              e.lx = Math.hypot(leftPoint[0] - rightPoint[0], leftPoint[1] - rightPoint[1]);
+              const w = e as WallModel;
+              w.relativeAngle = this.oldAngle;
+              w.leftPoint = [...leftPoint];
+              w.rightPoint = [...rightPoint];
+              w.leftJoints = [...oldLeftJoints];
+              w.rightJoints = [...oldRightJoints];
+              break;
+            }
+          }
+          state.resizeHandleType = null;
+          state.elements.push(...this.autoDeletedElements);
+          state.deletedRoofId = null;
+          state.autoDeletedChild = null;
+          state.autoDeletedRoof = null;
+        });
+        if (oldLeftJoints[0] !== newLeftJoints[0]) {
+          setCommonStore((state) => {
+            for (const e of state.elements) {
+              if (e.type === ObjectType.Wall) {
+                if (e.id === oldLeftJoints[0]) {
+                  (e as WallModel).rightJoints = [this.id];
+                }
+                if (e.id === newLeftJoints[0]) {
+                  if (this.flippedWallSide !== FlippedWallSide.left) {
+                    (e as WallModel).rightJoints = [];
+                  } else {
+                    (e as WallModel).leftJoints = [];
+                  }
+                }
+              }
+            }
+          });
+        }
+        if (oldRightJoints[0] !== newRightJoints[0]) {
+          setCommonStore((state) => {
+            for (const e of state.elements) {
+              if (e.type === ObjectType.Wall) {
+                if (e.id === oldRightJoints[0]) {
+                  (e as WallModel).leftJoints = [this.id];
+                }
+                if (e.id === newRightJoints[0]) {
+                  if (this.flippedWallSide !== FlippedWallSide.right) {
+                    (e as WallModel).leftJoints = [];
+                  } else {
+                    (e as WallModel).rightJoints = [];
+                  }
+                }
+              }
+            }
+          });
+        }
+        flippedWallSide.current = FlippedWallSide.null;
+      },
+      redo() {
+        const [oldLeftJoints, oldRightJoints] = this.oldJoints;
+        const [newLeftJoints, newRightJoints] = this.newJoints;
+        setCommonStore((state) => {
+          for (const e of state.elements) {
+            if (e.id === this.id && e.type === ObjectType.Wall) {
+              const [leftPoint, rightPoint] = this.newPoints;
+              e.cx = (leftPoint[0] + rightPoint[0]) / 2;
+              e.cy = (leftPoint[1] + rightPoint[1]) / 2;
+              e.lx = Math.hypot(leftPoint[0] - rightPoint[0], leftPoint[1] - rightPoint[1]);
+              const w = e as WallModel;
+              w.relativeAngle = this.newAngle;
+              w.leftPoint = [...leftPoint];
+              w.rightPoint = [...rightPoint];
+              w.leftJoints = [...newLeftJoints];
+              w.rightJoints = [...newRightJoints];
+              break;
+            }
+          }
+        });
+        if (oldLeftJoints[0] !== newLeftJoints[0]) {
+          setCommonStore((state) => {
+            for (const e of state.elements) {
+              if (e.type === ObjectType.Wall) {
+                if (e.id === oldLeftJoints[0]) {
+                  (e as WallModel).rightJoints = [];
+                }
+                if (e.id === newLeftJoints[0]) {
+                  if (this.flippedWallSide === FlippedWallSide.right) {
+                    (e as WallModel).leftJoints = [this.id];
+                  } else {
+                    (e as WallModel).rightJoints = [this.id];
+                  }
+                }
+              }
+            }
+          });
+        }
+        if (oldRightJoints[0] !== newRightJoints[0]) {
+          setCommonStore((state) => {
+            for (const e of state.elements) {
+              if (e.type === ObjectType.Wall) {
+                if (e.id === oldRightJoints[0]) {
+                  (e as WallModel).leftJoints = [];
+                }
+                if (e.id === newRightJoints[0]) {
+                  if (this.flippedWallSide === FlippedWallSide.right) {
+                    (e as WallModel).rightJoints = [this.id];
+                  } else {
+                    (e as WallModel).leftJoints = [this.id];
+                  }
+                }
+              }
+            }
+          });
+        }
+        switch (this.flippedWallSide) {
+          case FlippedWallSide.loop:
+            flipWallLoop(this.id);
+            break;
+          case FlippedWallSide.left:
+            const lw = getElementById(this.newJoints[0][0]) as WallModel;
+            if (lw) {
+              flipWallsCounterClockwise(lw);
+            }
+            break;
+          case FlippedWallSide.right:
+            const rw = getElementById(this.newJoints[1][0]) as WallModel;
+            if (rw) {
+              flipWallsClockwise(rw);
+            }
+            break;
+        }
+        const set = new Set(this.autoDeletedElements.map((e) => e.id));
+        setCommonStore((state) => {
+          state.resizeHandleType = null;
+          state.elements = state.elements.filter((e) => !set.has(e.id));
+          const deletedRoof = this.autoDeletedElements.find((e) => e.type === ObjectType.Roof);
+          if (deletedRoof) {
+            state.deletedRoofId = deletedRoof.id;
+          }
+        });
+        flippedWallSide.current = FlippedWallSide.null;
+      },
+    } as UndoableMoveWall;
+    addUndoable(undoableMove);
+
+    listenToAutoDeletionRef.current = false;
+    setCommonStore((state) => {
+      state.autoDeletedRoof = null;
+      state.autoDeletedChild = null;
+    });
+  }, 100);
 
   const setRayCast = (e: PointerEvent) => {
     mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;
@@ -759,6 +967,7 @@ const Foundation = (foundationModel: FoundationModel) => {
   };
 
   const handleUndoableResizeWall = (element: WallModel) => {
+    const autoDeletedElement = useStore.getState().getAutoDeletedElements();
     const undoableResize = {
       name: 'Resize Wall',
       timestamp: Date.now(),
@@ -775,6 +984,7 @@ const Foundation = (foundationModel: FoundationModel) => {
       oldPoint: [[...oldPointRef.current[0]], [...oldPointRef.current[1]]],
       newPoint: [[...newPointRef.current[0]], [...newPointRef.current[1]]],
       flippedWallSide: flippedWallSide.current,
+      autoDeletedElement: autoDeletedElement ? [...autoDeletedElement] : [],
       undo: () => {
         switch (undoableResize.flippedWallSide) {
           case FlippedWallSide.right:
@@ -937,12 +1147,21 @@ const Foundation = (foundationModel: FoundationModel) => {
               break;
             }
           }
+          state.elements.push(...undoableResize.autoDeletedElement);
           state.resizeHandleType = null;
+          state.deletedRoofId = null;
+          state.autoDeletedRoof = null;
+          state.autoDeletedChild = null;
         });
         flippedWallSide.current = FlippedWallSide.null;
       },
       redo: () => {
+        if (undoableResize.autoDeletedElement.length > 0) {
+          removeElementById(undoableResize.autoDeletedElement[0].id, false, false, true);
+        }
+        const deletedIdSet = new Set(undoableResize.autoDeletedElement.map((e) => e.id));
         setCommonStore((state) => {
+          state.elements = state.elements.filter((e) => !deletedIdSet.has(e.id));
           for (const e of state.elements) {
             if (e.id === undoableResize.resizedElementId) {
               const w = e as WallModel;
@@ -1030,6 +1249,12 @@ const Foundation = (foundationModel: FoundationModel) => {
           }
           state.resizeHandleType = null;
         });
+        setTimeout(() => {
+          setCommonStore((state) => {
+            state.deletedRoofId = null;
+            state.autoDeletedRoof = null;
+          });
+        });
         switch (undoableResize.flippedWallSide) {
           case FlippedWallSide.left: {
             const currWall = getElementById(undoableResize.resizedElementId) as WallModel;
@@ -1059,177 +1284,185 @@ const Foundation = (foundationModel: FoundationModel) => {
     addUndoable(undoableResize);
     setCommonStore((state) => {
       state.actionState.wallHeight = element.lz;
+      state.deletedRoofId = null;
+      state.autoDeletedRoof = null;
+      state.autoDeletedChild = [];
     });
   };
 
   const handleUndoableMoveWall = (wall: WallModel, newAngle: number, newJoints: string[][]) => {
-    const undoableMove = {
-      name: 'Move Wall',
-      timestamp: Date.now(),
-      id: wall.id,
-      oldPoints: [[...oldPointRef.current[0]], [...oldPointRef.current[1]]],
-      newPoints: [[...wall.leftPoint], [...wall.rightPoint]],
-      oldJoints: [[...oldJointsRef.current[0]], [...oldJointsRef.current[1]]],
-      newJoints: [[...newJoints[0]], [...newJoints[1]]],
-      oldAngle: oldAzimuthRef.current,
-      newAngle: newAngle,
-      flippedWallSide: flippedWallSide.current,
-      undo() {
-        switch (this.flippedWallSide) {
-          case FlippedWallSide.loop:
-            flipWallLoop(this.id);
-            break;
-          case FlippedWallSide.left:
-            const lw = getElementById(this.newJoints[0][0]) as WallModel;
-            if (lw) {
-              flipWallsClockwise(lw);
-            }
-            break;
-          case FlippedWallSide.right:
-            const rw = getElementById(this.newJoints[1][0]) as WallModel;
-            if (rw) {
-              flipWallsCounterClockwise(rw);
-            }
-            break;
-        }
-        const [oldLeftJoints, oldRightJoints] = this.oldJoints;
-        const [newLeftJoints, newRightJoints] = this.newJoints;
-        setCommonStore((state) => {
-          for (const e of state.elements) {
-            if (e.id === this.id) {
-              const [leftPoint, rightPoint] = this.oldPoints;
-              e.cx = (leftPoint[0] + rightPoint[0]) / 2;
-              e.cy = (leftPoint[1] + rightPoint[1]) / 2;
-              e.lx = Math.hypot(leftPoint[0] - rightPoint[0], leftPoint[1] - rightPoint[1]);
-              const w = e as WallModel;
-              w.relativeAngle = this.oldAngle;
-              w.leftPoint = [...leftPoint];
-              w.rightPoint = [...rightPoint];
-              w.leftJoints = [...oldLeftJoints];
-              w.rightJoints = [...oldRightJoints];
+    if (!wall.roofId) {
+      const undoableMove = {
+        name: 'Move Wall',
+        timestamp: Date.now(),
+        id: wall.id,
+        oldPoints: [[...oldPointRef.current[0]], [...oldPointRef.current[1]]],
+        newPoints: [[...wall.leftPoint], [...wall.rightPoint]],
+        oldJoints: [[...oldJointsRef.current[0]], [...oldJointsRef.current[1]]],
+        newJoints: [[...newJoints[0]], [...newJoints[1]]],
+        oldAngle: oldAzimuthRef.current,
+        newAngle: newAngle,
+        flippedWallSide: flippedWallSide.current,
+        undo() {
+          switch (this.flippedWallSide) {
+            case FlippedWallSide.loop:
+              flipWallLoop(this.id);
               break;
-            }
+            case FlippedWallSide.left:
+              const lw = getElementById(this.newJoints[0][0]) as WallModel;
+              if (lw) {
+                flipWallsClockwise(lw);
+              }
+              break;
+            case FlippedWallSide.right:
+              const rw = getElementById(this.newJoints[1][0]) as WallModel;
+              if (rw) {
+                flipWallsCounterClockwise(rw);
+              }
+              break;
           }
-          state.resizeHandleType = null;
-        });
-        if (oldLeftJoints[0] !== newLeftJoints[0]) {
+          const [oldLeftJoints, oldRightJoints] = this.oldJoints;
+          const [newLeftJoints, newRightJoints] = this.newJoints;
           setCommonStore((state) => {
             for (const e of state.elements) {
-              if (e.type === ObjectType.Wall) {
-                if (e.id === oldLeftJoints[0]) {
-                  (e as WallModel).rightJoints = [this.id];
-                }
-                if (e.id === newLeftJoints[0]) {
-                  if (this.flippedWallSide !== FlippedWallSide.left) {
-                    (e as WallModel).rightJoints = [];
-                  } else {
-                    (e as WallModel).leftJoints = [];
-                  }
-                }
+              if (e.id === this.id) {
+                const [leftPoint, rightPoint] = this.oldPoints;
+                e.cx = (leftPoint[0] + rightPoint[0]) / 2;
+                e.cy = (leftPoint[1] + rightPoint[1]) / 2;
+                e.lx = Math.hypot(leftPoint[0] - rightPoint[0], leftPoint[1] - rightPoint[1]);
+                const w = e as WallModel;
+                w.relativeAngle = this.oldAngle;
+                w.leftPoint = [...leftPoint];
+                w.rightPoint = [...rightPoint];
+                w.leftJoints = [...oldLeftJoints];
+                w.rightJoints = [...oldRightJoints];
+                break;
               }
             }
+            state.resizeHandleType = null;
           });
-        }
-        if (oldRightJoints[0] !== newRightJoints[0]) {
-          setCommonStore((state) => {
-            for (const e of state.elements) {
-              if (e.type === ObjectType.Wall) {
-                if (e.id === oldRightJoints[0]) {
-                  (e as WallModel).leftJoints = [this.id];
-                }
-                if (e.id === newRightJoints[0]) {
-                  if (this.flippedWallSide !== FlippedWallSide.right) {
-                    (e as WallModel).leftJoints = [];
-                  } else {
-                    (e as WallModel).rightJoints = [];
-                  }
-                }
-              }
-            }
-          });
-        }
-        flippedWallSide.current = FlippedWallSide.null;
-      },
-      redo() {
-        const [oldLeftJoints, oldRightJoints] = this.oldJoints;
-        const [newLeftJoints, newRightJoints] = this.newJoints;
-        setCommonStore((state) => {
-          for (const e of state.elements) {
-            if (e.id === this.id && e.type === ObjectType.Wall) {
-              const [leftPoint, rightPoint] = this.newPoints;
-              e.cx = (leftPoint[0] + rightPoint[0]) / 2;
-              e.cy = (leftPoint[1] + rightPoint[1]) / 2;
-              e.lx = Math.hypot(leftPoint[0] - rightPoint[0], leftPoint[1] - rightPoint[1]);
-              const w = e as WallModel;
-              w.relativeAngle = this.newAngle;
-              w.leftPoint = [...leftPoint];
-              w.rightPoint = [...rightPoint];
-              w.leftJoints = [...newLeftJoints];
-              w.rightJoints = [...newRightJoints];
-              break;
-            }
-          }
-        });
-        if (oldLeftJoints[0] !== newLeftJoints[0]) {
-          setCommonStore((state) => {
-            for (const e of state.elements) {
-              if (e.type === ObjectType.Wall) {
-                if (e.id === oldLeftJoints[0]) {
-                  (e as WallModel).rightJoints = [];
-                }
-                if (e.id === newLeftJoints[0]) {
-                  if (this.flippedWallSide === FlippedWallSide.right) {
-                    (e as WallModel).leftJoints = [this.id];
-                  } else {
+          if (oldLeftJoints[0] !== newLeftJoints[0]) {
+            setCommonStore((state) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Wall) {
+                  if (e.id === oldLeftJoints[0]) {
                     (e as WallModel).rightJoints = [this.id];
                   }
-                }
-              }
-            }
-          });
-        }
-        if (oldRightJoints[0] !== newRightJoints[0]) {
-          setCommonStore((state) => {
-            for (const e of state.elements) {
-              if (e.type === ObjectType.Wall) {
-                if (e.id === oldRightJoints[0]) {
-                  (e as WallModel).leftJoints = [];
-                }
-                if (e.id === newRightJoints[0]) {
-                  if (this.flippedWallSide === FlippedWallSide.right) {
-                    (e as WallModel).rightJoints = [this.id];
-                  } else {
-                    (e as WallModel).leftJoints = [this.id];
+                  if (e.id === newLeftJoints[0]) {
+                    if (this.flippedWallSide !== FlippedWallSide.left) {
+                      (e as WallModel).rightJoints = [];
+                    } else {
+                      (e as WallModel).leftJoints = [];
+                    }
                   }
                 }
               }
+            });
+          }
+          if (oldRightJoints[0] !== newRightJoints[0]) {
+            setCommonStore((state) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Wall) {
+                  if (e.id === oldRightJoints[0]) {
+                    (e as WallModel).leftJoints = [this.id];
+                  }
+                  if (e.id === newRightJoints[0]) {
+                    if (this.flippedWallSide !== FlippedWallSide.right) {
+                      (e as WallModel).leftJoints = [];
+                    } else {
+                      (e as WallModel).rightJoints = [];
+                    }
+                  }
+                }
+              }
+            });
+          }
+          flippedWallSide.current = FlippedWallSide.null;
+        },
+        redo() {
+          const [oldLeftJoints, oldRightJoints] = this.oldJoints;
+          const [newLeftJoints, newRightJoints] = this.newJoints;
+          setCommonStore((state) => {
+            for (const e of state.elements) {
+              if (e.id === this.id && e.type === ObjectType.Wall) {
+                const [leftPoint, rightPoint] = this.newPoints;
+                e.cx = (leftPoint[0] + rightPoint[0]) / 2;
+                e.cy = (leftPoint[1] + rightPoint[1]) / 2;
+                e.lx = Math.hypot(leftPoint[0] - rightPoint[0], leftPoint[1] - rightPoint[1]);
+                const w = e as WallModel;
+                w.relativeAngle = this.newAngle;
+                w.leftPoint = [...leftPoint];
+                w.rightPoint = [...rightPoint];
+                w.leftJoints = [...newLeftJoints];
+                w.rightJoints = [...newRightJoints];
+                break;
+              }
             }
           });
-        }
-        switch (this.flippedWallSide) {
-          case FlippedWallSide.loop:
-            flipWallLoop(this.id);
-            break;
-          case FlippedWallSide.left:
-            const lw = getElementById(this.newJoints[0][0]) as WallModel;
-            if (lw) {
-              flipWallsCounterClockwise(lw);
-            }
-            break;
-          case FlippedWallSide.right:
-            const rw = getElementById(this.newJoints[1][0]) as WallModel;
-            if (rw) {
-              flipWallsClockwise(rw);
-            }
-            break;
-        }
-        setCommonStore((state) => {
-          state.resizeHandleType = null;
-        });
-        flippedWallSide.current = FlippedWallSide.null;
-      },
-    } as UndoableMoveWall;
-    addUndoable(undoableMove);
+          if (oldLeftJoints[0] !== newLeftJoints[0]) {
+            setCommonStore((state) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Wall) {
+                  if (e.id === oldLeftJoints[0]) {
+                    (e as WallModel).rightJoints = [];
+                  }
+                  if (e.id === newLeftJoints[0]) {
+                    if (this.flippedWallSide === FlippedWallSide.right) {
+                      (e as WallModel).leftJoints = [this.id];
+                    } else {
+                      (e as WallModel).rightJoints = [this.id];
+                    }
+                  }
+                }
+              }
+            });
+          }
+          if (oldRightJoints[0] !== newRightJoints[0]) {
+            setCommonStore((state) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Wall) {
+                  if (e.id === oldRightJoints[0]) {
+                    (e as WallModel).leftJoints = [];
+                  }
+                  if (e.id === newRightJoints[0]) {
+                    if (this.flippedWallSide === FlippedWallSide.right) {
+                      (e as WallModel).rightJoints = [this.id];
+                    } else {
+                      (e as WallModel).leftJoints = [this.id];
+                    }
+                  }
+                }
+              }
+            });
+          }
+          switch (this.flippedWallSide) {
+            case FlippedWallSide.loop:
+              flipWallLoop(this.id);
+              break;
+            case FlippedWallSide.left:
+              const lw = getElementById(this.newJoints[0][0]) as WallModel;
+              if (lw) {
+                flipWallsCounterClockwise(lw);
+              }
+              break;
+            case FlippedWallSide.right:
+              const rw = getElementById(this.newJoints[1][0]) as WallModel;
+              if (rw) {
+                flipWallsClockwise(rw);
+              }
+              break;
+          }
+          setCommonStore((state) => {
+            state.resizeHandleType = null;
+          });
+          flippedWallSide.current = FlippedWallSide.null;
+        },
+      } as UndoableMoveWall;
+      addUndoable(undoableMove);
+    } else {
+      listenToAutoDeletionRef.current = true;
+      undoableMoveWallArgsRef.current = { wall, newAngle, newJoints: [[...newJoints[0]], [...newJoints[1]]] };
+    }
   };
 
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
