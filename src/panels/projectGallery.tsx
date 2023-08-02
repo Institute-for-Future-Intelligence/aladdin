@@ -12,6 +12,7 @@ import {
   BgColorsOutlined,
   CameraOutlined,
   CloseOutlined,
+  CloudUploadOutlined,
   DeleteOutlined,
   EditFilled,
   EditOutlined,
@@ -20,7 +21,6 @@ import {
   LinkOutlined,
   SortAscendingOutlined,
   SortDescendingOutlined,
-  UploadOutlined,
 } from '@ant-design/icons';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import ImageLoadFailureIcon from '../assets/image_fail_try_again.png';
@@ -461,6 +461,9 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                           style={{ border: 'none', padding: '4px' }}
                           onClick={(e) => {
                             e.stopPropagation();
+                            setCommonStore((state) => {
+                              state.projectInfo.sortDescending = !state.projectInfo.sortDescending;
+                            });
                           }}
                         >
                           {projectInfo.sortDescending ? (
@@ -490,7 +493,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                             }
                           }}
                         >
-                          <UploadOutlined
+                          <CloudUploadOutlined
                             style={{ fontSize: '24px', color: 'gray' }}
                             title={i18n.t('projectPanel.UpdateSelectedDesign', lang)}
                           />

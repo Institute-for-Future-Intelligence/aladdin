@@ -57,34 +57,37 @@ const VerticalAxis = ({
       value,
       yOffset: yScale(value),
     }));
-  }, [yScale, tickLength, type]);
+  }, [yScale, tickLength, type, tickIntegers]);
+
+  const select = () => {
+    if (user.uid && projectInfo.title) {
+      updateSelectedProperty(
+        user.uid,
+        projectInfo.title,
+        projectInfo.selectedProperty !== variable ? variable : null,
+      ).then(() => {
+        setCommonStore((state) => {
+          state.projectInfo.selectedProperty = state.projectInfo.selectedProperty !== variable ? variable : null;
+        });
+        usePrimitiveStore.setState((state) => {
+          state.updateProjectsFlag = !state.updateProjectsFlag;
+        });
+      });
+    }
+  };
 
   return (
     <>
       {/* Title */}
       <text
-        onClick={(e) => {
-          if (user.uid && projectInfo.title) {
-            updateSelectedProperty(
-              user.uid,
-              projectInfo.title,
-              projectInfo.selectedProperty !== variable ? variable : null,
-            ).then(() => {
-              setCommonStore((state) => {
-                state.projectInfo.selectedProperty = state.projectInfo.selectedProperty !== variable ? variable : null;
-              });
-              usePrimitiveStore.setState((state) => {
-                state.updateProjectsFlag = !state.updateProjectsFlag;
-              });
-            });
-          }
-        }}
+        onClick={select}
         x={0}
         y={-20}
         style={{
           fontSize: '10px',
           textAnchor: 'middle',
           fill: 'dimgray',
+          cursor: 'pointer',
           fontWeight: projectInfo.selectedProperty === variable ? 'bold' : 'normal',
         }}
       >
@@ -112,10 +115,19 @@ const VerticalAxis = ({
         </text>
       )}
 
-      {/* Vertical line */}
-      {projectInfo.selectedProperty === variable && (
-        <line x1={0} x2={0} y1={yScale(min)} y2={yScale(max)} stroke="gold" strokeWidth={8} strokeOpacity={0.5} />
-      )}
+      {/* Invisible vertical line for interactions */}
+      <line
+        x1={0}
+        x2={0}
+        y1={yScale(min)}
+        y2={yScale(max)}
+        stroke="gold"
+        strokeWidth={10}
+        onClick={select}
+        style={{ cursor: 'pointer' }}
+        strokeOpacity={projectInfo.selectedProperty === variable ? 0.5 : 0}
+      />
+      {/* Visible vertical line */}
       <line x1={0} x2={0} y1={yScale(min)} y2={yScale(max)} stroke="black" strokeWidth={2} />
 
       {/* Ticks and labels */}
