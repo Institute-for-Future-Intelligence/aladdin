@@ -7,4 +7,5 @@ import { ElementModel } from '../models/ElementModel';
 
 export interface UndoableDelete extends Undoable {
   deletedElements: ElementModel[];
+  selectedElementId: string;
 }

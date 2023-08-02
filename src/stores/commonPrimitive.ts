@@ -116,6 +116,9 @@ export interface PrimitiveStoreState {
 
   oldParentId: string | null;
   oldFoundationId: string | null | undefined;
+
+  // used for listen to auto deletion
+  selectedElementId: string | null;
 }
 
 export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
@@ -237,5 +240,7 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
 
     oldParentId: null,
     oldFoundationId: null,
+
+    selectedElementId: null,
   };
 });

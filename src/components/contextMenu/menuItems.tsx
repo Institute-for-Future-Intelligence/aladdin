@@ -15,6 +15,7 @@ import { ActionInfo, ObjectType } from '../../types';
 import { showInfo } from 'src/helpers';
 import { WallModel } from 'src/models/WallModel';
 import { useRefStore } from 'src/stores/commonRef';
+import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 
 export const Paste = ({ paddingLeft = '36px', keyName }: { paddingLeft?: string; keyName: string }) => {
   const setCommonStore = useStore(Selector.set);
@@ -114,36 +115,41 @@ export const Cut = ({ paddingLeft = '36px', keyName }: { paddingLeft?: string; k
 
       if (Util.ifNeedListenToAutoDeletion(cutElements[0])) {
         useRefStore.getState().setListenToAutoDeletionByCut(true);
+        usePrimitiveStore.getState().setPrimitiveStore('selectedElementId', selectedElement.id);
       } else {
         const undoableCut = {
           name: 'Cut',
           timestamp: Date.now(),
           deletedElements: cutElements,
+          selectedElementId: selectedElement.id,
           undo: () => {
+            const cutElements = undoableCut.deletedElements;
+            if (cutElements.length === 0) return;
+
+            const selectedElement = cutElements.find((e) => e.id === undoableCut.selectedElementId);
+            if (!selectedElement) return;
+
             setCommonStore((state) => {
-              if (undoableCut.deletedElements && undoableCut.deletedElements.length > 0) {
-                for (const e of undoableCut.deletedElements) {
-                  state.elements.push(e);
+              for (const e of cutElements) {
+                state.elements.push(e);
+              }
+              if (selectedElement.type === ObjectType.Wall) {
+                const wall = selectedElement as WallModel;
+                let leftWallId: string | null = null;
+                let rightWallId: string | null = null;
+                if (wall.leftJoints.length > 0) {
+                  leftWallId = wall.leftJoints[0];
                 }
-                state.selectedElement = undoableCut.deletedElements[0];
-                if (undoableCut.deletedElements[0].type === ObjectType.Wall) {
-                  const wall = undoableCut.deletedElements[0] as WallModel;
-                  let leftWallId: string | null = null;
-                  let rightWallId: string | null = null;
-                  if (wall.leftJoints.length > 0) {
-                    leftWallId = wall.leftJoints[0];
-                  }
-                  if (wall.rightJoints.length > 0) {
-                    rightWallId = wall.rightJoints[0];
-                  }
-                  if (leftWallId || rightWallId) {
-                    for (const e of state.elements) {
-                      if (e.id === leftWallId && e.type === ObjectType.Wall) {
-                        (e as WallModel).rightJoints[0] = wall.id;
-                      }
-                      if (e.id === rightWallId && e.type === ObjectType.Wall) {
-                        (e as WallModel).leftJoints[0] = wall.id;
-                      }
+                if (wall.rightJoints.length > 0) {
+                  rightWallId = wall.rightJoints[0];
+                }
+                if (leftWallId || rightWallId) {
+                  for (const e of state.elements) {
+                    if (e.id === leftWallId && e.type === ObjectType.Wall) {
+                      (e as WallModel).rightJoints[0] = wall.id;
+                    }
+                    if (e.id === rightWallId && e.type === ObjectType.Wall) {
+                      (e as WallModel).leftJoints[0] = wall.id;
                     }
                   }
                 }
