@@ -45,6 +45,7 @@ const VerticalAxis = ({
   const projectInfo = useStore(Selector.projectInfo);
   const lang = { lng: language };
 
+  const isOwner = user.uid === projectInfo.owner;
   const range = yScale.range();
 
   const ticks = useMemo(() => {
@@ -59,20 +60,26 @@ const VerticalAxis = ({
     }));
   }, [yScale, tickLength, type, tickIntegers]);
 
+  const localSelect = () => {
+    setCommonStore((state) => {
+      state.projectInfo.selectedProperty = state.projectInfo.selectedProperty !== variable ? variable : null;
+    });
+    usePrimitiveStore.setState((state) => {
+      state.updateProjectsFlag = !state.updateProjectsFlag;
+    });
+  };
+
   const select = () => {
-    if (user.uid && projectInfo.title) {
+    if (isOwner && projectInfo.owner && projectInfo.title) {
       updateSelectedProperty(
-        user.uid,
+        projectInfo.owner,
         projectInfo.title,
         projectInfo.selectedProperty !== variable ? variable : null,
       ).then(() => {
-        setCommonStore((state) => {
-          state.projectInfo.selectedProperty = state.projectInfo.selectedProperty !== variable ? variable : null;
-        });
-        usePrimitiveStore.setState((state) => {
-          state.updateProjectsFlag = !state.updateProjectsFlag;
-        });
+        localSelect();
       });
+    } else {
+      localSelect();
     }
   };
 

@@ -146,6 +146,8 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
     return { lng: language };
   }, [language]);
 
+  const isOwner = user.uid === projectInfo.owner;
+
   useEffect(() => {
     projectDesigns.current = [];
     if (projectInfo.designs) {
@@ -377,24 +379,55 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
     }
   };
 
-  const selectParameter = (selected: boolean, parameter: string) => {
-    if (user.uid && projectInfo.owner === user.uid && projectInfo.title) {
-      parameterSelectionChangedRef.current = true;
-      updateHiddenParameters(user.uid, projectInfo.title, parameter, !selected).then(() => {
-        setCommonStore((state) => {
-          if (state.projectInfo.hiddenParameters) {
-            if (selected) {
-              if (state.projectInfo.hiddenParameters.includes(parameter)) {
-                state.projectInfo.hiddenParameters.splice(state.projectInfo.hiddenParameters.indexOf(parameter), 1);
-              }
-            } else {
-              if (!state.projectInfo.hiddenParameters.includes(parameter)) {
-                state.projectInfo.hiddenParameters.push(parameter);
-              }
-            }
+  const localSelectParameter = (selected: boolean, parameter: string) => {
+    setCommonStore((state) => {
+      if (state.projectInfo.hiddenParameters) {
+        if (selected) {
+          if (state.projectInfo.hiddenParameters.includes(parameter)) {
+            state.projectInfo.hiddenParameters.splice(state.projectInfo.hiddenParameters.indexOf(parameter), 1);
           }
+        } else {
+          if (!state.projectInfo.hiddenParameters.includes(parameter)) {
+            state.projectInfo.hiddenParameters.push(parameter);
+          }
+        }
+      }
+    });
+  };
+
+  const selectParameter = (selected: boolean, parameter: string) => {
+    parameterSelectionChangedRef.current = true;
+    if (isOwner) {
+      if (user.uid && projectInfo.title) {
+        updateHiddenParameters(user.uid, projectInfo.title, parameter, !selected).then(() => {
+          localSelectParameter(selected, parameter);
         });
-      });
+      }
+    } else {
+      localSelectParameter(selected, parameter);
+    }
+  };
+
+  const localSelectDataColoring = () => {
+    setCommonStore((state) => {
+      state.projectInfo.dataColoring = dataColoringSelectionRef.current;
+    });
+    usePrimitiveStore.setState((state) => {
+      state.updateProjectsFlag = !state.updateProjectsFlag;
+    });
+    setUpdateFlag(!updateFlag);
+  };
+
+  const selectDataColoring = (value: DataColoring) => {
+    dataColoringSelectionRef.current = value;
+    if (isOwner) {
+      if (user.uid && projectInfo.title) {
+        updateDataColoring(user.uid, projectInfo.title, dataColoringSelectionRef.current).then(() => {
+          localSelectDataColoring();
+        });
+      }
+    } else {
+      localSelectDataColoring();
     }
   };
 
@@ -417,9 +450,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
             {i18n.t('projectPanel.Project', lang) +
               ': ' +
               projectInfo.title +
-              (projectInfo.owner === user.uid
-                ? ''
-                : ' (' + i18n.t('word.Owner', lang) + ': ' + projectInfo.owner?.substring(0, 4) + '***)')}
+              (isOwner ? '' : ' (' + i18n.t('word.Owner', lang) + ': ' + projectInfo.owner?.substring(0, 4) + '***)')}
           </span>
           <span
             style={{ cursor: 'pointer' }}
@@ -453,7 +484,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                     projectInfo.type}
                 </span>
                 <span>
-                  {user.uid === projectInfo.owner && (
+                  {isOwner && (
                     <>
                       {descriptionExpandedRef.current && (
                         <Button
@@ -489,29 +520,6 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                           title={i18n.t('projectPanel.CurateCurrentDesign', lang)}
                         />
                       </Button>
-                      {projectInfo.designs && projectInfo.designs.length > 1 && projectInfo.selectedProperty && (
-                        <Button
-                          style={{ border: 'none', padding: '4px' }}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setCommonStore((state) => {
-                              state.projectInfo.sortDescending = !state.projectInfo.sortDescending;
-                            });
-                          }}
-                        >
-                          {projectInfo.sortDescending ? (
-                            <SortAscendingOutlined
-                              style={{ fontSize: '24px', color: 'gray' }}
-                              title={i18n.t('projectPanel.ClickToFlipSortingOrder', lang)}
-                            />
-                          ) : (
-                            <SortDescendingOutlined
-                              style={{ fontSize: '24px', color: 'gray' }}
-                              title={i18n.t('projectPanel.ClickToFlipSortingOrder', lang)}
-                            />
-                          )}
-                        </Button>
-                      )}
                       {isProjectDesign && selectedDesign && (
                         <Button
                           style={{ border: 'none', padding: '4px' }}
@@ -575,6 +583,29 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                       )}
                     </>
                   )}
+                  {projectInfo.designs && projectInfo.designs.length > 1 && projectInfo.selectedProperty && (
+                    <Button
+                      style={{ border: 'none', padding: '4px' }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setCommonStore((state) => {
+                          state.projectInfo.sortDescending = !state.projectInfo.sortDescending;
+                        });
+                      }}
+                    >
+                      {projectInfo.sortDescending ? (
+                        <SortAscendingOutlined
+                          style={{ fontSize: '24px', color: 'gray' }}
+                          title={i18n.t('projectPanel.ClickToFlipSortingOrder', lang)}
+                        />
+                      ) : (
+                        <SortDescendingOutlined
+                          style={{ fontSize: '24px', color: 'gray' }}
+                          title={i18n.t('projectPanel.ClickToFlipSortingOrder', lang)}
+                        />
+                      )}
+                    </Button>
+                  )}
                 </span>
               </SubHeader>
             }
@@ -603,7 +634,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
               onBlur={() => {
                 descriptionTextAreaEditableRef.current = false;
                 if (descriptionChangedRef.current) {
-                  if (user.uid && projectInfo.owner === user.uid && projectInfo.title) {
+                  if (user.uid && isOwner && projectInfo.title) {
                     updateDescription(user.uid, projectInfo.title, descriptionRef.current).then(() => {
                       descriptionChangedRef.current = false;
                       setUpdateFlag(!updateFlag);
@@ -872,20 +903,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                       <hr />
                       <Radio.Group
                         onChange={(e) => {
-                          dataColoringSelectionRef.current = e.target.value;
-                          if (user.uid && projectInfo.owner === user.uid && projectInfo.title) {
-                            updateDataColoring(user.uid, projectInfo.title, dataColoringSelectionRef.current).then(
-                              () => {
-                                setCommonStore((state) => {
-                                  state.projectInfo.dataColoring = dataColoringSelectionRef.current;
-                                });
-                                usePrimitiveStore.setState((state) => {
-                                  state.updateProjectsFlag = !state.updateProjectsFlag;
-                                });
-                                setUpdateFlag(!updateFlag);
-                              },
-                            );
-                          }
+                          selectDataColoring(e.target.value);
                         }}
                         value={projectInfo.dataColoring ?? DataColoring.ALL}
                       >
