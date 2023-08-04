@@ -59,8 +59,9 @@ interface ShutterProps {
 
 export const Shutter = ({ cx, cz = 0, lx, lz, color, showLeft, showRight, spacing }: ShutterProps) => {
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
+  const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const showHeatFluxes = usePrimitiveStore(Selector.showHeatFluxes);
-  if (showHeatFluxes) {
+  if (showSolarRadiationHeatmap || showHeatFluxes) {
     return null;
   }
 
