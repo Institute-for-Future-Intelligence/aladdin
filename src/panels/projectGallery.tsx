@@ -776,7 +776,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                       position: 'relative',
                       right: '10px',
                       textAlign: 'right',
-                      bottom: '40px',
+                      bottom: '36px',
                       color: 'white',
                     }}
                   >
@@ -785,7 +785,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                         onClick={() => {
                           toggleDesignVisibility(design);
                         }}
-                        style={{ fontSize: '20px' }}
+                        style={{ fontSize: '16px' }}
                         title={i18n.t('projectPanel.DesignNotShownInSolutionSpaceClickToShow', lang)}
                       />
                     ) : (
@@ -793,7 +793,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                         onClick={() => {
                           toggleDesignVisibility(design);
                         }}
-                        style={{ fontSize: '20px' }}
+                        style={{ fontSize: '16px' }}
                         title={i18n.t('projectPanel.DesignShownInSolutionSpaceClickToHide', lang)}
                       />
                     )}

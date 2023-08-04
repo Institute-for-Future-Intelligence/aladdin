@@ -130,7 +130,9 @@ const ParallelCoordinates = ({
           digits={digits[i]}
           min={minima[i]}
           max={maxima[i]}
-          value={hoveredIndex >= 0 ? (data[hoveredIndex][variable] as number) : undefined}
+          value={
+            hoveredIndex >= 0 && !data[hoveredIndex].invisible ? (data[hoveredIndex][variable] as number) : undefined
+          }
         />
       </g>
     );
