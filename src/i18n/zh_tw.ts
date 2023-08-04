@@ -1388,6 +1388,8 @@ export const i18n_zh_tw = {
       UpdateSelectedDesign: '更新選中設計',
       RemoveSelectedDesign: '刪除選中設計',
       ClickToFlipSortingOrder: '點擊逆轉排序方向',
+      DesignNotShownInSolutionSpaceClickToShow: '此設計目前不顯示在設計空間內，點擊顯示',
+      DesignShownInSolutionSpaceClickToHide: '此設計目前顯示在設計空間內,點擊隱藏',
       DistributionInSolutionSpace: '方案在設計空間裡的分佈',
       ChooseSolutionSpace: '選擇設計空間',
       ChooseDataColoring: '選擇數據著色',

@@ -258,6 +258,58 @@ export const copyDesign = (original: string, copy: string, owner: string | null,
     });
 };
 
+export const updateDesignVisibility = (userid: string, projectTitle: string, design: Design) => {
+  const lang = { lng: useStore.getState().language };
+  firebase
+    .firestore()
+    .collection('users')
+    .doc(userid)
+    .collection('projects')
+    .doc(projectTitle)
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+        const data = doc.data();
+        if (data) {
+          const updatedDesigns: Design[] = [];
+          updatedDesigns.push(...data.designs);
+          // Get the index of the design to be modified by the title
+          let index = -1;
+          for (const [i, d] of updatedDesigns.entries()) {
+            if (d.title === design.title) {
+              index = i;
+              break;
+            }
+          }
+          // If found, update the design in the array
+          if (index >= 0) {
+            updatedDesigns[index].invisible = !design.invisible;
+            // Finally, upload the updated design array back to Firestore
+            firebase
+              .firestore()
+              .collection('users')
+              .doc(userid)
+              .collection('projects')
+              .doc(projectTitle)
+              .update({ designs: updatedDesigns })
+              .then(() => {
+                // ignore
+              })
+              .catch((error) => {
+                showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
+              });
+          }
+        }
+      }
+    })
+    .catch((error) => {
+      showError(i18n.t('message.CannotFetchProjectData', lang) + ': ' + error);
+    })
+    .finally(() => {
+      // ignore
+    });
+};
+
 export const updateDesign = (
   userid: string,
   projectType: string,

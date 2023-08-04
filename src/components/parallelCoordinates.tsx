@@ -84,6 +84,7 @@ const ParallelCoordinates = ({
   const lineGenerator = d3Shape.line();
 
   const allLines = data.map((series, i) => {
+    if (series.invisible) return null;
     const allCoordinates = variables.map((variable) => {
       const yScale = yScales[variable];
       // I don't understand the type of scalePoint. IMO x cannot be undefined since I'm passing it something of type Variable.

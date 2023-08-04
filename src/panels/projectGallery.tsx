@@ -11,6 +11,8 @@ import i18n from '../i18n/i18n';
 import {
   BgColorsOutlined,
   CameraOutlined,
+  CheckCircleOutlined,
+  CheckCircleFilled,
   CloseOutlined,
   CloudUploadOutlined,
   DeleteOutlined,
@@ -37,6 +39,7 @@ import {
   updateDataColoring,
   updateDescription,
   updateDesign,
+  updateDesignVisibility,
   updateHiddenParameters,
 } from '../cloudProjectUtil';
 import { loadCloudFile } from '../cloudFileUtil';
@@ -284,6 +287,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
           d['group'] = projectInfo.dataColoring === DataColoring.INDIVIDUALS ? design.title : 'default';
           d['selected'] = selectedDesign === design;
           d['hovered'] = hoveredDesign === design;
+          d['invisible'] = design.invisible;
           data.push(d);
         }
       }
@@ -375,6 +379,28 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
     if (projectInfo.designs) {
       if (i >= 0 && i < projectInfo.designs.length) {
         setHoveredDesign(projectInfo.designs[i]);
+      }
+    }
+  };
+
+  const localToggleDesignVisibility = (title: string) => {
+    setCommonStore((state) => {
+      if (state.projectInfo.designs) {
+        for (const d of state.projectInfo.designs) {
+          if (d.title === title) {
+            d.invisible = !d.invisible;
+            break;
+          }
+        }
+      }
+    });
+  };
+
+  const toggleDesignVisibility = (design: Design) => {
+    localToggleDesignVisibility(design.title);
+    if (isOwner) {
+      if (user.uid && projectInfo.title) {
+        updateDesignVisibility(user.uid, projectInfo.title, design);
       }
     }
   };
@@ -744,6 +770,33 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                         ? design.title.substring(0, 30) + '...'
                         : design.title
                       : 'Unknown'}
+                  </div>
+                  <div
+                    style={{
+                      position: 'relative',
+                      right: '10px',
+                      textAlign: 'right',
+                      bottom: '40px',
+                      color: 'white',
+                    }}
+                  >
+                    {design.invisible ? (
+                      <CheckCircleOutlined
+                        onClick={() => {
+                          toggleDesignVisibility(design);
+                        }}
+                        style={{ fontSize: '20px' }}
+                        title={i18n.t('projectPanel.DesignNotShownInSolutionSpaceClickToShow', lang)}
+                      />
+                    ) : (
+                      <CheckCircleFilled
+                        onClick={() => {
+                          toggleDesignVisibility(design);
+                        }}
+                        style={{ fontSize: '20px' }}
+                        title={i18n.t('projectPanel.DesignShownInSolutionSpaceClickToHide', lang)}
+                      />
+                    )}
                   </div>
                 </List.Item>
               )}
