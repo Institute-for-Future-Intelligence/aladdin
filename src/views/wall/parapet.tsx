@@ -2,9 +2,11 @@ import React, { useMemo } from 'react';
 import { Extrude, Line } from '@react-three/drei';
 import { HALF_PI, ZERO_TOLERANCE } from 'src/constants';
 import { ParapetArgs } from 'src/models/WallModel';
-import { WallTexture } from 'src/types';
+import { ActionType, ObjectType, WallTexture } from 'src/types';
 import { Euler, Shape, Vector3 } from 'three';
 import { useWallTexture } from './hooks';
+import { ThreeEvent } from '@react-three/fiber';
+import { useStore } from 'src/stores/common';
 
 export const DEFAULT_PARAPET_SETTINGS: ParapetArgs = {
   display: false,
@@ -16,11 +18,14 @@ export const DEFAULT_PARAPET_SETTINGS: ParapetArgs = {
 };
 
 export interface WallData {
+  id: string;
+  parentId: string;
   cx: number;
   cy: number;
   hx: number;
   hy: number;
   angle: number;
+  selected: boolean;
 }
 
 export interface WallPointData {
@@ -33,6 +38,7 @@ export interface WallPointData {
 export interface ParapetProps {
   args: ParapetArgs;
   wallData: WallData;
+  parapetZ: number;
   currWallPointData: WallPointData;
   leftWallPointData: WallPointData | null;
   rightWallPointData: WallPointData | null;
@@ -48,9 +54,16 @@ type CopingsPoints = {
   outerPoints: WallPoints;
 };
 
-const Parapet = ({ args, wallData, currWallPointData, leftWallPointData, rightWallPointData }: ParapetProps) => {
+const Parapet = ({
+  args,
+  wallData,
+  parapetZ,
+  currWallPointData,
+  leftWallPointData,
+  rightWallPointData,
+}: ParapetProps) => {
   const { display, color, textureType, parapetHeight, copingsWidth, copingsHeight } = args;
-  const { cx, cy, hx, hy, angle } = wallData;
+  const { id, parentId, cx, cy, hx, hy, angle, selected } = wallData;
   const bodyHeight = parapetHeight - copingsHeight;
 
   const texture = useWallTexture(textureType);
@@ -174,10 +187,51 @@ const Parapet = ({ args, wallData, currWallPointData, leftWallPointData, rightWa
     return new Vector3().subVectors(intersection, new Vector3(cx, cy)).applyEuler(new Euler(0, 0, -angle));
   }
 
+  function isAllowedToSelectMe() {
+    if (
+      useStore.getState().moveHandleType ||
+      useStore.getState().resizeHandleType ||
+      selected ||
+      useStore.getState().isAddingElement()
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  function handleParapetPointerDown(e: ThreeEvent<PointerEvent>) {
+    if (e.intersections.length > 0 && e.intersections[0].eventObject === e.eventObject) {
+      if (useStore.getState().groupActionMode) {
+        useStore.getState().set((state) => {
+          for (const e of state.elements) {
+            e.selected = e.id === parentId;
+          }
+          state.groupMasterId = parentId;
+        });
+        e.stopPropagation();
+      } else if (isAllowedToSelectMe()) {
+        useStore.getState().selectMe(id, e, ActionType.Select, true);
+      }
+    }
+  }
+
+  function handleParapetContextMenu(e: ThreeEvent<MouseEvent>) {
+    useStore.getState().set((state) => {
+      if (e.intersections.length > 0 && e.intersections[0].eventObject === e.eventObject) {
+        state.contextMenuObjectType = ObjectType.Wall;
+      }
+    });
+  }
+
   if (!display) return null;
 
   return (
-    <group name={'Parapet Group'}>
+    <group
+      name={'Wall Parapet Group'}
+      position={[0, 0, parapetZ]}
+      onContextMenu={handleParapetContextMenu}
+      onPointerDown={handleParapetPointerDown}
+    >
       {/* body */}
       <Extrude name={'Body Extrude Mesh'} args={[bodyShape, { steps: 1, depth: bodyHeight, bevelEnabled: false }]}>
         <meshStandardMaterial color={color} map={texture} />
