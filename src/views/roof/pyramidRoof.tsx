@@ -414,7 +414,6 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
         updateRooftopElements(foundation, id, roofSegments, centerPointV3, topZ, thickness);
       } else {
         removeElementById(id, false, false, true);
-        console.log('REMOVED!!!');
       }
     }
   }, [currentWallArray, updateRoofFlag]);

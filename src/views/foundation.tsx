@@ -1803,6 +1803,21 @@ const Foundation = (foundationModel: FoundationModel) => {
                     w.relativeAngle = newAngle;
                     [w.leftPoint, w.rightPoint] = [[...w.rightPoint], [...w.leftPoint]];
                   }
+
+                  if (newLeftJoints.length === 0 && newRightJoints.length === 0) {
+                    w.roofId = null;
+                  } else if (newLeftJoints.length > 0) {
+                    const newLeftWall = state.elements.find((e) => e.id === newLeftJoints[0]) as WallModel;
+                    if (newLeftWall) {
+                      w.roofId = newLeftWall.roofId;
+                    }
+                  } else if (newRightJoints.length > 0) {
+                    const newRightWall = state.elements.find((e) => e.id === newRightJoints[0]) as WallModel;
+                    if (newRightWall) {
+                      w.roofId = newRightWall.roofId;
+                    }
+                  }
+
                   w.leftJoints = [...newLeftJoints];
                   w.rightJoints = [...newRightJoints];
                   break;
