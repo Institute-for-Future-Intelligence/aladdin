@@ -51,10 +51,8 @@ import { RoofUtil } from './RoofUtil';
 import {
   ComposedWall,
   useComposedWallArray,
-  useCurrWallArray,
   useIsFirstMount,
   useComposedRoofHeight,
-  useRoofHeight,
   useRoofTexture,
   useTransparent,
   useUpdateOldRoofFiles,

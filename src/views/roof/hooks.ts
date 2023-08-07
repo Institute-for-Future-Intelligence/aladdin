@@ -107,92 +107,19 @@ export const useTransparent = (transparent?: boolean, opacity?: number) => {
   return { transparent: transparent || _transparent, opacity: Math.min(opacity !== undefined ? opacity : 1, _opacity) };
 };
 
-export const useCurrWallArray = (frontWallId: string) => {
-  const getElementById = useStore.getState().getElementById;
-
-  const getWallsId = () => {
-    const frontWall = getElementById(frontWallId) as WallModel;
-    if (frontWall) {
-      const leftWall = getElementById(frontWall.leftJoints[0]) as WallModel;
-      const rightWall = getElementById(frontWall.rightJoints[0]) as WallModel;
-      if (leftWall && rightWall) {
-        const backWall = getElementById(leftWall.leftJoints[0]) as WallModel;
-        const checkWall = getElementById(rightWall.rightJoints[0]) as WallModel;
-        if (backWall && checkWall && backWall.id === checkWall.id) {
-          return [frontWall.id, rightWall.id, backWall.id, leftWall.id];
-        }
-      }
-    }
-    return [frontWallId];
-  };
-
-  const wallsId = getWallsId();
-
-  const frontWall = useStore((state) => {
-    for (const e of state.elements) {
-      if (e.id === wallsId[0] && e.type === ObjectType.Wall) {
-        return e as WallModel;
-      }
-    }
-  });
-  const rightWall = useStore((state) => {
-    for (const e of state.elements) {
-      if (e.id === wallsId[1] && e.type === ObjectType.Wall) {
-        return e as WallModel;
-      }
-    }
-  });
-  const backWall = useStore((state) => {
-    for (const e of state.elements) {
-      if (e.id === wallsId[2] && e.type === ObjectType.Wall) {
-        return e as WallModel;
-      }
-    }
-  });
-  const leftWall = useStore((state) => {
-    for (const e of state.elements) {
-      if (e.id === wallsId[3] && e.type === ObjectType.Wall) {
-        return e as WallModel;
-      }
-    }
-  });
-
-  const currentWallArray = useMemo(() => {
-    if (frontWall && rightWall && backWall && leftWall) {
-      return [frontWall, rightWall, backWall, leftWall];
-    }
-    return [] as WallModel[];
-  }, [frontWall, rightWall, backWall, leftWall]);
-  return currentWallArray;
-};
-
 export const useMultiCurrWallArray = (fId: string | undefined, roofId: string, wallsId: string[]) => {
-  const getElementById = useStore.getState().getElementById;
+  const wallsOnSameFoundation = useStore(
+    (state) => state.elements.filter((e) => e.foundationId === fId && e.type === ObjectType.Wall),
+    shallow,
+  );
+
+  const getWallOnSameFoundation = (id: string) => wallsOnSameFoundation.find((e) => e.id === id) as WallModel;
 
   const isLoopRef = useRef(false);
 
-  const elementsTriggerChange = useStore((state) => {
-    return JSON.stringify(
-      state.elements
-        .filter((e) => (e.type === ObjectType.Wall && e.foundationId === fId) || e.id === fId)
-        .map((w) => [
-          w.cx,
-          w.cy,
-          w.cz,
-          w.lx,
-          w.ly,
-          w.lz,
-          (w as WallModel).eavesLength,
-          (w as WallModel).roofId,
-          (w as WallModel).leftJoints,
-          (w as WallModel).rightJoints,
-        ]),
-    );
-  });
-
   const currentWallArray = useMemo(() => {
     for (const wid of wallsId) {
-      let wall = getElementById(wid) as WallModel;
+      let wall = getWallOnSameFoundation(wid) as WallModel;
       if (!wall) return [];
 
       const array = [];
@@ -201,7 +128,7 @@ export const useMultiCurrWallArray = (fId: string | undefined, roofId: string, w
         array.push(wall);
         if (wall.leftJoints[0]) {
           if (wall.leftJoints[0] !== startWall.id) {
-            wall = getElementById(wall.leftJoints[0]) as WallModel;
+            wall = getWallOnSameFoundation(wall.leftJoints[0]) as WallModel;
           }
           // is a loop
           else {
@@ -216,11 +143,11 @@ export const useMultiCurrWallArray = (fId: string | undefined, roofId: string, w
 
       array.reverse();
 
-      wall = getElementById(startWall.rightJoints[0]) as WallModel;
+      wall = getWallOnSameFoundation(startWall.rightJoints[0]) as WallModel;
       while (wall && (!wall.roofId || wall.roofId === roofId)) {
         array.push(wall);
         if (wall.rightJoints[0] && wall.rightJoints[0] !== startWall.id) {
-          wall = getElementById(wall.rightJoints[0]) as WallModel;
+          wall = getWallOnSameFoundation(wall.rightJoints[0]) as WallModel;
         } else {
           break;
         }
@@ -231,7 +158,7 @@ export const useMultiCurrWallArray = (fId: string | undefined, roofId: string, w
       }
     }
     return [];
-  }, [wallsId, elementsTriggerChange]);
+  }, [wallsId, wallsOnSameFoundation]);
 
   return { currentWallArray, isLoopRef };
 };

@@ -18,10 +18,8 @@ import { CanvasTexture, DoubleSide, Euler, Mesh, Raycaster, RepeatWrapping, Vect
 import {
   ComposedWall,
   useComposedWallArray,
-  useCurrWallArray,
   useIsFirstMount,
   useComposedRoofHeight,
-  useRoofHeight,
   useRoofTexture,
   useUpdateOldRoofFiles,
   useUpdateSegmentVerticesMap,

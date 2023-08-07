@@ -355,7 +355,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
   }, [currentWallArray]);
 
   // set position and rotation
-  const foundation = getElementById(parentId);
+  const foundation = useStore((state) => state.elements.find((e) => e.id === parentId)) as FoundationModel | null;
   let rotation = 0;
   if (foundation) {
     cx = foundation.cx;

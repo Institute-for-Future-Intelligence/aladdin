@@ -32,9 +32,7 @@ import { ActionType, ObjectType, ResizeHandleType, RoofHandleType, RoofTexture }
 import { RoofUtil } from './RoofUtil';
 import {
   useComposedWallArray,
-  useCurrWallArray,
   useComposedRoofHeight,
-  useRoofHeight,
   useRoofTexture,
   useUpdateOldRoofFiles,
   useUpdateSegmentVerticesMap,
