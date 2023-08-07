@@ -144,7 +144,6 @@ const AutoDeletionListener = React.memo(() => {
 
 const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoomView }: KeyboardListenerProps) => {
   const setCommonStore = useStore(Selector.set);
-  const elements = useStore(Selector.elements);
   const loggable = useStore(Selector.loggable);
   const selectNone = useStore(Selector.selectNone);
   const language = useStore(Selector.language);
@@ -470,7 +469,7 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
           },
         } as UndoableMoveInX;
         addUndoable(undoableMoveAllLeft);
-        for (const e of elements) {
+        for (const e of useStore.getState().elements) {
           if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
             updateElementCxById(e.id, e.cx + displacement);
           }
@@ -575,7 +574,7 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
           },
         } as UndoableMoveInX;
         addUndoable(undoableMoveAllRight);
-        for (const e of elements) {
+        for (const e of useStore.getState().elements) {
           if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
             updateElementCxById(e.id, e.cx + displacement);
           }
@@ -680,7 +679,7 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
           },
         } as UndoableMoveInY;
         addUndoable(undoableMoveAllUp);
-        for (const e of elements) {
+        for (const e of useStore.getState().elements) {
           if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
             updateElementCyById(e.id, e.cy + displacement);
           }
@@ -785,7 +784,7 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
           },
         } as UndoableMoveInY;
         addUndoable(undoableMoveAllDown);
-        for (const e of elements) {
+        for (const e of useStore.getState().elements) {
           if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
             updateElementCyById(e.id, e.cy + displacement);
           }
