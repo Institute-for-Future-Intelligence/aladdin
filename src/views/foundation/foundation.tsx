@@ -92,6 +92,8 @@ interface SnapTargetType {
   jointId: string | undefined;
 }
 
+export const FOUNDATION_GROUP_NAME = 'Foundation Group';
+
 const Foundation = (foundationModel: FoundationModel) => {
   const {
     id,
@@ -2984,7 +2986,7 @@ const Foundation = (foundationModel: FoundationModel) => {
     <>
       <group
         ref={groupRef}
-        name={'Foundation Group ' + id}
+        name={`${FOUNDATION_GROUP_NAME} ${id}`}
         userData={{ aabb: true }}
         position={[cx, cy, hz]}
         rotation={[0, 0, rotation[2]]}
@@ -3419,9 +3421,9 @@ const Foundation = (foundationModel: FoundationModel) => {
         {solarStructure === SolarStructure.FocusPipe && <SolarReceiverPipe foundation={foundationModel} />}
         {solarStructure === SolarStructure.FocusTower && <SolarPowerTower foundation={foundationModel} />}
         {solarStructure === SolarStructure.UpdraftTower && <SolarUpdraftTower foundation={foundationModel} />}
-      </group>
 
-      <BuildingRenderer foundationModel={foundationModel} />
+        <BuildingRenderer foundationModel={foundationModel} />
+      </group>
 
       {selected && !locked && groupMasterId === id && foundationModel && groupMasterDimension && (
         <GroupMaster

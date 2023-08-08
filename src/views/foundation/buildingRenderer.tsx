@@ -17,8 +17,10 @@ import { WallModel } from 'src/models/WallModel';
 import RoofRenderer from '../roof/roofRenderer';
 import { RoofModel } from 'src/models/RoofModel';
 
+export const BUILDING_GROUP_NAME = 'Building Group';
+
 const BuildingRenderer = ({ foundationModel }: { foundationModel: FoundationModel }) => {
-  const { id, cx, cy, lx, ly, lz, rotation } = foundationModel;
+  const { id, lx, ly, lz } = foundationModel;
 
   const isBuildingParts = (e: ElementModel) => {
     if (e.foundationId !== id) return false;
@@ -32,8 +34,10 @@ const BuildingRenderer = ({ foundationModel }: { foundationModel: FoundationMode
 
   const buildingParts = useStore((state) => state.elements.filter(isBuildingParts), shallow);
 
+  if (buildingParts.length === 0) return null;
+
   return (
-    <group name={'Building Parts'} position={[cx, cy, lz]} rotation={[0, 0, rotation[2]]}>
+    <group name={BUILDING_GROUP_NAME} position={[0, 0, lz / 2]}>
       {buildingParts.map((e) => {
         switch (e.type) {
           case ObjectType.Wall:

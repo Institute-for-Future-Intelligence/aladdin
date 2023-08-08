@@ -25,6 +25,8 @@ import { getRoofPointsOfGambrelRoof } from '../roof/flatRoof';
 import { ElementModel } from 'src/models/ElementModel';
 import { Point2 } from 'src/models/Point2';
 import { DEFAULT_POLYGONTOP } from './window';
+import { FOUNDATION_GROUP_NAME } from '../foundation/foundation';
+import { BUILDING_GROUP_NAME } from '../foundation/buildingRenderer';
 
 interface WindowHandleWrapperProps {
   id: string;
@@ -311,10 +313,17 @@ const WindowHandleWrapper = ({
       }
     }
 
-    const groupRef = useRefStore.getState().contentRef;
-    if (!windowModel || !foundationModel || !roofModel || !groupRef || !groupRef.current) return;
+    const contentRef = useRefStore.getState().contentRef;
+    if (!windowModel || !foundationModel || !roofModel || !contentRef || !contentRef.current) return;
 
-    const roofGroup = groupRef.current.children.find((obj) => obj.name.includes('Roof') && obj.name.includes(parentId));
+    const fId = foundationModel.id;
+    const foundationGroup = contentRef.current.children.find((obj) => obj.name === `${FOUNDATION_GROUP_NAME} ${fId}`);
+    if (!foundationGroup) return;
+
+    const buildingGroup = foundationGroup.children.find((obj) => obj.name === BUILDING_GROUP_NAME);
+    if (!buildingGroup) return;
+
+    const roofGroup = buildingGroup.children.find((obj) => obj.name.includes('Roof') && obj.name.includes(parentId));
     if (!roofGroup) return;
 
     const segmentGroup = roofGroup.children[0];

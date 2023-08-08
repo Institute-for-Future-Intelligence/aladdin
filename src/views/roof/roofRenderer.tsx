@@ -646,7 +646,6 @@ interface RoofRendererProps extends BuildingParts {
 
 const RoofRenderer = ({ roofModel, foundationModel }: RoofRendererProps) => {
   const removeElementById = useStore(Selector.removeElementById);
-  const setCommonStore = useStore(Selector.set);
 
   const { id, wallsId, roofType } = roofModel;
 
