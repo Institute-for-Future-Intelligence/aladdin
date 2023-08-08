@@ -114,8 +114,6 @@ const ElementsRenderer: React.FC = () => {
             return <FresnelReflector key={e.id} {...(e as FresnelReflectorModel)} />;
           case ObjectType.Heliostat:
             return <Heliostat key={e.id} {...(e as HeliostatModel)} />;
-          case ObjectType.Wall:
-            return <WallRenderer key={e.id} {...(e as WallModel)} />;
           case ObjectType.Roof:
             return <RoofRenderer key={e.id} {...(e as RoofModel)} />;
           case ObjectType.Polygon:

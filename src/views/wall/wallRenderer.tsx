@@ -3,24 +3,24 @@
  */
 
 import React from 'react';
-import { useStore } from 'src/stores/common';
 import { WallModel, WallFill } from 'src/models/WallModel';
-import { Util } from 'src/Util';
-import { Vector3 } from 'three';
 import EmptyWall from './emptyWall';
 import Wall from './wall';
 import WallMoveHandleWrapper from './wallMoveHandleWrapper';
 import WallResizeHandleWrapper from './wallResizeHandleWrapper';
 import { useUpdateOldFiles } from './hooks';
-import { ObjectType } from 'src/types';
 import { FoundationModel } from 'src/models/FoundationModel';
 
-const WallRenderer = (wallModel: WallModel) => {
+interface WallRendererProps {
+  wallModel: WallModel;
+  foundationModel: FoundationModel;
+}
+
+const WallRenderer = ({ wallModel, foundationModel }: WallRendererProps) => {
   useUpdateOldFiles(wallModel);
 
   const {
     id,
-    parentId,
     roofId,
     cx,
     cy,
@@ -41,16 +41,6 @@ const WallRenderer = (wallModel: WallModel) => {
 
   const [hx, hz] = [lx / 2, lz / 2];
 
-  const foundation = useStore((state) => {
-    for (const e of state.elements) {
-      if (e.id === parentId && e.type === ObjectType.Foundation) {
-        return e as FoundationModel;
-      }
-    }
-  });
-
-  if (!foundation) return null;
-
   const isPartial = fill === WallFill.Partial;
   const leftRoofHeight = leftJoints.length > 0 ? wallModel.leftRoofHeight : lz;
   const rightRoofHeight = rightJoints.length > 0 ? wallModel.rightRoofHeight : lz;
@@ -58,25 +48,17 @@ const WallRenderer = (wallModel: WallModel) => {
   const wallRightHeight = rightRoofHeight ?? lz;
   const realWallLeftHeight = isPartial ? Math.min(wallLeftHeight, leftTopPartialHeight) : wallLeftHeight;
   const realWallRightHeight = isPartial ? Math.min(wallRightHeight, rightTopPartialHeight) : wallRightHeight;
-
-  const wallAbsPosition = Util.wallAbsolutePosition(new Vector3(cx, cy), foundation).setZ(hz + foundation.lz);
-  const wallAbsAngle = foundation.rotation[2] + relativeAngle;
   const highLight = lx === 0;
 
   const renderWall = () => {
     if (fill === WallFill.Empty) {
       return <EmptyWall {...wallModel} />;
     }
-    return <Wall wallModel={wallModel} foundationModel={foundation} />;
+    return <Wall wallModel={wallModel} foundationModel={foundationModel} />;
   };
 
   return (
-    <group
-      name={`Wall Group ${id}`}
-      position={wallAbsPosition}
-      rotation={[0, 0, wallAbsAngle]}
-      userData={{ aabb: true }}
-    >
+    <group name={`Wall Group ${id}`} position={[cx, cy, hz]} rotation={[0, 0, relativeAngle]} userData={{ aabb: true }}>
       {renderWall()}
 
       {/* handles */}
@@ -85,9 +67,9 @@ const WallRenderer = (wallModel: WallModel) => {
           {lx > 0.5 && <WallMoveHandleWrapper ply={ly} phz={hz} />}
           <WallResizeHandleWrapper
             id={id}
-            parentLz={foundation.lz}
+            parentLz={foundationModel.lz}
             roofId={roofId}
-            absAngle={relativeAngle + foundation.rotation[2]}
+            absAngle={relativeAngle + foundationModel.rotation[2]}
             x={hx}
             z={hz}
             leftUnfilledHeight={leftUnfilledHeight}
@@ -107,4 +89,6 @@ const WallRenderer = (wallModel: WallModel) => {
   );
 };
 
-export default React.memo(WallRenderer);
+const areEqual = (prev: WallRendererProps, curr: WallRendererProps) => prev.wallModel === curr.wallModel;
+
+export default React.memo(WallRenderer, areEqual);

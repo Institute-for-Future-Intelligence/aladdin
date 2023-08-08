@@ -2590,7 +2590,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         )}
 
       {/* heat flux */}
-      {<WallHeatFlux wallModel={wallModel} foundationModel={foundationModel} />}
+      {<WallHeatFlux wallModel={wallModel} notBuilding={(foundationModel as FoundationModel).notBuilding} />}
     </>
   );
 };
@@ -2604,4 +2604,6 @@ export function getSolarPanelUnitLength(solarPanel: SolarPanelModel) {
   }
 }
 
-export default React.memo(Wall);
+const areEqual = (prev: WallProps, curr: WallProps) => prev.wallModel === curr.wallModel;
+
+export default React.memo(Wall, areEqual);

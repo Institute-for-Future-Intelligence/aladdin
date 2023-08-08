@@ -22,10 +22,10 @@ import { Euler, Vector3 } from 'three';
 
 interface HeatFluxProps {
   wallModel: WallModel;
-  foundationModel: FoundationModel;
+  notBuilding?: boolean;
 }
 
-const WallHeatFlux = ({ wallModel, foundationModel }: HeatFluxProps) => {
+const WallHeatFlux = ({ wallModel, notBuilding }: HeatFluxProps) => {
   const { id, lx, lz } = wallModel;
   const getChildrenOfType = useStore(Selector.getChildrenOfType);
   const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
@@ -39,7 +39,7 @@ const WallHeatFlux = ({ wallModel, foundationModel }: HeatFluxProps) => {
 
   const heatFluxes: Vector3[][] | undefined = useMemo(() => {
     if (!showHeatFluxes) return undefined;
-    if (foundationModel && foundationModel.notBuilding) return undefined;
+    if (notBuilding) return undefined;
     const heat = hourlyHeatExchangeArrayMap.get(id);
     if (!heat) return undefined;
     const sum = heat.reduce((a, b) => a + b, 0);
@@ -138,7 +138,7 @@ const WallHeatFlux = ({ wallModel, foundationModel }: HeatFluxProps) => {
       }
     }
     return vectors;
-  }, [lx, lz, showHeatFluxes, heatFluxScaleFactor]);
+  }, [lx, lz, showHeatFluxes, heatFluxScaleFactor, notBuilding]);
 
   if (!heatFluxes) return null;
 
