@@ -545,7 +545,7 @@ const HipRoof = ({ roofModel, foundationModel }: HipRoofProps) => {
                   foundationModel={foundationModel as FoundationModel}
                   roofType={roofType}
                   segment={segment}
-                  centroid={new Vector3(centroid2D.x, centroid2D.y, topZ)}
+                  centroid={ridgeMidPoint}
                   thickness={thickness}
                   color={topLayerColor}
                   sideColor={sideColor}

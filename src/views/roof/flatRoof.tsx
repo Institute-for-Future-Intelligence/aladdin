@@ -39,6 +39,7 @@ import { getArchedWindowShape } from '../window/archedWindow';
 import { FoundationModel } from '../../models/FoundationModel';
 import { RoofType } from '../../models/RoofModel';
 import { DEFAULT_POLYGONTOP } from '../window/window';
+import shallow from 'zustand/shallow';
 
 interface TopExtrudeProps {
   uuid?: string;
@@ -173,8 +174,9 @@ const FlatRoof = ({
 
   const { transparent, opacity } = useTransparent();
 
-  const windows = useStore((state) => state.elements).filter(
-    (e) => e.type === ObjectType.Window && e.parentId === id,
+  const windows = useStore(
+    (state) => state.elements.filter((e) => e.type === ObjectType.Window && e.parentId === id),
+    shallow,
   ) as WindowModel[];
 
   const heatFluxes: Vector3[][] | undefined = useMemo(() => {

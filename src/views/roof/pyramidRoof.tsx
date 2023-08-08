@@ -636,7 +636,7 @@ const PyramidRoof = ({ roofModel, foundationModel }: PyramidRoofProps) => {
                         foundationModel={foundationModel as FoundationModel}
                         roofType={roofType}
                         segment={segment}
-                        centroid={new Vector3(centerPoint.x, centerPoint.y, topZ)}
+                        centroid={centerPointV3}
                         thickness={thickness}
                         color={topLayerColor}
                         sideColor={sideColor}

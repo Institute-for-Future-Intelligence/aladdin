@@ -68,6 +68,7 @@ import { BufferRoofSegment, WindowData } from './roofSegment';
 import Ceiling from './ceiling';
 import { WindowModel, WindowType } from 'src/models/WindowModel';
 import { WallHeights, isRoofValid } from './gambrelRoof';
+import shallow from 'zustand/shallow';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -1424,19 +1425,23 @@ const RoofSegment = ({
     return vectors;
   }, [showHeatFluxes, heatFluxScaleFactor, centroid, points]);
 
-  const windows: WindowData[] = useStore((state) => state.elements)
-    .filter((e) => e.parentId === id && e.type === ObjectType.Window)
-    .map((e) => {
-      const w = e as WindowModel;
-      return {
-        dimension: new Vector3(w.lx, w.lz, w.ly * 2),
-        position: new Vector3(w.cx, w.cy, w.cz).sub(centroid),
-        rotation: new Euler().fromArray([...w.rotation, 'ZXY']),
-        windowType: w.windowType,
-        archHeight: w.archHeight,
-        topPosition: w.polygonTop,
-      };
-    });
+  const windows: WindowData[] = useStore(
+    (state) =>
+      state.elements
+        .filter((e) => e.parentId === id && e.type === ObjectType.Window)
+        .map((e) => {
+          const w = e as WindowModel;
+          return {
+            dimension: new Vector3(w.lx, w.lz, w.ly * 2),
+            position: new Vector3(w.cx, w.cy, w.cz).sub(centroid),
+            rotation: new Euler().fromArray([...w.rotation, 'ZXY']),
+            windowType: w.windowType,
+            archHeight: w.archHeight,
+            topPosition: w.polygonTop,
+          };
+        }),
+    shallow,
+  );
 
   useEffect(() => {
     const [wallLeft, wallRight, ridgeRight, ridgeLeft, wallLeftAfterOverhang] = points;
