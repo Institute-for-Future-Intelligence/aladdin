@@ -7,7 +7,7 @@ import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import { ObjectType } from './types';
 import { FoundationModel } from './models/FoundationModel';
-import Foundation from './views/foundation';
+import Foundation from './views/foundation/foundation';
 import { SensorModel } from './models/SensorModel';
 import Sensor from './views/sensor';
 import { CuboidModel } from './models/CuboidModel';

@@ -2,21 +2,21 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import FoundationTexture00 from '../resources/tiny_white_square.png';
-import FoundationTexture01 from '../resources/foundation_01.png';
-import FoundationTexture02 from '../resources/foundation_02.png';
-import FoundationTexture03 from '../resources/foundation_03.png';
-import FoundationTexture04 from '../resources/foundation_04.png';
-import FoundationTexture05 from '../resources/foundation_05.png';
-import FoundationTexture06 from '../resources/foundation_06.png';
-import FoundationTexture07 from '../resources/foundation_07.png';
+import FoundationTexture00 from '../../resources/tiny_white_square.png';
+import FoundationTexture01 from '../../resources/foundation_01.png';
+import FoundationTexture02 from '../../resources/foundation_02.png';
+import FoundationTexture03 from '../../resources/foundation_03.png';
+import FoundationTexture04 from '../../resources/foundation_04.png';
+import FoundationTexture05 from '../../resources/foundation_05.png';
+import FoundationTexture06 from '../../resources/foundation_06.png';
+import FoundationTexture07 from '../../resources/foundation_07.png';
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Line, Plane, Sphere } from '@react-three/drei';
 import { CanvasTexture, Euler, Group, Mesh, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
-import { useStore } from '../stores/common';
-import { useRefStore } from '../stores/commonRef';
-import { FoundationModel } from '../models/FoundationModel';
+import { useStore } from '../../stores/common';
+import { useRefStore } from '../../stores/commonRef';
+import { FoundationModel } from '../../models/FoundationModel';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import {
   ActionType,
@@ -28,7 +28,7 @@ import {
   RotateHandleType,
   SolarStructure,
   WallSide,
-} from '../types';
+} from '../../types';
 import {
   HALF_PI,
   HIGHLIGHT_HANDLE_COLOR,
@@ -42,45 +42,42 @@ import {
   TWO_PI,
   UNIT_VECTOR_POS_Z,
   ZERO_TOLERANCE,
-} from '../constants';
-import { Util } from '../Util';
-import { ElementModel } from '../models/ElementModel';
-import { SolarPanelModel } from '../models/SolarPanelModel';
-import { ParabolicTroughModel } from '../models/ParabolicTroughModel';
-import { ParabolicDishModel } from '../models/ParabolicDishModel';
-import { PolarGrid } from './polarGrid';
-import { WallModel } from '../models/WallModel';
-import RotateHandle from '../components/rotateHandle';
-import Wireframe from '../components/wireframe';
-import * as Selector from '../stores/selector';
-import { FlippedWallSide, UndoableAdd, UndoableAddWall } from '../undo/UndoableAdd';
-import { UndoableMove, UndoableMoveWall } from '../undo/UndoableMove';
-import { UndoableResize, UndoableResizeWall } from '../undo/UndoableResize';
-import { UndoableChange } from '../undo/UndoableChange';
-import { ElementGrid } from './elementGrid';
-import i18n from '../i18n/i18n';
-import { PolygonModel } from '../models/PolygonModel';
-import { Point2 } from '../models/Point2';
-import { HorizontalRuler } from './horizontalRuler';
-import { showError } from '../helpers';
-import { SolarCollector } from '../models/SolarCollector';
-import { FresnelReflectorModel } from '../models/FresnelReflectorModel';
-import SolarUpdraftTower from './solarUpdraftTower';
-import SolarPowerTower from './solarPowerTower';
-import SolarReceiverPipe from './solarReceiverPipe';
-import { UndoablePaste } from '../undo/UndoablePaste';
+} from '../../constants';
+import { Util } from '../../Util';
+import { ElementModel } from '../../models/ElementModel';
+import { SolarPanelModel } from '../../models/SolarPanelModel';
+import { ParabolicTroughModel } from '../../models/ParabolicTroughModel';
+import { ParabolicDishModel } from '../../models/ParabolicDishModel';
+import { PolarGrid } from '../polarGrid';
+import { WallModel } from '../../models/WallModel';
+import RotateHandle from '../../components/rotateHandle';
+import Wireframe from '../../components/wireframe';
+import * as Selector from '../../stores/selector';
+import { FlippedWallSide, UndoableAdd, UndoableAddWall } from '../../undo/UndoableAdd';
+import { UndoableMove, UndoableMoveWall } from '../../undo/UndoableMove';
+import { UndoableResize, UndoableResizeWall } from '../../undo/UndoableResize';
+import { UndoableChange } from '../../undo/UndoableChange';
+import { ElementGrid } from '../elementGrid';
+import i18n from '../../i18n/i18n';
+import { PolygonModel } from '../../models/PolygonModel';
+import { Point2 } from '../../models/Point2';
+import { HorizontalRuler } from '../horizontalRuler';
+import { showError } from '../../helpers';
+import { SolarCollector } from '../../models/SolarCollector';
+import { FresnelReflectorModel } from '../../models/FresnelReflectorModel';
+import SolarUpdraftTower from '../solarUpdraftTower';
+import SolarPowerTower from '../solarPowerTower';
+import SolarReceiverPipe from '../solarReceiverPipe';
+import { UndoablePaste } from '../../undo/UndoablePaste';
 import GroupMaster from 'src/components/groupMaster';
-import SolarPanelOnRoof from './solarPanel/solarPanelOnRoof';
-import { useHandleSize } from './wall/hooks';
+import { useHandleSize } from '../wall/hooks';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import { InnerCommonState } from 'src/stores/InnerCommonState';
 import produce from 'immer';
-import { useDataStore } from '../stores/commonData';
-import { useGroupMaster } from './hooks';
-import { WindowModel } from 'src/models/WindowModel';
-import Window from './window/window';
+import { useDataStore } from '../../stores/commonData';
+import { useGroupMaster } from '../hooks';
 import { debounce } from 'lodash';
-import { RoofModel, RoofType } from 'src/models/RoofModel';
+import BuildingRenderer from './buildingRenderer';
 
 interface WallAuxiliaryType {
   show: boolean;
@@ -2983,20 +2980,6 @@ const Foundation = (foundationModel: FoundationModel) => {
 
   const opacity = groundImage ? (orthographic ? 0.25 : 0.75) : 1;
 
-  const elements = useStore(Selector.elements);
-
-  const isValidOnRoof = (e: ElementModel) => {
-    return (
-      e.foundationId === id &&
-      ((e.type === ObjectType.SolarPanel && (e as SolarPanelModel).parentType === ObjectType.Roof) ||
-        (e.type === ObjectType.Window && (e as WindowModel).parentType === ObjectType.Roof))
-    );
-  };
-
-  const elementsOnBuilding = useMemo(() => {
-    return elements.filter((e) => isValidOnRoof(e));
-  }, [elements]);
-
   return (
     <>
       <group
@@ -3438,25 +3421,7 @@ const Foundation = (foundationModel: FoundationModel) => {
         {solarStructure === SolarStructure.UpdraftTower && <SolarUpdraftTower foundation={foundationModel} />}
       </group>
 
-      <group name={'Elements On Building'} position={[cx, cy, lz]} rotation={[0, 0, rotation[2]]}>
-        {elementsOnBuilding.map((e) => {
-          switch (e.type) {
-            case ObjectType.SolarPanel:
-              return (
-                <SolarPanelOnRoof
-                  key={e.id}
-                  {...(e as SolarPanelModel)}
-                  cx={e.cx * lx}
-                  cy={e.cy * ly}
-                  cz={e.cz}
-                  foundationModel={foundationModel}
-                />
-              );
-            case ObjectType.Window:
-              return <Window key={e.id} {...(e as WindowModel)} cz={e.cz} />;
-          }
-        })}
-      </group>
+      <BuildingRenderer foundationModel={foundationModel} />
 
       {selected && !locked && groupMasterId === id && foundationModel && groupMasterDimension && (
         <GroupMaster
