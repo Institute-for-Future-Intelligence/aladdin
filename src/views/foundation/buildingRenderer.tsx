@@ -63,4 +63,4 @@ const BuildingRenderer = ({ foundationModel }: { foundationModel: FoundationMode
   );
 };
 
-export default BuildingRenderer;
+export default React.memo(BuildingRenderer);
