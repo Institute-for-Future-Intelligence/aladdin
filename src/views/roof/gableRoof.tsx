@@ -62,7 +62,7 @@ import {
 import { ConvexGeometry } from 'src/js/ConvexGeometry';
 import { CSG } from 'three-csg-ts';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
-import { FoundationModel } from '../../models/FoundationModel';
+import { BuildingParts, FoundationModel } from '../../models/FoundationModel';
 import { useDataStore } from '../../stores/commonData';
 import { BufferRoofSegment, WindowData } from './roofSegment';
 import Ceiling from './ceiling';
@@ -298,13 +298,16 @@ const GableRoofWireframe = React.memo(({ roofSegments, thickness, lineWidth, lin
   );
 });
 
-const GableRoof = (roofModel: GableRoofModel) => {
+interface GableRoofProps extends BuildingParts {
+  roofModel: GableRoofModel;
+}
+
+const GableRoof = ({ roofModel, foundationModel }: GableRoofProps) => {
   let {
     id,
     parentId,
     cx,
     cy,
-    cz,
     lz,
     wallsId,
     selected,
@@ -313,7 +316,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
     textureType,
     color = 'white',
     sideColor = 'white',
-    thickness,
+    thickness = 0.2,
     locked,
     lineColor = 'black',
     lineWidth = 0.2,
@@ -333,23 +336,6 @@ const GableRoof = (roofModel: GableRoofModel) => {
   const { gl, camera } = useThree();
   const ray = useMemo(() => new Raycaster(), []);
   const mouse = useMemo(() => new Vector2(), []);
-
-  // set position and rotation
-  const foundation = useStore((state) => {
-    for (const e of state.elements) {
-      if (e.id === parentId && e.type === ObjectType.Foundation) {
-        return e as FoundationModel;
-      }
-    }
-    return null;
-  });
-  let rotation = 0;
-  if (foundation) {
-    cx = foundation.cx;
-    cy = foundation.cy;
-    cz = foundation.lz;
-    rotation = foundation.rotation[2];
-  }
 
   const composedWalls = useComposedWallArray(wallsId[0], parentId);
 
@@ -375,7 +361,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
 
   useEffect(() => {
     if (!isFirstMount) {
-      updateRooftopElements(foundation, id, roofSegments, centroid, topZ, thickness);
+      updateRooftopElements(foundationModel, id, roofSegments, centroid, topZ, thickness);
     }
   }, [updateElementOnRoofFlag, topZ, thickness, ridgeLeftPoint, ridgeRightPoint, isFirstMount]);
 
@@ -889,7 +875,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
       removeElementById(id, false, false, true);
     } else {
       updateWalls(composedWalls, topZ, ridgeLeftPoint, ridgeRightPoint);
-      updateRooftopElements(foundation, id, roofSegments, centroid, topZ, thickness);
+      updateRooftopElements(foundationModel, id, roofSegments, centroid, topZ, thickness);
     }
     if (useStore.getState().addedRoofId === id) {
       useStore.getState().setAddedRoofId(null);
@@ -953,7 +939,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
   // used for move rooftop elements between different roofs, passed to handlePointerMove in roofRenderer
   const userData: RoofSegmentGroupUserData = {
     roofId: id,
-    foundation: foundation,
+    foundation: foundationModel,
     centroid: centroid,
     roofSegments: roofSegments,
   };
@@ -961,14 +947,14 @@ const GableRoof = (roofModel: GableRoofModel) => {
   if (composedWalls === null || composedWalls.length !== 4) return null;
 
   return (
-    <group position={[cx, cy, cz]} rotation={[0, 0, rotation]} name={`Gable Roof Group ${id}`}>
+    <group name={`Gable Roof Group ${id}`}>
       {/* roof segments group */}
       <group
         name={`Gable Roof Segments Group ${id}`}
         position={[centroid.x, centroid.y, centroid.z]}
         userData={userData}
         onPointerDown={(e) => {
-          handlePointerDown(e, id, foundation, roofSegments, centroid);
+          handlePointerDown(e, id, foundationModel, roofSegments, centroid);
         }}
         onPointerMove={(e) => {
           handlePointerMove(e, id);
@@ -1001,7 +987,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
               glassTint={glassTint}
               opacity={opacity}
               relativeAngle={i === 0 ? composedWalls[0].relativeAngle : composedWalls[2].relativeAngle}
-              foundation={foundation}
+              foundation={foundationModel}
             />
           );
         })}
@@ -1058,8 +1044,8 @@ const GableRoof = (roofModel: GableRoofModel) => {
               oldRiseRef.current = rise;
               setShowIntersectionPlane(true);
               intersectionPlanePosition.set(ridgeMidPoint.x, ridgeMidPoint.y, topZ);
-              if (foundation) {
-                const r = -Math.atan2(camera.position.x - cx, camera.position.y - cy) - foundation.rotation[2];
+              if (foundationModel) {
+                const r = -Math.atan2(camera.position.x - cx, camera.position.y - cy) - foundationModel.rotation[2];
                 intersectionPlaneRotation.set(-HALF_PI, 0, r, 'ZXY');
               }
               setRoofHandleType(RoofHandleType.Mid);
@@ -1087,7 +1073,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
               oldRidgeRight.current = ridgeRightPoint[0];
               setShowIntersectionPlane(true);
               intersectionPlanePosition.set(ridgeLeftPointV3.x, ridgeLeftPointV3.y, topZ);
-              if (foundation && composedWalls && composedWalls[3]) {
+              if (foundationModel && composedWalls && composedWalls[3]) {
                 const dir = new Vector3().subVectors(ridgeLeftPointV3, camera.position).normalize();
                 const rX = Math.atan2(dir.z, Math.hypot(dir.x, dir.y));
                 const rZ = composedWalls[3].relativeAngle;
@@ -1105,7 +1091,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
               oldRidgeRight.current = ridgeRightPoint[0];
               setShowIntersectionPlane(true);
               intersectionPlanePosition.set(ridgeRightPointV3.x, ridgeRightPointV3.y, topZ);
-              if (foundation && composedWalls && composedWalls[1]) {
+              if (foundationModel && composedWalls && composedWalls[1]) {
                 const dir = new Vector3().subVectors(ridgeRightPointV3, camera.position).normalize();
                 const rX = Math.atan2(dir.z, Math.hypot(dir.x, dir.y));
                 const rZ = composedWalls[1].relativeAngle;
@@ -1131,7 +1117,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
             if (
               intersectionPlaneRef.current &&
               isPointerDownRef.current &&
-              foundation &&
+              foundationModel &&
               composedWalls &&
               composedWalls.length === 4
             ) {
@@ -1146,7 +1132,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
                   case RoofHandleType.Left: {
                     const wall = composedWalls[3];
                     if (wall) {
-                      let x = getRelPos(foundation, wall, point);
+                      let x = getRelPos(foundationModel, wall, point);
                       if (Math.abs(x) >= 0.45 && Math.abs(x) < 0.5) {
                         x = 0.45 * Math.sign(x);
                       }
@@ -1167,7 +1153,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
                   case RoofHandleType.Right: {
                     const wall = composedWalls[1];
                     if (wall) {
-                      let x = getRelPos(foundation, wall, point);
+                      let x = getRelPos(foundationModel, wall, point);
                       if (Math.abs(x) >= 0.45 && Math.abs(x) < 0.5) {
                         x = 0.45 * Math.sign(x);
                       }
@@ -1188,9 +1174,9 @@ const GableRoof = (roofModel: GableRoofModel) => {
                   case RoofHandleType.Mid: {
                     let newRise: number;
                     if (isShed) {
-                      newRise = Math.max(0, point.z - foundation.lz - 0.3 - highestWallHeight);
+                      newRise = Math.max(0, point.z - foundationModel.lz - 0.3 - highestWallHeight);
                     } else {
-                      newRise = point.z - foundation.lz - 0.3 - highestWallHeight;
+                      newRise = point.z - foundationModel.lz - 0.3 - highestWallHeight;
                     }
                     const newTopZ = highestWallHeight + newRise;
                     const gabledWallsHeightsMap = getGabledWallsHeightsMap(
@@ -1207,7 +1193,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
                     break;
                   }
                 }
-                updateRooftopElements(foundation, id, roofSegments, centroid, topZ, thickness);
+                updateRooftopElements(foundationModel, id, roofSegments, centroid, topZ, thickness);
               }
             }
           }}
@@ -1233,7 +1219,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
             setRoofHandleType(RoofHandleType.Null);
             useRefStore.getState().setEnableOrbitController(true);
             useStore.getState().updateRoofRiseById(id, riseInnerState, topZ + roofModel.thickness);
-            updateRooftopElements(foundation, id, roofSegments, centroid, topZ, thickness);
+            updateRooftopElements(foundationModel, id, roofSegments, centroid, topZ, thickness);
           }}
         >
           <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0.5} />
@@ -1669,4 +1655,4 @@ const RoofSegment = ({
   );
 };
 
-export default React.memo(GableRoof);
+export default React.memo(GableRoof, (prev, curr) => prev.roofModel === curr.roofModel);

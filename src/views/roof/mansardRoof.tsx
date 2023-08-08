@@ -61,7 +61,7 @@ import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
 import Ceiling from './ceiling';
 import FlatRoof, { TopExtrude } from './flatRoof';
-import { FoundationModel } from '../../models/FoundationModel';
+import { BuildingParts, FoundationModel } from '../../models/FoundationModel';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -116,20 +116,22 @@ const MansardRoofWireframe = React.memo(({ roofSegments, thickness, lineWidth, l
   );
 });
 
-const MansardRoof = (roofModel: MansardRoofModel) => {
+interface MansardRoofProps extends BuildingParts {
+  roofModel: MansardRoofModel;
+}
+
+const MansardRoof = ({ roofModel, foundationModel }: MansardRoofProps) => {
   let {
-    parentId,
     id,
     wallsId,
     cx,
     cy,
-    cz,
     lz,
     selected,
     textureType,
     color = 'white',
     sideColor = 'white',
-    thickness,
+    thickness = 0.2,
     locked,
     lineColor = 'black',
     lineWidth = 0.2,
@@ -170,22 +172,6 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
   const { gl, camera } = useThree();
 
   const isFlat = riseInnerState < 0.01;
-
-  const foundation = useStore((state) => {
-    for (const e of state.elements) {
-      if (e.id === parentId && e.type === ObjectType.Foundation) {
-        return e;
-      }
-    }
-    return null;
-  });
-  let rotationZ = 0;
-  if (foundation) {
-    cx = foundation.cx;
-    cy = foundation.cy;
-    cz = foundation.lz;
-    rotationZ = foundation.rotation[2];
-  }
 
   const getWallPoint2 = (wallArray: WallModel[]) => {
     const arr: Point2[] = [];
@@ -507,7 +493,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
 
   useEffect(() => {
     if (!isFirstMountRef.current) {
-      updateRooftopElements(foundation, id, roofSegments, centroid, topZ, thickness);
+      updateRooftopElements(foundationModel, id, roofSegments, centroid, topZ, thickness);
     }
   }, [updateElementOnRoofFlag, topZ, thickness, currentWallArray]);
 
@@ -628,8 +614,8 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
           if (t) {
             // obtain the bounding rectangle
             const segmentVertices = updateSegmentVertices();
-            if (segmentVertices && segmentVertices.length > 0 && foundation) {
-              const euler = new Euler(0, 0, foundation.rotation[2], 'ZYX');
+            if (segmentVertices && segmentVertices.length > 0 && foundationModel) {
+              const euler = new Euler(0, 0, foundationModel.rotation[2], 'ZYX');
               let minX = Number.MAX_VALUE;
               let minY = Number.MAX_VALUE;
               let maxX = -Number.MAX_VALUE;
@@ -650,7 +636,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
               t.wrapT = t.wrapS = RepeatWrapping;
               t.offset.set(-minX / dx, -minY / dy);
               t.center.set(vcx / dx, vcy / dy);
-              t.rotation = -foundation.rotation[2];
+              t.rotation = -foundationModel.rotation[2];
               t.repeat.set(1 / dx, 1 / dy);
             }
             setFlatHeatmapTexture(t);
@@ -664,10 +650,10 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
           if (heatmap) {
             const t = Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5);
             if (t) {
-              if (i === n - 1 && foundation) {
+              if (i === n - 1 && foundationModel) {
                 // FIXME: I have no idea why the top heatmap needs to be rotated as follows
                 t.center.set(0.5, 0.5);
-                t.rotation = -foundation.rotation[2];
+                t.rotation = -foundationModel.rotation[2];
               }
               textures.push(t);
             }
@@ -767,7 +753,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
 
   const heatFluxes: Vector3[][] | undefined = useMemo(() => {
     if (!showHeatFluxes) return undefined;
-    if (foundation && (foundation as FoundationModel).notBuilding) return undefined;
+    if (foundationModel && (foundationModel as FoundationModel).notBuilding) return undefined;
     const heat = hourlyHeatExchangeArrayMap.get(id + '-' + roofSegments.length);
     if (!heat) return undefined;
     const sum = heat.reduce((a, b) => a + b, 0);
@@ -844,7 +830,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
   // used for move rooftop elements between different roofs, passed to handlePointerMove in roofRenderer
   const userData: RoofSegmentGroupUserData = {
     roofId: id,
-    foundation: foundation,
+    foundation: foundationModel,
     centroid: centroid,
     roofSegments: roofSegments,
   };
@@ -870,13 +856,13 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
   const castShadow = shadowEnabled && !transparent;
 
   return (
-    <group position={[cx, cy, cz]} rotation={[0, 0, rotationZ]} name={`Mansard Roof Group ${id}`}>
+    <group name={`Mansard Roof Group ${id}`}>
       <group
         name={`Mansard Roof Segments Group ${id}`}
         position={[centroid.x, centroid.y, centroid.z]}
         userData={userData}
         onPointerDown={(e) => {
-          handlePointerDown(e, id, foundation, roofSegments, centroid);
+          handlePointerDown(e, id, foundationModel, roofSegments, centroid);
         }}
         onPointerMove={(e) => {
           handlePointerMove(e, id);
@@ -891,7 +877,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
         {isFlat ? (
           <FlatRoof
             id={id}
-            foundationModel={foundation as FoundationModel}
+            foundationModel={foundationModel as FoundationModel}
             roofType={roofType}
             roofSegments={roofSegments}
             center={new Vector3(centroid.x, centroid.y, topZ)}
@@ -911,7 +897,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
                   id={id}
                   key={index}
                   index={index}
-                  foundationModel={foundation as FoundationModel}
+                  foundationModel={foundationModel as FoundationModel}
                   roofType={roofType}
                   segment={segment}
                   centroid={centroid}
@@ -994,8 +980,8 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
               oldRiseRef.current = rise;
               setEnableIntersectionPlane(true);
               intersectionPlanePosition.set(centroid.x, centroid.y, topZ);
-              if (foundation) {
-                const r = -Math.atan2(camera.position.x - cx, camera.position.y - cy) - foundation.rotation[2];
+              if (foundationModel) {
+                const r = -Math.atan2(camera.position.x - cx, camera.position.y - cy) - foundationModel.rotation[2];
                 intersectionPlaneRotation.set(-HALF_PI, 0, r, 'ZXY');
               }
               setRoofHandleType(RoofHandleType.Top);
@@ -1056,25 +1042,25 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
             if (intersectionPlaneRef.current && isPointerDownRef.current) {
               setRayCast(e);
               const intersects = ray.intersectObjects([intersectionPlaneRef.current]);
-              if (intersects[0] && foundation) {
+              if (intersects[0] && foundationModel) {
                 const pointer = intersects[0].point;
                 if (pointer.z < 0.001) {
                   return;
                 }
                 switch (roofHandleType) {
                   case RoofHandleType.Top: {
-                    const newRise = Math.max(0, pointer.z - foundation.lz - 0.6 - highestWallHeight);
+                    const newRise = Math.max(0, pointer.z - foundationModel.lz - 0.6 - highestWallHeight);
                     setRiseInnerState(newRise);
                     // the vertical ruler needs to display the latest rise when the handle is being dragged
                     useStore.getState().updateRoofRiseById(id, riseInnerState, topZ + roofModel.thickness);
                     break;
                   }
                   case RoofHandleType.Ridge: {
-                    if (foundation && ridgeHandleIndex !== null) {
+                    if (foundationModel && ridgeHandleIndex !== null) {
                       const p = pointer
                         .clone()
-                        .applyEuler(new Euler(0, 0, foundation.rotation[2]))
-                        .sub(new Vector3(foundation.cx, foundation.cy))
+                        .applyEuler(new Euler(0, 0, foundationModel.rotation[2]))
+                        .sub(new Vector3(foundationModel.cx, foundationModel.cy))
                         .setZ(0);
 
                       const wallPoint = getWallPointFromHandleIdx(ridgeHandleIndex);
@@ -1090,7 +1076,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
                     break;
                   }
                 }
-                updateRooftopElements(foundation, id, roofSegments, centroid, topZ, thickness);
+                updateRooftopElements(foundationModel, id, roofSegments, centroid, topZ, thickness);
               }
             }
           }}
@@ -1115,7 +1101,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
                 }
               }
             });
-            updateRooftopElements(foundation, id, roofSegments, centroid, topZ, thickness);
+            updateRooftopElements(foundationModel, id, roofSegments, centroid, topZ, thickness);
             isPointerDownRef.current = false;
             setEnableIntersectionPlane(false);
             setRoofHandleType(RoofHandleType.Null);
@@ -1158,4 +1144,4 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
   );
 };
 
-export default React.memo(MansardRoof);
+export default React.memo(MansardRoof, (prev, curr) => prev.roofModel === curr.roofModel);

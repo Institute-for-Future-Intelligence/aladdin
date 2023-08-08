@@ -41,7 +41,7 @@ import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
 import Ceiling from './ceiling';
 import FlatRoof from './flatRoof';
-import { FoundationModel } from '../../models/FoundationModel';
+import { BuildingParts, FoundationModel } from '../../models/FoundationModel';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -84,20 +84,22 @@ const PyramidRoofWireframe = React.memo(({ roofSegments, thickness, lineWidth, l
   );
 });
 
-const PyramidRoof = (roofModel: PyramidRoofModel) => {
+interface PyramidRoofProps extends BuildingParts {
+  roofModel: PyramidRoofModel;
+}
+
+const PyramidRoof = ({ roofModel, foundationModel }: PyramidRoofProps) => {
   let {
     cx,
     cy,
-    cz,
     lz,
     id,
-    parentId,
     wallsId,
     selected,
     textureType,
     color = 'white',
     sideColor = 'white',
-    thickness,
+    thickness = 0.2,
     locked,
     lineWidth = 0.2,
     lineColor = 'black',
@@ -111,7 +113,6 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
   const texture = useRoofTexture(textureType);
 
   const setCommonStore = useStore(Selector.set);
-  const getElementById = useStore(Selector.getElementById);
   const removeElementById = useStore(Selector.removeElementById);
   const updateRoofFlag = useStore(Selector.updateRoofFlag);
 
@@ -355,13 +356,11 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
   }, [currentWallArray]);
 
   // set position and rotation
-  const foundation = useStore((state) => state.elements.find((e) => e.id === parentId)) as FoundationModel | null;
   let rotation = 0;
-  if (foundation) {
-    cx = foundation.cx;
-    cy = foundation.cy;
-    cz = foundation.lz;
-    rotation = foundation.rotation[2];
+  if (foundationModel) {
+    cx = foundationModel.cx;
+    cy = foundationModel.cy;
+    rotation = foundationModel.rotation[2];
 
     const r = -Math.atan2(camera.position.x - cx, camera.position.y - cy) - rotation;
     intersectionPlanePosition.set(centerPoint.x, centerPoint.y, topZ);
@@ -411,7 +410,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
             }
           });
         }
-        updateRooftopElements(foundation, id, roofSegments, centerPointV3, topZ, thickness);
+        updateRooftopElements(foundationModel, id, roofSegments, centerPointV3, topZ, thickness);
       } else {
         removeElementById(id, false, false, true);
       }
@@ -422,7 +421,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
 
   useEffect(() => {
     if (!isFirstMountRef.current) {
-      updateRooftopElements(foundation, id, roofSegments, centerPointV3, topZ, thickness);
+      updateRooftopElements(foundationModel, id, roofSegments, centerPointV3, topZ, thickness);
     }
   }, [updateElementOnRoofFlag, topZ, thickness]);
 
@@ -482,8 +481,8 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
           if (t) {
             // obtain the bounding rectangle
             const segmentVertices = updateSegmentVertices();
-            if (segmentVertices && segmentVertices.length > 0 && foundation) {
-              const euler = new Euler(0, 0, foundation.rotation[2], 'ZYX');
+            if (segmentVertices && segmentVertices.length > 0 && foundationModel) {
+              const euler = new Euler(0, 0, foundationModel.rotation[2], 'ZYX');
               let minX = Number.MAX_VALUE;
               let minY = Number.MAX_VALUE;
               let maxX = -Number.MAX_VALUE;
@@ -504,7 +503,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
               t.wrapT = t.wrapS = RepeatWrapping;
               t.offset.set(-minX / dx, -minY / dy);
               t.center.set(vcx / dx, vcy / dy);
-              t.rotation = -foundation.rotation[2];
+              t.rotation = -foundationModel.rotation[2];
               t.repeat.set(1 / dx, 1 / dy);
             }
             setFlatHeatmapTexture(t);
@@ -580,7 +579,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
   // used for move rooftop elements between different roofs, passed to handlePointerMove in roofRenderer
   const userData: RoofSegmentGroupUserData = {
     roofId: id,
-    foundation: foundation,
+    foundation: foundationModel,
     centroid: centerPointV3,
     roofSegments: roofSegments,
   };
@@ -588,14 +587,14 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
   const topLayerColor = textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white';
 
   return (
-    <group position={[cx, cy, cz]} rotation={[0, 0, rotation]} name={`Pyramid Roof Group ${id}`}>
+    <group name={`Pyramid Roof Group ${id}`}>
       {/* roof segments group */}
       <group
         name={`Pyramid Roof Segments Group ${id}`}
         userData={userData}
         position={[centerPoint.x, centerPoint.y, topZ]}
         onPointerDown={(e) => {
-          handlePointerDown(e, id, foundation, roofSegments, centerPointV3);
+          handlePointerDown(e, id, foundationModel, roofSegments, centerPointV3);
         }}
         onPointerMove={(e) => {
           handlePointerMove(e, id);
@@ -610,7 +609,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
         {isFlatRoof ? (
           <FlatRoof
             id={id}
-            foundationModel={foundation as FoundationModel}
+            foundationModel={foundationModel as FoundationModel}
             roofType={roofType}
             roofSegments={roofSegments}
             center={centerPointV3}
@@ -634,7 +633,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
                       <RoofSegment
                         id={id}
                         index={index}
-                        foundationModel={foundation as FoundationModel}
+                        foundationModel={foundationModel as FoundationModel}
                         roofType={roofType}
                         segment={segment}
                         centroid={new Vector3(centerPoint.x, centerPoint.y, topZ)}
@@ -703,7 +702,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
           rotation={intersectionPlaneRotation}
           position={intersectionPlanePosition}
           onPointerMove={(e) => {
-            if (intersectionPlaneRef.current && isPointerDownRef.current && foundation) {
+            if (intersectionPlaneRef.current && isPointerDownRef.current && foundationModel) {
               setRayCast(e);
               const intersects = ray.intersectObjects([intersectionPlaneRef.current]);
               if (intersects[0]) {
@@ -711,10 +710,10 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
                 if (point.z < 0.001) {
                   return;
                 }
-                const newRise = Math.max(0, point.z - foundation.lz - 0.3 - highestWallHeight);
+                const newRise = Math.max(0, point.z - foundationModel.lz - 0.3 - highestWallHeight);
                 setRiseInnerState(newRise);
                 updateRooftopElements(
-                  foundation,
+                  foundationModel,
                   id,
                   roofSegments,
                   centerPointV3,
@@ -731,7 +730,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
             addUndoableResizeRoofRise(id, oldRiseRef.current, riseInnerState);
             setShowIntersectionPlane(false);
             useRefStore.getState().setEnableOrbitController(true);
-            updateRooftopElements(foundation, id, roofSegments, centerPointV3, topZ, thickness);
+            updateRooftopElements(foundationModel, id, roofSegments, centerPointV3, topZ, thickness);
             isPointerDownRef.current = false;
           }}
         />
@@ -740,4 +739,4 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
   );
 };
 
-export default React.memo(PyramidRoof);
+export default React.memo(PyramidRoof, (prev, curr) => prev.roofModel === curr.roofModel);

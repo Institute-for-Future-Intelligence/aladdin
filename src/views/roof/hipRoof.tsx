@@ -43,7 +43,7 @@ import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
 import Ceiling from './ceiling';
 import FlatRoof from './flatRoof';
-import { FoundationModel } from '../../models/FoundationModel';
+import { BuildingParts, FoundationModel } from '../../models/FoundationModel';
 
 const HipRoofWireframe = React.memo(({ roofSegments, thickness, lineWidth, lineColor }: RoofWireframeProps) => {
   if (roofSegments.length === 0) {
@@ -85,13 +85,16 @@ const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
 const zVector3 = new Vector3(0, 0, 1);
 
-const HipRoof = (roofModel: HipRoofModel) => {
+interface HipRoofProps extends BuildingParts {
+  roofModel: HipRoofModel;
+}
+
+const HipRoof = ({ roofModel, foundationModel }: HipRoofProps) => {
   let {
     id,
     parentId,
     cx,
     cy,
-    cz,
     lz,
     wallsId,
     leftRidgeLength,
@@ -100,7 +103,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
     textureType,
     color = 'white',
     sideColor = 'white',
-    thickness,
+    thickness = 0.2,
     locked,
     lineColor = 'black',
     lineWidth = 0.2,
@@ -108,29 +111,11 @@ const HipRoof = (roofModel: HipRoofModel) => {
     rise = lz,
     ceiling = false,
   } = roofModel;
-  // color = '#fb9e00';
 
   const getElementById = useStore(Selector.getElementById);
   const setCommonStore = useStore(Selector.set);
   const removeElementById = useStore(Selector.removeElementById);
   const updateElementOnRoofFlag = useStore(Selector.updateElementOnRoofFlag);
-
-  // set position and rotation
-  const foundation = useStore((state) => {
-    for (const e of state.elements) {
-      if (e.id === parentId && e.type === ObjectType.Foundation) {
-        return e;
-      }
-    }
-    return null;
-  });
-  let rotation = 0;
-  if (foundation) {
-    cx = foundation.cx;
-    cy = foundation.cy;
-    cz = foundation.lz;
-    rotation = foundation.rotation[2];
-  }
 
   const composedWalls = useComposedWallArray(wallsId[0], parentId);
   const texture = useRoofTexture(textureType);
@@ -168,7 +153,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
 
   useEffect(() => {
     if (!isFirstMount) {
-      updateRooftopElements(foundation, id, roofSegments, ridgeMidPoint, topZ, thickness);
+      updateRooftopElements(foundationModel, id, roofSegments, ridgeMidPoint, topZ, thickness);
     }
   }, [updateElementOnRoofFlag, topZ, thickness, isFirstMount]);
 
@@ -385,7 +370,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
             }
           });
         }
-        updateRooftopElements(foundation, id, roofSegments, ridgeMidPoint, topZ, thickness);
+        updateRooftopElements(foundationModel, id, roofSegments, ridgeMidPoint, topZ, thickness);
       }
     }
   }, [composedWalls, isFirstMount]);
@@ -470,8 +455,8 @@ const HipRoof = (roofModel: HipRoofModel) => {
           if (t) {
             // obtain the bounding rectangle
             const segmentVertices = updateSegmentVertices();
-            if (segmentVertices && segmentVertices.length > 0 && foundation) {
-              const euler = new Euler(0, 0, foundation.rotation[2], 'ZYX');
+            if (segmentVertices && segmentVertices.length > 0 && foundationModel) {
+              const euler = new Euler(0, 0, foundationModel.rotation[2], 'ZYX');
               let minX = Number.MAX_VALUE;
               let minY = Number.MAX_VALUE;
               let maxX = -Number.MAX_VALUE;
@@ -492,7 +477,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
               t.wrapT = t.wrapS = RepeatWrapping;
               t.offset.set(-minX / dx, -minY / dy);
               t.center.set(vcx / dx, vcy / dy);
-              t.rotation = -foundation.rotation[2];
+              t.rotation = -foundationModel.rotation[2];
               t.repeat.set(1 / dx, 1 / dy);
             }
             setFlatHeatmapTexture(t);
@@ -505,7 +490,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
   // used for move rooftop elements between different roofs, passed to handlePointerMove in roofRenderer
   const userData: RoofSegmentGroupUserData = {
     roofId: id,
-    foundation: foundation,
+    foundation: foundationModel,
     centroid: ridgeMidPoint,
     roofSegments: roofSegments,
   };
@@ -514,14 +499,14 @@ const HipRoof = (roofModel: HipRoofModel) => {
   if (composedWalls === null || composedWalls.length !== 4) return null;
 
   return (
-    <group position={[cx, cy, cz]} rotation={[0, 0, rotation]} name={`Hip Roof Group ${id}`}>
+    <group name={`Hip Roof Group ${id}`}>
       {/* roof segment group */}
       <group
         name={`Hip Roof Segments Group ${id}`}
         position={[centroid2D.x, centroid2D.y, topZ]}
         userData={userData}
         onPointerDown={(e) => {
-          handlePointerDown(e, id, foundation, roofSegments, ridgeMidPoint);
+          handlePointerDown(e, id, foundationModel, roofSegments, ridgeMidPoint);
         }}
         onPointerMove={(e) => {
           handlePointerMove(e, id);
@@ -536,7 +521,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
         {isFlat ? (
           <FlatRoof
             id={id}
-            foundationModel={foundation as FoundationModel}
+            foundationModel={foundationModel as FoundationModel}
             roofType={roofType}
             roofSegments={roofSegments}
             center={new Vector3(centroid2D.x, centroid2D.y, topZ)}
@@ -557,7 +542,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
                   id={id}
                   key={index}
                   index={index}
-                  foundationModel={foundation as FoundationModel}
+                  foundationModel={foundationModel as FoundationModel}
                   roofType={roofType}
                   segment={segment}
                   centroid={new Vector3(centroid2D.x, centroid2D.y, topZ)}
@@ -592,7 +577,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
               isPointerDownRef.current = true;
               setEnableIntersectionPlane(true);
               intersectionPlanePosition.set(ridgeLeftPoint.x, ridgeLeftPoint.y, topZ);
-              if (foundation && composedWalls[0]) {
+              if (foundationModel && composedWalls[0]) {
                 const dir = useStore.getState().cameraDirection;
                 const rX = Math.atan2(dir.z, dir.y);
                 const rZ = composedWalls[0].relativeAngle;
@@ -611,8 +596,8 @@ const HipRoof = (roofModel: HipRoofModel) => {
               oldRiseRef.current = rise;
               setEnableIntersectionPlane(true);
               intersectionPlanePosition.set(ridgeMidPoint.x, ridgeMidPoint.y, topZ);
-              if (foundation) {
-                const r = -Math.atan2(camera.position.x - cx, camera.position.y - cy) - foundation.rotation[2];
+              if (foundationModel) {
+                const r = -Math.atan2(camera.position.x - cx, camera.position.y - cy) - foundationModel.rotation[2];
                 intersectionPlaneRotation.set(-HALF_PI, 0, r, 'ZXY');
               }
               setRoofHandleType(RoofHandleType.Mid);
@@ -638,7 +623,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
               isPointerDownRef.current = true;
               setEnableIntersectionPlane(true);
               intersectionPlanePosition.set(ridgeRightPoint.x, ridgeRightPoint.y, topZ);
-              if (foundation && composedWalls[0]) {
+              if (foundationModel && composedWalls[0]) {
                 const dir = useStore.getState().cameraDirection;
                 const rX = Math.atan2(dir.z, dir.y);
                 const rZ = composedWalls[0].relativeAngle;
@@ -664,7 +649,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
             if (intersectionPlaneRef.current && isPointerDownRef.current) {
               setRayCast(e);
               const intersects = ray.intersectObjects([intersectionPlaneRef.current]);
-              if (intersects[0] && foundation) {
+              if (intersects[0] && foundationModel) {
                 const point = intersects[0].point;
                 if (point.z < 0.001) {
                   return;
@@ -680,8 +665,8 @@ const HipRoof = (roofModel: HipRoofModel) => {
 
                     const p = point
                       .clone()
-                      .sub(new Vector3(foundation.cx, foundation.cy, foundation.cz))
-                      .applyEuler(new Euler(0, 0, -foundation.rotation[2]))
+                      .sub(new Vector3(foundationModel.cx, foundationModel.cy, foundationModel.cz))
+                      .applyEuler(new Euler(0, 0, -foundationModel.rotation[2]))
                       .sub(intersectionPlanePosition)
                       .applyEuler(new Euler(0, 0, -intersectionPlaneRotation.z));
 
@@ -697,8 +682,8 @@ const HipRoof = (roofModel: HipRoofModel) => {
 
                     const p = point
                       .clone()
-                      .sub(new Vector3(foundation.cx, foundation.cy, foundation.cz))
-                      .applyEuler(new Euler(0, 0, -foundation.rotation[2]))
+                      .sub(new Vector3(foundationModel.cx, foundationModel.cy, foundationModel.cz))
+                      .applyEuler(new Euler(0, 0, -foundationModel.rotation[2]))
                       .sub(intersectionPlanePosition)
                       .applyEuler(new Euler(0, 0, -intersectionPlaneRotation.z));
 
@@ -708,14 +693,14 @@ const HipRoof = (roofModel: HipRoofModel) => {
                     break;
                   }
                   case RoofHandleType.Mid: {
-                    const newRise = Math.max(0, point.z - foundation.lz - 0.3 - highestWallHeight);
+                    const newRise = Math.max(0, point.z - foundationModel.lz - 0.3 - highestWallHeight);
                     setRiseInnerState(newRise);
                     // the vertical ruler needs to display the latest rise when the handle is being dragged
                     useStore.getState().updateRoofRiseById(id, riseInnerState, topZ + roofModel.thickness);
                     break;
                   }
                 }
-                updateRooftopElements(foundation, id, roofSegments, ridgeMidPoint, topZ, thickness);
+                updateRooftopElements(foundationModel, id, roofSegments, ridgeMidPoint, topZ, thickness);
               }
             }
           }}
@@ -752,7 +737,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
                 }
               }
             });
-            updateRooftopElements(foundation, id, roofSegments, ridgeMidPoint, topZ, thickness);
+            updateRooftopElements(foundationModel, id, roofSegments, ridgeMidPoint, topZ, thickness);
           }}
         >
           <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0.5} />
@@ -762,4 +747,4 @@ const HipRoof = (roofModel: HipRoofModel) => {
   );
 };
 
-export default React.memo(HipRoof);
+export default React.memo(HipRoof, (prev, curr) => prev.roofModel === curr.roofModel);

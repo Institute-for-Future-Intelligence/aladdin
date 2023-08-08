@@ -36,6 +36,7 @@ import { Sphere } from '@react-three/drei';
 import { useHandleSize } from '../wall/hooks';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import { SharedUtil } from '../SharedUtil';
+import { BuildingParts } from 'src/models/FoundationModel';
 
 export interface RoofSegmentGroupUserData {
   roofId: string;
@@ -639,15 +640,15 @@ export const RoofHandle = ({ position, onPointerDown, onPointerUp, onPointerOver
   );
 };
 
-const RoofRenderer = (props: RoofModel) => {
+interface RoofRendererProps extends BuildingParts {
+  roofModel: RoofModel;
+}
+
+const RoofRenderer = ({ roofModel, foundationModel }: RoofRendererProps) => {
   const removeElementById = useStore(Selector.removeElementById);
   const setCommonStore = useStore(Selector.set);
 
-  const { id, wallsId, roofType, selected, locked } = props;
-
-  // some old files don't have these props
-  const _lineColor = selected && locked ? LOCKED_ELEMENT_SELECTION_COLOR : props.lineColor ?? 'black';
-  const _lineWidth = selected && locked ? 1 : props.lineWidth ?? 0.2;
+  const { id, wallsId, roofType } = roofModel;
 
   useEffect(() => {
     if (wallsId.length === 0) {
@@ -655,30 +656,18 @@ const RoofRenderer = (props: RoofModel) => {
     }
   }, [wallsId]);
 
-  if (props.thickness === undefined) {
-    setCommonStore((state) => {
-      for (const e of state.elements) {
-        if (e.id === id) {
-          (e as RoofModel).thickness = props.thickness ?? 0.2;
-          return;
-        }
-      }
-    });
-    return null;
-  }
-
   const renderRoof = () => {
     switch (roofType) {
       case RoofType.Pyramid:
-        return <PyramidRoof {...(props as PyramidRoofModel)} lineColor={_lineColor} lineWidth={_lineWidth} />;
+        return <PyramidRoof roofModel={roofModel as PyramidRoofModel} foundationModel={foundationModel} />;
       case RoofType.Gable:
-        return <GableRoof {...(props as GableRoofModel)} lineColor={_lineColor} lineWidth={_lineWidth} />;
+        return <GableRoof roofModel={roofModel as GableRoofModel} foundationModel={foundationModel} />;
       case RoofType.Hip:
-        return <HipRoof {...(props as HipRoofModel)} lineColor={_lineColor} lineWidth={_lineWidth} />;
+        return <HipRoof roofModel={roofModel as HipRoofModel} foundationModel={foundationModel} />;
       case RoofType.Gambrel:
-        return <GambrelRoof {...(props as GambrelRoofModel)} lineColor={_lineColor} lineWidth={_lineWidth} />;
+        return <GambrelRoof roofModel={roofModel as GambrelRoofModel} foundationModel={foundationModel} />;
       case RoofType.Mansard:
-        return <MansardRoof {...(props as MansardRoofModel)} lineColor={_lineColor} lineWidth={_lineWidth} />;
+        return <MansardRoof roofModel={roofModel as MansardRoofModel} foundationModel={foundationModel} />;
       default:
         return null;
     }
@@ -687,4 +676,4 @@ const RoofRenderer = (props: RoofModel) => {
   return renderRoof();
 };
 
-export default React.memo(RoofRenderer);
+export default React.memo(RoofRenderer, (prev, curr) => prev.roofModel === curr.roofModel);

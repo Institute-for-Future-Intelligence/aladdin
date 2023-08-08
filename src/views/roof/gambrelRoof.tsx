@@ -43,7 +43,7 @@ import RoofSegment from './roofSegment';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
 import Ceiling from './ceiling';
-import { FoundationModel } from '../../models/FoundationModel';
+import { BuildingParts, FoundationModel } from '../../models/FoundationModel';
 import FlatRoof from './flatRoof';
 import { WindowModel, WindowType } from 'src/models/WindowModel';
 import { DEFAULT_POLYGONTOP } from '../window/window';
@@ -200,12 +200,14 @@ const intersectionPlaneRotation = new Euler();
 const zeroVector2 = new Vector2();
 const zVector3 = new Vector3(0, 0, 1);
 
-const GambrelRoof = (roofModel: GambrelRoofModel) => {
+interface GambrelRoofProps extends BuildingParts {
+  roofModel: GambrelRoofModel;
+}
+const GambrelRoof = ({ roofModel, foundationModel }: GambrelRoofProps) => {
   let {
     id,
     cx,
     cy,
-    cz,
     lz,
     wallsId,
     parentId,
@@ -219,7 +221,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
     textureType,
     color = 'white',
     sideColor = 'white',
-    thickness,
+    thickness = 0.2,
     locked,
     lineColor = 'black',
     lineWidth = 0.2,
@@ -263,23 +265,6 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
   const isFirstMountRef = useRef(true);
 
   const isFlat = riseInnerState < 0.01;
-
-  // set position and rotation
-  const foundation = useStore((state) => {
-    for (const e of state.elements) {
-      if (e.id === parentId && e.type === ObjectType.Foundation) {
-        return e;
-      }
-    }
-    return null;
-  });
-  let rotation = 0;
-  if (foundation) {
-    cx = foundation.cx;
-    cy = foundation.cy;
-    cz = foundation.lz;
-    rotation = foundation.rotation[2];
-  }
 
   const updateRidge = (elemId: string, type: string, val: number[]) => {
     setCommonStore((state) => {
@@ -335,7 +320,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
     setEnableIntersectionPlane(true);
     useRefStore.getState().setEnableOrbitController(false);
     intersectionPlanePosition.set(handlePointV3.x, handlePointV3.y, handlePointV3.z).add(centroid);
-    if (foundation && wall) {
+    if (foundationModel && wall) {
       intersectionPlaneRotation.set(HALF_PI, 0, wall.relativeAngle, 'ZXY');
     }
   };
@@ -917,7 +902,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
 
   useEffect(() => {
     if (!isFirstMountRef.current) {
-      updateRooftopElements(foundation, id, roofSegments, centroid, topZ, thickness, isFlat);
+      updateRooftopElements(foundationModel, id, roofSegments, centroid, topZ, thickness, isFlat);
     }
   }, [composedWalls, updateElementOnRoofFlag, topZ, thickness, topRidgePoint, frontRidgePoint, backRidgePoint, isFlat]);
 
@@ -971,8 +956,8 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
           if (t) {
             // obtain the bounding rectangle
             const segmentVertices = updateSegmentVertices();
-            if (segmentVertices && segmentVertices.length > 0 && foundation) {
-              const euler = new Euler(0, 0, foundation.rotation[2], 'ZYX');
+            if (segmentVertices && segmentVertices.length > 0 && foundationModel) {
+              const euler = new Euler(0, 0, foundationModel.rotation[2], 'ZYX');
               let minX = Number.MAX_VALUE;
               let minY = Number.MAX_VALUE;
               let maxX = -Number.MAX_VALUE;
@@ -993,7 +978,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
               t.wrapT = t.wrapS = RepeatWrapping;
               t.offset.set(-minX / dx, -minY / dy);
               t.center.set(vcx / dx, vcy / dy);
-              t.rotation = -foundation.rotation[2];
+              t.rotation = -foundationModel.rotation[2];
               t.repeat.set(1 / dx, 1 / dy);
             }
             setFlatHeatmapTexture(t);
@@ -1021,7 +1006,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
   // used for move rooftop elements between different roofs, passed to handlePointerMove in roofRenderer
   const userData: RoofSegmentGroupUserData = {
     roofId: id,
-    foundation: foundation,
+    foundation: foundationModel,
     centroid: centroid,
     roofSegments: roofSegments,
   };
@@ -1030,14 +1015,14 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
   if (!composedWalls || composedWalls.length !== 4) return null;
 
   return (
-    <group position={[cx, cy, cz]} rotation={[0, 0, rotation]} name={`Gambrel Roof Group ${id}`}>
+    <group name={`Gambrel Roof Group ${id}`}>
       {/* roof segments */}
       <group
         name={`Gambrel Roof Segments Group ${id}`}
         position={[centroid.x, centroid.y, centroid.z]}
         userData={userData}
         onPointerDown={(e) => {
-          handlePointerDown(e, id, foundation, roofSegments, centroid);
+          handlePointerDown(e, id, foundationModel, roofSegments, centroid);
         }}
         onPointerMove={(e) => {
           handlePointerMove(e, id);
@@ -1052,7 +1037,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
         {isFlat ? (
           <FlatRoof
             id={id}
-            foundationModel={foundation as FoundationModel}
+            foundationModel={foundationModel as FoundationModel}
             roofType={roofType}
             roofSegments={roofSegments}
             center={new Vector3(centroid.x, centroid.y, topZ)}
@@ -1072,7 +1057,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
                   id={id}
                   key={index}
                   index={index}
-                  foundationModel={foundation as FoundationModel}
+                  foundationModel={foundationModel as FoundationModel}
                   roofType={roofType}
                   segment={segment}
                   centroid={centroid}
@@ -1110,8 +1095,8 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
               oldRiseRef.current = rise;
               setEnableIntersectionPlane(true);
               intersectionPlanePosition.set(topRidgeMidPointV3.x, topRidgeMidPointV3.y, topZ).add(centroid);
-              if (foundation) {
-                const r = -Math.atan2(camera.position.x - cx, camera.position.y - cy) - foundation.rotation[2];
+              if (foundationModel) {
+                const r = -Math.atan2(camera.position.x - cx, camera.position.y - cy) - foundationModel.rotation[2];
                 intersectionPlaneRotation.set(-HALF_PI, 0, r, 'ZXY');
               }
               setRoofHandleType(RoofHandleType.TopMid);
@@ -1210,14 +1195,14 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
             ) {
               setRayCast(e);
               const intersects = ray.intersectObjects([intersectionPlaneRef.current]);
-              if (intersects[0] && foundation) {
+              if (intersects[0] && foundationModel) {
                 const point = intersects[0].point;
                 if (point.z < 0.001) {
                   return;
                 }
                 switch (roofHandleType) {
                   case RoofHandleType.TopMid: {
-                    const newRise = Math.max(0, point.z - foundation.lz - 0.3 - highestWallHeight);
+                    const newRise = Math.max(0, point.z - foundationModel.lz - 0.3 - highestWallHeight);
                     const newTopZ = highestWallHeight + newRise;
                     const sideWallHeightsMap = getSideWallHeightsMap(
                       composedWalls,
@@ -1235,14 +1220,14 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
                     break;
                   }
                   case RoofHandleType.FrontLeft: {
-                    if (foundation && composedWalls && composedWalls.length === 4) {
+                    if (foundationModel && composedWalls && composedWalls.length === 4) {
                       const px = Util.clamp(
-                        getRelPos(foundation, composedWalls[3], point),
+                        getRelPos(foundationModel, composedWalls[3], point),
                         topRidgePoint[0] + 0.05,
                         0.45,
                       );
                       const hDiff = topZ - composedWalls[0].lz;
-                      const pz = Util.clamp((point.z - foundation.lz - composedWalls[0].lz) / hDiff, 0, 1);
+                      const pz = Util.clamp((point.z - foundationModel.lz - composedWalls[0].lz) / hDiff, 0, 1);
                       const newFrontRidgePoint = [px, pz];
 
                       const sideWallHeightsMap = getSideWallHeightsMap(
@@ -1264,14 +1249,14 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
                     break;
                   }
                   case RoofHandleType.FrontRight: {
-                    if (foundation && composedWalls && composedWalls.length === 4) {
+                    if (foundationModel && composedWalls && composedWalls.length === 4) {
                       const px = Util.clamp(
-                        getRelPos(foundation, composedWalls[1], point),
+                        getRelPos(foundationModel, composedWalls[1], point),
                         -0.45,
                         -topRidgePoint[0] - 0.05,
                       );
                       const hDiff = topZ - composedWalls[0].lz;
-                      const pz = Util.clamp((point.z - foundation.lz - composedWalls[0].lz) / hDiff, 0, 1);
+                      const pz = Util.clamp((point.z - foundationModel.lz - composedWalls[0].lz) / hDiff, 0, 1);
                       const newFrontRidgePoint = [-px, pz];
 
                       const sideWallHeightsMap = getSideWallHeightsMap(
@@ -1292,9 +1277,9 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
                     break;
                   }
                   case RoofHandleType.TopLeft: {
-                    if (foundation && composedWalls && composedWalls.length === 4) {
+                    if (foundationModel && composedWalls && composedWalls.length === 4) {
                       const px = Util.clamp(
-                        getRelPos(foundation, composedWalls[3], point),
+                        getRelPos(foundationModel, composedWalls[3], point),
                         -backRidgePoint[0] + 0.05,
                         frontRidgePoint[0] - 0.05,
                       );
@@ -1318,9 +1303,9 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
                     break;
                   }
                   case RoofHandleType.TopRight: {
-                    if (foundation && composedWalls && composedWalls.length === 4) {
+                    if (foundationModel && composedWalls && composedWalls.length === 4) {
                       const px = Util.clamp(
-                        getRelPos(foundation, composedWalls[1], point),
+                        getRelPos(foundationModel, composedWalls[1], point),
                         -frontRidgePoint[0] + 0.05,
                         backRidgePoint[0] - 0.05,
                       );
@@ -1344,14 +1329,14 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
                     break;
                   }
                   case RoofHandleType.BackLeft: {
-                    if (foundation && composedWalls && composedWalls.length === 4) {
+                    if (foundationModel && composedWalls && composedWalls.length === 4) {
                       const px = Util.clamp(
-                        getRelPos(foundation, composedWalls[1], point),
+                        getRelPos(foundationModel, composedWalls[1], point),
                         -topRidgePoint[0] + 0.05,
                         0.45,
                       );
                       const hDiff = topZ - composedWalls[2].lz;
-                      const pz = Util.clamp((point.z - foundation.lz - composedWalls[2].lz) / hDiff, 0, 1);
+                      const pz = Util.clamp((point.z - foundationModel.lz - composedWalls[2].lz) / hDiff, 0, 1);
                       const newBackRidgePoint = [px, pz];
                       const sideWallHeightsMap = getSideWallHeightsMap(
                         composedWalls,
@@ -1371,14 +1356,14 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
                     break;
                   }
                   case RoofHandleType.BackRight: {
-                    if (foundation && composedWalls && composedWalls.length === 4) {
+                    if (foundationModel && composedWalls && composedWalls.length === 4) {
                       const px = Util.clamp(
-                        getRelPos(foundation, composedWalls[3], point),
+                        getRelPos(foundationModel, composedWalls[3], point),
                         -0.45,
                         topRidgePoint[0] - 0.05,
                       );
                       const hDiff = topZ - composedWalls[2].lz;
-                      const pz = Util.clamp((point.z - foundation.lz - composedWalls[2].lz) / hDiff, 0, 1);
+                      const pz = Util.clamp((point.z - foundationModel.lz - composedWalls[2].lz) / hDiff, 0, 1);
                       const newBackRidgePoint = [-px, pz];
 
                       const sideWallHeightsMap = getSideWallHeightsMap(
@@ -1399,7 +1384,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
                     break;
                   }
                 }
-                updateRooftopElements(foundation, id, roofSegments, centroid, topZ, thickness, isFlat);
+                updateRooftopElements(foundationModel, id, roofSegments, centroid, topZ, thickness, isFlat);
               }
             }
           }}
@@ -1430,7 +1415,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
             setRoofHandleType(RoofHandleType.Null);
             useRefStore.getState().setEnableOrbitController(true);
             useStore.getState().updateRoofRiseById(id, riseInnerState, topZ + roofModel.thickness);
-            updateRooftopElements(foundation, id, roofSegments, centroid, topZ, thickness, isFlat);
+            updateRooftopElements(foundationModel, id, roofSegments, centroid, topZ, thickness, isFlat);
           }}
         >
           <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0.5} />
@@ -1440,4 +1425,4 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
   );
 };
 
-export default React.memo(GambrelRoof);
+export default React.memo(GambrelRoof, (prev, curr) => prev.roofModel === curr.roofModel);

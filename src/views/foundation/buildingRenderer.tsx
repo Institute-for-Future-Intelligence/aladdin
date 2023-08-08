@@ -14,16 +14,19 @@ import shallow from 'zustand/shallow';
 import Window from '../window/window';
 import WallRenderer from '../wall/wallRenderer';
 import { WallModel } from 'src/models/WallModel';
+import RoofRenderer from '../roof/roofRenderer';
+import { RoofModel } from 'src/models/RoofModel';
 
 const BuildingRenderer = ({ foundationModel }: { foundationModel: FoundationModel }) => {
   const { id, cx, cy, lx, ly, lz, rotation } = foundationModel;
 
   const isBuildingParts = (e: ElementModel) => {
+    if (e.foundationId !== id) return false;
     return (
-      e.foundationId === id &&
-      (e.type === ObjectType.Wall ||
-        (e.type === ObjectType.SolarPanel && (e as SolarPanelModel).parentType === ObjectType.Roof) ||
-        (e.type === ObjectType.Window && (e as WindowModel).parentType === ObjectType.Roof))
+      e.type === ObjectType.Wall ||
+      e.type === ObjectType.Roof ||
+      (e.type === ObjectType.SolarPanel && (e as SolarPanelModel).parentType === ObjectType.Roof) ||
+      (e.type === ObjectType.Window && (e as WindowModel).parentType === ObjectType.Roof)
     );
   };
 
@@ -33,10 +36,12 @@ const BuildingRenderer = ({ foundationModel }: { foundationModel: FoundationMode
     <group name={'Building Parts'} position={[cx, cy, lz]} rotation={[0, 0, rotation[2]]}>
       {buildingParts.map((e) => {
         switch (e.type) {
-          case ObjectType.Wall: {
+          case ObjectType.Wall:
             return <WallRenderer key={e.id} wallModel={e as WallModel} foundationModel={foundationModel} />;
-          }
+          case ObjectType.Roof:
+            return <RoofRenderer key={e.id} roofModel={e as RoofModel} foundationModel={foundationModel} />;
           case ObjectType.SolarPanel:
+            // rooftop solar panels
             return (
               <SolarPanelOnRoof
                 key={e.id}
@@ -48,6 +53,7 @@ const BuildingRenderer = ({ foundationModel }: { foundationModel: FoundationMode
               />
             );
           case ObjectType.Window:
+            // rooftop windows
             return <Window key={e.id} {...(e as WindowModel)} cz={e.cz} />;
           default:
             return null;
