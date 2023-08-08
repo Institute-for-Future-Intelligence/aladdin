@@ -42,6 +42,7 @@ import {
   RoofWireframeProps,
   updateRooftopElements,
   RoofSegmentGroupUserData,
+  areRoofsEqual,
 } from './roofRenderer';
 import { UnoableResizeGableRoofRidge } from 'src/undo/UndoableResize';
 import { ActionType, ObjectType, ResizeHandleType, RoofHandleType, RoofTexture } from 'src/types';
@@ -1660,4 +1661,4 @@ const RoofSegment = ({
   );
 };
 
-export default React.memo(GableRoof, (prev, curr) => prev.roofModel === curr.roofModel);
+export default React.memo(GableRoof, areRoofsEqual);

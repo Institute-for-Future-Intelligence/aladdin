@@ -45,6 +45,7 @@ import {
 } from './hooks';
 import {
   addUndoableResizeRoofRise,
+  areRoofsEqual,
   handleContextMenu,
   handlePointerDown,
   handlePointerMove,
@@ -1144,4 +1145,4 @@ const MansardRoof = ({ roofModel, foundationModel }: MansardRoofProps) => {
   );
 };
 
-export default React.memo(MansardRoof, (prev, curr) => prev.roofModel === curr.roofModel);
+export default React.memo(MansardRoof, areRoofsEqual);

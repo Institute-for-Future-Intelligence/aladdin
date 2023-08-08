@@ -17,6 +17,7 @@ import { Util } from 'src/Util';
 import { ActionType, ObjectType, ResizeHandleType, RoofHandleType, RoofTexture } from 'src/types';
 import {
   addUndoableResizeRoofRise,
+  areRoofsEqual,
   handleContextMenu,
   handlePointerDown,
   handlePointerMove,
@@ -739,4 +740,4 @@ const PyramidRoof = ({ roofModel, foundationModel }: PyramidRoofProps) => {
   );
 };
 
-export default React.memo(PyramidRoof, (prev, curr) => prev.roofModel === curr.roofModel);
+export default React.memo(PyramidRoof, areRoofsEqual);

@@ -18,6 +18,7 @@ import { Util } from 'src/Util';
 import { CanvasTexture, DoubleSide, Euler, Mesh, Raycaster, RepeatWrapping, Vector2, Vector3 } from 'three';
 import {
   addUndoableResizeRoofRise,
+  areRoofsEqual,
   handleContextMenu,
   handlePointerDown,
   handlePointerMove,
@@ -1425,4 +1426,4 @@ const GambrelRoof = ({ roofModel, foundationModel }: GambrelRoofProps) => {
   );
 };
 
-export default React.memo(GambrelRoof, (prev, curr) => prev.roofModel === curr.roofModel);
+export default React.memo(GambrelRoof, areRoofsEqual);

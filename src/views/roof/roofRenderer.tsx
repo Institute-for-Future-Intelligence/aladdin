@@ -640,7 +640,7 @@ export const RoofHandle = ({ position, onPointerDown, onPointerUp, onPointerOver
   );
 };
 
-interface RoofRendererProps extends BuildingParts {
+export interface RoofRendererProps extends BuildingParts {
   roofModel: RoofModel;
 }
 
@@ -675,4 +675,13 @@ const RoofRenderer = ({ roofModel, foundationModel }: RoofRendererProps) => {
   return renderRoof();
 };
 
-export default React.memo(RoofRenderer, (prev, curr) => prev.roofModel === curr.roofModel);
+export function areRoofsEqual(prev: RoofRendererProps, curr: RoofRendererProps) {
+  return (
+    prev.roofModel === curr.roofModel &&
+    prev.foundationModel.lx === curr.foundationModel.lx &&
+    prev.foundationModel.ly === curr.foundationModel.ly &&
+    prev.foundationModel.lz === curr.foundationModel.lz
+  );
+}
+
+export default React.memo(RoofRenderer, areRoofsEqual);
