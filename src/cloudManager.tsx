@@ -129,6 +129,8 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     // do not use firebase.auth().currentUser - currentUser might be null because the auth object has not finished initializing.
     // If you use an observer to keep track of the user's sign-in status, you don't need to handle this case.
     firebase.auth().onAuthStateChanged((u) => {
+      const params = new URLSearchParams(window.location.search);
+      const title = params.get('title');
       if (u) {
         setCommonStore((state) => {
           if (state.user) {
@@ -137,10 +139,15 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
             state.user.email = u.email;
             state.user.photoURL = u.photoURL;
           }
+          state.cloudFile = title ?? undefined;
+        });
+      } else {
+        setCommonStore((state) => {
+          state.cloudFile = title ?? undefined;
         });
       }
-      init(); // load the initial state after we recognize the user
     });
+    init();
     window.addEventListener('popstate', handlePopStateEvent);
     return () => {
       window.removeEventListener('popstate', handlePopStateEvent);
@@ -343,9 +350,9 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const init = () => {
     const params = new URLSearchParams(window.location.search);
     const userid = params.get('userid');
-    const title = params.get('title');
-    const project = params.get('project');
     if (userid) {
+      const title = params.get('title');
+      const project = params.get('project');
       if (project) {
         setLoading(true);
         fetchProject(userid, project, setProjectState).finally(() => {
@@ -1011,9 +1018,9 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
             const description = useStore.getState().projectInfo.description;
             const timestamp = new Date().getTime();
             const counter = useStore.getState().projectInfo.counter;
-            const dataColoring = useStore.getState().projectInfo.dataColoring;
-            const selectedProperty = useStore.getState().projectInfo.selectedProperty;
-            const sortDescending = useStore.getState().projectInfo.sortDescending;
+            const dataColoring = useStore.getState().projectInfo.dataColoring ?? null;
+            const selectedProperty = useStore.getState().projectInfo.selectedProperty ?? null;
+            const sortDescending = !!useStore.getState().projectInfo.sortDescending;
             const newDesigns: Design[] = changeDesignTitles(t, designs) ?? [];
             for (const [i, d] of designs.entries()) {
               copyDesign(d.title, newDesigns[i].title, owner, user.uid);

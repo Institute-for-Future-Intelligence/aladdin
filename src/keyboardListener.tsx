@@ -233,6 +233,7 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
     'ctrl+shift+s',
     'meta+shift+s',
     'delete',
+    'backspace',
     'alt+backspace',
     'f2',
     'f4',
@@ -1076,6 +1077,7 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
         }
         break;
       case 'alt+backspace':
+      case 'backspace':
       case 'delete':
         if (!selectedElement) break;
         if (selectedElement.locked) {

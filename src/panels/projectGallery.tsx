@@ -691,7 +691,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
               dataSource={projectDesigns.current}
               renderItem={(design) => (
                 <List.Item
-                  style={{ marginBottom: '-6px' }}
+                  style={{ marginBottom: '-28px' }}
                   onMouseOver={() => {
                     setHoveredDesign(design);
                   }}
