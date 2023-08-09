@@ -372,21 +372,25 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       }
     });
     if (loggable && !runYearlySimulation) {
-      const heater = useDataStore.getState().totalBuildingHeater;
-      const ac = useDataStore.getState().totalBuildingAc;
-      const solarPanel = useDataStore.getState().totalBuildingSolarPanel;
-      setCommonStore((state) => {
-        state.actionInfo = {
-          name: 'Daily Building Energy Analysis Completed',
-          result: {
-            Heater: heater.toFixed(2),
-            AC: ac.toFixed(2),
-            SolarPanel: solarPanel.toFixed(2),
-            Net: (heater + ac - solarPanel).toFixed(2),
-          },
-          timestamp: new Date().getTime(),
-        };
-      });
+      // setTimeout callback will run asynchronously after finishing current execution stack,
+      // which is equivalent to waiting for the results to show up in the data store.
+      setTimeout(() => {
+        setCommonStore((state) => {
+          const heater = useDataStore.getState().totalBuildingHeater;
+          const ac = useDataStore.getState().totalBuildingAc;
+          const solarPanel = useDataStore.getState().totalBuildingSolarPanel;
+          state.actionInfo = {
+            name: 'Daily Building Energy Analysis Completed',
+            result: {
+              Heater: heater.toFixed(2),
+              AC: ac.toFixed(2),
+              SolarPanel: solarPanel.toFixed(2),
+              Net: (heater + ac - solarPanel).toFixed(2),
+            },
+            timestamp: new Date().getTime(),
+          };
+        });
+      }, 10);
     }
   };
 
@@ -534,21 +538,23 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
           showInfo(i18n.t('message.SimulationCompleted', lang));
           simulationCompletedRef.current = true;
           if (loggable) {
-            const heater = useDataStore.getState().totalBuildingHeater;
-            const ac = useDataStore.getState().totalBuildingAc;
-            const solarPanel = useDataStore.getState().totalBuildingSolarPanel;
-            setCommonStore((state) => {
-              state.actionInfo = {
-                name: 'Yearly Building Energy Analysis Completed',
-                result: {
-                  Heater: heater.toFixed(2),
-                  AC: ac.toFixed(2),
-                  SolarPanel: solarPanel.toFixed(2),
-                  Net: (heater + ac - solarPanel).toFixed(2),
-                },
-                timestamp: new Date().getTime(),
-              };
-            });
+            setTimeout(() => {
+              setCommonStore((state) => {
+                const heater = useDataStore.getState().totalBuildingHeater;
+                const ac = useDataStore.getState().totalBuildingAc;
+                const solarPanel = useDataStore.getState().totalBuildingSolarPanel;
+                state.actionInfo = {
+                  name: 'Yearly Building Energy Analysis Completed',
+                  result: {
+                    Heater: heater.toFixed(2),
+                    AC: ac.toFixed(2),
+                    SolarPanel: solarPanel.toFixed(2),
+                    Net: (heater + ac - solarPanel).toFixed(2),
+                  },
+                  timestamp: new Date().getTime(),
+                };
+              });
+            }, 10);
           }
           return;
         }
