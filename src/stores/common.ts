@@ -2127,7 +2127,7 @@ export const useStore = create<CommonStoreState>(
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === ObjectType.Wall && e.id === id && !e.locked) {
-                  (e as WallModel).leftPoint = point;
+                  (e as WallModel).leftPoint = [...point];
                   break;
                 }
               }
@@ -2137,7 +2137,7 @@ export const useStore = create<CommonStoreState>(
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === ObjectType.Wall && e.id === id && !e.locked) {
-                  (e as WallModel).rightPoint = point;
+                  (e as WallModel).rightPoint = [...point];
                   break;
                 }
               }

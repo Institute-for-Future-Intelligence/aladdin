@@ -376,8 +376,8 @@ const Ground = () => {
                       const w = e as WallModel;
                       const oldPoints = undoableResize.oldWallPointsMap.get(w.id);
                       if (oldPoints) {
-                        w.leftPoint = [oldPoints[0].x, oldPoints[0].y];
-                        w.rightPoint = [oldPoints[1].x, oldPoints[1].y];
+                        w.leftPoint = [oldPoints[0].x, oldPoints[0].y, 0];
+                        w.rightPoint = [oldPoints[1].x, oldPoints[1].y, 0];
                       }
                     }
                     break;
@@ -433,8 +433,8 @@ const Ground = () => {
                     const w = e as WallModel;
                     const oldPoints = undoableResize.newWallPointsMap.get(w.id);
                     if (oldPoints) {
-                      w.leftPoint = [oldPoints[0].x, oldPoints[0].y];
-                      w.rightPoint = [oldPoints[1].x, oldPoints[1].y];
+                      w.leftPoint = [oldPoints[0].x, oldPoints[0].y, 0];
+                      w.rightPoint = [oldPoints[1].x, oldPoints[1].y, 0];
                     }
                   }
                   break;
@@ -1771,8 +1771,8 @@ const Ground = () => {
                             childClone.cy = centerPointRelativePos.y;
                             break;
                         }
-                        childClone.leftPoint = [leftPointRelativePos.x, leftPointRelativePos.y, e.lz];
-                        childClone.rightPoint = [rightPointRelativePos.x, rightPointRelativePos.y, e.lz];
+                        childClone.leftPoint = [leftPointRelativePos.x, leftPointRelativePos.y, 0];
+                        childClone.rightPoint = [rightPointRelativePos.x, rightPointRelativePos.y, 0];
                       }
                     } else {
                       const centerAbsPos = absPosMapRef.current.get(c.id);
@@ -1917,8 +1917,8 @@ const Ground = () => {
                       e.cy = centerPointRelativePos.y;
                       break;
                   }
-                  wall.leftPoint = [leftPointRelativePos.x, leftPointRelativePos.y, grabRef.current!.lz];
-                  wall.rightPoint = [rightPointRelativePos.x, rightPointRelativePos.y, grabRef.current!.lz];
+                  wall.leftPoint = [leftPointRelativePos.x, leftPointRelativePos.y, 0];
+                  wall.rightPoint = [rightPointRelativePos.x, rightPointRelativePos.y, 0];
                 }
                 break;
               case ObjectType.SolarPanel:

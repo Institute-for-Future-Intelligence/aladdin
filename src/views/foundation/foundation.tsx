@@ -1194,8 +1194,8 @@ const Foundation = (foundationModel: FoundationModel) => {
                   w.relativeAngle = (undoableResize.newAngle + Math.PI) % TWO_PI;
                   w.leftJoints = [...undoableResize.newJoints[1]];
                   w.rightJoints = [...undoableResize.newJoints[0]];
-                  w.leftPoint = undoableResize.newPoint[1];
-                  w.rightPoint = undoableResize.newPoint[0];
+                  w.leftPoint = [...undoableResize.newPoint[1]];
+                  w.rightPoint = [...undoableResize.newPoint[0]];
                   for (const n of state.elements) {
                     if (n.type === ObjectType.Wall) {
                       if (n.id === undoableResize.newJoints[0][0]) {
@@ -1211,8 +1211,8 @@ const Foundation = (foundationModel: FoundationModel) => {
                   w.relativeAngle = undoableResize.newAngle;
                   w.leftJoints = [...undoableResize.newJoints[0]];
                   w.rightJoints = [...undoableResize.newJoints[1]];
-                  w.leftPoint = undoableResize.newPoint[0];
-                  w.rightPoint = undoableResize.newPoint[1];
+                  w.leftPoint = [...undoableResize.newPoint[0]];
+                  w.rightPoint = [...undoableResize.newPoint[1]];
                   // left handle
                   if (undoableResize.oldJoints[0][0] !== undoableResize.newJoints[0][0]) {
                     // left handle
@@ -2283,8 +2283,8 @@ const Foundation = (foundationModel: FoundationModel) => {
                     wall.cy = relativeCenter.y;
                     wall.lx = lx;
                     wall.relativeAngle = angle;
-                    wall.leftPoint = [leftPoint.x, leftPoint.y, leftPoint.z];
-                    wall.rightPoint = [rightPoint.x, rightPoint.y, rightPoint.z];
+                    wall.leftPoint = [leftPoint.x, leftPoint.y, 0];
+                    wall.rightPoint = [rightPoint.x, rightPoint.y, 0];
                     break;
                   }
                 }
