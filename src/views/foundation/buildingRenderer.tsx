@@ -19,7 +19,7 @@ import { RoofModel } from 'src/models/RoofModel';
 
 export const BUILDING_GROUP_NAME = 'Building Group';
 
-const BuildingRenderer = ({ foundationModel }: { foundationModel: FoundationModel }) => {
+const BuildingRenderer = (foundationModel: FoundationModel) => {
   const { id, lx, ly, lz } = foundationModel;
 
   const isBuildingParts = (e: ElementModel) => {
@@ -67,4 +67,7 @@ const BuildingRenderer = ({ foundationModel }: { foundationModel: FoundationMode
   );
 };
 
-export default React.memo(BuildingRenderer);
+const areEuqal = (prev: FoundationModel, curr: FoundationModel) =>
+  prev.lx === curr.lx && prev.ly === curr.ly && prev.lz === curr.lz && prev.rotation === curr.rotation;
+
+export default React.memo(BuildingRenderer, areEuqal);

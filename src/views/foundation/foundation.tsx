@@ -3422,7 +3422,7 @@ const Foundation = (foundationModel: FoundationModel) => {
         {solarStructure === SolarStructure.FocusTower && <SolarPowerTower foundation={foundationModel} />}
         {solarStructure === SolarStructure.UpdraftTower && <SolarUpdraftTower foundation={foundationModel} />}
 
-        <BuildingRenderer foundationModel={foundationModel} />
+        <BuildingRenderer {...foundationModel} />
       </group>
 
       {selected && !locked && groupMasterId === id && foundationModel && groupMasterDimension && (
