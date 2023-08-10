@@ -389,12 +389,12 @@ export const handlePointerDown = (
   centroid: Vector3,
 ) => {
   if (!foundation) return;
-  handleAddElementOnRoof(e, roofId, foundation, roofSegments, centroid);
   // click on child
   if (e.intersections[0].eventObject.name !== e.eventObject.name) {
   }
   // click on roof body
   else {
+    handleAddElementOnRoof(e, roofId, foundation, roofSegments, centroid);
     handleRoofBodyPointerDown(e, roofId, foundation.id);
   }
 };

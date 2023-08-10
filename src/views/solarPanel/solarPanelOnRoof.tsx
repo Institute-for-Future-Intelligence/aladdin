@@ -944,6 +944,7 @@ const SolarPanelOnRoof = ({
           name={'Solar Panel'}
           onPointerDown={(e) => {
             if (e.button === 2) return; // ignore right-click
+            if (useStore.getState().objectTypeToAdd !== ObjectType.None) return;
             selectMe(id, e, ActionType.Select);
           }}
           onContextMenu={(e) => {
