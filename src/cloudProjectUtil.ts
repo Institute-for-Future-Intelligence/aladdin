@@ -206,7 +206,6 @@ export const changeDesignTitles = (projectTitle: string, projectDesigns: Design[
 // the design title is named after the project title plus the current counter of the project
 // for example, "project title 0", "project title 1", etc.
 export const createDesignTitle = (projectTitle: string, designTitle: string) => {
-  if (designTitle.includes(projectTitle)) return designTitle;
   const index = designTitle.lastIndexOf(' ');
   return projectTitle + designTitle.substring(index);
 };
