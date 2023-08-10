@@ -477,6 +477,7 @@ export interface CommonStoreState {
   updateWallMapOnFoundation: () => void;
 
   updateElementOnRoofFlag: boolean;
+  setUpdateElementOnRoofFlag: (b: boolean) => void;
   updateElementOnRoofFn: () => void;
 
   updateRoofFlag: boolean;
@@ -4170,6 +4171,11 @@ export const useStore = create<CommonStoreState>(
           },
 
           updateElementOnRoofFlag: false,
+          setUpdateElementOnRoofFlag(b) {
+            immerSet((state: CommonStoreState) => {
+              state.updateElementOnRoofFlag = b;
+            });
+          },
           updateElementOnRoofFn() {
             immerSet((state: CommonStoreState) => {
               state.updateElementOnRoofFlag = !state.updateElementOnRoofFlag;

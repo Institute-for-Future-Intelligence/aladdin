@@ -18,12 +18,15 @@ import { CanvasTexture, DoubleSide, Euler, Mesh, Raycaster, RepeatWrapping, Vect
 import {
   ComposedWall,
   useComposedWallArray,
-  useIsFirstMount,
+  useIsFirstRender,
   useComposedRoofHeight,
   useRoofTexture,
   useUpdateOldRoofFiles,
   useUpdateSegmentVerticesMap,
   useUpdateSegmentVerticesWithoutOverhangMap,
+  useUpdateRooftopElementsByContextMenuChanges,
+  useUpdateRooftopElementsByControlPoints,
+  useUpdateRooftopElements,
 } from './hooks';
 import {
   addUndoableResizeRoofRise,
@@ -116,7 +119,6 @@ const HipRoof = ({ roofModel, foundationModel }: HipRoofProps) => {
   const getElementById = useStore(Selector.getElementById);
   const setCommonStore = useStore(Selector.set);
   const removeElementById = useStore(Selector.removeElementById);
-  const updateElementOnRoofFlag = useStore(Selector.updateElementOnRoofFlag);
 
   const composedWalls = useComposedWallArray(wallsId[0], parentId);
   const texture = useRoofTexture(textureType);
@@ -126,7 +128,7 @@ const HipRoof = ({ roofModel, foundationModel }: HipRoofProps) => {
   const [leftRidgeLengthCurr, setLeftRidgeLengthCurr] = useState(leftRidgeLength);
   const [rightRidgeLengthCurr, setRightRidgeLengthCurr] = useState(rightRidgeLength);
 
-  const { highestWallHeight, topZ, riseInnerState, setRiseInnerState } = useComposedRoofHeight(composedWalls, rise);
+  const { highestWallHeight, topZ } = useComposedRoofHeight(composedWalls, rise);
   useUpdateOldRoofFiles(roofModel, highestWallHeight);
 
   const intersectionPlaneRef = useRef<Mesh>(null);
@@ -136,27 +138,15 @@ const HipRoof = ({ roofModel, foundationModel }: HipRoofProps) => {
   const isPointerDownRef = useRef(false);
   const oldRiseRef = useRef(rise);
 
-  const isFirstMount = useIsFirstMount();
-
-  const isFlat = riseInnerState < 0.01;
+  const isFlat = rise < 0.01;
 
   useEffect(() => {
-    if (!isFirstMount) {
-      setLeftRidgeLengthCurr(leftRidgeLength);
-    }
-  }, [leftRidgeLength, isFirstMount]);
+    setLeftRidgeLengthCurr(leftRidgeLength);
+  }, [leftRidgeLength]);
 
   useEffect(() => {
-    if (!isFirstMount) {
-      setRightRidgeLengthCurr(rightRidgeLength);
-    }
-  }, [rightRidgeLength, isFirstMount]);
-
-  useEffect(() => {
-    if (!isFirstMount) {
-      updateRooftopElements(foundationModel, id, roofSegments, ridgeMidPoint, topZ, thickness);
-    }
-  }, [updateElementOnRoofFlag, topZ, thickness, isFirstMount]);
+    setRightRidgeLengthCurr(rightRidgeLength);
+  }, [rightRidgeLength]);
 
   const setHipRoofRidgeLength = (elemId: string, leftRidge: number, rightRidge: number) => {
     setCommonStore((state) => {
@@ -205,37 +195,11 @@ const HipRoof = ({ roofModel, foundationModel }: HipRoofProps) => {
     return arr;
   };
 
-  const centroid2D = useMemo(() => {
-    if (composedWalls === null || composedWalls.length !== 4) return new Vector2();
-
-    const points = getWallsPoint2(composedWalls);
-    const p = Util.calculatePolygonCentroid(points);
-    return new Vector2(p.x, p.y);
-  }, [composedWalls]);
-
-  const ridgeLeftPoint = useMemo(() => {
-    const vector = new Vector3();
-    const center = new Vector3(centroid2D.x, centroid2D.y, topZ);
-    const wall = getElementById(wallsId[0]) as WallModel;
-    if (wall) {
-      vector.setX(-leftRidgeLengthCurr).applyEuler(new Euler(0, 0, wall.relativeAngle)).add(center);
-    }
-    return vector;
-  }, [centroid2D, topZ, leftRidgeLengthCurr]);
-
-  const ridgeRightPoint = useMemo(() => {
-    const vector = new Vector3();
-    const center = new Vector3(centroid2D.x, centroid2D.y, topZ);
-    const wall = getElementById(wallsId[0]) as WallModel;
-    if (wall) {
-      vector.setX(rightRidgeLengthCurr).applyEuler(new Euler(0, 0, wall.relativeAngle)).add(center);
-    }
-    return vector;
-  }, [centroid2D, topZ, rightRidgeLengthCurr]);
-
-  const ridgeMidPoint = useMemo(() => {
-    return new Vector3(centroid2D.x, centroid2D.y, topZ);
-  }, [centroid2D, topZ]);
+  const setRayCast = (e: PointerEvent) => {
+    mouse.x = (e.offsetX / gl.domElement.clientWidth) * 2 - 1;
+    mouse.y = -(e.offsetY / gl.domElement.clientHeight) * 2 + 1;
+    ray.setFromCamera(mouse, camera);
+  };
 
   const makeSegment = (vector: Vector3[], p1: Vector3, p2: Vector3, p3: Vector3, p4?: Vector3) => {
     vector.push(p1, p2, p3);
@@ -267,6 +231,38 @@ const HipRoof = ({ roofModel, foundationModel }: HipRoofProps) => {
 
     return Number.isNaN(height) ? 0 : height;
   };
+
+  const centroid2D = useMemo(() => {
+    if (composedWalls === null || composedWalls.length !== 4) return new Vector2();
+
+    const points = getWallsPoint2(composedWalls);
+    const p = Util.calculatePolygonCentroid(points);
+    return new Vector2(p.x, p.y);
+  }, [composedWalls]);
+
+  const ridgeLeftPoint = useMemo(() => {
+    const vector = new Vector3();
+    const center = new Vector3(centroid2D.x, centroid2D.y, topZ);
+    const wall = getElementById(wallsId[0]) as WallModel;
+    if (wall) {
+      vector.setX(-leftRidgeLengthCurr).applyEuler(new Euler(0, 0, wall.relativeAngle)).add(center);
+    }
+    return vector;
+  }, [centroid2D, topZ, leftRidgeLengthCurr]);
+
+  const ridgeRightPoint = useMemo(() => {
+    const vector = new Vector3();
+    const center = new Vector3(centroid2D.x, centroid2D.y, topZ);
+    const wall = getElementById(wallsId[0]) as WallModel;
+    if (wall) {
+      vector.setX(rightRidgeLengthCurr).applyEuler(new Euler(0, 0, wall.relativeAngle)).add(center);
+    }
+    return vector;
+  }, [centroid2D, topZ, rightRidgeLengthCurr]);
+
+  const ridgeMidPoint = useMemo(() => {
+    return new Vector3(centroid2D.x, centroid2D.y, topZ);
+  }, [centroid2D, topZ]);
 
   const overhangs = useMemo(() => {
     if (composedWalls === null || composedWalls.length !== 4) return [] as Vector3[];
@@ -346,17 +342,13 @@ const HipRoof = ({ roofModel, foundationModel }: HipRoofProps) => {
     return composedWalls.map((wall) => wall.leftPoint);
   }, [composedWalls]);
 
-  const setRayCast = (e: PointerEvent) => {
-    mouse.x = (e.offsetX / gl.domElement.clientWidth) * 2 - 1;
-    mouse.y = -(e.offsetY / gl.domElement.clientHeight) * 2 + 1;
-    ray.setFromCamera(mouse, camera);
-  };
-
+  // update related walls roofId when adding new roof
   useEffect(() => {
-    if (!isFirstMount || useStore.getState().addedRoofId === id) {
-      if (composedWalls === null || composedWalls.length !== 4) {
-        removeElementById(id, false, false, true);
-      } else {
+    if (composedWalls === null || composedWalls.length !== 4) {
+      removeElementById(id, false, false, true);
+    } else {
+      const addIdRoofId = useStore.getState().addedRoofId;
+      if (addIdRoofId && addIdRoofId === id) {
         for (let i = 0; i < composedWalls.length; i++) {
           const wallsIdSet = new Set(composedWalls[i].wallsId);
           setCommonStore((state) => {
@@ -371,10 +363,12 @@ const HipRoof = ({ roofModel, foundationModel }: HipRoofProps) => {
             }
           });
         }
-        updateRooftopElements(foundationModel, id, roofSegments, ridgeMidPoint, topZ, thickness);
+        useStore.getState().setAddedRoofId(null);
       }
     }
-  }, [composedWalls, isFirstMount]);
+  }, [composedWalls]);
+
+  useUpdateRooftopElements(foundationModel, id, roofSegments, ridgeMidPoint, topZ, thickness);
 
   const updateSegmentVerticesWithoutOverhangMap = () => {
     if (!composedWalls) return;
@@ -433,7 +427,7 @@ const HipRoof = ({ roofModel, foundationModel }: HipRoofProps) => {
 
   useEffect(() => {
     if (showSolarRadiationHeatmap) {
-      if (riseInnerState > 0) {
+      if (rise > 0) {
         const n = roofSegments.length;
         if (n > 0) {
           const textures = [];
@@ -566,7 +560,7 @@ const HipRoof = ({ roofModel, foundationModel }: HipRoofProps) => {
       </group>
 
       {/* ceiling */}
-      {ceiling && riseInnerState > 0 && ceilingPoints && <Ceiling cz={composedWalls[0].lz} points={ceilingPoints} />}
+      {ceiling && rise > 0 && ceilingPoints && <Ceiling cz={composedWalls[0].lz} points={ceilingPoints} />}
 
       {/* handles */}
       {selected && !locked && (
@@ -695,20 +689,18 @@ const HipRoof = ({ roofModel, foundationModel }: HipRoofProps) => {
                   }
                   case RoofHandleType.Mid: {
                     const newRise = Math.max(0, point.z - foundationModel.lz - 0.3 - highestWallHeight);
-                    setRiseInnerState(newRise);
                     // the vertical ruler needs to display the latest rise when the handle is being dragged
-                    useStore.getState().updateRoofRiseById(id, riseInnerState, topZ + roofModel.thickness);
+                    useStore.getState().updateRoofRiseById(id, newRise, topZ + roofModel.thickness);
                     break;
                   }
                 }
-                updateRooftopElements(foundationModel, id, roofSegments, ridgeMidPoint, topZ, thickness);
               }
             }
           }}
           onPointerUp={() => {
             switch (roofHandleType) {
               case RoofHandleType.Mid: {
-                addUndoableResizeRoofRise(id, oldRiseRef.current, riseInnerState);
+                addUndoableResizeRoofRise(id, oldRiseRef.current, rise);
                 break;
               }
               case RoofHandleType.Left:
@@ -726,19 +718,6 @@ const HipRoof = ({ roofModel, foundationModel }: HipRoofProps) => {
             setEnableIntersectionPlane(false);
             setRoofHandleType(RoofHandleType.Null);
             useRefStore.getState().setEnableOrbitController(true);
-            setCommonStore((state) => {
-              for (const e of state.elements) {
-                if (e.id === id && e.type === ObjectType.Roof && (e as RoofModel).roofType === RoofType.Hip) {
-                  const r = e as HipRoofModel;
-                  r.leftRidgeLength = leftRidgeLengthCurr;
-                  r.rightRidgeLength = rightRidgeLengthCurr;
-                  r.rise = riseInnerState;
-                  state.actionState.roofRise = riseInnerState;
-                  break;
-                }
-              }
-            });
-            updateRooftopElements(foundationModel, id, roofSegments, ridgeMidPoint, topZ, thickness);
           }}
         >
           <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0.5} />

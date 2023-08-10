@@ -30,10 +30,13 @@ import {
 } from './roofRenderer';
 import { RoofUtil } from './RoofUtil';
 import {
+  useIsFirstRender,
   useMultiCurrWallArray,
   useRoofHeight,
   useRoofTexture,
   useUpdateOldRoofFiles,
+  useUpdateRooftopElements,
+  useUpdateRooftopElementsByContextMenuChanges,
   useUpdateSegmentVerticesMap,
   useUpdateSegmentVerticesWithoutOverhangMap,
 } from './hooks';
@@ -110,24 +113,18 @@ const PyramidRoof = ({ roofModel, foundationModel }: PyramidRoofProps) => {
     ceiling = false,
   } = roofModel;
 
-  const { currentWallArray, isLoopRef } = useMultiCurrWallArray(foundationId, id, wallsId);
   const texture = useRoofTexture(textureType);
 
   const setCommonStore = useStore(Selector.set);
   const removeElementById = useStore(Selector.removeElementById);
-  const updateRoofFlag = useStore(Selector.updateRoofFlag);
 
   const { camera, gl } = useThree();
   const ray = useMemo(() => new Raycaster(), []);
   const mouse = useMemo(() => new Vector2(), []);
 
-  const { highestWallHeight, topZ, riseInnerState, setRiseInnerState } = useRoofHeight(currentWallArray, rise);
-  useUpdateOldRoofFiles(roofModel, highestWallHeight);
-
   const [showIntersectionPlane, setShowIntersectionPlane] = useState(false);
 
   const intersectionPlaneRef = useRef<Mesh>(null);
-  const isFirstMountRef = useRef(true);
   const isPointerDownRef = useRef(false);
   const oldRiseRef = useRef(rise);
 
@@ -186,6 +183,11 @@ const PyramidRoof = ({ roofModel, foundationModel }: PyramidRoofProps) => {
 
     return Number.isNaN(height) ? 0 : height;
   };
+
+  const { currentWallArray, isLoopRef } = useMultiCurrWallArray(foundationId, id, wallsId);
+
+  const { highestWallHeight, topZ } = useRoofHeight(currentWallArray, rise);
+  useUpdateOldRoofFiles(roofModel, highestWallHeight);
 
   const centerPoint = useMemo(() => {
     if (currentWallArray.length < 2) {
@@ -344,7 +346,7 @@ const PyramidRoof = ({ roofModel, foundationModel }: PyramidRoofProps) => {
     }
 
     return segments;
-  }, [currentWallArray, updateRoofFlag, centerPoint, thickness]);
+  }, [currentWallArray, centerPoint, thickness]);
 
   const ceilingPoints = useMemo(() => {
     const points: Vector3[] = [];
@@ -368,9 +370,12 @@ const PyramidRoof = ({ roofModel, foundationModel }: PyramidRoofProps) => {
     intersectionPlaneRotation.set(-HALF_PI, 0, r, 'ZXY');
   }
 
-  // update new roofId
+  const isFirstRender = useIsFirstRender();
+
   useEffect(() => {
-    if (!isFirstMountRef.current) {
+    if (isFirstRender) return;
+    const addIdRoofId = useStore.getState().addedRoofId;
+    if (addIdRoofId && addIdRoofId === id) {
       if (currentWallArray.length >= 2 && needUpdateWallsId(currentWallArray, prevWallsIdSet)) {
         const newWallsIdArray = currentWallArray.map((v) => v.id);
         const newWallsIdSet = new Set(newWallsIdArray);
@@ -392,11 +397,14 @@ const PyramidRoof = ({ roofModel, foundationModel }: PyramidRoofProps) => {
         });
       }
     }
-  }, [updateRoofFlag, prevWallsIdSet]);
+  }, [prevWallsIdSet]);
 
+  // update wall's roofId when adding new roof
   useEffect(() => {
-    if (!isFirstMountRef.current || useStore.getState().addedRoofId === id) {
-      if (currentWallArray.length > 1) {
+    if (currentWallArray.length > 1) {
+      const addedRoofId = useStore.getState().addedRoofId;
+      if (addedRoofId && addedRoofId === id) {
+        // update walls
         for (let i = 0; i < currentWallArray.length; i++) {
           setCommonStore((state) => {
             for (const e of state.elements) {
@@ -411,24 +419,14 @@ const PyramidRoof = ({ roofModel, foundationModel }: PyramidRoofProps) => {
             }
           });
         }
-        updateRooftopElements(foundationModel, id, roofSegments, centerPointV3, topZ, thickness);
-      } else {
-        removeElementById(id, false, false, true);
+        useStore.getState().setAddedRoofId(null);
       }
+    } else {
+      removeElementById(id, false, false, true);
     }
-  }, [currentWallArray, updateRoofFlag]);
+  }, [currentWallArray]);
 
-  const updateElementOnRoofFlag = useStore(Selector.updateElementOnRoofFlag);
-
-  useEffect(() => {
-    if (!isFirstMountRef.current) {
-      updateRooftopElements(foundationModel, id, roofSegments, centerPointV3, topZ, thickness);
-    }
-  }, [updateElementOnRoofFlag, topZ, thickness]);
-
-  useEffect(() => {
-    isFirstMountRef.current = false;
-  }, []);
+  useUpdateRooftopElements(foundationModel, id, roofSegments, centerPointV3, topZ, thickness);
 
   const checkIsFlatRoof = () => {
     if (currentWallArray.length < 2) {
@@ -661,7 +659,7 @@ const PyramidRoof = ({ roofModel, foundationModel }: PyramidRoofProps) => {
       </group>
 
       {/* ceiling */}
-      {ceiling && riseInnerState > 0 && <Ceiling points={ceilingPoints} cz={currentWallArray[0].lz} />}
+      {ceiling && rise > 0 && <Ceiling points={ceilingPoints} cz={currentWallArray[0].lz} />}
 
       {/* handle */}
       {selected && !locked && (
@@ -712,26 +710,15 @@ const PyramidRoof = ({ roofModel, foundationModel }: PyramidRoofProps) => {
                   return;
                 }
                 const newRise = Math.max(0, point.z - foundationModel.lz - 0.3 - highestWallHeight);
-                setRiseInnerState(newRise);
-                updateRooftopElements(
-                  foundationModel,
-                  id,
-                  roofSegments,
-                  centerPointV3,
-                  newRise + highestWallHeight,
-                  thickness,
-                );
                 // the vertical ruler needs to display the latest rise when the handle is being dragged
-                useStore.getState().updateRoofRiseById(id, riseInnerState, topZ + roofModel.thickness);
+                useStore.getState().updateRoofRiseById(id, newRise, topZ + roofModel.thickness);
               }
             }
           }}
           onPointerUp={(e) => {
-            useStore.getState().updateRoofRiseById(id, riseInnerState, topZ + roofModel.thickness);
-            addUndoableResizeRoofRise(id, oldRiseRef.current, riseInnerState);
+            addUndoableResizeRoofRise(id, oldRiseRef.current, rise);
             setShowIntersectionPlane(false);
             useRefStore.getState().setEnableOrbitController(true);
-            updateRooftopElements(foundationModel, id, roofSegments, centerPointV3, topZ, thickness);
             isPointerDownRef.current = false;
           }}
         />

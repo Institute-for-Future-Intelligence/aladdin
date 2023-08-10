@@ -19,12 +19,13 @@ import { RepeatWrapping, TextureLoader, Vector3 } from 'three';
 import * as Selector from 'src/stores/selector';
 import { WallModel } from 'src/models/WallModel';
 import { useThree } from '@react-three/fiber';
-import { RoofSegmentProps } from './roofRenderer';
+import { RoofSegmentProps, updateRooftopElements } from './roofRenderer';
 import { RoofUtil } from './RoofUtil';
 import { GambrelRoofModel, RoofModel, RoofType } from 'src/models/RoofModel';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { getRoofPointsOfGambrelRoof } from './flatRoof';
 import shallow from 'zustand/shallow';
+import { FoundationModel } from 'src/models/FoundationModel';
 
 export type ComposedWall = {
   leftPoint: Vector3;
@@ -169,37 +170,38 @@ export const useComposedWallArray = (wId: string, fId: string) => {
     shallow,
   );
 
-  const getWallOnSameFoundation = (id: string) => wallsOnSameFoundation.find((e) => e.id === id) as WallModel;
-
-  const wallMap = new Map<string, WallModel>();
-  const rotationMap = new Map<string, WallModel[]>();
-  const startWall: WallModel | null = getWallOnSameFoundation(wId);
-  let wall: WallModel | null = startWall;
-  let count = 0;
-  let isLoop = false;
-
-  while (wall && wall.type === ObjectType.Wall && count < 100) {
-    wallMap.set(wall.id, wall);
-    const rotation = wall.relativeAngle.toFixed(1);
-    if (rotationMap.has(rotation)) {
-      rotationMap.get(rotation)?.push(wall);
-    } else {
-      rotationMap.set(rotation, [wall]);
-    }
-    if (wall.rightJoints.length !== 0) {
-      wall = getWallOnSameFoundation(wall.rightJoints[0]);
-      if (wall && wall.id === startWall.id) {
-        isLoop = true;
-        break;
-      }
-      count++;
-    } else {
-      wall = null;
-    }
-  }
-
   const composedWallsArray = useMemo(() => {
+    const getWallOnSameFoundation = (id: string) => wallsOnSameFoundation.find((e) => e.id === id) as WallModel;
+
+    const wallMap = new Map<string, WallModel>();
+    const rotationMap = new Map<string, WallModel[]>();
+    const startWall: WallModel | null = getWallOnSameFoundation(wId);
+    let wall: WallModel | null = startWall;
+    let count = 0;
+    let isLoop = false;
+
+    while (wall && wall.type === ObjectType.Wall && count < 100) {
+      wallMap.set(wall.id, wall);
+      const rotation = wall.relativeAngle.toFixed(1);
+      if (rotationMap.has(rotation)) {
+        rotationMap.get(rotation)?.push(wall);
+      } else {
+        rotationMap.set(rotation, [wall]);
+      }
+      if (wall.rightJoints.length !== 0) {
+        wall = getWallOnSameFoundation(wall.rightJoints[0]);
+        if (wall && wall.id === startWall.id) {
+          isLoop = true;
+          break;
+        }
+        count++;
+      } else {
+        wall = null;
+      }
+    }
+
     if (!isLoop || rotationMap.size !== 4) return null;
+
     const arr: ComposedWall[] = [];
     for (const [rot, walls] of rotationMap) {
       // check connection
@@ -245,6 +247,7 @@ export const useComposedWallArray = (wId: string, fId: string) => {
         });
       }
     }
+
     if (arr.length !== 4) return null;
     return arr;
   }, [wallsOnSameFoundation]);
@@ -258,15 +261,9 @@ export const useComposedRoofHeight = (composedWallArray: ComposedWall[] | null, 
     [composedWallArray],
   );
 
-  const [riseInnerState, setRiseInnerState] = useState(rise); // height from top to maxWallHeight
-  const topZ = highestWallHeight + riseInnerState; // height from top to foundation
-  useEffect(() => {
-    if (rise !== riseInnerState) {
-      setRiseInnerState(rise);
-    }
-  }, [rise]);
+  const topZ = useMemo(() => highestWallHeight + rise, [highestWallHeight, rise]); // height from top to foundation
 
-  return { highestWallHeight, topZ, riseInnerState, setRiseInnerState };
+  return { highestWallHeight, topZ };
 };
 
 export const useRoofHeight = (currentWallArray: WallModel[], rise: number, ignoreSide?: boolean) => {
@@ -420,10 +417,58 @@ export const useUpdateAfterMounted = () => {
   }, []);
 };
 
-export const useIsFirstMount = () => {
-  const isFirstMountRef = useRef(true);
+export const useIsFirstRender = () => {
+  const isFirstRenderRef = useRef(true);
+  if (isFirstRenderRef.current) {
+    isFirstRenderRef.current = false;
+    return true;
+  }
+  return false;
+};
+
+export const useUpdateRooftopElementsByContextMenuChanges = (
+  foundation: FoundationModel | null,
+  roofId: string,
+  roofSegments: RoofSegmentProps[],
+  centroid: Vector3,
+  topZ: number,
+  thickness: number,
+  isFlatGambrel?: boolean,
+) => {
+  // only update by context menu changes
   useEffect(() => {
-    isFirstMountRef.current = false;
-  }, []);
-  return isFirstMountRef.current;
+    if (useStore.getState().updateElementOnRoofFlag) {
+      updateRooftopElements(foundation, roofId, roofSegments, centroid, topZ, thickness, isFlatGambrel);
+      useStore.getState().setUpdateElementOnRoofFlag(false);
+    }
+  }, [topZ, thickness]);
+};
+
+export const useUpdateRooftopElementsByControlPoints = (
+  foundation: FoundationModel | null,
+  rId: string,
+  segments: RoofSegmentProps[],
+  centroid: Vector3,
+  topZ: number,
+  thickness: number,
+  isFlatGambrel?: boolean,
+) => {
+  const isFirstRender = useIsFirstRender();
+  useEffect(() => {
+    if (isFirstRender) return;
+    updateRooftopElements(foundation, rId, segments, centroid, topZ, thickness, isFlatGambrel);
+  }, [segments]);
+};
+
+export const useUpdateRooftopElements = (
+  foundation: FoundationModel | null,
+  roofId: string,
+  segments: RoofSegmentProps[],
+  centroid: Vector3,
+  topZ: number,
+  thickness: number,
+  isFlatGambrel?: boolean,
+) => {
+  useUpdateRooftopElementsByControlPoints(foundation, roofId, segments, centroid, topZ, thickness, isFlatGambrel);
+  useUpdateRooftopElementsByContextMenuChanges(foundation, roofId, segments, centroid, topZ, thickness, isFlatGambrel);
 };

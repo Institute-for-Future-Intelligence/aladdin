@@ -40,6 +40,7 @@ import {
   useRoofTexture,
   useTransparent,
   useUpdateOldRoofFiles,
+  useUpdateRooftopElements,
   useUpdateSegmentVerticesMap,
   useUpdateSegmentVerticesWithoutOverhangMap,
 } from './hooks';
@@ -147,16 +148,12 @@ const MansardRoof = ({ roofModel, foundationModel }: MansardRoofProps) => {
   } = roofModel;
 
   const texture = useRoofTexture(textureType);
-  const { currentWallArray, isLoopRef } = useMultiCurrWallArray(foundationId, id, wallsId);
 
   const setCommonStore = useStore(Selector.set);
   const removeElementById = useStore(Selector.removeElementById);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const ray = useStore((state) => state.ray);
   const mouse = useStore((state) => state.mouse);
-
-  const { highestWallHeight, topZ, riseInnerState, setRiseInnerState } = useRoofHeight(currentWallArray, rise);
-  useUpdateOldRoofFiles(roofModel, highestWallHeight);
 
   const [width, setWidth] = useState(ridgeWidth);
   const [maxWidth, setMaxWidth] = useState<number | null>(null);
@@ -166,13 +163,12 @@ const MansardRoof = ({ roofModel, foundationModel }: MansardRoofProps) => {
 
   const oldWidth = useRef(width);
   const oldRiseRef = useRef(rise);
-  const isFirstMountRef = useRef(true);
 
   const intersectionPlaneRef = useRef<Mesh>(null);
   const isPointerDownRef = useRef(false);
   const { gl, camera } = useThree();
 
-  const isFlat = riseInnerState < 0.01;
+  const isFlat = rise < 0.01;
 
   const getWallPoint2 = (wallArray: WallModel[]) => {
     const arr: Point2[] = [];
@@ -259,6 +255,10 @@ const MansardRoof = ({ roofModel, foundationModel }: MansardRoofProps) => {
     } as UnoableResizeMansardRoofRidge;
     useStore.getState().addUndoable(undoable);
   };
+  const { currentWallArray, isLoopRef } = useMultiCurrWallArray(foundationId, id, wallsId);
+
+  const { highestWallHeight, topZ } = useRoofHeight(currentWallArray, rise);
+  useUpdateOldRoofFiles(roofModel, highestWallHeight);
 
   const centroid = useMemo(() => {
     if (currentWallArray.length < 2) {
@@ -465,8 +465,8 @@ const MansardRoof = ({ roofModel, foundationModel }: MansardRoofProps) => {
   }, [ridgeWidth]);
 
   useEffect(() => {
-    if (!isFirstMountRef.current || useStore.getState().addedRoofId === id) {
-      if (currentWallArray.length > 1) {
+    if (currentWallArray.length > 1) {
+      if (useStore.getState().addedRoofId === id) {
         for (let i = 0; i < currentWallArray.length; i++) {
           setCommonStore((state) => {
             for (const e of state.elements) {
@@ -481,26 +481,17 @@ const MansardRoof = ({ roofModel, foundationModel }: MansardRoofProps) => {
             }
           });
         }
-      } else {
-        removeElementById(id, false, false, true);
-      }
-      if (useStore.getState().addedRoofId === id) {
         useStore.getState().setAddedRoofId(null);
       }
+    } else {
+      removeElementById(id, false, false, true);
     }
-  }, [currentWallArray, topZ]);
+  }, [currentWallArray]);
 
-  const updateElementOnRoofFlag = useStore(Selector.updateElementOnRoofFlag);
+  useUpdateRooftopElements(foundationModel, id, roofSegments, centroid, topZ, thickness);
 
+  // update old files
   useEffect(() => {
-    if (!isFirstMountRef.current) {
-      updateRooftopElements(foundationModel, id, roofSegments, centroid, topZ, thickness);
-    }
-  }, [updateElementOnRoofFlag, topZ, thickness, currentWallArray]);
-
-  useEffect(() => {
-    isFirstMountRef.current = false;
-
     // handle old files
     if (frontRidge !== undefined || backRidge !== undefined) {
       setCommonStore((state) => {
@@ -574,7 +565,6 @@ const MansardRoof = ({ roofModel, foundationModel }: MansardRoofProps) => {
     }
   };
 
-  const { transparent, opacity } = useTransparent();
   const updateSegmentVertices = useUpdateSegmentVerticesMap(
     id,
     centroid,
@@ -605,6 +595,8 @@ const MansardRoof = ({ roofModel, foundationModel }: MansardRoofProps) => {
   const heatFluxArrowHead = useRef<number>(0);
   const heatFluxArrowLength = useRef<Vector3>();
   const heatFluxArrowEuler = useRef<Euler>();
+
+  const { transparent, opacity } = useTransparent();
 
   useEffect(() => {
     if (showSolarRadiationHeatmap) {
@@ -968,7 +960,7 @@ const MansardRoof = ({ roofModel, foundationModel }: MansardRoofProps) => {
       </group>
 
       {/* ceiling */}
-      {ceiling && riseInnerState > 0 && <Ceiling points={ceilingPoints} cz={currentWallArray[0].lz} />}
+      {ceiling && rise > 0 && <Ceiling points={ceilingPoints} cz={currentWallArray[0].lz} />}
 
       {/* handles */}
       {selected && !locked && (
@@ -1051,9 +1043,8 @@ const MansardRoof = ({ roofModel, foundationModel }: MansardRoofProps) => {
                 switch (roofHandleType) {
                   case RoofHandleType.Top: {
                     const newRise = Math.max(0, pointer.z - foundationModel.lz - 0.6 - highestWallHeight);
-                    setRiseInnerState(newRise);
                     // the vertical ruler needs to display the latest rise when the handle is being dragged
-                    useStore.getState().updateRoofRiseById(id, riseInnerState, topZ + roofModel.thickness);
+                    useStore.getState().updateRoofRiseById(id, newRise, topZ + roofModel.thickness);
                     break;
                   }
                   case RoofHandleType.Ridge: {
@@ -1077,14 +1068,13 @@ const MansardRoof = ({ roofModel, foundationModel }: MansardRoofProps) => {
                     break;
                   }
                 }
-                updateRooftopElements(foundationModel, id, roofSegments, centroid, topZ, thickness);
               }
             }
           }}
           onPointerUp={() => {
             switch (roofHandleType) {
               case RoofHandleType.Top: {
-                addUndoableResizeRoofRise(id, oldRiseRef.current, riseInnerState);
+                addUndoableResizeRoofRise(id, oldRiseRef.current, rise);
                 break;
               }
               case RoofHandleType.Ridge: {
@@ -1095,14 +1085,11 @@ const MansardRoof = ({ roofModel, foundationModel }: MansardRoofProps) => {
             setCommonStore((state) => {
               for (const e of state.elements) {
                 if (e.id === id && e.type === ObjectType.Roof && (e as RoofModel).roofType === RoofType.Mansard) {
-                  (e as RoofModel).rise = riseInnerState;
                   (e as MansardRoofModel).ridgeWidth = width;
-                  state.actionState.roofRise = riseInnerState;
                   break;
                 }
               }
             });
-            updateRooftopElements(foundationModel, id, roofSegments, centroid, topZ, thickness);
             isPointerDownRef.current = false;
             setEnableIntersectionPlane(false);
             setRoofHandleType(RoofHandleType.Null);

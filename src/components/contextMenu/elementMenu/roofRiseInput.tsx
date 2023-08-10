@@ -23,7 +23,6 @@ const RoofRiseInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =>
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
   const getElementById = useStore(Selector.getElementById);
-  const updateRoofRiseById = useStore(Selector.updateRoofRiseById);
 
   const roof = useStore((state) => state.elements.find((e) => e.selected && e.type === ObjectType.Roof)) as RoofModel;
 
@@ -39,6 +38,13 @@ const RoofRiseInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =>
       setInputValue(roof.rise);
     }
   }, [roof]);
+
+  const updateRoofRiseById = (id: string, val: number) => {
+    useStore.getState().updateRoofRiseById(id, val);
+    useStore.getState().set((state) => {
+      state.updateElementOnRoofFlag = true;
+    });
+  };
 
   const undoInMap = (map: Map<string, number>) => {
     for (const [id, val] of map.entries()) {

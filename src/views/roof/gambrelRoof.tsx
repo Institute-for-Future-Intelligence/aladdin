@@ -39,6 +39,8 @@ import {
   useUpdateSegmentVerticesMap,
   useUpdateSegmentVerticesWithoutOverhangMap,
   ComposedWall,
+  useUpdateRooftopElementsByContextMenuChanges,
+  useIsFirstRender,
 } from './hooks';
 import RoofSegment from './roofSegment';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
@@ -244,15 +246,7 @@ const GambrelRoof = ({ roofModel, foundationModel }: GambrelRoofProps) => {
   const setCommonStore = useStore(Selector.set);
   const removeElementById = useStore(Selector.removeElementById);
 
-  const composedWalls = useComposedWallArray(wallsId[0], parentId);
   const texture = useRoofTexture(textureType);
-
-  const { highestWallHeight, topZ, riseInnerState, setRiseInnerState } = useComposedRoofHeight(
-    composedWalls,
-    rise,
-    true,
-  );
-  useUpdateOldRoofFiles(roofModel, highestWallHeight);
 
   const [roofHandleType, setRoofHandleType] = useState(RoofHandleType.Null);
   const [enableIntersectionPlane, setEnableIntersectionPlane] = useState(false);
@@ -263,9 +257,8 @@ const GambrelRoof = ({ roofModel, foundationModel }: GambrelRoofProps) => {
   const oldRidgeVal = useRef<number[]>([0, 0]);
   const oldRiseRef = useRef<number>(rise);
   const isPointerDownRef = useRef(false);
-  const isFirstMountRef = useRef(true);
 
-  const isFlat = riseInnerState < 0.01;
+  const isFlat = rise < 0.01;
 
   const updateRidge = (elemId: string, type: string, val: number[]) => {
     setCommonStore((state) => {
@@ -374,6 +367,245 @@ const GambrelRoof = ({ roofModel, foundationModel }: GambrelRoofProps) => {
   const isThisIdAndType = (e: ElementModel) => {
     return e.id === id && e.type === ObjectType.Roof && (e as RoofModel).roofType === RoofType.Gambrel;
   };
+
+  const getEdgeLine = (startPoint: Vector2, endPoint: Vector2) => {
+    const dx = endPoint.x - startPoint.x;
+    const dy = endPoint.y - startPoint.y;
+    const k = dy / dx;
+    const b = startPoint.y - k * startPoint.x;
+    return {
+      start: startPoint.x,
+      end: endPoint.x,
+      k,
+      b,
+    } as RoofEdge;
+  };
+
+  const getRoofSideEdges = (
+    composedWalls: ComposedWall[],
+    index: number,
+    topZ: number,
+    leftBaseHeight: number,
+    rightBaseHeight: number,
+    leftPoint: number[],
+    midPoint: number[],
+    rightPoint: number[],
+  ) => {
+    const composedWall = composedWalls[index];
+    const { lh, rh } = getWallHeight(composedWalls, index);
+    const length = new Vector3().subVectors(composedWall.leftPoint, composedWall.rightPoint).length();
+    const halfLength = length / 2;
+
+    const getX = (x: number) => x * length + halfLength;
+    const getY = (y: number, baseHeight: number) => y * (topZ - baseHeight) + baseHeight;
+
+    const points = [
+      new Vector2(getX(-leftPoint[0]), getY(leftPoint[1], leftBaseHeight)),
+      new Vector2(getX(midPoint[0]), topZ),
+      new Vector2(getX(rightPoint[0]), getY(rightPoint[1], rightBaseHeight)),
+      new Vector2(length, rh),
+    ];
+    const edges = points.map((p, i) => {
+      const start = i === 0 ? new Vector2(0, lh) : points[i - 1];
+      return getEdgeLine(start, p);
+    });
+    return edges;
+  };
+
+  const getYOnEdge = (edges: RoofEdge[], x: number) => {
+    for (const edge of edges) {
+      const { start, end, k, b } = edge;
+      if (x >= start && x <= end) {
+        return k * x + b;
+      }
+    }
+    return null;
+  };
+
+  const updateFlatRoofWalls = (composedWalls: ComposedWall[]) => {
+    const idSet = new Set<string>();
+    for (const composedWall of composedWalls) {
+      composedWall.wallsId.forEach((id) => idSet.add(id));
+    }
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Wall && e.foundationId === parentId && idSet.has(e.id)) {
+          const wall = e as WallModel;
+          wall.leftRoofHeight = topZ;
+          wall.rightRoofHeight = topZ;
+          wall.centerLeftRoofHeight = undefined;
+          wall.centerRightRoofHeight = undefined;
+          wall.centerRoofHeight = undefined;
+        }
+      }
+    });
+  };
+
+  const setSideWallHeightsMap = (
+    map: Map<string, WallHeights>,
+    composedWalls: ComposedWall[],
+    index: number,
+    topZ: number,
+    frontRidgePoint: number[],
+    topRidgePoint: number[],
+    backRidgePoint: number[],
+  ) => {
+    if (index !== 1 && index !== 3) return;
+    const isLeftSide = index === 3;
+    const { lh, rh } = getWallHeight(composedWalls, index);
+    const leftPoint = isLeftSide ? backRidgePoint : frontRidgePoint;
+    const rightPoint = isLeftSide ? frontRidgePoint : backRidgePoint;
+    const midPoint = isLeftSide ? topRidgePoint : [-topRidgePoint[0], topRidgePoint[1]];
+
+    const roofEdges = getRoofSideEdges(composedWalls, index, topZ, lh, rh, leftPoint, midPoint, rightPoint);
+    const roofPointsX = roofEdges.slice(1).map((edge) => edge.start);
+
+    const composedWall = composedWalls[index];
+    const wallPointsX = composedWall.wallsId.reduce(
+      (acc, currId) => {
+        const wall = useStore.getState().elements.find((e) => e.id === currId) as WallModel;
+        if (!wall) return acc;
+        return [...acc, wall.lx + acc[acc.length - 1]];
+      },
+      [0],
+    );
+
+    for (let i = 0; i < composedWall.wallsId.length; i++) {
+      const id = composedWall.wallsId[i];
+      const [wallStartX, wallEndX] = [wallPointsX[i], wallPointsX[i + 1]];
+      const wallStartY = getYOnEdge(roofEdges, wallStartX);
+      const wallEndY = getYOnEdge(roofEdges, wallEndX);
+
+      if (wallStartY !== null && wallEndY !== null) {
+        const wallLength = wallEndX - wallStartX;
+        const wallCenterX = (wallStartX + wallEndX) / 2;
+
+        const wallHeights: WallHeights = {
+          left: wallStartY,
+          right: wallEndY,
+        };
+
+        for (let i = 0; i < roofPointsX.length; i++) {
+          const roofPointX = roofPointsX[i];
+          if (roofPointX >= wallStartX && roofPointX <= wallEndX) {
+            const x = (roofPointX - wallCenterX) / wallLength;
+            const y = getYOnEdge(roofEdges, roofPointX);
+            if (y !== null) {
+              if (i === 0) {
+                wallHeights.centerLeft = [x, y];
+              } else if (i === 1) {
+                wallHeights.center = [x, y];
+              } else if (i === 2) {
+                wallHeights.centerRight = [x, y];
+              }
+            }
+          }
+        }
+
+        map.set(id, wallHeights);
+      }
+    }
+
+    return map;
+  };
+
+  const getSideWallHeightsMap = (
+    composedWalls: ComposedWall[],
+    topZ: number,
+    frontRidgePoint: number[],
+    topRidgePoint: number[],
+    backRidgePoint: number[],
+  ) => {
+    const map = new Map<string, WallHeights>();
+    setSideWallHeightsMap(map, composedWalls, 1, topZ, frontRidgePoint, topRidgePoint, backRidgePoint);
+    setSideWallHeightsMap(map, composedWalls, 3, topZ, frontRidgePoint, topRidgePoint, backRidgePoint);
+    return map;
+  };
+
+  const updateWalls = (
+    composedWalls: ComposedWall[],
+    topZ: number,
+    frontRidgePoint: number[],
+    topRidgePoint: number[],
+    backRidgePoint: number[],
+  ) => {
+    const frontWallsIdSet = new Set(composedWalls[0].wallsId);
+    const backWallsIdSet = new Set(composedWalls[2].wallsId);
+    const sideWallHeightsMap = getSideWallHeightsMap(
+      composedWalls,
+      topZ,
+      frontRidgePoint,
+      topRidgePoint,
+      backRidgePoint,
+    );
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Wall && e.foundationId === parentId) {
+          if (frontWallsIdSet.has(e.id)) {
+            const wall = e as WallModel;
+            const { lh, rh } = getWallHeight(composedWalls, 0);
+            wall.roofId = id;
+            wall.leftRoofHeight = lh;
+            wall.rightRoofHeight = rh;
+          } else if (backWallsIdSet.has(e.id)) {
+            const wall = e as WallModel;
+            const { lh, rh } = getWallHeight(composedWalls, 2);
+            wall.roofId = id;
+            wall.leftRoofHeight = lh;
+            wall.rightRoofHeight = rh;
+          } else if (sideWallHeightsMap.has(e.id)) {
+            const wallHeights = sideWallHeightsMap.get(e.id);
+            if (wallHeights) {
+              const wall = e as WallModel;
+              const { left, right, center, centerLeft, centerRight } = wallHeights;
+              wall.roofId = id;
+              wall.leftRoofHeight = left;
+              wall.rightRoofHeight = right;
+              if (centerLeft) {
+                const [x, y] = centerLeft;
+                if (wall.centerLeftRoofHeight) {
+                  wall.centerLeftRoofHeight[0] = x;
+                  wall.centerLeftRoofHeight[1] = y;
+                } else {
+                  wall.centerLeftRoofHeight = [x, y];
+                }
+              } else {
+                wall.centerLeftRoofHeight = undefined;
+              }
+              if (center) {
+                const [x, y] = center;
+                if (wall.centerRoofHeight) {
+                  wall.centerRoofHeight[0] = x;
+                  wall.centerRoofHeight[1] = y;
+                } else {
+                  wall.centerRoofHeight = [x, y];
+                }
+              } else {
+                wall.centerRoofHeight = undefined;
+              }
+              if (centerRight) {
+                const [x, y] = centerRight;
+                if (wall.centerRightRoofHeight) {
+                  wall.centerRightRoofHeight[0] = x;
+                  wall.centerRightRoofHeight[1] = y;
+                } else {
+                  wall.centerRightRoofHeight = [x, y];
+                }
+              } else {
+                wall.centerRightRoofHeight = undefined;
+              }
+            }
+          }
+        }
+      }
+    });
+  };
+
+  const composedWalls = useComposedWallArray(wallsId[0], parentId);
+
+  const { highestWallHeight, topZ } = useComposedRoofHeight(composedWalls, rise, true);
+
+  useUpdateOldRoofFiles(roofModel, highestWallHeight);
 
   const centroid = useMemo(() => {
     if (!composedWalls || composedWalls.length !== 4) return new Vector3();
@@ -649,267 +881,33 @@ const GambrelRoof = ({ roofModel, foundationModel }: GambrelRoofProps) => {
     return composedWalls.map((wall) => wall.leftPoint);
   }, [composedWalls]);
 
-  const getEdgeLine = (startPoint: Vector2, endPoint: Vector2) => {
-    const dx = endPoint.x - startPoint.x;
-    const dy = endPoint.y - startPoint.y;
-    const k = dy / dx;
-    const b = startPoint.y - k * startPoint.x;
-    return {
-      start: startPoint.x,
-      end: endPoint.x,
-      k,
-      b,
-    } as RoofEdge;
-  };
-
-  const getRoofSideEdges = (
-    composedWalls: ComposedWall[],
-    index: number,
-    topZ: number,
-    leftBaseHeight: number,
-    rightBaseHeight: number,
-    leftPoint: number[],
-    midPoint: number[],
-    rightPoint: number[],
-  ) => {
-    const composedWall = composedWalls[index];
-    const { lh, rh } = getWallHeight(composedWalls, index);
-    const length = new Vector3().subVectors(composedWall.leftPoint, composedWall.rightPoint).length();
-    const halfLength = length / 2;
-
-    const getX = (x: number) => x * length + halfLength;
-    const getY = (y: number, baseHeight: number) => y * (topZ - baseHeight) + baseHeight;
-
-    const points = [
-      new Vector2(getX(-leftPoint[0]), getY(leftPoint[1], leftBaseHeight)),
-      new Vector2(getX(midPoint[0]), topZ),
-      new Vector2(getX(rightPoint[0]), getY(rightPoint[1], rightBaseHeight)),
-      new Vector2(length, rh),
-    ];
-    const edges = points.map((p, i) => {
-      const start = i === 0 ? new Vector2(0, lh) : points[i - 1];
-      return getEdgeLine(start, p);
-    });
-    return edges;
-  };
-
-  const getYOnEdge = (edges: RoofEdge[], x: number) => {
-    for (const edge of edges) {
-      const { start, end, k, b } = edge;
-      if (x >= start && x <= end) {
-        return k * x + b;
-      }
+  // handle remove roof
+  useEffect(() => {
+    if (!composedWalls || composedWalls.length !== 4) {
+      removeElementById(id, false, false, true);
     }
-    return null;
-  };
+  }, [composedWalls]);
 
-  const updateFlatRoofWalls = (composedWalls: ComposedWall[]) => {
-    const idSet = new Set<string>();
-    for (const composedWall of composedWalls) {
-      composedWall.wallsId.forEach((id) => idSet.add(id));
-    }
-    setCommonStore((state) => {
-      for (const e of state.elements) {
-        if (e.type === ObjectType.Wall && e.foundationId === parentId && idSet.has(e.id)) {
-          const wall = e as WallModel;
-          wall.leftRoofHeight = topZ;
-          wall.rightRoofHeight = topZ;
-          wall.centerLeftRoofHeight = undefined;
-          wall.centerRightRoofHeight = undefined;
-          wall.centerRoofHeight = undefined;
-        }
-      }
-    });
-  };
-
-  const setSideWallHeightsMap = (
-    map: Map<string, WallHeights>,
-    composedWalls: ComposedWall[],
-    index: number,
-    topZ: number,
-    frontRidgePoint: number[],
-    topRidgePoint: number[],
-    backRidgePoint: number[],
-  ) => {
-    if (index !== 1 && index !== 3) return;
-    const isLeftSide = index === 3;
-    const { lh, rh } = getWallHeight(composedWalls, index);
-    const leftPoint = isLeftSide ? backRidgePoint : frontRidgePoint;
-    const rightPoint = isLeftSide ? frontRidgePoint : backRidgePoint;
-    const midPoint = isLeftSide ? topRidgePoint : [-topRidgePoint[0], topRidgePoint[1]];
-
-    const roofEdges = getRoofSideEdges(composedWalls, index, topZ, lh, rh, leftPoint, midPoint, rightPoint);
-    const roofPointsX = roofEdges.slice(1).map((edge) => edge.start);
-
-    const composedWall = composedWalls[index];
-    const wallPointsX = composedWall.wallsId.reduce(
-      (acc, currId) => {
-        const wall = useStore.getState().elements.find((e) => e.id === currId) as WallModel;
-        if (!wall) return acc;
-        return [...acc, wall.lx + acc[acc.length - 1]];
-      },
-      [0],
-    );
-
-    for (let i = 0; i < composedWall.wallsId.length; i++) {
-      const id = composedWall.wallsId[i];
-      const [wallStartX, wallEndX] = [wallPointsX[i], wallPointsX[i + 1]];
-      const wallStartY = getYOnEdge(roofEdges, wallStartX);
-      const wallEndY = getYOnEdge(roofEdges, wallEndX);
-
-      if (wallStartY !== null && wallEndY !== null) {
-        const wallLength = wallEndX - wallStartX;
-        const wallCenterX = (wallStartX + wallEndX) / 2;
-
-        const wallHeights: WallHeights = {
-          left: wallStartY,
-          right: wallEndY,
-        };
-
-        for (let i = 0; i < roofPointsX.length; i++) {
-          const roofPointX = roofPointsX[i];
-          if (roofPointX >= wallStartX && roofPointX <= wallEndX) {
-            const x = (roofPointX - wallCenterX) / wallLength;
-            const y = getYOnEdge(roofEdges, roofPointX);
-            if (y !== null) {
-              if (i === 0) {
-                wallHeights.centerLeft = [x, y];
-              } else if (i === 1) {
-                wallHeights.center = [x, y];
-              } else if (i === 2) {
-                wallHeights.centerRight = [x, y];
-              }
-            }
-          }
-        }
-
-        map.set(id, wallHeights);
-      }
-    }
-
-    return map;
-  };
-
-  const getSideWallHeightsMap = (
-    composedWalls: ComposedWall[],
-    topZ: number,
-    frontRidgePoint: number[],
-    topRidgePoint: number[],
-    backRidgePoint: number[],
-  ) => {
-    const map = new Map<string, WallHeights>();
-    setSideWallHeightsMap(map, composedWalls, 1, topZ, frontRidgePoint, topRidgePoint, backRidgePoint);
-    setSideWallHeightsMap(map, composedWalls, 3, topZ, frontRidgePoint, topRidgePoint, backRidgePoint);
-    return map;
-  };
-
-  const updateWalls = (
-    composedWalls: ComposedWall[],
-    topZ: number,
-    frontRidgePoint: number[],
-    topRidgePoint: number[],
-    backRidgePoint: number[],
-  ) => {
-    const frontWallsIdSet = new Set(composedWalls[0].wallsId);
-    const backWallsIdSet = new Set(composedWalls[2].wallsId);
-    const sideWallHeightsMap = getSideWallHeightsMap(
-      composedWalls,
-      topZ,
-      frontRidgePoint,
-      topRidgePoint,
-      backRidgePoint,
-    );
-    setCommonStore((state) => {
-      for (const e of state.elements) {
-        if (e.type === ObjectType.Wall && e.foundationId === parentId) {
-          if (frontWallsIdSet.has(e.id)) {
-            const wall = e as WallModel;
-            const { lh, rh } = getWallHeight(composedWalls, 0);
-            wall.roofId = id;
-            wall.leftRoofHeight = lh;
-            wall.rightRoofHeight = rh;
-          } else if (backWallsIdSet.has(e.id)) {
-            const wall = e as WallModel;
-            const { lh, rh } = getWallHeight(composedWalls, 2);
-            wall.roofId = id;
-            wall.leftRoofHeight = lh;
-            wall.rightRoofHeight = rh;
-          } else if (sideWallHeightsMap.has(e.id)) {
-            const wallHeights = sideWallHeightsMap.get(e.id);
-            if (wallHeights) {
-              const wall = e as WallModel;
-              const { left, right, center, centerLeft, centerRight } = wallHeights;
-              wall.roofId = id;
-              wall.leftRoofHeight = left;
-              wall.rightRoofHeight = right;
-              if (centerLeft) {
-                const [x, y] = centerLeft;
-                if (wall.centerLeftRoofHeight) {
-                  wall.centerLeftRoofHeight[0] = x;
-                  wall.centerLeftRoofHeight[1] = y;
-                } else {
-                  wall.centerLeftRoofHeight = [x, y];
-                }
-              } else {
-                wall.centerLeftRoofHeight = undefined;
-              }
-              if (center) {
-                const [x, y] = center;
-                if (wall.centerRoofHeight) {
-                  wall.centerRoofHeight[0] = x;
-                  wall.centerRoofHeight[1] = y;
-                } else {
-                  wall.centerRoofHeight = [x, y];
-                }
-              } else {
-                wall.centerRoofHeight = undefined;
-              }
-              if (centerRight) {
-                const [x, y] = centerRight;
-                if (wall.centerRightRoofHeight) {
-                  wall.centerRightRoofHeight[0] = x;
-                  wall.centerRightRoofHeight[1] = y;
-                } else {
-                  wall.centerRightRoofHeight = [x, y];
-                }
-              } else {
-                wall.centerRightRoofHeight = undefined;
-              }
-            }
-          }
-        }
-      }
-    });
-  };
+  const isFirstRender = useIsFirstRender();
 
   // update walls
   useEffect(() => {
-    if (composedWalls && composedWalls.length === 4) {
+    if (composedWalls?.length !== 4) return;
+
+    const addIdRoofId = useStore.getState().addedRoofId;
+    if ((addIdRoofId && addIdRoofId === id) || !isFirstRender) {
       if (isFlat) {
         updateFlatRoofWalls(composedWalls);
       } else {
         // update caused by changing wall height
         updateWalls(composedWalls, topZ, frontRidgePoint, topRidgePoint, backRidgePoint);
       }
-    } else {
-      removeElementById(id, false, false, true);
-    }
-    if (useStore.getState().addedRoofId === id) {
+      updateRooftopElements(foundationModel, id, roofSegments, centroid, topZ, thickness, isFlat);
       useStore.getState().setAddedRoofId(null);
     }
-  }, [composedWalls, topZ, isFlat, frontRidgePoint, topRidgePoint, backRidgePoint]);
+  }, [roofSegments]);
 
-  const updateElementOnRoofFlag = useStore(Selector.updateElementOnRoofFlag);
-
-  useEffect(() => {
-    if (!isFirstMountRef.current) {
-      updateRooftopElements(foundationModel, id, roofSegments, centroid, topZ, thickness, isFlat);
-    }
-  }, [composedWalls, updateElementOnRoofFlag, topZ, thickness, topRidgePoint, frontRidgePoint, backRidgePoint, isFlat]);
-
-  useEffect(() => {
-    isFirstMountRef.current = false;
-  }, []);
+  useUpdateRooftopElementsByContextMenuChanges(foundationModel, id, roofSegments, centroid, topZ, thickness, isFlat);
 
   const updateSegmentVerticesWithoutOverhangMap = () => {
     const segmentVertices: Vector3[][] = [];
@@ -1081,7 +1079,7 @@ const GambrelRoof = ({ roofModel, foundationModel }: GambrelRoofProps) => {
       </group>
 
       {/* ceiling */}
-      {ceiling && riseInnerState > 0 && composedWalls[0].lz === composedWalls[2].lz && ceilingPoints && (
+      {ceiling && rise > 0 && composedWalls[0].lz === composedWalls[2].lz && ceilingPoints && (
         <Ceiling cz={composedWalls[0].lz} points={ceilingPoints} />
       )}
 
@@ -1214,9 +1212,8 @@ const GambrelRoof = ({ roofModel, foundationModel }: GambrelRoofProps) => {
                     );
                     // check if new height no confilc with childs on walls
                     if (isRoofValid(sideWallHeightsMap, parentId)) {
-                      setRiseInnerState(newRise);
                       // the vertical ruler needs to display the latest rise when the handle is being dragged
-                      useStore.getState().updateRoofRiseById(id, riseInnerState, newTopZ + roofModel.thickness);
+                      useStore.getState().updateRoofRiseById(id, newRise, newTopZ + roofModel.thickness);
                     }
                     break;
                   }
@@ -1385,14 +1382,13 @@ const GambrelRoof = ({ roofModel, foundationModel }: GambrelRoofProps) => {
                     break;
                   }
                 }
-                updateRooftopElements(foundationModel, id, roofSegments, centroid, topZ, thickness, isFlat);
               }
             }
           }}
           onPointerUp={() => {
             switch (roofHandleType) {
               case RoofHandleType.TopMid: {
-                addUndoableResizeRoofRise(id, oldRiseRef.current, riseInnerState);
+                addUndoableResizeRoofRise(id, oldRiseRef.current, rise);
                 break;
               }
               case RoofHandleType.TopLeft:
@@ -1415,8 +1411,6 @@ const GambrelRoof = ({ roofModel, foundationModel }: GambrelRoofProps) => {
             setEnableIntersectionPlane(false);
             setRoofHandleType(RoofHandleType.Null);
             useRefStore.getState().setEnableOrbitController(true);
-            useStore.getState().updateRoofRiseById(id, riseInnerState, topZ + roofModel.thickness);
-            updateRooftopElements(foundationModel, id, roofSegments, centroid, topZ, thickness, isFlat);
           }}
         >
           <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0.5} />
