@@ -327,9 +327,7 @@ export const updateDesign = (
     .doc(designTitle)
     .set(useStore.getState().exportContent())
     .then(() => {
-      useStore.getState().set((state) => {
-        state.changed = false;
-      });
+      usePrimitiveStore.getState().setChanged(false);
       if (canvas) {
         // update the thumbnail image as well
         const thumbnail = Util.resizeCanvas(canvas, 200).toDataURL();

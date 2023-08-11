@@ -3,7 +3,7 @@
  */
 
 import { Util } from '../Util';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { computeDeclinationAngle, computeHourAngle, computeSunLocation } from '../analysis/sunTools';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
@@ -16,14 +16,9 @@ const HeliodonWrapper = () => {
   const dateString = useStore(Selector.world.date);
   const setSunlightDirection = useStore(Selector.setSunlightDirection);
 
-  const [hourAngle, setHourAngle] = useState<number>(0);
-  const [declinationAngle, setDeclinationAngle] = useState<number>(0);
+  const date = useMemo(() => new Date(dateString), [dateString]);
 
-  useEffect(() => {
-    const date = new Date(dateString);
-    setHourAngle(computeHourAngle(date));
-    setDeclinationAngle(computeDeclinationAngle(date));
-  }, [dateString]);
+  const [hourAngle, declinationAngle] = useMemo(() => [computeHourAngle(date), computeDeclinationAngle(date)], [date]);
 
   useEffect(() => {
     setSunlightDirection(

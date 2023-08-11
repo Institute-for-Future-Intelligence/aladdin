@@ -91,6 +91,21 @@ type BoundedPointerOptions = {
   resizeAnchor?: Vector3;
 };
 
+const InsideWallMaterial = React.memo(
+  ({ transparent, color, opacity }: { transparent: boolean; color: string; opacity: number }) => {
+    const sunlightDirection = useStore(Selector.sunlightDirection);
+    const night = sunlightDirection.z <= 0;
+    return (
+      <meshStandardMaterial
+        color={transparent ? color : 'white'}
+        transparent={transparent}
+        opacity={opacity}
+        side={night ? BackSide : DoubleSide}
+      />
+    );
+  },
+);
+
 const Wall = ({ wallModel, foundationModel }: WallProps) => {
   let {
     id,
@@ -145,7 +160,6 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   const updatePolygonVerticesById = useStore(Selector.updatePolygonVerticesById);
 
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
-  const sunlightDirection = useStore(Selector.sunlightDirection);
   const deletedRoofId = useStore(Selector.deletedRoofId);
   const autoDeletedRoof = useStore(Selector.autoDeletedRoof);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
@@ -189,7 +203,6 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   const leftOffset = Util.getInnerWallOffset(leftWall, lx, ly, relativeAngle, 'left');
   const rightOffset = Util.getInnerWallOffset(rightWall, lx, ly, relativeAngle, 'right');
   const transparent = wallStructure === WallStructure.Stud || wallStructure === WallStructure.Pillar;
-  const night = sunlightDirection.z <= 0;
   const wallLeftHeight = leftRoofHeight ?? lz;
   const wallRightHeight = rightRoofHeight ?? lz;
   const isPartial = fill === WallFill.Partial;
@@ -2393,12 +2406,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
             }}
           >
             <shapeBufferGeometry args={[insideWallShape]} />
-            <meshStandardMaterial
-              color={transparent ? color : 'white'}
-              transparent={transparent}
-              opacity={opacity}
-              side={night ? BackSide : DoubleSide}
-            />
+            <InsideWallMaterial transparent={transparent} color={color} opacity={opacity} />
           </mesh>
 
           <mesh rotation={[HALF_PI, 0, 0]} position={[0, ly - 0.01, 0]} receiveShadow={true}>

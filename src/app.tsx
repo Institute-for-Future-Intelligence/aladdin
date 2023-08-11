@@ -23,8 +23,8 @@ const App = () => {
   const notes = useStore((state: CommonStoreState) => state.notes);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const showHeatFluxes = usePrimitiveStore(Selector.showHeatFluxes);
-  const setChanged = useStore(Selector.setChanged);
-  const setSkipChange = useStore(Selector.setSkipChange);
+  const setChanged = usePrimitiveStore(Selector.setChanged);
+  const setSkipChange = usePrimitiveStore(Selector.setSkipChange);
   const loadWeatherData = useStore(Selector.loadWeatherData);
   const loadHorizontalSolarRadiationData = useStore(Selector.loadHorizontalSolarRadiationData);
   const loadVerticalSolarRadiationData = useStore(Selector.loadVerticalSolarRadiationData);
@@ -52,9 +52,9 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    if (useStore.getState().skipChange) {
+    if (usePrimitiveStore.getState().skipChange) {
       setSkipChange(false);
-    } else if (!useStore.getState().changed) {
+    } else if (!usePrimitiveStore.getState().changed) {
       setChanged(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -145,10 +145,6 @@ export interface CommonStoreState {
   ray: Raycaster;
   mouse: Vector2;
 
-  changed: boolean;
-  setChanged: (b: boolean) => void;
-  skipChange: boolean;
-  setSkipChange: (b: boolean) => void;
   fileChanged: boolean;
   applyCount: number;
   setApplyCount: (count: number) => void;
@@ -614,18 +610,6 @@ export const useStore = create<CommonStoreState>(
           ray: new Raycaster(),
           mouse: new Vector2(),
 
-          changed: false,
-          setChanged(b) {
-            immerSet((state: CommonStoreState) => {
-              state.changed = b;
-            });
-          },
-          skipChange: true,
-          setSkipChange(b) {
-            immerSet((state: CommonStoreState) => {
-              state.skipChange = b;
-            });
-          },
           fileChanged: false,
 
           applyCount: 0,
@@ -661,8 +645,6 @@ export const useStore = create<CommonStoreState>(
               state.actionInfo = undefined;
               state.sceneRadius = content.sceneRadius ?? 100;
               state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
-              state.changed = false;
-              state.skipChange = true;
               state.localContentToImportAfterCloudFileUpdate = undefined;
               state.fileChanged = !state.fileChanged;
               state.evolutionMethod = content.evolutionMethod ?? EvolutionMethod.GENETIC_ALGORITHM;
@@ -693,6 +675,8 @@ export const useStore = create<CommonStoreState>(
               }
             });
             usePrimitiveStore.setState((state) => {
+              state.changed = false;
+              state.skipChange = true;
               state.showSolarRadiationHeatmap = false;
               state.showHeatFluxes = false;
               state.simulationInProgress = false;
@@ -758,8 +742,6 @@ export const useStore = create<CommonStoreState>(
               state.elements = [];
               state.sceneRadius = 100;
               state.cloudFile = undefined;
-              state.changed = true;
-              state.skipChange = true;
               state.localContentToImportAfterCloudFileUpdate = undefined;
               state.notes = [];
               state.fileChanged = !state.fileChanged;
@@ -776,6 +758,8 @@ export const useStore = create<CommonStoreState>(
               state.minimumNavigationTurnSpeed = 3;
             });
             usePrimitiveStore.setState((state) => {
+              state.changed = false;
+              state.skipChange = true;
               state.showSolarRadiationHeatmap = false;
               state.showHeatFluxes = false;
             });

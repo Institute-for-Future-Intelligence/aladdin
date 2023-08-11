@@ -8,6 +8,11 @@ import create from 'zustand';
 export interface PrimitiveStoreState {
   setPrimitiveStore: <K extends keyof PrimitiveStoreState, V extends PrimitiveStoreState[K]>(key: K, val: V) => void;
 
+  changed: boolean;
+  setChanged: (b: boolean) => void;
+  skipChange: boolean;
+  setSkipChange: (b: boolean) => void;
+
   waiting: boolean;
 
   showEconomicsPanel: boolean;
@@ -130,6 +135,19 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
         } else {
           console.error(`key ${key} is not defined in PrimitiveStoreState`);
         }
+      });
+    },
+
+    changed: false,
+    setChanged(b) {
+      set((state: PrimitiveStoreState) => {
+        state.changed = b;
+      });
+    },
+    skipChange: true,
+    setSkipChange(b) {
+      set((state: PrimitiveStoreState) => {
+        state.skipChange = b;
       });
     },
 

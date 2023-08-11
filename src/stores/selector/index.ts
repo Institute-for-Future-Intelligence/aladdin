@@ -51,11 +51,11 @@ export const getRoofSegmentVertices = (state: CommonStoreState) => state.getRoof
 export const getRoofSegmentVerticesWithoutOverhang = (state: CommonStoreState) =>
   state.getRoofSegmentVerticesWithoutOverhang;
 
-export const changed = (state: CommonStoreState) => state.changed;
+export const changed = (state: PrimitiveStoreState) => state.changed;
 
-export const setChanged = (state: CommonStoreState) => state.setChanged;
+export const setChanged = (state: PrimitiveStoreState) => state.setChanged;
 
-export const setSkipChange = (state: CommonStoreState) => state.setSkipChange;
+export const setSkipChange = (state: PrimitiveStoreState) => state.setSkipChange;
 
 export const applyCount = (state: CommonStoreState) => state.applyCount;
 

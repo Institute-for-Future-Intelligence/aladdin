@@ -77,8 +77,8 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
       state.modelAuthor = modelAuthor;
       state.modelLabel = modelLabel;
       state.modelDescription = modelDescription;
-      state.changed = true;
     });
+    usePrimitiveStore.getState().setChanged(true);
     if (loggable) {
       setCommonStore((state) => {
         state.actionInfo = {

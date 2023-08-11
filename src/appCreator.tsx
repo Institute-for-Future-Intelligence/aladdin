@@ -58,11 +58,10 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const loggable = useStore(Selector.loggable);
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
-  const changed = useStore(Selector.changed);
+  const changed = usePrimitiveStore(Selector.changed);
   const addUndoable = useStore(Selector.addUndoable);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
   const navigation = useStore(Selector.viewState.navigationView) ?? false;
-  const sceneRadius = useStore(Selector.sceneRadius);
   const cloudFile = useStore(Selector.cloudFile);
   const projectView = useStore(Selector.projectView);
   const axes = useStore(Selector.viewState.axes);
@@ -179,7 +178,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
     if (orbitControlsRef?.current) {
       // I don't know why the reset method results in a black screen.
       // So we are resetting it here to a predictable position.
-      const z = Math.min(50, sceneRadius * 4);
+      const z = Math.min(50, useStore.getState().sceneRadius * 4);
       orbitControlsRef.current.object.position.set(z, z, z);
       orbitControlsRef.current.target.set(0, 0, 0);
       orbitControlsRef.current.update();

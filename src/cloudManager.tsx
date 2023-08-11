@@ -72,7 +72,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const showCloudFileTitleDialogFlag = useStore(Selector.showCloudFileTitleDialogFlag);
   const importContent = useStore(Selector.importContent);
   const createEmptyFile = useStore(Selector.createEmptyFile);
-  const changed = useStore(Selector.changed);
+  const changed = usePrimitiveStore(Selector.changed);
   const localContentToImportAfterCloudFileUpdate = useStore(Selector.localContentToImportAfterCloudFileUpdate);
   const peopleModels = useStore(Selector.peopleModels);
   const createProjectFlag = usePrimitiveStore(Selector.createProjectFlag);
@@ -1418,8 +1418,8 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
             if (!silent) {
               setCommonStore((state) => {
                 state.cloudFile = title;
-                state.changed = false;
               });
+              usePrimitiveStore.getState().setChanged(false);
             }
             if (localContentToImportAfterCloudFileUpdate) {
               if (localContentToImportAfterCloudFileUpdate === 'CREATE_NEW_FILE') {

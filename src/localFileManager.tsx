@@ -27,7 +27,7 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
   const saveLocalFileDialogVisible = usePrimitiveStore(Selector.saveLocalFileDialogVisible);
   const exportContent = useStore(Selector.exportContent);
   const importContent = useStore(Selector.importContent);
-  const changed = useStore(Selector.changed);
+  const changed = usePrimitiveStore(Selector.changed);
   const cloudFile = useStore(Selector.cloudFile);
   const user = useStore(Selector.user);
   const createEmptyFile = useStore(Selector.createEmptyFile);
