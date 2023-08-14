@@ -2,7 +2,7 @@
  * @Copyright 2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { ScaleLinear } from 'd3-scale';
 import i18n from '../i18n/i18n';
 import { useStore } from '../stores/common';
@@ -10,6 +10,7 @@ import * as Selector from '../stores/selector';
 import { updateSelectedProperty } from '../cloudProjectUtil';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { InputNumber, Popover } from 'antd';
+import { Range } from '../types';
 
 type VerticalAxisProps = {
   variable: string;
@@ -44,8 +45,12 @@ const VerticalAxis = ({
   const user = useStore(Selector.user);
   const language = useStore(Selector.language);
   const projectInfo = useStore(Selector.projectInfo);
-  const lang = { lng: language };
 
+  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
+  const minRef = useRef<number>(min);
+  const maxRef = useRef<number>(max);
+
+  const lang = { lng: language };
   const isOwner = user.uid === projectInfo.owner;
   const range = yScale.range();
 
@@ -112,22 +117,54 @@ const VerticalAxis = ({
   return (
     <>
       {/* Title */}
-      {name !== 'Orientation' ? (
+      {variable !== 'orientation' ? (
         <Popover
           content={
             <div>
               <InputNumber
                 style={{ width: '240px' }}
-                addonBefore={createLabel(i18n.t('word.Minimum', lang), 80)}
+                addonBefore={createLabel(i18n.t('word.Minimum', lang) + (money ? ' $' : ''), 80)}
                 addonAfter={unit}
-                defaultValue={0}
+                value={minRef.current}
+                onChange={(value) => {
+                  minRef.current = value;
+                  setUpdateFlag(!updateFlag);
+                }}
               />
               <br />
               <InputNumber
                 style={{ width: '240px' }}
-                addonBefore={createLabel(i18n.t('word.Maximum', lang), 80)}
+                addonBefore={createLabel(i18n.t('word.Maximum', lang) + (money ? ' $' : ''), 80)}
                 addonAfter={unit}
-                defaultValue={1}
+                value={maxRef.current}
+                onChange={(value) => {
+                  setCommonStore((state) => {
+                    if (state.projectInfo.ranges) {
+                      let index = -1;
+                      let range = null;
+                      for (const [i, r] of state.projectInfo.ranges.entries()) {
+                        if (r.variable === variable) {
+                          index = i;
+                          range = r;
+                          break;
+                        }
+                      }
+                      if (index >= 0 && range) {
+                        state.projectInfo.ranges[index] = {
+                          variable: range.variable,
+                          minimum: range.minimum,
+                          maximum: value,
+                        } as Range;
+                      } else {
+                        state.projectInfo.ranges.push({ variable, minimum: min, maximum: value } as Range);
+                      }
+                    } else {
+                      state.projectInfo.ranges = [{ variable, minimum: min, maximum: value } as Range];
+                    }
+                  });
+                  maxRef.current = value;
+                  setUpdateFlag(!updateFlag);
+                }}
               />
             </div>
           }

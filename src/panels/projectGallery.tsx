@@ -304,6 +304,32 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
     updateHiddenFlag,
   ]);
 
+  const getMin = (variable: string, defaultValue: number) => {
+    let min = defaultValue;
+    if (projectInfo.ranges) {
+      for (const r of projectInfo.ranges) {
+        if (r.variable === variable) {
+          min = r.minimum ?? defaultValue;
+          break;
+        }
+      }
+    }
+    return min;
+  };
+
+  const getMax = (variable: string, defaultValue: number) => {
+    let max = defaultValue;
+    if (projectInfo.ranges) {
+      for (const r of projectInfo.ranges) {
+        if (r.variable === variable) {
+          max = r.maximum ?? defaultValue;
+          break;
+        }
+      }
+    }
+    return max;
+  };
+
   const minima: number[] = useMemo(() => {
     if (projectInfo.type === DesignProblem.SOLAR_PANEL_ARRAY && solarPanelArrayLayoutConstraints) {
       const array: number[] = [];
@@ -314,16 +340,22 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
       if (!projectInfo.hiddenParameters?.includes('interRowSpacing'))
         array.push(solarPanelArrayLayoutConstraints.minimumInterRowSpacing);
       if (!projectInfo.hiddenParameters?.includes('orientation')) array.push(0);
-      if (!projectInfo.hiddenParameters?.includes('poleHeight')) array.push(0);
-      if (!projectInfo.hiddenParameters?.includes('unitCost')) array.push(0.1);
-      if (!projectInfo.hiddenParameters?.includes('sellingPrice')) array.push(0.1);
-      if (!projectInfo.hiddenParameters?.includes('panelCount')) array.push(0);
-      if (!projectInfo.hiddenParameters?.includes('yield')) array.push(0); // electricity output in MWh
-      if (!projectInfo.hiddenParameters?.includes('profit')) array.push(-10); // profit in $1,000
+      if (!projectInfo.hiddenParameters?.includes('poleHeight')) array.push(getMin('poleHeight', 0));
+      if (!projectInfo.hiddenParameters?.includes('unitCost')) array.push(getMin('unitCost', 0.1));
+      if (!projectInfo.hiddenParameters?.includes('sellingPrice')) array.push(getMin('sellingPrice', 0.1));
+      if (!projectInfo.hiddenParameters?.includes('panelCount')) array.push(getMin('panelCount', 0));
+      if (!projectInfo.hiddenParameters?.includes('yield')) array.push(getMin('yield', 0)); // electricity output in MWh
+      if (!projectInfo.hiddenParameters?.includes('profit')) array.push(getMin('profit', -10)); // profit in $1,000
       return array;
     }
     return [];
-  }, [solarPanelArrayLayoutConstraints, projectInfo.type, projectInfo.hiddenParameters, updateHiddenFlag]);
+  }, [
+    solarPanelArrayLayoutConstraints,
+    projectInfo.type,
+    projectInfo.ranges,
+    projectInfo.hiddenParameters,
+    updateHiddenFlag,
+  ]);
 
   const maxima: number[] = useMemo(() => {
     if (projectInfo.type === DesignProblem.SOLAR_PANEL_ARRAY && solarPanelArrayLayoutConstraints) {
@@ -335,16 +367,22 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
       if (!projectInfo.hiddenParameters?.includes('interRowSpacing'))
         array.push(solarPanelArrayLayoutConstraints.maximumInterRowSpacing);
       if (!projectInfo.hiddenParameters?.includes('orientation')) array.push(1);
-      if (!projectInfo.hiddenParameters?.includes('poleHeight')) array.push(5);
-      if (!projectInfo.hiddenParameters?.includes('unitCost')) array.push(1);
-      if (!projectInfo.hiddenParameters?.includes('sellingPrice')) array.push(0.5);
-      if (!projectInfo.hiddenParameters?.includes('panelCount')) array.push(300);
-      if (!projectInfo.hiddenParameters?.includes('yield')) array.push(100); // electricity output in MWh
-      if (!projectInfo.hiddenParameters?.includes('profit')) array.push(10); // profit in $1,000
+      if (!projectInfo.hiddenParameters?.includes('poleHeight')) array.push(getMax('poleHeight', 5));
+      if (!projectInfo.hiddenParameters?.includes('unitCost')) array.push(getMax('unitCost', 1));
+      if (!projectInfo.hiddenParameters?.includes('sellingPrice')) array.push(getMax('sellingPrice', 0.5));
+      if (!projectInfo.hiddenParameters?.includes('panelCount')) array.push(getMax('panelCount', 300));
+      if (!projectInfo.hiddenParameters?.includes('yield')) array.push(getMax('yield', 100)); // electricity output in MWh
+      if (!projectInfo.hiddenParameters?.includes('profit')) array.push(getMax('profit', 10)); // profit in $1,000
       return array;
     }
     return [];
-  }, [solarPanelArrayLayoutConstraints, projectInfo.type, projectInfo.hiddenParameters, updateHiddenFlag]);
+  }, [
+    solarPanelArrayLayoutConstraints,
+    projectInfo.type,
+    projectInfo.ranges,
+    projectInfo.hiddenParameters,
+    updateHiddenFlag,
+  ]);
 
   const rowWidthSelectionRef = useRef<boolean>(!projectInfo.hiddenParameters?.includes('rowWidth'));
   const tiltAngleSelectionRef = useRef<boolean>(!projectInfo.hiddenParameters?.includes('tiltAngle'));

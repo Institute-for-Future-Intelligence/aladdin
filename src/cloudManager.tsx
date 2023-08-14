@@ -202,6 +202,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           sortDescending: f.sortDescending,
           type: f.type,
           designs: f.designs,
+          ranges: f.ranges ?? [],
           hiddenParameters: f.hiddenParameters ?? [],
           counter: f.counter,
           action: '',
@@ -964,6 +965,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                 state.projectInfo.selectedProperty = null;
                 state.projectInfo.sortDescending = false;
                 state.projectInfo.designs = [];
+                state.projectInfo.ranges = [];
                 state.projectInfo.hiddenParameters = [];
               });
             })
@@ -1049,6 +1051,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                   selectedProperty,
                   sortDescending,
                   designs: newDesigns,
+                  ranges: useStore.getState().projectInfo.ranges ?? null,
                   hiddenParameters: useStore.getState().projectInfo.hiddenParameters,
                 })
                 .then(() => {
@@ -1100,6 +1103,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
             sortDescending: data.sortDescending,
             type: data.type,
             designs: data.designs ?? [],
+            ranges: data.ranges ?? [],
             hiddenParameters: data.hiddenParameters ?? [],
             counter: data.counter ?? 0,
           } as ProjectInfo);
@@ -1177,7 +1181,8 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
             state.projectInfo.selectedProperty = null;
             state.projectInfo.sortDescending = false;
             state.projectInfo.counter = 0;
-            state.projectInfo.designs = null;
+            state.projectInfo.designs = [];
+            state.projectInfo.ranges = [];
             state.projectInfo.hiddenParameters = [];
             state.designProjectType = null;
             state.projectView = false;
@@ -1245,6 +1250,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                             description: p.description,
                             type: p.type,
                             designs: p.designs,
+                            ranges: p.ranges ?? null,
                             hiddenParameters: p.hiddenParameters,
                             counter: p.counter,
                           } as ProjectInfo);

@@ -108,6 +108,12 @@ export enum DataColoring {
   GROUPS = 2,
 }
 
+export interface Range {
+  variable: string;
+  minimum: number;
+  maximum: number;
+}
+
 export interface ProjectInfo {
   owner: string | null;
   timestamp: number;
@@ -115,6 +121,7 @@ export interface ProjectInfo {
   description: string | null;
   type: DesignProblem;
   designs: Design[] | null;
+  ranges: Range[] | null;
   hiddenParameters: string[] | null;
   counter: number;
   dataColoring: DataColoring;

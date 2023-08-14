@@ -32,6 +32,7 @@ export const fetchProject = async (userid: string, project: string, setProjectSt
           dataColoring: data.dataColoring ?? DataColoring.ALL,
           type: data.type,
           designs: data.designs,
+          ranges: data.ranges,
           hiddenParameters: data.hiddenParameters,
           counter: data.counter ?? 0,
         } as ProjectInfo);
