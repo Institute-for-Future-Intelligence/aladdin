@@ -9,6 +9,7 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { updateSelectedProperty } from '../cloudProjectUtil';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { InputNumber, Popover } from 'antd';
 
 type VerticalAxisProps = {
   variable: string;
@@ -83,9 +84,12 @@ const VerticalAxis = ({
     }
   };
 
-  return (
-    <>
-      {/* Title */}
+  const createLabel = (text: string, width: number) => {
+    return <span style={{ display: 'block', width: width + 'px' }}>{text}</span>;
+  };
+
+  const createTitle = () => {
+    return (
       <text
         onClick={select}
         x={0}
@@ -100,6 +104,39 @@ const VerticalAxis = ({
       >
         {name}
       </text>
+    );
+  };
+
+  const money = variable === 'profit' || variable === 'unitCost' || variable === 'sellingPrice';
+
+  return (
+    <>
+      {/* Title */}
+      {name !== 'Orientation' ? (
+        <Popover
+          content={
+            <div>
+              <InputNumber
+                style={{ width: '240px' }}
+                addonBefore={createLabel(i18n.t('word.Minimum', lang), 80)}
+                addonAfter={unit}
+                defaultValue={0}
+              />
+              <br />
+              <InputNumber
+                style={{ width: '240px' }}
+                addonBefore={createLabel(i18n.t('word.Maximum', lang), 80)}
+                addonAfter={unit}
+                defaultValue={1}
+              />
+            </div>
+          }
+        >
+          {createTitle()}
+        </Popover>
+      ) : (
+        <>{createTitle()}</>
+      )}
       {value !== undefined && (
         <text
           x={0}
@@ -110,14 +147,15 @@ const VerticalAxis = ({
             fill: 'dimgray',
           }}
         >
-          {variable === 'profit' || variable === 'unitCost' || variable === 'sellingPrice'
+          {money
             ? value.toLocaleString('en-US', {
                 style: 'currency',
                 currency: 'USD',
                 maximumFractionDigits: 3,
               }) + (variable === 'profit' ? 'K' : '')
             : (variable === 'orientation'
-                ? i18n.t(value === 0 ? 'solarPanelMenu.Landscape' : 'solarPanelMenu.Portrait', lang)
+                ? i18n.t(value === 0 ? 'solarPanelMenu.Landscape' : 'solarPanelMenu.Portrait', lang) +
+                  (value === 0 ? ' (▭)' : ' (▯)')
                 : value.toFixed(digits)) + (unit !== '' ? unit : '')}
         </text>
       )}
@@ -150,7 +188,7 @@ const VerticalAxis = ({
               transform: 'translateX(-25px)',
             }}
           >
-            {value}
+            {name === 'Orientation' ? (value === 0 ? '▭' : '▯') : value}
           </text>
         </g>
       ))}
