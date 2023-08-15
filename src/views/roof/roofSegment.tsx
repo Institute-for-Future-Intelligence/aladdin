@@ -343,7 +343,6 @@ export const BufferRoofSegment = React.memo(
     windows,
     centroid,
   }: BufferRoofSegmentProps) => {
-    console.log('buffer');
     const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
     const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
 
@@ -667,15 +666,6 @@ export const BufferRoofSegment = React.memo(
         })}
       </mesh>
     );
-  },
-  (prev, curr) => {
-    console.log('centroid', prev.centroid === curr.centroid);
-    console.log('heatmap', prev.heatmap === curr.heatmap);
-    console.log('index', prev.index === curr.index);
-    console.log('segment', prev.segment === curr.segment);
-    console.log('texture', prev.texture === curr.texture);
-    console.log('windows', prev.windows === curr.windows);
-    return prev === curr;
   },
 );
 
