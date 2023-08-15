@@ -332,6 +332,9 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
     setTotalBuildingHeater(totalHeater);
     setTotalBuildingAc(totalAc);
     setTotalBuildingSolarPanel(totalSolarPanel);
+    if (!usePrimitiveStore.getState().showSolarRadiationHeatmap) {
+      useDataStore.getState().clearDataStore();
+    }
   }, [flagOfDailySimulation]);
 
   useEffect(() => {

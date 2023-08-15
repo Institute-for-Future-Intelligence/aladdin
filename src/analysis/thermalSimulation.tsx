@@ -61,30 +61,29 @@ interface RoofSegmentResult {
 const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const setCommonStore = useStore(Selector.set);
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
-  const language = useStore(Selector.language);
-  const loggable = useStore(Selector.loggable);
-  const world = useStore.getState().world;
-  const elements = useStore.getState().elements;
   const getWeather = useStore(Selector.getWeather);
-  const latitude = useStore(Selector.world.latitude);
-  const ground = useStore(Selector.world.ground);
   const getFoundation = useStore(Selector.getFoundation);
   const getParent = useStore(Selector.getParent);
   const getChildrenOfType = useStore(Selector.getChildrenOfType);
   const getPvModule = useStore(Selector.getPvModule);
   const setHeatmap = useDataStore(Selector.setHeatmap);
-  const clearDataStore = useDataStore(Selector.clearDataStore);
+  const getRoofSegmentVerticesWithoutOverhang = useDataStore(Selector.getRoofSegmentVerticesWithoutOverhang);
+  const getRoofSegmentVertices = useDataStore(Selector.getRoofSegmentVertices);
+  const setHourlyHeatExchangeArray = useDataStore(Selector.setHourlyHeatExchangeArray);
+  const setHourlySolarHeatGainArray = useDataStore(Selector.setHourlySolarHeatGainArray);
+  const setHourlySolarPanelOutputArray = useDataStore(Selector.setHourlySolarPanelOutputArray);
+
+  const language = useStore(Selector.language);
+  const loggable = useStore(Selector.loggable);
   const runDailySimulation = usePrimitiveStore(Selector.runDailyThermalSimulation);
   const pauseDailySimulation = usePrimitiveStore(Selector.pauseDailyThermalSimulation);
   const runYearlySimulation = usePrimitiveStore(Selector.runYearlyThermalSimulation);
   const pauseYearlySimulation = usePrimitiveStore(Selector.pauseYearlyThermalSimulation);
-  const noAnimation = !!useStore(Selector.world.noAnimationForThermalSimulation);
-  const getRoofSegmentVerticesWithoutOverhang = useDataStore(Selector.getRoofSegmentVerticesWithoutOverhang);
-  const getRoofSegmentVertices = useDataStore(Selector.getRoofSegmentVertices);
-  const highestTemperatureTimeInMinutes = useStore(Selector.world.highestTemperatureTimeInMinutes) ?? 900;
-  const setHourlyHeatExchangeArray = useDataStore(Selector.setHourlyHeatExchangeArray);
-  const setHourlySolarHeatGainArray = useDataStore(Selector.setHourlySolarHeatGainArray);
-  const setHourlySolarPanelOutputArray = useDataStore(Selector.setHourlySolarPanelOutputArray);
+
+  const world = useStore.getState().world;
+  const elements = useStore.getState().elements;
+  const noAnimation = !!world.noAnimationForThermalSimulation;
+  const highestTemperatureTimeInMinutes = world.highestTemperatureTimeInMinutes ?? 900;
 
   const requestRef = useRef<number>(0);
   const simulationCompletedRef = useRef<boolean>(false);
@@ -174,14 +173,14 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         minutes,
       );
       currentGroundTemperatureRef.current = getGroundTemperatureAtMinute(
-        latitude,
+        world.latitude,
         Util.dayOfYear(now),
         minutes,
         weather.lowestTemperatures,
         weather.highestTemperatures,
         highestTemperatureTimeInMinutes,
         0.5 * (outsideTemperatureRangeRef.current.high - outsideTemperatureRangeRef.current.low),
-        ground.thermalDiffusivity ?? 0.05,
+        world.ground.thermalDiffusivity ?? 0.05,
         DEFAULT_FOUNDATION_SLAB_DEPTH,
       );
     }
@@ -245,7 +244,6 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const resetSolarHeatMaps = () => {
     // must clear the map to allow the array to be recreated in case the dimensions will change
     solarHeatmapRef.current.clear();
-    clearDataStore();
   };
 
   /* do the daily simulation to generate hourly data and daily total */
