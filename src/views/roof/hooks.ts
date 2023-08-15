@@ -332,7 +332,6 @@ export const useUpdateSegmentVerticesMap = (
       }
     }
     useDataStore.getState().setRoofSegmentVertices(roofId, vertices);
-
     return vertices;
   };
 
@@ -341,12 +340,17 @@ export const useUpdateSegmentVerticesMap = (
     updateSegmentVertices();
   }
 
+  useEffect(() => {
+    updateSegmentVertices();
+  }, [roofSegments]);
+
   return updateSegmentVertices;
 };
 
 export const useUpdateSegmentVerticesWithoutOverhangMap = (update: () => void): void => {
   const runDailyThermalSimulation = usePrimitiveStore(Selector.runDailyThermalSimulation);
   const runYearlyThermalSimulation = usePrimitiveStore(Selector.runYearlyThermalSimulation);
+
   if (runDailyThermalSimulation || runYearlyThermalSimulation) {
     update();
   }

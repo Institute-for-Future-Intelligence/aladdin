@@ -55,7 +55,6 @@ import {
   RoofSegmentGroupUserData,
   RoofSegmentProps,
   RoofWireframeProps,
-  updateRooftopElements,
 } from './roofRenderer';
 import RoofSegment from './roofSegment';
 import { RoofUtil } from './RoofUtil';
@@ -64,6 +63,8 @@ import { useDataStore } from '../../stores/commonData';
 import Ceiling from './ceiling';
 import FlatRoof, { TopExtrude } from './flatRoof';
 import { BuildingParts, FoundationModel } from '../../models/FoundationModel';
+import shallow from 'zustand/shallow';
+import { WindowModel } from 'src/models/WindowModel';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -829,20 +830,25 @@ const MansardRoof = ({ roofModel, foundationModel }: MansardRoofProps) => {
   };
   const topLayerColor = textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white';
 
-  const windows = useStore((state) => state.elements).filter((e) => e.type === ObjectType.Window && e.parentId === id);
+  const windows = useStore(
+    (state) => state.elements.filter((e) => e.parentId === id && e.type === ObjectType.Window),
+    shallow,
+  ) as WindowModel[];
 
   const holeMeshes = useMemo(
     () =>
-      windows.map((window) => {
-        const holeMesh = new Mesh(new BoxBufferGeometry(window.lx, window.lz, window.ly * 2));
-        const [a, b, c] = window.rotation;
-        const position = new Vector3(window.cx, window.cy, window.cz).sub(centroid);
+      windows.map((w) => {
+        const dimension = new Vector3(w.lx, w.lz, w.ly * 2);
+        const position = new Vector3(w.cx, w.cy, w.cz).sub(centroid);
+        const rotation = new Euler().fromArray([...w.rotation, 'ZXY']);
+
+        const holeMesh = new Mesh(new BoxBufferGeometry(dimension.x, dimension.y, dimension.z));
         holeMesh.position.copy(position);
-        holeMesh.rotation.set(a, b, c);
+        holeMesh.rotation.copy(rotation);
         holeMesh.updateMatrix();
         return holeMesh;
       }),
-    [windows, centroid, thickness],
+    [windows, centroid],
   );
 
   const noTextureAndOneColor = textureType === RoofTexture.NoTexture && color && color === sideColor;
@@ -855,7 +861,7 @@ const MansardRoof = ({ roofModel, foundationModel }: MansardRoofProps) => {
         position={[centroid.x, centroid.y, centroid.z]}
         userData={userData}
         onPointerDown={(e) => {
-          handlePointerDown(e, id, foundationModel, roofSegments, centroid);
+          handlePointerDown(e, foundationModel.id, id, roofSegments, centroid);
         }}
         onPointerMove={(e) => {
           handlePointerMove(e, id);
@@ -899,6 +905,7 @@ const MansardRoof = ({ roofModel, foundationModel }: MansardRoofProps) => {
                   sideColor={sideColor}
                   texture={texture}
                   heatmap={heatmapTextures && index < heatmapTextures.length ? heatmapTextures[index] : undefined}
+                  windows={windows}
                 />
               );
             })}

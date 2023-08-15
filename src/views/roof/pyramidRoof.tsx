@@ -26,7 +26,6 @@ import {
   RoofSegmentGroupUserData,
   RoofSegmentProps,
   RoofWireframeProps,
-  updateRooftopElements,
 } from './roofRenderer';
 import { RoofUtil } from './RoofUtil';
 import {
@@ -36,7 +35,6 @@ import {
   useRoofTexture,
   useUpdateOldRoofFiles,
   useUpdateRooftopElements,
-  useUpdateRooftopElementsByContextMenuChanges,
   useUpdateSegmentVerticesMap,
   useUpdateSegmentVerticesWithoutOverhangMap,
 } from './hooks';
@@ -46,6 +44,8 @@ import { useDataStore } from '../../stores/commonData';
 import Ceiling from './ceiling';
 import FlatRoof from './flatRoof';
 import { BuildingParts, FoundationModel } from '../../models/FoundationModel';
+import shallow from 'zustand/shallow';
+import { WindowModel } from 'src/models/WindowModel';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -575,6 +575,11 @@ const PyramidRoof = ({ roofModel, foundationModel }: PyramidRoofProps) => {
 
   useUpdateSegmentVerticesWithoutOverhangMap(updateSegmentVerticesWithoutOverhangMap);
 
+  const windows = useStore(
+    (state) => state.elements.filter((e) => e.parentId === id && e.type === ObjectType.Window),
+    shallow,
+  ) as WindowModel[];
+
   // used for move rooftop elements between different roofs, passed to handlePointerMove in roofRenderer
   const userData: RoofSegmentGroupUserData = {
     roofId: id,
@@ -593,7 +598,7 @@ const PyramidRoof = ({ roofModel, foundationModel }: PyramidRoofProps) => {
         userData={userData}
         position={[centerPoint.x, centerPoint.y, topZ]}
         onPointerDown={(e) => {
-          handlePointerDown(e, id, foundationModel, roofSegments, centerPointV3);
+          handlePointerDown(e, foundationModel.id, id, roofSegments, centerPointV3);
         }}
         onPointerMove={(e) => {
           handlePointerMove(e, id);
@@ -641,6 +646,7 @@ const PyramidRoof = ({ roofModel, foundationModel }: PyramidRoofProps) => {
                         sideColor={sideColor}
                         texture={texture}
                         heatmap={heatmapTextures && index < heatmapTextures.length ? heatmapTextures[index] : undefined}
+                        windows={windows}
                       />
                     </group>
                   );

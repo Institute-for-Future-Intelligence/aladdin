@@ -60,7 +60,6 @@ import {
   useUpdateSegmentVerticesMap,
   useUpdateSegmentVerticesWithoutOverhangMap,
   useUpdateRooftopElementsByContextMenuChanges,
-  useUpdateRooftopElements,
 } from './hooks';
 import { ConvexGeometry } from 'src/js/ConvexGeometry';
 import { CSG } from 'three-csg-ts';
@@ -911,6 +910,11 @@ const GableRoof = ({ roofModel, foundationModel }: GableRoofProps) => {
   useUpdateSegmentVerticesMap(id, centroid, roofSegments, false, RoofType.Gable);
   useUpdateSegmentVerticesWithoutOverhangMap(updateSegmentVerticesWithoutOverhangMap);
 
+  const windows = useStore(
+    (state) => state.elements.filter((e) => e.parentId === id && e.type === ObjectType.Window),
+    shallow,
+  ) as WindowModel[];
+
   const selectMe = useStore(Selector.selectMe);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
@@ -954,7 +958,7 @@ const GableRoof = ({ roofModel, foundationModel }: GableRoofProps) => {
         position={[centroid.x, centroid.y, centroid.z]}
         userData={userData}
         onPointerDown={(e) => {
-          handlePointerDown(e, id, foundationModel, roofSegments, centroid);
+          handlePointerDown(e, foundationModel.id, id, roofSegments, centroid);
         }}
         onPointerMove={(e) => {
           handlePointerMove(e, id);
@@ -988,6 +992,7 @@ const GableRoof = ({ roofModel, foundationModel }: GableRoofProps) => {
               opacity={opacity}
               relativeAngle={i === 0 ? composedWalls[0].relativeAngle : composedWalls[2].relativeAngle}
               foundation={foundationModel}
+              windows={windows}
             />
           );
         })}
@@ -1243,6 +1248,7 @@ const RoofSegment = ({
   roofStructure,
   glassTint,
   opacity = 0.5,
+  windows,
 }: {
   index: number;
   id: string;
@@ -1259,6 +1265,7 @@ const RoofSegment = ({
   roofStructure?: RoofStructure;
   glassTint?: string;
   opacity?: number;
+  windows: WindowModel[];
 }) => {
   const world = useStore.getState().world;
   const getElementById = useStore(Selector.getElementById);
@@ -1422,24 +1429,6 @@ const RoofSegment = ({
     return vectors;
   }, [showHeatFluxes, heatFluxScaleFactor, centroid, points]);
 
-  const windows: WindowData[] = useStore(
-    (state) =>
-      state.elements
-        .filter((e) => e.parentId === id && e.type === ObjectType.Window)
-        .map((e) => {
-          const w = e as WindowModel;
-          return {
-            dimension: new Vector3(w.lx, w.lz, w.ly * 2),
-            position: new Vector3(w.cx, w.cy, w.cz).sub(centroid),
-            rotation: new Euler().fromArray([...w.rotation, 'ZXY']),
-            windowType: w.windowType,
-            archHeight: w.archHeight,
-            topPosition: w.polygonTop,
-          };
-        }),
-    shallow,
-  );
-
   useEffect(() => {
     const [wallLeft, wallRight, ridgeRight, ridgeLeft, wallLeftAfterOverhang] = points;
     const thickness = wallLeftAfterOverhang.z - wallLeft.z;
@@ -1586,6 +1575,7 @@ const RoofSegment = ({
             transparent={transparent}
             opacity={_opacity}
             windows={windows}
+            centroid={centroid}
           />
         </>
       )}

@@ -50,6 +50,7 @@ import { BuildingParts, FoundationModel } from '../../models/FoundationModel';
 import FlatRoof from './flatRoof';
 import { WindowModel, WindowType } from 'src/models/WindowModel';
 import { DEFAULT_POLYGONTOP } from '../window/window';
+import shallow from 'zustand/shallow';
 
 type RoofEdge = {
   start: number;
@@ -939,6 +940,11 @@ const GambrelRoof = ({ roofModel, foundationModel }: GambrelRoofProps) => {
   const updateSegmentVertices = useUpdateSegmentVerticesMap(id, centroid, roofSegments, isFlat, RoofType.Gambrel);
   useUpdateSegmentVerticesWithoutOverhangMap(updateSegmentVerticesWithoutOverhangMap);
 
+  const windows = useStore(
+    (state) => state.elements.filter((e) => e.parentId === id && e.type === ObjectType.Window),
+    shallow,
+  ) as WindowModel[];
+
   const selectMe = useStore(Selector.selectMe);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
@@ -1021,7 +1027,7 @@ const GambrelRoof = ({ roofModel, foundationModel }: GambrelRoofProps) => {
         position={[centroid.x, centroid.y, centroid.z]}
         userData={userData}
         onPointerDown={(e) => {
-          handlePointerDown(e, id, foundationModel, roofSegments, centroid);
+          handlePointerDown(e, foundationModel.id, id, roofSegments, centroid);
         }}
         onPointerMove={(e) => {
           handlePointerMove(e, id);
@@ -1065,6 +1071,7 @@ const GambrelRoof = ({ roofModel, foundationModel }: GambrelRoofProps) => {
                   sideColor={sideColor}
                   texture={texture}
                   heatmap={heatmapTextures && index < heatmapTextures.length ? heatmapTextures[index] : undefined}
+                  windows={windows}
                 />
               );
             })}

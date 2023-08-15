@@ -18,14 +18,11 @@ import { CanvasTexture, DoubleSide, Euler, Mesh, Raycaster, RepeatWrapping, Vect
 import {
   ComposedWall,
   useComposedWallArray,
-  useIsFirstRender,
   useComposedRoofHeight,
   useRoofTexture,
   useUpdateOldRoofFiles,
   useUpdateSegmentVerticesMap,
   useUpdateSegmentVerticesWithoutOverhangMap,
-  useUpdateRooftopElementsByContextMenuChanges,
-  useUpdateRooftopElementsByControlPoints,
   useUpdateRooftopElements,
 } from './hooks';
 import {
@@ -39,7 +36,6 @@ import {
   RoofSegmentGroupUserData,
   RoofSegmentProps,
   RoofWireframeProps,
-  updateRooftopElements,
 } from './roofRenderer';
 import RoofSegment from './roofSegment';
 import { RoofUtil } from './RoofUtil';
@@ -48,6 +44,8 @@ import { useDataStore } from '../../stores/commonData';
 import Ceiling from './ceiling';
 import FlatRoof from './flatRoof';
 import { BuildingParts, FoundationModel } from '../../models/FoundationModel';
+import shallow from 'zustand/shallow';
+import { WindowModel } from 'src/models/WindowModel';
 
 const HipRoofWireframe = React.memo(({ roofSegments, thickness, lineWidth, lineColor }: RoofWireframeProps) => {
   if (roofSegments.length === 0) {
@@ -418,6 +416,11 @@ const HipRoof = ({ roofModel, foundationModel }: HipRoofProps) => {
   );
   useUpdateSegmentVerticesWithoutOverhangMap(updateSegmentVerticesWithoutOverhangMap);
 
+  const windows = useStore(
+    (state) => state.elements.filter((e) => e.parentId === id && e.type === ObjectType.Window),
+    shallow,
+  ) as WindowModel[];
+
   const selectMe = useStore(Selector.selectMe);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
@@ -501,7 +504,7 @@ const HipRoof = ({ roofModel, foundationModel }: HipRoofProps) => {
         position={[centroid2D.x, centroid2D.y, topZ]}
         userData={userData}
         onPointerDown={(e) => {
-          handlePointerDown(e, id, foundationModel, roofSegments, ridgeMidPoint);
+          handlePointerDown(e, foundationModel.id, id, roofSegments, ridgeMidPoint);
         }}
         onPointerMove={(e) => {
           handlePointerMove(e, id);
@@ -546,6 +549,7 @@ const HipRoof = ({ roofModel, foundationModel }: HipRoofProps) => {
                   sideColor={sideColor}
                   texture={texture}
                   heatmap={heatmapTextures && index < heatmapTextures.length ? heatmapTextures[index] : undefined}
+                  windows={windows}
                 />
               );
             })}

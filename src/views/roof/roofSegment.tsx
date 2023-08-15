@@ -64,6 +64,7 @@ export const RoofSegment = ({
   sideColor,
   texture,
   heatmap,
+  windows,
 }: {
   id: string;
   index: number;
@@ -76,6 +77,7 @@ export const RoofSegment = ({
   sideColor: string;
   texture: Texture;
   heatmap?: CanvasTexture;
+  windows: WindowModel[];
 }) => {
   const getChildrenOfType = useStore(Selector.getChildrenOfType);
   const showHeatFluxes = usePrimitiveStore(Selector.showHeatFluxes);
@@ -248,24 +250,6 @@ export const RoofSegment = ({
     return vectors;
   }, [showHeatFluxes, heatFluxScaleFactor]);
 
-  const windows: WindowData[] = useStore(
-    (state) =>
-      state.elements
-        .filter((e) => e.parentId === id && e.type === ObjectType.Window)
-        .map((e) => {
-          const w = e as WindowModel;
-          return {
-            dimension: new Vector3(w.lx, w.lz, w.ly * 2),
-            position: new Vector3(w.cx, w.cy, w.cz).sub(centroid),
-            rotation: new Euler().fromArray([...w.rotation, 'ZXY']),
-            windowType: w.windowType,
-            archHeight: w.archHeight,
-            topPosition: w.polygonTop,
-          };
-        }),
-    shallow,
-  );
-
   return (
     <>
       <BufferRoofSegment
@@ -279,6 +263,7 @@ export const RoofSegment = ({
         transparent={transparent}
         opacity={opacity}
         windows={windows}
+        centroid={centroid}
       />
 
       {overhangLines &&
@@ -340,7 +325,8 @@ interface BufferRoofSegmentProps {
   heatmap?: CanvasTexture;
   transparent: boolean;
   opacity: number;
-  windows: WindowData[];
+  windows: WindowModel[];
+  centroid: Vector3;
 }
 
 export const BufferRoofSegment = React.memo(
@@ -355,7 +341,9 @@ export const BufferRoofSegment = React.memo(
     transparent,
     opacity,
     windows,
+    centroid,
   }: BufferRoofSegmentProps) => {
+    console.log('buffer');
     const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
     const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
 
@@ -368,11 +356,14 @@ export const BufferRoofSegment = React.memo(
 
     const holeMeshes = useMemo(
       () =>
-        windows.map((window) => {
-          const { dimension, position, rotation, windowType, archHeight, topPosition } = window;
-          if (windowType === WindowType.Polygonal) {
+        windows.map((w) => {
+          const dimension = new Vector3(w.lx, w.lz, w.ly * 2);
+          const position = new Vector3(w.cx, w.cy, w.cz).sub(centroid);
+          const rotation = new Euler().fromArray([...w.rotation, 'ZXY']);
+
+          if (w.windowType === WindowType.Polygonal) {
             // triangle window
-            const [topX, topH] = topPosition ?? DEFAULT_POLYGONTOP;
+            const [topX, topH] = w.polygonTop ?? DEFAULT_POLYGONTOP;
             const [hx, hy, tx] = [dimension.x / 2, dimension.y / 2, topX * dimension.x];
 
             const shape = getPolygonWindowShape(hx, hy, tx, topH);
@@ -384,8 +375,8 @@ export const BufferRoofSegment = React.memo(
             holeMesh.rotation.copy(rotation);
             holeMesh.updateMatrix();
             return holeMesh;
-          } else if (windowType === WindowType.Arched) {
-            const shape = getArchedWindowShape(dimension.x, dimension.y, archHeight);
+          } else if (w.windowType === WindowType.Arched) {
+            const shape = getArchedWindowShape(dimension.x, dimension.y, w.archHeight);
             const holeMesh = new Mesh(
               new ExtrudeBufferGeometry([shape], { steps: 1, depth: dimension.z, bevelEnabled: false }),
             );
@@ -403,7 +394,7 @@ export const BufferRoofSegment = React.memo(
             return holeMesh;
           }
         }),
-      [windows],
+      [windows, centroid],
     );
 
     const materialGroupNumber = render() ?? 6;
@@ -676,6 +667,15 @@ export const BufferRoofSegment = React.memo(
         })}
       </mesh>
     );
+  },
+  (prev, curr) => {
+    console.log('centroid', prev.centroid === curr.centroid);
+    console.log('heatmap', prev.heatmap === curr.heatmap);
+    console.log('index', prev.index === curr.index);
+    console.log('segment', prev.segment === curr.segment);
+    console.log('texture', prev.texture === curr.texture);
+    console.log('windows', prev.windows === curr.windows);
+    return prev === curr;
   },
 );
 
