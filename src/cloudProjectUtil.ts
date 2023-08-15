@@ -8,7 +8,7 @@ import 'firebase/firestore';
 import 'firebase/storage';
 import { showError, showInfo } from './helpers';
 import i18n from './i18n/i18n';
-import { Design, DesignProblem, DataColoring, ProjectInfo } from './types';
+import { Design, DesignProblem, DataColoring, ProjectInfo, Range } from './types';
 import { Util } from './Util';
 import { usePrimitiveStore } from './stores/commonPrimitive';
 
@@ -103,6 +103,42 @@ export const updateHiddenParameters = (
         ? firebase.firestore.FieldValue.arrayUnion(hiddenParameter)
         : firebase.firestore.FieldValue.arrayRemove(hiddenParameter),
     })
+    .then(() => {
+      // ignore
+    })
+    .catch((error) => {
+      showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
+    });
+};
+
+export const addRange = (userid: string, projectTitle: string, range: Range) => {
+  const lang = { lng: useStore.getState().language };
+  return firebase
+    .firestore()
+    .collection('users')
+    .doc(userid)
+    .collection('projects')
+    .doc(projectTitle)
+    .update({
+      ranges: firebase.firestore.FieldValue.arrayUnion(range),
+    })
+    .then(() => {
+      // ignore
+    })
+    .catch((error) => {
+      showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
+    });
+};
+
+export const updateRanges = (userid: string, projectTitle: string, ranges: Range[]) => {
+  const lang = { lng: useStore.getState().language };
+  return firebase
+    .firestore()
+    .collection('users')
+    .doc(userid)
+    .collection('projects')
+    .doc(projectTitle)
+    .update({ ranges })
     .then(() => {
       // ignore
     })

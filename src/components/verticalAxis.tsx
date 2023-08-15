@@ -2,12 +2,12 @@
  * @Copyright 2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ScaleLinear } from 'd3-scale';
 import i18n from '../i18n/i18n';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { updateSelectedProperty } from '../cloudProjectUtil';
+import { addRange, updateRanges, updateSelectedProperty } from '../cloudProjectUtil';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { InputNumber, Popover } from 'antd';
 import { Range } from '../types';
@@ -49,6 +49,14 @@ const VerticalAxis = ({
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const minRef = useRef<number>(min);
   const maxRef = useRef<number>(max);
+
+  useEffect(() => {
+    minRef.current = min;
+  }, [min]);
+
+  useEffect(() => {
+    maxRef.current = max;
+  }, [max]);
 
   const lang = { lng: language };
   const isOwner = user.uid === projectInfo.owner;
@@ -127,6 +135,41 @@ const VerticalAxis = ({
                 addonAfter={unit}
                 value={minRef.current}
                 onChange={(value) => {
+                  setCommonStore((state) => {
+                    if (state.projectInfo.ranges) {
+                      let index = -1;
+                      let range = null;
+                      for (const [i, r] of state.projectInfo.ranges.entries()) {
+                        if (r.variable === variable) {
+                          index = i;
+                          range = r;
+                          break;
+                        }
+                      }
+                      if (index >= 0 && range) {
+                        state.projectInfo.ranges[index] = {
+                          variable: range.variable,
+                          minimum: value,
+                          maximum: range.maximum,
+                        } as Range;
+                        if (user.uid && projectInfo.title) {
+                          updateRanges(user.uid, projectInfo.title, state.projectInfo.ranges);
+                        }
+                      } else {
+                        const r = { variable, minimum: value, maximum: max } as Range;
+                        state.projectInfo.ranges.push(r);
+                        if (user.uid && projectInfo.title) {
+                          addRange(user.uid, projectInfo.title, r);
+                        }
+                      }
+                    } else {
+                      const r = { variable, minimum: value, maximum: max } as Range;
+                      state.projectInfo.ranges = [r];
+                      if (user.uid && projectInfo.title) {
+                        addRange(user.uid, projectInfo.title, r);
+                      }
+                    }
+                  });
                   minRef.current = value;
                   setUpdateFlag(!updateFlag);
                 }}
@@ -155,11 +198,22 @@ const VerticalAxis = ({
                           minimum: range.minimum,
                           maximum: value,
                         } as Range;
+                        if (user.uid && projectInfo.title) {
+                          updateRanges(user.uid, projectInfo.title, state.projectInfo.ranges);
+                        }
                       } else {
-                        state.projectInfo.ranges.push({ variable, minimum: min, maximum: value } as Range);
+                        const r = { variable, minimum: min, maximum: value } as Range;
+                        state.projectInfo.ranges.push(r);
+                        if (user.uid && projectInfo.title) {
+                          addRange(user.uid, projectInfo.title, r);
+                        }
                       }
                     } else {
-                      state.projectInfo.ranges = [{ variable, minimum: min, maximum: value } as Range];
+                      const r = { variable, minimum: min, maximum: value } as Range;
+                      state.projectInfo.ranges = [r];
+                      if (user.uid && projectInfo.title) {
+                        addRange(user.uid, projectInfo.title, r);
+                      }
                     }
                   });
                   maxRef.current = value;

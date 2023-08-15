@@ -334,11 +334,11 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
     if (projectInfo.type === DesignProblem.SOLAR_PANEL_ARRAY && solarPanelArrayLayoutConstraints) {
       const array: number[] = [];
       if (!projectInfo.hiddenParameters?.includes('rowWidth'))
-        array.push(solarPanelArrayLayoutConstraints.minimumRowsPerRack);
+        array.push(getMin('rowWidth', solarPanelArrayLayoutConstraints.minimumRowsPerRack));
       if (!projectInfo.hiddenParameters?.includes('tiltAngle'))
-        array.push(Util.toDegrees(solarPanelArrayLayoutConstraints.minimumTiltAngle));
+        array.push(getMin('tiltAngle', Util.toDegrees(solarPanelArrayLayoutConstraints.minimumTiltAngle)));
       if (!projectInfo.hiddenParameters?.includes('interRowSpacing'))
-        array.push(solarPanelArrayLayoutConstraints.minimumInterRowSpacing);
+        array.push(getMin('interRowSpacing', solarPanelArrayLayoutConstraints.minimumInterRowSpacing));
       if (!projectInfo.hiddenParameters?.includes('orientation')) array.push(0);
       if (!projectInfo.hiddenParameters?.includes('poleHeight')) array.push(getMin('poleHeight', 0));
       if (!projectInfo.hiddenParameters?.includes('unitCost')) array.push(getMin('unitCost', 0.1));
@@ -361,11 +361,11 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
     if (projectInfo.type === DesignProblem.SOLAR_PANEL_ARRAY && solarPanelArrayLayoutConstraints) {
       const array: number[] = [];
       if (!projectInfo.hiddenParameters?.includes('rowWidth'))
-        array.push(solarPanelArrayLayoutConstraints.maximumRowsPerRack);
+        array.push(getMax('rowWidth', solarPanelArrayLayoutConstraints.maximumRowsPerRack));
       if (!projectInfo.hiddenParameters?.includes('tiltAngle'))
-        array.push(Util.toDegrees(solarPanelArrayLayoutConstraints.maximumTiltAngle));
+        array.push(getMax('tiltAngle', Util.toDegrees(solarPanelArrayLayoutConstraints.maximumTiltAngle)));
       if (!projectInfo.hiddenParameters?.includes('interRowSpacing'))
-        array.push(solarPanelArrayLayoutConstraints.maximumInterRowSpacing);
+        array.push(getMax('interRowSpacing', solarPanelArrayLayoutConstraints.maximumInterRowSpacing));
       if (!projectInfo.hiddenParameters?.includes('orientation')) array.push(1);
       if (!projectInfo.hiddenParameters?.includes('poleHeight')) array.push(getMax('poleHeight', 5));
       if (!projectInfo.hiddenParameters?.includes('unitCost')) array.push(getMax('unitCost', 1));
