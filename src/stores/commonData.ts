@@ -8,10 +8,9 @@ import { Vantage } from '../analysis/Vantage';
 import { Util } from '../Util';
 import { useStore } from './common';
 import { usePrimitiveStore } from './commonPrimitive';
+import { Vector3 } from 'three';
 
 export interface DataStoreState {
-  set: (fn: (state: DataStoreState) => void) => void;
-
   dailyLightSensorData: DatumEntry[];
   setDailyLightSensorData: (data: DatumEntry[]) => void;
   yearlyLightSensorData: DatumEntry[];
@@ -106,42 +105,76 @@ export interface DataStoreState {
   totalBuildingSolarPanel: number;
   setTotalBuildingSolarPanel: (solarPanel: number) => void;
 
+  roofSegmentVerticesMap: Map<string, Vector3[][]>; // key: roofId, val: [segmentIndex][vertex]
+  setRoofSegmentVertices: (id: string, vertices: Vector3[][]) => void;
+  getRoofSegmentVertices: (id: string) => Vector3[][] | undefined;
+  deleteRoofSegmentVertices: (id: string) => void;
+
+  roofSegmentVerticesWithoutOverhangMap: Map<string, Vector3[][]>; // key: roofId, val: [segmentIndex][vertex]
+  setRoofSegmentVerticesWithoutOverhang: (id: string, vertices: Vector3[][]) => void;
+  getRoofSegmentVerticesWithoutOverhang: (id: string) => Vector3[][] | undefined;
+  deleteRoofSegmentVerticesWithoutOverhang: (id: string) => void;
+
   clearDataStore: () => void;
+  clearRoofVerticesMap: () => void;
 }
 
 export const useDataStore = create<DataStoreState>((set, get) => {
-  const immerSet: DataStoreState['set'] = (fn) => set(produce(fn));
   return {
-    set: (fn) => {
-      try {
-        immerSet(fn);
-      } catch (e) {
-        console.log(e);
-      }
+    roofSegmentVerticesMap: new Map<string, Vector3[][]>(),
+    setRoofSegmentVertices(id, vertices) {
+      // this set doesn't mutate map, so it won't cause re-render. But it's value is updated when we are using it.
+      set((state) => {
+        state.roofSegmentVerticesMap.set(id, [...vertices]);
+      });
+    },
+    getRoofSegmentVertices(id) {
+      return get().roofSegmentVerticesMap.get(id);
+    },
+    deleteRoofSegmentVertices(id) {
+      set((state) => {
+        state.roofSegmentVerticesMap.delete(id);
+      });
+    },
+
+    roofSegmentVerticesWithoutOverhangMap: new Map<string, Vector3[][]>(),
+    setRoofSegmentVerticesWithoutOverhang(id, vertices) {
+      // this set mutate map, so it won't cause re-render. But it's value is updated when we are using it.
+      set((state) => {
+        state.roofSegmentVerticesWithoutOverhangMap.set(id, vertices);
+      });
+    },
+    getRoofSegmentVerticesWithoutOverhang(id) {
+      return get().roofSegmentVerticesWithoutOverhangMap.get(id);
+    },
+    deleteRoofSegmentVerticesWithoutOverhang(id) {
+      set((state) => {
+        state.roofSegmentVerticesWithoutOverhangMap.delete(id);
+      });
     },
 
     dailyLightSensorData: [],
     setDailyLightSensorData(data) {
-      immerSet((state) => {
+      set((state) => {
         state.dailyLightSensorData = [...data];
       });
     },
     yearlyLightSensorData: [],
     setYearlyLightSensorData(data) {
-      immerSet((state) => {
+      set((state) => {
         state.yearlyLightSensorData = [...data];
       });
     },
     sensorLabels: [],
     setSensorLabels(labels) {
-      immerSet((state) => {
+      set((state) => {
         state.sensorLabels = [...labels];
       });
     },
 
     dailyPvYield: [],
     setDailyPvYield(data) {
-      immerSet((state) => {
+      set((state) => {
         state.dailyPvYield = [...data];
       });
       // increment the index of objective evaluation to notify the genetic algorithm that
@@ -175,7 +208,7 @@ export const useDataStore = create<DataStoreState>((set, get) => {
     },
     yearlyPvYield: [],
     setYearlyPvYield(data) {
-      immerSet((state) => {
+      set((state) => {
         state.yearlyPvYield = [...data];
       });
       // increment the index of objective evaluation to notify the genetic algorithm that
@@ -210,25 +243,25 @@ export const useDataStore = create<DataStoreState>((set, get) => {
     },
     solarPanelLabels: [],
     setSolarPanelLabels(labels) {
-      immerSet((state) => {
+      set((state) => {
         state.solarPanelLabels = [...labels];
       });
     },
     solarPanelVisibilityResults: new Map<Vantage, Map<string, number>>(),
     setSolarPanelVisibilityResult(vantage, result) {
-      immerSet((state) => {
+      set((state) => {
         state.solarPanelVisibilityResults.set(vantage, result);
       });
     },
     clearSolarPanelVisibilityResults() {
-      immerSet((state) => {
+      set((state) => {
         state.solarPanelVisibilityResults.clear();
       });
     },
 
     dailyParabolicDishYield: [],
     setDailyParabolicDishYield(data) {
-      immerSet((state) => {
+      set((state) => {
         state.dailyParabolicDishYield = [...data];
       });
     },
@@ -247,7 +280,7 @@ export const useDataStore = create<DataStoreState>((set, get) => {
     },
     yearlyParabolicDishYield: [],
     setYearlyParabolicDishYield(data) {
-      immerSet((state) => {
+      set((state) => {
         state.yearlyParabolicDishYield = [...data];
       });
     },
@@ -266,14 +299,14 @@ export const useDataStore = create<DataStoreState>((set, get) => {
     },
     parabolicDishLabels: [],
     setParabolicDishLabels(labels) {
-      immerSet((state) => {
+      set((state) => {
         state.parabolicDishLabels = [...labels];
       });
     },
 
     dailyParabolicTroughYield: [],
     setDailyParabolicTroughYield(data) {
-      immerSet((state) => {
+      set((state) => {
         state.dailyParabolicTroughYield = [...data];
       });
     },
@@ -292,7 +325,7 @@ export const useDataStore = create<DataStoreState>((set, get) => {
     },
     yearlyParabolicTroughYield: [],
     setYearlyParabolicTroughYield(data) {
-      immerSet((state) => {
+      set((state) => {
         state.yearlyParabolicTroughYield = [...data];
       });
     },
@@ -311,14 +344,14 @@ export const useDataStore = create<DataStoreState>((set, get) => {
     },
     parabolicTroughLabels: [],
     setParabolicTroughLabels(labels) {
-      immerSet((state) => {
+      set((state) => {
         state.parabolicTroughLabels = [...labels];
       });
     },
 
     dailyFresnelReflectorYield: [],
     setDailyFresnelReflectorYield(data) {
-      immerSet((state) => {
+      set((state) => {
         state.dailyFresnelReflectorYield = [...data];
       });
     },
@@ -337,7 +370,7 @@ export const useDataStore = create<DataStoreState>((set, get) => {
     },
     yearlyFresnelReflectorYield: [],
     setYearlyFresnelReflectorYield(data) {
-      immerSet((state) => {
+      set((state) => {
         state.yearlyFresnelReflectorYield = [...data];
       });
     },
@@ -356,14 +389,14 @@ export const useDataStore = create<DataStoreState>((set, get) => {
     },
     fresnelReflectorLabels: [],
     setFresnelReflectorLabels(labels) {
-      immerSet((state) => {
+      set((state) => {
         state.fresnelReflectorLabels = [...labels];
       });
     },
 
     dailyHeliostatYield: [],
     setDailyHeliostatYield(data) {
-      immerSet((state) => {
+      set((state) => {
         state.dailyHeliostatYield = [...data];
       });
     },
@@ -382,7 +415,7 @@ export const useDataStore = create<DataStoreState>((set, get) => {
     },
     yearlyHeliostatYield: [],
     setYearlyHeliostatYield(data) {
-      immerSet((state) => {
+      set((state) => {
         state.yearlyHeliostatYield = [...data];
       });
     },
@@ -401,7 +434,7 @@ export const useDataStore = create<DataStoreState>((set, get) => {
     },
     heliostatLabels: [],
     setHeliostatLabels(labels) {
-      immerSet((state) => {
+      set((state) => {
         state.heliostatLabels = [...labels];
       });
     },
@@ -409,12 +442,12 @@ export const useDataStore = create<DataStoreState>((set, get) => {
     dailyUpdraftTowerResults: [],
     dailyUpdraftTowerYield: [],
     setDailyUpdraftTowerResults(data) {
-      immerSet((state) => {
+      set((state) => {
         state.dailyUpdraftTowerResults = [...data];
       });
     },
     setDailyUpdraftTowerYield(data) {
-      immerSet((state) => {
+      set((state) => {
         state.dailyUpdraftTowerYield = [...data];
       });
     },
@@ -433,7 +466,7 @@ export const useDataStore = create<DataStoreState>((set, get) => {
     },
     yearlyUpdraftTowerYield: [],
     setYearlyUpdraftTowerYield(data) {
-      immerSet((state) => {
+      set((state) => {
         state.yearlyUpdraftTowerYield = [...data];
       });
     },
@@ -452,14 +485,14 @@ export const useDataStore = create<DataStoreState>((set, get) => {
     },
     updraftTowerLabels: [],
     setUpdraftTowerLabels(labels) {
-      immerSet((state) => {
+      set((state) => {
         state.updraftTowerLabels = [...labels];
       });
     },
 
     heatmaps: new Map<string, number[][]>(),
     setHeatmap(id, data) {
-      immerSet((state) => {
+      set((state) => {
         state.heatmaps.set(id, data);
       });
     },
@@ -469,54 +502,54 @@ export const useDataStore = create<DataStoreState>((set, get) => {
 
     hourlyHeatExchangeArrayMap: new Map<string, number[]>(),
     setHourlyHeatExchangeArray(id, data) {
-      immerSet((state) => {
+      set((state) => {
         state.hourlyHeatExchangeArrayMap.set(id, data);
       });
     },
 
     hourlySolarHeatGainArrayMap: new Map<string, number[]>(),
     setHourlySolarHeatGainArray(id, data) {
-      immerSet((state) => {
+      set((state) => {
         state.hourlySolarHeatGainArrayMap.set(id, data);
       });
     },
 
     hourlySolarPanelOutputArrayMap: new Map<string, number[]>(),
     setHourlySolarPanelOutputArray(id, data) {
-      immerSet((state) => {
+      set((state) => {
         state.hourlySolarPanelOutputArrayMap.set(id, data);
       });
     },
 
     totalBuildingHeater: 0,
     setTotalBuildingHeater: (heater: number) => {
-      immerSet((state) => {
+      set((state) => {
         state.totalBuildingHeater = heater;
       });
     },
 
     totalBuildingAc: 0,
     setTotalBuildingAc: (ac: number) => {
-      immerSet((state) => {
+      set((state) => {
         state.totalBuildingAc = ac;
       });
     },
 
     totalBuildingSolarPanel: 0,
     setTotalBuildingSolarPanel: (solarPanel: number) => {
-      immerSet((state) => {
+      set((state) => {
         state.totalBuildingSolarPanel = solarPanel;
       });
     },
 
     clearHeatmaps() {
-      immerSet((state) => {
+      set((state) => {
         state.heatmaps.clear();
       });
     },
 
     clearDataStore() {
-      immerSet((state) => {
+      set((state) => {
         state.heatmaps.clear();
         state.hourlyHeatExchangeArrayMap.clear();
         state.hourlySolarHeatGainArrayMap.clear();
@@ -550,6 +583,12 @@ export const useDataStore = create<DataStoreState>((set, get) => {
         state.dailyUpdraftTowerResults.length = 0;
         state.yearlyUpdraftTowerYield.length = 0;
         state.updraftTowerLabels.length = 0;
+      });
+    },
+    clearRoofVerticesMap() {
+      set((state) => {
+        state.roofSegmentVerticesMap.clear();
+        state.roofSegmentVerticesWithoutOverhangMap.clear();
       });
     },
   };

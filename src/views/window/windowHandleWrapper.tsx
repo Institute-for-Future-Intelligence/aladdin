@@ -27,6 +27,7 @@ import { Point2 } from 'src/models/Point2';
 import { DEFAULT_POLYGONTOP } from './window';
 import { FOUNDATION_GROUP_NAME } from '../foundation/foundation';
 import { BUILDING_GROUP_NAME } from '../foundation/buildingRenderer';
+import { useDataStore } from 'src/stores/commonData';
 
 interface WindowHandleWrapperProps {
   id: string;
@@ -441,7 +442,7 @@ const WindowHandleWrapper = ({
     if (isOnFlatRoof) {
       return roofBoundaryVerticesRef.current;
     } else if (segmentIdx !== undefined && segmentIdx !== null) {
-      const segmentVertices = useStore.getState().getRoofSegmentVertices(parentId);
+      const segmentVertices = useDataStore.getState().getRoofSegmentVertices(parentId);
       if (!segmentVertices) return;
       const idx = segmentIdx === -1 ? segmentVertices.length - 1 : segmentIdx;
       const vertices = segmentVertices[idx];
@@ -612,7 +613,7 @@ const WindowHandleWrapper = ({
         }
 
         setCommonStore((state) => {
-          const segmentVertices = useStore.getState().getRoofSegmentVertices(parentId);
+          const segmentVertices = useDataStore.getState().getRoofSegmentVertices(parentId);
           if (!segmentVertices) return;
           // mansard top surface idx is -1, and its vertices is the last in the arrary
           const idx = segmentIdx === -1 ? segmentVertices.length - 1 : segmentIdx;

@@ -60,7 +60,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
   const runSimulation = usePrimitiveStore(Selector.runDynamicSimulation);
   const pauseSimulation = usePrimitiveStore(Selector.pauseSimulation);
   const solarRadiationHeatmapReflectionOnly = useStore(Selector.viewState.solarRadiationHeatmapReflectionOnly);
-  const getRoofSegmentVertices = useStore(Selector.getRoofSegmentVertices);
+  const getRoofSegmentVertices = useDataStore(Selector.getRoofSegmentVertices);
 
   const { scene } = useThree();
   const lang = useMemo(() => {

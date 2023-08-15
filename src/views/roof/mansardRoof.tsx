@@ -559,9 +559,9 @@ const MansardRoof = ({ roofModel, foundationModel }: MansardRoofProps) => {
       for (const segment of segmentVertices.slice(0, -1)) {
         seg.push(segment[0].clone());
       }
-      useStore.getState().setRoofSegmentVerticesWithoutOverhang(id, [seg]);
+      useDataStore.getState().setRoofSegmentVerticesWithoutOverhang(id, [seg]);
     } else {
-      useStore.getState().setRoofSegmentVerticesWithoutOverhang(id, segmentVertices);
+      useDataStore.getState().setRoofSegmentVerticesWithoutOverhang(id, segmentVertices);
     }
   };
 
@@ -589,7 +589,7 @@ const MansardRoof = ({ roofModel, foundationModel }: MansardRoofProps) => {
   const heatFluxColor = useStore(Selector.viewState.heatFluxColor);
   const heatFluxWidth = useStore(Selector.viewState.heatFluxWidth);
 
-  const getRoofSegmentVerticesWithoutOverhang = useStore(Selector.getRoofSegmentVerticesWithoutOverhang);
+  const getRoofSegmentVerticesWithoutOverhang = useDataStore(Selector.getRoofSegmentVerticesWithoutOverhang);
   const hourlyHeatExchangeArrayMap = useDataStore.getState().hourlyHeatExchangeArrayMap;
   const topSurfaceMeshRef = useRef<Mesh>(null);
   const heatFluxArrowHead = useRef<number>(0);

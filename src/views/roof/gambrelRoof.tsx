@@ -930,9 +930,9 @@ const GambrelRoof = ({ roofModel, foundationModel }: GambrelRoofProps) => {
     segmentVertices.push([wallPoints[2], wallPoints[3], ridgeBRPoint, ridgeBLPoint]);
 
     if (isFlat) {
-      useStore.getState().setRoofSegmentVerticesWithoutOverhang(id, [wallPoints]);
+      useDataStore.getState().setRoofSegmentVerticesWithoutOverhang(id, [wallPoints]);
     } else {
-      useStore.getState().setRoofSegmentVerticesWithoutOverhang(id, segmentVertices);
+      useDataStore.getState().setRoofSegmentVerticesWithoutOverhang(id, segmentVertices);
     }
   };
 

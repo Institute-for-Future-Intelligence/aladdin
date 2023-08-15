@@ -54,7 +54,7 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
   const setHeatmap = useDataStore(Selector.setHeatmap);
   const clearHeatmaps = useDataStore(Selector.clearHeatmaps);
   const runSimulation = usePrimitiveStore(Selector.runStaticSimulation);
-  const getRoofSegmentVertices = useStore(Selector.getRoofSegmentVertices);
+  const getRoofSegmentVertices = useDataStore(Selector.getRoofSegmentVertices);
 
   const { scene } = useThree();
   const lang = useMemo(() => {

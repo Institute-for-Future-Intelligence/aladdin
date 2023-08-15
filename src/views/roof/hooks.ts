@@ -26,6 +26,7 @@ import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { getRoofPointsOfGambrelRoof } from './flatRoof';
 import shallow from 'zustand/shallow';
 import { FoundationModel } from 'src/models/FoundationModel';
+import { useDataStore } from 'src/stores/commonData';
 
 export type ComposedWall = {
   leftPoint: Vector3;
@@ -330,9 +331,7 @@ export const useUpdateSegmentVerticesMap = (
         vertices.push(mansardTop);
       }
     }
-    useStore.getState().set((state) => {
-      state.roofSegmentVerticesMap.set(roofId, vertices);
-    });
+    useDataStore.getState().setRoofSegmentVertices(roofId, vertices);
 
     return vertices;
   };

@@ -46,9 +46,9 @@ export const hourlySolarPanelOutputArrayMap = (state: DataStoreState) => state.h
 
 export const setHourlySolarPanelOutputArray = (state: DataStoreState) => state.setHourlySolarPanelOutputArray;
 
-export const getRoofSegmentVertices = (state: CommonStoreState) => state.getRoofSegmentVertices;
+export const getRoofSegmentVertices = (state: DataStoreState) => state.getRoofSegmentVertices;
 
-export const getRoofSegmentVerticesWithoutOverhang = (state: CommonStoreState) =>
+export const getRoofSegmentVerticesWithoutOverhang = (state: DataStoreState) =>
   state.getRoofSegmentVerticesWithoutOverhang;
 
 export const changed = (state: PrimitiveStoreState) => state.changed;

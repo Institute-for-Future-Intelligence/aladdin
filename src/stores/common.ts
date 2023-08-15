@@ -136,12 +136,6 @@ export interface CommonStoreState {
   minimumNavigationMoveSpeed: number;
   minimumNavigationTurnSpeed: number;
 
-  roofSegmentVerticesMap: Map<string, Vector3[][]>; // key: roofId, val: [segmentIndex][vertex]
-  getRoofSegmentVertices: (id: string) => Vector3[][] | undefined;
-  roofSegmentVerticesWithoutOverhangMap: Map<string, Vector3[][]>;
-  setRoofSegmentVerticesWithoutOverhang: (id: string, data: Vector3[][]) => void;
-  getRoofSegmentVerticesWithoutOverhang: (id: string) => Vector3[][] | undefined;
-
   ray: Raycaster;
   mouse: Vector2;
 
@@ -593,20 +587,6 @@ export const useStore = create<CommonStoreState>(
 
           tempHumanPlant: [],
 
-          roofSegmentVerticesMap: new Map<string, Vector3[][]>(),
-          getRoofSegmentVertices(id) {
-            return get().roofSegmentVerticesMap.get(id);
-          },
-          roofSegmentVerticesWithoutOverhangMap: new Map<string, Vector3[][]>(),
-          setRoofSegmentVerticesWithoutOverhang(id, data) {
-            immerSet((state: CommonStoreState) => {
-              state.roofSegmentVerticesWithoutOverhangMap.set(id, data);
-            });
-          },
-          getRoofSegmentVerticesWithoutOverhang(id) {
-            return get().roofSegmentVerticesWithoutOverhangMap.get(id);
-          },
-
           ray: new Raycaster(),
           mouse: new Vector2(),
 
@@ -659,8 +639,6 @@ export const useStore = create<CommonStoreState>(
               state.minimumNavigationTurnSpeed = content.minimumNavigationTurnSpeed ?? 3;
               // clear existing data, if any
               state.fittestIndividualResults.length = 0;
-              state.roofSegmentVerticesMap = new Map<string, Vector3[][]>();
-              state.roofSegmentVerticesWithoutOverhangMap = new Map<string, Vector3[][]>();
               state.undoManager.clear();
               state.deletedRoofId = null;
               state.autoDeletedRoof = null;
@@ -686,9 +664,8 @@ export const useStore = create<CommonStoreState>(
               state.navigationMoveSpeed = content.minimumNavigationMoveSpeed ?? 3;
               state.navigationTurnSpeed = content.minimumNavigationTurnSpeed ?? 3;
             });
-            useDataStore.setState((state) => {
-              state.clearDataStore();
-            });
+            useDataStore.getState().clearDataStore();
+            useDataStore.getState().clearRoofVerticesMap();
           },
           exportContent() {
             const state = get();
@@ -725,13 +702,10 @@ export const useStore = create<CommonStoreState>(
           clearContent() {
             immerSet((state: CommonStoreState) => {
               state.elements = [];
-              state.roofSegmentVerticesMap.clear();
-              state.roofSegmentVerticesWithoutOverhangMap.clear();
               state.sceneRadius = 100;
             });
-            useDataStore.setState((state) => {
-              state.clearDataStore();
-            });
+            useDataStore.getState().clearDataStore();
+            useDataStore.getState().clearRoofVerticesMap();
           },
           createEmptyFile() {
             immerSet((state: CommonStoreState) => {
@@ -747,8 +721,6 @@ export const useStore = create<CommonStoreState>(
               state.fileChanged = !state.fileChanged;
               state.currentUndoable = undefined;
               state.actionInfo = undefined;
-              state.roofSegmentVerticesMap.clear();
-              state.roofSegmentVerticesWithoutOverhangMap.clear();
               state.undoManager.clear();
               state.modelType = ModelType.UNKNOWN;
               state.modelLabel = null;
@@ -763,9 +735,8 @@ export const useStore = create<CommonStoreState>(
               state.showSolarRadiationHeatmap = false;
               state.showHeatFluxes = false;
             });
-            useDataStore.setState((state) => {
-              state.clearDataStore();
-            });
+            useDataStore.getState().clearDataStore();
+            useDataStore.getState().clearRoofVerticesMap();
           },
           undoManager: new UndoManager(),
           addUndoable(undoable: Undoable) {
@@ -2551,8 +2522,8 @@ export const useStore = create<CommonStoreState>(
                   switch (elem.type) {
                     case ObjectType.Roof: {
                       state.deletedRoofId = elem.id;
-                      state.roofSegmentVerticesMap.delete(id);
-                      state.roofSegmentVerticesWithoutOverhangMap.delete(id);
+                      useDataStore.getState().deleteRoofSegmentVertices(id);
+                      useDataStore.getState().deleteRoofSegmentVerticesWithoutOverhang(id);
                       if (autoDeleted) {
                         state.autoDeletedRoof = elem as RoofModel;
                       }
@@ -2623,8 +2594,8 @@ export const useStore = create<CommonStoreState>(
               state.elements = state.elements.filter((e) => {
                 if (e.id === id || e.parentId === id || e.foundationId === id || Util.isChild(id, e.id)) {
                   if (e.type === ObjectType.Roof) {
-                    state.roofSegmentVerticesMap.delete(e.id);
-                    state.roofSegmentVerticesWithoutOverhangMap.delete(e.id);
+                    useDataStore.getState().deleteRoofSegmentVertices(id);
+                    useDataStore.getState().deleteRoofSegmentVerticesWithoutOverhang(id);
                   }
                   return false;
                 } else {
@@ -2645,8 +2616,8 @@ export const useStore = create<CommonStoreState>(
                     return true;
                   } else {
                     if (x.type === ObjectType.Roof) {
-                      state.roofSegmentVerticesMap.delete(x.id);
-                      state.roofSegmentVerticesWithoutOverhangMap.delete(x.id);
+                      useDataStore.getState().deleteRoofSegmentVertices(x.id);
+                      useDataStore.getState().deleteRoofSegmentVerticesWithoutOverhang(x.id);
                     }
                     return false;
                   }
@@ -2657,8 +2628,8 @@ export const useStore = create<CommonStoreState>(
                     return true;
                   } else {
                     if (x.type === ObjectType.Roof) {
-                      state.roofSegmentVerticesMap.delete(x.id);
-                      state.roofSegmentVerticesWithoutOverhangMap.delete(x.id);
+                      useDataStore.getState().deleteRoofSegmentVertices(x.id);
+                      useDataStore.getState().deleteRoofSegmentVerticesWithoutOverhang(x.id);
                     }
                     return false;
                   }

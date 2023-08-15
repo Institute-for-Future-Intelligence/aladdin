@@ -905,7 +905,7 @@ const GableRoof = ({ roofModel, foundationModel }: GableRoofProps) => {
       segmentVertices.push([wallPoints[0], wallPoints[1], ridgeRightPointV3.clone(), ridgeLeftPointV3.clone()]);
       segmentVertices.push([wallPoints[2], wallPoints[3], ridgeLeftPointV3.clone(), ridgeRightPointV3.clone()]);
     }
-    useStore.getState().setRoofSegmentVerticesWithoutOverhang(id, segmentVertices);
+    useDataStore.getState().setRoofSegmentVerticesWithoutOverhang(id, segmentVertices);
   };
 
   useUpdateSegmentVerticesMap(id, centroid, roofSegments, false, RoofType.Gable);
@@ -1268,7 +1268,7 @@ const RoofSegment = ({
   const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
   const heatFluxColor = useStore(Selector.viewState.heatFluxColor);
   const heatFluxWidth = useStore(Selector.viewState.heatFluxWidth);
-  const getRoofSegmentVerticesWithoutOverhang = useStore(Selector.getRoofSegmentVerticesWithoutOverhang);
+  const getRoofSegmentVerticesWithoutOverhang = useDataStore(Selector.getRoofSegmentVerticesWithoutOverhang);
   const hourlyHeatExchangeArrayMap = useDataStore.getState().hourlyHeatExchangeArrayMap;
 
   const texture = useRoofTexture(roofStructure === RoofStructure.Rafter ? RoofTexture.NoTexture : textureType);

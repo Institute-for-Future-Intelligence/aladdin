@@ -165,7 +165,7 @@ const FlatRoof = ({
   const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
   const heatFluxColor = useStore(Selector.viewState.heatFluxColor);
   const heatFluxWidth = useStore(Selector.viewState.heatFluxWidth);
-  const getRoofSegmentVerticesWithoutOverhang = useStore(Selector.getRoofSegmentVerticesWithoutOverhang);
+  const getRoofSegmentVerticesWithoutOverhang = useDataStore(Selector.getRoofSegmentVerticesWithoutOverhang);
   const hourlyHeatExchangeArrayMap = useDataStore.getState().hourlyHeatExchangeArrayMap;
 
   const heatFluxArrowHead = useRef<number>(0);

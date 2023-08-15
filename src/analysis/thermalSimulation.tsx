@@ -79,8 +79,8 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const runYearlySimulation = usePrimitiveStore(Selector.runYearlyThermalSimulation);
   const pauseYearlySimulation = usePrimitiveStore(Selector.pauseYearlyThermalSimulation);
   const noAnimation = !!useStore(Selector.world.noAnimationForThermalSimulation);
-  const getRoofSegmentVerticesWithoutOverhang = useStore(Selector.getRoofSegmentVerticesWithoutOverhang);
-  const getRoofSegmentVertices = useStore(Selector.getRoofSegmentVertices);
+  const getRoofSegmentVerticesWithoutOverhang = useDataStore(Selector.getRoofSegmentVerticesWithoutOverhang);
+  const getRoofSegmentVertices = useDataStore(Selector.getRoofSegmentVertices);
   const highestTemperatureTimeInMinutes = useStore(Selector.world.highestTemperatureTimeInMinutes) ?? 900;
   const setHourlyHeatExchangeArray = useDataStore(Selector.setHourlyHeatExchangeArray);
   const setHourlySolarHeatGainArray = useDataStore(Selector.setHourlySolarHeatGainArray);

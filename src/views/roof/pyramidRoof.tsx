@@ -567,9 +567,9 @@ const PyramidRoof = ({ roofModel, foundationModel }: PyramidRoofProps) => {
       for (const segment of segmentVertices) {
         seg.push(segment[0].clone());
       }
-      useStore.getState().setRoofSegmentVerticesWithoutOverhang(id, [seg]);
+      useDataStore.getState().setRoofSegmentVerticesWithoutOverhang(id, [seg]);
     } else {
-      useStore.getState().setRoofSegmentVerticesWithoutOverhang(id, segmentVertices);
+      useDataStore.getState().setRoofSegmentVerticesWithoutOverhang(id, segmentVertices);
     }
   };
 

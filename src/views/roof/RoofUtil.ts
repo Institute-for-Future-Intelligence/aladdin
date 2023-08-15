@@ -19,6 +19,7 @@ import { WindowModel, WindowType } from '../../models/WindowModel';
 import { FoundationModel } from '../../models/FoundationModel';
 import { DEFAULT_POLYGONTOP } from '../window/window';
 import { ComposedWall } from './hooks';
+import { useDataStore } from 'src/stores/commonData';
 
 export class RoofUtil {
   // roof related
@@ -339,7 +340,7 @@ export class RoofUtil {
   }
 
   static getRoofBoundaryVertices(roof: RoofModel) {
-    const segments = useStore.getState().roofSegmentVerticesMap.get(roof.id);
+    const segments = useDataStore.getState().roofSegmentVerticesMap.get(roof.id);
     if (!segments) throw new Error();
     // flat roof
     if (roof.roofType !== RoofType.Gable && roof.rise < 0.01) {
@@ -657,11 +658,9 @@ export class RoofUtil {
     return false;
   }
 
-  static isFirstIntersectRoof(event: ThreeEvent<PointerEvent>, id: string) {}
-
   /** position is relative to foundation */
   static getRotationOnRoof(roofId: string, position: Vector3) {
-    const segments = useStore.getState().getRoofSegmentVertices(roofId);
+    const segments = useDataStore.getState().getRoofSegmentVertices(roofId);
     if (!segments) return null;
     for (const segment of segments) {
       if (Util.isPointInside(position.x, position.y, segment)) {
@@ -674,7 +673,7 @@ export class RoofUtil {
   }
 
   static getRoofSegmentBoundary(roofId: string, position: Vector3) {
-    const segments = useStore.getState().getRoofSegmentVertices(roofId);
+    const segments = useDataStore.getState().getRoofSegmentVertices(roofId);
     if (!segments) return null;
     for (const segment of segments) {
       if (Util.isPointInside(position.x, position.y, segment)) {

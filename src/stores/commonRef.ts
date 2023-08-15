@@ -2,7 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import { RefObject, useRef } from 'react';
+import { RefObject } from 'react';
 import { MyOrbitControls } from 'src/js/MyOrbitControls';
 import { Group } from 'three';
 import create from 'zustand';
