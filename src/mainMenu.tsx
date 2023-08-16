@@ -1330,7 +1330,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
       )}
 
       {/* analysis menu */}
-      {!openModelsMap && (
+      {!openModelsMap && elementCounter.gotSome() && (
         <SubMenu key={'analysis'} title={i18n.t('menu.analysisSubMenu', lang)}>
           {/* physics */}
           <SubMenu key={'physics'} title={i18n.t('menu.physicsSubMenu', lang)}>

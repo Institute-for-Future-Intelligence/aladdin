@@ -3,6 +3,8 @@
  */
 
 export class ElementCounter {
+  foundationCount: number = 0;
+  cuboidCount: number = 0;
   wallCount: number = 0;
   windowCount: number = 0;
   doorCount: number = 0;
@@ -24,6 +26,8 @@ export class ElementCounter {
 
   gotSome() {
     return (
+      this.foundationCount > 0 ||
+      this.cuboidCount > 0 ||
       this.wallCount > 0 ||
       this.windowCount > 0 ||
       this.doorCount > 0 ||

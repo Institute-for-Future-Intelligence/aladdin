@@ -2768,6 +2768,10 @@ export const useStore = create<CommonStoreState>(
                   if (f.solarStructure === SolarStructure.UpdraftTower) {
                     counter.solarUpdraftTowerCount++;
                   }
+                  counter.foundationCount++;
+                  break;
+                case ObjectType.Cuboid:
+                  counter.cuboidCount++;
                   break;
                 case ObjectType.Wall:
                   counter.wallCount++;
@@ -2839,6 +2843,10 @@ export const useStore = create<CommonStoreState>(
                     if (f.solarStructure === SolarStructure.UpdraftTower) {
                       counter.solarUpdraftTowerCount++;
                     }
+                    counter.foundationCount++;
+                    break;
+                  case ObjectType.Cuboid:
+                    counter.cuboidCount++;
                     break;
                   case ObjectType.Wall:
                     counter.wallCount++;
