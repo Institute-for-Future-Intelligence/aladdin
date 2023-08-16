@@ -427,6 +427,7 @@ export interface CommonStoreState {
   getChildrenOfType: (type: ObjectType, id: string) => ElementModel[];
   // the following goes faster than counting individual types of children through multiple loops
   countAllElements: (excludeLocked?: boolean) => number;
+  countAllElementsByType: () => ElementCounter;
   countAllOffspringsByTypeAtOnce: (ancestorId: string, includingLocked: boolean) => ElementCounter;
   countSolarPanelsOnRack: (id: string) => number;
   removeAllChildElementsByType: (parentId: string, type: ObjectType) => void;
@@ -2758,6 +2759,74 @@ export const useStore = create<CommonStoreState>(
             }
             return count;
           },
+          countAllElementsByType() {
+            const counter = new ElementCounter();
+            for (const e of get().elements) {
+              switch (e.type) {
+                case ObjectType.Foundation:
+                  const f = e as FoundationModel;
+                  if (f.solarStructure === SolarStructure.UpdraftTower) {
+                    counter.solarUpdraftTowerCount++;
+                  }
+                  break;
+                case ObjectType.Wall:
+                  counter.wallCount++;
+                  break;
+                case ObjectType.Window:
+                  counter.windowCount++;
+                  break;
+                case ObjectType.Door:
+                  counter.doorCount++;
+                  break;
+                case ObjectType.Human:
+                  counter.humanCount++;
+                  break;
+                case ObjectType.Tree:
+                  counter.treeCount++;
+                  break;
+                case ObjectType.Flower:
+                  counter.flowerCount++;
+                  break;
+                case ObjectType.Polygon:
+                  counter.polygonCount++;
+                  break;
+                case ObjectType.Sensor:
+                  counter.sensorCount++;
+                  break;
+                case ObjectType.Light:
+                  if ((e as LightModel).inside) {
+                    counter.insideLightCount++;
+                  } else {
+                    counter.outsideLightCount++;
+                  }
+                  break;
+                case ObjectType.SolarPanel:
+                  counter.solarPanelCount++;
+                  const sp = e as SolarPanelModel;
+                  const pvModel = get().getPvModule(sp.pvModelName);
+                  if (pvModel) {
+                    counter.solarPanelModuleCount += Util.countSolarPanelsOnRack(sp, pvModel);
+                  }
+                  break;
+                case ObjectType.ParabolicDish:
+                  counter.parabolicDishCount++;
+                  break;
+                case ObjectType.ParabolicTrough:
+                  counter.parabolicTroughCount++;
+                  break;
+                case ObjectType.FresnelReflector:
+                  counter.fresnelReflectorCount++;
+                  break;
+                case ObjectType.Heliostat:
+                  counter.heliostatCount++;
+                  break;
+                case ObjectType.WindTurbine:
+                  counter.windTurbineCount++;
+                  break;
+              }
+            }
+            return counter;
+          },
           countAllOffspringsByTypeAtOnce(ancestorId, includingLocked) {
             const counter = new ElementCounter();
             for (const e of get().elements) {
@@ -2765,6 +2834,12 @@ export const useStore = create<CommonStoreState>(
               const idOk = e.parentId === ancestorId || e.foundationId === ancestorId;
               if (includingLocked ? idOk : !e.locked && idOk) {
                 switch (e.type) {
+                  case ObjectType.Foundation:
+                    const f = e as FoundationModel;
+                    if (f.solarStructure === SolarStructure.UpdraftTower) {
+                      counter.solarUpdraftTowerCount++;
+                    }
+                    break;
                   case ObjectType.Wall:
                     counter.wallCount++;
                     break;

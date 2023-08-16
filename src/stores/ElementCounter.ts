@@ -19,6 +19,7 @@ export class ElementCounter {
   parabolicTroughCount: number = 0;
   fresnelReflectorCount: number = 0;
   heliostatCount: number = 0;
+  solarUpdraftTowerCount: number = 0;
   windTurbineCount: number = 0;
 
   gotSome() {
@@ -38,6 +39,7 @@ export class ElementCounter {
       this.parabolicDishCount > 0 ||
       this.fresnelReflectorCount > 0 ||
       this.heliostatCount > 0 ||
+      this.solarUpdraftTowerCount > 0 ||
       this.windTurbineCount > 0
     );
   }

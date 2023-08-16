@@ -475,6 +475,8 @@ export const countObservers = (state: CommonStoreState) => state.countObservers;
 
 export const countAllElements = (state: CommonStoreState) => state.countAllElements;
 
+export const countAllElementsByType = (state: CommonStoreState) => state.countAllElementsByType;
+
 export const countAllOffspringsByTypeAtOnce = (state: CommonStoreState) => state.countAllOffspringsByTypeAtOnce;
 
 export const countSolarPanelsOnRack = (state: CommonStoreState) => state.countSolarPanelsOnRack;
