@@ -35,11 +35,10 @@ import Light from './views/light';
 import { LightModel } from './models/LightModel';
 import CuboidRenderer from './views/cuboid';
 import { GROUND_ID } from './constants';
-import { usePrimitiveStore } from './stores/commonPrimitive';
+import { EndWaiting } from './waiting';
 
 const ElementsRenderer: React.FC = () => {
   const elements = useStore(Selector.elements);
-  const waiting = usePrimitiveStore(Selector.waiting);
 
   const groupRef = useRef<Group>(null);
 
@@ -50,14 +49,6 @@ const ElementsRenderer: React.FC = () => {
       });
     }
   }, []);
-
-  useEffect(() => {
-    if (waiting) {
-      usePrimitiveStore.setState((state) => {
-        state.waiting = false;
-      });
-    }
-  }, [waiting]);
 
   // console.log(groupRef);
   // console.log(elements);
@@ -122,6 +113,7 @@ const ElementsRenderer: React.FC = () => {
         }
         return null;
       })}
+      <EndWaiting />
     </group>
   );
 };

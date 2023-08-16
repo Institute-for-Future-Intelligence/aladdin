@@ -3,7 +3,7 @@
  *
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useStore } from './stores/common';
 import * as Selector from 'src/stores/selector';
 import { Util } from './Util';
@@ -55,3 +55,19 @@ export default React.memo(function Waiting({ initializing }: { initializing: boo
     </>
   );
 });
+
+export const EndWaiting = () => {
+  const waiting = usePrimitiveStore.getState().waiting;
+  if (!waiting) return null;
+
+  const End = () => {
+    useEffect(() => {
+      usePrimitiveStore.setState((state) => {
+        state.waiting = false;
+      });
+    });
+    return null;
+  };
+
+  return <End />;
+};

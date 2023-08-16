@@ -49,10 +49,5 @@ export const loadCloudFile = (
     })
     .catch((error) => {
       showError(i18n.t('message.CannotOpenCloudFile', lang) + ': ' + error);
-    })
-    .finally(() => {
-      usePrimitiveStore.setState((state) => {
-        state.waiting = false;
-      });
     });
 };
