@@ -23,6 +23,7 @@ type VerticalAxisProps = {
   digits: number;
   min: number;
   max: number;
+  step: number;
   value?: number;
 };
 
@@ -39,6 +40,7 @@ const VerticalAxis = ({
   digits,
   min,
   max,
+  step,
   value,
 }: VerticalAxisProps) => {
   const setCommonStore = useStore(Selector.set);
@@ -122,6 +124,25 @@ const VerticalAxis = ({
 
   const money = variable === 'profit' || variable === 'unitCost' || variable === 'sellingPrice';
 
+  const getMin = () => {
+    if (
+      variable === 'panelCount' ||
+      variable === 'yield' ||
+      variable === 'unitCost' ||
+      variable === 'poleHeight' ||
+      variable === 'interRowSpacing'
+    )
+      return 0;
+    if (variable === 'tiltAngle') return -90;
+    if (variable === 'rowWidth') return 1;
+    return Number.MIN_SAFE_INTEGER;
+  };
+
+  const getMax = () => {
+    if (variable === 'tiltAngle') return 90;
+    return Number.MAX_SAFE_INTEGER;
+  };
+
   return (
     <>
       {/* Title */}
@@ -133,6 +154,9 @@ const VerticalAxis = ({
                 style={{ width: '240px' }}
                 addonBefore={createLabel(i18n.t('word.Minimum', lang) + (money ? ' $' : ''), 80)}
                 addonAfter={unit}
+                min={getMin()}
+                max={maxRef.current - step}
+                step={step}
                 value={minRef.current}
                 onChange={(value) => {
                   setCommonStore((state) => {
@@ -179,6 +203,9 @@ const VerticalAxis = ({
                 style={{ width: '240px' }}
                 addonBefore={createLabel(i18n.t('word.Maximum', lang) + (money ? ' $' : ''), 80)}
                 addonAfter={unit}
+                min={minRef.current + step}
+                max={getMax()}
+                step={step}
                 value={maxRef.current}
                 onChange={(value) => {
                   setCommonStore((state) => {

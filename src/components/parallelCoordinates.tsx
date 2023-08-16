@@ -33,6 +33,7 @@ type ParallelCoordinatesProps = {
   types: string[];
   minima: number[];
   maxima: number[];
+  steps: number[];
   variables: string[];
   titles: string[];
   units: string[];
@@ -52,6 +53,7 @@ const ParallelCoordinates = ({
   types,
   minima,
   maxima,
+  steps,
   variables,
   titles,
   units,
@@ -130,6 +132,7 @@ const ParallelCoordinates = ({
           digits={digits[i]}
           min={minima[i]}
           max={maxima[i]}
+          step={steps[i]}
           value={
             hoveredIndex >= 0 && !data[hoveredIndex].invisible ? (data[hoveredIndex][variable] as number) : undefined
           }

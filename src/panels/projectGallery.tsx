@@ -384,6 +384,24 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
     updateHiddenFlag,
   ]);
 
+  const steps: number[] = useMemo(() => {
+    if (projectInfo.type === DesignProblem.SOLAR_PANEL_ARRAY && solarPanelArrayLayoutConstraints) {
+      const array: number[] = [];
+      if (!projectInfo.hiddenParameters?.includes('rowWidth')) array.push(1);
+      if (!projectInfo.hiddenParameters?.includes('tiltAngle')) array.push(0.1);
+      if (!projectInfo.hiddenParameters?.includes('interRowSpacing')) array.push(0.1);
+      if (!projectInfo.hiddenParameters?.includes('orientation')) array.push(1);
+      if (!projectInfo.hiddenParameters?.includes('poleHeight')) array.push(0.1);
+      if (!projectInfo.hiddenParameters?.includes('unitCost')) array.push(0.01);
+      if (!projectInfo.hiddenParameters?.includes('sellingPrice')) array.push(0.01);
+      if (!projectInfo.hiddenParameters?.includes('panelCount')) array.push(1);
+      if (!projectInfo.hiddenParameters?.includes('yield')) array.push(1); // electricity output in MWh
+      if (!projectInfo.hiddenParameters?.includes('profit')) array.push(0.1); // profit in $1,000
+      return array;
+    }
+    return [];
+  }, [projectInfo.type, projectInfo.hiddenParameters, updateHiddenFlag]);
+
   const rowWidthSelectionRef = useRef<boolean>(!projectInfo.hiddenParameters?.includes('rowWidth'));
   const tiltAngleSelectionRef = useRef<boolean>(!projectInfo.hiddenParameters?.includes('tiltAngle'));
   const rowSpacingSelectionRef = useRef<boolean>(!projectInfo.hiddenParameters?.includes('interRowSpacing'));
@@ -1039,6 +1057,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
               types={types}
               minima={minima}
               maxima={maxima}
+              steps={steps}
               variables={variables}
               titles={titles}
               units={units}

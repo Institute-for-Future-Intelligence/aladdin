@@ -157,6 +157,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
   // Manually update menu when visible to avoid listen to common store change.
   const [updateMenuFlag, setUpdateMenuFlag] = useState(false);
 
+  const handleVisibleChange = (visible: boolean) => {
+    if (visible) {
+      setUpdateMenuFlag(!updateMenuFlag);
+    }
+  };
+
   const lang = useMemo(() => {
     return { lng: language };
   }, [language]);
@@ -2561,12 +2567,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
       </Menu.Item>
     </Menu>
   );
-
-  const handleVisibleChange = (visible: boolean) => {
-    if (visible) {
-      setUpdateMenuFlag(!updateMenuFlag);
-    }
-  };
 
   return (
     <>
