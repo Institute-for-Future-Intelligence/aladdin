@@ -17,7 +17,8 @@ export class ProjectUtil {
       if (!hidden.includes('unitCost')) a.push('unitCost');
       if (!hidden.includes('sellingPrice')) a.push('sellingPrice');
       if (!hidden.includes('panelCount')) a.push('panelCount');
-      if (!hidden.includes('yield')) a.push('yield');
+      if (!hidden.includes('totalYield')) a.push('totalYield');
+      if (!hidden.includes('meanYield')) a.push('meanYield');
       if (!hidden.includes('profit')) a.push('profit');
       return a;
     }
@@ -35,7 +36,8 @@ export class ProjectUtil {
       if (!hidden.includes('unitCost')) a.push(i18n.t('economicsPanel.UnitCost', l));
       if (!hidden.includes('sellingPrice')) a.push(i18n.t('economicsPanel.SellingPrice', l));
       if (!hidden.includes('panelCount')) a.push(i18n.t('polygonMenu.SolarPanelArrayPanelCount', l));
-      if (!hidden.includes('yield')) a.push(i18n.t('polygonMenu.SolarPanelArrayYield', l));
+      if (!hidden.includes('totalYield')) a.push(i18n.t('polygonMenu.SolarPanelArrayTotalYield', l));
+      if (!hidden.includes('meanYield')) a.push(i18n.t('polygonMenu.SolarPanelArrayMeanYield', l));
       if (!hidden.includes('profit')) a.push(i18n.t('polygonMenu.SolarPanelArrayProfit', l));
       return a;
     }
@@ -53,7 +55,8 @@ export class ProjectUtil {
       if (!hidden.includes('unitCost')) a.push('number');
       if (!hidden.includes('sellingPrice')) a.push('number');
       if (!hidden.includes('panelCount')) a.push('number');
-      if (!hidden.includes('yield')) a.push('number');
+      if (!hidden.includes('totalYield')) a.push('number');
+      if (!hidden.includes('meanYield')) a.push('number');
       if (!hidden.includes('profit')) a.push('number');
       return a;
     }
@@ -71,7 +74,8 @@ export class ProjectUtil {
       if (!hidden.includes('unitCost')) a.push(2);
       if (!hidden.includes('sellingPrice')) a.push(2);
       if (!hidden.includes('panelCount')) a.push(0);
-      if (!hidden.includes('yield')) a.push(1);
+      if (!hidden.includes('totalYield')) a.push(1);
+      if (!hidden.includes('meanYield')) a.push(1);
       if (!hidden.includes('profit')) a.push(1);
       return a;
     }
@@ -89,7 +93,8 @@ export class ProjectUtil {
       if (!hidden.includes('unitCost')) a.push(false);
       if (!hidden.includes('sellingPrice')) a.push(false);
       if (!hidden.includes('panelCount')) a.push(true);
-      if (!hidden.includes('yield')) a.push(false);
+      if (!hidden.includes('totalYield')) a.push(false);
+      if (!hidden.includes('meanYield')) a.push(false);
       if (!hidden.includes('profit')) a.push(false);
       return a;
     }
@@ -107,7 +112,8 @@ export class ProjectUtil {
       if (!hidden.includes('unitCost')) a.push('');
       if (!hidden.includes('sellingPrice')) a.push('');
       if (!hidden.includes('panelCount')) a.push('');
-      if (!hidden.includes('yield')) a.push(' MWh');
+      if (!hidden.includes('totalYield')) a.push(' MWh');
+      if (!hidden.includes('meanYield')) a.push(' kWh');
       if (!hidden.includes('profit')) a.push('K');
       return a;
     }

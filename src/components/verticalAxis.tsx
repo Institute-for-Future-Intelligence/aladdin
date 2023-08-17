@@ -127,7 +127,8 @@ const VerticalAxis = ({
   const getMin = () => {
     if (
       variable === 'panelCount' ||
-      variable === 'yield' ||
+      variable === 'totalYield' ||
+      variable === 'meanYield' ||
       variable === 'unitCost' ||
       variable === 'poleHeight' ||
       variable === 'interRowSpacing'

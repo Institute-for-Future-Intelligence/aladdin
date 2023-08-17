@@ -164,10 +164,10 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
               }}
             >
               <Option key={ObjectiveFunctionType.DAILY_TOTAL_OUTPUT} value={ObjectiveFunctionType.DAILY_TOTAL_OUTPUT}>
-                {i18n.t('optimizationMenu.ObjectiveFunctionDailyTotalOutput', lang)}
+                {i18n.t('optimizationMenu.ObjectiveFunctionDailyTotalYield', lang)}
               </Option>
               <Option key={ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT} value={ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT}>
-                {i18n.t('optimizationMenu.ObjectiveFunctionYearlyTotalOutput', lang)}
+                {i18n.t('optimizationMenu.ObjectiveFunctionYearlyTotalYield', lang)}
               </Option>
             </Select>
           </Col>

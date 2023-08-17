@@ -246,25 +246,25 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
                     key={ObjectiveFunctionType.DAILY_TOTAL_OUTPUT}
                     value={ObjectiveFunctionType.DAILY_TOTAL_OUTPUT}
                   >
-                    {i18n.t('optimizationMenu.ObjectiveFunctionDailyTotalOutput', lang)}
+                    {i18n.t('optimizationMenu.ObjectiveFunctionDailyTotalYield', lang)}
                   </Option>
                   <Option
                     key={ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT}
                     value={ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT}
                   >
-                    {i18n.t('optimizationMenu.ObjectiveFunctionYearlyTotalOutput', lang)}
+                    {i18n.t('optimizationMenu.ObjectiveFunctionYearlyTotalYield', lang)}
                   </Option>
                   <Option
                     key={ObjectiveFunctionType.DAILY_AVERAGE_OUTPUT}
                     value={ObjectiveFunctionType.DAILY_AVERAGE_OUTPUT}
                   >
-                    {i18n.t('optimizationMenu.ObjectiveFunctionDailyAverageOutput', lang)}
+                    {i18n.t('optimizationMenu.ObjectiveFunctionDailyMeanYield', lang)}
                   </Option>
                   <Option
                     key={ObjectiveFunctionType.YEARLY_AVERAGE_OUTPUT}
                     value={ObjectiveFunctionType.YEARLY_AVERAGE_OUTPUT}
                   >
-                    {i18n.t('optimizationMenu.ObjectiveFunctionYearlyAverageOutput', lang)}
+                    {i18n.t('optimizationMenu.ObjectiveFunctionYearlyMeanYield', lang)}
                   </Option>
                   <Option key={ObjectiveFunctionType.DAILY_PROFIT} value={ObjectiveFunctionType.DAILY_PROFIT}>
                     {i18n.t('optimizationMenu.ObjectiveFunctionDailyProfit', lang)}

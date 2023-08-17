@@ -209,13 +209,13 @@ const SolarPanelOptimizationResult = () => {
       case ObjectiveFunctionType.YEARLY_PROFIT:
         return i18n.t('optimizationMenu.ObjectiveFunctionYearlyProfit', lang);
       case ObjectiveFunctionType.DAILY_AVERAGE_OUTPUT:
-        return i18n.t('optimizationMenu.ObjectiveFunctionDailyAverageOutput', lang);
+        return i18n.t('optimizationMenu.ObjectiveFunctionDailyMeanYield', lang);
       case ObjectiveFunctionType.YEARLY_AVERAGE_OUTPUT:
-        return i18n.t('optimizationMenu.ObjectiveFunctionYearlyAverageOutput', lang);
+        return i18n.t('optimizationMenu.ObjectiveFunctionYearlyMeanYield', lang);
       case ObjectiveFunctionType.DAILY_TOTAL_OUTPUT:
-        return i18n.t('optimizationMenu.ObjectiveFunctionDailyTotalOutput', lang);
+        return i18n.t('optimizationMenu.ObjectiveFunctionDailyTotalYield', lang);
     }
-    return i18n.t('optimizationMenu.ObjectiveFunctionYearlyTotalOutput', lang);
+    return i18n.t('optimizationMenu.ObjectiveFunctionYearlyTotalYield', lang);
   }, [params.objectiveFunctionType, lang]);
 
   const buttonEnabled = useMemo(() => {
