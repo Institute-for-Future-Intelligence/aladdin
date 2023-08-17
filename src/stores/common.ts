@@ -494,8 +494,9 @@ export interface CommonStoreState {
   locale: Locale;
   localFileName: string;
   createNewFileFlag: boolean;
+  setCreateNewFileFlag: (b: boolean) => void;
   openLocalFileFlag: boolean;
-  saveLocalFileFlag: boolean;
+  setOpenLocalFileFlag: (b: boolean) => void;
   enableFineGrid: boolean;
   setEnableFineGrid: (b: boolean) => void;
 
@@ -4267,8 +4268,17 @@ export const useStore = create<CommonStoreState>(
           locale: enUS,
           localFileName: 'aladdin.ala',
           createNewFileFlag: false,
+          setCreateNewFileFlag(b) {
+            immerSet((state) => {
+              state.createNewFileFlag = b;
+            });
+          },
           openLocalFileFlag: false,
-          saveLocalFileFlag: false,
+          setOpenLocalFileFlag(b) {
+            immerSet((state) => {
+              state.createNewFileFlag = b;
+            });
+          },
           localFileDialogRequested: false,
           pvModelDialogVisible: false,
           loggable: false,
@@ -4295,7 +4305,7 @@ export const useStore = create<CommonStoreState>(
         },
         whitelist: [
           'language',
-          'animate24Hours',
+          // 'animate24Hours',
           'floatingWindowOpacity',
           'locale',
           'cloudFile',

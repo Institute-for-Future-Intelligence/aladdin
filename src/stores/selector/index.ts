@@ -142,8 +142,6 @@ export const createNewFileFlag = (state: CommonStoreState) => state.createNewFil
 
 export const openLocalFileFlag = (state: CommonStoreState) => state.openLocalFileFlag;
 
-export const saveLocalFileFlag = (state: CommonStoreState) => state.saveLocalFileFlag;
-
 export const saveLocalFileDialogVisible = (state: PrimitiveStoreState) => state.saveLocalFileDialogVisible;
 
 export const fileChanged = (state: CommonStoreState) => state.fileChanged;

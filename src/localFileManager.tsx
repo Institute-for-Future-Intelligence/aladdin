@@ -19,22 +19,17 @@ export interface LocalFileManagerProps {
 
 const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
   const setCommonStore = useStore(Selector.set);
-  const language = useStore(Selector.language);
-  const localFileName = useStore(Selector.localFileName);
-  const createNewFileFlag = useStore(Selector.createNewFileFlag);
-  const openLocalFileFlag = useStore(Selector.openLocalFileFlag);
-  const saveLocalFileFlag = useStore(Selector.saveLocalFileFlag);
-  const saveLocalFileDialogVisible = usePrimitiveStore(Selector.saveLocalFileDialogVisible);
   const exportContent = useStore(Selector.exportContent);
   const importContent = useStore(Selector.importContent);
-  const changed = usePrimitiveStore(Selector.changed);
-  const cloudFile = useStore(Selector.cloudFile);
-  const user = useStore(Selector.user);
   const createEmptyFile = useStore(Selector.createEmptyFile);
+  const saveLocalFileDialogVisible = usePrimitiveStore(Selector.saveLocalFileDialogVisible);
+  const createNewFileFlag = useStore(Selector.createNewFileFlag);
+  const openLocalFileFlag = useStore(Selector.openLocalFileFlag);
+  const cloudFile = useStore(Selector.cloudFile);
+  const localFileName = useStore(Selector.localFileName);
+  const user = useStore(Selector.user);
+  const language = useStore(Selector.language);
 
-  const firstNewCall = useRef<boolean>(true);
-  const firstSaveCall = useRef<boolean>(true);
-  const firstOpenCall = useRef<boolean>(true);
   const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -45,31 +40,18 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
   }, [language]);
 
   useEffect(() => {
-    if (firstNewCall.current) {
-      firstNewCall.current = false;
-    } else {
+    if (createNewFileFlag) {
       createNewFile();
+      useStore.getState().setCreateNewFileFlag(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createNewFileFlag]);
 
   useEffect(() => {
-    if (firstOpenCall.current) {
-      firstOpenCall.current = false;
-    } else {
+    if (openLocalFileFlag) {
       readLocalFile();
+      useStore.getState().setOpenLocalFileFlag(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [openLocalFileFlag]);
-
-  useEffect(() => {
-    if (firstSaveCall.current) {
-      firstSaveCall.current = false;
-    } else {
-      writeLocalFile();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [saveLocalFileFlag]);
 
   const createNewFile = () => {
     Modal.confirm({
@@ -104,7 +86,7 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
   };
 
   const readLocalFile = () => {
-    if (!viewOnly && changed) {
+    if (!viewOnly && usePrimitiveStore.getState().changed) {
       Modal.confirm({
         title: i18n.t('message.DoYouWantToSaveChanges', lang),
         icon: <ExclamationCircleOutlined />,

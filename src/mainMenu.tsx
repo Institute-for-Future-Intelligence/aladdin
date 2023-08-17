@@ -815,7 +815,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
               onClick={() => {
                 undoManager.clear();
                 setCommonStore((state) => {
-                  state.createNewFileFlag = !state.createNewFileFlag;
+                  state.createNewFileFlag = true;
                   state.objectTypeToAdd = ObjectType.None;
                   state.groupActionMode = false;
                   state.groupMasterId = null;
@@ -843,7 +843,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
               onClick={() => {
                 undoManager.clear();
                 setCommonStore((state) => {
-                  state.openLocalFileFlag = !state.openLocalFileFlag;
+                  state.openLocalFileFlag = true;
                   state.objectTypeToAdd = ObjectType.None;
                   state.groupActionMode = false;
                   state.groupMasterId = null;

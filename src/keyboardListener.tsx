@@ -1017,7 +1017,7 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
       case 'ctrl+f':
       case 'meta+f': // for Mac
         setCommonStore((state) => {
-          state.createNewFileFlag = !state.createNewFileFlag;
+          state.createNewFileFlag = true;
           state.objectTypeToAdd = ObjectType.None;
           state.groupActionMode = false;
           state.groupMasterId = null;
@@ -1224,7 +1224,7 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
         if (!localFileDialogRequested) {
           setCommonStore((state) => {
             state.localFileDialogRequested = true;
-            state.openLocalFileFlag = !state.openLocalFileFlag;
+            state.openLocalFileFlag = true;
             if (loggable) {
               state.actionInfo = {
                 name: 'Open Local File',
