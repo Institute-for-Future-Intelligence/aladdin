@@ -1404,6 +1404,7 @@ export const i18n_ua = {
     },
 
     projectPanel: {
+      ProjectByOtherPeople: 'Project by Other People',
       Project: 'Project',
       ProjectType: 'Тип проєкту',
       ProjectDescription: 'Description',

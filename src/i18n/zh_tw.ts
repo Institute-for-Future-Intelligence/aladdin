@@ -1378,6 +1378,7 @@ export const i18n_zh_tw = {
     },
 
     projectPanel: {
+      ProjectByOtherPeople: '別人的項目',
       Project: '項目',
       ProjectType: '類别',
       ProjectDescription: '描述',

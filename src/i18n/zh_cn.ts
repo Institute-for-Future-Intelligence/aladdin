@@ -1377,6 +1377,7 @@ export const i18n_zh_cn = {
     },
 
     projectPanel: {
+      ProjectByOtherPeople: '别人的项目',
       Project: '项目',
       ProjectType: '类别',
       ProjectDescription: '描述',

@@ -522,23 +522,12 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
     }
   };
 
-  const isProjectDesign = useMemo(() => {
-    if (cloudFile && projectInfo.designs) {
-      for (const design of projectInfo.designs) {
-        if (cloudFile === design.title) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }, [cloudFile, projectInfo.designs]);
-
   return (
     <Container>
       <ColumnWrapper>
         <Header>
           <span>
-            {i18n.t('projectPanel.Project', lang) +
+            {(isOwner ? i18n.t('projectPanel.Project', lang) : i18n.t('projectPanel.ProjectByOtherPeople', lang)) +
               ': ' +
               projectInfo.title +
               (isOwner ? '' : ' (' + i18n.t('word.Owner', lang) + ': ' + projectInfo.owner?.substring(0, 4) + '***)')}
@@ -611,7 +600,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                           title={i18n.t('projectPanel.CurateCurrentDesign', lang)}
                         />
                       </Button>
-                      {isProjectDesign && selectedDesign && (
+                      {selectedDesign && selectedDesign.title === cloudFile && (
                         <Button
                           style={{ border: 'none', padding: '4px' }}
                           onClick={(e) => {

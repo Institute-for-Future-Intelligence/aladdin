@@ -1402,6 +1402,7 @@ export const i18n_es = {
     },
 
     projectPanel: {
+      ProjectByOtherPeople: 'Project by Other People',
       Project: 'Project',
       ProjectType: 'Type',
       ProjectDescription: 'Description',
