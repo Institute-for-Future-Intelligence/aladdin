@@ -70,7 +70,7 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
 
   const onOkClick = () => {
     usePrimitiveStore.setState((state) => {
-      state.publishOnModelsMapFlag = !state.publishOnModelsMapFlag;
+      state.publishOnModelsMapFlag = true;
     });
     setCommonStore((state) => {
       state.modelType = modelType;

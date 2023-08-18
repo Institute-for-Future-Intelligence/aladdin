@@ -255,7 +255,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
     });
     usePrimitiveStore.setState((state) => {
       state.projectImagesUpdateFlag = !state.projectImagesUpdateFlag;
-      state.updateProjectsFlag = !state.updateProjectsFlag;
+      state.updateProjectsFlag = true;
     });
   };
 
@@ -290,9 +290,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
       setCommonStore((state) => {
         state.localContentToImportAfterCloudFileUpdate = input;
       });
-      usePrimitiveStore.setState((state) => {
-        state.saveCloudFileFlag = !state.saveCloudFileFlag;
-      });
+      usePrimitiveStore.getState().setSaveCloudFileFlag(true);
     } else {
       if (user.uid) {
         // no cloud file has been created
@@ -891,7 +889,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
               key="open-cloud-file"
               onClick={() => {
                 usePrimitiveStore.setState((state) => {
-                  state.listCloudFilesFlag = !state.listCloudFilesFlag;
+                  state.listCloudFilesFlag = true;
                   state.openModelsMap = false;
                 });
                 if (loggable) {
@@ -913,9 +911,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
             <Menu.Item
               key="save-cloud-file"
               onClick={() => {
-                usePrimitiveStore.setState((state) => {
-                  state.saveCloudFileFlag = !state.saveCloudFileFlag;
-                });
+                usePrimitiveStore.getState().setSaveCloudFileFlag(true);
                 if (loggable) {
                   setCommonStore((state) => {
                     state.actionInfo = {
@@ -1015,7 +1011,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                 return;
               }
               usePrimitiveStore.setState((state) => {
-                state.showProjectsFlag = !state.showProjectsFlag;
+                state.showProjectsFlag = true;
                 state.openModelsMap = false;
               });
               if (loggable) {
@@ -2470,7 +2466,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
             onClick={() => {
               usePrimitiveStore.setState((state) => {
                 state.showModelsGallery = true;
-                state.leaderboardFlag = !state.leaderboardFlag;
+                state.leaderboardFlag = true;
                 state.openModelsMap = false;
               });
             }}
@@ -2485,7 +2481,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
             key="models-map"
             onClick={() => {
               usePrimitiveStore.setState((state) => {
-                state.modelsMapFlag = !state.modelsMapFlag;
+                state.modelsMapFlag = true;
                 state.modelsMapWeatherStations = false;
                 state.openModelsMap = true;
                 state.showModelsGallery = false;

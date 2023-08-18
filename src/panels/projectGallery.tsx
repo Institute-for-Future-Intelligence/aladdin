@@ -228,7 +228,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
 
   const curateCurrentDesign = () => {
     usePrimitiveStore.setState((state) => {
-      state.curateDesignToProjectFlag = !state.curateDesignToProjectFlag;
+      state.curateDesignToProjectFlag = true;
     });
   };
 
@@ -504,7 +504,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
       state.projectInfo.dataColoring = dataColoringSelectionRef.current;
     });
     usePrimitiveStore.setState((state) => {
-      state.updateProjectsFlag = !state.updateProjectsFlag;
+      state.updateProjectsFlag = true;
     });
     setUpdateFlag(!updateFlag);
   };
@@ -864,7 +864,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                       if (parameterSelectionChangedRef.current) {
                         if (!visible) {
                           usePrimitiveStore.setState((state) => {
-                            state.updateProjectsFlag = !state.updateProjectsFlag;
+                            state.updateProjectsFlag = true;
                           });
                         }
                         parameterSelectionChangedRef.current = false;

@@ -4305,7 +4305,7 @@ export const useStore = create<CommonStoreState>(
         },
         whitelist: [
           'language',
-          // 'animate24Hours',
+          'animate24Hours',
           'floatingWindowOpacity',
           'locale',
           'cloudFile',

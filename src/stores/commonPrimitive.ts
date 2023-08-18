@@ -19,6 +19,7 @@ export interface PrimitiveStoreState {
   showNavigationPanel: boolean;
 
   saveCloudFileFlag: boolean;
+  setSaveCloudFileFlag: (b: boolean) => void;
   listCloudFilesFlag: boolean;
   saveLocalFileDialogVisible: boolean;
 
@@ -157,6 +158,11 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
     showNavigationPanel: false,
 
     saveCloudFileFlag: false,
+    setSaveCloudFileFlag(b) {
+      set((state) => {
+        state.saveCloudFileFlag = b;
+      });
+    },
     listCloudFilesFlag: false,
     saveLocalFileDialogVisible: false,
 

@@ -89,7 +89,7 @@ const ModelsMapWrapper = ({
   const selectAuthor = (author: string | undefined) => {
     setSelectedAuthor(author);
     usePrimitiveStore.setState((state) => {
-      if (!state.showLeaderboard) state.leaderboardFlag = !state.leaderboardFlag;
+      if (!state.showLeaderboard) state.leaderboardFlag = true;
       if (author) authorModelsRef.current = peopleModelsRef.current.get(author);
     });
   };
@@ -327,7 +327,7 @@ const ModelsMapWrapper = ({
             }}
             onClick={() => {
               usePrimitiveStore.setState((state) => {
-                if (!state.showLeaderboard) state.leaderboardFlag = !state.leaderboardFlag;
+                if (!state.showLeaderboard) state.leaderboardFlag = true;
                 state.showLeaderboard = !state.showLeaderboard;
               });
             }}

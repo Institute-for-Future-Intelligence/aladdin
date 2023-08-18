@@ -65,9 +65,7 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
             setCommonStore((state) => {
               state.localContentToImportAfterCloudFileUpdate = 'CREATE_NEW_FILE';
             });
-            usePrimitiveStore.setState((state) => {
-              state.saveCloudFileFlag = !state.saveCloudFileFlag;
-            });
+            usePrimitiveStore.getState().setSaveCloudFileFlag(true);
           } else {
             // no cloud file has been created
             setCommonStore((state) => {
@@ -140,9 +138,7 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
                 setCommonStore((state) => {
                   state.localContentToImportAfterCloudFileUpdate = input;
                 });
-                usePrimitiveStore.setState((state) => {
-                  state.saveCloudFileFlag = !state.saveCloudFileFlag;
-                });
+                usePrimitiveStore.getState().setSaveCloudFileFlag(true);
               }
             } else {
               importContent(input);

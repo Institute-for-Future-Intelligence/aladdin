@@ -47,6 +47,15 @@ export interface CloudManagerProps {
   canvas?: HTMLCanvasElement | null;
 }
 
+const useFlag = (flag: boolean, fn: Function, setFlag: () => void) => {
+  useEffect(() => {
+    if (flag) {
+      fn();
+      setFlag();
+    }
+  }, [flag]);
+};
+
 const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const setCommonStore = useStore(Selector.set);
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
@@ -91,16 +100,6 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const cloudFiles = useRef<CloudFileInfo[] | void>();
   const myProjects = useRef<ProjectInfo[] | void>(); // Not sure why I need to use ref to store this
   const authorModelsRef = useRef<Map<string, ModelSite>>();
-  const firstCallUpdateCloudFile = useRef<boolean>(true);
-  const firstCallFetchModels = useRef<boolean>(true);
-  const firstCallFetchLeaderboard = useRef<boolean>(true);
-  const firstCallPublishOnMap = useRef<boolean>(true);
-  const firstCallCreateProject = useRef<boolean>(true);
-  const firstCallSaveAsProject = useRef<boolean>(true);
-  const firstCallCurateDesign = useRef<boolean>(true);
-  const firstCallListProjects = useRef<boolean>(true);
-  const firstCallUpdateProjects = useRef<boolean>(true);
-  const firstCallListCloudFiles = useRef<boolean>(true);
   const firstAccountSettings = useRef<boolean>(true);
 
   const lang = useMemo(() => {
@@ -231,104 +230,27 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     }
   }, [peopleModels, user.displayName, user.aliases]);
 
-  useEffect(() => {
-    if (firstCallUpdateCloudFile.current) {
-      firstCallUpdateCloudFile.current = false;
-    } else {
-      updateCloudFile();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [saveCloudFileFlag]);
+  useFlag(saveCloudFileFlag, updateCloudFile, () => setPrimitiveStore('saveCloudFileFlag', false));
 
-  useEffect(() => {
-    if (firstCallFetchModels.current) {
-      firstCallFetchModels.current = false;
-    } else {
-      fetchModelSites().then(() => {
-        fetchLatest().then(() => {
-          // ignore for now
-        });
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [modelsMapFlag]);
+  useFlag(modelsMapFlag, fetchModelSitesFn, () => setPrimitiveStore('modelsMapFlag', false));
 
-  useEffect(() => {
-    if (firstCallFetchLeaderboard.current) {
-      firstCallFetchLeaderboard.current = false;
-    } else {
-      fetchPeopleModels().then(() => {
-        fetchLatest().then(() => {
-          // ignore for now
-        });
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [leaderboardFlag]);
+  useFlag(leaderboardFlag, fetchPeopleModelsFn, () => setPrimitiveStore('leaderboardFlag', false));
 
-  useEffect(() => {
-    if (firstCallPublishOnMap.current) {
-      firstCallPublishOnMap.current = false;
-    } else {
-      publishOnModelsMap();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [publishOnMapFlag]);
+  useFlag(publishOnMapFlag, publishOnModelsMap, () => setPrimitiveStore('publishOnModelsMapFlag', false));
 
-  useEffect(() => {
-    if (firstCallCreateProject.current) {
-      firstCallCreateProject.current = false;
-    } else {
-      createNewProject();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [createProjectFlag]);
+  useFlag(createProjectFlag, createNewProject, () => setPrimitiveStore('createProjectFlag', false));
 
-  useEffect(() => {
-    if (firstCallSaveAsProject.current) {
-      firstCallSaveAsProject.current = false;
-    } else {
-      saveProjectAs();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [saveProjectFlag]);
+  useFlag(saveProjectFlag, saveProjectAs, () => setPrimitiveStore('saveProjectFlag', false));
 
-  useEffect(() => {
-    if (firstCallCurateDesign.current) {
-      firstCallCurateDesign.current = false;
-    } else {
-      curateDesignToProject();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [curateDesignToProjectFlag]);
+  useFlag(showProjectsFlag, showMyProjectsList, () => setPrimitiveStore('showProjectsFlag', false));
 
-  useEffect(() => {
-    if (firstCallListProjects.current) {
-      firstCallListProjects.current = false;
-    } else {
-      listMyProjects(true);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showProjectsFlag]);
+  useFlag(updateProjectsFlag, hideMyProjectsList, () => setPrimitiveStore('updateProjectsFlag', false));
 
-  useEffect(() => {
-    if (firstCallUpdateProjects.current) {
-      firstCallUpdateProjects.current = false;
-    } else {
-      listMyProjects(false);
-      setUpdateFlag(!updateFlag);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [updateProjectsFlag]);
+  useFlag(listCloudFilesFlag, listMyCloudFiles, () => setPrimitiveStore('listCloudFilesFlag', false));
 
-  useEffect(() => {
-    if (firstCallListCloudFiles.current) {
-      firstCallListCloudFiles.current = false;
-    } else {
-      listMyCloudFiles();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [listCloudFilesFlag]);
+  useFlag(curateDesignToProjectFlag, curateDesignToProject, () =>
+    setPrimitiveStore('curateDesignToProjectFlag', false),
+  );
 
   useEffect(() => {
     setTitleDialogVisible(showCloudFileTitleDialog);
@@ -620,148 +542,6 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       });
   };
 
-  const publishOnModelsMap = () => {
-    if (user && user.uid && title) {
-      // check if the user is the owner of the current model
-      const params = new URLSearchParams(window.location.search);
-      if (params.get('userid') === user.uid && params.get('title') === title) {
-        const m = {
-          latitude,
-          longitude,
-          address: address ?? null,
-          countryCode: countryCode ?? null,
-          type: useStore.getState().modelType,
-          author: useStore.getState().modelAuthor ?? user.displayName,
-          userid: user.uid,
-          title,
-          label: useStore.getState().modelLabel,
-          description: useStore.getState().modelDescription,
-          timeCreated: Date.now(),
-        } as ModelSite;
-        const modelKey = Util.getModelKey(m);
-        const collection = firebase.firestore().collection('models');
-        if (collection) {
-          // first we upload a thumbnail of the model to Firestore Cloud Storage
-          const storageRef = firebase.storage().ref();
-          if (canvas) {
-            const thumbnail = Util.resizeCanvas(canvas, 200);
-            thumbnail.toBlob((blob) => {
-              if (blob) {
-                const metadata = { contentType: 'image/png' };
-                const uploadTask = storageRef.child('images/' + modelKey + '.png').put(blob, metadata);
-                // Listen for state changes, errors, and completion of the upload.
-                uploadTask.on(
-                  firebase.storage.TaskEvent.STATE_CHANGED,
-                  (snapshot) => {
-                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    if (progress > 0) {
-                      showInfo(i18n.t('word.Upload', lang) + ': ' + progress + '%');
-                    }
-                  },
-                  (error) => {
-                    showError('Storage: ' + error);
-                  },
-                  () => {
-                    uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-                      const m2 = { ...m, thumbnailUrl: downloadURL } as ModelSite;
-                      // after we get a download URL for the thumbnail image, we then go on to upload other data
-                      const document = collection.doc(Util.getLatLngKey(latitude, longitude));
-                      document
-                        .get()
-                        .then((doc) => {
-                          if (doc.exists) {
-                            const data = doc.data();
-                            if (data && data[modelKey]) {
-                              document.set({ [modelKey]: m2 }, { merge: true }).then(() => {
-                                showSuccess(i18n.t('menu.file.UpdatedOnModelsMap', lang) + '.');
-                              });
-                            } else {
-                              document.set({ [modelKey]: m2 }, { merge: true }).then(() => {
-                                showSuccess(i18n.t('menu.file.PublishedOnModelsMap', lang) + '.');
-                              });
-                            }
-                          } else {
-                            document.set({ [modelKey]: m2 }, { merge: true }).then(() => {
-                              showSuccess(i18n.t('menu.file.PublishedOnModelsMap', lang) + '.');
-                            });
-                          }
-                        })
-                        .catch((error) => {
-                          showError(i18n.t('message.CannotPublishModelOnMap', lang) + ': ' + error);
-                        });
-                      // add to the leaderboard
-                      firebase
-                        .firestore()
-                        .collection('board')
-                        .doc('people')
-                        .update({
-                          [(m2.author ?? 'Anonymous') + '.' + Util.getModelKey(m2)]: m2,
-                        })
-                        .then(() => {
-                          // update the cache
-                          setCommonStore((state) => {
-                            if (state.peopleModels) {
-                              const models = state.peopleModels.get(m2.author ?? 'Anonymous');
-                              if (models) {
-                                models.set(Util.getModelKey(m2), m2);
-                              }
-                            }
-                          });
-                        });
-                      // notify info
-                      firebase
-                        .firestore()
-                        .collection('board')
-                        .doc('info')
-                        .set({ latestModel: m2 }, { merge: true })
-                        .then(() => {
-                          // TODO
-                        });
-                    });
-                  },
-                );
-              }
-            });
-          }
-        }
-        // keep a record of the published model in the user's account
-        firebase
-          .firestore()
-          .collection('users')
-          .doc(user.uid)
-          .update(
-            useStore.getState().modelAuthor === user.displayName
-              ? {
-                  published: firebase.firestore.FieldValue.arrayUnion(title),
-                }
-              : {
-                  published: firebase.firestore.FieldValue.arrayUnion(title),
-                  aliases: firebase.firestore.FieldValue.arrayUnion(useStore.getState().modelAuthor),
-                },
-          )
-          .then(() => {
-            // update the cache
-            setCommonStore((state) => {
-              if (state.user) {
-                if (!state.user.published) state.user.published = [];
-                if (!state.user.published.includes(title)) {
-                  state.user.published.push(title);
-                }
-                if (!state.user.aliases) state.user.aliases = [];
-                if (
-                  state.modelAuthor &&
-                  !state.user.aliases.includes(state.modelAuthor) &&
-                  state.modelAuthor !== user.displayName
-                ) {
-                  state.user.aliases.push(state.modelAuthor);
-                }
-              }
-            });
-          });
-      }
-    }
-  };
-
   const deleteFromModelsMap = (model: ModelSite, successCallback?: Function) => {
     // pass if there is no user currently logged in
     if (user && user.uid) {
@@ -791,7 +571,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
             if (state.peopleModels) {
               state.peopleModels.delete(Util.getModelKey(model));
               usePrimitiveStore.setState((state) => {
-                state.leaderboardFlag = !state.leaderboardFlag;
+                state.leaderboardFlag = true;
               });
             }
           });
@@ -907,176 +687,6 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           // ignore
         });
     }
-  };
-
-  const createNewProject = () => {
-    if (!user || !user.uid) return;
-    const title = useStore.getState().projectInfo.title;
-    if (!title) {
-      showError(i18n.t('message.CannotCreateNewProjectWithoutTitle', lang) + '.');
-      return;
-    }
-    const t = title.trim();
-    if (t.length === 0) {
-      showError(i18n.t('message.CannotCreateNewProjectWithoutTitle', lang) + '.');
-      return;
-    }
-    // check if the project title is already used
-    fetchMyProjects(false).then(() => {
-      let exist = false;
-      if (myProjects.current) {
-        for (const p of myProjects.current) {
-          if (p.title === t) {
-            exist = true;
-            break;
-          }
-        }
-      }
-      if (exist) {
-        showInfo(i18n.t('message.TitleUsedChooseDifferentOne', lang) + ': ' + t);
-      } else {
-        if (user && user.uid) {
-          const type = useStore.getState().projectInfo.type ?? DesignProblem.SOLAR_PANEL_ARRAY;
-          const description = useStore.getState().projectInfo.description ?? null;
-          const timestamp = new Date().getTime();
-          const counter = 0;
-          firebase
-            .firestore()
-            .collection('users')
-            .doc(user.uid)
-            .collection('projects')
-            .doc(t)
-            .set({
-              owner: user.uid,
-              timestamp,
-              type,
-              description,
-              counter,
-              designs: [],
-              hiddenParameters: [],
-            })
-            .then(() => {
-              setCommonStore((state) => {
-                state.projectView = true;
-                // update the local copy as well
-                state.projectInfo.owner = user.uid;
-                state.projectInfo.counter = 0;
-                state.projectInfo.dataColoring = DataColoring.ALL;
-                state.projectInfo.selectedProperty = null;
-                state.projectInfo.sortDescending = false;
-                state.projectInfo.designs = [];
-                state.projectInfo.ranges = [];
-                state.projectInfo.hiddenParameters = [];
-              });
-            })
-            .catch((error) => {
-              showError(i18n.t('message.CannotCreateNewProject', lang) + ': ' + error);
-            })
-            .finally(() => {
-              // if the project list panel is open, update it
-              if (showProjectListPanel) {
-                fetchMyProjects(false).then(() => {
-                  setUpdateFlag(!updateFlag);
-                });
-              }
-              setLoading(false);
-            });
-        }
-      }
-    });
-  };
-
-  const saveProjectAs = () => {
-    if (!user || !user.uid) return;
-    const title = useStore.getState().projectInfo.title;
-    if (!title) {
-      showError(i18n.t('message.CannotCreateNewProjectWithoutTitle', lang) + '.');
-      return;
-    }
-    const t = title.trim();
-    if (t.length === 0) {
-      showError(i18n.t('message.CannotCreateNewProjectWithoutTitle', lang) + '.');
-      return;
-    }
-    // check if the project title is already taken
-    fetchMyProjects(false).then(() => {
-      let exist = false;
-      if (myProjects.current) {
-        for (const p of myProjects.current) {
-          if (p.title === t) {
-            exist = true;
-            break;
-          }
-        }
-      }
-      if (exist) {
-        showInfo(i18n.t('message.TitleUsedChooseDifferentOne', lang) + ': ' + t);
-      } else {
-        if (user && user.uid) {
-          const designs = useStore.getState().projectInfo.designs;
-          if (designs) {
-            const type = useStore.getState().projectInfo.type;
-            const owner = useStore.getState().projectInfo.owner;
-            const description = useStore.getState().projectInfo.description;
-            const timestamp = new Date().getTime();
-            const counter = useStore.getState().projectInfo.counter;
-            const dataColoring = useStore.getState().projectInfo.dataColoring ?? null;
-            const selectedProperty = useStore.getState().projectInfo.selectedProperty ?? null;
-            const sortDescending = !!useStore.getState().projectInfo.sortDescending;
-            const newDesigns: Design[] = changeDesignTitles(t, designs) ?? [];
-            for (const [i, d] of designs.entries()) {
-              copyDesign(d.title, newDesigns[i].title, owner, user.uid);
-            }
-            const projectImages = useStore.getState().projectImages;
-            if (projectImages && projectImages.size > 0) {
-              for (const [i, d] of designs.entries()) {
-                const image = projectImages.get(d.title);
-                if (image) {
-                  newDesigns[i].thumbnail = getImageData(image);
-                }
-              }
-              firebase
-                .firestore()
-                .collection('users')
-                .doc(user.uid)
-                .collection('projects')
-                .doc(t)
-                .set({
-                  owner: user.uid,
-                  timestamp,
-                  type,
-                  description,
-                  counter,
-                  dataColoring,
-                  selectedProperty,
-                  sortDescending,
-                  designs: newDesigns,
-                  ranges: useStore.getState().projectInfo.ranges ?? null,
-                  hiddenParameters: useStore.getState().projectInfo.hiddenParameters,
-                })
-                .then(() => {
-                  setCommonStore((state) => {
-                    state.projectView = true;
-                    state.projectInfo.owner = user.uid;
-                    state.projectInfo.designs = newDesigns;
-                  });
-                })
-                .catch((error) => {
-                  showError(i18n.t('message.CannotCreateNewProject', lang) + ': ' + error);
-                })
-                .finally(() => {
-                  if (showProjectListPanel) {
-                    fetchMyProjects(false).then(() => {
-                      setUpdateFlag(!updateFlag);
-                    });
-                  }
-                  setLoading(false);
-                });
-            }
-          }
-        }
-      }
-    });
   };
 
   // fetch owner's projects from the cloud
@@ -1292,7 +902,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     });
     usePrimitiveStore.setState((state) => {
       state.projectImagesUpdateFlag = !state.projectImagesUpdateFlag;
-      state.updateProjectsFlag = !state.updateProjectsFlag;
+      state.updateProjectsFlag = true;
     });
   };
 
@@ -1302,21 +912,6 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       loadCloudFile(userid, title, true, true, viewOnly).finally(() => {
         setLoading(false);
       });
-    }
-  };
-
-  const curateDesignToProject = () => {
-    const projectOwner = useStore.getState().projectInfo.owner;
-    if (user.uid !== projectOwner) {
-      showInfo(i18n.t('message.CannotAddDesignToProjectOwnedByOthers', lang));
-    } else {
-      const projectTitle = useStore.getState().projectInfo.title;
-      if (projectTitle) {
-        setLoading(true);
-        const projectType = useStore.getState().projectInfo.type ?? DesignProblem.SOLAR_PANEL_ARRAY;
-        const counter = useStore.getState().projectInfo.counter ?? 0;
-        addDesignToProject(projectType, projectTitle, projectTitle + ' ' + counter);
-      }
     }
   };
 
@@ -1549,15 +1144,6 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       });
   };
 
-  const listMyCloudFiles = () => {
-    if (!user.uid) return;
-    fetchMyCloudFiles().then(() => {
-      usePrimitiveStore.setState((state) => {
-        state.showCloudFilePanel = true;
-      });
-    });
-  };
-
   const deleteCloudFile = (userid: string, title: string) => {
     firebase
       .firestore()
@@ -1629,12 +1215,373 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       });
   };
 
-  const updateCloudFile = () => {
+  function updateCloudFile() {
     if (cloudFile) {
       saveToCloud(cloudFile, false, false);
       setTitle(cloudFile);
     }
-  };
+  }
+
+  function fetchModelSitesFn() {
+    fetchModelSites().then(() => {
+      fetchLatest().then(() => {
+        // ignore for now
+      });
+    });
+  }
+
+  function fetchPeopleModelsFn() {
+    fetchPeopleModels().then(() => {
+      fetchLatest().then(() => {
+        // ignore for now
+      });
+    });
+  }
+
+  function publishOnModelsMap() {
+    if (user && user.uid && title) {
+      // check if the user is the owner of the current model
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('userid') === user.uid && params.get('title') === title) {
+        const m = {
+          latitude,
+          longitude,
+          address: address ?? null,
+          countryCode: countryCode ?? null,
+          type: useStore.getState().modelType,
+          author: useStore.getState().modelAuthor ?? user.displayName,
+          userid: user.uid,
+          title,
+          label: useStore.getState().modelLabel,
+          description: useStore.getState().modelDescription,
+          timeCreated: Date.now(),
+        } as ModelSite;
+        const modelKey = Util.getModelKey(m);
+        const collection = firebase.firestore().collection('models');
+        if (collection) {
+          // first we upload a thumbnail of the model to Firestore Cloud Storage
+          const storageRef = firebase.storage().ref();
+          if (canvas) {
+            const thumbnail = Util.resizeCanvas(canvas, 200);
+            thumbnail.toBlob((blob) => {
+              if (blob) {
+                const metadata = { contentType: 'image/png' };
+                const uploadTask = storageRef.child('images/' + modelKey + '.png').put(blob, metadata);
+                // Listen for state changes, errors, and completion of the upload.
+                uploadTask.on(
+                  firebase.storage.TaskEvent.STATE_CHANGED,
+                  (snapshot) => {
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    if (progress > 0) {
+                      showInfo(i18n.t('word.Upload', lang) + ': ' + progress + '%');
+                    }
+                  },
+                  (error) => {
+                    showError('Storage: ' + error);
+                  },
+                  () => {
+                    uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                      const m2 = { ...m, thumbnailUrl: downloadURL } as ModelSite;
+                      // after we get a download URL for the thumbnail image, we then go on to upload other data
+                      const document = collection.doc(Util.getLatLngKey(latitude, longitude));
+                      document
+                        .get()
+                        .then((doc) => {
+                          if (doc.exists) {
+                            const data = doc.data();
+                            if (data && data[modelKey]) {
+                              document.set({ [modelKey]: m2 }, { merge: true }).then(() => {
+                                showSuccess(i18n.t('menu.file.UpdatedOnModelsMap', lang) + '.');
+                              });
+                            } else {
+                              document.set({ [modelKey]: m2 }, { merge: true }).then(() => {
+                                showSuccess(i18n.t('menu.file.PublishedOnModelsMap', lang) + '.');
+                              });
+                            }
+                          } else {
+                            document.set({ [modelKey]: m2 }, { merge: true }).then(() => {
+                              showSuccess(i18n.t('menu.file.PublishedOnModelsMap', lang) + '.');
+                            });
+                          }
+                        })
+                        .catch((error) => {
+                          showError(i18n.t('message.CannotPublishModelOnMap', lang) + ': ' + error);
+                        });
+                      // add to the leaderboard
+                      firebase
+                        .firestore()
+                        .collection('board')
+                        .doc('people')
+                        .update({
+                          [(m2.author ?? 'Anonymous') + '.' + Util.getModelKey(m2)]: m2,
+                        })
+                        .then(() => {
+                          // update the cache
+                          setCommonStore((state) => {
+                            if (state.peopleModels) {
+                              const models = state.peopleModels.get(m2.author ?? 'Anonymous');
+                              if (models) {
+                                models.set(Util.getModelKey(m2), m2);
+                              }
+                            }
+                          });
+                        });
+                      // notify info
+                      firebase
+                        .firestore()
+                        .collection('board')
+                        .doc('info')
+                        .set({ latestModel: m2 }, { merge: true })
+                        .then(() => {
+                          // TODO
+                        });
+                    });
+                  },
+                );
+              }
+            });
+          }
+        }
+        // keep a record of the published model in the user's account
+        firebase
+          .firestore()
+          .collection('users')
+          .doc(user.uid)
+          .update(
+            useStore.getState().modelAuthor === user.displayName
+              ? {
+                  published: firebase.firestore.FieldValue.arrayUnion(title),
+                }
+              : {
+                  published: firebase.firestore.FieldValue.arrayUnion(title),
+                  aliases: firebase.firestore.FieldValue.arrayUnion(useStore.getState().modelAuthor),
+                },
+          )
+          .then(() => {
+            // update the cache
+            setCommonStore((state) => {
+              if (state.user) {
+                if (!state.user.published) state.user.published = [];
+                if (!state.user.published.includes(title)) {
+                  state.user.published.push(title);
+                }
+                if (!state.user.aliases) state.user.aliases = [];
+                if (
+                  state.modelAuthor &&
+                  !state.user.aliases.includes(state.modelAuthor) &&
+                  state.modelAuthor !== user.displayName
+                ) {
+                  state.user.aliases.push(state.modelAuthor);
+                }
+              }
+            });
+          });
+      }
+    }
+  }
+
+  function createNewProject() {
+    if (!user || !user.uid) return;
+    const title = useStore.getState().projectInfo.title;
+    if (!title) {
+      showError(i18n.t('message.CannotCreateNewProjectWithoutTitle', lang) + '.');
+      return;
+    }
+    const t = title.trim();
+    if (t.length === 0) {
+      showError(i18n.t('message.CannotCreateNewProjectWithoutTitle', lang) + '.');
+      return;
+    }
+    // check if the project title is already used
+    fetchMyProjects(false).then(() => {
+      let exist = false;
+      if (myProjects.current) {
+        for (const p of myProjects.current) {
+          if (p.title === t) {
+            exist = true;
+            break;
+          }
+        }
+      }
+      if (exist) {
+        showInfo(i18n.t('message.TitleUsedChooseDifferentOne', lang) + ': ' + t);
+      } else {
+        if (user && user.uid) {
+          const type = useStore.getState().projectInfo.type ?? DesignProblem.SOLAR_PANEL_ARRAY;
+          const description = useStore.getState().projectInfo.description ?? null;
+          const timestamp = new Date().getTime();
+          const counter = 0;
+          firebase
+            .firestore()
+            .collection('users')
+            .doc(user.uid)
+            .collection('projects')
+            .doc(t)
+            .set({
+              owner: user.uid,
+              timestamp,
+              type,
+              description,
+              counter,
+              designs: [],
+              hiddenParameters: [],
+            })
+            .then(() => {
+              setCommonStore((state) => {
+                state.projectView = true;
+                // update the local copy as well
+                state.projectInfo.owner = user.uid;
+                state.projectInfo.counter = 0;
+                state.projectInfo.dataColoring = DataColoring.ALL;
+                state.projectInfo.selectedProperty = null;
+                state.projectInfo.sortDescending = false;
+                state.projectInfo.designs = [];
+                state.projectInfo.ranges = [];
+                state.projectInfo.hiddenParameters = [];
+              });
+            })
+            .catch((error) => {
+              showError(i18n.t('message.CannotCreateNewProject', lang) + ': ' + error);
+            })
+            .finally(() => {
+              // if the project list panel is open, update it
+              if (showProjectListPanel) {
+                fetchMyProjects(false).then(() => {
+                  setUpdateFlag(!updateFlag);
+                });
+              }
+              setLoading(false);
+            });
+        }
+      }
+    });
+  }
+
+  function saveProjectAs() {
+    if (!user || !user.uid) return;
+    const title = useStore.getState().projectInfo.title;
+    if (!title) {
+      showError(i18n.t('message.CannotCreateNewProjectWithoutTitle', lang) + '.');
+      return;
+    }
+    const t = title.trim();
+    if (t.length === 0) {
+      showError(i18n.t('message.CannotCreateNewProjectWithoutTitle', lang) + '.');
+      return;
+    }
+    // check if the project title is already taken
+    fetchMyProjects(false).then(() => {
+      let exist = false;
+      if (myProjects.current) {
+        for (const p of myProjects.current) {
+          if (p.title === t) {
+            exist = true;
+            break;
+          }
+        }
+      }
+      if (exist) {
+        showInfo(i18n.t('message.TitleUsedChooseDifferentOne', lang) + ': ' + t);
+      } else {
+        if (user && user.uid) {
+          const designs = useStore.getState().projectInfo.designs;
+          if (designs) {
+            const type = useStore.getState().projectInfo.type;
+            const owner = useStore.getState().projectInfo.owner;
+            const description = useStore.getState().projectInfo.description;
+            const timestamp = new Date().getTime();
+            const counter = useStore.getState().projectInfo.counter;
+            const dataColoring = useStore.getState().projectInfo.dataColoring ?? null;
+            const selectedProperty = useStore.getState().projectInfo.selectedProperty ?? null;
+            const sortDescending = !!useStore.getState().projectInfo.sortDescending;
+            const newDesigns: Design[] = changeDesignTitles(t, designs) ?? [];
+            for (const [i, d] of designs.entries()) {
+              copyDesign(d.title, newDesigns[i].title, owner, user.uid);
+            }
+            const projectImages = useStore.getState().projectImages;
+            if (projectImages && projectImages.size > 0) {
+              for (const [i, d] of designs.entries()) {
+                const image = projectImages.get(d.title);
+                if (image) {
+                  newDesigns[i].thumbnail = getImageData(image);
+                }
+              }
+              firebase
+                .firestore()
+                .collection('users')
+                .doc(user.uid)
+                .collection('projects')
+                .doc(t)
+                .set({
+                  owner: user.uid,
+                  timestamp,
+                  type,
+                  description,
+                  counter,
+                  dataColoring,
+                  selectedProperty,
+                  sortDescending,
+                  designs: newDesigns,
+                  ranges: useStore.getState().projectInfo.ranges ?? null,
+                  hiddenParameters: useStore.getState().projectInfo.hiddenParameters,
+                })
+                .then(() => {
+                  setCommonStore((state) => {
+                    state.projectView = true;
+                    state.projectInfo.owner = user.uid;
+                    state.projectInfo.designs = newDesigns;
+                  });
+                })
+                .catch((error) => {
+                  showError(i18n.t('message.CannotCreateNewProject', lang) + ': ' + error);
+                })
+                .finally(() => {
+                  if (showProjectListPanel) {
+                    fetchMyProjects(false).then(() => {
+                      setUpdateFlag(!updateFlag);
+                    });
+                  }
+                  setLoading(false);
+                });
+            }
+          }
+        }
+      }
+    });
+  }
+
+  function curateDesignToProject() {
+    const projectOwner = useStore.getState().projectInfo.owner;
+    if (user.uid !== projectOwner) {
+      showInfo(i18n.t('message.CannotAddDesignToProjectOwnedByOthers', lang));
+    } else {
+      const projectTitle = useStore.getState().projectInfo.title;
+      if (projectTitle) {
+        setLoading(true);
+        const projectType = useStore.getState().projectInfo.type ?? DesignProblem.SOLAR_PANEL_ARRAY;
+        const counter = useStore.getState().projectInfo.counter ?? 0;
+        addDesignToProject(projectType, projectTitle, projectTitle + ' ' + counter);
+      }
+    }
+  }
+
+  function listMyCloudFiles() {
+    if (!user.uid) return;
+    fetchMyCloudFiles().then(() => {
+      usePrimitiveStore.setState((state) => {
+        state.showCloudFilePanel = true;
+      });
+    });
+  }
+
+  function showMyProjectsList() {
+    listMyProjects(true);
+  }
+
+  function hideMyProjectsList() {
+    listMyProjects(false);
+    setUpdateFlag(!updateFlag);
+  }
 
   return viewOnly ? (
     <>

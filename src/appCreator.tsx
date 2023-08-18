@@ -316,9 +316,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
                 style={{ marginLeft: '10px' }}
                 title={i18n.t('menu.file.SaveCloudFile', lang)}
                 onClick={() => {
-                  usePrimitiveStore.setState((state) => {
-                    state.saveCloudFileFlag = !state.saveCloudFileFlag;
-                  });
+                  usePrimitiveStore.getState().setSaveCloudFileFlag(true);
                   if (loggable) {
                     setCommonStore((state) => {
                       state.actionInfo = {

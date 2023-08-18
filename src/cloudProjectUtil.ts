@@ -58,7 +58,7 @@ export const removeDesignFromProject = (userid: string, projectTitle: string, de
     })
     .then(() => {
       usePrimitiveStore.setState((state) => {
-        state.updateProjectsFlag = !state.updateProjectsFlag;
+        state.updateProjectsFlag = true;
       });
       // also delete the design
       firebase
@@ -412,7 +412,7 @@ export const updateDesign = (
                         state.projectInfo.designs = updatedDesigns;
                       });
                       usePrimitiveStore.setState((state) => {
-                        state.updateProjectsFlag = !state.updateProjectsFlag;
+                        state.updateProjectsFlag = true;
                       });
                     });
                 }

@@ -58,9 +58,9 @@ const CreateNewProjectDialog = ({
   const onOkClick = () => {
     usePrimitiveStore.setState((state) => {
       if (saveAs) {
-        state.saveProjectFlag = !state.saveProjectFlag;
+        state.saveProjectFlag = true;
       } else {
-        state.createProjectFlag = !state.createProjectFlag;
+        state.createProjectFlag = true;
       }
     });
     setCommonStore((state) => {

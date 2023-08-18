@@ -42,9 +42,9 @@ const App = () => {
     usePrimitiveStore.setState((state) => {
       state.openModelsMap = map;
       if (map) {
-        state.modelsMapFlag = !state.modelsMapFlag;
+        state.modelsMapFlag = true;
         state.modelsMapWeatherStations = false;
-        state.leaderboardFlag = !state.leaderboardFlag;
+        state.leaderboardFlag = true;
         state.showLeaderboard = true;
       }
     });

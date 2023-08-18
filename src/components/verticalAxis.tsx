@@ -81,7 +81,7 @@ const VerticalAxis = ({
       state.projectInfo.selectedProperty = state.projectInfo.selectedProperty !== variable ? variable : null;
     });
     usePrimitiveStore.setState((state) => {
-      state.updateProjectsFlag = !state.updateProjectsFlag;
+      state.updateProjectsFlag = true;
     });
   };
 

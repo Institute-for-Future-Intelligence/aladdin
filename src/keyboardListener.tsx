@@ -1050,7 +1050,7 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
       case 'ctrl+shift+o':
       case 'meta+shift+o': // for Mac
         usePrimitiveStore.setState((state) => {
-          state.listCloudFilesFlag = !state.listCloudFilesFlag;
+          state.listCloudFilesFlag = true;
           state.openModelsMap = false;
         });
         if (loggable) {
@@ -1064,9 +1064,7 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
         break;
       case 'ctrl+shift+s':
       case 'meta+shift+s': // for Mac
-        usePrimitiveStore.setState((state) => {
-          state.saveCloudFileFlag = !state.saveCloudFileFlag;
-        });
+        usePrimitiveStore.getState().setSaveCloudFileFlag(true);
         if (loggable) {
           setCommonStore((state) => {
             state.actionInfo = {
