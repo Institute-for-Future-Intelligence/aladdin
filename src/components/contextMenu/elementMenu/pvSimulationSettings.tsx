@@ -9,6 +9,7 @@ import * as Selector from '../../../stores/selector';
 import i18n from '../../../i18n/i18n';
 import { Discretization } from '../../../types';
 import { Util } from '../../../Util';
+import { useDataStore } from '../../../stores/commonData';
 
 const PvSimulationSettings = () => {
   const setCommonStore = useStore(Selector.set);
@@ -52,6 +53,10 @@ const PvSimulationSettings = () => {
             onChange={(value) => {
               setCommonStore((state) => {
                 state.world.daysPerYear = value;
+              });
+              // clear the results stored in the common store
+              useDataStore.setState((state) => {
+                state.yearlyPvYield = [];
               });
             }}
           >

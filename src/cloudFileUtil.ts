@@ -41,6 +41,9 @@ export const loadCloudFile = (
         useStore.getState().set((state) => {
           state.cloudFile = undefined;
         });
+        usePrimitiveStore.setState((state) => {
+          state.waiting = false;
+        });
       }
       if (!popState && !viewOnly) {
         const newUrl = HOME_URL + '?client=web&userid=' + userid + '&title=' + encodeURIComponent(title);
@@ -49,5 +52,8 @@ export const loadCloudFile = (
     })
     .catch((error) => {
       showError(i18n.t('message.CannotOpenCloudFile', lang) + ': ' + error);
+      usePrimitiveStore.setState((state) => {
+        state.waiting = false;
+      });
     });
 };

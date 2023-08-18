@@ -2,7 +2,6 @@
  * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 import create from 'zustand';
-import { produce } from 'immer';
 import { DatumEntry } from '../types';
 import { Vantage } from '../analysis/Vantage';
 import { Util } from '../Util';

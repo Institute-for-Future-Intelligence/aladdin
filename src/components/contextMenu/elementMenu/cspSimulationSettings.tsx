@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React from 'react';
@@ -7,6 +7,7 @@ import { InputNumber, Menu, Select, Space } from 'antd';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import i18n from '../../../i18n/i18n';
+import { useDataStore } from '../../../stores/commonData';
 
 const CspSimulationSettings = ({ name }: { name: string }) => {
   const setCommonStore = useStore(Selector.set);
@@ -47,6 +48,13 @@ const CspSimulationSettings = ({ name }: { name: string }) => {
             onChange={(value) => {
               setCommonStore((state) => {
                 state.world.cspDaysPerYear = value;
+              });
+              // clear the results stored in the common store
+              useDataStore.setState((state) => {
+                state.yearlyParabolicTroughYield = [];
+                state.yearlyParabolicDishYield = [];
+                state.yearlyFresnelReflectorYield = [];
+                state.yearlyHeliostatYield = [];
               });
             }}
           >
