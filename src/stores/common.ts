@@ -4276,7 +4276,7 @@ export const useStore = create<CommonStoreState>(
           openLocalFileFlag: false,
           setOpenLocalFileFlag(b) {
             immerSet((state) => {
-              state.createNewFileFlag = b;
+              state.openLocalFileFlag = b;
             });
           },
           localFileDialogRequested: false,
