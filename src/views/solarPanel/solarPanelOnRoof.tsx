@@ -487,6 +487,8 @@ const SolarPanelOnRoof = ({
   const pvModules = useStore(Selector.pvModules);
   const sceneRadius = useStore(Selector.sceneRadius);
 
+  const latestFoundationRef = useRef<FoundationModel | null>(null);
+
   const pvModel = pvModules[pvModelName] as PvModel;
   if (pvModel) {
     lz = Math.max(pvModel.thickness, 0.02);
@@ -611,7 +613,7 @@ const SolarPanelOnRoof = ({
       const roof = getElementById(parentId) as RoofModel;
       if (roof && foundationId) {
         const sp = getElementById(id) as SolarPanelModel;
-        const foundation = getElementById(foundationId) as FoundationModel;
+        const foundation = latestFoundationRef.current;
 
         if (sp && foundation) {
           const boundaryVertices = RoofUtil.getRoofBoundaryVertices(roof);
@@ -635,6 +637,7 @@ const SolarPanelOnRoof = ({
         state.rotateHandleType = null;
         state.updateElementOnRoofFlag = !state.updateElementOnRoofFlag;
       });
+      latestFoundationRef.current = null;
     }
   };
 
@@ -652,13 +655,17 @@ const SolarPanelOnRoof = ({
   const tiltHandleSize = (baseSize * 2) / 3;
 
   const initPointerDown = () => {
-    if (foundationModel) {
-      oldPosRef.current = [cx / foundationModel.lx, cy / foundationModel.ly, cz - foundationModel.lz / 2];
+    const latestFoundation = useStore
+      .getState()
+      .elements.find((e) => e.id === foundationId && e.type === ObjectType.Foundation) as FoundationModel;
+    if (latestFoundation) {
+      oldPosRef.current = [cx / latestFoundation.lx, cy / latestFoundation.ly, cz - latestFoundation.lz / 2];
       oldDmsRef.current = [lx, ly, lz];
       oldAziRef.current = relativeAzimuth;
       oldTiltRef.current = tiltAngle;
       oldNorRef.current = [...normal];
       oldRotRef.current = [...rotation];
+      latestFoundationRef.current = latestFoundation;
     }
     setShowIntersectionPlane(true);
     pointerDownRef.current = true;
@@ -679,7 +686,7 @@ const SolarPanelOnRoof = ({
   };
 
   const intersectionPlanePointerMove = (event: ThreeEvent<PointerEvent>) => {
-    if (intersectionPlaneRef.current && pointerDownRef.current && foundationModel && pvModel) {
+    if (intersectionPlaneRef.current && pointerDownRef.current && latestFoundationRef.current && pvModel) {
       setRayCast(event);
       const intersects = ray.intersectObjects([intersectionPlaneRef.current]);
       if (intersects.length > 0) {
@@ -691,13 +698,17 @@ const SolarPanelOnRoof = ({
         if (useStore.getState().resizeHandleType) {
           const azimuth = drawPole ? relativeAzimuth : 0;
           const anchor = useStore.getState().resizeAnchor;
-          const fCenter = new Vector3(foundationModel.cx, foundationModel.cy, foundationModel.lz);
+          const fCenter = new Vector3(
+            latestFoundationRef.current.cx,
+            latestFoundationRef.current.cy,
+            latestFoundationRef.current.lz,
+          );
           const r = new Vector3()
             .subVectors(pointer, anchor)
-            .applyEuler(new Euler(0, 0, -rotation[2] - foundationModel.rotation[2] - azimuth));
+            .applyEuler(new Euler(0, 0, -rotation[2] - latestFoundationRef.current.rotation[2] - azimuth));
           setCommonStore((state) => {
             for (const e of state.elements) {
-              if (e.id === id && foundationModel) {
+              if (e.id === id && latestFoundationRef.current) {
                 switch (state.resizeHandleType) {
                   case ResizeHandleType.Left:
                   case ResizeHandleType.Right: {
@@ -707,15 +718,15 @@ const SolarPanelOnRoof = ({
                     const nx = Math.max(1, Math.ceil((dx - unitLength / 2) / unitLength));
                     const lx = nx * unitLength;
                     const v = new Vector3((Math.sign(r.x) * lx) / 2, 0, 0).applyEuler(
-                      new Euler(0, 0, rotation[2] + foundationModel.rotation[2] + azimuth),
+                      new Euler(0, 0, rotation[2] + latestFoundationRef.current.rotation[2] + azimuth),
                     );
                     const center = new Vector3()
                       .addVectors(anchor, v)
                       .sub(fCenter)
-                      .applyEuler(new Euler(0, 0, -foundationModel.rotation[2]));
+                      .applyEuler(new Euler(0, 0, -latestFoundationRef.current.rotation[2]));
                     e.lx = lx;
-                    e.cx = center.x / foundationModel.lx;
-                    e.cy = center.y / foundationModel.ly;
+                    e.cx = center.x / latestFoundationRef.current.lx;
+                    e.cy = center.y / latestFoundationRef.current.ly;
                     break;
                   }
                   case ResizeHandleType.Upper:
@@ -728,16 +739,21 @@ const SolarPanelOnRoof = ({
                     const nl = Math.max(1, Math.ceil((dl - unitLength / 2) / unitLength));
                     const l = nl * unitLength;
                     const v = new Vector3(0, (l * Math.sign(r.y)) / 2, 0).applyEuler(
-                      new Euler(rotation[0], rotation[1], rotation[2] + foundationModel.rotation[2] + azimuth, 'ZXY'),
+                      new Euler(
+                        rotation[0],
+                        rotation[1],
+                        rotation[2] + latestFoundationRef.current.rotation[2] + azimuth,
+                        'ZXY',
+                      ),
                     );
                     const center = new Vector3()
                       .addVectors(anchor, v)
                       .sub(fCenter)
-                      .applyEuler(new Euler(0, 0, -foundationModel.rotation[2]));
+                      .applyEuler(new Euler(0, 0, -latestFoundationRef.current.rotation[2]));
                     if (!isTouchingRoof(l, tiltAngle)) {
                       e.ly = l;
-                      e.cx = center.x / foundationModel.lx;
-                      e.cy = center.y / foundationModel.ly;
+                      e.cx = center.x / latestFoundationRef.current.lx;
+                      e.cy = center.y / latestFoundationRef.current.ly;
                       if (!drawPole) {
                         e.cz = center.z - hz;
                       }
@@ -750,8 +766,8 @@ const SolarPanelOnRoof = ({
             }
           });
         } else if (rotateHandleType === RotateHandleType.Lower || rotateHandleType === RotateHandleType.Upper) {
-          const pr = foundationModel.rotation[2]; // parent rotation
-          const pc = new Vector2(foundationModel.cx, foundationModel.cy); // world parent center
+          const pr = latestFoundationRef.current.rotation[2]; // parent rotation
+          const pc = new Vector2(latestFoundationRef.current.cx, latestFoundationRef.current.cy); // world parent center
           const cc = new Vector2(cx, cy).rotateAround(ORIGIN_VECTOR2, pr);
           const wc = new Vector2().addVectors(cc, pc); // world current center
           const rotation =
@@ -782,7 +798,7 @@ const SolarPanelOnRoof = ({
             let angle = cv.angleTo(UNIT_VECTOR_POS_Z);
             const touch = 0.5 * ly * Math.abs(Math.sin(angle)) > poleHeight;
             if (!touch) {
-              const wr = relativeAzimuth + rotation[2] + (foundationModel?.rotation[2] ?? 0);
+              const wr = relativeAzimuth + rotation[2] + (latestFoundationRef.current?.rotation[2] ?? 0);
               const sign =
                 wr % Math.PI === 0
                   ? Math.sign(-cv.y) * Math.sign(Math.cos(wr))
