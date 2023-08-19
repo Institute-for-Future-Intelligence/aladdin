@@ -1003,7 +1003,7 @@ const Ground = () => {
             moveElementOnPointerUp(elem, e);
           }
           if (elem.type === ObjectType.Foundation) {
-            usePrimitiveStore.getState().updateRoofUserDataFlag();
+            usePrimitiveStore.getState().updateFoundationMovedFlag();
           }
         }
       }

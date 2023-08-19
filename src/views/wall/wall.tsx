@@ -39,7 +39,7 @@ import { DoorModel, DoorType } from 'src/models/DoorModel';
 import Door from '../door/door';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import SolarPanelOnWall from '../solarPanel/solarPanelOnWall';
-import { useElements, useWallTexture } from './hooks';
+import { useElements, useLatestFoundation, useWallTexture } from './hooks';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { HorizontalRuler } from '../horizontalRuler';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
@@ -183,6 +183,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   // hooks
   const { camera, gl, invalidate } = useThree();
   const { elementsOnWall, leftWall, rightWall } = useElements(id, leftJoints[0], rightJoints[0]);
+  const latestFoundation = useLatestFoundation(foundationModel);
 
   // object ref
   const outsideWallRef = useRef<Mesh>(null);
@@ -199,7 +200,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   const hx = lx / 2;
   const hy = ly / 2;
   const hz = lz / 2;
-  const wallAbsAngle = foundationModel ? foundationModel.rotation[2] + relativeAngle : relativeAngle;
+  const wallAbsAngle = latestFoundation ? latestFoundation.rotation[2] + relativeAngle : relativeAngle;
   const leftOffset = Util.getInnerWallOffset(leftWall, lx, ly, relativeAngle, 'left');
   const rightOffset = Util.getInnerWallOffset(rightWall, lx, ly, relativeAngle, 'right');
   const transparent = wallStructure === WallStructure.Stud || wallStructure === WallStructure.Pillar;
@@ -719,9 +720,9 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
 
   function getRelativePosOnWall(p: Vector3, wall: WallModel) {
     const { cx, cy, cz } = wall;
-    if (foundationModel && wallAbsAngle !== undefined) {
-      const wallAbsPos = Util.wallAbsolutePosition(new Vector3(cx, cy, cz), foundationModel).setZ(
-        lz / 2 + foundationModel.lz,
+    if (latestFoundation && wallAbsAngle !== undefined) {
+      const wallAbsPos = Util.wallAbsolutePosition(new Vector3(cx, cy, cz), latestFoundation).setZ(
+        lz / 2 + latestFoundation.lz,
       );
       return new Vector3().subVectors(p, wallAbsPos).applyEuler(new Euler(0, 0, -wallAbsAngle));
     }
@@ -2025,36 +2026,36 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
 
   function addElementByClick(pointer?: Vector3, body?: boolean) {
     // add new elements
-    if (foundationModel && useStore.getState().objectTypeToAdd) {
+    if (latestFoundation && useStore.getState().objectTypeToAdd) {
       let newElement: ElementModel | null = null;
       switch (useStore.getState().objectTypeToAdd) {
         case ObjectType.PyramidRoof: {
           if (!roofId && isValidToAddRoof(false, true)) {
-            newElement = ElementModelFactory.makePyramidRoof([wallModel.id], foundationModel);
+            newElement = ElementModelFactory.makePyramidRoof([wallModel.id], latestFoundation);
           }
           break;
         }
         case ObjectType.GableRoof: {
           if (!roofId && isValidToAddRoof(false, false)) {
-            newElement = ElementModelFactory.makeGableRoof([wallModel.id], foundationModel);
+            newElement = ElementModelFactory.makeGableRoof([wallModel.id], latestFoundation);
           }
           break;
         }
         case ObjectType.HipRoof: {
           if (!roofId && isValidToAddRoof(false, true)) {
-            newElement = ElementModelFactory.makeHipRoof([wallModel.id], foundationModel, lx / 2);
+            newElement = ElementModelFactory.makeHipRoof([wallModel.id], latestFoundation, lx / 2);
           }
           break;
         }
         case ObjectType.GambrelRoof: {
           if (!roofId && isValidToAddRoof(false, false)) {
-            newElement = ElementModelFactory.makeGambrelRoof([wallModel.id], foundationModel);
+            newElement = ElementModelFactory.makeGambrelRoof([wallModel.id], latestFoundation);
           }
           break;
         }
         case ObjectType.MansardRoof: {
           if (!roofId && isValidToAddRoof(false, true)) {
-            newElement = ElementModelFactory.makeMansardRoof([wallModel.id], foundationModel);
+            newElement = ElementModelFactory.makeMansardRoof([wallModel.id], latestFoundation);
           }
           break;
         }
@@ -2528,8 +2529,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               }
               case ObjectType.SolarPanel:
                 let r = 0;
-                if (foundationModel && wallModel) {
-                  r = foundationModel.rotation[2] + wallModel.relativeAngle;
+                if (latestFoundation && wallModel) {
+                  r = latestFoundation.rotation[2] + wallModel.relativeAngle;
                 }
                 return (
                   <group key={e.id} position={[0, -e.lz / 2, 0]}>
@@ -2598,7 +2599,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         )}
 
       {/* heat flux */}
-      {<WallHeatFlux wallModel={wallModel} notBuilding={(foundationModel as FoundationModel).notBuilding} />}
+      {<WallHeatFlux wallModel={wallModel} notBuilding={(latestFoundation as FoundationModel).notBuilding} />}
     </>
   );
 };

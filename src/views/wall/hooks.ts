@@ -15,7 +15,7 @@ import WallTexture08 from 'src/resources/wall_08.png';
 import WallTexture09 from 'src/resources/wall_09.png';
 import WallTexture10 from 'src/resources/wall_10.png';
 
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { ElementModel } from 'src/models/ElementModel';
 import { WallModel, WallFill, WallStructure } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
@@ -26,6 +26,8 @@ import { ObjectType, WallTexture } from 'src/types';
 import { RoofModel } from 'src/models/RoofModel';
 import { invalidate } from '@react-three/fiber';
 import { DEFAULT_PARAPET_SETTINGS } from './parapet';
+import { usePrimitiveStore } from 'src/stores/commonPrimitive';
+import { FoundationModel } from 'src/models/FoundationModel';
 
 export const useElements = (id: string, leftWallId?: string, rightWallId?: string, roofId?: string) => {
   const isElementTriggerWallChange = (elem: ElementModel) => {
@@ -229,4 +231,24 @@ export const useWallTexture = (textureType: WallTexture, wallStructure?: WallStr
   }, [textureType]);
 
   return texture;
+};
+
+export const useLatestFoundation = (foundationModel: FoundationModel) => {
+  const isFirstRenderRef = useRef(true);
+  usePrimitiveStore((state) => state.foundationMovedFlag);
+
+  let foundation = foundationModel;
+
+  if (!isFirstRenderRef.current) {
+    const latestFoundation = useStore
+      .getState()
+      .elements.find((e) => e.id === foundationModel.id && e.type === ObjectType.Foundation);
+    if (latestFoundation) {
+      foundation = latestFoundation as FoundationModel;
+    }
+  }
+
+  isFirstRenderRef.current = false;
+
+  return foundation;
 };

@@ -27,6 +27,7 @@ import { getRoofPointsOfGambrelRoof } from './flatRoof';
 import shallow from 'zustand/shallow';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { useDataStore } from 'src/stores/commonData';
+import { useLatestFoundation } from '../wall/hooks';
 
 export type ComposedWall = {
   leftPoint: Vector3;
@@ -478,31 +479,18 @@ export const useUserData = (
   centroid: Vector3,
   roofSegments: RoofSegmentProps[],
 ) => {
-  const isFirstRenderRef = useRef(true);
-  const roofUserDataFlag = usePrimitiveStore((state) => state.roofUserDataFlag);
+  const latestFoundation = useLatestFoundation(foundationModel);
 
   // used for move rooftop elements between different roofs, passed to handlePointerMove in roofRenderer
-  const userData: RoofSegmentGroupUserData = useMemo(() => {
-    let foundation = foundationModel;
-
-    if (!isFirstRenderRef.current) {
-      const latestFoundation = useStore
-        .getState()
-        .elements.find((e) => e.id === foundationModel.id && e.type === ObjectType.Foundation);
-      if (latestFoundation) {
-        foundation = latestFoundation as FoundationModel;
-      }
-    }
-
-    return {
+  const userData: RoofSegmentGroupUserData = useMemo(
+    () => ({
       roofId: roofId,
-      foundation: foundation,
+      foundation: latestFoundation,
       centroid: centroid,
       roofSegments: roofSegments,
-    };
-  }, [roofId, centroid, roofSegments, roofUserDataFlag]);
-
-  isFirstRenderRef.current = false;
+    }),
+    [roofId, centroid, roofSegments, latestFoundation],
+  );
 
   return userData;
 };
