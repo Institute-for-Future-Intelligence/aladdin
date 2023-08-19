@@ -2,7 +2,7 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ElementModel } from 'src/models/ElementModel';
 import { GroupableModel, isGroupable } from 'src/models/Groupable';
 import { Point2 } from 'src/models/Point2';
@@ -176,4 +176,10 @@ export const useGroupMaster = (elementModel: GroupableModel, groupMasterId: stri
   const baseGroupSet = baseGroupSetRef.current;
   const childCuboidSet = childCuboidSetRef.current;
   return { baseGroupSet, childCuboidSet, groupMasterDimension, groupMasterPosition, groupMasterRotation };
+};
+
+export const useSelected = (id: string) => {
+  const selectedIdSet = useStore((state) => state.selectedElementIdSet);
+  const selected = useMemo(() => selectedIdSet.has(id), [selectedIdSet]);
+  return selected;
 };

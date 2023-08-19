@@ -192,6 +192,9 @@ export interface CommonStoreState {
   setElementNormal: (id: string, x: number, y: number, z: number) => void;
   setElementSize: (id: string, lx: number, ly: number, lz?: number) => void;
 
+  selectedElementIdSet: Set<string>;
+  multiSelectionsMode: boolean;
+
   // for all types of elements
   updateAllElementLocks: (locked: boolean) => void;
   updateElementLockByFoundationId: (foundationId: string, locked: boolean) => void;
@@ -790,6 +793,9 @@ export const useStore = create<CommonStoreState>(
             return null;
           },
 
+          selectedElementIdSet: new Set(),
+          multiSelectionsMode: false,
+
           // a sibling is defined as an element of the same type of the same parent
           findNearestSibling(id) {
             let foundId: string | null = null;
@@ -958,6 +964,7 @@ export const useStore = create<CommonStoreState>(
           },
           selectNone() {
             immerSet((state: CommonStoreState) => {
+              state.selectedElementIdSet.clear();
               for (const e of state.elements) {
                 e.selected = false;
               }
@@ -973,6 +980,11 @@ export const useStore = create<CommonStoreState>(
               );
               if (intersectableObjects[0].object === e.eventObject || select) {
                 immerSet((state) => {
+                  if (!state.multiSelectionsMode) {
+                    state.selectedElementIdSet.clear();
+                  }
+                  state.selectedElementIdSet.add(id);
+
                   for (const elem of state.elements) {
                     if (elem.id === id) {
                       elem.selected = true;

@@ -25,6 +25,7 @@ import { Util } from '../Util';
 import { FlowerModel } from '../models/FlowerModel';
 import { FlowerData } from '../FlowerData';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
+import { useSelected } from './hooks';
 
 const Flower = ({
   parentId,
@@ -34,7 +35,6 @@ const Flower = ({
   cz,
   name = FlowerType.WhiteFlower,
   flip = false,
-  selected = false,
   locked = false,
 }: FlowerModel) => {
   let isRender = false;
@@ -72,6 +72,7 @@ const Flower = ({
   const [hovered, setHovered] = useState(false);
   const [updateFlag, setUpdateFlag] = useState(false);
   const { gl } = useThree();
+  const selected = useSelected(id);
 
   const contentRef = useRefStore((state) => state.contentRef);
   const groupRef = useRef<Group>(null);

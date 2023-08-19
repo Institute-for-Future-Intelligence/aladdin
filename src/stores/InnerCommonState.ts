@@ -52,6 +52,7 @@ export class InnerCommonState {
   }
 
   static selectNone(state: CommonStoreState) {
+    state.selectedElementIdSet.clear();
     for (const e of state.elements) {
       e.selected = false;
     }

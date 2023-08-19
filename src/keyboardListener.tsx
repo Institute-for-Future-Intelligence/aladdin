@@ -142,6 +142,65 @@ const AutoDeletionListener = React.memo(() => {
   return null;
 });
 
+const handleKeys = [
+  'left',
+  'up',
+  'right',
+  'down',
+  'shift+left',
+  'shift+up',
+  'shift+right',
+  'shift+down',
+  'ctrl+shift+left',
+  'ctrl+shift+up',
+  'ctrl+shift+right',
+  'ctrl+shift+down',
+  'meta+shift+left',
+  'meta+shift+up',
+  'meta+shift+right',
+  'meta+shift+down',
+  'ctrl+f',
+  'meta+f',
+  'ctrl+o',
+  'meta+o',
+  'ctrl+s',
+  'meta+s',
+  'ctrl+c',
+  'meta+c',
+  'ctrl+x',
+  'meta+x',
+  'ctrl+v',
+  'meta+v',
+  'ctrl+[',
+  'meta+[',
+  'ctrl+]',
+  'meta+]',
+  'ctrl+z',
+  'meta+z',
+  'ctrl+y',
+  'meta+y',
+  'ctrl+m',
+  'meta+m',
+  'ctrl+q', // navigation controls
+  'meta+q',
+  'ctrl+b',
+  'meta+b',
+  'shift',
+  'esc',
+  'ctrl+home',
+  'ctrl+alt+h',
+  'ctrl+shift+o',
+  'meta+shift+o',
+  'ctrl+shift+s',
+  'meta+shift+s',
+  'delete',
+  'backspace',
+  'alt+backspace',
+  'f2',
+  'f4',
+  'ctrl',
+];
+
 const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoomView }: KeyboardListenerProps) => {
   const setCommonStore = useStore(Selector.set);
   const loggable = useStore(Selector.loggable);
@@ -180,64 +239,6 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
   const lang = useMemo(() => {
     return { lng: language };
   }, [language]);
-
-  const handleKeys = [
-    'left',
-    'up',
-    'right',
-    'down',
-    'shift+left',
-    'shift+up',
-    'shift+right',
-    'shift+down',
-    'ctrl+shift+left',
-    'ctrl+shift+up',
-    'ctrl+shift+right',
-    'ctrl+shift+down',
-    'meta+shift+left',
-    'meta+shift+up',
-    'meta+shift+right',
-    'meta+shift+down',
-    'ctrl+f',
-    'meta+f',
-    'ctrl+o',
-    'meta+o',
-    'ctrl+s',
-    'meta+s',
-    'ctrl+c',
-    'meta+c',
-    'ctrl+x',
-    'meta+x',
-    'ctrl+v',
-    'meta+v',
-    'ctrl+[',
-    'meta+[',
-    'ctrl+]',
-    'meta+]',
-    'ctrl+z',
-    'meta+z',
-    'ctrl+y',
-    'meta+y',
-    'ctrl+m',
-    'meta+m',
-    'ctrl+q', // navigation controls
-    'meta+q',
-    'ctrl+b',
-    'meta+b',
-    'shift',
-    'esc',
-    'ctrl+home',
-    'ctrl+alt+h',
-    'ctrl+shift+o',
-    'meta+shift+o',
-    'ctrl+shift+s',
-    'meta+shift+s',
-    'delete',
-    'backspace',
-    'alt+backspace',
-    'f2',
-    'f4',
-  ];
 
   useEffect(() => {
     if (keyDown) {
@@ -794,6 +795,12 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
     }
   };
 
+  const setMultiSelectionMode = (b: boolean) => {
+    useStore.getState().set((state) => {
+      state.multiSelectionsMode = b;
+    });
+  };
+
   const handleKeyDown = () => {
     const selectedElement = getSelectedElement();
     const step = 1;
@@ -1201,6 +1208,10 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
         selectNone();
         break;
       }
+      case 'ctrl': {
+        setMultiSelectionMode(true);
+        break;
+      }
     }
   };
 
@@ -1232,6 +1243,10 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
           });
         }
         break;
+      case 'ctrl': {
+        setMultiSelectionMode(false);
+        break;
+      }
     }
   };
 
