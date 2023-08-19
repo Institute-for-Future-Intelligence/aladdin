@@ -354,6 +354,10 @@ export const updateDesign = (
   canvas: HTMLCanvasElement | null,
 ) => {
   const lang = { lng: useStore.getState().language };
+  usePrimitiveStore.setState((state) => {
+    state.waiting = true;
+  });
+
   // First we update the design file by overwriting it with the current content
   return firebase
     .firestore()
@@ -413,6 +417,7 @@ export const updateDesign = (
                       });
                       usePrimitiveStore.setState((state) => {
                         state.updateProjectsFlag = true;
+                        state.waiting = false;
                       });
                     });
                 }

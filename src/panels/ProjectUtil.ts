@@ -17,9 +17,9 @@ export class ProjectUtil {
       if (!hidden.includes('unitCost')) a.push('unitCost');
       if (!hidden.includes('sellingPrice')) a.push('sellingPrice');
       if (!hidden.includes('panelCount')) a.push('panelCount');
-      if (!hidden.includes('totalYield')) a.push('totalYield');
-      if (!hidden.includes('meanYield')) a.push('meanYield');
-      if (!hidden.includes('profit')) a.push('profit');
+      if (!hidden.includes('totalYearlyYield')) a.push('totalYearlyYield');
+      if (!hidden.includes('meanYearlyYield')) a.push('meanYearlyYield');
+      if (!hidden.includes('yearlyProfit')) a.push('yearlyProfit');
       return a;
     }
     return [];
@@ -36,9 +36,9 @@ export class ProjectUtil {
       if (!hidden.includes('unitCost')) a.push(i18n.t('economicsPanel.UnitCost', l));
       if (!hidden.includes('sellingPrice')) a.push(i18n.t('economicsPanel.SellingPrice', l));
       if (!hidden.includes('panelCount')) a.push(i18n.t('polygonMenu.SolarPanelArrayPanelCount', l));
-      if (!hidden.includes('totalYield')) a.push(i18n.t('polygonMenu.SolarPanelArrayTotalYield', l));
-      if (!hidden.includes('meanYield')) a.push(i18n.t('polygonMenu.SolarPanelArrayMeanYield', l));
-      if (!hidden.includes('profit')) a.push(i18n.t('polygonMenu.SolarPanelArrayProfit', l));
+      if (!hidden.includes('totalYearlyYield')) a.push(i18n.t('polygonMenu.SolarPanelArrayTotalYearlyYield', l));
+      if (!hidden.includes('meanYearlyYield')) a.push(i18n.t('polygonMenu.SolarPanelArrayMeanYearlyYield', l));
+      if (!hidden.includes('yearlyProfit')) a.push(i18n.t('polygonMenu.SolarPanelArrayYearlyProfit', l));
       return a;
     }
     return [];
@@ -55,9 +55,9 @@ export class ProjectUtil {
       if (!hidden.includes('unitCost')) a.push('number');
       if (!hidden.includes('sellingPrice')) a.push('number');
       if (!hidden.includes('panelCount')) a.push('number');
-      if (!hidden.includes('totalYield')) a.push('number');
-      if (!hidden.includes('meanYield')) a.push('number');
-      if (!hidden.includes('profit')) a.push('number');
+      if (!hidden.includes('totalYearlyYield')) a.push('number');
+      if (!hidden.includes('meanYearlyYield')) a.push('number');
+      if (!hidden.includes('yearlyProfit')) a.push('number');
       return a;
     }
     return [];
@@ -74,9 +74,9 @@ export class ProjectUtil {
       if (!hidden.includes('unitCost')) a.push(2);
       if (!hidden.includes('sellingPrice')) a.push(2);
       if (!hidden.includes('panelCount')) a.push(0);
-      if (!hidden.includes('totalYield')) a.push(1);
-      if (!hidden.includes('meanYield')) a.push(1);
-      if (!hidden.includes('profit')) a.push(1);
+      if (!hidden.includes('totalYearlyYield')) a.push(1);
+      if (!hidden.includes('meanYearlyYield')) a.push(1);
+      if (!hidden.includes('yearlyProfit')) a.push(1);
       return a;
     }
     return [];
@@ -93,9 +93,9 @@ export class ProjectUtil {
       if (!hidden.includes('unitCost')) a.push(false);
       if (!hidden.includes('sellingPrice')) a.push(false);
       if (!hidden.includes('panelCount')) a.push(true);
-      if (!hidden.includes('totalYield')) a.push(false);
-      if (!hidden.includes('meanYield')) a.push(false);
-      if (!hidden.includes('profit')) a.push(false);
+      if (!hidden.includes('totalYearlyYield')) a.push(false);
+      if (!hidden.includes('meanYearlyYield')) a.push(false);
+      if (!hidden.includes('yearlyProfit')) a.push(false);
       return a;
     }
     return [];
@@ -112,9 +112,9 @@ export class ProjectUtil {
       if (!hidden.includes('unitCost')) a.push('');
       if (!hidden.includes('sellingPrice')) a.push('');
       if (!hidden.includes('panelCount')) a.push('');
-      if (!hidden.includes('totalYield')) a.push(' MWh');
-      if (!hidden.includes('meanYield')) a.push(' kWh');
-      if (!hidden.includes('profit')) a.push('K');
+      if (!hidden.includes('totalYearlyYield')) a.push(' MWh');
+      if (!hidden.includes('meanYearlyYield')) a.push(' kWh');
+      if (!hidden.includes('yearlyProfit')) a.push('K');
       return a;
     }
     return [];

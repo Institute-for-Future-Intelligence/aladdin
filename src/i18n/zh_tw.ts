@@ -851,9 +851,9 @@ export const i18n_zh_tw = {
       SolarPanelArrayPoleHeight: '支架高度',
       SolarPanelArrayPoleSpacing: '支柱間隔',
       SolarPanelArrayPanelCount: '光伏板總數',
-      SolarPanelArrayTotalYield: '總發電量',
-      SolarPanelArrayMeanYield: '平均發電量',
-      SolarPanelArrayProfit: '利潤',
+      SolarPanelArrayTotalYearlyYield: '全年總發電量',
+      SolarPanelArrayMeanYearlyYield: '平均年發電量',
+      SolarPanelArrayYearlyProfit: '全年利潤',
       LayoutNotAcceptedCheckYourParameters: '恕不能採用此佈局。請檢查您的參數設置。',
     },
 

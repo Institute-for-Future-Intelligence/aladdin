@@ -873,9 +873,9 @@ export const i18n_es = {
       SolarPanelArrayPoleHeight: 'Pole Height',
       SolarPanelArrayPoleSpacing: 'Pole Spacing',
       SolarPanelArrayPanelCount: 'Panel Count',
-      SolarPanelArrayTotalYield: 'Total Yield',
-      SolarPanelArrayMeanYield: 'Mean Yield',
-      SolarPanelArrayProfit: 'Profit',
+      SolarPanelArrayTotalYearlyYield: 'Total Yield (Y)',
+      SolarPanelArrayMeanYearlyYield: 'Mean Yield (Y)',
+      SolarPanelArrayYearlyProfit: 'Profit (Y)',
       LayoutNotAcceptedCheckYourParameters: 'This layout is not accepted. Please check your parameters.',
     },
 

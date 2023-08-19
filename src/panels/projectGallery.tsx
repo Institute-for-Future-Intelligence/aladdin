@@ -168,13 +168,13 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
             if (p === 'orientation') {
               return prefix * ((a[p] === 'Landscape' ? 0 : 1) - (b[p] === 'Landscape' ? 0 : 1));
             }
-            if (p === 'totalYield' && 'yearlyYield' in a && 'yearlyYield' in b) {
+            if (p === 'totalYearlyYield' && 'yearlyYield' in a && 'yearlyYield' in b) {
               return prefix * (a['yearlyYield'] - b['yearlyYield']);
             }
-            if (p === 'meanYield' && 'yearlyYield' in a && 'yearlyYield' in b) {
+            if (p === 'meanYearlyYield' && 'yearlyYield' in a && 'yearlyYield' in b) {
               return prefix * (a['yearlyYield'] / a['panelCount'] - b['yearlyYield'] / b['panelCount']);
             }
-            if (p === 'profit') {
+            if (p === 'yearlyProfit') {
               return prefix * (Util.calculateProfit(a) - Util.calculateProfit(b));
             }
             if (p in a && p in b) {
@@ -284,10 +284,11 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
           if (!projectInfo.hiddenParameters?.includes('unitCost')) d['unitCost'] = design.unitCost;
           if (!projectInfo.hiddenParameters?.includes('sellingPrice')) d['sellingPrice'] = design.sellingPrice;
           if (!projectInfo.hiddenParameters?.includes('panelCount')) d['panelCount'] = design.panelCount;
-          if (!projectInfo.hiddenParameters?.includes('totalYield')) d['totalYield'] = design.yearlyYield * 0.001;
-          if (!projectInfo.hiddenParameters?.includes('meanYield'))
-            d['meanYield'] = design.yearlyYield / design.panelCount;
-          if (!projectInfo.hiddenParameters?.includes('profit')) d['profit'] = Util.calculateProfit(design);
+          if (!projectInfo.hiddenParameters?.includes('totalYearlyYield'))
+            d['totalYearlyYield'] = design.yearlyYield * 0.001;
+          if (!projectInfo.hiddenParameters?.includes('meanYearlyYield'))
+            d['meanYearlyYield'] = design.yearlyYield / design.panelCount;
+          if (!projectInfo.hiddenParameters?.includes('yearlyProfit')) d['yearlyProfit'] = Util.calculateProfit(design);
           d['group'] = projectInfo.dataColoring === DataColoring.INDIVIDUALS ? design.title : 'default';
           d['selected'] = selectedDesign === design;
           d['hovered'] = hoveredDesign === design;
@@ -348,9 +349,9 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
       if (!projectInfo.hiddenParameters?.includes('unitCost')) array.push(getMin('unitCost', 0.1));
       if (!projectInfo.hiddenParameters?.includes('sellingPrice')) array.push(getMin('sellingPrice', 0.1));
       if (!projectInfo.hiddenParameters?.includes('panelCount')) array.push(getMin('panelCount', 0));
-      if (!projectInfo.hiddenParameters?.includes('totalYield')) array.push(getMin('totalYield', 0)); // electricity output in MWh
-      if (!projectInfo.hiddenParameters?.includes('meanYield')) array.push(getMin('meanYield', 0)); // electricity output in kWh
-      if (!projectInfo.hiddenParameters?.includes('profit')) array.push(getMin('profit', -10)); // profit in $1,000
+      if (!projectInfo.hiddenParameters?.includes('totalYearlyYield')) array.push(getMin('totalYearlyYield', 0)); // electricity output in MWh
+      if (!projectInfo.hiddenParameters?.includes('meanYearlyYield')) array.push(getMin('meanYearlyYield', 0)); // electricity output in kWh
+      if (!projectInfo.hiddenParameters?.includes('yearlyProfit')) array.push(getMin('yearlyProfit', -10)); // profit in $1,000
       return array;
     }
     return [];
@@ -376,9 +377,9 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
       if (!projectInfo.hiddenParameters?.includes('unitCost')) array.push(getMax('unitCost', 1));
       if (!projectInfo.hiddenParameters?.includes('sellingPrice')) array.push(getMax('sellingPrice', 0.5));
       if (!projectInfo.hiddenParameters?.includes('panelCount')) array.push(getMax('panelCount', 300));
-      if (!projectInfo.hiddenParameters?.includes('totalYield')) array.push(getMax('totalYield', 100)); // electricity output in MWh
-      if (!projectInfo.hiddenParameters?.includes('meanYield')) array.push(getMax('meanYield', 1000)); // electricity output in kWh
-      if (!projectInfo.hiddenParameters?.includes('profit')) array.push(getMax('profit', 10)); // profit in $1,000
+      if (!projectInfo.hiddenParameters?.includes('totalYearlyYield')) array.push(getMax('totalYearlyYield', 100)); // electricity output in MWh
+      if (!projectInfo.hiddenParameters?.includes('meanYearlyYield')) array.push(getMax('meanYearlyYield', 1000)); // electricity output in kWh
+      if (!projectInfo.hiddenParameters?.includes('yearlyProfit')) array.push(getMax('yearlyProfit', 10)); // profit in $1,000
       return array;
     }
     return [];
@@ -401,9 +402,9 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
       if (!projectInfo.hiddenParameters?.includes('unitCost')) array.push(0.01);
       if (!projectInfo.hiddenParameters?.includes('sellingPrice')) array.push(0.01);
       if (!projectInfo.hiddenParameters?.includes('panelCount')) array.push(1);
-      if (!projectInfo.hiddenParameters?.includes('totalYield')) array.push(1); // electricity output in MWh
-      if (!projectInfo.hiddenParameters?.includes('meanYield')) array.push(1); // electricity output in kWh
-      if (!projectInfo.hiddenParameters?.includes('profit')) array.push(0.1); // profit in $1,000
+      if (!projectInfo.hiddenParameters?.includes('totalYearlyYield')) array.push(1); // electricity output in MWh
+      if (!projectInfo.hiddenParameters?.includes('meanYearlyYield')) array.push(1); // electricity output in kWh
+      if (!projectInfo.hiddenParameters?.includes('yearlyProfit')) array.push(0.1); // profit in $1,000
       return array;
     }
     return [];
@@ -417,9 +418,9 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
   const unitCostSelectionRef = useRef<boolean>(!projectInfo.hiddenParameters?.includes('unitCost'));
   const sellingPriceSelectionRef = useRef<boolean>(!projectInfo.hiddenParameters?.includes('sellingPrice'));
   const panelCountSelectionRef = useRef<boolean>(!projectInfo.hiddenParameters?.includes('panelCount'));
-  const totalYieldSelectionRef = useRef<boolean>(!projectInfo.hiddenParameters?.includes('totalYield'));
-  const meanYieldSelectionRef = useRef<boolean>(!projectInfo.hiddenParameters?.includes('meanYield'));
-  const profitSelectionRef = useRef<boolean>(!projectInfo.hiddenParameters?.includes('profit'));
+  const totalYieldSelectionRef = useRef<boolean>(!projectInfo.hiddenParameters?.includes('totalYearlyYield'));
+  const meanYieldSelectionRef = useRef<boolean>(!projectInfo.hiddenParameters?.includes('meanYearlyYield'));
+  const profitSelectionRef = useRef<boolean>(!projectInfo.hiddenParameters?.includes('yearlyProfit'));
 
   useEffect(() => {
     rowWidthSelectionRef.current = !projectInfo.hiddenParameters?.includes('rowWidth');
@@ -430,9 +431,9 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
     unitCostSelectionRef.current = !projectInfo.hiddenParameters?.includes('unitCost');
     sellingPriceSelectionRef.current = !projectInfo.hiddenParameters?.includes('sellingPrice');
     panelCountSelectionRef.current = !projectInfo.hiddenParameters?.includes('panelCount');
-    totalYieldSelectionRef.current = !projectInfo.hiddenParameters?.includes('totalYield');
-    meanYieldSelectionRef.current = !projectInfo.hiddenParameters?.includes('meanYield');
-    profitSelectionRef.current = !projectInfo.hiddenParameters?.includes('profit');
+    totalYieldSelectionRef.current = !projectInfo.hiddenParameters?.includes('totalYearlyYield');
+    meanYieldSelectionRef.current = !projectInfo.hiddenParameters?.includes('meanYearlyYield');
+    profitSelectionRef.current = !projectInfo.hiddenParameters?.includes('yearlyProfit');
     setUpdateFlag(!updateFlag);
   }, [projectInfo.hiddenParameters]);
 
@@ -977,38 +978,40 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                         <Checkbox
                           onChange={(e) => {
                             totalYieldSelectionRef.current = e.target.checked;
-                            selectParameter(totalYieldSelectionRef.current, 'totalYield');
+                            selectParameter(totalYieldSelectionRef.current, 'totalYearlyYield');
                             setUpdateHiddenFlag(!updateHiddenFlag);
                           }}
                           checked={totalYieldSelectionRef.current}
                         >
                           <span style={{ fontSize: '12px' }}>
-                            {i18n.t('polygonMenu.SolarPanelArrayTotalYield', lang)}
+                            {i18n.t('polygonMenu.SolarPanelArrayTotalYearlyYield', lang)}
                           </span>
                         </Checkbox>
                         <br />
                         <Checkbox
                           onChange={(e) => {
                             meanYieldSelectionRef.current = e.target.checked;
-                            selectParameter(meanYieldSelectionRef.current, 'meanYield');
+                            selectParameter(meanYieldSelectionRef.current, 'meanYearlyYield');
                             setUpdateHiddenFlag(!updateHiddenFlag);
                           }}
                           checked={meanYieldSelectionRef.current}
                         >
                           <span style={{ fontSize: '12px' }}>
-                            {i18n.t('polygonMenu.SolarPanelArrayMeanYield', lang)}
+                            {i18n.t('polygonMenu.SolarPanelArrayMeanYearlyYield', lang)}
                           </span>
                         </Checkbox>
                         <br />
                         <Checkbox
                           onChange={(e) => {
                             profitSelectionRef.current = e.target.checked;
-                            selectParameter(profitSelectionRef.current, 'profit');
+                            selectParameter(profitSelectionRef.current, 'yearlyProfit');
                             setUpdateHiddenFlag(!updateHiddenFlag);
                           }}
                           checked={profitSelectionRef.current}
                         >
-                          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayProfit', lang)}</span>
+                          <span style={{ fontSize: '12px' }}>
+                            {i18n.t('polygonMenu.SolarPanelArrayYearlyProfit', lang)}
+                          </span>
                         </Checkbox>
                       </div>
                     }

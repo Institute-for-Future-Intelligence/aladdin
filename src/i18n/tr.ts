@@ -873,9 +873,9 @@ export const i18n_tr = {
       SolarPanelArrayPoleHeight: 'Direk Yükseklik',
       SolarPanelArrayPoleSpacing: 'Direk Aralık',
       SolarPanelArrayPanelCount: 'Panel Count',
-      SolarPanelArrayTotalYield: 'Total Yield',
-      SolarPanelArrayMeanYield: 'Mean Yield',
-      SolarPanelArrayProfit: 'Profit',
+      SolarPanelArrayTotalYearlyYield: 'Total Yield (Y)',
+      SolarPanelArrayMeanYearlyYield: 'Mean Yield (Y)',
+      SolarPanelArrayYearlyProfit: 'Profit (Y)',
       LayoutNotAcceptedCheckYourParameters: 'Bu yerleşim düzeni uygulanamaz. Lütfen parametrelerinizi kontrol edin.',
     },
 

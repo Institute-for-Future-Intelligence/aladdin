@@ -122,13 +122,13 @@ const VerticalAxis = ({
     );
   };
 
-  const money = variable === 'profit' || variable === 'unitCost' || variable === 'sellingPrice';
+  const money = variable === 'yearlyProfit' || variable === 'unitCost' || variable === 'sellingPrice';
 
   const getMin = () => {
     if (
       variable === 'panelCount' ||
-      variable === 'totalYield' ||
-      variable === 'meanYield' ||
+      variable === 'totalYearlyYield' ||
+      variable === 'meanYearlyYield' ||
       variable === 'unitCost' ||
       variable === 'poleHeight' ||
       variable === 'interRowSpacing'
@@ -271,7 +271,7 @@ const VerticalAxis = ({
                 style: 'currency',
                 currency: 'USD',
                 maximumFractionDigits: 3,
-              }) + (variable === 'profit' ? 'K' : '')
+              }) + (variable === 'yearlyProfit' ? 'K' : '')
             : (variable === 'orientation'
                 ? i18n.t(value === 0 ? 'solarPanelMenu.Landscape' : 'solarPanelMenu.Portrait', lang) +
                   (value === 0 ? ' (▭)' : ' (▯)')
@@ -307,7 +307,7 @@ const VerticalAxis = ({
               transform: 'translateX(-25px)',
             }}
           >
-            {name === 'Orientation' ? (value === 0 ? '▭' : '▯') : value}
+            {variable === 'orientation' ? (value === 0 ? '▭' : '▯') : value}
           </text>
         </g>
       ))}
