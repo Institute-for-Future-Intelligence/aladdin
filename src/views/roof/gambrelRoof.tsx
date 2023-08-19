@@ -41,6 +41,7 @@ import {
   ComposedWall,
   useUpdateRooftopElementsByContextMenuChanges,
   useIsFirstRender,
+  useUserData,
 } from './hooks';
 import RoofSegment from './roofSegment';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
@@ -1008,13 +1009,8 @@ const GambrelRoof = ({ roofModel, foundationModel }: GambrelRoofProps) => {
     }
   }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
 
-  // used for move rooftop elements between different roofs, passed to handlePointerMove in roofRenderer
-  const userData: RoofSegmentGroupUserData = {
-    roofId: id,
-    foundation: foundationModel,
-    centroid: centroid,
-    roofSegments: roofSegments,
-  };
+  const userData = useUserData(id, foundationModel, centroid, roofSegments);
+
   const topLayerColor = textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white';
 
   if (!composedWalls || composedWalls.length !== 4) return null;

@@ -587,8 +587,6 @@ export const setTotalBuildingAc = (state: DataStoreState) => state.setTotalBuild
 
 export const setTotalBuildingSolarPanel = (state: DataStoreState) => state.setTotalBuildingSolarPanel;
 
-export const updateRoofFlag = (state: CommonStoreState) => state.updateRoofFlag;
-
 export const updateElementOnRoofFlag = (state: CommonStoreState) => state.updateElementOnRoofFlag;
 
 // parabolic troughs (CSP)

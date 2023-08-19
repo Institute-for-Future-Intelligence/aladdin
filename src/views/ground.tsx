@@ -1002,6 +1002,9 @@ const Ground = () => {
           } else if (useStore.getState().moveHandleType) {
             moveElementOnPointerUp(elem, e);
           }
+          if (elem.type === ObjectType.Foundation) {
+            usePrimitiveStore.getState().updateRoofUserDataFlag();
+          }
         }
       }
       grabRef.current = null;

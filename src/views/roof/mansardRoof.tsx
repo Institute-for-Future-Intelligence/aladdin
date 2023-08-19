@@ -43,6 +43,7 @@ import {
   useUpdateRooftopElements,
   useUpdateSegmentVerticesMap,
   useUpdateSegmentVerticesWithoutOverhangMap,
+  useUserData,
 } from './hooks';
 import {
   addUndoableResizeRoofRise,
@@ -821,13 +822,8 @@ const MansardRoof = ({ roofModel, foundationModel }: MansardRoofProps) => {
     return vectors;
   }, [showHeatFluxes, heatFluxScaleFactor]);
 
-  // used for move rooftop elements between different roofs, passed to handlePointerMove in roofRenderer
-  const userData: RoofSegmentGroupUserData = {
-    roofId: id,
-    foundation: foundationModel,
-    centroid: centroid,
-    roofSegments: roofSegments,
-  };
+  const userData = useUserData(id, foundationModel, centroid, roofSegments);
+
   const topLayerColor = textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white';
 
   const windows = useStore(

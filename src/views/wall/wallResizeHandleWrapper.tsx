@@ -436,7 +436,6 @@ const WallResizeHandleWrapper = React.memo(
             }
             state.selectedElementHeight = Math.max(0.1, p.z);
             state.actionState.wallHeight = newLz;
-            state.updateRoofFlag = !state.updateRoofFlag;
           });
           break;
         }

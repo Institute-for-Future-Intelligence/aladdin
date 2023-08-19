@@ -37,6 +37,7 @@ import {
   useUpdateRooftopElements,
   useUpdateSegmentVerticesMap,
   useUpdateSegmentVerticesWithoutOverhangMap,
+  useUserData,
 } from './hooks';
 import RoofSegment from './roofSegment';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
@@ -580,13 +581,7 @@ const PyramidRoof = ({ roofModel, foundationModel }: PyramidRoofProps) => {
     shallow,
   ) as WindowModel[];
 
-  // used for move rooftop elements between different roofs, passed to handlePointerMove in roofRenderer
-  const userData: RoofSegmentGroupUserData = {
-    roofId: id,
-    foundation: foundationModel,
-    centroid: centerPointV3,
-    roofSegments: roofSegments,
-  };
+  const userData = useUserData(id, foundationModel, centerPointV3, roofSegments);
 
   const topLayerColor = textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white';
 

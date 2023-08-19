@@ -24,6 +24,7 @@ import {
   useUpdateSegmentVerticesMap,
   useUpdateSegmentVerticesWithoutOverhangMap,
   useUpdateRooftopElements,
+  useUserData,
 } from './hooks';
 import {
   addUndoableResizeRoofRise,
@@ -485,13 +486,8 @@ const HipRoof = ({ roofModel, foundationModel }: HipRoofProps) => {
     }
   }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
 
-  // used for move rooftop elements between different roofs, passed to handlePointerMove in roofRenderer
-  const userData: RoofSegmentGroupUserData = {
-    roofId: id,
-    foundation: foundationModel,
-    centroid: ridgeMidPoint,
-    roofSegments: roofSegments,
-  };
+  const userData = useUserData(id, foundationModel, ridgeMidPoint, roofSegments);
+
   const topLayerColor = textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white';
 
   if (composedWalls === null || composedWalls.length !== 4) return null;

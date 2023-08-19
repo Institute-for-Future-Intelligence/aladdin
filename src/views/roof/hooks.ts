@@ -19,7 +19,7 @@ import { RepeatWrapping, TextureLoader, Vector3 } from 'three';
 import * as Selector from 'src/stores/selector';
 import { WallModel } from 'src/models/WallModel';
 import { useThree } from '@react-three/fiber';
-import { RoofSegmentProps, updateRooftopElements } from './roofRenderer';
+import { RoofSegmentGroupUserData, RoofSegmentProps, updateRooftopElements } from './roofRenderer';
 import { RoofUtil } from './RoofUtil';
 import { GambrelRoofModel, RoofModel, RoofType } from 'src/models/RoofModel';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
@@ -470,4 +470,39 @@ export const useUpdateRooftopElements = (
 ) => {
   useUpdateRooftopElementsByControlPoints(foundation, roofId, segments, centroid, topZ, thickness, isFlatGambrel);
   useUpdateRooftopElementsByContextMenuChanges(foundation, roofId, segments, centroid, topZ, thickness, isFlatGambrel);
+};
+
+export const useUserData = (
+  roofId: string,
+  foundationModel: FoundationModel,
+  centroid: Vector3,
+  roofSegments: RoofSegmentProps[],
+) => {
+  const isFirstRenderRef = useRef(true);
+  const roofUserDataFlag = usePrimitiveStore((state) => state.roofUserDataFlag);
+
+  // used for move rooftop elements between different roofs, passed to handlePointerMove in roofRenderer
+  const userData: RoofSegmentGroupUserData = useMemo(() => {
+    let foundation = foundationModel;
+
+    if (!isFirstRenderRef.current) {
+      const latestFoundation = useStore
+        .getState()
+        .elements.find((e) => e.id === foundationModel.id && e.type === ObjectType.Foundation);
+      if (latestFoundation) {
+        foundation = latestFoundation as FoundationModel;
+      }
+    }
+
+    return {
+      roofId: roofId,
+      foundation: foundation,
+      centroid: centroid,
+      roofSegments: roofSegments,
+    };
+  }, [roofId, centroid, roofSegments, roofUserDataFlag]);
+
+  isFirstRenderRef.current = false;
+
+  return userData;
 };

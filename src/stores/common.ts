@@ -471,8 +471,6 @@ export interface CommonStoreState {
   setUpdateElementOnRoofFlag: (b: boolean) => void;
   updateElementOnRoofFn: () => void;
 
-  updateRoofFlag: boolean;
-
   addedWindowId: string | null;
 
   addedDoorId: string | null;
@@ -2552,7 +2550,6 @@ export const useStore = create<CommonStoreState>(
                         (e) => !(e.type === ObjectType.Roof && (e as RoofModel).wallsId.length === 0),
                       );
                       state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
-                      state.updateRoofFlag = !state.updateRoofFlag;
                       state.deletedWallId = elem.id;
                       break;
                     }
@@ -4220,8 +4217,6 @@ export const useStore = create<CommonStoreState>(
               state.updateElementOnRoofFlag = !state.updateElementOnRoofFlag;
             });
           },
-
-          updateRoofFlag: false,
 
           addedWindowId: null,
 

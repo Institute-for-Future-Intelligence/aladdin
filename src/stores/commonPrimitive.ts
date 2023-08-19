@@ -125,6 +125,9 @@ export interface PrimitiveStoreState {
 
   // used for listen to auto deletion
   selectedElementId: string | null;
+
+  roofUserDataFlag: boolean;
+  updateRoofUserDataFlag: () => void;
 }
 
 export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
@@ -266,5 +269,12 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
     oldFoundationId: null,
 
     selectedElementId: null,
+
+    roofUserDataFlag: false,
+    updateRoofUserDataFlag() {
+      set((state) => {
+        state.roofUserDataFlag = !state.roofUserDataFlag;
+      });
+    },
   };
 });

@@ -2588,7 +2588,6 @@ const Foundation = (foundationModel: FoundationModel) => {
                       break;
                     }
                   }
-                  state.updateRoofFlag = !state.updateRoofFlag;
                 });
               }
             }

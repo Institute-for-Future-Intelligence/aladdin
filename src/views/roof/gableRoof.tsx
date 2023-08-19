@@ -60,6 +60,7 @@ import {
   useUpdateSegmentVerticesMap,
   useUpdateSegmentVerticesWithoutOverhangMap,
   useUpdateRooftopElementsByContextMenuChanges,
+  useUserData,
 } from './hooks';
 import { ConvexGeometry } from 'src/js/ConvexGeometry';
 import { CSG } from 'three-csg-ts';
@@ -940,13 +941,7 @@ const GableRoof = ({ roofModel, foundationModel }: GableRoofProps) => {
     }
   }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
 
-  // used for move rooftop elements between different roofs, passed to handlePointerMove in roofRenderer
-  const userData: RoofSegmentGroupUserData = {
-    roofId: id,
-    foundation: foundationModel,
-    centroid: centroid,
-    roofSegments: roofSegments,
-  };
+  const userData = useUserData(id, foundationModel, centroid, roofSegments);
 
   if (composedWalls === null || composedWalls.length !== 4) return null;
 
