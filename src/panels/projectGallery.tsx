@@ -6,7 +6,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import styled from 'styled-components';
-import { Button, Checkbox, Collapse, Input, List, Popover, Radio } from 'antd';
+import { Button, Checkbox, Col, Collapse, Input, List, Popover, Radio, Row, Select } from 'antd';
 import i18n from '../i18n/i18n';
 import {
   BgColorsOutlined,
@@ -16,6 +16,7 @@ import {
   CloseOutlined,
   CloudUploadOutlined,
   DeleteOutlined,
+  DotChartOutlined,
   EditFilled,
   EditOutlined,
   ImportOutlined,
@@ -45,6 +46,7 @@ import {
 import { loadCloudFile } from '../cloudFileUtil';
 
 const { TextArea } = Input;
+const { Option } = Select;
 
 const Container = styled.div`
   position: relative;
@@ -143,6 +145,8 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
   const dataColoringSelectionRef = useRef<DataColoring>(projectInfo.dataColoring ?? DataColoring.ALL);
   const parameterSelectionChangedRef = useRef<boolean>(false);
   const projectDesigns = useRef<Design[]>(projectInfo.designs ?? []); // store sorted designs
+  const xAxisRef = useRef<string>('rowWidth');
+  const yAxisRef = useRef<string>('rowWidth');
 
   const lang = useMemo(() => {
     return { lng: language };
@@ -523,6 +527,241 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
     }
   };
 
+  const createChooseSolutionSolutionContent = () => {
+    return (
+      <div>
+        <label style={{ fontWeight: 'bold' }}>{i18n.t('projectPanel.ChooseSolutionSpace', lang)}</label>
+        <hr />
+        <Checkbox
+          onChange={(e) => {
+            rowWidthSelectionRef.current = e.target.checked;
+            selectParameter(rowWidthSelectionRef.current, 'rowWidth');
+            setUpdateHiddenFlag(!updateHiddenFlag);
+          }}
+          checked={rowWidthSelectionRef.current}
+        >
+          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayRowWidth', lang)}</span>
+        </Checkbox>
+        <br />
+        <Checkbox
+          onChange={(e) => {
+            tiltAngleSelectionRef.current = e.target.checked;
+            selectParameter(tiltAngleSelectionRef.current, 'tiltAngle');
+            setUpdateHiddenFlag(!updateHiddenFlag);
+          }}
+          checked={tiltAngleSelectionRef.current}
+        >
+          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayTiltAngle', lang)}</span>
+        </Checkbox>
+        <br />
+        <Checkbox
+          onChange={(e) => {
+            rowSpacingSelectionRef.current = e.target.checked;
+            selectParameter(rowSpacingSelectionRef.current, 'interRowSpacing');
+            setUpdateHiddenFlag(!updateHiddenFlag);
+          }}
+          checked={rowSpacingSelectionRef.current}
+        >
+          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayRowSpacing', lang)}</span>
+        </Checkbox>
+        <br />
+        <Checkbox
+          onChange={(e) => {
+            orientationSelectionRef.current = e.target.checked;
+            selectParameter(orientationSelectionRef.current, 'orientation');
+            setUpdateHiddenFlag(!updateHiddenFlag);
+          }}
+          checked={orientationSelectionRef.current}
+        >
+          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayOrientation', lang)}</span>
+        </Checkbox>
+        <br />
+        <Checkbox
+          onChange={(e) => {
+            poleHeightSelectionRef.current = e.target.checked;
+            selectParameter(poleHeightSelectionRef.current, 'poleHeight');
+            setUpdateHiddenFlag(!updateHiddenFlag);
+          }}
+          checked={poleHeightSelectionRef.current}
+        >
+          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayPoleHeight', lang)}</span>
+        </Checkbox>
+        <br />
+        <Checkbox
+          onChange={(e) => {
+            unitCostSelectionRef.current = e.target.checked;
+            selectParameter(unitCostSelectionRef.current, 'unitCost');
+            setUpdateHiddenFlag(!updateHiddenFlag);
+          }}
+          checked={unitCostSelectionRef.current}
+        >
+          <span style={{ fontSize: '12px' }}>{i18n.t('economicsPanel.UnitCost', lang)}</span>
+        </Checkbox>
+        <br />
+        <Checkbox
+          onChange={(e) => {
+            sellingPriceSelectionRef.current = e.target.checked;
+            selectParameter(sellingPriceSelectionRef.current, 'sellingPrice');
+            setUpdateHiddenFlag(!updateHiddenFlag);
+          }}
+          checked={sellingPriceSelectionRef.current}
+        >
+          <span style={{ fontSize: '12px' }}>{i18n.t('economicsPanel.SellingPrice', lang)}</span>
+        </Checkbox>
+        <br />
+        <Checkbox
+          onChange={(e) => {
+            panelCountSelectionRef.current = e.target.checked;
+            selectParameter(panelCountSelectionRef.current, 'panelCount');
+            setUpdateHiddenFlag(!updateHiddenFlag);
+          }}
+          checked={panelCountSelectionRef.current}
+        >
+          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayPanelCount', lang)}</span>
+        </Checkbox>
+        <br />
+        <Checkbox
+          onChange={(e) => {
+            totalYieldSelectionRef.current = e.target.checked;
+            selectParameter(totalYieldSelectionRef.current, 'totalYearlyYield');
+            setUpdateHiddenFlag(!updateHiddenFlag);
+          }}
+          checked={totalYieldSelectionRef.current}
+        >
+          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayTotalYearlyYield', lang)}</span>
+        </Checkbox>
+        <br />
+        <Checkbox
+          onChange={(e) => {
+            meanYieldSelectionRef.current = e.target.checked;
+            selectParameter(meanYieldSelectionRef.current, 'meanYearlyYield');
+            setUpdateHiddenFlag(!updateHiddenFlag);
+          }}
+          checked={meanYieldSelectionRef.current}
+        >
+          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayMeanYearlyYield', lang)}</span>
+        </Checkbox>
+        <br />
+        <Checkbox
+          onChange={(e) => {
+            profitSelectionRef.current = e.target.checked;
+            selectParameter(profitSelectionRef.current, 'yearlyProfit');
+            setUpdateHiddenFlag(!updateHiddenFlag);
+          }}
+          checked={profitSelectionRef.current}
+        >
+          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayYearlyProfit', lang)}</span>
+        </Checkbox>
+      </div>
+    );
+  };
+
+  const createAxisOptions = () => {
+    return (
+      <>
+        <Option key={'rowWidth'} value={'rowWidth'}>
+          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayRowWidth', lang)}</span>
+        </Option>
+        <Option key={'tiltAngle'} value={'tiltAngle'}>
+          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayTiltAngle', lang)}</span>
+        </Option>
+        <Option key={'interRowSpacing'} value={'interRowSpacing'}>
+          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayRowSpacing', lang)}</span>
+        </Option>
+        <Option key={'orientation'} value={'orientation'}>
+          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayOrientation', lang)}</span>
+        </Option>
+        <Option key={'poleHeight'} value={'poleHeight'}>
+          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayPoleHeight', lang)}</span>
+        </Option>
+        <Option key={'unitCost'} value={'unitCost'}>
+          <span style={{ fontSize: '12px' }}>{i18n.t('economicsPanel.UnitCost', lang)}</span>
+        </Option>
+        <Option key={'sellingPrice'} value={'sellingPrice'}>
+          <span style={{ fontSize: '12px' }}>{i18n.t('economicsPanel.SellingPrice', lang)}</span>
+        </Option>
+        <Option key={'panelCount'} value={'panelCount'}>
+          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayPanelCount', lang)}</span>
+        </Option>
+        <Option key={'totalYearlyYield'} value={'totalYearlyYield'}>
+          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayTotalYearlyYield', lang)}</span>
+        </Option>
+        <Option key={'meanYearlyYield'} value={'meanYearlyYield'}>
+          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayMeanYearlyYield', lang)}</span>
+        </Option>
+        <Option key={'yearlProfit'} value={'yearlyProfit'}>
+          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayYearlyProfit', lang)}</span>
+        </Option>
+      </>
+    );
+  };
+
+  const createScatteredPlotContent = () => {
+    return (
+      <div>
+        <label style={{ fontWeight: 'bold' }}>{i18n.t('projectPanel.GenerateScatteredPlot', lang)}</label>
+        <hr />
+        <Row gutter={6} style={{ paddingBottom: '4px' }}>
+          <Col style={{ paddingTop: '5px' }}>
+            <span style={{ fontSize: '12px' }}>{i18n.t('projectPanel.SelectXAxis', lang)}: </span>
+          </Col>
+          <Col span={12}>
+            <Select
+              style={{ width: '200px' }}
+              value={xAxisRef.current}
+              onChange={(value) => {
+                xAxisRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
+            >
+              {createAxisOptions()}
+            </Select>
+          </Col>
+        </Row>
+        <Row gutter={6} style={{ paddingBottom: '4px' }}>
+          <Col style={{ paddingTop: '5px' }}>
+            <span style={{ fontSize: '12px' }}>{i18n.t('projectPanel.SelectYAxis', lang)}: </span>
+          </Col>
+          <Col span={12}>
+            <Select
+              style={{ width: '200px' }}
+              value={yAxisRef.current}
+              onChange={(value) => {
+                yAxisRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
+            >
+              {createAxisOptions()}
+            </Select>
+          </Col>
+        </Row>
+      </div>
+    );
+  };
+
+  const createChooseDataColoringContent = () => {
+    return (
+      <div>
+        <label style={{ fontWeight: 'bold' }}>{i18n.t('projectPanel.ChooseDataColoring', lang)}</label>
+        <hr />
+        <Radio.Group
+          onChange={(e) => {
+            selectDataColoring(e.target.value);
+          }}
+          value={projectInfo.dataColoring ?? DataColoring.ALL}
+        >
+          <Radio style={{ fontSize: '12px' }} value={DataColoring.ALL}>
+            {i18n.t('projectPanel.SameColorForAllDesigns', lang)}
+          </Radio>
+          <br />
+          <Radio style={{ fontSize: '12px' }} value={DataColoring.INDIVIDUALS}>
+            {i18n.t('projectPanel.OneColorForEachDesign', lang)}
+          </Radio>
+        </Radio.Group>
+      </div>
+    );
+  };
+
   return (
     <Container>
       <ColumnWrapper>
@@ -871,179 +1110,20 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                         parameterSelectionChangedRef.current = false;
                       }
                     }}
-                    content={
-                      <div>
-                        <label style={{ fontWeight: 'bold' }}>{i18n.t('projectPanel.ChooseSolutionSpace', lang)}</label>
-                        <hr />
-                        <Checkbox
-                          onChange={(e) => {
-                            rowWidthSelectionRef.current = e.target.checked;
-                            selectParameter(rowWidthSelectionRef.current, 'rowWidth');
-                            setUpdateHiddenFlag(!updateHiddenFlag);
-                          }}
-                          checked={rowWidthSelectionRef.current}
-                        >
-                          <span style={{ fontSize: '12px' }}>
-                            {i18n.t('polygonMenu.SolarPanelArrayRowWidth', lang)}
-                          </span>
-                        </Checkbox>
-                        <br />
-                        <Checkbox
-                          onChange={(e) => {
-                            tiltAngleSelectionRef.current = e.target.checked;
-                            selectParameter(tiltAngleSelectionRef.current, 'tiltAngle');
-                            setUpdateHiddenFlag(!updateHiddenFlag);
-                          }}
-                          checked={tiltAngleSelectionRef.current}
-                        >
-                          <span style={{ fontSize: '12px' }}>
-                            {i18n.t('polygonMenu.SolarPanelArrayTiltAngle', lang)}
-                          </span>
-                        </Checkbox>
-                        <br />
-                        <Checkbox
-                          onChange={(e) => {
-                            rowSpacingSelectionRef.current = e.target.checked;
-                            selectParameter(rowSpacingSelectionRef.current, 'interRowSpacing');
-                            setUpdateHiddenFlag(!updateHiddenFlag);
-                          }}
-                          checked={rowSpacingSelectionRef.current}
-                        >
-                          <span style={{ fontSize: '12px' }}>
-                            {i18n.t('polygonMenu.SolarPanelArrayRowSpacing', lang)}
-                          </span>
-                        </Checkbox>
-                        <br />
-                        <Checkbox
-                          onChange={(e) => {
-                            orientationSelectionRef.current = e.target.checked;
-                            selectParameter(orientationSelectionRef.current, 'orientation');
-                            setUpdateHiddenFlag(!updateHiddenFlag);
-                          }}
-                          checked={orientationSelectionRef.current}
-                        >
-                          <span style={{ fontSize: '12px' }}>
-                            {i18n.t('polygonMenu.SolarPanelArrayOrientation', lang)}
-                          </span>
-                        </Checkbox>
-                        <br />
-                        <Checkbox
-                          onChange={(e) => {
-                            poleHeightSelectionRef.current = e.target.checked;
-                            selectParameter(poleHeightSelectionRef.current, 'poleHeight');
-                            setUpdateHiddenFlag(!updateHiddenFlag);
-                          }}
-                          checked={poleHeightSelectionRef.current}
-                        >
-                          <span style={{ fontSize: '12px' }}>
-                            {i18n.t('polygonMenu.SolarPanelArrayPoleHeight', lang)}
-                          </span>
-                        </Checkbox>
-                        <br />
-                        <Checkbox
-                          onChange={(e) => {
-                            unitCostSelectionRef.current = e.target.checked;
-                            selectParameter(unitCostSelectionRef.current, 'unitCost');
-                            setUpdateHiddenFlag(!updateHiddenFlag);
-                          }}
-                          checked={unitCostSelectionRef.current}
-                        >
-                          <span style={{ fontSize: '12px' }}>{i18n.t('economicsPanel.UnitCost', lang)}</span>
-                        </Checkbox>
-                        <br />
-                        <Checkbox
-                          onChange={(e) => {
-                            sellingPriceSelectionRef.current = e.target.checked;
-                            selectParameter(sellingPriceSelectionRef.current, 'sellingPrice');
-                            setUpdateHiddenFlag(!updateHiddenFlag);
-                          }}
-                          checked={sellingPriceSelectionRef.current}
-                        >
-                          <span style={{ fontSize: '12px' }}>{i18n.t('economicsPanel.SellingPrice', lang)}</span>
-                        </Checkbox>
-                        <br />
-                        <Checkbox
-                          onChange={(e) => {
-                            panelCountSelectionRef.current = e.target.checked;
-                            selectParameter(panelCountSelectionRef.current, 'panelCount');
-                            setUpdateHiddenFlag(!updateHiddenFlag);
-                          }}
-                          checked={panelCountSelectionRef.current}
-                        >
-                          <span style={{ fontSize: '12px' }}>
-                            {i18n.t('polygonMenu.SolarPanelArrayPanelCount', lang)}
-                          </span>
-                        </Checkbox>
-                        <br />
-                        <Checkbox
-                          onChange={(e) => {
-                            totalYieldSelectionRef.current = e.target.checked;
-                            selectParameter(totalYieldSelectionRef.current, 'totalYearlyYield');
-                            setUpdateHiddenFlag(!updateHiddenFlag);
-                          }}
-                          checked={totalYieldSelectionRef.current}
-                        >
-                          <span style={{ fontSize: '12px' }}>
-                            {i18n.t('polygonMenu.SolarPanelArrayTotalYearlyYield', lang)}
-                          </span>
-                        </Checkbox>
-                        <br />
-                        <Checkbox
-                          onChange={(e) => {
-                            meanYieldSelectionRef.current = e.target.checked;
-                            selectParameter(meanYieldSelectionRef.current, 'meanYearlyYield');
-                            setUpdateHiddenFlag(!updateHiddenFlag);
-                          }}
-                          checked={meanYieldSelectionRef.current}
-                        >
-                          <span style={{ fontSize: '12px' }}>
-                            {i18n.t('polygonMenu.SolarPanelArrayMeanYearlyYield', lang)}
-                          </span>
-                        </Checkbox>
-                        <br />
-                        <Checkbox
-                          onChange={(e) => {
-                            profitSelectionRef.current = e.target.checked;
-                            selectParameter(profitSelectionRef.current, 'yearlyProfit');
-                            setUpdateHiddenFlag(!updateHiddenFlag);
-                          }}
-                          checked={profitSelectionRef.current}
-                        >
-                          <span style={{ fontSize: '12px' }}>
-                            {i18n.t('polygonMenu.SolarPanelArrayYearlyProfit', lang)}
-                          </span>
-                        </Checkbox>
-                      </div>
-                    }
+                    content={createChooseSolutionSolutionContent()}
                   >
-                    <Button style={{ border: 'none', paddingRight: 0, background: 'white' }} onClick={() => {}}>
+                    <Button style={{ border: 'none', paddingRight: 0, background: 'white' }}>
                       <LineChartOutlined style={{ fontSize: '24px', color: 'gray' }} />
                     </Button>
                   </Popover>
                 )}
-                <Popover
-                  content={
-                    <div>
-                      <label style={{ fontWeight: 'bold' }}>{i18n.t('projectPanel.ChooseDataColoring', lang)}</label>
-                      <hr />
-                      <Radio.Group
-                        onChange={(e) => {
-                          selectDataColoring(e.target.value);
-                        }}
-                        value={projectInfo.dataColoring ?? DataColoring.ALL}
-                      >
-                        <Radio style={{ fontSize: '12px' }} value={DataColoring.ALL}>
-                          {i18n.t('projectPanel.SameColorForAllDesigns', lang)}
-                        </Radio>
-                        <br />
-                        <Radio style={{ fontSize: '12px' }} value={DataColoring.INDIVIDUALS}>
-                          {i18n.t('projectPanel.OneColorForEachDesign', lang)}
-                        </Radio>
-                      </Radio.Group>
-                    </div>
-                  }
-                >
-                  <Button style={{ border: 'none', paddingRight: 0, background: 'white' }} onClick={() => {}}>
+                <Popover content={createScatteredPlotContent()}>
+                  <Button style={{ border: 'none', paddingRight: 0, background: 'white' }}>
+                    <DotChartOutlined style={{ fontSize: '24px', color: 'gray' }} />
+                  </Button>
+                </Popover>
+                <Popover content={createChooseDataColoringContent()}>
+                  <Button style={{ border: 'none', paddingRight: 0, background: 'white' }}>
                     <BgColorsOutlined style={{ fontSize: '24px', color: 'gray' }} />
                   </Button>
                 </Popover>

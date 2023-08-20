@@ -1399,6 +1399,9 @@ export const i18n_zh_cn = {
       SolutionSpaceScreenshot: '设计空间截图',
       SingleClickToSelectDoubleClickToOpen: '单击选择，双击打开。',
       SingleClickToDeselectDoubleClickToOpen: '单击取消选择，双击打开。',
+      GenerateScatteredPlot: '生成散点图',
+      SelectXAxis: '选择X轴',
+      SelectYAxis: '选择Y轴',
     },
 
     accountSettingsPanel: {

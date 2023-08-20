@@ -1400,6 +1400,9 @@ export const i18n_zh_tw = {
       SolutionSpaceScreenshot: '設計空間截圖',
       SingleClickToSelectDoubleClickToOpen: '單擊選擇，雙擊打開。',
       SingleClickToDeselectDoubleClickToOpen: '單擊取消選擇，雙擊打開。',
+      GenerateScatteredPlot: '生成散點圖',
+      SelectXAxis: '選擇X軸',
+      SelectYAxis: '選擇Y軸',
     },
 
     accountSettingsPanel: {

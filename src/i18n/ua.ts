@@ -1426,6 +1426,9 @@ export const i18n_ua = {
       SolutionSpaceScreenshot: 'Take a screenshot of the solution space',
       SingleClickToSelectDoubleClickToOpen: 'Single-click to select, double-click to open.',
       SingleClickToDeselectDoubleClickToOpen: 'Single-click to deselect, double-click to open.',
+      GenerateScatteredPlot: 'Generate Scattered Plot',
+      SelectXAxis: 'Select X Axis',
+      SelectYAxis: 'Select Y Axis',
     },
 
     accountSettingsPanel: {
