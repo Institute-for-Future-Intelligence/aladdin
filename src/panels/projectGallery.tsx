@@ -147,6 +147,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
   const projectDesigns = useRef<Design[]>(projectInfo.designs ?? []); // store sorted designs
   const xAxisRef = useRef<string>('rowWidth');
   const yAxisRef = useRef<string>('rowWidth');
+  const scatteredPlotVisibleRef = useRef<boolean>(false);
 
   const lang = useMemo(() => {
     return { lng: language };
@@ -530,8 +531,6 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
   const createChooseSolutionSolutionContent = () => {
     return (
       <div>
-        <label style={{ fontWeight: 'bold' }}>{i18n.t('projectPanel.ChooseSolutionSpace', lang)}</label>
-        <hr />
         <Checkbox
           onChange={(e) => {
             rowWidthSelectionRef.current = e.target.checked;
@@ -698,16 +697,14 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
 
   const createScatteredPlotContent = () => {
     return (
-      <div>
-        <label style={{ fontWeight: 'bold' }}>{i18n.t('projectPanel.GenerateScatteredPlot', lang)}</label>
-        <hr />
+      <div style={{ width: '280px' }}>
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col style={{ paddingTop: '5px' }}>
+          <Col span={8} style={{ paddingTop: '5px' }}>
             <span style={{ fontSize: '12px' }}>{i18n.t('projectPanel.SelectXAxis', lang)}: </span>
           </Col>
-          <Col span={12}>
+          <Col span={16}>
             <Select
-              style={{ width: '200px' }}
+              style={{ width: '100%' }}
               value={xAxisRef.current}
               onChange={(value) => {
                 xAxisRef.current = value;
@@ -719,12 +716,12 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
           </Col>
         </Row>
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col style={{ paddingTop: '5px' }}>
+          <Col span={8} style={{ paddingTop: '5px' }}>
             <span style={{ fontSize: '12px' }}>{i18n.t('projectPanel.SelectYAxis', lang)}: </span>
           </Col>
-          <Col span={12}>
+          <Col span={16}>
             <Select
-              style={{ width: '200px' }}
+              style={{ width: '100%' }}
               value={yAxisRef.current}
               onChange={(value) => {
                 yAxisRef.current = value;
@@ -735,15 +732,25 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
             </Select>
           </Col>
         </Row>
+        <Row gutter={6} style={{ paddingBottom: '4px' }}>
+          <Col span={24} style={{ textAlign: 'right' }}>
+            <Button type={'primary'} onClick={generateScatteredPlot}>
+              {i18n.t('word.OK', lang)}
+            </Button>
+          </Col>
+        </Row>
       </div>
     );
+  };
+
+  const generateScatteredPlot = () => {
+    scatteredPlotVisibleRef.current = false;
+    setUpdateFlag(!updateFlag);
   };
 
   const createChooseDataColoringContent = () => {
     return (
       <div>
-        <label style={{ fontWeight: 'bold' }}>{i18n.t('projectPanel.ChooseDataColoring', lang)}</label>
-        <hr />
         <Radio.Group
           onChange={(e) => {
             selectDataColoring(e.target.value);
@@ -1100,6 +1107,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
               <span>
                 {projectInfo.type === DesignProblem.SOLAR_PANEL_ARRAY && (
                   <Popover
+                    title={i18n.t('projectPanel.ChooseSolutionSpace', lang)}
                     onVisibleChange={(visible) => {
                       if (parameterSelectionChangedRef.current) {
                         if (!visible) {
@@ -1117,12 +1125,23 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                     </Button>
                   </Popover>
                 )}
-                <Popover content={createScatteredPlotContent()}>
+                <Popover
+                  title={i18n.t('projectPanel.GenerateScatteredPlot', lang)}
+                  onVisibleChange={(visible) => {
+                    scatteredPlotVisibleRef.current = visible;
+                    setUpdateFlag(!updateFlag);
+                  }}
+                  visible={scatteredPlotVisibleRef.current}
+                  content={createScatteredPlotContent()}
+                >
                   <Button style={{ border: 'none', paddingRight: 0, background: 'white' }}>
                     <DotChartOutlined style={{ fontSize: '24px', color: 'gray' }} />
                   </Button>
                 </Popover>
-                <Popover content={createChooseDataColoringContent()}>
+                <Popover
+                  title={i18n.t('projectPanel.ChooseDataColoring', lang)}
+                  content={createChooseDataColoringContent()}
+                >
                   <Button style={{ border: 'none', paddingRight: 0, background: 'white' }}>
                     <BgColorsOutlined style={{ fontSize: '24px', color: 'gray' }} />
                   </Button>
