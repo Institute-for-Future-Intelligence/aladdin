@@ -44,6 +44,7 @@ import {
   updateHiddenParameters,
 } from '../cloudProjectUtil';
 import { loadCloudFile } from '../cloudFileUtil';
+import { CartesianGrid, Scatter, ScatterChart, Tooltip, XAxis, YAxis } from 'recharts';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -147,7 +148,6 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
   const projectDesigns = useRef<Design[]>(projectInfo.designs ?? []); // store sorted designs
   const xAxisRef = useRef<string>('rowWidth');
   const yAxisRef = useRef<string>('rowWidth');
-  const scatteredPlotVisibleRef = useRef<boolean>(false);
 
   const lang = useMemo(() => {
     return { lng: language };
@@ -695,6 +695,159 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
     );
   };
 
+  const xyData = useMemo(() => {
+    const data: { x: number; y: number }[] = [];
+    if (projectInfo.designs) {
+      if (projectInfo.type === DesignProblem.SOLAR_PANEL_ARRAY) {
+        for (const design of projectInfo.designs) {
+          if (design.invisible) continue;
+          const d = {} as { x: number; y: number };
+          switch (xAxisRef.current) {
+            case 'rowWidth':
+              d['x'] = design.rowsPerRack;
+              break;
+            case 'tiltAngle':
+              d['x'] = Util.toDegrees(design.tiltAngle);
+              break;
+            case 'interRowSpacing':
+              d['x'] = design.interRowSpacing;
+              break;
+            case 'orientation':
+              d['x'] = design.orientation === Orientation.landscape ? 0 : 1;
+              break;
+            case 'poleHeight':
+              d['x'] = design.poleHeight;
+              break;
+            case 'unitCost':
+              d['x'] = design.unitCost;
+              break;
+            case 'sellingPrice':
+              d['x'] = design.sellingPrice;
+              break;
+            case 'panelCount':
+              d['x'] = design.panelCount;
+              break;
+            case 'totalYearlyYield':
+              d['x'] = design.yearlyYield * 0.001;
+              break;
+            case 'meanYearlyYield':
+              d['x'] = design.yearlyYield / design.panelCount;
+              break;
+            case 'yearlyProfit':
+              d['x'] = Util.calculateProfit(design);
+              break;
+          }
+          switch (yAxisRef.current) {
+            case 'rowWidth':
+              d['y'] = design.rowsPerRack;
+              break;
+            case 'tiltAngle':
+              d['y'] = Util.toDegrees(design.tiltAngle);
+              break;
+            case 'interRowSpacing':
+              d['y'] = design.interRowSpacing;
+              break;
+            case 'orientation':
+              d['y'] = design.orientation === Orientation.landscape ? 0 : 1;
+              break;
+            case 'poleHeight':
+              d['y'] = design.poleHeight;
+              break;
+            case 'unitCost':
+              d['y'] = design.unitCost;
+              break;
+            case 'sellingPrice':
+              d['y'] = design.sellingPrice;
+              break;
+            case 'panelCount':
+              d['y'] = design.panelCount;
+              break;
+            case 'totalYearlyYield':
+              d['y'] = design.yearlyYield * 0.001;
+              break;
+            case 'meanYearlyYield':
+              d['y'] = design.yearlyYield / design.panelCount;
+              break;
+            case 'yearlyProfit':
+              d['y'] = Util.calculateProfit(design);
+              break;
+          }
+          data.push(d);
+        }
+      }
+    }
+    return data;
+  }, [xAxisRef.current, yAxisRef.current, projectInfo.designs, projectInfo.type]);
+
+  const getBound = (axisName: string) => {
+    const bound: { min: number; max: number } = { min: 0, max: 1 };
+    if (projectInfo.type === DesignProblem.SOLAR_PANEL_ARRAY && solarPanelArrayLayoutConstraints) {
+      switch (axisName) {
+        case 'rowWidth':
+          bound.min = getMin('rowWidth', solarPanelArrayLayoutConstraints.minimumRowsPerRack);
+          bound.max = getMax('rowWidth', solarPanelArrayLayoutConstraints.maximumRowsPerRack);
+          break;
+        case 'tiltAngle':
+          bound.min = getMin('tiltAngle', Util.toDegrees(solarPanelArrayLayoutConstraints.minimumTiltAngle));
+          bound.max = getMax('tiltAngle', Util.toDegrees(solarPanelArrayLayoutConstraints.maximumTiltAngle));
+          break;
+        case 'interRowSpacing':
+          bound.min = getMin('interRowSpacing', solarPanelArrayLayoutConstraints.minimumInterRowSpacing);
+          bound.max = getMax('interRowSpacing', solarPanelArrayLayoutConstraints.maximumInterRowSpacing);
+          break;
+        case 'orientation':
+          bound.min = 0;
+          bound.max = 1;
+          break;
+        case 'poleHeight':
+          bound.min = getMin('poleHeight', 0);
+          bound.max = getMax('poleHeight', 5);
+          break;
+        case 'unitCost':
+          bound.min = getMin('unitCost', 0.1);
+          bound.max = getMax('unitCost', 1);
+          break;
+        case 'sellingPrice':
+          bound.min = getMin('sellingPrice', 0.1);
+          bound.max = getMax('sellingPrice', 0.5);
+          break;
+        case 'panelCount':
+          bound.min = getMin('panelCount', 0);
+          bound.max = getMax('panelCount', 300);
+          break;
+        case 'totalYearlyYield':
+          bound.min = getMin('totalYearlyYield', 0);
+          bound.max = getMax('totalYearlyYield', 100);
+          break;
+        case 'meanYearlyYield':
+          bound.min = getMin('meanYearlyYield', 0);
+          bound.max = getMax('meanYearlyYield', 1000);
+          break;
+        case 'yearlyProfit':
+          bound.min = getMin('yearlyProfit', -10);
+          bound.max = getMax('yearlyProfit', 10);
+          break;
+      }
+    }
+    return bound;
+  };
+
+  const xMinMax = useMemo(() => {
+    return getBound(xAxisRef.current);
+  }, [xAxisRef.current, projectInfo.ranges]);
+
+  const yMinMax = useMemo(() => {
+    return getBound(yAxisRef.current);
+  }, [yAxisRef.current, projectInfo.ranges]);
+
+  const xUnit = useMemo(() => {
+    return ProjectUtil.getUnit(xAxisRef.current, lang);
+  }, [xAxisRef.current, lang]);
+
+  const yUnit = useMemo(() => {
+    return ProjectUtil.getUnit(yAxisRef.current, lang);
+  }, [yAxisRef.current, lang]);
+
   const createScatteredPlotContent = () => {
     return (
       <div style={{ width: '280px' }}>
@@ -715,7 +868,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
             </Select>
           </Col>
         </Row>
-        <Row gutter={6} style={{ paddingBottom: '4px' }}>
+        <Row gutter={6} style={{ paddingBottom: '8px' }}>
           <Col span={8} style={{ paddingTop: '5px' }}>
             <span style={{ fontSize: '12px' }}>{i18n.t('projectPanel.SelectYAxis', lang)}: </span>
           </Col>
@@ -732,20 +885,44 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
             </Select>
           </Col>
         </Row>
-        <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col span={24} style={{ textAlign: 'right' }}>
-            <Button type={'primary'} onClick={generateScatteredPlot}>
-              {i18n.t('word.OK', lang)}
-            </Button>
-          </Col>
+        <Row style={{ paddingBottom: '8px' }}>
+          <ScatterChart
+            width={280}
+            height={280}
+            margin={{
+              top: 0,
+              right: 0,
+              bottom: -10,
+              left: -10,
+            }}
+          >
+            <CartesianGrid strokeWidth="1" stroke={'gray'} />
+            <XAxis
+              dataKey="x"
+              fontSize={10}
+              type="number"
+              domain={[xMinMax.min, xMinMax.max]}
+              name="x"
+              unit={xUnit}
+              strokeWidth={1}
+              stroke={'gray'}
+            />
+            <YAxis
+              dataKey="y"
+              fontSize={10}
+              type="number"
+              domain={[yMinMax.min, yMinMax.max]}
+              name="y"
+              unit={yUnit}
+              strokeWidth={1}
+              stroke={'gray'}
+            />
+            <Tooltip cursor={{ strokeDasharray: '3 3' }} />
+            <Scatter name="X" data={xyData} fill="#8884d8" />
+          </ScatterChart>
         </Row>
       </div>
     );
-  };
-
-  const generateScatteredPlot = () => {
-    scatteredPlotVisibleRef.current = false;
-    setUpdateFlag(!updateFlag);
   };
 
   const createChooseDataColoringContent = () => {
@@ -1127,11 +1304,6 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                 )}
                 <Popover
                   title={i18n.t('projectPanel.GenerateScatteredPlot', lang)}
-                  onVisibleChange={(visible) => {
-                    scatteredPlotVisibleRef.current = visible;
-                    setUpdateFlag(!updateFlag);
-                  }}
-                  visible={scatteredPlotVisibleRef.current}
                   content={createScatteredPlotContent()}
                 >
                   <Button style={{ border: 'none', paddingRight: 0, background: 'white' }}>
