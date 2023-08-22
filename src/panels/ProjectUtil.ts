@@ -125,11 +125,9 @@ export class ProjectUtil {
     if (variable === 'tiltAngle') return '°';
     if (variable === 'interRowSpacing') return i18n.t('word.MeterAbbreviation', l);
     if (variable === 'poleHeight') return i18n.t('word.MeterAbbreviation', l);
-    if (variable === 'unitCost') return '$';
-    if (variable === 'sellingPrice') return '$';
     if (variable === 'totalYearlyYield') return 'MWh';
     if (variable === 'meanYearlyYield') return 'kWh';
-    if (variable === 'yearlyProfit') return '$K';
+    if (variable === 'yearlyProfit') return 'K';
     return '';
   }
 

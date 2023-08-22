@@ -838,6 +838,15 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
               unit={xUnit}
               strokeWidth={1}
               stroke={'gray'}
+              tickFormatter={(value, index) => {
+                if (
+                  xAxisRef.current === 'yearlyProfit' ||
+                  xAxisRef.current === 'unitCost' ||
+                  xAxisRef.current === 'sellingPrice'
+                )
+                  return '$' + value;
+                return value;
+              }}
             />
             <YAxis
               dataKey="y"
@@ -848,6 +857,15 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
               unit={yUnit}
               strokeWidth={1}
               stroke={'gray'}
+              tickFormatter={(value, index) => {
+                if (
+                  yAxisRef.current === 'yearlyProfit' ||
+                  yAxisRef.current === 'unitCost' ||
+                  yAxisRef.current === 'sellingPrice'
+                )
+                  return '$' + value;
+                return value;
+              }}
             />
             <Tooltip cursor={{ strokeDasharray: '3 3' }} formatter={(value: number) => value.toFixed(2)} />
             <Scatter name="X" data={scatterData} fill="#8884d8" />
