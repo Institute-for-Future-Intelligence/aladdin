@@ -2,8 +2,9 @@
  * @Copyright 2023. Institute for Future Intelligence, Inc.
  */
 
-import { DesignProblem } from '../types';
+import { Design, DesignProblem, Orientation } from '../types';
 import i18n from '../i18n/i18n';
+import { Util } from '../Util';
 
 export class ProjectUtil {
   static getVariables(projectType: DesignProblem, hidden: string[]): string[] {
@@ -130,5 +131,43 @@ export class ProjectUtil {
     if (variable === 'meanYearlyYield') return 'kWh';
     if (variable === 'yearlyProfit') return '$K';
     return '';
+  }
+
+  static setScatterData(name: string, axis: 'x' | 'y', datum: { x: number; y: number }, design: Design) {
+    switch (name) {
+      case 'rowWidth':
+        datum[axis] = design.rowsPerRack;
+        break;
+      case 'tiltAngle':
+        datum[axis] = Util.toDegrees(design.tiltAngle);
+        break;
+      case 'interRowSpacing':
+        datum[axis] = design.interRowSpacing;
+        break;
+      case 'orientation':
+        datum[axis] = design.orientation === Orientation.landscape ? 0 : 1;
+        break;
+      case 'poleHeight':
+        datum[axis] = design.poleHeight;
+        break;
+      case 'unitCost':
+        datum[axis] = design.unitCost;
+        break;
+      case 'sellingPrice':
+        datum[axis] = design.sellingPrice;
+        break;
+      case 'panelCount':
+        datum[axis] = design.panelCount;
+        break;
+      case 'totalYearlyYield':
+        datum[axis] = design.yearlyYield * 0.001;
+        break;
+      case 'meanYearlyYield':
+        datum[axis] = design.yearlyYield / design.panelCount;
+        break;
+      case 'yearlyProfit':
+        datum[axis] = Util.calculateProfit(design);
+        break;
+    }
   }
 }

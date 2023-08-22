@@ -695,83 +695,15 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
     );
   };
 
-  const xyData = useMemo(() => {
+  const scatterData = useMemo(() => {
     const data: { x: number; y: number }[] = [];
     if (projectInfo.designs) {
       if (projectInfo.type === DesignProblem.SOLAR_PANEL_ARRAY) {
         for (const design of projectInfo.designs) {
           if (design.invisible) continue;
           const d = {} as { x: number; y: number };
-          switch (xAxisRef.current) {
-            case 'rowWidth':
-              d['x'] = design.rowsPerRack;
-              break;
-            case 'tiltAngle':
-              d['x'] = Util.toDegrees(design.tiltAngle);
-              break;
-            case 'interRowSpacing':
-              d['x'] = design.interRowSpacing;
-              break;
-            case 'orientation':
-              d['x'] = design.orientation === Orientation.landscape ? 0 : 1;
-              break;
-            case 'poleHeight':
-              d['x'] = design.poleHeight;
-              break;
-            case 'unitCost':
-              d['x'] = design.unitCost;
-              break;
-            case 'sellingPrice':
-              d['x'] = design.sellingPrice;
-              break;
-            case 'panelCount':
-              d['x'] = design.panelCount;
-              break;
-            case 'totalYearlyYield':
-              d['x'] = design.yearlyYield * 0.001;
-              break;
-            case 'meanYearlyYield':
-              d['x'] = design.yearlyYield / design.panelCount;
-              break;
-            case 'yearlyProfit':
-              d['x'] = Util.calculateProfit(design);
-              break;
-          }
-          switch (yAxisRef.current) {
-            case 'rowWidth':
-              d['y'] = design.rowsPerRack;
-              break;
-            case 'tiltAngle':
-              d['y'] = Util.toDegrees(design.tiltAngle);
-              break;
-            case 'interRowSpacing':
-              d['y'] = design.interRowSpacing;
-              break;
-            case 'orientation':
-              d['y'] = design.orientation === Orientation.landscape ? 0 : 1;
-              break;
-            case 'poleHeight':
-              d['y'] = design.poleHeight;
-              break;
-            case 'unitCost':
-              d['y'] = design.unitCost;
-              break;
-            case 'sellingPrice':
-              d['y'] = design.sellingPrice;
-              break;
-            case 'panelCount':
-              d['y'] = design.panelCount;
-              break;
-            case 'totalYearlyYield':
-              d['y'] = design.yearlyYield * 0.001;
-              break;
-            case 'meanYearlyYield':
-              d['y'] = design.yearlyYield / design.panelCount;
-              break;
-            case 'yearlyProfit':
-              d['y'] = Util.calculateProfit(design);
-              break;
-          }
+          ProjectUtil.setScatterData(xAxisRef.current, 'x', d, design);
+          ProjectUtil.setScatterData(yAxisRef.current, 'y', d, design);
           data.push(d);
         }
       }
@@ -917,8 +849,8 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
               strokeWidth={1}
               stroke={'gray'}
             />
-            <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-            <Scatter name="X" data={xyData} fill="#8884d8" />
+            <Tooltip cursor={{ strokeDasharray: '3 3' }} formatter={(value: number) => value.toFixed(2)} />
+            <Scatter name="X" data={scatterData} fill="#8884d8" />
           </ScatterChart>
         </Row>
       </div>
