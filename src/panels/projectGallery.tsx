@@ -700,7 +700,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
     if (projectInfo.designs) {
       if (projectInfo.type === DesignProblem.SOLAR_PANEL_ARRAY) {
         for (const design of projectInfo.designs) {
-          if (design.invisible) continue;
+          if (design.invisible || design === selectedDesign) continue;
           const d = {} as { x: number; y: number };
           ProjectUtil.setScatterData(xAxisRef.current, 'x', d, design);
           ProjectUtil.setScatterData(yAxisRef.current, 'y', d, design);
@@ -709,7 +709,23 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
       }
     }
     return data;
-  }, [xAxisRef.current, yAxisRef.current, projectInfo.designs, projectInfo.type]);
+  }, [xAxisRef.current, yAxisRef.current, projectInfo.designs, projectInfo.type, selectedDesign]);
+
+  const selectedData = useMemo(() => {
+    const data: { x: number; y: number }[] = [];
+    if (projectInfo.designs) {
+      if (projectInfo.type === DesignProblem.SOLAR_PANEL_ARRAY) {
+        for (const design of projectInfo.designs) {
+          if (design !== selectedDesign) continue;
+          const d = {} as { x: number; y: number };
+          ProjectUtil.setScatterData(xAxisRef.current, 'x', d, design);
+          ProjectUtil.setScatterData(yAxisRef.current, 'y', d, design);
+          data.push(d);
+        }
+      }
+    }
+    return data;
+  }, [xAxisRef.current, yAxisRef.current, projectInfo.designs, projectInfo.type, selectedDesign]);
 
   const getBound = (axisName: string) => {
     const bound: { min: number; max: number } = { min: 0, max: 1 };
@@ -868,7 +884,8 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
               }}
             />
             <Tooltip cursor={{ strokeDasharray: '3 3' }} formatter={(value: number) => value.toFixed(2)} />
-            <Scatter name="X" data={scatterData} fill="#8884d8" />
+            <Scatter name="All" data={scatterData} fill="#8884d8" />
+            {selectedDesign && <Scatter name="Selected" data={selectedData} fill="red" shape={'star'} />}
           </ScatterChart>
         </Row>
       </div>
