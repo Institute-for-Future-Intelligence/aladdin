@@ -565,6 +565,8 @@ export const useStore = create<CommonStoreState>(
             dataColoring: DataColoring.ALL,
             selectedProperty: null,
             sortDescending: false,
+            xAxisNameScatteredPlot: null,
+            yAxisNameScatteredPlot: null,
           } as ProjectInfo,
           projectImages: new Map<string, HTMLImageElement>(),
           designProjectType: null,

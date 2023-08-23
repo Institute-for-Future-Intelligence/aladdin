@@ -127,6 +127,8 @@ export interface ProjectInfo {
   dataColoring: DataColoring;
   selectedProperty: string | null;
   sortDescending: boolean | null;
+  xAxisNameScatteredPlot: string | null;
+  yAxisNameScatteredPlot: string | null;
 }
 
 export interface ActionInfo {

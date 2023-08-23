@@ -198,6 +198,48 @@ export const updateSelectedProperty = (userid: string, projectTitle: string, sel
     });
 };
 
+export const updateXAxisNameScatteredPlot = (
+  userid: string,
+  projectTitle: string,
+  xAxisNameScatteredPlot: string | null,
+) => {
+  const lang = { lng: useStore.getState().language };
+  return firebase
+    .firestore()
+    .collection('users')
+    .doc(userid)
+    .collection('projects')
+    .doc(projectTitle)
+    .update({ xAxisNameScatteredPlot })
+    .then(() => {
+      // ignore
+    })
+    .catch((error) => {
+      showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
+    });
+};
+
+export const updateYAxisNameScatteredPlot = (
+  userid: string,
+  projectTitle: string,
+  yAxisNameScatteredPlot: string | null,
+) => {
+  const lang = { lng: useStore.getState().language };
+  return firebase
+    .firestore()
+    .collection('users')
+    .doc(userid)
+    .collection('projects')
+    .doc(projectTitle)
+    .update({ yAxisNameScatteredPlot })
+    .then(() => {
+      // ignore
+    })
+    .catch((error) => {
+      showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
+    });
+};
+
 export const createDesign = (type: string, title: string, thumbnail: string): Design => {
   let design = { title, thumbnail } as Design;
   switch (type) {

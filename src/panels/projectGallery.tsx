@@ -42,6 +42,8 @@ import {
   updateDesign,
   updateDesignVisibility,
   updateHiddenParameters,
+  updateXAxisNameScatteredPlot,
+  updateYAxisNameScatteredPlot,
 } from '../cloudProjectUtil';
 import { loadCloudFile } from '../cloudFileUtil';
 import { CartesianGrid, Scatter, ScatterChart, Tooltip, XAxis, YAxis } from 'recharts';
@@ -146,8 +148,16 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
   const dataColoringSelectionRef = useRef<DataColoring>(projectInfo.dataColoring ?? DataColoring.ALL);
   const parameterSelectionChangedRef = useRef<boolean>(false);
   const projectDesigns = useRef<Design[]>(projectInfo.designs ?? []); // store sorted designs
-  const xAxisRef = useRef<string>('rowWidth');
-  const yAxisRef = useRef<string>('rowWidth');
+  const xAxisRef = useRef<string>(projectInfo.xAxisNameScatteredPlot ?? 'rowWidth');
+  const yAxisRef = useRef<string>(projectInfo.yAxisNameScatteredPlot ?? 'rowWidth');
+
+  useEffect(() => {
+    xAxisRef.current = projectInfo.xAxisNameScatteredPlot ?? 'rowWidth';
+  }, [projectInfo.xAxisNameScatteredPlot]);
+
+  useEffect(() => {
+    yAxisRef.current = projectInfo.yAxisNameScatteredPlot ?? 'rowWidth';
+  }, [projectInfo.yAxisNameScatteredPlot]);
 
   const lang = useMemo(() => {
     return { lng: language };
@@ -809,6 +819,11 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
               value={xAxisRef.current}
               onChange={(value) => {
                 xAxisRef.current = value;
+                if (user.uid && projectInfo.title) {
+                  updateXAxisNameScatteredPlot(user.uid, projectInfo.title, value).then(() => {
+                    //ignore
+                  });
+                }
                 setUpdateFlag(!updateFlag);
               }}
             >
@@ -826,6 +841,11 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
               value={yAxisRef.current}
               onChange={(value) => {
                 yAxisRef.current = value;
+                if (user.uid && projectInfo.title) {
+                  updateYAxisNameScatteredPlot(user.uid, projectInfo.title, value).then(() => {
+                    //ignore
+                  });
+                }
                 setUpdateFlag(!updateFlag);
               }}
             >
@@ -836,7 +856,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
         <Row style={{ paddingBottom: '8px' }}>
           <ScatterChart
             width={280}
-            height={280}
+            height={240}
             margin={{
               top: 0,
               right: 0,
