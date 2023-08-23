@@ -209,8 +209,6 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
   const undoManager = useStore(Selector.undoManager);
   const addUndoable = useStore(Selector.addUndoable);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
-  const navigation = useStore(Selector.viewState.navigationView);
-  const autoRotate = useStore(Selector.viewState.autoRotate);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const getElementById = useStore(Selector.getElementById);
   const copyElementById = useStore(Selector.copyElementById);
@@ -222,33 +220,13 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
   const updateWallLeftJointsById = useStore(Selector.updateWallLeftJointsById);
   const updateWallRightJointsById = useStore(Selector.updateWallRightJointsById);
   const setEnableFineGrid = useStore(Selector.setEnableFineGrid);
-  const localFileDialogRequested = useStore(Selector.localFileDialogRequested);
-  const cameraPosition = useStore(Selector.viewState.cameraPosition);
-  const panCenter = useStore(Selector.viewState.panCenter);
   const overlapWithSibling = useStore(Selector.overlapWithSibling);
-  const minimumNavigationMoveSpeed = useStore(Selector.minimumNavigationMoveSpeed);
-  const minimumNavigationTurnSpeed = useStore(Selector.minimumNavigationTurnSpeed);
-
-  const [keyPressed, setKeyPressed] = useState(false);
-  const [keyName, setKeyName] = useState<string | null>(null);
-  const [keyDown, setKeyDown] = useState(false);
-  const [keyUp, setKeyUp] = useState(false);
 
   const moveStepAbsolute = 0.1;
 
   const lang = useMemo(() => {
     return { lng: language };
   }, [language]);
-
-  useEffect(() => {
-    if (keyDown) {
-      handleKeyDown();
-    }
-    if (keyUp) {
-      handleKeyUp();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [keyDown, keyUp]);
 
   const removeElement = (elemId: string, cut: boolean) => {
     if (canvas) {
@@ -258,7 +236,7 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
   };
 
   const toggle2DView = () => {
-    if (navigation) return;
+    if (useStore.getState().viewState.navigationView) return;
     const undoableCheck = {
       name: 'Set 2D View',
       timestamp: Date.now(),
@@ -282,7 +260,7 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
     const undoableCheck = {
       name: 'Set Navigation View',
       timestamp: Date.now(),
-      checked: !navigation,
+      checked: !useStore.getState().viewState.navigationView,
       undo: () => {
         setNavigationView(!undoableCheck.checked);
       },
@@ -291,7 +269,7 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
       },
     } as UndoableCheck;
     addUndoable(undoableCheck);
-    setNavigationView(!navigation);
+    setNavigationView(!useStore.getState().viewState.navigationView);
     setCommonStore((state) => {
       state.viewState.autoRotate = false;
     });
@@ -302,7 +280,7 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
     const undoableCheck = {
       name: 'Auto Rotate',
       timestamp: Date.now(),
-      checked: !autoRotate,
+      checked: !useStore.getState().viewState.autoRotate,
       undo: () => {
         setCommonStore((state) => {
           state.objectTypeToAdd = ObjectType.None;
@@ -362,17 +340,6 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
       }
     }
     return true;
-  };
-
-  const handleKeyEvent = (key: string, down: boolean) => {
-    if (down) {
-      setKeyName(key);
-      setKeyUp(false);
-      setKeyDown(true);
-    } else {
-      setKeyDown(false);
-      setKeyUp(true);
-    }
   };
 
   const moveLeft = (scale: number) => {
@@ -801,10 +768,10 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
     });
   };
 
-  const handleKeyDown = () => {
+  const handleKeyDown = (key: string) => {
     const selectedElement = getSelectedElement();
     const step = 1;
-    switch (keyName) {
+    switch (key) {
       case 'left':
         moveLeft(step);
         break;
@@ -957,6 +924,9 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
       case 'ctrl+alt+h': // for Mac and Chrome OS
       case 'ctrl+home':
         if (!orthographic) {
+          const cameraPosition = useStore.getState().viewState.cameraPosition;
+          const panCenter = useStore.getState().viewState.panCenter;
+
           // if not already reset
           if (
             cameraPosition[0] !== cameraPosition[1] ||
@@ -1169,10 +1139,10 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
         }
         break;
       case 'shift':
-        if (navigation) {
+        if (useStore.getState().viewState.navigationView) {
           usePrimitiveStore.setState((state) => {
-            state.navigationMoveSpeed = 5 * minimumNavigationMoveSpeed;
-            state.navigationTurnSpeed = 5 * minimumNavigationTurnSpeed;
+            state.navigationMoveSpeed = 5 * useStore.getState().minimumNavigationMoveSpeed;
+            state.navigationTurnSpeed = 5 * useStore.getState().minimumNavigationTurnSpeed;
           });
         }
         setEnableFineGrid(true);
@@ -1215,13 +1185,13 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
     }
   };
 
-  const handleKeyUp = () => {
-    switch (keyName) {
+  const handleKeyUp = (key: string) => {
+    switch (key) {
       case 'shift':
-        if (navigation) {
+        if (useStore.getState().viewState.navigationView) {
           usePrimitiveStore.setState((state) => {
-            state.navigationMoveSpeed = minimumNavigationMoveSpeed;
-            state.navigationTurnSpeed = minimumNavigationTurnSpeed;
+            state.navigationMoveSpeed = useStore.getState().minimumNavigationMoveSpeed;
+            state.navigationTurnSpeed = useStore.getState().minimumNavigationTurnSpeed;
           });
         }
         setEnableFineGrid(false);
@@ -1230,7 +1200,7 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
       case 'meta+o': // for Mac
         // this must be handled as a key-up event because it brings up a native file dialog
         // when the key is down and the corresponding key-up event would never be processed as the focus is lost
-        if (!localFileDialogRequested) {
+        if (!useStore.getState().localFileDialogRequested) {
           setCommonStore((state) => {
             state.localFileDialogRequested = true;
             state.openLocalFileFlag = true;
@@ -1250,6 +1220,15 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
     }
   };
 
+  useEffect(
+    () => () => {
+      keyNameRef.current = null;
+    },
+    [],
+  );
+
+  const keyNameRef = useRef<string | null>(null);
+
   return (
     <>
       <KeyboardEventHandler
@@ -1257,11 +1236,9 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
         handleEventType={'keydown'}
         onKeyEvent={(key, e) => {
           e.preventDefault();
-          if (keyPressed) {
-            return;
-          }
-          setKeyPressed(true);
-          handleKeyEvent(key, true);
+          if (keyNameRef.current === key) return;
+          keyNameRef.current = key;
+          handleKeyDown(key);
         }}
       />
       <KeyboardEventHandler
@@ -1269,8 +1246,8 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
         handleEventType={'keyup'}
         onKeyEvent={(key, e) => {
           e.preventDefault();
-          setKeyPressed(false);
-          handleKeyEvent(key, false);
+          keyNameRef.current = null;
+          handleKeyUp(key);
         }}
       />
       <AutoDeletionListener />
