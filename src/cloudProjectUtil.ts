@@ -35,6 +35,10 @@ export const fetchProject = async (userid: string, project: string, setProjectSt
           ranges: data.ranges,
           hiddenParameters: data.hiddenParameters,
           counter: data.counter ?? 0,
+          selectedProperty: data.selectedProperty,
+          sortDescending: data.sortDescending,
+          xAxisNameScatteredPlot: data.xAxisNameScatteredPlot,
+          yAxisNameScatteredPlot: data.yAxisNameScatteredPlot,
         } as ProjectInfo);
       } else {
         showError(i18n.t('message.CannotOpenProject', lang) + ': ' + project);
