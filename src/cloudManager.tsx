@@ -944,6 +944,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           state.projectInfo.counter++;
           // store the project type in the design for linking it with the right type of project later
           state.designProjectType = state.projectInfo.type;
+          state.cloudFile = design.title;
         });
         // regardless of where the design is, make a copy on the cloud
         saveToCloudWithoutCheckingExistence(designTitle, true, true);
