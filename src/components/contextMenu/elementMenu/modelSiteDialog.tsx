@@ -213,6 +213,13 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
             maxLength={50}
             style={{ width: '100%' }}
             value={modelLabel ?? ''}
+            onKeyDown={(e) => {
+              const regex = /^[A-Za-z0-9\s]*$/;
+              if (!regex.test(e.key)) {
+                e.preventDefault();
+                return false;
+              }
+            }}
             onChange={(e) => {
               setModelLabel(e.target.value);
             }}

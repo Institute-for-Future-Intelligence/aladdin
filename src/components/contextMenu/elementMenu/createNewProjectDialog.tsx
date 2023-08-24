@@ -140,6 +140,13 @@ const CreateNewProjectDialog = ({
             maxLength={50}
             style={{ width: '100%' }}
             value={projectTitle ?? ''}
+            onKeyDown={(e) => {
+              const regex = /^[A-Za-z0-9\s]*$/;
+              if (!regex.test(e.key)) {
+                e.preventDefault();
+                return false;
+              }
+            }}
             onChange={(e) => {
               setProjectTitle(e.target.value);
             }}

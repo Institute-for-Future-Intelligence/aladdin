@@ -100,6 +100,13 @@ const SaveCloudFileModal = ({
           placeholder="Title"
           value={getTitle()}
           onPressEnter={onOk}
+          onKeyDown={(e) => {
+            const regex = /^[A-Za-z0-9\s]*$/;
+            if (!regex.test(e.key)) {
+              e.preventDefault();
+              return false;
+            }
+          }}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             setTitle(e.target.value);
           }}

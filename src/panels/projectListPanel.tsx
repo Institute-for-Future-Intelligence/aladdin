@@ -215,6 +215,13 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
             placeholder="Title"
             value={newTitle ? newTitle : oldTitle}
             onPressEnter={changeProjectTitle}
+            onKeyDown={(e) => {
+              const regex = /^[A-Za-z0-9\s]*$/;
+              if (!regex.test(e.key)) {
+                e.preventDefault();
+                return false;
+              }
+            }}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               setNewTitle(e.target.value);
             }}
