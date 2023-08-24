@@ -259,12 +259,11 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
     });
   };
 
-  const loadProject = (e: any) => {
-    const title = e.key;
+  const loadProject = (title: string, designIndex: number) => {
     const owner = process.env.REACT_APP_EXAMPLE_PROJECT_OWNER;
     if (title && owner) {
       fetchProject(owner, title, setProjectState).then(() => {
-        loadCloudFile(owner, title + ' 0', true, true, viewOnly).then(() => {
+        loadCloudFile(owner, title + ' ' + designIndex, true, true, viewOnly).then(() => {
           // ignore
         });
       });
@@ -274,7 +273,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
       if (loggable) {
         setCommonStore((state) => {
           state.actionInfo = {
-            name: 'Open Example: ' + e.key,
+            name: 'Open Example: ' + title,
             timestamp: new Date().getTime(),
           };
         });
@@ -2235,7 +2234,10 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
         </SubMenu>
         {/* generative design */}
         <SubMenu key={'generative-design'} title={i18n.t('menu.generativeDesignSubMenu', lang)}>
-          <Menu.Item key="Simple Solar Farm" onClick={loadProject}>
+          <Menu.Item key="Tilt Angle" onClick={(e) => loadProject(e.key, 48)}>
+            {i18n.t('menu.generativeDesignTutorials.EvenSamplingInOneDimension', lang)}
+          </Menu.Item>
+          <Menu.Item key="Simple Solar Farm" onClick={(e) => loadProject(e.key, 0)}>
             {i18n.t('menu.generativeDesignTutorials.SimpleSolarFarmGenerativeDesign', lang)}
           </Menu.Item>
         </SubMenu>

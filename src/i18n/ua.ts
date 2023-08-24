@@ -500,6 +500,7 @@ export const i18n_ua = {
 
       generativeDesignSubMenu: 'Generative Design',
       generativeDesignTutorials: {
+        EvenSamplingInOneDimension: 'Even Sampling in One Dimension',
         SimpleSolarFarmGenerativeDesign: 'Simple Solar Farm Generative Design',
       },
 
@@ -623,8 +624,8 @@ export const i18n_ua = {
       ShowAzimuthAngle: 'Показати азимутний кут',
       ShowElevationAngle: 'Показати висотний кут',
       ShowZenithAngle: 'Показати зенітний кут',
-      DirectLightIntensityAtNoon: 'Інтенсивність прямого світла опівдні',
-      AmbientLightIntensityAtNoon: 'Інтенсивність фонового світла опівдні',
+      DirectLightBrightnessAtNoon: 'Direct Light Brightness at Noon',
+      AmbientLightBrightnessAtNoon: 'Ambient Light Brightness at Noon',
     },
 
     groundMenu: {
@@ -1424,6 +1425,7 @@ export const i18n_ua = {
       SameColorForAllDesigns: 'Same color for all designs',
       OneColorForEachDesign: 'One color for each design',
       SolutionSpaceScreenshot: 'Take a screenshot of the solution space',
+      ScatteredPlotScreenshot: 'Take a screenshot of the scattered plot',
       SingleClickToSelectDoubleClickToOpen: 'Single-click to select, double-click to open.',
       SingleClickToDeselectDoubleClickToOpen: 'Single-click to deselect, double-click to open.',
       GenerateScatteredPlot: 'Generate Scattered Plot',

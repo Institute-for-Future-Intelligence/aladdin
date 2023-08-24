@@ -494,6 +494,7 @@ export const i18n_zh_tw = {
 
       generativeDesignSubMenu: '生成式設計',
       generativeDesignTutorials: {
+        EvenSamplingInOneDimension: '一個維度上的均勻採樣',
         SimpleSolarFarmGenerativeDesign: '簡單太陽能農場的生成式設計',
       },
 
@@ -619,8 +620,8 @@ export const i18n_zh_tw = {
       ShowAzimuthAngle: '顯示方位角',
       ShowElevationAngle: '顯示高度角',
       ShowZenithAngle: '顯示天頂角',
-      DirectLightIntensityAtNoon: '正午直射光照度',
-      AmbientLightIntensityAtNoon: '正午環境光照度',
+      DirectLightBrightnessAtNoon: '正午直射光照度',
+      AmbientLightBrightnessAtNoon: '正午環境光照度',
     },
 
     groundMenu: {
@@ -1398,6 +1399,7 @@ export const i18n_zh_tw = {
       SameColorForAllDesigns: '所有設計一個顏色',
       OneColorForEachDesign: '每個設計一個顏色',
       SolutionSpaceScreenshot: '設計空間截圖',
+      ScatteredPlotScreenshot: '散點圖截圖',
       SingleClickToSelectDoubleClickToOpen: '單擊選擇，雙擊打開。',
       SingleClickToDeselectDoubleClickToOpen: '單擊取消選擇，雙擊打開。',
       GenerateScatteredPlot: '生成散點圖',

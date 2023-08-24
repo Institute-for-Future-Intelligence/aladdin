@@ -855,6 +855,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
         </Row>
         <Row style={{ paddingBottom: '8px' }}>
           <ScatterChart
+            id={'scattered-chart'}
             width={280}
             height={240}
             margin={{
@@ -907,6 +908,22 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
             <Scatter name="All" data={scatterData} fill="#8884d8" />
             {selectedDesign && <Scatter name="Selected" data={selectedData} fill="red" shape={'star'} />}
           </ScatterChart>
+        </Row>
+        <Row>
+          <span style={{ width: '100%', textAlign: 'center' }}>
+            <CameraOutlined
+              style={{ fontSize: '18px', color: 'gray' }}
+              title={i18n.t('projectPanel.ScatteredPlotScreenshot', lang)}
+              onClick={() => {
+                const d = document.getElementById('scattered-chart');
+                if (d) {
+                  saveSvgAsPng(d, 'scattered-chart-' + projectInfo.title + '.png').then(() => {
+                    showInfo(i18n.t('message.ScreenshotSaved', lang));
+                  });
+                }
+              }}
+            />
+          </span>
         </Row>
       </div>
     );
