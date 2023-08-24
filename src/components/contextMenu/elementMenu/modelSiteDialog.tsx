@@ -214,7 +214,7 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
             style={{ width: '100%' }}
             value={modelLabel ?? ''}
             onKeyDown={(e) => {
-              const regex = /^[A-Za-z0-9\s]*$/;
+              const regex = /^[A-Za-z0-9\s-_()!?%&]*$/;
               if (!regex.test(e.key)) {
                 e.preventDefault();
                 return false;

@@ -25,7 +25,7 @@ export const i18n_zh_cn = {
       Support: '服务',
       Acknowledgment: '鸣谢',
       FundingInformation:
-        '本产品的研发承蒙美国国家科学基金会慷慨资助（项目号#2105695和#2131097）。本产品的任何观点或结论仅代表创作者个人意见。',
+        '本产品的研发承蒙美国国家科学基金会慷慨资助（项目号#2105695，#2131097，#2301164）。本产品的任何观点或结论仅代表创作者个人意见。',
       Contact: '如您需要更多信息，请联系 Charles Xie (charles@intofuture.org)。我们会尽快回复。',
       Translators: '翻译',
     },

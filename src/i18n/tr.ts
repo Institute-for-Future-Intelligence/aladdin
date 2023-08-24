@@ -25,7 +25,7 @@ export const i18n_tr = {
       Support: 'Destek',
       Acknowledgment: 'Onay',
       FundingInformation:
-        "Ulusal Bilim Vakfı (NSF), #2105695 ve #2131097 numaralı fon destekleriyle mevcut ürünün araştırma ve geliştirme çalışmalarına cömert bir mali kaynak sağlamıştır. Bununla birlikte üründe ifade edilen herhangi bir görüş, bulgu ve sonuç veya öneri yazarların kendi görüşleridir. NSF'nin kurumsal görüşlerini yansıtmayabilir.",
+        "Ulusal Bilim Vakfı (NSF), #2105695, #2131097, ve #2301164 numaralı fon destekleriyle mevcut ürünün araştırma ve geliştirme çalışmalarına cömert bir mali kaynak sağlamıştır. Bununla birlikte üründe ifade edilen herhangi bir görüş, bulgu ve sonuç veya öneri yazarların kendi görüşleridir. NSF'nin kurumsal görüşlerini yansıtmayabilir.",
       Contact: 'Daha fazla bilgi için lütfen Charles Xie (charles@intofuture.org) ile iletişime geçiniz.',
       Translators: 'Çevirmenler',
     },

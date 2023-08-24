@@ -216,7 +216,7 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
             value={newTitle ? newTitle : oldTitle}
             onPressEnter={changeProjectTitle}
             onKeyDown={(e) => {
-              const regex = /^[A-Za-z0-9\s]*$/;
+              const regex = /^[A-Za-z0-9\s-_()!?%&]*$/;
               if (!regex.test(e.key)) {
                 e.preventDefault();
                 return false;

@@ -217,7 +217,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
             value={newTitle ? newTitle : oldTitle}
             onPressEnter={renameFile}
             onKeyDown={(e) => {
-              const regex = /^[A-Za-z0-9\s]*$/;
+              const regex = /^[A-Za-z0-9\s-_()!?%&]*$/;
               if (!regex.test(e.key)) {
                 e.preventDefault();
                 return false;

@@ -25,7 +25,7 @@ export const i18n_es = {
       Support: 'Ayuda',
       Acknowledgment: 'Agradecimientos',
       FundingInformation:
-        'La National Science Foundation (NSF) proporcionó generosamente fondos para la investigación y el desarrollo de este producto a través de las subvenciones con número #2105695 y #2131097. Sin embargo, todas las opiniones, hallazgos y conclusiones o recomendaciones expresados en este producto pertenecen a los autores y no reflejan necesariamente los puntos de vista de la NSF.',
+        'La National Science Foundation (NSF) proporcionó generosamente fondos para la investigación y el desarrollo de este producto a través de las subvenciones con número #2105695, #2131097, y #2301164. Sin embargo, todas las opiniones, hallazgos y conclusiones o recomendaciones expresados en este producto pertenecen a los autores y no reflejan necesariamente los puntos de vista de la NSF.',
       Contact: 'Para más información, por favor contacte con Charles Xie (charles@intofuture.org).',
       Translators: 'Translators',
     },
