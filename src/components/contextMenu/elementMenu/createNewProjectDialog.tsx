@@ -10,6 +10,7 @@ import * as Selector from '../../../stores/selector';
 import i18n from '../../../i18n/i18n';
 import { usePrimitiveStore } from '../../../stores/commonPrimitive';
 import { DesignProblem } from '../../../types';
+import { REGEX_ALLOWABLE_IN_NAME } from '../../../constants';
 
 const { Option } = Select;
 
@@ -141,8 +142,7 @@ const CreateNewProjectDialog = ({
             style={{ width: '100%' }}
             value={projectTitle ?? ''}
             onKeyDown={(e) => {
-              const regex = /^[A-Za-z0-9\s-_()!?%&]*$/;
-              if (!regex.test(e.key)) {
+              if (!REGEX_ALLOWABLE_IN_NAME.test(e.key)) {
                 e.preventDefault();
                 return false;
               }

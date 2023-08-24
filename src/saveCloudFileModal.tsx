@@ -8,6 +8,7 @@ import i18n from './i18n/i18n';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
+import { REGEX_ALLOWABLE_IN_NAME } from './constants';
 
 export interface CloudFileSaveModalProps {
   saveToCloud: (title: string, silent: boolean, checkExistence: boolean) => void;
@@ -101,8 +102,7 @@ const SaveCloudFileModal = ({
           value={getTitle()}
           onPressEnter={onOk}
           onKeyDown={(e) => {
-            const regex = /^[A-Za-z0-9\s-_()!?%&]*$/;
-            if (!regex.test(e.key)) {
+            if (!REGEX_ALLOWABLE_IN_NAME.test(e.key)) {
               e.preventDefault();
               return false;
             }

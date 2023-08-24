@@ -9,7 +9,7 @@ import * as Selector from '../stores/selector';
 import ReactDraggable, { DraggableBounds, DraggableData, DraggableEvent, DraggableEventHandler } from 'react-draggable';
 import { Input, Modal, Space, Table, Typography } from 'antd';
 import { QuestionCircleOutlined, WarningOutlined } from '@ant-design/icons';
-import { HOME_URL } from '../constants';
+import { HOME_URL, REGEX_ALLOWABLE_IN_NAME } from '../constants';
 import { copyTextToClipboard, showSuccess } from '../helpers';
 import i18n from '../i18n/i18n';
 import Draggable from 'react-draggable';
@@ -216,8 +216,7 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
             value={newTitle ? newTitle : oldTitle}
             onPressEnter={changeProjectTitle}
             onKeyDown={(e) => {
-              const regex = /^[A-Za-z0-9\s-_()!?%&]*$/;
-              if (!regex.test(e.key)) {
+              if (!REGEX_ALLOWABLE_IN_NAME.test(e.key)) {
                 e.preventDefault();
                 return false;
               }

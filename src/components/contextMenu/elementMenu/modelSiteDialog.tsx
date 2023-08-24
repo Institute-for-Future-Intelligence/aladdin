@@ -23,6 +23,7 @@ import i18n from '../../../i18n/i18n';
 import { usePrimitiveStore } from '../../../stores/commonPrimitive';
 import { ModelType } from '../../../types';
 import generateRandomAnimal from 'random-animal-name';
+import { REGEX_ALLOWABLE_IN_NAME } from '../../../constants';
 
 const { Option } = Select;
 
@@ -214,8 +215,7 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
             style={{ width: '100%' }}
             value={modelLabel ?? ''}
             onKeyDown={(e) => {
-              const regex = /^[A-Za-z0-9\s-_()!?%&]*$/;
-              if (!regex.test(e.key)) {
+              if (!REGEX_ALLOWABLE_IN_NAME.test(e.key)) {
                 e.preventDefault();
                 return false;
               }
