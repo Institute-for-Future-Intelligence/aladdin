@@ -934,7 +934,11 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
   };
 
   return (
-    <Container>
+    <Container
+      onContextMenu={(e) => {
+        e.stopPropagation();
+      }}
+    >
       <ColumnWrapper>
         <Header>
           <span>
@@ -1146,7 +1150,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
             <List
               style={{
                 width: '100%',
-                height: totalHeight / 2 - 80,
+                height: totalHeight / 2 - (descriptionExpandedRef.current ? 160 : 80),
                 paddingLeft: '4px',
                 paddingRight: '4px',
                 overflowX: 'hidden',
@@ -1214,9 +1218,6 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                         target.src = design.thumbnailUrl;
                       }
                       setSelectedDesign(design !== selectedDesign ? design : undefined);
-                    }}
-                    onContextMenu={(event) => {
-                      event.stopPropagation();
                     }}
                   />
                   <div
