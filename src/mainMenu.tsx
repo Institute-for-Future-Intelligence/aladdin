@@ -2237,6 +2237,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
           <Menu.Item key="Tilt Angle" onClick={(e) => loadProject(e.key, 48)}>
             {i18n.t('menu.generativeDesignTutorials.EvenSamplingInOneDimension', lang)}
           </Menu.Item>
+          <Menu.Item key="Latitude" onClick={(e) => loadProject(e.key, 0)}>
+            {i18n.t('menu.generativeDesignTutorials.OutputOfSolarPanelArrayInDifferentPlaces', lang)}
+          </Menu.Item>
           <Menu.Item key="Simple Solar Farm" onClick={(e) => loadProject(e.key, 0)}>
             {i18n.t('menu.generativeDesignTutorials.SimpleSolarFarmGenerativeDesign', lang)}
           </Menu.Item>

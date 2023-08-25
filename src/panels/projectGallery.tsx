@@ -11,6 +11,7 @@ import i18n from '../i18n/i18n';
 import {
   BgColorsOutlined,
   CameraOutlined,
+  CarryOutOutlined,
   CheckCircleOutlined,
   CheckCircleFilled,
   CloseOutlined,
@@ -20,7 +21,6 @@ import {
   EditFilled,
   EditOutlined,
   ImportOutlined,
-  LineChartOutlined,
   LinkOutlined,
   SortAscendingOutlined,
   SortDescendingOutlined,
@@ -293,6 +293,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
           if (!projectInfo.hiddenParameters?.includes('rowWidth')) d['rowWidth'] = design.rowsPerRack;
           if (!projectInfo.hiddenParameters?.includes('tiltAngle')) d['tiltAngle'] = Util.toDegrees(design.tiltAngle);
           if (!projectInfo.hiddenParameters?.includes('interRowSpacing')) d['interRowSpacing'] = design.interRowSpacing;
+          if (!projectInfo.hiddenParameters?.includes('latitude')) d['latitude'] = design.latitude ?? 42;
           if (!projectInfo.hiddenParameters?.includes('orientation'))
             d['orientation'] = design.orientation === Orientation.landscape ? 0 : 1;
           if (!projectInfo.hiddenParameters?.includes('poleHeight')) d['poleHeight'] = design.poleHeight;
@@ -359,6 +360,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
         array.push(getMin('tiltAngle', Util.toDegrees(solarPanelArrayLayoutConstraints.minimumTiltAngle)));
       if (!projectInfo.hiddenParameters?.includes('interRowSpacing'))
         array.push(getMin('interRowSpacing', solarPanelArrayLayoutConstraints.minimumInterRowSpacing));
+      if (!projectInfo.hiddenParameters?.includes('latitude')) array.push(getMin('latitude', -90));
       if (!projectInfo.hiddenParameters?.includes('orientation')) array.push(0);
       if (!projectInfo.hiddenParameters?.includes('poleHeight')) array.push(getMin('poleHeight', 0));
       if (!projectInfo.hiddenParameters?.includes('unitCost')) array.push(getMin('unitCost', 0.1));
@@ -387,6 +389,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
         array.push(getMax('tiltAngle', Util.toDegrees(solarPanelArrayLayoutConstraints.maximumTiltAngle)));
       if (!projectInfo.hiddenParameters?.includes('interRowSpacing'))
         array.push(getMax('interRowSpacing', solarPanelArrayLayoutConstraints.maximumInterRowSpacing));
+      if (!projectInfo.hiddenParameters?.includes('latitude')) array.push(getMax('latitude', 90));
       if (!projectInfo.hiddenParameters?.includes('orientation')) array.push(1);
       if (!projectInfo.hiddenParameters?.includes('poleHeight')) array.push(getMax('poleHeight', 5));
       if (!projectInfo.hiddenParameters?.includes('unitCost')) array.push(getMax('unitCost', 1));
@@ -412,6 +415,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
       if (!projectInfo.hiddenParameters?.includes('rowWidth')) array.push(1);
       if (!projectInfo.hiddenParameters?.includes('tiltAngle')) array.push(0.1);
       if (!projectInfo.hiddenParameters?.includes('interRowSpacing')) array.push(0.1);
+      if (!projectInfo.hiddenParameters?.includes('latitude')) array.push(0.1);
       if (!projectInfo.hiddenParameters?.includes('orientation')) array.push(1);
       if (!projectInfo.hiddenParameters?.includes('poleHeight')) array.push(0.1);
       if (!projectInfo.hiddenParameters?.includes('unitCost')) array.push(0.01);
@@ -428,6 +432,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
   const rowWidthSelectionRef = useRef<boolean>(!projectInfo.hiddenParameters?.includes('rowWidth'));
   const tiltAngleSelectionRef = useRef<boolean>(!projectInfo.hiddenParameters?.includes('tiltAngle'));
   const rowSpacingSelectionRef = useRef<boolean>(!projectInfo.hiddenParameters?.includes('interRowSpacing'));
+  const latitudeSelectionRef = useRef<boolean>(!projectInfo.hiddenParameters?.includes('latitude'));
   const orientationSelectionRef = useRef<boolean>(!projectInfo.hiddenParameters?.includes('orientation'));
   const poleHeightSelectionRef = useRef<boolean>(!projectInfo.hiddenParameters?.includes('poleHeight'));
   const unitCostSelectionRef = useRef<boolean>(!projectInfo.hiddenParameters?.includes('unitCost'));
@@ -441,6 +446,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
     rowWidthSelectionRef.current = !projectInfo.hiddenParameters?.includes('rowWidth');
     tiltAngleSelectionRef.current = !projectInfo.hiddenParameters?.includes('tiltAngle');
     rowSpacingSelectionRef.current = !projectInfo.hiddenParameters?.includes('interRowSpacing');
+    latitudeSelectionRef.current = !projectInfo.hiddenParameters?.includes('latitude');
     orientationSelectionRef.current = !projectInfo.hiddenParameters?.includes('orientation');
     poleHeightSelectionRef.current = !projectInfo.hiddenParameters?.includes('poleHeight');
     unitCostSelectionRef.current = !projectInfo.hiddenParameters?.includes('unitCost');
@@ -576,6 +582,17 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
         <br />
         <Checkbox
           onChange={(e) => {
+            latitudeSelectionRef.current = e.target.checked;
+            selectParameter(latitudeSelectionRef.current, 'latitude');
+            setUpdateHiddenFlag(!updateHiddenFlag);
+          }}
+          checked={latitudeSelectionRef.current}
+        >
+          <span style={{ fontSize: '12px' }}>{i18n.t('word.Latitude', lang)}</span>
+        </Checkbox>
+        <br />
+        <Checkbox
+          onChange={(e) => {
             orientationSelectionRef.current = e.target.checked;
             selectParameter(orientationSelectionRef.current, 'orientation');
             setUpdateHiddenFlag(!updateHiddenFlag);
@@ -677,6 +694,9 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
         <Option key={'interRowSpacing'} value={'interRowSpacing'}>
           <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayRowSpacing', lang)}</span>
         </Option>
+        <Option key={'latitude'} value={'latitude'}>
+          <span style={{ fontSize: '12px' }}>{i18n.t('word.Latitude', lang)}</span>
+        </Option>
         <Option key={'orientation'} value={'orientation'}>
           <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayOrientation', lang)}</span>
         </Option>
@@ -752,6 +772,10 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
         case 'interRowSpacing':
           bound.min = getMin('interRowSpacing', solarPanelArrayLayoutConstraints.minimumInterRowSpacing);
           bound.max = getMax('interRowSpacing', solarPanelArrayLayoutConstraints.maximumInterRowSpacing);
+          break;
+        case 'latitude':
+          bound.min = getMin('latitude', -90);
+          bound.max = getMax('latitude', 90);
           break;
         case 'orientation':
           bound.min = 0;
@@ -912,7 +936,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
         <Row>
           <span style={{ width: '100%', textAlign: 'center' }}>
             <CameraOutlined
-              style={{ fontSize: '18px', color: 'gray' }}
+              style={{ fontSize: '18px', color: 'gray', paddingRight: '8px' }}
               title={i18n.t('projectPanel.ScatteredPlotScreenshot', lang)}
               onClick={() => {
                 const d = document.getElementById('scattered-chart');
@@ -962,7 +986,10 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
             {(isOwner ? i18n.t('projectPanel.Project', lang) : i18n.t('projectPanel.ProjectByOtherPeople', lang)) +
               ': ' +
               projectInfo.title +
-              (isOwner ? '' : ' (' + i18n.t('word.Owner', lang) + ': ' + projectInfo.owner?.substring(0, 4) + '***)')}
+              (isOwner ? '' : ' (' + i18n.t('word.Owner', lang) + ': ' + projectInfo.owner?.substring(0, 4) + '***)') +
+              ' (' +
+              projectDesigns.current.length +
+              ')'}
           </span>
           <span
             style={{ cursor: 'pointer' }}
@@ -1303,24 +1330,24 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                     content={createChooseSolutionSolutionContent()}
                   >
                     <Button style={{ border: 'none', paddingRight: 0, background: 'white' }}>
-                      <LineChartOutlined style={{ fontSize: '24px', color: 'gray' }} />
+                      <CarryOutOutlined style={{ fontSize: '24px', color: 'gray' }} />
                     </Button>
                   </Popover>
                 )}
-                <Popover
-                  title={i18n.t('projectPanel.GenerateScatteredPlot', lang)}
-                  content={createScatteredPlotContent()}
-                >
-                  <Button style={{ border: 'none', paddingRight: 0, background: 'white' }}>
-                    <DotChartOutlined style={{ fontSize: '24px', color: 'gray' }} />
-                  </Button>
-                </Popover>
                 <Popover
                   title={i18n.t('projectPanel.ChooseDataColoring', lang)}
                   content={createChooseDataColoringContent()}
                 >
                   <Button style={{ border: 'none', paddingRight: 0, background: 'white' }}>
                     <BgColorsOutlined style={{ fontSize: '24px', color: 'gray' }} />
+                  </Button>
+                </Popover>
+                <Popover
+                  title={i18n.t('projectPanel.GenerateScatteredPlot', lang)}
+                  content={createScatteredPlotContent()}
+                >
+                  <Button style={{ border: 'none', paddingRight: 0, background: 'white' }}>
+                    <DotChartOutlined style={{ fontSize: '24px', color: 'gray' }} />
                   </Button>
                 </Popover>
                 <Button

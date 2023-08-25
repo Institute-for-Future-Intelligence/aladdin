@@ -135,12 +135,14 @@ const VerticalAxis = ({
     )
       return 0;
     if (variable === 'tiltAngle') return -90;
+    if (variable === 'latitude') return -90;
     if (variable === 'rowWidth') return 1;
     return Number.MIN_SAFE_INTEGER;
   };
 
   const getMax = () => {
     if (variable === 'tiltAngle') return 90;
+    if (variable === 'latitude') return 90;
     return Number.MAX_SAFE_INTEGER;
   };
 

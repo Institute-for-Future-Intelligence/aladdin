@@ -31,6 +31,7 @@ export const i18n_tr = {
     },
 
     word: {
+      Design: 'Design',
       Information: 'Information',
       Type: 'Type',
       Text: 'Text',
@@ -498,6 +499,7 @@ export const i18n_tr = {
       generativeDesignSubMenu: 'Generative Design',
       generativeDesignTutorials: {
         EvenSamplingInOneDimension: 'Even Sampling in One Dimension',
+        OutputOfSolarPanelArrayInDifferentPlaces: 'The Output of a Solar Panel Array in Different Places',
         SimpleSolarFarmGenerativeDesign: 'Simple Solar Farm Generative Design',
       },
 

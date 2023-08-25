@@ -32,6 +32,7 @@ export const i18n_ua = {
     },
 
     word: {
+      Design: 'Design',
       Information: 'Information',
       Type: 'Type',
       Text: 'Текст',
@@ -501,6 +502,7 @@ export const i18n_ua = {
       generativeDesignSubMenu: 'Generative Design',
       generativeDesignTutorials: {
         EvenSamplingInOneDimension: 'Even Sampling in One Dimension',
+        OutputOfSolarPanelArrayInDifferentPlaces: 'The Output of a Solar Panel Array in Different Places',
         SimpleSolarFarmGenerativeDesign: 'Simple Solar Farm Generative Design',
       },
 

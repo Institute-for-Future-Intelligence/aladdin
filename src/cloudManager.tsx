@@ -41,6 +41,7 @@ import ModelsGallery from './modelsGallery';
 import ProjectListPanel from './panels/projectListPanel';
 import { loadCloudFile } from './cloudFileUtil';
 import { changeDesignTitles, copyDesign, createDesign, fetchProject, getImageData } from './cloudProjectUtil';
+import { ProjectUtil } from './panels/ProjectUtil';
 
 export interface CloudManagerProps {
   viewOnly: boolean;
@@ -204,7 +205,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           type: f.type,
           designs: f.designs,
           ranges: f.ranges ?? [],
-          hiddenParameters: f.hiddenParameters ?? [],
+          hiddenParameters: f.hiddenParameters ?? ProjectUtil.getDefaultHiddenParameters(f.type),
           counter: f.counter,
           action: '',
         });
@@ -718,7 +719,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
             type: data.type,
             designs: data.designs ?? [],
             ranges: data.ranges ?? [],
-            hiddenParameters: data.hiddenParameters ?? [],
+            hiddenParameters: data.hiddenParameters ?? ProjectUtil.getDefaultHiddenParameters(data.type),
             counter: data.counter ?? 0,
           } as ProjectInfo);
         });
@@ -799,7 +800,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
             state.projectInfo.counter = 0;
             state.projectInfo.designs = [];
             state.projectInfo.ranges = [];
-            state.projectInfo.hiddenParameters = [];
+            state.projectInfo.hiddenParameters = ProjectUtil.getDefaultHiddenParameters(state.projectInfo.type);
             state.designProjectType = null;
             state.projectView = false;
           }
@@ -1431,7 +1432,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
               description,
               counter,
               designs: [],
-              hiddenParameters: [],
+              hiddenParameters: ProjectUtil.getDefaultHiddenParameters(type),
             })
             .then(() => {
               setCommonStore((state) => {
@@ -1446,7 +1447,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                 state.projectInfo.yAxisNameScatteredPlot = null;
                 state.projectInfo.designs = [];
                 state.projectInfo.ranges = [];
-                state.projectInfo.hiddenParameters = [];
+                state.projectInfo.hiddenParameters = ProjectUtil.getDefaultHiddenParameters(state.projectInfo.type);
               });
             })
             .catch((error) => {

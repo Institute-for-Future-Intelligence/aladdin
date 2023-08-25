@@ -7,12 +7,20 @@ import i18n from '../i18n/i18n';
 import { Util } from '../Util';
 
 export class ProjectUtil {
+  static getDefaultHiddenParameters(projectType: DesignProblem): string[] {
+    if (projectType === DesignProblem.SOLAR_PANEL_ARRAY) {
+      return ['latitude', 'orientation', 'poleHeight'];
+    }
+    return [];
+  }
+
   static getVariables(projectType: DesignProblem, hidden: string[]): string[] {
     if (projectType === DesignProblem.SOLAR_PANEL_ARRAY) {
       const a: string[] = [];
       if (!hidden.includes('rowWidth')) a.push('rowWidth');
       if (!hidden.includes('tiltAngle')) a.push('tiltAngle');
       if (!hidden.includes('interRowSpacing')) a.push('interRowSpacing');
+      if (!hidden.includes('latitude')) a.push('latitude');
       if (!hidden.includes('orientation')) a.push('orientation');
       if (!hidden.includes('poleHeight')) a.push('poleHeight');
       if (!hidden.includes('unitCost')) a.push('unitCost');
@@ -32,6 +40,7 @@ export class ProjectUtil {
       if (!hidden.includes('rowWidth')) a.push(i18n.t('polygonMenu.SolarPanelArrayRowWidth', l));
       if (!hidden.includes('tiltAngle')) a.push(i18n.t('polygonMenu.SolarPanelArrayTiltAngle', l));
       if (!hidden.includes('interRowSpacing')) a.push(i18n.t('polygonMenu.SolarPanelArrayRowSpacing', l));
+      if (!hidden.includes('latitude')) a.push(i18n.t('word.Latitude', l));
       if (!hidden.includes('orientation')) a.push(i18n.t('polygonMenu.SolarPanelArrayOrientation', l));
       if (!hidden.includes('poleHeight')) a.push(i18n.t('polygonMenu.SolarPanelArrayPoleHeight', l));
       if (!hidden.includes('unitCost')) a.push(i18n.t('economicsPanel.UnitCost', l));
@@ -51,6 +60,7 @@ export class ProjectUtil {
       if (!hidden.includes('rowWidth')) a.push('number');
       if (!hidden.includes('tiltAngle')) a.push('number');
       if (!hidden.includes('interRowSpacing')) a.push('number');
+      if (!hidden.includes('latitude')) a.push('number');
       if (!hidden.includes('orientation')) a.push('boolean');
       if (!hidden.includes('poleHeight')) a.push('number');
       if (!hidden.includes('unitCost')) a.push('number');
@@ -70,6 +80,7 @@ export class ProjectUtil {
       if (!hidden.includes('rowWidth')) a.push(0);
       if (!hidden.includes('tiltAngle')) a.push(1);
       if (!hidden.includes('interRowSpacing')) a.push(1);
+      if (!hidden.includes('latitude')) a.push(1);
       if (!hidden.includes('orientation')) a.push(0);
       if (!hidden.includes('poleHeight')) a.push(1);
       if (!hidden.includes('unitCost')) a.push(2);
@@ -89,6 +100,7 @@ export class ProjectUtil {
       if (!hidden.includes('rowWidth')) a.push(true);
       if (!hidden.includes('tiltAngle')) a.push(false);
       if (!hidden.includes('interRowSpacing')) a.push(false);
+      if (!hidden.includes('latitude')) a.push(false);
       if (!hidden.includes('orientation')) a.push(true);
       if (!hidden.includes('poleHeight')) a.push(false);
       if (!hidden.includes('unitCost')) a.push(false);
@@ -108,6 +120,7 @@ export class ProjectUtil {
       if (!hidden.includes('rowWidth')) a.push(' ' + i18n.t('solarPanelMenu.Panels', l));
       if (!hidden.includes('tiltAngle')) a.push('°');
       if (!hidden.includes('interRowSpacing')) a.push(' ' + i18n.t('word.MeterAbbreviation', l));
+      if (!hidden.includes('latitude')) a.push('°');
       if (!hidden.includes('orientation')) a.push('');
       if (!hidden.includes('poleHeight')) a.push(' ' + i18n.t('word.MeterAbbreviation', l));
       if (!hidden.includes('unitCost')) a.push('');
@@ -122,7 +135,7 @@ export class ProjectUtil {
   }
 
   static getUnit(variable: string, l: { lng: string }): string {
-    if (variable === 'tiltAngle') return '°';
+    if (variable === 'tiltAngle' || variable === 'latitude') return '°';
     if (variable === 'interRowSpacing') return i18n.t('word.MeterAbbreviation', l);
     if (variable === 'poleHeight') return i18n.t('word.MeterAbbreviation', l);
     if (variable === 'totalYearlyYield') return 'MWh';
@@ -141,6 +154,9 @@ export class ProjectUtil {
         break;
       case 'interRowSpacing':
         datum[axis] = design.interRowSpacing;
+        break;
+      case 'latitude':
+        datum[axis] = design.latitude;
         break;
       case 'orientation':
         datum[axis] = design.orientation === Orientation.landscape ? 0 : 1;

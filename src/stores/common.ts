@@ -98,6 +98,7 @@ import { GraphState } from './GraphState';
 import { DefaultGraphState } from './DefaultGraphState';
 import { isStackableModel } from 'src/models/Stackable';
 import { WindowModel } from 'src/models/WindowModel';
+import { ProjectUtil } from '../panels/ProjectUtil';
 
 enableMapSet();
 
@@ -560,7 +561,7 @@ export const useStore = create<CommonStoreState>(
             type: DesignProblem.SOLAR_PANEL_ARRAY,
             designs: new Array<Design>(),
             ranges: new Array<Range>(),
-            hiddenParameters: new Array<string>(),
+            hiddenParameters: ProjectUtil.getDefaultHiddenParameters(DesignProblem.SOLAR_PANEL_ARRAY),
             counter: 0,
             dataColoring: DataColoring.ALL,
             selectedProperty: null,

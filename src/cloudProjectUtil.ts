@@ -248,6 +248,7 @@ export const createDesign = (type: string, title: string, thumbnail: string): De
   let design = { title, thumbnail } as Design;
   switch (type) {
     case DesignProblem.SOLAR_PANEL_ARRAY:
+      const latitude = useStore.getState().world.latitude;
       const panelCount = Util.countAllSolarPanels();
       const dailyYield = Util.countAllSolarPanelDailyYields();
       const yearlyYield = Util.countAllSolarPanelYearlyYields();
@@ -255,6 +256,7 @@ export const createDesign = (type: string, title: string, thumbnail: string): De
       const unitCost = economicParams.operationalCostPerUnit;
       const sellingPrice = economicParams.electricitySellingPrice;
       design = {
+        latitude,
         unitCost,
         sellingPrice,
         panelCount,

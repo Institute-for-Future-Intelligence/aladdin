@@ -31,6 +31,7 @@ export const i18n_zh_tw = {
     },
 
     word: {
+      Design: '設計',
       Information: '資訊',
       Type: '類别',
       Text: '文字',
@@ -495,6 +496,7 @@ export const i18n_zh_tw = {
       generativeDesignSubMenu: '生成式設計',
       generativeDesignTutorials: {
         EvenSamplingInOneDimension: '一個維度上的均勻採樣',
+        OutputOfSolarPanelArrayInDifferentPlaces: '一個光伏板陣列在不同地區的產出',
         SimpleSolarFarmGenerativeDesign: '簡單太陽能農場的生成式設計',
       },
 
