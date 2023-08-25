@@ -202,6 +202,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           sortDescending: f.sortDescending,
           xAxisNameScatteredPlot: f.xAxisNameScatteredPlot,
           yAxisNameScatteredPlot: f.yAxisNameScatteredPlot,
+          dotSizeScatteredPlot: f.dotSizeScatteredPlot,
           type: f.type,
           designs: f.designs,
           ranges: f.ranges ?? [],
@@ -716,6 +717,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
             sortDescending: data.sortDescending,
             xAxisNameScatteredPlot: data.xAxisNameScatteredPlot,
             yAxisNameScatteredPlot: data.yAxisNameScatteredPlot,
+            dotSizeScatteredPlot: data.dotSizeScatteredPlot,
             type: data.type,
             designs: data.designs ?? [],
             ranges: data.ranges ?? [],
@@ -797,6 +799,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
             state.projectInfo.sortDescending = false;
             state.projectInfo.xAxisNameScatteredPlot = null;
             state.projectInfo.yAxisNameScatteredPlot = null;
+            state.projectInfo.dotSizeScatteredPlot = 5;
             state.projectInfo.counter = 0;
             state.projectInfo.designs = [];
             state.projectInfo.ranges = [];
@@ -1445,6 +1448,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                 state.projectInfo.sortDescending = false;
                 state.projectInfo.xAxisNameScatteredPlot = null;
                 state.projectInfo.yAxisNameScatteredPlot = null;
+                state.projectInfo.dotSizeScatteredPlot = 5;
                 state.projectInfo.designs = [];
                 state.projectInfo.ranges = [];
                 state.projectInfo.hiddenParameters = ProjectUtil.getDefaultHiddenParameters(state.projectInfo.type);
@@ -1506,6 +1510,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
             const sortDescending = !!useStore.getState().projectInfo.sortDescending;
             const xAxisNameScatteredPlot = useStore.getState().projectInfo.xAxisNameScatteredPlot;
             const yAxisNameScatteredPlot = useStore.getState().projectInfo.yAxisNameScatteredPlot;
+            const dotSizeScatteredPlot = useStore.getState().projectInfo.dotSizeScatteredPlot;
             const newDesigns: Design[] = changeDesignTitles(t, designs) ?? [];
             for (const [i, d] of designs.entries()) {
               copyDesign(d.title, newDesigns[i].title, owner, user.uid);
@@ -1535,6 +1540,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                   sortDescending,
                   xAxisNameScatteredPlot,
                   yAxisNameScatteredPlot,
+                  dotSizeScatteredPlot,
                   designs: newDesigns,
                   ranges: useStore.getState().projectInfo.ranges ?? null,
                   hiddenParameters: useStore.getState().projectInfo.hiddenParameters,

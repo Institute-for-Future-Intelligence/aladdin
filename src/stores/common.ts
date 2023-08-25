@@ -568,6 +568,7 @@ export const useStore = create<CommonStoreState>(
             sortDescending: false,
             xAxisNameScatteredPlot: null,
             yAxisNameScatteredPlot: null,
+            dotSizeScatteredPlot: 5,
           } as ProjectInfo,
           projectImages: new Map<string, HTMLImageElement>(),
           designProjectType: null,

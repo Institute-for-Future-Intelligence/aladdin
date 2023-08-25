@@ -39,6 +39,7 @@ export const fetchProject = async (userid: string, project: string, setProjectSt
           sortDescending: data.sortDescending,
           xAxisNameScatteredPlot: data.xAxisNameScatteredPlot,
           yAxisNameScatteredPlot: data.yAxisNameScatteredPlot,
+          dotSizeScatteredPlot: data.dotSizeScatteredPlot,
         } as ProjectInfo);
       } else {
         showError(i18n.t('message.CannotOpenProject', lang) + ': ' + project);
@@ -236,6 +237,23 @@ export const updateYAxisNameScatteredPlot = (
     .collection('projects')
     .doc(projectTitle)
     .update({ yAxisNameScatteredPlot })
+    .then(() => {
+      // ignore
+    })
+    .catch((error) => {
+      showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
+    });
+};
+
+export const updateDotSizeScatteredPlot = (userid: string, projectTitle: string, dotSizeScatteredPlot: number) => {
+  const lang = { lng: useStore.getState().language };
+  return firebase
+    .firestore()
+    .collection('users')
+    .doc(userid)
+    .collection('projects')
+    .doc(projectTitle)
+    .update({ dotSizeScatteredPlot })
     .then(() => {
       // ignore
     })

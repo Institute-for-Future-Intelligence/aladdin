@@ -129,6 +129,7 @@ export interface ProjectInfo {
   sortDescending: boolean | null;
   xAxisNameScatteredPlot: string | null;
   yAxisNameScatteredPlot: string | null;
+  dotSizeScatteredPlot: number | null;
 }
 
 export interface ActionInfo {

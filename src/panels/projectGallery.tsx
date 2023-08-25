@@ -2,7 +2,7 @@
  * @Copyright 2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import styled from 'styled-components';
@@ -41,12 +41,14 @@ import {
   updateDescription,
   updateDesign,
   updateDesignVisibility,
+  updateDotSizeScatteredPlot,
   updateHiddenParameters,
   updateXAxisNameScatteredPlot,
   updateYAxisNameScatteredPlot,
 } from '../cloudProjectUtil';
 import { loadCloudFile } from '../cloudFileUtil';
-import { CartesianGrid, Scatter, ScatterChart, Tooltip, XAxis, YAxis } from 'recharts';
+import { CartesianGrid, Dot, DotProps, Scatter, ScatterChart, Tooltip, XAxis, YAxis } from 'recharts';
+import ScatteredPlotMenu from '../components/scatteredPlotMenu';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -150,6 +152,9 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
   const projectDesigns = useRef<Design[]>(projectInfo.designs ?? []); // store sorted designs
   const xAxisRef = useRef<string>(projectInfo.xAxisNameScatteredPlot ?? 'rowWidth');
   const yAxisRef = useRef<string>(projectInfo.yAxisNameScatteredPlot ?? 'rowWidth');
+  const dotSizeRef = useRef<number>(projectInfo.dotSizeScatteredPlot ?? 5);
+  const scatterChartHorizontalLinesRef = useRef<boolean>(true);
+  const scatterChartVerticalLinesRef = useRef<boolean>(true);
 
   useEffect(() => {
     xAxisRef.current = projectInfo.xAxisNameScatteredPlot ?? 'rowWidth';
@@ -158,6 +163,10 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
   useEffect(() => {
     yAxisRef.current = projectInfo.yAxisNameScatteredPlot ?? 'rowWidth';
   }, [projectInfo.yAxisNameScatteredPlot]);
+
+  useEffect(() => {
+    dotSizeRef.current = projectInfo.dotSizeScatteredPlot ?? 5;
+  }, [projectInfo.dotSizeScatteredPlot]);
 
   const lang = useMemo(() => {
     return { lng: language };
@@ -830,6 +839,10 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
     return ProjectUtil.getUnit(yAxisRef.current, lang);
   }, [yAxisRef.current, lang]);
 
+  const RenderDot: FC<DotProps> = ({ cx, cy }) => {
+    return <Dot cx={cx} cy={cy} fill="#8884d8" r={dotSizeRef.current} />;
+  };
+
   const createScatteredPlotContent = () => {
     return (
       <div style={{ width: '280px' }}>
@@ -878,60 +891,89 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
           </Col>
         </Row>
         <Row style={{ paddingBottom: '8px' }}>
-          <ScatterChart
-            id={'scattered-chart'}
-            width={280}
-            height={240}
-            margin={{
-              top: 0,
-              right: 0,
-              bottom: -10,
-              left: -10,
-            }}
-          >
-            <CartesianGrid strokeWidth="1" stroke={'gray'} />
-            <XAxis
-              dataKey="x"
-              fontSize={10}
-              type="number"
-              domain={[xMinMax.min, xMinMax.max]}
-              name="x"
-              unit={xUnit}
-              strokeWidth={1}
-              stroke={'gray'}
-              tickFormatter={(value, index) => {
-                if (
-                  xAxisRef.current === 'yearlyProfit' ||
-                  xAxisRef.current === 'unitCost' ||
-                  xAxisRef.current === 'sellingPrice'
-                )
-                  return '$' + value;
-                return value;
+          <div>
+            <ScatterChart
+              id={'scattered-chart'}
+              width={280}
+              height={240}
+              margin={{
+                top: 0,
+                right: 0,
+                bottom: -10,
+                left: -10,
+              }}
+            >
+              <CartesianGrid
+                strokeWidth="1"
+                stroke={'gray'}
+                horizontal={scatterChartHorizontalLinesRef.current}
+                vertical={scatterChartVerticalLinesRef.current}
+              />
+              <XAxis
+                dataKey="x"
+                fontSize={10}
+                type="number"
+                domain={[xMinMax.min, xMinMax.max]}
+                name="x"
+                unit={xUnit}
+                strokeWidth={1}
+                stroke={'gray'}
+                tickFormatter={(value, index) => {
+                  if (
+                    xAxisRef.current === 'yearlyProfit' ||
+                    xAxisRef.current === 'unitCost' ||
+                    xAxisRef.current === 'sellingPrice'
+                  )
+                    return '$' + value;
+                  return value;
+                }}
+              />
+              <YAxis
+                dataKey="y"
+                fontSize={10}
+                type="number"
+                domain={[yMinMax.min, yMinMax.max]}
+                name="y"
+                unit={yUnit}
+                strokeWidth={1}
+                stroke={'gray'}
+                tickFormatter={(value, index) => {
+                  if (
+                    yAxisRef.current === 'yearlyProfit' ||
+                    yAxisRef.current === 'unitCost' ||
+                    yAxisRef.current === 'sellingPrice'
+                  )
+                    return '$' + value;
+                  return value;
+                }}
+              />
+              <Tooltip cursor={{ strokeDasharray: '3 3' }} formatter={(value: number) => value.toFixed(2)} />
+              <Scatter name="All" data={scatterData} fill="#8884d8" shape={<RenderDot />} />
+              {selectedDesign && <Scatter name="Selected" data={selectedData} fill="red" shape={'star'} />}
+            </ScatterChart>
+            <ScatteredPlotMenu
+              symbolSize={dotSizeRef.current}
+              horizontalGrid={scatterChartHorizontalLinesRef.current}
+              verticalGrid={scatterChartVerticalLinesRef.current}
+              changeHorizontalGrid={(checked) => {
+                scatterChartHorizontalLinesRef.current = checked;
+                setUpdateFlag(!updateFlag);
+              }}
+              changeVerticalGrid={(checked) => {
+                scatterChartVerticalLinesRef.current = checked;
+                setUpdateFlag(!updateFlag);
+              }}
+              changeSymbolSize={(value) => {
+                dotSizeRef.current = value;
+                if (user.uid && projectInfo.title) {
+                  updateDotSizeScatteredPlot(user.uid, projectInfo.title, value).then(() => {
+                    //ignore
+                  });
+                }
+                setUpdateFlag(!updateFlag);
               }}
             />
-            <YAxis
-              dataKey="y"
-              fontSize={10}
-              type="number"
-              domain={[yMinMax.min, yMinMax.max]}
-              name="y"
-              unit={yUnit}
-              strokeWidth={1}
-              stroke={'gray'}
-              tickFormatter={(value, index) => {
-                if (
-                  yAxisRef.current === 'yearlyProfit' ||
-                  yAxisRef.current === 'unitCost' ||
-                  yAxisRef.current === 'sellingPrice'
-                )
-                  return '$' + value;
-                return value;
-              }}
-            />
-            <Tooltip cursor={{ strokeDasharray: '3 3' }} formatter={(value: number) => value.toFixed(2)} />
-            <Scatter name="All" data={scatterData} fill="#8884d8" />
-            {selectedDesign && <Scatter name="Selected" data={selectedData} fill="red" shape={'star'} />}
-          </ScatterChart>
+          </div>
         </Row>
         <Row>
           <span style={{ width: '100%', textAlign: 'center' }}>
