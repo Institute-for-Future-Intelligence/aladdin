@@ -25,7 +25,7 @@ export class ProjectUtil {
       if (!hidden.includes('poleHeight')) a.push('poleHeight');
       if (!hidden.includes('unitCost')) a.push('unitCost');
       if (!hidden.includes('sellingPrice')) a.push('sellingPrice');
-      if (!hidden.includes('panelCount')) a.push('panelCount');
+      if (!hidden.includes('totalYearlyCost')) a.push('totalYearlyCost');
       if (!hidden.includes('totalYearlyYield')) a.push('totalYearlyYield');
       if (!hidden.includes('meanYearlyYield')) a.push('meanYearlyYield');
       if (!hidden.includes('yearlyProfit')) a.push('yearlyProfit');
@@ -45,7 +45,7 @@ export class ProjectUtil {
       if (!hidden.includes('poleHeight')) a.push(i18n.t('polygonMenu.SolarPanelArrayPoleHeight', l));
       if (!hidden.includes('unitCost')) a.push(i18n.t('economicsPanel.UnitCost', l));
       if (!hidden.includes('sellingPrice')) a.push(i18n.t('economicsPanel.SellingPrice', l));
-      if (!hidden.includes('panelCount')) a.push(i18n.t('polygonMenu.SolarPanelArrayPanelCount', l));
+      if (!hidden.includes('totalYearlyCost')) a.push(i18n.t('polygonMenu.SolarPanelArrayTotalYearlyCost', l));
       if (!hidden.includes('totalYearlyYield')) a.push(i18n.t('polygonMenu.SolarPanelArrayTotalYearlyYield', l));
       if (!hidden.includes('meanYearlyYield')) a.push(i18n.t('polygonMenu.SolarPanelArrayMeanYearlyYield', l));
       if (!hidden.includes('yearlyProfit')) a.push(i18n.t('polygonMenu.SolarPanelArrayYearlyProfit', l));
@@ -65,7 +65,7 @@ export class ProjectUtil {
       if (!hidden.includes('poleHeight')) a.push('number');
       if (!hidden.includes('unitCost')) a.push('number');
       if (!hidden.includes('sellingPrice')) a.push('number');
-      if (!hidden.includes('panelCount')) a.push('number');
+      if (!hidden.includes('totalYearlyCost')) a.push('number');
       if (!hidden.includes('totalYearlyYield')) a.push('number');
       if (!hidden.includes('meanYearlyYield')) a.push('number');
       if (!hidden.includes('yearlyProfit')) a.push('number');
@@ -85,10 +85,10 @@ export class ProjectUtil {
       if (!hidden.includes('poleHeight')) a.push(1);
       if (!hidden.includes('unitCost')) a.push(2);
       if (!hidden.includes('sellingPrice')) a.push(2);
-      if (!hidden.includes('panelCount')) a.push(0);
+      if (!hidden.includes('totalYearlyCost')) a.push(1);
       if (!hidden.includes('totalYearlyYield')) a.push(1);
       if (!hidden.includes('meanYearlyYield')) a.push(1);
-      if (!hidden.includes('yearlyProfit')) a.push(1);
+      if (!hidden.includes('yearlyProfit')) a.push(3);
       return a;
     }
     return [];
@@ -105,7 +105,7 @@ export class ProjectUtil {
       if (!hidden.includes('poleHeight')) a.push(false);
       if (!hidden.includes('unitCost')) a.push(false);
       if (!hidden.includes('sellingPrice')) a.push(false);
-      if (!hidden.includes('panelCount')) a.push(true);
+      if (!hidden.includes('totalYearlyCost')) a.push(false);
       if (!hidden.includes('totalYearlyYield')) a.push(false);
       if (!hidden.includes('meanYearlyYield')) a.push(false);
       if (!hidden.includes('yearlyProfit')) a.push(false);
@@ -125,7 +125,7 @@ export class ProjectUtil {
       if (!hidden.includes('poleHeight')) a.push(' ' + i18n.t('word.MeterAbbreviation', l));
       if (!hidden.includes('unitCost')) a.push('');
       if (!hidden.includes('sellingPrice')) a.push('');
-      if (!hidden.includes('panelCount')) a.push('');
+      if (!hidden.includes('totalYearlyCost')) a.push('K');
       if (!hidden.includes('totalYearlyYield')) a.push(' MWh');
       if (!hidden.includes('meanYearlyYield')) a.push(' kWh');
       if (!hidden.includes('yearlyProfit')) a.push('K');
@@ -140,6 +140,7 @@ export class ProjectUtil {
     if (variable === 'poleHeight') return i18n.t('word.MeterAbbreviation', l);
     if (variable === 'totalYearlyYield') return 'MWh';
     if (variable === 'meanYearlyYield') return 'kWh';
+    if (variable === 'totalYearlyCost') return 'K';
     if (variable === 'yearlyProfit') return 'K';
     return '';
   }
@@ -170,8 +171,8 @@ export class ProjectUtil {
       case 'sellingPrice':
         datum[axis] = design.sellingPrice;
         break;
-      case 'panelCount':
-        datum[axis] = design.panelCount;
+      case 'totalYearlyCost':
+        datum[axis] = Util.calculateCost(design);
         break;
       case 'totalYearlyYield':
         datum[axis] = design.yearlyYield * 0.001;

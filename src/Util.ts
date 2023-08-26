@@ -57,6 +57,10 @@ export class Util {
     return (design.yearlyYield * design.sellingPrice - design.panelCount * design.unitCost * 365) * 0.001;
   }
 
+  static calculateCost(design: Design): number {
+    return design.panelCount * design.unitCost * 0.365;
+  }
+
   static getLatLngKey(lat: number, lng: number): string {
     return lat.toFixed(LAT_LNG_FRACTION_DIGITS) + ', ' + lng.toFixed(LAT_LNG_FRACTION_DIGITS);
   }

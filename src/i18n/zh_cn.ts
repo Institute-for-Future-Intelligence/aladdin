@@ -852,7 +852,7 @@ export const i18n_zh_cn = {
       SolarPanelArrayMargin: '边缘余地',
       SolarPanelArrayPoleHeight: '支架高度',
       SolarPanelArrayPoleSpacing: '支柱间隔',
-      SolarPanelArrayPanelCount: '光伏板总数',
+      SolarPanelArrayTotalYearlyCost: '全年总成本',
       SolarPanelArrayTotalYearlyYield: '全年总发电量',
       SolarPanelArrayMeanYearlyYield: '平均年发电量',
       SolarPanelArrayYearlyProfit: '全年利润',
