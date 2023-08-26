@@ -2240,8 +2240,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
           <Menu.Item key="Latitude" onClick={(e) => loadProject(e.key, 0)}>
             {i18n.t('menu.generativeDesignTutorials.OutputOfSolarPanelArrayInDifferentPlaces', lang)}
           </Menu.Item>
-          <Menu.Item key="Cost-Output Optimization" onClick={(e) => loadProject(e.key, 0)}>
-            {i18n.t('menu.generativeDesignTutorials.SimpleSolarFarmGenerativeDesign', lang)}
+          <Menu.Item key="Pareto Front" onClick={(e) => loadProject(e.key, 0)}>
+            {i18n.t('menu.generativeDesignTutorials.SimpleSolarFarmParetoFront', lang)}
           </Menu.Item>
         </SubMenu>
       </SubMenu>

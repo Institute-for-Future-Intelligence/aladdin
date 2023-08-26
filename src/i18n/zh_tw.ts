@@ -497,7 +497,7 @@ export const i18n_zh_tw = {
       generativeDesignTutorials: {
         EvenSamplingInOneDimension: '一個維度上的均勻採樣',
         OutputOfSolarPanelArrayInDifferentPlaces: '一個光伏板陣列在不同地區的產出',
-        SimpleSolarFarmGenerativeDesign: '簡單太陽能農場的生成式設計',
+        SimpleSolarFarmParetoFront: '簡單太陽能農場設計的帕累托前沿',
       },
 
       examplesSubMenu: '例子',

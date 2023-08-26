@@ -500,7 +500,7 @@ export const i18n_es = {
       generativeDesignTutorials: {
         EvenSamplingInOneDimension: 'Even Sampling in One Dimension',
         OutputOfSolarPanelArrayInDifferentPlaces: 'The Output of a Solar Panel Array in Different Places',
-        SimpleSolarFarmGenerativeDesign: 'Simple Solar Farm Generative Design',
+        SimpleSolarFarmParetoFront: 'The Pareto Front for Designing a Simple Solar Farm',
       },
 
       examplesSubMenu: 'Ejemplos',
