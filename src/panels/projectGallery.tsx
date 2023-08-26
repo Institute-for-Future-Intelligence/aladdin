@@ -1426,6 +1426,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
               tickIntegers={tickIntegers}
               hover={hover}
               hoveredIndex={projectInfo.designs && hoveredDesign ? projectInfo.designs.indexOf(hoveredDesign) : -1}
+              selectedIndex={projectInfo.designs && selectedDesign ? projectInfo.designs.indexOf(selectedDesign) : -1}
             />
           </SubContainer>
         )}

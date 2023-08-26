@@ -41,6 +41,7 @@ type ParallelCoordinatesProps = {
   tickIntegers: boolean[];
   hover: Function;
   hoveredIndex: number;
+  selectedIndex: number;
 };
 
 type YScale = d3Scale.ScaleLinear<number, number>;
@@ -61,6 +62,7 @@ const ParallelCoordinates = ({
   tickIntegers,
   hover,
   hoveredIndex,
+  selectedIndex,
 }: ParallelCoordinatesProps) => {
   const boundsWidth = width - MARGIN.right - MARGIN.left;
   const boundsHeight = height - MARGIN.top - MARGIN.bottom;
@@ -134,7 +136,11 @@ const ParallelCoordinates = ({
           max={maxima[i]}
           step={steps[i]}
           value={
-            hoveredIndex >= 0 && !data[hoveredIndex].invisible ? (data[hoveredIndex][variable] as number) : undefined
+            hoveredIndex >= 0 && !data[hoveredIndex].invisible
+              ? (data[hoveredIndex][variable] as number)
+              : selectedIndex >= 0 && !data[selectedIndex].invisible
+              ? (data[selectedIndex][variable] as number)
+              : undefined
           }
         />
       </g>

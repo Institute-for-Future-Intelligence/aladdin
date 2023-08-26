@@ -66,7 +66,7 @@ const ScatteredPlotMenu = ({
     <Menu>
       <Menu.Item>
         {i18n.t('menu.graph.SymbolSize', lang) + ':'}
-        <Slider min={1} max={8} tooltipVisible={false} defaultValue={symbolSize} onChange={onChangeSymbolSize} />
+        <Slider min={1} max={8} tooltipVisible={false} value={symbolSize} onChange={onChangeSymbolSize} />
       </Menu.Item>
       <Menu.Item>
         <Checkbox checked={horizontalGrid} onClick={onShowHorizontalGridLines}>
