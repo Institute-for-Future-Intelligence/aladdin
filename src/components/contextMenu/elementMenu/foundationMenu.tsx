@@ -1231,7 +1231,7 @@ export const FoundationMenu = React.memo(() => {
         {i18n.t('foundationMenu.AddPolygon', lang)}
       </Menu.Item>
 
-      {!foundation.notBuilding && (
+      {!foundation.notBuilding && counterAll.wallCount > 0 && (
         <SubMenu
           key={'building-hvac-system'}
           title={i18n.t('word.BuildingHVACSystem', lang)}
@@ -1322,7 +1322,7 @@ export const FoundationMenu = React.memo(() => {
       {editable && (
         <SubMenu
           key={'select-solar-structure'}
-          title={i18n.t('foundationMenu.SelectSolarStructure', lang)}
+          title={i18n.t('foundationMenu.SolarStructure', lang)}
           style={{ paddingLeft: '24px' }}
         >
           <Radio.Group
@@ -1672,6 +1672,7 @@ export const FoundationMenu = React.memo(() => {
           </Menu.Item>
         </SubMenu>
       )}
+
       <SubMenu
         key={'optimization'}
         title={i18n.t('optimizationMenu.Optimization', lang)}

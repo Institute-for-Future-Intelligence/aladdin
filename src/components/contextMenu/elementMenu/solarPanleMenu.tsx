@@ -34,6 +34,8 @@ import {
   useLabelSize,
   useLabelText,
 } from './menuHooks';
+import SolarPanelInverterEfficiencyInput from './solarPanelInverterEfficiencyInput';
+import SolarPanelDcToAcRatioInput from './solarPanelDcToAcRatioInput';
 
 export const SolarPanelMenu = React.memo(() => {
   const updateSolarCollectorDrawSunBeamById = useStore(Selector.updateSolarCollectorDrawSunBeamById);
@@ -49,6 +51,8 @@ export const SolarPanelMenu = React.memo(() => {
   const [orientationDialogVisible, setOrientationDialogVisible] = useState(false);
   const [widthDialogVisible, setWidthDialogVisible] = useState(false);
   const [lengthDialogVisible, setLengthDialogVisible] = useState(false);
+  const [inverterEfficiencyDialogVisible, setInverterEfficiencyDialogVisible] = useState(false);
+  const [dcAcRatioDialogVisible, setDcAcRatioDialogVisible] = useState(false);
   const [tiltDialogVisible, setTiltDialogVisible] = useState(false);
   const [azimuthDialogVisible, setAzimuthDialogVisible] = useState(false);
   const [trackerDialogVisible, setTrackerDialogVisible] = useState(false);
@@ -149,6 +153,34 @@ export const SolarPanelMenu = React.memo(() => {
             }}
           >
             {i18n.t('word.Width', lang)} ...
+          </Menu.Item>
+
+          {/* inverter efficiency */}
+          {inverterEfficiencyDialogVisible && (
+            <SolarPanelInverterEfficiencyInput setDialogVisible={setInverterEfficiencyDialogVisible} />
+          )}
+          <Menu.Item
+            key={'solar-panel-inverter-efficiency'}
+            style={{ paddingLeft: '36px' }}
+            onClick={() => {
+              setApplyCount(0);
+              setInverterEfficiencyDialogVisible(true);
+            }}
+          >
+            {i18n.t('solarPanelMenu.InverterEfficiency', lang)} ...
+          </Menu.Item>
+
+          {/* DC-AC ratio */}
+          {dcAcRatioDialogVisible && <SolarPanelDcToAcRatioInput setDialogVisible={setDcAcRatioDialogVisible} />}
+          <Menu.Item
+            key={'solar-panel-dc-ac-ratio'}
+            style={{ paddingLeft: '36px' }}
+            onClick={() => {
+              setApplyCount(0);
+              setDcAcRatioDialogVisible(true);
+            }}
+          >
+            {i18n.t('solarPanelMenu.DCACRatio', lang)} ...
           </Menu.Item>
 
           {solarPanel.parentType === ObjectType.Wall && (

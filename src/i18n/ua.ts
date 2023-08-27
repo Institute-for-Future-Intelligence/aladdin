@@ -688,6 +688,7 @@ export const i18n_ua = {
       Texture09: 'Текстура 9',
       Texture10: 'Текстура 10',
       SolarPanels: 'Сонячні панелі',
+      SolarPanelArray: 'Solar Panel Array',
       DoYouReallyWantToRemoveAllSolarPanelsOnFoundation:
         'Ви дійсно бажаєте видалити всі сонячні панелі на цьому фундаменті, які не є заблокованими',
       ParabolicTroughs: 'Параболічні сонячні колектори',
@@ -733,7 +734,7 @@ export const i18n_ua = {
       AllConnectedFoundations: 'Всі пов’язані фундаменти',
       AllFoundations: 'Всі фундаменти',
       AddPolygon: 'Додати багатокутник',
-      SelectSolarStructure: 'Вибрати сонячну структуру',
+      SolarStructure: 'Вибрати сонячну структуру',
       GroupMaster: 'Груповий майстер',
       LockAllElementsOnThisFoundation: 'Заблокувати всі елементи на цьому фундаменті',
       UnlockAllElementsOnThisFoundation: 'Розблокувати всі елементи на цьому фундаменті',
@@ -978,6 +979,8 @@ export const i18n_ua = {
     },
 
     solarPanelMenu: {
+      InverterEfficiency: 'Inverter Efficiency',
+      DCACRatio: 'DC-AC Ratio',
       ChangePvModel: 'Змінити модель',
       Orientation: 'Орієнтація',
       Portrait: 'Вертикальна',

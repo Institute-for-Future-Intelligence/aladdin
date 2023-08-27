@@ -16,6 +16,8 @@ export interface SolarPanelModel extends SolarCollector {
   foundationModel?: FoundationModel;
   frameColor?: string;
   backsheetColor?: string;
+  inverterEfficiency?: number;
+  dcToAcRatio?: number;
 }
 
 export interface SolarPanelModelOnWall extends SolarPanelModel {

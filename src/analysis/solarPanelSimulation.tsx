@@ -81,7 +81,6 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
   const daysPerYear = world.daysPerYear ?? 6;
   const monthInterval = 12 / daysPerYear;
   const ray = useMemo(() => new Raycaster(), []);
-  const inverterEfficiency = 0.95;
   const dustLoss = world.dustLoss ?? 0.05;
   const cellSize = world.pvGridCellSize ?? 0.25;
   const objectsRef = useRef<Object3D[]>([]); // reuse array in intersection detection
@@ -1098,7 +1097,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
   const getElementFactor = (panel: SolarPanelModel) => {
     const pvModel = getPvModule(panel.pvModelName);
     if (!pvModel) throw new Error('PV model not found');
-    return panel.lx * panel.ly * inverterEfficiency * (1 - dustLoss);
+    return panel.lx * panel.ly * (panel.inverterEfficiency ?? 0.95) * (1 - dustLoss);
   };
 
   const updateTemperature = (currentTime: Date) => {

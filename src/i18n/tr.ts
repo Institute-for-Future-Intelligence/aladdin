@@ -686,6 +686,7 @@ export const i18n_tr = {
       Texture09: 'Doku 9',
       Texture10: 'Doku 10',
       SolarPanels: 'Güneş Panelleri',
+      SolarPanelArray: 'Solar Panel Array',
       DoYouReallyWantToRemoveAllSolarPanelsOnFoundation:
         ' Seçili temel üzerindeki tüm güneş panellerini kaldırmak istiyor musunuz?',
       ParabolicTroughs: 'Parabolik Oluklar',
@@ -731,7 +732,7 @@ export const i18n_tr = {
       AllConnectedFoundations: 'Tüm Bağlantılı Temeller',
       AllFoundations: 'Tüm Temeller',
       AddPolygon: 'Poligon Ekle',
-      SelectSolarStructure: 'Solar Yapı Seçin',
+      SolarStructure: 'Solar Yapı Seçin',
       GroupMaster: 'Grup Yöneticisi',
       LockAllElementsOnThisFoundation: ' Seçili temel üzerindeki tüm öğeleri kilitle',
       UnlockAllElementsOnThisFoundation: ' Seçili temel üzerindeki tüm öğelerin kilidini aç',
@@ -976,6 +977,8 @@ export const i18n_tr = {
     },
 
     solarPanelMenu: {
+      InverterEfficiency: 'Inverter Efficiency',
+      DCACRatio: 'DC-AC Ratio',
       ChangePvModel: 'PV Modelini Değiştir',
       Orientation: 'Oryantasyon',
       Portrait: 'Portre',

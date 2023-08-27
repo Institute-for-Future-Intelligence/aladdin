@@ -122,11 +122,14 @@ const VerticalAxis = ({
     );
   };
 
-  const money =
-    variable === 'yearlyProfit' ||
-    variable === 'unitCost' ||
-    variable === 'sellingPrice' ||
-    variable === 'totalYearlyCost';
+  const money = useMemo(() => {
+    return (
+      variable === 'yearlyProfit' ||
+      variable === 'unitCost' ||
+      variable === 'sellingPrice' ||
+      variable === 'totalYearlyCost'
+    );
+  }, [variable]);
 
   const getMin = () => {
     if (

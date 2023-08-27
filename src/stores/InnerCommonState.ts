@@ -1,3 +1,7 @@
+/*
+ * @Copyright 2023. Institute for Future Intelligence, Inc.
+ */
+
 import { CommonStoreState } from './common';
 import { ThreeEvent } from '@react-three/fiber';
 import { ActionType, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from 'src/types';

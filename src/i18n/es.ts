@@ -686,6 +686,7 @@ export const i18n_es = {
       Texture09: 'Textura 9',
       Texture10: 'Textura 10',
       SolarPanels: 'Paneles solares',
+      SolarPanelArray: 'Solar Panel Array',
       DoYouReallyWantToRemoveAllSolarPanelsOnFoundation:
         'Estás seguro que quieres eliminar todos los paneles solares en esta base that are not locked',
       ParabolicTroughs: 'Parabolic Troughs',
@@ -731,7 +732,7 @@ export const i18n_es = {
       AllConnectedFoundations: 'Todas las bases conectadas',
       AllFoundations: 'Todas las bases',
       AddPolygon: 'Añadir polígono',
-      SelectSolarStructure: 'Select Solar Structure',
+      SolarStructure: 'Solar Structure',
       GroupMaster: 'Group Master',
       LockAllElementsOnThisFoundation: 'Lock All Elements on This Foundation',
       UnlockAllElementsOnThisFoundation: 'Unlock All Elements on This Foundation',
@@ -976,6 +977,8 @@ export const i18n_es = {
     },
 
     solarPanelMenu: {
+      InverterEfficiency: 'Inverter Efficiency',
+      DCACRatio: 'DC-AC Ratio',
       ChangePvModel: 'Cambiar modelo PV',
       Orientation: 'Orientación',
       Portrait: 'Vertical',

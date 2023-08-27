@@ -683,6 +683,7 @@ export const i18n_zh_cn = {
       Texture09: '九号材质',
       Texture10: '十号材质',
       SolarPanels: '光伏板',
+      SolarPanelArray: '光伏板阵列',
       DoYouReallyWantToRemoveAllSolarPanelsOnFoundation: '你确定删除此地基上所有非固定的光伏板吗',
       ParabolicTroughs: '抛物线槽',
       DoYouReallyWantToRemoveAllParabolicTroughsOnFoundation: '你确定删除此地基上所有非固定的抛物线槽吗',
@@ -714,7 +715,7 @@ export const i18n_zh_cn = {
       AllConnectedFoundations: '所有相连的地基',
       AllFoundations: '所有的地基',
       AddPolygon: '添加多边形',
-      SelectSolarStructure: '选择太阳能构型',
+      SolarStructure: '太阳能构型',
       GroupMaster: '主地基',
       LockAllElementsOnThisFoundation: '固定此地基上所有的部件',
       UnlockAllElementsOnThisFoundation: '解除此地基上所有的固定',
@@ -953,6 +954,8 @@ export const i18n_zh_cn = {
     },
 
     solarPanelMenu: {
+      InverterEfficiency: '逆变器效率',
+      DCACRatio: '直流-交流比例',
       ChangePvModel: '改变光伏板型号',
       Orientation: '排列方向',
       Portrait: '纵向',
