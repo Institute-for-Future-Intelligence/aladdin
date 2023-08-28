@@ -38,7 +38,7 @@ export interface WorldModel {
 
   timesPerHour: number;
   daysPerYear: number;
-  dustLoss: number;
+  monthlyIrradianceLosses: number[];
   solarRadiationHeatmapGridCellSize: number;
   pvGridCellSize: number;
   discretization: Discretization;

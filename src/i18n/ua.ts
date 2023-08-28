@@ -631,6 +631,7 @@ export const i18n_ua = {
     },
 
     groundMenu: {
+      MonthlyIrradianceLoss: 'Monthly Irradiance Loss',
       Vegetation: 'Рослинність',
       LeafOutDay: 'День розпускання листя',
       LeafOffDay: 'День опадання листя',
@@ -1634,6 +1635,22 @@ export const i18n_ua = {
       Juro: 'Юрій',
       Justin: 'Богдан',
     },
+
+    month: {
+      January: 'Jan',
+      February: 'Feb',
+      March: 'Mar',
+      April: 'Apr',
+      May: 'May',
+      June: 'Jun',
+      July: 'Jul',
+      August: 'Aug',
+      September: 'Sep',
+      October: 'Oct',
+      November: 'Nov',
+      December: 'Dec',
+    },
+
     modelsMap: {
       SearchByPublisher: 'Пошук за виробником',
       SearchByLabel: 'Пошук за міткою',

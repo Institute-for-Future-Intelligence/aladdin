@@ -59,7 +59,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
   const daysPerYear = world.cspDaysPerYear ?? 6;
   const monthInterval = 12 / daysPerYear;
   const ray = useMemo(() => new Raycaster(), []);
-  const dustLoss = world.dustLoss ?? 0.05;
+  const monthlyIrradianceLosses = world.monthlyIrradianceLosses ?? new Array(12).fill(0.05);
   const cellSize = world.cspGridCellSize ?? 0.5;
   const objectsRef = useRef<Object3D[]>([]);
   const intersectionsRef = useRef<Intersection[]>([]); // reuse array in intersection detection
@@ -579,7 +579,13 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
         (absorberPipe?.absorberThermalEfficiency ?? 0.3) *
         (absorberPipe?.absorberAbsorptance ?? 0.95);
     }
-    return reflector.lx * reflector.ly * reflector.reflectance * systemEfficiency * (1 - dustLoss);
+    return (
+      reflector.lx *
+      reflector.ly *
+      reflector.reflectance *
+      systemEfficiency *
+      (1 - monthlyIrradianceLosses[now.getMonth()])
+    );
   };
 
   const inShadow = (reflectorId: string, position: Vector3, sunDirection: Vector3) => {

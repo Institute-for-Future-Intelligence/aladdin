@@ -28,7 +28,7 @@ export const timesPerHour = (state: CommonStoreState) => state.world.timesPerHou
 
 export const daysPerYear = (state: CommonStoreState) => state.world.daysPerYear;
 
-export const dustLoss = (state: CommonStoreState) => state.world.dustLoss;
+export const monthlyIrradianceLosses = (state: CommonStoreState) => state.world.monthlyIrradianceLosses;
 
 export const discretization = (state: CommonStoreState) => state.world.discretization;
 

@@ -626,6 +626,7 @@ export const i18n_zh_cn = {
     },
 
     groundMenu: {
+      MonthlyIrradianceLoss: '月份辐射度损失比',
       Vegetation: '植被',
       LeafOutDay: '树叶长出的日子',
       LeafOffDay: '树叶脱落的日子',
@@ -1607,6 +1608,22 @@ export const i18n_zh_cn = {
       Juro: '朱诺',
       Justin: '贾斯汀',
     },
+
+    month: {
+      January: '一月',
+      February: '二月',
+      March: '三月',
+      April: '四月',
+      May: '五月',
+      June: '六月',
+      July: '七月',
+      August: '八月',
+      September: '九月',
+      October: '十月',
+      November: '十一月',
+      December: '十二月',
+    },
+
     modelsMap: {
       SearchByPublisher: '按发布者搜索',
       SearchByLabel: '按标签搜索',

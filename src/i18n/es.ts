@@ -629,6 +629,7 @@ export const i18n_es = {
     },
 
     groundMenu: {
+      MonthlyIrradianceLoss: 'Monthly Irradiance Loss',
       Vegetation: 'Vegetation',
       LeafOutDay: 'Leaf-Out Day',
       LeafOffDay: 'Leaf-Off Day',
@@ -1632,6 +1633,22 @@ export const i18n_es = {
       Juro: 'Juro',
       Justin: 'Justin',
     },
+
+    month: {
+      January: 'Jan',
+      February: 'Feb',
+      March: 'Mar',
+      April: 'Apr',
+      May: 'May',
+      June: 'Jun',
+      July: 'Jul',
+      August: 'Aug',
+      September: 'Sep',
+      October: 'Oct',
+      November: 'Nov',
+      December: 'Dec',
+    },
+
     modelsMap: {
       SearchByPublisher: 'Search by publisher',
       SearchByLabel: 'Search by label',

@@ -58,7 +58,7 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
   const daysPerYear = world.cspDaysPerYear ?? 6;
   const monthInterval = 12 / daysPerYear;
   const ray = useMemo(() => new Raycaster(), []);
-  const dustLoss = world.dustLoss ?? 0.05;
+  const monthlyIrradianceLosses = world.monthlyIrradianceLosses ?? new Array(12).fill(0.05);
   const cellSize = world.cspGridCellSize ?? 0.5;
   const objectsRef = useRef<Object3D[]>([]); // reuse array in intersection detection
   const intersectionsRef = useRef<Intersection[]>([]); // reuse array in intersection detection
@@ -544,7 +544,7 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
       trough.thermalEfficiency *
       trough.absorptance *
       trough.reflectance *
-      (1 - dustLoss)
+      (1 - monthlyIrradianceLosses[now.getMonth()])
     );
   };
 

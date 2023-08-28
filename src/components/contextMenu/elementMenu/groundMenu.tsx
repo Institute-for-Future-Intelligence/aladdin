@@ -16,7 +16,7 @@ import { UndoableRemoveAll } from '../../../undo/UndoableRemoveAll';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
-import { DEFAULT_LEAF_OFF_DAY, DEFAULT_LEAF_OUT_DAY } from '../../../constants';
+import { DEFAULT_LEAF_OFF_DAY, DEFAULT_LEAF_OUT_DAY, MONTHS } from '../../../constants';
 
 export const GroundMenu = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
@@ -29,6 +29,7 @@ export const GroundMenu = React.memo(() => {
   const latitude = useStore(Selector.world.latitude);
   const leafDayOfYear1 = useStore(Selector.world.leafDayOfYear1) ?? DEFAULT_LEAF_OUT_DAY;
   const leafDayOfYear2 = useStore(Selector.world.leafDayOfYear2) ?? DEFAULT_LEAF_OFF_DAY;
+  const monthlyIrradianceLosses = useStore(Selector.world.monthlyIrradianceLosses) ?? new Array(12).fill(0.05);
   const albedo = useStore((state) => state.world.ground.albedo);
   const groundColor = useStore(Selector.viewState.groundColor);
   const groundImage = useStore(Selector.viewState.groundImage);
@@ -72,6 +73,32 @@ export const GroundMenu = React.memo(() => {
   const setAlbedo = (value: number) => {
     setCommonStore((state) => {
       state.world.ground.albedo = value;
+    });
+  };
+
+  const setMonthlyIrradianceLoss = (month: number, value: number) => {
+    const oldValue = monthlyIrradianceLosses[month];
+    const newValue = value;
+    const undoableChange = {
+      name: 'Set Irradiance Loss in ' + MONTHS[month],
+      timestamp: Date.now(),
+      oldValue: oldValue,
+      newValue: newValue,
+      undo: () => {
+        setCommonStore((state) => {
+          state.world.monthlyIrradianceLosses[month] = undoableChange.oldValue as number;
+        });
+      },
+      redo: () => {
+        setCommonStore((state) => {
+          state.world.monthlyIrradianceLosses[month] = undoableChange.newValue as number;
+        });
+      },
+    } as UndoableChange;
+    addUndoable(undoableChange);
+    setCommonStore((state) => {
+      if (!state.world.monthlyIrradianceLosses) state.world.monthlyIrradianceLosses = new Array(12).fill(0.05);
+      state.world.monthlyIrradianceLosses[month] = newValue as number;
     });
   };
 
@@ -480,6 +507,171 @@ export const GroundMenu = React.memo(() => {
                 setCommonStore((state) => {
                   state.world.leafDayOfYear2 = newDay as number;
                 });
+              }}
+            />
+          </Menu.Item>
+        </Menu>
+      </SubMenu>
+
+      <SubMenu
+        key={'monthly-irradiance-loss'}
+        title={i18n.t('groundMenu.MonthlyIrradianceLoss', { lng: language })}
+        style={{ paddingLeft: '24px' }}
+      >
+        <Menu>
+          <Menu.Item style={{ height: '36px', paddingLeft: '6px', marginTop: 10 }} key={'irradiance-loss-jan'}>
+            <InputNumber
+              addonBefore={<span style={{ fontFamily: 'monospace' }}>{i18n.t('month.January', lang)}</span>}
+              style={{ width: '120px' }}
+              min={0}
+              max={1}
+              step={0.01}
+              precision={2}
+              value={monthlyIrradianceLosses[0]}
+              onChange={(value) => {
+                setMonthlyIrradianceLoss(0, value);
+              }}
+            />
+            <InputNumber
+              addonBefore={<span style={{ fontFamily: 'monospace' }}>{i18n.t('month.February', lang)}</span>}
+              style={{ width: '120px' }}
+              min={0}
+              max={1}
+              step={0.01}
+              precision={2}
+              value={monthlyIrradianceLosses[1]}
+              onChange={(value) => {
+                setMonthlyIrradianceLoss(1, value);
+              }}
+            />
+          </Menu.Item>
+          <Menu.Item style={{ height: '36px', paddingLeft: '6px' }} key={'irradiance-loss-mar'}>
+            <InputNumber
+              addonBefore={<span style={{ fontFamily: 'monospace' }}>{i18n.t('month.March', lang)}</span>}
+              style={{ width: '120px' }}
+              min={0}
+              max={1}
+              step={0.01}
+              precision={2}
+              value={monthlyIrradianceLosses[2]}
+              onChange={(value) => {
+                setMonthlyIrradianceLoss(2, value);
+              }}
+            />
+            <InputNumber
+              addonBefore={<span style={{ fontFamily: 'monospace' }}>{i18n.t('month.April', lang)}</span>}
+              style={{ width: '120px' }}
+              min={0}
+              max={1}
+              step={0.01}
+              precision={2}
+              value={monthlyIrradianceLosses[3]}
+              onChange={(value) => {
+                setMonthlyIrradianceLoss(3, value);
+              }}
+            />
+          </Menu.Item>
+          <Menu.Item style={{ height: '36px', paddingLeft: '6px' }} key={'irradiance-loss-may'}>
+            <InputNumber
+              addonBefore={<span style={{ fontFamily: 'monospace' }}>{i18n.t('month.May', lang)}</span>}
+              style={{ width: '120px' }}
+              min={0}
+              max={1}
+              step={0.01}
+              precision={2}
+              value={monthlyIrradianceLosses[4]}
+              onChange={(value) => {
+                setMonthlyIrradianceLoss(4, value);
+              }}
+            />
+            <InputNumber
+              addonBefore={<span style={{ fontFamily: 'monospace' }}>{i18n.t('month.June', lang)}</span>}
+              style={{ width: '120px' }}
+              min={0}
+              max={1}
+              step={0.01}
+              precision={2}
+              value={monthlyIrradianceLosses[5]}
+              onChange={(value) => {
+                setMonthlyIrradianceLoss(5, value);
+              }}
+            />
+          </Menu.Item>
+          <Menu.Item style={{ height: '36px', paddingLeft: '6px' }} key={'irradiance-loss-jul'}>
+            <InputNumber
+              addonBefore={<span style={{ fontFamily: 'monospace' }}>{i18n.t('month.July', lang)}</span>}
+              style={{ width: '120px' }}
+              min={0}
+              max={1}
+              step={0.01}
+              precision={2}
+              value={monthlyIrradianceLosses[6]}
+              onChange={(value) => {
+                setMonthlyIrradianceLoss(6, value);
+              }}
+            />
+            <InputNumber
+              addonBefore={<span style={{ fontFamily: 'monospace' }}>{i18n.t('month.August', lang)}</span>}
+              style={{ width: '120px' }}
+              min={0}
+              max={1}
+              step={0.01}
+              precision={2}
+              value={monthlyIrradianceLosses[7]}
+              onChange={(value) => {
+                setMonthlyIrradianceLoss(7, value);
+              }}
+            />
+          </Menu.Item>
+          <Menu.Item style={{ height: '36px', paddingLeft: '6px' }} key={'irradiance-loss-sep'}>
+            <InputNumber
+              addonBefore={<span style={{ fontFamily: 'monospace' }}>{i18n.t('month.September', lang)}</span>}
+              style={{ width: '120px' }}
+              min={0}
+              max={1}
+              step={0.01}
+              precision={2}
+              value={monthlyIrradianceLosses[8]}
+              onChange={(value) => {
+                setMonthlyIrradianceLoss(8, value);
+              }}
+            />
+            <InputNumber
+              addonBefore={<span style={{ fontFamily: 'monospace' }}>{i18n.t('month.October', lang)}</span>}
+              style={{ width: '120px' }}
+              min={0}
+              max={1}
+              step={0.01}
+              precision={2}
+              value={monthlyIrradianceLosses[9]}
+              onChange={(value) => {
+                setMonthlyIrradianceLoss(9, value);
+              }}
+            />
+          </Menu.Item>
+          <Menu.Item style={{ height: '36px', paddingLeft: '6px' }} key={'irradiance-loss-nov'}>
+            <InputNumber
+              addonBefore={<span style={{ fontFamily: 'monospace' }}>{i18n.t('month.November', lang)}</span>}
+              style={{ width: '120px' }}
+              min={0}
+              max={1}
+              step={0.01}
+              precision={2}
+              value={monthlyIrradianceLosses[10]}
+              onChange={(value) => {
+                setMonthlyIrradianceLoss(10, value);
+              }}
+            />
+            <InputNumber
+              addonBefore={<span style={{ fontFamily: 'monospace' }}>{i18n.t('month.December', lang)}</span>}
+              style={{ width: '120px' }}
+              min={0}
+              max={1}
+              step={0.01}
+              precision={2}
+              value={monthlyIrradianceLosses[11]}
+              onChange={(value) => {
+                setMonthlyIrradianceLoss(11, value);
               }}
             />
           </Menu.Item>

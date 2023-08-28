@@ -33,7 +33,7 @@ export class DefaultWorldModel implements WorldModel {
   airConvectiveCoefficient: number;
   timesPerHour: number;
   daysPerYear: number;
-  dustLoss: number;
+  monthlyIrradianceLosses: number[];
   pvGridCellSize: number;
   discretization: Discretization;
   diurnalTemperatureModel: DiurnalTemperatureModel;
@@ -79,7 +79,7 @@ export class DefaultWorldModel implements WorldModel {
 
     this.timesPerHour = 1; // how many times per hour to collect data
     this.daysPerYear = 12; // how many days per year for sampling
-    this.dustLoss = 0.05;
+    this.monthlyIrradianceLosses = new Array(12).fill(0.05);
     this.pvGridCellSize = 0.5;
     this.discretization = Discretization.APPROXIMATE;
     this.diurnalTemperatureModel = DiurnalTemperatureModel.Sinusoidal;
@@ -120,7 +120,7 @@ export class DefaultWorldModel implements WorldModel {
 
     worldModel.timesPerHour = 1; // how many times per hour to collect data
     worldModel.daysPerYear = 12; // how many days per year for sampling
-    worldModel.dustLoss = 0.05;
+    worldModel.monthlyIrradianceLosses = new Array(12).fill(0.05);
     worldModel.pvGridCellSize = 0.5;
     worldModel.discretization = Discretization.APPROXIMATE;
     worldModel.diurnalTemperatureModel = DiurnalTemperatureModel.Sinusoidal;

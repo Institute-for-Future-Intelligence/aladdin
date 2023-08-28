@@ -112,7 +112,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const now = useMemo(() => new Date(world.date), [world.date]);
 
   const elevation = city ? weather?.elevation : 0;
-  const dustLoss = world.dustLoss ?? 0.05;
+  const monthlyIrradianceLosses = world.monthlyIrradianceLosses ?? new Array(12).fill(0.05);
   const timesPerHour = world.timesPerHour ?? 4;
   const minuteInterval = 60 / timesPerHour;
   const daysPerYear = world.daysPerYear ?? 6;
@@ -604,7 +604,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     }
   };
 
-  const getPanelEfficiency = (temperature: number, panel: SolarPanelModel, pvModel: PvModel) => {
+  const getPanelEfficiency = (temperature: number, pvModel: PvModel) => {
     let e = pvModel.efficiency;
     if (pvModel.cellType === 'Monocrystalline') {
       e *= 0.95; // assuming that the packing density factor of semi-round cells is 0.95
@@ -620,11 +620,10 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     return daylight > ZERO_TOLERANCE ? weather.sunshineHours[now.getMonth()] / (30 * daylight * timesPerHour) : 0;
   };
 
-  const inverterEfficiency = 0.95;
   const getElementFactor = (panel: SolarPanelModel) => {
     const pvModel = getPvModule(panel.pvModelName);
     if (!pvModel) throw new Error('PV model not found');
-    return panel.lx * panel.ly * inverterEfficiency * (1 - dustLoss);
+    return panel.lx * panel.ly * (panel.inverterEfficiency ?? 0.95) * (1 - monthlyIrradianceLosses[now.getMonth()]);
   };
 
   const calculateSolarPanel = (panel: SolarPanelModel) => {
@@ -647,7 +646,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
             distanceToClosestObject,
           );
           const factor =
-            getPanelEfficiency(currentOutsideTemperatureRef.current, panel, pvModel) *
+            getPanelEfficiency(currentOutsideTemperatureRef.current, pvModel) *
             getTimeFactor() *
             getElementFactor(panel);
           updateSolarPanelOutputNow(foundation.id, results.average * factor);

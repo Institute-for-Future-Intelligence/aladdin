@@ -31,7 +31,7 @@ export interface SolarPanelSimulationProps {
   city: string | null;
 }
 
-const getPanelEfficiency = (temperature: number, panel: SolarPanelModel, pvModel: PvModel) => {
+const getPanelEfficiency = (temperature: number, pvModel: PvModel) => {
   let e = pvModel.efficiency;
   if (pvModel.cellType === 'Monocrystalline') {
     e *= 0.95; // assuming that the packing density factor of semi-round cells is 0.95
@@ -81,7 +81,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
   const daysPerYear = world.daysPerYear ?? 6;
   const monthInterval = 12 / daysPerYear;
   const ray = useMemo(() => new Raycaster(), []);
-  const dustLoss = world.dustLoss ?? 0.05;
+  const monthlyIrradianceLosses = world.monthlyIrradianceLosses ?? new Array(12).fill(0.05);
   const cellSize = world.pvGridCellSize ?? 0.25;
   const objectsRef = useRef<Object3D[]>([]); // reuse array in intersection detection
   const intersectionsRef = useRef<Intersection[]>([]); // reuse array in intersection detection
@@ -759,7 +759,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
           // Nice demo at: https://www.youtube.com/watch?v=UNPJapaZlCU
           let sum = 0;
           updateTemperature(currentTime);
-          const eff = getPanelEfficiency(currentTemperatureRef.current, panel, pvModel);
+          const eff = getPanelEfficiency(currentTemperatureRef.current, pvModel);
           switch (pvModel.shadeTolerance) {
             case ShadeTolerance.NONE:
               // all the cells are connected in a single series,
@@ -1048,7 +1048,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     const output = dailyOutputsMapRef.current.get(panel.id);
     if (output) {
       updateTemperature(now);
-      const eff = getPanelEfficiency(currentTemperatureRef.current, panel, pvModel);
+      const eff = getPanelEfficiency(currentTemperatureRef.current, pvModel);
       // the output is the average radiation intensity. if the minutes are greater than 30 or 30, it is counted
       // as the measurement of the next hour to maintain the symmetry around noon
       const index = now.getMinutes() >= 30 ? (now.getHours() + 1 === 24 ? 0 : now.getHours() + 1) : now.getHours();
@@ -1097,7 +1097,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
   const getElementFactor = (panel: SolarPanelModel) => {
     const pvModel = getPvModule(panel.pvModelName);
     if (!pvModel) throw new Error('PV model not found');
-    return panel.lx * panel.ly * (panel.inverterEfficiency ?? 0.95) * (1 - dustLoss);
+    return panel.lx * panel.ly * (panel.inverterEfficiency ?? 0.95) * (1 - monthlyIrradianceLosses[now.getMonth()]);
   };
 
   const updateTemperature = (currentTime: Date) => {
