@@ -306,7 +306,7 @@ const SolarPanel = ({
               'ZXY',
             );
           case TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER:
-            return new Euler(0, Math.atan2(rotatedSunDirection.x, rotatedSunDirection.z), 0, 'ZXY');
+            return new Euler(0, Math.atan2(rotatedSunDirection.x, rotatedSunDirection.z), lx < ly ? 0 : HALF_PI, 'XYZ');
           case TrackerType.VERTICAL_SINGLE_AXIS_TRACKER:
             return new Euler(tiltAngle, 0, Math.atan2(rotatedSunDirection.y, rotatedSunDirection.x) + HALF_PI, 'ZXY');
         }
@@ -321,7 +321,14 @@ const SolarPanel = ({
     return drawSunBeam
       ? v
           .fromArray(normal)
-          .applyEuler(new Euler(relativeEuler.x, relativeEuler.y, relativeEuler.z + rotation[2], 'ZXY'))
+          .applyEuler(
+            new Euler(
+              relativeEuler.x,
+              relativeEuler.y,
+              relativeEuler.z + rotation[2] + (lx < ly ? 0 : HALF_PI),
+              lx < ly ? 'ZXY' : 'XYZ',
+            ),
+          )
       : v;
   }, [drawSunBeam, normal, euler, relativeEuler]);
 
@@ -879,7 +886,12 @@ const SolarPanel = ({
           />
           <group
             position={normalVector.clone().multiplyScalar(0.75)}
-            rotation={[HALF_PI + euler.x + relativeEuler.x, 0, euler.z + relativeEuler.z, 'ZXY']}
+            rotation={[
+              HALF_PI + euler.x + relativeEuler.x,
+              0,
+              euler.z + relativeEuler.z + (lx < ly ? 0 : -HALF_PI),
+              lx < ly ? 'ZXY' : 'XYZ',
+            ]}
           >
             <Cone
               userData={{ unintersectable: true }}

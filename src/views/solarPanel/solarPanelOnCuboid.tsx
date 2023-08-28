@@ -149,7 +149,7 @@ const SolarPanelOnCuboid = (solarPanelModel: SolarPanelModel) => {
             'ZXY',
           );
         case TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER:
-          return new Euler(0, Math.atan2(sunDirection.x, sunDirection.z), -rot, 'ZXY');
+          return new Euler(0, Math.atan2(sunDirection.x, sunDirection.z), -rot + (lx < ly ? 0 : HALF_PI), 'XYZ');
         case TrackerType.VERTICAL_SINGLE_AXIS_TRACKER:
           return new Euler(tiltAngle, 0, Math.atan2(sunDirection.y, sunDirection.x) + HALF_PI - rot, 'ZXY');
       }

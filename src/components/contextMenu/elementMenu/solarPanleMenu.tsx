@@ -24,7 +24,7 @@ import SolarPanelPoleHeightInput from './solarPanelPoleHeightInput';
 import SolarPanelPoleSpacingInput from './solarPanelPoleSpacingInput';
 import SolarPanelFrameColorSelection from './solarPanelFrameColorSelection';
 import { UNIT_VECTOR_POS_Z } from '../../../constants';
-import { ObjectType } from '../../../types';
+import { ObjectType, TrackerType } from '../../../types';
 import {
   useLabel,
   useLabelColor,
@@ -208,16 +208,18 @@ export const SolarPanelMenu = React.memo(() => {
           {panelNormal && Util.isSame(panelNormal, UNIT_VECTOR_POS_Z) && (
             <>
               {/* tilt angle */}
-              <Menu.Item
-                key={'solar-panel-tilt-angle'}
-                style={{ paddingLeft: '36px' }}
-                onClick={() => {
-                  setApplyCount(0);
-                  setTiltDialogVisible(true);
-                }}
-              >
-                {i18n.t('solarPanelMenu.TiltAngle', lang)} ...
-              </Menu.Item>
+              {solarPanel.trackerType === TrackerType.NO_TRACKER && (
+                <Menu.Item
+                  key={'solar-panel-tilt-angle'}
+                  style={{ paddingLeft: '36px' }}
+                  onClick={() => {
+                    setApplyCount(0);
+                    setTiltDialogVisible(true);
+                  }}
+                >
+                  {i18n.t('solarPanelMenu.TiltAngle', lang)} ...
+                </Menu.Item>
+              )}
 
               {/* relative azimuth to the parent element */}
               {azimuthDialogVisible && <SolarPanelRelativeAzimuthInput setDialogVisible={setAzimuthDialogVisible} />}

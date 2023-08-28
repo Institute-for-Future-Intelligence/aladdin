@@ -124,6 +124,8 @@ export class SolarRadiation {
         case TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER:
           const qRotAADAT = new Quaternion().setFromUnitVectors(UNIT_VECTOR_POS_Z, rotatedSunDirection);
           normalEuler = new Euler().setFromQuaternion(qRotAADAT);
+          // the default order is XYZ, so we rotate the relative azimuth below using the z-component
+          normalEuler.z += zRot;
           break;
         case TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER:
           const qRotHSAT = new Quaternion().setFromUnitVectors(
@@ -131,6 +133,8 @@ export class SolarRadiation {
             new Vector3(rotatedSunDirection.x, 0, rotatedSunDirection.z).normalize(),
           );
           normalEuler = new Euler().setFromQuaternion(qRotHSAT);
+          // the default order is XYZ, so we rotate the relative azimuth below using the z-component
+          normalEuler.z += zRot;
           break;
         case TrackerType.VERTICAL_SINGLE_AXIS_TRACKER:
           const v2 = new Vector3(rotatedSunDirection.x, -rotatedSunDirection.y, 0).normalize();
