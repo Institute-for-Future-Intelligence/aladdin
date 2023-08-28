@@ -35,6 +35,7 @@ import { useSolarPanelHeatmapTexture, useSolarPanelTexture } from './hooks';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { PvModel } from 'src/models/PvModel';
 import { ElementModel } from 'src/models/ElementModel';
+import { useSelected } from '../hooks';
 
 interface SunbeamProps {
   drawSunbeam: boolean;
@@ -354,7 +355,6 @@ const SolarPanelOnWall = ({
   ly,
   lz,
   color = 'white',
-  selected = false,
   locked = false,
   parentId,
   foundationId,
@@ -367,7 +367,8 @@ const SolarPanelOnWall = ({
 }: SolarPanelModelOnWall) => {
   tiltAngle = Math.min(0, tiltAngle);
 
-  const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
+  const selected = useSelected(id);
+
   const setCommonStore = useStore(Selector.set);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);

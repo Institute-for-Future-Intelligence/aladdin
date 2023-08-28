@@ -32,6 +32,7 @@ import { useRefStore } from 'src/stores/commonRef';
 import { HumanData } from '../HumanData';
 import { Util } from '../Util';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
+import { useSelected } from './hooks';
 
 const Human = ({
   id,
@@ -39,7 +40,6 @@ const Human = ({
   cy,
   cz,
   name = HumanName.Jack,
-  selected = false,
   locked = false,
   flip = false,
   observer = false,
@@ -72,6 +72,8 @@ const Human = ({
   const getElementById = useStore(Selector.getElementById);
   const moveHandleType = useStore(Selector.moveHandleType);
   const hoveredHandle = useStore(Selector.hoveredHandle);
+
+  const selected = useSelected(id);
 
   const { gl } = useThree();
   const [hovered, setHovered] = useState(false);

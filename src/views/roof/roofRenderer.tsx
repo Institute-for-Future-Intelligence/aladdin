@@ -220,7 +220,11 @@ export const handleRoofBodyPointerDown = (e: ThreeEvent<PointerEvent>, id: strin
     useStore.getState().set((state) => {
       if (state.groupActionMode) {
         for (const e of state.elements) {
-          e.selected = e.id === foundationId;
+          if (e.id === foundationId) {
+            e.selected = true;
+          } else {
+            e.selected = false;
+          }
         }
         state.groupMasterId = foundationId;
       } else {
@@ -228,6 +232,10 @@ export const handleRoofBodyPointerDown = (e: ThreeEvent<PointerEvent>, id: strin
           if (e.id === id) {
             e.selected = true;
             state.selectedElement = e;
+            if (!state.multiSelectionsMode) {
+              state.selectedElementIdSet.clear();
+            }
+            state.selectedElementIdSet.add(e.id);
           } else {
             e.selected = false;
           }
@@ -495,6 +503,10 @@ export const handleContextMenu = (e: ThreeEvent<MouseEvent>, id: string) => {
         if (e.id === id) {
           e.selected = true;
           state.selectedElement = e;
+          if (!state.multiSelectionsMode) {
+            state.selectedElementIdSet.clear();
+          }
+          state.selectedElementIdSet.add(e.id);
         } else {
           e.selected = false;
         }

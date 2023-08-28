@@ -29,7 +29,7 @@ export const CUBOID_WRAPPER_NAME = 'Cuboid Wrapper';
 export const CUBOID_STACKABLE_CHILD = 'Cuboid Stackable Child';
 
 const CuboidRenderer = ({ elements, cuboidModel }: CuboidRendererProps) => {
-  const { id, parentId, cx, cy, lz, rotation, selected, locked } = cuboidModel;
+  const { id, parentId, cx, cy, lz, rotation, locked } = cuboidModel;
 
   const groupMasterId = useStore(Selector.groupMasterId);
 

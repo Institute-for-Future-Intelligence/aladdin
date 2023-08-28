@@ -27,6 +27,7 @@ import { LineData } from './LineData';
 import { ParabolicCylinder } from './shapes';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
+import { useSelected } from './hooks';
 
 const ParabolicTrough = ({
   id,
@@ -49,7 +50,6 @@ const ParabolicTrough = ({
   color = 'white',
   lineColor = 'black',
   lineWidth = 0.5,
-  selected = false,
   showLabel = false,
   locked = false,
   parentId,
@@ -68,6 +68,8 @@ const ParabolicTrough = ({
   const sceneRadius = useStore(Selector.sceneRadius);
   const resizeHandleType = useStore(Selector.resizeHandleType);
   const sunlightDirection = useStore(Selector.sunlightDirection);
+
+  const selected = useSelected(id);
 
   const {
     gl: { domElement },

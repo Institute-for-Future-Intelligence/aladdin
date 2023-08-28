@@ -14,6 +14,7 @@ import { ActionType, MoveHandleType, ObjectType } from '../types';
 import { Util } from '../Util';
 import i18n from '../i18n/i18n';
 import { WindTurbineModel } from '../models/WindTurbineModel';
+import { useSelected } from './hooks';
 
 const WindTurbine = ({
   id,
@@ -30,7 +31,6 @@ const WindTurbine = ({
   color = 'white',
   lineColor = 'black',
   lineWidth = 0.5,
-  selected = false,
   showLabel = false,
   locked = false,
   parentId,
@@ -38,6 +38,7 @@ const WindTurbine = ({
   const language = useStore(Selector.language);
   const getElementById = useStore(Selector.getElementById);
   const selectMe = useStore(Selector.selectMe);
+  const selected = useSelected(id);
 
   const {
     gl: { domElement },

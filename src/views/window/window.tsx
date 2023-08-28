@@ -20,6 +20,7 @@ import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useRefStore } from 'src/stores/commonRef';
 import { ElementModel } from 'src/models/ElementModel';
 import PolygonalWindow from './polygonalWindow';
+import { useSelected } from '../hooks';
 
 export const defaultShutter = { showLeft: false, showRight: false, color: 'grey', width: 0.5 };
 
@@ -172,7 +173,6 @@ const Window = (windowModel: WindowModel) => {
     ly,
     lz,
     rotation,
-    selected,
     locked,
     lineWidth = 0.2,
     lineColor = 'black',
@@ -202,12 +202,18 @@ const Window = (windowModel: WindowModel) => {
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const windowShininess = useStore(Selector.viewState.windowShininess);
 
+  const selected = useSelected(id);
+
   const selectMe = () => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id) {
           e.selected = true;
           state.selectedElement = e;
+          if (!state.multiSelectionsMode) {
+            state.selectedElementIdSet.clear();
+          }
+          state.selectedElementIdSet.add(e.id);
         } else {
           e.selected = false;
         }

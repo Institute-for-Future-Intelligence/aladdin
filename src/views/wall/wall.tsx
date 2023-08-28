@@ -61,6 +61,7 @@ import { UndoableChange } from '../../undo/UndoableChange';
 import Parapet, { DEFAULT_PARAPET_SETTINGS } from './parapet';
 import { InnerCommonState } from 'src/stores/InnerCommonState';
 import WallHeatFlux from './wallHeatFlux';
+import { useSelected } from '../hooks';
 
 export const WALL_BLOCK_PLANE = 'Wall Block Plane';
 
@@ -122,7 +123,6 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     lineColor = 'black',
     lineWidth = 0.2,
     parentId,
-    selected = false,
     locked = false,
     roofId,
     leftRoofHeight,
@@ -149,6 +149,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   rightRoofHeight = rightJoints.length > 0 ? rightRoofHeight : lz;
 
   const texture = useWallTexture(textureType);
+
+  const selected = useSelected(id);
 
   // common store
   const setCommonStore = useStore(Selector.set);
@@ -2162,7 +2164,11 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       if (useStore.getState().groupActionMode) {
         setCommonStore((state) => {
           for (const e of state.elements) {
-            e.selected = e.id === parentId;
+            if (e.id === parentId) {
+              e.selected = true;
+            } else {
+              e.selected = false;
+            }
           }
           state.groupMasterId = parentId;
         });

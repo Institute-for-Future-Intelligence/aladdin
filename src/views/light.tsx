@@ -30,6 +30,7 @@ import { RoofModel } from '../models/RoofModel';
 import { useRefStore } from 'src/stores/commonRef';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import { getRotationFromNormal } from './solarPanel/solarPanelOnCuboid';
+import { useSelected } from './hooks';
 
 const Light = (lightModel: LightModel) => {
   let {
@@ -45,7 +46,6 @@ const Light = (lightModel: LightModel) => {
     color = '#ffff99',
     lineColor = 'black',
     lineWidth = 0.1,
-    selected = false,
     locked = false,
     showLabel = false,
     parentId,
@@ -62,6 +62,7 @@ const Light = (lightModel: LightModel) => {
   const selectMe = useStore(Selector.selectMe);
   const sunlightDirection = useStore(Selector.sunlightDirection);
   const night = sunlightDirection.z <= 0;
+  const selected = useSelected(id);
 
   const {
     gl: { domElement },

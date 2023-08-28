@@ -10,6 +10,7 @@ import WallMoveHandleWrapper from './wallMoveHandleWrapper';
 import WallResizeHandleWrapper from './wallResizeHandleWrapper';
 import { useUpdateOldFiles } from './hooks';
 import { FoundationModel } from 'src/models/FoundationModel';
+import { useSelected } from '../hooks';
 
 interface WallRendererProps {
   wallModel: WallModel;
@@ -29,7 +30,6 @@ const WallRenderer = ({ wallModel, foundationModel }: WallRendererProps) => {
     lz,
     relativeAngle,
     fill,
-    selected,
     locked,
     leftUnfilledHeight,
     rightUnfilledHeight,
@@ -38,6 +38,8 @@ const WallRenderer = ({ wallModel, foundationModel }: WallRendererProps) => {
     leftJoints,
     rightJoints,
   } = wallModel;
+
+  const selected = useSelected(id);
 
   const [hx, hz] = [lx / 2, lz / 2];
 

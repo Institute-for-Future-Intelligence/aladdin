@@ -36,6 +36,7 @@ import { useRefStore } from 'src/stores/commonRef';
 import { Util } from '../Util';
 import { TreeData } from '../TreeData';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
+import { useSelected } from './hooks';
 
 const Tree = ({
   parentId,
@@ -47,7 +48,6 @@ const Tree = ({
   lz,
   name = TreeType.Pine,
   flip = false,
-  selected = false,
   locked = false,
   showModel = false,
   showLabel = false,
@@ -85,6 +85,8 @@ const Tree = ({
   const moveHandleType = useStore(Selector.moveHandleType);
   const resizeHandleType = useStore(Selector.resizeHandleType);
   const hoveredHandle = useStore(Selector.hoveredHandle);
+
+  const selected = useSelected(id);
 
   const [hovered, setHovered] = useState(false);
   const [updateFlag, setUpdateFlag] = useState(false);

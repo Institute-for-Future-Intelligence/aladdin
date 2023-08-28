@@ -66,6 +66,7 @@ import Handles from './handles';
 import { ElementModelFactory } from 'src/models/ElementModelFactory';
 import { getSolarPanelUnitLength } from '../wall/wall';
 import { isSolarPanelOnTopFace } from '../solarPanel/solarPanelOnCuboid';
+import { useSelected } from '../hooks';
 
 const Cuboid = (cuboidModel: CuboidModel) => {
   const {
@@ -75,11 +76,9 @@ const Cuboid = (cuboidModel: CuboidModel) => {
     lx = 1,
     ly = 1,
     lz = 1,
-    rotation = [0, 0, 0],
     color = 'silver',
     lineColor = 'black',
     lineWidth = 0.1,
-    selected = false,
     locked = false,
     showLabel = false,
     textureTypes = [
@@ -92,6 +91,8 @@ const Cuboid = (cuboidModel: CuboidModel) => {
     ],
     stackable,
   } = cuboidModel;
+
+  const selected = useSelected(id);
 
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);

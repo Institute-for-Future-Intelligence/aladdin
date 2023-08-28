@@ -75,7 +75,7 @@ import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import { InnerCommonState } from 'src/stores/InnerCommonState';
 import produce from 'immer';
 import { useDataStore } from '../../stores/commonData';
-import { useGroupMaster } from '../hooks';
+import { useGroupMaster, useSelected } from '../hooks';
 import { debounce } from 'lodash';
 import BuildingRenderer from './buildingRenderer';
 
@@ -107,11 +107,12 @@ const Foundation = (foundationModel: FoundationModel) => {
     lineColor = 'black',
     lineWidth = 0.2,
     locked = false,
-    selected = false,
     showLabel = false,
     textureType = FoundationTexture.NoTexture,
     solarStructure,
   } = foundationModel;
+
+  const selected = useSelected(id);
 
   const language = useStore(Selector.language);
   const orthographic = useStore(Selector.viewState.orthographic);

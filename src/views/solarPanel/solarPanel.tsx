@@ -45,6 +45,7 @@ import { LineData } from '../LineData';
 import { useSolarPanelHeatmapTexture, useSolarPanelTexture } from './hooks';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { PvModel } from 'src/models/PvModel';
+import { useSelected } from '../hooks';
 
 const SolarPanel = ({
   id,
@@ -67,7 +68,6 @@ const SolarPanel = ({
   color = 'white',
   lineColor = 'black',
   lineWidth = 0.1,
-  selected = false,
   showLabel = false,
   locked = false,
   parentId,
@@ -90,6 +90,8 @@ const SolarPanel = ({
   const addUndoable = useStore(Selector.addUndoable);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
   const pvModules = useStore(Selector.pvModules);
+
+  const selected = useSelected(id);
 
   const {
     gl: { domElement },

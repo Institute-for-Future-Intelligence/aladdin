@@ -31,6 +31,7 @@ import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
 import { useRefStore } from 'src/stores/commonRef';
 import { ElementModel } from 'src/models/ElementModel';
+import { useSelected } from '../hooks';
 
 interface DoorHandleWrapperProps {
   dimension: number[];
@@ -98,7 +99,6 @@ const Door = (doorModel: DoorModel) => {
     ly,
     lz,
     textureType,
-    selected = false,
     locked = false,
     color = 'white',
     doorType = DoorType.Default,
@@ -113,6 +113,8 @@ const Door = (doorModel: DoorModel) => {
   const setCommonStore = useStore(Selector.set);
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const windowShininess = useStore(Selector.viewState.windowShininess);
+
+  const selected = useSelected(id);
 
   const selectMe = () => {
     setCommonStore((state) => {

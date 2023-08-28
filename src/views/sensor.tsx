@@ -29,6 +29,7 @@ import { FoundationModel } from '../models/FoundationModel';
 import { useRefStore } from 'src/stores/commonRef';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import { getRotationFromNormal } from './solarPanel/solarPanelOnCuboid';
+import { useSelected } from './hooks';
 
 const Sensor = (sensorModel: SensorModel) => {
   let {
@@ -44,7 +45,6 @@ const Sensor = (sensorModel: SensorModel) => {
     color = 'white',
     lineColor = 'black',
     lineWidth = 0.1,
-    selected = false,
     locked = false,
     showLabel = false,
     parentId,
@@ -57,6 +57,7 @@ const Sensor = (sensorModel: SensorModel) => {
   const language = useStore(Selector.language);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const selectMe = useStore(Selector.selectMe);
+  const selected = useSelected(id);
 
   const {
     gl: { domElement },

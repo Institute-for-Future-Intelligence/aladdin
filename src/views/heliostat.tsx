@@ -18,6 +18,7 @@ import { FoundationModel } from '../models/FoundationModel';
 import { HeliostatModel } from '../models/HeliostatModel';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
+import { useSelected } from './hooks';
 
 const Heliostat = ({
   id,
@@ -37,7 +38,6 @@ const Heliostat = ({
   color = 'white',
   lineColor = 'black',
   lineWidth = 0.5,
-  selected = false,
   showLabel = false,
   locked = false,
   parentId,
@@ -55,6 +55,8 @@ const Heliostat = ({
   const getElementById = useStore(Selector.getElementById);
   const selectMe = useStore(Selector.selectMe);
   const sceneRadius = useStore(Selector.sceneRadius);
+
+  const selected = useSelected(id);
 
   const {
     gl: { domElement },

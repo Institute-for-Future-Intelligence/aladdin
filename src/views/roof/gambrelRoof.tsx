@@ -52,6 +52,7 @@ import FlatRoof from './flatRoof';
 import { WindowModel, WindowType } from 'src/models/WindowModel';
 import { DEFAULT_POLYGONTOP } from '../window/window';
 import shallow from 'zustand/shallow';
+import { useSelected } from '../hooks';
 
 type RoofEdge = {
   start: number;
@@ -222,7 +223,6 @@ const GambrelRoof = ({ roofModel, foundationModel }: GambrelRoofProps) => {
     topRidgePoint,
     frontRidgePoint,
     backRidgePoint,
-    selected,
     textureType,
     color = 'white',
     sideColor = 'white',
@@ -244,6 +244,8 @@ const GambrelRoof = ({ roofModel, foundationModel }: GambrelRoofProps) => {
   if (backRidgePoint === undefined) {
     backRidgePoint = backRidgeLeftPoint ? [...backRidgeLeftPoint] : [0.35, 0.5];
   }
+
+  const selected = useSelected(id);
 
   const setCommonStore = useStore(Selector.set);
   const removeElementById = useStore(Selector.removeElementById);

@@ -66,6 +66,7 @@ import FlatRoof, { TopExtrude } from './flatRoof';
 import { BuildingParts, FoundationModel } from '../../models/FoundationModel';
 import shallow from 'zustand/shallow';
 import { WindowModel } from 'src/models/WindowModel';
+import { useSelected } from '../hooks';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -131,7 +132,6 @@ const MansardRoof = ({ roofModel, foundationModel }: MansardRoofProps) => {
     cx,
     cy,
     lz,
-    selected,
     textureType,
     color = 'white',
     sideColor = 'white',
@@ -150,6 +150,8 @@ const MansardRoof = ({ roofModel, foundationModel }: MansardRoofProps) => {
   } = roofModel;
 
   const texture = useRoofTexture(textureType);
+
+  const selected = useSelected(id);
 
   const setCommonStore = useStore(Selector.set);
   const removeElementById = useStore(Selector.removeElementById);

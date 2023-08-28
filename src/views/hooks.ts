@@ -179,7 +179,6 @@ export const useGroupMaster = (elementModel: GroupableModel, groupMasterId: stri
 };
 
 export const useSelected = (id: string) => {
-  const selectedIdSet = useStore((state) => state.selectedElementIdSet);
-  const selected = useMemo(() => selectedIdSet.has(id), [selectedIdSet]);
+  const selected = useStore((state) => state.selectedElementIdSet.has(id));
   return selected;
 };

@@ -28,6 +28,7 @@ import { FresnelReflectorModel } from '../models/FresnelReflectorModel';
 import { FoundationModel } from '../models/FoundationModel';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
+import { useSelected } from './hooks';
 
 const FresnelReflector = ({
   id,
@@ -48,7 +49,6 @@ const FresnelReflector = ({
   color = 'white',
   lineColor = 'black',
   lineWidth = 0.5,
-  selected = false,
   showLabel = false,
   locked = false,
   parentId,
@@ -67,6 +67,8 @@ const FresnelReflector = ({
   const selectMe = useStore(Selector.selectMe);
   const sceneRadius = useStore(Selector.sceneRadius);
   const resizeHandleType = useStore(Selector.resizeHandleType);
+
+  const selected = useSelected(id);
 
   const {
     gl: { domElement },

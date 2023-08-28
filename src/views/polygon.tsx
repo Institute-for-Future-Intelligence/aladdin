@@ -40,6 +40,7 @@ import { PolygonModel } from '../models/PolygonModel';
 import { Point2 } from '../models/Point2';
 import { useRefStore } from '../stores/commonRef';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { useSelected } from './hooks';
 
 const Polygon = ({
   id,
@@ -59,7 +60,6 @@ const Polygon = ({
   lineStyle = LineStyle.Solid,
   lineColor = 'black',
   lineWidth = 1,
-  selected = false,
   locked = false,
   showLabel = false,
   parentId,
@@ -76,6 +76,8 @@ const Polygon = ({
   const selectMe = useStore(Selector.selectMe);
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
+
+  const selected = useSelected(id);
 
   const {
     gl: { domElement },

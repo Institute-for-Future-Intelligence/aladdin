@@ -72,6 +72,7 @@ import Ceiling from './ceiling';
 import { WindowModel, WindowType } from 'src/models/WindowModel';
 import { WallHeights, isRoofValid } from './gambrelRoof';
 import shallow from 'zustand/shallow';
+import { useSelected } from '../hooks';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -316,7 +317,6 @@ const GableRoof = ({ roofModel, foundationModel }: GableRoofProps) => {
     thickness = 0.2,
     ridgeLeftPoint,
     ridgeRightPoint,
-    selected,
     textureType,
     color = 'white',
     sideColor = 'white',
@@ -333,6 +333,8 @@ const GableRoof = ({ roofModel, foundationModel }: GableRoofProps) => {
   } = roofModel;
   const setCommonStore = useStore(Selector.set);
   const removeElementById = useStore(Selector.removeElementById);
+
+  const selected = useSelected(id);
 
   const { gl, camera } = useThree();
   const ray = useMemo(() => new Raycaster(), []);

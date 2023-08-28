@@ -39,6 +39,7 @@ import { RoofUtil } from '../roof/RoofUtil';
 import { useSolarPanelHeatmapTexture, useSolarPanelTexture } from './hooks';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { PvModel } from 'src/models/PvModel';
+import { useSelected } from '../hooks';
 
 interface MoveHandleProps {
   id: string;
@@ -469,7 +470,6 @@ const SolarPanelOnRoof = ({
   color = 'white',
   frameColor,
   backsheetColor,
-  selected = false,
   showLabel = false,
   locked = false,
   parentId,
@@ -486,6 +486,8 @@ const SolarPanelOnRoof = ({
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
   const pvModules = useStore(Selector.pvModules);
   const sceneRadius = useStore(Selector.sceneRadius);
+
+  const selected = useSelected(id);
 
   const latestFoundationRef = useRef<FoundationModel | null>(null);
 

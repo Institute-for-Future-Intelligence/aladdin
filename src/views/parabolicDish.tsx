@@ -36,6 +36,7 @@ import { Paraboloid } from './shapes';
 import GlowImage from '../resources/glow.png';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
+import { useSelected } from './hooks';
 
 const ParabolicDish = ({
   id,
@@ -59,7 +60,6 @@ const ParabolicDish = ({
   color = 'white',
   lineColor = 'black',
   lineWidth = 0.25,
-  selected = false,
   showLabel = false,
   locked = false,
   parentId,
@@ -78,6 +78,8 @@ const ParabolicDish = ({
   const sceneRadius = useStore(Selector.sceneRadius);
   const resizeHandleType = useStore(Selector.resizeHandleType);
   const sunlightDirection = useStore(Selector.sunlightDirection);
+
+  const selected = useSelected(id);
 
   const {
     gl: { domElement },

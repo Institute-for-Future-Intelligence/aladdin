@@ -47,6 +47,7 @@ import FlatRoof from './flatRoof';
 import { BuildingParts, FoundationModel } from '../../models/FoundationModel';
 import shallow from 'zustand/shallow';
 import { WindowModel } from 'src/models/WindowModel';
+import { useSelected } from '../hooks';
 
 const HipRoofWireframe = React.memo(({ roofSegments, thickness, lineWidth, lineColor }: RoofWireframeProps) => {
   if (roofSegments.length === 0) {
@@ -102,7 +103,6 @@ const HipRoof = ({ roofModel, foundationModel }: HipRoofProps) => {
     wallsId,
     leftRidgeLength,
     rightRidgeLength,
-    selected,
     textureType,
     color = 'white',
     sideColor = 'white',
@@ -121,6 +121,8 @@ const HipRoof = ({ roofModel, foundationModel }: HipRoofProps) => {
 
   const composedWalls = useComposedWallArray(wallsId[0], parentId);
   const texture = useRoofTexture(textureType);
+
+  const selected = useSelected(id);
 
   const [enableIntersectionPlane, setEnableIntersectionPlane] = useState(false);
   const [roofHandleType, setRoofHandleType] = useState<RoofHandleType>(RoofHandleType.Null);
