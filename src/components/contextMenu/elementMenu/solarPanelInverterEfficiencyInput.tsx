@@ -384,7 +384,11 @@ const SolarPanelInverterEfficiencyInput = ({ setDialogVisible }: { setDialogVisi
               }}
               onPressEnter={ok}
             />
-            <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>[0.5, 1.0]</div>
+            <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
+              [0.5, 1.0]
+              <br />
+              {i18n.t('solarPanelMenu.InverterEfficiencyExplained', lang)}
+            </div>
           </Col>
           <Col
             className="gutter-row"

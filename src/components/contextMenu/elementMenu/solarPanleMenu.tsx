@@ -180,7 +180,7 @@ export const SolarPanelMenu = React.memo(() => {
               setDcAcRatioDialogVisible(true);
             }}
           >
-            {i18n.t('solarPanelMenu.DCACRatio', lang)} ...
+            {i18n.t('solarPanelMenu.DcToAcSizeRatio', lang)} ...
           </Menu.Item>
 
           {solarPanel.parentType === ObjectType.Wall && (

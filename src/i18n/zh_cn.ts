@@ -956,7 +956,9 @@ export const i18n_zh_cn = {
 
     solarPanelMenu: {
       InverterEfficiency: '逆变器效率',
-      DCACRatio: '直流-交流比例',
+      InverterEfficiencyExplained: '直流电转换为交流电的效率。',
+      DcToAcSizeRatio: '直流-交流容量比例',
+      DcToAcSizeRatioExplained: '直流电容量和交流电容量的比例。',
       ChangePvModel: '改变光伏板型号',
       Orientation: '排列方向',
       Portrait: '纵向',

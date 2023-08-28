@@ -338,7 +338,7 @@ const SolarPanelDcToAcRatioInput = ({ setDialogVisible }: { setDialogVisible: (b
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('solarPanelMenu.DCACRatio', lang)}
+            {i18n.t('solarPanelMenu.DcToAcSizeRatio', lang)}
           </div>
         }
         footer={[
@@ -382,7 +382,11 @@ const SolarPanelDcToAcRatioInput = ({ setDialogVisible }: { setDialogVisible: (b
               }}
               onPressEnter={ok}
             />
-            <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>[1.0, 2.0]</div>
+            <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
+              [1.0, 2.0]
+              <br />
+              {i18n.t('solarPanelMenu.DcToAcSizeRatioExplained', lang)}
+            </div>
           </Col>
           <Col
             className="gutter-row"

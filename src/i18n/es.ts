@@ -979,7 +979,9 @@ export const i18n_es = {
 
     solarPanelMenu: {
       InverterEfficiency: 'Inverter Efficiency',
-      DCACRatio: 'DC-AC Ratio',
+      InverterEfficiencyExplained: 'The efficiency for converting direct current (DC) to alternating current (AC).',
+      DcToAcSizeRatio: 'DC-to-AC Size Ratio',
+      DcToAcSizeRatioExplained: "The ratio of the solar panels' DC-rated size to the inverter's AC-rated size.",
       ChangePvModel: 'Cambiar modelo PV',
       Orientation: 'Orientación',
       Portrait: 'Vertical',
