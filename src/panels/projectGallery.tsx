@@ -859,10 +859,12 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
               value={xAxisRef.current}
               onChange={(value) => {
                 xAxisRef.current = value;
-                if (user.uid && projectInfo.title) {
-                  updateXAxisNameScatteredPlot(user.uid, projectInfo.title, value).then(() => {
-                    //ignore
-                  });
+                if (isOwner) {
+                  if (user.uid && projectInfo.title) {
+                    updateXAxisNameScatteredPlot(user.uid, projectInfo.title, value).then(() => {
+                      //ignore
+                    });
+                  }
                 }
                 setUpdateFlag(!updateFlag);
               }}
@@ -881,10 +883,12 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
               value={yAxisRef.current}
               onChange={(value) => {
                 yAxisRef.current = value;
-                if (user.uid && projectInfo.title) {
-                  updateYAxisNameScatteredPlot(user.uid, projectInfo.title, value).then(() => {
-                    //ignore
-                  });
+                if (isOwner) {
+                  if (user.uid && projectInfo.title) {
+                    updateYAxisNameScatteredPlot(user.uid, projectInfo.title, value).then(() => {
+                      //ignore
+                    });
+                  }
                 }
                 setUpdateFlag(!updateFlag);
               }}
@@ -968,10 +972,12 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
               }}
               changeSymbolSize={(value) => {
                 dotSizeRef.current = value;
-                if (user.uid && projectInfo.title) {
-                  updateDotSizeScatteredPlot(user.uid, projectInfo.title, value).then(() => {
-                    //ignore
-                  });
+                if (isOwner) {
+                  if (user.uid && projectInfo.title) {
+                    updateDotSizeScatteredPlot(user.uid, projectInfo.title, value).then(() => {
+                      //ignore
+                    });
+                  }
                 }
                 setUpdateFlag(!updateFlag);
               }}
