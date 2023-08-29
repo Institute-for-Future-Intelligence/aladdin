@@ -956,6 +956,7 @@ export const i18n_zh_tw = {
     },
 
     solarPanelMenu: {
+      Bifacial: '雙面',
       InverterEfficiency: '逆變器效率',
       InverterEfficiencyExplained: '直流電轉換為交流電的效率。',
       DcToAcSizeRatio: '直流-交流容量比例',

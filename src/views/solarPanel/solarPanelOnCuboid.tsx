@@ -446,6 +446,8 @@ const SolarPanelBoxGroup = ({ solarPanelModel, groupRotation, panelRotation }: S
     frameColor,
     backsheetColor,
     color,
+    bifacial = false,
+    poleHeight,
   } = solarPanelModel;
 
   const setCommonStore = useStore(Selector.set);
@@ -630,7 +632,7 @@ const SolarPanelBoxGroup = ({ solarPanelModel, groupRotation, panelRotation }: S
     }
   }
 
-  function renderTextureMaterial() {
+  function renderTopTextureMaterial() {
     if (showSolarRadiationHeatmap && heatmapTexture) {
       return <meshBasicMaterial attachArray="material" map={heatmapTexture} />;
     }
@@ -638,6 +640,23 @@ const SolarPanelBoxGroup = ({ solarPanelModel, groupRotation, panelRotation }: S
     if (orthographic || solarPanelShininess === 0) {
       return <meshStandardMaterial attachArray="material" map={texture} color={color} />;
     }
+    return (
+      <meshPhongMaterial
+        attachArray="material"
+        specular={new Color(pvModel?.color === 'Blue' ? SOLAR_PANEL_BLUE_SPECULAR : SOLAR_PANEL_BLACK_SPECULAR)}
+        shininess={solarPanelShininess ?? DEFAULT_SOLAR_PANEL_SHININESS}
+        side={FrontSide}
+        map={texture}
+        color={color}
+      />
+    );
+  }
+
+  function renderBotTextureMaterial() {
+    if (!bifacial || orthographic || (poleHeight === 0 && tiltAngle === 0)) {
+      return <meshStandardMaterial attachArray="material" color={color} />;
+    }
+    if (!texture) return null;
     return (
       <meshPhongMaterial
         attachArray="material"
@@ -691,8 +710,8 @@ const SolarPanelBoxGroup = ({ solarPanelModel, groupRotation, panelRotation }: S
           <meshStandardMaterial attachArray="material" color={'white'} />
           <meshStandardMaterial attachArray="material" color={'white'} />
           <meshStandardMaterial attachArray="material" color={'white'} />
-          {renderTextureMaterial()}
-          <meshStandardMaterial attachArray="material" color={'white'} />
+          {renderTopTextureMaterial()}
+          {renderBotTextureMaterial()}
         </Box>
 
         {/* move & resize handles */}

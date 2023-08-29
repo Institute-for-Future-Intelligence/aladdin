@@ -980,6 +980,7 @@ export const i18n_ua = {
     },
 
     solarPanelMenu: {
+      Bifacial: 'Bifacial',
       InverterEfficiency: 'Inverter Efficiency',
       InverterEfficiencyExplained: 'The efficiency for converting direct current (DC) to alternating current (AC).',
       DcToAcSizeRatio: 'DC-to-AC Size Ratio',

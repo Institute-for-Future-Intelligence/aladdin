@@ -18,6 +18,7 @@ export interface SolarPanelModel extends SolarCollector {
   backsheetColor?: string;
   inverterEfficiency?: number;
   dcToAcRatio?: number;
+  bifacial?: boolean; // 8-29-2023
 }
 
 export interface SolarPanelModelOnWall extends SolarPanelModel {

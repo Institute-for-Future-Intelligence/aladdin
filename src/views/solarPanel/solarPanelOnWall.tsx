@@ -364,6 +364,7 @@ const SolarPanelOnWall = ({
   absRotation,
   tiltAngle,
   relativeAzimuth,
+  bifacial = false,
 }: SolarPanelModelOnWall) => {
   tiltAngle = Math.min(0, tiltAngle);
 
@@ -602,7 +603,7 @@ const SolarPanelOnWall = ({
   );
   const heatmapTexture = useSolarPanelHeatmapTexture(id);
 
-  const renderTextureMaterial = () => {
+  const renderTopTextureMaterial = () => {
     if (showSolarRadiationHeatmap && heatmapTexture) {
       return <meshBasicMaterial attachArray="material" map={heatmapTexture} />;
     }
@@ -610,6 +611,23 @@ const SolarPanelOnWall = ({
     if (orthographic || solarPanelShininess === 0) {
       return <meshStandardMaterial attachArray="material" map={texture} color={color} />;
     }
+    return (
+      <meshPhongMaterial
+        attachArray="material"
+        specular={new Color(pvModel?.color === 'Blue' ? SOLAR_PANEL_BLUE_SPECULAR : SOLAR_PANEL_BLACK_SPECULAR)}
+        shininess={solarPanelShininess ?? DEFAULT_SOLAR_PANEL_SHININESS}
+        side={FrontSide}
+        map={texture}
+        color={color}
+      />
+    );
+  };
+
+  const renderBotTextureMaterial = () => {
+    if (!bifacial || tiltAngle === 0) {
+      return <meshStandardMaterial attachArray="material" color={color} />;
+    }
+    if (!texture) return null;
     return (
       <meshPhongMaterial
         attachArray="material"
@@ -672,8 +690,8 @@ const SolarPanelOnWall = ({
             <meshStandardMaterial attachArray="material" color={color} />
             <meshStandardMaterial attachArray="material" color={color} />
             <meshStandardMaterial attachArray="material" color={color} />
-            {renderTextureMaterial()}
-            <meshStandardMaterial attachArray="material" color={color} />
+            {renderTopTextureMaterial()}
+            {renderBotTextureMaterial()}
           </Box>
 
           {showSolarRadiationHeatmap &&
