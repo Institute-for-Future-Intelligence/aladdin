@@ -2165,6 +2165,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
           <Menu.Item key="solar_panel_types" onClick={loadFile}>
             {i18n.t('menu.photovoltaicSolarPowerTutorials.SolarPanelTypes', lang)}
           </Menu.Item>
+          <Menu.Item key="bifacial_solar_panels" onClick={loadFile}>
+            {i18n.t('menu.photovoltaicSolarPowerTutorials.BifacialSolarPanels', lang)}
+          </Menu.Item>
           <Menu.Item key="solar_trackers" onClick={loadFile}>
             {i18n.t('menu.photovoltaicSolarPowerTutorials.SolarTrackers', lang)}
           </Menu.Item>
