@@ -141,6 +141,8 @@ const handleAddElementOnRoof = (
       );
       useStore.getState().set((state) => {
         state.elements.push(newElement);
+        state.selectedElementIdSet.clear();
+        state.selectedElementIdSet.add(newElement.id);
         if (!state.actionModeLock) state.objectTypeToAdd = ObjectType.None;
       });
       addUndoableAddRooftopElement(newElement);
@@ -161,6 +163,8 @@ const handleAddElementOnRoof = (
       );
       useStore.getState().set((state) => {
         state.elements.push(newElement);
+        state.selectedElementIdSet.clear();
+        state.selectedElementIdSet.add(newElement.id);
         if (!state.actionModeLock) state.objectTypeToAdd = ObjectType.None;
       });
       addUndoableAddRooftopElement(newElement);
@@ -179,6 +183,8 @@ const handleAddElementOnRoof = (
       );
       useStore.getState().set((state) => {
         state.elements.push(newElement);
+        state.selectedElementIdSet.clear();
+        state.selectedElementIdSet.add(newElement.id);
         if (!state.actionModeLock) state.objectTypeToAdd = ObjectType.None;
       });
       addUndoableAddRooftopElement(newElement);
@@ -202,6 +208,8 @@ const handleAddElementOnRoof = (
       );
       useStore.getState().set((state) => {
         state.elements.push(newElement);
+        state.selectedElementIdSet.clear();
+        state.selectedElementIdSet.add(newElement.id);
         if (!state.actionModeLock) state.objectTypeToAdd = ObjectType.None;
       });
       addUndoableAddRooftopElement(newElement);
@@ -227,15 +235,23 @@ export const handleRoofBodyPointerDown = (e: ThreeEvent<PointerEvent>, id: strin
           }
         }
         state.groupMasterId = foundationId;
+        state.selectedElementIdSet.clear();
+        state.selectedElementIdSet.add(foundationId);
       } else {
         for (const e of state.elements) {
           if (e.id === id) {
             e.selected = true;
             state.selectedElement = e;
-            if (!state.multiSelectionsMode) {
+            if (state.multiSelectionsMode) {
+              if (state.selectedElementIdSet.has(id)) {
+                state.selectedElementIdSet.delete(id);
+              } else {
+                state.selectedElementIdSet.add(id);
+              }
+            } else {
               state.selectedElementIdSet.clear();
+              state.selectedElementIdSet.add(id);
             }
-            state.selectedElementIdSet.add(e.id);
           } else {
             e.selected = false;
           }
@@ -384,8 +400,8 @@ export const handlePointerDown = (
   }
   // click on roof body
   else {
-    handleAddElementOnRoof(e, foundationId, roofId, roofSegments, centroid);
     handleRoofBodyPointerDown(e, roofId, foundationId);
+    handleAddElementOnRoof(e, foundationId, roofId, roofSegments, centroid);
   }
 };
 
@@ -503,10 +519,16 @@ export const handleContextMenu = (e: ThreeEvent<MouseEvent>, id: string) => {
         if (e.id === id) {
           e.selected = true;
           state.selectedElement = e;
-          if (!state.multiSelectionsMode) {
+          if (state.multiSelectionsMode) {
+            if (state.selectedElementIdSet.has(id)) {
+              state.selectedElementIdSet.delete(id);
+            } else {
+              state.selectedElementIdSet.add(id);
+            }
+          } else {
             state.selectedElementIdSet.clear();
+            state.selectedElementIdSet.add(id);
           }
-          state.selectedElementIdSet.add(e.id);
         } else {
           e.selected = false;
         }

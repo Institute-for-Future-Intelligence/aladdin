@@ -119,11 +119,16 @@ const MainToolBarButtons = () => {
             for (const e of state.elements) {
               e.selected = e.id === baseId;
             }
+            state.selectedElementIdSet.clear();
+            if (baseId) {
+              state.selectedElementIdSet.add(baseId);
+            }
           }
         } else {
           for (const e of state.elements) {
             e.selected = false;
           }
+          state.selectedElementIdSet.clear();
         }
         state.objectTypeToAdd = ObjectType.None;
       }

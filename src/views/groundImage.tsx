@@ -10,7 +10,7 @@ import { DoubleSide, Mesh } from 'three';
 import { getRoadMap, getSatelliteImage } from '../helpers';
 import { Util } from '../Util';
 import { ThreeEvent } from '@react-three/fiber';
-import { InnerCommonState } from '../stores/InnerCommonState';
+import { InnerCommonStoreState } from '../stores/InnerCommonState';
 import { ObjectType } from '../types';
 import { UNIT_VECTOR_POS_Z } from '../constants';
 
@@ -53,7 +53,7 @@ const GroundImage = () => {
       const groundImageClicked = e.intersections[0].object === groundImageRef.current;
       if (groundImageClicked) {
         setCommonStore((state) => {
-          InnerCommonState.selectNone(state);
+          InnerCommonStoreState.selectNone(state);
           state.pastePoint.copy(e.intersections[0].point);
           state.clickObjectType = ObjectType.Ground;
           state.contextMenuObjectType = ObjectType.Ground;

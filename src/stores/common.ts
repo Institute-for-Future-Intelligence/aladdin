@@ -99,6 +99,8 @@ import { DefaultGraphState } from './DefaultGraphState';
 import { isStackableModel } from 'src/models/Stackable';
 import { WindowModel } from 'src/models/WindowModel';
 import { ProjectUtil } from '../panels/ProjectUtil';
+import { debounce } from 'lodash';
+import { InnerCommonStoreState } from './InnerCommonState';
 
 enableMapSet();
 
@@ -651,6 +653,8 @@ export const useStore = create<CommonStoreState>(
               state.autoDeletedRoof = null;
               state.autoDeletedChild = null;
               state.actionState = new DefaultActionState();
+              state.multiSelectionsMode = false;
+              state.selectedElementIdSet.clear();
               // TODO: fix these bugs that are tentatively corrected here
               for (const e of state.elements) {
                 if (e.type === ObjectType.Foundation && e.parentId !== GROUND_ID) {
@@ -735,6 +739,8 @@ export const useStore = create<CommonStoreState>(
               state.designProjectType = null;
               state.minimumNavigationMoveSpeed = 3;
               state.minimumNavigationTurnSpeed = 3;
+              state.multiSelectionsMode = false;
+              state.selectedElementIdSet.clear();
             });
             usePrimitiveStore.setState((state) => {
               state.changed = false;
@@ -784,9 +790,10 @@ export const useStore = create<CommonStoreState>(
 
           selectedElement: null,
           getSelectedElement() {
+            if (get().selectedElementIdSet.size === 0) return null;
             const elements = get().elements;
             for (const e of elements) {
-              if (e.selected) {
+              if (get().selectedElementIdSet.has(e.id)) {
                 return e;
               }
             }
@@ -980,10 +987,16 @@ export const useStore = create<CommonStoreState>(
               );
               if (intersectableObjects[0].object === e.eventObject || select) {
                 immerSet((state) => {
-                  if (!state.multiSelectionsMode) {
+                  if (state.multiSelectionsMode) {
+                    if (state.selectedElementIdSet.has(id)) {
+                      state.selectedElementIdSet.delete(id);
+                    } else {
+                      state.selectedElementIdSet.add(id);
+                    }
+                  } else {
                     state.selectedElementIdSet.clear();
+                    state.selectedElementIdSet.add(id);
                   }
-                  state.selectedElementIdSet.add(id);
 
                   for (const elem of state.elements) {
                     if (elem.id === id) {
@@ -2475,6 +2488,10 @@ export const useStore = create<CommonStoreState>(
                   model = wall;
                   break;
               }
+              if (model) {
+                state.selectedElementIdSet.clear();
+                state.selectedElementIdSet.add(model.id);
+              }
             });
             return model;
           },
@@ -2617,8 +2634,10 @@ export const useStore = create<CommonStoreState>(
                   return true;
                 }
               });
+              state.selectedElementIdSet.delete(id);
               if (selectNone) {
                 state.selectedElement = null;
+                state.selectedElementIdSet.clear();
               }
             });
             return removed;
@@ -3459,6 +3478,11 @@ export const useStore = create<CommonStoreState>(
                   pastedElements.push(...cutElements);
                 }
               }
+              if (pastedElements.length > 0) {
+                state.selectedElementIdSet.clear();
+                state.selectedElementIdSet.add(pastedElements[0].id);
+                state.selectedElement = pastedElements[0];
+              }
             });
             return pastedElements;
           },
@@ -3821,6 +3845,9 @@ export const useStore = create<CommonStoreState>(
                         }
                         state.elements.push(...pastedElements);
                         state.elementsToPaste = [e];
+                        state.selectedElementIdSet.clear();
+                        state.selectedElementIdSet.add(e.id);
+                        state.selectedElement = e;
                       } else if (state.elementsToPaste.length > 1) {
                         const cutElements = state.copyCutElements();
                         if (cutElements.length > 0) {
@@ -3828,6 +3855,9 @@ export const useStore = create<CommonStoreState>(
                           state.elements.push(...cutElements);
                           state.elementsToPaste = [...cutElements];
                           pastedElements.push(...cutElements);
+                          state.selectedElementIdSet.clear();
+                          state.selectedElementIdSet.add(cutElements[0].id);
+                          state.selectedElement = cutElements[0];
                         }
                       }
                       approved = false;
@@ -3933,6 +3963,9 @@ export const useStore = create<CommonStoreState>(
                           state.elements.push(...cutElements);
                           pastedElements.push(...cutElements);
                           state.elementsToPaste = cutElements;
+                          state.selectedElementIdSet.clear();
+                          state.selectedElementIdSet.add(cutElements[0].id);
+                          state.selectedElement = cutElements[0];
                         }
                       }
                       approved = true;
@@ -3984,13 +4017,21 @@ export const useStore = create<CommonStoreState>(
                           state.elements.push(...cutElements);
                           pastedElements.push(...cutElements);
                           state.elementsToPaste = cutElements;
+                          state.selectedElementIdSet.clear();
+                          state.selectedElementIdSet.add(cutElements[0].id);
+                          state.selectedElement = cutElements[0];
                         }
                       }
                       state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
                       approved = true;
                       break;
                   }
-                  if (state.elementsToPaste.length === 1 && approved) pastedElements.push(e);
+                  if (state.elementsToPaste.length === 1 && approved) {
+                    pastedElements.push(e);
+                    state.selectedElementIdSet.clear();
+                    state.selectedElementIdSet.add(e.id);
+                    state.selectedElement = e;
+                  }
                 }
               }
             });

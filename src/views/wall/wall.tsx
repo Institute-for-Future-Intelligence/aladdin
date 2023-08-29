@@ -59,7 +59,7 @@ import Polygon from '../polygon';
 import { SharedUtil } from '../SharedUtil';
 import { UndoableChange } from '../../undo/UndoableChange';
 import Parapet, { DEFAULT_PARAPET_SETTINGS } from './parapet';
-import { InnerCommonState } from 'src/stores/InnerCommonState';
+import { InnerCommonStoreState } from 'src/stores/InnerCommonState';
 import WallHeatFlux from './wallHeatFlux';
 import { useSelected } from '../hooks';
 
@@ -1319,7 +1319,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   }
 
   function isAllowedToSelectMe() {
-    if (useStore.getState().moveHandleType || useStore.getState().resizeHandleType || selected || isAddingElement()) {
+    if (useStore.getState().moveHandleType || useStore.getState().resizeHandleType || isAddingElement()) {
       return false;
     }
     return true;
@@ -1376,6 +1376,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       if (newElement) {
         state.elements.push(newElement);
         state.selectedElement = newElement;
+        state.selectedElementIdSet.clear();
+        state.selectedElementIdSet.add(newElement.id);
         if (newElement.type === ObjectType.Window) {
           state.addedWindowId = newElement.id;
         } else if (newElement.type === ObjectType.Door) {
@@ -1733,6 +1735,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
             e.selected = e.id === parentId;
           }
           state.groupMasterId = parentId;
+          state.selectedElementIdSet.clear();
+          state.selectedElementIdSet.add(parentId);
         });
         e.stopPropagation();
       } else if (isAllowedToSelectMe()) {
@@ -2000,7 +2004,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
             setCommonStore((state) => {
               if (state.actionModeLock && elBeingAddedRef.current) {
                 state.objectTypeToAdd = elBeingAddedRef.current.type;
-                InnerCommonState.selectNone(state);
+                InnerCommonStoreState.selectNone(state);
               }
             });
             handleUndoableAdd(newElement);
@@ -2019,7 +2023,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     setCommonStore((state) => {
       state.moveHandleType = null;
       state.resizeHandleType = null;
-      state.selectedElement = state.elements.find((e) => e.selected) as ElementModel;
+      state.selectedElement = state.elements.find((e) => e.id === state.selectedElement?.id) as ElementModel;
     });
     setPrimitiveStore('showWallIntersectionPlaneId', null);
     invalidElementIdRef.current = null;
@@ -2189,6 +2193,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           e.selected = e.id === parentId;
         }
         state.groupMasterId = parentId;
+        state.selectedElementIdSet.clear();
+        state.selectedElementIdSet.add(parentId);
       });
     } else {
       if (checkIfCanSelectMe(e)) {

@@ -6,7 +6,7 @@ import { CommonStoreState } from './common';
 import { ThreeEvent } from '@react-three/fiber';
 import { ActionType, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from 'src/types';
 
-export class InnerCommonState {
+export class InnerCommonStoreState {
   static selectMe(state: CommonStoreState, id: string, e: ThreeEvent<MouseEvent>, action?: ActionType) {
     if (e.intersections.length > 0) {
       const intersectableObjects = e.intersections.filter(
@@ -23,6 +23,17 @@ export class InnerCommonState {
             elem.selected = false;
           }
         }
+        if (state.multiSelectionsMode) {
+          if (state.selectedElementIdSet.has(id)) {
+            state.selectedElementIdSet.delete(id);
+          } else {
+            state.selectedElementIdSet.add(id);
+          }
+        } else {
+          state.selectedElementIdSet.clear();
+          state.selectedElementIdSet.add(id);
+        }
+
         state.moveHandleType = null;
         state.resizeHandleType = null;
         state.rotateHandleType = null;
@@ -57,5 +68,11 @@ export class InnerCommonState {
       e.selected = false;
     }
     state.selectedElement = null;
+    state.selectedElementIdSet.clear();
+  }
+
+  static clearThenAddSelectedElementIdSet(state: CommonStoreState, id: string) {
+    state.selectedElementIdSet.clear();
+    state.selectedElementIdSet.add(id);
   }
 }

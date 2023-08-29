@@ -862,9 +862,10 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
                 if (!selectedElement) return;
 
                 setCommonStore((state) => {
-                  for (const e of cutElements) {
-                    state.elements.push(e);
-                  }
+                  state.elements.push(...cutElements);
+                  state.selectedElementIdSet.clear();
+                  state.selectedElementIdSet.add(selectedElement.id);
+                  state.selectedElement = selectedElement;
                   if (selectedElement.type === ObjectType.Wall) {
                     const wall = selectedElement as WallModel;
                     let leftWallId: string | null = null;
@@ -1078,9 +1079,10 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
                 if (!selectedElement) return;
 
                 setCommonStore((state) => {
-                  for (const e of deletedElements) {
-                    state.elements.push(e);
-                  }
+                  state.elements.push(...deletedElements);
+                  state.selectedElementIdSet.clear();
+                  state.selectedElementIdSet.add(selectedElement.id);
+                  state.selectedElement = selectedElement;
                   state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
                   state.deletedRoofId = null;
                 });

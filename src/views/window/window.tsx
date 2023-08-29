@@ -210,10 +210,16 @@ const Window = (windowModel: WindowModel) => {
         if (e.id === id) {
           e.selected = true;
           state.selectedElement = e;
-          if (!state.multiSelectionsMode) {
+          if (state.multiSelectionsMode) {
+            if (state.selectedElementIdSet.has(id)) {
+              state.selectedElementIdSet.delete(id);
+            } else {
+              state.selectedElementIdSet.add(id);
+            }
+          } else {
             state.selectedElementIdSet.clear();
+            state.selectedElementIdSet.add(id);
           }
-          state.selectedElementIdSet.add(e.id);
         } else {
           e.selected = false;
         }
@@ -254,13 +260,12 @@ const Window = (windowModel: WindowModel) => {
     setCommonStore((state) => {
       state.resizeHandleType = handleType;
       state.resizeAnchor.copy(new Vector3(cx, 0, cz).add(p));
-      state.selectedElement = state.elements.find((e) => e.selected) as ElementModel;
     });
   };
 
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
     if (e.button === 2 || useStore.getState().addedWallId) return; // ignore right-click
-    if (!selected && isAllowedToSelectMe(e)) {
+    if (isAllowedToSelectMe(e)) {
       selectMe();
     }
 
@@ -276,7 +281,7 @@ const Window = (windowModel: WindowModel) => {
           });
           setCommonStore((state) => {
             state.moveHandleType = handleType;
-            state.selectedElement = state.elements.find((e) => e.selected) as ElementModel;
+            state.selectedElement = state.elements.find((e) => e.id === state.selectedElement?.id) as ElementModel;
           });
           break;
         }
@@ -311,7 +316,7 @@ const Window = (windowModel: WindowModel) => {
   const handleContextMenu = (e: ThreeEvent<MouseEvent>) => {
     if (useStore.getState().addedWallId) return;
     if (isAllowedToSelectMe(e)) {
-      !selected && selectMe();
+      selectMe();
       setCommonStore((state) => {
         state.contextMenuObjectType = ObjectType.Window;
       });

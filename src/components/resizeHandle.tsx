@@ -36,7 +36,6 @@ const ResizeHandle = ({ handleType, position, size, onPointerOver, onPointerOut 
       useStore.getState().set((state) => {
         state.resizeAnchor.copy(anchor);
         state.resizeHandleType = handleType;
-        state.selectedElement = state.elements.find((e) => e.selected) ?? null;
       });
       useRefStore.getState().setEnableOrbitController(false);
     }

@@ -44,7 +44,6 @@ const MoveHandle = ({ handleType, position, size, onPointerOver, onPointerOut }:
     if (e.intersections.length > 0 && e.intersections[0].eventObject.name === handleType) {
       useStore.getState().set((state) => {
         state.moveHandleType = handleType;
-        state.selectedElement = state.elements.find((e) => e.selected) ?? null;
       });
       useRefStore.getState().setEnableOrbitController(false);
     }

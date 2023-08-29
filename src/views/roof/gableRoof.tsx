@@ -41,7 +41,6 @@ import {
   RoofSegmentProps,
   RoofWireframeProps,
   updateRooftopElements,
-  RoofSegmentGroupUserData,
   areRoofsEqual,
 } from './roofRenderer';
 import { UnoableResizeGableRoofRidge } from 'src/undo/UndoableResize';

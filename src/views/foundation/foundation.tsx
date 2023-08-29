@@ -72,7 +72,7 @@ import { UndoablePaste } from '../../undo/UndoablePaste';
 import GroupMaster from 'src/components/groupMaster';
 import { useHandleSize } from '../wall/hooks';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
-import { InnerCommonState } from 'src/stores/InnerCommonState';
+import { InnerCommonStoreState } from 'src/stores/InnerCommonState';
 import produce from 'immer';
 import { useDataStore } from '../../stores/commonData';
 import { useGroupMaster, useSelected } from '../hooks';
@@ -1677,7 +1677,7 @@ const Foundation = (foundationModel: FoundationModel) => {
             state.addedWallId = null;
             if (state.actionModeLock) {
               state.objectTypeToAdd = ObjectType.Wall;
-              InnerCommonState.selectNone(state);
+              InnerCommonStoreState.selectNone(state);
             }
           });
           if (addedWallIdRef.current) {
@@ -1691,7 +1691,7 @@ const Foundation = (foundationModel: FoundationModel) => {
           setCommonStore((state) => {
             if (state.actionModeLock) {
               state.objectTypeToAdd = ObjectType.Wall;
-              InnerCommonState.selectNone(state);
+              InnerCommonStoreState.selectNone(state);
             }
             state.addedWallId = null;
             if (wall.lx === 0 && elementsStateBeforeResizingRef.current) {
@@ -2656,7 +2656,7 @@ const Foundation = (foundationModel: FoundationModel) => {
 
   const handleContextMenu = (e: ThreeEvent<MouseEvent>) => {
     setCommonStore((state) => {
-      InnerCommonState.selectMe(state, id, e, ActionType.Select);
+      InnerCommonStoreState.selectMe(state, id, e, ActionType.Select);
       state.pastePoint.copy(e.intersections[0].point);
       state.clickObjectType = ObjectType.Foundation;
       state.pasteNormal = UNIT_VECTOR_POS_Z;

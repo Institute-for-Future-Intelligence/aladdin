@@ -53,6 +53,8 @@ const EmptyWall = (wallModel: WallModel) => {
           e.selected = e.id === parentId;
         }
         state.groupMasterId = parentId;
+        state.selectedElementIdSet.clear();
+        state.selectedElementIdSet.add(parentId);
       });
       e.stopPropagation();
     } else {

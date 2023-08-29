@@ -592,7 +592,6 @@ const SolarPanelBoxGroup = ({ solarPanelModel, groupRotation, panelRotation }: S
     useRefStore.getState().setEnableOrbitController(false);
     setCommonStore((state) => {
       state.resizeHandleType = handleType;
-      state.selectedElement = state.elements.find((e) => e.selected) as ElementModel;
       state.resizeAnchor.copy(anchor);
     });
   }
@@ -605,7 +604,7 @@ const SolarPanelBoxGroup = ({ solarPanelModel, groupRotation, panelRotation }: S
           useRefStore.getState().setEnableOrbitController(false);
           setCommonStore((state) => {
             state.moveHandleType = handleType;
-            state.selectedElement = state.elements.find((e) => e.selected) as ElementModel;
+            state.selectedElement = state.elements.find((e) => e.id === state.selectedElement?.id) as ElementModel;
           });
           break;
         }

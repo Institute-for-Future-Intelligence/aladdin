@@ -179,14 +179,7 @@ export const Lock = ({ keyName }: { keyName: string }) => {
   const language = useStore(Selector.language);
   const updateElementLockById = useStore(Selector.updateElementLockById);
   const addUndoable = useStore(Selector.addUndoable);
-  const selectedElement = useStore((state) => {
-    for (const e of state.elements) {
-      if (e.selected) {
-        return e;
-      }
-    }
-    return null;
-  });
+  const selectedElement = useStore((state) => state.elements.find((e) => state.selectedElementIdSet.has(e.id)));
 
   const lockElement = (on: boolean) => {
     if (selectedElement) {

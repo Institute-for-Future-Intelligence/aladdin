@@ -191,7 +191,6 @@ const Parapet = ({
     if (
       useStore.getState().moveHandleType ||
       useStore.getState().resizeHandleType ||
-      selected ||
       useStore.getState().isAddingElement()
     ) {
       return false;
@@ -207,6 +206,8 @@ const Parapet = ({
             e.selected = e.id === parentId;
           }
           state.groupMasterId = parentId;
+          state.selectedElementIdSet.clear();
+          state.selectedElementIdSet.add(parentId);
         });
         e.stopPropagation();
       } else if (isAllowedToSelectMe()) {

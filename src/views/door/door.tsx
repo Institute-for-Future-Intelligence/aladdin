@@ -168,7 +168,7 @@ const Door = (doorModel: DoorModel) => {
   const handleContextMenu = (e: ThreeEvent<MouseEvent>) => {
     if (useStore.getState().addedWallId) return;
     if (isAllowedToSelectMe(e)) {
-      !selected && selectMe();
+      selectMe();
       setCommonStore((state) => {
         state.contextMenuObjectType = ObjectType.Door;
       });

@@ -41,7 +41,7 @@ import { UndoableChange } from '../undo/UndoableChange';
 import { showError } from '../helpers';
 import i18n from '../i18n/i18n';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
-import { InnerCommonState } from 'src/stores/InnerCommonState';
+import { InnerCommonStoreState } from 'src/stores/InnerCommonState';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { GroupableModel, isGroupable } from 'src/models/Groupable';
 import { WindowModel } from 'src/models/WindowModel';
@@ -492,7 +492,7 @@ const Ground = () => {
       const groundClicked = e.intersections[0].object === groundPlaneRef.current;
       if (groundClicked) {
         setCommonStore((state) => {
-          InnerCommonState.selectNone(state);
+          InnerCommonStoreState.selectNone(state);
           state.pastePoint.copy(e.intersections[0].point);
           state.clickObjectType = ObjectType.Ground;
           state.contextMenuObjectType = ObjectType.Ground;
@@ -1127,7 +1127,7 @@ const Ground = () => {
       setCommonStore((state) => {
         state.clickObjectType = ObjectType.Ground;
         state.selectedElement = null;
-        InnerCommonState.selectNone(state);
+        InnerCommonStoreState.selectNone(state);
         state.contextMenuObjectType = null;
         state.groupMasterId = null;
       });
