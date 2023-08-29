@@ -72,7 +72,6 @@ const SolarPanel = ({
   locked = false,
   parentId,
   orientation = Orientation.landscape,
-  bifacial = false,
 }: SolarPanelModel) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
@@ -392,7 +391,7 @@ const SolarPanel = ({
   };
 
   const renderBotTextureMaterial = () => {
-    if (!bifacial || orthographic || (poleHeight === 0 && tiltAngle === 0)) {
+    if (!pvModel.bifacial || orthographic || (poleHeight === 0 && tiltAngle === 0)) {
       return <meshStandardMaterial attachArray="material" color={color} />;
     }
     if (!texture) return null;

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 export interface PvModel {
@@ -24,4 +24,5 @@ export interface PvModel {
   weight: number;
   color: string;
   shadeTolerance: string;
+  bifacial: boolean;
 }

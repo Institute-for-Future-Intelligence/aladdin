@@ -123,7 +123,6 @@ export class ElementModelFactory {
         break;
     }
     return {
-      bifacial: useStore.getState().actionState.solarPanelBifacial,
       type: ObjectType.SolarPanel,
       pvModelName: pvModel.name,
       trackerType: TrackerType.NO_TRACKER,

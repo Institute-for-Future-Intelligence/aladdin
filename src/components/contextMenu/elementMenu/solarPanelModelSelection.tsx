@@ -547,6 +547,30 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
         </Row>
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
           <Col className="gutter-row" span={14}>
+            {i18n.t('pvModelPanel.Bifacial', lang) + ':'}
+          </Col>
+          <Col className="gutter-row" span={10}>
+            <Select
+              disabled={true}
+              style={{ width: '100%' }}
+              value={pvModel.bifacial}
+              onChange={(value) => {
+                if (solarPanel) {
+                  // TODO for custom solar panel
+                }
+              }}
+            >
+              <Option key={'Bifacial'} value={true}>
+                {i18n.t('pvModelPanel.Bifacial', lang)}
+              </Option>
+              <Option key={'Monofacial'} value={false}>
+                {i18n.t('pvModelPanel.Monofacial', lang)}
+              </Option>
+            </Select>
+          </Col>
+        </Row>
+        <Row gutter={6} style={{ paddingBottom: '4px' }}>
+          <Col className="gutter-row" span={14}>
             {i18n.t('word.Color', lang) + ':'}
           </Col>
           <Col className="gutter-row" span={10}>

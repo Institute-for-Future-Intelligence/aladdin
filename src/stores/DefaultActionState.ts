@@ -123,7 +123,6 @@ export class DefaultActionState implements ActionState {
   solarPanelTiltAngle: number;
   solarPanelRelativeAzimuth: number;
   solarPanelFrameColor: string;
-  solarPanelBifacial: boolean;
 
   parabolicDishReflectance: number;
   parabolicDishAbsorptance: number;
@@ -258,7 +257,6 @@ export class DefaultActionState implements ActionState {
     this.solarPanelTiltAngle = 0;
     this.solarPanelRelativeAzimuth = 0;
     this.solarPanelFrameColor = '#ffffff';
-    this.solarPanelBifacial = false;
 
     this.parabolicDishReflectance = 0.9;
     this.parabolicDishAbsorptance = 0.95;

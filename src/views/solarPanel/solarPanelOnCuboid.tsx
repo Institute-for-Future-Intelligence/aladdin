@@ -446,7 +446,6 @@ const SolarPanelBoxGroup = ({ solarPanelModel, groupRotation, panelRotation }: S
     frameColor,
     backsheetColor,
     color,
-    bifacial = false,
     poleHeight,
   } = solarPanelModel;
 
@@ -653,7 +652,7 @@ const SolarPanelBoxGroup = ({ solarPanelModel, groupRotation, panelRotation }: S
   }
 
   function renderBotTextureMaterial() {
-    if (!bifacial || orthographic || (poleHeight === 0 && tiltAngle === 0)) {
+    if (!pvModel.bifacial || orthographic || (poleHeight === 0 && tiltAngle === 0)) {
       return <meshStandardMaterial attachArray="material" color={color} />;
     }
     if (!texture) return null;

@@ -955,7 +955,6 @@ export const i18n_zh_cn = {
     },
 
     solarPanelMenu: {
-      Bifacial: '双面',
       InverterEfficiency: '逆变器效率',
       InverterEfficiencyExplained: '直流电转换为交流电的效率。',
       DcToAcSizeRatio: '直流-交流容量比例',
@@ -992,6 +991,8 @@ export const i18n_zh_cn = {
       Monocrystalline: '单晶硅',
       Polycrystalline: '多晶硅',
       ThinFilm: '薄膜',
+      Bifacial: '双面',
+      Monofacial: '单面',
       Black: '黑色',
       Blue: '蓝色',
       ShadeTolerance: '阴影耐受度',

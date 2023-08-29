@@ -94,36 +94,6 @@ export const SolarPanelMenu = React.memo(() => {
     }
   };
 
-  const updateSolarPanelBifacialById = (id: string, b: boolean) => {
-    useStore.getState().set((state) => {
-      const sp = state.elements.find((e) => e.id === id && e.type === ObjectType.SolarPanel) as
-        | SolarPanelModel
-        | undefined;
-      if (!sp) return;
-      sp.bifacial = b;
-      state.actionState.solarPanelBifacial = b;
-    });
-  };
-
-  const onChangeBifacial = (checked: boolean) => {
-    if (!solarPanel) return;
-    const undoableCheck = {
-      name: 'Bifacial',
-      timestamp: Date.now(),
-      checked: !solarPanel.bifacial,
-      selectedElementId: solarPanel.id,
-      selectedElementType: ObjectType.SolarPanel,
-      undo: () => {
-        updateSolarPanelBifacialById(solarPanel.id, !undoableCheck.checked);
-      },
-      redo: () => {
-        updateSolarPanelBifacialById(solarPanel.id, undoableCheck.checked);
-      },
-    } as UndoableCheck;
-    addUndoable(undoableCheck);
-    updateSolarPanelBifacialById(solarPanel.id, checked);
-  };
-
   return (
     <Menu.ItemGroup>
       <Copy keyName={'solar-panel-copy'} paddingLeft={'36px'} />
@@ -131,13 +101,6 @@ export const SolarPanelMenu = React.memo(() => {
       <Lock keyName={'solar-panel-lock'} />
       {solarPanel && editable && (
         <>
-          {/* bifacial */}
-          <Menu.Item key={'solar-panel-bifacial'}>
-            <Checkbox checked={!!solarPanel?.bifacial} onChange={(e) => onChangeBifacial(e.target.checked)}>
-              {i18n.t('solarPanelMenu.Bifacial', lang)}
-            </Checkbox>
-          </Menu.Item>
-
           {/* pv model */}
           {pvModelDialogVisible && <SolarPanelModelSelection setDialogVisible={setPvModelDialogVisible} />}
           <Menu.Item

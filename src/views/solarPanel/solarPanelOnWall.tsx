@@ -364,7 +364,6 @@ const SolarPanelOnWall = ({
   absRotation,
   tiltAngle,
   relativeAzimuth,
-  bifacial = false,
 }: SolarPanelModelOnWall) => {
   tiltAngle = Math.min(0, tiltAngle);
 
@@ -624,7 +623,7 @@ const SolarPanelOnWall = ({
   };
 
   const renderBotTextureMaterial = () => {
-    if (!bifacial || tiltAngle === 0) {
+    if (!pvModel.bifacial || tiltAngle === 0) {
       return <meshStandardMaterial attachArray="material" color={color} />;
     }
     if (!texture) return null;

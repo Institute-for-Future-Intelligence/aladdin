@@ -978,7 +978,6 @@ export const i18n_en = {
     },
 
     solarPanelMenu: {
-      Bifacial: 'Bifacial',
       InverterEfficiency: 'Inverter Efficiency',
       InverterEfficiencyExplained: 'The efficiency for converting direct current (DC) to alternating current (AC).',
       DcToAcSizeRatio: 'DC-to-AC Size Ratio',
@@ -1015,6 +1014,8 @@ export const i18n_en = {
       Monocrystalline: 'Monocrystalline',
       Polycrystalline: 'Polycrystalline',
       ThinFilm: 'Thin Film',
+      Bifacial: 'Bifacial',
+      Monofacial: 'Monofacial',
       Black: 'Black',
       Blue: 'Blue',
       ShadeTolerance: 'Shade Tolerance',
