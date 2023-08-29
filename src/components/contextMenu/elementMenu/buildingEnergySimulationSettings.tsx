@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React from 'react';
@@ -24,20 +24,38 @@ const BuildingEnergySimulationSettings = () => {
       <Menu>
         <Menu.Item key={'building-energy-simulation-sampling-frequency'}>
           <Space style={{ width: '150px' }}>{i18n.t('menu.option.SamplingFrequency', lang) + ':'}</Space>
-          <InputNumber
-            min={1}
-            max={60}
-            step={1}
-            style={{ width: 72 }}
-            precision={0}
+          <Select
+            style={{ width: '72px' }}
             value={timesPerHour ?? 4}
-            formatter={(a) => Number(a).toFixed(0)}
             onChange={(value) => {
               setCommonStore((state) => {
                 state.world.timesPerHour = value;
               });
             }}
-          />
+          >
+            {/* sampling interval must be a factor of 60 (e.g., 8 is not)*/}
+            <Option key={1} value={1}>
+              1
+            </Option>
+            <Option key={2} value={2}>
+              2
+            </Option>
+            <Option key={3} value={3}>
+              3
+            </Option>
+            <Option key={4} value={4}>
+              4
+            </Option>
+            <Option key={6} value={6}>
+              6
+            </Option>
+            <Option key={12} value={12}>
+              12
+            </Option>
+            <Option key={30} value={30}>
+              30
+            </Option>
+          </Select>
           <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.option.TimesPerHour', lang)}</Space>
         </Menu.Item>
         <Menu.Item key={'building-energy-simulation-sampling-days'}>

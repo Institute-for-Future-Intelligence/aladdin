@@ -736,21 +736,51 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
         if (sunDirection.z > 0) {
           // when the sun is out
           const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
-          const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
+          const frontIndirectRadiation = calculateDiffuseAndReflectedRadiation(
+            world.ground,
+            month,
+            normal,
+            peakRadiation,
+          );
           const dot = normal.dot(sunDirection);
           const v2d = new Vector2();
           const dv = new Vector3();
-          for (let kx = 0; kx < nx; kx++) {
-            for (let ky = 0; ky < ny; ky++) {
-              cellOutputs[kx][ky] = indirectRadiation;
-              if (dot > 0) {
+          if (pvModel.bifacial) {
+            // bifacial panel
+            const backsideNormal = normal.clone().negate();
+            const backIndirectRadiation = calculateDiffuseAndReflectedRadiation(
+              world.ground,
+              month,
+              backsideNormal,
+              peakRadiation,
+            );
+            for (let kx = 0; kx < nx; kx++) {
+              for (let ky = 0; ky < ny; ky++) {
+                cellOutputs[kx][ky] = frontIndirectRadiation + backIndirectRadiation;
                 v2d.set(x0 + kx * dx, y0 + ky * dy);
                 dv.set(v2d.x - center2d.x, v2d.y - center2d.y, 0);
                 dv.applyEuler(normalEuler);
                 v.set(center.x + dv.x, center.y + dv.y, z0 + dv.z);
                 if (!inShadow(panel.id, v, sunDirection)) {
                   // direct radiation
-                  cellOutputs[kx][ky] += dot * peakRadiation;
+                  cellOutputs[kx][ky] += Math.abs(dot) * peakRadiation;
+                }
+              }
+            }
+          } else {
+            // monofacial panel
+            for (let kx = 0; kx < nx; kx++) {
+              for (let ky = 0; ky < ny; ky++) {
+                cellOutputs[kx][ky] = frontIndirectRadiation;
+                if (dot > 0) {
+                  v2d.set(x0 + kx * dx, y0 + ky * dy);
+                  dv.set(v2d.x - center2d.x, v2d.y - center2d.y, 0);
+                  dv.applyEuler(normalEuler);
+                  v.set(center.x + dv.x, center.y + dv.y, z0 + dv.z);
+                  if (!inShadow(panel.id, v, sunDirection)) {
+                    // direct radiation
+                    cellOutputs[kx][ky] += dot * peakRadiation;
+                  }
                 }
               }
             }
@@ -964,21 +994,46 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       normalEuler.z = (parent as WallModel).relativeAngle + rot;
     }
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
-    const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
+    const frontIndirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
     const dot = normal.dot(sunDirection);
     const v2d = new Vector2();
     const dv = new Vector3();
-    for (let kx = 0; kx < nx; kx++) {
-      for (let ky = 0; ky < ny; ky++) {
-        cellOutputs[kx][ky] = indirectRadiation;
-        if (dot > 0) {
+    if (pvModel.bifacial) {
+      // bifacial panel
+      const backsideNormal = normal.clone().negate();
+      const backIndirectRadiation = calculateDiffuseAndReflectedRadiation(
+        world.ground,
+        month,
+        backsideNormal,
+        peakRadiation,
+      );
+      for (let kx = 0; kx < nx; kx++) {
+        for (let ky = 0; ky < ny; ky++) {
+          cellOutputs[kx][ky] = frontIndirectRadiation + backIndirectRadiation;
           v2d.set(x0 + kx * dx, y0 + ky * dy);
           dv.set(v2d.x - center2d.x, v2d.y - center2d.y, 0);
           dv.applyEuler(normalEuler);
           v.set(center.x + dv.x, center.y + dv.y, z0 + dv.z);
           if (!inShadow(panel.id, v, sunDirection)) {
             // direct radiation
-            cellOutputs[kx][ky] += dot * peakRadiation;
+            cellOutputs[kx][ky] += Math.abs(dot) * peakRadiation;
+          }
+        }
+      }
+    } else {
+      // monofacial panel
+      for (let kx = 0; kx < nx; kx++) {
+        for (let ky = 0; ky < ny; ky++) {
+          cellOutputs[kx][ky] = frontIndirectRadiation;
+          if (dot > 0) {
+            v2d.set(x0 + kx * dx, y0 + ky * dy);
+            dv.set(v2d.x - center2d.x, v2d.y - center2d.y, 0);
+            dv.applyEuler(normalEuler);
+            v.set(center.x + dv.x, center.y + dv.y, z0 + dv.z);
+            if (!inShadow(panel.id, v, sunDirection)) {
+              // direct radiation
+              cellOutputs[kx][ky] += dot * peakRadiation;
+            }
           }
         }
       }
