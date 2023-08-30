@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/aladdin/static/css/main.c1ee157d.chunk.css",
-    "main.js": "/aladdin/static/js/main.b3734019.chunk.js",
-    "main.js.map": "/aladdin/static/js/main.b3734019.chunk.js.map",
+    "main.js": "/aladdin/static/js/main.ac5bdb47.chunk.js",
+    "main.js.map": "/aladdin/static/js/main.ac5bdb47.chunk.js.map",
     "runtime-main.js": "/aladdin/static/js/runtime-main.b3c25317.js",
     "runtime-main.js.map": "/aladdin/static/js/runtime-main.b3c25317.js.map",
     "static/css/2.447301e6.chunk.css": "/aladdin/static/css/2.447301e6.chunk.css",
@@ -157,7 +157,7 @@
     "static/media/polygon_09.26eed538.png": "/aladdin/static/media/polygon_09.26eed538.png",
     "static/media/polygon_10.749fa717.png": "/aladdin/static/media/polygon_10.749fa717.png",
     "static/media/polygon_10_menu.e1254bdd.png": "/aladdin/static/media/polygon_10_menu.e1254bdd.png",
-    "static/media/pvmodules.1492dff1.csv": "/aladdin/static/media/pvmodules.1492dff1.csv",
+    "static/media/pvmodules.6eddb31a.csv": "/aladdin/static/media/pvmodules.6eddb31a.csv",
     "static/media/red_rose.6fbd03bc.png": "/aladdin/static/media/red_rose.6fbd03bc.png",
     "static/media/roof_01.1418beb1.png": "/aladdin/static/media/roof_01.1418beb1.png",
     "static/media/roof_01_menu.1418beb1.png": "/aladdin/static/media/roof_01_menu.1418beb1.png",
@@ -204,6 +204,6 @@
     "static/css/2.447301e6.chunk.css",
     "static/js/2.eb926861.chunk.js",
     "static/css/main.c1ee157d.chunk.css",
-    "static/js/main.b3734019.chunk.js"
+    "static/js/main.ac5bdb47.chunk.js"
   ]
 }
