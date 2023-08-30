@@ -2,10 +2,9 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { CompactPicker } from 'react-color';
-import { Button, Col, Modal, Radio, RadioChangeEvent, Row, Space } from 'antd';
-import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
+import { Col, Radio, RadioChangeEvent, Row, Space } from 'antd';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { ObjectType, Scope } from '../../../types';
@@ -14,6 +13,7 @@ import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { FoundationModel } from '../../../models/FoundationModel';
 import { useSelectedElement } from './menuHooks';
+import Dialog from '../dialog';
 
 const FoundationColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
@@ -31,28 +31,14 @@ const FoundationColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
 
   const foundation = useSelectedElement(ObjectType.Foundation) as FoundationModel | undefined;
 
-  const [selectedColor, setSelectedColor] = useState<string>(foundation?.color ?? '#808080');
-  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
-  const [dragEnabled, setDragEnabled] = useState<boolean>(false);
-  const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
-  const dragRef = useRef<HTMLDivElement | null>(null);
-  const okButtonRef = useRef<HTMLElement | null>(null);
+  // useRef for keyboard listener closure
+  const selectedColorRef = useRef(foundation?.color ?? '#808080');
+  const [selectedColor, setSelectedColor] = useState(selectedColorRef.current);
 
   const lang = { lng: language };
 
-  useEffect(() => {
-    okButtonRef.current?.focus();
-  });
-
-  useEffect(() => {
-    if (foundation) {
-      setSelectedColor(foundation?.color ?? '#808080');
-    }
-  }, [foundation]);
-
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);
-    setUpdateFlag(!updateFlag);
   };
 
   const needChange = (color: string) => {
@@ -75,7 +61,7 @@ const FoundationColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
     return false;
   };
 
-  const setColor = (value: string) => {
+  const updateColor = (value: string) => {
     if (!foundation) return;
     if (!needChange(value)) return;
     switch (actionScope) {
@@ -129,27 +115,20 @@ const FoundationColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
     setCommonStore((state) => {
       state.actionState.foundationColor = value;
     });
-    setUpdateFlag(!updateFlag);
   };
 
-  const onStart = (event: DraggableEvent, uiData: DraggableData) => {
-    if (dragRef.current) {
-      const { clientWidth, clientHeight } = window.document.documentElement;
-      const targetRect = dragRef.current.getBoundingClientRect();
-      setBounds({
-        left: -targetRect.left + uiData.x,
-        right: clientWidth - (targetRect.right - uiData.x),
-        top: -targetRect.top + uiData.y,
-        bottom: clientHeight - (targetRect?.bottom - uiData.y),
-      });
-    }
+  const apply = () => {
+    updateColor(selectedColorRef.current);
   };
 
   const close = () => {
-    if (foundation?.color) {
-      setSelectedColor(foundation.color);
-    }
     setDialogVisible(false);
+  };
+
+  const ok = () => {
+    apply();
+    close();
+    setApplyCount(0);
   };
 
   const cancel = () => {
@@ -157,77 +136,39 @@ const FoundationColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
     revertApply();
   };
 
-  const ok = () => {
-    setColor(selectedColor);
-    setDialogVisible(false);
-    setApplyCount(0);
-  };
-
   return (
-    <>
-      <Modal
-        width={600}
-        visible={true}
-        title={
-          <div
-            style={{ width: '100%', cursor: 'move' }}
-            onMouseOver={() => setDragEnabled(true)}
-            onMouseOut={() => setDragEnabled(false)}
-          >
-            {i18n.t('word.Color', lang)}
-          </div>
-        }
-        footer={[
-          <Button
-            key="Apply"
-            onClick={() => {
-              setColor(selectedColor);
+    <Dialog
+      width={600}
+      title={i18n.t('word.Color', lang)}
+      onClickApply={apply}
+      onClickCancel={cancel}
+      onClickOk={ok}
+      onClose={close}
+    >
+      <Row gutter={6}>
+        <Col className="gutter-row" span={12}>
+          <CompactPicker
+            color={selectedColor}
+            onChangeComplete={(colorResult) => {
+              setSelectedColor(colorResult.hex);
+              selectedColorRef.current = colorResult.hex;
             }}
-          >
-            {i18n.t('word.Apply', lang)}
-          </Button>,
-          <Button key="Cancel" onClick={cancel}>
-            {i18n.t('word.Cancel', lang)}
-          </Button>,
-          <Button key="OK" type="primary" onClick={ok} ref={okButtonRef}>
-            {i18n.t('word.OK', lang)}
-          </Button>,
-        ]}
-        // this must be specified for the x button in the upper-right corner to work
-        onCancel={close}
-        maskClosable={false}
-        destroyOnClose={false}
-        modalRender={(modal) => (
-          <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
-            <div ref={dragRef}>{modal}</div>
-          </Draggable>
-        )}
-      >
-        <Row gutter={6}>
-          <Col className="gutter-row" span={12}>
-            <CompactPicker
-              color={selectedColor ?? foundation?.color ?? '#808080'}
-              onChangeComplete={(colorResult) => {
-                setSelectedColor(colorResult.hex);
-                setUpdateFlag(!updateFlag);
-              }}
-            />
-          </Col>
-          <Col
-            className="gutter-row"
-            style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={12}
-          >
-            <Radio.Group onChange={onScopeChange} value={actionScope}>
-              <Space direction="vertical">
-                <Radio value={Scope.OnlyThisObject}>{i18n.t('foundationMenu.OnlyThisFoundation', lang)}</Radio>
-                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('foundationMenu.AllFoundations', lang)}</Radio>
-              </Space>
-            </Radio.Group>
-          </Col>
-        </Row>
-      </Modal>
-    </>
+          />
+        </Col>
+        <Col
+          className="gutter-row"
+          style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
+          span={12}
+        >
+          <Radio.Group onChange={onScopeChange} value={actionScope}>
+            <Space direction="vertical">
+              <Radio value={Scope.OnlyThisObject}>{i18n.t('foundationMenu.OnlyThisFoundation', lang)}</Radio>
+              <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('foundationMenu.AllFoundations', lang)}</Radio>
+            </Space>
+          </Radio.Group>
+        </Col>
+      </Row>
+    </Dialog>
   );
 };
 

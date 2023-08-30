@@ -182,3 +182,9 @@ export const useSelected = (id: string) => {
   const selected = useStore((state) => state.selectedElementIdSet.has(id));
   return selected;
 };
+
+export const useLanguage = () => {
+  const language = useStore(Selector.language);
+  const lang = { lng: language };
+  return lang;
+};

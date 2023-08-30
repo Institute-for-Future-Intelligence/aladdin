@@ -21,6 +21,7 @@ import { ElementModel } from 'src/models/ElementModel';
 import { useRefStore } from 'src/stores/commonRef';
 import { invalidate } from '@react-three/fiber';
 import { useSelectedElement } from './menuHooks';
+import Dialog from '../dialog';
 
 const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
@@ -485,90 +486,62 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
     }
   };
 
+  const apply = () => {
+    setLy(inputLyRef.current);
+  };
+
+  const rejectedMessage = rejectRef.current
+    ? ': ' +
+      i18n.t('message.NotApplicableToSelectedAction', lang) +
+      (rejectedValue.current !== undefined ? ' (' + rejectedValue.current.toFixed(2) + ')' : '')
+    : null;
+
   return (
-    <>
-      <Modal
-        width={550}
-        visible={true}
-        title={
-          <div
-            style={{ width: '100%', cursor: 'move' }}
-            onMouseOver={() => setDragEnabled(true)}
-            onMouseOut={() => setDragEnabled(false)}
-          >
-            {i18n.t('word.Width', lang)}
-            <span style={{ color: 'red', fontWeight: 'bold' }}>
-              {rejectRef.current
-                ? ': ' +
-                  i18n.t('message.NotApplicableToSelectedAction', lang) +
-                  (rejectedValue.current !== undefined ? ' (' + rejectedValue.current.toFixed(2) + ')' : '')
-                : ''}
-            </span>
-          </div>
-        }
-        footer={[
-          <Button
-            key="Apply"
-            onClick={() => {
-              setLy(inputLyRef.current);
+    <Dialog
+      width={550}
+      title={i18n.t('word.Width', lang)}
+      rejectedMessage={rejectedMessage}
+      onClickApply={apply}
+      onClickCancel={cancel}
+      onClickOk={ok}
+      onClose={close}
+    >
+      <Row gutter={6}>
+        <Col className="gutter-row" span={6}>
+          <InputNumber
+            min={0.1}
+            max={1000}
+            style={{ width: 120 }}
+            step={0.5}
+            precision={2}
+            value={inputLyRef.current}
+            onChange={(value) => {
+              inputLyRef.current = value;
+              setUpdateFlag(!updateFlag);
             }}
-          >
-            {i18n.t('word.Apply', lang)}
-          </Button>,
-          <Button key="Cancel" onClick={cancel}>
-            {i18n.t('word.Cancel', lang)}
-          </Button>,
-          <Button key="OK" type="primary" onClick={ok}>
-            {i18n.t('word.OK', lang)}
-          </Button>,
-        ]}
-        // this must be specified for the x button in the upper-right corner to work
-        onCancel={close}
-        maskClosable={false}
-        destroyOnClose={false}
-        modalRender={(modal) => (
-          <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
-            <div ref={dragRef}>{modal}</div>
-          </Draggable>
-        )}
-      >
-        <Row gutter={6}>
-          <Col className="gutter-row" span={6}>
-            <InputNumber
-              min={0.1}
-              max={1000}
-              style={{ width: 120 }}
-              step={0.5}
-              precision={2}
-              value={inputLyRef.current}
-              onChange={(value) => {
-                inputLyRef.current = value;
-                setUpdateFlag(!updateFlag);
-              }}
-              onPressEnter={ok}
-            />
-            <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-              {i18n.t('word.Range', lang)}: [0.1, 1000] {i18n.t('word.MeterAbbreviation', lang)}
-            </div>
-          </Col>
-          <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
-            {i18n.t('word.MeterAbbreviation', lang)}
-          </Col>
-          <Col
-            className="gutter-row"
-            style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={17}
-          >
-            <Radio.Group onChange={onScopeChange} value={actionScope}>
-              <Space direction="vertical">
-                <Radio value={Scope.OnlyThisObject}>{i18n.t('foundationMenu.OnlyThisFoundation', lang)}</Radio>
-                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('foundationMenu.AllFoundations', lang)}</Radio>
-              </Space>
-            </Radio.Group>
-          </Col>
-        </Row>
-      </Modal>
-    </>
+            onPressEnter={ok}
+          />
+          <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
+            {i18n.t('word.Range', lang)}: [0.1, 1000] {i18n.t('word.MeterAbbreviation', lang)}
+          </div>
+        </Col>
+        <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
+          {i18n.t('word.MeterAbbreviation', lang)}
+        </Col>
+        <Col
+          className="gutter-row"
+          style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
+          span={17}
+        >
+          <Radio.Group onChange={onScopeChange} value={actionScope}>
+            <Space direction="vertical">
+              <Radio value={Scope.OnlyThisObject}>{i18n.t('foundationMenu.OnlyThisFoundation', lang)}</Radio>
+              <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('foundationMenu.AllFoundations', lang)}</Radio>
+            </Space>
+          </Radio.Group>
+        </Col>
+      </Row>
+    </Dialog>
   );
 };
 
