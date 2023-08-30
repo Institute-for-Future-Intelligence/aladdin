@@ -14,6 +14,7 @@ import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { ZERO_TOLERANCE } from 'src/constants';
 import { SolarPowerTowerModel } from '../../../models/SolarPowerTowerModel';
+import { useSelectedElement } from './menuHooks';
 
 const SolarPowerTowerReceiverOpticalEfficiencyInput = ({
   setDialogVisible,
@@ -31,9 +32,7 @@ const SolarPowerTowerReceiverOpticalEfficiencyInput = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const foundation = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.Foundation),
-  ) as FoundationModel;
+  const foundation = useSelectedElement(ObjectType.Foundation) as FoundationModel | undefined;
   const powerTower = foundation?.solarPowerTower;
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);

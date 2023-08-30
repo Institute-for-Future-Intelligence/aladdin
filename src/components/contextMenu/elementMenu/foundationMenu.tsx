@@ -56,6 +56,7 @@ import {
   useLabelShow,
   useLabelSize,
   useLabelText,
+  useSelectedElement,
 } from './menuHooks';
 import { HvacSystem } from '../../../models/HvacSystem';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
@@ -75,9 +76,7 @@ export const FoundationMenu = React.memo(() => {
   const language = useStore(Selector.language);
   const elementsToPaste = useStore(Selector.elementsToPaste);
 
-  const foundation = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.Foundation),
-  ) as FoundationModel;
+  const foundation = useSelectedElement(ObjectType.Foundation) as FoundationModel | undefined;
 
   const [colorDialogVisible, setColorDialogVisible] = useState(false);
   const [textureDialogVisible, setTextureDialogVisible] = useState(false);

@@ -13,6 +13,7 @@ import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { ZERO_TOLERANCE } from '../../../constants';
+import { useSelectedElement } from './menuHooks';
 
 const FresnelReflectorReflectanceInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
@@ -29,9 +30,7 @@ const FresnelReflectorReflectanceInput = ({ setDialogVisible }: { setDialogVisib
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const fresnelReflector = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.FresnelReflector),
-  ) as FresnelReflectorModel;
+  const fresnelReflector = useSelectedElement(ObjectType.FresnelReflector) as FresnelReflectorModel | undefined;
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -53,6 +52,7 @@ const FresnelReflectorReflectanceInput = ({ setDialogVisible }: { setDialogVisib
   };
 
   const needChange = (reflectance: number) => {
+    if (!fresnelReflector) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
@@ -191,6 +191,7 @@ const FresnelReflectorReflectanceInput = ({ setDialogVisible }: { setDialogVisib
   };
 
   const close = () => {
+    if (!fresnelReflector) return;
     inputReflectanceRef.current = fresnelReflector.reflectance;
     setDialogVisible(false);
   };

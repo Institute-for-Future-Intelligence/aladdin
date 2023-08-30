@@ -11,13 +11,12 @@ import { PolygonModel } from '../../../models/PolygonModel';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { Point2 } from '../../../models/Point2';
 import { ObjectType, PolygonVertexAction } from '../../../types';
+import { useSelectedElement } from './menuHooks';
 
 export const PolygonVertexMenu = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
-  const polygon = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.Polygon),
-  ) as PolygonModel;
+  const polygon = useSelectedElement(ObjectType.Polygon) as PolygonModel | undefined;
   const updatePolygonVerticesById = useStore(Selector.updatePolygonVerticesById);
   const addUndoable = useStore(Selector.addUndoable);
 

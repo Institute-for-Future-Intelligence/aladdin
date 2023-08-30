@@ -20,6 +20,7 @@ import { PolygonModel } from 'src/models/PolygonModel';
 import { useRefStore } from 'src/stores/commonRef';
 import { ElementModel } from 'src/models/ElementModel';
 import { invalidate } from '@react-three/fiber';
+import { useSelectedElement } from './menuHooks';
 
 const CuboidLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
@@ -38,9 +39,7 @@ const CuboidLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const cuboid = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.Cuboid),
-  ) as CuboidModel;
+  const cuboid = useSelectedElement(ObjectType.Cuboid) as CuboidModel | undefined;
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -73,6 +72,7 @@ const CuboidLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
   };
 
   const containsAllChildren = (lx: number) => {
+    if (!cuboid) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
@@ -106,6 +106,7 @@ const CuboidLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
   };
 
   const needChange = (lx: number) => {
+    if (!cuboid) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisTypeOnSurface:
         for (const e of elements) {
@@ -460,6 +461,7 @@ const CuboidLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
   };
 
   const close = () => {
+    if (!cuboid) return;
     inputLxRef.current = cuboid?.lx;
     rejectRef.current = false;
     setDialogVisible(false);

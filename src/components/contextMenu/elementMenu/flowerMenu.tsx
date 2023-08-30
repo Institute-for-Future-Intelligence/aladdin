@@ -12,13 +12,12 @@ import { FlowerModel } from '../../../models/FlowerModel';
 import FlowerSelection from './flowerSelection';
 import { ObjectType } from '../../../types';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
+import { useSelectedElement } from './menuHooks';
 
 export const FlowerMenu = () => {
+  const flower = useSelectedElement(ObjectType.Flower) as FlowerModel | undefined;
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
-  const flower = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.Flower),
-  ) as FlowerModel;
   const addUndoable = useStore(Selector.addUndoable);
 
   if (!flower) return null;

@@ -13,6 +13,7 @@ import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { ZERO_TOLERANCE } from '../../../constants';
+import { useSelectedElement } from './menuHooks';
 
 const ParabolicTroughPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
@@ -30,9 +31,7 @@ const ParabolicTroughPoleHeightInput = ({ setDialogVisible }: { setDialogVisible
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const parabolicTrough = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.ParabolicTrough),
-  ) as ParabolicTroughModel;
+  const parabolicTrough = useSelectedElement(ObjectType.ParabolicTrough) as ParabolicTroughModel | undefined;
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -56,6 +55,7 @@ const ParabolicTroughPoleHeightInput = ({ setDialogVisible }: { setDialogVisible
   };
 
   const needChange = (poleHeight: number) => {
+    if (!parabolicTrough) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
@@ -237,6 +237,7 @@ const ParabolicTroughPoleHeightInput = ({ setDialogVisible }: { setDialogVisible
   };
 
   const close = () => {
+    if (!parabolicTrough) return;
     inputPoleHeightRef.current = parabolicTrough.poleHeight;
     rejectRef.current = false;
     setDialogVisible(false);

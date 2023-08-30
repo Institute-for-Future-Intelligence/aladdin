@@ -14,6 +14,7 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { FoundationModel } from '../../../models/FoundationModel';
 import { Util } from '../../../Util';
 import { ZERO_TOLERANCE } from '../../../constants';
+import { useSelectedElement } from './menuHooks';
 
 const FoundationAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
@@ -28,16 +29,14 @@ const FoundationAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const foundation = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.Foundation),
-  ) as FoundationModel;
+  const foundation = useSelectedElement(ObjectType.Foundation) as FoundationModel | undefined;
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
   // reverse the sign because rotation angle is positive counterclockwise whereas azimuth is positive clockwise
-  const inputAzimuthRef = useRef<number>(-foundation?.rotation[2] ?? 0);
+  const inputAzimuthRef = useRef<number>(foundation ? -foundation?.rotation[2] ?? 0 : 0);
 
   const lang = { lng: language };
 
@@ -53,6 +52,7 @@ const FoundationAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
   };
 
   const needChange = (azimuth: number) => {
+    if (!foundation) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
@@ -140,6 +140,7 @@ const FoundationAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
   };
 
   const close = () => {
+    if (!foundation) return;
     inputAzimuthRef.current = -foundation?.rotation[2];
     setDialogVisible(false);
   };

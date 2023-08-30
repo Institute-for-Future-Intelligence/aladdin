@@ -14,6 +14,7 @@ import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { Util } from '../../../Util';
 import { ZERO_TOLERANCE } from '../../../constants';
+import { useSelectedElement } from './menuHooks';
 
 const SolarPanelPoleSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
@@ -28,9 +29,7 @@ const SolarPanelPoleSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const solarPanel = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.SolarPanel),
-  ) as SolarPanelModel;
+  const solarPanel = useSelectedElement(ObjectType.SolarPanel) as SolarPanelModel | undefined;
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -109,6 +108,7 @@ const SolarPanelPoleSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b
   };
 
   const needChange = (poleSpacing: number) => {
+    if (!solarPanel) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
@@ -322,6 +322,7 @@ const SolarPanelPoleSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b
   };
 
   const close = () => {
+    if (!solarPanel) return;
     inputPoleSpacingRef.current = solarPanel.poleSpacing;
     setDialogVisible(false);
   };

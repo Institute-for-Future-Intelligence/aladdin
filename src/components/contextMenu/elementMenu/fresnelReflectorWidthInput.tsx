@@ -14,6 +14,7 @@ import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { ZERO_TOLERANCE } from '../../../constants';
 import { Util } from '../../../Util';
+import { useSelectedElement } from './menuHooks';
 
 // for Fresnel reflectors, since the default alignment is north-south, ly is always much larger than lx.
 // to agree with the convention, we call ly length and lx width, reversed from most other elements in Aladdin.
@@ -34,9 +35,7 @@ const FresnelReflectorWidthInput = ({ setDialogVisible }: { setDialogVisible: (b
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const fresnelReflector = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.FresnelReflector),
-  ) as FresnelReflectorModel;
+  const fresnelReflector = useSelectedElement(ObjectType.FresnelReflector) as FresnelReflectorModel | undefined;
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -79,6 +78,7 @@ const FresnelReflectorWidthInput = ({ setDialogVisible }: { setDialogVisible: (b
   };
 
   const needChange = (lx: number) => {
+    if (!fresnelReflector) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
@@ -252,6 +252,7 @@ const FresnelReflectorWidthInput = ({ setDialogVisible }: { setDialogVisible: (b
   };
 
   const close = () => {
+    if (!fresnelReflector) return;
     inputWidthRef.current = fresnelReflector.lx;
     rejectRef.current = false;
     setDialogVisible(false);

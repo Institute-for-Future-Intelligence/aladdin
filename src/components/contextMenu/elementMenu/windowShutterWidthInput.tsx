@@ -12,6 +12,7 @@ import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { WindowModel } from 'src/models/WindowModel';
+import { useSelectedElement } from './menuHooks';
 
 const WindowShutterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
@@ -25,9 +26,7 @@ const WindowShutterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: b
   const getElementById = useStore(Selector.getElementById);
   const setCommonStore = useStore(Selector.set);
 
-  const windowModel = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.Window),
-  ) as WindowModel;
+  const windowModel = useSelectedElement(ObjectType.Window) as WindowModel | undefined;
 
   const [input, setInput] = useState<number>(windowModel?.shutter?.width ?? 0.5);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -69,6 +68,7 @@ const WindowShutterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: b
   };
 
   const needChange = (value: number) => {
+    if (!windowModel) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {

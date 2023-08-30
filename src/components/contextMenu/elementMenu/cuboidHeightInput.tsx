@@ -18,6 +18,7 @@ import { Object3D, Vector2, Vector3 } from 'three';
 import { ElementModel } from 'src/models/ElementModel';
 import { invalidate } from '@react-three/fiber';
 import { Util } from '../../../Util';
+import { useSelectedElement } from './menuHooks';
 
 const CuboidHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
@@ -37,9 +38,7 @@ const CuboidHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const cuboid = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.Cuboid),
-  ) as CuboidModel;
+  const cuboid = useSelectedElement(ObjectType.Cuboid) as CuboidModel | undefined;
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -71,6 +70,7 @@ const CuboidHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
   };
 
   const updateLzAndCzOnSurface = (value: number) => {
+    if (!cuboid) return;
     const parent = getParent(cuboid);
     if (parent) {
       for (const e of elements) {
@@ -83,7 +83,8 @@ const CuboidHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
   };
 
   const updateLzAndCzAboveBase = (value: number) => {
-    const baseId = Util.getBaseId(cuboid?.id);
+    if (!cuboid) return;
+    const baseId = Util.getBaseId(cuboid.id);
     if (baseId) {
       for (const e of elements) {
         if (e.type === ObjectType.Cuboid && !e.locked && Util.getBaseId(e.id) === baseId) {
@@ -95,6 +96,7 @@ const CuboidHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
   };
 
   const needChange = (lz: number) => {
+    if (!cuboid) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
@@ -475,6 +477,7 @@ const CuboidHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
   };
 
   const close = () => {
+    if (!cuboid) return;
     inputLzRef.current = cuboid?.lz;
     setDialogVisible(false);
   };
@@ -560,7 +563,7 @@ const CuboidHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
             <Radio.Group onChange={onScopeChange} value={actionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('cuboidMenu.OnlyThisCuboid', lang)}</Radio>
-                {cuboid.parentId !== GROUND_ID && (
+                {cuboid?.parentId !== GROUND_ID && (
                   <Radio value={Scope.AllObjectsOfThisTypeOnSurface}>
                     {i18n.t('cuboidMenu.AllCuboidsOnSameSurface', lang)}
                   </Radio>

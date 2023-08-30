@@ -27,6 +27,7 @@ import {
   useLabelShow,
   useLabelSize,
   useLabelText,
+  useSelectedElement,
 } from './menuHooks';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import ParabolicDishPoleRadiusInput from './parabolicDishPoleRadiusInput';
@@ -37,9 +38,7 @@ export const ParabolicDishMenu = React.memo(() => {
   const addUndoable = useStore(Selector.addUndoable);
   const setApplyCount = useStore(Selector.setApplyCount);
 
-  const parabolicDish = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.ParabolicDish),
-  ) as ParabolicDishModel;
+  const parabolicDish = useSelectedElement(ObjectType.ParabolicDish) as ParabolicDishModel | undefined;
 
   const [structureTypeDialogVisible, setStructureTypeDialogVisible] = useState(false);
   const [latusRectumDialogVisible, setLatusRectumDialogVisible] = useState(false);

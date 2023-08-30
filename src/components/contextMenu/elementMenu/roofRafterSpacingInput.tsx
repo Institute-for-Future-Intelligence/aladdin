@@ -12,6 +12,7 @@ import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { RoofModel } from 'src/models/RoofModel';
+import { useSelectedElement } from './menuHooks';
 
 const RoofRafterSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
@@ -25,8 +26,7 @@ const RoofRafterSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
   const getElementById = useStore(Selector.getElementById);
   const setCommonStore = useStore(Selector.set);
 
-  const roof = useStore((state) => state.elements.find((e) => e.selected && e.type === ObjectType.Roof)) as RoofModel;
-
+  const roof = useSelectedElement(ObjectType.Roof) as RoofModel | undefined;
   const [input, setInput] = useState<number>(roof?.rafterSpacing ?? 1);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -64,6 +64,7 @@ const RoofRafterSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
   };
 
   const needChange = (value: number) => {
+    if (!roof) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
@@ -188,7 +189,7 @@ const RoofRafterSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
   };
 
   const close = () => {
-    setInput(roof.rafterSpacing ?? 1);
+    setInput(roof?.rafterSpacing ?? 1);
     setDialogVisible(false);
   };
 

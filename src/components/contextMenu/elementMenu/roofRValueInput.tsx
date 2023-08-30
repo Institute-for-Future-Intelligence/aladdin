@@ -14,6 +14,7 @@ import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { RoofModel } from '../../../models/RoofModel';
 import { Util } from '../../../Util';
 import { DEFAULT_ROOF_R_VALUE } from '../../../constants';
+import { useSelectedElement } from './menuHooks';
 
 const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
@@ -27,7 +28,7 @@ const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   const getElementById = useStore(Selector.getElementById);
   const setCommonStore = useStore(Selector.set);
 
-  const roof = useStore((state) => state.elements.find((e) => e.selected && e.type === ObjectType.Roof)) as RoofModel;
+  const roof = useSelectedElement(ObjectType.Roof) as RoofModel | undefined;
 
   const [inputValue, setInputValue] = useState<number>(roof?.rValue ?? DEFAULT_ROOF_R_VALUE);
   const [inputValueUS, setInputValueUS] = useState<number>(Util.toRValueInUS(inputValue));
@@ -67,6 +68,7 @@ const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   };
 
   const needChange = (value: number) => {
+    if (!roof) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {

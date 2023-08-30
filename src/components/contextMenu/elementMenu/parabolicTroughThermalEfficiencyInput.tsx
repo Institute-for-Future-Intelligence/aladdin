@@ -13,6 +13,7 @@ import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { ZERO_TOLERANCE } from '../../../constants';
+import { useSelectedElement } from './menuHooks';
 
 const ParabolicTroughThermalEfficiencyInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
@@ -29,10 +30,7 @@ const ParabolicTroughThermalEfficiencyInput = ({ setDialogVisible }: { setDialog
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const parabolicTrough = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.ParabolicTrough),
-  ) as ParabolicTroughModel;
-
+  const parabolicTrough = useSelectedElement(ObjectType.ParabolicTrough) as ParabolicTroughModel | undefined;
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -53,6 +51,7 @@ const ParabolicTroughThermalEfficiencyInput = ({ setDialogVisible }: { setDialog
   };
 
   const needChange = (thermalEfficiency: number) => {
+    if (!parabolicTrough) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
@@ -186,6 +185,7 @@ const ParabolicTroughThermalEfficiencyInput = ({ setDialogVisible }: { setDialog
   };
 
   const close = () => {
+    if (!parabolicTrough) return;
     inputThermalEfficiencyRef.current = parabolicTrough.thermalEfficiency;
     setDialogVisible(false);
   };

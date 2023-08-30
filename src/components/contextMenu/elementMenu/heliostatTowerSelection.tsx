@@ -13,6 +13,7 @@ import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { FoundationModel } from '../../../models/FoundationModel';
+import { useSelectedElement } from './menuHooks';
 
 const { Option } = Select;
 
@@ -31,9 +32,7 @@ const HeliostatTowerSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const heliostat = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.Heliostat),
-  ) as HeliostatModel;
+  const heliostat = useSelectedElement(ObjectType.Heliostat) as HeliostatModel | undefined;
 
   const [selectedTowerId, setSelectedTowerId] = useState<string>(heliostat?.towerId ?? 'None');
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
@@ -219,6 +218,7 @@ const HeliostatTowerSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
   };
 
   const close = () => {
+    if (!heliostat) return;
     setTowerId(heliostat.towerId);
     setDialogVisible(false);
   };

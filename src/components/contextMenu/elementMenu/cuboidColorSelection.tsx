@@ -13,6 +13,7 @@ import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { CuboidModel } from '../../../models/CuboidModel';
+import { useSelectedElement } from './menuHooks';
 
 const CuboidColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
@@ -26,9 +27,7 @@ const CuboidColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const cuboid = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.Cuboid),
-  ) as CuboidModel;
+  const cuboid = useSelectedElement(ObjectType.Cuboid) as CuboidModel | undefined;
 
   const [selectedColor, setSelectedColor] = useState<string>(cuboid?.color ?? '#808080');
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
@@ -109,6 +108,7 @@ const CuboidColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
   };
 
   const needChange = (color: string) => {
+    if (!cuboid) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {

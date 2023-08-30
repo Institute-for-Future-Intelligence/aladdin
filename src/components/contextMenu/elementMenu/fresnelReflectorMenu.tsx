@@ -25,6 +25,7 @@ import {
   useLabelShow,
   useLabelSize,
   useLabelText,
+  useSelectedElement,
 } from './menuHooks';
 import SubMenu from 'antd/lib/menu/SubMenu';
 
@@ -32,9 +33,7 @@ export const FresnelReflectorMenu = React.memo(() => {
   const language = useStore(Selector.language);
   const setApplyCount = useStore(Selector.setApplyCount);
 
-  const fresnelReflector = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.FresnelReflector),
-  ) as FresnelReflectorModel;
+  const fresnelReflector = useSelectedElement(ObjectType.FresnelReflector) as FresnelReflectorModel | undefined;
 
   const [moduleLengthDialogVisible, setModuleLengthDialogVisible] = useState(false);
   const [widthDialogVisible, setWidthDialogVisible] = useState(false);

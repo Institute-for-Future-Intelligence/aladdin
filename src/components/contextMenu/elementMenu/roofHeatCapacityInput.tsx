@@ -12,6 +12,7 @@ import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { RoofModel } from '../../../models/RoofModel';
+import { useSelectedElement } from './menuHooks';
 
 const RoofHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
@@ -25,7 +26,7 @@ const RoofHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   const getElementById = useStore(Selector.getElementById);
   const setCommonStore = useStore(Selector.set);
 
-  const roof = useStore((state) => state.elements.find((e) => e.selected && e.type === ObjectType.Roof)) as RoofModel;
+  const roof = useSelectedElement(ObjectType.Roof) as RoofModel | undefined;
 
   const [inputValue, setInputValue] = useState<number>(roof?.volumetricHeatCapacity ?? 0.5);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -64,6 +65,7 @@ const RoofHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   };
 
   const needChange = (value: number) => {
+    if (!roof) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {

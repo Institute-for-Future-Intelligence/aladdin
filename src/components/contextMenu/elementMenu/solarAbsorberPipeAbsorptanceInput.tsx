@@ -14,6 +14,7 @@ import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { ZERO_TOLERANCE } from 'src/constants';
 import { SolarAbsorberPipeModel } from '../../../models/SolarAbsorberPipeModel';
+import { useSelectedElement } from './menuHooks';
 
 const SolarAbsorberPipeAbsorptanceInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
@@ -27,9 +28,7 @@ const SolarAbsorberPipeAbsorptanceInput = ({ setDialogVisible }: { setDialogVisi
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const foundation = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.Foundation),
-  ) as FoundationModel;
+  const foundation = useSelectedElement(ObjectType.Foundation) as FoundationModel | undefined;
   const absorberPipe = foundation?.solarAbsorberPipe;
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);

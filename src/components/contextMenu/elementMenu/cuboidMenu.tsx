@@ -36,6 +36,7 @@ import {
   useLabelShow,
   useLabelSize,
   useLabelText,
+  useSelectedElement,
 } from './menuHooks';
 import { Util } from 'src/Util';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
@@ -53,9 +54,7 @@ export const CuboidMenu = React.memo(() => {
   const selectedSideIndex = useStore(Selector.selectedSideIndex);
   const elementsToPaste = useStore(Selector.elementsToPaste);
 
-  const cuboid = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.Cuboid),
-  ) as CuboidModel;
+  const cuboid = useSelectedElement(ObjectType.Cuboid) as CuboidModel;
 
   const [colorDialogVisible, setColorDialogVisible] = useState(false);
   const [textureDialogVisible, setTextureDialogVisible] = useState(false);

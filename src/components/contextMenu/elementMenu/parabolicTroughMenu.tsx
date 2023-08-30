@@ -28,6 +28,7 @@ import {
   useLabelShow,
   useLabelSize,
   useLabelText,
+  useSelectedElement,
 } from './menuHooks';
 import SubMenu from 'antd/lib/menu/SubMenu';
 
@@ -37,9 +38,7 @@ export const ParabolicTroughMenu = React.memo(() => {
   const addUndoable = useStore(Selector.addUndoable);
   const setApplyCount = useStore(Selector.setApplyCount);
 
-  const parabolicTrough = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.ParabolicTrough),
-  ) as ParabolicTroughModel;
+  const parabolicTrough = useSelectedElement(ObjectType.ParabolicTrough) as ParabolicTroughModel | undefined;
 
   const [moduleLengthDialogVisible, setModuleLengthDialogVisible] = useState(false);
   const [latusRectumDialogVisible, setLatusRectumDialogVisible] = useState(false);

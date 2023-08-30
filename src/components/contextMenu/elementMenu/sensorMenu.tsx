@@ -10,13 +10,11 @@ import { Copy, Cut, Lock } from '../menuItems';
 import i18n from '../../../i18n/i18n';
 import { SensorModel } from '../../../models/SensorModel';
 import { ObjectType } from '../../../types';
-import { useLabel, useLabelShow, useLabelText } from './menuHooks';
+import { useLabel, useLabelShow, useLabelText, useSelectedElement } from './menuHooks';
 
 export const SensorMenu = React.memo(() => {
   const language = useStore(Selector.language);
-  const sensor = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.Sensor),
-  ) as SensorModel;
+  const sensor = useSelectedElement(ObjectType.Sensor) as SensorModel | undefined;
 
   const { labelText, setLabelText } = useLabel(sensor);
   const showLabel = useLabelShow(sensor);

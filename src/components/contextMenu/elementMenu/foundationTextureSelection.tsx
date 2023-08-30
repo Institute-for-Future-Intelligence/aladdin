@@ -20,6 +20,7 @@ import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { FoundationModel } from '../../../models/FoundationModel';
+import { useSelectedElement } from './menuHooks';
 
 const FoundationTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
@@ -33,9 +34,7 @@ const FoundationTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const foundation = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.Foundation),
-  ) as FoundationModel;
+  const foundation = useSelectedElement(ObjectType.Foundation) as FoundationModel | undefined;
 
   const [selectedTexture, setSelectedTexture] = useState<FoundationTexture>(
     foundation?.textureType ?? FoundationTexture.NoTexture,

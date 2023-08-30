@@ -14,6 +14,7 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { WallModel } from '../../../models/WallModel';
 import { CompactPicker } from 'react-color';
 import { Util } from '../../../Util';
+import { useSelectedElement } from './menuHooks';
 
 const WallStructureColorSelection = ({ setDialogVisible }: { setDialogVisible: () => void }) => {
   const setCommonStore = useStore(Selector.set);
@@ -27,7 +28,7 @@ const WallStructureColorSelection = ({ setDialogVisible }: { setDialogVisible: (
   const revertApply = useStore(Selector.revertApply);
   const getElementById = useStore(Selector.getElementById);
 
-  const wall = useStore((state) => state.elements.find((e) => e.selected && e.type === ObjectType.Wall)) as WallModel;
+  const wall = useSelectedElement(ObjectType.Wall) as WallModel | undefined;
 
   const [selectedColor, setSelectedColor] = useState<string>(wall?.structureColor ?? '#ffffff');
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
@@ -64,6 +65,7 @@ const WallStructureColorSelection = ({ setDialogVisible }: { setDialogVisible: (
   };
 
   const updateConnectedWalls = (color: string) => {
+    if (!wall) return;
     const connectedWalls = Util.getAllConnectedWalls(wall);
     if (connectedWalls.length === 0) return;
     setCommonStore((state) => {
@@ -100,6 +102,7 @@ const WallStructureColorSelection = ({ setDialogVisible }: { setDialogVisible: (
   };
 
   const needChange = (value: string) => {
+    if (!wall) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {

@@ -12,6 +12,7 @@ import { ObjectType, Scope } from '../../../types';
 import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
+import { useSelectedElement } from './menuHooks';
 
 const FresnelReflectorDrawSunBeamSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
@@ -27,9 +28,7 @@ const FresnelReflectorDrawSunBeamSelection = ({ setDialogVisible }: { setDialogV
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const fresnelReflector = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.FresnelReflector),
-  ) as FresnelReflectorModel;
+  const fresnelReflector = useSelectedElement(ObjectType.FresnelReflector) as FresnelReflectorModel | undefined;
 
   const [sunBeam, setSunBeam] = useState<boolean>(!!fresnelReflector?.drawSunBeam);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
@@ -190,6 +189,7 @@ const FresnelReflectorDrawSunBeamSelection = ({ setDialogVisible }: { setDialogV
   };
 
   const close = () => {
+    if (!fresnelReflector) return;
     setDrawSunBeam(fresnelReflector.drawSunBeam);
     setDialogVisible(false);
   };

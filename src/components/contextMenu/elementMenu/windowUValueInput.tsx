@@ -14,6 +14,7 @@ import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { WindowModel } from 'src/models/WindowModel';
 import { Util } from '../../../Util';
 import { DEFAULT_WINDOW_U_VALUE } from '../../../constants';
+import { useSelectedElement } from './menuHooks';
 
 const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
@@ -27,9 +28,7 @@ const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
   const getElementById = useStore(Selector.getElementById);
   const setCommonStore = useStore(Selector.set);
 
-  const windowModel = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.Window),
-  ) as WindowModel;
+  const windowModel = useSelectedElement(ObjectType.Window) as WindowModel | undefined;
 
   const [inputValue, setInputValue] = useState<number>(windowModel?.uValue ?? DEFAULT_WINDOW_U_VALUE);
   const [inputValueUS, setInputValueUS] = useState<number>(Util.toUValueInUS(inputValue));
@@ -69,6 +68,7 @@ const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
   };
 
   const needChange = (value: number) => {
+    if (!windowModel) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {

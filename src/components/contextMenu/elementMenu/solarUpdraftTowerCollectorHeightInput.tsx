@@ -14,6 +14,7 @@ import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { ZERO_TOLERANCE } from 'src/constants';
 import { SolarUpdraftTowerModel } from '../../../models/SolarUpdraftTowerModel';
+import { useSelectedElement } from './menuHooks';
 
 const SolarUpdraftTowerCollectorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
@@ -27,16 +28,14 @@ const SolarUpdraftTowerCollectorHeightInput = ({ setDialogVisible }: { setDialog
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const foundation = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.Foundation),
-  ) as FoundationModel;
+  const foundation = useSelectedElement(ObjectType.Foundation) as FoundationModel | undefined;
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
   const inputCollectorHeightRef = useRef<number>(
-    foundation?.solarUpdraftTower?.collectorHeight ?? Math.max(3, 10 * foundation?.lz),
+    foundation?.solarUpdraftTower?.collectorHeight ?? Math.max(3, 10 * (foundation?.lz ?? 0)),
   );
 
   const lang = { lng: language };
@@ -188,6 +187,7 @@ const SolarUpdraftTowerCollectorHeightInput = ({ setDialogVisible }: { setDialog
   };
 
   const close = () => {
+    if (!foundation) return;
     inputCollectorHeightRef.current = foundation?.solarUpdraftTower?.collectorHeight ?? Math.max(3, 10 * foundation.lz);
     setDialogVisible(false);
   };

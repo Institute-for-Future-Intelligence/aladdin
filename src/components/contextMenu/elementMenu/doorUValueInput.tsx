@@ -14,6 +14,7 @@ import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { DoorModel } from '../../../models/DoorModel';
 import { Util } from '../../../Util';
 import { DEFAULT_DOOR_U_VALUE } from '../../../constants';
+import { useSelectedElement } from './menuHooks';
 
 const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
@@ -27,7 +28,7 @@ const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   const getElementById = useStore(Selector.getElementById);
   const setCommonStore = useStore(Selector.set);
 
-  const door = useStore((state) => state.elements.find((e) => e.selected && e.type === ObjectType.Door)) as DoorModel;
+  const door = useSelectedElement(ObjectType.Door) as DoorModel | undefined;
 
   const [inputValue, setInputValue] = useState<number>(door?.uValue ?? DEFAULT_DOOR_U_VALUE);
   const [inputValueUS, setInputValueUS] = useState<number>(Util.toUValueInUS(inputValue));
@@ -67,6 +68,7 @@ const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   };
 
   const needChange = (value: number) => {
+    if (!door) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {

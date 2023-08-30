@@ -24,6 +24,7 @@ import {
   useLabelShow,
   useLabelSize,
   useLabelText,
+  useSelectedElement,
 } from './menuHooks';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import HeliostatPoleRadiusInput from './heliostatPoleRadiusInput';
@@ -32,9 +33,7 @@ export const HeliostatMenu = React.memo(() => {
   const language = useStore(Selector.language);
   const setApplyCount = useStore(Selector.setApplyCount);
 
-  const heliostat = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.Heliostat),
-  ) as HeliostatModel;
+  const heliostat = useSelectedElement(ObjectType.Heliostat) as HeliostatModel | undefined;
 
   const [widthDialogVisible, setWidthDialogVisible] = useState(false);
   const [lengthDialogVisible, setLengthDialogVisible] = useState(false);

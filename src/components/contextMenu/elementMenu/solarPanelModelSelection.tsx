@@ -14,6 +14,7 @@ import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { Util } from '../../../Util';
+import { useSelectedElement } from './menuHooks';
 
 const { Option } = Select;
 
@@ -32,9 +33,7 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const solarPanel = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.SolarPanel),
-  ) as SolarPanelModel;
+  const solarPanel = useSelectedElement(ObjectType.SolarPanel) as SolarPanelModel | undefined;
 
   const [selectedPvModel, setSelectedPvModel] = useState<string>(solarPanel?.pvModelName ?? 'SPR-X21-335-BLK');
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
@@ -205,6 +204,7 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
   };
 
   const needChange = (pvModelName: string) => {
+    if (!solarPanel) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
@@ -418,6 +418,7 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
   };
 
   const close = () => {
+    if (!solarPanel) return;
     setSelectedPvModel(solarPanel.pvModelName);
     setDialogVisible(false);
   };

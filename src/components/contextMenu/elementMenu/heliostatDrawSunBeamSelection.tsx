@@ -12,6 +12,7 @@ import { ObjectType, Scope } from '../../../types';
 import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
+import { useSelectedElement } from './menuHooks';
 
 const HeliostatDrawSunBeamSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
@@ -27,9 +28,7 @@ const HeliostatDrawSunBeamSelection = ({ setDialogVisible }: { setDialogVisible:
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const heliostat = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.Heliostat),
-  ) as HeliostatModel;
+  const heliostat = useSelectedElement(ObjectType.Heliostat) as HeliostatModel | undefined;
 
   const [sunBeam, setSunBeam] = useState<boolean>(!!heliostat?.drawSunBeam);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
@@ -186,6 +185,7 @@ const HeliostatDrawSunBeamSelection = ({ setDialogVisible }: { setDialogVisible:
   };
 
   const close = () => {
+    if (!heliostat) return;
     setDrawSunBeam(heliostat.drawSunBeam);
     setDialogVisible(false);
   };

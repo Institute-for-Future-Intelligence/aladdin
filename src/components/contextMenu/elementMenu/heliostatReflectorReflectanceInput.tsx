@@ -13,6 +13,7 @@ import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { ZERO_TOLERANCE } from '../../../constants';
+import { useSelectedElement } from './menuHooks';
 
 const HeliostatReflectanceInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
@@ -29,9 +30,7 @@ const HeliostatReflectanceInput = ({ setDialogVisible }: { setDialogVisible: (b:
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const heliostat = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.Heliostat),
-  ) as HeliostatModel;
+  const heliostat = useSelectedElement(ObjectType.Heliostat) as HeliostatModel | undefined;
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -53,6 +52,7 @@ const HeliostatReflectanceInput = ({ setDialogVisible }: { setDialogVisible: (b:
   };
 
   const needChange = (reflectance: number) => {
+    if (!heliostat) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
@@ -187,6 +187,7 @@ const HeliostatReflectanceInput = ({ setDialogVisible }: { setDialogVisible: (b:
   };
 
   const close = () => {
+    if (!heliostat) return;
     inputReflectanceRef.current = heliostat.reflectance;
     setDialogVisible(false);
   };

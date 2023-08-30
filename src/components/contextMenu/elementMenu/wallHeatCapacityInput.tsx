@@ -13,6 +13,7 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { WallModel } from '../../../models/WallModel';
 import { Util } from '../../../Util';
+import { useSelectedElement } from './menuHooks';
 
 const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
@@ -26,7 +27,7 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   const getElementById = useStore(Selector.getElementById);
   const setCommonStore = useStore(Selector.set);
 
-  const wall = useStore((state) => state.elements.find((e) => e.selected && e.type === ObjectType.Wall)) as WallModel;
+  const wall = useSelectedElement(ObjectType.Wall) as WallModel | undefined;
 
   const [inputValue, setInputValue] = useState<number>(wall?.volumetricHeatCapacity ?? 0.5);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -65,6 +66,7 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   };
 
   const needChange = (value: number) => {
+    if (!wall) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {

@@ -32,6 +32,7 @@ import { UndoableCheck } from 'src/undo/UndoableCheck';
 import WallParapetNumberInput from './wallParapetNumberInput';
 import WallParapetColorSelection from './wallParapetColorSelection';
 import WallParapetTextureSelection from './wallParapetTextureSelection';
+import { useSelectedElement } from './menuHooks';
 
 enum DataType {
   Height = 'Height',
@@ -88,15 +89,6 @@ export const radioStyle = {
   lineHeight: '30px',
 };
 
-const getSelectedWall = (state: CommonStoreState) => {
-  for (const el of state.elements) {
-    if (el.selected && el.type === ObjectType.Wall) {
-      return el as WallModel;
-    }
-  }
-  return null;
-};
-
 export const WallMenu = React.memo(() => {
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
@@ -110,7 +102,8 @@ export const WallMenu = React.memo(() => {
   const updateInsideLightById = useStore(Selector.updateInsideLightById);
   const removeElementById = useStore(Selector.removeElementById);
   const getFoundation = useStore(Selector.getFoundation);
-  const wall = useStore(getSelectedWall);
+
+  const wall = useSelectedElement(ObjectType.Wall) as WallModel | undefined;
 
   const [dataType, setDataType] = useState<DataType | null>(null);
   const [rValueDialogVisible, setRValueDialogVisible] = useState(false);

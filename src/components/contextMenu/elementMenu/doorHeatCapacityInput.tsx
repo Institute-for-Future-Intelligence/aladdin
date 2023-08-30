@@ -12,6 +12,7 @@ import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { DoorModel } from '../../../models/DoorModel';
+import { useSelectedElement } from './menuHooks';
 
 const DoorHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
@@ -25,7 +26,7 @@ const DoorHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   const getElementById = useStore(Selector.getElementById);
   const setCommonStore = useStore(Selector.set);
 
-  const door = useStore((state) => state.elements.find((e) => e.selected && e.type === ObjectType.Door)) as DoorModel;
+  const door = useSelectedElement(ObjectType.Door) as DoorModel | undefined;
 
   const [inputValue, setInputValue] = useState<number>(door?.volumetricHeatCapacity ?? 0.5);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -76,7 +77,7 @@ const DoorHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
         for (const e of elements) {
           if (
             e.type === ObjectType.Door &&
-            e.foundationId === door.foundationId &&
+            e.foundationId === door?.foundationId &&
             value !== (e as DoorModel).volumetricHeatCapacity &&
             !e.locked
           ) {
@@ -88,7 +89,7 @@ const DoorHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
         for (const e of elements) {
           if (
             e.type === ObjectType.Door &&
-            e.parentId === door.parentId &&
+            e.parentId === door?.parentId &&
             value !== (e as DoorModel).volumetricHeatCapacity &&
             !e.locked
           ) {

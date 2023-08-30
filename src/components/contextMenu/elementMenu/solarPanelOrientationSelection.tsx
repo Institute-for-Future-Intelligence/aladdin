@@ -15,6 +15,7 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { Util } from '../../../Util';
 import { UNIT_VECTOR_POS_Z_ARRAY } from '../../../constants';
 import { RoofModel } from 'src/models/RoofModel';
+import { useSelectedElement } from './menuHooks';
 
 const { Option } = Select;
 
@@ -33,9 +34,7 @@ const SolarPanelOrientationSelection = ({ setDialogVisible }: { setDialogVisible
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const solarPanel = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.SolarPanel),
-  ) as SolarPanelModel;
+  const solarPanel = useSelectedElement(ObjectType.SolarPanel) as SolarPanelModel | undefined;
 
   const [selectedOrientation, setSelectedOrientation] = useState<Orientation>(
     solarPanel?.orientation ?? Orientation.portrait,
@@ -212,6 +211,7 @@ const SolarPanelOrientationSelection = ({ setDialogVisible }: { setDialogVisible
   };
 
   const needChange = (orientation: Orientation) => {
+    if (!solarPanel) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
@@ -490,6 +490,7 @@ const SolarPanelOrientationSelection = ({ setDialogVisible }: { setDialogVisible
   };
 
   const close = () => {
+    if (!solarPanel) return;
     setSelectedOrientation(solarPanel.orientation);
     rejectRef.current = false;
     setDialogVisible(false);

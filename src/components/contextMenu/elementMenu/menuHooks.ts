@@ -8,8 +8,9 @@ import { UndoableChange } from '../../../undo/UndoableChange';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
+import { ObjectType } from 'src/types';
 
-export const useLabel = (element: ElementModel) => {
+export const useLabel = (element: ElementModel | undefined) => {
   const [labelText, setLabelText] = useState<string>(element?.label ?? '');
   useEffect(() => {
     if (element?.label) {
@@ -19,7 +20,7 @@ export const useLabel = (element: ElementModel) => {
   return { labelText, setLabelText };
 };
 
-export const useLabelShow = (element: ElementModel) => {
+export const useLabelShow = (element: ElementModel | undefined) => {
   const addUndoable = useStore(Selector.addUndoable);
   const updateElementShowLabelById = useStore(Selector.updateElementShowLabelById);
 
@@ -44,7 +45,7 @@ export const useLabelShow = (element: ElementModel) => {
   };
 };
 
-export const useLabelText = (element: ElementModel, labelText: string) => {
+export const useLabelText = (element: ElementModel | undefined, labelText: string) => {
   const updateElementLabelById = useStore(Selector.updateElementLabelById);
   const addUndoable = useStore(Selector.addUndoable);
 
@@ -71,14 +72,14 @@ export const useLabelText = (element: ElementModel, labelText: string) => {
   };
 };
 
-export const useLabelFontSize = (element: ElementModel) => {
+export const useLabelFontSize = (element: ElementModel | undefined) => {
   const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
 
   const updateFontSize = (value: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
-        if (e.id === element.id) {
+        if (e.id === element?.id) {
           e.labelFontSize = value;
           break;
         }
@@ -108,14 +109,14 @@ export const useLabelFontSize = (element: ElementModel) => {
   };
 };
 
-export const useLabelSize = (element: ElementModel) => {
+export const useLabelSize = (element: ElementModel | undefined) => {
   const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
 
   const updateLabelSize = (value: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
-        if (e.id === element.id) {
+        if (e.id === element?.id) {
           e.labelSize = value;
           break;
         }
@@ -145,14 +146,14 @@ export const useLabelSize = (element: ElementModel) => {
   };
 };
 
-export const useLabelColor = (element: ElementModel) => {
+export const useLabelColor = (element: ElementModel | undefined) => {
   const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
 
   const updateLabelColor = (value: string) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
-        if (e.id === element.id) {
+        if (e.id === element?.id) {
           e.labelColor = value;
           break;
         }
@@ -182,14 +183,14 @@ export const useLabelColor = (element: ElementModel) => {
   };
 };
 
-export const useLabelHeight = (element: ElementModel) => {
+export const useLabelHeight = (element: ElementModel | undefined) => {
   const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
 
   const updateLabelHeight = (value: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
-        if (e.id === element.id) {
+        if (e.id === element?.id) {
           e.labelHeight = value;
           break;
         }
@@ -217,4 +218,12 @@ export const useLabelHeight = (element: ElementModel) => {
       updateLabelHeight(newHeight);
     }
   };
+};
+
+export const useSelectedElement = (objectType: ObjectType) => {
+  const element = useStore((state) => {
+    if (!state.selectedElement) return;
+    return state.elements.find((e) => e.id === state.selectedElement?.id && e.type === objectType);
+  });
+  return element;
 };

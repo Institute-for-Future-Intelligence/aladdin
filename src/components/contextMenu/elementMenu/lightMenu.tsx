@@ -14,6 +14,7 @@ import SubMenu from 'antd/lib/menu/SubMenu';
 import { CompactPicker } from 'react-color';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { ObjectType } from '../../../types';
+import { useSelectedElement } from './menuHooks';
 
 export const LightMenu = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
@@ -21,14 +22,12 @@ export const LightMenu = React.memo(() => {
   const addUndoable = useStore(Selector.addUndoable);
   const getParent = useStore(Selector.getParent);
   const updateLightInsideById = useStore(Selector.updateInsideLightById);
-  const light = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.Light),
-  ) as LightModel;
+  const light = useSelectedElement(ObjectType.Light) as LightModel | undefined;
 
   const [inputIntensity, setInputIntensity] = useState<number>(light?.intensity ?? 3);
   const [inputDistance, setInputDistance] = useState<number>(light?.distance ?? 5);
   const [inputColor, setInputColor] = useState<string>(light?.color ?? '#ffff99');
-  const [inputInside, setInputInside] = useState<boolean>(light?.inside);
+  const [inputInside, setInputInside] = useState<boolean>(!!light?.inside);
 
   if (!light) return null;
 

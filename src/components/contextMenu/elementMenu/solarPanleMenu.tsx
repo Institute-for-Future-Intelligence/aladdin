@@ -33,6 +33,7 @@ import {
   useLabelShow,
   useLabelSize,
   useLabelText,
+  useSelectedElement,
 } from './menuHooks';
 import SolarPanelInverterEfficiencyInput from './solarPanelInverterEfficiencyInput';
 import SolarPanelDcToAcRatioInput from './solarPanelDcToAcRatioInput';
@@ -43,9 +44,7 @@ export const SolarPanelMenu = React.memo(() => {
   const setApplyCount = useStore(Selector.setApplyCount);
   const language = useStore(Selector.language);
 
-  const solarPanel = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.SolarPanel),
-  ) as SolarPanelModel;
+  const solarPanel = useSelectedElement(ObjectType.SolarPanel) as SolarPanelModel | undefined;
 
   const [pvModelDialogVisible, setPvModelDialogVisible] = useState(false);
   const [orientationDialogVisible, setOrientationDialogVisible] = useState(false);

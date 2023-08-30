@@ -15,6 +15,7 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { Util } from '../../../Util';
 import { UNIT_VECTOR_POS_Z_ARRAY, ZERO_TOLERANCE } from '../../../constants';
 import { RoofModel } from 'src/models/RoofModel';
+import { useSelectedElement } from './menuHooks';
 
 const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
@@ -30,9 +31,7 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const solarPanel = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.SolarPanel),
-  ) as SolarPanelModel;
+  const solarPanel = useSelectedElement(ObjectType.SolarPanel) as SolarPanelModel | undefined;
 
   const [dy, setDy] = useState<number>(0);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
@@ -155,6 +154,7 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
   // FIXME: When there are multiple types of solar panels that have different dimensions,
   // this will not work properly.
   const needChange = (ly: number) => {
+    if (!solarPanel) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
@@ -430,6 +430,7 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
   };
 
   const close = () => {
+    if (!solarPanel) return;
     inputWidthRef.current = solarPanel.ly;
     rejectRef.current = false;
     setDialogVisible(false);

@@ -18,6 +18,7 @@ import WindowNumberInput from './windowNumberInput';
 import { radioStyle } from './wallMenu';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import WindowUValueInput from './windowUValueInput';
+import { useSelectedElement } from './menuHooks';
 
 export enum WindowDataType {
   Color = 'Color',
@@ -83,9 +84,7 @@ export const WindowMenu = React.memo(() => {
   const [dataType, setDataType] = useState<WindowDataType | null>(null);
   const [uValueDialogVisible, setUValueDialogVisible] = useState(false);
 
-  const window = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.Window),
-  ) as WindowModel;
+  const window = useSelectedElement(ObjectType.Window) as WindowModel | undefined;
 
   if (!window) return null;
 

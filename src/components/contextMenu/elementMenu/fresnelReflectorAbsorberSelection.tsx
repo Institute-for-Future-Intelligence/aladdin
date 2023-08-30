@@ -13,6 +13,7 @@ import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { FoundationModel } from '../../../models/FoundationModel';
+import { useSelectedElement } from './menuHooks';
 
 const { Option } = Select;
 
@@ -31,9 +32,7 @@ const FresnelReflectorAbsorberSelection = ({ setDialogVisible }: { setDialogVisi
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const fresnelReflector = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.FresnelReflector),
-  ) as FresnelReflectorModel;
+  const fresnelReflector = useSelectedElement(ObjectType.FresnelReflector) as FresnelReflectorModel | undefined;
 
   const [selectedReceiverId, setSelectedReceiverId] = useState<string>(fresnelReflector?.receiverId ?? 'None');
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
@@ -223,6 +222,7 @@ const FresnelReflectorAbsorberSelection = ({ setDialogVisible }: { setDialogVisi
   };
 
   const close = () => {
+    if (!fresnelReflector) return;
     setReceiverId(fresnelReflector.receiverId);
     setDialogVisible(false);
   };

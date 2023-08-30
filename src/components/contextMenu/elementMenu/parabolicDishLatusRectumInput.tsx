@@ -14,6 +14,7 @@ import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { ZERO_TOLERANCE } from '../../../constants';
 import { Util } from '../../../Util';
+import { useSelectedElement } from './menuHooks';
 
 const ParabolicDishLatusRectumInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
@@ -31,9 +32,7 @@ const ParabolicDishLatusRectumInput = ({ setDialogVisible }: { setDialogVisible:
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const parabolicDish = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.ParabolicDish),
-  ) as ParabolicDishModel;
+  const parabolicDish = useSelectedElement(ObjectType.ParabolicDish) as ParabolicDishModel | undefined;
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -76,6 +75,7 @@ const ParabolicDishLatusRectumInput = ({ setDialogVisible }: { setDialogVisible:
   };
 
   const needChange = (latusRectum: number) => {
+    if (!parabolicDish) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
@@ -244,6 +244,7 @@ const ParabolicDishLatusRectumInput = ({ setDialogVisible }: { setDialogVisible:
   };
 
   const close = () => {
+    if (!parabolicDish) return;
     inputLatusRectumRef.current = parabolicDish.latusRectum;
     rejectRef.current = false;
     setDialogVisible(false);

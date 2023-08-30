@@ -14,6 +14,7 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { Util } from '../../../Util';
 import { CuboidModel } from '../../../models/CuboidModel';
 import { ZERO_TOLERANCE } from '../../../constants';
+import { useSelectedElement } from './menuHooks';
 
 const CuboidAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
@@ -27,16 +28,14 @@ const CuboidAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const cuboid = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.Cuboid),
-  ) as CuboidModel;
+  const cuboid = useSelectedElement(ObjectType.Cuboid) as CuboidModel | undefined;
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
   // reverse the sign because rotation angle is positive counterclockwise whereas azimuth is positive clockwise
-  const inputAzimuthRef = useRef<number>(-cuboid?.rotation[2] ?? 0);
+  const inputAzimuthRef = useRef<number>(cuboid ? -cuboid.rotation[2] ?? 0 : 0);
 
   const lang = { lng: language };
 
@@ -76,7 +75,7 @@ const CuboidAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
         // should list here, so it doesn't go to default, but ignore
         break;
       default:
-        if (Math.abs(-cuboid?.rotation[2] - azimuth) > ZERO_TOLERANCE) {
+        if (Math.abs((cuboid ? -cuboid.rotation[2] ?? 0 : 0) - azimuth) > ZERO_TOLERANCE) {
           return true;
         }
     }
@@ -155,7 +154,7 @@ const CuboidAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   };
 
   const close = () => {
-    inputAzimuthRef.current = -cuboid?.rotation[2];
+    inputAzimuthRef.current = cuboid ? -cuboid.rotation[2] ?? 0 : 0;
     setDialogVisible(false);
   };
 

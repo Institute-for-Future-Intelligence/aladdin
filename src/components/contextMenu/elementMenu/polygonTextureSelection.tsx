@@ -24,6 +24,7 @@ import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { PolygonModel } from '../../../models/PolygonModel';
 import { Util } from '../../../Util';
+import { useSelectedElement } from './menuHooks';
 
 const PolygonTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
@@ -38,9 +39,7 @@ const PolygonTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const polygon = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.Polygon),
-  ) as PolygonModel;
+  const polygon = useSelectedElement(ObjectType.Polygon) as PolygonModel | undefined;
 
   const [selectedTexture, setSelectedTexture] = useState<PolygonTexture>(
     polygon?.textureType ?? PolygonTexture.NoTexture,
@@ -115,6 +114,7 @@ const PolygonTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
   };
 
   const needChange = (texture: PolygonTexture) => {
+    if (!polygon) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {

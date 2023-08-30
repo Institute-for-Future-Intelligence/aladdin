@@ -21,6 +21,7 @@ import {
   useLabelShow,
   useLabelSize,
   useLabelText,
+  useSelectedElement,
 } from './menuHooks';
 import SubMenu from 'antd/lib/menu/SubMenu';
 
@@ -29,7 +30,7 @@ export const TreeMenu = React.memo(() => {
   const language = useStore(Selector.language);
   const updateElementLxById = useStore(Selector.updateElementLxById);
   const updateElementLzById = useStore(Selector.updateElementLzById);
-  const tree = useStore((state) => state.elements.find((e) => e.selected && e.type === ObjectType.Tree)) as TreeModel;
+  const tree = useSelectedElement(ObjectType.Tree) as TreeModel | undefined;
   const addUndoable = useStore(Selector.addUndoable);
 
   const [inputSpread, setInputSpread] = useState<number>(tree?.lx ?? 1);

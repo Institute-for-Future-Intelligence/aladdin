@@ -23,6 +23,7 @@ import SolarPanelArrayGaWizard from './solarPanelArrayGaWizard';
 import SolarPanelArrayPsoWizard from './solarPanelArrayPsoWizard';
 import PolygonOpacityInput from './polygonOpacityInput';
 import { UndoableChange } from '../../../undo/UndoableChange';
+import { useSelectedElement } from './menuHooks';
 
 export const PolygonMenu = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
@@ -31,9 +32,7 @@ export const PolygonMenu = React.memo(() => {
   const elementsToPaste = useStore(Selector.elementsToPaste);
   const setApplyCount = useStore(Selector.setApplyCount);
 
-  const polygon = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.Polygon),
-  ) as PolygonModel;
+  const polygon = useSelectedElement(ObjectType.Polygon) as PolygonModel | undefined;
 
   const [textContent, setTextContent] = useState<string>(polygon?.text ?? '');
   const [textSize, setTextSize] = useState<number>(polygon?.fontSize ?? 1);

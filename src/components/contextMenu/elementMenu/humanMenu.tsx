@@ -15,6 +15,7 @@ import { useRefStore } from '../../../stores/commonRef';
 import { Easing, Tween, update } from '@tweenjs/tween.js';
 import { Util } from '../../../Util';
 import { ObjectType } from '../../../types';
+import { useSelectedElement } from './menuHooks';
 
 export const HumanMenu = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
@@ -23,9 +24,7 @@ export const HumanMenu = React.memo(() => {
   const selectNone = useStore(Selector.selectNone);
   const language = useStore(Selector.language);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
-  const human = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.Human),
-  ) as HumanModel;
+  const human = useSelectedElement(ObjectType.Human) as HumanModel | undefined;
 
   const [animationFlag, setAnimationFlag] = useState(false);
 

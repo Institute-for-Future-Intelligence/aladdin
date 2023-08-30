@@ -13,6 +13,7 @@ import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { ZERO_TOLERANCE } from '../../../constants';
+import { useSelectedElement } from './menuHooks';
 
 const ParabolicTroughAbsorptanceInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
@@ -29,9 +30,7 @@ const ParabolicTroughAbsorptanceInput = ({ setDialogVisible }: { setDialogVisibl
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const parabolicTrough = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.ParabolicTrough),
-  ) as ParabolicTroughModel;
+  const parabolicTrough = useSelectedElement(ObjectType.ParabolicTrough) as ParabolicTroughModel | undefined;
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -53,6 +52,7 @@ const ParabolicTroughAbsorptanceInput = ({ setDialogVisible }: { setDialogVisibl
   };
 
   const needChange = (absorptance: number) => {
+    if (!parabolicTrough) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
@@ -186,6 +186,7 @@ const ParabolicTroughAbsorptanceInput = ({ setDialogVisible }: { setDialogVisibl
   };
 
   const close = () => {
+    if (!parabolicTrough) return;
     inputAbsorptanceRef.current = parabolicTrough.absorptance;
     setDialogVisible(false);
   };

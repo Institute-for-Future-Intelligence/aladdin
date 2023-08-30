@@ -14,6 +14,7 @@ import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { Util } from '../../../Util';
 import { CompactPicker } from 'react-color';
+import { useSelectedElement } from './menuHooks';
 
 const SolarPanelFrameColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
@@ -28,9 +29,7 @@ const SolarPanelFrameColorSelection = ({ setDialogVisible }: { setDialogVisible:
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const solarPanel = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.SolarPanel),
-  ) as SolarPanelModel;
+  const solarPanel = useSelectedElement(ObjectType.SolarPanel) as SolarPanelModel | undefined;
 
   const [selectedColor, setSelectedColor] = useState<string>(solarPanel?.frameColor ?? 'white');
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
@@ -105,6 +104,7 @@ const SolarPanelFrameColorSelection = ({ setDialogVisible }: { setDialogVisible:
   };
 
   const needChange = (frameColor: string) => {
+    if (!solarPanel) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
@@ -318,7 +318,7 @@ const SolarPanelFrameColorSelection = ({ setDialogVisible }: { setDialogVisible:
   };
 
   const close = () => {
-    if (solarPanel.frameColor) {
+    if (solarPanel?.frameColor) {
       setSelectedColor(solarPanel.frameColor);
     }
     setDialogVisible(false);

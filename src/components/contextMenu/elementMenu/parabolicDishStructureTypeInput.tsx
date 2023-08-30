@@ -12,6 +12,7 @@ import { ObjectType, ParabolicDishStructureType, Scope } from '../../../types';
 import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
+import { useSelectedElement } from './menuHooks';
 
 const ParabolicDishStructureTypeInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
@@ -25,9 +26,7 @@ const ParabolicDishStructureTypeInput = ({ setDialogVisible }: { setDialogVisibl
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const parabolicDish = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.ParabolicDish),
-  ) as ParabolicDishModel;
+  const parabolicDish = useSelectedElement(ObjectType.ParabolicDish) as ParabolicDishModel | undefined;
 
   const [inputStructureType, setInputStructureType] = useState<number>(
     parabolicDish?.structureType ?? ParabolicDishStructureType.CentralPole,
@@ -225,6 +224,7 @@ const ParabolicDishStructureTypeInput = ({ setDialogVisible }: { setDialogVisibl
   };
 
   const close = () => {
+    if (!parabolicDish) return;
     setInputStructureType(parabolicDish.structureType);
     setDialogVisible(false);
   };

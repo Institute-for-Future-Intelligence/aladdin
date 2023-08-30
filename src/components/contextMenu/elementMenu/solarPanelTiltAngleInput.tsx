@@ -14,6 +14,7 @@ import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { Util } from '../../../Util';
 import { ZERO_TOLERANCE } from '../../../constants';
+import { useSelectedElement } from './menuHooks';
 
 const SolarPanelTiltAngleInput = ({
   setDialogVisible,
@@ -35,9 +36,7 @@ const SolarPanelTiltAngleInput = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const solarPanel = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.SolarPanel),
-  ) as SolarPanelModel;
+  const solarPanel = useSelectedElement(ObjectType.SolarPanel) as SolarPanelModel | undefined;
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -117,6 +116,7 @@ const SolarPanelTiltAngleInput = ({
   };
 
   const needChange = (tiltAngle: number) => {
+    if (!solarPanel) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
@@ -419,6 +419,7 @@ const SolarPanelTiltAngleInput = ({
   };
 
   const close = () => {
+    if (!solarPanel) return;
     inputTiltAngleRef.current = solarPanel.tiltAngle;
     rejectRef.current = false;
     setDialogVisible(false);

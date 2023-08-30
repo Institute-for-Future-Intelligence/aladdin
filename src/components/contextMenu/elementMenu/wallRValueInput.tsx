@@ -14,6 +14,7 @@ import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { WallModel } from '../../../models/WallModel';
 import { Util } from '../../../Util';
 import { DEFAULT_WALL_R_VALUE } from '../../../constants';
+import { useSelectedElement } from './menuHooks';
 
 const WallRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const elements = useStore(Selector.elements);
@@ -27,7 +28,7 @@ const WallRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   const getElementById = useStore(Selector.getElementById);
   const setCommonStore = useStore(Selector.set);
 
-  const wall = useStore((state) => state.elements.find((e) => e.selected && e.type === ObjectType.Wall)) as WallModel;
+  const wall = useSelectedElement(ObjectType.Wall) as WallModel | undefined;
 
   const [inputValue, setInputValue] = useState<number>(wall?.rValue ?? DEFAULT_WALL_R_VALUE);
   const [inputValueUS, setInputValueUS] = useState<number>(Util.toRValueInUS(inputValue));
@@ -67,6 +68,7 @@ const WallRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   };
 
   const needChange = (value: number) => {
+    if (!wall) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {

@@ -31,6 +31,7 @@ import RoofRiseInput from './roofRiseInput';
 import RoofHeatCapacityInput from './roofHeatCapacityInput';
 import { UndoableCheck } from 'src/undo/UndoableCheck';
 import CeilingRValueInput from './ceilingRValueInput';
+import { useSelectedElement } from './menuHooks';
 
 export const RoofMenu = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
@@ -44,7 +45,7 @@ export const RoofMenu = React.memo(() => {
   const updateInsideLightById = useStore(Selector.updateInsideLightById);
   const setApplyCount = useStore(Selector.setApplyCount);
   const addUndoable = useStore(Selector.addUndoable);
-  const roof = useStore((state) => state.elements.find((e) => e.selected && e.type === ObjectType.Roof)) as RoofModel;
+  const roof = useSelectedElement(ObjectType.Roof) as RoofModel | undefined;
 
   const [rafterSpacingDialogVisible, setRafterSpacingDialogVisible] = useState(false);
   const [rafterWidthDialogVisible, setRafterWidthDialogVisible] = useState(false);

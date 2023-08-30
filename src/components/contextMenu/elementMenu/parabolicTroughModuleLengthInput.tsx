@@ -14,6 +14,7 @@ import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { ZERO_TOLERANCE } from '../../../constants';
 import { Util } from '../../../Util';
+import { useSelectedElement } from './menuHooks';
 
 const ParabolicTroughModuleLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
@@ -31,9 +32,7 @@ const ParabolicTroughModuleLengthInput = ({ setDialogVisible }: { setDialogVisib
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const parabolicTrough = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.ParabolicTrough),
-  ) as ParabolicTroughModel;
+  const parabolicTrough = useSelectedElement(ObjectType.ParabolicTrough) as ParabolicTroughModel | undefined;
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -76,6 +75,7 @@ const ParabolicTroughModuleLengthInput = ({ setDialogVisible }: { setDialogVisib
   };
 
   const needChange = (moduleLength: number) => {
+    if (!parabolicTrough) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
@@ -244,6 +244,7 @@ const ParabolicTroughModuleLengthInput = ({ setDialogVisible }: { setDialogVisib
   };
 
   const close = () => {
+    if (!parabolicTrough) return;
     inputModuleLengthRef.current = parabolicTrough.moduleLength;
     rejectRef.current = false;
     setDialogVisible(false);

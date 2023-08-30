@@ -13,6 +13,7 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { CompactPicker } from 'react-color';
 import { RoofModel } from 'src/models/RoofModel';
+import { useSelectedElement } from './menuHooks';
 
 const RoofColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
@@ -26,7 +27,7 @@ const RoofColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   const revertApply = useStore(Selector.revertApply);
   const getElementById = useStore(Selector.getElementById);
 
-  const roof = useStore((state) => state.elements.find((e) => e.selected && e.type === ObjectType.Roof)) as RoofModel;
+  const roof = useSelectedElement(ObjectType.Roof) as RoofModel | undefined;
 
   const [selectedColor, setSelectedColor] = useState<string>(roof?.rafterColor ?? '#ffffff');
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -72,6 +73,7 @@ const RoofColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   };
 
   const needChange = (value: string) => {
+    if (!roof) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
@@ -210,6 +212,7 @@ const RoofColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   };
 
   const handleOk = () => {
+    if (!roof) return;
     const updatedRoof = getElementById(roof.id) as RoofModel;
     if (updatedRoof && updatedRoof.rafterColor !== selectedColor) {
       setColor(selectedColor);

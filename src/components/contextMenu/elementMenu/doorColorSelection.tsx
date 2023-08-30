@@ -13,6 +13,7 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { CompactPicker } from 'react-color';
 import { DoorModel } from 'src/models/DoorModel';
+import { useSelectedElement } from './menuHooks';
 
 const DoorColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
@@ -26,7 +27,7 @@ const DoorColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   const revertApply = useStore(Selector.revertApply);
   const getElementById = useStore(Selector.getElementById);
 
-  const door = useStore((state) => state.elements.find((e) => e.selected && e.type === ObjectType.Door)) as DoorModel;
+  const door = useSelectedElement(ObjectType.Door) as DoorModel | undefined;
 
   const [selectedColor, setSelectedColor] = useState<string>(door?.color ?? '#ffffff');
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -82,14 +83,14 @@ const DoorColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         for (const e of elements) {
-          if (e.type === ObjectType.Door && e.foundationId === door.foundationId && color !== e.color && !e.locked) {
+          if (e.type === ObjectType.Door && e.foundationId === door?.foundationId && color !== e.color && !e.locked) {
             return true;
           }
         }
         break;
       case Scope.OnlyThisSide:
         for (const e of elements) {
-          if (e.type === ObjectType.Door && e.parentId === door.parentId && color !== e.color && !e.locked) {
+          if (e.type === ObjectType.Door && e.parentId === door?.parentId && color !== e.color && !e.locked) {
             return true;
           }
         }
@@ -246,6 +247,7 @@ const DoorColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   };
 
   const handleOk = () => {
+    if (!door) return;
     const updatedDoor = getElementById(door.id) as DoorModel;
     if (updatedDoor && updatedDoor.color !== selectedColor) {
       setColor(selectedColor);

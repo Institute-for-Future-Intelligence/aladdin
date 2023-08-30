@@ -22,18 +22,10 @@ import DoorHeightInput from './doorHeightInput';
 import DoorHeatCapacityInput from './doorHeatCapacityInput';
 import DoorOpacityInput from './doorOpacityInput';
 import DoorFrameColorSelection from './doorFrameColorSelection';
-
-const getSelectedDoor = (state: CommonStoreState) => {
-  for (const el of state.elements) {
-    if (el.selected && el.type === ObjectType.Door) {
-      return el as DoorModel;
-    }
-  }
-  return null;
-};
+import { useSelectedElement } from './menuHooks';
 
 export const DoorMenu = React.memo(() => {
-  const door = useStore(getSelectedDoor);
+  const door = useSelectedElement(ObjectType.Door) as DoorModel | undefined;
   const language = useStore(Selector.language);
   const setApplyCount = useStore(Selector.setApplyCount);
   const addUndoable = useStore(Selector.addUndoable);

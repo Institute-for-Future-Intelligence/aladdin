@@ -13,6 +13,7 @@ import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { ZERO_TOLERANCE } from '../../../constants';
+import { useSelectedElement } from './menuHooks';
 
 const FresnelReflectorPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
@@ -30,9 +31,7 @@ const FresnelReflectorPoleHeightInput = ({ setDialogVisible }: { setDialogVisibl
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const fresnelReflector = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.FresnelReflector),
-  ) as FresnelReflectorModel;
+  const fresnelReflector = useSelectedElement(ObjectType.FresnelReflector) as FresnelReflectorModel | undefined;
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -56,6 +55,7 @@ const FresnelReflectorPoleHeightInput = ({ setDialogVisible }: { setDialogVisibl
   };
 
   const needChange = (poleHeight: number) => {
+    if (!fresnelReflector) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
@@ -242,6 +242,7 @@ const FresnelReflectorPoleHeightInput = ({ setDialogVisible }: { setDialogVisibl
   };
 
   const close = () => {
+    if (!fresnelReflector) return;
     inputPoleHeightRef.current = fresnelReflector.poleHeight;
     rejectRef.current = false;
     setDialogVisible(false);

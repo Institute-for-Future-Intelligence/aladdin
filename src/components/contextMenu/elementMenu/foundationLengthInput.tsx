@@ -20,6 +20,7 @@ import { PolygonModel } from 'src/models/PolygonModel';
 import { ElementModel } from 'src/models/ElementModel';
 import { useRefStore } from 'src/stores/commonRef';
 import { invalidate } from '@react-three/fiber';
+import { useSelectedElement } from './menuHooks';
 
 const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
@@ -39,9 +40,7 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const foundation = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.Foundation),
-  ) as FoundationModel;
+  const foundation = useSelectedElement(ObjectType.Foundation) as FoundationModel | undefined;
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -74,6 +73,7 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   };
 
   const containsAllChildren = (lx: number) => {
+    if (!foundation) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
@@ -107,6 +107,7 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   };
 
   const needChange = (lx: number) => {
+    if (!foundation) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
@@ -463,6 +464,7 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   };
 
   const close = () => {
+    if (!foundation) return;
     inputLxRef.current = foundation?.lx;
     rejectRef.current = false;
     setDialogVisible(false);

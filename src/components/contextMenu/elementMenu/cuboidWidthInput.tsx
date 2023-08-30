@@ -20,6 +20,7 @@ import { Point2 } from 'src/models/Point2';
 import { useRefStore } from 'src/stores/commonRef';
 import { ElementModel } from 'src/models/ElementModel';
 import { invalidate } from '@react-three/fiber';
+import { useSelectedElement } from './menuHooks';
 
 const CuboidWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
@@ -38,9 +39,7 @@ const CuboidWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const cuboid = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.Cuboid),
-  ) as CuboidModel;
+  const cuboid = useSelectedElement(ObjectType.Cuboid) as CuboidModel | undefined;
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -73,6 +72,7 @@ const CuboidWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
   };
 
   const containsAllChildren = (ly: number) => {
+    if (!cuboid) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
@@ -106,6 +106,7 @@ const CuboidWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
   };
 
   const needChange = (ly: number) => {
+    if (!cuboid) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisTypeOnSurface:
         for (const e of elements) {
@@ -465,6 +466,7 @@ const CuboidWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
   };
 
   const close = () => {
+    if (!cuboid) return;
     inputLyRef.current = cuboid?.ly;
     rejectRef.current = false;
     setDialogVisible(false);

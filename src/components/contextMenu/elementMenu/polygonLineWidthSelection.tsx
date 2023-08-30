@@ -13,6 +13,7 @@ import { UndoableChange } from '../../../undo/UndoableChange';
 import { PolygonModel } from '../../../models/PolygonModel';
 import { Util } from '../../../Util';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
+import { useSelectedElement } from './menuHooks';
 
 const PolygonLineWidthSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
@@ -30,9 +31,7 @@ const PolygonLineWidthSelection = ({ setDialogVisible }: { setDialogVisible: (b:
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const polygon = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.Polygon),
-  ) as PolygonModel;
+  const polygon = useSelectedElement(ObjectType.Polygon) as PolygonModel | undefined;
 
   const [selectedLineWidth, setSelectedLineWidth] = useState<LineStyle>(polygon?.lineWidth ?? 1);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
@@ -59,6 +58,7 @@ const PolygonLineWidthSelection = ({ setDialogVisible }: { setDialogVisible: (b:
   };
 
   const needChange = (width: number) => {
+    if (!polygon) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {

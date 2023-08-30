@@ -13,6 +13,7 @@ import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { ZERO_TOLERANCE } from '../../../constants';
+import { useSelectedElement } from './menuHooks';
 
 const ParabolicDishReflectanceInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
@@ -29,9 +30,7 @@ const ParabolicDishReflectanceInput = ({ setDialogVisible }: { setDialogVisible:
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const parabolicDish = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.ParabolicDish),
-  ) as ParabolicDishModel;
+  const parabolicDish = useSelectedElement(ObjectType.ParabolicDish) as ParabolicDishModel | undefined;
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -53,6 +52,7 @@ const ParabolicDishReflectanceInput = ({ setDialogVisible }: { setDialogVisible:
   };
 
   const needChange = (reflectance: number) => {
+    if (!parabolicDish) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
@@ -186,6 +186,7 @@ const ParabolicDishReflectanceInput = ({ setDialogVisible }: { setDialogVisible:
   };
 
   const close = () => {
+    if (!parabolicDish) return;
     inputReflectanceRef.current = parabolicDish.reflectance;
     setDialogVisible(false);
   };

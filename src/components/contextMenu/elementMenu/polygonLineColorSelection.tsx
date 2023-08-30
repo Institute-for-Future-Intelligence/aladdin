@@ -14,6 +14,7 @@ import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { PolygonModel } from '../../../models/PolygonModel';
 import { Util } from '../../../Util';
+import { useSelectedElement } from './menuHooks';
 
 const PolygonLineColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
@@ -31,9 +32,7 @@ const PolygonLineColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const polygon = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.Polygon),
-  ) as PolygonModel;
+  const polygon = useSelectedElement(ObjectType.Polygon) as PolygonModel | undefined;
 
   const [selectedColor, setSelectedColor] = useState<string>(polygon?.lineColor ?? 'black');
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
@@ -59,6 +58,7 @@ const PolygonLineColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
   };
 
   const needChange = (color: string) => {
+    if (!polygon) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {

@@ -15,6 +15,7 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { Util } from '../../../Util';
 import { UNIT_VECTOR_POS_Z_ARRAY, ZERO_TOLERANCE } from '../../../constants';
 import { RoofModel } from 'src/models/RoofModel';
+import { useSelectedElement } from './menuHooks';
 
 const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
@@ -33,9 +34,7 @@ const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const solarPanel = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.SolarPanel),
-  ) as SolarPanelModel;
+  const solarPanel = useSelectedElement(ObjectType.SolarPanel) as SolarPanelModel | undefined;
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -46,7 +45,7 @@ const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible
   // reverse the sign because rotation angle is positive counterclockwise whereas azimuth is positive clockwise
   // unfortunately, the variable should not be named as relativeAzimuth. Instead, it should have been named as
   // relativeRotationAngle. Keep this in mind that relativeAzimuth is NOT really azimuth.
-  const inputRelativeAzimuthRef = useRef<number>(-solarPanel?.relativeAzimuth ?? 0);
+  const inputRelativeAzimuthRef = useRef<number>(solarPanel ? -solarPanel.relativeAzimuth ?? 0 : 0);
 
   const lang = { lng: language };
 
@@ -88,6 +87,7 @@ const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible
   };
 
   const needChange = (azimuth: number) => {
+    if (!solarPanel) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
@@ -387,6 +387,7 @@ const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible
   };
 
   const close = () => {
+    if (!solarPanel) return;
     inputRelativeAzimuthRef.current = -solarPanel.relativeAzimuth;
     rejectRef.current = false;
     setDialogVisible(false);

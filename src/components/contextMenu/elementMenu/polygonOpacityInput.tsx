@@ -13,6 +13,7 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { PolygonModel } from '../../../models/PolygonModel';
 import { Util } from '../../../Util';
+import { useSelectedElement } from './menuHooks';
 
 const PolygonOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
@@ -26,9 +27,7 @@ const PolygonOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boole
   const getElementById = useStore(Selector.getElementById);
   const setCommonStore = useStore(Selector.set);
 
-  const polygon = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.Polygon),
-  ) as PolygonModel;
+  const polygon = useSelectedElement(ObjectType.Polygon) as PolygonModel | undefined;
 
   const [input, setInput] = useState<number>(polygon?.opacity !== undefined ? polygon.opacity : 1);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -67,6 +66,7 @@ const PolygonOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boole
   };
 
   const needChange = (value: number) => {
+    if (!polygon) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
@@ -246,6 +246,7 @@ const PolygonOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boole
   };
 
   const close = () => {
+    if (!polygon) return;
     setInput(polygon.opacity !== undefined ? polygon.opacity : 1);
     setDialogVisible(false);
   };
