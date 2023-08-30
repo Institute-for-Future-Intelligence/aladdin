@@ -905,12 +905,7 @@ const SolarPanel = ({
           />
           <group
             position={normalVector.clone().multiplyScalar(0.75)}
-            rotation={[
-              HALF_PI + euler.x + relativeEuler.x,
-              0,
-              euler.z + relativeEuler.z + (lx < ly ? 0 : -HALF_PI),
-              lx < ly ? 'ZXY' : 'XYZ',
-            ]}
+            rotation={[HALF_PI + euler.x + relativeEuler.x, 0, euler.z + relativeEuler.z, lx < ly ? 'ZXY' : 'XYZ']}
           >
             <Cone
               userData={{ unintersectable: true }}
