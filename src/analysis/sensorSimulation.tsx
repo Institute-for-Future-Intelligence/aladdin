@@ -62,7 +62,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
     return { lng: language };
   }, [language]);
   const weather = useMemo(() => getWeather(city ?? 'Boston MA, USA'), [city]);
-  const now = useMemo(() => new Date(world.date), [world.date]);
+  const now = new Date(world.date);
   const measuredHorizontalRadiation = useMemo(() => getHorizontalSolarRadiation(city ?? 'Boston MA, USA'), [city]);
   const measuredVerticalRadiation = useMemo(() => getVerticalSolarRadiation(city ?? 'Boston MA, USA'), [city]);
 

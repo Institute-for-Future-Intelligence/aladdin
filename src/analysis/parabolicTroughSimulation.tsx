@@ -50,7 +50,7 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
     return { lng: language };
   }, [language]);
   const weather = useMemo(() => getWeather(city ?? 'Boston MA, USA'), [city]);
-  const now = useMemo(() => new Date(world.date), [world.date]);
+  const now = new Date(world.date);
 
   const elevation = city ? weather?.elevation : 0;
   const timesPerHour = world.cspTimesPerHour ?? 4;

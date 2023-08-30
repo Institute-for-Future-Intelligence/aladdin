@@ -7,7 +7,8 @@ import insolation_and_climate from './examples/insolation_and_climate.json';
 import solar_radiation_to_box from './examples/solar_radiation_to_box.json';
 import sun_beam_at_center from './examples/sun_beam_at_center.json';
 import solar_panel_types from './examples/solar_panel_types.json';
-import bifacial_solar_panels from './examples/bifacial_solar_panels.json';
+import vertical_bifacial_solar_panels from './examples/vertical_bifacial_solar_panels.json';
+import compare_monofacial_bifacial_solar_panels from './examples/compare_monofacial_bifacial_solar_panels.json';
 import rooftop_solar_panels from './examples/rooftop_solar_panels.json';
 import rainbow_swash_solar_farm from './examples/rainbow_swash_solar_farm.json';
 import mickey_mouse_solar_farm from './examples/mickey_mouse_solar_farm.json';
@@ -238,8 +239,11 @@ export const getExample = (name: string) => {
     case 'solar_panel_types':
       input = solar_panel_types;
       break;
-    case 'bifacial_solar_panels':
-      input = bifacial_solar_panels;
+    case 'vertical_bifacial_solar_panels':
+      input = vertical_bifacial_solar_panels;
+      break;
+    case 'compare_monofacial_bifacial_solar_panels':
+      input = compare_monofacial_bifacial_solar_panels;
       break;
     case 'why_solar_array':
       input = why_solar_array;

@@ -467,7 +467,8 @@ export const i18n_tr = {
         EffectOfTiltAngleOfSolarPanel: 'Güneş Paneli Eğim Açısı Etkisi',
         EffectOfAzimuthOfSolarPanel: 'Güneş Paneli Azimut Açısı Etkisi',
         SolarPanelTypes: 'Solar Panel Types',
-        BifacialSolarPanels: 'Bifacial Solar Panels',
+        VerticalBifacialSolarPanels: 'Vertical Bifacial Solar Panels',
+        CompareMonofacialAndBifacialSolarPanels: 'Monofacial vs. Bifacial Solar Panels',
         SolarTrackers: 'Güneş İzleyiciler',
         CoveringGroundWithSolarPanels:
           'Sadece güneş panellerini kullanarak yüzeyi kaplamak neden iyi bir fikir değildir?',
