@@ -490,7 +490,7 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
             >
               {Object.keys(pvModules).map((key) => (
                 <Option key={key} value={key}>
-                  {key}
+                  {key + (pvModules[key].bifacial ? ' (' + i18n.t('pvModelPanel.Bifacial', lang) + ')' : '')}
                 </Option>
               ))}
             </Select>
@@ -562,10 +562,10 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
               }}
             >
               <Option key={'Bifacial'} value={true}>
-                {i18n.t('pvModelPanel.Bifacial', lang)}
+                {i18n.t('word.Yes', lang)}
               </Option>
               <Option key={'Monofacial'} value={false}>
-                {i18n.t('pvModelPanel.Monofacial', lang)}
+                {i18n.t('word.No', lang)}
               </Option>
             </Select>
           </Col>
