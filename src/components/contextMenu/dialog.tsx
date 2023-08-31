@@ -8,27 +8,32 @@ import { useRef, useState } from 'react';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import i18n from 'src/i18n/i18n';
 import { useLanguage } from 'src/views/hooks';
+import { useStore } from 'src/stores/common';
+import * as Selector from '../../stores/selector';
 
 interface DialogProps {
   width: number;
   title: string;
   rejectedMessage?: string | null;
-  onClickApply: () => void;
-  onClickOk: () => void;
-  onClickCancel: () => void;
+  onApply: () => void;
   onClose: () => void; // this must be specified for the x button in the upper-right corner to work
+  onClickOk?: () => void;
+  onClickCancel?: () => void;
 }
 
 const Dialog: React.FC<DialogProps> = ({
   width,
   title,
   rejectedMessage,
-  onClickApply,
-  onClickCancel,
-  onClickOk,
+  onApply,
   onClose,
+  onClickOk,
+  onClickCancel,
   children,
 }) => {
+  const setApplyCount = useStore(Selector.setApplyCount);
+  const revertApply = useStore(Selector.revertApply);
+
   const lang = useLanguage();
 
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -49,15 +54,34 @@ const Dialog: React.FC<DialogProps> = ({
     }
   };
 
+  const handleClickOk = () => {
+    if (onClickOk) {
+      onClickOk();
+    } else {
+      onApply();
+      onClose();
+      setApplyCount(0);
+    }
+  };
+
+  const handleClickCancel = () => {
+    if (onClickCancel) {
+      onClickCancel();
+    } else {
+      onClose();
+      revertApply();
+    }
+  };
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Enter') {
-        onClickOk();
+        handleClickOk();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [handleClickOk]);
 
   return (
     <Modal
@@ -74,13 +98,13 @@ const Dialog: React.FC<DialogProps> = ({
         </div>
       }
       footer={[
-        <Button key="Apply" onClick={onClickApply}>
+        <Button key="Apply" onClick={onApply}>
           {i18n.t('word.Apply', lang)}
         </Button>,
-        <Button key="Cancel" onClick={onClickCancel}>
+        <Button key="Cancel" onClick={handleClickCancel}>
           {i18n.t('word.Cancel', lang)}
         </Button>,
-        <Button key="OK" type="primary" onClick={onClickOk}>
+        <Button key="OK" type="primary" onClick={handleClickOk}>
           {i18n.t('word.OK', lang)}
         </Button>,
       ]}

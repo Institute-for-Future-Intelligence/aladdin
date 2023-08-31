@@ -2,8 +2,7 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useRef, useState } from 'react';
-import { CompactPicker } from 'react-color';
+import React, { useState } from 'react';
 import { Col, Radio, RadioChangeEvent, Row, Space } from 'antd';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
@@ -14,28 +13,24 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { FoundationModel } from '../../../models/FoundationModel';
 import { useSelectedElement } from './menuHooks';
 import Dialog from '../dialog';
+import { useLanguage } from 'src/views/hooks';
+import { CompactPicker } from 'react-color';
 
 const FoundationColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
-  const language = useStore(Selector.language);
-  const elements = useStore(Selector.elements);
   const updateElementColorById = useStore(Selector.updateElementColorById);
   const getElementById = useStore(Selector.getElementById);
   const updateElementColorForAll = useStore(Selector.updateElementColorForAll);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.foundationActionScope);
   const setActionScope = useStore(Selector.setFoundationActionScope);
-  const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
-  const revertApply = useStore(Selector.revertApply);
 
   const foundation = useSelectedElement(ObjectType.Foundation) as FoundationModel | undefined;
 
-  // useRef for keyboard listener closure
-  const selectedColorRef = useRef(foundation?.color ?? '#808080');
-  const [selectedColor, setSelectedColor] = useState(selectedColorRef.current);
+  const [selectedColor, setSelectedColor] = useState(foundation?.color ?? '#808080');
 
-  const lang = { lng: language };
+  const lang = useLanguage();
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);
@@ -44,7 +39,7 @@ const FoundationColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
   const needChange = (color: string) => {
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
-        for (const e of elements) {
+        for (const e of useStore.getState().elements) {
           if (e.type === ObjectType.Foundation && !e.locked) {
             const f = e as FoundationModel;
             if (color !== f.color) {
@@ -67,7 +62,7 @@ const FoundationColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         const oldColorsAll = new Map<string, string>();
-        for (const elem of elements) {
+        for (const elem of useStore.getState().elements) {
           if (elem.type === ObjectType.Foundation) {
             oldColorsAll.set(elem.id, elem.color ?? '#808080');
           }
@@ -88,7 +83,7 @@ const FoundationColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
         updateElementColorForAll(ObjectType.Foundation, value);
-        setApplyCount(applyCount + 1);
+        setApplyCount(useStore.getState().applyCount + 1);
         break;
       default:
         // foundation via selected element may be outdated, make sure that we get the latest
@@ -110,7 +105,7 @@ const FoundationColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
         } as UndoableChange;
         addUndoable(undoableChange);
         updateElementColorById(foundation.id, value);
-        setApplyCount(applyCount + 1);
+        setApplyCount(useStore.getState().applyCount + 1);
     }
     setCommonStore((state) => {
       state.actionState.foundationColor = value;
@@ -118,40 +113,21 @@ const FoundationColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
   };
 
   const apply = () => {
-    updateColor(selectedColorRef.current);
+    updateColor(selectedColor);
   };
 
   const close = () => {
     setDialogVisible(false);
   };
 
-  const ok = () => {
-    apply();
-    close();
-    setApplyCount(0);
-  };
-
-  const cancel = () => {
-    close();
-    revertApply();
-  };
-
   return (
-    <Dialog
-      width={600}
-      title={i18n.t('word.Color', lang)}
-      onClickApply={apply}
-      onClickCancel={cancel}
-      onClickOk={ok}
-      onClose={close}
-    >
+    <Dialog width={600} title={i18n.t('word.Color', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
         <Col className="gutter-row" span={12}>
           <CompactPicker
             color={selectedColor}
             onChangeComplete={(colorResult) => {
               setSelectedColor(colorResult.hex);
-              selectedColorRef.current = colorResult.hex;
             }}
           />
         </Col>

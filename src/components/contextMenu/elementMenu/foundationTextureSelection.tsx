@@ -10,7 +10,7 @@ import Foundation_Texture_05_Menu from '../../../resources/foundation_05_menu.pn
 import Foundation_Texture_06_Menu from '../../../resources/foundation_06_menu.png';
 import Foundation_Texture_07_Menu from '../../../resources/foundation_07_menu.png';
 
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { Col, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
 import { CommonStoreState, useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
@@ -21,10 +21,10 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { FoundationModel } from '../../../models/FoundationModel';
 import { useSelectedElement } from './menuHooks';
 import Dialog from '../dialog';
+import { useLanguage } from 'src/views/hooks';
 
 const FoundationTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
-  const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
   const addUndoable = useStore(Selector.addUndoable);
@@ -32,14 +32,12 @@ const FoundationTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b
   const setActionScope = useStore(Selector.setFoundationActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
-  const revertApply = useStore(Selector.revertApply);
 
   const foundation = useSelectedElement(ObjectType.Foundation) as FoundationModel | undefined;
 
-  const selectedTextureRef = useRef(foundation?.textureType ?? FoundationTexture.NoTexture);
-  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
+  const [selectedTexture, setSelectedTexture] = useState(foundation?.textureType ?? FoundationTexture.NoTexture);
 
-  const lang = { lng: language };
+  const lang = useLanguage();
   const { Option } = Select;
 
   const updateFoundationTextureById = (id: string, texture: FoundationTexture) => {
@@ -65,7 +63,6 @@ const FoundationTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);
-    setUpdateFlag(!updateFlag);
   };
 
   const needChange = (texture: FoundationTexture) => {
@@ -142,52 +139,21 @@ const FoundationTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b
     setCommonStore((state) => {
       state.actionState.foundationTexture = value;
     });
-    setUpdateFlag(!updateFlag);
-  };
-
-  const setSelectedTexture = (value: FoundationTexture) => {
-    selectedTextureRef.current = value;
-    setUpdateFlag((b) => !b);
   };
 
   const close = () => {
-    if (foundation?.textureType) {
-      setSelectedTexture(foundation.textureType);
-    }
     setDialogVisible(false);
-  };
-
-  const cancel = () => {
-    close();
-    revertApply();
-  };
-
-  const ok = () => {
-    updateTexture(selectedTextureRef.current);
-    setDialogVisible(false);
-    setApplyCount(0);
   };
 
   const apply = () => {
-    updateTexture(selectedTextureRef.current);
+    updateTexture(selectedTexture);
   };
 
   return (
-    <Dialog
-      width={500}
-      title={i18n.t('word.Texture', lang)}
-      onClickApply={apply}
-      onClickCancel={cancel}
-      onClickOk={ok}
-      onClose={close}
-    >
+    <Dialog width={500} title={i18n.t('word.Texture', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
         <Col className="gutter-row" span={10}>
-          <Select
-            style={{ width: '150px' }}
-            value={selectedTextureRef.current}
-            onChange={(value) => setSelectedTexture(value)}
-          >
+          <Select style={{ width: '150px' }} value={selectedTexture} onChange={setSelectedTexture}>
             <Option key={FoundationTexture.NoTexture} value={FoundationTexture.NoTexture}>
               <div
                 style={{

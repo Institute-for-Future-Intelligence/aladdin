@@ -21,9 +21,9 @@ import { useRefStore } from 'src/stores/commonRef';
 import { invalidate } from '@react-three/fiber';
 import { useSelectedElement } from './menuHooks';
 import Dialog from '../dialog';
+import { useLanguage } from 'src/views/hooks';
 
 const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
-  const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
   const setElementPosition = useStore(Selector.setElementPosition);
@@ -42,9 +42,8 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
 
   const foundation = useSelectedElement(ObjectType.Foundation) as FoundationModel | undefined;
 
-  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
+  const [inputValue, setInputValue] = useState(foundation?.ly ?? 0.1);
 
-  const inputLyRef = useRef<number>(foundation?.ly ?? 0);
   const oldChildrenParentIdMapRef = useRef<Map<string, string>>(new Map<string, string>());
   const newChildrenParentIdMapRef = useRef<Map<string, string>>(new Map<string, string>());
   const oldChildrenPositionsMapRef = useRef<Map<string, Vector3>>(new Map<string, Vector3>());
@@ -56,17 +55,10 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
   const rejectRef = useRef<boolean>(false);
   const rejectedValue = useRef<number | undefined>();
 
-  const lang = { lng: language };
-
-  useEffect(() => {
-    if (foundation) {
-      inputLyRef.current = foundation.ly;
-    }
-  }, [foundation]);
+  const lang = useLanguage();
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);
-    setUpdateFlag(!updateFlag);
   };
 
   const containsAllChildren = (ly: number) => {
@@ -303,7 +295,7 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
     });
   };
 
-  const setLy = (value: number) => {
+  const updateLy = (value: number) => {
     if (!foundation) return;
     if (!needChange(value)) return;
     // foundation via selected element may be outdated, make sure that we get the latest
@@ -313,7 +305,7 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
     rejectRef.current = rejectChange(value);
     if (rejectRef.current) {
       rejectedValue.current = value;
-      inputLyRef.current = oldLy;
+      setInputValue(oldLy);
     } else {
       oldChildrenPositionsMapRef.current.clear();
       newChildrenPositionsMapRef.current.clear();
@@ -446,13 +438,9 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
           setApplyCount(applyCount + 1);
       }
     }
-    setUpdateFlag(!updateFlag);
   };
 
   const close = () => {
-    if (!foundation) return;
-    inputLyRef.current = foundation?.ly;
-    rejectRef.current = false;
     setDialogVisible(false);
   };
 
@@ -462,7 +450,7 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
   };
 
   const ok = () => {
-    setLy(inputLyRef.current);
+    updateLy(inputValue);
     if (!rejectRef.current) {
       setDialogVisible(false);
       setApplyCount(0);
@@ -470,7 +458,7 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
   };
 
   const apply = () => {
-    setLy(inputLyRef.current);
+    updateLy(inputValue);
   };
 
   const rejectedMessage = rejectRef.current
@@ -484,7 +472,7 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
       width={550}
       title={i18n.t('word.Width', lang)}
       rejectedMessage={rejectedMessage}
-      onClickApply={apply}
+      onApply={apply}
       onClickCancel={cancel}
       onClickOk={ok}
       onClose={close}
@@ -497,12 +485,8 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
             style={{ width: 120 }}
             step={0.5}
             precision={2}
-            value={inputLyRef.current}
-            onChange={(value) => {
-              inputLyRef.current = value;
-              setUpdateFlag(!updateFlag);
-            }}
-            onPressEnter={ok}
+            value={inputValue}
+            onChange={setInputValue}
           />
           <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
             {i18n.t('word.Range', lang)}: [0.1, 1000] {i18n.t('word.MeterAbbreviation', lang)}

@@ -19,50 +19,52 @@ import { invalidate } from '@react-three/fiber';
 import { Util } from '../../../Util';
 import { useSelectedElement } from './menuHooks';
 import Dialog from '../dialog';
+import { useLanguage } from 'src/views/hooks';
 
 const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
-  const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
-  const updateElementLzById = useStore(Selector.updateElementLzById);
-  const updateElementCzById = useStore(Selector.updateElementCzById);
-  const updateElementLzForAll = useStore(Selector.updateElementLzForAll);
-  const updateElementCzForAll = useStore(Selector.updateElementCzForAll);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.foundationActionScope);
   const setActionScope = useStore(Selector.setFoundationActionScope);
   const setElementPosition = useStore(Selector.setElementPosition);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
-  const revertApply = useStore(Selector.revertApply);
 
   const foundation = useSelectedElement(ObjectType.Foundation) as FoundationModel | undefined;
 
-  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
+  const [inputValue, setInputValue] = useState(foundation?.lz ?? 0.1);
 
-  const inputLzRef = useRef<number>(foundation?.lz ?? 0);
   const oldChildrenParentIdMapRef = useRef<Map<string, string>>(new Map<string, string>());
   const newChildrenParentIdMapRef = useRef<Map<string, string>>(new Map<string, string>());
   const oldChildrenPositionsMapRef = useRef<Map<string, Vector3>>(new Map<string, Vector3>());
   const newChildrenPositionsMapRef = useRef<Map<string, Vector3>>(new Map<string, Vector3>());
 
-  const lang = { lng: language };
-
-  useEffect(() => {
-    if (foundation) {
-      inputLzRef.current = foundation.lz;
-    }
-  }, [foundation]);
+  const lang = useLanguage();
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);
-    setUpdateFlag(!updateFlag);
   };
 
-  const updateLzAndCz = (id: string, value: number) => {
-    updateElementLzById(id, value);
-    updateElementCzById(id, value / 2);
+  const updateLzAndCzById = (id: string, value: number) => {
+    setCommonStore((state) => {
+      const el = state.elements.find((e) => e.id === id);
+      if (!el) return;
+      el.lz = value;
+      el.cz = value / 2;
+    });
+  };
+
+  const updateLzAndCzForAll = (type: ObjectType, value: number) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.type === type && !e.locked) {
+          e.lz = value;
+          e.cz = value / 2;
+        }
+      }
+    });
   };
 
   const needChange = (lz: number) => {
@@ -206,7 +208,7 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
           newChildrenParentIdMap: new Map(newChildrenParentIdMapRef.current),
           undo: () => {
             for (const [id, lz] of undoableChangeAll.oldValues.entries()) {
-              updateLzAndCz(id, lz as number);
+              updateLzAndCzById(id, lz as number);
             }
             if (undoableChangeAll.oldChildrenPositionsMap && undoableChangeAll.oldChildrenPositionsMap.size > 0) {
               for (const [id, ps] of undoableChangeAll.oldChildrenPositionsMap.entries()) {
@@ -221,9 +223,8 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
             }
           },
           redo: () => {
-            const newCz = undoableChangeAll.newValue as number;
-            updateElementLzForAll(ObjectType.Foundation, newCz);
-            updateElementCzForAll(ObjectType.Foundation, newCz / 2);
+            const newLz = undoableChangeAll.newValue as number;
+            updateLzAndCzForAll(ObjectType.Foundation, newLz);
             if (undoableChangeAll.newChildrenPositionsMap && undoableChangeAll.newChildrenPositionsMap.size > 0) {
               for (const [id, ps] of undoableChangeAll.newChildrenPositionsMap.entries()) {
                 setElementPosition(id, ps.x, ps.y, ps.z);
@@ -238,8 +239,7 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateElementLzForAll(ObjectType.Foundation, value);
-        updateElementCzForAll(ObjectType.Foundation, value / 2);
+        updateLzAndCzForAll(ObjectType.Foundation, value);
         setApplyCount(applyCount + 1);
         break;
       default:
@@ -247,7 +247,7 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
         const f = getElementById(foundation.id);
         const oldLz = f ? f.lz : foundation.lz;
         updateCzOfChildren(foundation, value);
-        updateLzAndCz(foundation.id, value);
+        updateLzAndCzById(foundation.id, value);
         const undoableChange = {
           name: 'Set Foundation Height',
           timestamp: Date.now(),
@@ -260,7 +260,7 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
           changedElementId: foundation.id,
           changedElementType: foundation.type,
           undo: () => {
-            updateLzAndCz(undoableChange.changedElementId, undoableChange.oldValue as number);
+            updateLzAndCzById(undoableChange.changedElementId, undoableChange.oldValue as number);
             if (undoableChange.oldChildrenPositionsMap && undoableChange.oldChildrenPositionsMap.size > 0) {
               for (const [id, ps] of undoableChange.oldChildrenPositionsMap.entries()) {
                 setElementPosition(id, ps.x, ps.y, ps.z);
@@ -274,7 +274,7 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
             }
           },
           redo: () => {
-            updateLzAndCz(undoableChange.changedElementId, undoableChange.newValue as number);
+            updateLzAndCzById(undoableChange.changedElementId, undoableChange.newValue as number);
             if (undoableChange.newChildrenPositionsMap && undoableChange.newChildrenPositionsMap.size > 0) {
               for (const [id, ps] of undoableChange.newChildrenPositionsMap.entries()) {
                 setElementPosition(id, ps.x, ps.y, ps.z);
@@ -294,38 +294,18 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
     setCommonStore((state) => {
       state.actionState.foundationHeight = value;
     });
-    setUpdateFlag(!updateFlag);
   };
 
   const close = () => {
-    inputLzRef.current = foundation ? foundation.lz : 0;
     setDialogVisible(false);
-  };
-
-  const cancel = () => {
-    close();
-    revertApply();
-  };
-
-  const ok = () => {
-    setLz(inputLzRef.current);
-    setDialogVisible(false);
-    setApplyCount(0);
   };
 
   const apply = () => {
-    setLz(inputLzRef.current);
+    setLz(inputValue);
   };
 
   return (
-    <Dialog
-      width={550}
-      title={i18n.t('word.Height', lang)}
-      onClickApply={apply}
-      onClickCancel={cancel}
-      onClickOk={ok}
-      onClose={close}
-    >
+    <Dialog width={550} title={i18n.t('word.Height', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
         <Col className="gutter-row" span={6}>
           <InputNumber
@@ -334,12 +314,10 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
             style={{ width: 120 }}
             step={0.1}
             precision={2}
-            value={inputLzRef.current}
+            value={inputValue}
             onChange={(value) => {
-              inputLzRef.current = value;
-              setUpdateFlag(!updateFlag);
+              setInputValue(value);
             }}
-            onPressEnter={ok}
           />
           <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
             {i18n.t('word.Range', lang)}: [0.1, 10] {i18n.t('word.MeterAbbreviation', lang)}

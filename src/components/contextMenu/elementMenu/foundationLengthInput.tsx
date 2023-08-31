@@ -2,7 +2,7 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Col, InputNumber, Radio, RadioChangeEvent, Row, Space } from 'antd';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
@@ -42,9 +42,8 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
 
   const foundation = useSelectedElement(ObjectType.Foundation) as FoundationModel | undefined;
 
-  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
+  const [inputValue, setInputValue] = useState(foundation?.lx ?? 0.1);
 
-  const inputLxRef = useRef<number>(foundation?.lx ?? 0);
   const oldChildrenParentIdMapRef = useRef<Map<string, string>>(new Map<string, string>());
   const newChildrenParentIdMapRef = useRef<Map<string, string>>(new Map<string, string>());
   const oldChildrenPositionsMapRef = useRef<Map<string, Vector3>>(new Map<string, Vector3>());
@@ -58,15 +57,8 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
 
   const lang = { lng: language };
 
-  useEffect(() => {
-    if (foundation) {
-      inputLxRef.current = foundation.lx;
-    }
-  }, [foundation]);
-
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);
-    setUpdateFlag(!updateFlag);
   };
 
   const containsAllChildren = (lx: number) => {
@@ -311,7 +303,7 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
     rejectRef.current = rejectChange(value);
     if (rejectRef.current) {
       rejectedValue.current = value;
-      inputLxRef.current = oldLx;
+      setInputValue(oldLx);
     } else {
       oldChildrenPositionsMapRef.current.clear();
       newChildrenPositionsMapRef.current.clear();
@@ -444,13 +436,9 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
           setApplyCount(applyCount + 1);
       }
     }
-    setUpdateFlag(!updateFlag);
   };
 
   const close = () => {
-    if (!foundation) return;
-    inputLxRef.current = foundation?.lx;
-    rejectRef.current = false;
     setDialogVisible(false);
   };
 
@@ -460,7 +448,7 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   };
 
   const ok = () => {
-    setLx(inputLxRef.current);
+    setLx(inputValue);
     if (!rejectRef.current) {
       setDialogVisible(false);
       setApplyCount(0);
@@ -468,7 +456,7 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   };
 
   const apply = () => {
-    setLx(inputLxRef.current);
+    setLx(inputValue);
   };
 
   const rejectedMessage = rejectRef.current
@@ -482,10 +470,10 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
       width={550}
       title={i18n.t('word.Length', lang)}
       rejectedMessage={rejectedMessage}
-      onClickApply={apply}
+      onApply={apply}
+      onClose={close}
       onClickCancel={cancel}
       onClickOk={ok}
-      onClose={close}
     >
       <Row gutter={6}>
         <Col className="gutter-row" span={6}>
@@ -495,12 +483,8 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
             style={{ width: 120 }}
             step={0.5}
             precision={2}
-            value={inputLxRef.current}
-            onChange={(value) => {
-              inputLxRef.current = value;
-              setUpdateFlag(!updateFlag);
-            }}
-            onPressEnter={ok}
+            value={inputValue}
+            onChange={setInputValue}
           />
           <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
             {i18n.t('word.Range', lang)}: [0.1, 1000] {i18n.t('word.MeterAbbreviation', lang)}

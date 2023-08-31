@@ -2,7 +2,7 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { Col, InputNumber, Radio, RadioChangeEvent, Row, Space } from 'antd';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
@@ -15,9 +15,9 @@ import { Util } from '../../../Util';
 import { ZERO_TOLERANCE } from '../../../constants';
 import { useSelectedElement } from './menuHooks';
 import Dialog from '../dialog';
+import { useLanguage } from 'src/views/hooks';
 
 const FoundationAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
-  const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
   const updateElementRotationById = useStore(Selector.updateElementRotationById);
@@ -27,19 +27,16 @@ const FoundationAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
   const setActionScope = useStore(Selector.setFoundationActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
-  const revertApply = useStore(Selector.revertApply);
 
   const foundation = useSelectedElement(ObjectType.Foundation) as FoundationModel | undefined;
 
-  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   // reverse the sign because rotation angle is positive counterclockwise whereas azimuth is positive clockwise
-  const inputAzimuthRef = useRef<number>(foundation ? -foundation?.rotation[2] ?? 0 : 0);
+  const [inputValue, setInputValue] = useState(foundation ? -foundation?.rotation[2] ?? 0 : 0);
 
-  const lang = { lng: language };
+  const lang = useLanguage();
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);
-    setUpdateFlag(!updateFlag);
   };
 
   const needChange = (azimuth: number) => {
@@ -114,39 +111,18 @@ const FoundationAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
         updateElementRotationById(foundation.id, 0, 0, -value);
         setApplyCount(applyCount + 1);
     }
-    setUpdateFlag(!updateFlag);
   };
 
   const close = () => {
-    if (!foundation) return;
-    inputAzimuthRef.current = -foundation?.rotation[2];
     setDialogVisible(false);
-  };
-
-  const cancel = () => {
-    close();
-    revertApply();
-  };
-
-  const ok = () => {
-    updateAzimuth(inputAzimuthRef.current);
-    setDialogVisible(false);
-    setApplyCount(0);
   };
 
   const apply = () => {
-    updateAzimuth(inputAzimuthRef.current);
+    updateAzimuth(inputValue);
   };
 
   return (
-    <Dialog
-      width={500}
-      title={i18n.t('word.Azimuth', lang)}
-      onClickApply={apply}
-      onClickCancel={cancel}
-      onClickOk={ok}
-      onClose={close}
-    >
+    <Dialog width={500} title={i18n.t('word.Azimuth', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
         <Col className="gutter-row" span={7}>
           <InputNumber
@@ -156,13 +132,11 @@ const FoundationAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
             step={0.5}
             precision={2}
             // make sure that we round up the number as toDegrees may cause things like .999999999
-            value={parseFloat(Util.toDegrees(inputAzimuthRef.current).toFixed(2))}
+            value={parseFloat(Util.toDegrees(inputValue).toFixed(2))}
             formatter={(value) => `${value}°`}
             onChange={(value) => {
-              inputAzimuthRef.current = Util.toRadians(value);
-              setUpdateFlag(!updateFlag);
+              setInputValue(Util.toRadians(value));
             }}
-            onPressEnter={ok}
           />
           <div style={{ paddingTop: '20px', paddingRight: '6px', textAlign: 'left', fontSize: '11px' }}>
             {i18n.t('word.Range', lang)}: [-180°, 180°]
