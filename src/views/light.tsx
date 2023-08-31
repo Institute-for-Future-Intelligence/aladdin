@@ -175,7 +175,7 @@ const Light = (lightModel: LightModel) => {
   const labelText = useMemo(() => {
     return (
       (lightModel?.label ? lightModel.label : i18n.t('shared.LightElement', lang)) +
-      (lightModel.locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
+      (lightModel?.locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
       '\n' +
       i18n.t('word.Coordinates', lang) +
       ': (' +

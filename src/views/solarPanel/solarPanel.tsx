@@ -227,7 +227,7 @@ const SolarPanel = ({
   const labelText = useMemo(() => {
     return (
       (solarPanel?.label ? solarPanel.label : i18n.t('shared.SolarPanelElement', lang)) +
-      (solarPanel.locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
+      (solarPanel?.locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
       (solarPanel?.label
         ? ''
         : '\n' +

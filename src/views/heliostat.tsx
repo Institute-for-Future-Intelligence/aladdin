@@ -130,7 +130,7 @@ const Heliostat = ({
   const labelText = useMemo(() => {
     return (
       (heliostat?.label ? heliostat.label : i18n.t('shared.HeliostatElement', lang)) +
-      (heliostat.locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
+      (heliostat?.locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
       (heliostat?.label
         ? ''
         : '\n' +

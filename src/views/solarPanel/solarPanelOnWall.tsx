@@ -143,9 +143,9 @@ const Label = ({ sp }: LabelProps) => {
     .add(fCenter);
 
   const labelText =
-    (sp.label ?? i18n.t('shared.SolarPanelElement', lang)) +
-    (sp.locked ? ` ( + ${i18n.t('shared.ElementLocked', lang)} + )` : '') +
-    (sp.label
+    (sp?.label ?? i18n.t('shared.SolarPanelElement', lang)) +
+    (sp?.locked ? ` ( + ${i18n.t('shared.ElementLocked', lang)} + )` : '') +
+    (sp?.label
       ? ''
       : '\n' +
         i18n.t('word.Coordinates', lang) +

@@ -95,7 +95,7 @@ const WindTurbine = ({
   const labelText = useMemo(() => {
     return (
       (turbine?.label ? turbine.label : i18n.t('shared.WindTurbineElement', lang)) +
-      (turbine.locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
+      (turbine?.locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
       (turbine?.label
         ? ''
         : '\n' +

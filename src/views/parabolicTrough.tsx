@@ -164,7 +164,7 @@ const ParabolicTrough = ({
   const labelText = useMemo(() => {
     return (
       (trough?.label ? trough.label : i18n.t('shared.ParabolicTroughElement', lang)) +
-      (trough.locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
+      (trough?.locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
       (trough?.label
         ? ''
         : '\n' +

@@ -166,7 +166,7 @@ const Sensor = (sensorModel: SensorModel) => {
   const labelText = useMemo(() => {
     return (
       (sensorModel?.label ? sensorModel.label : i18n.t('shared.SensorElement', lang)) +
-      (sensorModel.locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
+      (sensorModel?.locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
       '\n' +
       i18n.t('word.Coordinates', lang) +
       ': (' +
