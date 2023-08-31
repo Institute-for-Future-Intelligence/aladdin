@@ -1017,7 +1017,7 @@ export const i18n_en = {
       Polycrystalline: 'Polycrystalline',
       ThinFilm: 'Thin Film',
       Bifacial: 'Bifacial',
-      Monofacial: 'Monofacial',
+      BifacialityFactor: 'Bifaciality Factor',
       Black: 'Black',
       Blue: 'Blue',
       ShadeTolerance: 'Shade Tolerance',

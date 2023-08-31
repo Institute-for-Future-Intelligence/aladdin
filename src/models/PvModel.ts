@@ -24,5 +24,5 @@ export interface PvModel {
   weight: number;
   color: string;
   shadeTolerance: string;
-  bifacial: boolean;
+  bifacialityFactor: number; // [0,1] - 0 = monofacial, 1 = perfect bifacial
 }

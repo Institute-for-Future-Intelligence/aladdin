@@ -745,7 +745,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
           const dot = normal.dot(sunDirection);
           const v2d = new Vector2();
           const dv = new Vector3();
-          if (pvModel.bifacial) {
+          if (pvModel.bifacialityFactor > 0) {
             // bifacial panel
             const backsideNormal = normal.clone().negate();
             const backIndirectRadiation = calculateDiffuseAndReflectedRadiation(
@@ -754,16 +754,16 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
               backsideNormal,
               peakRadiation,
             );
+            const indirectRadiation = frontIndirectRadiation + backIndirectRadiation * pvModel.bifacialityFactor;
             for (let kx = 0; kx < nx; kx++) {
               for (let ky = 0; ky < ny; ky++) {
-                cellOutputs[kx][ky] = frontIndirectRadiation + backIndirectRadiation;
+                cellOutputs[kx][ky] = indirectRadiation;
                 v2d.set(x0 + kx * dx, y0 + ky * dy);
                 dv.set(v2d.x - center2d.x, v2d.y - center2d.y, 0);
                 dv.applyEuler(normalEuler);
                 v.set(center.x + dv.x, center.y + dv.y, z0 + dv.z);
                 if (!inShadow(panel.id, v, sunDirection)) {
-                  // direct radiation
-                  cellOutputs[kx][ky] += Math.abs(dot) * peakRadiation;
+                  cellOutputs[kx][ky] += (dot > 0 ? dot : -dot * pvModel.bifacialityFactor) * peakRadiation;
                 }
               }
             }
@@ -998,7 +998,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     const dot = normal.dot(sunDirection);
     const v2d = new Vector2();
     const dv = new Vector3();
-    if (pvModel.bifacial) {
+    if (pvModel.bifacialityFactor > 0) {
       // bifacial panel
       const backsideNormal = normal.clone().negate();
       const backIndirectRadiation = calculateDiffuseAndReflectedRadiation(
@@ -1007,16 +1007,16 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
         backsideNormal,
         peakRadiation,
       );
+      const indirectRadiation = frontIndirectRadiation + backIndirectRadiation * pvModel.bifacialityFactor;
       for (let kx = 0; kx < nx; kx++) {
         for (let ky = 0; ky < ny; ky++) {
-          cellOutputs[kx][ky] = frontIndirectRadiation + backIndirectRadiation;
+          cellOutputs[kx][ky] = indirectRadiation;
           v2d.set(x0 + kx * dx, y0 + ky * dy);
           dv.set(v2d.x - center2d.x, v2d.y - center2d.y, 0);
           dv.applyEuler(normalEuler);
           v.set(center.x + dv.x, center.y + dv.y, z0 + dv.z);
           if (!inShadow(panel.id, v, sunDirection)) {
-            // direct radiation
-            cellOutputs[kx][ky] += Math.abs(dot) * peakRadiation;
+            cellOutputs[kx][ky] += (dot > 0 ? dot : -dot * pvModel.bifacialityFactor) * peakRadiation;
           }
         }
       }

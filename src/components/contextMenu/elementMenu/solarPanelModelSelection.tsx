@@ -490,7 +490,8 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
             >
               {Object.keys(pvModules).map((key) => (
                 <Option key={key} value={key}>
-                  {key + (pvModules[key].bifacial ? ' (' + i18n.t('pvModelPanel.Bifacial', lang) + ')' : '')}
+                  {key +
+                    (pvModules[key].bifacialityFactor > 0 ? ' (' + i18n.t('pvModelPanel.Bifacial', lang) + ')' : '')}
                 </Option>
               ))}
             </Select>
@@ -548,26 +549,20 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
         </Row>
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
           <Col className="gutter-row" span={14}>
-            {i18n.t('pvModelPanel.Bifacial', lang) + ':'}
+            {i18n.t('pvModelPanel.BifacialityFactor', lang) + ':'}
           </Col>
           <Col className="gutter-row" span={10}>
-            <Select
+            <InputNumber
               disabled={true}
               style={{ width: '100%' }}
-              value={pvModel.bifacial}
+              precision={2}
+              value={pvModel.bifacialityFactor}
               onChange={(value) => {
                 if (solarPanel) {
                   // TODO for custom solar panel
                 }
               }}
-            >
-              <Option key={'Bifacial'} value={true}>
-                {i18n.t('word.Yes', lang)}
-              </Option>
-              <Option key={'Monofacial'} value={false}>
-                {i18n.t('word.No', lang)}
-              </Option>
-            </Select>
+            />
           </Col>
         </Row>
         <Row gutter={6} style={{ paddingBottom: '4px' }}>

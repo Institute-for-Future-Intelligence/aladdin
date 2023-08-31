@@ -1019,7 +1019,7 @@ export const i18n_ua = {
       Polycrystalline: 'Полікристалічні',
       ThinFilm: 'Тонкоплівкові',
       Bifacial: 'Bifacial',
-      Monofacial: 'Monofacial',
+      BifacialityFactor: 'Bifaciality Factor',
       Black: 'Чорний',
       Blue: 'Синій',
       ShadeTolerance: 'Стійкість до затінення',

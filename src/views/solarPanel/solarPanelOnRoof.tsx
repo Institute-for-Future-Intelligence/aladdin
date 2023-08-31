@@ -946,7 +946,7 @@ const SolarPanelOnRoof = ({
   };
 
   const renderBotTextureMaterial = () => {
-    if (!pvModel?.bifacial || orthographic || (poleHeight === 0 && tiltAngle === 0)) {
+    if (pvModel?.bifacialityFactor === 0 || orthographic || (poleHeight === 0 && tiltAngle === 0)) {
       return <meshStandardMaterial attachArray="material" color={color} />;
     }
     if (!texture) return null;

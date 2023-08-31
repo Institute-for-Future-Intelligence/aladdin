@@ -995,7 +995,7 @@ export const i18n_zh_tw = {
       Polycrystalline: '多晶矽',
       ThinFilm: '薄膜',
       Bifacial: '雙面',
-      Monofacial: '單面',
+      BifacialityFactor: '雙面性因子',
       Black: '黑色',
       Blue: '藍色',
       ShadeTolerance: '陰影耐受度',
