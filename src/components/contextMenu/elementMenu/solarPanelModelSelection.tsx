@@ -476,7 +476,12 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
       >
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
           <Col className="gutter-row" span={14}>
-            {i18n.t('pvModelPanel.Model', lang) + ':'}
+            {i18n.t('pvModelPanel.Model', lang) +
+              ' (' +
+              Object.keys(pvModules).length +
+              ' ' +
+              i18n.t('word.Options', lang) +
+              '):'}
           </Col>
           <Col className="gutter-row" span={10}>
             <Select
