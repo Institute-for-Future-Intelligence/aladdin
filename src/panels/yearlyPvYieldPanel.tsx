@@ -277,7 +277,7 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
                   title={[...panelSumRef.current.entries()].map((e, i) => (
                     <React.Fragment key={i}>
                       <Row style={{ textAlign: 'right' }}>
-                        <Col span={12} style={{ textAlign: 'right', paddingRight: '8px' }}>
+                        <Col span={16} style={{ textAlign: 'right', paddingRight: '8px' }}>
                           {e[0] + ': '}
                         </Col>
                         <Col span={8}>{(e[1] * yearScaleFactor).toFixed(2)}</Col>

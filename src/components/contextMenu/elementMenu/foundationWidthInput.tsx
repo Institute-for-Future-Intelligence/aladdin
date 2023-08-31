@@ -3,8 +3,7 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Col, InputNumber, Modal, Radio, RadioChangeEvent, Row, Space } from 'antd';
-import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
+import { Col, InputNumber, Radio, RadioChangeEvent, Row, Space } from 'antd';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
 import { ObjectType, Scope } from 'src/types';
@@ -44,8 +43,6 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
   const foundation = useSelectedElement(ObjectType.Foundation) as FoundationModel | undefined;
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
-  const [dragEnabled, setDragEnabled] = useState<boolean>(false);
-  const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
 
   const inputLyRef = useRef<number>(foundation?.ly ?? 0);
   const oldChildrenParentIdMapRef = useRef<Map<string, string>>(new Map<string, string>());
@@ -56,7 +53,6 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
   const oldChildrenVerticesMapRef = useRef<Map<string, Point2[]>>(new Map<string, Point2[]>()); // Point2 is used to store vertices
   const newChildrenVerticesMapRef = useRef<Map<string, Point2[]>>(new Map<string, Point2[]>());
   const denormalizedVerticesMapRef = useRef<Map<string, Vector2[]>>(new Map()); // use Vector2's rotation function
-  const dragRef = useRef<HTMLDivElement | null>(null);
   const rejectRef = useRef<boolean>(false);
   const rejectedValue = useRef<number | undefined>();
 
@@ -451,19 +447,6 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
       }
     }
     setUpdateFlag(!updateFlag);
-  };
-
-  const onStart = (event: DraggableEvent, uiData: DraggableData) => {
-    if (dragRef.current) {
-      const { clientWidth, clientHeight } = window.document.documentElement;
-      const targetRect = dragRef.current.getBoundingClientRect();
-      setBounds({
-        left: -targetRect.left + uiData.x,
-        right: clientWidth - (targetRect.right - uiData.x),
-        top: -targetRect.top + uiData.y,
-        bottom: clientHeight - (targetRect?.bottom - uiData.y),
-      });
-    }
   };
 
   const close = () => {

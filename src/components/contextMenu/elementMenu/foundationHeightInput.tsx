@@ -3,8 +3,7 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Col, InputNumber, Modal, Radio, RadioChangeEvent, Row, Space } from 'antd';
-import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
+import { Col, InputNumber, Radio, RadioChangeEvent, Row, Space } from 'antd';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
 import { ObjectType, Scope } from 'src/types';
@@ -41,9 +40,6 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   const foundation = useSelectedElement(ObjectType.Foundation) as FoundationModel | undefined;
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
-  const [dragEnabled, setDragEnabled] = useState<boolean>(false);
-  const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
-  const dragRef = useRef<HTMLDivElement | null>(null);
 
   const inputLzRef = useRef<number>(foundation?.lz ?? 0);
   const oldChildrenParentIdMapRef = useRef<Map<string, string>>(new Map<string, string>());
