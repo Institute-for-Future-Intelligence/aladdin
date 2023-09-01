@@ -22,6 +22,7 @@ import {
   EditOutlined,
   ImportOutlined,
   LinkOutlined,
+  SettingOutlined,
   SortAscendingOutlined,
   SortDescendingOutlined,
 } from '@ant-design/icons';
@@ -43,6 +44,7 @@ import {
   updateDesignVisibility,
   updateDotSizeScatteredPlot,
   updateHiddenParameters,
+  updateThumbnailWidth,
   updateXAxisNameScatteredPlot,
   updateYAxisNameScatteredPlot,
 } from '../cloudProjectUtil';
@@ -150,6 +152,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
   const dataColoringSelectionRef = useRef<DataColoring>(projectInfo.dataColoring ?? DataColoring.ALL);
   const parameterSelectionChangedRef = useRef<boolean>(false);
   const projectDesigns = useRef<Design[]>(projectInfo.designs ?? []); // store sorted designs
+  const thumbnailSizeRef = useRef<number>(projectInfo.thumbnailWidth ?? 200);
   const xAxisRef = useRef<string>(projectInfo.xAxisNameScatteredPlot ?? 'rowWidth');
   const yAxisRef = useRef<string>(projectInfo.yAxisNameScatteredPlot ?? 'rowWidth');
   const dotSizeRef = useRef<number>(projectInfo.dotSizeScatteredPlot ?? 5);
@@ -167,6 +170,10 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
   useEffect(() => {
     dotSizeRef.current = projectInfo.dotSizeScatteredPlot ?? 5;
   }, [projectInfo.dotSizeScatteredPlot]);
+
+  useEffect(() => {
+    thumbnailSizeRef.current = projectInfo.thumbnailWidth ?? 200;
+  }, [projectInfo.thumbnailWidth]);
 
   const lang = useMemo(() => {
     return { lng: language };
@@ -282,7 +289,9 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
   };
 
   const totalHeight = window.innerHeight;
-  const imageWidth = Math.round((relativeWidth * window.innerWidth) / 4 - 12);
+  const imageColumns = Math.round(800 / thumbnailSizeRef.current);
+  const imageGap = 48 / imageColumns;
+  const imageWidth = Math.round((relativeWidth * window.innerWidth) / imageColumns - imageGap);
 
   const [variables, titles, units, digits, tickIntegers, types] = useMemo(
     () => [
@@ -1025,6 +1034,51 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
     );
   };
 
+  const createProjectSettingsContent = () => {
+    return (
+      <div style={{ width: '240px' }} onClick={(e) => e.stopPropagation()}>
+        <Row gutter={6} style={{ paddingBottom: '4px' }}>
+          <Col span={16} style={{ paddingTop: '5px' }}>
+            <span style={{ fontSize: '12px' }}>{i18n.t('projectPanel.ThumbnailImageSize', lang)}: </span>
+          </Col>
+          <Col span={8}>
+            <Select
+              style={{ width: '100%' }}
+              value={thumbnailSizeRef.current}
+              onChange={(value) => {
+                thumbnailSizeRef.current = value;
+                if (isOwner) {
+                  if (user.uid && projectInfo.title) {
+                    updateThumbnailWidth(user.uid, projectInfo.title, value).then(() => {
+                      setCommonStore((state) => {
+                        state.projectInfo.thumbnailWidth = thumbnailSizeRef.current;
+                      });
+                    });
+                  }
+                } else {
+                  setCommonStore((state) => {
+                    state.projectInfo.thumbnailWidth = thumbnailSizeRef.current;
+                  });
+                }
+                setUpdateFlag(!updateFlag);
+              }}
+            >
+              <Option key={'small-thumbnail'} value={100}>
+                <span style={{ fontSize: '12px' }}>100</span>
+              </Option>
+              <Option key={'medium-thumbnail'} value={125}>
+                <span style={{ fontSize: '12px' }}>125</span>
+              </Option>
+              <Option key={'large-thumbnail'} value={200}>
+                <span style={{ fontSize: '12px' }}>200</span>
+              </Option>
+            </Select>
+          </Col>
+        </Row>
+      </div>
+    );
+  };
+
   return (
     <Container
       onContextMenu={(e) => {
@@ -1116,11 +1170,16 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                           onClick={(e) => {
                             e.stopPropagation();
                             if (canvas && user.uid && projectInfo.title && cloudFile) {
-                              updateDesign(user.uid, projectInfo.type, projectInfo.title, cloudFile, canvas).then(
-                                () => {
-                                  setUpdateFlag(!updateFlag);
-                                },
-                              );
+                              updateDesign(
+                                user.uid,
+                                projectInfo.type,
+                                projectInfo.title,
+                                projectInfo.thumbnailWidth ?? 200,
+                                cloudFile,
+                                canvas,
+                              ).then(() => {
+                                setUpdateFlag(!updateFlag);
+                              });
                             }
                           }}
                         >
@@ -1196,6 +1255,16 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                       )}
                     </Button>
                   )}
+                  <Popover
+                    title={
+                      <div onClick={(e) => e.stopPropagation()}>{i18n.t('projectPanel.ProjectSettings', lang)}</div>
+                    }
+                    content={createProjectSettingsContent}
+                  >
+                    <Button style={{ border: 'none', padding: '4px' }} onClick={(e) => e.stopPropagation()}>
+                      <SettingOutlined style={{ fontSize: '24px', color: 'gray' }} />
+                    </Button>
+                  </Popover>
                 </span>
               </SubHeader>
             }
@@ -1251,7 +1320,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                 overflowX: 'hidden',
                 overflowY: 'auto',
               }}
-              grid={{ column: 4, gutter: 1 }}
+              grid={{ column: imageColumns, gutter: 1 }}
               dataSource={projectDesigns.current}
               renderItem={(design) => (
                 <List.Item

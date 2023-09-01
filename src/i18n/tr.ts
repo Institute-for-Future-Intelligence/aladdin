@@ -1416,6 +1416,8 @@ export const i18n_tr = {
     },
 
     projectPanel: {
+      ProjectSettings: 'Project settings',
+      ThumbnailImageSize: 'Thumbnail Image Size',
       ProjectByOtherPeople: 'Project by Other People',
       Project: 'Project',
       ProjectType: 'Type',

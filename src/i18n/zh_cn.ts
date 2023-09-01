@@ -1390,6 +1390,8 @@ export const i18n_zh_cn = {
     },
 
     projectPanel: {
+      ProjectSettings: '项目设定',
+      ThumbnailImageSize: '缩略图大小',
       ProjectByOtherPeople: '别人的项目',
       Project: '项目',
       ProjectType: '类别',

@@ -203,6 +203,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           xAxisNameScatteredPlot: f.xAxisNameScatteredPlot,
           yAxisNameScatteredPlot: f.yAxisNameScatteredPlot,
           dotSizeScatteredPlot: f.dotSizeScatteredPlot,
+          thumbnailWidth: f.thumbnailWidth,
           type: f.type,
           designs: f.designs,
           ranges: f.ranges ?? [],
@@ -718,6 +719,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
             xAxisNameScatteredPlot: data.xAxisNameScatteredPlot,
             yAxisNameScatteredPlot: data.yAxisNameScatteredPlot,
             dotSizeScatteredPlot: data.dotSizeScatteredPlot,
+            thumbnailWidth: data.thumbnailWidth,
             type: data.type,
             designs: data.designs ?? [],
             ranges: data.ranges ?? [],
@@ -800,6 +802,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
             state.projectInfo.xAxisNameScatteredPlot = null;
             state.projectInfo.yAxisNameScatteredPlot = null;
             state.projectInfo.dotSizeScatteredPlot = 5;
+            state.projectInfo.thumbnailWidth = 200;
             state.projectInfo.counter = 0;
             state.projectInfo.designs = [];
             state.projectInfo.ranges = [];
@@ -925,11 +928,16 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     }
   };
 
-  const addDesignToProject = (projectType: string, projectTitle: string, designTitle: string) => {
+  const addDesignToProject = (
+    projectType: string,
+    projectTitle: string,
+    designTitle: string,
+    thumbnailWidth: number,
+  ) => {
     if (!user.uid || !canvas) return;
     // create a thumbnail image of the design in Base64 format
     // (don't create a PNG and then store in Firebase storage as I can't get the blob data correctly)
-    const thumbnail = Util.resizeCanvas(canvas, 200).toDataURL();
+    const thumbnail = Util.resizeCanvas(canvas, thumbnailWidth).toDataURL();
     const design = createDesign(projectType, designTitle, thumbnail);
     firebase
       .firestore()
@@ -1449,6 +1457,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                 state.projectInfo.xAxisNameScatteredPlot = null;
                 state.projectInfo.yAxisNameScatteredPlot = null;
                 state.projectInfo.dotSizeScatteredPlot = 5;
+                state.projectInfo.thumbnailWidth = 200;
                 state.projectInfo.designs = [];
                 state.projectInfo.ranges = [];
                 state.projectInfo.hiddenParameters = ProjectUtil.getDefaultHiddenParameters(state.projectInfo.type);
@@ -1511,6 +1520,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
             const xAxisNameScatteredPlot = useStore.getState().projectInfo.xAxisNameScatteredPlot;
             const yAxisNameScatteredPlot = useStore.getState().projectInfo.yAxisNameScatteredPlot;
             const dotSizeScatteredPlot = useStore.getState().projectInfo.dotSizeScatteredPlot;
+            const thumbnailWidth = useStore.getState().projectInfo.thumbnailWidth;
             const newDesigns: Design[] = changeDesignTitles(t, designs) ?? [];
             for (const [i, d] of designs.entries()) {
               copyDesign(d.title, newDesigns[i].title, owner, user.uid);
@@ -1541,6 +1551,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                   xAxisNameScatteredPlot,
                   yAxisNameScatteredPlot,
                   dotSizeScatteredPlot,
+                  thumbnailWidth,
                   designs: newDesigns,
                   ranges: useStore.getState().projectInfo.ranges ?? null,
                   hiddenParameters: useStore.getState().projectInfo.hiddenParameters,
@@ -1579,8 +1590,9 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       if (projectTitle) {
         setLoading(true);
         const projectType = useStore.getState().projectInfo.type ?? DesignProblem.SOLAR_PANEL_ARRAY;
+        const thumbnailWidth = useStore.getState().projectInfo.thumbnailWidth ?? 200;
         const counter = useStore.getState().projectInfo.counter ?? 0;
-        addDesignToProject(projectType, projectTitle, projectTitle + ' ' + counter);
+        addDesignToProject(projectType, projectTitle, projectTitle + ' ' + counter, thumbnailWidth);
       }
     }
   }

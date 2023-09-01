@@ -40,6 +40,7 @@ export const fetchProject = async (userid: string, project: string, setProjectSt
           xAxisNameScatteredPlot: data.xAxisNameScatteredPlot,
           yAxisNameScatteredPlot: data.yAxisNameScatteredPlot,
           dotSizeScatteredPlot: data.dotSizeScatteredPlot,
+          thumbnailWidth: data.thumbnailWidth,
         } as ProjectInfo);
       } else {
         showError(i18n.t('message.CannotOpenProject', lang) + ': ' + project);
@@ -262,6 +263,23 @@ export const updateDotSizeScatteredPlot = (userid: string, projectTitle: string,
     });
 };
 
+export const updateThumbnailWidth = (userid: string, projectTitle: string, thumbnailWidth: number) => {
+  const lang = { lng: useStore.getState().language };
+  return firebase
+    .firestore()
+    .collection('users')
+    .doc(userid)
+    .collection('projects')
+    .doc(projectTitle)
+    .update({ thumbnailWidth })
+    .then(() => {
+      // ignore
+    })
+    .catch((error) => {
+      showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
+    });
+};
+
 export const createDesign = (type: string, title: string, thumbnail: string): Design => {
   let design = { title, thumbnail } as Design;
   switch (type) {
@@ -416,6 +434,7 @@ export const updateDesign = (
   userid: string,
   projectType: string,
   projectTitle: string,
+  thumbnailWidth: number,
   designTitle: string,
   canvas: HTMLCanvasElement | null,
 ) => {
@@ -436,7 +455,7 @@ export const updateDesign = (
       usePrimitiveStore.getState().setChanged(false);
       if (canvas) {
         // update the thumbnail image as well
-        const thumbnail = Util.resizeCanvas(canvas, 200).toDataURL();
+        const thumbnail = Util.resizeCanvas(canvas, thumbnailWidth).toDataURL();
         firebase
           .firestore()
           .collection('users')

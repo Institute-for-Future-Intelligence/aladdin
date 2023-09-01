@@ -99,8 +99,6 @@ import { DefaultGraphState } from './DefaultGraphState';
 import { isStackableModel } from 'src/models/Stackable';
 import { WindowModel } from 'src/models/WindowModel';
 import { ProjectUtil } from '../panels/ProjectUtil';
-import { debounce } from 'lodash';
-import { InnerCommonStoreState } from './InnerCommonState';
 
 enableMapSet();
 
@@ -574,6 +572,7 @@ export const useStore = create<CommonStoreState>(
             xAxisNameScatteredPlot: null,
             yAxisNameScatteredPlot: null,
             dotSizeScatteredPlot: 5,
+            thumbnailWidth: 200,
           } as ProjectInfo,
           projectImages: new Map<string, HTMLImageElement>(),
           designProjectType: null,

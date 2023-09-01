@@ -114,6 +114,7 @@ export interface Range {
   maximum: number;
 }
 
+// use null for undefined, as we need to persist this in Firebase
 export interface ProjectInfo {
   owner: string | null;
   timestamp: number;
@@ -130,6 +131,7 @@ export interface ProjectInfo {
   xAxisNameScatteredPlot: string | null;
   yAxisNameScatteredPlot: string | null;
   dotSizeScatteredPlot: number | null;
+  thumbnailWidth: number | null;
 }
 
 export interface ActionInfo {

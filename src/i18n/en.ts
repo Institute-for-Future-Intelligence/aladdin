@@ -1415,6 +1415,8 @@ export const i18n_en = {
     },
 
     projectPanel: {
+      ProjectSettings: 'Project settings',
+      ThumbnailImageSize: 'Thumbnail Image Size',
       ProjectByOtherPeople: 'Project by Other People',
       Project: 'Project',
       ProjectType: 'Type',
