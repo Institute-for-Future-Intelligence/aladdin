@@ -1517,10 +1517,10 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
             const dataColoring = useStore.getState().projectInfo.dataColoring ?? null;
             const selectedProperty = useStore.getState().projectInfo.selectedProperty ?? null;
             const sortDescending = !!useStore.getState().projectInfo.sortDescending;
-            const xAxisNameScatteredPlot = useStore.getState().projectInfo.xAxisNameScatteredPlot;
-            const yAxisNameScatteredPlot = useStore.getState().projectInfo.yAxisNameScatteredPlot;
-            const dotSizeScatteredPlot = useStore.getState().projectInfo.dotSizeScatteredPlot;
-            const thumbnailWidth = useStore.getState().projectInfo.thumbnailWidth;
+            const xAxisNameScatteredPlot = useStore.getState().projectInfo.xAxisNameScatteredPlot ?? 'rowWidth';
+            const yAxisNameScatteredPlot = useStore.getState().projectInfo.yAxisNameScatteredPlot ?? 'rowWidth';
+            const dotSizeScatteredPlot = useStore.getState().projectInfo.dotSizeScatteredPlot ?? 5;
+            const thumbnailWidth = useStore.getState().projectInfo.thumbnailWidth ?? 200;
             const newDesigns: Design[] = changeDesignTitles(t, designs) ?? [];
             for (const [i, d] of designs.entries()) {
               copyDesign(d.title, newDesigns[i].title, owner, user.uid);

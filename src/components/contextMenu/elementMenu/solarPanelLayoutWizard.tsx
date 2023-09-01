@@ -367,7 +367,12 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
       >
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
           <Col className="gutter-row" span={14}>
-            {i18n.t('polygonMenu.SolarPanelArrayModel', lang) + ':'}
+            {i18n.t('polygonMenu.SolarPanelArrayModel', lang) +
+              ' (' +
+              Object.keys(pvModules).length +
+              ' ' +
+              i18n.t('word.Options', lang) +
+              '):'}
           </Col>
           <Col className="gutter-row" span={10}>
             <Select
@@ -382,7 +387,8 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
             >
               {Object.keys(pvModules).map((key) => (
                 <Option key={key} value={key}>
-                  {key}
+                  {key +
+                    (pvModules[key].bifacialityFactor > 0 ? ' (' + i18n.t('pvModelPanel.Bifacial', lang) + ')' : '')}
                 </Option>
               ))}
             </Select>

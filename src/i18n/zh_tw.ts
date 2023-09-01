@@ -500,7 +500,8 @@ export const i18n_zh_tw = {
 
       generativeDesignSubMenu: '生成式設計',
       generativeDesignTutorials: {
-        EvenSamplingInOneDimension: '一個維度上的均勻採樣',
+        MonofacialSolarPanelArrayTiltAngle: '單面光伏板陣列的傾斜角',
+        BifacialSolarPanelArrayTiltAngle: '雙面光伏板陣列的傾斜角',
         OutputOfSolarPanelArrayInDifferentPlaces: '一個光伏板陣列在不同地區的產出',
         SimpleSolarFarmParetoFront: '簡單太陽能農場設計的帕累托前沿',
       },

@@ -503,7 +503,8 @@ export const i18n_en = {
 
       generativeDesignSubMenu: 'Generative Design',
       generativeDesignTutorials: {
-        EvenSamplingInOneDimension: 'Even Sampling in One Dimension',
+        MonofacialSolarPanelArrayTiltAngle: 'The Tilt Angle of A Monofacial Solar Panel Array',
+        BifacialSolarPanelArrayTiltAngle: 'The Title Angle of A Bifacial Solar Panel Array',
         OutputOfSolarPanelArrayInDifferentPlaces: 'The Output of a Solar Panel Array in Different Places',
         SimpleSolarFarmParetoFront: 'The Pareto Front for Designing a Simple Solar Farm',
       },
