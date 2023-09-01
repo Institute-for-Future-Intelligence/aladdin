@@ -31,6 +31,9 @@ export const i18n_en = {
     },
 
     word: {
+      Small: 'Small',
+      Medium: 'Medium',
+      Large: 'Large',
       Design: 'Design',
       Information: 'Information',
       Type: 'Type',
@@ -1415,7 +1418,7 @@ export const i18n_en = {
     },
 
     projectPanel: {
-      ProjectSettings: 'Project settings',
+      ProjectSettings: 'Project Settings',
       ThumbnailImageSize: 'Thumbnail Image Size',
       ProjectByOtherPeople: 'Project by Other People',
       Project: 'Project',

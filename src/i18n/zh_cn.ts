@@ -31,6 +31,9 @@ export const i18n_zh_cn = {
     },
 
     word: {
+      Small: '小',
+      Medium: '中',
+      Large: '大',
       Design: '设计',
       Information: '信息',
       Type: '类别',

@@ -1036,12 +1036,12 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
 
   const createProjectSettingsContent = () => {
     return (
-      <div style={{ width: '240px' }} onClick={(e) => e.stopPropagation()}>
+      <div style={{ width: '250px' }} onClick={(e) => e.stopPropagation()}>
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col span={16} style={{ paddingTop: '5px' }}>
+          <Col span={14} style={{ paddingTop: '5px' }}>
             <span style={{ fontSize: '12px' }}>{i18n.t('projectPanel.ThumbnailImageSize', lang)}: </span>
           </Col>
-          <Col span={8}>
+          <Col span={10}>
             <Select
               style={{ width: '100%' }}
               value={thumbnailSizeRef.current}
@@ -1064,13 +1064,13 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
               }}
             >
               <Option key={'small-thumbnail'} value={100}>
-                <span style={{ fontSize: '12px' }}>100</span>
+                <span style={{ fontSize: '12px' }}>{i18n.t('word.Small', lang)}</span>
               </Option>
               <Option key={'medium-thumbnail'} value={125}>
-                <span style={{ fontSize: '12px' }}>125</span>
+                <span style={{ fontSize: '12px' }}>{i18n.t('word.Medium', lang)}</span>
               </Option>
               <Option key={'large-thumbnail'} value={200}>
-                <span style={{ fontSize: '12px' }}>200</span>
+                <span style={{ fontSize: '12px' }}>{i18n.t('word.Large', lang)}</span>
               </Option>
             </Select>
           </Col>
