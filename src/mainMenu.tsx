@@ -2243,7 +2243,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
           <Menu.Item key="Tilt Angle" onClick={(e) => loadProject(e.key, 48)}>
             {i18n.t('menu.generativeDesignTutorials.MonofacialSolarPanelArrayTiltAngle', lang)}
           </Menu.Item>
-          <Menu.Item key="Bifacial Tilt Angle" onClick={(e) => loadProject(e.key, 48)}>
+          <Menu.Item key="Bifacial Tilt Angle" onClick={(e) => loadProject(e.key, 50)}>
             {i18n.t('menu.generativeDesignTutorials.BifacialSolarPanelArrayTiltAngle', lang)}
           </Menu.Item>
           <Menu.Item key="Latitude" onClick={(e) => loadProject(e.key, 0)}>

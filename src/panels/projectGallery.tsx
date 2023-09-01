@@ -25,6 +25,7 @@ import {
   SettingOutlined,
   SortAscendingOutlined,
   SortDescendingOutlined,
+  FolderOpenOutlined,
 } from '@ant-design/icons';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import ImageLoadFailureIcon from '../assets/image_fail_try_again.png';
@@ -1322,114 +1323,124 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
               }}
               grid={{ column: imageColumns, gutter: 1 }}
               dataSource={projectDesigns.current}
-              renderItem={(design) => (
-                <List.Item
-                  style={{ marginBottom: '-28px' }}
-                  onMouseOver={() => {
-                    setHoveredDesign(design);
-                  }}
-                  onMouseLeave={() => {
-                    setHoveredDesign(undefined);
-                  }}
-                >
-                  <img
-                    loading={'eager'}
-                    width={imageWidth + 'px'}
-                    height={'auto'}
-                    onError={(event: any) => {
-                      (event.target as HTMLImageElement).src = ImageLoadFailureIcon;
+              renderItem={(design) => {
+                const lastSpaceIndex = design.title.lastIndexOf(' ');
+                const labelDisplayLength =
+                  projectInfo.thumbnailWidth === 100 ? 8 : projectInfo.thumbnailWidth === 125 ? 12 : 30;
+                return (
+                  <List.Item
+                    style={{ marginBottom: '-28px' }}
+                    onMouseOver={() => {
+                      setHoveredDesign(design);
                     }}
-                    onLoad={(event) => {
-                      setCommonStore((state) => {
-                        state.projectImages.set(design.title, event.target as HTMLImageElement);
-                      });
-                      usePrimitiveStore.setState((state) => {
-                        state.projectImagesUpdateFlag = !state.projectImagesUpdateFlag;
-                      });
+                    onMouseLeave={() => {
+                      setHoveredDesign(undefined);
                     }}
-                    alt={design.title}
-                    title={
-                      selectedDesign === design
-                        ? i18n.t('projectPanel.SingleClickToDeselectDoubleClickToOpen', lang)
-                        : i18n.t('projectPanel.SingleClickToSelectDoubleClickToOpen', lang)
-                    }
-                    src={
-                      design.thumbnail?.startsWith('data:image/png;base64') ? design.thumbnail : ImageLoadFailureIcon
-                    }
-                    style={{
-                      transition: '.5s ease',
-                      opacity: hoveredDesign === design ? 0.5 : 1,
-                      padding: '1px',
-                      cursor: 'pointer',
-                      borderRadius: selectedDesign === design ? '0' : '10px',
-                      border: selectedDesign === design ? '2px solid red' : 'none',
-                    }}
-                    onDoubleClick={(event) => {
-                      const target = event.target as HTMLImageElement;
-                      if (target.src === ImageLoadFailureIcon) {
-                        target.src = design.thumbnailUrl;
-                      }
-                      setSelectedDesign(design);
-                      if (projectInfo.owner) {
-                        loadCloudFile(projectInfo.owner, design.title, true, true).then(() => {
-                          // ignore
+                  >
+                    <img
+                      loading={'eager'}
+                      width={imageWidth + 'px'}
+                      height={'auto'}
+                      onError={(event: any) => {
+                        (event.target as HTMLImageElement).src = ImageLoadFailureIcon;
+                      }}
+                      onLoad={(event) => {
+                        setCommonStore((state) => {
+                          state.projectImages.set(design.title, event.target as HTMLImageElement);
                         });
+                        usePrimitiveStore.setState((state) => {
+                          state.projectImagesUpdateFlag = !state.projectImagesUpdateFlag;
+                        });
+                      }}
+                      alt={design.title}
+                      title={
+                        selectedDesign === design
+                          ? i18n.t('projectPanel.SingleClickToDeselectDoubleClickToOpen', lang)
+                          : i18n.t('projectPanel.SingleClickToSelectDoubleClickToOpen', lang)
                       }
-                    }}
-                    onClick={(event) => {
-                      const target = event.target as HTMLImageElement;
-                      if (target.src === ImageLoadFailureIcon) {
-                        target.src = design.thumbnailUrl;
+                      src={
+                        design.thumbnail?.startsWith('data:image/png;base64') ? design.thumbnail : ImageLoadFailureIcon
                       }
-                      setSelectedDesign(design !== selectedDesign ? design : undefined);
-                    }}
-                  />
-                  <div
-                    style={{
-                      position: 'relative',
-                      left: '8px',
-                      textAlign: 'left',
-                      bottom: '18px',
-                      color: 'white',
-                      fontSize: '8px',
-                      fontWeight: 'bold',
-                    }}
-                  >
-                    {design.title
-                      ? design.title.length > 30
-                        ? design.title.substring(0, 30) + '...'
-                        : design.title
-                      : 'Unknown'}
-                  </div>
-                  <div
-                    style={{
-                      position: 'relative',
-                      right: '10px',
-                      textAlign: 'right',
-                      bottom: '36px',
-                      color: 'white',
-                    }}
-                  >
-                    {design.invisible ? (
-                      <CheckCircleOutlined
-                        onClick={() => {
-                          toggleDesignVisibility(design);
-                        }}
-                        style={{ fontSize: '16px' }}
-                        title={i18n.t('projectPanel.DesignNotShownInSolutionSpaceClickToShow', lang)}
-                      />
-                    ) : (
-                      <CheckCircleFilled
-                        onClick={() => {
-                          toggleDesignVisibility(design);
-                        }}
-                        style={{ fontSize: '16px' }}
-                        title={i18n.t('projectPanel.DesignShownInSolutionSpaceClickToHide', lang)}
-                      />
-                    )}
-                  </div>
-                </List.Item>
-              )}
+                      style={{
+                        transition: '.5s ease',
+                        opacity: hoveredDesign === design ? 0.5 : 1,
+                        padding: '1px',
+                        cursor: 'pointer',
+                        borderRadius: selectedDesign === design ? '0' : '10px',
+                        border: selectedDesign === design ? '2px solid red' : 'none',
+                      }}
+                      onDoubleClick={(event) => {
+                        const target = event.target as HTMLImageElement;
+                        if (target.src === ImageLoadFailureIcon) {
+                          target.src = design.thumbnailUrl;
+                        }
+                        setSelectedDesign(design);
+                        if (projectInfo.owner) {
+                          loadCloudFile(projectInfo.owner, design.title, true, true).then(() => {
+                            // ignore
+                          });
+                        }
+                      }}
+                      onClick={(event) => {
+                        const target = event.target as HTMLImageElement;
+                        if (target.src === ImageLoadFailureIcon) {
+                          target.src = design.thumbnailUrl;
+                        }
+                        setSelectedDesign(design !== selectedDesign ? design : undefined);
+                      }}
+                    />
+                    <div
+                      style={{
+                        position: 'relative',
+                        left: '10px',
+                        textAlign: 'left',
+                        bottom: '18px',
+                        color: 'white',
+                        fontSize: '8px',
+                        fontWeight: design.title === cloudFile ? 'bold' : 'normal',
+                      }}
+                    >
+                      {design.title
+                        ? design.title.length > labelDisplayLength
+                          ? design.title.substring(0, Math.min(labelDisplayLength, lastSpaceIndex)) +
+                            '...' +
+                            design.title.substring(lastSpaceIndex)
+                          : design.title
+                        : 'Unknown'}
+                    </div>
+                    <div
+                      style={{
+                        position: 'relative',
+                        right: '10px',
+                        textAlign: 'right',
+                        bottom: '36px',
+                        color: 'white',
+                      }}
+                    >
+                      {design.title === cloudFile && (
+                        <FolderOpenOutlined style={{ paddingRight: '4px', fontSize: '16px' }} />
+                      )}
+                      {design.invisible ? (
+                        <CheckCircleOutlined
+                          onClick={() => {
+                            toggleDesignVisibility(design);
+                          }}
+                          style={{ fontSize: '16px' }}
+                          title={i18n.t('projectPanel.DesignNotShownInSolutionSpaceClickToShow', lang)}
+                        />
+                      ) : (
+                        <CheckCircleFilled
+                          onClick={() => {
+                            toggleDesignVisibility(design);
+                          }}
+                          style={{ fontSize: '16px' }}
+                          title={i18n.t('projectPanel.DesignShownInSolutionSpaceClickToHide', lang)}
+                        />
+                      )}
+                    </div>
+                  </List.Item>
+                );
+              }}
             />
             <SolutionSpaceHeader>
               <span style={{ paddingLeft: '20px' }}>{i18n.t('projectPanel.DistributionInSolutionSpace', lang)}</span>

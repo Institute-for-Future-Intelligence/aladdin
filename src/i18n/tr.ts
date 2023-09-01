@@ -503,8 +503,8 @@ export const i18n_tr = {
 
       generativeDesignSubMenu: 'Generative Design',
       generativeDesignTutorials: {
-        MonofacialSolarPanelArrayTiltAngle: 'The Tilt Angle of A Monofacial Solar Panel Array',
-        BifacialSolarPanelArrayTiltAngle: 'The Title Angle of A Bifacial Solar Panel Array',
+        MonofacialSolarPanelArrayTiltAngle: 'The Tilt Angle of a Monofacial Solar Panel Array',
+        BifacialSolarPanelArrayTiltAngle: 'The Title Angle of a Bifacial Solar Panel Array',
         OutputOfSolarPanelArrayInDifferentPlaces: 'The Output of a Solar Panel Array in Different Places',
         SimpleSolarFarmParetoFront: 'The Pareto Front for Designing a Simple Solar Farm',
       },
