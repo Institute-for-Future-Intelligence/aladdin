@@ -1,6 +1,7 @@
 /*
  * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
+
 import create from 'zustand';
 import { DatumEntry } from '../types';
 import { Vantage } from '../analysis/Vantage';
@@ -122,7 +123,7 @@ export const useDataStore = create<DataStoreState>((set, get) => {
   return {
     roofSegmentVerticesMap: new Map<string, Vector3[][]>(),
     setRoofSegmentVertices(id, vertices) {
-      // this set doesn't mutate map, so it won't cause re-render. But it's value is updated when we are using it.
+      // this set doesn't mutate map, so it won't cause re-render. But its value is updated when we are using it.
       set((state) => {
         state.roofSegmentVerticesMap.set(id, [...vertices]);
       });
@@ -138,7 +139,7 @@ export const useDataStore = create<DataStoreState>((set, get) => {
 
     roofSegmentVerticesWithoutOverhangMap: new Map<string, Vector3[][]>(),
     setRoofSegmentVerticesWithoutOverhang(id, vertices) {
-      // this set mutate map, so it won't cause re-render. But it's value is updated when we are using it.
+      // this set mutate map, so it won't cause re-render. But its value is updated when we are using it.
       set((state) => {
         state.roofSegmentVerticesWithoutOverhangMap.set(id, vertices);
       });
@@ -254,7 +255,8 @@ export const useDataStore = create<DataStoreState>((set, get) => {
     },
     clearSolarPanelVisibilityResults() {
       set((state) => {
-        state.solarPanelVisibilityResults.clear();
+        // must create a new map in order for the dependency on it to change for re-rendering
+        state.solarPanelVisibilityResults = new Map<Vantage, Map<string, number>>();
       });
     },
 
@@ -549,39 +551,46 @@ export const useDataStore = create<DataStoreState>((set, get) => {
 
     clearDataStore() {
       set((state) => {
-        state.heatmaps.clear();
-        state.hourlyHeatExchangeArrayMap.clear();
-        state.hourlySolarHeatGainArrayMap.clear();
-        state.hourlySolarPanelOutputArrayMap.clear();
+        // create a new empty map in the following
+        // do not just clear it as it may not trigger re-rendering
 
-        state.dailyLightSensorData.length = 0;
-        state.yearlyLightSensorData.length = 0;
-        state.sensorLabels.length = 0;
+        state.heatmaps = new Map<string, number[][]>();
+        state.hourlyHeatExchangeArrayMap = new Map<string, number[]>();
+        state.hourlySolarHeatGainArrayMap = new Map<string, number[]>();
+        state.hourlySolarPanelOutputArrayMap = new Map<string, number[]>();
+        state.solarPanelVisibilityResults = new Map<Vantage, Map<string, number>>();
 
-        state.dailyPvYield.length = 0;
-        state.yearlyPvYield.length = 0;
-        state.solarPanelLabels.length = 0;
+        // create a new empty array in the following
+        // do not just set the length to zero as it will not trigger re-rendering
 
-        state.dailyParabolicDishYield.length = 0;
-        state.yearlyParabolicDishYield.length = 0;
-        state.parabolicDishLabels.length = 0;
+        state.dailyLightSensorData = [];
+        state.yearlyLightSensorData = [];
+        state.sensorLabels = [];
 
-        state.dailyParabolicTroughYield.length = 0;
-        state.yearlyParabolicTroughYield.length = 0;
-        state.parabolicTroughLabels.length = 0;
+        state.dailyPvYield = [];
+        state.yearlyPvYield = [];
+        state.solarPanelLabels = [];
 
-        state.dailyFresnelReflectorYield.length = 0;
-        state.yearlyFresnelReflectorYield.length = 0;
-        state.fresnelReflectorLabels.length = 0;
+        state.dailyParabolicDishYield = [];
+        state.yearlyParabolicDishYield = [];
+        state.parabolicDishLabels = [];
 
-        state.dailyHeliostatYield.length = 0;
-        state.yearlyHeliostatYield.length = 0;
-        state.heliostatLabels.length = 0;
+        state.dailyParabolicTroughYield = [];
+        state.yearlyParabolicTroughYield = [];
+        state.parabolicTroughLabels = [];
 
-        state.dailyUpdraftTowerYield.length = 0;
-        state.dailyUpdraftTowerResults.length = 0;
-        state.yearlyUpdraftTowerYield.length = 0;
-        state.updraftTowerLabels.length = 0;
+        state.dailyFresnelReflectorYield = [];
+        state.yearlyFresnelReflectorYield = [];
+        state.fresnelReflectorLabels = [];
+
+        state.dailyHeliostatYield = [];
+        state.yearlyHeliostatYield = [];
+        state.heliostatLabels = [];
+
+        state.dailyUpdraftTowerYield = [];
+        state.dailyUpdraftTowerResults = [];
+        state.yearlyUpdraftTowerYield = [];
+        state.updraftTowerLabels = [];
       });
     },
     clearRoofVerticesMap() {

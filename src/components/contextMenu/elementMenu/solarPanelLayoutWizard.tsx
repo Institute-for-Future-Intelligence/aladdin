@@ -330,7 +330,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
         </Modal>
       )}
       <Modal
-        width={560}
+        width={600}
         visible={true}
         title={
           <div
