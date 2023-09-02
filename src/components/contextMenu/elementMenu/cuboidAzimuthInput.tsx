@@ -2,9 +2,8 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useRef, useState } from 'react';
-import { Button, Col, InputNumber, Modal, Radio, RadioChangeEvent, Row, Space } from 'antd';
-import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
+import React, { useState } from 'react';
+import { Col, InputNumber, Radio, RadioChangeEvent, Row, Space } from 'antd';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { ObjectType, Scope } from '../../../types';
@@ -15,9 +14,10 @@ import { Util } from '../../../Util';
 import { CuboidModel } from '../../../models/CuboidModel';
 import { ZERO_TOLERANCE } from '../../../constants';
 import { useSelectedElement } from './menuHooks';
+import Dialog from '../dialog';
+import { useLanguage } from 'src/views/hooks';
 
 const CuboidAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
-  const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
   const updateElementRotationById = useStore(Selector.updateElementRotationById);
@@ -26,28 +26,16 @@ const CuboidAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   const setActionScope = useStore(Selector.setCuboidActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
-  const revertApply = useStore(Selector.revertApply);
 
   const cuboid = useSelectedElement(ObjectType.Cuboid) as CuboidModel | undefined;
 
-  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
-  const [dragEnabled, setDragEnabled] = useState<boolean>(false);
-  const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
-  const dragRef = useRef<HTMLDivElement | null>(null);
   // reverse the sign because rotation angle is positive counterclockwise whereas azimuth is positive clockwise
-  const inputAzimuthRef = useRef<number>(cuboid ? -cuboid.rotation[2] ?? 0 : 0);
+  const [inputValue, setInputValue] = useState<number>(cuboid ? -cuboid.rotation[2] ?? 0 : 0);
 
-  const lang = { lng: language };
-
-  useEffect(() => {
-    if (cuboid) {
-      inputAzimuthRef.current = -cuboid.rotation[2];
-    }
-  }, [cuboid]);
+  const lang = useLanguage();
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);
-    setUpdateFlag(!updateFlag);
   };
 
   const updateOnSurface = (value: number) => {
@@ -137,120 +125,57 @@ const CuboidAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
         updateElementRotationById(cuboid.id, 0, 0, -value);
         setApplyCount(applyCount + 1);
     }
-    setUpdateFlag(!updateFlag);
-  };
-
-  const onStart = (event: DraggableEvent, uiData: DraggableData) => {
-    if (dragRef.current) {
-      const { clientWidth, clientHeight } = window.document.documentElement;
-      const targetRect = dragRef.current.getBoundingClientRect();
-      setBounds({
-        left: -targetRect.left + uiData.x,
-        right: clientWidth - (targetRect.right - uiData.x),
-        top: -targetRect.top + uiData.y,
-        bottom: clientHeight - (targetRect?.bottom - uiData.y),
-      });
-    }
   };
 
   const close = () => {
-    inputAzimuthRef.current = cuboid ? -cuboid.rotation[2] ?? 0 : 0;
     setDialogVisible(false);
   };
 
-  const cancel = () => {
-    close();
-    revertApply();
-  };
-
-  const ok = () => {
-    setAzimuth(inputAzimuthRef.current);
-    setDialogVisible(false);
-    setApplyCount(0);
+  const apply = () => {
+    setAzimuth(inputValue);
   };
 
   return (
-    <>
-      <Modal
-        width={550}
-        visible={true}
-        title={
-          <div
-            style={{ width: '100%', cursor: 'move' }}
-            onMouseOver={() => setDragEnabled(true)}
-            onMouseOut={() => setDragEnabled(false)}
-          >
-            {i18n.t('word.Azimuth', lang)}
-          </div>
-        }
-        footer={[
-          <Button
-            key="Apply"
-            onClick={() => {
-              setAzimuth(inputAzimuthRef.current);
+    <Dialog width={550} title={i18n.t('word.Azimuth', lang)} onApply={apply} onClose={close}>
+      <Row gutter={6}>
+        <Col className="gutter-row" span={7}>
+          <InputNumber
+            min={-180}
+            max={180}
+            style={{ width: 120 }}
+            step={0.5}
+            precision={2}
+            // make sure that we round up the number because toDegrees may cause things like .999999999
+            value={parseFloat(Util.toDegrees(inputValue).toFixed(2))}
+            formatter={(value) => `${value}°`}
+            onChange={(value) => {
+              setInputValue(Util.toRadians(value));
             }}
-          >
-            {i18n.t('word.Apply', lang)}
-          </Button>,
-          <Button key="Cancel" onClick={cancel}>
-            {i18n.t('word.Cancel', lang)}
-          </Button>,
-          <Button key="OK" type="primary" onClick={ok}>
-            {i18n.t('word.OK', lang)}
-          </Button>,
-        ]}
-        // this must be specified for the x button in the upper-right corner to work
-        onCancel={close}
-        maskClosable={false}
-        destroyOnClose={false}
-        modalRender={(modal) => (
-          <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
-            <div ref={dragRef}>{modal}</div>
-          </Draggable>
-        )}
-      >
-        <Row gutter={6}>
-          <Col className="gutter-row" span={7}>
-            <InputNumber
-              min={-180}
-              max={180}
-              style={{ width: 120 }}
-              step={0.5}
-              precision={2}
-              // make sure that we round up the number because toDegrees may cause things like .999999999
-              value={parseFloat(Util.toDegrees(inputAzimuthRef.current).toFixed(2))}
-              formatter={(value) => `${value}°`}
-              onChange={(value) => {
-                inputAzimuthRef.current = Util.toRadians(value);
-                setUpdateFlag(!updateFlag);
-              }}
-              onPressEnter={ok}
-            />
-            <div style={{ paddingTop: '20px', paddingRight: '6px', textAlign: 'left', fontSize: '11px' }}>
-              {i18n.t('word.Range', lang)}: [-180°, 180°]
-              <br />
-              {i18n.t('message.AzimuthOfNorthIsZero', lang)}
-              <br />
-              {i18n.t('message.CounterclockwiseAzimuthIsPositive', lang)}
-            </div>
-          </Col>
-          <Col
-            className="gutter-row"
-            style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={17}
-          >
-            <Radio.Group onChange={onScopeChange} value={actionScope}>
-              <Space direction="vertical">
-                <Radio value={Scope.OnlyThisObject}>{i18n.t('cuboidMenu.OnlyThisCuboid', lang)}</Radio>
-                <Radio value={Scope.AllObjectsOfThisTypeOnSurface}>
-                  {i18n.t('cuboidMenu.AllCuboidsOnSameSurface', lang)}
-                </Radio>
-              </Space>
-            </Radio.Group>
-          </Col>
-        </Row>
-      </Modal>
-    </>
+          />
+          <div style={{ paddingTop: '20px', paddingRight: '6px', textAlign: 'left', fontSize: '11px' }}>
+            {i18n.t('word.Range', lang)}: [-180°, 180°]
+            <br />
+            {i18n.t('message.AzimuthOfNorthIsZero', lang)}
+            <br />
+            {i18n.t('message.CounterclockwiseAzimuthIsPositive', lang)}
+          </div>
+        </Col>
+        <Col
+          className="gutter-row"
+          style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
+          span={17}
+        >
+          <Radio.Group onChange={onScopeChange} value={actionScope}>
+            <Space direction="vertical">
+              <Radio value={Scope.OnlyThisObject}>{i18n.t('cuboidMenu.OnlyThisCuboid', lang)}</Radio>
+              <Radio value={Scope.AllObjectsOfThisTypeOnSurface}>
+                {i18n.t('cuboidMenu.AllCuboidsOnSameSurface', lang)}
+              </Radio>
+            </Space>
+          </Radio.Group>
+        </Col>
+      </Row>
+    </Dialog>
   );
 };
 

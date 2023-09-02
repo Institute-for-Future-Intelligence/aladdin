@@ -3,7 +3,7 @@
  */
 
 import React, { useState } from 'react';
-import { Col, Radio, RadioChangeEvent, Row, Space } from 'antd';
+import { Col, Radio, Row, Space } from 'antd';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { ObjectType, Scope } from '../../../types';
@@ -23,7 +23,6 @@ const FoundationColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
   const updateElementColorForAll = useStore(Selector.updateElementColorForAll);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.foundationActionScope);
-  const setActionScope = useStore(Selector.setFoundationActionScope);
   const setApplyCount = useStore(Selector.setApplyCount);
 
   const foundation = useSelectedElement(ObjectType.Foundation) as FoundationModel | undefined;
@@ -31,10 +30,6 @@ const FoundationColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
   const [selectedColor, setSelectedColor] = useState(foundation?.color ?? '#808080');
 
   const lang = useLanguage();
-
-  const onScopeChange = (e: RadioChangeEvent) => {
-    setActionScope(e.target.value);
-  };
 
   const needChange = (color: string) => {
     switch (actionScope) {
@@ -136,7 +131,10 @@ const FoundationColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={12}
         >
-          <Radio.Group onChange={onScopeChange} value={actionScope}>
+          <Radio.Group
+            onChange={(e) => useStore.getState().setFoundationActionScope(e.target.value)}
+            value={actionScope}
+          >
             <Space direction="vertical">
               <Radio value={Scope.OnlyThisObject}>{i18n.t('foundationMenu.OnlyThisFoundation', lang)}</Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('foundationMenu.AllFoundations', lang)}</Radio>

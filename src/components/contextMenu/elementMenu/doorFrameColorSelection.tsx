@@ -2,9 +2,8 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useRef, useState } from 'react';
-import { Button, Col, Modal, Radio, Row, Space } from 'antd';
-import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
+import React, { useState } from 'react';
+import { Col, Radio, Row, Space } from 'antd';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
 import { ObjectType, Scope } from 'src/types';
@@ -14,38 +13,23 @@ import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { CompactPicker } from 'react-color';
 import { DoorModel } from 'src/models/DoorModel';
 import { useSelectedElement } from './menuHooks';
+import { useLanguage } from 'src/views/hooks';
+import Dialog from '../dialog';
 
 const DoorFrameColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
-  const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.doorActionScope);
-  const setActionScope = useStore(Selector.setDoorActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
-  const revertApply = useStore(Selector.revertApply);
   const getElementById = useStore(Selector.getElementById);
 
   const door = useSelectedElement(ObjectType.Door) as DoorModel | undefined;
 
   const [selectedColor, setSelectedColor] = useState<string>(door?.frameColor ?? '#ffffff');
-  const [dragEnabled, setDragEnabled] = useState<boolean>(false);
-  const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
-  const dragRef = useRef<HTMLDivElement | null>(null);
-  const okButtonRef = useRef<HTMLElement | null>(null);
 
-  useEffect(() => {
-    okButtonRef.current?.focus();
-  });
-
-  const lang = { lng: language };
-
-  useEffect(() => {
-    if (door) {
-      setSelectedColor(door?.frameColor ?? '#ffffff');
-    }
-  }, [door]);
+  const lang = useLanguage();
 
   const updateColorById = (id: string, color: string) => {
     setCommonStore((state) => {
@@ -227,108 +211,43 @@ const DoorFrameColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
     });
   };
 
-  const onStart = (event: DraggableEvent, uiData: DraggableData) => {
-    if (dragRef.current) {
-      const { clientWidth, clientHeight } = window.document.documentElement;
-      const targetRect = dragRef.current.getBoundingClientRect();
-      setBounds({
-        left: -targetRect.left + uiData.x,
-        right: clientWidth - (targetRect.right - uiData.x),
-        top: -targetRect.top + uiData.y,
-        bottom: clientHeight - (targetRect?.bottom - uiData.y),
-      });
-    }
-  };
-
   const close = () => {
-    if (door?.frameColor) {
-      setSelectedColor(door.frameColor);
-    }
     setDialogVisible(false);
   };
 
-  const handleCancel = () => {
-    close();
-    revertApply();
-  };
-
-  const handleOk = () => {
-    if (!door) return;
-    const updatedDoor = getElementById(door.id) as DoorModel;
-    if (updatedDoor && updatedDoor.frameColor !== selectedColor) {
-      setColor(selectedColor);
-    }
-    setDialogVisible(false);
-    setApplyCount(0);
-  };
-
-  const handleApply = () => {
+  const apply = () => {
     setColor(selectedColor);
   };
 
   return (
-    <>
-      <Modal
-        width={640}
-        visible={true}
-        title={
-          <div
-            style={{ width: '100%', cursor: 'move' }}
-            onMouseOver={() => setDragEnabled(true)}
-            onMouseOut={() => setDragEnabled(false)}
-          >
-            {i18n.t('doorMenu.FrameColor', lang)}
-          </div>
-        }
-        footer={[
-          <Button key="Apply" onClick={handleApply}>
-            {i18n.t('word.Apply', lang)}
-          </Button>,
-          <Button key="Cancel" onClick={handleCancel}>
-            {i18n.t('word.Cancel', lang)}
-          </Button>,
-          <Button key="OK" type="primary" ref={okButtonRef} onClick={handleOk}>
-            {i18n.t('word.OK', lang)}
-          </Button>,
-        ]}
-        // this must be specified for the x button in the upper-right corner to work
-        onCancel={close}
-        maskClosable={false}
-        destroyOnClose={false}
-        modalRender={(modal) => (
-          <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
-            <div ref={dragRef}>{modal}</div>
-          </Draggable>
-        )}
-      >
-        <Row gutter={6}>
-          <Col className="gutter-row" span={11}>
-            <CompactPicker
-              color={selectedColor ?? door?.frameColor ?? '#ffffff'}
-              onChangeComplete={(colorResult) => {
-                setSelectedColor(colorResult.hex);
-              }}
-            />
-          </Col>
-          <Col
-            className="gutter-row"
-            style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={13}
-          >
-            <Radio.Group onChange={(e) => setActionScope(e.target.value)} value={actionScope}>
-              <Space direction="vertical">
-                <Radio value={Scope.OnlyThisObject}>{i18n.t('doorMenu.OnlyThisDoor', lang)}</Radio>
-                <Radio value={Scope.OnlyThisSide}>{i18n.t('doorMenu.AllDoorsOnWall', lang)}</Radio>
-                <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
-                  {i18n.t('doorMenu.AllDoorsAboveFoundation', lang)}
-                </Radio>
-                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('doorMenu.AllDoors', lang)}</Radio>
-              </Space>
-            </Radio.Group>
-          </Col>
-        </Row>
-      </Modal>
-    </>
+    <Dialog width={640} title={i18n.t('doorMenu.FrameColor', lang)} onApply={apply} onClose={close}>
+      <Row gutter={6}>
+        <Col className="gutter-row" span={11}>
+          <CompactPicker
+            color={selectedColor ?? door?.frameColor ?? '#ffffff'}
+            onChangeComplete={(colorResult) => {
+              setSelectedColor(colorResult.hex);
+            }}
+          />
+        </Col>
+        <Col
+          className="gutter-row"
+          style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
+          span={13}
+        >
+          <Radio.Group onChange={(e) => useStore.getState().setDoorActionScope(e.target.value)} value={actionScope}>
+            <Space direction="vertical">
+              <Radio value={Scope.OnlyThisObject}>{i18n.t('doorMenu.OnlyThisDoor', lang)}</Radio>
+              <Radio value={Scope.OnlyThisSide}>{i18n.t('doorMenu.AllDoorsOnWall', lang)}</Radio>
+              <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
+                {i18n.t('doorMenu.AllDoorsAboveFoundation', lang)}
+              </Radio>
+              <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('doorMenu.AllDoors', lang)}</Radio>
+            </Space>
+          </Radio.Group>
+        </Col>
+      </Row>
+    </Dialog>
   );
 };
 

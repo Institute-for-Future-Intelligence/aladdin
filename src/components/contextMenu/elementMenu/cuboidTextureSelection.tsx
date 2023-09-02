@@ -13,9 +13,8 @@ import CuboidTexture08Icon from '../../../resources/building_facade_08_menu.png'
 import CuboidTexture09Icon from '../../../resources/building_facade_09_menu.png';
 import CuboidTexture10Icon from '../../../resources/building_facade_10_menu.png';
 
-import React, { useEffect, useRef, useState } from 'react';
-import { Button, Col, Modal, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
-import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
+import React, { useEffect, useState } from 'react';
+import { Col, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
 import { CommonStoreState, useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { CuboidTexture, ObjectType, Scope } from '../../../types';
@@ -24,10 +23,11 @@ import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { CuboidModel } from '../../../models/CuboidModel';
 import { useSelectedElement } from './menuHooks';
+import Dialog from '../dialog';
+import { useLanguage } from 'src/views/hooks';
 
 const CuboidTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
-  const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.cuboidActionScope);
@@ -35,7 +35,6 @@ const CuboidTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
   const selectedSideIndex = useStore(Selector.selectedSideIndex);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
-  const revertApply = useStore(Selector.revertApply);
 
   const cuboid = useSelectedElement(ObjectType.Cuboid) as CuboidModel | undefined;
 
@@ -44,16 +43,8 @@ const CuboidTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
       ? cuboid.textureTypes[selectedSideIndex]
       : CuboidTexture.NoTexture,
   );
-  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
-  const [dragEnabled, setDragEnabled] = useState<boolean>(false);
-  const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
-  const dragRef = useRef<HTMLDivElement | null>(null);
-  const okButtonRef = useRef<HTMLElement | null>(null);
-  useEffect(() => {
-    okButtonRef.current?.focus();
-  });
 
-  const lang = { lng: language };
+  const lang = useLanguage();
   const { Option } = Select;
 
   useEffect(() => {
@@ -119,7 +110,6 @@ const CuboidTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);
-    setUpdateFlag(!updateFlag);
   };
 
   const needChange = (texture: CuboidTexture) => {
@@ -297,20 +287,6 @@ const CuboidTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
           });
         }
     }
-    setUpdateFlag(!updateFlag);
-  };
-
-  const onStart = (event: DraggableEvent, uiData: DraggableData) => {
-    if (dragRef.current) {
-      const { clientWidth, clientHeight } = window.document.documentElement;
-      const targetRect = dragRef.current.getBoundingClientRect();
-      setBounds({
-        left: -targetRect.left + uiData.x,
-        right: clientWidth - (targetRect.right - uiData.x),
-        top: -targetRect.top + uiData.y,
-        bottom: clientHeight - (targetRect?.bottom - uiData.y),
-      });
-    }
   };
 
   const close = () => {
@@ -320,203 +296,157 @@ const CuboidTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
     setDialogVisible(false);
   };
 
-  const cancel = () => {
-    close();
-    revertApply();
-  };
-
-  const ok = () => {
+  const apply = () => {
     setTexture(selectedTexture);
-    setDialogVisible(false);
-    setApplyCount(0);
   };
 
   return (
-    <>
-      <Modal
-        width={600}
-        visible={true}
-        title={
-          <div
-            style={{ width: '100%', cursor: 'move' }}
-            onMouseOver={() => setDragEnabled(true)}
-            onMouseOut={() => setDragEnabled(false)}
-          >
-            {i18n.t('word.Texture', lang)}
-          </div>
-        }
-        footer={[
-          <Button
-            key="Apply"
-            onClick={() => {
-              setTexture(selectedTexture);
-            }}
-          >
-            {i18n.t('word.Apply', lang)}
-          </Button>,
-          <Button key="Cancel" onClick={cancel}>
-            {i18n.t('word.Cancel', lang)}
-          </Button>,
-          <Button key="OK" type="primary" onClick={ok} ref={okButtonRef}>
-            {i18n.t('word.OK', lang)}
-          </Button>,
-        ]}
-        // this must be specified for the x button in the upper-right corner to work
-        onCancel={close}
-        maskClosable={false}
-        destroyOnClose={false}
-        modalRender={(modal) => (
-          <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
-            <div ref={dragRef}>{modal}</div>
-          </Draggable>
-        )}
-      >
-        <Row gutter={6}>
-          <Col className="gutter-row" span={12}>
-            <Select style={{ width: '150px' }} value={selectedTexture} onChange={(value) => setSelectedTexture(value)}>
-              <Option key={CuboidTexture.NoTexture} value={CuboidTexture.NoTexture}>
-                <div
-                  style={{
-                    display: 'inline-block',
-                    verticalAlign: 'middle',
-                    marginRight: '12px',
-                    width: '32px',
-                    height: '20px',
-                    border: '1px dashed dimGray',
-                  }}
-                >
-                  {' '}
-                </div>
-                {i18n.t('shared.NoTexture', lang)}
-              </Option>
+    <Dialog width={600} title={i18n.t('word.Texture', lang)} onApply={apply} onClose={close}>
+      <Row gutter={6}>
+        <Col className="gutter-row" span={12}>
+          <Select style={{ width: '150px' }} value={selectedTexture} onChange={setSelectedTexture}>
+            <Option key={CuboidTexture.NoTexture} value={CuboidTexture.NoTexture}>
+              <div
+                style={{
+                  display: 'inline-block',
+                  verticalAlign: 'middle',
+                  marginRight: '12px',
+                  width: '32px',
+                  height: '20px',
+                  border: '1px dashed dimGray',
+                }}
+              >
+                {' '}
+              </div>
+              {i18n.t('shared.NoTexture', lang)}
+            </Option>
 
-              <Option key={CuboidTexture.Facade01} value={CuboidTexture.Facade01}>
-                <img
-                  alt={CuboidTexture.Facade01}
-                  src={CuboidTexture01Icon}
-                  height={20}
-                  width={40}
-                  style={{ paddingRight: '8px' }}
-                />{' '}
-                {i18n.t('cuboidMenu.Texture01', lang)}
-              </Option>
+            <Option key={CuboidTexture.Facade01} value={CuboidTexture.Facade01}>
+              <img
+                alt={CuboidTexture.Facade01}
+                src={CuboidTexture01Icon}
+                height={20}
+                width={40}
+                style={{ paddingRight: '8px' }}
+              />{' '}
+              {i18n.t('cuboidMenu.Texture01', lang)}
+            </Option>
 
-              <Option key={CuboidTexture.Facade02} value={CuboidTexture.Facade02}>
-                <img
-                  alt={CuboidTexture.Facade02}
-                  src={CuboidTexture02Icon}
-                  height={20}
-                  width={40}
-                  style={{ paddingRight: '8px' }}
-                />{' '}
-                {i18n.t('cuboidMenu.Texture02', lang)}
-              </Option>
+            <Option key={CuboidTexture.Facade02} value={CuboidTexture.Facade02}>
+              <img
+                alt={CuboidTexture.Facade02}
+                src={CuboidTexture02Icon}
+                height={20}
+                width={40}
+                style={{ paddingRight: '8px' }}
+              />{' '}
+              {i18n.t('cuboidMenu.Texture02', lang)}
+            </Option>
 
-              <Option key={CuboidTexture.Facade03} value={CuboidTexture.Facade03}>
-                <img
-                  alt={CuboidTexture.Facade03}
-                  src={CuboidTexture03Icon}
-                  height={20}
-                  width={40}
-                  style={{ paddingRight: '8px' }}
-                />{' '}
-                {i18n.t('cuboidMenu.Texture03', lang)}
-              </Option>
+            <Option key={CuboidTexture.Facade03} value={CuboidTexture.Facade03}>
+              <img
+                alt={CuboidTexture.Facade03}
+                src={CuboidTexture03Icon}
+                height={20}
+                width={40}
+                style={{ paddingRight: '8px' }}
+              />{' '}
+              {i18n.t('cuboidMenu.Texture03', lang)}
+            </Option>
 
-              <Option key={CuboidTexture.Facade04} value={CuboidTexture.Facade04}>
-                <img
-                  alt={CuboidTexture.Facade04}
-                  src={CuboidTexture04Icon}
-                  height={20}
-                  width={40}
-                  style={{ paddingRight: '8px' }}
-                />{' '}
-                {i18n.t('cuboidMenu.Texture04', lang)}
-              </Option>
+            <Option key={CuboidTexture.Facade04} value={CuboidTexture.Facade04}>
+              <img
+                alt={CuboidTexture.Facade04}
+                src={CuboidTexture04Icon}
+                height={20}
+                width={40}
+                style={{ paddingRight: '8px' }}
+              />{' '}
+              {i18n.t('cuboidMenu.Texture04', lang)}
+            </Option>
 
-              <Option key={CuboidTexture.Facade05} value={CuboidTexture.Facade05}>
-                <img
-                  alt={CuboidTexture.Facade05}
-                  src={CuboidTexture05Icon}
-                  height={20}
-                  width={40}
-                  style={{ paddingRight: '8px' }}
-                />{' '}
-                {i18n.t('cuboidMenu.Texture05', lang)}
-              </Option>
+            <Option key={CuboidTexture.Facade05} value={CuboidTexture.Facade05}>
+              <img
+                alt={CuboidTexture.Facade05}
+                src={CuboidTexture05Icon}
+                height={20}
+                width={40}
+                style={{ paddingRight: '8px' }}
+              />{' '}
+              {i18n.t('cuboidMenu.Texture05', lang)}
+            </Option>
 
-              <Option key={CuboidTexture.Facade06} value={CuboidTexture.Facade06}>
-                <img
-                  alt={CuboidTexture.Facade06}
-                  src={CuboidTexture06Icon}
-                  height={20}
-                  width={40}
-                  style={{ paddingRight: '8px' }}
-                />{' '}
-                {i18n.t('cuboidMenu.Texture06', lang)}
-              </Option>
+            <Option key={CuboidTexture.Facade06} value={CuboidTexture.Facade06}>
+              <img
+                alt={CuboidTexture.Facade06}
+                src={CuboidTexture06Icon}
+                height={20}
+                width={40}
+                style={{ paddingRight: '8px' }}
+              />{' '}
+              {i18n.t('cuboidMenu.Texture06', lang)}
+            </Option>
 
-              <Option key={CuboidTexture.Facade07} value={CuboidTexture.Facade07}>
-                <img
-                  alt={CuboidTexture.Facade07}
-                  src={CuboidTexture07Icon}
-                  height={20}
-                  width={40}
-                  style={{ paddingRight: '8px' }}
-                />{' '}
-                {i18n.t('cuboidMenu.Texture07', lang)}
-              </Option>
+            <Option key={CuboidTexture.Facade07} value={CuboidTexture.Facade07}>
+              <img
+                alt={CuboidTexture.Facade07}
+                src={CuboidTexture07Icon}
+                height={20}
+                width={40}
+                style={{ paddingRight: '8px' }}
+              />{' '}
+              {i18n.t('cuboidMenu.Texture07', lang)}
+            </Option>
 
-              <Option key={CuboidTexture.Facade08} value={CuboidTexture.Facade08}>
-                <img
-                  alt={CuboidTexture.Facade08}
-                  src={CuboidTexture08Icon}
-                  height={20}
-                  width={40}
-                  style={{ paddingRight: '8px' }}
-                />{' '}
-                {i18n.t('cuboidMenu.Texture08', lang)}
-              </Option>
+            <Option key={CuboidTexture.Facade08} value={CuboidTexture.Facade08}>
+              <img
+                alt={CuboidTexture.Facade08}
+                src={CuboidTexture08Icon}
+                height={20}
+                width={40}
+                style={{ paddingRight: '8px' }}
+              />{' '}
+              {i18n.t('cuboidMenu.Texture08', lang)}
+            </Option>
 
-              <Option key={CuboidTexture.Facade09} value={CuboidTexture.Facade09}>
-                <img
-                  alt={CuboidTexture.Facade09}
-                  src={CuboidTexture09Icon}
-                  height={20}
-                  width={40}
-                  style={{ paddingRight: '8px' }}
-                />{' '}
-                {i18n.t('cuboidMenu.Texture09', lang)}
-              </Option>
+            <Option key={CuboidTexture.Facade09} value={CuboidTexture.Facade09}>
+              <img
+                alt={CuboidTexture.Facade09}
+                src={CuboidTexture09Icon}
+                height={20}
+                width={40}
+                style={{ paddingRight: '8px' }}
+              />{' '}
+              {i18n.t('cuboidMenu.Texture09', lang)}
+            </Option>
 
-              <Option key={CuboidTexture.Facade10} value={CuboidTexture.Facade10}>
-                <img
-                  alt={CuboidTexture.Facade10}
-                  src={CuboidTexture10Icon}
-                  height={20}
-                  width={40}
-                  style={{ paddingRight: '8px' }}
-                />{' '}
-                {i18n.t('cuboidMenu.Texture10', lang)}
-              </Option>
-            </Select>
-          </Col>
-          <Col
-            className="gutter-row"
-            style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={12}
-          >
-            <Radio.Group onChange={onScopeChange} value={actionScope}>
-              <Space direction="vertical">
-                <Radio value={Scope.OnlyThisSide}>{i18n.t('cuboidMenu.OnlyThisSide', lang)}</Radio>
-                <Radio value={Scope.OnlyThisObject}>{i18n.t('cuboidMenu.AllSidesOfThisCuboid', lang)}</Radio>
-                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('cuboidMenu.AllSidesOfAllCuboids', lang)}</Radio>
-              </Space>
-            </Radio.Group>
-          </Col>
-        </Row>
-      </Modal>
-    </>
+            <Option key={CuboidTexture.Facade10} value={CuboidTexture.Facade10}>
+              <img
+                alt={CuboidTexture.Facade10}
+                src={CuboidTexture10Icon}
+                height={20}
+                width={40}
+                style={{ paddingRight: '8px' }}
+              />{' '}
+              {i18n.t('cuboidMenu.Texture10', lang)}
+            </Option>
+          </Select>
+        </Col>
+        <Col
+          className="gutter-row"
+          style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
+          span={12}
+        >
+          <Radio.Group onChange={onScopeChange} value={actionScope}>
+            <Space direction="vertical">
+              <Radio value={Scope.OnlyThisSide}>{i18n.t('cuboidMenu.OnlyThisSide', lang)}</Radio>
+              <Radio value={Scope.OnlyThisObject}>{i18n.t('cuboidMenu.AllSidesOfThisCuboid', lang)}</Radio>
+              <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('cuboidMenu.AllSidesOfAllCuboids', lang)}</Radio>
+            </Space>
+          </Radio.Group>
+        </Col>
+      </Row>
+    </Dialog>
   );
 };
 

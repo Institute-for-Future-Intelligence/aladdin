@@ -2,9 +2,8 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useRef, useState } from 'react';
-import { Button, Col, Modal, Radio, Row, Space } from 'antd';
-import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
+import React from 'react';
+import { Col, Radio, Row, Space } from 'antd';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
 import { ObjectType, Scope } from 'src/types';
@@ -14,6 +13,10 @@ import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { CompactPicker } from 'react-color';
 import { WindowModel } from 'src/models/WindowModel';
 import { WindowDataType } from './windowMenu';
+
+import { useColorPicker } from './menuHooks';
+import { useLanguage } from 'src/views/hooks';
+import Dialog from '../dialog';
 
 interface WindowItemSelectionProps {
   window: WindowModel;
@@ -30,25 +33,14 @@ const WindowItemSelection = ({
 }: WindowItemSelectionProps) => {
   const elements = useStore(Selector.elements);
   const setCommonStore = useStore(Selector.set);
-  const language = useStore(Selector.language);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.windowActionScope);
-  const setActionScope = useStore(Selector.setWindowActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
-  const revertApply = useStore(Selector.revertApply);
 
-  const [selectedItem, setSelectedItem] = useState<string>(windowModel[attributeKey] as string);
-  const [dragEnabled, setDragEnabled] = useState<boolean>(false);
-  const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
-  const dragRef = useRef<HTMLDivElement | null>(null);
-  const okButtonRef = useRef<HTMLElement | null>(null);
+  const [selectedItem, onItemChange] = useColorPicker((windowModel[attributeKey] as string) ?? '#ffffff');
 
-  useEffect(() => {
-    okButtonRef.current?.focus();
-  });
-
-  const lang = { lng: language };
+  const lang = useLanguage();
 
   const updateById = (id: string, val: string) => {
     setCommonStore((state) => {
@@ -141,7 +133,7 @@ const WindowItemSelection = ({
     return false;
   };
 
-  const setValue = (value: string) => {
+  const updateValue = (value: string) => {
     if (!windowModel) return;
     if (!needChange(value)) return;
     switch (actionScope) {
@@ -260,105 +252,40 @@ const WindowItemSelection = ({
     });
   };
 
-  const onStart = (event: DraggableEvent, uiData: DraggableData) => {
-    if (dragRef.current) {
-      const { clientWidth, clientHeight } = window.document.documentElement;
-      const targetRect = dragRef.current.getBoundingClientRect();
-      setBounds({
-        left: -targetRect.left + uiData.x,
-        right: clientWidth - (targetRect.right - uiData.x),
-        top: -targetRect.top + uiData.y,
-        bottom: clientHeight - (targetRect?.bottom - uiData.y),
-      });
-    }
-  };
-
   const close = () => {
     setDialogVisible();
   };
 
-  const handleCancel = () => {
-    close();
-    revertApply();
-  };
-
-  const handleOk = () => {
+  const apply = () => {
     if (windowModel[attributeKey] !== selectedItem) {
-      setValue(selectedItem);
-    }
-    setDialogVisible();
-    setApplyCount(0);
-  };
-
-  const handleApply = () => {
-    if (windowModel[attributeKey] !== selectedItem) {
-      setValue(selectedItem);
+      updateValue(selectedItem);
     }
   };
 
   return (
-    <>
-      <Modal
-        width={640}
-        visible={true}
-        title={
-          <div
-            style={{ width: '100%', cursor: 'move' }}
-            onMouseOver={() => setDragEnabled(true)}
-            onMouseOut={() => setDragEnabled(false)}
-          >
-            {i18n.t(`windowMenu.${dataType}`, lang)}
-          </div>
-        }
-        footer={[
-          <Button key="Apply" onClick={handleApply}>
-            {i18n.t('word.Apply', lang)}
-          </Button>,
-          <Button key="Cancel" onClick={handleCancel}>
-            {i18n.t('word.Cancel', lang)}
-          </Button>,
-          <Button key="OK" type="primary" ref={okButtonRef} onClick={handleOk}>
-            {i18n.t('word.OK', lang)}
-          </Button>,
-        ]}
-        // this must be specified for the x button in the upper-right corner to work
-        onCancel={close}
-        maskClosable={false}
-        destroyOnClose={false}
-        modalRender={(modal) => (
-          <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
-            <div ref={dragRef}>{modal}</div>
-          </Draggable>
-        )}
-      >
-        <Row gutter={6}>
-          <Col className="gutter-row" span={11}>
-            <CompactPicker
-              color={selectedItem ?? '#73D8FF'}
-              onChangeComplete={(colorResult) => {
-                setSelectedItem(colorResult.hex);
-              }}
-            />
-          </Col>
-          <Col
-            className="gutter-row"
-            style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={13}
-          >
-            <Radio.Group onChange={(e) => setActionScope(e.target.value)} value={actionScope}>
-              <Space direction="vertical">
-                <Radio value={Scope.OnlyThisObject}>{i18n.t('windowMenu.OnlyThisWindow', lang)}</Radio>
-                <Radio value={Scope.OnlyThisSide}>{i18n.t('windowMenu.AllWindowsOnSurface', lang)}</Radio>
-                <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
-                  {i18n.t('windowMenu.AllWindowsAboveFoundation', lang)}
-                </Radio>
-                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('windowMenu.AllWindows', lang)}</Radio>
-              </Space>
-            </Radio.Group>
-          </Col>
-        </Row>
-      </Modal>
-    </>
+    <Dialog width={640} title={i18n.t(`windowMenu.${dataType}`, lang)} onApply={apply} onClose={close}>
+      <Row gutter={6}>
+        <Col className="gutter-row" span={11}>
+          <CompactPicker color={selectedItem ?? '#73D8FF'} onChangeComplete={onItemChange} />
+        </Col>
+        <Col
+          className="gutter-row"
+          style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
+          span={13}
+        >
+          <Radio.Group onChange={(e) => useStore.getState().setWindowActionScope(e.target.value)} value={actionScope}>
+            <Space direction="vertical">
+              <Radio value={Scope.OnlyThisObject}>{i18n.t('windowMenu.OnlyThisWindow', lang)}</Radio>
+              <Radio value={Scope.OnlyThisSide}>{i18n.t('windowMenu.AllWindowsOnSurface', lang)}</Radio>
+              <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
+                {i18n.t('windowMenu.AllWindowsAboveFoundation', lang)}
+              </Radio>
+              <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('windowMenu.AllWindows', lang)}</Radio>
+            </Space>
+          </Radio.Group>
+        </Col>
+      </Row>
+    </Dialog>
   );
 };
 

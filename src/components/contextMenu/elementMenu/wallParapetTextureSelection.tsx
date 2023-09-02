@@ -14,9 +14,8 @@ import WallTexture08Icon from 'src/resources/wall_08_menu.png';
 import WallTexture09Icon from 'src/resources/wall_09_menu.png';
 import WallTexture10Icon from 'src/resources/wall_10_menu.png';
 
-import React, { useEffect, useRef, useState } from 'react';
-import { Button, Col, Modal, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
-import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
+import React, { useState } from 'react';
+import { Col, Radio, Row, Select, Space } from 'antd';
 import { CommonStoreState, useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
 import { ObjectType, Scope, WallTexture } from 'src/types';
@@ -26,39 +25,24 @@ import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { WallModel } from 'src/models/WallModel';
 import { Util } from '../../../Util';
 import { useSelectedElement } from './menuHooks';
+import Dialog from '../dialog';
+import { useLanguage } from 'src/views/hooks';
 
 const WallParapetTextureSelection = ({ setDialogVisible }: { setDialogVisible: () => void }) => {
   const setCommonStore = useStore(Selector.set);
-  const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.wallActionScope);
-  const setActionScope = useStore(Selector.setWallActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
-  const revertApply = useStore(Selector.revertApply);
   const getElementById = useStore(Selector.getElementById);
 
   const wall = useSelectedElement(ObjectType.Wall) as WallModel | undefined;
 
   const [selectedTexture, setSelectedTexture] = useState<WallTexture>(wall?.parapet.textureType ?? WallTexture.Default);
-  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
-  const [dragEnabled, setDragEnabled] = useState<boolean>(false);
-  const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
-  const dragRef = useRef<HTMLDivElement | null>(null);
-  const okButtonRef = useRef<HTMLElement | null>(null);
-  useEffect(() => {
-    okButtonRef.current?.focus();
-  });
 
-  const lang = { lng: language };
+  const lang = useLanguage();
   const { Option } = Select;
-
-  useEffect(() => {
-    if (wall) {
-      setSelectedTexture(wall?.parapet.textureType ?? WallTexture.Default);
-    }
-  }, [wall]);
 
   const updateById = (id: string, texture: WallTexture) => {
     setCommonStore((state: CommonStoreState) => {
@@ -108,11 +92,6 @@ const WallParapetTextureSelection = ({ setDialogVisible }: { setDialogVisible: (
     });
   };
 
-  const onScopeChange = (e: RadioChangeEvent) => {
-    setActionScope(e.target.value);
-    setUpdateFlag(!updateFlag);
-  };
-
   const needChange = (value: WallTexture) => {
     if (!wall) return;
     switch (actionScope) {
@@ -152,7 +131,7 @@ const WallParapetTextureSelection = ({ setDialogVisible }: { setDialogVisible: (
     return false;
   };
 
-  const setTexture = (value: WallTexture) => {
+  const updateTexture = (value: WallTexture) => {
     if (!wall) return;
     if (!needChange(value)) return;
     switch (actionScope) {
@@ -266,240 +245,177 @@ const WallParapetTextureSelection = ({ setDialogVisible }: { setDialogVisible: (
     setCommonStore((state) => {
       state.actionState.wallParapet.textureType = value;
     });
-    setUpdateFlag(!updateFlag);
-  };
-
-  const onStart = (event: DraggableEvent, uiData: DraggableData) => {
-    if (dragRef.current) {
-      const { clientWidth, clientHeight } = window.document.documentElement;
-      const targetRect = dragRef.current.getBoundingClientRect();
-      setBounds({
-        left: -targetRect.left + uiData.x,
-        right: clientWidth - (targetRect.right - uiData.x),
-        top: -targetRect.top + uiData.y,
-        bottom: clientHeight - (targetRect?.bottom - uiData.y),
-      });
-    }
   };
 
   const close = () => {
-    if (wall?.parapet.textureType) {
-      setSelectedTexture(wall.parapet.textureType);
-    }
     setDialogVisible();
   };
 
-  const cancel = () => {
-    close();
-    revertApply();
-  };
-
-  const ok = () => {
-    setTexture(selectedTexture);
-    setDialogVisible();
-    setApplyCount(0);
+  const apply = () => {
+    updateTexture(selectedTexture);
   };
 
   return (
-    <>
-      <Modal
-        width={550}
-        visible={true}
-        title={
-          <div
-            style={{ width: '100%', cursor: 'move' }}
-            onMouseOver={() => setDragEnabled(true)}
-            onMouseOut={() => setDragEnabled(false)}
-          >
-            {i18n.t('word.Texture', lang)}
-          </div>
-        }
-        footer={[
-          <Button
-            key="Apply"
-            onClick={() => {
-              setTexture(selectedTexture);
-            }}
-          >
-            {i18n.t('word.Apply', lang)}
-          </Button>,
-          <Button key="Cancel" onClick={cancel}>
-            {i18n.t('word.Cancel', lang)}
-          </Button>,
-          <Button key="OK" type="primary" onClick={ok} ref={okButtonRef}>
-            {i18n.t('word.OK', lang)}
-          </Button>,
-        ]}
-        // this must be specified for the x button in the upper-right corner to work
-        onCancel={close}
-        maskClosable={false}
-        destroyOnClose={false}
-        modalRender={(modal) => (
-          <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
-            <div ref={dragRef}>{modal}</div>
-          </Draggable>
-        )}
-      >
-        <Row gutter={6}>
-          <Col className="gutter-row" span={9}>
-            <Select style={{ width: '150px' }} value={selectedTexture} onChange={(value) => setSelectedTexture(value)}>
-              <Option key={WallTexture.NoTexture} value={WallTexture.NoTexture}>
-                <div
-                  style={{
-                    display: 'inline-block',
-                    verticalAlign: 'middle',
-                    marginRight: '12px',
-                    width: '32px',
-                    height: '20px',
-                    border: '1px dashed dimGray',
-                  }}
-                >
-                  {' '}
-                </div>
-                {i18n.t('shared.NoTexture', lang)}
-              </Option>
+    <Dialog width={550} title={i18n.t('word.Texture', lang)} onApply={apply} onClose={close}>
+      <Row gutter={6}>
+        <Col className="gutter-row" span={9}>
+          <Select style={{ width: '150px' }} value={selectedTexture} onChange={setSelectedTexture}>
+            <Option key={WallTexture.NoTexture} value={WallTexture.NoTexture}>
+              <div
+                style={{
+                  display: 'inline-block',
+                  verticalAlign: 'middle',
+                  marginRight: '12px',
+                  width: '32px',
+                  height: '20px',
+                  border: '1px dashed dimGray',
+                }}
+              >
+                {' '}
+              </div>
+              {i18n.t('shared.NoTexture', lang)}
+            </Option>
 
-              <Option key={WallTexture.Default} value={WallTexture.Default}>
-                <img
-                  alt={WallTexture.Default}
-                  src={WallTextureDefaultIcon}
-                  height={20}
-                  width={40}
-                  style={{ paddingRight: '8px' }}
-                />{' '}
-                {i18n.t('wallMenu.TextureDefault', lang)}
-              </Option>
+            <Option key={WallTexture.Default} value={WallTexture.Default}>
+              <img
+                alt={WallTexture.Default}
+                src={WallTextureDefaultIcon}
+                height={20}
+                width={40}
+                style={{ paddingRight: '8px' }}
+              />{' '}
+              {i18n.t('wallMenu.TextureDefault', lang)}
+            </Option>
 
-              <Option key={WallTexture.Texture01} value={WallTexture.Texture01}>
-                <img
-                  alt={WallTexture.Texture01}
-                  src={WallTexture01Icon}
-                  height={20}
-                  width={40}
-                  style={{ paddingRight: '8px' }}
-                />{' '}
-                {i18n.t('wallMenu.Texture01', lang)}
-              </Option>
+            <Option key={WallTexture.Texture01} value={WallTexture.Texture01}>
+              <img
+                alt={WallTexture.Texture01}
+                src={WallTexture01Icon}
+                height={20}
+                width={40}
+                style={{ paddingRight: '8px' }}
+              />{' '}
+              {i18n.t('wallMenu.Texture01', lang)}
+            </Option>
 
-              <Option key={WallTexture.Texture02} value={WallTexture.Texture02}>
-                <img
-                  alt={WallTexture.Texture02}
-                  src={WallTexture02Icon}
-                  height={20}
-                  width={40}
-                  style={{ paddingRight: '8px' }}
-                />{' '}
-                {i18n.t('wallMenu.Texture02', lang)}
-              </Option>
+            <Option key={WallTexture.Texture02} value={WallTexture.Texture02}>
+              <img
+                alt={WallTexture.Texture02}
+                src={WallTexture02Icon}
+                height={20}
+                width={40}
+                style={{ paddingRight: '8px' }}
+              />{' '}
+              {i18n.t('wallMenu.Texture02', lang)}
+            </Option>
 
-              <Option key={WallTexture.Texture03} value={WallTexture.Texture03}>
-                <img
-                  alt={WallTexture.Texture03}
-                  src={WallTexture03Icon}
-                  height={20}
-                  width={40}
-                  style={{ paddingRight: '8px' }}
-                />{' '}
-                {i18n.t('wallMenu.Texture03', lang)}
-              </Option>
+            <Option key={WallTexture.Texture03} value={WallTexture.Texture03}>
+              <img
+                alt={WallTexture.Texture03}
+                src={WallTexture03Icon}
+                height={20}
+                width={40}
+                style={{ paddingRight: '8px' }}
+              />{' '}
+              {i18n.t('wallMenu.Texture03', lang)}
+            </Option>
 
-              <Option key={WallTexture.Texture04} value={WallTexture.Texture04}>
-                <img
-                  alt={WallTexture.Texture04}
-                  src={WallTexture04Icon}
-                  height={20}
-                  width={40}
-                  style={{ paddingRight: '8px' }}
-                />{' '}
-                {i18n.t('wallMenu.Texture04', lang)}
-              </Option>
+            <Option key={WallTexture.Texture04} value={WallTexture.Texture04}>
+              <img
+                alt={WallTexture.Texture04}
+                src={WallTexture04Icon}
+                height={20}
+                width={40}
+                style={{ paddingRight: '8px' }}
+              />{' '}
+              {i18n.t('wallMenu.Texture04', lang)}
+            </Option>
 
-              <Option key={WallTexture.Texture05} value={WallTexture.Texture05}>
-                <img
-                  alt={WallTexture.Texture05}
-                  src={WallTexture05Icon}
-                  height={20}
-                  width={40}
-                  style={{ paddingRight: '8px' }}
-                />{' '}
-                {i18n.t('wallMenu.Texture05', lang)}
-              </Option>
+            <Option key={WallTexture.Texture05} value={WallTexture.Texture05}>
+              <img
+                alt={WallTexture.Texture05}
+                src={WallTexture05Icon}
+                height={20}
+                width={40}
+                style={{ paddingRight: '8px' }}
+              />{' '}
+              {i18n.t('wallMenu.Texture05', lang)}
+            </Option>
 
-              <Option key={WallTexture.Texture06} value={WallTexture.Texture06}>
-                <img
-                  alt={WallTexture.Texture06}
-                  src={WallTexture06Icon}
-                  height={20}
-                  width={40}
-                  style={{ paddingRight: '8px' }}
-                />{' '}
-                {i18n.t('wallMenu.Texture06', lang)}
-              </Option>
+            <Option key={WallTexture.Texture06} value={WallTexture.Texture06}>
+              <img
+                alt={WallTexture.Texture06}
+                src={WallTexture06Icon}
+                height={20}
+                width={40}
+                style={{ paddingRight: '8px' }}
+              />{' '}
+              {i18n.t('wallMenu.Texture06', lang)}
+            </Option>
 
-              <Option key={WallTexture.Texture07} value={WallTexture.Texture07}>
-                <img
-                  alt={WallTexture.Texture07}
-                  src={WallTexture07Icon}
-                  height={20}
-                  width={40}
-                  style={{ paddingRight: '8px' }}
-                />{' '}
-                {i18n.t('wallMenu.Texture07', lang)}
-              </Option>
+            <Option key={WallTexture.Texture07} value={WallTexture.Texture07}>
+              <img
+                alt={WallTexture.Texture07}
+                src={WallTexture07Icon}
+                height={20}
+                width={40}
+                style={{ paddingRight: '8px' }}
+              />{' '}
+              {i18n.t('wallMenu.Texture07', lang)}
+            </Option>
 
-              <Option key={WallTexture.Texture08} value={WallTexture.Texture08}>
-                <img
-                  alt={WallTexture.Texture08}
-                  src={WallTexture08Icon}
-                  height={20}
-                  width={40}
-                  style={{ paddingRight: '8px' }}
-                />{' '}
-                {i18n.t('wallMenu.Texture08', lang)}
-              </Option>
+            <Option key={WallTexture.Texture08} value={WallTexture.Texture08}>
+              <img
+                alt={WallTexture.Texture08}
+                src={WallTexture08Icon}
+                height={20}
+                width={40}
+                style={{ paddingRight: '8px' }}
+              />{' '}
+              {i18n.t('wallMenu.Texture08', lang)}
+            </Option>
 
-              <Option key={WallTexture.Texture09} value={WallTexture.Texture09}>
-                <img
-                  alt={WallTexture.Texture09}
-                  src={WallTexture09Icon}
-                  height={20}
-                  width={40}
-                  style={{ paddingRight: '8px' }}
-                />{' '}
-                {i18n.t('wallMenu.Texture09', lang)}
-              </Option>
+            <Option key={WallTexture.Texture09} value={WallTexture.Texture09}>
+              <img
+                alt={WallTexture.Texture09}
+                src={WallTexture09Icon}
+                height={20}
+                width={40}
+                style={{ paddingRight: '8px' }}
+              />{' '}
+              {i18n.t('wallMenu.Texture09', lang)}
+            </Option>
 
-              <Option key={WallTexture.Texture10} value={WallTexture.Texture10}>
-                <img
-                  alt={WallTexture.Texture10}
-                  src={WallTexture10Icon}
-                  height={20}
-                  width={40}
-                  style={{ paddingRight: '8px' }}
-                />{' '}
-                {i18n.t('wallMenu.Texture10', lang)}
-              </Option>
-            </Select>
-          </Col>
-          <Col
-            className="gutter-row"
-            style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={15}
-          >
-            <Radio.Group onChange={onScopeChange} value={actionScope}>
-              <Space direction="vertical">
-                <Radio value={Scope.OnlyThisObject}>{i18n.t('wallMenu.OnlyThisWall', lang)}</Radio>
-                <Radio value={Scope.AllConnectedObjects}>{i18n.t('wallMenu.AllConnectedWalls', lang)}</Radio>
-                <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
-                  {i18n.t('wallMenu.AllWallsAboveFoundation', lang)}
-                </Radio>
-                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('wallMenu.AllWalls', lang)}</Radio>
-              </Space>
-            </Radio.Group>
-          </Col>
-        </Row>
-      </Modal>
-    </>
+            <Option key={WallTexture.Texture10} value={WallTexture.Texture10}>
+              <img
+                alt={WallTexture.Texture10}
+                src={WallTexture10Icon}
+                height={20}
+                width={40}
+                style={{ paddingRight: '8px' }}
+              />{' '}
+              {i18n.t('wallMenu.Texture10', lang)}
+            </Option>
+          </Select>
+        </Col>
+        <Col
+          className="gutter-row"
+          style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
+          span={15}
+        >
+          <Radio.Group onChange={(e) => useStore.getState().setWallActionScope(e.target.value)} value={actionScope}>
+            <Space direction="vertical">
+              <Radio value={Scope.OnlyThisObject}>{i18n.t('wallMenu.OnlyThisWall', lang)}</Radio>
+              <Radio value={Scope.AllConnectedObjects}>{i18n.t('wallMenu.AllConnectedWalls', lang)}</Radio>
+              <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
+                {i18n.t('wallMenu.AllWallsAboveFoundation', lang)}
+              </Radio>
+              <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('wallMenu.AllWalls', lang)}</Radio>
+            </Space>
+          </Radio.Group>
+        </Col>
+      </Row>
+    </Dialog>
   );
 };
 

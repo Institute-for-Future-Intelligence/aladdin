@@ -3,7 +3,7 @@
  */
 
 import React, { useState } from 'react';
-import { Col, InputNumber, Radio, RadioChangeEvent, Row, Space } from 'antd';
+import { Col, InputNumber, Radio, Row, Space } from 'antd';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { ObjectType, Scope } from '../../../types';
@@ -24,7 +24,6 @@ const FoundationAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
   const updateElementRotationForAll = useStore(Selector.updateElementRotationForAll);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.foundationActionScope);
-  const setActionScope = useStore(Selector.setFoundationActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
 
@@ -34,10 +33,6 @@ const FoundationAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
   const [inputValue, setInputValue] = useState(foundation ? -foundation?.rotation[2] ?? 0 : 0);
 
   const lang = useLanguage();
-
-  const onScopeChange = (e: RadioChangeEvent) => {
-    setActionScope(e.target.value);
-  };
 
   const needChange = (azimuth: number) => {
     if (!foundation) return;
@@ -151,7 +146,10 @@ const FoundationAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={17}
         >
-          <Radio.Group onChange={onScopeChange} value={actionScope}>
+          <Radio.Group
+            onChange={(e) => useStore.getState().setFoundationActionScope(e.target.value)}
+            value={actionScope}
+          >
             <Space direction="vertical">
               <Radio value={Scope.OnlyThisObject}>{i18n.t('foundationMenu.OnlyThisFoundation', lang)}</Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('foundationMenu.AllFoundations', lang)}</Radio>

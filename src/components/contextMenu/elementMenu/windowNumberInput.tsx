@@ -2,9 +2,8 @@
  * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useMemo, useRef, useState } from 'react';
-import { Button, Col, InputNumber, Modal, Radio, Row, Space } from 'antd';
-import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
+import React, { useMemo, useState } from 'react';
+import { Col, InputNumber, Radio, Row, Space } from 'antd';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
 import { ObjectType, Scope } from 'src/types';
@@ -13,6 +12,9 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { WindowModel } from 'src/models/WindowModel';
 import { WindowDataType } from './windowMenu';
+import Dialog from '../dialog';
+
+import { useLanguage } from 'src/views/hooks';
 
 interface WindowNumberInputProps {
   windowModel: WindowModel;
@@ -38,13 +40,10 @@ const WindowNumberInput = ({
   setDialogVisible,
 }: WindowNumberInputProps) => {
   const elements = useStore(Selector.elements);
-  const language = useStore(Selector.language);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.windowActionScope);
-  const setActionScope = useStore(Selector.setWindowActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
-  const revertApply = useStore(Selector.revertApply);
   const setCommonStore = useStore(Selector.set);
   const getParent = useStore(Selector.getParent);
 
@@ -63,11 +62,8 @@ const WindowNumberInput = ({
   }, [attributeKey, windowModel]);
 
   const [inputValue, setInputValue] = useState<number>(currentValue);
-  const [dragEnabled, setDragEnabled] = useState<boolean>(false);
-  const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
-  const dragRef = useRef<HTMLDivElement | null>(null);
 
-  const lang = { lng: language };
+  const lang = useLanguage();
 
   const setAttribute = (window: WindowModel, attributeKey: keyof WindowModel, value: number) => {
     const parent = getParent(window);
@@ -216,7 +212,7 @@ const WindowNumberInput = ({
     return false;
   };
 
-  const setValue = (value: number) => {
+  const updateValue = (value: number) => {
     if (!windowModel) return;
     if (!needChange(value)) return;
     switch (actionScope) {
@@ -382,115 +378,55 @@ const WindowNumberInput = ({
     });
   };
 
-  const onStart = (event: DraggableEvent, uiData: DraggableData) => {
-    if (dragRef.current) {
-      const { clientWidth, clientHeight } = window.document.documentElement;
-      const targetRect = dragRef.current.getBoundingClientRect();
-      setBounds({
-        left: -targetRect.left + uiData.x,
-        right: clientWidth - (targetRect.right - uiData.x),
-        top: -targetRect.top + uiData.y,
-        bottom: clientHeight - (targetRect?.bottom - uiData.y),
-      });
-    }
-  };
-
   const close = () => {
-    setInputValue(currentValue);
     setDialogVisible();
   };
 
-  const handleCancel = () => {
-    close();
-    revertApply();
-  };
-
-  const handleOk = () => {
-    setValue(inputValue);
-    setDialogVisible();
-    setApplyCount(0);
-  };
-
-  const handleApply = () => {
-    setValue(inputValue);
+  const apply = () => {
+    updateValue(inputValue);
   };
 
   return (
-    <>
-      <Modal
-        width={550}
-        visible={true}
-        title={
-          <div
-            style={{ width: '100%', cursor: 'move' }}
-            onMouseOver={() => setDragEnabled(true)}
-            onMouseOut={() => setDragEnabled(false)}
-          >
-            {i18n.t(`windowMenu.${dataType}`, lang)}
+    <Dialog width={550} title={i18n.t(`windowMenu.${dataType}`, lang)} onApply={apply} onClose={close}>
+      <Row gutter={6}>
+        <Col className="gutter-row" span={6}>
+          <InputNumber
+            min={range[0]}
+            max={range[1]}
+            style={{ width: 120 }}
+            step={step}
+            precision={2}
+            value={inputValue}
+            formatter={(a) => Number(a).toFixed(2)}
+            onChange={setInputValue}
+          />
+          <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
+            {i18n.t('word.Range', lang)}: [{range[0].toFixed(range[0] === 0 ? 0 : digit ?? 0)},{' '}
+            {range[1].toFixed(digit ?? 0)}] {unit} <br />
+            <br /> {note}
           </div>
-        }
-        footer={[
-          <Button key="Apply" onClick={handleApply}>
-            {i18n.t('word.Apply', lang)}
-          </Button>,
-          <Button key="Cancel" onClick={handleCancel}>
-            {i18n.t('word.Cancel', lang)}
-          </Button>,
-          <Button key="OK" type="primary" onClick={handleOk}>
-            {i18n.t('word.OK', lang)}
-          </Button>,
-        ]}
-        // this must be specified for the x button in the upper-right corner to work
-        onCancel={close}
-        maskClosable={false}
-        destroyOnClose={false}
-        modalRender={(modal) => (
-          <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
-            <div ref={dragRef}>{modal}</div>
-          </Draggable>
-        )}
-      >
-        <Row gutter={6}>
-          <Col className="gutter-row" span={6}>
-            <InputNumber
-              min={range[0]}
-              max={range[1]}
-              style={{ width: 120 }}
-              step={step}
-              precision={2}
-              value={inputValue}
-              formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputValue(value)}
-              onPressEnter={handleOk}
-            />
-            <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-              {i18n.t('word.Range', lang)}: [{range[0].toFixed(range[0] === 0 ? 0 : digit ?? 0)},{' '}
-              {range[1].toFixed(digit ?? 0)}] {unit} <br />
-              <br /> {note}
-            </div>
-          </Col>
-          <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
-            {unit}
-          </Col>
-          <Col
-            className="gutter-row"
-            style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={17}
-          >
-            <Radio.Group onChange={(e) => setActionScope(e.target.value)} value={actionScope}>
-              <Space direction="vertical">
-                <Radio value={Scope.OnlyThisObject}>{i18n.t('windowMenu.OnlyThisWindow', lang)}</Radio>
-                <Radio value={Scope.OnlyThisSide}>{i18n.t('windowMenu.AllWindowsOnSurface', lang)}</Radio>
-                <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
-                  {i18n.t('windowMenu.AllWindowsAboveFoundation', lang)}
-                </Radio>
-                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('windowMenu.AllWindows', lang)}</Radio>
-              </Space>
-            </Radio.Group>
-          </Col>
-        </Row>
-      </Modal>
-    </>
+        </Col>
+        <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
+          {unit}
+        </Col>
+        <Col
+          className="gutter-row"
+          style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
+          span={17}
+        >
+          <Radio.Group onChange={(e) => useStore.getState().setWindowActionScope(e.target.value)} value={actionScope}>
+            <Space direction="vertical">
+              <Radio value={Scope.OnlyThisObject}>{i18n.t('windowMenu.OnlyThisWindow', lang)}</Radio>
+              <Radio value={Scope.OnlyThisSide}>{i18n.t('windowMenu.AllWindowsOnSurface', lang)}</Radio>
+              <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
+                {i18n.t('windowMenu.AllWindowsAboveFoundation', lang)}
+              </Radio>
+              <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('windowMenu.AllWindows', lang)}</Radio>
+            </Space>
+          </Radio.Group>
+        </Col>
+      </Row>
+    </Dialog>
   );
 };
 

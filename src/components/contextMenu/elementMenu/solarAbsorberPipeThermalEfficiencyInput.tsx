@@ -2,9 +2,8 @@
  * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useRef, useState } from 'react';
-import { Button, Col, InputNumber, Modal, Radio, RadioChangeEvent, Row, Space } from 'antd';
-import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
+import React, { useState } from 'react';
+import { Col, InputNumber, Radio, Row, Space } from 'antd';
 import { CommonStoreState, useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
 import { ObjectType, Scope, SolarStructure } from 'src/types';
@@ -15,35 +14,24 @@ import { FoundationModel } from 'src/models/FoundationModel';
 import { ZERO_TOLERANCE } from 'src/constants';
 import { SolarAbsorberPipeModel } from '../../../models/SolarAbsorberPipeModel';
 import { useSelectedElement } from './menuHooks';
+import Dialog from '../dialog';
+import { useLanguage } from 'src/views/hooks';
 
 const SolarAbsorberPipeThermalEfficiencyInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
-  const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.foundationActionScope);
-  const setActionScope = useStore(Selector.setFoundationActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
-  const revertApply = useStore(Selector.revertApply);
 
   const foundation = useSelectedElement(ObjectType.Foundation) as FoundationModel | undefined;
   const absorberPipe = foundation?.solarAbsorberPipe;
 
-  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
-  const [dragEnabled, setDragEnabled] = useState<boolean>(false);
-  const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
-  const dragRef = useRef<HTMLDivElement | null>(null);
-  const inputThermalEfficiencyRef = useRef<number>(absorberPipe?.absorberThermalEfficiency ?? 0.3);
+  const [inputValue, setInputValue] = useState(absorberPipe?.absorberThermalEfficiency ?? 0.3);
 
-  const lang = { lng: language };
-
-  useEffect(() => {
-    if (absorberPipe) {
-      inputThermalEfficiencyRef.current = absorberPipe.absorberThermalEfficiency ?? 0.3;
-    }
-  }, [foundation]);
+  const lang = useLanguage();
 
   const updateById = (id: string, efficiency: number) => {
     setCommonStore((state: CommonStoreState) => {
@@ -72,11 +60,6 @@ const SolarAbsorberPipeThermalEfficiencyInput = ({ setDialogVisible }: { setDial
         }
       }
     });
-  };
-
-  const onScopeChange = (e: RadioChangeEvent) => {
-    setActionScope(e.target.value);
-    setUpdateFlag(!updateFlag);
   };
 
   const needChange = (efficiency: number) => {
@@ -164,112 +147,55 @@ const SolarAbsorberPipeThermalEfficiencyInput = ({ setDialogVisible }: { setDial
         addUndoable(undoableChange);
         setApplyCount(applyCount + 1);
     }
-    setUpdateFlag(!updateFlag);
-  };
-
-  const onStart = (event: DraggableEvent, uiData: DraggableData) => {
-    if (dragRef.current) {
-      const { clientWidth, clientHeight } = window.document.documentElement;
-      const targetRect = dragRef.current.getBoundingClientRect();
-      setBounds({
-        left: -targetRect.left + uiData.x,
-        right: clientWidth - (targetRect.right - uiData.x),
-        top: -targetRect.top + uiData.y,
-        bottom: clientHeight - (targetRect?.bottom - uiData.y),
-      });
-    }
   };
 
   const close = () => {
-    inputThermalEfficiencyRef.current = absorberPipe?.absorberThermalEfficiency ?? 0.3;
     setDialogVisible(false);
   };
 
-  const cancel = () => {
-    close();
-    revertApply();
-  };
-
-  const ok = () => {
-    setThermalEfficiency(inputThermalEfficiencyRef.current);
-    setDialogVisible(false);
-    setApplyCount(0);
+  const apply = () => {
+    setThermalEfficiency(inputValue);
   };
 
   return (
-    <>
-      <Modal
-        width={500}
-        visible={true}
-        title={
-          <div
-            style={{ width: '100%', cursor: 'move' }}
-            onMouseOver={() => setDragEnabled(true)}
-            onMouseOut={() => setDragEnabled(false)}
-          >
-            {i18n.t('solarAbsorberPipeMenu.AbsorberThermalEfficiency', lang)}
+    <Dialog
+      width={500}
+      title={i18n.t('solarAbsorberPipeMenu.AbsorberThermalEfficiency', lang)}
+      onApply={apply}
+      onClose={close}
+    >
+      <Row gutter={6}>
+        <Col className="gutter-row" span={8}>
+          <InputNumber
+            min={0}
+            max={1}
+            style={{ width: 120 }}
+            step={0.01}
+            precision={2}
+            value={inputValue}
+            onChange={setInputValue}
+          />
+          <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
+            {i18n.t('word.Range', lang)}: [0, 1]
           </div>
-        }
-        footer={[
-          <Button
-            key="Apply"
-            onClick={() => {
-              setThermalEfficiency(inputThermalEfficiencyRef.current);
-            }}
+        </Col>
+        <Col
+          className="gutter-row"
+          style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
+          span={16}
+        >
+          <Radio.Group
+            onChange={(e) => useStore.getState().setFoundationActionScope(e.target.value)}
+            value={actionScope}
           >
-            {i18n.t('word.Apply', lang)}
-          </Button>,
-          <Button key="Cancel" onClick={cancel}>
-            {i18n.t('word.Cancel', lang)}
-          </Button>,
-          <Button key="OK" type="primary" onClick={ok}>
-            {i18n.t('word.OK', lang)}
-          </Button>,
-        ]}
-        // this must be specified for the x button in the upper-right corner to work
-        onCancel={close}
-        maskClosable={false}
-        destroyOnClose={false}
-        modalRender={(modal) => (
-          <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
-            <div ref={dragRef}>{modal}</div>
-          </Draggable>
-        )}
-      >
-        <Row gutter={6}>
-          <Col className="gutter-row" span={8}>
-            <InputNumber
-              min={0}
-              max={1}
-              style={{ width: 120 }}
-              step={0.01}
-              precision={2}
-              value={inputThermalEfficiencyRef.current}
-              onChange={(value) => {
-                inputThermalEfficiencyRef.current = value;
-                setUpdateFlag(!updateFlag);
-              }}
-              onPressEnter={ok}
-            />
-            <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-              {i18n.t('word.Range', lang)}: [0, 1]
-            </div>
-          </Col>
-          <Col
-            className="gutter-row"
-            style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={16}
-          >
-            <Radio.Group onChange={onScopeChange} value={actionScope}>
-              <Space direction="vertical">
-                <Radio value={Scope.OnlyThisObject}>{i18n.t('foundationMenu.OnlyThisFoundation', lang)}</Radio>
-                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('foundationMenu.AllFoundations', lang)}</Radio>
-              </Space>
-            </Radio.Group>
-          </Col>
-        </Row>
-      </Modal>
-    </>
+            <Space direction="vertical">
+              <Radio value={Scope.OnlyThisObject}>{i18n.t('foundationMenu.OnlyThisFoundation', lang)}</Radio>
+              <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('foundationMenu.AllFoundations', lang)}</Radio>
+            </Space>
+          </Radio.Group>
+        </Col>
+      </Row>
+    </Dialog>
   );
 };
 

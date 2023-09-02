@@ -2,8 +2,8 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useRef, useState } from 'react';
-import { Col, InputNumber, Radio, RadioChangeEvent, Row, Space } from 'antd';
+import React, { useRef, useState } from 'react';
+import { Col, InputNumber, Radio, Row, Space } from 'antd';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
 import { ObjectType, Scope } from 'src/types';
@@ -34,7 +34,6 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
   const getChildren = useStore(Selector.getChildren);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.foundationActionScope);
-  const setActionScope = useStore(Selector.setFoundationActionScope);
   const setCommonStore = useStore(Selector.set);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
@@ -56,10 +55,6 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
   const rejectedValue = useRef<number | undefined>();
 
   const lang = useLanguage();
-
-  const onScopeChange = (e: RadioChangeEvent) => {
-    setActionScope(e.target.value);
-  };
 
   const containsAllChildren = (ly: number) => {
     if (!foundation) return;
@@ -500,7 +495,10 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={17}
         >
-          <Radio.Group onChange={onScopeChange} value={actionScope}>
+          <Radio.Group
+            onChange={(e) => useStore.getState().setFoundationActionScope(e.target.value)}
+            value={actionScope}
+          >
             <Space direction="vertical">
               <Radio value={Scope.OnlyThisObject}>{i18n.t('foundationMenu.OnlyThisFoundation', lang)}</Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('foundationMenu.AllFoundations', lang)}</Radio>

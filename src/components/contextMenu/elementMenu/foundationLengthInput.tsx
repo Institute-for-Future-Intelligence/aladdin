@@ -3,7 +3,7 @@
  */
 
 import React, { useRef, useState } from 'react';
-import { Col, InputNumber, Radio, RadioChangeEvent, Row, Space } from 'antd';
+import { Col, InputNumber, Radio, Row, Space } from 'antd';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
 import { ObjectType, Scope } from 'src/types';
@@ -34,7 +34,6 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   const setElementPosition = useStore(Selector.setElementPosition);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.foundationActionScope);
-  const setActionScope = useStore(Selector.setFoundationActionScope);
   const setCommonStore = useStore(Selector.set);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
@@ -56,10 +55,6 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   const rejectedValue = useRef<number | undefined>();
 
   const lang = { lng: language };
-
-  const onScopeChange = (e: RadioChangeEvent) => {
-    setActionScope(e.target.value);
-  };
 
   const containsAllChildren = (lx: number) => {
     if (!foundation) return;
@@ -498,7 +493,10 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={17}
         >
-          <Radio.Group onChange={onScopeChange} value={actionScope}>
+          <Radio.Group
+            onChange={(e) => useStore.getState().setFoundationActionScope(e.target.value)}
+            value={actionScope}
+          >
             <Space direction="vertical">
               <Radio value={Scope.OnlyThisObject}>{i18n.t('foundationMenu.OnlyThisFoundation', lang)}</Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('foundationMenu.AllFoundations', lang)}</Radio>

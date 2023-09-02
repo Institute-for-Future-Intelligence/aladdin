@@ -4,14 +4,14 @@
 
 import React, { useState } from 'react';
 import { Checkbox, Menu, Radio } from 'antd';
-import { CommonStoreState, useStore } from 'src/stores/common';
+import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
 import { Copy, Cut, Lock } from '../menuItems';
 import i18n from 'src/i18n/i18n';
 import { DoorModel, DoorType } from 'src/models/DoorModel';
 import DoorTextureSelection from './doorTextureSelection';
 import DoorColorSelection from './doorColorSelection';
-import { DoorTexture, ObjectType } from 'src/types';
+import { DoorTexture, ObjectType, Scope } from 'src/types';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { radioStyle } from './wallMenu';
 import { UndoableChange } from 'src/undo/UndoableChange';

@@ -11,7 +11,7 @@ import Foundation_Texture_06_Menu from '../../../resources/foundation_06_menu.pn
 import Foundation_Texture_07_Menu from '../../../resources/foundation_07_menu.png';
 
 import React, { useState } from 'react';
-import { Col, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
+import { Col, Radio, Row, Select, Space } from 'antd';
 import { CommonStoreState, useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { FoundationTexture, ObjectType, Scope } from '../../../types';
@@ -29,7 +29,6 @@ const FoundationTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b
   const getElementById = useStore(Selector.getElementById);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.foundationActionScope);
-  const setActionScope = useStore(Selector.setFoundationActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
 
@@ -59,10 +58,6 @@ const FoundationTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b
         }
       }
     });
-  };
-
-  const onScopeChange = (e: RadioChangeEvent) => {
-    setActionScope(e.target.value);
   };
 
   const needChange = (texture: FoundationTexture) => {
@@ -253,7 +248,10 @@ const FoundationTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={14}
         >
-          <Radio.Group onChange={onScopeChange} value={actionScope}>
+          <Radio.Group
+            onChange={(e) => useStore.getState().setFoundationActionScope(e.target.value)}
+            value={actionScope}
+          >
             <Space direction="vertical">
               <Radio value={Scope.OnlyThisObject}>{i18n.t('foundationMenu.OnlyThisFoundation', lang)}</Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('foundationMenu.AllFoundations', lang)}</Radio>

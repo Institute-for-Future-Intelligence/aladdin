@@ -8,7 +8,7 @@ import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
 import { Lock, Paste } from '../menuItems';
 import i18n from 'src/i18n/i18n';
-import { ObjectType, RoofTexture } from 'src/types';
+import { ObjectType, RoofTexture, Scope } from 'src/types';
 import RoofTextureSelection from './roofTextureSelection';
 import RoofColorSelection from './roofColorSelection';
 import { RoofModel, RoofStructure, RoofType } from 'src/models/RoofModel';

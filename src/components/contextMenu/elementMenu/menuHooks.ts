@@ -9,6 +9,7 @@ import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { ObjectType } from 'src/types';
+import { ColorResult } from 'react-color';
 
 export const useLabel = (element: ElementModel | undefined) => {
   const [labelText, setLabelText] = useState<string>(element?.label ?? '');
@@ -226,4 +227,12 @@ export const useSelectedElement = (objectType: ObjectType) => {
     return state.elements.find((e) => e.id === state.selectedElement?.id && e.type === objectType);
   });
   return element;
+};
+
+export const useColorPicker = (color: string) => {
+  const [selectedColor, setSelectedColor] = useState<string>(color);
+  const onColorChange = (colorResult: ColorResult) => {
+    setSelectedColor(colorResult.hex);
+  };
+  return [selectedColor, onColorChange] as [string, (colorResult: ColorResult) => void];
 };
