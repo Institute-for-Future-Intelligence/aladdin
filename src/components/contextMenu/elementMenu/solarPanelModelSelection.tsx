@@ -602,7 +602,7 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
             <InputNumber
               disabled={true}
               style={{ width: '100%' }}
-              precision={1}
+              precision={2}
               value={100 * pvModel.efficiency}
               onChange={(value) => {
                 if (solarPanel) {
