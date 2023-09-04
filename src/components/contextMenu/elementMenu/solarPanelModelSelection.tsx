@@ -437,7 +437,7 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
   return (
     <>
       <Modal
-        width={600}
+        width={640}
         visible={true}
         title={
           <div
@@ -475,7 +475,7 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
         )}
       >
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={14}>
+          <Col className="gutter-row" span={13}>
             {i18n.t('pvModelPanel.Model', lang) +
               ' (' +
               Object.keys(pvModules).length +
@@ -483,7 +483,7 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
               i18n.t('word.Options', lang) +
               '):'}
           </Col>
-          <Col className="gutter-row" span={10}>
+          <Col className="gutter-row" span={11}>
             <Select
               defaultValue="Custom"
               style={{ width: '100%' }}
@@ -503,10 +503,10 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
           </Col>
         </Row>
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={14}>
+          <Col className="gutter-row" span={13}>
             {i18n.t('pvModelPanel.PanelSize', lang) + ':'}
           </Col>
-          <Col className="gutter-row" span={10}>
+          <Col className="gutter-row" span={11}>
             <Select
               disabled={true}
               style={{ width: '100%' }}
@@ -526,10 +526,10 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
           </Col>
         </Row>
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={14}>
+          <Col className="gutter-row" span={13}>
             {i18n.t('pvModelPanel.CellType', lang) + ':'}
           </Col>
-          <Col className="gutter-row" span={10}>
+          <Col className="gutter-row" span={11}>
             <Select
               disabled={true}
               style={{ width: '100%' }}
@@ -553,10 +553,10 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
           </Col>
         </Row>
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={14}>
+          <Col className="gutter-row" span={13}>
             {i18n.t('pvModelPanel.BifacialityFactor', lang) + ':'}
           </Col>
-          <Col className="gutter-row" span={10}>
+          <Col className="gutter-row" span={11}>
             <InputNumber
               disabled={true}
               style={{ width: '100%' }}
@@ -571,10 +571,10 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
           </Col>
         </Row>
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={14}>
+          <Col className="gutter-row" span={13}>
             {i18n.t('word.Color', lang) + ':'}
           </Col>
-          <Col className="gutter-row" span={10}>
+          <Col className="gutter-row" span={11}>
             <Select
               disabled={true}
               style={{ width: '100%' }}
@@ -595,10 +595,10 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
           </Col>
         </Row>
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={14}>
+          <Col className="gutter-row" span={13}>
             {i18n.t('pvModelPanel.SolarCellEfficiency', lang) + ' (%):'}
           </Col>
-          <Col className="gutter-row" span={10}>
+          <Col className="gutter-row" span={11}>
             <InputNumber
               disabled={true}
               style={{ width: '100%' }}
@@ -613,10 +613,10 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
           </Col>
         </Row>
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={14}>
+          <Col className="gutter-row" span={13}>
             {i18n.t('pvModelPanel.NominalOperatingCellTemperature', lang) + ' (°C):'}
           </Col>
-          <Col className="gutter-row" span={10}>
+          <Col className="gutter-row" span={11}>
             <InputNumber
               disabled={true}
               style={{ width: '100%' }}
@@ -631,10 +631,10 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
           </Col>
         </Row>
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={14}>
+          <Col className="gutter-row" span={13}>
             {i18n.t('pvModelPanel.TemperatureCoefficientOfPmax', lang) + ' (%/°C):'}
           </Col>
-          <Col className="gutter-row" span={10}>
+          <Col className="gutter-row" span={11}>
             <Input
               disabled={true}
               style={{ width: '100%' }}
