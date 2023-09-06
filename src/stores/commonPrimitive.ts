@@ -3,6 +3,7 @@
  */
 
 import create from 'zustand';
+import { DesignProblem } from '../types';
 
 // avoid using undefined value in the store for now.
 export interface PrimitiveStoreState {
@@ -36,6 +37,12 @@ export interface PrimitiveStoreState {
   updateProjectsFlag: boolean;
   showProjectListPanel: boolean;
   projectImagesUpdateFlag: boolean;
+
+  // These stores the settings from createNewProjectDialog.tsx, because we don't want to overwrite
+  // the local state in the common store yet. Don't be confused with commonStore's projectInfo.
+  projectType: DesignProblem;
+  projectTitle: string | null;
+  projectDescription: string | null;
 
   userCount: number;
   showCloudFilePanel: boolean;
@@ -182,6 +189,9 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
     updateProjectsFlag: false,
     showProjectListPanel: false,
     projectImagesUpdateFlag: false,
+    projectType: DesignProblem.SOLAR_PANEL_ARRAY,
+    projectTitle: null,
+    projectDescription: null,
 
     userCount: 0,
     showCloudFilePanel: false,

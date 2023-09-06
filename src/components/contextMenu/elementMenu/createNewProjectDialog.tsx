@@ -64,10 +64,10 @@ const CreateNewProjectDialog = ({
         state.createProjectFlag = true;
       }
     });
-    setCommonStore((state) => {
-      state.projectInfo.type = projectType;
-      state.projectInfo.title = projectTitle;
-      state.projectInfo.description = projectDescription;
+    usePrimitiveStore.setState((state) => {
+      state.projectType = projectType;
+      state.projectTitle = projectTitle;
+      state.projectDescription = projectDescription;
     });
     if (loggable) {
       setCommonStore((state) => {
@@ -119,6 +119,7 @@ const CreateNewProjectDialog = ({
         </Col>
         <Col className="gutter-row" span={16}>
           <Select
+            disabled={saveAs}
             style={{ width: '100%' }}
             value={projectType}
             onChange={(value) => {

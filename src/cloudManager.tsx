@@ -126,6 +126,17 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     } else {
       firebase.app(); // if already initialized, use the default one
     }
+
+    // don't enable persistence as we often need to open multiple tabs
+    // firebase.firestore().enablePersistence()
+    //   .catch((err) => {
+    //     if (err.code === 'failed-precondition') {
+    //       showWarning('Firestore: Multiple tabs open, persistence can only be enabled in one tab at a time.', 10);
+    //     } else if (err.code === 'unimplemented') {
+    //       showWarning('Firestore: The current browser does not support offline persistence, 10');
+    //     }
+    //   });
+
     // do not use firebase.auth().currentUser - currentUser might be null because the auth object has not finished initializing.
     // If you use an observer to keep track of the user's sign-in status, you don't need to handle this case.
     firebase.auth().onAuthStateChanged((u) => {
@@ -1401,7 +1412,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
 
   function createNewProject() {
     if (!user || !user.uid) return;
-    const title = useStore.getState().projectInfo.title;
+    const title = usePrimitiveStore.getState().projectTitle;
     if (!title) {
       showError(i18n.t('message.CannotCreateNewProjectWithoutTitle', lang) + '.');
       return;
@@ -1426,8 +1437,8 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
         showInfo(i18n.t('message.TitleUsedChooseDifferentOne', lang) + ': ' + t);
       } else {
         if (user && user.uid) {
-          const type = useStore.getState().projectInfo.type ?? DesignProblem.SOLAR_PANEL_ARRAY;
-          const description = useStore.getState().projectInfo.description ?? null;
+          const type = usePrimitiveStore.getState().projectType ?? DesignProblem.SOLAR_PANEL_ARRAY;
+          const description = usePrimitiveStore.getState().projectDescription ?? null;
           const timestamp = new Date().getTime();
           const counter = 0;
           firebase
@@ -1450,6 +1461,9 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                 state.projectView = true;
                 // update the local copy as well
                 state.projectInfo.owner = user.uid;
+                state.projectInfo.type = type;
+                state.projectInfo.title = title;
+                state.projectInfo.description = description;
                 state.projectInfo.counter = 0;
                 state.projectInfo.dataColoring = DataColoring.ALL;
                 state.projectInfo.selectedProperty = null;
@@ -1482,7 +1496,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
 
   function saveProjectAs() {
     if (!user || !user.uid) return;
-    const title = useStore.getState().projectInfo.title;
+    const title = usePrimitiveStore.getState().projectTitle;
     if (!title) {
       showError(i18n.t('message.CannotCreateNewProjectWithoutTitle', lang) + '.');
       return;
@@ -1509,9 +1523,9 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
         if (user && user.uid) {
           const designs = useStore.getState().projectInfo.designs;
           if (designs) {
-            const type = useStore.getState().projectInfo.type;
+            const type = usePrimitiveStore.getState().projectType;
+            const description = usePrimitiveStore.getState().projectDescription;
             const owner = useStore.getState().projectInfo.owner;
-            const description = useStore.getState().projectInfo.description;
             const timestamp = new Date().getTime();
             const counter = useStore.getState().projectInfo.counter;
             const dataColoring = useStore.getState().projectInfo.dataColoring ?? null;
@@ -1560,6 +1574,9 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                   setCommonStore((state) => {
                     state.projectView = true;
                     state.projectInfo.owner = user.uid;
+                    state.projectInfo.type = type;
+                    state.projectInfo.title = title;
+                    state.projectInfo.description = description;
                     state.projectInfo.designs = newDesigns;
                   });
                 })
