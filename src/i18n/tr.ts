@@ -182,6 +182,7 @@ export const i18n_tr = {
       ElementLocked: 'Kilitli',
       ModelType: 'Model Type',
       OutputBreakdown: 'Breakdown',
+      MoreResults: 'More Results',
     },
 
     message: {
@@ -884,6 +885,7 @@ export const i18n_tr = {
       SolarPanelArrayPoleHeight: 'Direk Yükseklik',
       SolarPanelArrayPoleSpacing: 'Direk Aralık',
       SolarPanelArrayTotalYearlyCost: 'Total Cost',
+      SolarPanelArrayTotalYearlyRevenue: 'Total Revenue',
       SolarPanelArrayTotalYearlyYield: 'Total Yield',
       SolarPanelArrayMeanYearlyYield: 'Mean Yield',
       SolarPanelArrayYearlyProfit: 'Profit',

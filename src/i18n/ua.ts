@@ -183,6 +183,7 @@ export const i18n_ua = {
       ElementLocked: 'Заблоковано',
       ModelType: 'Тип моделі',
       OutputBreakdown: 'Breakdown',
+      MoreResults: 'More Results',
     },
 
     message: {
@@ -886,6 +887,7 @@ export const i18n_ua = {
       SolarPanelArrayPoleHeight: 'Висота стовпа',
       SolarPanelArrayPoleSpacing: 'Інтервал між стовпами',
       SolarPanelArrayTotalYearlyCost: 'Total Cost',
+      SolarPanelArrayTotalYearlyRevenue: 'Total Revenue',
       SolarPanelArrayTotalYearlyYield: 'Total Yield',
       SolarPanelArrayMeanYearlyYield: 'Mean Yield',
       SolarPanelArrayYearlyProfit: 'Profit',

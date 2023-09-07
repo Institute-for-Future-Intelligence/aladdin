@@ -270,7 +270,8 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
             <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
               {individualOutputs && solarPanelCount > 1 && panelSumRef.current.size > 0 ? (
                 <Popover
-                  title={[...panelSumRef.current.entries()].map((e, i) => (
+                  title={i18n.t('shared.OutputBreakdown', lang)}
+                  content={[...panelSumRef.current.entries()].map((e, i) => (
                     <React.Fragment key={i}>
                       <Row style={{ textAlign: 'right' }}>
                         <Col span={16} style={{ textAlign: 'right', paddingRight: '8px' }}>

@@ -213,8 +213,9 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
   const solarPanelNumber = Util.countAllSolarPanels();
   const yearScaleFactor = 12 / daysPerYear;
   const totalYield = sum * yearScaleFactor;
-  const totalProfit =
-    totalYield * economics.electricitySellingPrice - solarPanelNumber * economics.operationalCostPerUnit * 365;
+  const totalCost = solarPanelNumber * economics.operationalCostPerUnit * 365;
+  const totalRevenue = totalYield * economics.electricitySellingPrice;
+  const totalProfit = totalRevenue - totalCost;
   const emptyGraph = yearlyYield && yearlyYield[0] ? Object.keys(yearlyYield[0]).length === 0 : true;
 
   return (
@@ -274,7 +275,8 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
             <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
               {individualOutputs && solarPanelCount > 1 && panelSumRef.current.size > 0 ? (
                 <Popover
-                  title={[...panelSumRef.current.entries()].map((e, i) => (
+                  title={i18n.t('shared.OutputBreakdown', lang)}
+                  content={[...panelSumRef.current.entries()].map((e, i) => (
                     <React.Fragment key={i}>
                       <Row style={{ textAlign: 'right' }}>
                         <Col span={16} style={{ textAlign: 'right', paddingRight: '8px' }}>
@@ -309,7 +311,31 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
                     </Space>
                   )}
                   {totalYield > 0 && (
-                    <Space>{'| ' + i18n.t('solarPanelYieldPanel.Profit', lang) + ': $' + totalProfit.toFixed(2)}</Space>
+                    <Popover
+                      title={i18n.t('shared.MoreResults', lang)}
+                      content={
+                        <>
+                          <Row style={{ width: '200px' }}>
+                            <Col span={14}>{i18n.t('polygonMenu.SolarPanelArrayMeanYearlyYield', lang) + ': '}</Col>
+                            <Col span={10}>{(totalYield / solarPanelNumber).toFixed(2)} kWh</Col>
+                          </Row>
+                          <Row style={{ width: '200px' }}>
+                            <Col span={14}>{i18n.t('polygonMenu.SolarPanelArrayTotalYearlyCost', lang) + ': '}</Col>
+                            <Col span={10}>${totalCost.toFixed(2)}</Col>
+                          </Row>
+                          <Row style={{ width: '200px' }}>
+                            <Col span={14}>{i18n.t('polygonMenu.SolarPanelArrayTotalYearlyRevenue', lang) + ': '}</Col>
+                            <Col span={10}>${totalRevenue.toFixed(2)}</Col>
+                          </Row>
+                          <Row style={{ width: '200px' }}>
+                            <Col span={14}>{i18n.t('solarPanelYieldPanel.Profit', lang) + ': '}</Col>
+                            <Col span={10}>{(totalProfit > 0 ? '$' : '-$') + Math.abs(totalProfit).toFixed(2)}</Col>
+                          </Row>
+                        </>
+                      }
+                    >
+                      <Button type="default">{i18n.t('shared.MoreResults', lang)}</Button>
+                    </Popover>
                   )}
                 </>
               )}

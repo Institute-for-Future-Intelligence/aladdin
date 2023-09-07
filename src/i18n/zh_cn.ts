@@ -182,6 +182,7 @@ export const i18n_zh_cn = {
       ElementLocked: '固定',
       ModelType: '模型类别',
       OutputBreakdown: '分列发电量',
+      MoreResults: '更多结果',
     },
 
     message: {
@@ -861,6 +862,7 @@ export const i18n_zh_cn = {
       SolarPanelArrayPoleHeight: '支架高度',
       SolarPanelArrayPoleSpacing: '支柱间隔',
       SolarPanelArrayTotalYearlyCost: '全年总成本',
+      SolarPanelArrayTotalYearlyRevenue: '全年总收入',
       SolarPanelArrayTotalYearlyYield: '全年总发电量',
       SolarPanelArrayMeanYearlyYield: '平均年发电量',
       SolarPanelArrayYearlyProfit: '全年利润',

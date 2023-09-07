@@ -182,6 +182,7 @@ export const i18n_en = {
       ElementLocked: 'Locked',
       ModelType: 'Model Type',
       OutputBreakdown: 'Breakdown',
+      MoreResults: 'More Results',
     },
 
     message: {
@@ -884,6 +885,7 @@ export const i18n_en = {
       SolarPanelArrayPoleHeight: 'Pole Height',
       SolarPanelArrayPoleSpacing: 'Pole Spacing',
       SolarPanelArrayTotalYearlyCost: 'Total Cost',
+      SolarPanelArrayTotalYearlyRevenue: 'Total Revenue',
       SolarPanelArrayTotalYearlyYield: 'Total Yield',
       SolarPanelArrayMeanYearlyYield: 'Mean Yield',
       SolarPanelArrayYearlyProfit: 'Profit',
