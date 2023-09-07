@@ -413,7 +413,7 @@ const SolarPanelTiltAngleInput = ({
   const rejectedMessage = rejectRef.current
     ? ': ' +
       i18n.t('message.NotApplicableToSelectedAction', lang) +
-      (rejectedValue.current !== undefined ? ' (' + rejectedValue.current.toFixed(1) + ')' : '')
+      (rejectedValue.current !== undefined ? ' (' + Util.toDegrees(rejectedValue.current).toFixed(1) + '°)' : null)
     : null;
 
   return (
