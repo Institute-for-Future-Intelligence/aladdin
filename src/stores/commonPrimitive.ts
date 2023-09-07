@@ -135,6 +135,8 @@ export interface PrimitiveStoreState {
 
   foundationMovedFlag: boolean;
   updateFoundationMovedFlag: () => void;
+
+  isCameraUnderGround: boolean;
 }
 
 export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
@@ -286,5 +288,7 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
         state.foundationMovedFlag = !state.foundationMovedFlag;
       });
     },
+
+    isCameraUnderGround: false,
   };
 });

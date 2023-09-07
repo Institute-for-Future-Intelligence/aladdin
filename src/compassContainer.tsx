@@ -11,8 +11,8 @@ const Container = styled.div`
   position: absolute;
   bottom: 0;
   right: 0;
-  height: 125px;
-  width: 150px;
+  height: 200px;
+  width: 200px;
   pointer-events: none;
 `;
 

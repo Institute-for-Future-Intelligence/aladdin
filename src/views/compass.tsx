@@ -3,33 +3,16 @@
  */
 
 import React, { useEffect, useMemo, useRef } from 'react';
-import { useLoader } from '@react-three/fiber';
-import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
-import { FontLoader, Group, MeshBasicMaterial, TextGeometryParameters } from 'three';
-import compassObj from '../assets/compass.obj';
-import helvetikerFont from '../fonts/helvetiker_regular.typeface.fnt';
+import { SVGLoader } from 'three/examples/jsm/loaders/SVGLoader';
+import { DoubleSide, Group, Mesh, MeshBasicMaterial, ShapeGeometry } from 'three';
+import compassSVG from '../assets/compass.svg';
 import { useRefStore } from 'src/stores/commonRef';
-import { HALF_PI } from '../constants';
-import { useStore } from '../stores/common';
-import * as Selector from '../stores/selector';
+import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 
 const Compass = () => {
-  const groundImage = useStore(Selector.viewState.groundImage);
-  const groundImageType = useStore(Selector.viewState.groundImageType) ?? 'roadmap';
-  const model = useLoader(OBJLoader, compassObj);
-  const font = useLoader(FontLoader, helvetikerFont);
-  const textGeometryParams = {
-    font: font,
-    height: 0.0,
-    size: 0.6,
-  } as TextGeometryParameters;
-  const compassMaterial = new MeshBasicMaterial({ color: 'red' });
+  const isCameraUnderGround = usePrimitiveStore((state) => state.isCameraUnderGround);
 
-  const textMaterial = useMemo(() => {
-    return new MeshBasicMaterial({
-      color: groundImage ? (groundImageType !== 'roadmap' ? 'antiquewhite' : 'darkslategrey') : 'darkgrey',
-    });
-  }, [groundImage, groundImageType]);
+  const svgLoader = useMemo(() => new SVGLoader(), []);
 
   const compassRef = useRef<Group>(null);
   useEffect(() => {
@@ -40,23 +23,41 @@ const Compass = () => {
     }
   }, []);
 
-  return (
-    <group ref={compassRef} name={'Compass'} scale={0.85}>
-      <mesh position={[-0.2, 2, 0]} material={textMaterial}>
-        <textGeometry args={['N', textGeometryParams]} />
-      </mesh>
-      <mesh rotation={[0, 0, Math.PI]} position={[0.25, -2, 0]} material={textMaterial}>
-        <textGeometry args={['S', textGeometryParams]} />
-      </mesh>
-      <mesh rotation={[0, 0, HALF_PI]} position={[-2, -0.4, 0]} material={textMaterial}>
-        <textGeometry args={['W', textGeometryParams]} />
-      </mesh>
-      <mesh rotation={[0, 0, -HALF_PI]} position={[2, 0.25, 0]} material={textMaterial}>
-        <textGeometry args={['E', textGeometryParams]} />
-      </mesh>
-      <primitive object={model} material={compassMaterial} />
-    </group>
-  );
+  useEffect(() => {
+    svgLoader.load(compassSVG, (data) => {
+      if (!compassRef.current) return;
+
+      const paths = data.paths;
+      const group = new Group();
+
+      for (let i = 0; i < paths.length; i++) {
+        const path = paths[i];
+
+        const color = isCameraUnderGround ? 'white' : path.color;
+
+        const material = new MeshBasicMaterial({
+          color: color,
+          side: DoubleSide,
+          depthWrite: false,
+        });
+
+        const shapes = SVGLoader.createShapes(path);
+
+        for (let j = 0; j < shapes.length; j++) {
+          const shape = shapes[j];
+          const geometry = new ShapeGeometry(shape);
+          const mesh = new Mesh(geometry, material);
+          group.add(mesh);
+        }
+      }
+
+      group.position.set(-650, -650, 0);
+
+      compassRef.current.add(group);
+    });
+  }, [isCameraUnderGround]);
+
+  return <group ref={compassRef} name={'Compass'} scale={0.004} rotation={[0, Math.PI, 0]} />;
 };
 
 export default React.memo(Compass);

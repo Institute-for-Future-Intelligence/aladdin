@@ -25,8 +25,16 @@ export const setCompassRotation = (camera: Camera) => {
   const compassRef = useRefStore.getState().compassRef;
   if (compassRef?.current) {
     const dircXY = getCameraDirection(camera).normalize();
-    const rotationZ = (-Math.PI * 17) / 18 + Math.atan2(dircXY.x, dircXY.y);
-    compassRef.current.rotation.set(-Math.PI / 3, 0, rotationZ);
+    const rotationZ = -Math.atan2(dircXY.x, dircXY.y);
+    compassRef.current.rotation.z = rotationZ;
+
+    const isCameraUnderGround = camera.position.z < 0.001;
+
+    if (isCameraUnderGround && !usePrimitiveStore.getState().isCameraUnderGround) {
+      usePrimitiveStore.getState().setPrimitiveStore('isCameraUnderGround', true);
+    } else if (!isCameraUnderGround && usePrimitiveStore.getState().isCameraUnderGround) {
+      usePrimitiveStore.getState().setPrimitiveStore('isCameraUnderGround', false);
+    }
   }
 };
 
