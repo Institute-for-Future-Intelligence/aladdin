@@ -83,6 +83,8 @@ const Dialog: React.FC<DialogProps> = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleClickOk]);
 
+  const showRejectMessage = !!rejectedMessage && rejectedMessage.length > 0;
+
   return (
     <Modal
       width={width}
@@ -94,7 +96,7 @@ const Dialog: React.FC<DialogProps> = ({
           onMouseOut={() => setDragEnabled(false)}
         >
           {title}
-          {rejectedMessage && <span style={{ color: 'red', fontWeight: 'bold' }}>{rejectedMessage}</span>}
+          {showRejectMessage && <span style={{ color: 'red', fontWeight: 'bold' }}>{rejectedMessage}</span>}
         </div>
       }
       footer={[

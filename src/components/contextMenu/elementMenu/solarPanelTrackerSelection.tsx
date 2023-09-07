@@ -2,9 +2,8 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useRef, useState } from 'react';
-import { Button, Col, Modal, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
-import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
+import React, { useState } from 'react';
+import { Col, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
 import { CommonStoreState, useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { SolarPanelModel } from '../../../models/SolarPanelModel';
@@ -14,10 +13,11 @@ import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { Util } from '../../../Util';
 import { useSelectedElement } from './menuHooks';
+import { useLanguage } from 'src/views/hooks';
+import Dialog from '../dialog';
 
 const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
-  const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
   const getParent = useStore(Selector.getParent);
@@ -26,30 +26,15 @@ const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b
   const setActionScope = useStore(Selector.setSolarPanelActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
-  const revertApply = useStore(Selector.revertApply);
 
   const solarPanel = useSelectedElement(ObjectType.SolarPanel) as SolarPanelModel | undefined;
 
   const [selectedTrackerType, setSelectedTrackerType] = useState<TrackerType>(
     solarPanel?.trackerType ?? TrackerType.NO_TRACKER,
   );
-  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
-  const [dragEnabled, setDragEnabled] = useState<boolean>(false);
-  const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
-  const dragRef = useRef<HTMLDivElement | null>(null);
-  const okButtonRef = useRef<HTMLElement | null>(null);
-  useEffect(() => {
-    okButtonRef.current?.focus();
-  });
 
-  const lang = { lng: language };
+  const lang = useLanguage();
   const { Option } = Select;
-
-  useEffect(() => {
-    if (solarPanel) {
-      setSelectedTrackerType(solarPanel.trackerType);
-    }
-  }, [solarPanel]);
 
   const updateSolarPanelTrackerTypeById = (id: string, trackerType: TrackerType) => {
     setCommonStore((state: CommonStoreState) => {
@@ -106,7 +91,6 @@ const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);
-    setUpdateFlag(!updateFlag);
   };
 
   const needChange = (tracker: TrackerType) => {
@@ -304,136 +288,74 @@ const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b
         updateSolarPanelTrackerTypeById(solarPanel.id, value);
         setApplyCount(applyCount + 1);
     }
-    setUpdateFlag(!updateFlag);
-  };
-
-  const onStart = (event: DraggableEvent, uiData: DraggableData) => {
-    if (dragRef.current) {
-      const { clientWidth, clientHeight } = window.document.documentElement;
-      const targetRect = dragRef.current.getBoundingClientRect();
-      setBounds({
-        left: -targetRect.left + uiData.x,
-        right: clientWidth - (targetRect.right - uiData.x),
-        top: -targetRect.top + uiData.y,
-        bottom: clientHeight - (targetRect?.bottom - uiData.y),
-      });
-    }
   };
 
   const close = () => {
-    if (!solarPanel) return;
-    setSelectedTrackerType(solarPanel.trackerType);
     setDialogVisible(false);
   };
 
-  const cancel = () => {
-    close();
-    revertApply();
-  };
-
-  const ok = () => {
+  const apply = () => {
     setTrackerType(selectedTrackerType);
-    setDialogVisible(false);
-    setApplyCount(0);
   };
 
   return (
-    <>
-      <Modal
-        width={550}
-        visible={true}
-        title={
-          <div
-            style={{ width: '100%', cursor: 'move' }}
-            onMouseOver={() => setDragEnabled(true)}
-            onMouseOut={() => setDragEnabled(false)}
+    <Dialog width={550} title={i18n.t('solarPanelMenu.Tracker', lang)} onApply={apply} onClose={close}>
+      <Row gutter={6}>
+        <Col className="gutter-row" span={7}>
+          <Select
+            style={{ width: '120px' }}
+            value={selectedTrackerType}
+            onChange={(value) => setSelectedTrackerType(value)}
           >
-            {i18n.t('solarPanelMenu.Tracker', lang)}
-          </div>
-        }
-        footer={[
-          <Button
-            key="Apply"
-            onClick={() => {
-              setTrackerType(selectedTrackerType);
-            }}
-          >
-            {i18n.t('word.Apply', lang)}
-          </Button>,
-          <Button key="Cancel" onClick={cancel}>
-            {i18n.t('word.Cancel', lang)}
-          </Button>,
-          <Button key="OK" type="primary" onClick={ok} ref={okButtonRef}>
-            {i18n.t('word.OK', lang)}
-          </Button>,
-        ]}
-        // this must be specified for the x button in the upper-right corner to work
-        onCancel={close}
-        maskClosable={false}
-        destroyOnClose={false}
-        modalRender={(modal) => (
-          <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
-            <div ref={dragRef}>{modal}</div>
-          </Draggable>
-        )}
-      >
-        <Row gutter={6}>
-          <Col className="gutter-row" span={7}>
-            <Select
-              style={{ width: '120px' }}
-              value={selectedTrackerType}
-              onChange={(value) => setSelectedTrackerType(value)}
+            <Option key={'NONE'} value={TrackerType.NO_TRACKER} title={i18n.t('solarPanelMenu.NoTracker', lang)}>
+              {i18n.t('word.None', lang)}
+            </Option>
+            <Option
+              key={'HSAT'}
+              value={TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER}
+              title={i18n.t('solarPanelMenu.HorizontalSingleAxisTracker', lang)}
             >
-              <Option key={'NONE'} value={TrackerType.NO_TRACKER} title={i18n.t('solarPanelMenu.NoTracker', lang)}>
-                {i18n.t('word.None', lang)}
-              </Option>
-              <Option
-                key={'HSAT'}
-                value={TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER}
-                title={i18n.t('solarPanelMenu.HorizontalSingleAxisTracker', lang)}
-              >
-                HSAT
-              </Option>
-              <Option
-                key={'VSAT'}
-                value={TrackerType.VERTICAL_SINGLE_AXIS_TRACKER}
-                title={i18n.t('solarPanelMenu.VerticalSingleAxisTracker', lang)}
-              >
-                VSAT
-              </Option>
-              <Option
-                key={'AADAT'}
-                value={TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER}
-                title={i18n.t('solarPanelMenu.AltazimuthDualAxisTracker', lang)}
-              >
-                AADAT
-              </Option>
-            </Select>
-            <div style={{ paddingTop: '20px', paddingRight: '10px', textAlign: 'left', fontSize: '11px' }}>
-              {i18n.t('solarPanelMenu.SolarTrackerFollowsSun', lang)}
-            </div>
-          </Col>
-          <Col
-            className="gutter-row"
-            style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={17}
-          >
-            <Radio.Group onChange={onScopeChange} value={actionScope}>
-              <Space direction="vertical">
-                <Radio value={Scope.OnlyThisObject}>{i18n.t('solarPanelMenu.OnlyThisSolarPanel', lang)}</Radio>
-                <Radio value={Scope.AllObjectsOfThisTypeOnSurface}>
-                  {i18n.t('solarPanelMenu.AllSolarPanelsOnSurface', lang)}
-                </Radio>
-                <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
-                  {i18n.t('solarPanelMenu.AllSolarPanelsAboveFoundation', lang)}
-                </Radio>
-                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('solarPanelMenu.AllSolarPanels', lang)}</Radio>
-              </Space>
-            </Radio.Group>
-          </Col>
-        </Row>
-      </Modal>
-    </>
+              HSAT
+            </Option>
+            <Option
+              key={'VSAT'}
+              value={TrackerType.VERTICAL_SINGLE_AXIS_TRACKER}
+              title={i18n.t('solarPanelMenu.VerticalSingleAxisTracker', lang)}
+            >
+              VSAT
+            </Option>
+            <Option
+              key={'AADAT'}
+              value={TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER}
+              title={i18n.t('solarPanelMenu.AltazimuthDualAxisTracker', lang)}
+            >
+              AADAT
+            </Option>
+          </Select>
+          <div style={{ paddingTop: '20px', paddingRight: '10px', textAlign: 'left', fontSize: '11px' }}>
+            {i18n.t('solarPanelMenu.SolarTrackerFollowsSun', lang)}
+          </div>
+        </Col>
+        <Col
+          className="gutter-row"
+          style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
+          span={17}
+        >
+          <Radio.Group onChange={onScopeChange} value={actionScope}>
+            <Space direction="vertical">
+              <Radio value={Scope.OnlyThisObject}>{i18n.t('solarPanelMenu.OnlyThisSolarPanel', lang)}</Radio>
+              <Radio value={Scope.AllObjectsOfThisTypeOnSurface}>
+                {i18n.t('solarPanelMenu.AllSolarPanelsOnSurface', lang)}
+              </Radio>
+              <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
+                {i18n.t('solarPanelMenu.AllSolarPanelsAboveFoundation', lang)}
+              </Radio>
+              <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('solarPanelMenu.AllSolarPanels', lang)}</Radio>
+            </Space>
+          </Radio.Group>
+        </Col>
+      </Row>
+    </Dialog>
   );
 };
 

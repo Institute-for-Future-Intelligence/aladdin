@@ -2,9 +2,8 @@
  * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useRef, useState } from 'react';
-import { Button, Col, Modal, Radio, RadioChangeEvent, Row, Space, Switch } from 'antd';
-import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
+import React, { useState } from 'react';
+import { Col, Radio, RadioChangeEvent, Row, Space, Switch } from 'antd';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { HeliostatModel } from '../../../models/HeliostatModel';
@@ -13,9 +12,10 @@ import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { useSelectedElement } from './menuHooks';
+import Dialog from '../dialog';
+import { useLanguage } from 'src/views/hooks';
 
 const HeliostatDrawSunBeamSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
-  const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
   const updateById = useStore(Selector.updateSolarCollectorDrawSunBeamById);
@@ -26,31 +26,15 @@ const HeliostatDrawSunBeamSelection = ({ setDialogVisible }: { setDialogVisible:
   const setActionScope = useStore(Selector.setHeliostatActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
-  const revertApply = useStore(Selector.revertApply);
 
   const heliostat = useSelectedElement(ObjectType.Heliostat) as HeliostatModel | undefined;
 
   const [sunBeam, setSunBeam] = useState<boolean>(!!heliostat?.drawSunBeam);
-  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
-  const [dragEnabled, setDragEnabled] = useState<boolean>(false);
-  const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
-  const dragRef = useRef<HTMLDivElement | null>(null);
-  const okButtonRef = useRef<HTMLElement | null>(null);
-  useEffect(() => {
-    okButtonRef.current?.focus();
-  });
 
-  const lang = { lng: language };
-
-  useEffect(() => {
-    if (heliostat) {
-      setSunBeam(heliostat.drawSunBeam);
-    }
-  }, [heliostat]);
+  const lang = useLanguage();
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);
-    setUpdateFlag(!updateFlag);
   };
 
   const needChange = (drawSunBeam: boolean) => {
@@ -168,108 +152,41 @@ const HeliostatDrawSunBeamSelection = ({ setDialogVisible }: { setDialogVisible:
         updateById(heliostat.id, value);
         setApplyCount(applyCount + 1);
     }
-    setUpdateFlag(!updateFlag);
-  };
-
-  const onStart = (event: DraggableEvent, uiData: DraggableData) => {
-    if (dragRef.current) {
-      const { clientWidth, clientHeight } = window.document.documentElement;
-      const targetRect = dragRef.current.getBoundingClientRect();
-      setBounds({
-        left: -targetRect.left + uiData.x,
-        right: clientWidth - (targetRect.right - uiData.x),
-        top: -targetRect.top + uiData.y,
-        bottom: clientHeight - (targetRect?.bottom - uiData.y),
-      });
-    }
   };
 
   const close = () => {
-    if (!heliostat) return;
-    setDrawSunBeam(heliostat.drawSunBeam);
     setDialogVisible(false);
   };
 
-  const cancel = () => {
-    close();
-    revertApply();
-  };
-
-  const ok = () => {
+  const apply = () => {
     setDrawSunBeam(sunBeam);
-    setDialogVisible(false);
-    setApplyCount(0);
   };
 
-  return heliostat?.type === ObjectType.Heliostat ? (
-    <>
-      <Modal
-        width={500}
-        visible={true}
-        title={
-          <div
-            style={{ width: '100%', cursor: 'move' }}
-            onMouseOver={() => setDragEnabled(true)}
-            onMouseOut={() => setDragEnabled(false)}
-          >
-            {i18n.t('solarCollectorMenu.DrawSunBeam', lang)}
-          </div>
-        }
-        footer={[
-          <Button
-            key="Apply"
-            onClick={() => {
-              setDrawSunBeam(sunBeam);
-            }}
-          >
-            {i18n.t('word.Apply', lang)}
-          </Button>,
-          <Button key="Cancel" onClick={cancel}>
-            {i18n.t('word.Cancel', lang)}
-          </Button>,
-          <Button key="OK" type="primary" onClick={ok} ref={okButtonRef}>
-            {i18n.t('word.OK', lang)}
-          </Button>,
-        ]}
-        // this must be specified for the x button in the upper-right corner to work
-        onCancel={close}
-        maskClosable={false}
-        destroyOnClose={false}
-        modalRender={(modal) => (
-          <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
-            <div ref={dragRef}>{modal}</div>
-          </Draggable>
-        )}
-      >
-        <Row gutter={6}>
-          <Col className="gutter-row" span={4}>
-            <Switch
-              checked={sunBeam}
-              onChange={(checked) => {
-                setSunBeam(checked);
-              }}
-            />
-          </Col>
-          <Col
-            className="gutter-row"
-            style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={20}
-          >
-            <Radio.Group onChange={onScopeChange} value={actionScope}>
-              <Space direction="vertical">
-                <Radio value={Scope.OnlyThisObject}>{i18n.t('heliostatMenu.OnlyThisHeliostat', lang)}</Radio>
-                <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
-                  {i18n.t('heliostatMenu.AllHeliostatsAboveFoundation', lang)}
-                </Radio>
-                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('heliostatMenu.AllHeliostats', lang)}</Radio>
-              </Space>
-            </Radio.Group>
-          </Col>
-        </Row>
-      </Modal>
-    </>
-  ) : (
-    <></>
+  if (heliostat?.type !== ObjectType.Heliostat) return null;
+
+  return (
+    <Dialog width={500} title={i18n.t('solarCollectorMenu.DrawSunBeam', lang)} onApply={apply} onClose={close}>
+      <Row gutter={6}>
+        <Col className="gutter-row" span={4}>
+          <Switch checked={sunBeam} onChange={setSunBeam} />
+        </Col>
+        <Col
+          className="gutter-row"
+          style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
+          span={20}
+        >
+          <Radio.Group onChange={onScopeChange} value={actionScope}>
+            <Space direction="vertical">
+              <Radio value={Scope.OnlyThisObject}>{i18n.t('heliostatMenu.OnlyThisHeliostat', lang)}</Radio>
+              <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
+                {i18n.t('heliostatMenu.AllHeliostatsAboveFoundation', lang)}
+              </Radio>
+              <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('heliostatMenu.AllHeliostats', lang)}</Radio>
+            </Space>
+          </Radio.Group>
+        </Col>
+      </Row>
+    </Dialog>
   );
 };
 

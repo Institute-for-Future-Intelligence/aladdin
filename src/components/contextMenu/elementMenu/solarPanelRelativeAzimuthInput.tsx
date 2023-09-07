@@ -2,9 +2,8 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useRef, useState } from 'react';
-import { Button, Col, InputNumber, Modal, Radio, RadioChangeEvent, Row, Space } from 'antd';
-import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
+import React, { useRef, useState } from 'react';
+import { Col, InputNumber, Radio, RadioChangeEvent, Row, Space } from 'antd';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { SolarPanelModel } from '../../../models/SolarPanelModel';
@@ -16,10 +15,11 @@ import { Util } from '../../../Util';
 import { UNIT_VECTOR_POS_Z_ARRAY, ZERO_TOLERANCE } from '../../../constants';
 import { RoofModel } from 'src/models/RoofModel';
 import { useSelectedElement } from './menuHooks';
+import { useLanguage } from 'src/views/hooks';
+import Dialog from '../dialog';
 
 const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
-  const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
   const updateRelativeAzimuthById = useStore(Selector.updateSolarCollectorRelativeAzimuthById);
@@ -36,28 +36,17 @@ const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible
 
   const solarPanel = useSelectedElement(ObjectType.SolarPanel) as SolarPanelModel | undefined;
 
-  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
-  const [dragEnabled, setDragEnabled] = useState<boolean>(false);
-  const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
-  const dragRef = useRef<HTMLDivElement | null>(null);
   const rejectRef = useRef<boolean>(false);
   const rejectedValue = useRef<number | undefined>();
   // reverse the sign because rotation angle is positive counterclockwise whereas azimuth is positive clockwise
   // unfortunately, the variable should not be named as relativeAzimuth. Instead, it should have been named as
   // relativeRotationAngle. Keep this in mind that relativeAzimuth is NOT really azimuth.
-  const inputRelativeAzimuthRef = useRef<number>(solarPanel ? -solarPanel.relativeAzimuth ?? 0 : 0);
+  const [inputValue, setInputValue] = useState(solarPanel ? -solarPanel.relativeAzimuth ?? 0 : 0);
 
-  const lang = { lng: language };
-
-  useEffect(() => {
-    if (solarPanel) {
-      inputRelativeAzimuthRef.current = -solarPanel.relativeAzimuth;
-    }
-  }, [solarPanel]);
+  const lang = useLanguage();
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);
-    setUpdateFlag(!updateFlag);
   };
 
   const withinParent = (sp: SolarPanelModel, azimuth: number) => {
@@ -173,7 +162,7 @@ const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible
         }
         if (rejectRef.current) {
           rejectedValue.current = value;
-          inputRelativeAzimuthRef.current = -solarPanel.relativeAzimuth;
+          setInputValue(-solarPanel.relativeAzimuth);
         } else {
           const oldRelativeAzimuthsAll = new Map<string, number>();
           for (const elem of elements) {
@@ -217,7 +206,7 @@ const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible
           }
           if (rejectRef.current) {
             rejectedValue.current = value;
-            inputRelativeAzimuthRef.current = -solarPanel.relativeAzimuth;
+            setInputValue(-solarPanel.relativeAzimuth);
           } else {
             const oldRelativeAzimuthsAboveFoundation = new Map<string, number>();
             for (const elem of elements) {
@@ -287,7 +276,7 @@ const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible
             }
             if (rejectRef.current) {
               rejectedValue.current = value;
-              inputRelativeAzimuthRef.current = -solarPanel.relativeAzimuth;
+              setInputValue(-solarPanel.relativeAzimuth);
             } else {
               const oldRelativeAzimuthsOnSurface = new Map<string, number>();
               const isParentCuboid = parent.type === ObjectType.Cuboid;
@@ -346,7 +335,7 @@ const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible
         rejectRef.current = rejectChange(solarPanel, value);
         if (rejectRef.current) {
           rejectedValue.current = value;
-          inputRelativeAzimuthRef.current = oldRelativeAzimuth;
+          setInputValue(oldRelativeAzimuth);
         } else {
           const undoableChange = {
             name: 'Set Solar Panel Array Relative Azimuth',
@@ -370,25 +359,9 @@ const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible
     setCommonStore((state) => {
       state.actionState.solarPanelRelativeAzimuth = -value;
     });
-    setUpdateFlag(!updateFlag);
-  };
-
-  const onStart = (event: DraggableEvent, uiData: DraggableData) => {
-    if (dragRef.current) {
-      const { clientWidth, clientHeight } = window.document.documentElement;
-      const targetRect = dragRef.current.getBoundingClientRect();
-      setBounds({
-        left: -targetRect.left + uiData.x,
-        right: clientWidth - (targetRect.right - uiData.x),
-        top: -targetRect.top + uiData.y,
-        bottom: clientHeight - (targetRect?.bottom - uiData.y),
-      });
-    }
   };
 
   const close = () => {
-    if (!solarPanel) return;
-    inputRelativeAzimuthRef.current = -solarPanel.relativeAzimuth;
     rejectRef.current = false;
     setDialogVisible(false);
   };
@@ -399,108 +372,76 @@ const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible
   };
 
   const ok = () => {
-    setRelativeAzimuth(inputRelativeAzimuthRef.current);
+    setRelativeAzimuth(inputValue);
     if (!rejectRef.current) {
       setDialogVisible(false);
       setApplyCount(0);
     }
   };
 
+  const apply = () => {
+    setRelativeAzimuth(inputValue);
+  };
+
+  const rejectedMessage = rejectRef.current
+    ? ': ' +
+      i18n.t('message.NotApplicableToSelectedAction', lang) +
+      (rejectedValue.current !== undefined ? ' (' + rejectedValue.current.toFixed(1) + ')' : '')
+    : null;
+
   return (
-    <>
-      <Modal
-        width={550}
-        visible={true}
-        title={
-          <div
-            style={{ width: '100%', cursor: 'move' }}
-            onMouseOver={() => setDragEnabled(true)}
-            onMouseOut={() => setDragEnabled(false)}
-          >
-            {i18n.t('solarCollectorMenu.RelativeAzimuth', lang)}
-            <span style={{ color: 'red', fontWeight: 'bold' }}>
-              {rejectRef.current
-                ? ': ' +
-                  i18n.t('message.NotApplicableToSelectedAction', lang) +
-                  (rejectedValue.current !== undefined
-                    ? ' (' + Util.toDegrees(rejectedValue.current).toFixed(1) + '°)'
-                    : '')
-                : ''}
-            </span>
-          </div>
-        }
-        footer={[
-          <Button
-            key="Apply"
-            onClick={() => {
-              setRelativeAzimuth(inputRelativeAzimuthRef.current);
+    <Dialog
+      width={550}
+      title={i18n.t('solarCollectorMenu.RelativeAzimuth', lang)}
+      rejectedMessage={rejectedMessage}
+      onApply={apply}
+      onClose={close}
+      onClickCancel={cancel}
+      onClickOk={ok}
+    >
+      <Row gutter={6}>
+        <Col className="gutter-row" span={6}>
+          <InputNumber
+            min={-180}
+            max={180}
+            style={{ width: 120 }}
+            precision={2}
+            step={1}
+            // make sure that we round up the number as toDegrees may cause things like .999999999
+            value={parseFloat(Util.toDegrees(inputValue).toFixed(2))}
+            formatter={(value) => `${value}°`}
+            onChange={(value) => {
+              setInputValue(Util.toRadians(value));
             }}
-          >
-            {i18n.t('word.Apply', lang)}
-          </Button>,
-          <Button key="Cancel" onClick={cancel}>
-            {i18n.t('word.Cancel', lang)}
-          </Button>,
-          <Button key="OK" type="primary" onClick={ok}>
-            {i18n.t('word.OK', lang)}
-          </Button>,
-        ]}
-        // this must be specified for the x button in the upper-right corner to work
-        onCancel={close}
-        maskClosable={false}
-        destroyOnClose={false}
-        modalRender={(modal) => (
-          <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
-            <div ref={dragRef}>{modal}</div>
-          </Draggable>
-        )}
-      >
-        <Row gutter={6}>
-          <Col className="gutter-row" span={6}>
-            <InputNumber
-              min={-180}
-              max={180}
-              style={{ width: 120 }}
-              precision={2}
-              step={1}
-              // make sure that we round up the number as toDegrees may cause things like .999999999
-              value={parseFloat(Util.toDegrees(inputRelativeAzimuthRef.current).toFixed(2))}
-              formatter={(value) => `${value}°`}
-              onChange={(value) => {
-                inputRelativeAzimuthRef.current = Util.toRadians(value);
-                setUpdateFlag(!updateFlag);
-              }}
-              onPressEnter={ok}
-            />
-            <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-              {i18n.t('word.Range', lang)}: [-180°, 180°]
-              <br />
-              {i18n.t('message.AzimuthOfNorthIsZero', lang)}
-              <br />
-              {i18n.t('message.CounterclockwiseAzimuthIsPositive', lang)}
-            </div>
-          </Col>
-          <Col
-            className="gutter-row"
-            style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={18}
-          >
-            <Radio.Group onChange={onScopeChange} value={actionScope}>
-              <Space direction="vertical">
-                <Radio value={Scope.OnlyThisObject}>{i18n.t('solarPanelMenu.OnlyThisSolarPanel', lang)}</Radio>
-                <Radio value={Scope.AllObjectsOfThisTypeOnSurface}>
-                  {i18n.t('solarPanelMenu.AllSolarPanelsOnSurface', lang)}
-                </Radio>
-                <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
-                  {i18n.t('solarPanelMenu.AllSolarPanelsAboveFoundation', lang)}
-                </Radio>
-                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('solarPanelMenu.AllSolarPanels', lang)}</Radio>
-              </Space>
-            </Radio.Group>
-          </Col>
-        </Row>
-      </Modal>
-    </>
+          />
+          <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
+            {i18n.t('word.Range', lang)}: [-180°, 180°]
+            <br />
+            {i18n.t('message.AzimuthOfNorthIsZero', lang)}
+            <br />
+            {i18n.t('message.CounterclockwiseAzimuthIsPositive', lang)}
+          </div>
+        </Col>
+        <Col
+          className="gutter-row"
+          style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
+          span={18}
+        >
+          <Radio.Group onChange={onScopeChange} value={actionScope}>
+            <Space direction="vertical">
+              <Radio value={Scope.OnlyThisObject}>{i18n.t('solarPanelMenu.OnlyThisSolarPanel', lang)}</Radio>
+              <Radio value={Scope.AllObjectsOfThisTypeOnSurface}>
+                {i18n.t('solarPanelMenu.AllSolarPanelsOnSurface', lang)}
+              </Radio>
+              <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
+                {i18n.t('solarPanelMenu.AllSolarPanelsAboveFoundation', lang)}
+              </Radio>
+              <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('solarPanelMenu.AllSolarPanels', lang)}</Radio>
+            </Space>
+          </Radio.Group>
+        </Col>
+      </Row>
+    </Dialog>
   );
 };
 

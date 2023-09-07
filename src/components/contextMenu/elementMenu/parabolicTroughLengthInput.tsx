@@ -2,9 +2,8 @@
  * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useRef, useState } from 'react';
-import { Button, Col, InputNumber, Modal, Radio, RadioChangeEvent, Row, Space } from 'antd';
-import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
+import React, { useRef, useState } from 'react';
+import { Col, InputNumber, Radio, RadioChangeEvent, Row, Space } from 'antd';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { ParabolicTroughModel } from '../../../models/ParabolicTroughModel';
@@ -15,12 +14,13 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { ZERO_TOLERANCE } from '../../../constants';
 import { Util } from '../../../Util';
 import { useSelectedElement } from './menuHooks';
+import { useLanguage } from 'src/views/hooks';
+import Dialog from '../dialog';
 
 // for parabolic troughs, since the default alignment is north-south, ly is always much larger than lx.
 // to agree with the convention, we call ly length and lx width, reversed from most other elements in Aladdin.
 
 const ParabolicTroughLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
-  const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
   const updateLyById = useStore(Selector.updateElementLyById);
@@ -36,25 +36,15 @@ const ParabolicTroughLengthInput = ({ setDialogVisible }: { setDialogVisible: (b
 
   const parabolicTrough = useSelectedElement(ObjectType.ParabolicTrough) as ParabolicTroughModel | undefined;
 
-  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
-  const [dragEnabled, setDragEnabled] = useState<boolean>(false);
-  const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
-  const dragRef = useRef<HTMLDivElement | null>(null);
+  const [inputValue, setInputValue] = useState(parabolicTrough?.ly ?? 9);
+
   const rejectRef = useRef<boolean>(false);
   const rejectedValue = useRef<number | undefined>();
-  const inputLengthRef = useRef<number>(parabolicTrough?.ly ?? 9);
 
-  const lang = { lng: language };
-
-  useEffect(() => {
-    if (parabolicTrough) {
-      inputLengthRef.current = parabolicTrough.ly;
-    }
-  }, [parabolicTrough]);
+  const lang = useLanguage();
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);
-    setUpdateFlag(!updateFlag);
   };
 
   const withinParent = (trough: ParabolicTroughModel, ly: number) => {
@@ -124,7 +114,7 @@ const ParabolicTroughLengthInput = ({ setDialogVisible }: { setDialogVisible: (b
         }
         if (rejectRef.current) {
           rejectedValue.current = value;
-          inputLengthRef.current = parabolicTrough.ly;
+          setInputValue(parabolicTrough.ly);
         } else {
           const oldLengthsAll = new Map<string, number>();
           for (const elem of elements) {
@@ -164,7 +154,7 @@ const ParabolicTroughLengthInput = ({ setDialogVisible }: { setDialogVisible: (b
           }
           if (rejectRef.current) {
             rejectedValue.current = value;
-            inputLengthRef.current = parabolicTrough.ly;
+            setInputValue(parabolicTrough.ly);
           } else {
             const oldLengthsAboveFoundation = new Map<string, number>();
             for (const elem of elements) {
@@ -205,7 +195,7 @@ const ParabolicTroughLengthInput = ({ setDialogVisible }: { setDialogVisible: (b
         rejectRef.current = rejectChange(parabolicTrough, value);
         if (rejectRef.current) {
           rejectedValue.current = value;
-          inputLengthRef.current = oldLength;
+          setInputValue(oldLength);
         } else {
           const undoableChange = {
             name: 'Set Parabolic Trough Length',
@@ -226,25 +216,9 @@ const ParabolicTroughLengthInput = ({ setDialogVisible }: { setDialogVisible: (b
           setApplyCount(applyCount + 1);
         }
     }
-    setUpdateFlag(!updateFlag);
-  };
-
-  const onStart = (event: DraggableEvent, uiData: DraggableData) => {
-    if (dragRef.current) {
-      const { clientWidth, clientHeight } = window.document.documentElement;
-      const targetRect = dragRef.current.getBoundingClientRect();
-      setBounds({
-        left: -targetRect.left + uiData.x,
-        right: clientWidth - (targetRect.right - uiData.x),
-        top: -targetRect.top + uiData.y,
-        bottom: clientHeight - (targetRect?.bottom - uiData.y),
-      });
-    }
   };
 
   const close = () => {
-    if (!parabolicTrough) return;
-    inputLengthRef.current = parabolicTrough.ly;
     rejectRef.current = false;
     setDialogVisible(false);
   };
@@ -255,7 +229,7 @@ const ParabolicTroughLengthInput = ({ setDialogVisible }: { setDialogVisible: (b
   };
 
   const ok = () => {
-    setLength(inputLengthRef.current);
+    setLength(inputValue);
     if (!rejectRef.current) {
       setDialogVisible(false);
       setApplyCount(0);
@@ -270,109 +244,77 @@ const ParabolicTroughLengthInput = ({ setDialogVisible }: { setDialogVisible: (b
     return length;
   };
 
-  return parabolicTrough?.type === ObjectType.ParabolicTrough ? (
-    <>
-      <Modal
-        width={600}
-        visible={true}
-        title={
-          <div
-            style={{ width: '100%', cursor: 'move' }}
-            onMouseOver={() => setDragEnabled(true)}
-            onMouseOut={() => setDragEnabled(false)}
-          >
-            {i18n.t('word.Length', lang)}
-            <span style={{ color: 'red', fontWeight: 'bold' }}>
-              {rejectRef.current
-                ? ': ' +
-                  i18n.t('message.NotApplicableToSelectedAction', lang) +
-                  (rejectedValue.current !== undefined ? ' (' + rejectedValue.current.toFixed(2) + ')' : '')
-                : ''}
-            </span>
-          </div>
-        }
-        footer={[
-          <Button
-            key="Apply"
-            onClick={() => {
-              setLength(inputLengthRef.current);
+  const apply = () => {
+    setLength(inputValue);
+  };
+
+  if (parabolicTrough?.type !== ObjectType.ParabolicTrough) return null;
+
+  const rejectedMessage = rejectRef.current
+    ? ': ' +
+      i18n.t('message.NotApplicableToSelectedAction', lang) +
+      (rejectedValue.current !== undefined ? ' (' + rejectedValue.current.toFixed(2) + ')' : '')
+    : null;
+
+  return (
+    <Dialog
+      width={600}
+      title={i18n.t('word.Length', lang)}
+      rejectedMessage={rejectedMessage}
+      onApply={apply}
+      onClose={close}
+      onClickCancel={cancel}
+      onClickOk={ok}
+    >
+      <Row gutter={6}>
+        <Col className="gutter-row" span={6}>
+          <InputNumber
+            min={parabolicTrough.moduleLength}
+            max={100 * parabolicTrough.moduleLength}
+            step={parabolicTrough.moduleLength}
+            precision={2}
+            style={{ width: 120 }}
+            value={inputValue}
+            onChange={(value) => {
+              setInputValue(modularize(value));
             }}
-          >
-            {i18n.t('word.Apply', lang)}
-          </Button>,
-          <Button key="Cancel" onClick={cancel}>
-            {i18n.t('word.Cancel', lang)}
-          </Button>,
-          <Button key="OK" type="primary" onClick={ok}>
-            {i18n.t('word.OK', lang)}
-          </Button>,
-        ]}
-        // this must be specified for the x button in the upper-right corner to work
-        onCancel={close}
-        maskClosable={false}
-        destroyOnClose={false}
-        modalRender={(modal) => (
-          <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
-            <div ref={dragRef}>{modal}</div>
-          </Draggable>
-        )}
-      >
-        <Row gutter={6}>
-          <Col className="gutter-row" span={6}>
-            <InputNumber
-              min={parabolicTrough.moduleLength}
-              max={100 * parabolicTrough.moduleLength}
-              step={parabolicTrough.moduleLength}
-              precision={2}
-              style={{ width: 120 }}
-              value={inputLengthRef.current}
-              onChange={(value) => {
-                inputLengthRef.current = modularize(value);
-                setUpdateFlag(!updateFlag);
-              }}
-              onPressEnter={ok}
-            />
-            <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-              {i18n.t('parabolicTroughMenu.ModuleLength', lang) +
-                ': ' +
-                parabolicTrough.moduleLength.toFixed(1) +
-                ' ' +
-                i18n.t('word.MeterAbbreviation', lang)}
-              <br />
-              {Math.round(inputLengthRef.current / parabolicTrough.moduleLength) +
-                ' ' +
-                i18n.t('parabolicTroughMenu.ModulesLong', lang)}
-              <br />
-              {i18n.t('word.Maximum', lang)}: 100 {i18n.t('parabolicTroughMenu.Modules', lang)}
-            </div>
-          </Col>
-          <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
-            {i18n.t('word.MeterAbbreviation', lang)}
-          </Col>
-          <Col
-            className="gutter-row"
-            style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={17}
-          >
-            <Radio.Group onChange={onScopeChange} value={actionScope}>
-              <Space direction="vertical">
-                <Radio value={Scope.OnlyThisObject}>
-                  {i18n.t('parabolicTroughMenu.OnlyThisParabolicTrough', lang)}
-                </Radio>
-                <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
-                  {i18n.t('parabolicTroughMenu.AllParabolicTroughsAboveFoundation', lang)}
-                </Radio>
-                <Radio value={Scope.AllObjectsOfThisType}>
-                  {i18n.t('parabolicTroughMenu.AllParabolicTroughs', lang)}
-                </Radio>
-              </Space>
-            </Radio.Group>
-          </Col>
-        </Row>
-      </Modal>
-    </>
-  ) : (
-    <></>
+          />
+          <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
+            {i18n.t('parabolicTroughMenu.ModuleLength', lang) +
+              ': ' +
+              parabolicTrough.moduleLength.toFixed(1) +
+              ' ' +
+              i18n.t('word.MeterAbbreviation', lang)}
+            <br />
+            {Math.round(inputValue / parabolicTrough.moduleLength) +
+              ' ' +
+              i18n.t('parabolicTroughMenu.ModulesLong', lang)}
+            <br />
+            {i18n.t('word.Maximum', lang)}: 100 {i18n.t('parabolicTroughMenu.Modules', lang)}
+          </div>
+        </Col>
+        <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
+          {i18n.t('word.MeterAbbreviation', lang)}
+        </Col>
+        <Col
+          className="gutter-row"
+          style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
+          span={17}
+        >
+          <Radio.Group onChange={onScopeChange} value={actionScope}>
+            <Space direction="vertical">
+              <Radio value={Scope.OnlyThisObject}>{i18n.t('parabolicTroughMenu.OnlyThisParabolicTrough', lang)}</Radio>
+              <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
+                {i18n.t('parabolicTroughMenu.AllParabolicTroughsAboveFoundation', lang)}
+              </Radio>
+              <Radio value={Scope.AllObjectsOfThisType}>
+                {i18n.t('parabolicTroughMenu.AllParabolicTroughs', lang)}
+              </Radio>
+            </Space>
+          </Radio.Group>
+        </Col>
+      </Row>
+    </Dialog>
   );
 };
 

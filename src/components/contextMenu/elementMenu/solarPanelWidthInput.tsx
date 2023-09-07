@@ -3,8 +3,7 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Col, InputNumber, Modal, Radio, RadioChangeEvent, Row, Space } from 'antd';
-import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
+import { Col, InputNumber, Radio, RadioChangeEvent, Row, Space } from 'antd';
 import { CommonStoreState, useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { SolarPanelModel } from '../../../models/SolarPanelModel';
@@ -16,10 +15,11 @@ import { Util } from '../../../Util';
 import { UNIT_VECTOR_POS_Z_ARRAY, ZERO_TOLERANCE } from '../../../constants';
 import { RoofModel } from 'src/models/RoofModel';
 import { useSelectedElement } from './menuHooks';
+import { useLanguage } from 'src/views/hooks';
+import Dialog from '../dialog';
 
 const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
-  const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
   const getPvModule = useStore(Selector.getPvModule);
@@ -32,25 +32,21 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
   const revertApply = useStore(Selector.revertApply);
 
   const solarPanel = useSelectedElement(ObjectType.SolarPanel) as SolarPanelModel | undefined;
-
-  const [dy, setDy] = useState<number>(0);
-  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
-  const [dragEnabled, setDragEnabled] = useState<boolean>(false);
-  const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
-  const dragRef = useRef<HTMLDivElement | null>(null);
-  const rejectRef = useRef<boolean>(false);
-  const rejectedValue = useRef<number | undefined>();
-  const inputWidthRef = useRef<number>(
+  const [inputValue, setInputValue] = useState(
     solarPanel?.orientation === Orientation.portrait ? solarPanel?.ly ?? 2 : solarPanel?.lx ?? 1,
   );
 
-  const lang = { lng: language };
+  const [dy, setDy] = useState<number>(0);
+  const rejectRef = useRef<boolean>(false);
+  const rejectedValue = useRef<number | undefined>();
+
+  const lang = useLanguage();
 
   useEffect(() => {
     if (solarPanel) {
       const pvModel = getPvModule(solarPanel.pvModelName) ?? getPvModule('SPR-X21-335-BLK');
       setDy(solarPanel.orientation === Orientation.portrait ? pvModel.length : pvModel.width);
-      inputWidthRef.current = solarPanel.ly;
+      setInputValue(solarPanel.ly);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [solarPanel]);
@@ -114,7 +110,6 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);
-    setUpdateFlag(!updateFlag);
   };
 
   const withinParent = (sp: SolarPanelModel, ly: number) => {
@@ -231,7 +226,7 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
         }
         if (rejectRef.current) {
           rejectedValue.current = value;
-          inputWidthRef.current = solarPanel.ly;
+          setInputValue(solarPanel.ly);
         } else {
           const oldWidthsAll = new Map<string, number>();
           for (const elem of elements) {
@@ -271,7 +266,7 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
           }
           if (rejectRef.current) {
             rejectedValue.current = value;
-            inputWidthRef.current = solarPanel.ly;
+            setInputValue(solarPanel.ly);
           } else {
             const oldWidthsAboveFoundation = new Map<string, number>();
             for (const elem of elements) {
@@ -335,7 +330,7 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
           }
           if (rejectRef.current) {
             rejectedValue.current = value;
-            inputWidthRef.current = solarPanel.ly;
+            setInputValue(solarPanel.ly);
           } else {
             const oldWidthsOnSurface = new Map<string, number>();
             const isParentCuboid = parent.type === ObjectType.Cuboid;
@@ -392,7 +387,7 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
         rejectRef.current = rejectChange(solarPanel, value);
         if (rejectRef.current) {
           rejectedValue.current = value;
-          inputWidthRef.current = oldWidth;
+          setInputValue(oldWidth);
         } else {
           const undoableChange = {
             name: 'Set Solar Panel Array Width',
@@ -413,25 +408,9 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
           setApplyCount(applyCount + 1);
         }
     }
-    setUpdateFlag(!updateFlag);
-  };
-
-  const onStart = (event: DraggableEvent, uiData: DraggableData) => {
-    if (dragRef.current) {
-      const { clientWidth, clientHeight } = window.document.documentElement;
-      const targetRect = dragRef.current.getBoundingClientRect();
-      setBounds({
-        left: -targetRect.left + uiData.x,
-        right: clientWidth - (targetRect.right - uiData.x),
-        top: -targetRect.top + uiData.y,
-        bottom: clientHeight - (targetRect?.bottom - uiData.y),
-      });
-    }
   };
 
   const close = () => {
-    if (!solarPanel) return;
-    inputWidthRef.current = solarPanel.ly;
     rejectRef.current = false;
     setDialogVisible(false);
   };
@@ -442,7 +421,7 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
   };
 
   const ok = () => {
-    setWidth(inputWidthRef.current);
+    setWidth(inputValue);
     if (!rejectRef.current) {
       setDialogVisible(false);
       setApplyCount(0);
@@ -456,98 +435,68 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
     return l;
   };
 
+  const apply = () => {
+    setWidth(inputValue);
+  };
+
+  const rejectedMessage = rejectRef.current
+    ? ': ' +
+      i18n.t('message.NotApplicableToSelectedAction', lang) +
+      (rejectedValue.current !== undefined ? ' (' + rejectedValue.current.toFixed(2) + ')' : '')
+    : null;
+
   return (
-    <>
-      <Modal
-        width={550}
-        visible={true}
-        title={
-          <div
-            style={{ width: '100%', cursor: 'move' }}
-            onMouseOver={() => setDragEnabled(true)}
-            onMouseOut={() => setDragEnabled(false)}
-          >
-            {i18n.t('word.Width', lang)}
-            <span style={{ color: 'red', fontWeight: 'bold' }}>
-              {rejectRef.current
-                ? ': ' +
-                  i18n.t('message.NotApplicableToSelectedAction', lang) +
-                  (rejectedValue.current !== undefined ? ' (' + rejectedValue.current.toFixed(2) + ')' : '')
-                : ''}
-            </span>
-          </div>
-        }
-        footer={[
-          <Button
-            key="Apply"
-            onClick={() => {
-              setWidth(inputWidthRef.current);
+    <Dialog
+      width={550}
+      title={i18n.t('word.Width', lang)}
+      rejectedMessage={rejectedMessage}
+      onApply={apply}
+      onClose={close}
+      onClickCancel={cancel}
+      onClickOk={ok}
+    >
+      <Row gutter={6}>
+        <Col className="gutter-row" span={6}>
+          <InputNumber
+            min={dy}
+            max={100 * dy}
+            step={dy}
+            style={{ width: 120 }}
+            precision={2}
+            value={inputValue}
+            onChange={(value) => {
+              setInputValue(panelize(value));
             }}
-          >
-            {i18n.t('word.Apply', lang)}
-          </Button>,
-          <Button key="Cancel" onClick={cancel}>
-            {i18n.t('word.Cancel', lang)}
-          </Button>,
-          <Button key="OK" type="primary" onClick={ok}>
-            {i18n.t('word.OK', lang)}
-          </Button>,
-        ]}
-        // this must be specified for the x button in the upper-right corner to work
-        onCancel={close}
-        maskClosable={false}
-        destroyOnClose={false}
-        modalRender={(modal) => (
-          <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
-            <div ref={dragRef}>{modal}</div>
-          </Draggable>
-        )}
-      >
-        <Row gutter={6}>
-          <Col className="gutter-row" span={6}>
-            <InputNumber
-              min={dy}
-              max={100 * dy}
-              step={dy}
-              style={{ width: 120 }}
-              precision={2}
-              value={inputWidthRef.current}
-              onChange={(value) => {
-                inputWidthRef.current = panelize(value);
-                setUpdateFlag(!updateFlag);
-              }}
-              onPressEnter={ok}
-            />
-            <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-              {Math.round(inputWidthRef.current / dy) + ' ' + i18n.t('solarPanelMenu.PanelsLong', lang)}
-              <br />
-              {i18n.t('word.MaximumNumber', lang)}: 100 {i18n.t('solarPanelMenu.Panels', lang)}
-            </div>
-          </Col>
-          <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
-            {i18n.t('word.MeterAbbreviation', lang)}
-          </Col>
-          <Col
-            className="gutter-row"
-            style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={16}
-          >
-            <Radio.Group onChange={onScopeChange} value={actionScope}>
-              <Space direction="vertical">
-                <Radio value={Scope.OnlyThisObject}>{i18n.t('solarPanelMenu.OnlyThisSolarPanel', lang)}</Radio>
-                <Radio value={Scope.AllObjectsOfThisTypeOnSurface}>
-                  {i18n.t('solarPanelMenu.AllSolarPanelsOnSurface', lang)}
-                </Radio>
-                <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
-                  {i18n.t('solarPanelMenu.AllSolarPanelsAboveFoundation', lang)}
-                </Radio>
-                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('solarPanelMenu.AllSolarPanels', lang)}</Radio>
-              </Space>
-            </Radio.Group>
-          </Col>
-        </Row>
-      </Modal>
-    </>
+          />
+          <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
+            {Math.round(inputValue / dy) + ' ' + i18n.t('solarPanelMenu.PanelsLong', lang)}
+            <br />
+            {i18n.t('word.MaximumNumber', lang)}: 100 {i18n.t('solarPanelMenu.Panels', lang)}
+          </div>
+        </Col>
+        <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
+          {i18n.t('word.MeterAbbreviation', lang)}
+        </Col>
+        <Col
+          className="gutter-row"
+          style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
+          span={16}
+        >
+          <Radio.Group onChange={onScopeChange} value={actionScope}>
+            <Space direction="vertical">
+              <Radio value={Scope.OnlyThisObject}>{i18n.t('solarPanelMenu.OnlyThisSolarPanel', lang)}</Radio>
+              <Radio value={Scope.AllObjectsOfThisTypeOnSurface}>
+                {i18n.t('solarPanelMenu.AllSolarPanelsOnSurface', lang)}
+              </Radio>
+              <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
+                {i18n.t('solarPanelMenu.AllSolarPanelsAboveFoundation', lang)}
+              </Radio>
+              <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('solarPanelMenu.AllSolarPanels', lang)}</Radio>
+            </Space>
+          </Radio.Group>
+        </Col>
+      </Row>
+    </Dialog>
   );
 };
 

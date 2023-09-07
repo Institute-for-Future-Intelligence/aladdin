@@ -2,9 +2,8 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useRef, useState } from 'react';
-import { Button, Col, Modal, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
-import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
+import React, { useRef, useState } from 'react';
+import { Col, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
 import { CommonStoreState, useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { SolarPanelModel } from '../../../models/SolarPanelModel';
@@ -16,12 +15,13 @@ import { Util } from '../../../Util';
 import { UNIT_VECTOR_POS_Z_ARRAY } from '../../../constants';
 import { RoofModel } from 'src/models/RoofModel';
 import { useSelectedElement } from './menuHooks';
+import Dialog from '../dialog';
+import { useLanguage } from 'src/views/hooks';
 
 const { Option } = Select;
 
 const SolarPanelOrientationSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
-  const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
   const getPvModule = useStore(Selector.getPvModule);
@@ -39,24 +39,10 @@ const SolarPanelOrientationSelection = ({ setDialogVisible }: { setDialogVisible
   const [selectedOrientation, setSelectedOrientation] = useState<Orientation>(
     solarPanel?.orientation ?? Orientation.portrait,
   );
-  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
-  const [dragEnabled, setDragEnabled] = useState<boolean>(false);
-  const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
-  const dragRef = useRef<HTMLDivElement | null>(null);
   const rejectRef = useRef<boolean>(false);
   const rejectedValue = useRef<Orientation | undefined>();
-  const okButtonRef = useRef<HTMLElement | null>(null);
-  useEffect(() => {
-    okButtonRef.current?.focus();
-  });
 
-  const lang = { lng: language };
-
-  useEffect(() => {
-    if (solarPanel) {
-      setSelectedOrientation(solarPanel.orientation);
-    }
-  }, [solarPanel]);
+  const lang = useLanguage();
 
   const updateSolarPanelOrientationById = (id: string, orientation: Orientation) => {
     setCommonStore((state: CommonStoreState) => {
@@ -142,7 +128,6 @@ const SolarPanelOrientationSelection = ({ setDialogVisible }: { setDialogVisible
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);
-    setUpdateFlag(!updateFlag);
   };
 
   // cannot use the stored dx, dy in the following calculation
@@ -162,7 +147,6 @@ const SolarPanelOrientationSelection = ({ setDialogVisible }: { setDialogVisible
         setElementSize(solarPanel.id, nx * pvModel.length, ny * pvModel.width);
       }
       updateSolarPanelOrientationById(solarPanel.id, value);
-      setUpdateFlag(!updateFlag);
     }
   };
 
@@ -473,20 +457,6 @@ const SolarPanelOrientationSelection = ({ setDialogVisible }: { setDialogVisible
     setCommonStore((state) => {
       state.actionState.solarPanelOrientation = value;
     });
-    setUpdateFlag(!updateFlag);
-  };
-
-  const onStart = (event: DraggableEvent, uiData: DraggableData) => {
-    if (dragRef.current) {
-      const { clientWidth, clientHeight } = window.document.documentElement;
-      const targetRect = dragRef.current.getBoundingClientRect();
-      setBounds({
-        left: -targetRect.left + uiData.x,
-        right: clientWidth - (targetRect.right - uiData.x),
-        top: -targetRect.top + uiData.y,
-        bottom: clientHeight - (targetRect?.bottom - uiData.y),
-      });
-    }
   };
 
   const close = () => {
@@ -509,95 +479,67 @@ const SolarPanelOrientationSelection = ({ setDialogVisible }: { setDialogVisible
     }
   };
 
+  const apply = () => {
+    setOrientation(selectedOrientation);
+  };
+
+  const rejectedMessage = rejectRef.current
+    ? ': ' +
+      i18n.t('message.NotApplicableToSelectedAction', lang) +
+      (rejectedValue.current
+        ? ' (' +
+          (rejectedValue.current === Orientation.portrait
+            ? i18n.t('solarPanelMenu.Portrait', lang)
+            : i18n.t('solarPanelMenu.Landscape', lang)) +
+          ')'
+        : '')
+    : '';
+
   return (
-    <>
-      <Modal
-        width={550}
-        visible={true}
-        title={
-          <div
-            style={{ width: '100%', cursor: 'move' }}
-            onMouseOver={() => setDragEnabled(true)}
-            onMouseOut={() => setDragEnabled(false)}
+    <Dialog
+      width={550}
+      title={i18n.t('solarPanelMenu.Orientation', lang)}
+      rejectedMessage={rejectedMessage}
+      onApply={apply}
+      onClose={close}
+      onClickCancel={cancel}
+      onClickOk={ok}
+    >
+      <Row gutter={6}>
+        <Col className="gutter-row" span={8}>
+          <Select
+            style={{ width: '150px' }}
+            value={selectedOrientation}
+            onChange={(value) => setSelectedOrientation(value)}
           >
-            {i18n.t('solarPanelMenu.Orientation', lang)}
-            <span style={{ color: 'red', fontWeight: 'bold' }}>
-              {rejectRef.current
-                ? ': ' +
-                  i18n.t('message.NotApplicableToSelectedAction', lang) +
-                  (rejectedValue.current
-                    ? ' (' +
-                      (rejectedValue.current === Orientation.portrait
-                        ? i18n.t('solarPanelMenu.Portrait', lang)
-                        : i18n.t('solarPanelMenu.Landscape', lang)) +
-                      ')'
-                    : '')
-                : ''}
-            </span>
-          </div>
-        }
-        footer={[
-          <Button
-            key="Apply"
-            onClick={() => {
-              setOrientation(selectedOrientation);
-            }}
-          >
-            {i18n.t('word.Apply', lang)}
-          </Button>,
-          <Button key="Cancel" onClick={cancel}>
-            {i18n.t('word.Cancel', lang)}
-          </Button>,
-          <Button key="OK" type="primary" onClick={ok} ref={okButtonRef}>
-            {i18n.t('word.OK', lang)}
-          </Button>,
-        ]}
-        // this must be specified for the x button in the upper-right corner to work
-        onCancel={close}
-        maskClosable={false}
-        destroyOnClose={false}
-        modalRender={(modal) => (
-          <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
-            <div ref={dragRef}>{modal}</div>
-          </Draggable>
-        )}
-      >
-        <Row gutter={6}>
-          <Col className="gutter-row" span={8}>
-            <Select
-              style={{ width: '150px' }}
-              value={selectedOrientation}
-              onChange={(value) => setSelectedOrientation(value)}
-            >
-              <Option key={Orientation.portrait} value={Orientation.portrait}>
-                {i18n.t('solarPanelMenu.Portrait', lang)}
-              </Option>
-              <Option key={Orientation.landscape} value={Orientation.landscape}>
-                {i18n.t('solarPanelMenu.Landscape', lang)}
-              </Option>
-            </Select>
-          </Col>
-          <Col
-            className="gutter-row"
-            style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={16}
-          >
-            <Radio.Group onChange={onScopeChange} value={actionScope}>
-              <Space direction="vertical">
-                <Radio value={Scope.OnlyThisObject}>{i18n.t('solarPanelMenu.OnlyThisSolarPanel', lang)}</Radio>
-                <Radio value={Scope.AllObjectsOfThisTypeOnSurface}>
-                  {i18n.t('solarPanelMenu.AllSolarPanelsOnSurface', lang)}
-                </Radio>
-                <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
-                  {i18n.t('solarPanelMenu.AllSolarPanelsAboveFoundation', lang)}
-                </Radio>
-                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('solarPanelMenu.AllSolarPanels', lang)}</Radio>
-              </Space>
-            </Radio.Group>
-          </Col>
-        </Row>
-      </Modal>
-    </>
+            <Option key={Orientation.portrait} value={Orientation.portrait}>
+              {i18n.t('solarPanelMenu.Portrait', lang)}
+            </Option>
+            <Option key={Orientation.landscape} value={Orientation.landscape}>
+              {i18n.t('solarPanelMenu.Landscape', lang)}
+            </Option>
+          </Select>
+        </Col>
+        <Col
+          className="gutter-row"
+          style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
+          span={16}
+        >
+          <Radio.Group onChange={onScopeChange} value={actionScope}>
+            <Space direction="vertical">
+              <Radio value={Scope.OnlyThisObject}>{i18n.t('solarPanelMenu.OnlyThisSolarPanel', lang)}</Radio>
+              <Radio value={Scope.AllObjectsOfThisTypeOnSurface}>
+                {i18n.t('solarPanelMenu.AllSolarPanelsOnSurface', lang)}
+              </Radio>
+              <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
+                {i18n.t('solarPanelMenu.AllSolarPanelsAboveFoundation', lang)}
+              </Radio>
+              <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('solarPanelMenu.AllSolarPanels', lang)}</Radio>
+            </Space>
+          </Radio.Group>
+        </Col>
+      </Row>
+    </Dialog>
   );
 };
 
