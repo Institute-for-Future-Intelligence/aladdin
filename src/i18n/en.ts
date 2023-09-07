@@ -1339,6 +1339,11 @@ export const i18n_en = {
       YearlyTotal: 'Yearly Total',
       ShowOutputsOfIndividualSolarPanels: 'Show outputs of individual solar panels',
       Profit: 'Profit',
+      TotalCost: 'Total Cost',
+      TotalRevenue: 'Total Revenue',
+      TotalYield: 'Total Yield',
+      MeanYield: 'Mean Yield',
+      ModuleCount: 'Module Count',
     },
 
     parabolicTroughYieldPanel: {

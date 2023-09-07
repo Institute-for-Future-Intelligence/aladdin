@@ -316,15 +316,19 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
                       content={
                         <>
                           <Row style={{ width: '200px' }}>
-                            <Col span={14}>{i18n.t('polygonMenu.SolarPanelArrayMeanYearlyYield', lang) + ': '}</Col>
+                            <Col span={14}>{i18n.t('solarPanelYieldPanel.ModuleCount', lang) + ': '}</Col>
+                            <Col span={10}>{solarPanelNumber}</Col>
+                          </Row>
+                          <Row style={{ width: '200px' }}>
+                            <Col span={14}>{i18n.t('solarPanelYieldPanel.MeanYield', lang) + ': '}</Col>
                             <Col span={10}>{(totalYield / solarPanelNumber).toFixed(2)} kWh</Col>
                           </Row>
                           <Row style={{ width: '200px' }}>
-                            <Col span={14}>{i18n.t('polygonMenu.SolarPanelArrayTotalYearlyCost', lang) + ': '}</Col>
+                            <Col span={14}>{i18n.t('solarPanelYieldPanel.TotalCost', lang) + ': '}</Col>
                             <Col span={10}>${totalCost.toFixed(2)}</Col>
                           </Row>
                           <Row style={{ width: '200px' }}>
-                            <Col span={14}>{i18n.t('polygonMenu.SolarPanelArrayTotalYearlyRevenue', lang) + ': '}</Col>
+                            <Col span={14}>{i18n.t('solarPanelYieldPanel.TotalRevenue', lang) + ': '}</Col>
                             <Col span={10}>${totalRevenue.toFixed(2)}</Col>
                           </Row>
                           <Row style={{ width: '200px' }}>

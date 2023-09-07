@@ -1341,6 +1341,11 @@ export const i18n_ua = {
       YearlyTotal: 'Річний загальний',
       ShowOutputsOfIndividualSolarPanels: 'Показати дохід окремих сонячних панелей',
       Profit: 'Прибуток',
+      TotalCost: 'Total Cost',
+      TotalRevenue: 'Total Revenue',
+      TotalYield: 'Total Yield',
+      MeanYield: 'Mean Yield',
+      ModuleCount: 'Module Count',
     },
 
     parabolicTroughYieldPanel: {

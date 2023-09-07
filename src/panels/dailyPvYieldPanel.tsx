@@ -209,7 +209,9 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
   const labelX = i18n.t('word.Hour', lang);
   const labelY = i18n.t('solarPanelYieldPanel.YieldPerHour', lang);
   const solarPanelNumber = Util.countAllSolarPanels();
-  const totalProfit = sum * economics.electricitySellingPrice - solarPanelNumber * economics.operationalCostPerUnit;
+  const totalCost = solarPanelNumber * economics.operationalCostPerUnit;
+  const totalRevenue = sum * economics.electricitySellingPrice;
+  const totalProfit = totalRevenue - totalCost;
   const emptyGraph = dailyYield && dailyYield[0] ? Object.keys(dailyYield[0]).length === 0 : true;
 
   return (
@@ -306,7 +308,35 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
                     </Space>
                   )}
                   {sum > 0 && (
-                    <Space>{'| ' + i18n.t('solarPanelYieldPanel.Profit', lang) + ': $' + totalProfit.toFixed(2)}</Space>
+                    <Popover
+                      title={i18n.t('shared.MoreResults', lang)}
+                      content={
+                        <>
+                          <Row style={{ width: '200px' }}>
+                            <Col span={14}>{i18n.t('solarPanelYieldPanel.ModuleCount', lang) + ': '}</Col>
+                            <Col span={10}>{solarPanelNumber}</Col>
+                          </Row>
+                          <Row style={{ width: '200px' }}>
+                            <Col span={14}>{i18n.t('solarPanelYieldPanel.MeanYield', lang) + ': '}</Col>
+                            <Col span={10}>{(sum / solarPanelNumber).toFixed(2)} kWh</Col>
+                          </Row>
+                          <Row style={{ width: '200px' }}>
+                            <Col span={14}>{i18n.t('solarPanelYieldPanel.TotalCost', lang) + ': '}</Col>
+                            <Col span={10}>${totalCost.toFixed(2)}</Col>
+                          </Row>
+                          <Row style={{ width: '200px' }}>
+                            <Col span={14}>{i18n.t('solarPanelYieldPanel.TotalRevenue', lang) + ': '}</Col>
+                            <Col span={10}>${totalRevenue.toFixed(2)}</Col>
+                          </Row>
+                          <Row style={{ width: '200px' }}>
+                            <Col span={14}>{i18n.t('solarPanelYieldPanel.Profit', lang) + ': '}</Col>
+                            <Col span={10}>{(totalProfit > 0 ? '$' : '-$') + Math.abs(totalProfit).toFixed(2)}</Col>
+                          </Row>
+                        </>
+                      }
+                    >
+                      <Button type="default">{i18n.t('shared.MoreResults', lang)}</Button>
+                    </Popover>
                   )}
                 </>
               )}

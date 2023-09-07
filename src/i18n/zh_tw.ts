@@ -1317,6 +1317,11 @@ export const i18n_zh_tw = {
       YearlyTotal: '年發電總量',
       ShowOutputsOfIndividualSolarPanels: '顯示每行光伏板單獨發電量',
       Profit: '利潤',
+      TotalCost: '總成本',
+      TotalRevenue: '總收入',
+      TotalYield: '總發電量',
+      MeanYield: '平均發電量',
+      ModuleCount: '光伏板總數',
     },
 
     parabolicTroughYieldPanel: {

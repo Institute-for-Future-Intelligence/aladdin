@@ -1340,6 +1340,11 @@ export const i18n_tr = {
       YearlyTotal: 'Yıllık Toplam',
       ShowOutputsOfIndividualSolarPanels: 'Herbir güneş panelinin üretimini göster',
       Profit: 'Kazanç',
+      TotalCost: 'Total Cost',
+      TotalRevenue: 'Total Revenue',
+      TotalYield: 'Total Yield',
+      MeanYield: 'Mean Yield',
+      ModuleCount: 'Module Count',
     },
 
     parabolicTroughYieldPanel: {
