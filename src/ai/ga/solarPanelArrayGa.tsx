@@ -43,6 +43,7 @@ const SolarPanelArrayGa = () => {
   const params = useStore(Selector.evolutionaryAlgorithmState).geneticAlgorithmParams;
   const constraints = useStore.getState().solarPanelArrayLayoutConstraints;
   const economics = useStore.getState().economicsParams;
+  const currentLayoutParams = useStore.getState().solarPanelArrayLayoutParams;
 
   const requestRef = useRef<number>(0);
   const evolutionCompletedRef = useRef<boolean>(false);
@@ -128,6 +129,7 @@ const SolarPanelArrayGa = () => {
       constraints.poleHeight ?? 1,
       constraints.poleSpacing ?? 3,
       initialSolarPanelArrayRef.current,
+      currentLayoutParams,
       polygon,
       foundation,
       params.objectiveFunctionType,

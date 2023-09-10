@@ -17,6 +17,7 @@ import { PvModel } from '../../../models/PvModel';
 import { Rectangle } from '../../../models/Rectangle';
 import { Particle } from './Particle';
 import { SolarPanelLayoutRelative } from '../../../pd/SolarPanelLayoutRelative';
+import { SolarPanelArrayLayoutParams } from '../../../stores/SolarPanelArrayLayoutParams';
 
 export class SolarPanelArrayOptimizerPso extends OptimizerPso {
   polygon: PolygonModel;
@@ -46,6 +47,7 @@ export class SolarPanelArrayOptimizerPso extends OptimizerPso {
     poleHeight: number,
     poleSpacing: number,
     initialSolarPanels: SolarPanelModel[],
+    initialLayoutParams: SolarPanelArrayLayoutParams,
     polygon: PolygonModel,
     foundation: FoundationModel,
     objectiveFunctionType: ObjectiveFunctionType,
@@ -101,10 +103,11 @@ export class SolarPanelArrayOptimizerPso extends OptimizerPso {
             : (sp1.tiltAngle - this.minimumTiltAngle) / (this.maximumTiltAngle - this.minimumTiltAngle);
 
         const sp2 = initialSolarPanels[1];
-        const interRowSpacing =
-          this.rowAxis === RowAxis.upDown
-            ? Math.abs(sp1.cx - sp2.cx) * this.foundation.lx
-            : Math.abs(sp1.cy - sp2.cy) * this.foundation.ly;
+        const interRowSpacing = initialLayoutParams
+          ? initialLayoutParams.interRowSpacing
+          : this.rowAxis === RowAxis.upDown
+          ? Math.abs(sp1.cx - sp2.cx) * this.foundation.lx
+          : Math.abs(sp1.cy - sp2.cy) * this.foundation.ly;
         let normalizedInterRowSpacing =
           this.maximumInterRowSpacing === this.minimumInterRowSpacing
             ? 0
@@ -114,10 +117,12 @@ export class SolarPanelArrayOptimizerPso extends OptimizerPso {
         else if (normalizedInterRowSpacing > 1) normalizedInterRowSpacing = 1;
         firstParticle.position[1] = normalizedInterRowSpacing;
 
-        const rowsPerRack = Math.max(
-          1,
-          Math.round(sp1.ly / (sp1.orientation === Orientation.portrait ? pvModel.length : pvModel.width)),
-        );
+        const rowsPerRack = initialLayoutParams
+          ? initialLayoutParams.rowsPerRack
+          : Math.max(
+              1,
+              Math.round(sp1.ly / (sp1.orientation === Orientation.portrait ? pvModel.length : pvModel.width)),
+            );
         let normalizedRowsPerRack =
           this.maximumRowsPerRack === this.minimumRowsPerRack
             ? 0

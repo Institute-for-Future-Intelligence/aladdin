@@ -100,6 +100,15 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
   const electricitySellingPriceRef = useRef<number>(economicsParams.electricitySellingPrice);
   const operationalCostPerUnitRef = useRef<number>(economicsParams.operationalCostPerUnit);
 
+  // make sure these ref values are updated
+  useEffect(() => {
+    electricitySellingPriceRef.current = economicsParams.electricitySellingPrice;
+  }, [economicsParams.electricitySellingPrice]);
+
+  useEffect(() => {
+    operationalCostPerUnitRef.current = economicsParams.operationalCostPerUnit;
+  }, [economicsParams.operationalCostPerUnit]);
+
   const onStart = (event: DraggableEvent, uiData: DraggableData) => {
     if (dragRef.current) {
       const { clientWidth, clientHeight } = window.document.documentElement;
