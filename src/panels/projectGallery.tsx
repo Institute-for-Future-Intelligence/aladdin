@@ -226,6 +226,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
   }, [projectInfo.designs, projectInfo.sortDescending, projectInfo.selectedProperty]);
 
   useEffect(() => {
+    setSelectedDesign(undefined);
     if (projectInfo.designs) {
       for (const design of projectInfo.designs) {
         if (design.title === cloudFile) {
