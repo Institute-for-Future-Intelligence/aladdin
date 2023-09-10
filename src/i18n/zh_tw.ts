@@ -31,6 +31,7 @@ export const i18n_zh_tw = {
     },
 
     word: {
+      LastUpdate: '上一次更新',
       Small: '小',
       Medium: '中',
       Large: '大',

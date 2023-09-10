@@ -281,7 +281,7 @@ export const updateThumbnailWidth = (userid: string, projectTitle: string, thumb
 };
 
 export const createDesign = (type: string, title: string, thumbnail: string): Design => {
-  let design = { title, thumbnail } as Design;
+  let design = { timestamp: Date.now(), title, thumbnail } as Design;
   switch (type) {
     case DesignProblem.SOLAR_PANEL_ARRAY:
       const latitude = useStore.getState().world.latitude;
@@ -319,6 +319,7 @@ export const changeDesignTitles = (projectTitle: string, projectDesigns: Design[
   for (const design of projectDesigns) {
     const copy = { ...design };
     copy.title = createDesignTitle(projectTitle, design.title);
+    copy.timestamp = Date.now();
     newDesigns.push(copy);
   }
   return newDesigns;

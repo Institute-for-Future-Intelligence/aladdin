@@ -32,6 +32,7 @@ export const i18n_ua = {
     },
 
     word: {
+      LastUpdate: 'Last Update',
       Small: 'Small',
       Medium: 'Medium',
       Large: 'Large',

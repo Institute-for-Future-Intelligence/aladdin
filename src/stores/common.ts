@@ -684,7 +684,7 @@ export const useStore = create<CommonStoreState>(
             Util.fixElements(elements);
             return {
               docid: short.generate(),
-              time: dayjs(date).format('MM/DD/YYYY hh:mm a'),
+              time: dayjs(date).format('MM/DD/YYYY hh:mm A'),
               timestamp: date.getTime(),
               userid: state.user.uid,
               owner: state.user.signFile ? state.user.displayName : null,

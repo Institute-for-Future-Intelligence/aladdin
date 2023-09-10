@@ -215,7 +215,7 @@ const VisibilityResultsPanel = () => {
         >
           <Header className="handle" style={{ direction: 'ltr' }}>
             <span>
-              {i18n.t('visibilityPanel.SolarPanelVisibility', lang) + ' — ' + moment(now).format('h:mm a MM/DD')}
+              {i18n.t('visibilityPanel.SolarPanelVisibility', lang) + ' — ' + moment(now).format('h:mm A MM/DD')}
             </span>
             <span
               style={{ cursor: 'pointer' }}

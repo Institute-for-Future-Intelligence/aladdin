@@ -183,7 +183,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
         arr.push({
           key: i.toString(),
           title: f.fileName,
-          time: dayjs(new Date(f.timestamp)).format('MM/DD/YYYY hh:mm a'),
+          time: dayjs(new Date(f.timestamp)).format('MM/DD/YYYY hh:mm A'),
           timestamp: f.timestamp,
           userid: f.userid,
           action: '',
@@ -205,7 +205,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           key: i.toString(),
           owner: f.owner,
           title: f.title,
-          time: dayjs(new Date(f.timestamp)).format('MM/DD/YYYY hh:mm a'),
+          time: dayjs(new Date(f.timestamp)).format('MM/DD/YYYY hh:mm A'),
           timestamp: f.timestamp,
           description: f.description,
           dataColoring: f.dataColoring,
@@ -408,7 +408,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
             noLogging: !!user.noLogging,
             schoolID: user.schoolID ?? SchoolID.UNKNOWN,
             classID: user.classID ?? ClassID.UNKNOWN,
-            since: dayjs(new Date()).format('MM/DD/YYYY hh:mm a'),
+            since: dayjs(new Date()).format('MM/DD/YYYY hh:mm A'),
             os: Util.getOS(),
           })
           .then(() => {

@@ -143,7 +143,7 @@ const SiteInfoPanel = ({ city }: SiteInfoPanelProps) => {
               verticalAlign: 'middle',
             }}
           />
-          {dayjs(now).format('MM/DD hh:mm a')}
+          {dayjs(now).format('MM/DD hh:mm A')}
           <img
             title={i18n.t('word.Temperature', lang)}
             alt={'Temperature'}

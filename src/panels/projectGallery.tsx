@@ -52,6 +52,7 @@ import {
 import { loadCloudFile } from '../cloudFileUtil';
 import { CartesianGrid, Dot, DotProps, Scatter, ScatterChart, Tooltip, XAxis, YAxis } from 'recharts';
 import ScatteredPlotMenu from '../components/scatteredPlotMenu';
+import dayjs from 'dayjs';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -1354,9 +1355,15 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                       }}
                       alt={design.title}
                       title={
-                        selectedDesign === design
+                        (design.timestamp
+                          ? i18n.t('word.LastUpdate', lang) +
+                            ': ' +
+                            dayjs(new Date(design.timestamp)).format('MM-DD-YYYY hh:mm A') +
+                            '\n'
+                          : '') +
+                        (selectedDesign === design
                           ? i18n.t('projectPanel.SingleClickToDeselectDoubleClickToOpen', lang)
-                          : i18n.t('projectPanel.SingleClickToSelectDoubleClickToOpen', lang)
+                          : i18n.t('projectPanel.SingleClickToSelectDoubleClickToOpen', lang))
                       }
                       src={
                         design.thumbnail?.startsWith('data:image/png;base64') ? design.thumbnail : ImageLoadFailureIcon

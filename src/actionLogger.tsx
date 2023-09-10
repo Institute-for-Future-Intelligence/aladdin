@@ -60,7 +60,7 @@ const ActionLogger = () => {
         const timestamp =
           currentUndoable.timestamp +
           ' (' +
-          dayjs(new Date(currentUndoable.timestamp)).format('MM-DD-YYYY hh:mm a') +
+          dayjs(new Date(currentUndoable.timestamp)).format('MM-DD-YYYY hh:mm A') +
           ')';
         databaseRef.current.ref(schoolID + '/' + classID + '/' + user.uid + '/' + timestamp).set({
           file: cloudFile ?? 'Untitled',
@@ -76,7 +76,7 @@ const ActionLogger = () => {
     } else {
       if (actionInfo) {
         const timestamp =
-          actionInfo.timestamp + ' (' + dayjs(new Date(actionInfo.timestamp)).format('MM-DD-YYYY hh:mm a') + ')';
+          actionInfo.timestamp + ' (' + dayjs(new Date(actionInfo.timestamp)).format('MM-DD-YYYY hh:mm A') + ')';
         databaseRef.current.ref(schoolID + '/' + classID + '/' + user.uid + '/' + timestamp).set({
           file: cloudFile ?? 'Untitled',
           action: JSON.stringify(actionInfo),

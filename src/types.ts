@@ -68,6 +68,7 @@ export interface ModelSite {
 }
 
 export interface Design {
+  timestamp: number;
   title: string;
   thumbnail: string; // PNG Base64 data
   [key: string]: any;
