@@ -2557,6 +2557,7 @@ export const useStore = create<CommonStoreState>(
                       const centroid = Util.calculatePolygonCentroid((elem as PolygonModel).vertices);
                       elem.cx = centroid.x;
                       elem.cy = centroid.y;
+                      state.elementsToPaste = [elem];
                     } else if (
                       elem.type === ObjectType.Window &&
                       (elem as WindowModel).parentType === ObjectType.Wall
