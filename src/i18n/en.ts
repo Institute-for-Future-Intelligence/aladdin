@@ -31,10 +31,6 @@ export const i18n_en = {
     },
 
     word: {
-      N: 'N',
-      S: 'S',
-      W: 'W',
-      E: 'E',
       LastUpdate: 'Last Update',
       Small: 'Small',
       Medium: 'Medium',
@@ -1656,6 +1652,13 @@ export const i18n_en = {
       June: 'June',
       Juro: 'Juro',
       Justin: 'Justin',
+    },
+
+    compass: {
+      N: 'N',
+      S: 'S',
+      W: 'W',
+      E: 'E',
     },
 
     month: {

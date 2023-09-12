@@ -32,10 +32,6 @@ export const i18n_ua = {
     },
 
     word: {
-      N: 'N',
-      S: 'S',
-      W: 'W',
-      E: 'E',
       LastUpdate: 'Last Update',
       Small: 'Small',
       Medium: 'Medium',
@@ -1658,6 +1654,13 @@ export const i18n_ua = {
       June: 'Анна',
       Juro: 'Юрій',
       Justin: 'Богдан',
+    },
+
+    compass: {
+      N: 'N',
+      S: 'S',
+      W: 'W',
+      E: 'E',
     },
 
     month: {

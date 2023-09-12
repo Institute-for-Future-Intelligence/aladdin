@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef } from 'react';
@@ -7,10 +7,10 @@ import { useRefStore } from './stores/commonRef';
 import { useLanguage } from './views/hooks';
 import i18n from './i18n/i18n';
 
-const CANVAS_SIZE = 150;
+const CANVAS_SIZE = 120;
 const BLACK = 'black';
 const WHITE = 'white';
-const FONT = '20px serif';
+const FONT = '16px serif';
 
 const CompassContainer = ({ visible = true }: { visible: boolean }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -31,10 +31,10 @@ const CompassContainer = ({ visible = true }: { visible: boolean }) => {
     if (!ctx) return;
 
     const center = CANVAS_SIZE / 2;
-    const pointerHalfWidth = 10;
-    const compassRadius = 40;
+    const pointerHalfWidth = 7;
+    const compassRadius = 32;
     const fontPosition = 15;
-    const pointerToEdge = 20;
+    const pointerToEdge = 18;
 
     ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
 
@@ -117,12 +117,12 @@ const CompassContainer = ({ visible = true }: { visible: boolean }) => {
     ctx.fillStyle = WHITE;
     ctx.textAlign = 'center';
 
-    ctx.fillText(`${i18n.t('word.N', lang)}`, center, fontPosition);
+    ctx.fillText(`${i18n.t('compass.N', lang)}`, center, fontPosition);
 
     ctx.save();
     ctx.translate(CANVAS_SIZE, CANVAS_SIZE);
     ctx.rotate(Math.PI);
-    ctx.fillText(`${i18n.t('word.S', lang)}`, center, fontPosition);
+    ctx.fillText(`${i18n.t('compass.S', lang)}`, center, fontPosition);
     ctx.restore();
 
     ctx.fillStyle = BLACK;
@@ -130,13 +130,13 @@ const CompassContainer = ({ visible = true }: { visible: boolean }) => {
     ctx.save();
     ctx.translate(0, CANVAS_SIZE);
     ctx.rotate(-Math.PI / 2);
-    ctx.fillText(`${i18n.t('word.W', lang)}`, center, fontPosition);
+    ctx.fillText(`${i18n.t('compass.W', lang)}`, center, fontPosition);
     ctx.restore();
 
     ctx.save();
     ctx.translate(CANVAS_SIZE, 0);
     ctx.rotate(Math.PI / 2);
-    ctx.fillText(`${i18n.t('word.E', lang)}`, center, fontPosition);
+    ctx.fillText(`${i18n.t('compass.E', lang)}`, center, fontPosition);
     ctx.restore();
   }, [lang]);
 

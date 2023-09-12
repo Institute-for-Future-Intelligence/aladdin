@@ -31,10 +31,6 @@ export const i18n_zh_cn = {
     },
 
     word: {
-      N: '北',
-      S: '南',
-      W: '西',
-      E: '东',
       LastUpdate: '上一次更新',
       Small: '小',
       Medium: '中',
@@ -1631,6 +1627,13 @@ export const i18n_zh_cn = {
       June: '准卫',
       Juro: '朱诺',
       Justin: '贾斯汀',
+    },
+
+    compass: {
+      N: '北',
+      S: '南',
+      W: '西',
+      E: '东',
     },
 
     month: {
