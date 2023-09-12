@@ -263,7 +263,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   };
 
   return (
-    <div className="App">
+    <div className="App" style={{ position: 'relative', overflow: 'hidden' }}>
       {/* Spinner, Simulation and Evolution control panels */}
       <Waiting initializing={initializing} />
 

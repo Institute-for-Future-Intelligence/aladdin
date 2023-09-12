@@ -22,11 +22,13 @@ const getCameraDirection = (cam: Camera) => {
 };
 
 export const setCompassRotation = (camera: Camera) => {
-  const compassRef = useRefStore.getState().compassRef;
-  if (compassRef?.current) {
+  const compass = document.getElementById('compassCanvas');
+  if (compass) {
     const dircXY = getCameraDirection(camera).normalize();
-    const rotationZ = -Math.atan2(dircXY.x, dircXY.y);
-    compassRef.current.rotation.z = rotationZ;
+    const rotationZ = Math.atan2(dircXY.y, dircXY.x) + Math.PI / 2;
+    const deg = (rotationZ / Math.PI) * 180;
+
+    compass.style.transform = `rotate(${deg}deg)`;
 
     const isCameraUnderGround = camera.position.z < 0.001;
 

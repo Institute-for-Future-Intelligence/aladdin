@@ -12,7 +12,7 @@ export interface RefStoreState {
   setEnableOrbitController: (b: boolean) => void;
   selectNone: () => void;
   contentRef: RefObject<Group> | null;
-  compassRef: RefObject<Group> | null;
+  compassRef: React.MutableRefObject<HTMLCanvasElement | null> | null;
   orbitControlsRef: RefObject<MyOrbitControls> | null;
   humanRef: RefObject<Group> | null;
   treeRef: RefObject<Group> | null;

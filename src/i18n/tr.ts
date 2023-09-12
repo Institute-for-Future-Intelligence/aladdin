@@ -31,6 +31,10 @@ export const i18n_tr = {
     },
 
     word: {
+      N: 'N',
+      S: 'S',
+      W: 'W',
+      E: 'E',
       LastUpdate: 'Last Update',
       Small: 'Small',
       Medium: 'Medium',

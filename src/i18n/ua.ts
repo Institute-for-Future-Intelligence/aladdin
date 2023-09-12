@@ -32,6 +32,10 @@ export const i18n_ua = {
     },
 
     word: {
+      N: 'N',
+      S: 'S',
+      W: 'W',
+      E: 'E',
       LastUpdate: 'Last Update',
       Small: 'Small',
       Medium: 'Medium',

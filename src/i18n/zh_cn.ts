@@ -31,6 +31,10 @@ export const i18n_zh_cn = {
     },
 
     word: {
+      N: '北',
+      S: '南',
+      W: '西',
+      E: '东',
       LastUpdate: '上一次更新',
       Small: '小',
       Medium: '中',
