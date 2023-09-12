@@ -247,7 +247,7 @@ const GroupMaster = ({
         }
       }
       state.groupActionUpdateFlag = !state.groupActionUpdateFlag;
-      state.updateElementOnRoofFlag = !state.updateElementOnRoofFlag;
+      state.updateElementOnRoofFlag = true;
     });
   };
 
@@ -279,7 +279,7 @@ const GroupMaster = ({
         }
       }
       state.groupActionUpdateFlag = !state.groupActionUpdateFlag;
-      state.updateElementOnRoofFlag = !state.updateElementOnRoofFlag;
+      state.updateElementOnRoofFlag = true;
     });
   };
 
@@ -578,7 +578,7 @@ const GroupMaster = ({
           }
         }
       }
-      state.updateElementOnRoofFlag = !state.updateElementOnRoofFlag;
+      state.updateElementOnRoofFlag = true;
     });
   };
 
@@ -806,7 +806,7 @@ const GroupMaster = ({
     setCommonStore((state) => {
       state.groupActionUpdateFlag = !state.groupActionUpdateFlag;
       state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
-      state.updateElementOnRoofFlag = !state.updateElementOnRoofFlag;
+      state.updateElementOnRoofFlag = true;
     });
   };
 

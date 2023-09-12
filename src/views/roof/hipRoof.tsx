@@ -156,7 +156,7 @@ const HipRoof = ({ roofModel, foundationModel }: HipRoofProps) => {
           (e as HipRoofModel).leftRidgeLength = leftRidge;
           (e as HipRoofModel).rightRidgeLength = rightRidge;
           if (manualUpdate) {
-            state.updateElementOnRoofFlag = !state.updateElementOnRoofFlag;
+            state.updateElementOnRoofFlag = true;
           }
           break;
         }

@@ -637,7 +637,7 @@ const SolarPanelOnRoof = ({
         state.moveHandleType = null;
         state.resizeHandleType = null;
         state.rotateHandleType = null;
-        state.updateElementOnRoofFlag = !state.updateElementOnRoofFlag;
+        state.updateElementOnRoofFlag = true;
       });
       latestFoundationRef.current = null;
     }

@@ -1233,7 +1233,7 @@ export const useStore = create<CommonStoreState>(
                 if (e.id === id && !e.locked) {
                   e.cx = cx;
                   if (e.type === ObjectType.SolarPanel && (e as SolarPanelModel).parentType === ObjectType.Roof) {
-                    state.updateElementOnRoofFlag = !state.updateElementOnRoofFlag;
+                    state.updateElementOnRoofFlag = true;
                   }
                   break;
                 }
@@ -1246,7 +1246,7 @@ export const useStore = create<CommonStoreState>(
                 if (e.id === id && !e.locked) {
                   e.cy = cy;
                   if (e.type === ObjectType.SolarPanel && (e as SolarPanelModel).parentType === ObjectType.Roof) {
-                    state.updateElementOnRoofFlag = !state.updateElementOnRoofFlag;
+                    state.updateElementOnRoofFlag = true;
                   }
                   break;
                 }
@@ -3319,7 +3319,7 @@ export const useStore = create<CommonStoreState>(
                               break;
                             }
                             approved = true;
-                            state.updateElementOnRoofFlag = !state.updateElementOnRoofFlag;
+                            state.updateElementOnRoofFlag = true;
                           }
                         }
                         break;
@@ -3592,7 +3592,7 @@ export const useStore = create<CommonStoreState>(
                           showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
                         }
                         if (parent.type === ObjectType.Roof && approved) {
-                          state.updateElementOnRoofFlag = !state.updateElementOnRoofFlag;
+                          state.updateElementOnRoofFlag = true;
                         }
                       }
                       break;
@@ -3706,7 +3706,7 @@ export const useStore = create<CommonStoreState>(
                                   const lang = { lng: state.language };
                                   showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
                                 } else {
-                                  state.updateElementOnRoofFlag = !state.updateElementOnRoofFlag;
+                                  state.updateElementOnRoofFlag = true;
                                 }
                               }
                             }
@@ -4271,7 +4271,7 @@ export const useStore = create<CommonStoreState>(
           },
           updateElementOnRoofFn() {
             immerSet((state: CommonStoreState) => {
-              state.updateElementOnRoofFlag = !state.updateElementOnRoofFlag;
+              state.updateElementOnRoofFlag = true;
             });
           },
 

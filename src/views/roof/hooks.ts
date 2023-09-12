@@ -435,13 +435,15 @@ export const useUpdateRooftopElementsByContextMenuChanges = (
   thickness: number,
   isFlatGambrel?: boolean,
 ) => {
+  const updateFlag = useStore((state) => state.updateElementOnRoofFlag);
+
   // only update by context menu changes
   useEffect(() => {
-    if (useStore.getState().updateElementOnRoofFlag) {
+    if (updateFlag) {
       updateRooftopElements(foundation, roofId, roofSegments, centroid, topZ, thickness, isFlatGambrel);
       useStore.getState().setUpdateElementOnRoofFlag(false);
     }
-  }, [topZ, thickness]);
+  }, [topZ, thickness, updateFlag]);
 };
 
 export const useUpdateRooftopElementsByControlPoints = (
