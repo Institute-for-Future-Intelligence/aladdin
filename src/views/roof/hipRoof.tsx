@@ -149,13 +149,15 @@ const HipRoof = ({ roofModel, foundationModel }: HipRoofProps) => {
     setRightRidgeLengthCurr(rightRidgeLength);
   }, [rightRidgeLength]);
 
-  const setHipRoofRidgeLength = (elemId: string, leftRidge: number, rightRidge: number) => {
+  const setHipRoofRidgeLength = (elemId: string, leftRidge: number, rightRidge: number, manualUpdate = false) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === elemId && e.type === ObjectType.Roof && (e as RoofModel).roofType === RoofType.Hip) {
           (e as HipRoofModel).leftRidgeLength = leftRidge;
           (e as HipRoofModel).rightRidgeLength = rightRidge;
-          state.updateElementOnRoofFlag = !state.updateElementOnRoofFlag;
+          if (manualUpdate) {
+            state.updateElementOnRoofFlag = !state.updateElementOnRoofFlag;
+          }
           break;
         }
       }
@@ -179,10 +181,20 @@ const HipRoof = ({ roofModel, foundationModel }: HipRoofProps) => {
       newLeftRidgeLength: newLeft,
       newRightRidgeLength: newRight,
       undo: () => {
-        setHipRoofRidgeLength(undoable.resizedElementId, undoable.oldLeftRidgeLength, undoable.oldRightRidgeLength);
+        setHipRoofRidgeLength(
+          undoable.resizedElementId,
+          undoable.oldLeftRidgeLength,
+          undoable.oldRightRidgeLength,
+          true,
+        );
       },
       redo: () => {
-        setHipRoofRidgeLength(undoable.resizedElementId, undoable.newLeftRidgeLength, undoable.newRightRidgeLength);
+        setHipRoofRidgeLength(
+          undoable.resizedElementId,
+          undoable.newLeftRidgeLength,
+          undoable.newRightRidgeLength,
+          true,
+        );
       },
     } as UndoableResizeHipRoofRidge;
     useStore.getState().addUndoable(undoable);
@@ -707,6 +719,7 @@ const HipRoof = ({ roofModel, foundationModel }: HipRoofProps) => {
               }
               case RoofHandleType.Left:
               case RoofHandleType.Right: {
+                setHipRoofRidgeLength(id, leftRidgeLengthCurr, rightRidgeLengthCurr);
                 handleUndoableResizeRidgeLength(
                   id,
                   leftRidgeLength,
