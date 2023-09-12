@@ -6,7 +6,7 @@ import { Euler, Vector3 } from 'three';
 import { ThreeEvent } from '@react-three/fiber';
 import { Util } from 'src/Util';
 import { RoofSegmentProps } from './roofRenderer';
-import { HALF_PI_Z_EULER, UNIT_VECTOR_POS_Z } from 'src/constants';
+import { HALF_PI_Z_EULER, LOCKED_ELEMENT_SELECTION_COLOR, UNIT_VECTOR_POS_Z } from 'src/constants';
 import { WallModel } from 'src/models/WallModel';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { ElementModel } from 'src/models/ElementModel';
@@ -23,6 +23,12 @@ import { useDataStore } from 'src/stores/commonData';
 
 export class RoofUtil {
   // roof related
+
+  static getWireframetStyle(lineColor: string, lineWidth: number, selected: boolean, locked?: boolean) {
+    const _lineColor = selected && locked ? LOCKED_ELEMENT_SELECTION_COLOR : lineColor;
+    const _lineWidth = selected && locked ? 1 : lineWidth;
+    return [_lineColor, _lineWidth] as [string, number];
+  }
 
   static getComposedWallNormal(wall: ComposedWall) {
     return new Vector3().subVectors(wall.leftPoint, wall.rightPoint).applyEuler(HALF_PI_Z_EULER).normalize();

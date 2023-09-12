@@ -335,6 +335,8 @@ const GableRoof = ({ roofModel, foundationModel }: GableRoofProps) => {
 
   const selected = useSelected(id);
 
+  [lineColor, lineWidth] = RoofUtil.getWireframetStyle(lineColor, lineWidth, selected, locked);
+
   const { gl, camera } = useThree();
   const ray = useMemo(() => new Raycaster(), []);
   const mouse = useMemo(() => new Vector2(), []);
