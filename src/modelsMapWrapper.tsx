@@ -282,7 +282,7 @@ const ModelsMapWrapper = ({
                         return (countB ? countB.size : 0) - (countA ? countA.size : 0);
                       })
                       .map((key: string, index: number) => {
-                        if (index > 20) return null;
+                        if (index > 50) return null;
                         const a = peopleModelsRef.current.get(key);
                         if (a?.size === undefined || a?.size === 0) return null;
                         return (

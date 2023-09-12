@@ -36,7 +36,7 @@ export class SolarPanelLayoutRelative {
       const n = Math.floor(((bounds.maxX() - bounds.minX()) * base.lx - ly) / interRowSpacing);
       const start = bounds.minX() + ly / (2 * base.lx) + margin / base.lx;
       const delta = interRowSpacing / base.lx;
-      const h = (0.5 * Math.abs(Math.sin(tiltAngle)) * ly) / base.lx;
+      const h = (0.5 * Math.abs(Math.cos(tiltAngle)) * ly) / base.lx;
       const a: Point2 = { x: 0, y: -0.5 } as Point2;
       const b: Point2 = { x: 0, y: 0.5 } as Point2;
       const rotation = 'rotation' in base ? base.rotation : undefined;
@@ -78,7 +78,7 @@ export class SolarPanelLayoutRelative {
       const n = Math.floor(((bounds.maxY() - bounds.minY()) * base.ly - 2 * margin - ly) / interRowSpacing);
       const start = bounds.minY() + ly / (2 * base.ly) + margin / base.ly;
       const delta = interRowSpacing / base.ly;
-      const h = (0.5 * Math.abs(Math.sin(tiltAngle)) * ly) / base.ly;
+      const h = (0.5 * Math.abs(Math.cos(tiltAngle)) * ly) / base.ly;
       const a: Point2 = { x: -0.5, y: 0 } as Point2;
       const b: Point2 = { x: 0.5, y: 0 } as Point2;
       const rotation = 'rotation' in base ? base.rotation : undefined;

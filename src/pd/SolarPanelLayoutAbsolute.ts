@@ -37,7 +37,7 @@ export class SolarPanelLayoutAbsolute {
     const verticesRotated = rotated ? Util.rotatePolygon(vertices, base.cx, base.cy, base.rotation[2]) : vertices;
     const bounds = Util.calculatePolygonBounds(verticesRotated);
     const ly = (orientation === Orientation.portrait ? pvModel.length : pvModel.width) * rowsPerRack;
-    const h = 0.5 * Math.abs(Math.sin(tiltAngle)) * ly;
+    const h = 0.5 * Math.abs(Math.cos(tiltAngle)) * ly;
     if (rowAxis === RowAxis.eastWest) {
       const maxLength = bounds.maxY() - bounds.minY();
       const n = Math.floor((maxLength - 2 * margin - ly) / interRowSpacing);
