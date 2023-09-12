@@ -2515,8 +2515,20 @@ export const useStore = create<CommonStoreState>(
                     const centroid = Util.calculatePolygonCentroid((e as PolygonModel).vertices);
                     e.cx = centroid.x;
                     e.cy = centroid.y;
+                    state.elementsToPaste.push(e);
+                  } else if (e.type === ObjectType.Window && (e as WindowModel).parentType === ObjectType.Wall) {
+                    const parentWall = state.elements.find(
+                      (el) => el.id === e.parentId && el.type === ObjectType.Wall,
+                    ) as WallModel | undefined;
+                    if (parentWall) {
+                      const copiedWindow = { ...e };
+                      copiedWindow.lx = e.lx * parentWall.lx;
+                      copiedWindow.lz = e.lz * parentWall.lz;
+                      state.elementsToPaste.push(copiedWindow);
+                    }
+                  } else {
+                    state.elementsToPaste.push(e);
                   }
-                  state.elementsToPaste.push(e);
                   break;
                 }
               }
@@ -2545,8 +2557,22 @@ export const useStore = create<CommonStoreState>(
                       const centroid = Util.calculatePolygonCentroid((elem as PolygonModel).vertices);
                       elem.cx = centroid.x;
                       elem.cy = centroid.y;
+                    } else if (
+                      elem.type === ObjectType.Window &&
+                      (elem as WindowModel).parentType === ObjectType.Wall
+                    ) {
+                      const parentWall = state.elements.find(
+                        (el) => el.id === elem.parentId && el.type === ObjectType.Wall,
+                      ) as WallModel | undefined;
+                      if (parentWall) {
+                        const copiedWindow = { ...elem };
+                        copiedWindow.lx = elem.lx * parentWall.lx;
+                        copiedWindow.lz = elem.lz * parentWall.lz;
+                        state.elementsToPaste = [copiedWindow];
+                      }
+                    } else {
+                      state.elementsToPaste = [elem];
                     }
-                    state.elementsToPaste = [elem];
                   } else if (!autoDeleted) {
                     state.deletedElements = [elem];
                   }
