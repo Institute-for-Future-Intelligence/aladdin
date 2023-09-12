@@ -218,10 +218,13 @@ const Foundation = (foundationModel: FoundationModel) => {
   const positionLR = useMemo(() => new Vector3(hx, -hy, hz), [hx, hy, hz]);
   const positionUR = useMemo(() => new Vector3(hx, hy, hz), [hx, hy, hz]);
 
-  const ratio = Math.max(1, Math.max(lx, ly) / 8);
-  const resizeHandleSize = RESIZE_HANDLE_SIZE * ratio;
-  const moveHandleSize = MOVE_HANDLE_RADIUS * ratio;
-  const rotateHandleSize = 0.6 * ratio;
+  // experimental wall handle size, may useful for foundation handles too
+  const handleRadius = useHandleSize();
+
+  const moveHandleRadius = handleRadius;
+  const resizeHandleRadius = handleRadius;
+  const rotateHandleRadius = handleRadius * 4;
+  const rotateHandlePosition = hy + rotateHandleRadius;
 
   // for undo auto deletion
   type UndoMoveWall = { wall: WallModel; newAngle: number; newJoints: string[][] };
@@ -229,18 +232,6 @@ const Foundation = (foundationModel: FoundationModel) => {
   const undoableMoveWallArgsRef = useRef<UndoMoveWall | null>(null);
   const autoDeletedRoof = useStore(Selector.autoDeletedRoof);
   const autoDeletedChild = useStore(Selector.autoDeletedChild);
-
-  // experimental wall handle size, may useful for foundation handles too
-  const wallHandleSize = useHandleSize();
-
-  const lowerRotateHandlePosition: [x: number, y: number, z: number] = useMemo(() => {
-    return [0, -hy - rotateHandleSize, 0];
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hy]);
-  const upperRotateHandlePosition: [x: number, y: number, z: number] = useMemo(() => {
-    return [0, hy + rotateHandleSize, 0];
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hy]);
 
   const intersectionPlanePosition = useMemo(() => new Vector3(), []);
   if (grabRef.current) {
@@ -2438,9 +2429,9 @@ const Foundation = (foundationModel: FoundationModel) => {
                 const handleOffset = new Vector3();
                 const euler = new Euler(0, 0, currWall.relativeAngle);
                 if (moveHandleType === MoveHandleType.Lower) {
-                  handleOffset.setY(wallHandleSize);
+                  handleOffset.setY(handleRadius);
                 } else if (moveHandleType === MoveHandleType.Upper) {
-                  handleOffset.setY(-wallHandleSize - currWall.ly);
+                  handleOffset.setY(-handleRadius - currWall.ly);
                 }
                 p.add(handleOffset.applyEuler(euler));
 
@@ -3057,7 +3048,7 @@ const Foundation = (foundationModel: FoundationModel) => {
         )}
 
         {/* ruler */}
-        {selected && <HorizontalRuler element={foundationModel} verticalLift={moveHandleSize} />}
+        {selected && <HorizontalRuler element={foundationModel} verticalLift={moveHandleRadius} />}
 
         {/* wireFrame */}
         {(!selected || groundImage) && (
@@ -3110,7 +3101,7 @@ const Foundation = (foundationModel: FoundationModel) => {
             <Box
               ref={resizeHandleLLRef}
               position={[positionLL.x, positionLL.y, 0]}
-              args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
+              args={[resizeHandleRadius, resizeHandleRadius, lz * 1.2]}
               name={ResizeHandleType.LowerLeft}
               onPointerDown={(e) => {
                 selectMe(id, e, ActionType.Resize);
@@ -3139,7 +3130,7 @@ const Foundation = (foundationModel: FoundationModel) => {
             <Box
               ref={resizeHandleULRef}
               position={[positionUL.x, positionUL.y, 0]}
-              args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
+              args={[resizeHandleRadius, resizeHandleRadius, lz * 1.2]}
               name={ResizeHandleType.UpperLeft}
               onPointerDown={(e) => {
                 selectMe(id, e, ActionType.Resize);
@@ -3168,7 +3159,7 @@ const Foundation = (foundationModel: FoundationModel) => {
             <Box
               ref={resizeHandleLRRef}
               position={[positionLR.x, positionLR.y, 0]}
-              args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
+              args={[resizeHandleRadius, resizeHandleRadius, lz * 1.2]}
               name={ResizeHandleType.LowerRight}
               onPointerDown={(e) => {
                 selectMe(id, e, ActionType.Resize);
@@ -3197,7 +3188,7 @@ const Foundation = (foundationModel: FoundationModel) => {
             <Box
               ref={resizeHandleURRef}
               position={[positionUR.x, positionUR.y, 0]}
-              args={[resizeHandleSize, resizeHandleSize, lz * 1.2]}
+              args={[resizeHandleRadius, resizeHandleRadius, lz * 1.2]}
               name={ResizeHandleType.UpperRight}
               onPointerDown={(e) => {
                 selectMe(id, e, ActionType.Resize);
@@ -3229,8 +3220,8 @@ const Foundation = (foundationModel: FoundationModel) => {
                 {/* move handles */}
                 <Sphere
                   ref={moveHandleLowerRef}
-                  args={[moveHandleSize, 6, 6, 0, Math.PI]}
-                  position={[0, -hy, 0]}
+                  args={[moveHandleRadius, 6, 6, 0, Math.PI]}
+                  position={[0, -hy - moveHandleRadius, 0]}
                   name={MoveHandleType.Lower}
                   onPointerDown={(e) => {
                     selectMe(id, e, ActionType.Move);
@@ -3252,8 +3243,8 @@ const Foundation = (foundationModel: FoundationModel) => {
                 </Sphere>
                 <Sphere
                   ref={moveHandleUpperRef}
-                  args={[moveHandleSize, 6, 6, 0, Math.PI]}
-                  position={[0, hy, 0]}
+                  args={[moveHandleRadius, 6, 6, 0, Math.PI]}
+                  position={[0, hy + moveHandleRadius, 0]}
                   name={MoveHandleType.Upper}
                   onPointerDown={(e) => {
                     selectMe(id, e, ActionType.Move);
@@ -3275,8 +3266,8 @@ const Foundation = (foundationModel: FoundationModel) => {
                 </Sphere>
                 <Sphere
                   ref={moveHandleLeftRef}
-                  args={[moveHandleSize, 6, 6, 0, Math.PI]}
-                  position={[-hx, 0, 0]}
+                  args={[moveHandleRadius, 6, 6, 0, Math.PI]}
+                  position={[-hx - moveHandleRadius, 0, 0]}
                   name={MoveHandleType.Left}
                   onPointerDown={(e) => {
                     selectMe(id, e, ActionType.Move);
@@ -3298,8 +3289,8 @@ const Foundation = (foundationModel: FoundationModel) => {
                 </Sphere>
                 <Sphere
                   ref={moveHandleRightRef}
-                  args={[moveHandleSize, 6, 6, 0, Math.PI]}
-                  position={[hx, 0, 0]}
+                  args={[moveHandleRadius, 6, 6, 0, Math.PI]}
+                  position={[hx + moveHandleRadius, 0, 0]}
                   name={MoveHandleType.Right}
                   onPointerDown={(e) => {
                     selectMe(id, e, ActionType.Move);
@@ -3323,28 +3314,28 @@ const Foundation = (foundationModel: FoundationModel) => {
                 {/* rotation handle */}
                 <RotateHandle
                   id={id}
-                  position={lowerRotateHandlePosition}
+                  position={[0, -rotateHandlePosition, 0]}
                   color={
                     hoveredHandle === RotateHandleType.Lower ||
                     useStore.getState().rotateHandleType === RotateHandleType.Lower
                       ? HIGHLIGHT_HANDLE_COLOR
                       : RESIZE_HANDLE_COLOR
                   }
-                  ratio={rotateHandleSize}
+                  ratio={rotateHandleRadius}
                   handleType={RotateHandleType.Lower}
                   hoverHandle={hoverHandle}
                   noHoverHandle={noHoverHandle}
                 />
                 <RotateHandle
                   id={id}
-                  position={upperRotateHandlePosition}
+                  position={[0, rotateHandlePosition, 0]}
                   color={
                     hoveredHandle === RotateHandleType.Upper ||
                     useStore.getState().rotateHandleType === RotateHandleType.Upper
                       ? HIGHLIGHT_HANDLE_COLOR
                       : RESIZE_HANDLE_COLOR
                   }
-                  ratio={rotateHandleSize}
+                  ratio={rotateHandleRadius}
                   handleType={RotateHandleType.Upper}
                   hoverHandle={hoverHandle}
                   noHoverHandle={noHoverHandle}
