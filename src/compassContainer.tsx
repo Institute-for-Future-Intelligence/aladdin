@@ -7,15 +7,21 @@ import { useRefStore } from './stores/commonRef';
 import { useLanguage } from './views/hooks';
 import i18n from './i18n/i18n';
 
-const CANVAS_SIZE = 120;
+const STYLE_SIZE = 120;
 const BLACK = 'black';
 const WHITE = 'white';
-const FONT = '16px serif';
 
-const CompassContainer = ({ visible = true }: { visible: boolean }) => {
+const Compass = ({ visible = true }: { visible: boolean }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const lang = useLanguage();
+
+  const PIXEL_RATIO = window.devicePixelRatio;
+  const CANVAS_SIZE = STYLE_SIZE * PIXEL_RATIO;
+  const scale = CANVAS_SIZE / 150;
+
+  const fontSize = 20 * scale;
+  const FONT = fontSize + 'px serif';
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -30,86 +36,104 @@ const CompassContainer = ({ visible = true }: { visible: boolean }) => {
     const ctx = canvasRef.current.getContext('2d') as CanvasRenderingContext2D;
     if (!ctx) return;
 
+    // all these numbers are based on 150px
+    const pointerLength = 55 * scale;
+    const pointerHalfWidth = 10 * scale;
+
+    const outerRingRadius = 40 * scale;
+    const outerRingWidth = 5 * scale;
+    const innerRingRadius = 30 * scale;
+    const innerRingWidth = 1 * scale;
+    const outlineWidth = 1 * scale;
+
+    const fontToEdge = 15 * scale;
+
     const center = CANVAS_SIZE / 2;
-    const pointerHalfWidth = 7;
-    const compassRadius = 32;
-    const fontPosition = 15;
-    const pointerToEdge = 18;
 
     ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
 
     // outer ring
     ctx.beginPath();
-    ctx.arc(center, center, compassRadius, 0, Math.PI * 2);
-    ctx.lineWidth = 5;
+    ctx.arc(center, center, outerRingRadius, 0, Math.PI * 2);
+    ctx.lineWidth = outerRingWidth;
     ctx.strokeStyle = BLACK;
     ctx.stroke();
 
     // inner ring
     ctx.beginPath();
-    ctx.arc(center, center, compassRadius - 10, 0, Math.PI * 2);
-    ctx.lineWidth = 1;
+    ctx.arc(center, center, innerRingRadius, 0, Math.PI * 2);
+    ctx.lineWidth = innerRingWidth;
     ctx.strokeStyle = BLACK;
     ctx.stroke();
 
+    ctx.lineWidth = outlineWidth;
+
     // pointer - N
     ctx.beginPath();
-    ctx.moveTo(center, pointerToEdge);
+    ctx.moveTo(center, center - pointerLength);
     ctx.lineTo(center - pointerHalfWidth, center - pointerHalfWidth);
     ctx.lineTo(center, center);
     ctx.fillStyle = WHITE;
+    ctx.stroke();
     ctx.fill();
 
     ctx.beginPath();
-    ctx.moveTo(center, pointerToEdge);
+    ctx.moveTo(center, center - pointerLength);
     ctx.lineTo(center + pointerHalfWidth, center - pointerHalfWidth);
     ctx.lineTo(center, center);
     ctx.fillStyle = BLACK;
+    ctx.stroke();
     ctx.fill();
 
     // pointer - S
     ctx.beginPath();
-    ctx.moveTo(center, CANVAS_SIZE - pointerToEdge);
+    ctx.moveTo(center, center + pointerLength);
     ctx.lineTo(center - pointerHalfWidth, center + pointerHalfWidth);
     ctx.lineTo(center, center);
     ctx.fillStyle = BLACK;
+    ctx.stroke();
     ctx.fill();
 
     ctx.beginPath();
-    ctx.moveTo(center, CANVAS_SIZE - pointerToEdge);
+    ctx.moveTo(center, center + pointerLength);
     ctx.lineTo(center + pointerHalfWidth, center + pointerHalfWidth);
     ctx.lineTo(center, center);
     ctx.fillStyle = WHITE;
+    ctx.stroke();
     ctx.fill();
 
     // pointer - W
     ctx.beginPath();
-    ctx.moveTo(pointerToEdge, center);
+    ctx.moveTo(center - pointerLength, center);
     ctx.lineTo(center - pointerHalfWidth, center - pointerHalfWidth);
     ctx.lineTo(center, center);
     ctx.fillStyle = BLACK;
+    ctx.stroke();
     ctx.fill();
 
     ctx.beginPath();
-    ctx.moveTo(pointerToEdge, center);
+    ctx.moveTo(center - pointerLength, center);
     ctx.lineTo(center - pointerHalfWidth, center + pointerHalfWidth);
     ctx.lineTo(center, center);
     ctx.fillStyle = WHITE;
+    ctx.stroke();
     ctx.fill();
 
     // pointer - E
     ctx.beginPath();
-    ctx.moveTo(CANVAS_SIZE - pointerToEdge, center);
+    ctx.moveTo(center + pointerLength, center);
     ctx.lineTo(center + pointerHalfWidth, center - pointerHalfWidth);
     ctx.lineTo(center, center);
     ctx.fillStyle = WHITE;
+    ctx.stroke();
     ctx.fill();
 
     ctx.beginPath();
-    ctx.moveTo(CANVAS_SIZE - pointerToEdge, center);
+    ctx.moveTo(center + pointerLength, center);
     ctx.lineTo(center + pointerHalfWidth, center + pointerHalfWidth);
     ctx.lineTo(center, center);
     ctx.fillStyle = BLACK;
+    ctx.stroke();
     ctx.fill();
 
     // text
@@ -117,12 +141,12 @@ const CompassContainer = ({ visible = true }: { visible: boolean }) => {
     ctx.fillStyle = WHITE;
     ctx.textAlign = 'center';
 
-    ctx.fillText(`${i18n.t('compass.N', lang)}`, center, fontPosition);
+    ctx.fillText(`${i18n.t('compass.N', lang)}`, center, fontToEdge);
 
     ctx.save();
     ctx.translate(CANVAS_SIZE, CANVAS_SIZE);
     ctx.rotate(Math.PI);
-    ctx.fillText(`${i18n.t('compass.S', lang)}`, center, fontPosition);
+    ctx.fillText(`${i18n.t('compass.S', lang)}`, center, fontToEdge);
     ctx.restore();
 
     ctx.fillStyle = BLACK;
@@ -130,13 +154,13 @@ const CompassContainer = ({ visible = true }: { visible: boolean }) => {
     ctx.save();
     ctx.translate(0, CANVAS_SIZE);
     ctx.rotate(-Math.PI / 2);
-    ctx.fillText(`${i18n.t('compass.W', lang)}`, center, fontPosition);
+    ctx.fillText(`${i18n.t('compass.W', lang)}`, center, fontToEdge);
     ctx.restore();
 
     ctx.save();
     ctx.translate(CANVAS_SIZE, 0);
     ctx.rotate(Math.PI / 2);
-    ctx.fillText(`${i18n.t('compass.E', lang)}`, center, fontPosition);
+    ctx.fillText(`${i18n.t('compass.E', lang)}`, center, fontToEdge);
     ctx.restore();
   }, [lang]);
 
@@ -152,8 +176,8 @@ const CompassContainer = ({ visible = true }: { visible: boolean }) => {
         position: 'absolute',
         bottom: '0',
         right: '0',
-        height: `${CANVAS_SIZE}px`,
-        width: `${CANVAS_SIZE}px`,
+        height: `${STYLE_SIZE}px`,
+        width: `${STYLE_SIZE}px`,
         margin: '5px',
         pointerEvents: 'none',
       }}
@@ -161,4 +185,4 @@ const CompassContainer = ({ visible = true }: { visible: boolean }) => {
   );
 };
 
-export default CompassContainer;
+export default React.memo(Compass);

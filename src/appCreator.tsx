@@ -25,7 +25,7 @@ import CloudManager from './cloudManager';
 import ActionLogger from './actionLogger';
 import Lights from './lights';
 import { Auxiliary } from './auxiliary';
-import CompassContainer from './compassContainer';
+import Compass from './compassContainer';
 import i18n from './i18n/i18n';
 import KeyboardListener from './keyboardListener';
 import CloudImage from './assets/cloud.png';
@@ -454,7 +454,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
           />
         </div>
       </DropdownContextMenu>
-      <CompassContainer visible={!orthographic} />
+      <Compass visible={!orthographic} />
       {!viewOnly && <AcceptCookie />}
       {!viewOnly && loggable && <ActionLogger />}
     </div>
