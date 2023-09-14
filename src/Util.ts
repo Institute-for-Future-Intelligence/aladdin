@@ -1175,11 +1175,13 @@ export class Util {
   }
 
   static checkElementOnWallState(elem: ElementModel, parent?: ElementModel): ElementState {
-    let hx = elem.lx / 2;
-    let hz = elem.lz / 2;
+    const margin = 0.00001;
+
+    let hx = elem.lx / 2 + margin;
+    let hz = elem.lz / 2 + margin;
     if (parent && elem.type === ObjectType.SolarPanel) {
-      hx = hx / parent.lx;
-      hz = elem.ly / 2 / parent.lz;
+      hx = hx / parent.lx + margin;
+      hz = elem.ly / 2 / parent.lz + margin;
     }
     const eMinX = elem.cx - hx;
     const eMaxX = elem.cx + hx;
