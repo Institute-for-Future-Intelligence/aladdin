@@ -122,6 +122,16 @@ const Door = (doorModel: DoorModel) => {
         if (e.id === id) {
           e.selected = true;
           state.selectedElement = e;
+          if (state.multiSelectionsMode) {
+            if (state.selectedElementIdSet.has(id)) {
+              state.selectedElementIdSet.delete(id);
+            } else {
+              state.selectedElementIdSet.add(id);
+            }
+          } else {
+            state.selectedElementIdSet.clear();
+            state.selectedElementIdSet.add(id);
+          }
         } else {
           e.selected = false;
         }
