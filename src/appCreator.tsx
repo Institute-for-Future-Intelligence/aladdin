@@ -263,7 +263,8 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   };
 
   return (
-    <div className="App" style={{ position: 'relative', overflow: 'hidden' }}>
+    // disable the default context menu for the entire app
+    <div className="App" style={{ position: 'relative', overflow: 'hidden' }} onContextMenu={(e) => e.preventDefault()}>
       {/* Spinner, Simulation and Evolution control panels */}
       <Waiting initializing={initializing} />
 
