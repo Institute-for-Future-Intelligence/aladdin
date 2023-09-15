@@ -17,7 +17,6 @@ const Container = styled.div`
   display: flex;
   justify-content: left;
   align-self: flex-start;
-  alignment: left;
   align-content: flex-start;
   align-items: start;
   padding: 16px;
@@ -32,7 +31,6 @@ const ColumnWrapper = styled.div`
   top: 0;
   left: 0;
   align-self: flex-start;
-  alignment: left;
   align-content: flex-start;
   align-items: flex-start;
   margin: auto;
@@ -63,10 +61,12 @@ const InstructionPanel = () => {
           </span>
         )}
         <span>
-          <b>{i18n.t('instructionPanel.Zoom', lang)}</b>: {i18n.t('instructionPanel.MouseWheelOrKeys', lang)}
+          <b>{i18n.t('instructionPanel.Zoom', lang)}</b>:{' '}
+          {i18n.t(isMac ? 'instructionPanel.MouseWheelOrKeysMac' : 'instructionPanel.MouseWheelOrKeys', lang)}
         </span>
         <span>
-          <b>{i18n.t('instructionPanel.Pan', lang)}</b>: {i18n.t('instructionPanel.HoldCtrlDragMouse', lang)}
+          <b>{i18n.t('instructionPanel.Pan', lang)}</b>:{' '}
+          {i18n.t(isMac ? 'instructionPanel.HoldMetaDragMouse' : 'instructionPanel.HoldCtrlDragMouse', lang)}
         </span>
         <span>
           <b>{i18n.t(orthographic ? 'instructionPanel.Exit2DMode' : 'instructionPanel.Enter2DMode', lang)}</b>:{' '}
@@ -74,7 +74,7 @@ const InstructionPanel = () => {
         </span>
         <span>
           <b>{i18n.t(navigation ? 'instructionPanel.DisableNavigation' : 'instructionPanel.EnableNavigation', lang)}</b>
-          : {i18n.t('word.Press', lang)} {isMac ? '⌘' : 'Ctrl'}+Q
+          : {i18n.t('word.Press', lang)} {isMac ? '⌘' : 'Ctrl'}+U
         </span>
         {navigation && (
           <>

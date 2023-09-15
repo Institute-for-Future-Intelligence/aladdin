@@ -181,8 +181,8 @@ const handleKeys = [
   'meta+y',
   'ctrl+m',
   'meta+m',
-  'ctrl+q', // navigation controls
-  'meta+q',
+  'ctrl+u', // navigation controls
+  'meta+u',
   'ctrl+b',
   'meta+b',
   'shift',
@@ -983,8 +983,8 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
       case 'meta+b':
         toggle2DView();
         break;
-      case 'ctrl+q':
-      case 'meta+q':
+      case 'ctrl+u':
+      case 'meta+u':
         toggleNatigationView();
         break;
       case 'f4':
