@@ -265,42 +265,40 @@ export const WallMenu = React.memo(() => {
     }
     return (
       <SubMenu key={'wall-fill-selection'} title={i18n.t('wallMenu.Fill', lang)} style={{ paddingLeft: '24px' }}>
-        <Menu.Item style={{ paddingLeft: '0px' }}>
-          <Radio.Group
-            value={wall.fill}
-            style={{ height: '75px' }}
-            onChange={(e) => {
-              const undoableChange = {
-                name: 'Select Wall Fill',
-                timestamp: Date.now(),
-                oldValue: wall.fill,
-                newValue: e.target.value,
-                changedElementId: wall.id,
-                changedElementType: wall.type,
-                undo: () => {
-                  updateWallFillById(undoableChange.changedElementId, undoableChange.oldValue as WallFill);
-                },
-                redo: () => {
-                  updateWallFillById(undoableChange.changedElementId, undoableChange.newValue as WallFill);
-                },
-              } as UndoableChange;
-              addUndoable(undoableChange);
-              updateWallFillById(wall.id, e.target.value);
-            }}
-          >
-            <Radio style={radioStyle} value={WallFill.Full}>
-              {i18n.t('wallMenu.Full', lang)}
-            </Radio>
-            <Radio style={radioStyle} value={WallFill.Partial}>
-              {i18n.t('wallMenu.Partial', lang)}
-            </Radio>
-            <Radio style={radioStyle} value={WallFill.Empty}>
-              {i18n.t('wallMenu.Empty', lang)}
-            </Radio>
-          </Radio.Group>
-        </Menu.Item>
+        <Radio.Group
+          value={wall.fill}
+          style={{ height: '75px' }}
+          onChange={(e) => {
+            const undoableChange = {
+              name: 'Select Wall Fill',
+              timestamp: Date.now(),
+              oldValue: wall.fill,
+              newValue: e.target.value,
+              changedElementId: wall.id,
+              changedElementType: wall.type,
+              undo: () => {
+                updateWallFillById(undoableChange.changedElementId, undoableChange.oldValue as WallFill);
+              },
+              redo: () => {
+                updateWallFillById(undoableChange.changedElementId, undoableChange.newValue as WallFill);
+              },
+            } as UndoableChange;
+            addUndoable(undoableChange);
+            updateWallFillById(wall.id, e.target.value);
+          }}
+        >
+          <Radio style={radioStyle} value={WallFill.Full}>
+            {i18n.t('wallMenu.Full', lang)}
+          </Radio>
+          <Radio style={radioStyle} value={WallFill.Partial}>
+            {i18n.t('wallMenu.Partial', lang)}
+          </Radio>
+          <Radio style={radioStyle} value={WallFill.Empty}>
+            {i18n.t('wallMenu.Empty', lang)}
+          </Radio>
+        </Radio.Group>
         {wall.fill !== WallFill.Full && (
-          <Menu.Item style={{ paddingLeft: '10px' }}>
+          <div style={{ paddingLeft: '10px', paddingTop: '10px' }}>
             <Checkbox
               checked={!!wall.openToOutside}
               onChange={(e) => {
@@ -324,7 +322,7 @@ export const WallMenu = React.memo(() => {
             >
               {i18n.t('wallMenu.OpenToOutside', lang)}
             </Checkbox>
-          </Menu.Item>
+          </div>
         )}
       </SubMenu>
     );
