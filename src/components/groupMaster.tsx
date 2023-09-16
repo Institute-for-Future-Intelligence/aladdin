@@ -10,14 +10,7 @@ import { MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from '
 import { useRefStore } from 'src/stores/commonRef';
 import { useStore } from 'src/stores/common';
 import * as Selector from '../stores/selector';
-import {
-  GROUND_ID,
-  HALF_PI,
-  HIGHLIGHT_HANDLE_COLOR,
-  RESIZE_HANDLE_COLOR,
-  RESIZE_HANDLE_SIZE,
-  TWO_PI,
-} from 'src/constants';
+import { GROUND_ID, HALF_PI, HIGHLIGHT_HANDLE_COLOR, RESIZE_HANDLE_COLOR, TWO_PI } from 'src/constants';
 import { WallFill, WallModel } from 'src/models/WallModel';
 import Wireframe from './wireframe';
 import { UndoableMoveFoundationGroup } from 'src/undo/UndoableMove';

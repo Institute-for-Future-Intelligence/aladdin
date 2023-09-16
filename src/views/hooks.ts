@@ -2,7 +2,7 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ElementModel } from 'src/models/ElementModel';
 import { GroupableModel, isGroupable } from 'src/models/Groupable';
 import { Point2 } from 'src/models/Point2';

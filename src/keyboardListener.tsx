@@ -2,7 +2,7 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { ActionInfo, ObjectType } from './types';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
@@ -221,6 +221,7 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
   const updateWallRightJointsById = useStore(Selector.updateWallRightJointsById);
   const setEnableFineGrid = useStore(Selector.setEnableFineGrid);
   const overlapWithSibling = useStore(Selector.overlapWithSibling);
+  const groupMasterId = useStore(Selector.groupMasterId);
 
   const moveStepAbsolute = 0.1;
 
@@ -349,7 +350,15 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
         let displacement = 0;
         switch (selectedElement.type) {
           case ObjectType.Foundation:
-          case ObjectType.Cuboid:
+          case ObjectType.Cuboid: {
+            displacement = -moveStepAbsolute;
+            if (groupMasterId === selectedElement.id) {
+              setCommonStore((state) => {
+                state.groupActionUpdateFlag = !state.groupActionUpdateFlag;
+              });
+            }
+            break;
+          }
           case ObjectType.Tree:
           case ObjectType.Flower:
           case ObjectType.Human: {
@@ -454,7 +463,15 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
         let displacement = 0;
         switch (selectedElement.type) {
           case ObjectType.Foundation:
-          case ObjectType.Cuboid:
+          case ObjectType.Cuboid: {
+            displacement = moveStepAbsolute;
+            if (groupMasterId === selectedElement.id) {
+              setCommonStore((state) => {
+                state.groupActionUpdateFlag = !state.groupActionUpdateFlag;
+              });
+            }
+            break;
+          }
           case ObjectType.Tree:
           case ObjectType.Flower:
           case ObjectType.Human: {
@@ -559,7 +576,15 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
         let displacement = 0;
         switch (selectedElement.type) {
           case ObjectType.Foundation:
-          case ObjectType.Cuboid:
+          case ObjectType.Cuboid: {
+            displacement = moveStepAbsolute;
+            if (groupMasterId === selectedElement.id) {
+              setCommonStore((state) => {
+                state.groupActionUpdateFlag = !state.groupActionUpdateFlag;
+              });
+            }
+            break;
+          }
           case ObjectType.Tree:
           case ObjectType.Flower:
           case ObjectType.Human: {
@@ -664,7 +689,15 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
         let displacement = 0;
         switch (selectedElement.type) {
           case ObjectType.Foundation:
-          case ObjectType.Cuboid:
+          case ObjectType.Cuboid: {
+            displacement = -moveStepAbsolute;
+            if (groupMasterId === selectedElement.id) {
+              setCommonStore((state) => {
+                state.groupActionUpdateFlag = !state.groupActionUpdateFlag;
+              });
+            }
+            break;
+          }
           case ObjectType.Tree:
           case ObjectType.Flower:
           case ObjectType.Human: {
