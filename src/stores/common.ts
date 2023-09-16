@@ -431,7 +431,7 @@ export interface CommonStoreState {
   getChildrenOfType: (type: ObjectType, id: string) => ElementModel[];
   // the following goes faster than counting individual types of children through multiple loops
   countAllElements: (excludeLocked?: boolean) => number;
-  countAllElementsByType: () => ElementCounter;
+  countAllElementsByType: (excludeLocked?: boolean) => ElementCounter;
   countAllOffspringsByTypeAtOnce: (ancestorId: string, includingLocked: boolean) => ElementCounter;
   countSolarPanelsOnRack: (id: string) => number;
   removeAllChildElementsByType: (parentId: string, type: ObjectType) => void;
@@ -2818,9 +2818,10 @@ export const useStore = create<CommonStoreState>(
             }
             return count;
           },
-          countAllElementsByType() {
+          countAllElementsByType(excludeLocked) {
             const counter = new ElementCounter();
             for (const e of get().elements) {
+              if (e.locked) continue;
               switch (e.type) {
                 case ObjectType.Foundation:
                   const f = e as FoundationModel;

@@ -2,7 +2,7 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Checkbox, InputNumber, Menu, Modal, Space } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
@@ -17,11 +17,11 @@ import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { DEFAULT_LEAF_OFF_DAY, DEFAULT_LEAF_OUT_DAY, MONTHS } from '../../../constants';
+import { ElementCounter } from '../../../stores/ElementCounter';
 
 export const GroundMenu = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
-  const countAllElements = useStore(Selector.countAllElements);
-  const countElementsByType = useStore(Selector.countElementsByType);
+  const elements = useStore(Selector.elements);
   const removeElementsByType = useStore(Selector.removeElementsByType);
   const updateElementLockById = useStore(Selector.updateElementLockById);
   const updateAllElementLocks = useStore(Selector.updateAllElementLocks);
@@ -37,19 +37,15 @@ export const GroundMenu = React.memo(() => {
   const language = useStore(Selector.language);
   const elementsToPaste = useStore(Selector.elementsToPaste);
 
-  const [elementCount, setElementCount] = useState<number>(0);
-  const [recountFlag, setRecountFlag] = useState<boolean>(false);
-  const treeCount = countElementsByType(ObjectType.Tree, true);
-  const flowerCount = countElementsByType(ObjectType.Flower, true);
-  const humanCount = countElementsByType(ObjectType.Human, true);
-  const foundationCount = countElementsByType(ObjectType.Foundation, true);
-  const cuboidCount = countElementsByType(ObjectType.Cuboid, true);
-
   const lang = { lng: language };
-
-  useEffect(() => {
-    setElementCount(countAllElements());
-  }, [recountFlag]);
+  const elementCounter: ElementCounter = useStore.getState().countAllElementsByType(true);
+  const treeCount = elementCounter.treeCount;
+  const flowerCount = elementCounter.flowerCount;
+  const humanCount = elementCounter.humanCount;
+  const foundationCount = elementCounter.foundationCount;
+  const cuboidCount = elementCounter.cuboidCount;
+  const solarPanelCount = elementCounter.solarPanelCount;
+  const gotSome = elementCounter.gotSome();
 
   const setWaterSurface = (checked: boolean) => {
     setCommonStore((state) => {
@@ -136,7 +132,7 @@ export const GroundMenu = React.memo(() => {
                 removeElementsByType(ObjectType.Human);
                 const removedElements = JSON.parse(JSON.stringify(removed));
                 const undoableRemoveAll = {
-                  name: 'Remove All',
+                  name: 'Remove All Humans',
                   timestamp: Date.now(),
                   removedElements: removedElements,
                   undo: () => {
@@ -170,7 +166,7 @@ export const GroundMenu = React.memo(() => {
                 removeElementsByType(ObjectType.Tree);
                 const removedElements = JSON.parse(JSON.stringify(removed));
                 const undoableRemoveAll = {
-                  name: 'Remove All',
+                  name: 'Remove All Trees',
                   timestamp: Date.now(),
                   removedElements: removedElements,
                   undo: () => {
@@ -204,7 +200,7 @@ export const GroundMenu = React.memo(() => {
                 removeElementsByType(ObjectType.Flower);
                 const removedElements = JSON.parse(JSON.stringify(removed));
                 const undoableRemoveAll = {
-                  name: 'Remove All',
+                  name: 'Remove All Flowers',
                   timestamp: Date.now(),
                   removedElements: removedElements,
                   undo: () => {
@@ -225,6 +221,42 @@ export const GroundMenu = React.memo(() => {
         </Menu.Item>
       )}
 
+      {solarPanelCount > 0 && (
+        <Menu.Item
+          style={{ paddingLeft: '36px' }}
+          key={'ground-remove-all-solar-panels'}
+          onClick={() => {
+            Modal.confirm({
+              title: i18n.t('groundMenu.DoYouReallyWantToRemoveAllSolarPanels', lang) + ' (' + solarPanelCount + ')?',
+              icon: <ExclamationCircleOutlined />,
+              onOk: () => {
+                const removed = useStore
+                  .getState()
+                  .elements.filter((e) => !e.locked && e.type === ObjectType.SolarPanel);
+                removeElementsByType(ObjectType.SolarPanel);
+                const removedElements = JSON.parse(JSON.stringify(removed));
+                const undoableRemoveAll = {
+                  name: 'Remove All Solar Panels',
+                  timestamp: Date.now(),
+                  removedElements: removedElements,
+                  undo: () => {
+                    setCommonStore((state) => {
+                      state.elements.push(...undoableRemoveAll.removedElements);
+                    });
+                  },
+                  redo: () => {
+                    removeElementsByType(ObjectType.SolarPanel);
+                  },
+                } as UndoableRemoveAll;
+                addUndoable(undoableRemoveAll);
+              },
+            });
+          }}
+        >
+          {i18n.t('groundMenu.RemoveAllUnlockedSolarPanels', lang)} ({solarPanelCount})
+        </Menu.Item>
+      )}
+
       {foundationCount > 0 && (
         <Menu.Item
           style={{ paddingLeft: '36px' }}
@@ -240,7 +272,7 @@ export const GroundMenu = React.memo(() => {
                 removeElementsByType(ObjectType.Foundation);
                 const removedElements = JSON.parse(JSON.stringify(removed));
                 const undoableRemoveAll = {
-                  name: 'Remove All',
+                  name: 'Remove All Foundations',
                   timestamp: Date.now(),
                   removedElements: removedElements,
                   undo: () => {
@@ -274,7 +306,7 @@ export const GroundMenu = React.memo(() => {
                 removeElementsByType(ObjectType.Cuboid);
                 const removedElements = JSON.parse(JSON.stringify(removed));
                 const undoableRemoveAll = {
-                  name: 'Remove All',
+                  name: 'Remove All Cuboids',
                   timestamp: Date.now(),
                   removedElements: removedElements,
                   undo: () => {
@@ -295,67 +327,65 @@ export const GroundMenu = React.memo(() => {
         </Menu.Item>
       )}
 
-      {elementCount > 0 && (
-        <>
-          <Menu.Item
-            style={{ paddingLeft: '36px' }}
-            key={'lock-all-elements'}
-            onClick={() => {
-              const oldLocks = new Map<string, boolean>();
-              for (const elem of useStore.getState().elements) {
-                oldLocks.set(elem.id, !!elem.locked);
-              }
-              updateAllElementLocks(true);
-              setRecountFlag(!recountFlag);
-              const undoableLockAllElements = {
-                name: 'Lock All Elements',
-                timestamp: Date.now(),
-                oldValues: oldLocks,
-                newValue: true,
-                undo: () => {
-                  for (const [id, locked] of undoableLockAllElements.oldValues.entries()) {
-                    updateElementLockById(id, locked as boolean);
-                  }
-                },
-                redo: () => {
-                  updateAllElementLocks(true);
-                },
-              } as UndoableChangeGroup;
-              addUndoable(undoableLockAllElements);
-            }}
-          >
-            {i18n.t('groundMenu.LockAllElements', lang)} ({elementCount})
-          </Menu.Item>
-          <Menu.Item
-            style={{ paddingLeft: '36px' }}
-            key={'unlock-all-elements'}
-            onClick={() => {
-              const oldLocks = new Map<string, boolean>();
-              for (const elem of useStore.getState().elements) {
-                oldLocks.set(elem.id, !!elem.locked);
-              }
-              updateAllElementLocks(false);
-              setRecountFlag(!recountFlag);
-              const undoableLockAllElements = {
-                name: 'Lock All Elements',
-                timestamp: Date.now(),
-                oldValues: oldLocks,
-                newValue: false,
-                undo: () => {
-                  for (const [id, locked] of undoableLockAllElements.oldValues.entries()) {
-                    updateElementLockById(id, locked as boolean);
-                  }
-                },
-                redo: () => {
-                  updateAllElementLocks(false);
-                },
-              } as UndoableChangeGroup;
-              addUndoable(undoableLockAllElements);
-            }}
-          >
-            {i18n.t('groundMenu.UnlockAllElements', lang)} ({elementCount})
-          </Menu.Item>
-        </>
+      {gotSome && (
+        <Menu.Item
+          style={{ paddingLeft: '36px' }}
+          key={'lock-all-elements'}
+          onClick={() => {
+            const oldLocks = new Map<string, boolean>();
+            for (const elem of useStore.getState().elements) {
+              oldLocks.set(elem.id, !!elem.locked);
+            }
+            updateAllElementLocks(true);
+            const undoableLockAllElements = {
+              name: 'Lock All Elements',
+              timestamp: Date.now(),
+              oldValues: oldLocks,
+              newValue: true,
+              undo: () => {
+                for (const [id, locked] of undoableLockAllElements.oldValues.entries()) {
+                  updateElementLockById(id, locked as boolean);
+                }
+              },
+              redo: () => {
+                updateAllElementLocks(true);
+              },
+            } as UndoableChangeGroup;
+            addUndoable(undoableLockAllElements);
+          }}
+        >
+          {i18n.t('groundMenu.LockAllElements', lang)} ({elements.length})
+        </Menu.Item>
+      )}
+      {!gotSome && elements.length > 0 && (
+        <Menu.Item
+          style={{ paddingLeft: '36px' }}
+          key={'unlock-all-elements'}
+          onClick={() => {
+            const oldLocks = new Map<string, boolean>();
+            for (const elem of useStore.getState().elements) {
+              oldLocks.set(elem.id, !!elem.locked);
+            }
+            updateAllElementLocks(false);
+            const undoableLockAllElements = {
+              name: 'Lock All Elements',
+              timestamp: Date.now(),
+              oldValues: oldLocks,
+              newValue: false,
+              undo: () => {
+                for (const [id, locked] of undoableLockAllElements.oldValues.entries()) {
+                  updateElementLockById(id, locked as boolean);
+                }
+              },
+              redo: () => {
+                updateAllElementLocks(false);
+              },
+            } as UndoableChangeGroup;
+            addUndoable(undoableLockAllElements);
+          }}
+        >
+          {i18n.t('groundMenu.UnlockAllElements', lang)} ({elements.length})
+        </Menu.Item>
       )}
 
       <Menu.Item key={'image-on-ground'}>

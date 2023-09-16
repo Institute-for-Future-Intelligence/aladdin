@@ -26,7 +26,6 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
   align-self: center;
-  alignment: center;
   align-content: center;
   align-items: center;
   padding: 0;
@@ -46,7 +45,6 @@ const ColumnWrapper = styled.div<ColumnWrapperProps>`
   top: 0;
   left: ${(p) => (p.projectView ? 'calc(3 * 100vw / 4 - 120px)' : 'calc(100vw / 2 - 120px)')};
   align-self: center;
-  alignment: center;
   align-content: center;
   align-items: center;
   margin: 0;

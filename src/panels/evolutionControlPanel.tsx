@@ -19,7 +19,6 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
   align-self: center;
-  alignment: center;
   align-content: center;
   align-items: center;
   padding: 0;
