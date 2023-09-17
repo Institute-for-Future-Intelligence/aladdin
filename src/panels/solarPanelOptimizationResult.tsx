@@ -9,12 +9,12 @@ import * as Selector from '../stores/selector';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space } from 'antd';
 import { screenshot, showInfo } from '../helpers';
-import { CameraOutlined, RightCircleOutlined, SaveOutlined } from '@ant-design/icons';
+import { CameraOutlined, RightCircleOutlined } from '@ant-design/icons';
 import i18n from '../i18n/i18n';
 import EvolutionBiaxialLineGraph from '../components/evolutionBiaxialLineGraph';
 import { DesignProblem, EvolutionMethod, ObjectiveFunctionType, ObjectType } from '../types';
 import { Rectangle } from '../models/Rectangle';
-import { FLOATING_WINDOW_OPACITY } from '../constants';
+import { FLOATING_WINDOW_OPACITY, Z_INDEX_FRONT_PANEL } from '../constants';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 const Container = styled.div`
@@ -81,6 +81,7 @@ const SolarPanelOptimizationResult = () => {
   const evolutionaryAlgorithmState = useStore.getState().evolutionaryAlgorithmState;
   const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);
   const evolutionInProgress = usePrimitiveStore(Selector.evolutionInProgress);
+  const selectedFloatingWindow = useStore(Selector.selectedFloatingWindow);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -253,8 +254,16 @@ const SolarPanelOptimizationResult = () => {
       position={curPosition}
       onDrag={onDrag}
       onStop={onDragEnd}
+      onMouseDown={() => {
+        setCommonStore((state) => {
+          state.selectedFloatingWindow = 'solarPanelOptimizationResult';
+        });
+      }}
     >
-      <Container ref={nodeRef}>
+      <Container
+        ref={nodeRef}
+        style={{ zIndex: selectedFloatingWindow === 'solarPanelOptimizationResult' ? Z_INDEX_FRONT_PANEL : 9 }}
+      >
         <ColumnWrapper
           ref={wrapperRef}
           style={{

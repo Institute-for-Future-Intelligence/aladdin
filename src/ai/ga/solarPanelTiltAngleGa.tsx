@@ -126,6 +126,7 @@ const SolarPanelTiltAngleGa = () => {
       optimizerRef.current.startEvolving();
       setCommonStore((state) => {
         state.viewState.showEvolutionPanel = true;
+        state.selectedFloatingWindow = 'solarPanelOptimizationResult';
       });
     } else {
       showError(i18n.t('message.EncounterEvolutionError', lang));

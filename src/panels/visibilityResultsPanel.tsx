@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -16,6 +16,7 @@ import { HumanData } from '../HumanData';
 import { Rectangle } from '../models/Rectangle';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
+import { Z_INDEX_FRONT_PANEL } from '../constants';
 
 const { Column } = Table;
 
@@ -78,6 +79,7 @@ const VisibilityResultsPanel = () => {
   const panelRect = useStore(Selector.viewState.visibilityResultsPanelRect);
   const solarPanelVisibilityResults = useDataStore(Selector.solarPanelVisibilityResults);
   const countObservers = useStore(Selector.countObservers);
+  const selectedFloatingWindow = useStore(Selector.selectedFloatingWindow);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -204,8 +206,16 @@ const VisibilityResultsPanel = () => {
       position={curPosition}
       onDrag={onDrag}
       onStop={onDragEnd}
+      onMouseDown={() => {
+        setCommonStore((state) => {
+          state.selectedFloatingWindow = 'visibilityResultsPanel';
+        });
+      }}
     >
-      <Container ref={nodeRef}>
+      <Container
+        ref={nodeRef}
+        style={{ zIndex: selectedFloatingWindow === 'visibilityResultsPanel' ? Z_INDEX_FRONT_PANEL : 8 }}
+      >
         <ColumnWrapper
           ref={wrapperRef}
           style={{

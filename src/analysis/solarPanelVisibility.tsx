@@ -42,6 +42,7 @@ const SolarPanelVisibility = () => {
         setPrimitiveStore('runSolarPanelVisibilityAnalysis', false);
         setCommonStore((state) => {
           state.viewState.showSolarPanelVisibilityResultsPanel = true;
+          state.selectedFloatingWindow = 'visibilityResultsPanel';
         });
         showInfo(i18n.t('message.SimulationCompleted', lang));
       }

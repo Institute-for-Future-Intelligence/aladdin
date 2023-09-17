@@ -156,6 +156,7 @@ const SolarPanelArrayPso = () => {
     optimizerRef.current.startEvolving();
     setCommonStore((state) => {
       state.viewState.showEvolutionPanel = true;
+      state.selectedFloatingWindow = 'solarPanelOptimizationResult';
     });
   };
 
