@@ -18,6 +18,7 @@ import { computeSunriseAndSunsetInMinutes } from '../analysis/sunTools';
 import { throttle } from 'lodash';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { Undoable } from '../undo/Undoable';
+import { Z_INDEX_FRONT_PANEL } from '../constants';
 
 const Container = styled.div`
   position: absolute;
@@ -77,6 +78,7 @@ const HeliodonPanel = () => {
   const heliodon = useStore(Selector.viewState.heliodon);
   const heliodonPanelX = useStore(Selector.viewState.heliodonPanelX);
   const heliodonPanelY = useStore(Selector.viewState.heliodonPanelY);
+  const selectedFloatingWindow = useStore(Selector.selectedFloatingWindow);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -266,8 +268,16 @@ const HeliodonPanel = () => {
       position={curPosition}
       onDrag={onDrag}
       onStop={onDragEnd}
+      onMouseDown={() => {
+        setCommonStore((state) => {
+          state.selectedFloatingWindow = 'heliodonPanel';
+        });
+      }}
     >
-      <Container ref={nodeRef}>
+      <Container
+        ref={nodeRef}
+        style={{ zIndex: selectedFloatingWindow === 'heliodonPanel' ? Z_INDEX_FRONT_PANEL : 11 }}
+      >
         <ColumnWrapper ref={wrapperRef}>
           <Header className="handle">
             <span>{i18n.t('heliodonPanel.SunAndTimeSettings', lang)}</span>

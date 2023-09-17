@@ -20,7 +20,7 @@ import { computeSunriseAndSunsetInMinutes } from '../analysis/sunTools';
 import dayjs from 'dayjs';
 import { Radio, Space } from 'antd';
 import { Rectangle } from '../models/Rectangle';
-import { DEFAULT_FOUNDATION_SLAB_DEPTH, FLOATING_WINDOW_OPACITY } from '../constants';
+import { DEFAULT_FOUNDATION_SLAB_DEPTH, FLOATING_WINDOW_OPACITY, Z_INDEX_FRONT_PANEL } from '../constants';
 import { UndoableChange } from '../undo/UndoableChange';
 import { Undoable } from '../undo/Undoable';
 
@@ -91,6 +91,7 @@ const DiurnalTemperaturePanel = ({ city }: DiurnalTemperaturePanelProps) => {
   const highestTemperatureTimeInMinutes = useStore(Selector.world.highestTemperatureTimeInMinutes) ?? 900;
   const getWeather = useStore(Selector.getWeather);
   const panelRect = useStore(Selector.viewState.diurnalTemperaturePanelRect);
+  const selectedFloatingWindow = useStore(Selector.selectedFloatingWindow);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -268,8 +269,16 @@ const DiurnalTemperaturePanel = ({ city }: DiurnalTemperaturePanelProps) => {
       position={curPosition}
       onDrag={onDrag}
       onStop={onDragEnd}
+      onMouseDown={() => {
+        setCommonStore((state) => {
+          state.selectedFloatingWindow = 'diurnalTemperaturePanel';
+        });
+      }}
     >
-      <Container ref={nodeRef}>
+      <Container
+        ref={nodeRef}
+        style={{ zIndex: selectedFloatingWindow === 'diurnalTemperaturePanel' ? Z_INDEX_FRONT_PANEL : 10 }}
+      >
         <ColumnWrapper
           ref={wrapperRef}
           style={{

@@ -10,7 +10,7 @@ import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Input } from 'antd';
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
-import { FLOATING_WINDOW_OPACITY } from '../constants';
+import { FLOATING_WINDOW_OPACITY, Z_INDEX_FRONT_PANEL } from '../constants';
 import { Undoable } from '../undo/Undoable';
 
 const Container = styled.div`
@@ -71,6 +71,7 @@ const StickyNotePanel = () => {
   const setCommonStore = useStore(Selector.set);
   const notes = useStore(Selector.notes);
   const panelRect = useStore(Selector.viewState.stickyNotePanelRect);
+  const selectedFloatingWindow = useStore(Selector.selectedFloatingWindow);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -179,8 +180,16 @@ const StickyNotePanel = () => {
         position={curPosition}
         onDrag={onDrag}
         onStop={onDragEnd}
+        onMouseDown={() => {
+          setCommonStore((state) => {
+            state.selectedFloatingWindow = 'stickyNotePanel';
+          });
+        }}
       >
-        <Container ref={nodeRef}>
+        <Container
+          ref={nodeRef}
+          style={{ zIndex: selectedFloatingWindow === 'stickyNotePanel' ? Z_INDEX_FRONT_PANEL : 12 }}
+        >
           <ColumnWrapper
             ref={wrapperRef}
             style={{

@@ -17,7 +17,7 @@ import i18n from '../i18n/i18n';
 import { UndoableChangeLocation } from '../undo/UndoableChangeLocation';
 import { UndoableCheck } from '../undo/UndoableCheck';
 import { Undoable } from '../undo/Undoable';
-import { LAT_LNG_FRACTION_DIGITS } from '../constants';
+import { LAT_LNG_FRACTION_DIGITS, Z_INDEX_FRONT_PANEL } from '../constants';
 
 const libraries = ['places'] as Libraries;
 
@@ -82,8 +82,8 @@ const MapPanel = () => {
   const mapPanelX = useStore(Selector.viewState.mapPanelX);
   const mapPanelY = useStore(Selector.viewState.mapPanelY);
   const groundImage = useStore(Selector.viewState.groundImage);
-  // const mapWeatherStations = useStore(Selector.viewState.mapWeatherStations);
   const mapZoom = useStore(Selector.viewState.mapZoom);
+  const selectedFloatingWindow = useStore(Selector.selectedFloatingWindow);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -222,8 +222,13 @@ const MapPanel = () => {
       position={curPosition}
       onDrag={onDrag}
       onStop={onDragEnd}
+      onMouseDown={() => {
+        setCommonStore((state) => {
+          state.selectedFloatingWindow = 'mapPanel';
+        });
+      }}
     >
-      <Container ref={nodeRef}>
+      <Container ref={nodeRef} style={{ zIndex: selectedFloatingWindow === 'mapPanel' ? Z_INDEX_FRONT_PANEL : 10 }}>
         <ColumnWrapper ref={wrapperRef}>
           <Header className="handle">
             <span>{i18n.t('word.Location', lang)}</span>

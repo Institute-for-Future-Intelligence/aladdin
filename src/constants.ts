@@ -15,7 +15,7 @@ export const HOME_URL: string = isProd
 export const DEFAULT_ADDRESS = 'Natick, MA';
 export const PRESET_COLORS = ['#627682', '#8884d8', '#f97356', '#1bc32c', '#c6502d', '#82ca9d', '#3eaec0', '#445111'];
 
-export const Z_INDEX_FRONT_PANEL = 10;
+export const Z_INDEX_FRONT_PANEL = 15;
 
 export const UNDO_SHOW_INFO_DURATION = 0.5;
 export const FLOATING_WINDOW_OPACITY = 0.8;
