@@ -15,7 +15,7 @@ import { CameraOutlined, CaretRightOutlined, ReloadOutlined, SaveOutlined } from
 import { saveCsv, screenshot, showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
-import { FLOATING_WINDOW_OPACITY } from '../constants';
+import { FLOATING_WINDOW_OPACITY, Z_INDEX_FRONT_PANEL } from '../constants';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
 
@@ -84,6 +84,7 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
   const sensorData = useDataStore(Selector.dailyLightSensorData);
   const panelRect = useStore(Selector.viewState.dailyLightSensorPanelRect);
   const countElementsByType = useStore(Selector.countElementsByType);
+  const selectedFloatingWindow = useStore(Selector.selectedFloatingWindow);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -181,8 +182,16 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
       position={curPosition}
       onDrag={onDrag}
       onStop={onDragEnd}
+      onMouseDown={() => {
+        setCommonStore((state) => {
+          state.selectedFloatingWindow = 'dailyLightSensorPanel';
+        });
+      }}
     >
-      <Container ref={nodeRef}>
+      <Container
+        ref={nodeRef}
+        style={{ zIndex: selectedFloatingWindow === 'dailyLightSensorPanel' ? Z_INDEX_FRONT_PANEL : 9 }}
+      >
         <ColumnWrapper
           ref={wrapperRef}
           style={{

@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { ChartType, GraphDataType, ObjectType } from '../types';
-import { FLOATING_WINDOW_OPACITY, MONTHS } from '../constants';
+import { FLOATING_WINDOW_OPACITY, MONTHS, Z_INDEX_FRONT_PANEL } from '../constants';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Col, Row, Space, Switch, Popover } from 'antd';
 import { saveCsv, screenshot, showInfo } from '../helpers';
@@ -92,6 +92,7 @@ const YearlyFresnelReflectorYieldPanel = ({ city }: YearlyFresnelReflectorYieldP
   const countElementsByType = useStore(Selector.countElementsByType);
   const panelRect = useStore(Selector.viewState.yearlyFresnelReflectorYieldPanelRect);
   const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);
+  const selectedFloatingWindow = useStore(Selector.selectedFloatingWindow);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -219,8 +220,16 @@ const YearlyFresnelReflectorYieldPanel = ({ city }: YearlyFresnelReflectorYieldP
       position={curPosition}
       onDrag={onDrag}
       onStop={onDragEnd}
+      onMouseDown={() => {
+        setCommonStore((state) => {
+          state.selectedFloatingWindow = 'yearlyFresnelReflectorYieldPanel';
+        });
+      }}
     >
-      <Container ref={nodeRef}>
+      <Container
+        ref={nodeRef}
+        style={{ zIndex: selectedFloatingWindow === 'yearlyFresnelReflectorYieldPanel' ? Z_INDEX_FRONT_PANEL : 9 }}
+      >
         <ColumnWrapper
           ref={wrapperRef}
           style={{

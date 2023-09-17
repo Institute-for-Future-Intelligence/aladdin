@@ -21,7 +21,7 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
   padding: 16px;
-  z-index: 11;
+  z-index: 12;
 `;
 
 const ColumnWrapper = styled.div`

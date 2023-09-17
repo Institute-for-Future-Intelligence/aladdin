@@ -16,7 +16,7 @@ import { CameraOutlined, CaretRightOutlined, ReloadOutlined, SaveOutlined } from
 import i18n from '../i18n/i18n';
 import SutBiaxialLineGraph from '../components/sutBiaxialLineGraph';
 import { Rectangle } from '../models/Rectangle';
-import { FLOATING_WINDOW_OPACITY } from '../constants';
+import { FLOATING_WINDOW_OPACITY, Z_INDEX_FRONT_PANEL } from '../constants';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
 
@@ -88,6 +88,7 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
   const panelRect = useStore(Selector.viewState.dailyUpdraftTowerYieldPanelRect);
   const updraftTowerLabels = useDataStore(Selector.updraftTowerLabels);
   const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);
+  const selectedFloatingWindow = useStore(Selector.selectedFloatingWindow);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -216,8 +217,16 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
       position={curPosition}
       onDrag={onDrag}
       onStop={onDragEnd}
+      onMouseDown={() => {
+        setCommonStore((state) => {
+          state.selectedFloatingWindow = 'dailySolarUpdraftTowerYieldPanel';
+        });
+      }}
     >
-      <Container ref={nodeRef}>
+      <Container
+        ref={nodeRef}
+        style={{ zIndex: selectedFloatingWindow === 'dailySolarUpdraftTowerYieldPanel' ? Z_INDEX_FRONT_PANEL : 9 }}
+      >
         <ColumnWrapper
           ref={wrapperRef}
           style={{

@@ -144,6 +144,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
         setCommonStore((state) => {
           state.world.date = originalDateRef.current.toLocaleString('en-US');
           state.viewState.showDailyFresnelReflectorYieldPanel = true;
+          state.selectedFloatingWindow = 'dailyFresnelReflectorYieldPanel';
         });
         usePrimitiveStore.setState((state) => {
           state.runDailySimulationForFresnelReflectors = false;
@@ -348,6 +349,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
           setCommonStore((state) => {
             state.world.date = originalDateRef.current.toLocaleString('en-US');
             state.viewState.showYearlyFresnelReflectorYieldPanel = true;
+            state.selectedFloatingWindow = 'yearlyFresnelReflectorYieldPanel';
           });
           usePrimitiveStore.setState((state) => {
             state.runYearlySimulationForFresnelReflectors = false;

@@ -144,6 +144,7 @@ const HeliostatSimulation = ({ city }: HeliostatSimulationProps) => {
         setCommonStore((state) => {
           state.world.date = originalDateRef.current.toLocaleString('en-US');
           state.viewState.showDailyHeliostatYieldPanel = true;
+          state.selectedFloatingWindow = 'dailyHeliostatYieldPanel';
         });
         usePrimitiveStore.setState((state) => {
           state.runDailySimulationForHeliostats = false;
@@ -348,6 +349,7 @@ const HeliostatSimulation = ({ city }: HeliostatSimulationProps) => {
           setCommonStore((state) => {
             state.world.date = originalDateRef.current.toLocaleString('en-US');
             state.viewState.showYearlyHeliostatYieldPanel = true;
+            state.selectedFloatingWindow = 'yearlyHeliostatYieldPanel';
           });
           usePrimitiveStore.setState((state) => {
             state.runYearlySimulationForHeliostats = false;

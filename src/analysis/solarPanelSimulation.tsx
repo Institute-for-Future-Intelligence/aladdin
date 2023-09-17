@@ -176,7 +176,10 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       }
     }
     setCommonStore((state) => {
-      if (!runEvolution && !lastStep) state.viewState.showDailyPvYieldPanel = true;
+      if (!runEvolution && !lastStep) {
+        state.viewState.showDailyPvYieldPanel = true;
+        state.selectedFloatingWindow = 'dailyPvYieldPanel';
+      }
     });
     usePrimitiveStore.setState((state) => {
       if (lastStep) {
@@ -231,7 +234,10 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
         cancelAnimationFrame(requestRef.current);
         setCommonStore((state) => {
           state.world.date = originalDateRef.current.toLocaleString('en-US');
-          if (!runEvolution) state.viewState.showDailyPvYieldPanel = true;
+          if (!runEvolution) {
+            state.viewState.showDailyPvYieldPanel = true;
+            state.selectedFloatingWindow = 'dailyPvYieldPanel';
+          }
         });
         usePrimitiveStore.setState((state) => {
           state.runDailySimulationForSolarPanels = false;
@@ -457,7 +463,10 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     }
     setCommonStore((state) => {
       state.world.date = originalDateRef.current.toLocaleString('en-US');
-      if (!runEvolution && !lastStep) state.viewState.showYearlyPvYieldPanel = true;
+      if (!runEvolution && !lastStep) {
+        state.viewState.showYearlyPvYieldPanel = true;
+        state.selectedFloatingWindow = 'yearlyPvYieldPanel';
+      }
     });
     usePrimitiveStore.setState((state) => {
       if (lastStep) {
@@ -512,7 +521,10 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
           cancelAnimationFrame(requestRef.current);
           setCommonStore((state) => {
             state.world.date = originalDateRef.current.toLocaleString('en-US');
-            if (!runEvolution) state.viewState.showYearlyPvYieldPanel = true;
+            if (!runEvolution) {
+              state.viewState.showYearlyPvYieldPanel = true;
+              state.selectedFloatingWindow = 'yearlyPvYieldPanel';
+            }
           });
           usePrimitiveStore.setState((state) => {
             state.runYearlySimulationForSolarPanels = false;

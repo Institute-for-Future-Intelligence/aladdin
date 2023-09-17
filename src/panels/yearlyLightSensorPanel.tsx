@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { ChartType, GraphDataType, ObjectType } from '../types';
-import { FLOATING_WINDOW_OPACITY, MONTHS } from '../constants';
+import { FLOATING_WINDOW_OPACITY, MONTHS, Z_INDEX_FRONT_PANEL } from '../constants';
 import BarGraph from '../components/barGraph';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space, Switch } from 'antd';
@@ -86,6 +86,7 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
   const countElementsByType = useStore(Selector.countElementsByType);
   const daylightGraph = useStore(Selector.viewState.yearlyLightSensorPanelShowDaylight);
   const clearnessGraph = useStore(Selector.viewState.yearlyLightSensorPanelShowClearness);
+  const selectedFloatingWindow = useStore(Selector.selectedFloatingWindow);
 
   const [radiationGraph, setRadiationGraph] = useState(true);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
@@ -185,8 +186,16 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
       position={curPosition}
       onDrag={onDrag}
       onStop={onDragEnd}
+      onMouseDown={() => {
+        setCommonStore((state) => {
+          state.selectedFloatingWindow = 'yearlyLightSensorPanel';
+        });
+      }}
     >
-      <Container ref={nodeRef}>
+      <Container
+        ref={nodeRef}
+        style={{ zIndex: selectedFloatingWindow === 'yearlyLightSensorPanel' ? Z_INDEX_FRONT_PANEL : 9 }}
+      >
         <ColumnWrapper
           ref={wrapperRef}
           style={{

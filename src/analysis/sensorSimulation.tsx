@@ -145,6 +145,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
     }
     setCommonStore((state) => {
       state.viewState.showDailyLightSensorPanel = true;
+      state.selectedFloatingWindow = 'dailyLightSensorPanel';
     });
     usePrimitiveStore.setState((state) => {
       state.runDailyLightSensor = false;
@@ -189,6 +190,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
         setCommonStore((state) => {
           state.world.date = originalDateRef.current.toLocaleString('en-US');
           state.viewState.showDailyLightSensorPanel = true;
+          state.selectedFloatingWindow = 'dailyLightSensorPanel';
         });
         usePrimitiveStore.setState((state) => {
           state.runDailyLightSensor = false;
@@ -356,6 +358,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
     setCommonStore((state) => {
       state.world.date = originalDateRef.current.toLocaleString('en-US');
       state.viewState.showYearlyLightSensorPanel = true;
+      state.selectedFloatingWindow = 'yearlyLightSensorPanel';
     });
     usePrimitiveStore.setState((state) => {
       state.runYearlyLightSensor = false;
@@ -400,6 +403,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
           setCommonStore((state) => {
             state.world.date = originalDateRef.current.toLocaleString('en-US');
             state.viewState.showYearlyLightSensorPanel = true;
+            state.selectedFloatingWindow = 'yearlyLightSensorPanel';
           });
           usePrimitiveStore.setState((state) => {
             state.runYearlyLightSensor = false;

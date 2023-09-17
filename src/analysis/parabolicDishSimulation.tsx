@@ -143,6 +143,7 @@ const ParabolicDishSimulation = ({ city }: ParabolicDishSimulationProps) => {
         setCommonStore((state) => {
           state.world.date = originalDateRef.current.toLocaleString('en-US');
           state.viewState.showDailyParabolicDishYieldPanel = true;
+          state.selectedFloatingWindow = 'dailyParabolicDishYieldPanel';
         });
         usePrimitiveStore.setState((state) => {
           state.runDailySimulationForParabolicDishes = false;
@@ -347,6 +348,7 @@ const ParabolicDishSimulation = ({ city }: ParabolicDishSimulationProps) => {
           setCommonStore((state) => {
             state.world.date = originalDateRef.current.toLocaleString('en-US');
             state.viewState.showYearlyParabolicDishYieldPanel = true;
+            state.selectedFloatingWindow = 'yearlyParabolicDishYieldPanel';
           });
           usePrimitiveStore.setState((state) => {
             state.runYearlySimulationForParabolicDishes = false;

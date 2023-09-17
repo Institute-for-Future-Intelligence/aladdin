@@ -402,6 +402,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         setCommonStore((state) => {
           state.world.date = originalDateRef.current.toLocaleString('en-US');
           state.viewState.showDailyBuildingEnergyPanel = true;
+          state.selectedFloatingWindow = 'dailyBuildingEnergyPanel';
         });
         usePrimitiveStore.setState((state) => {
           state.runDailyThermalSimulation = false;
@@ -499,6 +500,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       // set the initial date so that the scene gets a chance to render before the simulation starts
       setCommonStore((state) => {
         state.viewState.showYearlyBuildingEnergyPanel = true;
+        state.selectedFloatingWindow = 'yearlyBuildingEnergyPanel';
         state.world.date = now.toLocaleString('en-US');
       });
     }

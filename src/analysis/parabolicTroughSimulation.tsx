@@ -143,6 +143,7 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
         setCommonStore((state) => {
           state.world.date = originalDateRef.current.toLocaleString('en-US');
           state.viewState.showDailyParabolicTroughYieldPanel = true;
+          state.selectedFloatingWindow = 'dailyParabolicTroughYieldPanel';
         });
         usePrimitiveStore.setState((state) => {
           state.runDailySimulationForParabolicTroughs = false;
@@ -347,6 +348,7 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
           setCommonStore((state) => {
             state.world.date = originalDateRef.current.toLocaleString('en-US');
             state.viewState.showYearlyParabolicTroughYieldPanel = true;
+            state.selectedFloatingWindow = 'yearlyParabolicTroughYieldPanel';
           });
           usePrimitiveStore.setState((state) => {
             state.runYearlySimulationForParabolicTroughs = false;

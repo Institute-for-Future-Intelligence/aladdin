@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { ChartType, GraphDataType, ObjectType } from '../types';
-import { FLOATING_WINDOW_OPACITY, MONTHS } from '../constants';
+import { FLOATING_WINDOW_OPACITY, MONTHS, Z_INDEX_FRONT_PANEL } from '../constants';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space, Switch, Popover, Row, Col } from 'antd';
 import { saveCsv, screenshot, showInfo } from '../helpers';
@@ -95,6 +95,7 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
   const runEvolution = usePrimitiveStore(Selector.runEvolution);
   const economics = useStore.getState().economicsParams;
   const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);
+  const selectedFloatingWindow = useStore(Selector.selectedFloatingWindow);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -227,8 +228,16 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
       position={curPosition}
       onDrag={onDrag}
       onStop={onDragEnd}
+      onMouseDown={() => {
+        setCommonStore((state) => {
+          state.selectedFloatingWindow = 'yearlyPvYieldPanel';
+        });
+      }}
     >
-      <Container ref={nodeRef}>
+      <Container
+        ref={nodeRef}
+        style={{ zIndex: selectedFloatingWindow === 'yearlyPvYieldPanel' ? Z_INDEX_FRONT_PANEL : 9 }}
+      >
         <ColumnWrapper
           ref={wrapperRef}
           style={{

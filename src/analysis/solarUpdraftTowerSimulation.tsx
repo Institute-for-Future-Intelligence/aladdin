@@ -152,6 +152,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
     }
     setCommonStore((state) => {
       state.viewState.showDailyUpdraftTowerYieldPanel = true;
+      state.selectedFloatingWindow = 'dailySolarUpdraftTowerYieldPanel';
     });
     usePrimitiveStore.setState((state) => {
       state.runDailySimulationForUpdraftTower = false;
@@ -198,6 +199,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
         setCommonStore((state) => {
           state.world.date = originalDateRef.current.toLocaleString('en-US');
           state.viewState.showDailyUpdraftTowerYieldPanel = true;
+          state.selectedFloatingWindow = 'dailySolarUpdraftTowerYieldPanel';
         });
         usePrimitiveStore.setState((state) => {
           state.runDailySimulationForUpdraftTower = false;
@@ -457,6 +459,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
     setCommonStore((state) => {
       state.world.date = originalDateRef.current.toLocaleString('en-US');
       state.viewState.showYearlyUpdraftTowerYieldPanel = true;
+      state.selectedFloatingWindow = 'yearlySolarUpdraftTowerYieldPanel';
     });
     usePrimitiveStore.setState((state) => {
       state.runYearlySimulationForUpdraftTower = false;
@@ -506,6 +509,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
           setCommonStore((state) => {
             state.world.date = originalDateRef.current.toLocaleString('en-US');
             state.viewState.showYearlyUpdraftTowerYieldPanel = true;
+            state.selectedFloatingWindow = 'yearlySolarUpdraftTowerYieldPanel';
           });
           usePrimitiveStore.setState((state) => {
             state.runYearlySimulationForUpdraftTower = false;
