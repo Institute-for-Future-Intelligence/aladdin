@@ -1147,6 +1147,11 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
       case 'meta+z': // for Mac
         if (undoManager.hasUndo()) {
           const commandName = undoManager.undo();
+          if (groupMasterId === selectedElement?.id) {
+            setCommonStore((state) => {
+              state.groupActionUpdateFlag = !state.groupActionUpdateFlag;
+            });
+          }
           if (commandName) showInfo(i18n.t('menu.edit.Undo', lang) + ': ' + commandName, UNDO_SHOW_INFO_DURATION);
           if (loggable) {
             setCommonStore((state) => {
@@ -1163,6 +1168,11 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
         if (undoManager.hasRedo()) {
           const commandName = undoManager.redo();
           if (commandName) showInfo(i18n.t('menu.edit.Redo', lang) + ': ' + commandName, UNDO_SHOW_INFO_DURATION);
+          if (groupMasterId === selectedElement?.id) {
+            setCommonStore((state) => {
+              state.groupActionUpdateFlag = !state.groupActionUpdateFlag;
+            });
+          }
           if (loggable) {
             setCommonStore((state) => {
               state.actionInfo = {

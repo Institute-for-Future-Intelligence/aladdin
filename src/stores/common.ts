@@ -656,6 +656,8 @@ export const useStore = create<CommonStoreState>(
               state.actionState = new DefaultActionState();
               state.multiSelectionsMode = false;
               state.selectedElementIdSet.clear();
+              state.groupMasterId = null;
+              state.selectedFloatingWindow = null;
               // TODO: fix these bugs that are tentatively corrected here
               for (const e of state.elements) {
                 if (e.type === ObjectType.Foundation && e.parentId !== GROUND_ID) {
@@ -742,6 +744,8 @@ export const useStore = create<CommonStoreState>(
               state.minimumNavigationTurnSpeed = 3;
               state.multiSelectionsMode = false;
               state.selectedElementIdSet.clear();
+              state.groupMasterId = null;
+              state.selectedFloatingWindow = null;
             });
             usePrimitiveStore.setState((state) => {
               state.changed = false;
@@ -2823,7 +2827,7 @@ export const useStore = create<CommonStoreState>(
           countAllElementsByType(excludeLocked) {
             const counter = new ElementCounter();
             for (const e of get().elements) {
-              if (e.locked) continue;
+              if (excludeLocked && e.locked) continue;
               switch (e.type) {
                 case ObjectType.Foundation:
                   const f = e as FoundationModel;
