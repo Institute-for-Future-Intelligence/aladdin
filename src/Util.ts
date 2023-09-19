@@ -1812,7 +1812,13 @@ export class Util {
     return Util.getBaseId(el.parentId);
   };
 
-  static ifNeedListenToAutoDeletion = (el: ElementModel) => {
+  static isElementTriggerAutoDeletion = (el: ElementModel) => {
+    if (el.type === ObjectType.Roof) {
+      const roof = el as RoofModel;
+      if (roof.roofType === RoofType.Gable || roof.roofType === RoofType.Gambrel) {
+        return true;
+      }
+    }
     if (el.type !== ObjectType.Wall) return false;
 
     const wall = el as WallModel;

@@ -673,7 +673,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
       const cutElements = removeElementById(selectedElement.id, true);
       if (cutElements.length === 0) return;
 
-      if (Util.ifNeedListenToAutoDeletion(cutElements[0])) {
+      if (Util.isElementTriggerAutoDeletion(cutElements[0])) {
         useRefStore.getState().setListenToAutoDeletionByCut(true);
         usePrimitiveStore.getState().setPrimitiveStore('selectedElementId', selectedElement.id);
       } else {

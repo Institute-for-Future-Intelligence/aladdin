@@ -362,8 +362,8 @@ const HipRoof = ({ roofModel, foundationModel }: HipRoofProps) => {
     if (composedWalls === null || composedWalls.length !== 4) {
       removeElementById(id, false, false, true);
     } else {
-      const addIdRoofId = useStore.getState().addedRoofId;
-      if (addIdRoofId && addIdRoofId === id) {
+      const addedRoofIdSet = useStore.getState().addedRoofIdSet;
+      if (addedRoofIdSet.has(id)) {
         for (let i = 0; i < composedWalls.length; i++) {
           const wallsIdSet = new Set(composedWalls[i].wallsId);
           setCommonStore((state) => {
@@ -378,7 +378,7 @@ const HipRoof = ({ roofModel, foundationModel }: HipRoofProps) => {
             }
           });
         }
-        useStore.getState().setAddedRoofId(null);
+        useStore.getState().deleteAddedRoofId(id);
       }
     }
   }, [composedWalls]);

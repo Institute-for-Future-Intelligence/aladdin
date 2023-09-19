@@ -113,7 +113,7 @@ export const Cut = ({ paddingLeft = '36px', keyName }: { paddingLeft?: string; k
       const cutElements = removeElementById(selectedElement.id, true);
       if (cutElements.length === 0) return;
 
-      if (Util.ifNeedListenToAutoDeletion(cutElements[0])) {
+      if (Util.isElementTriggerAutoDeletion(cutElements[0])) {
         useRefStore.getState().setListenToAutoDeletionByCut(true);
         usePrimitiveStore.getState().setPrimitiveStore('selectedElementId', selectedElement.id);
       } else {

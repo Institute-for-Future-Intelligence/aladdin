@@ -114,8 +114,23 @@ const ElementsRenderer: React.FC = () => {
         return null;
       })}
       <EndWaiting />
+      <ClearDeletedRoofIdSet />
     </group>
   );
+};
+
+// Couldn't find a good way to clear this set to avoid memory leak.
+// This roof id set is used in all walls which shape needs to be changed by the deletion of the roof.
+// So fter all the walls have used it their useEffect hooks, then we can clear it.
+// And here is the last hook get called due to React hooks mechanism.
+const ClearDeletedRoofIdSet = () => {
+  const deletedRoofIdSet = useStore(Selector.deletedRoofIdSet);
+  useEffect(() => {
+    useStore.getState().set((state) => {
+      state.deletedRoofIdSet.clear();
+    });
+  }, [deletedRoofIdSet]);
+  return null;
 };
 
 export default React.memo(ElementsRenderer);

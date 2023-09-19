@@ -228,7 +228,8 @@ const Foundation = (foundationModel: FoundationModel) => {
   type UndoMoveWall = { wall: WallModel; newAngle: number; newJoints: string[][] };
   const listenToAutoDeletionRef = useRef(false);
   const undoableMoveWallArgsRef = useRef<UndoMoveWall | null>(null);
-  const autoDeletedRoof = useStore(Selector.autoDeletedRoof);
+  // only one roof is affected, so no need to use set
+  const autoDeletedRoofs = useStore(Selector.autoDeletedRoofs);
   const autoDeletedChild = useStore(Selector.autoDeletedChild);
 
   const intersectionPlanePosition = useMemo(() => new Vector3(), []);
@@ -305,7 +306,7 @@ const Foundation = (foundationModel: FoundationModel) => {
   useEffect(() => {
     if (!listenToAutoDeletionRef.current || !useStore.getState().getAutoDeletedElements()) return;
     handleUndoMoveWallWithAutoDeletion();
-  }, [autoDeletedRoof, autoDeletedChild]);
+  }, [autoDeletedRoofs, autoDeletedChild]);
 
   const handleUndoMoveWallWithAutoDeletion = debounce(() => {
     if (!undoableMoveWallArgsRef.current) return;
@@ -366,7 +367,8 @@ const Foundation = (foundationModel: FoundationModel) => {
           state.elements.push(...this.autoDeletedElements);
           state.deletedRoofId = null;
           state.autoDeletedChild = null;
-          state.autoDeletedRoof = null;
+          state.autoDeletedRoofs = null;
+          state.autoDeletedRoofIdSet.clear();
         });
         if (oldLeftJoints[0] !== newLeftJoints[0]) {
           setCommonStore((state) => {
@@ -495,7 +497,8 @@ const Foundation = (foundationModel: FoundationModel) => {
 
     listenToAutoDeletionRef.current = false;
     setCommonStore((state) => {
-      state.autoDeletedRoof = null;
+      state.autoDeletedRoofs = null;
+      state.autoDeletedRoofIdSet.clear();
       state.autoDeletedChild = null;
     });
   }, 100);
@@ -1139,7 +1142,8 @@ const Foundation = (foundationModel: FoundationModel) => {
           state.elements.push(...undoableResize.autoDeletedElement);
           state.resizeHandleType = null;
           state.deletedRoofId = null;
-          state.autoDeletedRoof = null;
+          state.autoDeletedRoofs = null;
+          state.autoDeletedRoofIdSet.clear();
           state.autoDeletedChild = null;
         });
         flippedWallSide.current = FlippedWallSide.null;
@@ -1241,7 +1245,8 @@ const Foundation = (foundationModel: FoundationModel) => {
         setTimeout(() => {
           setCommonStore((state) => {
             state.deletedRoofId = null;
-            state.autoDeletedRoof = null;
+            state.autoDeletedRoofs = null;
+            state.autoDeletedRoofIdSet.clear();
           });
         });
         switch (undoableResize.flippedWallSide) {
@@ -1274,7 +1279,8 @@ const Foundation = (foundationModel: FoundationModel) => {
     setCommonStore((state) => {
       state.actionState.wallHeight = element.lz;
       state.deletedRoofId = null;
-      state.autoDeletedRoof = null;
+      state.autoDeletedRoofs = null;
+      state.autoDeletedRoofIdSet.clear();
       state.autoDeletedChild = [];
     });
   };

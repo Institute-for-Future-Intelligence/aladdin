@@ -472,7 +472,7 @@ const MansardRoof = ({ roofModel, foundationModel }: MansardRoofProps) => {
 
   useEffect(() => {
     if (currentWallArray.length > 1) {
-      if (useStore.getState().addedRoofId === id) {
+      if (useStore.getState().addedRoofIdSet.has(id)) {
         for (let i = 0; i < currentWallArray.length; i++) {
           setCommonStore((state) => {
             for (const e of state.elements) {
@@ -487,7 +487,7 @@ const MansardRoof = ({ roofModel, foundationModel }: MansardRoofProps) => {
             }
           });
         }
-        useStore.getState().setAddedRoofId(null);
+        useStore.getState().deleteAddedRoofId(id);
       }
     } else {
       removeElementById(id, false, false, true);

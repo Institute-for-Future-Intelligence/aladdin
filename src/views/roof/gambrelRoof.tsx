@@ -900,8 +900,8 @@ const GambrelRoof = ({ roofModel, foundationModel }: GambrelRoofProps) => {
   useEffect(() => {
     if (composedWalls?.length !== 4) return;
 
-    const addIdRoofId = useStore.getState().addedRoofId;
-    if ((addIdRoofId && addIdRoofId === id) || !isFirstRender) {
+    const addedRoofIdSet = useStore.getState().addedRoofIdSet;
+    if (addedRoofIdSet.has(id) || !isFirstRender) {
       if (isFlat) {
         updateFlatRoofWalls(composedWalls);
       } else {
@@ -909,7 +909,7 @@ const GambrelRoof = ({ roofModel, foundationModel }: GambrelRoofProps) => {
         updateWalls(composedWalls, topZ, frontRidgePoint, topRidgePoint, backRidgePoint);
       }
       updateRooftopElements(foundationModel, id, roofSegments, centroid, topZ, thickness, isFlat);
-      useStore.getState().setAddedRoofId(null);
+      useStore.getState().deleteAddedRoofId(id);
     }
   }, [roofSegments]);
 

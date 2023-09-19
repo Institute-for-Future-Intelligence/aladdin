@@ -875,11 +875,11 @@ const GableRoof = ({ roofModel, foundationModel }: GableRoofProps) => {
   useEffect(() => {
     if (composedWalls?.length !== 4) return;
 
-    const addIdRoofId = useStore.getState().addedRoofId;
-    if ((addIdRoofId && addIdRoofId === id) || !isFirstRender) {
+    const addedRoofIdSet = useStore.getState().addedRoofIdSet;
+    if (addedRoofIdSet.has(id) || !isFirstRender) {
       updateWalls(composedWalls, topZ, ridgeLeftPoint, ridgeRightPoint);
       updateRooftopElements(foundationModel, id, roofSegments, centroid, topZ, thickness);
-      useStore.getState().setAddedRoofId(null);
+      useStore.getState().deleteAddedRoofId(id);
     }
   }, [roofSegments]);
 

@@ -65,6 +65,11 @@ export const EndWaiting = () => {
       usePrimitiveStore.setState((state) => {
         state.waiting = false;
       });
+      return () => {
+        usePrimitiveStore.setState((state) => {
+          state.waiting = false;
+        });
+      };
     });
     return null;
   };

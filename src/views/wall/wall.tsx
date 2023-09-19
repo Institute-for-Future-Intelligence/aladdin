@@ -162,8 +162,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   const updatePolygonVerticesById = useStore(Selector.updatePolygonVerticesById);
 
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
-  const deletedRoofId = useStore(Selector.deletedRoofId);
-  const autoDeletedRoof = useStore(Selector.autoDeletedRoof);
+  const deletedRoofIdSet = useStore(Selector.deletedRoofIdSet);
+  const autoDeletedRoofIdSet = useStore(Selector.autoDeletedRoofIdSet);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   // const roofRise = useStore((state) => {
   //   if (!roofId) return 0;
@@ -590,7 +590,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
 
   useEffect(() => {
     if (!roofId) return;
-    if (deletedRoofId === roofId || autoDeletedRoof?.id === roofId) {
+    if (deletedRoofIdSet.has(roofId) || autoDeletedRoofIdSet.has(roofId)) {
       useStore.getState().set((state) => {
         const invalidateIdSet = new Set<string>();
 
@@ -635,7 +635,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         }
       });
     }
-  }, [roofId, deletedRoofId, autoDeletedRoof]);
+  }, [roofId, deletedRoofIdSet, autoDeletedRoofIdSet]);
 
   function drawWallShape(
     shape: Shape,
@@ -2136,7 +2136,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         setCommonStore((state) => {
           state.elements.push(newElement as ElementModel);
           if (newElement && newElement.type === ObjectType.Roof) {
-            state.addedRoofId = newElement.id;
+            state.addedRoofIdSet.add(newElement.id);
           }
           if (!state.actionModeLock) {
             state.objectTypeToAdd = ObjectType.None;

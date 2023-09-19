@@ -9,3 +9,7 @@ export interface UndoableDelete extends Undoable {
   deletedElements: ElementModel[];
   selectedElementId: string;
 }
+
+export interface UndoableDeleteMultiple extends UndoableDelete {
+  selectedElementIdSet: Set<string>;
+}

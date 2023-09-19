@@ -16,9 +16,11 @@ const EmptyWall = (wallModel: WallModel) => {
   const { lx, lz, parentId, id, roofId } = wallModel;
 
   const deletedRoofId = useStore(Selector.deletedRoofId);
+  const deletedRoofIdSet = useStore(Selector.deletedRoofIdSet);
 
   useEffect(() => {
-    if (deletedRoofId === roofId) {
+    if (!roofId) return;
+    if (deletedRoofId === roofId || deletedRoofIdSet.has(roofId)) {
       useStore.getState().set((state) => {
         for (const e of state.elements) {
           if (e.id === id && e.type === ObjectType.Wall) {
@@ -34,7 +36,7 @@ const EmptyWall = (wallModel: WallModel) => {
         }
       });
     }
-  }, [deletedRoofId]);
+  }, [roofId, deletedRoofId, deletedRoofIdSet]);
 
   const checkIfCanSelectMe = (e: ThreeEvent<PointerEvent>) => {
     return !(

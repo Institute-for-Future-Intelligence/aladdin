@@ -379,8 +379,8 @@ const PyramidRoof = ({ roofModel, foundationModel }: PyramidRoofProps) => {
 
   useEffect(() => {
     if (isFirstRender) return;
-    const addIdRoofId = useStore.getState().addedRoofId;
-    if (addIdRoofId && addIdRoofId === id) {
+    const addedRoofIdSet = useStore.getState().addedRoofIdSet;
+    if (addedRoofIdSet.has(id)) {
       if (currentWallArray.length >= 2 && needUpdateWallsId(currentWallArray, prevWallsIdSet)) {
         const newWallsIdArray = currentWallArray.map((v) => v.id);
         const newWallsIdSet = new Set(newWallsIdArray);
@@ -400,6 +400,7 @@ const PyramidRoof = ({ roofModel, foundationModel }: PyramidRoofProps) => {
             }
           }
         });
+        useStore.getState().deleteAddedRoofId(id);
       }
     }
   }, [prevWallsIdSet]);
@@ -407,8 +408,8 @@ const PyramidRoof = ({ roofModel, foundationModel }: PyramidRoofProps) => {
   // update wall's roofId when adding new roof
   useEffect(() => {
     if (currentWallArray.length > 1) {
-      const addedRoofId = useStore.getState().addedRoofId;
-      if (addedRoofId && addedRoofId === id) {
+      const addedRoofIdSet = useStore.getState().addedRoofIdSet;
+      if (addedRoofIdSet.has(id)) {
         // update walls
         for (let i = 0; i < currentWallArray.length; i++) {
           setCommonStore((state) => {
@@ -424,7 +425,7 @@ const PyramidRoof = ({ roofModel, foundationModel }: PyramidRoofProps) => {
             }
           });
         }
-        useStore.getState().setAddedRoofId(null);
+        useStore.getState().deleteAddedRoofId(id);
       }
     } else {
       removeElementById(id, false, false, true);

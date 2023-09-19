@@ -419,6 +419,7 @@ export interface CommonStoreState {
   deletedElements: ElementModel[]; // this is for undoing deletion
   clearDeletedElements: () => void;
   copyElementById: (id: string) => void;
+  removeSelectedElements: () => ElementModel[];
   removeElementById: (id: string, cut: boolean, selectNone?: boolean, auto?: boolean) => ElementModel[]; // set cut to false for deletion
   copyCutElements: () => ElementModel[];
   pasteElementsToPoint: () => ElementModel[];
@@ -481,11 +482,13 @@ export interface CommonStoreState {
 
   addedDoorId: string | null;
 
-  addedRoofId: string | null;
   deletedRoofId: string | null;
-  setAddedRoofId: (id: string | null) => void;
+  deletedRoofIdSet: Set<string>;
+  addedRoofIdSet: Set<string>; // new roof or undo multiple deleted roof, to notify roof to update walls.
+  deleteAddedRoofId: (id: string) => void;
 
-  autoDeletedRoof: RoofModel | null;
+  autoDeletedRoofs: RoofModel[] | null;
+  autoDeletedRoofIdSet: Set<string>;
   autoDeletedChild: ElementModel[] | null; // [] means checked but no element, null means haven't check yet.
   getAutoDeletedElements: () => ElementModel[] | null;
 
@@ -652,8 +655,11 @@ export const useStore = create<CommonStoreState>(
               state.fittestIndividualResults.length = 0;
               state.undoManager.clear();
               state.deletedRoofId = null;
-              state.autoDeletedRoof = null;
+              state.autoDeletedRoofs = null;
+              state.autoDeletedRoofIdSet.clear();
               state.autoDeletedChild = null;
+              state.deletedRoofIdSet.clear();
+              state.addedRoofIdSet.clear();
               state.actionState = new DefaultActionState();
               state.multiSelectionsMode = false;
               state.selectedElementIdSet.clear();
@@ -741,6 +747,12 @@ export const useStore = create<CommonStoreState>(
               state.selectedElementIdSet.clear();
               state.groupMasterId = null;
               state.selectedFloatingWindow = null;
+              state.deletedRoofId = null;
+              state.autoDeletedRoofs = null;
+              state.autoDeletedRoofIdSet.clear();
+              state.autoDeletedChild = null;
+              state.deletedRoofIdSet.clear();
+              state.addedRoofIdSet.clear();
             });
             usePrimitiveStore.setState((state) => {
               state.changed = false;
@@ -791,13 +803,9 @@ export const useStore = create<CommonStoreState>(
           selectedElement: null,
           getSelectedElement() {
             if (get().selectedElementIdSet.size === 0) return null;
-            const elements = get().elements;
-            for (const e of elements) {
-              if (get().selectedElementIdSet.has(e.id)) {
-                return e;
-              }
-            }
-            return null;
+            const selectedElement = get().selectedElement;
+            if (!selectedElement) return null;
+            return get().elements.find((e) => e.id === selectedElement.id) ?? null;
           },
 
           selectedElementIdSet: new Set(),
@@ -2546,6 +2554,69 @@ export const useStore = create<CommonStoreState>(
               }
             });
           },
+          removeSelectedElements() {
+            const selectedIdSet = get().selectedElementIdSet;
+            if (selectedIdSet.size === 0) return [];
+
+            const selectedIds = Array.from(selectedIdSet);
+            const deletedElementSet = new Set<ElementModel>();
+            const deletedElementIdSet = new Set<string>();
+            for (const e of get().elements) {
+              if (selectedIdSet.has(e.id)) {
+                deletedElementSet.add(e);
+                deletedElementIdSet.add(e.id);
+              } else {
+                for (const id of selectedIds) {
+                  if (Util.isChild(id, e.id)) {
+                    deletedElementSet.add(e);
+                    deletedElementIdSet.add(e.id);
+                  }
+                }
+              }
+            }
+
+            immerSet((state) => {
+              state.autoDeletedRoofs = [];
+              state.deletedElements = Array.from(deletedElementSet);
+              state.elements = state.elements.filter((e) => {
+                if (deletedElementIdSet.has(e.id)) {
+                  switch (e.type) {
+                    case ObjectType.Wall: {
+                      const currentWall = e as WallModel;
+                      let leftWallId = '';
+                      let rightWallId = '';
+                      if (currentWall.leftJoints.length > 0) {
+                        leftWallId = state.getElementById(currentWall.leftJoints[0])?.id ?? '';
+                      }
+                      if (currentWall.rightJoints.length > 0) {
+                        rightWallId = state.getElementById(currentWall.rightJoints[0])?.id ?? '';
+                      }
+                      for (const el of state.elements) {
+                        if (el.id === leftWallId) {
+                          (el as WallModel).rightJoints = [];
+                        } else if (el.id === rightWallId) {
+                          (el as WallModel).leftJoints = [];
+                        }
+                      }
+                      state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
+                      break;
+                    }
+                    case ObjectType.Roof: {
+                      state.deletedRoofIdSet.add(e.id);
+                      useDataStore.getState().deleteRoofSegmentVertices(e.id);
+                      useDataStore.getState().deleteRoofSegmentVerticesWithoutOverhang(e.id);
+                      break;
+                    }
+                  }
+                  return false;
+                } else {
+                  return true;
+                }
+              });
+            });
+
+            return Array.from(deletedElementSet);
+          },
           removeElementById(id, cut, selectNone = true, autoDeleted) {
             const removed = get().elements.filter((e) => e.id === id || Util.isChild(id, e.id));
             immerSet((state: CommonStoreState) => {
@@ -2581,11 +2652,18 @@ export const useStore = create<CommonStoreState>(
                   elem.selected = false;
                   switch (elem.type) {
                     case ObjectType.Roof: {
+                      const roof = elem as RoofModel;
                       state.deletedRoofId = elem.id;
+                      state.deletedRoofIdSet.add(elem.id);
                       useDataStore.getState().deleteRoofSegmentVertices(id);
                       useDataStore.getState().deleteRoofSegmentVerticesWithoutOverhang(id);
                       if (autoDeleted) {
-                        state.autoDeletedRoof = elem as RoofModel;
+                        if (state.autoDeletedRoofs) {
+                          state.autoDeletedRoofs.push(roof);
+                        } else {
+                          state.autoDeletedRoofs = [roof];
+                        }
+                        state.autoDeletedRoofIdSet.add(roof.id);
                       }
                       break;
                     }
@@ -4315,24 +4393,24 @@ export const useStore = create<CommonStoreState>(
 
           addedDoorId: null,
 
-          addedRoofId: null,
+          addedRoofIdSet: new Set(),
           deletedRoofId: null,
-          autoDeletedRoof: null,
+          deletedRoofIdSet: new Set(),
+          autoDeletedRoofs: null,
+          autoDeletedRoofIdSet: new Set(),
           autoDeletedChild: null,
           getAutoDeletedElements() {
-            const autoDeletedRoof = get().autoDeletedRoof;
+            const autoDeletedRoofs = get().autoDeletedRoofs;
             const autoDeletedChild = get().autoDeletedChild;
 
-            if (!autoDeletedRoof || !autoDeletedChild) return null;
+            if (!autoDeletedRoofs || !autoDeletedChild) return null;
 
-            const arr: ElementModel[] = [];
-
-            arr.push(autoDeletedRoof, ...autoDeletedChild);
+            const arr = [...autoDeletedRoofs, ...autoDeletedChild];
             return arr;
           },
-          setAddedRoofId(id: string | null) {
+          deleteAddedRoofId(id: string) {
             immerSet((state) => {
-              state.addedRoofId = id;
+              state.addedRoofIdSet.delete(id);
             });
           },
 
