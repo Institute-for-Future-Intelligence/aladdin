@@ -606,8 +606,9 @@ export const i18n_tr = {
 
     avatarMenu: {
       AccountSettings: 'Hesap Ayarları',
-      PrivacyInfo:
-        'Oturum açtığınızda, Aladdin hesabınızı oluşturmak ve hesabınıza erişmek için Google Kimliğiniz kullanılır.\nVeritabanımızda referans olarak yalnızca rastgele bir alfasayısal dize depolanır.\nAdınız veya e-posta adresiniz gibi kişisel olarak tanımlanabilir hiçbir veri toplanmaz.\n Daha fazla bilgi için Gizlilik Politikamıza bakın:\nhttps://intofuture.org/aladdin-privacy.html',
+      PrivacyStatementTitle: 'User Privacy Protection Statement',
+      PrivacyStatement:
+        'Oturum açtığınızda, Aladdin hesabınızı oluşturmak ve hesabınıza erişmek için Google Kimliğiniz kullanılır. Veritabanımızda referans olarak yalnızca rastgele bir alfasayısal dize depolanır. Adınız veya e-posta adresiniz gibi kişisel olarak tanımlanabilir hiçbir veri toplanmaz. Daha fazla bilgi için ',
       SignIn: 'Kayıt Ol',
       SignOut: 'Oturum Kapat',
       IfYouAreAStudent: 'Eğer Öğrenciyseniz',

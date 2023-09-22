@@ -3,7 +3,7 @@
  */
 
 import styled from 'styled-components';
-import { Avatar, Button, Dropdown, Menu, Space } from 'antd';
+import { Avatar, Button, Dropdown, Menu, Popover, Space } from 'antd';
 import MainToolBarButtons from './mainToolBarButtons';
 import i18n from './i18n/i18n';
 import React, { useMemo } from 'react';
@@ -73,9 +73,22 @@ const MainToolBar = ({ signIn, signOut }: MainToolBarProps) => {
               </a>
             </Dropdown>
           ) : (
-            <Button type="primary" title={i18n.t('avatarMenu.PrivacyInfo', lang)} onClick={signIn}>
-              {i18n.t('avatarMenu.SignIn', lang)}
-            </Button>
+            <Popover
+              title={<div onClick={(e) => e.stopPropagation()}>{i18n.t('avatarMenu.PrivacyStatementTitle', lang)}</div>}
+              content={
+                <div style={{ width: '280px', fontSize: '12px' }}>
+                  {i18n.t('avatarMenu.PrivacyStatement', lang)}
+                  <a target="_blank" rel="noopener noreferrer" href={'https://intofuture.org/aladdin-privacy.html'}>
+                    {i18n.t('aboutUs.PrivacyPolicy', lang)}
+                  </a>
+                  .
+                </div>
+              }
+            >
+              <Button type="primary" onClick={signIn}>
+                {i18n.t('avatarMenu.SignIn', lang)}
+              </Button>
+            </Popover>
           )}
         </div>
       </Space>
