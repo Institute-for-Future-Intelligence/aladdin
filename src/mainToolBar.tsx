@@ -67,7 +67,7 @@ const MainToolBar = ({ signIn, signOut }: MainToolBarProps) => {
               <a
                 className="ant-dropdown-link"
                 onClick={(e) => e.preventDefault()}
-                title={i18n.t('tooltip.clickToAccessCloudTools', lang)}
+                title={i18n.t('tooltip.clickToAccessAccountSettings', lang)}
               >
                 <Avatar size={32} src={user.photoURL} alt={user.displayName} />
               </a>

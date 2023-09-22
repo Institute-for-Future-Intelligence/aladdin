@@ -1582,7 +1582,7 @@ export const i18n_es = {
       gotoIFI: 'Ver Institute for Future Intelligence',
       visitAladdinHomePage: 'Visita la página de Aladdin',
       clickToOpenMenu: 'Haz clic para abrir el menú principal',
-      clickToAccessCloudTools: 'Haz clic para acceder a las herramientas en la nube',
+      clickToAccessAccountSettings: 'Click to access account settings',
     },
 
     tree: {

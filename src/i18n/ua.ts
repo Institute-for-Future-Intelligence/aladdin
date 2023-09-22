@@ -1584,7 +1584,7 @@ export const i18n_ua = {
       gotoIFI: 'Перейти до Інституту Інтелекту Майбутнього',
       visitAladdinHomePage: 'Відвідати домашню сторінку Aladdin',
       clickToOpenMenu: 'Натисність, щоб відкрити Головне Меню',
-      clickToAccessCloudTools: 'Натисність, щоб отримати доступ до хмарних інструментів',
+      clickToAccessAccountSettings: 'Click to access account settings',
     },
 
     tree: {

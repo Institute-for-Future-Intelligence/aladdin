@@ -1583,7 +1583,7 @@ export const i18n_tr = {
       gotoIFI: 'Yarının Zekası Enstitüsüne Git',
       visitAladdinHomePage: 'Aladdin Ana Sayfasını Ziyaret Edin',
       clickToOpenMenu: 'Ana Menüyü Açmak İçin Tıklayınız',
-      clickToAccessCloudTools: 'Bulut Araçlarına Erişmek İçin Tıklayınız',
+      clickToAccessAccountSettings: 'Click to access account settings',
     },
 
     tree: {

@@ -1558,7 +1558,7 @@ export const i18n_zh_tw = {
       gotoIFI: '訪問未來智能研究所',
       visitAladdinHomePage: '訪問阿拉丁主頁',
       clickToOpenMenu: '點擊打開主菜單',
-      clickToAccessCloudTools: '點擊打開雲菜單',
+      clickToAccessAccountSettings: '點擊打開賬號設定',
     },
 
     tree: {
