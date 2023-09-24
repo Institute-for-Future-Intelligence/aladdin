@@ -399,7 +399,15 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
                         }
                         trigger={['hover']}
                       >
-                        <DownSquareOutlined style={{ fontSize: '16px' }} />
+                        <DownSquareOutlined
+                          style={{ fontSize: '16px' }}
+                          onMouseEnter={() => {
+                            if (index !== undefined) setSelectedIndex(index);
+                          }}
+                          onMouseLeave={() => {
+                            setSelectedIndex(-1);
+                          }}
+                        />
                       </Dropdown>
                       <Typography.Text style={{ fontSize: '12px', cursor: 'pointer', verticalAlign: 'top' }}>
                         {title}
@@ -409,12 +417,6 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
                 }}
                 onCell={(data, index) => {
                   return {
-                    onMouseEnter: () => {
-                      if (index !== undefined) setSelectedIndex(index);
-                    },
-                    onMouseLeave: () => {
-                      setSelectedIndex(-1);
-                    },
                     style: {
                       background:
                         selectedIndex === index
