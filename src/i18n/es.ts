@@ -1411,6 +1411,8 @@ export const i18n_es = {
     },
 
     cloudFilePanel: {
+      CopyTitle: 'Copy Title',
+      TitleCopiedToClipBoard: 'The title was copied to the clip board',
       SearchByTitle: 'Search by title',
       MyLikes: 'My Likes',
       MyCloudFiles: 'Mis archivos en la nube',
@@ -1423,10 +1425,11 @@ export const i18n_es = {
 
     projectListPanel: {
       CopyTitle: 'Copy Title',
+      TitleCopiedToClipBoard: 'The title was copied to the clip board',
       SearchByTitle: 'Search by title',
       MyProjects: 'My Projects',
       GenerateProjectLink: 'Generate Project Link',
-      ProjectLinkGeneratedInClipBoard: 'A link to the project has been generated in the clip board',
+      ProjectLinkGeneratedInClipBoard: 'A link to the project was generated in the clip board',
       DoYouReallyWantToDeleteProject: 'Do you really want to delete Project',
       IfSharedOrPublishedRenamingProjectBreaksExistingLinks:
         'If this project has been shared or published, renaming it breaks existing links',

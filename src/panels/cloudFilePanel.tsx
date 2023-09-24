@@ -8,7 +8,7 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import ReactDraggable, { DraggableBounds, DraggableData, DraggableEvent, DraggableEventHandler } from 'react-draggable';
 import { Input, Modal, Space, Table, Typography } from 'antd';
-import { QuestionCircleOutlined, WarningOutlined } from '@ant-design/icons';
+import { CopyOutlined, QuestionCircleOutlined, WarningOutlined } from '@ant-design/icons';
 import { HOME_URL, REGEX_ALLOWABLE_IN_NAME, Z_INDEX_FRONT_PANEL } from '../constants';
 import { copyTextToClipboard, showSuccess } from '../helpers';
 import i18n from '../i18n/i18n';
@@ -36,7 +36,7 @@ const ColumnWrapper = styled.div`
   position: absolute;
   right: 0;
   top: 0;
-  width: 640px;
+  width: 680px;
   height: 520px;
   min-width: 400px;
   max-width: 800px;
@@ -307,7 +307,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
                 title={i18n.t('word.Title', lang)}
                 dataIndex="title"
                 key="title"
-                width={'58%'}
+                width={'56%'}
                 sortDirections={['ascend', 'descend', 'ascend']}
                 sorter={(a, b) => {
                   // @ts-ignore
@@ -348,7 +348,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
                 }}
               />
               <Column
-                width={'17%'}
+                width={'19%'}
                 title={i18n.t('word.Action', lang)}
                 key="action"
                 render={(text, record: any) => (
@@ -375,6 +375,20 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
                         setOldTitle(record.title);
                         setUserid(record.userid);
                         setRenameDialogVisible(true);
+                      }}
+                      height={16}
+                      width={16}
+                      style={{
+                        cursor: 'pointer',
+                        verticalAlign: 'middle',
+                      }}
+                    />
+                    <CopyOutlined
+                      title={i18n.t('cloudFilePanel.CopyTitle', lang)}
+                      alt={'Copy Title'}
+                      onClick={() => {
+                        copyTextToClipboard(record.title);
+                        showSuccess(i18n.t('cloudFilePanel.TitleCopiedToClipBoard', lang) + '.');
                       }}
                       height={16}
                       width={16}

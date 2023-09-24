@@ -1413,6 +1413,8 @@ export const i18n_ua = {
     },
 
     cloudFilePanel: {
+      CopyTitle: 'Copy Title',
+      TitleCopiedToClipBoard: 'The title was copied to the clip board',
       SearchByTitle: 'Пошук за назвою',
       MyLikes: 'Мої вподобання',
       MyCloudFiles: 'Мої файли у хмарному середовищі',
@@ -1425,10 +1427,11 @@ export const i18n_ua = {
 
     projectListPanel: {
       CopyTitle: 'Copy Title',
+      TitleCopiedToClipBoard: 'The title was copied to the clip board',
       SearchByTitle: 'Пошук за назвою',
       MyProjects: 'My Projects',
       GenerateProjectLink: 'Generate Project Link',
-      ProjectLinkGeneratedInClipBoard: 'A link to the project has been generated in the clip board',
+      ProjectLinkGeneratedInClipBoard: 'A link to the project was generated in the clip board',
       DoYouReallyWantToDeleteProject: 'Do you really want to delete Project',
       IfSharedOrPublishedRenamingProjectBreaksExistingLinks:
         'If this project has been shared or published, renaming it breaks existing links',

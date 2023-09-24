@@ -359,6 +359,7 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
                                 } else {
                                   copyTextToClipboard(title);
                                 }
+                                showSuccess(i18n.t('projectListPanel.TitleCopiedToClipBoard', lang) + '.');
                               }}
                             >
                               {i18n.t('projectListPanel.CopyTitle', lang)}

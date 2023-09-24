@@ -1411,11 +1411,13 @@ export const i18n_en = {
     },
 
     cloudFilePanel: {
+      CopyTitle: 'Copy Title',
+      TitleCopiedToClipBoard: 'The title was copied to the clip board',
       SearchByTitle: 'Search by title',
       MyLikes: 'My Likes',
       MyCloudFiles: 'My Cloud Files',
       GenerateLink: 'Generate Link',
-      LinkGeneratedInClipBoard: 'A link has been generated in the clip board',
+      LinkGeneratedInClipBoard: 'A link was generated in the clip board',
       DoYouReallyWantToDelete: 'Do you really want to delete',
       IfSharedOrPublishedRenamingFileBreaksExistingLinks:
         'If this file has been shared or published, renaming it breaks existing links',
@@ -1423,10 +1425,11 @@ export const i18n_en = {
 
     projectListPanel: {
       CopyTitle: 'Copy Title',
+      TitleCopiedToClipBoard: 'The title was copied to the clip board',
       SearchByTitle: 'Search by title',
       MyProjects: 'My Projects',
       GenerateProjectLink: 'Generate Project Link',
-      ProjectLinkGeneratedInClipBoard: 'A link to the project has been generated in the clip board',
+      ProjectLinkGeneratedInClipBoard: 'A link to the project was generated in the clip board',
       DoYouReallyWantToDeleteProject: 'Do you really want to delete Project',
       IfSharedOrPublishedRenamingProjectBreaksExistingLinks:
         'If this project has been shared or published, renaming it breaks existing links',

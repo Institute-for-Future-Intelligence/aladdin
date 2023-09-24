@@ -299,7 +299,6 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
               userSelect: 'text',
               color: isCloudFileOwner ? 'black' : 'gray',
             }}
-            title={i18n.t('toolbar.CloudFile', lang)}
           >
             <img
               title={i18n.t('toolbar.CloudFile', lang)}
