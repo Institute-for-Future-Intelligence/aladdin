@@ -1424,6 +1424,7 @@ export const i18n_ua = {
     },
 
     projectListPanel: {
+      CopyTitle: 'Copy Title',
       SearchByTitle: 'Пошук за назвою',
       MyProjects: 'My Projects',
       GenerateProjectLink: 'Generate Project Link',

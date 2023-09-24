@@ -891,6 +891,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                   state.listCloudFilesFlag = true;
                   state.openModelsMap = false;
                 });
+                setCommonStore((state) => {
+                  state.selectedFloatingWindow = 'cloudFilePanel';
+                });
                 if (loggable) {
                   setCommonStore((state) => {
                     state.actionInfo = {
@@ -1012,6 +1015,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
               usePrimitiveStore.setState((state) => {
                 state.showProjectsFlag = true;
                 state.openModelsMap = false;
+              });
+              setCommonStore((state) => {
+                state.selectedFloatingWindow = 'projectListPanel';
               });
               if (loggable) {
                 setCommonStore((state) => {

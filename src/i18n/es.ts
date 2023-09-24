@@ -1422,6 +1422,7 @@ export const i18n_es = {
     },
 
     projectListPanel: {
+      CopyTitle: 'Copy Title',
       SearchByTitle: 'Search by title',
       MyProjects: 'My Projects',
       GenerateProjectLink: 'Generate Project Link',

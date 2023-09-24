@@ -9,7 +9,7 @@ import * as Selector from '../stores/selector';
 import ReactDraggable, { DraggableBounds, DraggableData, DraggableEvent, DraggableEventHandler } from 'react-draggable';
 import { Input, Modal, Space, Table, Typography } from 'antd';
 import { QuestionCircleOutlined, WarningOutlined } from '@ant-design/icons';
-import { HOME_URL, REGEX_ALLOWABLE_IN_NAME } from '../constants';
+import { HOME_URL, REGEX_ALLOWABLE_IN_NAME, Z_INDEX_FRONT_PANEL } from '../constants';
 import { copyTextToClipboard, showSuccess } from '../helpers';
 import i18n from '../i18n/i18n';
 import Draggable from 'react-draggable';
@@ -28,7 +28,7 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
   padding: 16px;
-  z-index: 99;
+  z-index: 14;
 `;
 
 const ColumnWrapper = styled.div`
@@ -82,6 +82,8 @@ export interface CloudFilePanelProps {
 
 const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, renameCloudFile }: CloudFilePanelProps) => {
   const language = useStore(Selector.language);
+  const setCommonStore = useStore(Selector.set);
+  const selectedFloatingWindow = useStore(Selector.selectedFloatingWindow);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -243,8 +245,16 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
         position={curPosition}
         onDrag={onDrag}
         onStop={onDragEnd}
+        onMouseDown={() => {
+          setCommonStore((state) => {
+            state.selectedFloatingWindow = 'cloudFilePanel';
+          });
+        }}
       >
-        <Container ref={nodeRef}>
+        <Container
+          ref={nodeRef}
+          style={{ zIndex: selectedFloatingWindow === 'cloudFilePanel' ? Z_INDEX_FRONT_PANEL : 14 }}
+        >
           <ColumnWrapper ref={wrapperRef}>
             <Header className="handle" style={{ direction: 'ltr' }}>
               <span>{i18n.t('cloudFilePanel.MyCloudFiles', lang) + ' (' + filesRef.current.length + ')'}</span>

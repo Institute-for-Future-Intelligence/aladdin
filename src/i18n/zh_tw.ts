@@ -1399,6 +1399,7 @@ export const i18n_zh_tw = {
     },
 
     projectListPanel: {
+      CopyTitle: '拷貝標題',
       SearchByTitle: '按標題搜索',
       MyProjects: '我的項目',
       GenerateProjectLink: '生成項目鏈接',

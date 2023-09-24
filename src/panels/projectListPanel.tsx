@@ -7,15 +7,12 @@ import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import ReactDraggable, { DraggableBounds, DraggableData, DraggableEvent, DraggableEventHandler } from 'react-draggable';
-import { Input, Modal, Space, Table, Typography } from 'antd';
-import { QuestionCircleOutlined, WarningOutlined } from '@ant-design/icons';
-import { HOME_URL, REGEX_ALLOWABLE_IN_NAME } from '../constants';
+import { Dropdown, Input, Menu, Modal, Space, Table, Typography } from 'antd';
+import { DownSquareOutlined, QuestionCircleOutlined, WarningOutlined } from '@ant-design/icons';
+import { HOME_URL, REGEX_ALLOWABLE_IN_NAME, Z_INDEX_FRONT_PANEL } from '../constants';
 import { copyTextToClipboard, showSuccess } from '../helpers';
 import i18n from '../i18n/i18n';
 import Draggable from 'react-draggable';
-import RenameImage from '../assets/rename.png';
-import DeleteImage from '../assets/delete.png';
-import LinkImage from '../assets/create_link.png';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { ProjectInfo } from '../types';
 
@@ -29,7 +26,7 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
   padding: 16px;
-  z-index: 99;
+  z-index: 14;
 `;
 
 const ColumnWrapper = styled.div`
@@ -84,6 +81,8 @@ export interface ProjectListPanelProps {
 const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProject }: ProjectListPanelProps) => {
   const language = useStore(Selector.language);
   const user = useStore(Selector.user);
+  const setCommonStore = useStore(Selector.set);
+  const selectedFloatingWindow = useStore(Selector.selectedFloatingWindow);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -103,6 +102,7 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
   const projectsRef = useRef<object[]>([...projects]);
   // set a flag so that we can update when projectsRef changes
   const [recountFlag, setRecountFlag] = useState<boolean>(false);
+  const [selectedIndex, setSelectedIndex] = useState<number>(-1);
 
   const { Search } = Input;
   const lang = useMemo(() => {
@@ -242,8 +242,16 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
         position={curPosition}
         onDrag={onDrag}
         onStop={onDragEnd}
+        onMouseDown={() => {
+          setCommonStore((state) => {
+            state.selectedFloatingWindow = 'projectListPanel';
+          });
+        }}
       >
-        <Container ref={nodeRef}>
+        <Container
+          ref={nodeRef}
+          style={{ zIndex: selectedFloatingWindow === 'projectListPanel' ? Z_INDEX_FRONT_PANEL : 14 }}
+        >
           <ColumnWrapper ref={wrapperRef}>
             <Header className="handle" style={{ direction: 'ltr' }}>
               <span>{i18n.t('projectListPanel.MyProjects', lang) + ' (' + projectsRef.current.length + ')'}</span>
@@ -300,35 +308,126 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
                 render={(type) => {
                   return <Typography.Text style={{ fontSize: '12px', verticalAlign: 'top' }}>{type}</Typography.Text>;
                 }}
+                onCell={(data, index) => {
+                  return {
+                    style: {
+                      background:
+                        selectedIndex === index
+                          ? 'lightskyblue'
+                          : index !== undefined && index % 2 === 0
+                          ? 'beige'
+                          : 'gainsboro',
+                    },
+                  };
+                }}
               />
               <Column
                 title={i18n.t('word.Title', lang)}
                 dataIndex="title"
                 key="title"
-                width={'33%'}
+                width={'50%'}
                 sortDirections={['ascend', 'descend', 'ascend']}
                 sorter={(a, b) => {
-                  // @ts-ignore
-                  return a['title'].localeCompare(b['title']);
+                  return (a as any)['title'].localeCompare((b as any)['title']);
                 }}
-                render={(title) => {
+                render={(title, record, index) => {
+                  let selection: string | undefined = undefined;
                   return (
-                    <Typography.Text
-                      style={{ fontSize: '12px', cursor: 'pointer', verticalAlign: 'top' }}
-                      title={i18n.t('word.Open', lang)}
-                    >
-                      {title}
-                    </Typography.Text>
+                    <Space style={{ width: '100%' }}>
+                      <Dropdown
+                        overlay={
+                          <Menu
+                            onMouseEnter={(e) => {
+                              selection = window.getSelection()?.toString();
+                            }}
+                          >
+                            <Menu.Item
+                              onClick={(menuInfo) => {
+                                menuInfo.domEvent.preventDefault();
+                                menuInfo.domEvent.stopPropagation();
+                                setProjectState(record as ProjectInfo);
+                              }}
+                            >
+                              {i18n.t('word.Open', lang)}
+                            </Menu.Item>
+                            <Menu.Item
+                              onClick={(menuInfo) => {
+                                menuInfo.domEvent.preventDefault();
+                                menuInfo.domEvent.stopPropagation();
+                                if (selection && selection.length > 0) {
+                                  copyTextToClipboard(selection);
+                                } else {
+                                  copyTextToClipboard(title);
+                                }
+                              }}
+                            >
+                              {i18n.t('projectListPanel.CopyTitle', lang)}
+                            </Menu.Item>
+                            <Menu.Item
+                              onClick={(menuInfo) => {
+                                menuInfo.domEvent.preventDefault();
+                                menuInfo.domEvent.stopPropagation();
+                                setOldTitle(title);
+                                setRenameDialogVisible(true);
+                              }}
+                            >
+                              {i18n.t('word.Rename', lang)}
+                            </Menu.Item>
+                            <Menu.Item
+                              onClick={(menuInfo) => {
+                                menuInfo.domEvent.preventDefault();
+                                menuInfo.domEvent.stopPropagation();
+                                confirmDeleteProject(title);
+                              }}
+                            >
+                              {i18n.t('word.Delete', lang)}
+                            </Menu.Item>
+                            <Menu.Item
+                              onClick={(menuInfo) => {
+                                menuInfo.domEvent.preventDefault();
+                                menuInfo.domEvent.stopPropagation();
+                                const url =
+                                  HOME_URL + '?client=web&userid=' + user.uid + '&project=' + encodeURIComponent(title);
+                                copyTextToClipboard(url);
+                                showSuccess(i18n.t('projectListPanel.ProjectLinkGeneratedInClipBoard', lang) + '.');
+                              }}
+                            >
+                              {i18n.t('projectListPanel.GenerateProjectLink', lang)}
+                            </Menu.Item>
+                          </Menu>
+                        }
+                        trigger={['hover']}
+                      >
+                        <DownSquareOutlined style={{ fontSize: '16px' }} />
+                      </Dropdown>
+                      <Typography.Text style={{ fontSize: '12px', cursor: 'pointer', verticalAlign: 'top' }}>
+                        {title}
+                      </Typography.Text>
+                    </Space>
                   );
                 }}
-                onCell={(r) => {
+                onCell={(data, index) => {
                   return {
-                    onClick: () => {
-                      const selection = window.getSelection();
-                      if (selection && selection.toString().length > 0) return;
-                      // only proceed when no text is selected
-                      setProjectState(r as ProjectInfo);
+                    onMouseEnter: () => {
+                      if (index !== undefined) setSelectedIndex(index);
                     },
+                    onMouseLeave: () => {
+                      setSelectedIndex(-1);
+                    },
+                    style: {
+                      background:
+                        selectedIndex === index
+                          ? 'lightskyblue'
+                          : index !== undefined && index % 2 === 0
+                          ? 'beige'
+                          : 'gainsboro',
+                    },
+                    // onClick: () => {
+                    //   const selection = window.getSelection();
+                    //   if (selection && selection.toString().length > 0) return;
+                    //   // only proceed when no text is selected
+                    //   setProjectState(data as ProjectInfo);
+                    // },
                   };
                 }}
               />
@@ -346,61 +445,18 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
                 render={(time) => {
                   return <Typography.Text style={{ fontSize: '12px', verticalAlign: 'top' }}>{time}</Typography.Text>;
                 }}
-              />
-              <Column
-                width={'17%'}
-                title={i18n.t('word.Action', lang)}
-                key="action"
-                render={(text, record: any) => (
-                  <Space size="middle" style={{ verticalAlign: 'top' }}>
-                    <img
-                      title={i18n.t('word.Delete', lang)}
-                      alt={'Delete'}
-                      src={DeleteImage}
-                      onClick={() => {
-                        confirmDeleteProject(record.title);
-                      }}
-                      height={16}
-                      width={16}
-                      style={{
-                        cursor: 'pointer',
-                        verticalAlign: 'middle',
-                      }}
-                    />
-                    <img
-                      title={i18n.t('word.Rename', lang)}
-                      alt={'Rename'}
-                      src={RenameImage}
-                      onClick={() => {
-                        setOldTitle(record.title);
-                        setRenameDialogVisible(true);
-                      }}
-                      height={16}
-                      width={16}
-                      style={{
-                        cursor: 'pointer',
-                        verticalAlign: 'middle',
-                      }}
-                    />
-                    <img
-                      title={i18n.t('projectListPanel.GenerateProjectLink', lang)}
-                      alt={'Link'}
-                      src={LinkImage}
-                      onClick={() => {
-                        const url =
-                          HOME_URL + '?client=web&userid=' + user.uid + '&project=' + encodeURIComponent(record.title);
-                        copyTextToClipboard(url);
-                        showSuccess(i18n.t('projectListPanel.ProjectLinkGeneratedInClipBoard', lang) + '.');
-                      }}
-                      height={16}
-                      width={16}
-                      style={{
-                        cursor: 'pointer',
-                        verticalAlign: 'middle',
-                      }}
-                    />
-                  </Space>
-                )}
+                onCell={(data, index) => {
+                  return {
+                    style: {
+                      background:
+                        selectedIndex === index
+                          ? 'lightskyblue'
+                          : index !== undefined && index % 2 === 0
+                          ? 'beige'
+                          : 'gainsboro',
+                    },
+                  };
+                }}
               />
             </Table>
           </ColumnWrapper>

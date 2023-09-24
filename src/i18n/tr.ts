@@ -1423,6 +1423,7 @@ export const i18n_tr = {
     },
 
     projectListPanel: {
+      CopyTitle: 'Copy Title',
       SearchByTitle: 'Search by title',
       MyProjects: 'My Projects',
       GenerateProjectLink: 'Generate Project Link',
