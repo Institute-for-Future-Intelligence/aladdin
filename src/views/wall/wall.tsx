@@ -1773,7 +1773,10 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     if (selectedElement?.parentId === wallModel.id) {
       // move element
       if (useStore.getState().moveHandleType) {
-        const diagonalVector = new Vector3((-selectedElement.lx / 2) * lx, 0, (selectedElement.lz / 2) * lz);
+        const diagonalVector =
+          selectedElement.type !== ObjectType.Polygon
+            ? new Vector3((-selectedElement.lx / 2) * lx, 0, (selectedElement.lz / 2) * lz)
+            : undefined;
         const { relativePointer, pointerOnGrid } = getPointer(e, intersectionPlaneRef.current, diagonalVector);
         const elementHalfSize = getElementHalfSize(selectedElement);
         const boundedPointer = getBoundedPointer(pointerOnGrid, {
