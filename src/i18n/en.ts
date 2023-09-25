@@ -1155,6 +1155,8 @@ export const i18n_en = {
       AllWindows: 'All Windows',
       Width: 'Width',
       Height: 'Height',
+      Setback: 'Setback from Exterior Surface',
+      RelativeToWallThickness: 'Relative to wall thickness',
       Mullion: 'Mullion',
       MullionWidth: 'Mullion Width',
       MullionSpacing: 'Mullion Spacing',

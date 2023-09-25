@@ -1132,6 +1132,8 @@ export const i18n_zh_cn = {
       AllWindows: '所有的窗户',
       Width: '宽度',
       Height: '高度',
+      Setback: '离墙体外表面的距离',
+      RelativeToWallThickness: '相对于墙的厚度',
       Mullion: '直棂',
       MullionWidth: '直棂宽度',
       MullionSpacing: '直棂间距',

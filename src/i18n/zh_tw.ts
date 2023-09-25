@@ -1133,6 +1133,8 @@ export const i18n_zh_tw = {
       AllWindows: '所有的窗戶',
       Width: '寬度',
       Height: '高度',
+      Setback: '離牆體外表面的距離',
+      RelativeToWallThickness: '相對於牆的厚度',
       Mullion: '直櫺',
       MullionWidth: '直櫺寬度',
       MullionSpacing: '直櫺間距',

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import { ObjectType } from 'src/types';
@@ -10,6 +10,7 @@ export interface WindowModel extends ElementModel {
   opacity: number;
   tint: string;
   uValue: number;
+  setback?: number;
 
   shutter: ShutterProps;
 

@@ -1157,6 +1157,8 @@ export const i18n_ua = {
       AllWindows: 'Всі вікна',
       Width: 'Ширина',
       Height: 'Висота',
+      Setback: 'Setback from Exterior Surface',
+      RelativeToWallThickness: 'Relative to wall thickness',
       Mullion: 'Розділовий стовпець',
       MullionWidth: 'Ширина розділового стовпця',
       MullionSpacing: 'Відстань між розділовими стовпцями',

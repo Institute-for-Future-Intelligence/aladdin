@@ -1156,6 +1156,8 @@ export const i18n_tr = {
       AllWindows: 'Tüm Pencereler',
       Width: 'Genişlik',
       Height: 'Yükseklik',
+      Setback: 'Setback from Exterior Surface',
+      RelativeToWallThickness: 'Relative to wall thickness',
       Mullion: 'Tiriz',
       MullionWidth: 'Tiriz Genişliği',
       MullionSpacing: 'Tiriz Aralığı',

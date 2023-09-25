@@ -31,6 +31,7 @@ export enum WindowDataType {
   SillWidth = 'SillWidth',
   Width = 'Width',
   Height = 'Height',
+  Setback = 'Setback',
 }
 
 type ItemSelectionSettingType = {
@@ -62,6 +63,14 @@ const NumberDialogSettings = {
   },
   Width: { attributeKey: 'lx', range: [0.1, 100], step: 0.1, unit: 'word.MeterAbbreviation', digit: 1 },
   Height: { attributeKey: 'lz', range: [0.1, 100], step: 0.1, unit: 'word.MeterAbbreviation', digit: 1 },
+  Setback: {
+    attributeKey: 'cy',
+    range: [0, 1],
+    step: 0.01,
+    unit: '',
+    digit: 0,
+    note: 'windowMenu.RelativeToWallThickness',
+  },
   MullionWidth: { attributeKey: 'mullionWidth', range: [0, 0.2], step: 0.1, unit: 'word.MeterAbbreviation', digit: 1 },
   MullionSpacing: {
     attributeKey: 'mullionSpacing',
@@ -321,6 +330,7 @@ export const WindowMenu = React.memo(() => {
       case WindowDataType.Opacity:
       case WindowDataType.Width:
       case WindowDataType.Height:
+      case WindowDataType.Setback:
       case WindowDataType.MullionSpacing:
       case WindowDataType.MullionWidth:
       case WindowDataType.SillWidth:
@@ -421,6 +431,7 @@ export const WindowMenu = React.memo(() => {
           </Menu.Item>
           {renderMenuItem(WindowDataType.Width)}
           {renderMenuItem(WindowDataType.Height)}
+          {renderMenuItem(WindowDataType.Setback)}
           {renderMenuItem(WindowDataType.Opacity)}
           {renderMenuItem(WindowDataType.Tint)}
           {/* u-value has its special UI */}
