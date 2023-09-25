@@ -607,6 +607,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
             if (elementsOnWall.length > 0) {
               const wallPoints = RoofUtil.getWallPoints2D(wall);
               elementsOnWall.forEach((e) => {
+                if (e.type === ObjectType.Polygon) return;
                 const isDoor = e.type === ObjectType.Door;
                 const isSolarPanel = e.type === ObjectType.SolarPanel;
                 const eLx = isSolarPanel ? e.lx - 0.01 : e.lx * lx;
