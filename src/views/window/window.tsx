@@ -93,79 +93,6 @@ export const Shutter = ({ cx, cz = 0, lx, lz, color, showLeft, showRight, spacin
   );
 };
 
-const useUpdateOldFiles = (windowModel: WindowModel) => {
-  const fileChanged = useStore(Selector.fileChanged);
-  useEffect(() => {
-    if (
-      windowModel.horizontalMullion === undefined ||
-      windowModel.verticalMullion === undefined ||
-      windowModel.mullionWidth === undefined ||
-      windowModel.horizontalMullionSpacing === undefined ||
-      windowModel.verticalMullionSpacing === undefined ||
-      windowModel.tint === undefined ||
-      windowModel.opacity === undefined ||
-      windowModel.shutter === undefined ||
-      windowModel.mullionColor === undefined ||
-      windowModel.frame === undefined ||
-      windowModel.color === undefined ||
-      windowModel.frameWidth === undefined ||
-      windowModel.windowType === undefined ||
-      windowModel.archHeight === undefined
-    ) {
-      useStore.getState().set((state) => {
-        for (const e of state.elements) {
-          if (e.id === windowModel.id) {
-            const w = e as WindowModel;
-            if (w.horizontalMullion === undefined) {
-              w.horizontalMullion = w.mullion;
-            }
-            if (w.verticalMullion === undefined) {
-              w.verticalMullion = w.mullion;
-            }
-            if (w.mullionWidth === undefined) {
-              w.mullionWidth = 0.06;
-            }
-            if (w.horizontalMullionSpacing === undefined) {
-              w.horizontalMullionSpacing = w.mullionSpacing ?? 0.5;
-            }
-            if (w.verticalMullionSpacing === undefined) {
-              w.verticalMullionSpacing = w.mullionSpacing ?? 0.5;
-            }
-            if (w.tint === undefined) {
-              w.tint = '#73D8FF';
-            }
-            if (w.opacity === undefined) {
-              w.opacity = 0.5;
-            }
-            if (w.shutter === undefined) {
-              w.shutter = defaultShutter;
-            }
-            if (w.mullionColor === undefined) {
-              w.mullionColor = 'white';
-            }
-            if (w.frame === undefined) {
-              w.frame = false;
-            }
-            if (w.color === undefined) {
-              w.color = 'white';
-            }
-            if (w.frameWidth === undefined) {
-              w.frameWidth = 0.1;
-            }
-            if (w.windowType === undefined) {
-              w.windowType = WindowType.Default;
-            }
-            if (w.archHeight === undefined) {
-              w.archHeight = 1;
-            }
-            break;
-          }
-        }
-      });
-    }
-  }, [fileChanged]);
-};
-
 export const WINDOW_GROUP_NAME = 'Window Group';
 
 export const DEFAULT_POLYGONTOP = [0, 0.5];
@@ -205,8 +132,6 @@ const Window = (windowModel: WindowModel) => {
   } = windowModel;
 
   const GROUP_NAME = `${WINDOW_GROUP_NAME} ${id}`;
-
-  useUpdateOldFiles(windowModel);
 
   const setCommonStore = useStore(Selector.set);
   const getFoundation = useStore(Selector.getFoundation);

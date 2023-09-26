@@ -11,7 +11,7 @@ import WindowResizeHandle from '../window/windowResizeHandle';
 import { ThreeEvent } from '@react-three/fiber';
 import RectangleDoor from './rectangleDoor';
 import ArchedDoor from './archedDoor';
-import { useDoorTexture, useUpdateOldDoors } from './hooks';
+import { useDoorTexture } from './hooks';
 import { ArchResizeHandle } from '../window/windowHandleWrapper';
 import {
   CanvasTexture,
@@ -87,8 +87,6 @@ const DoorSealPlanes = React.memo(({ dimension }: DoorSealPlanesProps) => {
 });
 
 const Door = (doorModel: DoorModel) => {
-  useUpdateOldDoors(doorModel);
-
   const {
     id,
     parentId,

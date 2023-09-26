@@ -99,6 +99,7 @@ import { DefaultGraphState } from './DefaultGraphState';
 import { isStackableModel } from 'src/models/Stackable';
 import { WindowModel } from 'src/models/WindowModel';
 import { ProjectUtil } from '../panels/ProjectUtil';
+import { StoreUtil } from './storeUtil';
 
 enableMapSet();
 
@@ -658,13 +659,7 @@ export const useStore = create<CommonStoreState>(
               state.selectedElementIdSet.clear();
               state.groupMasterId = null;
               state.selectedFloatingWindow = null;
-              // TODO: fix these bugs that are tentatively corrected here
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && e.parentId !== GROUND_ID) {
-                  console.log('Error: ' + e.parentId + ' is not ground!');
-                  e.parentId = GROUND_ID;
-                }
-              }
+              StoreUtil.updateOldFileData(state);
             });
             usePrimitiveStore.setState((state) => {
               state.changed = false;

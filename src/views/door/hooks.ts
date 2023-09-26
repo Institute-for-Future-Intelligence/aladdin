@@ -108,28 +108,3 @@ export const useDoorTexture = (textureType: DoorTexture, doorType: DoorType, lx?
   const { invalidate } = useThree();
   return texture;
 };
-
-export const useUpdateOldDoors = (doorModel: DoorModel) => {
-  const isFileChangedFlag = useStore(fileChanged);
-  useEffect(() => {
-    if (doorModel.doorType === undefined || doorModel.archHeight === undefined || doorModel.filled === undefined) {
-      useStore.getState().set((state) => {
-        for (const e of state.elements) {
-          if (e.id === doorModel.id && e.type === ObjectType.Door) {
-            const door = e as DoorModel;
-            if (door.doorType === undefined) {
-              door.doorType = DoorType.Default;
-            }
-            if (door.archHeight === undefined) {
-              door.archHeight = 1;
-            }
-            if (door.filled === undefined) {
-              door.filled = true;
-            }
-            break;
-          }
-        }
-      });
-    }
-  }, [isFileChangedFlag]);
-};

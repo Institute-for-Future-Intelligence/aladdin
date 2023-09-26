@@ -8,7 +8,6 @@ import EmptyWall from './emptyWall';
 import Wall from './wall';
 import WallMoveHandleWrapper from './wallMoveHandleWrapper';
 import WallResizeHandleWrapper from './wallResizeHandleWrapper';
-import { useUpdateOldFiles } from './hooks';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { useSelected } from '../hooks';
 
@@ -18,8 +17,6 @@ interface WallRendererProps {
 }
 
 const WallRenderer = ({ wallModel, foundationModel }: WallRendererProps) => {
-  useUpdateOldFiles(wallModel);
-
   const {
     id,
     roofId,
