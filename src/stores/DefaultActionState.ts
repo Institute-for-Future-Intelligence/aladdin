@@ -100,9 +100,11 @@ export class DefaultActionState implements ActionState {
   windowTint: string;
   windowOpacity: number;
   windowUValue: number;
-  windowMullion: boolean;
+  windowHorizontalMullion: boolean;
+  windowVerticalMullion: boolean;
   windowMullionWidth: number;
-  windowMullionSpacing: number;
+  windowHorizontalMullionSpacing: number;
+  windowVerticalMullionSpacing: number;
   windowMullionColor: string;
   windowShutterLeft: boolean;
   windowShutterRight: boolean;
@@ -233,9 +235,11 @@ export class DefaultActionState implements ActionState {
     this.windowTint = '#73D8FF';
     this.windowOpacity = 0.5;
     this.windowUValue = DEFAULT_WINDOW_U_VALUE;
-    this.windowMullion = true;
+    this.windowHorizontalMullion = true;
+    this.windowVerticalMullion = true;
     this.windowMullionWidth = 0.06;
-    this.windowMullionSpacing = 0.5;
+    this.windowHorizontalMullionSpacing = 0.5;
+    this.windowVerticalMullionSpacing = 0.5;
     this.windowMullionColor = '#ffffff';
     this.windowFrame = false;
     this.windowFrameWidth = 0.1;

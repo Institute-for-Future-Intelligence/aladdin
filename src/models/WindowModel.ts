@@ -15,8 +15,12 @@ export interface WindowModel extends ElementModel {
   shutter: ShutterProps;
 
   mullion: boolean;
-  mullionWidth: number;
+  horizontalMullion: boolean;
+  verticalMullion: boolean;
   mullionSpacing: number;
+  horizontalMullionSpacing: number;
+  verticalMullionSpacing: number;
+  mullionWidth: number;
   mullionColor: string;
 
   // frameColor is using color

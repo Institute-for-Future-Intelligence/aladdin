@@ -66,7 +66,7 @@ const Mullion = React.memo(({ dimension, mullionData, shadowEnabled }: MullionPr
   const [lx, ly, lz, archHeight] = dimension;
   const ah = Math.min(archHeight, lz, lx / 2);
 
-  const { width, spacingX, spacingY, color } = mullionData;
+  const { width, horizontalMullionSpacing, verticalMullionSpacing, color } = mullionData;
 
   const radialSegments = 3;
   const heightSegments = 1;
@@ -113,7 +113,7 @@ const Mullion = React.memo(({ dimension, mullionData, shadowEnabled }: MullionPr
 
   const verticalMullions = useMemo(() => {
     const arr: number[] = [];
-    const dividers = Math.round(lx / spacingX) - 1;
+    const dividers = Math.round(lx / verticalMullionSpacing) - 1;
     if (dividers <= 0 || width === 0) {
       return null;
     }
@@ -127,7 +127,7 @@ const Mullion = React.memo(({ dimension, mullionData, shadowEnabled }: MullionPr
       arr.push(x, -x);
     }
     return arr;
-  }, [lx, width, spacingX]);
+  }, [lx, width, verticalMullionSpacing]);
 
   const horizontalMullions = useMemo(() => {
     const arr: number[] = [];
@@ -136,19 +136,19 @@ const Mullion = React.memo(({ dimension, mullionData, shadowEnabled }: MullionPr
     }
     const top = lz / 2 - ah; // include
     const totalDist = lz - ah;
-    const number = Math.ceil(totalDist / spacingY);
+    const number = Math.ceil(totalDist / horizontalMullionSpacing);
     let curr = top;
     for (let i = 0; i < number; i++) {
       arr.push(curr);
-      curr -= spacingY;
+      curr -= horizontalMullionSpacing;
     }
     return arr;
-  }, [lx, lz, ah, width, spacingY]);
+  }, [lx, lz, ah, width, horizontalMullionSpacing]);
 
   const archMullions = useMemo(() => {
     const arr: number[] = [];
 
-    const dividers = Math.round(lx / spacingX) - 1;
+    const dividers = Math.round(lx / verticalMullionSpacing) - 1;
     if (dividers <= 0 || width === 0) {
       return null;
     }
@@ -163,7 +163,7 @@ const Mullion = React.memo(({ dimension, mullionData, shadowEnabled }: MullionPr
       }
     }
 
-    const shape = drawArchMullionShape(mullionRadius);
+    const shape = drawArchMullionShape(mullionRadius / 2);
 
     return arr.map((x, idx) => {
       if (ah < lx / 4 && idx % 2 === 1) {
@@ -174,7 +174,7 @@ const Mullion = React.memo(({ dimension, mullionData, shadowEnabled }: MullionPr
       }
       return { shape, path: drawArchMullionPath(ah, x) };
     });
-  }, [lx, lz, ah, width, spacingX]);
+  }, [lx, lz, ah, width, verticalMullionSpacing]);
 
   const renderRadialMullion = (length: number, angle: number) => {
     return (
@@ -194,30 +194,32 @@ const Mullion = React.memo(({ dimension, mullionData, shadowEnabled }: MullionPr
 
   return (
     <group name={'Window Mullion Group'} position={[0, -0.001, 0]}>
-      {horizontalMullions.map((z, index) => (
-        <Cylinder
-          key={index}
-          position={[0, 0, z]}
-          args={[mullionRadius, mullionRadius, lx, radialSegments, heightSegments]}
-          rotation={[0, 0, HALF_PI]}
-          receiveShadow={shadowEnabled}
-          castShadow={shadowEnabled}
-        >
-          {material}
-        </Cylinder>
-      ))}
-      {verticalMullions?.map((x, index) => (
-        <Cylinder
-          key={index}
-          position={[x, 0, -ah / 2]}
-          args={[mullionRadius, mullionRadius, lz - ah, radialSegments, heightSegments]}
-          rotation={[HALF_PI, HALF_PI, 0]}
-          receiveShadow={shadowEnabled}
-          castShadow={shadowEnabled}
-        >
-          {material}
-        </Cylinder>
-      ))}
+      {mullionData.horizontalMullion &&
+        horizontalMullions.map((z, index) => (
+          <Cylinder
+            key={index}
+            position={[0, 0, z]}
+            args={[mullionRadius, mullionRadius, lx, radialSegments, heightSegments]}
+            rotation={[0, 0, HALF_PI]}
+            receiveShadow={shadowEnabled}
+            castShadow={shadowEnabled}
+          >
+            {material}
+          </Cylinder>
+        ))}
+      {mullionData.verticalMullion &&
+        verticalMullions?.map((x, index) => (
+          <Cylinder
+            key={index}
+            position={[x, 0, -ah / 2]}
+            args={[mullionRadius, mullionRadius, lz - ah, radialSegments, heightSegments]}
+            rotation={[HALF_PI, HALF_PI, 0]}
+            receiveShadow={shadowEnabled}
+            castShadow={shadowEnabled}
+          >
+            {material}
+          </Cylinder>
+        ))}
       {ah > 0 &&
         archMullions?.map((item, index) => {
           if (item === null) return null;
@@ -557,7 +559,7 @@ const ArchedWindow = ({
             {glassMaterial}
           </mesh>
 
-          {mullionData.showMullion && archHeight !== undefined && (
+          {(mullionData.horizontalMullion || mullionData.verticalMullion) && archHeight !== undefined && (
             <Mullion dimension={dimension} mullionData={mullionData} shadowEnabled={shadowEnabled} />
           )}
         </group>

@@ -25,10 +25,11 @@ import { useSelected } from '../hooks';
 export const defaultShutter = { showLeft: false, showRight: false, color: 'grey', width: 0.5 };
 
 export type MullionDataType = {
-  showMullion: boolean;
+  horizontalMullion: boolean;
+  verticalMullion: boolean;
   width: number;
-  spacingX: number;
-  spacingY: number;
+  horizontalMullionSpacing: number;
+  verticalMullionSpacing: number;
   color: string;
 };
 
@@ -96,9 +97,11 @@ const useUpdateOldFiles = (windowModel: WindowModel) => {
   const fileChanged = useStore(Selector.fileChanged);
   useEffect(() => {
     if (
-      windowModel.mullion === undefined ||
+      windowModel.horizontalMullion === undefined ||
+      windowModel.verticalMullion === undefined ||
       windowModel.mullionWidth === undefined ||
-      windowModel.mullionSpacing === undefined ||
+      windowModel.horizontalMullionSpacing === undefined ||
+      windowModel.verticalMullionSpacing === undefined ||
       windowModel.tint === undefined ||
       windowModel.opacity === undefined ||
       windowModel.shutter === undefined ||
@@ -113,14 +116,20 @@ const useUpdateOldFiles = (windowModel: WindowModel) => {
         for (const e of state.elements) {
           if (e.id === windowModel.id) {
             const w = e as WindowModel;
-            if (w.mullion === undefined) {
-              w.mullion = true;
+            if (w.horizontalMullion === undefined) {
+              w.horizontalMullion = w.mullion;
+            }
+            if (w.verticalMullion === undefined) {
+              w.verticalMullion = w.mullion;
             }
             if (w.mullionWidth === undefined) {
               w.mullionWidth = 0.06;
             }
-            if (w.mullionSpacing === undefined) {
-              w.mullionSpacing = 0.5;
+            if (w.horizontalMullionSpacing === undefined) {
+              w.horizontalMullionSpacing = w.mullionSpacing ?? 0.5;
+            }
+            if (w.verticalMullionSpacing === undefined) {
+              w.verticalMullionSpacing = w.mullionSpacing ?? 0.5;
             }
             if (w.tint === undefined) {
               w.tint = '#73D8FF';
@@ -176,9 +185,11 @@ const Window = (windowModel: WindowModel) => {
     locked,
     lineWidth = 0.2,
     lineColor = 'black',
-    mullion: showMullion = true,
+    horizontalMullion = true,
+    verticalMullion = true,
     mullionWidth = 0.06,
-    mullionSpacing = 0.5,
+    horizontalMullionSpacing = 0.5,
+    verticalMullionSpacing = 0.5,
     tint = '#73D8FF',
     opacity = 0.5,
     shutter = defaultShutter,
@@ -364,13 +375,14 @@ const Window = (windowModel: WindowModel) => {
   const mullionData = useMemo(
     () =>
       ({
-        showMullion,
+        horizontalMullion,
+        verticalMullion,
         width: mullionWidth,
-        spacingX: mullionSpacing,
-        spacingY: mullionSpacing,
+        horizontalMullionSpacing,
+        verticalMullionSpacing,
         color: mullionColor,
       } as MullionDataType),
-    [showMullion, mullionWidth, mullionSpacing, mullionColor],
+    [horizontalMullion, verticalMullion, mullionWidth, horizontalMullionSpacing, verticalMullionSpacing, mullionColor],
   );
 
   const frameData = useMemo(

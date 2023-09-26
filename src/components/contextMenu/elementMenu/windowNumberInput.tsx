@@ -368,8 +368,11 @@ const WindowNumberInput = ({
         case WindowDataType.SillWidth:
           state.actionState.windowSillWidth = value;
           break;
-        case WindowDataType.MullionSpacing:
-          state.actionState.windowMullionSpacing = value;
+        case WindowDataType.HorizontalMullionSpacing:
+          state.actionState.windowHorizontalMullionSpacing = value;
+          break;
+        case WindowDataType.VerticalMullionSpacing:
+          state.actionState.windowVerticalMullionSpacing = value;
           break;
         case WindowDataType.MullionWidth:
           state.actionState.windowMullionWidth = value;

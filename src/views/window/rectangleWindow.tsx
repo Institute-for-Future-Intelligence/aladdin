@@ -64,12 +64,7 @@ const sealPlanesMaterial = new MeshStandardMaterial({ color: 'white', side: Doub
 const Mullion = React.memo(({ dimension, mullionData, shadowEnabled }: MullionProps) => {
   const [lx, ly, lz] = dimension;
 
-  const {
-    width: mullionWidth,
-    spacingX: mullionSpacingX,
-    spacingY: mullionSpacingY,
-    color: mullionColor,
-  } = mullionData;
+  const { width: mullionWidth, horizontalMullionSpacing, verticalMullionSpacing, color: mullionColor } = mullionData;
 
   const radialSegments = 3;
   const heightSegments = 1;
@@ -80,7 +75,7 @@ const Mullion = React.memo(({ dimension, mullionData, shadowEnabled }: MullionPr
 
   const verticalMullions = useMemo(() => {
     const arr: number[] = [];
-    const dividers = Math.round(lx / mullionSpacingX) - 1;
+    const dividers = Math.round(lx / verticalMullionSpacing) - 1;
     if (dividers <= 0 || mullionWidth === 0) {
       return arr;
     }
@@ -94,11 +89,11 @@ const Mullion = React.memo(({ dimension, mullionData, shadowEnabled }: MullionPr
       arr.push(x, -x);
     }
     return arr;
-  }, [lx, mullionWidth, mullionSpacingX]);
+  }, [lx, mullionWidth, verticalMullionSpacing]);
 
   const horizontalMullions = useMemo(() => {
     const arr: number[] = [];
-    const dividers = Math.round(lz / mullionSpacingY) - 1;
+    const dividers = Math.round(lz / horizontalMullionSpacing) - 1;
     if (dividers <= 0 || mullionWidth === 0) {
       return arr;
     }
@@ -112,34 +107,36 @@ const Mullion = React.memo(({ dimension, mullionData, shadowEnabled }: MullionPr
       arr.push(z, -z);
     }
     return arr;
-  }, [lz, mullionWidth, mullionSpacingY]);
+  }, [lz, mullionWidth, horizontalMullionSpacing]);
 
   return (
     <group name={'Window Mullion Group'} position={[0, -0.001, 0]}>
-      {verticalMullions.map((x, index) => (
-        <Cylinder
-          key={index}
-          position={[x, 0.00025, 0]}
-          args={[mullionRadius, mullionRadius, lz, radialSegments, heightSegments]}
-          rotation={[HALF_PI, HALF_PI, 0]}
-          receiveShadow={shadowEnabled}
-          castShadow={shadowEnabled}
-        >
-          {material}
-        </Cylinder>
-      ))}
-      {horizontalMullions.map((z, index) => (
-        <Cylinder
-          key={index}
-          position={[0, 0.0005, z]}
-          args={[mullionRadius, mullionRadius, lx, radialSegments, heightSegments]}
-          rotation={[0, 0, HALF_PI]}
-          receiveShadow={shadowEnabled}
-          castShadow={shadowEnabled}
-        >
-          {material}
-        </Cylinder>
-      ))}
+      {mullionData.verticalMullion &&
+        verticalMullions.map((x, index) => (
+          <Cylinder
+            key={index}
+            position={[x, 0.00025, 0]}
+            args={[mullionRadius, mullionRadius, lz, radialSegments, heightSegments]}
+            rotation={[HALF_PI, HALF_PI, 0]}
+            receiveShadow={shadowEnabled}
+            castShadow={shadowEnabled}
+          >
+            {material}
+          </Cylinder>
+        ))}
+      {mullionData.horizontalMullion &&
+        horizontalMullions.map((z, index) => (
+          <Cylinder
+            key={index}
+            position={[0, 0.0005, z]}
+            args={[mullionRadius, mullionRadius, lx, radialSegments, heightSegments]}
+            rotation={[0, 0, HALF_PI]}
+            receiveShadow={shadowEnabled}
+            castShadow={shadowEnabled}
+          >
+            {material}
+          </Cylinder>
+        ))}
     </group>
   );
 });
@@ -353,7 +350,7 @@ const RectangleWindow = ({
             {glassMaterial}
           </Plane>
 
-          {mullionData.showMullion && (
+          {(mullionData.horizontalMullion || mullionData.verticalMullion) && (
             <Mullion dimension={dimension} mullionData={mullionData} shadowEnabled={shadowEnabled} />
           )}
         </group>

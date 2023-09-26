@@ -84,9 +84,11 @@ export interface ActionState {
   windowTint: string;
   windowOpacity: number;
   windowUValue: number;
-  windowMullion: boolean;
+  windowHorizontalMullion: boolean;
+  windowVerticalMullion: boolean;
   windowMullionWidth: number;
-  windowMullionSpacing: number;
+  windowHorizontalMullionSpacing: number;
+  windowVerticalMullionSpacing: number;
   windowMullionColor: string;
   windowShutterLeft: boolean;
   windowShutterRight: boolean;

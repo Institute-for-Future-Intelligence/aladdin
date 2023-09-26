@@ -25,7 +25,8 @@ export enum WindowDataType {
   Tint = 'Tint',
   Opacity = 'Opacity',
   MullionWidth = 'MullionWidth',
-  MullionSpacing = 'MullionSpacing',
+  HorizontalMullionSpacing = 'HorizontalMullionSpacing',
+  VerticalMullionSpacing = 'VerticalMullionSpacing',
   MullionColor = 'MullionColor',
   FrameWidth = 'FrameWidth',
   SillWidth = 'SillWidth',
@@ -72,8 +73,15 @@ const NumberDialogSettings = {
     note: 'windowMenu.RelativeToWallThickness',
   },
   MullionWidth: { attributeKey: 'mullionWidth', range: [0, 0.2], step: 0.1, unit: 'word.MeterAbbreviation', digit: 1 },
-  MullionSpacing: {
-    attributeKey: 'mullionSpacing',
+  HorizontalMullionSpacing: {
+    attributeKey: 'horizontalMullionSpacing',
+    range: [0.1, 5],
+    step: 0.01,
+    unit: 'word.MeterAbbreviation',
+    digit: 1,
+  },
+  VerticalMullionSpacing: {
+    attributeKey: 'verticalMullionSpacing',
     range: [0.1, 5],
     step: 0.01,
     unit: 'word.MeterAbbreviation',
@@ -100,11 +108,23 @@ export const WindowMenu = React.memo(() => {
   const lang = { lng: language };
   const parent = window ? getParent(window) : null;
 
-  const updateWindowMullionById = (id: string, mullion: boolean) => {
+  const updateWindowHorizontalMullionById = (id: string, value: boolean) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Window && e.id === id) {
-          (e as WindowModel).mullion = mullion;
+          (e as WindowModel).horizontalMullion = value;
+          state.selectedElement = e;
+          break;
+        }
+      }
+    });
+  };
+
+  const updateWindowVerticalMullionById = (id: string, value: boolean) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Window && e.id === id) {
+          (e as WindowModel).verticalMullion = value;
           state.selectedElement = e;
           break;
         }
@@ -184,39 +204,68 @@ export const WindowMenu = React.memo(() => {
 
     return (
       <SubMenu key={'window-mullion'} title={i18n.t('windowMenu.Mullion', lang)} style={{ paddingLeft: '24px' }}>
-        <Menu.Item key={'mullion'}>
+        <Menu.Item key={'horizontal-mullion'}>
           <Checkbox
-            checked={window.mullion}
+            checked={window.horizontalMullion}
             onChange={(e) => {
               const checked = e.target.checked;
               const undoableCheck = {
-                name: 'Mullion',
+                name: 'Horizontal Mullion',
                 timestamp: Date.now(),
                 checked: checked,
                 selectedElementId: window.id,
                 selectedElementType: window.type,
                 undo: () => {
-                  updateWindowMullionById(window.id, !undoableCheck.checked);
+                  updateWindowHorizontalMullionById(window.id, !undoableCheck.checked);
                 },
                 redo: () => {
-                  updateWindowMullionById(window.id, undoableCheck.checked);
+                  updateWindowHorizontalMullionById(window.id, undoableCheck.checked);
                 },
               } as UndoableCheck;
               addUndoable(undoableCheck);
-              updateWindowMullionById(window.id, checked);
+              updateWindowHorizontalMullionById(window.id, checked);
               setCommonStore((state) => {
-                state.actionState.windowMullion = checked;
+                state.actionState.windowHorizontalMullion = checked;
               });
             }}
           >
-            {i18n.t('windowMenu.Mullion', { lng: language })}
+            {i18n.t('windowMenu.HorizontalMullion', { lng: language })}
+          </Checkbox>
+        </Menu.Item>
+        <Menu.Item key={'vertical-mullion'}>
+          <Checkbox
+            checked={window.verticalMullion}
+            onChange={(e) => {
+              const checked = e.target.checked;
+              const undoableCheck = {
+                name: 'Vertical Mullion',
+                timestamp: Date.now(),
+                checked: checked,
+                selectedElementId: window.id,
+                selectedElementType: window.type,
+                undo: () => {
+                  updateWindowVerticalMullionById(window.id, !undoableCheck.checked);
+                },
+                redo: () => {
+                  updateWindowVerticalMullionById(window.id, undoableCheck.checked);
+                },
+              } as UndoableCheck;
+              addUndoable(undoableCheck);
+              updateWindowVerticalMullionById(window.id, checked);
+              setCommonStore((state) => {
+                state.actionState.windowVerticalMullion = checked;
+              });
+            }}
+          >
+            {i18n.t('windowMenu.VerticalMullion', { lng: language })}
           </Checkbox>
         </Menu.Item>
 
         <Divider plain style={{ margin: '6px' }} />
 
         {renderMenuItem(WindowDataType.MullionWidth)}
-        {renderMenuItem(WindowDataType.MullionSpacing)}
+        {renderMenuItem(WindowDataType.HorizontalMullionSpacing)}
+        {renderMenuItem(WindowDataType.VerticalMullionSpacing)}
         {renderMenuItem(WindowDataType.MullionColor)}
       </SubMenu>
     );
@@ -331,7 +380,8 @@ export const WindowMenu = React.memo(() => {
       case WindowDataType.Width:
       case WindowDataType.Height:
       case WindowDataType.Setback:
-      case WindowDataType.MullionSpacing:
+      case WindowDataType.HorizontalMullionSpacing:
+      case WindowDataType.VerticalMullionSpacing:
       case WindowDataType.MullionWidth:
       case WindowDataType.SillWidth:
       case WindowDataType.FrameWidth: {
