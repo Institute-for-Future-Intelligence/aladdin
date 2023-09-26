@@ -198,6 +198,12 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
             maxLength={30}
             style={{ width: '100%' }}
             value={modelAuthor ?? ''}
+            onKeyDown={(e) => {
+              if (!REGEX_ALLOWABLE_IN_NAME.test(e.key)) {
+                e.preventDefault();
+                return false;
+              }
+            }}
             onChange={(e) => {
               setModelAuthor(e.target.value);
             }}

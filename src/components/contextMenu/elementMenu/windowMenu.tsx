@@ -263,9 +263,9 @@ export const WindowMenu = React.memo(() => {
 
         <Divider plain style={{ margin: '6px' }} />
 
-        {renderMenuItem(WindowDataType.MullionWidth)}
         {renderMenuItem(WindowDataType.HorizontalMullionSpacing)}
         {renderMenuItem(WindowDataType.VerticalMullionSpacing)}
+        {renderMenuItem(WindowDataType.MullionWidth)}
         {renderMenuItem(WindowDataType.MullionColor)}
       </SubMenu>
     );
