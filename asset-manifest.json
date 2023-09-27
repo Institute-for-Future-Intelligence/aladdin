@@ -1,17 +1,17 @@
 {
   "files": {
     "main.css": "/aladdin/static/css/main.c1ee157d.chunk.css",
-    "main.js": "/aladdin/static/js/main.d680a398.chunk.js",
-    "main.js.map": "/aladdin/static/js/main.d680a398.chunk.js.map",
+    "main.js": "/aladdin/static/js/main.c7b7d10c.chunk.js",
+    "main.js.map": "/aladdin/static/js/main.c7b7d10c.chunk.js.map",
     "runtime-main.js": "/aladdin/static/js/runtime-main.b3c25317.js",
     "runtime-main.js.map": "/aladdin/static/js/runtime-main.b3c25317.js.map",
     "static/css/2.447301e6.chunk.css": "/aladdin/static/css/2.447301e6.chunk.css",
-    "static/js/2.bc5f84a2.chunk.js": "/aladdin/static/js/2.bc5f84a2.chunk.js",
-    "static/js/2.bc5f84a2.chunk.js.map": "/aladdin/static/js/2.bc5f84a2.chunk.js.map",
+    "static/js/2.254fa5cd.chunk.js": "/aladdin/static/js/2.254fa5cd.chunk.js",
+    "static/js/2.254fa5cd.chunk.js.map": "/aladdin/static/js/2.254fa5cd.chunk.js.map",
     "index.html": "/aladdin/index.html",
     "static/css/2.447301e6.chunk.css.map": "/aladdin/static/css/2.447301e6.chunk.css.map",
     "static/css/main.c1ee157d.chunk.css.map": "/aladdin/static/css/main.c1ee157d.chunk.css.map",
-    "static/js/2.bc5f84a2.chunk.js.LICENSE.txt": "/aladdin/static/js/2.bc5f84a2.chunk.js.LICENSE.txt",
+    "static/js/2.254fa5cd.chunk.js.LICENSE.txt": "/aladdin/static/js/2.254fa5cd.chunk.js.LICENSE.txt",
     "static/media/apple_fall.27ba1ce5.png": "/aladdin/static/media/apple_fall.27ba1ce5.png",
     "static/media/apple_spring.0cad3025.png": "/aladdin/static/media/apple_spring.0cad3025.png",
     "static/media/apple_summer.46de7d87.png": "/aladdin/static/media/apple_summer.46de7d87.png",
@@ -201,8 +201,8 @@
   "entrypoints": [
     "static/js/runtime-main.b3c25317.js",
     "static/css/2.447301e6.chunk.css",
-    "static/js/2.bc5f84a2.chunk.js",
+    "static/js/2.254fa5cd.chunk.js",
     "static/css/main.c1ee157d.chunk.css",
-    "static/js/main.d680a398.chunk.js"
+    "static/js/main.c7b7d10c.chunk.js"
   ]
 }
