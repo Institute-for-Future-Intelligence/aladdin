@@ -109,7 +109,7 @@ const CameraController = () => {
         oc.removeEventListener('end', onInteractionEnd);
       }
     };
-  }, []);
+  }, [enabldeNavigationControls]);
 
   // open new/other file
   useEffect(() => {
@@ -146,9 +146,8 @@ const CameraController = () => {
 
   // switch camera
   useEffect(() => {
-    if (!orthCameraRef.current || !persCameraRef.current || !orbitControlRef.current) {
-      return;
-    }
+    if (!orthCameraRef.current || !persCameraRef.current || !orbitControlRef.current) return;
+
     const viewState = useStore.getState().viewState;
     const orbitControl = orbitControlRef.current;
     const orthCam = orthCameraRef.current;
@@ -201,24 +200,27 @@ const CameraController = () => {
       state.duringCameraInteraction = false;
     });
     setCommonStore((state) => {
-      if (orbitControlRef.current) {
-        const v = state.viewState;
-        const cam = get().camera;
-        const cameraPosition = cam.position;
-        const targetPosition = orbitControlRef.current.target;
-        if (v.orthographic) {
-          if (cam.zoom && !isNaN(cam.zoom)) {
-            v.cameraZoom = cam.zoom;
-          } else {
-            v.cameraZoom = 20;
-          }
-          v.cameraPosition2D = [cameraPosition.x, cameraPosition.y, 150];
-          v.panCenter2D = [targetPosition.x, targetPosition.y, targetPosition.z];
+      if (!orbitControlRef.current) return;
+      const v = state.viewState;
+      const cam = get().camera;
+      const cameraPosition = cam.position;
+      const targetPosition = orbitControlRef.current.target;
+      if (v.orthographic) {
+        if (cam.zoom && !isNaN(cam.zoom)) {
+          v.cameraZoom = cam.zoom;
         } else {
-          v.cameraPosition = [cameraPosition.x, cameraPosition.y, cameraPosition.z];
-          v.panCenter = [targetPosition.x, targetPosition.y, targetPosition.z];
-          state.cameraDirection = getCameraDirection(cam);
+          v.cameraZoom = 20;
         }
+        v.cameraPosition2D = [cameraPosition.x, cameraPosition.y, 150];
+        v.panCenter2D = [targetPosition.x, targetPosition.y, targetPosition.z];
+      } else if (enabldeNavigationControls) {
+        v.cameraPositionNav = [cameraPosition.x, cameraPosition.y, cameraPosition.z];
+        v.cameraRotationNav = [cam.rotation.x, cam.rotation.y, cam.rotation.z];
+        state.cameraDirection = getCameraDirection(cam);
+      } else {
+        v.cameraPosition = [cameraPosition.x, cameraPosition.y, cameraPosition.z];
+        v.panCenter = [targetPosition.x, targetPosition.y, targetPosition.z];
+        state.cameraDirection = getCameraDirection(cam);
       }
     });
   };
@@ -260,16 +262,35 @@ const CameraController = () => {
     }
   }, [enabldeNavigationControls]);
 
-  //switch to navigation controls
+  // switch to navigation controls
   useEffect(() => {
     if (!orbitControlRef.current) return;
 
     if (enabldeNavigationControls) {
       const camera = get().camera;
-      camera.position.z = 3;
-      camera.lookAt(0, 0, 2);
+      const positionNav = useStore.getState().viewState.cameraPositionNav ?? [5, -30, 1];
+      const rotationNav = useStore.getState().viewState.cameraRotationNav ?? [
+        1.5374753309166491, 0.16505866097993566, 0.005476951734475092,
+      ];
+      camera.position.fromArray(positionNav);
+      camera.rotation.fromArray([...rotationNav, 'XYZ']);
+      camera.updateMatrixWorld();
+      setCompassRotation(get().camera);
     } else {
-      orbitControlRef.current.update();
+      const viewState = useStore.getState().viewState;
+      if (orbitControlRef.current && persCameraRef.current) {
+        const cameraPosition = getVector(viewState.cameraPosition ?? [0, 0, 20]);
+        const panCenter = getVector(viewState.panCenter ?? [0, 0, 0]);
+        persCameraRef.current.position.copy(cameraPosition);
+        persCameraRef.current.lookAt(panCenter);
+        persCameraRef.current.zoom = 1;
+        if (!orthographic) {
+          orbitControlRef.current.object = persCameraRef.current;
+          orbitControlRef.current.target.copy(panCenter);
+        }
+        persCameraRef.current.updateMatrixWorld();
+        setCompassRotation(persCameraRef.current);
+      }
     }
   }, [enabldeNavigationControls]);
 

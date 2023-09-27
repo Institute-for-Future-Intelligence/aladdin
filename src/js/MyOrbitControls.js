@@ -512,6 +512,8 @@ class MyOrbitControls extends EventDispatcher {
 
         scope.dispatchEvent( _changeEvent );
 
+        scope.dispatchEvent( _endEvent );
+
       }
 
     }();
@@ -534,6 +536,8 @@ class MyOrbitControls extends EventDispatcher {
 
         scope.dispatchEvent( _changeEvent );
 
+        scope.dispatchEvent( _endEvent );
+
       }
 
     }();
@@ -553,6 +557,8 @@ class MyOrbitControls extends EventDispatcher {
         camera.position.add( _vector );
 
         scope.dispatchEvent( _changeEvent );
+
+        scope.dispatchEvent( _endEvent );
 
       }
     }();
@@ -591,6 +597,8 @@ class MyOrbitControls extends EventDispatcher {
 
         scope.dispatchEvent( _changeEvent );
 
+        scope.dispatchEvent( _endEvent );
+
       }
 
     }();
@@ -610,6 +618,8 @@ class MyOrbitControls extends EventDispatcher {
         camera.quaternion.setFromEuler( _euler );
 
         scope.dispatchEvent( _changeEvent );
+
+        scope.dispatchEvent( _endEvent );
 
       }
 
