@@ -18,19 +18,19 @@ import { useColorPicker } from './menuHooks';
 import { useLanguage } from 'src/views/hooks';
 import Dialog from '../dialog';
 
-interface WindowItemSelectionProps {
+interface WindowColorSelectionProps {
   window: WindowModel;
   dataType: string;
   attributeKey: keyof WindowModel;
   setDialogVisible: () => void;
 }
 
-const WindowItemSelection = ({
+const WindowColorSelection = ({
   window: windowModel,
   dataType,
   attributeKey,
   setDialogVisible,
-}: WindowItemSelectionProps) => {
+}: WindowColorSelectionProps) => {
   const elements = useStore(Selector.elements);
   const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
@@ -289,4 +289,4 @@ const WindowItemSelection = ({
   );
 };
 
-export default WindowItemSelection;
+export default WindowColorSelection;

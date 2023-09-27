@@ -7,23 +7,23 @@ import { CommonStoreState, useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { Copy, Cut, Lock } from '../menuItems';
 import { WindowModel, WindowType } from '../../../models/WindowModel';
-import { Checkbox, Divider, Menu, Radio } from 'antd';
+import { Checkbox, Divider, Menu } from 'antd';
 import i18n from 'src/i18n/i18n';
 import WindowShutterSubMenu from './windowShutterSubMenu';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { ObjectType } from 'src/types';
-import WindowItemSelection from './windowItemSelection';
+import WindowColorSelection from './windowColorSelection';
 import WindowNumberInput from './windowNumberInput';
-import { radioStyle } from './wallMenu';
-import { UndoableChange } from 'src/undo/UndoableChange';
 import WindowUValueInput from './windowUValueInput';
 import { useSelectedElement } from './menuHooks';
+import WindowOptionSelection from './windowOptionSelection';
 
 export enum WindowDataType {
   Color = 'Color',
   Tint = 'Tint',
   Opacity = 'Opacity',
+  WindowType = 'WindowType',
   MullionWidth = 'MullionWidth',
   HorizontalMullionSpacing = 'HorizontalMullionSpacing',
   VerticalMullionSpacing = 'VerticalMullionSpacing',
@@ -35,8 +35,13 @@ export enum WindowDataType {
   Setback = 'Setback',
 }
 
-type ItemSelectionSettingType = {
+type ColorSelectionSettingType = {
   attributeKey: keyof WindowModel;
+};
+
+type OptionSelectionSettingType = {
+  attributeKey: keyof WindowModel;
+  options: string[];
 };
 
 type NumberDialogSettingType = {
@@ -48,10 +53,17 @@ type NumberDialogSettingType = {
   digit?: number;
 };
 
-const SelectionDialogSettings = {
+const ColorDialogSettings = {
   Tint: { attributeKey: 'tint' },
   Color: { attributeKey: 'color' },
   MullionColor: { attributeKey: 'mullionColor' },
+};
+
+const OptionDialogSettings = {
+  WindowType: {
+    attributeKey: 'windowType',
+    options: [WindowType.Default, WindowType.Arched, WindowType.Polygonal],
+  },
 };
 
 const NumberDialogSettings = {
@@ -314,64 +326,36 @@ export const WindowMenu = React.memo(() => {
     );
   };
 
-  const renderTypeSubMenu = () => {
-    if (!window) {
-      return null;
-    }
-    return (
-      <SubMenu key={'window-type'} title={i18n.t('windowMenu.WindowType', lang)} style={{ paddingLeft: '24px' }}>
-        <Radio.Group
-          value={window.windowType ?? WindowType.Default}
-          style={{ height: '75px' }}
-          onChange={(e) => {
-            const undoableChange = {
-              name: 'Select Window Type',
-              timestamp: Date.now(),
-              oldValue: window.windowType,
-              newValue: e.target.value,
-              changedElementId: window.id,
-              changedElementType: window.type,
-              undo: () => {
-                updateWindowTypeById(undoableChange.changedElementId, undoableChange.oldValue as WindowType);
-              },
-              redo: () => {
-                updateWindowTypeById(undoableChange.changedElementId, undoableChange.newValue as WindowType);
-              },
-            } as UndoableChange;
-            addUndoable(undoableChange);
-            updateWindowTypeById(window.id, e.target.value);
-            // todo: can't use it as wall can't have triangle window.
-            // setCommonStore((state) => {
-            //   state.actionState.windowType = e.target.value;
-            // });
-          }}
-        >
-          <Radio style={radioStyle} value={WindowType.Default}>
-            {i18n.t('windowMenu.Default', lang)}
-          </Radio>
-          <Radio style={radioStyle} value={WindowType.Arched}>
-            {i18n.t('windowMenu.Arched', lang)}
-          </Radio>
-          <Radio style={radioStyle} value={WindowType.Polygonal}>
-            {i18n.t('windowMenu.Polygonal', lang)}
-          </Radio>
-        </Radio.Group>
-      </SubMenu>
-    );
-  };
-
   const renderDialogs = () => {
     switch (dataType) {
       case WindowDataType.Tint:
       case WindowDataType.MullionColor:
       case WindowDataType.Color: {
-        const setting = SelectionDialogSettings[dataType] as ItemSelectionSettingType;
+        const setting = ColorDialogSettings[dataType] as ColorSelectionSettingType;
         if (!setting) return null;
         return (
-          <WindowItemSelection
+          <WindowColorSelection
             window={window!}
             dataType={dataType}
             attributeKey={setting.attributeKey}
+            setDialogVisible={() => setDataType(null)}
+          />
+        );
+      }
+      case WindowDataType.WindowType: {
+        const setting = OptionDialogSettings[dataType] as OptionSelectionSettingType;
+        if (!setting) return null;
+        return (
+          <WindowOptionSelection
+            window={window!}
+            dataType={dataType}
+            attributeKey={setting.attributeKey}
+            options={[WindowType.Default, WindowType.Arched, WindowType.Polygonal]}
+            optionsText={[
+              i18n.t('windowMenu.Default', lang),
+              i18n.t('windowMenu.Arched', lang),
+              i18n.t('windowMenu.Polygonal', lang),
+            ]}
             setDialogVisible={() => setDataType(null)}
           />
         );
@@ -479,6 +463,7 @@ export const WindowMenu = React.memo(() => {
               {i18n.t('windowMenu.Interior', lang)}
             </Checkbox>
           </Menu.Item>
+          {renderMenuItem(WindowDataType.WindowType)}
           {renderMenuItem(WindowDataType.Width)}
           {renderMenuItem(WindowDataType.Height)}
           {renderMenuItem(WindowDataType.Setback)}
@@ -496,7 +481,6 @@ export const WindowMenu = React.memo(() => {
           >
             {i18n.t('word.UValue', lang)} ...
           </Menu.Item>
-          {renderTypeSubMenu()}
           {renderMullionSubMenu()}
           {renderFrameSubMenu()}
           <WindowShutterSubMenu windowId={window.id} />
