@@ -18,7 +18,6 @@ import {
   UNIT_VECTOR_POS_Z,
 } from 'src/constants';
 import { FrameDataType, MullionDataType, Shutter, WireframeDataType } from './window';
-import { ShutterProps } from 'src/models/WindowModel';
 import { Util } from '../../Util';
 import { useDataStore } from '../../stores/commonData';
 import { FoundationModel } from '../../models/FoundationModel';
@@ -30,7 +29,10 @@ interface ArchedWindowProps {
   mullionData: MullionDataType;
   frameData: FrameDataType;
   wireframeData: WireframeDataType;
-  shutter: ShutterProps;
+  leftShutter: boolean;
+  rightShutter: boolean;
+  shutterColor: string;
+  shutterWidth: number;
   glassMaterial: JSX.Element;
   showHeatFluxes: boolean;
   area: number;
@@ -439,7 +441,10 @@ const ArchedWindow = ({
   mullionData,
   frameData,
   wireframeData,
-  shutter,
+  leftShutter,
+  rightShutter,
+  shutterColor,
+  shutterWidth,
   glassMaterial,
   showHeatFluxes,
   area,
@@ -528,13 +533,13 @@ const ArchedWindow = ({
     return vectors;
   }, [id, dimension, showHeatFluxes, heatFluxScaleFactor]);
 
-  const shutterWidth = useMemo(() => shutter.width * lx, [lx, shutter.width]);
-  const shutterHeight = useMemo(() => lz - Math.min(archHeight, lz, lx / 2), [lx, lz, archHeight]);
+  const widthShutter = useMemo(() => shutterWidth * lx, [lx, shutterWidth]);
+  const heightShutter = useMemo(() => lz - Math.min(archHeight, lz, lx / 2), [lx, lz, archHeight]);
   const shutterPosX = useMemo(
-    () => ((shutterWidth + frameData.width + lx) / 2) * 1.025,
-    [lx, shutterWidth, frameData.width],
+    () => ((widthShutter + frameData.width + lx) / 2) * 1.025,
+    [lx, widthShutter, frameData.width],
   );
-  const shutterPosZ = useMemo(() => -Math.min(archHeight, lz, lx / 2) / 2, [lz, shutterHeight]);
+  const shutterPosZ = useMemo(() => -Math.min(archHeight, lz, lx / 2) / 2, [lz, heightShutter]);
 
   const glassShape = useMemo(() => getArchedWindowShape(lx, lz, archHeight), [lx, lz, archHeight]);
 
@@ -572,11 +577,11 @@ const ArchedWindow = ({
       <Shutter
         cx={shutterPosX}
         cz={shutterPosZ}
-        lx={shutterWidth}
-        lz={shutterHeight}
-        color={shutter.color}
-        showLeft={shutter.showLeft}
-        showRight={shutter.showRight}
+        lx={widthShutter}
+        lz={heightShutter}
+        color={shutterColor}
+        showLeft={leftShutter}
+        showRight={rightShutter}
         spacing={frameData.showFrame ? frameData.width / 2 : 0}
       />
 

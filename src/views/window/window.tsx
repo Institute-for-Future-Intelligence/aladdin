@@ -2,7 +2,7 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Color, DoubleSide, Euler, Vector3 } from 'three';
 import { Box } from '@react-three/drei';
 import { WindowModel, WindowType } from 'src/models/WindowModel';
@@ -21,8 +21,6 @@ import { useRefStore } from 'src/stores/commonRef';
 import { ElementModel } from 'src/models/ElementModel';
 import PolygonalWindow from './polygonalWindow';
 import { useSelected } from '../hooks';
-
-export const defaultShutter = { showLeft: false, showRight: false, color: 'grey', width: 0.5 };
 
 export type MullionDataType = {
   horizontalMullion: boolean;
@@ -119,7 +117,10 @@ const Window = (windowModel: WindowModel) => {
     verticalMullionSpacing = 0.5,
     tint = '#73D8FF',
     opacity = 0.5,
-    shutter = defaultShutter,
+    leftShutter = false,
+    rightShutter = false,
+    shutterColor = 'gray',
+    shutterWidth = 0.5,
     mullionColor = 'white',
     frame = false,
     color = 'white',
@@ -333,7 +334,10 @@ const Window = (windowModel: WindowModel) => {
             mullionData={mullionData}
             frameData={frameData}
             wireframeData={wireframeData}
-            shutter={shutter}
+            leftShutter={leftShutter}
+            rightShutter={rightShutter}
+            shutterColor={shutterColor}
+            shutterWidth={shutterWidth}
             glassMaterial={glassMaterial}
             showHeatFluxes={showHeatFluxes}
             area={Util.getWindowArea(windowModel)}
@@ -351,7 +355,10 @@ const Window = (windowModel: WindowModel) => {
             mullionData={mullionData}
             frameData={frameData}
             wireframeData={wireframeData}
-            shutter={shutter}
+            leftShutter={leftShutter}
+            rightShutter={rightShutter}
+            shutterColor={shutterColor}
+            shutterWidth={shutterWidth}
             glassMaterial={glassMaterial}
             showHeatFluxes={showHeatFluxes}
             area={Util.getWindowArea(windowModel)}
@@ -372,7 +379,10 @@ const Window = (windowModel: WindowModel) => {
             interior={!!windowModel.interior}
             wireframeData={wireframeData}
             frameData={frameData}
-            shutter={shutter}
+            leftShutter={leftShutter}
+            rightShutter={rightShutter}
+            shutterColor={shutterColor}
+            shutterWidth={shutterWidth}
             showHeatFluxes={showHeatFluxes}
             area={Util.getWindowArea(windowModel)}
             foundation={getFoundation(windowModel)}

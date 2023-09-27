@@ -17,7 +17,6 @@ import {
   WallTexture,
 } from '../types';
 import { ParapetArgs, WallStructure } from '../models/WallModel';
-import { defaultShutter } from '../views/window/window';
 import { WindowType } from 'src/models/WindowModel';
 import { RoofStructure } from '../models/RoofModel';
 import { DoorType } from 'src/models/DoorModel';
@@ -247,10 +246,10 @@ export class DefaultActionState implements ActionState {
     this.windowType = WindowType.Default;
     this.windowArchHeight = 1;
     // I worry about this using Shutter objects may cause default to be accidentally overwritten.
-    this.windowShutterLeft = defaultShutter.showLeft;
-    this.windowShutterRight = defaultShutter.showRight;
-    this.windowShutterColor = defaultShutter.color;
-    this.windowShutterWidth = defaultShutter.width;
+    this.windowShutterLeft = false;
+    this.windowShutterRight = false;
+    this.windowShutterColor = 'gray';
+    this.windowShutterWidth = 0.5;
     this.windowEmpty = false;
     this.windowInterior = false;
 

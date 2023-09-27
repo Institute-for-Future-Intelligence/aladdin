@@ -19,7 +19,6 @@ import { DoubleSide, Euler, MeshStandardMaterial, Shape, Vector3 } from 'three';
 import * as Selector from 'src/stores/selector';
 import { FrameDataType, Shutter, WireframeDataType } from './window';
 import { RoofUtil } from '../roof/RoofUtil';
-import { ShutterProps } from 'src/models/WindowModel';
 import { useDataStore } from '../../stores/commonData';
 import { Util } from '../../Util';
 import { Point2 } from '../../models/Point2';
@@ -35,7 +34,10 @@ interface PolygonalWindowProps {
   interior: boolean;
   wireframeData: WireframeDataType;
   frameData: FrameDataType;
-  shutter: ShutterProps;
+  leftShutter: boolean;
+  rightShutter: boolean;
+  shutterColor: string;
+  shutterWidth: number;
   area: number;
   showHeatFluxes: boolean;
   foundation: FoundationModel | null;
@@ -158,7 +160,10 @@ const PolygonalWindow = ({
   interior,
   wireframeData,
   frameData,
-  shutter,
+  leftShutter,
+  rightShutter,
+  shutterColor,
+  shutterWidth,
   area,
   showHeatFluxes,
   foundation,
@@ -253,7 +258,7 @@ const PolygonalWindow = ({
     return vectors;
   }, [id, dimension, showHeatFluxes, heatFluxScaleFactor]);
 
-  const shutterLength = useMemo(() => shutter.width * lx, [lx, shutter]);
+  const shutterLength = useMemo(() => shutterWidth * lx, [lx, shutterWidth]);
   const shutterPosX = useMemo(
     () => ((shutterLength + frameData.width + lx) / 2) * 1.025,
     [lx, shutterLength, frameData.width],
@@ -329,9 +334,9 @@ const PolygonalWindow = ({
         cx={shutterPosX}
         lx={shutterLength}
         lz={lz}
-        color={shutter.color}
-        showLeft={shutter.showLeft}
-        showRight={shutter.showRight}
+        color={shutterColor}
+        showLeft={leftShutter}
+        showRight={rightShutter}
         spacing={frameData.showFrame ? frameData.width / 2 : 0}
       />
 

@@ -55,20 +55,20 @@ const WindowColorSelection = ({
     });
   };
 
-  const updateOnSameWall = (wId: string, val: string) => {
+  const updateOnSameWall = (wallId: string, val: string) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
-        if (!e.locked && e.type === ObjectType.Window && e.parentId === wId) {
+        if (!e.locked && e.type === ObjectType.Window && e.parentId === wallId) {
           ((e as WindowModel)[attributeKey] as string) = val;
         }
       }
     });
   };
 
-  const updateAboveFoundation = (fId: string, val: string) => {
+  const updateAboveFoundation = (foundationId: string, val: string) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
-        if (!e.locked && e.type === ObjectType.Window && e.foundationId === fId) {
+        if (!e.locked && e.type === ObjectType.Window && e.foundationId === foundationId) {
           ((e as WindowModel)[attributeKey] as string) = val;
         }
       }
@@ -87,7 +87,7 @@ const WindowColorSelection = ({
 
   const undoInMap = (map: Map<string, string>) => {
     for (const [id, val] of map.entries()) {
-      updateById(id, val as string);
+      updateById(id, val);
     }
   };
 

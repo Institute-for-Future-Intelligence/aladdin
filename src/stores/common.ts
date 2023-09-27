@@ -99,7 +99,7 @@ import { DefaultGraphState } from './DefaultGraphState';
 import { isStackableModel } from 'src/models/Stackable';
 import { WindowModel } from 'src/models/WindowModel';
 import { ProjectUtil } from '../panels/ProjectUtil';
-import { StoreUtil } from './storeUtil';
+import { StoreUtil } from './StoreUtil';
 
 enableMapSet();
 

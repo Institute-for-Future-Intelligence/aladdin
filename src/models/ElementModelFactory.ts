@@ -639,12 +639,6 @@ export class ElementModelFactory {
         break;
     }
     const actionState = useStore.getState().actionState;
-    const shutter = {
-      showLeft: actionState.windowShutterLeft,
-      showRight: actionState.windowShutterRight,
-      color: actionState.windowShutterColor,
-      width: actionState.windowShutterWidth,
-    };
     return {
       type: ObjectType.Window,
       cx: cx,
@@ -653,7 +647,10 @@ export class ElementModelFactory {
       lx: lx,
       ly: ly,
       lz: lz,
-      shutter: shutter,
+      leftShutter: actionState.windowShutterLeft,
+      rightShutter: actionState.windowShutterRight,
+      shutterColor: actionState.windowShutterColor,
+      shutterWidth: actionState.windowShutterWidth,
       horizontalMullion: actionState.windowHorizontalMullion,
       verticalMullion: actionState.windowVerticalMullion,
       mullionWidth: actionState.windowMullionWidth,
