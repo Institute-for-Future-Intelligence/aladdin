@@ -213,18 +213,19 @@ const CameraController = () => {
         }
         v.cameraPosition2D = [cameraPosition.x, cameraPosition.y, 150];
         v.panCenter2D = [targetPosition.x, targetPosition.y, targetPosition.z];
-      } else {
+      } else if (enabledNavigationControls) {
+        // Do not save the pan center in the navigation mode as the camera position in this mode
+        // may be way off, which can surprise the user when they exit the navigation mode and try
+        // to rotate the view. It is difficult to get the pan center back unless they reset the view.
+        // const panCenter = cam.localToWorld(new Vector3(0, 0, -50));
+        // v.panCenter = [panCenter.x, panCenter.y, 0];
+        v.cameraPositionNav = [cameraPosition.x, cameraPosition.y, cameraPosition.z];
+        v.cameraRotationNav = [cam.rotation.x, cam.rotation.y, cam.rotation.z];
         state.cameraDirection = getCameraDirection(cam);
-        if (enabledNavigationControls) {
-          // Do not save the pan center in the navigation mode as the camera position in this mode
-          // may be way off, which can surprise the user when they exit the navigation mode and try
-          // to rotate the view. It is difficult to get the pan center back unless they reset the view.
-          // const panCenter = cam.localToWorld(new Vector3(0, 0, -50));
-          // v.panCenter = [panCenter.x, panCenter.y, 0];
-        } else {
-          v.panCenter = [targetPosition.x, targetPosition.y, targetPosition.z];
-        }
+      } else {
         v.cameraPosition = [cameraPosition.x, cameraPosition.y, cameraPosition.z];
+        v.panCenter = [targetPosition.x, targetPosition.y, targetPosition.z];
+        state.cameraDirection = getCameraDirection(cam);
       }
     });
   };
@@ -274,9 +275,12 @@ const CameraController = () => {
 
     if (enabledNavigationControls) {
       const camera = get().camera;
-      camera.position.fromArray(viewState.cameraPosition ?? [0, 0, 20]);
-      const [x, y, z] = viewState.panCenter ?? [0, 0, 0];
-      camera.lookAt(x, y, z);
+      const positionNav = viewState.cameraPositionNav ?? [5, -30, 1];
+      const rotationNav = viewState.cameraRotationNav ?? [
+        1.5374753309166491, 0.16505866097993566, 0.005476951734475092,
+      ];
+      camera.position.fromArray(positionNav);
+      camera.rotation.fromArray([...rotationNav, 'XYZ']);
       camera.updateMatrixWorld();
       setCompassRotation(get().camera);
     } else {
@@ -291,10 +295,10 @@ const CameraController = () => {
           orbitControlRef.current.target.copy(panCenter);
         }
         persCameraRef.current.updateMatrixWorld();
-        orbitControlRef.current.update();
         setCompassRotation(persCameraRef.current);
       }
     }
+    invalidate();
   }, [enabledNavigationControls]);
 
   return (

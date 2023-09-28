@@ -27,6 +27,8 @@ export class DefaultViewState implements ViewState {
   panCenter: number[];
   panCenter2D: number[];
   cameraZoom: number;
+  cameraPositionNav: number[];
+  cameraRotationNav: number[];
 
   axes: boolean;
   heatFluxScaleFactor: number;
@@ -119,6 +121,8 @@ export class DefaultViewState implements ViewState {
     this.panCenter = [0, 0, 0];
     this.panCenter2D = [0, 0, 0];
     this.cameraZoom = 20;
+    this.cameraPositionNav = [5, -30, 1];
+    this.cameraRotationNav = [1.5374753309166491, 0.16505866097993566, 0.005476951734475092];
 
     this.axes = true;
     this.heatFluxScaleFactor = DEFAULT_HEAT_FLUX_SCALE_FACTOR;
@@ -212,6 +216,8 @@ export class DefaultViewState implements ViewState {
     viewState.panCenter2D = [0, 0, 0];
     viewState.directLightIntensity = 1;
     viewState.ambientLightIntensity = 0.1;
+    viewState.cameraPositionNav = [5, -30, 1];
+    viewState.cameraRotationNav = [1.5374753309166491, 0.16505866097993566, 0.005476951734475092];
 
     viewState.axes = true;
     viewState.heatFluxScaleFactor = DEFAULT_HEAT_FLUX_SCALE_FACTOR;
