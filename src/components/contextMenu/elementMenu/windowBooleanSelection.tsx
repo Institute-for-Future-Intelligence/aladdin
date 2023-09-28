@@ -1,213 +1,218 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2023. Institute for Future Intelligence, Inc.
  */
 
-import React from 'react';
-import { Col, Radio, Row, Space } from 'antd';
+import React, { useState } from 'react';
+import { Col, Radio, Row, Space, Switch } from 'antd';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
 import { ObjectType, Scope } from 'src/types';
 import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
-import { CompactPicker } from 'react-color';
 import { WindowModel } from 'src/models/WindowModel';
-import { useColorPicker, useSelectedElement } from './menuHooks';
-import Dialog from '../dialog';
-import { useLanguage } from 'src/views/hooks';
 
-const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
-  const setCommonStore = useStore(Selector.set);
+import { useLanguage } from 'src/views/hooks';
+import Dialog from '../dialog';
+
+interface WindowBooleanSelectionProps {
+  window: WindowModel;
+  dataType: string;
+  attributeKey: keyof WindowModel;
+  setDialogVisible: () => void;
+}
+
+const WindowBooleanSelection = ({
+  window: windowModel,
+  dataType,
+  attributeKey,
+  setDialogVisible,
+}: WindowBooleanSelectionProps) => {
   const elements = useStore(Selector.elements);
+  const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.windowActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
-  const getElementById = useStore(Selector.getElementById);
 
-  const windowModel = useSelectedElement(ObjectType.Window) as WindowModel | undefined;
-
-  const [selectedColor, onColorChange] = useColorPicker(windowModel?.shutter?.color ?? '#808080');
+  const [selected, setSelected] = useState<boolean>(windowModel[attributeKey] as boolean);
 
   const lang = useLanguage();
 
-  const updateById = (id: string, color: string) => {
+  const updateById = (id: string, value: boolean) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
-        if (e.id === id) {
-          if (!e.locked) {
-            const w = e as WindowModel;
-            if (w.shutter) {
-              w.shutter.color = color;
-            }
-          }
+        if (e.id === id && !e.locked && e.type === ObjectType.Window) {
+          ((e as WindowModel)[attributeKey] as boolean) = value;
           break;
         }
       }
     });
   };
 
-  const updateInMap = (map: Map<string, string>, color: string) => {
-    for (const id of map.keys()) {
-      updateById(id, color);
+  const updateOnSameWall = (wallId: string, value: boolean) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (!e.locked && e.type === ObjectType.Window && e.parentId === wallId) {
+          ((e as WindowModel)[attributeKey] as boolean) = value;
+        }
+      }
+    });
+  };
+
+  const updateAboveFoundation = (foundationId: string, value: boolean) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (!e.locked && e.type === ObjectType.Window && e.foundationId === foundationId) {
+          ((e as WindowModel)[attributeKey] as boolean) = value;
+        }
+      }
+    });
+  };
+
+  const updateForAll = (value: boolean) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (!e.locked && e.type === ObjectType.Window) {
+          ((e as WindowModel)[attributeKey] as boolean) = value;
+        }
+      }
+    });
+  };
+
+  const undoInMap = (map: Map<string, boolean>) => {
+    for (const [id, v] of map.entries()) {
+      updateById(id, v);
     }
   };
 
-  const undoInMap = (map: Map<string, string>) => {
-    for (const [id, color] of map.entries()) {
-      updateById(id, color);
-    }
-  };
-
-  const needChange = (value: string) => {
-    if (!windowModel) return;
+  const needChange = (value: boolean) => {
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
-          if (e.type === ObjectType.Window && value !== (e as WindowModel).shutter.color && !e.locked) {
-            return true;
+          if (e.type === ObjectType.Window && !e.locked) {
+            if ((e as WindowModel)[attributeKey] !== value) return true;
           }
         }
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         for (const e of elements) {
-          if (
-            e.type === ObjectType.Window &&
-            e.foundationId === windowModel.foundationId &&
-            value !== (e as WindowModel).shutter.color &&
-            !e.locked
-          ) {
-            return true;
+          if (e.type === ObjectType.Window && e.foundationId === windowModel.foundationId && !e.locked) {
+            if ((e as WindowModel)[attributeKey] !== value) return true;
           }
         }
         break;
       case Scope.OnlyThisSide:
         for (const e of elements) {
-          if (
-            e.type === ObjectType.Window &&
-            e.parentId === windowModel.parentId &&
-            value !== (e as WindowModel).shutter.color &&
-            !e.locked
-          ) {
-            return true;
+          if (e.type === ObjectType.Window && e.parentId === windowModel.parentId && !e.locked) {
+            if ((e as WindowModel)[attributeKey] !== value) return true;
           }
         }
         break;
       default:
-        if (value !== windowModel?.shutter.color) {
-          return true;
-        }
+        if (windowModel[attributeKey] !== value) return true;
         break;
     }
     return false;
   };
 
-  const updateColor = (value: string) => {
+  const updateValue = (value: boolean) => {
     if (!windowModel) return;
     if (!needChange(value)) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
-        const oldValuesAll = new Map<string, string>();
+        const oldValuesAll = new Map<string, boolean>();
         for (const e of elements) {
           if (e.type === ObjectType.Window && !e.locked) {
-            oldValuesAll.set(e.id, (e as WindowModel).shutter?.color ?? '#808080');
+            oldValuesAll.set(e.id, (e as WindowModel)[attributeKey] as boolean);
           }
         }
         const undoableChangeAll = {
-          name: 'Set Shutter Color for All Windows',
+          name: `Set ${dataType} for All Windows`,
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
           undo: () => {
-            undoInMap(undoableChangeAll.oldValues as Map<string, string>);
+            undoInMap(undoableChangeAll.oldValues as Map<string, boolean>);
           },
           redo: () => {
-            updateInMap(undoableChangeAll.oldValues as Map<string, string>, undoableChangeAll.newValue as string);
+            updateForAll(undoableChangeAll.newValue as boolean);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateInMap(oldValuesAll, value);
+        updateForAll(value);
         setApplyCount(applyCount + 1);
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (windowModel.foundationId) {
-          const oldValuesAboveFoundation = new Map<string, string>();
+          const oldValuesAboveFoundation = new Map<string, boolean>();
           for (const e of elements) {
             if (e.type === ObjectType.Window && e.foundationId === windowModel.foundationId && !windowModel.locked) {
-              oldValuesAboveFoundation.set(e.id, (e as WindowModel).shutter?.color ?? '#808080');
+              oldValuesAboveFoundation.set(e.id, (e as WindowModel)[attributeKey] as boolean);
             }
           }
           const undoableChangeAboveFoundation = {
-            name: 'Set Shutter Color for All Windows Above Foundation',
+            name: `Set ${dataType} for All Windows Above Foundation`,
             timestamp: Date.now(),
             oldValues: oldValuesAboveFoundation,
             newValue: value,
             groupId: windowModel.foundationId,
             undo: () => {
-              undoInMap(undoableChangeAboveFoundation.oldValues as Map<string, string>);
+              undoInMap(undoableChangeAboveFoundation.oldValues as Map<string, boolean>);
             },
             redo: () => {
-              if (undoableChangeAboveFoundation.groupId) {
-                updateInMap(
-                  undoableChangeAboveFoundation.oldValues as Map<string, string>,
-                  undoableChangeAboveFoundation.newValue as string,
-                );
-              }
+              updateAboveFoundation(
+                undoableChangeAboveFoundation.groupId,
+                undoableChangeAboveFoundation.newValue as boolean,
+              );
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAboveFoundation);
-          updateInMap(oldValuesAboveFoundation, value);
+          updateAboveFoundation(windowModel.foundationId, value);
           setApplyCount(applyCount + 1);
         }
         break;
       case Scope.OnlyThisSide:
         if (windowModel.parentId) {
-          const oldValues = new Map<string, string>();
+          const oldValues = new Map<string, boolean>();
           for (const e of elements) {
             if (e.type === ObjectType.Window && e.parentId === windowModel.parentId && !e.locked) {
-              const w = e as WindowModel;
-              if (w.shutter) {
-                oldValues.set(e.id, w.shutter.color);
-              }
+              oldValues.set(e.id, (e as WindowModel)[attributeKey] as boolean);
             }
           }
           const undoableChangeOnSameWall = {
-            name: 'Set Shutter Color for All Windows On the Same Wall',
+            name: `Set ${dataType} for All Windows On the Same Wall`,
             timestamp: Date.now(),
             oldValues: oldValues,
             newValue: value,
             groupId: windowModel.parentId,
             undo: () => {
-              undoInMap(undoableChangeOnSameWall.oldValues as Map<string, string>);
+              undoInMap(undoableChangeOnSameWall.oldValues as Map<string, boolean>);
             },
             redo: () => {
-              updateInMap(
-                undoableChangeOnSameWall.oldValues as Map<string, string>,
-                undoableChangeOnSameWall.newValue as string,
-              );
+              updateOnSameWall(windowModel.parentId, undoableChangeOnSameWall.newValue as boolean);
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeOnSameWall);
-          updateInMap(oldValues, value);
+          updateOnSameWall(windowModel.parentId, value);
           setApplyCount(applyCount + 1);
         }
         break;
       default:
         if (windowModel) {
-          const updatedWindow = getElementById(windowModel.id) as WindowModel;
-          const oldColor = (updatedWindow ? updatedWindow.tint : windowModel.tint) ?? '#808080';
+          const oldValue = windowModel[attributeKey] as boolean;
           const undoableChange = {
-            name: 'Set Shutter Color of Selected window',
+            name: `Set ${dataType} of Selected window`,
             timestamp: Date.now(),
-            oldValue: oldColor,
+            oldValue: oldValue,
             newValue: value,
             changedElementId: windowModel.id,
             changedElementType: windowModel.type,
             undo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.oldValue as string);
+              updateById(undoableChange.changedElementId, undoableChange.oldValue as boolean);
             },
             redo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.newValue as string);
+              updateById(undoableChange.changedElementId, undoableChange.newValue as boolean);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
@@ -215,29 +220,33 @@ const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (
           setApplyCount(applyCount + 1);
         }
     }
-    setCommonStore((state) => {
-      state.actionState.windowShutterColor = value;
-    });
   };
 
   const close = () => {
-    setDialogVisible(false);
+    setDialogVisible();
   };
 
   const apply = () => {
-    updateColor(selectedColor);
+    if (windowModel[attributeKey] !== selected) {
+      updateValue(selected);
+    }
   };
 
   return (
-    <Dialog width={640} title={i18n.t('windowMenu.ShutterColor', lang)} onApply={apply} onClose={close}>
+    <Dialog width={500} title={i18n.t(`windowMenu.${dataType}`, lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
-        <Col className="gutter-row" span={11}>
-          <CompactPicker color={selectedColor} onChangeComplete={onColorChange} />
+        <Col className="gutter-row" span={4}>
+          <Switch
+            checked={selected}
+            onChange={(checked) => {
+              setSelected(checked);
+            }}
+          />
         </Col>
         <Col
           className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-          span={13}
+          span={20}
         >
           <Radio.Group onChange={(e) => useStore.getState().setWindowActionScope(e.target.value)} value={actionScope}>
             <Space direction="vertical">
@@ -255,4 +264,4 @@ const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (
   );
 };
 
-export default WindowShutterColorSelection;
+export default WindowBooleanSelection;

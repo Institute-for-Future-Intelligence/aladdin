@@ -12,7 +12,11 @@ export interface WindowModel extends ElementModel {
   uValue: number;
   setback?: number;
 
-  shutter: ShutterProps;
+  shutter: ShutterProps | undefined; // backward compatibility
+  leftShutter: boolean;
+  rightShutter: boolean;
+  shutterColor: string;
+  shutterWidth: number;
 
   mullion: boolean;
   horizontalMullion: boolean;
@@ -43,6 +47,7 @@ export interface WindowModel extends ElementModel {
   interior?: boolean;
 }
 
+// backward compatibility
 export interface ShutterProps {
   showLeft: boolean;
   showRight: boolean;

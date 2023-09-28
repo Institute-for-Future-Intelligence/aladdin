@@ -18,7 +18,6 @@ import {
   UNIT_VECTOR_POS_Z,
 } from 'src/constants';
 import { FrameDataType, MullionDataType, Shutter, WireframeDataType } from './window';
-import { ShutterProps } from 'src/models/WindowModel';
 import { Util } from '../../Util';
 import { useDataStore } from '../../stores/commonData';
 import { FoundationModel } from '../../models/FoundationModel';
@@ -30,7 +29,10 @@ interface RectangleWindowProps {
   mullionData: MullionDataType;
   frameData: FrameDataType;
   wireframeData: WireframeDataType;
-  shutter: ShutterProps;
+  leftShutter: boolean;
+  rightShutter: boolean;
+  shutterColor: string;
+  shutterWidth: number;
   glassMaterial: JSX.Element;
   showHeatFluxes: boolean;
   area: number;
@@ -256,7 +258,10 @@ const RectangleWindow = ({
   mullionData,
   frameData,
   wireframeData,
-  shutter,
+  leftShutter,
+  rightShutter,
+  shutterColor,
+  shutterWidth,
   glassMaterial,
   showHeatFluxes,
   area,
@@ -324,7 +329,7 @@ const RectangleWindow = ({
     return vectors;
   }, [id, dimension, showHeatFluxes, heatFluxScaleFactor]);
 
-  const shutterLength = useMemo(() => shutter.width * lx, [lx, shutter]);
+  const shutterLength = useMemo(() => shutterWidth * lx, [lx, shutterWidth]);
   const shutterPosX = useMemo(
     () => ((shutterLength + frameData.width + lx) / 2) * 1.025,
     [lx, shutterLength, frameData.width],
@@ -362,9 +367,9 @@ const RectangleWindow = ({
         cx={shutterPosX}
         lx={shutterLength}
         lz={lz}
-        color={shutter.color}
-        showLeft={shutter.showLeft}
-        showRight={shutter.showRight}
+        color={shutterColor}
+        showLeft={leftShutter}
+        showRight={rightShutter}
         spacing={frameData.showFrame ? frameData.width / 2 : 0}
       />
 

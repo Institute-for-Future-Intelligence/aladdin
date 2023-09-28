@@ -5,7 +5,6 @@
 import { CommonStoreState } from './common';
 import { ObjectType } from 'src/types';
 import { WindowModel, WindowType } from 'src/models/WindowModel';
-import { defaultShutter } from 'src/views/window/window';
 import { WallFill, WallModel, WallStructure } from 'src/models/WallModel';
 import { DEFAULT_PARAPET_SETTINGS } from 'src/views/wall/parapet';
 import { GambrelRoofModel, RoofModel, RoofType } from 'src/models/RoofModel';
@@ -93,8 +92,18 @@ export class StoreUtil {
           if (window.opacity === undefined) {
             window.opacity = 0.5;
           }
-          if (window.shutter === undefined) {
-            window.shutter = defaultShutter;
+          if (window.shutter) {
+            window.leftShutter = window.shutter.showLeft;
+            window.rightShutter = window.shutter.showRight;
+            window.shutterColor = window.shutter.color;
+            window.shutterWidth = window.shutter.width;
+            window.shutter = undefined;
+          }
+          if (window.shutterColor === undefined) {
+            window.shutterColor = 'gray';
+          }
+          if (window.shutterWidth === undefined) {
+            window.shutterWidth = 0.5;
           }
           if (window.mullionColor === undefined) {
             window.mullionColor = 'white';

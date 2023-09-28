@@ -1,36 +1,40 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2023. Institute for Future Intelligence, Inc.
  */
 
-import React from 'react';
-import { Col, Radio, Row, Space } from 'antd';
+import React, { useState } from 'react';
+import { Col, Radio, Row, Select, Space } from 'antd';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
 import { ObjectType, Scope } from 'src/types';
 import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
-import { CompactPicker } from 'react-color';
 import { WindowModel } from 'src/models/WindowModel';
 import { WindowDataType } from './windowMenu';
 
-import { useColorPicker } from './menuHooks';
 import { useLanguage } from 'src/views/hooks';
 import Dialog from '../dialog';
 
-interface WindowItemSelectionProps {
+interface WindowOptionSelectionProps {
   window: WindowModel;
   dataType: string;
   attributeKey: keyof WindowModel;
+  options: string[];
+  optionsText: string[];
   setDialogVisible: () => void;
 }
 
-const WindowItemSelection = ({
+const { Option } = Select;
+
+const WindowOptionSelection = ({
   window: windowModel,
   dataType,
   attributeKey,
+  options,
+  optionsText,
   setDialogVisible,
-}: WindowItemSelectionProps) => {
+}: WindowOptionSelectionProps) => {
   const elements = useStore(Selector.elements);
   const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
@@ -38,7 +42,7 @@ const WindowItemSelection = ({
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
 
-  const [selectedItem, onItemChange] = useColorPicker((windowModel[attributeKey] as string) ?? '#ffffff');
+  const [selectedOption, setSelectedOption] = useState<string>(windowModel[attributeKey] as string);
 
   const lang = useLanguage();
 
@@ -55,20 +59,20 @@ const WindowItemSelection = ({
     });
   };
 
-  const updateOnSameWall = (wId: string, val: string) => {
+  const updateOnSameWall = (wallId: string, val: string) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
-        if (!e.locked && e.type === ObjectType.Window && e.parentId === wId) {
+        if (!e.locked && e.type === ObjectType.Window && e.parentId === wallId) {
           ((e as WindowModel)[attributeKey] as string) = val;
         }
       }
     });
   };
 
-  const updateAboveFoundation = (fId: string, val: string) => {
+  const updateAboveFoundation = (foundationId: string, val: string) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
-        if (!e.locked && e.type === ObjectType.Window && e.foundationId === fId) {
+        if (!e.locked && e.type === ObjectType.Window && e.foundationId === foundationId) {
           ((e as WindowModel)[attributeKey] as string) = val;
         }
       }
@@ -87,7 +91,7 @@ const WindowItemSelection = ({
 
   const undoInMap = (map: Map<string, string>) => {
     for (const [id, val] of map.entries()) {
-      updateById(id, val as string);
+      updateById(id, val);
     }
   };
 
@@ -257,21 +261,29 @@ const WindowItemSelection = ({
   };
 
   const apply = () => {
-    if (windowModel[attributeKey] !== selectedItem) {
-      updateValue(selectedItem);
+    if (windowModel[attributeKey] !== selectedOption) {
+      updateValue(selectedOption);
     }
   };
 
   return (
-    <Dialog width={640} title={i18n.t(`windowMenu.${dataType}`, lang)} onApply={apply} onClose={close}>
+    <Dialog width={560} title={i18n.t(`windowMenu.${dataType}`, lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
-        <Col className="gutter-row" span={11}>
-          <CompactPicker color={selectedItem ?? '#73D8FF'} onChangeComplete={onItemChange} />
+        <Col className="gutter-row" span={8}>
+          <Select style={{ width: '150px' }} value={selectedOption} onChange={(value) => setSelectedOption(value)}>
+            {options.map((e, index) => {
+              return (
+                <Option key={e} value={e}>
+                  {optionsText[index]}
+                </Option>
+              );
+            })}
+          </Select>
         </Col>
         <Col
           className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-          span={13}
+          span={16}
         >
           <Radio.Group onChange={(e) => useStore.getState().setWindowActionScope(e.target.value)} value={actionScope}>
             <Space direction="vertical">
@@ -289,4 +301,4 @@ const WindowItemSelection = ({
   );
 };
 
-export default WindowItemSelection;
+export default WindowOptionSelection;
