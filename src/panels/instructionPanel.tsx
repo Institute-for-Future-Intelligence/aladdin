@@ -8,6 +8,8 @@ import styled from 'styled-components';
 import i18n from '../i18n/i18n';
 import * as Selector from '../stores/selector';
 import { Util } from '../Util';
+import { CloseOutlined } from '@ant-design/icons';
+import { Undoable } from '../undo/Undoable';
 
 const Container = styled.div`
   position: absolute;
@@ -43,6 +45,8 @@ const ColumnWrapper = styled.div`
 `;
 
 const InstructionPanel = () => {
+  const setCommonStore = useStore(Selector.set);
+  const addUndoable = useStore(Selector.addUndoable);
   const language = useStore(Selector.language);
   const sunlightDirection = useStore(Selector.sunlightDirection);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
@@ -52,26 +56,49 @@ const InstructionPanel = () => {
 
   const isMac = Util.isMac();
 
+  const setNavigationView = (selected: boolean) => {
+    setCommonStore((state) => {
+      state.viewState.navigationView = selected;
+      state.viewState.enableRotate = !selected;
+    });
+  };
+
   return (
     <Container>
-      <ColumnWrapper style={{ color: color, fontSize: '9px' }}>
-        {!orthographic && (
-          <span>
-            <b>{i18n.t('instructionPanel.Rotate', lang)}</b>: {i18n.t('instructionPanel.DragMouse', lang)}
+      <ColumnWrapper style={{ color: color, fontSize: navigation ? '10px' : '9px' }}>
+        {navigation && (
+          <span
+            style={{
+              fontSize: '12px',
+              paddingLeft: '6px',
+              paddingRight: '6px',
+              paddingTop: '2px',
+              paddingBottom: '2px',
+              marginBottom: '6px',
+              background: 'tomato',
+              border: '1px solid',
+            }}
+          >
+            <b>{i18n.t('instructionPanel.NavigationMode', lang)}</b>
+            <CloseOutlined
+              style={{ paddingLeft: '6px', cursor: 'pointer' }}
+              onClick={() => {
+                const undoableAction = {
+                  name: 'Close Navigation Mode',
+                  timestamp: Date.now(),
+                  undo: () => {
+                    setNavigationView(true);
+                  },
+                  redo: () => {
+                    setNavigationView(false);
+                  },
+                } as Undoable;
+                addUndoable(undoableAction);
+                setNavigationView(false);
+              }}
+            />
           </span>
         )}
-        <span>
-          <b>{i18n.t('instructionPanel.Zoom', lang)}</b>:{' '}
-          {i18n.t(isMac ? 'instructionPanel.MouseWheelOrKeysMac' : 'instructionPanel.MouseWheelOrKeys', lang)}
-        </span>
-        <span>
-          <b>{i18n.t('instructionPanel.Pan', lang)}</b>:{' '}
-          {i18n.t(isMac ? 'instructionPanel.HoldMetaDragMouse' : 'instructionPanel.HoldCtrlDragMouse', lang)}
-        </span>
-        <span>
-          <b>{i18n.t(orthographic ? 'instructionPanel.Exit2DMode' : 'instructionPanel.Enter2DMode', lang)}</b>:{' '}
-          {i18n.t('word.Press', lang)} {isMac ? '⌘' : 'Ctrl'}+B
-        </span>
         <span>
           <b>{i18n.t(navigation ? 'instructionPanel.DisableNavigation' : 'instructionPanel.EnableNavigation', lang)}</b>
           : {i18n.t('word.Press', lang)} {isMac ? '⌘' : 'Ctrl'}+U
@@ -79,10 +106,40 @@ const InstructionPanel = () => {
         {navigation && (
           <>
             <span>
-              <b>{i18n.t('instructionPanel.Move', lang)}</b>: {i18n.t('instructionPanel.MoveInstruction', lang)}
+              <b>{i18n.t('instructionPanel.MoveForwardBack', lang)}</b>:{' '}
+              {i18n.t('instructionPanel.MoveForwardBackInstruction', lang)}
+            </span>
+            <span>
+              <b>{i18n.t('instructionPanel.MoveLeftRight', lang)}</b>:{' '}
+              {i18n.t('instructionPanel.MoveLeftRightInstruction', lang)}
+            </span>
+            <span>
+              <b>{i18n.t('instructionPanel.MoveUpDown', lang)}</b>:{' '}
+              {i18n.t('instructionPanel.MoveUpDownInstruction', lang)}
             </span>
             <span>
               <b>{i18n.t('instructionPanel.Turn', lang)}</b>: {i18n.t('instructionPanel.TurnInstruction', lang)}
+            </span>
+          </>
+        )}
+        {!orthographic && !navigation && (
+          <span>
+            <b>{i18n.t('instructionPanel.Rotate', lang)}</b>: {i18n.t('instructionPanel.DragMouse', lang)}
+          </span>
+        )}
+        {!navigation && (
+          <>
+            <span>
+              <b>{i18n.t('instructionPanel.Zoom', lang)}</b>:{' '}
+              {i18n.t(isMac ? 'instructionPanel.MouseWheelOrKeysMac' : 'instructionPanel.MouseWheelOrKeys', lang)}
+            </span>
+            <span>
+              <b>{i18n.t('instructionPanel.Pan', lang)}</b>:{' '}
+              {i18n.t(isMac ? 'instructionPanel.HoldMetaDragMouse' : 'instructionPanel.HoldCtrlDragMouse', lang)}
+            </span>
+            <span>
+              <b>{i18n.t(orthographic ? 'instructionPanel.Exit2DMode' : 'instructionPanel.Enter2DMode', lang)}</b>:{' '}
+              {i18n.t('word.Press', lang)} {isMac ? '⌘' : 'Ctrl'}+B
             </span>
           </>
         )}

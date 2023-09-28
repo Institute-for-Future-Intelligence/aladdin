@@ -72,6 +72,7 @@ const Panels = () => {
   const worldLatitude = useStore(Selector.world.latitude);
   const worldLongitude = useStore(Selector.world.longitude);
   const getClosestCity = useStore(Selector.getClosestCity);
+  const navigation = useStore(Selector.viewState.navigationView) ?? false;
 
   const [city, setCity] = useState<string>('Boston MA, USA');
 
@@ -87,7 +88,7 @@ const Panels = () => {
       {showStickyNotePanel && <StickyNotePanel />}
       {showSiteInfoPanel && <SiteInfoPanel city={city} />}
       {showDesignInfoPanel && <DesignInfoPanel />}
-      {showInstructionPanel && !projectView && <InstructionPanel />}
+      {(showInstructionPanel || navigation) && !projectView && <InstructionPanel />}
       {showWeatherPanel && (
         <WeatherPanel city={city} graphs={[GraphDataType.MonthlyTemperatures, GraphDataType.SunshineHours]} />
       )}

@@ -55,7 +55,7 @@ const VisualizationControlPanel = () => {
     <Container style={{ top: showSiteInfoPanel ? '110px' : '80px' }}>
       <ColumnWrapper
         style={{
-          width: showHeatFluxes ? '300px' : '160px',
+          width: showHeatFluxes ? '320px' : '170px',
           left: showHeatFluxes ? 'calc(100vw / 2 - 150px)' : 'calc(100vw / 2 - 80px)',
         }}
       >
