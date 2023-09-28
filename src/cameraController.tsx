@@ -213,14 +213,15 @@ const CameraController = () => {
         }
         v.cameraPosition2D = [cameraPosition.x, cameraPosition.y, 150];
         v.panCenter2D = [targetPosition.x, targetPosition.y, targetPosition.z];
-      } else if (enabldeNavigationControls) {
-        v.cameraPositionNav = [cameraPosition.x, cameraPosition.y, cameraPosition.z];
-        v.cameraRotationNav = [cam.rotation.x, cam.rotation.y, cam.rotation.z];
-        state.cameraDirection = getCameraDirection(cam);
       } else {
-        v.cameraPosition = [cameraPosition.x, cameraPosition.y, cameraPosition.z];
-        v.panCenter = [targetPosition.x, targetPosition.y, targetPosition.z];
         state.cameraDirection = getCameraDirection(cam);
+        if (enabldeNavigationControls) {
+          const panCenter = cam.localToWorld(new Vector3(0, 0, -50));
+          v.panCenter = [panCenter.x, panCenter.y, 0];
+        } else {
+          v.panCenter = [targetPosition.x, targetPosition.y, targetPosition.z];
+        }
+        v.cameraPosition = [cameraPosition.x, cameraPosition.y, cameraPosition.z];
       }
     });
   };
@@ -266,18 +267,16 @@ const CameraController = () => {
   useEffect(() => {
     if (!orbitControlRef.current) return;
 
+    const viewState = useStore.getState().viewState;
+
     if (enabldeNavigationControls) {
       const camera = get().camera;
-      const positionNav = useStore.getState().viewState.cameraPositionNav ?? [5, -30, 1];
-      const rotationNav = useStore.getState().viewState.cameraRotationNav ?? [
-        1.5374753309166491, 0.16505866097993566, 0.005476951734475092,
-      ];
-      camera.position.fromArray(positionNav);
-      camera.rotation.fromArray([...rotationNav, 'XYZ']);
+      camera.position.fromArray(viewState.cameraPosition ?? [0, 0, 20]);
+      const [x, y, z] = viewState.panCenter ?? [0, 0, 0];
+      camera.lookAt(x, y, z);
       camera.updateMatrixWorld();
       setCompassRotation(get().camera);
     } else {
-      const viewState = useStore.getState().viewState;
       if (orbitControlRef.current && persCameraRef.current) {
         const cameraPosition = getVector(viewState.cameraPosition ?? [0, 0, 20]);
         const panCenter = getVector(viewState.panCenter ?? [0, 0, 0]);
@@ -289,6 +288,7 @@ const CameraController = () => {
           orbitControlRef.current.target.copy(panCenter);
         }
         persCameraRef.current.updateMatrixWorld();
+        orbitControlRef.current.update();
         setCompassRotation(persCameraRef.current);
       }
     }

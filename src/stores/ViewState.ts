@@ -15,8 +15,6 @@ export interface ViewState {
   cameraPosition2D: number[];
   panCenter2D: number[];
   cameraZoom: number; // for orthographic camera in 2D mode
-  cameraPositionNav: number[];
-  cameraRotationNav: number[];
 
   axes: boolean;
   heatFluxScaleFactor: number;
