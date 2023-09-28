@@ -116,14 +116,25 @@ const CameraController = () => {
     const viewState = useStore.getState().viewState;
     if (orbitControlRef.current) {
       if (persCameraRef.current) {
-        const cameraPosition = getVector(viewState.cameraPosition ?? [0, 0, 20]);
-        const panCenter = getVector(viewState.panCenter ?? [0, 0, 0]);
-        persCameraRef.current.position.copy(cameraPosition);
-        persCameraRef.current.lookAt(panCenter);
-        persCameraRef.current.zoom = 1;
-        if (!orthographic) {
-          orbitControlRef.current.object = persCameraRef.current;
-          orbitControlRef.current.target.copy(panCenter);
+        if (enabledNavigationControls) {
+          const camera = get().camera;
+          const positionNav = viewState.cameraPositionNav ?? [5, -30, 1];
+          const rotationNav = viewState.cameraRotationNav ?? [
+            1.5374753309166491, 0.16505866097993566, 0.005476951734475092,
+          ];
+          camera.position.fromArray(positionNav);
+          camera.rotation.fromArray([...rotationNav, 'XYZ']);
+          camera.updateMatrixWorld();
+        } else {
+          const cameraPosition = getVector(viewState.cameraPosition ?? [0, 0, 20]);
+          const panCenter = getVector(viewState.panCenter ?? [0, 0, 0]);
+          persCameraRef.current.position.copy(cameraPosition);
+          persCameraRef.current.lookAt(panCenter);
+          persCameraRef.current.zoom = 1;
+          if (!orthographic) {
+            orbitControlRef.current.object = persCameraRef.current;
+            orbitControlRef.current.target.copy(panCenter);
+          }
         }
       }
       if (orthCameraRef.current) {
