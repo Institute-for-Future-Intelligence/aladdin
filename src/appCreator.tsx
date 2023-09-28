@@ -201,7 +201,6 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   };
 
   const setNavigationView = (selected: boolean) => {
-    if (navigation === selected) return;
     setCommonStore((state) => {
       state.viewState.navigationView = selected;
       state.viewState.enableRotate = !selected;

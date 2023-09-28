@@ -53,7 +53,7 @@ const CameraController = () => {
   const navigationMoveSpeed = usePrimitiveStore(Selector.navigationMoveSpeed);
   const navigationTurnSpeed = usePrimitiveStore(Selector.navigationTurnSpeed);
 
-  const enabldeNavigationControls = navigationView && !orthographic;
+  const enabledNavigationControls = navigationView && !orthographic;
   const cameraPositionLength = Math.hypot(cameraPosition[0], cameraPosition[1], cameraPosition[2]);
   const panRadius = (orthographic ? cameraZoom * 50 : cameraPositionLength * 10) * sceneRadius;
   const minPan = useMemo(() => new Vector3(-panRadius, -panRadius, 0), [panRadius]);
@@ -109,7 +109,7 @@ const CameraController = () => {
         oc.removeEventListener('end', onInteractionEnd);
       }
     };
-  }, [enabldeNavigationControls]);
+  }, [enabledNavigationControls]);
 
   // open new/other file
   useEffect(() => {
@@ -215,9 +215,12 @@ const CameraController = () => {
         v.panCenter2D = [targetPosition.x, targetPosition.y, targetPosition.z];
       } else {
         state.cameraDirection = getCameraDirection(cam);
-        if (enabldeNavigationControls) {
-          const panCenter = cam.localToWorld(new Vector3(0, 0, -50));
-          v.panCenter = [panCenter.x, panCenter.y, 0];
+        if (enabledNavigationControls) {
+          // Do not save the pan center in the navigation mode as the camera position in this mode
+          // may be way off, which can surprise the user when they exit the navigation mode and try
+          // to rotate the view. It is difficult to get the pan center back unless they reset the view.
+          // const panCenter = cam.localToWorld(new Vector3(0, 0, -50));
+          // v.panCenter = [panCenter.x, panCenter.y, 0];
         } else {
           v.panCenter = [targetPosition.x, targetPosition.y, targetPosition.z];
         }
@@ -256,12 +259,12 @@ const CameraController = () => {
   useEffect(() => {
     if (!orbitControlRef.current) return;
 
-    if (enabldeNavigationControls) {
+    if (enabledNavigationControls) {
       orbitControlRef.current.listenToKeyEvents(window);
     } else {
       orbitControlRef.current.removeKeyEvents();
     }
-  }, [enabldeNavigationControls]);
+  }, [enabledNavigationControls]);
 
   // switch to navigation controls
   useEffect(() => {
@@ -269,7 +272,7 @@ const CameraController = () => {
 
     const viewState = useStore.getState().viewState;
 
-    if (enabldeNavigationControls) {
+    if (enabledNavigationControls) {
       const camera = get().camera;
       camera.position.fromArray(viewState.cameraPosition ?? [0, 0, 20]);
       const [x, y, z] = viewState.panCenter ?? [0, 0, 0];
@@ -292,7 +295,7 @@ const CameraController = () => {
         setCompassRotation(persCameraRef.current);
       }
     }
-  }, [enabldeNavigationControls]);
+  }, [enabledNavigationControls]);
 
   return (
     <>
