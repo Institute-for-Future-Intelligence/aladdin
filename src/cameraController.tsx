@@ -150,7 +150,6 @@ const CameraController = () => {
           orbitControlRef.current.target.copy(panCenter2D);
         }
       }
-      orbitControlRef.current.update();
     }
     setCompassRotation(get().camera);
   }, [fileChanged]);
