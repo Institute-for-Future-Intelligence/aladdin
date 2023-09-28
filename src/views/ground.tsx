@@ -930,6 +930,8 @@ const Ground = () => {
     useRefStore.setState((state) => {
       state.setEnableOrbitController(true);
     });
+    isMultipleMoveRef.current = false;
+    offsetMapRef.current.clear();
     if (grabRef.current) {
       const elem = getElementById(grabRef.current.id);
       if (elem) {
@@ -1054,9 +1056,7 @@ const Ground = () => {
   const handleGroupMaster = (event: ThreeEvent<PointerEvent>, currElem: GroupableModel) => {
     baseGroupRelPosMapRef.current.clear();
     baseGroupOldPosMapRef.current.clear();
-    if (!currElem.enableGroupMaster) {
-      return;
-    }
+    if (!currElem.enableGroupMaster) return;
     if (useStore.getState().moveHandleType) {
       checkOverlapWithAllBases(event, currElem);
     }
@@ -1076,6 +1076,10 @@ const Ground = () => {
       if (e.type === ObjectType.Sensor || e.type === ObjectType.Light) return true;
     });
   };
+
+  // **********************
+  const offsetMapRef = useRef(new Map<string, Vector3>());
+  const isMultipleMoveRef = useRef(false);
 
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
     if (e.button === 2) return; // ignore right-click
@@ -1124,13 +1128,15 @@ const Ground = () => {
 
     const groundClicked = e.intersections[0].object === groundPlaneRef.current;
     if (groundClicked) {
-      setCommonStore((state) => {
-        state.clickObjectType = ObjectType.Ground;
-        state.selectedElement = null;
-        InnerCommonStoreState.selectNone(state);
-        state.contextMenuObjectType = null;
-        state.groupMasterId = null;
-      });
+      if (!useStore.getState().multiSelectionsMode) {
+        setCommonStore((state) => {
+          state.clickObjectType = ObjectType.Ground;
+          state.selectedElement = null;
+          InnerCommonStoreState.selectNone(state);
+          state.contextMenuObjectType = null;
+          state.groupMasterId = null;
+        });
+      }
       if (legalOnGround(objectTypeToAdd)) {
         const position = e.intersections[0].point;
         const addedElement = addElement(groundModel, position);
@@ -1157,9 +1163,24 @@ const Ground = () => {
         });
       }
     } else {
-      const selectedElement = getSelectedElement();
-      if (selectedElement) {
-        if (legalOnGround(selectedElement.type)) {
+      const selectedElementIdSet = useStore.getState().selectedElementIdSet;
+      if (selectedElementIdSet.size > 1) {
+        const selectedElement = useStore.getState().selectedElement;
+        if (selectedElement) {
+          grabRef.current = selectedElement;
+          const selectedElementCenter = new Vector3(selectedElement.cx, selectedElement.cy);
+          offsetMapRef.current.clear();
+          isMultipleMoveRef.current = true;
+          for (const e of useStore.getState().elements) {
+            if (Util.isElementAllowedMultipleMoveOnGround(e) && selectedElementIdSet.has(e.id)) {
+              const offset = new Vector3(e.cx, e.cy).sub(selectedElementCenter);
+              offsetMapRef.current.set(e.id, offset);
+            }
+          }
+        }
+      } else {
+        const selectedElement = getSelectedElement();
+        if (selectedElement && legalOnGround(selectedElement.type)) {
           grabRef.current = selectedElement;
           // save info for undo
           oldPositionRef.current.set(selectedElement.cx, selectedElement.cy, selectedElement.cz);
@@ -2102,28 +2123,123 @@ const Ground = () => {
     const hy = grabRef.current!.ly / 2;
     switch (moveHandleType) {
       case MoveHandleType.Top: {
-        setElementPosition(grabRef.current!.id, p.x, p.y);
+        if (isMultipleMoveRef.current) {
+          const center = new Vector3(p.x, p.y);
+          setCommonStore((state) => {
+            for (const e of state.elements) {
+              if (e.id === grabRef.current!.id) {
+                e.cx = center.x;
+                e.cy = center.y;
+              } else if (offsetMapRef.current.has(e.id)) {
+                const offset = offsetMapRef.current.get(e.id);
+                if (offset) {
+                  const c = new Vector3().addVectors(center, offset);
+                  e.cx = c.x;
+                  e.cy = c.y;
+                }
+              }
+            }
+          });
+        } else {
+          setElementPosition(grabRef.current!.id, p.x, p.y);
+        }
         break;
       }
       case MoveHandleType.Upper:
         x0 = p.x + sinAngle * hy;
         y0 = p.y - cosAngle * hy;
-        setElementPosition(grabRef.current!.id, x0, y0);
+        if (isMultipleMoveRef.current) {
+          const center = new Vector3(x0, y0);
+          setCommonStore((state) => {
+            for (const e of state.elements) {
+              if (e.id === grabRef.current!.id) {
+                e.cx = center.x;
+                e.cy = center.y;
+              } else if (offsetMapRef.current.has(e.id)) {
+                const offset = offsetMapRef.current.get(e.id);
+                if (offset) {
+                  const c = new Vector3().addVectors(center, offset);
+                  e.cx = c.x;
+                  e.cy = c.y;
+                }
+              }
+            }
+          });
+        } else {
+          setElementPosition(grabRef.current!.id, x0, y0);
+        }
         break;
       case MoveHandleType.Lower:
         x0 = p.x - sinAngle * hy;
         y0 = p.y + cosAngle * hy;
-        setElementPosition(grabRef.current!.id, x0, y0);
+        if (isMultipleMoveRef.current) {
+          const center = new Vector3(x0, y0);
+          setCommonStore((state) => {
+            for (const e of state.elements) {
+              if (e.id === grabRef.current!.id) {
+                e.cx = center.x;
+                e.cy = center.y;
+              } else if (offsetMapRef.current.has(e.id)) {
+                const offset = offsetMapRef.current.get(e.id);
+                if (offset) {
+                  const c = new Vector3().addVectors(center, offset);
+                  e.cx = c.x;
+                  e.cy = c.y;
+                }
+              }
+            }
+          });
+        } else {
+          setElementPosition(grabRef.current!.id, x0, y0);
+        }
         break;
       case MoveHandleType.Left:
         x0 = p.x + cosAngle * hx;
         y0 = p.y + sinAngle * hx;
-        setElementPosition(grabRef.current!.id, x0, y0);
+        if (isMultipleMoveRef.current) {
+          const center = new Vector3(x0, y0);
+          setCommonStore((state) => {
+            for (const e of state.elements) {
+              if (e.id === grabRef.current!.id) {
+                e.cx = center.x;
+                e.cy = center.y;
+              } else if (offsetMapRef.current.has(e.id)) {
+                const offset = offsetMapRef.current.get(e.id);
+                if (offset) {
+                  const c = new Vector3().addVectors(center, offset);
+                  e.cx = c.x;
+                  e.cy = c.y;
+                }
+              }
+            }
+          });
+        } else {
+          setElementPosition(grabRef.current!.id, x0, y0);
+        }
         break;
       case MoveHandleType.Right:
         x0 = p.x - cosAngle * hx;
         y0 = p.y - sinAngle * hx;
-        setElementPosition(grabRef.current!.id, x0, y0);
+        if (isMultipleMoveRef.current) {
+          const center = new Vector3(x0, y0);
+          setCommonStore((state) => {
+            for (const e of state.elements) {
+              if (e.id === grabRef.current!.id) {
+                e.cx = center.x;
+                e.cy = center.y;
+              } else if (offsetMapRef.current.has(e.id)) {
+                const offset = offsetMapRef.current.get(e.id);
+                if (offset) {
+                  const c = new Vector3().addVectors(center, offset);
+                  e.cx = c.x;
+                  e.cy = c.y;
+                }
+              }
+            }
+          });
+        } else {
+          setElementPosition(grabRef.current!.id, x0, y0);
+        }
         break;
     }
   };

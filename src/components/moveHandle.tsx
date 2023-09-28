@@ -16,12 +16,12 @@ interface MoveHandleProps {
   position: number[];
   size: number;
   handleType: MoveHandleType;
-  onPointerDown?: () => void;
+  onPointerDown?: (e: ThreeEvent<PointerEvent>) => void;
   onPointerOver: (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => void;
   onPointerOut: () => void;
 }
 
-const MoveHandle = ({ handleType, position, size, onPointerOver, onPointerOut }: MoveHandleProps) => {
+const MoveHandle = ({ handleType, position, size, onPointerDown, onPointerOver, onPointerOut }: MoveHandleProps) => {
   const moveHandleType = useStore(Selector.moveHandleType);
   const hoveredHandle = useStore(Selector.hoveredHandle);
 
@@ -40,22 +40,13 @@ const MoveHandle = ({ handleType, position, size, onPointerOver, onPointerOut }:
 
   const color = hoveredHandle === handleType || moveHandleType === handleType ? HIGHLIGHT_HANDLE_COLOR : handleColor;
 
-  const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
-    if (e.intersections.length > 0 && e.intersections[0].eventObject.name === handleType) {
-      useStore.getState().set((state) => {
-        state.moveHandleType = handleType;
-      });
-      useRefStore.getState().setEnableOrbitController(false);
-    }
-  };
-
   return (
     <Sphere
       ref={handleRef}
       name={handleType}
       args={[size / 2, 6, 6, 0, Math.PI]}
       position={[cx, cy, cz]}
-      onPointerDown={handlePointerDown}
+      onPointerDown={onPointerDown}
       onPointerOver={(e) => {
         onPointerOver(e, handleType);
       }}

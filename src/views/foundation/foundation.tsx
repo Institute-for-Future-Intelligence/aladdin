@@ -3228,7 +3228,16 @@ const Foundation = (foundationModel: FoundationModel) => {
                   position={[0, -hy - moveHandleRadius, 0]}
                   name={MoveHandleType.Lower}
                   onPointerDown={(e) => {
-                    selectMe(id, e, ActionType.Move);
+                    setCommonStore((state) => {
+                      state.moveHandleType = MoveHandleType.Lower;
+                      state.selectedElement = state.elements.find((e) => e.id === id) ?? null;
+                      for (const e of state.elements) {
+                        if (state.selectedElementIdSet.has(e.id) && !Util.isElementAllowedMultipleMoveOnGround(e)) {
+                          state.selectedElementIdSet.delete(e.id);
+                        }
+                      }
+                    });
+                    useRefStore.getState().setEnableOrbitController(false);
                   }}
                   onPointerOver={(e) => {
                     hoverHandle(e, MoveHandleType.Lower);
@@ -3251,7 +3260,16 @@ const Foundation = (foundationModel: FoundationModel) => {
                   position={[0, hy + moveHandleRadius, 0]}
                   name={MoveHandleType.Upper}
                   onPointerDown={(e) => {
-                    selectMe(id, e, ActionType.Move);
+                    setCommonStore((state) => {
+                      state.moveHandleType = MoveHandleType.Upper;
+                      state.selectedElement = state.elements.find((e) => e.id === id) ?? null;
+                      for (const e of state.elements) {
+                        if (state.selectedElementIdSet.has(e.id) && !Util.isElementAllowedMultipleMoveOnGround(e)) {
+                          state.selectedElementIdSet.delete(e.id);
+                        }
+                      }
+                    });
+                    useRefStore.getState().setEnableOrbitController(false);
                   }}
                   onPointerOver={(e) => {
                     hoverHandle(e, MoveHandleType.Upper);
@@ -3274,7 +3292,16 @@ const Foundation = (foundationModel: FoundationModel) => {
                   position={[-hx - moveHandleRadius, 0, 0]}
                   name={MoveHandleType.Left}
                   onPointerDown={(e) => {
-                    selectMe(id, e, ActionType.Move);
+                    setCommonStore((state) => {
+                      state.moveHandleType = MoveHandleType.Left;
+                      state.selectedElement = state.elements.find((e) => e.id === id) ?? null;
+                      for (const e of state.elements) {
+                        if (state.selectedElementIdSet.has(e.id) && !Util.isElementAllowedMultipleMoveOnGround(e)) {
+                          state.selectedElementIdSet.delete(e.id);
+                        }
+                      }
+                    });
+                    useRefStore.getState().setEnableOrbitController(false);
                   }}
                   onPointerOver={(e) => {
                     hoverHandle(e, MoveHandleType.Left);
@@ -3297,7 +3324,16 @@ const Foundation = (foundationModel: FoundationModel) => {
                   position={[hx + moveHandleRadius, 0, 0]}
                   name={MoveHandleType.Right}
                   onPointerDown={(e) => {
-                    selectMe(id, e, ActionType.Move);
+                    setCommonStore((state) => {
+                      state.moveHandleType = MoveHandleType.Right;
+                      state.selectedElement = state.elements.find((e) => e.id === id) ?? null;
+                      for (const e of state.elements) {
+                        if (state.selectedElementIdSet.has(e.id) && !Util.isElementAllowedMultipleMoveOnGround(e)) {
+                          state.selectedElementIdSet.delete(e.id);
+                        }
+                      }
+                    });
+                    useRefStore.getState().setEnableOrbitController(false);
                   }}
                   onPointerOver={(e) => {
                     hoverHandle(e, MoveHandleType.Right);

@@ -1841,4 +1841,10 @@ export class Util {
         return false;
     }
   };
+
+  static isElementAllowedMultipleMoveOnGround(e: ElementModel) {
+    if (e.type === ObjectType.Foundation) return true;
+    if (e.type === ObjectType.Cuboid && e.parentId === GROUND_ID) return true;
+    return false;
+  }
 }

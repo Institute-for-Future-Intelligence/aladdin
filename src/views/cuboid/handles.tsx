@@ -16,6 +16,7 @@ import { Util } from 'src/Util';
 import { Euler, Mesh, Vector3 } from 'three';
 import * as Selector from '../../stores/selector';
 import { useHandleSize } from '../wall/hooks';
+import { useRefStore } from 'src/stores/commonRef';
 
 interface HandlesProps {
   id: string;
@@ -410,6 +411,31 @@ const Handles = ({ id, args }: HandlesProps) => {
     }
   };
 
+  const handleMoveHandlePointerDown = (e: ThreeEvent<PointerEvent>) => {
+    if (e.intersections.length > 0) {
+      const handleType = e.intersections[0].eventObject.name;
+      switch (handleType) {
+        case MoveHandleType.Lower:
+        case MoveHandleType.Upper:
+        case MoveHandleType.Left:
+        case MoveHandleType.Right:
+        case MoveHandleType.Top: {
+          useStore.getState().set((state) => {
+            state.moveHandleType = handleType;
+            state.selectedElement = state.elements.find((e) => e.id === id) ?? null;
+            for (const e of state.elements) {
+              if (state.selectedElementIdSet.has(e.id) && !Util.isElementAllowedMultipleMoveOnGround(e)) {
+                state.selectedElementIdSet.delete(e.id);
+              }
+            }
+          });
+          useRefStore.getState().setEnableOrbitController(false);
+          break;
+        }
+      }
+    }
+  };
+
   // pointer move event
   const handleIntersectionPlaneMove = (e: ThreeEvent<PointerEvent>) => {
     // set ray cast, need change wall together
@@ -566,41 +592,48 @@ const Handles = ({ id, args }: HandlesProps) => {
       {showMoveAndRotateHandles && (
         <>
           {/* move handles */}
-          <MoveHandle
-            handleType={MoveHandleType.Lower}
-            position={[0, -hy - size * 1.2, -hz]}
-            size={size}
-            onPointerOver={hoverHandle}
-            onPointerOut={noHoverHandle}
-          />
-          <MoveHandle
-            handleType={MoveHandleType.Upper}
-            position={[0, hy + size * 1.2, -hz]}
-            size={size}
-            onPointerOver={hoverHandle}
-            onPointerOut={noHoverHandle}
-          />
-          <MoveHandle
-            handleType={MoveHandleType.Left}
-            position={[-hx - size * 1.2, 0, -hz]}
-            size={size}
-            onPointerOver={hoverHandle}
-            onPointerOut={noHoverHandle}
-          />
-          <MoveHandle
-            handleType={MoveHandleType.Right}
-            position={[hx + size * 1.2, 0, -hz]}
-            size={size}
-            onPointerOver={hoverHandle}
-            onPointerOut={noHoverHandle}
-          />
-          <MoveHandle
-            handleType={MoveHandleType.Top}
-            position={[0, 0, hz]}
-            size={size}
-            onPointerOver={hoverHandle}
-            onPointerOut={noHoverHandle}
-          />
+          <group name="Cuboid Move Handle Group" onPointerDown={handleMoveHandlePointerDown}>
+            <MoveHandle
+              handleType={MoveHandleType.Lower}
+              position={[0, -hy - size * 1.2, -hz]}
+              size={size}
+              onPointerDown={handleMoveHandlePointerDown}
+              onPointerOver={hoverHandle}
+              onPointerOut={noHoverHandle}
+            />
+            <MoveHandle
+              handleType={MoveHandleType.Upper}
+              position={[0, hy + size * 1.2, -hz]}
+              size={size}
+              onPointerDown={handleMoveHandlePointerDown}
+              onPointerOver={hoverHandle}
+              onPointerOut={noHoverHandle}
+            />
+            <MoveHandle
+              handleType={MoveHandleType.Left}
+              position={[-hx - size * 1.2, 0, -hz]}
+              size={size}
+              onPointerDown={handleMoveHandlePointerDown}
+              onPointerOver={hoverHandle}
+              onPointerOut={noHoverHandle}
+            />
+            <MoveHandle
+              handleType={MoveHandleType.Right}
+              position={[hx + size * 1.2, 0, -hz]}
+              size={size}
+              onPointerDown={handleMoveHandlePointerDown}
+              onPointerOver={hoverHandle}
+              onPointerOut={noHoverHandle}
+            />
+            <MoveHandle
+              handleType={MoveHandleType.Top}
+              position={[0, 0, hz]}
+              size={size}
+              onPointerDown={handleMoveHandlePointerDown}
+              onPointerOver={hoverHandle}
+              onPointerOut={noHoverHandle}
+            />
+          </group>
 
           {/* rotate handles */}
           <group name="Cuboid Rotate Handle Group" onPointerDown={handleRotateHandlePointerDown}>
