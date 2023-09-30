@@ -124,7 +124,6 @@ const CameraController = () => {
           ];
           camera.position.fromArray(positionNav);
           camera.rotation.fromArray([...rotationNav, 'XYZ']);
-          camera.updateMatrixWorld();
         } else {
           const cameraPosition = getVector(viewState.cameraPosition ?? [0, 0, 20]);
           const panCenter = getVector(viewState.panCenter ?? [0, 0, 0]);
@@ -136,6 +135,8 @@ const CameraController = () => {
             orbitControlRef.current.target.copy(panCenter);
           }
         }
+        camera.updateMatrixWorld();
+        setCompassRotation(get().camera);
       }
       if (orthCameraRef.current) {
         // old files have no cameraPosition2D and panCenter2D: 12/19/2021
@@ -151,7 +152,6 @@ const CameraController = () => {
         }
       }
     }
-    setCompassRotation(get().camera);
   }, [fileChanged]);
 
   // switch camera
@@ -171,8 +171,8 @@ const CameraController = () => {
       orbitControl.object = persCam;
       orbitControl.target.copy(getVector(viewState.panCenter ?? [0, 0, 0]));
       set({ camera: persCam });
+      setCompassRotation(get().camera);
     }
-    setCompassRotation(get().camera);
   }, [orthographic]);
 
   // camera zoom in 2D view (no need to do this in 3D view)
