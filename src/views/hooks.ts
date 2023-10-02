@@ -179,12 +179,9 @@ export const useGroupMaster = (elementModel: GroupableModel, groupMasterId: stri
 };
 
 export const useSelected = (id: string) => {
-  const selected = useStore((state) => state.selectedElementIdSet.has(id));
-  return selected;
+  return useStore((state) => state.selectedElementIdSet.has(id));
 };
 
 export const useLanguage = () => {
-  const language = useStore(Selector.language);
-  const lang = { lng: language };
-  return lang;
+  return { lng: useStore(Selector.language) };
 };

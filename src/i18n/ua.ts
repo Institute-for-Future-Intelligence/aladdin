@@ -1676,10 +1676,10 @@ export const i18n_ua = {
     },
 
     compass: {
-      N: 'N',
-      S: 'S',
-      W: 'W',
-      E: 'E',
+      N: 'Пн',
+      S: 'Пд',
+      W: 'Зx',
+      E: 'Сх',
     },
 
     month: {
