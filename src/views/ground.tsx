@@ -110,6 +110,7 @@ const Ground = () => {
   const baseGroupOldPosMapRef = useRef<Map<string, number[]>>(new Map());
   const baseGroupNewPosMapRef = useRef<Map<string, number[]>>(new Map());
   const moveHandleWorldDiffV3Ref = useRef(new Vector3());
+  const isMultipleMoveRef = useRef(false);
 
   const lang = useMemo(() => {
     return { lng: language };
@@ -813,7 +814,7 @@ const Ground = () => {
         }
         showError(i18n.t('message.CannotMoveObjectTooFar', lang));
       } else {
-        if (baseGroupRelPosMapRef.current.size > 1) {
+        if (baseGroupRelPosMapRef.current.size > 1 && isMultipleMoveRef.current) {
           baseGroupNewPosMapRef.current.clear();
           for (const elem of useStore.getState().elements) {
             if (baseGroupOldPosMapRef.current.has(elem.id)) {
@@ -887,6 +888,8 @@ const Ground = () => {
           } as UndoableMove;
           addUndoable(undoableMove);
         }
+        isMultipleMoveRef.current = false;
+        baseGroupRelPosMapRef.current.clear();
         updateSceneRadius();
       }
     }
@@ -930,8 +933,6 @@ const Ground = () => {
     useRefStore.setState((state) => {
       state.setEnableOrbitController(true);
     });
-    isMultipleMoveRef.current = false;
-    offsetMapRef.current.clear();
     if (grabRef.current) {
       const elem = getElementById(grabRef.current.id);
       if (elem) {
@@ -1077,10 +1078,6 @@ const Ground = () => {
     });
   };
 
-  // **********************
-  const offsetMapRef = useRef(new Map<string, Vector3>());
-  const isMultipleMoveRef = useRef(false);
-
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
     if (e.button === 2) return; // ignore right-click
     if (e.intersections.length === 0 || !groundPlaneRef.current) return;
@@ -1168,13 +1165,17 @@ const Ground = () => {
         const selectedElement = useStore.getState().selectedElement;
         if (selectedElement) {
           grabRef.current = selectedElement;
-          const selectedElementCenter = new Vector3(selectedElement.cx, selectedElement.cy);
-          offsetMapRef.current.clear();
+          baseGroupRelPosMapRef.current.clear();
           isMultipleMoveRef.current = true;
-          for (const e of useStore.getState().elements) {
-            if (Util.isElementAllowedMultipleMoveOnGround(e) && selectedElementIdSet.has(e.id)) {
-              const offset = new Vector3(e.cx, e.cy).sub(selectedElementCenter);
-              offsetMapRef.current.set(e.id, offset);
+          for (const elem of useStore.getState().elements) {
+            if (Util.isElementAllowedMultipleMoveOnGround(elem) && selectedElementIdSet.has(elem.id)) {
+              const base = elem as GroupableModel;
+              if (base.enableGroupMaster) {
+                checkOverlapWithAllBases(e, elem);
+              } else {
+                const pointer = e.intersections[0].point.clone().setZ(0);
+                setBasePosMap(elem, pointer);
+              }
             }
           }
         }
@@ -2130,8 +2131,8 @@ const Ground = () => {
               if (e.id === grabRef.current!.id) {
                 e.cx = center.x;
                 e.cy = center.y;
-              } else if (offsetMapRef.current.has(e.id)) {
-                const offset = offsetMapRef.current.get(e.id);
+              } else if (baseGroupRelPosMapRef.current.has(e.id)) {
+                const offset = baseGroupRelPosMapRef.current.get(e.id);
                 if (offset) {
                   const c = new Vector3().addVectors(center, offset);
                   e.cx = c.x;
@@ -2155,8 +2156,8 @@ const Ground = () => {
               if (e.id === grabRef.current!.id) {
                 e.cx = center.x;
                 e.cy = center.y;
-              } else if (offsetMapRef.current.has(e.id)) {
-                const offset = offsetMapRef.current.get(e.id);
+              } else if (baseGroupRelPosMapRef.current.has(e.id)) {
+                const offset = baseGroupRelPosMapRef.current.get(e.id);
                 if (offset) {
                   const c = new Vector3().addVectors(center, offset);
                   e.cx = c.x;
@@ -2179,8 +2180,8 @@ const Ground = () => {
               if (e.id === grabRef.current!.id) {
                 e.cx = center.x;
                 e.cy = center.y;
-              } else if (offsetMapRef.current.has(e.id)) {
-                const offset = offsetMapRef.current.get(e.id);
+              } else if (baseGroupRelPosMapRef.current.has(e.id)) {
+                const offset = baseGroupRelPosMapRef.current.get(e.id);
                 if (offset) {
                   const c = new Vector3().addVectors(center, offset);
                   e.cx = c.x;
@@ -2203,8 +2204,8 @@ const Ground = () => {
               if (e.id === grabRef.current!.id) {
                 e.cx = center.x;
                 e.cy = center.y;
-              } else if (offsetMapRef.current.has(e.id)) {
-                const offset = offsetMapRef.current.get(e.id);
+              } else if (baseGroupRelPosMapRef.current.has(e.id)) {
+                const offset = baseGroupRelPosMapRef.current.get(e.id);
                 if (offset) {
                   const c = new Vector3().addVectors(center, offset);
                   e.cx = c.x;
@@ -2227,8 +2228,8 @@ const Ground = () => {
               if (e.id === grabRef.current!.id) {
                 e.cx = center.x;
                 e.cy = center.y;
-              } else if (offsetMapRef.current.has(e.id)) {
-                const offset = offsetMapRef.current.get(e.id);
+              } else if (baseGroupRelPosMapRef.current.has(e.id)) {
+                const offset = baseGroupRelPosMapRef.current.get(e.id);
                 if (offset) {
                   const c = new Vector3().addVectors(center, offset);
                   e.cx = c.x;
