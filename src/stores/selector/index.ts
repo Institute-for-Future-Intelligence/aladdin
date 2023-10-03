@@ -214,6 +214,8 @@ export const getChildrenOfType = (state: CommonStoreState) => state.getChildrenO
 
 export const selectedElement = (state: CommonStoreState) => state.selectedElement;
 
+export const selectedElementIdSet = (state: CommonStoreState) => state.selectedElementIdSet;
+
 export const getSelectedElement = (state: CommonStoreState) => state.getSelectedElement;
 
 export const overlapWithSibling = (state: CommonStoreState) => state.overlapWithSibling;

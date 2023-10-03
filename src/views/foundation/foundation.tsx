@@ -67,13 +67,12 @@ import SolarUpdraftTower from '../solarUpdraftTower';
 import SolarPowerTower from '../solarPowerTower';
 import SolarReceiverPipe from '../solarReceiverPipe';
 import { UndoablePaste } from '../../undo/UndoablePaste';
-import GroupMaster from 'src/components/groupMaster';
 import { useHandleSize } from '../wall/hooks';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import { InnerCommonStoreState } from 'src/stores/InnerCommonState';
 import produce from 'immer';
 import { useDataStore } from '../../stores/commonData';
-import { useGroupMaster, useSelected } from '../hooks';
+import { useSelected } from '../hooks';
 import { debounce } from 'lodash';
 import BuildingRenderer from './buildingRenderer';
 
@@ -147,9 +146,6 @@ const Foundation = (foundationModel: FoundationModel) => {
   const solarRadiationHeatmapReflectionOnly = useStore(Selector.viewState.solarRadiationHeatmapReflectionOnly);
   const getHeatmap = useDataStore(Selector.getHeatmap);
   const groupMasterId = useStore(Selector.groupMasterId);
-
-  const { baseGroupSet, childCuboidSet, groupMasterDimension, groupMasterPosition, groupMasterRotation } =
-    useGroupMaster(foundationModel, groupMasterId);
 
   const {
     camera,
@@ -3455,16 +3451,6 @@ const Foundation = (foundationModel: FoundationModel) => {
 
         <BuildingRenderer {...foundationModel} />
       </group>
-
-      {selected && !locked && groupMasterId === id && foundationModel && groupMasterDimension && (
-        <GroupMaster
-          baseGroupSet={baseGroupSet}
-          childCuboidSet={childCuboidSet}
-          initalPosition={groupMasterPosition}
-          initalDimension={groupMasterDimension}
-          initalRotation={groupMasterRotation}
-        />
-      )}
     </>
   );
 };

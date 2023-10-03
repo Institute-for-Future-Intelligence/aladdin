@@ -2,7 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import { PartialWallHeight } from 'src/components/groupMaster';
+import { PartialWallHeight } from 'src/components/groupMaster/groupMaster';
 import { Undoable } from './Undoable';
 
 export interface UndoableResizeBuildingXY extends Undoable {

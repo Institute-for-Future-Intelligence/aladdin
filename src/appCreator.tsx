@@ -48,6 +48,7 @@ import { Button } from 'antd';
 import ProjectGallery from './panels/projectGallery';
 import SplitPane from 'react-split-pane';
 import { throttle } from 'lodash';
+import GroupMasterWrapper from './components/groupMaster';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -232,6 +233,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
         {/* somehow we have to use two suspense wrappers as follows */}
         <Suspense fallback={null}>
           <ElementsRenderer />
+          <GroupMasterWrapper />
         </Suspense>
         <Suspense fallback={null}>
           {axes && <Axes />}

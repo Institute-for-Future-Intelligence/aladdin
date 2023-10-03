@@ -9,10 +9,10 @@ import { Box, Circle, Cone, Plane, Sphere, Torus } from '@react-three/drei';
 import { MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from 'src/types';
 import { useRefStore } from 'src/stores/commonRef';
 import { useStore } from 'src/stores/common';
-import * as Selector from '../stores/selector';
+import * as Selector from '../../stores/selector';
 import { GROUND_ID, HALF_PI, HIGHLIGHT_HANDLE_COLOR, RESIZE_HANDLE_COLOR, TWO_PI } from 'src/constants';
 import { WallFill, WallModel } from 'src/models/WallModel';
-import Wireframe from './wireframe';
+import Wireframe from '../wireframe';
 import { UndoableMoveFoundationGroup } from 'src/undo/UndoableMove';
 import { UndoableResizeBuildingXY, UndoableResizeBuildingZ } from 'src/undo/UndoableResizeBuilding';
 import { useHandleSize } from 'src/views/wall/hooks';
@@ -22,7 +22,7 @@ import { Util } from 'src/Util';
 import { WindowModel } from 'src/models/WindowModel';
 
 interface GroupMasterProps {
-  baseGroupSet: Set<string>;
+  groupedElementsIdSet: Set<string>;
   childCuboidSet: Set<string>;
   initalPosition: number[];
   initalDimension: number[];
@@ -120,7 +120,7 @@ const RotateHandle = ({ args, handleType }: HandleProps) => {
 };
 
 const GroupMaster = ({
-  baseGroupSet,
+  groupedElementsIdSet,
   childCuboidSet,
   initalPosition,
   initalDimension,
@@ -129,7 +129,7 @@ const GroupMaster = ({
   const [cx, cy, cz] = initalPosition;
   const [lx, ly, lz] = initalDimension;
   const aspectRatio = lx === 0 ? 1 : ly / lx;
-  const lockAspectRatio = baseGroupSet.size > 1;
+  const lockAspectRatio = groupedElementsIdSet.size > 1 || childCuboidSet.size > 0;
 
   const intersectionPlaneRef = useRef<Mesh>(null);
   const intersectionPlanePositionRef = useRef(new Vector3());
@@ -296,7 +296,7 @@ const GroupMaster = ({
   const addUndoableMove = () => {
     const map = new Map<string, number[]>();
     for (const elem of useStore.getState().elements) {
-      if ((isGroupable(elem) && baseGroupSet.has(elem.id)) || baseGroupSet.has(elem.parentId)) {
+      if ((isGroupable(elem) && groupedElementsIdSet.has(elem.id)) || groupedElementsIdSet.has(elem.parentId)) {
         map.set(elem.id, [elem.cx, elem.cy, elem.cz, elem.rotation[2]]);
       }
     }
@@ -426,7 +426,7 @@ const GroupMaster = ({
       setCommonStore((state) => {
         const tempWorldDataMap = new Map<string, { pos: Vector3; rot: number }>();
         for (const elem of state.elements) {
-          if (isGroupable(elem) && baseGroupSet.has(elem.id)) {
+          if (isGroupable(elem) && (groupedElementsIdSet.has(elem.id) || childCuboidSet.has(elem.id))) {
             const posRatio = basePosRatioMapRef.current.get(elem.id);
             const dmsRatio = baseDmsRatioMapRef.current.get(elem.id);
             if (posRatio && dmsRatio) {
@@ -499,14 +499,14 @@ const GroupMaster = ({
       setCommonStore((state) => {
         for (const elem of state.elements) {
           // foundationGroupSet only has one element here
-          if (baseGroupSet.has(elem.id)) {
+          if (groupedElementsIdSet.has(elem.id)) {
             elem.lx = lx;
             elem.ly = ly;
             elem.cx = center.x;
             elem.cy = center.y;
           }
           // child elements
-          else if (elem.foundationId && baseGroupSet.has(elem.foundationId)) {
+          else if (elem.foundationId && groupedElementsIdSet.has(elem.foundationId)) {
             switch (elem.type) {
               case ObjectType.Wall: {
                 const wall = elem as WallModel;
@@ -585,7 +585,7 @@ const GroupMaster = ({
     const groupSize = baseRotationMapRef.current.size;
     setCommonStore((state) => {
       for (const elem of state.elements) {
-        if (isGroupable(elem) && baseGroupSet.has(elem.id) && !childCuboidSet.has(elem.id)) {
+        if (isGroupable(elem) && groupedElementsIdSet.has(elem.id) && !childCuboidSet.has(elem.id)) {
           const oldCenter = baseRelPosMapRef.current.get(elem.id);
           const oldRotation = groupSize !== 1 ? baseRotationMapRef.current.get(elem.id) : 0;
           if (oldCenter && oldRotation !== undefined) {
@@ -595,7 +595,7 @@ const GroupMaster = ({
             elem.rotation = [0, 0, oldRotation + rotateAngle];
           }
         }
-        if (elem.type !== ObjectType.Cuboid && baseGroupSet.has(elem.parentId)) {
+        if (elem.type !== ObjectType.Cuboid && groupedElementsIdSet.has(elem.parentId)) {
           const oldRotation = groupSize !== 1 ? baseRotationMapRef.current.get(elem.parentId) : 0;
           if (oldRotation !== undefined) {
             elem.rotation = [0, 0, oldRotation + rotateAngle];
@@ -622,14 +622,14 @@ const GroupMaster = ({
     const [currLx, currLy] = [hx * 2, hy * 2];
     for (const elem of useStore.getState().elements) {
       // base elements
-      if (isGroupable(elem) && baseGroupSet.has(elem.id)) {
+      if (isGroupable(elem) && (groupedElementsIdSet.has(elem.id) || childCuboidSet.has(elem.id))) {
         const { pos } = Util.getWorldDataById(elem.id);
         basePosRatioMapRef.current.set(elem.id, [(pos.x - position.x) / currLx, (pos.y - position.y) / currLy]);
         baseDmsRatioMapRef.current.set(elem.id, [elem.lx / currLx, elem.ly / currLy]);
         foundatonOldDataMapRef.current.set(elem.id, [elem.cx, elem.cy, elem.lx, elem.ly]);
       }
       // child elements
-      else if (elem.foundationId && baseGroupSet.has(elem.foundationId)) {
+      else if (elem.foundationId && groupedElementsIdSet.has(elem.foundationId)) {
         const foundation = getElementById(elem.foundationId);
         if (!foundation) continue;
         switch (elem.type) {
@@ -668,7 +668,7 @@ const GroupMaster = ({
     oldPartialWallHeightMapRef.current.clear();
 
     for (const elem of useStore.getState().elements) {
-      if (elem.foundationId && baseGroupSet.has(elem.foundationId)) {
+      if (elem.foundationId && groupedElementsIdSet.has(elem.foundationId)) {
         if (elem.type === ObjectType.Wall) {
           elementHeightMapRef.current.set(elem.id, elem.lz / height);
           elementOldHeightMapRef.current.set(elem.id, elem.lz);
@@ -691,7 +691,7 @@ const GroupMaster = ({
           elementHeightMapRef.current.set(elem.id, (elem as RoofModel).rise / height);
           elementOldHeightMapRef.current.set(elem.id, (elem as RoofModel).rise);
         }
-      } else if (baseGroupSet.has(elem.id)) {
+      } else if (groupedElementsIdSet.has(elem.id) || childCuboidSet.has(elem.id)) {
         elementHeightMapRef.current.set(elem.id, elem.lz / height);
         elementOldHeightMapRef.current.set(elem.id, elem.lz);
       }
@@ -743,7 +743,7 @@ const GroupMaster = ({
       const p = event.intersections[0].point.clone().setZ(0);
       resizerCenterRelPosRef.current.subVectors(position, p);
       for (const elem of useStore.getState().elements) {
-        if (isGroupable(elem) && baseGroupSet.has(elem.id)) {
+        if (isGroupable(elem) && groupedElementsIdSet.has(elem.id)) {
           const c = new Vector3(elem.cx, elem.cy);
           const v = new Vector3().subVectors(c, p);
           baseRelPosMapRef.current.set(elem.id, v);
@@ -763,14 +763,14 @@ const GroupMaster = ({
     if (event.intersections.length > 0) {
       const resizerCenter = new Vector3(position.x, position.y);
       for (const elem of useStore.getState().elements) {
-        if (isGroupable(elem) && baseGroupSet.has(elem.id)) {
+        if (isGroupable(elem) && groupedElementsIdSet.has(elem.id)) {
           const elemCenter = new Vector3(elem.cx, elem.cy);
           const v = new Vector3().subVectors(elemCenter, resizerCenter);
           baseRelPosMapRef.current.set(elem.id, v);
           baseRotationMapRef.current.set(elem.id, elem.rotation[2]);
           foundatonOldDataMapRef.current.set(elem.id, [elem.cx, elem.cy, elem.cz, elem.rotation[2]]);
         }
-        if (baseGroupSet.has(elem.parentId)) {
+        if (groupedElementsIdSet.has(elem.parentId)) {
           foundatonOldDataMapRef.current.set(elem.id, [elem.cx, elem.cy, elem.cz, elem.rotation[2]]);
         }
       }
@@ -824,7 +824,7 @@ const GroupMaster = ({
           setPosition(new Vector3().addVectors(p.clone().setZ(0), resizerCenterRelPosRef.current));
           setCommonStore((state) => {
             for (const elem of state.elements) {
-              if (isGroupable(elem) && baseGroupSet.has(elem.id) && !childCuboidSet.has(elem.id)) {
+              if (isGroupable(elem) && groupedElementsIdSet.has(elem.id) && !childCuboidSet.has(elem.id)) {
                 const v = baseRelPosMapRef.current.get(elem.id);
                 if (v) {
                   elem.cx = p.x + v.x;

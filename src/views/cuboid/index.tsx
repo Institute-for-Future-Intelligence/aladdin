@@ -2,14 +2,12 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import GroupMaster from 'src/components/groupMaster';
 import { CuboidModel } from 'src/models/CuboidModel';
 import { ElementModel } from 'src/models/ElementModel';
 import { isStackableModel } from 'src/models/Stackable';
 import { useStore } from 'src/stores/common';
 import Cuboid from './cuboid';
 import * as Selector from '../../stores/selector';
-import { useGroupMaster } from '../hooks';
 import { ObjectType } from 'src/types';
 import SolarPanelOnCuboid from '../solarPanel/solarPanelOnCuboid';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
@@ -29,21 +27,9 @@ export const CUBOID_WRAPPER_NAME = 'Cuboid Wrapper';
 export const CUBOID_STACKABLE_CHILD = 'Cuboid Stackable Child';
 
 const CuboidRenderer = ({ elements, cuboidModel }: CuboidRendererProps) => {
-  const { id, parentId, cx, cy, lz, rotation, locked } = cuboidModel;
-
-  const groupMasterId = useStore(Selector.groupMasterId);
-
-  const { baseGroupSet, childCuboidSet, groupMasterDimension, groupMasterPosition, groupMasterRotation } =
-    useGroupMaster(cuboidModel, groupMasterId);
+  const { cx, cy, lz, rotation } = cuboidModel;
 
   const hz = lz / 2;
-  const showGroupMaster = !!(
-    parentId === GROUND_ID &&
-    !locked &&
-    groupMasterId === id &&
-    cuboidModel &&
-    groupMasterDimension
-  );
 
   const isStackableChild = (e: ElementModel) => isStackableModel(e) && e.parentId === cuboidModel.id;
 
@@ -85,16 +71,6 @@ const CuboidRenderer = ({ elements, cuboidModel }: CuboidRendererProps) => {
           }
         })}
       </group>
-
-      {showGroupMaster && (
-        <GroupMaster
-          baseGroupSet={baseGroupSet}
-          childCuboidSet={childCuboidSet}
-          initalPosition={groupMasterPosition}
-          initalDimension={groupMasterDimension}
-          initalRotation={groupMasterRotation}
-        />
-      )}
     </>
   );
 };
