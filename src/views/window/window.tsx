@@ -143,22 +143,35 @@ const Window = (windowModel: WindowModel) => {
 
   const selectMe = () => {
     setCommonStore((state) => {
-      for (const e of state.elements) {
-        if (e.id === id) {
-          e.selected = true;
-          state.selectedElement = e;
-          if (state.multiSelectionsMode) {
-            if (state.selectedElementIdSet.has(id)) {
-              state.selectedElementIdSet.delete(id);
+      if (state.groupActionMode) {
+        if (!state.multiSelectionsMode) {
+          state.selectedElementIdSet.clear();
+        }
+        if (windowModel.foundationId) {
+          if (state.selectedElementIdSet.has(parentId)) {
+            state.selectedElementIdSet.delete(parentId);
+          } else {
+            state.selectedElementIdSet.add(windowModel.foundationId);
+          }
+        }
+      } else {
+        for (const e of state.elements) {
+          if (e.id === id) {
+            e.selected = true;
+            state.selectedElement = e;
+            if (state.multiSelectionsMode) {
+              if (state.selectedElementIdSet.has(id)) {
+                state.selectedElementIdSet.delete(id);
+              } else {
+                state.selectedElementIdSet.add(id);
+              }
             } else {
+              state.selectedElementIdSet.clear();
               state.selectedElementIdSet.add(id);
             }
           } else {
-            state.selectedElementIdSet.clear();
-            state.selectedElementIdSet.add(id);
+            e.selected = false;
           }
-        } else {
-          e.selected = false;
         }
       }
     });

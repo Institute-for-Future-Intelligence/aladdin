@@ -317,7 +317,6 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     setCommonStore((state) => {
       state.objectTypeToAdd = ObjectType.None;
       state.groupActionMode = false;
-      state.groupMasterId = null;
     });
   };
 

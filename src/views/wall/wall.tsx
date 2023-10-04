@@ -1735,9 +1735,14 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           for (const e of state.elements) {
             e.selected = e.id === parentId;
           }
-          state.groupMasterId = parentId;
-          state.selectedElementIdSet.clear();
-          state.selectedElementIdSet.add(parentId);
+          if (!state.multiSelectionsMode) {
+            state.selectedElementIdSet.clear();
+          }
+          if (state.selectedElementIdSet.has(parentId)) {
+            state.selectedElementIdSet.delete(parentId);
+          } else {
+            state.selectedElementIdSet.add(parentId);
+          }
         });
         e.stopPropagation();
       } else if (isAllowedToSelectMe()) {
@@ -2178,7 +2183,6 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               e.selected = false;
             }
           }
-          state.groupMasterId = parentId;
         });
         e.stopPropagation();
       } else if (isAllowedToSelectMe()) {
@@ -2196,7 +2200,6 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         for (const e of state.elements) {
           e.selected = e.id === parentId;
         }
-        state.groupMasterId = parentId;
         state.selectedElementIdSet.clear();
         state.selectedElementIdSet.add(parentId);
       });

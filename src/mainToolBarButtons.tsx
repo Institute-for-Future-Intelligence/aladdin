@@ -100,36 +100,13 @@ const MainToolBarButtons = () => {
     setCommonStore((state) => {
       state.objectTypeToAdd = ObjectType.None;
       state.groupActionMode = false;
-      state.groupMasterId = null;
       state.actionModeLock = false;
     });
   };
 
   const handleGroupActionMode = () => {
     setCommonStore((state) => {
-      if (state.groupActionMode) {
-        state.groupMasterId = null;
-      } else {
-        if (state.selectedElement) {
-          if (isGroupable(state.selectedElement)) {
-            state.groupMasterId = Util.getBaseId(state.selectedElement.id);
-          } else {
-            const baseId = Util.getBaseId(state.selectedElement.foundationId ?? state.selectedElement.parentId);
-            state.groupMasterId = baseId;
-            for (const e of state.elements) {
-              e.selected = e.id === baseId;
-            }
-            state.selectedElementIdSet.clear();
-            if (baseId) {
-              state.selectedElementIdSet.add(baseId);
-            }
-          }
-        } else {
-          for (const e of state.elements) {
-            e.selected = false;
-          }
-          state.selectedElementIdSet.clear();
-        }
+      if (!state.groupActionMode) {
         state.objectTypeToAdd = ObjectType.None;
       }
       state.groupActionMode = !state.groupActionMode;
@@ -226,7 +203,6 @@ const MainToolBarButtons = () => {
     setCommonStore((state) => {
       state.objectTypeToAdd = type;
       state.groupActionMode = false;
-      state.groupMasterId = null;
       state.actionModeLock = false;
     });
     useRefStore.getState().setEnableOrbitController(false);

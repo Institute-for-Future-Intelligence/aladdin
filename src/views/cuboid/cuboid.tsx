@@ -119,7 +119,6 @@ const Cuboid = (cuboidModel: CuboidModel) => {
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const getHeatmap = useDataStore(Selector.getHeatmap);
   const groundImage = useStore(Selector.viewState.groundImage);
-  const groupMasterId = useStore(Selector.groupMasterId);
 
   const {
     camera,
@@ -460,10 +459,6 @@ const Cuboid = (cuboidModel: CuboidModel) => {
       bypass = true;
     }
     if (selectedElement?.id === id || bypass) {
-      if (useStore.getState().groupActionMode) {
-        const baseId = Util.getBaseId(id);
-        useStore.getState().setGroupMasterId(baseId);
-      }
       // no child of this cuboid is clicked
       if (legalAddToCuboid(useStore.getState().objectTypeToAdd) && cuboidModel) {
         setShowGrid(true);
@@ -1167,7 +1162,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
 
   const handleArgs = useMemo(() => [hx, hy, hz], [hx, hy, hz]);
 
-  const showHandles = selected && !locked && !groupMasterId;
+  const showHandles = selected && !locked;
 
   return (
     <group ref={groupRef} name={'Cuboid Group ' + id} userData={{ aabb: true }}>

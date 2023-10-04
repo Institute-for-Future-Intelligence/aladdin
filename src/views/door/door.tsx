@@ -2,7 +2,7 @@
  * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { DoorModel, DoorType } from 'src/models/DoorModel';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
@@ -114,24 +114,47 @@ const Door = (doorModel: DoorModel) => {
 
   const selected = useSelected(id);
 
+  // don't know why pointerDown event get called twice. So use a ref to avoid second call
+  const pointerDownRef = useRef(false);
+  useEffect(() => {
+    const handlePointerUp = () => {
+      pointerDownRef.current = false;
+    };
+    window.addEventListener('pointerup', handlePointerUp);
+    return () => window.removeEventListener('pointerup', handlePointerUp);
+  }, []);
+
   const selectMe = () => {
     setCommonStore((state) => {
-      for (const e of state.elements) {
-        if (e.id === id) {
-          e.selected = true;
-          state.selectedElement = e;
-          if (state.multiSelectionsMode) {
-            if (state.selectedElementIdSet.has(id)) {
-              state.selectedElementIdSet.delete(id);
+      if (state.groupActionMode) {
+        if (!state.multiSelectionsMode) {
+          state.selectedElementIdSet.clear();
+        }
+        if (doorModel.foundationId) {
+          if (state.selectedElementIdSet.has(parentId)) {
+            state.selectedElementIdSet.delete(parentId);
+          } else {
+            state.selectedElementIdSet.add(doorModel.foundationId);
+          }
+        }
+      } else {
+        for (const e of state.elements) {
+          if (e.id === id) {
+            e.selected = true;
+            state.selectedElement = e;
+            if (state.multiSelectionsMode) {
+              if (state.selectedElementIdSet.has(id)) {
+                state.selectedElementIdSet.delete(id);
+              } else {
+                state.selectedElementIdSet.add(id);
+              }
             } else {
+              state.selectedElementIdSet.clear();
               state.selectedElementIdSet.add(id);
             }
           } else {
-            state.selectedElementIdSet.clear();
-            state.selectedElementIdSet.add(id);
+            e.selected = false;
           }
-        } else {
-          e.selected = false;
         }
       }
     });
@@ -184,7 +207,8 @@ const Door = (doorModel: DoorModel) => {
   };
 
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
-    if (e.button === 2 || useStore.getState().addedWallId) return; // ignore right-click
+    if (pointerDownRef.current || e.button === 2 || useStore.getState().addedWallId) return; // ignore right-click
+    pointerDownRef.current = true;
     if (isAllowedToSelectMe(e)) {
       selectMe();
     }

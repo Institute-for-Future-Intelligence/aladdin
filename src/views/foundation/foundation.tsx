@@ -145,7 +145,6 @@ const Foundation = (foundationModel: FoundationModel) => {
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const solarRadiationHeatmapReflectionOnly = useStore(Selector.viewState.solarRadiationHeatmapReflectionOnly);
   const getHeatmap = useDataStore(Selector.getHeatmap);
-  const groupMasterId = useStore(Selector.groupMasterId);
 
   const {
     camera,
@@ -1479,9 +1478,6 @@ const Foundation = (foundationModel: FoundationModel) => {
     }
     // no child of this foundation is clicked
     if (selectedElement?.id === id || bypass) {
-      if (useStore.getState().groupActionMode) {
-        useStore.getState().setGroupMasterId(id);
-      }
       if (legalOnFoundation(useStore.getState().objectTypeToAdd)) {
         if (foundationModel) {
           setShowGrid(true);
@@ -3095,7 +3091,7 @@ const Foundation = (foundationModel: FoundationModel) => {
         </group>
 
         {/* draw handles */}
-        {selected && !locked && !groupMasterId && (
+        {selected && !locked && (
           <>
             {/* resize handles */}
             <Box

@@ -76,7 +76,6 @@ const Ground = () => {
   const deletedFoundationId = useStore(Selector.deletedFoundationId);
   const deletedCuboidId = useStore(Selector.deletedCuboidId);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
-  const groupMasterId = useStore(Selector.groupMasterId);
 
   const { get: getThree, scene, invalidate } = useThree();
   const groundPlaneRef = useRef<Mesh>();
@@ -1131,7 +1130,6 @@ const Ground = () => {
           state.selectedElement = null;
           InnerCommonStoreState.selectNone(state);
           state.contextMenuObjectType = null;
-          state.groupMasterId = null;
         });
       }
       if (legalOnGround(objectTypeToAdd)) {
@@ -1755,7 +1753,7 @@ const Ground = () => {
             case ObjectType.Cuboid: // we can only deal with the top surface of a cuboid now
             case ObjectType.Foundation:
               const children = getChildren(e.id);
-              if (children.length > 0 && !groupMasterId) {
+              if (children.length > 0) {
                 // basically, we have to create a copy of parent and children, set them to the new values,
                 // check if the new values are OK, proceed to change the original elements in
                 // the common store only when they are OK.
@@ -1906,7 +1904,7 @@ const Ground = () => {
         }
       }
       // if the new size is okay, we can then change the relative positions of the children.
-      if (sizeOk && !groupMasterId) {
+      if (sizeOk) {
         for (const e of state.elements) {
           if (e.parentId === grabRef.current!.id) {
             switch (e.type) {

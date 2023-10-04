@@ -819,8 +819,6 @@ export const autoDeletedChild = (state: CommonStoreState) => state.autoDeletedCh
 
 export const groupActionMode = (state: CommonStoreState) => state.groupActionMode;
 
-export const groupMasterId = (state: CommonStoreState) => state.groupMasterId;
-
 export const groupActionUpdateFlag = (state: CommonStoreState) => state.groupActionUpdateFlag;
 
 export const addedWindowId = (state: CommonStoreState) => state.addedWindowId;

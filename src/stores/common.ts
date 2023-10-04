@@ -100,6 +100,7 @@ import { isStackableModel } from 'src/models/Stackable';
 import { WindowModel } from 'src/models/WindowModel';
 import { ProjectUtil } from '../panels/ProjectUtil';
 import { StoreUtil } from './StoreUtil';
+import { isGroupable } from 'src/models/Groupable';
 
 enableMapSet();
 
@@ -494,8 +495,6 @@ export interface CommonStoreState {
 
   groupActionMode: boolean;
   setGroupActionMode: (b: boolean) => void;
-  groupMasterId: string | null;
-  setGroupMasterId: (id: string | null) => void;
   groupActionUpdateFlag: boolean;
 
   locale: Locale;
@@ -663,7 +662,7 @@ export const useStore = create<CommonStoreState>(
               state.actionState = new DefaultActionState();
               state.multiSelectionsMode = false;
               state.selectedElementIdSet.clear();
-              state.groupMasterId = null;
+              state.groupActionMode = false;
               state.selectedFloatingWindow = null;
               StoreUtil.updateOldFileData(state);
             });
@@ -745,7 +744,7 @@ export const useStore = create<CommonStoreState>(
               state.minimumNavigationTurnSpeed = 3;
               state.multiSelectionsMode = false;
               state.selectedElementIdSet.clear();
-              state.groupMasterId = null;
+              state.groupActionMode = false;
               state.selectedFloatingWindow = null;
               state.deletedRoofId = null;
               state.autoDeletedRoofs = null;
@@ -995,23 +994,40 @@ export const useStore = create<CommonStoreState>(
               );
               if (intersectableObjects[0].object === e.eventObject || select) {
                 immerSet((state) => {
-                  if (state.multiSelectionsMode) {
-                    if (state.selectedElementIdSet.has(id)) {
-                      state.selectedElementIdSet.delete(id);
-                    } else {
-                      state.selectedElementIdSet.add(id);
-                    }
-                  } else {
-                    state.selectedElementIdSet.clear();
-                    state.selectedElementIdSet.add(id);
-                  }
-
                   for (const elem of state.elements) {
                     if (elem.id === id) {
                       elem.selected = true;
                       state.selectedElement = elem;
                       // TODO: lz is now zero for roof. So this may need to be set from elsewhere for roofs.
                       state.selectedElementHeight = elem.lz;
+
+                      if (state.groupActionMode) {
+                        let fId = elem.foundationId ?? null;
+                        if (!fId && isGroupable(elem)) {
+                          fId = Util.getBaseId(elem.id);
+                        }
+                        if (fId) {
+                          if (!state.multiSelectionsMode) {
+                            state.selectedElementIdSet.clear();
+                          }
+                          if (state.selectedElementIdSet.has(fId)) {
+                            state.selectedElementIdSet.delete(fId);
+                          } else {
+                            state.selectedElementIdSet.add(fId);
+                          }
+                        }
+                      } else {
+                        if (state.multiSelectionsMode) {
+                          if (state.selectedElementIdSet.has(id)) {
+                            state.selectedElementIdSet.delete(id);
+                          } else {
+                            state.selectedElementIdSet.add(id);
+                          }
+                        } else {
+                          state.selectedElementIdSet.clear();
+                          state.selectedElementIdSet.add(id);
+                        }
+                      }
                     } else {
                       elem.selected = false;
                     }
@@ -4418,15 +4434,6 @@ export const useStore = create<CommonStoreState>(
           setGroupActionMode(b: boolean) {
             immerSet((state) => {
               state.groupActionMode = b;
-            });
-          },
-          groupMasterId: null,
-          setGroupMasterId(id: string | null) {
-            immerSet((state) => {
-              state.groupMasterId = id;
-              for (const e of state.elements) {
-                e.selected = e.id === id;
-              }
             });
           },
           groupActionUpdateFlag: false,

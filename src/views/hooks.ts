@@ -6,7 +6,7 @@ import { useStore } from 'src/stores/common';
 import * as Selector from '../stores/selector';
 
 export const useSelected = (id: string) => {
-  return useStore((state) => state.selectedElementIdSet.has(id));
+  return useStore((state) => state.selectedElementIdSet.has(id) && !state.groupActionMode);
 };
 
 export const useLanguage = () => {

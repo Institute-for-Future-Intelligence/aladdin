@@ -227,16 +227,14 @@ export const handleRoofBodyPointerDown = (e: ThreeEvent<PointerEvent>, id: strin
     e.stopPropagation();
     useStore.getState().set((state) => {
       if (state.groupActionMode) {
-        for (const e of state.elements) {
-          if (e.id === foundationId) {
-            e.selected = true;
-          } else {
-            e.selected = false;
-          }
+        if (!state.multiSelectionsMode) {
+          state.selectedElementIdSet.clear();
         }
-        state.groupMasterId = foundationId;
-        state.selectedElementIdSet.clear();
-        state.selectedElementIdSet.add(foundationId);
+        if (state.selectedElementIdSet.has(foundationId)) {
+          state.selectedElementIdSet.delete(foundationId);
+        } else {
+          state.selectedElementIdSet.add(foundationId);
+        }
       } else {
         for (const e of state.elements) {
           if (e.id === id) {

@@ -375,6 +375,11 @@ const Handles = ({ id, args }: HandlesProps) => {
           childPositionMap.current.set(child.id, worldPos);
         }
       }
+      setCommonStore((state) => {
+        state.selectedElementIdSet.clear();
+        state.selectedElementIdSet.add(id);
+        state.selectedElement = state.elements.find((e) => e.id === id) ?? null;
+      });
     }
   };
 
@@ -396,6 +401,12 @@ const Handles = ({ id, args }: HandlesProps) => {
           childSideMap.current.set(child.id, [CuboidFace.Top, 1]);
         }
       }
+
+      setCommonStore((state) => {
+        state.selectedElementIdSet.clear();
+        state.selectedElementIdSet.add(id);
+        state.selectedElement = state.elements.find((e) => e.id === id) ?? null;
+      });
     }
   };
 

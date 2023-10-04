@@ -234,7 +234,6 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
   const updateWallRightJointsById = useStore(Selector.updateWallRightJointsById);
   const setEnableFineGrid = useStore(Selector.setEnableFineGrid);
   const overlapWithSibling = useStore(Selector.overlapWithSibling);
-  const groupMasterId = useStore(Selector.groupMasterId);
 
   const moveStepAbsolute = 0.1;
 
@@ -299,7 +298,6 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
         setCommonStore((state) => {
           state.objectTypeToAdd = ObjectType.None;
           state.groupActionMode = false;
-          state.groupMasterId = null;
           state.viewState.autoRotate = !undoableCheck.checked;
         });
       },
@@ -307,7 +305,6 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
         setCommonStore((state) => {
           state.objectTypeToAdd = ObjectType.None;
           state.groupActionMode = false;
-          state.groupMasterId = null;
           state.viewState.autoRotate = undoableCheck.checked;
         });
       },
@@ -316,7 +313,6 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
     setCommonStore((state) => {
       state.objectTypeToAdd = ObjectType.None;
       state.groupActionMode = false;
-      state.groupMasterId = null;
       state.viewState.autoRotate = !state.viewState.autoRotate;
     });
   };
@@ -365,7 +361,7 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
           case ObjectType.Foundation:
           case ObjectType.Cuboid: {
             displacement = -moveStepAbsolute;
-            if (groupMasterId === selectedElement.id) {
+            if (useStore.getState().groupActionMode) {
               setCommonStore((state) => {
                 state.groupActionUpdateFlag = !state.groupActionUpdateFlag;
               });
@@ -478,7 +474,7 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
           case ObjectType.Foundation:
           case ObjectType.Cuboid: {
             displacement = moveStepAbsolute;
-            if (groupMasterId === selectedElement.id) {
+            if (useStore.getState().groupActionMode) {
               setCommonStore((state) => {
                 state.groupActionUpdateFlag = !state.groupActionUpdateFlag;
               });
@@ -591,7 +587,7 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
           case ObjectType.Foundation:
           case ObjectType.Cuboid: {
             displacement = moveStepAbsolute;
-            if (groupMasterId === selectedElement.id) {
+            if (useStore.getState().groupActionMode) {
               setCommonStore((state) => {
                 state.groupActionUpdateFlag = !state.groupActionUpdateFlag;
               });
@@ -704,7 +700,7 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
           case ObjectType.Foundation:
           case ObjectType.Cuboid: {
             displacement = -moveStepAbsolute;
-            if (groupMasterId === selectedElement.id) {
+            if (useStore.getState().groupActionMode) {
               setCommonStore((state) => {
                 state.groupActionUpdateFlag = !state.groupActionUpdateFlag;
               });
@@ -1017,7 +1013,6 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
             setCommonStore((state) => {
               state.objectTypeToAdd = ObjectType.None;
               state.groupActionMode = false;
-              state.groupMasterId = null;
               state.viewState.orthographic = false;
             });
             resetView();
@@ -1044,7 +1039,6 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
           state.createNewFileFlag = true;
           state.objectTypeToAdd = ObjectType.None;
           state.groupActionMode = false;
-          state.groupMasterId = null;
           window.history.pushState({}, document.title, HOME_URL);
           if (loggable) {
             state.actionInfo = {
@@ -1213,7 +1207,7 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
       case 'meta+z': // for Mac
         if (undoManager.hasUndo()) {
           const commandName = undoManager.undo();
-          if (groupMasterId === selectedElement?.id) {
+          if (useStore.getState().groupActionMode) {
             setCommonStore((state) => {
               state.groupActionUpdateFlag = !state.groupActionUpdateFlag;
             });
@@ -1234,7 +1228,7 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
         if (undoManager.hasRedo()) {
           const commandName = undoManager.redo();
           if (commandName) showInfo(i18n.t('menu.edit.Redo', lang) + ': ' + commandName, UNDO_SHOW_INFO_DURATION);
-          if (groupMasterId === selectedElement?.id) {
+          if (useStore.getState().groupActionMode) {
             setCommonStore((state) => {
               state.groupActionUpdateFlag = !state.groupActionUpdateFlag;
             });
@@ -1282,7 +1276,6 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
           state.actionModeLock = false;
           state.moveHandleType = null;
           state.resizeHandleType = null;
-          state.groupMasterId = null;
           state.groupActionMode = false;
         });
         useRefStore.getState().setEnableOrbitController(true);

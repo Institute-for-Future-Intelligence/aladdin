@@ -626,7 +626,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
           setCommonStore((state) => {
             state.objectTypeToAdd = ObjectType.None;
             state.groupActionMode = false;
-            state.groupMasterId = null;
             state.viewState.autoRotate = !undoableCheck.checked;
           });
         },
@@ -634,7 +633,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
           setCommonStore((state) => {
             state.objectTypeToAdd = ObjectType.None;
             state.groupActionMode = false;
-            state.groupMasterId = null;
             state.viewState.autoRotate = undoableCheck.checked;
           });
         },
@@ -643,7 +641,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
       setCommonStore((state) => {
         state.objectTypeToAdd = ObjectType.None;
         state.groupActionMode = false;
-        state.groupMasterId = null;
         state.viewState.autoRotate = !state.viewState.autoRotate;
       });
     }
@@ -815,7 +812,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                   state.createNewFileFlag = true;
                   state.objectTypeToAdd = ObjectType.None;
                   state.groupActionMode = false;
-                  state.groupMasterId = null;
                   window.history.pushState({}, document.title, HOME_URL);
                   if (loggable) {
                     state.actionInfo = {
@@ -843,7 +839,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                   state.openLocalFileFlag = true;
                   state.objectTypeToAdd = ObjectType.None;
                   state.groupActionMode = false;
-                  state.groupMasterId = null;
                   state.cloudFile = undefined;
                   window.history.pushState({}, document.title, HOME_URL);
                   if (loggable) {
@@ -1167,7 +1162,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                 setCommonStore((state) => {
                   state.objectTypeToAdd = ObjectType.None;
                   state.groupActionMode = false;
-                  state.groupMasterId = null;
                   state.viewState.orthographic = false;
                 });
               }}
