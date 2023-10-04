@@ -10,10 +10,15 @@ import { DEFAULT_PARAPET_SETTINGS } from 'src/views/wall/parapet';
 import { GambrelRoofModel, RoofModel, RoofType } from 'src/models/RoofModel';
 import { GROUND_ID } from 'src/constants';
 import { DoorModel, DoorType } from 'src/models/DoorModel';
+import { ElementModel } from 'src/models/ElementModel';
 
 // should put this inside immerSet function, because it mutate state directly
 export class StoreUtil {
   static updateOldFileData(state: CommonStoreState) {
+    const elementMap = new Map<string, ElementModel>();
+    for (const e of state.elements) {
+      elementMap.set(e.id, e);
+    }
     for (const e of state.elements) {
       switch (e.type) {
         case ObjectType.Foundation: {
@@ -57,15 +62,33 @@ export class StoreUtil {
             wall.rightTopPartialHeight = wall.lz;
           }
           if (wall.eavesLength === undefined) {
-            const roof = state.elements.find((e) => e.id === wall.roofId && e.type === ObjectType.Roof) as RoofModel;
-            if (roof) {
-              wall.eavesLength = roof.overhang !== undefined ? roof.overhang : 0.3;
-            } else {
-              wall.eavesLength = 0.3;
+            if (wall.roofId) {
+              const el = elementMap.get(wall.roofId);
+              if (el && el.type === ObjectType.Roof) {
+                const roof = el as RoofModel;
+                wall.eavesLength = roof.overhang !== undefined ? roof.overhang : 0.3;
+              } else {
+                wall.eavesLength = 0.3;
+              }
             }
           }
           if (wall.parapet === undefined) {
             wall.parapet = { ...DEFAULT_PARAPET_SETTINGS };
+          }
+
+          if (wall.roofId) {
+            const el = elementMap.get(wall.roofId);
+            if (el && el.type === ObjectType.Roof) {
+              const roof = el as RoofModel;
+              if (
+                roof.roofType === RoofType.Pyramid ||
+                roof.roofType === RoofType.Hip ||
+                roof.roofType === RoofType.Mansard
+              ) {
+                wall.leftRoofHeight = undefined;
+                wall.rightRoofHeight = undefined;
+              }
+            }
           }
           break;
         }
