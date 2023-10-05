@@ -866,6 +866,10 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
       case 'meta+c': // for Mac
         if (selectedElement && selectedElement.type !== ObjectType.Roof) {
           copyElementById(selectedElement.id);
+          setCommonStore((state) => {
+            state.selectedElementIdSet.clear();
+            state.selectedElementIdSet.add(selectedElement.id);
+          });
           if (loggable) {
             setCommonStore((state) => {
               state.actionInfo = {
