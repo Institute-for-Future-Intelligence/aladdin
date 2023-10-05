@@ -432,13 +432,21 @@ const Handles = ({ id, args }: HandlesProps) => {
         case MoveHandleType.Right:
         case MoveHandleType.Top: {
           useStore.getState().set((state) => {
-            state.moveHandleType = handleType;
-            state.selectedElement = state.elements.find((e) => e.id === id) ?? null;
-            for (const e of state.elements) {
-              if (state.selectedElementIdSet.has(e.id) && !Util.isElementAllowedMultipleMoveOnGround(e)) {
-                state.selectedElementIdSet.delete(e.id);
+            const cuboid = state.elements.find((e) => e.id === id) ?? null;
+            if (!cuboid) return;
+
+            state.selectedElement = cuboid;
+            if (cuboid.parentId === GROUND_ID) {
+              for (const e of state.elements) {
+                if (state.selectedElementIdSet.has(e.id) && !Util.isElementAllowedMultipleMoveOnGround(e)) {
+                  state.selectedElementIdSet.delete(e.id);
+                }
               }
+            } else {
+              state.selectedElementIdSet.clear();
+              state.selectedElementIdSet.add(cuboid.id);
             }
+            state.moveHandleType = handleType;
           });
           useRefStore.getState().setEnableOrbitController(false);
           break;
@@ -608,7 +616,6 @@ const Handles = ({ id, args }: HandlesProps) => {
               handleType={MoveHandleType.Lower}
               position={[0, -hy - size * 1.2, -hz]}
               size={size}
-              onPointerDown={handleMoveHandlePointerDown}
               onPointerOver={hoverHandle}
               onPointerOut={noHoverHandle}
             />
@@ -616,7 +623,6 @@ const Handles = ({ id, args }: HandlesProps) => {
               handleType={MoveHandleType.Upper}
               position={[0, hy + size * 1.2, -hz]}
               size={size}
-              onPointerDown={handleMoveHandlePointerDown}
               onPointerOver={hoverHandle}
               onPointerOut={noHoverHandle}
             />
@@ -624,7 +630,6 @@ const Handles = ({ id, args }: HandlesProps) => {
               handleType={MoveHandleType.Left}
               position={[-hx - size * 1.2, 0, -hz]}
               size={size}
-              onPointerDown={handleMoveHandlePointerDown}
               onPointerOver={hoverHandle}
               onPointerOut={noHoverHandle}
             />
@@ -632,7 +637,6 @@ const Handles = ({ id, args }: HandlesProps) => {
               handleType={MoveHandleType.Right}
               position={[hx + size * 1.2, 0, -hz]}
               size={size}
-              onPointerDown={handleMoveHandlePointerDown}
               onPointerOver={hoverHandle}
               onPointerOut={noHoverHandle}
             />
@@ -640,7 +644,6 @@ const Handles = ({ id, args }: HandlesProps) => {
               handleType={MoveHandleType.Top}
               position={[0, 0, hz]}
               size={size}
-              onPointerDown={handleMoveHandlePointerDown}
               onPointerOver={hoverHandle}
               onPointerOut={noHoverHandle}
             />

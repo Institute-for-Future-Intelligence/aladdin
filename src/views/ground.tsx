@@ -109,7 +109,6 @@ const Ground = () => {
   const baseGroupOldPosMapRef = useRef<Map<string, number[]>>(new Map());
   const baseGroupNewPosMapRef = useRef<Map<string, number[]>>(new Map());
   const moveHandleWorldDiffV3Ref = useRef(new Vector3());
-  const isMultipleMoveRef = useRef(false);
 
   const lang = useMemo(() => {
     return { lng: language };
@@ -813,7 +812,7 @@ const Ground = () => {
         }
         showError(i18n.t('message.CannotMoveObjectTooFar', lang));
       } else {
-        if (baseGroupRelPosMapRef.current.size > 1 && isMultipleMoveRef.current) {
+        if (baseGroupRelPosMapRef.current.size > 1) {
           baseGroupNewPosMapRef.current.clear();
           for (const elem of useStore.getState().elements) {
             if (baseGroupOldPosMapRef.current.has(elem.id)) {
@@ -887,7 +886,6 @@ const Ground = () => {
           } as UndoableMove;
           addUndoable(undoableMove);
         }
-        isMultipleMoveRef.current = false;
         baseGroupRelPosMapRef.current.clear();
         updateSceneRadius();
       }
@@ -1029,6 +1027,7 @@ const Ground = () => {
     const diff = new Vector3().subVectors(center, pointer);
     baseGroupRelPosMapRef.current.set(element.id, diff);
     baseGroupOldPosMapRef.current.set(element.id, [element.cx, element.cy, element.cz]);
+    console.log('set', baseGroupRelPosMapRef.current);
   };
 
   const checkOverlapWithAllBases = (event: ThreeEvent<PointerEvent>, currElem: GroupableModel) => {
@@ -1164,7 +1163,6 @@ const Ground = () => {
         if (selectedElement) {
           grabRef.current = selectedElement;
           baseGroupRelPosMapRef.current.clear();
-          isMultipleMoveRef.current = true;
           for (const elem of useStore.getState().elements) {
             if (Util.isElementAllowedMultipleMoveOnGround(elem) && selectedElementIdSet.has(elem.id)) {
               const base = elem as GroupableModel;
@@ -1235,6 +1233,8 @@ const Ground = () => {
             case ObjectType.Cuboid:
               if (isGroupable(selectedElement) && selectedElement.parentId === GROUND_ID) {
                 handleGroupMaster(e, selectedElement as GroupableModel);
+              } else {
+                baseGroupRelPosMapRef.current.clear();
               }
               oldCuboidParentIdRef.current = selectedElement.parentId;
               const moveHandleType = useStore.getState().moveHandleType;
@@ -1487,7 +1487,7 @@ const Ground = () => {
                     setCommonStore((state) => {
                       // todo: move grouped cuboid
                       const cuboid = state.elements.find((e) => e.id === state.selectedElement?.id);
-                      const selectedElement = state.selectedElement;
+                      const selectedElement = state.selectedElement; // old cuboid
                       if (cuboid && selectedElement) {
                         const { pos: parentAbsPos, rot: parentAbsRot } = Util.getWorldDataById(newParentId);
                         const diff = new Vector3().subVectors(p, parentAbsPos);
@@ -2103,7 +2103,8 @@ const Ground = () => {
   };
 
   const handleMove = (p: Vector3) => {
-    if (baseGroupRelPosMapRef.current.size > 0) {
+    const isMultipleMove = baseGroupRelPosMapRef.current.size > 1;
+    if (isMultipleMove) {
       setCommonStore((state) => {
         for (const elem of state.elements) {
           if (isGroupable(elem) && baseGroupRelPosMapRef.current.has(elem.id)) {
@@ -2122,7 +2123,7 @@ const Ground = () => {
     const hy = grabRef.current!.ly / 2;
     switch (moveHandleType) {
       case MoveHandleType.Top: {
-        if (isMultipleMoveRef.current) {
+        if (isMultipleMove) {
           const center = new Vector3(p.x, p.y);
           setCommonStore((state) => {
             for (const e of state.elements) {
@@ -2147,7 +2148,7 @@ const Ground = () => {
       case MoveHandleType.Upper:
         x0 = p.x + sinAngle * hy;
         y0 = p.y - cosAngle * hy;
-        if (isMultipleMoveRef.current) {
+        if (isMultipleMove) {
           const center = new Vector3(x0, y0);
           setCommonStore((state) => {
             for (const e of state.elements) {
@@ -2171,7 +2172,7 @@ const Ground = () => {
       case MoveHandleType.Lower:
         x0 = p.x - sinAngle * hy;
         y0 = p.y + cosAngle * hy;
-        if (isMultipleMoveRef.current) {
+        if (isMultipleMove) {
           const center = new Vector3(x0, y0);
           setCommonStore((state) => {
             for (const e of state.elements) {
@@ -2195,7 +2196,7 @@ const Ground = () => {
       case MoveHandleType.Left:
         x0 = p.x + cosAngle * hx;
         y0 = p.y + sinAngle * hx;
-        if (isMultipleMoveRef.current) {
+        if (isMultipleMove) {
           const center = new Vector3(x0, y0);
           setCommonStore((state) => {
             for (const e of state.elements) {
@@ -2219,7 +2220,7 @@ const Ground = () => {
       case MoveHandleType.Right:
         x0 = p.x - cosAngle * hx;
         y0 = p.y - sinAngle * hx;
-        if (isMultipleMoveRef.current) {
+        if (isMultipleMove) {
           const center = new Vector3(x0, y0);
           setCommonStore((state) => {
             for (const e of state.elements) {
