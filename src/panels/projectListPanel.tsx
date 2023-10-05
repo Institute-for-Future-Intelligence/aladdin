@@ -8,7 +8,7 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import ReactDraggable, { DraggableBounds, DraggableData, DraggableEvent, DraggableEventHandler } from 'react-draggable';
 import { Dropdown, Input, Menu, Modal, Space, Table, Typography } from 'antd';
-import { DownSquareOutlined, QuestionCircleOutlined, WarningOutlined } from '@ant-design/icons';
+import { CaretDownOutlined, QuestionCircleOutlined, WarningOutlined } from '@ant-design/icons';
 import { HOME_URL, REGEX_ALLOWABLE_IN_NAME, Z_INDEX_FRONT_PANEL } from '../constants';
 import { copyTextToClipboard, showSuccess } from '../helpers';
 import i18n from '../i18n/i18n';
@@ -399,8 +399,8 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
                         }
                         trigger={['hover']}
                       >
-                        <DownSquareOutlined
-                          style={{ fontSize: '16px' }}
+                        <CaretDownOutlined
+                          style={{ fontSize: '12px', cursor: 'pointer' }}
                           onMouseEnter={() => {
                             if (index !== undefined) setSelectedIndex(index);
                           }}
