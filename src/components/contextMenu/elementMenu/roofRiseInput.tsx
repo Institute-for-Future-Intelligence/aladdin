@@ -82,7 +82,6 @@ const RoofRiseInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =>
   const setRise = (value: number) => {
     if (!roof) return;
     if (!needChange(value)) return;
-    console.log('get', useStore.getState().roofActionScope);
     switch (useStore.getState().roofActionScope) {
       case Scope.AllObjectsOfThisType:
         const oldValuesAll = new Map<string, number>();
