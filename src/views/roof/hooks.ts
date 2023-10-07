@@ -127,7 +127,8 @@ export const useMultiCurrWallArray = (fId: string | undefined, roofId: string, w
 
       const array = [];
       const startWall = wall;
-      while (wall && (!wall.roofId || wall.roofId === roofId)) {
+      let i = 0;
+      while (wall && (!wall.roofId || wall.roofId === roofId) && i++ < 100) {
         array.push(wall);
         if (wall.leftJoints[0]) {
           if (wall.leftJoints[0] !== startWall.id) {
@@ -147,7 +148,8 @@ export const useMultiCurrWallArray = (fId: string | undefined, roofId: string, w
       array.reverse();
 
       wall = getWallOnSameFoundation(startWall.rightJoints[0]) as WallModel;
-      while (wall && (!wall.roofId || wall.roofId === roofId)) {
+      i = 0;
+      while (wall && (!wall.roofId || wall.roofId === roofId) && i++ < 100) {
         array.push(wall);
         if (wall.rightJoints[0] && wall.rightJoints[0] !== startWall.id) {
           wall = getWallOnSameFoundation(wall.rightJoints[0]) as WallModel;
