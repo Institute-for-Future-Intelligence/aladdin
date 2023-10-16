@@ -393,6 +393,7 @@ export const handlePointerDown = (
   roofSegments: RoofSegmentProps[],
   centroid: Vector3,
 ) => {
+  if (e.button === 2) return;
   // click on child
   if (e.intersections[0].eventObject.name !== e.eventObject.name) {
   }
@@ -517,15 +518,29 @@ export const handleContextMenu = (e: ThreeEvent<MouseEvent>, id: string) => {
         if (e.id === id) {
           e.selected = true;
           state.selectedElement = e;
-          if (state.multiSelectionsMode) {
-            if (state.selectedElementIdSet.has(id)) {
-              state.selectedElementIdSet.delete(id);
+
+          // right click on selected element
+          if (state.selectedElementIdSet.has(id)) {
+            // de-select other type of elements
+            for (const elem of state.elements) {
+              if (state.selectedElementIdSet.has(elem.id) && elem.type !== state.selectedElement.type) {
+                state.selectedElementIdSet.delete(elem.id);
+              }
+            }
+          }
+          // right click on new element
+          else {
+            if (state.multiSelectionsMode) {
+              state.selectedElementIdSet.add(id);
+              for (const elem of state.elements) {
+                if (state.selectedElementIdSet.has(elem.id) && elem.type !== state.selectedElement.type) {
+                  state.selectedElementIdSet.delete(elem.id);
+                }
+              }
             } else {
+              state.selectedElementIdSet.clear();
               state.selectedElementIdSet.add(id);
             }
-          } else {
-            state.selectedElementIdSet.clear();
-            state.selectedElementIdSet.add(id);
           }
         } else {
           e.selected = false;

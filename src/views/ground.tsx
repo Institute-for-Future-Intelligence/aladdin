@@ -1027,7 +1027,6 @@ const Ground = () => {
     const diff = new Vector3().subVectors(center, pointer);
     baseGroupRelPosMapRef.current.set(element.id, diff);
     baseGroupOldPosMapRef.current.set(element.id, [element.cx, element.cy, element.cz]);
-    console.log('set', baseGroupRelPosMapRef.current);
   };
 
   const checkOverlapWithAllBases = (event: ThreeEvent<PointerEvent>, currElem: GroupableModel) => {

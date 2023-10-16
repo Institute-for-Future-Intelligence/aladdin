@@ -1709,6 +1709,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   }
 
   function handleWallBodyPointerDown(e: ThreeEvent<PointerEvent>) {
+    if (e.button === 2) return;
     if (isSettingElementStartPoint()) {
       useRefStore.getState().setEnableOrbitController(false);
       setShowIntersectionPlane(true);
@@ -2152,10 +2153,9 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   }
 
   function handleContextMenu(e: ThreeEvent<MouseEvent>, mesh: Mesh | null, canPaste?: boolean) {
-    if (grabRef.current) {
-      return;
-    }
-    selectMe(id, e, ActionType.Select);
+    if (grabRef.current) return;
+
+    selectMe(id, e, ActionType.ContextMenu);
     setCommonStore((state) => {
       if (e.intersections.length > 0 && e.intersections[0].object === mesh) {
         state.contextMenuObjectType = ObjectType.Wall;
@@ -2164,9 +2164,11 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         }
       }
     });
+    e.stopPropagation();
   }
 
   function handleWallSideSurfacePointerDown(e: ThreeEvent<PointerEvent>) {
+    if (e.button === 2) return;
     const objectTypeToAdd = useStore.getState().objectTypeToAdd;
     if (
       !isSettingElementStartPoint() &&
@@ -2194,7 +2196,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   }
 
   function handleStudPointerDown(e: ThreeEvent<PointerEvent>) {
-    if (e.intersections.length === 0 || e.intersections[0].object !== e.eventObject) return;
+    if (e.button === 2 || e.intersections.length === 0 || e.intersections[0].object !== e.eventObject) return;
     if (useStore.getState().groupActionMode) {
       setCommonStore((state) => {
         for (const e of state.elements) {
@@ -2220,7 +2222,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       setCommonStore((state) => {
         state.contextMenuObjectType = ObjectType.Wall;
       });
-      selectMe(id, e, ActionType.Select);
+      selectMe(id, e, ActionType.ContextMenu);
       e.stopPropagation();
     }
   }

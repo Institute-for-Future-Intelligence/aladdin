@@ -2643,7 +2643,7 @@ const Foundation = (foundationModel: FoundationModel) => {
 
   const handleContextMenu = (e: ThreeEvent<MouseEvent>) => {
     setCommonStore((state) => {
-      InnerCommonStoreState.selectMe(state, id, e, ActionType.Select);
+      InnerCommonStoreState.selectMe(state, id, e, ActionType.ContextMenu);
       state.pastePoint.copy(e.intersections[0].point);
       state.clickObjectType = ObjectType.Foundation;
       state.pasteNormal = UNIT_VECTOR_POS_Z;

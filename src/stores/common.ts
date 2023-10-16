@@ -1017,15 +1017,44 @@ export const useStore = create<CommonStoreState>(
                           }
                         }
                       } else {
-                        if (state.multiSelectionsMode) {
+                        if (action === ActionType.ContextMenu) {
+                          // right click on selected element
                           if (state.selectedElementIdSet.has(id)) {
-                            state.selectedElementIdSet.delete(id);
-                          } else {
-                            state.selectedElementIdSet.add(id);
+                            // de-select other type of elements
+                            for (const elem of state.elements) {
+                              if (state.selectedElementIdSet.has(elem.id) && elem.type !== state.selectedElement.type) {
+                                state.selectedElementIdSet.delete(elem.id);
+                              }
+                            }
+                          }
+                          // right click on new element
+                          else {
+                            if (state.multiSelectionsMode) {
+                              state.selectedElementIdSet.add(id);
+                              for (const elem of state.elements) {
+                                if (
+                                  state.selectedElementIdSet.has(elem.id) &&
+                                  elem.type !== state.selectedElement.type
+                                ) {
+                                  state.selectedElementIdSet.delete(elem.id);
+                                }
+                              }
+                            } else {
+                              state.selectedElementIdSet.clear();
+                              state.selectedElementIdSet.add(id);
+                            }
                           }
                         } else {
-                          state.selectedElementIdSet.clear();
-                          state.selectedElementIdSet.add(id);
+                          if (state.multiSelectionsMode) {
+                            if (state.selectedElementIdSet.has(id)) {
+                              state.selectedElementIdSet.delete(id);
+                            } else {
+                              state.selectedElementIdSet.add(id);
+                            }
+                          } else {
+                            state.selectedElementIdSet.clear();
+                            state.selectedElementIdSet.add(id);
+                          }
                         }
                       }
                     } else {

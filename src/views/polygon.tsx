@@ -393,7 +393,7 @@ const Polygon = ({
             }
           }}
           onContextMenu={(e) => {
-            selectMe(id, e);
+            selectMe(id, e, ActionType.ContextMenu);
             setCommonStore((state) => {
               if (e.intersections.length > 0) {
                 const intersected = e.intersections[0].object === baseRef.current;
@@ -482,7 +482,7 @@ const Polygon = ({
           }}
           onContextMenu={(e) => {
             if (objectTypeToAdd !== ObjectType.None) return;
-            selectMe(id, e);
+            selectMe(id, e, ActionType.ContextMenu);
             setCommonStore((state) => {
               if (e.intersections.length > 0) {
                 const obj = e.intersections[0].object;
@@ -512,7 +512,7 @@ const Polygon = ({
           }}
           onContextMenu={(e) => {
             if (objectTypeToAdd !== ObjectType.None) return;
-            selectMe(id, e);
+            selectMe(id, e, ActionType.ContextMenu);
             setCommonStore((state) => {
               if (e.intersections.length > 0) {
                 const obj = e.intersections[0].object;
@@ -534,6 +534,7 @@ const Polygon = ({
           args={[moveHandleSize, 6, 6]}
           name={MoveHandleType.Default}
           onPointerDown={(e) => {
+            if (e.button === 2) return;
             selectMe(id, e, ActionType.Move);
             useRefStore.getState().setEnableOrbitController(false);
             usePrimitiveStore.setState((state) => {
@@ -564,6 +565,7 @@ const Polygon = ({
                 name={ResizeHandleType.Default}
                 args={[resizeHandleSize, resizeHandleSize, lz / 2 + (filled ? 0 : 0.1)]}
                 onPointerDown={(e) => {
+                  if (e.button === 2) return;
                   selectMe(id, e, ActionType.Resize);
                   updatePolygonSelectedIndexById(id, i);
                   useRefStore.getState().setEnableOrbitController(false);

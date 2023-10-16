@@ -49,27 +49,16 @@ const EmptyWall = (wallModel: WallModel) => {
   };
 
   const handleWallBodyPointerDown = (e: ThreeEvent<PointerEvent>) => {
-    if (useStore.getState().groupActionMode) {
+    if (checkIfCanSelectMe(e)) {
       useStore.getState().set((state) => {
-        for (const e of state.elements) {
-          e.selected = e.id === parentId;
-        }
-        state.selectedElementIdSet.clear();
-        state.selectedElementIdSet.add(parentId);
+        state.contextMenuObjectType = null;
       });
-      e.stopPropagation();
-    } else {
-      if (checkIfCanSelectMe(e)) {
-        useStore.getState().set((state) => {
-          state.contextMenuObjectType = null;
-        });
-        useStore.getState().selectMe(id, e, ActionType.Select);
-      }
+      useStore.getState().selectMe(id, e, ActionType.Select);
     }
   };
 
   const handleContextMenu = (e: ThreeEvent<MouseEvent>) => {
-    useStore.getState().selectMe(id, e, ActionType.Select);
+    useStore.getState().selectMe(id, e, ActionType.ContextMenu);
     useStore.getState().set((state) => {
       if (e.intersections.length > 0 && e.intersections[0].object === e.eventObject) {
         state.contextMenuObjectType = ObjectType.Wall;

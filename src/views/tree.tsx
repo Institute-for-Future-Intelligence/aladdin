@@ -321,7 +321,7 @@ const Tree = ({
                 args={[lx / 2, lz / 3]}
                 rotation={[orthographic ? HALF_PI : 0, 0, 0]}
                 onContextMenu={(e) => {
-                  selectMe(id, e);
+                  selectMe(id, e, ActionType.ContextMenu);
                   setCommonStore((state) => {
                     if (e.intersections.length > 0) {
                       const intersected = e.intersections[0].object === trunkMeshRef.current;
@@ -387,7 +387,7 @@ const Tree = ({
                   name={MoveHandleType.Default}
                   renderOrder={2}
                   onPointerDown={(e) => {
-                    if (e.eventObject === e.intersections[0].eventObject) {
+                    if (e.button !== 2 && e.eventObject === e.intersections[0].eventObject) {
                       selectMe(id, e, ActionType.Move);
                       useRefStore.setState((state) => {
                         state.treeRef = groupRef;

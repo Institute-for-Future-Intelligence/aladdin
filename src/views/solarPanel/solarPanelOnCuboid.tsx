@@ -439,7 +439,6 @@ const SolarPanelBoxGroup = ({ solarPanelModel, groupRotation, panelRotation }: S
     relativeAzimuth,
     trackerType,
     drawSunBeam,
-    selected,
     locked,
     showLabel,
     label,
@@ -450,6 +449,8 @@ const SolarPanelBoxGroup = ({ solarPanelModel, groupRotation, panelRotation }: S
     color,
     poleHeight,
   } = solarPanelModel;
+
+  const selected = useSelected(id);
 
   const setCommonStore = useStore(Selector.set);
   const selectMe = useStore(Selector.selectMe);
@@ -682,7 +683,7 @@ const SolarPanelBoxGroup = ({ solarPanelModel, groupRotation, panelRotation }: S
             selectMe(id, e, ActionType.Select);
           }}
           onContextMenu={(e) => {
-            selectMe(id, e, ActionType.Select);
+            selectMe(id, e, ActionType.ContextMenu);
             setCommonStore((state) => {
               if (e.intersections.length > 0) {
                 const intersected = e.intersections[0].object === baseRef.current;

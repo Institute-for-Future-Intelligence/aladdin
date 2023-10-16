@@ -222,7 +222,7 @@ const Light = (lightModel: LightModel) => {
           });
         }}
         onContextMenu={(e) => {
-          selectMe(id, e);
+          selectMe(id, e, ActionType.ContextMenu);
           setCommonStore((state) => {
             if (e.intersections.length > 0) {
               const intersected = e.intersections[0].object === baseRef.current;
@@ -283,7 +283,19 @@ const Light = (lightModel: LightModel) => {
           args={[MOVE_HANDLE_RADIUS, 6, 6, inside ? Math.PI : 0, Math.PI]}
           name={MoveHandleType.Default}
           onPointerDown={(e) => {
-            selectMe(id, e, ActionType.Move);
+            if (e.button === 2) {
+              selectMe(id, e, ActionType.ContextMenu);
+              setCommonStore((state) => {
+                if (e.intersections.length > 0) {
+                  const intersected = e.intersections[0].object === handleRef.current;
+                  if (intersected) {
+                    state.contextMenuObjectType = ObjectType.Light;
+                  }
+                }
+              });
+            } else {
+              selectMe(id, e, ActionType.Move);
+            }
             useRefStore.getState().setEnableOrbitController(false);
             usePrimitiveStore.setState((state) => {
               state.showWallIntersectionPlaneId = parentId;

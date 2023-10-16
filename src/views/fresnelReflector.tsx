@@ -318,7 +318,7 @@ const FresnelReflector = ({
             selectMe(id, e, ActionType.Select);
           }}
           onContextMenu={(e) => {
-            selectMe(id, e, ActionType.Select);
+            selectMe(id, e, ActionType.ContextMenu);
             setCommonStore((state) => {
               if (e.intersections.length > 0) {
                 const intersected = e.intersections[0].object === baseRef.current;
@@ -451,6 +451,7 @@ const FresnelReflector = ({
                 noHoverHandle();
               }}
               onPointerDown={(e) => {
+                if (e.button === 2) return;
                 selectMe(id, e, ActionType.Move);
               }}
             >

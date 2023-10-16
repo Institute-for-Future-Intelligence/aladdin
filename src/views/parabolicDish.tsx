@@ -328,7 +328,7 @@ const ParabolicDish = ({
             selectMe(id, e, ActionType.Select);
           }}
           onContextMenu={(e) => {
-            selectMe(id, e, ActionType.Select);
+            selectMe(id, e, ActionType.ContextMenu);
             setCommonStore((state) => {
               if (e.intersections.length > 0) {
                 const intersected = e.intersections[0].object === frontSideRef.current;
@@ -379,7 +379,7 @@ const ParabolicDish = ({
             selectMe(id, e, ActionType.Select);
           }}
           onContextMenu={(e) => {
-            selectMe(id, e, ActionType.Select);
+            selectMe(id, e, ActionType.ContextMenu);
             setCommonStore((state) => {
               if (e.intersections.length > 0) {
                 const intersected = e.intersections[0].object === backSideRef.current;
@@ -562,6 +562,7 @@ const ParabolicDish = ({
                 noHoverHandle();
               }}
               onPointerDown={(e) => {
+                if (e.button === 2) return;
                 selectMe(id, e, ActionType.Move);
               }}
             >

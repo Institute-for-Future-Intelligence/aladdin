@@ -259,7 +259,7 @@ const Flower = ({
                 args={[width / 2, height * 2]}
                 rotation={[orthographic ? HALF_PI : 0, 0, 0]}
                 onContextMenu={(e) => {
-                  selectMe(id, e);
+                  selectMe(id, e, ActionType.ContextMenu);
                   setCommonStore((state) => {
                     if (e.intersections.length > 0) {
                       const intersected = e.intersections[0].object === interactionMeshRef.current;
@@ -325,7 +325,7 @@ const Flower = ({
                   name={MoveHandleType.Default}
                   renderOrder={2}
                   onPointerDown={(e) => {
-                    if (e.eventObject === e.intersections[0].eventObject) {
+                    if (e.button !== 2 && e.eventObject === e.intersections[0].eventObject) {
                       selectMe(id, e, ActionType.Move);
                       useRefStore.setState((state) => {
                         state.flowerRef = groupRef;

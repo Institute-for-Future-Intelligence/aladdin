@@ -199,23 +199,15 @@ const Parapet = ({
   }
 
   function handleParapetPointerDown(e: ThreeEvent<PointerEvent>) {
-    if (e.intersections.length > 0 && e.intersections[0].eventObject === e.eventObject) {
-      if (useStore.getState().groupActionMode) {
-        useStore.getState().set((state) => {
-          for (const e of state.elements) {
-            e.selected = e.id === parentId;
-          }
-          state.selectedElementIdSet.clear();
-          state.selectedElementIdSet.add(parentId);
-        });
-        e.stopPropagation();
-      } else if (isAllowedToSelectMe()) {
+    if (e.button !== 2 && e.intersections.length > 0 && e.intersections[0].eventObject === e.eventObject) {
+      if (isAllowedToSelectMe()) {
         useStore.getState().selectMe(id, e, ActionType.Select, true);
       }
     }
   }
 
   function handleParapetContextMenu(e: ThreeEvent<MouseEvent>) {
+    useStore.getState().selectMe(id, e, ActionType.ContextMenu, true);
     useStore.getState().set((state) => {
       if (e.intersections.length > 0 && e.intersections[0].eventObject === e.eventObject) {
         state.contextMenuObjectType = ObjectType.Wall;

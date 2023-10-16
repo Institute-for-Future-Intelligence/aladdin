@@ -326,6 +326,7 @@ export enum ActionType {
   Move = 'Move',
   Resize = 'Resize',
   Rotate = 'Rotate',
+  ContextMenu = 'ContextMenu',
 }
 
 export enum MoveHandleType {

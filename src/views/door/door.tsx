@@ -124,7 +124,7 @@ const Door = (doorModel: DoorModel) => {
     return () => window.removeEventListener('pointerup', handlePointerUp);
   }, []);
 
-  const selectMe = () => {
+  const selectMe = (isContextMenu = false) => {
     setCommonStore((state) => {
       if (state.groupActionMode) {
         if (!state.multiSelectionsMode) {
@@ -142,15 +142,42 @@ const Door = (doorModel: DoorModel) => {
           if (e.id === id) {
             e.selected = true;
             state.selectedElement = e;
-            if (state.multiSelectionsMode) {
+
+            if (isContextMenu) {
+              // right click on selected element
               if (state.selectedElementIdSet.has(id)) {
-                state.selectedElementIdSet.delete(id);
-              } else {
-                state.selectedElementIdSet.add(id);
+                // de-select other type of elements
+                for (const elem of state.elements) {
+                  if (state.selectedElementIdSet.has(elem.id) && elem.type !== state.selectedElement.type) {
+                    state.selectedElementIdSet.delete(elem.id);
+                  }
+                }
+              }
+              // right click on new element
+              else {
+                if (state.multiSelectionsMode) {
+                  state.selectedElementIdSet.add(id);
+                  for (const elem of state.elements) {
+                    if (state.selectedElementIdSet.has(elem.id) && elem.type !== state.selectedElement.type) {
+                      state.selectedElementIdSet.delete(elem.id);
+                    }
+                  }
+                } else {
+                  state.selectedElementIdSet.clear();
+                  state.selectedElementIdSet.add(id);
+                }
               }
             } else {
-              state.selectedElementIdSet.clear();
-              state.selectedElementIdSet.add(id);
+              if (state.multiSelectionsMode) {
+                if (state.selectedElementIdSet.has(id)) {
+                  state.selectedElementIdSet.delete(id);
+                } else {
+                  state.selectedElementIdSet.add(id);
+                }
+              } else {
+                state.selectedElementIdSet.clear();
+                state.selectedElementIdSet.add(id);
+              }
             }
           } else {
             e.selected = false;
@@ -199,7 +226,7 @@ const Door = (doorModel: DoorModel) => {
   const handleContextMenu = (e: ThreeEvent<MouseEvent>) => {
     if (useStore.getState().addedWallId) return;
     if (isAllowedToSelectMe(e)) {
-      selectMe();
+      selectMe(true);
       setCommonStore((state) => {
         state.contextMenuObjectType = ObjectType.Door;
       });

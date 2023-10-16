@@ -224,7 +224,7 @@ const Human = ({
             name={`Human ${name} plane`}
             args={[width, height]}
             onContextMenu={(e) => {
-              selectMe(id, e);
+              selectMe(id, e, ActionType.ContextMenu);
               setCommonStore((state) => {
                 if (e.intersections.length > 0) {
                   const intersected = e.intersections[0].object === planeRef.current;
@@ -327,7 +327,7 @@ const Human = ({
             args={[MOVE_HANDLE_RADIUS * 4, 6, 6, 0, Math.PI]}
             name={MoveHandleType.Default}
             onPointerDown={(e) => {
-              if (e.eventObject === e.intersections[0].eventObject) {
+              if (e.button !== 2 && e.eventObject === e.intersections[0].eventObject) {
                 selectMe(id, e, ActionType.Move);
                 useRefStore.setState((state) => {
                   state.humanRef = groupRef;

@@ -1062,7 +1062,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
   };
 
   const handleContextMenu = (e: ThreeEvent<MouseEvent>) => {
-    selectMe(id, e, ActionType.Select);
+    selectMe(id, e, ActionType.ContextMenu);
     setCommonStore((state) => {
       state.pastePoint.copy(e.intersections[0].point);
       const face = e.intersections[0].face;
