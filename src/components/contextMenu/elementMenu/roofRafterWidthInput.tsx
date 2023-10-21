@@ -56,6 +56,18 @@ const RoofRafterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
   const needChange = (value: number) => {
     if (!roof) return;
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Roof &&
+            value !== (e as RoofModel).rafterWidth &&
+            !e.locked &&
+            useStore.getState().selectedElementIdSet.has(e.id)
+          ) {
+            return true;
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Roof && value !== (e as RoofModel).rafterWidth && !e.locked) {
@@ -88,7 +100,34 @@ const RoofRafterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
     if (!roof) return;
     if (!needChange(value)) return;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
+        const oldValSelected = new Map<string, number>();
+        for (const e of elements) {
+          if (e.type === ObjectType.Roof && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            oldValSelected.set(e.id, (e as RoofModel).rafterWidth ?? 0.1);
+            updateById(e.id, value);
+          }
+        }
+        const undoableChangeSelected = {
+          name: 'Set Rafter Width for Selected Roofs',
+          timestamp: Date.now(),
+          oldValues: oldValSelected,
+          newValue: value,
+          undo: () => {
+            undoInMap(undoableChangeSelected.oldValues as Map<string, number>);
+          },
+          redo: () => {
+            updateInMap(
+              undoableChangeSelected.oldValues as Map<string, number>,
+              undoableChangeSelected.newValue as number,
+            );
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeSelected);
+        setApplyCount(applyCount + 1);
+        break;
+      }
+      case Scope.AllObjectsOfThisType: {
         const oldValAll = new Map<string, number>();
         for (const e of elements) {
           if (e.type === ObjectType.Roof && !e.locked) {
@@ -111,6 +150,7 @@ const RoofRafterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
         addUndoable(undoableChangeAll);
         setApplyCount(applyCount + 1);
         break;
+      }
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (roof.foundationId) {
           const oldValAboveFoundation = new Map<string, number>();
@@ -205,6 +245,7 @@ const RoofRafterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
               <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('roofMenu.AllRoofsAboveFoundation', lang)}
               </Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>{i18n.t('roofMenu.AllSelectedRoofs', lang)}</Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('roofMenu.AllRoofs', lang)}</Radio>
             </Space>
           </Radio.Group>

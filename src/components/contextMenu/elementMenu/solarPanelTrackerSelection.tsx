@@ -89,6 +89,16 @@ const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b
     });
   };
 
+  const updateInMap = (map: Map<string, TrackerType>, value: TrackerType) => {
+    useStore.getState().set((state) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.SolarPanel && !e.locked && map.has(e.id)) {
+          (e as SolarPanelModel).trackerType = value;
+        }
+      }
+    });
+  };
+
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);
   };
@@ -96,6 +106,16 @@ const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b
   const needChange = (tracker: TrackerType) => {
     if (!solarPanel) return;
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.SolarPanel && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            const sp = e as SolarPanelModel;
+            if (sp.trackerType !== tracker) {
+              return true;
+            }
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.SolarPanel && !e.locked) {
@@ -158,7 +178,36 @@ const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b
     if (!solarPanel) return;
     if (!needChange(value)) return;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
+        const oldTrackerTypesSelected = new Map<string, TrackerType>();
+        for (const elem of elements) {
+          if (elem.type === ObjectType.SolarPanel && useStore.getState().selectedElementIdSet.has(elem.id)) {
+            oldTrackerTypesSelected.set(elem.id, (elem as SolarPanelModel).trackerType);
+          }
+        }
+        const undoableChangeSelected = {
+          name: 'Set Tracker Type for Selected Solar Panel Arrays',
+          timestamp: Date.now(),
+          oldValues: oldTrackerTypesSelected,
+          newValue: value,
+          undo: () => {
+            for (const [id, tt] of undoableChangeSelected.oldValues.entries()) {
+              updateSolarPanelTrackerTypeById(id, tt as TrackerType);
+            }
+          },
+          redo: () => {
+            updateInMap(
+              undoableChangeSelected.oldValues as Map<string, TrackerType>,
+              undoableChangeSelected.newValue as TrackerType,
+            );
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeSelected);
+        updateInMap(oldTrackerTypesSelected, value);
+        setApplyCount(applyCount + 1);
+        break;
+      }
+      case Scope.AllObjectsOfThisType: {
         const oldTrackerTypesAll = new Map<string, TrackerType>();
         for (const elem of elements) {
           if (elem.type === ObjectType.SolarPanel) {
@@ -183,6 +232,7 @@ const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b
         updateSolarPanelTrackerTypeForAll(value);
         setApplyCount(applyCount + 1);
         break;
+      }
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (solarPanel.foundationId) {
           const oldTrackerTypesAboveFoundation = new Map<string, TrackerType>();
@@ -349,6 +399,9 @@ const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b
               </Radio>
               <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('solarPanelMenu.AllSolarPanelsAboveFoundation', lang)}
+              </Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>
+                {i18n.t('solarPanelMenu.AllSelectedSolarPanels', lang)}
               </Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('solarPanelMenu.AllSolarPanels', lang)}</Radio>
             </Space>

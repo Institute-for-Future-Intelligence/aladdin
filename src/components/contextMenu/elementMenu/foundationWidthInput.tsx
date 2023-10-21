@@ -59,6 +59,19 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
   const containsAllChildren = (ly: number) => {
     if (!foundation) return;
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Foundation && useStore.getState().selectedElementIdSet.has(e.id)) {
+            const f = e as FoundationModel;
+            const children = getChildren(f.id);
+            if (children.length > 0) {
+              if (!Util.doesNewSizeContainAllChildren(f, children, f.lx, ly)) {
+                return false;
+              }
+            }
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Foundation) {
@@ -94,6 +107,16 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
     if (!foundation) return;
 
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Foundation && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            const f = e as FoundationModel;
+            if (Math.abs(f.ly - ly) > ZERO_TOLERANCE) {
+              return true;
+            }
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Foundation && !e.locked) {
@@ -307,7 +330,90 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
       oldChildrenVerticesMapRef.current.clear();
       newChildrenVerticesMapRef.current.clear();
       switch (actionScope) {
-        case Scope.AllObjectsOfThisType:
+        case Scope.AllSelectedObjectsOfThisType: {
+          const oldLysSelected = new Map<string, number>();
+          for (const elem of elements) {
+            if (elem.type === ObjectType.Foundation && useStore.getState().selectedElementIdSet.has(elem.id)) {
+              oldLysSelected.set(elem.id, elem.ly);
+            }
+          }
+          // the following also populates the above two maps in ref
+          for (const elem of elements) {
+            if (elem.type === ObjectType.Foundation && useStore.getState().selectedElementIdSet.has(elem.id)) {
+              updateLyWithChildren(elem as FoundationModel, value);
+            }
+          }
+          const undoableChangeSelected = {
+            name: 'Set Width for Selected Foundations',
+            timestamp: Date.now(),
+            oldSizes: oldLysSelected,
+            newSize: value,
+            oldChildrenPositionsMap: new Map(oldChildrenPositionsMapRef.current),
+            newChildrenPositionsMap: new Map(newChildrenPositionsMapRef.current),
+            oldChildrenVerticesMap: new Map(oldChildrenVerticesMapRef.current),
+            newChildrenVerticesMap: new Map(newChildrenVerticesMapRef.current),
+            oldChildrenParentIdMap: new Map(oldChildrenParentIdMapRef.current),
+            newChildrenParentIdMap: new Map(newChildrenParentIdMapRef.current),
+            undo: () => {
+              for (const [id, ly] of undoableChangeSelected.oldSizes.entries()) {
+                updateElementLyById(id, ly as number);
+              }
+              if (
+                undoableChangeSelected.oldChildrenPositionsMap &&
+                undoableChangeSelected.oldChildrenPositionsMap.size > 0
+              ) {
+                for (const [id, ps] of undoableChangeSelected.oldChildrenPositionsMap.entries()) {
+                  setElementPosition(id, ps.x, ps.y, ps.z);
+                  const oldParentId = undoableChangeSelected.oldChildrenParentIdMap?.get(id);
+                  const newParentId = undoableChangeSelected.newChildrenParentIdMap?.get(id);
+                  if (oldParentId && newParentId && oldParentId !== newParentId) {
+                    attachToObjectGroup(oldParentId, newParentId, id);
+                    setParentIdById(oldParentId, id);
+                  }
+                }
+              }
+              if (
+                undoableChangeSelected.oldChildrenVerticesMap &&
+                undoableChangeSelected.oldChildrenVerticesMap.size > 0
+              ) {
+                for (const [id, vs] of undoableChangeSelected.oldChildrenVerticesMap.entries()) {
+                  updatePolygonVerticesById(id, vs);
+                }
+              }
+            },
+            redo: () => {
+              for (const [id, ly] of undoableChangeSelected.oldSizes.entries()) {
+                updateElementLyById(id, undoableChangeSelected.newSize as number);
+              }
+              if (
+                undoableChangeSelected.newChildrenPositionsMap &&
+                undoableChangeSelected.newChildrenPositionsMap.size > 0
+              ) {
+                for (const [id, ps] of undoableChangeSelected.newChildrenPositionsMap.entries()) {
+                  setElementPosition(id, ps.x, ps.y, ps.z);
+                  const oldParentId = undoableChangeSelected.oldChildrenParentIdMap?.get(id);
+                  const newParentId = undoableChangeSelected.newChildrenParentIdMap?.get(id);
+                  if (oldParentId && newParentId && oldParentId !== newParentId) {
+                    attachToObjectGroup(newParentId, oldParentId, id);
+                    setParentIdById(newParentId, id);
+                  }
+                }
+              }
+              if (
+                undoableChangeSelected.newChildrenVerticesMap &&
+                undoableChangeSelected.newChildrenVerticesMap.size > 0
+              ) {
+                for (const [id, vs] of undoableChangeSelected.newChildrenVerticesMap.entries()) {
+                  updatePolygonVerticesById(id, vs);
+                }
+              }
+            },
+          } as UndoableSizeGroupChange;
+          addUndoable(undoableChangeSelected);
+          setApplyCount(applyCount + 1);
+          break;
+        }
+        case Scope.AllObjectsOfThisType: {
           const oldLysAll = new Map<string, number>();
           for (const elem of elements) {
             if (elem.type === ObjectType.Foundation) {
@@ -375,6 +481,7 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
           addUndoable(undoableChangeAll);
           setApplyCount(applyCount + 1);
           break;
+        }
         default:
           updateLyWithChildren(foundation, value);
           const undoableChange = {
@@ -501,6 +608,9 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
           >
             <Space direction="vertical">
               <Radio value={Scope.OnlyThisObject}>{i18n.t('foundationMenu.OnlyThisFoundation', lang)}</Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>
+                {i18n.t('foundationMenu.AllSelectedFoundations', lang)}
+              </Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('foundationMenu.AllFoundations', lang)}</Radio>
             </Space>
           </Radio.Group>

@@ -42,6 +42,20 @@ const FresnelReflectorReflectanceInput = ({ setDialogVisible }: { setDialogVisib
   const needChange = (reflectance: number) => {
     if (!fresnelReflector) return;
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.FresnelReflector &&
+            !e.locked &&
+            useStore.getState().selectedElementIdSet.has(e.id)
+          ) {
+            const fr = e as FresnelReflectorModel;
+            if (Math.abs(fr.reflectance - reflectance) > ZERO_TOLERANCE) {
+              return true;
+            }
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.FresnelReflector && !e.locked) {
@@ -74,11 +88,50 @@ const FresnelReflectorReflectanceInput = ({ setDialogVisible }: { setDialogVisib
     return false;
   };
 
+  const updateInMap = (map: Map<string, number>, value: number) => {
+    useStore.getState().set((state) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.FresnelReflector && !e.locked && map.has(e.id)) {
+          (e as FresnelReflectorModel).reflectance = value;
+        }
+      }
+    });
+  };
+
   const setReflectance = (value: number) => {
     if (!fresnelReflector) return;
     if (!needChange(value)) return;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
+        const oldReflectancesSelected = new Map<string, number>();
+        for (const elem of elements) {
+          if (elem.type === ObjectType.FresnelReflector && useStore.getState().selectedElementIdSet.has(elem.id)) {
+            oldReflectancesSelected.set(elem.id, (elem as FresnelReflectorModel).reflectance);
+          }
+        }
+        const undoableChangeSelected = {
+          name: 'Set Reflectance for Selected Fresnel Reflectors',
+          timestamp: Date.now(),
+          oldValues: oldReflectancesSelected,
+          newValue: value,
+          undo: () => {
+            for (const [id, rf] of undoableChangeSelected.oldValues.entries()) {
+              updateById(id, rf as number);
+            }
+          },
+          redo: () => {
+            updateInMap(
+              undoableChangeSelected.oldValues as Map<string, number>,
+              undoableChangeSelected.newValue as number,
+            );
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeSelected);
+        updateInMap(oldReflectancesSelected, value);
+        setApplyCount(applyCount + 1);
+        break;
+      }
+      case Scope.AllObjectsOfThisType: {
         const oldReflectancesAll = new Map<string, number>();
         for (const elem of elements) {
           if (elem.type === ObjectType.FresnelReflector) {
@@ -103,6 +156,7 @@ const FresnelReflectorReflectanceInput = ({ setDialogVisible }: { setDialogVisib
         updateForAll(ObjectType.FresnelReflector, value);
         setApplyCount(applyCount + 1);
         break;
+      }
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (fresnelReflector.foundationId) {
           const oldReflectancesAboveFoundation = new Map<string, number>();
@@ -208,6 +262,9 @@ const FresnelReflectorReflectanceInput = ({ setDialogVisible }: { setDialogVisib
               </Radio>
               <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('fresnelReflectorMenu.AllFresnelReflectorsAboveFoundation', lang)}
+              </Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>
+                {i18n.t('fresnelReflectorMenu.AllSelectedFresnelReflectors', lang)}
               </Radio>
               <Radio value={Scope.AllObjectsOfThisType}>
                 {i18n.t('fresnelReflectorMenu.AllFresnelReflectors', lang)}

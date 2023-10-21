@@ -39,6 +39,16 @@ const HeliostatDrawSunBeamSelection = ({ setDialogVisible }: { setDialogVisible:
 
   const needChange = (drawSunBeam: boolean) => {
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Heliostat && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            const hs = e as HeliostatModel;
+            if (hs.drawSunBeam !== drawSunBeam) {
+              return true;
+            }
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Heliostat && !e.locked) {
@@ -67,11 +77,50 @@ const HeliostatDrawSunBeamSelection = ({ setDialogVisible }: { setDialogVisible:
     return false;
   };
 
+  const updateInMap = (map: Map<string, boolean>, value: boolean) => {
+    useStore.getState().set((state) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Heliostat && !e.locked && map.has(e.id)) {
+          (e as HeliostatModel).drawSunBeam = value;
+        }
+      }
+    });
+  };
+
   const setDrawSunBeam = (value: boolean) => {
     if (!heliostat) return;
     if (!needChange(value)) return;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
+        const oldValuesSelected = new Map<string, boolean>();
+        for (const elem of elements) {
+          if (elem.type === ObjectType.Heliostat && useStore.getState().selectedElementIdSet.has(elem.id)) {
+            oldValuesSelected.set(elem.id, (elem as HeliostatModel).drawSunBeam);
+          }
+        }
+        const undoableChangeSelected = {
+          name: 'Draw Sun Beam for Selected Heliostats',
+          timestamp: Date.now(),
+          oldValues: oldValuesSelected,
+          newValue: value,
+          undo: () => {
+            for (const [id, sb] of undoableChangeSelected.oldValues.entries()) {
+              updateById(id, sb as boolean);
+            }
+          },
+          redo: () => {
+            updateInMap(
+              undoableChangeSelected.oldValues as Map<string, boolean>,
+              undoableChangeSelected.newValue as boolean,
+            );
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeSelected);
+        updateInMap(oldValuesSelected, value);
+        setApplyCount(applyCount + 1);
+        break;
+      }
+      case Scope.AllObjectsOfThisType: {
         const oldValuesAll = new Map<string, boolean>();
         for (const elem of elements) {
           if (elem.type === ObjectType.Heliostat) {
@@ -96,6 +145,7 @@ const HeliostatDrawSunBeamSelection = ({ setDialogVisible }: { setDialogVisible:
         updateForAll(ObjectType.Heliostat, value);
         setApplyCount(applyCount + 1);
         break;
+      }
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (heliostat.foundationId) {
           const oldValuesAboveFoundation = new Map<string, boolean>();
@@ -180,6 +230,9 @@ const HeliostatDrawSunBeamSelection = ({ setDialogVisible }: { setDialogVisible:
               <Radio value={Scope.OnlyThisObject}>{i18n.t('heliostatMenu.OnlyThisHeliostat', lang)}</Radio>
               <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('heliostatMenu.AllHeliostatsAboveFoundation', lang)}
+              </Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>
+                {i18n.t('heliostatMenu.AllSelectedHeliostats', lang)}
               </Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('heliostatMenu.AllHeliostats', lang)}</Radio>
             </Space>

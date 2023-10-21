@@ -102,6 +102,25 @@ const CuboidColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
   const needChange = (color: string) => {
     if (!cuboid) return;
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Cuboid && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            const cm = e as CuboidModel;
+            if (cm.faceColors) {
+              // do not check the top and bottom sides, check only the vertical sides (the first four)
+              for (let i = 0; i < 4; i++) {
+                if (color !== cm.faceColors[i]) {
+                  return true;
+                }
+              }
+            } else {
+              if (color !== cm.color) {
+                return true;
+              }
+            }
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Cuboid && !e.locked) {
@@ -154,7 +173,63 @@ const CuboidColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
     if (!cuboid) return;
     if (!needChange(value)) return;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
+        const oldColorsSelected = new Map<string, string[]>();
+        for (const elem of elements) {
+          if (elem.type === ObjectType.Cuboid && useStore.getState().selectedElementIdSet.has(elem.id)) {
+            const cm = elem as CuboidModel;
+            if (cm.faceColors) {
+              oldColorsSelected.set(elem.id, [...cm.faceColors]);
+            } else {
+              const c = cm.color ?? '#808080';
+              oldColorsSelected.set(elem.id, [c, c, c, c, c, c]);
+            }
+          }
+        }
+        const undoableChangeSelected = {
+          name: 'Set Color for Selected Cuboids',
+          timestamp: Date.now(),
+          oldValues: oldColorsSelected,
+          newValue: value,
+          undo: () => {
+            for (const [id, colors] of undoableChangeSelected.oldValues.entries()) {
+              if (colors && Array.isArray(colors)) {
+                for (let i = 0; i < colors.length; i++) {
+                  updateCuboidColorBySide(i, id, colors[i]);
+                }
+              }
+            }
+          },
+          redo: () => {
+            for (const [id, colors] of undoableChangeSelected.oldValues.entries()) {
+              if (colors && Array.isArray(colors)) {
+                for (let i = 0; i < colors.length; i++) {
+                  updateCuboidColorBySide(i, id, undoableChangeSelected.newValue as string);
+                }
+              }
+            }
+            // updateCuboidColorForAll(undoableChangeAll.newValue as string);
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeSelected);
+        for (const [id, colors] of oldColorsSelected.entries()) {
+          if (colors && Array.isArray(colors)) {
+            for (let i = 0; i < colors.length; i++) {
+              updateCuboidColorBySide(i, id, value);
+            }
+          }
+        }
+        setApplyCount(applyCount + 1);
+        setCommonStore((state) => {
+          if (!state.actionState.cuboidFaceColors)
+            state.actionState.cuboidFaceColors = ['#808080', '#808080', '#808080', '#808080', '#808080', '#808080'];
+          for (let i = 0; i < 4; i++) {
+            state.actionState.cuboidFaceColors[i] = value;
+          }
+        });
+        break;
+      }
+      case Scope.AllObjectsOfThisType: {
         const oldColorsAll = new Map<string, string[]>();
         for (const elem of elements) {
           if (elem.type === ObjectType.Cuboid) {
@@ -196,6 +271,7 @@ const CuboidColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
           }
         });
         break;
+      }
       case Scope.OnlyThisObject:
         let oldColors;
         if (cuboid.faceColors) {
@@ -311,6 +387,9 @@ const CuboidColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
             <Space direction="vertical">
               <Radio value={Scope.OnlyThisSide}>{i18n.t('cuboidMenu.OnlyThisSide', lang)}</Radio>
               <Radio value={Scope.OnlyThisObject}>{i18n.t('cuboidMenu.AllSidesOfThisCuboid', lang)}</Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>
+                {i18n.t('cuboidMenu.AllSidesOfSelectedCuboids', lang)}
+              </Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('cuboidMenu.AllSidesOfAllCuboids', lang)}</Radio>
             </Space>
           </Radio.Group>

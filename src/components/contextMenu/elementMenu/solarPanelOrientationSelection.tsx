@@ -126,6 +126,18 @@ const SolarPanelOrientationSelection = ({ setDialogVisible }: { setDialogVisible
     });
   };
 
+  const updateInMap = (map: Map<string, Orientation>, value: Orientation) => {
+    useStore.getState().set((state) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.SolarPanel && !e.locked && map.has(e.id)) {
+          const sp = e as SolarPanelModel;
+          const pvModel = state.pvModules[sp.pvModelName];
+          state.setSolarPanelOrientation(sp, pvModel, value);
+        }
+      }
+    });
+  };
+
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);
   };
@@ -197,6 +209,16 @@ const SolarPanelOrientationSelection = ({ setDialogVisible }: { setDialogVisible
   const needChange = (orientation: Orientation) => {
     if (!solarPanel) return;
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.SolarPanel && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            const sp = e as SolarPanelModel;
+            if (sp.orientation !== orientation) {
+              return true;
+            }
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.SolarPanel && !e.locked) {
@@ -260,7 +282,50 @@ const SolarPanelOrientationSelection = ({ setDialogVisible }: { setDialogVisible
     if (!needChange(value)) return;
     rejectedValue.current = undefined;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
+        rejectRef.current = false;
+        for (const elem of elements) {
+          if (elem.type === ObjectType.SolarPanel && useStore.getState().selectedElementIdSet.has(elem.id)) {
+            if (rejectChange(elem as SolarPanelModel, value)) {
+              rejectRef.current = true;
+              break;
+            }
+          }
+        }
+        if (rejectRef.current) {
+          rejectedValue.current = value;
+          setSelectedOrientation(solarPanel.orientation);
+        } else {
+          const oldOrientationsSelected = new Map<string, Orientation>();
+          for (const elem of elements) {
+            if (elem.type === ObjectType.SolarPanel && useStore.getState().selectedElementIdSet.has(elem.id)) {
+              oldOrientationsSelected.set(elem.id, (elem as SolarPanelModel).orientation);
+            }
+          }
+          const undoableChangeSelected = {
+            name: 'Set Orientation for Selected Solar Panels',
+            timestamp: Date.now(),
+            oldValues: oldOrientationsSelected,
+            newValue: value,
+            undo: () => {
+              for (const [id, orientation] of undoableChangeSelected.oldValues.entries()) {
+                updateSolarPanelOrientationById(id, orientation as Orientation);
+              }
+            },
+            redo: () => {
+              updateInMap(
+                undoableChangeSelected.oldValues as Map<string, Orientation>,
+                undoableChangeSelected.newValue as Orientation,
+              );
+            },
+          } as UndoableChangeGroup;
+          addUndoable(undoableChangeSelected);
+          updateInMap(oldOrientationsSelected, value);
+          setApplyCount(applyCount + 1);
+        }
+        break;
+      }
+      case Scope.AllObjectsOfThisType: {
         rejectRef.current = false;
         for (const elem of elements) {
           if (elem.type === ObjectType.SolarPanel) {
@@ -299,6 +364,7 @@ const SolarPanelOrientationSelection = ({ setDialogVisible }: { setDialogVisible
           setApplyCount(applyCount + 1);
         }
         break;
+      }
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (solarPanel.foundationId) {
           rejectRef.current = false;
@@ -533,6 +599,9 @@ const SolarPanelOrientationSelection = ({ setDialogVisible }: { setDialogVisible
               </Radio>
               <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('solarPanelMenu.AllSolarPanelsAboveFoundation', lang)}
+              </Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>
+                {i18n.t('solarPanelMenu.AllSelectedSolarPanels', lang)}
               </Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('solarPanelMenu.AllSolarPanels', lang)}</Radio>
             </Space>

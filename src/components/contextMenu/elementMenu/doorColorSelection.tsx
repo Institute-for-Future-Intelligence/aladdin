@@ -58,6 +58,18 @@ const DoorColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
 
   const needChange = (color: string) => {
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Door &&
+            color !== e.color &&
+            !e.locked &&
+            useStore.getState().selectedElementIdSet.has(e.id)
+          ) {
+            return true;
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Door && color !== e.color && !e.locked) {
@@ -92,7 +104,34 @@ const DoorColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
     if (!door) return;
     if (!needChange(value)) return;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
+        const oldColorsSelected = new Map<string, string>();
+        for (const elem of useStore.getState().elements) {
+          if (elem.type === ObjectType.Door && !elem.locked && useStore.getState().selectedElementIdSet.has(elem.id)) {
+            oldColorsSelected.set(elem.id, elem.color ?? '#ffffff');
+          }
+        }
+        const undoableChangeSelected = {
+          name: 'Set Color for Selected Doors',
+          timestamp: Date.now(),
+          oldValues: oldColorsSelected,
+          newValue: value,
+          undo: () => {
+            undoColorInMap(undoableChangeSelected.oldValues as Map<string, string>);
+          },
+          redo: () => {
+            updateColorInMap(
+              undoableChangeSelected.oldValues as Map<string, string>,
+              undoableChangeSelected.newValue as string,
+            );
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeSelected);
+        updateColorInMap(oldColorsSelected, value);
+        setApplyCount(applyCount + 1);
+        break;
+      }
+      case Scope.AllObjectsOfThisType: {
         const oldColorsAll = new Map<string, string>();
         for (const elem of useStore.getState().elements) {
           if (elem.type === ObjectType.Door && !elem.locked) {
@@ -115,6 +154,7 @@ const DoorColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
         updateColorInMap(oldColorsAll, value);
         setApplyCount(applyCount + 1);
         break;
+      }
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (door.foundationId) {
           const oldColorsAboveFoundation = new Map<string, string>();
@@ -236,6 +276,7 @@ const DoorColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
               <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('doorMenu.AllDoorsAboveFoundation', lang)}
               </Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>{i18n.t('doorMenu.AllSelectedDoors', lang)}</Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('doorMenu.AllDoors', lang)}</Radio>
             </Space>
           </Radio.Group>

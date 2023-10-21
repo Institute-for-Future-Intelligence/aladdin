@@ -66,8 +66,37 @@ const SolarPowerTowerReceiverOpticalEfficiencyInput = ({
     });
   };
 
+  const updateInMap = (map: Map<string, number>, value: number) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Foundation && !e.locked && map.has(e.id)) {
+          const f = e as FoundationModel;
+          if (f.solarStructure === SolarStructure.FocusTower) {
+            if (!f.solarPowerTower) f.solarPowerTower = {} as SolarPowerTowerModel;
+            f.solarPowerTower.receiverOpticalEfficiency = value;
+          }
+        }
+      }
+    });
+  };
+
   const needChange = (efficiency: number) => {
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Foundation && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            const f = e as FoundationModel;
+            if (f.solarStructure === SolarStructure.FocusTower && f.solarPowerTower) {
+              if (
+                f.solarPowerTower.receiverOpticalEfficiency === undefined ||
+                Math.abs(f.solarPowerTower.receiverOpticalEfficiency - efficiency) > ZERO_TOLERANCE
+              ) {
+                return true;
+              }
+            }
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Foundation && !e.locked) {
@@ -98,7 +127,39 @@ const SolarPowerTowerReceiverOpticalEfficiencyInput = ({
     if (!foundation || !powerTower) return;
     if (!needChange(value)) return;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
+        const oldValuesSelected = new Map<string, number>();
+        for (const elem of elements) {
+          if (elem.type === ObjectType.Foundation && useStore.getState().selectedElementIdSet.has(elem.id)) {
+            const f = elem as FoundationModel;
+            if (f.solarPowerTower) {
+              oldValuesSelected.set(elem.id, f.solarPowerTower.receiverOpticalEfficiency ?? 0.7);
+            }
+          }
+        }
+        const undoableChangeSelected = {
+          name: 'Set Receiver Optical Efficiency for Selected Foundations',
+          timestamp: Date.now(),
+          oldValues: oldValuesSelected,
+          newValue: value,
+          undo: () => {
+            for (const [id, oe] of undoableChangeSelected.oldValues.entries()) {
+              updateById(id, oe as number);
+            }
+          },
+          redo: () => {
+            updateInMap(
+              undoableChangeSelected.oldValues as Map<string, number>,
+              undoableChangeSelected.newValue as number,
+            );
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeSelected);
+        updateInMap(oldValuesSelected, value);
+        setApplyCount(applyCount + 1);
+        break;
+      }
+      case Scope.AllObjectsOfThisType: {
         const oldValuesAll = new Map<string, number>();
         for (const elem of elements) {
           if (elem.type === ObjectType.Foundation) {
@@ -126,6 +187,7 @@ const SolarPowerTowerReceiverOpticalEfficiencyInput = ({
         updateForAll(value);
         setApplyCount(applyCount + 1);
         break;
+      }
       default:
         // foundation selected element may be outdated, make sure that we get the latest
         const f = getElementById(foundation.id) as FoundationModel;
@@ -194,6 +256,9 @@ const SolarPowerTowerReceiverOpticalEfficiencyInput = ({
           >
             <Space direction="vertical">
               <Radio value={Scope.OnlyThisObject}>{i18n.t('foundationMenu.OnlyThisFoundation', lang)}</Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>
+                {i18n.t('foundationMenu.AllSelectedFoundations', lang)}
+              </Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('foundationMenu.AllFoundations', lang)}</Radio>
             </Space>
           </Radio.Group>

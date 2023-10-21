@@ -15,6 +15,8 @@ import { FoundationModel } from '../../../models/FoundationModel';
 import { useSelectedElement } from './menuHooks';
 import Dialog from '../dialog';
 import { useLanguage } from 'src/views/hooks';
+import { Util } from 'src/Util';
+import { HeliostatModel } from 'src/models/HeliostatModel';
 
 const { Option } = Select;
 
@@ -75,6 +77,20 @@ const FresnelReflectorAbsorberSelection = ({ setDialogVisible }: { setDialogVisi
 
   const needChange = (receiverId: string) => {
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.FresnelReflector &&
+            !e.locked &&
+            useStore.getState().selectedElementIdSet.has(e.id)
+          ) {
+            const fr = e as FresnelReflectorModel;
+            if (fr.receiverId !== receiverId) {
+              return true;
+            }
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.FresnelReflector && !e.locked) {
@@ -107,11 +123,55 @@ const FresnelReflectorAbsorberSelection = ({ setDialogVisible }: { setDialogVisi
     return false;
   };
 
+  const updateInMap = (map: Map<string, string>, receiverId: string) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (!Util.isHeliostatOrFresnelReflector(e.type)) continue;
+        if (!e.locked && map.has(e.id)) {
+          if (e.type === ObjectType.Heliostat) {
+            (e as HeliostatModel).towerId = receiverId;
+          } else if (e.type === ObjectType.FresnelReflector) {
+            (e as FresnelReflectorModel).receiverId = receiverId;
+          }
+        }
+      }
+    });
+  };
+
   const setReceiverId = (value: string) => {
     if (!fresnelReflector) return;
     if (!needChange(value)) return;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
+        const oldValuesSelected = new Map<string, string>();
+        for (const elem of elements) {
+          if (elem.type === ObjectType.FresnelReflector && useStore.getState().selectedElementIdSet.has(elem.id)) {
+            oldValuesSelected.set(elem.id, (elem as FresnelReflectorModel).receiverId);
+          }
+        }
+        const undoableChangeSelected = {
+          name: 'Set Receiver for Selected Fresnel Reflectors',
+          timestamp: Date.now(),
+          oldValues: oldValuesSelected,
+          newValue: value,
+          undo: () => {
+            for (const [id, ti] of undoableChangeSelected.oldValues.entries()) {
+              updateById(id, ti as string);
+            }
+          },
+          redo: () => {
+            updateInMap(
+              undoableChangeSelected.oldValues as Map<string, string>,
+              undoableChangeSelected.newValue as string,
+            );
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeSelected);
+        updateInMap(oldValuesSelected, value);
+        setApplyCount(applyCount + 1);
+        break;
+      }
+      case Scope.AllObjectsOfThisType: {
         const oldValuesAll = new Map<string, string>();
         for (const elem of elements) {
           if (elem.type === ObjectType.FresnelReflector) {
@@ -136,6 +196,7 @@ const FresnelReflectorAbsorberSelection = ({ setDialogVisible }: { setDialogVisi
         updateForAll(ObjectType.FresnelReflector, value);
         setApplyCount(applyCount + 1);
         break;
+      }
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (fresnelReflector.foundationId) {
           const oldValuesAboveFoundation = new Map<string, string>();
@@ -246,6 +307,9 @@ const FresnelReflectorAbsorberSelection = ({ setDialogVisible }: { setDialogVisi
               </Radio>
               <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('fresnelReflectorMenu.AllFresnelReflectorsAboveFoundation', lang)}
+              </Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>
+                {i18n.t('fresnelReflectorMenu.AllSelectedFresnelReflectors', lang)}
               </Radio>
               <Radio value={Scope.AllObjectsOfThisType}>
                 {i18n.t('fresnelReflectorMenu.AllFresnelReflectors', lang)}

@@ -59,6 +59,18 @@ const WallRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   const needChange = (value: number) => {
     if (!wall) return;
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Wall &&
+            value !== (e as WallModel).rValue &&
+            !e.locked &&
+            useStore.getState().selectedElementIdSet.has(e.id)
+          ) {
+            return true;
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Wall && value !== (e as WallModel).rValue && !e.locked) {
@@ -99,7 +111,35 @@ const WallRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
     if (!wall) return;
     if (!needChange(value)) return;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
+        const oldValuesSelected = new Map<string, number | undefined>();
+        for (const e of elements) {
+          if (e.type === ObjectType.Wall && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            const w = e as WallModel;
+            oldValuesSelected.set(e.id, w.rValue ?? DEFAULT_WALL_R_VALUE);
+            updateById(w.id, value);
+          }
+        }
+        const undoableChangeSelected = {
+          name: 'Set R-Value for Selected Walls',
+          timestamp: Date.now(),
+          oldValues: oldValuesSelected,
+          newValue: value,
+          undo: () => {
+            undoInMap(undoableChangeSelected.oldValues as Map<string, number>);
+          },
+          redo: () => {
+            updateInMap(
+              undoableChangeSelected.oldValues as Map<string, number>,
+              undoableChangeSelected.newValue as number,
+            );
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeSelected);
+        setApplyCount(applyCount + 1);
+        break;
+      }
+      case Scope.AllObjectsOfThisType: {
         const oldValuesAll = new Map<string, number | undefined>();
         for (const e of elements) {
           if (e.type === ObjectType.Wall && !e.locked) {
@@ -123,6 +163,7 @@ const WallRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
         addUndoable(undoableChangeAll);
         setApplyCount(applyCount + 1);
         break;
+      }
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (wall?.foundationId) {
           const oldValuesAboveFoundation = new Map<string, number | undefined>();
@@ -279,6 +320,7 @@ const WallRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
               <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('wallMenu.AllWallsAboveFoundation', lang)}
               </Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>{i18n.t('wallMenu.AllSelectedWalls', lang)}</Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('wallMenu.AllWalls', lang)}</Radio>
             </Space>
           </Radio.Group>

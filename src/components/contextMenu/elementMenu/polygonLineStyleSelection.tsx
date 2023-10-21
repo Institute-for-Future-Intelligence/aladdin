@@ -87,6 +87,15 @@ const PolygonLineStyleSelection = ({ setDialogVisible }: { setDialogVisible: (b:
   const needChange = (style: LineStyle) => {
     if (!polygon) return;
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Polygon && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            if (style !== (e as PolygonModel).lineStyle) {
+              return true;
+            }
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Polygon && !e.locked) {
@@ -127,11 +136,50 @@ const PolygonLineStyleSelection = ({ setDialogVisible }: { setDialogVisible: (b:
     return false;
   };
 
+  const updateInMap = (map: Map<string, LineStyle>, value: LineStyle) => {
+    useStore.getState().set((state) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Polygon && !e.locked && map.has(e.id)) {
+          (e as PolygonModel).lineStyle = value;
+        }
+      }
+    });
+  };
+
   const setLineStyle = (value: LineStyle) => {
     if (!polygon) return;
     if (!needChange(value)) return;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
+        const oldLineStylesSelected = new Map<string, LineStyle>();
+        for (const elem of elements) {
+          if (elem.type === ObjectType.Polygon && useStore.getState().selectedElementIdSet.has(elem.id)) {
+            oldLineStylesSelected.set(elem.id, (elem as PolygonModel).lineStyle ?? LineStyle.Solid);
+          }
+        }
+        const undoableChangeSelected = {
+          name: 'Set Line Style for Selected Polygons',
+          timestamp: Date.now(),
+          oldValues: oldLineStylesSelected,
+          newValue: value,
+          undo: () => {
+            for (const [id, style] of undoableChangeSelected.oldValues.entries()) {
+              updatePolygonLineStyleById(id, style as LineStyle);
+            }
+          },
+          redo: () => {
+            updateInMap(
+              undoableChangeSelected.oldValues as Map<string, LineStyle>,
+              undoableChangeSelected.newValue as LineStyle,
+            );
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeSelected);
+        updateInMap(oldLineStylesSelected, value);
+        setApplyCount(applyCount + 1);
+        break;
+      }
+      case Scope.AllObjectsOfThisType: {
         const oldLineStylesAll = new Map<string, LineStyle>();
         for (const elem of elements) {
           if (elem.type === ObjectType.Polygon) {
@@ -156,6 +204,7 @@ const PolygonLineStyleSelection = ({ setDialogVisible }: { setDialogVisible: (b:
         updatePolygonLineStyleForAll(value);
         setApplyCount(applyCount + 1);
         break;
+      }
       case Scope.AllObjectsOfThisTypeOnSurface:
         const parent = getParent(polygon);
         if (parent) {
@@ -331,6 +380,9 @@ const PolygonLineStyleSelection = ({ setDialogVisible }: { setDialogVisible: (b:
               </Radio>
               <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('polygonMenu.AllPolygonsAboveFoundation', lang)}
+              </Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>
+                {i18n.t('polygonMenu.AllSelectedPolygons', lang)}
               </Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('polygonMenu.AllPolygons', lang)}</Radio>
             </Space>

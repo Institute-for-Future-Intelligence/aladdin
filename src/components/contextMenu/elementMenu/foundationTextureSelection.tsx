@@ -64,6 +64,16 @@ const FoundationTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
+          if (e.type === ObjectType.Foundation && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            const f = e as FoundationModel;
+            if (texture !== f.textureType) {
+              return true;
+            }
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
           if (e.type === ObjectType.Foundation && !e.locked) {
             const f = e as FoundationModel;
             if (texture !== f.textureType) {
@@ -80,11 +90,55 @@ const FoundationTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b
     return false;
   };
 
+  const updateTextureInMap = (map: Map<string, FoundationTexture>, value?: string) => {
+    useStore.getState().set((state) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Foundation && map.has(e.id)) {
+          if (value !== undefined) {
+            (e as FoundationModel).textureType = value as FoundationTexture;
+          } else {
+            const texture = map.get(e.id);
+            if (texture !== undefined) {
+              (e as FoundationModel).textureType = texture as FoundationTexture;
+            }
+          }
+        }
+      }
+    });
+  };
+
   const updateTexture = (value: FoundationTexture) => {
     if (!foundation) return;
     if (!needChange(value)) return;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
+        const oldTexturesSelected = new Map<string, FoundationTexture>();
+        for (const elem of elements) {
+          if (elem.type === ObjectType.Foundation && useStore.getState().selectedElementIdSet.has(elem.id)) {
+            oldTexturesSelected.set(elem.id, (elem as FoundationModel).textureType ?? FoundationTexture.NoTexture);
+          }
+        }
+        const undoableChangeAll = {
+          name: 'Set Texture for Selected Foundations',
+          timestamp: Date.now(),
+          oldValues: oldTexturesSelected,
+          newValue: value,
+          undo: () => {
+            updateTextureInMap(undoableChangeAll.oldValues as Map<string, FoundationTexture>);
+          },
+          redo: () => {
+            updateTextureInMap(
+              undoableChangeAll.oldValues as Map<string, FoundationTexture>,
+              undoableChangeAll.newValue as FoundationTexture,
+            );
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeAll);
+        updateTextureInMap(oldTexturesSelected, value);
+        setApplyCount(applyCount + 1);
+        break;
+      }
+      case Scope.AllObjectsOfThisType: {
         const oldTexturesAll = new Map<string, FoundationTexture>();
         for (const elem of elements) {
           if (elem.type === ObjectType.Foundation) {
@@ -109,6 +163,7 @@ const FoundationTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b
         updateFoundationTextureForAll(value);
         setApplyCount(applyCount + 1);
         break;
+      }
       default:
         // foundation via selected element may be outdated, make sure that we get the latest
         const f = getElementById(foundation.id) as FoundationModel;
@@ -254,6 +309,9 @@ const FoundationTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b
           >
             <Space direction="vertical">
               <Radio value={Scope.OnlyThisObject}>{i18n.t('foundationMenu.OnlyThisFoundation', lang)}</Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>
+                {i18n.t('foundationMenu.AllSelectedFoundations', lang)}
+              </Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('foundationMenu.AllFoundations', lang)}</Radio>
             </Space>
           </Radio.Group>

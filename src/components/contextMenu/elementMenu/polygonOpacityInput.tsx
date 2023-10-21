@@ -58,6 +58,18 @@ const PolygonOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boole
   const needChange = (value: number) => {
     if (!polygon) return;
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Polygon &&
+            value !== (e as PolygonModel).opacity &&
+            !e.locked &&
+            useStore.getState().selectedElementIdSet.has(e.id)
+          ) {
+            return true;
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Polygon && value !== (e as PolygonModel).opacity && !e.locked) {
@@ -103,7 +115,35 @@ const PolygonOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boole
     if (!polygon) return;
     if (!needChange(value)) return;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
+        const oldValuesSelected = new Map<string, number | undefined>();
+        for (const e of elements) {
+          if (e.type === ObjectType.Polygon && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            const polygon = e as PolygonModel;
+            oldValuesSelected.set(e.id, polygon.opacity);
+            updateOpacityById(polygon.id, value);
+          }
+        }
+        const undoableChangeSelected = {
+          name: 'Set Opacity for Selected Polygons',
+          timestamp: Date.now(),
+          oldValues: oldValuesSelected,
+          newValue: value,
+          undo: () => {
+            undoInMap(undoableChangeSelected.oldValues as Map<string, number>);
+          },
+          redo: () => {
+            updateInMap(
+              undoableChangeSelected.oldValues as Map<string, number>,
+              undoableChangeSelected.newValue as number,
+            );
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeSelected);
+        setApplyCount(applyCount + 1);
+        break;
+      }
+      case Scope.AllObjectsOfThisType: {
         const oldValuesAll = new Map<string, number | undefined>();
         for (const e of elements) {
           if (e.type === ObjectType.Polygon && !e.locked) {
@@ -127,6 +167,7 @@ const PolygonOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boole
         addUndoable(undoableChangeAll);
         setApplyCount(applyCount + 1);
         break;
+      }
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (polygon.foundationId) {
           const oldValuesAboveFoundation = new Map<string, number | undefined>();
@@ -261,6 +302,9 @@ const PolygonOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boole
               </Radio>
               <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('polygonMenu.AllPolygonsAboveFoundation', lang)}
+              </Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>
+                {i18n.t('polygonMenu.AllSelectedPolygons', lang)}
               </Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('polygonMenu.AllPolygons', lang)}</Radio>
             </Space>

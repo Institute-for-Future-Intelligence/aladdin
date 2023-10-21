@@ -59,6 +59,18 @@ const RoofThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   const needChange = (value: number) => {
     if (!roof) return;
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Roof &&
+            value !== (e as RoofModel).thickness &&
+            !e.locked &&
+            useStore.getState().selectedElementIdSet.has(e.id)
+          ) {
+            return true;
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Roof && value !== (e as RoofModel).thickness && !e.locked) {
@@ -91,7 +103,35 @@ const RoofThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
     if (!roof) return;
     if (!needChange(value)) return;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
+        const oldThicknessSelected = new Map<string, number>();
+        for (const e of elements) {
+          if (e.type === ObjectType.Roof && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            const roof = e as RoofModel;
+            oldThicknessSelected.set(e.id, roof.thickness);
+            updateById(roof.id, value);
+          }
+        }
+        const undoableChangeSelected = {
+          name: 'Set Thickness for Selected Roofs',
+          timestamp: Date.now(),
+          oldValues: oldThicknessSelected,
+          newValue: value,
+          undo: () => {
+            undoInMap(undoableChangeSelected.oldValues as Map<string, number>);
+          },
+          redo: () => {
+            updateInMap(
+              undoableChangeSelected.oldValues as Map<string, number>,
+              undoableChangeSelected.newValue as number,
+            );
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeSelected);
+        setApplyCount(applyCount + 1);
+        break;
+      }
+      case Scope.AllObjectsOfThisType: {
         const oldThicknessAll = new Map<string, number>();
         for (const e of elements) {
           if (e.type === ObjectType.Roof && !e.locked) {
@@ -115,6 +155,7 @@ const RoofThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
         addUndoable(undoableChangeAll);
         setApplyCount(applyCount + 1);
         break;
+      }
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (roof.foundationId) {
           const oldThicknessAboveFoundation = new Map<string, number>();
@@ -213,6 +254,7 @@ const RoofThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
               <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('roofMenu.AllRoofsAboveFoundation', lang)}
               </Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>{i18n.t('roofMenu.AllSelectedRoofs', lang)}</Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('roofMenu.AllRoofs', lang)}</Radio>
             </Space>
           </Radio.Group>

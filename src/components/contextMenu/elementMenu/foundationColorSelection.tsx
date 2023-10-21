@@ -33,6 +33,17 @@ const FoundationColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
 
   const needChange = (color: string) => {
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType: {
+        for (const e of useStore.getState().elements) {
+          if (e.type === ObjectType.Foundation && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            const f = e as FoundationModel;
+            if (color !== f.color) {
+              return true;
+            }
+          }
+        }
+        break;
+      }
       case Scope.AllObjectsOfThisType:
         for (const e of useStore.getState().elements) {
           if (e.type === ObjectType.Foundation && !e.locked) {
@@ -51,10 +62,54 @@ const FoundationColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
     return false;
   };
 
+  const updateInMap = (map: Map<string, string>, value?: string) => {
+    useStore.getState().set((state) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Foundation && map.has(e.id)) {
+          if (value !== undefined) {
+            e.color = value;
+          } else {
+            const color = map.get(e.id);
+            if (color !== undefined) {
+              e.color = color;
+            }
+          }
+        }
+      }
+    });
+  };
+
   const updateColor = (value: string) => {
     if (!foundation) return;
     if (!needChange(value)) return;
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType: {
+        const oldColorsSelected = new Map<string, string>();
+        for (const elem of useStore.getState().elements) {
+          if (elem.type === ObjectType.Foundation && useStore.getState().selectedElementIdSet.has(elem.id)) {
+            oldColorsSelected.set(elem.id, elem.color ?? '#808080');
+          }
+        }
+        const undoableChangeSelected = {
+          name: 'Set Color for Selected Foundations',
+          timestamp: Date.now(),
+          oldValues: oldColorsSelected,
+          newValue: value,
+          undo: () => {
+            updateInMap(undoableChangeSelected.oldValues as Map<string, string>);
+          },
+          redo: () => {
+            updateInMap(
+              undoableChangeSelected.oldValues as Map<string, string>,
+              undoableChangeSelected.newValue as string,
+            );
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeSelected);
+        updateInMap(oldColorsSelected, value);
+        setApplyCount(useStore.getState().applyCount + 1);
+        break;
+      }
       case Scope.AllObjectsOfThisType:
         const oldColorsAll = new Map<string, string>();
         for (const elem of useStore.getState().elements) {
@@ -137,6 +192,9 @@ const FoundationColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
           >
             <Space direction="vertical">
               <Radio value={Scope.OnlyThisObject}>{i18n.t('foundationMenu.OnlyThisFoundation', lang)}</Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>
+                {i18n.t('foundationMenu.AllSelectedFoundations', lang)}
+              </Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('foundationMenu.AllFoundations', lang)}</Radio>
             </Space>
           </Radio.Group>

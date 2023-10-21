@@ -93,9 +93,31 @@ const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: () => vo
     });
   };
 
+  const updateInMap = (map: Map<string, WallTexture>, texture: WallTexture) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Wall && !e.locked && map.has(e.id)) {
+          (e as WallModel).textureType = texture;
+        }
+      }
+    });
+  };
+
   const needChange = (value: WallTexture) => {
     if (!wall) return;
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Wall &&
+            value !== (e as WallModel).textureType &&
+            !e.locked &&
+            useStore.getState().selectedElementIdSet.has(e.id)
+          ) {
+            return true;
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Wall && value !== (e as WallModel).textureType && !e.locked) {
@@ -136,7 +158,36 @@ const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: () => vo
     if (!wall) return;
     if (!needChange(value)) return;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
+        const oldTexturesSelected = new Map<string, WallTexture>();
+        for (const e of elements) {
+          if (e.type === ObjectType.Wall && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            oldTexturesSelected.set(e.id, (e as WallModel).textureType ?? WallTexture.Default);
+          }
+        }
+        const undoableChangeSelected = {
+          name: 'Set Texture for Selected Walls',
+          timestamp: Date.now(),
+          oldValues: oldTexturesSelected,
+          newValue: value,
+          undo: () => {
+            for (const [id, texture] of undoableChangeSelected.oldValues.entries()) {
+              updateById(id, texture as WallTexture);
+            }
+          },
+          redo: () => {
+            updateInMap(
+              undoableChangeSelected.oldValues as Map<string, WallTexture>,
+              undoableChangeSelected.newValue as WallTexture,
+            );
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeSelected);
+        updateInMap(oldTexturesSelected, value);
+        setApplyCount(applyCount + 1);
+        break;
+      }
+      case Scope.AllObjectsOfThisType: {
         const oldTexturesAll = new Map<string, WallTexture>();
         for (const e of elements) {
           if (e.type === ObjectType.Wall && !e.locked) {
@@ -161,6 +212,7 @@ const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: () => vo
         updateForAll(value);
         setApplyCount(applyCount + 1);
         break;
+      }
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (wall.foundationId) {
           const oldTexturesAboveFoundation = new Map<string, WallTexture>();
@@ -411,6 +463,7 @@ const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: () => vo
               <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('wallMenu.AllWallsAboveFoundation', lang)}
               </Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>{i18n.t('wallMenu.AllSelectedWalls', lang)}</Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('wallMenu.AllWalls', lang)}</Radio>
             </Space>
           </Radio.Group>

@@ -59,6 +59,18 @@ const RoofSideColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
   const needChange = (value: string) => {
     if (!roof) return;
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Roof &&
+            value !== (e as RoofModel).sideColor &&
+            !e.locked &&
+            useStore.getState().selectedElementIdSet.has(e.id)
+          ) {
+            return true;
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Roof && value !== (e as RoofModel).sideColor && !e.locked) {
@@ -91,7 +103,34 @@ const RoofSideColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
     if (!roof) return;
     if (!needChange(value)) return;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
+        const oldColorsSelected = new Map<string, string>();
+        for (const e of elements) {
+          if (e.type === ObjectType.Roof && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            oldColorsSelected.set(e.id, (e as RoofModel).sideColor ?? '#ffffff');
+          }
+        }
+        const undoableChangeSelected = {
+          name: 'Set Side Color for Selected Roofs',
+          timestamp: Date.now(),
+          oldValues: oldColorsSelected,
+          newValue: value,
+          undo: () => {
+            undoSideColorInMap(undoableChangeSelected.oldValues as Map<string, string>);
+          },
+          redo: () => {
+            updateSideColorInMap(
+              undoableChangeSelected.oldValues as Map<string, string>,
+              undoableChangeSelected.newValue as string,
+            );
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeSelected);
+        updateSideColorInMap(oldColorsSelected, value);
+        setApplyCount(applyCount + 1);
+        break;
+      }
+      case Scope.AllObjectsOfThisType: {
         const oldColorsAll = new Map<string, string>();
         for (const e of elements) {
           if (e.type === ObjectType.Roof && !e.locked) {
@@ -117,6 +156,7 @@ const RoofSideColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
         updateSideColorInMap(oldColorsAll, value);
         setApplyCount(applyCount + 1);
         break;
+      }
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (roof.foundationId) {
           const oldColorsAboveFoundation = new Map<string, string>();
@@ -206,6 +246,7 @@ const RoofSideColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
               <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('roofMenu.AllRoofsAboveFoundation', lang)}
               </Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>{i18n.t('roofMenu.AllSelectedRoofs', lang)}</Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('roofMenu.AllRoofs', lang)}</Radio>
             </Space>
           </Radio.Group>

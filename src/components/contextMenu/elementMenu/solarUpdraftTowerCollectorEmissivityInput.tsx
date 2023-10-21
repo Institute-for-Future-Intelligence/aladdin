@@ -65,8 +65,37 @@ const SolarUpdraftTowerCollectorEmissivityInput = ({
     });
   };
 
+  const updateInMap = (map: Map<string, number>, value: number) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Foundation && !e.locked && map.has(e.id)) {
+          const f = e as FoundationModel;
+          if (f.solarStructure === SolarStructure.UpdraftTower) {
+            if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
+            f.solarUpdraftTower.collectorEmissivity = value;
+          }
+        }
+      }
+    });
+  };
+
   const needChange = (emissivity: number) => {
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Foundation && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            const f = e as FoundationModel;
+            if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
+              if (
+                f.solarUpdraftTower.collectorEmissivity === undefined ||
+                Math.abs(f.solarUpdraftTower.collectorEmissivity - emissivity) > ZERO_TOLERANCE
+              ) {
+                return true;
+              }
+            }
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Foundation && !e.locked) {
@@ -99,7 +128,39 @@ const SolarUpdraftTowerCollectorEmissivityInput = ({
     if (!foundation) return;
     if (!needChange(value)) return;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
+        const oldValuesSelected = new Map<string, number>();
+        for (const elem of elements) {
+          if (elem.type === ObjectType.Foundation && useStore.getState().selectedElementIdSet.has(elem.id)) {
+            const f = elem as FoundationModel;
+            if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
+              oldValuesSelected.set(elem.id, f.solarUpdraftTower.collectorEmissivity ?? 0.95);
+            }
+          }
+        }
+        const undoableChangeSelected = {
+          name: 'Set Solar Collector Emissivity for Selected Foundations',
+          timestamp: Date.now(),
+          oldValues: oldValuesSelected,
+          newValue: value,
+          undo: () => {
+            for (const [id, ce] of undoableChangeSelected.oldValues.entries()) {
+              updateById(id, ce as number);
+            }
+          },
+          redo: () => {
+            updateInMap(
+              undoableChangeSelected.oldValues as Map<string, number>,
+              undoableChangeSelected.newValue as number,
+            );
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeSelected);
+        updateInMap(oldValuesSelected, value);
+        setApplyCount(applyCount + 1);
+        break;
+      }
+      case Scope.AllObjectsOfThisType: {
         const oldValuesAll = new Map<string, number>();
         for (const elem of elements) {
           if (elem.type === ObjectType.Foundation) {
@@ -127,6 +188,7 @@ const SolarUpdraftTowerCollectorEmissivityInput = ({
         updateForAll(value);
         setApplyCount(applyCount + 1);
         break;
+      }
       default:
         if (foundation.solarStructure === SolarStructure.UpdraftTower && foundation.solarUpdraftTower) {
           // foundation selected element may be outdated, make sure that we get the latest
@@ -203,6 +265,9 @@ const SolarUpdraftTowerCollectorEmissivityInput = ({
           >
             <Space direction="vertical">
               <Radio value={Scope.OnlyThisObject}>{i18n.t('foundationMenu.OnlyThisFoundation', lang)}</Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>
+                {i18n.t('foundationMenu.AllSelectedFoundations', lang)}
+              </Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('foundationMenu.AllFoundations', lang)}</Radio>
             </Space>
           </Radio.Group>

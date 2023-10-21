@@ -100,6 +100,16 @@ const PolygonTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
   const needChange = (texture: PolygonTexture) => {
     if (!polygon) return;
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Polygon && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            const polygon = e as PolygonModel;
+            if (texture !== polygon.textureType) {
+              return true;
+            }
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Polygon && !e.locked) {
@@ -141,11 +151,50 @@ const PolygonTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
     return false;
   };
 
+  const updateInMap = (map: Map<string, PolygonTexture>, value: PolygonTexture) => {
+    useStore.getState().set((state) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Polygon && !e.locked && map.has(e.id)) {
+          (e as PolygonModel).textureType = value;
+        }
+      }
+    });
+  };
+
   const setTexture = (value: PolygonTexture) => {
     if (!polygon) return;
     if (!needChange(value)) return;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
+        const oldTexturesSelected = new Map<string, PolygonTexture>();
+        for (const elem of elements) {
+          if (elem.type === ObjectType.Polygon && useStore.getState().selectedElementIdSet.has(elem.id)) {
+            oldTexturesSelected.set(elem.id, (elem as PolygonModel).textureType ?? PolygonTexture.NoTexture);
+          }
+        }
+        const undoableChangeSelected = {
+          name: 'Set Texture for Selected Polygons',
+          timestamp: Date.now(),
+          oldValues: oldTexturesSelected,
+          newValue: value,
+          undo: () => {
+            for (const [id, texture] of undoableChangeSelected.oldValues.entries()) {
+              updatePolygonTextureById(id, texture as PolygonTexture);
+            }
+          },
+          redo: () => {
+            updateInMap(
+              undoableChangeSelected.oldValues as Map<string, PolygonTexture>,
+              undoableChangeSelected.newValue as PolygonTexture,
+            );
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeSelected);
+        updateInMap(oldTexturesSelected, value);
+        setApplyCount(applyCount + 1);
+        break;
+      }
+      case Scope.AllObjectsOfThisType: {
         const oldTexturesAll = new Map<string, PolygonTexture>();
         for (const elem of elements) {
           if (elem.type === ObjectType.Polygon) {
@@ -170,6 +219,7 @@ const PolygonTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
         updatePolygonTextureForAll(value);
         setApplyCount(applyCount + 1);
         break;
+      }
       case Scope.AllObjectsOfThisTypeOnSurface:
         const parent = getParent(polygon);
         if (parent) {
@@ -419,6 +469,9 @@ const PolygonTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
               </Radio>
               <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('polygonMenu.AllPolygonsAboveFoundation', lang)}
+              </Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>
+                {i18n.t('polygonMenu.AllSelectedPolygons', lang)}
               </Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('polygonMenu.AllPolygons', lang)}</Radio>
             </Space>

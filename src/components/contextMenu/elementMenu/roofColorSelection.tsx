@@ -59,6 +59,18 @@ const RoofColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   const needChange = (value: string) => {
     if (!roof) return;
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Roof &&
+            value !== e.color &&
+            !e.locked &&
+            useStore.getState().selectedElementIdSet.has(e.id)
+          ) {
+            return true;
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Roof && value !== e.color && !e.locked) {
@@ -86,7 +98,34 @@ const RoofColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
     if (!roof) return;
     if (!needChange(value)) return;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
+        const oldColorsSelected = new Map<string, string>();
+        for (const e of elements) {
+          if (e.type === ObjectType.Roof && !e.locked) {
+            oldColorsSelected.set(e.id, e.color ?? '#ffffff');
+          }
+        }
+        const undoableChangeSelected = {
+          name: 'Set Color for Selected Roofs',
+          timestamp: Date.now(),
+          oldValues: oldColorsSelected,
+          newValue: value,
+          undo: () => {
+            undoColorInMap(undoableChangeSelected.oldValues as Map<string, string>);
+          },
+          redo: () => {
+            updateColorInMap(
+              undoableChangeSelected.oldValues as Map<string, string>,
+              undoableChangeSelected.newValue as string,
+            );
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeSelected);
+        updateColorInMap(oldColorsSelected, value);
+        setApplyCount(applyCount + 1);
+        break;
+      }
+      case Scope.AllObjectsOfThisType: {
         const oldColorsAll = new Map<string, string>();
         for (const e of elements) {
           if (e.type === ObjectType.Roof && !e.locked) {
@@ -109,6 +148,7 @@ const RoofColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
         updateColorInMap(oldColorsAll, value);
         setApplyCount(applyCount + 1);
         break;
+      }
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (roof.foundationId) {
           const oldColorsAboveFoundation = new Map<string, string>();
@@ -198,6 +238,7 @@ const RoofColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
               <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('roofMenu.AllRoofsAboveFoundation', lang)}
               </Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>{i18n.t('roofMenu.AllSelectedRoofs', lang)}</Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('roofMenu.AllRoofs', lang)}</Radio>
             </Space>
           </Radio.Group>

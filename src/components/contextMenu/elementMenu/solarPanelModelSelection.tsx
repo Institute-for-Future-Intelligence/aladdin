@@ -185,6 +185,35 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
     });
   };
 
+  const updateInMap = (map: Map<string, string>, value: string) => {
+    useStore.getState().set((state) => {
+      const pvModel = state.pvModules[value];
+      let updateWall = false;
+      for (const e of state.elements) {
+        if (e.type === ObjectType.SolarPanel && !e.locked && map.has(e.id)) {
+          const sp = e as SolarPanelModel;
+          sp.pvModelName = value;
+          if (sp.orientation === Orientation.portrait) {
+            // calculate the current x-y layout
+            const nx = Math.max(1, Math.round(sp.lx / pvModel.width));
+            const ny = Math.max(1, Math.round(sp.ly / pvModel.length));
+            sp.lx = nx * pvModel.width;
+            sp.ly = ny * pvModel.length;
+          } else {
+            // calculate the current x-y layout
+            const nx = Math.max(1, Math.round(sp.lx / pvModel.length));
+            const ny = Math.max(1, Math.round(sp.ly / pvModel.width));
+            sp.lx = nx * pvModel.length;
+            sp.ly = ny * pvModel.width;
+          }
+          if (sp.parentType === ObjectType.Wall) {
+            updateWall = true;
+          }
+        }
+      }
+    });
+  };
+
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);
   };
@@ -192,6 +221,16 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
   const needChange = (pvModelName: string) => {
     if (!solarPanel) return;
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.SolarPanel && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            const sp = e as SolarPanelModel;
+            if (sp.pvModelName !== pvModelName) {
+              return true;
+            }
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.SolarPanel && !e.locked) {
@@ -254,7 +293,36 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
     if (!solarPanel) return;
     if (!needChange(value)) return;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
+        const oldModelsSelected = new Map<string, string>();
+        for (const elem of elements) {
+          if (elem.type === ObjectType.SolarPanel && useStore.getState().selectedElementIdSet.has(elem.id)) {
+            oldModelsSelected.set(elem.id, (elem as SolarPanelModel).pvModelName);
+          }
+        }
+        const undoableChangeSelected = {
+          name: 'Set Model for Selected Solar Panels',
+          timestamp: Date.now(),
+          oldValues: oldModelsSelected,
+          newValue: value,
+          undo: () => {
+            for (const [id, model] of undoableChangeSelected.oldValues.entries()) {
+              updateSolarPanelModelById(id, model as string);
+            }
+          },
+          redo: () => {
+            updateInMap(
+              undoableChangeSelected.oldValues as Map<string, string>,
+              undoableChangeSelected.newValue as string,
+            );
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeSelected);
+        updateInMap(oldModelsSelected, value);
+        setApplyCount(applyCount + 1);
+        break;
+      }
+      case Scope.AllObjectsOfThisType: {
         const oldModelsAll = new Map<string, string>();
         for (const elem of elements) {
           if (elem.type === ObjectType.SolarPanel) {
@@ -279,6 +347,7 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
         updateSolarPanelModelForAll(value);
         setApplyCount(applyCount + 1);
         break;
+      }
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (solarPanel.foundationId) {
           const oldModelsAboveFoundation = new Map<string, string>();
@@ -579,6 +648,9 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
               </Radio>
               <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('solarPanelMenu.AllSolarPanelsAboveFoundation', lang)}
+              </Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>
+                {i18n.t('solarPanelMenu.AllSelectedSolarPanels', lang)}
               </Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('solarPanelMenu.AllSolarPanels', lang)}</Radio>
             </Space>

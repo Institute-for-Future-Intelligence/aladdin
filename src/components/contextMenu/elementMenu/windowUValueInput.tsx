@@ -59,6 +59,18 @@ const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
   const needChange = (value: number) => {
     if (!windowModel) return;
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Window &&
+            value !== (e as WindowModel).uValue &&
+            !e.locked &&
+            useStore.getState().selectedElementIdSet.has(e.id)
+          ) {
+            return true;
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Window && value !== (e as WindowModel).uValue && !e.locked) {
@@ -103,7 +115,35 @@ const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
     if (!windowModel) return;
     if (!needChange(value)) return;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
+        const oldValuesSelected = new Map<string, number | undefined>();
+        for (const e of elements) {
+          if (e.type === ObjectType.Window && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            const window = e as WindowModel;
+            oldValuesSelected.set(e.id, window.uValue ?? DEFAULT_WINDOW_U_VALUE);
+            updateById(window.id, value);
+          }
+        }
+        const undoableChangeSelected = {
+          name: 'Set U-Value for Selected Windows',
+          timestamp: Date.now(),
+          oldValues: oldValuesSelected,
+          newValue: value,
+          undo: () => {
+            undoInMap(undoableChangeSelected.oldValues as Map<string, number>);
+          },
+          redo: () => {
+            updateInMap(
+              undoableChangeSelected.oldValues as Map<string, number>,
+              undoableChangeSelected.newValue as number,
+            );
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeSelected);
+        setApplyCount(applyCount + 1);
+        break;
+      }
+      case Scope.AllObjectsOfThisType: {
         const oldValuesAll = new Map<string, number | undefined>();
         for (const e of elements) {
           if (e.type === ObjectType.Window && !e.locked) {
@@ -127,6 +167,7 @@ const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
         addUndoable(undoableChangeAll);
         setApplyCount(applyCount + 1);
         break;
+      }
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (windowModel.foundationId) {
           const oldValuesAboveFoundation = new Map<string, number | undefined>();
@@ -282,6 +323,7 @@ const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
               <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('windowMenu.AllWindowsAboveFoundation', lang)}
               </Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>{i18n.t('windowMenu.AllSelectedWindows', lang)}</Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('windowMenu.AllWindows', lang)}</Radio>
             </Space>
           </Radio.Group>

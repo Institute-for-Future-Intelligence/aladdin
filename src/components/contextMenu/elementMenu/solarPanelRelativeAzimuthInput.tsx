@@ -78,6 +78,21 @@ const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible
   const needChange = (azimuth: number) => {
     if (!solarPanel) return;
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.SolarPanel &&
+            !e.locked &&
+            (e as SolarPanelModel).parentType !== ObjectType.Wall &&
+            useStore.getState().selectedElementIdSet.has(e.id)
+          ) {
+            const sp = e as SolarPanelModel;
+            if (Math.abs(-sp.relativeAzimuth - azimuth) > ZERO_TOLERANCE) {
+              return true;
+            }
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.SolarPanel && !e.locked && (e as SolarPanelModel).parentType !== ObjectType.Wall) {
@@ -145,12 +160,74 @@ const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible
     return false;
   };
 
+  const updateInMap = (map: Map<string, number>, value: number) => {
+    useStore.getState().set((state) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.SolarPanel && !e.locked && map.has(e.id)) {
+          const sp = e as SolarPanelModel;
+          sp.relativeAzimuth = value;
+        }
+      }
+    });
+  };
+
   const setRelativeAzimuth = (value: number) => {
     if (!solarPanel) return;
     if (!needChange(value)) return;
     rejectedValue.current = undefined;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
+        rejectRef.current = false;
+        for (const elem of elements) {
+          if (
+            elem.type === ObjectType.SolarPanel &&
+            (elem as SolarPanelModel).parentType !== ObjectType.Wall &&
+            useStore.getState().selectedElementIdSet.has(elem.id)
+          ) {
+            if (rejectChange(elem as SolarPanelModel, value)) {
+              rejectRef.current = true;
+              break;
+            }
+          }
+        }
+        if (rejectRef.current) {
+          rejectedValue.current = value;
+          setInputValue(-solarPanel.relativeAzimuth);
+        } else {
+          const oldRelativeAzimuthsSelected = new Map<string, number>();
+          for (const elem of elements) {
+            if (
+              elem.type === ObjectType.SolarPanel &&
+              (elem as SolarPanelModel).parentType !== ObjectType.Wall &&
+              useStore.getState().selectedElementIdSet.has(elem.id)
+            ) {
+              oldRelativeAzimuthsSelected.set(elem.id, -(elem as SolarPanelModel).relativeAzimuth);
+            }
+          }
+          const undoableChangeSelected = {
+            name: 'Set Relative Azimuth for Selected Solar Panel Arrays',
+            timestamp: Date.now(),
+            oldValues: oldRelativeAzimuthsSelected,
+            newValue: value,
+            undo: () => {
+              for (const [id, ra] of undoableChangeSelected.oldValues.entries()) {
+                updateRelativeAzimuthById(id, -(ra as number));
+              }
+            },
+            redo: () => {
+              updateInMap(
+                undoableChangeSelected.oldValues as Map<string, number>,
+                undoableChangeSelected.newValue as number,
+              );
+            },
+          } as UndoableChangeGroup;
+          addUndoable(undoableChangeSelected);
+          updateInMap(oldRelativeAzimuthsSelected, -value);
+          setApplyCount(applyCount + 1);
+        }
+        break;
+      }
+      case Scope.AllObjectsOfThisType: {
         rejectRef.current = false;
         for (const elem of elements) {
           if (elem.type === ObjectType.SolarPanel && (elem as SolarPanelModel).parentType !== ObjectType.Wall) {
@@ -189,6 +266,7 @@ const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible
           setApplyCount(applyCount + 1);
         }
         break;
+      }
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (solarPanel.foundationId) {
           rejectRef.current = false;
@@ -435,6 +513,9 @@ const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible
               </Radio>
               <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('solarPanelMenu.AllSolarPanelsAboveFoundation', lang)}
+              </Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>
+                {i18n.t('solarPanelMenu.AllSelectedSolarPanels', lang)}
               </Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('solarPanelMenu.AllSolarPanels', lang)}</Radio>
             </Space>

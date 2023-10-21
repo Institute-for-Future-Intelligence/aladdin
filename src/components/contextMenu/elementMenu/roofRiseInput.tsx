@@ -51,6 +51,18 @@ const RoofRiseInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =>
   const needChange = (value: number) => {
     if (!roof) return;
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Roof &&
+            value !== (e as RoofModel).rise &&
+            !e.locked &&
+            useStore.getState().selectedElementIdSet.has(e.id)
+          ) {
+            return true;
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Roof && value !== (e as RoofModel).rise && !e.locked) {
@@ -83,7 +95,34 @@ const RoofRiseInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =>
     if (!roof) return;
     if (!needChange(value)) return;
     switch (useStore.getState().roofActionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
+        const oldValuesSelected = new Map<string, number>();
+        for (const e of elements) {
+          if (e.type === ObjectType.Roof && !e.locked) {
+            oldValuesSelected.set(e.id, (e as RoofModel).rise);
+            updateRoofRiseById(e.id, value);
+          }
+        }
+        const undoableChangeSelected = {
+          name: 'Set Rise for Selected Roofs',
+          timestamp: Date.now(),
+          oldValues: oldValuesSelected,
+          newValue: value,
+          undo: () => {
+            undoInMap(undoableChangeSelected.oldValues as Map<string, number>);
+          },
+          redo: () => {
+            updateInMap(
+              undoableChangeSelected.oldValues as Map<string, number>,
+              undoableChangeSelected.newValue as number,
+            );
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeSelected);
+        setApplyCount(applyCount + 1);
+        break;
+      }
+      case Scope.AllObjectsOfThisType: {
         const oldValuesAll = new Map<string, number>();
         for (const e of elements) {
           if (e.type === ObjectType.Roof && !e.locked) {
@@ -106,6 +145,7 @@ const RoofRiseInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =>
         addUndoable(undoableChangeAll);
         setApplyCount(applyCount + 1);
         break;
+      }
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (roof.foundationId) {
           const oldValuesAboveFoundation = new Map<string, number>();
@@ -200,6 +240,7 @@ const RoofRiseInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =>
               <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('roofMenu.AllRoofsAboveFoundation', lang)}
               </Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>{i18n.t('roofMenu.AllSelectedRoofs', lang)}</Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('roofMenu.AllRoofs', lang)}</Radio>
             </Space>
           </Radio.Group>

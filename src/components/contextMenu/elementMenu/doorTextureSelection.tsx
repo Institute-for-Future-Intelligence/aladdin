@@ -78,6 +78,18 @@ const DoorTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
   const needChange = (value: DoorTexture) => {
     if (!door) return;
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Door &&
+            value !== (e as DoorModel).textureType &&
+            !e.locked &&
+            useStore.getState().selectedElementIdSet.has(e.id)
+          ) {
+            return true;
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Door && value !== (e as DoorModel).textureType && !e.locked) {
@@ -122,7 +134,34 @@ const DoorTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
     if (!door) return;
     if (!needChange(value)) return;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
+        const oldTexturesSelected = new Map<string, DoorTexture>();
+        for (const elem of useStore.getState().elements) {
+          if (elem.type === ObjectType.Door && !elem.locked && useStore.getState().selectedElementIdSet.has(elem.id)) {
+            oldTexturesSelected.set(elem.id, (elem as DoorModel).textureType ?? DoorTexture.Default);
+          }
+        }
+        const undoableChangeSelected = {
+          name: 'Set Texture for Selected Doors',
+          timestamp: Date.now(),
+          oldValues: oldTexturesSelected,
+          newValue: value,
+          undo: () => {
+            undoTextureInMap(undoableChangeSelected.oldValues as Map<string, DoorTexture>);
+          },
+          redo: () => {
+            updateTextureInMap(
+              undoableChangeSelected.oldValues as Map<string, DoorTexture>,
+              undoableChangeSelected.newValue as DoorTexture,
+            );
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeSelected);
+        updateTextureInMap(oldTexturesSelected, value);
+        setApplyCount(applyCount + 1);
+        break;
+      }
+      case Scope.AllObjectsOfThisType: {
         const oldTexturesAll = new Map<string, DoorTexture>();
         for (const elem of useStore.getState().elements) {
           if (elem.type === ObjectType.Door && !elem.locked) {
@@ -148,6 +187,7 @@ const DoorTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
         updateTextureInMap(oldTexturesAll, value);
         setApplyCount(applyCount + 1);
         break;
+      }
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (door.foundationId) {
           const oldTexturesAboveFoundation = new Map<string, DoorTexture>();
@@ -478,6 +518,7 @@ const DoorTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
               <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('doorMenu.AllDoorsAboveFoundation', lang)}
               </Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>{i18n.t('doorMenu.AllSelectedDoors', lang)}</Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('doorMenu.AllDoors', lang)}</Radio>
             </Space>
           </Radio.Group>

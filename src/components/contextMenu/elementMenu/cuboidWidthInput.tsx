@@ -63,6 +63,19 @@ const CuboidWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
   const containsAllChildren = (ly: number) => {
     if (!cuboid) return;
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Cuboid && useStore.getState().selectedElementIdSet.has(e.id)) {
+            const c = e as CuboidModel;
+            const children = getChildren(c.id);
+            if (children.length > 0) {
+              if (!Util.doesNewSizeContainAllChildren(c, children, c.lx, ly)) {
+                return false;
+              }
+            }
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Cuboid) {
@@ -97,6 +110,16 @@ const CuboidWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
   const needChange = (ly: number) => {
     if (!cuboid) return;
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Cuboid && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            const c = e as CuboidModel;
+            if (Math.abs(c.ly - ly) > ZERO_TOLERANCE) {
+              return true;
+            }
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisTypeOnSurface:
         for (const e of elements) {
           if (e.type === ObjectType.Cuboid && e.parentId === cuboid?.parentId && !e.locked) {
@@ -107,7 +130,17 @@ const CuboidWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
           }
         }
         break;
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllObjectsOfThisType: {
+        for (const e of elements) {
+          if (e.type === ObjectType.Cuboid && !e.locked) {
+            const c = e as CuboidModel;
+            if (Math.abs(c.ly - ly) > ZERO_TOLERANCE) {
+              return true;
+            }
+          }
+        }
+        break;
+      }
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         // should list here, so it doesn't go to default, but ignore
         break;
@@ -312,7 +345,90 @@ const CuboidWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
       oldChildrenVerticesMapRef.current.clear();
       newChildrenVerticesMapRef.current.clear();
       switch (actionScope) {
-        case Scope.AllObjectsOfThisTypeOnSurface:
+        case Scope.AllSelectedObjectsOfThisType: {
+          const oldLysSelected = new Map<string, number>();
+          for (const elem of elements) {
+            if (
+              elem.type === ObjectType.Cuboid &&
+              !elem.locked &&
+              useStore.getState().selectedElementIdSet.has(elem.id)
+            ) {
+              oldLysSelected.set(elem.id, elem.ly);
+              updateLyWithChildren(elem as CuboidModel, value);
+            }
+          }
+          // the following also populates the above two maps in ref
+          const undoableChangeSelected = {
+            name: 'Set Width for Selected Cuboids on Surface',
+            timestamp: Date.now(),
+            oldSizes: oldLysSelected,
+            newSize: value,
+            oldChildrenPositionsMap: new Map(oldChildrenPositionsMapRef.current),
+            newChildrenPositionsMap: new Map(newChildrenPositionsMapRef.current),
+            oldChildrenVerticesMap: new Map(oldChildrenVerticesMapRef.current),
+            newChildrenVerticesMap: new Map(newChildrenVerticesMapRef.current),
+            oldChildrenParentIdMap: new Map(oldChildrenParentIdMapRef.current),
+            newChildrenParentIdMap: new Map(newChildrenParentIdMapRef.current),
+            undo: () => {
+              for (const [id, ly] of undoableChangeSelected.oldSizes.entries()) {
+                updateElementLyById(id, ly as number);
+              }
+              if (
+                undoableChangeSelected.oldChildrenPositionsMap &&
+                undoableChangeSelected.oldChildrenPositionsMap.size > 0
+              ) {
+                for (const [id, ps] of undoableChangeSelected.oldChildrenPositionsMap.entries()) {
+                  setElementPosition(id, ps.x, ps.y, ps.z);
+                  const oldParentId = undoableChangeSelected.oldChildrenParentIdMap?.get(id);
+                  const newParentId = undoableChangeSelected.newChildrenParentIdMap?.get(id);
+                  if (oldParentId && newParentId && oldParentId !== newParentId) {
+                    attachToObjectGroup(oldParentId, newParentId, id);
+                    setParentIdById(oldParentId, id);
+                  }
+                }
+              }
+              if (
+                undoableChangeSelected.oldChildrenVerticesMap &&
+                undoableChangeSelected.oldChildrenVerticesMap.size > 0
+              ) {
+                for (const [id, vs] of undoableChangeSelected.oldChildrenVerticesMap.entries()) {
+                  updatePolygonVerticesById(id, vs);
+                }
+              }
+            },
+            redo: () => {
+              for (const [id, ly] of undoableChangeSelected.oldSizes.entries()) {
+                updateElementLyById(id, undoableChangeSelected.newSize as number);
+              }
+              if (
+                undoableChangeSelected.newChildrenPositionsMap &&
+                undoableChangeSelected.newChildrenPositionsMap.size > 0
+              ) {
+                for (const [id, ps] of undoableChangeSelected.newChildrenPositionsMap.entries()) {
+                  setElementPosition(id, ps.x, ps.y, ps.z);
+                  const oldParentId = undoableChangeSelected.oldChildrenParentIdMap?.get(id);
+                  const newParentId = undoableChangeSelected.newChildrenParentIdMap?.get(id);
+                  if (oldParentId && newParentId && oldParentId !== newParentId) {
+                    attachToObjectGroup(newParentId, oldParentId, id);
+                    setParentIdById(newParentId, id);
+                  }
+                }
+              }
+              if (
+                undoableChangeSelected.newChildrenVerticesMap &&
+                undoableChangeSelected.newChildrenVerticesMap.size > 0
+              ) {
+                for (const [id, vs] of undoableChangeSelected.newChildrenVerticesMap.entries()) {
+                  updatePolygonVerticesById(id, vs);
+                }
+              }
+            },
+          } as UndoableSizeGroupChange;
+          addUndoable(undoableChangeSelected);
+          setApplyCount(applyCount + 1);
+          break;
+        }
+        case Scope.AllObjectsOfThisTypeOnSurface: {
           const oldLysAll = new Map<string, number>();
           for (const elem of elements) {
             if (elem.type === ObjectType.Cuboid && elem.parentId === cuboid.parentId && !elem.locked) {
@@ -376,7 +492,74 @@ const CuboidWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
           addUndoable(undoableChangeAll);
           setApplyCount(applyCount + 1);
           break;
-        case Scope.AllObjectsOfThisType:
+        }
+        case Scope.AllObjectsOfThisType: {
+          const oldLysAll = new Map<string, number>();
+          for (const elem of elements) {
+            if (elem.type === ObjectType.Cuboid && !elem.locked) {
+              oldLysAll.set(elem.id, elem.ly);
+              updateLyWithChildren(elem as CuboidModel, value);
+            }
+          }
+          // the following also populates the above two maps in ref
+          const undoableChangeAll = {
+            name: 'Set Width for All Cuboids on Surface',
+            timestamp: Date.now(),
+            oldSizes: oldLysAll,
+            newSize: value,
+            oldChildrenPositionsMap: new Map(oldChildrenPositionsMapRef.current),
+            newChildrenPositionsMap: new Map(newChildrenPositionsMapRef.current),
+            oldChildrenVerticesMap: new Map(oldChildrenVerticesMapRef.current),
+            newChildrenVerticesMap: new Map(newChildrenVerticesMapRef.current),
+            oldChildrenParentIdMap: new Map(oldChildrenParentIdMapRef.current),
+            newChildrenParentIdMap: new Map(newChildrenParentIdMapRef.current),
+            undo: () => {
+              for (const [id, ly] of undoableChangeAll.oldSizes.entries()) {
+                updateElementLyById(id, ly as number);
+              }
+              if (undoableChangeAll.oldChildrenPositionsMap && undoableChangeAll.oldChildrenPositionsMap.size > 0) {
+                for (const [id, ps] of undoableChangeAll.oldChildrenPositionsMap.entries()) {
+                  setElementPosition(id, ps.x, ps.y, ps.z);
+                  const oldParentId = undoableChangeAll.oldChildrenParentIdMap?.get(id);
+                  const newParentId = undoableChangeAll.newChildrenParentIdMap?.get(id);
+                  if (oldParentId && newParentId && oldParentId !== newParentId) {
+                    attachToObjectGroup(oldParentId, newParentId, id);
+                    setParentIdById(oldParentId, id);
+                  }
+                }
+              }
+              if (undoableChangeAll.oldChildrenVerticesMap && undoableChangeAll.oldChildrenVerticesMap.size > 0) {
+                for (const [id, vs] of undoableChangeAll.oldChildrenVerticesMap.entries()) {
+                  updatePolygonVerticesById(id, vs);
+                }
+              }
+            },
+            redo: () => {
+              for (const [id, ly] of undoableChangeAll.oldSizes.entries()) {
+                updateElementLyById(id, undoableChangeAll.newSize as number);
+              }
+              if (undoableChangeAll.newChildrenPositionsMap && undoableChangeAll.newChildrenPositionsMap.size > 0) {
+                for (const [id, ps] of undoableChangeAll.newChildrenPositionsMap.entries()) {
+                  setElementPosition(id, ps.x, ps.y, ps.z);
+                  const oldParentId = undoableChangeAll.oldChildrenParentIdMap?.get(id);
+                  const newParentId = undoableChangeAll.newChildrenParentIdMap?.get(id);
+                  if (oldParentId && newParentId && oldParentId !== newParentId) {
+                    attachToObjectGroup(newParentId, oldParentId, id);
+                    setParentIdById(newParentId, id);
+                  }
+                }
+              }
+              if (undoableChangeAll.newChildrenVerticesMap && undoableChangeAll.newChildrenVerticesMap.size > 0) {
+                for (const [id, vs] of undoableChangeAll.newChildrenVerticesMap.entries()) {
+                  updatePolygonVerticesById(id, vs);
+                }
+              }
+            },
+          } as UndoableSizeGroupChange;
+          addUndoable(undoableChangeAll);
+          setApplyCount(applyCount + 1);
+          break;
+        }
         case Scope.AllObjectsOfThisTypeAboveFoundation:
           // should list here, so it doesn't go to default, but ignore
           break;
@@ -506,6 +689,8 @@ const CuboidWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
               <Radio value={Scope.AllObjectsOfThisTypeOnSurface}>
                 {i18n.t('cuboidMenu.AllCuboidsOnSameSurface', lang)}
               </Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>{i18n.t('cuboidMenu.AllSelectedCuboids', lang)}</Radio>
+              <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('cuboidMenu.AllCuboids', lang)}</Radio>
             </Space>
           </Radio.Group>
         </Col>

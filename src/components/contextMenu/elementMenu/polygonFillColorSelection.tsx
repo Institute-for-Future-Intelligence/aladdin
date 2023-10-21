@@ -44,6 +44,15 @@ const PolygonFillColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
   const needChange = (color: string) => {
     if (!polygon) return;
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Polygon && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            if (color !== e.color) {
+              return true;
+            }
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Polygon && !e.locked) {
@@ -84,11 +93,50 @@ const PolygonFillColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
     return false;
   };
 
+  const updateInMap = (map: Map<string, string>, value: string) => {
+    useStore.getState().set((state) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Polygon && !e.locked && map.has(e.id)) {
+          (e as PolygonModel).color = value;
+        }
+      }
+    });
+  };
+
   const setColor = (value: string) => {
     if (!polygon) return;
     if (!needChange(value)) return;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
+        const oldColorsSelected = new Map<string, string>();
+        for (const elem of elements) {
+          if (elem.type === ObjectType.Polygon && useStore.getState().selectedElementIdSet.has(elem.id)) {
+            oldColorsSelected.set(elem.id, elem.color ?? 'gray');
+          }
+        }
+        const undoableChangeSelected = {
+          name: 'Set Fill Color for Selected Polygons',
+          timestamp: Date.now(),
+          oldValues: oldColorsSelected,
+          newValue: value,
+          undo: () => {
+            for (const [id, color] of undoableChangeSelected.oldValues.entries()) {
+              updateElementFillColorById(id, color as string);
+            }
+          },
+          redo: () => {
+            updateInMap(
+              undoableChangeSelected.oldValues as Map<string, string>,
+              undoableChangeSelected.newValue as string,
+            );
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeSelected);
+        updateInMap(oldColorsSelected, value);
+        setApplyCount(applyCount + 1);
+        break;
+      }
+      case Scope.AllObjectsOfThisType: {
         const oldColorsAll = new Map<string, string>();
         for (const elem of elements) {
           if (elem.type === ObjectType.Polygon) {
@@ -113,6 +161,7 @@ const PolygonFillColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
         updateElementFillColorForAll(ObjectType.Polygon, value);
         setApplyCount(applyCount + 1);
         break;
+      }
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (polygon.foundationId) {
           const oldFillColorsAboveFoundation = new Map<string, string>();
@@ -243,6 +292,9 @@ const PolygonFillColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
               </Radio>
               <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('polygonMenu.AllPolygonsAboveFoundation', lang)}
+              </Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>
+                {i18n.t('polygonMenu.AllSelectedPolygons', lang)}
               </Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('polygonMenu.AllPolygons', lang)}</Radio>
             </Space>

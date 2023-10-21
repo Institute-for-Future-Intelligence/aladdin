@@ -121,8 +121,31 @@ const WallNumberInput = ({
     updateActionState(val);
   };
 
+  const updateInMap = (map: Map<string, number>, value: number) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Wall && !e.locked && map.has(e.id)) {
+          ((e as WallModel)[attributeKey] as number) = value;
+        }
+      }
+    });
+    updateActionState(value);
+  };
+
   const needChange = (value: number) => {
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Wall &&
+            value !== (e as WallModel)[attributeKey] &&
+            !e.locked &&
+            useStore.getState().selectedElementIdSet.has(e.id)
+          ) {
+            return true;
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Wall && value !== (e as WallModel)[attributeKey] && !e.locked) {
@@ -163,7 +186,36 @@ const WallNumberInput = ({
     if (!wall) return;
     if (!needChange(value)) return;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
+        const oldValuesSelected = new Map<string, number>();
+        for (const e of elements) {
+          if (e.type === ObjectType.Wall && useStore.getState().selectedElementIdSet.has(e.id)) {
+            oldValuesSelected.set(e.id, (e as WallModel)[attributeKey] as number);
+          }
+        }
+        const undoableChangeSelected = {
+          name: `Set ${dataType} for Selected Walls`,
+          timestamp: Date.now(),
+          oldValues: oldValuesSelected,
+          newValue: value,
+          undo: () => {
+            for (const [id, wh] of undoableChangeSelected.oldValues.entries()) {
+              updateById(id, wh as number);
+            }
+          },
+          redo: () => {
+            updateInMap(
+              undoableChangeSelected.oldValues as Map<string, number>,
+              undoableChangeSelected.newValue as number,
+            );
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeSelected);
+        updateInMap(oldValuesSelected, value);
+        setApplyCount(applyCount + 1);
+        break;
+      }
+      case Scope.AllObjectsOfThisType: {
         const oldValuesAll = new Map<string, number>();
         for (const e of elements) {
           if (e.type === ObjectType.Wall) {
@@ -188,6 +240,7 @@ const WallNumberInput = ({
         updateForAll(value);
         setApplyCount(applyCount + 1);
         break;
+      }
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (wall.foundationId) {
           const oldValuesAboveFoundation = new Map<string, number>();
@@ -312,6 +365,7 @@ const WallNumberInput = ({
               <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('wallMenu.AllWallsAboveFoundation', lang)}
               </Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>{i18n.t('wallMenu.AllSelectedWalls', lang)}</Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('wallMenu.AllWalls', lang)}</Radio>
             </Space>
           </Radio.Group>

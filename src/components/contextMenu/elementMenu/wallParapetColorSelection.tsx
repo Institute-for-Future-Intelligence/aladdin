@@ -79,9 +79,31 @@ const WallParapetColorSelection = ({ setDialogVisible }: { setDialogVisible: () 
     });
   };
 
+  const updateInMap = (map: Map<string, string>, color: string) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Wall && !e.locked && map.has(e.id)) {
+          (e as WallModel).parapet.color = color;
+        }
+      }
+    });
+  };
+
   const needChange = (value: string) => {
     if (!wall) return;
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Wall &&
+            value !== (e as WallModel).parapet.color &&
+            !e.locked &&
+            useStore.getState().selectedElementIdSet.has(e.id)
+          ) {
+            return true;
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Wall && value !== (e as WallModel).parapet.color && !e.locked) {
@@ -122,7 +144,36 @@ const WallParapetColorSelection = ({ setDialogVisible }: { setDialogVisible: () 
     if (!wall) return;
     if (!needChange(value)) return;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
+        const oldColorsSelected = new Map<string, string>();
+        for (const e of elements) {
+          if (e.type === ObjectType.Wall && useStore.getState().selectedElementIdSet.has(e.id)) {
+            oldColorsSelected.set(e.id, (e as WallModel).parapet.color ?? '#ffffff');
+          }
+        }
+        const undoableChangeSelected = {
+          name: 'Set Parapet Color for Selected Walls',
+          timestamp: Date.now(),
+          oldValues: oldColorsSelected,
+          newValue: value,
+          undo: () => {
+            for (const [id, studColor] of undoableChangeSelected.oldValues.entries()) {
+              updateById(id, studColor as string);
+            }
+          },
+          redo: () => {
+            updateInMap(
+              undoableChangeSelected.oldValues as Map<string, string>,
+              undoableChangeSelected.newValue as string,
+            );
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeSelected);
+        updateInMap(oldColorsSelected, value);
+        setApplyCount(applyCount + 1);
+        break;
+      }
+      case Scope.AllObjectsOfThisType: {
         const oldColorsAll = new Map<string, string>();
         for (const e of elements) {
           if (e.type === ObjectType.Wall) {
@@ -147,6 +198,7 @@ const WallParapetColorSelection = ({ setDialogVisible }: { setDialogVisible: () 
         updateForAll(value);
         setApplyCount(applyCount + 1);
         break;
+      }
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (wall.foundationId) {
           const oldColorsAboveFoundation = new Map<string, string>();
@@ -260,6 +312,7 @@ const WallParapetColorSelection = ({ setDialogVisible }: { setDialogVisible: () 
               <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('wallMenu.AllWallsAboveFoundation', lang)}
               </Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>{i18n.t('wallMenu.AllSelectedWalls', lang)}</Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('wallMenu.AllWalls', lang)}</Radio>
             </Space>
           </Radio.Group>

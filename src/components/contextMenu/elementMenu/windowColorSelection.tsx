@@ -85,6 +85,16 @@ const WindowColorSelection = ({
     });
   };
 
+  const updateInMap = (map: Map<string, string>, val: string) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (!e.locked && e.type === ObjectType.Window && map.has(e.id)) {
+          ((e as WindowModel)[attributeKey] as string) = val;
+        }
+      }
+    });
+  };
+
   const undoInMap = (map: Map<string, string>) => {
     for (const [id, val] of map.entries()) {
       updateById(id, val);
@@ -93,6 +103,18 @@ const WindowColorSelection = ({
 
   const needChange = (value: string) => {
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Window &&
+            value !== (e as WindowModel)[attributeKey] &&
+            !e.locked &&
+            useStore.getState().selectedElementIdSet.has(e.id)
+          ) {
+            return true;
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Window && value !== (e as WindowModel)[attributeKey] && !e.locked) {
@@ -137,7 +159,34 @@ const WindowColorSelection = ({
     if (!windowModel) return;
     if (!needChange(value)) return;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
+        const oldValuesSelected = new Map<string, string>();
+        for (const e of elements) {
+          if (e.type === ObjectType.Window && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            oldValuesSelected.set(e.id, (e as WindowModel)[attributeKey] as string);
+          }
+        }
+        const undoableChangeSelected = {
+          name: `Set ${dataType} for Selected Windows`,
+          timestamp: Date.now(),
+          oldValues: oldValuesSelected,
+          newValue: value,
+          undo: () => {
+            undoInMap(undoableChangeSelected.oldValues as Map<string, string>);
+          },
+          redo: () => {
+            updateInMap(
+              undoableChangeSelected.oldValues as Map<string, string>,
+              undoableChangeSelected.newValue as string,
+            );
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeSelected);
+        updateInMap(oldValuesSelected, value);
+        setApplyCount(applyCount + 1);
+        break;
+      }
+      case Scope.AllObjectsOfThisType: {
         const oldValuesAll = new Map<string, string>();
         for (const e of elements) {
           if (e.type === ObjectType.Window && !e.locked) {
@@ -160,6 +209,7 @@ const WindowColorSelection = ({
         updateForAll(value);
         setApplyCount(applyCount + 1);
         break;
+      }
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (windowModel.foundationId) {
           const oldValuesAboveFoundation = new Map<string, string>();
@@ -280,6 +330,7 @@ const WindowColorSelection = ({
               <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('windowMenu.AllWindowsAboveFoundation', lang)}
               </Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>{i18n.t('windowMenu.AllSelectedWindows', lang)}</Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('windowMenu.AllWindows', lang)}</Radio>
             </Space>
           </Radio.Group>

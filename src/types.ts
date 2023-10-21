@@ -387,6 +387,7 @@ export enum Scope {
   AllObjectsOfThisType = 4,
   AllConnectedObjects = 5,
   OnlyThisSide = 6, // same wall
+  AllSelectedObjectsOfThisType = 7,
 }
 
 export enum Orientation {

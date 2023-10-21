@@ -37,6 +37,17 @@ const FoundationAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
   const needChange = (azimuth: number) => {
     if (!foundation) return;
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType: {
+        for (const e of elements) {
+          if (e.type === ObjectType.Foundation && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            const f = e as FoundationModel;
+            if (Math.abs(-f.rotation[2] - azimuth) > ZERO_TOLERANCE) {
+              return true;
+            }
+          }
+        }
+        break;
+      }
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Foundation && !e.locked) {
@@ -55,10 +66,51 @@ const FoundationAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
     return false;
   };
 
+  const updateInMap = (map: Map<string, number>, value?: number) => {
+    useStore.getState().set((state) => {
+      for (const e of state.elements) {
+        if (map.has(e.id)) {
+          if (value !== undefined) {
+            e.rotation[2] = value;
+          } else {
+            const rot = map.get(e.id);
+            if (rot !== undefined) {
+              e.rotation[2] = -rot;
+            }
+          }
+        }
+      }
+    });
+  };
+
   const updateAzimuth = (value: number) => {
     if (!foundation) return;
     if (!needChange(value)) return;
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType: {
+        const oldAzimuthsSelected = new Map<string, number>();
+        for (const elem of elements) {
+          if (elem.type === ObjectType.Foundation && useStore.getState().selectedElementIdSet.has(elem.id)) {
+            oldAzimuthsSelected.set(elem.id, -elem.rotation[2]);
+          }
+        }
+        const undoableChangeAll = {
+          name: 'Set Azimuth for All Selected Foundations',
+          timestamp: Date.now(),
+          oldValues: oldAzimuthsSelected,
+          newValue: value,
+          undo: () => {
+            updateInMap(undoableChangeAll.oldValues as Map<string, number>);
+          },
+          redo: () => {
+            updateInMap(undoableChangeAll.oldValues as Map<string, number>, -undoableChangeAll.newValue as number);
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeAll);
+        updateInMap(oldAzimuthsSelected, -value);
+        setApplyCount(applyCount + 1);
+        break;
+      }
       case Scope.AllObjectsOfThisType:
         const oldAzimuthsAll = new Map<string, number>();
         for (const elem of elements) {
@@ -152,6 +204,9 @@ const FoundationAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
           >
             <Space direction="vertical">
               <Radio value={Scope.OnlyThisObject}>{i18n.t('foundationMenu.OnlyThisFoundation', lang)}</Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>
+                {i18n.t('foundationMenu.AllSelectedFoundations', lang)}
+              </Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('foundationMenu.AllFoundations', lang)}</Radio>
             </Space>
           </Radio.Group>

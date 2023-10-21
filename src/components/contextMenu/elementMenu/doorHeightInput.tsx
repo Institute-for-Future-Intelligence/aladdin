@@ -67,6 +67,14 @@ const DoorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   const needChange = (value: number) => {
     if (!door) return;
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Door && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            const parent = getParent(e);
+            if (parent && value !== e.lz * parent.lz) return true;
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Door && !e.locked) {
@@ -103,7 +111,39 @@ const DoorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
     if (!door) return;
     if (!needChange(value)) return;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
+        const oldValuesSelected = new Map<string, number | undefined>();
+        setCommonStore((state) => {
+          for (const e of state.elements) {
+            if (e.type === ObjectType.Door && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+              const d = e as DoorModel;
+              const parent = d ? getParent(d) : null;
+              oldValuesSelected.set(e.id, d.lz * (parent ? parent.lz : 1));
+              d.lz = parent ? value / parent.lz : value;
+              if (parent) d.cz = -(parent.lz - value) / (2 * parent.lz);
+            }
+          }
+        });
+        const undoableChangeSelected = {
+          name: 'Set Height for Selected Doors',
+          timestamp: Date.now(),
+          oldValues: oldValuesSelected,
+          newValue: value,
+          undo: () => {
+            undoInMap(undoableChangeSelected.oldValues as Map<string, number>);
+          },
+          redo: () => {
+            updateInMap(
+              undoableChangeSelected.oldValues as Map<string, number>,
+              undoableChangeSelected.newValue as number,
+            );
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeSelected);
+        setApplyCount(applyCount + 1);
+        break;
+      }
+      case Scope.AllObjectsOfThisType: {
         const oldValuesAll = new Map<string, number | undefined>();
         setCommonStore((state) => {
           for (const e of state.elements) {
@@ -131,6 +171,7 @@ const DoorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
         addUndoable(undoableChangeAll);
         setApplyCount(applyCount + 1);
         break;
+      }
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (door.foundationId) {
           const oldValuesAboveFoundation = new Map<string, number | undefined>();
@@ -270,6 +311,7 @@ const DoorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
               <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('doorMenu.AllDoorsAboveFoundation', lang)}
               </Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>{i18n.t('doorMenu.AllSelectedDoors', lang)}</Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('doorMenu.AllDoors', lang)}</Radio>
             </Space>
           </Radio.Group>

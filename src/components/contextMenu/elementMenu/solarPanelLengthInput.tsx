@@ -108,6 +108,18 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
     });
   };
 
+  const updateInMap = (map: Map<string, number>, value: number) => {
+    useStore.getState().set((state) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.SolarPanel && !e.locked && map.has(e.id)) {
+          const sp = e as SolarPanelModel;
+          const pv = state.getPvModule(sp.pvModelName);
+          e.lx = Util.panelizeLx(sp, pv, value);
+        }
+      }
+    });
+  };
+
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);
   };
@@ -147,6 +159,16 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   const needChange = (lx: number) => {
     if (!solarPanel) return;
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.SolarPanel && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            const sp = e as SolarPanelModel;
+            if (Math.abs(sp.lx - lx) > ZERO_TOLERANCE) {
+              return true;
+            }
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.SolarPanel && !e.locked) {
@@ -210,10 +232,53 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
     if (!needChange(value)) return;
     rejectedValue.current = undefined;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
         rejectRef.current = false;
         for (const elem of elements) {
-          if (elem.type === ObjectType.SolarPanel) {
+          if (elem.type === ObjectType.SolarPanel && useStore.getState().selectedElementIdSet.has(elem.id)) {
+            if (rejectChange(elem as SolarPanelModel, value)) {
+              rejectRef.current = true;
+              break;
+            }
+          }
+        }
+        if (rejectRef.current) {
+          rejectedValue.current = value;
+          setInputValue(solarPanel.lx);
+        } else {
+          const oldLengthsSelected = new Map<string, number>();
+          for (const elem of elements) {
+            if (elem.type === ObjectType.SolarPanel && useStore.getState().selectedElementIdSet.has(elem.id)) {
+              oldLengthsSelected.set(elem.id, elem.lx);
+            }
+          }
+          const undoableChangeSelected = {
+            name: 'Set Length for Selected Solar Panel Arrays',
+            timestamp: Date.now(),
+            oldValues: oldLengthsSelected,
+            newValue: value,
+            undo: () => {
+              for (const [id, lx] of undoableChangeSelected.oldValues.entries()) {
+                updateSolarPanelLxById(id, lx as number);
+              }
+            },
+            redo: () => {
+              updateInMap(
+                undoableChangeSelected.oldValues as Map<string, number>,
+                undoableChangeSelected.newValue as number,
+              );
+            },
+          } as UndoableChangeGroup;
+          addUndoable(undoableChangeSelected);
+          updateInMap(oldLengthsSelected, value);
+          setApplyCount(applyCount + 1);
+        }
+        break;
+      }
+      case Scope.AllObjectsOfThisType: {
+        rejectRef.current = false;
+        for (const elem of elements) {
+          if (elem.type === ObjectType.SolarPanel && useStore.getState().selectedElementIdSet.has(elem.id)) {
             if (rejectChange(elem as SolarPanelModel, value)) {
               rejectRef.current = true;
               break;
@@ -226,7 +291,7 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
         } else {
           const oldLengthsAll = new Map<string, number>();
           for (const elem of elements) {
-            if (elem.type === ObjectType.SolarPanel) {
+            if (elem.type === ObjectType.SolarPanel && useStore.getState().selectedElementIdSet.has(elem.id)) {
               oldLengthsAll.set(elem.id, elem.lx);
             }
           }
@@ -249,6 +314,7 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
           setApplyCount(applyCount + 1);
         }
         break;
+      }
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (solarPanel.foundationId) {
           rejectRef.current = false;
@@ -486,6 +552,9 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
               </Radio>
               <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('solarPanelMenu.AllSolarPanelsAboveFoundation', lang)}
+              </Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>
+                {i18n.t('solarPanelMenu.AllSelectedSolarPanels', lang)}
               </Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('solarPanelMenu.AllSolarPanels', lang)}</Radio>
             </Space>

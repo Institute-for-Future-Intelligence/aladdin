@@ -68,6 +68,18 @@ const RoofTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
   const needChange = (value: RoofTexture) => {
     if (!roof) return;
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Roof &&
+            value !== (e as RoofModel).textureType &&
+            !e.locked &&
+            useStore.getState().selectedElementIdSet.has(e.id)
+          ) {
+            return true;
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Roof && value !== (e as RoofModel).textureType && !e.locked) {
@@ -100,7 +112,34 @@ const RoofTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
     if (!roof) return;
     if (!needChange(value)) return;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
+        const oldTexturesSelected = new Map<string, RoofTexture>();
+        for (const elem of elements) {
+          if (elem.type === ObjectType.Roof && !elem.locked && useStore.getState().selectedElementIdSet.has(elem.id)) {
+            oldTexturesSelected.set(elem.id, (elem as RoofModel).textureType ?? RoofTexture.Default);
+          }
+        }
+        const undoableChangeSelected = {
+          name: 'Set Texture for Selected Roofs',
+          timestamp: Date.now(),
+          oldValues: oldTexturesSelected,
+          newValue: value,
+          undo: () => {
+            undoTextureInMap(undoableChangeSelected.oldValues as Map<string, RoofTexture>);
+          },
+          redo: () => {
+            updateTextureInMap(
+              undoableChangeSelected.oldValues as Map<string, RoofTexture>,
+              undoableChangeSelected.newValue as RoofTexture,
+            );
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeSelected);
+        updateTextureInMap(oldTexturesSelected, value);
+        setApplyCount(applyCount + 1);
+        break;
+      }
+      case Scope.AllObjectsOfThisType: {
         const oldTexturesAll = new Map<string, RoofTexture>();
         for (const elem of elements) {
           if (elem.type === ObjectType.Roof && !elem.locked) {
@@ -126,6 +165,7 @@ const RoofTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
         updateTextureInMap(oldTexturesAll, value);
         setApplyCount(applyCount + 1);
         break;
+      }
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (roof.foundationId) {
           const oldTexturesAboveFoundation = new Map<string, RoofTexture>();
@@ -314,6 +354,7 @@ const RoofTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
               <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('roofMenu.AllRoofsAboveFoundation', lang)}
               </Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>{i18n.t('roofMenu.AllSelectedRoofs', lang)}</Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('roofMenu.AllRoofs', lang)}</Radio>
             </Space>
           </Radio.Group>

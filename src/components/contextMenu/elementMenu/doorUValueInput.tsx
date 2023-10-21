@@ -59,6 +59,18 @@ const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   const needChange = (value: number) => {
     if (!door) return;
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Door &&
+            value !== (e as DoorModel).uValue &&
+            !e.locked &&
+            useStore.getState().selectedElementIdSet.has(e.id)
+          ) {
+            return true;
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Door && value !== (e as DoorModel).uValue && !e.locked) {
@@ -103,7 +115,37 @@ const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
     if (!door) return;
     if (!needChange(value)) return;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
+        const oldValuesSelected = new Map<string, number | undefined>();
+        setCommonStore((state) => {
+          for (const e of state.elements) {
+            if (e.type === ObjectType.Door && !e.locked) {
+              const door = e as DoorModel;
+              oldValuesSelected.set(e.id, door.uValue ?? DEFAULT_DOOR_U_VALUE);
+              door.uValue = value;
+            }
+          }
+        });
+        const undoableChangeSelected = {
+          name: 'Set U-Value for Selected Doors',
+          timestamp: Date.now(),
+          oldValues: oldValuesSelected,
+          newValue: value,
+          undo: () => {
+            undoInMap(undoableChangeSelected.oldValues as Map<string, number>);
+          },
+          redo: () => {
+            updateInMap(
+              undoableChangeSelected.oldValues as Map<string, number>,
+              undoableChangeSelected.newValue as number,
+            );
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeSelected);
+        setApplyCount(applyCount + 1);
+        break;
+      }
+      case Scope.AllObjectsOfThisType: {
         const oldValuesAll = new Map<string, number | undefined>();
         setCommonStore((state) => {
           for (const e of state.elements) {
@@ -129,6 +171,7 @@ const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
         addUndoable(undoableChangeAll);
         setApplyCount(applyCount + 1);
         break;
+      }
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (door.foundationId) {
           const oldValuesAboveFoundation = new Map<string, number | undefined>();
@@ -288,6 +331,7 @@ const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
               <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('doorMenu.AllDoorsAboveFoundation', lang)}
               </Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>{i18n.t('doorMenu.AllSelectedDoors', lang)}</Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('doorMenu.AllDoors', lang)}</Radio>
             </Space>
           </Radio.Group>

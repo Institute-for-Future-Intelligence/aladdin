@@ -65,6 +65,17 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   const needChange = (lz: number) => {
     if (!foundation) return;
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType: {
+        for (const e of elements) {
+          if (e.type === ObjectType.Foundation && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            const f = e as FoundationModel;
+            if (Math.abs(f.lz - lz) > ZERO_TOLERANCE) {
+              return true;
+            }
+          }
+        }
+        break;
+      }
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Foundation && !e.locked) {
@@ -176,10 +187,99 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
     });
   };
 
+  const updateLzAndCzInMap = (map: Map<string, number>, value?: number) => {
+    useStore.getState().set((state) => {
+      for (const e of state.elements) {
+        if (map.has(e.id)) {
+          if (value !== undefined) {
+            e.lz = value;
+            e.cz = value / 2;
+          } else {
+            const lz = map.get(e.id);
+            if (lz !== undefined) {
+              e.lz = lz;
+              e.cz = lz / 2;
+            }
+          }
+        }
+      }
+    });
+  };
+
   const setLz = (value: number) => {
     if (!foundation) return;
     if (!needChange(value)) return;
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType: {
+        const oldLzsSelected = new Map<string, number>();
+        for (const elem of elements) {
+          if (
+            elem.type === ObjectType.Foundation &&
+            !elem.locked &&
+            useStore.getState().selectedElementIdSet.has(elem.id)
+          ) {
+            oldLzsSelected.set(elem.id, elem.lz);
+          }
+        }
+        for (const elem of elements) {
+          if (
+            elem.type === ObjectType.Foundation &&
+            !elem.locked &&
+            useStore.getState().selectedElementIdSet.has(elem.id)
+          ) {
+            updateCzOfChildren(elem, value);
+          }
+        }
+        const undoableChangeSelected = {
+          name: 'Set Height for Selected Foundations',
+          timestamp: Date.now(),
+          oldValues: oldLzsSelected,
+          newValue: value,
+          oldChildrenPositionsMap: new Map(oldChildrenPositionsMapRef.current),
+          newChildrenPositionsMap: new Map(newChildrenPositionsMapRef.current),
+          oldChildrenParentIdMap: new Map(oldChildrenParentIdMapRef.current),
+          newChildrenParentIdMap: new Map(newChildrenParentIdMapRef.current),
+          undo: () => {
+            updateLzAndCzInMap(undoableChangeSelected.oldValues as Map<string, number>);
+            if (
+              undoableChangeSelected.oldChildrenPositionsMap &&
+              undoableChangeSelected.oldChildrenPositionsMap.size > 0
+            ) {
+              for (const [id, ps] of undoableChangeSelected.oldChildrenPositionsMap.entries()) {
+                setElementPosition(id, ps.x, ps.y, ps.z);
+                const oldParentId = undoableChangeSelected.oldChildrenParentIdMap?.get(id);
+                const newParentId = undoableChangeSelected.newChildrenParentIdMap?.get(id);
+                if (oldParentId && newParentId && oldParentId !== newParentId) {
+                  attachToObjectGroup(oldParentId, newParentId, id);
+                  setParentIdById(oldParentId, id);
+                }
+              }
+            }
+          },
+          redo: () => {
+            const newLz = undoableChangeSelected.newValue as number;
+            updateLzAndCzInMap(undoableChangeSelected.oldValues as Map<string, number>, newLz);
+            if (
+              undoableChangeSelected.newChildrenPositionsMap &&
+              undoableChangeSelected.newChildrenPositionsMap.size > 0
+            ) {
+              for (const [id, ps] of undoableChangeSelected.newChildrenPositionsMap.entries()) {
+                setElementPosition(id, ps.x, ps.y, ps.z);
+                const oldParentId = undoableChangeSelected.oldChildrenParentIdMap?.get(id);
+                const newParentId = undoableChangeSelected.newChildrenParentIdMap?.get(id);
+                if (oldParentId && newParentId && oldParentId !== newParentId) {
+                  attachToObjectGroup(newParentId, oldParentId, id);
+                  setParentIdById(newParentId, id);
+                }
+              }
+            }
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeSelected);
+        updateLzAndCzInMap(oldLzsSelected, value);
+        setApplyCount(applyCount + 1);
+        break;
+      }
       case Scope.AllObjectsOfThisType:
         const oldLzsAll = new Map<string, number>();
         for (const elem of elements) {
@@ -332,6 +432,9 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
           >
             <Space direction="vertical">
               <Radio value={Scope.OnlyThisObject}>{i18n.t('foundationMenu.OnlyThisFoundation', lang)}</Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>
+                {i18n.t('foundationMenu.AllSelectedFoundations', lang)}
+              </Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('foundationMenu.AllFoundations', lang)}</Radio>
             </Space>
           </Radio.Group>

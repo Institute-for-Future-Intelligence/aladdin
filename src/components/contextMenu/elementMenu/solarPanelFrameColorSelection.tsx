@@ -83,6 +83,16 @@ const SolarPanelFrameColorSelection = ({ setDialogVisible }: { setDialogVisible:
     });
   };
 
+  const updateInMap = (map: Map<string, string>, value: string) => {
+    useStore.getState().set((state) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.SolarPanel && !e.locked && map.has(e.id)) {
+          (e as SolarPanelModel).frameColor = value;
+        }
+      }
+    });
+  };
+
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);
   };
@@ -90,6 +100,16 @@ const SolarPanelFrameColorSelection = ({ setDialogVisible }: { setDialogVisible:
   const needChange = (frameColor: string) => {
     if (!solarPanel) return;
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.SolarPanel && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            const sp = e as SolarPanelModel;
+            if (sp.frameColor !== frameColor) {
+              return true;
+            }
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.SolarPanel && !e.locked) {
@@ -152,7 +172,36 @@ const SolarPanelFrameColorSelection = ({ setDialogVisible }: { setDialogVisible:
     if (!solarPanel) return;
     if (!needChange(value)) return;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
+        const oldFrameColorsSelected = new Map<string, string>();
+        for (const elem of elements) {
+          if (elem.type === ObjectType.SolarPanel && useStore.getState().selectedElementIdSet.has(elem.id)) {
+            oldFrameColorsSelected.set(elem.id, (elem as SolarPanelModel).frameColor ?? 'white');
+          }
+        }
+        const undoableChangeSelected = {
+          name: 'Set Frame Color for Selected Solar Panels',
+          timestamp: Date.now(),
+          oldValues: oldFrameColorsSelected,
+          newValue: value,
+          undo: () => {
+            for (const [id, fc] of undoableChangeSelected.oldValues.entries()) {
+              updateSolarPanelFrameColorById(id, fc as string);
+            }
+          },
+          redo: () => {
+            updateInMap(
+              undoableChangeSelected.oldValues as Map<string, string>,
+              undoableChangeSelected.newValue as string,
+            );
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeSelected);
+        updateInMap(oldFrameColorsSelected, value);
+        setApplyCount(applyCount + 1);
+        break;
+      }
+      case Scope.AllObjectsOfThisType: {
         const oldFrameColorsAll = new Map<string, string>();
         for (const elem of elements) {
           if (elem.type === ObjectType.SolarPanel) {
@@ -177,6 +226,7 @@ const SolarPanelFrameColorSelection = ({ setDialogVisible }: { setDialogVisible:
         updateSolarPanelFrameColorForAll(value);
         setApplyCount(applyCount + 1);
         break;
+      }
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (solarPanel.foundationId) {
           const oldFrameColorsAboveFoundation = new Map<string, string>();
@@ -319,6 +369,9 @@ const SolarPanelFrameColorSelection = ({ setDialogVisible }: { setDialogVisible:
               </Radio>
               <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('solarPanelMenu.AllSolarPanelsAboveFoundation', lang)}
+              </Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>
+                {i18n.t('solarPanelMenu.AllSelectedSolarPanels', lang)}
               </Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('solarPanelMenu.AllSolarPanels', lang)}</Radio>
             </Space>

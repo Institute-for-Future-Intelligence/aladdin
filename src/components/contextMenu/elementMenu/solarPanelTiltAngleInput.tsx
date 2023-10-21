@@ -95,6 +95,21 @@ const SolarPanelTiltAngleInput = ({
     });
   };
 
+  const updateInMap = (map: Map<string, number>, value: number, isReverse: boolean) => {
+    useStore.getState().set((state) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.SolarPanel && !e.locked && map.has(e.id)) {
+          const sp = e as SolarPanelModel;
+          if (sp.parentType === ObjectType.Wall) {
+            sp.tiltAngle = Math.min(0, isReverse ? -value : value);
+          } else {
+            sp.tiltAngle = value;
+          }
+        }
+      }
+    });
+  };
+
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);
   };
@@ -102,6 +117,16 @@ const SolarPanelTiltAngleInput = ({
   const needChange = (tiltAngle: number) => {
     if (!solarPanel) return;
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.SolarPanel && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            const sp = e as SolarPanelModel;
+            if (Math.abs(sp.tiltAngle - tiltAngle) > ZERO_TOLERANCE) {
+              return true;
+            }
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.SolarPanel && !e.locked) {
@@ -169,7 +194,55 @@ const SolarPanelTiltAngleInput = ({
     if (!needChange(value)) return;
     rejectedValue.current = undefined;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
+        rejectRef.current = false;
+        for (const elem of elements) {
+          if (
+            elem.type === ObjectType.SolarPanel &&
+            (elem as SolarPanelModel).parentType !== ObjectType.Wall &&
+            useStore.getState().selectedElementIdSet.has(elem.id)
+          ) {
+            if (0.5 * elem.ly * Math.abs(Math.sin(value)) > (elem as SolarPanelModel).poleHeight) {
+              rejectRef.current = true;
+              break;
+            }
+          }
+        }
+        if (rejectRef.current) {
+          rejectedValue.current = value;
+          setInputValue(solarPanel.tiltAngle);
+        } else {
+          const oldTiltAnglesSelected = new Map<string, number>();
+          for (const elem of elements) {
+            if (elem.type === ObjectType.SolarPanel && useStore.getState().selectedElementIdSet.has(elem.id)) {
+              oldTiltAnglesSelected.set(elem.id, (elem as SolarPanelModel).tiltAngle);
+            }
+          }
+          const undoableChangeSelected = {
+            name: 'Set Tilt Angle for Selected Solar Panel Arrays',
+            timestamp: Date.now(),
+            oldValues: oldTiltAnglesSelected,
+            newValue: value,
+            undo: () => {
+              for (const [id, ta] of undoableChangeSelected.oldValues.entries()) {
+                updateSolarPanelTiltAngleById(id, ta as number);
+              }
+            },
+            redo: () => {
+              updateInMap(
+                undoableChangeSelected.oldValues as Map<string, number>,
+                undoableChangeSelected.newValue as number,
+                !isOnWall,
+              );
+            },
+          } as UndoableChangeGroup;
+          addUndoable(undoableChangeSelected);
+          updateInMap(oldTiltAnglesSelected, value, !isOnWall);
+          setApplyCount(applyCount + 1);
+        }
+        break;
+      }
+      case Scope.AllObjectsOfThisType: {
         rejectRef.current = false;
         for (const elem of elements) {
           if (elem.type === ObjectType.SolarPanel && (elem as SolarPanelModel).parentType !== ObjectType.Wall) {
@@ -198,9 +271,6 @@ const SolarPanelTiltAngleInput = ({
               for (const [id, ta] of undoableChangeAll.oldValues.entries()) {
                 updateSolarPanelTiltAngleById(id, ta as number);
               }
-              if (undoableChangeAll.oldValues.size % 2 === 0) {
-                useStore.getState().set((state) => {});
-              }
             },
             redo: () => {
               updateSolarPanelTiltAngleForAll(undoableChangeAll.newValue as number, !isOnWall);
@@ -211,6 +281,7 @@ const SolarPanelTiltAngleInput = ({
           setApplyCount(applyCount + 1);
         }
         break;
+      }
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (solarPanel.foundationId) {
           rejectRef.current = false;
@@ -460,6 +531,9 @@ const SolarPanelTiltAngleInput = ({
               </Radio>
               <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('solarPanelMenu.AllSolarPanelsAboveFoundation', lang)}
+              </Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>
+                {i18n.t('solarPanelMenu.AllSelectedSolarPanels', lang)}
               </Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('solarPanelMenu.AllSolarPanels', lang)}</Radio>
             </Space>

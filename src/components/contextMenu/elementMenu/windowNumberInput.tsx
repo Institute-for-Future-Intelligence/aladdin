@@ -125,6 +125,16 @@ const WindowNumberInput = ({
     });
   };
 
+  const updateInMap = (map: Map<string, number>, value: number) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (!e.locked && e.type === ObjectType.Window && map.has(e.id)) {
+          setAttribute(e as WindowModel, attributeKey, value);
+        }
+      }
+    });
+  };
+
   const undoInMap = (map: Map<string, number>) => {
     for (const [id, val] of map.entries()) {
       updateById(id, val);
@@ -133,6 +143,26 @@ const WindowNumberInput = ({
 
   const needChange = (value: number) => {
     switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Window && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            const w = e as WindowModel;
+            const parent = getParent(w);
+            if (parent && w.parentType !== ObjectType.Roof) {
+              // on a wall
+              if (attributeKey === 'lx') {
+                if (value !== w[attributeKey] * parent.lx) return true;
+              } else if (attributeKey === 'lz') {
+                if (value !== w[attributeKey] * parent.lz) return true;
+              } else {
+                if (value !== w[attributeKey]) return true;
+              }
+            } else {
+              if (value !== w[attributeKey]) return true;
+            }
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Window && !e.locked) {
@@ -216,7 +246,44 @@ const WindowNumberInput = ({
     if (!windowModel) return;
     if (!needChange(value)) return;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
+        const oldValuesSelected = new Map<string, number>();
+        for (const e of elements) {
+          if (e.type === ObjectType.Window && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            const window = e as WindowModel;
+            const parent = getParent(window);
+            let oldValue = window[attributeKey] as number;
+            if (parent && window.parentType !== ObjectType.Roof) {
+              if (attributeKey === 'lx') {
+                oldValue *= parent.lx;
+              } else if (attributeKey === 'lz') {
+                oldValue *= parent.lz;
+              }
+            }
+            oldValuesSelected.set(e.id, oldValue);
+          }
+        }
+        const undoableChangeSelected = {
+          name: `Set ${dataType} for Selected Windows`,
+          timestamp: Date.now(),
+          oldValues: oldValuesSelected,
+          newValue: value,
+          undo: () => {
+            undoInMap(undoableChangeSelected.oldValues as Map<string, number>);
+          },
+          redo: () => {
+            updateInMap(
+              undoableChangeSelected.oldValues as Map<string, number>,
+              undoableChangeSelected.newValue as number,
+            );
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeSelected);
+        updateInMap(oldValuesSelected, value);
+        setApplyCount(applyCount + 1);
+        break;
+      }
+      case Scope.AllObjectsOfThisType: {
         const oldValuesAll = new Map<string, number>();
         for (const e of elements) {
           if (e.type === ObjectType.Window && !e.locked) {
@@ -249,6 +316,7 @@ const WindowNumberInput = ({
         updateForAll(value);
         setApplyCount(applyCount + 1);
         break;
+      }
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (windowModel.foundationId) {
           const oldValuesAboveFoundation = new Map<string, number>();
@@ -424,6 +492,7 @@ const WindowNumberInput = ({
               <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('windowMenu.AllWindowsAboveFoundation', lang)}
               </Radio>
+              <Radio value={Scope.AllSelectedObjectsOfThisType}>{i18n.t('windowMenu.AllSelectedWindows', lang)}</Radio>
               <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('windowMenu.AllWindows', lang)}</Radio>
             </Space>
           </Radio.Group>
