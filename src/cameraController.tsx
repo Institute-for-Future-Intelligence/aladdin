@@ -52,6 +52,8 @@ const CameraController = () => {
   const navigationView = useStore(Selector.viewState.navigationView);
   const navigationMoveSpeed = usePrimitiveStore(Selector.navigationMoveSpeed);
   const navigationTurnSpeed = usePrimitiveStore(Selector.navigationTurnSpeed);
+  const showCloudFileTitleDialogFlag = useStore(Selector.showCloudFileTitleDialogFlag);
+  const saveLocalFileDialogVisible = usePrimitiveStore(Selector.saveLocalFileDialogVisible);
 
   const enabledNavigationControls = navigationView && !orthographic;
   const cameraPositionLength = Math.hypot(cameraPosition[0], cameraPosition[1], cameraPosition[2]);
@@ -270,12 +272,12 @@ const CameraController = () => {
   useEffect(() => {
     if (!orbitControlRef.current) return;
 
-    if (enabledNavigationControls) {
+    if (enabledNavigationControls && !saveLocalFileDialogVisible && !showCloudFileTitleDialogFlag) {
       orbitControlRef.current.listenToKeyEvents(window);
     } else {
       orbitControlRef.current.removeKeyEvents();
     }
-  }, [enabledNavigationControls]);
+  }, [enabledNavigationControls, saveLocalFileDialogVisible, showCloudFileTitleDialogFlag]);
 
   // switch to navigation controls
   useEffect(() => {
