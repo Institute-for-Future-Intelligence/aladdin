@@ -16,7 +16,7 @@ const isBaseElement = (e: ElementModel) => {
   return e.parentId === GROUND_ID && (e.type === ObjectType.Foundation || e.type === ObjectType.Cuboid);
 };
 
-const areTwoBasesOverlapped = (bId1: string, bId2: string, verticesMap: Map<string, Point2[]>) => {
+export const areTwoBasesOverlapped = (bId1: string, bId2: string, verticesMap: Map<string, Point2[]>) => {
   const v1 = verticesMap.get(bId1);
   const v2 = verticesMap.get(bId2);
   if (!v1 || !v2) return false;
@@ -105,7 +105,9 @@ const GroupMasterController = React.memo(() => {
       ) {
         groupIdSet.add(baseElement.id);
         groupElements.push(baseElement);
-        checkOverlapWithOtherBases(baseElement);
+        if ((baseElement as GroupableModel).enableGroupMaster) {
+          checkOverlapWithOtherBases(baseElement);
+        }
       }
     }
   }

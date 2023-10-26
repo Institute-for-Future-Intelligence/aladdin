@@ -12,8 +12,6 @@ import { UndoableCheck } from './undo/UndoableCheck';
 import { UndoableResetView } from './undo/UndoableResetView';
 import { showError, showInfo } from './helpers';
 import i18n from './i18n/i18n';
-import { UndoableMoveInX } from './undo/UndoableMoveInX';
-import { UndoableMoveInY } from './undo/UndoableMoveInY';
 import KeyboardEventHandler from 'react-keyboard-event-handler';
 import { WallModel } from './models/WallModel';
 import { useRefStore } from './stores/commonRef';
@@ -26,6 +24,13 @@ import { RoofModel } from './models/RoofModel';
 import { spBoundaryCheck, spCollisionCheck } from './views/roof/roofRenderer';
 import { usePrimitiveStore } from './stores/commonPrimitive';
 import { debounce } from 'lodash';
+import { SensorModel } from './models/SensorModel';
+import { LightModel } from './models/LightModel';
+import { Vector3 } from 'three';
+import { UndoableMoveAllByKey, UndoableMoveSelectedByKey } from './undo/UndoableMove';
+import { GroupableModel, isGroupable } from './models/Groupable';
+import { Point2 } from './models/Point2';
+import { areTwoBasesOverlapped } from './components/groupMaster';
 
 export interface KeyboardListenerProps {
   canvas?: HTMLCanvasElement | null;
@@ -33,6 +38,13 @@ export interface KeyboardListenerProps {
   setNavigationView: (selected: boolean) => void;
   resetView: () => void;
   zoomView: (scale: number) => void;
+}
+
+export enum MoveDirection {
+  Left = 'Left',
+  Right = 'Right',
+  Up = 'Up',
+  Down = 'Down',
 }
 
 const AutoDeletionListener = React.memo(() => {
@@ -352,380 +364,219 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
     return true;
   };
 
-  const moveLeft = (scale: number) => {
-    if (orthographic) {
-      const selectedElement = getSelectedElement();
-      if (selectedElement) {
-        let displacement = 0;
-        switch (selectedElement.type) {
-          case ObjectType.Foundation:
-          case ObjectType.Cuboid: {
-            displacement = -moveStepAbsolute;
-            if (useStore.getState().groupActionMode) {
-              setCommonStore((state) => {
-                state.groupActionUpdateFlag = !state.groupActionUpdateFlag;
-              });
-            }
-            break;
-          }
-          case ObjectType.Tree:
-          case ObjectType.Flower:
-          case ObjectType.Human: {
-            displacement = -moveStepAbsolute;
-            break;
-          }
-          case ObjectType.Wall: {
-            const wall = selectedElement as WallModel;
-            if (wall.leftJoints.length === 0 && wall.rightJoints.length === 0) {
-              displacement = -moveStepAbsolute;
-            }
-            break;
-          }
-          case ObjectType.Sensor: {
-            const parent = getParent(selectedElement);
-            if (parent) {
-              const halfLx = selectedElement.lx / (2 * parent.lx);
-              const x = Math.max(-0.5 + halfLx, selectedElement.cx - moveStepAbsolute / parent.lx);
-              displacement = x - selectedElement.cx;
-            }
-            break;
-          }
-          case ObjectType.SolarPanel:
-          case ObjectType.ParabolicDish:
-          case ObjectType.ParabolicTrough:
-          case ObjectType.FresnelReflector:
-          case ObjectType.Heliostat: {
-            const parent = getParent(selectedElement);
-            if (parent) {
-              displacement = -moveStepAbsolute / parent.lx;
-            }
-            break;
+  const canBeMovedIn2DMode = (e: ElementModel) => {
+    switch (e.type) {
+      case ObjectType.Roof:
+      case ObjectType.Door:
+      case ObjectType.Window:
+        return false;
+      case ObjectType.SolarPanel:
+      case ObjectType.Sensor:
+      case ObjectType.Light: {
+        const el = e as SensorModel | LightModel | SolarPanelModel;
+        if (el.parentType === ObjectType.Wall || el.parentType === ObjectType.Roof) {
+          return false;
+        }
+        if (el.parentType === ObjectType.Cuboid) {
+          return el.rotation[2] === 1;
+        }
+        return true;
+      }
+      case ObjectType.Wall: {
+        const wall = e as WallModel;
+        if (wall.leftJoints.length !== 0 || wall.rightJoints.length !== 0) {
+          return false;
+        }
+        return true;
+      }
+      default:
+        return true;
+    }
+  };
+
+  const isSameTypeGroup = (selectedType: ObjectType, currType: ObjectType) => {
+    switch (selectedType) {
+      case ObjectType.Foundation:
+      case ObjectType.Cuboid:
+        return currType === ObjectType.Foundation || currType === ObjectType.Cuboid;
+      default:
+        return currType !== ObjectType.Foundation && currType !== ObjectType.Cuboid;
+    }
+  };
+
+  const handleGroupMaster = (arr: GroupableModel[]) => {
+    const allBases = useStore
+      .getState()
+      .elements.filter((e) => isGroupable(e) && e.parentId === GROUND_ID) as GroupableModel[];
+
+    const idSet = new Set(arr.map((e) => e.id));
+    const verticesMap = new Map<string, Point2[]>();
+
+    for (const base of allBases) {
+      const vertices = Util.fetchFoundationVertexCoordinates(base);
+      verticesMap.set(base.id, vertices);
+    }
+
+    const checkBaseOverlap = (curr: GroupableModel) => {
+      for (const base of allBases) {
+        if (!idSet.has(base.id) && areTwoBasesOverlapped(curr.id, base.id, verticesMap)) {
+          idSet.add(base.id);
+          arr.push(base);
+          if (base.enableGroupMaster) {
+            checkBaseOverlap(base);
           }
         }
-        if (displacement !== 0) {
-          let accept = true;
-          // for the time being, we deal with solar panels only
-          if (selectedElement.type === ObjectType.SolarPanel) {
-            accept = isNewPositionOk(selectedElement, selectedElement.cx + displacement, selectedElement.cy);
-          }
-          if (accept) {
-            displacement *= scale;
-            const undoableMoveLeft = {
-              name: 'Move Left',
-              timestamp: Date.now(),
-              displacement: displacement,
-              movedElementId: selectedElement.id,
-              movedElementType: selectedElement.type,
-              undo: () => {
-                const elem = useStore.getState().getElementById(undoableMoveLeft.movedElementId);
-                if (elem) {
-                  updateElementCxById(elem.id, elem.cx - undoableMoveLeft.displacement);
-                }
-              },
-              redo: () => {
-                const elem = useStore.getState().getElementById(undoableMoveLeft.movedElementId);
-                if (elem) {
-                  updateElementCxById(elem.id, elem.cx + undoableMoveLeft.displacement);
-                }
-              },
-            } as UndoableMoveInX;
-            addUndoable(undoableMoveLeft);
-            updateElementCxById(selectedElement.id, selectedElement.cx + displacement);
-          }
-        }
-      } else {
-        // if no element is selected, move everything
-        const displacement = -moveStepAbsolute * scale;
-        const undoableMoveAllLeft = {
-          name: 'Move All Left',
-          timestamp: Date.now(),
-          displacement: displacement,
-          undo: () => {
-            for (const e of useStore.getState().elements) {
-              if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
-                updateElementCxById(e.id, e.cx - undoableMoveAllLeft.displacement);
-              }
-            }
-          },
-          redo: () => {
-            for (const e of useStore.getState().elements) {
-              if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
-                updateElementCxById(e.id, e.cx + undoableMoveAllLeft.displacement);
-              }
-            }
-          },
-        } as UndoableMoveInX;
-        addUndoable(undoableMoveAllLeft);
-        for (const e of useStore.getState().elements) {
-          if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
-            updateElementCxById(e.id, e.cx + displacement);
-          }
-        }
+      }
+    };
+
+    for (const curr of arr) {
+      if (curr.enableGroupMaster) {
+        checkBaseOverlap(curr);
       }
     }
   };
 
-  const moveRight = (scale: number) => {
-    if (orthographic) {
-      const selectedElement = getSelectedElement();
-      if (selectedElement) {
-        let displacement = 0;
-        switch (selectedElement.type) {
-          case ObjectType.Foundation:
-          case ObjectType.Cuboid: {
-            displacement = moveStepAbsolute;
-            if (useStore.getState().groupActionMode) {
-              setCommonStore((state) => {
-                state.groupActionUpdateFlag = !state.groupActionUpdateFlag;
-              });
-            }
-            break;
-          }
-          case ObjectType.Tree:
-          case ObjectType.Flower:
-          case ObjectType.Human: {
-            displacement = moveStepAbsolute;
-            break;
-          }
-          case ObjectType.Wall: {
-            const wall = selectedElement as WallModel;
-            if (wall.leftJoints.length === 0 && wall.rightJoints.length === 0) {
-              displacement = moveStepAbsolute;
-            }
-            break;
-          }
-          case ObjectType.Sensor: {
-            const parent = getParent(selectedElement);
-            if (parent) {
-              const halfLx = parent ? selectedElement.lx / (2 * parent.lx) : 0;
-              const x = Math.min(0.5 - halfLx, selectedElement.cx + moveStepAbsolute / parent.lx);
-              displacement = x - selectedElement.cx;
-            }
-            break;
-          }
-          case ObjectType.SolarPanel:
-          case ObjectType.ParabolicDish:
-          case ObjectType.ParabolicTrough:
-          case ObjectType.FresnelReflector:
-          case ObjectType.Heliostat: {
-            const parent = getParent(selectedElement);
-            if (parent) {
-              displacement = moveStepAbsolute / parent.lx;
-            }
-            break;
-          }
-        }
-        if (displacement !== 0) {
-          let accept = true;
-          // for the time being, we deal with solar panels only
-          if (selectedElement.type === ObjectType.SolarPanel) {
-            accept = isNewPositionOk(selectedElement, selectedElement.cx + displacement, selectedElement.cy);
-          }
-          if (accept) {
-            displacement *= scale;
-            const undoableMoveRight = {
-              name: 'Move Right',
-              timestamp: Date.now(),
-              displacement: displacement,
-              movedElementId: selectedElement.id,
-              movedElementType: selectedElement.type,
-              undo: () => {
-                const elem = useStore.getState().getElementById(undoableMoveRight.movedElementId);
-                if (elem) {
-                  updateElementCxById(elem.id, elem.cx - undoableMoveRight.displacement);
-                }
-              },
-              redo: () => {
-                const elem = useStore.getState().getElementById(undoableMoveRight.movedElementId);
-                if (elem) {
-                  updateElementCxById(elem.id, elem.cx + undoableMoveRight.displacement);
-                }
-              },
-            } as UndoableMoveInX;
-            addUndoable(undoableMoveRight);
-            updateElementCxById(selectedElement.id, selectedElement.cx + displacement);
-          }
-        }
-      } else {
-        // if no element is selected, move everything
-        const displacement = moveStepAbsolute * scale;
-        const undoableMoveAllRight = {
-          name: 'Move All Right',
-          timestamp: Date.now(),
-          displacement: displacement,
-          undo: () => {
-            for (const e of useStore.getState().elements) {
-              if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
-                updateElementCxById(e.id, e.cx - undoableMoveAllRight.displacement);
-              }
-            }
-          },
-          redo: () => {
-            for (const e of useStore.getState().elements) {
-              if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
-                updateElementCxById(e.id, e.cx + undoableMoveAllRight.displacement);
-              }
-            }
-          },
-        } as UndoableMoveInX;
-        addUndoable(undoableMoveAllRight);
-        for (const e of useStore.getState().elements) {
-          if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
-            updateElementCxById(e.id, e.cx + displacement);
-          }
-        }
+  const getElementsToBeMoved = () => {
+    const elementsToBeMoved = [] as ElementModel[];
+
+    const selectedElementIdSet = useStore.getState().selectedElementIdSet;
+    const selectedElement = getSelectedElement();
+
+    if (!selectedElement || selectedElementIdSet.size === 0) return elementsToBeMoved;
+
+    if (selectedElement) {
+      const lastSelectedType = selectedElement.type;
+      const parentId = selectedElement.parentId;
+      const filtered = useStore
+        .getState()
+        .elements.filter(
+          (e) =>
+            isSameTypeGroup(lastSelectedType, e.type) &&
+            canBeMovedIn2DMode(e) &&
+            e.parentId === parentId &&
+            selectedElementIdSet.has(e.id),
+        );
+      elementsToBeMoved.push(...filtered);
+
+      if (isGroupable(selectedElement) && elementsToBeMoved.length > 0 && parentId === GROUND_ID) {
+        handleGroupMaster(elementsToBeMoved as GroupableModel[]);
       }
+    }
+
+    return elementsToBeMoved;
+  };
+
+  const getElementNewPosition = (oldCx: number, oldCy: number, displacement: number, direction: MoveDirection) => {
+    switch (direction) {
+      case MoveDirection.Left:
+        return [oldCx - displacement, oldCy];
+      case MoveDirection.Right:
+        return [oldCx + displacement, oldCy];
+      case MoveDirection.Up:
+        return [oldCx, oldCy + displacement];
+      case MoveDirection.Down:
+        return [oldCx, oldCy - displacement];
     }
   };
 
-  const moveUp = (scale: number) => {
-    if (orthographic) {
-      const selectedElement = getSelectedElement();
-      if (selectedElement) {
-        let displacement = 0;
-        switch (selectedElement.type) {
-          case ObjectType.Foundation:
-          case ObjectType.Cuboid: {
-            displacement = moveStepAbsolute;
-            if (useStore.getState().groupActionMode) {
-              setCommonStore((state) => {
-                state.groupActionUpdateFlag = !state.groupActionUpdateFlag;
-              });
+  const updateMoveInMap = (elementDisplacementMap: Map<string, number>, direction: MoveDirection) => {
+    setCommonStore((state) => {
+      let updateWallMapOnFoundationFlag = false;
+
+      for (const e of state.elements) {
+        if (elementDisplacementMap.has(e.id)) {
+          const dist = elementDisplacementMap.get(e.id);
+          if (dist !== undefined) {
+            const [newCx, newCy] = getElementNewPosition(e.cx, e.cy, dist, direction);
+            if (e.type === ObjectType.Wall) {
+              const wall = e as WallModel;
+              const dist = new Vector3(newCx - wall.cx, newCy - wall.cy);
+              const newLeftPoint = new Vector3().fromArray(wall.leftPoint).setZ(0).add(dist);
+              const newRightPoint = new Vector3().fromArray(wall.rightPoint).setZ(0).add(dist);
+              wall.leftPoint = newLeftPoint.toArray();
+              wall.rightPoint = newRightPoint.toArray();
+              updateWallMapOnFoundationFlag = true;
             }
-            break;
+            e.cx = newCx;
+            e.cy = newCy;
           }
-          case ObjectType.Tree:
-          case ObjectType.Flower:
-          case ObjectType.Human: {
-            displacement = moveStepAbsolute;
-            break;
-          }
-          case ObjectType.Wall: {
-            const wall = selectedElement as WallModel;
-            if (wall.leftJoints.length === 0 && wall.rightJoints.length === 0) {
-              displacement = moveStepAbsolute;
-            }
-            break;
-          }
-          case ObjectType.Sensor: {
-            const parent = getParent(selectedElement);
-            if (parent) {
-              const halfLy = parent ? selectedElement.ly / (2 * parent.ly) : 0;
-              const y = Math.min(0.5 - halfLy, selectedElement.cy + moveStepAbsolute / parent.ly);
-              displacement = y - selectedElement.cy;
-            }
-            break;
-          }
-          case ObjectType.SolarPanel:
-          case ObjectType.ParabolicDish:
-          case ObjectType.ParabolicTrough:
-          case ObjectType.FresnelReflector:
-          case ObjectType.Heliostat: {
-            const parent = getParent(selectedElement);
-            if (parent) {
-              displacement = moveStepAbsolute / parent.ly;
-            }
-            break;
-          }
-        }
-        if (displacement !== 0) {
-          let accept = true;
-          // for the time being, we deal with solar panels only
-          if (selectedElement.type === ObjectType.SolarPanel) {
-            accept = isNewPositionOk(selectedElement, selectedElement.cx, selectedElement.cy + displacement);
-          }
-          if (accept) {
-            displacement *= scale;
-            const undoableMoveUp = {
-              name: 'Move Up',
-              timestamp: Date.now(),
-              displacement: displacement,
-              movedElementId: selectedElement.id,
-              movedElementType: selectedElement.type,
-              undo: () => {
-                const elem = useStore.getState().getElementById(undoableMoveUp.movedElementId);
-                if (elem) {
-                  updateElementCyById(elem.id, elem.cy - undoableMoveUp.displacement);
-                }
-              },
-              redo: () => {
-                const elem = useStore.getState().getElementById(undoableMoveUp.movedElementId);
-                if (elem) {
-                  updateElementCyById(elem.id, elem.cy + undoableMoveUp.displacement);
-                }
-              },
-            } as UndoableMoveInY;
-            addUndoable(undoableMoveUp);
-            updateElementCyById(selectedElement.id, selectedElement.cy + displacement);
-          }
-        }
-      } else {
-        // if no element is selected, move everything
-        const displacement = moveStepAbsolute * scale;
-        const undoableMoveAllUp = {
-          name: 'Move All Up',
-          timestamp: Date.now(),
-          displacement: displacement,
-          undo: () => {
-            for (const e of useStore.getState().elements) {
-              if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
-                updateElementCyById(e.id, e.cy - undoableMoveAllUp.displacement);
-              }
-            }
-          },
-          redo: () => {
-            for (const e of useStore.getState().elements) {
-              if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
-                updateElementCyById(e.id, e.cy + undoableMoveAllUp.displacement);
-              }
-            }
-          },
-        } as UndoableMoveInY;
-        addUndoable(undoableMoveAllUp);
-        for (const e of useStore.getState().elements) {
-          if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
-            updateElementCyById(e.id, e.cy + displacement);
-          }
+        } else if (state.selectedElementIdSet.has(e.id)) {
+          state.selectedElementIdSet.delete(e.id);
         }
       }
-    }
+
+      if (state.selectedElement?.type === ObjectType.Cuboid || state.selectedElement?.type === ObjectType.Foundation) {
+        state.groupActionUpdateFlag = !state.groupActionUpdateFlag;
+      } else if (updateWallMapOnFoundationFlag) {
+        state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
+      }
+    });
   };
 
-  const moveDown = (scale: number) => {
-    if (orthographic) {
-      const selectedElement = getSelectedElement();
-      if (selectedElement) {
-        let displacement = 0;
-        switch (selectedElement.type) {
+  const updateMovementForAll = (displacement: number, direction: MoveDirection) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
+          [e.cx, e.cy] = getElementNewPosition(e.cx, e.cy, displacement, direction);
+        }
+      }
+    });
+  };
+
+  const getOppositeDirection = (dir: MoveDirection) => {
+    if (dir === MoveDirection.Left) return MoveDirection.Right;
+    if (dir === MoveDirection.Right) return MoveDirection.Left;
+    if (dir === MoveDirection.Up) return MoveDirection.Down;
+    if (dir === MoveDirection.Down) return MoveDirection.Up;
+    console.error('Undo direction is possibly incorrect:', dir);
+    return dir;
+  };
+
+  const moveByKey = (direction: MoveDirection, scale: number) => {
+    if (!orthographic) return;
+
+    // foundation and cuboid can be moved together, child elements on same parent can be moved together.
+    const elementsToBeMoved = getElementsToBeMoved();
+    const selectedElement = getSelectedElement();
+    const displacement = scale * moveStepAbsolute;
+
+    if (selectedElement && elementsToBeMoved.length > 0) {
+      const elementDisplacementMap = new Map<string, number>();
+
+      for (const e of elementsToBeMoved) {
+        switch (e.type) {
           case ObjectType.Foundation:
-          case ObjectType.Cuboid: {
-            displacement = -moveStepAbsolute;
-            if (useStore.getState().groupActionMode) {
-              setCommonStore((state) => {
-                state.groupActionUpdateFlag = !state.groupActionUpdateFlag;
-              });
-            }
-            break;
-          }
+          case ObjectType.Cuboid:
+          case ObjectType.Wall:
           case ObjectType.Tree:
           case ObjectType.Flower:
           case ObjectType.Human: {
-            displacement = -moveStepAbsolute;
+            elementDisplacementMap.set(e.id, displacement);
             break;
           }
-          case ObjectType.Wall: {
-            const wall = selectedElement as WallModel;
-            if (wall.leftJoints.length === 0 && wall.rightJoints.length === 0) {
-              displacement = -moveStepAbsolute;
-            }
-            break;
-          }
+          case ObjectType.Light:
           case ObjectType.Sensor: {
             const parent = getParent(selectedElement);
             if (parent) {
-              const halfLy = parent ? selectedElement.ly / (2 * parent.ly) : 0;
-              const y = Math.max(-0.5 + halfLy, selectedElement.cy - moveStepAbsolute / parent.ly);
-              displacement = y - selectedElement.cy;
+              let displacementRel = displacement / parent.lx;
+              const [newCx, newCy] = getElementNewPosition(e.cx, e.cy, displacementRel, direction);
+              const halfLx = e.lx / (2 * parent.lx);
+              const halfLy = e.lx / (2 * parent.ly);
+              switch (direction) {
+                case MoveDirection.Left:
+                case MoveDirection.Right: {
+                  const x = Util.clamp(newCx, -0.5 + halfLx, 0.5 - halfLx);
+                  displacementRel = Math.abs(x - selectedElement.cx);
+                  break;
+                }
+                case MoveDirection.Up:
+                case MoveDirection.Down: {
+                  const y = Util.clamp(newCy, -0.5 + halfLy, 0.5 - halfLy);
+                  displacementRel = Math.abs(y - selectedElement.cy);
+                  break;
+                }
+              }
+              elementDisplacementMap.set(e.id, displacementRel);
             }
             break;
           }
@@ -734,73 +585,69 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
           case ObjectType.ParabolicTrough:
           case ObjectType.FresnelReflector:
           case ObjectType.Heliostat: {
-            const parent = getParent(selectedElement);
+            const parent = getParent(e);
             if (parent) {
-              displacement = -moveStepAbsolute / parent.ly;
+              let accept = true;
+              let displacementRel = displacement;
+              switch (direction) {
+                case MoveDirection.Left:
+                case MoveDirection.Right: {
+                  displacementRel = displacement / parent.lx;
+                  break;
+                }
+                case MoveDirection.Up:
+                case MoveDirection.Down: {
+                  displacementRel = displacement / parent.ly;
+                  break;
+                }
+              }
+              if (e.type === ObjectType.SolarPanel) {
+                const [newCx, newCy] = getElementNewPosition(e.cx, e.cy, displacementRel, direction);
+                accept = isNewPositionOk(e, newCx, newCy);
+              }
+              if (accept) {
+                elementDisplacementMap.set(e.id, displacementRel);
+              } else {
+                return;
+              }
             }
             break;
           }
         }
-        if (displacement !== 0) {
-          let accept = true;
-          // for the time being, we deal with solar panels only
-          if (selectedElement.type === ObjectType.SolarPanel) {
-            accept = isNewPositionOk(selectedElement, selectedElement.cx, selectedElement.cy + displacement);
-          }
-          if (accept) {
-            displacement *= scale;
-            const undoableMoveDown = {
-              name: 'Move Down',
-              timestamp: Date.now(),
-              displacement: displacement,
-              movedElementId: selectedElement.id,
-              movedElementType: selectedElement.type,
-              undo: () => {
-                const elem = useStore.getState().getElementById(undoableMoveDown.movedElementId);
-                if (elem) {
-                  updateElementCyById(elem.id, elem.cy - undoableMoveDown.displacement);
-                }
-              },
-              redo: () => {
-                const elem = useStore.getState().getElementById(undoableMoveDown.movedElementId);
-                if (elem) {
-                  updateElementCyById(elem.id, elem.cy + undoableMoveDown.displacement);
-                }
-              },
-            } as UndoableMoveInY;
-            addUndoable(undoableMoveDown);
-            updateElementCyById(selectedElement.id, selectedElement.cy + displacement);
-          }
-        }
-      } else {
-        // if no element is selected, move everything
-        const displacement = -moveStepAbsolute * scale;
-        const undoableMoveAllDown = {
-          name: 'Move All Down',
-          timestamp: Date.now(),
-          displacement: displacement,
-          undo: () => {
-            for (const e of useStore.getState().elements) {
-              if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
-                updateElementCyById(e.id, e.cy - undoableMoveAllDown.displacement);
-              }
-            }
-          },
-          redo: () => {
-            for (const e of useStore.getState().elements) {
-              if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
-                updateElementCyById(e.id, e.cy + undoableMoveAllDown.displacement);
-              }
-            }
-          },
-        } as UndoableMoveInY;
-        addUndoable(undoableMoveAllDown);
-        for (const e of useStore.getState().elements) {
-          if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
-            updateElementCyById(e.id, e.cy + displacement);
-          }
-        }
       }
+
+      updateMoveInMap(elementDisplacementMap, direction);
+
+      const undoableMoveSelected = {
+        name: `Move Selected Elements ${direction} By Key`,
+        timestamp: Date.now(),
+        direction: direction,
+        movedElementsDisplacementMap: new Map(elementDisplacementMap),
+        undo: () => {
+          const dir = getOppositeDirection(undoableMoveSelected.direction);
+          updateMoveInMap(undoableMoveSelected.movedElementsDisplacementMap, dir);
+        },
+        redo: () => {
+          updateMoveInMap(undoableMoveSelected.movedElementsDisplacementMap, undoableMoveSelected.direction);
+        },
+      } as UndoableMoveSelectedByKey;
+      addUndoable(undoableMoveSelected);
+    } else {
+      updateMovementForAll(displacement, direction);
+      const undoableMoveAll = {
+        name: `Move All ${direction} By Key`,
+        timestamp: Date.now(),
+        direction: direction,
+        displacement: displacement,
+        undo: () => {
+          const dir = getOppositeDirection(undoableMoveAll.direction);
+          updateMovementForAll(undoableMoveAll.displacement, dir);
+        },
+        redo: () => {
+          updateMovementForAll(undoableMoveAll.displacement, undoableMoveAll.direction);
+        },
+      } as UndoableMoveAllByKey;
+      addUndoable(undoableMoveAll);
     }
   };
 
@@ -815,44 +662,44 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
     const step = 1;
     switch (key) {
       case 'left':
-        moveLeft(step);
+        moveByKey(MoveDirection.Left, step);
         break;
       case 'shift+left':
-        moveLeft(step / GRID_RATIO);
+        moveByKey(MoveDirection.Left, step / GRID_RATIO);
         break;
       case 'ctrl+shift+left':
       case 'meta+shift+left':
-        moveLeft(step * GRID_RATIO);
+        moveByKey(MoveDirection.Left, step * GRID_RATIO);
         break;
       case 'right':
-        moveRight(step);
+        moveByKey(MoveDirection.Right, step);
         break;
       case 'shift+right':
-        moveRight(step / GRID_RATIO);
+        moveByKey(MoveDirection.Right, step / GRID_RATIO);
         break;
       case 'ctrl+shift+right':
       case 'meta+shift+right':
-        moveRight(step * GRID_RATIO);
+        moveByKey(MoveDirection.Right, step * GRID_RATIO);
         break;
       case 'down':
-        moveDown(step);
+        moveByKey(MoveDirection.Down, step);
         break;
       case 'shift+down':
-        moveDown(step / GRID_RATIO);
+        moveByKey(MoveDirection.Down, step / GRID_RATIO);
         break;
       case 'ctrl+shift+down':
       case 'meta+shift+down':
-        moveDown(step * GRID_RATIO);
+        moveByKey(MoveDirection.Down, step * GRID_RATIO);
         break;
       case 'up':
-        moveUp(step);
+        moveByKey(MoveDirection.Up, step);
         break;
       case 'shift+up':
-        moveUp(step / GRID_RATIO);
+        moveByKey(MoveDirection.Up, step / GRID_RATIO);
         break;
       case 'ctrl+shift+up':
       case 'meta+shift+up':
-        moveUp(step * GRID_RATIO);
+        moveByKey(MoveDirection.Up, step * GRID_RATIO);
         break;
       case 'ctrl+[':
       case 'meta+[': // for Mac

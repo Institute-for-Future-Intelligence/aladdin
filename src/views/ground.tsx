@@ -1043,7 +1043,9 @@ const Ground = () => {
         Util.areTwoBasesOverlapped(element, currElem)
       ) {
         setBasePosMap(element, pointer);
-        checkOverlapWithAllBases(event, element);
+        if ((element as GroupableModel).enableGroupMaster) {
+          checkOverlapWithAllBases(event, element);
+        }
       }
       if (element.id === currElem.id) {
         setBasePosMap(element, pointer);
