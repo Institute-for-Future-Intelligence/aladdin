@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useMemo } from 'react';
@@ -89,21 +89,21 @@ const Team = ({ top, height, color }: TeamProps) => {
             >
               <td>
                 <h3 style={{ color: color }}>{i18n.t('aboutUs.Software', lang)}</h3>
-                Charles Xie
-                <br />
                 Xiaotong Ding
+                <br />
+                Charles Xie
                 <br />
               </td>
               <td>
                 <h3 style={{ color: color }}>{i18n.t('aboutUs.Content', lang)}</h3>
-                Rundong Jiang
+                Elena Sereiviene
                 <br />
                 Charles Xie
                 <br />
               </td>
               <td>
                 <h3 style={{ color: color }}>{i18n.t('aboutUs.Support', lang)}</h3>
-                Rundong Jiang
+                Elena Sereiviene
                 <br />
                 Charles Xie
                 <br />
