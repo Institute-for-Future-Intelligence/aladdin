@@ -304,9 +304,10 @@ const MapPanel = () => {
               <Space>
                 <div>
                   <GroundMap width={400} height={400} />
-                  <p style={{ paddingTop: '10px' }}>
-                    {i18n.t('mapPanel.Coordinates', lang) + ':'} ({latitude.toFixed(LAT_LNG_FRACTION_DIGITS)}°,{' '}
-                    {longitude.toFixed(LAT_LNG_FRACTION_DIGITS)}°), &nbsp;
+                  <p style={{ paddingTop: '10px', fontSize: '12px' }}>
+                    {i18n.t('mapPanel.Coordinates', lang) + ':'} (
+                    {Math.abs(latitude).toFixed(LAT_LNG_FRACTION_DIGITS) + (latitude > 0 ? '°N' : '°S')},{' '}
+                    {Math.abs(longitude).toFixed(LAT_LNG_FRACTION_DIGITS) + (longitude > 0 ? '°E' : '°W')}), &nbsp;
                     {i18n.t('mapPanel.Zoom', lang) + ':'} {mapZoom}
                   </p>
                 </div>
