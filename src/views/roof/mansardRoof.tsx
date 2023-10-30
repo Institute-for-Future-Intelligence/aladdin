@@ -632,11 +632,12 @@ const MansardRoof = ({ roofModel, foundationModel }: MansardRoofProps) => {
               const dy = maxY - minY;
               const vcx = (minX + maxX) / 2;
               const vcy = (minY + maxY) / 2;
+              const cp = new Vector3(centroid.x, centroid.y).applyEuler(euler);
               t.wrapT = t.wrapS = RepeatWrapping;
-              t.offset.set(-minX / dx, -minY / dy);
-              t.center.set(vcx / dx, vcy / dy);
-              t.rotation = -foundationModel.rotation[2];
               t.repeat.set(1 / dx, 1 / dy);
+              t.center.set((cp.x - vcx) / dx, (cp.y - vcy) / dy);
+              t.offset.set(0.5, 0.5);
+              t.rotation = -foundationModel.rotation[2];
             }
             setFlatHeatmapTexture(t);
           }
