@@ -489,6 +489,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
     addUndoable(undoable);
     setCommonStore((state) => {
       state.viewState.showHeliodonPanel = true;
+      state.selectedFloatingWindow = 'heliodonPanel';
     });
   };
 
@@ -510,6 +511,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
     addUndoable(undoable);
     setCommonStore((state) => {
       state.viewState.showMapPanel = true;
+      state.selectedFloatingWindow = 'mapPanel';
     });
   };
 
@@ -531,6 +533,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
     addUndoable(undoable);
     setCommonStore((state) => {
       state.viewState.showWeatherPanel = true;
+      state.selectedFloatingWindow = 'weatherPanel';
     });
   };
 
@@ -552,6 +555,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
     addUndoable(undoable);
     setCommonStore((state) => {
       state.viewState.showDiurnalTemperaturePanel = true;
+      state.selectedFloatingWindow = 'diurnalTemperaturePanel';
     });
   };
 

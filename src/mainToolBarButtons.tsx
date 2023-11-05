@@ -158,6 +158,7 @@ const MainToolBarButtons = () => {
     addUndoable(undoableCheck);
     setCommonStore((state) => {
       state.viewState.showHeliodonPanel = !state.viewState.showHeliodonPanel;
+      if (state.viewState.showHeliodonPanel) state.selectedFloatingWindow = 'heliodonPanel';
     });
   };
 

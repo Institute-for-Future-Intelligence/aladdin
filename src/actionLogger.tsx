@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef } from 'react';
@@ -9,6 +9,7 @@ import firebase from 'firebase/app';
 import 'firebase/database';
 import dayjs from 'dayjs';
 import { ClassID, FirebaseName, SchoolID } from './types';
+import { showWarning } from './helpers';
 
 const ActionLogger = () => {
   const actionInfo = useStore(Selector.actionInfo);
@@ -16,9 +17,7 @@ const ActionLogger = () => {
   const user = useStore(Selector.user);
   const cloudFile = useStore(Selector.cloudFile);
 
-  const firstCallUndo = useRef<boolean>(true);
-  const firstCallAction = useRef<boolean>(true);
-  const databaseRef = useRef<any>();
+  const databaseRef = useRef<firebase.database.Database>();
   const schoolID = user.schoolID ?? SchoolID.UNKNOWN;
   const classID = user.classID ?? ClassID.UNKNOWN;
 
@@ -49,39 +48,45 @@ const ActionLogger = () => {
   }, []);
 
   useEffect(() => {
-    if (firstCallUndo.current) {
-      firstCallUndo.current = false;
-    } else {
-      if (currentUndoable) {
-        // we cannot use hh:mm:SSS as suggested by dayjs's format documentation
-        // because SSS only takes the last three digits of the millisecond string,
-        // resulting in incorrect ordering of the log. so we use the millisecond string
-        // to ensure the order and use the formatted string to provide readability.
-        const timestamp =
-          currentUndoable.timestamp +
-          ' (' +
-          dayjs(new Date(currentUndoable.timestamp)).format('MM-DD-YYYY hh:mm A') +
-          ')';
-        databaseRef.current.ref(schoolID + '/' + classID + '/' + user.uid + '/' + timestamp).set({
-          file: cloudFile ?? 'Untitled',
-          action: JSON.stringify(currentUndoable),
-        });
-      }
+    if (currentUndoable) {
+      // we cannot use hh:mm:SSS as suggested by dayjs's format documentation
+      // because SSS only takes the last three digits of the millisecond string,
+      // resulting in incorrect ordering of the log. so we use the millisecond string
+      // to ensure the order and use the formatted string to provide readability.
+      const logData = async () => {
+        if (databaseRef.current) {
+          const timestamp =
+            currentUndoable.timestamp +
+            ' (' +
+            dayjs(new Date(currentUndoable.timestamp)).format('MM-DD-YYYY hh:mm A') +
+            ')';
+          await databaseRef.current.ref(schoolID + '/' + classID + '/' + user.uid + '/' + timestamp).set({
+            file: cloudFile ?? 'Untitled',
+            action: JSON.stringify(currentUndoable),
+          });
+        }
+      };
+      logData().catch((e) => {
+        showWarning('Data logger error: ' + currentUndoable + ' - ' + e);
+      });
     }
   }, [currentUndoable, user.uid, classID, schoolID, cloudFile]);
 
   useEffect(() => {
-    if (firstCallAction.current) {
-      firstCallAction.current = false;
-    } else {
-      if (actionInfo) {
-        const timestamp =
-          actionInfo.timestamp + ' (' + dayjs(new Date(actionInfo.timestamp)).format('MM-DD-YYYY hh:mm A') + ')';
-        databaseRef.current.ref(schoolID + '/' + classID + '/' + user.uid + '/' + timestamp).set({
-          file: cloudFile ?? 'Untitled',
-          action: JSON.stringify(actionInfo),
-        });
-      }
+    if (actionInfo) {
+      const logData = async () => {
+        if (databaseRef.current) {
+          const timestamp =
+            actionInfo.timestamp + ' (' + dayjs(new Date(actionInfo.timestamp)).format('MM-DD-YYYY hh:mm A') + ')';
+          await databaseRef.current.ref(schoolID + '/' + classID + '/' + user.uid + '/' + timestamp).set({
+            file: cloudFile ?? 'Untitled',
+            action: JSON.stringify(actionInfo),
+          });
+        }
+      };
+      logData().catch((e) => {
+        showWarning('Data logger error: ' + actionInfo + ' - ' + e);
+      });
     }
   }, [actionInfo, user.uid, classID, schoolID, cloudFile]);
 
