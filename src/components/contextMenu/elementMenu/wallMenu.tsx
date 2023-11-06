@@ -109,6 +109,7 @@ export const WallMenu = React.memo(() => {
   const [dataType, setDataType] = useState<DataType | null>(null);
   const [rValueDialogVisible, setRValueDialogVisible] = useState(false);
   const [heatCapacityDialogVisible, setHeatCapacityDialogVisible] = useState(false);
+  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
 
   if (!wall) return null;
 
@@ -472,8 +473,9 @@ export const WallMenu = React.memo(() => {
             }
           }
           updateElementUnlockByParentId(wall.id, objectType, true);
+          setUpdateFlag(!updateFlag);
           const undoableLockAllElementsOfType = {
-            name: 'Lock All ' + objectTypeText + ' on Wall',
+            name: 'Lock All Unlocked ' + objectTypeText + ' on Wall',
             timestamp: Date.now(),
             oldValues: oldLocks,
             newValue: true,
@@ -489,7 +491,7 @@ export const WallMenu = React.memo(() => {
           addUndoable(undoableLockAllElementsOfType);
         }}
       >
-        {i18n.t(`wallMenu.LockAll${objectTypeText}s`, lang)} ({count})
+        {i18n.t(`wallMenu.LockAllUnlocked${objectTypeText}s`, lang)} ({count})
       </Menu.Item>
     );
   };
@@ -509,8 +511,9 @@ export const WallMenu = React.memo(() => {
             }
           }
           updateElementUnlockByParentId(wall.id, objectType, false);
+          setUpdateFlag(!updateFlag);
           const undoableUnlockAllElementsOfType = {
-            name: 'Unlock All ' + objectTypeText + ' on Wall',
+            name: 'Unlock All Locked ' + objectTypeText + ' on Wall',
             timestamp: Date.now(),
             oldValues: oldLocks,
             newValue: true,
@@ -526,7 +529,7 @@ export const WallMenu = React.memo(() => {
           addUndoable(undoableUnlockAllElementsOfType);
         }}
       >
-        {i18n.t(`wallMenu.UnlockAll${objectTypeText}s`, lang)}
+        {i18n.t(`wallMenu.UnlockAllLocked${objectTypeText}s`, lang)} ({count})
       </Menu.Item>
     );
   };
@@ -584,15 +587,15 @@ export const WallMenu = React.memo(() => {
           {renderClearItem(ObjectType.Light, counterUnlocked.insideLightCount + counterUnlocked.outsideLightCount)}
           {renderClearItem(ObjectType.Polygon, counterUnlocked.polygonCount)}
           {renderLockItem(ObjectType.Window, counterUnlocked.windowCount)}
-          {renderUnlockItem(ObjectType.Window, counterAll.windowCount)}
+          {renderUnlockItem(ObjectType.Window, counterAll.lockedWindowCount)}
           {renderLockItem(ObjectType.SolarPanel, counterUnlocked.solarPanelCount)}
-          {renderUnlockItem(ObjectType.SolarPanel, counterAll.solarPanelCount)}
+          {renderUnlockItem(ObjectType.SolarPanel, counterAll.lockedSolarPanelCount)}
           {renderLockItem(ObjectType.Sensor, counterUnlocked.sensorCount)}
-          {renderUnlockItem(ObjectType.Sensor, counterAll.sensorCount)}
+          {renderUnlockItem(ObjectType.Sensor, counterAll.lockedSensorCount)}
           {renderInsideLightItem(counterAll.outsideLightCount, true)}
           {renderInsideLightItem(counterAll.insideLightCount, false)}
           {renderLockItem(ObjectType.Polygon, counterUnlocked.polygonCount)}
-          {renderUnlockItem(ObjectType.Polygon, counterAll.polygonCount)}
+          {renderUnlockItem(ObjectType.Polygon, counterAll.lockedPolygonCount)}
         </SubMenu>
       );
     }

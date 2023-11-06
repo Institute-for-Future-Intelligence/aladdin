@@ -8,7 +8,7 @@ import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
 import { Lock, Paste } from '../menuItems';
 import i18n from 'src/i18n/i18n';
-import { ObjectType, RoofTexture, Scope } from 'src/types';
+import { ObjectType, RoofTexture } from 'src/types';
 import RoofTextureSelection from './roofTextureSelection';
 import RoofColorSelection from './roofColorSelection';
 import { RoofModel, RoofStructure, RoofType } from 'src/models/RoofModel';
@@ -60,6 +60,7 @@ export const RoofMenu = React.memo(() => {
   const [roofRValueDialogVisible, setRoofRValueDialogVisible] = useState(false);
   const [ceilingRValueDialogVisible, setCeilingRValueDialogVisible] = useState(false);
   const [heatCapacityDialogVisible, setHeatCapacityDialogVisible] = useState(false);
+  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
 
   if (!roof) return null;
 
@@ -153,8 +154,9 @@ export const RoofMenu = React.memo(() => {
             }
           }
           updateElementUnlockByParentId(roof.id, objectType, true);
+          setUpdateFlag(!updateFlag);
           const undoableLockAllElementsOfType = {
-            name: 'Lock All ' + objectTypeText + ' on Roof',
+            name: 'Lock All Unlocked ' + objectTypeText + ' on Roof',
             timestamp: Date.now(),
             oldValues: oldLocks,
             newValue: true,
@@ -170,7 +172,7 @@ export const RoofMenu = React.memo(() => {
           addUndoable(undoableLockAllElementsOfType);
         }}
       >
-        {i18n.t(`roofMenu.LockAll${objectTypeText}s`, lang)} ({count})
+        {i18n.t(`roofMenu.LockAllUnlocked${objectTypeText}s`, lang)} ({count})
       </Menu.Item>
     );
   };
@@ -190,8 +192,9 @@ export const RoofMenu = React.memo(() => {
             }
           }
           updateElementUnlockByParentId(roof.id, objectType, false);
+          setUpdateFlag(!updateFlag);
           const undoableUnlockAllElementsOfType = {
-            name: 'Unlock All ' + objectTypeText + ' on Roof',
+            name: 'Unlock All Locked ' + objectTypeText + ' on Roof',
             timestamp: Date.now(),
             oldValues: oldLocks,
             newValue: true,
@@ -207,7 +210,7 @@ export const RoofMenu = React.memo(() => {
           addUndoable(undoableUnlockAllElementsOfType);
         }}
       >
-        {i18n.t(`roofMenu.UnlockAll${objectTypeText}s`, lang)}
+        {i18n.t(`roofMenu.UnlockAllLocked${objectTypeText}s`, lang)} ({count})
       </Menu.Item>
     );
   };
@@ -263,11 +266,11 @@ export const RoofMenu = React.memo(() => {
           {renderClearItem(ObjectType.Sensor, counterUnlocked.sensorCount)}
           {renderClearItem(ObjectType.Light, counterUnlocked.insideLightCount + counterUnlocked.outsideLightCount)}
           {renderLockItem(ObjectType.SolarPanel, counterUnlocked.solarPanelCount)}
-          {renderUnlockItem(ObjectType.SolarPanel, counterAll.solarPanelCount)}
+          {renderUnlockItem(ObjectType.SolarPanel, counterAll.lockedSolarPanelCount)}
           {renderLockItem(ObjectType.Window, counterUnlocked.windowCount)}
-          {renderUnlockItem(ObjectType.Window, counterAll.windowCount)}
+          {renderUnlockItem(ObjectType.Window, counterAll.lockedWindowCount)}
           {renderLockItem(ObjectType.Sensor, counterUnlocked.sensorCount)}
-          {renderUnlockItem(ObjectType.Sensor, counterAll.sensorCount)}
+          {renderUnlockItem(ObjectType.Sensor, counterAll.lockedSensorCount)}
           {renderInsideLightItem(counterAll.outsideLightCount, true)}
           {renderInsideLightItem(counterAll.insideLightCount, false)}
         </SubMenu>

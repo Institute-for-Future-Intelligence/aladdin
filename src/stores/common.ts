@@ -3049,6 +3049,7 @@ export const useStore = create<CommonStoreState>(
                     break;
                   case ObjectType.Window:
                     counter.windowCount++;
+                    if (e.locked) counter.lockedWindowCount++;
                     break;
                   case ObjectType.Door:
                     counter.doorCount++;
@@ -3064,9 +3065,11 @@ export const useStore = create<CommonStoreState>(
                     break;
                   case ObjectType.Polygon:
                     counter.polygonCount++;
+                    if (e.locked) counter.lockedPolygonCount++;
                     break;
                   case ObjectType.Sensor:
                     counter.sensorCount++;
+                    if (e.locked) counter.lockedSensorCount++;
                     break;
                   case ObjectType.Light:
                     if ((e as LightModel).inside) {
@@ -3077,6 +3080,7 @@ export const useStore = create<CommonStoreState>(
                     break;
                   case ObjectType.SolarPanel:
                     counter.solarPanelCount++;
+                    if (e.locked) counter.lockedSolarPanelCount++;
                     const sp = e as SolarPanelModel;
                     const pvModel = get().getPvModule(sp.pvModelName);
                     if (pvModel) {

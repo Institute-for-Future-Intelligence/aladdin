@@ -9,7 +9,7 @@ import SubMenu from 'antd/lib/menu/SubMenu';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { CommonStoreState, useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
-import { BuildingCompletionStatus, FoundationTexture, ObjectType, Scope, SolarStructure } from '../../../types';
+import { BuildingCompletionStatus, FoundationTexture, ObjectType, SolarStructure } from '../../../types';
 import i18n from '../../../i18n/i18n';
 import { UndoableRemoveAllChildren } from '../../../undo/UndoableRemoveAllChildren';
 import FoundationColorSelection from './foundationColorSelection';
