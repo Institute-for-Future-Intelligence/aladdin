@@ -657,8 +657,8 @@ export const i18n_tr = {
       DoYouReallyWantToRemoveAllSolarPanels: 'Do you really want to remove all the solar panels that are not locked',
       DoYouReallyWantToRemoveAllFoundations: 'Tüm Temelleri Kaldırmak İstiyor Musunuz?',
       DoYouReallyWantToRemoveAllCuboids: 'Tüm Kübikleri Kaldırmak İstiyor Musunuz?',
-      LockAllElements: 'Tüm Öğeleri Kilitle',
-      UnlockAllElements: 'Tüm Öğelerin Kilidini Aç',
+      LockAllUnlockedElements: 'Lock All Unlocked Elements',
+      UnlockAllLockedElements: 'Unlock All Locked Elements',
     },
 
     labelSubMenu: {
@@ -747,8 +747,8 @@ export const i18n_tr = {
       AddPolygon: 'Poligon Ekle',
       SolarStructure: 'Solar Yapı Seçin',
       GroupMaster: 'Grup Yöneticisi',
-      LockAllElementsOnThisFoundation: ' Seçili temel üzerindeki tüm öğeleri kilitle',
-      UnlockAllElementsOnThisFoundation: ' Seçili temel üzerindeki tüm öğelerin kilidini aç',
+      LockAllUnlockedElementsOnThisFoundation: 'Lock All Unlocked Elements on This Foundation',
+      UnlockAllLockedElementsOnThisFoundation: 'Unlock All Locked Elements on This Foundation',
       GroundFloorRValue: 'Ground Floor R-Value',
       OnlyThisGroundFloor: 'Only This Ground Floor',
       AllGroundFloors: 'All Ground Floors',

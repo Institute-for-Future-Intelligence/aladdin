@@ -659,8 +659,8 @@ export const i18n_ua = {
       DoYouReallyWantToRemoveAllSolarPanels: 'Do you really want to remove all the solar panels that are not locked',
       DoYouReallyWantToRemoveAllFoundations: 'Ви дійсно хочете видалити всі фундаменти, що не заблоковані',
       DoYouReallyWantToRemoveAllCuboids: 'Ви дійсно хочете видалити всі кубоїди, що не заблоковані',
-      LockAllElements: 'Заблокувати всі елементи',
-      UnlockAllElements: 'Розблокувати всі елементи',
+      LockAllUnlockedElements: 'Lock All Unlocked Elements',
+      UnlockAllLockedElements: 'Unlock All Locked Elements',
     },
 
     labelSubMenu: {
@@ -749,8 +749,8 @@ export const i18n_ua = {
       AddPolygon: 'Додати багатокутник',
       SolarStructure: 'Вибрати сонячну структуру',
       GroupMaster: 'Груповий майстер',
-      LockAllElementsOnThisFoundation: 'Заблокувати всі елементи на цьому фундаменті',
-      UnlockAllElementsOnThisFoundation: 'Розблокувати всі елементи на цьому фундаменті',
+      LockAllUnlockedElementsOnThisFoundation: 'Lock All Unlocked Elements on This Foundation',
+      UnlockAllLockedElementsOnThisFoundation: 'Unlock All Locked Elements on This Foundation',
       GroundFloorRValue: 'Теплопровідність перекриття цокольного поверху',
       OnlyThisGroundFloor: 'Тільки цокольний поверх',
       AllGroundFloors: 'Всі цокольні поверхи',

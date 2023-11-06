@@ -657,8 +657,8 @@ export const i18n_es = {
       DoYouReallyWantToRemoveAllSolarPanels: 'Do you really want to remove all the solar panels that are not locked',
       DoYouReallyWantToRemoveAllFoundations: 'Estás seguro que quieres eliminar todas las bases that are not locked',
       DoYouReallyWantToRemoveAllCuboids: 'Estás seguro que quieres eliminar todos los cuboides that are not locked',
-      LockAllElements: 'Lock All Elements',
-      UnlockAllElements: 'Unlock All Elements',
+      LockAllUnlockedElements: 'Lock All Unlocked Elements',
+      UnlockAllLockedElements: 'Unlock All Locked Elements',
     },
 
     labelSubMenu: {
@@ -747,8 +747,8 @@ export const i18n_es = {
       AddPolygon: 'Añadir polígono',
       SolarStructure: 'Solar Structure',
       GroupMaster: 'Group Master',
-      LockAllElementsOnThisFoundation: 'Lock All Elements on This Foundation',
-      UnlockAllElementsOnThisFoundation: 'Unlock All Elements on This Foundation',
+      LockAllUnlockedElementsOnThisFoundation: 'Lock All Unlocked Elements on This Foundation',
+      UnlockAllLockedElementsOnThisFoundation: 'Unlock All Locked Elements on This Foundation',
       GroundFloorRValue: 'Ground Floor R-Value',
       OnlyThisGroundFloor: 'Only This Ground Floor',
       AllGroundFloors: 'All Ground Floors',

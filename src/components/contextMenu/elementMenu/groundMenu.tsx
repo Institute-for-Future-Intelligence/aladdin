@@ -45,7 +45,6 @@ export const GroundMenu = React.memo(() => {
   const foundationCount = elementCounter.foundationCount;
   const cuboidCount = elementCounter.cuboidCount;
   const solarPanelCount = elementCounter.solarPanelCount;
-  const gotSome = elementCounter.gotSome();
 
   const setWaterSurface = (checked: boolean) => {
     setCommonStore((state) => {
@@ -327,7 +326,7 @@ export const GroundMenu = React.memo(() => {
         </Menu.Item>
       )}
 
-      {gotSome && (
+      {elementCounter.unlockedCount > 0 && (
         <Menu.Item
           style={{ paddingLeft: '36px' }}
           key={'lock-all-elements'}
@@ -338,7 +337,7 @@ export const GroundMenu = React.memo(() => {
             }
             updateAllElementLocks(true);
             const undoableLockAllElements = {
-              name: 'Lock All Elements',
+              name: 'Lock All Unlocked Elements',
               timestamp: Date.now(),
               oldValues: oldLocks,
               newValue: true,
@@ -354,10 +353,10 @@ export const GroundMenu = React.memo(() => {
             addUndoable(undoableLockAllElements);
           }}
         >
-          {i18n.t('groundMenu.LockAllElements', lang)} ({elements.length})
+          {i18n.t('groundMenu.LockAllUnlockedElements', lang)} ({elementCounter.unlockedCount})
         </Menu.Item>
       )}
-      {!gotSome && elements.length > 0 && (
+      {elementCounter.lockedCount > 0 && elements.length > 0 && (
         <Menu.Item
           style={{ paddingLeft: '36px' }}
           key={'unlock-all-elements'}
@@ -367,13 +366,13 @@ export const GroundMenu = React.memo(() => {
               oldLocks.set(elem.id, !!elem.locked);
             }
             updateAllElementLocks(false);
-            const undoableLockAllElements = {
-              name: 'Lock All Elements',
+            const undoableUnlockAllElements = {
+              name: 'Unlock All Locked Elements',
               timestamp: Date.now(),
               oldValues: oldLocks,
               newValue: false,
               undo: () => {
-                for (const [id, locked] of undoableLockAllElements.oldValues.entries()) {
+                for (const [id, locked] of undoableUnlockAllElements.oldValues.entries()) {
                   updateElementLockById(id, locked as boolean);
                 }
               },
@@ -381,10 +380,10 @@ export const GroundMenu = React.memo(() => {
                 updateAllElementLocks(false);
               },
             } as UndoableChangeGroup;
-            addUndoable(undoableLockAllElements);
+            addUndoable(undoableUnlockAllElements);
           }}
         >
-          {i18n.t('groundMenu.UnlockAllElements', lang)} ({elements.length})
+          {i18n.t('groundMenu.UnlockAllLockedElements', lang)} ({elementCounter.lockedCount})
         </Menu.Item>
       )}
 

@@ -654,8 +654,8 @@ export const i18n_zh_cn = {
       DoYouReallyWantToRemoveAllSolarPanels: '你确定删除所有非固定的光伏板吗',
       DoYouReallyWantToRemoveAllFoundations: '你确定删除所有非固定的地基吗',
       DoYouReallyWantToRemoveAllCuboids: '你确定删除所有非固定的长方体吗',
-      LockAllElements: '固定所有的部件',
-      UnlockAllElements: '解除所有的固定',
+      LockAllUnlockedElements: '固定所有非固定的部件',
+      UnlockAllLockedElements: '解除所有的固定',
     },
 
     labelSubMenu: {
@@ -730,8 +730,8 @@ export const i18n_zh_cn = {
       AddPolygon: '添加多边形',
       SolarStructure: '太阳能构型',
       GroupMaster: '主地基',
-      LockAllElementsOnThisFoundation: '固定此地基上所有的部件',
-      UnlockAllElementsOnThisFoundation: '解除此地基上所有的固定',
+      LockAllUnlockedElementsOnThisFoundation: '固定此地基上所有非固定的部件',
+      UnlockAllLockedElementsOnThisFoundation: '解除此地基上所有的固定',
       GroundFloorRValue: '建筑物地板的R值',
       OnlyThisGroundFloor: '只这个建筑物的地板',
       AllGroundFloors: '所有建筑物的地板',

@@ -2945,6 +2945,11 @@ export const useStore = create<CommonStoreState>(
           countAllElementsByType(excludeLocked) {
             const counter = new ElementCounter();
             for (const e of get().elements) {
+              if (e.locked) {
+                counter.lockedCount++;
+              } else {
+                counter.unlockedCount++;
+              }
               if (excludeLocked && e.locked) continue;
               switch (e.type) {
                 case ObjectType.Foundation:
@@ -3020,6 +3025,13 @@ export const useStore = create<CommonStoreState>(
             for (const e of get().elements) {
               // foundationId applies to both foundations and cuboids, should have been named ancestorId
               const idOk = e.parentId === ancestorId || e.foundationId === ancestorId;
+              if (idOk) {
+                if (e.locked) {
+                  counter.lockedCount++;
+                } else {
+                  counter.unlockedCount++;
+                }
+              }
               if (includingLocked ? idOk : !e.locked && idOk) {
                 switch (e.type) {
                   case ObjectType.Foundation:

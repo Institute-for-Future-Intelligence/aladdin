@@ -329,7 +329,7 @@ export const FoundationMenu = React.memo(() => {
           title={i18n.t('word.Elements', lang)}
           style={{ paddingLeft: '24px' }}
         >
-          {counterUnlocked.gotSome() && (
+          {counterAll.unlockedCount > 0 && (
             <Menu.Item
               key={'lock-all-offsprings'}
               onClick={() => {
@@ -341,7 +341,7 @@ export const FoundationMenu = React.memo(() => {
                 }
                 updateElementLockByFoundationId(foundation.id, true);
                 const undoableLockAllElements = {
-                  name: 'Lock All Offsprings',
+                  name: 'Lock All Unlocked Offsprings',
                   timestamp: Date.now(),
                   oldValues: oldLocks,
                   newValue: true,
@@ -357,38 +357,40 @@ export const FoundationMenu = React.memo(() => {
                 addUndoable(undoableLockAllElements);
               }}
             >
-              {i18n.t('foundationMenu.LockAllElementsOnThisFoundation', lang)}
+              {i18n.t('foundationMenu.LockAllUnlockedElementsOnThisFoundation', lang)} ({counterAll.unlockedCount})
             </Menu.Item>
           )}
-          <Menu.Item
-            key={'unlock-all-offsprings'}
-            onClick={() => {
-              const oldLocks = new Map<string, boolean>();
-              for (const elem of useStore.getState().elements) {
-                if (elem.foundationId === foundation.id || elem.id === foundation.id) {
-                  oldLocks.set(elem.id, !!elem.locked);
-                }
-              }
-              updateElementLockByFoundationId(foundation.id, false);
-              const undoableLockAllElements = {
-                name: 'Unlock All Offsprings',
-                timestamp: Date.now(),
-                oldValues: oldLocks,
-                newValue: true,
-                undo: () => {
-                  for (const [id, locked] of undoableLockAllElements.oldValues.entries()) {
-                    updateElementLockById(id, locked as boolean);
+          {counterAll.lockedCount > 0 && (
+            <Menu.Item
+              key={'unlock-all-offsprings'}
+              onClick={() => {
+                const oldLocks = new Map<string, boolean>();
+                for (const elem of useStore.getState().elements) {
+                  if (elem.foundationId === foundation.id || elem.id === foundation.id) {
+                    oldLocks.set(elem.id, !!elem.locked);
                   }
-                },
-                redo: () => {
-                  updateElementLockByFoundationId(foundation.id, false);
-                },
-              } as UndoableChangeGroup;
-              addUndoable(undoableLockAllElements);
-            }}
-          >
-            {i18n.t('foundationMenu.UnlockAllElementsOnThisFoundation', lang)}
-          </Menu.Item>
+                }
+                updateElementLockByFoundationId(foundation.id, false);
+                const undoableLockAllElements = {
+                  name: 'Unlock All Locked Offsprings',
+                  timestamp: Date.now(),
+                  oldValues: oldLocks,
+                  newValue: true,
+                  undo: () => {
+                    for (const [id, locked] of undoableLockAllElements.oldValues.entries()) {
+                      updateElementLockById(id, locked as boolean);
+                    }
+                  },
+                  redo: () => {
+                    updateElementLockByFoundationId(foundation.id, false);
+                  },
+                } as UndoableChangeGroup;
+                addUndoable(undoableLockAllElements);
+              }}
+            >
+              {i18n.t('foundationMenu.UnlockAllLockedElementsOnThisFoundation', lang)} ({counterAll.lockedCount})
+            </Menu.Item>
+          )}
           {counterUnlocked.wallCount > 0 && (
             <Menu.Item
               key={'remove-all-walls-on-foundation'}

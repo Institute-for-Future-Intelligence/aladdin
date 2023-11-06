@@ -1,8 +1,10 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 export class ElementCounter {
+  lockedCount: number = 0;
+  unlockedCount: number = 0;
   foundationCount: number = 0;
   cuboidCount: number = 0;
   wallCount: number = 0;
