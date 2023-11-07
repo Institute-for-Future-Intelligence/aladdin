@@ -49,6 +49,7 @@ import ProjectGallery from './panels/projectGallery';
 import SplitPane from 'react-split-pane';
 import { throttle } from 'lodash';
 import GroupMasterWrapper from './components/groupMaster';
+import platform from 'platform';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -216,7 +217,15 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const isCloudFileOwner = user.uid && new URLSearchParams(window.location.search).get('userid') === user.uid;
 
   const createCanvas = () => {
-    return (
+    return platform.os?.family === 'iOS' ? (
+      <div style={{ height: '100%', width: '100%', backgroundColor: 'black', verticalAlign: 'middle', color: 'white' }}>
+        <br />
+        <br />
+        <br />
+        <br />
+        Sorry, Aladdin does not currently work on iOS.
+      </div>
+    ) : (
       <Canvas
         ref={canvasRef}
         shadows={true}
