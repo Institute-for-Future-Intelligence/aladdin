@@ -10,3 +10,6 @@ The context is in the field of engineering design for renewable energy and build
 
 The app is published at: https://institute-for-future-intelligence.github.io/aladdin/
 
+## How to Cite it
+
+Charles Xie, Xiaotong Ding, & Rundong Jiang, Using Computer Graphics to Make Science Visible in Engineering Education, IEEE Computer Graphics and Applications, 43(5), 99-106, 2023. DOI:10.1109/MCG.2023.3298386
