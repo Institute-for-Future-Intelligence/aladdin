@@ -36,6 +36,8 @@ import { LightModel } from './models/LightModel';
 import CuboidRenderer from './views/cuboid';
 import { GROUND_ID } from './constants';
 import { EndWaiting } from './waiting';
+import WindTurbine from './views/windTurbine';
+import { WindTurbineModel } from './models/WindTurbineModel';
 
 const ElementsRenderer: React.FC = () => {
   const elements = useStore(Selector.elements);
@@ -101,6 +103,8 @@ const ElementsRenderer: React.FC = () => {
             return <FresnelReflector key={e.id} {...(e as FresnelReflectorModel)} />;
           case ObjectType.Heliostat:
             return <Heliostat key={e.id} {...(e as HeliostatModel)} />;
+          case ObjectType.WindTurbine:
+            return <WindTurbine key={e.id} {...(e as WindTurbineModel)} />;
           case ObjectType.Polygon:
             switch ((e as PolygonModel).parentType) {
               case ObjectType.Wall:

@@ -368,7 +368,7 @@ const MainToolBarButtons = () => {
       {menuItem(ObjectType.Sensor, SensorImage, setCategory3Flag)}
       {menuItem(ObjectType.Light, LightImage, setCategory3Flag)}
       {/*{menuItem(ObjectType.WindTurbine, WaterHeaterImage, setCategory3Flag)}*/}
-      {/*{menuItem(ObjectType.WindTurbine, WindTurbineImage, setCategory3Flag)}*/}
+      {menuItem(ObjectType.WindTurbine, WindTurbineImage, setCategory3Flag)}
     </Menu>
   );
 

@@ -2504,6 +2504,18 @@ export const useStore = create<CommonStoreState>(
                   model = heliostat;
                   state.elements.push(heliostat);
                   break;
+                case ObjectType.WindTurbine:
+                  const windTurbineParentModel = parent as ElementModel;
+                  const windTurbineRelativeCoordinates = Util.relativeCoordinates(p.x, p.y, 0, windTurbineParentModel);
+                  const windTurbine = ElementModelFactory.makeWindTurbine(
+                    windTurbineParentModel,
+                    windTurbineRelativeCoordinates.x,
+                    windTurbineRelativeCoordinates.y,
+                    0,
+                  );
+                  model = windTurbine;
+                  state.elements.push(windTurbine);
+                  break;
                 case ObjectType.Foundation:
                   const foundation = ElementModelFactory.makeFoundation(
                     p.x,

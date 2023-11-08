@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -21,9 +21,6 @@ const WindTurbine = ({
   cx,
   cy,
   cz,
-  lx,
-  ly,
-  lz = 0.1,
   towerHeight,
   towerRadius,
   bladeRadius,
@@ -64,7 +61,7 @@ const WindTurbine = ({
   if (parent) {
     switch (parent.type) {
       case ObjectType.Foundation:
-        cz = towerHeight + parent.lz;
+        cz = parent.lz;
         if (Util.isZero(rotation[2])) {
           cx = parent.cx + cx * parent.lx;
           cy = parent.cy + cy * parent.ly;
@@ -165,7 +162,7 @@ const WindTurbine = ({
         castShadow={false}
         receiveShadow={false}
         args={[towerRadius, towerRadius, towerHeight, 4, 1]}
-        position={new Vector3(0, 0, 0)}
+        position={new Vector3(0, 0, towerHeight / 2)}
         rotation={[HALF_PI, 0, 0]}
       >
         <meshStandardMaterial attach="material" color={color} />
