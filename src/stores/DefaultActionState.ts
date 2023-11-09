@@ -118,6 +118,8 @@ export class DefaultActionState implements ActionState {
   windowInterior: boolean;
 
   windTurbineTowerHeight: number;
+  windTurbineTowerRadius: number;
+  windTurbineBladeRadius: number;
 
   solarPanelModelName: string;
   solarPanelOrientation: Orientation;
@@ -256,6 +258,8 @@ export class DefaultActionState implements ActionState {
     this.windowInterior = false;
 
     this.windTurbineTowerHeight = 15;
+    this.windTurbineTowerRadius = 1;
+    this.windTurbineBladeRadius = 10;
 
     this.solarPanelModelName = 'SPR-X21-335-BLK';
     this.solarPanelOrientation = Orientation.landscape;

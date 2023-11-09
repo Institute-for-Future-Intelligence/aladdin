@@ -359,7 +359,7 @@ const WindTurbineTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (
       <Row gutter={6}>
         <Col className="gutter-row" span={6}>
           <InputNumber
-            min={0}
+            min={1}
             max={100}
             style={{ width: 120 }}
             step={0.1}
@@ -370,7 +370,7 @@ const WindTurbineTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (
             onChange={setInputValue}
           />
           <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-            {i18n.t('word.Range', lang)}: [0, 10] {i18n.t('word.MeterAbbreviation', lang)}
+            {i18n.t('word.Range', lang)}: [1, 100] {i18n.t('word.MeterAbbreviation', lang)}
           </div>
         </Col>
         <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
