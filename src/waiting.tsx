@@ -62,11 +62,11 @@ export const EndWaiting = () => {
 
   const End = () => {
     useEffect(() => {
-      usePrimitiveStore.setState((state) => {
+      usePrimitiveStore.getState().set((state) => {
         state.waiting = false;
       });
       return () => {
-        usePrimitiveStore.setState((state) => {
+        usePrimitiveStore.getState().set((state) => {
           state.waiting = false;
         });
       };

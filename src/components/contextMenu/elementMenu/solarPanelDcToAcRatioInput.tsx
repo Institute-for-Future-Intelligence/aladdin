@@ -427,6 +427,7 @@ const SolarPanelDcToAcRatioInput = ({ setDialogVisible }: { setDialogVisible: (b
               precision={2}
               value={inputDcToAcRatioRef.current}
               onChange={(value) => {
+                if (value === null) return;
                 inputDcToAcRatioRef.current = value;
                 setUpdateFlag(!updateFlag);
               }}

@@ -110,7 +110,7 @@ const SolarPanelOnCuboid = (solarPanelModel: SolarPanelModel) => {
   const parentWorldPositionRef = useRef<Vector3 | null>(null);
   const parentWorldRotationRef = useRef<number | null>(null);
 
-  const tiltHandleRef = useRef<Mesh>();
+  const tiltHandleRef = useRef<Mesh>(null);
 
   const degree = useMemo(() => new Array(13).fill(0), []);
   const dateObject = useMemo(() => new Date(date), [date]);
@@ -635,15 +635,15 @@ const SolarPanelBoxGroup = ({ solarPanelModel, groupRotation, panelRotation }: S
 
   function renderTopTextureMaterial() {
     if (showSolarRadiationHeatmap && heatmapTexture) {
-      return <meshBasicMaterial attachArray="material" map={heatmapTexture} />;
+      return <meshBasicMaterial attach="material-4" map={heatmapTexture} />;
     }
-    if (!texture) return <meshStandardMaterial attachArray="material" color={color} />;
+    if (!texture) return <meshStandardMaterial attach="material-4" color={color} />;
     if (orthographic || solarPanelShininess === 0) {
-      return <meshStandardMaterial attachArray="material" map={texture} color={color} />;
+      return <meshStandardMaterial attach="material-4" map={texture} color={color} />;
     }
     return (
       <meshPhongMaterial
-        attachArray="material"
+        attach="material-4"
         specular={new Color(pvModel?.color === 'Blue' ? SOLAR_PANEL_BLUE_SPECULAR : SOLAR_PANEL_BLACK_SPECULAR)}
         shininess={solarPanelShininess ?? DEFAULT_SOLAR_PANEL_SHININESS}
         side={FrontSide}
@@ -655,12 +655,12 @@ const SolarPanelBoxGroup = ({ solarPanelModel, groupRotation, panelRotation }: S
 
   function renderBotTextureMaterial() {
     if (pvModel?.bifacialityFactor === 0 || orthographic || (poleHeight === 0 && tiltAngle === 0)) {
-      return <meshStandardMaterial attachArray="material" color={color} />;
+      return <meshStandardMaterial attach="material-5" color={color} />;
     }
     if (!texture) return null;
     return (
       <meshPhongMaterial
-        attachArray="material"
+        attach="material-5"
         specular={new Color(pvModel?.color === 'Blue' ? SOLAR_PANEL_BLUE_SPECULAR : SOLAR_PANEL_BLACK_SPECULAR)}
         shininess={solarPanelShininess ?? DEFAULT_SOLAR_PANEL_SHININESS}
         side={FrontSide}
@@ -707,10 +707,10 @@ const SolarPanelBoxGroup = ({ solarPanelModel, groupRotation, panelRotation }: S
             gl.domElement.style.cursor = 'default';
           }}
         >
-          <meshStandardMaterial attachArray="material" color={'white'} />
-          <meshStandardMaterial attachArray="material" color={'white'} />
-          <meshStandardMaterial attachArray="material" color={'white'} />
-          <meshStandardMaterial attachArray="material" color={'white'} />
+          <meshStandardMaterial attach="material-0" color={'white'} />
+          <meshStandardMaterial attach="material-1" color={'white'} />
+          <meshStandardMaterial attach="material-2" color={'white'} />
+          <meshStandardMaterial attach="material-3" color={'white'} />
           {renderTopTextureMaterial()}
           {renderBotTextureMaterial()}
         </Box>

@@ -11,7 +11,7 @@ import { WallModel } from 'src/models/WallModel';
 import { Line, Plane } from '@react-three/drei';
 import { HALF_PI, HALF_PI_Z_EULER, TWO_PI } from 'src/constants';
 import { useRefStore } from 'src/stores/commonRef';
-import { useThree } from '@react-three/fiber';
+import { ThreeEvent, useThree } from '@react-three/fiber';
 import { Point2 } from 'src/models/Point2';
 import { Util } from 'src/Util';
 import { ActionType, ObjectType, ResizeHandleType, RoofHandleType, RoofTexture } from 'src/types';
@@ -135,7 +135,7 @@ const PyramidRoof = ({ roofModel, foundationModel }: PyramidRoofProps) => {
 
   const prevWallsIdSet = new Set<string>(wallsId);
 
-  const setRayCast = (e: PointerEvent) => {
+  const setRayCast = (e: ThreeEvent<PointerEvent>) => {
     mouse.x = (e.offsetX / gl.domElement.clientWidth) * 2 - 1;
     mouse.y = -(e.offsetY / gl.domElement.clientHeight) * 2 + 1;
     ray.setFromCamera(mouse, camera);

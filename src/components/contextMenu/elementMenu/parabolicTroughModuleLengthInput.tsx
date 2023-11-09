@@ -336,7 +336,10 @@ const ParabolicTroughModuleLengthInput = ({ setDialogVisible }: { setDialogVisib
             style={{ width: 120 }}
             precision={2}
             value={inputValue}
-            onChange={setInputValue}
+            onChange={(value) => {
+              if (value === null) return;
+              setInputValue(value);
+            }}
           />
           <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
             {i18n.t('word.MinimumValue', lang)}: 1 {i18n.t('word.MeterAbbreviation', lang)}

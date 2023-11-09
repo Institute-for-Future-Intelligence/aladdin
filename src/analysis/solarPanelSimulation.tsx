@@ -127,7 +127,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
             setCommonStore((state) => {
               state.world.date = originalDateRef.current.toLocaleString('en-US');
             });
-            usePrimitiveStore.setState((state) => {
+            usePrimitiveStore.getState().set((state) => {
               state.simulationInProgress = false;
               state.simulationPaused = false;
             });
@@ -181,7 +181,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
         state.selectedFloatingWindow = 'dailyPvYieldPanel';
       }
     });
-    usePrimitiveStore.setState((state) => {
+    usePrimitiveStore.getState().set((state) => {
       if (lastStep) {
         state.runDailySimulationForSolarPanelsLastStep = false;
       } else {
@@ -239,7 +239,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
             state.selectedFloatingWindow = 'dailyPvYieldPanel';
           }
         });
-        usePrimitiveStore.setState((state) => {
+        usePrimitiveStore.getState().set((state) => {
           state.runDailySimulationForSolarPanels = false;
           state.simulationInProgress = false;
           state.simulationPaused = false;
@@ -380,7 +380,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
             setCommonStore((state) => {
               state.world.date = originalDateRef.current.toLocaleString('en-US');
             });
-            usePrimitiveStore.setState((state) => {
+            usePrimitiveStore.getState().set((state) => {
               state.simulationInProgress = false;
               state.simulationPaused = false;
             });
@@ -468,7 +468,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
         state.selectedFloatingWindow = 'yearlyPvYieldPanel';
       }
     });
-    usePrimitiveStore.setState((state) => {
+    usePrimitiveStore.getState().set((state) => {
       if (lastStep) {
         state.runYearlySimulationForSolarPanelsLastStep = false;
       } else {
@@ -526,7 +526,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
               state.selectedFloatingWindow = 'yearlyPvYieldPanel';
             }
           });
-          usePrimitiveStore.setState((state) => {
+          usePrimitiveStore.getState().set((state) => {
             state.runYearlySimulationForSolarPanels = false;
             state.simulationInProgress = false;
             state.simulationPaused = false;

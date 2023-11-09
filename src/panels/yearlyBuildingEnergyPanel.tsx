@@ -453,7 +453,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
                 closePanel();
               }}
             >
-              {i18n.t('word.Close', lang)}
+              {`${i18n.t('word.Close', lang)}`}
             </span>
           </Header>
           <BuildingEnergyGraph
@@ -575,7 +575,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
                     selectNone();
-                    usePrimitiveStore.setState((state) => {
+                    usePrimitiveStore.getState().set((state) => {
                       state.runYearlyThermalSimulation = true;
                       state.pauseYearlyThermalSimulation = false;
                       state.simulationInProgress = true;

@@ -5,7 +5,11 @@
 import { OrthographicCamera, PerspectiveCamera } from '@react-three/drei';
 import { Camera, useFrame, useThree } from '@react-three/fiber';
 import React, { useEffect, useMemo, useRef } from 'react';
-import { Vector3 } from 'three';
+import {
+  OrthographicCamera as THREEOrthographicCamera,
+  PerspectiveCamera as THREEPerspectiveCamera,
+  Vector3,
+} from 'three';
 import { DEFAULT_FAR, DEFAULT_FOV, HALF_PI } from './constants';
 import { MyOrbitControls } from './js/MyOrbitControls';
 import { useStore } from './stores/common';
@@ -23,6 +27,11 @@ const getCameraDirection = (cam: Camera) => {
 
 export const setCompassRotation = (camera: Camera) => {
   const compass = document.getElementById('compassCanvas');
+  const setCameraUnderGround = (b: boolean) => {
+    usePrimitiveStore.getState().set((state) => {
+      state.isCameraUnderGround = b;
+    });
+  };
   if (compass) {
     const dircXY = getCameraDirection(camera).normalize();
     const rotationZ = Math.atan2(dircXY.y, dircXY.x) + Math.PI / 2;
@@ -33,9 +42,9 @@ export const setCompassRotation = (camera: Camera) => {
     const isCameraUnderGround = camera.position.z < 0.001;
 
     if (isCameraUnderGround && !usePrimitiveStore.getState().isCameraUnderGround) {
-      usePrimitiveStore.getState().setPrimitiveStore('isCameraUnderGround', true);
+      setCameraUnderGround(true);
     } else if (!isCameraUnderGround && usePrimitiveStore.getState().isCameraUnderGround) {
-      usePrimitiveStore.getState().setPrimitiveStore('isCameraUnderGround', false);
+      setCameraUnderGround(false);
     }
   }
 };
@@ -74,8 +83,8 @@ const CameraController = () => {
   }, []);
 
   const orbitControlRef = useRef<MyOrbitControls>(null);
-  const persCameraRef = useRef<Camera>(null);
-  const orthCameraRef = useRef<Camera>(null);
+  const persCameraRef = useRef<THREEPerspectiveCamera>(null);
+  const orthCameraRef = useRef<THREEOrthographicCamera>(null);
 
   //
   useEffect(() => {
@@ -89,8 +98,8 @@ const CameraController = () => {
   // save orbitControlRef to common store
   useEffect(() => {
     if (orbitControlRef && orbitControlRef.current) {
-      useRefStore.setState((state) => {
-        state.orbitControlsRef = orbitControlRef;
+      useRefStore.setState({
+        orbitControlsRef: orbitControlRef,
       });
     }
   }, []);
@@ -125,7 +134,7 @@ const CameraController = () => {
             1.5374753309166491, 0.16505866097993566, 0.005476951734475092,
           ];
           camera.position.fromArray(positionNav);
-          camera.rotation.fromArray([...rotationNav, 'XYZ']);
+          camera.rotation.fromArray([rotationNav[0], rotationNav[1], rotationNav[2], 'XYZ']);
         } else {
           const cameraPosition = getVector(viewState.cameraPosition ?? [0, 0, 20]);
           const panCenter = getVector(viewState.panCenter ?? [0, 0, 0]);
@@ -202,13 +211,13 @@ const CameraController = () => {
   };
 
   const onInteractionStart = () => {
-    usePrimitiveStore.setState((state) => {
+    usePrimitiveStore.getState().set((state) => {
       state.duringCameraInteraction = true;
     });
   };
 
   const onInteractionEnd = () => {
-    usePrimitiveStore.setState((state) => {
+    usePrimitiveStore.getState().set((state) => {
       state.duringCameraInteraction = false;
     });
     setCommonStore((state) => {
@@ -292,7 +301,7 @@ const CameraController = () => {
         1.5374753309166491, 0.16505866097993566, 0.005476951734475092,
       ];
       camera.position.fromArray(positionNav);
-      camera.rotation.fromArray([...rotationNav, 'XYZ']);
+      camera.rotation.fromArray([rotationNav[0], rotationNav[1], rotationNav[2], 'XYZ']);
       camera.updateMatrixWorld();
       setCompassRotation(get().camera);
     } else {

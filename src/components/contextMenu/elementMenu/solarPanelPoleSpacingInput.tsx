@@ -366,7 +366,10 @@ const SolarPanelPoleSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b
             style={{ width: 120 }}
             precision={2}
             value={inputValue}
-            onChange={setInputValue}
+            onChange={(value) => {
+              if (value === null) return;
+              setInputValue(value);
+            }}
           />
           <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
             {i18n.t('word.Range', lang)}: [1, 10] {i18n.t('word.MeterAbbreviation', lang)}

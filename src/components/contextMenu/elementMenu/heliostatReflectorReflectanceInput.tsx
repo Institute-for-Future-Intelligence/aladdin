@@ -238,7 +238,10 @@ const HeliostatReflectanceInput = ({ setDialogVisible }: { setDialogVisible: (b:
             precision={2}
             step={0.01}
             value={inputValue}
-            onChange={setInputValue}
+            onChange={(value) => {
+              if (value === null) return;
+              setInputValue(value);
+            }}
           />
           <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
             {i18n.t('word.Range', lang)}: [0, 1]

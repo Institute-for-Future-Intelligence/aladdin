@@ -68,7 +68,7 @@ const SolarPanelArrayGa = () => {
         cancelAnimationFrame(requestRef.current);
         if (!evolutionCompletedRef.current) {
           showInfo(i18n.t('message.EvolutionAborted', lang));
-          usePrimitiveStore.setState((state) => {
+          usePrimitiveStore.getState().set((state) => {
             state.evolutionInProgress = false;
             state.runDailySimulationForSolarPanels = false;
             state.runYearlySimulationForSolarPanels = false;
@@ -94,12 +94,12 @@ const SolarPanelArrayGa = () => {
     pauseRef.current = pauseEvolution;
     if (pauseEvolution) {
       cancelAnimationFrame(requestRef.current);
-      usePrimitiveStore.setState((state) => {
+      usePrimitiveStore.getState().set((state) => {
         state.evolutionPaused = true;
       });
       showInfo(i18n.t('message.EvolutionPaused', lang));
     } else {
-      usePrimitiveStore.setState((state) => {
+      usePrimitiveStore.getState().set((state) => {
         state.evolutionPaused = false;
       });
       // continue the evolution
@@ -111,7 +111,7 @@ const SolarPanelArrayGa = () => {
   // getting ready for the evolution
   const init = () => {
     if (!polygon || !foundation) return;
-    usePrimitiveStore.setState((state) => {
+    usePrimitiveStore.getState().set((state) => {
       state.evolutionInProgress = true;
       state.objectiveEvaluationIndex = 0;
     });
@@ -298,7 +298,7 @@ const SolarPanelArrayGa = () => {
   };
 
   const runCallback = (lastStep: boolean) => {
-    usePrimitiveStore.setState((state) => {
+    usePrimitiveStore.getState().set((state) => {
       switch (params.objectiveFunctionType) {
         case ObjectiveFunctionType.DAILY_TOTAL_OUTPUT:
         case ObjectiveFunctionType.DAILY_AVERAGE_OUTPUT:
@@ -336,7 +336,7 @@ const SolarPanelArrayGa = () => {
       state.elements.push(...solarPanelArrayRef.current);
     });
     if (lastStep) {
-      usePrimitiveStore.setState((state) => {
+      usePrimitiveStore.getState().set((state) => {
         state.runEvolution = false;
         state.evolutionInProgress = false;
         state.objectiveEvaluationIndex = 0;

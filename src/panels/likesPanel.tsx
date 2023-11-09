@@ -10,6 +10,7 @@ import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Table } from 'antd';
 import i18n from '../i18n/i18n';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { useTranslation } from 'react-i18next';
 
 const { Column } = Table;
 
@@ -83,6 +84,7 @@ const LikesPanel = ({ likesArray, openCloudFile }: LikesPanelProps) => {
   const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 600;
   const [curPosition, setCurPosition] = useState({ x: 0, y: 0 });
   const lang = { lng: language };
+  const { t } = useTranslation();
 
   // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
   useEffect(() => {
@@ -111,7 +113,7 @@ const LikesPanel = ({ likesArray, openCloudFile }: LikesPanelProps) => {
   };
 
   const closePanel = () => {
-    usePrimitiveStore.setState((state) => {
+    usePrimitiveStore.getState().set((state) => {
       state.showLikesPanel = false;
     });
   };
@@ -130,7 +132,7 @@ const LikesPanel = ({ likesArray, openCloudFile }: LikesPanelProps) => {
         <Container ref={nodeRef}>
           <ColumnWrapper ref={wrapperRef}>
             <Header className="handle" style={{ direction: 'ltr' }}>
-              <span>{i18n.t('cloudFilePanel.MyLikes', lang)}</span>
+              <span>{t('cloudFilePanel.MyLikes', lang)}</span>
               <span
                 style={{ cursor: 'pointer' }}
                 onMouseDown={() => {
@@ -140,7 +142,7 @@ const LikesPanel = ({ likesArray, openCloudFile }: LikesPanelProps) => {
                   closePanel();
                 }}
               >
-                {i18n.t('word.Close', lang)}
+                {t('word.Close', lang)}
               </span>
             </Header>
             <Table
@@ -157,7 +159,7 @@ const LikesPanel = ({ likesArray, openCloudFile }: LikesPanelProps) => {
               }}
             >
               <Column
-                title={i18n.t('word.Title', lang)}
+                title={`${t('word.Title', lang)}`}
                 key="title"
                 render={(text, record: any) => (
                   <span
@@ -167,7 +169,7 @@ const LikesPanel = ({ likesArray, openCloudFile }: LikesPanelProps) => {
                       const s = record as string;
                       const i = s.lastIndexOf(', ');
                       if (i >= 0) {
-                        usePrimitiveStore.setState((state) => {
+                        usePrimitiveStore.getState().set((state) => {
                           state.openModelsMap = false;
                         });
                         openCloudFile(s.substring(i + 2), s.substring(0, i));

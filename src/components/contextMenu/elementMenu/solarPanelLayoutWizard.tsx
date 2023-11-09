@@ -380,6 +380,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
               style={{ width: '100%' }}
               value={pvModelNameRef.current}
               onChange={(value) => {
+                if (value === null) return;
                 pvModelNameRef.current = value;
                 changedRef.current = true;
                 setUpdateFlag(!updateFlag);
@@ -404,6 +405,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
               style={{ width: '100%' }}
               value={rowAxisRef.current}
               onChange={(value) => {
+                if (value === null) return;
                 rowAxisRef.current = value;
                 changedRef.current = true;
                 setUpdateFlag(!updateFlag);
@@ -434,6 +436,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
               style={{ width: '100%' }}
               value={orientationRef.current}
               onChange={(value) => {
+                if (value === null) return;
                 orientationRef.current = value;
                 changedRef.current = true;
                 setUpdateFlag(!updateFlag);
@@ -464,6 +467,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
               step={1}
               formatter={(value) => `${value}°`}
               onChange={(value) => {
+                if (value === null) return;
                 tiltAngleRef.current = Util.toRadians(value);
                 changedRef.current = true;
                 setUpdateFlag(!updateFlag);
@@ -489,6 +493,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
               formatter={(a) => Number(a).toFixed(0)}
               value={rowsPerRackRef.current}
               onChange={(value) => {
+                if (value === null) return;
                 rowsPerRackRef.current = value;
                 changedRef.current = true;
                 setUpdateFlag(!updateFlag);
@@ -513,6 +518,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
               value={interRowSpacingRef.current}
               step={0.5}
               onChange={(value) => {
+                if (value === null) return;
                 interRowSpacingRef.current = value;
                 changedRef.current = true;
                 setUpdateFlag(!updateFlag);
@@ -537,6 +543,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
               value={marginRef.current}
               step={0.1}
               onChange={(value) => {
+                if (value === null) return;
                 marginRef.current = value;
                 changedRef.current = true;
                 setUpdateFlag(!updateFlag);
@@ -561,6 +568,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
               value={poleHeightRef.current}
               step={0.1}
               onChange={(value) => {
+                if (value === null) return;
                 poleHeightRef.current = value;
                 changedRef.current = true;
                 setUpdateFlag(!updateFlag);
@@ -585,6 +593,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
               value={poleSpacingRef.current}
               step={0.5}
               onChange={(value) => {
+                if (value === null) return;
                 poleSpacingRef.current = value;
                 changedRef.current = true;
                 setUpdateFlag(!updateFlag);

@@ -344,7 +344,7 @@ const ParabolicTroughLengthInput = ({ setDialogVisible }: { setDialogVisible: (b
             style={{ width: 120 }}
             value={inputValue}
             onChange={(value) => {
-              setInputValue(modularize(value));
+              setInputValue(modularize(value!));
             }}
           />
           <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

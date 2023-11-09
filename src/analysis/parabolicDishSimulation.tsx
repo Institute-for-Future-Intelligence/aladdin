@@ -95,7 +95,7 @@ const ParabolicDishSimulation = ({ city }: ParabolicDishSimulationProps) => {
           setCommonStore((state) => {
             state.world.date = originalDateRef.current.toLocaleString('en-US');
           });
-          usePrimitiveStore.setState((state) => {
+          usePrimitiveStore.getState().set((state) => {
             state.simulationInProgress = false;
             state.simulationPaused = false;
           });
@@ -145,7 +145,7 @@ const ParabolicDishSimulation = ({ city }: ParabolicDishSimulationProps) => {
           state.viewState.showDailyParabolicDishYieldPanel = true;
           state.selectedFloatingWindow = 'dailyParabolicDishYieldPanel';
         });
-        usePrimitiveStore.setState((state) => {
+        usePrimitiveStore.getState().set((state) => {
           state.runDailySimulationForParabolicDishes = false;
           state.simulationInProgress = false;
           state.simulationPaused = false;
@@ -277,7 +277,7 @@ const ParabolicDishSimulation = ({ city }: ParabolicDishSimulationProps) => {
           setCommonStore((state) => {
             state.world.date = originalDateRef.current.toLocaleString('en-US');
           });
-          usePrimitiveStore.setState((state) => {
+          usePrimitiveStore.getState().set((state) => {
             state.simulationInProgress = false;
             state.simulationPaused = false;
           });
@@ -350,7 +350,7 @@ const ParabolicDishSimulation = ({ city }: ParabolicDishSimulationProps) => {
             state.viewState.showYearlyParabolicDishYieldPanel = true;
             state.selectedFloatingWindow = 'yearlyParabolicDishYieldPanel';
           });
-          usePrimitiveStore.setState((state) => {
+          usePrimitiveStore.getState().set((state) => {
             state.runYearlySimulationForParabolicDishes = false;
             state.simulationInProgress = false;
             state.simulationPaused = false;

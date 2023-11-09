@@ -71,7 +71,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
   } = useThree();
   const meshRef = useRef<Mesh>(null!);
   const grabRef = useRef<ElementModel | null>(null);
-  const intersectionPlaneRef = useRef<Mesh>();
+  const intersectionPlaneRef = useRef<Mesh>(null);
   const absPosMapRef = useRef<Map<string, Vector3>>(new Map());
   const polygonsAbsPosMapRef = useRef<Map<string, Vector2[]>>(new Map());
   const oldPositionRef = useRef<Vector3>(new Vector3());
@@ -814,11 +814,11 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
         state.resizeHandleType = null;
         state.rotateHandleType = null;
       });
-      useRefStore.setState((state) => {
-        state.humanRef = null;
-        state.treeRef = null;
-        state.setEnableOrbitController(true);
+      useRefStore.setState({
+        humanRef: null,
+        treeRef: null,
       });
+      useRefStore.getState().setEnableOrbitController(true);
     }
   };
 
@@ -843,7 +843,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
         }}
         onPointerDown={handlePointerDown}
       >
-        <sphereBufferGeometry args={[DEFAULT_SKY_RADIUS, 16, 8, 0, TWO_PI, 0, HALF_PI]} />
+        <sphereGeometry args={[DEFAULT_SKY_RADIUS, 16, 8, 0, TWO_PI, 0, HALF_PI]} />
         <meshToonMaterial map={texture} side={BackSide} opacity={1} color={'skyblue'} />
       </mesh>
       {grabRef.current && intersectionPlaneType !== IntersectionPlaneType.Sky && (

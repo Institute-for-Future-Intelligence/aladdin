@@ -19,7 +19,18 @@ import {
   UNIT_VECTOR_POS_Z_ARRAY,
   ZERO_TOLERANCE,
 } from './constants';
-import { CanvasTexture, Color, Euler, Object3D, Quaternion, Scene, Triangle, Vector2, Vector3 } from 'three';
+import {
+  CanvasTexture,
+  Color,
+  Euler,
+  EulerOrder,
+  Object3D,
+  Quaternion,
+  Scene,
+  Triangle,
+  Vector2,
+  Vector3,
+} from 'three';
 import { ElementModel } from './models/ElementModel';
 import { SolarPanelModel } from './models/SolarPanelModel';
 import {
@@ -34,6 +45,7 @@ import {
   RoofHandleType,
   RotateHandleType,
   TrackerType,
+  XYZO,
 } from './types';
 import { PvModel } from './models/PvModel';
 import { SensorModel } from './models/SensorModel';
@@ -92,7 +104,7 @@ export class Util {
     quaternion.setFromUnitVectors(from, to);
     const euler = new Euler();
     euler.setFromQuaternion(quaternion);
-    if (order) euler.order = order;
+    if (order) euler.order = order as EulerOrder;
     if (rotateX) euler.x += rotateX;
     if (rotateY) euler.y += rotateY;
     if (rotateZ) euler.z += rotateZ;
@@ -1307,13 +1319,13 @@ export class Util {
     }
     if (parent.type === ObjectType.Roof && foundation) {
       const v = new Vector3(x * foundation.lx, y * foundation.ly, z + foundation.lz);
-      v.applyEuler(new Euler().fromArray(foundation.rotation));
+      v.applyEuler(new Euler().fromArray(foundation.rotation as XYZO));
       v.x += foundation.cx;
       v.y += foundation.cy;
       return v;
     }
     const v = new Vector3(x * parent.lx, y * parent.ly, z * parent.lz);
-    v.applyEuler(new Euler().fromArray(parent.rotation));
+    v.applyEuler(new Euler().fromArray(parent.rotation as XYZO));
     v.x += parent.cx;
     v.y += parent.cy;
     v.z += parent.cz;
@@ -1323,7 +1335,7 @@ export class Util {
   // use this only for humans or trees or flowers
   static absoluteHumanOrTreeCoordinates(x: number, y: number, z: number, parent: ElementModel): Vector3 {
     const v = new Vector3(x, y, z);
-    v.applyEuler(new Euler().fromArray(parent.rotation));
+    v.applyEuler(new Euler().fromArray(parent.rotation as XYZO));
     v.x += parent.cx;
     v.y += parent.cy;
     v.z += parent.cz;
@@ -1333,7 +1345,7 @@ export class Util {
   // no normalization
   static relativePoint(point: Vector3, parent: ElementModel): Vector3 {
     const v = new Vector3(point.x - parent.cx, point.y - parent.cy, point.z - parent.cz);
-    v.applyEuler(new Euler().fromArray(parent.rotation.map((a) => -a)));
+    v.applyEuler(new Euler().fromArray(parent.rotation.map((a) => -a) as XYZO));
     return v;
   }
 

@@ -30,7 +30,7 @@ const GroundImage = () => {
   const mapZoom = useStore(Selector.viewState.mapZoom);
   const mapType = useStore(Selector.viewState.mapType);
 
-  const groundImageRef = useRef<Mesh>();
+  const groundImageRef = useRef<Mesh>(null);
 
   const texture = useTexture(
     mapType === 'satellite' || mapType === 'hybrid'
@@ -73,7 +73,7 @@ const GroundImage = () => {
       ref={groundImageRef}
       onContextMenu={handleContextMenu}
     >
-      <planeBufferGeometry args={[100, 100]} />
+      <planeGeometry args={[100, 100]} />
       <meshStandardMaterial attach="material" depthTest={false} side={DoubleSide} map={texture} opacity={1} />
     </mesh>
   ) : (

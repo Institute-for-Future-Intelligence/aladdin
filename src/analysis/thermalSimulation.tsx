@@ -264,7 +264,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
             setCommonStore((state) => {
               state.world.date = originalDateRef.current.toLocaleString('en-US');
             });
-            usePrimitiveStore.setState((state) => {
+            usePrimitiveStore.getState().set((state) => {
               state.simulationInProgress = false;
               state.simulationPaused = false;
             });
@@ -362,13 +362,15 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         }
       }
     }
-    usePrimitiveStore.setState((state) => {
-      state.flagOfDailySimulation = !state.flagOfDailySimulation;
-      if (!state.runYearlyThermalSimulation) {
-        state.showSolarRadiationHeatmap = true;
-        state.showHeatFluxes = true;
-      }
-    });
+    setTimeout(() => {
+      usePrimitiveStore.getState().set((state) => {
+        state.flagOfDailySimulation = !state.flagOfDailySimulation;
+        if (!state.runYearlyThermalSimulation) {
+          state.showSolarRadiationHeatmap = true;
+          state.showHeatFluxes = true;
+        }
+      });
+    }, 10);
     if (loggable && !runYearlySimulation) {
       // setTimeout callback will run asynchronously after finishing current execution stack,
       // which is equivalent to waiting for the results to show up in the data store.
@@ -404,7 +406,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
           state.viewState.showDailyBuildingEnergyPanel = true;
           state.selectedFloatingWindow = 'dailyBuildingEnergyPanel';
         });
-        usePrimitiveStore.setState((state) => {
+        usePrimitiveStore.getState().set((state) => {
           state.runDailyThermalSimulation = false;
           state.simulationPaused = false;
           state.simulationInProgress = false;
@@ -459,7 +461,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
             setCommonStore((state) => {
               state.world.date = originalDateRef.current.toLocaleString('en-US');
             });
-            usePrimitiveStore.setState((state) => {
+            usePrimitiveStore.getState().set((state) => {
               state.simulationInProgress = false;
               state.simulationPaused = false;
             });
@@ -530,7 +532,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
           setCommonStore((state) => {
             state.world.date = originalDateRef.current.toLocaleString('en-US');
           });
-          usePrimitiveStore.setState((state) => {
+          usePrimitiveStore.getState().set((state) => {
             state.runYearlyThermalSimulation = false;
             state.simulationInProgress = false;
             state.simulationPaused = false;

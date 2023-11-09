@@ -3,11 +3,11 @@
  */
 
 import {
-  BoxBufferGeometry,
+  BoxGeometry,
   BufferGeometry,
   CanvasTexture,
   Euler,
-  ExtrudeBufferGeometry,
+  ExtrudeGeometry,
   FrontSide,
   Material,
   Mesh,
@@ -104,7 +104,7 @@ export const TopExtrude = ({
   const ref = useRef<Mesh>(null);
 
   if (ref.current) {
-    ref.current.geometry = new ExtrudeBufferGeometry(shape, { steps: 1, depth: thickness, bevelEnabled: false });
+    ref.current.geometry = new ExtrudeGeometry(shape, { steps: 1, depth: thickness, bevelEnabled: false });
     ref.current.updateMatrix();
 
     if (holeMeshes.length > 0) {
@@ -345,14 +345,14 @@ const FlatRoof = ({
       windows.map((window) => {
         const [a, b, c] = window.rotation;
         const position = new Vector3(window.cx, window.cy, window.cz).sub(center);
-        const euler = new Euler().fromArray([...window.rotation, 'ZXY']);
+        const euler = new Euler().fromArray([window.rotation[0], window.rotation[1], window.rotation[2], 'ZXY']);
         switch (window.windowType) {
           case WindowType.Polygonal: {
             const [topX, topH] = window.polygonTop ?? DEFAULT_POLYGONTOP;
             const [hx, hy, tx] = [window.lx / 2, window.lz / 2, topX * window.lx];
             const shape = getPolygonWindowShape(hx, hy, tx, topH);
             const holeMesh = new Mesh(
-              new ExtrudeBufferGeometry([shape], { steps: 1, depth: window.ly, bevelEnabled: false }),
+              new ExtrudeGeometry([shape], { steps: 1, depth: window.ly, bevelEnabled: false }),
             );
             const offset = new Vector3(0, 0, -window.ly).applyEuler(euler);
             holeMesh.position.copy(position.clone().add(offset));
@@ -363,7 +363,7 @@ const FlatRoof = ({
           case WindowType.Arched: {
             const shape = getArchedWindowShape(window.lx, window.lz, window.archHeight);
             const holeMesh = new Mesh(
-              new ExtrudeBufferGeometry([shape], { steps: 1, depth: window.ly, bevelEnabled: false }),
+              new ExtrudeGeometry([shape], { steps: 1, depth: window.ly, bevelEnabled: false }),
             );
             const offset = new Vector3(0, 0, -window.ly).applyEuler(euler);
             holeMesh.position.copy(position.clone().add(offset));
@@ -372,7 +372,7 @@ const FlatRoof = ({
             return holeMesh;
           }
           default: {
-            const holeMesh = new Mesh(new BoxBufferGeometry(window.lx, window.lz, window.ly * 2));
+            const holeMesh = new Mesh(new BoxGeometry(window.lx, window.lz, window.ly * 2));
             holeMesh.position.copy(position);
             holeMesh.rotation.set(a, b, c);
             holeMesh.updateMatrix();
@@ -412,7 +412,7 @@ const FlatRoof = ({
             position={[0, 0, thickness + 0.001]}
             receiveShadow={shadowEnabled}
           >
-            <shapeBufferGeometry args={[shapeWithHoles]} />
+            <shapeGeometry args={[shapeWithHoles]} />
             {showHeatmap ? (
               <meshBasicMaterial map={heatmap} side={FrontSide} />
             ) : (

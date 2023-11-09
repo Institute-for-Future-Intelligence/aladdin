@@ -190,7 +190,7 @@ const setUndoableResizePolygonTop = (id: string, polygonTop: number[]) => {
 const getElementVerticesOnRoof = (el: ElementModel, foundation: FoundationModel, margin = 0.01) => {
   if (el.type !== ObjectType.SolarPanel && el.type !== ObjectType.Window) return null;
 
-  const euler = new Euler().fromArray([...el.rotation, 'ZXY']);
+  const euler = new Euler().fromArray([el.rotation[0], el.rotation[1], el.rotation[2], 'ZXY']);
   const center = new Vector3();
   const hx = el.lx / 2 + margin;
   let hy = margin;
@@ -223,7 +223,7 @@ const getPolygonTop = (window: WindowModel) => {
 };
 
 export const ArchResizeHandle = ({ z }: { z: number }) => {
-  const ref = useRef<Mesh>();
+  const ref = useRef<Mesh>(null);
 
   const [color, setColor] = useState('white');
   return (
@@ -452,7 +452,7 @@ const WindowHandleWrapper = ({
 
   const collisionCheck = (center: Vector3, lx: number, ly: number, rotation: number[], polygonTop?: number[]) => {
     const [hx, hy] = [lx / 2, ly / 2];
-    const euler = new Euler().fromArray([...rotation, 'ZXY']);
+    const euler = new Euler().fromArray([rotation[0], rotation[1], rotation[2], 'ZXY']);
 
     const currentVertices: Vector3[] = [];
     for (let i = -1; i <= 1; i += 2) {
@@ -679,7 +679,7 @@ const WindowHandleWrapper = ({
         const [whx, whz] = [window.lx / 2, window.lz / 2];
 
         const centerPoint = new Vector3(window.cx, window.cy, window.cz);
-        const euler = new Euler().fromArray([...window.rotation, 'ZXY']);
+        const euler = new Euler().fromArray([window.rotation[0], window.rotation[1], window.rotation[2], 'ZXY']);
         const lowerLeftPoint = new Vector3(-whx, -whz, 0).applyEuler(euler).add(centerPoint);
         const lowerRightPoint = new Vector3(whx, -whz, 0).applyEuler(euler).add(centerPoint);
 
@@ -721,7 +721,7 @@ const WindowHandleWrapper = ({
         const [whx, whz] = [window.lx / 2, window.lz / 2];
 
         const centerPoint = new Vector3(window.cx, window.cy, window.cz);
-        const euler = new Euler().fromArray([...window.rotation, 'ZXY']);
+        const euler = new Euler().fromArray([window.rotation[0], window.rotation[1], window.rotation[2], 'ZXY']);
         const lowerLeftPoint = new Vector3(-whx, -whz, 0).applyEuler(euler).add(centerPoint);
         const lowerRightPoint = new Vector3(whx, -whz, 0).applyEuler(euler).add(centerPoint);
 

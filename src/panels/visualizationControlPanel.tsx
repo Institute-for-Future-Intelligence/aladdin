@@ -70,6 +70,7 @@ const VisualizationControlPanel = () => {
             precision={1}
             value={solarRadiationHeatmapMaxValue ?? 5}
             onChange={(value) => {
+              if (value === null) return;
               setCommonStore((state) => {
                 state.viewState.solarRadiationHeatMapMaxValue = value;
               });
@@ -87,6 +88,7 @@ const VisualizationControlPanel = () => {
                 precision={0}
                 value={heatFluxScaleFactor ?? 20}
                 onChange={(value) => {
+                  if (value === null) return;
                   setCommonStore((state) => {
                     state.viewState.heatFluxScaleFactor = value;
                   });

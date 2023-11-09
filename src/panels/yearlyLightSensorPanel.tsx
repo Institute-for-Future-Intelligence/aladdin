@@ -18,6 +18,7 @@ import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
+import { useTranslation } from 'react-i18next';
 
 const Container = styled.div`
   position: fixed;
@@ -173,8 +174,9 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
     });
   };
 
-  const labelX = i18n.t('word.Month', lang);
-  const labelY = i18n.t('word.Radiation', lang);
+  const { t } = useTranslation();
+  const labelX = t('word.Month', lang);
+  const labelY = t('word.Radiation', lang);
   const emptyGraph = sensorData && sensorData[0] ? Object.keys(sensorData[0]).length === 0 : true;
 
   return (
@@ -206,9 +208,9 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
         >
           <Header className="handle" style={{ direction: 'ltr' }}>
             <span>
-              {i18n.t('sensorPanel.LightSensor', lang) + ': '}
+              {t('sensorPanel.LightSensor', lang) + ': '}
               <span style={{ fontSize: '10px' }}>
-                {i18n.t('sensorPanel.WeatherDataFrom', lang) + ' ' + city + ' | ' + now.getFullYear()}
+                {t('sensorPanel.WeatherDataFrom', lang) + ' ' + city + ' | ' + now.getFullYear()}
               </span>
             </span>
             <span
@@ -220,7 +222,7 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
                 closePanel();
               }}
             >
-              {i18n.t('word.Close', lang)}
+              {t('word.Close', lang)}
             </span>
           </Header>
           {daylightGraph && (
@@ -231,8 +233,8 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
               height={100}
               dataKeyAxisX={'Month'}
               labelX={labelX}
-              labelY={i18n.t('word.Daylight', lang)}
-              unitY={i18n.t('word.Hour', lang)}
+              labelY={t('word.Daylight', lang)}
+              unitY={t('word.Hour', lang)}
               yMin={0}
               curveType={'linear'}
               fractionDigits={1}
@@ -246,7 +248,7 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
               height={100}
               dataKeyAxisX={'Month'}
               labelX={labelX}
-              labelY={i18n.t('yearlyLightSensorPanel.SkyClearness', lang)}
+              labelY={t('yearlyLightSensorPanel.SkyClearness', lang)}
               unitY={'%'}
               yMin={0}
               yMax={100}
@@ -265,7 +267,7 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
               dataKeyAxisX={'Month'}
               labelX={labelX}
               labelY={labelY}
-              unitY={'kWh/m²/' + i18n.t('word.Day', lang)}
+              unitY={'kWh/m²/' + t('word.Day', lang)}
               yMin={0}
               curveType={'linear'}
               fractionDigits={2}
@@ -275,7 +277,7 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
           <Space style={{ alignSelf: 'center', padding: '10px', direction: 'ltr' }}>
             <Space>
               <Switch
-                title={i18n.t('yearlyLightSensorPanel.ShowDaylightResults', lang)}
+                title={t('yearlyLightSensorPanel.ShowDaylightResults', lang)}
                 checked={daylightGraph}
                 onChange={(checked) => {
                   setCommonStore((state) => {
@@ -283,11 +285,11 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
                   });
                 }}
               />
-              {i18n.t('word.Daylight', lang)}
+              {t('word.Daylight', lang)}
             </Space>
             <Space>
               <Switch
-                title={i18n.t('yearlyLightSensorPanel.ShowSkyClearnessResults', lang)}
+                title={t('yearlyLightSensorPanel.ShowSkyClearnessResults', lang)}
                 checked={clearnessGraph}
                 onChange={(checked) => {
                   setCommonStore((state) => {
@@ -295,30 +297,30 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
                   });
                 }}
               />
-              {i18n.t('yearlyLightSensorPanel.SkyClearness', lang)}
+              {t('yearlyLightSensorPanel.SkyClearness', lang)}
             </Space>
             <Space>
               <Switch
-                title={i18n.t('yearlyLightSensorPanel.ShowAverageDailySolarRadiation', lang)}
+                title={t('yearlyLightSensorPanel.ShowAverageDailySolarRadiation', lang)}
                 checked={radiationGraph}
                 onChange={(checked) => {
                   setRadiationGraph(checked);
                 }}
               />
-              {i18n.t('word.Radiation', lang)}
+              {t('word.Radiation', lang)}
             </Space>
             <Space>
               <Button
                 type="default"
                 icon={emptyGraph ? <CaretRightOutlined /> : <ReloadOutlined />}
-                title={i18n.t(emptyGraph ? 'word.Run' : 'word.Update', lang)}
+                title={t(emptyGraph ? 'word.Run' : 'word.Update', lang)}
                 onClick={() => {
                   const sensorCount = countElementsByType(ObjectType.Sensor);
                   if (sensorCount === 0) {
-                    showInfo(i18n.t('analysisManager.NoSensorForCollectingData', lang));
+                    showInfo(t('analysisManager.NoSensorForCollectingData', lang));
                     return;
                   }
-                  showInfo(i18n.t('message.SimulationStarted', lang));
+                  showInfo(t('message.SimulationStarted', lang));
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
                     setCommonStore((state) => {
@@ -326,7 +328,7 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
                         state.actionInfo = { name: 'Collect Yearly Data for Sensors', timestamp: new Date().getTime() };
                       }
                     });
-                    usePrimitiveStore.setState((state) => {
+                    usePrimitiveStore.getState().set((state) => {
                       state.runYearlyLightSensor = true;
                       state.pauseYearlyLightSensor = false;
                       state.simulationInProgress = true;
@@ -337,10 +339,10 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
               <Button
                 type="default"
                 icon={<CameraOutlined />}
-                title={i18n.t('word.SaveAsImage', lang)}
+                title={t('word.SaveAsImage', lang)}
                 onClick={() => {
                   screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-light-sensor', {}).then(() => {
-                    showInfo(i18n.t('message.ScreenshotSaved', lang));
+                    showInfo(t('message.ScreenshotSaved', lang));
                     if (loggable) {
                       setCommonStore((state) => {
                         state.actionInfo = {
@@ -356,10 +358,10 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
                 <Button
                   type="default"
                   icon={<SaveOutlined />}
-                  title={i18n.t('word.SaveAsCsv', lang)}
+                  title={t('word.SaveAsCsv', lang)}
                   onClick={() => {
                     saveCsv(sensorData, 'yearly-light-sensor.csv');
-                    showInfo(i18n.t('message.CsvFileSaved', lang));
+                    showInfo(t('message.CsvFileSaved', lang));
                     if (loggable) {
                       setCommonStore((state) => {
                         state.actionInfo = {

@@ -63,8 +63,8 @@ const Sensor = (sensorModel: SensorModel) => {
     gl: { domElement },
   } = useThree();
   const [hovered, setHovered] = useState(false);
-  const baseRef = useRef<Mesh>();
-  const handleRef = useRef<Mesh>();
+  const baseRef = useRef<Mesh>(null);
+  const handleRef = useRef<Mesh>(null);
 
   const lang = useMemo(() => {
     return { lng: language };
@@ -193,7 +193,7 @@ const Sensor = (sensorModel: SensorModel) => {
           if (e.button === 2) return; // ignore right-click
           selectMe(id, e, ActionType.Move);
           useRefStore.getState().setEnableOrbitController(false);
-          usePrimitiveStore.setState((state) => {
+          usePrimitiveStore.getState().set((state) => {
             state.showWallIntersectionPlaneId = parentId;
             state.oldParentId = parentId;
             state.oldFoundationId = foundationId;
@@ -277,7 +277,7 @@ const Sensor = (sensorModel: SensorModel) => {
               selectMe(id, e, ActionType.Move);
             }
             useRefStore.getState().setEnableOrbitController(false);
-            usePrimitiveStore.setState((state) => {
+            usePrimitiveStore.getState().set((state) => {
               state.showWallIntersectionPlaneId = parentId;
               state.oldParentId = parentId;
               state.oldFoundationId = foundationId;

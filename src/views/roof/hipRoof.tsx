@@ -2,7 +2,7 @@
  * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 import { Line, Plane } from '@react-three/drei';
-import { useThree } from '@react-three/fiber';
+import { ThreeEvent, useThree } from '@react-three/fiber';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { HALF_PI } from 'src/constants';
 import { Point2 } from 'src/models/Point2';
@@ -210,7 +210,7 @@ const HipRoof = ({ roofModel, foundationModel }: HipRoofProps) => {
     return arr;
   };
 
-  const setRayCast = (e: PointerEvent) => {
+  const setRayCast = (e: ThreeEvent<PointerEvent>) => {
     mouse.x = (e.offsetX / gl.domElement.clientWidth) * 2 - 1;
     mouse.y = -(e.offsetY / gl.domElement.clientHeight) * 2 + 1;
     ray.setFromCamera(mouse, camera);

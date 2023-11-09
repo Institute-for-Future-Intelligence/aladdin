@@ -78,8 +78,8 @@ const Ground = () => {
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
 
   const { get: getThree, scene, invalidate } = useThree();
-  const groundPlaneRef = useRef<Mesh>();
-  const intersectionPlaneRef = useRef<Mesh>();
+  const groundPlaneRef = useRef<Mesh>(null);
+  const intersectionPlaneRef = useRef<Mesh>(null);
   const grabRef = useRef<ElementModel | null>(null);
   const oldPositionRef = useRef<Vector3>(new Vector3());
   const newPositionRef = useRef<Vector3>(new Vector3());
@@ -195,7 +195,7 @@ const Ground = () => {
     }
   }
 
-  const setRayCast = (e: PointerEvent) => {
+  const setRayCast = (e: ThreeEvent<PointerEvent>) => {
     mouse.x = (e.offsetX / getThree().gl.domElement.clientWidth) * 2 - 1;
     mouse.y = -(e.offsetY / getThree().gl.domElement.clientHeight) * 2 + 1;
     ray.setFromCamera(mouse, getThree().camera);
@@ -721,7 +721,7 @@ const Ground = () => {
     let newHumanOrPlantParentId: string | null = oldHumanOrPlantParentIdRef.current;
     // elements modified by reference
     let elementRef: Group | null | undefined = null;
-    setRayCast(e);
+    setRayCast(e as unknown as ThreeEvent<PointerEvent>);
     switch (elem.type) {
       case ObjectType.Tree:
         elementRef = useRefStore.getState().treeRef?.current;
@@ -927,9 +927,7 @@ const Ground = () => {
 
   const handlePointerUp = (e: PointerEvent) => {
     if (e.button === 2) return;
-    useRefStore.setState((state) => {
-      state.setEnableOrbitController(true);
-    });
+    useRefStore.getState().setEnableOrbitController(true);
     if (grabRef.current) {
       const elem = getElementById(grabRef.current.id);
       if (elem) {
@@ -1014,10 +1012,10 @@ const Ground = () => {
       state.resizeHandleType = null;
       state.rotateHandleType = null;
     });
-    useRefStore.setState((state) => {
-      state.humanRef = null;
-      state.treeRef = null;
-      state.flowerRef = null;
+    useRefStore.setState({
+      humanRef: null,
+      treeRef: null,
+      flowerRef: null,
     });
   };
 

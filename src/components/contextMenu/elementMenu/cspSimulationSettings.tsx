@@ -68,11 +68,11 @@ const CspSimulationSettings = ({ name }: { name: string }) => {
                 state.world.cspDaysPerYear = value;
               });
               // clear the results stored in the common store
-              useDataStore.setState((state) => {
-                state.yearlyParabolicTroughYield = [];
-                state.yearlyParabolicDishYield = [];
-                state.yearlyFresnelReflectorYield = [];
-                state.yearlyHeliostatYield = [];
+              useDataStore.setState({
+                yearlyParabolicTroughYield: [],
+                yearlyParabolicDishYield: [],
+                yearlyFresnelReflectorYield: [],
+                yearlyHeliostatYield: [],
               });
             }}
           >
@@ -98,6 +98,7 @@ const CspSimulationSettings = ({ name }: { name: string }) => {
             precision={2}
             value={cspGridCellSize ?? 0.5}
             onChange={(value) => {
+              if (value === null) return;
               setCommonStore((state) => {
                 state.world.cspGridCellSize = value;
               });

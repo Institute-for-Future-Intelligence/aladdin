@@ -17,6 +17,7 @@ import { Rectangle } from '../models/Rectangle';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
 import { Z_INDEX_FRONT_PANEL } from '../constants';
+import { useTranslation } from 'react-i18next';
 
 const { Column } = Table;
 
@@ -159,7 +160,7 @@ const VisibilityResultsPanel = () => {
             ', ' +
             vantage.position.z.toFixed(1) +
             ') ' +
-            i18n.t('word.MeterAbbreviation', lang),
+            t('word.MeterAbbreviation', lang),
           total: total.toFixed(2),
           itemized: count > 1 ? fieldString.substring(0, fieldString.length - 2) : '---',
         });
@@ -197,6 +198,7 @@ const VisibilityResultsPanel = () => {
     });
   };
 
+  const { t } = useTranslation();
   return (
     <ReactDraggable
       nodeRef={nodeRef}
@@ -224,9 +226,7 @@ const VisibilityResultsPanel = () => {
           }}
         >
           <Header className="handle" style={{ direction: 'ltr' }}>
-            <span>
-              {i18n.t('visibilityPanel.SolarPanelVisibility', lang) + ' — ' + moment(now).format('h:mm A MM/DD')}
-            </span>
+            <span>{t('visibilityPanel.SolarPanelVisibility', lang) + ' — ' + moment(now).format('h:mm A MM/DD')}</span>
             <span
               style={{ cursor: 'pointer' }}
               onTouchStart={() => {
@@ -236,7 +236,7 @@ const VisibilityResultsPanel = () => {
                 closePanel();
               }}
             >
-              {i18n.t('word.Close', lang)}
+              {t('word.Close', lang)}
             </span>
           </Header>
           <Table
@@ -249,11 +249,11 @@ const VisibilityResultsPanel = () => {
               pageSizeOptions: ['5', '10', '50'],
             }}
           >
-            <Column title={i18n.t('visibilityPanel.Observer', lang)} dataIndex="observer" key="observer" />
-            <Column title={i18n.t('visibilityPanel.VantagePoint', lang)} dataIndex="vantage" key="vantage" />
-            <Column title={i18n.t('visibilityPanel.TotalVisibility', lang)} dataIndex="total" key="total" />
+            <Column title={`${t('visibilityPanel.Observer', lang)}`} dataIndex="observer" key="observer" />
+            <Column title={`${t('visibilityPanel.VantagePoint', lang)}`} dataIndex="vantage" key="vantage" />
+            <Column title={`${t('visibilityPanel.TotalVisibility', lang)}`} dataIndex="total" key="total" />
             <Column
-              title={i18n.t('visibilityPanel.ItemizedVisibilityByFields', lang)}
+              title={`${t('visibilityPanel.ItemizedVisibilityByFields', lang)}`}
               dataIndex="itemized"
               key="itemized"
             />
@@ -263,17 +263,17 @@ const VisibilityResultsPanel = () => {
             <Button
               type="default"
               icon={<ReloadOutlined />}
-              title={i18n.t('word.Update', lang)}
+              title={t('word.Update', lang)}
               onClick={() => {
                 const observerCount = countObservers();
                 if (observerCount === 0) {
-                  showInfo(i18n.t('analysisManager.NoObserverForVisibilityAnalysis', lang));
+                  showInfo(t('analysisManager.NoObserverForVisibilityAnalysis', lang));
                   return;
                 }
-                showInfo(i18n.t('message.SimulationStarted', lang));
+                showInfo(t('message.SimulationStarted', lang));
                 // give it 0.1 second for the info to show up
                 setTimeout(() => {
-                  usePrimitiveStore.setState((state) => {
+                  usePrimitiveStore.getState().set((state) => {
                     state.simulationInProgress = true;
                     state.runSolarPanelVisibilityAnalysis = true;
                   });
@@ -291,10 +291,10 @@ const VisibilityResultsPanel = () => {
             <Button
               type="default"
               icon={<SaveOutlined />}
-              title={i18n.t('word.SaveAsImage', lang)}
+              title={t('word.SaveAsImage', lang)}
               onClick={() => {
                 screenshot('visibility-results-table', 'visibility-results', {}).then(() => {
-                  showInfo(i18n.t('message.ScreenshotSaved', lang));
+                  showInfo(t('message.ScreenshotSaved', lang));
                 });
               }}
             />

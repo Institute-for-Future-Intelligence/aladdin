@@ -10,6 +10,7 @@ import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Table } from 'antd';
 import i18n from '../i18n/i18n';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { useTranslation } from 'react-i18next';
 
 const { Column } = Table;
 
@@ -84,6 +85,7 @@ const PublishedModelsPanel = ({ publishedModels, openCloudFile }: PublishedModel
   const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 600;
   const [curPosition, setCurPosition] = useState({ x: 0, y: 0 });
   const lang = { lng: language };
+  const { t } = useTranslation();
 
   // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
   useEffect(() => {
@@ -112,7 +114,7 @@ const PublishedModelsPanel = ({ publishedModels, openCloudFile }: PublishedModel
   };
 
   const closePanel = () => {
-    usePrimitiveStore.setState((state) => {
+    usePrimitiveStore.getState().set((state) => {
       state.showPublishedModelsPanel = false;
     });
   };
@@ -131,7 +133,7 @@ const PublishedModelsPanel = ({ publishedModels, openCloudFile }: PublishedModel
         <Container ref={nodeRef}>
           <ColumnWrapper ref={wrapperRef}>
             <Header className="handle" style={{ direction: 'ltr' }}>
-              <span>{i18n.t('modelsMap.MyPublishedModels', lang)}</span>
+              <span>{t('modelsMap.MyPublishedModels', lang)}</span>
               <span
                 style={{ cursor: 'pointer' }}
                 onMouseDown={() => {
@@ -141,7 +143,7 @@ const PublishedModelsPanel = ({ publishedModels, openCloudFile }: PublishedModel
                   closePanel();
                 }}
               >
-                {i18n.t('word.Close', lang)}
+                {t('word.Close', lang)}
               </span>
             </Header>
             <Table
@@ -158,7 +160,7 @@ const PublishedModelsPanel = ({ publishedModels, openCloudFile }: PublishedModel
               }}
             >
               <Column
-                title={i18n.t('word.Title', lang)}
+                title={`${t('word.Title', lang)}`}
                 key="title"
                 render={(text, record: any) => (
                   <span
@@ -166,7 +168,7 @@ const PublishedModelsPanel = ({ publishedModels, openCloudFile }: PublishedModel
                     style={{ cursor: 'pointer' }}
                     onClick={() => {
                       if (user.uid) {
-                        usePrimitiveStore.setState((state) => {
+                        usePrimitiveStore.getState().set((state) => {
                           state.openModelsMap = false;
                         });
                         openCloudFile(user.uid, record);

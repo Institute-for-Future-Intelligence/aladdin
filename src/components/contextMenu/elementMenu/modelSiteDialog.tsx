@@ -24,6 +24,7 @@ import { usePrimitiveStore } from '../../../stores/commonPrimitive';
 import { ModelType } from '../../../types';
 import generateRandomAnimal from 'random-animal-name';
 import { REGEX_ALLOWABLE_IN_NAME } from '../../../constants';
+import { useTranslation } from 'react-i18next';
 
 const { Option } = Select;
 
@@ -70,7 +71,7 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   };
 
   const onOkClick = () => {
-    usePrimitiveStore.setState((state) => {
+    usePrimitiveStore.getState().set((state) => {
       state.publishOnModelsMapFlag = true;
     });
     setCommonStore((state) => {
@@ -91,6 +92,8 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
     setDialogVisible(false);
   };
 
+  const { t } = useTranslation();
+
   return (
     <Modal
       width={560}
@@ -101,15 +104,15 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
           onMouseOver={() => setDragEnabled(true)}
           onMouseOut={() => setDragEnabled(false)}
         >
-          {i18n.t('menu.file.PublishOnModelsMap', lang)}
+          {t('menu.file.PublishOnModelsMap', lang)}
         </div>
       }
       footer={[
         <Button key="Cancel" onClick={onCancelClick}>
-          {i18n.t('word.Cancel', lang)}
+          {t('word.Cancel', lang)}
         </Button>,
         <Button key="OK" type="primary" ref={okButtonRef} onClick={onOkClick} disabled={!modelAuthor || !modelLabel}>
-          {i18n.t('word.OK', lang)}
+          {t('word.OK', lang)}
         </Button>,
       ]}
       // this must be specified for the x button in the upper-right corner to work
@@ -126,7 +129,7 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
     >
       <Row gutter={6} style={{ paddingBottom: '4px' }}>
         <Col className="gutter-row" span={8}>
-          {i18n.t('shared.ModelType', lang) + ':'}
+          {t('shared.ModelType', lang) + ':'}
         </Col>
         <Col className="gutter-row" span={16}>
           <Select
@@ -138,11 +141,11 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
           >
             <Option key={ModelType.UNKNOWN} value={ModelType.UNKNOWN}>
               <img alt={'Building'} width={24} src={UnknownIcon} style={{ marginRight: '8px' }} />
-              {i18n.t('word.Unknown', lang)}
+              {t('word.Unknown', lang)}
             </Option>
             <Option key={ModelType.UNDER_CONSTRUCTION} value={ModelType.UNDER_CONSTRUCTION}>
               <img alt={'Building'} width={24} src={UnderConstructionIcon} style={{ marginRight: '8px' }} />
-              {i18n.t('word.UnderConstruction', lang)}
+              {t('word.UnderConstruction', lang)}
             </Option>
             <Option key={ModelType.RESIDENTIAL_BUILDING} value={ModelType.RESIDENTIAL_BUILDING}>
               <img
@@ -151,39 +154,39 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
                 src={ResidentialBuildingIcon}
                 style={{ marginRight: '8px' }}
               />
-              {i18n.t('word.ResidentialBuilding', lang)}
+              {t('word.ResidentialBuilding', lang)}
             </Option>
             <Option key={ModelType.COMMERCIAL_BUILDING} value={ModelType.COMMERCIAL_BUILDING}>
               <img alt={'Commercial Building'} width={24} src={CommercialBuildingIcon} style={{ marginRight: '8px' }} />
-              {i18n.t('word.CommercialBuilding', lang)}
+              {t('word.CommercialBuilding', lang)}
             </Option>
             <Option key={ModelType.SCHOOL_BUILDING} value={ModelType.SCHOOL_BUILDING}>
               <img alt={'School Building'} width={24} src={SchoolBuildingIcon} style={{ marginRight: '8px' }} />
-              {i18n.t('word.SchoolBuilding', lang)}
+              {t('word.SchoolBuilding', lang)}
             </Option>
             <Option key={ModelType.TOURIST_ATTRACTION} value={ModelType.TOURIST_ATTRACTION}>
               <img alt={'Tourist Attraction'} width={24} src={TouristAttractionIcon} style={{ marginRight: '8px' }} />
-              {i18n.t('word.TouristAttraction', lang)}
+              {t('word.TouristAttraction', lang)}
             </Option>
             <Option key={ModelType.PHOTOVOLTAIC} value={ModelType.PHOTOVOLTAIC}>
               <img alt={'Photovoltaic'} width={24} src={SolarPanelIcon} style={{ marginRight: '8px' }} />
-              {i18n.t('word.Photovoltaic', lang)}
+              {t('word.Photovoltaic', lang)}
             </Option>
             <Option key={ModelType.PARABOLIC_DISH} value={ModelType.PARABOLIC_DISH}>
               <img alt={'Parabolic Dish'} width={24} src={ParabolicDishIcon} style={{ marginRight: '8px' }} />
-              {i18n.t('shared.ParabolicDishElement', lang)}
+              {t('shared.ParabolicDishElement', lang)}
             </Option>
             <Option key={ModelType.PARABOLIC_TROUGH} value={ModelType.PARABOLIC_TROUGH}>
               <img alt={'Parabolic Trough'} width={24} src={ParabolicTroughIcon} style={{ marginRight: '8px' }} />
-              {i18n.t('shared.ParabolicTroughElement', lang)}
+              {t('shared.ParabolicTroughElement', lang)}
             </Option>
             <Option key={ModelType.FRESNEL_REFLECTOR} value={ModelType.FRESNEL_REFLECTOR}>
               <img alt={'Fresnel Reflector'} width={24} src={FresnelReflectorIcon} style={{ marginRight: '8px' }} />
-              {i18n.t('shared.FresnelReflectorElement', lang)}
+              {t('shared.FresnelReflectorElement', lang)}
             </Option>
             <Option key={ModelType.SOLAR_POWER_TOWER} value={ModelType.SOLAR_POWER_TOWER}>
               <img alt={'Heliostat'} width={24} src={HeliostatIcon} style={{ marginRight: '8px' }} />
-              {i18n.t('shared.HeliostatElement', lang)}
+              {t('shared.HeliostatElement', lang)}
             </Option>
           </Select>
         </Col>
@@ -191,7 +194,7 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
 
       <Row gutter={6} style={{ paddingBottom: '4px' }}>
         <Col className="gutter-row" span={8}>
-          {i18n.t('word.Publisher', lang)}:
+          {t('word.Publisher', lang)}:
         </Col>
         <Col className="gutter-row" span={16}>
           <Input
@@ -213,7 +216,7 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
 
       <Row gutter={6} style={{ paddingBottom: '4px' }}>
         <Col className="gutter-row" span={8}>
-          {i18n.t('word.Label', lang)}:
+          {t('word.Label', lang)}:
         </Col>
         <Col className="gutter-row" span={16}>
           <Input
@@ -235,8 +238,8 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
 
       <Row gutter={6} style={{ paddingBottom: '4px' }}>
         <Col className="gutter-row" span={8}>
-          {i18n.t('word.Description', lang)}:<br />
-          <span style={{ fontSize: '10px' }}>({i18n.t('word.MaximumCharacters', lang)}: 200)</span>
+          {t('word.Description', lang)}:<br />
+          <span style={{ fontSize: '10px' }}>({t('word.MaximumCharacters', lang)}: 200)</span>
         </Col>
         <Col className="gutter-row" span={16}>
           <TextArea

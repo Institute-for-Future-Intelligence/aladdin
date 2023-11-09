@@ -44,7 +44,7 @@ const MainToolBar = ({ signIn, signOut }: MainToolBarProps) => {
       <Menu.Item
         key="account"
         onClick={() => {
-          usePrimitiveStore.setState((state) => {
+          usePrimitiveStore.getState().set((state) => {
             state.showAccountSettingsPanel = true;
           });
         }}

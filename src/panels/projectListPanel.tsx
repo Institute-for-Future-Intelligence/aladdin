@@ -15,6 +15,7 @@ import i18n from '../i18n/i18n';
 import Draggable from 'react-draggable';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { ProjectInfo } from '../types';
+import { useTranslation } from 'react-i18next';
 
 const { Column } = Table;
 
@@ -105,6 +106,7 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
 
   const { Search } = Input;
+  const { t } = useTranslation();
   const lang = useMemo(() => {
     return { lng: language };
   }, [language]);
@@ -143,18 +145,18 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
   };
 
   const closePanel = () => {
-    usePrimitiveStore.setState((state) => {
+    usePrimitiveStore.getState().set((state) => {
       state.showProjectListPanel = false;
     });
   };
 
   const confirmDeleteProject = (title: string) => {
     Modal.confirm({
-      title: i18n.t('projectListPanel.DoYouReallyWantToDeleteProject', lang) + ' "' + title + '"?',
+      title: t('projectListPanel.DoYouReallyWantToDeleteProject', lang) + ' "' + title + '"?',
       content: (
         <span style={{ color: 'red', fontWeight: 'bold' }}>
           <WarningOutlined style={{ marginRight: '6px' }} />
-          {i18n.t('word.Warning', lang) + ': ' + i18n.t('message.ThisCannotBeUndone', lang)}
+          {t('word.Warning', lang) + ': ' + t('message.ThisCannotBeUndone', lang)}
         </span>
       ),
       icon: <QuestionCircleOutlined />,
@@ -195,7 +197,7 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('word.Rename', lang)}
+            {t('word.Rename', lang)}
           </div>
         }
         visible={renameDialogVisible}
@@ -227,9 +229,9 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
           />
           <span style={{ fontSize: '11px', color: 'red' }}>
             <WarningOutlined style={{ marginRight: '4px' }} />
-            {i18n.t('word.Caution', lang) +
+            {t('word.Caution', lang) +
               ': ' +
-              i18n.t('projectListPanel.IfSharedOrPublishedRenamingProjectBreaksExistingLinks', lang)}
+              t('projectListPanel.IfSharedOrPublishedRenamingProjectBreaksExistingLinks', lang)}
             .
           </span>
         </Space>
@@ -254,7 +256,7 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
         >
           <ColumnWrapper ref={wrapperRef}>
             <Header className="handle" style={{ direction: 'ltr' }}>
-              <span>{i18n.t('projectListPanel.MyProjects', lang) + ' (' + projectsRef.current.length + ')'}</span>
+              <span>{t('projectListPanel.MyProjects', lang) + ' (' + projectsRef.current.length + ')'}</span>
               <span
                 style={{ cursor: 'pointer' }}
                 onMouseDown={() => {
@@ -264,13 +266,13 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
                   closePanel();
                 }}
               >
-                {i18n.t('word.Close', lang)}
+                {t('word.Close', lang)}
               </span>
             </Header>
             <span style={{ direction: 'ltr' }}>
               <Search
                 style={{ width: '50%', paddingTop: '8px', paddingBottom: '8px' }}
-                title={i18n.t('projectListPanel.SearchByTitle', lang)}
+                title={t('projectListPanel.SearchByTitle', lang)}
                 allowClear
                 size={'small'}
                 enterButton
@@ -301,7 +303,7 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
               }}
             >
               <Column
-                title={i18n.t('word.Type', lang)}
+                title={`${t('word.Type', lang)}`}
                 dataIndex="type"
                 key="type"
                 width={'25%'}
@@ -322,7 +324,7 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
                 }}
               />
               <Column
-                title={i18n.t('word.Title', lang)}
+                title={`${t('word.Title', lang)}`}
                 dataIndex="title"
                 key="title"
                 width={'50%'}
@@ -348,7 +350,7 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
                                 setProjectState(record as ProjectInfo);
                               }}
                             >
-                              {i18n.t('word.Open', lang)}
+                              {t('word.Open', lang)}
                             </Menu.Item>
                             <Menu.Item
                               onClick={(menuInfo) => {
@@ -359,10 +361,10 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
                                 } else {
                                   copyTextToClipboard(title);
                                 }
-                                showSuccess(i18n.t('projectListPanel.TitleCopiedToClipBoard', lang) + '.');
+                                showSuccess(t('projectListPanel.TitleCopiedToClipBoard', lang) + '.');
                               }}
                             >
-                              {i18n.t('projectListPanel.CopyTitle', lang)}
+                              {t('projectListPanel.CopyTitle', lang)}
                             </Menu.Item>
                             <Menu.Item
                               onClick={(menuInfo) => {
@@ -372,7 +374,7 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
                                 setRenameDialogVisible(true);
                               }}
                             >
-                              {i18n.t('word.Rename', lang)}
+                              {t('word.Rename', lang)}
                             </Menu.Item>
                             <Menu.Item
                               onClick={(menuInfo) => {
@@ -381,7 +383,7 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
                                 confirmDeleteProject(title);
                               }}
                             >
-                              {i18n.t('word.Delete', lang)}
+                              {t('word.Delete', lang)}
                             </Menu.Item>
                             <Menu.Item
                               onClick={(menuInfo) => {
@@ -390,10 +392,10 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
                                 const url =
                                   HOME_URL + '?client=web&userid=' + user.uid + '&project=' + encodeURIComponent(title);
                                 copyTextToClipboard(url);
-                                showSuccess(i18n.t('projectListPanel.ProjectLinkGeneratedInClipBoard', lang) + '.');
+                                showSuccess(t('projectListPanel.ProjectLinkGeneratedInClipBoard', lang) + '.');
                               }}
                             >
-                              {i18n.t('projectListPanel.GenerateProjectLink', lang)}
+                              {t('projectListPanel.GenerateProjectLink', lang)}
                             </Menu.Item>
                           </Menu>
                         }
@@ -435,7 +437,7 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
                 }}
               />
               <Column
-                title={i18n.t('word.Time', lang)}
+                title={`${t('word.Time', lang)}`}
                 dataIndex="time"
                 key="time"
                 width={'25%'}

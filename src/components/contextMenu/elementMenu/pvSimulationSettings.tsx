@@ -73,8 +73,8 @@ const PvSimulationSettings = () => {
                 state.world.daysPerYear = value;
               });
               // clear the results stored in the common store
-              useDataStore.setState((state) => {
-                state.yearlyPvYield = [];
+              useDataStore.setState({
+                yearlyPvYield: [],
               });
             }}
           >
@@ -120,6 +120,7 @@ const PvSimulationSettings = () => {
               precision={2}
               value={gridCellSize ?? 0.5}
               onChange={(value) => {
+                if (value === null) return;
                 setCommonStore((state) => {
                   state.world.pvGridCellSize = value;
                 });

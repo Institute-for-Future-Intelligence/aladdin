@@ -87,8 +87,8 @@ const Polygon = ({
   const [centerY, setCenterY] = useState(0);
   const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | null>(null);
 
-  const baseRef = useRef<Mesh>();
-  const centerRef = useRef<Mesh>();
+  const baseRef = useRef<Mesh>(null);
+  const centerRef = useRef<Mesh>(null);
 
   // be sure to get the updated parent so that this memorized element can move with it
   const parent = useStore((state) => {
@@ -420,7 +420,7 @@ const Polygon = ({
             domElement.style.cursor = 'default';
           }}
         >
-          <shapeBufferGeometry attach="geometry" args={[shape]} />
+          <shapeGeometry attach="geometry" args={[shape]} />
           {shininess === undefined || shininess === 0 ? (
             <meshStandardMaterial
               attach="material"
@@ -537,7 +537,7 @@ const Polygon = ({
             if (e.button === 2) return;
             selectMe(id, e, ActionType.Move);
             useRefStore.getState().setEnableOrbitController(false);
-            usePrimitiveStore.setState((state) => {
+            usePrimitiveStore.getState().set((state) => {
               state.showWallIntersectionPlaneId = parentId;
               state.oldParentId = parentId;
               state.oldFoundationId = foundationId;
@@ -569,7 +569,7 @@ const Polygon = ({
                   selectMe(id, e, ActionType.Resize);
                   updatePolygonSelectedIndexById(id, i);
                   useRefStore.getState().setEnableOrbitController(false);
-                  usePrimitiveStore.setState((state) => {
+                  usePrimitiveStore.getState().set((state) => {
                     state.showWallIntersectionPlaneId = parentId;
                     state.oldParentId = parentId;
                     state.oldFoundationId = foundationId;

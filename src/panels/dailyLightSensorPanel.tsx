@@ -216,7 +216,7 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
                 closePanel();
               }}
             >
-              {i18n.t('word.Close', lang)}
+              {`${i18n.t('word.Close', lang)}`}
             </span>
           </Header>
           <LineGraph
@@ -254,7 +254,7 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
                       state.actionInfo = { name: 'Collect Daily Data for Sensors', timestamp: new Date().getTime() };
                     }
                   });
-                  usePrimitiveStore.setState((state) => {
+                  usePrimitiveStore.getState().set((state) => {
                     state.runDailyLightSensor = true;
                     state.pauseDailyLightSensor = false;
                     state.simulationInProgress = true;

@@ -607,7 +607,7 @@ export const PolygonMenu = React.memo(() => {
                 step={0.01}
                 precision={2}
                 value={textSize}
-                onChange={(value) => setTextSize(value)}
+                onChange={(value) => setTextSize(value!)}
                 onPressEnter={changeFontSize}
                 onBlur={changeFontSize}
               />
@@ -641,7 +641,7 @@ export const PolygonMenu = React.memo(() => {
                 step={0.01}
                 precision={2}
                 value={textOutlineWidth}
-                onChange={(value) => setTextOutlineWidth(value)}
+                onChange={(value) => setTextOutlineWidth(value!)}
                 onPressEnter={changeFontOutlineWidth}
                 onBlur={changeFontOutlineWidth}
               />
@@ -665,7 +665,7 @@ export const PolygonMenu = React.memo(() => {
                 step={0.01}
                 precision={2}
                 value={textStrokeWidth}
-                onChange={(value) => setTextStrokeWidth(value)}
+                onChange={(value) => setTextStrokeWidth(value!)}
                 onPressEnter={changeFontStrokeWidth}
                 onBlur={changeFontStrokeWidth}
               />

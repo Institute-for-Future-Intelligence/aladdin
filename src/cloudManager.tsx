@@ -386,7 +386,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
         state.user.published = published;
         state.user.aliases = aliases;
       });
-      usePrimitiveStore.setState((state) => {
+      usePrimitiveStore.getState().set((state) => {
         state.userCount = userCount;
       });
       user.signFile = signFile;
@@ -436,7 +436,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           state.user.aliases = [];
           state.cloudFile = undefined; // if there is a current cloud file
         });
-        usePrimitiveStore.setState((state) => {
+        usePrimitiveStore.getState().set((state) => {
           state.showCloudFilePanel = false;
           state.showAccountSettingsPanel = false;
           state.showModelsGallery = false;
@@ -585,7 +585,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           setCommonStore((state) => {
             if (state.peopleModels) {
               state.peopleModels.delete(Util.getModelKey(model));
-              usePrimitiveStore.setState((state) => {
+              usePrimitiveStore.getState().set((state) => {
                 state.leaderboardFlag = true;
               });
             }
@@ -751,7 +751,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     if (user.uid) {
       fetchMyProjects(!show).then(() => {
         if (show) {
-          usePrimitiveStore.setState((state) => {
+          usePrimitiveStore.getState().set((state) => {
             state.showProjectListPanel = true;
           });
         }
@@ -923,7 +923,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       state.projectImages.clear();
       state.projectView = true;
     });
-    usePrimitiveStore.setState((state) => {
+    usePrimitiveStore.getState().set((state) => {
       state.projectImagesUpdateFlag = !state.projectImagesUpdateFlag;
       state.updateProjectsFlag = true;
     });
@@ -1000,7 +1000,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
         }
         if (exist) {
           Modal.confirm({
-            title: i18n.t('message.CloudFileWithTitleExistsDoYouWantToOverwrite', lang),
+            title: `${i18n.t('message.CloudFileWithTitleExistsDoYouWantToOverwrite', lang)}`,
             icon: <QuestionCircleOutlined />,
             onOk: () => {
               saveToCloudWithoutCheckingExistence(t, silent);
@@ -1011,8 +1011,8 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                 state.showCloudFileTitleDialog = true;
               });
             },
-            okText: i18n.t('word.Yes', lang),
-            cancelText: i18n.t('word.No', lang),
+            okText: `${i18n.t('word.Yes', lang)}`,
+            cancelText: `${i18n.t('word.No', lang)}`,
           });
         } else {
           saveToCloudWithoutCheckingExistence(t, silent);
@@ -1030,7 +1030,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       const doc = firebase.firestore().collection('users').doc(user.uid);
       if (doc) {
         if (localContentToImportAfterCloudFileUpdate) {
-          usePrimitiveStore.setState((state) => {
+          usePrimitiveStore.getState().set((state) => {
             state.waiting = true;
           });
         }
@@ -1079,7 +1079,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const openCloudFileWithSaveReminder = (userid: string, title: string) => {
     if (changed) {
       Modal.confirm({
-        title: i18n.t('message.DoYouWantToSaveChanges', lang),
+        title: `${i18n.t('message.DoYouWantToSaveChanges', lang)}`,
         icon: <ExclamationCircleOutlined />,
         onOk: () => {
           if (cloudFile) {
@@ -1095,8 +1095,8 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
         onCancel: () => {
           openCloudFile(userid, title);
         },
-        okText: i18n.t('word.Yes', lang),
-        cancelText: i18n.t('word.No', lang),
+        okText: `${i18n.t('word.Yes', lang)}`,
+        cancelText: `${i18n.t('word.No', lang)}`,
       });
     } else {
       openCloudFile(userid, title);
@@ -1106,7 +1106,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const openCloudFileWithSaveReminderFromMap = (model: ModelSite) => {
     if (changed) {
       Modal.confirm({
-        title: i18n.t('message.DoYouWantToSaveChanges', lang),
+        title: `${i18n.t('message.DoYouWantToSaveChanges', lang)}`,
         icon: <ExclamationCircleOutlined />,
         onOk: () => {
           if (cloudFile) {
@@ -1124,8 +1124,8 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           openCloudFile(model.userid, model.title);
           countClicksModelsMap(model);
         },
-        okText: i18n.t('word.Yes', lang),
-        cancelText: i18n.t('word.No', lang),
+        okText: `${i18n.t('word.Yes', lang)}`,
+        cancelText: `${i18n.t('word.No', lang)}`,
       });
     } else {
       openCloudFile(model.userid, model.title);
@@ -1616,7 +1616,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   function listMyCloudFiles() {
     if (!user.uid) return;
     fetchMyCloudFiles().then(() => {
-      usePrimitiveStore.setState((state) => {
+      usePrimitiveStore.getState().set((state) => {
         state.showCloudFilePanel = true;
       });
     });

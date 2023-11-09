@@ -21,7 +21,7 @@ export const loadCloudFile = (
   const lang = { lng: useStore.getState().language };
 
   useStore.getState().undoManager.clear();
-  usePrimitiveStore.setState((state) => {
+  usePrimitiveStore.getState().set((state) => {
     state.waiting = true;
   });
 
@@ -41,7 +41,7 @@ export const loadCloudFile = (
         useStore.getState().set((state) => {
           state.cloudFile = undefined;
         });
-        usePrimitiveStore.setState((state) => {
+        usePrimitiveStore.getState().set((state) => {
           state.waiting = false;
         });
       }
@@ -52,7 +52,7 @@ export const loadCloudFile = (
     })
     .catch((error) => {
       showError(i18n.t('message.CannotOpenCloudFile', lang) + ': ' + error);
-      usePrimitiveStore.setState((state) => {
+      usePrimitiveStore.getState().set((state) => {
         state.waiting = false;
       });
     });

@@ -479,6 +479,7 @@ export const GroundMenu = React.memo(() => {
               precision={0}
               value={leafDayOfYear1}
               onChange={(value) => {
+                if (value === null) return;
                 const oldDay = leafDayOfYear1;
                 const newDay = value;
                 const undoableChange = {
@@ -515,6 +516,7 @@ export const GroundMenu = React.memo(() => {
               precision={0}
               value={leafDayOfYear2}
               onChange={(value) => {
+                if (value === null) return;
                 const oldDay = leafDayOfYear2;
                 const newDay = value;
                 const undoableChange = {
@@ -559,6 +561,7 @@ export const GroundMenu = React.memo(() => {
               precision={2}
               value={monthlyIrradianceLosses[0]}
               onChange={(value) => {
+                if (value === null) return;
                 setMonthlyIrradianceLoss(0, value);
               }}
             />
@@ -571,6 +574,7 @@ export const GroundMenu = React.memo(() => {
               precision={2}
               value={monthlyIrradianceLosses[1]}
               onChange={(value) => {
+                if (value === null) return;
                 setMonthlyIrradianceLoss(1, value);
               }}
             />
@@ -585,6 +589,7 @@ export const GroundMenu = React.memo(() => {
               precision={2}
               value={monthlyIrradianceLosses[2]}
               onChange={(value) => {
+                if (value === null) return;
                 setMonthlyIrradianceLoss(2, value);
               }}
             />
@@ -597,6 +602,7 @@ export const GroundMenu = React.memo(() => {
               precision={2}
               value={monthlyIrradianceLosses[3]}
               onChange={(value) => {
+                if (value === null) return;
                 setMonthlyIrradianceLoss(3, value);
               }}
             />
@@ -611,6 +617,7 @@ export const GroundMenu = React.memo(() => {
               precision={2}
               value={monthlyIrradianceLosses[4]}
               onChange={(value) => {
+                if (value === null) return;
                 setMonthlyIrradianceLoss(4, value);
               }}
             />
@@ -623,6 +630,7 @@ export const GroundMenu = React.memo(() => {
               precision={2}
               value={monthlyIrradianceLosses[5]}
               onChange={(value) => {
+                if (value === null) return;
                 setMonthlyIrradianceLoss(5, value);
               }}
             />
@@ -637,6 +645,7 @@ export const GroundMenu = React.memo(() => {
               precision={2}
               value={monthlyIrradianceLosses[6]}
               onChange={(value) => {
+                if (value === null) return;
                 setMonthlyIrradianceLoss(6, value);
               }}
             />
@@ -649,6 +658,7 @@ export const GroundMenu = React.memo(() => {
               precision={2}
               value={monthlyIrradianceLosses[7]}
               onChange={(value) => {
+                if (value === null) return;
                 setMonthlyIrradianceLoss(7, value);
               }}
             />
@@ -663,6 +673,7 @@ export const GroundMenu = React.memo(() => {
               precision={2}
               value={monthlyIrradianceLosses[8]}
               onChange={(value) => {
+                if (value === null) return;
                 setMonthlyIrradianceLoss(8, value);
               }}
             />
@@ -675,6 +686,7 @@ export const GroundMenu = React.memo(() => {
               precision={2}
               value={monthlyIrradianceLosses[9]}
               onChange={(value) => {
+                if (value === null) return;
                 setMonthlyIrradianceLoss(9, value);
               }}
             />
@@ -689,6 +701,7 @@ export const GroundMenu = React.memo(() => {
               precision={2}
               value={monthlyIrradianceLosses[10]}
               onChange={(value) => {
+                if (value === null) return;
                 setMonthlyIrradianceLoss(10, value);
               }}
             />
@@ -701,6 +714,7 @@ export const GroundMenu = React.memo(() => {
               precision={2}
               value={monthlyIrradianceLosses[11]}
               onChange={(value) => {
+                if (value === null) return;
                 setMonthlyIrradianceLoss(11, value);
               }}
             />

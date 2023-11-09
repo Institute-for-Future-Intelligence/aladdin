@@ -238,8 +238,8 @@ const Human = ({
               if (e.button === 2) return; // ignore right-click
               if (e.eventObject === e.intersections[0].eventObject) {
                 selectMe(id, e, ActionType.Move);
-                useRefStore.setState((state) => {
-                  state.humanRef = groupRef;
+                useRefStore.setState({
+                  humanRef: groupRef,
                 });
               }
             }}
@@ -329,8 +329,8 @@ const Human = ({
             onPointerDown={(e) => {
               if (e.button !== 2 && e.eventObject === e.intersections[0].eventObject) {
                 selectMe(id, e, ActionType.Move);
-                useRefStore.setState((state) => {
-                  state.humanRef = groupRef;
+                useRefStore.setState({
+                  humanRef: groupRef,
                 });
               }
             }}

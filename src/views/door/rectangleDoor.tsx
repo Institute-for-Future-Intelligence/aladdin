@@ -194,7 +194,7 @@ const RectangleDoor = React.memo(
           castShadow={shadowEnabled && filled}
           receiveShadow={shadowEnabled && filled}
         >
-          <shapeBufferGeometry args={[doorShape]} />
+          <shapeGeometry args={[doorShape]} />
         </mesh>
 
         {filled && (
@@ -207,7 +207,7 @@ const RectangleDoor = React.memo(
             receiveShadow={false}
             visible={false}
           >
-            <shapeBufferGeometry args={[doorShape]} />
+            <shapeGeometry args={[doorShape]} />
             <meshBasicMaterial side={DoubleSide} />
           </mesh>
         )}
@@ -221,7 +221,7 @@ const RectangleDoor = React.memo(
             castShadow={shadowEnabled && filled}
             receiveShadow={shadowEnabled && filled}
           >
-            <shapeBufferGeometry args={[doorShape]} />
+            <shapeGeometry args={[doorShape]} />
           </mesh>
         )}
 

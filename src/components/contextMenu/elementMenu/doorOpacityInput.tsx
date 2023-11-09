@@ -282,7 +282,7 @@ const DoorOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
             precision={2}
             value={inputValue}
             formatter={(a) => Number(a).toFixed(2)}
-            onChange={(value) => setInputValue(value)}
+            onChange={(value) => setInputValue(value!)}
           />
           <div style={{ paddingTop: '4px', textAlign: 'left', fontSize: '11px' }}>
             kWh/(m³·℃)

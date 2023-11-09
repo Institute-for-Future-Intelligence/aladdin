@@ -9,6 +9,7 @@ import styled from 'styled-components';
 import { Button, Space } from 'antd';
 import i18n from '../i18n/i18n';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { useTranslation } from 'react-i18next';
 
 const Container = styled.div`
   position: absolute;
@@ -37,7 +38,7 @@ const SimulationControlPanel = () => {
   const lang = { lng: language };
 
   const cancel = () => {
-    usePrimitiveStore.setState((state) => {
+    usePrimitiveStore.getState().set((state) => {
       state.runDailyThermalSimulation = false;
       state.runYearlyThermalSimulation = false;
       state.pauseDailyThermalSimulation = false;
@@ -89,7 +90,7 @@ const SimulationControlPanel = () => {
   };
 
   const pause = () => {
-    usePrimitiveStore.setState((state) => {
+    usePrimitiveStore.getState().set((state) => {
       if (state.runDailyThermalSimulation) {
         state.pauseDailyThermalSimulation = true;
       }
@@ -155,7 +156,7 @@ const SimulationControlPanel = () => {
   };
 
   const resume = () => {
-    usePrimitiveStore.setState((state) => {
+    usePrimitiveStore.getState().set((state) => {
       if (state.runDailyThermalSimulation) {
         state.pauseDailyThermalSimulation = false;
       }
@@ -220,20 +221,22 @@ const SimulationControlPanel = () => {
     });
   };
 
+  const { t } = useTranslation();
+
   return (
     <Container style={{ bottom: showDesignInfoPanel ? '42px' : '6px' }}>
       <Space direction={'horizontal'} style={{ color: 'antiquewhite', fontSize: '10px' }}>
-        <Button type="primary" onClick={cancel} title={i18n.t('message.CancelSimulation', lang)}>
-          {i18n.t('word.Cancel', lang)}
+        <Button type="primary" onClick={cancel} title={t('message.CancelSimulation', lang)}>
+          {t('word.Cancel', lang)}
         </Button>
         {!simulationPaused && (
-          <Button type="primary" onClick={pause} title={i18n.t('message.PauseSimulation', lang)}>
-            {i18n.t('word.Pause', lang)}
+          <Button type="primary" onClick={pause} title={t('message.PauseSimulation', lang)}>
+            {t('word.Pause', lang)}
           </Button>
         )}
         {simulationPaused && (
-          <Button type="primary" onClick={resume} title={i18n.t('message.ResumeSimulation', lang)}>
-            {i18n.t('word.Resume', lang)}
+          <Button type="primary" onClick={resume} title={t('message.ResumeSimulation', lang)}>
+            {t('word.Resume', lang)}
           </Button>
         )}
       </Space>

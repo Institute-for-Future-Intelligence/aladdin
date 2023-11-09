@@ -9,6 +9,7 @@ import styled from 'styled-components';
 import { Button, Space } from 'antd';
 import i18n from '../i18n/i18n';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { useTranslation } from 'react-i18next';
 
 const Container = styled.div`
   position: absolute;
@@ -34,10 +35,11 @@ const EvolutionControlPanel = () => {
   const evolutionPaused = usePrimitiveStore(Selector.evolutionPaused);
   const showDesignInfoPanel = useStore(Selector.viewState.showDesignInfoPanel);
 
+  const { t } = useTranslation();
   const lang = { lng: language };
 
   const cancel = () => {
-    usePrimitiveStore.setState((state) => {
+    usePrimitiveStore.getState().set((state) => {
       state.runStaticSimulation = false;
       state.pauseSimulation = false;
       state.runEvolution = false;
@@ -54,7 +56,7 @@ const EvolutionControlPanel = () => {
   };
 
   const pause = () => {
-    usePrimitiveStore.setState((state) => {
+    usePrimitiveStore.getState().set((state) => {
       state.pauseSimulation = true;
       if (state.runEvolution) {
         state.pauseEvolution = true;
@@ -71,7 +73,7 @@ const EvolutionControlPanel = () => {
   };
 
   const resume = () => {
-    usePrimitiveStore.setState((state) => {
+    usePrimitiveStore.getState().set((state) => {
       state.pauseSimulation = false;
       if (state.runEvolution) {
         state.pauseEvolution = false;
@@ -90,17 +92,17 @@ const EvolutionControlPanel = () => {
   return (
     <Container style={{ bottom: showDesignInfoPanel ? '42px' : '6px' }}>
       <Space direction={'horizontal'} style={{ color: 'antiquewhite', fontSize: '10px' }}>
-        <Button type="primary" onClick={cancel} title={i18n.t('message.CancelEvolution', lang)}>
-          {i18n.t('word.Cancel', lang)}
+        <Button type="primary" onClick={cancel} title={t('message.CancelEvolution', lang)}>
+          {t('word.Cancel', lang)}
         </Button>
         {!evolutionPaused && (
-          <Button type="primary" onClick={pause} title={i18n.t('message.PauseEvolution', lang)}>
-            {i18n.t('word.Pause', lang)}
+          <Button type="primary" onClick={pause} title={t('message.PauseEvolution', lang)}>
+            {t('word.Pause', lang)}
           </Button>
         )}
         {evolutionPaused && (
-          <Button type="primary" onClick={resume} title={i18n.t('message.ResumeEvolution', lang)}>
-            {i18n.t('word.Resume', lang)}
+          <Button type="primary" onClick={resume} title={t('message.ResumeEvolution', lang)}>
+            {t('word.Resume', lang)}
           </Button>
         )}
       </Space>

@@ -304,7 +304,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       const totalMinutes = now.getMinutes() + now.getHours() * 60;
       if (totalMinutes >= sunMinutes.sunset) {
         cancelAnimationFrame(requestRef.current);
-        usePrimitiveStore.setState((state) => {
+        usePrimitiveStore.getState().set((state) => {
           state.runDynamicSimulation = false;
         });
         setCommonStore((state) => {
@@ -315,8 +315,14 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         updateHeatmaps();
         // the following must be set with a different store callback so that the useEffect hook of app.ts
         // is not triggered to cancel the solar radiation heat map
-        setPrimitiveStore('simulationInProgress', false);
-        setPrimitiveStore('showSolarRadiationHeatmap', true);
+        // setPrimitiveStore('simulationInProgress', false);
+        // setPrimitiveStore('showSolarRadiationHeatmap', true);
+
+        // after upgrading packages, have to put this in setTimeout to avoid triggering useEffect hook of app.ts
+        setTimeout(() => {
+          setPrimitiveStore('simulationInProgress', false);
+          setPrimitiveStore('showSolarRadiationHeatmap', true);
+        }, 10);
         return;
       }
       // this is where time advances (by incrementing the minutes with the given interval)

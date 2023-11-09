@@ -5,7 +5,7 @@
 import { RefObject } from 'react';
 import { MyOrbitControls } from 'src/js/MyOrbitControls';
 import { Group } from 'three';
-import create from 'zustand';
+import { create } from 'zustand';
 import { useStore } from './common';
 
 export interface RefStoreState {
@@ -25,7 +25,7 @@ export interface RefStoreState {
   setListenToAutoDeletionByCut: (b: boolean) => void;
 }
 
-export const useRefStore = create<RefStoreState>((set, get) => {
+export const useRefStore = create<RefStoreState>()((set, get) => {
   return {
     setEnableOrbitController: (b: boolean) => {
       if (useStore.getState().viewState.navigationView) {
@@ -35,13 +35,14 @@ export const useRefStore = create<RefStoreState>((set, get) => {
         if (state.orbitControlsRef?.current) {
           state.orbitControlsRef.current.enabled = b;
         }
+        return state;
       });
     },
     selectNone: () => {
-      set((state) => {
-        state.humanRef = null;
-        state.treeRef = null;
-        state.foundationRef = null;
+      set({
+        humanRef: null,
+        treeRef: null,
+        foundationRef: null,
       });
     },
     contentRef: null,

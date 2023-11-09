@@ -8,10 +8,10 @@ import { RoofSegmentProps } from './roofRenderer';
 import * as Selector from 'src/stores/selector';
 import { useStore } from 'src/stores/common';
 import {
-  BoxBufferGeometry,
+  BoxGeometry,
   CanvasTexture,
   Euler,
-  ExtrudeBufferGeometry,
+  ExtrudeGeometry,
   Float32BufferAttribute,
   Mesh,
   Texture,
@@ -358,7 +358,7 @@ export const BufferRoofSegment = React.memo(
         windows.map((w) => {
           const dimension = new Vector3(w.lx, w.lz, w.ly * 2);
           const position = new Vector3(w.cx, w.cy, w.cz).sub(centroid);
-          const rotation = new Euler().fromArray([...w.rotation, 'ZXY']);
+          const rotation = new Euler().fromArray([w.rotation[0], w.rotation[1], w.rotation[2], 'ZXY']);
 
           if (w.windowType === WindowType.Polygonal) {
             // triangle window
@@ -367,7 +367,7 @@ export const BufferRoofSegment = React.memo(
 
             const shape = getPolygonWindowShape(hx, hy, tx, topH);
             const holeMesh = new Mesh(
-              new ExtrudeBufferGeometry([shape], { steps: 1, depth: dimension.z, bevelEnabled: false }),
+              new ExtrudeGeometry([shape], { steps: 1, depth: dimension.z, bevelEnabled: false }),
             );
             const offset = new Vector3(0, 0, -dimension.z).applyEuler(rotation);
             holeMesh.position.copy(position.clone().add(offset));
@@ -377,7 +377,7 @@ export const BufferRoofSegment = React.memo(
           } else if (w.windowType === WindowType.Arched) {
             const shape = getArchedWindowShape(dimension.x, dimension.y, w.archHeight);
             const holeMesh = new Mesh(
-              new ExtrudeBufferGeometry([shape], { steps: 1, depth: dimension.z, bevelEnabled: false }),
+              new ExtrudeGeometry([shape], { steps: 1, depth: dimension.z, bevelEnabled: false }),
             );
             const offset = new Vector3(0, 0, -dimension.z).applyEuler(rotation);
             holeMesh.position.copy(position.clone().add(offset));
@@ -386,7 +386,7 @@ export const BufferRoofSegment = React.memo(
             return holeMesh;
           } else {
             // rectangle window
-            const holeMesh = new Mesh(new BoxBufferGeometry(dimension.x, dimension.y, dimension.z));
+            const holeMesh = new Mesh(new BoxGeometry(dimension.x, dimension.y, dimension.z));
             holeMesh.position.copy(position);
             holeMesh.rotation.copy(rotation);
             holeMesh.updateMatrix();
@@ -625,13 +625,13 @@ export const BufferRoofSegment = React.memo(
       return [lower, upper];
     }
 
-    const HeatMapMaterial = () => (
-      <meshBasicMaterial attachArray="material" map={topLayerTexture} transparent={transparent} opacity={opacity} />
+    const HeatMapMaterial = ({ i }: { i: number }) => (
+      <meshBasicMaterial attach={`material-${i}`} map={topLayerTexture} transparent={transparent} opacity={opacity} />
     );
 
-    const TopLayerMaterial = () => (
+    const TopLayerMaterial = ({ i }: { i: number }) => (
       <meshStandardMaterial
-        attachArray="material"
+        attach={`material-${i}`}
         color={color}
         map={topLayerTexture}
         transparent={transparent}
@@ -639,8 +639,8 @@ export const BufferRoofSegment = React.memo(
       />
     );
 
-    const SideSurfaceMaterial = () => (
-      <meshStandardMaterial attachArray="material" color={sideColor} transparent={transparent} opacity={opacity} />
+    const SideSurfaceMaterial = ({ i }: { i: number }) => (
+      <meshStandardMaterial attach={`material-${i}`} color={sideColor} transparent={transparent} opacity={opacity} />
     );
 
     const enableShadow = shadowEnabled && !showSolarRadiationHeatmap;
@@ -657,11 +657,11 @@ export const BufferRoofSegment = React.memo(
       >
         {materialArray.map((_, i) => {
           if (i !== 0) {
-            return <SideSurfaceMaterial key={'side' + i} />;
+            return <SideSurfaceMaterial key={'side' + i} i={i} />;
           } else if (showSolarRadiationHeatmap) {
-            return <HeatMapMaterial key={'heatmap' + i} />;
+            return <HeatMapMaterial key={'heatmap' + i} i={i} />;
           } else {
-            return <TopLayerMaterial key={'texture' + i} />;
+            return <TopLayerMaterial key={'texture' + i} i={i} />;
           }
         })}
       </mesh>

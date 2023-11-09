@@ -348,6 +348,7 @@ const FresnelReflectorLengthInput = ({ setDialogVisible }: { setDialogVisible: (
             precision={2}
             value={inputValue}
             onChange={(value) => {
+              if (value === null) return;
               setInputValue(modularize(value));
             }}
           />

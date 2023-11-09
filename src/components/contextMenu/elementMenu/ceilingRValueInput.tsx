@@ -243,6 +243,7 @@ const CeilingRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
               value={inputValue}
               formatter={(a) => Number(a).toFixed(2)}
               onChange={(value) => {
+                if (value === null) return;
                 setInputValue(value);
                 setInputValueUS(Util.toRValueInUS(value));
               }}
@@ -263,6 +264,7 @@ const CeilingRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
               value={inputValueUS}
               formatter={(a) => Number(a).toFixed(2)}
               onChange={(value) => {
+                if (value === null) return;
                 setInputValueUS(value);
                 setInputValue(Util.toRValueInSI(value));
               }}

@@ -2,7 +2,7 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import create from 'zustand';
+import { create } from 'zustand';
 import short from 'short-uuid';
 import dayjs from 'dayjs';
 import Papa from 'papaparse';
@@ -528,7 +528,7 @@ export interface CommonStoreState {
   tempHumanPlant: ElementModel[];
 }
 
-export const useStore = create<CommonStoreState>(
+export const useStore = create<CommonStoreState>()(
   devtools(
     persist(
       (set, get) => {
@@ -666,7 +666,7 @@ export const useStore = create<CommonStoreState>(
               state.selectedFloatingWindow = null;
               StoreUtil.updateOldFileData(state);
             });
-            usePrimitiveStore.setState((state) => {
+            usePrimitiveStore.getState().set((state) => {
               state.changed = false;
               state.skipChange = true;
               state.showSolarRadiationHeatmap = false;
@@ -753,7 +753,7 @@ export const useStore = create<CommonStoreState>(
               state.deletedRoofIdSet.clear();
               state.addedRoofIdSet.clear();
             });
-            usePrimitiveStore.setState((state) => {
+            usePrimitiveStore.getState().set((state) => {
               state.changed = false;
               state.skipChange = true;
               state.showSolarRadiationHeatmap = false;
@@ -4482,7 +4482,7 @@ export const useStore = create<CommonStoreState>(
             });
           },
           localFileDialogRequested: false,
-          pvModelDialogVisible: false,
+          // pvModelDialogVisible: false,
           loggable: false,
           actionInfo: undefined,
           currentUndoable: undefined,
@@ -4505,47 +4505,47 @@ export const useStore = create<CommonStoreState>(
           const viewOnly = params.get('viewonly') === 'true';
           return viewOnly ? sessionStorage : localStorage;
         },
-        whitelist: [
-          'language',
-          'animate24Hours',
-          'floatingWindowOpacity',
-          'selectedFloatingWindow',
-          'locale',
-          'cloudFile',
-          'latestModelSite',
-          'modelSites',
-          'modelsMapLatitude',
-          'modelsMapLongitude',
-          'modelsMapAddress',
-          'modelsMapZoom',
-          'modelsMapType',
-          'modelsMapTilt',
-          'world',
-          'elements',
-          'viewState',
-          'graphState',
-          'actionState',
-          'modelType',
-          'modelAuthor',
-          'modelLabel',
-          'modelDescription',
-          'projectView',
-          'projectInfo',
-          'designProjectType',
-          'notes',
-          'user',
-          'sceneRadius',
-          'weatherData',
-          'solarPanelArrayLayoutParams',
-          'solarPanelArrayLayoutConstraints',
-          'economicsParams',
-          'evolutionMethod',
-          'evolutionaryAlgorithmState',
-          'geneticAlgorithmWizardSelectedTab',
-          'particleSwarmOptimizationWizardSelectedTab',
-          'minimumNavigationMoveSpeed',
-          'minimumNavigationTurnSpeed',
-        ],
+        partialize: (state) => ({
+          language: state.language,
+          animate24Hours: state.animate24Hours,
+          floatingWindowOpacity: state.floatingWindowOpacity,
+          selectedFloatingWindow: state.selectedFloatingWindow,
+          locale: state.locale,
+          cloudFile: state.cloudFile,
+          latestModelSite: state.latestModelSite,
+          modelSites: state.modelSites,
+          modelsMapLatitude: state.modelsMapLatitude,
+          modelsMapLongitude: state.modelsMapLongitude,
+          modelsMapAddress: state.modelsMapAddress,
+          modelsMapZoom: state.modelsMapZoom,
+          modelsMapType: state.modelsMapType,
+          modelsMapTilt: state.modelsMapTilt,
+          world: state.world,
+          elements: state.elements,
+          viewState: state.viewState,
+          graphState: state.graphState,
+          actionState: state.actionState,
+          modelType: state.modelType,
+          modelAuthor: state.modelAuthor,
+          modelLabel: state.modelLabel,
+          modelDescription: state.modelDescription,
+          projectView: state.projectView,
+          projectInfo: state.projectInfo,
+          designProjectType: state.designProjectType,
+          notes: state.notes,
+          user: state.user,
+          sceneRadius: state.sceneRadius,
+          weatherData: state.weatherData,
+          solarPanelArrayLayoutParams: state.solarPanelArrayLayoutParams,
+          solarPanelArrayLayoutConstraints: state.solarPanelArrayLayoutConstraints,
+          economicsParams: state.economicsParams,
+          evolutionMethod: state.evolutionMethod,
+          evolutionaryAlgorithmState: state.evolutionaryAlgorithmState,
+          geneticAlgorithmWizardSelectedTab: state.geneticAlgorithmWizardSelectedTab,
+          particleSwarmOptimizationWizardSelectedTab: state.particleSwarmOptimizationWizardSelectedTab,
+          minimumNavigationMoveSpeed: state.minimumNavigationMoveSpeed,
+          minimumNavigationTurnSpeed: state.minimumNavigationTurnSpeed,
+        }),
       },
     ),
   ),

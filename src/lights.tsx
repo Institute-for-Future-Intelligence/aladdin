@@ -15,8 +15,9 @@ const Lights = () => {
   const sceneRadius = useStore(Selector.sceneRadius);
   const positionExtent = 2 * sceneRadius;
   const cameraExtent = sceneRadius + 100;
+  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
 
-  const ref = useRef<DirectionalLight>();
+  const ref = useRef<DirectionalLight>(null);
 
   if (ref.current) {
     ref.current.shadow.camera.left = -cameraExtent;
@@ -41,7 +42,7 @@ const Lights = () => {
         color="white"
         position={sunlightDirection.normalize().multiplyScalar(positionExtent)}
         intensity={day ? (directLightIntensity ?? 1) * dot : 0}
-        castShadow
+        castShadow={shadowEnabled}
         shadow-mapSize-height={4096 * 4}
         shadow-mapSize-width={4096 * 4}
         shadow-camera-near={1}

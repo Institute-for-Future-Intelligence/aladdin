@@ -75,7 +75,7 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
       if (elements && elements.length > 0) {
         clearHeatmaps();
         generateHeatmaps();
-        usePrimitiveStore.setState((state) => {
+        usePrimitiveStore.getState().set((state) => {
           state.runStaticSimulation = false;
           state.simulationInProgress = false;
           state.showSolarRadiationHeatmap = true;

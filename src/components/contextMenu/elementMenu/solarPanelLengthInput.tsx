@@ -527,6 +527,7 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
             precision={2}
             value={inputValue}
             onChange={(value) => {
+              if (value === null) return;
               setInputValue(panelize(value));
             }}
           />

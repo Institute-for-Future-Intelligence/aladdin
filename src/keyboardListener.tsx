@@ -61,9 +61,9 @@ const AutoDeletionListener = React.memo(() => {
   usePrimitiveStore((state) => state.selectedElementId);
 
   useEffect(() => {
-    useRefStore.setState((state) => {
-      state.listenToAutoDeletionByDeleteRef = listenToAutoDeletionByDeleteRef;
-      state.listenToAutoDeletionByCutRef = listenToAutoDeletionByCutRef;
+    useRefStore.setState({
+      listenToAutoDeletionByDeleteRef: listenToAutoDeletionByDeleteRef,
+      listenToAutoDeletionByCutRef: listenToAutoDeletionByCutRef,
     });
   }, []);
 
@@ -898,13 +898,13 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
             };
           }
         });
-        usePrimitiveStore.setState((state) => {
+        usePrimitiveStore.getState().set((state) => {
           state.openModelsMap = false;
         });
         break;
       case 'ctrl+s':
       case 'meta+s': // for Mac
-        usePrimitiveStore.setState((state) => {
+        usePrimitiveStore.getState().set((state) => {
           state.saveLocalFileDialogVisible = true;
         });
         if (loggable) {
@@ -918,7 +918,7 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
         break;
       case 'ctrl+shift+o':
       case 'meta+shift+o': // for Mac
-        usePrimitiveStore.setState((state) => {
+        usePrimitiveStore.getState().set((state) => {
           state.listCloudFilesFlag = true;
           state.openModelsMap = false;
         });
@@ -1096,7 +1096,7 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
         break;
       case 'shift':
         if (useStore.getState().viewState.navigationView) {
-          usePrimitiveStore.setState((state) => {
+          usePrimitiveStore.getState().set((state) => {
             state.navigationMoveSpeed = 5 * useStore.getState().minimumNavigationMoveSpeed;
             state.navigationTurnSpeed = 5 * useStore.getState().minimumNavigationTurnSpeed;
           });
@@ -1144,7 +1144,7 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
     switch (key) {
       case 'shift':
         if (useStore.getState().viewState.navigationView) {
-          usePrimitiveStore.setState((state) => {
+          usePrimitiveStore.getState().set((state) => {
             state.navigationMoveSpeed = useStore.getState().minimumNavigationMoveSpeed;
             state.navigationTurnSpeed = useStore.getState().minimumNavigationTurnSpeed;
           });

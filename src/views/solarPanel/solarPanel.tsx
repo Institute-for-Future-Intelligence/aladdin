@@ -101,13 +101,13 @@ const SolarPanel = ({
   const [hovered, setHovered] = useState(false);
   const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | RotateHandleType | null>(null);
   const [faceUp, setFaceUp] = useState<boolean>();
-  const baseRef = useRef<Mesh>();
-  const moveHandleRef = useRef<Mesh>();
-  const resizeHandleLowerRef = useRef<Mesh>();
-  const resizeHandleUpperRef = useRef<Mesh>();
-  const resizeHandleLeftRef = useRef<Mesh>();
-  const resizeHandleRightRef = useRef<Mesh>();
-  const tiltHandleRef = useRef<Mesh>();
+  const baseRef = useRef<Mesh>(null);
+  const moveHandleRef = useRef<Mesh>(null);
+  const resizeHandleLowerRef = useRef<Mesh>(null);
+  const resizeHandleUpperRef = useRef<Mesh>(null);
+  const resizeHandleLeftRef = useRef<Mesh>(null);
+  const resizeHandleRightRef = useRef<Mesh>(null);
+  const tiltHandleRef = useRef<Mesh>(null);
   const pointerDown = useRef<boolean>(false);
   const oldTiltAngleRef = useRef<number>(0);
   const newTiltAngleRef = useRef<number>(0);
@@ -374,15 +374,15 @@ const SolarPanel = ({
 
   const renderTopTextureMaterial = () => {
     if (showSolarRadiationHeatmap && heatmapTexture) {
-      return <meshBasicMaterial attachArray="material" map={heatmapTexture} />;
+      return <meshBasicMaterial attach="material-4" map={heatmapTexture} />;
     }
     if (!texture) return null;
     if (orthographic || solarPanelShininess === 0) {
-      return <meshStandardMaterial attachArray="material" map={texture} color={color} />;
+      return <meshStandardMaterial attach="material-4" map={texture} color={color} />;
     }
     return (
       <meshPhongMaterial
-        attachArray="material"
+        attach="material-4"
         specular={new Color(pvModel?.color === 'Blue' ? SOLAR_PANEL_BLUE_SPECULAR : SOLAR_PANEL_BLACK_SPECULAR)}
         shininess={solarPanelShininess ?? DEFAULT_SOLAR_PANEL_SHININESS}
         side={FrontSide}
@@ -394,12 +394,12 @@ const SolarPanel = ({
 
   const renderBotTextureMaterial = () => {
     if (pvModel?.bifacialityFactor === 0 || orthographic || (poleHeight === 0 && tiltAngle === 0)) {
-      return <meshStandardMaterial attachArray="material" color={color} />;
+      return <meshStandardMaterial attach="material-5" color={color} />;
     }
     if (!texture) return null;
     return (
       <meshPhongMaterial
-        attachArray="material"
+        attach="material-5"
         specular={new Color(pvModel?.color === 'Blue' ? SOLAR_PANEL_BLUE_SPECULAR : SOLAR_PANEL_BLACK_SPECULAR)}
         shininess={solarPanelShininess ?? DEFAULT_SOLAR_PANEL_SHININESS}
         side={FrontSide}
@@ -449,10 +449,10 @@ const SolarPanel = ({
             domElement.style.cursor = 'default';
           }}
         >
-          <meshStandardMaterial attachArray="material" color={color} />
-          <meshStandardMaterial attachArray="material" color={color} />
-          <meshStandardMaterial attachArray="material" color={color} />
-          <meshStandardMaterial attachArray="material" color={color} />
+          <meshStandardMaterial attach="material-0" color={color} />
+          <meshStandardMaterial attach="material-1" color={color} />
+          <meshStandardMaterial attach="material-2" color={color} />
+          <meshStandardMaterial attach="material-3" color={color} />
           {renderTopTextureMaterial()}
           {renderBotTextureMaterial()}
         </Box>

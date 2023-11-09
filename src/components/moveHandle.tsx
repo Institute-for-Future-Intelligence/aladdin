@@ -25,7 +25,7 @@ const MoveHandle = ({ handleType, position, size, onPointerDown, onPointerOver, 
   const moveHandleType = useStore(Selector.moveHandleType);
   const hoveredHandle = useStore(Selector.hoveredHandle);
 
-  const handleRef = useRef<Mesh>();
+  const handleRef = useRef<Mesh>(null);
 
   const [cx, cy, cz] = position;
 

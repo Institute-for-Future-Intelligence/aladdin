@@ -22,7 +22,7 @@ const WindowResizeHandle = ({ x, z, handleType, scale = [1, 1, 1] }: WindowResiz
   const setCommonStore = useStore(Selector.set);
   const resizeHandleType = useStore(Selector.resizeHandleType);
 
-  const handleRef = useRef<Mesh>();
+  const handleRef = useRef<Mesh>(null);
 
   const [color, setColor] = useState('white');
 

@@ -71,8 +71,8 @@ const SutSimulationSettings = () => {
                 state.world.sutDaysPerYear = value;
               });
               // clear the results stored in the common store
-              useDataStore.setState((state) => {
-                state.yearlyUpdraftTowerYield = [];
+              useDataStore.setState({
+                yearlyUpdraftTowerYield: [],
               });
             }}
           >
@@ -98,6 +98,7 @@ const SutSimulationSettings = () => {
             precision={1}
             value={sutGridCellSize ?? 1}
             onChange={(value) => {
+              if (value === null) return;
               setCommonStore((state) => {
                 state.world.sutGridCellSize = value;
               });

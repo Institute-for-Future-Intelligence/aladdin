@@ -20,7 +20,7 @@ import {
   Vector3,
 } from 'three';
 import { useRefStore } from 'src/stores/commonRef';
-import { useThree } from '@react-three/fiber';
+import { ThreeEvent, useThree } from '@react-three/fiber';
 import {
   DEFAULT_HEAT_FLUX_COLOR,
   DEFAULT_HEAT_FLUX_DENSITY_FACTOR,
@@ -390,7 +390,7 @@ const GableRoof = ({ roofModel, foundationModel }: GableRoofProps) => {
     useStore.getState().addUndoable(undoable);
   };
 
-  const setRayCast = (e: PointerEvent) => {
+  const setRayCast = (e: ThreeEvent<PointerEvent>) => {
     mouse.x = (e.offsetX / gl.domElement.clientWidth) * 2 - 1;
     mouse.y = -(e.offsetY / gl.domElement.clientHeight) * 2 + 1;
     ray.setFromCamera(mouse, camera);

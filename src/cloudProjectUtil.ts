@@ -63,7 +63,7 @@ export const removeDesignFromProject = (userid: string, projectTitle: string, de
       designs: firebase.firestore.FieldValue.arrayRemove(design),
     })
     .then(() => {
-      usePrimitiveStore.setState((state) => {
+      usePrimitiveStore.getState().set((state) => {
         state.updateProjectsFlag = true;
       });
       // also delete the design
@@ -75,7 +75,7 @@ export const removeDesignFromProject = (userid: string, projectTitle: string, de
         .doc(design.title)
         .delete()
         .then(() => {
-          useStore.setState((state) => {
+          useStore.getState().set((state) => {
             if (design.title === state.cloudFile) {
               state.cloudFile = undefined;
             }
@@ -440,7 +440,7 @@ export const updateDesign = (
   canvas: HTMLCanvasElement | null,
 ) => {
   const lang = { lng: useStore.getState().language };
-  usePrimitiveStore.setState((state) => {
+  usePrimitiveStore.getState().set((state) => {
     state.waiting = true;
   });
 
@@ -501,7 +501,7 @@ export const updateDesign = (
                       useStore.getState().set((state) => {
                         state.projectInfo.designs = updatedDesigns;
                       });
-                      usePrimitiveStore.setState((state) => {
+                      usePrimitiveStore.getState().set((state) => {
                         state.updateProjectsFlag = true;
                         state.waiting = false;
                       });

@@ -23,6 +23,7 @@ import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
+import { useTranslation } from 'react-i18next';
 
 const Container = styled.div`
   position: fixed;
@@ -206,8 +207,9 @@ const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelPr
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parabolicDishCount, individualOutputs]);
 
-  const labelX = i18n.t('word.Month', lang);
-  const labelY = i18n.t('parabolicDishYieldPanel.Yield', lang);
+  const { t } = useTranslation();
+  const labelX = t('word.Month', lang);
+  const labelY = t('parabolicDishYieldPanel.Yield', lang);
   const yearScaleFactor = 12 / daysPerYear;
   const emptyGraph = yearlyYield && yearlyYield[0] ? Object.keys(yearlyYield[0]).length === 0 : true;
 
@@ -240,9 +242,9 @@ const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelPr
         >
           <Header className="handle" style={{ direction: 'ltr' }}>
             <span>
-              {i18n.t('parabolicDishYieldPanel.ParabolicDishYearlyYield', lang) + ': '}
+              {t('parabolicDishYieldPanel.ParabolicDishYearlyYield', lang) + ': '}
               <span style={{ fontSize: '10px' }}>
-                {i18n.t('sensorPanel.WeatherDataFrom', lang) + ' ' + city + ' | ' + now.getFullYear()}
+                {t('sensorPanel.WeatherDataFrom', lang) + ' ' + city + ' | ' + now.getFullYear()}
               </span>
             </span>
             <span
@@ -254,7 +256,7 @@ const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelPr
                 closePanel();
               }}
             >
-              {i18n.t('word.Close', lang)}
+              {t('word.Close', lang)}
             </span>
           </Header>
           <LineGraph
@@ -266,7 +268,7 @@ const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelPr
             dataKeyAxisX={'Month'}
             labelX={labelX}
             labelY={labelY}
-            unitY={i18n.t('word.kWh', lang)}
+            unitY={t('word.kWh', lang)}
             yMin={0}
             curveType={'linear'}
             fractionDigits={2}
@@ -288,11 +290,11 @@ const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelPr
                         <>
                           <hr></hr>
                           <div style={{ textAlign: 'right' }}>
-                            {i18n.t('word.Total', lang) +
+                            {t('word.Total', lang) +
                               ': ' +
                               (sum * yearScaleFactor).toFixed(2) +
                               ' ' +
-                              i18n.t('word.kWh', lang)}
+                              t('word.kWh', lang)}
                           </div>
                         </>
                       )}
@@ -300,27 +302,27 @@ const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelPr
                   ))}
                 >
                   <Space style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
-                    {i18n.t('shared.OutputBreakdown', lang)}
+                    {t('shared.OutputBreakdown', lang)}
                   </Space>
                 </Popover>
               ) : (
                 <Space>
-                  {i18n.t('parabolicDishYieldPanel.YearlyTotal', lang)}:{(sum * yearScaleFactor).toFixed(2)}{' '}
-                  {i18n.t('word.kWh', lang)}
+                  {t('parabolicDishYieldPanel.YearlyTotal', lang)}:{(sum * yearScaleFactor).toFixed(2)}{' '}
+                  {t('word.kWh', lang)}
                 </Space>
               )}
               {parabolicDishCount > 1 && (
                 <Switch
-                  title={i18n.t('parabolicDishYieldPanel.ShowOutputsOfIndividualParabolicDishes', lang)}
+                  title={t('parabolicDishYieldPanel.ShowOutputsOfIndividualParabolicDishes', lang)}
                   checkedChildren={<UnorderedListOutlined />}
                   unCheckedChildren={<UnorderedListOutlined />}
                   checked={individualOutputs}
                   onChange={(checked) => {
                     if (parabolicDishCount === 0) {
-                      showInfo(i18n.t('analysisManager.NoParabolicDishForAnalysis', lang));
+                      showInfo(t('analysisManager.NoParabolicDishForAnalysis', lang));
                       return;
                     }
-                    showInfo(i18n.t('message.SimulationStarted', lang));
+                    showInfo(t('message.SimulationStarted', lang));
                     // give it 0.1 second for the info to show up
                     setTimeout(() => {
                       setCommonStore((state) => {
@@ -332,7 +334,7 @@ const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelPr
                           };
                         }
                       });
-                      usePrimitiveStore.setState((state) => {
+                      usePrimitiveStore.getState().set((state) => {
                         state.runYearlySimulationForParabolicDishes = true;
                         state.pauseYearlySimulationForParabolicDishes = false;
                         state.simulationInProgress = true;
@@ -344,13 +346,13 @@ const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelPr
               <Button
                 type="default"
                 icon={emptyGraph ? <CaretRightOutlined /> : <ReloadOutlined />}
-                title={i18n.t(emptyGraph ? 'word.Run' : 'word.Update', lang)}
+                title={t(emptyGraph ? 'word.Run' : 'word.Update', lang)}
                 onClick={() => {
                   if (parabolicDishCount === 0) {
-                    showInfo(i18n.t('analysisManager.NoParabolicDishForAnalysis', lang));
+                    showInfo(t('analysisManager.NoParabolicDishForAnalysis', lang));
                     return;
                   }
-                  showInfo(i18n.t('message.SimulationStarted', lang));
+                  showInfo(t('message.SimulationStarted', lang));
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
                     setCommonStore((state) => {
@@ -361,7 +363,7 @@ const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelPr
                         };
                       }
                     });
-                    usePrimitiveStore.setState((state) => {
+                    usePrimitiveStore.getState().set((state) => {
                       state.runYearlySimulationForParabolicDishes = true;
                       state.pauseYearlySimulationForParabolicDishes = false;
                       state.simulationInProgress = true;
@@ -372,10 +374,10 @@ const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelPr
               <Button
                 type="default"
                 icon={<CameraOutlined />}
-                title={i18n.t('word.SaveAsImage', lang)}
+                title={t('word.SaveAsImage', lang)}
                 onClick={() => {
                   screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-parabolic-dish-yield', {}).then(() => {
-                    showInfo(i18n.t('message.ScreenshotSaved', lang));
+                    showInfo(t('message.ScreenshotSaved', lang));
                     if (loggable) {
                       setCommonStore((state) => {
                         state.actionInfo = {
@@ -391,10 +393,10 @@ const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelPr
                 <Button
                   type="default"
                   icon={<SaveOutlined />}
-                  title={i18n.t('word.SaveAsCsv', lang)}
+                  title={t('word.SaveAsCsv', lang)}
                   onClick={() => {
                     saveCsv(yearlyYield, 'yearly-parabolic-dish-yield.csv');
-                    showInfo(i18n.t('message.CsvFileSaved', lang));
+                    showInfo(t('message.CsvFileSaved', lang));
                     if (loggable) {
                       setCommonStore((state) => {
                         state.actionInfo = {

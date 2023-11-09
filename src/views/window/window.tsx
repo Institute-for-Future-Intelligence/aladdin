@@ -251,7 +251,7 @@ const Window = (windowModel: WindowModel) => {
       switch (handleType) {
         case MoveHandleType.Mid: {
           useRefStore.getState().setEnableOrbitController(false);
-          usePrimitiveStore.setState((state) => {
+          usePrimitiveStore.getState().set((state) => {
             state.showWallIntersectionPlaneId = parentId;
             state.oldParentId = parentId;
             state.oldFoundationId = foundationId;

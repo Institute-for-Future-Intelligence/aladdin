@@ -222,7 +222,10 @@ const SolarAbsorberPipePoleNumberInput = ({ setDialogVisible }: { setDialogVisib
             step={1}
             precision={0}
             value={inputValue}
-            onChange={setInputValue}
+            onChange={(value) => {
+              if (value === null) return;
+              setInputValue(value);
+            }}
           />
           <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
             {i18n.t('word.Range', lang)}: [1, 100]

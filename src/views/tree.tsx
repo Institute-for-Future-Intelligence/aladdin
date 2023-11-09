@@ -94,15 +94,15 @@ const Tree = ({
 
   const contentRef = useRefStore((state) => state.contentRef);
   const groupRef = useRef<Group>(null);
-  const solidTreeRef = useRef<Mesh>(null);
-  const shadowTreeRef = useRef<Mesh>(null);
+  const solidTreeRef = useRef<Group>(null);
+  const shadowTreeRef = useRef<Group>(null);
   const trunkMeshRef = useRef<Mesh>(null);
-  const interactionPlaneRef = useRef<Mesh>(null);
-  const resizeHandleTopRef = useRef<Mesh>();
-  const resizeHandleLeftRef = useRef<Mesh>();
-  const resizeHandleRightRef = useRef<Mesh>();
-  const resizeHandleLowerRef = useRef<Mesh>();
-  const resizeHandleUpperRef = useRef<Mesh>();
+  const interactionPlaneRef = useRef<Group>(null);
+  const resizeHandleTopRef = useRef<Mesh>(null);
+  const resizeHandleLeftRef = useRef<Mesh>(null);
+  const resizeHandleRightRef = useRef<Mesh>(null);
+  const resizeHandleLowerRef = useRef<Mesh>(null);
+  const resizeHandleUpperRef = useRef<Mesh>(null);
 
   const lang = useMemo(() => {
     return { lng: language };
@@ -276,8 +276,8 @@ const Tree = ({
 
             {/* cast shadow */}
             <Billboard ref={shadowTreeRef} name={name + ' Shadow Billboard'} follow={false}>
-              <Plane castShadow={shadowEnabled} args={[lx, lz]} customDepthMaterial={customDepthMaterial}>
-                <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0} depthTest={false} />
+              <Plane args={[lx, lz]} castShadow={shadowEnabled}>
+                <meshBasicMaterial map={texture} side={DoubleSide} alphaTest={0.5} opacity={0} />
               </Plane>
             </Billboard>
 
@@ -335,8 +335,8 @@ const Tree = ({
                   if (e.button === 2) return; // ignore right-click
                   if (e.eventObject === e.intersections[0].eventObject) {
                     selectMe(id, e, ActionType.Move);
-                    useRefStore.setState((state) => {
-                      state.treeRef = groupRef;
+                    useRefStore.setState({
+                      treeRef: groupRef,
                     });
                   }
                 }}
@@ -389,8 +389,8 @@ const Tree = ({
                   onPointerDown={(e) => {
                     if (e.button !== 2 && e.eventObject === e.intersections[0].eventObject) {
                       selectMe(id, e, ActionType.Move);
-                      useRefStore.setState((state) => {
-                        state.treeRef = groupRef;
+                      useRefStore.setState({
+                        treeRef: groupRef,
                       });
                     }
                   }}

@@ -182,7 +182,7 @@ const GroupMaster = ({
     setRotation(initalRotation);
   }, [initalPosition, initalDimension, initalRotation]);
 
-  const setRayCast = (e: PointerEvent) => {
+  const setRayCast = (e: ThreeEvent<PointerEvent>) => {
     mouse.x = (e.offsetX / getThree().gl.domElement.clientWidth) * 2 - 1;
     mouse.y = -(e.offsetY / getThree().gl.domElement.clientHeight) * 2 + 1;
     ray.setFromCamera(mouse, getThree().camera);

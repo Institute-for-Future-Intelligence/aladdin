@@ -3,7 +3,7 @@
  */
 
 import { Cone, Line, Plane } from '@react-three/drei';
-import { useThree } from '@react-three/fiber';
+import { ThreeEvent, useThree } from '@react-three/fiber';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   DEFAULT_HEAT_FLUX_COLOR,
@@ -24,7 +24,7 @@ import { ActionType, ObjectType, ResizeHandleType, RoofHandleType, RoofTexture }
 import { UnoableResizeMansardRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import {
-  BoxBufferGeometry,
+  BoxGeometry,
   CanvasTexture,
   DoubleSide,
   Euler,
@@ -205,7 +205,7 @@ const MansardRoof = ({ roofModel, foundationModel }: MansardRoofProps) => {
     }
   };
 
-  const setRayCast = (e: PointerEvent) => {
+  const setRayCast = (e: ThreeEvent<PointerEvent>) => {
     mouse.x = (e.offsetX / gl.domElement.clientWidth) * 2 - 1;
     mouse.y = -(e.offsetY / gl.domElement.clientHeight) * 2 + 1;
     ray.setFromCamera(mouse, camera);
@@ -841,9 +841,9 @@ const MansardRoof = ({ roofModel, foundationModel }: MansardRoofProps) => {
       windows.map((w) => {
         const dimension = new Vector3(w.lx, w.lz, w.ly * 2);
         const position = new Vector3(w.cx, w.cy, w.cz).sub(centroid);
-        const rotation = new Euler().fromArray([...w.rotation, 'ZXY']);
+        const rotation = new Euler().fromArray([w.rotation[0], w.rotation[1], w.rotation[2], 'ZXY']);
 
-        const holeMesh = new Mesh(new BoxBufferGeometry(dimension.x, dimension.y, dimension.z));
+        const holeMesh = new Mesh(new BoxGeometry(dimension.x, dimension.y, dimension.z));
         holeMesh.position.copy(position);
         holeMesh.rotation.copy(rotation);
         holeMesh.updateMatrix();

@@ -55,10 +55,10 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
 
   const createNewFile = () => {
     Modal.confirm({
-      title: i18n.t('message.DoYouWantToSaveChanges', lang),
+      title: `${i18n.t('message.DoYouWantToSaveChanges', lang)}`,
       icon: <ExclamationCircleOutlined />,
-      okText: i18n.t('word.Yes', lang),
-      cancelText: i18n.t('word.No', lang),
+      okText: `${i18n.t('word.Yes', lang)}`,
+      cancelText: `${i18n.t('word.No', lang)}`,
       onOk: () => {
         if (user.uid) {
           if (cloudFile) {
@@ -121,7 +121,7 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
     const fileDialog = document.getElementById('file-dialog') as HTMLInputElement;
     fileDialog.onchange = () => {
       if (fileDialog.files && fileDialog.files.length > 0) {
-        usePrimitiveStore.setState((state) => {
+        usePrimitiveStore.getState().set((state) => {
           state.waiting = true;
         });
         const reader = new FileReader();
@@ -186,7 +186,7 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
   const performOkAction = () => {
     setConfirmLoading(true);
     if (writeLocalFile()) {
-      usePrimitiveStore.setState((state) => {
+      usePrimitiveStore.getState().set((state) => {
         state.saveLocalFileDialogVisible = false;
       });
     }
@@ -194,7 +194,7 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
   };
 
   const performCancelAction = () => {
-    usePrimitiveStore.setState((state) => {
+    usePrimitiveStore.getState().set((state) => {
       state.saveLocalFileDialogVisible = false;
     });
   };

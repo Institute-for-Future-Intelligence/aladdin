@@ -558,7 +558,7 @@ export const RoofHandle = ({ position, onPointerDown, onPointerUp, onPointerOver
   const pointerDownRef = useRef(false);
   const hoveredRef = useRef(false);
   const haveFiredEvent = useRef(false);
-  const handleRef = useRef<Mesh>();
+  const handleRef = useRef<Mesh>(null);
 
   const [color, setColor] = useState('white');
 

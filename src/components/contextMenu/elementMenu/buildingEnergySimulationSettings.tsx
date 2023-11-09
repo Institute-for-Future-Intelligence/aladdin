@@ -90,6 +90,7 @@ const BuildingEnergySimulationSettings = () => {
             precision={2}
             value={gridCellSize ?? 0.5}
             onChange={(value) => {
+              if (value === null) return;
               setCommonStore((state) => {
                 state.world.solarRadiationHeatmapGridCellSize = value;
               });
