@@ -4,9 +4,8 @@
 
 import React, { useRef, useState } from 'react';
 import { Col, InputNumber, Radio, RadioChangeEvent, Row, Space } from 'antd';
-import { useStore } from '../../../stores/common';
+import { CommonStoreState, useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
-import { SolarPanelModel } from '../../../models/SolarPanelModel';
 import { ObjectType, Scope } from '../../../types';
 import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
@@ -16,25 +15,22 @@ import { ZERO_TOLERANCE } from '../../../constants';
 import { useSelectedElement } from './menuHooks';
 import Dialog from '../dialog';
 import { useLanguage } from 'src/views/hooks';
+import { WindTurbineModel } from '../../../models/WindTurbineModel';
 
 const WindTurbineTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
-  const updatePoleHeightById = useStore(Selector.updateSolarCollectorPoleHeightById);
-  const updatePoleHeightOnSurface = useStore(Selector.updateSolarCollectorPoleHeightOnSurface);
-  const updatePoleHeightAboveFoundation = useStore(Selector.updateSolarCollectorPoleHeightAboveFoundation);
-  const updatePoleHeightForAll = useStore(Selector.updateSolarCollectorPoleHeightForAll);
   const getParent = useStore(Selector.getParent);
   const addUndoable = useStore(Selector.addUndoable);
-  const actionScope = useStore(Selector.solarPanelActionScope);
-  const setActionScope = useStore(Selector.setSolarPanelActionScope);
+  const actionScope = useStore(Selector.windTurbineActionScope);
+  const setActionScope = useStore(Selector.setWindTurbineActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const solarPanel = useSelectedElement(ObjectType.SolarPanel) as SolarPanelModel | undefined;
-  const [inputValue, setInputValue] = useState(solarPanel?.poleHeight ?? 0);
+  const windTurbine = useSelectedElement(ObjectType.WindTurbine) as WindTurbineModel | undefined;
+  const [inputValue, setInputValue] = useState(windTurbine?.towerHeight ?? 0);
 
   const rejectRef = useRef<boolean>(false);
   const rejectedValue = useRef<number | undefined>();
@@ -45,14 +41,14 @@ const WindTurbineTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (
     setActionScope(e.target.value);
   };
 
-  const needChange = (poleHeight: number) => {
-    if (!solarPanel) return;
+  const needChange = (towerHeight: number) => {
+    if (!windTurbine) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
-          if (e.type === ObjectType.SolarPanel && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
-            const sp = e as SolarPanelModel;
-            if (Math.abs(sp.poleHeight - poleHeight) > ZERO_TOLERANCE) {
+          if (e.type === ObjectType.WindTurbine && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            const wt = e as WindTurbineModel;
+            if (Math.abs(wt.towerHeight - towerHeight) > ZERO_TOLERANCE) {
               return true;
             }
           }
@@ -60,37 +56,37 @@ const WindTurbineTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         for (const e of elements) {
-          if (e.type === ObjectType.SolarPanel && e.foundationId === solarPanel?.foundationId && !e.locked) {
-            const sp = e as SolarPanelModel;
-            if (Math.abs(sp.poleHeight - poleHeight) > ZERO_TOLERANCE) {
+          if (e.type === ObjectType.WindTurbine && e.foundationId === windTurbine?.foundationId && !e.locked) {
+            const wt = e as WindTurbineModel;
+            if (Math.abs(wt.towerHeight - towerHeight) > ZERO_TOLERANCE) {
               return true;
             }
           }
         }
         break;
       case Scope.AllObjectsOfThisTypeOnSurface:
-        const parent = getParent(solarPanel);
+        const parent = getParent(windTurbine);
         if (parent) {
           const isParentCuboid = parent.type === ObjectType.Cuboid;
           if (isParentCuboid) {
             for (const e of elements) {
               if (
-                e.type === ObjectType.SolarPanel &&
-                e.parentId === solarPanel.parentId &&
-                Util.isIdentical(e.normal, solarPanel.normal) &&
+                e.type === ObjectType.WindTurbine &&
+                e.parentId === windTurbine.parentId &&
+                Util.isIdentical(e.normal, windTurbine.normal) &&
                 !e.locked
               ) {
-                const sp = e as SolarPanelModel;
-                if (Math.abs(sp.poleHeight - poleHeight) > ZERO_TOLERANCE) {
+                const wt = e as WindTurbineModel;
+                if (Math.abs(wt.towerHeight - towerHeight) > ZERO_TOLERANCE) {
                   return true;
                 }
               }
             }
           } else {
             for (const e of elements) {
-              if (e.type === ObjectType.SolarPanel && e.parentId === solarPanel.parentId && !e.locked) {
-                const sp = e as SolarPanelModel;
-                if (Math.abs(sp.poleHeight - poleHeight) > ZERO_TOLERANCE) {
+              if (e.type === ObjectType.WindTurbine && e.parentId === windTurbine.parentId && !e.locked) {
+                const wt = e as WindTurbineModel;
+                if (Math.abs(wt.towerHeight - towerHeight) > ZERO_TOLERANCE) {
                   return true;
                 }
               }
@@ -99,34 +95,69 @@ const WindTurbineTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (
         }
         break;
       default:
-        if (Math.abs(solarPanel?.poleHeight - poleHeight) > ZERO_TOLERANCE) {
+        if (Math.abs(windTurbine?.towerHeight - towerHeight) > ZERO_TOLERANCE) {
           return true;
         }
     }
     return false;
   };
 
-  const updateInMap = (map: Map<string, number>, value: number) => {
-    useStore.getState().set((state) => {
+  const updateTowerHeightById = (id: string, h: number) => {
+    setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
-        if (e.type === ObjectType.SolarPanel && !e.locked && map.has(e.id)) {
-          const sp = e as SolarPanelModel;
-          sp.poleHeight = value;
+        if (e.type === ObjectType.WindTurbine && e.id === id && !e.locked) {
+          const wt = e as WindTurbineModel;
+          wt.towerHeight = h;
+          break;
         }
       }
     });
   };
 
-  const setPoleHeight = (value: number) => {
-    if (!solarPanel) return;
+  const updateTowerHeightAboveFoundation = (foundationId: string, h: number) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.WindTurbine && e.foundationId === foundationId && !e.locked) {
+          const wt = e as WindTurbineModel;
+          wt.towerHeight = h;
+        }
+      }
+    });
+  };
+
+  const updateTowerHeightForAll = (h: number) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.WindTurbine && !e.locked) {
+          const wt = e as WindTurbineModel;
+          wt.towerHeight = h;
+        }
+      }
+    });
+  };
+
+  const updateInMap = (map: Map<string, number>, value: number) => {
+    useStore.getState().set((state) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.WindTurbine && !e.locked && map.has(e.id)) {
+          const wt = e as WindTurbineModel;
+          wt.towerHeight = value;
+        }
+      }
+    });
+  };
+
+  const setTowerHeight = (value: number) => {
+    if (!windTurbine) return;
     if (!needChange(value)) return;
     rejectedValue.current = undefined;
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType: {
         rejectRef.current = false;
         for (const elem of elements) {
-          if (elem.type === ObjectType.SolarPanel && useStore.getState().selectedElementIdSet.has(elem.id)) {
-            if (0.5 * elem.ly * Math.abs(Math.sin((elem as SolarPanelModel).tiltAngle)) > value) {
+          if (elem.type === ObjectType.WindTurbine && useStore.getState().selectedElementIdSet.has(elem.id)) {
+            const wt = elem as WindTurbineModel;
+            if (wt.bladeRadius > value) {
               rejectRef.current = true;
               break;
             }
@@ -134,22 +165,22 @@ const WindTurbineTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (
         }
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputValue(solarPanel.poleHeight);
+          setInputValue(windTurbine.towerHeight);
         } else {
-          const oldPoleHeightsSelected = new Map<string, number>();
+          const oldHeightsSelected = new Map<string, number>();
           for (const elem of elements) {
-            if (elem.type === ObjectType.SolarPanel && useStore.getState().selectedElementIdSet.has(elem.id)) {
-              oldPoleHeightsSelected.set(elem.id, (elem as SolarPanelModel).poleHeight);
+            if (elem.type === ObjectType.WindTurbine && useStore.getState().selectedElementIdSet.has(elem.id)) {
+              oldHeightsSelected.set(elem.id, (elem as WindTurbineModel).towerHeight);
             }
           }
           const undoableChangeSelected = {
-            name: 'Set Pole Height for Selected Solar Panel Arrays',
+            name: 'Set Tower Height for Selected Wind Turbines',
             timestamp: Date.now(),
-            oldValues: oldPoleHeightsSelected,
+            oldValues: oldHeightsSelected,
             newValue: value,
             undo: () => {
-              for (const [id, ph] of undoableChangeSelected.oldValues.entries()) {
-                updatePoleHeightById(id, ph as number);
+              for (const [id, th] of undoableChangeSelected.oldValues.entries()) {
+                updateTowerHeightById(id, th as number);
               }
             },
             redo: () => {
@@ -160,7 +191,7 @@ const WindTurbineTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeSelected);
-          updateInMap(oldPoleHeightsSelected, value);
+          updateInMap(oldHeightsSelected, value);
           setApplyCount(applyCount + 1);
         }
         break;
@@ -168,8 +199,9 @@ const WindTurbineTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (
       case Scope.AllObjectsOfThisType: {
         rejectRef.current = false;
         for (const elem of elements) {
-          if (elem.type === ObjectType.SolarPanel) {
-            if (0.5 * elem.ly * Math.abs(Math.sin((elem as SolarPanelModel).tiltAngle)) > value) {
+          if (elem.type === ObjectType.WindTurbine) {
+            const wt = elem as WindTurbineModel;
+            if (wt.bladeRadius > value) {
               rejectRef.current = true;
               break;
             }
@@ -177,40 +209,41 @@ const WindTurbineTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (
         }
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputValue(solarPanel.poleHeight);
+          setInputValue(windTurbine.towerHeight);
         } else {
-          const oldPoleHeightsAll = new Map<string, number>();
+          const oldHeightsAll = new Map<string, number>();
           for (const elem of elements) {
-            if (elem.type === ObjectType.SolarPanel) {
-              oldPoleHeightsAll.set(elem.id, (elem as SolarPanelModel).poleHeight);
+            if (elem.type === ObjectType.WindTurbine) {
+              oldHeightsAll.set(elem.id, (elem as WindTurbineModel).towerHeight);
             }
           }
           const undoableChangeAll = {
-            name: 'Set Pole Height for All Solar Panel Arrays',
+            name: 'Set Tower Height for All Wind Turbines',
             timestamp: Date.now(),
-            oldValues: oldPoleHeightsAll,
+            oldValues: oldHeightsAll,
             newValue: value,
             undo: () => {
-              for (const [id, ph] of undoableChangeAll.oldValues.entries()) {
-                updatePoleHeightById(id, ph as number);
+              for (const [id, th] of undoableChangeAll.oldValues.entries()) {
+                updateTowerHeightById(id, th as number);
               }
             },
             redo: () => {
-              updatePoleHeightForAll(ObjectType.SolarPanel, undoableChangeAll.newValue as number);
+              updateTowerHeightForAll(undoableChangeAll.newValue as number);
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAll);
-          updatePoleHeightForAll(ObjectType.SolarPanel, value);
+          updateTowerHeightForAll(value);
           setApplyCount(applyCount + 1);
         }
         break;
       }
       case Scope.AllObjectsOfThisTypeAboveFoundation:
-        if (solarPanel.foundationId) {
+        if (windTurbine.foundationId) {
           rejectRef.current = false;
           for (const elem of elements) {
-            if (elem.type === ObjectType.SolarPanel && elem.foundationId === solarPanel.foundationId) {
-              if (0.5 * elem.ly * Math.abs(Math.sin((elem as SolarPanelModel).tiltAngle)) > value) {
+            if (elem.type === ObjectType.WindTurbine && elem.foundationId === windTurbine.foundationId) {
+              const wt = elem as WindTurbineModel;
+              if (wt.bladeRadius > value) {
                 rejectRef.current = true;
                 break;
               }
@@ -218,29 +251,28 @@ const WindTurbineTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (
           }
           if (rejectRef.current) {
             rejectedValue.current = value;
-            setInputValue(solarPanel.poleHeight);
+            setInputValue(windTurbine.towerHeight);
           } else {
-            const oldPoleHeightsAboveFoundation = new Map<string, number>();
+            const oldHeightsAboveFoundation = new Map<string, number>();
             for (const elem of elements) {
-              if (elem.type === ObjectType.SolarPanel && elem.foundationId === solarPanel.foundationId) {
-                oldPoleHeightsAboveFoundation.set(elem.id, (elem as SolarPanelModel).poleHeight);
+              if (elem.type === ObjectType.WindTurbine && elem.foundationId === windTurbine.foundationId) {
+                oldHeightsAboveFoundation.set(elem.id, (elem as WindTurbineModel).towerHeight);
               }
             }
             const undoableChangeAboveFoundation = {
-              name: 'Set Pole Height for All Solar Panel Arrays Above Foundation',
+              name: 'Set Tower Height for All Wind Turbines Above Foundation',
               timestamp: Date.now(),
-              oldValues: oldPoleHeightsAboveFoundation,
+              oldValues: oldHeightsAboveFoundation,
               newValue: value,
-              groupId: solarPanel.foundationId,
+              groupId: windTurbine.foundationId,
               undo: () => {
-                for (const [id, ph] of undoableChangeAboveFoundation.oldValues.entries()) {
-                  updatePoleHeightById(id, ph as number);
+                for (const [id, th] of undoableChangeAboveFoundation.oldValues.entries()) {
+                  updateTowerHeightById(id, th as number);
                 }
               },
               redo: () => {
                 if (undoableChangeAboveFoundation.groupId) {
-                  updatePoleHeightAboveFoundation(
-                    ObjectType.SolarPanel,
+                  updateTowerHeightAboveFoundation(
                     undoableChangeAboveFoundation.groupId,
                     undoableChangeAboveFoundation.newValue as number,
                   );
@@ -248,124 +280,41 @@ const WindTurbineTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (
               },
             } as UndoableChangeGroup;
             addUndoable(undoableChangeAboveFoundation);
-            updatePoleHeightAboveFoundation(ObjectType.SolarPanel, solarPanel.foundationId, value);
-            setApplyCount(applyCount + 1);
-          }
-        }
-        break;
-      case Scope.AllObjectsOfThisTypeOnSurface:
-        const parent = getParent(solarPanel);
-        if (parent) {
-          rejectRef.current = false;
-          const isParentCuboid = parent.type === ObjectType.Cuboid;
-          if (isParentCuboid) {
-            for (const elem of elements) {
-              if (
-                elem.type === ObjectType.SolarPanel &&
-                elem.parentId === solarPanel.parentId &&
-                Util.isIdentical(elem.normal, solarPanel.normal)
-              ) {
-                // tilt is only allowed for the top surface of a cuboid
-                if (0.5 * elem.ly * Math.abs(Math.sin((elem as SolarPanelModel).tiltAngle)) > value) {
-                  rejectRef.current = true;
-                  break;
-                }
-              }
-            }
-          } else {
-            // tilt is only allowed on top of a foundation or a roof
-            for (const elem of elements) {
-              if (elem.type === ObjectType.SolarPanel && elem.parentId === solarPanel.parentId) {
-                if (0.5 * elem.ly * Math.abs(Math.sin((elem as SolarPanelModel).tiltAngle)) > value) {
-                  rejectRef.current = true;
-                  break;
-                }
-              }
-            }
-          }
-          if (rejectRef.current) {
-            rejectedValue.current = value;
-            setInputValue(solarPanel.poleHeight);
-          } else {
-            const oldPoleHeightsOnSurface = new Map<string, number>();
-            const isParentCuboid = parent.type === ObjectType.Cuboid;
-            if (isParentCuboid) {
-              for (const elem of elements) {
-                if (
-                  elem.type === ObjectType.SolarPanel &&
-                  elem.parentId === solarPanel.parentId &&
-                  Util.isIdentical(elem.normal, solarPanel.normal)
-                ) {
-                  oldPoleHeightsOnSurface.set(elem.id, (elem as SolarPanelModel).poleHeight);
-                }
-              }
-            } else {
-              for (const elem of elements) {
-                if (elem.type === ObjectType.SolarPanel && elem.parentId === solarPanel.parentId) {
-                  oldPoleHeightsOnSurface.set(elem.id, (elem as SolarPanelModel).poleHeight);
-                }
-              }
-            }
-            const normal = isParentCuboid ? solarPanel.normal : undefined;
-            const undoableChangeOnSurface = {
-              name: 'Set Pole Height for All Solar Panel Arrays on Surface',
-              timestamp: Date.now(),
-              oldValues: oldPoleHeightsOnSurface,
-              newValue: value,
-              groupId: solarPanel.parentId,
-              normal: normal,
-              undo: () => {
-                for (const [id, ph] of undoableChangeOnSurface.oldValues.entries()) {
-                  updatePoleHeightById(id, ph as number);
-                }
-              },
-              redo: () => {
-                if (undoableChangeOnSurface.groupId) {
-                  updatePoleHeightOnSurface(
-                    ObjectType.SolarPanel,
-                    undoableChangeOnSurface.groupId,
-                    undoableChangeOnSurface.normal,
-                    undoableChangeOnSurface.newValue as number,
-                  );
-                }
-              },
-            } as UndoableChangeGroup;
-            addUndoable(undoableChangeOnSurface);
-            updatePoleHeightOnSurface(ObjectType.SolarPanel, solarPanel.parentId, normal, value);
+            updateTowerHeightAboveFoundation(windTurbine.foundationId, value);
             setApplyCount(applyCount + 1);
           }
         }
         break;
       default:
-        // solar panel selected element may be outdated, make sure that we get the latest
-        const sp = getElementById(solarPanel.id) as SolarPanelModel;
-        const oldPoleHeight = sp ? sp.poleHeight : solarPanel.poleHeight;
-        rejectRef.current = 0.5 * solarPanel.ly * Math.abs(Math.sin(solarPanel.tiltAngle)) > value;
+        // selected element may be outdated, make sure that we get the latest
+        const wt = getElementById(windTurbine.id) as WindTurbineModel;
+        const oldHeight = wt ? wt.towerHeight : windTurbine.towerHeight;
+        rejectRef.current = windTurbine.bladeRadius > value;
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputValue(oldPoleHeight);
+          setInputValue(oldHeight);
         } else {
           const undoableChange = {
-            name: 'Set Solar Panel Array Pole Height',
+            name: 'Set Wind Turbine Tower Height',
             timestamp: Date.now(),
-            oldValue: oldPoleHeight,
+            oldValue: oldHeight,
             newValue: value,
-            changedElementId: solarPanel.id,
-            changedElementType: solarPanel.type,
+            changedElementId: windTurbine.id,
+            changedElementType: windTurbine.type,
             undo: () => {
-              updatePoleHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
+              updateTowerHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
             redo: () => {
-              updatePoleHeightById(undoableChange.changedElementId, undoableChange.newValue as number);
+              updateTowerHeightById(undoableChange.changedElementId, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updatePoleHeightById(solarPanel.id, value);
+          updateTowerHeightById(windTurbine.id, value);
           setApplyCount(applyCount + 1);
         }
     }
     setCommonStore((state) => {
-      state.actionState.solarPanelPoleHeight = value;
+      state.actionState.windTurbineTowerHeight = value;
     });
   };
 
@@ -380,7 +329,7 @@ const WindTurbineTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (
   };
 
   const ok = () => {
-    setPoleHeight(inputValue);
+    setTowerHeight(inputValue);
     if (!rejectRef.current) {
       setDialogVisible(false);
       setApplyCount(0);
@@ -388,7 +337,7 @@ const WindTurbineTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (
   };
 
   const apply = () => {
-    setPoleHeight(inputValue);
+    setTowerHeight(inputValue);
   };
 
   const rejectedMessage = rejectRef.current
@@ -400,7 +349,7 @@ const WindTurbineTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (
   return (
     <Dialog
       width={550}
-      title={i18n.t('solarCollectorMenu.PoleHeight', lang)}
+      title={i18n.t('windTurbineMenu.TowerHeight', lang)}
       rejectedMessage={rejectedMessage}
       onApply={apply}
       onClose={close}
@@ -411,10 +360,10 @@ const WindTurbineTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (
         <Col className="gutter-row" span={6}>
           <InputNumber
             min={0}
-            max={10}
+            max={100}
             style={{ width: 120 }}
             step={0.1}
-            precision={2}
+            precision={1}
             // formatter={(value) => `${value} ` + i18n.t('word.MeterAbbreviation', lang)}
             // parser={value => Number(value?.replace(i18n.t('word.MeterAbbreviation', lang), ''))}
             value={inputValue}

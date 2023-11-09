@@ -380,6 +380,10 @@ export interface CommonStoreState {
   updateParabolaLatusRectumAboveFoundation: (type: ObjectType, foundationId: string, latusRectum: number) => void;
   updateParabolaLatusRectumForAll: (type: ObjectType, latusRectum: number) => void;
 
+  // for wind turbines
+  windTurbineActionScope: Scope;
+  setWindTurbineActionScope: (scope: Scope) => void;
+
   // for walls
   wallActionScope: Scope;
   setWallActionScope: (scope: Scope) => void;
@@ -2100,6 +2104,14 @@ export const useStore = create<CommonStoreState>(
                   }
                 }
               }
+            });
+          },
+
+          // for wind turbines
+          windTurbineActionScope: Scope.OnlyThisObject,
+          setWindTurbineActionScope(scope) {
+            immerSet((state: CommonStoreState) => {
+              state.windTurbineActionScope = scope;
             });
           },
 

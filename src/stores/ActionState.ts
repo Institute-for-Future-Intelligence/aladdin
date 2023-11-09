@@ -103,6 +103,8 @@ export interface ActionState {
   windowEmpty: boolean;
   windowInterior: boolean;
 
+  windTurbineTowerHeight: number;
+
   solarPanelModelName: string;
   solarPanelOrientation: Orientation;
   solarPanelPoleHeight: number;

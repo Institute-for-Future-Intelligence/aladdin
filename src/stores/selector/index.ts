@@ -432,6 +432,10 @@ export const updateModuleLengthAboveFoundation = (state: CommonStoreState) => st
 
 export const updateModuleLengthForAll = (state: CommonStoreState) => state.updateModuleLengthForAll;
 
+export const windTurbineActionScope = (state: CommonStoreState) => state.windTurbineActionScope;
+
+export const setWindTurbineActionScope = (state: CommonStoreState) => state.setWindTurbineActionScope;
+
 export const updateInsideLightById = (state: CommonStoreState) => state.updateInsideLightById;
 
 export const updateInsideLightsByParentId = (state: CommonStoreState) => state.updateInsideLightsByParentId;
