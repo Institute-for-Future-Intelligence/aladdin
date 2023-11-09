@@ -135,7 +135,10 @@ export const WindTurbineMenu = React.memo(() => {
                   step={0.1}
                   precision={1}
                   value={windTurbine.labelHeight ?? 0.2}
-                  onChange={(value) => setLabelHeight(value)}
+                  onChange={(value) => {
+                    if (value === null) return;
+                    setLabelHeight(value);
+                  }}
                 />
               </Menu.Item>
               {/* the label's font size */}
@@ -150,7 +153,10 @@ export const WindTurbineMenu = React.memo(() => {
                   step={1}
                   precision={0}
                   value={windTurbine.labelFontSize ?? 20}
-                  onChange={(value) => setLabelFontSize(value)}
+                  onChange={(value) => {
+                    if (value === null) return;
+                    setLabelFontSize(value);
+                  }}
                 />
               </Menu.Item>
               {/* the label's size */}
@@ -162,7 +168,10 @@ export const WindTurbineMenu = React.memo(() => {
                   step={0.1}
                   precision={1}
                   value={windTurbine.labelSize ?? 0.2}
-                  onChange={(value) => setLabelSize(value)}
+                  onChange={(value) => {
+                    if (value === null) return;
+                    setLabelSize(value);
+                  }}
                 />
               </Menu.Item>
               {/* the label's color */}
