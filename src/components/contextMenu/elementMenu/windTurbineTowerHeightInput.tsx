@@ -367,7 +367,9 @@ const WindTurbineTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (
             // formatter={(value) => `${value} ` + i18n.t('word.MeterAbbreviation', lang)}
             // parser={value => Number(value?.replace(i18n.t('word.MeterAbbreviation', lang), ''))}
             value={inputValue}
-            onChange={setInputValue}
+            onChange={(value) => {
+              if (value) setInputValue(value);
+            }}
           />
           <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
             {i18n.t('word.Range', lang)}: [1, 100] {i18n.t('word.MeterAbbreviation', lang)}

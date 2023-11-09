@@ -249,7 +249,7 @@ const WindTurbine = ({
         position={new Vector3(0, 1, towerHeight)}
         rotation={[HALF_PI, 0, 0]}
       >
-        <shapeBufferGeometry attach="geometry" args={[bladeShape]} />
+        <shapeGeometry attach="geometry" args={[bladeShape]} />
         <meshStandardMaterial attach="material" color={color} side={DoubleSide} />
       </mesh>
       <mesh
@@ -258,7 +258,7 @@ const WindTurbine = ({
         position={new Vector3(0, 1, towerHeight)}
         rotation={[HALF_PI, 0, (Math.PI * 2) / 3]}
       >
-        <shapeBufferGeometry attach="geometry" args={[bladeShape]} />
+        <shapeGeometry attach="geometry" args={[bladeShape]} />
         <meshStandardMaterial attach="material" color={color} side={DoubleSide} />
       </mesh>
       <mesh
@@ -267,7 +267,7 @@ const WindTurbine = ({
         position={new Vector3(0, 1, towerHeight)}
         rotation={[HALF_PI, 0, (Math.PI * 4) / 3]}
       >
-        <shapeBufferGeometry attach="geometry" args={[bladeShape]} />
+        <shapeGeometry attach="geometry" args={[bladeShape]} />
         <meshStandardMaterial attach="material" color={color} side={DoubleSide} />
       </mesh>
 

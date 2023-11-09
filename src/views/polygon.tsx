@@ -420,7 +420,7 @@ const Polygon = ({
             domElement.style.cursor = 'default';
           }}
         >
-          <shapeBufferGeometry attach="geometry" args={[shape]} />
+          <shapeGeometry attach="geometry" args={[shape]} />
           {shininess === undefined || shininess === 0 ? (
             <meshStandardMaterial
               attach="material"

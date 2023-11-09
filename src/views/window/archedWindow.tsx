@@ -560,7 +560,7 @@ const ArchedWindow = ({
       {!empty && (
         <group name={'Arched Window Plane Group'} position={[0, cy, 0]}>
           <mesh name={'Window Glass mesh'} rotation={[HALF_PI, 0, 0]}>
-            <shapeBufferGeometry args={[glassShape]} />
+            <shapeGeometry args={[glassShape]} />
             {glassMaterial}
           </mesh>
 

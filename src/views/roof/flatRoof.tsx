@@ -412,7 +412,7 @@ const FlatRoof = ({
             position={[0, 0, thickness + 0.001]}
             receiveShadow={shadowEnabled}
           >
-            <shapeBufferGeometry args={[shapeWithHoles]} />
+            <shapeGeometry args={[shapeWithHoles]} />
             {showHeatmap ? (
               <meshBasicMaterial map={heatmap} side={FrontSide} />
             ) : (

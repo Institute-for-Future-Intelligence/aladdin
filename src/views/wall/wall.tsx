@@ -2371,7 +2371,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
             receiveShadow={false}
             visible={false}
           >
-            <shapeBufferGeometry args={[outsideWallShape]} />
+            <shapeGeometry args={[outsideWallShape]} />
             <meshBasicMaterial side={DoubleSide} />
           </mesh>
           {/* wall outside surface */}
@@ -2389,7 +2389,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
             onPointerUp={handleWallBodyPointerUp}
             onPointerOut={handleWallBodyPointerOut}
           >
-            <shapeBufferGeometry args={[outsideWallShape]} />
+            <shapeGeometry args={[outsideWallShape]} />
             {showSolarRadiationHeatmap && heatmapTexture ? (
               <meshBasicMaterial
                 attach="material"
@@ -2410,7 +2410,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           </mesh>
 
           <mesh rotation={[HALF_PI, 0, 0]} position={[0, 0.05, 0]} castShadow={castShadow}>
-            <shapeBufferGeometry args={[insideWallShape]} />
+            <shapeGeometry args={[insideWallShape]} />
             <meshStandardMaterial color={'white'} side={BackSide} transparent={transparent} opacity={opacity} />
           </mesh>
 
@@ -2427,12 +2427,12 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               handleContextMenu(e, insideWallRef.current);
             }}
           >
-            <shapeBufferGeometry args={[insideWallShape]} />
+            <shapeGeometry args={[insideWallShape]} />
             <InsideWallMaterial transparent={transparent} color={color} opacity={opacity} />
           </mesh>
 
           <mesh rotation={[HALF_PI, 0, 0]} position={[0, ly - 0.01, 0]} receiveShadow={true}>
-            <shapeBufferGeometry args={[insideWallShape]} />
+            <shapeGeometry args={[insideWallShape]} />
             <meshStandardMaterial color={'white'} side={FrontSide} transparent={transparent} opacity={opacity} />
           </mesh>
 
@@ -2451,7 +2451,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
                 handleContextMenu(e, topSurfaceRef.current);
               }}
             >
-              <shapeBufferGeometry args={[topWallShape]} />
+              <shapeGeometry args={[topWallShape]} />
             </mesh>
           )}
 
