@@ -148,7 +148,7 @@ const BuildingEnergyGraph = ({
     for (let i = 0; i < buildingCount; i++) {
       let name = buildingCount > 1 ? labels[i * n + m] : buildingId ? 'Net ' + buildingId : 'Net';
       const opacity = legendDataKey === null ? 1 : legendDataKey === name ? 1 : 0.25;
-      const symbol = createSymbol(SYMBOLS[i], symbolSize, symbolCount, opacity);
+      const symbol = createSymbol(SYMBOLS[i], symbolSize, dataSource.length, symbolCount, opacity);
       if (i === 0) defaultSymbol = symbol;
       representations.push(
         <Line
