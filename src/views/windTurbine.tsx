@@ -10,7 +10,7 @@ import { useRefStore } from 'src/stores/commonRef';
 import * as Selector from '../stores/selector';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import { HALF_PI, MOVE_HANDLE_RADIUS, UNIT_VECTOR_POS_Z } from '../constants';
-import { ActionType, MoveHandleType, ObjectType, PolygonTexture } from '../types';
+import { ActionType, MoveHandleType, ObjectType } from '../types';
 import { Util } from '../Util';
 import i18n from '../i18n/i18n';
 import { WindTurbineModel } from '../models/WindTurbineModel';
@@ -32,6 +32,7 @@ const WindTurbine = ({
   locked = false,
   parentId,
 }: WindTurbineModel) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const getElementById = useStore(Selector.getElementById);
   const selectMe = useStore(Selector.selectMe);
@@ -43,6 +44,7 @@ const WindTurbine = ({
   } = useThree();
 
   const [hovered, setHovered] = useState(false);
+  const baseRef = useRef<Mesh>();
   const moveHandleRef = useRef<Mesh>();
   const pointerDown = useRef<boolean>(false);
 
@@ -152,7 +154,7 @@ const WindTurbine = ({
           <Sphere
             ref={moveHandleRef}
             position={new Vector3(0, 0, 0)}
-            args={[moveHandleSize, 6, 6]}
+            args={[moveHandleSize + towerRadius, 6, 6]}
             name={MoveHandleType.Default}
             castShadow={false}
             receiveShadow={false}
@@ -163,6 +165,7 @@ const WindTurbine = ({
               noHoverHandle();
             }}
             onPointerDown={(e) => {
+              if (e.button === 2) return;
               selectMe(id, e, ActionType.Move);
             }}
           >
@@ -175,11 +178,40 @@ const WindTurbine = ({
       <Cylinder
         userData={{ unintersectable: true }}
         name={'Tower'}
+        ref={baseRef}
         castShadow={false}
         receiveShadow={false}
         args={[towerRadius, towerRadius, towerHeight, 4, 1]}
         position={new Vector3(0, 0, towerHeight / 2)}
         rotation={[HALF_PI, 0, 0]}
+        onPointerDown={(e) => {
+          if (e.button === 2) return; // ignore right-click
+          selectMe(id, e, ActionType.Select);
+        }}
+        onContextMenu={(e) => {
+          selectMe(id, e, ActionType.ContextMenu);
+          setCommonStore((state) => {
+            if (e.intersections.length > 0) {
+              const intersected = e.intersections[0].object === baseRef.current;
+              if (intersected) {
+                state.contextMenuObjectType = ObjectType.WindTurbine;
+              }
+            }
+          });
+        }}
+        onPointerOver={(e) => {
+          if (e.intersections.length > 0) {
+            const intersected = e.intersections[0].object === baseRef.current;
+            if (intersected) {
+              setHovered(true);
+              domElement.style.cursor = 'move';
+            }
+          }
+        }}
+        onPointerOut={(e) => {
+          setHovered(false);
+          domElement.style.cursor = 'default';
+        }}
       >
         <meshStandardMaterial attach="material" color={color} />
       </Cylinder>

@@ -222,11 +222,10 @@ export const useLabelHeight = (element: ElementModel | undefined) => {
 };
 
 export const useSelectedElement = (objectType: ObjectType) => {
-  const element = useStore((state) => {
+  return useStore((state) => {
     if (!state.selectedElement) return;
     return state.elements.find((e) => e.id === state.selectedElement?.id && e.type === objectType);
   });
-  return element;
 };
 
 export const useColorPicker = (color: string) => {

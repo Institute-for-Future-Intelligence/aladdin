@@ -1,0 +1,182 @@
+/*
+ * @Copyright 2023. Institute for Future Intelligence, Inc.
+ */
+
+import React, { useState } from 'react';
+import { Checkbox, Input, InputNumber, Menu } from 'antd';
+import { useStore } from '../../../stores/common';
+import * as Selector from '../../../stores/selector';
+import { Copy, Cut, Lock } from '../menuItems';
+import i18n from '../../../i18n/i18n';
+import { ObjectType } from '../../../types';
+import {
+  useLabel,
+  useLabelColor,
+  useLabelFontSize,
+  useLabelHeight,
+  useLabelShow,
+  useLabelSize,
+  useLabelText,
+  useSelectedElement,
+} from './menuHooks';
+import SubMenu from 'antd/lib/menu/SubMenu';
+import { WindTurbineModel } from '../../../models/WindTurbineModel';
+import WindTurbineTowerHeightInput from './windTurbineTowerHeightInput';
+import WindTurbineTowerRadiusInput from './windTurbineTowerRadiusInput';
+import WindTurbineBladeRadiusInput from './windTurbineBladeRadiusInput';
+
+export const WindTurbineMenu = React.memo(() => {
+  const language = useStore(Selector.language);
+  const setApplyCount = useStore(Selector.setApplyCount);
+
+  const windTurbine = useSelectedElement(ObjectType.WindTurbine) as WindTurbineModel | undefined;
+
+  const [bladeRadiusDialogVisible, setBladeRadiusDialogVisible] = useState(false);
+  const [towerHeightDialogVisible, setTowerHeightDialogVisible] = useState(false);
+  const [towerRadiusDialogVisible, setTowerRadiusDialogVisible] = useState(false);
+
+  const { labelText, setLabelText } = useLabel(windTurbine);
+  const showLabel = useLabelShow(windTurbine);
+  const updateLabelText = useLabelText(windTurbine, labelText);
+  const setLabelSize = useLabelSize(windTurbine);
+  const setLabelFontSize = useLabelFontSize(windTurbine);
+  const setLabelColor = useLabelColor(windTurbine);
+  const setLabelHeight = useLabelHeight(windTurbine);
+
+  if (!windTurbine) return null;
+
+  const lang = { lng: language };
+  const editable = !windTurbine?.locked;
+
+  return (
+    <Menu.ItemGroup>
+      <Copy keyName={'wind-turbine-copy'} paddingLeft={'36px'} />
+      {editable && <Cut keyName={'wind-turbine-cut'} paddingLeft={'36px'} />}
+      <Lock keyName={'wind-turbine-lock'} />
+      {windTurbine && editable && (
+        <>
+          {/* select tower */}
+          <SubMenu
+            key={'wind-turbine-tower'}
+            title={i18n.t('windTurbineMenu.Tower', lang)}
+            style={{ paddingLeft: '24px' }}
+          >
+            {/* pole height */}
+            {towerHeightDialogVisible && <WindTurbineTowerHeightInput setDialogVisible={setTowerHeightDialogVisible} />}
+            <Menu.Item
+              key={'wind-turbine-tower-height'}
+              onClick={() => {
+                setApplyCount(0);
+                setTowerHeightDialogVisible(true);
+              }}
+            >
+              {i18n.t('windTurbineMenu.TowerHeight', lang)} ...
+            </Menu.Item>
+
+            {/* pole spacing */}
+            {towerRadiusDialogVisible && <WindTurbineTowerRadiusInput setDialogVisible={setTowerRadiusDialogVisible} />}
+            <Menu.Item
+              key={'wind-turbine-tower-radius'}
+              onClick={() => {
+                setApplyCount(0);
+                setTowerRadiusDialogVisible(true);
+              }}
+            >
+              {i18n.t('windTurbineMenu.TowerRadius', lang)} ...
+            </Menu.Item>
+          </SubMenu>
+
+          {/* blade radius */}
+          {bladeRadiusDialogVisible && <WindTurbineBladeRadiusInput setDialogVisible={setBladeRadiusDialogVisible} />}
+          <Menu.Item
+            key={'rotor-blade-radius'}
+            style={{ paddingLeft: '36px' }}
+            onClick={() => {
+              setApplyCount(0);
+              setBladeRadiusDialogVisible(true);
+            }}
+          >
+            {i18n.t('windTurbineMenu.RotorBladeRadius', lang)} ...
+          </Menu.Item>
+
+          <SubMenu
+            key={'wind-turbine-label'}
+            title={i18n.t('labelSubMenu.Label', lang)}
+            style={{ paddingLeft: '24px' }}
+          >
+            {/* show label or not */}
+            <Menu.Item key={'wind-turbine-show-label'}>
+              <Checkbox checked={!!windTurbine?.showLabel} onChange={showLabel}>
+                {i18n.t('labelSubMenu.KeepShowingLabel', lang)}
+              </Checkbox>
+            </Menu.Item>
+
+            {/*have to wrap the text field with a Menu so that it can stay open when the user types in it */}
+            <Menu>
+              {/* label text */}
+              <Menu.Item key={'wind-turbine-label-text'} style={{ height: '36px', paddingLeft: '36px' }}>
+                <Input
+                  addonBefore={i18n.t('labelSubMenu.Label', lang) + ':'}
+                  value={labelText}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLabelText(e.target.value)}
+                  onPressEnter={updateLabelText}
+                  onBlur={updateLabelText}
+                />
+              </Menu.Item>
+              {/* the label's height relative to the center */}
+              <Menu.Item
+                style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }}
+                key={'wind-turbine-label-height'}
+              >
+                <InputNumber
+                  addonBefore={i18n.t('labelSubMenu.LabelHeight', lang) + ':'}
+                  min={0.2}
+                  max={5}
+                  step={0.1}
+                  precision={1}
+                  value={windTurbine.labelHeight ?? 0.2}
+                  onChange={(value) => setLabelHeight(value)}
+                />
+              </Menu.Item>
+              {/* the label's font size */}
+              <Menu.Item
+                style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }}
+                key={'wind-turbine-label-font-size'}
+              >
+                <InputNumber
+                  addonBefore={i18n.t('labelSubMenu.LabelFontSize', lang) + ':'}
+                  min={10}
+                  max={100}
+                  step={1}
+                  precision={0}
+                  value={windTurbine.labelFontSize ?? 20}
+                  onChange={(value) => setLabelFontSize(value)}
+                />
+              </Menu.Item>
+              {/* the label's size */}
+              <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'wind-turbine-label-size'}>
+                <InputNumber
+                  addonBefore={i18n.t('labelSubMenu.LabelSize', lang) + ':'}
+                  min={0.2}
+                  max={5}
+                  step={0.1}
+                  precision={1}
+                  value={windTurbine.labelSize ?? 0.2}
+                  onChange={(value) => setLabelSize(value)}
+                />
+              </Menu.Item>
+              {/* the label's color */}
+              <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'wind-turbine-label-color'}>
+                <Input
+                  addonBefore={i18n.t('labelSubMenu.LabelColor', lang) + ':'}
+                  value={windTurbine.labelColor ?? '#ffffff'}
+                  onChange={(e) => setLabelColor(e.target.value)}
+                />
+              </Menu.Item>
+            </Menu>
+          </SubMenu>
+        </>
+      )}
+    </Menu.ItemGroup>
+  );
+});

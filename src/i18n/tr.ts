@@ -1087,6 +1087,17 @@ export const i18n_tr = {
       AllParabolicDishes: 'Tüm Parabolik Çanaklar',
     },
 
+    windTurbineMenu: {
+      RotorBladeRadius: 'Rotor Blade Radius',
+      Tower: 'Tower',
+      TowerHeight: 'Tower Height',
+      TowerRadius: 'Tower Radius',
+      OnlyThisWindTurbine: 'Only This Wind Turbine',
+      AllWindTurbinesAboveFoundation: 'All Wind Turbines Above the Same Foundation',
+      AllSelectedWindTurbines: 'All Selected Wind Turbines',
+      AllWindTurbines: 'All Wind Turbines',
+    },
+
     wallMenu: {
       TextureDefault: 'Varsayılan',
       Texture01: 'Doku 1',

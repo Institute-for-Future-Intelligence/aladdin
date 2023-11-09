@@ -1948,7 +1948,7 @@ const Foundation = (foundationModel: FoundationModel) => {
             }
           }
         } else {
-          // for moving sensors, lights, and solar collectors
+          // for moving sensors, lights, wind turbines, and solar collectors
           newPositionRef.current.set(elem.cx, elem.cy, elem.cz);
           if (newPositionRef.current.distanceToSquared(oldPositionRef.current) > ZERO_TOLERANCE) {
             let accept = true;
@@ -2197,6 +2197,7 @@ const Foundation = (foundationModel: FoundationModel) => {
         switch (grabRef.current.type) {
           case ObjectType.Sensor:
           case ObjectType.Light:
+          case ObjectType.WindTurbine:
             p = Util.relativeCoordinates(p.x, p.y, p.z, foundationModel);
             setElementPosition(grabRef.current.id, p.x, p.y);
             break;

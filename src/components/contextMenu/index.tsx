@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React from 'react';
@@ -29,6 +29,7 @@ import {
   HeliostatMenu,
   RoofMenu,
 } from './elementMenu';
+import { WindTurbineMenu } from './elementMenu/windTurbineMenu';
 
 export interface ContextMenuProps {
   [key: string]: any;
@@ -103,6 +104,12 @@ const DropdownContextMenu: React.FC<ContextMenuProps> = ({ children }) => {
         return (
           <Menu triggerSubMenuAction={'click'}>
             <HeliostatMenu />
+          </Menu>
+        );
+      case ObjectType.WindTurbine:
+        return (
+          <Menu triggerSubMenuAction={'click'}>
+            <WindTurbineMenu />
           </Menu>
         );
       case ObjectType.Sensor:

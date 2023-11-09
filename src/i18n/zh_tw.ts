@@ -1065,6 +1065,17 @@ export const i18n_zh_tw = {
       AllParabolicDishes: '所有的拋物線碟',
     },
 
+    windTurbineMenu: {
+      RotorBladeRadius: '轉子葉片半徑',
+      Tower: '塔架',
+      TowerHeight: '塔架高度',
+      TowerRadius: '塔架半徑',
+      OnlyThisWindTurbine: '只這個風力渦輪機',
+      AllWindTurbinesAboveFoundation: '同一地基上所有的風力渦輪',
+      AllSelectedWindTurbines: '所有選中的風力渦輪',
+      AllWindTurbines: '所有的風力渦輪',
+    },
+
     wallMenu: {
       TextureDefault: '默認材質',
       Texture01: '一號材質',
