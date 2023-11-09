@@ -3,14 +3,14 @@
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Cylinder, Sphere } from '@react-three/drei';
-import { Euler, Mesh, Vector3 } from 'three';
+import { Cone, Cylinder, Sphere } from '@react-three/drei';
+import { DoubleSide, Euler, Mesh, Shape, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import { useRefStore } from 'src/stores/commonRef';
 import * as Selector from '../stores/selector';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import { HALF_PI, MOVE_HANDLE_RADIUS, UNIT_VECTOR_POS_Z } from '../constants';
-import { ActionType, MoveHandleType, ObjectType } from '../types';
+import { ActionType, MoveHandleType, ObjectType, PolygonTexture } from '../types';
 import { Util } from '../Util';
 import i18n from '../i18n/i18n';
 import { WindTurbineModel } from '../models/WindTurbineModel';
@@ -36,6 +36,7 @@ const WindTurbine = ({
   const getElementById = useStore(Selector.getElementById);
   const selectMe = useStore(Selector.selectMe);
   const selected = useSelected(id);
+  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
 
   const {
     gl: { domElement },
@@ -128,6 +129,21 @@ const WindTurbine = ({
 
   const moveHandleSize = MOVE_HANDLE_RADIUS * 4;
 
+  const bladeShape = useMemo(() => {
+    const x = 0;
+    const y = bladeRadius;
+    const halfEdge = 0.1;
+    const s = new Shape();
+    s.moveTo(-0.2, 0);
+    s.lineTo(x - 0.75, 1.5);
+    s.lineTo(x - halfEdge, y);
+    s.lineTo(x + halfEdge, y);
+    s.lineTo(x + 0.35, 1);
+    s.lineTo(0.2, 0);
+    s.closePath();
+    return s;
+  }, [bladeRadius]);
+
   return (
     <group name={'Wind Turbine Group ' + id} rotation={euler} position={[cx, cy, cz]}>
       <group>
@@ -167,6 +183,61 @@ const WindTurbine = ({
       >
         <meshStandardMaterial attach="material" color={color} />
       </Cylinder>
+
+      {/*draw hub */}
+      <Cone
+        userData={{ unintersectable: true }}
+        name={'Cone'}
+        castShadow={false}
+        receiveShadow={false}
+        args={[0.75, 1, 8, 1]}
+        position={new Vector3(0, 1.5, towerHeight)}
+        rotation={[0, 0, 0]}
+      >
+        <meshStandardMaterial attach="material" color={color} />
+      </Cone>
+
+      {/*draw nacelle */}
+      <Cylinder
+        userData={{ unintersectable: true }}
+        name={'Cylinder'}
+        castShadow={false}
+        receiveShadow={false}
+        args={[0.4, 0.75, 2.5, 8, 1]}
+        position={new Vector3(0, -0.3, towerHeight)}
+        rotation={[Math.PI, 0, 0]}
+      >
+        <meshStandardMaterial attach="material" color={color} />
+      </Cylinder>
+
+      {/*draw blades*/}
+      <mesh
+        receiveShadow={shadowEnabled}
+        castShadow={shadowEnabled}
+        position={new Vector3(0, 1, towerHeight)}
+        rotation={[HALF_PI, 0, 0]}
+      >
+        <shapeBufferGeometry attach="geometry" args={[bladeShape]} />
+        <meshStandardMaterial attach="material" color={color} side={DoubleSide} />
+      </mesh>
+      <mesh
+        receiveShadow={shadowEnabled}
+        castShadow={shadowEnabled}
+        position={new Vector3(0, 1, towerHeight)}
+        rotation={[HALF_PI, 0, (Math.PI * 2) / 3]}
+      >
+        <shapeBufferGeometry attach="geometry" args={[bladeShape]} />
+        <meshStandardMaterial attach="material" color={color} side={DoubleSide} />
+      </mesh>
+      <mesh
+        receiveShadow={shadowEnabled}
+        castShadow={shadowEnabled}
+        position={new Vector3(0, 1, towerHeight)}
+        rotation={[HALF_PI, 0, (Math.PI * 4) / 3]}
+      >
+        <shapeBufferGeometry attach="geometry" args={[bladeShape]} />
+        <meshStandardMaterial attach="material" color={color} side={DoubleSide} />
+      </mesh>
 
       {/* draw label */}
       {(hovered || showLabel) && !selected && (
