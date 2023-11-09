@@ -104,6 +104,8 @@ export interface ActionState {
   windowInterior: boolean;
 
   windTurbineTowerHeight: number;
+  windTurbineTowerRadius: number;
+  windTurbineBladeRadius: number;
 
   solarPanelModelName: string;
   solarPanelOrientation: Orientation;

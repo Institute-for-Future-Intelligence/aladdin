@@ -55,37 +55,6 @@ export const WindTurbineMenu = React.memo(() => {
       <Lock keyName={'wind-turbine-lock'} />
       {windTurbine && editable && (
         <>
-          {/* select tower */}
-          <SubMenu
-            key={'wind-turbine-tower'}
-            title={i18n.t('windTurbineMenu.Tower', lang)}
-            style={{ paddingLeft: '24px' }}
-          >
-            {/* pole height */}
-            {towerHeightDialogVisible && <WindTurbineTowerHeightInput setDialogVisible={setTowerHeightDialogVisible} />}
-            <Menu.Item
-              key={'wind-turbine-tower-height'}
-              onClick={() => {
-                setApplyCount(0);
-                setTowerHeightDialogVisible(true);
-              }}
-            >
-              {i18n.t('windTurbineMenu.TowerHeight', lang)} ...
-            </Menu.Item>
-
-            {/* pole spacing */}
-            {towerRadiusDialogVisible && <WindTurbineTowerRadiusInput setDialogVisible={setTowerRadiusDialogVisible} />}
-            <Menu.Item
-              key={'wind-turbine-tower-radius'}
-              onClick={() => {
-                setApplyCount(0);
-                setTowerRadiusDialogVisible(true);
-              }}
-            >
-              {i18n.t('windTurbineMenu.TowerRadius', lang)} ...
-            </Menu.Item>
-          </SubMenu>
-
           {/* blade radius */}
           {bladeRadiusDialogVisible && <WindTurbineBladeRadiusInput setDialogVisible={setBladeRadiusDialogVisible} />}
           <Menu.Item
@@ -99,6 +68,38 @@ export const WindTurbineMenu = React.memo(() => {
             {i18n.t('windTurbineMenu.RotorBladeRadius', lang)} ...
           </Menu.Item>
 
+          {/* tower properties */}
+          <SubMenu
+            key={'wind-turbine-tower'}
+            title={i18n.t('windTurbineMenu.Tower', lang)}
+            style={{ paddingLeft: '24px' }}
+          >
+            {/* tower height */}
+            {towerHeightDialogVisible && <WindTurbineTowerHeightInput setDialogVisible={setTowerHeightDialogVisible} />}
+            <Menu.Item
+              key={'wind-turbine-tower-height'}
+              onClick={() => {
+                setApplyCount(0);
+                setTowerHeightDialogVisible(true);
+              }}
+            >
+              {i18n.t('windTurbineMenu.TowerHeight', lang)} ...
+            </Menu.Item>
+
+            {/* tower radius */}
+            {towerRadiusDialogVisible && <WindTurbineTowerRadiusInput setDialogVisible={setTowerRadiusDialogVisible} />}
+            <Menu.Item
+              key={'wind-turbine-tower-radius'}
+              onClick={() => {
+                setApplyCount(0);
+                setTowerRadiusDialogVisible(true);
+              }}
+            >
+              {i18n.t('windTurbineMenu.TowerRadius', lang)} ...
+            </Menu.Item>
+          </SubMenu>
+
+          {/* label */}
           <SubMenu
             key={'wind-turbine-label'}
             title={i18n.t('labelSubMenu.Label', lang)}

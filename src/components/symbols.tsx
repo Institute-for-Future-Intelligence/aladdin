@@ -26,8 +26,8 @@ export enum Direction {
 const strokeWidth = 1;
 
 export const CircleSymbol = (props: any) => {
-  const { cx, cy, opacity, stroke, index, points, scale, numberOfSymbols, fillColor } = props;
-  const interval = Math.round(points.length / numberOfSymbols);
+  const { cx, cy, opacity, stroke, index, numberOfPoints, numberOfSymbols, scale, fillColor } = props;
+  const interval = numberOfPoints ? Math.round(numberOfPoints / numberOfSymbols) : 1;
   if (cx && cy && index > 0 && index % interval === 0) {
     return (
       <svg x={cx - 10 * scale} y={cy - 10 * scale} width={20 * scale} height={20 * scale} viewBox="-10 -10 20 20">
@@ -147,17 +147,32 @@ export const HexagonSymbol = (props: any) => {
   return null;
 };
 
-export const createSymbol = (type: string, size: number, count: number, opacity: number, fillColor?: string) => {
+export const createSymbol = (
+  type: string,
+  size: number,
+  numberOfPoints: number,
+  numberOfSymbols: number,
+  opacity: number,
+  fillColor?: string,
+) => {
   switch (type) {
     case 'circle':
-      return <CircleSymbol scale={size} numberOfSymbols={count} opacity={opacity} fillColor={fillColor} />;
+      return (
+        <CircleSymbol
+          scale={size}
+          numberOfPoints={numberOfPoints}
+          numberOfSymbols={numberOfSymbols}
+          opacity={opacity}
+          fillColor={fillColor}
+        />
+      );
     case 'square':
-      return <SquareSymbol scale={size} numberOfSymbols={count} opacity={opacity} fillColor={fillColor} />;
+      return <SquareSymbol scale={size} numberOfSymbols={numberOfSymbols} opacity={opacity} fillColor={fillColor} />;
     case 'triangle up':
       return (
         <TriangleSymbol
           scale={1.1 * size}
-          numberOfSymbols={count}
+          numberOfSymbols={numberOfSymbols}
           direction={Direction.UP}
           opacity={opacity}
           fillColor={fillColor}
@@ -167,7 +182,7 @@ export const createSymbol = (type: string, size: number, count: number, opacity:
       return (
         <TriangleSymbol
           scale={1.1 * size}
-          numberOfSymbols={count}
+          numberOfSymbols={numberOfSymbols}
           direction={Direction.DOWN}
           opacity={opacity}
           fillColor={fillColor}
@@ -177,7 +192,7 @@ export const createSymbol = (type: string, size: number, count: number, opacity:
       return (
         <TriangleSymbol
           scale={1.1 * size}
-          numberOfSymbols={count}
+          numberOfSymbols={numberOfSymbols}
           direction={Direction.RIGHT}
           opacity={opacity}
           fillColor={fillColor}
@@ -187,17 +202,23 @@ export const createSymbol = (type: string, size: number, count: number, opacity:
       return (
         <TriangleSymbol
           scale={1.1 * size}
-          numberOfSymbols={count}
+          numberOfSymbols={numberOfSymbols}
           direction={Direction.LEFT}
           opacity={opacity}
           fillColor={fillColor}
         />
       );
     case 'star':
-      return <StarSymbol scale={1.25 * size} numberOfSymbols={count} opacity={opacity} fillColor={fillColor} />;
+      return (
+        <StarSymbol scale={1.25 * size} numberOfSymbols={numberOfSymbols} opacity={opacity} fillColor={fillColor} />
+      );
     case 'diamond':
-      return <DiamondSymbol scale={1.1 * size} numberOfSymbols={count} opacity={opacity} fillColor={fillColor} />;
+      return (
+        <DiamondSymbol scale={1.1 * size} numberOfSymbols={numberOfSymbols} opacity={opacity} fillColor={fillColor} />
+      );
     case 'hexagon':
-      return <HexagonSymbol scale={1.3 * size} numberOfSymbols={count} opacity={opacity} fillColor={fillColor} />;
+      return (
+        <HexagonSymbol scale={1.3 * size} numberOfSymbols={numberOfSymbols} opacity={opacity} fillColor={fillColor} />
+      );
   }
 };

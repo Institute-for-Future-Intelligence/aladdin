@@ -91,7 +91,7 @@ const EvolutionBiaxialLineGraph = ({
       if (i < lastFittestLineIndex) {
         const name = labels && labels[i] && labels[i] !== '' ? labels[i] : 'Var' + (i + 1);
         const opacity = legendDataKey === null ? 1 : legendDataKey === name ? 1 : 0.25;
-        const symbol = createSymbol(SYMBOLS[i], symbolSize, symbolCount, opacity);
+        const symbol = createSymbol(SYMBOLS[i], symbolSize, dataSource.length, symbolCount, opacity);
         if (i === 0) defaultSymbol = symbol;
         lines.push(
           <Line
@@ -112,7 +112,7 @@ const EvolutionBiaxialLineGraph = ({
       } else if (i === lastFittestLineIndex) {
         const name = 'Objective';
         const opacity = legendDataKey === null ? 1 : legendDataKey === name ? 1 : 0.25;
-        const symbol = createSymbol(SYMBOLS[i], symbolSize, symbolCount, opacity);
+        const symbol = createSymbol(SYMBOLS[i], symbolSize, dataSource.length, symbolCount, opacity);
         lines.push(
           <Line
             yAxisId="right"
@@ -132,7 +132,14 @@ const EvolutionBiaxialLineGraph = ({
         const varIndex = Math.floor((i - fittestLineCount) / individualCount);
         const name = 'Individual' + (i + 1);
         const opacity = 0.5;
-        const symbol = createSymbol(SYMBOLS[varIndex], symbolSize * 0.5, symbolCount, opacity, PRESET_COLORS[varIndex]);
+        const symbol = createSymbol(
+          SYMBOLS[varIndex],
+          symbolSize * 0.5,
+          dataSource.length,
+          symbolCount,
+          opacity,
+          PRESET_COLORS[varIndex],
+        );
         lines.push(
           <Line
             yAxisId="left"

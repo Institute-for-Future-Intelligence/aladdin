@@ -99,7 +99,7 @@ const SutBiaxialLineGraph = ({
     for (let i = 0; i < lineCount; i++) {
       let name = 'T_Tower' + (i + 1);
       let opacity = legendDataKey === null ? 1 : legendDataKey === name ? 1 : 0.25;
-      let symbol = createSymbol(SYMBOLS[2 * i], symbolSize, symbolCount, opacity);
+      let symbol = createSymbol(SYMBOLS[2 * i], symbolSize, dataSource.length, symbolCount, opacity);
       if (i === 0) defaultSymbol = symbol;
       const isMeasured = name.startsWith('Measured');
       lines.push(
@@ -119,7 +119,7 @@ const SutBiaxialLineGraph = ({
       );
       name = 'V_Tower' + (i + 1);
       opacity = legendDataKey === null ? 1 : legendDataKey === name ? 1 : 0.25;
-      symbol = createSymbol(SYMBOLS[2 * i + 1], symbolSize, symbolCount, opacity);
+      symbol = createSymbol(SYMBOLS[2 * i + 1], symbolSize, dataSource.length, symbolCount, opacity);
       lines.push(
         <Line
           yAxisId="right"
