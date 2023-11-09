@@ -44,8 +44,8 @@ export const CircleSymbol = (props: any) => {
 };
 
 export const SquareSymbol = (props: any) => {
-  const { cx, cy, opacity, stroke, index, points, scale, numberOfSymbols, fillColor } = props;
-  const interval = Math.round(points.length / numberOfSymbols);
+  const { cx, cy, opacity, stroke, index, scale, numberOfPoints, numberOfSymbols, fillColor } = props;
+  const interval = numberOfPoints ? Math.round(numberOfPoints / numberOfSymbols) : 1;
   if (cx && cy && index > 0 && index % interval === 0) {
     return (
       <svg x={cx - 10 * scale} y={cy - 10 * scale} width={20 * scale} height={20 * scale} viewBox="-10 -10 20 20">
@@ -63,8 +63,8 @@ export const SquareSymbol = (props: any) => {
 };
 
 export const TriangleSymbol = (props: any) => {
-  const { cx, cy, opacity, stroke, index, points, scale, numberOfSymbols, direction, fillColor } = props;
-  const interval = Math.round(points.length / numberOfSymbols);
+  const { cx, cy, opacity, stroke, index, scale, numberOfPoints, numberOfSymbols, direction, fillColor } = props;
+  const interval = numberOfPoints ? Math.round(numberOfPoints / numberOfSymbols) : 1;
   if (cx && cy && index > 0 && index % interval === 0) {
     let pointsString;
     switch (direction) {
@@ -94,8 +94,8 @@ export const TriangleSymbol = (props: any) => {
 };
 
 export const DiamondSymbol = (props: any) => {
-  const { cx, cy, opacity, stroke, index, points, scale, numberOfSymbols, fillColor } = props;
-  const interval = Math.round(points.length / numberOfSymbols);
+  const { cx, cy, opacity, stroke, index, scale, numberOfPoints, numberOfSymbols, fillColor } = props;
+  const interval = numberOfPoints ? Math.round(numberOfPoints / numberOfSymbols) : 1;
   if (cx && cy && index > 0 && index % interval === 0) {
     // strokeWidth needs to be halved as the view box is too small
     return (
@@ -111,8 +111,8 @@ export const DiamondSymbol = (props: any) => {
 };
 
 export const StarSymbol = (props: any) => {
-  const { cx, cy, opacity, stroke, index, points, scale, numberOfSymbols, fillColor } = props;
-  const interval = Math.round(points.length / numberOfSymbols);
+  const { cx, cy, opacity, stroke, index, scale, numberOfPoints, numberOfSymbols, fillColor } = props;
+  const interval = numberOfPoints ? Math.round(numberOfPoints / numberOfSymbols) : 1;
   if (cx && cy && index > 0 && index % interval === 0) {
     // we need to scale down by 50% first before applying the scale factor as the original svg is too large
     const s = 0.05 * scale;
@@ -130,8 +130,8 @@ export const StarSymbol = (props: any) => {
 };
 
 export const HexagonSymbol = (props: any) => {
-  const { cx, cy, opacity, stroke, index, points, scale, numberOfSymbols, fillColor } = props;
-  const interval = Math.round(points.length / numberOfSymbols);
+  const { cx, cy, opacity, stroke, index, scale, numberOfPoints, numberOfSymbols, fillColor } = props;
+  const interval = numberOfPoints ? Math.round(numberOfPoints / numberOfSymbols) : 1;
   if (cx && cy && index > 0 && index % interval === 0) {
     const s = 0.02 * scale;
     return (
