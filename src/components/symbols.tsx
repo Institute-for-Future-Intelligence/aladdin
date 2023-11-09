@@ -167,11 +167,20 @@ export const createSymbol = (
         />
       );
     case 'square':
-      return <SquareSymbol scale={size} numberOfSymbols={numberOfSymbols} opacity={opacity} fillColor={fillColor} />;
+      return (
+        <SquareSymbol
+          scale={size}
+          numberOfPoints={numberOfPoints}
+          numberOfSymbols={numberOfSymbols}
+          opacity={opacity}
+          fillColor={fillColor}
+        />
+      );
     case 'triangle up':
       return (
         <TriangleSymbol
           scale={1.1 * size}
+          numberOfPoints={numberOfPoints}
           numberOfSymbols={numberOfSymbols}
           direction={Direction.UP}
           opacity={opacity}
@@ -182,6 +191,7 @@ export const createSymbol = (
       return (
         <TriangleSymbol
           scale={1.1 * size}
+          numberOfPoints={numberOfPoints}
           numberOfSymbols={numberOfSymbols}
           direction={Direction.DOWN}
           opacity={opacity}
@@ -192,6 +202,7 @@ export const createSymbol = (
       return (
         <TriangleSymbol
           scale={1.1 * size}
+          numberOfPoints={numberOfPoints}
           numberOfSymbols={numberOfSymbols}
           direction={Direction.RIGHT}
           opacity={opacity}
@@ -202,6 +213,7 @@ export const createSymbol = (
       return (
         <TriangleSymbol
           scale={1.1 * size}
+          numberOfPoints={numberOfPoints}
           numberOfSymbols={numberOfSymbols}
           direction={Direction.LEFT}
           opacity={opacity}
@@ -210,15 +222,33 @@ export const createSymbol = (
       );
     case 'star':
       return (
-        <StarSymbol scale={1.25 * size} numberOfSymbols={numberOfSymbols} opacity={opacity} fillColor={fillColor} />
+        <StarSymbol
+          scale={1.25 * size}
+          numberOfPoints={numberOfPoints}
+          numberOfSymbols={numberOfSymbols}
+          opacity={opacity}
+          fillColor={fillColor}
+        />
       );
     case 'diamond':
       return (
-        <DiamondSymbol scale={1.1 * size} numberOfSymbols={numberOfSymbols} opacity={opacity} fillColor={fillColor} />
+        <DiamondSymbol
+          scale={1.1 * size}
+          numberOfPoints={numberOfPoints}
+          numberOfSymbols={numberOfSymbols}
+          opacity={opacity}
+          fillColor={fillColor}
+        />
       );
     case 'hexagon':
       return (
-        <HexagonSymbol scale={1.3 * size} numberOfSymbols={numberOfSymbols} opacity={opacity} fillColor={fillColor} />
+        <HexagonSymbol
+          scale={1.3 * size}
+          numberOfPoints={numberOfPoints}
+          numberOfSymbols={numberOfSymbols}
+          opacity={opacity}
+          fillColor={fillColor}
+        />
       );
   }
 };
