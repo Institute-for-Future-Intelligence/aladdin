@@ -16,7 +16,7 @@ interface WindowMoveHandleProps {
 const WindowMoveHandle = ({ handleType }: WindowMoveHandleProps) => {
   const moveHandleType = useStore(Selector.moveHandleType);
 
-  const handleRef = useRef<Mesh>();
+  const handleRef = useRef<Mesh>(null);
 
   const [color, setColor] = useState('white');
 

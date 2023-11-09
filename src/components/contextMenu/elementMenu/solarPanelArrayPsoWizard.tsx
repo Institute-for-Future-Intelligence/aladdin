@@ -25,6 +25,7 @@ import { FoundationModel } from '../../../models/FoundationModel';
 import { SolarPanelModel } from '../../../models/SolarPanelModel';
 import { PolygonModel } from '../../../models/PolygonModel';
 import { usePrimitiveStore } from '../../../stores/commonPrimitive';
+import { useTranslation } from 'react-i18next';
 
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -160,12 +161,12 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
 
   const run = () => {
     if (!runEvolution) {
-      showInfo(i18n.t('message.EvolutionStarted', lang));
+      showInfo(t('message.EvolutionStarted', lang));
     }
     updateStoreParams();
     // give it 0.1 second for the info to show up
     setTimeout(() => {
-      usePrimitiveStore.setState((state) => {
+      usePrimitiveStore.getState().set((state) => {
         state.runEvolution = !state.runEvolution;
       });
       setCommonStore((state) => {
@@ -180,6 +181,8 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
     }, 100);
   };
 
+  const { t } = useTranslation();
+
   return (
     <>
       <Modal
@@ -191,9 +194,9 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('optimizationMenu.SolarPanelArrayLayout', lang) +
+            {t('optimizationMenu.SolarPanelArrayLayout', lang) +
               ': ' +
-              i18n.t('optimizationMenu.ParticleSwarmOptimizationSettings', lang)}
+              t('optimizationMenu.ParticleSwarmOptimizationSettings', lang)}
           </div>
         }
         footer={[
@@ -203,7 +206,7 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
               setDialogVisible(false);
             }}
           >
-            {i18n.t('word.Cancel', lang)}
+            {t('word.Cancel', lang)}
           </Button>,
           <Button
             key="Run"
@@ -214,7 +217,7 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
               setDialogVisible(false);
             }}
           >
-            {i18n.t('word.Run', lang)}
+            {t('word.Run', lang)}
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
@@ -238,10 +241,10 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
             });
           }}
         >
-          <TabPane tab={i18n.t('optimizationMenu.Parameters', lang)} key="1">
+          <TabPane tab={t('optimizationMenu.Parameters', lang)} key="1">
             <Row gutter={6} style={{ paddingBottom: '4px' }}>
               <Col className="gutter-row" span={12}>
-                {i18n.t('optimizationMenu.Objective', lang) + ':'}
+                {t('optimizationMenu.Objective', lang) + ':'}
               </Col>
               <Col className="gutter-row" span={12}>
                 <Select
@@ -257,31 +260,31 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
                     key={ObjectiveFunctionType.DAILY_TOTAL_OUTPUT}
                     value={ObjectiveFunctionType.DAILY_TOTAL_OUTPUT}
                   >
-                    {i18n.t('optimizationMenu.ObjectiveFunctionDailyTotalYield', lang)}
+                    {t('optimizationMenu.ObjectiveFunctionDailyTotalYield', lang)}
                   </Option>
                   <Option
                     key={ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT}
                     value={ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT}
                   >
-                    {i18n.t('optimizationMenu.ObjectiveFunctionYearlyTotalYield', lang)}
+                    {t('optimizationMenu.ObjectiveFunctionYearlyTotalYield', lang)}
                   </Option>
                   <Option
                     key={ObjectiveFunctionType.DAILY_AVERAGE_OUTPUT}
                     value={ObjectiveFunctionType.DAILY_AVERAGE_OUTPUT}
                   >
-                    {i18n.t('optimizationMenu.ObjectiveFunctionDailyMeanYield', lang)}
+                    {t('optimizationMenu.ObjectiveFunctionDailyMeanYield', lang)}
                   </Option>
                   <Option
                     key={ObjectiveFunctionType.YEARLY_AVERAGE_OUTPUT}
                     value={ObjectiveFunctionType.YEARLY_AVERAGE_OUTPUT}
                   >
-                    {i18n.t('optimizationMenu.ObjectiveFunctionYearlyMeanYield', lang)}
+                    {t('optimizationMenu.ObjectiveFunctionYearlyMeanYield', lang)}
                   </Option>
                   <Option key={ObjectiveFunctionType.DAILY_PROFIT} value={ObjectiveFunctionType.DAILY_PROFIT}>
-                    {i18n.t('optimizationMenu.ObjectiveFunctionDailyProfit', lang)}
+                    {t('optimizationMenu.ObjectiveFunctionDailyProfit', lang)}
                   </Option>
                   <Option key={ObjectiveFunctionType.YEARLY_PROFIT} value={ObjectiveFunctionType.YEARLY_PROFIT}>
-                    {i18n.t('optimizationMenu.ObjectiveFunctionYearlyProfit', lang)}
+                    {t('optimizationMenu.ObjectiveFunctionYearlyProfit', lang)}
                   </Option>
                 </Select>
               </Col>
@@ -289,7 +292,7 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
 
             <Row gutter={6} style={{ paddingBottom: '4px' }}>
               <Col className="gutter-row" span={12}>
-                {i18n.t('optimizationMenu.SwarmSize', lang) + ' [10, 100]:'}
+                {t('optimizationMenu.SwarmSize', lang) + ' [10, 100]:'}
               </Col>
               <Col className="gutter-row" span={12}>
                 <InputNumber
@@ -301,7 +304,7 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
                   step={1}
                   formatter={(a) => Number(a).toFixed(0)}
                   onChange={(value) => {
-                    swarmSizeRef.current = value;
+                    swarmSizeRef.current = Number(value);
                     setUpdateFlag(!updateFlag);
                   }}
                 />
@@ -310,7 +313,7 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
 
             <Row gutter={6} style={{ paddingBottom: '4px' }}>
               <Col className="gutter-row" span={12}>
-                {i18n.t('optimizationMenu.MaximumSteps', lang) + ' [5, 100]:'}
+                {t('optimizationMenu.MaximumSteps', lang) + ' [5, 100]:'}
               </Col>
               <Col className="gutter-row" span={12}>
                 <InputNumber
@@ -322,7 +325,7 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
                   value={maximumStepsRef.current}
                   formatter={(a) => Number(a).toFixed(0)}
                   onChange={(value) => {
-                    maximumStepsRef.current = value;
+                    maximumStepsRef.current = Number(value);
                     setUpdateFlag(!updateFlag);
                   }}
                 />
@@ -331,7 +334,7 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
 
             <Row gutter={6} style={{ paddingBottom: '4px' }}>
               <Col className="gutter-row" span={12}>
-                {i18n.t('optimizationMenu.CognitiveCoefficient', lang) + ' [0, 1]: '}
+                {t('optimizationMenu.CognitiveCoefficient', lang) + ' [0, 1]: '}
               </Col>
               <Col className="gutter-row" span={12}>
                 <InputNumber
@@ -342,7 +345,7 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
                   value={cognitiveCoefficientRef.current}
                   step={0.01}
                   onChange={(value) => {
-                    cognitiveCoefficientRef.current = value;
+                    cognitiveCoefficientRef.current = Number(value);
                     setUpdateFlag(!updateFlag);
                   }}
                 />
@@ -351,7 +354,7 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
 
             <Row gutter={6} style={{ paddingBottom: '4px' }}>
               <Col className="gutter-row" span={12}>
-                {i18n.t('optimizationMenu.SocialCoefficient', lang) + ' [0, 1]: '}
+                {t('optimizationMenu.SocialCoefficient', lang) + ' [0, 1]: '}
               </Col>
               <Col className="gutter-row" span={12}>
                 <InputNumber
@@ -362,7 +365,7 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
                   value={socialCoefficientRef.current}
                   step={0.01}
                   onChange={(value) => {
-                    socialCoefficientRef.current = value;
+                    socialCoefficientRef.current = Number(value);
                     setUpdateFlag(!updateFlag);
                   }}
                 />
@@ -371,7 +374,7 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
 
             <Row gutter={6} style={{ paddingBottom: '4px' }}>
               <Col className="gutter-row" span={12}>
-                {i18n.t('optimizationMenu.InertiaWeight', lang) + ' [0, 1]: '}
+                {t('optimizationMenu.InertiaWeight', lang) + ' [0, 1]: '}
               </Col>
               <Col className="gutter-row" span={12}>
                 <InputNumber
@@ -382,7 +385,7 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
                   value={inertiaRef.current}
                   step={0.01}
                   onChange={(value) => {
-                    inertiaRef.current = value;
+                    inertiaRef.current = Number(value);
                     setUpdateFlag(!updateFlag);
                   }}
                 />
@@ -391,7 +394,7 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
 
             <Row gutter={6} style={{ paddingBottom: '4px' }}>
               <Col className="gutter-row" span={12}>
-                {i18n.t('optimizationMenu.MaximumVelocity', lang) + ' [0.001, 0.1]: '}
+                {t('optimizationMenu.MaximumVelocity', lang) + ' [0.001, 0.1]: '}
               </Col>
               <Col className="gutter-row" span={12}>
                 <InputNumber
@@ -402,7 +405,7 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
                   value={vmaxRef.current}
                   step={0.001}
                   onChange={(value) => {
-                    vmaxRef.current = value;
+                    vmaxRef.current = Number(value);
                     setUpdateFlag(!updateFlag);
                   }}
                 />
@@ -411,7 +414,7 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
 
             <Row gutter={6} style={{ paddingBottom: '4px' }}>
               <Col className="gutter-row" span={12}>
-                {i18n.t('optimizationMenu.ConvergenceThreshold', lang) + ' (0, 0.1]: '}
+                {t('optimizationMenu.ConvergenceThreshold', lang) + ' (0, 0.1]: '}
               </Col>
               <Col className="gutter-row" span={12}>
                 <InputNumber
@@ -422,7 +425,7 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
                   value={convergenceThresholdRef.current}
                   step={0.001}
                   onChange={(value) => {
-                    convergenceThresholdRef.current = value;
+                    convergenceThresholdRef.current = Number(value);
                     setUpdateFlag(!updateFlag);
                   }}
                 />
@@ -431,7 +434,7 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
 
             <Row gutter={6} style={{ paddingBottom: '4px' }}>
               <Col className="gutter-row" span={12}>
-                {i18n.t('optimizationMenu.SearchMethod', lang) + ':'}
+                {t('optimizationMenu.SearchMethod', lang) + ':'}
               </Col>
               <Col className="gutter-row" span={12}>
                 <Select
@@ -439,7 +442,7 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
                   style={{ width: '100%' }}
                   value={searchMethodRef.current}
                   onChange={(value) => {
-                    searchMethodRef.current = value;
+                    searchMethodRef.current = Number(value);
                     setUpdateFlag(!updateFlag);
                   }}
                 >
@@ -447,13 +450,13 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
                     key={SearchMethod.GLOBAL_SEARCH_UNIFORM_SELECTION}
                     value={SearchMethod.GLOBAL_SEARCH_UNIFORM_SELECTION}
                   >
-                    {i18n.t('optimizationMenu.GlobalSearchUniformSelection', lang)}
+                    {t('optimizationMenu.GlobalSearchUniformSelection', lang)}
                   </Option>
                   <Option
                     key={SearchMethod.LOCAL_SEARCH_RANDOM_OPTIMIZATION}
                     value={SearchMethod.LOCAL_SEARCH_RANDOM_OPTIMIZATION}
                   >
-                    {i18n.t('optimizationMenu.LocalSearchRandomOptimization', lang)}
+                    {t('optimizationMenu.LocalSearchRandomOptimization', lang)}
                   </Option>
                 </Select>
               </Col>
@@ -462,7 +465,7 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
             {searchMethodRef.current === SearchMethod.LOCAL_SEARCH_RANDOM_OPTIMIZATION && (
               <Row gutter={6} style={{ paddingBottom: '4px' }}>
                 <Col className="gutter-row" span={12}>
-                  {i18n.t('optimizationMenu.LocalSearchRadius', lang) + ' ([0, 1]: '}
+                  {t('optimizationMenu.LocalSearchRadius', lang) + ' ([0, 1]: '}
                 </Col>
                 <Col className="gutter-row" span={12}>
                   <InputNumber
@@ -473,7 +476,7 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
                     value={localSearchRadiusRef.current}
                     step={0.01}
                     onChange={(value) => {
-                      localSearchRadiusRef.current = value;
+                      localSearchRadiusRef.current = Number(value);
                       setUpdateFlag(!updateFlag);
                     }}
                   />
@@ -482,10 +485,10 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
             )}
           </TabPane>
 
-          <TabPane tab={i18n.t('optimizationMenu.Variables', lang)} key="2">
+          <TabPane tab={t('optimizationMenu.Variables', lang)} key="2">
             <Row gutter={6}>
               <Col className="gutter-row" span={12}>
-                {i18n.t('optimizationMenu.TiltAngleRange', lang) + ':'}
+                {t('optimizationMenu.TiltAngleRange', lang) + ':'}
               </Col>
               <Col className="gutter-row" span={12}>
                 <Slider
@@ -539,7 +542,7 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
 
             <Row gutter={6}>
               <Col className="gutter-row" span={12}>
-                {i18n.t('optimizationMenu.RowsPerRackRange', lang) + ':'}
+                {t('optimizationMenu.RowsPerRackRange', lang) + ':'}
               </Col>
               <Col className="gutter-row" span={12}>
                 <Slider
@@ -615,7 +618,7 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
 
             <Row gutter={6}>
               <Col className="gutter-row" span={12}>
-                {i18n.t('optimizationMenu.InterRowSpacingRange', lang) + ':'}
+                {t('optimizationMenu.InterRowSpacingRange', lang) + ':'}
               </Col>
               <Col className="gutter-row" span={12}>
                 <Slider
@@ -665,14 +668,14 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
             </Row>
           </TabPane>
 
-          <TabPane tab={i18n.t('optimizationMenu.Constants', lang)} key="3">
+          <TabPane tab={t('optimizationMenu.Constants', lang)} key="3">
             <Row gutter={6} style={{ paddingBottom: '6px', paddingTop: '0px' }}>
               <Col className="gutter-row" span={12}>
-                {i18n.t('polygonMenu.SolarPanelArrayModel', lang) +
+                {t('polygonMenu.SolarPanelArrayModel', lang) +
                   ' (' +
                   Object.keys(pvModules).length +
                   ' ' +
-                  i18n.t('word.Options', lang) +
+                  t('word.Options', lang) +
                   '):'}
               </Col>
               <Col className="gutter-row" span={12}>
@@ -688,9 +691,7 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
                   {Object.keys(pvModules).map((key) => (
                     <Option key={key} value={key}>
                       {key +
-                        (pvModules[key].bifacialityFactor > 0
-                          ? ' (' + i18n.t('pvModelPanel.Bifacial', lang) + ')'
-                          : '')}
+                        (pvModules[key].bifacialityFactor > 0 ? ' (' + t('pvModelPanel.Bifacial', lang) + ')' : '')}
                     </Option>
                   ))}
                 </Select>
@@ -699,7 +700,7 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
 
             <Row gutter={6} style={{ paddingBottom: '6px', paddingTop: '8px' }}>
               <Col className="gutter-row" span={12}>
-                {i18n.t('polygonMenu.SolarPanelArrayRowAxis', lang) + ':'}
+                {t('polygonMenu.SolarPanelArrayRowAxis', lang) + ':'}
               </Col>
               <Col className="gutter-row" span={12}>
                 <Select
@@ -711,10 +712,10 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
                   }}
                 >
                   <Option key={RowAxis.leftRight} value={RowAxis.leftRight}>
-                    {i18n.t('polygonMenu.SolarPanelArrayLeftRightRowAxis', lang)}
+                    {t('polygonMenu.SolarPanelArrayLeftRightRowAxis', lang)}
                   </Option>
                   <Option key={RowAxis.upDown} value={RowAxis.upDown}>
-                    {i18n.t('polygonMenu.SolarPanelArrayUpDownRowAxis', lang)}
+                    {t('polygonMenu.SolarPanelArrayUpDownRowAxis', lang)}
                   </Option>
                 </Select>
               </Col>
@@ -722,7 +723,7 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
 
             <Row gutter={6} style={{ paddingBottom: '6px', paddingTop: '8px' }}>
               <Col className="gutter-row" span={12}>
-                {i18n.t('polygonMenu.SolarPanelArrayOrientation', lang) + ':'}
+                {t('polygonMenu.SolarPanelArrayOrientation', lang) + ':'}
               </Col>
               <Col className="gutter-row" span={12}>
                 <Select
@@ -734,10 +735,10 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
                   }}
                 >
                   <Option key={Orientation.portrait} value={Orientation.portrait}>
-                    {i18n.t('solarPanelMenu.Portrait', lang)}
+                    {t('solarPanelMenu.Portrait', lang)}
                   </Option>
                   <Option key={Orientation.landscape} value={Orientation.landscape}>
-                    {i18n.t('solarPanelMenu.Landscape', lang)}
+                    {t('solarPanelMenu.Landscape', lang)}
                   </Option>
                 </Select>
               </Col>
@@ -745,7 +746,7 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
 
             <Row gutter={6} style={{ paddingBottom: '0px', paddingTop: '12px' }}>
               <Col className="gutter-row" span={12}>
-                {i18n.t('polygonMenu.SolarPanelArrayMargin', lang) + ':'}
+                {t('polygonMenu.SolarPanelArrayMargin', lang) + ':'}
               </Col>
               <Col className="gutter-row" span={12}>
                 <Slider
@@ -802,7 +803,7 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
 
             <Row gutter={6} style={{ paddingBottom: '0px', paddingTop: '12px' }}>
               <Col className="gutter-row" span={12}>
-                {i18n.t('solarCollectorMenu.PoleHeight', lang) + ':'}
+                {t('solarCollectorMenu.PoleHeight', lang) + ':'}
               </Col>
               <Col className="gutter-row" span={12}>
                 <Slider
@@ -859,7 +860,7 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
 
             <Row gutter={6} style={{ paddingBottom: '0px', paddingTop: '12px' }}>
               <Col className="gutter-row" span={12}>
-                {i18n.t('solarPanelMenu.PoleSpacing', lang) + ':'}
+                {t('solarPanelMenu.PoleSpacing', lang) + ':'}
               </Col>
               <Col className="gutter-row" span={12}>
                 <Slider
@@ -910,7 +911,7 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
 
             <Row gutter={6} style={{ paddingBottom: '0px', paddingTop: '12px' }}>
               <Col className="gutter-row" span={12}>
-                {i18n.t('economicsPanel.OperationalCostPerUnit', lang) + ':'}
+                {t('economicsPanel.OperationalCostPerUnit', lang) + ':'}
               </Col>
               <Col className="gutter-row" span={12}>
                 <Slider
@@ -961,7 +962,7 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
 
             <Row gutter={6} style={{ paddingBottom: '0px', paddingTop: '12px' }}>
               <Col className="gutter-row" span={12}>
-                {i18n.t('economicsPanel.ElectricitySellingPrice', lang) + ':'}
+                {t('economicsPanel.ElectricitySellingPrice', lang) + ':'}
               </Col>
               <Col className="gutter-row" span={12}>
                 <Slider

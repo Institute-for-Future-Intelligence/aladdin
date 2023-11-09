@@ -17,6 +17,7 @@ import RenameImage from '../assets/rename.png';
 import DeleteImage from '../assets/delete.png';
 import LinkImage from '../assets/create_link.png';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { useTranslation } from 'react-i18next';
 
 const { Column } = Table;
 
@@ -142,18 +143,18 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
   };
 
   const closePanel = () => {
-    usePrimitiveStore.setState((state) => {
+    usePrimitiveStore.getState().set((state) => {
       state.showCloudFilePanel = false;
     });
   };
 
   const deleteFile = (userid: string, title: string) => {
     Modal.confirm({
-      title: i18n.t('cloudFilePanel.DoYouReallyWantToDelete', lang) + ' "' + title + '"?',
+      title: t('cloudFilePanel.DoYouReallyWantToDelete', lang) + ' "' + title + '"?',
       content: (
         <span style={{ color: 'red', fontWeight: 'bold' }}>
           <WarningOutlined style={{ marginRight: '6px' }} />
-          {i18n.t('word.Warning', lang) + ': ' + i18n.t('message.ThisCannotBeUndone', lang)}
+          {t('word.Warning', lang) + ': ' + t('message.ThisCannotBeUndone', lang)}
         </span>
       ),
       icon: <QuestionCircleOutlined />,
@@ -189,6 +190,8 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
     }
   };
 
+  const { t } = useTranslation();
+
   return (
     <>
       <Modal
@@ -198,7 +201,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('word.Rename', lang)}
+            {t('word.Rename', lang)}
           </div>
         }
         visible={renameDialogVisible}
@@ -230,9 +233,9 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
           />
           <span style={{ fontSize: '11px', color: 'red' }}>
             <WarningOutlined style={{ marginRight: '4px' }} />
-            {i18n.t('word.Caution', lang) +
+            {t('word.Caution', lang) +
               ': ' +
-              i18n.t('cloudFilePanel.IfSharedOrPublishedRenamingFileBreaksExistingLinks', lang)}
+              t('cloudFilePanel.IfSharedOrPublishedRenamingFileBreaksExistingLinks', lang)}
             .
           </span>
         </Space>
@@ -257,7 +260,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
         >
           <ColumnWrapper ref={wrapperRef}>
             <Header className="handle" style={{ direction: 'ltr' }}>
-              <span>{i18n.t('cloudFilePanel.MyCloudFiles', lang) + ' (' + filesRef.current.length + ')'}</span>
+              <span>{t('cloudFilePanel.MyCloudFiles', lang) + ' (' + filesRef.current.length + ')'}</span>
               <span
                 style={{ cursor: 'pointer' }}
                 onMouseDown={() => {
@@ -267,13 +270,13 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
                   closePanel();
                 }}
               >
-                {i18n.t('word.Close', lang)}
+                {t('word.Close', lang)}
               </span>
             </Header>
             <span style={{ direction: 'ltr' }}>
               <Search
                 style={{ width: '50%', paddingTop: '8px', paddingBottom: '8px' }}
-                title={i18n.t('cloudFilePanel.SearchByTitle', lang)}
+                title={t('cloudFilePanel.SearchByTitle', lang)}
                 allowClear
                 size={'small'}
                 enterButton
@@ -304,7 +307,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
               }}
             >
               <Column
-                title={i18n.t('word.Title', lang)}
+                title={`${t('word.Title', lang)}`}
                 dataIndex="title"
                 key="title"
                 width={'56%'}
@@ -315,7 +318,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
                 }}
                 render={(title, record) => {
                   return (
-                    <Typography.Text style={{ fontSize: '12px', cursor: 'pointer' }} title={i18n.t('word.Open', lang)}>
+                    <Typography.Text style={{ fontSize: '12px', cursor: 'pointer' }} title={t('word.Open', lang)}>
                       {title}
                     </Typography.Text>
                   );
@@ -333,7 +336,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
                 }}
               />
               <Column
-                title={i18n.t('word.Time', lang)}
+                title={`${t('word.Time', lang)}`}
                 dataIndex="time"
                 key="time"
                 width={'25%'}
@@ -349,12 +352,12 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
               />
               <Column
                 width={'19%'}
-                title={i18n.t('word.Action', lang)}
+                title={`${t('word.Action', lang)}`}
                 key="action"
                 render={(text, record: any) => (
                   <Space size="middle">
                     <img
-                      title={i18n.t('word.Delete', lang)}
+                      title={t('word.Delete', lang)}
                       alt={'Delete'}
                       src={DeleteImage}
                       onClick={() => {
@@ -368,7 +371,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
                       }}
                     />
                     <img
-                      title={i18n.t('word.Rename', lang)}
+                      title={t('word.Rename', lang)}
                       alt={'Rename'}
                       src={RenameImage}
                       onClick={() => {
@@ -384,11 +387,11 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
                       }}
                     />
                     <CopyOutlined
-                      title={i18n.t('cloudFilePanel.CopyTitle', lang)}
+                      title={t('cloudFilePanel.CopyTitle', lang)}
                       alt={'Copy Title'}
                       onClick={() => {
                         copyTextToClipboard(record.title);
-                        showSuccess(i18n.t('cloudFilePanel.TitleCopiedToClipBoard', lang) + '.');
+                        showSuccess(t('cloudFilePanel.TitleCopiedToClipBoard', lang) + '.');
                       }}
                       height={16}
                       width={16}
@@ -398,7 +401,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
                       }}
                     />
                     <img
-                      title={i18n.t('cloudFilePanel.GenerateLink', lang)}
+                      title={t('cloudFilePanel.GenerateLink', lang)}
                       alt={'Link'}
                       src={LinkImage}
                       onClick={() => {
@@ -409,7 +412,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
                           '&title=' +
                           encodeURIComponent(record.title);
                         copyTextToClipboard(url);
-                        showSuccess(i18n.t('cloudFilePanel.LinkGeneratedInClipBoard', lang) + '.');
+                        showSuccess(t('cloudFilePanel.LinkGeneratedInClipBoard', lang) + '.');
                       }}
                       height={16}
                       width={16}

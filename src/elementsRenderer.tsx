@@ -46,8 +46,8 @@ const ElementsRenderer: React.FC = () => {
 
   useEffect(() => {
     if (groupRef) {
-      useRefStore.setState((state) => {
-        state.contentRef = groupRef;
+      useRefStore.setState({
+        contentRef: groupRef,
       });
     }
   }, []);

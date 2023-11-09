@@ -489,6 +489,7 @@ const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible
             value={parseFloat(Util.toDegrees(inputValue).toFixed(2))}
             formatter={(value) => `${value}°`}
             onChange={(value) => {
+              if (value === null) return;
               setInputValue(Util.toRadians(value));
             }}
           />

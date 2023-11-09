@@ -53,7 +53,7 @@ const SolarPanelTiltAnglePso = () => {
         cancelAnimationFrame(requestRef.current);
         if (!evolutionCompletedRef.current) {
           showInfo(i18n.t('message.EvolutionAborted', lang));
-          usePrimitiveStore.setState((state) => {
+          usePrimitiveStore.getState().set((state) => {
             state.evolutionInProgress = false;
           });
           // revert to the initial solar panels
@@ -71,12 +71,12 @@ const SolarPanelTiltAnglePso = () => {
     pauseRef.current = pauseEvolution;
     if (pauseEvolution) {
       cancelAnimationFrame(requestRef.current);
-      usePrimitiveStore.setState((state) => {
+      usePrimitiveStore.getState().set((state) => {
         state.evolutionPaused = true;
       });
       showInfo(i18n.t('message.EvolutionPaused', lang));
     } else {
-      usePrimitiveStore.setState((state) => {
+      usePrimitiveStore.getState().set((state) => {
         state.evolutionPaused = false;
       });
       // continue the evolution
@@ -88,7 +88,7 @@ const SolarPanelTiltAnglePso = () => {
   // getting ready for the evolution
   const init = () => {
     if (!foundation) return;
-    usePrimitiveStore.setState((state) => {
+    usePrimitiveStore.getState().set((state) => {
       state.evolutionInProgress = true;
       state.objectiveEvaluationIndex = 0;
     });
@@ -218,7 +218,7 @@ const SolarPanelTiltAnglePso = () => {
   };
 
   const runCallback = (lastStep: boolean) => {
-    usePrimitiveStore.setState((state) => {
+    usePrimitiveStore.getState().set((state) => {
       if (solarPanelsRef.current) {
         switch (params.objectiveFunctionType) {
           case ObjectiveFunctionType.DAILY_TOTAL_OUTPUT:
@@ -262,7 +262,7 @@ const SolarPanelTiltAnglePso = () => {
       }
     });
     if (lastStep) {
-      usePrimitiveStore.setState((state) => {
+      usePrimitiveStore.getState().set((state) => {
         state.runEvolution = false;
         state.evolutionInProgress = false;
         state.objectiveEvaluationIndex = 0;

@@ -669,7 +669,10 @@ const CuboidWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
             step={0.5}
             precision={2}
             value={inputValue}
-            onChange={setInputValue}
+            onChange={(value) => {
+              if (value === null) return;
+              setInputValue(value);
+            }}
           />
           <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
             {i18n.t('word.Range', lang)}: [0.1, 500] {i18n.t('word.MeterAbbreviation', lang)}

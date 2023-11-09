@@ -355,7 +355,10 @@ const SolarPanelInverterEfficiencyInput = ({ setDialogVisible }: { setDialogVisi
             style={{ width: 120 }}
             precision={2}
             value={inputValue}
-            onChange={setInputValue}
+            onChange={(value) => {
+              if (value === null) return;
+              setInputValue(value);
+            }}
           />
           <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
             [0.5, 1.0]

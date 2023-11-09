@@ -509,6 +509,7 @@ const SolarPanelTiltAngleInput = ({
             step={1}
             formatter={(value) => `${value}°`}
             onChange={(value) => {
+              if (value === null) return;
               setInputValue(Util.toRadians(value));
             }}
           />

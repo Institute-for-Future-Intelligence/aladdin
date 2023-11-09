@@ -44,8 +44,8 @@ const WindTurbine = ({
   } = useThree();
 
   const [hovered, setHovered] = useState(false);
-  const baseRef = useRef<Mesh>();
-  const moveHandleRef = useRef<Mesh>();
+  const baseRef = useRef<Mesh>(null);
+  const moveHandleRef = useRef<Mesh>(null);
   const pointerDown = useRef<boolean>(false);
 
   const lang = useMemo(() => {

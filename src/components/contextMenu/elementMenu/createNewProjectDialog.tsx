@@ -57,14 +57,14 @@ const CreateNewProjectDialog = ({
   };
 
   const onOkClick = () => {
-    usePrimitiveStore.setState((state) => {
+    usePrimitiveStore.getState().set((state) => {
       if (saveAs) {
         state.saveProjectFlag = true;
       } else {
         state.createProjectFlag = true;
       }
     });
-    usePrimitiveStore.setState((state) => {
+    usePrimitiveStore.getState().set((state) => {
       state.projectType = projectType;
       state.projectTitle = projectTitle;
       state.projectDescription = projectDescription;
@@ -90,15 +90,15 @@ const CreateNewProjectDialog = ({
           onMouseOver={() => setDragEnabled(true)}
           onMouseOut={() => setDragEnabled(false)}
         >
-          {i18n.t(saveAs ? 'menu.project.SaveProjectAs' : 'menu.project.CreateNewProject', lang)}
+          {`${i18n.t(saveAs ? 'menu.project.SaveProjectAs' : 'menu.project.CreateNewProject', lang)}`}
         </div>
       }
       footer={[
         <Button key="Cancel" onClick={onCancelClick}>
-          {i18n.t('word.Cancel', lang)}
+          {`${i18n.t('word.Cancel', lang)}`}
         </Button>,
         <Button key="OK" type="primary" onClick={onOkClick} disabled={!projectTitle}>
-          {i18n.t('word.OK', lang)}
+          {`${i18n.t('word.OK', lang)}`}
         </Button>,
       ]}
       // this must be specified for the x button in the upper-right corner to work
@@ -127,7 +127,7 @@ const CreateNewProjectDialog = ({
             }}
           >
             <Option key={DesignProblem.SOLAR_PANEL_ARRAY} value={DesignProblem.SOLAR_PANEL_ARRAY}>
-              {i18n.t('projectPanel.SolarPanelArray', lang)}
+              {`${i18n.t('projectPanel.SolarPanelArray', lang)}`}
             </Option>
           </Select>
         </Col>
@@ -135,7 +135,7 @@ const CreateNewProjectDialog = ({
 
       <Row gutter={6} style={{ paddingBottom: '4px' }}>
         <Col className="gutter-row" span={8}>
-          {i18n.t('word.Title', lang)}:
+          {`${i18n.t('word.Title', lang)}`}:
         </Col>
         <Col className="gutter-row" span={16}>
           <Input
@@ -157,8 +157,8 @@ const CreateNewProjectDialog = ({
 
       <Row gutter={6} style={{ paddingBottom: '4px' }}>
         <Col className="gutter-row" span={8}>
-          {i18n.t('word.Description', lang)}:<br />
-          <span style={{ fontSize: '10px' }}>({i18n.t('word.MaximumCharacters', lang)}: 200)</span>
+          {`${i18n.t('word.Description', lang)}`}:<br />
+          <span style={{ fontSize: '10px' }}>({`${i18n.t('word.MaximumCharacters', lang)}`}: 200)</span>
         </Col>
         <Col className="gutter-row" span={16}>
           <TextArea

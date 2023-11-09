@@ -220,7 +220,7 @@ const RoofRiseInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =>
             precision={2}
             value={inputValue}
             formatter={(a) => Number(a).toFixed(2)}
-            onChange={(value) => setInputValue(value)}
+            onChange={(value) => setInputValue(value!)}
           />
           <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
             {i18n.t('word.Range', lang)}: [0, 200] {i18n.t('word.MeterAbbreviation', lang)}

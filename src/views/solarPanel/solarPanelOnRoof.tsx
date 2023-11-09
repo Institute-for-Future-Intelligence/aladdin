@@ -4,7 +4,20 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Circle, Cone, Cylinder, Line, Plane, Ring, Sphere, Torus } from '@react-three/drei';
-import { Color, DoubleSide, Euler, FrontSide, Mesh, Raycaster, Vector2, Vector3 } from 'three';
+import {
+  BufferGeometry,
+  Color,
+  DoubleSide,
+  Euler,
+  FrontSide,
+  Material,
+  Mesh,
+  NormalBufferAttributes,
+  Object3DEventMap,
+  Raycaster,
+  Vector2,
+  Vector3,
+} from 'three';
 import { useStore } from '../../stores/common';
 import { useRefStore } from 'src/stores/commonRef';
 import * as Selector from '../../stores/selector';
@@ -67,7 +80,12 @@ interface TiltHandleProps {
   tiltAngle: number;
   handleSize: number;
   initPointerDown: () => void;
-  handlePointerMove: (e: ThreeEvent<PointerEvent>, tiltHandleRef: React.MutableRefObject<Mesh | undefined>) => void;
+  handlePointerMove: (
+    e: ThreeEvent<PointerEvent>,
+    tiltHandleRef: React.RefObject<
+      Mesh<BufferGeometry<NormalBufferAttributes>, Material | Material[], Object3DEventMap>
+    >,
+  ) => void;
   handlePointerUp: () => void;
 }
 
@@ -98,7 +116,7 @@ const MoveHandle = ({ id, parentId, foundationId, handleSize }: MoveHandleProps)
       }}
       onPointerDown={(e) => {
         useStore.getState().selectMe(id, e, ActionType.Move);
-        usePrimitiveStore.setState((state) => {
+        usePrimitiveStore.getState().set((state) => {
           state.showWallIntersectionPlaneId = parentId;
           state.oldParentId = parentId;
           state.oldFoundationId = foundationId;
@@ -215,7 +233,7 @@ const TiltHandle = ({
   const { gl } = useThree();
   const [color, setColor] = useState(RESIZE_HANDLE_COLOR);
   const [showTiltAngle, setShowTiltAngle] = useState(false);
-  const tiltHandleRef = useRef<Mesh>();
+  const tiltHandleRef = useRef<Mesh>(null);
   const degree = useMemo(() => new Array(13).fill(0), []);
   const setCommonStore = useStore(Selector.set);
 
@@ -315,7 +333,7 @@ const TiltHandle = ({
 };
 
 const Sunbeam = React.memo(({ drawSunbeam, rotation, normal, relativeEuler, fRotation }: SunbeamProps) => {
-  const euler = new Euler().fromArray([...rotation, 'ZXY']);
+  const euler = new Euler().fromArray([rotation[0], rotation[1], rotation[2], 'ZXY']);
 
   const normalVector = useMemo(() => {
     if (rotation[0] === 0) {
@@ -507,7 +525,7 @@ const SolarPanelOnRoof = ({
   const [hovered, setHovered] = useState(false);
   const { gl, camera } = useThree();
 
-  const baseRef = useRef<Mesh>();
+  const baseRef = useRef<Mesh>(null);
   const solarPanelLinesRef = useRef<LineData[]>();
   const intersectionPlaneRef = useRef<Mesh>(null);
   const pointerDownRef = useRef<boolean>(false);
@@ -530,7 +548,7 @@ const SolarPanelOnRoof = ({
   }, [cx, cy, cz, hz, drawPole, poleHeight, sceneRadius]);
 
   const euler = useMemo(() => {
-    return new Euler().fromArray([...rotation, 'ZXY']);
+    return new Euler().fromArray([rotation[0], rotation[1], rotation[2], 'ZXY']);
   }, [rotation]);
 
   const relativeEuler = useMemo(() => {
@@ -674,7 +692,7 @@ const SolarPanelOnRoof = ({
     useRefStore.getState().setEnableOrbitController(false);
   };
 
-  const setRayCast = (e: PointerEvent) => {
+  const setRayCast = (e: ThreeEvent<PointerEvent>) => {
     mouse.x = (e.offsetX / gl.domElement.clientWidth) * 2 - 1;
     mouse.y = -(e.offsetY / gl.domElement.clientHeight) * 2 + 1;
     ray.setFromCamera(mouse, camera);
@@ -786,7 +804,9 @@ const SolarPanelOnRoof = ({
 
   const tiltHandlePointerMove = (
     e: ThreeEvent<PointerEvent>,
-    tiltHandleRef: React.MutableRefObject<Mesh | undefined>,
+    tiltHandleRef: React.RefObject<
+      Mesh<BufferGeometry<NormalBufferAttributes>, Material | Material[], Object3DEventMap>
+    >,
   ) => {
     if (pointerDownRef.current) {
       setRayCast(e);
@@ -927,15 +947,15 @@ const SolarPanelOnRoof = ({
 
   const renderTopTextureMaterial = () => {
     if (showSolarRadiationHeatmap && heatmapTexture) {
-      return <meshBasicMaterial attachArray="material" map={heatmapTexture} />;
+      return <meshBasicMaterial attach={'material-4'} map={heatmapTexture} />;
     }
-    if (!texture) return <meshStandardMaterial attachArray="material" color={color} />;
+    if (!texture) return <meshStandardMaterial attach={'material-4'} color={color} />;
     if (orthographic || solarPanelShininess === 0) {
-      return <meshStandardMaterial attachArray="material" map={texture} color={color} />;
+      return <meshStandardMaterial attach={'material-4'} map={texture} color={color} />;
     }
     return (
       <meshPhongMaterial
-        attachArray="material"
+        attach={'material-4'}
         specular={new Color(pvModel?.color === 'Blue' ? SOLAR_PANEL_BLUE_SPECULAR : SOLAR_PANEL_BLACK_SPECULAR)}
         shininess={solarPanelShininess ?? DEFAULT_SOLAR_PANEL_SHININESS}
         side={FrontSide}
@@ -947,12 +967,12 @@ const SolarPanelOnRoof = ({
 
   const renderBotTextureMaterial = () => {
     if (pvModel?.bifacialityFactor === 0 || orthographic || (poleHeight === 0 && tiltAngle === 0)) {
-      return <meshStandardMaterial attachArray="material" color={color} />;
+      return <meshStandardMaterial attach={'material-5'} color={color} />;
     }
     if (!texture) return null;
     return (
       <meshPhongMaterial
-        attachArray="material"
+        attach={'material-5'}
         specular={new Color(pvModel?.color === 'Blue' ? SOLAR_PANEL_BLUE_SPECULAR : SOLAR_PANEL_BLACK_SPECULAR)}
         shininess={solarPanelShininess ?? DEFAULT_SOLAR_PANEL_SHININESS}
         side={FrontSide}
@@ -1005,10 +1025,10 @@ const SolarPanelOnRoof = ({
             setHovered(false);
           }}
         >
-          <meshStandardMaterial attachArray="material" color={color} />
-          <meshStandardMaterial attachArray="material" color={color} />
-          <meshStandardMaterial attachArray="material" color={color} />
-          <meshStandardMaterial attachArray="material" color={color} />
+          <meshStandardMaterial attach={'material-0'} color={color} />
+          <meshStandardMaterial attach={'material-1'} color={color} />
+          <meshStandardMaterial attach={'material-2'} color={color} />
+          <meshStandardMaterial attach={'material-3'} color={color} />
           {renderTopTextureMaterial()}
           {renderBotTextureMaterial()}
         </Box>

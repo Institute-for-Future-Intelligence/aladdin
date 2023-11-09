@@ -11,6 +11,7 @@ import i18n from '../../../i18n/i18n';
 import { DesignProblem, EvolutionMethod, ObjectiveFunctionType, SearchMethod } from '../../../types';
 import { showInfo } from '../../../helpers';
 import { usePrimitiveStore } from '../../../stores/commonPrimitive';
+import { useTranslation } from 'react-i18next';
 
 const { Option } = Select;
 
@@ -80,12 +81,12 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
 
   const run = () => {
     if (!runEvolution) {
-      showInfo(i18n.t('message.EvolutionStarted', lang));
+      showInfo(t('message.EvolutionStarted', lang));
     }
     updateStoreParams();
     // give it 0.1 second for the info to show up
     setTimeout(() => {
-      usePrimitiveStore.setState((state) => {
+      usePrimitiveStore.getState().set((state) => {
         state.runEvolution = !state.runEvolution;
       });
       setCommonStore((state) => {
@@ -101,6 +102,8 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
     }, 100);
   };
 
+  const { t } = useTranslation();
+
   return (
     <>
       <Modal
@@ -112,8 +115,8 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('optimizationMenu.SolarPanelTiltAngleOptimization', lang) + ': '}
-            {i18n.t('optimizationMenu.ParticleSwarmOptimizationSettings', lang)}
+            {t('optimizationMenu.SolarPanelTiltAngleOptimization', lang) + ': '}
+            {t('optimizationMenu.ParticleSwarmOptimizationSettings', lang)}
           </div>
         }
         footer={[
@@ -123,7 +126,7 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
               setDialogVisible(false);
             }}
           >
-            {i18n.t('word.Cancel', lang)}
+            {t('word.Cancel', lang)}
           </Button>,
           <Button
             key="Run"
@@ -134,7 +137,7 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
               setDialogVisible(false);
             }}
           >
-            {i18n.t('word.Run', lang)}
+            {t('word.Run', lang)}
           </Button>,
         ]}
         // this must be specified for the x button in the upper-right corner to work
@@ -151,7 +154,7 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
       >
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
           <Col className="gutter-row" span={12}>
-            {i18n.t('optimizationMenu.Objective', lang) + ':'}
+            {t('optimizationMenu.Objective', lang) + ':'}
           </Col>
           <Col className="gutter-row" span={12}>
             <Select
@@ -164,10 +167,10 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
               }}
             >
               <Option key={ObjectiveFunctionType.DAILY_TOTAL_OUTPUT} value={ObjectiveFunctionType.DAILY_TOTAL_OUTPUT}>
-                {i18n.t('optimizationMenu.ObjectiveFunctionDailyTotalYield', lang)}
+                {t('optimizationMenu.ObjectiveFunctionDailyTotalYield', lang)}
               </Option>
               <Option key={ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT} value={ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT}>
-                {i18n.t('optimizationMenu.ObjectiveFunctionYearlyTotalYield', lang)}
+                {t('optimizationMenu.ObjectiveFunctionYearlyTotalYield', lang)}
               </Option>
             </Select>
           </Col>
@@ -175,7 +178,7 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
           <Col className="gutter-row" span={12}>
-            {i18n.t('optimizationMenu.SwarmSize', lang) + ':'}
+            {t('optimizationMenu.SwarmSize', lang) + ':'}
           </Col>
           <Col className="gutter-row" span={12}>
             <InputNumber
@@ -187,7 +190,7 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
               step={1}
               formatter={(a) => Number(a).toFixed(0)}
               onChange={(value) => {
-                swarmSizeRef.current = value;
+                swarmSizeRef.current = Number(value);
                 setUpdateFlag(!updateFlag);
               }}
             />
@@ -196,7 +199,7 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
           <Col className="gutter-row" span={12}>
-            {i18n.t('optimizationMenu.MaximumSteps', lang) + ':'}
+            {t('optimizationMenu.MaximumSteps', lang) + ':'}
           </Col>
           <Col className="gutter-row" span={12}>
             <InputNumber
@@ -208,7 +211,7 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
               value={maximumStepsRef.current}
               formatter={(a) => Number(a).toFixed(0)}
               onChange={(value) => {
-                maximumStepsRef.current = value;
+                maximumStepsRef.current = Number(value);
                 setUpdateFlag(!updateFlag);
               }}
             />
@@ -217,7 +220,7 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
           <Col className="gutter-row" span={12}>
-            {i18n.t('optimizationMenu.CognitiveCoefficient', lang) + ' [0, 1]: '}
+            {t('optimizationMenu.CognitiveCoefficient', lang) + ' [0, 1]: '}
           </Col>
           <Col className="gutter-row" span={12}>
             <InputNumber
@@ -228,7 +231,7 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
               value={cognitiveCoefficientRef.current}
               step={0.01}
               onChange={(value) => {
-                cognitiveCoefficientRef.current = value;
+                cognitiveCoefficientRef.current = Number(value);
                 setUpdateFlag(!updateFlag);
               }}
             />
@@ -237,7 +240,7 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
           <Col className="gutter-row" span={12}>
-            {i18n.t('optimizationMenu.SocialCoefficient', lang) + ' [0, 1]: '}
+            {t('optimizationMenu.SocialCoefficient', lang) + ' [0, 1]: '}
           </Col>
           <Col className="gutter-row" span={12}>
             <InputNumber
@@ -248,7 +251,7 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
               value={socialCoefficientRef.current}
               step={0.01}
               onChange={(value) => {
-                socialCoefficientRef.current = value;
+                socialCoefficientRef.current = Number(value);
                 setUpdateFlag(!updateFlag);
               }}
             />
@@ -257,7 +260,7 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
           <Col className="gutter-row" span={12}>
-            {i18n.t('optimizationMenu.InertiaWeight', lang) + ' [0, 1]: '}
+            {t('optimizationMenu.InertiaWeight', lang) + ' [0, 1]: '}
           </Col>
           <Col className="gutter-row" span={12}>
             <InputNumber
@@ -268,7 +271,7 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
               value={inertiaRef.current}
               step={0.01}
               onChange={(value) => {
-                inertiaRef.current = value;
+                inertiaRef.current = Number(value);
                 setUpdateFlag(!updateFlag);
               }}
             />
@@ -277,7 +280,7 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
           <Col className="gutter-row" span={12}>
-            {i18n.t('optimizationMenu.MaximumVelocity', lang) + ' [0.001, 0.1]: '}
+            {t('optimizationMenu.MaximumVelocity', lang) + ' [0.001, 0.1]: '}
           </Col>
           <Col className="gutter-row" span={12}>
             <InputNumber
@@ -288,7 +291,7 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
               value={vmaxRef.current}
               step={0.001}
               onChange={(value) => {
-                vmaxRef.current = value;
+                vmaxRef.current = Number(value);
                 setUpdateFlag(!updateFlag);
               }}
             />
@@ -297,7 +300,7 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
           <Col className="gutter-row" span={12}>
-            {i18n.t('optimizationMenu.ConvergenceThreshold', lang) + ' [0, 0.1]: '}
+            {t('optimizationMenu.ConvergenceThreshold', lang) + ' [0, 0.1]: '}
           </Col>
           <Col className="gutter-row" span={12}>
             <InputNumber
@@ -308,7 +311,7 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
               value={convergenceThresholdRef.current}
               step={0.001}
               onChange={(value) => {
-                convergenceThresholdRef.current = value;
+                convergenceThresholdRef.current = Number(value);
                 setUpdateFlag(!updateFlag);
               }}
             />
@@ -317,7 +320,7 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
           <Col className="gutter-row" span={12}>
-            {i18n.t('optimizationMenu.SearchMethod', lang) + ':'}
+            {t('optimizationMenu.SearchMethod', lang) + ':'}
           </Col>
           <Col className="gutter-row" span={12}>
             <Select
@@ -325,7 +328,7 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
               style={{ width: '100%' }}
               value={searchMethodRef.current}
               onChange={(value) => {
-                searchMethodRef.current = value;
+                searchMethodRef.current = Number(value);
                 setUpdateFlag(!updateFlag);
               }}
             >
@@ -333,13 +336,13 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
                 key={SearchMethod.GLOBAL_SEARCH_UNIFORM_SELECTION}
                 value={SearchMethod.GLOBAL_SEARCH_UNIFORM_SELECTION}
               >
-                {i18n.t('optimizationMenu.GlobalSearchUniformSelection', lang)}
+                {t('optimizationMenu.GlobalSearchUniformSelection', lang)}
               </Option>
               <Option
                 key={SearchMethod.LOCAL_SEARCH_RANDOM_OPTIMIZATION}
                 value={SearchMethod.LOCAL_SEARCH_RANDOM_OPTIMIZATION}
               >
-                {i18n.t('optimizationMenu.LocalSearchRandomOptimization', lang)}
+                {t('optimizationMenu.LocalSearchRandomOptimization', lang)}
               </Option>
             </Select>
           </Col>
@@ -348,7 +351,7 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
         {searchMethodRef.current === SearchMethod.LOCAL_SEARCH_RANDOM_OPTIMIZATION && (
           <Row gutter={6} style={{ paddingBottom: '4px' }}>
             <Col className="gutter-row" span={12}>
-              {i18n.t('optimizationMenu.LocalSearchRadius', lang) + ' ([0, 1]: '}
+              {t('optimizationMenu.LocalSearchRadius', lang) + ' ([0, 1]: '}
             </Col>
             <Col className="gutter-row" span={12}>
               <InputNumber
@@ -359,7 +362,7 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
                 value={localSearchRadiusRef.current}
                 step={0.01}
                 onChange={(value) => {
-                  localSearchRadiusRef.current = value;
+                  localSearchRadiusRef.current = Number(value);
                   setUpdateFlag(!updateFlag);
                 }}
               />

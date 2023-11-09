@@ -28,6 +28,7 @@ import {
   RotateHandleType,
   SolarStructure,
   WallSide,
+  XYZO,
 } from '../../types';
 import {
   HALF_PI,
@@ -174,17 +175,17 @@ const Foundation = (foundationModel: FoundationModel) => {
   const wallMapOnFoundation = useRef<Map<string, WallModel>>(new Map());
 
   const groupRef = useRef<Group>(null);
-  const baseRef = useRef<Mesh>();
+  const baseRef = useRef<Mesh>(null);
   const grabRef = useRef<ElementModel | null>(null);
-  const intersectPlaneRef = useRef<Mesh>();
-  const resizeHandleLLRef = useRef<Mesh>();
-  const resizeHandleULRef = useRef<Mesh>();
-  const resizeHandleLRRef = useRef<Mesh>();
-  const resizeHandleURRef = useRef<Mesh>();
-  const moveHandleLowerRef = useRef<Mesh>();
-  const moveHandleUpperRef = useRef<Mesh>();
-  const moveHandleLeftRef = useRef<Mesh>();
-  const moveHandleRightRef = useRef<Mesh>();
+  const intersectPlaneRef = useRef<Mesh>(null);
+  const resizeHandleLLRef = useRef<Mesh>(null);
+  const resizeHandleULRef = useRef<Mesh>(null);
+  const resizeHandleLRRef = useRef<Mesh>(null);
+  const resizeHandleURRef = useRef<Mesh>(null);
+  const moveHandleLowerRef = useRef<Mesh>(null);
+  const moveHandleUpperRef = useRef<Mesh>(null);
+  const moveHandleLeftRef = useRef<Mesh>(null);
+  const moveHandleRightRef = useRef<Mesh>(null);
   const oldPositionRef = useRef<Vector3>(new Vector3());
   const newPositionRef = useRef<Vector3>(new Vector3());
   const oldDimensionRef = useRef<Vector3>(new Vector3(1, 1, 1));
@@ -498,7 +499,7 @@ const Foundation = (foundationModel: FoundationModel) => {
     });
   }, 100);
 
-  const setRayCast = (e: PointerEvent) => {
+  const setRayCast = (e: ThreeEvent<PointerEvent>) => {
     mouse.x = (e.offsetX / domElement.clientWidth) * 2 - 1;
     mouse.y = -(e.offsetY / domElement.clientHeight) * 2 + 1;
     ray.setFromCamera(mouse, camera);
@@ -1494,8 +1495,8 @@ const Foundation = (foundationModel: FoundationModel) => {
         }
       } else {
         useRefStore.getState().selectNone();
-        useRefStore.setState((state) => {
-          state.foundationRef = groupRef;
+        useRefStore.setState({
+          foundationRef: groupRef,
         });
       }
     }
@@ -2221,7 +2222,7 @@ const Foundation = (foundationModel: FoundationModel) => {
               // snap to the grid (do not call Util.relativeCoordinates because we have to snap in the middle)
               p.x -= foundationModel.cx;
               p.y -= foundationModel.cy;
-              p.applyEuler(new Euler().fromArray(foundationModel.rotation.map((a) => -a)));
+              p.applyEuler(new Euler().fromArray(foundationModel.rotation.map((a) => -a) as XYZO));
               p = useStore.getState().enableFineGrid ? Util.snapToFineGrid(p) : Util.snapToNormalGrid(p);
               p.x /= foundationModel.lx;
               p.y /= foundationModel.ly;
@@ -2996,13 +2997,13 @@ const Foundation = (foundationModel: FoundationModel) => {
           onPointerOut={handlePointerOut}
           onPointerEnter={handlePointerEnter}
         >
-          <meshStandardMaterial attachArray="material" color={color} transparent={groundImage} opacity={opacity} />
-          <meshStandardMaterial attachArray="material" color={color} transparent={groundImage} opacity={opacity} />
-          <meshStandardMaterial attachArray="material" color={color} transparent={groundImage} opacity={opacity} />
-          <meshStandardMaterial attachArray="material" color={color} transparent={groundImage} opacity={opacity} />
+          <meshStandardMaterial attach="material-0" color={color} transparent={groundImage} opacity={opacity} />
+          <meshStandardMaterial attach="material-1" color={color} transparent={groundImage} opacity={opacity} />
+          <meshStandardMaterial attach="material-2" color={color} transparent={groundImage} opacity={opacity} />
+          <meshStandardMaterial attach="material-3" color={color} transparent={groundImage} opacity={opacity} />
           {showSolarRadiationHeatmap && heatmapTexture ? (
             <meshBasicMaterial
-              attachArray="material"
+              attach="material-4"
               color={'white'}
               map={heatmapTexture}
               transparent={groundImage}
@@ -3010,14 +3011,14 @@ const Foundation = (foundationModel: FoundationModel) => {
             />
           ) : (
             <meshStandardMaterial
-              attachArray="material"
+              attach="material-4"
               color={textureType === FoundationTexture.NoTexture ? color : 'white'}
               map={texture}
               transparent={groundImage}
               opacity={opacity}
             />
           )}
-          <meshStandardMaterial attachArray="material" color={color} transparent={groundImage} opacity={opacity} />
+          <meshStandardMaterial attach="material-5" color={color} transparent={groundImage} opacity={opacity} />
         </Box>
 
         {/* intersection plane */}

@@ -469,7 +469,10 @@ const WindowNumberInput = ({
             precision={2}
             value={inputValue}
             formatter={(a) => Number(a).toFixed(2)}
-            onChange={setInputValue}
+            onChange={(value) => {
+              if (value === null) return;
+              setInputValue(value);
+            }}
           />
           <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
             {i18n.t('word.Range', lang)}: [{range[0].toFixed(range[0] === 0 ? 0 : digit ?? 0)},{' '}

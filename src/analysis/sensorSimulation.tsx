@@ -109,7 +109,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
             setCommonStore((state) => {
               state.world.date = originalDateRef.current.toLocaleString('en-US');
             });
-            usePrimitiveStore.setState((state) => {
+            usePrimitiveStore.getState().set((state) => {
               state.simulationInProgress = false;
               state.simulationPaused = false;
             });
@@ -147,7 +147,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
       state.viewState.showDailyLightSensorPanel = true;
       state.selectedFloatingWindow = 'dailyLightSensorPanel';
     });
-    usePrimitiveStore.setState((state) => {
+    usePrimitiveStore.getState().set((state) => {
       state.runDailyLightSensor = false;
       state.simulationInProgress = false;
       state.simulationPaused = false;
@@ -192,7 +192,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
           state.viewState.showDailyLightSensorPanel = true;
           state.selectedFloatingWindow = 'dailyLightSensorPanel';
         });
-        usePrimitiveStore.setState((state) => {
+        usePrimitiveStore.getState().set((state) => {
           state.runDailyLightSensor = false;
           state.simulationInProgress = false;
           state.simulationPaused = false;
@@ -288,7 +288,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
             setCommonStore((state) => {
               state.world.date = originalDateRef.current.toLocaleString('en-US');
             });
-            usePrimitiveStore.setState((state) => {
+            usePrimitiveStore.getState().set((state) => {
               state.simulationInProgress = false;
               state.simulationPaused = false;
             });
@@ -360,7 +360,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
       state.viewState.showYearlyLightSensorPanel = true;
       state.selectedFloatingWindow = 'yearlyLightSensorPanel';
     });
-    usePrimitiveStore.setState((state) => {
+    usePrimitiveStore.getState().set((state) => {
       state.runYearlyLightSensor = false;
       state.simulationInProgress = false;
       state.simulationPaused = false;
@@ -405,7 +405,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
             state.viewState.showYearlyLightSensorPanel = true;
             state.selectedFloatingWindow = 'yearlyLightSensorPanel';
           });
-          usePrimitiveStore.setState((state) => {
+          usePrimitiveStore.getState().set((state) => {
             state.runYearlyLightSensor = false;
             state.simulationInProgress = false;
             state.simulationPaused = false;

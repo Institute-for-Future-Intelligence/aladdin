@@ -3,7 +3,7 @@
  */
 
 import React, { useMemo } from 'react';
-import { Euler, FontLoader, TextGeometryParameters } from 'three';
+import { Euler } from 'three';
 import { useLoader } from '@react-three/fiber';
 import { Line } from '@react-three/drei';
 import helvetikerFont from '../fonts/helvetiker_regular.typeface.fnt';
@@ -12,6 +12,7 @@ import * as Selector from '../stores/selector';
 import { ElementModel } from '../models/ElementModel';
 import { HALF_PI } from '../constants';
 import { ObjectType, ResizeHandleType } from '../types';
+import { FontLoader, TextGeometryParameters } from 'three/examples/jsm/Addons';
 import { RoofModel } from '../models/RoofModel';
 
 export const VerticalRuler = ({ element }: { element: ElementModel }) => {

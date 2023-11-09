@@ -234,7 +234,7 @@ const RoofThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
             precision={2}
             value={inputLength}
             formatter={(a) => Number(a).toFixed(2)}
-            onChange={(value) => setInputLength(value)}
+            onChange={(value) => setInputLength(value!)}
           />
           <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
             {i18n.t('word.Range', lang)}: [0.05, 1] {i18n.t('word.MeterAbbreviation', lang)}

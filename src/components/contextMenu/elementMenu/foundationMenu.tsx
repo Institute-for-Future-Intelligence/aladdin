@@ -1263,6 +1263,7 @@ export const FoundationMenu = React.memo(() => {
                 precision={1}
                 value={foundation.hvacSystem?.thermostatSetpoint ?? 20}
                 onChange={(value) => {
+                  if (value === null) return;
                   const oldValue = foundation.hvacSystem?.thermostatSetpoint ?? 20;
                   const newValue = value;
                   const undoableChange = {
@@ -1296,6 +1297,7 @@ export const FoundationMenu = React.memo(() => {
                 precision={1}
                 value={foundation.hvacSystem?.temperatureThreshold ?? 3}
                 onChange={(value) => {
+                  if (value === null) return;
                   const oldValue = foundation.hvacSystem?.temperatureThreshold ?? 3;
                   const newValue = value;
                   const undoableChange = {
@@ -1747,7 +1749,7 @@ export const FoundationMenu = React.memo(() => {
                 step={1}
                 precision={1}
                 value={foundation.labelHeight ?? foundation.lz / 2 + 0.2}
-                onChange={(value) => setLabelHeight(value)}
+                onChange={(value) => setLabelHeight(value!)}
               />
             </Menu.Item>
             {/* the label's font size */}
@@ -1759,7 +1761,7 @@ export const FoundationMenu = React.memo(() => {
                 step={1}
                 precision={0}
                 value={foundation.labelFontSize ?? 20}
-                onChange={(value) => setLabelFontSize(value)}
+                onChange={(value) => setLabelFontSize(value!)}
               />
             </Menu.Item>
             {/* the label's size */}
@@ -1771,7 +1773,7 @@ export const FoundationMenu = React.memo(() => {
                 step={0.1}
                 precision={1}
                 value={foundation.labelSize ?? 0.2}
-                onChange={(value) => setLabelSize(value)}
+                onChange={(value) => setLabelSize(value!)}
               />
             </Menu.Item>
             {/* the label's color */}

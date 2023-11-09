@@ -245,7 +245,10 @@ const HeliostatPoleRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b: 
             step={0.01}
             precision={2}
             value={inputValue}
-            onChange={setInputValue}
+            onChange={(value) => {
+              if (value === null) return;
+              setInputValue(value);
+            }}
           />
           <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
             {i18n.t('word.Range', lang)}: [0.1, 0.5] {i18n.t('word.MeterAbbreviation', lang)}

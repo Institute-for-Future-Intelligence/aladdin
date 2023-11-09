@@ -64,8 +64,8 @@ const Heliostat = ({
 
   const [hovered, setHovered] = useState(false);
   const [heatmapTexture, setHeatmapTexture] = useState<CanvasTexture | null>(null);
-  const baseRef = useRef<Mesh>();
-  const moveHandleRef = useRef<Mesh>();
+  const baseRef = useRef<Mesh>(null);
+  const moveHandleRef = useRef<Mesh>(null);
   const pointerDown = useRef<boolean>(false);
 
   const sunBeamLength = Math.max(100, 10 * sceneRadius);
@@ -264,22 +264,22 @@ const Heliostat = ({
             domElement.style.cursor = 'default';
           }}
         >
-          <meshStandardMaterial attachArray="material" color={color} />
-          <meshStandardMaterial attachArray="material" color={color} />
-          <meshStandardMaterial attachArray="material" color={color} />
-          <meshStandardMaterial attachArray="material" color={color} />
+          <meshStandardMaterial attach="material-0" color={color} />
+          <meshStandardMaterial attach="material-1" color={color} />
+          <meshStandardMaterial attach="material-2" color={color} />
+          <meshStandardMaterial attach="material-3" color={color} />
           {showSolarRadiationHeatmap && heatmapTexture ? (
-            <meshBasicMaterial attachArray="material" side={FrontSide} map={heatmapTexture} />
+            <meshBasicMaterial attach="material-4" side={FrontSide} map={heatmapTexture} />
           ) : (
             <meshPhongMaterial
-              attachArray="material"
+              attach="material-4"
               specular={new Color('white')}
               shininess={100 * reflectance}
               side={FrontSide}
               color={'lightskyblue'}
             />
           )}
-          <meshStandardMaterial attachArray="material" color={color} />
+          <meshStandardMaterial attach="material-5" color={color} />
         </Box>
 
         {/* simulation element */}

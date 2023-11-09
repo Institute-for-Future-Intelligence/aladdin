@@ -13,11 +13,10 @@ import {
   DoubleSide,
   EllipseCurve,
   Euler,
-  FontLoader,
   Plane,
-  TextGeometryParameters,
   Vector3,
 } from 'three';
+import { FontLoader, TextGeometryParameters } from 'three/examples/jsm/Addons';
 import {
   computeDeclinationAngle,
   computeHourAngleAtMinute,

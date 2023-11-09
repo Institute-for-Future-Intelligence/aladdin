@@ -49,7 +49,7 @@ const NavigationPanel = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
     setCommonStore((state) => {
       state.minimumNavigationMoveSpeed = value;
     });
-    usePrimitiveStore.setState((state) => {
+    usePrimitiveStore.getState().set((state) => {
       state.navigationMoveSpeed = value;
     });
   };
@@ -58,7 +58,7 @@ const NavigationPanel = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
     setCommonStore((state) => {
       state.minimumNavigationTurnSpeed = value;
     });
-    usePrimitiveStore.setState((state) => {
+    usePrimitiveStore.getState().set((state) => {
       state.navigationTurnSpeed = value;
     });
   };
@@ -115,22 +115,22 @@ const NavigationPanel = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   return (
     <Modal
       width={500}
-      visible={true}
+      open={true}
       title={
         <div
           style={{ width: '100%', cursor: 'move' }}
           onMouseOver={() => setDragEnabled(true)}
           onMouseOut={() => setDragEnabled(false)}
         >
-          {i18n.t('navigationPanel.NavigationParameters', lang)}
+          {`${i18n.t('navigationPanel.NavigationParameters', lang)}`}
         </div>
       }
       footer={[
         <Button key="Cancel" onClick={onCancelClick}>
-          {i18n.t('word.Cancel', lang)}
+          {`${i18n.t('word.Cancel', lang)}`}
         </Button>,
         <Button key="OK" type="primary" ref={okButtonRef} onClick={onOkClick}>
-          {i18n.t('word.OK', lang)}
+          {`${i18n.t('word.OK', lang)}`}
         </Button>,
       ]}
       // this must be specified for the x button in the upper-right corner to work
@@ -158,7 +158,7 @@ const NavigationPanel = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
             value={minimumMoveSpeedRef.current}
             step={1}
             onChange={(value) => {
-              minimumMoveSpeedRef.current = value;
+              minimumMoveSpeedRef.current = Number(value);
               setUpdateFlag(!updateFlag);
             }}
             onBlur={(e) => {
@@ -189,7 +189,7 @@ const NavigationPanel = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
             value={minimumTurnSpeedRef.current}
             step={1}
             onChange={(value) => {
-              minimumTurnSpeedRef.current = value;
+              minimumTurnSpeedRef.current = Number(value);
               setUpdateFlag(!updateFlag);
             }}
             onBlur={(e) => {

@@ -25,6 +25,7 @@ import { FLOATING_WINDOW_OPACITY, Z_INDEX_FRONT_PANEL } from '../constants';
 import { Util } from 'src/Util';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
+import { useTranslation } from 'react-i18next';
 
 const Container = styled.div`
   position: fixed;
@@ -207,8 +208,10 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
     }
   }, [solarPanelCount, individualOutputs]);
 
-  const labelX = i18n.t('word.Hour', lang);
-  const labelY = i18n.t('solarPanelYieldPanel.YieldPerHour', lang);
+  const { t } = useTranslation();
+
+  const labelX = t('word.Hour', lang);
+  const labelY = t('solarPanelYieldPanel.YieldPerHour', lang);
   const solarPanelNumber = Util.countAllSolarPanels();
   const totalCost = solarPanelNumber * economics.operationalCostPerUnit;
   const totalRevenue = sum * economics.electricitySellingPrice;
@@ -244,9 +247,9 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
         >
           <Header className="handle" style={{ direction: 'ltr' }}>
             <span>
-              {i18n.t('solarPanelYieldPanel.SolarPanelDailyYield', lang) + ': '}
+              {t('solarPanelYieldPanel.SolarPanelDailyYield', lang) + ': '}
               <span style={{ fontSize: '10px' }}>
-                {i18n.t('sensorPanel.WeatherDataFrom', lang) + ' ' + city + ' | ' + moment(now).format('MM/DD')}
+                {t('sensorPanel.WeatherDataFrom', lang) + ' ' + city + ' | ' + moment(now).format('MM/DD')}
               </span>
             </span>
             <span
@@ -258,7 +261,7 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
                 closePanel();
               }}
             >
-              {i18n.t('word.Close', lang)}
+              {t('word.Close', lang)}
             </span>
           </Header>
           <LineGraph
@@ -270,7 +273,7 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
             dataKeyAxisX={'Hour'}
             labelX={labelX}
             labelY={labelY}
-            unitY={i18n.t('word.kWh', lang)}
+            unitY={t('word.kWh', lang)}
             yMin={0}
             curveType={'linear'}
             fractionDigits={2}
@@ -281,7 +284,7 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
             <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
               {individualOutputs && solarPanelCount > 1 && panelSumRef.current.size > 0 ? (
                 <Popover
-                  title={i18n.t('shared.OutputBreakdown', lang)}
+                  title={t('shared.OutputBreakdown', lang)}
                   content={[...panelSumRef.current.entries()].map((e, i) => (
                     <React.Fragment key={i}>
                       <Row style={{ textAlign: 'right' }}>
@@ -294,7 +297,7 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
                         <>
                           <hr></hr>
                           <div style={{ textAlign: 'right' }}>
-                            {i18n.t('word.Total', lang) + ': ' + sum.toFixed(3) + ' ' + i18n.t('word.kWh', lang)}
+                            {t('word.Total', lang) + ': ' + sum.toFixed(3) + ' ' + t('word.kWh', lang)}
                           </div>
                         </>
                       )}
@@ -302,49 +305,45 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
                   ))}
                 >
                   <Space style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
-                    {i18n.t('shared.OutputBreakdown', lang)}
+                    {t('shared.OutputBreakdown', lang)}
                   </Space>
                 </Popover>
               ) : (
                 <>
                   {sum > 0 && (
                     <Space style={{ cursor: 'default' }}>
-                      {i18n.t('solarPanelYieldPanel.DailyTotal', lang) +
-                        ': ' +
-                        sum.toFixed(3) +
-                        ' ' +
-                        i18n.t('word.kWh', lang)}
+                      {t('solarPanelYieldPanel.DailyTotal', lang) + ': ' + sum.toFixed(3) + ' ' + t('word.kWh', lang)}
                     </Space>
                   )}
                   {sum > 0 && (
                     <Popover
-                      title={i18n.t('shared.MoreResults', lang)}
+                      title={t('shared.MoreResults', lang)}
                       content={
                         <>
                           <Row style={{ width: '200px' }}>
-                            <Col span={14}>{i18n.t('solarPanelYieldPanel.ModuleCount', lang) + ': '}</Col>
+                            <Col span={14}>{t('solarPanelYieldPanel.ModuleCount', lang) + ': '}</Col>
                             <Col span={10}>{solarPanelNumber}</Col>
                           </Row>
                           <Row style={{ width: '200px' }}>
-                            <Col span={14}>{i18n.t('solarPanelYieldPanel.MeanYield', lang) + ': '}</Col>
+                            <Col span={14}>{t('solarPanelYieldPanel.MeanYield', lang) + ': '}</Col>
                             <Col span={10}>{(sum / solarPanelNumber).toFixed(2)} kWh</Col>
                           </Row>
                           <Row style={{ width: '200px' }}>
-                            <Col span={14}>{i18n.t('solarPanelYieldPanel.TotalCost', lang) + ': '}</Col>
+                            <Col span={14}>{t('solarPanelYieldPanel.TotalCost', lang) + ': '}</Col>
                             <Col span={10}>${totalCost.toFixed(2)}</Col>
                           </Row>
                           <Row style={{ width: '200px' }}>
-                            <Col span={14}>{i18n.t('solarPanelYieldPanel.TotalRevenue', lang) + ': '}</Col>
+                            <Col span={14}>{t('solarPanelYieldPanel.TotalRevenue', lang) + ': '}</Col>
                             <Col span={10}>${totalRevenue.toFixed(2)}</Col>
                           </Row>
                           <Row style={{ width: '200px' }}>
-                            <Col span={14}>{i18n.t('solarPanelYieldPanel.Profit', lang) + ': '}</Col>
+                            <Col span={14}>{t('solarPanelYieldPanel.Profit', lang) + ': '}</Col>
                             <Col span={10}>{(totalProfit > 0 ? '$' : '-$') + Math.abs(totalProfit).toFixed(2)}</Col>
                           </Row>
                         </>
                       }
                     >
-                      <Button type="default">{i18n.t('shared.MoreResults', lang)}</Button>
+                      <Button type="default">{t('shared.MoreResults', lang)}</Button>
                     </Popover>
                   )}
                 </>
@@ -353,16 +352,16 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
                 <>
                   {solarPanelCount > 1 && (
                     <Switch
-                      title={i18n.t('solarPanelYieldPanel.ShowOutputsOfIndividualSolarPanels', lang)}
+                      title={t('solarPanelYieldPanel.ShowOutputsOfIndividualSolarPanels', lang)}
                       checkedChildren={<UnorderedListOutlined />}
                       unCheckedChildren={<UnorderedListOutlined />}
                       checked={individualOutputs}
                       onChange={(checked) => {
                         if (solarPanelCount === 0) {
-                          showInfo(i18n.t('analysisManager.NoSolarPanelForAnalysis', lang));
+                          showInfo(t('analysisManager.NoSolarPanelForAnalysis', lang));
                           return;
                         }
-                        showInfo(i18n.t('message.SimulationStarted', lang));
+                        showInfo(t('message.SimulationStarted', lang));
                         // give it 0.1 second for the info to show up
                         setTimeout(() => {
                           setCommonStore((state) => {
@@ -374,7 +373,7 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
                               };
                             }
                           });
-                          usePrimitiveStore.setState((state) => {
+                          usePrimitiveStore.getState().set((state) => {
                             state.simulationInProgress = true;
                             state.runDailySimulationForSolarPanels = true;
                             state.pauseDailySimulationForSolarPanels = false;
@@ -386,13 +385,13 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
                   <Button
                     type="default"
                     icon={emptyGraph ? <CaretRightOutlined /> : <ReloadOutlined />}
-                    title={i18n.t(emptyGraph ? 'word.Run' : 'word.Update', lang)}
+                    title={t(emptyGraph ? 'word.Run' : 'word.Update', lang)}
                     onClick={() => {
                       if (solarPanelCount === 0) {
-                        showInfo(i18n.t('analysisManager.NoSolarPanelForAnalysis', lang));
+                        showInfo(t('analysisManager.NoSolarPanelForAnalysis', lang));
                         return;
                       }
-                      showInfo(i18n.t('message.SimulationStarted', lang));
+                      showInfo(t('message.SimulationStarted', lang));
                       // give it 0.1 second for the info to show up
                       setTimeout(() => {
                         setCommonStore((state) => {
@@ -403,7 +402,7 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
                             };
                           }
                         });
-                        usePrimitiveStore.setState((state) => {
+                        usePrimitiveStore.getState().set((state) => {
                           state.simulationInProgress = true;
                           state.runDailySimulationForSolarPanels = true;
                           state.pauseDailySimulationForSolarPanels = false;
@@ -414,10 +413,10 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
                   <Button
                     type="default"
                     icon={<CameraOutlined />}
-                    title={i18n.t('word.SaveAsImage', lang)}
+                    title={t('word.SaveAsImage', lang)}
                     onClick={() => {
                       screenshot('line-graph-' + labelX + '-' + labelY, 'daily-pv-yield', {}).then(() => {
-                        showInfo(i18n.t('message.ScreenshotSaved', lang));
+                        showInfo(t('message.ScreenshotSaved', lang));
                         if (loggable) {
                           setCommonStore((state) => {
                             state.actionInfo = {
@@ -433,10 +432,10 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
                     <Button
                       type="default"
                       icon={<SaveOutlined />}
-                      title={i18n.t('word.SaveAsCsv', lang)}
+                      title={t('word.SaveAsCsv', lang)}
                       onClick={() => {
                         saveCsv(dailyYield, 'daily-pv-yield.csv');
-                        showInfo(i18n.t('message.CsvFileSaved', lang));
+                        showInfo(t('message.CsvFileSaved', lang));
                         if (loggable) {
                           setCommonStore((state) => {
                             state.actionInfo = {

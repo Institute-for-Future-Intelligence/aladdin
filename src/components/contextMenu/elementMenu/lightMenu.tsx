@@ -161,7 +161,7 @@ export const LightMenu = React.memo(() => {
             step={0.1}
             precision={1}
             value={inputIntensity}
-            onChange={(value) => setIntensity(value)}
+            onChange={(value) => setIntensity(value!)}
           />
         </Menu.Item>
         <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'light-distance'}>
@@ -172,7 +172,7 @@ export const LightMenu = React.memo(() => {
             step={1}
             precision={1}
             value={inputDistance}
-            onChange={(value) => setDistance(value)}
+            onChange={(value) => setDistance(value!)}
           />
         </Menu.Item>
       </Menu>

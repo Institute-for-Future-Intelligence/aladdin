@@ -509,7 +509,9 @@ export class RoofUtil {
     for (let i = -1; i <= 1; i += 2) {
       for (let j = -1; j <= 1; j += 2) {
         const vertex = new Vector3(i * hx, i * j * hy);
-        vertex.applyEuler(new Euler().fromArray([...window.rotation, 'ZXY'])).add(center);
+        vertex
+          .applyEuler(new Euler().fromArray([window.rotation[0], window.rotation[1], window.rotation[2], 'ZXY']))
+          .add(center);
         vertices.push(vertex);
       }
     }

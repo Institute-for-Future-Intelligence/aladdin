@@ -136,7 +136,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
   const [normal, setNormal] = useState<Vector3>();
 
   const groupRef = useRef<Group>(null);
-  const baseRef = useRef<Mesh>();
+  const baseRef = useRef<Mesh>(null);
   const grabRef = useRef<ElementModel | null>(null);
   const faceNormalRef = useRef<Vector3>(UNIT_VECTOR_POS_Z);
   const gridPositionRef = useRef<Vector3>(new Vector3(0, 0, 0));
@@ -152,7 +152,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
   const newAzimuthRef = useRef<number>(0);
   const oldVerticesRef = useRef<Point2[]>([]);
   const newVerticesRef = useRef<Point2[]>([]);
-  const intersectPlaneRef = useRef<Mesh>();
+  const intersectPlaneRef = useRef<Mesh>(null);
   const worldPositionRef = useRef<Vector3>(new Vector3());
   const worldRotationRef = useRef<number>(0);
 
@@ -485,8 +485,8 @@ const Cuboid = (cuboidModel: CuboidModel) => {
         }
       } else {
         useRefStore.getState().selectNone();
-        useRefStore.setState((state) => {
-          state.cuboidRef = groupRef;
+        useRefStore.setState({
+          cuboidRef: groupRef,
         });
       }
     } else {
@@ -1109,7 +1109,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
             <meshBasicMaterial
               key={i}
               side={FrontSide}
-              attachArray="material"
+              attach={`material-${i}`}
               color={'white'}
               map={textures[i]}
               transparent={orthographic && groundImage}
@@ -1119,7 +1119,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
             <meshStandardMaterial
               key={i}
               side={FrontSide}
-              attachArray="material"
+              attach={`material-${i}`}
               color={'white'}
               map={textures[i]}
               transparent={orthographic && groundImage}
@@ -1131,7 +1131,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
             <meshBasicMaterial
               key={i}
               side={FrontSide}
-              attachArray="material"
+              attach={`material-${i}`}
               color={'white'}
               map={textures[i]}
               transparent={orthographic && groundImage}
@@ -1141,7 +1141,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
             <meshStandardMaterial
               key={i}
               side={FrontSide}
-              attachArray="material"
+              attach={`material-${i}`}
               color={cuboidModel.faceColors ? cuboidModel.faceColors[i] : color}
               map={textures[i]}
               transparent={orthographic && groundImage}
@@ -1153,7 +1153,6 @@ const Cuboid = (cuboidModel: CuboidModel) => {
     ) : (
       <meshStandardMaterial
         side={FrontSide}
-        attach="material"
         color={color}
         transparent={orthographic && groundImage}
         opacity={opacity}

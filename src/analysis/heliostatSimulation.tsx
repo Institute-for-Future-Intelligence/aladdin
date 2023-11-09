@@ -96,7 +96,7 @@ const HeliostatSimulation = ({ city }: HeliostatSimulationProps) => {
           setCommonStore((state) => {
             state.world.date = originalDateRef.current.toLocaleString('en-US');
           });
-          usePrimitiveStore.setState((state) => {
+          usePrimitiveStore.getState().set((state) => {
             state.simulationInProgress = false;
             state.simulationPaused = false;
           });
@@ -146,7 +146,7 @@ const HeliostatSimulation = ({ city }: HeliostatSimulationProps) => {
           state.viewState.showDailyHeliostatYieldPanel = true;
           state.selectedFloatingWindow = 'dailyHeliostatYieldPanel';
         });
-        usePrimitiveStore.setState((state) => {
+        usePrimitiveStore.getState().set((state) => {
           state.runDailySimulationForHeliostats = false;
           state.simulationInProgress = false;
           state.simulationPaused = false;
@@ -278,7 +278,7 @@ const HeliostatSimulation = ({ city }: HeliostatSimulationProps) => {
           setCommonStore((state) => {
             state.world.date = originalDateRef.current.toLocaleString('en-US');
           });
-          usePrimitiveStore.setState((state) => {
+          usePrimitiveStore.getState().set((state) => {
             state.simulationInProgress = false;
             state.simulationPaused = false;
           });
@@ -351,7 +351,7 @@ const HeliostatSimulation = ({ city }: HeliostatSimulationProps) => {
             state.viewState.showYearlyHeliostatYieldPanel = true;
             state.selectedFloatingWindow = 'yearlyHeliostatYieldPanel';
           });
-          usePrimitiveStore.setState((state) => {
+          usePrimitiveStore.getState().set((state) => {
             state.runYearlySimulationForHeliostats = false;
             state.simulationInProgress = false;
             state.simulationPaused = false;

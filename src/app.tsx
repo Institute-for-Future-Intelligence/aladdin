@@ -39,7 +39,7 @@ const App = () => {
     loadHorizontalSolarRadiationData();
     loadVerticalSolarRadiationData();
     loadPvModules();
-    usePrimitiveStore.setState((state) => {
+    usePrimitiveStore.getState().set((state) => {
       state.openModelsMap = map;
       if (map) {
         state.modelsMapFlag = true;
@@ -62,12 +62,12 @@ const App = () => {
 
   useEffect(() => {
     if (showSolarRadiationHeatmap) {
-      usePrimitiveStore.setState((state) => {
+      usePrimitiveStore.getState().set((state) => {
         state.showSolarRadiationHeatmap = false;
       });
     }
     if (showHeatFluxes) {
-      usePrimitiveStore.setState((state) => {
+      usePrimitiveStore.getState().set((state) => {
         state.showHeatFluxes = false;
       });
     }

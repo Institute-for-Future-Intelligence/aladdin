@@ -204,7 +204,7 @@ export const TreeMenu = React.memo(() => {
               step={1}
               precision={1}
               value={inputSpread}
-              onChange={(value) => setSpread(value)}
+              onChange={(value) => setSpread(value!)}
             />
           </Menu.Item>
 
@@ -219,7 +219,7 @@ export const TreeMenu = React.memo(() => {
               step={1}
               precision={1}
               value={inputHeight}
-              onChange={(value) => setHeight(value)}
+              onChange={(value) => setHeight(value!)}
             />
           </Menu.Item>
         </Menu>
@@ -255,7 +255,7 @@ export const TreeMenu = React.memo(() => {
                 step={0.1}
                 precision={1}
                 value={tree.labelHeight ?? 0.2}
-                onChange={(value) => setLabelHeight(value)}
+                onChange={(value) => setLabelHeight(value!)}
               />
             </Menu.Item>
             {/* the label's font size */}
@@ -267,7 +267,7 @@ export const TreeMenu = React.memo(() => {
                 step={1}
                 precision={0}
                 value={tree.labelFontSize ?? 20}
-                onChange={(value) => setLabelFontSize(value)}
+                onChange={(value) => setLabelFontSize(value!)}
               />
             </Menu.Item>
             {/* the label's size */}
@@ -279,7 +279,7 @@ export const TreeMenu = React.memo(() => {
                 step={0.1}
                 precision={1}
                 value={tree.labelSize ?? 0.2}
-                onChange={(value) => setLabelSize(value)}
+                onChange={(value) => setLabelSize(value!)}
               />
             </Menu.Item>
             {/* the label's color */}

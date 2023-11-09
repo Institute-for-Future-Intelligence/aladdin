@@ -321,7 +321,7 @@ const PolygonalWindow = ({
     <>
       {!empty && (
         <mesh name={'Triangle Glass Plane'} position={[0, cy, 0]} rotation={[HALF_PI, 0, 0]}>
-          <shapeBufferGeometry args={[glassShape]} />
+          <shapeGeometry args={[glassShape]} />
           {glassMaterial}
         </mesh>
       )}

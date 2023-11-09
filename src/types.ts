@@ -8,7 +8,8 @@ import { MyOrbitControls } from './js/MyOrbitControls';
 import { ParabolicCylinderGeometry } from './js/ParabolicCylinderGeometry';
 import { ParaboloidGeometry } from './js/ParaboloidGeometry';
 import { ConvexGeometry } from './js/ConvexGeometry';
-import { Vector2 } from 'three';
+import { EulerOrder, Vector2 } from 'three';
+import { TextGeometry } from 'three/examples/jsm/Addons';
 
 // Extend makes these JSX elements (with the first character lower-cased)
 extend({ TextSprite });
@@ -16,6 +17,7 @@ extend({ MyOrbitControls });
 extend({ ParabolicCylinderGeometry });
 extend({ ParaboloidGeometry });
 extend({ ConvexGeometry });
+extend({ TextGeometry });
 
 declare global {
   namespace JSX {
@@ -25,10 +27,12 @@ declare global {
       parabolicCylinderGeometry: Object3DNode<ParabolicCylinderGeometry, typeof ParabolicCylinderGeometry>;
       paraboloidGeometry: Object3DNode<ParaboloidGeometry, typeof ParaboloidGeometry>;
       convexGeometry: Object3DNode<ConvexGeometry, typeof ConvexGeometry>;
+      textGeometry: Object3DNode<TextGeometry, typeof TextGeometry>;
     }
   }
 }
 
+export type XYZO = [number, number, number, (EulerOrder | undefined)?, ...any[]];
 export interface User {
   displayName: string | null;
   email: string | null;

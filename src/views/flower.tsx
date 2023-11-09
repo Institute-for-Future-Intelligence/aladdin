@@ -76,9 +76,9 @@ const Flower = ({
 
   const contentRef = useRefStore((state) => state.contentRef);
   const groupRef = useRef<Group>(null);
-  const flowerRef = useRef<Mesh>(null);
+  const flowerRef = useRef<Group>(null);
   const interactionMeshRef = useRef<Mesh>(null);
-  const interactionPlaneRef = useRef<Mesh>(null);
+  const interactionPlaneRef = useRef<Group>(null);
 
   const flowerModel = useMemo(() => getElementById(id) as FlowerModel, [id]);
 
@@ -273,8 +273,8 @@ const Flower = ({
                   if (e.button === 2) return; // ignore right-click
                   if (e.eventObject === e.intersections[0].eventObject) {
                     selectMe(id, e, ActionType.Move);
-                    useRefStore.setState((state) => {
-                      state.flowerRef = groupRef;
+                    useRefStore.setState({
+                      flowerRef: groupRef,
                     });
                   }
                 }}
@@ -327,8 +327,8 @@ const Flower = ({
                   onPointerDown={(e) => {
                     if (e.button !== 2 && e.eventObject === e.intersections[0].eventObject) {
                       selectMe(id, e, ActionType.Move);
-                      useRefStore.setState((state) => {
-                        state.flowerRef = groupRef;
+                      useRefStore.setState({
+                        flowerRef: groupRef,
                       });
                     }
                   }}

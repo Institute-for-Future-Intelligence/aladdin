@@ -44,6 +44,7 @@ import { fetchProject } from './cloudProjectUtil';
 import { loadCloudFile } from './cloudFileUtil';
 import { WallModel } from './models/WallModel';
 import { ElementCounter } from './stores/ElementCounter';
+import { useTranslation } from 'react-i18next';
 
 const { SubMenu } = Menu;
 
@@ -163,6 +164,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
     }
   };
 
+  const { t } = useTranslation();
   const lang = useMemo(() => {
     return { lng: language };
   }, [language]);
@@ -193,7 +195,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
           };
         });
       }
-      usePrimitiveStore.setState((state) => {
+      usePrimitiveStore.getState().set((state) => {
         state.openModelsMap = false;
       });
     }
@@ -202,16 +204,16 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
   const loadFile = (e: any) => {
     const input = getExample(e.key);
     if (input) {
-      usePrimitiveStore.setState((state) => {
+      usePrimitiveStore.getState().set((state) => {
         state.openModelsMap = false;
       });
       if (!viewOnly && changed) {
         Modal.confirm({
-          title: i18n.t('message.DoYouWantToSaveChanges', lang),
+          title: t('message.DoYouWantToSaveChanges', lang),
           icon: <ExclamationCircleOutlined />,
           onOk: () => saveAndImport(input),
           onCancel: () => {
-            usePrimitiveStore.setState((state) => {
+            usePrimitiveStore.getState().set((state) => {
               state.waiting = true;
             });
             // give it a brief moment for this modal to close
@@ -220,11 +222,11 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
               importContent(input);
             }, 10);
           },
-          okText: i18n.t('word.Yes', lang),
-          cancelText: i18n.t('word.No', lang),
+          okText: t('word.Yes', lang),
+          cancelText: t('word.No', lang),
         });
       } else {
-        usePrimitiveStore.setState((state) => {
+        usePrimitiveStore.getState().set((state) => {
           state.waiting = true;
         });
         // give it a brief moment for the loading spinner to show
@@ -253,7 +255,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
       state.projectImages.clear();
       state.projectView = true;
     });
-    usePrimitiveStore.setState((state) => {
+    usePrimitiveStore.getState().set((state) => {
       state.projectImagesUpdateFlag = !state.projectImagesUpdateFlag;
       state.updateProjectsFlag = true;
     });
@@ -267,7 +269,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
           // ignore
         });
       });
-      usePrimitiveStore.setState((state) => {
+      usePrimitiveStore.getState().set((state) => {
         state.openModelsMap = false;
       });
       if (loggable) {
@@ -299,7 +301,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
           state.showCloudFileTitleDialog = true;
         });
       } else {
-        showInfo(i18n.t('menu.file.ToSaveYourWorkPleaseSignIn', lang));
+        showInfo(t('menu.file.ToSaveYourWorkPleaseSignIn', lang));
       }
     }
   };
@@ -669,7 +671,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
   const cutSelectedElement = () => {
     if (!selectedElement || selectedElement.type === ObjectType.Roof) return;
     if (selectedElement.locked) {
-      showInfo(i18n.t('message.ThisElementIsLocked', lang));
+      showInfo(t('message.ThisElementIsLocked', lang));
     } else {
       const cutElements = removeElementById(selectedElement.id, true);
       if (cutElements.length === 0) return;
@@ -762,7 +764,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
 
   const toggleStaticSolarRadiationHeatmap = () => {
     if (!runStaticSimulation) {
-      showInfo(i18n.t('message.SimulationStarted', lang));
+      showInfo(t('message.SimulationStarted', lang));
     }
     // give it 0.1 second for the info to show up
     setTimeout(() => {
@@ -781,7 +783,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
 
   const toggleDynamicSolarRadiationHeatmap = () => {
     if (!runDynamicSimulation) {
-      showInfo(i18n.t('message.SimulationStarted', lang));
+      showInfo(t('message.SimulationStarted', lang));
     }
     // give it 0.1 second for the info to show up
     setTimeout(() => {
@@ -806,7 +808,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
     <Menu triggerSubMenuAction={'click'}>
       {/* file menu */}
       {!openModelsMap && (
-        <SubMenu key={'file'} title={i18n.t('menu.fileSubMenu', lang)}>
+        <SubMenu key={'file'} title={t('menu.fileSubMenu', lang)}>
           {!viewOnly && (
             <Menu.Item
               key="create-new-file"
@@ -824,12 +826,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                     };
                   }
                 });
-                usePrimitiveStore.setState((state) => {
+                usePrimitiveStore.getState().set((state) => {
                   state.openModelsMap = false;
                 });
               }}
             >
-              {i18n.t('menu.file.CreateNewFile', lang)}
+              {t('menu.file.CreateNewFile', lang)}
               <span style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+F)</span>
             </Menu.Item>
           )}
@@ -852,12 +854,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                     };
                   }
                 });
-                usePrimitiveStore.setState((state) => {
+                usePrimitiveStore.getState().set((state) => {
                   state.openModelsMap = false;
                 });
               }}
             >
-              {i18n.t('menu.file.OpenLocalFile', lang)}
+              {t('menu.file.OpenLocalFile', lang)}
               <span style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+O)</span>...
             </Menu.Item>
           )}
@@ -865,7 +867,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
           <Menu.Item
             key="save-local-file"
             onClick={() => {
-              usePrimitiveStore.setState((state) => {
+              usePrimitiveStore.getState().set((state) => {
                 state.saveLocalFileDialogVisible = true;
               });
               if (loggable) {
@@ -878,7 +880,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
               }
             }}
           >
-            {i18n.t('menu.file.SaveAsLocalFile', lang)}
+            {t('menu.file.SaveAsLocalFile', lang)}
             <span style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+S)</span>...
           </Menu.Item>
 
@@ -886,7 +888,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
             <Menu.Item
               key="open-cloud-file"
               onClick={() => {
-                usePrimitiveStore.setState((state) => {
+                usePrimitiveStore.getState().set((state) => {
                   state.listCloudFilesFlag = true;
                   state.openModelsMap = false;
                 });
@@ -903,7 +905,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                 }
               }}
             >
-              {i18n.t('menu.file.OpenCloudFile', lang)}
+              {t('menu.file.OpenCloudFile', lang)}
               <span style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+Shift+O)</span>...
             </Menu.Item>
           )}
@@ -923,7 +925,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                 }
               }}
             >
-              {i18n.t('menu.file.SaveCloudFile', lang)}
+              {t('menu.file.SaveCloudFile', lang)}
               <span style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+Shift+S)</span>
             </Menu.Item>
           )}
@@ -944,7 +946,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                 });
               }}
             >
-              {i18n.t('menu.file.SaveAsCloudFile', lang)}...
+              {t('menu.file.SaveAsCloudFile', lang)}...
             </Menu.Item>
           )}
 
@@ -959,37 +961,37 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                   setModelSiteDialogVisible(true);
                 } else {
                   if (!user.uid) {
-                    showInfo(i18n.t('menu.file.YouMustLogInToPublishYourModel', lang) + '.');
+                    showInfo(t('menu.file.YouMustLogInToPublishYourModel', lang) + '.');
                   } else if (urlId && !matched) {
-                    showInfo(i18n.t('menu.file.YouCannotPublishAModelThatYouDoNotOwn', lang) + '.');
+                    showInfo(t('menu.file.YouCannotPublishAModelThatYouDoNotOwn', lang) + '.');
                   } else {
-                    showInfo(i18n.t('menu.file.YouMustSaveModelOnCloudBeforePublishingIt', lang) + '.');
+                    showInfo(t('menu.file.YouMustSaveModelOnCloudBeforePublishingIt', lang) + '.');
                   }
                 }
               }}
             >
-              {i18n.t('menu.file.PublishOnModelsMap', lang)}...
+              {t('menu.file.PublishOnModelsMap', lang)}...
             </Menu.Item>
           )}
 
           <Menu.Item key="screenshot" onClick={takeScreenshot}>
-            {i18n.t('menu.file.TakeScreenshot', lang)}
+            {t('menu.file.TakeScreenshot', lang)}
           </Menu.Item>
         </SubMenu>
       )}
 
       {/* project menu */}
       {!openModelsMap && !viewOnly && user.uid && (
-        <SubMenu key={'project'} title={i18n.t('menu.projectSubMenu', lang)}>
+        <SubMenu key={'project'} title={t('menu.projectSubMenu', lang)}>
           <Menu.Item
             key="create-new-project"
             onClick={() => {
               if (!user.uid) {
-                showInfo(i18n.t('menu.project.YouMustLogInToCreateProject', lang) + '.');
+                showInfo(t('menu.project.YouMustLogInToCreateProject', lang) + '.');
                 return;
               }
               setCreateNewProjectDialogVisible(true);
-              usePrimitiveStore.setState((state) => {
+              usePrimitiveStore.getState().set((state) => {
                 state.openModelsMap = false;
               });
               if (loggable) {
@@ -1002,16 +1004,16 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
               }
             }}
           >
-            {i18n.t('menu.project.CreateNewProject', lang)}...
+            {t('menu.project.CreateNewProject', lang)}...
           </Menu.Item>
           <Menu.Item
             key="list-project"
             onClick={() => {
               if (!user.uid) {
-                showInfo(i18n.t('menu.project.YouMustLogInToOpenProject', lang) + '.');
+                showInfo(t('menu.project.YouMustLogInToOpenProject', lang) + '.');
                 return;
               }
-              usePrimitiveStore.setState((state) => {
+              usePrimitiveStore.getState().set((state) => {
                 state.showProjectsFlag = true;
                 state.openModelsMap = false;
               });
@@ -1028,14 +1030,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
               }
             }}
           >
-            {i18n.t('menu.project.OpenProject', lang)}...
+            {t('menu.project.OpenProject', lang)}...
           </Menu.Item>
           {projectView && projectInfo.title && user.uid && (
             <Menu.Item
               key="save-project-as"
               onClick={() => {
                 setSaveProjectAsDialogVisible(true);
-                usePrimitiveStore.setState((state) => {
+                usePrimitiveStore.getState().set((state) => {
                   state.openModelsMap = false;
                 });
                 if (loggable) {
@@ -1048,7 +1050,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                 }
               }}
             >
-              {i18n.t('menu.project.SaveProjectAs', lang)}...
+              {t('menu.project.SaveProjectAs', lang)}...
             </Menu.Item>
           )}
         </SubMenu>
@@ -1056,22 +1058,22 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
 
       {/* edit menu */}
       {(selectedElement || readyToPaste || undoManager.hasUndo() || undoManager.hasRedo()) && !openModelsMap && (
-        <SubMenu key={'edit'} title={i18n.t('menu.editSubMenu', lang)}>
+        <SubMenu key={'edit'} title={t('menu.editSubMenu', lang)}>
           {selectedElement && (
             <Menu.Item key="copy" onClick={copySelectedElement}>
-              {i18n.t('word.Copy', lang)}
+              {t('word.Copy', lang)}
               <span style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+C)</span>
             </Menu.Item>
           )}
           {selectedElement && (
             <Menu.Item key="cut" onClick={cutSelectedElement}>
-              {i18n.t('word.Cut', lang)}
+              {t('word.Cut', lang)}
               <span style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+X)</span>
             </Menu.Item>
           )}
           {readyToPaste && (
             <Menu.Item key="paste" onClick={pasteSelectedElement}>
-              {i18n.t('word.Paste', lang)}
+              {t('word.Paste', lang)}
               <span style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+V)</span>
             </Menu.Item>
           )}
@@ -1081,8 +1083,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
               onClick={() => {
                 if (undoManager.hasUndo()) {
                   const commandName = undoManager.undo();
-                  if (commandName)
-                    showInfo(i18n.t('menu.edit.Undo', lang) + ': ' + commandName, UNDO_SHOW_INFO_DURATION);
+                  if (commandName) showInfo(t('menu.edit.Undo', lang) + ': ' + commandName, UNDO_SHOW_INFO_DURATION);
                   if (loggable) {
                     setCommonStore((state) => {
                       state.actionInfo = {
@@ -1094,7 +1095,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                 }
               }}
             >
-              {i18n.t('menu.edit.Undo', lang) + ': ' + undoManager.getLastUndoName()}
+              {t('menu.edit.Undo', lang) + ': ' + undoManager.getLastUndoName()}
               <span style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+Z)</span>
             </Menu.Item>
           )}
@@ -1104,8 +1105,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
               onClick={() => {
                 if (undoManager.hasRedo()) {
                   const commandName = undoManager.redo();
-                  if (commandName)
-                    showInfo(i18n.t('menu.edit.Redo', lang) + ': ' + commandName, UNDO_SHOW_INFO_DURATION);
+                  if (commandName) showInfo(t('menu.edit.Redo', lang) + ': ' + commandName, UNDO_SHOW_INFO_DURATION);
                   if (loggable) {
                     setCommonStore((state) => {
                       state.actionInfo = {
@@ -1117,7 +1117,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                 }
               }}
             >
-              {i18n.t('menu.edit.Redo', lang) + ': ' + undoManager.getLastRedoName()}
+              {t('menu.edit.Redo', lang) + ': ' + undoManager.getLastRedoName()}
               <span style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+Y)</span>
             </Menu.Item>
           )}
@@ -1126,7 +1126,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
 
       {/* view menu */}
       {!openModelsMap && (
-        <SubMenu key={'view'} title={i18n.t('menu.viewSubMenu', lang)}>
+        <SubMenu key={'view'} title={t('menu.viewSubMenu', lang)}>
           {!orthographic && !viewAlreadyReset && (
             <Menu.Item
               key={'reset-view'}
@@ -1171,7 +1171,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
               }}
               style={{ paddingLeft: '36px' }}
             >
-              {i18n.t('menu.view.ResetView', lang)}
+              {t('menu.view.ResetView', lang)}
               <span style={{ paddingLeft: '2px', fontSize: 9 }}>({keyHome})</span>
             </Menu.Item>
           )}
@@ -1182,7 +1182,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
             }}
             style={{ paddingLeft: '36px' }}
           >
-            {i18n.t('menu.view.ZoomOut', lang)}
+            {t('menu.view.ZoomOut', lang)}
             <span style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+])</span>
           </Menu.Item>
           <Menu.Item
@@ -1192,37 +1192,37 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
             }}
             style={{ paddingLeft: '36px' }}
           >
-            {i18n.t('menu.view.ZoomIn', lang)}
+            {t('menu.view.ZoomIn', lang)}
             <span style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+[)</span>
           </Menu.Item>
           <Menu.Item key={'navigation-view-check-box'}>
             <Checkbox checked={navigationView} onChange={toggleNavigationView}>
-              {i18n.t('menu.view.NavigationView', lang)}
+              {t('menu.view.NavigationView', lang)}
               <span style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+Q)</span>
             </Checkbox>
           </Menu.Item>
           <Menu.Item key={'orthographic-check-box'}>
             <Checkbox checked={orthographic} onChange={toggle2DView}>
-              {i18n.t('menu.view.TwoDimensionalView', lang)}
+              {t('menu.view.TwoDimensionalView', lang)}
               <span style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+B)</span>
             </Checkbox>
           </Menu.Item>
           {!orthographic && (
             <Menu.Item key={'auto-rotate-check-box'}>
               <Checkbox checked={autoRotate} onChange={toggleAutoRotate}>
-                {i18n.t('menu.view.AutoRotate', lang)}
+                {t('menu.view.AutoRotate', lang)}
                 <span style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+M)</span>
               </Checkbox>
             </Menu.Item>
           )}
           <Menu.Item key={'axes-check-box'}>
             <Checkbox checked={axes} onChange={toggleAxes}>
-              {i18n.t('skyMenu.Axes', lang)}
+              {t('skyMenu.Axes', lang)}
             </Checkbox>
           </Menu.Item>
           <Menu.Item key={'shadow-check-box'}>
             <Checkbox checked={shadowEnabled} onChange={toggleShadow}>
-              {i18n.t('menu.view.ShowShadow', lang)}
+              {t('menu.view.ShowShadow', lang)}
             </Checkbox>
           </Menu.Item>
           <Menu.Item key={'shininess-check-box'}>
@@ -1232,12 +1232,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                 setSurfaceShininess(e.target.checked ? DEFAULT_SOLAR_PANEL_SHININESS : 0);
               }}
             >
-              {i18n.t('menu.view.ShowSurfaceShininess', lang)}
+              {t('menu.view.ShowSurfaceShininess', lang)}
             </Checkbox>
           </Menu.Item>
           <Menu.Item key={'translucency-check-box'}>
             <Checkbox checked={floatingWindowOpacity < 1} onChange={toggleTranslucency}>
-              {i18n.t('menu.view.TranslucentFloatingWindows', lang)}
+              {t('menu.view.TranslucentFloatingWindows', lang)}
             </Checkbox>
           </Menu.Item>
         </SubMenu>
@@ -1245,32 +1245,32 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
 
       {/* settings menu */}
       {!openModelsMap && (
-        <SubMenu key={'settings'} title={i18n.t('menu.settingsSubMenu', lang)}>
+        <SubMenu key={'settings'} title={t('menu.settingsSubMenu', lang)}>
           {!showHeliodonPanel && (
             <Menu.Item key={'heliodon-panel-check-box'} onClick={openHeliodonPanel}>
-              {i18n.t('menu.settings.SunAndTime', lang)}...
+              {t('menu.settings.SunAndTime', lang)}...
             </Menu.Item>
           )}
           {!showMapPanel && (
             <Menu.Item key={'map-panel-check-box'} onClick={openMapPanel}>
-              {i18n.t('word.Location', lang)}...
+              {t('word.Location', lang)}...
             </Menu.Item>
           )}
           {!showWeatherPanel && (
             <Menu.Item key={'weather-panel-check-box'} onClick={openWeatherPanel}>
-              {i18n.t('menu.settings.WeatherData', lang)}...
+              {t('menu.settings.WeatherData', lang)}...
             </Menu.Item>
           )}
           {!showDiurnalTemperaturePanel && (
             <Menu.Item key={'diurnal-temperature-panel-check-box'} onClick={openDiurnalTemperaturePanel}>
-              {i18n.t('menu.settings.DiurnalTemperature', lang)}...
+              {t('menu.settings.DiurnalTemperature', lang)}...
             </Menu.Item>
           )}
           {!showEconomicsPanel && (
             <Menu.Item
               key={'economics-panel-menu-item'}
               onClick={() => {
-                usePrimitiveStore.setState((state) => {
+                usePrimitiveStore.getState().set((state) => {
                   state.showEconomicsPanel = true;
                 });
                 if (loggable) {
@@ -1283,14 +1283,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                 }
               }}
             >
-              {i18n.t('economicsPanel.EconomicsParameters', lang)}...
+              {t('economicsPanel.EconomicsParameters', lang)}...
             </Menu.Item>
           )}
           {!showNavigationPanel && (
             <Menu.Item
               key={'navigation-panel-menu-item'}
               onClick={() => {
-                usePrimitiveStore.setState((state) => {
+                usePrimitiveStore.getState().set((state) => {
                   state.showNavigationPanel = true;
                 });
                 if (loggable) {
@@ -1303,32 +1303,32 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                 }
               }}
             >
-              {i18n.t('navigationPanel.NavigationParameters', lang)}...
+              {t('navigationPanel.NavigationParameters', lang)}...
             </Menu.Item>
           )}
         </SubMenu>
       )}
 
       {!openModelsMap && (
-        <SubMenu key={'accessories'} title={i18n.t('menu.view.accessoriesSubMenu', lang)}>
+        <SubMenu key={'accessories'} title={t('menu.view.accessoriesSubMenu', lang)}>
           <Menu.Item key={'site-info-panel-check-box'}>
             <Checkbox checked={showSiteInfoPanel} onChange={toggleSiteInfoPanel}>
-              {i18n.t('menu.view.accessories.SiteInformation', lang)}
+              {t('menu.view.accessories.SiteInformation', lang)}
             </Checkbox>
           </Menu.Item>
           <Menu.Item key={'design-info-panel-check-box'}>
             <Checkbox checked={showDesignInfoPanel} onChange={toggleDesignInfoPanel}>
-              {i18n.t('menu.view.accessories.DesignInformation', lang)}
+              {t('menu.view.accessories.DesignInformation', lang)}
             </Checkbox>
           </Menu.Item>
           <Menu.Item key={'instruction-panel-check-box'}>
             <Checkbox checked={showInstructionPanel} onChange={toggleInstructionPanel}>
-              {i18n.t('menu.view.accessories.Instruction', lang)}
+              {t('menu.view.accessories.Instruction', lang)}
             </Checkbox>
           </Menu.Item>
           <Menu.Item key={'sticky-note-panel-check-box'}>
             <Checkbox checked={showStickyNotePanel} onChange={toggleStickyNote}>
-              {i18n.t('menu.view.accessories.StickyNote', lang)}
+              {t('menu.view.accessories.StickyNote', lang)}
             </Checkbox>
           </Menu.Item>
         </SubMenu>
@@ -1336,9 +1336,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
 
       {/* analysis menu */}
       {!openModelsMap && elementCounter.gotSome() && (
-        <SubMenu key={'analysis'} title={i18n.t('menu.analysisSubMenu', lang)}>
+        <SubMenu key={'analysis'} title={t('menu.analysisSubMenu', lang)}>
           {/* physics */}
-          <SubMenu key={'physics'} title={i18n.t('menu.physicsSubMenu', lang)}>
+          <SubMenu key={'physics'} title={t('menu.physicsSubMenu', lang)}>
             <Menu.Item
               key={'daily-solar-radiation-heatmap'}
               onClick={
@@ -1347,16 +1347,16 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                   : toggleStaticSolarRadiationHeatmap
               }
             >
-              {i18n.t('menu.physics.DailySolarRadiationHeatmap', lang)}
+              {t('menu.physics.DailySolarRadiationHeatmap', lang)}
             </Menu.Item>
             <SubMenu
               key={'solar-radiation-heatmap-options'}
-              title={i18n.t('menu.physics.SolarRadiationHeatmapOptions', lang)}
+              title={t('menu.physics.SolarRadiationHeatmapOptions', lang)}
             >
               <Menu>
                 <Menu.Item key={'solar-radiation-heatmap-grid-cell-size'}>
                   <Space style={{ width: '280px' }}>
-                    {i18n.t('menu.physics.SolarRadiationHeatmapGridCellSize', lang) + ':'}
+                    {t('menu.physics.SolarRadiationHeatmapGridCellSize', lang) + ':'}
                   </Space>
                   <InputNumber
                     min={0.1}
@@ -1366,16 +1366,17 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                     precision={1}
                     value={solarRadiationHeatmapGridCellSize ?? 0.5}
                     onChange={(value) => {
+                      if (value === null) return;
                       setCommonStore((state) => {
                         state.world.solarRadiationHeatmapGridCellSize = value;
                       });
                     }}
                   />
-                  <Space style={{ paddingLeft: '10px' }}>{i18n.t('word.MeterAbbreviation', lang)}</Space>
+                  <Space style={{ paddingLeft: '10px' }}>{t('word.MeterAbbreviation', lang)}</Space>
                 </Menu.Item>
                 <Menu.Item key={'solar-radiation-heatmap-max-value'}>
                   <Space style={{ width: '280px' }}>
-                    {i18n.t('menu.physics.SolarRadiationHeatmapMaxValue', lang) + ':'}
+                    {t('menu.physics.SolarRadiationHeatmapMaxValue', lang) + ':'}
                   </Space>
                   <InputNumber
                     min={0.5}
@@ -1386,6 +1387,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                     value={solarRadiationHeatmapMaxValue ?? 5}
                     onChange={(value) => {
                       setCommonStore((state) => {
+                        if (value === null) return;
                         state.viewState.solarRadiationHeatMapMaxValue = value;
                       });
                     }}
@@ -1393,7 +1395,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                 </Menu.Item>
                 {Util.hasHeliostatOrFresnelReflectors(elements) && (
                   <Menu.Item key={'solar-radiation-heatmap-reflection-only'}>
-                    <Space style={{ width: '280px' }}>{i18n.t('menu.physics.ReflectionHeatmap', lang) + ':'}</Space>
+                    <Space style={{ width: '280px' }}>{t('menu.physics.ReflectionHeatmap', lang) + ':'}</Space>
                     <Switch
                       checked={solarRadiationHeatmapReflectionOnly}
                       onChange={(checked) => {
@@ -1407,7 +1409,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                 {!Util.hasMovingParts(elements) && (
                   <Menu.Item key={'solar-radiation-heatmap-no-animation'}>
                     <Space style={{ width: '280px' }}>
-                      {i18n.t('menu.physics.SolarRadiationHeatmapNoAnimation', lang) + ':'}
+                      {t('menu.physics.SolarRadiationHeatmapNoAnimation', lang) + ':'}
                     </Space>
                     <Switch
                       checked={noAnimationForHeatmapSimulation}
@@ -1425,16 +1427,16 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
 
           {/* sensors */}
           {elementCounter.sensorCount > 0 && (
-            <SubMenu key={'sensors'} title={i18n.t('menu.sensorSubMenu', lang)}>
+            <SubMenu key={'sensors'} title={t('menu.sensorSubMenu', lang)}>
               <Menu.Item
                 key={'sensor-collect-daily-data'}
                 onClick={() => {
                   const sensorCount = countElementsByType(ObjectType.Sensor);
                   if (sensorCount === 0) {
-                    showInfo(i18n.t('analysisManager.NoSensorForCollectingData', lang));
+                    showInfo(t('analysisManager.NoSensorForCollectingData', lang));
                     return;
                   }
-                  showInfo(i18n.t('message.SimulationStarted', lang));
+                  showInfo(t('message.SimulationStarted', lang));
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
                     if (loggable) {
@@ -1442,24 +1444,24 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                         state.actionInfo = { name: 'Collect Daily Data for Sensors', timestamp: new Date().getTime() };
                       });
                     }
-                    usePrimitiveStore.setState((state) => {
+                    usePrimitiveStore.getState().set((state) => {
                       state.simulationInProgress = true;
                       state.runDailyLightSensor = true;
                     });
                   }, 100);
                 }}
               >
-                {i18n.t('menu.sensor.CollectDailyData', lang)}
+                {t('menu.sensor.CollectDailyData', lang)}
               </Menu.Item>
               <Menu.Item
                 key={'sensor-collect-yearly-data'}
                 onClick={() => {
                   const sensorCount = countElementsByType(ObjectType.Sensor);
                   if (sensorCount === 0) {
-                    showInfo(i18n.t('analysisManager.NoSensorForCollectingData', lang));
+                    showInfo(t('analysisManager.NoSensorForCollectingData', lang));
                     return;
                   }
-                  showInfo(i18n.t('message.SimulationStarted', lang));
+                  showInfo(t('message.SimulationStarted', lang));
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
                     if (loggable) {
@@ -1467,19 +1469,19 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                         state.actionInfo = { name: 'Collect Yearly Data for Sensors', timestamp: new Date().getTime() };
                       });
                     }
-                    usePrimitiveStore.setState((state) => {
+                    usePrimitiveStore.getState().set((state) => {
                       state.simulationInProgress = true;
                       state.runYearlyLightSensor = true;
                     });
                   }, 100);
                 }}
               >
-                {i18n.t('menu.sensor.CollectYearlyData', lang)}
+                {t('menu.sensor.CollectYearlyData', lang)}
               </Menu.Item>
-              <SubMenu key={'sensor-simulation-options'} title={i18n.t('word.Options', lang)}>
+              <SubMenu key={'sensor-simulation-options'} title={t('word.Options', lang)}>
                 <Menu>
                   <Menu.Item key={'sensor-simulation-sampling-frequency'}>
-                    <Space style={{ width: '150px' }}>{i18n.t('menu.option.SamplingFrequency', lang) + ':'}</Space>
+                    <Space style={{ width: '150px' }}>{t('menu.option.SamplingFrequency', lang) + ':'}</Space>
                     <InputNumber
                       min={1}
                       max={60}
@@ -1489,17 +1491,18 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                       value={timesPerHour}
                       formatter={(a) => Number(a).toFixed(0)}
                       onChange={(value) => {
+                        if (value === null) return;
                         setCommonStore((state) => {
                           state.world.timesPerHour = value;
                         });
                       }}
                     />
-                    <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.option.TimesPerHour', lang)}</Space>
+                    <Space style={{ paddingLeft: '10px' }}>{t('menu.option.TimesPerHour', lang)}</Space>
                   </Menu.Item>
                   {!Util.hasMovingParts(elements) && (
                     <Menu.Item key={'sensor-simulation-no-animation'}>
                       <Space style={{ width: '280px' }}>
-                        {i18n.t('menu.sensor.SensorSimulationNoAnimation', lang) + ':'}
+                        {t('menu.sensor.SensorSimulationNoAnimation', lang) + ':'}
                       </Space>
                       <Switch
                         checked={noAnimationForSensorDataCollection}
@@ -1518,37 +1521,37 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
 
           {/* buildings */}
           {elementCounter.wallCount > 0 && (
-            <SubMenu key={'buildings'} title={i18n.t('menu.buildingSubMenu', lang)}>
+            <SubMenu key={'buildings'} title={t('menu.buildingSubMenu', lang)}>
               <Menu.Item
                 key={'building-energy-daily-data'}
                 onClick={() => {
                   const checkResult = checkBuilding(elements, countElementsByType, getChildrenOfType);
                   if (checkResult.status === CheckStatus.NO_BUILDING) {
-                    showInfo(i18n.t('analysisManager.NoBuildingForAnalysis', lang));
+                    showInfo(t('analysisManager.NoBuildingForAnalysis', lang));
                     return;
                   }
                   if (checkResult.status === CheckStatus.AT_LEAST_ONE_BAD_NO_GOOD) {
                     let errorType;
                     switch (checkResult.buildingCompletion) {
                       case BuildingCompletionStatus.WALL_DISJOINED:
-                        errorType = i18n.t('message.WallsAreNotConnected', lang);
+                        errorType = t('message.WallsAreNotConnected', lang);
                         break;
                       case BuildingCompletionStatus.WALL_EMPTY:
-                        errorType = i18n.t('message.BuildingContainsEmptyWall', lang);
+                        errorType = t('message.BuildingContainsEmptyWall', lang);
                         break;
                       case BuildingCompletionStatus.ROOF_MISSING:
-                        errorType = i18n.t('message.BuildingRoofMissing', lang);
+                        errorType = t('message.BuildingRoofMissing', lang);
                         break;
                       default:
-                        errorType = i18n.t('message.UnknownErrors', lang);
+                        errorType = t('message.UnknownErrors', lang);
                     }
-                    showError(i18n.t('message.SimulationWillNotStartDueToErrors', lang) + ': ' + errorType);
+                    showError(t('message.SimulationWillNotStartDueToErrors', lang) + ': ' + errorType);
                     return;
                   }
                   if (checkResult.status === CheckStatus.AT_LEAST_ONE_BAD_AT_LEAST_ONE_GOOD) {
-                    showWarning(i18n.t('message.SimulationWillStartDespiteWarnings', lang));
+                    showWarning(t('message.SimulationWillStartDespiteWarnings', lang));
                   }
-                  showInfo(i18n.t('message.SimulationStarted', lang));
+                  showInfo(t('message.SimulationStarted', lang));
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
                     selectNone();
@@ -1557,49 +1560,49 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                         state.actionInfo = { name: 'Analyze Daily Building Energy', timestamp: new Date().getTime() };
                       });
                     }
-                    usePrimitiveStore.setState((state) => {
+                    usePrimitiveStore.getState().set((state) => {
                       state.runDailyThermalSimulation = true;
                       state.simulationInProgress = true;
                     });
                   }, 100);
                 }}
               >
-                {i18n.t('menu.building.AnalyzeDailyBuildingEnergy', lang)}
+                {t('menu.building.AnalyzeDailyBuildingEnergy', lang)}
               </Menu.Item>
               <Menu.Item
                 key={'building-energy-yearly-data'}
                 onClick={() => {
                   const checkResult = checkBuilding(elements, countElementsByType, getChildrenOfType);
                   if (checkResult.status === CheckStatus.NO_BUILDING) {
-                    showInfo(i18n.t('analysisManager.NoBuildingForAnalysis', lang));
+                    showInfo(t('analysisManager.NoBuildingForAnalysis', lang));
                     return;
                   }
                   if (checkResult.status === CheckStatus.AT_LEAST_ONE_BAD_NO_GOOD) {
                     let errorType;
                     switch (checkResult.buildingCompletion) {
                       case BuildingCompletionStatus.WALL_DISJOINED:
-                        errorType = i18n.t('message.WallsAreNotConnected', lang);
+                        errorType = t('message.WallsAreNotConnected', lang);
                         break;
                       case BuildingCompletionStatus.WALL_EMPTY:
-                        errorType = i18n.t('message.BuildingContainsEmptyWall', lang);
+                        errorType = t('message.BuildingContainsEmptyWall', lang);
                         break;
                       case BuildingCompletionStatus.ROOF_MISSING:
-                        errorType = i18n.t('message.BuildingRoofMissing', lang);
+                        errorType = t('message.BuildingRoofMissing', lang);
                         break;
                       default:
-                        errorType = i18n.t('message.UnknownErrors', lang);
+                        errorType = t('message.UnknownErrors', lang);
                     }
-                    showError(i18n.t('message.SimulationWillNotStartDueToErrors', lang) + ': ' + errorType);
+                    showError(t('message.SimulationWillNotStartDueToErrors', lang) + ': ' + errorType);
                     return;
                   }
                   if (checkResult.status === CheckStatus.AT_LEAST_ONE_BAD_AT_LEAST_ONE_GOOD) {
-                    showWarning(i18n.t('message.SimulationWillStartDespiteWarnings', lang));
+                    showWarning(t('message.SimulationWillStartDespiteWarnings', lang));
                   }
-                  showInfo(i18n.t('message.SimulationStarted', lang));
+                  showInfo(t('message.SimulationStarted', lang));
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
                     selectNone();
-                    usePrimitiveStore.setState((state) => {
+                    usePrimitiveStore.getState().set((state) => {
                       state.runYearlyThermalSimulation = true;
                       state.simulationInProgress = true;
                     });
@@ -1611,7 +1614,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                   }, 100);
                 }}
               >
-                {i18n.t('menu.building.AnalyzeYearlyBuildingEnergy', lang)}
+                {t('menu.building.AnalyzeYearlyBuildingEnergy', lang)}
               </Menu.Item>
               <BuildingEnergySimulationSettings />
             </SubMenu>
@@ -1619,16 +1622,16 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
 
           {/* solar panels */}
           {elementCounter.solarPanelCount > 0 && (
-            <SubMenu key={'solar-panels'} title={i18n.t('menu.solarPanelSubMenu', lang)}>
+            <SubMenu key={'solar-panels'} title={t('menu.solarPanelSubMenu', lang)}>
               <Menu.Item
                 key={'solar-panel-daily-yield'}
                 onClick={() => {
                   const solarPanelCount = countElementsByType(ObjectType.SolarPanel);
                   if (solarPanelCount === 0) {
-                    showInfo(i18n.t('analysisManager.NoSolarPanelForAnalysis', lang));
+                    showInfo(t('analysisManager.NoSolarPanelForAnalysis', lang));
                     return;
                   }
-                  showInfo(i18n.t('message.SimulationStarted', lang));
+                  showInfo(t('message.SimulationStarted', lang));
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
                     setCommonStore((state) => {
@@ -1640,24 +1643,24 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                         };
                       }
                     });
-                    usePrimitiveStore.setState((state) => {
+                    usePrimitiveStore.getState().set((state) => {
                       state.simulationInProgress = true;
                       state.runDailySimulationForSolarPanels = true;
                     });
                   }, 100);
                 }}
               >
-                {i18n.t('menu.solarPanel.AnalyzeDailyYield', lang)}
+                {t('menu.solarPanel.AnalyzeDailyYield', lang)}
               </Menu.Item>
               <Menu.Item
                 key={'solar-panel-yearly-yield'}
                 onClick={() => {
                   const solarPanelCount = countElementsByType(ObjectType.SolarPanel);
                   if (solarPanelCount === 0) {
-                    showInfo(i18n.t('analysisManager.NoSolarPanelForAnalysis', lang));
+                    showInfo(t('analysisManager.NoSolarPanelForAnalysis', lang));
                     return;
                   }
-                  showInfo(i18n.t('message.SimulationStarted', lang));
+                  showInfo(t('message.SimulationStarted', lang));
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
                     setCommonStore((state) => {
@@ -1669,14 +1672,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                         };
                       }
                     });
-                    usePrimitiveStore.setState((state) => {
+                    usePrimitiveStore.getState().set((state) => {
                       state.simulationInProgress = true;
                       state.runYearlySimulationForSolarPanels = true;
                     });
                   }, 100);
                 }}
               >
-                {i18n.t('menu.solarPanel.AnalyzeYearlyYield', lang)}
+                {t('menu.solarPanel.AnalyzeYearlyYield', lang)}
               </Menu.Item>
               <PvSimulationSettings />
               <Menu.Item
@@ -1684,13 +1687,13 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                 onClick={() => {
                   const observerCount = countObservers();
                   if (observerCount === 0) {
-                    showInfo(i18n.t('analysisManager.NoObserverForVisibilityAnalysis', lang));
+                    showInfo(t('analysisManager.NoObserverForVisibilityAnalysis', lang));
                     return;
                   }
-                  showInfo(i18n.t('message.SimulationStarted', lang));
+                  showInfo(t('message.SimulationStarted', lang));
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
-                    usePrimitiveStore.setState((state) => {
+                    usePrimitiveStore.getState().set((state) => {
                       state.runSolarPanelVisibilityAnalysis = !state.runSolarPanelVisibilityAnalysis;
                       state.simulationInProgress = true;
                     });
@@ -1705,16 +1708,16 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                   }, 100);
                 }}
               >
-                {i18n.t('menu.solarPanel.AnalyzeVisibility', lang)}
+                {t('menu.solarPanel.AnalyzeVisibility', lang)}
               </Menu.Item>
               <SubMenu
                 key={'solar-panel-visibility-analysis-options'}
-                title={i18n.t('menu.solarPanel.VisibilityAnalysisOptions', lang)}
+                title={t('menu.solarPanel.VisibilityAnalysisOptions', lang)}
               >
                 <Menu>
                   <Menu.Item key={'solar-panel-visibility-grid-cell-size'}>
                     <Space style={{ paddingRight: '10px' }}>
-                      {i18n.t('menu.solarPanel.VisibilityGridCellSize', lang) + ':'}
+                      {t('menu.solarPanel.VisibilityGridCellSize', lang) + ':'}
                     </Space>
                     <InputNumber
                       min={0.1}
@@ -1724,12 +1727,13 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                       precision={1}
                       value={solarPanelVisibilityGridCellSize ?? 0.2}
                       onChange={(value) => {
+                        if (value === null) return;
                         setCommonStore((state) => {
                           state.world.solarPanelVisibilityGridCellSize = value;
                         });
                       }}
                     />
-                    <Space style={{ paddingLeft: '10px' }}>{i18n.t('word.MeterAbbreviation', lang)}</Space>
+                    <Space style={{ paddingLeft: '10px' }}>{t('word.MeterAbbreviation', lang)}</Space>
                   </Menu.Item>
                 </Menu>
               </SubMenu>
@@ -1738,16 +1742,16 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
 
           {/* parabolic troughs */}
           {elementCounter.parabolicTroughCount > 0 && (
-            <SubMenu key={'parabolic-trough'} title={i18n.t('menu.parabolicTroughSubMenu', lang)}>
+            <SubMenu key={'parabolic-trough'} title={t('menu.parabolicTroughSubMenu', lang)}>
               <Menu.Item
                 key={'parabolic-trough-daily-yield'}
                 onClick={() => {
                   const parabolicTroughCount = countElementsByType(ObjectType.ParabolicTrough);
                   if (parabolicTroughCount === 0) {
-                    showInfo(i18n.t('analysisManager.NoParabolicTroughForAnalysis', lang));
+                    showInfo(t('analysisManager.NoParabolicTroughForAnalysis', lang));
                     return;
                   }
-                  showInfo(i18n.t('message.SimulationStarted', lang));
+                  showInfo(t('message.SimulationStarted', lang));
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
                     setCommonStore((state) => {
@@ -1759,24 +1763,24 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                         };
                       }
                     });
-                    usePrimitiveStore.setState((state) => {
+                    usePrimitiveStore.getState().set((state) => {
                       state.simulationInProgress = true;
                       state.runDailySimulationForParabolicTroughs = true;
                     });
                   }, 100);
                 }}
               >
-                {i18n.t('menu.parabolicTrough.AnalyzeDailyYield', lang)}
+                {t('menu.parabolicTrough.AnalyzeDailyYield', lang)}
               </Menu.Item>
               <Menu.Item
                 key={'parabolic-trough-yearly-yield'}
                 onClick={() => {
                   const parabolicTroughCount = countElementsByType(ObjectType.ParabolicTrough);
                   if (parabolicTroughCount === 0) {
-                    showInfo(i18n.t('analysisManager.NoParabolicTroughForAnalysis', lang));
+                    showInfo(t('analysisManager.NoParabolicTroughForAnalysis', lang));
                     return;
                   }
-                  showInfo(i18n.t('message.SimulationStarted', lang));
+                  showInfo(t('message.SimulationStarted', lang));
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
                     setCommonStore((state) => {
@@ -1788,14 +1792,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                         };
                       }
                     });
-                    usePrimitiveStore.setState((state) => {
+                    usePrimitiveStore.getState().set((state) => {
                       state.simulationInProgress = true;
                       state.runYearlySimulationForParabolicTroughs = true;
                     });
                   }, 100);
                 }}
               >
-                {i18n.t('menu.parabolicTrough.AnalyzeYearlyYield', lang)}
+                {t('menu.parabolicTrough.AnalyzeYearlyYield', lang)}
               </Menu.Item>
               <CspSimulationSettings name={'parabolic-trough'} />
             </SubMenu>
@@ -1803,16 +1807,16 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
 
           {/* parabolic dishes */}
           {elementCounter.parabolicDishCount > 0 && (
-            <SubMenu key={'parabolic-dish'} title={i18n.t('menu.parabolicDishSubMenu', lang)}>
+            <SubMenu key={'parabolic-dish'} title={t('menu.parabolicDishSubMenu', lang)}>
               <Menu.Item
                 key={'parabolic-dish-daily-yield'}
                 onClick={() => {
                   const parabolicDishCount = countElementsByType(ObjectType.ParabolicDish);
                   if (parabolicDishCount === 0) {
-                    showInfo(i18n.t('analysisManager.NoParabolicDishForAnalysis', lang));
+                    showInfo(t('analysisManager.NoParabolicDishForAnalysis', lang));
                     return;
                   }
-                  showInfo(i18n.t('message.SimulationStarted', lang));
+                  showInfo(t('message.SimulationStarted', lang));
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
                     setCommonStore((state) => {
@@ -1824,24 +1828,24 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                         };
                       }
                     });
-                    usePrimitiveStore.setState((state) => {
+                    usePrimitiveStore.getState().set((state) => {
                       state.simulationInProgress = true;
                       state.runDailySimulationForParabolicDishes = true;
                     });
                   }, 100);
                 }}
               >
-                {i18n.t('menu.parabolicDish.AnalyzeDailyYield', lang)}
+                {t('menu.parabolicDish.AnalyzeDailyYield', lang)}
               </Menu.Item>
               <Menu.Item
                 key={'parabolic-dish-yearly-yield'}
                 onClick={() => {
                   const parabolicDishCount = countElementsByType(ObjectType.ParabolicDish);
                   if (parabolicDishCount === 0) {
-                    showInfo(i18n.t('analysisManager.NoParabolicDishForAnalysis', lang));
+                    showInfo(t('analysisManager.NoParabolicDishForAnalysis', lang));
                     return;
                   }
-                  showInfo(i18n.t('message.SimulationStarted', lang));
+                  showInfo(t('message.SimulationStarted', lang));
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
                     setCommonStore((state) => {
@@ -1853,14 +1857,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                         };
                       }
                     });
-                    usePrimitiveStore.setState((state) => {
+                    usePrimitiveStore.getState().set((state) => {
                       state.simulationInProgress = true;
                       state.runYearlySimulationForParabolicDishes = true;
                     });
                   }, 100);
                 }}
               >
-                {i18n.t('menu.parabolicDish.AnalyzeYearlyYield', lang)}
+                {t('menu.parabolicDish.AnalyzeYearlyYield', lang)}
               </Menu.Item>
               <CspSimulationSettings name={'parabolic-dish'} />
             </SubMenu>
@@ -1868,16 +1872,16 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
 
           {/* Fresnel reflector */}
           {elementCounter.fresnelReflectorCount > 0 && (
-            <SubMenu key={'fresnel-reflector'} title={i18n.t('menu.fresnelReflectorSubMenu', lang)}>
+            <SubMenu key={'fresnel-reflector'} title={t('menu.fresnelReflectorSubMenu', lang)}>
               <Menu.Item
                 key={'fresnel-reflector-daily-yield'}
                 onClick={() => {
                   const fresnelReflectorCount = countElementsByType(ObjectType.FresnelReflector);
                   if (fresnelReflectorCount === 0) {
-                    showInfo(i18n.t('analysisManager.NoFresnelReflectorForAnalysis', lang));
+                    showInfo(t('analysisManager.NoFresnelReflectorForAnalysis', lang));
                     return;
                   }
-                  showInfo(i18n.t('message.SimulationStarted', lang));
+                  showInfo(t('message.SimulationStarted', lang));
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
                     setCommonStore((state) => {
@@ -1889,24 +1893,24 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                         };
                       }
                     });
-                    usePrimitiveStore.setState((state) => {
+                    usePrimitiveStore.getState().set((state) => {
                       state.simulationInProgress = true;
                       state.runDailySimulationForFresnelReflectors = true;
                     });
                   }, 100);
                 }}
               >
-                {i18n.t('menu.fresnelReflector.AnalyzeDailyYield', lang)}
+                {t('menu.fresnelReflector.AnalyzeDailyYield', lang)}
               </Menu.Item>
               <Menu.Item
                 key={'fresnel-reflector-yearly-yield'}
                 onClick={() => {
                   const fresnelReflectorCount = countElementsByType(ObjectType.FresnelReflector);
                   if (fresnelReflectorCount === 0) {
-                    showInfo(i18n.t('analysisManager.NoFresnelReflectorForAnalysis', lang));
+                    showInfo(t('analysisManager.NoFresnelReflectorForAnalysis', lang));
                     return;
                   }
-                  showInfo(i18n.t('message.SimulationStarted', lang));
+                  showInfo(t('message.SimulationStarted', lang));
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
                     setCommonStore((state) => {
@@ -1918,14 +1922,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                         };
                       }
                     });
-                    usePrimitiveStore.setState((state) => {
+                    usePrimitiveStore.getState().set((state) => {
                       state.simulationInProgress = true;
                       state.runYearlySimulationForFresnelReflectors = true;
                     });
                   }, 100);
                 }}
               >
-                {i18n.t('menu.fresnelReflector.AnalyzeYearlyYield', lang)}
+                {t('menu.fresnelReflector.AnalyzeYearlyYield', lang)}
               </Menu.Item>
               <CspSimulationSettings name={'fresnel-reflector'} />
             </SubMenu>
@@ -1933,16 +1937,16 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
 
           {/* heliostat */}
           {elementCounter.heliostatCount > 0 && (
-            <SubMenu key={'heliostat'} title={i18n.t('menu.heliostatSubMenu', lang)}>
+            <SubMenu key={'heliostat'} title={t('menu.heliostatSubMenu', lang)}>
               <Menu.Item
                 key={'heliostat-daily-yield'}
                 onClick={() => {
                   const heliostatCount = countElementsByType(ObjectType.Heliostat);
                   if (heliostatCount === 0) {
-                    showInfo(i18n.t('analysisManager.NoHeliostatForAnalysis', lang));
+                    showInfo(t('analysisManager.NoHeliostatForAnalysis', lang));
                     return;
                   }
-                  showInfo(i18n.t('message.SimulationStarted', lang));
+                  showInfo(t('message.SimulationStarted', lang));
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
                     setCommonStore((state) => {
@@ -1954,24 +1958,24 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                         };
                       }
                     });
-                    usePrimitiveStore.setState((state) => {
+                    usePrimitiveStore.getState().set((state) => {
                       state.simulationInProgress = true;
                       state.runDailySimulationForHeliostats = true;
                     });
                   }, 100);
                 }}
               >
-                {i18n.t('menu.heliostat.AnalyzeDailyYield', lang)}
+                {t('menu.heliostat.AnalyzeDailyYield', lang)}
               </Menu.Item>
               <Menu.Item
                 key={'heliostat-yearly-yield'}
                 onClick={() => {
                   const heliostatCount = countElementsByType(ObjectType.Heliostat);
                   if (heliostatCount === 0) {
-                    showInfo(i18n.t('analysisManager.NoHeliostatForAnalysis', lang));
+                    showInfo(t('analysisManager.NoHeliostatForAnalysis', lang));
                     return;
                   }
-                  showInfo(i18n.t('message.SimulationStarted', lang));
+                  showInfo(t('message.SimulationStarted', lang));
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
                     setCommonStore((state) => {
@@ -1983,14 +1987,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                         };
                       }
                     });
-                    usePrimitiveStore.setState((state) => {
+                    usePrimitiveStore.getState().set((state) => {
                       state.simulationInProgress = true;
                       state.runYearlySimulationForHeliostats = true;
                     });
                   }, 100);
                 }}
               >
-                {i18n.t('menu.heliostat.AnalyzeYearlyYield', lang)}
+                {t('menu.heliostat.AnalyzeYearlyYield', lang)}
               </Menu.Item>
               <CspSimulationSettings name={'heliostat'} />
             </SubMenu>
@@ -1998,16 +2002,16 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
 
           {/* solar updraft tower */}
           {elementCounter.solarUpdraftTowerCount > 0 && (
-            <SubMenu key={'solar-updraft-tower'} title={i18n.t('menu.solarUpdraftTowerSubMenu', lang)}>
+            <SubMenu key={'solar-updraft-tower'} title={t('menu.solarUpdraftTowerSubMenu', lang)}>
               <Menu.Item
                 key={'solar-updraft-tower-daily-yield'}
                 onClick={() => {
                   const towerCount = countSolarStructuresByType(SolarStructure.UpdraftTower);
                   if (towerCount === 0) {
-                    showInfo(i18n.t('analysisManager.NoSolarUpdraftTowerForAnalysis', lang));
+                    showInfo(t('analysisManager.NoSolarUpdraftTowerForAnalysis', lang));
                     return;
                   }
-                  showInfo(i18n.t('message.SimulationStarted', lang));
+                  showInfo(t('message.SimulationStarted', lang));
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
                     setCommonStore((state) => {
@@ -2019,24 +2023,24 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                         };
                       }
                     });
-                    usePrimitiveStore.setState((state) => {
+                    usePrimitiveStore.getState().set((state) => {
                       state.simulationInProgress = true;
                       state.runDailySimulationForUpdraftTower = true;
                     });
                   }, 100);
                 }}
               >
-                {i18n.t('menu.solarUpdraftTower.AnalyzeDailyYield', lang)}
+                {t('menu.solarUpdraftTower.AnalyzeDailyYield', lang)}
               </Menu.Item>
               <Menu.Item
                 key={'solar-updraft-tower-yearly-yield'}
                 onClick={() => {
                   const towerCount = countSolarStructuresByType(SolarStructure.UpdraftTower);
                   if (towerCount === 0) {
-                    showInfo(i18n.t('analysisManager.NoSolarUpdraftTowerForAnalysis', lang));
+                    showInfo(t('analysisManager.NoSolarUpdraftTowerForAnalysis', lang));
                     return;
                   }
-                  showInfo(i18n.t('message.SimulationStarted', lang));
+                  showInfo(t('message.SimulationStarted', lang));
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
                     setCommonStore((state) => {
@@ -2048,14 +2052,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
                         };
                       }
                     });
-                    usePrimitiveStore.setState((state) => {
+                    usePrimitiveStore.getState().set((state) => {
                       state.simulationInProgress = true;
                       state.runYearlySimulationForUpdraftTower = true;
                     });
                   }, 100);
                 }}
               >
-                {i18n.t('menu.solarUpdraftTower.AnalyzeYearlyYield', lang)}
+                {t('menu.solarUpdraftTower.AnalyzeYearlyYield', lang)}
               </Menu.Item>
               <SutSimulationSettings />
             </SubMenu>
@@ -2064,432 +2068,429 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
       )}
 
       {/* tutorials menu */}
-      <SubMenu key={'tutorials'} title={i18n.t('menu.tutorialsSubMenu', lang)}>
+      <SubMenu key={'tutorials'} title={t('menu.tutorialsSubMenu', lang)}>
         {/* solar science */}
-        <SubMenu key={'solar-energy-science'} title={i18n.t('menu.solarEnergyScienceSubMenu', lang)}>
+        <SubMenu key={'solar-energy-science'} title={t('menu.solarEnergyScienceSubMenu', lang)}>
           <Menu.Item key="sun_angles" onClick={loadFile}>
-            {i18n.t('menu.solarEnergyScienceTutorials.SunAngles', lang)}
+            {t('menu.solarEnergyScienceTutorials.SunAngles', lang)}
           </Menu.Item>
           <Menu.Item key="insolation_and_climate" onClick={loadFile}>
-            {i18n.t('menu.solarEnergyScienceTutorials.InsolationAndClimate', lang)}
+            {t('menu.solarEnergyScienceTutorials.InsolationAndClimate', lang)}
           </Menu.Item>
           <Menu.Item key="solar_radiation_to_box" onClick={loadFile}>
-            {i18n.t('menu.solarEnergyScienceTutorials.SolarRadiationToBox', lang)}
+            {t('menu.solarEnergyScienceTutorials.SolarRadiationToBox', lang)}
           </Menu.Item>
           <Menu.Item key="sun_beam_at_center" onClick={loadFile}>
-            {i18n.t('menu.solarEnergyExamples.SunBeamAndHeliodon', lang)}
+            {t('menu.solarEnergyExamples.SunBeamAndHeliodon', lang)}
           </Menu.Item>
         </SubMenu>
         {/* building science */}
-        <SubMenu key={'building-science'} title={i18n.t('menu.buildingScienceSubMenu', lang)}>
+        <SubMenu key={'building-science'} title={t('menu.buildingScienceSubMenu', lang)}>
           <Menu.Item key="thermal_vs_building_envelope" onClick={loadFile}>
-            {i18n.t('menu.buildingScienceTutorials.ThermalEnvelopeVsBuildingEnvelope', lang)}
+            {t('menu.buildingScienceTutorials.ThermalEnvelopeVsBuildingEnvelope', lang)}
           </Menu.Item>
           <Menu.Item key="effect_house_size" onClick={loadFile}>
-            {i18n.t('menu.buildingScienceTutorials.EffectOfSizeOnBuildingEnergy', lang)}
+            {t('menu.buildingScienceTutorials.EffectOfSizeOnBuildingEnergy', lang)}
           </Menu.Item>
           <Menu.Item key="effect_house_orientation" onClick={loadFile}>
-            {i18n.t('menu.buildingScienceTutorials.EffectOfOrientationOnBuildingEnergy', lang)}
+            {t('menu.buildingScienceTutorials.EffectOfOrientationOnBuildingEnergy', lang)}
           </Menu.Item>
           <Menu.Item key="effect_wall_roof_insulation" onClick={loadFile}>
-            {i18n.t('menu.buildingScienceTutorials.EffectOfInsulationOnBuildingEnergy', lang)}
+            {t('menu.buildingScienceTutorials.EffectOfInsulationOnBuildingEnergy', lang)}
           </Menu.Item>
           <Menu.Item key="effect_roof_color" onClick={loadFile}>
-            {i18n.t('menu.buildingScienceTutorials.EffectOfRoofColorOnBuildingEnergy', lang)}
+            {t('menu.buildingScienceTutorials.EffectOfRoofColorOnBuildingEnergy', lang)}
           </Menu.Item>
           <Menu.Item key="effect_eaves_overhang_length" onClick={loadFile}>
-            {i18n.t('menu.buildingScienceTutorials.EffectOfEavesOverhangLengthOnBuildingEnergy', lang)}
+            {t('menu.buildingScienceTutorials.EffectOfEavesOverhangLengthOnBuildingEnergy', lang)}
           </Menu.Item>
           <Menu.Item key="effect_window_shgc" onClick={loadFile}>
-            {i18n.t('menu.buildingScienceTutorials.EffectOfWindowSHGCOnBuildingEnergy', lang)}
+            {t('menu.buildingScienceTutorials.EffectOfWindowSHGCOnBuildingEnergy', lang)}
           </Menu.Item>
           <Menu.Item key="effect_thermostat_setpoint" onClick={loadFile}>
-            {i18n.t('menu.buildingScienceTutorials.EffectOfThermostatSetpointOnBuildingEnergy', lang)}
+            {t('menu.buildingScienceTutorials.EffectOfThermostatSetpointOnBuildingEnergy', lang)}
           </Menu.Item>
           <Menu.Item key="effect_solar_panels" onClick={loadFile}>
-            {i18n.t('menu.buildingScienceTutorials.EffectOfSolarPanelsOnBuildingEnergy', lang)}
+            {t('menu.buildingScienceTutorials.EffectOfSolarPanelsOnBuildingEnergy', lang)}
           </Menu.Item>
           <Menu.Item key="effect_ground_temperature" onClick={loadFile}>
-            {i18n.t('menu.buildingScienceTutorials.EffectOfGroundTemperatureOnBuildingEnergy', lang)}
+            {t('menu.buildingScienceTutorials.EffectOfGroundTemperatureOnBuildingEnergy', lang)}
           </Menu.Item>
           <Menu.Item key="effect_trees" onClick={loadFile}>
-            {i18n.t('menu.buildingScienceTutorials.EffectOfTreesOnBuildingEnergy', lang)}
+            {t('menu.buildingScienceTutorials.EffectOfTreesOnBuildingEnergy', lang)}
           </Menu.Item>
         </SubMenu>
         {/* building design */}
-        <SubMenu key={'building-design'} title={i18n.t('menu.buildingDesignSubMenu', lang)}>
+        <SubMenu key={'building-design'} title={t('menu.buildingDesignSubMenu', lang)}>
           <Menu.Item key="cape_cod_with_shed_dormer" onClick={loadFile}>
-            {i18n.t('menu.buildingDesignTutorials.CapeCodStyleHouseWithShedDormer', lang)}
+            {t('menu.buildingDesignTutorials.CapeCodStyleHouseWithShedDormer', lang)}
           </Menu.Item>
           <Menu.Item key="mansard_roof_with_dormers" onClick={loadFile}>
-            {i18n.t('menu.buildingDesignTutorials.MansardRoofWithDormers', lang)}
+            {t('menu.buildingDesignTutorials.MansardRoofWithDormers', lang)}
           </Menu.Item>
           <Menu.Item key="gable_roof_vs_hip_roof" onClick={loadFile}>
-            {i18n.t('menu.buildingDesignTutorials.GableRoofVsHipRoof', lang)}
+            {t('menu.buildingDesignTutorials.GableRoofVsHipRoof', lang)}
           </Menu.Item>
           <Menu.Item key="colonial_vs_saltbox" onClick={loadFile}>
-            {i18n.t('menu.buildingDesignTutorials.ColonialVsSaltbox', lang)}
+            {t('menu.buildingDesignTutorials.ColonialVsSaltbox', lang)}
           </Menu.Item>
           <Menu.Item key="gambrel_roof_vs_mansard_roof" onClick={loadFile}>
-            {i18n.t('menu.buildingDesignTutorials.GambrelRoofVsMansardRoof', lang)}
+            {t('menu.buildingDesignTutorials.GambrelRoofVsMansardRoof', lang)}
           </Menu.Item>
           <Menu.Item key="combination_roof_vs_bonnet_roof" onClick={loadFile}>
-            {i18n.t('menu.buildingDesignTutorials.CombinationRoofVsBonnetRoof', lang)}
+            {t('menu.buildingDesignTutorials.CombinationRoofVsBonnetRoof', lang)}
           </Menu.Item>
           <Menu.Item key="dutch_gable_roof" onClick={loadFile}>
-            {i18n.t('menu.buildingDesignTutorials.DutchGableRoof', lang)}
+            {t('menu.buildingDesignTutorials.DutchGableRoof', lang)}
           </Menu.Item>
           <Menu.Item key="gable_and_valley_roof" onClick={loadFile}>
-            {i18n.t('menu.buildingDesignTutorials.GableAndValleyRoof', lang)}
+            {t('menu.buildingDesignTutorials.GableAndValleyRoof', lang)}
           </Menu.Item>
           <Menu.Item key="clerestory_roof" onClick={loadFile}>
-            {i18n.t('menu.buildingDesignTutorials.ClerestoryRoof', lang)}
+            {t('menu.buildingDesignTutorials.ClerestoryRoof', lang)}
           </Menu.Item>
           <Menu.Item key="monitor_roof" onClick={loadFile}>
-            {i18n.t('menu.buildingDesignTutorials.MonitorRoof', lang)}
+            {t('menu.buildingDesignTutorials.MonitorRoof', lang)}
           </Menu.Item>
           <Menu.Item key="a_frame_house" onClick={loadFile}>
-            {i18n.t('menu.buildingDesignTutorials.AFrameHouse', lang)}
+            {t('menu.buildingDesignTutorials.AFrameHouse', lang)}
           </Menu.Item>
           <Menu.Item key="half_timbered_house" onClick={loadFile}>
-            {i18n.t('menu.buildingDesignTutorials.HalfTimberedHouse', lang)}
+            {t('menu.buildingDesignTutorials.HalfTimberedHouse', lang)}
           </Menu.Item>
           <Menu.Item key="all_roof_types" onClick={loadFile}>
-            {i18n.t('menu.buildingDesignTutorials.AllBasicRoofTypes', lang)}
+            {t('menu.buildingDesignTutorials.AllBasicRoofTypes', lang)}
           </Menu.Item>
         </SubMenu>
         {/* photovoltaic solar power */}
-        <SubMenu key={'photovoltaic-solar-power'} title={i18n.t('menu.photovoltaicSolarPowerSubMenu', lang)}>
+        <SubMenu key={'photovoltaic-solar-power'} title={t('menu.photovoltaicSolarPowerSubMenu', lang)}>
           <Menu.Item key="effect_tilt_angle_solar_panel" onClick={loadFile}>
-            {i18n.t('menu.photovoltaicSolarPowerTutorials.EffectOfTiltAngleOfSolarPanel', lang)}
+            {t('menu.photovoltaicSolarPowerTutorials.EffectOfTiltAngleOfSolarPanel', lang)}
           </Menu.Item>
           <Menu.Item key="effect_azimuth_solar_panel" onClick={loadFile}>
-            {i18n.t('menu.photovoltaicSolarPowerTutorials.EffectOfAzimuthOfSolarPanel', lang)}
+            {t('menu.photovoltaicSolarPowerTutorials.EffectOfAzimuthOfSolarPanel', lang)}
           </Menu.Item>
           <Menu.Item key="solar_panel_types" onClick={loadFile}>
-            {i18n.t('menu.photovoltaicSolarPowerTutorials.SolarPanelTypes', lang)}
+            {t('menu.photovoltaicSolarPowerTutorials.SolarPanelTypes', lang)}
           </Menu.Item>
           <Menu.Item key="vertical_bifacial_solar_panels" onClick={loadFile}>
-            {i18n.t('menu.photovoltaicSolarPowerTutorials.VerticalBifacialSolarPanels', lang)}
+            {t('menu.photovoltaicSolarPowerTutorials.VerticalBifacialSolarPanels', lang)}
           </Menu.Item>
           <Menu.Item key="compare_monofacial_bifacial_solar_panels" onClick={loadFile}>
-            {i18n.t('menu.photovoltaicSolarPowerTutorials.CompareMonofacialAndBifacialSolarPanels', lang)}
+            {t('menu.photovoltaicSolarPowerTutorials.CompareMonofacialAndBifacialSolarPanels', lang)}
           </Menu.Item>
           <Menu.Item key="solar_trackers" onClick={loadFile}>
-            {i18n.t('menu.photovoltaicSolarPowerTutorials.SolarTrackers', lang)}
+            {t('menu.photovoltaicSolarPowerTutorials.SolarTrackers', lang)}
           </Menu.Item>
           <Menu.Item key="why_solar_array" onClick={loadFile}>
-            {i18n.t('menu.photovoltaicSolarPowerTutorials.CoveringGroundWithSolarPanels', lang)}
+            {t('menu.photovoltaicSolarPowerTutorials.CoveringGroundWithSolarPanels', lang)}
           </Menu.Item>
           <Menu.Item key="inter_row_spacing" onClick={loadFile}>
-            {i18n.t('menu.photovoltaicSolarPowerTutorials.InterRowSpacingOfSolarPanelArray', lang)}
+            {t('menu.photovoltaicSolarPowerTutorials.InterRowSpacingOfSolarPanelArray', lang)}
           </Menu.Item>
           <Menu.Item key="effect_orientation_solar_panel" onClick={loadFile}>
-            {i18n.t('menu.photovoltaicSolarPowerTutorials.EffectOfOrientationOfSolarPanels', lang)}
+            {t('menu.photovoltaicSolarPowerTutorials.EffectOfOrientationOfSolarPanels', lang)}
           </Menu.Item>
           <Menu.Item key="solar_panel_array_auto_layout" onClick={loadFile}>
-            {i18n.t('menu.photovoltaicSolarPowerTutorials.SolarPanelArrayAutomaticLayout', lang)}
+            {t('menu.photovoltaicSolarPowerTutorials.SolarPanelArrayAutomaticLayout', lang)}
           </Menu.Item>
           <Menu.Item key="rooftop_solar_panels" onClick={loadFile}>
-            {i18n.t('menu.solarEnergyExamples.RooftopSolarPanels', lang)}
+            {t('menu.solarEnergyExamples.RooftopSolarPanels', lang)}
           </Menu.Item>
           <Menu.Item key="solar_canopy_form_factors" onClick={loadFile}>
-            {i18n.t('menu.solarEnergyExamples.SolarCanopyFormFactors', lang)}
+            {t('menu.solarEnergyExamples.SolarCanopyFormFactors', lang)}
           </Menu.Item>
           <Menu.Item key="bipv_01" onClick={loadFile}>
-            {i18n.t('menu.solarEnergyExamples.BuildingIntegratedPhotovoltaics', lang)}
+            {t('menu.solarEnergyExamples.BuildingIntegratedPhotovoltaics', lang)}
           </Menu.Item>
         </SubMenu>
         {/* concentrated solar power */}
-        <SubMenu key={'concentrated-solar-power'} title={i18n.t('menu.concentratedSolarPowerSubMenu', lang)}>
+        <SubMenu key={'concentrated-solar-power'} title={t('menu.concentratedSolarPowerSubMenu', lang)}>
           <Menu.Item key="parabolic_dish_focus_sunlight" onClick={loadFile}>
-            {i18n.t('menu.concentratedSolarPowerTutorials.FocusSunlightWithParabolicDish', lang)}
+            {t('menu.concentratedSolarPowerTutorials.FocusSunlightWithParabolicDish', lang)}
           </Menu.Item>
           <Menu.Item key="effect_azimuth_parabolic_trough" onClick={loadFile}>
-            {i18n.t('menu.concentratedSolarPowerTutorials.EffectOfAzimuthOfParabolicTrough', lang)}
+            {t('menu.concentratedSolarPowerTutorials.EffectOfAzimuthOfParabolicTrough', lang)}
           </Menu.Item>
           <Menu.Item key="effect_latus_rectum_parabolic_trough" onClick={loadFile}>
-            {i18n.t('menu.concentratedSolarPowerTutorials.EffectOfLatusRectumOfParabolicTrough', lang)}
+            {t('menu.concentratedSolarPowerTutorials.EffectOfLatusRectumOfParabolicTrough', lang)}
           </Menu.Item>
           <Menu.Item key="linear_fresnel_reflectors" onClick={loadFile}>
-            {i18n.t('menu.concentratedSolarPowerTutorials.LinearFresnelReflectors', lang)}
+            {t('menu.concentratedSolarPowerTutorials.LinearFresnelReflectors', lang)}
           </Menu.Item>
           <Menu.Item key="effect_absorber_pipe_height" onClick={loadFile}>
-            {i18n.t('menu.concentratedSolarPowerTutorials.EffectOfAbsorberPipeHeightForLinearFresnelReflectors', lang)}
+            {t('menu.concentratedSolarPowerTutorials.EffectOfAbsorberPipeHeightForLinearFresnelReflectors', lang)}
           </Menu.Item>
           <Menu.Item key="effect_azimuth_fresnel_reflector" onClick={loadFile}>
-            {i18n.t('menu.concentratedSolarPowerTutorials.EffectOfAzimuthOfLinearFresnelReflectors', lang)}
+            {t('menu.concentratedSolarPowerTutorials.EffectOfAzimuthOfLinearFresnelReflectors', lang)}
           </Menu.Item>
           <Menu.Item key="linear_fresnel_reflectors_two_absorbers" onClick={loadFile}>
-            {i18n.t('menu.concentratedSolarPowerTutorials.LinearFresnelReflectorsWithTwoAbsorbers', lang)}
+            {t('menu.concentratedSolarPowerTutorials.LinearFresnelReflectorsWithTwoAbsorbers', lang)}
           </Menu.Item>
           <Menu.Item key="solar_power_tower" onClick={loadFile}>
-            {i18n.t('menu.concentratedSolarPowerTutorials.SolarPowerTower', lang)}
+            {t('menu.concentratedSolarPowerTutorials.SolarPowerTower', lang)}
           </Menu.Item>
           <Menu.Item key="cosine_efficiency_heliostats" onClick={loadFile}>
-            {i18n.t('menu.concentratedSolarPowerTutorials.CosineEfficiencyOfHeliostats', lang)}
+            {t('menu.concentratedSolarPowerTutorials.CosineEfficiencyOfHeliostats', lang)}
           </Menu.Item>
           <Menu.Item key="shadowing_blocking_heliostats" onClick={loadFile}>
-            {i18n.t('menu.concentratedSolarPowerTutorials.ShadowingAndBlockingOfHeliostats', lang)}
+            {t('menu.concentratedSolarPowerTutorials.ShadowingAndBlockingOfHeliostats', lang)}
           </Menu.Item>
           <Menu.Item key="effect_solar_power_tower_height" onClick={loadFile}>
-            {i18n.t('menu.concentratedSolarPowerTutorials.EffectSolarPowerTowerHeight', lang)}
+            {t('menu.concentratedSolarPowerTutorials.EffectSolarPowerTowerHeight', lang)}
           </Menu.Item>
         </SubMenu>
         {/* other types of solar power */}
-        <SubMenu key={'other-types-of-solar-power'} title={i18n.t('menu.otherTypesOfSolarPowerSubMenu', lang)}>
+        <SubMenu key={'other-types-of-solar-power'} title={t('menu.otherTypesOfSolarPowerSubMenu', lang)}>
           <Menu.Item key="solar_updraft_tower" onClick={loadFile}>
-            {i18n.t('menu.otherTypesOfSolarPowerTutorials.SolarUpdraftTower', lang)}
+            {t('menu.otherTypesOfSolarPowerTutorials.SolarUpdraftTower', lang)}
           </Menu.Item>
         </SubMenu>
         {/* generative design */}
-        <SubMenu key={'generative-design'} title={i18n.t('menu.generativeDesignSubMenu', lang)}>
+        <SubMenu key={'generative-design'} title={t('menu.generativeDesignSubMenu', lang)}>
           <Menu.Item key="Tilt Angle" onClick={(e) => loadProject(e.key, 48)}>
-            {i18n.t('menu.generativeDesignTutorials.MonofacialSolarPanelArrayTiltAngle', lang)}
+            {t('menu.generativeDesignTutorials.MonofacialSolarPanelArrayTiltAngle', lang)}
           </Menu.Item>
           <Menu.Item key="Bifacial Tilt Angle" onClick={(e) => loadProject(e.key, 50)}>
-            {i18n.t('menu.generativeDesignTutorials.BifacialSolarPanelArrayTiltAngle', lang)}
+            {t('menu.generativeDesignTutorials.BifacialSolarPanelArrayTiltAngle', lang)}
           </Menu.Item>
           <Menu.Item key="Latitude" onClick={(e) => loadProject(e.key, 0)}>
-            {i18n.t('menu.generativeDesignTutorials.OutputOfSolarPanelArrayInDifferentPlaces', lang)}
+            {t('menu.generativeDesignTutorials.OutputOfSolarPanelArrayInDifferentPlaces', lang)}
           </Menu.Item>
           <Menu.Item key="Pareto Front" onClick={(e) => loadProject(e.key, 0)}>
-            {i18n.t('menu.generativeDesignTutorials.SimpleSolarFarmParetoFront', lang)}
+            {t('menu.generativeDesignTutorials.SimpleSolarFarmParetoFront', lang)}
           </Menu.Item>
         </SubMenu>
       </SubMenu>
 
       {/* example menu */}
-      <SubMenu key={'examples'} title={i18n.t('menu.examplesSubMenu', lang)}>
+      <SubMenu key={'examples'} title={t('menu.examplesSubMenu', lang)}>
         {/* solar energy */}
-        <SubMenu key={'solar-energy'} title={i18n.t('menu.solarEnergySubMenu', lang)}>
-          <SubMenu key={'photovoltaic-solar-power-examples'} title={i18n.t('menu.photovoltaicSolarPowerSubMenu', lang)}>
+        <SubMenu key={'solar-energy'} title={t('menu.solarEnergySubMenu', lang)}>
+          <SubMenu key={'photovoltaic-solar-power-examples'} title={t('menu.photovoltaicSolarPowerSubMenu', lang)}>
             <Menu.Item key="vegetative_buffer_01" onClick={loadFile}>
-              {i18n.t('menu.solarEnergyExamples.VegetativeBuffer', lang)}
+              {t('menu.solarEnergyExamples.VegetativeBuffer', lang)}
             </Menu.Item>
             <Menu.Item key="solar_canopy_over_bleachers" onClick={loadFile}>
-              {i18n.t('menu.solarEnergyExamples.SolarCanopyOverBleachers', lang)}
+              {t('menu.solarEnergyExamples.SolarCanopyOverBleachers', lang)}
             </Menu.Item>
             <Menu.Item key="solar_canopy_over_garage" onClick={loadFile}>
-              {i18n.t('menu.solarEnergyExamples.SolarCanopyOverGarage', lang)}
+              {t('menu.solarEnergyExamples.SolarCanopyOverGarage', lang)}
             </Menu.Item>
             <Menu.Item key="solar_bus_stop" onClick={loadFile}>
-              {i18n.t('menu.solarEnergyExamples.SolarBusStop', lang)}
+              {t('menu.solarEnergyExamples.SolarBusStop', lang)}
             </Menu.Item>
             <Menu.Item key="solar_facade_tesla" onClick={loadFile}>
-              {i18n.t('menu.solarEnergyExamples.SolarFacadeTesla', lang)}
+              {t('menu.solarEnergyExamples.SolarFacadeTesla', lang)}
             </Menu.Item>
             <Menu.Item key="floatovoltaics" onClick={loadFile}>
-              {i18n.t('menu.solarEnergyExamples.Floatovoltaics', lang)}
+              {t('menu.solarEnergyExamples.Floatovoltaics', lang)}
             </Menu.Item>
             <Menu.Item key="agrivoltaics" onClick={loadFile}>
-              {i18n.t('menu.solarEnergyExamples.Agrivoltaics', lang)}
+              {t('menu.solarEnergyExamples.Agrivoltaics', lang)}
             </Menu.Item>
             <Menu.Item key="rainbow_swash_solar_farm" onClick={loadFile}>
-              {i18n.t('menu.solarEnergyExamples.RainbowSwashSolarFarmBostonMA', lang)}
+              {t('menu.solarEnergyExamples.RainbowSwashSolarFarmBostonMA', lang)}
             </Menu.Item>
             <Menu.Item key="mickey_mouse_solar_farm" onClick={loadFile}>
-              {i18n.t('menu.solarEnergyExamples.MickeyMouseSolarFarmOrlandoFL', lang)}
+              {t('menu.solarEnergyExamples.MickeyMouseSolarFarmOrlandoFL', lang)}
             </Menu.Item>
             <Menu.Item key="solar_panels_over_canal" onClick={loadFile}>
-              {i18n.t('menu.solarEnergyExamples.SolarPanelsOverCanalBakersfieldCA', lang)}
+              {t('menu.solarEnergyExamples.SolarPanelsOverCanalBakersfieldCA', lang)}
             </Menu.Item>
             <Menu.Item key="solar_noise_barrier" onClick={loadFile}>
-              {i18n.t('menu.solarEnergyExamples.SolarNoiseBarrierLexingtonMA', lang)}
+              {t('menu.solarEnergyExamples.SolarNoiseBarrierLexingtonMA', lang)}
             </Menu.Item>
             <Menu.Item key="solar_farm_hsat_array" onClick={loadFile}>
-              {i18n.t('menu.solarEnergyExamples.HSATSolarTrackersRaleighNC', lang)}
+              {t('menu.solarEnergyExamples.HSATSolarTrackersRaleighNC', lang)}
             </Menu.Item>
             <Menu.Item key="solar_farm_aadat_array" onClick={loadFile}>
-              {i18n.t('menu.solarEnergyExamples.AADATSolarTrackersLancasterCA', lang)}
+              {t('menu.solarEnergyExamples.AADATSolarTrackersLancasterCA', lang)}
             </Menu.Item>
           </SubMenu>
-          <SubMenu key={'concentrated-solar-power-examples'} title={i18n.t('menu.concentratedSolarPowerSubMenu', lang)}>
+          <SubMenu key={'concentrated-solar-power-examples'} title={t('menu.concentratedSolarPowerSubMenu', lang)}>
             <Menu.Item key="nevada_solar_one_parabolic_troughs" onClick={loadFile}>
-              {i18n.t('menu.solarEnergyExamples.NevadaSolarOneParabolicTroughArray', lang)}
+              {t('menu.solarEnergyExamples.NevadaSolarOneParabolicTroughArray', lang)}
             </Menu.Item>
             <Menu.Item key="tooele_parabolic_dish_array" onClick={loadFile}>
-              {i18n.t('menu.solarEnergyExamples.TooeleParabolicDishArray', lang)}
+              {t('menu.solarEnergyExamples.TooeleParabolicDishArray', lang)}
             </Menu.Item>
             <Menu.Item key="tucson_sundt_station" onClick={loadFile}>
-              {i18n.t('menu.solarEnergyExamples.TucsonLinearFresnelReflectors', lang)}
+              {t('menu.solarEnergyExamples.TucsonLinearFresnelReflectors', lang)}
             </Menu.Item>
             <Menu.Item key="ps10_solar_power_tower" onClick={loadFile}>
-              {i18n.t('menu.solarEnergyExamples.PS10SolarPowerTower', lang)}
+              {t('menu.solarEnergyExamples.PS10SolarPowerTower', lang)}
             </Menu.Item>
           </SubMenu>
-          <SubMenu
-            key={'other-types-of-solar-power-examples'}
-            title={i18n.t('menu.otherTypesOfSolarPowerSubMenu', lang)}
-          >
+          <SubMenu key={'other-types-of-solar-power-examples'} title={t('menu.otherTypesOfSolarPowerSubMenu', lang)}>
             <Menu.Item key="solar_updraft_tower_city" onClick={loadFile}>
-              {i18n.t('menu.solarEnergyExamples.SolarUpdraftTowerInCity', lang)}
+              {t('menu.solarEnergyExamples.SolarUpdraftTowerInCity', lang)}
             </Menu.Item>
           </SubMenu>
         </SubMenu>
 
         {/* built environments */}
-        <SubMenu key={'built-environment'} title={i18n.t('menu.builtEnvironmentSubMenu', lang)}>
-          <SubMenu key={'residential_buildings'} title={i18n.t('menu.residentialBuildingsSubMenu', lang)}>
+        <SubMenu key={'built-environment'} title={t('menu.builtEnvironmentSubMenu', lang)}>
+          <SubMenu key={'residential_buildings'} title={t('menu.residentialBuildingsSubMenu', lang)}>
             <Menu.Item key="colonial_house" onClick={loadFile}>
-              {i18n.t('menu.residentialBuildingExamples.ColonialHouse', lang)}
+              {t('menu.residentialBuildingExamples.ColonialHouse', lang)}
             </Menu.Item>
             <Menu.Item key="dutch_colonial_house" onClick={loadFile}>
-              {i18n.t('menu.residentialBuildingExamples.DutchColonialHouse', lang)}
+              {t('menu.residentialBuildingExamples.DutchColonialHouse', lang)}
             </Menu.Item>
             <Menu.Item key="t_shaped_house" onClick={loadFile}>
-              {i18n.t('menu.residentialBuildingExamples.TShapedHouse', lang)}
+              {t('menu.residentialBuildingExamples.TShapedHouse', lang)}
             </Menu.Item>
             <Menu.Item key="cape_cod_with_garage" onClick={loadFile}>
-              {i18n.t('menu.residentialBuildingExamples.CapeCodHouseWithGarage', lang)}
+              {t('menu.residentialBuildingExamples.CapeCodHouseWithGarage', lang)}
             </Menu.Item>
             <Menu.Item key="solarium" onClick={loadFile}>
-              {i18n.t('menu.residentialBuildingExamples.Solarium', lang)}
+              {t('menu.residentialBuildingExamples.Solarium', lang)}
             </Menu.Item>
             <Menu.Item key="butterfly_roof_house" onClick={loadFile}>
-              {i18n.t('menu.residentialBuildingExamples.ButterflyRoofHouse', lang)}
+              {t('menu.residentialBuildingExamples.ButterflyRoofHouse', lang)}
             </Menu.Item>
             <Menu.Item key="adobe_taos_house" onClick={loadFile}>
-              {i18n.t('menu.residentialBuildingExamples.AdobeTaosHouse', lang)}
+              {t('menu.residentialBuildingExamples.AdobeTaosHouse', lang)}
             </Menu.Item>
             <Menu.Item key="ranch_house" onClick={loadFile}>
-              {i18n.t('menu.residentialBuildingExamples.RanchHouse', lang)}
+              {t('menu.residentialBuildingExamples.RanchHouse', lang)}
             </Menu.Item>
             <Menu.Item key="bonnet_house" onClick={loadFile}>
-              {i18n.t('menu.residentialBuildingExamples.BonnetHouse', lang)}
+              {t('menu.residentialBuildingExamples.BonnetHouse', lang)}
             </Menu.Item>
             <Menu.Item key="barn_house" onClick={loadFile}>
-              {i18n.t('menu.residentialBuildingExamples.BarnStyleHouse', lang)}
+              {t('menu.residentialBuildingExamples.BarnStyleHouse', lang)}
             </Menu.Item>
             <Menu.Item key="modern_house_01" onClick={loadFile}>
-              {i18n.t('menu.residentialBuildingExamples.ModernHouse', lang)}
+              {t('menu.residentialBuildingExamples.ModernHouse', lang)}
             </Menu.Item>
           </SubMenu>
-          <SubMenu key={'commercial_buildings'} title={i18n.t('menu.commercialBuildingsSubMenu', lang)}>
+          <SubMenu key={'commercial_buildings'} title={t('menu.commercialBuildingsSubMenu', lang)}>
             <Menu.Item key="white_house" onClick={loadFile}>
-              {i18n.t('menu.commercialBuildingExamples.WhiteHouse', lang)}
+              {t('menu.commercialBuildingExamples.WhiteHouse', lang)}
             </Menu.Item>
             <Menu.Item key="bilim_mersin_turkiye" onClick={loadFile}>
-              {i18n.t('menu.commercialBuildingExamples.BilimMersinTurkiye', lang)}
+              {t('menu.commercialBuildingExamples.BilimMersinTurkiye', lang)}
             </Menu.Item>
             <Menu.Item key="spanish_style_hotel" onClick={loadFile}>
-              {i18n.t('menu.commercialBuildingExamples.SpanishStyleHotel', lang)}
+              {t('menu.commercialBuildingExamples.SpanishStyleHotel', lang)}
             </Menu.Item>
             <Menu.Item key="apartment_building_01" onClick={loadFile}>
-              {i18n.t('menu.commercialBuildingExamples.ApartmentBuilding', lang)}
+              {t('menu.commercialBuildingExamples.ApartmentBuilding', lang)}
             </Menu.Item>
             <Menu.Item key="office_building_01" onClick={loadFile}>
-              {i18n.t('menu.commercialBuildingExamples.OfficeBuilding', lang)}
+              {t('menu.commercialBuildingExamples.OfficeBuilding', lang)}
             </Menu.Item>
             <Menu.Item key="hotel_01" onClick={loadFile}>
-              {i18n.t('menu.commercialBuildingExamples.Hotel', lang)}
+              {t('menu.commercialBuildingExamples.Hotel', lang)}
             </Menu.Item>
           </SubMenu>
-          <SubMenu key={'other_buildings'} title={i18n.t('menu.otherBuildingsSubMenu', lang)}>
+          <SubMenu key={'other_buildings'} title={t('menu.otherBuildingsSubMenu', lang)}>
             <Menu.Item key="greenhouse" onClick={loadFile}>
-              {i18n.t('menu.otherBuildingExamples.Greenhouse', lang)}
+              {t('menu.otherBuildingExamples.Greenhouse', lang)}
             </Menu.Item>
             <Menu.Item key="church_01" onClick={loadFile}>
-              {i18n.t('menu.residentialBuildingExamples.Church1', lang)}
+              {t('menu.residentialBuildingExamples.Church1', lang)}
             </Menu.Item>
             <Menu.Item key="cathedral_01" onClick={loadFile}>
-              {i18n.t('menu.residentialBuildingExamples.Cathedral1', lang)}
+              {t('menu.residentialBuildingExamples.Cathedral1', lang)}
             </Menu.Item>
             <Menu.Item key="cathedral_02" onClick={loadFile}>
-              {i18n.t('menu.residentialBuildingExamples.Cathedral2', lang)}
+              {t('menu.residentialBuildingExamples.Cathedral2', lang)}
             </Menu.Item>
             <Menu.Item key="mosque_01" onClick={loadFile}>
-              {i18n.t('menu.residentialBuildingExamples.Mosque1', lang)}
+              {t('menu.residentialBuildingExamples.Mosque1', lang)}
             </Menu.Item>
             <Menu.Item key="pavilion" onClick={loadFile}>
-              {i18n.t('menu.otherBuildingExamples.Pavilion', lang)}
+              {t('menu.otherBuildingExamples.Pavilion', lang)}
             </Menu.Item>
             <Menu.Item key="octagonal_pagoda" onClick={loadFile}>
-              {i18n.t('menu.otherBuildingExamples.OctagonalPagoda', lang)}
+              {t('menu.otherBuildingExamples.OctagonalPagoda', lang)}
             </Menu.Item>
             <Menu.Item key="ocean_front" onClick={loadFile}>
-              {i18n.t('menu.otherBuildingExamples.OceanFront', lang)}
+              {t('menu.otherBuildingExamples.OceanFront', lang)}
             </Menu.Item>
             <Menu.Item key="egyptian_pyramids" onClick={loadFile}>
-              {i18n.t('menu.otherBuildingExamples.EgyptianPyramids', lang)}
+              {t('menu.otherBuildingExamples.EgyptianPyramids', lang)}
             </Menu.Item>
             <Menu.Item key="mayan_pyramid" onClick={loadFile}>
-              {i18n.t('menu.otherBuildingExamples.MayanPyramid', lang)}
+              {t('menu.otherBuildingExamples.MayanPyramid', lang)}
             </Menu.Item>
             <Menu.Item key="si_o_se_pol" onClick={loadFile}>
-              {i18n.t('menu.otherBuildingExamples.SiOSePol', lang)}
+              {t('menu.otherBuildingExamples.SiOSePol', lang)}
             </Menu.Item>
             <Menu.Item key="stacked_cuboids" onClick={loadFile}>
-              {i18n.t('menu.otherBuildingExamples.StackedCuboids', lang)}
+              {t('menu.otherBuildingExamples.StackedCuboids', lang)}
             </Menu.Item>
           </SubMenu>
-          <SubMenu key={'building_complexes'} title={i18n.t('menu.buildingComplexesSubMenu', lang)}>
+          <SubMenu key={'building_complexes'} title={t('menu.buildingComplexesSubMenu', lang)}>
             <Menu.Item key="south_burlington_high_school" onClick={loadFile}>
-              {i18n.t('menu.buildingComplexExamples.SouthBurlingtonHighSchoolVermont', lang)}
+              {t('menu.buildingComplexExamples.SouthBurlingtonHighSchoolVermont', lang)}
             </Menu.Item>
             <Menu.Item key="mescalero_apache_school" onClick={loadFile}>
-              {i18n.t('menu.buildingComplexExamples.MescaleroApacheSchoolNewMexico', lang)}
+              {t('menu.buildingComplexExamples.MescaleroApacheSchoolNewMexico', lang)}
             </Menu.Item>
           </SubMenu>
-          <SubMenu key={'urban_planning'} title={i18n.t('menu.urbanPlanningSubMenu', lang)}>
+          <SubMenu key={'urban_planning'} title={t('menu.urbanPlanningSubMenu', lang)}>
             <Menu.Item key="heatmap_01" onClick={loadFile}>
-              {i18n.t('menu.urbanPlanningExamples.Heatmap1', lang)}
+              {t('menu.urbanPlanningExamples.Heatmap1', lang)}
             </Menu.Item>
           </SubMenu>
         </SubMenu>
 
         {/* artificial intelligence */}
-        <SubMenu key={'artificial-intelligence'} title={i18n.t('menu.artificialIntelligenceSubMenu', lang)}>
+        <SubMenu key={'artificial-intelligence'} title={t('menu.artificialIntelligenceSubMenu', lang)}>
           <Menu.Item key="ai_tilt_angle_one_row" onClick={loadFile}>
-            {i18n.t('menu.artificialIntelligenceExamples.OptimizingTiltAngleOfOneSolarPanelRow', lang)}
+            {t('menu.artificialIntelligenceExamples.OptimizingTiltAngleOfOneSolarPanelRow', lang)}
           </Menu.Item>
           <Menu.Item key="ai_tilt_angles_multiple_rows" onClick={loadFile}>
-            {i18n.t('menu.artificialIntelligenceExamples.OptimizingTiltAnglesOfMultipleSolarPanelRows', lang)}
+            {t('menu.artificialIntelligenceExamples.OptimizingTiltAnglesOfMultipleSolarPanelRows', lang)}
           </Menu.Item>
           <Menu.Item key="ai_solar_farm_design" onClick={loadFile}>
-            {i18n.t('menu.artificialIntelligenceExamples.SolarFarmGenerativeDesign', lang)}
+            {t('menu.artificialIntelligenceExamples.SolarFarmGenerativeDesign', lang)}
           </Menu.Item>
           <Menu.Item key="ai_solar_farm_design_block" onClick={loadFile}>
-            {i18n.t('menu.artificialIntelligenceExamples.SolarFarmGenerativeDesignWithBlock', lang)}
+            {t('menu.artificialIntelligenceExamples.SolarFarmGenerativeDesignWithBlock', lang)}
           </Menu.Item>
           <Menu.Item key="ai_fitchburg_solar_farm" onClick={loadFile}>
-            {i18n.t('menu.artificialIntelligenceExamples.FitchburgSolarFarmGenerativeDesign', lang)}
+            {t('menu.artificialIntelligenceExamples.FitchburgSolarFarmGenerativeDesign', lang)}
           </Menu.Item>
         </SubMenu>
 
         {/* benchmarks menu */}
-        <SubMenu key={'benchmarks'} title={i18n.t('menu.benchmarksSubMenu', lang)}>
+        <SubMenu key={'benchmarks'} title={t('menu.benchmarksSubMenu', lang)}>
           <Menu.Item key="solar_radiation_predicted_vs_measured" onClick={loadFile}>
-            {i18n.t('menu.benchmarks.SolarRadiationPredictionVsMeasurement', lang)}
+            {t('menu.benchmarks.SolarRadiationPredictionVsMeasurement', lang)}
           </Menu.Item>
           <Menu.Item key="bestest_case_600" onClick={loadFile}>
-            {i18n.t('menu.benchmarks.BESTESTCase600', lang)}
+            {t('menu.benchmarks.BESTESTCase600', lang)}
           </Menu.Item>
           <Menu.Item key="bestest_case_610" onClick={loadFile}>
-            {i18n.t('menu.benchmarks.BESTESTCase610', lang)}
+            {t('menu.benchmarks.BESTESTCase610', lang)}
           </Menu.Item>
           <Menu.Item key="bestest_case_620" onClick={loadFile}>
-            {i18n.t('menu.benchmarks.BESTESTCase620', lang)}
+            {t('menu.benchmarks.BESTESTCase620', lang)}
           </Menu.Item>
           <Menu.Item key="bestest_case_630" onClick={loadFile}>
-            {i18n.t('menu.benchmarks.BESTESTCase630', lang)}
+            {t('menu.benchmarks.BESTESTCase630', lang)}
           </Menu.Item>
         </SubMenu>
       </SubMenu>
 
-      <SubMenu key={'public'} title={i18n.t('menu.publicSubMenu', lang)}>
+      <SubMenu key={'public'} title={t('menu.publicSubMenu', lang)}>
         {user.uid && !viewOnly && (
           <Menu.Item
             key="my-models"
             onClick={() => {
-              usePrimitiveStore.setState((state) => {
+              usePrimitiveStore.getState().set((state) => {
                 state.showModelsGallery = true;
                 state.leaderboardFlag = true;
                 state.openModelsMap = false;
               });
             }}
           >
-            {i18n.t('menu.ModelsGallery', lang)}...
+            {t('menu.ModelsGallery', lang)}...
           </Menu.Item>
         )}
 
@@ -2498,7 +2499,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
           <Menu.Item
             key="models-map"
             onClick={() => {
-              usePrimitiveStore.setState((state) => {
+              usePrimitiveStore.getState().set((state) => {
                 state.modelsMapFlag = true;
                 state.modelsMapWeatherStations = false;
                 state.openModelsMap = true;
@@ -2514,13 +2515,13 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
               }
             }}
           >
-            {i18n.t('menu.ModelsMap', lang)}...
+            {t('menu.ModelsMap', lang)}...
           </Menu.Item>
         )}
       </SubMenu>
 
       {/*language menu*/}
-      <SubMenu key={'language'} title={i18n.t('menu.languageSubMenu', lang)}>
+      <SubMenu key={'language'} title={t('menu.languageSubMenu', lang)}>
         <Radio.Group
           value={language}
           style={{ height: '170px' }}
@@ -2577,7 +2578,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
           setAboutUs(true);
         }}
       >
-        {i18n.t('menu.AboutUs', lang)}...
+        {t('menu.AboutUs', lang)}...
       </Menu.Item>
     </Menu>
   );
@@ -2586,10 +2587,10 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
     <>
       <Dropdown overlay={menu} trigger={['click']} onVisibleChange={handleVisibleChange}>
         <MainMenuContainer>
-          <StyledImage src={logo} title={i18n.t('tooltip.clickToOpenMenu', lang)} />
+          <StyledImage src={logo} title={t('tooltip.clickToOpenMenu', lang)} />
           <LabelContainer>
             <span style={{ fontSize: '10px', alignContent: 'center', cursor: 'pointer' }}>
-              {i18n.t('menu.mainMenu', lang)}
+              {t('menu.mainMenu', lang)}
             </span>
           </LabelContainer>
         </MainMenuContainer>

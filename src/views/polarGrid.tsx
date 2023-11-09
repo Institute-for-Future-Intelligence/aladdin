@@ -3,7 +3,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { DoubleSide, FontLoader, TextGeometryParameters, Vector3 } from 'three';
+import { DoubleSide, Vector3 } from 'three';
 import { useLoader } from '@react-three/fiber';
 import { Ring } from '@react-three/drei';
 import helvetikerFont from '../fonts/helvetiker_regular.typeface.fnt';
@@ -13,6 +13,7 @@ import * as Selector from '../stores/selector';
 import { ObjectType } from '../types';
 import { ElementModel } from '../models/ElementModel';
 import { HALF_PI } from '../constants';
+import { FontLoader, TextGeometryParameters } from 'three/examples/jsm/Addons';
 
 export const PolarGrid = ({ element, height }: { element: ElementModel; height?: number }) => {
   const rotateHandle = useStore(Selector.rotateHandleType);

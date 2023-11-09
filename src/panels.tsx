@@ -96,7 +96,7 @@ const Panels = () => {
       {showEconomicsPanel && (
         <EconomicsPanel
           setDialogVisible={(visible) => {
-            usePrimitiveStore.setState((state) => {
+            usePrimitiveStore.getState().set((state) => {
               state.showEconomicsPanel = visible;
             });
           }}
@@ -105,7 +105,7 @@ const Panels = () => {
       {showNavigationPanel && (
         <NavigationPanel
           setDialogVisible={(visible) => {
-            usePrimitiveStore.setState((state) => {
+            usePrimitiveStore.getState().set((state) => {
               state.showNavigationPanel = visible;
             });
           }}

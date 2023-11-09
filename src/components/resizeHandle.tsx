@@ -24,7 +24,7 @@ const ResizeHandle = ({ handleType, position, size, onPointerOver, onPointerOut 
   const resizeHandleType = useStore(Selector.resizeHandleType);
   const hoveredHandle = useStore(Selector.hoveredHandle);
 
-  const handleRef = useRef<Mesh>();
+  const handleRef = useRef<Mesh>(null);
 
   const [cx, cy, cz] = position;
   const color =

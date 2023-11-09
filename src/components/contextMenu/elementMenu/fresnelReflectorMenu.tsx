@@ -194,7 +194,7 @@ export const FresnelReflectorMenu = React.memo(() => {
                   step={0.1}
                   precision={1}
                   value={fresnelReflector.labelHeight ?? 0.2}
-                  onChange={(value) => setLabelHeight(value)}
+                  onChange={(value) => setLabelHeight(value!)}
                 />
               </Menu.Item>
               {/* the label's font size */}
@@ -209,7 +209,7 @@ export const FresnelReflectorMenu = React.memo(() => {
                   step={1}
                   precision={0}
                   value={fresnelReflector.labelFontSize ?? 20}
-                  onChange={(value) => setLabelFontSize(value)}
+                  onChange={(value) => setLabelFontSize(value!)}
                 />
               </Menu.Item>
               {/* the label's size */}
@@ -224,7 +224,7 @@ export const FresnelReflectorMenu = React.memo(() => {
                   step={0.1}
                   precision={1}
                   value={fresnelReflector.labelSize ?? 0.2}
-                  onChange={(value) => setLabelSize(value)}
+                  onChange={(value) => setLabelSize(value!)}
                 />
               </Menu.Item>
               {/* the label's color */}

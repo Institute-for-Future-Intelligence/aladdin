@@ -19,6 +19,7 @@ import { Rectangle } from '../models/Rectangle';
 import { FLOATING_WINDOW_OPACITY, Z_INDEX_FRONT_PANEL } from '../constants';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
+import { useTranslation } from 'react-i18next';
 
 const Container = styled.div`
   position: fixed;
@@ -202,10 +203,11 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [towerCount, individualOutputs]);
 
-  const labelHour = i18n.t('word.Hour', lang);
-  const labelYield = i18n.t('updraftTowerYieldPanel.YieldPerHour', lang);
-  const labelTemperature = i18n.t('updraftTowerYieldPanel.ChimneyAirTemperature', lang);
-  const labelSpeed = i18n.t('updraftTowerYieldPanel.ChimneyWindSpeed', lang);
+  const { t } = useTranslation();
+  const labelHour = t('word.Hour', lang);
+  const labelYield = t('updraftTowerYieldPanel.YieldPerHour', lang);
+  const labelTemperature = t('updraftTowerYieldPanel.ChimneyAirTemperature', lang);
+  const labelSpeed = t('updraftTowerYieldPanel.ChimneyWindSpeed', lang);
   const emptyGraph = dailyYield && dailyYield[0] ? Object.keys(dailyYield[0]).length === 0 : true;
 
   return (
@@ -237,9 +239,9 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
         >
           <Header className="handle" style={{ direction: 'ltr' }}>
             <span>
-              {i18n.t('updraftTowerYieldPanel.UpdraftTowerDailyYield', lang) + ': '}
+              {t('updraftTowerYieldPanel.UpdraftTowerDailyYield', lang) + ': '}
               <span style={{ fontSize: '10px' }}>
-                {i18n.t('sensorPanel.WeatherDataFrom', lang) + ' ' + city + ' | ' + moment(now).format('MM/DD')}
+                {t('sensorPanel.WeatherDataFrom', lang) + ' ' + city + ' | ' + moment(now).format('MM/DD')}
               </span>
             </span>
             <span
@@ -251,7 +253,7 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
                 closePanel();
               }}
             >
-              {i18n.t('word.Close', lang)}
+              {t('word.Close', lang)}
             </span>
           </Header>
           <LineGraph
@@ -263,7 +265,7 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
             dataKeyAxisX={'Hour'}
             labelX={labelHour}
             labelY={labelYield}
-            unitY={i18n.t('word.kWh', lang)}
+            unitY={t('word.kWh', lang)}
             yMin={0}
             curveType={'linear'}
             fractionDigits={2}
@@ -278,7 +280,7 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
             labelY1={labelTemperature}
             labelY2={labelSpeed}
             unitY1={'°C'}
-            unitY2={i18n.t('word.MeterPerSecond', lang)}
+            unitY2={t('word.MeterPerSecond', lang)}
             yMin1={0}
             yMin2={0}
             curveType={'linear'}
@@ -302,7 +304,7 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
                         <>
                           <hr></hr>
                           <div style={{ textAlign: 'right' }}>
-                            {i18n.t('word.Total', lang) + ': ' + sum.toFixed(3) + ' ' + i18n.t('word.kWh', lang)}
+                            {t('word.Total', lang) + ': ' + sum.toFixed(3) + ' ' + t('word.kWh', lang)}
                           </div>
                         </>
                       )}
@@ -310,24 +312,24 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
                   ))}
                 >
                   <Space style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
-                    {i18n.t('shared.OutputBreakdown', lang)}
+                    {t('shared.OutputBreakdown', lang)}
                   </Space>
                 </Popover>
               ) : (
                 <Space style={{ cursor: 'default' }}>
-                  {i18n.t('updraftTowerYieldPanel.DailyTotal', lang)}:{sum.toFixed(2)} {i18n.t('word.kWh', lang)}
+                  {t('updraftTowerYieldPanel.DailyTotal', lang)}:{sum.toFixed(2)} {t('word.kWh', lang)}
                 </Space>
               )}
               <Button
                 type="default"
                 icon={emptyGraph ? <CaretRightOutlined /> : <ReloadOutlined />}
-                title={i18n.t(emptyGraph ? 'word.Run' : 'word.Update', lang)}
+                title={t(emptyGraph ? 'word.Run' : 'word.Update', lang)}
                 onClick={() => {
                   if (towerCount === 0) {
-                    showInfo(i18n.t('analysisManager.NoSolarUpdraftTowerForAnalysis', lang));
+                    showInfo(t('analysisManager.NoSolarUpdraftTowerForAnalysis', lang));
                     return;
                   }
-                  showInfo(i18n.t('message.SimulationStarted', lang));
+                  showInfo(t('message.SimulationStarted', lang));
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
                     setCommonStore((state) => {
@@ -338,7 +340,7 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
                         };
                       }
                     });
-                    usePrimitiveStore.setState((state) => {
+                    usePrimitiveStore.getState().set((state) => {
                       state.runDailySimulationForUpdraftTower = true;
                       state.pauseDailySimulationForUpdraftTower = false;
                       state.simulationInProgress = true;
@@ -349,10 +351,10 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
               <Button
                 type="default"
                 icon={<CameraOutlined />}
-                title={i18n.t('word.SaveAsImage', lang)}
+                title={t('word.SaveAsImage', lang)}
                 onClick={() => {
                   screenshot('line-graph-' + labelHour + '-' + labelYield, 'daily-updraft-tower-yield', {}).then(() => {
-                    showInfo(i18n.t('message.ScreenshotSaved', lang));
+                    showInfo(t('message.ScreenshotSaved', lang));
                     if (loggable) {
                       setCommonStore((state) => {
                         state.actionInfo = {
@@ -368,10 +370,10 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
                 <Button
                   type="default"
                   icon={<SaveOutlined />}
-                  title={i18n.t('word.SaveAsCsv', lang)}
+                  title={t('word.SaveAsCsv', lang)}
                   onClick={() => {
                     saveCsv(dailyYield, 'daily-updraft-tower-yield.csv');
-                    showInfo(i18n.t('message.CsvFileSaved', lang));
+                    showInfo(t('message.CsvFileSaved', lang));
                     if (loggable) {
                       setCommonStore((state) => {
                         state.actionInfo = {

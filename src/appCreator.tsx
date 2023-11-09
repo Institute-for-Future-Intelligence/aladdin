@@ -298,7 +298,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
           title={i18n.t('tooltip.visitAladdinHomePage', lang)}
           onClick={visitHomepage}
         >
-          {i18n.t('name.Aladdin', lang)}
+          {`${i18n.t('name.Aladdin', lang)}`}
         </span>
         {cloudFile && !openModelsMap && (
           <span
@@ -337,7 +337,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
                   }
                 }}
               >
-                {i18n.t('word.Save', lang)}
+                {`${i18n.t('word.Save', lang)}`}
               </Button>
             )}
           </span>
@@ -404,7 +404,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
                 : 'antiquewhite',
             }}
           >
-            &nbsp;&nbsp; &copy;{new Date().getFullYear()} {i18n.t('name.IFI', lang)}
+            &nbsp;&nbsp; &copy;{new Date().getFullYear()} {`${i18n.t('name.IFI', lang)}`}
             &nbsp;
             {i18n.t('word.VersionInitial', lang) + VERSION + '. ' + i18n.t('word.AllRightsReserved', lang) + '. '}
           </div>
@@ -426,6 +426,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       <DropdownContextMenu>
         {/* must specify the height here for the floating window to have correct boundary check*/}
         <div style={{ height: 'calc(100vh - 72px)' }}>
+          {/* @ts-ignore */}
           <SplitPane
             split={'vertical'}
             defaultSize={projectView ? '50%' : 0}

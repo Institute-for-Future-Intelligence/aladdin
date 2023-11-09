@@ -352,7 +352,7 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
                 closePanel();
               }}
             >
-              {i18n.t('word.Close', lang)}
+              {`${i18n.t('word.Close', lang)}`}
             </span>
           </Header>
           <BuildingEnergyGraph
@@ -475,7 +475,7 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
                     selectNone();
-                    usePrimitiveStore.setState((state) => {
+                    usePrimitiveStore.getState().set((state) => {
                       state.runDailyThermalSimulation = true;
                       state.pauseDailyThermalSimulation = false;
                       state.simulationInProgress = true;

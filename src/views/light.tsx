@@ -68,8 +68,8 @@ const Light = (lightModel: LightModel) => {
     gl: { domElement },
   } = useThree();
   const [hovered, setHovered] = useState(false);
-  const baseRef = useRef<Mesh>();
-  const handleRef = useRef<Mesh>();
+  const baseRef = useRef<Mesh>(null);
+  const handleRef = useRef<Mesh>(null);
 
   const lang = useMemo(() => {
     return { lng: language };
@@ -215,7 +215,7 @@ const Light = (lightModel: LightModel) => {
           if (e.button === 2) return; // ignore right-click
           selectMe(id, e, ActionType.Move);
           useRefStore.getState().setEnableOrbitController(false);
-          usePrimitiveStore.setState((state) => {
+          usePrimitiveStore.getState().set((state) => {
             state.showWallIntersectionPlaneId = parentId;
             state.oldParentId = parentId;
             state.oldFoundationId = foundationId;
@@ -297,7 +297,7 @@ const Light = (lightModel: LightModel) => {
               selectMe(id, e, ActionType.Move);
             }
             useRefStore.getState().setEnableOrbitController(false);
-            usePrimitiveStore.setState((state) => {
+            usePrimitiveStore.getState().set((state) => {
               state.showWallIntersectionPlaneId = parentId;
               state.oldParentId = parentId;
               state.oldFoundationId = foundationId;

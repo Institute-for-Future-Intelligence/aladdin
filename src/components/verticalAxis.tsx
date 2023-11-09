@@ -80,7 +80,7 @@ const VerticalAxis = ({
     setCommonStore((state) => {
       state.projectInfo.selectedProperty = state.projectInfo.selectedProperty !== variable ? variable : null;
     });
-    usePrimitiveStore.setState((state) => {
+    usePrimitiveStore.getState().set((state) => {
       state.updateProjectsFlag = true;
     });
   };
@@ -169,6 +169,7 @@ const VerticalAxis = ({
                 step={step}
                 value={minRef.current}
                 onChange={(value) => {
+                  if (value === null) return;
                   setCommonStore((state) => {
                     if (state.projectInfo.ranges) {
                       let index = -1;
@@ -204,7 +205,7 @@ const VerticalAxis = ({
                       }
                     }
                   });
-                  minRef.current = value;
+                  minRef.current = Number(value);
                   setUpdateFlag(!updateFlag);
                 }}
               />
@@ -218,6 +219,7 @@ const VerticalAxis = ({
                 step={step}
                 value={maxRef.current}
                 onChange={(value) => {
+                  if (value === null) return;
                   setCommonStore((state) => {
                     if (state.projectInfo.ranges) {
                       let index = -1;
@@ -253,7 +255,7 @@ const VerticalAxis = ({
                       }
                     }
                   });
-                  maxRef.current = value;
+                  maxRef.current = Number(value);
                   setUpdateFlag(!updateFlag);
                 }}
               />

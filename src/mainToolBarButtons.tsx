@@ -522,7 +522,7 @@ const MainToolBarButtons = () => {
           }}
           onClick={() => {
             if (showSolarRadiationHeatmap) {
-              usePrimitiveStore.setState((state) => {
+              usePrimitiveStore.getState().set((state) => {
                 state.showSolarRadiationHeatmap = false;
                 state.showHeatFluxes = false;
               });

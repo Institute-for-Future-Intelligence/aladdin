@@ -3,7 +3,7 @@
  */
 
 import { Line, Plane } from '@react-three/drei';
-import { useThree } from '@react-three/fiber';
+import { ThreeEvent, useThree } from '@react-three/fiber';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { HALF_PI } from 'src/constants';
 import { ElementModel } from 'src/models/ElementModel';
@@ -310,7 +310,7 @@ const GambrelRoof = ({ roofModel, foundationModel }: GambrelRoofProps) => {
     useStore.getState().addUndoable(undoable);
   };
 
-  const setRayCast = (e: PointerEvent) => {
+  const setRayCast = (e: ThreeEvent<PointerEvent>) => {
     mouse.x = (e.offsetX / gl.domElement.clientWidth) * 2 - 1;
     mouse.y = -(e.offsetY / gl.domElement.clientHeight) * 2 + 1;
     ray.setFromCamera(mouse, camera);

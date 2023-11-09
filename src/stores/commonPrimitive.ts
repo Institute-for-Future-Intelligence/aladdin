@@ -2,13 +2,12 @@
  * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
-import create from 'zustand';
+import { create } from 'zustand';
 import { DesignProblem } from '../types';
+import produce from 'immer';
 
 // avoid using undefined value in the store for now.
 export interface PrimitiveStoreState {
-  setPrimitiveStore: <K extends keyof PrimitiveStoreState, V extends PrimitiveStoreState[K]>(key: K, val: V) => void;
-
   changed: boolean;
   setChanged: (b: boolean) => void;
   skipChange: boolean;
@@ -137,12 +136,25 @@ export interface PrimitiveStoreState {
   updateFoundationMovedFlag: () => void;
 
   isCameraUnderGround: boolean;
+
+  set: (fn: (state: PrimitiveStoreState) => void) => void;
+  setPrimitiveStore: <K extends keyof PrimitiveStoreState, V extends PrimitiveStoreState[K]>(key: K, val: V) => void;
 }
 
-export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
+export const usePrimitiveStore = create<PrimitiveStoreState>()((set, get) => {
+  const immerSet: PrimitiveStoreState['set'] = (fn) => set(produce(fn));
+
   return {
+    set: (fn) => {
+      try {
+        immerSet(fn);
+      } catch (e) {
+        console.log(e);
+      }
+    },
+
     setPrimitiveStore(key, val) {
-      set((state) => {
+      immerSet((state) => {
         if (state[key] !== undefined) {
           state[key] = val;
         } else {
@@ -153,13 +165,13 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
 
     changed: false,
     setChanged(b) {
-      set((state: PrimitiveStoreState) => {
+      immerSet((state: PrimitiveStoreState) => {
         state.changed = b;
       });
     },
     skipChange: true,
     setSkipChange(b) {
-      set((state: PrimitiveStoreState) => {
+      immerSet((state: PrimitiveStoreState) => {
         state.skipChange = b;
       });
     },
@@ -171,7 +183,7 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
 
     saveCloudFileFlag: false,
     setSaveCloudFileFlag(b) {
-      set((state) => {
+      immerSet((state) => {
         state.saveCloudFileFlag = b;
       });
     },
@@ -284,7 +296,7 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
 
     foundationMovedFlag: false,
     updateFoundationMovedFlag() {
-      set((state) => {
+      immerSet((state) => {
         state.foundationMovedFlag = !state.foundationMovedFlag;
       });
     },

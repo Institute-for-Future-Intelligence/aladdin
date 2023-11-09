@@ -28,7 +28,7 @@ const SolarUpdraftTower = ({ foundation }: { foundation: FoundationModel }) => {
   const getHeatmap = useDataStore(Selector.getHeatmap);
 
   const [heatmapTexture, setHeatmapTexture] = useState<CanvasTexture | null>(null);
-  const streamlinesRef = useRef<Group>();
+  const streamlinesRef = useRef<Group>(null);
 
   const { lx, ly, lz, solarUpdraftTower } = foundation;
 

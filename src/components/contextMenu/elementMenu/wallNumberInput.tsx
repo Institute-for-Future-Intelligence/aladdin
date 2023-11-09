@@ -344,7 +344,7 @@ const WallNumberInput = ({
             step={step}
             precision={2}
             defaultValue={wall[attributeKey] as number}
-            onChange={(val) => (inputRef.current = val)}
+            onChange={(val) => (inputRef.current = val!)}
           />
           <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
             {i18n.t('word.Range', lang)}: [{range.toString()}] {unit}

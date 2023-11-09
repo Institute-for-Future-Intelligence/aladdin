@@ -19,6 +19,7 @@ import { throttle } from 'lodash';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { Undoable } from '../undo/Undoable';
 import { Z_INDEX_FRONT_PANEL } from '../constants';
+import { useTranslation } from 'react-i18next';
 
 const Container = styled.div`
   position: absolute;
@@ -100,6 +101,7 @@ const HeliodonPanel = () => {
     return computeSunriseAndSunsetInMinutes(date, latitude);
   }, [date, latitude]);
 
+  const { t } = useTranslation();
   const lang = { lng: language };
 
   // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
@@ -129,7 +131,7 @@ const HeliodonPanel = () => {
     if (animateSun) {
       if (sunriseAndSunsetInMinutes.sunset === 0) {
         cancelAnimationFrame(requestRef.current);
-        usePrimitiveStore.setState((state) => {
+        usePrimitiveStore.getState().set((state) => {
           state.animateSun = false;
         });
       }
@@ -280,7 +282,7 @@ const HeliodonPanel = () => {
       >
         <ColumnWrapper ref={wrapperRef}>
           <Header className="handle">
-            <span>{i18n.t('heliodonPanel.SunAndTimeSettings', lang)}</span>
+            <span>{t('heliodonPanel.SunAndTimeSettings', lang)}</span>
             <span
               style={{ cursor: 'pointer' }}
               onTouchStart={() => {
@@ -290,12 +292,12 @@ const HeliodonPanel = () => {
                 closePanel();
               }}
             >
-              {i18n.t('word.Close', lang)}
+              {t('word.Close', lang)}
             </span>
           </Header>
           <Space style={{ padding: '20px' }} align={'baseline'} size={20}>
             <div>
-              {i18n.t('menu.settings.Heliodon', lang)}
+              {t('menu.settings.Heliodon', lang)}
               <br />
               <Switch
                 checked={heliodon}
@@ -333,7 +335,7 @@ const HeliodonPanel = () => {
             </div>
             {heliodon && (
               <div>
-                <span style={{ fontSize: '10px' }}>{i18n.t('heliodonPanel.SunAngles', lang)}</span>
+                <span style={{ fontSize: '10px' }}>{t('heliodonPanel.SunAngles', lang)}</span>
                 <br />
                 <Switch
                   checked={showSunAngles}
@@ -364,7 +366,7 @@ const HeliodonPanel = () => {
             {sunriseAndSunsetInMinutes.sunset > 0 && !runSimulation && (
               <>
                 <div>
-                  {i18n.t('word.Animate', lang)}
+                  {t('word.Animate', lang)}
                   <br />
                   <Switch
                     checked={animateSun}
@@ -374,18 +376,18 @@ const HeliodonPanel = () => {
                         timestamp: Date.now(),
                         checked: !animateSun,
                         undo: () => {
-                          usePrimitiveStore.setState((state) => {
+                          usePrimitiveStore.getState().set((state) => {
                             state.animateSun = !undoableCheck.checked;
                           });
                         },
                         redo: () => {
-                          usePrimitiveStore.setState((state) => {
+                          usePrimitiveStore.getState().set((state) => {
                             state.animateSun = undoableCheck.checked;
                           });
                         },
                       } as UndoableCheck;
                       addUndoable(undoableCheck);
-                      usePrimitiveStore.setState((state) => {
+                      usePrimitiveStore.getState().set((state) => {
                         state.animateSun = checked;
                       });
                     }}
@@ -393,7 +395,7 @@ const HeliodonPanel = () => {
                 </div>
                 {animateSun && (
                   <div>
-                    <span style={{ fontSize: '10px' }}>{i18n.t('heliodonPanel.TwentyFourHours', lang)}</span>
+                    <span style={{ fontSize: '10px' }}>{t('heliodonPanel.TwentyFourHours', lang)}</span>
                     <br />
                     <Switch
                       checked={animate24Hours}
@@ -424,7 +426,7 @@ const HeliodonPanel = () => {
               </>
             )}
             <div>
-              {i18n.t('word.Date', lang)}
+              {t('word.Date', lang)}
               <br />
               <DatePicker
                 disabled={runSimulation}
@@ -461,7 +463,7 @@ const HeliodonPanel = () => {
               />
             </div>
             <div>
-              {i18n.t('word.Time', lang)}
+              {t('word.Time', lang)}
               <br />
               <TimePicker
                 disabled={runSimulation}
@@ -474,7 +476,7 @@ const HeliodonPanel = () => {
             </div>
             {!runSimulation && (
               <div>
-                {i18n.t('word.Latitude', lang)}: {latitude.toFixed(2)}°
+                {t('word.Latitude', lang)}: {latitude.toFixed(2)}°
                 <Slider
                   disabled={runSimulation}
                   style={{ width: '110px' }}

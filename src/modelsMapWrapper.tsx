@@ -88,7 +88,7 @@ const ModelsMapWrapper = ({
 
   const selectAuthor = (author: string | undefined) => {
     setSelectedAuthor(author);
-    usePrimitiveStore.setState((state) => {
+    usePrimitiveStore.getState().set((state) => {
       if (!state.showLeaderboard) state.leaderboardFlag = true;
       if (author) authorModelsRef.current = peopleModelsRef.current.get(author);
     });
@@ -101,7 +101,7 @@ const ModelsMapWrapper = ({
   });
 
   const close = () => {
-    usePrimitiveStore.setState((state) => {
+    usePrimitiveStore.getState().set((state) => {
       state.openModelsMap = false;
     });
   };
@@ -326,7 +326,7 @@ const ModelsMapWrapper = ({
               userSelect: 'none',
             }}
             onClick={() => {
-              usePrimitiveStore.setState((state) => {
+              usePrimitiveStore.getState().set((state) => {
                 if (!state.showLeaderboard) state.leaderboardFlag = true;
                 state.showLeaderboard = !state.showLeaderboard;
               });
@@ -414,7 +414,7 @@ const ModelsMapWrapper = ({
                 paddingLeft: '4px',
               }}
               onChange={() => {
-                usePrimitiveStore.setState((state) => {
+                usePrimitiveStore.getState().set((state) => {
                   state.modelsMapWeatherStations = !state.modelsMapWeatherStations;
                 });
               }}

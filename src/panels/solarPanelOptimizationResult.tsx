@@ -283,7 +283,7 @@ const SolarPanelOptimizationResult = () => {
                 closePanel();
               }}
             >
-              {i18n.t('word.Close', lang)}
+              {`${i18n.t('word.Close', lang)}`}
             </span>
           </Header>
           <EvolutionBiaxialLineGraph
@@ -310,7 +310,7 @@ const SolarPanelOptimizationResult = () => {
                     showInfo(i18n.t('message.EvolutionStarted', lang));
                     // give it 0.1 second for the info to show up
                     setTimeout(() => {
-                      usePrimitiveStore.setState((state) => {
+                      usePrimitiveStore.getState().set((state) => {
                         state.runEvolution = true;
                         state.pauseEvolution = false;
                         state.evolutionInProgress = true;

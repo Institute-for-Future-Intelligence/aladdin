@@ -224,7 +224,7 @@ const RoofRafterSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
             precision={2}
             value={input}
             formatter={(a) => Number(a).toFixed(2)}
-            onChange={(value) => setInput(value)}
+            onChange={(value) => setInput(value!)}
           />
           <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
             {i18n.t('word.Range', lang)}: [0.1, 100] {i18n.t('word.MeterAbbreviation', lang)}

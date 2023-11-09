@@ -16,6 +16,7 @@ import { ClassID } from '../types';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import LikesPanel from './likesPanel';
 import PublishedModelsPanel from './publishedModelsPanel';
+import { useTranslation } from 'react-i18next';
 
 const { confirm } = Modal;
 const { Option } = Select;
@@ -122,13 +123,15 @@ const AccountSettingsPanel = ({ openCloudFile }: { openCloudFile: (userid: strin
   };
 
   const closePanel = () => {
-    usePrimitiveStore.setState((state) => {
+    usePrimitiveStore.getState().set((state) => {
       state.showAccountSettingsPanel = false;
     });
   };
 
   const superuser = user && user.email && user.email.endsWith('intofuture.org');
   const signFile = false;
+
+  const { t } = useTranslation();
 
   return (
     <>
@@ -148,7 +151,7 @@ const AccountSettingsPanel = ({ openCloudFile }: { openCloudFile: (userid: strin
         <Container ref={nodeRef}>
           <ColumnWrapper ref={wrapperRef}>
             <Header className="handle" style={{ direction: 'ltr' }}>
-              <span>{i18n.t('accountSettingsPanel.MyAccountSettings', lang)}</span>
+              <span>{t('accountSettingsPanel.MyAccountSettings', lang)}</span>
               <span
                 style={{ cursor: 'pointer' }}
                 onMouseDown={() => {
@@ -158,7 +161,7 @@ const AccountSettingsPanel = ({ openCloudFile }: { openCloudFile: (userid: strin
                   closePanel();
                 }}
               >
-                {i18n.t('word.Close', lang)}
+                {t('word.Close', lang)}
               </span>
             </Header>
 
@@ -169,15 +172,15 @@ const AccountSettingsPanel = ({ openCloudFile }: { openCloudFile: (userid: strin
                 onClick={() => {
                   if (user.uid) {
                     copyTextToClipboard(user.uid);
-                    showSuccess(i18n.t('accountSettingsPanel.IDInClipBoard', lang));
+                    showSuccess(t('accountSettingsPanel.IDInClipBoard', lang));
                   }
                 }}
               >
                 <Button
-                  title={i18n.t('accountSettingsPanel.ClickToCopyMyID', lang)}
+                  title={t('accountSettingsPanel.ClickToCopyMyID', lang)}
                   style={{ cursor: 'copy', borderRadius: '8px' }}
                 >
-                  {i18n.t('accountSettingsPanel.MyID', lang)}
+                  {t('accountSettingsPanel.MyID', lang)}
                 </Button>
               </Col>
               <Col className="gutter-row" span={18}>
@@ -193,9 +196,9 @@ const AccountSettingsPanel = ({ openCloudFile }: { openCloudFile: (userid: strin
                     onChange={(checked) => {
                       if (checked) {
                         confirm({
-                          title: i18n.t('accountSettingsPanel.DoYouReallyWantToShowYourNameInYourFiles', lang),
+                          title: t('accountSettingsPanel.DoYouReallyWantToShowYourNameInYourFiles', lang),
                           icon: <ExclamationCircleOutlined />,
-                          content: i18n.t('accountSettingsPanel.SignFileDisclaimer', lang),
+                          content: t('accountSettingsPanel.SignFileDisclaimer', lang),
                           onOk() {
                             setCommonStore((state) => {
                               state.user.signFile = true;
@@ -216,14 +219,14 @@ const AccountSettingsPanel = ({ openCloudFile }: { openCloudFile: (userid: strin
                   />
                 </Col>
                 <Col className="gutter-row" span={18}>
-                  {i18n.t('accountSettingsPanel.StoreMyNameInMyFilesWhenSaving', lang)}
+                  {t('accountSettingsPanel.StoreMyNameInMyFilesWhenSaving', lang)}
                 </Col>
               </Row>
             )}
 
             <Row gutter={20} style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>
               <Col className="gutter-row" span={6}>
-                {i18n.t('accountSettingsPanel.SchoolID', lang)}
+                {t('accountSettingsPanel.SchoolID', lang)}
               </Col>
               <Col className="gutter-row" span={18}>
                 <Select
@@ -260,7 +263,7 @@ const AccountSettingsPanel = ({ openCloudFile }: { openCloudFile: (userid: strin
 
             <Row gutter={20} style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>
               <Col className="gutter-row" span={6}>
-                {i18n.t('accountSettingsPanel.ClassID', lang)}
+                {t('accountSettingsPanel.ClassID', lang)}
               </Col>
               <Col className="gutter-row" span={18}>
                 <Select
@@ -309,7 +312,7 @@ const AccountSettingsPanel = ({ openCloudFile }: { openCloudFile: (userid: strin
 
             <Row gutter={6} style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>
               <Col className="gutter-row" span={6}>
-                {i18n.t('accountSettingsPanel.AllPublished', lang)}
+                {t('accountSettingsPanel.AllPublished', lang)}
               </Col>
               <Col className="gutter-row" span={18}>
                 <span
@@ -325,7 +328,7 @@ const AccountSettingsPanel = ({ openCloudFile }: { openCloudFile: (userid: strin
 
             <Row gutter={6} style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>
               <Col className="gutter-row" span={6}>
-                {i18n.t('accountSettingsPanel.PublishedUnderAliases', lang)}
+                {t('accountSettingsPanel.PublishedUnderAliases', lang)}
               </Col>
               <Col className="gutter-row" span={18}>
                 <span style={{ fontSize: '10px' }}>
@@ -339,7 +342,7 @@ const AccountSettingsPanel = ({ openCloudFile }: { openCloudFile: (userid: strin
 
             <Row gutter={6} style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>
               <Col className="gutter-row" span={6}>
-                {i18n.t('accountSettingsPanel.Likes', lang)}
+                {t('accountSettingsPanel.Likes', lang)}
               </Col>
               <Col className="gutter-row" span={18}>
                 <span
@@ -356,7 +359,7 @@ const AccountSettingsPanel = ({ openCloudFile }: { openCloudFile: (userid: strin
             {superuser && (
               <Row gutter={6} style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>
                 <Col className="gutter-row" span={6}>
-                  {i18n.t('accountSettingsPanel.UserCount', lang)}
+                  {t('accountSettingsPanel.UserCount', lang)}
                 </Col>
                 <Col className="gutter-row" span={18}>
                   {userCount}

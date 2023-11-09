@@ -53,6 +53,7 @@ import { loadCloudFile } from '../cloudFileUtil';
 import { CartesianGrid, Dot, DotProps, Scatter, ScatterChart, Tooltip, XAxis, YAxis } from 'recharts';
 import ScatteredPlotMenu from '../components/scatteredPlotMenu';
 import dayjs from 'dayjs';
+import { useTranslation } from 'react-i18next';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -177,6 +178,8 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
     thumbnailSizeRef.current = projectInfo.thumbnailWidth ?? 200;
   }, [projectInfo.thumbnailWidth]);
 
+  const { t } = useTranslation();
+
   const lang = useMemo(() => {
     return { lng: language };
   }, [language]);
@@ -258,13 +261,13 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
       state.projectImages.clear();
     });
     setSelectedDesign(undefined);
-    usePrimitiveStore.setState((state) => {
+    usePrimitiveStore.getState().set((state) => {
       state.projectImagesUpdateFlag = !state.projectImagesUpdateFlag;
     });
   };
 
   const curateCurrentDesign = () => {
-    usePrimitiveStore.setState((state) => {
+    usePrimitiveStore.getState().set((state) => {
       state.curateDesignToProjectFlag = true;
     });
   };
@@ -549,7 +552,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
     setCommonStore((state) => {
       state.projectInfo.dataColoring = dataColoringSelectionRef.current;
     });
-    usePrimitiveStore.setState((state) => {
+    usePrimitiveStore.getState().set((state) => {
       state.updateProjectsFlag = true;
     });
     setUpdateFlag(!updateFlag);
@@ -579,7 +582,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
           }}
           checked={rowWidthSelectionRef.current}
         >
-          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayRowWidth', lang)}</span>
+          <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayRowWidth', lang)}</span>
         </Checkbox>
         <br />
         <Checkbox
@@ -590,7 +593,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
           }}
           checked={tiltAngleSelectionRef.current}
         >
-          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayTiltAngle', lang)}</span>
+          <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayTiltAngle', lang)}</span>
         </Checkbox>
         <br />
         <Checkbox
@@ -601,7 +604,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
           }}
           checked={rowSpacingSelectionRef.current}
         >
-          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayRowSpacing', lang)}</span>
+          <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayRowSpacing', lang)}</span>
         </Checkbox>
         <br />
         <Checkbox
@@ -612,7 +615,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
           }}
           checked={latitudeSelectionRef.current}
         >
-          <span style={{ fontSize: '12px' }}>{i18n.t('word.Latitude', lang)}</span>
+          <span style={{ fontSize: '12px' }}>{t('word.Latitude', lang)}</span>
         </Checkbox>
         <br />
         <Checkbox
@@ -623,7 +626,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
           }}
           checked={orientationSelectionRef.current}
         >
-          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayOrientation', lang)}</span>
+          <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayOrientation', lang)}</span>
         </Checkbox>
         <br />
         <Checkbox
@@ -634,7 +637,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
           }}
           checked={poleHeightSelectionRef.current}
         >
-          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayPoleHeight', lang)}</span>
+          <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayPoleHeight', lang)}</span>
         </Checkbox>
         <br />
         <Checkbox
@@ -645,7 +648,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
           }}
           checked={unitCostSelectionRef.current}
         >
-          <span style={{ fontSize: '12px' }}>{i18n.t('economicsPanel.UnitCost', lang)}</span>
+          <span style={{ fontSize: '12px' }}>{t('economicsPanel.UnitCost', lang)}</span>
         </Checkbox>
         <br />
         <Checkbox
@@ -656,7 +659,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
           }}
           checked={sellingPriceSelectionRef.current}
         >
-          <span style={{ fontSize: '12px' }}>{i18n.t('economicsPanel.SellingPrice', lang)}</span>
+          <span style={{ fontSize: '12px' }}>{t('economicsPanel.SellingPrice', lang)}</span>
         </Checkbox>
         <br />
         <Checkbox
@@ -667,7 +670,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
           }}
           checked={costSelectionRef.current}
         >
-          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayTotalYearlyCost', lang)}</span>
+          <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayTotalYearlyCost', lang)}</span>
         </Checkbox>
         <br />
         <Checkbox
@@ -678,7 +681,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
           }}
           checked={totalYieldSelectionRef.current}
         >
-          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayTotalYearlyYield', lang)}</span>
+          <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayTotalYearlyYield', lang)}</span>
         </Checkbox>
         <br />
         <Checkbox
@@ -689,7 +692,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
           }}
           checked={meanYieldSelectionRef.current}
         >
-          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayMeanYearlyYield', lang)}</span>
+          <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayMeanYearlyYield', lang)}</span>
         </Checkbox>
         <br />
         <Checkbox
@@ -700,7 +703,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
           }}
           checked={profitSelectionRef.current}
         >
-          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayYearlyProfit', lang)}</span>
+          <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayYearlyProfit', lang)}</span>
         </Checkbox>
       </div>
     );
@@ -710,40 +713,40 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
     return (
       <>
         <Option key={'rowWidth'} value={'rowWidth'}>
-          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayRowWidth', lang)}</span>
+          <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayRowWidth', lang)}</span>
         </Option>
         <Option key={'tiltAngle'} value={'tiltAngle'}>
-          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayTiltAngle', lang)}</span>
+          <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayTiltAngle', lang)}</span>
         </Option>
         <Option key={'interRowSpacing'} value={'interRowSpacing'}>
-          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayRowSpacing', lang)}</span>
+          <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayRowSpacing', lang)}</span>
         </Option>
         <Option key={'latitude'} value={'latitude'}>
-          <span style={{ fontSize: '12px' }}>{i18n.t('word.Latitude', lang)}</span>
+          <span style={{ fontSize: '12px' }}>{t('word.Latitude', lang)}</span>
         </Option>
         <Option key={'orientation'} value={'orientation'}>
-          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayOrientation', lang)}</span>
+          <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayOrientation', lang)}</span>
         </Option>
         <Option key={'poleHeight'} value={'poleHeight'}>
-          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayPoleHeight', lang)}</span>
+          <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayPoleHeight', lang)}</span>
         </Option>
         <Option key={'unitCost'} value={'unitCost'}>
-          <span style={{ fontSize: '12px' }}>{i18n.t('economicsPanel.UnitCost', lang)}</span>
+          <span style={{ fontSize: '12px' }}>{t('economicsPanel.UnitCost', lang)}</span>
         </Option>
         <Option key={'sellingPrice'} value={'sellingPrice'}>
-          <span style={{ fontSize: '12px' }}>{i18n.t('economicsPanel.SellingPrice', lang)}</span>
+          <span style={{ fontSize: '12px' }}>{t('economicsPanel.SellingPrice', lang)}</span>
         </Option>
         <Option key={'totalYearlyCost'} value={'totalYearlyCost'}>
-          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayTotalYearlyCost', lang)}</span>
+          <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayTotalYearlyCost', lang)}</span>
         </Option>
         <Option key={'totalYearlyYield'} value={'totalYearlyYield'}>
-          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayTotalYearlyYield', lang)}</span>
+          <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayTotalYearlyYield', lang)}</span>
         </Option>
         <Option key={'meanYearlyYield'} value={'meanYearlyYield'}>
-          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayMeanYearlyYield', lang)}</span>
+          <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayMeanYearlyYield', lang)}</span>
         </Option>
         <Option key={'yearlProfit'} value={'yearlyProfit'}>
-          <span style={{ fontSize: '12px' }}>{i18n.t('polygonMenu.SolarPanelArrayYearlyProfit', lang)}</span>
+          <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayYearlyProfit', lang)}</span>
         </Option>
       </>
     );
@@ -863,7 +866,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
       <div style={{ width: '280px' }}>
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
           <Col span={8} style={{ paddingTop: '5px' }}>
-            <span style={{ fontSize: '12px' }}>{i18n.t('projectPanel.SelectXAxis', lang)}: </span>
+            <span style={{ fontSize: '12px' }}>{t('projectPanel.SelectXAxis', lang)}: </span>
           </Col>
           <Col span={16}>
             <Select
@@ -887,7 +890,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
         </Row>
         <Row gutter={6} style={{ paddingBottom: '8px' }}>
           <Col span={8} style={{ paddingTop: '5px' }}>
-            <span style={{ fontSize: '12px' }}>{i18n.t('projectPanel.SelectYAxis', lang)}: </span>
+            <span style={{ fontSize: '12px' }}>{t('projectPanel.SelectYAxis', lang)}: </span>
           </Col>
           <Col span={16}>
             <Select
@@ -1000,12 +1003,12 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
           <span style={{ width: '100%', textAlign: 'center' }}>
             <CameraOutlined
               style={{ fontSize: '18px', color: 'gray', paddingRight: '8px' }}
-              title={i18n.t('projectPanel.ScatteredPlotScreenshot', lang)}
+              title={t('projectPanel.ScatteredPlotScreenshot', lang)}
               onClick={() => {
                 const d = document.getElementById('scattered-chart');
                 if (d) {
                   saveSvgAsPng(d, 'scattered-chart-' + projectInfo.title + '.png').then(() => {
-                    showInfo(i18n.t('message.ScreenshotSaved', lang));
+                    showInfo(t('message.ScreenshotSaved', lang));
                   });
                 }
               }}
@@ -1026,11 +1029,11 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
           value={projectInfo.dataColoring ?? DataColoring.ALL}
         >
           <Radio style={{ fontSize: '12px' }} value={DataColoring.ALL}>
-            {i18n.t('projectPanel.SameColorForAllDesigns', lang)}
+            {t('projectPanel.SameColorForAllDesigns', lang)}
           </Radio>
           <br />
           <Radio style={{ fontSize: '12px' }} value={DataColoring.INDIVIDUALS}>
-            {i18n.t('projectPanel.OneColorForEachDesign', lang)}
+            {t('projectPanel.OneColorForEachDesign', lang)}
           </Radio>
         </Radio.Group>
       </div>
@@ -1042,7 +1045,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
       <div style={{ width: '250px' }} onClick={(e) => e.stopPropagation()}>
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
           <Col span={14} style={{ paddingTop: '5px' }}>
-            <span style={{ fontSize: '12px' }}>{i18n.t('projectPanel.ThumbnailImageSize', lang)}: </span>
+            <span style={{ fontSize: '12px' }}>{t('projectPanel.ThumbnailImageSize', lang)}: </span>
           </Col>
           <Col span={10}>
             <Select
@@ -1067,13 +1070,13 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
               }}
             >
               <Option key={'small-thumbnail'} value={100}>
-                <span style={{ fontSize: '12px' }}>{i18n.t('word.Small', lang)}</span>
+                <span style={{ fontSize: '12px' }}>{t('word.Small', lang)}</span>
               </Option>
               <Option key={'medium-thumbnail'} value={125}>
-                <span style={{ fontSize: '12px' }}>{i18n.t('word.Medium', lang)}</span>
+                <span style={{ fontSize: '12px' }}>{t('word.Medium', lang)}</span>
               </Option>
               <Option key={'large-thumbnail'} value={200}>
-                <span style={{ fontSize: '12px' }}>{i18n.t('word.Large', lang)}</span>
+                <span style={{ fontSize: '12px' }}>{t('word.Large', lang)}</span>
               </Option>
             </Select>
           </Col>
@@ -1091,10 +1094,10 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
       <ColumnWrapper>
         <Header>
           <span>
-            {(isOwner ? i18n.t('projectPanel.Project', lang) : i18n.t('projectPanel.ProjectByOtherPeople', lang)) +
+            {(isOwner ? t('projectPanel.Project', lang) : t('projectPanel.ProjectByOtherPeople', lang)) +
               ': ' +
               projectInfo.title +
-              (isOwner ? '' : ' (' + i18n.t('word.Owner', lang) + ': ' + projectInfo.owner?.substring(0, 4) + '***)') +
+              (isOwner ? '' : ' (' + t('word.Owner', lang) + ': ' + projectInfo.owner?.substring(0, 4) + '***)') +
               ' (' +
               projectDesigns.current.length +
               ')'}
@@ -1108,7 +1111,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
               closeProject();
             }}
           >
-            <CloseOutlined title={i18n.t('word.Close', lang)} />
+            <CloseOutlined title={t('word.Close', lang)} />
           </span>
         </Header>
         <Collapse
@@ -1124,9 +1127,9 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
             header={
               <SubHeader>
                 <span>
-                  {i18n.t('projectPanel.ProjectDescription', lang) +
+                  {t('projectPanel.ProjectDescription', lang) +
                     ' | ' +
-                    i18n.t('projectPanel.ProjectType', lang) +
+                    t('projectPanel.ProjectType', lang) +
                     ': ' +
                     projectInfo.type}
                 </span>
@@ -1145,12 +1148,12 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                           {descriptionTextAreaEditableRef.current ? (
                             <EditFilled
                               style={{ fontSize: '24px', color: 'gray' }}
-                              title={i18n.t('projectPanel.MakeDescriptionNonEditable', lang)}
+                              title={t('projectPanel.MakeDescriptionNonEditable', lang)}
                             />
                           ) : (
                             <EditOutlined
                               style={{ fontSize: '24px', color: 'gray' }}
-                              title={i18n.t('projectPanel.MakeDescriptionEditable', lang)}
+                              title={t('projectPanel.MakeDescriptionEditable', lang)}
                             />
                           )}
                         </Button>
@@ -1164,7 +1167,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                       >
                         <ImportOutlined
                           style={{ fontSize: '24px', color: 'gray' }}
-                          title={i18n.t('projectPanel.CurateCurrentDesign', lang)}
+                          title={t('projectPanel.CurateCurrentDesign', lang)}
                         />
                       </Button>
                       {selectedDesign && selectedDesign.title === cloudFile && (
@@ -1188,7 +1191,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                         >
                           <CloudUploadOutlined
                             style={{ fontSize: '24px', color: 'gray' }}
-                            title={i18n.t('projectPanel.UpdateSelectedDesign', lang)}
+                            title={t('projectPanel.UpdateSelectedDesign', lang)}
                           />
                         </Button>
                       )}
@@ -1203,7 +1206,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                         >
                           <DeleteOutlined
                             style={{ fontSize: '24px', color: 'gray' }}
-                            title={i18n.t('projectPanel.RemoveSelectedDesign', lang)}
+                            title={t('projectPanel.RemoveSelectedDesign', lang)}
                           />
                         </Button>
                       )}
@@ -1223,13 +1226,13 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                                 url += '&title=' + encodeURIComponent(selectedDesign.title);
                               }
                               copyTextToClipboard(url);
-                              showSuccess(i18n.t('projectListPanel.ProjectLinkGeneratedInClipBoard', lang) + '.');
+                              showSuccess(t('projectListPanel.ProjectLinkGeneratedInClipBoard', lang) + '.');
                             }
                           }}
                         >
                           <LinkOutlined
                             style={{ fontSize: '24px', color: 'gray' }}
-                            title={i18n.t('projectListPanel.GenerateProjectLink', lang)}
+                            title={t('projectListPanel.GenerateProjectLink', lang)}
                           />
                         </Button>
                       )}
@@ -1248,20 +1251,18 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                       {projectInfo.sortDescending ? (
                         <SortAscendingOutlined
                           style={{ fontSize: '24px', color: 'gray' }}
-                          title={i18n.t('projectPanel.ClickToFlipSortingOrder', lang)}
+                          title={t('projectPanel.ClickToFlipSortingOrder', lang)}
                         />
                       ) : (
                         <SortDescendingOutlined
                           style={{ fontSize: '24px', color: 'gray' }}
-                          title={i18n.t('projectPanel.ClickToFlipSortingOrder', lang)}
+                          title={t('projectPanel.ClickToFlipSortingOrder', lang)}
                         />
                       )}
                     </Button>
                   )}
                   <Popover
-                    title={
-                      <div onClick={(e) => e.stopPropagation()}>{i18n.t('projectPanel.ProjectSettings', lang)}</div>
-                    }
+                    title={<div onClick={(e) => e.stopPropagation()}>{t('projectPanel.ProjectSettings', lang)}</div>}
                     content={createProjectSettingsContent}
                   >
                     <Button style={{ border: 'none', padding: '4px' }} onClick={(e) => e.stopPropagation()}>
@@ -1276,7 +1277,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
               title={
                 descriptionTextAreaEditableRef.current
                   ? undefined
-                  : i18n.t('projectPanel.DoubleClickToMakeDescriptionEditable', lang)
+                  : t('projectPanel.DoubleClickToMakeDescriptionEditable', lang)
               }
               bordered={descriptionTextAreaEditableRef.current}
               readOnly={!descriptionTextAreaEditableRef.current}
@@ -1350,21 +1351,21 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                         setCommonStore((state) => {
                           state.projectImages.set(design.title, event.target as HTMLImageElement);
                         });
-                        usePrimitiveStore.setState((state) => {
+                        usePrimitiveStore.getState().set((state) => {
                           state.projectImagesUpdateFlag = !state.projectImagesUpdateFlag;
                         });
                       }}
                       alt={design.title}
                       title={
                         (design.timestamp
-                          ? i18n.t('word.LastUpdate', lang) +
+                          ? t('word.LastUpdate', lang) +
                             ': ' +
                             dayjs(new Date(design.timestamp)).format('MM-DD-YYYY hh:mm A') +
                             '\n'
                           : '') +
                         (selectedDesign === design
-                          ? i18n.t('projectPanel.SingleClickToDeselectDoubleClickToOpen', lang)
-                          : i18n.t('projectPanel.SingleClickToSelectDoubleClickToOpen', lang))
+                          ? t('projectPanel.SingleClickToDeselectDoubleClickToOpen', lang)
+                          : t('projectPanel.SingleClickToSelectDoubleClickToOpen', lang))
                       }
                       src={
                         design.thumbnail?.startsWith('data:image/png;base64') ? design.thumbnail : ImageLoadFailureIcon
@@ -1434,7 +1435,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                             toggleDesignVisibility(design);
                           }}
                           style={{ fontSize: '16px' }}
-                          title={i18n.t('projectPanel.DesignNotShownInSolutionSpaceClickToShow', lang)}
+                          title={t('projectPanel.DesignNotShownInSolutionSpaceClickToShow', lang)}
                         />
                       ) : (
                         <CheckCircleFilled
@@ -1442,7 +1443,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                             toggleDesignVisibility(design);
                           }}
                           style={{ fontSize: '16px' }}
-                          title={i18n.t('projectPanel.DesignShownInSolutionSpaceClickToHide', lang)}
+                          title={t('projectPanel.DesignShownInSolutionSpaceClickToHide', lang)}
                         />
                       )}
                     </div>
@@ -1451,15 +1452,15 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
               }}
             />
             <SolutionSpaceHeader>
-              <span style={{ paddingLeft: '20px' }}>{i18n.t('projectPanel.DistributionInSolutionSpace', lang)}</span>
+              <span style={{ paddingLeft: '20px' }}>{t('projectPanel.DistributionInSolutionSpace', lang)}</span>
               <span>
                 {projectInfo.type === DesignProblem.SOLAR_PANEL_ARRAY && (
                   <Popover
-                    title={i18n.t('projectPanel.ChooseSolutionSpace', lang)}
+                    title={t('projectPanel.ChooseSolutionSpace', lang)}
                     onVisibleChange={(visible) => {
                       if (parameterSelectionChangedRef.current) {
                         if (!visible) {
-                          usePrimitiveStore.setState((state) => {
+                          usePrimitiveStore.getState().set((state) => {
                             state.updateProjectsFlag = true;
                           });
                         }
@@ -1473,18 +1474,12 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                     </Button>
                   </Popover>
                 )}
-                <Popover
-                  title={i18n.t('projectPanel.ChooseDataColoring', lang)}
-                  content={createChooseDataColoringContent()}
-                >
+                <Popover title={t('projectPanel.ChooseDataColoring', lang)} content={createChooseDataColoringContent()}>
                   <Button style={{ border: 'none', paddingRight: 0, background: 'white' }}>
                     <BgColorsOutlined style={{ fontSize: '24px', color: 'gray' }} />
                   </Button>
                 </Popover>
-                <Popover
-                  title={i18n.t('projectPanel.GenerateScatteredPlot', lang)}
-                  content={createScatteredPlotContent()}
-                >
+                <Popover title={t('projectPanel.GenerateScatteredPlot', lang)} content={createScatteredPlotContent()}>
                   <Button style={{ border: 'none', paddingRight: 0, background: 'white' }}>
                     <DotChartOutlined style={{ fontSize: '24px', color: 'gray' }} />
                   </Button>
@@ -1495,14 +1490,14 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                     const d = document.getElementById('design-space');
                     if (d) {
                       saveSvgAsPng(d, 'design-space-' + projectInfo.title + '.png').then(() => {
-                        showInfo(i18n.t('message.ScreenshotSaved', lang));
+                        showInfo(t('message.ScreenshotSaved', lang));
                       });
                     }
                   }}
                 >
                   <CameraOutlined
                     style={{ fontSize: '24px', color: 'gray' }}
-                    title={i18n.t('projectPanel.SolutionSpaceScreenshot', lang)}
+                    title={t('projectPanel.SolutionSpaceScreenshot', lang)}
                   />
                 </Button>
               </span>

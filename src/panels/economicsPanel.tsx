@@ -151,6 +151,7 @@ const EconomicsPanel = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =
             step={0.01}
             formatter={(value) => `$${value}/kWh`}
             onChange={(value) => {
+              if (value === null) return;
               electricitySellingPriceRef.current = value;
               setUpdateFlag(!updateFlag);
             }}
@@ -184,6 +185,7 @@ const EconomicsPanel = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =
             step={0.01}
             formatter={(value) => `$${value}/day`}
             onChange={(value) => {
+              if (value === null) return;
               operationalCostPerUnitRef.current = value;
               setUpdateFlag(!updateFlag);
             }}

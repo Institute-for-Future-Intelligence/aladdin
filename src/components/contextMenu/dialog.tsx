@@ -2,7 +2,7 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect } from 'react';
+import React, { PropsWithChildren, useEffect } from 'react';
 import { Button, Modal } from 'antd';
 import { useRef, useState } from 'react';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
@@ -10,6 +10,7 @@ import i18n from 'src/i18n/i18n';
 import { useLanguage } from 'src/views/hooks';
 import { useStore } from 'src/stores/common';
 import * as Selector from '../../stores/selector';
+import { useTranslation } from 'react-i18next';
 
 interface DialogProps {
   width: number;
@@ -21,7 +22,7 @@ interface DialogProps {
   onClickCancel?: () => void;
 }
 
-const Dialog: React.FC<DialogProps> = ({
+const Dialog: React.FunctionComponent<PropsWithChildren<DialogProps>> = ({
   width,
   title,
   rejectedMessage,
@@ -34,6 +35,7 @@ const Dialog: React.FC<DialogProps> = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
+  const { t } = useTranslation();
   const lang = useLanguage();
 
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -101,13 +103,13 @@ const Dialog: React.FC<DialogProps> = ({
       }
       footer={[
         <Button key="Apply" onClick={onApply}>
-          {i18n.t('word.Apply', lang)}
+          {t('word.Apply', lang)}
         </Button>,
         <Button key="Cancel" onClick={handleClickCancel}>
-          {i18n.t('word.Cancel', lang)}
+          {t('word.Cancel', lang)}
         </Button>,
         <Button key="OK" type="primary" onClick={handleClickOk}>
-          {i18n.t('word.OK', lang)}
+          {t('word.OK', lang)}
         </Button>,
       ]}
       // this must be specified for the x button in the upper-right corner to work

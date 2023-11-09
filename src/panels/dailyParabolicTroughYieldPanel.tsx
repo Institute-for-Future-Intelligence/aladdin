@@ -24,6 +24,7 @@ import { Rectangle } from '../models/Rectangle';
 import { FLOATING_WINDOW_OPACITY, Z_INDEX_FRONT_PANEL } from '../constants';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
+import { useTranslation } from 'react-i18next';
 
 const Container = styled.div`
   position: fixed;
@@ -206,8 +207,10 @@ const DailyParabolicTroughYieldPanel = ({ city }: DailyParabolicTroughYieldPanel
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parabolicTroughCount, individualOutputs]);
 
-  const labelX = i18n.t('word.Hour', lang);
-  const labelY = i18n.t('parabolicTroughYieldPanel.YieldPerHour', lang);
+  const { t } = useTranslation();
+
+  const labelX = t('word.Hour', lang);
+  const labelY = t('parabolicTroughYieldPanel.YieldPerHour', lang);
   const emptyGraph = dailyYield && dailyYield[0] ? Object.keys(dailyYield[0]).length === 0 : true;
 
   return (
@@ -239,9 +242,9 @@ const DailyParabolicTroughYieldPanel = ({ city }: DailyParabolicTroughYieldPanel
         >
           <Header className="handle" style={{ direction: 'ltr' }}>
             <span>
-              {i18n.t('parabolicTroughYieldPanel.ParabolicTroughDailyYield', lang) + ': '}
+              {t('parabolicTroughYieldPanel.ParabolicTroughDailyYield', lang) + ': '}
               <span style={{ fontSize: '10px' }}>
-                {i18n.t('sensorPanel.WeatherDataFrom', lang) + ' ' + city + ' | ' + moment(now).format('MM/DD')}
+                {t('sensorPanel.WeatherDataFrom', lang) + ' ' + city + ' | ' + moment(now).format('MM/DD')}
               </span>
             </span>
             <span
@@ -253,7 +256,7 @@ const DailyParabolicTroughYieldPanel = ({ city }: DailyParabolicTroughYieldPanel
                 closePanel();
               }}
             >
-              {i18n.t('word.Close', lang)}
+              {t('word.Close', lang)}
             </span>
           </Header>
           <LineGraph
@@ -265,7 +268,7 @@ const DailyParabolicTroughYieldPanel = ({ city }: DailyParabolicTroughYieldPanel
             dataKeyAxisX={'Hour'}
             labelX={labelX}
             labelY={labelY}
-            unitY={i18n.t('word.kWh', lang)}
+            unitY={t('word.kWh', lang)}
             yMin={0}
             curveType={'linear'}
             fractionDigits={2}
@@ -288,7 +291,7 @@ const DailyParabolicTroughYieldPanel = ({ city }: DailyParabolicTroughYieldPanel
                         <>
                           <hr></hr>
                           <div style={{ textAlign: 'right' }}>
-                            {i18n.t('word.Total', lang) + ': ' + sum.toFixed(3) + ' ' + i18n.t('word.kWh', lang)}
+                            {t('word.Total', lang) + ': ' + sum.toFixed(3) + ' ' + t('word.kWh', lang)}
                           </div>
                         </>
                       )}
@@ -296,26 +299,26 @@ const DailyParabolicTroughYieldPanel = ({ city }: DailyParabolicTroughYieldPanel
                   ))}
                 >
                   <Space style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
-                    {i18n.t('shared.OutputBreakdown', lang)}
+                    {t('shared.OutputBreakdown', lang)}
                   </Space>
                 </Popover>
               ) : (
                 <Space style={{ cursor: 'default' }}>
-                  {i18n.t('parabolicTroughYieldPanel.DailyTotal', lang)}:{sum.toFixed(2)} {i18n.t('word.kWh', lang)}
+                  {t('parabolicTroughYieldPanel.DailyTotal', lang)}:{sum.toFixed(2)} {t('word.kWh', lang)}
                 </Space>
               )}
               {parabolicTroughCount > 1 && (
                 <Switch
-                  title={i18n.t('parabolicTroughYieldPanel.ShowOutputsOfIndividualParabolicTroughs', lang)}
+                  title={t('parabolicTroughYieldPanel.ShowOutputsOfIndividualParabolicTroughs', lang)}
                   checkedChildren={<UnorderedListOutlined />}
                   unCheckedChildren={<UnorderedListOutlined />}
                   checked={individualOutputs}
                   onChange={(checked) => {
                     if (parabolicTroughCount === 0) {
-                      showInfo(i18n.t('analysisManager.NoParabolicTroughForAnalysis', lang));
+                      showInfo(t('analysisManager.NoParabolicTroughForAnalysis', lang));
                       return;
                     }
-                    showInfo(i18n.t('message.SimulationStarted', lang));
+                    showInfo(t('message.SimulationStarted', lang));
                     // give it 0.1 second for the info to show up
                     setTimeout(() => {
                       setCommonStore((state) => {
@@ -327,7 +330,7 @@ const DailyParabolicTroughYieldPanel = ({ city }: DailyParabolicTroughYieldPanel
                           };
                         }
                       });
-                      usePrimitiveStore.setState((state) => {
+                      usePrimitiveStore.getState().set((state) => {
                         state.runDailySimulationForParabolicTroughs = true;
                         state.pauseDailySimulationForParabolicTroughs = false;
                         state.simulationInProgress = true;
@@ -339,13 +342,13 @@ const DailyParabolicTroughYieldPanel = ({ city }: DailyParabolicTroughYieldPanel
               <Button
                 type="default"
                 icon={emptyGraph ? <CaretRightOutlined /> : <ReloadOutlined />}
-                title={i18n.t(emptyGraph ? 'word.Run' : 'word.Update', lang)}
+                title={t(emptyGraph ? 'word.Run' : 'word.Update', lang)}
                 onClick={() => {
                   if (parabolicTroughCount === 0) {
-                    showInfo(i18n.t('analysisManager.NoParabolicTroughForAnalysis', lang));
+                    showInfo(t('analysisManager.NoParabolicTroughForAnalysis', lang));
                     return;
                   }
-                  showInfo(i18n.t('message.SimulationStarted', lang));
+                  showInfo(t('message.SimulationStarted', lang));
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
                     setCommonStore((state) => {
@@ -356,7 +359,7 @@ const DailyParabolicTroughYieldPanel = ({ city }: DailyParabolicTroughYieldPanel
                         };
                       }
                     });
-                    usePrimitiveStore.setState((state) => {
+                    usePrimitiveStore.getState().set((state) => {
                       state.runDailySimulationForParabolicTroughs = true;
                       state.pauseDailySimulationForParabolicTroughs = false;
                       state.simulationInProgress = true;
@@ -367,10 +370,10 @@ const DailyParabolicTroughYieldPanel = ({ city }: DailyParabolicTroughYieldPanel
               <Button
                 type="default"
                 icon={<CameraOutlined />}
-                title={i18n.t('word.SaveAsImage', lang)}
+                title={t('word.SaveAsImage', lang)}
                 onClick={() => {
                   screenshot('line-graph-' + labelX + '-' + labelY, 'daily-parabolic-trough-yield', {}).then(() => {
-                    showInfo(i18n.t('message.ScreenshotSaved', lang));
+                    showInfo(t('message.ScreenshotSaved', lang));
                     if (loggable) {
                       setCommonStore((state) => {
                         state.actionInfo = {
@@ -386,10 +389,10 @@ const DailyParabolicTroughYieldPanel = ({ city }: DailyParabolicTroughYieldPanel
                 <Button
                   type="default"
                   icon={<SaveOutlined />}
-                  title={i18n.t('word.SaveAsCsv', lang)}
+                  title={t('word.SaveAsCsv', lang)}
                   onClick={() => {
                     saveCsv(dailyYield, 'daily-parabolic-trough-yield.csv');
-                    showInfo(i18n.t('message.CsvFileSaved', lang));
+                    showInfo(t('message.CsvFileSaved', lang));
                     if (loggable) {
                       setCommonStore((state) => {
                         state.actionInfo = {

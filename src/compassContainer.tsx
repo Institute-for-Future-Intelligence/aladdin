@@ -25,8 +25,8 @@ const Compass = ({ visible = true }: { visible: boolean }) => {
 
   useEffect(() => {
     if (canvasRef.current) {
-      useRefStore.setState((state) => {
-        state.compassRef = canvasRef;
+      useRefStore.setState({
+        compassRef: canvasRef,
       });
     }
   }, []);
