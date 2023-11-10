@@ -148,6 +148,12 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
       });
     };
     window.addEventListener('resize', handleWindowResize);
+    return () => {
+      window.removeEventListener('resize', handleWindowResize);
+    };
+  }, [panelRect, wOffset, hOffset]);
+
+  useEffect(() => {
     if (wrapperRef.current) {
       if (!resizeObserverRef.current) {
         resizeObserverRef.current = new ResizeObserver(() => {
@@ -165,10 +171,9 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
       resizeObserverRef.current.observe(wrapperRef.current);
     }
     return () => {
-      window.removeEventListener('resize', handleWindowResize);
       resizeObserverRef.current?.disconnect();
     };
-  }, [panelRect, wOffset, hOffset]);
+  }, []);
 
   const onDrag: DraggableEventHandler = (e, ui) => {
     setCurPosition({

@@ -141,16 +141,23 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
       });
     };
     window.addEventListener('resize', handleWindowResize);
+    return () => {
+      window.removeEventListener('resize', handleWindowResize);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [panelRect, wOffset, hOffset]);
+
+  useEffect(() => {
     if (wrapperRef.current) {
       if (!resizeObserverRef.current) {
         resizeObserverRef.current = new ResizeObserver(() => {
           setCommonStore((state) => {
             if (wrapperRef.current) {
-              if (!state.viewState.dailyUpdraftTowerYieldPanelRect) {
-                state.viewState.dailyUpdraftTowerYieldPanelRect = new Rectangle(0, 0, 640, 550);
+              if (!state.viewState.dailyPvYieldPanelRect) {
+                state.viewState.dailyPvYieldPanelRect = new Rectangle(0, 0, 600, 400);
               }
-              state.viewState.dailyUpdraftTowerYieldPanelRect.width = wrapperRef.current.offsetWidth;
-              state.viewState.dailyUpdraftTowerYieldPanelRect.height = wrapperRef.current.offsetHeight;
+              state.viewState.dailyPvYieldPanelRect.width = wrapperRef.current.offsetWidth;
+              state.viewState.dailyPvYieldPanelRect.height = wrapperRef.current.offsetHeight;
             }
           });
         });
@@ -158,11 +165,9 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
       resizeObserverRef.current.observe(wrapperRef.current);
     }
     return () => {
-      window.removeEventListener('resize', handleWindowResize);
       resizeObserverRef.current?.disconnect();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [panelRect, wOffset, hOffset]);
+  }, []);
 
   const onDrag: DraggableEventHandler = (e, ui) => {
     setCurPosition({

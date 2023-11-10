@@ -104,16 +104,23 @@ const StickyNotePanel = () => {
       });
     };
     window.addEventListener('resize', handleWindowResize);
+    return () => {
+      window.removeEventListener('resize', handleWindowResize);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [panelRect, wOffset, hOffset]);
+
+  useEffect(() => {
     if (wrapperRef.current) {
       if (!resizeObserverRef.current) {
         resizeObserverRef.current = new ResizeObserver(() => {
           setCommonStore((state) => {
             if (wrapperRef.current) {
-              if (!state.viewState.stickyNotePanelRect) {
-                state.viewState.stickyNotePanelRect = new Rectangle(0, 0, 400, 300);
+              if (!state.viewState.dailyPvYieldPanelRect) {
+                state.viewState.dailyPvYieldPanelRect = new Rectangle(0, 0, 600, 400);
               }
-              state.viewState.stickyNotePanelRect.width = wrapperRef.current.offsetWidth;
-              state.viewState.stickyNotePanelRect.height = wrapperRef.current.offsetHeight;
+              state.viewState.dailyPvYieldPanelRect.width = wrapperRef.current.offsetWidth;
+              state.viewState.dailyPvYieldPanelRect.height = wrapperRef.current.offsetHeight;
             }
           });
         });
@@ -121,11 +128,9 @@ const StickyNotePanel = () => {
       resizeObserverRef.current.observe(wrapperRef.current);
     }
     return () => {
-      window.removeEventListener('resize', handleWindowResize);
       resizeObserverRef.current?.disconnect();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [panelRect, wOffset, hOffset]);
+  }, []);
 
   useEffect(() => {
     setText(notes.length > 0 ? notes[0] : '');

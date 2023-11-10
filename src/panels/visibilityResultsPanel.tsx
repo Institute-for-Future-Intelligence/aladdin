@@ -114,16 +114,23 @@ const VisibilityResultsPanel = () => {
       });
     };
     window.addEventListener('resize', handleWindowResize);
+    return () => {
+      window.removeEventListener('resize', handleWindowResize);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     if (wrapperRef.current) {
       if (!resizeObserverRef.current) {
         resizeObserverRef.current = new ResizeObserver(() => {
           setCommonStore((state) => {
             if (wrapperRef.current) {
-              if (!state.viewState.visibilityResultsPanelRect) {
-                state.viewState.visibilityResultsPanelRect = new Rectangle(0, 0, 600, 470);
+              if (!state.viewState.dailyPvYieldPanelRect) {
+                state.viewState.dailyPvYieldPanelRect = new Rectangle(0, 0, 600, 400);
               }
-              state.viewState.visibilityResultsPanelRect.width = wrapperRef.current.offsetWidth;
-              state.viewState.visibilityResultsPanelRect.height = wrapperRef.current.offsetHeight;
+              state.viewState.dailyPvYieldPanelRect.width = wrapperRef.current.offsetWidth;
+              state.viewState.dailyPvYieldPanelRect.height = wrapperRef.current.offsetHeight;
             }
           });
         });
@@ -131,10 +138,8 @@ const VisibilityResultsPanel = () => {
       resizeObserverRef.current.observe(wrapperRef.current);
     }
     return () => {
-      window.removeEventListener('resize', handleWindowResize);
       resizeObserverRef.current?.disconnect();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

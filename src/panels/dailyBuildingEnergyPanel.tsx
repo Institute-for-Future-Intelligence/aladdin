@@ -253,16 +253,23 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
       });
     };
     window.addEventListener('resize', handleWindowResize);
+    return () => {
+      window.removeEventListener('resize', handleWindowResize);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [panelRect, wOffset, hOffset]);
+
+  useEffect(() => {
     if (wrapperRef.current) {
       if (!resizeObserverRef.current) {
         resizeObserverRef.current = new ResizeObserver(() => {
           setCommonStore((state) => {
             if (wrapperRef.current) {
-              if (!state.viewState.dailyBuildingEnergyPanelRect) {
-                state.viewState.dailyBuildingEnergyPanelRect = new Rectangle(0, 0, 600, 360);
+              if (!state.viewState.dailyPvYieldPanelRect) {
+                state.viewState.dailyPvYieldPanelRect = new Rectangle(0, 0, 600, 400);
               }
-              state.viewState.dailyBuildingEnergyPanelRect.width = wrapperRef.current.offsetWidth;
-              state.viewState.dailyBuildingEnergyPanelRect.height = wrapperRef.current.offsetHeight;
+              state.viewState.dailyPvYieldPanelRect.width = wrapperRef.current.offsetWidth;
+              state.viewState.dailyPvYieldPanelRect.height = wrapperRef.current.offsetHeight;
             }
           });
         });
@@ -270,11 +277,9 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
       resizeObserverRef.current.observe(wrapperRef.current);
     }
     return () => {
-      window.removeEventListener('resize', handleWindowResize);
       resizeObserverRef.current?.disconnect();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [panelRect, wOffset, hOffset]);
+  }, []);
 
   const onDrag: DraggableEventHandler = (e, ui) => {
     setCurPosition({
