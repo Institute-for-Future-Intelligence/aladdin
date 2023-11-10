@@ -23,8 +23,8 @@ export const SkyMenu = () => {
   const showAzimuthAngle = useStore(Selector.viewState.showAzimuthAngle) ?? true;
   const showElevationAngle = useStore(Selector.viewState.showElevationAngle) ?? true;
   const showZenithAngle = useStore(Selector.viewState.showZenithAngle) ?? true;
-  const directLightIntensity = useStore(Selector.viewState.directLightIntensity) ?? 1;
-  const ambientLightIntensity = useStore(Selector.viewState.ambientLightIntensity) ?? 0.1;
+  const directLightIntensity = useStore(Selector.viewState.directLightIntensity) ?? 3.5;
+  const ambientLightIntensity = useStore(Selector.viewState.ambientLightIntensity) ?? 0.2;
   const airAttenuationCoefficient = useStore(Selector.world.airAttenuationCoefficient) ?? 0.01;
   const airConvectiveCoefficient = useStore(Selector.world.airConvectiveCoefficient) ?? 5;
   const highestTemperatureTimeInMinutes = useStore(Selector.world.highestTemperatureTimeInMinutes) ?? 900;
@@ -268,7 +268,7 @@ export const SkyMenu = () => {
           <Space style={{ width: '270px' }}>{i18n.t('skyMenu.DirectLightBrightnessAtNoon', lang) + ' [0.1-5]:'}</Space>
           <InputNumber
             min={0.1}
-            max={5}
+            max={10}
             step={0.1}
             precision={2}
             value={directLightIntensity}

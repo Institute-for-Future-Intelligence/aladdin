@@ -114,8 +114,8 @@ export class DefaultViewState implements ViewState {
     this.navigationView = false;
     this.orthographic = false;
     this.enableRotate = true;
-    this.directLightIntensity = 1;
-    this.ambientLightIntensity = 0.1;
+    this.directLightIntensity = 3.5;
+    this.ambientLightIntensity = 0.2;
     this.cameraPosition = [5, -30, 1];
     this.cameraPosition2D = [0, 0, 150];
     this.panCenter = [0, 0, 0];
@@ -214,8 +214,8 @@ export class DefaultViewState implements ViewState {
     viewState.cameraZoom = 20;
     viewState.cameraPosition2D = [0, 0, 20];
     viewState.panCenter2D = [0, 0, 0];
-    viewState.directLightIntensity = 1;
-    viewState.ambientLightIntensity = 0.1;
+    viewState.directLightIntensity = 3.5;
+    viewState.ambientLightIntensity = 0.2;
     viewState.cameraPositionNav = [5, -30, 1];
     viewState.cameraRotationNav = [1.5374753309166491, 0.16505866097993566, 0.005476951734475092];
 

@@ -62,6 +62,7 @@ import { FoundationModel } from './models/FoundationModel';
 import { WindowModel, WindowType } from './models/WindowModel';
 import { DoorModel, DoorType } from './models/DoorModel';
 import { CUBOID_STACKABLE_CHILD, CUBOID_WRAPPER_NAME } from './views/cuboid';
+import { ViewState } from './stores/ViewState';
 
 export class Util {
   // calculate the annual profit in 1,000 dollars
@@ -990,6 +991,15 @@ export class Util {
     }
   }
 
+  static fixViewStateLight(viewState: ViewState) {
+    if (viewState.ambientLightIntensity) {
+      viewState.ambientLightIntensity *= 2;
+    }
+    if (viewState.directLightIntensity) {
+      viewState.directLightIntensity *= 3.5;
+    }
+  }
+
   static isResizingVertical(handle: ResizeHandleType | null): boolean {
     switch (handle) {
       case ResizeHandleType.LowerLeftTop:
@@ -1857,6 +1867,19 @@ export class Util {
   static isElementAllowedMultipleMoveOnGround(e: ElementModel) {
     if (e.type === ObjectType.Foundation) return true;
     if (e.type === ObjectType.Cuboid && e.parentId === GROUND_ID) return true;
+    return false;
+  }
+
+  /** Is first version older than second one */
+  static compareVersion(version1: string | undefined, version2: string) {
+    if (!version1) return true;
+
+    const [v1Major, v1Minor, v1Patch] = version1.split('.').map((n) => Number(n));
+    const [v2Major, v2Minor, v2Patch] = version2.split('.').map((n) => Number(n));
+
+    if (v1Major < v2Major) return true;
+    if (v1Minor < v2Minor) return true;
+    if (v1Patch < v2Patch) return true;
     return false;
   }
 }

@@ -550,7 +550,7 @@ export const useStore = create<CommonStoreState>()(
               console.log(e);
             }
           },
-          version: undefined,
+          version: VERSION,
           world: defaultWorldModel,
           elements: defaultElements,
           user: {} as User,
@@ -629,6 +629,9 @@ export const useStore = create<CommonStoreState>()(
           },
 
           importContent(content, title) {
+            if (Util.compareVersion(content.version, VERSION)) {
+              Util.fixViewStateLight(content.view);
+            }
             immerSet((state: CommonStoreState) => {
               state.version = content.version;
               state.world = content.world;
@@ -736,6 +739,7 @@ export const useStore = create<CommonStoreState>()(
               DefaultViewState.resetViewState(state.viewState);
               // don't create a new instance like this (otherwise some UI elements may not update):
               // state.world = new DefaultWorldModel()
+              state.version = VERSION;
               state.elements = [];
               state.sceneRadius = 100;
               state.cloudFile = undefined;
