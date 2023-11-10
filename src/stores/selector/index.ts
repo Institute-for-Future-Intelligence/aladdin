@@ -12,6 +12,8 @@ export const user = (state: CommonStoreState) => state.user;
 
 export const userCount = (state: PrimitiveStoreState) => state.userCount;
 
+export const version = (state: CommonStoreState) => state.version;
+
 export const showEconomicsPanel = (state: PrimitiveStoreState) => state.showEconomicsPanel;
 
 export const showNavigationPanel = (state: PrimitiveStoreState) => state.showNavigationPanel;

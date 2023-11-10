@@ -65,6 +65,7 @@ import {
   HALF_PI,
   ORIGIN_VECTOR2,
   UNIT_VECTOR_POS_Z_ARRAY,
+  VERSION,
 } from '../constants';
 import { PolygonModel } from '../models/PolygonModel';
 import { Point2 } from '../models/Point2';
@@ -108,6 +109,7 @@ export interface CommonStoreState {
   set: (fn: (state: CommonStoreState) => void) => void;
 
   // only the following properties are persisted (see the whitelist at the end)
+  version: string;
   world: WorldModel;
   elements: ElementModel[];
   viewState: ViewState;
@@ -548,6 +550,7 @@ export const useStore = create<CommonStoreState>(
               console.log(e);
             }
           },
+          version: VERSION,
           world: defaultWorldModel,
           elements: defaultElements,
           user: {} as User,
@@ -627,6 +630,7 @@ export const useStore = create<CommonStoreState>(
 
           importContent(content, title) {
             immerSet((state: CommonStoreState) => {
+              state.version = content.version ?? VERSION;
               state.world = content.world;
               state.viewState = content.view;
               state.graphState = content.graphState ?? new DefaultGraphState();
@@ -697,6 +701,7 @@ export const useStore = create<CommonStoreState>(
               userid: state.user.uid,
               owner: state.user.signFile ? state.user.displayName : null,
               email: state.user.signFile ? state.user.email : null,
+              version: VERSION,
               world: JSON.parse(JSON.stringify(state.world)),
               elements: elements,
               sceneRadius: state.sceneRadius,
