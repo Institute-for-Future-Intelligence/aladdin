@@ -8,13 +8,23 @@ import { WindowModel, WindowType } from 'src/models/WindowModel';
 import { WallFill, WallModel, WallStructure } from 'src/models/WallModel';
 import { DEFAULT_PARAPET_SETTINGS } from 'src/views/wall/parapet';
 import { GambrelRoofModel, RoofModel, RoofType } from 'src/models/RoofModel';
-import { GROUND_ID } from 'src/constants';
+import { GROUND_ID, VERSION } from 'src/constants';
 import { DoorModel, DoorType } from 'src/models/DoorModel';
 import { ElementModel } from 'src/models/ElementModel';
+import { Util } from 'src/Util';
 
 // should put this inside immerSet function, because it mutate state directly
 export class StoreUtil {
-  static updateOldFileData(state: CommonStoreState) {
+  static updateOldFile(state: CommonStoreState) {
+    if (Util.compareVersion(state.version, VERSION)) {
+      if (state.viewState.ambientLightIntensity) {
+        state.viewState.ambientLightIntensity *= 2;
+      }
+      if (state.viewState.directLightIntensity) {
+        state.viewState.directLightIntensity *= 3.5;
+      }
+    }
+
     const elementMap = new Map<string, ElementModel>();
     for (const e of state.elements) {
       elementMap.set(e.id, e);

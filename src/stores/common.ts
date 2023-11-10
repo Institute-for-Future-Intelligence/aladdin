@@ -629,9 +629,6 @@ export const useStore = create<CommonStoreState>()(
           },
 
           importContent(content, title) {
-            if (Util.compareVersion(content.version, VERSION)) {
-              Util.fixViewStateLight(content.view);
-            }
             immerSet((state: CommonStoreState) => {
               state.version = content.version;
               state.world = content.world;
@@ -675,7 +672,7 @@ export const useStore = create<CommonStoreState>()(
               state.selectedElementIdSet.clear();
               state.groupActionMode = false;
               state.selectedFloatingWindow = null;
-              StoreUtil.updateOldFileData(state);
+              StoreUtil.updateOldFile(state);
             });
             usePrimitiveStore.getState().set((state) => {
               state.changed = false;
