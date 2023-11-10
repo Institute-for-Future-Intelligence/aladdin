@@ -413,6 +413,12 @@ export class ElementModelFactory {
   }
 
   static makeWindTurbine(parent: ElementModel, x: number, y: number, z?: number) {
+    let foundationId;
+    switch (parent.type) {
+      case ObjectType.Foundation:
+        foundationId = parent.id;
+        break;
+    }
     return {
       type: ObjectType.WindTurbine,
       bladeRadius: 10,
@@ -424,6 +430,7 @@ export class ElementModelFactory {
       normal: [0, 1, 0],
       rotation: [0, 0, 0],
       parentId: parent.id,
+      foundationId: foundationId,
       id: short.generate() as string,
     } as WindTurbineModel;
   }

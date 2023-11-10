@@ -4,7 +4,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Cone, Cylinder, Sphere } from '@react-three/drei';
-import { DoubleSide, Euler, Mesh, Shape, Vector3 } from 'three';
+import { BackSide, Euler, FrontSide, Mesh, Shape, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import { useRefStore } from 'src/stores/commonRef';
 import * as Selector from '../stores/selector';
@@ -80,6 +80,25 @@ const WindTurbine = ({
   }
 
   const turbine = useMemo(() => getElementById(id) as WindTurbineModel, [id]);
+  const bladeTipWidth = 0.2;
+  const hubRadius = 0.75;
+  const hubLength = 1;
+  const nacelleRadiusLg = hubRadius;
+  const nacelleRadiusSm = 0.4;
+  const nacelleLength = hubLength * 2.5;
+
+  const bladeShape = useMemo(() => {
+    const tipHalfWidth = bladeTipWidth * 0.5;
+    const bladeConnectorRadius = Math.min(hubRadius * 0.5, hubRadius * 0.25 + bladeRadius * 0.01);
+    const s = new Shape();
+    s.moveTo(-bladeConnectorRadius, 0);
+    s.lineTo(-hubRadius * bladeRadius * 0.1, hubRadius + bladeRadius * 0.2);
+    s.lineTo(-tipHalfWidth, bladeRadius);
+    s.lineTo(tipHalfWidth, bladeRadius);
+    s.lineTo(bladeConnectorRadius, 0);
+    s.closePath();
+    return s;
+  }, [bladeRadius]);
 
   useEffect(() => {
     const handlePointerUp = () => {
@@ -131,21 +150,6 @@ const WindTurbine = ({
 
   const moveHandleSize = MOVE_HANDLE_RADIUS * 4;
 
-  const bladeShape = useMemo(() => {
-    const x = 0;
-    const y = bladeRadius;
-    const halfEdge = 0.1;
-    const s = new Shape();
-    s.moveTo(-0.2, 0);
-    s.lineTo(x - 0.75, 1.5);
-    s.lineTo(x - halfEdge, y);
-    s.lineTo(x + halfEdge, y);
-    s.lineTo(x + 0.35, 1);
-    s.lineTo(0.2, 0);
-    s.closePath();
-    return s;
-  }, [bladeRadius]);
-
   return (
     <group name={'Wind Turbine Group ' + id} rotation={euler} position={[cx, cy, cz]}>
       <group>
@@ -182,11 +186,12 @@ const WindTurbine = ({
         castShadow={false}
         receiveShadow={false}
         args={[towerRadius, towerRadius, towerHeight, 4, 1]}
-        position={new Vector3(0, 0, towerHeight / 2)}
+        position={new Vector3(0, 0, towerHeight * 0.5)}
         rotation={[HALF_PI, 0, 0]}
         onPointerDown={(e) => {
           if (e.button === 2) return; // ignore right-click
           selectMe(id, e, ActionType.Select);
+          useRefStore.getState().setEnableOrbitController(false);
         }}
         onContextMenu={(e) => {
           selectMe(id, e, ActionType.ContextMenu);
@@ -222,9 +227,9 @@ const WindTurbine = ({
         name={'Cone'}
         castShadow={false}
         receiveShadow={false}
-        args={[0.75, 1, 8, 1]}
-        position={new Vector3(0, 1.5, towerHeight)}
-        rotation={[0, 0, 0]}
+        args={[hubRadius, hubLength, 8, 1]}
+        position={new Vector3(0, -hubLength - 0.5, towerHeight)}
+        rotation={[Math.PI, 0, 0]}
       >
         <meshStandardMaterial attach="material" color={color} />
       </Cone>
@@ -235,40 +240,71 @@ const WindTurbine = ({
         name={'Cylinder'}
         castShadow={false}
         receiveShadow={false}
-        args={[0.4, 0.75, 2.5, 8, 1]}
-        position={new Vector3(0, -0.3, towerHeight)}
-        rotation={[Math.PI, 0, 0]}
+        args={[nacelleRadiusSm, nacelleRadiusLg, nacelleLength, 8, 1]}
+        position={new Vector3(0, 0.3, towerHeight)}
+        rotation={[0, 0, 0]}
       >
         <meshStandardMaterial attach="material" color={color} />
       </Cylinder>
 
-      {/*draw blades*/}
+      {/*draw blade 1*/}
       <mesh
         receiveShadow={shadowEnabled}
         castShadow={shadowEnabled}
-        position={new Vector3(0, 1, towerHeight)}
+        position={new Vector3(0, -1, towerHeight)}
         rotation={[HALF_PI, 0, 0]}
       >
         <shapeGeometry attach="geometry" args={[bladeShape]} />
-        <meshStandardMaterial attach="material" color={color} side={DoubleSide} />
+        <meshStandardMaterial attach="material" color={color} side={FrontSide} />
       </mesh>
       <mesh
         receiveShadow={shadowEnabled}
         castShadow={shadowEnabled}
-        position={new Vector3(0, 1, towerHeight)}
+        position={new Vector3(0, -1.05, towerHeight)}
+        rotation={[HALF_PI, 0, 0]}
+      >
+        <shapeGeometry attach="geometry" args={[bladeShape]} />
+        <meshStandardMaterial attach="material" color={color} side={BackSide} />
+      </mesh>
+
+      {/*draw blade 2*/}
+      <mesh
+        receiveShadow={shadowEnabled}
+        castShadow={shadowEnabled}
+        position={new Vector3(0, -1, towerHeight)}
         rotation={[HALF_PI, 0, (Math.PI * 2) / 3]}
       >
         <shapeGeometry attach="geometry" args={[bladeShape]} />
-        <meshStandardMaterial attach="material" color={color} side={DoubleSide} />
+        <meshStandardMaterial attach="material" color={color} side={FrontSide} />
       </mesh>
       <mesh
         receiveShadow={shadowEnabled}
         castShadow={shadowEnabled}
-        position={new Vector3(0, 1, towerHeight)}
+        position={new Vector3(0, -1.05, towerHeight)}
+        rotation={[HALF_PI, 0, (Math.PI * 2) / 3]}
+      >
+        <shapeGeometry attach="geometry" args={[bladeShape]} />
+        <meshStandardMaterial attach="material" color={color} side={BackSide} />
+      </mesh>
+
+      {/*draw blade 3*/}
+      <mesh
+        receiveShadow={shadowEnabled}
+        castShadow={shadowEnabled}
+        position={new Vector3(0, -1, towerHeight)}
         rotation={[HALF_PI, 0, (Math.PI * 4) / 3]}
       >
         <shapeGeometry attach="geometry" args={[bladeShape]} />
-        <meshStandardMaterial attach="material" color={color} side={DoubleSide} />
+        <meshStandardMaterial attach="material" color={color} side={FrontSide} />
+      </mesh>
+      <mesh
+        receiveShadow={shadowEnabled}
+        castShadow={shadowEnabled}
+        position={new Vector3(0, -1.05, towerHeight)}
+        rotation={[HALF_PI, 0, (Math.PI * 4) / 3]}
+      >
+        <shapeGeometry attach="geometry" args={[bladeShape]} />
+        <meshStandardMaterial attach="material" color={color} side={BackSide} />
       </mesh>
 
       {/* draw label */}
