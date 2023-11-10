@@ -159,39 +159,26 @@ export const useDataStore = create<DataStoreState>()((set, get) => {
 
     dailyLightSensorData: [],
     setDailyLightSensorData(data) {
-      set((state) => {
-        state.dailyLightSensorData = [...data];
-        return state;
-      });
+      set({ dailyLightSensorData: [...data] });
     },
     yearlyLightSensorData: [],
     setYearlyLightSensorData(data) {
-      set((state) => {
-        state.yearlyLightSensorData = [...data];
-        return state;
-      });
+      set({ yearlyLightSensorData: [...data] });
     },
     sensorLabels: [],
     setSensorLabels(labels) {
-      set((state) => {
-        state.sensorLabels = [...labels];
-        return state;
-      });
+      set({ sensorLabels: [...labels] });
     },
 
     dailyPvYield: [],
     setDailyPvYield(data) {
-      set((state) => {
-        state.dailyPvYield = [...data];
-        return state;
-      });
+      set({ dailyPvYield: [...data] });
       // increment the index of objective evaluation to notify the genetic algorithm that
       // this simulation has completed and the result has been reported to the common store
       usePrimitiveStore.getState().set((state) => {
         if (state.runEvolution) {
           state.objectiveEvaluationIndex++;
         }
-        return state;
       });
     },
     sumDailyPvYield() {
@@ -217,10 +204,7 @@ export const useDataStore = create<DataStoreState>()((set, get) => {
     },
     yearlyPvYield: [],
     setYearlyPvYield(data) {
-      set((state) => {
-        state.yearlyPvYield = [...data];
-        return state;
-      });
+      set({ yearlyPvYield: [...data] });
       // increment the index of objective evaluation to notify the genetic algorithm that
       // this simulation has completed and the result has been reported to the common store
       usePrimitiveStore.getState().set((state) => {
@@ -254,10 +238,7 @@ export const useDataStore = create<DataStoreState>()((set, get) => {
     },
     solarPanelLabels: [],
     setSolarPanelLabels(labels) {
-      set((state) => {
-        state.solarPanelLabels = [...labels];
-        return state;
-      });
+      set({ solarPanelLabels: [...labels] });
     },
     solarPanelVisibilityResults: new Map<Vantage, Map<string, number>>(),
     setSolarPanelVisibilityResult(vantage, result) {
@@ -267,19 +248,13 @@ export const useDataStore = create<DataStoreState>()((set, get) => {
       });
     },
     clearSolarPanelVisibilityResults() {
-      set((state) => {
-        // must create a new map in order for the dependency on it to change for re-rendering
-        state.solarPanelVisibilityResults = new Map<Vantage, Map<string, number>>();
-        return state;
-      });
+      // must create a new map in order for the dependency on it to change for re-rendering
+      set({ solarPanelVisibilityResults: new Map<Vantage, Map<string, number>>() });
     },
 
     dailyParabolicDishYield: [],
     setDailyParabolicDishYield(data) {
-      set((state) => {
-        state.dailyParabolicDishYield = [...data];
-        return state;
-      });
+      set({ dailyParabolicDishYield: [...data] });
     },
     sumDailyParabolicDishYield() {
       let sum = 0;
@@ -296,10 +271,7 @@ export const useDataStore = create<DataStoreState>()((set, get) => {
     },
     yearlyParabolicDishYield: [],
     setYearlyParabolicDishYield(data) {
-      set((state) => {
-        state.yearlyParabolicDishYield = [...data];
-        return state;
-      });
+      set({ yearlyParabolicDishYield: [...data] });
     },
     sumYearlyParabolicDishYield() {
       let sum = 0;
@@ -316,18 +288,12 @@ export const useDataStore = create<DataStoreState>()((set, get) => {
     },
     parabolicDishLabels: [],
     setParabolicDishLabels(labels) {
-      set((state) => {
-        state.parabolicDishLabels = [...labels];
-        return state;
-      });
+      set({ parabolicDishLabels: [...labels] });
     },
 
     dailyParabolicTroughYield: [],
     setDailyParabolicTroughYield(data) {
-      set((state) => {
-        state.dailyParabolicTroughYield = [...data];
-        return state;
-      });
+      set({ dailyParabolicTroughYield: [...data] });
     },
     sumDailyParabolicTroughYield() {
       let sum = 0;
@@ -344,10 +310,7 @@ export const useDataStore = create<DataStoreState>()((set, get) => {
     },
     yearlyParabolicTroughYield: [],
     setYearlyParabolicTroughYield(data) {
-      set((state) => {
-        state.yearlyParabolicTroughYield = [...data];
-        return state;
-      });
+      set({ yearlyParabolicTroughYield: [...data] });
     },
     sumYearlyParabolicTroughYield() {
       let sum = 0;
@@ -364,18 +327,12 @@ export const useDataStore = create<DataStoreState>()((set, get) => {
     },
     parabolicTroughLabels: [],
     setParabolicTroughLabels(labels) {
-      set((state) => {
-        state.parabolicTroughLabels = [...labels];
-        return state;
-      });
+      set({ parabolicTroughLabels: [...labels] });
     },
 
     dailyFresnelReflectorYield: [],
     setDailyFresnelReflectorYield(data) {
-      set((state) => {
-        state.dailyFresnelReflectorYield = [...data];
-        return state;
-      });
+      set({ dailyFresnelReflectorYield: [...data] });
     },
     sumDailyFresnelReflectorYield() {
       let sum = 0;
@@ -392,10 +349,7 @@ export const useDataStore = create<DataStoreState>()((set, get) => {
     },
     yearlyFresnelReflectorYield: [],
     setYearlyFresnelReflectorYield(data) {
-      set((state) => {
-        state.yearlyFresnelReflectorYield = [...data];
-        return state;
-      });
+      set({ yearlyFresnelReflectorYield: [...data] });
     },
     sumYearlyFresnelReflectorYield() {
       let sum = 0;
@@ -412,18 +366,12 @@ export const useDataStore = create<DataStoreState>()((set, get) => {
     },
     fresnelReflectorLabels: [],
     setFresnelReflectorLabels(labels) {
-      set((state) => {
-        state.fresnelReflectorLabels = [...labels];
-        return state;
-      });
+      set({ fresnelReflectorLabels: [...labels] });
     },
 
     dailyHeliostatYield: [],
     setDailyHeliostatYield(data) {
-      set((state) => {
-        state.dailyHeliostatYield = [...data];
-        return state;
-      });
+      set({ dailyHeliostatYield: [...data] });
     },
     sumDailyHeliostatYield() {
       let sum = 0;
@@ -440,10 +388,7 @@ export const useDataStore = create<DataStoreState>()((set, get) => {
     },
     yearlyHeliostatYield: [],
     setYearlyHeliostatYield(data) {
-      set((state) => {
-        state.yearlyHeliostatYield = [...data];
-        return state;
-      });
+      set({ yearlyHeliostatYield: [...data] });
     },
     sumYearlyHeliostatYield() {
       let sum = 0;
@@ -460,25 +405,16 @@ export const useDataStore = create<DataStoreState>()((set, get) => {
     },
     heliostatLabels: [],
     setHeliostatLabels(labels) {
-      set((state) => {
-        state.heliostatLabels = [...labels];
-        return state;
-      });
+      set({ heliostatLabels: [...labels] });
     },
 
     dailyUpdraftTowerResults: [],
     dailyUpdraftTowerYield: [],
     setDailyUpdraftTowerResults(data) {
-      set((state) => {
-        state.dailyUpdraftTowerResults = [...data];
-        return state;
-      });
+      set({ dailyUpdraftTowerResults: [...data] });
     },
     setDailyUpdraftTowerYield(data) {
-      set((state) => {
-        state.dailyUpdraftTowerYield = [...data];
-        return state;
-      });
+      set({ dailyUpdraftTowerYield: [...data] });
     },
     sumDailyUpdraftTowerYield() {
       let sum = 0;
@@ -495,10 +431,7 @@ export const useDataStore = create<DataStoreState>()((set, get) => {
     },
     yearlyUpdraftTowerYield: [],
     setYearlyUpdraftTowerYield(data) {
-      set((state) => {
-        state.yearlyUpdraftTowerYield = [...data];
-        return state;
-      });
+      set({ yearlyUpdraftTowerYield: [...data] });
     },
     sumYearlyUpdraftTowerYield() {
       let sum = 0;
@@ -515,10 +448,7 @@ export const useDataStore = create<DataStoreState>()((set, get) => {
     },
     updraftTowerLabels: [],
     setUpdraftTowerLabels(labels) {
-      set((state) => {
-        state.updraftTowerLabels = [...labels];
-        return state;
-      });
+      set({ updraftTowerLabels: [...labels] });
     },
 
     heatmaps: new Map<string, number[][]>(),
@@ -558,26 +488,17 @@ export const useDataStore = create<DataStoreState>()((set, get) => {
 
     totalBuildingHeater: 0,
     setTotalBuildingHeater: (heater: number) => {
-      set((state) => {
-        state.totalBuildingHeater = heater;
-        return state;
-      });
+      set({ totalBuildingHeater: heater });
     },
 
     totalBuildingAc: 0,
     setTotalBuildingAc: (ac: number) => {
-      set((state) => {
-        state.totalBuildingAc = ac;
-        return state;
-      });
+      set({ totalBuildingAc: ac });
     },
 
     totalBuildingSolarPanel: 0,
     setTotalBuildingSolarPanel: (solarPanel: number) => {
-      set((state) => {
-        state.totalBuildingSolarPanel = solarPanel;
-        return state;
-      });
+      set({ totalBuildingSolarPanel: solarPanel });
     },
 
     clearHeatmaps() {
