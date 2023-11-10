@@ -230,6 +230,8 @@ export const i18n_tr = {
       ThisCannotBeUndone: 'Geri alınamaz.',
       AzimuthOfNorthIsZero: 'Kuzey yönünün azimut açısı 0 Â° derecedir.',
       CounterclockwiseAzimuthIsPositive: 'Saat yönünün tersi yönde azimut açısı pozitiftir.',
+      SouthFacingIsZero: 'South-facing is 0°',
+      ClockwiseRotationIsPositive: 'Clockwise is positive',
       MoveCancelledBecauseOfOverlap: 'Çakışma nedeniyle taşıma iptal edildi.',
       MoveOutsideBoundaryCancelled: 'Alan dışına çıkan taşıma iptal edildi.',
       RotationCancelledBecauseOfOverlap: 'Çakışma nedeniyle döndürme iptal edildi.',
@@ -1088,6 +1090,7 @@ export const i18n_tr = {
     },
 
     windTurbineMenu: {
+      RelativeAngle: 'Relative Angle',
       RotorBladeRadius: 'Rotor Blade Radius',
       Tower: 'Tower',
       TowerHeight: 'Tower Height',

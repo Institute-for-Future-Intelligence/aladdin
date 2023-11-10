@@ -25,6 +25,7 @@ const WindTurbine = ({
   towerRadius,
   bladeRadius,
   rotation = [0, 0, 0],
+  relativeAngle = 0,
   color = 'white',
   lineColor = 'black',
   lineWidth = 0.5,
@@ -79,7 +80,7 @@ const WindTurbine = ({
     }
   }
 
-  const turbine = useMemo(() => getElementById(id) as WindTurbineModel, [id]);
+  const turbine = getElementById(id) as WindTurbineModel;
   const bladeTipWidth = 0.2;
   const hubRadius = 0.75;
   const hubLength = 1;
@@ -132,8 +133,8 @@ const WindTurbine = ({
 
   // in model coordinate system
   const euler = useMemo(() => {
-    return new Euler(0, 0, rotation[2], 'ZXY');
-  }, [rotation]);
+    return new Euler(0, 0, rotation[2] + relativeAngle, 'ZXY');
+  }, [rotation, relativeAngle]);
 
   const hoverHandle = (e: ThreeEvent<MouseEvent>, handle: MoveHandleType) => {
     if (e.intersections.length > 0) {
@@ -185,7 +186,7 @@ const WindTurbine = ({
         ref={baseRef}
         castShadow={false}
         receiveShadow={false}
-        args={[towerRadius, towerRadius, towerHeight, 4, 1]}
+        args={[towerRadius * 0.8, towerRadius * 1.2, towerHeight, 4, 1]}
         position={new Vector3(0, 0, towerHeight * 0.5)}
         rotation={[HALF_PI, 0, 0]}
         onPointerDown={(e) => {
@@ -316,7 +317,7 @@ const WindTurbine = ({
           text={labelText}
           color={turbine?.labelColor ?? 'white'}
           fontSize={turbine?.labelFontSize ?? 20}
-          textHeight={turbine?.labelSize ?? 0.2}
+          textHeight={turbine?.labelSize ?? 1}
           castShadow={false}
           receiveShadow={false}
           position={[0, 0, 0.5 + towerHeight + hubRadius]}

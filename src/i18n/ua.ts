@@ -232,6 +232,8 @@ export const i18n_ua = {
       ThisCannotBeUndone: 'Це не можна скасувати.',
       AzimuthOfNorthIsZero: 'Азимут півночі дорівнює 0°',
       CounterclockwiseAzimuthIsPositive: 'Азимут є позитивним проти годинникової стрілки.',
+      SouthFacingIsZero: 'South-facing is 0°',
+      ClockwiseRotationIsPositive: 'Clockwise is positive',
       MoveCancelledBecauseOfOverlap: 'Переміщення скасовано через перекриття.',
       MoveOutsideBoundaryCancelled: 'Переміщення за межі скасовано.',
       RotationCancelledBecauseOfOverlap: 'Ротацію скасовано через перекриття.',
@@ -1090,6 +1092,7 @@ export const i18n_ua = {
     },
 
     windTurbineMenu: {
+      RelativeAngle: 'Relative Angle',
       RotorBladeRadius: 'Rotor Blade Radius',
       Tower: 'Tower',
       TowerHeight: 'Tower Height',

@@ -24,6 +24,7 @@ import { WindTurbineModel } from '../../../models/WindTurbineModel';
 import WindTurbineTowerHeightInput from './windTurbineTowerHeightInput';
 import WindTurbineTowerRadiusInput from './windTurbineTowerRadiusInput';
 import WindTurbineBladeRadiusInput from './windTurbineBladeRadiusInput';
+import WindTurbineRelativeAngleInput from './windTurbineRelativeAngleInput';
 
 export const WindTurbineMenu = React.memo(() => {
   const language = useStore(Selector.language);
@@ -31,6 +32,7 @@ export const WindTurbineMenu = React.memo(() => {
 
   const windTurbine = useSelectedElement(ObjectType.WindTurbine) as WindTurbineModel | undefined;
 
+  const [relativeAngleDialogVisible, setRelativeAngleDialogVisible] = useState(false);
   const [bladeRadiusDialogVisible, setBladeRadiusDialogVisible] = useState(false);
   const [towerHeightDialogVisible, setTowerHeightDialogVisible] = useState(false);
   const [towerRadiusDialogVisible, setTowerRadiusDialogVisible] = useState(false);
@@ -55,6 +57,21 @@ export const WindTurbineMenu = React.memo(() => {
       <Lock keyName={'wind-turbine-lock'} />
       {windTurbine && editable && (
         <>
+          {/* relative angle to the parent element */}
+          {relativeAngleDialogVisible && (
+            <WindTurbineRelativeAngleInput setDialogVisible={setRelativeAngleDialogVisible} />
+          )}
+          <Menu.Item
+            key={'wind-turbine-relative-angle'}
+            style={{ paddingLeft: '36px' }}
+            onClick={() => {
+              setApplyCount(0);
+              setRelativeAngleDialogVisible(true);
+            }}
+          >
+            {i18n.t('windTurbineMenu.RelativeAngle', lang)} ...
+          </Menu.Item>
+
           {/* blade radius */}
           {bladeRadiusDialogVisible && <WindTurbineBladeRadiusInput setDialogVisible={setBladeRadiusDialogVisible} />}
           <Menu.Item
@@ -121,7 +138,6 @@ export const WindTurbineMenu = React.memo(() => {
                   value={labelText}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLabelText(e.target.value)}
                   onPressEnter={updateLabelText}
-                  onBlur={updateLabelText}
                 />
               </Menu.Item>
               {/* the label's height relative to the center */}
@@ -158,11 +174,11 @@ export const WindTurbineMenu = React.memo(() => {
               <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'wind-turbine-label-size'}>
                 <InputNumber
                   addonBefore={i18n.t('labelSubMenu.LabelSize', lang) + ':'}
-                  min={0.2}
+                  min={0.5}
                   max={5}
                   step={0.1}
                   precision={1}
-                  value={windTurbine.labelSize ?? 0.2}
+                  value={windTurbine.labelSize ?? 1}
                   onChange={(value) => setLabelSize(value)}
                 />
               </Menu.Item>

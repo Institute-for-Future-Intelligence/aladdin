@@ -10,13 +10,14 @@ import { ObjectType, Scope } from '../../../types';
 import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
+import { Util } from '../../../Util';
 import { ZERO_TOLERANCE } from '../../../constants';
 import { useSelectedElement } from './menuHooks';
 import Dialog from '../dialog';
 import { useLanguage } from 'src/views/hooks';
 import { WindTurbineModel } from '../../../models/WindTurbineModel';
 
-const WindTurbineTowerRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const WindTurbineRelativeAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -28,7 +29,7 @@ const WindTurbineTowerRadiusInput = ({ setDialogVisible }: { setDialogVisible: (
   const revertApply = useStore(Selector.revertApply);
 
   const windTurbine = useSelectedElement(ObjectType.WindTurbine) as WindTurbineModel | undefined;
-  const [inputValue, setInputValue] = useState(windTurbine?.towerRadius ?? 0);
+  const [inputValue, setInputValue] = useState(windTurbine?.relativeAngle ?? 0);
 
   const lang = useLanguage();
 
@@ -36,14 +37,14 @@ const WindTurbineTowerRadiusInput = ({ setDialogVisible }: { setDialogVisible: (
     setActionScope(e.target.value);
   };
 
-  const needChange = (towerRadius: number) => {
+  const needChange = (relativeAngle: number) => {
     if (!windTurbine) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.WindTurbine && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
             const wt = e as WindTurbineModel;
-            if (Math.abs(wt.towerRadius - towerRadius) > ZERO_TOLERANCE) {
+            if (Math.abs((wt.relativeAngle ?? 0) - relativeAngle) > ZERO_TOLERANCE) {
               return true;
             }
           }
@@ -53,7 +54,7 @@ const WindTurbineTowerRadiusInput = ({ setDialogVisible }: { setDialogVisible: (
         for (const e of elements) {
           if (e.type === ObjectType.WindTurbine && e.foundationId === windTurbine?.foundationId && !e.locked) {
             const wt = e as WindTurbineModel;
-            if (Math.abs(wt.towerRadius - towerRadius) > ZERO_TOLERANCE) {
+            if (Math.abs((wt.relativeAngle ?? 0) - relativeAngle) > ZERO_TOLERANCE) {
               return true;
             }
           }
@@ -63,49 +64,49 @@ const WindTurbineTowerRadiusInput = ({ setDialogVisible }: { setDialogVisible: (
         for (const e of elements) {
           if (e.type === ObjectType.WindTurbine && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
             const wt = e as WindTurbineModel;
-            if (Math.abs(wt.towerRadius - towerRadius) > ZERO_TOLERANCE) {
+            if (Math.abs((wt.relativeAngle ?? 0) - relativeAngle) > ZERO_TOLERANCE) {
               return true;
             }
           }
         }
         break;
       default:
-        if (Math.abs(windTurbine?.towerRadius - towerRadius) > ZERO_TOLERANCE) {
+        if (Math.abs((windTurbine?.relativeAngle ?? 0) - relativeAngle) > ZERO_TOLERANCE) {
           return true;
         }
     }
     return false;
   };
 
-  const updateTowerRadiusById = (id: string, r: number) => {
+  const updateRelativeAngleById = (id: string, ra: number) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.WindTurbine && e.id === id && !e.locked) {
           const wt = e as WindTurbineModel;
-          wt.towerRadius = r;
+          wt.relativeAngle = ra;
           break;
         }
       }
     });
   };
 
-  const updateTowerRadiusAboveFoundation = (foundationId: string, r: number) => {
+  const updateRelativeAngleAboveFoundation = (foundationId: string, ra: number) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.WindTurbine && e.foundationId === foundationId && !e.locked) {
           const wt = e as WindTurbineModel;
-          wt.towerRadius = r;
+          wt.relativeAngle = ra;
         }
       }
     });
   };
 
-  const updateTowerRadiusForAll = (r: number) => {
+  const updateRelativeAngleForAll = (ra: number) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.WindTurbine && !e.locked) {
           const wt = e as WindTurbineModel;
-          wt.towerRadius = r;
+          wt.relativeAngle = ra;
         }
       }
     });
@@ -116,31 +117,31 @@ const WindTurbineTowerRadiusInput = ({ setDialogVisible }: { setDialogVisible: (
       for (const e of state.elements) {
         if (e.type === ObjectType.WindTurbine && !e.locked && map.has(e.id)) {
           const wt = e as WindTurbineModel;
-          wt.towerRadius = value;
+          wt.relativeAngle = value;
         }
       }
     });
   };
 
-  const setTowerRadius = (value: number) => {
+  const setRelativeAngle = (value: number) => {
     if (!windTurbine) return;
     if (!needChange(value)) return;
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType: {
-        const oldRadiiSelected = new Map<string, number>();
+        const oldValuesSelected = new Map<string, number>();
         for (const elem of elements) {
           if (elem.type === ObjectType.WindTurbine && useStore.getState().selectedElementIdSet.has(elem.id)) {
-            oldRadiiSelected.set(elem.id, (elem as WindTurbineModel).towerRadius);
+            oldValuesSelected.set(elem.id, (elem as WindTurbineModel).relativeAngle);
           }
         }
         const undoableChangeSelected = {
-          name: 'Set Tower Radius for Selected Wind Turbines',
+          name: 'Set Blade Radius for Selected Wind Turbines',
           timestamp: Date.now(),
-          oldValues: oldRadiiSelected,
+          oldValues: oldValuesSelected,
           newValue: value,
           undo: () => {
-            for (const [id, th] of undoableChangeSelected.oldValues.entries()) {
-              updateTowerRadiusById(id, th as number);
+            for (const [id, br] of undoableChangeSelected.oldValues.entries()) {
+              updateRelativeAngleById(id, br as number);
             }
           },
           redo: () => {
@@ -151,58 +152,58 @@ const WindTurbineTowerRadiusInput = ({ setDialogVisible }: { setDialogVisible: (
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeSelected);
-        updateInMap(oldRadiiSelected, value);
+        updateInMap(oldValuesSelected, value);
         setApplyCount(applyCount + 1);
         break;
       }
       case Scope.AllObjectsOfThisType: {
-        const oldRadiiAll = new Map<string, number>();
+        const oldValuesAll = new Map<string, number>();
         for (const elem of elements) {
           if (elem.type === ObjectType.WindTurbine) {
-            oldRadiiAll.set(elem.id, (elem as WindTurbineModel).towerRadius);
+            oldValuesAll.set(elem.id, (elem as WindTurbineModel).relativeAngle);
           }
         }
         const undoableChangeAll = {
-          name: 'Set Tower Radius for All Wind Turbines',
+          name: 'Set Blade Radius for All Wind Turbines',
           timestamp: Date.now(),
-          oldValues: oldRadiiAll,
+          oldValues: oldValuesAll,
           newValue: value,
           undo: () => {
-            for (const [id, th] of undoableChangeAll.oldValues.entries()) {
-              updateTowerRadiusById(id, th as number);
+            for (const [id, br] of undoableChangeAll.oldValues.entries()) {
+              updateRelativeAngleById(id, br as number);
             }
           },
           redo: () => {
-            updateTowerRadiusForAll(undoableChangeAll.newValue as number);
+            updateRelativeAngleForAll(undoableChangeAll.newValue as number);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateTowerRadiusForAll(value);
+        updateRelativeAngleForAll(value);
         setApplyCount(applyCount + 1);
         break;
       }
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (windTurbine.foundationId) {
-          const oldRadiiAboveFoundation = new Map<string, number>();
+          const oldValuesAboveFoundation = new Map<string, number>();
           for (const elem of elements) {
             if (elem.type === ObjectType.WindTurbine && elem.foundationId === windTurbine.foundationId) {
-              oldRadiiAboveFoundation.set(elem.id, (elem as WindTurbineModel).towerRadius);
+              oldValuesAboveFoundation.set(elem.id, (elem as WindTurbineModel).relativeAngle);
             }
           }
           const undoableChangeAboveFoundation = {
-            name: 'Set Tower Radius for All Wind Turbines Above Foundation',
+            name: 'Set Blade Radius for All Wind Turbines Above Foundation',
             timestamp: Date.now(),
-            oldValues: oldRadiiAboveFoundation,
+            oldValues: oldValuesAboveFoundation,
             newValue: value,
             groupId: windTurbine.foundationId,
             undo: () => {
-              for (const [id, th] of undoableChangeAboveFoundation.oldValues.entries()) {
-                updateTowerRadiusById(id, th as number);
+              for (const [id, br] of undoableChangeAboveFoundation.oldValues.entries()) {
+                updateRelativeAngleById(id, br as number);
               }
             },
             redo: () => {
               if (undoableChangeAboveFoundation.groupId) {
-                updateTowerRadiusAboveFoundation(
+                updateRelativeAngleAboveFoundation(
                   undoableChangeAboveFoundation.groupId,
                   undoableChangeAboveFoundation.newValue as number,
                 );
@@ -210,34 +211,34 @@ const WindTurbineTowerRadiusInput = ({ setDialogVisible }: { setDialogVisible: (
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAboveFoundation);
-          updateTowerRadiusAboveFoundation(windTurbine.foundationId, value);
+          updateRelativeAngleAboveFoundation(windTurbine.foundationId, value);
           setApplyCount(applyCount + 1);
         }
         break;
       default:
         // selected element may be outdated, make sure that we get the latest
         const wt = getElementById(windTurbine.id) as WindTurbineModel;
-        const oldRadius = wt ? wt.towerRadius : windTurbine.towerRadius;
+        const oldValue = wt ? wt.relativeAngle : windTurbine.relativeAngle;
         const undoableChange = {
-          name: 'Set Wind Turbine Tower Radius',
+          name: 'Set Wind Turbine Blade Radius',
           timestamp: Date.now(),
-          oldValue: oldRadius,
+          oldValue: oldValue,
           newValue: value,
           changedElementId: windTurbine.id,
           changedElementType: windTurbine.type,
           undo: () => {
-            updateTowerRadiusById(undoableChange.changedElementId, undoableChange.oldValue as number);
+            updateRelativeAngleById(undoableChange.changedElementId, undoableChange.oldValue as number);
           },
           redo: () => {
-            updateTowerRadiusById(undoableChange.changedElementId, undoableChange.newValue as number);
+            updateRelativeAngleById(undoableChange.changedElementId, undoableChange.newValue as number);
           },
         } as UndoableChange;
         addUndoable(undoableChange);
-        updateTowerRadiusById(windTurbine.id, value);
+        updateRelativeAngleById(windTurbine.id, value);
         setApplyCount(applyCount + 1);
     }
     setCommonStore((state) => {
-      state.actionState.windTurbineTowerRadius = value;
+      state.actionState.windTurbineRelativeAngle = value;
     });
   };
 
@@ -251,19 +252,19 @@ const WindTurbineTowerRadiusInput = ({ setDialogVisible }: { setDialogVisible: (
   };
 
   const ok = () => {
-    setTowerRadius(inputValue);
+    setRelativeAngle(inputValue);
     setDialogVisible(false);
     setApplyCount(0);
   };
 
   const apply = () => {
-    setTowerRadius(inputValue);
+    setRelativeAngle(inputValue);
   };
 
   return (
     <Dialog
       width={550}
-      title={i18n.t('windTurbineMenu.TowerRadius', lang)}
+      title={i18n.t('windTurbineMenu.RelativeAngle', lang)}
       onApply={apply}
       onClose={close}
       onClickCancel={cancel}
@@ -272,24 +273,25 @@ const WindTurbineTowerRadiusInput = ({ setDialogVisible }: { setDialogVisible: (
       <Row gutter={6}>
         <Col className="gutter-row" span={6}>
           <InputNumber
-            min={0.1}
-            max={2}
+            min={-180}
+            max={180}
             style={{ width: 120 }}
-            step={0.01}
             precision={2}
-            // formatter={(value) => `${value} ` + i18n.t('word.MeterAbbreviation', lang)}
-            // parser={value => Number(value?.replace(i18n.t('word.MeterAbbreviation', lang), ''))}
-            value={inputValue}
+            step={1}
+            // make sure that we round up the number as toDegrees may cause things like .999999999
+            value={parseFloat(Util.toDegrees(inputValue).toFixed(2))}
+            formatter={(value) => `${value}°`}
             onChange={(value) => {
-              if (value) setInputValue(value);
+              if (value !== undefined) setInputValue(Util.toRadians(value));
             }}
           />
           <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-            {i18n.t('word.Range', lang)}: [0.1, 2] {i18n.t('word.MeterAbbreviation', lang)}
+            {i18n.t('word.Range', lang)}: [-180°, 180°]
+            <br />
+            {i18n.t('message.SouthFacingIsZero', lang)}
+            <br />
+            {i18n.t('message.CounterclockwiseAzimuthIsPositive', lang)}
           </div>
-        </Col>
-        <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
-          {i18n.t('word.MeterAbbreviation', lang)}
         </Col>
         <Col
           className="gutter-row"
@@ -314,4 +316,4 @@ const WindTurbineTowerRadiusInput = ({ setDialogVisible }: { setDialogVisible: (
   );
 };
 
-export default WindTurbineTowerRadiusInput;
+export default WindTurbineRelativeAngleInput;

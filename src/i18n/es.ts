@@ -230,6 +230,8 @@ export const i18n_es = {
       ThisCannotBeUndone: 'Esto no se puede deshacer',
       AzimuthOfNorthIsZero: 'Azimut del norte es 0°',
       CounterclockwiseAzimuthIsPositive: 'Hacia la izquierda es positivo',
+      SouthFacingIsZero: 'South-facing is 0°',
+      ClockwiseRotationIsPositive: 'Clockwise is positive',
       MoveCancelledBecauseOfOverlap: 'Move cancelled because of overlap.',
       MoveOutsideBoundaryCancelled: 'Move outside the boundary cancelled.',
       RotationCancelledBecauseOfOverlap: 'Rotation cancelled because of overlap.',
@@ -1088,6 +1090,7 @@ export const i18n_es = {
     },
 
     windTurbineMenu: {
+      RelativeAngle: 'Relative Angle',
       RotorBladeRadius: 'Rotor Blade Radius',
       Tower: 'Tower',
       TowerHeight: 'Tower Height',

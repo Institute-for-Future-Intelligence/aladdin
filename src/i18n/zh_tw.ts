@@ -230,6 +230,8 @@ export const i18n_zh_tw = {
       ThisCannotBeUndone: '這個操作一旦執行就不能撤銷。',
       AzimuthOfNorthIsZero: '正北的方位角為零度',
       CounterclockwiseAzimuthIsPositive: '逆時針為正',
+      SouthFacingIsZero: '朝南為零度',
+      ClockwiseRotationIsPositive: '順時針為正',
       MoveCancelledBecauseOfOverlap: '位置重疊，移動取消。',
       MoveOutsideBoundaryCancelled: '位置出界，移動取消。',
       RotationCancelledBecauseOfOverlap: '位置重疊，旋轉取消。',
@@ -1066,6 +1068,7 @@ export const i18n_zh_tw = {
     },
 
     windTurbineMenu: {
+      RelativeAngle: '相對角度',
       RotorBladeRadius: '轉子葉片半徑',
       Tower: '塔架',
       TowerHeight: '塔架高度',

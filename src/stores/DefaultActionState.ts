@@ -117,6 +117,7 @@ export class DefaultActionState implements ActionState {
   windowEmpty: boolean;
   windowInterior: boolean;
 
+  windTurbineRelativeAngle: number;
   windTurbineTowerHeight: number;
   windTurbineTowerRadius: number;
   windTurbineBladeRadius: number;
@@ -257,6 +258,7 @@ export class DefaultActionState implements ActionState {
     this.windowEmpty = false;
     this.windowInterior = false;
 
+    this.windTurbineRelativeAngle = 0;
     this.windTurbineTowerHeight = 15;
     this.windTurbineTowerRadius = 1;
     this.windTurbineBladeRadius = 10;
