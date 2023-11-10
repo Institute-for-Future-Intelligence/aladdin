@@ -312,13 +312,14 @@ const WindTurbine = ({
         <textSprite
           userData={{ unintersectable: true }}
           name={'Label'}
+          fontFace={'Roboto'}
           text={labelText}
-          fontSize={20}
-          fontFace={'Times Roman'}
-          textHeight={0.2}
+          color={turbine?.labelColor ?? 'white'}
+          fontSize={turbine?.labelFontSize ?? 20}
+          textHeight={turbine?.labelSize ?? 0.2}
           castShadow={false}
           receiveShadow={false}
-          position={[0, 0, 0.2]}
+          position={[0, 0, 0.5 + towerHeight + hubRadius]}
         />
       )}
     </group>
