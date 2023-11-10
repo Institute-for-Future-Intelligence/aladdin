@@ -109,7 +109,7 @@ export interface CommonStoreState {
   set: (fn: (state: CommonStoreState) => void) => void;
 
   // only the following properties are persisted (see the whitelist at the end)
-  version: string;
+  version: string | undefined;
   world: WorldModel;
   elements: ElementModel[];
   viewState: ViewState;
@@ -550,7 +550,7 @@ export const useStore = create<CommonStoreState>()(
               console.log(e);
             }
           },
-          version: VERSION,
+          version: undefined,
           world: defaultWorldModel,
           elements: defaultElements,
           user: {} as User,
@@ -630,7 +630,7 @@ export const useStore = create<CommonStoreState>()(
 
           importContent(content, title) {
             immerSet((state: CommonStoreState) => {
-              state.version = content.version ?? VERSION;
+              state.version = content.version;
               state.world = content.world;
               state.viewState = content.view;
               state.graphState = content.graphState ?? new DefaultGraphState();
