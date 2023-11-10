@@ -83,6 +83,22 @@ const WindTurbine = ({
   const bladeTipWidth = 0.2;
   const hubRadius = 0.75;
   const hubLength = 1;
+  const nacelleRadiusLg = hubRadius;
+  const nacelleRadiusSm = 0.4;
+  const nacelleLength = hubLength * 2.5;
+
+  const bladeShape = useMemo(() => {
+    const tipHalfWidth = bladeTipWidth * 0.5;
+    const bladeConnectorRadius = Math.min(hubRadius * 0.5, hubRadius * 0.25 + bladeRadius * 0.01);
+    const s = new Shape();
+    s.moveTo(-bladeConnectorRadius, 0);
+    s.lineTo(-hubRadius * bladeRadius * 0.1, hubRadius + bladeRadius * 0.2);
+    s.lineTo(-tipHalfWidth, bladeRadius);
+    s.lineTo(tipHalfWidth, bladeRadius);
+    s.lineTo(bladeConnectorRadius, 0);
+    s.closePath();
+    return s;
+  }, [bladeRadius]);
 
   useEffect(() => {
     const handlePointerUp = () => {
@@ -134,21 +150,6 @@ const WindTurbine = ({
 
   const moveHandleSize = MOVE_HANDLE_RADIUS * 4;
 
-  const bladeShape = useMemo(() => {
-    const x = 0;
-    const y = bladeRadius;
-    const tipHalfWidth = bladeTipWidth / 2;
-    const s = new Shape();
-    s.moveTo(-0.2, 0);
-    s.lineTo(x - 0.75, 1.5);
-    s.lineTo(x - tipHalfWidth, y);
-    s.lineTo(x + tipHalfWidth, y);
-    s.lineTo(x + 0.35, 1);
-    s.lineTo(0.2, 0);
-    s.closePath();
-    return s;
-  }, [bladeRadius]);
-
   return (
     <group name={'Wind Turbine Group ' + id} rotation={euler} position={[cx, cy, cz]}>
       <group>
@@ -185,11 +186,12 @@ const WindTurbine = ({
         castShadow={false}
         receiveShadow={false}
         args={[towerRadius, towerRadius, towerHeight, 4, 1]}
-        position={new Vector3(0, 0, towerHeight / 2)}
+        position={new Vector3(0, 0, towerHeight * 0.5)}
         rotation={[HALF_PI, 0, 0]}
         onPointerDown={(e) => {
           if (e.button === 2) return; // ignore right-click
           selectMe(id, e, ActionType.Select);
+          useRefStore.getState().setEnableOrbitController(false);
         }}
         onContextMenu={(e) => {
           selectMe(id, e, ActionType.ContextMenu);
@@ -226,7 +228,7 @@ const WindTurbine = ({
         castShadow={false}
         receiveShadow={false}
         args={[hubRadius, hubLength, 8, 1]}
-        position={new Vector3(0, -1.5, towerHeight)}
+        position={new Vector3(0, -hubLength - 0.5, towerHeight)}
         rotation={[Math.PI, 0, 0]}
       >
         <meshStandardMaterial attach="material" color={color} />
@@ -238,7 +240,7 @@ const WindTurbine = ({
         name={'Cylinder'}
         castShadow={false}
         receiveShadow={false}
-        args={[0.4, 0.75, 2.5, 8, 1]}
+        args={[nacelleRadiusSm, nacelleRadiusLg, nacelleLength, 8, 1]}
         position={new Vector3(0, 0.3, towerHeight)}
         rotation={[0, 0, 0]}
       >
