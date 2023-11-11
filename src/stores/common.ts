@@ -3134,6 +3134,7 @@ export const useStore = create<CommonStoreState>(
                     break;
                   case ObjectType.WindTurbine:
                     counter.windTurbineCount++;
+                    if (e.locked) counter.lockedWindTurbineCount++;
                     break;
                 }
               }

@@ -508,6 +508,7 @@ export const i18n_tr = {
       windPowerSubMenu: 'Wind Power',
       windPowerTutorials: {
         WindTurbines: 'Wind Turbines',
+        OffshoreWindFarm: 'Offshore Wind Farm',
       },
 
       generativeDesignSubMenu: 'Generative Design',
@@ -684,6 +685,7 @@ export const i18n_tr = {
       RemoveAllUnlockedParabolicDishes: 'Tüm Kilitlenmemiş Parabolik Çanakları Kaldır',
       RemoveAllUnlockedFresnelReflectors: 'Tüm Kilitlenmemiş Fresnel Reflektörleri Kaldır',
       RemoveAllUnlockedHeliostats: 'Tüm Kilitlenmemiş Heliostatları Kaldır',
+      RemoveAllUnlockedWindTurbines: 'Remove All Unlocked Wind Turbines',
       RemoveAllUnlockedSensors: 'Tüm Kilitlenmemiş Sensörleri Kaldır',
       RemoveAllUnlockedLights: 'Remove All Unlocked Lights',
       RemoveAllUnlockedWalls: 'Tüm Kilitlenmemiş Duvarları Kaldır',
@@ -720,6 +722,9 @@ export const i18n_tr = {
       Heliostats: 'Heliostatlar',
       DoYouReallyWantToRemoveAllHeliostatsOnFoundation:
         ' Seçili temel üzerinde kilitli olmayan tüm heliostatları kaldırmak istiyor musunuz?',
+      WindTurbines: 'Wind Turbines',
+      DoYouReallyWantToRemoveAllWindTurbinesOnFoundation:
+        'Do you really want to remove all the wind turbines on this foundation that are not locked',
       Sensors: 'Sensörler',
       DoYouReallyWantToRemoveAllSensorsOnFoundation:
         ' Seçili temel üzerinde kilitli olmayan tüm sensörleri kaldırmak istiyor musunuz?',

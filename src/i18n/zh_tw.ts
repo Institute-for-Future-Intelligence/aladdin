@@ -505,6 +505,7 @@ export const i18n_zh_tw = {
       windPowerSubMenu: '風力發電',
       windPowerTutorials: {
         WindTurbines: '風力渦輪機',
+        OffshoreWindFarm: '離岸風電場',
       },
 
       generativeDesignSubMenu: '生成式設計',
@@ -682,6 +683,7 @@ export const i18n_zh_tw = {
       RemoveAllUnlockedParabolicDishes: '刪除此地基上所有非固定的拋物線碟',
       RemoveAllUnlockedFresnelReflectors: '刪除此地基上所有非固定的菲涅耳反射鏡',
       RemoveAllUnlockedHeliostats: '刪除此地基上所有非固定的定日鏡',
+      RemoveAllUnlockedWindTurbines: '刪除此地基上所有非固定的風力渦輪機',
       RemoveAllUnlockedSensors: '刪除此地基上所有非固定的傳感器',
       RemoveAllUnlockedLights: '刪除此地基上所有非固定的電燈',
       RemoveAllUnlockedWalls: '刪除此地基上所有非固定的牆',
@@ -713,6 +715,8 @@ export const i18n_zh_tw = {
       DoYouReallyWantToRemoveAllFresnelReflectorsOnFoundation: '你確定刪除此地基上所有非固定的菲涅耳反射鏡嗎',
       Heliostats: '定日鏡',
       DoYouReallyWantToRemoveAllHeliostatsOnFoundation: '你確定刪除此地基上所有非固定的定日鏡嗎',
+      WindTurbines: '風力渦輪機',
+      DoYouReallyWantToRemoveAllWindTurbinesOnFoundation: '你確定刪除此地基上所有非固定的風力渦輪機嗎',
       Sensors: '傳感器',
       DoYouReallyWantToRemoveAllSensorsOnFoundation: '你確定刪除此地基上所有非固定的傳感器嗎',
       Lights: '電燈',

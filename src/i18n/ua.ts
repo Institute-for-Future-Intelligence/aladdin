@@ -511,6 +511,7 @@ export const i18n_ua = {
       windPowerSubMenu: 'Wind Power',
       windPowerTutorials: {
         WindTurbines: 'Wind Turbines',
+        OffshoreWindFarm: 'Offshore Wind Farm',
       },
 
       generativeDesignSubMenu: 'Generative Design',
@@ -686,6 +687,7 @@ export const i18n_ua = {
       RemoveAllUnlockedParabolicDishes: 'Видалити всі незаблоковані параболічні антени',
       RemoveAllUnlockedFresnelReflectors: 'Видалити всі незаблоковані відбивачі Френеля',
       RemoveAllUnlockedHeliostats: 'Видалити всі незаблоковані геліостати',
+      RemoveAllUnlockedWindTurbines: 'Remove All Unlocked Wind Turbines',
       RemoveAllUnlockedSensors: 'Видалити всі незаблоковані датчики',
       RemoveAllUnlockedLights: 'Видалити всі незаблоковані освітлювальні прилади',
       RemoveAllUnlockedWalls: 'Видалити всі незаблоковані стіни',
@@ -722,6 +724,9 @@ export const i18n_ua = {
       Heliostats: 'Геліостати',
       DoYouReallyWantToRemoveAllHeliostatsOnFoundation:
         'Ви дійсно бажаєте видалити всі геліостати на цьому фундаменті, які не є заблокованими',
+      WindTurbines: 'Wind Turbines',
+      DoYouReallyWantToRemoveAllWindTurbinesOnFoundation:
+        'Do you really want to remove all the wind turbines on this foundation that are not locked',
       Sensors: 'Датчики',
       DoYouReallyWantToRemoveAllSensorsOnFoundation:
         'Ви дійсно бажаєте видалити всі датчики на цьому фундаменті, які не є заблокованими',

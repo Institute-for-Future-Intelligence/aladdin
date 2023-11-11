@@ -508,6 +508,7 @@ export const i18n_es = {
       windPowerSubMenu: 'Wind Power',
       windPowerTutorials: {
         WindTurbines: 'Wind Turbines',
+        OffshoreWindFarm: 'Offshore Wind Farm',
       },
 
       generativeDesignSubMenu: 'Generative Design',
@@ -684,6 +685,7 @@ export const i18n_es = {
       RemoveAllUnlockedParabolicDishes: 'Remove All Unlocked Parabolic Dishes',
       RemoveAllUnlockedFresnelReflectors: 'Remove All Unlocked Fresnel Reflectors',
       RemoveAllUnlockedHeliostats: 'Remove All Unlocked Heliostats',
+      RemoveAllUnlockedWindTurbines: 'Remove All Unlocked Wind Turbines',
       RemoveAllUnlockedSensors: 'Eliminar todos los sensores',
       RemoveAllUnlockedLights: 'Remove All Unlocked Lights',
       RemoveAllUnlockedWalls: 'Eliminar todas las paredes',
@@ -720,6 +722,9 @@ export const i18n_es = {
       Heliostats: 'Heliostats',
       DoYouReallyWantToRemoveAllHeliostatsOnFoundation:
         'Do you really want to remove all the heliostats on this foundation that are not locked',
+      WindTurbines: 'Wind Turbines',
+      DoYouReallyWantToRemoveAllWindTurbinesOnFoundation:
+        'Do you really want to remove all the wind turbines on this foundation that are not locked',
       Sensors: 'Sensores',
       DoYouReallyWantToRemoveAllSensorsOnFoundation:
         'Estás seguro que quieres eliminar todos los sensores de esta base',

@@ -2247,6 +2247,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
           <Menu.Item key="wind_turbines" onClick={loadFile}>
             {i18n.t('menu.windPowerTutorials.WindTurbines', lang)}
           </Menu.Item>
+          <Menu.Item key="offshore_wind_farm" onClick={loadFile}>
+            {i18n.t('menu.windPowerTutorials.OffshoreWindFarm', lang)}
+          </Menu.Item>
         </SubMenu>
         {/* generative design */}
         <SubMenu key={'generative-design'} title={i18n.t('menu.generativeDesignSubMenu', lang)}>
