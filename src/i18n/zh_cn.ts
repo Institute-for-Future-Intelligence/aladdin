@@ -502,6 +502,11 @@ export const i18n_zh_cn = {
         SolarUpdraftTower: '太阳能上升气流塔',
       },
 
+      windPowerSubMenu: '风力发电',
+      windPowerTutorials: {
+        WindTurbines: '风力涡轮机',
+      },
+
       generativeDesignSubMenu: '生成式设计',
       generativeDesignTutorials: {
         MonofacialSolarPanelArrayTiltAngle: '单面光伏板阵列的倾斜角',

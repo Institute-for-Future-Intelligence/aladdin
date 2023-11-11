@@ -505,6 +505,11 @@ export const i18n_en = {
         SolarUpdraftTower: 'Solar Updraft Tower',
       },
 
+      windPowerSubMenu: 'Wind Power',
+      windPowerTutorials: {
+        WindTurbines: 'Wind Turbines',
+      },
+
       generativeDesignSubMenu: 'Generative Design',
       generativeDesignTutorials: {
         MonofacialSolarPanelArrayTiltAngle: 'The Tilt Angle of a Monofacial Solar Panel Array',

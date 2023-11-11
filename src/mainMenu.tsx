@@ -2242,6 +2242,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
             {i18n.t('menu.otherTypesOfSolarPowerTutorials.SolarUpdraftTower', lang)}
           </Menu.Item>
         </SubMenu>
+        {/* wind power */}
+        <SubMenu key={'wind-power'} title={i18n.t('menu.windPowerSubMenu', lang)}>
+          <Menu.Item key="wind_turbines" onClick={loadFile}>
+            {i18n.t('menu.windPowerTutorials.WindTurbines', lang)}
+          </Menu.Item>
+        </SubMenu>
         {/* generative design */}
         <SubMenu key={'generative-design'} title={i18n.t('menu.generativeDesignSubMenu', lang)}>
           <Menu.Item key="Tilt Angle" onClick={(e) => loadProject(e.key, 48)}>
