@@ -21,11 +21,13 @@ const WindTurbine = ({
   cx,
   cy,
   cz,
+  speed = 10,
   towerHeight,
   towerRadius,
   bladeRadius,
   rotation = [0, 0, 0],
   relativeAngle = 0,
+  initialRotorAngle = 0,
   color = 'white',
   lineColor = 'black',
   lineWidth = 0.5,
@@ -39,6 +41,7 @@ const WindTurbine = ({
   const selectMe = useStore(Selector.selectMe);
   const selected = useSelected(id);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
+  const dateString = useStore(Selector.world.date);
 
   const {
     gl: { domElement },
@@ -100,6 +103,13 @@ const WindTurbine = ({
     s.closePath();
     return s;
   }, [bladeRadius]);
+
+  const timeAngle = useMemo(() => {
+    // A wind turbine rotates 10-20 revolutions per minute, which is too fast to show in a 24-hour animation
+    // with a step length of 15 minutes or so. So we have to slow it down by a divider (144).
+    const now = new Date(dateString);
+    return initialRotorAngle + (speed * (now.getHours() * 60 + now.getMinutes()) * Math.PI) / 72;
+  }, [dateString, speed, initialRotorAngle]);
 
   useEffect(() => {
     const handlePointerUp = () => {
@@ -253,7 +263,7 @@ const WindTurbine = ({
         receiveShadow={shadowEnabled}
         castShadow={shadowEnabled}
         position={new Vector3(0, -1, towerHeight)}
-        rotation={[HALF_PI, 0, 0]}
+        rotation={[HALF_PI, 0, timeAngle]}
       >
         <shapeGeometry attach="geometry" args={[bladeShape]} />
         <meshStandardMaterial attach="material" color={color} side={FrontSide} />
@@ -262,7 +272,7 @@ const WindTurbine = ({
         receiveShadow={shadowEnabled}
         castShadow={shadowEnabled}
         position={new Vector3(0, -1.05, towerHeight)}
-        rotation={[HALF_PI, 0, 0]}
+        rotation={[HALF_PI, 0, timeAngle]}
       >
         <shapeGeometry attach="geometry" args={[bladeShape]} />
         <meshStandardMaterial attach="material" color={color} side={BackSide} />
@@ -273,7 +283,7 @@ const WindTurbine = ({
         receiveShadow={shadowEnabled}
         castShadow={shadowEnabled}
         position={new Vector3(0, -1, towerHeight)}
-        rotation={[HALF_PI, 0, (Math.PI * 2) / 3]}
+        rotation={[HALF_PI, 0, timeAngle + (Math.PI * 2) / 3]}
       >
         <shapeGeometry attach="geometry" args={[bladeShape]} />
         <meshStandardMaterial attach="material" color={color} side={FrontSide} />
@@ -282,7 +292,7 @@ const WindTurbine = ({
         receiveShadow={shadowEnabled}
         castShadow={shadowEnabled}
         position={new Vector3(0, -1.05, towerHeight)}
-        rotation={[HALF_PI, 0, (Math.PI * 2) / 3]}
+        rotation={[HALF_PI, 0, timeAngle + (Math.PI * 2) / 3]}
       >
         <shapeGeometry attach="geometry" args={[bladeShape]} />
         <meshStandardMaterial attach="material" color={color} side={BackSide} />
@@ -293,7 +303,7 @@ const WindTurbine = ({
         receiveShadow={shadowEnabled}
         castShadow={shadowEnabled}
         position={new Vector3(0, -1, towerHeight)}
-        rotation={[HALF_PI, 0, (Math.PI * 4) / 3]}
+        rotation={[HALF_PI, 0, timeAngle + (Math.PI * 4) / 3]}
       >
         <shapeGeometry attach="geometry" args={[bladeShape]} />
         <meshStandardMaterial attach="material" color={color} side={FrontSide} />
@@ -302,7 +312,7 @@ const WindTurbine = ({
         receiveShadow={shadowEnabled}
         castShadow={shadowEnabled}
         position={new Vector3(0, -1.05, towerHeight)}
-        rotation={[HALF_PI, 0, (Math.PI * 4) / 3]}
+        rotation={[HALF_PI, 0, timeAngle + (Math.PI * 4) / 3]}
       >
         <shapeGeometry attach="geometry" args={[bladeShape]} />
         <meshStandardMaterial attach="material" color={color} side={BackSide} />
