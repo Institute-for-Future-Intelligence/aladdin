@@ -636,6 +636,7 @@ export const useStore = create<CommonStoreState>(
               state.graphState = content.graphState ?? new DefaultGraphState();
               state.elements = content.elements;
               state.notes = content.notes ?? [];
+              state.animate24Hours = !!content.animate24Hours;
               state.modelType = content.modelType ?? ModelType.UNKNOWN;
               state.modelAuthor = content.modelAuthor ?? null;
               state.modelLabel = content.modelLabel ?? null;
@@ -677,6 +678,7 @@ export const useStore = create<CommonStoreState>(
             usePrimitiveStore.setState((state) => {
               state.changed = false;
               state.skipChange = true;
+              state.animateSun = false;
               state.showSolarRadiationHeatmap = false;
               state.showHeatFluxes = false;
               state.simulationInProgress = false;
@@ -706,6 +708,7 @@ export const useStore = create<CommonStoreState>(
               elements: elements,
               sceneRadius: state.sceneRadius,
               view: JSON.parse(JSON.stringify(state.viewState)),
+              animate24Hours: state.animate24Hours,
               graphState: JSON.parse(JSON.stringify(state.graphState)),
               evolutionMethod: state.evolutionMethod,
               solarPanelArrayLayoutParams: JSON.parse(JSON.stringify(state.solarPanelArrayLayoutParams)),
@@ -765,6 +768,7 @@ export const useStore = create<CommonStoreState>(
             usePrimitiveStore.setState((state) => {
               state.changed = false;
               state.skipChange = true;
+              state.animateSun = false;
               state.showSolarRadiationHeatmap = false;
               state.showHeatFluxes = false;
             });
