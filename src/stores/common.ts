@@ -3485,6 +3485,7 @@ export const useStore = create<CommonStoreState>(
                     case ObjectType.SolarPanel:
                     case ObjectType.Sensor:
                     case ObjectType.Light:
+                    case ObjectType.WindTurbine:
                     case ObjectType.ParabolicDish:
                     case ObjectType.Heliostat:
                     case ObjectType.FresnelReflector:
@@ -3543,9 +3544,14 @@ export const useStore = create<CommonStoreState>(
                             (newParent.type === ObjectType.Cuboid &&
                               Util.isIdentical(e.normal, UNIT_VECTOR_POS_Z_ARRAY))
                           ) {
-                            approved = Util.isSolarCollectorWithinHorizontalSurface(e as SolarCollector, newParent);
-                            if (!approved) {
-                              showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
+                            if (Util.isSolarCollector(e)) {
+                              approved = Util.isSolarCollectorWithinHorizontalSurface(e as SolarCollector, newParent);
+                              if (!approved) {
+                                showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
+                              }
+                            } else {
+                              // if it is a wind turbine, we don't check out-of-boundary issues
+                              approved = true;
                             }
                           } else {
                             // TODO: other surfaces
@@ -3985,6 +3991,7 @@ export const useStore = create<CommonStoreState>(
                       break;
                     case ObjectType.Sensor:
                     case ObjectType.Light:
+                    case ObjectType.WindTurbine:
                       if (e.parentId) {
                         const parent = state.getParent(e);
                         if (parent) {

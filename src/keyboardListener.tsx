@@ -240,8 +240,6 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
   const removeElementById = useStore(Selector.removeElementById);
   const pasteElements = useStore(Selector.pasteElementsByKey);
   const getParent = useStore(Selector.getParent);
-  const updateElementCxById = useStore(Selector.updateElementCxById);
-  const updateElementCyById = useStore(Selector.updateElementCyById);
   const updateWallLeftJointsById = useStore(Selector.updateWallLeftJointsById);
   const updateWallRightJointsById = useStore(Selector.updateWallRightJointsById);
   const setEnableFineGrid = useStore(Selector.setEnableFineGrid);
@@ -280,7 +278,7 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
     });
   };
 
-  const toggleNatigationView = () => {
+  const toggleNavigationView = () => {
     if (orthographic) return;
     const undoableCheck = {
       name: 'Set Navigation View',
@@ -877,7 +875,7 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
         break;
       case 'ctrl+u':
       case 'meta+u':
-        toggleNatigationView();
+        toggleNavigationView();
         break;
       case 'f4':
       case 'ctrl+m':

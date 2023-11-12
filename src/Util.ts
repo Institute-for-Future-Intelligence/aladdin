@@ -1060,6 +1060,7 @@ export class Util {
       objectType === ObjectType.ParabolicDish ||
       objectType === ObjectType.FresnelReflector ||
       objectType === ObjectType.Heliostat ||
+      objectType === ObjectType.WindTurbine ||
       objectType === ObjectType.WaterHeater ||
       objectType === ObjectType.Sensor ||
       objectType === ObjectType.Light ||

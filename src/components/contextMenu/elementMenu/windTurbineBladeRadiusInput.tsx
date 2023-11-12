@@ -86,6 +86,8 @@ const WindTurbineBladeRadiusInput = ({ setDialogVisible }: { setDialogVisible: (
         if (e.type === ObjectType.WindTurbine && e.id === id && !e.locked) {
           const wt = e as WindTurbineModel;
           wt.bladeRadius = br;
+          wt.lx = wt.ly = br * 2;
+          wt.lz = wt.towerHeight + br;
           break;
         }
       }
@@ -98,6 +100,8 @@ const WindTurbineBladeRadiusInput = ({ setDialogVisible }: { setDialogVisible: (
         if (e.type === ObjectType.WindTurbine && e.foundationId === foundationId && !e.locked) {
           const wt = e as WindTurbineModel;
           wt.bladeRadius = br;
+          wt.lx = wt.ly = br * 2;
+          wt.lz = wt.towerHeight + br;
         }
       }
     });
@@ -109,6 +113,8 @@ const WindTurbineBladeRadiusInput = ({ setDialogVisible }: { setDialogVisible: (
         if (e.type === ObjectType.WindTurbine && !e.locked) {
           const wt = e as WindTurbineModel;
           wt.bladeRadius = br;
+          wt.lx = wt.ly = br * 2;
+          wt.lz = wt.towerHeight + br;
         }
       }
     });
@@ -120,6 +126,8 @@ const WindTurbineBladeRadiusInput = ({ setDialogVisible }: { setDialogVisible: (
         if (e.type === ObjectType.WindTurbine && !e.locked && map.has(e.id)) {
           const wt = e as WindTurbineModel;
           wt.bladeRadius = value;
+          wt.lx = wt.ly = value * 2;
+          wt.lz = wt.towerHeight + value;
         }
       }
     });

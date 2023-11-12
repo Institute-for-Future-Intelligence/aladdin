@@ -427,6 +427,9 @@ export class ElementModelFactory {
       cx: x, // relative
       cy: y, // relative
       cz: z, // absolute
+      lx: 20,
+      ly: 20,
+      lz: 30,
       normal: [0, 1, 0],
       rotation: [0, 0, 0],
       parentId: parent.id,

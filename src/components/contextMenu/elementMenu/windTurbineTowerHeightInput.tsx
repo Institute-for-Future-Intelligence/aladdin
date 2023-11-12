@@ -86,6 +86,7 @@ const WindTurbineTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (
         if (e.type === ObjectType.WindTurbine && e.id === id && !e.locked) {
           const wt = e as WindTurbineModel;
           wt.towerHeight = h;
+          wt.lz = h + wt.bladeRadius;
           break;
         }
       }
@@ -98,6 +99,7 @@ const WindTurbineTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (
         if (e.type === ObjectType.WindTurbine && e.foundationId === foundationId && !e.locked) {
           const wt = e as WindTurbineModel;
           wt.towerHeight = h;
+          wt.lz = h + wt.bladeRadius;
         }
       }
     });
@@ -109,6 +111,7 @@ const WindTurbineTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (
         if (e.type === ObjectType.WindTurbine && !e.locked) {
           const wt = e as WindTurbineModel;
           wt.towerHeight = h;
+          wt.lz = h + wt.bladeRadius;
         }
       }
     });
@@ -120,6 +123,7 @@ const WindTurbineTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (
         if (e.type === ObjectType.WindTurbine && !e.locked && map.has(e.id)) {
           const wt = e as WindTurbineModel;
           wt.towerHeight = value;
+          wt.lz = value + wt.bladeRadius;
         }
       }
     });
