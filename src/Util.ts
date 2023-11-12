@@ -50,6 +50,7 @@ import { FoundationModel } from './models/FoundationModel';
 import { WindowModel, WindowType } from './models/WindowModel';
 import { DoorModel, DoorType } from './models/DoorModel';
 import { CUBOID_STACKABLE_CHILD, CUBOID_WRAPPER_NAME } from './views/cuboid';
+import { WindTurbineModel } from './models/WindTurbineModel';
 
 export class Util {
   // calculate the annual profit in 1,000 dollars
@@ -861,6 +862,11 @@ export class Util {
             return false;
           }
           break;
+        case ObjectType.WindTurbine:
+          if (!Util.isWindTurbineWithinHorizontalSurface(e as WindTurbineModel, parent)) {
+            return false;
+          }
+          break;
         // sensors can be placed on any surface, but we can only check horizontal surfaces now
         case ObjectType.Sensor:
           if (Util.isIdentical(e.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
@@ -926,6 +932,10 @@ export class Util {
     if (Math.abs(x) > dx || Math.abs(y) > dy) return false;
     // all in
     return true;
+  }
+
+  static isWindTurbineWithinHorizontalSurface(turbine: WindTurbineModel, parent: ElementModel): boolean {
+    return Math.abs(turbine.cx) <= 0.5 && Math.abs(turbine.cy) <= 0.5;
   }
 
   static isUnitVectorX(v: Vector3): boolean {

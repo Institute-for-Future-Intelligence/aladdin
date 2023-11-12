@@ -430,7 +430,7 @@ export class ElementModelFactory {
       lx: 20,
       ly: 20,
       lz: 30,
-      normal: [0, 1, 0],
+      normal: [0, 0, 1],
       rotation: [0, 0, 0],
       parentId: parent.id,
       foundationId: foundationId,
