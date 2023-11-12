@@ -3862,7 +3862,6 @@ export const useStore = create<CommonStoreState>(
                             if (!approved) {
                               const lang = { lng: state.language };
                               showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
-                            } else {
                             }
                             break;
                           } else if (parent.type === ObjectType.Roof) {
@@ -3958,11 +3957,11 @@ export const useStore = create<CommonStoreState>(
                                 }
                               }
                             } else {
-                              e.cx += e.lx / parent.lx;
+                              e.cx += (0.01 + e.lx) / parent.lx;
                             }
                           } else {
                             // a loner
-                            e.cx += e.lx / parent.lx;
+                            e.cx += (0.01 + e.lx) / parent.lx; // give a small offset to ensure no overlap
                           }
                           const lang = { lng: state.language };
                           if (!state.overlapWithSibling(e)) {

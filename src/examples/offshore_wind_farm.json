@@ -124,7 +124,7 @@
       "relativeRotationAngle": 1.5707963267948966,
       "relativeAngle": 0,
       "initialRotorAngle": 0.5235987755982988,
-      "ly": 30,
+      "ly": 1,
       "lx": 30,
       "lz": 35
     },
@@ -204,7 +204,7 @@
       "id": "wmRwaWRbnt4jyLACLBbnbR",
       "selected": false,
       "initialRotorAngle": 0.5759586531581288,
-      "ly": 30,
+      "ly": 1,
       "lx": 30,
       "lz": 35
     },
@@ -262,7 +262,7 @@
       "id": "8zpiTHWfmH9dxxMob7gGKw",
       "selected": false,
       "initialRotorAngle": 0.6981317007977318,
-      "ly": 30,
+      "ly": 1,
       "lx": 30,
       "lz": 35
     },
@@ -319,7 +319,7 @@
       "foundationId": "3PvdrySRRuRb4VWscpoan1",
       "id": "jh2VLP6aEsC9MjyvMzHmnh",
       "selected": false,
-      "ly": 30,
+      "ly": 1,
       "lx": 30,
       "lz": 35
     },
@@ -377,7 +377,7 @@
       "id": "73M62UHt2cc3ePWwwXFCtp",
       "selected": false,
       "initialRotorAngle": 1.9198621771937625,
-      "ly": 30,
+      "ly": 1,
       "lx": 30,
       "lz": 35
     },
@@ -435,7 +435,7 @@
       "id": "9phSpLbBjff3RP3Gd6q3wk",
       "selected": false,
       "initialRotorAngle": 3.735004599267865,
-      "ly": 30,
+      "ly": 1,
       "lx": 30,
       "lz": 35
     },
@@ -493,7 +493,7 @@
       "id": "n57NaRS2RhJe7aRryzjvz5",
       "selected": false,
       "initialRotorAngle": 2.1467549799530254,
-      "ly": 30,
+      "ly": 1,
       "lx": 30,
       "lz": 35
     },
@@ -551,7 +551,7 @@
       "id": "gzowsxQwP2TmUT7TdsAvgu",
       "selected": true,
       "initialRotorAngle": 0.7504915783575618,
-      "ly": 30,
+      "ly": 1,
       "lx": 30,
       "lz": 35
     },
@@ -609,7 +609,7 @@
       "id": "8FDU4ixVHqSmgDc6imfmtZ",
       "selected": false,
       "initialRotorAngle": 3.001966313430247,
-      "ly": 30,
+      "ly": 1,
       "lx": 30,
       "lz": 35
     }

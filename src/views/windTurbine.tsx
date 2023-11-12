@@ -3,13 +3,13 @@
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Cone, Cylinder, Sphere } from '@react-three/drei';
+import { Cone, Cylinder, Line, Sphere } from '@react-three/drei';
 import { BackSide, Euler, FrontSide, Mesh, Shape, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import { useRefStore } from 'src/stores/commonRef';
 import * as Selector from '../stores/selector';
 import { ThreeEvent, useThree } from '@react-three/fiber';
-import { HALF_PI, MOVE_HANDLE_RADIUS, UNIT_VECTOR_POS_Z } from '../constants';
+import { HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR, MOVE_HANDLE_RADIUS, UNIT_VECTOR_POS_Z } from '../constants';
 import { ActionType, MoveHandleType, ObjectType } from '../types';
 import { Util } from '../Util';
 import i18n from '../i18n/i18n';
@@ -21,6 +21,8 @@ const WindTurbine = ({
   cx,
   cy,
   cz,
+  lx,
+  lz,
   speed = 10,
   towerHeight,
   towerRadius,
@@ -317,6 +319,29 @@ const WindTurbine = ({
         <shapeGeometry attach="geometry" args={[bladeShape]} />
         <meshStandardMaterial attach="material" color={color} side={BackSide} />
       </mesh>
+
+      {/* highlight it when it is selected but locked */}
+      {selected && locked && (
+        <Line
+          name={'Selection highlight lines'}
+          userData={{ unintersectable: true }}
+          points={[
+            [-lx / 2, 0, 0],
+            [-lx / 2, lz, 0],
+            [-lx / 2, lz, 0],
+            [lx / 2, lz, 0],
+            [lx / 2, 0, 0],
+            [lx / 2, lz, 0],
+            [lx / 2, 0, 0],
+            [-lx / 2, 0, 0],
+          ]}
+          rotation={[HALF_PI, 0, 0]}
+          castShadow={false}
+          receiveShadow={false}
+          lineWidth={1}
+          color={LOCKED_ELEMENT_SELECTION_COLOR}
+        />
+      )}
 
       {/* draw label */}
       {(hovered || showLabel) && !selected && (
