@@ -77,7 +77,7 @@ import bipv_01 from './examples/bipv_01.json';
 import solar_canopy_over_garage from './examples/solar_canopy_over_garage.json';
 import solar_facade_tesla from './examples/solar_facade_tesla.json';
 import floatovoltaics from './examples/floatovoltaics.json';
-import agrivoltaics from './examples/agrivoltaics.json';
+import agriculture_solar_wind_colocation from './examples/agriculture_solar_wind_colocation.json';
 import inter_row_spacing from './examples/inter_row_spacing.json';
 import ps10_solar_power_tower from './examples/ps10_solar_power_tower.json';
 import nevada_solar_one_parabolic_troughs from './examples/nevada_solar_one_parabolic_troughs.json';
@@ -217,8 +217,8 @@ export const getExample = (name: string) => {
     case 'floatovoltaics':
       input = floatovoltaics;
       break;
-    case 'agrivoltaics':
-      input = agrivoltaics;
+    case 'agriculture_solar_wind_colocation':
+      input = agriculture_solar_wind_colocation;
       break;
     case 'effect_tilt_angle_solar_panel':
       input = effect_tilt_angle_solar_panel;

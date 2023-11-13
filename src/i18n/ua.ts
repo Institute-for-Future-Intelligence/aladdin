@@ -514,6 +514,11 @@ export const i18n_ua = {
         OffshoreWindFarm: 'Offshore Wind Farm',
       },
 
+      colocationSubMenu: 'Colocation',
+      colocationTutorials: {
+        AgricultureSolarWindColocation: 'Agriculture-Solar-Wind Colocation',
+      },
+
       generativeDesignSubMenu: 'Generative Design',
       generativeDesignTutorials: {
         MonofacialSolarPanelArrayTiltAngle: 'The Tilt Angle of a Monofacial Solar Panel Array',

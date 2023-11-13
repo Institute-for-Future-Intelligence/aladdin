@@ -2251,6 +2251,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
             {i18n.t('menu.windPowerTutorials.OffshoreWindFarm', lang)}
           </Menu.Item>
         </SubMenu>
+        {/* colocation */}
+        <SubMenu key={'colocation'} title={i18n.t('menu.colocationSubMenu', lang)}>
+          <Menu.Item key="agriculture_solar_wind_colocation" onClick={loadFile}>
+            {i18n.t('menu.colocationTutorials.AgricultureSolarWindColocation', lang)}
+          </Menu.Item>
+        </SubMenu>
         {/* generative design */}
         <SubMenu key={'generative-design'} title={i18n.t('menu.generativeDesignSubMenu', lang)}>
           <Menu.Item key="Tilt Angle" onClick={(e) => loadProject(e.key, 48)}>
@@ -2290,9 +2296,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
             </Menu.Item>
             <Menu.Item key="floatovoltaics" onClick={loadFile}>
               {i18n.t('menu.solarEnergyExamples.Floatovoltaics', lang)}
-            </Menu.Item>
-            <Menu.Item key="agrivoltaics" onClick={loadFile}>
-              {i18n.t('menu.solarEnergyExamples.Agrivoltaics', lang)}
             </Menu.Item>
             <Menu.Item key="rainbow_swash_solar_farm" onClick={loadFile}>
               {i18n.t('menu.solarEnergyExamples.RainbowSwashSolarFarmBostonMA', lang)}

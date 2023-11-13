@@ -508,6 +508,11 @@ export const i18n_zh_tw = {
         OffshoreWindFarm: '離岸風電場',
       },
 
+      colocationSubMenu: '共用空間項目',
+      colocationTutorials: {
+        AgricultureSolarWindColocation: '農業光電風力共用空間',
+      },
+
       generativeDesignSubMenu: '生成式設計',
       generativeDesignTutorials: {
         MonofacialSolarPanelArrayTiltAngle: '單面光伏板陣列的傾斜角',
