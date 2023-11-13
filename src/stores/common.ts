@@ -673,8 +673,8 @@ export const useStore = create<CommonStoreState>(
               state.selectedElementIdSet.clear();
               state.groupActionMode = false;
               state.selectedFloatingWindow = null;
-              StoreUtil.updateOldFileData(state);
             });
+            StoreUtil.updateOldFileData();
             usePrimitiveStore.setState((state) => {
               state.changed = false;
               state.skipChange = true;
