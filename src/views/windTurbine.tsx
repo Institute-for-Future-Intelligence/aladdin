@@ -4,7 +4,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Cone, Cylinder, Line, Sphere } from '@react-three/drei';
-import { BackSide, Euler, FrontSide, Mesh, Shape, Vector3 } from 'three';
+import { BackSide, Euler, FrontSide, Mesh, Shape, Vector2, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import { useRefStore } from 'src/stores/commonRef';
 import * as Selector from '../stores/selector';
@@ -24,6 +24,8 @@ const WindTurbine = ({
   lx,
   lz,
   speed = 10,
+  maximumChordRadius,
+  maximumChordLength,
   towerHeight,
   towerRadius,
   bladeRadius,
@@ -92,14 +94,23 @@ const WindTurbine = ({
   const nacelleRadiusLg = hubRadius;
   const nacelleRadiusSm = 0.4;
   const nacelleLength = hubLength * 2.5;
+  const maximumChordR = maximumChordRadius ?? hubRadius + bladeRadius * 0.25;
+  const maximumChordL = maximumChordLength ?? hubRadius * bladeRadius * 0.1;
+  const bladeLength = bladeRadius - maximumChordR / 3;
 
   const bladeShape = useMemo(() => {
     const tipHalfWidth = bladeTipWidth * 0.5;
     const bladeConnectorRadius = Math.min(hubRadius * 0.5, hubRadius * 0.25 + bladeRadius * 0.01);
     const s = new Shape();
+    const points: Vector2[] = [];
+    points.push(new Vector2(-bladeConnectorRadius, 0));
+    points.push(new Vector2(-maximumChordL / 2, bladeRadius - bladeLength));
+    points.push(new Vector2(-maximumChordL, maximumChordR));
+    points.push(new Vector2(-tipHalfWidth, bladeRadius));
     s.moveTo(-bladeConnectorRadius, 0);
-    s.lineTo(-hubRadius * bladeRadius * 0.1, hubRadius + bladeRadius * 0.2);
-    s.lineTo(-tipHalfWidth, bladeRadius);
+    s.splineThru(points);
+    // s.lineTo(-maximumChordR, maximumChordL);
+    // s.lineTo(-tipHalfWidth, bladeRadius);
     s.lineTo(tipHalfWidth, bladeRadius);
     s.lineTo(bladeConnectorRadius, 0);
     s.closePath();

@@ -2,7 +2,7 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import { CommonStoreState, useStore } from './common';
+import { useStore } from './common';
 import { ObjectType } from 'src/types';
 import { WindowModel, WindowType } from 'src/models/WindowModel';
 import { WallFill, WallModel, WallStructure } from 'src/models/WallModel';
@@ -12,7 +12,6 @@ import { GROUND_ID } from 'src/constants';
 import { DoorModel, DoorType } from 'src/models/DoorModel';
 import { ElementModel } from 'src/models/ElementModel';
 
-// should put this inside immerSet function, because it mutate state directly
 export class StoreUtil {
   static updateOldFileData() {
     useStore.getState().set((state) => {

@@ -1083,15 +1083,16 @@ export const i18n_zh_tw = {
 
     windTurbineMenu: {
       RelativeOrientation: '相對方位角',
-      InitialRotorAngle: '初始轉子角度',
+      Rotor: '轉子',
+      RotorInitialAngle: '轉子初始角度',
       RotorBladeRadius: '轉子葉片半徑',
       Tower: '塔架',
       TowerHeight: '塔架高度',
       TowerRadius: '塔架半徑',
       OnlyThisWindTurbine: '只這個風力渦輪機',
-      AllWindTurbinesAboveFoundation: '同一地基上所有的風力渦輪',
-      AllSelectedWindTurbines: '所有選中的風力渦輪',
-      AllWindTurbines: '所有的風力渦輪',
+      AllWindTurbinesAboveFoundation: '同一地基上所有的風力渦輪機',
+      AllSelectedWindTurbines: '所有選中的風力渦輪機',
+      AllWindTurbines: '所有的風力渦輪機',
     },
 
     wallMenu: {

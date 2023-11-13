@@ -17,7 +17,7 @@ import Dialog from '../dialog';
 import { useLanguage } from 'src/views/hooks';
 import { WindTurbineModel } from '../../../models/WindTurbineModel';
 
-const WindTurbineInitialRotorAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const WindTurbineRotorInitialAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -135,7 +135,7 @@ const WindTurbineInitialRotorAngleInput = ({ setDialogVisible }: { setDialogVisi
           }
         }
         const undoableChangeSelected = {
-          name: 'Set Initial Rotor Angle for Selected Wind Turbines',
+          name: 'Set Rotor Initial Angle for Selected Wind Turbines',
           timestamp: Date.now(),
           oldValues: oldValuesSelected,
           newValue: value,
@@ -164,7 +164,7 @@ const WindTurbineInitialRotorAngleInput = ({ setDialogVisible }: { setDialogVisi
           }
         }
         const undoableChangeAll = {
-          name: 'Set Initial Rotor Angle for All Wind Turbines',
+          name: 'Set Rotor Initial Angle for All Wind Turbines',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
@@ -191,7 +191,7 @@ const WindTurbineInitialRotorAngleInput = ({ setDialogVisible }: { setDialogVisi
             }
           }
           const undoableChangeAboveFoundation = {
-            name: 'Set Initial Rotor Angle for All Wind Turbines Above Foundation',
+            name: 'Set Rotor Initial Angle for All Wind Turbines Above Foundation',
             timestamp: Date.now(),
             oldValues: oldValuesAboveFoundation,
             newValue: value,
@@ -220,7 +220,7 @@ const WindTurbineInitialRotorAngleInput = ({ setDialogVisible }: { setDialogVisi
         const wt = getElementById(windTurbine.id) as WindTurbineModel;
         const oldValue = wt ? wt.initialRotorAngle : windTurbine.initialRotorAngle;
         const undoableChange = {
-          name: 'Set Wind Turbine Initial Rotor Angle',
+          name: 'Set Wind Turbine Rotor Initial Angle',
           timestamp: Date.now(),
           oldValue: oldValue,
           newValue: value,
@@ -264,7 +264,7 @@ const WindTurbineInitialRotorAngleInput = ({ setDialogVisible }: { setDialogVisi
   return (
     <Dialog
       width={550}
-      title={i18n.t('windTurbineMenu.InitialRotorAngle', lang)}
+      title={i18n.t('windTurbineMenu.RotorInitialAngle', lang)}
       onApply={apply}
       onClose={close}
       onClickCancel={cancel}
@@ -312,4 +312,4 @@ const WindTurbineInitialRotorAngleInput = ({ setDialogVisible }: { setDialogVisi
   );
 };
 
-export default WindTurbineInitialRotorAngleInput;
+export default WindTurbineRotorInitialAngleInput;
