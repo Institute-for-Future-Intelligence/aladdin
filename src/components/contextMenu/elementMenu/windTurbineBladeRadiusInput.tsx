@@ -10,7 +10,6 @@ import { ObjectType, Scope } from '../../../types';
 import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
-import { Util } from '../../../Util';
 import { ZERO_TOLERANCE } from '../../../constants';
 import { useSelectedElement } from './menuHooks';
 import Dialog from '../dialog';
@@ -21,7 +20,6 @@ const WindTurbineBladeRadiusInput = ({ setDialogVisible }: { setDialogVisible: (
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
-  const getParent = useStore(Selector.getParent);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.windTurbineActionScope);
   const setActionScope = useStore(Selector.setWindTurbineActionScope);
@@ -64,32 +62,12 @@ const WindTurbineBladeRadiusInput = ({ setDialogVisible }: { setDialogVisible: (
           }
         }
         break;
-      case Scope.AllObjectsOfThisTypeOnSurface:
-        const parent = getParent(windTurbine);
-        if (parent) {
-          const isParentCuboid = parent.type === ObjectType.Cuboid;
-          if (isParentCuboid) {
-            for (const e of elements) {
-              if (
-                e.type === ObjectType.WindTurbine &&
-                e.parentId === windTurbine.parentId &&
-                Util.isIdentical(e.normal, windTurbine.normal) &&
-                !e.locked
-              ) {
-                const wt = e as WindTurbineModel;
-                if (Math.abs(wt.bladeRadius - bladeRadius) > ZERO_TOLERANCE) {
-                  return true;
-                }
-              }
-            }
-          } else {
-            for (const e of elements) {
-              if (e.type === ObjectType.WindTurbine && e.parentId === windTurbine.parentId && !e.locked) {
-                const wt = e as WindTurbineModel;
-                if (Math.abs(wt.bladeRadius - bladeRadius) > ZERO_TOLERANCE) {
-                  return true;
-                }
-              }
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.WindTurbine && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            const wt = e as WindTurbineModel;
+            if (Math.abs(wt.bladeRadius - bladeRadius) > ZERO_TOLERANCE) {
+              return true;
             }
           }
         }
@@ -108,6 +86,8 @@ const WindTurbineBladeRadiusInput = ({ setDialogVisible }: { setDialogVisible: (
         if (e.type === ObjectType.WindTurbine && e.id === id && !e.locked) {
           const wt = e as WindTurbineModel;
           wt.bladeRadius = br;
+          wt.lx = wt.ly = br * 2;
+          wt.lz = wt.towerHeight + br;
           break;
         }
       }
@@ -120,6 +100,8 @@ const WindTurbineBladeRadiusInput = ({ setDialogVisible }: { setDialogVisible: (
         if (e.type === ObjectType.WindTurbine && e.foundationId === foundationId && !e.locked) {
           const wt = e as WindTurbineModel;
           wt.bladeRadius = br;
+          wt.lx = wt.ly = br * 2;
+          wt.lz = wt.towerHeight + br;
         }
       }
     });
@@ -131,6 +113,8 @@ const WindTurbineBladeRadiusInput = ({ setDialogVisible }: { setDialogVisible: (
         if (e.type === ObjectType.WindTurbine && !e.locked) {
           const wt = e as WindTurbineModel;
           wt.bladeRadius = br;
+          wt.lx = wt.ly = br * 2;
+          wt.lz = wt.towerHeight + br;
         }
       }
     });
@@ -142,6 +126,8 @@ const WindTurbineBladeRadiusInput = ({ setDialogVisible }: { setDialogVisible: (
         if (e.type === ObjectType.WindTurbine && !e.locked && map.has(e.id)) {
           const wt = e as WindTurbineModel;
           wt.bladeRadius = value;
+          wt.lx = wt.ly = value * 2;
+          wt.lz = wt.towerHeight + value;
         }
       }
     });

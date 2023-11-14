@@ -636,6 +636,7 @@ export const useStore = create<CommonStoreState>()(
               state.graphState = content.graphState ?? new DefaultGraphState();
               state.elements = content.elements;
               state.notes = content.notes ?? [];
+              state.animate24Hours = !!content.animate24Hours;
               state.modelType = content.modelType ?? ModelType.UNKNOWN;
               state.modelAuthor = content.modelAuthor ?? null;
               state.modelLabel = content.modelLabel ?? null;
@@ -672,11 +673,12 @@ export const useStore = create<CommonStoreState>()(
               state.selectedElementIdSet.clear();
               state.groupActionMode = false;
               state.selectedFloatingWindow = null;
-              StoreUtil.updateOldFile(state);
             });
+            StoreUtil.updateOldFileData();
             usePrimitiveStore.getState().set((state) => {
               state.changed = false;
               state.skipChange = true;
+              state.animateSun = false;
               state.showSolarRadiationHeatmap = false;
               state.showHeatFluxes = false;
               state.simulationInProgress = false;
@@ -706,6 +708,7 @@ export const useStore = create<CommonStoreState>()(
               elements: elements,
               sceneRadius: state.sceneRadius,
               view: JSON.parse(JSON.stringify(state.viewState)),
+              animate24Hours: state.animate24Hours,
               graphState: JSON.parse(JSON.stringify(state.graphState)),
               evolutionMethod: state.evolutionMethod,
               solarPanelArrayLayoutParams: JSON.parse(JSON.stringify(state.solarPanelArrayLayoutParams)),
@@ -766,6 +769,7 @@ export const useStore = create<CommonStoreState>()(
             usePrimitiveStore.getState().set((state) => {
               state.changed = false;
               state.skipChange = true;
+              state.animateSun = false;
               state.showSolarRadiationHeatmap = false;
               state.showHeatFluxes = false;
             });
@@ -3131,6 +3135,7 @@ export const useStore = create<CommonStoreState>()(
                     break;
                   case ObjectType.WindTurbine:
                     counter.windTurbineCount++;
+                    if (e.locked) counter.lockedWindTurbineCount++;
                     break;
                 }
               }
@@ -3481,6 +3486,7 @@ export const useStore = create<CommonStoreState>()(
                     case ObjectType.SolarPanel:
                     case ObjectType.Sensor:
                     case ObjectType.Light:
+                    case ObjectType.WindTurbine:
                     case ObjectType.ParabolicDish:
                     case ObjectType.Heliostat:
                     case ObjectType.FresnelReflector:
@@ -3539,9 +3545,14 @@ export const useStore = create<CommonStoreState>()(
                             (newParent.type === ObjectType.Cuboid &&
                               Util.isIdentical(e.normal, UNIT_VECTOR_POS_Z_ARRAY))
                           ) {
-                            approved = Util.isSolarCollectorWithinHorizontalSurface(e as SolarCollector, newParent);
-                            if (!approved) {
-                              showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
+                            if (Util.isSolarCollector(e)) {
+                              approved = Util.isSolarCollectorWithinHorizontalSurface(e as SolarCollector, newParent);
+                              if (!approved) {
+                                showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
+                              }
+                            } else {
+                              // if it is a wind turbine, we don't check out-of-boundary issues
+                              approved = true;
                             }
                           } else {
                             // TODO: other surfaces
@@ -3852,7 +3863,6 @@ export const useStore = create<CommonStoreState>()(
                             if (!approved) {
                               const lang = { lng: state.language };
                               showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
-                            } else {
                             }
                             break;
                           } else if (parent.type === ObjectType.Roof) {
@@ -3948,11 +3958,11 @@ export const useStore = create<CommonStoreState>()(
                                 }
                               }
                             } else {
-                              e.cx += e.lx / parent.lx;
+                              e.cx += (0.01 + e.lx) / parent.lx;
                             }
                           } else {
                             // a loner
-                            e.cx += e.lx / parent.lx;
+                            e.cx += (0.01 + e.lx) / parent.lx; // give a small offset to ensure no overlap
                           }
                           const lang = { lng: state.language };
                           if (!state.overlapWithSibling(e)) {
@@ -3981,6 +3991,7 @@ export const useStore = create<CommonStoreState>()(
                       break;
                     case ObjectType.Sensor:
                     case ObjectType.Light:
+                    case ObjectType.WindTurbine:
                       if (e.parentId) {
                         const parent = state.getParent(e);
                         if (parent) {

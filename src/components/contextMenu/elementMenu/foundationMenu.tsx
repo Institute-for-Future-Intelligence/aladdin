@@ -915,6 +915,55 @@ export const FoundationMenu = React.memo(() => {
             </Menu.Item>
           )}
 
+          {counterUnlocked.windTurbineCount > 0 && (
+            <Menu.Item
+              key={'remove-all-wind-turbines-on-foundation'}
+              onClick={() => {
+                Modal.confirm({
+                  title:
+                    i18n.t('foundationMenu.DoYouReallyWantToRemoveAllWindTurbinesOnFoundation', lang) +
+                    ' (' +
+                    counterUnlocked.windTurbineCount +
+                    ' ' +
+                    i18n.t('foundationMenu.WindTurbines', lang) +
+                    ')?',
+                  icon: <ExclamationCircleOutlined />,
+                  onOk: () => {
+                    if (foundation) {
+                      const removed = useStore
+                        .getState()
+                        .elements.filter(
+                          (e) => !e.locked && e.type === ObjectType.WindTurbine && e.foundationId === foundation.id,
+                        );
+                      removeAllChildElementsByType(foundation.id, ObjectType.WindTurbine);
+                      const removedElements = JSON.parse(JSON.stringify(removed));
+                      const undoableRemoveAllWindTurbineChildren = {
+                        name: 'Remove All Wind Turbines on Foundation',
+                        timestamp: Date.now(),
+                        parentId: foundation.id,
+                        removedElements: removedElements,
+                        undo: () => {
+                          setCommonStore((state) => {
+                            state.elements.push(...undoableRemoveAllWindTurbineChildren.removedElements);
+                          });
+                        },
+                        redo: () => {
+                          removeAllChildElementsByType(
+                            undoableRemoveAllWindTurbineChildren.parentId,
+                            ObjectType.Heliostat,
+                          );
+                        },
+                      } as UndoableRemoveAllChildren;
+                      addUndoable(undoableRemoveAllWindTurbineChildren);
+                    }
+                  },
+                });
+              }}
+            >
+              {i18n.t('foundationMenu.RemoveAllUnlockedWindTurbines', lang)} ({counterUnlocked.windTurbineCount})
+            </Menu.Item>
+          )}
+
           {counterUnlocked.polygonCount > 0 && (
             <Menu.Item
               key={'remove-all-polygons-on-foundation'}

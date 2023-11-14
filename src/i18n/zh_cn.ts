@@ -230,6 +230,8 @@ export const i18n_zh_cn = {
       ThisCannotBeUndone: '这个操作一旦执行就不能撤销。',
       AzimuthOfNorthIsZero: '正北的方位角为零度',
       CounterclockwiseAzimuthIsPositive: '逆时针为正',
+      SouthFacingIsZero: '朝南为零度',
+      ClockwiseRotationIsPositive: '顺时针为正',
       MoveCancelledBecauseOfOverlap: '位置重叠，移动取消。',
       MoveOutsideBoundaryCancelled: '位置出界，移动取消。',
       RotationCancelledBecauseOfOverlap: '位置重叠，旋转取消。',
@@ -500,6 +502,17 @@ export const i18n_zh_cn = {
         SolarUpdraftTower: '太阳能上升气流塔',
       },
 
+      windPowerSubMenu: '风力发电',
+      windPowerTutorials: {
+        WindTurbines: '风力涡轮机',
+        OffshoreWindFarm: '海上风电场',
+      },
+
+      colocationSubMenu: '共用空间项目',
+      colocationTutorials: {
+        AgricultureSolarWindColocation: '农业光伏风力共用空间',
+      },
+
       generativeDesignSubMenu: '生成式设计',
       generativeDesignTutorials: {
         MonofacialSolarPanelArrayTiltAngle: '单面光伏板阵列的倾斜角',
@@ -674,6 +687,7 @@ export const i18n_zh_cn = {
       RemoveAllUnlockedParabolicDishes: '删除此地基上所有非固定的抛物线碟',
       RemoveAllUnlockedFresnelReflectors: '删除此地基上所有非固定的菲涅耳反射镜',
       RemoveAllUnlockedHeliostats: '删除此地基上所有非固定的定日镜',
+      RemoveAllUnlockedWindTurbines: '删除此地基上所有非固定的风力涡轮机',
       RemoveAllUnlockedSensors: '删除此地基上所有非固定的传感器',
       RemoveAllUnlockedLights: '删除此地基上所有非固定的电灯',
       RemoveAllUnlockedWalls: '删除此地基上所有非固定的墙',
@@ -705,6 +719,8 @@ export const i18n_zh_cn = {
       DoYouReallyWantToRemoveAllFresnelReflectorsOnFoundation: '你确定删除此地基上所有非固定的菲涅耳反射镜吗',
       Heliostats: '定日镜',
       DoYouReallyWantToRemoveAllHeliostatsOnFoundation: '你确定删除此地基上所有非固定的定日镜吗',
+      WindTurbines: '风力涡轮机',
+      DoYouReallyWantToRemoveAllWindTurbinesOnFoundation: '你确定删除此地基上所有非固定的风力涡轮机吗',
       Sensors: '传感器',
       DoYouReallyWantToRemoveAllSensorsOnFoundation: '你确定删除此地基上所有非固定的传感器吗',
       Lights: '电灯',
@@ -1065,6 +1081,10 @@ export const i18n_zh_cn = {
     },
 
     windTurbineMenu: {
+      RelativeOrientation: '相对方位角',
+      Rotor: '转子',
+      RotorInitialAngle: '转子初始角度',
+      RotorBladeDesign: '转子叶片设计',
       RotorBladeRadius: '转子叶片半径',
       Tower: '塔架',
       TowerHeight: '塔架高度',

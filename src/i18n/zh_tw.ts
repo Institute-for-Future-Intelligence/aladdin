@@ -230,6 +230,8 @@ export const i18n_zh_tw = {
       ThisCannotBeUndone: '這個操作一旦執行就不能撤銷。',
       AzimuthOfNorthIsZero: '正北的方位角為零度',
       CounterclockwiseAzimuthIsPositive: '逆時針為正',
+      SouthFacingIsZero: '朝南為零度',
+      ClockwiseRotationIsPositive: '順時針為正',
       MoveCancelledBecauseOfOverlap: '位置重疊，移動取消。',
       MoveOutsideBoundaryCancelled: '位置出界，移動取消。',
       RotationCancelledBecauseOfOverlap: '位置重疊，旋轉取消。',
@@ -500,6 +502,17 @@ export const i18n_zh_tw = {
         SolarUpdraftTower: '太陽能上升氣流塔',
       },
 
+      windPowerSubMenu: '風力發電',
+      windPowerTutorials: {
+        WindTurbines: '風力渦輪機',
+        OffshoreWindFarm: '離岸風電場',
+      },
+
+      colocationSubMenu: '共用空間項目',
+      colocationTutorials: {
+        AgricultureSolarWindColocation: '農業光電風力共用空間',
+      },
+
       generativeDesignSubMenu: '生成式設計',
       generativeDesignTutorials: {
         MonofacialSolarPanelArrayTiltAngle: '單面光伏板陣列的傾斜角',
@@ -675,6 +688,7 @@ export const i18n_zh_tw = {
       RemoveAllUnlockedParabolicDishes: '刪除此地基上所有非固定的拋物線碟',
       RemoveAllUnlockedFresnelReflectors: '刪除此地基上所有非固定的菲涅耳反射鏡',
       RemoveAllUnlockedHeliostats: '刪除此地基上所有非固定的定日鏡',
+      RemoveAllUnlockedWindTurbines: '刪除此地基上所有非固定的風力渦輪機',
       RemoveAllUnlockedSensors: '刪除此地基上所有非固定的傳感器',
       RemoveAllUnlockedLights: '刪除此地基上所有非固定的電燈',
       RemoveAllUnlockedWalls: '刪除此地基上所有非固定的牆',
@@ -706,6 +720,8 @@ export const i18n_zh_tw = {
       DoYouReallyWantToRemoveAllFresnelReflectorsOnFoundation: '你確定刪除此地基上所有非固定的菲涅耳反射鏡嗎',
       Heliostats: '定日鏡',
       DoYouReallyWantToRemoveAllHeliostatsOnFoundation: '你確定刪除此地基上所有非固定的定日鏡嗎',
+      WindTurbines: '風力渦輪機',
+      DoYouReallyWantToRemoveAllWindTurbinesOnFoundation: '你確定刪除此地基上所有非固定的風力渦輪機嗎',
       Sensors: '傳感器',
       DoYouReallyWantToRemoveAllSensorsOnFoundation: '你確定刪除此地基上所有非固定的傳感器嗎',
       Lights: '電燈',
@@ -1066,14 +1082,18 @@ export const i18n_zh_tw = {
     },
 
     windTurbineMenu: {
+      RelativeOrientation: '相對方位角',
+      Rotor: '轉子',
+      RotorInitialAngle: '轉子初始角度',
+      RotorBladeDesign: '轉子葉片設計',
       RotorBladeRadius: '轉子葉片半徑',
       Tower: '塔架',
       TowerHeight: '塔架高度',
       TowerRadius: '塔架半徑',
       OnlyThisWindTurbine: '只這個風力渦輪機',
-      AllWindTurbinesAboveFoundation: '同一地基上所有的風力渦輪',
-      AllSelectedWindTurbines: '所有選中的風力渦輪',
-      AllWindTurbines: '所有的風力渦輪',
+      AllWindTurbinesAboveFoundation: '同一地基上所有的風力渦輪機',
+      AllSelectedWindTurbines: '所有選中的風力渦輪機',
+      AllWindTurbines: '所有的風力渦輪機',
     },
 
     wallMenu: {

@@ -232,6 +232,8 @@ export const i18n_ua = {
       ThisCannotBeUndone: 'Це не можна скасувати.',
       AzimuthOfNorthIsZero: 'Азимут півночі дорівнює 0°',
       CounterclockwiseAzimuthIsPositive: 'Азимут є позитивним проти годинникової стрілки.',
+      SouthFacingIsZero: 'South-facing is 0°',
+      ClockwiseRotationIsPositive: 'Clockwise is positive',
       MoveCancelledBecauseOfOverlap: 'Переміщення скасовано через перекриття.',
       MoveOutsideBoundaryCancelled: 'Переміщення за межі скасовано.',
       RotationCancelledBecauseOfOverlap: 'Ротацію скасовано через перекриття.',
@@ -506,6 +508,17 @@ export const i18n_ua = {
         SolarUpdraftTower: 'Сонячна вежа з використаним повітрям',
       },
 
+      windPowerSubMenu: 'Wind Power',
+      windPowerTutorials: {
+        WindTurbines: 'Wind Turbines',
+        OffshoreWindFarm: 'Offshore Wind Farm',
+      },
+
+      colocationSubMenu: 'Colocation',
+      colocationTutorials: {
+        AgricultureSolarWindColocation: 'Agriculture-Solar-Wind Colocation',
+      },
+
       generativeDesignSubMenu: 'Generative Design',
       generativeDesignTutorials: {
         MonofacialSolarPanelArrayTiltAngle: 'The Tilt Angle of a Monofacial Solar Panel Array',
@@ -679,6 +692,7 @@ export const i18n_ua = {
       RemoveAllUnlockedParabolicDishes: 'Видалити всі незаблоковані параболічні антени',
       RemoveAllUnlockedFresnelReflectors: 'Видалити всі незаблоковані відбивачі Френеля',
       RemoveAllUnlockedHeliostats: 'Видалити всі незаблоковані геліостати',
+      RemoveAllUnlockedWindTurbines: 'Remove All Unlocked Wind Turbines',
       RemoveAllUnlockedSensors: 'Видалити всі незаблоковані датчики',
       RemoveAllUnlockedLights: 'Видалити всі незаблоковані освітлювальні прилади',
       RemoveAllUnlockedWalls: 'Видалити всі незаблоковані стіни',
@@ -715,6 +729,9 @@ export const i18n_ua = {
       Heliostats: 'Геліостати',
       DoYouReallyWantToRemoveAllHeliostatsOnFoundation:
         'Ви дійсно бажаєте видалити всі геліостати на цьому фундаменті, які не є заблокованими',
+      WindTurbines: 'Wind Turbines',
+      DoYouReallyWantToRemoveAllWindTurbinesOnFoundation:
+        'Do you really want to remove all the wind turbines on this foundation that are not locked',
       Sensors: 'Датчики',
       DoYouReallyWantToRemoveAllSensorsOnFoundation:
         'Ви дійсно бажаєте видалити всі датчики на цьому фундаменті, які не є заблокованими',
@@ -1090,6 +1107,10 @@ export const i18n_ua = {
     },
 
     windTurbineMenu: {
+      RelativeOrientation: 'Relative Orientation',
+      Rotor: 'Rotor',
+      RotorInitialAngle: 'Rotor Initial Angle',
+      RotorBladeDesign: 'Rotor Blade Design',
       RotorBladeRadius: 'Rotor Blade Radius',
       Tower: 'Tower',
       TowerHeight: 'Tower Height',

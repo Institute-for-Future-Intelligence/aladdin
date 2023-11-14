@@ -230,6 +230,8 @@ export const i18n_es = {
       ThisCannotBeUndone: 'Esto no se puede deshacer',
       AzimuthOfNorthIsZero: 'Azimut del norte es 0°',
       CounterclockwiseAzimuthIsPositive: 'Hacia la izquierda es positivo',
+      SouthFacingIsZero: 'South-facing is 0°',
+      ClockwiseRotationIsPositive: 'Clockwise is positive',
       MoveCancelledBecauseOfOverlap: 'Move cancelled because of overlap.',
       MoveOutsideBoundaryCancelled: 'Move outside the boundary cancelled.',
       RotationCancelledBecauseOfOverlap: 'Rotation cancelled because of overlap.',
@@ -503,6 +505,17 @@ export const i18n_es = {
         SolarUpdraftTower: 'Solar Updraft Tower',
       },
 
+      windPowerSubMenu: 'Wind Power',
+      windPowerTutorials: {
+        WindTurbines: 'Wind Turbines',
+        OffshoreWindFarm: 'Offshore Wind Farm',
+      },
+
+      colocationSubMenu: 'Colocation',
+      colocationTutorials: {
+        AgricultureSolarWindColocation: 'Agriculture-Solar-Wind Colocation',
+      },
+
       generativeDesignSubMenu: 'Generative Design',
       generativeDesignTutorials: {
         MonofacialSolarPanelArrayTiltAngle: 'The Tilt Angle of a Monofacial Solar Panel Array',
@@ -677,6 +690,7 @@ export const i18n_es = {
       RemoveAllUnlockedParabolicDishes: 'Remove All Unlocked Parabolic Dishes',
       RemoveAllUnlockedFresnelReflectors: 'Remove All Unlocked Fresnel Reflectors',
       RemoveAllUnlockedHeliostats: 'Remove All Unlocked Heliostats',
+      RemoveAllUnlockedWindTurbines: 'Remove All Unlocked Wind Turbines',
       RemoveAllUnlockedSensors: 'Eliminar todos los sensores',
       RemoveAllUnlockedLights: 'Remove All Unlocked Lights',
       RemoveAllUnlockedWalls: 'Eliminar todas las paredes',
@@ -713,6 +727,9 @@ export const i18n_es = {
       Heliostats: 'Heliostats',
       DoYouReallyWantToRemoveAllHeliostatsOnFoundation:
         'Do you really want to remove all the heliostats on this foundation that are not locked',
+      WindTurbines: 'Wind Turbines',
+      DoYouReallyWantToRemoveAllWindTurbinesOnFoundation:
+        'Do you really want to remove all the wind turbines on this foundation that are not locked',
       Sensors: 'Sensores',
       DoYouReallyWantToRemoveAllSensorsOnFoundation:
         'Estás seguro que quieres eliminar todos los sensores de esta base',
@@ -1088,6 +1105,10 @@ export const i18n_es = {
     },
 
     windTurbineMenu: {
+      RelativeOrientation: 'Relative Orientation',
+      Rotor: 'Rotor',
+      RotorInitialAngle: 'Rotor Initial Angle',
+      RotorBladeDesign: 'Rotor Blade Design',
       RotorBladeRadius: 'Rotor Blade Radius',
       Tower: 'Tower',
       TowerHeight: 'Tower Height',

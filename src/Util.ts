@@ -63,6 +63,7 @@ import { WindowModel, WindowType } from './models/WindowModel';
 import { DoorModel, DoorType } from './models/DoorModel';
 import { CUBOID_STACKABLE_CHILD, CUBOID_WRAPPER_NAME } from './views/cuboid';
 import { ViewState } from './stores/ViewState';
+import { WindTurbineModel } from './models/WindTurbineModel';
 
 export class Util {
   // calculate the annual profit in 1,000 dollars
@@ -874,6 +875,11 @@ export class Util {
             return false;
           }
           break;
+        case ObjectType.WindTurbine:
+          if (!Util.isWindTurbineWithinHorizontalSurface(e as WindTurbineModel, parent)) {
+            return false;
+          }
+          break;
         // sensors can be placed on any surface, but we can only check horizontal surfaces now
         case ObjectType.Sensor:
           if (Util.isIdentical(e.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
@@ -939,6 +945,10 @@ export class Util {
     if (Math.abs(x) > dx || Math.abs(y) > dy) return false;
     // all in
     return true;
+  }
+
+  static isWindTurbineWithinHorizontalSurface(turbine: WindTurbineModel, parent: ElementModel): boolean {
+    return Math.abs(turbine.cx) <= 0.5 && Math.abs(turbine.cy) <= 0.5;
   }
 
   static isUnitVectorX(v: Vector3): boolean {
@@ -1082,6 +1092,7 @@ export class Util {
       objectType === ObjectType.ParabolicDish ||
       objectType === ObjectType.FresnelReflector ||
       objectType === ObjectType.Heliostat ||
+      objectType === ObjectType.WindTurbine ||
       objectType === ObjectType.WaterHeater ||
       objectType === ObjectType.Sensor ||
       objectType === ObjectType.Light ||

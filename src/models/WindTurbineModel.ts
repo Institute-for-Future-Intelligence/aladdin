@@ -1,10 +1,15 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import { ElementModel } from './ElementModel';
 
 export interface WindTurbineModel extends ElementModel {
+  speed: number; // revolutions per minute (typically 10-20)
+  maximumChordRadius: number;
+  maximumChordLength: number;
+  initialRotorAngle: number;
+  relativeAngle: number; // in radian
   bladeRadius: number;
   towerRadius: number;
   towerHeight: number;

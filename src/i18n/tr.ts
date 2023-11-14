@@ -230,6 +230,8 @@ export const i18n_tr = {
       ThisCannotBeUndone: 'Geri alınamaz.',
       AzimuthOfNorthIsZero: 'Kuzey yönünün azimut açısı 0 Â° derecedir.',
       CounterclockwiseAzimuthIsPositive: 'Saat yönünün tersi yönde azimut açısı pozitiftir.',
+      SouthFacingIsZero: 'South-facing is 0°',
+      ClockwiseRotationIsPositive: 'Clockwise is positive',
       MoveCancelledBecauseOfOverlap: 'Çakışma nedeniyle taşıma iptal edildi.',
       MoveOutsideBoundaryCancelled: 'Alan dışına çıkan taşıma iptal edildi.',
       RotationCancelledBecauseOfOverlap: 'Çakışma nedeniyle döndürme iptal edildi.',
@@ -503,6 +505,17 @@ export const i18n_tr = {
         SolarUpdraftTower: 'Solar Updraft Kulesi',
       },
 
+      windPowerSubMenu: 'Wind Power',
+      windPowerTutorials: {
+        WindTurbines: 'Wind Turbines',
+        OffshoreWindFarm: 'Offshore Wind Farm',
+      },
+
+      colocationSubMenu: 'Colocation',
+      colocationTutorials: {
+        AgricultureSolarWindColocation: 'Agriculture-Solar-Wind Colocation',
+      },
+
       generativeDesignSubMenu: 'Generative Design',
       generativeDesignTutorials: {
         MonofacialSolarPanelArrayTiltAngle: 'The Tilt Angle of a Monofacial Solar Panel Array',
@@ -677,6 +690,7 @@ export const i18n_tr = {
       RemoveAllUnlockedParabolicDishes: 'Tüm Kilitlenmemiş Parabolik Çanakları Kaldır',
       RemoveAllUnlockedFresnelReflectors: 'Tüm Kilitlenmemiş Fresnel Reflektörleri Kaldır',
       RemoveAllUnlockedHeliostats: 'Tüm Kilitlenmemiş Heliostatları Kaldır',
+      RemoveAllUnlockedWindTurbines: 'Remove All Unlocked Wind Turbines',
       RemoveAllUnlockedSensors: 'Tüm Kilitlenmemiş Sensörleri Kaldır',
       RemoveAllUnlockedLights: 'Remove All Unlocked Lights',
       RemoveAllUnlockedWalls: 'Tüm Kilitlenmemiş Duvarları Kaldır',
@@ -713,6 +727,9 @@ export const i18n_tr = {
       Heliostats: 'Heliostatlar',
       DoYouReallyWantToRemoveAllHeliostatsOnFoundation:
         ' Seçili temel üzerinde kilitli olmayan tüm heliostatları kaldırmak istiyor musunuz?',
+      WindTurbines: 'Wind Turbines',
+      DoYouReallyWantToRemoveAllWindTurbinesOnFoundation:
+        'Do you really want to remove all the wind turbines on this foundation that are not locked',
       Sensors: 'Sensörler',
       DoYouReallyWantToRemoveAllSensorsOnFoundation:
         ' Seçili temel üzerinde kilitli olmayan tüm sensörleri kaldırmak istiyor musunuz?',
@@ -1088,6 +1105,10 @@ export const i18n_tr = {
     },
 
     windTurbineMenu: {
+      RelativeOrientation: 'Relative Orientation',
+      Rotor: 'Rotor',
+      RotorInitialAngle: 'Rotor Initial Angle',
+      RotorBladeDesign: 'Rotor Blade Design',
       RotorBladeRadius: 'Rotor Blade Radius',
       Tower: 'Tower',
       TowerHeight: 'Tower Height',

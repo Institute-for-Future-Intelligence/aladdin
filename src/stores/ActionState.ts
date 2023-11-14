@@ -103,6 +103,8 @@ export interface ActionState {
   windowEmpty: boolean;
   windowInterior: boolean;
 
+  windTurbineRelativeAngle: number;
+  windTurbineInitialRotorAngle: number;
   windTurbineTowerHeight: number;
   windTurbineTowerRadius: number;
   windTurbineBladeRadius: number;

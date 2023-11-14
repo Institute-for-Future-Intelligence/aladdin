@@ -77,7 +77,7 @@ import bipv_01 from './examples/bipv_01.json';
 import solar_canopy_over_garage from './examples/solar_canopy_over_garage.json';
 import solar_facade_tesla from './examples/solar_facade_tesla.json';
 import floatovoltaics from './examples/floatovoltaics.json';
-import agrivoltaics from './examples/agrivoltaics.json';
+import agriculture_solar_wind_colocation from './examples/agriculture_solar_wind_colocation.json';
 import inter_row_spacing from './examples/inter_row_spacing.json';
 import ps10_solar_power_tower from './examples/ps10_solar_power_tower.json';
 import nevada_solar_one_parabolic_troughs from './examples/nevada_solar_one_parabolic_troughs.json';
@@ -98,6 +98,8 @@ import bestest_case_620 from './examples/bestest_case_620.json';
 import bestest_case_630 from './examples/bestest_case_630.json';
 import solar_updraft_tower from './examples/solar_updraft_tower.json';
 import solar_updraft_tower_city from './examples/solar_updraft_tower_city.json';
+import wind_turbines from './examples/wind_turbines.json';
+import offshore_wind_farm from './examples/offshore_wind_farm.json';
 import tucson_sundt_station from './examples/tucson_sundt_station.json';
 import ai_tilt_angle_one_row from './examples/ai_tilt_angle_one_row.json';
 import ai_tilt_angles_multiple_rows from './examples/ai_tilt_angles_multiple_rows.json';
@@ -215,8 +217,8 @@ export const getExample = (name: string) => {
     case 'floatovoltaics':
       input = floatovoltaics;
       break;
-    case 'agrivoltaics':
-      input = agrivoltaics;
+    case 'agriculture_solar_wind_colocation':
+      input = agriculture_solar_wind_colocation;
       break;
     case 'effect_tilt_angle_solar_panel':
       input = effect_tilt_angle_solar_panel;
@@ -316,6 +318,12 @@ export const getExample = (name: string) => {
       break;
     case 'solar_updraft_tower_city':
       input = solar_updraft_tower_city;
+      break;
+    case 'wind_turbines':
+      input = wind_turbines;
+      break;
+    case 'offshore_wind_farm':
+      input = offshore_wind_farm;
       break;
     case 'cape_cod_with_shed_dormer':
       input = cape_cod_with_shed_dormer;
