@@ -71,7 +71,7 @@ const App = () => {
         state.showHeatFluxes = false;
       });
     }
-  }, [world, elements]);
+  }, [world, elements, showHeatFluxes, showSolarRadiationHeatmap]);
 
   return (
     <ConfigProvider locale={locale}>
