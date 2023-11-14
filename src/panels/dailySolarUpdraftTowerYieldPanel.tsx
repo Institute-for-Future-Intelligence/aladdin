@@ -153,11 +153,11 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
         resizeObserverRef.current = new ResizeObserver(() => {
           setCommonStore((state) => {
             if (wrapperRef.current) {
-              if (!state.viewState.dailyPvYieldPanelRect) {
-                state.viewState.dailyPvYieldPanelRect = new Rectangle(0, 0, 600, 400);
+              if (!state.viewState.dailyUpdraftTowerYieldPanelRect) {
+                state.viewState.dailyUpdraftTowerYieldPanelRect = new Rectangle(0, 0, 640, 550);
               }
-              state.viewState.dailyPvYieldPanelRect.width = wrapperRef.current.offsetWidth;
-              state.viewState.dailyPvYieldPanelRect.height = wrapperRef.current.offsetHeight;
+              state.viewState.dailyUpdraftTowerYieldPanelRect.width = wrapperRef.current.offsetWidth;
+              state.viewState.dailyUpdraftTowerYieldPanelRect.height = wrapperRef.current.offsetHeight;
             }
           });
         });

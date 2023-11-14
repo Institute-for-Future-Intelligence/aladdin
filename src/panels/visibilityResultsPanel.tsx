@@ -126,11 +126,11 @@ const VisibilityResultsPanel = () => {
         resizeObserverRef.current = new ResizeObserver(() => {
           setCommonStore((state) => {
             if (wrapperRef.current) {
-              if (!state.viewState.dailyPvYieldPanelRect) {
-                state.viewState.dailyPvYieldPanelRect = new Rectangle(0, 0, 600, 400);
+              if (!state.viewState.visibilityResultsPanelRect) {
+                state.viewState.visibilityResultsPanelRect = new Rectangle(0, 0, 600, 470);
               }
-              state.viewState.dailyPvYieldPanelRect.width = wrapperRef.current.offsetWidth;
-              state.viewState.dailyPvYieldPanelRect.height = wrapperRef.current.offsetHeight;
+              state.viewState.visibilityResultsPanelRect.width = wrapperRef.current.offsetWidth;
+              state.viewState.visibilityResultsPanelRect.height = wrapperRef.current.offsetHeight;
             }
           });
         });

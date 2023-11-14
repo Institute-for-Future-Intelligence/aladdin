@@ -157,11 +157,11 @@ const DailyHeliostatYieldPanel = ({ city }: DailyHeliostatYieldPanelProps) => {
         resizeObserverRef.current = new ResizeObserver(() => {
           setCommonStore((state) => {
             if (wrapperRef.current) {
-              if (!state.viewState.dailyPvYieldPanelRect) {
-                state.viewState.dailyPvYieldPanelRect = new Rectangle(0, 0, 600, 400);
+              if (!state.viewState.dailyHeliostatYieldPanelRect) {
+                state.viewState.dailyHeliostatYieldPanelRect = new Rectangle(0, 0, 600, 400);
               }
-              state.viewState.dailyPvYieldPanelRect.width = wrapperRef.current.offsetWidth;
-              state.viewState.dailyPvYieldPanelRect.height = wrapperRef.current.offsetHeight;
+              state.viewState.dailyHeliostatYieldPanelRect.width = wrapperRef.current.offsetWidth;
+              state.viewState.dailyHeliostatYieldPanelRect.height = wrapperRef.current.offsetHeight;
             }
           });
         });

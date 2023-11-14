@@ -122,11 +122,11 @@ const WeatherPanel = ({ city, graphs }: WeatherPanelProps) => {
         resizeObserverRef.current = new ResizeObserver(() => {
           setCommonStore((state) => {
             if (wrapperRef.current) {
-              if (!state.viewState.dailyPvYieldPanelRect) {
-                state.viewState.dailyPvYieldPanelRect = new Rectangle(0, 0, 600, 400);
+              if (!state.viewState.weatherPanelRect) {
+                state.viewState.weatherPanelRect = new Rectangle(0, 0, 500, 500);
               }
-              state.viewState.dailyPvYieldPanelRect.width = wrapperRef.current.offsetWidth;
-              state.viewState.dailyPvYieldPanelRect.height = wrapperRef.current.offsetHeight;
+              state.viewState.weatherPanelRect.width = wrapperRef.current.offsetWidth;
+              state.viewState.weatherPanelRect.height = wrapperRef.current.offsetHeight;
             }
           });
         });

@@ -134,11 +134,11 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
         resizeObserverRef.current = new ResizeObserver(() => {
           setCommonStore((state) => {
             if (wrapperRef.current) {
-              if (!state.viewState.dailyPvYieldPanelRect) {
-                state.viewState.dailyPvYieldPanelRect = new Rectangle(0, 0, 600, 400);
+              if (!state.viewState.yearlyLightSensorPanelRect) {
+                state.viewState.yearlyLightSensorPanelRect = new Rectangle(0, 0, 600, 500);
               }
-              state.viewState.dailyPvYieldPanelRect.width = wrapperRef.current.offsetWidth;
-              state.viewState.dailyPvYieldPanelRect.height = wrapperRef.current.offsetHeight;
+              state.viewState.yearlyLightSensorPanelRect.width = wrapperRef.current.offsetWidth;
+              state.viewState.yearlyLightSensorPanelRect.height = wrapperRef.current.offsetHeight;
             }
           });
         });

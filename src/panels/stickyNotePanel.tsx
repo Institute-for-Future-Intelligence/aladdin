@@ -116,11 +116,11 @@ const StickyNotePanel = () => {
         resizeObserverRef.current = new ResizeObserver(() => {
           setCommonStore((state) => {
             if (wrapperRef.current) {
-              if (!state.viewState.dailyPvYieldPanelRect) {
-                state.viewState.dailyPvYieldPanelRect = new Rectangle(0, 0, 600, 400);
+              if (!state.viewState.stickyNotePanelRect) {
+                state.viewState.stickyNotePanelRect = new Rectangle(0, 0, 400, 300);
               }
-              state.viewState.dailyPvYieldPanelRect.width = wrapperRef.current.offsetWidth;
-              state.viewState.dailyPvYieldPanelRect.height = wrapperRef.current.offsetHeight;
+              state.viewState.stickyNotePanelRect.width = wrapperRef.current.offsetWidth;
+              state.viewState.stickyNotePanelRect.height = wrapperRef.current.offsetHeight;
             }
           });
         });

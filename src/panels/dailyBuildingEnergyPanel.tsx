@@ -265,11 +265,11 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
         resizeObserverRef.current = new ResizeObserver(() => {
           setCommonStore((state) => {
             if (wrapperRef.current) {
-              if (!state.viewState.dailyPvYieldPanelRect) {
-                state.viewState.dailyPvYieldPanelRect = new Rectangle(0, 0, 600, 400);
+              if (!state.viewState.dailyBuildingEnergyPanelRect) {
+                state.viewState.dailyBuildingEnergyPanelRect = new Rectangle(0, 0, 600, 360);
               }
-              state.viewState.dailyPvYieldPanelRect.width = wrapperRef.current.offsetWidth;
-              state.viewState.dailyPvYieldPanelRect.height = wrapperRef.current.offsetHeight;
+              state.viewState.dailyBuildingEnergyPanelRect.width = wrapperRef.current.offsetWidth;
+              state.viewState.dailyBuildingEnergyPanelRect.height = wrapperRef.current.offsetHeight;
             }
           });
         });

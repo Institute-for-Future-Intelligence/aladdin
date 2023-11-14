@@ -157,11 +157,11 @@ const DailyFresnelReflectorYieldPanel = ({ city }: DailyFresnelReflectorYieldPan
         resizeObserverRef.current = new ResizeObserver(() => {
           setCommonStore((state) => {
             if (wrapperRef.current) {
-              if (!state.viewState.dailyPvYieldPanelRect) {
-                state.viewState.dailyPvYieldPanelRect = new Rectangle(0, 0, 600, 400);
+              if (!state.viewState.dailyFresnelReflectorYieldPanelRect) {
+                state.viewState.dailyFresnelReflectorYieldPanelRect = new Rectangle(0, 0, 600, 400);
               }
-              state.viewState.dailyPvYieldPanelRect.width = wrapperRef.current.offsetWidth;
-              state.viewState.dailyPvYieldPanelRect.height = wrapperRef.current.offsetHeight;
+              state.viewState.dailyFresnelReflectorYieldPanelRect.width = wrapperRef.current.offsetWidth;
+              state.viewState.dailyFresnelReflectorYieldPanelRect.height = wrapperRef.current.offsetHeight;
             }
           });
         });
