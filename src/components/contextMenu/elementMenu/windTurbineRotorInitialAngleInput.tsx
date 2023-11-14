@@ -282,7 +282,7 @@ const WindTurbineRotorInitialAngleInput = ({ setDialogVisible }: { setDialogVisi
             value={parseFloat(Util.toDegrees(inputValue).toFixed(2))}
             formatter={(value) => `${value}°`}
             onChange={(value) => {
-              if (value !== undefined) setInputValue(Util.toRadians(value));
+              if (value !== null) setInputValue(Util.toRadians(value));
             }}
           />
           <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
