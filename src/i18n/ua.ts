@@ -1110,6 +1110,7 @@ export const i18n_ua = {
       RelativeOrientation: 'Relative Orientation',
       Rotor: 'Rotor',
       RotorInitialAngle: 'Rotor Initial Angle',
+      RotorBladeDesign: 'Rotor Blade Design',
       RotorBladeRadius: 'Rotor Blade Radius',
       Tower: 'Tower',
       TowerHeight: 'Tower Height',

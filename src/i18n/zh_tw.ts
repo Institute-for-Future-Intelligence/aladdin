@@ -1085,6 +1085,7 @@ export const i18n_zh_tw = {
       RelativeOrientation: '相對方位角',
       Rotor: '轉子',
       RotorInitialAngle: '轉子初始角度',
+      RotorBladeDesign: '轉子葉片設計',
       RotorBladeRadius: '轉子葉片半徑',
       Tower: '塔架',
       TowerHeight: '塔架高度',

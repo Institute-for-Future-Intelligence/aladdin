@@ -43,8 +43,8 @@ const Compass = ({ visible = true }: { visible: boolean }) => {
     const outerRingRadius = 40 * scale;
     const outerRingWidth = 5 * scale;
     const innerRingRadius = 30 * scale;
-    const innerRingWidth = 1 * scale;
-    const outlineWidth = 1 * scale;
+    const innerRingWidth = scale;
+    const outlineWidth = scale;
 
     const fontToEdge = 15 * scale;
 

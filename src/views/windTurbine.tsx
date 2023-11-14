@@ -99,19 +99,16 @@ const WindTurbine = ({
   const bladeLength = bladeRadius - maximumChordR / 3;
 
   const bladeShape = useMemo(() => {
-    const tipHalfWidth = bladeTipWidth * 0.5;
     const bladeConnectorRadius = Math.min(hubRadius * 0.5, hubRadius * 0.25 + bladeRadius * 0.01);
     const s = new Shape();
     const points: Vector2[] = [];
     points.push(new Vector2(-bladeConnectorRadius, 0));
     points.push(new Vector2(-maximumChordL / 2, bladeRadius - bladeLength));
     points.push(new Vector2(-maximumChordL, maximumChordR));
-    points.push(new Vector2(-tipHalfWidth, bladeRadius));
+    points.push(new Vector2(bladeConnectorRadius - bladeTipWidth, bladeRadius));
     s.moveTo(-bladeConnectorRadius, 0);
     s.splineThru(points);
-    // s.lineTo(-maximumChordR, maximumChordL);
-    // s.lineTo(-tipHalfWidth, bladeRadius);
-    s.lineTo(tipHalfWidth, bladeRadius);
+    s.lineTo(bladeConnectorRadius, bladeRadius);
     s.lineTo(bladeConnectorRadius, 0);
     s.closePath();
     return s;
