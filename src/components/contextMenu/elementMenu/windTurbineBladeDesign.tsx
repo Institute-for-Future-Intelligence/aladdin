@@ -54,18 +54,19 @@ const WindTurbineBladeDesign = ({ setDialogVisible }: { setDialogVisible: (b: bo
     ctx.stroke();
 
     const scale = (w - x0 * 2) / turbine.bladeRadius;
-    const bladeTipWidth = 0.2;
-    const hubRadius = 0.75;
-    const maximumChordR = scale * (turbine.maximumChordRadius ?? hubRadius + turbine.bladeRadius * 0.25);
-    const maximumChordL = scale * (turbine.maximumChordLength ?? hubRadius * turbine.bladeRadius * 0.1);
+    const bladeTipWidth = scale * turbine.bladeTipWidth;
+    const maximumChordRadius = scale * turbine.maximumChordRadius;
+    const maximumChordLength = scale * turbine.maximumChordLength;
     const bladeRadius = scale * turbine.bladeRadius;
-    const tipWidth = scale * bladeTipWidth;
-    const bladeConnectorRadius = scale * Math.min(hubRadius * 0.5, hubRadius * 0.25 + turbine.bladeRadius * 0.01);
+    const bladeConnectorRadius =
+      scale * Math.min(turbine.hubRadius * 0.5, turbine.hubRadius * 0.25 + turbine.bladeRadius * 0.01);
+    const maximumChordOffset = maximumChordLength - bladeConnectorRadius;
+    const bladeLength = bladeRadius - maximumChordRadius / 3;
     const points: Vector2[] = [];
     points.push(new Vector2(x0, h2 - bladeConnectorRadius));
-    points.push(new Vector2(x0 + maximumChordR / 3, h2 - maximumChordL / 2));
-    points.push(new Vector2(x0 + maximumChordR, h2 - maximumChordL));
-    points.push(new Vector2(x0 + bladeRadius, h2 + bladeConnectorRadius - tipWidth));
+    points.push(new Vector2(x0 + bladeRadius - bladeLength, h2 - maximumChordOffset / 2));
+    points.push(new Vector2(x0 + maximumChordRadius, h2 - maximumChordOffset));
+    points.push(new Vector2(x0 + bladeRadius, h2 + bladeConnectorRadius - bladeTipWidth));
     const spline = new SplineCurve(points);
     const p = spline.getPoints(50);
     ctx.beginPath();
@@ -73,7 +74,7 @@ const WindTurbineBladeDesign = ({ setDialogVisible }: { setDialogVisible: (b: bo
     for (let i = 1; i < p.length; i++) {
       ctx.lineTo(p[i].x, p[i].y);
     }
-    ctx.lineTo(x0 + bladeRadius, h2 + bladeConnectorRadius - tipWidth);
+    ctx.lineTo(x0 + bladeRadius, h2 + bladeConnectorRadius - bladeTipWidth);
     ctx.lineTo(x0 + bladeRadius, h2 + bladeConnectorRadius);
     ctx.lineTo(x0, h2 + bladeConnectorRadius);
     ctx.closePath();
