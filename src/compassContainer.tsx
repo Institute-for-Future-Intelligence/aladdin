@@ -8,7 +8,7 @@ import { useLanguage } from './views/hooks';
 import i18n from './i18n/i18n';
 
 const STYLE_SIZE = 120;
-const BLACK = 'black';
+const DARK = 'DarkSlateGray';
 const WHITE = 'white';
 
 const Compass = ({ visible = true }: { visible: boolean }) => {
@@ -56,14 +56,14 @@ const Compass = ({ visible = true }: { visible: boolean }) => {
     ctx.beginPath();
     ctx.arc(center, center, outerRingRadius, 0, Math.PI * 2);
     ctx.lineWidth = outerRingWidth;
-    ctx.strokeStyle = BLACK;
+    ctx.strokeStyle = DARK;
     ctx.stroke();
 
     // inner ring
     ctx.beginPath();
     ctx.arc(center, center, innerRingRadius, 0, Math.PI * 2);
     ctx.lineWidth = innerRingWidth;
-    ctx.strokeStyle = BLACK;
+    ctx.strokeStyle = DARK;
     ctx.stroke();
 
     ctx.lineWidth = outlineWidth;
@@ -81,7 +81,7 @@ const Compass = ({ visible = true }: { visible: boolean }) => {
     ctx.moveTo(center, center - pointerLength);
     ctx.lineTo(center + pointerHalfWidth, center - pointerHalfWidth);
     ctx.lineTo(center, center);
-    ctx.fillStyle = BLACK;
+    ctx.fillStyle = DARK;
     ctx.stroke();
     ctx.fill();
 
@@ -90,7 +90,7 @@ const Compass = ({ visible = true }: { visible: boolean }) => {
     ctx.moveTo(center, center + pointerLength);
     ctx.lineTo(center - pointerHalfWidth, center + pointerHalfWidth);
     ctx.lineTo(center, center);
-    ctx.fillStyle = BLACK;
+    ctx.fillStyle = DARK;
     ctx.stroke();
     ctx.fill();
 
@@ -107,7 +107,7 @@ const Compass = ({ visible = true }: { visible: boolean }) => {
     ctx.moveTo(center - pointerLength, center);
     ctx.lineTo(center - pointerHalfWidth, center - pointerHalfWidth);
     ctx.lineTo(center, center);
-    ctx.fillStyle = BLACK;
+    ctx.fillStyle = DARK;
     ctx.stroke();
     ctx.fill();
 
@@ -132,7 +132,7 @@ const Compass = ({ visible = true }: { visible: boolean }) => {
     ctx.moveTo(center + pointerLength, center);
     ctx.lineTo(center + pointerHalfWidth, center + pointerHalfWidth);
     ctx.lineTo(center, center);
-    ctx.fillStyle = BLACK;
+    ctx.fillStyle = DARK;
     ctx.stroke();
     ctx.fill();
 
@@ -149,7 +149,7 @@ const Compass = ({ visible = true }: { visible: boolean }) => {
     ctx.fillText(`${i18n.t('compass.S', lang)}`, center, fontToEdge);
     ctx.restore();
 
-    ctx.fillStyle = BLACK;
+    ctx.fillStyle = DARK;
 
     ctx.save();
     ctx.translate(0, CANVAS_SIZE);
