@@ -111,7 +111,7 @@ const WindTurbine = ({
     s.lineTo(bladeConnectorRadius, 0);
     s.closePath();
     return s;
-  }, [bladeRadius]);
+  }, [bladeRadius, maximumChordLength, maximumChordRadius]);
 
   const timeAngle = useMemo(() => {
     // A wind turbine rotates 10-20 revolutions per minute, which is too fast to show in a 24-hour animation

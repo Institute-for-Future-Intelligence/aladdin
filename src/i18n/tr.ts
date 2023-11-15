@@ -1110,6 +1110,7 @@ export const i18n_tr = {
       RotorInitialAngle: 'Rotor Initial Angle',
       RotorBladeDesign: 'Rotor Blade Design',
       RotorBladeRadius: 'Rotor Blade Radius',
+      MaximumChordLength: 'Maximum Chord Length',
       Tower: 'Tower',
       TowerHeight: 'Tower Height',
       TowerRadius: 'Tower Radius',

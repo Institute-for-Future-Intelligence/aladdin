@@ -1086,6 +1086,7 @@ export const i18n_zh_cn = {
       RotorInitialAngle: '转子初始角度',
       RotorBladeDesign: '转子叶片设计',
       RotorBladeRadius: '转子叶片半径',
+      MaximumChordLength: '最大弦长度',
       Tower: '塔架',
       TowerHeight: '塔架高度',
       TowerRadius: '塔架半径',
