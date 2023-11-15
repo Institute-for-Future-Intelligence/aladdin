@@ -10,7 +10,10 @@ export interface WindTurbineModel extends ElementModel {
   maximumChordLength: number;
   initialRotorAngle: number;
   relativeAngle: number; // in radian
+  hubRadius: number;
+  hubLength: number;
   bladeRadius: number;
+  bladeTipWidth: number;
   towerRadius: number;
   towerHeight: number;
 }

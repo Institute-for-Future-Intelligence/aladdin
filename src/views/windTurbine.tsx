@@ -24,11 +24,14 @@ const WindTurbine = ({
   lx,
   lz,
   speed = 10,
-  maximumChordRadius,
-  maximumChordLength,
+  hubRadius = 0.75,
+  hubLength = 1,
+  maximumChordRadius = 3.25,
+  maximumChordLength = 1,
   towerHeight,
   towerRadius,
   bladeRadius,
+  bladeTipWidth = 0.2,
   rotation = [0, 0, 0],
   relativeAngle = 0,
   initialRotorAngle = 0,
@@ -88,23 +91,18 @@ const WindTurbine = ({
   }
 
   const turbine = getElementById(id) as WindTurbineModel;
-  const bladeTipWidth = 0.2;
-  const hubRadius = 0.75;
-  const hubLength = 1;
   const nacelleRadiusLg = hubRadius;
-  const nacelleRadiusSm = 0.4;
+  const nacelleRadiusSm = hubRadius * 0.6;
   const nacelleLength = hubLength * 2.5;
-  const maximumChordR = maximumChordRadius ?? hubRadius + bladeRadius * 0.25;
-  const maximumChordL = maximumChordLength ?? hubRadius * bladeRadius * 0.1;
-  const bladeLength = bladeRadius - maximumChordR / 3;
+  const bladeLength = bladeRadius - maximumChordRadius / 3;
 
   const bladeShape = useMemo(() => {
     const bladeConnectorRadius = Math.min(hubRadius * 0.5, hubRadius * 0.25 + bladeRadius * 0.01);
     const s = new Shape();
     const points: Vector2[] = [];
     points.push(new Vector2(-bladeConnectorRadius, 0));
-    points.push(new Vector2(-maximumChordL / 2, bladeRadius - bladeLength));
-    points.push(new Vector2(-maximumChordL, maximumChordR));
+    points.push(new Vector2(-maximumChordLength / 2, bladeRadius - bladeLength));
+    points.push(new Vector2(-maximumChordLength, maximumChordRadius));
     points.push(new Vector2(bladeConnectorRadius - bladeTipWidth, bladeRadius));
     s.moveTo(-bladeConnectorRadius, 0);
     s.splineThru(points);

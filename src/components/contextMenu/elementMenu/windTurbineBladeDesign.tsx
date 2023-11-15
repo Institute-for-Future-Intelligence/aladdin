@@ -10,12 +10,12 @@ import { ObjectType, Scope } from '../../../types';
 import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
-import { HALF_PI, ZERO_TOLERANCE } from '../../../constants';
+import { ZERO_TOLERANCE } from '../../../constants';
 import { useSelectedElement } from './menuHooks';
 import Dialog from '../dialog';
 import { useLanguage } from 'src/views/hooks';
 import { WindTurbineModel } from '../../../models/WindTurbineModel';
-import { Shape, SplineCurve, Vector2 } from 'three';
+import { SplineCurve, Vector2 } from 'three';
 
 const WindTurbineBladeDesign = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
@@ -29,7 +29,7 @@ const WindTurbineBladeDesign = ({ setDialogVisible }: { setDialogVisible: (b: bo
   const revertApply = useStore(Selector.revertApply);
 
   const turbine = useSelectedElement(ObjectType.WindTurbine) as WindTurbineModel | undefined;
-  const [inputValue, setInputValue] = useState(turbine?.bladeRadius ?? 0);
+  const [inputValue, setInputValue] = useState(turbine?.maximumChordLength ?? 3.25);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const rejectRef = useRef<boolean>(false);
@@ -416,8 +416,6 @@ const WindTurbineBladeDesign = ({ setDialogVisible }: { setDialogVisible: (b: bo
             style={{ width: 120 }}
             step={0.1}
             precision={1}
-            // formatter={(value) => `${value} ` + i18n.t('word.MeterAbbreviation', lang)}
-            // parser={value => Number(value?.replace(i18n.t('word.MeterAbbreviation', lang), ''))}
             value={inputValue}
             onChange={(value) => {
               if (value) setInputValue(value);

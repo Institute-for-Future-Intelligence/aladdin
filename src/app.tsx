@@ -71,7 +71,8 @@ const App = () => {
         state.showHeatFluxes = false;
       });
     }
-  }, [world, elements, showHeatFluxes, showSolarRadiationHeatmap]);
+    // do not add dependencies on showSolarRadiationHeatmap and showHeatFluxes
+  }, [world, elements]);
 
   return (
     <ConfigProvider locale={locale}>
