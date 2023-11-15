@@ -16,6 +16,15 @@ import { Util } from 'src/Util';
 export class StoreUtil {
   static updateOldFileData() {
     useStore.getState().set((state) => {
+      if (Util.compareVersion(state.version, VERSION)) {
+        if (state.viewState.ambientLightIntensity) {
+          state.viewState.ambientLightIntensity *= 2;
+        }
+        if (state.viewState.directLightIntensity) {
+          state.viewState.directLightIntensity *= 3.5;
+        }
+      }
+
       const elementMap = new Map<string, ElementModel>();
       for (const e of state.elements) {
         elementMap.set(e.id, e);
