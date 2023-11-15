@@ -63,7 +63,6 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const changed = usePrimitiveStore(Selector.changed);
   const addUndoable = useStore(Selector.addUndoable);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
-  const navigation = useStore(Selector.viewState.navigationView) ?? false;
   const cloudFile = useStore(Selector.cloudFile);
   const projectView = useStore(Selector.projectView);
   const axes = useStore(Selector.viewState.axes);

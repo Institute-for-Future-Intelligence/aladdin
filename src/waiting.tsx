@@ -57,6 +57,7 @@ export default React.memo(function Waiting({ initializing }: { initializing: boo
 });
 
 export const EndWaiting = () => {
+  useStore(Selector.fileChanged);
   const waiting = usePrimitiveStore.getState().waiting;
   if (!waiting) return null;
 
