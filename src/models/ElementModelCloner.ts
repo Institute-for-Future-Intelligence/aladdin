@@ -553,7 +553,7 @@ export class ElementModelCloner {
       lz: windTurbine.lz,
       speed: windTurbine.speed,
       pitchAngle: windTurbine.pitchAngle,
-      relativeAngle: windTurbine.relativeAngle,
+      relativeYawAngle: windTurbine.relativeYawAngle,
       initialRotorAngle: windTurbine.initialRotorAngle,
       maximumChordRadius: windTurbine.maximumChordRadius,
       maximumChordLength: windTurbine.maximumChordLength,

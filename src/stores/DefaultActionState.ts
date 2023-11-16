@@ -118,7 +118,7 @@ export class DefaultActionState implements ActionState {
   windowInterior: boolean;
 
   windTurbinePitchAngle: number;
-  windTurbineRelativeAngle: number;
+  windTurbineRelativeYawAngle: number;
   windTurbineInitialRotorAngle: number;
   windTurbineTowerHeight: number;
   windTurbineTowerRadius: number;
@@ -264,7 +264,7 @@ export class DefaultActionState implements ActionState {
     this.windowInterior = false;
 
     this.windTurbinePitchAngle = Math.PI / 18;
-    this.windTurbineRelativeAngle = 0;
+    this.windTurbineRelativeYawAngle = 0;
     this.windTurbineInitialRotorAngle = 0;
     this.windTurbineTowerHeight = 15;
     this.windTurbineTowerRadius = 1;

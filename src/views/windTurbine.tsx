@@ -34,7 +34,7 @@ const WindTurbine = ({
   bladeTipWidth = 0.2,
   bladeRootRadius = 0.3,
   rotation = [0, 0, 0],
-  relativeAngle = 0,
+  relativeYawAngle = 0,
   initialRotorAngle = 0,
   pitchAngle = Util.toRadians(10),
   color = 'white',
@@ -153,8 +153,8 @@ const WindTurbine = ({
 
   // in model coordinate system
   const euler = useMemo(() => {
-    return new Euler(0, 0, rotation[2] + relativeAngle, 'ZXY');
-  }, [rotation, relativeAngle]);
+    return new Euler(0, 0, rotation[2] + relativeYawAngle, 'ZXY');
+  }, [rotation, relativeYawAngle]);
 
   const hoverHandle = (e: ThreeEvent<MouseEvent>, handle: MoveHandleType) => {
     if (e.intersections.length > 0) {

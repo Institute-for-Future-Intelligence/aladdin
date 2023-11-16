@@ -1082,12 +1082,12 @@ export const i18n_zh_tw = {
     },
 
     windTurbineMenu: {
-      RelativeOrientation: '相對方位角',
       Rotor: '轉子',
       RotorInitialAngle: '轉子初始角度',
       RotorBladeDesign: '轉子葉片設計',
       RotorBladeRadius: '轉子葉片半徑',
       RotorBladePitchAngle: '轉子葉片俯仰角',
+      RelativeYawAngle: '相對偏流角',
       MaximumChordLength: '最大弦長度',
       Tower: '塔架',
       TowerHeight: '塔架高度',

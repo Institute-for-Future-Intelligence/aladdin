@@ -1105,12 +1105,12 @@ export const i18n_es = {
     },
 
     windTurbineMenu: {
-      RelativeOrientation: 'Relative Orientation',
       Rotor: 'Rotor',
       RotorInitialAngle: 'Rotor Initial Angle',
       RotorBladeDesign: 'Rotor Blade Design',
       RotorBladeRadius: 'Rotor Blade Radius',
       RotorBladePitchAngle: 'Rotor Blade Pitch Angle',
+      RelativeYawAngle: 'Relative Yaw Angle',
       MaximumChordLength: 'Maximum Chord Length',
       Tower: 'Tower',
       TowerHeight: 'Tower Height',

@@ -17,7 +17,7 @@ import Dialog from '../dialog';
 import { useLanguage } from 'src/views/hooks';
 import { WindTurbineModel } from '../../../models/WindTurbineModel';
 
-const WindTurbineRelativeAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const WindTurbineYawInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -29,7 +29,7 @@ const WindTurbineRelativeAngleInput = ({ setDialogVisible }: { setDialogVisible:
   const revertApply = useStore(Selector.revertApply);
 
   const windTurbine = useSelectedElement(ObjectType.WindTurbine) as WindTurbineModel | undefined;
-  const [inputValue, setInputValue] = useState(windTurbine?.relativeAngle ?? 0);
+  const [inputValue, setInputValue] = useState(windTurbine?.relativeYawAngle ?? 0);
 
   const lang = useLanguage();
 
@@ -37,14 +37,14 @@ const WindTurbineRelativeAngleInput = ({ setDialogVisible }: { setDialogVisible:
     setActionScope(e.target.value);
   };
 
-  const needChange = (relativeAngle: number) => {
+  const needChange = (value: number) => {
     if (!windTurbine) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.WindTurbine && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
             const wt = e as WindTurbineModel;
-            if (Math.abs((wt.relativeAngle ?? 0) - relativeAngle) > ZERO_TOLERANCE) {
+            if (Math.abs((wt.relativeYawAngle ?? 0) - value) > ZERO_TOLERANCE) {
               return true;
             }
           }
@@ -54,7 +54,7 @@ const WindTurbineRelativeAngleInput = ({ setDialogVisible }: { setDialogVisible:
         for (const e of elements) {
           if (e.type === ObjectType.WindTurbine && e.foundationId === windTurbine?.foundationId && !e.locked) {
             const wt = e as WindTurbineModel;
-            if (Math.abs((wt.relativeAngle ?? 0) - relativeAngle) > ZERO_TOLERANCE) {
+            if (Math.abs((wt.relativeYawAngle ?? 0) - value) > ZERO_TOLERANCE) {
               return true;
             }
           }
@@ -64,49 +64,49 @@ const WindTurbineRelativeAngleInput = ({ setDialogVisible }: { setDialogVisible:
         for (const e of elements) {
           if (e.type === ObjectType.WindTurbine && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
             const wt = e as WindTurbineModel;
-            if (Math.abs((wt.relativeAngle ?? 0) - relativeAngle) > ZERO_TOLERANCE) {
+            if (Math.abs((wt.relativeYawAngle ?? 0) - value) > ZERO_TOLERANCE) {
               return true;
             }
           }
         }
         break;
       default:
-        if (Math.abs((windTurbine?.relativeAngle ?? 0) - relativeAngle) > ZERO_TOLERANCE) {
+        if (Math.abs((windTurbine?.relativeYawAngle ?? 0) - value) > ZERO_TOLERANCE) {
           return true;
         }
     }
     return false;
   };
 
-  const updateRelativeAngleById = (id: string, ra: number) => {
+  const updateRelativeYawAngleById = (id: string, value: number) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.WindTurbine && e.id === id && !e.locked) {
           const wt = e as WindTurbineModel;
-          wt.relativeAngle = ra;
+          wt.relativeYawAngle = value;
           break;
         }
       }
     });
   };
 
-  const updateRelativeAngleAboveFoundation = (foundationId: string, ra: number) => {
+  const updateRelativeYawAngleAboveFoundation = (foundationId: string, value: number) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.WindTurbine && e.foundationId === foundationId && !e.locked) {
           const wt = e as WindTurbineModel;
-          wt.relativeAngle = ra;
+          wt.relativeYawAngle = value;
         }
       }
     });
   };
 
-  const updateRelativeAngleForAll = (ra: number) => {
+  const updateRelativeYawAngleForAll = (value: number) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.WindTurbine && !e.locked) {
           const wt = e as WindTurbineModel;
-          wt.relativeAngle = ra;
+          wt.relativeYawAngle = value;
         }
       }
     });
@@ -117,13 +117,13 @@ const WindTurbineRelativeAngleInput = ({ setDialogVisible }: { setDialogVisible:
       for (const e of state.elements) {
         if (e.type === ObjectType.WindTurbine && !e.locked && map.has(e.id)) {
           const wt = e as WindTurbineModel;
-          wt.relativeAngle = value;
+          wt.relativeYawAngle = value;
         }
       }
     });
   };
 
-  const setRelativeAngle = (value: number) => {
+  const setRelativeYawAngle = (value: number) => {
     if (!windTurbine) return;
     if (!needChange(value)) return;
     switch (actionScope) {
@@ -131,17 +131,17 @@ const WindTurbineRelativeAngleInput = ({ setDialogVisible }: { setDialogVisible:
         const oldValuesSelected = new Map<string, number>();
         for (const elem of elements) {
           if (elem.type === ObjectType.WindTurbine && useStore.getState().selectedElementIdSet.has(elem.id)) {
-            oldValuesSelected.set(elem.id, (elem as WindTurbineModel).relativeAngle);
+            oldValuesSelected.set(elem.id, (elem as WindTurbineModel).relativeYawAngle);
           }
         }
         const undoableChangeSelected = {
-          name: 'Set Relative Orientation for Selected Wind Turbines',
+          name: 'Set Relative Yaw Angle for Selected Wind Turbines',
           timestamp: Date.now(),
           oldValues: oldValuesSelected,
           newValue: value,
           undo: () => {
             for (const [id, br] of undoableChangeSelected.oldValues.entries()) {
-              updateRelativeAngleById(id, br as number);
+              updateRelativeYawAngleById(id, br as number);
             }
           },
           redo: () => {
@@ -160,25 +160,25 @@ const WindTurbineRelativeAngleInput = ({ setDialogVisible }: { setDialogVisible:
         const oldValuesAll = new Map<string, number>();
         for (const elem of elements) {
           if (elem.type === ObjectType.WindTurbine) {
-            oldValuesAll.set(elem.id, (elem as WindTurbineModel).relativeAngle);
+            oldValuesAll.set(elem.id, (elem as WindTurbineModel).relativeYawAngle);
           }
         }
         const undoableChangeAll = {
-          name: 'Set Relative Orientation for All Wind Turbines',
+          name: 'Set Relative Yaw Angle for All Wind Turbines',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
           undo: () => {
             for (const [id, br] of undoableChangeAll.oldValues.entries()) {
-              updateRelativeAngleById(id, br as number);
+              updateRelativeYawAngleById(id, br as number);
             }
           },
           redo: () => {
-            updateRelativeAngleForAll(undoableChangeAll.newValue as number);
+            updateRelativeYawAngleForAll(undoableChangeAll.newValue as number);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateRelativeAngleForAll(value);
+        updateRelativeYawAngleForAll(value);
         setApplyCount(applyCount + 1);
         break;
       }
@@ -187,23 +187,23 @@ const WindTurbineRelativeAngleInput = ({ setDialogVisible }: { setDialogVisible:
           const oldValuesAboveFoundation = new Map<string, number>();
           for (const elem of elements) {
             if (elem.type === ObjectType.WindTurbine && elem.foundationId === windTurbine.foundationId) {
-              oldValuesAboveFoundation.set(elem.id, (elem as WindTurbineModel).relativeAngle);
+              oldValuesAboveFoundation.set(elem.id, (elem as WindTurbineModel).relativeYawAngle);
             }
           }
           const undoableChangeAboveFoundation = {
-            name: 'Set Relative Orientation for All Wind Turbines Above Foundation',
+            name: 'Set Relative Yaw Angle for All Wind Turbines Above Foundation',
             timestamp: Date.now(),
             oldValues: oldValuesAboveFoundation,
             newValue: value,
             groupId: windTurbine.foundationId,
             undo: () => {
               for (const [id, br] of undoableChangeAboveFoundation.oldValues.entries()) {
-                updateRelativeAngleById(id, br as number);
+                updateRelativeYawAngleById(id, br as number);
               }
             },
             redo: () => {
               if (undoableChangeAboveFoundation.groupId) {
-                updateRelativeAngleAboveFoundation(
+                updateRelativeYawAngleAboveFoundation(
                   undoableChangeAboveFoundation.groupId,
                   undoableChangeAboveFoundation.newValue as number,
                 );
@@ -211,34 +211,34 @@ const WindTurbineRelativeAngleInput = ({ setDialogVisible }: { setDialogVisible:
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAboveFoundation);
-          updateRelativeAngleAboveFoundation(windTurbine.foundationId, value);
+          updateRelativeYawAngleAboveFoundation(windTurbine.foundationId, value);
           setApplyCount(applyCount + 1);
         }
         break;
       default:
         // selected element may be outdated, make sure that we get the latest
         const wt = getElementById(windTurbine.id) as WindTurbineModel;
-        const oldValue = wt ? wt.relativeAngle : windTurbine.relativeAngle;
+        const oldValue = wt ? wt.relativeYawAngle : windTurbine.relativeYawAngle;
         const undoableChange = {
-          name: 'Set Wind Turbine Relative Orientation',
+          name: 'Set Wind Turbine Relative Yaw Angle',
           timestamp: Date.now(),
           oldValue: oldValue,
           newValue: value,
           changedElementId: windTurbine.id,
           changedElementType: windTurbine.type,
           undo: () => {
-            updateRelativeAngleById(undoableChange.changedElementId, undoableChange.oldValue as number);
+            updateRelativeYawAngleById(undoableChange.changedElementId, undoableChange.oldValue as number);
           },
           redo: () => {
-            updateRelativeAngleById(undoableChange.changedElementId, undoableChange.newValue as number);
+            updateRelativeYawAngleById(undoableChange.changedElementId, undoableChange.newValue as number);
           },
         } as UndoableChange;
         addUndoable(undoableChange);
-        updateRelativeAngleById(windTurbine.id, value);
+        updateRelativeYawAngleById(windTurbine.id, value);
         setApplyCount(applyCount + 1);
     }
     setCommonStore((state) => {
-      state.actionState.windTurbineRelativeAngle = value;
+      state.actionState.windTurbineRelativeYawAngle = value;
     });
   };
 
@@ -252,19 +252,19 @@ const WindTurbineRelativeAngleInput = ({ setDialogVisible }: { setDialogVisible:
   };
 
   const ok = () => {
-    setRelativeAngle(inputValue);
+    setRelativeYawAngle(inputValue);
     setDialogVisible(false);
     setApplyCount(0);
   };
 
   const apply = () => {
-    setRelativeAngle(inputValue);
+    setRelativeYawAngle(inputValue);
   };
 
   return (
     <Dialog
       width={550}
-      title={i18n.t('windTurbineMenu.RelativeOrientation', lang)}
+      title={i18n.t('windTurbineMenu.RelativeYawAngle', lang)}
       onApply={apply}
       onClose={close}
       onClickCancel={cancel}
@@ -316,4 +316,4 @@ const WindTurbineRelativeAngleInput = ({ setDialogVisible }: { setDialogVisible:
   );
 };
 
-export default WindTurbineRelativeAngleInput;
+export default WindTurbineYawInput;
