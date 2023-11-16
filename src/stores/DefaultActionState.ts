@@ -29,6 +29,7 @@ import {
   DEFAULT_WINDOW_U_VALUE,
 } from '../constants';
 import { DEFAULT_PARAPET_SETTINGS } from 'src/views/wall/parapet';
+import { Util } from '../Util';
 
 export class DefaultActionState implements ActionState {
   // Needed for immer drafting to work properly: https://immerjs.github.io/immer/docs/complex-objects
@@ -117,6 +118,7 @@ export class DefaultActionState implements ActionState {
   windowEmpty: boolean;
   windowInterior: boolean;
 
+  windTurbinePitchAngle: number;
   windTurbineRelativeAngle: number;
   windTurbineInitialRotorAngle: number;
   windTurbineTowerHeight: number;
@@ -262,6 +264,7 @@ export class DefaultActionState implements ActionState {
     this.windowEmpty = false;
     this.windowInterior = false;
 
+    this.windTurbinePitchAngle = Util.toRadians(10);
     this.windTurbineRelativeAngle = 0;
     this.windTurbineInitialRotorAngle = 0;
     this.windTurbineTowerHeight = 15;

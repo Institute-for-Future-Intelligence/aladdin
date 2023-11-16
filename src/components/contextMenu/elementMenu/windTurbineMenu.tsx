@@ -27,6 +27,7 @@ import WindTurbineBladeRadiusInput from './windTurbineBladeRadiusInput';
 import WindTurbineRelativeAngleInput from './windTurbineRelativeAngleInput';
 import WindTurbineRotorInitialAngleInput from './windTurbineRotorInitialAngleInput';
 import WindTurbineBladeDesign from './windTurbineBladeDesign';
+import WindTurbineBladePitchInput from './windTurbineBladePitchInput';
 
 export const WindTurbineMenu = React.memo(() => {
   const language = useStore(Selector.language);
@@ -37,6 +38,7 @@ export const WindTurbineMenu = React.memo(() => {
   const [relativeAngleDialogVisible, setRelativeAngleDialogVisible] = useState(false);
   const [rotorInitialAngleDialogVisible, setRotorInitialAngleDialogVisible] = useState(false);
   const [bladeRadiusDialogVisible, setBladeRadiusDialogVisible] = useState(false);
+  const [bladePitchDialogVisible, setBladePitchDialogVisible] = useState(false);
   const [bladeDesignDialogVisible, setBladeDesignDialogVisible] = useState(false);
   const [towerHeightDialogVisible, setTowerHeightDialogVisible] = useState(false);
   const [towerRadiusDialogVisible, setTowerRadiusDialogVisible] = useState(false);
@@ -107,6 +109,18 @@ export const WindTurbineMenu = React.memo(() => {
               }}
             >
               {i18n.t('windTurbineMenu.RotorBladeRadius', lang)} ...
+            </Menu.Item>
+            {/* blade pitch angle */}
+            {bladePitchDialogVisible && <WindTurbineBladePitchInput setDialogVisible={setBladePitchDialogVisible} />}
+            <Menu.Item
+              key={'wind-turbine-rotor-blade-pitch-angle'}
+              style={{ paddingLeft: '36px' }}
+              onClick={() => {
+                setApplyCount(0);
+                setBladePitchDialogVisible(true);
+              }}
+            >
+              {i18n.t('windTurbineMenu.RotorBladePitchAngle', lang)} ...
             </Menu.Item>
             {/* blade design */}
             {bladeDesignDialogVisible && <WindTurbineBladeDesign setDialogVisible={setBladeDesignDialogVisible} />}

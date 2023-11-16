@@ -421,6 +421,9 @@ export class ElementModelFactory {
     }
     return {
       type: ObjectType.WindTurbine,
+      initialRotorAngle: 0,
+      relativeAngle: 0,
+      pitchAngle: Util.toRadians(10),
       hubRadius: 0.75,
       hubLength: 1,
       bladeRadius: 10,

@@ -36,6 +36,7 @@ const WindTurbine = ({
   rotation = [0, 0, 0],
   relativeAngle = 0,
   initialRotorAngle = 0,
+  pitchAngle = Util.toRadians(10),
   color = 'white',
   lineColor = 'black',
   lineWidth = 0.5,
@@ -272,7 +273,7 @@ const WindTurbine = ({
         receiveShadow={shadowEnabled}
         castShadow={shadowEnabled}
         position={new Vector3(0, -1, towerHeight)}
-        rotation={[HALF_PI, 0, timeAngle]}
+        rotation={[HALF_PI, pitchAngle, timeAngle, 'XZY']}
       >
         <shapeGeometry attach="geometry" args={[bladeShape]} />
         <meshStandardMaterial attach="material" color={color} side={FrontSide} />
@@ -281,7 +282,7 @@ const WindTurbine = ({
         receiveShadow={shadowEnabled}
         castShadow={shadowEnabled}
         position={new Vector3(0, -1.05, towerHeight)}
-        rotation={[HALF_PI, 0, timeAngle]}
+        rotation={[HALF_PI, pitchAngle, timeAngle, 'XZY']}
       >
         <shapeGeometry attach="geometry" args={[bladeShape]} />
         <meshStandardMaterial attach="material" color={color} side={BackSide} />
@@ -292,7 +293,7 @@ const WindTurbine = ({
         receiveShadow={shadowEnabled}
         castShadow={shadowEnabled}
         position={new Vector3(0, -1, towerHeight)}
-        rotation={[HALF_PI, 0, timeAngle + (Math.PI * 2) / 3]}
+        rotation={[HALF_PI, pitchAngle, timeAngle + (Math.PI * 2) / 3, 'XZY']}
       >
         <shapeGeometry attach="geometry" args={[bladeShape]} />
         <meshStandardMaterial attach="material" color={color} side={FrontSide} />
@@ -301,7 +302,7 @@ const WindTurbine = ({
         receiveShadow={shadowEnabled}
         castShadow={shadowEnabled}
         position={new Vector3(0, -1.05, towerHeight)}
-        rotation={[HALF_PI, 0, timeAngle + (Math.PI * 2) / 3]}
+        rotation={[HALF_PI, pitchAngle, timeAngle + (Math.PI * 2) / 3, 'XZY']}
       >
         <shapeGeometry attach="geometry" args={[bladeShape]} />
         <meshStandardMaterial attach="material" color={color} side={BackSide} />
@@ -312,7 +313,7 @@ const WindTurbine = ({
         receiveShadow={shadowEnabled}
         castShadow={shadowEnabled}
         position={new Vector3(0, -1, towerHeight)}
-        rotation={[HALF_PI, 0, timeAngle + (Math.PI * 4) / 3]}
+        rotation={[HALF_PI, pitchAngle, timeAngle + (Math.PI * 4) / 3, 'XZY']}
       >
         <shapeGeometry attach="geometry" args={[bladeShape]} />
         <meshStandardMaterial attach="material" color={color} side={FrontSide} />
@@ -321,7 +322,7 @@ const WindTurbine = ({
         receiveShadow={shadowEnabled}
         castShadow={shadowEnabled}
         position={new Vector3(0, -1.05, towerHeight)}
-        rotation={[HALF_PI, 0, timeAngle + (Math.PI * 4) / 3]}
+        rotation={[HALF_PI, pitchAngle, timeAngle + (Math.PI * 4) / 3, 'XZY']}
       >
         <shapeGeometry attach="geometry" args={[bladeShape]} />
         <meshStandardMaterial attach="material" color={color} side={BackSide} />
@@ -362,7 +363,7 @@ const WindTurbine = ({
           textHeight={turbine?.labelSize ?? 1}
           castShadow={false}
           receiveShadow={false}
-          position={[0, 0, 0.5 + towerHeight + hubRadius]}
+          position={[0, 0, 1 + towerHeight + hubRadius]}
         />
       )}
     </group>

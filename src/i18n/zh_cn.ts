@@ -504,7 +504,7 @@ export const i18n_zh_cn = {
 
       windPowerSubMenu: '风力发电',
       windPowerTutorials: {
-        WindTurbines: '风力涡轮机',
+        EffectOfPitchAngleOfWindTurbineBlades: '转子叶片的俯仰角对风力涡轮机输出的影响',
         OffshoreWindFarm: '海上风电场',
       },
 
@@ -1086,6 +1086,7 @@ export const i18n_zh_cn = {
       RotorInitialAngle: '转子初始角度',
       RotorBladeDesign: '转子叶片设计',
       RotorBladeRadius: '转子叶片半径',
+      RotorBladePitchAngle: '转子叶片俯仰角',
       MaximumChordLength: '最大弦长度',
       Tower: '塔架',
       TowerHeight: '塔架高度',

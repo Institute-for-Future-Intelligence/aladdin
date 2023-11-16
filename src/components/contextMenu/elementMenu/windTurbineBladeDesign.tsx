@@ -784,8 +784,8 @@ const WindTurbineBladeDesign = ({ setDialogVisible }: { setDialogVisible: (b: bo
                 min={0.1}
                 max={1}
                 style={{ width: '70px' }}
-                step={0.1}
-                precision={1}
+                step={0.01}
+                precision={2}
                 value={rootRadiusInputValue}
                 onChange={(value) => {
                   if (value) setRootRadiusInputValue(value);
@@ -803,8 +803,8 @@ const WindTurbineBladeDesign = ({ setDialogVisible }: { setDialogVisible: (b: bo
                 min={0.5}
                 max={2}
                 style={{ width: '70px' }}
-                step={0.1}
-                precision={1}
+                step={0.01}
+                precision={2}
                 value={maximumChordLengthInputValue}
                 onChange={(value) => {
                   if (value) setMaximumChordLengthInputValue(value);
@@ -822,8 +822,8 @@ const WindTurbineBladeDesign = ({ setDialogVisible }: { setDialogVisible: (b: bo
                 min={2}
                 max={(turbine?.bladeRadius ?? 10) / 2}
                 style={{ width: 70 }}
-                step={0.1}
-                precision={1}
+                step={0.01}
+                precision={2}
                 value={maximumChordRadiusInputValue}
                 onChange={(value) => {
                   if (value) setMaximumChordRadiusInputValue(value);

@@ -510,7 +510,7 @@ export const i18n_ua = {
 
       windPowerSubMenu: 'Wind Power',
       windPowerTutorials: {
-        WindTurbines: 'Wind Turbines',
+        EffectOfPitchAngleOfWindTurbineBlades: 'Effect of Pitch Angle of Wind Turbine Blades',
         OffshoreWindFarm: 'Offshore Wind Farm',
       },
 
@@ -1112,6 +1112,7 @@ export const i18n_ua = {
       RotorInitialAngle: 'Rotor Initial Angle',
       RotorBladeDesign: 'Rotor Blade Design',
       RotorBladeRadius: 'Rotor Blade Radius',
+      RotorBladePitchAngle: 'Rotor Blade Pitch Angle',
       MaximumChordLength: 'Maximum Chord Length',
       Tower: 'Tower',
       TowerHeight: 'Tower Height',
