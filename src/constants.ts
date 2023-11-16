@@ -6,6 +6,9 @@ import { Color, Euler, Vector2, Vector3 } from 'three';
 
 export const VERSION = '1.4.7';
 
+// used for check old file that need to update light intensity.
+export const LIGHT_INTENSITY_CHANGED_VERSION = '1.5.0';
+
 export const isProd = process.env.NODE_ENV === 'production';
 
 export const HOME_URL: string = isProd

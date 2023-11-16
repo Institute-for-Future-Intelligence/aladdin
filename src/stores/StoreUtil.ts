@@ -8,7 +8,7 @@ import { WindowModel, WindowType } from 'src/models/WindowModel';
 import { WallFill, WallModel, WallStructure } from 'src/models/WallModel';
 import { DEFAULT_PARAPET_SETTINGS } from 'src/views/wall/parapet';
 import { GambrelRoofModel, RoofModel, RoofType } from 'src/models/RoofModel';
-import { GROUND_ID, VERSION } from 'src/constants';
+import { GROUND_ID, LIGHT_INTENSITY_CHANGED_VERSION } from 'src/constants';
 import { DoorModel, DoorType } from 'src/models/DoorModel';
 import { ElementModel } from 'src/models/ElementModel';
 import { Util } from 'src/Util';
@@ -16,7 +16,7 @@ import { Util } from 'src/Util';
 export class StoreUtil {
   static updateOldFileData() {
     useStore.getState().set((state) => {
-      if (Util.compareVersion(state.version, VERSION)) {
+      if (Util.compareVersion(state.version, LIGHT_INTENSITY_CHANGED_VERSION)) {
         if (state.viewState.ambientLightIntensity) {
           state.viewState.ambientLightIntensity *= 2;
         }

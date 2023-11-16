@@ -1889,8 +1889,13 @@ export class Util {
     const [v2Major, v2Minor, v2Patch] = version2.split('.').map((n) => Number(n));
 
     if (v1Major < v2Major) return true;
+    if (v1Major > v2Major) return false;
+
     if (v1Minor < v2Minor) return true;
+    if (v1Minor > v2Minor) return false;
+
     if (v1Patch < v2Patch) return true;
+
     return false;
   }
 }
