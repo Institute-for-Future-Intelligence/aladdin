@@ -5055,6 +5055,7 @@
       "hubRadius": 0.75,
       "hubLength": 1,
       "bladeTipWidth": 0.2,
+      "bladeRootRadius": 0.3,
       "maximumChordRadius": 3,
       "maximumChordLength": 1,
       "normal": [
@@ -5118,6 +5119,7 @@
       "hubRadius": 0.75,
       "hubLength": 1,
       "bladeTipWidth": 0.2,
+      "bladeRootRadius": 0.3,
       "maximumChordRadius": 3,
       "maximumChordLength": 1,
       "normal": [
@@ -5181,6 +5183,7 @@
       "hubRadius": 0.75,
       "hubLength": 1,
       "bladeTipWidth": 0.2,
+      "bladeRootRadius": 0.3,
       "maximumChordRadius": 3,
       "maximumChordLength": 1,
       "normal": [

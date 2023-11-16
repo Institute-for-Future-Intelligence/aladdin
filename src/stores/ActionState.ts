@@ -110,6 +110,7 @@ export interface ActionState {
   windTurbineBladeRadius: number;
   windTurbineBladeMaximumChordLength: number;
   windTurbineBladeMaximumChordRadius: number;
+  windTurbineBladeRootRadius: number;
 
   solarPanelModelName: string;
   solarPanelOrientation: Orientation;

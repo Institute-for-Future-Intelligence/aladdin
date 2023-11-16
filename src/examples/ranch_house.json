@@ -3883,6 +3883,7 @@
       "hubRadius": 0.75,
       "hubLength": 1,
       "bladeTipWidth": 0.2,
+      "bladeRootRadius": 0.3,
       "maximumChordRadius": 3,
       "maximumChordLength": 1,
       "cx": 0.03780364026220417,

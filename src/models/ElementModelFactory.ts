@@ -425,6 +425,7 @@ export class ElementModelFactory {
       hubLength: 1,
       bladeRadius: 10,
       bladeTipWidth: 0.2,
+      bladeRootRadius: 0.3,
       maximumChordRadius: 3,
       maximumChordLength: 1,
       towerRadius: 0.5,

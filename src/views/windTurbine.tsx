@@ -32,6 +32,7 @@ const WindTurbine = ({
   towerRadius,
   bladeRadius,
   bladeTipWidth = 0.2,
+  bladeRootRadius = 0.3,
   rotation = [0, 0, 0],
   relativeAngle = 0,
   initialRotorAngle = 0,
@@ -97,21 +98,20 @@ const WindTurbine = ({
   const bladeLength = bladeRadius - maximumChordRadius / 3;
 
   const bladeShape = useMemo(() => {
-    const bladeConnectorRadius = Math.min(hubRadius * 0.5, hubRadius * 0.25 + bladeRadius * 0.01);
-    const maximumChordOffset = maximumChordLength - bladeConnectorRadius;
+    const maximumChordOffset = maximumChordLength - bladeRootRadius;
     const s = new Shape();
     const points: Vector2[] = [];
-    points.push(new Vector2(-bladeConnectorRadius, 0));
+    points.push(new Vector2(-bladeRootRadius, 0));
     points.push(new Vector2(-maximumChordOffset / 2, bladeRadius - bladeLength));
     points.push(new Vector2(-maximumChordOffset, maximumChordRadius));
-    points.push(new Vector2(bladeConnectorRadius - bladeTipWidth, bladeRadius));
-    s.moveTo(-bladeConnectorRadius, 0);
+    points.push(new Vector2(bladeRootRadius - bladeTipWidth, bladeRadius));
+    s.moveTo(-bladeRootRadius, 0);
     s.splineThru(points);
-    s.lineTo(bladeConnectorRadius, bladeRadius);
-    s.lineTo(bladeConnectorRadius, 0);
+    s.lineTo(bladeRootRadius, bladeRadius);
+    s.lineTo(bladeRootRadius, 0);
     s.closePath();
     return s;
-  }, [bladeRadius, maximumChordLength, maximumChordRadius]);
+  }, [bladeRadius, maximumChordLength, maximumChordRadius, bladeRootRadius]);
 
   const timeAngle = useMemo(() => {
     // A wind turbine rotates 10-20 revolutions per minute, which is too fast to show in a 24-hour animation
