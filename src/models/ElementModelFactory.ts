@@ -431,7 +431,7 @@ export class ElementModelFactory {
       bladeRootRadius: 0.3,
       maximumChordRadius: 3,
       maximumChordLength: 1,
-      towerRadius: 0.5,
+      towerRadius: 0.4,
       towerHeight: 20,
       cx: x, // relative
       cy: y, // relative
