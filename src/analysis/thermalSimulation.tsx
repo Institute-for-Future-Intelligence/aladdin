@@ -362,15 +362,13 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         }
       }
     }
-    setTimeout(() => {
-      usePrimitiveStore.getState().set((state) => {
-        state.flagOfDailySimulation = !state.flagOfDailySimulation;
-        if (!state.runYearlyThermalSimulation) {
-          state.showSolarRadiationHeatmap = true;
-          state.showHeatFluxes = true;
-        }
-      });
-    }, 10);
+    usePrimitiveStore.getState().set((state) => {
+      state.flagOfDailySimulation = !state.flagOfDailySimulation;
+      if (!state.runYearlyThermalSimulation) {
+        state.showSolarRadiationHeatmap = true;
+        state.showHeatFluxes = true;
+      }
+    });
     if (loggable && !runYearlySimulation) {
       // setTimeout callback will run asynchronously after finishing current execution stack,
       // which is equivalent to waiting for the results to show up in the data store.
@@ -442,6 +440,10 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
 
   useEffect(() => {
     if (runYearlySimulation) {
+      usePrimitiveStore.getState().set((state) => {
+        state.showSolarRadiationHeatmap = false;
+        state.showHeatFluxes = false;
+      });
       if (noAnimation && !Util.hasMovingParts(elements)) {
         // this causes the simulation code to run at the beginning of the next event cycle
         // that hopefully has the updated scene graph
@@ -529,9 +531,11 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         sampledDayRef.current++;
         if (sampledDayRef.current === daysPerYear) {
           cancelAnimationFrame(requestRef.current);
-          setCommonStore((state) => {
-            state.world.date = originalDateRef.current.toLocaleString('en-US');
-          });
+          setTimeout(() => {
+            setCommonStore((state) => {
+              state.world.date = originalDateRef.current.toLocaleString('en-US');
+            });
+          }, 10);
           usePrimitiveStore.getState().set((state) => {
             state.runYearlyThermalSimulation = false;
             state.simulationInProgress = false;
@@ -558,17 +562,17 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
               });
             }, 10);
           }
-          return;
+        } else {
+          // go to the next month
+          now.setMonth(sampledDayRef.current * monthInterval, 22);
+          now.setHours(0, minuteInterval / 2);
+          setMonthIndex(now.getMonth());
+          dayRef.current = Util.dayOfYear(now);
+          resetHourlyMaps();
+          resetSolarHeatMaps();
+          // recursive call to the next step of the simulation
+          requestRef.current = requestAnimationFrame(simulateYearly);
         }
-        // go to the next month
-        now.setMonth(sampledDayRef.current * monthInterval, 22);
-        now.setHours(0, minuteInterval / 2);
-        setMonthIndex(now.getMonth());
-        dayRef.current = Util.dayOfYear(now);
-        resetHourlyMaps();
-        resetSolarHeatMaps();
-        // recursive call to the next step of the simulation
-        requestRef.current = requestAnimationFrame(simulateYearly);
       }
     }
   };

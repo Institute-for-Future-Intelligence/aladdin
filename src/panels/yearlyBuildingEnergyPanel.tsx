@@ -163,7 +163,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
   };
 
   useEffect(() => {
-    const indexOfMonth = now.getMonth() / monthInterval;
+    const indexOfMonth = Math.floor(now.getMonth() / monthInterval);
     const countBuildings = (Object.keys(sum[0]).length - 1) / (hasSolarPanels ? 4 : 3);
     tooltipHeaterBreakdown.current = [];
     tooltipAcBreakdown.current = [];

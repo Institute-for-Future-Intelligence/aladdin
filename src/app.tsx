@@ -72,7 +72,7 @@ const App = () => {
       });
     }
     // do not add dependencies on showSolarRadiationHeatmap and showHeatFluxes
-  }, [world, elements]);
+  }, [elements]);
 
   return (
     <ConfigProvider locale={locale}>
