@@ -298,6 +298,7 @@ export enum ObjectType {
   FresnelReflector = 'Fresnel Reflector',
   Heliostat = 'Heliostat',
   WindTurbine = 'Wind Turbine',
+  VerticalAxisWindTurbine = 'Vertical Axis Wind Turbine',
   Cuboid = 'Cuboid',
   Human = 'Human',
   Tree = 'Tree',
