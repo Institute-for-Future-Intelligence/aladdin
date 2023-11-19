@@ -13,6 +13,8 @@ import FresnelReflectorIcon from '../../../assets/map_fresnel_reflector.png';
 import HeliostatIcon from '../../../assets/map_heliostat.png';
 import UnderConstructionIcon from '../../../assets/map_under_construction.png';
 import UnknownIcon from '../../../assets/map_marker.png';
+import WindTurbineIcon from '../../../assets/map_wind_turbine.png';
+import ColocationProjectsIcon from '../../../assets/map_colocation_projects.png';
 
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Col, Input, Modal, Row, Select } from 'antd';
@@ -184,6 +186,14 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
             <Option key={ModelType.SOLAR_POWER_TOWER} value={ModelType.SOLAR_POWER_TOWER}>
               <img alt={'Heliostat'} width={24} src={HeliostatIcon} style={{ marginRight: '8px' }} />
               {i18n.t('shared.HeliostatElement', lang)}
+            </Option>
+            <Option key={ModelType.WIND_TURBINE} value={ModelType.WIND_TURBINE}>
+              <img alt={'Wind Turbine'} width={24} src={WindTurbineIcon} style={{ marginRight: '8px' }} />
+              {i18n.t('word.WindPower', lang)}
+            </Option>
+            <Option key={ModelType.COLOCATION_PROJECTS} value={ModelType.COLOCATION_PROJECTS}>
+              <img alt={'Colocation Projects'} width={24} src={ColocationProjectsIcon} style={{ marginRight: '8px' }} />
+              {i18n.t('word.ColocationProjects', lang)}
             </Option>
           </Select>
         </Col>

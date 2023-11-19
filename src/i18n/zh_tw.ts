@@ -160,6 +160,8 @@ export const i18n_zh_tw = {
       TouristAttraction: '旅遊景點',
       UnderConstruction: '在建',
       Photovoltaic: '光伏',
+      WindPower: '風能',
+      ColocationProjects: '共用空間項目',
       Anonymous: '無名氏',
       Nickname: '别名',
       Pin: '置頂',

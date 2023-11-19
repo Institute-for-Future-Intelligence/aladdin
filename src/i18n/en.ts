@@ -160,6 +160,8 @@ export const i18n_en = {
       TouristAttraction: 'Tourist Attraction',
       UnderConstruction: 'Under Construction',
       Photovoltaic: 'Photovoltaic',
+      WindPower: 'Wind Power',
+      ColocationProjects: 'Colocation Projects',
       Anonymous: 'Anonymous',
       Nickname: 'Nickname',
       Pin: 'Pin',

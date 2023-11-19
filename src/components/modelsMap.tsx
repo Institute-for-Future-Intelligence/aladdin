@@ -13,6 +13,8 @@ import FresnelReflectorIcon from '../assets/map_fresnel_reflector.png';
 import HeliostatIcon from '../assets/map_heliostat.png';
 import UnderConstructionIcon from '../assets/map_under_construction.png';
 import UnknownIcon from '../assets/map_marker.png';
+import WindTurbineIcon from '../assets/map_wind_turbine.png';
+import ColocationProjectsIcon from '../assets/map_colocation_projects.png';
 import EmptyHeartIcon from '../assets/empty_heart.png';
 import RedHeartIcon from '../assets/red_heart.png';
 import OpenFileIcon from '../assets/open_file.png';
@@ -57,6 +59,10 @@ export const getIconUrl = (site: ModelSite) => {
       return FresnelReflectorIcon;
     case ModelType.SOLAR_POWER_TOWER:
       return HeliostatIcon;
+    case ModelType.WIND_TURBINE:
+      return WindTurbineIcon;
+    case ModelType.COLOCATION_PROJECTS:
+      return ColocationProjectsIcon;
     case ModelType.RESIDENTIAL_BUILDING:
       return ResidentialBuildingIcon;
     case ModelType.COMMERCIAL_BUILDING:
