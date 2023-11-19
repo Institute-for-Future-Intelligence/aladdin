@@ -237,7 +237,7 @@ const MainToolBarButtons = () => {
             marginRight: '10px',
           }}
         />
-        {i18n.t(`toolbar.SwitchToAdding${replacingText ?? objectType.replaceAll(' ', '')}`, lang)}
+        {i18n.t(`toolbar.Add${replacingText ?? objectType.replaceAll(' ', '')}`, lang)}
       </Menu.Item>
     );
   };
