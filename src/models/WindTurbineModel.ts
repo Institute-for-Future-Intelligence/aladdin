@@ -8,12 +8,14 @@ export interface WindTurbineModel extends ElementModel {
   speed: number; // revolutions per minute (typically 10-20)
   maximumChordRadius: number;
   maximumChordLength: number;
-  initialRotorAngle: number;
-  relativeAngle: number; // in radian
+  initialRotorAngle: number; // in radian
+  relativeYawAngle: number; // in radian
+  pitchAngle: number; // in radian
   hubRadius: number;
   hubLength: number;
   bladeRadius: number;
   bladeTipWidth: number;
+  bladeRootRadius: number;
   towerRadius: number;
   towerHeight: number;
 }

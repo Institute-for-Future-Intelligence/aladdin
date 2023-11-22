@@ -117,11 +117,15 @@ export class DefaultActionState implements ActionState {
   windowEmpty: boolean;
   windowInterior: boolean;
 
-  windTurbineRelativeAngle: number;
+  windTurbinePitchAngle: number;
+  windTurbineRelativeYawAngle: number;
   windTurbineInitialRotorAngle: number;
   windTurbineTowerHeight: number;
   windTurbineTowerRadius: number;
   windTurbineBladeRadius: number;
+  windTurbineBladeMaximumChordLength: number;
+  windTurbineBladeMaximumChordRadius: number;
+  windTurbineBladeRootRadius: number;
 
   solarPanelModelName: string;
   solarPanelOrientation: Orientation;
@@ -259,11 +263,15 @@ export class DefaultActionState implements ActionState {
     this.windowEmpty = false;
     this.windowInterior = false;
 
-    this.windTurbineRelativeAngle = 0;
+    this.windTurbinePitchAngle = Math.PI / 18;
+    this.windTurbineRelativeYawAngle = 0;
     this.windTurbineInitialRotorAngle = 0;
     this.windTurbineTowerHeight = 15;
     this.windTurbineTowerRadius = 1;
     this.windTurbineBladeRadius = 10;
+    this.windTurbineBladeMaximumChordLength = 1;
+    this.windTurbineBladeMaximumChordRadius = 3;
+    this.windTurbineBladeRootRadius = 0.3;
 
     this.solarPanelModelName = 'SPR-X21-335-BLK';
     this.solarPanelOrientation = Orientation.landscape;

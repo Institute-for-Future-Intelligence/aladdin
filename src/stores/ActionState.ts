@@ -103,11 +103,15 @@ export interface ActionState {
   windowEmpty: boolean;
   windowInterior: boolean;
 
-  windTurbineRelativeAngle: number;
+  windTurbinePitchAngle: number;
+  windTurbineRelativeYawAngle: number;
   windTurbineInitialRotorAngle: number;
   windTurbineTowerHeight: number;
   windTurbineTowerRadius: number;
   windTurbineBladeRadius: number;
+  windTurbineBladeMaximumChordLength: number;
+  windTurbineBladeMaximumChordRadius: number;
+  windTurbineBladeRootRadius: number;
 
   solarPanelModelName: string;
   solarPanelOrientation: Orientation;

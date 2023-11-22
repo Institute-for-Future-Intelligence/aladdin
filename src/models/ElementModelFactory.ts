@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import {
@@ -421,13 +421,17 @@ export class ElementModelFactory {
     }
     return {
       type: ObjectType.WindTurbine,
+      initialRotorAngle: 0,
+      relativeYawAngle: 0,
+      pitchAngle: Util.toRadians(10),
       hubRadius: 0.75,
       hubLength: 1,
       bladeRadius: 10,
       bladeTipWidth: 0.2,
-      maximumChordRadius: 1.75,
-      maximumChordLength: 3,
-      towerRadius: 0.5,
+      bladeRootRadius: 0.3,
+      maximumChordRadius: 3,
+      maximumChordLength: 1,
+      towerRadius: 0.4,
       towerHeight: 20,
       cx: x, // relative
       cy: y, // relative

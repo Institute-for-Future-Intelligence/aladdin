@@ -3,7 +3,7 @@
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Cone, Cylinder, Line, Sphere } from '@react-three/drei';
+import { Cone, Cylinder, Line, RoundedBox, Sphere } from '@react-three/drei';
 import { BackSide, Euler, FrontSide, Mesh, Shape, Vector2, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import { useRefStore } from 'src/stores/commonRef';
@@ -26,15 +26,17 @@ const WindTurbine = ({
   speed = 10,
   hubRadius = 0.75,
   hubLength = 1,
-  maximumChordRadius = 3.25,
+  maximumChordRadius = 3,
   maximumChordLength = 1,
   towerHeight,
   towerRadius,
   bladeRadius,
   bladeTipWidth = 0.2,
+  bladeRootRadius = 0.3,
   rotation = [0, 0, 0],
-  relativeAngle = 0,
+  relativeYawAngle = 0,
   initialRotorAngle = 0,
+  pitchAngle = Util.toRadians(10),
   color = 'white',
   lineColor = 'black',
   lineWidth = 0.5,
@@ -91,26 +93,25 @@ const WindTurbine = ({
   }
 
   const turbine = getElementById(id) as WindTurbineModel;
-  const nacelleRadiusLg = hubRadius;
-  const nacelleRadiusSm = hubRadius * 0.6;
+  const nacelleRadiusWidth = hubRadius * 1.5;
   const nacelleLength = hubLength * 2.5;
   const bladeLength = bladeRadius - maximumChordRadius / 3;
 
   const bladeShape = useMemo(() => {
-    const bladeConnectorRadius = Math.min(hubRadius * 0.5, hubRadius * 0.25 + bladeRadius * 0.01);
+    const maximumChordOffset = maximumChordLength - bladeRootRadius;
     const s = new Shape();
     const points: Vector2[] = [];
-    points.push(new Vector2(-bladeConnectorRadius, 0));
-    points.push(new Vector2(-maximumChordLength / 2, bladeRadius - bladeLength));
-    points.push(new Vector2(-maximumChordLength, maximumChordRadius));
-    points.push(new Vector2(bladeConnectorRadius - bladeTipWidth, bladeRadius));
-    s.moveTo(-bladeConnectorRadius, 0);
+    points.push(new Vector2(-bladeRootRadius, 0));
+    points.push(new Vector2(-maximumChordOffset / 2, bladeRadius - bladeLength));
+    points.push(new Vector2(-maximumChordOffset, maximumChordRadius));
+    points.push(new Vector2(bladeRootRadius - bladeTipWidth, bladeRadius));
+    s.moveTo(-bladeRootRadius, 0);
     s.splineThru(points);
-    s.lineTo(bladeConnectorRadius, bladeRadius);
-    s.lineTo(bladeConnectorRadius, 0);
+    s.lineTo(bladeRootRadius, bladeRadius);
+    s.lineTo(bladeRootRadius, 0);
     s.closePath();
     return s;
-  }, [bladeRadius]);
+  }, [bladeRadius, maximumChordLength, maximumChordRadius, bladeRootRadius]);
 
   const timeAngle = useMemo(() => {
     // A wind turbine rotates 10-20 revolutions per minute, which is too fast to show in a 24-hour animation
@@ -151,8 +152,8 @@ const WindTurbine = ({
 
   // in model coordinate system
   const euler = useMemo(() => {
-    return new Euler(0, 0, rotation[2] + relativeAngle, 'ZXY');
-  }, [rotation, relativeAngle]);
+    return new Euler(0, 0, rotation[2] + relativeYawAngle, 'ZXY');
+  }, [rotation, relativeYawAngle]);
 
   const hoverHandle = (e: ThreeEvent<MouseEvent>, handle: MoveHandleType) => {
     if (e.intersections.length > 0) {
@@ -243,7 +244,7 @@ const WindTurbine = ({
       {/*draw hub */}
       <Cone
         userData={{ unintersectable: true }}
-        name={'Cone'}
+        name={'Hub'}
         castShadow={false}
         receiveShadow={false}
         args={[hubRadius, hubLength, 8, 1]}
@@ -254,33 +255,37 @@ const WindTurbine = ({
       </Cone>
 
       {/*draw nacelle */}
-      <Cylinder
+      <RoundedBox
         userData={{ unintersectable: true }}
-        name={'Cylinder'}
+        name={'Nacelle'}
         castShadow={false}
         receiveShadow={false}
-        args={[nacelleRadiusSm, nacelleRadiusLg, nacelleLength, 8, 1]}
+        radius={0.1}
+        smoothness={4}
+        args={[nacelleRadiusWidth, nacelleRadiusWidth, nacelleLength]}
         position={new Vector3(0, 0.3, towerHeight)}
-        rotation={[0, 0, 0]}
+        rotation={[HALF_PI, 0, 0]}
       >
         <meshStandardMaterial attach="material" color={color} />
-      </Cylinder>
+      </RoundedBox>
 
       {/*draw blade 1*/}
       <mesh
+        name={'Blade 1A'}
         receiveShadow={shadowEnabled}
         castShadow={shadowEnabled}
         position={new Vector3(0, -1, towerHeight)}
-        rotation={[HALF_PI, 0, timeAngle]}
+        rotation={[HALF_PI, pitchAngle, timeAngle, 'XZY']}
       >
         <shapeGeometry attach="geometry" args={[bladeShape]} />
         <meshStandardMaterial attach="material" color={color} side={FrontSide} />
       </mesh>
       <mesh
+        name={'Blade 1B'}
         receiveShadow={shadowEnabled}
         castShadow={shadowEnabled}
         position={new Vector3(0, -1.05, towerHeight)}
-        rotation={[HALF_PI, 0, timeAngle]}
+        rotation={[HALF_PI, pitchAngle, timeAngle, 'XZY']}
       >
         <shapeGeometry attach="geometry" args={[bladeShape]} />
         <meshStandardMaterial attach="material" color={color} side={BackSide} />
@@ -288,19 +293,21 @@ const WindTurbine = ({
 
       {/*draw blade 2*/}
       <mesh
+        name={'Blade 2A'}
         receiveShadow={shadowEnabled}
         castShadow={shadowEnabled}
         position={new Vector3(0, -1, towerHeight)}
-        rotation={[HALF_PI, 0, timeAngle + (Math.PI * 2) / 3]}
+        rotation={[HALF_PI, pitchAngle, timeAngle + (Math.PI * 2) / 3, 'XZY']}
       >
         <shapeGeometry attach="geometry" args={[bladeShape]} />
         <meshStandardMaterial attach="material" color={color} side={FrontSide} />
       </mesh>
       <mesh
+        name={'Blade 2B'}
         receiveShadow={shadowEnabled}
         castShadow={shadowEnabled}
         position={new Vector3(0, -1.05, towerHeight)}
-        rotation={[HALF_PI, 0, timeAngle + (Math.PI * 2) / 3]}
+        rotation={[HALF_PI, pitchAngle, timeAngle + (Math.PI * 2) / 3, 'XZY']}
       >
         <shapeGeometry attach="geometry" args={[bladeShape]} />
         <meshStandardMaterial attach="material" color={color} side={BackSide} />
@@ -308,19 +315,21 @@ const WindTurbine = ({
 
       {/*draw blade 3*/}
       <mesh
+        name={'Blade 3A'}
         receiveShadow={shadowEnabled}
         castShadow={shadowEnabled}
         position={new Vector3(0, -1, towerHeight)}
-        rotation={[HALF_PI, 0, timeAngle + (Math.PI * 4) / 3]}
+        rotation={[HALF_PI, pitchAngle, timeAngle + (Math.PI * 4) / 3, 'XZY']}
       >
         <shapeGeometry attach="geometry" args={[bladeShape]} />
         <meshStandardMaterial attach="material" color={color} side={FrontSide} />
       </mesh>
       <mesh
+        name={'Blade 3B'}
         receiveShadow={shadowEnabled}
         castShadow={shadowEnabled}
         position={new Vector3(0, -1.05, towerHeight)}
-        rotation={[HALF_PI, 0, timeAngle + (Math.PI * 4) / 3]}
+        rotation={[HALF_PI, pitchAngle, timeAngle + (Math.PI * 4) / 3, 'XZY']}
       >
         <shapeGeometry attach="geometry" args={[bladeShape]} />
         <meshStandardMaterial attach="material" color={color} side={BackSide} />
@@ -361,7 +370,7 @@ const WindTurbine = ({
           textHeight={turbine?.labelSize ?? 1}
           castShadow={false}
           receiveShadow={false}
-          position={[0, 0, 0.5 + towerHeight + hubRadius]}
+          position={[0, 0, 1 + towerHeight + hubRadius]}
         />
       )}
     </group>

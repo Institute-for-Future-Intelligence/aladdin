@@ -161,6 +161,8 @@ export enum ModelType {
   PARABOLIC_TROUGH = 'Parabolic Trough',
   FRESNEL_REFLECTOR = 'Fresnel Reflector',
   SOLAR_POWER_TOWER = 'Solar Power Tower',
+  WIND_TURBINE = 'Wind Turbine',
+  COLOCATION_PROJECTS = 'Colocation Projects',
 }
 
 export enum BuildingCompletionStatus {
@@ -302,6 +304,7 @@ export enum ObjectType {
   FresnelReflector = 'Fresnel Reflector',
   Heliostat = 'Heliostat',
   WindTurbine = 'Wind Turbine',
+  VerticalAxisWindTurbine = 'Vertical Axis Wind Turbine',
   Cuboid = 'Cuboid',
   Human = 'Human',
   Tree = 'Tree',

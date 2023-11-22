@@ -2248,8 +2248,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
         </SubMenu>
         {/* wind power */}
         <SubMenu key={'wind-power'} title={i18n.t('menu.windPowerSubMenu', lang)}>
-          <Menu.Item key="wind_turbines" onClick={loadFile}>
-            {i18n.t('menu.windPowerTutorials.WindTurbines', lang)}
+          <Menu.Item key="effect_pitch_angle" onClick={loadFile}>
+            {i18n.t('menu.windPowerTutorials.EffectOfPitchAngleOfWindTurbineBlades', lang)}
           </Menu.Item>
           <Menu.Item key="offshore_wind_farm" onClick={loadFile}>
             {i18n.t('menu.windPowerTutorials.OffshoreWindFarm', lang)}

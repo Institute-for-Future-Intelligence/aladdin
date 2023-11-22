@@ -24,6 +24,7 @@ import ParabolicDishImage from './assets/parabolic_dish.png';
 import FresnelReflectorImage from './assets/fresnel_reflector.png';
 import HeliostatImage from './assets/heliostat.png';
 import WindTurbineImage from './assets/wind_turbine.png';
+import VerticalAxisWindTurbineImage from './assets/vertical_axis_wind_turbine.png';
 import LightImage from './assets/led_light.png';
 import GroupImage from './assets/group.png';
 import ClearImage from './assets/clear.png';
@@ -44,7 +45,6 @@ import { useRefStore } from './stores/commonRef';
 import { showInfo } from './helpers';
 import { Util } from './Util';
 import { usePrimitiveStore } from './stores/commonPrimitive';
-import { isGroupable } from './models/Groupable';
 
 const ToolBarButton = ({ ...props }) => {
   return (
@@ -237,7 +237,7 @@ const MainToolBarButtons = () => {
             marginRight: '10px',
           }}
         />
-        {i18n.t(`toolbar.SwitchToAdding${replacingText ?? objectType.replaceAll(' ', '')}`, lang)}
+        {i18n.t(`toolbar.Add${replacingText ?? objectType.replaceAll(' ', '')}`, lang)}
       </Menu.Item>
     );
   };
@@ -255,6 +255,7 @@ const MainToolBarButtons = () => {
       case ObjectType.FresnelReflector:
       case ObjectType.Heliostat:
       case ObjectType.WindTurbine:
+      case ObjectType.VerticalAxisWindTurbine:
       case ObjectType.Light:
       case ObjectType.Wall:
       case ObjectType.Window:
@@ -366,9 +367,10 @@ const MainToolBarButtons = () => {
       {menuItem(ObjectType.FresnelReflector, FresnelReflectorImage, setCategory3Flag)}
       {menuItem(ObjectType.Heliostat, HeliostatImage, setCategory3Flag)}
       {menuItem(ObjectType.WindTurbine, WindTurbineImage, setCategory3Flag)}
+      {/*{menuItem(ObjectType.VerticalAxisWindTurbine, VerticalAxisWindTurbineImage, setCategory3Flag)}*/}
       {menuItem(ObjectType.Sensor, SensorImage, setCategory3Flag)}
       {menuItem(ObjectType.Light, LightImage, setCategory3Flag)}
-      {/*{menuItem(ObjectType.WindTurbine, WaterHeaterImage, setCategory3Flag)}*/}
+      {/*{menuItem(ObjectType.WaterHeater, WaterHeaterImage, setCategory3Flag)}*/}
     </Menu>
   );
 
@@ -424,6 +426,8 @@ const MainToolBarButtons = () => {
         return buttonImg(objectType, SensorImage);
       case ObjectType.WindTurbine:
         return buttonImg(objectType, WindTurbineImage);
+      case ObjectType.VerticalAxisWindTurbine:
+        return buttonImg(objectType, VerticalAxisWindTurbineImage);
       case ObjectType.Light:
         return buttonImg(objectType, LightImage);
     }

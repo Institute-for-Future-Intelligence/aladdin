@@ -29,14 +29,14 @@ const WindTurbineBladeDesign = ({ setDialogVisible }: { setDialogVisible: (b: bo
   const revertApply = useStore(Selector.revertApply);
 
   const turbine = useSelectedElement(ObjectType.WindTurbine) as WindTurbineModel | undefined;
-  const [inputValue, setInputValue] = useState(turbine?.maximumChordLength ?? 3.25);
+  const [rootRadiusInputValue, setRootRadiusInputValue] = useState(turbine?.bladeRootRadius ?? 0.3);
+  const [maximumChordLengthInputValue, setMaximumChordLengthInputValue] = useState(turbine?.maximumChordLength ?? 1);
+  const [maximumChordRadiusInputValue, setMaximumChordRadiusInputValue] = useState(turbine?.maximumChordRadius ?? 3);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const rejectRef = useRef<boolean>(false);
-  const rejectedValue = useRef<number | undefined>();
 
   const lang = useLanguage();
-  const canvasWidth = 505;
+  const canvasWidth = 555;
 
   useEffect(() => {
     if (!canvasRef.current || !turbine) return;
@@ -45,27 +45,28 @@ const WindTurbineBladeDesign = ({ setDialogVisible }: { setDialogVisible: (b: bo
     const w = canvasRef.current.width;
     const h = canvasRef.current.height;
     const x0 = 20;
-    const h2 = h / 2;
+    const h2 = h * 0.7;
     ctx.clearRect(0, 0, w, h);
 
+    ctx.setLineDash([]);
     ctx.strokeStyle = 'gray';
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 1;
     ctx.rect(0, 0, w, h);
     ctx.stroke();
 
     const scale = (w - x0 * 2) / turbine.bladeRadius;
-    const bladeTipWidth = 0.2;
-    const hubRadius = 0.75;
-    const maximumChordR = scale * (turbine.maximumChordRadius ?? hubRadius + turbine.bladeRadius * 0.25);
-    const maximumChordL = scale * (turbine.maximumChordLength ?? hubRadius * turbine.bladeRadius * 0.1);
+    const bladeTipWidth = scale * turbine.bladeTipWidth;
+    const maximumChordRadius = scale * maximumChordRadiusInputValue;
+    const maximumChordLength = scale * maximumChordLengthInputValue;
     const bladeRadius = scale * turbine.bladeRadius;
-    const tipWidth = scale * bladeTipWidth;
-    const bladeConnectorRadius = scale * Math.min(hubRadius * 0.5, hubRadius * 0.25 + turbine.bladeRadius * 0.01);
+    const bladeRootRadius = scale * rootRadiusInputValue;
+    const maximumChordOffset = maximumChordLength - bladeRootRadius;
+    const bladeLength = bladeRadius - maximumChordRadius / 3;
     const points: Vector2[] = [];
-    points.push(new Vector2(x0, h2 - bladeConnectorRadius));
-    points.push(new Vector2(x0 + maximumChordR / 3, h2 - maximumChordL / 2));
-    points.push(new Vector2(x0 + maximumChordR, h2 - maximumChordL));
-    points.push(new Vector2(x0 + bladeRadius, h2 + bladeConnectorRadius - tipWidth));
+    points.push(new Vector2(x0, h2 - bladeRootRadius));
+    points.push(new Vector2(x0 + bladeRadius - bladeLength, h2 - maximumChordOffset / 2));
+    points.push(new Vector2(x0 + maximumChordRadius, h2 - maximumChordOffset));
+    points.push(new Vector2(x0 + bladeRadius, h2 + bladeRootRadius - bladeTipWidth));
     const spline = new SplineCurve(points);
     const p = spline.getPoints(50);
     ctx.beginPath();
@@ -73,41 +74,51 @@ const WindTurbineBladeDesign = ({ setDialogVisible }: { setDialogVisible: (b: bo
     for (let i = 1; i < p.length; i++) {
       ctx.lineTo(p[i].x, p[i].y);
     }
-    ctx.lineTo(x0 + bladeRadius, h2 + bladeConnectorRadius - tipWidth);
-    ctx.lineTo(x0 + bladeRadius, h2 + bladeConnectorRadius);
-    ctx.lineTo(x0, h2 + bladeConnectorRadius);
+    ctx.lineTo(x0 + bladeRadius, h2 + bladeRootRadius - bladeTipWidth);
+    ctx.lineTo(x0 + bladeRadius, h2 + bladeRootRadius);
+    ctx.lineTo(x0, h2 + bladeRootRadius);
     ctx.closePath();
+    ctx.lineWidth = 2;
     ctx.fillStyle = 'lightgray';
     ctx.fill();
-    ctx.lineWidth = 2;
     ctx.stroke();
 
     ctx.lineWidth = 0.5;
-    ctx.setLineDash([5, 3]);
+    // ctx.setLineDash([5, 3]);
     ctx.strokeStyle = 'gray';
     ctx.beginPath();
-    ctx.moveTo(0, h2);
-    ctx.lineTo(w, h2);
+    ctx.moveTo(x0 + maximumChordRadius, h2 - maximumChordOffset);
+    ctx.lineTo(x0 + maximumChordRadius, h2);
     ctx.stroke();
 
+    ctx.font = 'italic 10px Arial';
+    ctx.fillStyle = 'dimgray';
+    ctx.fillText('C', x0 + maximumChordRadius + 5, h2 - maximumChordOffset / 2 + 8);
+    ctx.fillText('D', x0 + maximumChordRadius / 2, h2 - 3);
+    ctx.fillText('A', x0 - 10, h2);
+
     ctx.beginPath();
-    ctx.moveTo(w / 2, 0);
-    ctx.lineTo(w / 2, h);
+    ctx.moveTo(x0, h2);
+    ctx.lineTo(x0 + maximumChordRadius, h2);
     ctx.stroke();
-  }, [turbine?.bladeRadius]);
+  }, [turbine?.bladeRadius, maximumChordLengthInputValue, maximumChordRadiusInputValue, rootRadiusInputValue]);
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);
   };
 
-  const needChange = (bladeRadius: number) => {
+  {
+    /* root radius */
+  }
+
+  const needChangeRootRadius = (value: number) => {
     if (!turbine) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.WindTurbine && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
             const wt = e as WindTurbineModel;
-            if (Math.abs(wt.bladeRadius - bladeRadius) > ZERO_TOLERANCE) {
+            if (Math.abs(wt.bladeRootRadius - value) > ZERO_TOLERANCE) {
               return true;
             }
           }
@@ -117,7 +128,7 @@ const WindTurbineBladeDesign = ({ setDialogVisible }: { setDialogVisible: (b: bo
         for (const e of elements) {
           if (e.type === ObjectType.WindTurbine && e.foundationId === turbine?.foundationId && !e.locked) {
             const wt = e as WindTurbineModel;
-            if (Math.abs(wt.bladeRadius - bladeRadius) > ZERO_TOLERANCE) {
+            if (Math.abs(wt.bladeRootRadius - value) > ZERO_TOLERANCE) {
               return true;
             }
           }
@@ -127,246 +138,601 @@ const WindTurbineBladeDesign = ({ setDialogVisible }: { setDialogVisible: (b: bo
         for (const e of elements) {
           if (e.type === ObjectType.WindTurbine && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
             const wt = e as WindTurbineModel;
-            if (Math.abs(wt.bladeRadius - bladeRadius) > ZERO_TOLERANCE) {
+            if (Math.abs(wt.bladeRootRadius - value) > ZERO_TOLERANCE) {
               return true;
             }
           }
         }
         break;
       default:
-        if (Math.abs(turbine?.bladeRadius - bladeRadius) > ZERO_TOLERANCE) {
+        if (Math.abs((turbine?.bladeRootRadius ?? 0.3) - value) > ZERO_TOLERANCE) {
           return true;
         }
     }
     return false;
   };
 
-  const updateBladeRadiusById = (id: string, br: number) => {
+  const updateRootRadiusById = (id: string, value: number) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.WindTurbine && e.id === id && !e.locked) {
           const wt = e as WindTurbineModel;
-          wt.bladeRadius = br;
-          wt.lx = wt.ly = br * 2;
-          wt.lz = wt.towerHeight + br;
+          wt.bladeRootRadius = value;
           break;
         }
       }
     });
   };
 
-  const updateBladeRadiusAboveFoundation = (foundationId: string, br: number) => {
+  const updateRootRadiusAboveFoundation = (foundationId: string, value: number) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.WindTurbine && e.foundationId === foundationId && !e.locked) {
           const wt = e as WindTurbineModel;
-          wt.bladeRadius = br;
-          wt.lx = wt.ly = br * 2;
-          wt.lz = wt.towerHeight + br;
+          wt.bladeRootRadius = value;
         }
       }
     });
   };
 
-  const updateBladeRadiusForAll = (br: number) => {
+  const updateRootRadiusForAll = (value: number) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.WindTurbine && !e.locked) {
           const wt = e as WindTurbineModel;
-          wt.bladeRadius = br;
-          wt.lx = wt.ly = br * 2;
-          wt.lz = wt.towerHeight + br;
+          wt.bladeRootRadius = value;
         }
       }
     });
   };
 
-  const updateInMap = (map: Map<string, number>, value: number) => {
+  const updateRootRadiusInMap = (map: Map<string, number>, value: number) => {
     useStore.getState().set((state) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.WindTurbine && !e.locked && map.has(e.id)) {
           const wt = e as WindTurbineModel;
-          wt.bladeRadius = value;
-          wt.lx = wt.ly = value * 2;
-          wt.lz = wt.towerHeight + value;
+          wt.bladeRootRadius = value;
         }
       }
     });
   };
 
-  const setBladeRadius = (value: number) => {
+  const setRootRadius = (value: number) => {
     if (!turbine) return;
-    if (!needChange(value)) return;
-    rejectedValue.current = undefined;
+    if (!needChangeRootRadius(value)) return;
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType: {
-        rejectRef.current = false;
+        const oldValuesSelected = new Map<string, number>();
         for (const elem of elements) {
           if (elem.type === ObjectType.WindTurbine && useStore.getState().selectedElementIdSet.has(elem.id)) {
-            const wt = elem as WindTurbineModel;
-            if (wt.towerHeight < value) {
-              rejectRef.current = true;
-              break;
-            }
+            oldValuesSelected.set(elem.id, (elem as WindTurbineModel).bladeRootRadius);
           }
         }
-        if (rejectRef.current) {
-          rejectedValue.current = value;
-          setInputValue(turbine.bladeRadius);
-        } else {
-          const oldValuesSelected = new Map<string, number>();
-          for (const elem of elements) {
-            if (elem.type === ObjectType.WindTurbine && useStore.getState().selectedElementIdSet.has(elem.id)) {
-              oldValuesSelected.set(elem.id, (elem as WindTurbineModel).bladeRadius);
+        const undoableChangeSelected = {
+          name: 'Set Root Radius for Selected Wind Turbines',
+          timestamp: Date.now(),
+          oldValues: oldValuesSelected,
+          newValue: value,
+          undo: () => {
+            for (const [id, br] of undoableChangeSelected.oldValues.entries()) {
+              updateRootRadiusById(id, br as number);
             }
-          }
-          const undoableChangeSelected = {
-            name: 'Set Blade Radius for Selected Wind Turbines',
-            timestamp: Date.now(),
-            oldValues: oldValuesSelected,
-            newValue: value,
-            undo: () => {
-              for (const [id, br] of undoableChangeSelected.oldValues.entries()) {
-                updateBladeRadiusById(id, br as number);
-              }
-            },
-            redo: () => {
-              updateInMap(
-                undoableChangeSelected.oldValues as Map<string, number>,
-                undoableChangeSelected.newValue as number,
-              );
-            },
-          } as UndoableChangeGroup;
-          addUndoable(undoableChangeSelected);
-          updateInMap(oldValuesSelected, value);
-          setApplyCount(applyCount + 1);
-        }
+          },
+          redo: () => {
+            updateRootRadiusInMap(
+              undoableChangeSelected.oldValues as Map<string, number>,
+              undoableChangeSelected.newValue as number,
+            );
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeSelected);
+        updateRootRadiusInMap(oldValuesSelected, value);
+        setApplyCount(applyCount + 1);
         break;
       }
       case Scope.AllObjectsOfThisType: {
-        rejectRef.current = false;
+        const oldValuesAll = new Map<string, number>();
         for (const elem of elements) {
           if (elem.type === ObjectType.WindTurbine) {
-            const wt = elem as WindTurbineModel;
-            if (wt.towerHeight < value) {
-              rejectRef.current = true;
-              break;
-            }
+            oldValuesAll.set(elem.id, (elem as WindTurbineModel).bladeRootRadius);
           }
         }
-        if (rejectRef.current) {
-          rejectedValue.current = value;
-          setInputValue(turbine.bladeRadius);
-        } else {
-          const oldValuesAll = new Map<string, number>();
-          for (const elem of elements) {
-            if (elem.type === ObjectType.WindTurbine) {
-              oldValuesAll.set(elem.id, (elem as WindTurbineModel).bladeRadius);
+        const undoableChangeAll = {
+          name: 'Set Root Radius for All Wind Turbines',
+          timestamp: Date.now(),
+          oldValues: oldValuesAll,
+          newValue: value,
+          undo: () => {
+            for (const [id, br] of undoableChangeAll.oldValues.entries()) {
+              updateRootRadiusById(id, br as number);
             }
-          }
-          const undoableChangeAll = {
-            name: 'Set Blade Radius for All Wind Turbines',
-            timestamp: Date.now(),
-            oldValues: oldValuesAll,
-            newValue: value,
-            undo: () => {
-              for (const [id, br] of undoableChangeAll.oldValues.entries()) {
-                updateBladeRadiusById(id, br as number);
-              }
-            },
-            redo: () => {
-              updateBladeRadiusForAll(undoableChangeAll.newValue as number);
-            },
-          } as UndoableChangeGroup;
-          addUndoable(undoableChangeAll);
-          updateBladeRadiusForAll(value);
-          setApplyCount(applyCount + 1);
-        }
+          },
+          redo: () => {
+            updateRootRadiusForAll(undoableChangeAll.newValue as number);
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeAll);
+        updateRootRadiusForAll(value);
+        setApplyCount(applyCount + 1);
         break;
       }
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (turbine.foundationId) {
-          rejectRef.current = false;
+          const oldValuesAboveFoundation = new Map<string, number>();
           for (const elem of elements) {
             if (elem.type === ObjectType.WindTurbine && elem.foundationId === turbine.foundationId) {
-              const wt = elem as WindTurbineModel;
-              if (wt.towerHeight < value) {
-                rejectRef.current = true;
-                break;
-              }
+              oldValuesAboveFoundation.set(elem.id, (elem as WindTurbineModel).bladeRootRadius);
             }
           }
-          if (rejectRef.current) {
-            rejectedValue.current = value;
-            setInputValue(turbine.bladeRadius);
-          } else {
-            const oldValuesAboveFoundation = new Map<string, number>();
-            for (const elem of elements) {
-              if (elem.type === ObjectType.WindTurbine && elem.foundationId === turbine.foundationId) {
-                oldValuesAboveFoundation.set(elem.id, (elem as WindTurbineModel).bladeRadius);
+          const undoableChangeAboveFoundation = {
+            name: 'Set Root Radius for All Wind Turbines Above Foundation',
+            timestamp: Date.now(),
+            oldValues: oldValuesAboveFoundation,
+            newValue: value,
+            groupId: turbine.foundationId,
+            undo: () => {
+              for (const [id, br] of undoableChangeAboveFoundation.oldValues.entries()) {
+                updateRootRadiusById(id, br as number);
               }
-            }
-            const undoableChangeAboveFoundation = {
-              name: 'Set Blade Radius for All Wind Turbines Above Foundation',
-              timestamp: Date.now(),
-              oldValues: oldValuesAboveFoundation,
-              newValue: value,
-              groupId: turbine.foundationId,
-              undo: () => {
-                for (const [id, br] of undoableChangeAboveFoundation.oldValues.entries()) {
-                  updateBladeRadiusById(id, br as number);
-                }
-              },
-              redo: () => {
-                if (undoableChangeAboveFoundation.groupId) {
-                  updateBladeRadiusAboveFoundation(
-                    undoableChangeAboveFoundation.groupId,
-                    undoableChangeAboveFoundation.newValue as number,
-                  );
-                }
-              },
-            } as UndoableChangeGroup;
-            addUndoable(undoableChangeAboveFoundation);
-            updateBladeRadiusAboveFoundation(turbine.foundationId, value);
-            setApplyCount(applyCount + 1);
-          }
+            },
+            redo: () => {
+              if (undoableChangeAboveFoundation.groupId) {
+                updateRootRadiusAboveFoundation(
+                  undoableChangeAboveFoundation.groupId,
+                  undoableChangeAboveFoundation.newValue as number,
+                );
+              }
+            },
+          } as UndoableChangeGroup;
+          addUndoable(undoableChangeAboveFoundation);
+          updateRootRadiusAboveFoundation(turbine.foundationId, value);
+          setApplyCount(applyCount + 1);
         }
         break;
       default:
         // selected element may be outdated, make sure that we get the latest
         const wt = getElementById(turbine.id) as WindTurbineModel;
-        const oldValue = wt ? wt.bladeRadius : turbine.bladeRadius;
-        rejectRef.current = turbine.towerHeight < value;
-        if (rejectRef.current) {
-          rejectedValue.current = value;
-          setInputValue(oldValue);
-        } else {
-          const undoableChange = {
-            name: 'Set Wind Turbine Blade Radius',
-            timestamp: Date.now(),
-            oldValue: oldValue,
-            newValue: value,
-            changedElementId: turbine.id,
-            changedElementType: turbine.type,
-            undo: () => {
-              updateBladeRadiusById(undoableChange.changedElementId, undoableChange.oldValue as number);
-            },
-            redo: () => {
-              updateBladeRadiusById(undoableChange.changedElementId, undoableChange.newValue as number);
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
-          updateBladeRadiusById(turbine.id, value);
-          setApplyCount(applyCount + 1);
-        }
+        const oldValue = wt ? wt.bladeRootRadius : turbine.bladeRootRadius;
+        const undoableChange = {
+          name: 'Set Wind Turbine Root Radius',
+          timestamp: Date.now(),
+          oldValue: oldValue,
+          newValue: value,
+          changedElementId: turbine.id,
+          changedElementType: turbine.type,
+          undo: () => {
+            updateRootRadiusById(undoableChange.changedElementId, undoableChange.oldValue as number);
+          },
+          redo: () => {
+            updateRootRadiusById(undoableChange.changedElementId, undoableChange.newValue as number);
+          },
+        } as UndoableChange;
+        addUndoable(undoableChange);
+        updateRootRadiusById(turbine.id, value);
+        setApplyCount(applyCount + 1);
     }
     setCommonStore((state) => {
-      state.actionState.windTurbineTowerHeight = value;
+      state.actionState.windTurbineBladeRootRadius = value;
+    });
+  };
+
+  {
+    /* chord length */
+  }
+
+  const needChangeChordLength = (value: number) => {
+    if (!turbine) return;
+    switch (actionScope) {
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.WindTurbine && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            const wt = e as WindTurbineModel;
+            if (Math.abs(wt.maximumChordLength - value) > ZERO_TOLERANCE) {
+              return true;
+            }
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeAboveFoundation:
+        for (const e of elements) {
+          if (e.type === ObjectType.WindTurbine && e.foundationId === turbine?.foundationId && !e.locked) {
+            const wt = e as WindTurbineModel;
+            if (Math.abs(wt.maximumChordLength - value) > ZERO_TOLERANCE) {
+              return true;
+            }
+          }
+        }
+        break;
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.WindTurbine && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            const wt = e as WindTurbineModel;
+            if (Math.abs(wt.maximumChordLength - value) > ZERO_TOLERANCE) {
+              return true;
+            }
+          }
+        }
+        break;
+      default:
+        if (Math.abs(turbine?.maximumChordLength - value) > ZERO_TOLERANCE) {
+          return true;
+        }
+    }
+    return false;
+  };
+
+  const updateMaximumChordLengthById = (id: string, value: number) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.WindTurbine && e.id === id && !e.locked) {
+          const wt = e as WindTurbineModel;
+          wt.maximumChordLength = value;
+          break;
+        }
+      }
+    });
+  };
+
+  const updateMaximumChordLengthAboveFoundation = (foundationId: string, value: number) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.WindTurbine && e.foundationId === foundationId && !e.locked) {
+          const wt = e as WindTurbineModel;
+          wt.maximumChordLength = value;
+        }
+      }
+    });
+  };
+
+  const updateMaximumChordLengthForAll = (value: number) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.WindTurbine && !e.locked) {
+          const wt = e as WindTurbineModel;
+          wt.maximumChordLength = value;
+        }
+      }
+    });
+  };
+
+  const updateChordLengthInMap = (map: Map<string, number>, value: number) => {
+    useStore.getState().set((state) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.WindTurbine && !e.locked && map.has(e.id)) {
+          const wt = e as WindTurbineModel;
+          wt.maximumChordLength = value;
+        }
+      }
+    });
+  };
+
+  const setMaximumChordLength = (value: number) => {
+    if (!turbine) return;
+    if (!needChangeChordLength(value)) return;
+    switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType: {
+        const oldValuesSelected = new Map<string, number>();
+        for (const elem of elements) {
+          if (elem.type === ObjectType.WindTurbine && useStore.getState().selectedElementIdSet.has(elem.id)) {
+            oldValuesSelected.set(elem.id, (elem as WindTurbineModel).maximumChordLength);
+          }
+        }
+        const undoableChangeSelected = {
+          name: 'Set Chord Length for Selected Wind Turbines',
+          timestamp: Date.now(),
+          oldValues: oldValuesSelected,
+          newValue: value,
+          undo: () => {
+            for (const [id, br] of undoableChangeSelected.oldValues.entries()) {
+              updateMaximumChordLengthById(id, br as number);
+            }
+          },
+          redo: () => {
+            updateChordLengthInMap(
+              undoableChangeSelected.oldValues as Map<string, number>,
+              undoableChangeSelected.newValue as number,
+            );
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeSelected);
+        updateChordLengthInMap(oldValuesSelected, value);
+        setApplyCount(applyCount + 1);
+        break;
+      }
+      case Scope.AllObjectsOfThisType: {
+        const oldValuesAll = new Map<string, number>();
+        for (const elem of elements) {
+          if (elem.type === ObjectType.WindTurbine) {
+            oldValuesAll.set(elem.id, (elem as WindTurbineModel).maximumChordLength);
+          }
+        }
+        const undoableChangeAll = {
+          name: 'Set Chord Length for All Wind Turbines',
+          timestamp: Date.now(),
+          oldValues: oldValuesAll,
+          newValue: value,
+          undo: () => {
+            for (const [id, br] of undoableChangeAll.oldValues.entries()) {
+              updateMaximumChordLengthById(id, br as number);
+            }
+          },
+          redo: () => {
+            updateMaximumChordLengthForAll(undoableChangeAll.newValue as number);
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeAll);
+        updateMaximumChordLengthForAll(value);
+        setApplyCount(applyCount + 1);
+        break;
+      }
+      case Scope.AllObjectsOfThisTypeAboveFoundation:
+        if (turbine.foundationId) {
+          const oldValuesAboveFoundation = new Map<string, number>();
+          for (const elem of elements) {
+            if (elem.type === ObjectType.WindTurbine && elem.foundationId === turbine.foundationId) {
+              oldValuesAboveFoundation.set(elem.id, (elem as WindTurbineModel).maximumChordLength);
+            }
+          }
+          const undoableChangeAboveFoundation = {
+            name: 'Set Chord Length for All Wind Turbines Above Foundation',
+            timestamp: Date.now(),
+            oldValues: oldValuesAboveFoundation,
+            newValue: value,
+            groupId: turbine.foundationId,
+            undo: () => {
+              for (const [id, br] of undoableChangeAboveFoundation.oldValues.entries()) {
+                updateMaximumChordLengthById(id, br as number);
+              }
+            },
+            redo: () => {
+              if (undoableChangeAboveFoundation.groupId) {
+                updateMaximumChordLengthAboveFoundation(
+                  undoableChangeAboveFoundation.groupId,
+                  undoableChangeAboveFoundation.newValue as number,
+                );
+              }
+            },
+          } as UndoableChangeGroup;
+          addUndoable(undoableChangeAboveFoundation);
+          updateMaximumChordLengthAboveFoundation(turbine.foundationId, value);
+          setApplyCount(applyCount + 1);
+        }
+        break;
+      default:
+        // selected element may be outdated, make sure that we get the latest
+        const wt = getElementById(turbine.id) as WindTurbineModel;
+        const oldValue = wt ? wt.maximumChordLength : turbine.maximumChordLength;
+        const undoableChange = {
+          name: 'Set Wind Turbine Chord Length',
+          timestamp: Date.now(),
+          oldValue: oldValue,
+          newValue: value,
+          changedElementId: turbine.id,
+          changedElementType: turbine.type,
+          undo: () => {
+            updateMaximumChordLengthById(undoableChange.changedElementId, undoableChange.oldValue as number);
+          },
+          redo: () => {
+            updateMaximumChordLengthById(undoableChange.changedElementId, undoableChange.newValue as number);
+          },
+        } as UndoableChange;
+        addUndoable(undoableChange);
+        updateMaximumChordLengthById(turbine.id, value);
+        setApplyCount(applyCount + 1);
+    }
+    setCommonStore((state) => {
+      state.actionState.windTurbineBladeMaximumChordLength = value;
+    });
+  };
+
+  /* chord radius*/
+
+  const needChangeChordRadius = (value: number) => {
+    if (!turbine) return;
+    switch (actionScope) {
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.WindTurbine && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            const wt = e as WindTurbineModel;
+            if (Math.abs(wt.maximumChordRadius - value) > ZERO_TOLERANCE) {
+              return true;
+            }
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeAboveFoundation:
+        for (const e of elements) {
+          if (e.type === ObjectType.WindTurbine && e.foundationId === turbine?.foundationId && !e.locked) {
+            const wt = e as WindTurbineModel;
+            if (Math.abs(wt.maximumChordRadius - value) > ZERO_TOLERANCE) {
+              return true;
+            }
+          }
+        }
+        break;
+      case Scope.AllSelectedObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.WindTurbine && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            const wt = e as WindTurbineModel;
+            if (Math.abs(wt.maximumChordRadius - value) > ZERO_TOLERANCE) {
+              return true;
+            }
+          }
+        }
+        break;
+      default:
+        if (Math.abs(turbine?.maximumChordRadius - value) > ZERO_TOLERANCE) {
+          return true;
+        }
+    }
+    return false;
+  };
+
+  const updateMaximumChordRadiusById = (id: string, value: number) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.WindTurbine && e.id === id && !e.locked) {
+          const wt = e as WindTurbineModel;
+          wt.maximumChordRadius = value;
+          break;
+        }
+      }
+    });
+  };
+
+  const updateMaximumChordRadiusAboveFoundation = (foundationId: string, value: number) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.WindTurbine && e.foundationId === foundationId && !e.locked) {
+          const wt = e as WindTurbineModel;
+          wt.maximumChordRadius = value;
+        }
+      }
+    });
+  };
+
+  const updateMaximumChordRadiusForAll = (value: number) => {
+    setCommonStore((state: CommonStoreState) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.WindTurbine && !e.locked) {
+          const wt = e as WindTurbineModel;
+          wt.maximumChordRadius = value;
+        }
+      }
+    });
+  };
+
+  const updateChordRadiusInMap = (map: Map<string, number>, value: number) => {
+    useStore.getState().set((state) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.WindTurbine && !e.locked && map.has(e.id)) {
+          const wt = e as WindTurbineModel;
+          wt.maximumChordRadius = value;
+        }
+      }
+    });
+  };
+
+  const setMaximumChordRadius = (value: number) => {
+    if (!turbine) return;
+    if (!needChangeChordRadius(value)) return;
+    switch (actionScope) {
+      case Scope.AllSelectedObjectsOfThisType: {
+        const oldValuesSelected = new Map<string, number>();
+        for (const elem of elements) {
+          if (elem.type === ObjectType.WindTurbine && useStore.getState().selectedElementIdSet.has(elem.id)) {
+            oldValuesSelected.set(elem.id, (elem as WindTurbineModel).maximumChordRadius);
+          }
+        }
+        const undoableChangeSelected = {
+          name: 'Set Chord Radius for Selected Wind Turbines',
+          timestamp: Date.now(),
+          oldValues: oldValuesSelected,
+          newValue: value,
+          undo: () => {
+            for (const [id, br] of undoableChangeSelected.oldValues.entries()) {
+              updateMaximumChordRadiusById(id, br as number);
+            }
+          },
+          redo: () => {
+            updateChordRadiusInMap(
+              undoableChangeSelected.oldValues as Map<string, number>,
+              undoableChangeSelected.newValue as number,
+            );
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeSelected);
+        updateChordRadiusInMap(oldValuesSelected, value);
+        setApplyCount(applyCount + 1);
+        break;
+      }
+      case Scope.AllObjectsOfThisType: {
+        const oldValuesAll = new Map<string, number>();
+        for (const elem of elements) {
+          if (elem.type === ObjectType.WindTurbine) {
+            oldValuesAll.set(elem.id, (elem as WindTurbineModel).maximumChordRadius);
+          }
+        }
+        const undoableChangeAll = {
+          name: 'Set Chord Radius for All Wind Turbines',
+          timestamp: Date.now(),
+          oldValues: oldValuesAll,
+          newValue: value,
+          undo: () => {
+            for (const [id, br] of undoableChangeAll.oldValues.entries()) {
+              updateMaximumChordRadiusById(id, br as number);
+            }
+          },
+          redo: () => {
+            updateMaximumChordRadiusForAll(undoableChangeAll.newValue as number);
+          },
+        } as UndoableChangeGroup;
+        addUndoable(undoableChangeAll);
+        updateMaximumChordRadiusForAll(value);
+        setApplyCount(applyCount + 1);
+        break;
+      }
+      case Scope.AllObjectsOfThisTypeAboveFoundation:
+        if (turbine.foundationId) {
+          const oldValuesAboveFoundation = new Map<string, number>();
+          for (const elem of elements) {
+            if (elem.type === ObjectType.WindTurbine && elem.foundationId === turbine.foundationId) {
+              oldValuesAboveFoundation.set(elem.id, (elem as WindTurbineModel).maximumChordRadius);
+            }
+          }
+          const undoableChangeAboveFoundation = {
+            name: 'Set Chord Radius for All Wind Turbines Above Foundation',
+            timestamp: Date.now(),
+            oldValues: oldValuesAboveFoundation,
+            newValue: value,
+            groupId: turbine.foundationId,
+            undo: () => {
+              for (const [id, br] of undoableChangeAboveFoundation.oldValues.entries()) {
+                updateMaximumChordRadiusById(id, br as number);
+              }
+            },
+            redo: () => {
+              if (undoableChangeAboveFoundation.groupId) {
+                updateMaximumChordRadiusAboveFoundation(
+                  undoableChangeAboveFoundation.groupId,
+                  undoableChangeAboveFoundation.newValue as number,
+                );
+              }
+            },
+          } as UndoableChangeGroup;
+          addUndoable(undoableChangeAboveFoundation);
+          updateMaximumChordRadiusAboveFoundation(turbine.foundationId, value);
+          setApplyCount(applyCount + 1);
+        }
+        break;
+      default:
+        // selected element may be outdated, make sure that we get the latest
+        const wt = getElementById(turbine.id) as WindTurbineModel;
+        const oldValue = wt ? wt.maximumChordRadius : turbine.maximumChordRadius;
+        const undoableChange = {
+          name: 'Set Wind Turbine Chord Radius',
+          timestamp: Date.now(),
+          oldValue: oldValue,
+          newValue: value,
+          changedElementId: turbine.id,
+          changedElementType: turbine.type,
+          undo: () => {
+            updateMaximumChordRadiusById(undoableChange.changedElementId, undoableChange.oldValue as number);
+          },
+          redo: () => {
+            updateMaximumChordRadiusById(undoableChange.changedElementId, undoableChange.newValue as number);
+          },
+        } as UndoableChange;
+        addUndoable(undoableChange);
+        updateMaximumChordRadiusById(turbine.id, value);
+        setApplyCount(applyCount + 1);
+    }
+    setCommonStore((state) => {
+      state.actionState.windTurbineBladeMaximumChordRadius = value;
     });
   };
 
   const close = () => {
-    rejectRef.current = false;
     setDialogVisible(false);
   };
 
@@ -376,28 +742,23 @@ const WindTurbineBladeDesign = ({ setDialogVisible }: { setDialogVisible: (b: bo
   };
 
   const ok = () => {
-    setBladeRadius(inputValue);
-    if (!rejectRef.current) {
-      setDialogVisible(false);
-      setApplyCount(0);
-    }
+    setMaximumChordLength(maximumChordLengthInputValue);
+    setMaximumChordRadius(maximumChordRadiusInputValue);
+    setRootRadius(rootRadiusInputValue);
+    setDialogVisible(false);
+    setApplyCount(0);
   };
 
   const apply = () => {
-    setBladeRadius(inputValue);
+    setMaximumChordLength(maximumChordLengthInputValue);
+    setMaximumChordRadius(maximumChordRadiusInputValue);
+    setRootRadius(rootRadiusInputValue);
   };
-
-  const rejectedMessage = rejectRef.current
-    ? ': ' +
-      i18n.t('message.NotApplicableToSelectedAction', lang) +
-      (rejectedValue.current !== undefined ? ' (' + rejectedValue.current.toFixed(2) + ')' : '')
-    : null;
 
   return (
     <Dialog
-      width={550}
+      width={600}
       title={i18n.t('windTurbineMenu.RotorBladeDesign', lang)}
-      rejectedMessage={rejectedMessage}
       onApply={apply}
       onClose={close}
       onClickCancel={cancel}
@@ -405,33 +766,79 @@ const WindTurbineBladeDesign = ({ setDialogVisible }: { setDialogVisible: (b: bo
     >
       <Row>
         <Col span={24}>
-          <canvas ref={canvasRef} id="blade-design-canvas" width={canvasWidth} height={canvasWidth * 0.25}></canvas>
+          <canvas
+            ref={canvasRef}
+            id="blade-design-canvas"
+            width={canvasWidth}
+            height={canvasWidth * 0.25}
+            style={{ paddingBottom: '12px' }}
+          />
         </Col>
       </Row>
       <Row gutter={6}>
-        <Col className="gutter-row" span={6}>
-          <InputNumber
-            min={1}
-            max={100}
-            style={{ width: 120 }}
-            step={0.1}
-            precision={1}
-            value={inputValue}
-            onChange={(value) => {
-              if (value) setInputValue(value);
-            }}
-          />
-          <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-            {i18n.t('word.Range', lang)}: [1, 100] {i18n.t('word.MeterAbbreviation', lang)}
-          </div>
-        </Col>
-        <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
-          {i18n.t('word.MeterAbbreviation', lang)}
+        <Col className="gutter-row" span={8}>
+          <Row gutter={6} style={{ paddingBottom: '8px' }}>
+            <Col style={{ textAlign: 'center', fontStyle: 'italic' }}>A: </Col>
+            <Col>
+              <InputNumber
+                min={0.1}
+                max={1}
+                style={{ width: '70px' }}
+                step={0.01}
+                precision={2}
+                value={rootRadiusInputValue}
+                onChange={(value) => {
+                  if (value) setRootRadiusInputValue(value);
+                }}
+              />
+            </Col>
+            <Col style={{ paddingTop: '5px', textAlign: 'left', fontSize: '11px' }}>
+              [0.1, 1] {i18n.t('word.MeterAbbreviation', lang)}
+            </Col>
+          </Row>
+          <Row gutter={6} style={{ paddingBottom: '8px' }}>
+            <Col style={{ textAlign: 'center', fontStyle: 'italic' }}>C: </Col>
+            <Col>
+              <InputNumber
+                min={0.5}
+                max={2}
+                style={{ width: '70px' }}
+                step={0.01}
+                precision={2}
+                value={maximumChordLengthInputValue}
+                onChange={(value) => {
+                  if (value) setMaximumChordLengthInputValue(value);
+                }}
+              />
+            </Col>
+            <Col style={{ paddingTop: '5px', textAlign: 'left', fontSize: '11px' }}>
+              [0.5, 2] {i18n.t('word.MeterAbbreviation', lang)}
+            </Col>
+          </Row>
+          <Row gutter={6}>
+            <Col style={{ textAlign: 'center', fontStyle: 'italic' }}>D:</Col>
+            <Col>
+              <InputNumber
+                min={2}
+                max={(turbine?.bladeRadius ?? 10) / 2}
+                style={{ width: 70 }}
+                step={0.01}
+                precision={2}
+                value={maximumChordRadiusInputValue}
+                onChange={(value) => {
+                  if (value) setMaximumChordRadiusInputValue(value);
+                }}
+              />
+            </Col>
+            <Col style={{ paddingTop: '5px', textAlign: 'left', fontSize: '11px' }}>
+              [2, {(turbine?.bladeRadius ?? 10) / 2}] {i18n.t('word.MeterAbbreviation', lang)}
+            </Col>
+          </Row>
         </Col>
         <Col
           className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-          span={17}
+          span={16}
         >
           <Radio.Group onChange={onScopeChange} value={actionScope}>
             <Space direction="vertical">
