@@ -102,7 +102,6 @@ import { WindowModel } from 'src/models/WindowModel';
 import { ProjectUtil } from '../panels/ProjectUtil';
 import { StoreUtil } from './StoreUtil';
 import { isGroupable } from 'src/models/Groupable';
-import { loadCloudFile } from 'src/cloudFileUtil';
 
 enableMapSet();
 
