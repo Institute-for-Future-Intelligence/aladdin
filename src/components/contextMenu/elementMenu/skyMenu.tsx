@@ -265,7 +265,7 @@ export const SkyMenu = () => {
           style={{ height: '36px', paddingLeft: '36px', marginBottom: 0, marginTop: 0 }}
           key={'direct-light-intensity'}
         >
-          <Space style={{ width: '270px' }}>{i18n.t('skyMenu.DirectLightBrightnessAtNoon', lang) + ' [0.1-5]:'}</Space>
+          <Space style={{ width: '270px' }}>{i18n.t('skyMenu.DirectLightBrightnessAtNoon', lang) + ' [0.1-10]:'}</Space>
           <InputNumber
             min={0.1}
             max={10}
