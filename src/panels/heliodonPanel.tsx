@@ -8,7 +8,7 @@ import * as Selector from '../stores/selector';
 import styled from 'styled-components';
 import { DatePicker, Slider, Space, Switch, TimePicker } from 'antd';
 import moment from 'moment';
-import 'antd/dist/antd.css';
+import 'antd/dist/reset.css';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { UndoableCheck } from '../undo/UndoableCheck';
 import { UndoableChange } from '../undo/UndoableChange';
@@ -433,7 +433,7 @@ const HeliodonPanel = () => {
               <br />
               <DatePicker
                 disabled={runSimulation}
-                value={moment(date)}
+                value={moment(date) as any}
                 onChange={(d) => {
                   if (d) {
                     const day = new Date(date);
@@ -473,7 +473,7 @@ const HeliodonPanel = () => {
               <br />
               <TimePicker
                 disabled={runSimulation}
-                value={moment(date, 'HH:mm')}
+                value={moment(date, 'HH:mm') as any}
                 format={'HH:mm'}
                 onChange={(t) => {
                   if (t) changeTime?.(t.toDate(), true);

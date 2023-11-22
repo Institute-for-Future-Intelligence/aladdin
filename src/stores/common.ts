@@ -53,7 +53,7 @@ import { PvModel } from '../models/PvModel';
 import { ThreeEvent } from '@react-three/fiber';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { WallModel } from '../models/WallModel';
-import { Locale } from 'antd/lib/locale-provider';
+import { Locale } from 'antd/lib/locale';
 import { Undoable } from '../undo/Undoable';
 import { UndoManager } from '../undo/UndoManager';
 import { HumanModel } from '../models/HumanModel';

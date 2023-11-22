@@ -12,7 +12,7 @@ import { StandaloneSearchBox, useJsApiLoader } from '@react-google-maps/api';
 import { Libraries } from '@react-google-maps/api/dist/utils/make-load-script-url';
 import Spinner from '../components/spinner';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
-import 'antd/dist/antd.css';
+import 'antd/dist/reset.css';
 import i18n from '../i18n/i18n';
 import { UndoableChangeLocation } from '../undo/UndoableChangeLocation';
 import { UndoableCheck } from '../undo/UndoableCheck';

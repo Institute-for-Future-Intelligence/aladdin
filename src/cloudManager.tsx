@@ -8,7 +8,7 @@ import { usePrimitiveStore } from './stores/commonPrimitive';
 import * as Selector from './stores/selector';
 import { Modal } from 'antd';
 import dayjs from 'dayjs';
-import 'antd/dist/antd.css';
+import 'antd/dist/reset.css';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';

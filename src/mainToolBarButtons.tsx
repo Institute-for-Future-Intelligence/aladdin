@@ -35,7 +35,7 @@ import React, { useMemo, useState } from 'react';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import { Dropdown, Menu, Modal } from 'antd';
-import 'antd/dist/antd.css';
+import 'antd/dist/reset.css';
 import { ObjectType } from './types';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import i18n from './i18n/i18n';

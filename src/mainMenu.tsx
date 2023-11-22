@@ -14,7 +14,7 @@ import { useStore } from './stores/common';
 import styled from 'styled-components';
 import { Checkbox, Dropdown, InputNumber, Menu, Modal, Radio, Space, Switch } from 'antd';
 import logo from './assets/magic-lamp.png';
-import 'antd/dist/antd.css';
+import 'antd/dist/reset.css';
 import About from './about';
 import { saveImage, showError, showInfo, showWarning } from './helpers';
 import { ActionInfo, BuildingCompletionStatus, Language, ObjectType, ProjectInfo, SolarStructure } from './types';
