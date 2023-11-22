@@ -36,7 +36,7 @@ import {
   SolarStructure,
   User,
 } from '../types';
-import { devtools, persist } from 'zustand/middleware';
+import { createJSONStorage, devtools, persist } from 'zustand/middleware';
 import { WorldModel } from '../models/WorldModel';
 import { ElementModel } from '../models/ElementModel';
 import { WeatherModel } from '../models/WeatherModel';
@@ -102,6 +102,7 @@ import { WindowModel } from 'src/models/WindowModel';
 import { ProjectUtil } from '../panels/ProjectUtil';
 import { StoreUtil } from './StoreUtil';
 import { isGroupable } from 'src/models/Groupable';
+import { loadCloudFile } from 'src/cloudFileUtil';
 
 enableMapSet();
 
@@ -538,9 +539,11 @@ export const useStore = create<CommonStoreState>()(
   devtools(
     persist(
       (set, get) => {
-        const immerSet: CommonStoreState['set'] = (fn) => set(produce(fn));
+        const isOpenFromURL = Util.isOpenFromURL();
         const defaultWorldModel = new DefaultWorldModel();
-        const defaultElements = defaultWorldModel.getElements();
+        const defaultElements = isOpenFromURL ? [] : defaultWorldModel.getElements();
+
+        const immerSet: CommonStoreState['set'] = (fn) => set(produce(fn));
 
         return {
           set: (fn) => {
@@ -4539,7 +4542,6 @@ export const useStore = create<CommonStoreState>()(
             });
           },
           localFileDialogRequested: false,
-          // pvModelDialogVisible: false,
           loggable: false,
           actionInfo: undefined,
           currentUndoable: undefined,
@@ -4557,11 +4559,12 @@ export const useStore = create<CommonStoreState>()(
       },
       {
         name: 'aladdin-storage',
-        getStorage: () => {
+        storage: createJSONStorage(() => {
           const params = new URLSearchParams(window.location.search);
           const viewOnly = params.get('viewonly') === 'true';
           return viewOnly ? sessionStorage : localStorage;
-        },
+        }),
+        skipHydration: Util.isOpenFromURL(),
         partialize: (state) => ({
           language: state.language,
           animate24Hours: state.animate24Hours,
