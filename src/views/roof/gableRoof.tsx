@@ -70,7 +70,7 @@ import { BufferRoofSegment, WindowData } from './roofSegment';
 import Ceiling from './ceiling';
 import { WindowModel, WindowType } from 'src/models/WindowModel';
 import { WallHeights, isRoofValid } from './gambrelRoof';
-import shallow from 'zustand/shallow';
+import { shallow } from 'zustand/shallow';
 import { useSelected } from '../hooks';
 
 const intersectionPlanePosition = new Vector3();

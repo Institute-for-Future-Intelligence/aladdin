@@ -10,7 +10,7 @@ import { WindowModel } from 'src/models/WindowModel';
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
 import SolarPanelOnRoof from '../solarPanel/solarPanelOnRoof';
-import shallow from 'zustand/shallow';
+import { shallow } from 'zustand/shallow';
 import Window from '../window/window';
 import WallRenderer from '../wall/wallRenderer';
 import { WallModel } from 'src/models/WallModel';

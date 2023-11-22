@@ -24,7 +24,7 @@ import { RoofUtil } from './RoofUtil';
 import { GambrelRoofModel, RoofModel, RoofType } from 'src/models/RoofModel';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { getRoofPointsOfGambrelRoof } from './flatRoof';
-import shallow from 'zustand/shallow';
+import { shallow } from 'zustand/shallow';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { useDataStore } from 'src/stores/commonData';
 import { useLatestFoundation } from '../wall/hooks';

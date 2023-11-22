@@ -64,7 +64,7 @@ import { useDataStore } from '../../stores/commonData';
 import Ceiling from './ceiling';
 import FlatRoof, { TopExtrude } from './flatRoof';
 import { BuildingParts, FoundationModel } from '../../models/FoundationModel';
-import shallow from 'zustand/shallow';
+import { shallow } from 'zustand/shallow';
 import { WindowModel } from 'src/models/WindowModel';
 import { useSelected } from '../hooks';
 

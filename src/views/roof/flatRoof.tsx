@@ -39,7 +39,7 @@ import { getArchedWindowShape } from '../window/archedWindow';
 import { FoundationModel } from '../../models/FoundationModel';
 import { RoofType } from '../../models/RoofModel';
 import { DEFAULT_POLYGONTOP } from '../window/window';
-import shallow from 'zustand/shallow';
+import { shallow } from 'zustand/shallow';
 
 interface TopExtrudeProps {
   uuid?: string;

@@ -41,7 +41,7 @@ import { getArchedWindowShape } from '../window/archedWindow';
 import { getPolygonWindowShape } from '../window/polygonalWindow';
 import { FoundationModel } from '../../models/FoundationModel';
 import { DEFAULT_POLYGONTOP } from '../window/window';
-import shallow from 'zustand/shallow';
+import { shallow } from 'zustand/shallow';
 
 export type WindowData = {
   dimension: Vector3;
