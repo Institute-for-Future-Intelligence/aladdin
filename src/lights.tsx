@@ -7,6 +7,7 @@ import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import { DirectionalLight } from 'three';
 import { DEFAULT_FAR, STARLIGHT_INTENSITY, UNIT_VECTOR_POS_Z } from './constants';
+import platform from 'platform';
 
 const Lights = () => {
   const directLightIntensity = useStore(Selector.viewState.directLightIntensity) ?? 3.5;
@@ -29,6 +30,7 @@ const Lights = () => {
 
   const day = sunlightDirection.z > 0;
   const dot = day ? sunlightDirection.normalize().dot(UNIT_VECTOR_POS_Z) : 0;
+  const shadowMapSize = platform.os?.family === 'iOS' ? 4096 : 4096 * 4;
 
   return (
     <>
@@ -40,8 +42,8 @@ const Lights = () => {
         position={sunlightDirection.normalize().multiplyScalar(positionExtent)}
         intensity={day ? directLightIntensity * dot : 0}
         castShadow={shadowEnabled}
-        shadow-mapSize-height={4096 * 4}
-        shadow-mapSize-width={4096 * 4}
+        shadow-mapSize-height={shadowMapSize}
+        shadow-mapSize-width={shadowMapSize}
         shadow-camera-near={1}
         shadow-camera-far={DEFAULT_FAR}
       />
