@@ -15,7 +15,7 @@ import Ground from './views/ground';
 import Heliodon from './views/heliodonWrapper';
 import ifiLogo from './assets/ifi-logo.png';
 import MainMenu from './mainMenu';
-import { DEFAULT_FAR, DEFAULT_FOV, VERSION } from './constants';
+import { DEFAULT_SHADOW_CAMERA_FAR, DEFAULT_FOV, VERSION } from './constants';
 import { visitHomepage, visitIFI } from './helpers';
 import AcceptCookie from './acceptCookie';
 import GroundImage from './views/groundImage';
@@ -49,7 +49,6 @@ import ProjectGallery from './panels/projectGallery';
 import SplitPane from 'react-split-pane';
 import { throttle } from 'lodash';
 import GroupMasterWrapper from './components/groupMaster';
-import platform from 'platform';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -63,6 +62,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const changed = usePrimitiveStore(Selector.changed);
   const addUndoable = useStore(Selector.addUndoable);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
+  const shadowCameraFar = useStore(Selector.viewState.shadowCameraFar) ?? DEFAULT_SHADOW_CAMERA_FAR;
   const cloudFile = useStore(Selector.cloudFile);
   const projectView = useStore(Selector.projectView);
   const axes = useStore(Selector.viewState.axes);
@@ -216,22 +216,14 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const isCloudFileOwner = user.uid && new URLSearchParams(window.location.search).get('userid') === user.uid;
 
   const createCanvas = () => {
-    return platform.os?.family === 'iOS' ? (
-      <div style={{ height: '100%', width: '100%', backgroundColor: 'black', verticalAlign: 'middle', color: 'white' }}>
-        <br />
-        <br />
-        <br />
-        <br />
-        Sorry, Aladdin does not currently work on iOS.
-      </div>
-    ) : (
+    return (
       <Canvas
         ref={canvasRef}
         shadows={true}
         gl={{ preserveDrawingBuffer: true, logarithmicDepthBuffer: true }}
         frameloop={'demand'}
         style={{ height: '100%', width: '100%', backgroundColor: 'black' }}
-        camera={{ fov: DEFAULT_FOV, far: DEFAULT_FAR, up: [0, 0, 1] }}
+        camera={{ fov: DEFAULT_FOV, far: shadowCameraFar, up: [0, 0, 1] }}
       >
         <NavigationController />
         <CameraController />

@@ -10,7 +10,7 @@ import {
   PerspectiveCamera as THREEPerspectiveCamera,
   Vector3,
 } from 'three';
-import { DEFAULT_FAR, DEFAULT_FOV, HALF_PI } from './constants';
+import { DEFAULT_SHADOW_CAMERA_FAR, DEFAULT_FOV, HALF_PI } from './constants';
 import { MyOrbitControls } from './js/MyOrbitControls';
 import { useStore } from './stores/common';
 import { usePrimitiveStore } from './stores/commonPrimitive';
@@ -58,6 +58,7 @@ const CameraController = () => {
   const sceneRadius = useStore(Selector.sceneRadius);
   const cameraPosition = useStore(Selector.viewState.cameraPosition);
   const cameraZoom = useStore(Selector.viewState.cameraZoom);
+  const shadowCameraFar = useStore(Selector.viewState.shadowCameraFar) ?? DEFAULT_SHADOW_CAMERA_FAR;
   const navigationView = useStore(Selector.viewState.navigationView);
   const navigationMoveSpeed = usePrimitiveStore(Selector.navigationMoveSpeed);
   const navigationTurnSpeed = usePrimitiveStore(Selector.navigationTurnSpeed);
@@ -324,7 +325,7 @@ const CameraController = () => {
 
   return (
     <>
-      <PerspectiveCamera ref={persCameraRef} fov={DEFAULT_FOV} far={DEFAULT_FAR} up={[0, 0, 1]} />
+      <PerspectiveCamera ref={persCameraRef} fov={DEFAULT_FOV} far={shadowCameraFar} up={[0, 0, 1]} />
       <OrthographicCamera ref={orthCameraRef} up={[0, 0, 1]} />
       <myOrbitControls
         ref={orbitControlRef}
