@@ -381,7 +381,7 @@ const SolarPanelDcToAcRatioInput = ({ setDialogVisible }: { setDialogVisible: (b
     <>
       <Modal
         width={550}
-        visible={true}
+        open={true}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}

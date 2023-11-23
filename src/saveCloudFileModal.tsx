@@ -77,7 +77,7 @@ const SaveCloudFileModal = ({
           {i18n.t('menu.file.SaveAsCloudFile', lang)}
         </div>
       }
-      visible={isTitleDialogVisible()}
+      open={isTitleDialogVisible()}
       footer={[
         <Button key="Cancel" onClick={onCancel}>
           {i18n.t('word.Cancel', lang)}

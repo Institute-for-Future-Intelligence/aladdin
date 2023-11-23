@@ -191,7 +191,7 @@ const GroundFloorRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
     <>
       <Modal
         width={550}
-        visible={true}
+        open={true}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}

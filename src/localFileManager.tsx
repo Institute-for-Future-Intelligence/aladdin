@@ -242,7 +242,7 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
                 </Button>,
               ]
         }
-        visible={saveLocalFileDialogVisible}
+        open={saveLocalFileDialogVisible}
         confirmLoading={confirmLoading}
         onCancel={performCancelAction}
         modalRender={(modal) => (

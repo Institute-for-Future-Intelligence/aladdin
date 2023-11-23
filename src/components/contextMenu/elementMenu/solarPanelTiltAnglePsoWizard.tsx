@@ -108,7 +108,7 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
     <>
       <Modal
         width={640}
-        visible={true}
+        open={true}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}

@@ -107,7 +107,7 @@ const EconomicsPanel = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =
   return (
     <Modal
       width={500}
-      visible={true}
+      open={true}
       title={
         <div
           style={{ width: '100%', cursor: 'move' }}

@@ -83,7 +83,7 @@ const ScatteredPlotMenu = ({
 
   return (
     <>
-      <Dropdown overlay={menu} placement="bottomRight" visible={visible} onVisibleChange={handleVisibleChange}>
+      <Dropdown overlay={menu} placement="bottomRight" open={visible} onOpenChange={handleVisibleChange}>
         <StyledMenuSVG
           style={{ top: '120px', right: '16px' }}
           onClick={(e) => {

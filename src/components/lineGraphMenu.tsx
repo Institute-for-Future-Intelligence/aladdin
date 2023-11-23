@@ -97,7 +97,7 @@ const LineGraphMenu = ({
 
   return (
     <>
-      <Dropdown overlay={menu} placement="bottomRight" visible={visible} onVisibleChange={handleVisibleChange}>
+      <Dropdown overlay={menu} placement="bottomRight" open={visible} onOpenChange={handleVisibleChange}>
         <StyledMenuSVG
           style={{ right: lineCount > 1 ? '25px' : '32px' }}
           onClick={(e) => {

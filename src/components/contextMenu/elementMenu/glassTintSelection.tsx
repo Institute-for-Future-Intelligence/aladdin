@@ -193,7 +193,7 @@ const GlassTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
     <>
       <Modal
         width={640}
-        visible={true}
+        open={true}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}

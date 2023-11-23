@@ -47,6 +47,7 @@ const Lights = () => {
         position={sunlightDirection.normalize().multiplyScalar(positionExtent)}
         intensity={day ? directLightIntensity * dot : 0}
         castShadow={shadowEnabled}
+        shadow-bias={0} // may be used to reduce shadow artifacts
         shadow-mapSize-height={shadowMapSize}
         shadow-mapSize-width={shadowMapSize}
         shadow-camera-near={1}

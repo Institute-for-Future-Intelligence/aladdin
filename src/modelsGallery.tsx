@@ -74,7 +74,7 @@ const ModelsGallery = ({ latRef, lngRef, author, models, closeCallback, openClou
       style={{ scrollbarColor: dark ? '#6A6B6E' : 'whitesmoke' }}
       title={(author ?? i18n.t('modelsMap.MyPublishedModels', lang)) + ' (0)'}
       placement="bottom"
-      visible={true}
+      open={true}
       height={'150px'}
       onClose={() => {
         closeCallback();
@@ -135,7 +135,7 @@ const ModelsGallery = ({ latRef, lngRef, author, models, closeCallback, openClou
       bodyStyle={{ padding: '0px 4px 0px 4px', overflowY: 'hidden', background: dark ? '#2A2B2E' : 'white' }}
       title={(author ?? i18n.t('modelsMap.MyPublishedModels', lang)) + ' (' + countModels + ')'}
       placement="bottom"
-      visible={true}
+      open={true}
       height={'164px'}
       onClose={() => {
         setSelectedModel(undefined);

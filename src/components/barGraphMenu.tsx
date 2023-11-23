@@ -71,7 +71,7 @@ const BarGraphMenu = ({
 
   return (
     <>
-      <Dropdown overlay={menu} placement="bottomRight" visible={visible} onVisibleChange={handleVisibleChange}>
+      <Dropdown overlay={menu} placement="bottomRight" open={visible} onOpenChange={handleVisibleChange}>
         <StyledMenuSVG
           style={{ right: '32px' }}
           onClick={(e) => {

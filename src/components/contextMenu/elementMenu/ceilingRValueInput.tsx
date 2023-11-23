@@ -201,7 +201,7 @@ const CeilingRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
     <>
       <Modal
         width={550}
-        visible={true}
+        open={true}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}

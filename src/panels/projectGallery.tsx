@@ -1457,7 +1457,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                 {projectInfo.type === DesignProblem.SOLAR_PANEL_ARRAY && (
                   <Popover
                     title={t('projectPanel.ChooseSolutionSpace', lang)}
-                    onVisibleChange={(visible) => {
+                    onOpenChange={(visible) => {
                       if (parameterSelectionChangedRef.current) {
                         if (!visible) {
                           usePrimitiveStore.getState().set((state) => {

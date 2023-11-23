@@ -11,7 +11,6 @@ import { Dropdown, Input, Menu, Modal, Space, Table, Typography } from 'antd';
 import { CaretDownOutlined, QuestionCircleOutlined, WarningOutlined } from '@ant-design/icons';
 import { HOME_URL, REGEX_ALLOWABLE_IN_NAME, Z_INDEX_FRONT_PANEL } from '../constants';
 import { copyTextToClipboard, showSuccess } from '../helpers';
-import i18n from '../i18n/i18n';
 import Draggable from 'react-draggable';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { ProjectInfo } from '../types';
@@ -200,7 +199,7 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
             {t('word.Rename', lang)}
           </div>
         }
-        visible={renameDialogVisible}
+        open={renameDialogVisible}
         onOk={changeProjectTitle}
         onCancel={() => {
           setRenameDialogVisible(false);

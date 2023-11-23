@@ -204,7 +204,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
             {t('word.Rename', lang)}
           </div>
         }
-        visible={renameDialogVisible}
+        open={renameDialogVisible}
         onOk={renameFile}
         onCancel={() => {
           setRenameDialogVisible(false);

@@ -83,7 +83,7 @@ const CreateNewProjectDialog = ({
   return (
     <Modal
       width={560}
-      visible={true}
+      open={true}
       title={
         <div
           style={{ width: '100%', cursor: 'move' }}

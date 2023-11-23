@@ -2621,7 +2621,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
 
   return (
     <>
-      <Dropdown overlay={menu} trigger={['click']} onVisibleChange={handleVisibleChange}>
+      <Dropdown overlay={menu} trigger={['click']} onOpenChange={handleVisibleChange}>
         <MainMenuContainer>
           <StyledImage src={logo} title={t('tooltip.clickToOpenMenu', lang)} />
           <LabelContainer>

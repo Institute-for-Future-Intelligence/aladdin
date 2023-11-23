@@ -305,7 +305,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
       {warningDialogVisible && (
         <Modal
           width={400}
-          visible={warningDialogVisible}
+          open={warningDialogVisible}
           title={
             <div
               style={{ width: '100%', cursor: 'move' }}
@@ -331,7 +331,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
       )}
       <Modal
         width={640}
-        visible={true}
+        open={true}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}
