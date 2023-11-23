@@ -18,7 +18,7 @@ export class StoreUtil {
     useStore.getState().set((state) => {
       if (Util.compareVersion(state.version, LIGHT_INTENSITY_CHANGED_VERSION)) {
         if (state.viewState.ambientLightIntensity) {
-          state.viewState.ambientLightIntensity *= 2;
+          state.viewState.ambientLightIntensity *= 3;
         }
         if (state.viewState.directLightIntensity) {
           state.viewState.directLightIntensity *= 3.5;

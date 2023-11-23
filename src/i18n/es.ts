@@ -1564,6 +1564,15 @@ export const i18n_es = {
       MinimumTurnSpeed: 'Minimum Turn Speed',
     },
 
+    shadowSettingsPanel: {
+      ShadowSettings: 'Shadow Settings',
+      ShadowCameraFarDistance: 'Shadow Camera Far Distance',
+      ShadowMapSize: 'Shadow Map Size',
+      Notes: 'Notes',
+      RefreshPageNote: 'Refresh the page for the new settings to take effect.',
+      MapSizeWarning: 'A model that uses a large shadow map size may not be opened on some computers.',
+    },
+
     yearlyLightSensorPanel: {
       SkyClearness: 'Claridad',
       ShowDaylightResults: 'Mostrar resultados de la luz solar',

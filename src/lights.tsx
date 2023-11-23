@@ -6,12 +6,18 @@ import React, { useRef } from 'react';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import { DirectionalLight } from 'three';
-import { DEFAULT_SHADOW_CAMERA_FAR, STARLIGHT_INTENSITY, UNIT_VECTOR_POS_Z } from './constants';
+import {
+  DEFAULT_SHADOW_CAMERA_FAR,
+  DEFAULT_SHADOW_MAP_SIZE,
+  STARLIGHT_INTENSITY,
+  UNIT_VECTOR_POS_Z,
+} from './constants';
 
 const Lights = () => {
   const directLightIntensity = useStore(Selector.viewState.directLightIntensity) ?? 3.5;
   const ambientLightIntensity = useStore(Selector.viewState.ambientLightIntensity) ?? 0.2;
   const shadowCameraFar = useStore(Selector.viewState.shadowCameraFar) ?? DEFAULT_SHADOW_CAMERA_FAR;
+  const shadowMapSize = useStore(Selector.viewState.shadowMapSize) ?? DEFAULT_SHADOW_MAP_SIZE;
   const sunlightDirection = useStore(Selector.sunlightDirection);
   const sceneRadius = useStore(Selector.sceneRadius);
   const positionExtent = 2 * sceneRadius;
@@ -30,7 +36,6 @@ const Lights = () => {
 
   const day = sunlightDirection.z > 0;
   const dot = day ? sunlightDirection.normalize().dot(UNIT_VECTOR_POS_Z) : 0;
-  const shadowMapSize = 4096;
 
   return (
     <>

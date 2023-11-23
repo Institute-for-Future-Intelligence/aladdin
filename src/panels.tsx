@@ -37,6 +37,7 @@ import { useStore } from './stores/common';
 import * as Selector from 'src/stores/selector';
 import { GraphDataType } from './types';
 import NavigationPanel from './panels/navigationPanel';
+import ShadowSettingsPanel from './panels/shadowSettingsPanel';
 
 const Panels = () => {
   const showSiteInfoPanel = useStore(Selector.viewState.showSiteInfoPanel);
@@ -49,6 +50,7 @@ const Panels = () => {
   const showDiurnalTemperaturePanel = useStore(Selector.viewState.showDiurnalTemperaturePanel);
   const showEconomicsPanel = usePrimitiveStore(Selector.showEconomicsPanel);
   const showNavigationPanel = usePrimitiveStore(Selector.showNavigationPanel);
+  const showShadowSettings = usePrimitiveStore(Selector.showShadowSettings);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const showDailyLightSensorPanel = useStore(Selector.viewState.showDailyLightSensorPanel);
   const showYearlyLightSensorPanel = useStore(Selector.viewState.showYearlyLightSensorPanel);
@@ -107,6 +109,15 @@ const Panels = () => {
           setDialogVisible={(visible) => {
             usePrimitiveStore.getState().set((state) => {
               state.showNavigationPanel = visible;
+            });
+          }}
+        />
+      )}
+      {showShadowSettings && (
+        <ShadowSettingsPanel
+          setDialogVisible={(visible) => {
+            usePrimitiveStore.getState().set((state) => {
+              state.showShadowSettings = visible;
             });
           }}
         />

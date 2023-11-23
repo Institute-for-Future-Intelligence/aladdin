@@ -1539,6 +1539,15 @@ export const i18n_zh_tw = {
       MinimumTurnSpeed: '最小拐彎速度',
     },
 
+    shadowSettingsPanel: {
+      ShadowSettings: '陰影設定',
+      ShadowCameraFarDistance: '最遠距離',
+      ShadowMapSize: '映射圖長寬',
+      Notes: '注意事項',
+      RefreshPageNote: '改變設定後須刷新頁面。',
+      MapSizeWarning: '使用大的映射圖長寬的模型可能無法在某些電腦上開啟。',
+    },
+
     yearlyLightSensorPanel: {
       SkyClearness: '天空清晰度',
       ShowDaylightResults: '顯示日照時間結果',

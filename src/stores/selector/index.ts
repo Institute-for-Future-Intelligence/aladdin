@@ -18,6 +18,8 @@ export const showEconomicsPanel = (state: PrimitiveStoreState) => state.showEcon
 
 export const showNavigationPanel = (state: PrimitiveStoreState) => state.showNavigationPanel;
 
+export const showShadowSettings = (state: PrimitiveStoreState) => state.showShadowSettings;
+
 export const minimumNavigationMoveSpeed = (state: CommonStoreState) => state.minimumNavigationMoveSpeed;
 
 export const minimumNavigationTurnSpeed = (state: CommonStoreState) => state.minimumNavigationTurnSpeed;

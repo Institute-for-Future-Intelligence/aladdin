@@ -129,6 +129,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
   const showDiurnalTemperaturePanel = useStore.getState().viewState.showDiurnalTemperaturePanel;
   const showEconomicsPanel = usePrimitiveStore.getState().showEconomicsPanel;
   const showNavigationPanel = usePrimitiveStore.getState().showNavigationPanel;
+  const showShadowSettings = usePrimitiveStore.getState().showShadowSettings;
   const showStickyNotePanel = useStore.getState().viewState.showStickyNotePanel;
   const showHeliodonPanel = useStore.getState().viewState.showHeliodonPanel;
   const shadowEnabled = useStore.getState().viewState.shadowEnabled;
@@ -1304,6 +1305,26 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
               }}
             >
               {t('navigationPanel.NavigationParameters', lang)}...
+            </Menu.Item>
+          )}
+          {!showShadowSettings && (
+            <Menu.Item
+              key={'shadow-settings-menu-item'}
+              onClick={() => {
+                usePrimitiveStore.getState().set((state) => {
+                  state.showShadowSettings = true;
+                });
+                if (loggable) {
+                  setCommonStore((state) => {
+                    state.actionInfo = {
+                      name: 'Open Shadow Settings',
+                      timestamp: new Date().getTime(),
+                    };
+                  });
+                }
+              }}
+            >
+              {t('shadowSettingsPanel.ShadowSettings', lang)}...
             </Menu.Item>
           )}
         </SubMenu>

@@ -17,6 +17,7 @@ export interface PrimitiveStoreState {
 
   showEconomicsPanel: boolean;
   showNavigationPanel: boolean;
+  showShadowSettings: boolean;
 
   saveCloudFileFlag: boolean;
   setSaveCloudFileFlag: (b: boolean) => void;
@@ -180,6 +181,7 @@ export const usePrimitiveStore = create<PrimitiveStoreState>()((set, get) => {
 
     showEconomicsPanel: false,
     showNavigationPanel: false,
+    showShadowSettings: false,
 
     saveCloudFileFlag: false,
     setSaveCloudFileFlag(b) {

@@ -10,6 +10,8 @@ export const shadowEnabled = (state: CommonStoreState) => state.viewState.shadow
 
 export const shadowCameraFar = (state: CommonStoreState) => state.viewState.shadowCameraFar;
 
+export const shadowMapSize = (state: CommonStoreState) => state.viewState.shadowMapSize;
+
 export const solarPanelShininess = (state: CommonStoreState) => state.viewState.solarPanelShininess;
 
 export const windowShininess = (state: CommonStoreState) => state.viewState.windowShininess;

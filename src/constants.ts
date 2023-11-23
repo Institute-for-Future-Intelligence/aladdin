@@ -55,6 +55,7 @@ export const DEFAULT_LEAF_OFF_DAY = 320;
 export const DEFAULT_SKY_RADIUS = 5000;
 export const DEFAULT_FOV = 45;
 export const DEFAULT_SHADOW_CAMERA_FAR = 10000;
+export const DEFAULT_SHADOW_MAP_SIZE = 4096;
 export const STARLIGHT_INTENSITY = 0.1;
 
 export const MOVE_HANDLE_RADIUS = 0.1;
