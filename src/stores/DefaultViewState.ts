@@ -224,6 +224,8 @@ export class DefaultViewState implements ViewState {
     viewState.ambientLightIntensity = 0.2;
     viewState.cameraPositionNav = [5, -30, 1];
     viewState.cameraRotationNav = [1.5374753309166491, 0.16505866097993566, 0.005476951734475092];
+    viewState.shadowCameraFar = DEFAULT_SHADOW_CAMERA_FAR;
+    viewState.shadowMapSize = DEFAULT_SHADOW_MAP_SIZE;
 
     viewState.axes = true;
     viewState.heatFluxScaleFactor = DEFAULT_HEAT_FLUX_SCALE_FACTOR;
