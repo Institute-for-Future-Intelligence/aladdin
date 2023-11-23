@@ -22,7 +22,7 @@ import DeleteIcon from '../assets/delete.png';
 import ExportLinkIcon from '../assets/export_link.png';
 import ClickCountIcon from '../assets/click_count.png';
 
-import React, { useCallback, useRef, useState } from 'react';
+import React, { MutableRefObject, useCallback, useRef, useState } from 'react';
 import { GoogleMap, Marker, GoogleMapProps, InfoWindow, MarkerClusterer } from '@react-google-maps/api';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
@@ -78,6 +78,8 @@ export const getIconUrl = (site: ModelSite) => {
 };
 
 export interface ModelsMapProps {
+  latRef: MutableRefObject<number>;
+  lngRef: MutableRefObject<number>;
   selectAuthor: (author: string | undefined) => void;
   closeMap: () => void;
   openModel: (model: ModelSite) => void;
@@ -86,15 +88,20 @@ export interface ModelsMapProps {
   pinModel: (model: ModelSite, pinned: boolean, successCallback?: Function) => void;
 }
 
-const ModelsMap = ({ selectAuthor, closeMap, openModel, deleteModel, likeModel, pinModel }: ModelsMapProps) => {
+const ModelsMap = ({
+  latRef,
+  lngRef,
+  selectAuthor,
+  closeMap,
+  openModel,
+  deleteModel,
+  likeModel,
+  pinModel,
+}: ModelsMapProps) => {
   const language = useStore(Selector.language);
   const user = useStore.getState().user;
   const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
-  const modelsMapLatitude = useStore(Selector.modelsMapLatitude);
-  const latitude = modelsMapLatitude !== undefined ? modelsMapLatitude : 42.2844063;
-  const modelsMapLongitude = useStore(Selector.modelsMapLongitude);
-  const longitude = modelsMapLongitude !== undefined ? modelsMapLongitude : -71.3488548;
   const mapZoom = useStore(Selector.modelsMapZoom) ?? DEFAULT_MODEL_MAP_ZOOM;
   const mapTilt = useStore(Selector.modelsMapTilt) ?? 0;
   const mapType = useStore(Selector.modelsMapType) ?? 'roadmap';
@@ -144,32 +151,26 @@ const ModelsMap = ({ selectAuthor, closeMap, openModel, deleteModel, likeModel, 
       if (center) {
         const lat = center.lat();
         const lng = center.lng();
-        if (lat !== latitude || lng !== longitude) {
+        if (lat !== latRef.current || lng !== lngRef.current) {
           const undoableChangeLocation = {
             name: 'Set Model Map Location',
             timestamp: Date.now(),
-            oldLatitude: latitude,
+            oldLatitude: latRef.current,
             newLatitude: lat,
-            oldLongitude: longitude,
+            oldLongitude: lngRef.current,
             newLongitude: lng,
             undo: () => {
-              setCommonStore((state) => {
-                state.modelsMapLatitude = undoableChangeLocation.oldLatitude;
-                state.modelsMapLongitude = undoableChangeLocation.oldLongitude;
-              });
+              latRef.current = undoableChangeLocation.oldLatitude;
+              lngRef.current = undoableChangeLocation.oldLongitude;
             },
             redo: () => {
-              setCommonStore((state) => {
-                state.modelsMapLatitude = undoableChangeLocation.newLatitude;
-                state.modelsMapLongitude = undoableChangeLocation.newLongitude;
-              });
+              latRef.current = undoableChangeLocation.newLatitude;
+              lngRef.current = undoableChangeLocation.newLongitude;
             },
           } as UndoableChangeLocation;
           addUndoable(undoableChangeLocation);
-          setCommonStore((state) => {
-            state.modelsMapLatitude = lat;
-            state.modelsMapLongitude = lng;
-          });
+          latRef.current = lat;
+          lngRef.current = lng;
         }
       }
     }
@@ -434,7 +435,7 @@ const ModelsMap = ({ selectAuthor, closeMap, openModel, deleteModel, likeModel, 
       }}
       mapTypeId={mapType}
       options={options}
-      center={{ lat: latitude, lng: longitude }}
+      center={{ lat: latRef.current, lng: lngRef.current }}
       zoom={mapZoom}
       tilt={mapTilt}
       onLoad={onLoad}

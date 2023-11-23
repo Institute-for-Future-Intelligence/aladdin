@@ -71,6 +71,8 @@ const ModelsMapWrapper = ({
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const authorModelsRef = useRef<Map<string, ModelSite>>();
   const searchBox = useRef<google.maps.places.SearchBox>();
+  const latRef = useRef<number>(latitude);
+  const lngRef = useRef<number>(longitude);
 
   const lang = useMemo(() => {
     return { lng: language };
@@ -104,6 +106,10 @@ const ModelsMapWrapper = ({
     usePrimitiveStore.getState().set((state) => {
       state.openModelsMap = false;
     });
+    setCommonStore((state) => {
+      state.modelsMapLatitude = latRef.current;
+      state.modelsMapLongitude = lngRef.current;
+    });
   };
 
   const onLoad = (s: google.maps.places.SearchBox) => {
@@ -130,6 +136,8 @@ const ModelsMapWrapper = ({
               state.modelsMapLatitude = undoableChangeLocation.oldLatitude;
               state.modelsMapLongitude = undoableChangeLocation.oldLongitude;
               state.modelsMapAddress = undoableChangeLocation.oldAddress;
+              latRef.current = state.modelsMapLatitude;
+              lngRef.current = state.modelsMapLongitude;
             });
           },
           redo: () => {
@@ -137,6 +145,8 @@ const ModelsMapWrapper = ({
               state.modelsMapLatitude = undoableChangeLocation.newLatitude;
               state.modelsMapLongitude = undoableChangeLocation.newLongitude;
               state.modelsMapAddress = undoableChangeLocation.newAddress;
+              latRef.current = state.modelsMapLatitude;
+              lngRef.current = state.modelsMapLongitude;
             });
           },
         } as UndoableChangeLocation;
@@ -145,6 +155,8 @@ const ModelsMapWrapper = ({
           if (geometry.location) {
             state.modelsMapLatitude = geometry.location.lat();
             state.modelsMapLongitude = geometry.location.lng();
+            latRef.current = state.modelsMapLatitude;
+            lngRef.current = state.modelsMapLongitude;
           }
           state.modelsMapAddress = places[0].formatted_address as string;
         });
@@ -210,6 +222,8 @@ const ModelsMapWrapper = ({
       )}
       {isLoaded ? (
         <ModelsMap
+          latRef={latRef}
+          lngRef={lngRef}
           selectAuthor={selectAuthor}
           closeMap={close}
           openModel={openCloudFile}
@@ -228,6 +242,8 @@ const ModelsMapWrapper = ({
       <>
         {selectedAuthor && (
           <ModelsGallery
+            latRef={latRef}
+            lngRef={lngRef}
             author={selectedAuthor}
             models={authorModelsRef.current}
             closeCallback={() => {
@@ -359,6 +375,8 @@ const ModelsMapWrapper = ({
                     state.modelsMapLatitude = latestModelSite.latitude;
                     state.modelsMapLongitude = latestModelSite.longitude;
                     state.modelsMapZoom = 20;
+                    latRef.current = state.modelsMapLatitude;
+                    lngRef.current = state.modelsMapLongitude;
                   }
                 });
               }}

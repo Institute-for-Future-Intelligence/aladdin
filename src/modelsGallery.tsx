@@ -2,7 +2,7 @@
  * @Copyright 2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { MutableRefObject, useEffect, useMemo, useRef, useState } from 'react';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import i18n from './i18n/i18n';
@@ -13,13 +13,15 @@ import { getIconUrl } from './components/modelsMap';
 import ImageLoadFailureIcon from './assets/image_load_failure.png';
 
 export interface ModelsGalleryProps {
+  latRef?: MutableRefObject<number>;
+  lngRef?: MutableRefObject<number>;
   author: string | undefined; // if undefined, the user is the owner of models
   models: Map<string, ModelSite> | undefined;
   closeCallback: () => void;
   openCloudFile?: (userid: string, title: string) => void;
 }
 
-const ModelsGallery = ({ author, models, closeCallback, openCloudFile }: ModelsGalleryProps) => {
+const ModelsGallery = ({ latRef, lngRef, author, models, closeCallback, openCloudFile }: ModelsGalleryProps) => {
   const user = useStore(Selector.user);
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
@@ -186,6 +188,8 @@ const ModelsGallery = ({ author, models, closeCallback, openCloudFile }: ModelsG
                                 state.modelsMapLatitude = m.latitude;
                                 state.modelsMapLongitude = m.longitude;
                                 state.modelsMapZoom = 17;
+                                if (latRef) latRef.current = m.latitude;
+                                if (lngRef) lngRef.current = m.longitude;
                               }
                             });
                           }

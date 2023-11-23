@@ -5,7 +5,7 @@
   "homepage": "https://institute-for-future-intelligence.github.io/aladdin",
   "dependencies": {
     "@koale/useworker": "^4.0.2",
-    "@react-google-maps/api": "^2.18.1",
+    "@react-google-maps/api": "^2.19.2",
     "@react-three/drei": "^9.88.10",
     "@react-three/fiber": "^8.15.9",
     "@testing-library/jest-dom": "^5.11.4",
