@@ -54,7 +54,7 @@ export const Paste = ({ paddingLeft = '36px', keyName }: { paddingLeft?: string;
   };
 
   return (
-    <Menu.Item key={keyName} onClick={paste} style={{ paddingLeft: paddingLeft }}>
+    <Menu.Item key={keyName} onClick={paste} style={{ paddingLeft: paddingLeft, backgroundColor: 'rgba(0,0,0,0)' }}>
       {i18n.t('word.Paste', { lng: language })}
       <span style={{ paddingLeft: '4px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+V)</span>
     </Menu.Item>
@@ -85,8 +85,13 @@ export const Copy = ({ paddingLeft = '36px', keyName }: { paddingLeft?: string; 
     }
   };
 
+  // for some reason, we have to force a transparent color background for this menu item
   return (
-    <Menu.Item key={keyName} onClick={copyElement} style={{ paddingLeft: paddingLeft }}>
+    <Menu.Item
+      key={keyName}
+      onClick={copyElement}
+      style={{ paddingLeft: paddingLeft, backgroundColor: 'rgba(0,0,0,0)' }}
+    >
       {i18n.t('word.Copy', { lng: language })}
       <span style={{ paddingLeft: '4px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+C)</span>
     </Menu.Item>
@@ -168,7 +173,7 @@ export const Cut = ({ paddingLeft = '36px', keyName }: { paddingLeft?: string; k
   };
 
   return (
-    <Menu.Item key={keyName} onClick={cut} style={{ paddingLeft: paddingLeft }}>
+    <Menu.Item key={keyName} onClick={cut} style={{ paddingLeft: paddingLeft, backgroundColor: 'rgba(0,0,0,0)' }}>
       {i18n.t('word.Cut', { lng: language })}
       <span style={{ paddingLeft: '4px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+X)</span>
     </Menu.Item>
@@ -188,7 +193,7 @@ export const Lock = ({ keyName }: { keyName: string }) => {
   };
 
   return (
-    <Menu.Item key={keyName}>
+    <Menu.Item key={keyName} style={{ backgroundColor: 'rgba(0,0,0,0)' }}>
       <Checkbox
         checked={selectedElement?.locked}
         onChange={(e) => {

@@ -143,12 +143,15 @@ const ShadowSettingsPanel = ({ setDialogVisible }: { setDialogVisible: (b: boole
     >
       <Row gutter={6} style={{ paddingBottom: '4px' }}>
         <Col className="gutter-row" span={18}>
-          {i18n.t('shadowSettingsPanel.ShadowCameraFarDistance', lang) + ' ([1, 100]×' + SHADOW_CAMERA_FAR_STEP + '): '}
+          {i18n.t('shadowSettingsPanel.ShadowCameraFarDistance', lang) +
+            ' ([1, 1000]×' +
+            SHADOW_CAMERA_FAR_STEP +
+            '): '}
         </Col>
         <Col className="gutter-row" span={6}>
           <InputNumber
             min={1}
-            max={100}
+            max={1000}
             style={{ width: '100%' }}
             precision={0}
             value={shadowCameraFarRef.current}
