@@ -70,7 +70,6 @@ const Flower = ({
   const hoveredHandle = useStore(Selector.hoveredHandle);
 
   const [hovered, setHovered] = useState(false);
-  const [updateFlag, setUpdateFlag] = useState(false);
   const { gl } = useThree();
   const selected = useSelected(id);
 
@@ -144,7 +143,7 @@ const Flower = ({
       ') ' +
       i18n.t('word.MeterAbbreviation', lang)
     );
-  }, [name, cx, cy, locked, language]);
+  }, [name, cx, cy, locked, lang]);
 
   const hoverHandle = useCallback(
     (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {
@@ -167,7 +166,7 @@ const Flower = ({
         }
       }
     },
-    [],
+    [flowerModel.lz],
   );
 
   const noHoverHandle = useCallback(() => {

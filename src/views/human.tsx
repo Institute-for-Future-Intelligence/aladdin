@@ -77,7 +77,6 @@ const Human = ({
 
   const { gl } = useThree();
   const [hovered, setHovered] = useState(false);
-  const [updateFlag, setUpdateFlag] = useState(false);
 
   const contentRef = useRefStore((state) => state.contentRef);
   const groupRef = useRef<Group>(null);
@@ -143,7 +142,7 @@ const Human = ({
       ') ' +
       i18n.t('word.MeterAbbreviation', lang)
     );
-  }, [name, locked, language, cx, cy]);
+  }, [name, locked, cx, cy, lang]);
 
   // attach parent dom element if parent is not Ground
   useEffect(() => {
@@ -196,7 +195,7 @@ const Human = ({
         }
       }
     },
-    [],
+    [humanModel.lz],
   );
 
   const noHoverHandle = useCallback(() => {

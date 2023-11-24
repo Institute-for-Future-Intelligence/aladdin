@@ -3,16 +3,7 @@
  */
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  DoubleSide,
-  Group,
-  Mesh,
-  MeshDepthMaterial,
-  RepeatWrapping,
-  RGBADepthPacking,
-  TextureLoader,
-  Vector3,
-} from 'three';
+import { DoubleSide, Group, Mesh, RepeatWrapping, TextureLoader, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { ThreeEvent, useFrame, useThree } from '@react-three/fiber';
@@ -89,7 +80,6 @@ const Tree = ({
   const selected = useSelected(id);
 
   const [hovered, setHovered] = useState(false);
-  const [updateFlag, setUpdateFlag] = useState(false);
   const { gl } = useThree();
 
   const contentRef = useRefStore((state) => state.contentRef);
@@ -178,17 +168,11 @@ const Tree = ({
           ') ' +
           i18n.t('word.MeterAbbreviation', lang))
     );
-  }, [treeModel?.label, name, cx, cy, locked, language]);
+  }, [treeModel?.label, name, cx, cy, locked, lang]);
 
   const theta = useMemo(() => {
     return TreeData.fetchTheta(name);
   }, [name]);
-
-  const customDepthMaterial = new MeshDepthMaterial({
-    depthPacking: RGBADepthPacking,
-    map: texture,
-    alphaTest: 0.1,
-  });
 
   const hx = lx / 2;
   const hz = lz / 2;
@@ -219,7 +203,7 @@ const Tree = ({
         }
       }
     },
-    [],
+    [treeModel?.lz],
   );
 
   const noHoverHandle = useCallback(() => {

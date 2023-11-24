@@ -7,7 +7,6 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import styled from 'styled-components';
 import { Button, Checkbox, Col, Collapse, Input, List, Popover, Radio, Row, Select } from 'antd';
-import i18n from '../i18n/i18n';
 import {
   BgColorsOutlined,
   CameraOutlined,

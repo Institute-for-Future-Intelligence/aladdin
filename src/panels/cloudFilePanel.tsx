@@ -11,7 +11,6 @@ import { Input, Modal, Space, Table, Typography } from 'antd';
 import { CopyOutlined, QuestionCircleOutlined, WarningOutlined } from '@ant-design/icons';
 import { HOME_URL, REGEX_ALLOWABLE_IN_NAME, Z_INDEX_FRONT_PANEL } from '../constants';
 import { copyTextToClipboard, showSuccess } from '../helpers';
-import i18n from '../i18n/i18n';
 import Draggable from 'react-draggable';
 import RenameImage from '../assets/rename.png';
 import DeleteImage from '../assets/delete.png';

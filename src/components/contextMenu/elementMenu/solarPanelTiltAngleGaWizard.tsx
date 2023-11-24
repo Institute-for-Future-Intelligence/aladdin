@@ -7,7 +7,6 @@ import { Button, Col, InputNumber, Modal, Row, Select } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
-import i18n from '../../../i18n/i18n';
 import {
   DesignProblem,
   EvolutionMethod,
