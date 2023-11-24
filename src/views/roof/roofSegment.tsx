@@ -41,7 +41,6 @@ import { getArchedWindowShape } from '../window/archedWindow';
 import { getPolygonWindowShape } from '../window/polygonalWindow';
 import { FoundationModel } from '../../models/FoundationModel';
 import { DEFAULT_POLYGONTOP } from '../window/window';
-import { shallow } from 'zustand/shallow';
 
 export type WindowData = {
   dimension: Vector3;
@@ -343,7 +342,6 @@ export const BufferRoofSegment = React.memo(
     windows,
     centroid,
   }: BufferRoofSegmentProps) => {
-    const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
     const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
 
     const ref = useRef<Mesh>(null);
@@ -643,16 +641,14 @@ export const BufferRoofSegment = React.memo(
       <meshStandardMaterial attach={`material-${i}`} color={sideColor} transparent={transparent} opacity={opacity} />
     );
 
-    const enableShadow = shadowEnabled && !showSolarRadiationHeatmap;
-
     return (
       <mesh
         ref={ref}
         name={`Buffer Roof Segment ${index}`}
         uuid={id + '-' + index}
         userData={{ simulation: true }}
-        receiveShadow={enableShadow}
-        castShadow={enableShadow}
+        receiveShadow={!showSolarRadiationHeatmap}
+        castShadow
         frustumCulled={false}
       >
         {materialArray.map((_, i) => {
