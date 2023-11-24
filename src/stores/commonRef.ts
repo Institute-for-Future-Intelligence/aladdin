@@ -1,11 +1,11 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
+import { createWithEqualityFn } from 'zustand/traditional';
 import { RefObject } from 'react';
 import { MyOrbitControls } from 'src/js/MyOrbitControls';
 import { Group } from 'three';
-import { create } from 'zustand';
 import { useStore } from './common';
 
 export interface RefStoreState {
@@ -25,7 +25,7 @@ export interface RefStoreState {
   setListenToAutoDeletionByCut: (b: boolean) => void;
 }
 
-export const useRefStore = create<RefStoreState>()((set, get) => {
+export const useRefStore = createWithEqualityFn<RefStoreState>()((set, get) => {
   return {
     setEnableOrbitController: (b: boolean) => {
       if (useStore.getState().viewState.navigationView) {

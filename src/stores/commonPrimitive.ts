@@ -2,7 +2,7 @@
  * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
-import { create } from 'zustand';
+import { createWithEqualityFn } from 'zustand/traditional';
 import { DesignProblem } from '../types';
 import produce from 'immer';
 
@@ -142,7 +142,7 @@ export interface PrimitiveStoreState {
   setPrimitiveStore: <K extends keyof PrimitiveStoreState, V extends PrimitiveStoreState[K]>(key: K, val: V) => void;
 }
 
-export const usePrimitiveStore = create<PrimitiveStoreState>()((set, get) => {
+export const usePrimitiveStore = createWithEqualityFn<PrimitiveStoreState>()((set, get) => {
   const immerSet: PrimitiveStoreState['set'] = (fn) => set(produce(fn));
 
   return {

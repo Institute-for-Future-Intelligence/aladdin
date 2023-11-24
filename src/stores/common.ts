@@ -2,7 +2,7 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import { create } from 'zustand';
+import { createWithEqualityFn } from 'zustand/traditional';
 import short from 'short-uuid';
 import dayjs from 'dayjs';
 import Papa from 'papaparse';
@@ -534,7 +534,7 @@ export interface CommonStoreState {
   tempHumanPlant: ElementModel[];
 }
 
-export const useStore = create<CommonStoreState>()(
+export const useStore = createWithEqualityFn<CommonStoreState>()(
   devtools(
     persist(
       (set, get) => {

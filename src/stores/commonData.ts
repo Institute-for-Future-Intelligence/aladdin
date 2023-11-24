@@ -2,7 +2,7 @@
  * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
-import { create } from 'zustand';
+import { createWithEqualityFn } from 'zustand/traditional';
 import { DatumEntry } from '../types';
 import { Vantage } from '../analysis/Vantage';
 import { Util } from '../Util';
@@ -119,7 +119,7 @@ export interface DataStoreState {
   clearRoofVerticesMap: () => void;
 }
 
-export const useDataStore = create<DataStoreState>()((set, get) => {
+export const useDataStore = createWithEqualityFn<DataStoreState>()((set, get) => {
   return {
     roofSegmentVerticesMap: new Map<string, Vector3[][]>(),
     setRoofSegmentVertices(id, vertices) {
