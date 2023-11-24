@@ -111,7 +111,7 @@ const Human = ({
     }
   }, [fileChangedState]);
 
-  const textureLoader = useMemo(() => {
+  const loadedTexture = useMemo(() => {
     return new TextureLoader().load(HumanData.fetchTextureImage(name), (texture) => {
       if (flip) {
         texture.wrapS = RepeatWrapping;
@@ -120,7 +120,7 @@ const Human = ({
       setTexture(texture);
     });
   }, [name, flip]);
-  const [texture, setTexture] = useState(textureLoader);
+  const [texture, setTexture] = useState(loadedTexture);
 
   const width = useMemo(() => {
     return HumanData.fetchWidth(name);

@@ -149,7 +149,7 @@ const Tree = ({
     }
   }, [contentRef]);
 
-  const textureLoader = useMemo(() => {
+  const loadedTexture = useMemo(() => {
     return new TextureLoader().load(
       TreeData.fetchTextureImage(name, dayOfYear, latitude, leafDayOfYear1, leafDayOfYear2),
       (texture) => {
@@ -161,7 +161,7 @@ const Tree = ({
       },
     );
   }, [name, dayOfYear, latitude, flip, leafDayOfYear1, leafDayOfYear2]);
-  const [texture, setTexture] = useState(textureLoader);
+  const [texture, setTexture] = useState(loadedTexture);
 
   const labelText = useMemo(() => {
     return (

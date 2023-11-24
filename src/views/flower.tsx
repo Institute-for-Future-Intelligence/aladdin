@@ -120,7 +120,7 @@ const Flower = ({
     }
   }, [contentRef]);
 
-  const textureLoader = useMemo(() => {
+  const loadedTexture = useMemo(() => {
     return new TextureLoader().load(FlowerData.fetchTextureImage(name, noLeaves), (texture) => {
       if (flip) {
         texture.wrapS = RepeatWrapping;
@@ -129,7 +129,7 @@ const Flower = ({
       setTexture(texture);
     });
   }, [name, noLeaves, flip]);
-  const [texture, setTexture] = useState(textureLoader);
+  const [texture, setTexture] = useState(loadedTexture);
 
   const labelText = useMemo(() => {
     return (
