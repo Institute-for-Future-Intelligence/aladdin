@@ -127,7 +127,6 @@ const Flower = ({
         texture.repeat.x = -1;
       }
       setTexture(texture);
-      setUpdateFlag(!updateFlag);
     });
   }, [name, noLeaves, flip]);
   const [texture, setTexture] = useState(textureLoader);

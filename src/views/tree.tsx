@@ -158,7 +158,6 @@ const Tree = ({
           texture.repeat.x = -1;
         }
         setTexture(texture);
-        setUpdateFlag(!updateFlag);
       },
     );
   }, [name, dayOfYear, latitude, flip, leafDayOfYear1, leafDayOfYear2]);

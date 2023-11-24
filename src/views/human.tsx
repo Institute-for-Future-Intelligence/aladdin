@@ -118,7 +118,6 @@ const Human = ({
         texture.repeat.x = -1;
       }
       setTexture(texture);
-      setUpdateFlag(!updateFlag);
     });
   }, [name, flip]);
   const [texture, setTexture] = useState(textureLoader);
