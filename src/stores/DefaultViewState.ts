@@ -10,7 +10,6 @@ import {
   DEFAULT_HEAT_FLUX_SCALE_FACTOR,
   DEFAULT_HEAT_FLUX_WIDTH,
   DEFAULT_SHADOW_CAMERA_FAR,
-  DEFAULT_SHADOW_MAP_SIZE,
   DEFAULT_SOLAR_PANEL_SHININESS,
   DEFAULT_WINDOW_SHININESS,
 } from '../constants';
@@ -32,7 +31,6 @@ export class DefaultViewState implements ViewState {
   cameraPositionNav: number[];
   cameraRotationNav: number[];
   shadowCameraFar: number;
-  shadowMapSize: number;
 
   axes: boolean;
   heatFluxScaleFactor: number;
@@ -128,7 +126,6 @@ export class DefaultViewState implements ViewState {
     this.cameraPositionNav = [5, -30, 1];
     this.cameraRotationNav = [1.5374753309166491, 0.16505866097993566, 0.005476951734475092];
     this.shadowCameraFar = DEFAULT_SHADOW_CAMERA_FAR;
-    this.shadowMapSize = DEFAULT_SHADOW_MAP_SIZE;
 
     this.axes = true;
     this.heatFluxScaleFactor = DEFAULT_HEAT_FLUX_SCALE_FACTOR;
@@ -225,7 +222,6 @@ export class DefaultViewState implements ViewState {
     viewState.cameraPositionNav = [5, -30, 1];
     viewState.cameraRotationNav = [1.5374753309166491, 0.16505866097993566, 0.005476951734475092];
     viewState.shadowCameraFar = DEFAULT_SHADOW_CAMERA_FAR;
-    viewState.shadowMapSize = DEFAULT_SHADOW_MAP_SIZE;
 
     viewState.axes = true;
     viewState.heatFluxScaleFactor = DEFAULT_HEAT_FLUX_SCALE_FACTOR;

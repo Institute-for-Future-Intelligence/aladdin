@@ -18,7 +18,6 @@ export interface ViewState {
   cameraPositionNav: number[];
   cameraRotationNav: number[];
   shadowCameraFar: number;
-  shadowMapSize: number;
 
   axes: boolean;
   heatFluxScaleFactor: number;

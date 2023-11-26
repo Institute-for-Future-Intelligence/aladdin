@@ -60,6 +60,7 @@ import { FoundationModel } from '../models/FoundationModel';
 import {
   DEFAULT_ADDRESS,
   DEFAULT_MODEL_MAP_ZOOM,
+  DEFAULT_SHADOW_MAP_SIZE,
   FLOATING_WINDOW_OPACITY,
   GROUND_ID,
   HALF_PI,
@@ -115,6 +116,7 @@ export interface CommonStoreState {
   viewState: ViewState;
   actionState: ActionState;
   graphState: GraphState;
+  shadowMapSize: number; // this is saved locally
   modelType: ModelType;
   modelAuthor: string | null;
   modelLabel: string | null;
@@ -559,6 +561,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
           viewState: new DefaultViewState(),
           actionState: new DefaultActionState(),
           graphState: new DefaultGraphState(),
+          shadowMapSize: DEFAULT_SHADOW_MAP_SIZE,
           solarPanelArrayLayoutParams: new DefaultSolarPanelArrayLayoutParams(),
           solarPanelArrayLayoutConstraints: new DefaultSolarPanelArrayLayoutConstraints(),
           evolutionaryAlgorithmState: new DefaultEvolutionaryAlgorithmState(),
@@ -4604,6 +4607,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
           particleSwarmOptimizationWizardSelectedTab: state.particleSwarmOptimizationWizardSelectedTab,
           minimumNavigationMoveSpeed: state.minimumNavigationMoveSpeed,
           minimumNavigationTurnSpeed: state.minimumNavigationTurnSpeed,
+          shadowMapSize: state.shadowMapSize,
         }),
       },
     ),

@@ -15,7 +15,7 @@ const ShadowSettingsPanel = ({ setDialogVisible }: { setDialogVisible: (b: boole
   const language = useStore(Selector.language);
   const addUndoable = useStore(Selector.addUndoable);
   const shadowCameraFar = useStore(Selector.viewState.shadowCameraFar);
-  const shadowMapSize = useStore(Selector.viewState.shadowMapSize);
+  const shadowMapSize = useStore(Selector.shadowMapSize);
 
   const SHADOW_MAP_SIZE_STEP = 4096;
   const SHADOW_CAMERA_FAR_STEP = 10000;
@@ -55,7 +55,7 @@ const ShadowSettingsPanel = ({ setDialogVisible }: { setDialogVisible: (b: boole
 
   const setShadowMapSize = (value: number) => {
     setCommonStore((state) => {
-      state.viewState.shadowMapSize = value;
+      state.shadowMapSize = value;
     });
   };
 

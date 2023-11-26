@@ -17,7 +17,7 @@ const Lights = () => {
   const directLightIntensity = useStore(Selector.viewState.directLightIntensity) ?? 3.5;
   const ambientLightIntensity = useStore(Selector.viewState.ambientLightIntensity) ?? 0.2;
   const shadowCameraFar = useStore(Selector.viewState.shadowCameraFar) ?? DEFAULT_SHADOW_CAMERA_FAR;
-  const shadowMapSize = useStore(Selector.viewState.shadowMapSize) ?? DEFAULT_SHADOW_MAP_SIZE;
+  const shadowMapSize = useStore(Selector.shadowMapSize) ?? DEFAULT_SHADOW_MAP_SIZE;
   const sunlightDirection = useStore(Selector.sunlightDirection);
   const sceneRadius = useStore(Selector.sceneRadius);
   const positionExtent = 2 * sceneRadius;
