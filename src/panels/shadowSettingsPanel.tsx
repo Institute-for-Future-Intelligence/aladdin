@@ -106,6 +106,7 @@ const ShadowSettingsPanel = ({ setDialogVisible }: { setDialogVisible: (b: boole
   const onOkClick = () => {
     apply();
     setDialogVisible(false);
+    window.location.reload();
   };
 
   return (
