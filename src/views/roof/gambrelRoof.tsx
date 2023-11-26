@@ -24,7 +24,6 @@ import {
   handlePointerMove,
   handlePointerUp,
   RoofHandle,
-  RoofSegmentGroupUserData,
   RoofSegmentProps,
   RoofWireframeProps,
   updateRooftopElements,

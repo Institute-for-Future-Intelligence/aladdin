@@ -140,7 +140,6 @@ const CuboidLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
           }
         }
         break;
-      case Scope.AllObjectsOfThisType:
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         // should list here, so it doesn't go to default, but ignore
         break;

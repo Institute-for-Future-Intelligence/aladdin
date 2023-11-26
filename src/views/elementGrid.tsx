@@ -34,7 +34,7 @@ export const ElementGrid = React.memo(({ hx, hy, hz, position, rotation }: Eleme
       setStep((Math.floor(maxSize / 25) + 1) * NORMAL_GRID_SCALE);
       setLineWidth((groundImage ? 0.05 : 0.1) * GRID_RATIO);
     }
-  }, [enableFineGrid, maxSize]);
+  }, [enableFineGrid, maxSize, groundImage]);
 
   const pointsX = useMemo(() => {
     const p: number[] = [0];

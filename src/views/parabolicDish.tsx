@@ -187,7 +187,7 @@ const ParabolicDish = ({
           ') ' +
           i18n.t('word.MeterAbbreviation', lang))
     );
-  }, [dish?.label, locked, language, cx, cy, cz]);
+  }, [dish?.label, dish?.locked, lang, cx, cy, cz]);
 
   // in model coordinate system
   const euler = useMemo(() => {
@@ -272,7 +272,7 @@ const ParabolicDish = ({
       }
     }
     return array;
-  }, [hx, latusRectum]);
+  }, [hx, latusRectum, detailed]);
 
   const tripodLines = useMemo<LineData[] | undefined>(() => {
     if (structureType === ParabolicDishStructureType.CentralPoleWithTripod) {

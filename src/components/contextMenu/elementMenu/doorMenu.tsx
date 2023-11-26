@@ -11,7 +11,7 @@ import i18n from 'src/i18n/i18n';
 import { DoorModel, DoorType } from 'src/models/DoorModel';
 import DoorTextureSelection from './doorTextureSelection';
 import DoorColorSelection from './doorColorSelection';
-import { DoorTexture, ObjectType, Scope } from 'src/types';
+import { DoorTexture, ObjectType } from 'src/types';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { radioStyle } from './wallMenu';
 import { UndoableChange } from 'src/undo/UndoableChange';

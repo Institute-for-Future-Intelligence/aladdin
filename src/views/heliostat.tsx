@@ -144,7 +144,7 @@ const Heliostat = ({
           ') ' +
           i18n.t('word.MeterAbbreviation', lang))
     );
-  }, [heliostat?.label, locked, language, cx, cy, cz]);
+  }, [heliostat?.label, heliostat?.locked, lang, cx, cy, cz]);
 
   // in model coordinate system
   const euler = useMemo(() => {
@@ -218,7 +218,7 @@ const Heliostat = ({
       return new Euler(Math.atan2(r, normalVector.z), 0, Math.atan2(normalVector.y, normalVector.x) + HALF_PI, 'ZXY');
     }
     return new Euler(tiltAngle, 0, relativeAzimuth, 'ZXY');
-  }, [receiverCenter, sunDirection, tiltAngle, relativeAzimuth, rot, tower?.cx, tower?.cy, tower?.cz]);
+  }, [receiverCenter, sunDirection, tiltAngle, relativeAzimuth, rot]);
 
   const poleZ = -(actualPoleHeight + lz) / 2;
   const baseSize = Math.max(1, (lx + ly) / 8);

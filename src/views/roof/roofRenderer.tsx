@@ -23,7 +23,7 @@ import MansardRoof from './mansardRoof';
 import { Euler, Mesh, Vector3 } from 'three';
 import { ObjectType, Orientation } from 'src/types';
 import { ThreeEvent, useThree } from '@react-three/fiber';
-import { HIGHLIGHT_HANDLE_COLOR, LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
+import { HIGHLIGHT_HANDLE_COLOR } from 'src/constants';
 import { Point2 } from 'src/models/Point2';
 import { showError } from 'src/helpers';
 import i18n from 'src/i18n/i18n';

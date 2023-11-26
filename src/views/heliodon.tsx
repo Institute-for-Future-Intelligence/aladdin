@@ -24,7 +24,7 @@ import {
   computeSunriseAndSunsetInMinutes,
   TILT_ANGLE,
 } from '../analysis/sunTools';
-import { Line, Plane as Drei_Plane, useTexture } from '@react-three/drei';
+import { Line, Plane as DreiPlane, useTexture } from '@react-three/drei';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { useLoader } from '@react-three/fiber';
@@ -361,9 +361,9 @@ const Heliodon = ({ date, hourAngle, declinationAngle, worldLatitude }: Heliodon
         </mesh>
       </mesh>
       {/* use this plane to hide the uneven edge */}
-      <Drei_Plane args={[10000, 10000]} renderOrder={-1} userData={{ unintersectable: true }}>
+      <DreiPlane args={[10000, 10000]} renderOrder={-1} userData={{ unintersectable: true }}>
         <meshBasicMaterial transparent={true} opacity={0} />
-      </Drei_Plane>
+      </DreiPlane>
       {showSunAngles && sunPosition.z > 0 && (
         <>
           <Line

@@ -19,15 +19,10 @@ import Dialog from '../dialog';
 
 const SolarUpdraftTowerCollectorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
-  const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.foundationActionScope);
-  const setActionScope = useStore(Selector.setFoundationActionScope);
-  const applyCount = useStore(Selector.applyCount);
-  const setApplyCount = useStore(Selector.setApplyCount);
-  const revertApply = useStore(Selector.revertApply);
 
   const foundation = useSelectedElement(ObjectType.Foundation) as FoundationModel | undefined;
 
@@ -158,7 +153,6 @@ const SolarUpdraftTowerCollectorHeightInput = ({ setDialogVisible }: { setDialog
         } as UndoableChangeGroup;
         addUndoable(undoableChangeSelected);
         updateInMap(oldValuesSelected, value);
-        setApplyCount(applyCount + 1);
         break;
       }
       case Scope.AllObjectsOfThisType: {
@@ -187,7 +181,6 @@ const SolarUpdraftTowerCollectorHeightInput = ({ setDialogVisible }: { setDialog
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
         updateCollectorHeightForAll(value);
-        setApplyCount(applyCount + 1);
         break;
       }
       default:
@@ -214,7 +207,6 @@ const SolarUpdraftTowerCollectorHeightInput = ({ setDialogVisible }: { setDialog
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          setApplyCount(applyCount + 1);
         }
     }
   };

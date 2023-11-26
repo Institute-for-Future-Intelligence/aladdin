@@ -49,7 +49,7 @@ export const Auxiliary = () => {
     } else {
       setShowGrid(false);
     }
-  }, [resizeHandleType]);
+  }, [resizeHandleType, element?.type]);
 
   // only these elements are allowed to be on the ground
   const legalOnGround = () => {

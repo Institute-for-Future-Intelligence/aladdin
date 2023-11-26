@@ -170,7 +170,7 @@ const FresnelReflector = ({
           ') ' +
           i18n.t('word.MeterAbbreviation', lang))
     );
-  }, [fresnelReflector?.label, locked, language, cx, cy, cz]);
+  }, [fresnelReflector?.label, fresnelReflector?.locked, lang, cx, cy, cz]);
 
   // in model coordinate system
   const euler = useMemo(() => {
@@ -271,7 +271,7 @@ const FresnelReflector = ({
       return new Euler(0, Math.atan2(normalVector.x, normalVector.z), 0, 'ZXY');
     }
     return new Euler(tiltAngle, 0, relativeAzimuth, 'ZXY');
-  }, [receiverCenter, sunDirection, tiltAngle, relativeAzimuth, rot, receiver?.cx, receiver?.cy, receiver?.cz]);
+  }, [receiverCenter, sunDirection, tiltAngle, relativeAzimuth, rot]);
 
   const poleZ = -(actualPoleHeight + lz) / 2;
 
@@ -296,7 +296,7 @@ const FresnelReflector = ({
       array.push({ points: line } as LineData);
     }
     return array;
-  }, [lx, ly, numberOfModules]);
+  }, [lx, ly, hz, numberOfModules]);
 
   const baseSize = Math.max(1, Math.min(lx * 5, ly * 5, (lx + ly) / 16));
   const resizeHandleSize = RESIZE_HANDLE_SIZE * baseSize * 1.5;

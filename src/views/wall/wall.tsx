@@ -183,7 +183,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   const [heatmapTexture, setHeatmapTexture] = useState<CanvasTexture | null>(null);
 
   // hooks
-  const { camera, gl, invalidate } = useThree();
+  const { camera, gl } = useThree();
   const { elementsOnWall, leftWall, rightWall } = useElements(id, leftJoints[0], rightJoints[0]);
   const latestFoundation = useLatestFoundation(foundationModel);
 

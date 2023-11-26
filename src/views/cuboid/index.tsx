@@ -5,9 +5,7 @@
 import { CuboidModel } from 'src/models/CuboidModel';
 import { ElementModel } from 'src/models/ElementModel';
 import { isStackableModel } from 'src/models/Stackable';
-import { useStore } from 'src/stores/common';
 import Cuboid from './cuboid';
-import * as Selector from '../../stores/selector';
 import { ObjectType } from 'src/types';
 import SolarPanelOnCuboid from '../solarPanel/solarPanelOnCuboid';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
@@ -15,7 +13,6 @@ import Sensor from '../sensor';
 import { SensorModel } from 'src/models/SensorModel';
 import Light from '../light';
 import { LightModel } from 'src/models/LightModel';
-import { GROUND_ID } from '../../constants';
 
 export interface CuboidRendererProps {
   elements: ElementModel[];
@@ -68,6 +65,8 @@ const CuboidRenderer = ({ elements, cuboidModel }: CuboidRendererProps) => {
               default:
                 return null;
             }
+          } else {
+            return null;
           }
         })}
       </group>

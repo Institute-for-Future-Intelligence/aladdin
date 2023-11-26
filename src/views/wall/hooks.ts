@@ -15,17 +15,14 @@ import WallTexture08 from 'src/resources/wall_08.png';
 import WallTexture09 from 'src/resources/wall_09.png';
 import WallTexture10 from 'src/resources/wall_10.png';
 
-import { useEffect, useMemo, useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import { ElementModel } from 'src/models/ElementModel';
-import { WallModel, WallFill, WallStructure } from 'src/models/WallModel';
+import { WallModel, WallStructure } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
 import { Util } from 'src/Util';
-import * as Selector from 'src/stores/selector';
 import { RepeatWrapping, TextureLoader, Vector3 } from 'three';
 import { ObjectType, WallTexture } from 'src/types';
-import { RoofModel } from 'src/models/RoofModel';
 import { invalidate } from '@react-three/fiber';
-import { DEFAULT_PARAPET_SETTINGS } from './parapet';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import { FoundationModel } from 'src/models/FoundationModel';
 

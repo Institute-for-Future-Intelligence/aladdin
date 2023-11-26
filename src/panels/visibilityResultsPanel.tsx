@@ -11,7 +11,6 @@ import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space, Table } from 'antd';
 import { ReloadOutlined, SaveOutlined } from '@ant-design/icons';
 import { screenshot, showInfo } from '../helpers';
-import i18n from '../i18n/i18n';
 import { HumanData } from '../HumanData';
 import { Rectangle } from '../models/Rectangle';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
@@ -172,7 +171,7 @@ const VisibilityResultsPanel = () => {
       });
       setResultArray(arr);
     }
-  }, [solarPanelVisibilityResults, language]);
+  }, [solarPanelVisibilityResults, lang]);
 
   const onDrag: DraggableEventHandler = (e, ui) => {
     setCurPosition({

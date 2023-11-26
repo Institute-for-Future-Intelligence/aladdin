@@ -57,7 +57,7 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   const needChange = (value: number) => {
     if (!wall) return;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType:
         for (const e of elements) {
           if (
             e.type === ObjectType.Wall &&

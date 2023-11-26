@@ -337,7 +337,7 @@ const Mount = React.memo(
           </Box>
         </group>
       );
-    }, [tiltAngle, spCy, spLy]);
+    }, [tiltAngle, spCy, spLy, shadowEnabled]);
 
     const arr = useMemo(() => {
       const arr: number[] = [];

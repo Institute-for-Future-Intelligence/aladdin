@@ -63,7 +63,7 @@ const Parapet = ({
   rightWallPointData,
 }: ParapetProps) => {
   const { display, color, textureType, parapetHeight, copingsWidth, copingsHeight } = args;
-  const { id, parentId, cx, cy, hx, hy, angle, selected } = wallData;
+  const { id, cx, cy, hx, hy, angle } = wallData;
   const bodyHeight = parapetHeight - copingsHeight;
 
   const texture = useWallTexture(textureType);
@@ -96,7 +96,7 @@ const Parapet = ({
     }
 
     return points;
-  }, [hy, copingsWidth, currWallPointData, leftWallPointData, rightWallPointData]);
+  }, [hx, hy, copingsWidth, currWallPointData, leftWallPointData, rightWallPointData]);
 
   const bodyShape = useMemo(() => {
     const shape = new Shape();
@@ -123,25 +123,23 @@ const Parapet = ({
     shape.lineTo(leftPoint.x, leftPoint.y);
     shape.closePath();
     return shape;
-  }, [hx, currWallPointData, leftWallPointData, rightWallPointData]);
+  }, [hx, hy, currWallPointData, leftWallPointData, rightWallPointData]);
 
   const copingsShape = useMemo(() => {
     const shape = new Shape();
     if (copingsWidth === 0) return shape;
-
     const [outerLeft, outerRight, innerRight, innerLeft] = copingsPoints;
-
     shape.moveTo(outerLeft.x, outerLeft.y);
     shape.lineTo(outerRight.x, outerRight.y);
     shape.lineTo(innerRight.x, innerRight.y);
     shape.lineTo(innerLeft.x, innerLeft.y);
     shape.closePath();
     return shape;
-  }, [hy, copingsWidth, copingsPoints]);
+  }, [copingsWidth, copingsPoints]);
 
   const copingsWireframePoints = useMemo(() => {
     return copingsPoints.map((v) => v.toArray() as [number, number, number]);
-  }, [hy, copingsPoints]);
+  }, [copingsPoints]);
 
   const bodyHorizontalWireframePoints = useMemo(() => [new Vector3(-hx, 0, 0), new Vector3(hx, 0, 0)], [hx]);
   const bodyVerticalWireframePoints = useMemo(() => [new Vector3(), new Vector3(0, 0, bodyHeight)], [bodyHeight]);

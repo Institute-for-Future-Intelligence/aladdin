@@ -13,7 +13,6 @@ import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Col, Row, Space, Popover } from 'antd';
 import { saveCsv, screenshot, showInfo } from '../helpers';
 import { CameraOutlined, CaretRightOutlined, ReloadOutlined, SaveOutlined } from '@ant-design/icons';
-import i18n from '../i18n/i18n';
 import SutBiaxialLineGraph from '../components/sutBiaxialLineGraph';
 import { Rectangle } from '../models/Rectangle';
 import { FLOATING_WINDOW_OPACITY, Z_INDEX_FRONT_PANEL } from '../constants';

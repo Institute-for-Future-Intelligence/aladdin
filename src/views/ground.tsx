@@ -1072,6 +1072,7 @@ const Ground = () => {
       if (e.type === ObjectType.SolarPanel && (e as SolarPanelModel).parentType === ObjectType.Roof) return true;
       if (e.type === ObjectType.Window && (e as WindowModel).parentType === ObjectType.Roof) return true;
       if (e.type === ObjectType.Sensor || e.type === ObjectType.Light) return true;
+      return false;
     });
   };
 

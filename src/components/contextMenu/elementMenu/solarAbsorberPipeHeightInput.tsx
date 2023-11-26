@@ -78,7 +78,7 @@ const SolarAbsorberPipeHeightInput = ({ setDialogVisible }: { setDialogVisible: 
 
   const needChange = (absorberHeight: number) => {
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Foundation && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
             const f = e as FoundationModel;

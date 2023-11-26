@@ -78,9 +78,7 @@ const SolarPanelOnCuboid = (solarPanelModel: SolarPanelModel) => {
 
   const isTop = isSolarPanelOnTopFace(normal);
 
-  const hx = lx / 2;
   const hy = ly / 2;
-  const hz = lz / 2;
   const actualPoleHeight = isTop ? poleHeight : 0;
   const baseSize = Math.max(1, (lx + ly) / 16);
   const rotateHandleSize = (baseSize * 2) / 3;
@@ -107,7 +105,6 @@ const SolarPanelOnCuboid = (solarPanelModel: SolarPanelModel) => {
   const pointerDown = useRef<boolean>(false);
   const oldTiltAngleRef = useRef<number>(0);
   const newTiltAngleRef = useRef<number>(0);
-  const parentWorldPositionRef = useRef<Vector3 | null>(null);
   const parentWorldRotationRef = useRef<number | null>(null);
 
   const tiltHandleRef = useRef<Mesh>(null);
@@ -500,7 +497,7 @@ const SolarPanelBoxGroup = ({ solarPanelModel, groupRotation, panelRotation }: S
           ') ' +
           i18n.t('word.MeterAbbreviation', lang))
     );
-  }, [label, locked, language, cx, cy, cz]);
+  }, [label, locked, lang, cx, cy, cz]);
 
   const solarPanelLines = useMemo(() => {
     const lines: LineData[] = [];

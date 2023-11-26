@@ -188,7 +188,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
           ') ' +
           i18n.t('word.MeterAbbreviation', lang))
     );
-  }, [cuboidModel?.label, locked, language, cx, cy, lz]);
+  }, [cuboidModel?.label, cuboidModel?.locked, lang, cx, cy, lz]);
 
   useEffect(() => {
     const handlePointerUp = () => {

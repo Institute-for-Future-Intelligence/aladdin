@@ -2,8 +2,8 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import { useEffect, useMemo, useState } from 'react';
-import { DoorTexture, ObjectType } from 'src/types';
+import { useMemo, useState } from 'react';
+import { DoorTexture } from 'src/types';
 import DoorTextureDefault from 'src/resources/door_edge.png';
 import DoorTexture00 from 'src/resources/tiny_white_square.png';
 import DoorTexture01 from 'src/resources/door_01.png';
@@ -25,9 +25,7 @@ import DoorTexture16 from 'src/resources/door_16.png';
 import DoorTexture17 from 'src/resources/door_17.png';
 import { TextureLoader } from 'three';
 import { useThree } from '@react-three/fiber';
-import { useStore } from 'src/stores/common';
-import { fileChanged } from 'src/stores/selector';
-import { DoorModel, DoorType } from 'src/models/DoorModel';
+import { DoorType } from 'src/models/DoorModel';
 
 export const useDoorTexture = (textureType: DoorTexture, doorType: DoorType, lx?: number, lz?: number) => {
   const textureLoader = useMemo(() => {

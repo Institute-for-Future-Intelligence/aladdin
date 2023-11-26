@@ -4,7 +4,6 @@
 
 import { Extrude } from '@react-three/drei';
 import React from 'react';
-import { WallModel } from 'src/models/WallModel';
 import { DoubleSide, Shape, Vector3 } from 'three';
 
 interface CeilingProps {

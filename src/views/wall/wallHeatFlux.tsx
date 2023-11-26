@@ -10,7 +10,6 @@ import {
   UNIT_VECTOR_POS_Y,
   UNIT_VECTOR_POS_Z,
 } from 'src/constants';
-import { FoundationModel } from 'src/models/FoundationModel';
 import { WallFill, WallModel } from 'src/models/WallModel';
 import { WindowModel, WindowType } from 'src/models/WindowModel';
 import { useStore } from 'src/stores/common';

@@ -10,7 +10,6 @@ import { DatePicker, Slider, Space, Switch, TimePicker } from 'antd';
 import moment from 'moment';
 import 'antd/dist/antd.css';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
-import i18n from '../i18n/i18n';
 import { UndoableCheck } from '../undo/UndoableCheck';
 import { UndoableChange } from '../undo/UndoableChange';
 import { UndoableChangeLocation } from '../undo/UndoableChangeLocation';

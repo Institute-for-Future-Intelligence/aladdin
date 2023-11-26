@@ -19,7 +19,6 @@ import {
   SaveOutlined,
   UnorderedListOutlined,
 } from '@ant-design/icons';
-import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 import { FLOATING_WINDOW_OPACITY, Z_INDEX_FRONT_PANEL } from '../constants';
 import { Util } from 'src/Util';

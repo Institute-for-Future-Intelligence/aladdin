@@ -97,7 +97,7 @@ export const RulerOnWall = ({ element }: RulerOnWallProps) => {
         />
       </>
     );
-  }, [hx, hz]);
+  }, [hx, hz, lang]);
 
   // lower-right to upper-right
   const lr2ur = useMemo(() => {
@@ -161,7 +161,7 @@ export const RulerOnWall = ({ element }: RulerOnWallProps) => {
         />
       </>
     );
-  }, [hx, hz]);
+  }, [hx, hz, lang]);
 
   // lower-left to lower-right
   const ll2lr = useMemo(() => {
@@ -225,7 +225,7 @@ export const RulerOnWall = ({ element }: RulerOnWallProps) => {
         />
       </>
     );
-  }, [hx, hz]);
+  }, [hx, hz, lang]);
 
   // upper-left to upper-right
   const ul2ur = useMemo(() => {
@@ -289,7 +289,7 @@ export const RulerOnWall = ({ element }: RulerOnWallProps) => {
         />
       </>
     );
-  }, [hx, hz]);
+  }, [hx, hz, lang]);
 
   if (resizeHandleType) {
     switch (resizeHandleType) {

@@ -241,7 +241,7 @@ const SolarPanel = ({
           ') ' +
           i18n.t('word.MeterAbbreviation', lang))
     );
-  }, [solarPanel?.label, locked, language, cx, cy, cz]);
+  }, [solarPanel?.label, solarPanel?.locked, lang, cx, cy, cz]);
 
   const euler = useMemo(() => {
     // east face in model coordinate system

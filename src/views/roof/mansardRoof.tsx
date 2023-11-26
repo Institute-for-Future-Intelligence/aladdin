@@ -53,7 +53,6 @@ import {
   handlePointerMove,
   handlePointerUp,
   RoofHandle,
-  RoofSegmentGroupUserData,
   RoofSegmentProps,
   RoofWireframeProps,
 } from './roofRenderer';

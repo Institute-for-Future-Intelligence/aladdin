@@ -107,9 +107,7 @@ const WindTurbineBladeDesign = ({ setDialogVisible }: { setDialogVisible: (b: bo
     setActionScope(e.target.value);
   };
 
-  {
-    /* root radius */
-  }
+  /* root radius */
 
   const needChangeRootRadius = (value: number) => {
     if (!turbine) return;
@@ -316,9 +314,7 @@ const WindTurbineBladeDesign = ({ setDialogVisible }: { setDialogVisible: (b: bo
     });
   };
 
-  {
-    /* chord length */
-  }
+  /* chord length */
 
   const needChangeChordLength = (value: number) => {
     if (!turbine) return;

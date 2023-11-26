@@ -141,7 +141,7 @@ const CuboidTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
   const needChange = (texture: CuboidTexture) => {
     if (!cuboid) return;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Cuboid && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
             const cm = e as CuboidModel;

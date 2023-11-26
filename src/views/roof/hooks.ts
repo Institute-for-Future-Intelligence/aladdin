@@ -21,7 +21,7 @@ import { WallModel } from 'src/models/WallModel';
 import { useThree } from '@react-three/fiber';
 import { RoofSegmentGroupUserData, RoofSegmentProps, updateRooftopElements } from './roofRenderer';
 import { RoofUtil } from './RoofUtil';
-import { GambrelRoofModel, RoofModel, RoofType } from 'src/models/RoofModel';
+import { RoofModel, RoofType } from 'src/models/RoofModel';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { getRoofPointsOfGambrelRoof } from './flatRoof';
 import { shallow } from 'zustand/shallow';

@@ -113,7 +113,7 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
         />
       </>
     );
-  }, [hx, hy, hz]);
+  }, [hx, hy, hz, lang, color]);
 
   const lr2ur = useMemo(() => {
     return (
@@ -176,7 +176,7 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
         />
       </>
     );
-  }, [hx, hy, hz]);
+  }, [hx, hy, hz, lang, color]);
 
   const ll2lr = useMemo(() => {
     return (
@@ -239,7 +239,7 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
         />
       </>
     );
-  }, [hx, hy, hz]);
+  }, [hx, hy, hz, lang, color]);
 
   const ul2ur = useMemo(() => {
     return (
@@ -302,7 +302,7 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
         />
       </>
     );
-  }, [hx, hy, hz]);
+  }, [hx, hy, hz, lang, color]);
 
   if (resizeHandleType) {
     if (element.type === ObjectType.Wall) {

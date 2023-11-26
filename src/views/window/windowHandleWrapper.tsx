@@ -97,7 +97,7 @@ const isPolygonalWindowInsideVertices = (
   rotation: number[],
   vertices: Vector3[],
 ) => {
-  const [hx, hy] = [lx / 2, ly / 2];
+  const hy = ly / 2;
   const [a, b, c] = rotation;
   const euler = new Euler().fromArray([a - HALF_PI, b, c, 'ZXY']);
   const boundaryPoint2 = vertices.map((v) => ({ x: v.x, y: v.y }));

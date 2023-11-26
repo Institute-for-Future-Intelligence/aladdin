@@ -7,7 +7,6 @@ import { ThreeEvent } from '@react-three/fiber';
 import { useRef } from 'react';
 import { HIGHLIGHT_HANDLE_COLOR, MOVE_HANDLE_COLOR_1, MOVE_HANDLE_COLOR_2, MOVE_HANDLE_COLOR_3 } from 'src/constants';
 import { useStore } from 'src/stores/common';
-import { useRefStore } from 'src/stores/commonRef';
 import { MoveHandleType, ResizeHandleType, RotateHandleType } from 'src/types';
 import { Mesh } from 'three';
 import * as Selector from '../stores/selector';

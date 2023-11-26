@@ -13,7 +13,6 @@ import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Col, Row, Space, Popover } from 'antd';
 import { saveCsv, screenshot, showInfo } from '../helpers';
 import { CameraOutlined, CaretRightOutlined, ReloadOutlined, SaveOutlined } from '@ant-design/icons';
-import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';

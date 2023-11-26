@@ -19,7 +19,6 @@ import {
   SaveOutlined,
   UnorderedListOutlined,
 } from '@ant-design/icons';
-import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 import { Util } from 'src/Util';
 import { usePrimitiveStore } from '../stores/commonPrimitive';

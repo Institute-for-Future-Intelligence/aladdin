@@ -7,7 +7,6 @@ import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
-import i18n from '../i18n/i18n';
 import { Button, Col, Modal, Row, Select, Switch } from 'antd';
 import { copyTextToClipboard, showSuccess } from '../helpers';
 import { ExclamationCircleOutlined } from '@ant-design/icons';

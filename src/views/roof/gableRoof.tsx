@@ -66,7 +66,7 @@ import { CSG } from 'three-csg-ts';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { BuildingParts, FoundationModel } from '../../models/FoundationModel';
 import { useDataStore } from '../../stores/commonData';
-import { BufferRoofSegment, WindowData } from './roofSegment';
+import { BufferRoofSegment } from './roofSegment';
 import Ceiling from './ceiling';
 import { WindowModel, WindowType } from 'src/models/WindowModel';
 import { WallHeights, isRoofValid } from './gambrelRoof';

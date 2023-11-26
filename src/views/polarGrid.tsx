@@ -52,7 +52,7 @@ export const PolarGrid = ({ element, height }: { element: ElementModel; height?:
       }
       setRadius(Math.max(5, Math.hypot(lx, ly) * 0.75));
     }
-  }, [rotateHandle, hoveredHandle]);
+  }, [rotateHandle, hoveredHandle, groundImage, height]);
 
   const font = useLoader(FontLoader, helvetikerFont);
   const fontSize = radius * 0.05;

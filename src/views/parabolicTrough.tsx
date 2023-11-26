@@ -178,7 +178,7 @@ const ParabolicTrough = ({
           ') ' +
           i18n.t('word.MeterAbbreviation', lang))
     );
-  }, [trough?.label, locked, language, cx, cy, cz]);
+  }, [trough?.label, trough?.locked, cx, cy, cz, lang]);
 
   // in model coordinate system
   const euler = useMemo(() => {

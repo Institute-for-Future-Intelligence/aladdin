@@ -2,9 +2,8 @@
  * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useRef, useState } from 'react';
-import { Button, Col, InputNumber, Modal, Radio, RadioChangeEvent, Row, Space } from 'antd';
-import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
+import React, { useRef, useState } from 'react';
+import { Col, InputNumber, Radio, RadioChangeEvent, Row, Space } from 'antd';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { FresnelReflectorModel } from '../../../models/FresnelReflectorModel';
@@ -23,7 +22,6 @@ import Dialog from '../dialog';
 
 const FresnelReflectorWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
-  const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
   const updateLxById = useStore(Selector.updateElementLxById);

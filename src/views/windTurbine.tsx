@@ -111,7 +111,7 @@ const WindTurbine = ({
     s.lineTo(bladeRootRadius, 0);
     s.closePath();
     return s;
-  }, [bladeRadius, maximumChordLength, maximumChordRadius, bladeRootRadius]);
+  }, [bladeRadius, maximumChordLength, maximumChordRadius, bladeRootRadius, bladeTipWidth]);
 
   const timeAngle = useMemo(() => {
     // A wind turbine rotates 10-20 revolutions per minute, which is too fast to show in a 24-hour animation
@@ -148,7 +148,7 @@ const WindTurbine = ({
           ') ' +
           i18n.t('word.MeterAbbreviation', lang))
     );
-  }, [turbine?.label, locked, language, cx, cy, cz]);
+  }, [turbine?.label, turbine?.locked, lang, cx, cy, cz]);
 
   // in model coordinate system
   const euler = useMemo(() => {
