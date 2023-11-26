@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/aladdin/static/css/main.e5ad6973.css",
-    "main.js": "/aladdin/static/js/main.bc16a81e.js",
+    "main.js": "/aladdin/static/js/main.c25b1b9d.js",
     "static/media/foundation_05.png": "/aladdin/static/media/foundation_05.8164fdc83b5bfd18b612.png",
     "static/media/foundation_07.png": "/aladdin/static/media/foundation_07.e759a1c6ff70f139c78e.png",
     "static/media/wall_03.png": "/aladdin/static/media/wall_03.9fd1fc56ccb99fcbc99d.png",
@@ -18,7 +18,7 @@
     "static/media/wall_06.png": "/aladdin/static/media/wall_06.a62f49a945094ecf3ac0.png",
     "static/media/building_facade_09.png": "/aladdin/static/media/building_facade_09.65f795a5b27b06721e29.png",
     "static/media/building_facade_05.png": "/aladdin/static/media/building_facade_05.6f979c80fcda7929a177.png",
-    "static/media/weather.csv": "/aladdin/static/media/weather.0c774b9f3b86668a0cd6.csv",
+    "static/media/weather.csv": "/aladdin/static/media/weather.b893372e7ed45c57f3d1.csv",
     "static/media/wall_08.png": "/aladdin/static/media/wall_08.cfa0113cc6c1f3786d9d.png",
     "static/media/building_facade_04.png": "/aladdin/static/media/building_facade_04.1253be24d22deb941f42.png",
     "static/media/building_facade_10.png": "/aladdin/static/media/building_facade_10.6520a3bfbeab2ab5c554.png",
@@ -189,10 +189,10 @@
     "index.html": "/aladdin/index.html",
     "static/media/menu.svg": "/aladdin/static/media/menu.c2982aedd8f7a7f0f9a4350b23bdcab5.svg",
     "main.e5ad6973.css.map": "/aladdin/static/css/main.e5ad6973.css.map",
-    "main.bc16a81e.js.map": "/aladdin/static/js/main.bc16a81e.js.map"
+    "main.c25b1b9d.js.map": "/aladdin/static/js/main.c25b1b9d.js.map"
   },
   "entrypoints": [
     "static/css/main.e5ad6973.css",
-    "static/js/main.bc16a81e.js"
+    "static/js/main.c25b1b9d.js"
   ]
 }
