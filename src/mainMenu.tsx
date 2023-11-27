@@ -2322,9 +2322,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
             <Menu.Item key="floatovoltaics" onClick={loadFile}>
               {t('menu.solarEnergyExamples.Floatovoltaics', lang)}
             </Menu.Item>
-            <Menu.Item key="agrivoltaics" onClick={loadFile}>
-              {t('menu.solarEnergyExamples.Agrivoltaics', lang)}
-            </Menu.Item>
             <Menu.Item key="rainbow_swash_solar_farm" onClick={loadFile}>
               {t('menu.solarEnergyExamples.RainbowSwashSolarFarmBostonMA', lang)}
             </Menu.Item>

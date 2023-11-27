@@ -390,7 +390,6 @@ const RectangleWindow = ({
                 lineWidth={heatFluxWidth ?? DEFAULT_HEAT_FLUX_WIDTH}
                 color={heatFluxColor ?? DEFAULT_HEAT_FLUX_COLOR}
               />
-              ;
               <Cone
                 userData={{ unintersectable: true }}
                 position={v[heatFluxArrowHead.current]

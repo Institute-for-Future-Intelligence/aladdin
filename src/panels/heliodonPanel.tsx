@@ -19,6 +19,7 @@ import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { Undoable } from '../undo/Undoable';
 import { Z_INDEX_FRONT_PANEL } from '../constants';
 import { useTranslation } from 'react-i18next';
+import { turnOffisualization } from './panelUtils';
 
 const Container = styled.div`
   position: absolute;
@@ -446,17 +447,20 @@ const HeliodonPanel = () => {
                         setCommonStore((state) => {
                           state.world.date = undoableChange.oldValue as string;
                         });
+                        turnOffisualization();
                       },
                       redo: () => {
                         setCommonStore((state) => {
                           state.world.date = undoableChange.newValue as string;
                         });
+                        turnOffisualization();
                       },
                     } as UndoableChange;
                     addUndoable(undoableChange);
                     setCommonStore((state) => {
                       state.world.date = day.toLocaleString('en-US');
                     });
+                    turnOffisualization();
                   }
                 }}
               />
