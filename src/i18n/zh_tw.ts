@@ -1545,7 +1545,7 @@ export const i18n_zh_tw = {
       ShadowMapSize: '映射圖長寬',
       Notes: '注意事項',
       RefreshPageNote: '改變設定後須刷新頁面。',
-      MapSizeWarning: '使用大的映射圖長寬的模型可能無法在某些電腦上開啟。',
+      MapSizeWarning: '大的映射圖長寬可能導致阿拉丁無法在某些電腦上運作。',
     },
 
     yearlyLightSensorPanel: {

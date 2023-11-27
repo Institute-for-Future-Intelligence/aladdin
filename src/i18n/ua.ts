@@ -1572,7 +1572,7 @@ export const i18n_ua = {
       ShadowMapSize: 'Shadow Map Size',
       Notes: 'Notes',
       RefreshPageNote: 'Refresh the page for the new settings to take effect.',
-      MapSizeWarning: 'A model that uses a large shadow map size may not be opened on some computers.',
+      MapSizeWarning: 'A large shadow map size may cause Aladdin to crash on some computers.',
     },
 
     yearlyLightSensorPanel: {
