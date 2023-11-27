@@ -240,6 +240,7 @@ const HeliodonPanel = () => {
               state.world.latitude = undoableChangeLocation.oldLatitude;
               state.world.address = undoableChangeLocation.oldAddress;
             });
+            turnOffisualization();
             setUpdateFlag(!updateFlag);
           },
           redo: () => {
@@ -247,6 +248,7 @@ const HeliodonPanel = () => {
               state.world.latitude = undoableChangeLocation.newLatitude;
               state.world.address = undoableChangeLocation.newAddress;
             });
+            turnOffisualization();
             setUpdateFlag(!updateFlag);
           },
         } as UndoableChangeLocation;
@@ -255,6 +257,7 @@ const HeliodonPanel = () => {
           state.world.latitude = value;
           state.world.address = '';
         });
+        turnOffisualization();
       },
       500,
       { leading: false, trailing: true },

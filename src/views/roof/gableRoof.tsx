@@ -1624,7 +1624,6 @@ const RoofSegment = ({
                 lineWidth={heatFluxWidth ?? DEFAULT_HEAT_FLUX_WIDTH}
                 color={heatFluxColor ?? DEFAULT_HEAT_FLUX_COLOR}
               />
-              ;
               <Cone
                 userData={{ unintersectable: true }}
                 position={

@@ -18,6 +18,7 @@ import { UndoableChangeLocation } from '../undo/UndoableChangeLocation';
 import { UndoableCheck } from '../undo/UndoableCheck';
 import { Undoable } from '../undo/Undoable';
 import { LAT_LNG_FRACTION_DIGITS, Z_INDEX_FRONT_PANEL } from '../constants';
+import { turnOffisualization } from './panelUtils';
 
 const libraries = ['places'] as Libraries;
 
@@ -141,6 +142,7 @@ const MapPanel = () => {
               state.world.longitude = undoableChangeLocation.oldLongitude;
               state.world.address = undoableChangeLocation.oldAddress;
             });
+            turnOffisualization();
             setUpdateFlag(!updateFlag);
           },
           redo: () => {
@@ -149,10 +151,12 @@ const MapPanel = () => {
               state.world.longitude = undoableChangeLocation.newLongitude;
               state.world.address = undoableChangeLocation.newAddress;
             });
+            turnOffisualization();
             setUpdateFlag(!updateFlag);
           },
         } as UndoableChangeLocation;
         addUndoable(undoableChangeLocation);
+        turnOffisualization();
         setCommonStore((state) => {
           if (geometry.location) {
             state.world.latitude = geometry.location.lat();
