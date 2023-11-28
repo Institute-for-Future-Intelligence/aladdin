@@ -9,6 +9,7 @@ import * as Selector from '../stores/selector';
 import { UndoableChange } from '../undo/UndoableChange';
 import { UndoableChangeLocation } from '../undo/UndoableChangeLocation';
 import { throttle } from 'lodash';
+import { turnOffisualization } from '../panels/panelUtils';
 
 const GroundMap = ({ width = 400, height = 400 }: { width: number; height: number }) => {
   const setCommonStore = useStore(Selector.set);
@@ -74,12 +75,14 @@ const GroundMap = ({ width = 400, height = 400 }: { width: number; height: numbe
               oldLongitude: longitude,
               newLongitude: lng,
               undo: () => {
+                turnOffisualization();
                 setCommonStore((state) => {
                   state.world.latitude = undoableChangeLocation.oldLatitude;
                   state.world.longitude = undoableChangeLocation.oldLongitude;
                 });
               },
               redo: () => {
+                turnOffisualization();
                 setCommonStore((state) => {
                   state.world.latitude = undoableChangeLocation.newLatitude;
                   state.world.longitude = undoableChangeLocation.newLongitude;
@@ -87,6 +90,7 @@ const GroundMap = ({ width = 400, height = 400 }: { width: number; height: numbe
               },
             } as UndoableChangeLocation;
             addUndoable(undoableChangeLocation);
+            turnOffisualization();
             setCommonStore((state) => {
               state.world.latitude = lat;
               state.world.longitude = lng;
