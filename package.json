@@ -4,6 +4,7 @@
   "private": true,
   "homepage": "https://institute-for-future-intelligence.github.io/aladdin",
   "dependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@koale/useworker": "^4.0.2",
     "@react-google-maps/api": "^2.19.2",
     "@react-three/drei": "^9.88.10",
