@@ -1,10 +1,12 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React from 'react';
 import styled from 'styled-components';
 import {
+  EmailIcon,
+  EmailShareButton,
   FacebookIcon,
   FacebookShareButton,
   LineIcon,
@@ -13,10 +15,12 @@ import {
   LinkedinShareButton,
   RedditIcon,
   RedditShareButton,
-  TwitterIcon,
+  TelegramIcon,
+  TelegramShareButton,
   TwitterShareButton,
   WhatsappIcon,
   WhatsappShareButton,
+  XIcon,
 } from 'react-share';
 import { HOME_URL } from './constants';
 import { useStore } from './stores/common';
@@ -61,6 +65,9 @@ const ShareLinks = ({ style, size, margin, round, handleShareWindowClose }: Shar
 
   return (
     <ShareLinkContainer style={style}>
+      <EmailShareButton url={url} subject={title}>
+        <EmailIcon size={size} round={round} />
+      </EmailShareButton>
       <TwitterShareButton
         url={url}
         title={title}
@@ -68,14 +75,9 @@ const ShareLinks = ({ style, size, margin, round, handleShareWindowClose }: Shar
         style={{ paddingRight: margin }}
         onShareWindowClose={handleShareWindowClose}
       >
-        <TwitterIcon size={size} round={round} />
+        <XIcon size={size} round={round} />
       </TwitterShareButton>
-      <FacebookShareButton
-        url={url}
-        quote={title}
-        style={{ paddingRight: margin }}
-        onShareWindowClose={handleShareWindowClose}
-      >
+      <FacebookShareButton url={url} style={{ paddingRight: margin }} onShareWindowClose={handleShareWindowClose}>
         <FacebookIcon size={size} round={round} />
       </FacebookShareButton>
       <RedditShareButton
@@ -86,6 +88,14 @@ const ShareLinks = ({ style, size, margin, round, handleShareWindowClose }: Shar
       >
         <RedditIcon size={size} round={round} />
       </RedditShareButton>
+      <TelegramShareButton
+        url={url}
+        title={title}
+        style={{ paddingRight: margin }}
+        onShareWindowClose={handleShareWindowClose}
+      >
+        <TelegramIcon size={size} round={round} />
+      </TelegramShareButton>
       <LineShareButton
         url={url}
         title={title}
@@ -104,7 +114,7 @@ const ShareLinks = ({ style, size, margin, round, handleShareWindowClose }: Shar
       >
         <LinkedinIcon size={size} round={round} />
       </LinkedinShareButton>
-      <WhatsappShareButton url={url} title={title} onShareWindowClose={handleShareWindowClose}>
+      <WhatsappShareButton url={url} title={title} separator=":: " onShareWindowClose={handleShareWindowClose}>
         <WhatsappIcon size={size} round={round} />
       </WhatsappShareButton>
     </ShareLinkContainer>

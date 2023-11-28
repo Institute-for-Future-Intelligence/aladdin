@@ -37,7 +37,7 @@
     "react-infinite-scroller": "^1.2.4",
     "react-keyboard-event-handler": "^1.5.4",
     "react-scripts": "^5.0.1",
-    "react-share": "^4.4.0",
+    "react-share": "^5.0.2",
     "react-split-pane": "^0.1.92",
     "react-timeago": "^7.1.0",
     "recharts": "^2.10.1",
