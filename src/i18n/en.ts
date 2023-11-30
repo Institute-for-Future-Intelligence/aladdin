@@ -509,6 +509,7 @@ export const i18n_en = {
 
       windPowerSubMenu: 'Wind Power',
       windPowerTutorials: {
+        EffectOfBladeNumberOfWindTurbine: 'Effect of Blade Number of Wind Turbine',
         EffectOfPitchAngleOfWindTurbineBlades: 'Effect of Pitch Angle of Wind Turbine Blades',
         OffshoreWindFarm: 'Offshore Wind Farm',
       },
@@ -1108,6 +1109,7 @@ export const i18n_en = {
 
     windTurbineMenu: {
       Rotor: 'Rotor',
+      BladeNumber: 'Blade Number',
       RotorInitialAngle: 'Rotor Initial Angle',
       RotorBladeDesign: 'Rotor Blade Design',
       RotorBladeRadius: 'Rotor Blade Radius',

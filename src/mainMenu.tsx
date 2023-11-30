@@ -2269,6 +2269,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
         </SubMenu>
         {/* wind power */}
         <SubMenu key={'wind-power'} title={i18n.t('menu.windPowerSubMenu', lang)}>
+          <Menu.Item key="effect_blade_number" onClick={loadFile}>
+            {i18n.t('menu.windPowerTutorials.EffectOfBladeNumberOfWindTurbine', lang)}
+          </Menu.Item>
           <Menu.Item key="effect_pitch_angle" onClick={loadFile}>
             {i18n.t('menu.windPowerTutorials.EffectOfPitchAngleOfWindTurbineBlades', lang)}
           </Menu.Item>

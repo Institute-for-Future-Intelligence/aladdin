@@ -23,6 +23,7 @@ const WindTurbine = ({
   cz,
   lx,
   lz,
+  numberOfBlades = 3,
   speed = 10,
   hubRadius = 0.75,
   hubLength = 1,
@@ -170,6 +171,15 @@ const WindTurbine = ({
 
   const moveHandleSize = MOVE_HANDLE_RADIUS * 4;
 
+  const bladeAngles = useMemo(() => {
+    const bladeAngleExtent = (Math.PI * 2) / numberOfBlades;
+    const angles = new Array<number>();
+    for (let i = 0; i < numberOfBlades; i++) {
+      angles.push(timeAngle + bladeAngleExtent * i);
+    }
+    return angles;
+  }, [numberOfBlades, timeAngle]);
+
   return (
     <group name={'Wind Turbine Group ' + id} rotation={euler} position={[cx, cy, cz]}>
       <group>
@@ -269,71 +279,26 @@ const WindTurbine = ({
         <meshStandardMaterial attach="material" color={color} />
       </RoundedBox>
 
-      {/*draw blade 1*/}
-      <mesh
-        name={'Blade 1A'}
-        receiveShadow={shadowEnabled}
-        castShadow={shadowEnabled}
-        position={new Vector3(0, -1, towerHeight)}
-        rotation={[HALF_PI, pitchAngle, timeAngle, 'XZY']}
-      >
-        <shapeGeometry attach="geometry" args={[bladeShape]} />
-        <meshStandardMaterial attach="material" color={color} side={FrontSide} />
-      </mesh>
-      <mesh
-        name={'Blade 1B'}
-        receiveShadow={shadowEnabled}
-        castShadow={shadowEnabled}
-        position={new Vector3(0, -1.05, towerHeight)}
-        rotation={[HALF_PI, pitchAngle, timeAngle, 'XZY']}
-      >
-        <shapeGeometry attach="geometry" args={[bladeShape]} />
-        <meshStandardMaterial attach="material" color={color} side={BackSide} />
-      </mesh>
-
-      {/*draw blade 2*/}
-      <mesh
-        name={'Blade 2A'}
-        receiveShadow={shadowEnabled}
-        castShadow={shadowEnabled}
-        position={new Vector3(0, -1, towerHeight)}
-        rotation={[HALF_PI, pitchAngle, timeAngle + (Math.PI * 2) / 3, 'XZY']}
-      >
-        <shapeGeometry attach="geometry" args={[bladeShape]} />
-        <meshStandardMaterial attach="material" color={color} side={FrontSide} />
-      </mesh>
-      <mesh
-        name={'Blade 2B'}
-        receiveShadow={shadowEnabled}
-        castShadow={shadowEnabled}
-        position={new Vector3(0, -1.05, towerHeight)}
-        rotation={[HALF_PI, pitchAngle, timeAngle + (Math.PI * 2) / 3, 'XZY']}
-      >
-        <shapeGeometry attach="geometry" args={[bladeShape]} />
-        <meshStandardMaterial attach="material" color={color} side={BackSide} />
-      </mesh>
-
-      {/*draw blade 3*/}
-      <mesh
-        name={'Blade 3A'}
-        receiveShadow={shadowEnabled}
-        castShadow={shadowEnabled}
-        position={new Vector3(0, -1, towerHeight)}
-        rotation={[HALF_PI, pitchAngle, timeAngle + (Math.PI * 4) / 3, 'XZY']}
-      >
-        <shapeGeometry attach="geometry" args={[bladeShape]} />
-        <meshStandardMaterial attach="material" color={color} side={FrontSide} />
-      </mesh>
-      <mesh
-        name={'Blade 3B'}
-        receiveShadow={shadowEnabled}
-        castShadow={shadowEnabled}
-        position={new Vector3(0, -1.05, towerHeight)}
-        rotation={[HALF_PI, pitchAngle, timeAngle + (Math.PI * 4) / 3, 'XZY']}
-      >
-        <shapeGeometry attach="geometry" args={[bladeShape]} />
-        <meshStandardMaterial attach="material" color={color} side={BackSide} />
-      </mesh>
+      {/*draw blades*/}
+      {bladeAngles.map((value, index) => {
+        return (
+          <group key={index} position={new Vector3(0, -1, towerHeight)} rotation={[HALF_PI, pitchAngle, value, 'XZY']}>
+            <mesh name={'Blade ' + index + ' Font Side'} receiveShadow={shadowEnabled} castShadow={shadowEnabled}>
+              <shapeGeometry attach="geometry" args={[bladeShape]} />
+              <meshStandardMaterial attach="material" color={color} side={FrontSide} />
+            </mesh>
+            <mesh
+              name={'Blade ' + index + ' Back Side'}
+              receiveShadow={shadowEnabled}
+              castShadow={shadowEnabled}
+              position={new Vector3(0, -0.05, 0)}
+            >
+              <shapeGeometry attach="geometry" args={[bladeShape]} />
+              <meshStandardMaterial attach="material" color={color} side={BackSide} />
+            </mesh>
+          </group>
+        );
+      })}
 
       {/* highlight it when it is selected but locked */}
       {selected && locked && (

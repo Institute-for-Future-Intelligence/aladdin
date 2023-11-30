@@ -506,6 +506,7 @@ export const i18n_zh_tw = {
 
       windPowerSubMenu: '風力發電',
       windPowerTutorials: {
+        EffectOfBladeNumberOfWindTurbine: '轉子葉片的數目對風力渦輪機輸出的影響',
         EffectOfPitchAngleOfWindTurbineBlades: '轉子葉片的俯仰角對風力渦輪機輸出的影響',
         OffshoreWindFarm: '離岸風電場',
       },
@@ -1085,6 +1086,7 @@ export const i18n_zh_tw = {
 
     windTurbineMenu: {
       Rotor: '轉子',
+      BladeNumber: '葉片數目',
       RotorInitialAngle: '轉子初始角度',
       RotorBladeDesign: '轉子葉片設計',
       RotorBladeRadius: '轉子葉片半徑',

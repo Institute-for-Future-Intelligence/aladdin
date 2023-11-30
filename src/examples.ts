@@ -98,6 +98,7 @@ import bestest_case_620 from './examples/bestest_case_620.json';
 import bestest_case_630 from './examples/bestest_case_630.json';
 import solar_updraft_tower from './examples/solar_updraft_tower.json';
 import solar_updraft_tower_city from './examples/solar_updraft_tower_city.json';
+import effect_blade_number from './examples/effect_blade_number.json';
 import effect_pitch_angle from './examples/effect_pitch_angle.json';
 import offshore_wind_farm from './examples/offshore_wind_farm.json';
 import tucson_sundt_station from './examples/tucson_sundt_station.json';
@@ -318,6 +319,9 @@ export const getExample = (name: string) => {
       break;
     case 'solar_updraft_tower_city':
       input = solar_updraft_tower_city;
+      break;
+    case 'effect_blade_number':
+      input = effect_blade_number;
       break;
     case 'effect_pitch_angle':
       input = effect_pitch_angle;

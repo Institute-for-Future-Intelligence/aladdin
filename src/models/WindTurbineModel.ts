@@ -6,6 +6,7 @@ import { ElementModel } from './ElementModel';
 
 export interface WindTurbineModel extends ElementModel {
   speed: number; // revolutions per minute (typically 10-20)
+  numberOfBlades: number;
   maximumChordRadius: number;
   maximumChordLength: number;
   initialRotorAngle: number; // in radian

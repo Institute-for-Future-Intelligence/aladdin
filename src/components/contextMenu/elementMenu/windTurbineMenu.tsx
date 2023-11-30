@@ -28,6 +28,7 @@ import WindTurbineYawInput from './windTurbineYawInput';
 import WindTurbineRotorInitialAngleInput from './windTurbineRotorInitialAngleInput';
 import WindTurbineBladeDesign from './windTurbineBladeDesign';
 import WindTurbineBladePitchInput from './windTurbineBladePitchInput';
+import WindTurbineBladeNumberSelection from './windTurbineBladeNumberSelection';
 
 export const WindTurbineMenu = React.memo(() => {
   const language = useStore(Selector.language);
@@ -35,6 +36,7 @@ export const WindTurbineMenu = React.memo(() => {
 
   const windTurbine = useSelectedElement(ObjectType.WindTurbine) as WindTurbineModel | undefined;
 
+  const [bladeNumberDialogVisible, setBladeNumberDialogVisible] = useState(false);
   const [relativeAngleDialogVisible, setRelativeAngleDialogVisible] = useState(false);
   const [rotorInitialAngleDialogVisible, setRotorInitialAngleDialogVisible] = useState(false);
   const [bladeRadiusDialogVisible, setBladeRadiusDialogVisible] = useState(false);
@@ -82,6 +84,21 @@ export const WindTurbineMenu = React.memo(() => {
             title={i18n.t('windTurbineMenu.Rotor', lang)}
             style={{ paddingLeft: '24px' }}
           >
+            {/* blade number */}
+            {bladeNumberDialogVisible && (
+              <WindTurbineBladeNumberSelection setDialogVisible={setBladeNumberDialogVisible} />
+            )}
+            <Menu.Item
+              key={'wind-turbine-rotor-blade-number'}
+              style={{ paddingLeft: '36px' }}
+              onClick={() => {
+                setApplyCount(0);
+                setBladeNumberDialogVisible(true);
+              }}
+            >
+              {i18n.t('windTurbineMenu.BladeNumber', lang)} ...
+            </Menu.Item>
+
             {/* initial angle */}
             {rotorInitialAngleDialogVisible && (
               <WindTurbineRotorInitialAngleInput setDialogVisible={setRotorInitialAngleDialogVisible} />
