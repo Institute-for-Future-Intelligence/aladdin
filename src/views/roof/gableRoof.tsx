@@ -1181,7 +1181,10 @@ const GableRoof = ({ roofModel, foundationModel }: GableRoofProps) => {
                     if (isShed) {
                       newRise = Math.max(0, point.z - foundationModel.lz - 0.3 - highestWallHeight);
                     } else {
-                      newRise = point.z - foundationModel.lz - 0.3 - highestWallHeight;
+                      newRise = Math.max(
+                        -highestWallHeight + 0.01,
+                        point.z - foundationModel.lz - 0.3 - highestWallHeight,
+                      );
                     }
                     const newTopZ = highestWallHeight + newRise;
                     const gabledWallsHeightsMap = getGabledWallsHeightsMap(
