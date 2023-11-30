@@ -2536,6 +2536,16 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                   const windTurbineRelativeCoordinates = Util.relativeCoordinates(p.x, p.y, 0, windTurbineParentModel);
                   const windTurbine = ElementModelFactory.makeWindTurbine(
                     windTurbineParentModel,
+                    state.actionState.windTurbineNumberOfBlades ?? 3,
+                    state.actionState.windTurbineInitialRotorAngle ?? 0,
+                    state.actionState.windTurbineRelativeYawAngle ?? 0,
+                    state.actionState.windTurbinePitchAngle ?? Math.PI / 18,
+                    state.actionState.windTurbineBladeRadius ?? 10,
+                    state.actionState.windTurbineBladeRootRadius ?? 0.3,
+                    state.actionState.windTurbineBladeMaximumChordLength ?? 1,
+                    state.actionState.windTurbineBladeMaximumChordRadius ?? 3,
+                    state.actionState.windTurbineTowerRadius ?? 0.5,
+                    state.actionState.windTurbineTowerHeight ?? 20,
                     windTurbineRelativeCoordinates.x,
                     windTurbineRelativeCoordinates.y,
                     0,

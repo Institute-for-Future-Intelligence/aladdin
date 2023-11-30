@@ -300,7 +300,7 @@ const WindTurbineBladeRadiusInput = ({ setDialogVisible }: { setDialogVisible: (
         }
     }
     setCommonStore((state) => {
-      state.actionState.windTurbineTowerHeight = value;
+      state.actionState.windTurbineBladeRadius = value;
     });
   };
 

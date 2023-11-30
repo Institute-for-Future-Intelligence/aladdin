@@ -369,6 +369,57 @@ export class ElementModelFactory {
     } as FresnelReflectorModel;
   }
 
+  static makeWindTurbine(
+    parent: ElementModel,
+    numberOfBlades: number,
+    initialRotorAngle: number,
+    relativeYawAngle: number,
+    pitchAngle: number,
+    bladeRadius: number,
+    bladeRootRadius: number,
+    maximumChordLength: number,
+    maximumChordRadius: number,
+    towerRadius: number,
+    towerHeight: number,
+    x: number,
+    y: number,
+    z?: number,
+  ) {
+    let foundationId;
+    switch (parent.type) {
+      case ObjectType.Foundation:
+        foundationId = parent.id;
+        break;
+    }
+    return {
+      type: ObjectType.WindTurbine,
+      numberOfBlades,
+      initialRotorAngle,
+      relativeYawAngle,
+      pitchAngle,
+      hubRadius: 0.75,
+      hubLength: 1,
+      bladeRadius,
+      bladeTipWidth: 0.2,
+      bladeRootRadius,
+      maximumChordRadius,
+      maximumChordLength,
+      towerRadius,
+      towerHeight,
+      cx: x, // relative
+      cy: y, // relative
+      cz: z, // absolute
+      lx: towerRadius * 4,
+      ly: towerRadius * 4,
+      lz: towerHeight + bladeRadius,
+      normal: [0, 0, 1],
+      rotation: [0, 0, 0],
+      parentId: parent.id,
+      foundationId: foundationId,
+      id: short.generate() as string,
+    } as WindTurbineModel;
+  }
+
   static makeHeliostat(
     parent: ElementModel,
     towerId: string,
@@ -410,42 +461,6 @@ export class ElementModelFactory {
       foundationId: foundationId,
       id: short.generate() as string,
     } as HeliostatModel;
-  }
-
-  static makeWindTurbine(parent: ElementModel, x: number, y: number, z?: number) {
-    let foundationId;
-    switch (parent.type) {
-      case ObjectType.Foundation:
-        foundationId = parent.id;
-        break;
-    }
-    return {
-      type: ObjectType.WindTurbine,
-      numberOfBlades: 3,
-      initialRotorAngle: 0,
-      relativeYawAngle: 0,
-      pitchAngle: Util.toRadians(10),
-      hubRadius: 0.75,
-      hubLength: 1,
-      bladeRadius: 10,
-      bladeTipWidth: 0.2,
-      bladeRootRadius: 0.3,
-      maximumChordRadius: 3,
-      maximumChordLength: 1,
-      towerRadius: 0.4,
-      towerHeight: 20,
-      cx: x, // relative
-      cy: y, // relative
-      cz: z, // absolute
-      lx: 20,
-      ly: 1,
-      lz: 30,
-      normal: [0, 0, 1],
-      rotation: [0, 0, 0],
-      parentId: parent.id,
-      foundationId: foundationId,
-      id: short.generate() as string,
-    } as WindTurbineModel;
   }
 
   static makePolygon(
