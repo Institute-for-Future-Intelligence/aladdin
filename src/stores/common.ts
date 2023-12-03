@@ -2546,6 +2546,8 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                     state.actionState.windTurbineBladeMaximumChordRadius ?? 3,
                     state.actionState.windTurbineTowerRadius ?? 0.5,
                     state.actionState.windTurbineTowerHeight ?? 20,
+                    state.actionState.windTurbineHubRadius ?? 0.75,
+                    state.actionState.windTurbineHubLength ?? 1.5,
                     windTurbineRelativeCoordinates.x,
                     windTurbineRelativeCoordinates.y,
                     0,

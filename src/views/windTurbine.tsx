@@ -3,7 +3,7 @@
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Cone, Cylinder, Line, RoundedBox, Sphere } from '@react-three/drei';
+import { Cylinder, Line, RoundedBox, Sphere } from '@react-three/drei';
 import { BackSide, Euler, FrontSide, Mesh, Shape, Vector2, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import { useRefStore } from 'src/stores/commonRef';
@@ -26,7 +26,7 @@ const WindTurbine = ({
   numberOfBlades = 3,
   speed = 10,
   hubRadius = 0.75,
-  hubLength = 1,
+  hubLength = 1.5,
   maximumChordRadius = 3,
   maximumChordLength = 1,
   towerHeight,
@@ -94,7 +94,7 @@ const WindTurbine = ({
   }
 
   const turbine = getElementById(id) as WindTurbineModel;
-  const nacelleRadiusWidth = hubRadius * 1.5;
+  const nacelleWidth = hubRadius * 1.25;
   const nacelleLength = hubLength * 2.5;
   const bladeLength = bladeRadius - maximumChordRadius / 3;
 
@@ -252,17 +252,29 @@ const WindTurbine = ({
       </Cylinder>
 
       {/*draw hub */}
-      <Cone
+      <Sphere
         userData={{ unintersectable: true }}
         name={'Hub'}
         castShadow={false}
         receiveShadow={false}
-        args={[hubRadius, hubLength, 8, 1]}
-        position={new Vector3(0, -hubLength - 0.5, towerHeight)}
+        args={[hubRadius, 8, 8, HALF_PI, Math.PI, 0, Math.PI]}
+        position={new Vector3(0, -hubLength * 0.5, towerHeight)}
+        rotation={[Math.PI, 0, HALF_PI]}
+        scale={[hubLength / hubRadius, 1, 1]}
+      >
+        <meshStandardMaterial attach="material" color={color} />
+      </Sphere>
+      <Cylinder
+        userData={{ unintersectable: true }}
+        name={'Hub Cap'}
+        castShadow={false}
+        receiveShadow={false}
+        args={[hubRadius, hubRadius, 0.01, 16, 1]}
+        position={new Vector3(0, -hubLength * 0.5, towerHeight)}
         rotation={[Math.PI, 0, 0]}
       >
         <meshStandardMaterial attach="material" color={color} />
-      </Cone>
+      </Cylinder>
 
       {/*draw nacelle */}
       <RoundedBox
@@ -272,8 +284,8 @@ const WindTurbine = ({
         receiveShadow={false}
         radius={0.1}
         smoothness={4}
-        args={[nacelleRadiusWidth, nacelleRadiusWidth, nacelleLength]}
-        position={new Vector3(0, 0.3, towerHeight)}
+        args={[nacelleWidth, nacelleWidth, nacelleLength]}
+        position={new Vector3(0, (nacelleLength - hubLength) * 0.5 - 0.1, towerHeight)}
         rotation={[HALF_PI, 0, 0]}
       >
         <meshStandardMaterial attach="material" color={color} />
@@ -282,7 +294,11 @@ const WindTurbine = ({
       {/*draw blades*/}
       {bladeAngles.map((value, index) => {
         return (
-          <group key={index} position={new Vector3(0, -1, towerHeight)} rotation={[HALF_PI, pitchAngle, value, 'XZY']}>
+          <group
+            key={index}
+            position={new Vector3(0, -hubLength * 0.85, towerHeight)}
+            rotation={[HALF_PI, pitchAngle, value, 'XZY']}
+          >
             <mesh name={'Blade ' + index + ' Font Side'} receiveShadow={shadowEnabled} castShadow={shadowEnabled}>
               <shapeGeometry attach="geometry" args={[bladeShape]} />
               <meshStandardMaterial attach="material" color={color} side={FrontSide} />
@@ -296,6 +312,15 @@ const WindTurbine = ({
               <shapeGeometry attach="geometry" args={[bladeShape]} />
               <meshStandardMaterial attach="material" color={color} side={BackSide} />
             </mesh>
+            <Cylinder
+              name={'Blade root'}
+              castShadow={false}
+              receiveShadow={false}
+              args={[bladeRootRadius * 1.1, bladeRootRadius * 1.1, 0.24, 12, 1]}
+              position={new Vector3(0, hubRadius - 0.14, 0)}
+            >
+              <meshStandardMaterial attach="material" color={color} />
+            </Cylinder>
           </group>
         );
       })}

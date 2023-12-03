@@ -381,6 +381,8 @@ export class ElementModelFactory {
     maximumChordRadius: number,
     towerRadius: number,
     towerHeight: number,
+    hubRadius: number,
+    hubLength: number,
     x: number,
     y: number,
     z?: number,
@@ -397,8 +399,6 @@ export class ElementModelFactory {
       initialRotorAngle,
       relativeYawAngle,
       pitchAngle,
-      hubRadius: 0.75,
-      hubLength: 1,
       bladeRadius,
       bladeTipWidth: 0.2,
       bladeRootRadius,
@@ -406,6 +406,8 @@ export class ElementModelFactory {
       maximumChordLength,
       towerRadius,
       towerHeight,
+      hubRadius,
+      hubLength,
       cx: x, // relative
       cy: y, // relative
       cz: z, // absolute

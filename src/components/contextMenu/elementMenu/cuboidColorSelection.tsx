@@ -195,7 +195,7 @@ const CuboidColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
             for (const [id, colors] of undoableChangeSelected.oldValues.entries()) {
               if (colors && Array.isArray(colors)) {
                 for (let i = 0; i < colors.length; i++) {
-                  updateCuboidColorBySide(i, id, colors[i]);
+                  updateCuboidColorBySide(i, id, colors[i] as string);
                 }
               }
             }
@@ -251,7 +251,7 @@ const CuboidColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
             for (const [id, colors] of undoableChangeAll.oldValues.entries()) {
               if (colors && Array.isArray(colors)) {
                 for (let i = 0; i < colors.length; i++) {
-                  updateCuboidColorBySide(i, id, colors[i]);
+                  updateCuboidColorBySide(i, id, colors[i] as string);
                 }
               }
             }

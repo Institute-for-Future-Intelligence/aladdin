@@ -127,6 +127,8 @@ export class DefaultActionState implements ActionState {
   windTurbineBladeMaximumChordLength: number;
   windTurbineBladeMaximumChordRadius: number;
   windTurbineBladeRootRadius: number;
+  windTurbineHubRadius: number;
+  windTurbineHubLength: number;
 
   solarPanelModelName: string;
   solarPanelOrientation: Orientation;
@@ -274,6 +276,8 @@ export class DefaultActionState implements ActionState {
     this.windTurbineBladeMaximumChordLength = 1;
     this.windTurbineBladeMaximumChordRadius = 3;
     this.windTurbineBladeRootRadius = 0.3;
+    this.windTurbineHubRadius = 0.75;
+    this.windTurbineHubLength = 1.5;
 
     this.solarPanelModelName = 'SPR-X21-335-BLK';
     this.solarPanelOrientation = Orientation.landscape;

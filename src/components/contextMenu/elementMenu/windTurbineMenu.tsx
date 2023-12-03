@@ -29,6 +29,7 @@ import WindTurbineRotorInitialAngleInput from './windTurbineRotorInitialAngleInp
 import WindTurbineBladeDesign from './windTurbineBladeDesign';
 import WindTurbineBladePitchInput from './windTurbineBladePitchInput';
 import WindTurbineBladeNumberSelection from './windTurbineBladeNumberSelection';
+import WindTurbineHubDesign from './windTurbineHubDesign';
 
 export const WindTurbineMenu = React.memo(() => {
   const language = useStore(Selector.language);
@@ -44,6 +45,7 @@ export const WindTurbineMenu = React.memo(() => {
   const [bladeDesignDialogVisible, setBladeDesignDialogVisible] = useState(false);
   const [towerHeightDialogVisible, setTowerHeightDialogVisible] = useState(false);
   const [towerRadiusDialogVisible, setTowerRadiusDialogVisible] = useState(false);
+  const [hubDesignDialogVisible, setHubDesignDialogVisible] = useState(false);
 
   const { labelText, setLabelText } = useLabel(windTurbine);
   const showLabel = useLabelShow(windTurbine);
@@ -182,6 +184,25 @@ export const WindTurbineMenu = React.memo(() => {
               }}
             >
               {i18n.t('windTurbineMenu.TowerRadius', lang)} ...
+            </Menu.Item>
+          </SubMenu>
+
+          {/* other properties */}
+          <SubMenu
+            key={'wind-turbine-other-properties'}
+            title={i18n.t('windTurbineMenu.OtherParameters', lang)}
+            style={{ paddingLeft: '24px' }}
+          >
+            {/* hub design */}
+            {hubDesignDialogVisible && <WindTurbineHubDesign setDialogVisible={setHubDesignDialogVisible} />}
+            <Menu.Item
+              key={'wind-turbine-hub-design'}
+              onClick={() => {
+                setApplyCount(0);
+                setHubDesignDialogVisible(true);
+              }}
+            >
+              {i18n.t('windTurbineMenu.HubDesign', lang)} ...
             </Menu.Item>
           </SubMenu>
 
