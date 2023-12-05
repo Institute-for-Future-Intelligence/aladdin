@@ -324,7 +324,7 @@ const WindTurbine = ({
               <meshStandardMaterial
                 attach="material"
                 color={bladeColor}
-                side={FrontSide}
+                side={BackSide}
                 map={birdSafe !== BirdSafeDesign.None ? texture : null}
               />
             </mesh>
