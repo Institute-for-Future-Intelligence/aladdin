@@ -86,7 +86,7 @@ export const useHandleSize = (size = 0.3) => {
 export const useWallTexture = (textureType: WallTexture, wallStructure?: WallStructure) => {
   const textureLoader = useMemo(() => new TextureLoader(), []);
 
-  const texture = useMemo(() => {
+  return useMemo(() => {
     let textureImg;
     switch (textureType) {
       case WallTexture.Default:
@@ -155,9 +155,7 @@ export const useWallTexture = (textureType: WallTexture, wallStructure?: WallStr
       texture.repeat.set(repeatX, repeatY);
       invalidate();
     });
-  }, [textureType]);
-
-  return texture;
+  }, [textureType, wallStructure]);
 };
 
 export const useLatestFoundation = (foundationModel: FoundationModel) => {

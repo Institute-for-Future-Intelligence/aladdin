@@ -21,11 +21,13 @@ import {
 } from './constants';
 import {
   CanvasTexture,
+  ClampToEdgeWrapping,
   Color,
   Euler,
   EulerOrder,
   Object3D,
   Quaternion,
+  RepeatWrapping,
   Scene,
   Triangle,
   Vector2,
@@ -437,29 +439,36 @@ export class Util {
     return new CanvasTexture(canvas);
   }
 
-  static fetchBladeTexture(w: number, h: number): CanvasTexture | null {
-    console.log(w, h);
+  static fetchBladeTexture(w: number, h: number, scale: number): CanvasTexture | null {
     const canvas = document.createElement('canvas') as HTMLCanvasElement;
-    canvas.width = w;
-    canvas.height = h;
+    const wc = Math.round(w * scale);
+    const hc = Math.round(h * scale);
+    canvas.width = wc;
+    canvas.height = hc;
     const ctx = canvas.getContext('2d');
     if (ctx) {
-      ctx.clearRect(0, 0, w, h);
-      const imageData = ctx.getImageData(0, 0, w, h);
+      ctx.clearRect(0, 0, wc, hc);
+      const imageData = ctx.getImageData(0, 0, wc, hc);
       const pixels = imageData.data;
-      for (let i = 0; i < w; i++) {
-        const c = i < w / 2 ? 0 : 1;
-        for (let j = 0; j < h; j++) {
-          const off = ((h - 1 - j) * w + i) * 4;
-          pixels[off] = Math.floor(255);
-          pixels[off + 1] = Math.floor(c * 255);
-          pixels[off + 2] = Math.floor(c * 255);
+      const wcLightColor = wc / 4;
+      for (let i = 0; i < wc; i++) {
+        const c = Math.floor((i < wcLightColor ? 1 : 0.5) * 255);
+        for (let j = 0; j < hc; j++) {
+          const off = ((hc - 1 - j) * wc + i) * 4;
+          pixels[off] = c;
+          pixels[off + 1] = c;
+          pixels[off + 2] = c;
           pixels[off + 3] = 255;
         }
       }
       ctx.putImageData(imageData, 0, 0);
     }
-    return new CanvasTexture(canvas);
+    const t = new CanvasTexture(canvas);
+    t.wrapS = t.wrapT = RepeatWrapping;
+    t.rotation = HALF_PI;
+    t.center.set(w / 2, h / 2);
+    t.repeat.set(1 / w, 1 / h);
+    return t;
   }
 
   static countSolarPanelsOnRack(rack: SolarPanelModel, pvModel: PvModel): number {

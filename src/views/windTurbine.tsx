@@ -67,9 +67,9 @@ const WindTurbine = ({
     return { lng: language };
   }, [language]);
 
-  // const texture = useMemo(()=>{
-  //   return Util.fetchBladeTexture(bladeRadius*10, bladeRootRadius*20);
-  // },[bladeRootRadius, bladeRadius]);
+  const texture = useMemo(() => {
+    return Util.fetchBladeTexture(bladeRadius, bladeRootRadius * 2, 100);
+  }, [bladeRootRadius, bladeRadius]);
 
   // be sure to get the updated parent so that this memorized element can move with it
   const parent = useStore((state) => {
@@ -306,7 +306,7 @@ const WindTurbine = ({
           >
             <mesh name={'Blade ' + index + ' Font Side'} receiveShadow={shadowEnabled} castShadow={shadowEnabled}>
               <shapeGeometry attach="geometry" args={[bladeShape]} />
-              <meshStandardMaterial attach="material" color={bladeColor} side={FrontSide} />
+              <meshStandardMaterial attach="material" color={bladeColor} side={FrontSide} map={texture} />
             </mesh>
             <mesh
               name={'Blade ' + index + ' Back Side'}
@@ -315,7 +315,7 @@ const WindTurbine = ({
               position={new Vector3(0, -0.05, 0)}
             >
               <shapeGeometry attach="geometry" args={[bladeShape]} />
-              <meshStandardMaterial attach="material" color={bladeColor} side={BackSide} />
+              <meshStandardMaterial attach="material" color={bladeColor} side={BackSide} map={texture} />
             </mesh>
             <Cylinder
               name={'Blade root'}
