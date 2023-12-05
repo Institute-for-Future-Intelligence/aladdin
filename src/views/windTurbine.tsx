@@ -301,7 +301,7 @@ const WindTurbine = ({
       {bladeAngles.map((value, index) => {
         return (
           <group
-            key={index}
+            key={`${index}-${texture?.uuid}`}
             position={new Vector3(0, -hubLength * 0.85, towerHeight)}
             rotation={[HALF_PI, pitchAngle, value, 'XZY']}
           >
