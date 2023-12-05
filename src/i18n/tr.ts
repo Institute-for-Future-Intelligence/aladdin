@@ -827,7 +827,11 @@ export const i18n_tr = {
       RemoveAllUnlockedHumans: 'Tüm Kilitlenmemiş Kişileri Kaldır',
       RemoveAllUnlockedTrees: 'Tüm Kilitlenmemiş Ağaçları Kaldır',
       RemoveAllUnlockedFlowers: 'Remove All Unlocked Flowers',
+      RemoveAllUnlockedLights: 'Remove All Unlocked Lights',
       Racks: 'Çerçeveler',
+      Lights: 'Lights',
+      DoYouReallyWantToRemoveAllLightsOnCuboid:
+        'Do you really want to remove all the lights on this cuboid that are not locked',
       SolarPanels: 'Güneş Panelleri',
       DoYouReallyWantToRemoveAllSolarPanelsOnCuboid:
         ' Seçili kübik üzerinde kilitlenmemiş tüm güneş panellerini kaldırmak istiyor musunuz?',

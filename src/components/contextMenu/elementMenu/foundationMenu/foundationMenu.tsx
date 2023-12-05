@@ -5,30 +5,18 @@
 import { useStore } from 'src/stores/common';
 import type { MenuProps } from 'antd';
 import { BuildingCompletionStatus, FoundationTexture, ObjectType, SolarStructure } from 'src/types';
-import { Copy, Cut, Lock, MenuItem, Paste } from '../../menuItems';
+import { Copy, Cut, DialogItem, GroupMasterCheckbox, Lock, MenuItem, Paste } from '../../menuItems';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { ElementModel } from 'src/models/ElementModel';
 import {
   AddPolygonItem,
   BuildingCheckbox,
-  DialogItem,
-  GroupMasterCheckbox,
   HvacSystemIdInput,
-  LabelColorInput,
-  LabelFontSizeInput,
-  LabelHeightInput,
-  LabelSizeInput,
-  LabelTextInput,
-  LockOffspringsItem,
-  RemoveFoundationElementsItem,
-  ShowLabelCheckbox,
   SolarStructureRadioGroup,
   ThermostatTemperatureInput,
   ToleranceThresholdInput,
 } from './foundationMenuItems';
 import i18n from 'src/i18n/i18n';
-import { ElementCounter } from 'src/stores/ElementCounter';
-import { UndoableRemoveAllChildren } from 'src/undo/UndoableRemoveAllChildren';
 import FoundationTextureSelection from '../foundationTextureSelection';
 import FoundationColorSelection from '../foundationColorSelection';
 import FoundationLengthInput from '../foundationLengthInput';
@@ -58,178 +46,8 @@ import SolarUpdraftTowerDischargeCoefficientInput from '../solarUpdraftTowerDisc
 import SolarUpdraftTowerTurbineEfficiencyInput from '../solarUpdraftTowerTurbineEfficiencyInput';
 import SolarPanelTiltAngleGaWizard from '../solarPanelTiltAngleGaWizard';
 import SolarPanelTiltAnglePsoWizard from '../solarPanelTiltAnglePsoWizard';
-
-type FoundationCounterItem = {
-  key: keyof ElementCounter;
-  objectType: ObjectType;
-};
-
-const counterItems: FoundationCounterItem[] = [
-  {
-    key: 'windowCount',
-    objectType: ObjectType.Window,
-  },
-  {
-    key: 'doorCount',
-    objectType: ObjectType.Door,
-  },
-  {
-    key: 'sensorCount',
-    objectType: ObjectType.Sensor,
-  },
-  {
-    key: 'parabolicTroughCount',
-    objectType: ObjectType.ParabolicTrough,
-  },
-  {
-    key: 'parabolicDishCount',
-    objectType: ObjectType.ParabolicDish,
-  },
-  {
-    key: 'fresnelReflectorCount',
-    objectType: ObjectType.FresnelReflector,
-  },
-  {
-    key: 'heliostatCount',
-    objectType: ObjectType.Heliostat,
-  },
-  {
-    key: 'windTurbineCount',
-    objectType: ObjectType.WindTurbine,
-  },
-  {
-    key: 'polygonCount',
-    objectType: ObjectType.Polygon,
-  },
-  {
-    key: 'humanCount',
-    objectType: ObjectType.Human,
-  },
-  {
-    key: 'treeCount',
-    objectType: ObjectType.Tree,
-  },
-  {
-    key: 'flowerCount',
-    objectType: ObjectType.Flower,
-  },
-];
-
-const getItemText = (type: ObjectType, count: number) => {
-  const lang = { lng: useStore.getState().language };
-
-  let itemLabel = '';
-  let modalTitle = '';
-
-  switch (type) {
-    case ObjectType.Wall: {
-      itemLabel = `${i18n.t('foundationMenu.RemoveAllUnlockedWalls', lang)} (${count})`;
-      modalTitle = `${i18n.t('foundationMenu.DoYouReallyWantToRemoveAllWallsOnFoundation', lang)} (${count} ${i18n.t(
-        'foundationMenu.Walls',
-        lang,
-      )})`;
-      break;
-    }
-    case ObjectType.Window: {
-      itemLabel = `${i18n.t('foundationMenu.RemoveAllUnlockedWindows', lang)} (${count})`;
-      modalTitle = `${i18n.t('foundationMenu.DoYouReallyWantToRemoveAllWindowsOnFoundation', lang)} (${count} ${i18n.t(
-        'foundationMenu.Windows',
-        lang,
-      )})`;
-      break;
-    }
-    case ObjectType.Door: {
-      itemLabel = `${i18n.t('foundationMenu.RemoveAllUnlockedDoors', lang)} (${count})`;
-      modalTitle = `${i18n.t('foundationMenu.DoYouReallyWantToRemoveAllDoorsOnFoundation', lang)} (${count} ${i18n.t(
-        'foundationMenu.Doors',
-        lang,
-      )})`;
-      break;
-    }
-    case ObjectType.Sensor: {
-      itemLabel = `${i18n.t('foundationMenu.RemoveAllUnlockedSensors', lang)} (${count})`;
-      modalTitle = `${i18n.t('foundationMenu.DoYouReallyWantToRemoveAllSensorsOnFoundation', lang)} (${count} ${i18n.t(
-        'foundationMenu.Sensors',
-        lang,
-      )})`;
-      break;
-    }
-    case ObjectType.ParabolicTrough: {
-      itemLabel = `${i18n.t('foundationMenu.RemoveAllUnlockedParabolicTroughs', lang)} (${count})`;
-      modalTitle = `${i18n.t(
-        'foundationMenu.DoYouReallyWantToRemoveAllParabolicTroughsOnFoundation',
-        lang,
-      )} (${count} ${i18n.t('foundationMenu.ParabolicTroughs', lang)})`;
-      break;
-    }
-    case ObjectType.ParabolicDish: {
-      itemLabel = `${i18n.t('foundationMenu.RemoveAllUnlockedParabolicDishes', lang)} (${count})`;
-      modalTitle = `${i18n.t(
-        'foundationMenu.DoYouReallyWantToRemoveAllParabolicDishesOnFoundation',
-        lang,
-      )} (${count} ${i18n.t('foundationMenu.ParabolicDishes', lang)})`;
-      break;
-    }
-    case ObjectType.FresnelReflector: {
-      itemLabel = `${i18n.t('foundationMenu.RemoveAllUnlockedFresnelReflectors', lang)} (${count})`;
-      modalTitle = `${i18n.t(
-        'foundationMenu.DoYouReallyWantToRemoveAllFresnelReflectorsOnFoundation',
-        lang,
-      )} (${count} ${i18n.t('foundationMenu.FresnelReflectors', lang)})`;
-      break;
-    }
-    case ObjectType.Heliostat: {
-      itemLabel = `${i18n.t('foundationMenu.RemoveAllUnlockedHeliostats', lang)} (${count})`;
-      modalTitle = `${i18n.t(
-        'foundationMenu.DoYouReallyWantToRemoveAllHeliostatsOnFoundation',
-        lang,
-      )} (${count} ${i18n.t('foundationMenu.Heliostats', lang)})`;
-      break;
-    }
-    case ObjectType.WindTurbine: {
-      itemLabel = `${i18n.t('foundationMenu.RemoveAllUnlockedWindTurbines', lang)} (${count})`;
-      modalTitle = `${i18n.t(
-        'foundationMenu.DoYouReallyWantToRemoveAllWindTurbinesOnFoundation',
-        lang,
-      )} (${count} ${i18n.t('foundationMenu.WindTurbines', lang)})`;
-      break;
-    }
-    case ObjectType.Polygon: {
-      itemLabel = `${i18n.t('foundationMenu.RemoveAllUnlockedPolygons', lang)} (${count})`;
-      modalTitle = `${i18n.t('foundationMenu.DoYouReallyWantToRemoveAllPolygonsOnFoundation', lang)} (${count} ${i18n.t(
-        'foundationMenu.Polygons',
-        lang,
-      )})`;
-      break;
-    }
-    case ObjectType.Human: {
-      itemLabel = `${i18n.t('foundationMenu.RemoveAllUnlockedHumans', lang)} (${count})`;
-      modalTitle = `${i18n.t('foundationMenu.DoYouReallyWantToRemoveAllHumansOnFoundation', lang)} (${count} ${i18n.t(
-        'foundationMenu.Humans',
-        lang,
-      )})`;
-      break;
-    }
-    case ObjectType.Tree: {
-      itemLabel = `${i18n.t('foundationMenu.RemoveAllUnlockedTrees', lang)} (${count})`;
-      modalTitle = `${i18n.t('foundationMenu.DoYouReallyWantToRemoveAllTreesOnFoundation', lang)} (${count} ${i18n.t(
-        'foundationMenu.Trees',
-        lang,
-      )})`;
-      break;
-    }
-    case ObjectType.Flower: {
-      itemLabel = `${i18n.t('foundationMenu.RemoveAllUnlockedFlowers', lang)} (${count})`;
-      modalTitle = `${i18n.t('foundationMenu.DoYouReallyWantToRemoveAllFlowersOnFoundation', lang)} (${count} ${i18n.t(
-        'foundationMenu.Flowers',
-        lang,
-      )})`;
-      break;
-    }
-  }
-
-  return { itemLabel, modalTitle };
-};
+import { createLabelSubmenu } from '../../labelSubmenuItems';
+import { createFoundationElementCounterSubmenu } from './foundationElementCounterSubmenu';
 
 const legalToPasteOnFoundation = () => {
   const elementsToPaste = useStore.getState().elementsToPaste;
@@ -260,159 +78,6 @@ const legalToPasteOnFoundation = () => {
   return false;
 };
 
-const handleClickRemoveAllWalls = (foundation: FoundationModel) => {
-  const setCommonStore = useStore.getState().set;
-
-  const wallsIdSet = new Set();
-  useStore.getState().elements.forEach((e) => {
-    if (!e.locked && e.type === ObjectType.Wall && (e.parentId === foundation.id || e.foundationId === foundation.id)) {
-      wallsIdSet.add(e.id);
-    }
-  });
-  const removed = useStore.getState().elements.filter((e) => wallsIdSet.has(e.id) || wallsIdSet.has(e.parentId));
-  setCommonStore((state) => {
-    state.elements = state.elements.filter((e) => !wallsIdSet.has(e.id) && !wallsIdSet.has(e.parentId));
-  });
-  const removedElements = JSON.parse(JSON.stringify(removed));
-  const undoableRemoveAllWallChildren = {
-    name: 'Remove All Walls on Foundation',
-    timestamp: Date.now(),
-    parentId: foundation.id,
-    removedElements: removedElements,
-    undo: () => {
-      setCommonStore((state) => {
-        state.elements.push(...undoableRemoveAllWallChildren.removedElements);
-        state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
-      });
-    },
-    redo: () => {
-      const wallsIdSet = new Set();
-      useStore.getState().elements.forEach((e) => {
-        if (!e.locked && e.type === ObjectType.Wall && e.parentId === undoableRemoveAllWallChildren.parentId) {
-          wallsIdSet.add(e.id);
-        }
-      });
-      setCommonStore((state) => {
-        state.elements = state.elements.filter((e) => !wallsIdSet.has(e.id) && !wallsIdSet.has(e.parentId));
-      });
-    },
-  } as UndoableRemoveAllChildren;
-  useStore.getState().addUndoable(undoableRemoveAllWallChildren);
-};
-
-const createElementCounterSubmenu = (
-  foundation: FoundationModel,
-  counterAll: ElementCounter,
-  counterUnlocked: ElementCounter,
-) => {
-  const items: MenuProps['items'] = [];
-  const lang = { lng: useStore.getState().language };
-
-  // lock-all-offsprings
-  if (counterAll.unlockedCount > 0) {
-    items.push({
-      key: 'lock-all-offsprings',
-      label: <LockOffspringsItem foundation={foundation} lock={true} count={counterAll.unlockedCount} />,
-    });
-  }
-
-  // unlock-all-offsprings
-  if (counterAll.lockedCount > 0) {
-    items.push({
-      key: 'unlock-all-offsprings',
-      label: <LockOffspringsItem foundation={foundation} lock={false} count={counterAll.lockedCount} />,
-    });
-  }
-
-  // elements-counter-wall
-  if (counterUnlocked.wallCount > 0) {
-    const { itemLabel, modalTitle } = getItemText(ObjectType.Wall, counterUnlocked.wallCount);
-    items.push({
-      key: `remove-all-walls-on-foundation`,
-      label: (
-        <RemoveFoundationElementsItem
-          foundation={foundation}
-          objectType={ObjectType.Wall}
-          modalTitle={modalTitle}
-          onClickOk={() => handleClickRemoveAllWalls(foundation)}
-        >
-          {itemLabel}
-        </RemoveFoundationElementsItem>
-      ),
-    });
-  }
-
-  // elements-counter-solar-panels
-  if (counterUnlocked.solarPanelCount > 0) {
-    const modalTitle =
-      i18n.t('foundationMenu.DoYouReallyWantToRemoveAllSolarPanelsOnFoundation', lang) +
-      ' (' +
-      counterUnlocked.solarPanelModuleCount +
-      ' ' +
-      i18n.t('foundationMenu.SolarPanels', lang) +
-      ', ' +
-      counterUnlocked.solarPanelCount +
-      ' ' +
-      i18n.t('foundationMenu.Racks', lang) +
-      ')?';
-    items.push({
-      key: `remove-all-solar-panels-on-foundation`,
-      label: (
-        <RemoveFoundationElementsItem
-          foundation={foundation}
-          objectType={ObjectType.SolarPanel}
-          modalTitle={modalTitle}
-        >
-          {i18n.t('foundationMenu.RemoveAllUnlockedSolarPanels', lang)}&nbsp; ({counterUnlocked.solarPanelModuleCount}{' '}
-          {i18n.t('foundationMenu.SolarPanels', lang)}, {counterUnlocked.solarPanelCount}{' '}
-          {i18n.t('foundationMenu.Racks', lang)})
-        </RemoveFoundationElementsItem>
-      ),
-    });
-  }
-
-  // elements-counter-lights
-  if (counterUnlocked.insideLightCount + counterUnlocked.outsideLightCount > 0) {
-    const modalTitle =
-      i18n.t('foundationMenu.DoYouReallyWantToRemoveAllLightsOnFoundation', lang) +
-      ' (' +
-      (counterUnlocked.insideLightCount + counterUnlocked.outsideLightCount) +
-      ' ' +
-      i18n.t('foundationMenu.Lights', lang) +
-      ')?';
-    items.push({
-      key: `remove-all-lights-on-foundation`,
-      label: (
-        <RemoveFoundationElementsItem foundation={foundation} objectType={ObjectType.Light} modalTitle={modalTitle}>
-          {i18n.t('foundationMenu.RemoveAllUnlockedLights', lang)} (
-          {counterUnlocked.insideLightCount + counterUnlocked.outsideLightCount})
-        </RemoveFoundationElementsItem>
-      ),
-    });
-  }
-
-  // elements-counter-others
-  counterItems.forEach(({ key, objectType }) => {
-    const count = counterUnlocked[key];
-
-    if (typeof count === 'number' && count > 0) {
-      const { itemLabel, modalTitle } = getItemText(objectType, count);
-      const typeKeyName = objectType.replaceAll(' ', '');
-
-      items.push({
-        key: `remove-all-${typeKeyName}s-on-foundation`,
-        label: (
-          <RemoveFoundationElementsItem foundation={foundation} objectType={objectType} modalTitle={modalTitle}>
-            {itemLabel}
-          </RemoveFoundationElementsItem>
-        ),
-      });
-    }
-  });
-
-  return items;
-};
-
 export const createFoundationMenu = (selectedElement: ElementModel) => {
   const items: MenuProps['items'] = [];
 
@@ -427,13 +92,9 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
     !foundation.notBuilding &&
     Util.getBuildingCompletionStatus(foundation, useStore.getState().elements) === BuildingCompletionStatus.COMPLETE;
 
-  const counterAll = foundation
-    ? useStore.getState().countAllOffspringsByTypeAtOnce(foundation.id, true)
-    : new ElementCounter();
+  const counterAll = useStore.getState().countAllOffspringsByTypeAtOnce(foundation.id, true);
 
-  const counterUnlocked = foundation
-    ? useStore.getState().countAllOffspringsByTypeAtOnce(foundation.id, false)
-    : new ElementCounter();
+  const counterUnlocked = useStore.getState().countAllOffspringsByTypeAtOnce(foundation.id, false);
 
   // lock
   items.push({
@@ -444,27 +105,13 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
   // group-master
   items.push({
     key: 'foundation-group-master',
-    label: <GroupMasterCheckbox foundation={foundation} />,
+    label: <GroupMasterCheckbox groupableElement={foundation} />,
   });
 
   // building
   items.push({
     key: 'building',
     label: <BuildingCheckbox foundation={foundation} />,
-  });
-
-  // paste
-  if (legalToPasteOnFoundation()) {
-    items.push({
-      key: 'foundation-paste',
-      label: <Paste />,
-    });
-  }
-
-  // copy
-  items.push({
-    key: 'foundation-copy',
-    label: <Copy />,
   });
 
   // cut
@@ -475,12 +122,26 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
     });
   }
 
+  // copy
+  items.push({
+    key: 'foundation-copy',
+    label: <Copy />,
+  });
+
+  // paste
+  if (legalToPasteOnFoundation()) {
+    items.push({
+      key: 'foundation-paste',
+      label: <Paste />,
+    });
+  }
+
   // lock-unlock-clear-on-foundation
   if (counterAll.gotSome()) {
     items.push({
       key: 'lock-unlock-clear-on-foundation',
       label: <MenuItem>{i18n.t('word.Elements', lang)}</MenuItem>,
-      children: createElementCounterSubmenu(foundation, counterAll, counterUnlocked),
+      children: createFoundationElementCounterSubmenu(foundation, counterAll, counterUnlocked),
     });
   }
 
@@ -801,32 +462,7 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
     items.push({
       key: 'foundation-label',
       label: i18n.t('labelSubMenu.Label', lang),
-      children: [
-        {
-          key: 'foundation-show-label',
-          label: <ShowLabelCheckbox foundation={foundation} />,
-        },
-        {
-          key: 'foundation-label-text',
-          label: <LabelTextInput foundation={foundation} />,
-        },
-        {
-          key: 'foundation-label-height',
-          label: <LabelHeightInput foundation={foundation} />,
-        },
-        {
-          key: 'foundation-label-font-size',
-          label: <LabelFontSizeInput foundation={foundation} />,
-        },
-        {
-          key: 'foundation-label-size',
-          label: <LabelSizeInput foundation={foundation} />,
-        },
-        {
-          key: 'foundation-label-color',
-          label: <LabelColorInput foundation={foundation} />,
-        },
-      ],
+      children: createLabelSubmenu(foundation),
     });
   }
 

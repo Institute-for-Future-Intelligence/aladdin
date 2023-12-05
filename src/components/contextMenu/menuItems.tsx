@@ -2,8 +2,8 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import React from 'react';
-import { Checkbox } from 'antd';
+import React, { useState } from 'react';
+import { Checkbox, Input, InputNumber } from 'antd';
 import { useStore } from '../../stores/common';
 import * as Selector from '../../stores/selector';
 import i18n from '../../i18n/i18n';
@@ -19,6 +19,7 @@ import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import { useLanguage } from 'src/views/hooks';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { ElementModel } from 'src/models/ElementModel';
+import { GroupableModel, isGroupable } from 'src/models/Groupable';
 
 interface MenuItemProps {
   stayAfterClick?: boolean;
@@ -27,29 +28,14 @@ interface MenuItemProps {
   onClick?: (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void;
 }
 
-export const MenuItem: React.FC<MenuItemProps> = ({ stayAfterClick, textSelectable = true, onClick, children }) => {
-  const handleClick = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
-    if (onClick) {
-      onClick(e);
-    }
-    if (stayAfterClick) {
-      e.stopPropagation();
-    }
-  };
+interface DialogItems {
+  Dialog: (props: { setDialogVisible: (b: boolean) => void }) => JSX.Element;
+  children?: React.ReactNode;
+}
 
-  return (
-    <span
-      onClick={handleClick}
-      style={{
-        userSelect: textSelectable ? 'auto' : 'none',
-        display: 'inline-block',
-        width: '100%',
-      }}
-    >
-      {children}
-    </span>
-  );
-};
+interface GroupMasterCheckboxProps {
+  groupableElement: GroupableModel;
+}
 
 export const Paste = () => {
   const setCommonStore = useStore(Selector.set);
@@ -235,6 +221,84 @@ export const Lock = ({ selectedElement }: { selectedElement: ElementModel }) => 
     <MenuItem stayAfterClick>
       <Checkbox checked={selectedElement.locked} onChange={onChange}>
         {i18n.t('word.Lock', lang)}
+      </Checkbox>
+    </MenuItem>
+  );
+};
+
+export const MenuItem: React.FC<MenuItemProps> = ({ stayAfterClick, textSelectable = true, onClick, children }) => {
+  const handleClick = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+    if (onClick) {
+      onClick(e);
+    }
+    if (stayAfterClick) {
+      e.stopPropagation();
+    }
+  };
+
+  return (
+    <span
+      onClick={handleClick}
+      style={{
+        userSelect: textSelectable ? 'auto' : 'none',
+        display: 'inline-block',
+        width: '100%',
+      }}
+    >
+      {children}
+    </span>
+  );
+};
+
+export const DialogItem = ({ Dialog, children }: DialogItems) => {
+  const [dialogVisible, setDialogVisible] = useState(false);
+
+  const handleClick = () => {
+    useStore.getState().setApplyCount(0);
+    setDialogVisible(true);
+  };
+
+  return (
+    <>
+      <MenuItem onClick={handleClick}>{children}</MenuItem>
+      {dialogVisible && <Dialog setDialogVisible={setDialogVisible} />}
+    </>
+  );
+};
+
+export const GroupMasterCheckbox = ({ groupableElement }: GroupMasterCheckboxProps) => {
+  const lang = useLanguage();
+
+  const toggleGroupMaster = () => {
+    useStore.getState().set((state) => {
+      for (const e of state.elements) {
+        if (e.id === groupableElement.id && isGroupable(e)) {
+          (e as GroupableModel).enableGroupMaster = !(e as GroupableModel).enableGroupMaster;
+          break;
+        }
+      }
+      state.groupActionUpdateFlag = !state.groupActionUpdateFlag;
+    });
+  };
+
+  const onChange = (e: CheckboxChangeEvent) => {
+    const undoableCheck = {
+      name: 'Group Master',
+      timestamp: Date.now(),
+      checked: e.target.checked,
+      selectedElementId: groupableElement.id,
+      selectedElementType: groupableElement.type,
+      undo: () => toggleGroupMaster(),
+      redo: () => toggleGroupMaster(),
+    } as UndoableCheck;
+    useStore.getState().addUndoable(undoableCheck);
+    toggleGroupMaster();
+  };
+
+  return (
+    <MenuItem stayAfterClick>
+      <Checkbox checked={groupableElement.enableGroupMaster} onChange={onChange}>
+        {i18n.t('foundationMenu.GroupMaster', lang)}
       </Checkbox>
     </MenuItem>
   );

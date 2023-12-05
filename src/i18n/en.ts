@@ -827,10 +827,14 @@ export const i18n_en = {
       RemoveAllUnlockedHumans: 'Remove All Unlocked Humans',
       RemoveAllUnlockedTrees: 'Remove All Unlocked Trees',
       RemoveAllUnlockedFlowers: 'Remove All Unlocked Flowers',
+      RemoveAllUnlockedLights: 'Remove All Unlocked Lights',
       Racks: 'Racks',
       SolarPanels: 'Solar Panels',
       DoYouReallyWantToRemoveAllSolarPanelsOnCuboid:
         'Do you really want to remove all the solar panels on this cuboid that are not locked',
+      Lights: 'Lights',
+      DoYouReallyWantToRemoveAllLightsOnCuboid:
+        'Do you really want to remove all the lights on this cuboid that are not locked',
       Sensors: 'Sensors',
       DoYouReallyWantToRemoveAllSensorsOnCuboid:
         'Do you really want to remove all the sensors on this cuboid that are not locked',

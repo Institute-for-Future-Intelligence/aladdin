@@ -3,7 +3,7 @@
  */
 
 export * from './foundationMenu/foundationMenu';
-export * from './cuboidMenu';
+export * from './cuboidMenu/cuboidMenu';
 export * from './groundMenu/groundMenu';
 export * from './humanMenu';
 export * from './flowerMenu';

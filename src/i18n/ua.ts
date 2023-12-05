@@ -829,7 +829,11 @@ export const i18n_ua = {
       RemoveAllUnlockedHumans: 'Видалити всіх розблокованих людей',
       RemoveAllUnlockedTrees: 'Видалити всі розблоковані дерева',
       RemoveAllUnlockedFlowers: 'Видалити всі розблоковані квіти',
+      RemoveAllUnlockedLights: 'Remove All Unlocked Lights',
       Racks: 'Стійки',
+      Lights: 'Lights',
+      DoYouReallyWantToRemoveAllLightsOnCuboid:
+        'Do you really want to remove all the lights on this cuboid that are not locked',
       SolarPanels: 'Сонячні панелі',
       DoYouReallyWantToRemoveAllSolarPanelsOnCuboid:
         'Ви дійсно бажаєте видалити всі сонячні панелі на цьому кубоїді, які не заблоковані',

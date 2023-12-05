@@ -8,7 +8,6 @@ import { useStore } from '../../stores/common';
 import * as Selector from '../../stores/selector';
 import { ObjectType } from '../../types';
 import {
-  CuboidMenu,
   HumanMenu,
   FlowerMenu,
   PolygonMenu,
@@ -28,6 +27,7 @@ import {
   createGroundMenu,
   createSkyMenu,
   createFoundationMenu,
+  createCuboidMenu,
 } from './elementMenu';
 import { WindTurbineMenu } from './elementMenu/windTurbineMenu';
 import { useSelectedElement } from './elementMenu/menuHooks';
@@ -199,12 +199,8 @@ const DropdownContextMenu: React.FC<ContextMenuProps> = ({ children }) => {
         return createSkyMenu();
       case ObjectType.Foundation:
         return createFoundationMenu(elementRef.current);
-      // case ObjectType.Cuboid:
-      //   return (
-      //     <Menu triggerSubMenuAction={'click'}>
-      //       <CuboidMenu />
-      //     </Menu>
-      //   );
+      case ObjectType.Cuboid:
+        return createCuboidMenu(elementRef.current);
       // case ObjectType.Polygon:
       //   return (
       //     <Menu triggerSubMenuAction={'click'}>
