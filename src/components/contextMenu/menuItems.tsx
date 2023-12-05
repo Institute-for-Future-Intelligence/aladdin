@@ -2,8 +2,8 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useMemo } from 'react';
-import { Checkbox, Menu } from 'antd';
+import React from 'react';
+import { Checkbox } from 'antd';
 import { useStore } from '../../stores/common';
 import * as Selector from '../../stores/selector';
 import i18n from '../../i18n/i18n';
@@ -16,14 +16,47 @@ import { showInfo } from 'src/helpers';
 import { WallModel } from 'src/models/WallModel';
 import { useRefStore } from 'src/stores/commonRef';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
+import { useLanguage } from 'src/views/hooks';
+import { CheckboxChangeEvent } from 'antd/lib/checkbox';
+import { ElementModel } from 'src/models/ElementModel';
 
-export const Paste = ({ paddingLeft = '36px', keyName }: { paddingLeft?: string; keyName: string }) => {
+interface MenuItemProps {
+  stayAfterClick?: boolean;
+  textSelectable?: boolean;
+  children?: React.ReactNode;
+  onClick?: (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void;
+}
+
+export const MenuItem: React.FC<MenuItemProps> = ({ stayAfterClick, textSelectable = true, onClick, children }) => {
+  const handleClick = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+    if (onClick) {
+      onClick(e);
+    }
+    if (stayAfterClick) {
+      e.stopPropagation();
+    }
+  };
+
+  return (
+    <span
+      onClick={handleClick}
+      style={{
+        userSelect: textSelectable ? 'auto' : 'none',
+        display: 'inline-block',
+        width: '100%',
+      }}
+    >
+      {children}
+    </span>
+  );
+};
+
+export const Paste = () => {
   const setCommonStore = useStore(Selector.set);
-  const language = useStore(Selector.language);
   const pasteElements = useStore(Selector.pasteElementsToPoint);
   const elementsToPaste = useStore(Selector.elementsToPaste);
   const removeElementById = useStore(Selector.removeElementById);
-  const addUndoable = useStore(Selector.addUndoable);
+  const lang = useLanguage();
 
   const isMac = Util.isMac();
 
@@ -48,69 +81,58 @@ export const Paste = ({ paddingLeft = '36px', keyName }: { paddingLeft?: string;
             });
           },
         } as UndoablePaste;
-        addUndoable(undoablePaste);
+        useStore.getState().addUndoable(undoablePaste);
       }
     }
   };
 
   return (
-    <Menu.Item key={keyName} onClick={paste} style={{ paddingLeft: paddingLeft, backgroundColor: 'rgba(0,0,0,0)' }}>
-      {i18n.t('word.Paste', { lng: language })}
+    <MenuItem onClick={paste}>
+      {i18n.t('word.Paste', lang)}
       <span style={{ paddingLeft: '4px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+V)</span>
-    </Menu.Item>
+    </MenuItem>
   );
 };
 
-export const Copy = ({ paddingLeft = '36px', keyName }: { paddingLeft?: string; keyName: string }) => {
+export const Copy = () => {
   const setCommonStore = useStore(Selector.set);
-  const language = useStore(Selector.language);
   const copyElementById = useStore(Selector.copyElementById);
-  const selectedElement = useStore(Selector.selectedElement);
   const loggable = useStore(Selector.loggable);
+  const lang = useLanguage();
   const isMac = Util.isMac();
 
   const copyElement = () => {
-    if (selectedElement) {
-      copyElementById(selectedElement.id);
-      if (loggable) {
-        setCommonStore((state) => {
-          state.actionInfo = {
-            name: 'Copy',
-            timestamp: new Date().getTime(),
-            elementId: selectedElement.id,
-            elementType: selectedElement.type,
-          } as ActionInfo;
-        });
-      }
+    const selectedElement = useStore.getState().selectedElement;
+    if (!selectedElement) return;
+    copyElementById(selectedElement.id);
+    if (loggable) {
+      setCommonStore((state) => {
+        state.actionInfo = {
+          name: 'Copy',
+          timestamp: new Date().getTime(),
+          elementId: selectedElement.id,
+          elementType: selectedElement.type,
+        } as ActionInfo;
+      });
     }
   };
 
-  // for some reason, we have to force a transparent color background for this menu item
   return (
-    <Menu.Item
-      key={keyName}
-      onClick={copyElement}
-      style={{ paddingLeft: paddingLeft, backgroundColor: 'rgba(0,0,0,0)' }}
-    >
-      {i18n.t('word.Copy', { lng: language })}
+    <MenuItem onClick={copyElement}>
+      {i18n.t('word.Copy', lang)}
       <span style={{ paddingLeft: '4px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+C)</span>
-    </Menu.Item>
+    </MenuItem>
   );
 };
 
-export const Cut = ({ paddingLeft = '36px', keyName }: { paddingLeft?: string; keyName: string }) => {
+export const Cut = () => {
   const setCommonStore = useStore(Selector.set);
-  const language = useStore(Selector.language);
   const removeElementById = useStore(Selector.removeElementById);
-  const selectedElement = useStore(Selector.selectedElement);
-  const addUndoable = useStore(Selector.addUndoable);
   const isMac = Util.isMac();
-
-  const lang = useMemo(() => {
-    return { lng: language };
-  }, [language]);
+  const lang = useLanguage();
 
   const cut = () => {
+    const selectedElement = useStore.getState().selectedElement;
     if (!selectedElement || selectedElement.type === ObjectType.Roof) return;
     if (selectedElement.locked) {
       showInfo(i18n.t('message.ThisElementIsLocked', lang));
@@ -167,56 +189,53 @@ export const Cut = ({ paddingLeft = '36px', keyName }: { paddingLeft?: string; k
             }
           },
         } as UndoableDelete;
-        addUndoable(undoableCut);
+        useStore.getState().addUndoable(undoableCut);
       }
     }
   };
 
   return (
-    <Menu.Item key={keyName} onClick={cut} style={{ paddingLeft: paddingLeft, backgroundColor: 'rgba(0,0,0,0)' }}>
-      {i18n.t('word.Cut', { lng: language })}
+    <MenuItem onClick={cut}>
+      {i18n.t('word.Cut', lang)}
       <span style={{ paddingLeft: '4px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+X)</span>
-    </Menu.Item>
+    </MenuItem>
   );
 };
 
-export const Lock = ({ keyName }: { keyName: string }) => {
-  const language = useStore(Selector.language);
+export const Lock = ({ selectedElement }: { selectedElement: ElementModel }) => {
+  const lang = useLanguage();
   const updateElementLockById = useStore(Selector.updateElementLockById);
   const addUndoable = useStore(Selector.addUndoable);
-  const selectedElement = useStore((state) => state.elements.find((e) => state.selectedElementIdSet.has(e.id)));
 
   const lockElement = (on: boolean) => {
-    if (selectedElement) {
-      updateElementLockById(selectedElement.id, on);
-    }
+    if (!selectedElement) return;
+    updateElementLockById(selectedElement.id, on);
+  };
+
+  const onChange = (e: CheckboxChangeEvent) => {
+    const checked = e.target.checked;
+    const undoableCheck = {
+      name: 'Lock',
+      timestamp: Date.now(),
+      checked: checked,
+      selectedElementId: selectedElement?.id,
+      selectedElementType: selectedElement?.type,
+      undo: () => {
+        lockElement(!undoableCheck.checked);
+      },
+      redo: () => {
+        lockElement(undoableCheck.checked);
+      },
+    } as UndoableCheck;
+    addUndoable(undoableCheck);
+    lockElement(checked);
   };
 
   return (
-    <Menu.Item key={keyName} style={{ backgroundColor: 'rgba(0,0,0,0)' }}>
-      <Checkbox
-        checked={selectedElement?.locked}
-        onChange={(e) => {
-          const checked = e.target.checked;
-          const undoableCheck = {
-            name: 'Lock',
-            timestamp: Date.now(),
-            checked: checked,
-            selectedElementId: selectedElement?.id,
-            selectedElementType: selectedElement?.type,
-            undo: () => {
-              lockElement(!undoableCheck.checked);
-            },
-            redo: () => {
-              lockElement(undoableCheck.checked);
-            },
-          } as UndoableCheck;
-          addUndoable(undoableCheck);
-          lockElement(checked);
-        }}
-      >
-        {i18n.t('word.Lock', { lng: language })}
+    <MenuItem stayAfterClick>
+      <Checkbox checked={selectedElement.locked} onChange={onChange}>
+        {i18n.t('word.Lock', lang)}
       </Checkbox>
-    </Menu.Item>
+    </MenuItem>
   );
 };

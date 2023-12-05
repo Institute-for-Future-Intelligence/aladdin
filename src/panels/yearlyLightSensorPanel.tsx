@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { ChartType, GraphDataType, ObjectType } from '../types';
-import { FLOATING_WINDOW_OPACITY, MONTHS, Z_INDEX_FRONT_PANEL } from '../constants';
+import { FLOATING_WINDOW_OPACITY, MONTHS_ABBV, Z_INDEX_FRONT_PANEL } from '../constants';
 import BarGraph from '../components/barGraph';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space, Switch } from 'antd';
@@ -103,7 +103,7 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
   const nodeRef = React.useRef(null);
 
   const lang = { lng: language };
-  const referenceX = MONTHS[now.getMonth()];
+  const referenceX = MONTHS_ABBV[now.getMonth()];
 
   useEffect(() => {
     setCurPosition({

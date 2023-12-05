@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { BuildingCompletionStatus, DatumEntry, GraphDataType } from '../types';
-import { FLOATING_WINDOW_OPACITY, MONTHS, Z_INDEX_FRONT_PANEL } from '../constants';
+import { FLOATING_WINDOW_OPACITY, MONTHS_ABBV, Z_INDEX_FRONT_PANEL } from '../constants';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Popover, Space } from 'antd';
 import { CameraOutlined, CaretRightOutlined, ReloadOutlined, SaveOutlined } from '@ant-design/icons';
@@ -111,7 +111,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
 
   const lang = { lng: language };
   const weather = getWeather(city ?? 'Boston MA, USA');
-  const referenceX = MONTHS[now.getMonth()];
+  const referenceX = MONTHS_ABBV[now.getMonth()];
   const daysPerYear = world.daysPerYear ?? 6;
   const monthInterval = 12 / daysPerYear;
 
@@ -202,7 +202,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
         }
       }
       const datum: DatumEntry = {};
-      datum['Month'] = MONTHS[now.getMonth()];
+      datum['Month'] = MONTHS_ABBV[now.getMonth()];
       const l = [];
       let i = 0;
       for (let index = 0; index < countBuildings; index++) {
@@ -277,7 +277,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
           net += h[netId] as number;
         }
         const datum: DatumEntry = {};
-        datum['Month'] = MONTHS[now.getMonth()];
+        datum['Month'] = MONTHS_ABBV[now.getMonth()];
         datum[heaterId] = 30 * heater;
         datum[acId] = 30 * ac;
         datum[solarId] = 30 * solarPanel;
@@ -291,7 +291,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
           net += h[netId] as number;
         }
         const datum: DatumEntry = {};
-        datum['Month'] = MONTHS[now.getMonth()];
+        datum['Month'] = MONTHS_ABBV[now.getMonth()];
         datum[heaterId] = 30 * heater;
         datum[acId] = 30 * ac;
         datum[netId] = 30 * net;

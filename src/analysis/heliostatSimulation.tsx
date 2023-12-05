@@ -11,7 +11,7 @@ import * as Selector from 'src/stores/selector';
 import { DatumEntry, ObjectType, SolarStructure } from '../types';
 import { Util } from '../Util';
 import { AirMass } from './analysisConstants';
-import { HALF_PI, MONTHS, UNIT_VECTOR_POS_Z, ZERO_TOLERANCE } from '../constants';
+import { HALF_PI, MONTHS_ABBV, UNIT_VECTOR_POS_Z, ZERO_TOLERANCE } from '../constants';
 import { showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
 import { HeliostatModel } from '../models/HeliostatModel';
@@ -423,7 +423,7 @@ const HeliostatSimulation = ({ city }: HeliostatSimulationProps) => {
       const results = [];
       for (let month = 0; month < 12; month += monthInterval) {
         const r: DatumEntry = {};
-        r['Month'] = MONTHS[month];
+        r['Month'] = MONTHS_ABBV[month];
         for (const [i, a] of resultArr.entries()) {
           r[labels[i]] = a[month / monthInterval] * daysOfMonth;
         }
@@ -448,7 +448,7 @@ const HeliostatSimulation = ({ city }: HeliostatSimulationProps) => {
         for (const result of resultArr) {
           total += result[month / monthInterval];
         }
-        results.push({ Month: MONTHS[month], Total: total * daysOfMonth } as DatumEntry);
+        results.push({ Month: MONTHS_ABBV[month], Total: total * daysOfMonth } as DatumEntry);
       }
       setYearlyYield(results);
     }

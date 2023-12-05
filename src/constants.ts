@@ -51,7 +51,21 @@ export const DEFAULT_WIND_TURBINE_STRIPE_COLOR = '#404040';
 export const DEFAULT_MODEL_MAP_ZOOM = 10;
 export const LAT_LNG_FRACTION_DIGITS = 4;
 
-export const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+export const MONTHS_ABBV = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+export const MONTHS = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+];
 export const DEFAULT_LEAF_OUT_DAY = 105;
 export const DEFAULT_LEAF_OFF_DAY = 320;
 

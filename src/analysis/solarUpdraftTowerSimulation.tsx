@@ -23,7 +23,7 @@ import {
   MINUTES_OF_DAY,
   STEFAN_BOLTZMANN_CONSTANT,
 } from './analysisConstants';
-import { MONTHS, UNIT_VECTOR_POS_Z, ZERO_TOLERANCE } from '../constants';
+import { MONTHS_ABBV, UNIT_VECTOR_POS_Z, ZERO_TOLERANCE } from '../constants';
 import * as Selector from '../stores/selector';
 import { showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
@@ -642,7 +642,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
     const results = [];
     for (let month = 0; month < 12; month += monthInterval) {
       const r: DatumEntry = {};
-      r['Month'] = MONTHS[month];
+      r['Month'] = MONTHS_ABBV[month];
       for (const [i, a] of resultArr.entries()) {
         r[labels[i]] = a[month / monthInterval] * daysOfMonth;
       }

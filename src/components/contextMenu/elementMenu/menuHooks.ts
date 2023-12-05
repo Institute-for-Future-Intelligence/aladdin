@@ -221,10 +221,12 @@ export const useLabelHeight = (element: ElementModel | undefined) => {
   };
 };
 
-export const useSelectedElement = (objectType: ObjectType) => {
+export const useSelectedElement = (objectType?: ObjectType) => {
   return useStore((state) => {
     if (!state.selectedElement) return;
-    return state.elements.find((e) => e.id === state.selectedElement?.id && e.type === objectType);
+    const el = state.elements.find((e) => e.id === state.selectedElement?.id);
+    if (!el || !objectType) return el;
+    if (el.type === objectType) return el;
   });
 };
 

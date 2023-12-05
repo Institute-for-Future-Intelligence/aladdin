@@ -16,7 +16,7 @@ import { DatumEntry, ObjectType } from '../types';
 import { Util } from '../Util';
 import { AirMass, MINUTES_OF_DAY } from './analysisConstants';
 import {
-  MONTHS,
+  MONTHS_ABBV,
   UNIT_VECTOR_NEG_Y_ARRAY,
   UNIT_VECTOR_POS_Z,
   UNIT_VECTOR_POS_Z_ARRAY,
@@ -481,7 +481,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
     const results = [];
     for (let month = 0; month < 12; month++) {
       const r: DatumEntry = {};
-      r['Month'] = MONTHS[month];
+      r['Month'] = MONTHS_ABBV[month];
       for (const [i, a] of resultArr.entries()) {
         r['Daylight'] = daylightArrayRef.current[month];
         r['Clearness'] = clearnessArrayRef.current[month] * 100;

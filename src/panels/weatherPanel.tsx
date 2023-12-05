@@ -9,7 +9,7 @@ import { ChartType, GraphDataType } from '../types';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { FLOATING_WINDOW_OPACITY, MONTHS, Z_INDEX_FRONT_PANEL } from '../constants';
+import { FLOATING_WINDOW_OPACITY, MONTHS_ABBV, Z_INDEX_FRONT_PANEL } from '../constants';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
@@ -156,7 +156,7 @@ const WeatherPanel = ({ city, graphs }: WeatherPanelProps) => {
             case GraphDataType.MonthlyTemperatures:
               for (let i = 0; i < 12; i++) {
                 result[g].push({
-                  Month: MONTHS[i],
+                  Month: MONTHS_ABBV[i],
                   Low: weather.lowestTemperatures[i],
                   High: weather.highestTemperatures[i],
                 });
@@ -165,7 +165,7 @@ const WeatherPanel = ({ city, graphs }: WeatherPanelProps) => {
             case GraphDataType.SunshineHours:
               for (let i = 0; i < 12; i++) {
                 result[g].push({
-                  Month: MONTHS[i],
+                  Month: MONTHS_ABBV[i],
                   Sunshine: weather.sunshineHours[i],
                 });
               }
@@ -185,7 +185,7 @@ const WeatherPanel = ({ city, graphs }: WeatherPanelProps) => {
     i18n.t('weatherPanel.SunshineHours', lang),
   ];
   const yUnits = ['NA', '°C', '°C', i18n.t('word.Hour', lang)];
-  const referenceX = MONTHS[now.getMonth()];
+  const referenceX = MONTHS_ABBV[now.getMonth()];
 
   const onDrag: DraggableEventHandler = (e, ui) => {
     setCurPosition({

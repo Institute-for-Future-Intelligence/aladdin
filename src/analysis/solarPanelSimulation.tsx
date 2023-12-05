@@ -16,7 +16,7 @@ import * as Selector from 'src/stores/selector';
 import { DatumEntry, Discretization, ObjectType, Orientation, ShadeTolerance, TrackerType } from '../types';
 import { Util } from '../Util';
 import { AirMass, MINUTES_OF_DAY } from './analysisConstants';
-import { HALF_PI, MONTHS, UNIT_VECTOR_POS_Y, UNIT_VECTOR_POS_Z, ZERO_TOLERANCE } from '../constants';
+import { HALF_PI, MONTHS_ABBV, UNIT_VECTOR_POS_Y, UNIT_VECTOR_POS_Z, ZERO_TOLERANCE } from '../constants';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { computeOutsideTemperature, getOutsideTemperatureAtMinute } from './heatTools';
 import { PvModel } from '../models/PvModel';
@@ -604,7 +604,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       const results = [];
       for (let month = 0; month < 12; month += monthInterval) {
         const r: DatumEntry = {};
-        r['Month'] = MONTHS[month];
+        r['Month'] = MONTHS_ABBV[month];
         for (const [i, a] of resultArr.entries()) {
           r[labels[i]] = a[month / monthInterval] * daysOfMonth;
         }
@@ -629,7 +629,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
         for (const result of resultArr) {
           total += result[month / monthInterval];
         }
-        results.push({ Month: MONTHS[month], Total: total * daysOfMonth } as DatumEntry);
+        results.push({ Month: MONTHS_ABBV[month], Total: total * daysOfMonth } as DatumEntry);
       }
       setYearlyYield(results);
     }

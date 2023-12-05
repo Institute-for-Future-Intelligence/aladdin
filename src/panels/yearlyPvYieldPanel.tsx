@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { ChartType, GraphDataType, ObjectType } from '../types';
-import { FLOATING_WINDOW_OPACITY, MONTHS, Z_INDEX_FRONT_PANEL } from '../constants';
+import { FLOATING_WINDOW_OPACITY, MONTHS_ABBV, Z_INDEX_FRONT_PANEL } from '../constants';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space, Switch, Popover, Row, Col } from 'antd';
 import { saveCsv, screenshot, showInfo } from '../helpers';
@@ -112,7 +112,7 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
   const panelSumRef = useRef(new Map<string, number>());
   const resizeObserverRef = useRef<ResizeObserver>();
 
-  const referenceX = MONTHS[now.getMonth()];
+  const referenceX = MONTHS_ABBV[now.getMonth()];
   const lang = { lng: language };
   const solarPanelCount = countElementsByType(ObjectType.SolarPanel);
 

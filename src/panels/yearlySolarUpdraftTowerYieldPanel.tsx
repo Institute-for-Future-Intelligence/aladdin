@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { ChartType, GraphDataType, SolarStructure } from '../types';
-import { FLOATING_WINDOW_OPACITY, MONTHS, Z_INDEX_FRONT_PANEL } from '../constants';
+import { FLOATING_WINDOW_OPACITY, MONTHS_ABBV, Z_INDEX_FRONT_PANEL } from '../constants';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Col, Row, Space, Popover } from 'antd';
 import { saveCsv, screenshot, showInfo } from '../helpers';
@@ -103,7 +103,7 @@ const YearlySolarUpdraftTowerYieldPanel = ({ city }: YearlySolarUpdraftTowerYiel
   const [sum, setSum] = useState(0);
   const towerSumRef = useRef(new Map<string, number>());
 
-  const referenceX = MONTHS[now.getMonth()];
+  const referenceX = MONTHS_ABBV[now.getMonth()];
   const lang = { lng: language };
 
   useEffect(() => {

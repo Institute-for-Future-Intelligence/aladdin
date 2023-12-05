@@ -2,16 +2,16 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-export * from './foundationMenu';
+export * from './foundationMenu/foundationMenu';
 export * from './cuboidMenu';
-export * from './groundMenu';
+export * from './groundMenu/groundMenu';
 export * from './humanMenu';
 export * from './flowerMenu';
 export * from './polygonMenu';
 export * from './polygonVertexMenu';
 export * from './sensorMenu';
 export * from './lightMenu';
-export * from './skyMenu';
+export * from './skyMenu/skyMenu';
 export * from './solarPanleMenu';
 export * from './parabolicTroughMenu';
 export * from './parabolicDishMenu';
