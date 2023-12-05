@@ -408,6 +408,7 @@ export class ElementModelFactory {
       towerHeight,
       hubRadius,
       hubLength,
+      bladeColor: 'white',
       cx: x, // relative
       cy: y, // relative
       cz: z, // absolute

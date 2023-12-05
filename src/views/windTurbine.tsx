@@ -39,6 +39,7 @@ const WindTurbine = ({
   initialRotorAngle = 0,
   pitchAngle = Util.toRadians(10),
   color = 'white',
+  bladeColor = 'white',
   lineColor = 'black',
   lineWidth = 0.5,
   showLabel = false,
@@ -65,6 +66,10 @@ const WindTurbine = ({
   const lang = useMemo(() => {
     return { lng: language };
   }, [language]);
+
+  // const texture = useMemo(()=>{
+  //   return Util.fetchBladeTexture(bladeRadius*10, bladeRootRadius*20);
+  // },[bladeRootRadius, bladeRadius]);
 
   // be sure to get the updated parent so that this memorized element can move with it
   const parent = useStore((state) => {
@@ -213,8 +218,8 @@ const WindTurbine = ({
         userData={{ unintersectable: true }}
         name={'Tower'}
         ref={baseRef}
-        castShadow={false}
-        receiveShadow={false}
+        castShadow={shadowEnabled}
+        receiveShadow={shadowEnabled}
         args={[towerRadius * 0.8, towerRadius * 1.2, towerHeight, 4, 1]}
         position={new Vector3(0, 0, towerHeight * 0.5)}
         rotation={[HALF_PI, 0, 0]}
@@ -255,8 +260,8 @@ const WindTurbine = ({
       <Sphere
         userData={{ unintersectable: true }}
         name={'Hub'}
-        castShadow={false}
-        receiveShadow={false}
+        castShadow={shadowEnabled}
+        receiveShadow={shadowEnabled}
         args={[hubRadius, 8, 8, HALF_PI, Math.PI, 0, Math.PI]}
         position={new Vector3(0, -hubLength * 0.5, towerHeight)}
         rotation={[Math.PI, 0, HALF_PI]}
@@ -267,8 +272,8 @@ const WindTurbine = ({
       <Cylinder
         userData={{ unintersectable: true }}
         name={'Hub Cap'}
-        castShadow={false}
-        receiveShadow={false}
+        castShadow={shadowEnabled}
+        receiveShadow={shadowEnabled}
         args={[hubRadius, hubRadius, 0.01, 16, 1]}
         position={new Vector3(0, -hubLength * 0.5, towerHeight)}
         rotation={[Math.PI, 0, 0]}
@@ -280,8 +285,8 @@ const WindTurbine = ({
       <RoundedBox
         userData={{ unintersectable: true }}
         name={'Nacelle'}
-        castShadow={false}
-        receiveShadow={false}
+        castShadow={shadowEnabled}
+        receiveShadow={shadowEnabled}
         radius={0.1}
         smoothness={4}
         args={[nacelleWidth, nacelleWidth, nacelleLength]}
@@ -301,7 +306,7 @@ const WindTurbine = ({
           >
             <mesh name={'Blade ' + index + ' Font Side'} receiveShadow={shadowEnabled} castShadow={shadowEnabled}>
               <shapeGeometry attach="geometry" args={[bladeShape]} />
-              <meshStandardMaterial attach="material" color={color} side={FrontSide} />
+              <meshStandardMaterial attach="material" color={bladeColor} side={FrontSide} />
             </mesh>
             <mesh
               name={'Blade ' + index + ' Back Side'}
@@ -310,7 +315,7 @@ const WindTurbine = ({
               position={new Vector3(0, -0.05, 0)}
             >
               <shapeGeometry attach="geometry" args={[bladeShape]} />
-              <meshStandardMaterial attach="material" color={color} side={BackSide} />
+              <meshStandardMaterial attach="material" color={bladeColor} side={BackSide} />
             </mesh>
             <Cylinder
               name={'Blade root'}

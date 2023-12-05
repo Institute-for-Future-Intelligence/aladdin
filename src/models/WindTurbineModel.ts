@@ -19,4 +19,5 @@ export interface WindTurbineModel extends ElementModel {
   bladeRootRadius: number;
   towerRadius: number;
   towerHeight: number;
+  bladeColor: string;
 }

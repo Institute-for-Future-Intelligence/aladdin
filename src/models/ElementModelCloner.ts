@@ -565,6 +565,7 @@ export class ElementModelCloner {
       hubLength: windTurbine.hubLength,
       towerRadius: windTurbine.towerRadius,
       towerHeight: windTurbine.towerHeight,
+      bladeColor: windTurbine.bladeColor,
       showLabel: windTurbine.showLabel,
       normal: [...windTurbine.normal],
       rotation: windTurbine.parentId ? [...parent.rotation] : [0, 0, 0],

@@ -437,6 +437,31 @@ export class Util {
     return new CanvasTexture(canvas);
   }
 
+  static fetchBladeTexture(w: number, h: number): CanvasTexture | null {
+    console.log(w, h);
+    const canvas = document.createElement('canvas') as HTMLCanvasElement;
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.clearRect(0, 0, w, h);
+      const imageData = ctx.getImageData(0, 0, w, h);
+      const pixels = imageData.data;
+      for (let i = 0; i < w; i++) {
+        const c = i < w / 2 ? 0 : 1;
+        for (let j = 0; j < h; j++) {
+          const off = ((h - 1 - j) * w + i) * 4;
+          pixels[off] = Math.floor(255);
+          pixels[off + 1] = Math.floor(c * 255);
+          pixels[off + 2] = Math.floor(c * 255);
+          pixels[off + 3] = 255;
+        }
+      }
+      ctx.putImageData(imageData, 0, 0);
+    }
+    return new CanvasTexture(canvas);
+  }
+
   static countSolarPanelsOnRack(rack: SolarPanelModel, pvModel: PvModel): number {
     let count = 0;
     if (pvModel && rack) {

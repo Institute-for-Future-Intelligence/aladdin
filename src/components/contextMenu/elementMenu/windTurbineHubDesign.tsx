@@ -139,9 +139,9 @@ const WindTurbineHubDesign = ({ setDialogVisible }: { setDialogVisible: (b: bool
     });
   };
 
-  const setValues = (hubRadius: number, hubLength: number) => {
+  const setValues = (values: number[]) => {
     if (!windTurbine) return;
-    if (!needChange(hubRadius, hubLength)) return;
+    if (!needChange(values[0], values[1])) return;
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType: {
         const oldValuesSelected = new Map<string, number[]>();
@@ -155,7 +155,7 @@ const WindTurbineHubDesign = ({ setDialogVisible }: { setDialogVisible: (b: bool
           name: 'Set Hub Parameters for Selected Wind Turbines',
           timestamp: Date.now(),
           oldValues: oldValuesSelected,
-          newValue: [hubRadius, hubLength],
+          newValue: values,
           undo: () => {
             for (const [id, v] of undoableChangeSelected.oldValues.entries()) {
               updateById(id, v as number[]);
@@ -169,7 +169,7 @@ const WindTurbineHubDesign = ({ setDialogVisible }: { setDialogVisible: (b: bool
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeSelected);
-        updateInMap(oldValuesSelected, [hubRadius, hubLength]);
+        updateInMap(oldValuesSelected, values);
         setApplyCount(applyCount + 1);
         break;
       }
@@ -185,7 +185,7 @@ const WindTurbineHubDesign = ({ setDialogVisible }: { setDialogVisible: (b: bool
           name: 'Set Hub Parameters for All Wind Turbines',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
-          newValue: [hubRadius, hubLength],
+          newValue: values,
           undo: () => {
             for (const [id, v] of undoableChangeAll.oldValues.entries()) {
               updateById(id, v as number[]);
@@ -196,7 +196,7 @@ const WindTurbineHubDesign = ({ setDialogVisible }: { setDialogVisible: (b: bool
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateForAll([hubRadius, hubLength]);
+        updateForAll(values);
         setApplyCount(applyCount + 1);
         break;
       }
@@ -213,7 +213,7 @@ const WindTurbineHubDesign = ({ setDialogVisible }: { setDialogVisible: (b: bool
             name: 'Set Hub Parameters for All Wind Turbines Above Foundation',
             timestamp: Date.now(),
             oldValues: oldValuesAboveFoundation,
-            newValue: [hubRadius, hubLength],
+            newValue: values,
             groupId: windTurbine.foundationId,
             undo: () => {
               for (const [id, v] of undoableChangeAboveFoundation.oldValues.entries()) {
@@ -230,7 +230,7 @@ const WindTurbineHubDesign = ({ setDialogVisible }: { setDialogVisible: (b: bool
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAboveFoundation);
-          updateAboveFoundation(windTurbine.foundationId, [hubRadius, hubLength]);
+          updateAboveFoundation(windTurbine.foundationId, values);
           setApplyCount(applyCount + 1);
         }
         break;
@@ -243,7 +243,7 @@ const WindTurbineHubDesign = ({ setDialogVisible }: { setDialogVisible: (b: bool
           name: 'Set Wind Turbine Hub Parameters',
           timestamp: Date.now(),
           oldValue: [oldHubRadius, oldHubLength],
-          newValue: [hubRadius, hubLength],
+          newValue: values,
           changedElementId: windTurbine.id,
           changedElementType: windTurbine.type,
           undo: () => {
@@ -254,12 +254,12 @@ const WindTurbineHubDesign = ({ setDialogVisible }: { setDialogVisible: (b: bool
           },
         } as UndoableChange;
         addUndoable(undoableChange);
-        updateById(windTurbine.id, [hubRadius, hubLength]);
+        updateById(windTurbine.id, values);
         setApplyCount(applyCount + 1);
     }
     setCommonStore((state) => {
-      state.actionState.windTurbineHubRadius = hubRadius;
-      state.actionState.windTurbineHubLength = hubLength;
+      state.actionState.windTurbineHubRadius = values[0];
+      state.actionState.windTurbineHubLength = values[1];
     });
   };
 
@@ -273,13 +273,13 @@ const WindTurbineHubDesign = ({ setDialogVisible }: { setDialogVisible: (b: bool
   };
 
   const ok = () => {
-    setValues(inputRadiusValue, inputLengthValue);
+    setValues([inputRadiusValue, inputLengthValue]);
     setDialogVisible(false);
     setApplyCount(0);
   };
 
   const apply = () => {
-    setValues(inputRadiusValue, inputLengthValue);
+    setValues([inputRadiusValue, inputLengthValue]);
   };
 
   return (
