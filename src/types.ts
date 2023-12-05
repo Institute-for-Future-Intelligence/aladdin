@@ -328,6 +328,12 @@ export enum SolarStructure {
   UpdraftTower = 3,
 }
 
+export enum BirdSafeDesign {
+  None = 0,
+  HalfDark = 1,
+  Stripe = 2,
+}
+
 export enum ActionType {
   Select = 'Select',
   Move = 'Move',

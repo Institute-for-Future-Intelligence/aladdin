@@ -5,6 +5,7 @@
 import { immerable } from 'immer';
 import { ActionState } from './ActionState';
 import {
+  BirdSafeDesign,
   CuboidTexture,
   DoorTexture,
   FlowerType,
@@ -117,6 +118,7 @@ export class DefaultActionState implements ActionState {
   windowEmpty: boolean;
   windowInterior: boolean;
 
+  windTurbineBirdSafeDesign: BirdSafeDesign;
   windTurbineNumberOfBlades: number;
   windTurbinePitchAngle: number;
   windTurbineRelativeYawAngle: number;
@@ -266,6 +268,7 @@ export class DefaultActionState implements ActionState {
     this.windowEmpty = false;
     this.windowInterior = false;
 
+    this.windTurbineBirdSafeDesign = BirdSafeDesign.None;
     this.windTurbineNumberOfBlades = 3;
     this.windTurbinePitchAngle = Math.PI / 18;
     this.windTurbineRelativeYawAngle = 0;

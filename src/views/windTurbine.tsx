@@ -10,7 +10,7 @@ import { useRefStore } from 'src/stores/commonRef';
 import * as Selector from '../stores/selector';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import { HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR, MOVE_HANDLE_RADIUS, UNIT_VECTOR_POS_Z } from '../constants';
-import { ActionType, MoveHandleType, ObjectType } from '../types';
+import { ActionType, BirdSafeDesign, MoveHandleType, ObjectType } from '../types';
 import { Util } from '../Util';
 import i18n from '../i18n/i18n';
 import { WindTurbineModel } from '../models/WindTurbineModel';
@@ -23,6 +23,7 @@ const WindTurbine = ({
   cz,
   lx,
   lz,
+  birdSafe = BirdSafeDesign.None,
   numberOfBlades = 3,
   speed = 10,
   hubRadius = 0.75,
@@ -69,7 +70,7 @@ const WindTurbine = ({
 
   const texture = useMemo(() => {
     return Util.fetchBladeTexture(bladeRadius, bladeRootRadius * 2, 100);
-  }, [bladeRootRadius, bladeRadius]);
+  }, [bladeRootRadius, bladeRadius, birdSafe]);
 
   // be sure to get the updated parent so that this memorized element can move with it
   const parent = useStore((state) => {
@@ -306,7 +307,12 @@ const WindTurbine = ({
           >
             <mesh name={'Blade ' + index + ' Font Side'} receiveShadow={shadowEnabled} castShadow={shadowEnabled}>
               <shapeGeometry attach="geometry" args={[bladeShape]} />
-              <meshStandardMaterial attach="material" color={bladeColor} side={FrontSide} map={texture} />
+              <meshStandardMaterial
+                attach="material"
+                color={bladeColor}
+                side={FrontSide}
+                map={birdSafe !== BirdSafeDesign.None ? texture : null}
+              />
             </mesh>
             <mesh
               name={'Blade ' + index + ' Back Side'}
@@ -315,7 +321,12 @@ const WindTurbine = ({
               position={new Vector3(0, -0.05, 0)}
             >
               <shapeGeometry attach="geometry" args={[bladeShape]} />
-              <meshStandardMaterial attach="material" color={bladeColor} side={BackSide} map={texture} />
+              <meshStandardMaterial
+                attach="material"
+                color={bladeColor}
+                side={FrontSide}
+                map={birdSafe !== BirdSafeDesign.None ? texture : null}
+              />
             </mesh>
             <Cylinder
               name={'Blade root'}

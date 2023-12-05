@@ -1108,6 +1108,7 @@ export const i18n_en = {
     },
 
     windTurbineMenu: {
+      BirdSafeDesign: 'Bird-Safe Design',
       Rotor: 'Rotor',
       BladeNumber: 'Blade Number',
       RotorInitialAngle: 'Rotor Initial Angle',

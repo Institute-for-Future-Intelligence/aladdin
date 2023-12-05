@@ -3,6 +3,7 @@
  */
 
 import {
+  BirdSafeDesign,
   CuboidTexture,
   DoorTexture,
   FlowerType,
@@ -103,6 +104,7 @@ export interface ActionState {
   windowEmpty: boolean;
   windowInterior: boolean;
 
+  windTurbineBirdSafeDesign: BirdSafeDesign;
   windTurbineNumberOfBlades: number;
   windTurbinePitchAngle: number;
   windTurbineRelativeYawAngle: number;

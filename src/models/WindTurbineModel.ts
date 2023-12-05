@@ -3,6 +3,7 @@
  */
 
 import { ElementModel } from './ElementModel';
+import { BirdSafeDesign } from '../types';
 
 export interface WindTurbineModel extends ElementModel {
   speed: number; // revolutions per minute (typically 10-20)
@@ -20,4 +21,5 @@ export interface WindTurbineModel extends ElementModel {
   towerRadius: number;
   towerHeight: number;
   bladeColor: string;
+  birdSafe: BirdSafeDesign;
 }
