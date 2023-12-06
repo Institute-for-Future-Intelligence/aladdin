@@ -21,7 +21,6 @@ import {
 } from './constants';
 import {
   CanvasTexture,
-  ClampToEdgeWrapping,
   Color,
   Euler,
   EulerOrder,
@@ -36,6 +35,7 @@ import {
 import { ElementModel } from './models/ElementModel';
 import { SolarPanelModel } from './models/SolarPanelModel';
 import {
+  BirdSafeDesign,
   BuildingCompletionStatus,
   Design,
   ElementState,
@@ -439,7 +439,7 @@ export class Util {
     return new CanvasTexture(canvas);
   }
 
-  static fetchBladeTexture(w: number, h: number, scale: number): CanvasTexture | null {
+  static fetchBladeTexture(w: number, h: number, scale: number, birdSafe: BirdSafeDesign): CanvasTexture | null {
     const canvas = document.createElement('canvas') as HTMLCanvasElement;
     const wc = Math.round(w * scale);
     const hc = Math.round(h * scale);
@@ -450,9 +450,12 @@ export class Util {
       ctx.clearRect(0, 0, wc, hc);
       const imageData = ctx.getImageData(0, 0, wc, hc);
       const pixels = imageData.data;
-      const wcLightColorSectionLength = wc / 4;
+      const sectionLength = wc / 4;
       for (let i = 0; i < wc; i++) {
-        const c = Math.floor((i < wcLightColorSectionLength ? 1 : 0.25) * 255);
+        const c =
+          birdSafe === BirdSafeDesign.Bicolor
+            ? Math.floor((i < sectionLength ? 1 : 0.25) * 255)
+            : Math.floor((Math.floor(i / sectionLength) % 2 === 0 ? 1 : 0.25) * 255);
         for (let j = 0; j < hc; j++) {
           const off = ((hc - 1 - j) * wc + i) * 4;
           pixels[off] = c;

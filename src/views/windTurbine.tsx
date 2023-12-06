@@ -69,7 +69,7 @@ const WindTurbine = ({
   }, [language]);
 
   const texture = useMemo(() => {
-    return Util.fetchBladeTexture(bladeRadius, bladeRootRadius * 2, 100);
+    return Util.fetchBladeTexture(bladeRadius, bladeRootRadius * 2, 100, birdSafe);
   }, [bladeRootRadius, bladeRadius, birdSafe]);
 
   // be sure to get the updated parent so that this memorized element can move with it

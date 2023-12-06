@@ -272,7 +272,7 @@ const WindTurbineBirdSafeSelection = ({ setDialogVisible }: { setDialogVisible: 
       <Row gutter={6}>
         <Col className="gutter-row" span={6}>
           <Select
-            style={{ width: '120px' }}
+            style={{ width: '116px' }}
             value={inputValue}
             onChange={(value) => {
               if (value !== null) setInputValue(value);
@@ -281,8 +281,11 @@ const WindTurbineBirdSafeSelection = ({ setDialogVisible }: { setDialogVisible: 
             <Option key={BirdSafeDesign.None} value={BirdSafeDesign.None}>
               {i18n.t('windTurbineMenu.BirdSafeNone', lang)}
             </Option>
-            <Option key={BirdSafeDesign.TwoColors} value={BirdSafeDesign.TwoColors}>
-              {i18n.t('windTurbineMenu.BirdSafeTwoColors', lang)}
+            <Option key={BirdSafeDesign.Bicolor} value={BirdSafeDesign.Bicolor}>
+              {i18n.t('windTurbineMenu.BirdSafeBicolor', lang)}
+            </Option>
+            <Option key={BirdSafeDesign.Striped} value={BirdSafeDesign.Striped}>
+              {i18n.t('windTurbineMenu.BirdSafeStriped', lang)}
             </Option>
           </Select>
         </Col>

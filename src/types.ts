@@ -330,7 +330,7 @@ export enum SolarStructure {
 
 export enum BirdSafeDesign {
   None = 0,
-  TwoColors = 1,
+  Bicolor = 1,
   Striped = 2,
 }
 
