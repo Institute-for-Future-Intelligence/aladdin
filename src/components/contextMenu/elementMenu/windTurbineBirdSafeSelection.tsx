@@ -279,10 +279,10 @@ const WindTurbineBirdSafeSelection = ({ setDialogVisible }: { setDialogVisible: 
             }}
           >
             <Option key={BirdSafeDesign.None} value={BirdSafeDesign.None}>
-              None
+              {i18n.t('windTurbineMenu.BirdSafeNone', lang)}
             </Option>
-            <Option key={BirdSafeDesign.HalfDark} value={BirdSafeDesign.HalfDark}>
-              Half Dark
+            <Option key={BirdSafeDesign.TwoColors} value={BirdSafeDesign.TwoColors}>
+              {i18n.t('windTurbineMenu.BirdSafeTwoColors', lang)}
             </Option>
           </Select>
         </Col>

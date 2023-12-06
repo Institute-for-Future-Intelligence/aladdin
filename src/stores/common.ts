@@ -16,6 +16,7 @@ import produce, { enableMapSet } from 'immer';
 import {
   ActionInfo,
   ActionType,
+  BirdSafeDesign,
   DataColoring,
   DatumEntry,
   Design,
@@ -2536,6 +2537,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                   const windTurbineRelativeCoordinates = Util.relativeCoordinates(p.x, p.y, 0, windTurbineParentModel);
                   const windTurbine = ElementModelFactory.makeWindTurbine(
                     windTurbineParentModel,
+                    state.actionState.windTurbineBirdSafeDesign ?? BirdSafeDesign.None,
                     state.actionState.windTurbineNumberOfBlades ?? 3,
                     state.actionState.windTurbineInitialRotorAngle ?? 0,
                     state.actionState.windTurbineRelativeYawAngle ?? 0,

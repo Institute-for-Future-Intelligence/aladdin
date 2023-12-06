@@ -1086,6 +1086,9 @@ export const i18n_zh_tw = {
 
     windTurbineMenu: {
       BirdSafeDesign: '鳥類安全設計',
+      BirdSafeNone: '無',
+      BirdSafeTwoColors: '雙色',
+      BirdSafeStriped: '條紋',
       Rotor: '轉子',
       BladeNumber: '葉片數目',
       RotorInitialAngle: '轉子初始角度',

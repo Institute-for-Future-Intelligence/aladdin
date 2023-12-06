@@ -551,6 +551,7 @@ export class ElementModelCloner {
       lx: windTurbine.lx,
       ly: windTurbine.ly,
       lz: windTurbine.lz,
+      birdSafe: windTurbine.birdSafe,
       numberOfBlades: windTurbine.numberOfBlades,
       speed: windTurbine.speed,
       pitchAngle: windTurbine.pitchAngle,

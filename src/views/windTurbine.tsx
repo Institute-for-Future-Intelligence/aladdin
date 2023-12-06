@@ -4,7 +4,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Cylinder, Line, RoundedBox, Sphere } from '@react-three/drei';
-import { BackSide, Euler, FrontSide, Mesh, Shape, Vector2, Vector3 } from 'three';
+import { BackSide, CanvasTexture, Euler, FrontSide, Mesh, Shape, Vector2, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import { useRefStore } from 'src/stores/commonRef';
 import * as Selector from '../stores/selector';
@@ -186,6 +186,39 @@ const WindTurbine = ({
     return angles;
   }, [numberOfBlades, timeAngle]);
 
+  const makeBladeGroup = (index: number, angle: number, tex: CanvasTexture | null) => {
+    return (
+      <group
+        key={index}
+        position={new Vector3(0, -hubLength * 0.85, towerHeight)}
+        rotation={[HALF_PI, pitchAngle, angle, 'XZY']}
+      >
+        <mesh name={'Blade ' + index + ' Font Side'} receiveShadow={shadowEnabled} castShadow={shadowEnabled}>
+          <shapeGeometry attach="geometry" args={[bladeShape]} />
+          <meshStandardMaterial attach="material" color={bladeColor} side={FrontSide} map={tex} />
+        </mesh>
+        <mesh
+          name={'Blade ' + index + ' Back Side'}
+          receiveShadow={shadowEnabled}
+          castShadow={shadowEnabled}
+          position={new Vector3(0, -0.05, 0)}
+        >
+          <shapeGeometry attach="geometry" args={[bladeShape]} />
+          <meshStandardMaterial attach="material" color={bladeColor} side={BackSide} map={tex} />
+        </mesh>
+        <Cylinder
+          name={'Blade root'}
+          castShadow={false}
+          receiveShadow={false}
+          args={[bladeRootRadius * 1.1, bladeRootRadius * 1.1, 0.24, 12, 1]}
+          position={new Vector3(0, hubRadius - 0.14, 0)}
+        >
+          <meshStandardMaterial attach="material" color={color} />
+        </Cylinder>
+      </group>
+    );
+  };
+
   return (
     <group name={'Wind Turbine Group ' + id} rotation={euler} position={[cx, cy, cz]}>
       <group>
@@ -297,49 +330,17 @@ const WindTurbine = ({
         <meshStandardMaterial attach="material" color={color} />
       </RoundedBox>
 
-      {/*draw blades*/}
-      {bladeAngles.map((value, index) => {
-        return (
-          <group
-            key={`${index}-${texture?.uuid}`}
-            position={new Vector3(0, -hubLength * 0.85, towerHeight)}
-            rotation={[HALF_PI, pitchAngle, value, 'XZY']}
-          >
-            <mesh name={'Blade ' + index + ' Font Side'} receiveShadow={shadowEnabled} castShadow={shadowEnabled}>
-              <shapeGeometry attach="geometry" args={[bladeShape]} />
-              <meshStandardMaterial
-                attach="material"
-                color={bladeColor}
-                side={FrontSide}
-                map={birdSafe !== BirdSafeDesign.None ? texture : null}
-              />
-            </mesh>
-            <mesh
-              name={'Blade ' + index + ' Back Side'}
-              receiveShadow={shadowEnabled}
-              castShadow={shadowEnabled}
-              position={new Vector3(0, -0.05, 0)}
-            >
-              <shapeGeometry attach="geometry" args={[bladeShape]} />
-              <meshStandardMaterial
-                attach="material"
-                color={bladeColor}
-                side={BackSide}
-                map={birdSafe !== BirdSafeDesign.None ? texture : null}
-              />
-            </mesh>
-            <Cylinder
-              name={'Blade root'}
-              castShadow={false}
-              receiveShadow={false}
-              args={[bladeRootRadius * 1.1, bladeRootRadius * 1.1, 0.24, 12, 1]}
-              position={new Vector3(0, hubRadius - 0.14, 0)}
-            >
-              <meshStandardMaterial attach="material" color={color} />
-            </Cylinder>
-          </group>
-        );
-      })}
+      {/*draw bird-safe blades*/}
+      {birdSafe !== BirdSafeDesign.None &&
+        bladeAngles.map((value, index) => {
+          return makeBladeGroup(index, value, texture);
+        })}
+
+      {/*draw no bird-safe (default) blade*/}
+      {birdSafe === BirdSafeDesign.None &&
+        bladeAngles.map((value, index) => {
+          return makeBladeGroup(index, value, null);
+        })}
 
       {/* highlight it when it is selected but locked */}
       {selected && locked && (

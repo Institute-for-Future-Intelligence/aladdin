@@ -3,6 +3,7 @@
  */
 
 import {
+  BirdSafeDesign,
   CuboidTexture,
   DoorTexture,
   FlowerType,
@@ -371,6 +372,7 @@ export class ElementModelFactory {
 
   static makeWindTurbine(
     parent: ElementModel,
+    birdSafe: BirdSafeDesign,
     numberOfBlades: number,
     initialRotorAngle: number,
     relativeYawAngle: number,
@@ -395,6 +397,7 @@ export class ElementModelFactory {
     }
     return {
       type: ObjectType.WindTurbine,
+      birdSafe,
       numberOfBlades,
       initialRotorAngle,
       relativeYawAngle,

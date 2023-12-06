@@ -450,9 +450,9 @@ export class Util {
       ctx.clearRect(0, 0, wc, hc);
       const imageData = ctx.getImageData(0, 0, wc, hc);
       const pixels = imageData.data;
-      const wcLightColor = wc / 4;
+      const wcLightColorSectionLength = wc / 4;
       for (let i = 0; i < wc; i++) {
-        const c = Math.floor((i < wcLightColor ? 1 : 0.5) * 255);
+        const c = Math.floor((i < wcLightColorSectionLength ? 1 : 0.25) * 255);
         for (let j = 0; j < hc; j++) {
           const off = ((hc - 1 - j) * wc + i) * 4;
           pixels[off] = c;
