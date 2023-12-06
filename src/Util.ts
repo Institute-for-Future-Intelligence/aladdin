@@ -469,7 +469,6 @@ export class Util {
     const t = new CanvasTexture(canvas);
     t.wrapS = t.wrapT = RepeatWrapping;
     t.rotation = HALF_PI;
-    t.center.set(w / 2, h / 2);
     t.repeat.set(1 / w, 1 / h);
     return t;
   }
