@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/aladdin/static/css/main.e5ad6973.css",
-    "main.js": "/aladdin/static/js/main.6e93098b.js",
+    "main.js": "/aladdin/static/js/main.5f6d65a6.js",
     "static/media/foundation_05.png": "/aladdin/static/media/foundation_05.8164fdc83b5bfd18b612.png",
     "static/media/foundation_07.png": "/aladdin/static/media/foundation_07.e759a1c6ff70f139c78e.png",
     "static/media/wall_03.png": "/aladdin/static/media/wall_03.9fd1fc56ccb99fcbc99d.png",
@@ -189,10 +189,10 @@
     "index.html": "/aladdin/index.html",
     "static/media/menu.svg": "/aladdin/static/media/menu.c2982aedd8f7a7f0f9a4350b23bdcab5.svg",
     "main.e5ad6973.css.map": "/aladdin/static/css/main.e5ad6973.css.map",
-    "main.6e93098b.js.map": "/aladdin/static/js/main.6e93098b.js.map"
+    "main.5f6d65a6.js.map": "/aladdin/static/js/main.5f6d65a6.js.map"
   },
   "entrypoints": [
     "static/css/main.e5ad6973.css",
-    "static/js/main.6e93098b.js"
+    "static/js/main.5f6d65a6.js"
   ]
 }
