@@ -508,6 +508,7 @@ export const i18n_zh_tw = {
       windPowerTutorials: {
         EffectOfBladeNumberOfWindTurbine: '轉子葉片的數目對風力渦輪機輸出的影響',
         EffectOfPitchAngleOfWindTurbineBlades: '轉子葉片的俯仰角對風力渦輪機輸出的影響',
+        BirdSafeBladeDesign: '對鳥類安全的葉片設計',
         OffshoreWindFarm: '離岸風電場',
       },
 

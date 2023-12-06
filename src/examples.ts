@@ -100,6 +100,7 @@ import solar_updraft_tower from './examples/solar_updraft_tower.json';
 import solar_updraft_tower_city from './examples/solar_updraft_tower_city.json';
 import effect_blade_number from './examples/effect_blade_number.json';
 import effect_pitch_angle from './examples/effect_pitch_angle.json';
+import bird_safe_blade_design from './examples/bird_safe_blade_design.json';
 import offshore_wind_farm from './examples/offshore_wind_farm.json';
 import tucson_sundt_station from './examples/tucson_sundt_station.json';
 import ai_tilt_angle_one_row from './examples/ai_tilt_angle_one_row.json';
@@ -325,6 +326,9 @@ export const getExample = (name: string) => {
       break;
     case 'effect_pitch_angle':
       input = effect_pitch_angle;
+      break;
+    case 'bird_safe_blade_design':
+      input = bird_safe_blade_design;
       break;
     case 'offshore_wind_farm':
       input = offshore_wind_farm;

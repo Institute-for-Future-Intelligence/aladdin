@@ -511,6 +511,7 @@ export const i18n_en = {
       windPowerTutorials: {
         EffectOfBladeNumberOfWindTurbine: 'Effect of Blade Number of Wind Turbine',
         EffectOfPitchAngleOfWindTurbineBlades: 'Effect of Pitch Angle of Wind Turbine Blades',
+        BirdSafeBladeDesign: 'Bird-Safe Blade Design',
         OffshoreWindFarm: 'Offshore Wind Farm',
       },
 

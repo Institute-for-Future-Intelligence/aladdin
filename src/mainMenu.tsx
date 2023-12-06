@@ -2275,6 +2275,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, setNavigationView,
           <Menu.Item key="effect_pitch_angle" onClick={loadFile}>
             {i18n.t('menu.windPowerTutorials.EffectOfPitchAngleOfWindTurbineBlades', lang)}
           </Menu.Item>
+          <Menu.Item key="bird_safe_blade_design" onClick={loadFile}>
+            {i18n.t('menu.windPowerTutorials.BirdSafeBladeDesign', lang)}
+          </Menu.Item>
           <Menu.Item key="offshore_wind_farm" onClick={loadFile}>
             {i18n.t('menu.windPowerTutorials.OffshoreWindFarm', lang)}
           </Menu.Item>
