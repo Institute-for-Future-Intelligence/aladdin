@@ -82,19 +82,6 @@ export const WindTurbineMenu = React.memo(() => {
             {i18n.t('windTurbineMenu.RelativeYawAngle', lang)} ...
           </Menu.Item>
 
-          {/* bird-safe blade */}
-          {birdSafeDialogVisible && <WindTurbineBirdSafeSelection setDialogVisible={setBirdSafeDialogVisible} />}
-          <Menu.Item
-            key={'wind-turbine-bird-safe-blade'}
-            style={{ paddingLeft: '36px' }}
-            onClick={() => {
-              setApplyCount(0);
-              setBirdSafeDialogVisible(true);
-            }}
-          >
-            {i18n.t('windTurbineMenu.BirdSafeDesign', lang)} ...
-          </Menu.Item>
-
           {/* rotor properties */}
           <SubMenu
             key={'wind-turbine-rotor'}
@@ -107,7 +94,6 @@ export const WindTurbineMenu = React.memo(() => {
             )}
             <Menu.Item
               key={'wind-turbine-rotor-blade-number'}
-              style={{ paddingLeft: '36px' }}
               onClick={() => {
                 setApplyCount(0);
                 setBladeNumberDialogVisible(true);
@@ -122,7 +108,6 @@ export const WindTurbineMenu = React.memo(() => {
             )}
             <Menu.Item
               key={'wind-turbine-rotor-initial-angle'}
-              style={{ paddingLeft: '36px' }}
               onClick={() => {
                 setApplyCount(0);
                 setRotorInitialAngleDialogVisible(true);
@@ -135,7 +120,6 @@ export const WindTurbineMenu = React.memo(() => {
             {bladePitchDialogVisible && <WindTurbineBladePitchInput setDialogVisible={setBladePitchDialogVisible} />}
             <Menu.Item
               key={'wind-turbine-rotor-blade-pitch-angle'}
-              style={{ paddingLeft: '36px' }}
               onClick={() => {
                 setApplyCount(0);
                 setBladePitchDialogVisible(true);
@@ -148,7 +132,6 @@ export const WindTurbineMenu = React.memo(() => {
             {bladeRadiusDialogVisible && <WindTurbineBladeRadiusInput setDialogVisible={setBladeRadiusDialogVisible} />}
             <Menu.Item
               key={'wind-turbine-rotor-blade-radius'}
-              style={{ paddingLeft: '36px' }}
               onClick={() => {
                 setApplyCount(0);
                 setBladeRadiusDialogVisible(true);
@@ -161,13 +144,36 @@ export const WindTurbineMenu = React.memo(() => {
             {bladeDesignDialogVisible && <WindTurbineBladeDesign setDialogVisible={setBladeDesignDialogVisible} />}
             <Menu.Item
               key={'wind-turbine-rotor-blade-design'}
-              style={{ paddingLeft: '36px' }}
               onClick={() => {
                 setApplyCount(0);
                 setBladeDesignDialogVisible(true);
               }}
             >
               {i18n.t('windTurbineMenu.RotorBladeDesign', lang)} ...
+            </Menu.Item>
+
+            {/* hub design */}
+            {hubDesignDialogVisible && <WindTurbineHubDesign setDialogVisible={setHubDesignDialogVisible} />}
+            <Menu.Item
+              key={'wind-turbine-hub-design'}
+              onClick={() => {
+                setApplyCount(0);
+                setHubDesignDialogVisible(true);
+              }}
+            >
+              {i18n.t('windTurbineMenu.HubDesign', lang)} ...
+            </Menu.Item>
+
+            {/* bird-safe blade */}
+            {birdSafeDialogVisible && <WindTurbineBirdSafeSelection setDialogVisible={setBirdSafeDialogVisible} />}
+            <Menu.Item
+              key={'wind-turbine-bird-safe-blade'}
+              onClick={() => {
+                setApplyCount(0);
+                setBirdSafeDialogVisible(true);
+              }}
+            >
+              {i18n.t('windTurbineMenu.BirdSafeDesign', lang)} ...
             </Menu.Item>
           </SubMenu>
 
@@ -199,25 +205,6 @@ export const WindTurbineMenu = React.memo(() => {
               }}
             >
               {i18n.t('windTurbineMenu.TowerRadius', lang)} ...
-            </Menu.Item>
-          </SubMenu>
-
-          {/* other properties */}
-          <SubMenu
-            key={'wind-turbine-other-properties'}
-            title={i18n.t('windTurbineMenu.OtherParameters', lang)}
-            style={{ paddingLeft: '24px' }}
-          >
-            {/* hub design */}
-            {hubDesignDialogVisible && <WindTurbineHubDesign setDialogVisible={setHubDesignDialogVisible} />}
-            <Menu.Item
-              key={'wind-turbine-hub-design'}
-              onClick={() => {
-                setApplyCount(0);
-                setHubDesignDialogVisible(true);
-              }}
-            >
-              {i18n.t('windTurbineMenu.HubDesign', lang)} ...
             </Menu.Item>
           </SubMenu>
 

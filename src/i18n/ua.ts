@@ -1126,7 +1126,6 @@ export const i18n_ua = {
       Tower: 'Tower',
       TowerHeight: 'Tower Height',
       TowerRadius: 'Tower Radius',
-      OtherParameters: 'Other Parameters',
       HubDesign: 'Hub Design',
       HubRadius: 'Hub Radius',
       HubLength: 'Hub Length',

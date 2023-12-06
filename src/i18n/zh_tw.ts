@@ -1101,7 +1101,6 @@ export const i18n_zh_tw = {
       Tower: '塔架',
       TowerHeight: '塔架高度',
       TowerRadius: '塔架半徑',
-      OtherParameters: '其它參數',
       HubDesign: '轉子輪轂設計',
       HubRadius: '輪轂半徑',
       HubLength: '輪轂長度',
