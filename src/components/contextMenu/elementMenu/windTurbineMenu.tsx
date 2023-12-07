@@ -64,9 +64,9 @@ export const WindTurbineMenu = React.memo(() => {
 
   return (
     <Menu.ItemGroup>
-      <Copy keyName={'wind-turbine-copy'} paddingLeft={'36px'} />
+      {/* <Copy keyName={'wind-turbine-copy'} paddingLeft={'36px'} />
       {editable && <Cut keyName={'wind-turbine-cut'} paddingLeft={'36px'} />}
-      <Lock keyName={'wind-turbine-lock'} />
+      <Lock keyName={'wind-turbine-lock'} /> */}
       {windTurbine && editable && (
         <>
           {/* relative yaw angle to the parent element */}

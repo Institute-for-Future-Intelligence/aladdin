@@ -38,9 +38,9 @@ export const FlowerMenu = () => {
 
   return (
     <Menu.ItemGroup>
-      <Copy keyName={'flower-copy'} />
+      {/* <Copy keyName={'flower-copy'} />
       {editable && <Cut keyName={'flower-cut'} />}
-      <Lock keyName={'flower-lock'} />
+      <Lock keyName={'flower-lock'} /> */}
 
       {editable && (
         <Menu.Item key={'flower-flip'}>

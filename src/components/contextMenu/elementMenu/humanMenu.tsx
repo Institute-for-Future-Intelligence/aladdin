@@ -125,9 +125,9 @@ export const HumanMenu = React.memo(() => {
 
   return (
     <Menu.ItemGroup>
-      <Copy keyName={'human-copy'} />
+      {/* <Copy keyName={'human-copy'} />
       {editable && <Cut keyName={'human-cut'} />}
-      <Lock keyName={'human-lock'} />
+      <Lock keyName={'human-lock'} /> */}
       {editable && (
         <Menu.Item key={'human-observer'}>
           <Checkbox

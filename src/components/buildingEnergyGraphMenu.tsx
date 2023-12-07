@@ -113,14 +113,14 @@ const BuildingEnergyGraphMenu = ({
 
   return (
     <>
-      <Dropdown overlay={menu} placement="bottomRight" open={visible} onOpenChange={handleVisibleChange}>
+      {/* <Dropdown overlay={menu} placement="bottomRight" open={visible} onOpenChange={handleVisibleChange}>
         <StyledMenuSVG
           style={{ right: '25px' }}
           onClick={(e) => {
             e.stopPropagation();
           }}
         />
-      </Dropdown>
+      </Dropdown> */}
     </>
   );
 };

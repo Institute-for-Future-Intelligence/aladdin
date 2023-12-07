@@ -26,9 +26,9 @@ export const SensorMenu = React.memo(() => {
 
   return (
     <Menu.ItemGroup>
-      <Copy keyName={'sensor-copy'} />
+      {/* <Copy keyName={'sensor-copy'} />
       <Cut keyName={'sensor-cut'} />
-      <Lock keyName={'sensor-lock'} />
+      <Lock keyName={'sensor-lock'} /> */}
       <Menu.Item key={'sensor-show-label'}>
         <Checkbox checked={!!sensor?.showLabel} onChange={showLabel}>
           {i18n.t('labelSubMenu.KeepShowingLabel', lang)}

@@ -71,14 +71,14 @@ const BarGraphMenu = ({
 
   return (
     <>
-      <Dropdown overlay={menu} placement="bottomRight" open={visible} onOpenChange={handleVisibleChange}>
+      {/* <Dropdown overlay={menu} placement="bottomRight" open={visible} onOpenChange={handleVisibleChange}>
         <StyledMenuSVG
           style={{ right: '32px' }}
           onClick={(e) => {
             e.stopPropagation();
           }}
         />
-      </Dropdown>
+      </Dropdown> */}
     </>
   );
 };

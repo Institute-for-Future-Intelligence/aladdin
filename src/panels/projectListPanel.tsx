@@ -335,7 +335,7 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
                   let selection: string | undefined = undefined;
                   return (
                     <Space style={{ width: '100%' }}>
-                      <Dropdown
+                      {/* <Dropdown
                         overlay={
                           <Menu
                             onMouseEnter={(e) => {
@@ -409,7 +409,7 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
                             setSelectedIndex(-1);
                           }}
                         />
-                      </Dropdown>
+                      </Dropdown> */}
                       <Typography.Text style={{ fontSize: '12px', cursor: 'pointer', verticalAlign: 'top' }}>
                         {title}
                       </Typography.Text>

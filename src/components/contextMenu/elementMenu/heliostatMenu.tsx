@@ -58,9 +58,9 @@ export const HeliostatMenu = React.memo(() => {
 
   return (
     <Menu.ItemGroup>
-      <Copy keyName={'heliostat-copy'} paddingLeft={'36px'} />
+      {/* <Copy keyName={'heliostat-copy'} paddingLeft={'36px'} />
       {editable && <Cut keyName={'heliostat-cut'} paddingLeft={'36px'} />}
-      <Lock keyName={'heliostat-lock'} />
+      <Lock keyName={'heliostat-lock'} /> */}
       {heliostat && editable && (
         <>
           {/* select tower */}

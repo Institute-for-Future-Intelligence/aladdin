@@ -142,9 +142,9 @@ export const TreeMenu = React.memo(() => {
 
   return (
     <Menu.ItemGroup>
-      <Copy keyName={'tree-copy'} />
+      {/* <Copy keyName={'tree-copy'} />
       {editable && <Cut keyName={'tree-cut'} />}
-      <Lock keyName={'tree-lock'} />
+      <Lock keyName={'tree-lock'} /> */}
       <Menu.Item key={'tree-show-model'}>
         <Checkbox
           checked={tree?.showModel && tree?.type === ObjectType.Tree}

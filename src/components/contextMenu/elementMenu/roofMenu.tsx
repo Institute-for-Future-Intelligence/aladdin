@@ -291,8 +291,8 @@ export const RoofMenu = React.memo(() => {
 
   return (
     <Menu.ItemGroup>
-      {legalToPaste() && <Paste keyName={'roof-paste'} />}
-      <Lock keyName={'roof-lock'} />
+      {/* {legalToPaste() && <Paste keyName={'roof-paste'} />}
+      <Lock keyName={'roof-lock'} /> */}
 
       {roof.rise > 0 && (
         <Menu.Item key={'roof-ceiling'}>

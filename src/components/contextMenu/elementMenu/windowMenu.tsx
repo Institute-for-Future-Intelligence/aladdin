@@ -163,12 +163,12 @@ export const WindowMenu = React.memo(() => {
     });
   };
 
-  const renderCut = () => {
-    if (!window || window.locked) {
-      return null;
-    }
-    return <Cut keyName={'window-cut'} />;
-  };
+  // const renderCut = () => {
+  //   if (!window || window.locked) {
+  //     return null;
+  //   }
+  //   return <Cut keyName={'window-cut'} />;
+  // };
 
   const renderMenuItem = (dataType: WindowDataType) => {
     return (
@@ -318,9 +318,9 @@ export const WindowMenu = React.memo(() => {
 
   return (
     <Menu.ItemGroup>
-      <Copy keyName={'window-copy'} />
+      {/* <Copy keyName={'window-copy'} />
       {renderCut()}
-      <Lock keyName={'window-lock'} />
+      <Lock keyName={'window-lock'} /> */}
 
       {!window.locked && (
         <>

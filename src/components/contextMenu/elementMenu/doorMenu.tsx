@@ -6,14 +6,13 @@ import React, { useState } from 'react';
 import { Checkbox, Menu, Radio } from 'antd';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
-import { Copy, Cut, Lock } from '../menuItems';
+import { radioStyle } from '../menuItems';
 import i18n from 'src/i18n/i18n';
 import { DoorModel, DoorType } from 'src/models/DoorModel';
 import DoorTextureSelection from './doorTextureSelection';
 import DoorColorSelection from './doorColorSelection';
 import { DoorTexture, ObjectType } from 'src/types';
 import SubMenu from 'antd/lib/menu/SubMenu';
-import { radioStyle } from './wallMenu';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableCheck } from 'src/undo/UndoableCheck';
 import DoorUValueInput from './doorUValueInput';
@@ -122,9 +121,9 @@ export const DoorMenu = React.memo(() => {
 
   return (
     <Menu.ItemGroup>
-      <Copy keyName={'door-copy'} />
+      {/* <Copy keyName={'door-copy'} />
       {!door.locked && <Cut keyName={'door-cut'} />}
-      <Lock keyName={'door-lock'} />
+      <Lock keyName={'door-lock'} /> */}
 
       {!door.locked && (
         <>

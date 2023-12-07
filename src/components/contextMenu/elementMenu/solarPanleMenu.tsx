@@ -95,9 +95,9 @@ export const SolarPanelMenu = React.memo(() => {
 
   return (
     <Menu.ItemGroup>
-      <Copy keyName={'solar-panel-copy'} paddingLeft={'36px'} />
+      {/* <Copy keyName={'solar-panel-copy'} paddingLeft={'36px'} />
       {editable && <Cut keyName={'solar-panel-cut'} paddingLeft={'36px'} />}
-      <Lock keyName={'solar-panel-lock'} />
+      <Lock keyName={'solar-panel-lock'} /> */}
       {solarPanel && editable && (
         <>
           {/* pv model */}

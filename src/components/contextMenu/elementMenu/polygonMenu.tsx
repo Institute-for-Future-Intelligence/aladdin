@@ -427,9 +427,9 @@ export const PolygonMenu = React.memo(() => {
 
   return (
     <Menu.ItemGroup>
-      {legalToPaste() && <Paste keyName={'polygon-paste'} />}
+      {/* {legalToPaste() && <Paste keyName={'polygon-paste'} />}
       <Copy keyName={'polygon-copy'} />
-      {editable && <Cut keyName={'polygon-cut'} />}
+      {editable && <Cut keyName={'polygon-cut'} />} */}
       {(parent?.type === ObjectType.Foundation || parent?.type === ObjectType.Cuboid) && (
         <SubMenu key={'layout'} title={i18n.t('polygonMenu.Layout', lang)} style={{ paddingLeft: '24px' }}>
           {solarPanelLayoutWizardVisible && (
@@ -479,7 +479,7 @@ export const PolygonMenu = React.memo(() => {
           </SubMenu>
         </SubMenu>
       )}
-      <Lock keyName={'polygon-lock'} />
+      {/* <Lock keyName={'polygon-lock'} /> */}
       {editable && (
         <Menu.Item key={'polygon-filled'}>
           <Checkbox checked={!!polygon?.filled} onChange={toggleFilled}>

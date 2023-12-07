@@ -117,9 +117,9 @@ export const LightMenu = React.memo(() => {
 
   return (
     <Menu.ItemGroup>
-      <Copy keyName={'light-copy'} />
+      {/* <Copy keyName={'light-copy'} />
       <Cut keyName={'light-cut'} />
-      <Lock keyName={'light-lock'} />
+      <Lock keyName={'light-lock'} /> */}
 
       {parent && (parent.type === ObjectType.Roof || parent.type === ObjectType.Wall) && (
         <Menu.Item key={'light-inside'}>
