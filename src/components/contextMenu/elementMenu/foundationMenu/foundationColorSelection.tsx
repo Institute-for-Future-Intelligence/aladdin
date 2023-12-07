@@ -4,15 +4,15 @@
 
 import React, { useState } from 'react';
 import { Col, Radio, Row, Space } from 'antd';
-import { useStore } from '../../../stores/common';
-import * as Selector from '../../../stores/selector';
-import { ObjectType, Scope } from '../../../types';
-import i18n from '../../../i18n/i18n';
-import { UndoableChange } from '../../../undo/UndoableChange';
-import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
-import { FoundationModel } from '../../../models/FoundationModel';
-import { useSelectedElement } from './menuHooks';
-import Dialog from '../dialog';
+import { useStore } from '../../../../stores/common';
+import * as Selector from '../../../../stores/selector';
+import { ObjectType, Scope } from '../../../../types';
+import i18n from '../../../../i18n/i18n';
+import { UndoableChange } from '../../../../undo/UndoableChange';
+import { UndoableChangeGroup } from '../../../../undo/UndoableChangeGroup';
+import { FoundationModel } from '../../../../models/FoundationModel';
+import { useSelectedElement } from '../menuHooks';
+import Dialog from '../../dialog';
 import { useLanguage } from 'src/views/hooks';
 import { CompactPicker } from 'react-color';
 

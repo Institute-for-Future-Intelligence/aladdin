@@ -4,28 +4,28 @@
 
 import React, { useRef } from 'react';
 import { Col, InputNumber, Radio, Row, Space } from 'antd';
-import { useStore } from '../../../stores/common';
-import * as Selector from '../../../stores/selector';
-import { ObjectType, Scope } from '../../../types';
-import i18n from '../../../i18n/i18n';
-import { UndoableChange } from '../../../undo/UndoableChange';
-import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
-import { ParapetArgs, WallModel } from '../../../models/WallModel';
-import { Util } from '../../../Util';
-import Dialog from '../dialog';
+import { useStore } from '../../../../stores/common';
+import * as Selector from '../../../../stores/selector';
+import { ObjectType, Scope } from '../../../../types';
+import i18n from '../../../../i18n/i18n';
+import { UndoableChange } from '../../../../undo/UndoableChange';
+import { UndoableChangeGroup } from '../../../../undo/UndoableChangeGroup';
+import { WallModel } from '../../../../models/WallModel';
+import { Util } from '../../../../Util';
+import Dialog from '../../dialog';
 import { useLanguage } from 'src/views/hooks';
 
-interface WallNumberInputProps {
+export interface WallNumberInputProps {
   wall: WallModel;
   dataType: string;
-  attributeKey: keyof ParapetArgs;
+  attributeKey: keyof WallModel;
   range: [min: number, max: number];
   step: number;
-  setDialogVisible: () => void;
+  setDialogVisible: (b: boolean) => void;
   unit?: string;
 }
 
-const WallParapetNumberInput = ({
+const WallNumberInput = ({
   wall,
   dataType,
   attributeKey,
@@ -41,21 +41,30 @@ const WallParapetNumberInput = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const setCommonStore = useStore(Selector.set);
 
-  const inputRef = useRef<number>(wall.parapet[attributeKey] as number);
+  const inputRef = useRef<number>(wall[attributeKey] as number);
 
   const lang = useLanguage();
 
   const updateActionState = (value: number) => {
     setCommonStore((state) => {
       switch (attributeKey) {
-        case 'copingsHeight':
-          state.actionState.wallParapet.copingsHeight = value;
+        case 'ly':
+          state.actionState.wallThickness = value;
           break;
-        case 'copingsWidth':
-          state.actionState.wallParapet.copingsWidth = value;
+        case 'lz':
+          state.actionState.wallHeight = value;
           break;
-        case 'parapetHeight':
-          state.actionState.wallParapet.parapetHeight = value;
+        case 'opacity':
+          state.actionState.wallOpacity = value;
+          break;
+        case 'structureSpacing':
+          state.actionState.wallStructureSpacing = value;
+          break;
+        case 'structureWidth':
+          state.actionState.wallStructureWidth = value;
+          break;
+        case 'eavesLength':
+          state.actionState.wallEavesLength = value;
           break;
       }
     });
@@ -65,7 +74,7 @@ const WallParapetNumberInput = ({
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id && e.type === ObjectType.Wall && !e.locked) {
-          ((e as WallModel).parapet[attributeKey] as number) = val;
+          ((e as WallModel)[attributeKey] as number) = val;
           break;
         }
       }
@@ -81,7 +90,7 @@ const WallParapetNumberInput = ({
         if (!w.locked) {
           for (const e of state.elements) {
             if (e.id === w.id && e.type === ObjectType.Wall) {
-              ((e as WallModel).parapet[attributeKey] as number) = val;
+              ((e as WallModel)[attributeKey] as number) = val;
             }
           }
         }
@@ -94,7 +103,7 @@ const WallParapetNumberInput = ({
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.parentId === fId && e.type === ObjectType.Wall && !e.locked) {
-          ((e as WallModel).parapet[attributeKey] as number) = val;
+          ((e as WallModel)[attributeKey] as number) = val;
         }
       }
     });
@@ -105,7 +114,7 @@ const WallParapetNumberInput = ({
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Wall && !e.locked) {
-          ((e as WallModel).parapet[attributeKey] as number) = val;
+          ((e as WallModel)[attributeKey] as number) = val;
         }
       }
     });
@@ -116,7 +125,7 @@ const WallParapetNumberInput = ({
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Wall && !e.locked && map.has(e.id)) {
-          ((e as WallModel).parapet[attributeKey] as number) = value;
+          ((e as WallModel)[attributeKey] as number) = value;
         }
       }
     });
@@ -129,7 +138,7 @@ const WallParapetNumberInput = ({
         for (const e of elements) {
           if (
             e.type === ObjectType.Wall &&
-            value !== (e as WallModel).parapet[attributeKey] &&
+            value !== (e as WallModel)[attributeKey] &&
             !e.locked &&
             useStore.getState().selectedElementIdSet.has(e.id)
           ) {
@@ -139,7 +148,7 @@ const WallParapetNumberInput = ({
         break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
-          if (e.type === ObjectType.Wall && value !== (e as WallModel).parapet[attributeKey] && !e.locked) {
+          if (e.type === ObjectType.Wall && value !== (e as WallModel)[attributeKey] && !e.locked) {
             return true;
           }
         }
@@ -149,7 +158,7 @@ const WallParapetNumberInput = ({
           if (
             e.type === ObjectType.Wall &&
             e.foundationId === wall.foundationId &&
-            value !== (e as WallModel).parapet[attributeKey] &&
+            value !== (e as WallModel)[attributeKey] &&
             !e.locked
           ) {
             return true;
@@ -159,13 +168,13 @@ const WallParapetNumberInput = ({
       case Scope.AllConnectedObjects:
         const connectedWalls = Util.getAllConnectedWalls(wall);
         for (const e of connectedWalls) {
-          if (value !== e.parapet[attributeKey] && !e.locked) {
+          if (value !== e[attributeKey] && !e.locked) {
             return true;
           }
         }
         break;
       default:
-        if (value !== wall.parapet[attributeKey]) {
+        if (value !== wall[attributeKey]) {
           return true;
         }
         break;
@@ -173,7 +182,7 @@ const WallParapetNumberInput = ({
     return false;
   };
 
-  const setValue = (value: number) => {
+  const updateValue = (value: number) => {
     if (!wall) return;
     if (!needChange(value)) return;
     switch (actionScope) {
@@ -181,7 +190,7 @@ const WallParapetNumberInput = ({
         const oldValuesSelected = new Map<string, number>();
         for (const e of elements) {
           if (e.type === ObjectType.Wall && useStore.getState().selectedElementIdSet.has(e.id)) {
-            oldValuesSelected.set(e.id, (e as WallModel).parapet[attributeKey] as number);
+            oldValuesSelected.set(e.id, (e as WallModel)[attributeKey] as number);
           }
         }
         const undoableChangeSelected = {
@@ -210,7 +219,7 @@ const WallParapetNumberInput = ({
         const oldValuesAll = new Map<string, number>();
         for (const e of elements) {
           if (e.type === ObjectType.Wall) {
-            oldValuesAll.set(e.id, (e as WallModel).parapet[attributeKey] as number);
+            oldValuesAll.set(e.id, (e as WallModel)[attributeKey] as number);
           }
         }
         const undoableChangeAll = {
@@ -237,7 +246,7 @@ const WallParapetNumberInput = ({
           const oldValuesAboveFoundation = new Map<string, number>();
           for (const e of elements) {
             if (e.type === ObjectType.Wall && e.foundationId === wall.foundationId) {
-              oldValuesAboveFoundation.set(e.id, (e as WallModel).parapet[attributeKey] as number);
+              oldValuesAboveFoundation.set(e.id, (e as WallModel)[attributeKey] as number);
             }
           }
           const undoableChangeAboveFoundation = {
@@ -270,7 +279,7 @@ const WallParapetNumberInput = ({
           const connectedWalls = Util.getAllConnectedWalls(wall);
           const oldValuesConnectedWalls = new Map<string, number>();
           for (const e of connectedWalls) {
-            oldValuesConnectedWalls.set(e.id, e.parapet[attributeKey] as number);
+            oldValuesConnectedWalls.set(e.id, e[attributeKey] as number);
           }
           const undoableChangeConnectedWalls = {
             name: `Set ${dataType} for All Connected Walls`,
@@ -293,7 +302,7 @@ const WallParapetNumberInput = ({
         break;
       default:
         if (wall) {
-          const oldValue = wall.parapet[attributeKey] as number;
+          const oldValue = wall[attributeKey] as number;
           const undoableChange = {
             name: `Set Wall ${dataType}`,
             timestamp: Date.now(),
@@ -316,11 +325,12 @@ const WallParapetNumberInput = ({
   };
 
   const close = () => {
-    setDialogVisible();
+    inputRef.current = wall[attributeKey] as number;
+    setDialogVisible(false);
   };
 
   const apply = () => {
-    setValue(inputRef.current);
+    updateValue(inputRef.current);
   };
 
   return (
@@ -333,7 +343,7 @@ const WallParapetNumberInput = ({
             style={{ width: 120 }}
             step={step}
             precision={2}
-            defaultValue={wall.parapet[attributeKey] as number}
+            defaultValue={wall[attributeKey] as number}
             onChange={(val) => (inputRef.current = val!)}
           />
           <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
@@ -365,4 +375,4 @@ const WallParapetNumberInput = ({
   );
 };
 
-export default WallParapetNumberInput;
+export default WallNumberInput;

@@ -18,7 +18,7 @@ export * from './parabolicDishMenu';
 export * from './fresnelReflectorMenu';
 export * from './heliostatMenu';
 export * from './treeMenu';
-export * from './wallMenu';
+export * from './wallMenu/wallMenu';
 export * from './doorMenu';
 export * from './windowMenu';
 export * from './roofMenu';

@@ -4,17 +4,17 @@
 
 import React, { useState } from 'react';
 import { Col, InputNumber, Radio, RadioChangeEvent, Row, Space } from 'antd';
-import { useStore } from '../../../stores/common';
-import * as Selector from '../../../stores/selector';
-import { ObjectType, Scope } from '../../../types';
-import i18n from '../../../i18n/i18n';
-import { UndoableChange } from '../../../undo/UndoableChange';
-import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
-import { Util } from '../../../Util';
-import { CuboidModel } from '../../../models/CuboidModel';
-import { ZERO_TOLERANCE } from '../../../constants';
-import { useSelectedElement } from './menuHooks';
-import Dialog from '../dialog';
+import { useStore } from '../../../../stores/common';
+import * as Selector from '../../../../stores/selector';
+import { ObjectType, Scope } from '../../../../types';
+import i18n from '../../../../i18n/i18n';
+import { UndoableChange } from '../../../../undo/UndoableChange';
+import { UndoableChangeGroup } from '../../../../undo/UndoableChangeGroup';
+import { Util } from '../../../../Util';
+import { CuboidModel } from '../../../../models/CuboidModel';
+import { ZERO_TOLERANCE } from '../../../../constants';
+import { useSelectedElement } from '../menuHooks';
+import Dialog from '../../dialog';
 import { useLanguage } from 'src/views/hooks';
 
 const CuboidAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {

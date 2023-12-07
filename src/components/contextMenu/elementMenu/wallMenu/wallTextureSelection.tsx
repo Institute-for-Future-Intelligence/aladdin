@@ -23,12 +23,12 @@ import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { WallModel } from 'src/models/WallModel';
-import { Util } from '../../../Util';
-import { useSelectedElement } from './menuHooks';
-import Dialog from '../dialog';
+import { Util } from '../../../../Util';
+import { useSelectedElement } from '../menuHooks';
+import Dialog from '../../dialog';
 import { useLanguage } from 'src/views/hooks';
 
-const WallParapetTextureSelection = ({ setDialogVisible }: { setDialogVisible: () => void }) => {
+const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const addUndoable = useStore(Selector.addUndoable);
@@ -37,18 +37,19 @@ const WallParapetTextureSelection = ({ setDialogVisible }: { setDialogVisible: (
   const setApplyCount = useStore(Selector.setApplyCount);
   const getElementById = useStore(Selector.getElementById);
 
+  const lang = useLanguage();
+
   const wall = useSelectedElement(ObjectType.Wall) as WallModel | undefined;
 
-  const [selectedTexture, setSelectedTexture] = useState<WallTexture>(wall?.parapet.textureType ?? WallTexture.Default);
+  const [selectedTexture, setSelectedTexture] = useState<WallTexture>(wall?.textureType ?? WallTexture.Default);
 
-  const lang = useLanguage();
   const { Option } = Select;
 
   const updateById = (id: string, texture: WallTexture) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Wall && e.id === id && !e.locked) {
-          (e as WallModel).parapet.textureType = texture;
+          (e as WallModel).textureType = texture;
           break;
         }
       }
@@ -64,7 +65,7 @@ const WallParapetTextureSelection = ({ setDialogVisible }: { setDialogVisible: (
         if (!w.locked) {
           for (const e of state.elements) {
             if (e.id === w.id && e.type === ObjectType.Wall) {
-              (e as WallModel).parapet.textureType = texture;
+              (e as WallModel).textureType = texture;
             }
           }
         }
@@ -76,7 +77,7 @@ const WallParapetTextureSelection = ({ setDialogVisible }: { setDialogVisible: (
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Wall && e.foundationId === foundationId && !e.locked) {
-          (e as WallModel).parapet.textureType = texture;
+          (e as WallModel).textureType = texture;
         }
       }
     });
@@ -86,17 +87,17 @@ const WallParapetTextureSelection = ({ setDialogVisible }: { setDialogVisible: (
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Wall && !e.locked) {
-          (e as WallModel).parapet.textureType = texture;
+          (e as WallModel).textureType = texture;
         }
       }
     });
   };
 
   const updateInMap = (map: Map<string, WallTexture>, texture: WallTexture) => {
-    setCommonStore((state) => {
+    setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Wall && !e.locked && map.has(e.id)) {
-          (e as WallModel).parapet.textureType = texture;
+          (e as WallModel).textureType = texture;
         }
       }
     });
@@ -109,7 +110,7 @@ const WallParapetTextureSelection = ({ setDialogVisible }: { setDialogVisible: (
         for (const e of elements) {
           if (
             e.type === ObjectType.Wall &&
-            value !== (e as WallModel).parapet.textureType &&
+            value !== (e as WallModel).textureType &&
             !e.locked &&
             useStore.getState().selectedElementIdSet.has(e.id)
           ) {
@@ -119,7 +120,7 @@ const WallParapetTextureSelection = ({ setDialogVisible }: { setDialogVisible: (
         break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
-          if (e.type === ObjectType.Wall && value !== (e as WallModel).parapet.textureType && !e.locked) {
+          if (e.type === ObjectType.Wall && value !== (e as WallModel).textureType && !e.locked) {
             return true;
           }
         }
@@ -129,7 +130,7 @@ const WallParapetTextureSelection = ({ setDialogVisible }: { setDialogVisible: (
           if (
             e.type === ObjectType.Wall &&
             e.foundationId === wall.foundationId &&
-            value !== (e as WallModel).parapet.textureType &&
+            value !== (e as WallModel).textureType &&
             !e.locked
           ) {
             return true;
@@ -139,13 +140,13 @@ const WallParapetTextureSelection = ({ setDialogVisible }: { setDialogVisible: (
       case Scope.AllConnectedObjects:
         const connectedWalls = Util.getAllConnectedWalls(wall);
         for (const e of connectedWalls) {
-          if (value !== e.parapet.textureType && !e.locked) {
+          if (value !== e.textureType && !e.locked) {
             return true;
           }
         }
         break;
       default:
-        if (value !== wall?.parapet.textureType) {
+        if (value !== wall?.textureType) {
           return true;
         }
         break;
@@ -153,7 +154,7 @@ const WallParapetTextureSelection = ({ setDialogVisible }: { setDialogVisible: (
     return false;
   };
 
-  const updateTexture = (value: WallTexture) => {
+  const setTexture = (value: WallTexture) => {
     if (!wall) return;
     if (!needChange(value)) return;
     switch (actionScope) {
@@ -161,11 +162,11 @@ const WallParapetTextureSelection = ({ setDialogVisible }: { setDialogVisible: (
         const oldTexturesSelected = new Map<string, WallTexture>();
         for (const e of elements) {
           if (e.type === ObjectType.Wall && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
-            oldTexturesSelected.set(e.id, (e as WallModel).parapet.textureType ?? WallTexture.Default);
+            oldTexturesSelected.set(e.id, (e as WallModel).textureType ?? WallTexture.Default);
           }
         }
         const undoableChangeSelected = {
-          name: 'Set Parapet Texture for Selected Walls',
+          name: 'Set Texture for Selected Walls',
           timestamp: Date.now(),
           oldValues: oldTexturesSelected,
           newValue: value,
@@ -190,11 +191,11 @@ const WallParapetTextureSelection = ({ setDialogVisible }: { setDialogVisible: (
         const oldTexturesAll = new Map<string, WallTexture>();
         for (const e of elements) {
           if (e.type === ObjectType.Wall && !e.locked) {
-            oldTexturesAll.set(e.id, (e as WallModel).parapet.textureType ?? WallTexture.Default);
+            oldTexturesAll.set(e.id, (e as WallModel).textureType ?? WallTexture.Default);
           }
         }
         const undoableChangeAll = {
-          name: 'Set Parapet Texture for All Walls',
+          name: 'Set Texture for All Walls',
           timestamp: Date.now(),
           oldValues: oldTexturesAll,
           newValue: value,
@@ -217,11 +218,11 @@ const WallParapetTextureSelection = ({ setDialogVisible }: { setDialogVisible: (
           const oldTexturesAboveFoundation = new Map<string, WallTexture>();
           for (const e of elements) {
             if (e.type === ObjectType.Wall && e.foundationId === wall.foundationId && !e.locked) {
-              oldTexturesAboveFoundation.set(e.id, (e as WallModel).parapet.textureType);
+              oldTexturesAboveFoundation.set(e.id, (e as WallModel).textureType);
             }
           }
           const undoableChangeAboveFoundation = {
-            name: 'Set Parapet Texture for All Walls Above Foundation',
+            name: 'Set Texture for All Walls Above Foundation',
             timestamp: Date.now(),
             oldValues: oldTexturesAboveFoundation,
             newValue: value,
@@ -250,10 +251,10 @@ const WallParapetTextureSelection = ({ setDialogVisible }: { setDialogVisible: (
           const connectedWalls = Util.getAllConnectedWalls(wall);
           const oldValuesConnectedWalls = new Map<string, WallTexture>();
           for (const e of connectedWalls) {
-            oldValuesConnectedWalls.set(e.id, e.parapet.textureType);
+            oldValuesConnectedWalls.set(e.id, e.textureType);
           }
           const undoableChangeConnectedWalls = {
-            name: `Set Parapet Texture for All Connected Walls`,
+            name: `Set Texture for All Connected Walls`,
             timestamp: Date.now(),
             oldValues: oldValuesConnectedWalls,
             newValue: value,
@@ -274,9 +275,9 @@ const WallParapetTextureSelection = ({ setDialogVisible }: { setDialogVisible: (
       default:
         if (wall) {
           const updatedWall = getElementById(wall.id) as WallModel;
-          const oldTexture = updatedWall?.parapet.textureType ?? wall.parapet.textureType;
+          const oldTexture = updatedWall?.textureType ?? wall.textureType;
           const undoableChange = {
-            name: 'Set Parapet Texture of Selected Wall',
+            name: 'Set Texture of Selected Wall',
             timestamp: Date.now(),
             oldValue: oldTexture,
             newValue: value,
@@ -295,16 +296,16 @@ const WallParapetTextureSelection = ({ setDialogVisible }: { setDialogVisible: (
         }
     }
     setCommonStore((state) => {
-      state.actionState.wallParapet.textureType = value;
+      state.actionState.wallTexture = value;
     });
   };
 
   const close = () => {
-    setDialogVisible();
+    setDialogVisible(false);
   };
 
   const apply = () => {
-    updateTexture(selectedTexture);
+    setTexture(selectedTexture);
   };
 
   return (
@@ -472,4 +473,4 @@ const WallParapetTextureSelection = ({ setDialogVisible }: { setDialogVisible: (
   );
 };
 
-export default WallParapetTextureSelection;
+export default WallTextureSelection;

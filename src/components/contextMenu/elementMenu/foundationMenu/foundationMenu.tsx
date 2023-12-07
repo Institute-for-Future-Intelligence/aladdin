@@ -17,12 +17,12 @@ import {
   ToleranceThresholdInput,
 } from './foundationMenuItems';
 import i18n from 'src/i18n/i18n';
-import FoundationTextureSelection from '../foundationTextureSelection';
-import FoundationColorSelection from '../foundationColorSelection';
-import FoundationLengthInput from '../foundationLengthInput';
-import FoundationWidthInput from '../foundationWidthInput';
-import FoundationHeightInput from '../foundationHeightInput';
-import FoundationAzimuthInput from '../foundationAzimuthInput';
+import FoundationTextureSelection from './foundationTextureSelection';
+import FoundationColorSelection from './foundationColorSelection';
+import FoundationLengthInput from './foundationLengthInput';
+import FoundationWidthInput from './foundationWidthInput';
+import FoundationHeightInput from './foundationHeightInput';
+import FoundationAzimuthInput from './foundationAzimuthInput';
 import { Util } from 'src/Util';
 import GroundFloorRValueInput from '../groundFloorRValueInput';
 import SolarAbsorberPipeHeightInput from '../solarAbsorberPipeHeightInput';

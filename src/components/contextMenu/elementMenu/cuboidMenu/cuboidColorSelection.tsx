@@ -5,15 +5,15 @@
 import React, { useEffect, useState } from 'react';
 import { CompactPicker } from 'react-color';
 import { Col, Radio, RadioChangeEvent, Row, Space } from 'antd';
-import { CommonStoreState, useStore } from '../../../stores/common';
-import * as Selector from '../../../stores/selector';
-import { ObjectType, Scope } from '../../../types';
-import i18n from '../../../i18n/i18n';
-import { UndoableChange } from '../../../undo/UndoableChange';
-import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
-import { CuboidModel } from '../../../models/CuboidModel';
-import { useSelectedElement } from './menuHooks';
-import Dialog from '../dialog';
+import { CommonStoreState, useStore } from '../../../../stores/common';
+import * as Selector from '../../../../stores/selector';
+import { ObjectType, Scope } from '../../../../types';
+import i18n from '../../../../i18n/i18n';
+import { UndoableChange } from '../../../../undo/UndoableChange';
+import { UndoableChangeGroup } from '../../../../undo/UndoableChangeGroup';
+import { CuboidModel } from '../../../../models/CuboidModel';
+import { useSelectedElement } from '../menuHooks';
+import Dialog from '../../dialog';
 import { useLanguage } from 'src/views/hooks';
 
 const CuboidColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {

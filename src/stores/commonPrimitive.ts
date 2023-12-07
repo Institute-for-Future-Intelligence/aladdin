@@ -15,6 +15,9 @@ export interface PrimitiveStoreState {
 
   waiting: boolean;
 
+  contextMenuFlag: boolean;
+  updateContextMenu: () => void;
+
   showEconomicsPanel: boolean;
   showNavigationPanel: boolean;
   showShadowSettings: boolean;
@@ -178,6 +181,13 @@ export const usePrimitiveStore = createWithEqualityFn<PrimitiveStoreState>()((se
     },
 
     waiting: false,
+
+    contextMenuFlag: false,
+    updateContextMenu() {
+      immerSet((state) => {
+        state.contextMenuFlag = !state.contextMenuFlag;
+      });
+    },
 
     showEconomicsPanel: false,
     showNavigationPanel: false,

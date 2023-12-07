@@ -1,88 +1,50 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useRef } from 'react';
-import { Col, InputNumber, Radio, Row, Space } from 'antd';
-import { useStore } from '../../../stores/common';
-import * as Selector from '../../../stores/selector';
-import { ObjectType, Scope } from '../../../types';
-import i18n from '../../../i18n/i18n';
-import { UndoableChange } from '../../../undo/UndoableChange';
-import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
-import { WallModel } from '../../../models/WallModel';
-import { Util } from '../../../Util';
-import Dialog from '../dialog';
+import React from 'react';
+import { Col, Radio, Row, Space } from 'antd';
+import { useStore } from '../../../../stores/common';
+import * as Selector from '../../../../stores/selector';
+import { ObjectType, Scope } from '../../../../types';
+import i18n from '../../../../i18n/i18n';
+import { UndoableChange } from '../../../../undo/UndoableChange';
+import { UndoableChangeGroup } from '../../../../undo/UndoableChangeGroup';
+import { WallModel } from '../../../../models/WallModel';
+import { CompactPicker } from 'react-color';
+import { Util } from '../../../../Util';
+import { useColorPicker, useSelectedElement } from '../menuHooks';
+import Dialog from '../../dialog';
 import { useLanguage } from 'src/views/hooks';
 
-interface WallNumberInputProps {
-  wall: WallModel;
-  dataType: string;
-  attributeKey: keyof WallModel;
-  range: [min: number, max: number];
-  step: number;
-  setDialogVisible: () => void;
-  unit?: string;
-}
-
-const WallNumberInput = ({
-  wall,
-  dataType,
-  attributeKey,
-  range,
-  step,
-  unit,
-  setDialogVisible,
-}: WallNumberInputProps) => {
+const WallStructureColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.wallActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
-  const setCommonStore = useStore(Selector.set);
+  const getElementById = useStore(Selector.getElementById);
 
-  const inputRef = useRef<number>(wall[attributeKey] as number);
+  const wall = useSelectedElement(ObjectType.Wall) as WallModel | undefined;
+
+  const [selectedColor, onColorChange] = useColorPicker(wall?.structureColor ?? '#ffffff');
 
   const lang = useLanguage();
 
-  const updateActionState = (value: number) => {
-    setCommonStore((state) => {
-      switch (attributeKey) {
-        case 'ly':
-          state.actionState.wallThickness = value;
-          break;
-        case 'lz':
-          state.actionState.wallHeight = value;
-          break;
-        case 'opacity':
-          state.actionState.wallOpacity = value;
-          break;
-        case 'structureSpacing':
-          state.actionState.wallStructureSpacing = value;
-          break;
-        case 'structureWidth':
-          state.actionState.wallStructureWidth = value;
-          break;
-        case 'eavesLength':
-          state.actionState.wallEavesLength = value;
-          break;
-      }
-    });
-  };
-
-  const updateById = (id: string, val: number) => {
+  const updateById = (id: string, color: string) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id && e.type === ObjectType.Wall && !e.locked) {
-          ((e as WallModel)[attributeKey] as number) = val;
+          (e as WallModel).structureColor = color;
           break;
         }
       }
     });
-    updateActionState(val);
   };
 
-  const updateConnectedWalls = (val: number) => {
+  const updateConnectedWalls = (color: string) => {
+    if (!wall) return;
     const connectedWalls = Util.getAllConnectedWalls(wall);
     if (connectedWalls.length === 0) return;
     setCommonStore((state) => {
@@ -90,55 +52,52 @@ const WallNumberInput = ({
         if (!w.locked) {
           for (const e of state.elements) {
             if (e.id === w.id && e.type === ObjectType.Wall) {
-              ((e as WallModel)[attributeKey] as number) = val;
+              (e as WallModel).structureColor = color;
             }
           }
         }
       }
     });
-    updateActionState(val);
   };
 
-  const updateAboveFoundation = (fId: string, val: number) => {
+  const updateAboveFoundation = (fId: string, color: string) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.parentId === fId && e.type === ObjectType.Wall && !e.locked) {
-          ((e as WallModel)[attributeKey] as number) = val;
+          (e as WallModel).structureColor = color;
         }
       }
     });
-    updateActionState(val);
   };
 
-  const updateForAll = (val: number) => {
+  const updateForAll = (color: string) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Wall && !e.locked) {
-          ((e as WallModel)[attributeKey] as number) = val;
+          (e as WallModel).structureColor = color;
         }
       }
     });
-    updateActionState(val);
   };
 
-  const updateInMap = (map: Map<string, number>, value: number) => {
+  const updateInMap = (map: Map<string, string>, value: string) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Wall && !e.locked && map.has(e.id)) {
-          ((e as WallModel)[attributeKey] as number) = value;
+          e.color = value;
         }
       }
     });
-    updateActionState(value);
   };
 
-  const needChange = (value: number) => {
+  const needChange = (value: string) => {
+    if (!wall) return;
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType:
         for (const e of elements) {
           if (
             e.type === ObjectType.Wall &&
-            value !== (e as WallModel)[attributeKey] &&
+            value !== (e as WallModel).structureColor &&
             !e.locked &&
             useStore.getState().selectedElementIdSet.has(e.id)
           ) {
@@ -148,7 +107,7 @@ const WallNumberInput = ({
         break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
-          if (e.type === ObjectType.Wall && value !== (e as WallModel)[attributeKey] && !e.locked) {
+          if (e.type === ObjectType.Wall && value !== (e as WallModel).structureColor && !e.locked) {
             return true;
           }
         }
@@ -158,7 +117,7 @@ const WallNumberInput = ({
           if (
             e.type === ObjectType.Wall &&
             e.foundationId === wall.foundationId &&
-            value !== (e as WallModel)[attributeKey] &&
+            value !== (e as WallModel).structureColor &&
             !e.locked
           ) {
             return true;
@@ -168,13 +127,13 @@ const WallNumberInput = ({
       case Scope.AllConnectedObjects:
         const connectedWalls = Util.getAllConnectedWalls(wall);
         for (const e of connectedWalls) {
-          if (value !== e[attributeKey] && !e.locked) {
+          if (value !== e.structureColor && !e.locked) {
             return true;
           }
         }
         break;
       default:
-        if (value !== wall[attributeKey]) {
+        if (value !== wall?.structureColor) {
           return true;
         }
         break;
@@ -182,58 +141,58 @@ const WallNumberInput = ({
     return false;
   };
 
-  const updateValue = (value: number) => {
+  const setColor = (value: string) => {
     if (!wall) return;
     if (!needChange(value)) return;
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType: {
-        const oldValuesSelected = new Map<string, number>();
+        const oldColorsSelected = new Map<string, string>();
         for (const e of elements) {
           if (e.type === ObjectType.Wall && useStore.getState().selectedElementIdSet.has(e.id)) {
-            oldValuesSelected.set(e.id, (e as WallModel)[attributeKey] as number);
+            oldColorsSelected.set(e.id, (e as WallModel).structureColor ?? '#ffffff');
           }
         }
         const undoableChangeSelected = {
-          name: `Set ${dataType} for Selected Walls`,
+          name: 'Set Structure Color for Selected Walls',
           timestamp: Date.now(),
-          oldValues: oldValuesSelected,
+          oldValues: oldColorsSelected,
           newValue: value,
           undo: () => {
-            for (const [id, wh] of undoableChangeSelected.oldValues.entries()) {
-              updateById(id, wh as number);
+            for (const [id, studColor] of undoableChangeSelected.oldValues.entries()) {
+              updateById(id, studColor as string);
             }
           },
           redo: () => {
             updateInMap(
-              undoableChangeSelected.oldValues as Map<string, number>,
-              undoableChangeSelected.newValue as number,
+              undoableChangeSelected.oldValues as Map<string, string>,
+              undoableChangeSelected.newValue as string,
             );
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeSelected);
-        updateInMap(oldValuesSelected, value);
+        updateInMap(oldColorsSelected, value);
         setApplyCount(applyCount + 1);
         break;
       }
       case Scope.AllObjectsOfThisType: {
-        const oldValuesAll = new Map<string, number>();
+        const oldColorsAll = new Map<string, string>();
         for (const e of elements) {
           if (e.type === ObjectType.Wall) {
-            oldValuesAll.set(e.id, (e as WallModel)[attributeKey] as number);
+            oldColorsAll.set(e.id, (e as WallModel).structureColor ?? '#ffffff');
           }
         }
         const undoableChangeAll = {
-          name: `Set ${dataType} for All Walls`,
+          name: 'Set Structure Color for All Walls',
           timestamp: Date.now(),
-          oldValues: oldValuesAll,
+          oldValues: oldColorsAll,
           newValue: value,
           undo: () => {
-            for (const [id, wh] of undoableChangeAll.oldValues.entries()) {
-              updateById(id, wh as number);
+            for (const [id, studColor] of undoableChangeAll.oldValues.entries()) {
+              updateById(id, studColor as string);
             }
           },
           redo: () => {
-            updateForAll(undoableChangeAll.newValue as number);
+            updateForAll(undoableChangeAll.newValue as string);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
@@ -243,28 +202,28 @@ const WallNumberInput = ({
       }
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (wall.foundationId) {
-          const oldValuesAboveFoundation = new Map<string, number>();
+          const oldColorsAboveFoundation = new Map<string, string>();
           for (const e of elements) {
             if (e.type === ObjectType.Wall && e.foundationId === wall.foundationId) {
-              oldValuesAboveFoundation.set(e.id, (e as WallModel)[attributeKey] as number);
+              oldColorsAboveFoundation.set(e.id, (e as WallModel).structureColor ?? '#ffffff');
             }
           }
           const undoableChangeAboveFoundation = {
-            name: `Set ${dataType} for All Walls Above Foundation`,
+            name: 'Set Structure Color for All Walls Above Foundation',
             timestamp: Date.now(),
-            oldValues: oldValuesAboveFoundation,
+            oldValues: oldColorsAboveFoundation,
             newValue: value,
             groupId: wall.foundationId,
             undo: () => {
-              for (const [id, wh] of undoableChangeAboveFoundation.oldValues.entries()) {
-                updateById(id, wh as number);
+              for (const [id, studColor] of undoableChangeAboveFoundation.oldValues.entries()) {
+                updateById(id, studColor as string);
               }
             },
             redo: () => {
               if (undoableChangeAboveFoundation.groupId) {
                 updateAboveFoundation(
                   undoableChangeAboveFoundation.groupId,
-                  undoableChangeAboveFoundation.newValue as number,
+                  undoableChangeAboveFoundation.newValue as string,
                 );
               }
             },
@@ -277,22 +236,22 @@ const WallNumberInput = ({
       case Scope.AllConnectedObjects:
         if (wall) {
           const connectedWalls = Util.getAllConnectedWalls(wall);
-          const oldValuesConnectedWalls = new Map<string, number>();
+          const oldValuesConnectedWalls = new Map<string, string>();
           for (const e of connectedWalls) {
-            oldValuesConnectedWalls.set(e.id, e[attributeKey] as number);
+            oldValuesConnectedWalls.set(e.id, e.color ?? '#ffffff');
           }
           const undoableChangeConnectedWalls = {
-            name: `Set ${dataType} for All Connected Walls`,
+            name: `Set Structure Color for All Connected Walls`,
             timestamp: Date.now(),
             oldValues: oldValuesConnectedWalls,
             newValue: value,
             undo: () => {
               for (const [id, wh] of undoableChangeConnectedWalls.oldValues.entries()) {
-                updateById(id, wh as number);
+                updateById(id, wh as string);
               }
             },
             redo: () => {
-              updateConnectedWalls(undoableChangeConnectedWalls.newValue as number);
+              updateConnectedWalls(undoableChangeConnectedWalls.newValue as string);
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeConnectedWalls);
@@ -302,19 +261,20 @@ const WallNumberInput = ({
         break;
       default:
         if (wall) {
-          const oldValue = wall[attributeKey] as number;
+          const updatedWall = getElementById(wall.id) as WallModel;
+          const oldColor = updatedWall?.structureColor ?? wall.structureColor ?? '#ffffff';
           const undoableChange = {
-            name: `Set Wall ${dataType}`,
+            name: 'Set Structure Color of Selected Wall',
             timestamp: Date.now(),
-            oldValue: oldValue,
+            oldValue: oldColor,
             newValue: value,
             changedElementId: wall.id,
             changedElementType: wall.type,
             undo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
+              updateById(undoableChange.changedElementId, undoableChange.oldValue as string);
             },
             redo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.newValue as number);
+              updateById(undoableChange.changedElementId, undoableChange.newValue as string);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
@@ -322,41 +282,29 @@ const WallNumberInput = ({
           setApplyCount(applyCount + 1);
         }
     }
+    setCommonStore((state) => {
+      state.actionState.wallStructureColor = value;
+    });
   };
 
   const close = () => {
-    inputRef.current = wall[attributeKey] as number;
-    setDialogVisible();
+    setDialogVisible(false);
   };
 
   const apply = () => {
-    updateValue(inputRef.current);
+    setColor(selectedColor);
   };
 
   return (
-    <Dialog width={550} title={i18n.t(`wallMenu.${dataType}`, lang)} onApply={apply} onClose={close}>
+    <Dialog width={640} title={i18n.t('wallMenu.StructureColor', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
-        <Col className="gutter-row" span={6}>
-          <InputNumber
-            min={range[0]}
-            max={range[1]}
-            style={{ width: 120 }}
-            step={step}
-            precision={2}
-            defaultValue={wall[attributeKey] as number}
-            onChange={(val) => (inputRef.current = val!)}
-          />
-          <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-            {i18n.t('word.Range', lang)}: [{range.toString()}] {unit}
-          </div>
-        </Col>
-        <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
-          {unit ?? ' '}
+        <Col className="gutter-row" span={11}>
+          <CompactPicker color={selectedColor} onChangeComplete={onColorChange} />
         </Col>
         <Col
           className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-          span={17}
+          span={13}
         >
           <Radio.Group onChange={(e) => useStore.getState().setWallActionScope(e.target.value)} value={actionScope}>
             <Space direction="vertical">
@@ -375,4 +323,4 @@ const WallNumberInput = ({
   );
 };
 
-export default WallNumberInput;
+export default WallStructureColorSelection;

@@ -30,6 +30,8 @@ export class ElementCounter {
   solarUpdraftTowerCount: number = 0;
   windTurbineCount: number = 0;
   lockedWindTurbineCount: number = 0;
+  lockedDoorCount: number = 0;
+  lockedLightCount: number = 0;
 
   gotSome() {
     return (

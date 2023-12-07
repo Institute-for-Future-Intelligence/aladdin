@@ -10,14 +10,13 @@ import { ObjectType, Scope } from 'src/types';
 import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
-import { WallModel } from '../../../models/WallModel';
-import { Util } from '../../../Util';
-import { DEFAULT_WALL_R_VALUE } from '../../../constants';
-import { useSelectedElement } from './menuHooks';
-import Dialog from '../dialog';
+import { WallModel } from '../../../../models/WallModel';
+import { Util } from '../../../../Util';
+import { useSelectedElement } from '../menuHooks';
+import Dialog from '../../dialog';
 import { useLanguage } from 'src/views/hooks';
 
-const WallRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const elements = useStore(Selector.elements);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.wallActionScope);
@@ -28,8 +27,7 @@ const WallRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
 
   const wall = useSelectedElement(ObjectType.Wall) as WallModel | undefined;
 
-  const [inputValue, setInputValue] = useState<number>(wall?.rValue ?? DEFAULT_WALL_R_VALUE);
-  const [inputValueUS, setInputValueUS] = useState<number>(Util.toRValueInUS(inputValue));
+  const [inputValue, setInputValue] = useState<number>(wall?.volumetricHeatCapacity ?? 0.5);
 
   const lang = useLanguage();
 
@@ -37,7 +35,7 @@ const WallRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id) {
-          (e as WallModel).rValue = value;
+          (e as WallModel).volumetricHeatCapacity = value;
           break;
         }
       }
@@ -63,7 +61,7 @@ const WallRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
         for (const e of elements) {
           if (
             e.type === ObjectType.Wall &&
-            value !== (e as WallModel).rValue &&
+            value !== (e as WallModel).volumetricHeatCapacity &&
             !e.locked &&
             useStore.getState().selectedElementIdSet.has(e.id)
           ) {
@@ -73,7 +71,7 @@ const WallRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
         break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
-          if (e.type === ObjectType.Wall && value !== (e as WallModel).rValue && !e.locked) {
+          if (e.type === ObjectType.Wall && value !== (e as WallModel).volumetricHeatCapacity && !e.locked) {
             return true;
           }
         }
@@ -83,7 +81,7 @@ const WallRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
           if (
             e.type === ObjectType.Wall &&
             e.foundationId === wall.foundationId &&
-            value !== (e as WallModel).rValue &&
+            value !== (e as WallModel).volumetricHeatCapacity &&
             !e.locked
           ) {
             return true;
@@ -93,13 +91,13 @@ const WallRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
       case Scope.AllConnectedObjects:
         const connectedWalls = Util.getAllConnectedWalls(wall);
         for (const e of connectedWalls) {
-          if (value !== e.rValue && !e.locked) {
+          if (value !== e.volumetricHeatCapacity && !e.locked) {
             return true;
           }
         }
         break;
       default:
-        if (value !== wall?.rValue) {
+        if (value !== wall?.volumetricHeatCapacity) {
           return true;
         }
         break;
@@ -116,12 +114,12 @@ const WallRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
         for (const e of elements) {
           if (e.type === ObjectType.Wall && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
             const w = e as WallModel;
-            oldValuesSelected.set(e.id, w.rValue ?? DEFAULT_WALL_R_VALUE);
+            oldValuesSelected.set(e.id, w.volumetricHeatCapacity ?? 0.5);
             updateById(w.id, value);
           }
         }
         const undoableChangeSelected = {
-          name: 'Set R-Value for Selected Walls',
+          name: 'Set Volumetric Heat Capacity for Selected Walls',
           timestamp: Date.now(),
           oldValues: oldValuesSelected,
           newValue: value,
@@ -144,12 +142,12 @@ const WallRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
         for (const e of elements) {
           if (e.type === ObjectType.Wall && !e.locked) {
             const w = e as WallModel;
-            oldValuesAll.set(e.id, w.rValue ?? DEFAULT_WALL_R_VALUE);
+            oldValuesAll.set(e.id, w.volumetricHeatCapacity ?? 0.5);
             updateById(w.id, value);
           }
         }
         const undoableChangeAll = {
-          name: 'Set R-Value for All Walls',
+          name: 'Set Volumetric Heat Capacity for All Walls',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
@@ -170,12 +168,12 @@ const WallRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
           for (const e of elements) {
             if (e.type === ObjectType.Wall && e.foundationId === wall.foundationId && !e.locked) {
               const w = e as WallModel;
-              oldValuesAboveFoundation.set(e.id, w.rValue ?? DEFAULT_WALL_R_VALUE);
+              oldValuesAboveFoundation.set(e.id, w.volumetricHeatCapacity ?? 0.5);
               updateById(w.id, value);
             }
           }
           const undoableChangeAboveFoundation = {
-            name: 'Set R-Value for All Walls Above Foundation',
+            name: 'Set Volumetric Heat Capacity for All Walls Above Foundation',
             timestamp: Date.now(),
             oldValues: oldValuesAboveFoundation,
             newValue: value,
@@ -201,12 +199,12 @@ const WallRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
           for (const e of connectedWalls) {
             if (!e.locked) {
               const w = e as WallModel;
-              oldValuesConnectedWalls.set(e.id, w.rValue ?? DEFAULT_WALL_R_VALUE);
+              oldValuesConnectedWalls.set(e.id, w.volumetricHeatCapacity ?? 0.5);
               updateById(w.id, value);
             }
           }
           const undoableChangeConnectedWalls = {
-            name: 'Set R-Value for All Connected Walls',
+            name: 'Set Volumetric Heat Capacity for All Connected Walls',
             timestamp: Date.now(),
             oldValues: oldValuesConnectedWalls,
             newValue: value,
@@ -227,9 +225,9 @@ const WallRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
       default:
         if (wall) {
           const updatedWall = getElementById(wall.id) as WallModel;
-          const oldValue = updatedWall.rValue ?? wall.rValue ?? DEFAULT_WALL_R_VALUE;
+          const oldValue = updatedWall.volumetricHeatCapacity ?? wall.volumetricHeatCapacity ?? 0.5;
           const undoableChange = {
-            name: 'Set Wall R-Value',
+            name: 'Set Volumetric Heat Capacity of Wall',
             timestamp: Date.now(),
             oldValue: oldValue,
             newValue: value,
@@ -248,12 +246,11 @@ const WallRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
         }
     }
     setCommonStore((state) => {
-      state.actionState.wallRValue = value;
+      state.actionState.wallVolumetricHeatCapacity = value;
     });
   };
 
   const close = () => {
-    setInputValue(wall?.rValue ?? DEFAULT_WALL_R_VALUE);
     setDialogVisible(false);
   };
 
@@ -262,12 +259,7 @@ const WallRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   };
 
   return (
-    <Dialog
-      width={550}
-      title={`${i18n.t('word.RValue', lang) + ' '}(${i18n.t('word.ThermalResistance', lang)})`}
-      onApply={apply}
-      onClose={close}
-    >
+    <Dialog width={550} title={i18n.t('word.VolumetricHeatCapacity', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
         <Col className="gutter-row" span={7}>
           <InputNumber
@@ -281,33 +273,13 @@ const WallRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
             onChange={(value) => {
               if (value === null) return;
               setInputValue(value);
-              setInputValueUS(Util.toRValueInUS(value));
             }}
           />
           <div style={{ paddingTop: '4px', textAlign: 'left', fontSize: '11px' }}>
+            kWh/(m³·℃)
+            <br />
+            <br />
             {i18n.t('word.Range', lang)}: [0.01, 100]
-            <br />
-            {i18n.t('word.SIUnit', lang)}: m²·℃/W
-          </div>
-          <br />
-          <InputNumber
-            min={Util.toRValueInUS(0.01)}
-            max={Util.toRValueInUS(100)}
-            style={{ width: 120 }}
-            step={0.01}
-            precision={2}
-            value={inputValueUS}
-            formatter={(a) => Number(a).toFixed(2)}
-            onChange={(value) => {
-              if (value === null) return;
-              setInputValueUS(value);
-              setInputValue(Util.toRValueInSI(value));
-            }}
-          />
-          <div style={{ paddingTop: '4px', textAlign: 'left', fontSize: '11px' }}>
-            {i18n.t('word.Range', lang)}: [{Util.toRValueInUS(0.01).toFixed(3)}, {Util.toRValueInUS(100).toFixed(1)}]
-            <br />
-            {i18n.t('word.USUnit', lang)}: h·ft²·℉/Btu
           </div>
         </Col>
         <Col
@@ -332,4 +304,4 @@ const WallRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   );
 };
 
-export default WallRValueInput;
+export default WallHeatCapacityInput;

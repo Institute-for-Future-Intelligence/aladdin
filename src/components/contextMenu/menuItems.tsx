@@ -24,6 +24,7 @@ import { GroupableModel, isGroupable } from 'src/models/Groupable';
 interface MenuItemProps {
   stayAfterClick?: boolean;
   textSelectable?: boolean;
+  update?: boolean;
   children?: React.ReactNode;
   onClick?: (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void;
 }
@@ -36,6 +37,11 @@ interface DialogItems {
 interface GroupMasterCheckboxProps {
   groupableElement: GroupableModel;
 }
+
+export const radioStyle = {
+  display: 'block',
+  height: '30px',
+};
 
 export const Paste = () => {
   const setCommonStore = useStore(Selector.set);
@@ -226,13 +232,22 @@ export const Lock = ({ selectedElement }: { selectedElement: ElementModel }) => 
   );
 };
 
-export const MenuItem: React.FC<MenuItemProps> = ({ stayAfterClick, textSelectable = true, onClick, children }) => {
+export const MenuItem: React.FC<MenuItemProps> = ({
+  stayAfterClick,
+  textSelectable = true,
+  update,
+  onClick,
+  children,
+}) => {
   const handleClick = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
     if (onClick) {
       onClick(e);
     }
     if (stayAfterClick) {
       e.stopPropagation();
+    }
+    if (update) {
+      usePrimitiveStore.getState().updateContextMenu();
     }
   };
 

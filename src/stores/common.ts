@@ -3110,6 +3110,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                     break;
                   case ObjectType.Door:
                     counter.doorCount++;
+                    if (e.locked) counter.lockedDoorCount++;
                     break;
                   case ObjectType.Human:
                     counter.humanCount++;
@@ -3134,6 +3135,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                     } else {
                       counter.outsideLightCount++;
                     }
+                    if (e.locked) counter.lockedLightCount++;
                     break;
                   case ObjectType.SolarPanel:
                     counter.solarPanelCount++;

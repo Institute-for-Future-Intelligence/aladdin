@@ -30,6 +30,10 @@ const counterItems: FoundationCounterItem[] = [
     objectType: ObjectType.Sensor,
   },
   {
+    key: 'outsideLightCount',
+    objectType: ObjectType.Light,
+  },
+  {
     key: 'parabolicTroughCount',
     objectType: ObjectType.ParabolicTrough,
   },
@@ -102,6 +106,14 @@ const getItemText = (type: ObjectType, count: number) => {
       itemLabel = `${i18n.t('foundationMenu.RemoveAllUnlockedSensors', lang)} (${count})`;
       modalTitle = `${i18n.t('foundationMenu.DoYouReallyWantToRemoveAllSensorsOnFoundation', lang)} (${count} ${i18n.t(
         'foundationMenu.Sensors',
+        lang,
+      )})`;
+      break;
+    }
+    case ObjectType.Light: {
+      itemLabel = `${i18n.t('foundationMenu.RemoveAllUnlockedLights', lang)} (${count})`;
+      modalTitle = `${i18n.t('foundationMenu.DoYouReallyWantToRemoveAllLightsOnFoundation', lang)} (${count} ${i18n.t(
+        'foundationMenu.Lights',
         lang,
       )})`;
       break;
@@ -181,6 +193,14 @@ const getItemText = (type: ObjectType, count: number) => {
   }
 
   return { itemLabel, modalTitle };
+};
+
+const getCount = (counter: ElementCounter, key: keyof ElementCounter, objectType: ObjectType) => {
+  if (objectType === ObjectType.Light) {
+    return counter.insideLightCount + counter.outsideLightCount;
+  } else {
+    return counter[key];
+  }
 };
 
 const handleClickRemoveAllWalls = (foundation: FoundationModel) => {
@@ -294,29 +314,9 @@ export const createFoundationElementCounterSubmenu = (
     });
   }
 
-  // elements-counter-lights
-  if (counterUnlocked.insideLightCount + counterUnlocked.outsideLightCount > 0) {
-    const modalTitle =
-      i18n.t('foundationMenu.DoYouReallyWantToRemoveAllLightsOnFoundation', lang) +
-      ' (' +
-      (counterUnlocked.insideLightCount + counterUnlocked.outsideLightCount) +
-      ' ' +
-      i18n.t('foundationMenu.Lights', lang) +
-      ')?';
-    items.push({
-      key: `remove-all-lights-on-foundation`,
-      label: (
-        <RemoveFoundationElementsItem foundation={foundation} objectType={ObjectType.Light} modalTitle={modalTitle}>
-          {i18n.t('foundationMenu.RemoveAllUnlockedLights', lang)} (
-          {counterUnlocked.insideLightCount + counterUnlocked.outsideLightCount})
-        </RemoveFoundationElementsItem>
-      ),
-    });
-  }
-
   // elements-counter-others
   counterItems.forEach(({ key, objectType }) => {
-    const count = counterUnlocked[key];
+    const count = getCount(counterUnlocked, key, objectType);
 
     if (typeof count === 'number' && count > 0) {
       const { itemLabel, modalTitle } = getItemText(objectType, count);

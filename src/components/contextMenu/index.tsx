@@ -18,7 +18,6 @@ import {
   ParabolicTroughMenu,
   ParabolicDishMenu,
   TreeMenu,
-  WallMenu,
   WindowMenu,
   DoorMenu,
   FresnelReflectorMenu,
@@ -28,9 +27,11 @@ import {
   createSkyMenu,
   createFoundationMenu,
   createCuboidMenu,
+  createWallMenu,
 } from './elementMenu';
 import { WindTurbineMenu } from './elementMenu/windTurbineMenu';
 import { useSelectedElement } from './elementMenu/menuHooks';
+import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 
 export interface ContextMenuProps {
   [key: string]: any;
@@ -39,6 +40,7 @@ export interface ContextMenuProps {
 const DropdownContextMenu: React.FC<ContextMenuProps> = ({ children }) => {
   useStore((state) => state.elements.length);
   useStore((state) => state.viewState.groundImage);
+  usePrimitiveStore((state) => state.contextMenuFlag);
   const selectedElement = useSelectedElement();
   const contextMenuObjectType = useStore(Selector.contextMenuObjectType);
 
@@ -201,6 +203,8 @@ const DropdownContextMenu: React.FC<ContextMenuProps> = ({ children }) => {
         return createFoundationMenu(elementRef.current);
       case ObjectType.Cuboid:
         return createCuboidMenu(elementRef.current);
+      case ObjectType.Wall:
+        return createWallMenu(elementRef.current);
       // case ObjectType.Polygon:
       //   return (
       //     <Menu triggerSubMenuAction={'click'}>
@@ -277,12 +281,6 @@ const DropdownContextMenu: React.FC<ContextMenuProps> = ({ children }) => {
       //   return (
       //     <Menu triggerSubMenuAction={'click'}>
       //       <FlowerMenu />
-      //     </Menu>
-      //   );
-      // case ObjectType.Wall:
-      //   return (
-      //     <Menu triggerSubMenuAction={'click'}>
-      //       <WallMenu />
       //     </Menu>
       //   );
       // case ObjectType.Window:

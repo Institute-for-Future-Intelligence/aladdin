@@ -2,28 +2,28 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import CuboidTexture01Icon from '../../../resources/building_facade_01_menu.png';
-import CuboidTexture02Icon from '../../../resources/building_facade_02_menu.png';
-import CuboidTexture03Icon from '../../../resources/building_facade_03_menu.png';
-import CuboidTexture04Icon from '../../../resources/building_facade_04_menu.png';
-import CuboidTexture05Icon from '../../../resources/building_facade_05_menu.png';
-import CuboidTexture06Icon from '../../../resources/building_facade_06_menu.png';
-import CuboidTexture07Icon from '../../../resources/building_facade_07_menu.png';
-import CuboidTexture08Icon from '../../../resources/building_facade_08_menu.png';
-import CuboidTexture09Icon from '../../../resources/building_facade_09_menu.png';
-import CuboidTexture10Icon from '../../../resources/building_facade_10_menu.png';
+import CuboidTexture01Icon from '../../../../resources/building_facade_01_menu.png';
+import CuboidTexture02Icon from '../../../../resources/building_facade_02_menu.png';
+import CuboidTexture03Icon from '../../../../resources/building_facade_03_menu.png';
+import CuboidTexture04Icon from '../../../../resources/building_facade_04_menu.png';
+import CuboidTexture05Icon from '../../../../resources/building_facade_05_menu.png';
+import CuboidTexture06Icon from '../../../../resources/building_facade_06_menu.png';
+import CuboidTexture07Icon from '../../../../resources/building_facade_07_menu.png';
+import CuboidTexture08Icon from '../../../../resources/building_facade_08_menu.png';
+import CuboidTexture09Icon from '../../../../resources/building_facade_09_menu.png';
+import CuboidTexture10Icon from '../../../../resources/building_facade_10_menu.png';
 
 import React, { useEffect, useState } from 'react';
 import { Col, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
-import { CommonStoreState, useStore } from '../../../stores/common';
-import * as Selector from '../../../stores/selector';
-import { CuboidTexture, ObjectType, Scope } from '../../../types';
-import i18n from '../../../i18n/i18n';
-import { UndoableChange } from '../../../undo/UndoableChange';
-import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
-import { CuboidModel } from '../../../models/CuboidModel';
-import { useSelectedElement } from './menuHooks';
-import Dialog from '../dialog';
+import { CommonStoreState, useStore } from '../../../../stores/common';
+import * as Selector from '../../../../stores/selector';
+import { CuboidTexture, ObjectType, Scope } from '../../../../types';
+import i18n from '../../../../i18n/i18n';
+import { UndoableChange } from '../../../../undo/UndoableChange';
+import { UndoableChangeGroup } from '../../../../undo/UndoableChangeGroup';
+import { CuboidModel } from '../../../../models/CuboidModel';
+import { useSelectedElement } from '../menuHooks';
+import Dialog from '../../dialog';
 import { useLanguage } from 'src/views/hooks';
 
 const CuboidTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {

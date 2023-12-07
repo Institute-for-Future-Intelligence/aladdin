@@ -10,14 +10,15 @@ import { Copy, Cut, DialogItem, GroupMasterCheckbox, Lock, Paste } from '../../m
 import { CuboidModel } from 'src/models/CuboidModel';
 import { AddPolygonItem, StackableCheckbox } from './cuboidMenuItems';
 import i18n from 'src/i18n/i18n';
-import CuboidColorSelection from '../cuboidColorSelection';
-import CuboidTextureSelection from '../cuboidTextureSelection';
-import CuboidLengthInput from '../cuboidLengthInput';
-import CuboidWidthInput from '../cuboidWidthInput';
-import CuboidHeightInput from '../cuboidHeightInput';
-import CuboidAzimuthInput from '../cuboidAzimuthInput';
+import CuboidColorSelection from './cuboidColorSelection';
+import CuboidTextureSelection from './cuboidTextureSelection';
+import CuboidLengthInput from './cuboidLengthInput';
+import CuboidWidthInput from './cuboidWidthInput';
+import CuboidHeightInput from './cuboidHeightInput';
+import CuboidAzimuthInput from './cuboidAzimuthInput';
 import { createLabelSubmenu } from '../../labelSubmenuItems';
 import { createCuboidElementCounterSubmenu } from './cuboidElementCounterSubmenu';
+import { MenuItem } from 'rc-menu';
 
 const legalToPaste = () => {
   const elementsToPaste = useStore.getState().elementsToPaste;
@@ -99,7 +100,7 @@ export const createCuboidMenu = (selectedElement: ElementModel) => {
   if (counterUnlocked.gotSome()) {
     items.push({
       key: 'cuboid-clear',
-      label: i18n.t('word.Clear', lang),
+      label: <MenuItem>{i18n.t('word.Clear', lang)}</MenuItem>,
       children: createCuboidElementCounterSubmenu(cuboid, counterUnlocked),
     });
   }
@@ -154,7 +155,7 @@ export const createCuboidMenu = (selectedElement: ElementModel) => {
   if (editable) {
     items.push({
       key: 'cuboid-label',
-      label: i18n.t('labelSubMenu.Label', lang),
+      label: <MenuItem>{i18n.t('labelSubMenu.Label', lang)}</MenuItem>,
       children: createLabelSubmenu(cuboid),
     });
   }

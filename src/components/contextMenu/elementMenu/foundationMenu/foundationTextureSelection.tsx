@@ -2,25 +2,25 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import Foundation_Texture_01_Menu from '../../../resources/foundation_01_menu.png';
-import Foundation_Texture_02_Menu from '../../../resources/foundation_02_menu.png';
-import Foundation_Texture_03_Menu from '../../../resources/foundation_03_menu.png';
-import Foundation_Texture_04_Menu from '../../../resources/foundation_04_menu.png';
-import Foundation_Texture_05_Menu from '../../../resources/foundation_05_menu.png';
-import Foundation_Texture_06_Menu from '../../../resources/foundation_06_menu.png';
-import Foundation_Texture_07_Menu from '../../../resources/foundation_07_menu.png';
+import Foundation_Texture_01_Menu from '../../../../resources/foundation_01_menu.png';
+import Foundation_Texture_02_Menu from '../../../../resources/foundation_02_menu.png';
+import Foundation_Texture_03_Menu from '../../../../resources/foundation_03_menu.png';
+import Foundation_Texture_04_Menu from '../../../../resources/foundation_04_menu.png';
+import Foundation_Texture_05_Menu from '../../../../resources/foundation_05_menu.png';
+import Foundation_Texture_06_Menu from '../../../../resources/foundation_06_menu.png';
+import Foundation_Texture_07_Menu from '../../../../resources/foundation_07_menu.png';
 
 import React, { useState } from 'react';
 import { Col, Radio, Row, Select, Space } from 'antd';
-import { CommonStoreState, useStore } from '../../../stores/common';
-import * as Selector from '../../../stores/selector';
-import { FoundationTexture, ObjectType, Scope } from '../../../types';
-import i18n from '../../../i18n/i18n';
-import { UndoableChange } from '../../../undo/UndoableChange';
-import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
-import { FoundationModel } from '../../../models/FoundationModel';
-import { useSelectedElement } from './menuHooks';
-import Dialog from '../dialog';
+import { CommonStoreState, useStore } from '../../../../stores/common';
+import * as Selector from '../../../../stores/selector';
+import { FoundationTexture, ObjectType, Scope } from '../../../../types';
+import i18n from '../../../../i18n/i18n';
+import { UndoableChange } from '../../../../undo/UndoableChange';
+import { UndoableChangeGroup } from '../../../../undo/UndoableChangeGroup';
+import { FoundationModel } from '../../../../models/FoundationModel';
+import { useSelectedElement } from '../menuHooks';
+import Dialog from '../../dialog';
 import { useLanguage } from 'src/views/hooks';
 
 const FoundationTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
