@@ -27,6 +27,8 @@ import {
   DEFAULT_GROUND_FLOOR_R_VALUE,
   DEFAULT_ROOF_R_VALUE,
   DEFAULT_WALL_R_VALUE,
+  DEFAULT_WIND_TURBINE_BLADE_COLOR,
+  DEFAULT_WIND_TURBINE_STRIPE_COLOR,
   DEFAULT_WINDOW_U_VALUE,
 } from '../constants';
 import { DEFAULT_PARAPET_SETTINGS } from 'src/views/wall/parapet';
@@ -119,6 +121,8 @@ export class DefaultActionState implements ActionState {
   windowInterior: boolean;
 
   windTurbineBirdSafeDesign: BirdSafeDesign;
+  windTurbineBladeColor: string;
+  windTurbineStripeColor: string;
   windTurbineNumberOfBlades: number;
   windTurbinePitchAngle: number;
   windTurbineRelativeYawAngle: number;
@@ -269,6 +273,8 @@ export class DefaultActionState implements ActionState {
     this.windowInterior = false;
 
     this.windTurbineBirdSafeDesign = BirdSafeDesign.None;
+    this.windTurbineBladeColor = DEFAULT_WIND_TURBINE_BLADE_COLOR;
+    this.windTurbineStripeColor = DEFAULT_WIND_TURBINE_STRIPE_COLOR;
     this.windTurbineNumberOfBlades = 3;
     this.windTurbinePitchAngle = Math.PI / 18;
     this.windTurbineRelativeYawAngle = 0;

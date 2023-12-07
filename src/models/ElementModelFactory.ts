@@ -373,6 +373,8 @@ export class ElementModelFactory {
   static makeWindTurbine(
     parent: ElementModel,
     birdSafe: BirdSafeDesign,
+    bladeColor: string,
+    stripeColor: string,
     numberOfBlades: number,
     initialRotorAngle: number,
     relativeYawAngle: number,
@@ -398,6 +400,8 @@ export class ElementModelFactory {
     return {
       type: ObjectType.WindTurbine,
       birdSafe,
+      bladeColor,
+      stripeColor,
       numberOfBlades,
       initialRotorAngle,
       relativeYawAngle,
@@ -411,7 +415,6 @@ export class ElementModelFactory {
       towerHeight,
       hubRadius,
       hubLength,
-      bladeColor: 'white',
       cx: x, // relative
       cy: y, // relative
       cz: z, // absolute

@@ -105,6 +105,8 @@ export interface ActionState {
   windowInterior: boolean;
 
   windTurbineBirdSafeDesign: BirdSafeDesign;
+  windTurbineBladeColor: string;
+  windTurbineStripeColor: string;
   windTurbineNumberOfBlades: number;
   windTurbinePitchAngle: number;
   windTurbineRelativeYawAngle: number;

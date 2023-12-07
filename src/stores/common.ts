@@ -62,6 +62,8 @@ import {
   DEFAULT_ADDRESS,
   DEFAULT_MODEL_MAP_ZOOM,
   DEFAULT_SHADOW_MAP_SIZE,
+  DEFAULT_WIND_TURBINE_BLADE_COLOR,
+  DEFAULT_WIND_TURBINE_STRIPE_COLOR,
   FLOATING_WINDOW_OPACITY,
   GROUND_ID,
   HALF_PI,
@@ -2538,6 +2540,8 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                   const windTurbine = ElementModelFactory.makeWindTurbine(
                     windTurbineParentModel,
                     state.actionState.windTurbineBirdSafeDesign ?? BirdSafeDesign.None,
+                    state.actionState.windTurbineBladeColor ?? DEFAULT_WIND_TURBINE_BLADE_COLOR,
+                    state.actionState.windTurbineStripeColor ?? DEFAULT_WIND_TURBINE_STRIPE_COLOR,
                     state.actionState.windTurbineNumberOfBlades ?? 3,
                     state.actionState.windTurbineInitialRotorAngle ?? 0,
                     state.actionState.windTurbineRelativeYawAngle ?? 0,

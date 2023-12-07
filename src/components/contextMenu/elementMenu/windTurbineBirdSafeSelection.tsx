@@ -294,6 +294,8 @@ const WindTurbineBirdSafeSelection = ({ setDialogVisible }: { setDialogVisible: 
     }
     setCommonStore((state) => {
       state.actionState.windTurbineBirdSafeDesign = design;
+      state.actionState.windTurbineBladeColor = color1;
+      state.actionState.windTurbineStripeColor = color2;
     });
   };
 
