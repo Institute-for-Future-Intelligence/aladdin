@@ -21,5 +21,6 @@ export interface WindTurbineModel extends ElementModel {
   towerRadius: number;
   towerHeight: number;
   bladeColor: string;
+  stripeColor: string;
   birdSafe: BirdSafeDesign;
 }

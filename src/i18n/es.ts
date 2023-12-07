@@ -95,6 +95,7 @@ export const i18n_es = {
       Lock: 'Cerrar con llave',
       Translucent: 'Translucent',
       Color: 'Color',
+      Pattern: 'Pattern',
       Texture: 'Textura',
       Size: 'Tamaño',
       Thickness: 'Grosor',

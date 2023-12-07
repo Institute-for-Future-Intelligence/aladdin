@@ -95,6 +95,7 @@ export const i18n_zh_cn = {
       Lock: '固定',
       Translucent: '半透明',
       Color: '颜色',
+      Pattern: '图案',
       Texture: '材质',
       Thickness: '厚度',
       Size: '尺寸',

@@ -95,6 +95,7 @@ export const i18n_en = {
       Lock: 'Lock',
       Translucent: 'Translucent',
       Color: 'Color',
+      Pattern: 'Pattern',
       Texture: 'Texture',
       Size: 'Size',
       Thickness: 'Thickness',

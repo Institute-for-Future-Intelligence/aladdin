@@ -9,7 +9,14 @@ import { useStore } from '../stores/common';
 import { useRefStore } from 'src/stores/commonRef';
 import * as Selector from '../stores/selector';
 import { ThreeEvent, useThree } from '@react-three/fiber';
-import { HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR, MOVE_HANDLE_RADIUS, UNIT_VECTOR_POS_Z } from '../constants';
+import {
+  DEFAULT_WIND_TURBINE_BLADE_COLOR,
+  DEFAULT_WIND_TURBINE_STRIPE_COLOR,
+  HALF_PI,
+  LOCKED_ELEMENT_SELECTION_COLOR,
+  MOVE_HANDLE_RADIUS,
+  UNIT_VECTOR_POS_Z,
+} from '../constants';
 import { ActionType, BirdSafeDesign, MoveHandleType, ObjectType } from '../types';
 import { Util } from '../Util';
 import i18n from '../i18n/i18n';
@@ -40,7 +47,8 @@ const WindTurbine = ({
   initialRotorAngle = 0,
   pitchAngle = Util.toRadians(10),
   color = 'white',
-  bladeColor = 'white',
+  bladeColor = DEFAULT_WIND_TURBINE_BLADE_COLOR,
+  stripeColor = DEFAULT_WIND_TURBINE_STRIPE_COLOR,
   lineColor = 'black',
   lineWidth = 0.5,
   showLabel = false,
@@ -69,8 +77,8 @@ const WindTurbine = ({
   }, [language]);
 
   const texture = useMemo(() => {
-    return Util.fetchBladeTexture(bladeRadius, bladeRootRadius * 2, 100, birdSafe);
-  }, [bladeRootRadius, bladeRadius, birdSafe]);
+    return Util.fetchBladeTexture(bladeRadius, bladeRootRadius * 2, 100, birdSafe, bladeColor, stripeColor);
+  }, [bladeRootRadius, bladeRadius, birdSafe, bladeColor, stripeColor]);
 
   // be sure to get the updated parent so that this memorized element can move with it
   const parent = useStore((state) => {

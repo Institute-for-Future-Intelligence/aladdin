@@ -96,6 +96,7 @@ export const i18n_ua = {
       Lock: 'Заблокувати',
       Translucent: 'Півпрозорий',
       Color: 'Колір',
+      Pattern: 'Pattern',
       Texture: 'Текстура',
       Size: 'Розмір',
       Thickness: 'Товщина',

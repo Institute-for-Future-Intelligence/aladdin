@@ -95,6 +95,7 @@ export const i18n_tr = {
       Lock: 'Kilitle',
       Translucent: 'Yarı Saydam',
       Color: 'Renk',
+      Pattern: 'Pattern',
       Texture: 'Doku',
       Size: 'Boyut',
       Thickness: 'Kalınlık',

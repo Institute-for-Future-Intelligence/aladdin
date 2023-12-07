@@ -439,7 +439,14 @@ export class Util {
     return new CanvasTexture(canvas);
   }
 
-  static fetchBladeTexture(w: number, h: number, scale: number, birdSafe: BirdSafeDesign): CanvasTexture | null {
+  static fetchBladeTexture(
+    w: number,
+    h: number,
+    scale: number,
+    birdSafe: BirdSafeDesign,
+    bladeColor: string,
+    stripeColor: string,
+  ): CanvasTexture | null {
     const canvas = document.createElement('canvas') as HTMLCanvasElement;
     const wc = Math.round(w * scale);
     const hc = Math.round(h * scale);
@@ -451,16 +458,38 @@ export class Util {
       const imageData = ctx.getImageData(0, 0, wc, hc);
       const pixels = imageData.data;
       const sectionLength = wc / 4;
+      const bladeRgb = Util.hexToRgb(bladeColor) ?? { r: 255, g: 255, b: 255 };
+      const stripeRgb = Util.hexToRgb(stripeColor) ?? { r: 64, g: 64, b: 64 };
       for (let i = 0; i < wc; i++) {
-        const c =
+        const r =
           birdSafe === BirdSafeDesign.Bicolor
-            ? Math.floor((i < sectionLength ? 1 : 0.25) * 255)
-            : Math.floor((Math.floor(i / sectionLength) % 2 === 0 ? 1 : 0.25) * 255);
+            ? i < sectionLength
+              ? bladeRgb.r
+              : stripeRgb.r
+            : Math.floor(i / sectionLength) % 2 === 0
+            ? bladeRgb.r
+            : stripeRgb.r;
+        const g =
+          birdSafe === BirdSafeDesign.Bicolor
+            ? i < sectionLength
+              ? bladeRgb.g
+              : stripeRgb.g
+            : Math.floor(i / sectionLength) % 2 === 0
+            ? bladeRgb.g
+            : stripeRgb.g;
+        const b =
+          birdSafe === BirdSafeDesign.Bicolor
+            ? i < sectionLength
+              ? bladeRgb.b
+              : stripeRgb.b
+            : Math.floor(i / sectionLength) % 2 === 0
+            ? bladeRgb.b
+            : stripeRgb.b;
         for (let j = 0; j < hc; j++) {
           const off = ((hc - 1 - j) * wc + i) * 4;
-          pixels[off] = c;
-          pixels[off + 1] = c;
-          pixels[off + 2] = c;
+          pixels[off] = r;
+          pixels[off + 1] = g;
+          pixels[off + 2] = b;
           pixels[off + 3] = 255;
         }
       }
@@ -1933,6 +1962,17 @@ export class Util {
     if (v1Patch < v2Patch) return true;
 
     return false;
+  }
+
+  static hexToRgb(hex: string) {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result
+      ? {
+          r: parseInt(result[1], 16),
+          g: parseInt(result[2], 16),
+          b: parseInt(result[3], 16),
+        }
+      : null;
   }
 
   static isOpenFromURL() {
