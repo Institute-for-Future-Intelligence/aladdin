@@ -10,6 +10,8 @@ import { useStore } from 'src/stores/common';
 import { MenuItem } from '../../menuItems';
 import i18n from 'src/i18n/i18n';
 import { WallNumberDialogSettingType, WallNumberDialogSettings } from './wallMenu';
+import { useSelectedElement } from '../menuHooks';
+import { ObjectType } from 'src/types';
 
 export enum WallNumberDataType {
   Height = 'Height',
@@ -22,15 +24,19 @@ export enum WallNumberDataType {
 
 interface WallNumberDialogItemsProps {
   Dialog: (props: WallNumberInputProps) => JSX.Element;
-  wall: WallModel;
   dataType: WallNumberDataType;
   children?: React.ReactNode;
 }
 
-export const WallNumberDialogItem = ({ Dialog, wall, dataType, children }: WallNumberDialogItemsProps) => {
+export const WallNumberDialogItem = ({ Dialog, dataType, children }: WallNumberDialogItemsProps) => {
   const lang = useLanguage();
 
   const [dialogVisible, setDialogVisible] = useState(false);
+
+  const wall = useSelectedElement(ObjectType.Wall) as WallModel | undefined;
+
+  if (!wall) return null;
+
   const handleClick = () => {
     useStore.getState().setApplyCount(0);
     setDialogVisible(true);

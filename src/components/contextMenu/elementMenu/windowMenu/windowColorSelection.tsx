@@ -14,9 +14,9 @@ import { CompactPicker } from 'react-color';
 import { WindowModel } from 'src/models/WindowModel';
 import { WindowDataType } from './windowMenu';
 
-import { useColorPicker } from './menuHooks';
+import { useColorPicker } from '../menuHooks';
 import { useLanguage } from 'src/views/hooks';
-import Dialog from '../dialog';
+import Dialog from '../../dialog';
 
 interface WindowColorSelectionProps {
   window: WindowModel;

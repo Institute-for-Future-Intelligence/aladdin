@@ -30,7 +30,7 @@ export const createWallStructureSubmenu = (wall: WallModel) => {
       {
         key: 'wall-structure-spacing',
         label: (
-          <WallNumberDialogItem wall={wall} dataType={WallNumberDataType.StructureSpacing} Dialog={WallNumberInput}>
+          <WallNumberDialogItem dataType={WallNumberDataType.StructureSpacing} Dialog={WallNumberInput}>
             {i18n.t(`wallMenu.${WallNumberDataType.StructureSpacing}`, lang)} ...
           </WallNumberDialogItem>
         ),
@@ -38,7 +38,7 @@ export const createWallStructureSubmenu = (wall: WallModel) => {
       {
         key: 'wall-structure-width',
         label: (
-          <WallNumberDialogItem wall={wall} dataType={WallNumberDataType.StructureWidth} Dialog={WallNumberInput}>
+          <WallNumberDialogItem dataType={WallNumberDataType.StructureWidth} Dialog={WallNumberInput}>
             {i18n.t(`wallMenu.${WallNumberDataType.StructureWidth}`, lang)} ...
           </WallNumberDialogItem>
         ),

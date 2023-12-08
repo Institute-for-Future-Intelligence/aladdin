@@ -124,7 +124,7 @@ export const createWallMenu = (selectedElement: ElementModel) => {
       items.push({
         key: 'wall-opacity',
         label: (
-          <WallNumberDialogItem wall={wall} dataType={WallNumberDataType.Opacity} Dialog={WallNumberInput}>
+          <WallNumberDialogItem dataType={WallNumberDataType.Opacity} Dialog={WallNumberInput}>
             {i18n.t(`wallMenu.${WallNumberDataType.Opacity}`, lang)} ...
           </WallNumberDialogItem>
         ),
@@ -144,7 +144,7 @@ export const createWallMenu = (selectedElement: ElementModel) => {
       {
         key: 'wall-thickness',
         label: (
-          <WallNumberDialogItem wall={wall} dataType={WallNumberDataType.Thickness} Dialog={WallNumberInput}>
+          <WallNumberDialogItem dataType={WallNumberDataType.Thickness} Dialog={WallNumberInput}>
             {i18n.t(`wallMenu.${WallNumberDataType.Thickness}`, lang)} ...
           </WallNumberDialogItem>
         ),
@@ -152,7 +152,7 @@ export const createWallMenu = (selectedElement: ElementModel) => {
       {
         key: 'wall-height',
         label: (
-          <WallNumberDialogItem wall={wall} dataType={WallNumberDataType.Height} Dialog={WallNumberInput}>
+          <WallNumberDialogItem dataType={WallNumberDataType.Height} Dialog={WallNumberInput}>
             {i18n.t(`wallMenu.${WallNumberDataType.Height}`, lang)} ...
           </WallNumberDialogItem>
         ),
@@ -160,7 +160,7 @@ export const createWallMenu = (selectedElement: ElementModel) => {
       {
         key: 'wall-eaves-length',
         label: (
-          <WallNumberDialogItem wall={wall} dataType={WallNumberDataType.EavesLength} Dialog={WallNumberInput}>
+          <WallNumberDialogItem dataType={WallNumberDataType.EavesLength} Dialog={WallNumberInput}>
             {i18n.t(`wallMenu.${WallNumberDataType.EavesLength}`, lang)} ...
           </WallNumberDialogItem>
         ),

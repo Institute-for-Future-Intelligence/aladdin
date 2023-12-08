@@ -3,7 +3,7 @@
  */
 
 import React, { useState } from 'react';
-import { Col, Radio, Row, Select, Space } from 'antd';
+import { Col, Radio, Row, Space, Switch } from 'antd';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
 import { ObjectType, Scope } from 'src/types';
@@ -11,30 +11,23 @@ import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { WindowModel } from 'src/models/WindowModel';
-import { WindowDataType } from './windowMenu';
 
 import { useLanguage } from 'src/views/hooks';
-import Dialog from '../dialog';
+import Dialog from '../../dialog';
 
-interface WindowOptionSelectionProps {
+interface WindowBooleanSelectionProps {
   window: WindowModel;
   dataType: string;
   attributeKey: keyof WindowModel;
-  options: string[];
-  optionsText: string[];
   setDialogVisible: () => void;
 }
 
-const { Option } = Select;
-
-const WindowOptionSelection = ({
+const WindowBooleanSelection = ({
   window: windowModel,
   dataType,
   attributeKey,
-  options,
-  optionsText,
   setDialogVisible,
-}: WindowOptionSelectionProps) => {
+}: WindowBooleanSelectionProps) => {
   const elements = useStore(Selector.elements);
   const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
@@ -42,132 +35,113 @@ const WindowOptionSelection = ({
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
 
-  const [selectedOption, setSelectedOption] = useState<string>(windowModel[attributeKey] as string);
+  const [selected, setSelected] = useState<boolean>(windowModel[attributeKey] as boolean);
 
   const lang = useLanguage();
 
-  const updateById = (id: string, val: string) => {
+  const updateById = (id: string, value: boolean) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
-        if (e.id === id) {
-          if (!e.locked && e.type === ObjectType.Window) {
-            ((e as WindowModel)[attributeKey] as string) = val;
-          }
+        if (e.id === id && !e.locked && e.type === ObjectType.Window) {
+          ((e as WindowModel)[attributeKey] as boolean) = value;
           break;
         }
       }
     });
   };
 
-  const updateOnSameWall = (wallId: string, val: string) => {
+  const updateOnSameWall = (wallId: string, value: boolean) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (!e.locked && e.type === ObjectType.Window && e.parentId === wallId) {
-          ((e as WindowModel)[attributeKey] as string) = val;
+          ((e as WindowModel)[attributeKey] as boolean) = value;
         }
       }
     });
   };
 
-  const updateAboveFoundation = (foundationId: string, val: string) => {
+  const updateAboveFoundation = (foundationId: string, value: boolean) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (!e.locked && e.type === ObjectType.Window && e.foundationId === foundationId) {
-          ((e as WindowModel)[attributeKey] as string) = val;
+          ((e as WindowModel)[attributeKey] as boolean) = value;
         }
       }
     });
   };
 
-  const updateForAll = (val: string) => {
+  const updateForAll = (value: boolean) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (!e.locked && e.type === ObjectType.Window) {
-          ((e as WindowModel)[attributeKey] as string) = val;
+          ((e as WindowModel)[attributeKey] as boolean) = value;
         }
       }
     });
   };
 
-  const updateInMap = (map: Map<string, string>, val: string) => {
+  const updateInMap = (map: Map<string, boolean>, value: boolean) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (!e.locked && e.type === ObjectType.Window && map.has(e.id)) {
-          ((e as WindowModel)[attributeKey] as string) = val;
+          ((e as WindowModel)[attributeKey] as boolean) = value;
         }
       }
     });
   };
 
-  const undoInMap = (map: Map<string, string>) => {
-    for (const [id, val] of map.entries()) {
-      updateById(id, val);
+  const undoInMap = (map: Map<string, boolean>) => {
+    for (const [id, v] of map.entries()) {
+      updateById(id, v);
     }
   };
 
-  const needChange = (value: string) => {
+  const needChange = (value: boolean) => {
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType:
         for (const e of elements) {
-          if (
-            e.type === ObjectType.Window &&
-            value !== (e as WindowModel)[attributeKey] &&
-            !e.locked &&
-            useStore.getState().selectedElementIdSet.has(e.id)
-          ) {
-            return true;
+          if (e.type === ObjectType.Window && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            if ((e as WindowModel)[attributeKey] !== value) return true;
           }
         }
         break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
-          if (e.type === ObjectType.Window && value !== (e as WindowModel)[attributeKey] && !e.locked) {
-            return true;
+          if (e.type === ObjectType.Window && !e.locked) {
+            if ((e as WindowModel)[attributeKey] !== value) return true;
           }
         }
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         for (const e of elements) {
-          if (
-            e.type === ObjectType.Window &&
-            e.foundationId === windowModel.foundationId &&
-            value !== (e as WindowModel)[attributeKey] &&
-            !e.locked
-          ) {
-            return true;
+          if (e.type === ObjectType.Window && e.foundationId === windowModel.foundationId && !e.locked) {
+            if ((e as WindowModel)[attributeKey] !== value) return true;
           }
         }
         break;
       case Scope.OnlyThisSide:
         for (const e of elements) {
-          if (
-            e.type === ObjectType.Window &&
-            e.parentId === windowModel.parentId &&
-            value !== (e as WindowModel)[attributeKey] &&
-            !e.locked
-          ) {
-            return true;
+          if (e.type === ObjectType.Window && e.parentId === windowModel.parentId && !e.locked) {
+            if ((e as WindowModel)[attributeKey] !== value) return true;
           }
         }
         break;
       default:
-        if (value !== windowModel[attributeKey]) {
-          return true;
-        }
+        if (windowModel[attributeKey] !== value) return true;
         break;
     }
     return false;
   };
 
-  const updateValue = (value: string) => {
+  const updateValue = (value: boolean) => {
     if (!windowModel) return;
     if (!needChange(value)) return;
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType: {
-        const oldValuesSelected = new Map<string, string>();
+        const oldValuesSelected = new Map<string, boolean>();
         for (const e of elements) {
           if (e.type === ObjectType.Window && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
-            oldValuesSelected.set(e.id, (e as WindowModel)[attributeKey] as string);
+            oldValuesSelected.set(e.id, (e as WindowModel)[attributeKey] as boolean);
           }
         }
         const undoableChangeSelected = {
@@ -176,12 +150,12 @@ const WindowOptionSelection = ({
           oldValues: oldValuesSelected,
           newValue: value,
           undo: () => {
-            undoInMap(undoableChangeSelected.oldValues as Map<string, string>);
+            undoInMap(undoableChangeSelected.oldValues as Map<string, boolean>);
           },
           redo: () => {
             updateInMap(
-              undoableChangeSelected.oldValues as Map<string, string>,
-              undoableChangeSelected.newValue as string,
+              undoableChangeSelected.oldValues as Map<string, boolean>,
+              undoableChangeSelected.newValue as boolean,
             );
           },
         } as UndoableChangeGroup;
@@ -191,10 +165,10 @@ const WindowOptionSelection = ({
         break;
       }
       case Scope.AllObjectsOfThisType: {
-        const oldValuesAll = new Map<string, string>();
+        const oldValuesAll = new Map<string, boolean>();
         for (const e of elements) {
           if (e.type === ObjectType.Window && !e.locked) {
-            oldValuesAll.set(e.id, (e as WindowModel)[attributeKey] as string);
+            oldValuesAll.set(e.id, (e as WindowModel)[attributeKey] as boolean);
           }
         }
         const undoableChangeAll = {
@@ -203,10 +177,10 @@ const WindowOptionSelection = ({
           oldValues: oldValuesAll,
           newValue: value,
           undo: () => {
-            undoInMap(undoableChangeAll.oldValues as Map<string, string>);
+            undoInMap(undoableChangeAll.oldValues as Map<string, boolean>);
           },
           redo: () => {
-            updateForAll(undoableChangeAll.newValue as string);
+            updateForAll(undoableChangeAll.newValue as boolean);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
@@ -216,10 +190,10 @@ const WindowOptionSelection = ({
       }
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (windowModel.foundationId) {
-          const oldValuesAboveFoundation = new Map<string, string>();
+          const oldValuesAboveFoundation = new Map<string, boolean>();
           for (const e of elements) {
             if (e.type === ObjectType.Window && e.foundationId === windowModel.foundationId && !windowModel.locked) {
-              oldValuesAboveFoundation.set(e.id, (e as WindowModel)[attributeKey] as string);
+              oldValuesAboveFoundation.set(e.id, (e as WindowModel)[attributeKey] as boolean);
             }
           }
           const undoableChangeAboveFoundation = {
@@ -229,12 +203,12 @@ const WindowOptionSelection = ({
             newValue: value,
             groupId: windowModel.foundationId,
             undo: () => {
-              undoInMap(undoableChangeAboveFoundation.oldValues as Map<string, string>);
+              undoInMap(undoableChangeAboveFoundation.oldValues as Map<string, boolean>);
             },
             redo: () => {
               updateAboveFoundation(
                 undoableChangeAboveFoundation.groupId,
-                undoableChangeAboveFoundation.newValue as string,
+                undoableChangeAboveFoundation.newValue as boolean,
               );
             },
           } as UndoableChangeGroup;
@@ -245,10 +219,10 @@ const WindowOptionSelection = ({
         break;
       case Scope.OnlyThisSide:
         if (windowModel.parentId) {
-          const oldValues = new Map<string, string>();
+          const oldValues = new Map<string, boolean>();
           for (const e of elements) {
             if (e.type === ObjectType.Window && e.parentId === windowModel.parentId && !e.locked) {
-              oldValues.set(e.id, (e as WindowModel)[attributeKey] as string);
+              oldValues.set(e.id, (e as WindowModel)[attributeKey] as boolean);
             }
           }
           const undoableChangeOnSameWall = {
@@ -258,10 +232,10 @@ const WindowOptionSelection = ({
             newValue: value,
             groupId: windowModel.parentId,
             undo: () => {
-              undoInMap(undoableChangeOnSameWall.oldValues as Map<string, string>);
+              undoInMap(undoableChangeOnSameWall.oldValues as Map<string, boolean>);
             },
             redo: () => {
-              updateOnSameWall(windowModel.parentId, undoableChangeOnSameWall.newValue as string);
+              updateOnSameWall(windowModel.parentId, undoableChangeOnSameWall.newValue as boolean);
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeOnSameWall);
@@ -271,7 +245,7 @@ const WindowOptionSelection = ({
         break;
       default:
         if (windowModel) {
-          const oldValue = windowModel[attributeKey] as string;
+          const oldValue = windowModel[attributeKey] as boolean;
           const undoableChange = {
             name: `Set ${dataType} of Selected window`,
             timestamp: Date.now(),
@@ -280,10 +254,10 @@ const WindowOptionSelection = ({
             changedElementId: windowModel.id,
             changedElementType: windowModel.type,
             undo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.oldValue as string);
+              updateById(undoableChange.changedElementId, undoableChange.oldValue as boolean);
             },
             redo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.newValue as string);
+              updateById(undoableChange.changedElementId, undoableChange.newValue as boolean);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
@@ -291,19 +265,6 @@ const WindowOptionSelection = ({
           setApplyCount(applyCount + 1);
         }
     }
-    setCommonStore((state) => {
-      switch (dataType) {
-        case WindowDataType.Tint:
-          state.actionState.windowTint = value;
-          break;
-        case WindowDataType.MullionColor:
-          state.actionState.windowMullionColor = value;
-          break;
-        case WindowDataType.Color:
-          state.actionState.windowColor = value;
-          break;
-      }
-    });
   };
 
   const close = () => {
@@ -311,29 +272,26 @@ const WindowOptionSelection = ({
   };
 
   const apply = () => {
-    if (windowModel[attributeKey] !== selectedOption) {
-      updateValue(selectedOption);
+    if (windowModel[attributeKey] !== selected) {
+      updateValue(selected);
     }
   };
 
   return (
-    <Dialog width={560} title={i18n.t(`windowMenu.${dataType}`, lang)} onApply={apply} onClose={close}>
+    <Dialog width={500} title={i18n.t(`windowMenu.${dataType}`, lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
-        <Col className="gutter-row" span={8}>
-          <Select style={{ width: '150px' }} value={selectedOption} onChange={(value) => setSelectedOption(value)}>
-            {options.map((e, index) => {
-              return (
-                <Option key={e} value={e}>
-                  {optionsText[index]}
-                </Option>
-              );
-            })}
-          </Select>
+        <Col className="gutter-row" span={4}>
+          <Switch
+            checked={selected}
+            onChange={(checked) => {
+              setSelected(checked);
+            }}
+          />
         </Col>
         <Col
           className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-          span={16}
+          span={20}
         >
           <Radio.Group onChange={(e) => useStore.getState().setWindowActionScope(e.target.value)} value={actionScope}>
             <Space direction="vertical">
@@ -352,4 +310,4 @@ const WindowOptionSelection = ({
   );
 };
 
-export default WindowOptionSelection;
+export default WindowBooleanSelection;

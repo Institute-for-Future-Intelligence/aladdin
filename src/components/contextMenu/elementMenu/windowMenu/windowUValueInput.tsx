@@ -11,10 +11,10 @@ import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { WindowModel } from 'src/models/WindowModel';
-import { Util } from '../../../Util';
-import { DEFAULT_WINDOW_U_VALUE } from '../../../constants';
-import { useSelectedElement } from './menuHooks';
-import Dialog from '../dialog';
+import { Util } from '../../../../Util';
+import { DEFAULT_WINDOW_U_VALUE } from '../../../../constants';
+import { useSelectedElement } from '../menuHooks';
+import Dialog from '../../dialog';
 import { useLanguage } from 'src/views/hooks';
 
 const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {

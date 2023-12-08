@@ -12,17 +12,17 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { WindowModel } from 'src/models/WindowModel';
 import { WindowDataType } from './windowMenu';
-import Dialog from '../dialog';
+import Dialog from '../../dialog';
 
 import { useLanguage } from 'src/views/hooks';
 
-interface WindowNumberInputProps {
+export interface WindowNumberInputProps {
   windowModel: WindowModel;
   dataType: string;
   attributeKey: keyof WindowModel;
   range: [min: number, max: number];
   step: number;
-  setDialogVisible: () => void;
+  setDialogVisible: (b: boolean) => void;
   unit?: string;
   note?: string;
   digit?: number;
@@ -450,7 +450,7 @@ const WindowNumberInput = ({
   };
 
   const close = () => {
-    setDialogVisible();
+    setDialogVisible(false);
   };
 
   const apply = () => {
