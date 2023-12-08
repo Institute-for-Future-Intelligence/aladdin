@@ -21,4 +21,4 @@ export * from './treeMenu';
 export * from './wallMenu/wallMenu';
 export * from './doorMenu';
 export * from './windowMenu';
-export * from './roofMenu';
+export * from './roofMenu/roofMenu';

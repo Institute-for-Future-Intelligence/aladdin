@@ -11,12 +11,11 @@ import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { RoofModel } from 'src/models/RoofModel';
-import { useSelectedElement } from './menuHooks';
-
+import { useSelectedElement } from '../menuHooks';
 import { useLanguage } from 'src/views/hooks';
-import Dialog from '../dialog';
+import Dialog from '../../dialog';
 
-const RoofOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const RoofThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const elements = useStore(Selector.elements);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.roofActionScope);
@@ -27,16 +26,19 @@ const RoofOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
 
   const roof = useSelectedElement(ObjectType.Roof) as RoofModel | undefined;
 
-  const [input, setInput] = useState<number>(roof?.opacity !== undefined ? roof.opacity : 0.5);
+  const [inputLength, setInputLength] = useState<number>(roof?.thickness ?? 0.4);
 
   const lang = useLanguage();
 
-  const updateOpacityById = (id: string, value: number) => {
+  const updateById = (id: string, value: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id) {
-          (e as RoofModel).opacity = value;
-          break;
+          (e as RoofModel).thickness = value;
+          state.updateElementOnRoofFlag = true;
+        }
+        if (e.parentId === id && e.type === ObjectType.Window) {
+          e.ly = value;
         }
       }
     });
@@ -44,13 +46,13 @@ const RoofOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
 
   const undoInMap = (map: Map<string, number>) => {
     for (const [id, val] of map.entries()) {
-      updateOpacityById(id, val);
+      updateById(id, val);
     }
   };
 
   const updateInMap = (map: Map<string, number>, value: number) => {
     for (const id of map.keys()) {
-      updateOpacityById(id, value);
+      updateById(id, value);
     }
   };
 
@@ -61,7 +63,7 @@ const RoofOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
         for (const e of elements) {
           if (
             e.type === ObjectType.Roof &&
-            value !== (e as RoofModel).opacity &&
+            value !== (e as RoofModel).thickness &&
             !e.locked &&
             useStore.getState().selectedElementIdSet.has(e.id)
           ) {
@@ -71,7 +73,7 @@ const RoofOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
         break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
-          if (e.type === ObjectType.Roof && value !== (e as RoofModel).opacity && !e.locked) {
+          if (e.type === ObjectType.Roof && value !== (e as RoofModel).thickness && !e.locked) {
             return true;
           }
         }
@@ -81,7 +83,7 @@ const RoofOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
           if (
             e.type === ObjectType.Roof &&
             e.foundationId === roof.foundationId &&
-            value !== (e as RoofModel).opacity &&
+            value !== (e as RoofModel).thickness &&
             !e.locked
           ) {
             return true;
@@ -89,7 +91,7 @@ const RoofOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
         }
         break;
       default:
-        if (value !== roof?.opacity) {
+        if (value !== roof?.thickness) {
           return true;
         }
         break;
@@ -97,23 +99,23 @@ const RoofOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
     return false;
   };
 
-  const setValue = (value: number) => {
+  const setThickness = (value: number) => {
     if (!roof) return;
     if (!needChange(value)) return;
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType: {
-        const oldValuesSelected = new Map<string, number | undefined>();
+        const oldThicknessSelected = new Map<string, number>();
         for (const e of elements) {
-          if (e.type === ObjectType.Roof && !e.locked) {
+          if (e.type === ObjectType.Roof && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
             const roof = e as RoofModel;
-            oldValuesSelected.set(e.id, roof.opacity);
-            updateOpacityById(roof.id, value);
+            oldThicknessSelected.set(e.id, roof.thickness);
+            updateById(roof.id, value);
           }
         }
         const undoableChangeSelected = {
-          name: 'Set Opacity for Selected Roofs',
+          name: 'Set Thickness for Selected Roofs',
           timestamp: Date.now(),
-          oldValues: oldValuesSelected,
+          oldValues: oldThicknessSelected,
           newValue: value,
           undo: () => {
             undoInMap(undoableChangeSelected.oldValues as Map<string, number>);
@@ -130,18 +132,18 @@ const RoofOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
         break;
       }
       case Scope.AllObjectsOfThisType: {
-        const oldValuesAll = new Map<string, number | undefined>();
+        const oldThicknessAll = new Map<string, number>();
         for (const e of elements) {
           if (e.type === ObjectType.Roof && !e.locked) {
             const roof = e as RoofModel;
-            oldValuesAll.set(e.id, roof.opacity);
-            updateOpacityById(roof.id, value);
+            oldThicknessAll.set(e.id, roof.thickness);
+            updateById(roof.id, value);
           }
         }
         const undoableChangeAll = {
-          name: 'Set Opacity for All Roofs',
+          name: 'Set Thickness for All Roofs',
           timestamp: Date.now(),
-          oldValues: oldValuesAll,
+          oldValues: oldThicknessAll,
           newValue: value,
           undo: () => {
             undoInMap(undoableChangeAll.oldValues as Map<string, number>);
@@ -156,18 +158,18 @@ const RoofOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
       }
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (roof.foundationId) {
-          const oldValuesAboveFoundation = new Map<string, number | undefined>();
-          for (const e of elements) {
-            if (e.type === ObjectType.Roof && e.foundationId === roof.foundationId && !e.locked) {
-              const roof = e as RoofModel;
-              oldValuesAboveFoundation.set(e.id, roof.opacity);
-              updateOpacityById(roof.id, value);
+          const oldThicknessAboveFoundation = new Map<string, number>();
+          for (const elem of elements) {
+            if (elem.type === ObjectType.Roof && elem.foundationId === roof.foundationId && !elem.locked) {
+              const roof = elem as RoofModel;
+              oldThicknessAboveFoundation.set(elem.id, roof.thickness);
+              updateById(roof.id, value);
             }
           }
           const undoableChangeAboveFoundation = {
-            name: 'Set Opacity for All Roofs Above Foundation',
+            name: 'Set Thickness for All Roofs Above Foundation',
             timestamp: Date.now(),
-            oldValues: oldValuesAboveFoundation,
+            oldValues: oldThicknessAboveFoundation,
             newValue: value,
             groupId: roof.foundationId,
             undo: () => {
@@ -187,29 +189,28 @@ const RoofOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
       default:
         if (roof) {
           const updatedRoof = getElementById(roof.id) as RoofModel;
-          const oldOpacity =
-            updatedRoof.opacity !== undefined ? updatedRoof.opacity : roof.opacity !== undefined ? roof.opacity : 0.5;
+          const oldThickness = updatedRoof.thickness ?? roof.thickness ?? 0.4;
           const undoableChange = {
-            name: 'Set Roof Opacity',
+            name: 'Set Roof Thickness',
             timestamp: Date.now(),
-            oldValue: oldOpacity,
+            oldValue: oldThickness,
             newValue: value,
             changedElementId: roof.id,
             changedElementType: roof.type,
             undo: () => {
-              updateOpacityById(undoableChange.changedElementId, undoableChange.oldValue as number);
+              updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateOpacityById(undoableChange.changedElementId, undoableChange.newValue as number);
+              updateById(undoableChange.changedElementId, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateOpacityById(roof.id, value);
+          updateById(roof.id, value);
           setApplyCount(applyCount + 1);
         }
     }
     setCommonStore((state) => {
-      state.actionState.roofGlassOpacity = value;
+      state.actionState.roofThickness = value;
     });
   };
 
@@ -218,26 +219,29 @@ const RoofOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
   };
 
   const apply = () => {
-    setValue(input);
+    setThickness(inputLength);
   };
 
   return (
-    <Dialog width={550} title={i18n.t('roofMenu.Opacity', lang)} onApply={apply} onClose={close}>
+    <Dialog width={550} title={i18n.t('word.Thickness', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
-        <Col className="gutter-row" span={7}>
+        <Col className="gutter-row" span={6}>
           <InputNumber
-            min={0}
+            min={0.05}
             max={1}
             style={{ width: 120 }}
             step={0.01}
             precision={2}
-            value={input}
+            value={inputLength}
             formatter={(a) => Number(a).toFixed(2)}
-            onChange={(value) => setInput(value!)}
+            onChange={(value) => setInputLength(value!)}
           />
           <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-            {i18n.t('word.Range', lang)}: [0, 1]
+            {i18n.t('word.Range', lang)}: [0.05, 1] {i18n.t('word.MeterAbbreviation', lang)}
           </div>
+        </Col>
+        <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
+          {i18n.t('word.MeterAbbreviation', lang)}
         </Col>
         <Col
           className="gutter-row"
@@ -260,4 +264,4 @@ const RoofOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
   );
 };
 
-export default RoofOpacityInput;
+export default RoofThicknessInput;

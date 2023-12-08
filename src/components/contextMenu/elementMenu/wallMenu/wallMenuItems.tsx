@@ -5,12 +5,11 @@
 import { WallFill, WallModel, WallStructure } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
-import { MenuItem, radioStyle } from '../../menuItems';
-import { Checkbox, Modal, Radio, RadioChangeEvent } from 'antd';
+import { MenuItem } from '../../menuItems';
+import { Checkbox, Modal, Radio, RadioChangeEvent, Space } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { UndoableRemoveAllChildren } from 'src/undo/UndoableRemoveAllChildren';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
-import { LightModel } from 'src/models/LightModel';
 import { UndoableCheck } from 'src/undo/UndoableCheck';
 import i18n from 'src/i18n/i18n';
 import { useLanguage } from 'src/views/hooks';
@@ -36,10 +35,6 @@ interface RemoveWallElementsItemProps extends WallMenuItemProps {
 interface LockWallElementsItemProps extends WallMenuItemProps {
   objectType: ObjectType;
   lock: boolean;
-}
-
-interface LightSideItemProps extends WallMenuItemProps {
-  inside: boolean;
 }
 
 export const RemoveWallElementsItem = ({
@@ -121,41 +116,6 @@ export const LockWallElementsItem = ({ wall, objectType, lock, children }: LockW
       },
     } as UndoableChangeGroup;
     useStore.getState().addUndoable(undoable);
-  };
-
-  return (
-    <MenuItem stayAfterClick update onClick={handleClick}>
-      {children}
-    </MenuItem>
-  );
-};
-
-export const LightSideItem = ({ wall, inside, children }: LightSideItemProps) => {
-  const updateInsideLightsByParentId = useStore.getState().updateInsideLightsByParentId;
-
-  const handleClick = () => {
-    const oldValues = new Map<string, boolean>();
-    for (const elem of useStore.getState().elements) {
-      if (elem.parentId === wall.id && elem.type === ObjectType.Light) {
-        oldValues.set(elem.id, (elem as LightModel).inside);
-      }
-    }
-    updateInsideLightsByParentId(wall.id, inside);
-    const undoableInsideLightsOnWall = {
-      name: inside ? 'Set All Lights on Wall Inside' : 'Set All Lights on Wall Outside',
-      timestamp: Date.now(),
-      oldValues: oldValues,
-      newValue: true,
-      undo: () => {
-        for (const [id, inside] of undoableInsideLightsOnWall.oldValues.entries()) {
-          useStore.getState().updateInsideLightById(id, inside as boolean);
-        }
-      },
-      redo: () => {
-        updateInsideLightsByParentId(wall.id, inside);
-      },
-    } as UndoableChangeGroup;
-    useStore.getState().addUndoable(undoableInsideLightsOnWall);
   };
 
   return (
@@ -260,15 +220,11 @@ export const WallStructureRadioGroup = ({ wall }: WallMenuItemProps) => {
   return (
     <MenuItem stayAfterClick>
       <Radio.Group value={value} onChange={handleChange}>
-        <Radio style={radioStyle} value={WallStructure.Default}>
-          {i18n.t('wallMenu.DefaultStructure', lang)}
-        </Radio>
-        <Radio style={radioStyle} value={WallStructure.Stud}>
-          {i18n.t('wallMenu.StudStructure', lang)}
-        </Radio>
-        <Radio style={radioStyle} value={WallStructure.Pillar}>
-          {i18n.t('wallMenu.PillarStructure', lang)}
-        </Radio>
+        <Space direction="vertical">
+          <Radio value={WallStructure.Default}>{i18n.t('wallMenu.DefaultStructure', lang)}</Radio>
+          <Radio value={WallStructure.Stud}>{i18n.t('wallMenu.StudStructure', lang)}</Radio>
+          <Radio value={WallStructure.Pillar}>{i18n.t('wallMenu.PillarStructure', lang)}</Radio>
+        </Space>
       </Radio.Group>
     </MenuItem>
   );
@@ -363,16 +319,12 @@ export const WallFillRadioGroup = ({ wall }: WallMenuItemProps) => {
 
   return (
     <MenuItem stayAfterClick>
-      <Radio.Group value={wall.fill} style={{ height: '75px' }} onChange={handleChange}>
-        <Radio style={radioStyle} value={WallFill.Full}>
-          {i18n.t('wallMenu.Full', lang)}
-        </Radio>
-        <Radio style={radioStyle} value={WallFill.Partial}>
-          {i18n.t('wallMenu.Partial', lang)}
-        </Radio>
-        <Radio style={radioStyle} value={WallFill.Empty}>
-          {i18n.t('wallMenu.Empty', lang)}
-        </Radio>
+      <Radio.Group value={wall.fill} onChange={handleChange}>
+        <Space direction="vertical">
+          <Radio value={WallFill.Full}>{i18n.t('wallMenu.Full', lang)}</Radio>
+          <Radio value={WallFill.Partial}>{i18n.t('wallMenu.Partial', lang)}</Radio>
+          <Radio value={WallFill.Empty}>{i18n.t('wallMenu.Empty', lang)}</Radio>
+        </Space>
       </Radio.Group>
     </MenuItem>
   );

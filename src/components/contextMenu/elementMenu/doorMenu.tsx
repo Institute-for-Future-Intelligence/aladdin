@@ -6,7 +6,6 @@ import React, { useState } from 'react';
 import { Checkbox, Menu, Radio } from 'antd';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
-import { radioStyle } from '../menuItems';
 import i18n from 'src/i18n/i18n';
 import { DoorModel, DoorType } from 'src/models/DoorModel';
 import DoorTextureSelection from './doorTextureSelection';
@@ -108,12 +107,8 @@ export const DoorMenu = React.memo(() => {
             });
           }}
         >
-          <Radio style={radioStyle} value={DoorType.Default}>
-            {i18n.t('doorMenu.Default', lang)}
-          </Radio>
-          <Radio style={radioStyle} value={DoorType.Arched}>
-            {i18n.t('doorMenu.Arched', lang)}
-          </Radio>
+          <Radio value={DoorType.Default}>{i18n.t('doorMenu.Default', lang)}</Radio>
+          <Radio value={DoorType.Arched}>{i18n.t('doorMenu.Arched', lang)}</Radio>
         </Radio.Group>
       </SubMenu>
     );

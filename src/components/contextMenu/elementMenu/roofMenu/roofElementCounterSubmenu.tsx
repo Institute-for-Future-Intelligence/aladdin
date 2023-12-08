@@ -7,17 +7,17 @@ import { ElementCounter } from 'src/stores/ElementCounter';
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
 import type { MenuProps } from 'antd';
-import { WallModel } from 'src/models/WallModel';
-import { LockWallElementsItem, RemoveWallElementsItem } from './wallMenuItems';
+import { RoofModel } from 'src/models/RoofModel';
+import { LockRoofElementsItem, RemoveRoofElementsItem } from './roofMenuItems';
 import { LightSideItem } from '../../menuItems';
 
-type WallCounterItem = {
+type RoofCounterItem = {
   key: keyof ElementCounter;
   lockedKey: keyof ElementCounter;
   objectType: ObjectType;
 };
 
-const counterItems: WallCounterItem[] = [
+const counterItems: RoofCounterItem[] = [
   {
     key: 'solarPanelCount',
     lockedKey: 'lockedSolarPanelCount',
@@ -29,19 +29,9 @@ const counterItems: WallCounterItem[] = [
     objectType: ObjectType.Window,
   },
   {
-    key: 'doorCount',
-    lockedKey: 'lockedDoorCount',
-    objectType: ObjectType.Door,
-  },
-  {
     key: 'sensorCount',
     lockedKey: 'lockedSensorCount',
     objectType: ObjectType.Sensor,
-  },
-  {
-    key: 'polygonCount',
-    lockedKey: 'lockedPolygonCount',
-    objectType: ObjectType.Polygon,
   },
   {
     key: 'outsideLightCount',
@@ -58,49 +48,33 @@ const getItemText = (type: ObjectType, count: number) => {
 
   switch (type) {
     case ObjectType.SolarPanel: {
-      itemLabel = `${i18n.t('wallMenu.RemoveAllUnlockedSolarPanels', lang)} (${count})`;
-      modalTitle = `${i18n.t('wallMenu.DoYouReallyWantToRemoveAllSolarPanelsOnThisWall', lang)} (${count} ${i18n.t(
-        'wallMenu.SolarPanels',
+      itemLabel = `${i18n.t('roofMenu.RemoveAllUnlockedSolarPanels', lang)} (${count})`;
+      modalTitle = `${i18n.t('roofMenu.DoYouReallyWantToRemoveAllSolarPanelsOnThisRoof', lang)} (${count} ${i18n.t(
+        'roofMenu.SolarPanels',
         lang,
       )})`;
       break;
     }
     case ObjectType.Window: {
-      itemLabel = `${i18n.t('wallMenu.RemoveAllUnlockedWindows', lang)} (${count})`;
-      modalTitle = `${i18n.t('wallMenu.DoYouReallyWantToRemoveAllWindowsOnThisWall', lang)} (${count} ${i18n.t(
-        'wallMenu.Windows',
-        lang,
-      )})`;
-      break;
-    }
-    case ObjectType.Door: {
-      itemLabel = `${i18n.t('wallMenu.RemoveAllUnlockedDoors', lang)} (${count})`;
-      modalTitle = `${i18n.t('wallMenu.DoYouReallyWantToRemoveAllDoorsOnThisWall', lang)} (${count} ${i18n.t(
-        'wallMenu.Doors',
+      itemLabel = `${i18n.t('roofMenu.RemoveAllUnlockedWindows', lang)} (${count})`;
+      modalTitle = `${i18n.t('roofMenu.DoYouReallyWantToRemoveAllWindowsOnThisRoof', lang)} (${count} ${i18n.t(
+        'roofMenu.Windows',
         lang,
       )})`;
       break;
     }
     case ObjectType.Sensor: {
-      itemLabel = `${i18n.t('wallMenu.RemoveAllUnlockedSensors', lang)} (${count})`;
-      modalTitle = `${i18n.t('wallMenu.DoYouReallyWantToRemoveAllSensorsOnThisWall', lang)} (${count} ${i18n.t(
-        'wallMenu.Sensors',
+      itemLabel = `${i18n.t('roofMenu.RemoveAllUnlockedSensors', lang)} (${count})`;
+      modalTitle = `${i18n.t('roofMenu.DoYouReallyWantToRemoveAllSensorsOnThisRoof', lang)} (${count} ${i18n.t(
+        'roofMenu.Sensors',
         lang,
       )})`;
       break;
     }
     case ObjectType.Light: {
-      itemLabel = `${i18n.t('wallMenu.RemoveAllUnlockedLights', lang)} (${count})`;
-      modalTitle = `${i18n.t('wallMenu.DoYouReallyWantToRemoveAllLightsOnThisWall', lang)} (${count} ${i18n.t(
-        'wallMenu.Lights',
-        lang,
-      )})`;
-      break;
-    }
-    case ObjectType.Polygon: {
-      itemLabel = `${i18n.t('wallMenu.RemoveAllUnlockedPolygons', lang)} (${count})`;
-      modalTitle = `${i18n.t('wallMenu.DoYouReallyWantToRemoveAllPolygonsOnThisWall', lang)} (${count} ${i18n.t(
-        'wallMenu.Polygons',
+      itemLabel = `${i18n.t('roofMenu.RemoveAllUnlockedLights', lang)} (${count})`;
+      modalTitle = `${i18n.t('roofMenu.DoYouReallyWantToRemoveAllLightsOnThisRoof', lang)} (${count} ${i18n.t(
+        'roofMenu.Lights',
         lang,
       )})`;
       break;
@@ -119,8 +93,8 @@ const getCount = (counter: ElementCounter, key: keyof ElementCounter, objectType
   }
 };
 
-export const createWallElementCounterSubmenu = (
-  wall: WallModel,
+export const createRoofElementCounterSubmenu = (
+  roof: RoofModel,
   counterAll: ElementCounter,
   counterUnlocked: ElementCounter,
 ) => {
@@ -136,11 +110,11 @@ export const createWallElementCounterSubmenu = (
       const typeKeyName = objectType.replaceAll(' ', '');
 
       items.push({
-        key: `remove-all-${typeKeyName}s-on-wall`,
+        key: `remove-all-${typeKeyName}s-on-roof`,
         label: (
-          <RemoveWallElementsItem wall={wall} objectType={objectType} modalTitle={modalTitle}>
+          <RemoveRoofElementsItem roof={roof} objectType={objectType} modalTitle={modalTitle}>
             {itemLabel}
-          </RemoveWallElementsItem>
+          </RemoveRoofElementsItem>
         ),
       });
     }
@@ -152,11 +126,11 @@ export const createWallElementCounterSubmenu = (
     if (typeof count === 'number' && count > 0) {
       const objectTypeText = objectType.replaceAll(' ', '');
       items.push({
-        key: `lock-all-${objectTypeText}s-on-wall`,
+        key: `lock-all-${objectTypeText}s-on-roof`,
         label: (
-          <LockWallElementsItem wall={wall} objectType={objectType} lock={true}>
+          <LockRoofElementsItem roof={roof} objectType={objectType} lock={true}>
             {i18n.t(`wallMenu.LockAllUnlocked${objectTypeText}s`, lang)} ({count})
-          </LockWallElementsItem>
+          </LockRoofElementsItem>
         ),
       });
     }
@@ -170,9 +144,9 @@ export const createWallElementCounterSubmenu = (
       items.push({
         key: `unlock-all-${objectTypeText}s-on-wall`,
         label: (
-          <LockWallElementsItem wall={wall} objectType={objectType} lock={false}>
+          <LockRoofElementsItem roof={roof} objectType={objectType} lock={false}>
             {i18n.t(`wallMenu.UnlockAllLocked${objectTypeText}s`, lang)} ({count})
-          </LockWallElementsItem>
+          </LockRoofElementsItem>
         ),
       });
     }
@@ -183,7 +157,7 @@ export const createWallElementCounterSubmenu = (
     items.push({
       key: 'inside-lights-on-wall',
       label: (
-        <LightSideItem element={wall} inside={true}>
+        <LightSideItem element={roof} inside={true}>
           {i18n.t(`wallMenu.AllLightsOnWallInside`, lang)} ({counterAll.outsideLightCount})
         </LightSideItem>
       ),
@@ -195,7 +169,7 @@ export const createWallElementCounterSubmenu = (
     items.push({
       key: 'outside-lights-on-wall',
       label: (
-        <LightSideItem element={wall} inside={false}>
+        <LightSideItem element={roof} inside={false}>
           {i18n.t(`wallMenu.AllLightsOnWallOutside`, lang)} ({counterAll.insideLightCount})
         </LightSideItem>
       ),

@@ -22,12 +22,12 @@ import {
   DoorMenu,
   FresnelReflectorMenu,
   HeliostatMenu,
-  RoofMenu,
   createGroundMenu,
   createSkyMenu,
   createFoundationMenu,
   createCuboidMenu,
   createWallMenu,
+  createRoofMenu,
 } from './elementMenu';
 import { WindTurbineMenu } from './elementMenu/windTurbineMenu';
 import { useSelectedElement } from './elementMenu/menuHooks';
@@ -205,6 +205,8 @@ const DropdownContextMenu: React.FC<ContextMenuProps> = ({ children }) => {
         return createCuboidMenu(elementRef.current);
       case ObjectType.Wall:
         return createWallMenu(elementRef.current);
+      case ObjectType.Roof:
+        return createRoofMenu(elementRef.current);
       // case ObjectType.Polygon:
       //   return (
       //     <Menu triggerSubMenuAction={'click'}>

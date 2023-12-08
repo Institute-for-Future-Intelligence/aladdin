@@ -20,6 +20,8 @@ import { useLanguage } from 'src/views/hooks';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { ElementModel } from 'src/models/ElementModel';
 import { GroupableModel, isGroupable } from 'src/models/Groupable';
+import { LightModel } from 'src/models/LightModel';
+import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 
 interface MenuItemProps {
   stayAfterClick?: boolean;
@@ -38,10 +40,11 @@ interface GroupMasterCheckboxProps {
   groupableElement: GroupableModel;
 }
 
-export const radioStyle = {
-  display: 'block',
-  height: '30px',
-};
+interface LightSideItemProps {
+  element: ElementModel;
+  inside: boolean;
+  children?: React.ReactNode;
+}
 
 export const Paste = () => {
   const setCommonStore = useStore(Selector.set);
@@ -315,6 +318,41 @@ export const GroupMasterCheckbox = ({ groupableElement }: GroupMasterCheckboxPro
       <Checkbox checked={groupableElement.enableGroupMaster} onChange={onChange}>
         {i18n.t('foundationMenu.GroupMaster', lang)}
       </Checkbox>
+    </MenuItem>
+  );
+};
+
+export const LightSideItem = ({ element, inside, children }: LightSideItemProps) => {
+  const updateInsideLightsByParentId = useStore.getState().updateInsideLightsByParentId;
+
+  const handleClick = () => {
+    const oldValues = new Map<string, boolean>();
+    for (const elem of useStore.getState().elements) {
+      if (elem.parentId === element.id && elem.type === ObjectType.Light) {
+        oldValues.set(elem.id, (elem as LightModel).inside);
+      }
+    }
+    updateInsideLightsByParentId(element.id, inside);
+    const undoableInsideLights = {
+      name: inside ? `Set All Lights on ${element.type} Inside` : `Set All Lights on ${element.type} Outside`,
+      timestamp: Date.now(),
+      oldValues: oldValues,
+      newValue: true,
+      undo: () => {
+        for (const [id, inside] of undoableInsideLights.oldValues.entries()) {
+          useStore.getState().updateInsideLightById(id, inside as boolean);
+        }
+      },
+      redo: () => {
+        updateInsideLightsByParentId(element.id, inside);
+      },
+    } as UndoableChangeGroup;
+    useStore.getState().addUndoable(undoableInsideLights);
+  };
+
+  return (
+    <MenuItem stayAfterClick update onClick={handleClick}>
+      {children}
     </MenuItem>
   );
 };

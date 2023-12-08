@@ -10,12 +10,14 @@ import { ObjectType, Scope } from 'src/types';
 import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
-import { RoofModel } from 'src/models/RoofModel';
-import { useSelectedElement } from './menuHooks';
+import { RoofModel } from '../../../../models/RoofModel';
+import { Util } from '../../../../Util';
+import { DEFAULT_ROOF_R_VALUE } from '../../../../constants';
+import { useSelectedElement } from '../menuHooks';
 import { useLanguage } from 'src/views/hooks';
-import Dialog from '../dialog';
+import Dialog from '../../dialog';
 
-const RoofRafterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const elements = useStore(Selector.elements);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.roofActionScope);
@@ -26,15 +28,16 @@ const RoofRafterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
 
   const roof = useSelectedElement(ObjectType.Roof) as RoofModel | undefined;
 
-  const [input, setInput] = useState<number>(roof?.rafterWidth ?? 0.1);
+  const [inputValue, setInputValue] = useState<number>(roof?.rValue ?? DEFAULT_ROOF_R_VALUE);
+  const [inputValueUS, setInputValueUS] = useState<number>(Util.toRValueInUS(inputValue));
 
   const lang = useLanguage();
 
-  const updateById = (id: string, length: number) => {
+  const updateById = (id: string, value: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id) {
-          (e as RoofModel).rafterWidth = length;
+          (e as RoofModel).rValue = value;
           break;
         }
       }
@@ -60,7 +63,7 @@ const RoofRafterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
         for (const e of elements) {
           if (
             e.type === ObjectType.Roof &&
-            value !== (e as RoofModel).rafterWidth &&
+            value !== (e as RoofModel).rValue &&
             !e.locked &&
             useStore.getState().selectedElementIdSet.has(e.id)
           ) {
@@ -70,7 +73,7 @@ const RoofRafterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
         break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
-          if (e.type === ObjectType.Roof && value !== (e as RoofModel).rafterWidth && !e.locked) {
+          if (e.type === ObjectType.Roof && value !== (e as RoofModel).rValue && !e.locked) {
             return true;
           }
         }
@@ -80,7 +83,7 @@ const RoofRafterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
           if (
             e.type === ObjectType.Roof &&
             e.foundationId === roof.foundationId &&
-            value !== (e as RoofModel).rafterWidth &&
+            value !== (e as RoofModel).rValue &&
             !e.locked
           ) {
             return true;
@@ -88,7 +91,7 @@ const RoofRafterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
         }
         break;
       default:
-        if (value !== roof?.rafterWidth) {
+        if (value !== roof?.rValue) {
           return true;
         }
         break;
@@ -101,17 +104,18 @@ const RoofRafterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
     if (!needChange(value)) return;
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType: {
-        const oldValSelected = new Map<string, number>();
+        const oldValuesSelected = new Map<string, number | undefined>();
         for (const e of elements) {
           if (e.type === ObjectType.Roof && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
-            oldValSelected.set(e.id, (e as RoofModel).rafterWidth ?? 0.1);
-            updateById(e.id, value);
+            const roof = e as RoofModel;
+            oldValuesSelected.set(e.id, roof.rValue ?? DEFAULT_ROOF_R_VALUE);
+            updateById(roof.id, value);
           }
         }
         const undoableChangeSelected = {
-          name: 'Set Rafter Width for Selected Roofs',
+          name: 'Set R-Value for Selected Roofs',
           timestamp: Date.now(),
-          oldValues: oldValSelected,
+          oldValues: oldValuesSelected,
           newValue: value,
           undo: () => {
             undoInMap(undoableChangeSelected.oldValues as Map<string, number>);
@@ -128,17 +132,18 @@ const RoofRafterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
         break;
       }
       case Scope.AllObjectsOfThisType: {
-        const oldValAll = new Map<string, number>();
+        const oldValuesAll = new Map<string, number | undefined>();
         for (const e of elements) {
           if (e.type === ObjectType.Roof && !e.locked) {
-            oldValAll.set(e.id, (e as RoofModel).rafterWidth ?? 0.1);
-            updateById(e.id, value);
+            const roof = e as RoofModel;
+            oldValuesAll.set(e.id, roof.rValue ?? DEFAULT_ROOF_R_VALUE);
+            updateById(roof.id, value);
           }
         }
         const undoableChangeAll = {
-          name: 'Set Rafter Width for All Roofs',
+          name: 'Set R-Value for All Roofs',
           timestamp: Date.now(),
-          oldValues: oldValAll,
+          oldValues: oldValuesAll,
           newValue: value,
           undo: () => {
             undoInMap(undoableChangeAll.oldValues as Map<string, number>);
@@ -153,17 +158,18 @@ const RoofRafterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
       }
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (roof.foundationId) {
-          const oldValAboveFoundation = new Map<string, number>();
+          const oldValuesAboveFoundation = new Map<string, number | undefined>();
           for (const e of elements) {
             if (e.type === ObjectType.Roof && e.foundationId === roof.foundationId && !e.locked) {
-              oldValAboveFoundation.set(e.id, (e as RoofModel).rafterWidth ?? 0.1);
-              updateById(e.id, value);
+              const roof = e as RoofModel;
+              oldValuesAboveFoundation.set(e.id, roof.rValue ?? DEFAULT_ROOF_R_VALUE);
+              updateById(roof.id, value);
             }
           }
           const undoableChangeAboveFoundation = {
-            name: 'Set Rafter Width for All Roofs Above Foundation',
+            name: 'Set R-Value for All Roofs Above Foundation',
             timestamp: Date.now(),
-            oldValues: oldValAboveFoundation,
+            oldValues: oldValuesAboveFoundation,
             newValue: value,
             groupId: roof.foundationId,
             undo: () => {
@@ -183,11 +189,11 @@ const RoofRafterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
       default:
         if (roof) {
           const updatedRoof = getElementById(roof.id) as RoofModel;
-          const oldVal = updatedRoof.rafterWidth ?? roof.rafterWidth ?? 0.1;
+          const oldValue = updatedRoof.rValue ?? roof.rValue ?? DEFAULT_ROOF_R_VALUE;
           const undoableChange = {
-            name: 'Set Roof Rafter Width',
+            name: 'Set Roof R-Value',
             timestamp: Date.now(),
-            oldValue: oldVal,
+            oldValue: oldValue,
             newValue: value,
             changedElementId: roof.id,
             changedElementType: roof.type,
@@ -203,6 +209,9 @@ const RoofRafterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
           setApplyCount(applyCount + 1);
         }
     }
+    setCommonStore((state) => {
+      state.actionState.roofRValue = value;
+    });
   };
 
   const close = () => {
@@ -210,29 +219,57 @@ const RoofRafterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
   };
 
   const apply = () => {
-    setValue(input);
+    setValue(inputValue);
   };
 
   return (
-    <Dialog width={550} title={i18n.t('roofMenu.RafterWidth', lang)} onApply={apply} onClose={close}>
+    <Dialog
+      width={550}
+      title={`${i18n.t('roofMenu.RoofRValue', lang) + ' '}(${i18n.t('word.ThermalResistance', lang)})`}
+      onApply={apply}
+      onClose={close}
+    >
       <Row gutter={6}>
-        <Col className="gutter-row" span={6}>
+        <Col className="gutter-row" span={7}>
           <InputNumber
             min={0.01}
-            max={1}
+            max={100}
+            style={{ width: 120 }}
+            step={0.05}
+            precision={2}
+            value={inputValue}
+            formatter={(a) => Number(a).toFixed(2)}
+            onChange={(value) => {
+              if (value === null) return;
+              setInputValue(value);
+              setInputValueUS(Util.toRValueInUS(value));
+            }}
+          />
+          <div style={{ paddingTop: '4px', textAlign: 'left', fontSize: '11px' }}>
+            {i18n.t('word.Range', lang)}: [0.01, 100]
+            <br />
+            {i18n.t('word.SIUnit', lang)}: m²·℃/W
+          </div>
+          <br />
+          <InputNumber
+            min={Util.toRValueInUS(0.01)}
+            max={Util.toRValueInUS(100)}
             style={{ width: 120 }}
             step={0.01}
             precision={2}
-            value={input}
+            value={inputValueUS}
             formatter={(a) => Number(a).toFixed(2)}
-            onChange={(value) => setInput(value!)}
+            onChange={(value) => {
+              if (value === null) return;
+              setInputValueUS(value);
+              setInputValue(Util.toRValueInSI(value));
+            }}
           />
-          <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-            {i18n.t('word.Range', lang)}: [0.01, 1] {i18n.t('word.MeterAbbreviation', lang)}
+          <div style={{ paddingTop: '4px', textAlign: 'left', fontSize: '11px' }}>
+            {i18n.t('word.Range', lang)}: [{Util.toRValueInUS(0.01).toFixed(3)}, {Util.toRValueInUS(100).toFixed(1)}]
+            <br />
+            {i18n.t('word.USUnit', lang)}: h·ft²·℉/Btu
           </div>
-        </Col>
-        <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
-          {i18n.t('word.MeterAbbreviation', lang)}
         </Col>
         <Col
           className="gutter-row"
@@ -255,4 +292,4 @@ const RoofRafterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
   );
 };
 
-export default RoofRafterWidthInput;
+export default RoofRValueInput;

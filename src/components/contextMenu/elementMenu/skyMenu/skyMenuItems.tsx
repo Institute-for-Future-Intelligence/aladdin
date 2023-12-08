@@ -81,10 +81,6 @@ export const ThemeRadioGroup = () => {
     setTheme(newTheme);
   };
 
-  const radioStyle = {
-    display: 'block',
-  };
-
   const radioArray = [
     { value: Theme.Default, label: 'skyMenu.ThemeDefault' },
     { value: Theme.Desert, label: 'skyMenu.ThemeDesert' },
@@ -99,12 +95,14 @@ export const ThemeRadioGroup = () => {
 
   return (
     <MenuItem stayAfterClick>
-      <Radio.Group value={theme} style={{ height: '135px' }} onChange={onChange}>
-        {radioArray.map((radio, idx) => (
-          <Radio key={`${idx}-${radio.value}`} style={radioStyle} value={radio.value}>
-            {i18n.t(radio.label, lang)}
-          </Radio>
-        ))}
+      <Radio.Group value={theme} onChange={onChange}>
+        <Space direction="vertical">
+          {radioArray.map((radio, idx) => (
+            <Radio key={`${idx}-${radio.value}`} value={radio.value}>
+              {i18n.t(radio.label, lang)}
+            </Radio>
+          ))}
+        </Space>
       </Radio.Group>
     </MenuItem>
   );

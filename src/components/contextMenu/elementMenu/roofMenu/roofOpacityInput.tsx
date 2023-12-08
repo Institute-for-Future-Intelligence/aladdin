@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -10,14 +10,13 @@ import { ObjectType, Scope } from 'src/types';
 import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
-import { RoofModel } from '../../../models/RoofModel';
-import { Util } from '../../../Util';
-import { DEFAULT_ROOF_R_VALUE } from '../../../constants';
-import { useSelectedElement } from './menuHooks';
-import { useLanguage } from 'src/views/hooks';
-import Dialog from '../dialog';
+import { RoofModel } from 'src/models/RoofModel';
+import { useSelectedElement } from '../menuHooks';
 
-const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+import { useLanguage } from 'src/views/hooks';
+import Dialog from '../../dialog';
+
+const RoofOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const elements = useStore(Selector.elements);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.roofActionScope);
@@ -28,16 +27,15 @@ const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
 
   const roof = useSelectedElement(ObjectType.Roof) as RoofModel | undefined;
 
-  const [inputValue, setInputValue] = useState<number>(roof?.rValue ?? DEFAULT_ROOF_R_VALUE);
-  const [inputValueUS, setInputValueUS] = useState<number>(Util.toRValueInUS(inputValue));
+  const [input, setInput] = useState<number>(roof?.opacity !== undefined ? roof.opacity : 0.5);
 
   const lang = useLanguage();
 
-  const updateById = (id: string, value: number) => {
+  const updateOpacityById = (id: string, value: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id) {
-          (e as RoofModel).rValue = value;
+          (e as RoofModel).opacity = value;
           break;
         }
       }
@@ -46,13 +44,13 @@ const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
 
   const undoInMap = (map: Map<string, number>) => {
     for (const [id, val] of map.entries()) {
-      updateById(id, val);
+      updateOpacityById(id, val);
     }
   };
 
   const updateInMap = (map: Map<string, number>, value: number) => {
     for (const id of map.keys()) {
-      updateById(id, value);
+      updateOpacityById(id, value);
     }
   };
 
@@ -63,7 +61,7 @@ const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
         for (const e of elements) {
           if (
             e.type === ObjectType.Roof &&
-            value !== (e as RoofModel).rValue &&
+            value !== (e as RoofModel).opacity &&
             !e.locked &&
             useStore.getState().selectedElementIdSet.has(e.id)
           ) {
@@ -73,7 +71,7 @@ const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
         break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
-          if (e.type === ObjectType.Roof && value !== (e as RoofModel).rValue && !e.locked) {
+          if (e.type === ObjectType.Roof && value !== (e as RoofModel).opacity && !e.locked) {
             return true;
           }
         }
@@ -83,7 +81,7 @@ const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
           if (
             e.type === ObjectType.Roof &&
             e.foundationId === roof.foundationId &&
-            value !== (e as RoofModel).rValue &&
+            value !== (e as RoofModel).opacity &&
             !e.locked
           ) {
             return true;
@@ -91,7 +89,7 @@ const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
         }
         break;
       default:
-        if (value !== roof?.rValue) {
+        if (value !== roof?.opacity) {
           return true;
         }
         break;
@@ -106,14 +104,14 @@ const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
       case Scope.AllSelectedObjectsOfThisType: {
         const oldValuesSelected = new Map<string, number | undefined>();
         for (const e of elements) {
-          if (e.type === ObjectType.Roof && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+          if (e.type === ObjectType.Roof && !e.locked) {
             const roof = e as RoofModel;
-            oldValuesSelected.set(e.id, roof.rValue ?? DEFAULT_ROOF_R_VALUE);
-            updateById(roof.id, value);
+            oldValuesSelected.set(e.id, roof.opacity);
+            updateOpacityById(roof.id, value);
           }
         }
         const undoableChangeSelected = {
-          name: 'Set R-Value for Selected Roofs',
+          name: 'Set Opacity for Selected Roofs',
           timestamp: Date.now(),
           oldValues: oldValuesSelected,
           newValue: value,
@@ -136,12 +134,12 @@ const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
         for (const e of elements) {
           if (e.type === ObjectType.Roof && !e.locked) {
             const roof = e as RoofModel;
-            oldValuesAll.set(e.id, roof.rValue ?? DEFAULT_ROOF_R_VALUE);
-            updateById(roof.id, value);
+            oldValuesAll.set(e.id, roof.opacity);
+            updateOpacityById(roof.id, value);
           }
         }
         const undoableChangeAll = {
-          name: 'Set R-Value for All Roofs',
+          name: 'Set Opacity for All Roofs',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
@@ -162,12 +160,12 @@ const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
           for (const e of elements) {
             if (e.type === ObjectType.Roof && e.foundationId === roof.foundationId && !e.locked) {
               const roof = e as RoofModel;
-              oldValuesAboveFoundation.set(e.id, roof.rValue ?? DEFAULT_ROOF_R_VALUE);
-              updateById(roof.id, value);
+              oldValuesAboveFoundation.set(e.id, roof.opacity);
+              updateOpacityById(roof.id, value);
             }
           }
           const undoableChangeAboveFoundation = {
-            name: 'Set R-Value for All Roofs Above Foundation',
+            name: 'Set Opacity for All Roofs Above Foundation',
             timestamp: Date.now(),
             oldValues: oldValuesAboveFoundation,
             newValue: value,
@@ -189,28 +187,29 @@ const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
       default:
         if (roof) {
           const updatedRoof = getElementById(roof.id) as RoofModel;
-          const oldValue = updatedRoof.rValue ?? roof.rValue ?? DEFAULT_ROOF_R_VALUE;
+          const oldOpacity =
+            updatedRoof.opacity !== undefined ? updatedRoof.opacity : roof.opacity !== undefined ? roof.opacity : 0.5;
           const undoableChange = {
-            name: 'Set Roof R-Value',
+            name: 'Set Roof Opacity',
             timestamp: Date.now(),
-            oldValue: oldValue,
+            oldValue: oldOpacity,
             newValue: value,
             changedElementId: roof.id,
             changedElementType: roof.type,
             undo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
+              updateOpacityById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.newValue as number);
+              updateOpacityById(undoableChange.changedElementId, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateById(roof.id, value);
+          updateOpacityById(roof.id, value);
           setApplyCount(applyCount + 1);
         }
     }
     setCommonStore((state) => {
-      state.actionState.roofRValue = value;
+      state.actionState.roofGlassOpacity = value;
     });
   };
 
@@ -219,56 +218,25 @@ const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   };
 
   const apply = () => {
-    setValue(inputValue);
+    setValue(input);
   };
 
   return (
-    <Dialog
-      width={550}
-      title={`${i18n.t('roofMenu.RoofRValue', lang) + ' '}(${i18n.t('word.ThermalResistance', lang)})`}
-      onApply={apply}
-      onClose={close}
-    >
+    <Dialog width={550} title={i18n.t('roofMenu.Opacity', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
         <Col className="gutter-row" span={7}>
           <InputNumber
-            min={0.01}
-            max={100}
-            style={{ width: 120 }}
-            step={0.05}
-            precision={2}
-            value={inputValue}
-            formatter={(a) => Number(a).toFixed(2)}
-            onChange={(value) => {
-              if (value === null) return;
-              setInputValue(value);
-              setInputValueUS(Util.toRValueInUS(value));
-            }}
-          />
-          <div style={{ paddingTop: '4px', textAlign: 'left', fontSize: '11px' }}>
-            {i18n.t('word.Range', lang)}: [0.01, 100]
-            <br />
-            {i18n.t('word.SIUnit', lang)}: m²·℃/W
-          </div>
-          <br />
-          <InputNumber
-            min={Util.toRValueInUS(0.01)}
-            max={Util.toRValueInUS(100)}
+            min={0}
+            max={1}
             style={{ width: 120 }}
             step={0.01}
             precision={2}
-            value={inputValueUS}
+            value={input}
             formatter={(a) => Number(a).toFixed(2)}
-            onChange={(value) => {
-              if (value === null) return;
-              setInputValueUS(value);
-              setInputValue(Util.toRValueInSI(value));
-            }}
+            onChange={(value) => setInput(value!)}
           />
-          <div style={{ paddingTop: '4px', textAlign: 'left', fontSize: '11px' }}>
-            {i18n.t('word.Range', lang)}: [{Util.toRValueInUS(0.01).toFixed(3)}, {Util.toRValueInUS(100).toFixed(1)}]
-            <br />
-            {i18n.t('word.USUnit', lang)}: h·ft²·℉/Btu
+          <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
+            {i18n.t('word.Range', lang)}: [0, 1]
           </div>
         </Col>
         <Col
@@ -292,4 +260,4 @@ const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   );
 };
 
-export default RoofRValueInput;
+export default RoofOpacityInput;

@@ -1,69 +1,69 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
-import { Col, Row, InputNumber, Radio, Space } from 'antd';
+import { Col, Radio, Row, Space } from 'antd';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
 import { ObjectType, Scope } from 'src/types';
 import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
+import { CompactPicker } from 'react-color';
 import { RoofModel } from 'src/models/RoofModel';
-import { useSelectedElement } from './menuHooks';
+import { useSelectedElement } from '../menuHooks';
 import { useLanguage } from 'src/views/hooks';
-import Dialog from '../dialog';
+import Dialog from '../../dialog';
 
-const RoofThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const RoofSideColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const elements = useStore(Selector.elements);
+  const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.roofActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const getElementById = useStore(Selector.getElementById);
-  const setCommonStore = useStore(Selector.set);
 
   const roof = useSelectedElement(ObjectType.Roof) as RoofModel | undefined;
 
-  const [inputLength, setInputLength] = useState<number>(roof?.thickness ?? 0.4);
+  const [selectedSideColor, setSelectedSideColor] = useState<string>(roof?.sideColor ?? '#ffffff');
 
   const lang = useLanguage();
 
-  const updateById = (id: string, value: number) => {
+  const updateSideColorById = (id: string, sideColor: string) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id) {
-          (e as RoofModel).thickness = value;
-          state.updateElementOnRoofFlag = true;
-        }
-        if (e.parentId === id && e.type === ObjectType.Window) {
-          e.ly = value;
+          if (!e.locked) {
+            (e as RoofModel).sideColor = sideColor;
+          }
+          break;
         }
       }
     });
   };
 
-  const undoInMap = (map: Map<string, number>) => {
-    for (const [id, val] of map.entries()) {
-      updateById(id, val);
-    }
-  };
-
-  const updateInMap = (map: Map<string, number>, value: number) => {
+  const updateSideColorInMap = (map: Map<string, string>, sideColor: string) => {
     for (const id of map.keys()) {
-      updateById(id, value);
+      updateSideColorById(id, sideColor as string);
     }
   };
 
-  const needChange = (value: number) => {
+  const undoSideColorInMap = (map: Map<string, string>) => {
+    for (const [id, color] of map.entries()) {
+      updateSideColorById(id, color as string);
+    }
+  };
+
+  const needChange = (value: string) => {
     if (!roof) return;
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType:
         for (const e of elements) {
           if (
             e.type === ObjectType.Roof &&
-            value !== (e as RoofModel).thickness &&
+            value !== (e as RoofModel).sideColor &&
             !e.locked &&
             useStore.getState().selectedElementIdSet.has(e.id)
           ) {
@@ -73,7 +73,7 @@ const RoofThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
         break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
-          if (e.type === ObjectType.Roof && value !== (e as RoofModel).thickness && !e.locked) {
+          if (e.type === ObjectType.Roof && value !== (e as RoofModel).sideColor && !e.locked) {
             return true;
           }
         }
@@ -83,7 +83,7 @@ const RoofThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
           if (
             e.type === ObjectType.Roof &&
             e.foundationId === roof.foundationId &&
-            value !== (e as RoofModel).thickness &&
+            value !== (e as RoofModel).sideColor &&
             !e.locked
           ) {
             return true;
@@ -91,7 +91,7 @@ const RoofThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
         }
         break;
       default:
-        if (value !== roof?.thickness) {
+        if (value !== roof?.sideColor) {
           return true;
         }
         break;
@@ -99,118 +99,120 @@ const RoofThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
     return false;
   };
 
-  const setThickness = (value: number) => {
+  const setSideColor = (value: string) => {
     if (!roof) return;
     if (!needChange(value)) return;
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType: {
-        const oldThicknessSelected = new Map<string, number>();
+        const oldColorsSelected = new Map<string, string>();
         for (const e of elements) {
           if (e.type === ObjectType.Roof && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
-            const roof = e as RoofModel;
-            oldThicknessSelected.set(e.id, roof.thickness);
-            updateById(roof.id, value);
+            oldColorsSelected.set(e.id, (e as RoofModel).sideColor ?? '#ffffff');
           }
         }
         const undoableChangeSelected = {
-          name: 'Set Thickness for Selected Roofs',
+          name: 'Set Side Color for Selected Roofs',
           timestamp: Date.now(),
-          oldValues: oldThicknessSelected,
+          oldValues: oldColorsSelected,
           newValue: value,
           undo: () => {
-            undoInMap(undoableChangeSelected.oldValues as Map<string, number>);
+            undoSideColorInMap(undoableChangeSelected.oldValues as Map<string, string>);
           },
           redo: () => {
-            updateInMap(
-              undoableChangeSelected.oldValues as Map<string, number>,
-              undoableChangeSelected.newValue as number,
+            updateSideColorInMap(
+              undoableChangeSelected.oldValues as Map<string, string>,
+              undoableChangeSelected.newValue as string,
             );
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeSelected);
+        updateSideColorInMap(oldColorsSelected, value);
         setApplyCount(applyCount + 1);
         break;
       }
       case Scope.AllObjectsOfThisType: {
-        const oldThicknessAll = new Map<string, number>();
+        const oldColorsAll = new Map<string, string>();
         for (const e of elements) {
           if (e.type === ObjectType.Roof && !e.locked) {
-            const roof = e as RoofModel;
-            oldThicknessAll.set(e.id, roof.thickness);
-            updateById(roof.id, value);
+            oldColorsAll.set(e.id, (e as RoofModel).sideColor ?? '#ffffff');
           }
         }
         const undoableChangeAll = {
-          name: 'Set Thickness for All Roofs',
+          name: 'Set Side Color for All Roofs',
           timestamp: Date.now(),
-          oldValues: oldThicknessAll,
+          oldValues: oldColorsAll,
           newValue: value,
           undo: () => {
-            undoInMap(undoableChangeAll.oldValues as Map<string, number>);
+            undoSideColorInMap(undoableChangeAll.oldValues as Map<string, string>);
           },
           redo: () => {
-            updateInMap(undoableChangeAll.oldValues as Map<string, number>, undoableChangeAll.newValue as number);
+            updateSideColorInMap(
+              undoableChangeAll.oldValues as Map<string, string>,
+              undoableChangeAll.newValue as string,
+            );
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
+        updateSideColorInMap(oldColorsAll, value);
         setApplyCount(applyCount + 1);
         break;
       }
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (roof.foundationId) {
-          const oldThicknessAboveFoundation = new Map<string, number>();
-          for (const elem of elements) {
-            if (elem.type === ObjectType.Roof && elem.foundationId === roof.foundationId && !elem.locked) {
-              const roof = elem as RoofModel;
-              oldThicknessAboveFoundation.set(elem.id, roof.thickness);
-              updateById(roof.id, value);
+          const oldColorsAboveFoundation = new Map<string, string>();
+          for (const e of elements) {
+            if (e.type === ObjectType.Roof && e.foundationId === roof.foundationId && !roof.locked) {
+              oldColorsAboveFoundation.set(e.id, (e as RoofModel).sideColor ?? '#ffffff');
             }
           }
           const undoableChangeAboveFoundation = {
-            name: 'Set Thickness for All Roofs Above Foundation',
+            name: 'Set Side Color for All Roofs Above Foundation',
             timestamp: Date.now(),
-            oldValues: oldThicknessAboveFoundation,
+            oldValues: oldColorsAboveFoundation,
             newValue: value,
             groupId: roof.foundationId,
             undo: () => {
-              undoInMap(undoableChangeAboveFoundation.oldValues as Map<string, number>);
+              undoSideColorInMap(undoableChangeAboveFoundation.oldValues as Map<string, string>);
             },
             redo: () => {
-              updateInMap(
-                undoableChangeAboveFoundation.oldValues as Map<string, number>,
-                undoableChangeAboveFoundation.newValue as number,
-              );
+              if (undoableChangeAboveFoundation.groupId) {
+                updateSideColorInMap(
+                  undoableChangeAboveFoundation.oldValues as Map<string, string>,
+                  undoableChangeAboveFoundation.newValue as string,
+                );
+              }
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAboveFoundation);
+          updateSideColorInMap(oldColorsAboveFoundation, value);
           setApplyCount(applyCount + 1);
         }
         break;
       default:
         if (roof) {
           const updatedRoof = getElementById(roof.id) as RoofModel;
-          const oldThickness = updatedRoof.thickness ?? roof.thickness ?? 0.4;
+          const oldColor = (updatedRoof ? updatedRoof.sideColor : roof.sideColor) ?? '#ffffff';
           const undoableChange = {
-            name: 'Set Roof Thickness',
+            name: 'Set Side Color of Selected Roof',
             timestamp: Date.now(),
-            oldValue: oldThickness,
+            oldValue: oldColor,
             newValue: value,
             changedElementId: roof.id,
             changedElementType: roof.type,
             undo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
+              updateSideColorById(undoableChange.changedElementId, undoableChange.oldValue as string);
             },
             redo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.newValue as number);
+              updateSideColorById(undoableChange.changedElementId, undoableChange.newValue as string);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateById(roof.id, value);
+          updateSideColorById(roof.id, value);
           setApplyCount(applyCount + 1);
         }
     }
     setCommonStore((state) => {
-      state.actionState.roofThickness = value;
+      state.actionState.roofSideColor = value;
     });
   };
 
@@ -219,34 +221,24 @@ const RoofThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   };
 
   const apply = () => {
-    setThickness(inputLength);
+    setSideColor(selectedSideColor);
   };
 
   return (
-    <Dialog width={550} title={i18n.t('word.Thickness', lang)} onApply={apply} onClose={close}>
+    <Dialog width={640} title={i18n.t('roofMenu.RoofSideColor', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
-        <Col className="gutter-row" span={6}>
-          <InputNumber
-            min={0.05}
-            max={1}
-            style={{ width: 120 }}
-            step={0.01}
-            precision={2}
-            value={inputLength}
-            formatter={(a) => Number(a).toFixed(2)}
-            onChange={(value) => setInputLength(value!)}
+        <Col className="gutter-row" span={11}>
+          <CompactPicker
+            color={selectedSideColor ?? roof?.sideColor ?? '#ffffff'}
+            onChangeComplete={(colorResult) => {
+              setSelectedSideColor(colorResult.hex);
+            }}
           />
-          <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-            {i18n.t('word.Range', lang)}: [0.05, 1] {i18n.t('word.MeterAbbreviation', lang)}
-          </div>
-        </Col>
-        <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
-          {i18n.t('word.MeterAbbreviation', lang)}
         </Col>
         <Col
           className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-          span={17}
+          span={13}
         >
           <Radio.Group onChange={(e) => useStore.getState().setRoofActionScope(e.target.value)} value={actionScope}>
             <Space direction="vertical">
@@ -264,4 +256,4 @@ const RoofThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   );
 };
 
-export default RoofThicknessInput;
+export default RoofSideColorSelection;
