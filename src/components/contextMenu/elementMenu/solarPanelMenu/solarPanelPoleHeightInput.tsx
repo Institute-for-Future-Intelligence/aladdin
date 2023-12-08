@@ -2,27 +2,29 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Col, InputNumber, Radio, RadioChangeEvent, Row, Space } from 'antd';
-import { CommonStoreState, useStore } from '../../../stores/common';
-import * as Selector from '../../../stores/selector';
-import { SolarPanelModel } from '../../../models/SolarPanelModel';
-import { ElementState, ObjectType, Orientation, Scope } from '../../../types';
-import i18n from '../../../i18n/i18n';
-import { UndoableChange } from '../../../undo/UndoableChange';
-import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
-import { Util } from '../../../Util';
-import { UNIT_VECTOR_POS_Z_ARRAY, ZERO_TOLERANCE } from '../../../constants';
-import { RoofModel } from 'src/models/RoofModel';
-import { useSelectedElement } from './menuHooks';
+import { useStore } from '../../../../stores/common';
+import * as Selector from '../../../../stores/selector';
+import { SolarPanelModel } from '../../../../models/SolarPanelModel';
+import { ObjectType, Scope } from '../../../../types';
+import i18n from '../../../../i18n/i18n';
+import { UndoableChange } from '../../../../undo/UndoableChange';
+import { UndoableChangeGroup } from '../../../../undo/UndoableChangeGroup';
+import { Util } from '../../../../Util';
+import { ZERO_TOLERANCE } from '../../../../constants';
+import { useSelectedElement } from '../menuHooks';
+import Dialog from '../../dialog';
 import { useLanguage } from 'src/views/hooks';
-import Dialog from '../dialog';
 
-const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const SolarPanelPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
-  const getPvModule = useStore(Selector.getPvModule);
+  const updatePoleHeightById = useStore(Selector.updateSolarCollectorPoleHeightById);
+  const updatePoleHeightOnSurface = useStore(Selector.updateSolarCollectorPoleHeightOnSurface);
+  const updatePoleHeightAboveFoundation = useStore(Selector.updateSolarCollectorPoleHeightAboveFoundation);
+  const updatePoleHeightForAll = useStore(Selector.updateSolarCollectorPoleHeightForAll);
   const getParent = useStore(Selector.getParent);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.solarPanelActionScope);
@@ -32,152 +34,25 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
   const revertApply = useStore(Selector.revertApply);
 
   const solarPanel = useSelectedElement(ObjectType.SolarPanel) as SolarPanelModel | undefined;
-  const [inputValue, setInputValue] = useState(
-    solarPanel?.orientation === Orientation.portrait ? solarPanel?.ly ?? 2 : solarPanel?.lx ?? 1,
-  );
+  const [inputValue, setInputValue] = useState(solarPanel?.poleHeight ?? 0);
 
-  const [dy, setDy] = useState<number>(0);
   const rejectRef = useRef<boolean>(false);
   const rejectedValue = useRef<number | undefined>();
 
   const lang = useLanguage();
 
-  useEffect(() => {
-    if (solarPanel) {
-      const pvModel = getPvModule(solarPanel.pvModelName) ?? getPvModule('SPR-X21-335-BLK');
-      setDy(solarPanel.orientation === Orientation.portrait ? pvModel.length : pvModel.width);
-      setInputValue(solarPanel.ly);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [solarPanel]);
-
-  const updateSolarPanelLyById = (id: string, ly: number) => {
-    setCommonStore((state: CommonStoreState) => {
-      for (const e of state.elements) {
-        if (e.type === ObjectType.SolarPanel && e.id === id && !e.locked) {
-          const sp = e as SolarPanelModel;
-          const pv = state.getPvModule(sp.pvModelName);
-          e.ly = Util.panelizeLy(sp, pv, ly);
-          break;
-        }
-      }
-    });
-  };
-
-  const updateSolarPanelLyAboveFoundation = (foundationId: string, ly: number) => {
-    setCommonStore((state: CommonStoreState) => {
-      for (const e of state.elements) {
-        if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId && !e.locked) {
-          const sp = e as SolarPanelModel;
-          const pv = state.getPvModule(sp.pvModelName);
-          e.ly = Util.panelizeLy(sp, pv, ly);
-        }
-      }
-    });
-  };
-
-  const updateSolarPanelLyOnSurface = (parentId: string, normal: number[] | undefined, ly: number) => {
-    setCommonStore((state: CommonStoreState) => {
-      for (const e of state.elements) {
-        if (e.type === ObjectType.SolarPanel && !e.locked) {
-          let found;
-          if (normal) {
-            found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
-          } else {
-            found = e.parentId === parentId;
-          }
-          if (found) {
-            const sp = e as SolarPanelModel;
-            const pv = state.getPvModule(sp.pvModelName);
-            e.ly = Util.panelizeLy(sp, pv, ly);
-          }
-        }
-      }
-    });
-  };
-
-  const updateSolarPanelLyForAll = (ly: number) => {
-    setCommonStore((state: CommonStoreState) => {
-      for (const e of state.elements) {
-        if (e.type === ObjectType.SolarPanel && !e.locked) {
-          const sp = e as SolarPanelModel;
-          const pv = state.getPvModule(sp.pvModelName);
-          e.ly = Util.panelizeLy(sp, pv, ly);
-        }
-      }
-    });
-  };
-
-  const updateInMap = (map: Map<string, number>, value: number) => {
-    useStore.getState().set((state) => {
-      for (const e of state.elements) {
-        if (e.type === ObjectType.SolarPanel && !e.locked && map.has(e.id)) {
-          const sp = e as SolarPanelModel;
-          const pv = state.getPvModule(sp.pvModelName);
-          e.ly = Util.panelizeLy(sp, pv, value);
-        }
-      }
-    });
-  };
-
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);
   };
 
-  const withinParent = (sp: SolarPanelModel, ly: number) => {
-    const parent = getParent(sp);
-    if (parent) {
-      if (parent.type === ObjectType.Cuboid && !Util.isIdentical(sp.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
-        // TODO: cuboid vertical sides
-        return true;
-      }
-      const clone = JSON.parse(JSON.stringify(sp)) as SolarPanelModel;
-      clone.ly = ly;
-      if (parent.type === ObjectType.Wall) {
-        // maybe outside bound or overlap with others
-        return Util.checkElementOnWallState(clone, parent) === ElementState.Valid;
-      }
-      if (parent.type === ObjectType.Roof) {
-        return Util.checkElementOnRoofState(clone, parent as RoofModel) === ElementState.Valid;
-      }
-      return Util.isSolarCollectorWithinHorizontalSurface(clone, parent);
-    }
-    return false;
-  };
-
-  const rejectChange = (sp: SolarPanelModel, ly: number) => {
-    if (sp.tiltAngle !== 0 && 0.5 * ly * Math.abs(Math.sin(sp.tiltAngle)) > sp.poleHeight) {
-      // check if the new width will cause the solar panel to intersect with the base surface
-      return true;
-    }
-    // check if the new width will cause the solar panel to be out of the bound
-    if (!withinParent(sp, ly)) {
-      return true;
-    }
-    // other check?
-    return false;
-  };
-
-  // FIXME: When there are multiple types of solar panels that have different dimensions,
-  // this will not work properly.
-  const needChange = (ly: number) => {
+  const needChange = (poleHeight: number) => {
     if (!solarPanel) return;
     switch (actionScope) {
-      case Scope.AllSelectedObjectsOfThisType:
+      case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.SolarPanel && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
             const sp = e as SolarPanelModel;
-            if (Math.abs(sp.ly - ly) > ZERO_TOLERANCE) {
-              return true;
-            }
-          }
-        }
-        break;
-      case Scope.AllObjectsOfThisType:
-        for (const e of elements) {
-          if (e.type === ObjectType.SolarPanel && !e.locked) {
-            const sp = e as SolarPanelModel;
-            if (Math.abs(sp.ly - ly) > ZERO_TOLERANCE) {
+            if (Math.abs(sp.poleHeight - poleHeight) > ZERO_TOLERANCE) {
               return true;
             }
           }
@@ -187,7 +62,7 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
         for (const e of elements) {
           if (e.type === ObjectType.SolarPanel && e.foundationId === solarPanel?.foundationId && !e.locked) {
             const sp = e as SolarPanelModel;
-            if (Math.abs(sp.ly - ly) > ZERO_TOLERANCE) {
+            if (Math.abs(sp.poleHeight - poleHeight) > ZERO_TOLERANCE) {
               return true;
             }
           }
@@ -206,7 +81,7 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
                 !e.locked
               ) {
                 const sp = e as SolarPanelModel;
-                if (Math.abs(sp.ly - ly) > ZERO_TOLERANCE) {
+                if (Math.abs(sp.poleHeight - poleHeight) > ZERO_TOLERANCE) {
                   return true;
                 }
               }
@@ -215,7 +90,7 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
             for (const e of elements) {
               if (e.type === ObjectType.SolarPanel && e.parentId === solarPanel.parentId && !e.locked) {
                 const sp = e as SolarPanelModel;
-                if (Math.abs(sp.ly - ly) > ZERO_TOLERANCE) {
+                if (Math.abs(sp.poleHeight - poleHeight) > ZERO_TOLERANCE) {
                   return true;
                 }
               }
@@ -224,14 +99,25 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
         }
         break;
       default:
-        if (Math.abs(solarPanel?.ly - ly) > ZERO_TOLERANCE) {
+        if (Math.abs(solarPanel?.poleHeight - poleHeight) > ZERO_TOLERANCE) {
           return true;
         }
     }
     return false;
   };
 
-  const setWidth = (value: number) => {
+  const updateInMap = (map: Map<string, number>, value: number) => {
+    useStore.getState().set((state) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.SolarPanel && !e.locked && map.has(e.id)) {
+          const sp = e as SolarPanelModel;
+          sp.poleHeight = value;
+        }
+      }
+    });
+  };
+
+  const setPoleHeight = (value: number) => {
     if (!solarPanel) return;
     if (!needChange(value)) return;
     rejectedValue.current = undefined;
@@ -240,7 +126,7 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
         rejectRef.current = false;
         for (const elem of elements) {
           if (elem.type === ObjectType.SolarPanel && useStore.getState().selectedElementIdSet.has(elem.id)) {
-            if (rejectChange(elem as SolarPanelModel, value)) {
+            if (0.5 * elem.ly * Math.abs(Math.sin((elem as SolarPanelModel).tiltAngle)) > value) {
               rejectRef.current = true;
               break;
             }
@@ -248,22 +134,22 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
         }
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputValue(solarPanel.ly);
+          setInputValue(solarPanel.poleHeight);
         } else {
-          const oldWidthsSelected = new Map<string, number>();
+          const oldPoleHeightsSelected = new Map<string, number>();
           for (const elem of elements) {
             if (elem.type === ObjectType.SolarPanel && useStore.getState().selectedElementIdSet.has(elem.id)) {
-              oldWidthsSelected.set(elem.id, elem.ly);
+              oldPoleHeightsSelected.set(elem.id, (elem as SolarPanelModel).poleHeight);
             }
           }
           const undoableChangeSelected = {
-            name: 'Set Width for Selected Solar Panel Arrays',
+            name: 'Set Pole Height for Selected Solar Panel Arrays',
             timestamp: Date.now(),
-            oldValues: oldWidthsSelected,
+            oldValues: oldPoleHeightsSelected,
             newValue: value,
             undo: () => {
-              for (const [id, ly] of undoableChangeSelected.oldValues.entries()) {
-                updateSolarPanelLyById(id, ly as number);
+              for (const [id, ph] of undoableChangeSelected.oldValues.entries()) {
+                updatePoleHeightById(id, ph as number);
               }
             },
             redo: () => {
@@ -274,7 +160,7 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeSelected);
-          updateInMap(oldWidthsSelected, value);
+          updateInMap(oldPoleHeightsSelected, value);
           setApplyCount(applyCount + 1);
         }
         break;
@@ -283,7 +169,7 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
         rejectRef.current = false;
         for (const elem of elements) {
           if (elem.type === ObjectType.SolarPanel) {
-            if (rejectChange(elem as SolarPanelModel, value)) {
+            if (0.5 * elem.ly * Math.abs(Math.sin((elem as SolarPanelModel).tiltAngle)) > value) {
               rejectRef.current = true;
               break;
             }
@@ -291,30 +177,30 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
         }
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputValue(solarPanel.ly);
+          setInputValue(solarPanel.poleHeight);
         } else {
-          const oldWidthsAll = new Map<string, number>();
+          const oldPoleHeightsAll = new Map<string, number>();
           for (const elem of elements) {
             if (elem.type === ObjectType.SolarPanel) {
-              oldWidthsAll.set(elem.id, elem.ly);
+              oldPoleHeightsAll.set(elem.id, (elem as SolarPanelModel).poleHeight);
             }
           }
           const undoableChangeAll = {
-            name: 'Set Width for All Solar Panel Arrays',
+            name: 'Set Pole Height for All Solar Panel Arrays',
             timestamp: Date.now(),
-            oldValues: oldWidthsAll,
+            oldValues: oldPoleHeightsAll,
             newValue: value,
             undo: () => {
-              for (const [id, ly] of undoableChangeAll.oldValues.entries()) {
-                updateSolarPanelLyById(id, ly as number);
+              for (const [id, ph] of undoableChangeAll.oldValues.entries()) {
+                updatePoleHeightById(id, ph as number);
               }
             },
             redo: () => {
-              updateSolarPanelLyForAll(undoableChangeAll.newValue as number);
+              updatePoleHeightForAll(ObjectType.SolarPanel, undoableChangeAll.newValue as number);
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAll);
-          updateSolarPanelLyForAll(value);
+          updatePoleHeightForAll(ObjectType.SolarPanel, value);
           setApplyCount(applyCount + 1);
         }
         break;
@@ -324,7 +210,7 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
           rejectRef.current = false;
           for (const elem of elements) {
             if (elem.type === ObjectType.SolarPanel && elem.foundationId === solarPanel.foundationId) {
-              if (rejectChange(elem as SolarPanelModel, value)) {
+              if (0.5 * elem.ly * Math.abs(Math.sin((elem as SolarPanelModel).tiltAngle)) > value) {
                 rejectRef.current = true;
                 break;
               }
@@ -332,28 +218,29 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
           }
           if (rejectRef.current) {
             rejectedValue.current = value;
-            setInputValue(solarPanel.ly);
+            setInputValue(solarPanel.poleHeight);
           } else {
-            const oldWidthsAboveFoundation = new Map<string, number>();
+            const oldPoleHeightsAboveFoundation = new Map<string, number>();
             for (const elem of elements) {
               if (elem.type === ObjectType.SolarPanel && elem.foundationId === solarPanel.foundationId) {
-                oldWidthsAboveFoundation.set(elem.id, elem.ly);
+                oldPoleHeightsAboveFoundation.set(elem.id, (elem as SolarPanelModel).poleHeight);
               }
             }
             const undoableChangeAboveFoundation = {
-              name: 'Set Width for All Solar Panel Arrays Above Foundation',
+              name: 'Set Pole Height for All Solar Panel Arrays Above Foundation',
               timestamp: Date.now(),
-              oldValues: oldWidthsAboveFoundation,
+              oldValues: oldPoleHeightsAboveFoundation,
               newValue: value,
               groupId: solarPanel.foundationId,
               undo: () => {
-                for (const [id, ly] of undoableChangeAboveFoundation.oldValues.entries()) {
-                  updateSolarPanelLyById(id, ly as number);
+                for (const [id, ph] of undoableChangeAboveFoundation.oldValues.entries()) {
+                  updatePoleHeightById(id, ph as number);
                 }
               },
               redo: () => {
                 if (undoableChangeAboveFoundation.groupId) {
-                  updateSolarPanelLyAboveFoundation(
+                  updatePoleHeightAboveFoundation(
+                    ObjectType.SolarPanel,
                     undoableChangeAboveFoundation.groupId,
                     undoableChangeAboveFoundation.newValue as number,
                   );
@@ -361,7 +248,7 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
               },
             } as UndoableChangeGroup;
             addUndoable(undoableChangeAboveFoundation);
-            updateSolarPanelLyAboveFoundation(solarPanel.foundationId, value);
+            updatePoleHeightAboveFoundation(ObjectType.SolarPanel, solarPanel.foundationId, value);
             setApplyCount(applyCount + 1);
           }
         }
@@ -378,16 +265,18 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
                 elem.parentId === solarPanel.parentId &&
                 Util.isIdentical(elem.normal, solarPanel.normal)
               ) {
-                if (rejectChange(elem as SolarPanelModel, value)) {
+                // tilt is only allowed for the top surface of a cuboid
+                if (0.5 * elem.ly * Math.abs(Math.sin((elem as SolarPanelModel).tiltAngle)) > value) {
                   rejectRef.current = true;
                   break;
                 }
               }
             }
           } else {
+            // tilt is only allowed on top of a foundation or a roof
             for (const elem of elements) {
               if (elem.type === ObjectType.SolarPanel && elem.parentId === solarPanel.parentId) {
-                if (rejectChange(elem as SolarPanelModel, value)) {
+                if (0.5 * elem.ly * Math.abs(Math.sin((elem as SolarPanelModel).tiltAngle)) > value) {
                   rejectRef.current = true;
                   break;
                 }
@@ -396,9 +285,9 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
           }
           if (rejectRef.current) {
             rejectedValue.current = value;
-            setInputValue(solarPanel.ly);
+            setInputValue(solarPanel.poleHeight);
           } else {
-            const oldWidthsOnSurface = new Map<string, number>();
+            const oldPoleHeightsOnSurface = new Map<string, number>();
             const isParentCuboid = parent.type === ObjectType.Cuboid;
             if (isParentCuboid) {
               for (const elem of elements) {
@@ -407,32 +296,33 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
                   elem.parentId === solarPanel.parentId &&
                   Util.isIdentical(elem.normal, solarPanel.normal)
                 ) {
-                  oldWidthsOnSurface.set(elem.id, elem.ly);
+                  oldPoleHeightsOnSurface.set(elem.id, (elem as SolarPanelModel).poleHeight);
                 }
               }
             } else {
               for (const elem of elements) {
                 if (elem.type === ObjectType.SolarPanel && elem.parentId === solarPanel.parentId) {
-                  oldWidthsOnSurface.set(elem.id, elem.ly);
+                  oldPoleHeightsOnSurface.set(elem.id, (elem as SolarPanelModel).poleHeight);
                 }
               }
             }
             const normal = isParentCuboid ? solarPanel.normal : undefined;
             const undoableChangeOnSurface = {
-              name: 'Set Width for All Solar Panel Arrays on Surface',
+              name: 'Set Pole Height for All Solar Panel Arrays on Surface',
               timestamp: Date.now(),
-              oldValues: oldWidthsOnSurface,
+              oldValues: oldPoleHeightsOnSurface,
               newValue: value,
               groupId: solarPanel.parentId,
               normal: normal,
               undo: () => {
-                for (const [id, ly] of undoableChangeOnSurface.oldValues.entries()) {
-                  updateSolarPanelLyById(id, ly as number);
+                for (const [id, ph] of undoableChangeOnSurface.oldValues.entries()) {
+                  updatePoleHeightById(id, ph as number);
                 }
               },
               redo: () => {
                 if (undoableChangeOnSurface.groupId) {
-                  updateSolarPanelLyOnSurface(
+                  updatePoleHeightOnSurface(
+                    ObjectType.SolarPanel,
                     undoableChangeOnSurface.groupId,
                     undoableChangeOnSurface.normal,
                     undoableChangeOnSurface.newValue as number,
@@ -441,39 +331,42 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
               },
             } as UndoableChangeGroup;
             addUndoable(undoableChangeOnSurface);
-            updateSolarPanelLyOnSurface(solarPanel.parentId, normal, value);
+            updatePoleHeightOnSurface(ObjectType.SolarPanel, solarPanel.parentId, normal, value);
             setApplyCount(applyCount + 1);
           }
         }
         break;
       default:
         // solar panel selected element may be outdated, make sure that we get the latest
-        const sp = getElementById(solarPanel.id);
-        const oldWidth = sp ? sp.ly : solarPanel.ly;
-        rejectRef.current = rejectChange(solarPanel, value);
+        const sp = getElementById(solarPanel.id) as SolarPanelModel;
+        const oldPoleHeight = sp ? sp.poleHeight : solarPanel.poleHeight;
+        rejectRef.current = 0.5 * solarPanel.ly * Math.abs(Math.sin(solarPanel.tiltAngle)) > value;
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputValue(oldWidth);
+          setInputValue(oldPoleHeight);
         } else {
           const undoableChange = {
-            name: 'Set Solar Panel Array Width',
+            name: 'Set Solar Panel Array Pole Height',
             timestamp: Date.now(),
-            oldValue: oldWidth,
+            oldValue: oldPoleHeight,
             newValue: value,
             changedElementId: solarPanel.id,
             changedElementType: solarPanel.type,
             undo: () => {
-              updateSolarPanelLyById(undoableChange.changedElementId, undoableChange.oldValue as number);
+              updatePoleHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateSolarPanelLyById(undoableChange.changedElementId, undoableChange.newValue as number);
+              updatePoleHeightById(undoableChange.changedElementId, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateSolarPanelLyById(solarPanel.id, value);
+          updatePoleHeightById(solarPanel.id, value);
           setApplyCount(applyCount + 1);
         }
     }
+    setCommonStore((state) => {
+      state.actionState.solarPanelPoleHeight = value;
+    });
   };
 
   const close = () => {
@@ -487,22 +380,15 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
   };
 
   const ok = () => {
-    setWidth(inputValue);
+    setPoleHeight(inputValue);
     if (!rejectRef.current) {
       setDialogVisible(false);
       setApplyCount(0);
     }
   };
 
-  const panelize = (value: number) => {
-    let l = value ?? 1;
-    const n = Math.max(1, Math.ceil((l - dy / 2) / dy));
-    l = n * dy;
-    return l;
-  };
-
   const apply = () => {
-    setWidth(inputValue);
+    setPoleHeight(inputValue);
   };
 
   const rejectedMessage = rejectRef.current
@@ -514,7 +400,7 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
   return (
     <Dialog
       width={550}
-      title={i18n.t('word.Width', lang)}
+      title={i18n.t('solarCollectorMenu.PoleHeight', lang)}
       rejectedMessage={rejectedMessage}
       onApply={apply}
       onClose={close}
@@ -524,21 +410,21 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
       <Row gutter={6}>
         <Col className="gutter-row" span={6}>
           <InputNumber
-            min={dy}
-            max={100 * dy}
-            step={dy}
+            min={0}
+            max={10}
             style={{ width: 120 }}
+            step={0.1}
             precision={2}
+            // formatter={(value) => `${value} ` + i18n.t('word.MeterAbbreviation', lang)}
+            // parser={value => Number(value?.replace(i18n.t('word.MeterAbbreviation', lang), ''))}
             value={inputValue}
             onChange={(value) => {
               if (value === null) return;
-              setInputValue(panelize(value));
+              setInputValue(value);
             }}
           />
           <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-            {Math.round(inputValue / dy) + ' ' + i18n.t('solarPanelMenu.PanelsLong', lang)}
-            <br />
-            {i18n.t('word.MaximumNumber', lang)}: 100 {i18n.t('solarPanelMenu.Panels', lang)}
+            {i18n.t('word.Range', lang)}: [0, 10] {i18n.t('word.MeterAbbreviation', lang)}
           </div>
         </Col>
         <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
@@ -547,7 +433,7 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
         <Col
           className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-          span={16}
+          span={17}
         >
           <Radio.Group onChange={onScopeChange} value={actionScope}>
             <Space direction="vertical">
@@ -570,4 +456,4 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
   );
 };
 
-export default SolarPanelWidthInput;
+export default SolarPanelPoleHeightInput;

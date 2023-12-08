@@ -12,7 +12,7 @@ export * from './polygonVertexMenu';
 export * from './sensorMenu';
 export * from './lightMenu';
 export * from './skyMenu/skyMenu';
-export * from './solarPanleMenu';
+export * from './solarPanelMenu/solarPanelMenu';
 export * from './parabolicTroughMenu';
 export * from './parabolicDishMenu';
 export * from './fresnelReflectorMenu';

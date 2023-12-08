@@ -2,28 +2,31 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useRef, useState } from 'react';
-import { Col, InputNumber, Radio, RadioChangeEvent, Row, Space } from 'antd';
-import { CommonStoreState, useStore } from '../../../stores/common';
-import * as Selector from '../../../stores/selector';
-import { SolarPanelModel } from '../../../models/SolarPanelModel';
-import { ElementState, ObjectType, Orientation, Scope } from '../../../types';
-import i18n from '../../../i18n/i18n';
-import { UndoableChange } from '../../../undo/UndoableChange';
-import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
-import { Util } from '../../../Util';
-import { UNIT_VECTOR_POS_Z_ARRAY, ZERO_TOLERANCE } from '../../../constants';
+import React, { useRef, useState } from 'react';
+import { Col, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
+import { CommonStoreState, useStore } from '../../../../stores/common';
+import * as Selector from '../../../../stores/selector';
+import { SolarPanelModel } from '../../../../models/SolarPanelModel';
+import { ElementState, ObjectType, Orientation, Scope } from '../../../../types';
+import i18n from '../../../../i18n/i18n';
+import { UndoableChange } from '../../../../undo/UndoableChange';
+import { UndoableChangeGroup } from '../../../../undo/UndoableChangeGroup';
+import { Util } from '../../../../Util';
+import { UNIT_VECTOR_POS_Z_ARRAY } from '../../../../constants';
 import { RoofModel } from 'src/models/RoofModel';
-import { useSelectedElement } from './menuHooks';
-import Dialog from '../dialog';
+import { useSelectedElement } from '../menuHooks';
+import Dialog from '../../dialog';
 import { useLanguage } from 'src/views/hooks';
 
-const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const { Option } = Select;
+
+const SolarPanelOrientationSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
   const getPvModule = useStore(Selector.getPvModule);
   const getParent = useStore(Selector.getParent);
+  const setElementSize = useStore(Selector.setElementSize);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.solarPanelActionScope);
   const setActionScope = useStore(Selector.setSolarPanelActionScope);
@@ -33,51 +36,55 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
 
   const solarPanel = useSelectedElement(ObjectType.SolarPanel) as SolarPanelModel | undefined;
 
-  const [inputValue, setInputValue] = useState(
-    solarPanel?.orientation === Orientation.portrait ? solarPanel?.lx ?? 1 : solarPanel?.ly ?? 2,
+  const [selectedOrientation, setSelectedOrientation] = useState<Orientation>(
+    solarPanel?.orientation ?? Orientation.portrait,
   );
-
-  const [dx, setDx] = useState<number>(0);
   const rejectRef = useRef<boolean>(false);
-  const rejectedValue = useRef<number | undefined>();
+  const rejectedValue = useRef<Orientation | undefined>();
 
   const lang = useLanguage();
 
-  useEffect(() => {
-    if (solarPanel) {
-      const pvModel = getPvModule(solarPanel.pvModelName) ?? getPvModule('SPR-X21-335-BLK');
-      setDx(solarPanel.orientation === Orientation.portrait ? pvModel.width : pvModel.length);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [solarPanel]);
-
-  const updateSolarPanelLxById = (id: string, lx: number) => {
+  const updateSolarPanelOrientationById = (id: string, orientation: Orientation) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.SolarPanel && e.id === id && !e.locked) {
           const sp = e as SolarPanelModel;
-          const pv = state.getPvModule(sp.pvModelName);
-          e.lx = Util.panelizeLx(sp, pv, lx);
+          const pvModel = state.pvModules[sp.pvModelName];
+          state.setSolarPanelOrientation(sp, pvModel, orientation);
+          if (sp.parentType === ObjectType.Wall) {
+          }
           break;
         }
       }
     });
   };
 
-  const updateSolarPanelLxAboveFoundation = (foundationId: string, lx: number) => {
+  const updateSolarPanelOrientationAboveFoundation = (foundationId: string, orientation: Orientation) => {
     setCommonStore((state: CommonStoreState) => {
+      let updateWall = false;
       for (const e of state.elements) {
         if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId && !e.locked) {
           const sp = e as SolarPanelModel;
-          const pv = state.getPvModule(sp.pvModelName);
-          e.lx = Util.panelizeLx(sp, pv, lx);
+          const pvModel = state.pvModules[sp.pvModelName];
+          state.setSolarPanelOrientation(sp, pvModel, orientation);
+          if (sp.parentType === ObjectType.Wall) {
+            updateWall = true;
+          }
         }
+      }
+      if (updateWall) {
       }
     });
   };
 
-  const updateSolarPanelLxOnSurface = (parentId: string, normal: number[] | undefined, lx: number) => {
+  const updateSolarPanelOrientationOnSurface = (
+    parentId: string,
+    normal: number[] | undefined,
+    orientation: Orientation,
+  ) => {
     setCommonStore((state: CommonStoreState) => {
+      let updateWall = false;
+
       for (const e of state.elements) {
         if (e.type === ObjectType.SolarPanel && !e.locked) {
           let found;
@@ -88,33 +95,44 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
           }
           if (found) {
             const sp = e as SolarPanelModel;
-            const pv = state.getPvModule(sp.pvModelName);
-            e.lx = Util.panelizeLx(sp, pv, lx);
+            const pvModel = state.pvModules[sp.pvModelName];
+            state.setSolarPanelOrientation(sp, pvModel, orientation);
+            if (sp.parentType === ObjectType.Wall) {
+              updateWall = true;
+            }
           }
         }
       }
-    });
-  };
-
-  const updateSolarPanelLxForAll = (lx: number) => {
-    setCommonStore((state: CommonStoreState) => {
-      for (const e of state.elements) {
-        if (e.type === ObjectType.SolarPanel && !e.locked) {
-          const sp = e as SolarPanelModel;
-          const pv = state.getPvModule(sp.pvModelName);
-          e.lx = Util.panelizeLx(sp, pv, lx);
-        }
+      if (updateWall) {
       }
     });
   };
 
-  const updateInMap = (map: Map<string, number>, value: number) => {
+  const updateSolarPanelOrientationForAll = (orientation: Orientation) => {
+    setCommonStore((state: CommonStoreState) => {
+      let updateWall = false;
+      for (const e of state.elements) {
+        if (e.type === ObjectType.SolarPanel && !e.locked) {
+          const sp = e as SolarPanelModel;
+          const pvModel = state.pvModules[sp.pvModelName];
+          state.setSolarPanelOrientation(sp, pvModel, orientation);
+          if (sp.parentType === ObjectType.Wall) {
+            updateWall = true;
+          }
+        }
+      }
+      if (updateWall) {
+      }
+    });
+  };
+
+  const updateInMap = (map: Map<string, Orientation>, value: Orientation) => {
     useStore.getState().set((state) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.SolarPanel && !e.locked && map.has(e.id)) {
           const sp = e as SolarPanelModel;
-          const pv = state.getPvModule(sp.pvModelName);
-          e.lx = Util.panelizeLx(sp, pv, value);
+          const pvModel = state.pvModules[sp.pvModelName];
+          state.setSolarPanelOrientation(sp, pvModel, value);
         }
       }
     });
@@ -124,7 +142,27 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
     setActionScope(e.target.value);
   };
 
-  const withinParent = (sp: SolarPanelModel, lx: number) => {
+  // cannot use the stored dx, dy in the following calculation
+  // as changing orientation does not cause it to update
+  const changeOrientation = (value: Orientation) => {
+    if (solarPanel) {
+      const pvModel = getPvModule(solarPanel.pvModelName);
+      if (value === Orientation.portrait) {
+        // calculate the current x-y layout
+        const nx = Math.max(1, Math.round(solarPanel.lx / pvModel.width));
+        const ny = Math.max(1, Math.round(solarPanel.ly / pvModel.length));
+        setElementSize(solarPanel.id, nx * pvModel.width, ny * pvModel.length);
+      } else {
+        // calculate the current x-y layout
+        const nx = Math.max(1, Math.round(solarPanel.lx / pvModel.length));
+        const ny = Math.max(1, Math.round(solarPanel.ly / pvModel.width));
+        setElementSize(solarPanel.id, nx * pvModel.length, ny * pvModel.width);
+      }
+      updateSolarPanelOrientationById(solarPanel.id, value);
+    }
+  };
+
+  const withinParent = (sp: SolarPanelModel, orientation: Orientation) => {
     const parent = getParent(sp);
     if (parent) {
       if (parent.type === ObjectType.Cuboid && !Util.isIdentical(sp.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
@@ -132,7 +170,21 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
         return true;
       }
       const clone = JSON.parse(JSON.stringify(sp)) as SolarPanelModel;
-      clone.lx = lx;
+      clone.orientation = orientation;
+      const pvModel = getPvModule(clone.pvModelName);
+      if (orientation === Orientation.portrait) {
+        // calculate the current x-y layout
+        const nx = Math.max(1, Math.round(clone.lx / pvModel.width));
+        const ny = Math.max(1, Math.round(clone.ly / pvModel.length));
+        clone.lx = nx * pvModel.width;
+        clone.ly = ny * pvModel.length;
+      } else {
+        // calculate the current x-y layout
+        const nx = Math.max(1, Math.round(clone.lx / pvModel.length));
+        const ny = Math.max(1, Math.round(clone.ly / pvModel.width));
+        clone.lx = nx * pvModel.length;
+        clone.ly = ny * pvModel.width;
+      }
       if (parent.type === ObjectType.Wall) {
         // maybe outside bound or overlap with others
         return Util.checkElementOnWallState(clone, parent) === ElementState.Valid;
@@ -145,25 +197,23 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
     return false;
   };
 
-  const rejectChange = (sp: SolarPanelModel, lx: number) => {
-    // check if the new length will cause the solar panel to be out of the bound
-    if (!withinParent(sp, lx)) {
+  const rejectChange = (sp: SolarPanelModel, orientation: Orientation) => {
+    // check if the new orientation will cause the solar panel to be out of the bound
+    if (!withinParent(sp, orientation)) {
       return true;
     }
     // other check?
     return false;
   };
 
-  // FIXME: When there are multiple types of solar panels that have different dimensions,
-  // this will not work properly.
-  const needChange = (lx: number) => {
+  const needChange = (orientation: Orientation) => {
     if (!solarPanel) return;
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.SolarPanel && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
             const sp = e as SolarPanelModel;
-            if (Math.abs(sp.lx - lx) > ZERO_TOLERANCE) {
+            if (sp.orientation !== orientation) {
               return true;
             }
           }
@@ -173,7 +223,7 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
         for (const e of elements) {
           if (e.type === ObjectType.SolarPanel && !e.locked) {
             const sp = e as SolarPanelModel;
-            if (Math.abs(sp.lx - lx) > ZERO_TOLERANCE) {
+            if (sp.orientation !== orientation) {
               return true;
             }
           }
@@ -183,7 +233,7 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
         for (const e of elements) {
           if (e.type === ObjectType.SolarPanel && e.foundationId === solarPanel?.foundationId && !e.locked) {
             const sp = e as SolarPanelModel;
-            if (Math.abs(sp.lx - lx) > ZERO_TOLERANCE) {
+            if (sp.orientation !== orientation) {
               return true;
             }
           }
@@ -202,7 +252,7 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
                 !e.locked
               ) {
                 const sp = e as SolarPanelModel;
-                if (Math.abs(sp.lx - lx) > ZERO_TOLERANCE) {
+                if (sp.orientation !== orientation) {
                   return true;
                 }
               }
@@ -211,7 +261,7 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
             for (const e of elements) {
               if (e.type === ObjectType.SolarPanel && e.parentId === solarPanel.parentId && !e.locked) {
                 const sp = e as SolarPanelModel;
-                if (Math.abs(sp.lx - lx) > ZERO_TOLERANCE) {
+                if (sp.orientation !== orientation) {
                   return true;
                 }
               }
@@ -220,14 +270,14 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
         }
         break;
       default:
-        if (Math.abs(solarPanel?.lx - lx) > ZERO_TOLERANCE) {
+        if (solarPanel?.orientation !== orientation) {
           return true;
         }
     }
     return false;
   };
 
-  const setLength = (value: number) => {
+  const setOrientation = (value: Orientation) => {
     if (!solarPanel) return;
     if (!needChange(value)) return;
     rejectedValue.current = undefined;
@@ -244,33 +294,33 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
         }
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputValue(solarPanel.lx);
+          setSelectedOrientation(solarPanel.orientation);
         } else {
-          const oldLengthsSelected = new Map<string, number>();
+          const oldOrientationsSelected = new Map<string, Orientation>();
           for (const elem of elements) {
             if (elem.type === ObjectType.SolarPanel && useStore.getState().selectedElementIdSet.has(elem.id)) {
-              oldLengthsSelected.set(elem.id, elem.lx);
+              oldOrientationsSelected.set(elem.id, (elem as SolarPanelModel).orientation);
             }
           }
           const undoableChangeSelected = {
-            name: 'Set Length for Selected Solar Panel Arrays',
+            name: 'Set Orientation for Selected Solar Panels',
             timestamp: Date.now(),
-            oldValues: oldLengthsSelected,
+            oldValues: oldOrientationsSelected,
             newValue: value,
             undo: () => {
-              for (const [id, lx] of undoableChangeSelected.oldValues.entries()) {
-                updateSolarPanelLxById(id, lx as number);
+              for (const [id, orientation] of undoableChangeSelected.oldValues.entries()) {
+                updateSolarPanelOrientationById(id, orientation as Orientation);
               }
             },
             redo: () => {
               updateInMap(
-                undoableChangeSelected.oldValues as Map<string, number>,
-                undoableChangeSelected.newValue as number,
+                undoableChangeSelected.oldValues as Map<string, Orientation>,
+                undoableChangeSelected.newValue as Orientation,
               );
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeSelected);
-          updateInMap(oldLengthsSelected, value);
+          updateInMap(oldOrientationsSelected, value);
           setApplyCount(applyCount + 1);
         }
         break;
@@ -278,7 +328,7 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
       case Scope.AllObjectsOfThisType: {
         rejectRef.current = false;
         for (const elem of elements) {
-          if (elem.type === ObjectType.SolarPanel && useStore.getState().selectedElementIdSet.has(elem.id)) {
+          if (elem.type === ObjectType.SolarPanel) {
             if (rejectChange(elem as SolarPanelModel, value)) {
               rejectRef.current = true;
               break;
@@ -287,30 +337,30 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
         }
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputValue(solarPanel.lx);
+          setSelectedOrientation(solarPanel.orientation);
         } else {
-          const oldLengthsAll = new Map<string, number>();
+          const oldOrientationsAll = new Map<string, Orientation>();
           for (const elem of elements) {
-            if (elem.type === ObjectType.SolarPanel && useStore.getState().selectedElementIdSet.has(elem.id)) {
-              oldLengthsAll.set(elem.id, elem.lx);
+            if (elem.type === ObjectType.SolarPanel) {
+              oldOrientationsAll.set(elem.id, (elem as SolarPanelModel).orientation);
             }
           }
           const undoableChangeAll = {
-            name: 'Set Length for All Solar Panel Arrays',
+            name: 'Set Orientation for All Solar Panels',
             timestamp: Date.now(),
-            oldValues: oldLengthsAll,
+            oldValues: oldOrientationsAll,
             newValue: value,
             undo: () => {
-              for (const [id, lx] of undoableChangeAll.oldValues.entries()) {
-                updateSolarPanelLxById(id, lx as number);
+              for (const [id, orientation] of undoableChangeAll.oldValues.entries()) {
+                updateSolarPanelOrientationById(id, orientation as Orientation);
               }
             },
             redo: () => {
-              updateSolarPanelLxForAll(undoableChangeAll.newValue as number);
+              updateSolarPanelOrientationForAll(undoableChangeAll.newValue as Orientation);
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAll);
-          updateSolarPanelLxForAll(value);
+          updateSolarPanelOrientationForAll(value);
           setApplyCount(applyCount + 1);
         }
         break;
@@ -328,36 +378,36 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
           }
           if (rejectRef.current) {
             rejectedValue.current = value;
-            setInputValue(solarPanel.lx);
+            setSelectedOrientation(solarPanel.orientation);
           } else {
-            const oldLengthsAboveFoundation = new Map<string, number>();
+            const oldOrientationsAboveFoundation = new Map<string, Orientation>();
             for (const elem of elements) {
               if (elem.type === ObjectType.SolarPanel && elem.foundationId === solarPanel.foundationId) {
-                oldLengthsAboveFoundation.set(elem.id, elem.lx);
+                oldOrientationsAboveFoundation.set(elem.id, (elem as SolarPanelModel).orientation);
               }
             }
             const undoableChangeAboveFoundation = {
-              name: 'Set Length for All Solar Panel Arrays Above Foundation',
+              name: 'Set Orientation for All Solar Panels Above Foundation',
               timestamp: Date.now(),
-              oldValues: oldLengthsAboveFoundation,
+              oldValues: oldOrientationsAboveFoundation,
               newValue: value,
               groupId: solarPanel.foundationId,
               undo: () => {
-                for (const [id, lx] of undoableChangeAboveFoundation.oldValues.entries()) {
-                  updateSolarPanelLxById(id, lx as number);
+                for (const [id, orientation] of undoableChangeAboveFoundation.oldValues.entries()) {
+                  updateSolarPanelOrientationById(id, orientation as Orientation);
                 }
               },
               redo: () => {
                 if (undoableChangeAboveFoundation.groupId) {
-                  updateSolarPanelLxAboveFoundation(
+                  updateSolarPanelOrientationAboveFoundation(
                     undoableChangeAboveFoundation.groupId,
-                    undoableChangeAboveFoundation.newValue as number,
+                    undoableChangeAboveFoundation.newValue as Orientation,
                   );
                 }
               },
             } as UndoableChangeGroup;
             addUndoable(undoableChangeAboveFoundation);
-            updateSolarPanelLxAboveFoundation(solarPanel.foundationId, value);
+            updateSolarPanelOrientationAboveFoundation(solarPanel.foundationId, value);
             setApplyCount(applyCount + 1);
           }
         }
@@ -392,9 +442,9 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
           }
           if (rejectRef.current) {
             rejectedValue.current = value;
-            setInputValue(solarPanel.lx);
+            setSelectedOrientation(solarPanel.orientation);
           } else {
-            const oldLengthsOnSurface = new Map<string, number>();
+            const oldOrientationsOnSurface = new Map<string, Orientation>();
             const isParentCuboid = parent.type === ObjectType.Cuboid;
             if (isParentCuboid) {
               for (const elem of elements) {
@@ -403,83 +453,81 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
                   elem.parentId === solarPanel.parentId &&
                   Util.isIdentical(elem.normal, solarPanel.normal)
                 ) {
-                  oldLengthsOnSurface.set(elem.id, elem.lx);
+                  oldOrientationsOnSurface.set(elem.id, (elem as SolarPanelModel).orientation);
                 }
               }
             } else {
               for (const elem of elements) {
                 if (elem.type === ObjectType.SolarPanel && elem.parentId === solarPanel.parentId) {
-                  oldLengthsOnSurface.set(elem.id, elem.lx);
+                  oldOrientationsOnSurface.set(elem.id, (elem as SolarPanelModel).orientation);
                 }
               }
             }
             const normal = isParentCuboid ? solarPanel.normal : undefined;
             const undoableChangeOnSurface = {
-              name: 'Set Length for All Solar Panel Arrays on Surface',
+              name: 'Set Orientation for All Solar Panels on Surface',
               timestamp: Date.now(),
-              oldValues: oldLengthsOnSurface,
+              oldValues: oldOrientationsOnSurface,
               newValue: value,
               groupId: solarPanel.parentId,
               normal: normal,
               undo: () => {
-                for (const [id, lx] of undoableChangeOnSurface.oldValues.entries()) {
-                  updateSolarPanelLxById(id, lx as number);
+                for (const [id, orientation] of undoableChangeOnSurface.oldValues.entries()) {
+                  updateSolarPanelOrientationById(id, orientation as Orientation);
                 }
               },
               redo: () => {
                 if (undoableChangeOnSurface.groupId) {
-                  updateSolarPanelLxOnSurface(
+                  updateSolarPanelOrientationOnSurface(
                     undoableChangeOnSurface.groupId,
                     undoableChangeOnSurface.normal,
-                    undoableChangeOnSurface.newValue as number,
+                    undoableChangeOnSurface.newValue as Orientation,
                   );
                 }
               },
             } as UndoableChangeGroup;
             addUndoable(undoableChangeOnSurface);
-            updateSolarPanelLxOnSurface(solarPanel.parentId, normal, value);
+            updateSolarPanelOrientationOnSurface(solarPanel.parentId, normal, value);
             setApplyCount(applyCount + 1);
           }
         }
         break;
       default:
         // solar panel selected element may be outdated, make sure that we get the latest
-        const sp = getElementById(solarPanel.id);
-        const oldLength = sp ? sp.lx : solarPanel.lx;
+        const sp = getElementById(solarPanel.id) as SolarPanelModel;
+        const oldOrientation = sp ? sp.orientation : solarPanel.orientation;
         rejectRef.current = rejectChange(solarPanel, value);
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputValue(oldLength);
+          setSelectedOrientation(oldOrientation);
         } else {
           const undoableChange = {
-            name: 'Set Solar Panel Array Length',
+            name: 'Set Orientation of Selected Solar Panel',
             timestamp: Date.now(),
-            oldValue: oldLength,
+            oldValue: oldOrientation,
             newValue: value,
             changedElementId: solarPanel.id,
             changedElementType: solarPanel.type,
             undo: () => {
-              updateSolarPanelLxById(undoableChange.changedElementId, undoableChange.oldValue as number);
+              changeOrientation(undoableChange.oldValue as Orientation);
             },
             redo: () => {
-              updateSolarPanelLxById(undoableChange.changedElementId, undoableChange.newValue as number);
+              changeOrientation(undoableChange.newValue as Orientation);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateSolarPanelLxById(solarPanel.id, value);
+          changeOrientation(value);
           setApplyCount(applyCount + 1);
         }
     }
-  };
-
-  const panelize = (value: number) => {
-    let w = value ?? 1;
-    const n = Math.max(1, Math.ceil((w - dx / 2) / dx));
-    w = n * dx;
-    return w;
+    setCommonStore((state) => {
+      state.actionState.solarPanelOrientation = value;
+    });
   };
 
   const close = () => {
+    if (!solarPanel) return;
+    setSelectedOrientation(solarPanel.orientation);
     rejectRef.current = false;
     setDialogVisible(false);
   };
@@ -490,7 +538,7 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   };
 
   const ok = () => {
-    setLength(inputValue);
+    setOrientation(selectedOrientation);
     if (!rejectRef.current) {
       setDialogVisible(false);
       setApplyCount(0);
@@ -498,19 +546,25 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   };
 
   const apply = () => {
-    setLength(inputValue);
+    setOrientation(selectedOrientation);
   };
 
   const rejectedMessage = rejectRef.current
     ? ': ' +
       i18n.t('message.NotApplicableToSelectedAction', lang) +
-      (rejectedValue.current !== undefined ? ' (' + rejectedValue.current.toFixed(2) + ')' : '')
-    : null;
+      (rejectedValue.current
+        ? ' (' +
+          (rejectedValue.current === Orientation.portrait
+            ? i18n.t('solarPanelMenu.Portrait', lang)
+            : i18n.t('solarPanelMenu.Landscape', lang)) +
+          ')'
+        : '')
+    : '';
 
   return (
     <Dialog
       width={550}
-      title={i18n.t('word.Length', lang)}
+      title={i18n.t('solarPanelMenu.Orientation', lang)}
       rejectedMessage={rejectedMessage}
       onApply={apply}
       onClose={close}
@@ -518,32 +572,24 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
       onClickOk={ok}
     >
       <Row gutter={6}>
-        <Col className="gutter-row" span={6}>
-          <InputNumber
-            min={dx}
-            max={100 * dx}
-            step={dx}
-            style={{ width: 120 }}
-            precision={2}
-            value={inputValue}
-            onChange={(value) => {
-              if (value === null) return;
-              setInputValue(panelize(value));
-            }}
-          />
-          <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-            {Math.round(inputValue / dx) + ' ' + i18n.t('solarPanelMenu.PanelsWide', lang)}
-            <br />
-            {i18n.t('word.MaximumNumber', lang)}: 100 {i18n.t('solarPanelMenu.Panels', lang)}
-          </div>
-        </Col>
-        <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
-          {i18n.t('word.MeterAbbreviation', lang)}
+        <Col className="gutter-row" span={8}>
+          <Select
+            style={{ width: '150px' }}
+            value={selectedOrientation}
+            onChange={(value) => setSelectedOrientation(value)}
+          >
+            <Option key={Orientation.portrait} value={Orientation.portrait}>
+              {i18n.t('solarPanelMenu.Portrait', lang)}
+            </Option>
+            <Option key={Orientation.landscape} value={Orientation.landscape}>
+              {i18n.t('solarPanelMenu.Landscape', lang)}
+            </Option>
+          </Select>
         </Col>
         <Col
           className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-          span={17}
+          span={16}
         >
           <Radio.Group onChange={onScopeChange} value={actionScope}>
             <Space direction="vertical">
@@ -566,4 +612,4 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   );
 };
 
-export default SolarPanelLengthInput;
+export default SolarPanelOrientationSelection;
