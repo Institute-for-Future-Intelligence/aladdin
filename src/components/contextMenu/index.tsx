@@ -12,8 +12,6 @@ import {
   FlowerMenu,
   PolygonMenu,
   PolygonVertexMenu,
-  SensorMenu,
-  LightMenu,
   ParabolicTroughMenu,
   ParabolicDishMenu,
   TreeMenu,
@@ -28,6 +26,8 @@ import {
   createSolarPanelMenu,
   createWindowMenu,
   createDoorMenu,
+  createSensorMenu,
+  createLightMenu,
 } from './elementMenu';
 import { WindTurbineMenu } from './elementMenu/windTurbineMenu';
 import { useSelectedElement } from './elementMenu/menuHooks';
@@ -213,6 +213,10 @@ const DropdownContextMenu: React.FC<ContextMenuProps> = ({ children }) => {
         return createWindowMenu(elementRef.current);
       case ObjectType.Door:
         return createDoorMenu(elementRef.current);
+      case ObjectType.Sensor:
+        return createSensorMenu(elementRef.current);
+      case ObjectType.Light:
+        return createLightMenu(elementRef.current);
       // case ObjectType.Polygon:
       //   return (
       //     <Menu triggerSubMenuAction={'click'}>
@@ -254,18 +258,6 @@ const DropdownContextMenu: React.FC<ContextMenuProps> = ({ children }) => {
       //   return (
       //     <Menu triggerSubMenuAction={'click'}>
       //       <WindTurbineMenu />
-      //     </Menu>
-      //   );
-      // case ObjectType.Sensor:
-      //   return (
-      //     <Menu triggerSubMenuAction={'click'}>
-      //       <SensorMenu />
-      //     </Menu>
-      //   );
-      // case ObjectType.Light:
-      //   return (
-      //     <Menu triggerSubMenuAction={'click'}>
-      //       <LightMenu />
       //     </Menu>
       //   );
       // case ObjectType.Human:
