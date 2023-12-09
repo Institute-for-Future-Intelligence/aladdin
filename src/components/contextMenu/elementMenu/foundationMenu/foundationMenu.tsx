@@ -24,7 +24,7 @@ import FoundationWidthInput from './foundationWidthInput';
 import FoundationHeightInput from './foundationHeightInput';
 import FoundationAzimuthInput from './foundationAzimuthInput';
 import { Util } from 'src/Util';
-import GroundFloorRValueInput from '../groundFloorRValueInput';
+import GroundFloorRValueInput from './groundFloorRValueInput';
 import SolarAbsorberPipeHeightInput from '../solarAbsorberPipeHeightInput';
 import SolarAbsorberPipeApertureWidthInput from '../solarAbsorberPipeApertureWidthInput';
 import SolarAbsorberPipePoleNumberInput from '../solarAbsorberPipePoleNumberInput';

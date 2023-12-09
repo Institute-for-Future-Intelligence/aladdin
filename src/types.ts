@@ -10,6 +10,11 @@ import { ParaboloidGeometry } from './js/ParaboloidGeometry';
 import { ConvexGeometry } from './js/ConvexGeometry';
 import { EulerOrder, Vector2 } from 'three';
 import { TextGeometry } from 'three/examples/jsm/Addons';
+import { SolarPanelModel } from './models/SolarPanelModel';
+import { FresnelReflectorModel } from './models/FresnelReflectorModel';
+import { HeliostatModel } from './models/HeliostatModel';
+import { ParabolicDishModel } from './models/ParabolicDishModel';
+import { ParabolicTroughModel } from './models/ParabolicTroughModel';
 
 // Extend makes these JSX elements (with the first character lower-cased)
 extend({ TextSprite });
@@ -648,3 +653,10 @@ export interface OldRooftopElementData {
 }
 
 export type BoxArgs = [width?: number | undefined, height?: number | undefined, depth?: number | undefined];
+
+export type SolarCollector =
+  | SolarPanelModel
+  | FresnelReflectorModel
+  | HeliostatModel
+  | ParabolicDishModel
+  | ParabolicTroughModel;

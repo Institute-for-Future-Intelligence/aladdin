@@ -3,7 +3,7 @@
  */
 
 import React, { useState } from 'react';
-import { Checkbox, Input, InputNumber } from 'antd';
+import { Checkbox } from 'antd';
 import { useStore } from '../../stores/common';
 import * as Selector from '../../stores/selector';
 import i18n from '../../i18n/i18n';
@@ -11,7 +11,7 @@ import { Util } from '../../Util';
 import { UndoableDelete } from '../../undo/UndoableDelete';
 import { UndoablePaste } from '../../undo/UndoablePaste';
 import { UndoableCheck } from '../../undo/UndoableCheck';
-import { ActionInfo, ObjectType } from '../../types';
+import { ActionInfo, ObjectType, SolarCollector } from '../../types';
 import { showInfo } from 'src/helpers';
 import { WallModel } from 'src/models/WallModel';
 import { useRefStore } from 'src/stores/commonRef';
@@ -31,8 +31,8 @@ interface MenuItemProps {
   onClick?: (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void;
 }
 
-interface DialogItems {
-  Dialog: (props: { setDialogVisible: (b: boolean) => void }) => JSX.Element;
+interface DialogItemProps {
+  Dialog: (props: { setDialogVisible: (b: boolean) => void }) => JSX.Element | null;
   children?: React.ReactNode;
 }
 
@@ -44,6 +44,10 @@ interface LightSideItemProps {
   element: ElementModel;
   inside: boolean;
   children?: React.ReactNode;
+}
+
+interface SolarCollectorSunBeamCheckboxProps {
+  solarCollector: SolarCollector;
 }
 
 export const Paste = () => {
@@ -268,7 +272,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({
   );
 };
 
-export const DialogItem = ({ Dialog, children }: DialogItems) => {
+export const DialogItem = ({ Dialog, children }: DialogItemProps) => {
   const [dialogVisible, setDialogVisible] = useState(false);
 
   const handleClick = () => {
@@ -353,6 +357,38 @@ export const LightSideItem = ({ element, inside, children }: LightSideItemProps)
   return (
     <MenuItem stayAfterClick update onClick={handleClick}>
       {children}
+    </MenuItem>
+  );
+};
+
+export const SolarCollectorSunBeamCheckbox = ({ solarCollector }: SolarCollectorSunBeamCheckboxProps) => {
+  const updateSolarCollectorDrawSunBeamById = useStore.getState().updateSolarCollectorDrawSunBeamById;
+
+  const lang = useLanguage();
+
+  const drawSunBeam = (checked: boolean) => {
+    const undoableCheck = {
+      name: 'Show Sun Beam',
+      timestamp: Date.now(),
+      checked: !solarCollector.drawSunBeam,
+      selectedElementId: solarCollector.id,
+      selectedElementType: solarCollector.type,
+      undo: () => {
+        updateSolarCollectorDrawSunBeamById(solarCollector.id, !undoableCheck.checked);
+      },
+      redo: () => {
+        updateSolarCollectorDrawSunBeamById(solarCollector.id, undoableCheck.checked);
+      },
+    } as UndoableCheck;
+    useStore.getState().addUndoable(undoableCheck);
+    updateSolarCollectorDrawSunBeamById(solarCollector.id, checked);
+  };
+
+  return (
+    <MenuItem stayAfterClick>
+      <Checkbox checked={!!solarCollector.drawSunBeam} onChange={(e) => drawSunBeam(e.target.checked)}>
+        {i18n.t('solarCollectorMenu.DrawSunBeam', lang)}
+      </Checkbox>
     </MenuItem>
   );
 };

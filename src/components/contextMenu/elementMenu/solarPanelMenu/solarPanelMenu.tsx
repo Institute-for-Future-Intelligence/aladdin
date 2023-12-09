@@ -7,8 +7,7 @@ import { ElementModel } from 'src/models/ElementModel';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { useStore } from 'src/stores/common';
 import { ObjectType, TrackerType } from 'src/types';
-import { Copy, Cut, DialogItem, Lock, MenuItem } from '../../menuItems';
-import { SolarPanelSunBeamCheckbox } from './solarPanelMenuItems';
+import { Copy, Cut, DialogItem, Lock, MenuItem, SolarCollectorSunBeamCheckbox } from '../../menuItems';
 import i18n from 'src/i18n/i18n';
 import SolarPanelModelSelection from './solarPanelModelSelection';
 import SolarPanelOrientationSelection from './solarPanelOrientationSelection';
@@ -49,7 +48,7 @@ export const createSolarPanelMenu = (selectedElement: ElementModel) => {
       // solar-panel-draw-sun-beam
       {
         key: 'solar-panel-draw-sun-beam',
-        label: <SolarPanelSunBeamCheckbox solarPanel={solarPanel} />,
+        label: <SolarCollectorSunBeamCheckbox solarCollector={solarPanel} />,
       },
       // solar-panel-cut
       {

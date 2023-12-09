@@ -10,10 +10,6 @@ import { ObjectType } from '../../types';
 import {
   PolygonMenu,
   PolygonVertexMenu,
-  ParabolicTroughMenu,
-  ParabolicDishMenu,
-  FresnelReflectorMenu,
-  HeliostatMenu,
   createGroundMenu,
   createSkyMenu,
   createFoundationMenu,
@@ -28,6 +24,10 @@ import {
   createHumanMenu,
   createTreeMenu,
   createFlowerMenu,
+  createParabolicTroughMenu,
+  createParabolicDishMenu,
+  createFresnelReflectorMenu,
+  createHeliostatMenu,
 } from './elementMenu';
 import { WindTurbineMenu } from './elementMenu/windTurbineMenu';
 import { useSelectedElement } from './elementMenu/menuHooks';
@@ -56,139 +56,6 @@ const DropdownContextMenu: React.FC<ContextMenuProps> = ({ children }) => {
   if (selectedElement !== undefined) {
     elementRef.current = selectedElement;
   }
-
-  // const contextMenu = () => {
-  //   switch (contextMenuObjectType) {
-  //     case ObjectType.Ground:
-  //       return (
-  //         <Menu triggerSubMenuAction={'click'}>
-  //           <GroundMenu />
-  //         </Menu>
-  //       );
-  //     case ObjectType.Sky:
-  //       return (
-  //         <Menu triggerSubMenuAction={'click'}>
-  //           <SkyMenu />
-  //         </Menu>
-  //       );
-  //     case ObjectType.Foundation:
-  //       return (
-  //         <Menu triggerSubMenuAction={'click'}>
-  //           <FoundationMenu />
-  //         </Menu>
-  //       );
-  //     case ObjectType.Cuboid:
-  //       return (
-  //         <Menu triggerSubMenuAction={'click'}>
-  //           <CuboidMenu />
-  //         </Menu>
-  //       );
-  //     case ObjectType.Polygon:
-  //       return (
-  //         <Menu triggerSubMenuAction={'click'}>
-  //           <PolygonMenu />
-  //         </Menu>
-  //       );
-  //     case ObjectType.PolygonVertex:
-  //       return (
-  //         <Menu triggerSubMenuAction={'click'}>
-  //           <PolygonVertexMenu />
-  //         </Menu>
-  //       );
-  //     case ObjectType.SolarPanel:
-  //       return (
-  //         <Menu triggerSubMenuAction={'click'}>
-  //           <SolarPanelMenu />
-  //         </Menu>
-  //       );
-  //     case ObjectType.ParabolicTrough:
-  //       return (
-  //         <Menu triggerSubMenuAction={'click'}>
-  //           <ParabolicTroughMenu />
-  //         </Menu>
-  //       );
-  //     case ObjectType.ParabolicDish:
-  //       return (
-  //         <Menu triggerSubMenuAction={'click'}>
-  //           <ParabolicDishMenu />
-  //         </Menu>
-  //       );
-  //     case ObjectType.FresnelReflector:
-  //       return (
-  //         <Menu triggerSubMenuAction={'click'}>
-  //           <FresnelReflectorMenu />
-  //         </Menu>
-  //       );
-  //     case ObjectType.Heliostat:
-  //       return (
-  //         <Menu triggerSubMenuAction={'click'}>
-  //           <HeliostatMenu />
-  //         </Menu>
-  //       );
-  //     case ObjectType.WindTurbine:
-  //       return (
-  //         <Menu triggerSubMenuAction={'click'}>
-  //           <WindTurbineMenu />
-  //         </Menu>
-  //       );
-  //     case ObjectType.Sensor:
-  //       return (
-  //         <Menu triggerSubMenuAction={'click'}>
-  //           <SensorMenu />
-  //         </Menu>
-  //       );
-  //     case ObjectType.Light:
-  //       return (
-  //         <Menu triggerSubMenuAction={'click'}>
-  //           <LightMenu />
-  //         </Menu>
-  //       );
-  //     case ObjectType.Human:
-  //       return (
-  //         <Menu triggerSubMenuAction={'click'}>
-  //           <HumanMenu />
-  //         </Menu>
-  //       );
-  //     case ObjectType.Tree:
-  //       return (
-  //         <Menu triggerSubMenuAction={'click'}>
-  //           <TreeMenu />
-  //         </Menu>
-  //       );
-  //     case ObjectType.Flower:
-  //       return (
-  //         <Menu triggerSubMenuAction={'click'}>
-  //           <FlowerMenu />
-  //         </Menu>
-  //       );
-  //     case ObjectType.Wall:
-  //       return (
-  //         <Menu triggerSubMenuAction={'click'}>
-  //           <WallMenu />
-  //         </Menu>
-  //       );
-  //     case ObjectType.Window:
-  //       return (
-  //         <Menu triggerSubMenuAction={'click'}>
-  //           <WindowMenu />
-  //         </Menu>
-  //       );
-  //     case ObjectType.Roof:
-  //       return (
-  //         <Menu triggerSubMenuAction={'click'}>
-  //           <RoofMenu />
-  //         </Menu>
-  //       );
-  //     case ObjectType.Door:
-  //       return (
-  //         <Menu triggerSubMenuAction={'click'}>
-  //           <DoorMenu />
-  //         </Menu>
-  //       );
-  //     default:
-  //       return <></>;
-  //   }
-  // };
 
   const updateMenu = () => update((b) => !b);
 
@@ -223,6 +90,14 @@ const DropdownContextMenu: React.FC<ContextMenuProps> = ({ children }) => {
         return createTreeMenu(elementRef.current);
       case ObjectType.Flower:
         return createFlowerMenu(elementRef.current);
+      case ObjectType.ParabolicTrough:
+        return createParabolicTroughMenu(elementRef.current);
+      case ObjectType.ParabolicDish:
+        return createParabolicDishMenu(elementRef.current);
+      case ObjectType.FresnelReflector:
+        return createFresnelReflectorMenu(elementRef.current);
+      case ObjectType.Heliostat:
+        return createHeliostatMenu(elementRef.current);
 
       // case ObjectType.Polygon:
       //   return (
@@ -234,31 +109,6 @@ const DropdownContextMenu: React.FC<ContextMenuProps> = ({ children }) => {
       //   return (
       //     <Menu triggerSubMenuAction={'click'}>
       //       <PolygonVertexMenu />
-      //     </Menu>
-      //   );
-
-      // case ObjectType.ParabolicTrough:
-      //   return (
-      //     <Menu triggerSubMenuAction={'click'}>
-      //       <ParabolicTroughMenu />
-      //     </Menu>
-      //   );
-      // case ObjectType.ParabolicDish:
-      //   return (
-      //     <Menu triggerSubMenuAction={'click'}>
-      //       <ParabolicDishMenu />
-      //     </Menu>
-      //   );
-      // case ObjectType.FresnelReflector:
-      //   return (
-      //     <Menu triggerSubMenuAction={'click'}>
-      //       <FresnelReflectorMenu />
-      //     </Menu>
-      //   );
-      // case ObjectType.Heliostat:
-      //   return (
-      //     <Menu triggerSubMenuAction={'click'}>
-      //       <HeliostatMenu />
       //     </Menu>
       //   );
       // case ObjectType.WindTurbine:

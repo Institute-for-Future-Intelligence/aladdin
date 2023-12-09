@@ -11,7 +11,7 @@ import { DialogItem } from '../../menuItems';
 import RoofRafterColorSelection from './roofRafterColorSelection';
 import RoofRafterSpacingInput from './roofRafterSpacingInput';
 import RoofRafterWidthInput from './roofRafterWidthInput';
-import GlassTintSelection from '../glassTintSelection';
+import GlassTintSelection from './glassTintSelection';
 
 export const createRoofStructureSubmenu = (roof: RoofModel) => {
   const lang = { lng: useStore.getState().language };

@@ -8,7 +8,7 @@ import type { MenuProps } from 'antd';
 import { RoofModel } from 'src/models/RoofModel';
 import { RoofCeilingCheckbox } from './roofMenuItems';
 import { DialogItem } from '../../menuItems';
-import CeilingRValueInput from '../ceilingRValueInput';
+import CeilingRValueInput from './ceilingRValueInput';
 
 export const createRoofCeilingSubmenu = (roof: RoofModel) => {
   const lang = { lng: useStore.getState().language };
