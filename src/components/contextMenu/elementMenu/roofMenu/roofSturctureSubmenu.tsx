@@ -21,6 +21,7 @@ export const createRoofStructureSubmenu = (roof: RoofModel) => {
   items.push({
     key: 'roof-structure-radio-group',
     label: <RoofSturctureRadioGroup roof={roof} />,
+    style: { backgroundColor: 'white' },
   });
 
   if (roof.roofStructure === RoofStructure.Rafter) {
@@ -30,15 +31,27 @@ export const createRoofStructureSubmenu = (roof: RoofModel) => {
       },
       {
         key: 'roof-rafter-spacing',
-        label: <DialogItem Dialog={RoofRafterSpacingInput}>{i18n.t('roofMenu.RafterSpacing', lang)} ...</DialogItem>,
+        label: (
+          <DialogItem noPadding Dialog={RoofRafterSpacingInput}>
+            {i18n.t('roofMenu.RafterSpacing', lang)} ...
+          </DialogItem>
+        ),
       },
       {
         key: 'roof-rafter-width',
-        label: <DialogItem Dialog={RoofRafterWidthInput}>{i18n.t('roofMenu.RafterWidth', lang)} ...</DialogItem>,
+        label: (
+          <DialogItem noPadding Dialog={RoofRafterWidthInput}>
+            {i18n.t('roofMenu.RafterWidth', lang)} ...
+          </DialogItem>
+        ),
       },
       {
         key: 'roof-rafter-color',
-        label: <DialogItem Dialog={RoofRafterColorSelection}>{i18n.t('roofMenu.RafterColor', lang)} ...</DialogItem>,
+        label: (
+          <DialogItem noPadding Dialog={RoofRafterColorSelection}>
+            {i18n.t('roofMenu.RafterColor', lang)} ...
+          </DialogItem>
+        ),
       },
     );
   }
@@ -50,7 +63,11 @@ export const createRoofStructureSubmenu = (roof: RoofModel) => {
       },
       {
         key: 'roof-glass-tint-selection',
-        label: <DialogItem Dialog={GlassTintSelection}>{i18n.t('roofMenu.GlassTint', lang)} ...</DialogItem>,
+        label: (
+          <DialogItem noPadding Dialog={GlassTintSelection}>
+            {i18n.t('roofMenu.GlassTint', lang)} ...
+          </DialogItem>
+        ),
       },
     );
   }

@@ -21,7 +21,7 @@ export const createWindowFrameSubmenu = (window: WindowModel) => {
     // window-frame-boolean
     {
       key: 'window-frame-boolean',
-      label: <WindowBooleanDialogItem dataType={WindowBooleanData.Frame} />,
+      label: <WindowBooleanDialogItem noPadding dataType={WindowBooleanData.Frame} />,
     },
   );
 
@@ -34,17 +34,17 @@ export const createWindowFrameSubmenu = (window: WindowModel) => {
       // window-frame-width
       {
         key: 'window-frame-width',
-        label: <WindowNumberDialogItem dataType={WindowNumberData.FrameWidth} />,
+        label: <WindowNumberDialogItem noPadding dataType={WindowNumberData.FrameWidth} />,
       },
       // window-sill-width
       {
         key: 'window-sill-width',
-        label: <WindowNumberDialogItem dataType={WindowNumberData.SillWidth} />,
+        label: <WindowNumberDialogItem noPadding dataType={WindowNumberData.SillWidth} />,
       },
       // window-frame-color
       {
         key: 'window-frame-color',
-        label: <WindowColorDialogItem dataType={WindowColorData.Color} />,
+        label: <WindowColorDialogItem noPadding dataType={WindowColorData.Color} />,
       },
     );
   }

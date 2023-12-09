@@ -24,6 +24,7 @@ import { LightModel } from 'src/models/LightModel';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 
 interface MenuItemProps {
+  noPadding?: boolean;
   stayAfterClick?: boolean;
   textSelectable?: boolean;
   update?: boolean;
@@ -33,6 +34,7 @@ interface MenuItemProps {
 
 interface DialogItemProps {
   Dialog: (props: { setDialogVisible: (b: boolean) => void }) => JSX.Element | null;
+  noPadding?: boolean;
   children?: React.ReactNode;
 }
 
@@ -231,7 +233,7 @@ export const Lock = ({ selectedElement }: { selectedElement: ElementModel }) => 
   };
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <Checkbox checked={selectedElement.locked} onChange={onChange}>
         {i18n.t('word.Lock', lang)}
       </Checkbox>
@@ -241,6 +243,7 @@ export const Lock = ({ selectedElement }: { selectedElement: ElementModel }) => 
 
 export const MenuItem: React.FC<MenuItemProps> = ({
   stayAfterClick,
+  noPadding,
   textSelectable = true,
   update,
   onClick,
@@ -265,6 +268,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({
         userSelect: textSelectable ? 'auto' : 'none',
         display: 'inline-block',
         width: '100%',
+        paddingLeft: noPadding ? '0px' : '24px',
       }}
     >
       {children}
@@ -272,7 +276,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({
   );
 };
 
-export const DialogItem = ({ Dialog, children }: DialogItemProps) => {
+export const DialogItem = ({ Dialog, noPadding, children }: DialogItemProps) => {
   const [dialogVisible, setDialogVisible] = useState(false);
 
   const handleClick = () => {
@@ -282,7 +286,9 @@ export const DialogItem = ({ Dialog, children }: DialogItemProps) => {
 
   return (
     <>
-      <MenuItem onClick={handleClick}>{children}</MenuItem>
+      <MenuItem noPadding={noPadding} onClick={handleClick}>
+        {children}
+      </MenuItem>
       {dialogVisible && <Dialog setDialogVisible={setDialogVisible} />}
     </>
   );
@@ -318,7 +324,7 @@ export const GroupMasterCheckbox = ({ groupableElement }: GroupMasterCheckboxPro
   };
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <Checkbox checked={groupableElement.enableGroupMaster} onChange={onChange}>
         {i18n.t('foundationMenu.GroupMaster', lang)}
       </Checkbox>
@@ -355,7 +361,7 @@ export const LightSideItem = ({ element, inside, children }: LightSideItemProps)
   };
 
   return (
-    <MenuItem stayAfterClick update onClick={handleClick}>
+    <MenuItem stayAfterClick update noPadding onClick={handleClick}>
       {children}
     </MenuItem>
   );
@@ -385,7 +391,7 @@ export const SolarCollectorSunBeamCheckbox = ({ solarCollector }: SolarCollector
   };
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <Checkbox checked={!!solarCollector.drawSunBeam} onChange={(e) => drawSunBeam(e.target.checked)}>
         {i18n.t('solarCollectorMenu.DrawSunBeam', lang)}
       </Checkbox>

@@ -27,7 +27,11 @@ export const createRoofCeilingSubmenu = (roof: RoofModel) => {
       },
       {
         key: 'ceiling-r-value',
-        label: <DialogItem Dialog={CeilingRValueInput}>{i18n.t('roofMenu.CeilingRValue', lang)} ...</DialogItem>,
+        label: (
+          <DialogItem noPadding Dialog={CeilingRValueInput}>
+            {i18n.t('roofMenu.CeilingRValue', lang)} ...
+          </DialogItem>
+        ),
       },
     );
   }

@@ -54,7 +54,7 @@ export const StackableCheckbox = ({ cuboid }: CuboidMenuItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <Checkbox checked={cuboid.stackable} onChange={handleChange}>
         {i18n.t('cuboidMenu.Stackable', lang)}
       </Checkbox>

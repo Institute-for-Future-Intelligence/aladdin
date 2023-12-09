@@ -24,11 +24,12 @@ export enum WallNumberDataType {
 
 interface WallNumberDialogItemsProps {
   Dialog: (props: WallNumberInputProps) => JSX.Element;
+  noPadding?: boolean;
   dataType: WallNumberDataType;
   children?: React.ReactNode;
 }
 
-export const WallNumberDialogItem = ({ Dialog, dataType, children }: WallNumberDialogItemsProps) => {
+export const WallNumberDialogItem = ({ Dialog, noPadding, dataType, children }: WallNumberDialogItemsProps) => {
   const lang = useLanguage();
 
   const [dialogVisible, setDialogVisible] = useState(false);
@@ -46,7 +47,9 @@ export const WallNumberDialogItem = ({ Dialog, dataType, children }: WallNumberD
 
   return (
     <>
-      <MenuItem onClick={handleClick}>{children}</MenuItem>
+      <MenuItem noPadding={noPadding} onClick={handleClick}>
+        {children}
+      </MenuItem>
       {dialogVisible && (
         <Dialog
           wall={wall}

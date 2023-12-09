@@ -41,7 +41,7 @@ export const LightInsideCheckbox = ({ light }: LightMenutItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <Checkbox checked={!!light.inside} onChange={handleChange}>
         {i18n.t('lightMenu.Inside', lang)}
       </Checkbox>
@@ -156,7 +156,7 @@ export const LightColorPicker = ({ light }: LightMenutItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <CompactPicker
         color={inputColor}
         onChangeComplete={(colorResult) => {

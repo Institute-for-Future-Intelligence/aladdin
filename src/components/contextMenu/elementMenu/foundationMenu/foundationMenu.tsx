@@ -149,7 +149,7 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
   if (!foundation.notBuilding && counterAll.wallCount > 0) {
     items.push({
       key: 'building-hvac-system',
-      label: i18n.t('word.BuildingHVACSystem', lang),
+      label: <MenuItem>{i18n.t('word.BuildingHVACSystem', lang)}</MenuItem>,
       children: [
         {
           key: 'hvac-system-id',
@@ -227,11 +227,12 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
     // select-solar-structure
     items.push({
       key: 'select-solar-structure',
-      label: i18n.t('foundationMenu.SolarStructure', lang),
+      label: <MenuItem>{i18n.t('foundationMenu.SolarStructure', lang)}</MenuItem>,
       children: [
         {
           key: 'select-solar-structure-submenu',
           label: <SolarStructureRadioGroup foundation={foundation} />,
+          style: { backgroundColor: 'white' },
         },
       ],
     });
@@ -240,12 +241,12 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
     if (foundation.solarStructure === SolarStructure.FocusPipe) {
       items.push({
         key: 'solar-absorber-pipe-physical-properties',
-        label: i18n.t('solarAbsorberPipeMenu.AbsorberPipePhysicalProperties', lang),
+        label: <MenuItem>{i18n.t('solarAbsorberPipeMenu.AbsorberPipePhysicalProperties', lang)}</MenuItem>,
         children: [
           {
             key: 'solar-absorber-pipe-height',
             label: (
-              <DialogItem Dialog={SolarAbsorberPipeHeightInput}>
+              <DialogItem noPadding Dialog={SolarAbsorberPipeHeightInput}>
                 {i18n.t('solarAbsorberPipeMenu.AbsorberHeight', lang)} ...
               </DialogItem>
             ),
@@ -253,7 +254,7 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
           {
             key: 'solar-absorber-pipe-aperture-width',
             label: (
-              <DialogItem Dialog={SolarAbsorberPipeApertureWidthInput}>
+              <DialogItem noPadding Dialog={SolarAbsorberPipeApertureWidthInput}>
                 {i18n.t('solarAbsorberPipeMenu.AbsorberApertureWidth', lang)} ...
               </DialogItem>
             ),
@@ -261,7 +262,7 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
           {
             key: 'foundation-solar-receiver-pipe-pole-number',
             label: (
-              <DialogItem Dialog={SolarAbsorberPipePoleNumberInput}>
+              <DialogItem noPadding Dialog={SolarAbsorberPipePoleNumberInput}>
                 {i18n.t('solarAbsorberPipeMenu.AbsorberPipePoleNumber', lang)} ...
               </DialogItem>
             ),
@@ -269,7 +270,7 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
           {
             key: 'solar-absorber-pipe-absorptance',
             label: (
-              <DialogItem Dialog={SolarAbsorberPipeAbsorptanceInput}>
+              <DialogItem noPadding Dialog={SolarAbsorberPipeAbsorptanceInput}>
                 {i18n.t('solarAbsorberPipeMenu.AbsorberAbsorptance', lang)} ...
               </DialogItem>
             ),
@@ -277,7 +278,7 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
           {
             key: 'solar-absorber-optical-efficiency',
             label: (
-              <DialogItem Dialog={SolarAbsorberPipeOpticalEfficiencyInput}>
+              <DialogItem noPadding Dialog={SolarAbsorberPipeOpticalEfficiencyInput}>
                 {i18n.t('solarAbsorberPipeMenu.AbsorberOpticalEfficiency', lang)} ...
               </DialogItem>
             ),
@@ -285,7 +286,7 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
           {
             key: 'solar-absorber-thermal-efficiency',
             label: (
-              <DialogItem Dialog={SolarAbsorberPipeThermalEfficiencyInput}>
+              <DialogItem noPadding Dialog={SolarAbsorberPipeThermalEfficiencyInput}>
                 {i18n.t('solarAbsorberPipeMenu.AbsorberThermalEfficiency', lang)} ...
               </DialogItem>
             ),
@@ -298,12 +299,12 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
     if (foundation.solarStructure === SolarStructure.FocusTower) {
       items.push({
         key: 'solar-power-tower-physical-properties',
-        label: i18n.t('solarPowerTowerMenu.ReceiverTowerPhysicalProperties', lang),
+        label: <MenuItem>{i18n.t('solarPowerTowerMenu.ReceiverTowerPhysicalProperties', lang)}</MenuItem>,
         children: [
           {
             key: 'solar-power-tower-height',
             label: (
-              <DialogItem Dialog={SolarPowerTowerHeightInput}>
+              <DialogItem noPadding Dialog={SolarPowerTowerHeightInput}>
                 {i18n.t('solarPowerTowerMenu.ReceiverTowerHeight', lang)} ...
               </DialogItem>
             ),
@@ -311,7 +312,7 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
           {
             key: 'solar-power-tower-radius',
             label: (
-              <DialogItem Dialog={SolarPowerTowerRadiusInput}>
+              <DialogItem noPadding Dialog={SolarPowerTowerRadiusInput}>
                 {i18n.t('solarPowerTowerMenu.ReceiverTowerRadius', lang)} ...
               </DialogItem>
             ),
@@ -319,7 +320,7 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
           {
             key: 'solar-power-tower-receiver-absorptance',
             label: (
-              <DialogItem Dialog={SolarPowerTowerReceiverAbsorptanceInput}>
+              <DialogItem noPadding Dialog={SolarPowerTowerReceiverAbsorptanceInput}>
                 {i18n.t('solarPowerTowerMenu.ReceiverAbsorptance', lang)} ...
               </DialogItem>
             ),
@@ -327,7 +328,7 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
           {
             key: 'solar-power-tower-receiver-optical-efficiency',
             label: (
-              <DialogItem Dialog={SolarPowerTowerReceiverOpticalEfficiencyInput}>
+              <DialogItem noPadding Dialog={SolarPowerTowerReceiverOpticalEfficiencyInput}>
                 {i18n.t('solarPowerTowerMenu.ReceiverOpticalEfficiency', lang)} ...
               </DialogItem>
             ),
@@ -335,7 +336,7 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
           {
             key: 'solar-power-tower-receiver-thermal-efficiency',
             label: (
-              <DialogItem Dialog={SolarPowerTowerReceiverThermalEfficiencyInput}>
+              <DialogItem noPadding Dialog={SolarPowerTowerReceiverThermalEfficiencyInput}>
                 {i18n.t('solarPowerTowerMenu.ReceiverThermalEfficiency', lang)} ...
               </DialogItem>
             ),
@@ -348,12 +349,12 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
     if (foundation.solarStructure === SolarStructure.UpdraftTower) {
       items.push({
         key: 'solar-updraft-tower-physical-properties',
-        label: i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerPhysicalProperties', lang),
+        label: <MenuItem>{i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerPhysicalProperties', lang)}</MenuItem>,
         children: [
           {
             key: 'solar-updraft-tower-chimney-height',
             label: (
-              <DialogItem Dialog={SolarUpdraftTowerChimneyHeightInput}>
+              <DialogItem noPadding Dialog={SolarUpdraftTowerChimneyHeightInput}>
                 {i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerChimneyHeight', lang)} ...
               </DialogItem>
             ),
@@ -361,7 +362,7 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
           {
             key: 'solar-updraft-tower-chimney-radius',
             label: (
-              <DialogItem Dialog={SolarUpdraftTowerChimneyRadiusInput}>
+              <DialogItem noPadding Dialog={SolarUpdraftTowerChimneyRadiusInput}>
                 {i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerChimneyRadius', lang)} ...
               </DialogItem>
             ),
@@ -369,7 +370,7 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
           {
             key: 'solar-updraft-tower-collector-height',
             label: (
-              <DialogItem Dialog={SolarUpdraftTowerCollectorHeightInput}>
+              <DialogItem noPadding Dialog={SolarUpdraftTowerCollectorHeightInput}>
                 {i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerCollectorHeight', lang)} ...
               </DialogItem>
             ),
@@ -377,7 +378,7 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
           {
             key: 'solar-updraft-tower-collector-radius',
             label: (
-              <DialogItem Dialog={SolarUpdraftTowerCollectorRadiusInput}>
+              <DialogItem noPadding Dialog={SolarUpdraftTowerCollectorRadiusInput}>
                 {i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerCollectorRadius', lang)} ...
               </DialogItem>
             ),
@@ -385,7 +386,7 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
           {
             key: 'solar-updraft-tower-collector-transmissivity',
             label: (
-              <DialogItem Dialog={SolarUpdraftTowerCollectorTransmissivityInput}>
+              <DialogItem noPadding Dialog={SolarUpdraftTowerCollectorTransmissivityInput}>
                 {i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerCollectorTransmissivity', lang)} ...
               </DialogItem>
             ),
@@ -393,7 +394,7 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
           {
             key: 'solar-updraft-tower-collector-emissivity',
             label: (
-              <DialogItem Dialog={SolarUpdraftTowerCollectorEmissivityInput}>
+              <DialogItem noPadding Dialog={SolarUpdraftTowerCollectorEmissivityInput}>
                 {i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerCollectorEmissivity', lang)} ...
               </DialogItem>
             ),
@@ -401,7 +402,7 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
           {
             key: 'solar-updraft-tower-discharge-coefficient',
             label: (
-              <DialogItem Dialog={SolarUpdraftTowerDischargeCoefficientInput}>
+              <DialogItem noPadding Dialog={SolarUpdraftTowerDischargeCoefficientInput}>
                 {i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerDischargeCoefficient', lang)} ...
               </DialogItem>
             ),
@@ -409,7 +410,7 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
           {
             key: 'solar-updraft-tower-turbine-efficiency',
             label: (
-              <DialogItem Dialog={SolarUpdraftTowerTurbineEfficiencyInput}>
+              <DialogItem noPadding Dialog={SolarUpdraftTowerTurbineEfficiencyInput}>
                 {i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerTurbineEfficiency', lang)} ...
               </DialogItem>
             ),
@@ -422,17 +423,17 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
   // optimization
   items.push({
     key: 'optimization',
-    label: i18n.t('optimizationMenu.Optimization', lang),
+    label: <MenuItem>{i18n.t('optimizationMenu.Optimization', lang)}</MenuItem>,
     children: [
       {
         key: 'genetic-algorithms',
-        label: i18n.t('optimizationMenu.GeneticAlgorithm', lang),
+        label: <MenuItem noPadding>{i18n.t('optimizationMenu.GeneticAlgorithm', lang)}</MenuItem>,
         disabled: counterUnlocked.solarPanelCount === 0,
         children: [
           {
             key: 'solar-panel-tilt-angle-ga-optimizer',
             label: (
-              <DialogItem Dialog={SolarPanelTiltAngleGaWizard}>
+              <DialogItem noPadding Dialog={SolarPanelTiltAngleGaWizard}>
                 {i18n.t('optimizationMenu.SolarPanelTiltAngleOptimization', lang)}...
               </DialogItem>
             ),
@@ -441,13 +442,13 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
       },
       {
         key: 'particle-swarm-optimization',
-        label: i18n.t('optimizationMenu.ParticleSwarmOptimization', lang),
+        label: <MenuItem noPadding>{i18n.t('optimizationMenu.ParticleSwarmOptimization', lang)}</MenuItem>,
         disabled: counterUnlocked.solarPanelCount === 0,
         children: [
           {
             key: 'solar-panel-tilt-angle-pso-optimizer',
             label: (
-              <DialogItem Dialog={SolarPanelTiltAnglePsoWizard}>
+              <DialogItem noPadding Dialog={SolarPanelTiltAnglePsoWizard}>
                 {i18n.t('optimizationMenu.SolarPanelTiltAngleOptimization', lang)}...
               </DialogItem>
             ),
@@ -461,7 +462,7 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
   if (editable) {
     items.push({
       key: 'foundation-label',
-      label: i18n.t('labelSubMenu.Label', lang),
+      label: <MenuItem>{i18n.t('labelSubMenu.Label', lang)}</MenuItem>,
       children: createLabelSubmenu(foundation),
     });
   }

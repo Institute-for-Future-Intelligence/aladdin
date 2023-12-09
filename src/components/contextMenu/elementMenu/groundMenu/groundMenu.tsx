@@ -83,7 +83,7 @@ const createMonthlyIrradianceLossSubmenu = () => {
       acc.push({
         key: `${arr[idx - 1]}-${arr[idx]}`,
         label: (
-          <MenuItem stayAfterClick>
+          <MenuItem stayAfterClick noPadding>
             <IrradianceLossInput monthIndex={idx - 1} />
             <IrradianceLossInput monthIndex={idx} />
           </MenuItem>
@@ -177,6 +177,7 @@ export const createGroundMenu = (updateMenu: () => void) => {
         {
           key: 'groung-color-picker',
           label: <GroundColorPicker />,
+          style: { backgroundColor: 'white' },
         },
       ],
     });

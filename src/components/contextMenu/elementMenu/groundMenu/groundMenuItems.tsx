@@ -61,7 +61,7 @@ export const GroundImageCheckbox = () => {
   };
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <Checkbox checked={groundImage} onChange={onChange}>
         {i18n.t('groundMenu.ImageOnGround', lang)}
       </Checkbox>
@@ -98,7 +98,7 @@ export const WaterSurfaceCheckbox = ({ updateMenu }: { updateMenu: () => void })
   };
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <Checkbox checked={waterSurface} onChange={onChange}>
         {i18n.t('groundMenu.WaterSurface', lang)}
       </Checkbox>
@@ -135,7 +135,7 @@ export const GroundColorPicker = () => {
   };
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <CompactPicker color={groundColor} onChangeComplete={onChange} />
     </MenuItem>
   );
@@ -182,7 +182,7 @@ export const LeafOutDayInput = () => {
   const AddonAfter = () => <div style={{ width: '60px' }}>(1-150)</div>;
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <InputNumber
         addonBefore={<AddonBefore />}
         addonAfter={<AddonAfter />}
@@ -239,7 +239,7 @@ export const LeafShedDayInput = () => {
   const AddonAfter = () => <div style={{ width: '60px' }}>(215-365)</div>;
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <InputNumber
         addonBefore={<AddonBefore />}
         addonAfter={<AddonAfter />}

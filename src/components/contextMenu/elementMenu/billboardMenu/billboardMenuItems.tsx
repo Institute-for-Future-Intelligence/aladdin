@@ -71,7 +71,7 @@ export const BillboardFlipCheckbox = ({ billboardModel }: BillboardFlipCheckboxP
   };
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <Checkbox checked={billboardModel.flip} onChange={handleChange}>
         {i18n.t('peopleMenu.Flip', lang)}
       </Checkbox>
@@ -113,7 +113,7 @@ export const HumanObserverCheckbox = ({ human }: HumanMenuItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <Checkbox checked={human.observer} onChange={handleChange}>
         {i18n.t('peopleMenu.Observer', lang)}
       </Checkbox>
@@ -236,7 +236,7 @@ export const TreeShowModelCheckbox = ({ tree }: TreeMenuItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <Checkbox
         checked={tree?.showModel && tree?.type === ObjectType.Tree}
         onChange={(e) => showTreeModel(e.target.checked)}

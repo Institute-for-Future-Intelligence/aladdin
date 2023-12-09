@@ -44,7 +44,7 @@ export const AxesCheckBox = () => {
   };
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <Checkbox checked={axes} onChange={onChange}>
         {i18n.t('skyMenu.Axes', lang)}
       </Checkbox>
@@ -94,7 +94,7 @@ export const ThemeRadioGroup = () => {
   ];
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <Radio.Group value={theme} onChange={onChange}>
         <Space direction="vertical">
           {radioArray.map((radio, idx) => (
@@ -138,7 +138,7 @@ export const ShowAzimuthAngleCheckbox = () => {
   };
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <Checkbox checked={showAzimuthAngle} onChange={onChange}>
         {i18n.t('skyMenu.ShowAzimuthAngle', lang)}
       </Checkbox>
@@ -176,7 +176,7 @@ export const ShowElevationAngle = () => {
   };
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <Checkbox checked={showElevationAngle} onChange={onChange}>
         {i18n.t('skyMenu.ShowElevationAngle', lang)}
       </Checkbox>
@@ -214,7 +214,7 @@ export const ShowZenithAngle = () => {
   };
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <Checkbox checked={showZenithAngle} onChange={onChange}>
         {i18n.t('skyMenu.ShowZenithAngle', lang)}
       </Checkbox>

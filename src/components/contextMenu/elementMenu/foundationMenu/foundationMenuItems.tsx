@@ -75,7 +75,7 @@ export const BuildingCheckbox = ({ foundation }: FoundationItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <Checkbox checked={!foundation.notBuilding} onChange={onChange}>
         {i18n.t('word.Building', lang)}
       </Checkbox>
@@ -119,7 +119,7 @@ export const LockOffspringsItem = ({ foundation, lock, count }: LockOffspringsIt
   };
 
   return (
-    <MenuItem onClick={handleClick}>
+    <MenuItem noPadding onClick={handleClick}>
       {i18n.t(label, lang)} ({count})
     </MenuItem>
   );
@@ -166,7 +166,11 @@ export const RemoveFoundationElementsItem = ({
     });
   };
 
-  return <MenuItem onClick={handleClickItem}>{children}</MenuItem>;
+  return (
+    <MenuItem noPadding onClick={handleClickItem}>
+      {children}
+    </MenuItem>
+  );
 };
 
 export const AddPolygonItem = ({ foundation }: FoundationItemProps) => {
@@ -248,7 +252,7 @@ export const HvacSystemIdInput = ({ foundation }: FoundationItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <Space style={{ width: '40px', paddingLeft: '0px', textAlign: 'left' }}>{'ID:'}</Space>
       <Input
         style={{ width: '180px' }}
@@ -301,7 +305,7 @@ export const ThermostatTemperatureInput = ({ foundation }: FoundationItemProps) 
   };
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <Space style={{ width: '160px' }}>{i18n.t('word.ThermostatSetpoint', lang) + ':'}</Space>
       <InputNumber
         min={0}
@@ -356,7 +360,7 @@ export const ToleranceThresholdInput = ({ foundation }: FoundationItemProps) => 
   };
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <Space title={i18n.t('word.TemperatureToleranceThresholdExplanation', lang)} style={{ width: '160px' }}>
         {i18n.t('word.TemperatureToleranceThreshold', lang) + ':'}
       </Space>
@@ -412,17 +416,19 @@ export const SolarStructureRadioGroup = ({ foundation }: FoundationItemProps) =>
   };
 
   return (
-    <Radio.Group value={selectedSolarStructure} onChange={handleChange}>
-      <Space direction="vertical">
-        <Radio value={SolarStructure.None}>{i18n.t('word.None', lang)}</Radio>
-        <Radio value={SolarStructure.FocusPipe}>
-          {i18n.t('solarAbsorberPipeMenu.AbsorberPipeForFresnelReflectors', lang)}
-        </Radio>
-        <Radio value={SolarStructure.FocusTower}>
-          {i18n.t('solarPowerTowerMenu.ReceiverTowerForHeliostats', lang)}
-        </Radio>
-        <Radio value={SolarStructure.UpdraftTower}>{i18n.t('solarUpdraftTowerMenu.SolarUpdraftTower', lang)}</Radio>
-      </Space>
-    </Radio.Group>
+    <MenuItem stayAfterClick noPadding>
+      <Radio.Group value={selectedSolarStructure} onChange={handleChange}>
+        <Space direction="vertical">
+          <Radio value={SolarStructure.None}>{i18n.t('word.None', lang)}</Radio>
+          <Radio value={SolarStructure.FocusPipe}>
+            {i18n.t('solarAbsorberPipeMenu.AbsorberPipeForFresnelReflectors', lang)}
+          </Radio>
+          <Radio value={SolarStructure.FocusTower}>
+            {i18n.t('solarPowerTowerMenu.ReceiverTowerForHeliostats', lang)}
+          </Radio>
+          <Radio value={SolarStructure.UpdraftTower}>{i18n.t('solarUpdraftTowerMenu.SolarUpdraftTower', lang)}</Radio>
+        </Space>
+      </Radio.Group>
+    </MenuItem>
   );
 };

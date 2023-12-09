@@ -67,7 +67,13 @@ export const createDoorMenu = (selectedElement: ElementModel) => {
       {
         key: 'door-type-submenu',
         label: <MenuItem>{i18n.t('doorMenu.DoorType', lang)}</MenuItem>,
-        children: [{ key: 'door-type-radio-group', label: <DoorTypeRadioGroup door={door} /> }],
+        children: [
+          {
+            key: 'door-type-radio-group',
+            label: <DoorTypeRadioGroup door={door} />,
+            style: { backgroundColor: 'white' },
+          },
+        ],
       },
       // door-width
       {

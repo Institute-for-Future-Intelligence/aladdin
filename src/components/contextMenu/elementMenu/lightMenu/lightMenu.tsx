@@ -66,7 +66,9 @@ export const createLightMenu = (selectedElement: ElementModel) => {
       {
         key: 'light-color',
         label: <MenuItem>{i18n.t('word.Color', lang)}</MenuItem>,
-        children: [{ key: 'light-color-picker', label: <LightColorPicker light={light} /> }],
+        children: [
+          { key: 'light-color-picker', label: <LightColorPicker light={light} />, style: { backgroundColor: 'white' } },
+        ],
       },
     );
   }

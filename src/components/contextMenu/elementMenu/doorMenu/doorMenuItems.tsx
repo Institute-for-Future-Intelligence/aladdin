@@ -55,7 +55,7 @@ export const DoorFilledCheckbox = ({ door }: DoorMenuItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <Checkbox checked={door.filled} onChange={handleChange}>
         {i18n.t('doorMenu.Filled', lang)}
       </Checkbox>
@@ -100,7 +100,7 @@ export const DoorInteriorCheckbox = ({ door }: DoorMenuItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <Checkbox checked={door.interior} onChange={handleChange}>
         {i18n.t('doorMenu.Interior', lang)}
       </Checkbox>
@@ -145,7 +145,7 @@ export const DoorTypeRadioGroup = ({ door }: DoorMenuItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <Radio.Group value={door.doorType} onChange={handleChange}>
         <Space direction="vertical">
           <Radio value={DoorType.Default}>{i18n.t('doorMenu.Default', lang)}</Radio>

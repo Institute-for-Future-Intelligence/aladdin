@@ -35,6 +35,7 @@ interface WindowMenuItemProps {
 
 interface WindowDialogItemProps<T> {
   dataType: T;
+  noPadding?: boolean;
   children?: React.ReactNode;
 }
 
@@ -70,7 +71,7 @@ export enum WindowOptionData {
   WindowType = 'WindowType',
 }
 
-export const WindowNumberDialogItem = ({ dataType, children }: WindowDialogItemProps<WindowNumberData>) => {
+export const WindowNumberDialogItem = ({ dataType, noPadding }: WindowDialogItemProps<WindowNumberData>) => {
   const lang = useLanguage();
   const [dialogVisible, setDialogVisible] = useState(false);
 
@@ -100,7 +101,9 @@ export const WindowNumberDialogItem = ({ dataType, children }: WindowDialogItemP
 
   return (
     <>
-      <MenuItem onClick={handleClick}>{i18n.t(`windowMenu.${dataType}`, lang)} ...</MenuItem>
+      <MenuItem noPadding={noPadding} onClick={handleClick}>
+        {i18n.t(`windowMenu.${dataType}`, lang)} ...
+      </MenuItem>
       {dialogVisible && setting && (
         <WindowNumberInput
           windowModel={window}
@@ -118,7 +121,7 @@ export const WindowNumberDialogItem = ({ dataType, children }: WindowDialogItemP
   );
 };
 
-export const WindowColorDialogItem = ({ dataType }: WindowDialogItemProps<WindowColorData>) => {
+export const WindowColorDialogItem = ({ dataType, noPadding }: WindowDialogItemProps<WindowColorData>) => {
   const [dialogVisible, setDialogVisible] = useState(false);
   const lang = useLanguage();
 
@@ -135,7 +138,9 @@ export const WindowColorDialogItem = ({ dataType }: WindowDialogItemProps<Window
 
   return (
     <>
-      <MenuItem onClick={handleClick}>{i18n.t(`windowMenu.${dataType}`, lang)} ...</MenuItem>
+      <MenuItem noPadding={noPadding} onClick={handleClick}>
+        {i18n.t(`windowMenu.${dataType}`, lang)} ...
+      </MenuItem>
       {dialogVisible && setting && (
         <WindowColorSelection
           window={window}
@@ -148,7 +153,7 @@ export const WindowColorDialogItem = ({ dataType }: WindowDialogItemProps<Window
   );
 };
 
-export const WindowBooleanDialogItem = ({ dataType }: WindowDialogItemProps<WindowBooleanData>) => {
+export const WindowBooleanDialogItem = ({ dataType, noPadding }: WindowDialogItemProps<WindowBooleanData>) => {
   const [dialogVisible, setDialogVisible] = useState(false);
   const lang = useLanguage();
 
@@ -165,7 +170,9 @@ export const WindowBooleanDialogItem = ({ dataType }: WindowDialogItemProps<Wind
 
   return (
     <>
-      <MenuItem onClick={handleClick}>{i18n.t(`windowMenu.${dataType}`, lang)} ...</MenuItem>
+      <MenuItem noPadding={noPadding} onClick={handleClick}>
+        {i18n.t(`windowMenu.${dataType}`, lang)} ...
+      </MenuItem>
       {dialogVisible && setting && (
         <WindowBooleanSelection
           window={window}
@@ -178,7 +185,7 @@ export const WindowBooleanDialogItem = ({ dataType }: WindowDialogItemProps<Wind
   );
 };
 
-export const WindowOptionDialogItem = ({ dataType }: WindowDialogItemProps<WindowOptionData>) => {
+export const WindowOptionDialogItem = ({ dataType, noPadding }: WindowDialogItemProps<WindowOptionData>) => {
   const lang = useLanguage();
 
   const [dialogVisible, setDialogVisible] = useState(false);
@@ -196,7 +203,9 @@ export const WindowOptionDialogItem = ({ dataType }: WindowDialogItemProps<Windo
 
   return (
     <>
-      <MenuItem onClick={handleClick}>{i18n.t(`windowMenu.${dataType}`, lang)} ...</MenuItem>
+      <MenuItem noPadding={noPadding} onClick={handleClick}>
+        {i18n.t(`windowMenu.${dataType}`, lang)} ...
+      </MenuItem>
       {dialogVisible && setting && (
         <WindowOptionSelection
           window={window}
@@ -252,7 +261,7 @@ export const WindowEmptyCheckbox = ({ window }: WindowMenuItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <Checkbox checked={!!window.empty} onChange={handleChange}>
         {i18n.t('windowMenu.Empty', lang)}
       </Checkbox>
@@ -297,7 +306,7 @@ export const WindowInteriorCheckbox = ({ window }: WindowMenuItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <Checkbox checked={!!window.interior} onChange={handleChange}>
         {i18n.t('windowMenu.Interior', lang)}
       </Checkbox>

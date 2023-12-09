@@ -53,7 +53,9 @@ const ParapetNumberDialogItem = ({ Dialog, wall, dataType, children }: NumberDia
 
   return (
     <>
-      <MenuItem onClick={handleClick}>{children}</MenuItem>
+      <MenuItem noPadding onClick={handleClick}>
+        {children}
+      </MenuItem>
       {dialogVisible && (
         <Dialog
           wall={wall}
@@ -85,12 +87,18 @@ export const createParapetSubmenu = (wall: WallModel) => {
       },
       {
         key: 'parapet-color',
-        label: <DialogItem Dialog={WallParapetColorSelection}>{i18n.t(`wallMenu.ParapetColor`, lang)} ...</DialogItem>,
+        label: (
+          <DialogItem noPadding Dialog={WallParapetColorSelection}>
+            {i18n.t(`wallMenu.ParapetColor`, lang)} ...
+          </DialogItem>
+        ),
       },
       {
         key: 'parapet-texture',
         label: (
-          <DialogItem Dialog={WallParapetTextureSelection}>{i18n.t(`wallMenu.ParapetTexture`, lang)} ...</DialogItem>
+          <DialogItem noPadding Dialog={WallParapetTextureSelection}>
+            {i18n.t(`wallMenu.ParapetTexture`, lang)} ...
+          </DialogItem>
         ),
       },
       {

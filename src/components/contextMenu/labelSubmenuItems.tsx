@@ -31,7 +31,7 @@ const ShowLabelCheckbox = ({ element }: LabelSubmenuItemProps) => {
   const lang = useLanguage();
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <Checkbox checked={!!element?.showLabel} onChange={showLabel}>
         {i18n.t('labelSubMenu.KeepShowingLabel', lang)}
       </Checkbox>
@@ -45,7 +45,7 @@ const LabelTextInput = ({ element }: LabelSubmenuItemProps) => {
 
   const lang = useLanguage();
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <Input
         addonBefore={<LabelAddonBefore>{i18n.t('labelSubMenu.LabelText', lang) + ':'}</LabelAddonBefore>}
         value={labelText}
@@ -62,7 +62,7 @@ const LabelHeightInput = ({ element }: LabelSubmenuItemProps) => {
   const lang = useLanguage();
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <InputNumber
         addonBefore={<LabelAddonBefore>{i18n.t('labelSubMenu.LabelHeight', lang) + ':'}</LabelAddonBefore>}
         min={element.lz / 2 + 0.2}
@@ -81,7 +81,7 @@ const LabelFontSizeInput = ({ element }: LabelSubmenuItemProps) => {
   const lang = useLanguage();
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <InputNumber
         addonBefore={<LabelAddonBefore>{i18n.t('labelSubMenu.LabelFontSize', lang) + ':'}</LabelAddonBefore>}
         min={10}
@@ -100,7 +100,7 @@ const LabelSizeInput = ({ element }: LabelSubmenuItemProps) => {
   const lang = useLanguage();
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <InputNumber
         addonBefore={<LabelAddonBefore>{i18n.t('labelSubMenu.LabelSize', lang) + ':'}</LabelAddonBefore>}
         min={0.2}
@@ -119,7 +119,7 @@ const LabelColorInput = ({ element }: LabelSubmenuItemProps) => {
   const lang = useLanguage();
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <Input
         addonBefore={<LabelAddonBefore>{i18n.t('labelSubMenu.LabelColor', lang) + ':'}</LabelAddonBefore>}
         value={element.labelColor ?? '#ffffff'}

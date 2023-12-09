@@ -20,6 +20,7 @@ export const createWallStructureSubmenu = (wall: WallModel) => {
   items.push({
     key: 'wall-structure-submenu-radio-group',
     label: <WallStructureRadioGroup wall={wall} />,
+    style: { backgroundColor: 'white' },
   });
 
   if (wall.wallStructure !== WallStructure.Default) {
@@ -30,7 +31,7 @@ export const createWallStructureSubmenu = (wall: WallModel) => {
       {
         key: 'wall-structure-spacing',
         label: (
-          <WallNumberDialogItem dataType={WallNumberDataType.StructureSpacing} Dialog={WallNumberInput}>
+          <WallNumberDialogItem noPadding dataType={WallNumberDataType.StructureSpacing} Dialog={WallNumberInput}>
             {i18n.t(`wallMenu.${WallNumberDataType.StructureSpacing}`, lang)} ...
           </WallNumberDialogItem>
         ),
@@ -38,7 +39,7 @@ export const createWallStructureSubmenu = (wall: WallModel) => {
       {
         key: 'wall-structure-width',
         label: (
-          <WallNumberDialogItem dataType={WallNumberDataType.StructureWidth} Dialog={WallNumberInput}>
+          <WallNumberDialogItem noPadding dataType={WallNumberDataType.StructureWidth} Dialog={WallNumberInput}>
             {i18n.t(`wallMenu.${WallNumberDataType.StructureWidth}`, lang)} ...
           </WallNumberDialogItem>
         ),
@@ -46,7 +47,9 @@ export const createWallStructureSubmenu = (wall: WallModel) => {
       {
         key: 'wall-structure-color',
         label: (
-          <DialogItem Dialog={WallStructureColorSelection}>{i18n.t(`wallMenu.StructureColor`, lang)} ...</DialogItem>
+          <DialogItem noPadding Dialog={WallStructureColorSelection}>
+            {i18n.t(`wallMenu.StructureColor`, lang)} ...
+          </DialogItem>
         ),
       },
     );

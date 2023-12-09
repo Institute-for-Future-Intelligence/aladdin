@@ -20,12 +20,12 @@ export const createWindowMullionSubmenu = (window: WindowModel) => {
     // window-horizontal-mullion
     {
       key: 'window-horizontal-mullion',
-      label: <WindowBooleanDialogItem dataType={WindowBooleanData.HorizontalMullion} />,
+      label: <WindowBooleanDialogItem noPadding dataType={WindowBooleanData.HorizontalMullion} />,
     },
     // window-vertical-mullion
     {
       key: 'window-vertical-mullion',
-      label: <WindowBooleanDialogItem dataType={WindowBooleanData.VerticalMullion} />,
+      label: <WindowBooleanDialogItem noPadding dataType={WindowBooleanData.VerticalMullion} />,
     },
   );
 
@@ -37,12 +37,12 @@ export const createWindowMullionSubmenu = (window: WindowModel) => {
       // window-mullion-width
       {
         key: 'window-mullion-width',
-        label: <WindowNumberDialogItem dataType={WindowNumberData.MullionWidth} />,
+        label: <WindowNumberDialogItem noPadding dataType={WindowNumberData.MullionWidth} />,
       },
       // window-mullion-color
       {
         key: 'window-mullion-color',
-        label: <WindowColorDialogItem dataType={WindowColorData.MullionColor} />,
+        label: <WindowColorDialogItem noPadding dataType={WindowColorData.MullionColor} />,
       },
     );
 
@@ -50,7 +50,7 @@ export const createWindowMullionSubmenu = (window: WindowModel) => {
     if (window.horizontalMullion) {
       items.push({
         key: 'window-horizontal-mullion-spacing',
-        label: <WindowNumberDialogItem dataType={WindowNumberData.HorizontalMullionSpacing} />,
+        label: <WindowNumberDialogItem noPadding dataType={WindowNumberData.HorizontalMullionSpacing} />,
       });
     }
 
@@ -58,7 +58,7 @@ export const createWindowMullionSubmenu = (window: WindowModel) => {
     if (window.verticalMullion) {
       items.push({
         key: 'window-vertical-mullion-spacing',
-        label: <WindowNumberDialogItem dataType={WindowNumberData.VerticalMullionSpacing} />,
+        label: <WindowNumberDialogItem noPadding dataType={WindowNumberData.VerticalMullionSpacing} />,
       });
     }
   }

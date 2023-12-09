@@ -79,7 +79,7 @@ export const RemoveWallElementsItem = ({
   };
 
   return (
-    <MenuItem update onClick={handleClickItem}>
+    <MenuItem update noPadding onClick={handleClickItem}>
       {children}
     </MenuItem>
   );
@@ -119,7 +119,7 @@ export const LockWallElementsItem = ({ wall, objectType, lock, children }: LockW
   };
 
   return (
-    <MenuItem stayAfterClick update onClick={handleClick}>
+    <MenuItem stayAfterClick update noPadding onClick={handleClick}>
       {children}
     </MenuItem>
   );
@@ -161,7 +161,7 @@ export const ParapetCheckbox = ({ wall }: WallMenuItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <Checkbox checked={wall.parapet.display} onChange={handleChange}>
         {i18n.t('wallMenu.Parapet', lang)}
       </Checkbox>
@@ -218,7 +218,7 @@ export const WallStructureRadioGroup = ({ wall }: WallMenuItemProps) => {
   const value = wall.wallStructure ?? WallStructure.Default;
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <Radio.Group value={value} onChange={handleChange}>
         <Space direction="vertical">
           <Radio value={WallStructure.Default}>{i18n.t('wallMenu.DefaultStructure', lang)}</Radio>
@@ -318,7 +318,7 @@ export const WallFillRadioGroup = ({ wall }: WallMenuItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <Radio.Group value={wall.fill} onChange={handleChange}>
         <Space direction="vertical">
           <Radio value={WallFill.Full}>{i18n.t('wallMenu.Full', lang)}</Radio>
@@ -364,7 +364,7 @@ export const WallOpenToOutsideCheckbox = ({ wall }: WallMenuItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <Checkbox checked={!!wall.openToOutside} onChange={handleChange}>
         {i18n.t('wallMenu.OpenToOutside', lang)}
       </Checkbox>

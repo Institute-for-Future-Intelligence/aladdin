@@ -6,7 +6,7 @@ import { useStore } from 'src/stores/common';
 import type { MenuProps } from 'antd';
 import { ElementModel } from 'src/models/ElementModel';
 import { CuboidTexture, ObjectType } from 'src/types';
-import { Copy, Cut, DialogItem, GroupMasterCheckbox, Lock, Paste } from '../../menuItems';
+import { Copy, Cut, DialogItem, GroupMasterCheckbox, Lock, MenuItem, Paste } from '../../menuItems';
 import { CuboidModel } from 'src/models/CuboidModel';
 import { AddPolygonItem, StackableCheckbox } from './cuboidMenuItems';
 import i18n from 'src/i18n/i18n';
@@ -18,7 +18,6 @@ import CuboidHeightInput from './cuboidHeightInput';
 import CuboidAzimuthInput from './cuboidAzimuthInput';
 import { createLabelSubmenu } from '../../labelSubmenuItems';
 import { createCuboidElementCounterSubmenu } from './cuboidElementCounterSubmenu';
-import { MenuItem } from 'rc-menu';
 
 const legalToPaste = () => {
   const elementsToPaste = useStore.getState().elementsToPaste;

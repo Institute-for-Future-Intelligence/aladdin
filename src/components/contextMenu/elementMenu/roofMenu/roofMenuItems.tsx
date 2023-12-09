@@ -65,7 +65,7 @@ export const RoofCeilingCheckbox = ({ roof }: RoofMenuItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <Checkbox checked={roof.ceiling} onChange={handleChange}>
         {i18n.t('roofMenu.Ceiling', lang)}
       </Checkbox>
@@ -115,7 +115,7 @@ export const RemoveRoofElementsItem = ({
   };
 
   return (
-    <MenuItem update onClick={handleClickItem}>
+    <MenuItem update noPadding onClick={handleClickItem}>
       {children}
     </MenuItem>
   );
@@ -155,7 +155,7 @@ export const LockRoofElementsItem = ({ roof, objectType, lock, children }: LockR
   };
 
   return (
-    <MenuItem stayAfterClick update onClick={handleClick}>
+    <MenuItem stayAfterClick update noPadding onClick={handleClick}>
       {children}
     </MenuItem>
   );
@@ -189,7 +189,7 @@ export const RoofSturctureRadioGroup = ({ roof }: RoofMenuItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick>
+    <MenuItem stayAfterClick noPadding>
       <Radio.Group value={roof.roofStructure ?? RoofStructure.Default} onChange={handleChange}>
         <Space direction="vertical">
           <Radio value={RoofStructure.Default}>{i18n.t('roofMenu.DefaultStructure', lang)}</Radio>

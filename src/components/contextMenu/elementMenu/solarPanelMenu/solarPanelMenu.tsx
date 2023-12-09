@@ -172,7 +172,7 @@ export const createSolarPanelMenu = (selectedElement: ElementModel) => {
         {
           key: 'solar-panel-pole-height',
           label: (
-            <DialogItem Dialog={SolarPanelPoleHeightInput}>
+            <DialogItem noPadding Dialog={SolarPanelPoleHeightInput}>
               {i18n.t('solarCollectorMenu.PoleHeight', lang)} ...
             </DialogItem>
           ),
@@ -180,7 +180,7 @@ export const createSolarPanelMenu = (selectedElement: ElementModel) => {
         {
           key: 'solar-panel-pole-spacing',
           label: (
-            <DialogItem Dialog={SolarPanelPoleSpacingInput}>
+            <DialogItem noPadding Dialog={SolarPanelPoleSpacingInput}>
               {i18n.t('solarPanelMenu.PoleSpacing', lang)} ...
             </DialogItem>
           ),
@@ -191,7 +191,7 @@ export const createSolarPanelMenu = (selectedElement: ElementModel) => {
     // solar-panel-label
     items.push({
       key: 'solar-panel-label',
-      label: i18n.t('labelSubMenu.Label', lang),
+      label: <MenuItem>{i18n.t('labelSubMenu.Label', lang)}</MenuItem>,
       children: createLabelSubmenu(solarPanel),
     });
   }

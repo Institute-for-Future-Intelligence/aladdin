@@ -20,12 +20,12 @@ export const createWindowShutterSubmenu = (window: WindowModel) => {
     // window-left-shutter
     {
       key: 'window-left-shutter',
-      label: <WindowBooleanDialogItem dataType={WindowBooleanData.LeftShutter} />,
+      label: <WindowBooleanDialogItem noPadding dataType={WindowBooleanData.LeftShutter} />,
     },
     // window-right-shutter
     {
       key: 'window-right-shutter',
-      label: <WindowBooleanDialogItem dataType={WindowBooleanData.RightShutter} />,
+      label: <WindowBooleanDialogItem noPadding dataType={WindowBooleanData.RightShutter} />,
     },
   );
 
@@ -37,12 +37,12 @@ export const createWindowShutterSubmenu = (window: WindowModel) => {
       // window-shutter-color
       {
         key: 'window-shutter-color',
-        label: <WindowColorDialogItem dataType={WindowColorData.ShutterColor} />,
+        label: <WindowColorDialogItem noPadding dataType={WindowColorData.ShutterColor} />,
       },
       // window-shutter-width
       {
         key: 'window-shutter-width',
-        label: <WindowNumberDialogItem dataType={WindowNumberData.ShutterWidth} />,
+        label: <WindowNumberDialogItem noPadding dataType={WindowNumberData.ShutterWidth} />,
       },
     );
   }

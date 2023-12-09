@@ -15,6 +15,7 @@ export const createWallFillSubmenu = (wall: WallModel) => {
   items.push({
     key: 'wall-fill-radio-group',
     label: <WallFillRadioGroup wall={wall} />,
+    style: { backgroundColor: 'white' },
   });
 
   if (wall.fill !== WallFill.Full) {

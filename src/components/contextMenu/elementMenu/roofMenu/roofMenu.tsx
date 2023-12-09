@@ -66,12 +66,14 @@ export const createRoofMenu = (selectedElement: ElementModel) => {
     });
   }
 
-  // element-counter
-  items.push({
-    key: 'lock-unlock-clear-on-roof',
-    label: <MenuItem>{i18n.t('word.Elements', lang)}</MenuItem>,
-    children: createRoofElementCounterSubmenu(roof, counterAll, counterUnlocked),
-  });
+  if (counterAll.gotSome()) {
+    // element-counter
+    items.push({
+      key: 'lock-unlock-clear-on-roof',
+      label: <MenuItem>{i18n.t('word.Elements', lang)}</MenuItem>,
+      children: createRoofElementCounterSubmenu(roof, counterAll, counterUnlocked),
+    });
+  }
 
   // roof-ceiling
   if (roof.rise > 0) {

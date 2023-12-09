@@ -38,6 +38,7 @@ export const createSkyMenu = () => {
       {
         key: 'theme-radio-group',
         label: <ThemeRadioGroup />,
+        style: { backgroundColor: 'white' },
       },
     ],
   });
