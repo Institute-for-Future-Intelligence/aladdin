@@ -12,10 +12,10 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { ZERO_TOLERANCE } from 'src/constants';
-import { SolarUpdraftTowerModel } from '../../../models/SolarUpdraftTowerModel';
-import { useSelectedElement } from './menuHooks';
+import { SolarUpdraftTowerModel } from '../../../../models/SolarUpdraftTowerModel';
+import { useSelectedElement } from '../menuHooks';
 import { useLanguage } from 'src/views/hooks';
-import Dialog from '../dialog';
+import Dialog from '../../dialog';
 
 const SolarUpdraftTowerDischargeCoefficientInput = ({
   setDialogVisible,

@@ -12,35 +12,34 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { ZERO_TOLERANCE } from 'src/constants';
-import { SolarPowerTowerModel } from '../../../models/SolarPowerTowerModel';
-import { useSelectedElement } from './menuHooks';
+import { SolarUpdraftTowerModel } from '../../../../models/SolarUpdraftTowerModel';
+import { useSelectedElement } from '../menuHooks';
 import { useLanguage } from 'src/views/hooks';
-import Dialog from '../dialog';
+import Dialog from '../../dialog';
 
-const SolarPowerTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const SolarUpdraftTowerCollectorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.foundationActionScope);
-  const applyCount = useStore(Selector.applyCount);
-  const setApplyCount = useStore(Selector.setApplyCount);
 
   const foundation = useSelectedElement(ObjectType.Foundation) as FoundationModel | undefined;
-  const powerTower = foundation?.solarPowerTower;
 
-  const [inputValue, setInputValue] = useState<number>(powerTower?.towerHeight ?? 20);
+  const [inputValue, setInputValue] = useState<number>(
+    foundation?.solarUpdraftTower?.collectorHeight ?? Math.max(3, 10 * (foundation?.lz ?? 0)),
+  );
 
   const lang = useLanguage();
 
-  const updateById = (id: string, height: number) => {
+  const updateCollectorHeightById = (id: string, height: number) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
           const f = e as FoundationModel;
-          if (f.solarStructure === SolarStructure.FocusTower) {
-            if (!f.solarPowerTower) f.solarPowerTower = {} as SolarPowerTowerModel;
-            f.solarPowerTower.towerHeight = height;
+          if (f.solarStructure === SolarStructure.UpdraftTower) {
+            if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
+            f.solarUpdraftTower.collectorHeight = height;
           }
           break;
         }
@@ -48,14 +47,14 @@ const SolarPowerTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (b
     });
   };
 
-  const updateForAll = (height: number) => {
+  const updateCollectorHeightForAll = (height: number) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Foundation && !e.locked) {
           const f = e as FoundationModel;
-          if (f.solarStructure === SolarStructure.FocusTower) {
-            if (!f.solarPowerTower) f.solarPowerTower = {} as SolarPowerTowerModel;
-            f.solarPowerTower.towerHeight = height;
+          if (f.solarStructure === SolarStructure.UpdraftTower) {
+            if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
+            f.solarUpdraftTower.collectorHeight = height;
           }
         }
       }
@@ -67,25 +66,25 @@ const SolarPowerTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (b
       for (const e of state.elements) {
         if (e.type === ObjectType.Foundation && !e.locked && map.has(e.id)) {
           const f = e as FoundationModel;
-          if (f.solarStructure === SolarStructure.FocusTower) {
-            if (!f.solarPowerTower) f.solarPowerTower = {} as SolarPowerTowerModel;
-            f.solarPowerTower.towerHeight = value;
+          if (f.solarStructure === SolarStructure.UpdraftTower) {
+            if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
+            f.solarUpdraftTower.collectorHeight = value;
           }
         }
       }
     });
   };
 
-  const needChange = (towerHeight: number) => {
+  const needChange = (collectorHeight: number) => {
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Foundation && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
             const f = e as FoundationModel;
-            if (f.solarStructure === SolarStructure.FocusTower && f.solarPowerTower) {
+            if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
               if (
-                f.solarPowerTower.towerHeight === undefined ||
-                Math.abs(f.solarPowerTower.towerHeight - towerHeight) > ZERO_TOLERANCE
+                f.solarUpdraftTower.collectorHeight === undefined ||
+                Math.abs(f.solarUpdraftTower.collectorHeight - collectorHeight) > ZERO_TOLERANCE
               ) {
                 return true;
               }
@@ -97,10 +96,10 @@ const SolarPowerTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (b
         for (const e of elements) {
           if (e.type === ObjectType.Foundation && !e.locked) {
             const f = e as FoundationModel;
-            if (f.solarStructure === SolarStructure.FocusTower && f.solarPowerTower) {
+            if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
               if (
-                f.solarPowerTower.towerHeight === undefined ||
-                Math.abs(f.solarPowerTower.towerHeight - towerHeight) > ZERO_TOLERANCE
+                f.solarUpdraftTower.collectorHeight === undefined ||
+                Math.abs(f.solarUpdraftTower.collectorHeight - collectorHeight) > ZERO_TOLERANCE
               ) {
                 return true;
               }
@@ -109,35 +108,40 @@ const SolarPowerTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (b
         }
         break;
       default:
-        if (powerTower?.towerHeight === undefined || Math.abs(powerTower?.towerHeight - towerHeight) > ZERO_TOLERANCE) {
-          return true;
+        if (foundation && foundation.solarStructure === SolarStructure.UpdraftTower && foundation.solarUpdraftTower) {
+          if (
+            foundation.solarUpdraftTower.collectorHeight === undefined ||
+            Math.abs(foundation.solarUpdraftTower.collectorHeight - collectorHeight) > ZERO_TOLERANCE
+          ) {
+            return true;
+          }
         }
     }
     return false;
   };
 
-  const setTowerHeight = (value: number) => {
-    if (!foundation || !powerTower) return;
+  const setCollectorHeight = (value: number) => {
+    if (!foundation) return;
     if (!needChange(value)) return;
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType: {
         const oldValuesSelected = new Map<string, number>();
         for (const elem of elements) {
-          if (elem.type === ObjectType.Foundation) {
+          if (elem.type === ObjectType.Foundation && useStore.getState().selectedElementIdSet.has(elem.id)) {
             const f = elem as FoundationModel;
-            if (f.solarPowerTower) {
-              oldValuesSelected.set(elem.id, f.solarPowerTower.towerHeight ?? 20);
+            if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
+              oldValuesSelected.set(elem.id, f.solarUpdraftTower.collectorHeight ?? Math.max(3, 10 * f.lz));
             }
           }
         }
         const undoableChangeSelected = {
-          name: 'Set Tower Height for Selected Foundations',
+          name: 'Set Solar Collector Height for Selected Foundations',
           timestamp: Date.now(),
           oldValues: oldValuesSelected,
           newValue: value,
           undo: () => {
-            for (const [id, th] of undoableChangeSelected.oldValues.entries()) {
-              updateById(id, th as number);
+            for (const [id, ch] of undoableChangeSelected.oldValues.entries()) {
+              updateCollectorHeightById(id, ch as number);
             }
           },
           redo: () => {
@@ -149,7 +153,6 @@ const SolarPowerTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (b
         } as UndoableChangeGroup;
         addUndoable(undoableChangeSelected);
         updateInMap(oldValuesSelected, value);
-        setApplyCount(applyCount + 1);
         break;
       }
       case Scope.AllObjectsOfThisType: {
@@ -157,51 +160,54 @@ const SolarPowerTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (b
         for (const elem of elements) {
           if (elem.type === ObjectType.Foundation) {
             const f = elem as FoundationModel;
-            if (f.solarPowerTower) {
-              oldValuesAll.set(elem.id, f.solarPowerTower.towerHeight ?? 20);
+            if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
+              oldValuesAll.set(elem.id, f.solarUpdraftTower.collectorHeight ?? Math.max(3, 10 * f.lz));
             }
           }
         }
         const undoableChangeAll = {
-          name: 'Set Tower Height for All Foundations',
+          name: 'Set Solar Collector Height for All Foundations',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
           undo: () => {
-            for (const [id, th] of undoableChangeAll.oldValues.entries()) {
-              updateById(id, th as number);
+            for (const [id, ch] of undoableChangeAll.oldValues.entries()) {
+              updateCollectorHeightById(id, ch as number);
             }
           },
           redo: () => {
-            updateForAll(undoableChangeAll.newValue as number);
+            updateCollectorHeightForAll(undoableChangeAll.newValue as number);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateForAll(value);
-        setApplyCount(applyCount + 1);
+        updateCollectorHeightForAll(value);
         break;
       }
       default:
-        // foundation selected element may be outdated, make sure that we get the latest
-        const f = getElementById(foundation.id) as FoundationModel;
-        const oldValue = f && f.solarPowerTower ? f.solarPowerTower.towerHeight ?? 20 : powerTower.towerHeight ?? 20;
-        updateById(foundation.id, value);
-        const undoableChange = {
-          name: 'Set Tower Height on Foundation',
-          timestamp: Date.now(),
-          oldValue: oldValue,
-          newValue: value,
-          changedElementId: foundation.id,
-          changedElementType: foundation.type,
-          undo: () => {
-            updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
-          },
-          redo: () => {
-            updateById(undoableChange.changedElementId, undoableChange.newValue as number);
-          },
-        } as UndoableChange;
-        addUndoable(undoableChange);
-        setApplyCount(applyCount + 1);
+        if (foundation.solarStructure === SolarStructure.UpdraftTower && foundation.solarUpdraftTower) {
+          // foundation selected element may be outdated, make sure that we get the latest
+          const f = getElementById(foundation.id) as FoundationModel;
+          const oldValue =
+            f && f.solarUpdraftTower
+              ? f.solarUpdraftTower.collectorHeight ?? Math.max(3, 10 * f.lz)
+              : foundation.solarUpdraftTower.collectorHeight ?? Math.max(3, 10 * foundation.lz);
+          updateCollectorHeightById(foundation.id, value);
+          const undoableChange = {
+            name: 'Set Solar Collector Height on Foundation',
+            timestamp: Date.now(),
+            oldValue: oldValue,
+            newValue: value,
+            changedElementId: foundation.id,
+            changedElementType: foundation.type,
+            undo: () => {
+              updateCollectorHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
+            },
+            redo: () => {
+              updateCollectorHeightById(undoableChange.changedElementId, undoableChange.newValue as number);
+            },
+          } as UndoableChange;
+          addUndoable(undoableChange);
+        }
     }
   };
 
@@ -210,16 +216,21 @@ const SolarPowerTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (b
   };
 
   const apply = () => {
-    setTowerHeight(inputValue);
+    setCollectorHeight(inputValue);
   };
 
   return (
-    <Dialog width={550} title={i18n.t('solarPowerTowerMenu.ReceiverTowerHeight', lang)} onApply={apply} onClose={close}>
+    <Dialog
+      width={550}
+      title={i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerCollectorHeight', lang)}
+      onApply={apply}
+      onClose={close}
+    >
       <Row gutter={6}>
         <Col className="gutter-row" span={6}>
           <InputNumber
-            min={10}
-            max={500}
+            min={0.1}
+            max={20}
             style={{ width: 120 }}
             step={1}
             precision={1}
@@ -230,7 +241,7 @@ const SolarPowerTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (b
             }}
           />
           <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-            {i18n.t('word.Range', lang)}: [10, 500] {i18n.t('word.MeterAbbreviation', lang)}
+            {i18n.t('word.Range', lang)}: [0.1, 20] {i18n.t('word.MeterAbbreviation', lang)}
           </div>
         </Col>
         <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
@@ -239,7 +250,7 @@ const SolarPowerTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (b
         <Col
           className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-          span={17}
+          span={16}
         >
           <Radio.Group
             onChange={(e) => useStore.getState().setFoundationActionScope(e.target.value)}
@@ -259,4 +270,4 @@ const SolarPowerTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (b
   );
 };
 
-export default SolarPowerTowerHeightInput;
+export default SolarUpdraftTowerCollectorHeightInput;

@@ -12,12 +12,12 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { ZERO_TOLERANCE } from 'src/constants';
-import { SolarUpdraftTowerModel } from '../../../models/SolarUpdraftTowerModel';
-import { useSelectedElement } from './menuHooks';
+import { SolarAbsorberPipeModel } from '../../../../models/SolarAbsorberPipeModel';
+import { useSelectedElement } from '../menuHooks';
 import { useLanguage } from 'src/views/hooks';
-import Dialog from '../dialog';
+import Dialog from '../../dialog';
 
-const SolarUpdraftTowerChimneyRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const SolarAbsorberPipeOpticalEfficiencyInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -27,22 +27,20 @@ const SolarUpdraftTowerChimneyRadiusInput = ({ setDialogVisible }: { setDialogVi
   const setApplyCount = useStore(Selector.setApplyCount);
 
   const foundation = useSelectedElement(ObjectType.Foundation) as FoundationModel | undefined;
+  const absorberPipe = foundation?.solarAbsorberPipe;
 
-  const [inputValue, setInputValue] = useState<number>(
-    foundation?.solarUpdraftTower?.chimneyRadius ??
-      Math.max(1, 0.025 * Math.min(foundation?.lx ?? 0, foundation?.ly ?? 0)),
-  );
+  const [inputValue, setInputValue] = useState<number>(absorberPipe?.absorberOpticalEfficiency ?? 0.7);
 
   const lang = useLanguage();
 
-  const updateChimneyRadiusById = (id: string, radius: number) => {
+  const updateById = (id: string, efficiency: number) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
           const f = e as FoundationModel;
-          if (f.solarStructure === SolarStructure.UpdraftTower) {
-            if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
-            f.solarUpdraftTower.chimneyRadius = radius;
+          if (f.solarStructure === SolarStructure.FocusPipe) {
+            if (!f.solarAbsorberPipe) f.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
+            f.solarAbsorberPipe.absorberOpticalEfficiency = efficiency;
           }
           break;
         }
@@ -50,14 +48,14 @@ const SolarUpdraftTowerChimneyRadiusInput = ({ setDialogVisible }: { setDialogVi
     });
   };
 
-  const updateChimneyRadiusForAll = (radius: number) => {
+  const updateForAll = (efficiency: number) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Foundation && !e.locked) {
           const f = e as FoundationModel;
-          if (f.solarStructure === SolarStructure.UpdraftTower) {
-            if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
-            f.solarUpdraftTower.chimneyRadius = radius;
+          if (f.solarStructure === SolarStructure.FocusPipe) {
+            if (!f.solarAbsorberPipe) f.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
+            f.solarAbsorberPipe.absorberOpticalEfficiency = efficiency;
           }
         }
       }
@@ -65,29 +63,29 @@ const SolarUpdraftTowerChimneyRadiusInput = ({ setDialogVisible }: { setDialogVi
   };
 
   const updateInMap = (map: Map<string, number>, value: number) => {
-    setCommonStore((state: CommonStoreState) => {
+    useStore.getState().set((state) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Foundation && !e.locked && map.has(e.id)) {
           const f = e as FoundationModel;
-          if (f.solarStructure === SolarStructure.UpdraftTower) {
-            if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
-            f.solarUpdraftTower.chimneyRadius = value;
+          if (f.solarStructure === SolarStructure.FocusPipe) {
+            if (!f.solarAbsorberPipe) f.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
+            f.solarAbsorberPipe.absorberOpticalEfficiency = value;
           }
         }
       }
     });
   };
 
-  const needChange = (chimneyRadius: number) => {
+  const needChange = (efficiency: number) => {
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Foundation && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
             const f = e as FoundationModel;
-            if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
+            if (f.solarStructure === SolarStructure.FocusPipe && f.solarAbsorberPipe) {
               if (
-                f.solarUpdraftTower.chimneyRadius === undefined ||
-                Math.abs(f.solarUpdraftTower.chimneyRadius - chimneyRadius) > ZERO_TOLERANCE
+                f.solarAbsorberPipe.absorberOpticalEfficiency === undefined ||
+                Math.abs(f.solarAbsorberPipe.absorberOpticalEfficiency - efficiency) > ZERO_TOLERANCE
               ) {
                 return true;
               }
@@ -99,10 +97,10 @@ const SolarUpdraftTowerChimneyRadiusInput = ({ setDialogVisible }: { setDialogVi
         for (const e of elements) {
           if (e.type === ObjectType.Foundation && !e.locked) {
             const f = e as FoundationModel;
-            if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
+            if (f.solarStructure === SolarStructure.FocusPipe && f.solarAbsorberPipe) {
               if (
-                f.solarUpdraftTower.chimneyRadius === undefined ||
-                Math.abs(f.solarUpdraftTower.chimneyRadius - chimneyRadius) > ZERO_TOLERANCE
+                f.solarAbsorberPipe.absorberOpticalEfficiency === undefined ||
+                Math.abs(f.solarAbsorberPipe.absorberOpticalEfficiency - efficiency) > ZERO_TOLERANCE
               ) {
                 return true;
               }
@@ -111,20 +109,18 @@ const SolarUpdraftTowerChimneyRadiusInput = ({ setDialogVisible }: { setDialogVi
         }
         break;
       default:
-        if (foundation && foundation.solarStructure === SolarStructure.UpdraftTower && foundation.solarUpdraftTower) {
-          if (
-            foundation.solarUpdraftTower.chimneyRadius === undefined ||
-            Math.abs(foundation.solarUpdraftTower.chimneyRadius - chimneyRadius) > ZERO_TOLERANCE
-          ) {
-            return true;
-          }
+        if (
+          absorberPipe?.absorberOpticalEfficiency === undefined ||
+          Math.abs(absorberPipe?.absorberOpticalEfficiency - efficiency) > ZERO_TOLERANCE
+        ) {
+          return true;
         }
     }
     return false;
   };
 
-  const setChimneyRadius = (value: number) => {
-    if (!foundation) return;
+  const setOpticalEfficiency = (value: number) => {
+    if (!foundation || !absorberPipe) return;
     if (!needChange(value)) return;
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType: {
@@ -132,22 +128,19 @@ const SolarUpdraftTowerChimneyRadiusInput = ({ setDialogVisible }: { setDialogVi
         for (const elem of elements) {
           if (elem.type === ObjectType.Foundation && useStore.getState().selectedElementIdSet.has(elem.id)) {
             const f = elem as FoundationModel;
-            if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
-              oldValuesSelected.set(
-                elem.id,
-                f.solarUpdraftTower?.chimneyRadius ?? Math.max(1, 0.025 * Math.min(f.lx, f.ly)),
-              );
+            if (f.solarAbsorberPipe) {
+              oldValuesSelected.set(elem.id, f.solarAbsorberPipe.absorberOpticalEfficiency ?? 0.7);
             }
           }
         }
         const undoableChangeSelected = {
-          name: 'Set Solar Chimney Radius for Selected Foundations',
+          name: 'Set Absorber Optical Efficiency for Selected Foundations',
           timestamp: Date.now(),
           oldValues: oldValuesSelected,
           newValue: value,
           undo: () => {
-            for (const [id, cr] of undoableChangeSelected.oldValues.entries()) {
-              updateChimneyRadiusById(id, cr as number);
+            for (const [id, oe] of undoableChangeSelected.oldValues.entries()) {
+              updateById(id, oe as number);
             }
           },
           redo: () => {
@@ -167,60 +160,54 @@ const SolarUpdraftTowerChimneyRadiusInput = ({ setDialogVisible }: { setDialogVi
         for (const elem of elements) {
           if (elem.type === ObjectType.Foundation) {
             const f = elem as FoundationModel;
-            if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
-              oldValuesAll.set(
-                elem.id,
-                f.solarUpdraftTower?.chimneyRadius ?? Math.max(1, 0.025 * Math.min(f.lx, f.ly)),
-              );
+            if (f.solarAbsorberPipe) {
+              oldValuesAll.set(elem.id, f.solarAbsorberPipe.absorberOpticalEfficiency ?? 0.7);
             }
           }
         }
         const undoableChangeAll = {
-          name: 'Set Solar Chimney Radius for All Foundations',
+          name: 'Set Absorber Optical Efficiency for All Foundations',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
           undo: () => {
-            for (const [id, cr] of undoableChangeAll.oldValues.entries()) {
-              updateChimneyRadiusById(id, cr as number);
+            for (const [id, oe] of undoableChangeAll.oldValues.entries()) {
+              updateById(id, oe as number);
             }
           },
           redo: () => {
-            updateChimneyRadiusForAll(undoableChangeAll.newValue as number);
+            updateForAll(undoableChangeAll.newValue as number);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateChimneyRadiusForAll(value);
+        updateForAll(value);
         setApplyCount(applyCount + 1);
         break;
       }
       default:
-        if (foundation.solarStructure === SolarStructure.UpdraftTower && foundation.solarUpdraftTower) {
-          // foundation selected element may be outdated, make sure that we get the latest
-          const f = getElementById(foundation.id) as FoundationModel;
-          const oldValue =
-            f && f.solarUpdraftTower
-              ? f.solarUpdraftTower.chimneyRadius ?? Math.max(1, 0.025 * Math.min(f.lx, f.ly))
-              : foundation.solarUpdraftTower.chimneyRadius ??
-                Math.max(1, 0.025 * Math.min(foundation.lx, foundation.ly));
-          updateChimneyRadiusById(foundation.id, value);
-          const undoableChange = {
-            name: 'Set Solar Chimney Radius on Foundation',
-            timestamp: Date.now(),
-            oldValue: oldValue,
-            newValue: value,
-            changedElementId: foundation.id,
-            changedElementType: foundation.type,
-            undo: () => {
-              updateChimneyRadiusById(undoableChange.changedElementId, undoableChange.oldValue as number);
-            },
-            redo: () => {
-              updateChimneyRadiusById(undoableChange.changedElementId, undoableChange.newValue as number);
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
-          setApplyCount(applyCount + 1);
-        }
+        // foundation selected element may be outdated, make sure that we get the latest
+        const f = getElementById(foundation.id) as FoundationModel;
+        const oldValue =
+          f && f.solarAbsorberPipe
+            ? f.solarAbsorberPipe.absorberOpticalEfficiency ?? 0.7
+            : absorberPipe.absorberOpticalEfficiency ?? 0.7;
+        updateById(foundation.id, value);
+        const undoableChange = {
+          name: 'Set Absorber Optical Efficiency on Foundation',
+          timestamp: Date.now(),
+          oldValue: oldValue,
+          newValue: value,
+          changedElementId: foundation.id,
+          changedElementType: foundation.type,
+          undo: () => {
+            updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
+          },
+          redo: () => {
+            updateById(undoableChange.changedElementId, undoableChange.newValue as number);
+          },
+        } as UndoableChange;
+        addUndoable(undoableChange);
+        setApplyCount(applyCount + 1);
     }
   };
 
@@ -229,24 +216,24 @@ const SolarUpdraftTowerChimneyRadiusInput = ({ setDialogVisible }: { setDialogVi
   };
 
   const apply = () => {
-    setChimneyRadius(inputValue);
+    setOpticalEfficiency(inputValue);
   };
 
   return (
     <Dialog
-      width={550}
-      title={i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerChimneyRadius', lang)}
+      width={500}
+      title={i18n.t('solarAbsorberPipeMenu.AbsorberOpticalEfficiency', lang)}
       onApply={apply}
       onClose={close}
     >
       <Row gutter={6}>
-        <Col className="gutter-row" span={6}>
+        <Col className="gutter-row" span={8}>
           <InputNumber
-            min={0.1}
-            max={10}
+            min={0}
+            max={1}
             style={{ width: 120 }}
-            step={1}
-            precision={1}
+            step={0.01}
+            precision={2}
             value={inputValue}
             onChange={(value) => {
               if (value === null) return;
@@ -254,11 +241,8 @@ const SolarUpdraftTowerChimneyRadiusInput = ({ setDialogVisible }: { setDialogVi
             }}
           />
           <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-            {i18n.t('word.Range', lang)}: [0.1, 10] {i18n.t('word.MeterAbbreviation', lang)}
+            {i18n.t('word.Range', lang)}: [0, 1]
           </div>
-        </Col>
-        <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
-          {i18n.t('word.MeterAbbreviation', lang)}
         </Col>
         <Col
           className="gutter-row"
@@ -283,4 +267,4 @@ const SolarUpdraftTowerChimneyRadiusInput = ({ setDialogVisible }: { setDialogVi
   );
 };
 
-export default SolarUpdraftTowerChimneyRadiusInput;
+export default SolarAbsorberPipeOpticalEfficiencyInput;

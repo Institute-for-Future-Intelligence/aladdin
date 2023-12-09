@@ -12,34 +12,38 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { ZERO_TOLERANCE } from 'src/constants';
-import { SolarUpdraftTowerModel } from '../../../models/SolarUpdraftTowerModel';
-import { useSelectedElement } from './menuHooks';
+import { SolarUpdraftTowerModel } from '../../../../models/SolarUpdraftTowerModel';
+import { useSelectedElement } from '../menuHooks';
 import { useLanguage } from 'src/views/hooks';
-import Dialog from '../dialog';
+import Dialog from '../../dialog';
 
-const SolarUpdraftTowerCollectorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const SolarUpdraftTowerCollectorTransmissivityInput = ({
+  setDialogVisible,
+}: {
+  setDialogVisible: (b: boolean) => void;
+}) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.foundationActionScope);
+  const applyCount = useStore(Selector.applyCount);
+  const setApplyCount = useStore(Selector.setApplyCount);
 
   const foundation = useSelectedElement(ObjectType.Foundation) as FoundationModel | undefined;
 
-  const [inputValue, setInputValue] = useState<number>(
-    foundation?.solarUpdraftTower?.collectorHeight ?? Math.max(3, 10 * (foundation?.lz ?? 0)),
-  );
+  const [inputValue, setInputValue] = useState<number>(foundation?.solarUpdraftTower?.collectorTransmissivity ?? 0.9);
 
   const lang = useLanguage();
 
-  const updateCollectorHeightById = (id: string, height: number) => {
+  const updateById = (id: string, transmissivity: number) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
           const f = e as FoundationModel;
           if (f.solarStructure === SolarStructure.UpdraftTower) {
             if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
-            f.solarUpdraftTower.collectorHeight = height;
+            f.solarUpdraftTower.collectorTransmissivity = transmissivity;
           }
           break;
         }
@@ -47,14 +51,14 @@ const SolarUpdraftTowerCollectorHeightInput = ({ setDialogVisible }: { setDialog
     });
   };
 
-  const updateCollectorHeightForAll = (height: number) => {
+  const updateForAll = (transmissivity: number) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Foundation && !e.locked) {
           const f = e as FoundationModel;
           if (f.solarStructure === SolarStructure.UpdraftTower) {
             if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
-            f.solarUpdraftTower.collectorHeight = height;
+            f.solarUpdraftTower.collectorTransmissivity = transmissivity;
           }
         }
       }
@@ -68,14 +72,14 @@ const SolarUpdraftTowerCollectorHeightInput = ({ setDialogVisible }: { setDialog
           const f = e as FoundationModel;
           if (f.solarStructure === SolarStructure.UpdraftTower) {
             if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
-            f.solarUpdraftTower.collectorHeight = value;
+            f.solarUpdraftTower.collectorTransmissivity = value;
           }
         }
       }
     });
   };
 
-  const needChange = (collectorHeight: number) => {
+  const needChange = (transmissivity: number) => {
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType:
         for (const e of elements) {
@@ -83,8 +87,8 @@ const SolarUpdraftTowerCollectorHeightInput = ({ setDialogVisible }: { setDialog
             const f = e as FoundationModel;
             if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
               if (
-                f.solarUpdraftTower.collectorHeight === undefined ||
-                Math.abs(f.solarUpdraftTower.collectorHeight - collectorHeight) > ZERO_TOLERANCE
+                f.solarUpdraftTower.collectorTransmissivity === undefined ||
+                Math.abs(f.solarUpdraftTower.collectorTransmissivity - transmissivity) > ZERO_TOLERANCE
               ) {
                 return true;
               }
@@ -98,8 +102,8 @@ const SolarUpdraftTowerCollectorHeightInput = ({ setDialogVisible }: { setDialog
             const f = e as FoundationModel;
             if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
               if (
-                f.solarUpdraftTower.collectorHeight === undefined ||
-                Math.abs(f.solarUpdraftTower.collectorHeight - collectorHeight) > ZERO_TOLERANCE
+                f.solarUpdraftTower.collectorTransmissivity === undefined ||
+                Math.abs(f.solarUpdraftTower.collectorTransmissivity - transmissivity) > ZERO_TOLERANCE
               ) {
                 return true;
               }
@@ -110,8 +114,8 @@ const SolarUpdraftTowerCollectorHeightInput = ({ setDialogVisible }: { setDialog
       default:
         if (foundation && foundation.solarStructure === SolarStructure.UpdraftTower && foundation.solarUpdraftTower) {
           if (
-            foundation.solarUpdraftTower.collectorHeight === undefined ||
-            Math.abs(foundation.solarUpdraftTower.collectorHeight - collectorHeight) > ZERO_TOLERANCE
+            foundation.solarUpdraftTower.collectorTransmissivity === undefined ||
+            Math.abs(foundation.solarUpdraftTower.collectorTransmissivity - transmissivity) > ZERO_TOLERANCE
           ) {
             return true;
           }
@@ -120,7 +124,7 @@ const SolarUpdraftTowerCollectorHeightInput = ({ setDialogVisible }: { setDialog
     return false;
   };
 
-  const setCollectorHeight = (value: number) => {
+  const setTransmissivity = (value: number) => {
     if (!foundation) return;
     if (!needChange(value)) return;
     switch (actionScope) {
@@ -130,18 +134,18 @@ const SolarUpdraftTowerCollectorHeightInput = ({ setDialogVisible }: { setDialog
           if (elem.type === ObjectType.Foundation && useStore.getState().selectedElementIdSet.has(elem.id)) {
             const f = elem as FoundationModel;
             if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
-              oldValuesSelected.set(elem.id, f.solarUpdraftTower.collectorHeight ?? Math.max(3, 10 * f.lz));
+              oldValuesSelected.set(elem.id, f.solarUpdraftTower.collectorTransmissivity ?? 0.9);
             }
           }
         }
         const undoableChangeSelected = {
-          name: 'Set Solar Collector Height for Selected Foundations',
+          name: 'Set Solar Collector Transmissivity for Selected Foundations',
           timestamp: Date.now(),
           oldValues: oldValuesSelected,
           newValue: value,
           undo: () => {
-            for (const [id, ch] of undoableChangeSelected.oldValues.entries()) {
-              updateCollectorHeightById(id, ch as number);
+            for (const [id, ct] of undoableChangeSelected.oldValues.entries()) {
+              updateById(id, ct as number);
             }
           },
           redo: () => {
@@ -153,6 +157,7 @@ const SolarUpdraftTowerCollectorHeightInput = ({ setDialogVisible }: { setDialog
         } as UndoableChangeGroup;
         addUndoable(undoableChangeSelected);
         updateInMap(oldValuesSelected, value);
+        setApplyCount(applyCount + 1);
         break;
       }
       case Scope.AllObjectsOfThisType: {
@@ -161,26 +166,27 @@ const SolarUpdraftTowerCollectorHeightInput = ({ setDialogVisible }: { setDialog
           if (elem.type === ObjectType.Foundation) {
             const f = elem as FoundationModel;
             if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
-              oldValuesAll.set(elem.id, f.solarUpdraftTower.collectorHeight ?? Math.max(3, 10 * f.lz));
+              oldValuesAll.set(elem.id, f.solarUpdraftTower.collectorTransmissivity ?? 0.9);
             }
           }
         }
         const undoableChangeAll = {
-          name: 'Set Solar Collector Height for All Foundations',
+          name: 'Set Solar Collector Transmissivity for All Foundations',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
           undo: () => {
-            for (const [id, ch] of undoableChangeAll.oldValues.entries()) {
-              updateCollectorHeightById(id, ch as number);
+            for (const [id, ct] of undoableChangeAll.oldValues.entries()) {
+              updateById(id, ct as number);
             }
           },
           redo: () => {
-            updateCollectorHeightForAll(undoableChangeAll.newValue as number);
+            updateForAll(undoableChangeAll.newValue as number);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateCollectorHeightForAll(value);
+        updateForAll(value);
+        setApplyCount(applyCount + 1);
         break;
       }
       default:
@@ -189,24 +195,25 @@ const SolarUpdraftTowerCollectorHeightInput = ({ setDialogVisible }: { setDialog
           const f = getElementById(foundation.id) as FoundationModel;
           const oldValue =
             f && f.solarUpdraftTower
-              ? f.solarUpdraftTower.collectorHeight ?? Math.max(3, 10 * f.lz)
-              : foundation.solarUpdraftTower.collectorHeight ?? Math.max(3, 10 * foundation.lz);
-          updateCollectorHeightById(foundation.id, value);
+              ? f.solarUpdraftTower.collectorTransmissivity ?? 0.9
+              : foundation.solarUpdraftTower.collectorTransmissivity ?? 0.9;
+          updateById(foundation.id, value);
           const undoableChange = {
-            name: 'Set Solar Collector Height on Foundation',
+            name: 'Set Solar Collector Transmissivity on Foundation',
             timestamp: Date.now(),
             oldValue: oldValue,
             newValue: value,
             changedElementId: foundation.id,
             changedElementType: foundation.type,
             undo: () => {
-              updateCollectorHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
+              updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateCollectorHeightById(undoableChange.changedElementId, undoableChange.newValue as number);
+              updateById(undoableChange.changedElementId, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
+          setApplyCount(applyCount + 1);
         }
     }
   };
@@ -216,24 +223,24 @@ const SolarUpdraftTowerCollectorHeightInput = ({ setDialogVisible }: { setDialog
   };
 
   const apply = () => {
-    setCollectorHeight(inputValue);
+    setTransmissivity(inputValue);
   };
 
   return (
     <Dialog
-      width={550}
-      title={i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerCollectorHeight', lang)}
+      width={540}
+      title={i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerCollectorTransmissivity', lang)}
       onApply={apply}
       onClose={close}
     >
       <Row gutter={6}>
         <Col className="gutter-row" span={6}>
           <InputNumber
-            min={0.1}
-            max={20}
+            min={0}
+            max={1}
             style={{ width: 120 }}
-            step={1}
-            precision={1}
+            step={0.01}
+            precision={2}
             value={inputValue}
             onChange={(value) => {
               if (value === null) return;
@@ -241,16 +248,19 @@ const SolarUpdraftTowerCollectorHeightInput = ({ setDialogVisible }: { setDialog
             }}
           />
           <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-            {i18n.t('word.Range', lang)}: [0.1, 20] {i18n.t('word.MeterAbbreviation', lang)}
+            {i18n.t('word.Range', lang)}: [0, 1]
           </div>
-        </Col>
-        <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
-          {i18n.t('word.MeterAbbreviation', lang)}
         </Col>
         <Col
           className="gutter-row"
-          style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-          span={16}
+          style={{
+            border: '2px dashed #ccc',
+            marginLeft: '16px',
+            paddingTop: '8px',
+            paddingLeft: '12px',
+            paddingBottom: '8px',
+          }}
+          span={17}
         >
           <Radio.Group
             onChange={(e) => useStore.getState().setFoundationActionScope(e.target.value)}
@@ -270,4 +280,4 @@ const SolarUpdraftTowerCollectorHeightInput = ({ setDialogVisible }: { setDialog
   );
 };
 
-export default SolarUpdraftTowerCollectorHeightInput;
+export default SolarUpdraftTowerCollectorTransmissivityInput;

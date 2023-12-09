@@ -12,12 +12,16 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { ZERO_TOLERANCE } from 'src/constants';
-import { SolarUpdraftTowerModel } from '../../../models/SolarUpdraftTowerModel';
-import { useSelectedElement } from './menuHooks';
+import { SolarPowerTowerModel } from '../../../../models/SolarPowerTowerModel';
+import { useSelectedElement } from '../menuHooks';
+import Dialog from '../../dialog';
 import { useLanguage } from 'src/views/hooks';
-import Dialog from '../dialog';
 
-const SolarUpdraftTowerTurbineEfficiencyInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const SolarPowerTowerReceiverOpticalEfficiencyInput = ({
+  setDialogVisible,
+}: {
+  setDialogVisible: (b: boolean) => void;
+}) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -27,8 +31,9 @@ const SolarUpdraftTowerTurbineEfficiencyInput = ({ setDialogVisible }: { setDial
   const setApplyCount = useStore(Selector.setApplyCount);
 
   const foundation = useSelectedElement(ObjectType.Foundation) as FoundationModel | undefined;
+  const powerTower = foundation?.solarPowerTower;
 
-  const [inputValue, setInputValue] = useState<number>(foundation?.solarUpdraftTower?.turbineEfficiency ?? 0.3);
+  const [inputValue, setInputValue] = useState<number>(powerTower?.receiverOpticalEfficiency ?? 0.7);
 
   const lang = useLanguage();
 
@@ -37,9 +42,9 @@ const SolarUpdraftTowerTurbineEfficiencyInput = ({ setDialogVisible }: { setDial
       for (const e of state.elements) {
         if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
           const f = e as FoundationModel;
-          if (f.solarStructure === SolarStructure.UpdraftTower) {
-            if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
-            f.solarUpdraftTower.turbineEfficiency = efficiency;
+          if (f.solarStructure === SolarStructure.FocusTower) {
+            if (!f.solarPowerTower) f.solarPowerTower = {} as SolarPowerTowerModel;
+            f.solarPowerTower.receiverOpticalEfficiency = efficiency;
           }
           break;
         }
@@ -52,9 +57,9 @@ const SolarUpdraftTowerTurbineEfficiencyInput = ({ setDialogVisible }: { setDial
       for (const e of state.elements) {
         if (e.type === ObjectType.Foundation && !e.locked) {
           const f = e as FoundationModel;
-          if (f.solarStructure === SolarStructure.UpdraftTower) {
-            if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
-            f.solarUpdraftTower.turbineEfficiency = efficiency;
+          if (f.solarStructure === SolarStructure.FocusTower) {
+            if (!f.solarPowerTower) f.solarPowerTower = {} as SolarPowerTowerModel;
+            f.solarPowerTower.receiverOpticalEfficiency = efficiency;
           }
         }
       }
@@ -66,9 +71,9 @@ const SolarUpdraftTowerTurbineEfficiencyInput = ({ setDialogVisible }: { setDial
       for (const e of state.elements) {
         if (e.type === ObjectType.Foundation && !e.locked && map.has(e.id)) {
           const f = e as FoundationModel;
-          if (f.solarStructure === SolarStructure.UpdraftTower) {
-            if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
-            f.solarUpdraftTower.turbineEfficiency = value;
+          if (f.solarStructure === SolarStructure.FocusTower) {
+            if (!f.solarPowerTower) f.solarPowerTower = {} as SolarPowerTowerModel;
+            f.solarPowerTower.receiverOpticalEfficiency = value;
           }
         }
       }
@@ -81,10 +86,10 @@ const SolarUpdraftTowerTurbineEfficiencyInput = ({ setDialogVisible }: { setDial
         for (const e of elements) {
           if (e.type === ObjectType.Foundation && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
             const f = e as FoundationModel;
-            if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
+            if (f.solarStructure === SolarStructure.FocusTower && f.solarPowerTower) {
               if (
-                f.solarUpdraftTower.turbineEfficiency === undefined ||
-                Math.abs(f.solarUpdraftTower.turbineEfficiency - efficiency) > ZERO_TOLERANCE
+                f.solarPowerTower.receiverOpticalEfficiency === undefined ||
+                Math.abs(f.solarPowerTower.receiverOpticalEfficiency - efficiency) > ZERO_TOLERANCE
               ) {
                 return true;
               }
@@ -96,10 +101,10 @@ const SolarUpdraftTowerTurbineEfficiencyInput = ({ setDialogVisible }: { setDial
         for (const e of elements) {
           if (e.type === ObjectType.Foundation && !e.locked) {
             const f = e as FoundationModel;
-            if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
+            if (f.solarStructure === SolarStructure.FocusTower && f.solarPowerTower) {
               if (
-                f.solarUpdraftTower.turbineEfficiency === undefined ||
-                Math.abs(f.solarUpdraftTower.turbineEfficiency - efficiency) > ZERO_TOLERANCE
+                f.solarPowerTower.receiverOpticalEfficiency === undefined ||
+                Math.abs(f.solarPowerTower.receiverOpticalEfficiency - efficiency) > ZERO_TOLERANCE
               ) {
                 return true;
               }
@@ -108,20 +113,18 @@ const SolarUpdraftTowerTurbineEfficiencyInput = ({ setDialogVisible }: { setDial
         }
         break;
       default:
-        if (foundation && foundation.solarStructure === SolarStructure.UpdraftTower && foundation.solarUpdraftTower) {
-          if (
-            foundation.solarUpdraftTower.turbineEfficiency === undefined ||
-            Math.abs(foundation.solarUpdraftTower.turbineEfficiency - efficiency) > ZERO_TOLERANCE
-          ) {
-            return true;
-          }
+        if (
+          powerTower?.receiverOpticalEfficiency === undefined ||
+          Math.abs(powerTower?.receiverOpticalEfficiency - efficiency) > ZERO_TOLERANCE
+        ) {
+          return true;
         }
     }
     return false;
   };
 
-  const setEfficiency = (value: number) => {
-    if (!foundation) return;
+  const updateOpticalEfficiency = (value: number) => {
+    if (!foundation || !powerTower) return;
     if (!needChange(value)) return;
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType: {
@@ -129,19 +132,19 @@ const SolarUpdraftTowerTurbineEfficiencyInput = ({ setDialogVisible }: { setDial
         for (const elem of elements) {
           if (elem.type === ObjectType.Foundation && useStore.getState().selectedElementIdSet.has(elem.id)) {
             const f = elem as FoundationModel;
-            if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
-              oldValuesSelected.set(elem.id, f.solarUpdraftTower.turbineEfficiency ?? 0.3);
+            if (f.solarPowerTower) {
+              oldValuesSelected.set(elem.id, f.solarPowerTower.receiverOpticalEfficiency ?? 0.7);
             }
           }
         }
         const undoableChangeSelected = {
-          name: 'Set Solar Updraft Tower Turbine Efficiency for Selected Foundations',
+          name: 'Set Receiver Optical Efficiency for Selected Foundations',
           timestamp: Date.now(),
           oldValues: oldValuesSelected,
           newValue: value,
           undo: () => {
-            for (const [id, dc] of undoableChangeSelected.oldValues.entries()) {
-              updateById(id, dc as number);
+            for (const [id, oe] of undoableChangeSelected.oldValues.entries()) {
+              updateById(id, oe as number);
             }
           },
           redo: () => {
@@ -161,19 +164,19 @@ const SolarUpdraftTowerTurbineEfficiencyInput = ({ setDialogVisible }: { setDial
         for (const elem of elements) {
           if (elem.type === ObjectType.Foundation) {
             const f = elem as FoundationModel;
-            if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
-              oldValuesAll.set(elem.id, f.solarUpdraftTower.turbineEfficiency ?? 0.3);
+            if (f.solarPowerTower) {
+              oldValuesAll.set(elem.id, f.solarPowerTower.receiverOpticalEfficiency ?? 0.7);
             }
           }
         }
         const undoableChangeAll = {
-          name: 'Set Solar Updraft Tower Turbine Efficiency for All Foundations',
+          name: 'Set Receiver Optical Efficiency for All Foundations',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
           undo: () => {
-            for (const [id, dc] of undoableChangeAll.oldValues.entries()) {
-              updateById(id, dc as number);
+            for (const [id, oe] of undoableChangeAll.oldValues.entries()) {
+              updateById(id, oe as number);
             }
           },
           redo: () => {
@@ -186,31 +189,29 @@ const SolarUpdraftTowerTurbineEfficiencyInput = ({ setDialogVisible }: { setDial
         break;
       }
       default:
-        if (foundation.solarStructure === SolarStructure.UpdraftTower && foundation.solarUpdraftTower) {
-          // foundation selected element may be outdated, make sure that we get the latest
-          const f = getElementById(foundation.id) as FoundationModel;
-          const oldValue =
-            f && f.solarUpdraftTower
-              ? f.solarUpdraftTower.turbineEfficiency ?? 0.3
-              : foundation.solarUpdraftTower.turbineEfficiency ?? 0.3;
-          updateById(foundation.id, value);
-          const undoableChange = {
-            name: 'Set Solar Updraft Tower Turbine Efficiency on Foundation',
-            timestamp: Date.now(),
-            oldValue: oldValue,
-            newValue: value,
-            changedElementId: foundation.id,
-            changedElementType: foundation.type,
-            undo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
-            },
-            redo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.newValue as number);
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
-          setApplyCount(applyCount + 1);
-        }
+        // foundation selected element may be outdated, make sure that we get the latest
+        const f = getElementById(foundation.id) as FoundationModel;
+        const oldValue =
+          f && f.solarPowerTower
+            ? f.solarPowerTower.receiverOpticalEfficiency ?? 0.7
+            : powerTower.receiverOpticalEfficiency ?? 0.7;
+        updateById(foundation.id, value);
+        const undoableChange = {
+          name: 'Set Receiver Optical Efficiency on Foundation',
+          timestamp: Date.now(),
+          oldValue: oldValue,
+          newValue: value,
+          changedElementId: foundation.id,
+          changedElementType: foundation.type,
+          undo: () => {
+            updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
+          },
+          redo: () => {
+            updateById(undoableChange.changedElementId, undoableChange.newValue as number);
+          },
+        } as UndoableChange;
+        addUndoable(undoableChange);
+        setApplyCount(applyCount + 1);
     }
   };
 
@@ -219,21 +220,21 @@ const SolarUpdraftTowerTurbineEfficiencyInput = ({ setDialogVisible }: { setDial
   };
 
   const apply = () => {
-    setEfficiency(inputValue);
+    updateOpticalEfficiency(inputValue);
   };
 
   return (
     <Dialog
-      width={540}
-      title={i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerTurbineEfficiency', lang)}
+      width={500}
+      title={i18n.t('solarPowerTowerMenu.ReceiverOpticalEfficiency', lang)}
       onApply={apply}
       onClose={close}
     >
       <Row gutter={6}>
-        <Col className="gutter-row" span={6}>
+        <Col className="gutter-row" span={8}>
           <InputNumber
-            min={0.2}
-            max={1.0}
+            min={0}
+            max={1}
             style={{ width: 120 }}
             step={0.01}
             precision={2}
@@ -244,19 +245,13 @@ const SolarUpdraftTowerTurbineEfficiencyInput = ({ setDialogVisible }: { setDial
             }}
           />
           <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-            {i18n.t('word.Range', lang)}: [0.2, 1.0]
+            {i18n.t('word.Range', lang)}: [0, 1]
           </div>
         </Col>
         <Col
           className="gutter-row"
-          style={{
-            border: '2px dashed #ccc',
-            marginLeft: '16px',
-            paddingTop: '8px',
-            paddingLeft: '12px',
-            paddingBottom: '8px',
-          }}
-          span={17}
+          style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
+          span={16}
         >
           <Radio.Group
             onChange={(e) => useStore.getState().setFoundationActionScope(e.target.value)}
@@ -276,4 +271,4 @@ const SolarUpdraftTowerTurbineEfficiencyInput = ({ setDialogVisible }: { setDial
   );
 };
 
-export default SolarUpdraftTowerTurbineEfficiencyInput;
+export default SolarPowerTowerReceiverOpticalEfficiencyInput;

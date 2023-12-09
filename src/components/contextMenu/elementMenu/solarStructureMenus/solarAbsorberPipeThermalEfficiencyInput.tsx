@@ -12,12 +12,12 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { ZERO_TOLERANCE } from 'src/constants';
-import { SolarAbsorberPipeModel } from '../../../models/SolarAbsorberPipeModel';
-import { useSelectedElement } from './menuHooks';
-import Dialog from '../dialog';
+import { SolarAbsorberPipeModel } from '../../../../models/SolarAbsorberPipeModel';
+import { useSelectedElement } from '../menuHooks';
+import Dialog from '../../dialog';
 import { useLanguage } from 'src/views/hooks';
 
-const SolarAbsorberPipeAbsorptanceInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const SolarAbsorberPipeThermalEfficiencyInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -29,18 +29,18 @@ const SolarAbsorberPipeAbsorptanceInput = ({ setDialogVisible }: { setDialogVisi
   const foundation = useSelectedElement(ObjectType.Foundation) as FoundationModel | undefined;
   const absorberPipe = foundation?.solarAbsorberPipe;
 
-  const [inputValue, setInputValue] = useState(absorberPipe?.absorberAbsorptance ?? 0.95);
+  const [inputValue, setInputValue] = useState(absorberPipe?.absorberThermalEfficiency ?? 0.3);
 
   const lang = useLanguage();
 
-  const updateById = (id: string, absorptance: number) => {
+  const updateById = (id: string, efficiency: number) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
           const f = e as FoundationModel;
           if (f.solarStructure === SolarStructure.FocusPipe) {
             if (!f.solarAbsorberPipe) f.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
-            f.solarAbsorberPipe.absorberAbsorptance = absorptance;
+            f.solarAbsorberPipe.absorberThermalEfficiency = efficiency;
           }
           break;
         }
@@ -48,14 +48,14 @@ const SolarAbsorberPipeAbsorptanceInput = ({ setDialogVisible }: { setDialogVisi
     });
   };
 
-  const updateForAll = (absorptance: number) => {
+  const updateForAll = (efficiency: number) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Foundation && !e.locked) {
           const f = e as FoundationModel;
           if (f.solarStructure === SolarStructure.FocusPipe) {
             if (!f.solarAbsorberPipe) f.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
-            f.solarAbsorberPipe.absorberAbsorptance = absorptance;
+            f.solarAbsorberPipe.absorberThermalEfficiency = efficiency;
           }
         }
       }
@@ -69,14 +69,14 @@ const SolarAbsorberPipeAbsorptanceInput = ({ setDialogVisible }: { setDialogVisi
           const f = e as FoundationModel;
           if (f.solarStructure === SolarStructure.FocusPipe) {
             if (!f.solarAbsorberPipe) f.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
-            f.solarAbsorberPipe.absorberAbsorptance = value;
+            f.solarAbsorberPipe.absorberThermalEfficiency = value;
           }
         }
       }
     });
   };
 
-  const needChange = (absorptance: number) => {
+  const needChange = (efficiency: number) => {
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType:
         for (const e of elements) {
@@ -84,8 +84,8 @@ const SolarAbsorberPipeAbsorptanceInput = ({ setDialogVisible }: { setDialogVisi
             const f = e as FoundationModel;
             if (f.solarStructure === SolarStructure.FocusPipe && f.solarAbsorberPipe) {
               if (
-                f.solarAbsorberPipe.absorberAbsorptance === undefined ||
-                Math.abs(f.solarAbsorberPipe.absorberAbsorptance - absorptance) > ZERO_TOLERANCE
+                f.solarAbsorberPipe.absorberThermalEfficiency === undefined ||
+                Math.abs(f.solarAbsorberPipe.absorberThermalEfficiency - efficiency) > ZERO_TOLERANCE
               ) {
                 return true;
               }
@@ -99,8 +99,8 @@ const SolarAbsorberPipeAbsorptanceInput = ({ setDialogVisible }: { setDialogVisi
             const f = e as FoundationModel;
             if (f.solarStructure === SolarStructure.FocusPipe && f.solarAbsorberPipe) {
               if (
-                f.solarAbsorberPipe.absorberAbsorptance === undefined ||
-                Math.abs(f.solarAbsorberPipe.absorberAbsorptance - absorptance) > ZERO_TOLERANCE
+                f.solarAbsorberPipe.absorberThermalEfficiency === undefined ||
+                Math.abs(f.solarAbsorberPipe.absorberThermalEfficiency - efficiency) > ZERO_TOLERANCE
               ) {
                 return true;
               }
@@ -110,8 +110,8 @@ const SolarAbsorberPipeAbsorptanceInput = ({ setDialogVisible }: { setDialogVisi
         break;
       default:
         if (
-          absorberPipe?.absorberAbsorptance === undefined ||
-          Math.abs(absorberPipe?.absorberAbsorptance - absorptance) > ZERO_TOLERANCE
+          absorberPipe?.absorberThermalEfficiency === undefined ||
+          Math.abs(absorberPipe?.absorberThermalEfficiency - efficiency) > ZERO_TOLERANCE
         ) {
           return true;
         }
@@ -119,7 +119,7 @@ const SolarAbsorberPipeAbsorptanceInput = ({ setDialogVisible }: { setDialogVisi
     return false;
   };
 
-  const updateAbsorptance = (value: number) => {
+  const setThermalEfficiency = (value: number) => {
     if (!foundation || !absorberPipe) return;
     if (!needChange(value)) return;
     switch (actionScope) {
@@ -129,18 +129,18 @@ const SolarAbsorberPipeAbsorptanceInput = ({ setDialogVisible }: { setDialogVisi
           if (elem.type === ObjectType.Foundation && useStore.getState().selectedElementIdSet.has(elem.id)) {
             const f = elem as FoundationModel;
             if (f.solarAbsorberPipe) {
-              oldValuesSelected.set(elem.id, f.solarAbsorberPipe.absorberAbsorptance ?? 0.95);
+              oldValuesSelected.set(elem.id, f.solarAbsorberPipe.absorberThermalEfficiency ?? 0.3);
             }
           }
         }
         const undoableChangeSelected = {
-          name: 'Set Absorber Pipe Absorptance for Selected Foundations',
+          name: 'Set Absorber Thermal Efficiency for Selected Foundations',
           timestamp: Date.now(),
           oldValues: oldValuesSelected,
           newValue: value,
           undo: () => {
-            for (const [id, ab] of undoableChangeSelected.oldValues.entries()) {
-              updateById(id, ab as number);
+            for (const [id, te] of undoableChangeSelected.oldValues.entries()) {
+              updateById(id, te as number);
             }
           },
           redo: () => {
@@ -161,18 +161,18 @@ const SolarAbsorberPipeAbsorptanceInput = ({ setDialogVisible }: { setDialogVisi
           if (elem.type === ObjectType.Foundation) {
             const f = elem as FoundationModel;
             if (f.solarAbsorberPipe) {
-              oldValuesAll.set(elem.id, f.solarAbsorberPipe.absorberAbsorptance ?? 0.95);
+              oldValuesAll.set(elem.id, f.solarAbsorberPipe.absorberThermalEfficiency ?? 0.3);
             }
           }
         }
         const undoableChangeAll = {
-          name: 'Set Absorber Pipe Absorptance for All Foundations',
+          name: 'Set Absorber Thermal Efficiency for All Foundations',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
           undo: () => {
-            for (const [id, ab] of undoableChangeAll.oldValues.entries()) {
-              updateById(id, ab as number);
+            for (const [id, te] of undoableChangeAll.oldValues.entries()) {
+              updateById(id, te as number);
             }
           },
           redo: () => {
@@ -189,11 +189,11 @@ const SolarAbsorberPipeAbsorptanceInput = ({ setDialogVisible }: { setDialogVisi
         const f = getElementById(foundation.id) as FoundationModel;
         const oldValue =
           f && f.solarAbsorberPipe
-            ? f.solarAbsorberPipe.absorberAbsorptance ?? 0.95
-            : absorberPipe.absorberAbsorptance ?? 0.95;
+            ? f.solarAbsorberPipe.absorberThermalEfficiency ?? 0.3
+            : absorberPipe.absorberThermalEfficiency ?? 0.3;
         updateById(foundation.id, value);
         const undoableChange = {
-          name: 'Set Absorber Pipe Absorptance on Foundation',
+          name: 'Set Absorber Thermal Efficiency on Foundation',
           timestamp: Date.now(),
           oldValue: oldValue,
           newValue: value,
@@ -216,13 +216,13 @@ const SolarAbsorberPipeAbsorptanceInput = ({ setDialogVisible }: { setDialogVisi
   };
 
   const apply = () => {
-    updateAbsorptance(inputValue);
+    setThermalEfficiency(inputValue);
   };
 
   return (
     <Dialog
       width={500}
-      title={i18n.t('solarAbsorberPipeMenu.AbsorberAbsorptance', lang)}
+      title={i18n.t('solarAbsorberPipeMenu.AbsorberThermalEfficiency', lang)}
       onApply={apply}
       onClose={close}
     >
@@ -267,4 +267,4 @@ const SolarAbsorberPipeAbsorptanceInput = ({ setDialogVisible }: { setDialogVisi
   );
 };
 
-export default SolarAbsorberPipeAbsorptanceInput;
+export default SolarAbsorberPipeThermalEfficiencyInput;

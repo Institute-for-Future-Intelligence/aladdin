@@ -12,12 +12,12 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { ZERO_TOLERANCE } from 'src/constants';
-import { SolarPowerTowerModel } from '../../../models/SolarPowerTowerModel';
-import { useSelectedElement } from './menuHooks';
-import Dialog from '../dialog';
+import { SolarAbsorberPipeModel } from '../../../../models/SolarAbsorberPipeModel';
+import { useSelectedElement } from '../menuHooks';
+import Dialog from '../../dialog';
 import { useLanguage } from 'src/views/hooks';
 
-const SolarPowerTowerRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const SolarAbsorberPipeHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -27,20 +27,20 @@ const SolarPowerTowerRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b
   const setApplyCount = useStore(Selector.setApplyCount);
 
   const foundation = useSelectedElement(ObjectType.Foundation) as FoundationModel | undefined;
-  const powerTower = foundation?.solarPowerTower;
+  const absorberPipe = foundation?.solarAbsorberPipe;
 
-  const [inputValue, setInputValue] = useState<number>(powerTower?.towerRadius ?? 1);
+  const [inputValue, setInputValue] = useState(absorberPipe?.absorberHeight ?? 10);
 
   const lang = useLanguage();
 
-  const updateById = (id: string, radius: number) => {
+  const updateById = (id: string, height: number) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
           const f = e as FoundationModel;
-          if (f.solarStructure === SolarStructure.FocusTower) {
-            if (!f.solarPowerTower) f.solarPowerTower = {} as SolarPowerTowerModel;
-            f.solarPowerTower.towerRadius = radius;
+          if (f.solarStructure === SolarStructure.FocusPipe) {
+            if (!f.solarAbsorberPipe) f.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
+            f.solarAbsorberPipe.absorberHeight = height;
           }
           break;
         }
@@ -48,14 +48,14 @@ const SolarPowerTowerRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b
     });
   };
 
-  const updateForAll = (radius: number) => {
+  const updateForAll = (height: number) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Foundation && !e.locked) {
           const f = e as FoundationModel;
-          if (f.solarStructure === SolarStructure.FocusTower) {
-            if (!f.solarPowerTower) f.solarPowerTower = {} as SolarPowerTowerModel;
-            f.solarPowerTower.towerRadius = radius;
+          if (f.solarStructure === SolarStructure.FocusPipe) {
+            if (!f.solarAbsorberPipe) f.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
+            f.solarAbsorberPipe.absorberHeight = height;
           }
         }
       }
@@ -63,29 +63,29 @@ const SolarPowerTowerRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b
   };
 
   const updateInMap = (map: Map<string, number>, value: number) => {
-    setCommonStore((state: CommonStoreState) => {
+    useStore.getState().set((state) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Foundation && !e.locked && map.has(e.id)) {
           const f = e as FoundationModel;
-          if (f.solarStructure === SolarStructure.FocusTower) {
-            if (!f.solarPowerTower) f.solarPowerTower = {} as SolarPowerTowerModel;
-            f.solarPowerTower.towerRadius = value;
+          if (f.solarStructure === SolarStructure.FocusPipe) {
+            if (!f.solarAbsorberPipe) f.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
+            f.solarAbsorberPipe.absorberHeight = value;
           }
         }
       }
     });
   };
 
-  const needChange = (towerRadius: number) => {
+  const needChange = (absorberHeight: number) => {
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Foundation && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
             const f = e as FoundationModel;
-            if (f.solarStructure === SolarStructure.FocusTower && f.solarPowerTower) {
+            if (f.solarStructure === SolarStructure.FocusPipe && f.solarAbsorberPipe) {
               if (
-                f.solarPowerTower.towerRadius === undefined ||
-                Math.abs(f.solarPowerTower.towerRadius - towerRadius) > ZERO_TOLERANCE
+                f.solarAbsorberPipe.absorberHeight === undefined ||
+                Math.abs(f.solarAbsorberPipe.absorberHeight - absorberHeight) > ZERO_TOLERANCE
               ) {
                 return true;
               }
@@ -97,10 +97,10 @@ const SolarPowerTowerRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b
         for (const e of elements) {
           if (e.type === ObjectType.Foundation && !e.locked) {
             const f = e as FoundationModel;
-            if (f.solarStructure === SolarStructure.FocusTower && f.solarPowerTower) {
+            if (f.solarStructure === SolarStructure.FocusPipe && f.solarAbsorberPipe) {
               if (
-                f.solarPowerTower.towerRadius === undefined ||
-                Math.abs(f.solarPowerTower.towerRadius - towerRadius) > ZERO_TOLERANCE
+                f.solarAbsorberPipe.absorberHeight === undefined ||
+                Math.abs(f.solarAbsorberPipe.absorberHeight - absorberHeight) > ZERO_TOLERANCE
               ) {
                 return true;
               }
@@ -109,15 +109,18 @@ const SolarPowerTowerRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b
         }
         break;
       default:
-        if (powerTower?.towerRadius === undefined || Math.abs(powerTower?.towerRadius - towerRadius) > ZERO_TOLERANCE) {
+        if (
+          absorberPipe?.absorberHeight === undefined ||
+          Math.abs(absorberPipe?.absorberHeight - absorberHeight) > ZERO_TOLERANCE
+        ) {
           return true;
         }
     }
     return false;
   };
 
-  const setTowerRadius = (value: number) => {
-    if (!foundation || !powerTower) return;
+  const setAbsorberHeight = (value: number) => {
+    if (!foundation || !absorberPipe) return;
     if (!needChange(value)) return;
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType: {
@@ -125,19 +128,19 @@ const SolarPowerTowerRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b
         for (const elem of elements) {
           if (elem.type === ObjectType.Foundation && useStore.getState().selectedElementIdSet.has(elem.id)) {
             const f = elem as FoundationModel;
-            if (f.solarPowerTower) {
-              oldValuesSelected.set(elem.id, f.solarPowerTower.towerRadius ?? 1);
+            if (f.solarAbsorberPipe) {
+              oldValuesSelected.set(elem.id, f.solarAbsorberPipe.absorberHeight ?? 10);
             }
           }
         }
         const undoableChangeSelected = {
-          name: 'Set Tower Radius for Selected Foundations',
+          name: 'Set Absorber Height for Selected Foundations',
           timestamp: Date.now(),
           oldValues: oldValuesSelected,
           newValue: value,
           undo: () => {
-            for (const [id, th] of undoableChangeSelected.oldValues.entries()) {
-              updateById(id, th as number);
+            for (const [id, ah] of undoableChangeSelected.oldValues.entries()) {
+              updateById(id, ah as number);
             }
           },
           redo: () => {
@@ -157,19 +160,19 @@ const SolarPowerTowerRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b
         for (const elem of elements) {
           if (elem.type === ObjectType.Foundation) {
             const f = elem as FoundationModel;
-            if (f.solarPowerTower) {
-              oldValuesAll.set(elem.id, f.solarPowerTower.towerRadius ?? 1);
+            if (f.solarAbsorberPipe) {
+              oldValuesAll.set(elem.id, f.solarAbsorberPipe.absorberHeight ?? 10);
             }
           }
         }
         const undoableChangeAll = {
-          name: 'Set Tower Radius for All Foundations',
+          name: 'Set Absorber Height for All Foundations',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
           undo: () => {
-            for (const [id, th] of undoableChangeAll.oldValues.entries()) {
-              updateById(id, th as number);
+            for (const [id, ah] of undoableChangeAll.oldValues.entries()) {
+              updateById(id, ah as number);
             }
           },
           redo: () => {
@@ -184,10 +187,11 @@ const SolarPowerTowerRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b
       default:
         // foundation selected element may be outdated, make sure that we get the latest
         const f = getElementById(foundation.id) as FoundationModel;
-        const oldValue = f && f.solarPowerTower ? f.solarPowerTower.towerRadius ?? 1 : powerTower.towerRadius ?? 1;
+        const oldValue =
+          f && f.solarAbsorberPipe ? f.solarAbsorberPipe.absorberHeight ?? 10 : absorberPipe.absorberHeight ?? 10;
         updateById(foundation.id, value);
         const undoableChange = {
-          name: 'Set Tower Radius on Foundation',
+          name: 'Set Absorber Height on Foundation',
           timestamp: Date.now(),
           oldValue: oldValue,
           newValue: value,
@@ -210,19 +214,19 @@ const SolarPowerTowerRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b
   };
 
   const apply = () => {
-    setTowerRadius(inputValue);
+    setAbsorberHeight(inputValue);
   };
 
   return (
-    <Dialog width={550} title={i18n.t('solarPowerTowerMenu.ReceiverTowerRadius', lang)} onApply={apply} onClose={close}>
+    <Dialog width={550} title={i18n.t('solarAbsorberPipeMenu.AbsorberHeight', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
         <Col className="gutter-row" span={6}>
           <InputNumber
-            min={0.5}
-            max={10}
+            min={1}
+            max={50}
             style={{ width: 120 }}
             step={0.5}
-            precision={1}
+            precision={2}
             value={inputValue}
             onChange={(value) => {
               if (value === null) return;
@@ -230,7 +234,7 @@ const SolarPowerTowerRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b
             }}
           />
           <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-            {i18n.t('word.Range', lang)}: [0.5, 10] {i18n.t('word.MeterAbbreviation', lang)}
+            {i18n.t('word.Range', lang)}: [1, 50] {i18n.t('word.MeterAbbreviation', lang)}
           </div>
         </Col>
         <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
@@ -259,4 +263,4 @@ const SolarPowerTowerRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b
   );
 };
 
-export default SolarPowerTowerRadiusInput;
+export default SolarAbsorberPipeHeightInput;

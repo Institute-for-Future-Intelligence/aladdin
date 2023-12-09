@@ -12,12 +12,12 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { ZERO_TOLERANCE } from 'src/constants';
-import { SolarAbsorberPipeModel } from '../../../models/SolarAbsorberPipeModel';
-import { useSelectedElement } from './menuHooks';
-import Dialog from '../dialog';
+import { SolarUpdraftTowerModel } from '../../../../models/SolarUpdraftTowerModel';
+import { useSelectedElement } from '../menuHooks';
 import { useLanguage } from 'src/views/hooks';
+import Dialog from '../../dialog';
 
-const SolarAbsorberPipeThermalEfficiencyInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const SolarUpdraftTowerCollectorRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -27,20 +27,22 @@ const SolarAbsorberPipeThermalEfficiencyInput = ({ setDialogVisible }: { setDial
   const setApplyCount = useStore(Selector.setApplyCount);
 
   const foundation = useSelectedElement(ObjectType.Foundation) as FoundationModel | undefined;
-  const absorberPipe = foundation?.solarAbsorberPipe;
 
-  const [inputValue, setInputValue] = useState(absorberPipe?.absorberThermalEfficiency ?? 0.3);
+  const [inputValue, setInputValue] = useState<number>(
+    foundation?.solarUpdraftTower?.collectorRadius ??
+      Math.max(10, 0.5 * Math.min(foundation?.lx ?? 0, foundation?.ly ?? 0)),
+  );
 
   const lang = useLanguage();
 
-  const updateById = (id: string, efficiency: number) => {
+  const updateCollectorRadiusById = (id: string, radius: number) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
           const f = e as FoundationModel;
-          if (f.solarStructure === SolarStructure.FocusPipe) {
-            if (!f.solarAbsorberPipe) f.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
-            f.solarAbsorberPipe.absorberThermalEfficiency = efficiency;
+          if (f.solarStructure === SolarStructure.UpdraftTower) {
+            if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
+            f.solarUpdraftTower.collectorRadius = radius;
           }
           break;
         }
@@ -48,14 +50,14 @@ const SolarAbsorberPipeThermalEfficiencyInput = ({ setDialogVisible }: { setDial
     });
   };
 
-  const updateForAll = (efficiency: number) => {
+  const updateCollectorRadiusForAll = (radius: number) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Foundation && !e.locked) {
           const f = e as FoundationModel;
-          if (f.solarStructure === SolarStructure.FocusPipe) {
-            if (!f.solarAbsorberPipe) f.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
-            f.solarAbsorberPipe.absorberThermalEfficiency = efficiency;
+          if (f.solarStructure === SolarStructure.UpdraftTower) {
+            if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
+            f.solarUpdraftTower.collectorRadius = radius;
           }
         }
       }
@@ -63,29 +65,29 @@ const SolarAbsorberPipeThermalEfficiencyInput = ({ setDialogVisible }: { setDial
   };
 
   const updateInMap = (map: Map<string, number>, value: number) => {
-    useStore.getState().set((state) => {
+    setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Foundation && !e.locked && map.has(e.id)) {
           const f = e as FoundationModel;
-          if (f.solarStructure === SolarStructure.FocusPipe) {
-            if (!f.solarAbsorberPipe) f.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
-            f.solarAbsorberPipe.absorberThermalEfficiency = value;
+          if (f.solarStructure === SolarStructure.UpdraftTower) {
+            if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
+            f.solarUpdraftTower.collectorRadius = value;
           }
         }
       }
     });
   };
 
-  const needChange = (efficiency: number) => {
+  const needChange = (collectorRadius: number) => {
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Foundation && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
             const f = e as FoundationModel;
-            if (f.solarStructure === SolarStructure.FocusPipe && f.solarAbsorberPipe) {
+            if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
               if (
-                f.solarAbsorberPipe.absorberThermalEfficiency === undefined ||
-                Math.abs(f.solarAbsorberPipe.absorberThermalEfficiency - efficiency) > ZERO_TOLERANCE
+                f.solarUpdraftTower.collectorRadius === undefined ||
+                Math.abs(f.solarUpdraftTower.collectorRadius - collectorRadius) > ZERO_TOLERANCE
               ) {
                 return true;
               }
@@ -97,10 +99,10 @@ const SolarAbsorberPipeThermalEfficiencyInput = ({ setDialogVisible }: { setDial
         for (const e of elements) {
           if (e.type === ObjectType.Foundation && !e.locked) {
             const f = e as FoundationModel;
-            if (f.solarStructure === SolarStructure.FocusPipe && f.solarAbsorberPipe) {
+            if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
               if (
-                f.solarAbsorberPipe.absorberThermalEfficiency === undefined ||
-                Math.abs(f.solarAbsorberPipe.absorberThermalEfficiency - efficiency) > ZERO_TOLERANCE
+                f.solarUpdraftTower.collectorRadius === undefined ||
+                Math.abs(f.solarUpdraftTower.collectorRadius - collectorRadius) > ZERO_TOLERANCE
               ) {
                 return true;
               }
@@ -109,18 +111,20 @@ const SolarAbsorberPipeThermalEfficiencyInput = ({ setDialogVisible }: { setDial
         }
         break;
       default:
-        if (
-          absorberPipe?.absorberThermalEfficiency === undefined ||
-          Math.abs(absorberPipe?.absorberThermalEfficiency - efficiency) > ZERO_TOLERANCE
-        ) {
-          return true;
+        if (foundation && foundation.solarStructure === SolarStructure.UpdraftTower && foundation.solarUpdraftTower) {
+          if (
+            foundation.solarUpdraftTower.collectorRadius === undefined ||
+            Math.abs(foundation.solarUpdraftTower.collectorRadius - collectorRadius) > ZERO_TOLERANCE
+          ) {
+            return true;
+          }
         }
     }
     return false;
   };
 
-  const setThermalEfficiency = (value: number) => {
-    if (!foundation || !absorberPipe) return;
+  const setCollectorRadius = (value: number) => {
+    if (!foundation) return;
     if (!needChange(value)) return;
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType: {
@@ -128,19 +132,22 @@ const SolarAbsorberPipeThermalEfficiencyInput = ({ setDialogVisible }: { setDial
         for (const elem of elements) {
           if (elem.type === ObjectType.Foundation && useStore.getState().selectedElementIdSet.has(elem.id)) {
             const f = elem as FoundationModel;
-            if (f.solarAbsorberPipe) {
-              oldValuesSelected.set(elem.id, f.solarAbsorberPipe.absorberThermalEfficiency ?? 0.3);
+            if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
+              oldValuesSelected.set(
+                elem.id,
+                f.solarUpdraftTower.collectorRadius ?? Math.max(10, 0.5 * Math.min(f.lx, f.ly)),
+              );
             }
           }
         }
         const undoableChangeSelected = {
-          name: 'Set Absorber Thermal Efficiency for Selected Foundations',
+          name: 'Set Solar Collector Radius for Selected Foundations',
           timestamp: Date.now(),
           oldValues: oldValuesSelected,
           newValue: value,
           undo: () => {
-            for (const [id, te] of undoableChangeSelected.oldValues.entries()) {
-              updateById(id, te as number);
+            for (const [id, cr] of undoableChangeSelected.oldValues.entries()) {
+              updateCollectorRadiusById(id, cr as number);
             }
           },
           redo: () => {
@@ -160,54 +167,60 @@ const SolarAbsorberPipeThermalEfficiencyInput = ({ setDialogVisible }: { setDial
         for (const elem of elements) {
           if (elem.type === ObjectType.Foundation) {
             const f = elem as FoundationModel;
-            if (f.solarAbsorberPipe) {
-              oldValuesAll.set(elem.id, f.solarAbsorberPipe.absorberThermalEfficiency ?? 0.3);
+            if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
+              oldValuesAll.set(
+                elem.id,
+                f.solarUpdraftTower.collectorRadius ?? Math.max(10, 0.5 * Math.min(f.lx, f.ly)),
+              );
             }
           }
         }
         const undoableChangeAll = {
-          name: 'Set Absorber Thermal Efficiency for All Foundations',
+          name: 'Set Solar Collector Radius for All Foundations',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
           undo: () => {
-            for (const [id, te] of undoableChangeAll.oldValues.entries()) {
-              updateById(id, te as number);
+            for (const [id, cr] of undoableChangeAll.oldValues.entries()) {
+              updateCollectorRadiusById(id, cr as number);
             }
           },
           redo: () => {
-            updateForAll(undoableChangeAll.newValue as number);
+            updateCollectorRadiusForAll(undoableChangeAll.newValue as number);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateForAll(value);
+        updateCollectorRadiusForAll(value);
         setApplyCount(applyCount + 1);
         break;
       }
       default:
-        // foundation selected element may be outdated, make sure that we get the latest
-        const f = getElementById(foundation.id) as FoundationModel;
-        const oldValue =
-          f && f.solarAbsorberPipe
-            ? f.solarAbsorberPipe.absorberThermalEfficiency ?? 0.3
-            : absorberPipe.absorberThermalEfficiency ?? 0.3;
-        updateById(foundation.id, value);
-        const undoableChange = {
-          name: 'Set Absorber Thermal Efficiency on Foundation',
-          timestamp: Date.now(),
-          oldValue: oldValue,
-          newValue: value,
-          changedElementId: foundation.id,
-          changedElementType: foundation.type,
-          undo: () => {
-            updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
-          },
-          redo: () => {
-            updateById(undoableChange.changedElementId, undoableChange.newValue as number);
-          },
-        } as UndoableChange;
-        addUndoable(undoableChange);
-        setApplyCount(applyCount + 1);
+        if (foundation.solarStructure === SolarStructure.UpdraftTower && foundation.solarUpdraftTower) {
+          // foundation selected element may be outdated, make sure that we get the latest
+          const f = getElementById(foundation.id) as FoundationModel;
+          const oldValue =
+            f && f.solarUpdraftTower
+              ? f.solarUpdraftTower.collectorRadius ?? Math.max(10, 0.5 * Math.min(f.lx, f.ly))
+              : foundation.solarUpdraftTower.collectorRadius ??
+                Math.max(10, 0.5 * Math.min(foundation.lx, foundation.ly));
+          updateCollectorRadiusById(foundation.id, value);
+          const undoableChange = {
+            name: 'Set Solar Collector Radius on Foundation',
+            timestamp: Date.now(),
+            oldValue: oldValue,
+            newValue: value,
+            changedElementId: foundation.id,
+            changedElementType: foundation.type,
+            undo: () => {
+              updateCollectorRadiusById(undoableChange.changedElementId, undoableChange.oldValue as number);
+            },
+            redo: () => {
+              updateCollectorRadiusById(undoableChange.changedElementId, undoableChange.newValue as number);
+            },
+          } as UndoableChange;
+          addUndoable(undoableChange);
+          setApplyCount(applyCount + 1);
+        }
     }
   };
 
@@ -216,24 +229,24 @@ const SolarAbsorberPipeThermalEfficiencyInput = ({ setDialogVisible }: { setDial
   };
 
   const apply = () => {
-    setThermalEfficiency(inputValue);
+    setCollectorRadius(inputValue);
   };
 
   return (
     <Dialog
-      width={500}
-      title={i18n.t('solarAbsorberPipeMenu.AbsorberThermalEfficiency', lang)}
+      width={550}
+      title={i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerCollectorRadius', lang)}
       onApply={apply}
       onClose={close}
     >
       <Row gutter={6}>
-        <Col className="gutter-row" span={8}>
+        <Col className="gutter-row" span={6}>
           <InputNumber
-            min={0}
-            max={1}
+            min={1}
+            max={1000}
             style={{ width: 120 }}
-            step={0.01}
-            precision={2}
+            step={1}
+            precision={1}
             value={inputValue}
             onChange={(value) => {
               if (value === null) return;
@@ -241,8 +254,11 @@ const SolarAbsorberPipeThermalEfficiencyInput = ({ setDialogVisible }: { setDial
             }}
           />
           <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-            {i18n.t('word.Range', lang)}: [0, 1]
+            {i18n.t('word.Range', lang)}: [1, 1000] {i18n.t('word.MeterAbbreviation', lang)}
           </div>
+        </Col>
+        <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
+          {i18n.t('word.MeterAbbreviation', lang)}
         </Col>
         <Col
           className="gutter-row"
@@ -267,4 +283,4 @@ const SolarAbsorberPipeThermalEfficiencyInput = ({ setDialogVisible }: { setDial
   );
 };
 
-export default SolarAbsorberPipeThermalEfficiencyInput;
+export default SolarUpdraftTowerCollectorRadiusInput;

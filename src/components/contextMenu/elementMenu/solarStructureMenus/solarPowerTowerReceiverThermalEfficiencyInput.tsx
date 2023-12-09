@@ -11,12 +11,17 @@ import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { FoundationModel } from 'src/models/FoundationModel';
-import { SolarAbsorberPipeModel } from '../../../models/SolarAbsorberPipeModel';
-import { useSelectedElement } from './menuHooks';
-import Dialog from '../dialog';
+import { ZERO_TOLERANCE } from 'src/constants';
+import { SolarPowerTowerModel } from '../../../../models/SolarPowerTowerModel';
+import { useSelectedElement } from '../menuHooks';
+import Dialog from '../../dialog';
 import { useLanguage } from 'src/views/hooks';
 
-const SolarAbsorberPipePoleNumberInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const SolarPowerTowerReceiverThermalEfficiencyInput = ({
+  setDialogVisible,
+}: {
+  setDialogVisible: (b: boolean) => void;
+}) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -26,20 +31,20 @@ const SolarAbsorberPipePoleNumberInput = ({ setDialogVisible }: { setDialogVisib
   const setApplyCount = useStore(Selector.setApplyCount);
 
   const foundation = useSelectedElement(ObjectType.Foundation) as FoundationModel | undefined;
-  const absorberPipe = foundation?.solarAbsorberPipe;
+  const powerTower = foundation?.solarPowerTower;
 
-  const [inputValue, setInputValue] = useState<number>(absorberPipe?.poleNumber ?? 5);
+  const [inputValue, setInputValue] = useState<number>(powerTower?.receiverThermalEfficiency ?? 0.3);
 
   const lang = useLanguage();
 
-  const updateById = (id: string, poleNumber: number) => {
+  const updateById = (id: string, efficiency: number) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
           const f = e as FoundationModel;
-          if (f.solarStructure === SolarStructure.FocusPipe) {
-            if (!f.solarAbsorberPipe) f.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
-            f.solarAbsorberPipe.poleNumber = poleNumber;
+          if (f.solarStructure === SolarStructure.FocusTower) {
+            if (!f.solarPowerTower) f.solarPowerTower = {} as SolarPowerTowerModel;
+            f.solarPowerTower.receiverThermalEfficiency = efficiency;
           }
           break;
         }
@@ -47,14 +52,14 @@ const SolarAbsorberPipePoleNumberInput = ({ setDialogVisible }: { setDialogVisib
     });
   };
 
-  const updateForAll = (poleNumber: number) => {
+  const updateForAll = (efficiency: number) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Foundation && !e.locked) {
           const f = e as FoundationModel;
-          if (f.solarStructure === SolarStructure.FocusPipe) {
-            if (!f.solarAbsorberPipe) f.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
-            f.solarAbsorberPipe.poleNumber = poleNumber;
+          if (f.solarStructure === SolarStructure.FocusTower) {
+            if (!f.solarPowerTower) f.solarPowerTower = {} as SolarPowerTowerModel;
+            f.solarPowerTower.receiverThermalEfficiency = efficiency;
           }
         }
       }
@@ -62,27 +67,30 @@ const SolarAbsorberPipePoleNumberInput = ({ setDialogVisible }: { setDialogVisib
   };
 
   const updateInMap = (map: Map<string, number>, value: number) => {
-    useStore.getState().set((state) => {
+    setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Foundation && !e.locked && map.has(e.id)) {
           const f = e as FoundationModel;
-          if (f.solarStructure === SolarStructure.FocusPipe) {
-            if (!f.solarAbsorberPipe) f.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
-            f.solarAbsorberPipe.poleNumber = value;
+          if (f.solarStructure === SolarStructure.FocusTower) {
+            if (!f.solarPowerTower) f.solarPowerTower = {} as SolarPowerTowerModel;
+            f.solarPowerTower.receiverThermalEfficiency = value;
           }
         }
       }
     });
   };
 
-  const needChange = (value: number) => {
+  const needChange = (efficiency: number) => {
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Foundation && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
             const f = e as FoundationModel;
-            if (f.solarStructure === SolarStructure.FocusPipe && f.solarAbsorberPipe) {
-              if (f.solarAbsorberPipe.poleNumber === undefined || f.solarAbsorberPipe.poleNumber !== value) {
+            if (f.solarStructure === SolarStructure.FocusTower && f.solarPowerTower) {
+              if (
+                f.solarPowerTower.receiverThermalEfficiency === undefined ||
+                Math.abs(f.solarPowerTower.receiverThermalEfficiency - efficiency) > ZERO_TOLERANCE
+              ) {
                 return true;
               }
             }
@@ -93,8 +101,11 @@ const SolarAbsorberPipePoleNumberInput = ({ setDialogVisible }: { setDialogVisib
         for (const e of elements) {
           if (e.type === ObjectType.Foundation && !e.locked) {
             const f = e as FoundationModel;
-            if (f.solarStructure === SolarStructure.FocusPipe && f.solarAbsorberPipe) {
-              if (f.solarAbsorberPipe.poleNumber === undefined || f.solarAbsorberPipe.poleNumber !== value) {
+            if (f.solarStructure === SolarStructure.FocusTower && f.solarPowerTower) {
+              if (
+                f.solarPowerTower.receiverThermalEfficiency === undefined ||
+                Math.abs(f.solarPowerTower.receiverThermalEfficiency - efficiency) > ZERO_TOLERANCE
+              ) {
                 return true;
               }
             }
@@ -102,15 +113,18 @@ const SolarAbsorberPipePoleNumberInput = ({ setDialogVisible }: { setDialogVisib
         }
         break;
       default:
-        if (absorberPipe?.poleNumber === undefined || absorberPipe?.poleNumber !== value) {
+        if (
+          powerTower?.receiverThermalEfficiency === undefined ||
+          Math.abs(powerTower?.receiverThermalEfficiency - efficiency) > ZERO_TOLERANCE
+        ) {
           return true;
         }
     }
     return false;
   };
 
-  const setPoleNumber = (value: number) => {
-    if (!foundation || !absorberPipe) return;
+  const setThermalEfficiency = (value: number) => {
+    if (!foundation || !powerTower) return;
     if (!needChange(value)) return;
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType: {
@@ -118,19 +132,19 @@ const SolarAbsorberPipePoleNumberInput = ({ setDialogVisible }: { setDialogVisib
         for (const elem of elements) {
           if (elem.type === ObjectType.Foundation && useStore.getState().selectedElementIdSet.has(elem.id)) {
             const f = elem as FoundationModel;
-            if (f.solarAbsorberPipe) {
-              oldValuesSelected.set(elem.id, f.solarAbsorberPipe.poleNumber ?? 5);
+            if (f.solarPowerTower) {
+              oldValuesSelected.set(elem.id, f.solarPowerTower.receiverThermalEfficiency ?? 0.3);
             }
           }
         }
         const undoableChangeSelected = {
-          name: 'Set Absorber Pipe Pole Number for Selected Foundations',
+          name: 'Set Receiver Thermal Efficiency for Selected Foundations',
           timestamp: Date.now(),
           oldValues: oldValuesSelected,
           newValue: value,
           undo: () => {
-            for (const [id, pn] of undoableChangeSelected.oldValues.entries()) {
-              updateById(id, pn as number);
+            for (const [id, te] of undoableChangeSelected.oldValues.entries()) {
+              updateById(id, te as number);
             }
           },
           redo: () => {
@@ -150,19 +164,19 @@ const SolarAbsorberPipePoleNumberInput = ({ setDialogVisible }: { setDialogVisib
         for (const elem of elements) {
           if (elem.type === ObjectType.Foundation) {
             const f = elem as FoundationModel;
-            if (f.solarAbsorberPipe) {
-              oldValuesAll.set(elem.id, f.solarAbsorberPipe.poleNumber ?? 5);
+            if (f.solarPowerTower) {
+              oldValuesAll.set(elem.id, f.solarPowerTower.receiverThermalEfficiency ?? 0.3);
             }
           }
         }
         const undoableChangeAll = {
-          name: 'Set Absorber Pipe Pole Number for All Foundations',
+          name: 'Set Receiver Thermal Efficiency for All Foundations',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
           undo: () => {
-            for (const [id, pn] of undoableChangeAll.oldValues.entries()) {
-              updateById(id, pn as number);
+            for (const [id, te] of undoableChangeAll.oldValues.entries()) {
+              updateById(id, te as number);
             }
           },
           redo: () => {
@@ -177,10 +191,13 @@ const SolarAbsorberPipePoleNumberInput = ({ setDialogVisible }: { setDialogVisib
       default:
         // foundation selected element may be outdated, make sure that we get the latest
         const f = getElementById(foundation.id) as FoundationModel;
-        const oldValue = f && f.solarAbsorberPipe ? f.solarAbsorberPipe.poleNumber ?? 5 : absorberPipe.poleNumber ?? 5;
+        const oldValue =
+          f && f.solarPowerTower
+            ? f.solarPowerTower.receiverThermalEfficiency ?? 0.3
+            : powerTower.receiverThermalEfficiency ?? 0.3;
         updateById(foundation.id, value);
         const undoableChange = {
-          name: 'Set Absorber Pipe Pole Number on Foundation',
+          name: 'Set Receiver Thermal Efficiency on Foundation',
           timestamp: Date.now(),
           oldValue: oldValue,
           newValue: value,
@@ -203,24 +220,24 @@ const SolarAbsorberPipePoleNumberInput = ({ setDialogVisible }: { setDialogVisib
   };
 
   const apply = () => {
-    setPoleNumber(inputValue);
+    setThermalEfficiency(inputValue);
   };
 
   return (
     <Dialog
       width={550}
-      title={i18n.t('solarAbsorberPipeMenu.AbsorberPipePoleNumber', lang)}
+      title={i18n.t('solarPowerTowerMenu.ReceiverThermalEfficiency', lang)}
       onApply={apply}
       onClose={close}
     >
       <Row gutter={6}>
-        <Col className="gutter-row" span={7}>
+        <Col className="gutter-row" span={8}>
           <InputNumber
-            min={1}
-            max={100}
+            min={0}
+            max={1}
             style={{ width: 120 }}
-            step={1}
-            precision={0}
+            step={0.01}
+            precision={2}
             value={inputValue}
             onChange={(value) => {
               if (value === null) return;
@@ -228,13 +245,13 @@ const SolarAbsorberPipePoleNumberInput = ({ setDialogVisible }: { setDialogVisib
             }}
           />
           <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-            {i18n.t('word.Range', lang)}: [1, 100]
+            {i18n.t('word.Range', lang)}: [0, 1]
           </div>
         </Col>
         <Col
           className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-          span={17}
+          span={16}
         >
           <Radio.Group
             onChange={(e) => useStore.getState().setFoundationActionScope(e.target.value)}
@@ -254,4 +271,4 @@ const SolarAbsorberPipePoleNumberInput = ({ setDialogVisible }: { setDialogVisib
   );
 };
 
-export default SolarAbsorberPipePoleNumberInput;
+export default SolarPowerTowerReceiverThermalEfficiencyInput;

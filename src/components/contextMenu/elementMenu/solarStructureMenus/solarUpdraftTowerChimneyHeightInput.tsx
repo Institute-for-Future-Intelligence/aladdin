@@ -12,16 +12,12 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { ZERO_TOLERANCE } from 'src/constants';
-import { SolarUpdraftTowerModel } from '../../../models/SolarUpdraftTowerModel';
-import { useSelectedElement } from './menuHooks';
+import { SolarUpdraftTowerModel } from '../../../../models/SolarUpdraftTowerModel';
+import { useSelectedElement } from '../menuHooks';
 import { useLanguage } from 'src/views/hooks';
-import Dialog from '../dialog';
+import Dialog from '../../dialog';
 
-const SolarUpdraftTowerCollectorEmissivityInput = ({
-  setDialogVisible,
-}: {
-  setDialogVisible: (b: boolean) => void;
-}) => {
+const SolarUpdraftTowerChimneyHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -31,19 +27,20 @@ const SolarUpdraftTowerCollectorEmissivityInput = ({
   const setApplyCount = useStore(Selector.setApplyCount);
 
   const foundation = useSelectedElement(ObjectType.Foundation) as FoundationModel | undefined;
-
-  const [inputValue, setInputValue] = useState<number>(foundation?.solarUpdraftTower?.collectorEmissivity ?? 0.95);
+  const [inputValue, setInputValue] = useState<number>(
+    foundation?.solarUpdraftTower?.chimneyHeight ?? Math.max(foundation?.lx ?? 0, foundation?.ly ?? 0),
+  );
 
   const lang = useLanguage();
 
-  const updateById = (id: string, emissivity: number) => {
+  const updateChimneyHeightById = (id: string, height: number) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
           const f = e as FoundationModel;
           if (f.solarStructure === SolarStructure.UpdraftTower) {
             if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
-            f.solarUpdraftTower.collectorEmissivity = emissivity;
+            f.solarUpdraftTower.chimneyHeight = height;
           }
           break;
         }
@@ -51,14 +48,14 @@ const SolarUpdraftTowerCollectorEmissivityInput = ({
     });
   };
 
-  const updateForAll = (emissivity: number) => {
+  const updateChimneyHeightForAll = (height: number) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Foundation && !e.locked) {
           const f = e as FoundationModel;
           if (f.solarStructure === SolarStructure.UpdraftTower) {
             if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
-            f.solarUpdraftTower.collectorEmissivity = emissivity;
+            f.solarUpdraftTower.chimneyHeight = height;
           }
         }
       }
@@ -72,14 +69,14 @@ const SolarUpdraftTowerCollectorEmissivityInput = ({
           const f = e as FoundationModel;
           if (f.solarStructure === SolarStructure.UpdraftTower) {
             if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
-            f.solarUpdraftTower.collectorEmissivity = value;
+            f.solarUpdraftTower.chimneyHeight = value;
           }
         }
       }
     });
   };
 
-  const needChange = (emissivity: number) => {
+  const needChange = (chimneyHeight: number) => {
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType:
         for (const e of elements) {
@@ -87,8 +84,8 @@ const SolarUpdraftTowerCollectorEmissivityInput = ({
             const f = e as FoundationModel;
             if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
               if (
-                f.solarUpdraftTower.collectorEmissivity === undefined ||
-                Math.abs(f.solarUpdraftTower.collectorEmissivity - emissivity) > ZERO_TOLERANCE
+                f.solarUpdraftTower.chimneyHeight === undefined ||
+                Math.abs(f.solarUpdraftTower.chimneyHeight - chimneyHeight) > ZERO_TOLERANCE
               ) {
                 return true;
               }
@@ -102,8 +99,8 @@ const SolarUpdraftTowerCollectorEmissivityInput = ({
             const f = e as FoundationModel;
             if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
               if (
-                f.solarUpdraftTower.collectorEmissivity === undefined ||
-                Math.abs(f.solarUpdraftTower.collectorEmissivity - emissivity) > ZERO_TOLERANCE
+                f.solarUpdraftTower.chimneyHeight === undefined ||
+                Math.abs(f.solarUpdraftTower.chimneyHeight - chimneyHeight) > ZERO_TOLERANCE
               ) {
                 return true;
               }
@@ -114,8 +111,8 @@ const SolarUpdraftTowerCollectorEmissivityInput = ({
       default:
         if (foundation && foundation.solarStructure === SolarStructure.UpdraftTower && foundation.solarUpdraftTower) {
           if (
-            foundation.solarUpdraftTower.collectorEmissivity === undefined ||
-            Math.abs(foundation.solarUpdraftTower.collectorEmissivity - emissivity) > ZERO_TOLERANCE
+            foundation.solarUpdraftTower.chimneyHeight === undefined ||
+            Math.abs(foundation.solarUpdraftTower.chimneyHeight - chimneyHeight) > ZERO_TOLERANCE
           ) {
             return true;
           }
@@ -124,7 +121,7 @@ const SolarUpdraftTowerCollectorEmissivityInput = ({
     return false;
   };
 
-  const setEmissivity = (value: number) => {
+  const setChimneyHeight = (value: number) => {
     if (!foundation) return;
     if (!needChange(value)) return;
     switch (actionScope) {
@@ -134,18 +131,18 @@ const SolarUpdraftTowerCollectorEmissivityInput = ({
           if (elem.type === ObjectType.Foundation && useStore.getState().selectedElementIdSet.has(elem.id)) {
             const f = elem as FoundationModel;
             if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
-              oldValuesSelected.set(elem.id, f.solarUpdraftTower.collectorEmissivity ?? 0.95);
+              oldValuesSelected.set(elem.id, f.solarUpdraftTower?.chimneyHeight ?? Math.max(f.lx, f.ly));
             }
           }
         }
         const undoableChangeSelected = {
-          name: 'Set Solar Collector Emissivity for Selected Foundations',
+          name: 'Set Solar Chimney Height for Selected Foundations',
           timestamp: Date.now(),
           oldValues: oldValuesSelected,
           newValue: value,
           undo: () => {
-            for (const [id, ce] of undoableChangeSelected.oldValues.entries()) {
-              updateById(id, ce as number);
+            for (const [id, ch] of undoableChangeSelected.oldValues.entries()) {
+              updateChimneyHeightById(id, ch as number);
             }
           },
           redo: () => {
@@ -166,26 +163,26 @@ const SolarUpdraftTowerCollectorEmissivityInput = ({
           if (elem.type === ObjectType.Foundation) {
             const f = elem as FoundationModel;
             if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
-              oldValuesAll.set(elem.id, f.solarUpdraftTower.collectorEmissivity ?? 0.95);
+              oldValuesAll.set(elem.id, f.solarUpdraftTower?.chimneyHeight ?? Math.max(f.lx, f.ly));
             }
           }
         }
         const undoableChangeAll = {
-          name: 'Set Solar Collector Emissivity for All Foundations',
+          name: 'Set Solar Chimney Height for All Foundations',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
           undo: () => {
-            for (const [id, ce] of undoableChangeAll.oldValues.entries()) {
-              updateById(id, ce as number);
+            for (const [id, ch] of undoableChangeAll.oldValues.entries()) {
+              updateChimneyHeightById(id, ch as number);
             }
           },
           redo: () => {
-            updateForAll(undoableChangeAll.newValue as number);
+            updateChimneyHeightForAll(undoableChangeAll.newValue as number);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateForAll(value);
+        updateChimneyHeightForAll(value);
         setApplyCount(applyCount + 1);
         break;
       }
@@ -195,21 +192,21 @@ const SolarUpdraftTowerCollectorEmissivityInput = ({
           const f = getElementById(foundation.id) as FoundationModel;
           const oldValue =
             f && f.solarUpdraftTower
-              ? f.solarUpdraftTower.collectorEmissivity ?? 0.95
-              : foundation.solarUpdraftTower.collectorEmissivity ?? 0.95;
-          updateById(foundation.id, value);
+              ? f.solarUpdraftTower.chimneyHeight ?? Math.max(f.lx, f.ly)
+              : foundation.solarUpdraftTower.chimneyHeight ?? Math.max(foundation.lx, foundation.ly);
+          updateChimneyHeightById(foundation.id, value);
           const undoableChange = {
-            name: 'Set Solar Collector Emissivity on Foundation',
+            name: 'Set Solar Chimney Height on Foundation',
             timestamp: Date.now(),
             oldValue: oldValue,
             newValue: value,
             changedElementId: foundation.id,
             changedElementType: foundation.type,
             undo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
+              updateChimneyHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.newValue as number);
+              updateChimneyHeightById(undoableChange.changedElementId, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
@@ -223,24 +220,24 @@ const SolarUpdraftTowerCollectorEmissivityInput = ({
   };
 
   const apply = () => {
-    setEmissivity(inputValue);
+    setChimneyHeight(inputValue);
   };
 
   return (
     <Dialog
-      width={540}
-      title={i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerCollectorEmissivity', lang)}
+      width={550}
+      title={i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerChimneyHeight', lang)}
       onApply={apply}
       onClose={close}
     >
       <Row gutter={6}>
         <Col className="gutter-row" span={6}>
           <InputNumber
-            min={0.01}
-            max={1}
+            min={1}
+            max={1000}
             style={{ width: 120 }}
-            step={0.01}
-            precision={2}
+            step={1}
+            precision={1}
             value={inputValue}
             onChange={(value) => {
               if (value === null) return;
@@ -248,19 +245,16 @@ const SolarUpdraftTowerCollectorEmissivityInput = ({
             }}
           />
           <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-            {i18n.t('word.Range', lang)}: [0, 1]
+            {i18n.t('word.Range', lang)}: [1, 1000] {i18n.t('word.MeterAbbreviation', lang)}
           </div>
+        </Col>
+        <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
+          {i18n.t('word.MeterAbbreviation', lang)}
         </Col>
         <Col
           className="gutter-row"
-          style={{
-            border: '2px dashed #ccc',
-            marginLeft: '16px',
-            paddingTop: '8px',
-            paddingLeft: '12px',
-            paddingBottom: '8px',
-          }}
-          span={17}
+          style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
+          span={16}
         >
           <Radio.Group
             onChange={(e) => useStore.getState().setFoundationActionScope(e.target.value)}
@@ -280,4 +274,4 @@ const SolarUpdraftTowerCollectorEmissivityInput = ({
   );
 };
 
-export default SolarUpdraftTowerCollectorEmissivityInput;
+export default SolarUpdraftTowerChimneyHeightInput;

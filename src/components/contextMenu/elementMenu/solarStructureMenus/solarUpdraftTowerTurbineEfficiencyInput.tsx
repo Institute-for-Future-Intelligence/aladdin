@@ -12,12 +12,12 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { ZERO_TOLERANCE } from 'src/constants';
-import { SolarUpdraftTowerModel } from '../../../models/SolarUpdraftTowerModel';
-import { useSelectedElement } from './menuHooks';
+import { SolarUpdraftTowerModel } from '../../../../models/SolarUpdraftTowerModel';
+import { useSelectedElement } from '../menuHooks';
 import { useLanguage } from 'src/views/hooks';
-import Dialog from '../dialog';
+import Dialog from '../../dialog';
 
-const SolarUpdraftTowerCollectorRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const SolarUpdraftTowerTurbineEfficiencyInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -28,21 +28,18 @@ const SolarUpdraftTowerCollectorRadiusInput = ({ setDialogVisible }: { setDialog
 
   const foundation = useSelectedElement(ObjectType.Foundation) as FoundationModel | undefined;
 
-  const [inputValue, setInputValue] = useState<number>(
-    foundation?.solarUpdraftTower?.collectorRadius ??
-      Math.max(10, 0.5 * Math.min(foundation?.lx ?? 0, foundation?.ly ?? 0)),
-  );
+  const [inputValue, setInputValue] = useState<number>(foundation?.solarUpdraftTower?.turbineEfficiency ?? 0.3);
 
   const lang = useLanguage();
 
-  const updateCollectorRadiusById = (id: string, radius: number) => {
+  const updateById = (id: string, efficiency: number) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
           const f = e as FoundationModel;
           if (f.solarStructure === SolarStructure.UpdraftTower) {
             if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
-            f.solarUpdraftTower.collectorRadius = radius;
+            f.solarUpdraftTower.turbineEfficiency = efficiency;
           }
           break;
         }
@@ -50,14 +47,14 @@ const SolarUpdraftTowerCollectorRadiusInput = ({ setDialogVisible }: { setDialog
     });
   };
 
-  const updateCollectorRadiusForAll = (radius: number) => {
+  const updateForAll = (efficiency: number) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Foundation && !e.locked) {
           const f = e as FoundationModel;
           if (f.solarStructure === SolarStructure.UpdraftTower) {
             if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
-            f.solarUpdraftTower.collectorRadius = radius;
+            f.solarUpdraftTower.turbineEfficiency = efficiency;
           }
         }
       }
@@ -71,14 +68,14 @@ const SolarUpdraftTowerCollectorRadiusInput = ({ setDialogVisible }: { setDialog
           const f = e as FoundationModel;
           if (f.solarStructure === SolarStructure.UpdraftTower) {
             if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
-            f.solarUpdraftTower.collectorRadius = value;
+            f.solarUpdraftTower.turbineEfficiency = value;
           }
         }
       }
     });
   };
 
-  const needChange = (collectorRadius: number) => {
+  const needChange = (efficiency: number) => {
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType:
         for (const e of elements) {
@@ -86,8 +83,8 @@ const SolarUpdraftTowerCollectorRadiusInput = ({ setDialogVisible }: { setDialog
             const f = e as FoundationModel;
             if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
               if (
-                f.solarUpdraftTower.collectorRadius === undefined ||
-                Math.abs(f.solarUpdraftTower.collectorRadius - collectorRadius) > ZERO_TOLERANCE
+                f.solarUpdraftTower.turbineEfficiency === undefined ||
+                Math.abs(f.solarUpdraftTower.turbineEfficiency - efficiency) > ZERO_TOLERANCE
               ) {
                 return true;
               }
@@ -101,8 +98,8 @@ const SolarUpdraftTowerCollectorRadiusInput = ({ setDialogVisible }: { setDialog
             const f = e as FoundationModel;
             if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
               if (
-                f.solarUpdraftTower.collectorRadius === undefined ||
-                Math.abs(f.solarUpdraftTower.collectorRadius - collectorRadius) > ZERO_TOLERANCE
+                f.solarUpdraftTower.turbineEfficiency === undefined ||
+                Math.abs(f.solarUpdraftTower.turbineEfficiency - efficiency) > ZERO_TOLERANCE
               ) {
                 return true;
               }
@@ -113,8 +110,8 @@ const SolarUpdraftTowerCollectorRadiusInput = ({ setDialogVisible }: { setDialog
       default:
         if (foundation && foundation.solarStructure === SolarStructure.UpdraftTower && foundation.solarUpdraftTower) {
           if (
-            foundation.solarUpdraftTower.collectorRadius === undefined ||
-            Math.abs(foundation.solarUpdraftTower.collectorRadius - collectorRadius) > ZERO_TOLERANCE
+            foundation.solarUpdraftTower.turbineEfficiency === undefined ||
+            Math.abs(foundation.solarUpdraftTower.turbineEfficiency - efficiency) > ZERO_TOLERANCE
           ) {
             return true;
           }
@@ -123,7 +120,7 @@ const SolarUpdraftTowerCollectorRadiusInput = ({ setDialogVisible }: { setDialog
     return false;
   };
 
-  const setCollectorRadius = (value: number) => {
+  const setEfficiency = (value: number) => {
     if (!foundation) return;
     if (!needChange(value)) return;
     switch (actionScope) {
@@ -133,21 +130,18 @@ const SolarUpdraftTowerCollectorRadiusInput = ({ setDialogVisible }: { setDialog
           if (elem.type === ObjectType.Foundation && useStore.getState().selectedElementIdSet.has(elem.id)) {
             const f = elem as FoundationModel;
             if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
-              oldValuesSelected.set(
-                elem.id,
-                f.solarUpdraftTower.collectorRadius ?? Math.max(10, 0.5 * Math.min(f.lx, f.ly)),
-              );
+              oldValuesSelected.set(elem.id, f.solarUpdraftTower.turbineEfficiency ?? 0.3);
             }
           }
         }
         const undoableChangeSelected = {
-          name: 'Set Solar Collector Radius for Selected Foundations',
+          name: 'Set Solar Updraft Tower Turbine Efficiency for Selected Foundations',
           timestamp: Date.now(),
           oldValues: oldValuesSelected,
           newValue: value,
           undo: () => {
-            for (const [id, cr] of undoableChangeSelected.oldValues.entries()) {
-              updateCollectorRadiusById(id, cr as number);
+            for (const [id, dc] of undoableChangeSelected.oldValues.entries()) {
+              updateById(id, dc as number);
             }
           },
           redo: () => {
@@ -168,29 +162,26 @@ const SolarUpdraftTowerCollectorRadiusInput = ({ setDialogVisible }: { setDialog
           if (elem.type === ObjectType.Foundation) {
             const f = elem as FoundationModel;
             if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
-              oldValuesAll.set(
-                elem.id,
-                f.solarUpdraftTower.collectorRadius ?? Math.max(10, 0.5 * Math.min(f.lx, f.ly)),
-              );
+              oldValuesAll.set(elem.id, f.solarUpdraftTower.turbineEfficiency ?? 0.3);
             }
           }
         }
         const undoableChangeAll = {
-          name: 'Set Solar Collector Radius for All Foundations',
+          name: 'Set Solar Updraft Tower Turbine Efficiency for All Foundations',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
           undo: () => {
-            for (const [id, cr] of undoableChangeAll.oldValues.entries()) {
-              updateCollectorRadiusById(id, cr as number);
+            for (const [id, dc] of undoableChangeAll.oldValues.entries()) {
+              updateById(id, dc as number);
             }
           },
           redo: () => {
-            updateCollectorRadiusForAll(undoableChangeAll.newValue as number);
+            updateForAll(undoableChangeAll.newValue as number);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateCollectorRadiusForAll(value);
+        updateForAll(value);
         setApplyCount(applyCount + 1);
         break;
       }
@@ -200,22 +191,21 @@ const SolarUpdraftTowerCollectorRadiusInput = ({ setDialogVisible }: { setDialog
           const f = getElementById(foundation.id) as FoundationModel;
           const oldValue =
             f && f.solarUpdraftTower
-              ? f.solarUpdraftTower.collectorRadius ?? Math.max(10, 0.5 * Math.min(f.lx, f.ly))
-              : foundation.solarUpdraftTower.collectorRadius ??
-                Math.max(10, 0.5 * Math.min(foundation.lx, foundation.ly));
-          updateCollectorRadiusById(foundation.id, value);
+              ? f.solarUpdraftTower.turbineEfficiency ?? 0.3
+              : foundation.solarUpdraftTower.turbineEfficiency ?? 0.3;
+          updateById(foundation.id, value);
           const undoableChange = {
-            name: 'Set Solar Collector Radius on Foundation',
+            name: 'Set Solar Updraft Tower Turbine Efficiency on Foundation',
             timestamp: Date.now(),
             oldValue: oldValue,
             newValue: value,
             changedElementId: foundation.id,
             changedElementType: foundation.type,
             undo: () => {
-              updateCollectorRadiusById(undoableChange.changedElementId, undoableChange.oldValue as number);
+              updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateCollectorRadiusById(undoableChange.changedElementId, undoableChange.newValue as number);
+              updateById(undoableChange.changedElementId, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
@@ -229,24 +219,24 @@ const SolarUpdraftTowerCollectorRadiusInput = ({ setDialogVisible }: { setDialog
   };
 
   const apply = () => {
-    setCollectorRadius(inputValue);
+    setEfficiency(inputValue);
   };
 
   return (
     <Dialog
-      width={550}
-      title={i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerCollectorRadius', lang)}
+      width={540}
+      title={i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerTurbineEfficiency', lang)}
       onApply={apply}
       onClose={close}
     >
       <Row gutter={6}>
         <Col className="gutter-row" span={6}>
           <InputNumber
-            min={1}
-            max={1000}
+            min={0.2}
+            max={1.0}
             style={{ width: 120 }}
-            step={1}
-            precision={1}
+            step={0.01}
+            precision={2}
             value={inputValue}
             onChange={(value) => {
               if (value === null) return;
@@ -254,16 +244,19 @@ const SolarUpdraftTowerCollectorRadiusInput = ({ setDialogVisible }: { setDialog
             }}
           />
           <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-            {i18n.t('word.Range', lang)}: [1, 1000] {i18n.t('word.MeterAbbreviation', lang)}
+            {i18n.t('word.Range', lang)}: [0.2, 1.0]
           </div>
-        </Col>
-        <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
-          {i18n.t('word.MeterAbbreviation', lang)}
         </Col>
         <Col
           className="gutter-row"
-          style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-          span={16}
+          style={{
+            border: '2px dashed #ccc',
+            marginLeft: '16px',
+            paddingTop: '8px',
+            paddingLeft: '12px',
+            paddingBottom: '8px',
+          }}
+          span={17}
         >
           <Radio.Group
             onChange={(e) => useStore.getState().setFoundationActionScope(e.target.value)}
@@ -283,4 +276,4 @@ const SolarUpdraftTowerCollectorRadiusInput = ({ setDialogVisible }: { setDialog
   );
 };
 
-export default SolarUpdraftTowerCollectorRadiusInput;
+export default SolarUpdraftTowerTurbineEfficiencyInput;

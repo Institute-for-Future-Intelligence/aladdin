@@ -12,12 +12,12 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { ZERO_TOLERANCE } from 'src/constants';
-import { SolarAbsorberPipeModel } from '../../../models/SolarAbsorberPipeModel';
-import { useSelectedElement } from './menuHooks';
-import Dialog from '../dialog';
+import { SolarAbsorberPipeModel } from '../../../../models/SolarAbsorberPipeModel';
+import { useSelectedElement } from '../menuHooks';
+import Dialog from '../../dialog';
 import { useLanguage } from 'src/views/hooks';
 
-const SolarAbsorberPipeHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const SolarAbsorberPipeApertureWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -29,18 +29,18 @@ const SolarAbsorberPipeHeightInput = ({ setDialogVisible }: { setDialogVisible: 
   const foundation = useSelectedElement(ObjectType.Foundation) as FoundationModel | undefined;
   const absorberPipe = foundation?.solarAbsorberPipe;
 
-  const [inputValue, setInputValue] = useState(absorberPipe?.absorberHeight ?? 10);
+  const [inputValue, setInputValue] = useState(absorberPipe?.apertureWidth ?? 0.6);
 
   const lang = useLanguage();
 
-  const updateById = (id: string, height: number) => {
+  const updateById = (id: string, apertureWidth: number) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
           const f = e as FoundationModel;
           if (f.solarStructure === SolarStructure.FocusPipe) {
             if (!f.solarAbsorberPipe) f.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
-            f.solarAbsorberPipe.absorberHeight = height;
+            f.solarAbsorberPipe.apertureWidth = apertureWidth;
           }
           break;
         }
@@ -48,14 +48,14 @@ const SolarAbsorberPipeHeightInput = ({ setDialogVisible }: { setDialogVisible: 
     });
   };
 
-  const updateForAll = (height: number) => {
+  const updateForAll = (apertureWidth: number) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Foundation && !e.locked) {
           const f = e as FoundationModel;
           if (f.solarStructure === SolarStructure.FocusPipe) {
             if (!f.solarAbsorberPipe) f.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
-            f.solarAbsorberPipe.absorberHeight = height;
+            f.solarAbsorberPipe.apertureWidth = apertureWidth;
           }
         }
       }
@@ -69,14 +69,14 @@ const SolarAbsorberPipeHeightInput = ({ setDialogVisible }: { setDialogVisible: 
           const f = e as FoundationModel;
           if (f.solarStructure === SolarStructure.FocusPipe) {
             if (!f.solarAbsorberPipe) f.solarAbsorberPipe = {} as SolarAbsorberPipeModel;
-            f.solarAbsorberPipe.absorberHeight = value;
+            f.solarAbsorberPipe.apertureWidth = value;
           }
         }
       }
     });
   };
 
-  const needChange = (absorberHeight: number) => {
+  const needChange = (apertureWidth: number) => {
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType:
         for (const e of elements) {
@@ -84,8 +84,8 @@ const SolarAbsorberPipeHeightInput = ({ setDialogVisible }: { setDialogVisible: 
             const f = e as FoundationModel;
             if (f.solarStructure === SolarStructure.FocusPipe && f.solarAbsorberPipe) {
               if (
-                f.solarAbsorberPipe.absorberHeight === undefined ||
-                Math.abs(f.solarAbsorberPipe.absorberHeight - absorberHeight) > ZERO_TOLERANCE
+                f.solarAbsorberPipe.apertureWidth === undefined ||
+                Math.abs(f.solarAbsorberPipe.apertureWidth - apertureWidth) > ZERO_TOLERANCE
               ) {
                 return true;
               }
@@ -99,8 +99,8 @@ const SolarAbsorberPipeHeightInput = ({ setDialogVisible }: { setDialogVisible: 
             const f = e as FoundationModel;
             if (f.solarStructure === SolarStructure.FocusPipe && f.solarAbsorberPipe) {
               if (
-                f.solarAbsorberPipe.absorberHeight === undefined ||
-                Math.abs(f.solarAbsorberPipe.absorberHeight - absorberHeight) > ZERO_TOLERANCE
+                f.solarAbsorberPipe.apertureWidth === undefined ||
+                Math.abs(f.solarAbsorberPipe.apertureWidth - apertureWidth) > ZERO_TOLERANCE
               ) {
                 return true;
               }
@@ -110,8 +110,8 @@ const SolarAbsorberPipeHeightInput = ({ setDialogVisible }: { setDialogVisible: 
         break;
       default:
         if (
-          absorberPipe?.absorberHeight === undefined ||
-          Math.abs(absorberPipe?.absorberHeight - absorberHeight) > ZERO_TOLERANCE
+          absorberPipe?.apertureWidth === undefined ||
+          Math.abs(absorberPipe?.apertureWidth - apertureWidth) > ZERO_TOLERANCE
         ) {
           return true;
         }
@@ -119,28 +119,28 @@ const SolarAbsorberPipeHeightInput = ({ setDialogVisible }: { setDialogVisible: 
     return false;
   };
 
-  const setAbsorberHeight = (value: number) => {
+  const updateApertureWidth = (value: number) => {
     if (!foundation || !absorberPipe) return;
     if (!needChange(value)) return;
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType: {
-        const oldValuesSelected = new Map<string, number>();
+        const oldValues = new Map<string, number>();
         for (const elem of elements) {
           if (elem.type === ObjectType.Foundation && useStore.getState().selectedElementIdSet.has(elem.id)) {
             const f = elem as FoundationModel;
             if (f.solarAbsorberPipe) {
-              oldValuesSelected.set(elem.id, f.solarAbsorberPipe.absorberHeight ?? 10);
+              oldValues.set(elem.id, f.solarAbsorberPipe.apertureWidth ?? 0.6);
             }
           }
         }
         const undoableChangeSelected = {
-          name: 'Set Absorber Height for Selected Foundations',
+          name: 'Set Absorber Aperture Width for Selected Foundations',
           timestamp: Date.now(),
-          oldValues: oldValuesSelected,
+          oldValues: oldValues,
           newValue: value,
           undo: () => {
-            for (const [id, ah] of undoableChangeSelected.oldValues.entries()) {
-              updateById(id, ah as number);
+            for (const [id, aw] of undoableChangeSelected.oldValues.entries()) {
+              updateById(id, aw as number);
             }
           },
           redo: () => {
@@ -151,28 +151,28 @@ const SolarAbsorberPipeHeightInput = ({ setDialogVisible }: { setDialogVisible: 
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeSelected);
-        updateInMap(oldValuesSelected, value);
+        updateInMap(oldValues, value);
         setApplyCount(applyCount + 1);
         break;
       }
       case Scope.AllObjectsOfThisType: {
-        const oldValuesAll = new Map<string, number>();
+        const oldValues = new Map<string, number>();
         for (const elem of elements) {
           if (elem.type === ObjectType.Foundation) {
             const f = elem as FoundationModel;
             if (f.solarAbsorberPipe) {
-              oldValuesAll.set(elem.id, f.solarAbsorberPipe.absorberHeight ?? 10);
+              oldValues.set(elem.id, f.solarAbsorberPipe.apertureWidth ?? 0.6);
             }
           }
         }
         const undoableChangeAll = {
-          name: 'Set Absorber Height for All Foundations',
+          name: 'Set Absorber Aperture Width for All Foundations',
           timestamp: Date.now(),
-          oldValues: oldValuesAll,
+          oldValues: oldValues,
           newValue: value,
           undo: () => {
-            for (const [id, ah] of undoableChangeAll.oldValues.entries()) {
-              updateById(id, ah as number);
+            for (const [id, aw] of undoableChangeAll.oldValues.entries()) {
+              updateById(id, aw as number);
             }
           },
           redo: () => {
@@ -188,10 +188,10 @@ const SolarAbsorberPipeHeightInput = ({ setDialogVisible }: { setDialogVisible: 
         // foundation selected element may be outdated, make sure that we get the latest
         const f = getElementById(foundation.id) as FoundationModel;
         const oldValue =
-          f && f.solarAbsorberPipe ? f.solarAbsorberPipe.absorberHeight ?? 10 : absorberPipe.absorberHeight ?? 10;
+          f && f.solarAbsorberPipe ? f.solarAbsorberPipe.apertureWidth ?? 0.6 : absorberPipe.apertureWidth ?? 0.6;
         updateById(foundation.id, value);
         const undoableChange = {
-          name: 'Set Absorber Height on Foundation',
+          name: 'Set Absorber Aperture Width on Foundation',
           timestamp: Date.now(),
           oldValue: oldValue,
           newValue: value,
@@ -214,18 +214,23 @@ const SolarAbsorberPipeHeightInput = ({ setDialogVisible }: { setDialogVisible: 
   };
 
   const apply = () => {
-    setAbsorberHeight(inputValue);
+    updateApertureWidth(inputValue);
   };
 
   return (
-    <Dialog width={550} title={i18n.t('solarAbsorberPipeMenu.AbsorberHeight', lang)} onApply={apply} onClose={close}>
+    <Dialog
+      width={550}
+      title={i18n.t('solarAbsorberPipeMenu.AbsorberApertureWidth', lang)}
+      onApply={apply}
+      onClose={close}
+    >
       <Row gutter={6}>
         <Col className="gutter-row" span={6}>
           <InputNumber
-            min={1}
-            max={50}
+            min={0.1}
+            max={2}
             style={{ width: 120 }}
-            step={0.5}
+            step={0.01}
             precision={2}
             value={inputValue}
             onChange={(value) => {
@@ -234,7 +239,7 @@ const SolarAbsorberPipeHeightInput = ({ setDialogVisible }: { setDialogVisible: 
             }}
           />
           <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-            {i18n.t('word.Range', lang)}: [1, 50] {i18n.t('word.MeterAbbreviation', lang)}
+            {i18n.t('word.Range', lang)}: [0.1, 2] {i18n.t('word.MeterAbbreviation', lang)}
           </div>
         </Col>
         <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
@@ -263,4 +268,4 @@ const SolarAbsorberPipeHeightInput = ({ setDialogVisible }: { setDialogVisible: 
   );
 };
 
-export default SolarAbsorberPipeHeightInput;
+export default SolarAbsorberPipeApertureWidthInput;
