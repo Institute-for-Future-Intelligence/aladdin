@@ -10,12 +10,12 @@ import { ObjectType, Scope } from 'src/types';
 import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
-import { DoorModel } from '../../../models/DoorModel';
-import { useSelectedElement } from './menuHooks';
+import { DoorModel } from '../../../../models/DoorModel';
+import { useSelectedElement } from '../menuHooks';
 import { useLanguage } from 'src/views/hooks';
-import Dialog from '../dialog';
+import Dialog from '../../dialog';
 
-const DoorOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const DoorHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const elements = useStore(Selector.elements);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.doorActionScope);
@@ -26,7 +26,7 @@ const DoorOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
 
   const door = useSelectedElement(ObjectType.Door) as DoorModel | undefined;
 
-  const [inputValue, setInputValue] = useState<number>(door?.opacity ?? 1);
+  const [inputValue, setInputValue] = useState<number>(door?.volumetricHeatCapacity ?? 0.5);
 
   const lang = useLanguage();
 
@@ -34,7 +34,7 @@ const DoorOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id) {
-          (e as DoorModel).opacity = value;
+          (e as DoorModel).volumetricHeatCapacity = value;
           break;
         }
       }
@@ -54,14 +54,12 @@ const DoorOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
   };
 
   const needChange = (value: number) => {
-    if (!door) return;
-
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType:
         for (const e of elements) {
           if (
             e.type === ObjectType.Door &&
-            value !== (e as DoorModel).opacity &&
+            value !== (e as DoorModel).volumetricHeatCapacity &&
             !e.locked &&
             useStore.getState().selectedElementIdSet.has(e.id)
           ) {
@@ -71,7 +69,7 @@ const DoorOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
         break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
-          if (e.type === ObjectType.Door && value !== (e as DoorModel).opacity && !e.locked) {
+          if (e.type === ObjectType.Door && value !== (e as DoorModel).volumetricHeatCapacity && !e.locked) {
             return true;
           }
         }
@@ -80,8 +78,8 @@ const DoorOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
         for (const e of elements) {
           if (
             e.type === ObjectType.Door &&
-            e.foundationId === door.foundationId &&
-            value !== (e as DoorModel).opacity &&
+            e.foundationId === door?.foundationId &&
+            value !== (e as DoorModel).volumetricHeatCapacity &&
             !e.locked
           ) {
             return true;
@@ -92,8 +90,8 @@ const DoorOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
         for (const e of elements) {
           if (
             e.type === ObjectType.Door &&
-            e.parentId === door.parentId &&
-            value !== (e as DoorModel).opacity &&
+            e.parentId === door?.parentId &&
+            value !== (e as DoorModel).volumetricHeatCapacity &&
             !e.locked
           ) {
             return true;
@@ -101,7 +99,7 @@ const DoorOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
         }
         break;
       default:
-        if (value !== door?.opacity) {
+        if (value !== door?.volumetricHeatCapacity) {
           return true;
         }
         break;
@@ -119,13 +117,13 @@ const DoorOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
           for (const e of state.elements) {
             if (e.type === ObjectType.Door && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
               const door = e as DoorModel;
-              oldValuesSelected.set(e.id, door.opacity ?? 1);
-              door.opacity = value;
+              oldValuesSelected.set(e.id, door.volumetricHeatCapacity ?? 0.5);
+              door.volumetricHeatCapacity = value;
             }
           }
         });
         const undoableChangeSelected = {
-          name: 'Set Opacity for Selected Doors',
+          name: 'Set Volumetric Heat Capacity for Selected Doors',
           timestamp: Date.now(),
           oldValues: oldValuesSelected,
           newValue: value,
@@ -149,13 +147,13 @@ const DoorOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
           for (const e of state.elements) {
             if (e.type === ObjectType.Door && !e.locked) {
               const door = e as DoorModel;
-              oldValuesAll.set(e.id, door.opacity ?? 1);
-              door.opacity = value;
+              oldValuesAll.set(e.id, door.volumetricHeatCapacity ?? 0.5);
+              door.volumetricHeatCapacity = value;
             }
           }
         });
         const undoableChangeAll = {
-          name: 'Set Opacity for All Doors',
+          name: 'Set Volumetric Heat Capacity for All Doors',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
@@ -177,13 +175,13 @@ const DoorOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
             for (const e of state.elements) {
               if (e.type === ObjectType.Door && e.foundationId === door.foundationId && !e.locked) {
                 const door = e as DoorModel;
-                oldValuesAboveFoundation.set(e.id, door.opacity ?? 1);
-                door.opacity = value;
+                oldValuesAboveFoundation.set(e.id, door.volumetricHeatCapacity ?? 0.5);
+                door.volumetricHeatCapacity = value;
               }
             }
           });
           const undoableChangeAboveFoundation = {
-            name: 'Set Opacity for All Doors Above Foundation',
+            name: 'Set Volumetric Heat Capacity for All Doors Above Foundation',
             timestamp: Date.now(),
             oldValues: oldValuesAboveFoundation,
             newValue: value,
@@ -209,13 +207,13 @@ const DoorOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
             for (const e of state.elements) {
               if (e.type === ObjectType.Door && e.parentId === door.parentId && !e.locked) {
                 const door = e as DoorModel;
-                oldValues.set(e.id, door.opacity ?? 1);
-                door.opacity = value;
+                oldValues.set(e.id, door.volumetricHeatCapacity ?? 0.5);
+                door.volumetricHeatCapacity = value;
               }
             }
           });
           const undoableChangeOnSameWall = {
-            name: 'Set Opacity for All Doors On the Same Wall',
+            name: 'Set Volumetric Heat Capacity for All Doors On the Same Wall',
             timestamp: Date.now(),
             oldValues: oldValues,
             newValue: value,
@@ -237,9 +235,9 @@ const DoorOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
       default:
         if (door) {
           const updatedDoor = getElementById(door.id) as DoorModel;
-          const oldValue = updatedDoor.opacity ?? door.opacity ?? 1;
+          const oldValue = updatedDoor.volumetricHeatCapacity ?? door.volumetricHeatCapacity ?? 0.5;
           const undoableChange = {
-            name: 'Set Opacity of Door',
+            name: 'Set Volumetric Heat Capacity of Door',
             timestamp: Date.now(),
             oldValue: oldValue,
             newValue: value,
@@ -258,7 +256,7 @@ const DoorOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
         }
     }
     setCommonStore((state) => {
-      state.actionState.doorOpacity = value;
+      state.actionState.doorVolumetricHeatCapacity = value;
     });
   };
 
@@ -271,7 +269,7 @@ const DoorOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
   };
 
   return (
-    <Dialog width={550} title={i18n.t('wallMenu.Opacity', lang)} onApply={apply} onClose={close}>
+    <Dialog width={550} title={i18n.t('word.VolumetricHeatCapacity', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
         <Col className="gutter-row" span={7}>
           <InputNumber
@@ -282,7 +280,10 @@ const DoorOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
             precision={2}
             value={inputValue}
             formatter={(a) => Number(a).toFixed(2)}
-            onChange={(value) => setInputValue(value!)}
+            onChange={(value) => {
+              if (value === null) return;
+              setInputValue(value);
+            }}
           />
           <div style={{ paddingTop: '4px', textAlign: 'left', fontSize: '11px' }}>
             kWh/(m³·℃)
@@ -313,4 +314,4 @@ const DoorOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
   );
 };
 
-export default DoorOpacityInput;
+export default DoorHeatCapacityInput;

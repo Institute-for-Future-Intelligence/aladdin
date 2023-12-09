@@ -19,6 +19,6 @@ export * from './fresnelReflectorMenu';
 export * from './heliostatMenu';
 export * from './treeMenu';
 export * from './wallMenu/wallMenu';
-export * from './doorMenu';
+export * from './doorMenu/doorMenu';
 export * from './windowMenu/windowMenu';
 export * from './roofMenu/roofMenu';

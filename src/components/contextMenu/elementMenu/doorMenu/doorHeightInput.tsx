@@ -2,7 +2,7 @@
  * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Col, InputNumber, Radio, Row, Space } from 'antd';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
@@ -10,14 +10,12 @@ import { ObjectType, Scope } from 'src/types';
 import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
-import { DoorModel } from '../../../models/DoorModel';
-import { Util } from '../../../Util';
-import { DEFAULT_DOOR_U_VALUE } from '../../../constants';
-import { useSelectedElement } from './menuHooks';
+import { DoorModel } from '../../../../models/DoorModel';
+import { useSelectedElement } from '../menuHooks';
 import { useLanguage } from 'src/views/hooks';
-import Dialog from '../dialog';
+import Dialog from '../../dialog';
 
-const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const DoorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const elements = useStore(Selector.elements);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.doorActionScope);
@@ -25,19 +23,29 @@ const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   const setApplyCount = useStore(Selector.setApplyCount);
   const getElementById = useStore(Selector.getElementById);
   const setCommonStore = useStore(Selector.set);
+  const getParent = useStore(Selector.getParent);
 
   const door = useSelectedElement(ObjectType.Door) as DoorModel | undefined;
 
-  const [inputValue, setInputValue] = useState<number>(door?.uValue ?? DEFAULT_DOOR_U_VALUE);
-  const [inputValueUS, setInputValueUS] = useState<number>(Util.toUValueInUS(inputValue));
+  const currentValue = useMemo(() => {
+    const v = door ? door.lz : 1;
+    const parent = door ? getParent(door) : null;
+    if (parent) return v * parent.lz;
+    return v;
+  }, [door?.lz]);
+
+  const [inputValue, setInputValue] = useState<number>(currentValue);
 
   const lang = useLanguage();
 
   const updateById = (id: string, value: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
-        if (e.id === id) {
-          (e as DoorModel).uValue = value;
+        if (e.id === id && e.type === ObjectType.Door) {
+          const d = e as DoorModel;
+          const parent = getParent(d);
+          d.lz = parent ? value / parent.lz : value;
+          if (parent) d.cz = -(parent.lz - value) / (2 * parent.lz);
           break;
         }
       }
@@ -61,51 +69,39 @@ const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType:
         for (const e of elements) {
-          if (
-            e.type === ObjectType.Door &&
-            value !== (e as DoorModel).uValue &&
-            !e.locked &&
-            useStore.getState().selectedElementIdSet.has(e.id)
-          ) {
-            return true;
+          if (e.type === ObjectType.Door && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            const parent = getParent(e);
+            if (parent && value !== e.lz * parent.lz) return true;
           }
         }
         break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
-          if (e.type === ObjectType.Door && value !== (e as DoorModel).uValue && !e.locked) {
-            return true;
+          if (e.type === ObjectType.Door && !e.locked) {
+            const parent = getParent(e);
+            if (parent && value !== e.lz * parent.lz) return true;
           }
         }
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         for (const e of elements) {
-          if (
-            e.type === ObjectType.Door &&
-            e.foundationId === door.foundationId &&
-            value !== (e as DoorModel).uValue &&
-            !e.locked
-          ) {
-            return true;
+          if (e.type === ObjectType.Door && e.foundationId === door.foundationId && !e.locked) {
+            const parent = getParent(e);
+            if (parent && value !== e.lz * parent.lz) return true;
           }
         }
         break;
       case Scope.OnlyThisSide:
         for (const e of elements) {
-          if (
-            e.type === ObjectType.Door &&
-            e.parentId === door.parentId &&
-            value !== (e as DoorModel).uValue &&
-            !e.locked
-          ) {
-            return true;
+          if (e.type === ObjectType.Door && e.parentId === door.parentId && !e.locked) {
+            const parent = getParent(e);
+            if (parent && value !== e.lz * parent.lz) return true;
           }
         }
         break;
       default:
-        if (value !== door?.uValue) {
-          return true;
-        }
+        const parent = getParent(door);
+        if (parent && value !== door.lz * parent.lz) return true;
         break;
     }
     return false;
@@ -119,15 +115,17 @@ const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
         const oldValuesSelected = new Map<string, number | undefined>();
         setCommonStore((state) => {
           for (const e of state.elements) {
-            if (e.type === ObjectType.Door && !e.locked) {
-              const door = e as DoorModel;
-              oldValuesSelected.set(e.id, door.uValue ?? DEFAULT_DOOR_U_VALUE);
-              door.uValue = value;
+            if (e.type === ObjectType.Door && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+              const d = e as DoorModel;
+              const parent = d ? getParent(d) : null;
+              oldValuesSelected.set(e.id, d.lz * (parent ? parent.lz : 1));
+              d.lz = parent ? value / parent.lz : value;
+              if (parent) d.cz = -(parent.lz - value) / (2 * parent.lz);
             }
           }
         });
         const undoableChangeSelected = {
-          name: 'Set U-Value for Selected Doors',
+          name: 'Set Height for Selected Doors',
           timestamp: Date.now(),
           oldValues: oldValuesSelected,
           newValue: value,
@@ -150,14 +148,16 @@ const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
         setCommonStore((state) => {
           for (const e of state.elements) {
             if (e.type === ObjectType.Door && !e.locked) {
-              const door = e as DoorModel;
-              oldValuesAll.set(e.id, door.uValue ?? DEFAULT_DOOR_U_VALUE);
-              door.uValue = value;
+              const d = e as DoorModel;
+              const parent = d ? getParent(d) : null;
+              oldValuesAll.set(e.id, d.lz * (parent ? parent.lz : 1));
+              d.lz = parent ? value / parent.lz : value;
+              if (parent) d.cz = -(parent.lz - value) / (2 * parent.lz);
             }
           }
         });
         const undoableChangeAll = {
-          name: 'Set U-Value for All Doors',
+          name: 'Set Height for All Doors',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
@@ -178,14 +178,16 @@ const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
           setCommonStore((state) => {
             for (const e of state.elements) {
               if (e.type === ObjectType.Door && e.foundationId === door.foundationId && !e.locked) {
-                const door = e as DoorModel;
-                oldValuesAboveFoundation.set(e.id, door.uValue ?? DEFAULT_DOOR_U_VALUE);
-                door.uValue = value;
+                const d = e as DoorModel;
+                const parent = d ? getParent(d) : null;
+                oldValuesAboveFoundation.set(e.id, d.lz * (parent ? parent.lz : 1));
+                d.lz = parent ? value / parent.lz : value;
+                if (parent) d.cz = -(parent.lz - value) / (2 * parent.lz);
               }
             }
           });
           const undoableChangeAboveFoundation = {
-            name: 'Set U-Value for All Doors Above Foundation',
+            name: 'Set Height for All Doors Above Foundation',
             timestamp: Date.now(),
             oldValues: oldValuesAboveFoundation,
             newValue: value,
@@ -210,14 +212,16 @@ const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
           setCommonStore((state) => {
             for (const e of state.elements) {
               if (e.type === ObjectType.Door && e.parentId === door.parentId && !e.locked) {
-                const door = e as DoorModel;
-                oldValues.set(e.id, door.uValue ?? DEFAULT_DOOR_U_VALUE);
-                door.uValue = value;
+                const d = e as DoorModel;
+                const parent = d ? getParent(d) : null;
+                oldValues.set(e.id, d.lz * (parent ? parent.lz : 1));
+                d.lz = parent ? value / parent.lz : value;
+                if (parent) d.cz = -(parent.lz - value) / (2 * parent.lz);
               }
             }
           });
           const undoableChangeOnSameWall = {
-            name: 'Set U-Value for All Doors On the Same Wall',
+            name: 'Set Height for All Doors On the Same Wall',
             timestamp: Date.now(),
             oldValues: oldValues,
             newValue: value,
@@ -239,9 +243,10 @@ const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
       default:
         if (door) {
           const updatedDoor = getElementById(door.id) as DoorModel;
-          const oldValue = updatedDoor.uValue ?? door.uValue ?? DEFAULT_DOOR_U_VALUE;
+          const parent = door ? getParent(updatedDoor) : null;
+          const oldValue = (updatedDoor.lz ?? door.lz ?? 0.2) * (parent ? parent.lz : 1);
           const undoableChange = {
-            name: 'Set Door U-Value',
+            name: 'Set Door Height',
             timestamp: Date.now(),
             oldValue: oldValue,
             newValue: value,
@@ -259,12 +264,10 @@ const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
           setApplyCount(applyCount + 1);
         }
     }
-    setCommonStore((state) => {
-      state.actionState.doorUValue = value;
-    });
   };
 
   const close = () => {
+    setInputValue(currentValue);
     setDialogVisible(false);
   };
 
@@ -272,54 +275,32 @@ const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
     setValue(inputValue);
   };
 
+  const parent = door ? getParent(door) : null;
+  const max = parent?.lz ?? 20;
+
   return (
-    <Dialog
-      width={550}
-      title={`${i18n.t('word.UValue', lang) + ' '}(${i18n.t('word.ThermalTransmittance', lang)})`}
-      onApply={apply}
-      onClose={close}
-    >
+    <Dialog width={550} title={i18n.t('word.Height', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
-        <Col className="gutter-row" span={7}>
+        <Col className="gutter-row" span={6}>
           <InputNumber
-            min={0.01}
-            max={100}
+            min={0.1}
+            max={max}
             style={{ width: 120 }}
-            step={0.05}
+            step={0.1}
             precision={2}
             value={inputValue}
             formatter={(a) => Number(a).toFixed(2)}
             onChange={(value) => {
               if (value === null) return;
               setInputValue(value);
-              setInputValueUS(Util.toUValueInUS(value));
             }}
           />
           <div style={{ paddingTop: '4px', textAlign: 'left', fontSize: '11px' }}>
-            {i18n.t('word.Range', lang)}: [0.01, 100]
-            <br />
-            {i18n.t('word.SIUnit', lang)}: W/(m²·℃)
+            {i18n.t('word.Range', lang)}: [0.1, {max.toFixed(1)}]{i18n.t('word.MeterAbbreviation', lang)}
           </div>
-          <br />
-          <InputNumber
-            min={Util.toUValueInUS(0.01)}
-            max={Util.toUValueInUS(100)}
-            style={{ width: 120 }}
-            step={0.01}
-            precision={2}
-            value={inputValueUS}
-            formatter={(a) => Number(a).toFixed(2)}
-            onChange={(value) => {
-              if (value === null) return;
-              setInputValueUS(value);
-              setInputValue(Util.toUValueInSI(value));
-            }}
-          />
-          <div style={{ paddingTop: '4px', textAlign: 'left', fontSize: '11px' }}>
-            {i18n.t('word.Range', lang)}: [{Util.toUValueInUS(0.01).toFixed(3)}, {Util.toUValueInUS(100).toFixed(1)}]
-            <br />
-            {i18n.t('word.USUnit', lang)}: Btu/(h·ft²·℉)
-          </div>
+        </Col>
+        <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
+          {i18n.t('word.MeterAbbreviation', lang)}
         </Col>
         <Col
           className="gutter-row"
@@ -343,4 +324,4 @@ const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   );
 };
 
-export default DoorUValueInput;
+export default DoorHeightInput;

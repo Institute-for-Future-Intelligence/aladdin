@@ -2,7 +2,7 @@
  * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { Col, InputNumber, Radio, Row, Space } from 'antd';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
@@ -10,12 +10,12 @@ import { ObjectType, Scope } from 'src/types';
 import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
-import { DoorModel } from '../../../models/DoorModel';
-import { useSelectedElement } from './menuHooks';
+import { DoorModel } from '../../../../models/DoorModel';
+import { useSelectedElement } from '../menuHooks';
 import { useLanguage } from 'src/views/hooks';
-import Dialog from '../dialog';
+import Dialog from '../../dialog';
 
-const DoorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const DoorOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const elements = useStore(Selector.elements);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.doorActionScope);
@@ -23,29 +23,18 @@ const DoorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   const setApplyCount = useStore(Selector.setApplyCount);
   const getElementById = useStore(Selector.getElementById);
   const setCommonStore = useStore(Selector.set);
-  const getParent = useStore(Selector.getParent);
 
   const door = useSelectedElement(ObjectType.Door) as DoorModel | undefined;
 
-  const currentValue = useMemo(() => {
-    const v = door ? door.lz : 1;
-    const parent = door ? getParent(door) : null;
-    if (parent) return v * parent.lz;
-    return v;
-  }, [door?.lz]);
-
-  const [inputValue, setInputValue] = useState<number>(currentValue);
+  const [inputValue, setInputValue] = useState<number>(door?.opacity ?? 1);
 
   const lang = useLanguage();
 
   const updateById = (id: string, value: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
-        if (e.id === id && e.type === ObjectType.Door) {
-          const d = e as DoorModel;
-          const parent = getParent(d);
-          d.lz = parent ? value / parent.lz : value;
-          if (parent) d.cz = -(parent.lz - value) / (2 * parent.lz);
+        if (e.id === id) {
+          (e as DoorModel).opacity = value;
           break;
         }
       }
@@ -66,42 +55,55 @@ const DoorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
 
   const needChange = (value: number) => {
     if (!door) return;
+
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType:
         for (const e of elements) {
-          if (e.type === ObjectType.Door && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
-            const parent = getParent(e);
-            if (parent && value !== e.lz * parent.lz) return true;
+          if (
+            e.type === ObjectType.Door &&
+            value !== (e as DoorModel).opacity &&
+            !e.locked &&
+            useStore.getState().selectedElementIdSet.has(e.id)
+          ) {
+            return true;
           }
         }
         break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
-          if (e.type === ObjectType.Door && !e.locked) {
-            const parent = getParent(e);
-            if (parent && value !== e.lz * parent.lz) return true;
+          if (e.type === ObjectType.Door && value !== (e as DoorModel).opacity && !e.locked) {
+            return true;
           }
         }
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         for (const e of elements) {
-          if (e.type === ObjectType.Door && e.foundationId === door.foundationId && !e.locked) {
-            const parent = getParent(e);
-            if (parent && value !== e.lz * parent.lz) return true;
+          if (
+            e.type === ObjectType.Door &&
+            e.foundationId === door.foundationId &&
+            value !== (e as DoorModel).opacity &&
+            !e.locked
+          ) {
+            return true;
           }
         }
         break;
       case Scope.OnlyThisSide:
         for (const e of elements) {
-          if (e.type === ObjectType.Door && e.parentId === door.parentId && !e.locked) {
-            const parent = getParent(e);
-            if (parent && value !== e.lz * parent.lz) return true;
+          if (
+            e.type === ObjectType.Door &&
+            e.parentId === door.parentId &&
+            value !== (e as DoorModel).opacity &&
+            !e.locked
+          ) {
+            return true;
           }
         }
         break;
       default:
-        const parent = getParent(door);
-        if (parent && value !== door.lz * parent.lz) return true;
+        if (value !== door?.opacity) {
+          return true;
+        }
         break;
     }
     return false;
@@ -116,16 +118,14 @@ const DoorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
         setCommonStore((state) => {
           for (const e of state.elements) {
             if (e.type === ObjectType.Door && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
-              const d = e as DoorModel;
-              const parent = d ? getParent(d) : null;
-              oldValuesSelected.set(e.id, d.lz * (parent ? parent.lz : 1));
-              d.lz = parent ? value / parent.lz : value;
-              if (parent) d.cz = -(parent.lz - value) / (2 * parent.lz);
+              const door = e as DoorModel;
+              oldValuesSelected.set(e.id, door.opacity ?? 1);
+              door.opacity = value;
             }
           }
         });
         const undoableChangeSelected = {
-          name: 'Set Height for Selected Doors',
+          name: 'Set Opacity for Selected Doors',
           timestamp: Date.now(),
           oldValues: oldValuesSelected,
           newValue: value,
@@ -148,16 +148,14 @@ const DoorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
         setCommonStore((state) => {
           for (const e of state.elements) {
             if (e.type === ObjectType.Door && !e.locked) {
-              const d = e as DoorModel;
-              const parent = d ? getParent(d) : null;
-              oldValuesAll.set(e.id, d.lz * (parent ? parent.lz : 1));
-              d.lz = parent ? value / parent.lz : value;
-              if (parent) d.cz = -(parent.lz - value) / (2 * parent.lz);
+              const door = e as DoorModel;
+              oldValuesAll.set(e.id, door.opacity ?? 1);
+              door.opacity = value;
             }
           }
         });
         const undoableChangeAll = {
-          name: 'Set Height for All Doors',
+          name: 'Set Opacity for All Doors',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
@@ -178,16 +176,14 @@ const DoorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
           setCommonStore((state) => {
             for (const e of state.elements) {
               if (e.type === ObjectType.Door && e.foundationId === door.foundationId && !e.locked) {
-                const d = e as DoorModel;
-                const parent = d ? getParent(d) : null;
-                oldValuesAboveFoundation.set(e.id, d.lz * (parent ? parent.lz : 1));
-                d.lz = parent ? value / parent.lz : value;
-                if (parent) d.cz = -(parent.lz - value) / (2 * parent.lz);
+                const door = e as DoorModel;
+                oldValuesAboveFoundation.set(e.id, door.opacity ?? 1);
+                door.opacity = value;
               }
             }
           });
           const undoableChangeAboveFoundation = {
-            name: 'Set Height for All Doors Above Foundation',
+            name: 'Set Opacity for All Doors Above Foundation',
             timestamp: Date.now(),
             oldValues: oldValuesAboveFoundation,
             newValue: value,
@@ -212,16 +208,14 @@ const DoorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
           setCommonStore((state) => {
             for (const e of state.elements) {
               if (e.type === ObjectType.Door && e.parentId === door.parentId && !e.locked) {
-                const d = e as DoorModel;
-                const parent = d ? getParent(d) : null;
-                oldValues.set(e.id, d.lz * (parent ? parent.lz : 1));
-                d.lz = parent ? value / parent.lz : value;
-                if (parent) d.cz = -(parent.lz - value) / (2 * parent.lz);
+                const door = e as DoorModel;
+                oldValues.set(e.id, door.opacity ?? 1);
+                door.opacity = value;
               }
             }
           });
           const undoableChangeOnSameWall = {
-            name: 'Set Height for All Doors On the Same Wall',
+            name: 'Set Opacity for All Doors On the Same Wall',
             timestamp: Date.now(),
             oldValues: oldValues,
             newValue: value,
@@ -243,10 +237,9 @@ const DoorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
       default:
         if (door) {
           const updatedDoor = getElementById(door.id) as DoorModel;
-          const parent = door ? getParent(updatedDoor) : null;
-          const oldValue = (updatedDoor.lz ?? door.lz ?? 0.2) * (parent ? parent.lz : 1);
+          const oldValue = updatedDoor.opacity ?? door.opacity ?? 1;
           const undoableChange = {
-            name: 'Set Door Height',
+            name: 'Set Opacity of Door',
             timestamp: Date.now(),
             oldValue: oldValue,
             newValue: value,
@@ -264,10 +257,12 @@ const DoorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
           setApplyCount(applyCount + 1);
         }
     }
+    setCommonStore((state) => {
+      state.actionState.doorOpacity = value;
+    });
   };
 
   const close = () => {
-    setInputValue(currentValue);
     setDialogVisible(false);
   };
 
@@ -275,32 +270,26 @@ const DoorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
     setValue(inputValue);
   };
 
-  const parent = door ? getParent(door) : null;
-  const max = parent?.lz ?? 20;
-
   return (
-    <Dialog width={550} title={i18n.t('word.Height', lang)} onApply={apply} onClose={close}>
+    <Dialog width={550} title={i18n.t('wallMenu.Opacity', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
-        <Col className="gutter-row" span={6}>
+        <Col className="gutter-row" span={7}>
           <InputNumber
-            min={0.1}
-            max={max}
+            min={0.01}
+            max={100}
             style={{ width: 120 }}
-            step={0.1}
+            step={0.05}
             precision={2}
             value={inputValue}
             formatter={(a) => Number(a).toFixed(2)}
-            onChange={(value) => {
-              if (value === null) return;
-              setInputValue(value);
-            }}
+            onChange={(value) => setInputValue(value!)}
           />
           <div style={{ paddingTop: '4px', textAlign: 'left', fontSize: '11px' }}>
-            {i18n.t('word.Range', lang)}: [0.1, {max.toFixed(1)}]{i18n.t('word.MeterAbbreviation', lang)}
+            kWh/(m³·℃)
+            <br />
+            <br />
+            {i18n.t('word.Range', lang)}: [0.01, 100]
           </div>
-        </Col>
-        <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
-          {i18n.t('word.MeterAbbreviation', lang)}
         </Col>
         <Col
           className="gutter-row"
@@ -324,4 +313,4 @@ const DoorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   );
 };
 
-export default DoorHeightInput;
+export default DoorOpacityInput;

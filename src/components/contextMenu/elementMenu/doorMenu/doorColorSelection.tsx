@@ -12,11 +12,11 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { CompactPicker } from 'react-color';
 import { DoorModel } from 'src/models/DoorModel';
-import { useSelectedElement } from './menuHooks';
+import { useSelectedElement } from '../menuHooks';
+import Dialog from '../../dialog';
 import { useLanguage } from 'src/views/hooks';
-import Dialog from '../dialog';
 
-const DoorFrameColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const DoorColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const addUndoable = useStore(Selector.addUndoable);
@@ -27,7 +27,7 @@ const DoorFrameColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
 
   const door = useSelectedElement(ObjectType.Door) as DoorModel | undefined;
 
-  const [selectedColor, setSelectedColor] = useState<string>(door?.frameColor ?? '#ffffff');
+  const [selectedColor, setSelectedColor] = useState<string>(door?.color ?? '#ffffff');
 
   const lang = useLanguage();
 
@@ -35,8 +35,8 @@ const DoorFrameColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id) {
-          if (!e.locked && e.type === ObjectType.Door) {
-            (e as DoorModel).frameColor = color;
+          if (!e.locked) {
+            e.color = color;
           }
           break;
         }
@@ -60,42 +60,39 @@ const DoorFrameColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType:
         for (const e of elements) {
-          if (e.type === ObjectType.Door && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
-            if (color !== (e as DoorModel).frameColor) {
-              return true;
-            }
+          if (
+            e.type === ObjectType.Door &&
+            color !== e.color &&
+            !e.locked &&
+            useStore.getState().selectedElementIdSet.has(e.id)
+          ) {
+            return true;
           }
         }
         break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
-          if (e.type === ObjectType.Door && !e.locked) {
-            if (color !== (e as DoorModel).frameColor) {
-              return true;
-            }
+          if (e.type === ObjectType.Door && color !== e.color && !e.locked) {
+            return true;
           }
         }
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         for (const e of elements) {
-          if (e.type === ObjectType.Door && e.foundationId === door?.foundationId && !e.locked) {
-            if (color !== (e as DoorModel).frameColor) {
-              return true;
-            }
+          if (e.type === ObjectType.Door && e.foundationId === door?.foundationId && color !== e.color && !e.locked) {
+            return true;
           }
         }
         break;
       case Scope.OnlyThisSide:
         for (const e of elements) {
-          if (e.type === ObjectType.Door && e.parentId === door?.parentId && !e.locked) {
-            if (color !== (e as DoorModel).frameColor) {
-              return true;
-            }
+          if (e.type === ObjectType.Door && e.parentId === door?.parentId && color !== e.color && !e.locked) {
+            return true;
           }
         }
         break;
       default:
-        if (color !== door?.frameColor) {
+        if (color !== door?.color) {
           return true;
         }
         break;
@@ -103,7 +100,7 @@ const DoorFrameColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
     return false;
   };
 
-  const setColor = (value: string) => {
+  const updateColor = (value: string) => {
     if (!door) return;
     if (!needChange(value)) return;
     switch (actionScope) {
@@ -111,7 +108,7 @@ const DoorFrameColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
         const oldColorsSelected = new Map<string, string>();
         for (const elem of useStore.getState().elements) {
           if (elem.type === ObjectType.Door && !elem.locked && useStore.getState().selectedElementIdSet.has(elem.id)) {
-            oldColorsSelected.set(elem.id, (elem as DoorModel).frameColor ?? '#ffffff');
+            oldColorsSelected.set(elem.id, elem.color ?? '#ffffff');
           }
         }
         const undoableChangeSelected = {
@@ -138,7 +135,7 @@ const DoorFrameColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
         const oldColorsAll = new Map<string, string>();
         for (const elem of useStore.getState().elements) {
           if (elem.type === ObjectType.Door && !elem.locked) {
-            oldColorsAll.set(elem.id, (elem as DoorModel).frameColor ?? '#ffffff');
+            oldColorsAll.set(elem.id, elem.color ?? '#ffffff');
           }
         }
         const undoableChangeAll = {
@@ -163,7 +160,7 @@ const DoorFrameColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
           const oldColorsAboveFoundation = new Map<string, string>();
           for (const elem of useStore.getState().elements) {
             if (elem.type === ObjectType.Door && elem.foundationId === door.foundationId && !door.locked) {
-              oldColorsAboveFoundation.set(elem.id, (elem as DoorModel).frameColor ?? '#ffffff');
+              oldColorsAboveFoundation.set(elem.id, elem.color ?? '#ffffff');
             }
           }
           const undoableChangeAboveFoundation = {
@@ -194,7 +191,7 @@ const DoorFrameColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
           const oldColorsOnSameWall = new Map<string, string>();
           for (const elem of useStore.getState().elements) {
             if (elem.type === ObjectType.Door && elem.parentId === door.parentId && !door.locked) {
-              oldColorsOnSameWall.set(elem.id, (elem as DoorModel).frameColor ?? '#ffffff');
+              oldColorsOnSameWall.set(elem.id, elem.color ?? '#ffffff');
             }
           }
           const undoableChangeOnSameWall = {
@@ -223,7 +220,7 @@ const DoorFrameColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
       default:
         if (door) {
           const updatedDoor = getElementById(door.id) as DoorModel;
-          const oldColor = (updatedDoor ? updatedDoor.frameColor : door.frameColor) ?? '#ffffff';
+          const oldColor = (updatedDoor ? updatedDoor.color : door.color) ?? '#ffffff';
           const undoableChange = {
             name: 'Set Color of Selected Door',
             timestamp: Date.now(),
@@ -253,15 +250,15 @@ const DoorFrameColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
   };
 
   const apply = () => {
-    setColor(selectedColor);
+    updateColor(selectedColor);
   };
 
   return (
-    <Dialog width={640} title={i18n.t('doorMenu.FrameColor', lang)} onApply={apply} onClose={close}>
+    <Dialog width={640} title={i18n.t('word.Color', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
         <Col className="gutter-row" span={11}>
           <CompactPicker
-            color={selectedColor ?? door?.frameColor ?? '#ffffff'}
+            color={selectedColor}
             onChangeComplete={(colorResult) => {
               setSelectedColor(colorResult.hex);
             }}
@@ -289,4 +286,4 @@ const DoorFrameColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
   );
 };
 
-export default DoorFrameColorSelection;
+export default DoorColorSelection;
