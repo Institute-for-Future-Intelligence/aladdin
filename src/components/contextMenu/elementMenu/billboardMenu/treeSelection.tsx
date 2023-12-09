@@ -4,32 +4,35 @@
 
 import React, { useState } from 'react';
 import { Select } from 'antd';
-import { CommonStoreState, useStore } from '../../../stores/common';
-import * as Selector from '../../../stores/selector';
-import { ObjectType, TreeType } from '../../../types';
-import AppleImage from '../../../resources/apple_summer.png';
-import BirchImage from '../../../resources/birch_summer.png';
-import CoconutImage from '../../../resources/coconut.png';
-import DogwoodImage from '../../../resources/dogwood_summer.png';
-import ElmImage from '../../../resources/elm_summer.png';
-import LindenImage from '../../../resources/linden_summer.png';
-import MagnoliaImage from '../../../resources/magnolia_summer.png';
-import MapleImage from '../../../resources/maple_summer.png';
-import OakImage from '../../../resources/oak_summer.png';
-import FanPalmImage from '../../../resources/fan_palm.png';
-import PineImage from '../../../resources/pine.png';
-import SpruceImage from '../../../resources/spruce.png';
-import { UndoableChange } from '../../../undo/UndoableChange';
-import i18n from '../../../i18n/i18n';
-import { TreeModel } from '../../../models/TreeModel';
+import { CommonStoreState, useStore } from '../../../../stores/common';
+import * as Selector from '../../../../stores/selector';
+import { ObjectType, TreeType } from '../../../../types';
+import AppleImage from 'src/resources/apple_summer.png';
+import BirchImage from 'src/resources/birch_summer.png';
+import CoconutImage from 'src/resources/coconut.png';
+import DogwoodImage from 'src/resources/dogwood_summer.png';
+import ElmImage from 'src/resources/elm_summer.png';
+import LindenImage from 'src/resources/linden_summer.png';
+import MagnoliaImage from 'src/resources/magnolia_summer.png';
+import MapleImage from 'src/resources/maple_summer.png';
+import OakImage from 'src/resources/oak_summer.png';
+import FanPalmImage from 'src/resources/fan_palm.png';
+import PineImage from 'src/resources/pine.png';
+import SpruceImage from 'src/resources/spruce.png';
+import { UndoableChange } from '../../../../undo/UndoableChange';
+import i18n from '../../../../i18n/i18n';
+import { TreeModel } from '../../../../models/TreeModel';
 
 const { Option } = Select;
 
-const TreeSelection = () => {
+interface TreeSelectionProps {
+  tree: TreeModel;
+}
+
+const TreeSelection = ({ tree }: TreeSelectionProps) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const addUndoable = useStore(Selector.addUndoable);
-  const tree = useStore.getState().getSelectedElement() as TreeModel;
 
   const [updateFlag, setUpdateFlag] = useState(false);
   const lang = { lng: language };

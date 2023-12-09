@@ -8,13 +8,10 @@ import { useStore } from '../../stores/common';
 import * as Selector from '../../stores/selector';
 import { ObjectType } from '../../types';
 import {
-  HumanMenu,
-  FlowerMenu,
   PolygonMenu,
   PolygonVertexMenu,
   ParabolicTroughMenu,
   ParabolicDishMenu,
-  TreeMenu,
   FresnelReflectorMenu,
   HeliostatMenu,
   createGroundMenu,
@@ -28,6 +25,9 @@ import {
   createDoorMenu,
   createSensorMenu,
   createLightMenu,
+  createHumanMenu,
+  createTreeMenu,
+  createFlowerMenu,
 } from './elementMenu';
 import { WindTurbineMenu } from './elementMenu/windTurbineMenu';
 import { useSelectedElement } from './elementMenu/menuHooks';
@@ -217,6 +217,13 @@ const DropdownContextMenu: React.FC<ContextMenuProps> = ({ children }) => {
         return createSensorMenu(elementRef.current);
       case ObjectType.Light:
         return createLightMenu(elementRef.current);
+      case ObjectType.Human:
+        return createHumanMenu(elementRef.current);
+      case ObjectType.Tree:
+        return createTreeMenu(elementRef.current);
+      case ObjectType.Flower:
+        return createFlowerMenu(elementRef.current);
+
       // case ObjectType.Polygon:
       //   return (
       //     <Menu triggerSubMenuAction={'click'}>
@@ -258,24 +265,6 @@ const DropdownContextMenu: React.FC<ContextMenuProps> = ({ children }) => {
       //   return (
       //     <Menu triggerSubMenuAction={'click'}>
       //       <WindTurbineMenu />
-      //     </Menu>
-      //   );
-      // case ObjectType.Human:
-      //   return (
-      //     <Menu triggerSubMenuAction={'click'}>
-      //       <HumanMenu />
-      //     </Menu>
-      //   );
-      // case ObjectType.Tree:
-      //   return (
-      //     <Menu triggerSubMenuAction={'click'}>
-      //       <TreeMenu />
-      //     </Menu>
-      //   );
-      // case ObjectType.Flower:
-      //   return (
-      //     <Menu triggerSubMenuAction={'click'}>
-      //       <FlowerMenu />
       //     </Menu>
       //   );
       default:

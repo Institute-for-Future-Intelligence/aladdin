@@ -4,38 +4,41 @@
 
 import React, { useState } from 'react';
 import { Select } from 'antd';
-import { CommonStoreState, useStore } from '../../../stores/common';
-import * as Selector from '../../../stores/selector';
-import { FlowerType, ObjectType } from '../../../types';
-import BellflowerImage from '../../../resources/bellflower.png';
-import BoxwoodImage from '../../../resources/boxwood.png';
-import CactusCombo1Image from '../../../resources/cactus_combo_1.png';
-import CactusCombo2Image from '../../../resources/cactus_combo_2.png';
-import CactusCombo3Image from '../../../resources/cactus_combo_3.png';
-import CactusCombo4Image from '../../../resources/cactus_combo_4.png';
-import HibiscusImage from '../../../resources/hibiscus.png';
-import HydrangeaImage from '../../../resources/hydrangea.png';
-import HostaImage from '../../../resources/hosta.png';
-import PeonyImage from '../../../resources/peony.png';
-import RedRoseImage from '../../../resources/red_rose.png';
-import SpireaImage from '../../../resources/spirea.png';
-import SunflowerImage from '../../../resources/sunflower.png';
-import TallBushImage from '../../../resources/tall_bush.png';
-import TulipImage from '../../../resources/tulip.png';
-import WhiteFlowerImage from '../../../resources/white_flower.png';
-import YellowFlowerImage from '../../../resources/yellow_flower.png';
-import { UndoableChange } from '../../../undo/UndoableChange';
-import i18n from '../../../i18n/i18n';
-import { FlowerModel } from '../../../models/FlowerModel';
-import { FlowerData } from '../../../FlowerData';
+import { CommonStoreState, useStore } from '../../../../stores/common';
+import * as Selector from '../../../../stores/selector';
+import { FlowerType, ObjectType } from '../../../../types';
+import BellflowerImage from 'src/resources/bellflower.png';
+import BoxwoodImage from 'src/resources/boxwood.png';
+import CactusCombo1Image from 'src/resources/cactus_combo_1.png';
+import CactusCombo2Image from 'src/resources/cactus_combo_2.png';
+import CactusCombo3Image from 'src/resources/cactus_combo_3.png';
+import CactusCombo4Image from 'src/resources/cactus_combo_4.png';
+import HibiscusImage from 'src/resources/hibiscus.png';
+import HydrangeaImage from 'src/resources/hydrangea.png';
+import HostaImage from 'src/resources/hosta.png';
+import PeonyImage from 'src/resources/peony.png';
+import RedRoseImage from 'src/resources/red_rose.png';
+import SpireaImage from 'src/resources/spirea.png';
+import SunflowerImage from 'src/resources/sunflower.png';
+import TallBushImage from 'src/resources/tall_bush.png';
+import TulipImage from 'src/resources/tulip.png';
+import WhiteFlowerImage from 'src/resources/white_flower.png';
+import YellowFlowerImage from 'src/resources/yellow_flower.png';
+import { UndoableChange } from '../../../../undo/UndoableChange';
+import i18n from '../../../../i18n/i18n';
+import { FlowerModel } from '../../../../models/FlowerModel';
+import { FlowerData } from '../../../../FlowerData';
 
 const { Option } = Select;
 
-const FlowerSelection = () => {
+interface FlowerSelectionProps {
+  flower: FlowerModel;
+}
+
+const FlowerSelection = ({ flower }: FlowerSelectionProps) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const addUndoable = useStore(Selector.addUndoable);
-  const flower = useStore.getState().getSelectedElement() as FlowerModel;
 
   const [updateFlag, setUpdateFlag] = useState(false);
   const lang = { lng: language };

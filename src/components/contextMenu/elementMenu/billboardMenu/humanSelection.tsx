@@ -2,60 +2,63 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import JaahImage from '../../../resources/jaah.png';
-import JackImage from '../../../resources/jack.png';
-import JacobImage from '../../../resources/jacob.png';
-import JacquelineImage from '../../../resources/jacqueline.png';
-import JadeImage from '../../../resources/jade.png';
-import JameliaImage from '../../../resources/jamelia.png';
-import JamesImage from '../../../resources/james.png';
-import JaneImage from '../../../resources/jane.png';
-import JayaImage from '../../../resources/jaya.png';
-import JayeImage from '../../../resources/jaye.png';
-import JeanetteImage from '../../../resources/jeanette.png';
-import JediImage from '../../../resources/jedi.png';
-import JeffImage from '../../../resources/jeff.png';
-import JenaImage from '../../../resources/jena.png';
-import JenniferImage from '../../../resources/jennifer.png';
-import JessImage from '../../../resources/jess.png';
-import JettImage from '../../../resources/jett.png';
-import JillImage from '../../../resources/jill.png';
-import JiyaImage from '../../../resources/jiya.png';
-import JoanImage from '../../../resources/joan.png';
-import JocelynImage from '../../../resources/jocelyn.png';
-import JoelImage from '../../../resources/joel.png';
-import JoeyImage from '../../../resources/joey.png';
-import JohnImage from '../../../resources/john.png';
-import JonathonImage from '../../../resources/jonathon.png';
-import JoseImage from '../../../resources/jose.png';
-import JosephImage from '../../../resources/joseph.png';
-import JoshuaImage from '../../../resources/joshua.png';
-import JuddImage from '../../../resources/judd.png';
-import JudyImage from '../../../resources/judy.png';
-import JuliaImage from '../../../resources/julia.png';
-import JulioImage from '../../../resources/julio.png';
-import JumapiliImage from '../../../resources/jumapili.png';
-import JuneImage from '../../../resources/june.png';
-import JuroImage from '../../../resources/juro.png';
-import JustinImage from '../../../resources/justin.png';
+import JaahImage from 'src/resources/jaah.png';
+import JackImage from 'src/resources/jack.png';
+import JacobImage from 'src/resources/jacob.png';
+import JacquelineImage from 'src/resources/jacqueline.png';
+import JadeImage from 'src/resources/jade.png';
+import JameliaImage from 'src/resources/jamelia.png';
+import JamesImage from 'src/resources/james.png';
+import JaneImage from 'src/resources/jane.png';
+import JayaImage from 'src/resources/jaya.png';
+import JayeImage from 'src/resources/jaye.png';
+import JeanetteImage from 'src/resources/jeanette.png';
+import JediImage from 'src/resources/jedi.png';
+import JeffImage from 'src/resources/jeff.png';
+import JenaImage from 'src/resources/jena.png';
+import JenniferImage from 'src/resources/jennifer.png';
+import JessImage from 'src/resources/jess.png';
+import JettImage from 'src/resources/jett.png';
+import JillImage from 'src/resources/jill.png';
+import JiyaImage from 'src/resources/jiya.png';
+import JoanImage from 'src/resources/joan.png';
+import JocelynImage from 'src/resources/jocelyn.png';
+import JoelImage from 'src/resources/joel.png';
+import JoeyImage from 'src/resources/joey.png';
+import JohnImage from 'src/resources/john.png';
+import JonathonImage from 'src/resources/jonathon.png';
+import JoseImage from 'src/resources/jose.png';
+import JosephImage from 'src/resources/joseph.png';
+import JoshuaImage from 'src/resources/joshua.png';
+import JuddImage from 'src/resources/judd.png';
+import JudyImage from 'src/resources/judy.png';
+import JuliaImage from 'src/resources/julia.png';
+import JulioImage from 'src/resources/julio.png';
+import JumapiliImage from 'src/resources/jumapili.png';
+import JuneImage from 'src/resources/june.png';
+import JuroImage from 'src/resources/juro.png';
+import JustinImage from 'src/resources/justin.png';
 
 import React, { useState } from 'react';
 import { Select } from 'antd';
-import { HumanName, ObjectType } from '../../../types';
-import { CommonStoreState, useStore } from '../../../stores/common';
-import * as Selector from '../../../stores/selector';
-import { HumanModel } from '../../../models/HumanModel';
-import { UndoableChange } from '../../../undo/UndoableChange';
-import i18n from '../../../i18n/i18n';
-import { HumanData } from '../../../HumanData';
+import { HumanName, ObjectType } from '../../../../types';
+import { CommonStoreState, useStore } from '../../../../stores/common';
+import * as Selector from '../../../../stores/selector';
+import { HumanModel } from '../../../../models/HumanModel';
+import { UndoableChange } from '../../../../undo/UndoableChange';
+import i18n from '../../../../i18n/i18n';
+import { HumanData } from '../../../../HumanData';
 
 const { Option } = Select;
 
-const HumanSelection = () => {
+interface HumanSelectionProps {
+  human: HumanModel;
+}
+
+const HumanSelection = ({ human }: HumanSelectionProps) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const addUndoable = useStore(Selector.addUndoable);
-  const human = useStore.getState().getSelectedElement() as HumanModel;
 
   const [updateFlag, setUpdateFlag] = useState(false);
   const lang = { lng: language };
