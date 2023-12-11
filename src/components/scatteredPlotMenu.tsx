@@ -9,6 +9,9 @@ import { ReactComponent as MenuSVG } from '../assets/menu.svg';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import i18n from '../i18n/i18n';
+import { useLanguage } from 'src/views/hooks';
+import type { MenuProps } from 'antd';
+import { CheckboxMenuItem, SliderMenuItem } from './contextMenu/menuItems';
 
 const StyledMenuSVG = styled(MenuSVG)`
   position: absolute;
@@ -41,14 +44,7 @@ const ScatteredPlotMenu = ({
   changeVerticalGrid,
   changeSymbolSize,
 }: ScatteredPlotMenuProps) => {
-  const language = useStore(Selector.language);
-  const lang = { lng: language };
-
-  const [visible, setVisible] = useState(false);
-
-  const handleVisibleChange = (v: boolean) => {
-    setVisible(v);
-  };
+  const lang = useLanguage();
 
   const onShowHorizontalGridLines = () => {
     changeHorizontalGrid?.(!horizontalGrid);
@@ -62,36 +58,37 @@ const ScatteredPlotMenu = ({
     changeSymbolSize?.(size);
   };
 
-  const menu = (
-    <Menu>
-      <Menu.Item>
-        {i18n.t('menu.graph.SymbolSize', lang) + ':'}
-        <Slider min={1} max={8} tooltipVisible={false} value={symbolSize} onChange={onChangeSymbolSize} />
-      </Menu.Item>
-      <Menu.Item>
-        <Checkbox checked={horizontalGrid} onClick={onShowHorizontalGridLines}>
+  const items: MenuProps['items'] = [
+    {
+      key: 'graph-symbol-size',
+      label: (
+        <SliderMenuItem min={1} max={8} value={symbolSize} onChange={onChangeSymbolSize}>
+          {i18n.t('menu.graph.SymbolSize', lang) + ':'}
+        </SliderMenuItem>
+      ),
+    },
+    {
+      key: 'show-horizontal-grid-lines-checkbox',
+      label: (
+        <CheckboxMenuItem checked={horizontalGrid} onClick={onShowHorizontalGridLines}>
           {i18n.t('menu.graph.ShowHorizontalGridLines', lang)}
-        </Checkbox>
-      </Menu.Item>
-      <Menu.Item>
-        <Checkbox checked={verticalGrid} onClick={onShowVerticalGridLines}>
-          {i18n.t('menu.graph.ShowVerticalGridLines', lang)}
-        </Checkbox>
-      </Menu.Item>
-    </Menu>
-  );
+        </CheckboxMenuItem>
+      ),
+    },
+    {
+      key: 'show-vertical-grid-lines-checkbox',
+      label: (
+        <CheckboxMenuItem checked={verticalGrid} onClick={onShowVerticalGridLines}>
+          {i18n.t('menu.graph.ShowHorizontalGridLines', lang)}
+        </CheckboxMenuItem>
+      ),
+    },
+  ];
 
   return (
-    <>
-      {/* <Dropdown overlay={menu} placement="bottomRight" open={visible} onOpenChange={handleVisibleChange}>
-        <StyledMenuSVG
-          style={{ top: '120px', right: '16px' }}
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
-        />
-      </Dropdown> */}
-    </>
+    <Dropdown menu={{ items }} placement="bottomRight">
+      <StyledMenuSVG style={{ top: '120px', right: '16px' }} onClick={(e) => e.stopPropagation()} />
+    </Dropdown>
   );
 };
 

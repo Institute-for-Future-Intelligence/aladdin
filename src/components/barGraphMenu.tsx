@@ -2,13 +2,13 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Menu, Dropdown, Checkbox } from 'antd';
+import { Dropdown } from 'antd';
 import { ReactComponent as MenuSVG } from '../assets/menu.svg';
-import { useStore } from '../stores/common';
-import * as Selector from '../stores/selector';
 import i18n from '../i18n/i18n';
+import type { MenuProps } from 'antd';
+import { CheckboxMenuItem } from './contextMenu/menuItems';
+import { useLanguage } from 'src/views/hooks';
 
 const StyledMenuSVG = styled(MenuSVG)`
   position: absolute;
@@ -37,14 +37,7 @@ const BarGraphMenu = ({
   changeHorizontalGrid,
   changeVerticalGrid,
 }: BarGraphMenuProps) => {
-  const language = useStore(Selector.language);
-  const lang = { lng: language };
-
-  const [visible, setVisible] = useState(false);
-
-  const handleVisibleChange = (v: boolean) => {
-    setVisible(v);
-  };
+  const lang = useLanguage();
 
   const onShowHorizontalGridLines = () => {
     changeHorizontalGrid?.(!horizontalGrid);
@@ -54,32 +47,29 @@ const BarGraphMenu = ({
     changeVerticalGrid?.(!verticalGrid);
   };
 
-  const menu = (
-    <Menu>
-      <Menu.Item>
-        <Checkbox checked={horizontalGrid} onClick={onShowHorizontalGridLines}>
+  const items: MenuProps['items'] = [
+    {
+      key: 'show-horizontal-grid-lines-checkbox',
+      label: (
+        <CheckboxMenuItem checked={horizontalGrid} onClick={onShowHorizontalGridLines}>
           {i18n.t('menu.graph.ShowHorizontalGridLines', lang)}
-        </Checkbox>
-      </Menu.Item>
-      <Menu.Item>
-        <Checkbox checked={verticalGrid} onClick={onShowVerticalGridLines}>
-          {i18n.t('menu.graph.ShowVerticalGridLines', lang)}
-        </Checkbox>
-      </Menu.Item>
-    </Menu>
-  );
+        </CheckboxMenuItem>
+      ),
+    },
+    {
+      key: 'show-vertical-grid-lines-checkbox',
+      label: (
+        <CheckboxMenuItem checked={verticalGrid} onClick={onShowVerticalGridLines}>
+          {i18n.t('menu.graph.ShowHorizontalGridLines', lang)}
+        </CheckboxMenuItem>
+      ),
+    },
+  ];
 
   return (
-    <>
-      {/* <Dropdown overlay={menu} placement="bottomRight" open={visible} onOpenChange={handleVisibleChange}>
-        <StyledMenuSVG
-          style={{ right: '32px' }}
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
-        />
-      </Dropdown> */}
-    </>
+    <Dropdown menu={{ items }} placement="bottomRight">
+      <StyledMenuSVG style={{ right: '32px' }} onClick={(e) => e.stopPropagation()} />
+    </Dropdown>
   );
 };
 

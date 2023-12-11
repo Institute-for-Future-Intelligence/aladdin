@@ -3,7 +3,7 @@
  */
 
 import React, { useState } from 'react';
-import { Checkbox } from 'antd';
+import { Checkbox, Slider } from 'antd';
 import { useStore } from '../../stores/common';
 import * as Selector from '../../stores/selector';
 import i18n from '../../i18n/i18n';
@@ -50,6 +50,20 @@ interface LightSideItemProps {
 
 interface SolarCollectorSunBeamCheckboxProps {
   solarCollector: SolarCollector;
+}
+
+interface CheckboxMenuItemProps {
+  checked: boolean;
+  onClick: () => void;
+  children?: React.ReactNode;
+}
+
+interface SliderMenuItemProps {
+  min: number;
+  max: number;
+  value: number;
+  onChange: (val: number) => void;
+  children?: React.ReactNode;
 }
 
 export const Paste = () => {
@@ -395,6 +409,25 @@ export const SolarCollectorSunBeamCheckbox = ({ solarCollector }: SolarCollector
       <Checkbox checked={!!solarCollector.drawSunBeam} onChange={(e) => drawSunBeam(e.target.checked)}>
         {i18n.t('solarCollectorMenu.DrawSunBeam', lang)}
       </Checkbox>
+    </MenuItem>
+  );
+};
+
+export const CheckboxMenuItem = ({ checked, onClick, children }: CheckboxMenuItemProps) => {
+  return (
+    <MenuItem stayAfterClick noPadding>
+      <Checkbox checked={checked} onClick={onClick}>
+        {children}
+      </Checkbox>
+    </MenuItem>
+  );
+};
+
+export const SliderMenuItem = ({ min, max, value, onChange, children }: SliderMenuItemProps) => {
+  return (
+    <MenuItem stayAfterClick noPadding>
+      {children}
+      <Slider min={min} max={max} tooltip={{ open: false }} defaultValue={value} onChange={onChange} />
     </MenuItem>
   );
 };

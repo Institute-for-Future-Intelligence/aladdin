@@ -9,6 +9,8 @@ import { ReactComponent as MenuSVG } from '../assets/menu.svg';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import i18n from '../i18n/i18n';
+import type { MenuProps } from 'antd';
+import { CheckboxMenuItem, SliderMenuItem } from './contextMenu/menuItems';
 
 const StyledMenuSVG = styled(MenuSVG)`
   position: absolute;
@@ -111,17 +113,53 @@ const BuildingEnergyGraphMenu = ({
     </Menu>
   );
 
+  const items: MenuProps['items'] = [
+    {
+      key: 'graph-line-width-slider',
+      label: (
+        <SliderMenuItem min={0} max={10} value={lineWidth * 2} onChange={onChangeLineWidth}>
+          {i18n.t('menu.graph.LineWidth', lang) + ':'}
+        </SliderMenuItem>
+      ),
+    },
+    {
+      key: 'graph-symbol-size',
+      label: (
+        <SliderMenuItem min={2} max={12} value={symbolSize * 5} onChange={onChangeSymbolSize}>
+          {i18n.t('menu.graph.SymbolSize', lang) + ':'}
+        </SliderMenuItem>
+      ),
+    },
+    {
+      key: 'graph-bar-category-gap',
+      label: (
+        <SliderMenuItem min={0} max={20} value={barCategoryGap} onChange={onChangeBarCategoryGap}>
+          {i18n.t('menu.graph.BarCategoryGap', lang) + ':'}
+        </SliderMenuItem>
+      ),
+    },
+    {
+      key: 'show-horizontal-grid-lines-checkbox',
+      label: (
+        <CheckboxMenuItem checked={horizontalGrid} onClick={onShowHorizontalGridLines}>
+          {i18n.t('menu.graph.ShowHorizontalGridLines', lang)}
+        </CheckboxMenuItem>
+      ),
+    },
+    {
+      key: 'show-vertical-grid-lines-checkbox',
+      label: (
+        <CheckboxMenuItem checked={verticalGrid} onClick={onShowVerticalGridLines}>
+          {i18n.t('menu.graph.ShowHorizontalGridLines', lang)}
+        </CheckboxMenuItem>
+      ),
+    },
+  ];
+
   return (
-    <>
-      {/* <Dropdown overlay={menu} placement="bottomRight" open={visible} onOpenChange={handleVisibleChange}>
-        <StyledMenuSVG
-          style={{ right: '25px' }}
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
-        />
-      </Dropdown> */}
-    </>
+    <Dropdown menu={{ items }} placement="bottomRight">
+      <StyledMenuSVG style={{ right: '25px' }} onClick={(e) => e.stopPropagation()} />
+    </Dropdown>
   );
 };
 
