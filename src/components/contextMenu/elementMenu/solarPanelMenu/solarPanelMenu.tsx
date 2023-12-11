@@ -21,7 +21,7 @@ import { Util } from 'src/Util';
 import { UNIT_VECTOR_POS_Z } from 'src/constants';
 import SolarPanelRelativeAzimuthInput from './solarPanelRelativeAzimuthInput';
 import SolarPanelTrackerSelection from './solarPanelTrackerSelection';
-import SolarPanelFrameColorSelection from '../solarPanelFrameColorSelection';
+import SolarPanelFrameColorSelection from './solarPanelFrameColorSelection';
 import SolarPanelPoleHeightInput from './solarPanelPoleHeightInput';
 import SolarPanelPoleSpacingInput from './solarPanelPoleSpacingInput';
 import { createLabelSubmenu } from '../../labelSubmenuItems';

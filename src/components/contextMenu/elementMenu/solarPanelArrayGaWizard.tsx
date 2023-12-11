@@ -1029,4 +1029,4 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
   );
 };
 
-export default React.memo(SolarPanelArrayGaWizard);
+export default SolarPanelArrayGaWizard;

@@ -22,11 +22,16 @@ interface LabelSubmenuItemProps {
   element: ElementModel;
 }
 
-const LabelAddonBefore = (props: any) => {
-  return <div style={{ width: '90px' }}>{props.children}</div>;
+interface LabelAddonBeforeProps {
+  children?: React.ReactNode;
+  width?: string;
+}
+
+export const LabelAddonBefore = ({ children, width = '90px' }: LabelAddonBeforeProps) => {
+  return <div style={{ width: width }}>{children}</div>;
 };
 
-const ShowLabelCheckbox = ({ element }: LabelSubmenuItemProps) => {
+export const ShowLabelCheckbox = ({ element }: LabelSubmenuItemProps) => {
   const showLabel = useLabelShow(element);
   const lang = useLanguage();
 
@@ -39,7 +44,7 @@ const ShowLabelCheckbox = ({ element }: LabelSubmenuItemProps) => {
   );
 };
 
-const LabelTextInput = ({ element }: LabelSubmenuItemProps) => {
+export const LabelTextInput = ({ element }: LabelSubmenuItemProps) => {
   const { labelText, setLabelText } = useLabel(element);
   const updateLabelText = useLabelText(element, labelText);
 
@@ -57,7 +62,7 @@ const LabelTextInput = ({ element }: LabelSubmenuItemProps) => {
   );
 };
 
-const LabelHeightInput = ({ element }: LabelSubmenuItemProps) => {
+export const LabelHeightInput = ({ element }: LabelSubmenuItemProps) => {
   const setLabelHeight = useLabelHeight(element);
   const lang = useLanguage();
 
@@ -76,7 +81,7 @@ const LabelHeightInput = ({ element }: LabelSubmenuItemProps) => {
   );
 };
 
-const LabelFontSizeInput = ({ element }: LabelSubmenuItemProps) => {
+export const LabelFontSizeInput = ({ element }: LabelSubmenuItemProps) => {
   const setLabelFontSize = useLabelFontSize(element);
   const lang = useLanguage();
 
@@ -95,7 +100,7 @@ const LabelFontSizeInput = ({ element }: LabelSubmenuItemProps) => {
   );
 };
 
-const LabelSizeInput = ({ element }: LabelSubmenuItemProps) => {
+export const LabelSizeInput = ({ element }: LabelSubmenuItemProps) => {
   const setLabelSize = useLabelSize(element);
   const lang = useLanguage();
 
@@ -114,7 +119,7 @@ const LabelSizeInput = ({ element }: LabelSubmenuItemProps) => {
   );
 };
 
-const LabelColorInput = ({ element }: LabelSubmenuItemProps) => {
+export const LabelColorInput = ({ element }: LabelSubmenuItemProps) => {
   const setLabelColor = useLabelColor(element);
   const lang = useLanguage();
 

@@ -10,10 +10,10 @@ import { ObjectType, Scope } from 'src/types';
 import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
-import { PolygonModel } from '../../../models/PolygonModel';
-import { Util } from '../../../Util';
-import { useSelectedElement } from './menuHooks';
-import Dialog from '../dialog';
+import { PolygonModel } from '../../../../models/PolygonModel';
+import { Util } from '../../../../Util';
+import { useSelectedElement } from '../menuHooks';
+import Dialog from '../../dialog';
 import { useLanguage } from 'src/views/hooks';
 
 const PolygonOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {

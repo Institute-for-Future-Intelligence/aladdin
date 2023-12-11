@@ -3,27 +3,28 @@
  */
 
 import React, { useState } from 'react';
-import { Col, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
-import { useStore } from '../../../stores/common';
-import * as Selector from '../../../stores/selector';
-import { LineStyle, LineWidth, ObjectType, Scope } from '../../../types';
-import i18n from '../../../i18n/i18n';
-import { UndoableChange } from '../../../undo/UndoableChange';
-import { PolygonModel } from '../../../models/PolygonModel';
-import { Util } from '../../../Util';
-import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
-import { useSelectedElement } from './menuHooks';
-import Dialog from '../dialog';
+import { CompactPicker } from 'react-color';
+import { Col, Radio, RadioChangeEvent, Row, Space } from 'antd';
+import { useStore } from '../../../../stores/common';
+import * as Selector from '../../../../stores/selector';
+import { ObjectType, Scope } from '../../../../types';
+import i18n from '../../../../i18n/i18n';
+import { UndoableChange } from '../../../../undo/UndoableChange';
+import { UndoableChangeGroup } from '../../../../undo/UndoableChangeGroup';
+import { PolygonModel } from '../../../../models/PolygonModel';
+import { Util } from '../../../../Util';
+import { useSelectedElement } from '../menuHooks';
+import Dialog from '../../dialog';
 import { useLanguage } from 'src/views/hooks';
 
-const PolygonLineWidthSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const PolygonLineColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
   const getParent = useStore(Selector.getParent);
-  const updateElementLineWidthById = useStore(Selector.updateElementLineWidthById);
-  const updateElementLineWidthOnSurface = useStore(Selector.updateElementLineWidthOnSurface);
-  const updateElementLineWidthAboveFoundation = useStore(Selector.updateElementLineWidthAboveFoundation);
-  const updateElementLineWidthForAll = useStore(Selector.updateElementLineWidthForAll);
+  const updateElementLineColorById = useStore(Selector.updateElementLineColorById);
+  const updateElementLineColorOnSurface = useStore(Selector.updateElementLineColorOnSurface);
+  const updateElementLineColorAboveFoundation = useStore(Selector.updateElementLineColorAboveFoundation);
+  const updateElementLineColorForAll = useStore(Selector.updateElementLineColorForAll);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.polygonActionScope);
   const setActionScope = useStore(Selector.setPolygonActionScope);
@@ -32,22 +33,21 @@ const PolygonLineWidthSelection = ({ setDialogVisible }: { setDialogVisible: (b:
 
   const polygon = useSelectedElement(ObjectType.Polygon) as PolygonModel | undefined;
 
-  const [selectedLineWidth, setSelectedLineWidth] = useState<LineStyle>(polygon?.lineWidth ?? 1);
+  const [selectedColor, setSelectedColor] = useState<string>(polygon?.lineColor ?? 'black');
 
   const lang = useLanguage();
-  const { Option } = Select;
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);
   };
 
-  const needChange = (width: number) => {
+  const needChange = (color: string) => {
     if (!polygon) return;
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Polygon && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
-            if (width !== e.lineWidth) {
+            if (color !== e.lineColor) {
               return true;
             }
           }
@@ -56,7 +56,7 @@ const PolygonLineWidthSelection = ({ setDialogVisible }: { setDialogVisible: (b:
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Polygon && !e.locked) {
-            if (width !== e.lineWidth) {
+            if (color !== e.lineColor) {
               return true;
             }
           }
@@ -70,7 +70,7 @@ const PolygonLineWidthSelection = ({ setDialogVisible }: { setDialogVisible: (b:
             Util.isIdentical(e.normal, polygon.normal) &&
             !e.locked
           ) {
-            if (e.lineWidth !== width) {
+            if (e.lineColor !== color) {
               return true;
             }
           }
@@ -79,183 +79,183 @@ const PolygonLineWidthSelection = ({ setDialogVisible }: { setDialogVisible: (b:
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         for (const e of elements) {
           if (e.type === ObjectType.Polygon && e.foundationId === polygon?.foundationId && !e.locked) {
-            if (e.lineWidth !== width) {
+            if (e.lineColor !== color) {
               return true;
             }
           }
         }
         break;
       default:
-        if (width !== polygon?.lineWidth) {
+        if (color !== polygon?.lineColor) {
           return true;
         }
     }
     return false;
   };
 
-  const updateInMap = (map: Map<string, number>, value: number) => {
+  const updateInMap = (map: Map<string, string>, value: string) => {
     useStore.getState().set((state) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Polygon && !e.locked && map.has(e.id)) {
-          (e as PolygonModel).lineWidth = value;
+          (e as PolygonModel).lineColor = value;
         }
       }
     });
   };
 
-  const setLineWidth = (value: number) => {
+  const setColor = (value: string) => {
     if (!polygon) return;
     if (!needChange(value)) return;
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType: {
-        const oldLineWidthsSelected = new Map<string, number>();
+        const oldColorsSelected = new Map<string, string>();
         for (const elem of elements) {
           if (elem.type === ObjectType.Polygon && useStore.getState().selectedElementIdSet.has(elem.id)) {
-            oldLineWidthsSelected.set(elem.id, elem.lineWidth ?? 1);
+            oldColorsSelected.set(elem.id, elem.lineColor ?? 'black');
           }
         }
         const undoableChangeSelected = {
-          name: 'Set Line Width for Selected Polygons',
+          name: 'Set Line Color for Selected Polygons',
           timestamp: Date.now(),
-          oldValues: oldLineWidthsSelected,
+          oldValues: oldColorsSelected,
           newValue: value,
           undo: () => {
-            for (const [id, width] of undoableChangeSelected.oldValues.entries()) {
-              updateElementLineWidthById(id, width as number);
+            for (const [id, color] of undoableChangeSelected.oldValues.entries()) {
+              updateElementLineColorById(id, color as string);
             }
           },
           redo: () => {
             updateInMap(
-              undoableChangeSelected.oldValues as Map<string, number>,
-              undoableChangeSelected.newValue as number,
+              undoableChangeSelected.oldValues as Map<string, string>,
+              undoableChangeSelected.newValue as string,
             );
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeSelected);
-        updateInMap(oldLineWidthsSelected, value);
+        updateInMap(oldColorsSelected, value);
         setApplyCount(applyCount + 1);
         break;
       }
       case Scope.AllObjectsOfThisType: {
-        const oldLineWidthsAll = new Map<string, number>();
+        const oldColorsAll = new Map<string, string>();
         for (const elem of elements) {
           if (elem.type === ObjectType.Polygon) {
-            oldLineWidthsAll.set(elem.id, elem.lineWidth ?? 1);
+            oldColorsAll.set(elem.id, elem.lineColor ?? 'black');
           }
         }
         const undoableChangeAll = {
-          name: 'Set Line Width for All Polygons',
+          name: 'Set Line Color for All Polygons',
           timestamp: Date.now(),
-          oldValues: oldLineWidthsAll,
+          oldValues: oldColorsAll,
           newValue: value,
           undo: () => {
-            for (const [id, width] of undoableChangeAll.oldValues.entries()) {
-              updateElementLineWidthById(id, width as number);
+            for (const [id, color] of undoableChangeAll.oldValues.entries()) {
+              updateElementLineColorById(id, color as string);
             }
           },
           redo: () => {
-            updateElementLineWidthForAll(ObjectType.Polygon, undoableChangeAll.newValue as number);
+            updateElementLineColorForAll(ObjectType.Polygon, undoableChangeAll.newValue as string);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateElementLineWidthForAll(ObjectType.Polygon, value);
+        updateElementLineColorForAll(ObjectType.Polygon, value);
         setApplyCount(applyCount + 1);
         break;
       }
       case Scope.AllObjectsOfThisTypeOnSurface:
         const parent = getParent(polygon);
         if (parent) {
-          const oldLineWidthsOnSurface = new Map<string, number>();
+          const oldLineColorsOnSurface = new Map<string, string>();
           for (const elem of elements) {
             if (
               elem.type === ObjectType.Polygon &&
               elem.parentId === polygon.parentId &&
               Util.isIdentical(elem.normal, polygon.normal)
             ) {
-              oldLineWidthsOnSurface.set(elem.id, elem.lineWidth ?? 1);
+              oldLineColorsOnSurface.set(elem.id, elem.lineColor ?? 'gray');
             }
           }
           const undoableChangeOnSurface = {
-            name: 'Set Line Width for All Polygons on Same Surface',
+            name: 'Set Line Color for All Polygons on Same Surface',
             timestamp: Date.now(),
-            oldValues: oldLineWidthsOnSurface,
+            oldValues: oldLineColorsOnSurface,
             newValue: value,
             groupId: polygon.parentId,
             normal: polygon.normal,
             undo: () => {
-              for (const [id, width] of undoableChangeOnSurface.oldValues.entries()) {
-                updateElementLineWidthById(id, width as number);
+              for (const [id, lc] of undoableChangeOnSurface.oldValues.entries()) {
+                updateElementLineColorById(id, lc as string);
               }
             },
             redo: () => {
               if (undoableChangeOnSurface.groupId) {
-                updateElementLineWidthOnSurface(
+                updateElementLineColorOnSurface(
                   ObjectType.Polygon,
                   undoableChangeOnSurface.groupId,
                   undoableChangeOnSurface.normal,
-                  undoableChangeOnSurface.newValue as number,
+                  undoableChangeOnSurface.newValue as string,
                 );
               }
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeOnSurface);
-          updateElementLineWidthOnSurface(ObjectType.Polygon, polygon.parentId, polygon.normal, value);
+          updateElementLineColorOnSurface(ObjectType.Polygon, polygon.parentId, polygon.normal, value);
           setApplyCount(applyCount + 1);
         }
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (polygon.foundationId) {
-          const oldLineWidthsAboveFoundation = new Map<string, number>();
+          const oldLineColorsAboveFoundation = new Map<string, string>();
           for (const elem of elements) {
             if (elem.type === ObjectType.Polygon && elem.foundationId === polygon.foundationId) {
-              oldLineWidthsAboveFoundation.set(elem.id, elem.lineWidth ?? 1);
+              oldLineColorsAboveFoundation.set(elem.id, elem.lineColor ?? 'black');
             }
           }
           const undoableChangeAboveFoundation = {
-            name: 'Set Line Width for All Polygons Above Foundation',
+            name: 'Set Line Color for All Polygons Above Foundation',
             timestamp: Date.now(),
-            oldValues: oldLineWidthsAboveFoundation,
+            oldValues: oldLineColorsAboveFoundation,
             newValue: value,
             groupId: polygon.foundationId,
             undo: () => {
-              for (const [id, width] of undoableChangeAboveFoundation.oldValues.entries()) {
-                updateElementLineWidthById(id, width as number);
+              for (const [id, lc] of undoableChangeAboveFoundation.oldValues.entries()) {
+                updateElementLineColorById(id, lc as string);
               }
             },
             redo: () => {
               if (undoableChangeAboveFoundation.groupId) {
-                updateElementLineWidthAboveFoundation(
+                updateElementLineColorAboveFoundation(
                   ObjectType.Polygon,
                   undoableChangeAboveFoundation.groupId,
-                  undoableChangeAboveFoundation.newValue as number,
+                  undoableChangeAboveFoundation.newValue as string,
                 );
               }
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAboveFoundation);
-          updateElementLineWidthAboveFoundation(ObjectType.Polygon, polygon.foundationId, value);
+          updateElementLineColorAboveFoundation(ObjectType.Polygon, polygon.foundationId, value);
           setApplyCount(applyCount + 1);
         }
         break;
       default:
         const p = getElementById(polygon.id) as PolygonModel;
-        const oldWidth = p ? p.lineWidth : polygon.lineWidth;
+        const oldColor = p ? p.lineColor : polygon.lineColor;
         const undoableChange = {
-          name: 'Set Line Width of Selected Polygon',
+          name: 'Set Line Color of Selected Polygon',
           timestamp: Date.now(),
-          oldValue: oldWidth,
+          oldValue: oldColor,
           newValue: value,
           changedElementId: polygon.id,
           changedElementType: polygon.type,
           undo: () => {
-            updateElementLineWidthById(undoableChange.changedElementId, undoableChange.oldValue as number);
+            updateElementLineColorById(undoableChange.changedElementId, undoableChange.oldValue as string);
           },
           redo: () => {
-            updateElementLineWidthById(undoableChange.changedElementId, undoableChange.newValue as number);
+            updateElementLineColorById(undoableChange.changedElementId, undoableChange.newValue as string);
           },
         } as UndoableChange;
         addUndoable(undoableChange);
-        updateElementLineWidthById(polygon.id, value);
+        updateElementLineColorById(polygon.id, value);
         setApplyCount(applyCount + 1);
     }
   };
@@ -265,90 +265,24 @@ const PolygonLineWidthSelection = ({ setDialogVisible }: { setDialogVisible: (b:
   };
 
   const apply = () => {
-    setLineWidth(selectedLineWidth);
-    setDialogVisible(false);
-    setApplyCount(0);
+    setColor(selectedColor);
   };
 
   return (
-    <Dialog width={560} title={i18n.t('polygonMenu.LineWidth', lang)} onApply={apply} onClose={close}>
+    <Dialog width={600} title={i18n.t('polygonMenu.LineColor', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
-        <Col className="gutter-row" span={10}>
-          <Select
-            style={{ width: '200px' }}
-            value={selectedLineWidth}
-            onChange={(value) => setSelectedLineWidth(value)}
-          >
-            <Option key={LineWidth.One} value={LineWidth.One}>
-              <div
-                style={{
-                  display: 'inline-block',
-                  verticalAlign: 'middle',
-                  marginRight: '24px',
-                  width: '100%',
-                  height: '1px',
-                  border: '1px solid dimGray',
-                }}
-              />
-            </Option>
-
-            <Option key={LineWidth.Two} value={LineWidth.Two}>
-              <div
-                style={{
-                  display: 'inline-block',
-                  verticalAlign: 'middle',
-                  marginRight: '24px',
-                  width: '100%',
-                  height: '1px',
-                  border: '2px solid dimGray',
-                }}
-              />
-            </Option>
-
-            <Option key={LineWidth.Three} value={LineWidth.Three}>
-              <div
-                style={{
-                  display: 'inline-block',
-                  verticalAlign: 'middle',
-                  marginRight: '24px',
-                  width: '100%',
-                  height: '1px',
-                  border: '3px solid dimGray',
-                }}
-              />
-            </Option>
-
-            <Option key={LineWidth.Four} value={LineWidth.Four}>
-              <div
-                style={{
-                  display: 'inline-block',
-                  verticalAlign: 'middle',
-                  marginRight: '24px',
-                  width: '100%',
-                  height: '1px',
-                  border: '4px solid dimGray',
-                }}
-              />
-            </Option>
-
-            <Option key={LineWidth.Five} value={LineWidth.Five}>
-              <div
-                style={{
-                  display: 'inline-block',
-                  verticalAlign: 'middle',
-                  marginRight: '24px',
-                  width: '100%',
-                  height: '1px',
-                  border: '5px solid dimGray',
-                }}
-              />
-            </Option>
-          </Select>
+        <Col className="gutter-row" span={12}>
+          <CompactPicker
+            color={selectedColor ?? polygon?.lineColor ?? 'black'}
+            onChangeComplete={(colorResult) => {
+              setSelectedColor(colorResult.hex);
+            }}
+          />
         </Col>
         <Col
           className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-          span={14}
+          span={12}
         >
           <Radio.Group onChange={onScopeChange} value={actionScope}>
             <Space direction="vertical">
@@ -371,4 +305,4 @@ const PolygonLineWidthSelection = ({ setDialogVisible }: { setDialogVisible: (b:
   );
 };
 
-export default PolygonLineWidthSelection;
+export default PolygonLineColorSelection;

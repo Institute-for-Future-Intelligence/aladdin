@@ -4,23 +4,26 @@
 
 import React, { useState } from 'react';
 import { Col, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
-import { CommonStoreState, useStore } from '../../../stores/common';
-import * as Selector from '../../../stores/selector';
-import { LineStyle, ObjectType, Scope } from '../../../types';
-import i18n from '../../../i18n/i18n';
-import { UndoableChange } from '../../../undo/UndoableChange';
-import { PolygonModel } from '../../../models/PolygonModel';
-import { Util } from '../../../Util';
-import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
-import { useSelectedElement } from './menuHooks';
-import Dialog from '../dialog';
+import { useStore } from '../../../../stores/common';
+import * as Selector from '../../../../stores/selector';
+import { LineStyle, LineWidth, ObjectType, Scope } from '../../../../types';
+import i18n from '../../../../i18n/i18n';
+import { UndoableChange } from '../../../../undo/UndoableChange';
+import { PolygonModel } from '../../../../models/PolygonModel';
+import { Util } from '../../../../Util';
+import { UndoableChangeGroup } from '../../../../undo/UndoableChangeGroup';
+import { useSelectedElement } from '../menuHooks';
+import Dialog from '../../dialog';
 import { useLanguage } from 'src/views/hooks';
 
-const PolygonLineStyleSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
-  const setCommonStore = useStore(Selector.set);
+const PolygonLineWidthSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
   const getParent = useStore(Selector.getParent);
+  const updateElementLineWidthById = useStore(Selector.updateElementLineWidthById);
+  const updateElementLineWidthOnSurface = useStore(Selector.updateElementLineWidthOnSurface);
+  const updateElementLineWidthAboveFoundation = useStore(Selector.updateElementLineWidthAboveFoundation);
+  const updateElementLineWidthForAll = useStore(Selector.updateElementLineWidthForAll);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.polygonActionScope);
   const setActionScope = useStore(Selector.setPolygonActionScope);
@@ -29,68 +32,22 @@ const PolygonLineStyleSelection = ({ setDialogVisible }: { setDialogVisible: (b:
 
   const polygon = useSelectedElement(ObjectType.Polygon) as PolygonModel | undefined;
 
-  const [selectedLineStyle, setSelectedLineStyle] = useState<LineStyle>(polygon?.lineStyle ?? LineStyle.Solid);
+  const [selectedLineWidth, setSelectedLineWidth] = useState<LineStyle>(polygon?.lineWidth ?? 1);
 
   const lang = useLanguage();
   const { Option } = Select;
-
-  const updatePolygonLineStyleById = (id: string, style: LineStyle) => {
-    setCommonStore((state: CommonStoreState) => {
-      for (const e of state.elements) {
-        if (e.type === ObjectType.Polygon && e.id === id) {
-          (e as PolygonModel).lineStyle = style;
-          break;
-        }
-      }
-    });
-  };
-
-  const updatePolygonLineStyleOnSurface = (parentId: string, normal: number[] | undefined, style: LineStyle) => {
-    setCommonStore((state: CommonStoreState) => {
-      for (const e of state.elements) {
-        if (
-          e.type === ObjectType.Polygon &&
-          e.parentId === parentId &&
-          Util.isIdentical(e.normal, normal) &&
-          !e.locked
-        ) {
-          (e as PolygonModel).lineStyle = style;
-        }
-      }
-    });
-  };
-
-  const updatePolygonLineStyleAboveFoundation = (foundationId: string, style: LineStyle) => {
-    setCommonStore((state: CommonStoreState) => {
-      for (const e of state.elements) {
-        if (e.type === ObjectType.Polygon && e.foundationId === foundationId && !e.locked) {
-          (e as PolygonModel).lineStyle = style;
-        }
-      }
-    });
-  };
-
-  const updatePolygonLineStyleForAll = (style: LineStyle) => {
-    setCommonStore((state: CommonStoreState) => {
-      for (const e of state.elements) {
-        if (e.type === ObjectType.Polygon && !e.locked) {
-          (e as PolygonModel).lineStyle = style;
-        }
-      }
-    });
-  };
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);
   };
 
-  const needChange = (style: LineStyle) => {
+  const needChange = (width: number) => {
     if (!polygon) return;
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Polygon && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
-            if (style !== (e as PolygonModel).lineStyle) {
+            if (width !== e.lineWidth) {
               return true;
             }
           }
@@ -99,7 +56,7 @@ const PolygonLineStyleSelection = ({ setDialogVisible }: { setDialogVisible: (b:
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Polygon && !e.locked) {
-            if (style !== (e as PolygonModel).lineStyle) {
+            if (width !== e.lineWidth) {
               return true;
             }
           }
@@ -113,7 +70,7 @@ const PolygonLineStyleSelection = ({ setDialogVisible }: { setDialogVisible: (b:
             Util.isIdentical(e.normal, polygon.normal) &&
             !e.locked
           ) {
-            if (style !== (e as PolygonModel).lineStyle) {
+            if (e.lineWidth !== width) {
               return true;
             }
           }
@@ -122,181 +79,183 @@ const PolygonLineStyleSelection = ({ setDialogVisible }: { setDialogVisible: (b:
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         for (const e of elements) {
           if (e.type === ObjectType.Polygon && e.foundationId === polygon?.foundationId && !e.locked) {
-            if (style !== (e as PolygonModel).lineStyle) {
+            if (e.lineWidth !== width) {
               return true;
             }
           }
         }
         break;
       default:
-        if (style !== polygon?.lineStyle) {
+        if (width !== polygon?.lineWidth) {
           return true;
         }
     }
     return false;
   };
 
-  const updateInMap = (map: Map<string, LineStyle>, value: LineStyle) => {
+  const updateInMap = (map: Map<string, number>, value: number) => {
     useStore.getState().set((state) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Polygon && !e.locked && map.has(e.id)) {
-          (e as PolygonModel).lineStyle = value;
+          (e as PolygonModel).lineWidth = value;
         }
       }
     });
   };
 
-  const setLineStyle = (value: LineStyle) => {
+  const setLineWidth = (value: number) => {
     if (!polygon) return;
     if (!needChange(value)) return;
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType: {
-        const oldLineStylesSelected = new Map<string, LineStyle>();
+        const oldLineWidthsSelected = new Map<string, number>();
         for (const elem of elements) {
           if (elem.type === ObjectType.Polygon && useStore.getState().selectedElementIdSet.has(elem.id)) {
-            oldLineStylesSelected.set(elem.id, (elem as PolygonModel).lineStyle ?? LineStyle.Solid);
+            oldLineWidthsSelected.set(elem.id, elem.lineWidth ?? 1);
           }
         }
         const undoableChangeSelected = {
-          name: 'Set Line Style for Selected Polygons',
+          name: 'Set Line Width for Selected Polygons',
           timestamp: Date.now(),
-          oldValues: oldLineStylesSelected,
+          oldValues: oldLineWidthsSelected,
           newValue: value,
           undo: () => {
-            for (const [id, style] of undoableChangeSelected.oldValues.entries()) {
-              updatePolygonLineStyleById(id, style as LineStyle);
+            for (const [id, width] of undoableChangeSelected.oldValues.entries()) {
+              updateElementLineWidthById(id, width as number);
             }
           },
           redo: () => {
             updateInMap(
-              undoableChangeSelected.oldValues as Map<string, LineStyle>,
-              undoableChangeSelected.newValue as LineStyle,
+              undoableChangeSelected.oldValues as Map<string, number>,
+              undoableChangeSelected.newValue as number,
             );
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeSelected);
-        updateInMap(oldLineStylesSelected, value);
+        updateInMap(oldLineWidthsSelected, value);
         setApplyCount(applyCount + 1);
         break;
       }
       case Scope.AllObjectsOfThisType: {
-        const oldLineStylesAll = new Map<string, LineStyle>();
+        const oldLineWidthsAll = new Map<string, number>();
         for (const elem of elements) {
           if (elem.type === ObjectType.Polygon) {
-            oldLineStylesAll.set(elem.id, (elem as PolygonModel).lineStyle ?? LineStyle.Solid);
+            oldLineWidthsAll.set(elem.id, elem.lineWidth ?? 1);
           }
         }
         const undoableChangeAll = {
-          name: 'Set Line Style for All Polygons',
+          name: 'Set Line Width for All Polygons',
           timestamp: Date.now(),
-          oldValues: oldLineStylesAll,
+          oldValues: oldLineWidthsAll,
           newValue: value,
           undo: () => {
-            for (const [id, style] of undoableChangeAll.oldValues.entries()) {
-              updatePolygonLineStyleById(id, style as LineStyle);
+            for (const [id, width] of undoableChangeAll.oldValues.entries()) {
+              updateElementLineWidthById(id, width as number);
             }
           },
           redo: () => {
-            updatePolygonLineStyleForAll(undoableChangeAll.newValue as LineStyle);
+            updateElementLineWidthForAll(ObjectType.Polygon, undoableChangeAll.newValue as number);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updatePolygonLineStyleForAll(value);
+        updateElementLineWidthForAll(ObjectType.Polygon, value);
         setApplyCount(applyCount + 1);
         break;
       }
       case Scope.AllObjectsOfThisTypeOnSurface:
         const parent = getParent(polygon);
         if (parent) {
-          const oldLineStylesOnSurface = new Map<string, LineStyle>();
+          const oldLineWidthsOnSurface = new Map<string, number>();
           for (const elem of elements) {
             if (
               elem.type === ObjectType.Polygon &&
               elem.parentId === polygon.parentId &&
               Util.isIdentical(elem.normal, polygon.normal)
             ) {
-              oldLineStylesOnSurface.set(elem.id, (elem as PolygonModel).lineStyle ?? LineStyle.Solid);
+              oldLineWidthsOnSurface.set(elem.id, elem.lineWidth ?? 1);
             }
           }
           const undoableChangeOnSurface = {
-            name: 'Set Line Style for All Polygons on Same Surface',
+            name: 'Set Line Width for All Polygons on Same Surface',
             timestamp: Date.now(),
-            oldValues: oldLineStylesOnSurface,
+            oldValues: oldLineWidthsOnSurface,
             newValue: value,
             groupId: polygon.parentId,
             normal: polygon.normal,
             undo: () => {
-              for (const [id, style] of undoableChangeOnSurface.oldValues.entries()) {
-                updatePolygonLineStyleById(id, style as LineStyle);
+              for (const [id, width] of undoableChangeOnSurface.oldValues.entries()) {
+                updateElementLineWidthById(id, width as number);
               }
             },
             redo: () => {
               if (undoableChangeOnSurface.groupId) {
-                updatePolygonLineStyleOnSurface(
+                updateElementLineWidthOnSurface(
+                  ObjectType.Polygon,
                   undoableChangeOnSurface.groupId,
                   undoableChangeOnSurface.normal,
-                  undoableChangeOnSurface.newValue as LineStyle,
+                  undoableChangeOnSurface.newValue as number,
                 );
               }
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeOnSurface);
-          updatePolygonLineStyleOnSurface(polygon.parentId, polygon.normal, value);
+          updateElementLineWidthOnSurface(ObjectType.Polygon, polygon.parentId, polygon.normal, value);
           setApplyCount(applyCount + 1);
         }
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (polygon.foundationId) {
-          const oldLineStylesAboveFoundation = new Map<string, LineStyle>();
+          const oldLineWidthsAboveFoundation = new Map<string, number>();
           for (const elem of elements) {
             if (elem.type === ObjectType.Polygon && elem.foundationId === polygon.foundationId) {
-              oldLineStylesAboveFoundation.set(elem.id, (elem as PolygonModel).lineStyle ?? LineStyle.Solid);
+              oldLineWidthsAboveFoundation.set(elem.id, elem.lineWidth ?? 1);
             }
           }
           const undoableChangeAboveFoundation = {
-            name: 'Set Line Style for All Polygons Above Foundation',
+            name: 'Set Line Width for All Polygons Above Foundation',
             timestamp: Date.now(),
-            oldValues: oldLineStylesAboveFoundation,
+            oldValues: oldLineWidthsAboveFoundation,
             newValue: value,
             groupId: polygon.foundationId,
             undo: () => {
-              for (const [id, style] of undoableChangeAboveFoundation.oldValues.entries()) {
-                updatePolygonLineStyleById(id, style as LineStyle);
+              for (const [id, width] of undoableChangeAboveFoundation.oldValues.entries()) {
+                updateElementLineWidthById(id, width as number);
               }
             },
             redo: () => {
               if (undoableChangeAboveFoundation.groupId) {
-                updatePolygonLineStyleAboveFoundation(
+                updateElementLineWidthAboveFoundation(
+                  ObjectType.Polygon,
                   undoableChangeAboveFoundation.groupId,
-                  undoableChangeAboveFoundation.newValue as LineStyle,
+                  undoableChangeAboveFoundation.newValue as number,
                 );
               }
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAboveFoundation);
-          updatePolygonLineStyleAboveFoundation(polygon.foundationId, value);
+          updateElementLineWidthAboveFoundation(ObjectType.Polygon, polygon.foundationId, value);
           setApplyCount(applyCount + 1);
         }
         break;
       default:
         const p = getElementById(polygon.id) as PolygonModel;
-        const oldStyle = p ? p.lineStyle : polygon.lineStyle;
+        const oldWidth = p ? p.lineWidth : polygon.lineWidth;
         const undoableChange = {
-          name: 'Set Line Style of Selected Polygon',
+          name: 'Set Line Width of Selected Polygon',
           timestamp: Date.now(),
-          oldValue: oldStyle,
+          oldValue: oldWidth,
           newValue: value,
           changedElementId: polygon.id,
           changedElementType: polygon.type,
           undo: () => {
-            updatePolygonLineStyleById(undoableChange.changedElementId, undoableChange.oldValue as LineStyle);
+            updateElementLineWidthById(undoableChange.changedElementId, undoableChange.oldValue as number);
           },
           redo: () => {
-            updatePolygonLineStyleById(undoableChange.changedElementId, undoableChange.newValue as LineStyle);
+            updateElementLineWidthById(undoableChange.changedElementId, undoableChange.newValue as number);
           },
         } as UndoableChange;
         addUndoable(undoableChange);
-        updatePolygonLineStyleById(polygon.id, value);
+        updateElementLineWidthById(polygon.id, value);
         setApplyCount(applyCount + 1);
     }
   };
@@ -306,64 +265,83 @@ const PolygonLineStyleSelection = ({ setDialogVisible }: { setDialogVisible: (b:
   };
 
   const apply = () => {
-    setLineStyle(selectedLineStyle);
+    setLineWidth(selectedLineWidth);
+    setDialogVisible(false);
+    setApplyCount(0);
   };
 
   return (
-    <Dialog width={600} title={i18n.t('polygonMenu.LineStyle', lang)} onApply={apply} onClose={close}>
+    <Dialog width={560} title={i18n.t('polygonMenu.LineWidth', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
         <Col className="gutter-row" span={10}>
           <Select
             style={{ width: '200px' }}
-            value={selectedLineStyle}
-            onChange={(value) => setSelectedLineStyle(value)}
+            value={selectedLineWidth}
+            onChange={(value) => setSelectedLineWidth(value)}
           >
-            <Option key={LineStyle.Solid} value={LineStyle.Solid}>
+            <Option key={LineWidth.One} value={LineWidth.One}>
               <div
                 style={{
                   display: 'inline-block',
                   verticalAlign: 'middle',
-                  marginRight: '12px',
-                  width: '48px',
+                  marginRight: '24px',
+                  width: '100%',
                   height: '1px',
                   border: '1px solid dimGray',
                 }}
-              >
-                {' '}
-              </div>
-              {i18n.t('polygonMenu.SolidLine', lang)}
+              />
             </Option>
 
-            <Option key={LineStyle.Dashed} value={LineStyle.Dashed}>
+            <Option key={LineWidth.Two} value={LineWidth.Two}>
               <div
                 style={{
                   display: 'inline-block',
                   verticalAlign: 'middle',
-                  marginRight: '12px',
-                  width: '48px',
+                  marginRight: '24px',
+                  width: '100%',
                   height: '1px',
-                  border: '1px dashed dimGray',
+                  border: '2px solid dimGray',
                 }}
-              >
-                {' '}
-              </div>
-              {i18n.t('polygonMenu.DashedLine', lang)}
+              />
             </Option>
 
-            <Option key={LineStyle.Dotted} value={LineStyle.Dotted}>
+            <Option key={LineWidth.Three} value={LineWidth.Three}>
               <div
                 style={{
                   display: 'inline-block',
                   verticalAlign: 'middle',
-                  marginRight: '12px',
-                  width: '48px',
+                  marginRight: '24px',
+                  width: '100%',
                   height: '1px',
-                  border: '1px dotted dimGray',
+                  border: '3px solid dimGray',
                 }}
-              >
-                {' '}
-              </div>
-              {i18n.t('polygonMenu.DottedLine', lang)}
+              />
+            </Option>
+
+            <Option key={LineWidth.Four} value={LineWidth.Four}>
+              <div
+                style={{
+                  display: 'inline-block',
+                  verticalAlign: 'middle',
+                  marginRight: '24px',
+                  width: '100%',
+                  height: '1px',
+                  border: '4px solid dimGray',
+                }}
+              />
+            </Option>
+
+            <Option key={LineWidth.Five} value={LineWidth.Five}>
+              <div
+                style={{
+                  display: 'inline-block',
+                  verticalAlign: 'middle',
+                  marginRight: '24px',
+                  width: '100%',
+                  height: '1px',
+                  border: '5px solid dimGray',
+                }}
+              />
             </Option>
           </Select>
         </Col>
@@ -393,4 +371,4 @@ const PolygonLineStyleSelection = ({ setDialogVisible }: { setDialogVisible: (b:
   );
 };
 
-export default PolygonLineStyleSelection;
+export default PolygonLineWidthSelection;

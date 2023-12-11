@@ -8,8 +8,6 @@ import { useStore } from '../../stores/common';
 import * as Selector from '../../stores/selector';
 import { ObjectType } from '../../types';
 import {
-  PolygonMenu,
-  PolygonVertexMenu,
   createGroundMenu,
   createSkyMenu,
   createFoundationMenu,
@@ -28,6 +26,8 @@ import {
   createParabolicDishMenu,
   createFresnelReflectorMenu,
   createHeliostatMenu,
+  createPolygonMenu,
+  createPolygonVertexMenu,
 } from './elementMenu';
 import { WindTurbineMenu } from './elementMenu/windTurbineMenu';
 import { useSelectedElement } from './elementMenu/menuHooks';
@@ -98,19 +98,11 @@ const DropdownContextMenu: React.FC<ContextMenuProps> = ({ children }) => {
         return createFresnelReflectorMenu(elementRef.current);
       case ObjectType.Heliostat:
         return createHeliostatMenu(elementRef.current);
+      case ObjectType.Polygon:
+        return createPolygonMenu(elementRef.current);
+      case ObjectType.PolygonVertex:
+        return createPolygonVertexMenu(elementRef.current);
 
-      // case ObjectType.Polygon:
-      //   return (
-      //     <Menu triggerSubMenuAction={'click'}>
-      //       <PolygonMenu />
-      //     </Menu>
-      //   );
-      // case ObjectType.PolygonVertex:
-      //   return (
-      //     <Menu triggerSubMenuAction={'click'}>
-      //       <PolygonVertexMenu />
-      //     </Menu>
-      //   );
       // case ObjectType.WindTurbine:
       //   return (
       //     <Menu triggerSubMenuAction={'click'}>

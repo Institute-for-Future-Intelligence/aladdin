@@ -1016,4 +1016,4 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
   );
 };
 
-export default React.memo(SolarPanelArrayPsoWizard);
+export default SolarPanelArrayPsoWizard;

@@ -103,10 +103,12 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
   });
 
   // group-master
-  items.push({
-    key: 'foundation-group-master',
-    label: <GroupMasterCheckbox groupableElement={foundation} />,
-  });
+  if (editable) {
+    items.push({
+      key: 'foundation-group-master',
+      label: <GroupMasterCheckbox groupableElement={foundation} />,
+    });
+  }
 
   // building
   items.push({

@@ -2,29 +2,29 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import Polygon_Texture_01_Menu from '../../../resources/foundation_01_menu.png';
-import Polygon_Texture_02_Menu from '../../../resources/foundation_02_menu.png';
-import Polygon_Texture_03_Menu from '../../../resources/foundation_03_menu.png';
-import Polygon_Texture_04_Menu from '../../../resources/foundation_04_menu.png';
-import Polygon_Texture_05_Menu from '../../../resources/foundation_05_menu.png';
-import Polygon_Texture_06_Menu from '../../../resources/foundation_06_menu.png';
-import Polygon_Texture_07_Menu from '../../../resources/foundation_07_menu.png';
-import Polygon_Texture_08_Menu from '../../../resources/polygon_08_menu.png';
-import Polygon_Texture_09_Menu from '../../../resources/polygon_09_menu.png';
-import Polygon_Texture_10_Menu from '../../../resources/polygon_10_menu.png';
+import Polygon_Texture_01_Menu from 'src/resources/foundation_01_menu.png';
+import Polygon_Texture_02_Menu from 'src/resources/foundation_02_menu.png';
+import Polygon_Texture_03_Menu from 'src/resources/foundation_03_menu.png';
+import Polygon_Texture_04_Menu from 'src/resources/foundation_04_menu.png';
+import Polygon_Texture_05_Menu from 'src/resources/foundation_05_menu.png';
+import Polygon_Texture_06_Menu from 'src/resources/foundation_06_menu.png';
+import Polygon_Texture_07_Menu from 'src/resources/foundation_07_menu.png';
+import Polygon_Texture_08_Menu from 'src/resources/polygon_08_menu.png';
+import Polygon_Texture_09_Menu from 'src/resources/polygon_09_menu.png';
+import Polygon_Texture_10_Menu from 'src/resources/polygon_10_menu.png';
 
 import React, { useState } from 'react';
 import { Col, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
-import { CommonStoreState, useStore } from '../../../stores/common';
-import * as Selector from '../../../stores/selector';
-import { ObjectType, PolygonTexture, Scope } from '../../../types';
-import i18n from '../../../i18n/i18n';
-import { UndoableChange } from '../../../undo/UndoableChange';
-import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
-import { PolygonModel } from '../../../models/PolygonModel';
-import { Util } from '../../../Util';
-import { useSelectedElement } from './menuHooks';
-import Dialog from '../dialog';
+import { CommonStoreState, useStore } from '../../../../stores/common';
+import * as Selector from '../../../../stores/selector';
+import { ObjectType, PolygonTexture, Scope } from '../../../../types';
+import i18n from '../../../../i18n/i18n';
+import { UndoableChange } from '../../../../undo/UndoableChange';
+import { UndoableChangeGroup } from '../../../../undo/UndoableChangeGroup';
+import { PolygonModel } from '../../../../models/PolygonModel';
+import { Util } from '../../../../Util';
+import { useSelectedElement } from '../menuHooks';
+import Dialog from '../../dialog';
 import { useLanguage } from 'src/views/hooks';
 
 const PolygonTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
