@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import ReactDraggable, { DraggableBounds, DraggableData, DraggableEvent, DraggableEventHandler } from 'react-draggable';
-import { Dropdown, Input, Menu, Modal, Space, Table, Typography } from 'antd';
+import { Dropdown, Input, Modal, Space, Table, Typography } from 'antd';
 import { CaretDownOutlined, QuestionCircleOutlined, WarningOutlined } from '@ant-design/icons';
 import { HOME_URL, REGEX_ALLOWABLE_IN_NAME, Z_INDEX_FRONT_PANEL } from '../constants';
 import { copyTextToClipboard, showSuccess } from '../helpers';
@@ -15,6 +15,8 @@ import Draggable from 'react-draggable';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { ProjectInfo } from '../types';
 import { useTranslation } from 'react-i18next';
+import { MenuProps } from 'antd/lib';
+import { MenuItem } from 'src/components/contextMenu/menuItems';
 
 const { Column } = Table;
 
@@ -333,73 +335,77 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
                 }}
                 render={(title, record, index) => {
                   let selection: string | undefined = undefined;
+
+                  const items: MenuProps['items'] = [
+                    {
+                      key: 'open-project',
+                      label: (
+                        <MenuItem noPadding onClick={() => setProjectState(record as ProjectInfo)}>
+                          {t('word.Open', lang)}
+                        </MenuItem>
+                      ),
+                    },
+                    {
+                      key: 'copy-title-to-clip-board',
+                      label: (
+                        <MenuItem
+                          noPadding
+                          onClick={() => {
+                            if (selection && selection.length > 0) {
+                              copyTextToClipboard(selection);
+                            } else {
+                              copyTextToClipboard(title);
+                            }
+                            showSuccess(t('projectListPanel.TitleCopiedToClipBoard', lang) + '.');
+                          }}
+                        >
+                          {t('projectListPanel.CopyTitle', lang)}
+                        </MenuItem>
+                      ),
+                    },
+                    {
+                      key: 'rename-project',
+                      label: (
+                        <MenuItem
+                          noPadding
+                          onClick={() => {
+                            setOldTitle(title);
+                            setRenameDialogVisible(true);
+                          }}
+                        >
+                          {t('word.Rename', lang)}
+                        </MenuItem>
+                      ),
+                    },
+                    {
+                      key: 'delete-project',
+                      label: (
+                        <MenuItem noPadding onClick={() => confirmDeleteProject(title)}>
+                          {t('word.Delete', lang)}
+                        </MenuItem>
+                      ),
+                    },
+                    {
+                      key: 'generate-project-link',
+                      label: (
+                        <MenuItem
+                          noPadding
+                          onClick={() => {
+                            const url =
+                              HOME_URL + '?client=web&userid=' + user.uid + '&project=' + encodeURIComponent(title);
+                            copyTextToClipboard(url);
+                            showSuccess(t('projectListPanel.ProjectLinkGeneratedInClipBoard', lang) + '.');
+                          }}
+                        >
+                          {t('projectListPanel.GenerateProjectLink', lang)}
+                        </MenuItem>
+                      ),
+                    },
+                  ];
+
                   return (
                     <Space style={{ width: '100%' }}>
-                      {/* <Dropdown
-                        overlay={
-                          <Menu
-                            onMouseEnter={(e) => {
-                              selection = window.getSelection()?.toString();
-                            }}
-                          >
-                            <Menu.Item
-                              onClick={(menuInfo) => {
-                                menuInfo.domEvent.preventDefault();
-                                menuInfo.domEvent.stopPropagation();
-                                setProjectState(record as ProjectInfo);
-                              }}
-                            >
-                              {t('word.Open', lang)}
-                            </Menu.Item>
-                            <Menu.Item
-                              onClick={(menuInfo) => {
-                                menuInfo.domEvent.preventDefault();
-                                menuInfo.domEvent.stopPropagation();
-                                if (selection && selection.length > 0) {
-                                  copyTextToClipboard(selection);
-                                } else {
-                                  copyTextToClipboard(title);
-                                }
-                                showSuccess(t('projectListPanel.TitleCopiedToClipBoard', lang) + '.');
-                              }}
-                            >
-                              {t('projectListPanel.CopyTitle', lang)}
-                            </Menu.Item>
-                            <Menu.Item
-                              onClick={(menuInfo) => {
-                                menuInfo.domEvent.preventDefault();
-                                menuInfo.domEvent.stopPropagation();
-                                setOldTitle(title);
-                                setRenameDialogVisible(true);
-                              }}
-                            >
-                              {t('word.Rename', lang)}
-                            </Menu.Item>
-                            <Menu.Item
-                              onClick={(menuInfo) => {
-                                menuInfo.domEvent.preventDefault();
-                                menuInfo.domEvent.stopPropagation();
-                                confirmDeleteProject(title);
-                              }}
-                            >
-                              {t('word.Delete', lang)}
-                            </Menu.Item>
-                            <Menu.Item
-                              onClick={(menuInfo) => {
-                                menuInfo.domEvent.preventDefault();
-                                menuInfo.domEvent.stopPropagation();
-                                const url =
-                                  HOME_URL + '?client=web&userid=' + user.uid + '&project=' + encodeURIComponent(title);
-                                copyTextToClipboard(url);
-                                showSuccess(t('projectListPanel.ProjectLinkGeneratedInClipBoard', lang) + '.');
-                              }}
-                            >
-                              {t('projectListPanel.GenerateProjectLink', lang)}
-                            </Menu.Item>
-                          </Menu>
-                        }
-                        trigger={['hover']}
-                      >
+                      <Dropdown menu={{ items }} trigger={['hover']}>
                         <CaretDownOutlined
                           style={{ fontSize: '12px', cursor: 'pointer' }}
                           onMouseEnter={() => {
@@ -409,7 +415,7 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
                             setSelectedIndex(-1);
                           }}
                         />
-                      </Dropdown> */}
+                      </Dropdown>
                       <Typography.Text style={{ fontSize: '12px', cursor: 'pointer', verticalAlign: 'top' }}>
                         {title}
                       </Typography.Text>
