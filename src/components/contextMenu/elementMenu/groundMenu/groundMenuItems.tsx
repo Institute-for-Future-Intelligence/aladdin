@@ -256,7 +256,13 @@ export const LeafShedDayInput = () => {
 };
 
 export const IrradianceLossInput = ({ monthIndex }: { monthIndex: number }) => {
-  const monthlyIrradianceLoss = useStore((state) => state.world.monthlyIrradianceLosses[monthIndex]) ?? 0.05;
+  const monthlyIrradianceLoss =
+    useStore((state) => {
+      if (!state.world.monthlyIrradianceLosses) {
+        return 0.05;
+      }
+      return state.world.monthlyIrradianceLosses[monthIndex];
+    }) ?? 0.05;
 
   const lang = useLanguage();
 
