@@ -3,7 +3,7 @@
  */
 
 import React, { PropsWithChildren, useEffect } from 'react';
-import { Button, Modal } from 'antd';
+import { Button, Divider, Modal } from 'antd';
 import { useRef, useState } from 'react';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useLanguage } from 'src/views/hooks';
@@ -121,7 +121,9 @@ const Dialog: React.FunctionComponent<PropsWithChildren<DialogProps>> = ({
         </Draggable>
       )}
     >
+      <Divider />
       {children}
+      <Divider />
     </Modal>
   );
 };

@@ -28,8 +28,8 @@ import {
   createHeliostatMenu,
   createPolygonMenu,
   createPolygonVertexMenu,
+  createWindTurbineMenu,
 } from './elementMenu';
-import { WindTurbineMenu } from './elementMenu/windTurbineMenu';
 import { useSelectedElement } from './elementMenu/menuHooks';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 
@@ -102,13 +102,8 @@ const DropdownContextMenu: React.FC<ContextMenuProps> = ({ children }) => {
         return createPolygonMenu(elementRef.current);
       case ObjectType.PolygonVertex:
         return createPolygonVertexMenu(elementRef.current);
-
-      // case ObjectType.WindTurbine:
-      //   return (
-      //     <Menu triggerSubMenuAction={'click'}>
-      //       <WindTurbineMenu />
-      //     </Menu>
-      //   );
+      case ObjectType.WindTurbine:
+        return createWindTurbineMenu(elementRef.current);
       default:
         return { items: [] };
     }

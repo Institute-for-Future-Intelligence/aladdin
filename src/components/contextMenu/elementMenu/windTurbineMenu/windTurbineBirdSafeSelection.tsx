@@ -4,17 +4,17 @@
 
 import React, { useState } from 'react';
 import { Col, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
-import { CommonStoreState, useStore } from '../../../stores/common';
-import * as Selector from '../../../stores/selector';
-import { BirdSafeDesign, ObjectType, Scope } from '../../../types';
-import i18n from '../../../i18n/i18n';
-import { UndoableChange } from '../../../undo/UndoableChange';
-import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
-import { useSelectedElement } from './menuHooks';
-import Dialog from '../dialog';
+import { CommonStoreState, useStore } from '../../../../stores/common';
+import * as Selector from '../../../../stores/selector';
+import { BirdSafeDesign, ObjectType, Scope } from '../../../../types';
+import i18n from '../../../../i18n/i18n';
+import { UndoableChange } from '../../../../undo/UndoableChange';
+import { UndoableChangeGroup } from '../../../../undo/UndoableChangeGroup';
+import { useSelectedElement } from '../menuHooks';
+import Dialog from '../../dialog';
 import { useLanguage } from 'src/views/hooks';
-import { WindTurbineModel } from '../../../models/WindTurbineModel';
-import { DEFAULT_WIND_TURBINE_BLADE_COLOR, DEFAULT_WIND_TURBINE_STRIPE_COLOR } from '../../../constants';
+import { WindTurbineModel } from '../../../../models/WindTurbineModel';
+import { DEFAULT_WIND_TURBINE_BLADE_COLOR, DEFAULT_WIND_TURBINE_STRIPE_COLOR } from '../../../../constants';
 
 const WindTurbineBirdSafeSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);

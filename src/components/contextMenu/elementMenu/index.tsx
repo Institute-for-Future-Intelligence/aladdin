@@ -22,3 +22,4 @@ export * from './wallMenu/wallMenu';
 export * from './doorMenu/doorMenu';
 export * from './windowMenu/windowMenu';
 export * from './roofMenu/roofMenu';
+export * from './windTurbineMenu/windTurbineMenu';
