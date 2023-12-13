@@ -28,6 +28,19 @@ export const createDoorMenu = (selectedElement: ElementModel) => {
 
   const editable = !door.locked;
   const lang = { lng: useStore.getState().language };
+  // copy
+  items.push({
+    key: 'door-copy',
+    label: <Copy />,
+  });
+
+  // cut
+  if (editable) {
+    items.push({
+      key: 'door-cut',
+      label: <Cut />,
+    });
+  }
 
   // lock
   items.push({
@@ -47,19 +60,8 @@ export const createDoorMenu = (selectedElement: ElementModel) => {
         key: 'door-interior',
         label: <DoorInteriorCheckbox door={door} />,
       },
-      // cut
-      {
-        key: 'door-cut',
-        label: <Cut />,
-      },
     );
   }
-
-  // copy
-  items.push({
-    key: 'door-copy',
-    label: <Copy />,
-  });
 
   if (editable) {
     items.push(

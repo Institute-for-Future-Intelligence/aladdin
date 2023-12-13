@@ -18,6 +18,20 @@ export const createSensorMenu = (selectedElement: ElementModel) => {
 
   const editable = !sensor.locked;
 
+  // copy
+  items.push({
+    key: 'sensor-copy',
+    label: <Copy />,
+  });
+
+  // cut
+  if (editable) {
+    items.push({
+      key: 'sensor-cut',
+      label: <Cut />,
+    });
+  }
+
   // lock
   items.push({
     key: 'sensor-lock',
@@ -31,19 +45,8 @@ export const createSensorMenu = (selectedElement: ElementModel) => {
         key: 'seneor-show-label',
         label: <SensorShowLabelCheckbox sensor={sensor} />,
       },
-      // cut
-      {
-        key: 'sensor-cut',
-        label: <Cut />,
-      },
     );
   }
-
-  // copy
-  items.push({
-    key: 'sensor-copy',
-    label: <Copy />,
-  });
 
   if (editable) {
     // sensor-label-text

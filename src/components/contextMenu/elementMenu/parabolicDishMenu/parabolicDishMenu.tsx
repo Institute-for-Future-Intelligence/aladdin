@@ -30,31 +30,24 @@ export const createParabolicDishMenu = (selectedElement: ElementModel) => {
   const lang = { lng: useStore.getState().language };
   const editable = !parabolicDish.locked;
 
-  // lock
-  items.push({
-    key: 'parabolic-dish-lock',
-    label: <Lock selectedElement={parabolicDish} />,
-  });
-
-  if (editable) {
-    items.push(
-      // draw-sun-beam
-      {
-        key: 'parabolic-dish-draw-sun-beam',
-        label: <SolarCollectorSunBeamCheckbox solarCollector={parabolicDish} />,
-      },
-      // cut
-      {
-        key: 'parabolic-dish-cut',
-        label: <Cut />,
-      },
-    );
-  }
-
   // copy
   items.push({
     key: 'parabolic-dish-copy',
     label: <Copy />,
+  });
+
+  // cut
+  if (editable) {
+    items.push({
+      key: 'parabolic-dish-cut',
+      label: <Cut />,
+    });
+  }
+
+  // lock
+  items.push({
+    key: 'parabolic-dish-lock',
+    label: <Lock selectedElement={parabolicDish} />,
   });
 
   if (editable) {
@@ -139,6 +132,11 @@ export const createParabolicDishMenu = (selectedElement: ElementModel) => {
             {i18n.t('concentratedSolarPowerCollectorMenu.ReceiverThermalEfficiency', lang)} ...
           </DialogItem>
         ),
+      },
+      // draw-sun-beam
+      {
+        key: 'parabolic-dish-draw-sun-beam',
+        label: <SolarCollectorSunBeamCheckbox solarCollector={parabolicDish} />,
       },
       // parabolic-dish-label-submenu
       {

@@ -30,31 +30,24 @@ export const createParabolicTroughMenu = (selectedElement: ElementModel) => {
   const lang = { lng: useStore.getState().language };
   const editable = !parabolicTrough.locked;
 
-  // lock
-  items.push({
-    key: 'parabolic-trough-lock',
-    label: <Lock selectedElement={parabolicTrough} />,
-  });
-
-  if (editable) {
-    items.push(
-      // draw-sun-beam
-      {
-        key: 'parabolic-dish-draw-sun-beam',
-        label: <SolarCollectorSunBeamCheckbox solarCollector={parabolicTrough} />,
-      },
-      // cut
-      {
-        key: 'parabolic-trough-cut',
-        label: <Cut />,
-      },
-    );
-  }
-
   // copy
   items.push({
     key: 'parabolic-trough-copy',
     label: <Copy />,
+  });
+
+  // cut
+  if (editable) {
+    items.push({
+      key: 'parabolic-trough-cut',
+      label: <Cut />,
+    });
+  }
+
+  // lock
+  items.push({
+    key: 'parabolic-trough-lock',
+    label: <Lock selectedElement={parabolicTrough} />,
   });
 
   if (editable) {
@@ -131,6 +124,11 @@ export const createParabolicTroughMenu = (selectedElement: ElementModel) => {
             {i18n.t('concentratedSolarPowerCollectorMenu.ReceiverThermalEfficiency', lang)} ...
           </DialogItem>
         ),
+      },
+      // draw-sun-beam
+      {
+        key: 'parabolic-dish-draw-sun-beam',
+        label: <SolarCollectorSunBeamCheckbox solarCollector={parabolicTrough} />,
       },
       // parabolic-trough-label-submenu
       {

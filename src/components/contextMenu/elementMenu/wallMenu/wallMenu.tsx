@@ -67,10 +67,18 @@ export const createWallMenu = (selectedElement: ElementModel) => {
   const counterAll = countAllOffspringsByType(wall.id, true);
   const counterUnlocked = countAllOffspringsByType(wall.id, false);
 
-  // lock
+  // paste
+  if (legalToPaste()) {
+    items.push({
+      key: 'wall-paste',
+      label: <Paste />,
+    });
+  }
+
+  // copy
   items.push({
-    key: 'wall-lock',
-    label: <Lock selectedElement={wall} />,
+    key: 'wall-copy',
+    label: <Copy />,
   });
 
   // cut
@@ -81,19 +89,11 @@ export const createWallMenu = (selectedElement: ElementModel) => {
     });
   }
 
-  // copy
+  // lock
   items.push({
-    key: 'wall-copy',
-    label: <Copy />,
+    key: 'wall-lock',
+    label: <Lock selectedElement={wall} />,
   });
-
-  // paste
-  if (legalToPaste()) {
-    items.push({
-      key: 'wall-paste',
-      label: <Paste />,
-    });
-  }
 
   if (editable) {
     // element-counter

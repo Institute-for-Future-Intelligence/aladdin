@@ -1,0 +1,21 @@
+/* .my-overlay ul li {
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+}
+
+.my-overlay ul li div {
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+} */
+
+.ant-dropdown-menu-item,
+.ant-dropdown-menu-submenu {
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+}
+
+.ant-dropdown-menu-title-content,
+.ant-dropdown-menu-submenu-title {
+  padding-top: 3px !important;
+  padding-bottom: 3px !important;
+}

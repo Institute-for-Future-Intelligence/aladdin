@@ -22,6 +22,20 @@ export const createLightMenu = (selectedElement: ElementModel) => {
   const lang = { lng: useStore.getState().language };
   const parent = light.parentId ? useStore.getState().getParent(light) : undefined;
 
+  // copy
+  items.push({
+    key: 'light-copy',
+    label: <Copy />,
+  });
+
+  // cut
+  if (editable) {
+    items.push({
+      key: 'light-cut',
+      label: <Cut />,
+    });
+  }
+
   // lock
   items.push({
     key: 'light-lock',
@@ -36,19 +50,7 @@ export const createLightMenu = (selectedElement: ElementModel) => {
         label: <LightInsideCheckbox light={light} />,
       });
     }
-
-    // cut
-    items.push({
-      key: 'light-cut',
-      label: <Cut />,
-    });
   }
-
-  // copy
-  items.push({
-    key: 'light-copy',
-    label: <Copy />,
-  });
 
   if (editable) {
     items.push(

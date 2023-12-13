@@ -22,6 +22,20 @@ export const createFlowerMenu = (selectedElement: ElementModel) => {
   const editable = !flower.locked;
   const lang = { lng: useStore.getState().language };
 
+  // copy
+  items.push({
+    key: 'flower-copy',
+    label: <Copy />,
+  });
+
+  // cut
+  if (editable) {
+    items.push({
+      key: 'flower-cut',
+      label: <Cut />,
+    });
+  }
+
   // lock
   items.push({
     key: 'flower-lock',
@@ -35,19 +49,8 @@ export const createFlowerMenu = (selectedElement: ElementModel) => {
         key: 'flower-flip',
         label: <BillboardFlipCheckbox billboardModel={flower} />,
       },
-      // cut
-      {
-        key: 'flower-cut',
-        label: <Cut />,
-      },
     );
   }
-
-  // copy
-  items.push({
-    key: 'flower-copy',
-    label: <Copy />,
-  });
 
   // flower-change-type
   if (editable) {

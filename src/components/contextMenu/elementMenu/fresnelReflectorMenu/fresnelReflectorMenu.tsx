@@ -28,10 +28,10 @@ export const createFresnelReflectorMenu = (selectedElement: ElementModel) => {
   const lang = { lng: useStore.getState().language };
   const editable = !fresnelReflector.locked;
 
-  // lock
+  // copy
   items.push({
-    key: 'fresnel-reflector-lock',
-    label: <Lock selectedElement={fresnelReflector} />,
+    key: 'fresnel-reflector-copy',
+    label: <Copy />,
   });
 
   // cut
@@ -42,10 +42,10 @@ export const createFresnelReflectorMenu = (selectedElement: ElementModel) => {
     });
   }
 
-  // copy
+  // lock
   items.push({
-    key: 'fresnel-reflector-copy',
-    label: <Copy />,
+    key: 'fresnel-reflector-lock',
+    label: <Lock selectedElement={fresnelReflector} />,
   });
 
   if (editable) {

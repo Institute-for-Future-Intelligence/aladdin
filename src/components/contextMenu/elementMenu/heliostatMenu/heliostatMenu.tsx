@@ -28,10 +28,10 @@ export const createHeliostatMenu = (selectedElement: ElementModel) => {
   const lang = { lng: useStore.getState().language };
   const editable = !heliostat.locked;
 
-  // lock
+  // copy
   items.push({
-    key: 'heliostat-lock',
-    label: <Lock selectedElement={heliostat} />,
+    key: 'heliostat-copy',
+    label: <Copy />,
   });
 
   // cut
@@ -42,10 +42,10 @@ export const createHeliostatMenu = (selectedElement: ElementModel) => {
     });
   }
 
-  // copy
+  // lock
   items.push({
-    key: 'heliostat-copy',
-    label: <Copy />,
+    key: 'heliostat-lock',
+    label: <Lock selectedElement={heliostat} />,
   });
 
   if (editable) {

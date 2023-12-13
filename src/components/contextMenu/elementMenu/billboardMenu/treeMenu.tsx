@@ -23,6 +23,20 @@ export const createTreeMenu = (selectedElement: ElementModel) => {
   const editable = !tree.locked;
   const lang = { lng: useStore.getState().language };
 
+  // copy
+  items.push({
+    key: 'tree-copy',
+    label: <Copy />,
+  });
+
+  // cut
+  if (editable) {
+    items.push({
+      key: 'tree-cut',
+      label: <Cut />,
+    });
+  }
+
   // lock
   items.push({
     key: 'tree-lock',
@@ -31,29 +45,18 @@ export const createTreeMenu = (selectedElement: ElementModel) => {
 
   if (editable) {
     items.push(
-      // flip
-      {
-        key: 'tree-flip',
-        label: <BillboardFlipCheckbox billboardModel={tree} />,
-      },
       // show-model
       {
         key: 'tree-show-model',
         label: <TreeShowModelCheckbox tree={tree} />,
       },
-      // cut
+      // flip
       {
-        key: 'tree-cut',
-        label: <Cut />,
+        key: 'tree-flip',
+        label: <BillboardFlipCheckbox billboardModel={tree} />,
       },
     );
   }
-
-  // copy
-  items.push({
-    key: 'tree-copy',
-    label: <Copy />,
-  });
 
   if (editable) {
     items.push(

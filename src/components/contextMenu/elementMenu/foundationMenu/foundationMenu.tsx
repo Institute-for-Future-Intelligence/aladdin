@@ -96,6 +96,28 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
 
   const counterUnlocked = useStore.getState().countAllOffspringsByTypeAtOnce(foundation.id, false);
 
+  // paste
+  if (legalToPasteOnFoundation()) {
+    items.push({
+      key: 'foundation-paste',
+      label: <Paste />,
+    });
+  }
+
+  // copy
+  items.push({
+    key: 'foundation-copy',
+    label: <Copy />,
+  });
+
+  // cut
+  if (editable) {
+    items.push({
+      key: 'foundation-cut',
+      label: <Cut />,
+    });
+  }
+
   // lock
   items.push({
     key: 'foundation-lock',
@@ -116,28 +138,6 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
     label: <BuildingCheckbox foundation={foundation} />,
   });
 
-  // cut
-  if (editable) {
-    items.push({
-      key: 'foundation-cut',
-      label: <Cut />,
-    });
-  }
-
-  // copy
-  items.push({
-    key: 'foundation-copy',
-    label: <Copy />,
-  });
-
-  // paste
-  if (legalToPasteOnFoundation()) {
-    items.push({
-      key: 'foundation-paste',
-      label: <Paste />,
-    });
-  }
-
   // lock-unlock-clear-on-foundation
   if (counterAll.gotSome()) {
     items.push({
@@ -146,34 +146,6 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
       children: createFoundationElementCounterSubmenu(foundation, counterAll, counterUnlocked),
     });
   }
-
-  // building-hvac-system
-  if (!foundation.notBuilding && counterAll.wallCount > 0) {
-    items.push({
-      key: 'building-hvac-system',
-      label: <MenuItem>{i18n.t('word.BuildingHVACSystem', lang)}</MenuItem>,
-      children: [
-        {
-          key: 'hvac-system-id',
-          label: <HvacSystemIdInput foundation={foundation} />,
-        },
-        {
-          key: 'thermostat-temperature',
-          label: <ThermostatTemperatureInput foundation={foundation} />,
-        },
-        {
-          key: 'tolerance-threshold',
-          label: <ToleranceThresholdInput foundation={foundation} />,
-        },
-      ],
-    });
-  }
-
-  // add-polygon-on-foundation
-  items.push({
-    key: 'add-polygon-on-foundation',
-    label: <AddPolygonItem foundation={foundation} />,
-  });
 
   if (editable) {
     // foundation-color
@@ -225,7 +197,37 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
         ),
       });
     }
+  }
 
+  // add-polygon-on-foundation
+  items.push({
+    key: 'add-polygon-on-foundation',
+    label: <AddPolygonItem foundation={foundation} />,
+  });
+
+  // building-hvac-system
+  if (!foundation.notBuilding && counterAll.wallCount > 0) {
+    items.push({
+      key: 'building-hvac-system',
+      label: <MenuItem>{i18n.t('word.BuildingHVACSystem', lang)}</MenuItem>,
+      children: [
+        {
+          key: 'hvac-system-id',
+          label: <HvacSystemIdInput foundation={foundation} />,
+        },
+        {
+          key: 'thermostat-temperature',
+          label: <ThermostatTemperatureInput foundation={foundation} />,
+        },
+        {
+          key: 'tolerance-threshold',
+          label: <ToleranceThresholdInput foundation={foundation} />,
+        },
+      ],
+    });
+  }
+
+  if (editable) {
     // select-solar-structure
     items.push({
       key: 'select-solar-structure',

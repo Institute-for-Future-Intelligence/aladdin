@@ -115,18 +115,18 @@ export const createPolygonVertexMenu = (selectedElement: ElementModel) => {
   items.push(
     {
       key: 'polygon-vertex-insert-before-index',
-      label: <MenuItem>{i18n.t('polygonMenu.InsertVertexBeforeIndex', lang)}</MenuItem>,
+      label: <MenuItem noPadding>{i18n.t('polygonMenu.InsertVertexBeforeIndex', lang)}</MenuItem>,
     },
     {
       key: 'polygon-vertex-insert-after-index',
-      label: <MenuItem>{i18n.t('polygonMenu.InsertVertexAfterIndex', lang)}</MenuItem>,
+      label: <MenuItem noPadding>{i18n.t('polygonMenu.InsertVertexAfterIndex', lang)}</MenuItem>,
     },
   );
 
   if (polygon.vertices.length > 3) {
     items.push({
       key: 'polygon-vertex-delete',
-      label: <MenuItem>{i18n.t('polygonMenu.DeleteVertex', lang)}</MenuItem>,
+      label: <MenuItem noPadding>{i18n.t('polygonMenu.DeleteVertex', lang)}</MenuItem>,
     });
   }
 

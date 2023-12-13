@@ -33,7 +33,7 @@ import {
 import { useSelectedElement } from './elementMenu/menuHooks';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import { ElementModel } from 'src/models/ElementModel';
-
+import './style.css';
 export interface ContextMenuProps {
   [key: string]: any;
 }
@@ -62,7 +62,7 @@ const useContextMenu = (contextMenuObjectType: ObjectType | null) => {
 const DropdownContextMenu: React.FC<ContextMenuProps> = ({ children }) => {
   usePrimitiveStore((state) => state.contextMenuFlag);
 
-  // dropdown menu faded in about 0.2s, so we have to preserve the state util the menu is fully disappeared.
+  // dropdown menu fades out about 0.2s, so we have to preserve the state util the menu is fully disappeared.
   const contextMenuObjectType = useStore(Selector.contextMenuObjectType);
   const [contextMenuType, selectedElement] = useContextMenu(contextMenuObjectType);
 
@@ -121,7 +121,7 @@ const DropdownContextMenu: React.FC<ContextMenuProps> = ({ children }) => {
   };
 
   return (
-    <Dropdown trigger={['contextMenu']} menu={createMenu()}>
+    <Dropdown trigger={['contextMenu']} menu={createMenu()} overlayClassName="my-overlay">
       {children}
     </Dropdown>
   );

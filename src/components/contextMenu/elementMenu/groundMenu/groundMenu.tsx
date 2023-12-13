@@ -101,18 +101,6 @@ export const createGroundMenu = () => {
 
   const items: MenuProps['items'] = [];
 
-  // image-on-ground
-  items.push({
-    key: 'image-on-ground',
-    label: <GroundImageCheckbox />,
-  });
-
-  // water-surface
-  items.push({
-    key: 'water-surface',
-    label: <WaterSurfaceCheckbox />,
-  });
-
   // paste
   if (legalToPaste()) {
     items.push({
@@ -165,6 +153,18 @@ export const createGroundMenu = () => {
       ),
     });
   }
+
+  // image-on-ground
+  items.push({
+    key: 'image-on-ground',
+    label: <GroundImageCheckbox />,
+  });
+
+  // water-surface
+  items.push({
+    key: 'water-surface',
+    label: <WaterSurfaceCheckbox />,
+  });
 
   // ground-color-submenu
   if (!useStore.getState().viewState.waterSurface) {

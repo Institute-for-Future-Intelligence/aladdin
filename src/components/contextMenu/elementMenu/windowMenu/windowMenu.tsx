@@ -139,6 +139,20 @@ export const createWindowMenu = (selectedElement: ElementModel) => {
   const editable = !window.locked;
   const lang = { lng: useStore.getState().language };
 
+  // window-copy
+  items.push({
+    key: 'window-copy',
+    label: <Copy />,
+  });
+
+  // window-cut
+  if (editable) {
+    items.push({
+      key: 'window-cut',
+      label: <Cut />,
+    });
+  }
+
   // window-lock
   items.push({
     key: 'window-lock',
@@ -155,18 +169,8 @@ export const createWindowMenu = (selectedElement: ElementModel) => {
         key: 'window-interior',
         label: <WindowInteriorCheckbox window={window} />,
       },
-      {
-        key: 'window-cut',
-        label: <Cut />,
-      },
     );
   }
-
-  // window-copy
-  items.push({
-    key: 'window-copy',
-    label: <Copy />,
-  });
 
   if (editable) {
     items.push(

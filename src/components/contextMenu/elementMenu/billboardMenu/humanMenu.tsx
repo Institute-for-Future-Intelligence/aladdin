@@ -23,43 +23,47 @@ export const createHumanMenu = (selectedElement: ElementModel) => {
   const lang = { lng: useStore.getState().language };
   const orthographic = useStore.getState().viewState.orthographic ?? false;
 
-  // lock
-  items.push({
-    key: 'human-lock',
-    label: <Lock selectedElement={human} />,
-  });
-
-  if (editable) {
-    items.push(
-      // human-flip
-      {
-        key: 'human-flip',
-        label: <BillboardFlipCheckbox billboardModel={human} />,
-      },
-      // observer
-      {
-        key: 'human-obserber',
-        label: <HumanObserverCheckbox human={human} />,
-      },
-      // cut
-      {
-        key: 'human-cut',
-        label: <Cut />,
-      },
-    );
-  }
-
   // copy
   items.push({
     key: 'human-copy',
     label: <Copy />,
   });
 
+  // cut
+  if (editable) {
+    items.push({
+      key: 'human-cut',
+      label: <Cut />,
+    });
+  }
+
+  // lock
+  items.push({
+    key: 'human-lock',
+    label: <Lock selectedElement={human} />,
+  });
+
+  // human-flip
+  if (editable) {
+    items.push({
+      key: 'human-flip',
+      label: <BillboardFlipCheckbox billboardModel={human} />,
+    });
+  }
+
   // human-move-view
   if (!orthographic) {
     items.push({
       key: 'human-move-view',
       label: <HumanMoveViewItem human={human} />,
+    });
+  }
+
+  // observer
+  if (editable) {
+    items.push({
+      key: 'human-obserber',
+      label: <HumanObserverCheckbox human={human} />,
     });
   }
 

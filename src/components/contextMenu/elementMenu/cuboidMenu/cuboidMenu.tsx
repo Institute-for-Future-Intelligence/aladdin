@@ -55,6 +55,28 @@ export const createCuboidMenu = (selectedElement: ElementModel) => {
     !cuboid.textureTypes ||
     (selectedSideIndex >= 0 && cuboid.textureTypes[selectedSideIndex] === CuboidTexture.NoTexture);
 
+  // paste
+  if (legalToPaste()) {
+    items.push({
+      key: 'cuboid-paste',
+      label: <Paste />,
+    });
+  }
+
+  // copy
+  items.push({
+    key: 'cuboid-copy',
+    label: <Copy />,
+  });
+
+  // cut
+  if (editable) {
+    items.push({
+      key: 'cuboid-cut',
+      label: <Cut />,
+    });
+  }
+
   // lock
   items.push({
     key: 'cuboid-lock',
@@ -72,28 +94,6 @@ export const createCuboidMenu = (selectedElement: ElementModel) => {
     key: 'cuboid-stackable',
     label: <StackableCheckbox cuboid={cuboid} />,
   });
-
-  // cut
-  if (editable) {
-    items.push({
-      key: 'cuboid-cut',
-      label: <Cut />,
-    });
-  }
-
-  // copy
-  items.push({
-    key: 'cuboid-copy',
-    label: <Copy />,
-  });
-
-  // paste
-  if (legalToPaste()) {
-    items.push({
-      key: 'cuboid-paste',
-      label: <Paste />,
-    });
-  }
 
   // element-counter
   if (counterUnlocked.gotSome()) {

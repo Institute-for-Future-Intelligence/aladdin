@@ -155,5 +155,9 @@ export const RemoveCuboidElementsItem = ({
     });
   };
 
-  return <MenuItem onClick={handleClickItem}>{children}</MenuItem>;
+  return (
+    <MenuItem noPadding onClick={handleClickItem}>
+      {children}
+    </MenuItem>
+  );
 };

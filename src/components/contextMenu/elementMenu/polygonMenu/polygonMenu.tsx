@@ -7,7 +7,7 @@ import { ElementModel } from 'src/models/ElementModel';
 import { PolygonModel } from 'src/models/PolygonModel';
 import { useStore } from 'src/stores/common';
 import { ObjectType, PolygonTexture } from 'src/types';
-import { Copy, Cut, DialogItem, Lock, MenuItem } from '../../menuItems';
+import { Copy, Cut, DialogItem, Lock, MenuItem, Paste } from '../../menuItems';
 import {
   PolygonFillCheckbox,
   PolygonFontColor,
@@ -42,46 +42,25 @@ export const createPolygonMenu = (selectedElement: ElementModel) => {
   const lang = { lng: useStore.getState().language };
   const editable = !polygon.locked;
 
-  // lock
+  // paste
   items.push({
-    key: 'polygon-lock',
-    label: <Lock selectedElement={polygon} />,
+    key: 'polygon-paste',
+    label: <Paste />,
   });
-
-  if (editable) {
-    // polygon-filled
-    items.push({
-      key: 'polygon-filled',
-      label: <PolygonFillCheckbox polygon={polygon} />,
-    });
-
-    // polygon-shiny
-    if (polygon.filled) {
-      items.push({
-        key: 'polygon-shiny',
-        label: <PolygonShinyCheckbox polygon={polygon} />,
-      });
-    }
-
-    items.push(
-      // polygon-no-outline
-      {
-        key: 'polygon-no-outline',
-        label: <PolygonOutlineCheckbox polygon={polygon} />,
-      },
-      // cut
-      {
-        key: 'polygon-cut',
-        label: <Cut />,
-      },
-    );
-  }
 
   // copy
   items.push({
     key: 'polygon-copy',
     label: <Copy />,
   });
+
+  // cut
+  if (editable) {
+    items.push({
+      key: 'polygon-cut',
+      label: <Cut />,
+    });
+  }
 
   // layout-submenu
   if (parent && (parent.type === ObjectType.Foundation || parent.type === ObjectType.Cuboid)) {
@@ -121,6 +100,36 @@ export const createPolygonMenu = (selectedElement: ElementModel) => {
         },
       ],
     });
+  }
+
+  // lock
+  items.push({
+    key: 'polygon-lock',
+    label: <Lock selectedElement={polygon} />,
+  });
+
+  if (editable) {
+    // polygon-filled
+    items.push({
+      key: 'polygon-filled',
+      label: <PolygonFillCheckbox polygon={polygon} />,
+    });
+
+    // polygon-shiny
+    if (polygon.filled) {
+      items.push({
+        key: 'polygon-shiny',
+        label: <PolygonShinyCheckbox polygon={polygon} />,
+      });
+    }
+
+    items.push(
+      // polygon-no-outline
+      {
+        key: 'polygon-no-outline',
+        label: <PolygonOutlineCheckbox polygon={polygon} />,
+      },
+    );
   }
 
   if (editable) {

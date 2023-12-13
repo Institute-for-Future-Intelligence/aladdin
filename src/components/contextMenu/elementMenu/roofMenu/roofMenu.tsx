@@ -52,17 +52,26 @@ export const createRoofMenu = (selectedElement: ElementModel) => {
 
   const isRoofVisible = roof.roofStructure !== RoofStructure.Rafter || roof.opacity === undefined || roof.opacity > 0;
 
+  // roof-paste
+  if (legalToPaste()) {
+    items.push({
+      key: 'roof-paste',
+      label: <Paste />,
+    });
+  }
+
   // lock
   items.push({
     key: 'roof-lock',
     label: <Lock selectedElement={roof} />,
   });
 
-  // roof-paste
-  if (legalToPaste()) {
+  // roof-ceiling
+  if (roof.rise > 0) {
     items.push({
-      key: 'roof-paste',
-      label: <Paste />,
+      key: 'roof-ceiling-submenu',
+      label: <MenuItem>{i18n.t('roofMenu.Ceiling', lang)}</MenuItem>,
+      children: createRoofCeilingSubmenu(roof),
     });
   }
 
@@ -72,15 +81,6 @@ export const createRoofMenu = (selectedElement: ElementModel) => {
       key: 'lock-unlock-clear-on-roof',
       label: <MenuItem>{i18n.t('word.Elements', lang)}</MenuItem>,
       children: createRoofElementCounterSubmenu(roof, counterAll, counterUnlocked),
-    });
-  }
-
-  // roof-ceiling
-  if (roof.rise > 0) {
-    items.push({
-      key: 'roof-ceiling-submenu',
-      label: <MenuItem>{i18n.t('roofMenu.Ceiling', lang)}</MenuItem>,
-      children: createRoofCeilingSubmenu(roof),
     });
   }
 

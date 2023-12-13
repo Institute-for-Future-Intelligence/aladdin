@@ -37,31 +37,24 @@ export const createSolarPanelMenu = (selectedElement: ElementModel) => {
   const lang = { lng: useStore.getState().language };
   const panelNormal = new Vector3().fromArray(solarPanel.normal);
 
-  // solar-panel-lock
-  items.push({
-    key: 'solar-panel-lock',
-    label: <Lock selectedElement={solarPanel} />,
-  });
-
-  if (editable) {
-    items.push(
-      // solar-panel-draw-sun-beam
-      {
-        key: 'solar-panel-draw-sun-beam',
-        label: <SolarCollectorSunBeamCheckbox solarCollector={solarPanel} />,
-      },
-      // solar-panel-cut
-      {
-        key: 'solar-panel-cut',
-        label: <Cut />,
-      },
-    );
-  }
-
   // solar-panel-copy
   items.push({
     key: 'solar-panel-copy',
     label: <Copy />,
+  });
+
+  // solar-panel-cut
+  if (editable) {
+    items.push({
+      key: 'solar-panel-cut',
+      label: <Cut />,
+    });
+  }
+
+  // solar-panel-lock
+  items.push({
+    key: 'solar-panel-lock',
+    label: <Lock selectedElement={solarPanel} />,
   });
 
   if (editable) {
@@ -162,6 +155,12 @@ export const createSolarPanelMenu = (selectedElement: ElementModel) => {
       label: (
         <DialogItem Dialog={SolarPanelFrameColorSelection}>{i18n.t('solarPanelMenu.FrameColor', lang)} ...</DialogItem>
       ),
+    });
+
+    // solar-panel-draw-sun-beam
+    items.push({
+      key: 'solar-panel-draw-sun-beam',
+      label: <SolarCollectorSunBeamCheckbox solarCollector={solarPanel} />,
     });
 
     // solar-panel-pole-submenu

@@ -30,10 +30,10 @@ export const createWindTurbineMenu = (selectedElement: ElementModel) => {
   const lang = { lng: useStore.getState().language };
   const editable = !windTurbine.locked;
 
-  // lock
+  // copy
   items.push({
-    key: 'wind-turbine-lock',
-    label: <Lock selectedElement={windTurbine} />,
+    key: 'wind-turbine-copy',
+    label: <Copy />,
   });
 
   // cut
@@ -44,10 +44,10 @@ export const createWindTurbineMenu = (selectedElement: ElementModel) => {
     });
   }
 
-  // copy
+  // lock
   items.push({
-    key: 'wind-turbine-copy',
-    label: <Copy />,
+    key: 'wind-turbine-lock',
+    label: <Lock selectedElement={windTurbine} />,
   });
 
   if (editable) {
