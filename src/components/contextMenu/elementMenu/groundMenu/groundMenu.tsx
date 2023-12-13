@@ -94,7 +94,7 @@ const createMonthlyIrradianceLossSubmenu = () => {
   }, [] as MenuProps['items']);
 };
 
-export const createGroundMenu = (updateMenu: () => void) => {
+export const createGroundMenu = () => {
   const lang = { lng: useStore.getState().language };
 
   const elementCounter: ElementCounter = useStore.getState().countAllElementsByType(true);
@@ -110,7 +110,7 @@ export const createGroundMenu = (updateMenu: () => void) => {
   // water-surface
   items.push({
     key: 'water-surface',
-    label: <WaterSurfaceCheckbox updateMenu={updateMenu} />,
+    label: <WaterSurfaceCheckbox />,
   });
 
   // paste
@@ -147,7 +147,6 @@ export const createGroundMenu = (updateMenu: () => void) => {
           lock={true}
           count={elementCounter.unlockedCount}
           label={i18n.t('groundMenu.LockAllUnlockedElements', lang)}
-          updateMenu={updateMenu}
         />
       ),
     });
@@ -162,7 +161,6 @@ export const createGroundMenu = (updateMenu: () => void) => {
           lock={false}
           count={elementCounter.lockedCount}
           label={i18n.t('groundMenu.UnlockAllLockedElements', lang)}
-          updateMenu={updateMenu}
         />
       ),
     });

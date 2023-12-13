@@ -18,6 +18,7 @@ import { ColorResult, CompactPicker } from 'react-color';
 import { MenuItem } from '../../menuItems';
 import { DEFAULT_LEAF_OFF_DAY, DEFAULT_LEAF_OUT_DAY, MONTHS } from '../../../../constants';
 import i18n from 'src/i18n/i18n';
+import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 
 interface RemoveElementsItemProps {
   itemLabel: string;
@@ -29,7 +30,6 @@ interface LockElementsItemProps {
   lock: boolean;
   count: number;
   label: string;
-  updateMenu: () => void;
 }
 
 export const GroundImageCheckbox = () => {
@@ -69,7 +69,7 @@ export const GroundImageCheckbox = () => {
   );
 };
 
-export const WaterSurfaceCheckbox = ({ updateMenu }: { updateMenu: () => void }) => {
+export const WaterSurfaceCheckbox = () => {
   const waterSurface = useStore(Selector.viewState.waterSurface);
   const lang = useLanguage();
 
@@ -94,11 +94,10 @@ export const WaterSurfaceCheckbox = ({ updateMenu }: { updateMenu: () => void })
     } as UndoableCheck;
     useStore.getState().addUndoable(undoableCheck);
     setWaterSurface(checked);
-    updateMenu();
   };
 
   return (
-    <MenuItem stayAfterClick noPadding>
+    <MenuItem stayAfterClick noPadding update>
       <Checkbox checked={waterSurface} onChange={onChange}>
         {i18n.t('groundMenu.WaterSurface', lang)}
       </Checkbox>
@@ -368,6 +367,7 @@ export const RemoveGroundElementsItem = ({ itemLabel, modalTitle, objectType }: 
       },
     } as UndoableRemoveAll;
     useStore.getState().addUndoable(undoableRemoveAll);
+    usePrimitiveStore.getState().updateContextMenu();
   };
 
   const handleClickItem = () => {
@@ -381,7 +381,7 @@ export const RemoveGroundElementsItem = ({ itemLabel, modalTitle, objectType }: 
   return <MenuItem onClick={handleClickItem}>{itemLabel}</MenuItem>;
 };
 
-export const LockElementsItem = ({ lock, count, label, updateMenu }: LockElementsItemProps) => {
+export const LockElementsItem = ({ lock, count, label }: LockElementsItemProps) => {
   const updateAllElementLocks = useStore.getState().updateAllElementLocks;
 
   const onClick = () => {
@@ -407,11 +407,10 @@ export const LockElementsItem = ({ lock, count, label, updateMenu }: LockElement
     } as UndoableChangeGroup;
     useStore.getState().addUndoable(undoableLockAllElements);
     updateAllElementLocks(lock);
-    updateMenu();
   };
 
   return (
-    <MenuItem onClick={onClick}>
+    <MenuItem update onClick={onClick}>
       {label} ({count})
     </MenuItem>
   );

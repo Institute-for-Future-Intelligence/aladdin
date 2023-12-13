@@ -36,8 +36,6 @@ export const WallNumberDialogItem = ({ Dialog, noPadding, dataType, children }: 
 
   const wall = useSelectedElement(ObjectType.Wall) as WallModel | undefined;
 
-  if (!wall) return null;
-
   const handleClick = () => {
     useStore.getState().setApplyCount(0);
     setDialogVisible(true);
@@ -50,7 +48,7 @@ export const WallNumberDialogItem = ({ Dialog, noPadding, dataType, children }: 
       <MenuItem noPadding={noPadding} onClick={handleClick}>
         {children}
       </MenuItem>
-      {dialogVisible && (
+      {dialogVisible && wall && (
         <Dialog
           wall={wall}
           dataType={dataType}

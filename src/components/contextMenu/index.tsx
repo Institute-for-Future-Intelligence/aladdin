@@ -2,7 +2,7 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dropdown } from 'antd';
 import { useStore } from '../../stores/common';
 import * as Selector from '../../stores/selector';
@@ -32,78 +32,89 @@ import {
 } from './elementMenu';
 import { useSelectedElement } from './elementMenu/menuHooks';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
+import { ElementModel } from 'src/models/ElementModel';
 
 export interface ContextMenuProps {
   [key: string]: any;
 }
 
-const DropdownContextMenu: React.FC<ContextMenuProps> = ({ children }) => {
-  useStore((state) => state.elements.length);
-  useStore((state) => state.viewState.groundImage);
-  usePrimitiveStore((state) => state.contextMenuFlag);
+const useContextMenu = (contextMenuObjectType: ObjectType | null) => {
   const selectedElement = useSelectedElement();
+
+  const [ctx, setCtx] = useState(contextMenuObjectType);
+  const [sel, setSel] = useState(selectedElement);
+
+  useEffect(() => {
+    if (contextMenuObjectType !== null) {
+      setCtx(contextMenuObjectType);
+      setSel(selectedElement);
+    } else {
+      setTimeout(() => {
+        setCtx(null);
+        setSel(undefined);
+      }, 200);
+    }
+  }, [contextMenuObjectType, selectedElement]);
+
+  return [ctx, sel] as [ObjectType | null, ElementModel | undefined];
+};
+
+const DropdownContextMenu: React.FC<ContextMenuProps> = ({ children }) => {
+  usePrimitiveStore((state) => state.contextMenuFlag);
+
+  // dropdown menu faded in about 0.2s, so we have to preserve the state util the menu is fully disappeared.
   const contextMenuObjectType = useStore(Selector.contextMenuObjectType);
-
-  const [_, update] = useState(false);
-
-  // use ref to avoid object type to be null, which is not acceptted by antd menu
-  const objectTypeRef = useRef(contextMenuObjectType);
-  if (contextMenuObjectType !== null) {
-    objectTypeRef.current = contextMenuObjectType;
-  }
-
-  const elementRef = useRef(selectedElement);
-  if (selectedElement !== undefined) {
-    elementRef.current = selectedElement;
-  }
-
-  const updateMenu = () => update((b) => !b);
+  const [contextMenuType, selectedElement] = useContextMenu(contextMenuObjectType);
 
   const createMenu = () => {
-    if (objectTypeRef.current === null || elementRef.current === undefined) return { items: [] };
-    switch (objectTypeRef.current) {
-      case ObjectType.Ground:
-        return createGroundMenu(updateMenu);
-      case ObjectType.Sky:
-        return createSkyMenu();
+    let menuType = contextMenuType;
+    if (contextMenuObjectType !== null) {
+      menuType = contextMenuObjectType;
+    }
+    if (!selectedElement) {
+      if (menuType === ObjectType.Ground) return createGroundMenu();
+      if (menuType === ObjectType.Sky) return createSkyMenu();
+      return { items: [] };
+    }
+    switch (menuType) {
       case ObjectType.Foundation:
-        return createFoundationMenu(elementRef.current);
+        return createFoundationMenu(selectedElement);
       case ObjectType.Cuboid:
-        return createCuboidMenu(elementRef.current);
+        return createCuboidMenu(selectedElement);
       case ObjectType.Wall:
-        return createWallMenu(elementRef.current);
+        return createWallMenu(selectedElement);
       case ObjectType.Roof:
-        return createRoofMenu(elementRef.current);
+        return createRoofMenu(selectedElement);
       case ObjectType.SolarPanel:
-        return createSolarPanelMenu(elementRef.current);
+        return createSolarPanelMenu(selectedElement);
       case ObjectType.Window:
-        return createWindowMenu(elementRef.current);
+        return createWindowMenu(selectedElement);
       case ObjectType.Door:
-        return createDoorMenu(elementRef.current);
+        return createDoorMenu(selectedElement);
       case ObjectType.Sensor:
-        return createSensorMenu(elementRef.current);
+        return createSensorMenu(selectedElement);
       case ObjectType.Light:
-        return createLightMenu(elementRef.current);
+        return createLightMenu(selectedElement);
       case ObjectType.Human:
-        return createHumanMenu(elementRef.current);
+        return createHumanMenu(selectedElement);
       case ObjectType.Tree:
-        return createTreeMenu(elementRef.current);
+        return createTreeMenu(selectedElement);
       case ObjectType.Flower:
-        return createFlowerMenu(elementRef.current);
+        return createFlowerMenu(selectedElement);
       case ObjectType.ParabolicTrough:
-        return createParabolicTroughMenu(elementRef.current);
+        return createParabolicTroughMenu(selectedElement);
       case ObjectType.ParabolicDish:
-        return createParabolicDishMenu(elementRef.current);
+        return createParabolicDishMenu(selectedElement);
       case ObjectType.FresnelReflector:
-        return createFresnelReflectorMenu(elementRef.current);
+        return createFresnelReflectorMenu(selectedElement);
       case ObjectType.Heliostat:
-        return createHeliostatMenu(elementRef.current);
+        return createHeliostatMenu(selectedElement);
       case ObjectType.Polygon:
-        return createPolygonMenu(elementRef.current);
+        return createPolygonMenu(selectedElement);
       case ObjectType.PolygonVertex:
-        return createPolygonVertexMenu(elementRef.current);
+        return createPolygonVertexMenu(selectedElement);
       case ObjectType.WindTurbine:
-        return createWindTurbineMenu(elementRef.current);
+        return createWindTurbineMenu(selectedElement);
       default:
         return { items: [] };
     }
