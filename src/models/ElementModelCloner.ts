@@ -705,10 +705,16 @@ export class ElementModelCloner {
     }
 
     // copy to wall
-    if (parent.type === ObjectType.Wall) {
+    if (oldParent && oldParent?.type !== ObjectType.Wall && parent.type === ObjectType.Wall) {
       lx = window.lx / parent.lx;
       lz = window.lz / parent.lz;
     }
+    // copy to roof
+    if (oldParent && oldParent.type !== ObjectType.Roof && parent.type === ObjectType.Roof) {
+      lx = window.lx * oldParent.lx;
+      lz = window.lz * oldParent.lz;
+    }
+
     return {
       type: ObjectType.Window,
       cx: x,
