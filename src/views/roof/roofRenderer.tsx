@@ -226,6 +226,7 @@ export const handleRoofBodyPointerDown = (e: ThreeEvent<PointerEvent>, id: strin
   if (e.intersections.length > 0 && e.intersections[0].eventObject.name === e.eventObject.name) {
     e.stopPropagation();
     useStore.getState().set((state) => {
+      state.contextMenuObjectType = null;
       if (state.groupActionMode) {
         if (!state.multiSelectionsMode) {
           state.selectedElementIdSet.clear();

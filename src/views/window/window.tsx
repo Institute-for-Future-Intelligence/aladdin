@@ -143,6 +143,7 @@ const Window = (windowModel: WindowModel) => {
 
   const selectMe = (isContextMenu = false) => {
     setCommonStore((state) => {
+      state.contextMenuObjectType = null;
       if (state.groupActionMode) {
         if (!state.multiSelectionsMode) {
           state.selectedElementIdSet.clear();

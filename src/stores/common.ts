@@ -1086,6 +1086,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                   state.moveHandleType = null;
                   state.resizeHandleType = null;
                   state.rotateHandleType = null;
+                  state.contextMenuObjectType = null;
                   if (action) {
                     switch (action) {
                       case ActionType.Move:

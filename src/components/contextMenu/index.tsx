@@ -2,7 +2,7 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useRef } from 'react';
 import { Dropdown } from 'antd';
 import { useStore } from '../../stores/common';
 import * as Selector from '../../stores/selector';
@@ -38,45 +38,39 @@ export interface ContextMenuProps {
   [key: string]: any;
 }
 
-const useContextMenu = (contextMenuObjectType: ObjectType | null) => {
+const useContextMenu = () => {
+  const contextMenuObjectType = useStore(Selector.contextMenuObjectType);
   const selectedElement = useSelectedElement();
 
-  const [ctx, setCtx] = useState(contextMenuObjectType);
-  const [sel, setSel] = useState(selectedElement);
+  const ctxRef = useRef(contextMenuObjectType);
+  const elRef = useRef(selectedElement);
 
-  useEffect(() => {
-    if (contextMenuObjectType !== null) {
-      setCtx(contextMenuObjectType);
-      setSel(selectedElement);
-    } else {
-      setTimeout(() => {
-        setCtx(null);
-        setSel(undefined);
-      }, 200);
-    }
-  }, [contextMenuObjectType, selectedElement]);
+  // dropdown menu fades out about 0.2s, so we have to preserve the state util the menu is fully disappeared.
+  if (contextMenuObjectType !== null) {
+    ctxRef.current = contextMenuObjectType;
+    elRef.current = selectedElement;
+  } else {
+    setTimeout(() => {
+      ctxRef.current = contextMenuObjectType;
+      elRef.current = contextMenuObjectType === null ? undefined : selectedElement;
+    }, 200);
+  }
 
-  return [ctx, sel] as [ObjectType | null, ElementModel | undefined];
+  return [ctxRef.current, elRef.current] as [ObjectType | null, ElementModel | undefined];
 };
 
 const DropdownContextMenu: React.FC<ContextMenuProps> = ({ children }) => {
   usePrimitiveStore((state) => state.contextMenuFlag);
 
-  // dropdown menu fades out about 0.2s, so we have to preserve the state util the menu is fully disappeared.
-  const contextMenuObjectType = useStore(Selector.contextMenuObjectType);
-  const [contextMenuType, selectedElement] = useContextMenu(contextMenuObjectType);
+  const [contextMenuObjectType, selectedElement] = useContextMenu();
 
   const createMenu = () => {
-    let menuType = contextMenuType;
-    if (contextMenuObjectType !== null) {
-      menuType = contextMenuObjectType;
-    }
     if (!selectedElement) {
-      if (menuType === ObjectType.Ground) return createGroundMenu();
-      if (menuType === ObjectType.Sky) return createSkyMenu();
+      if (contextMenuObjectType === ObjectType.Ground) return createGroundMenu();
+      if (contextMenuObjectType === ObjectType.Sky) return createSkyMenu();
       return { items: [] };
     }
-    switch (menuType) {
+    switch (contextMenuObjectType) {
       case ObjectType.Foundation:
         return createFoundationMenu(selectedElement);
       case ObjectType.Cuboid:

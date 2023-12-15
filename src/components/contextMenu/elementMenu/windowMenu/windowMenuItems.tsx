@@ -77,9 +77,7 @@ export const WindowNumberDialogItem = ({ dataType, noPadding }: WindowDialogItem
 
   const window = useSelectedElement(ObjectType.Window) as WindowModel | undefined;
 
-  if (!window) return null;
-
-  const parent = useStore.getState().getParent(window);
+  const parent = window ? useStore.getState().getParent(window) : null;
 
   const handleClick = () => {
     useStore.getState().setApplyCount(0);
@@ -104,7 +102,7 @@ export const WindowNumberDialogItem = ({ dataType, noPadding }: WindowDialogItem
       <MenuItem noPadding={noPadding} onClick={handleClick}>
         {i18n.t(`windowMenu.${dataType}`, lang)} ...
       </MenuItem>
-      {dialogVisible && setting && (
+      {dialogVisible && setting && window && (
         <WindowNumberInput
           windowModel={window}
           dataType={dataType}
@@ -127,8 +125,6 @@ export const WindowColorDialogItem = ({ dataType, noPadding }: WindowDialogItemP
 
   const window = useSelectedElement(ObjectType.Window) as WindowModel | undefined;
 
-  if (!window) return null;
-
   const handleClick = () => {
     useStore.getState().setApplyCount(0);
     setDialogVisible(true);
@@ -141,7 +137,7 @@ export const WindowColorDialogItem = ({ dataType, noPadding }: WindowDialogItemP
       <MenuItem noPadding={noPadding} onClick={handleClick}>
         {i18n.t(`windowMenu.${dataType}`, lang)} ...
       </MenuItem>
-      {dialogVisible && setting && (
+      {dialogVisible && setting && window && (
         <WindowColorSelection
           window={window}
           dataType={dataType}
@@ -159,8 +155,6 @@ export const WindowBooleanDialogItem = ({ dataType, noPadding }: WindowDialogIte
 
   const window = useSelectedElement(ObjectType.Window) as WindowModel | undefined;
 
-  if (!window) return null;
-
   const handleClick = () => {
     useStore.getState().setApplyCount(0);
     setDialogVisible(true);
@@ -173,7 +167,7 @@ export const WindowBooleanDialogItem = ({ dataType, noPadding }: WindowDialogIte
       <MenuItem noPadding={noPadding} onClick={handleClick}>
         {i18n.t(`windowMenu.${dataType}`, lang)} ...
       </MenuItem>
-      {dialogVisible && setting && (
+      {dialogVisible && setting && window && (
         <WindowBooleanSelection
           window={window}
           dataType={dataType}
@@ -192,8 +186,6 @@ export const WindowOptionDialogItem = ({ dataType, noPadding }: WindowDialogItem
 
   const window = useSelectedElement(ObjectType.Window) as WindowModel | undefined;
 
-  if (!window) return null;
-
   const handleClick = () => {
     useStore.getState().setApplyCount(0);
     setDialogVisible(true);
@@ -206,7 +198,7 @@ export const WindowOptionDialogItem = ({ dataType, noPadding }: WindowDialogItem
       <MenuItem noPadding={noPadding} onClick={handleClick}>
         {i18n.t(`windowMenu.${dataType}`, lang)} ...
       </MenuItem>
-      {dialogVisible && setting && (
+      {dialogVisible && setting && window && (
         <WindowOptionSelection
           window={window}
           dataType={dataType}
