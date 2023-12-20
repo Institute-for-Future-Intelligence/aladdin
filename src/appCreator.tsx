@@ -49,8 +49,6 @@ import ProjectGallery from './panels/projectGallery';
 import SplitPane from 'react-split-pane';
 import { throttle } from 'lodash';
 import GroupMasterWrapper from './components/groupMaster';
-import { Box } from '@react-three/drei';
-import { Vector3 } from 'three';
 
 export interface AppCreatorProps {
   viewOnly: boolean;

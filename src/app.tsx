@@ -14,7 +14,6 @@ import { ConfigProvider } from 'antd';
 import AppCreator from './appCreator';
 import LocalFileManager from './localFileManager';
 import { usePrimitiveStore } from './stores/commonPrimitive';
-import { Vector3 } from 'three';
 
 const App = () => {
   const locale = useStore(Selector.locale);

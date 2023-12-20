@@ -2,7 +2,6 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import { ElementCounter } from 'src/stores/ElementCounter';
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
 import { useLanguage } from 'src/views/hooks';
