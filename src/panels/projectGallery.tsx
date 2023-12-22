@@ -6,7 +6,7 @@ import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import styled from 'styled-components';
-import { Button, Checkbox, Col, Collapse, Input, List, Popover, Radio, Row, Select } from 'antd';
+import { Button, Checkbox, Col, Collapse, CollapseProps, Input, List, Popover, Radio, Row, Select } from 'antd';
 import {
   BgColorsOutlined,
   CameraOutlined,
@@ -1084,6 +1084,200 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
     );
   };
 
+  const descriptionItems: CollapseProps['items'] = [
+    {
+      key: '1',
+      label: (
+        <SubHeader>
+          <span>
+            {t('projectPanel.ProjectDescription', lang) +
+              ' | ' +
+              t('projectPanel.ProjectType', lang) +
+              ': ' +
+              projectInfo.type}
+          </span>
+          <span>
+            {isOwner && (
+              <>
+                {descriptionExpandedRef.current && (
+                  <Button
+                    style={{ border: 'none', padding: '4px' }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      descriptionTextAreaEditableRef.current = !descriptionTextAreaEditableRef.current;
+                      setUpdateFlag(!updateFlag);
+                    }}
+                  >
+                    {descriptionTextAreaEditableRef.current ? (
+                      <EditFilled
+                        style={{ fontSize: '24px', color: 'gray' }}
+                        title={t('projectPanel.MakeDescriptionNonEditable', lang)}
+                      />
+                    ) : (
+                      <EditOutlined
+                        style={{ fontSize: '24px', color: 'gray' }}
+                        title={t('projectPanel.MakeDescriptionEditable', lang)}
+                      />
+                    )}
+                  </Button>
+                )}
+                <Button
+                  style={{ border: 'none', padding: '4px' }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    curateCurrentDesign();
+                  }}
+                >
+                  <ImportOutlined
+                    style={{ fontSize: '24px', color: 'gray' }}
+                    title={t('projectPanel.CurateCurrentDesign', lang)}
+                  />
+                </Button>
+                {selectedDesign && selectedDesign.title === cloudFile && (
+                  <Button
+                    style={{ border: 'none', padding: '4px' }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (canvas && user.uid && projectInfo.title && cloudFile) {
+                        updateDesign(
+                          user.uid,
+                          projectInfo.type,
+                          projectInfo.title,
+                          projectInfo.thumbnailWidth ?? 200,
+                          cloudFile,
+                          canvas,
+                        ).then(() => {
+                          setUpdateFlag(!updateFlag);
+                        });
+                      }
+                    }}
+                  >
+                    <CloudUploadOutlined
+                      style={{ fontSize: '24px', color: 'gray' }}
+                      title={t('projectPanel.UpdateSelectedDesign', lang)}
+                    />
+                  </Button>
+                )}
+                {selectedDesign && (
+                  <Button
+                    style={{ border: 'none', padding: '4px' }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeSelectedDesign();
+                      setSelectedDesign(undefined);
+                    }}
+                  >
+                    <DeleteOutlined
+                      style={{ fontSize: '24px', color: 'gray' }}
+                      title={t('projectPanel.RemoveSelectedDesign', lang)}
+                    />
+                  </Button>
+                )}
+                {selectedDesign && (
+                  <Button
+                    style={{ border: 'none', padding: '4px' }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (projectInfo.title) {
+                        let url =
+                          HOME_URL +
+                          '?client=web&userid=' +
+                          user.uid +
+                          '&project=' +
+                          encodeURIComponent(projectInfo.title);
+                        if (selectedDesign) {
+                          url += '&title=' + encodeURIComponent(selectedDesign.title);
+                        }
+                        copyTextToClipboard(url);
+                        showSuccess(t('projectListPanel.ProjectLinkGeneratedInClipBoard', lang) + '.');
+                      }
+                    }}
+                  >
+                    <LinkOutlined
+                      style={{ fontSize: '24px', color: 'gray' }}
+                      title={t('projectListPanel.GenerateProjectLink', lang)}
+                    />
+                  </Button>
+                )}
+              </>
+            )}
+            {projectInfo.designs && projectInfo.designs.length > 1 && projectInfo.selectedProperty && (
+              <Button
+                style={{ border: 'none', padding: '4px' }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCommonStore((state) => {
+                    state.projectInfo.sortDescending = !state.projectInfo.sortDescending;
+                  });
+                }}
+              >
+                {projectInfo.sortDescending ? (
+                  <SortAscendingOutlined
+                    style={{ fontSize: '24px', color: 'gray' }}
+                    title={t('projectPanel.ClickToFlipSortingOrder', lang)}
+                  />
+                ) : (
+                  <SortDescendingOutlined
+                    style={{ fontSize: '24px', color: 'gray' }}
+                    title={t('projectPanel.ClickToFlipSortingOrder', lang)}
+                  />
+                )}
+              </Button>
+            )}
+            <Popover
+              title={<div onClick={(e) => e.stopPropagation()}>{t('projectPanel.ProjectSettings', lang)}</div>}
+              content={createProjectSettingsContent}
+            >
+              <Button style={{ border: 'none', padding: '4px' }} onClick={(e) => e.stopPropagation()}>
+                <SettingOutlined style={{ fontSize: '24px', color: 'gray' }} />
+              </Button>
+            </Popover>
+          </span>
+        </SubHeader>
+      ),
+      children: (
+        <TextArea
+          title={
+            descriptionTextAreaEditableRef.current
+              ? undefined
+              : t('projectPanel.DoubleClickToMakeDescriptionEditable', lang)
+          }
+          bordered={descriptionTextAreaEditableRef.current}
+          readOnly={!descriptionTextAreaEditableRef.current}
+          value={descriptionRef.current ?? undefined}
+          onDoubleClick={() => {
+            descriptionTextAreaEditableRef.current = !descriptionTextAreaEditableRef.current;
+            setUpdateFlag(!updateFlag);
+          }}
+          onChange={(e) => {
+            descriptionRef.current = e.target.value;
+            descriptionChangedRef.current = true;
+            setCommonStore((state) => {
+              state.projectInfo.description = e.target.value;
+            });
+            setUpdateFlag(!updateFlag);
+          }}
+          onBlur={() => {
+            descriptionTextAreaEditableRef.current = false;
+            if (descriptionChangedRef.current) {
+              if (user.uid && isOwner && projectInfo.title) {
+                updateDescription(user.uid, projectInfo.title, descriptionRef.current).then(() => {
+                  descriptionChangedRef.current = false;
+                  setUpdateFlag(!updateFlag);
+                });
+              }
+            }
+          }}
+          style={{
+            paddingLeft: '10px',
+            textAlign: 'left',
+            resize: descriptionTextAreaEditableRef.current ? 'vertical' : 'none',
+          }}
+        />
+      ),
+    },
+  ];
+
   return (
     <Container
       onContextMenu={(e) => {
@@ -1114,204 +1308,13 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
           </span>
         </Header>
         <Collapse
+          items={descriptionItems}
           style={{ backgroundColor: 'white', border: 'none' }}
           onChange={(e) => {
             descriptionExpandedRef.current = e.length > 0;
             setUpdateFlag(!updateFlag);
           }}
-        >
-          <Collapse.Panel
-            style={{ backgroundColor: 'white', border: 'none' }}
-            key={'1'}
-            header={
-              <SubHeader>
-                <span>
-                  {t('projectPanel.ProjectDescription', lang) +
-                    ' | ' +
-                    t('projectPanel.ProjectType', lang) +
-                    ': ' +
-                    projectInfo.type}
-                </span>
-                <span>
-                  {isOwner && (
-                    <>
-                      {descriptionExpandedRef.current && (
-                        <Button
-                          style={{ border: 'none', padding: '4px' }}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            descriptionTextAreaEditableRef.current = !descriptionTextAreaEditableRef.current;
-                            setUpdateFlag(!updateFlag);
-                          }}
-                        >
-                          {descriptionTextAreaEditableRef.current ? (
-                            <EditFilled
-                              style={{ fontSize: '24px', color: 'gray' }}
-                              title={t('projectPanel.MakeDescriptionNonEditable', lang)}
-                            />
-                          ) : (
-                            <EditOutlined
-                              style={{ fontSize: '24px', color: 'gray' }}
-                              title={t('projectPanel.MakeDescriptionEditable', lang)}
-                            />
-                          )}
-                        </Button>
-                      )}
-                      <Button
-                        style={{ border: 'none', padding: '4px' }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          curateCurrentDesign();
-                        }}
-                      >
-                        <ImportOutlined
-                          style={{ fontSize: '24px', color: 'gray' }}
-                          title={t('projectPanel.CurateCurrentDesign', lang)}
-                        />
-                      </Button>
-                      {selectedDesign && selectedDesign.title === cloudFile && (
-                        <Button
-                          style={{ border: 'none', padding: '4px' }}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            if (canvas && user.uid && projectInfo.title && cloudFile) {
-                              updateDesign(
-                                user.uid,
-                                projectInfo.type,
-                                projectInfo.title,
-                                projectInfo.thumbnailWidth ?? 200,
-                                cloudFile,
-                                canvas,
-                              ).then(() => {
-                                setUpdateFlag(!updateFlag);
-                              });
-                            }
-                          }}
-                        >
-                          <CloudUploadOutlined
-                            style={{ fontSize: '24px', color: 'gray' }}
-                            title={t('projectPanel.UpdateSelectedDesign', lang)}
-                          />
-                        </Button>
-                      )}
-                      {selectedDesign && (
-                        <Button
-                          style={{ border: 'none', padding: '4px' }}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            removeSelectedDesign();
-                            setSelectedDesign(undefined);
-                          }}
-                        >
-                          <DeleteOutlined
-                            style={{ fontSize: '24px', color: 'gray' }}
-                            title={t('projectPanel.RemoveSelectedDesign', lang)}
-                          />
-                        </Button>
-                      )}
-                      {selectedDesign && (
-                        <Button
-                          style={{ border: 'none', padding: '4px' }}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            if (projectInfo.title) {
-                              let url =
-                                HOME_URL +
-                                '?client=web&userid=' +
-                                user.uid +
-                                '&project=' +
-                                encodeURIComponent(projectInfo.title);
-                              if (selectedDesign) {
-                                url += '&title=' + encodeURIComponent(selectedDesign.title);
-                              }
-                              copyTextToClipboard(url);
-                              showSuccess(t('projectListPanel.ProjectLinkGeneratedInClipBoard', lang) + '.');
-                            }
-                          }}
-                        >
-                          <LinkOutlined
-                            style={{ fontSize: '24px', color: 'gray' }}
-                            title={t('projectListPanel.GenerateProjectLink', lang)}
-                          />
-                        </Button>
-                      )}
-                    </>
-                  )}
-                  {projectInfo.designs && projectInfo.designs.length > 1 && projectInfo.selectedProperty && (
-                    <Button
-                      style={{ border: 'none', padding: '4px' }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setCommonStore((state) => {
-                          state.projectInfo.sortDescending = !state.projectInfo.sortDescending;
-                        });
-                      }}
-                    >
-                      {projectInfo.sortDescending ? (
-                        <SortAscendingOutlined
-                          style={{ fontSize: '24px', color: 'gray' }}
-                          title={t('projectPanel.ClickToFlipSortingOrder', lang)}
-                        />
-                      ) : (
-                        <SortDescendingOutlined
-                          style={{ fontSize: '24px', color: 'gray' }}
-                          title={t('projectPanel.ClickToFlipSortingOrder', lang)}
-                        />
-                      )}
-                    </Button>
-                  )}
-                  <Popover
-                    title={<div onClick={(e) => e.stopPropagation()}>{t('projectPanel.ProjectSettings', lang)}</div>}
-                    content={createProjectSettingsContent}
-                  >
-                    <Button style={{ border: 'none', padding: '4px' }} onClick={(e) => e.stopPropagation()}>
-                      <SettingOutlined style={{ fontSize: '24px', color: 'gray' }} />
-                    </Button>
-                  </Popover>
-                </span>
-              </SubHeader>
-            }
-          >
-            <TextArea
-              title={
-                descriptionTextAreaEditableRef.current
-                  ? undefined
-                  : t('projectPanel.DoubleClickToMakeDescriptionEditable', lang)
-              }
-              bordered={descriptionTextAreaEditableRef.current}
-              readOnly={!descriptionTextAreaEditableRef.current}
-              value={descriptionRef.current ?? undefined}
-              onDoubleClick={() => {
-                descriptionTextAreaEditableRef.current = !descriptionTextAreaEditableRef.current;
-                setUpdateFlag(!updateFlag);
-              }}
-              onChange={(e) => {
-                descriptionRef.current = e.target.value;
-                descriptionChangedRef.current = true;
-                setCommonStore((state) => {
-                  state.projectInfo.description = e.target.value;
-                });
-                setUpdateFlag(!updateFlag);
-              }}
-              onBlur={() => {
-                descriptionTextAreaEditableRef.current = false;
-                if (descriptionChangedRef.current) {
-                  if (user.uid && isOwner && projectInfo.title) {
-                    updateDescription(user.uid, projectInfo.title, descriptionRef.current).then(() => {
-                      descriptionChangedRef.current = false;
-                      setUpdateFlag(!updateFlag);
-                    });
-                  }
-                }
-              }}
-              style={{
-                paddingLeft: '10px',
-                textAlign: 'left',
-                resize: descriptionTextAreaEditableRef.current ? 'vertical' : 'none',
-              }}
-            />
-          </Collapse.Panel>
-        </Collapse>
+        />
         {projectDesigns.current.length > 0 && (
           <SubContainer>
             <List
