@@ -84,18 +84,24 @@ const BuildingEnergyGraphMenu = ({
     <Menu>
       <Menu.Item>
         {i18n.t('menu.graph.LineWidth', lang) + ':'}
-        <Slider min={0} max={10} tooltipVisible={false} defaultValue={lineWidth * 2} onChange={onChangeLineWidth} />
+        <Slider min={0} max={10} tooltip={{ open: false }} defaultValue={lineWidth * 2} onChange={onChangeLineWidth} />
       </Menu.Item>
       <Menu.Item>
         {i18n.t('menu.graph.SymbolSize', lang) + ':'}
-        <Slider min={2} max={12} tooltipVisible={false} defaultValue={symbolSize * 5} onChange={onChangeSymbolSize} />
+        <Slider
+          min={2}
+          max={12}
+          tooltip={{ open: false }}
+          defaultValue={symbolSize * 5}
+          onChange={onChangeSymbolSize}
+        />
       </Menu.Item>
       <Menu.Item>
         {i18n.t('menu.graph.BarCategoryGap', lang) + ':'}
         <Slider
           min={0}
           max={20}
-          tooltipVisible={false}
+          tooltip={{ open: false }}
           defaultValue={barCategoryGap}
           onChange={onChangeBarCategoryGap}
         />

@@ -490,7 +490,7 @@ const HeliodonPanel = () => {
                   min={-90}
                   max={90}
                   value={latitude}
-                  tooltipVisible={false}
+                  tooltip={{ open: false }}
                   onChange={onLatitudeChangeRef.current}
                 />
               </div>
