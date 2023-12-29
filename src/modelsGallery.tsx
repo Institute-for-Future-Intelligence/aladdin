@@ -62,15 +62,21 @@ const ModelsGallery = ({ latRef, lngRef, author, models, closeCallback, openClou
   return modelsRef.current.size === 0 ? (
     <Drawer
       mask={false}
-      headerStyle={{
-        height: '40px',
-        paddingLeft: '1px',
-        paddingRight: '1px',
-        paddingTop: '16px',
-        paddingBottom: '12px',
-        background: dark ? '#6A6B6E' : 'whitesmoke',
+      styles={{
+        header: {
+          height: '40px',
+          paddingLeft: '1px',
+          paddingRight: '1px',
+          paddingTop: '16px',
+          paddingBottom: '12px',
+          background: dark ? '#6A6B6E' : 'whitesmoke',
+        },
+        body: {
+          padding: '0px 4px 0px 4px',
+          overflowY: 'hidden',
+          background: dark ? '#2A2B2E' : 'white',
+        },
       }}
-      bodyStyle={{ padding: '0px 4px 0px 4px', overflowY: 'hidden', background: dark ? '#2A2B2E' : 'white' }}
       style={{ scrollbarColor: dark ? '#6A6B6E' : 'whitesmoke' }}
       title={(author ?? i18n.t('modelsMap.MyPublishedModels', lang)) + ' (0)'}
       placement="bottom"
@@ -122,17 +128,23 @@ const ModelsGallery = ({ latRef, lngRef, author, models, closeCallback, openClou
         </Space>
       }
       mask={false}
-      headerStyle={{
-        height: '40px',
-        color: dark ? 'white' : 'black', // doesn't work
-        background: dark ? '#6A6B6E' : 'whitesmoke',
-        paddingLeft: '1px',
-        paddingRight: '1px',
-        paddingTop: '16px',
-        paddingBottom: '12px',
-        border: 'none',
+      styles={{
+        header: {
+          height: '40px',
+          color: dark ? 'white' : 'black', // doesn't work
+          background: dark ? '#6A6B6E' : 'whitesmoke',
+          paddingLeft: '1px',
+          paddingRight: '1px',
+          paddingTop: '16px',
+          paddingBottom: '12px',
+          border: 'none',
+        },
+        body: {
+          padding: '0px 4px 0px 4px',
+          overflowY: 'hidden',
+          background: dark ? '#2A2B2E' : 'white',
+        },
       }}
-      bodyStyle={{ padding: '0px 4px 0px 4px', overflowY: 'hidden', background: dark ? '#2A2B2E' : 'white' }}
       title={(author ?? i18n.t('modelsMap.MyPublishedModels', lang)) + ' (' + countModels + ')'}
       placement="bottom"
       open={true}
