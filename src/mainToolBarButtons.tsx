@@ -34,7 +34,7 @@ import AnalyzeImage from './assets/analyze.png';
 import React, { useMemo, useState } from 'react';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
-import { Dropdown, Menu, Modal } from 'antd';
+import { Dropdown, Menu, MenuProps, Modal } from 'antd';
 import 'antd/dist/reset.css';
 import { ObjectType } from './types';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
@@ -45,6 +45,8 @@ import { useRefStore } from './stores/commonRef';
 import { showInfo } from './helpers';
 import { Util } from './Util';
 import { usePrimitiveStore } from './stores/commonPrimitive';
+import { useLanguage } from './views/hooks';
+import { MenuItem } from './components/contextMenu/menuItems';
 
 const ToolBarButton = ({ ...props }) => {
   return (
@@ -58,6 +60,54 @@ const ToolBarButton = ({ ...props }) => {
     >
       {props.children}
     </div>
+  );
+};
+
+interface ToolBarMenuItemProps {
+  objectType: ObjectType;
+  srcImg: string;
+  setFlag: (val: React.SetStateAction<ObjectType>) => void;
+  replacingText?: string; // sometimes we don't want to use the type name as the name in the menu
+}
+
+const defaultFilter = 'invert(41%) sepia(0%) saturate(0%) hue-rotate(224deg) brightness(93%) contrast(81%)';
+const selectFilter = 'invert(93%) sepia(3%) saturate(1955%) hue-rotate(26deg) brightness(113%) contrast(96%)';
+
+const ToolBarMenuItem = ({ objectType, srcImg, setFlag, replacingText }: ToolBarMenuItemProps) => {
+  const setMode = (type: ObjectType) => {
+    useStore.getState().set((state) => {
+      state.objectTypeToAdd = type;
+      state.groupActionMode = false;
+      state.actionModeLock = false;
+    });
+    useRefStore.getState().setEnableOrbitController(false);
+    useStore.getState().selectNone();
+  };
+
+  const lang = useLanguage();
+
+  return (
+    <MenuItem
+      noPadding
+      textSelectable={false}
+      onClick={() => {
+        setFlag(objectType);
+        setMode(objectType);
+      }}
+    >
+      <img
+        alt={objectType}
+        src={srcImg}
+        height={36}
+        width={36}
+        style={{
+          filter: defaultFilter,
+          verticalAlign: 'middle',
+          marginRight: '10px',
+        }}
+      />
+      {i18n.t(`toolbar.Add${replacingText ?? objectType.replaceAll(' ', '')}`, lang)}
+    </MenuItem>
   );
 };
 
@@ -91,10 +141,6 @@ const MainToolBarButtons = () => {
   const lang = useMemo(() => {
     return { lng: language };
   }, [language]);
-
-  // CSS filter generator of color: https://codepen.io/sosuke/pen/Pjoqqp
-  const defaultFilter = 'invert(41%) sepia(0%) saturate(0%) hue-rotate(224deg) brightness(93%) contrast(81%)';
-  const selectFilter = 'invert(93%) sepia(3%) saturate(1955%) hue-rotate(26deg) brightness(113%) contrast(96%)';
 
   const resetToSelectMode = () => {
     setCommonStore((state) => {
@@ -210,38 +256,6 @@ const MainToolBarButtons = () => {
     selectNone();
   };
 
-  const menuItem = (
-    objectType: ObjectType,
-    srcImg: string,
-    setFlag: (val: React.SetStateAction<ObjectType>) => void,
-    replacingText?: string, // sometimes we don't want to use the type name as the name in the menu
-  ) => {
-    const key = objectType.charAt(0).toLowerCase() + objectType.slice(1).replace(/\s+/g, '');
-    return (
-      <Menu.Item
-        style={{ userSelect: 'none' }}
-        key={`add-${key}-menu-item`}
-        onClick={() => {
-          setFlag(objectType);
-          setMode(objectType);
-        }}
-      >
-        <img
-          alt={objectType}
-          src={srcImg}
-          height={36}
-          width={36}
-          style={{
-            filter: defaultFilter,
-            verticalAlign: 'middle',
-            marginRight: '10px',
-          }}
-        />
-        {i18n.t(`toolbar.Add${replacingText ?? objectType.replaceAll(' ', '')}`, lang)}
-      </Menu.Item>
-    );
-  };
-
   // only the following types of elements need to be added in a large quantity
   const needToLock = (type: ObjectType) => {
     switch (type) {
@@ -314,9 +328,9 @@ const MainToolBarButtons = () => {
     );
   };
 
-  const dropdownButton = (overlay: JSX.Element) => {
+  const dropdownButton = (menu: MenuProps) => {
     return (
-      <Dropdown overlay={overlay} trigger={['click']}>
+      <Dropdown menu={menu} trigger={['click']}>
         <span
           title={i18n.t('toolbar.ClickForMoreButtons', lang)}
           style={{
@@ -336,43 +350,135 @@ const MainToolBarButtons = () => {
     );
   };
 
-  const category1Menu = (
-    <Menu>
-      {menuItem(ObjectType.Foundation, FoundationImage, setCategory1Flag)}
-      {menuItem(ObjectType.Cuboid, CuboidImage, setCategory1Flag)}
-      {menuItem(ObjectType.Tree, TreeImage, setCategory1Flag)}
-      {menuItem(ObjectType.Flower, FlowerImage, setCategory1Flag)}
-      {menuItem(ObjectType.Human, HumanImage, setCategory1Flag, 'People')}
-    </Menu>
-  );
+  const category1Menu: MenuProps['items'] = [
+    {
+      key: 'add-foundation',
+      label: <ToolBarMenuItem objectType={ObjectType.Foundation} srcImg={FoundationImage} setFlag={setCategory1Flag} />,
+    },
+    {
+      key: 'add-cuboid',
+      label: <ToolBarMenuItem objectType={ObjectType.Cuboid} srcImg={CuboidImage} setFlag={setCategory1Flag} />,
+    },
+    {
+      key: 'add-tree',
+      label: <ToolBarMenuItem objectType={ObjectType.Tree} srcImg={TreeImage} setFlag={setCategory1Flag} />,
+    },
+    {
+      key: 'add-flower',
+      label: <ToolBarMenuItem objectType={ObjectType.Flower} srcImg={FlowerImage} setFlag={setCategory1Flag} />,
+    },
+    {
+      key: 'add-human',
+      label: (
+        <ToolBarMenuItem
+          objectType={ObjectType.Human}
+          srcImg={HumanImage}
+          setFlag={setCategory1Flag}
+          replacingText="People"
+        />
+      ),
+    },
+  ];
 
-  const category2Menu = (
-    <Menu>
-      {menuItem(ObjectType.Wall, WallImage, setCategory2Flag)}
-      {menuItem(ObjectType.Window, WindowImage, setCategory2Flag)}
-      {menuItem(ObjectType.Door, DoorImage, setCategory2Flag)}
-      {menuItem(ObjectType.PyramidRoof, PyramidRoofImage, setCategory2Flag)}
-      {menuItem(ObjectType.HipRoof, HipRoofImage, setCategory2Flag)}
-      {menuItem(ObjectType.GableRoof, GableRoofImage, setCategory2Flag)}
-      {menuItem(ObjectType.GambrelRoof, GambrelRoofImage, setCategory2Flag)}
-      {menuItem(ObjectType.MansardRoof, MansardRoofImage, setCategory2Flag)}
-    </Menu>
-  );
+  const category2Menu: MenuProps['items'] = [
+    {
+      key: 'add-wall',
+      label: <ToolBarMenuItem objectType={ObjectType.Wall} srcImg={WallImage} setFlag={setCategory2Flag} />,
+    },
+    {
+      key: 'add-window',
+      label: <ToolBarMenuItem objectType={ObjectType.Window} srcImg={WindowImage} setFlag={setCategory2Flag} />,
+    },
+    {
+      key: 'add-door',
+      label: <ToolBarMenuItem objectType={ObjectType.Door} srcImg={DoorImage} setFlag={setCategory2Flag} />,
+    },
+    {
+      key: 'add-pyramid-roof',
+      label: (
+        <ToolBarMenuItem objectType={ObjectType.PyramidRoof} srcImg={PyramidRoofImage} setFlag={setCategory2Flag} />
+      ),
+    },
+    {
+      key: 'add-hip-roof',
+      label: <ToolBarMenuItem objectType={ObjectType.HipRoof} srcImg={HipRoofImage} setFlag={setCategory2Flag} />,
+    },
+    {
+      key: 'add-gable-roof',
+      label: <ToolBarMenuItem objectType={ObjectType.GableRoof} srcImg={GableRoofImage} setFlag={setCategory2Flag} />,
+    },
+    {
+      key: 'add-gambrel-roof',
+      label: (
+        <ToolBarMenuItem objectType={ObjectType.GambrelRoof} srcImg={GambrelRoofImage} setFlag={setCategory2Flag} />
+      ),
+    },
+    {
+      key: 'add-mansard-roof',
+      label: (
+        <ToolBarMenuItem objectType={ObjectType.MansardRoof} srcImg={MansardRoofImage} setFlag={setCategory2Flag} />
+      ),
+    },
+  ];
 
-  const category3Menu = (
-    <Menu>
-      {menuItem(ObjectType.SolarPanel, SolarPanelImage, setCategory3Flag)}
-      {menuItem(ObjectType.ParabolicTrough, ParabolicTroughImage, setCategory3Flag)}
-      {menuItem(ObjectType.ParabolicDish, ParabolicDishImage, setCategory3Flag)}
-      {menuItem(ObjectType.FresnelReflector, FresnelReflectorImage, setCategory3Flag)}
-      {menuItem(ObjectType.Heliostat, HeliostatImage, setCategory3Flag)}
-      {menuItem(ObjectType.WindTurbine, WindTurbineImage, setCategory3Flag)}
-      {/*{menuItem(ObjectType.VerticalAxisWindTurbine, VerticalAxisWindTurbineImage, setCategory3Flag)}*/}
-      {menuItem(ObjectType.Sensor, SensorImage, setCategory3Flag)}
-      {menuItem(ObjectType.Light, LightImage, setCategory3Flag)}
-      {/*{menuItem(ObjectType.WaterHeater, WaterHeaterImage, setCategory3Flag)}*/}
-    </Menu>
-  );
+  const category3Menu: MenuProps['items'] = [
+    {
+      key: 'add-solar-panel',
+      label: <ToolBarMenuItem objectType={ObjectType.SolarPanel} srcImg={SolarPanelImage} setFlag={setCategory3Flag} />,
+    },
+    {
+      key: 'add-parabolic-trough',
+      label: (
+        <ToolBarMenuItem
+          objectType={ObjectType.ParabolicTrough}
+          srcImg={ParabolicTroughImage}
+          setFlag={setCategory3Flag}
+        />
+      ),
+    },
+    {
+      key: 'add-parabolic-dish',
+      label: (
+        <ToolBarMenuItem objectType={ObjectType.ParabolicDish} srcImg={ParabolicDishImage} setFlag={setCategory3Flag} />
+      ),
+    },
+    {
+      key: 'add-fresnel-reflector',
+      label: (
+        <ToolBarMenuItem
+          objectType={ObjectType.FresnelReflector}
+          srcImg={FresnelReflectorImage}
+          setFlag={setCategory3Flag}
+        />
+      ),
+    },
+    {
+      key: 'add-heliostat',
+      label: <ToolBarMenuItem objectType={ObjectType.Heliostat} srcImg={HeliostatImage} setFlag={setCategory3Flag} />,
+    },
+    {
+      key: 'add-wind-turbine',
+      label: (
+        <ToolBarMenuItem objectType={ObjectType.WindTurbine} srcImg={WindTurbineImage} setFlag={setCategory3Flag} />
+      ),
+    },
+    // {
+    //   key: 'add-vertical-axis-wind-turbine',
+    //   label: <ToolBarMenuItem objectType={ObjectType.VerticalAxisWindTurbine} srcImg={VerticalAxisWindTurbineImage} setFlag={setCategory3Flag} />,
+    // },
+    {
+      key: 'add-sensor',
+      label: <ToolBarMenuItem objectType={ObjectType.Sensor} srcImg={SensorImage} setFlag={setCategory3Flag} />,
+    },
+    {
+      key: 'add-light',
+      label: <ToolBarMenuItem objectType={ObjectType.Light} srcImg={LightImage} setFlag={setCategory3Flag} />,
+    },
+    // {
+    //   key: 'add-water-heater',
+    //   label: <ToolBarMenuItem objectType={ObjectType.WaterHeater} srcImg={WaterHeaterImage} setFlag={setCategory3Flag} />,
+    // },
+  ];
 
   const category1Button = (objectType: ObjectType) => {
     switch (objectType) {
@@ -483,19 +589,20 @@ const MainToolBarButtons = () => {
       {/* add buttons in category 1 */}
       <ToolBarButton>
         {category1Button(category1Flag)}
-        {dropdownButton(category1Menu)}
+        {/* {dropdownButton(category1Menu)} */}
+        {dropdownButton({ items: category1Menu })}
       </ToolBarButton>
 
       {/* add buttons in category 2 */}
       <ToolBarButton>
         {category2Button(category2Flag)}
-        {dropdownButton(category2Menu)}
+        {dropdownButton({ items: category2Menu })}
       </ToolBarButton>
 
       {/* add buttons in category 3 */}
       <ToolBarButton>
         {category3Button(category3Flag)}
-        {dropdownButton(category3Menu)}
+        {dropdownButton({ items: category3Menu })}
       </ToolBarButton>
 
       <ToolBarButton>
