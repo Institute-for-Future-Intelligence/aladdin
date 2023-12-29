@@ -14,7 +14,7 @@ import ElementsRenderer from './elementsRenderer';
 import Ground from './views/ground';
 import Heliodon from './views/heliodonWrapper';
 import ifiLogo from './assets/ifi-logo.png';
-import MainMenu from './mainMenu';
+import MainMenu from './components/mainMenu/mainMenu';
 import { DEFAULT_SHADOW_CAMERA_FAR, DEFAULT_FOV, VERSION } from './constants';
 import { visitHomepage, visitIFI } from './helpers';
 import AcceptCookie from './acceptCookie';
@@ -189,26 +189,6 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
         v.panCenter = [0, 0, 0];
       });
     }
-  };
-
-  const set2DView = (selected: boolean) => {
-    setCommonStore((state) => {
-      state.viewState.orthographic = selected;
-      state.viewState.enableRotate = !selected;
-      if (selected) {
-        state.viewState.navigationView = false;
-      }
-    });
-  };
-
-  const setNavigationView = (selected: boolean) => {
-    setCommonStore((state) => {
-      state.viewState.navigationView = selected;
-      state.viewState.enableRotate = !selected;
-      if (selected) {
-        state.viewState.orthographic = false;
-      }
-    });
   };
 
   console.log('x');
@@ -404,14 +384,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       {!viewOnly && (
         <ShareLink size={16} round={true} margin={'2px'} style={{ position: 'absolute', right: '0', top: '80px' }} />
       )}
-      <MainMenu
-        viewOnly={viewOnly}
-        canvas={canvasRef.current}
-        setNavigationView={setNavigationView}
-        set2DView={set2DView}
-        resetView={resetView}
-        zoomView={zoomView}
-      />
+      <MainMenu viewOnly={viewOnly} canvas={canvasRef.current} resetView={resetView} zoomView={zoomView} />
       <CloudManager viewOnly={viewOnly} canvas={canvasRef.current} />
       <Panels />
       <DropdownContextMenu>
@@ -447,13 +420,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
             )}
             {createCanvas()}
           </SplitPane>
-          <KeyboardListener
-            canvas={canvasRef.current}
-            set2DView={set2DView}
-            setNavigationView={setNavigationView}
-            resetView={resetView}
-            zoomView={zoomView}
-          />
+          <KeyboardListener canvas={canvasRef.current} resetView={resetView} zoomView={zoomView} />
         </div>
       </DropdownContextMenu>
       <Compass visible={!orthographic} />

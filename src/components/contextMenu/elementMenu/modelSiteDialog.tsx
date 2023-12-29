@@ -267,4 +267,4 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   );
 };
 
-export default React.memo(ModelSiteDialog);
+export default ModelSiteDialog;

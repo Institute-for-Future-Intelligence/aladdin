@@ -3,6 +3,8 @@
  */
 
 import { Color, Euler, Vector2, Vector3 } from 'three';
+import { Util } from './Util';
+import platform from 'platform';
 
 export const VERSION = '1.5.4';
 
@@ -133,3 +135,11 @@ export const PARABOLIC_DISH_STRUCTURE_TRIPOD = 2;
 export const HALF_PI_Z_EULER = new Euler(0, 0, HALF_PI);
 
 export const REGEX_ALLOWABLE_IN_NAME = /^[A-Za-z0-9\s-_()!?%&,]*$/;
+
+export const KeyCtrl = isMac() ? '⌘' : 'Ctrl';
+
+function isMac() {
+  const os = platform.os?.family;
+  if (os) return os.includes('Mac') || os.includes('OS X');
+  return false;
+}

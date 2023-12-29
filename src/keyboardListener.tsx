@@ -34,8 +34,6 @@ import { areTwoBasesOverlapped } from './components/groupMaster';
 
 export interface KeyboardListenerProps {
   canvas?: HTMLCanvasElement | null;
-  set2DView: (selected: boolean) => void;
-  setNavigationView: (selected: boolean) => void;
   resetView: () => void;
   zoomView: (scale: number) => void;
 }
@@ -226,7 +224,7 @@ const handleKeys = [
   'ctrl',
 ];
 
-const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoomView }: KeyboardListenerProps) => {
+const KeyboardListener = ({ canvas, resetView, zoomView }: KeyboardListenerProps) => {
   const setCommonStore = useStore(Selector.set);
   const loggable = useStore(Selector.loggable);
   const selectNone = useStore(Selector.selectNone);
@@ -260,6 +258,7 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
 
   const toggle2DView = () => {
     if (useStore.getState().viewState.navigationView) return;
+    const set2DView = useStore.getState().set2DView;
     const undoableCheck = {
       name: 'Set 2D View',
       timestamp: Date.now(),
@@ -280,6 +279,7 @@ const KeyboardListener = ({ canvas, set2DView, setNavigationView, resetView, zoo
 
   const toggleNavigationView = () => {
     if (orthographic) return;
+    const setNavigationView = useStore.getState().setNavigationView;
     const undoableCheck = {
       name: 'Set Navigation View',
       timestamp: Date.now(),

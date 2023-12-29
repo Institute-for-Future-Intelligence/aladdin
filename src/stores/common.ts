@@ -147,6 +147,9 @@ export interface CommonStoreState {
   minimumNavigationMoveSpeed: number;
   minimumNavigationTurnSpeed: number;
 
+  setNavigationView: (selected: boolean) => void;
+  set2DView: (selected: boolean) => void;
+
   ray: Raycaster;
   mouse: Vector2;
 
@@ -619,6 +622,25 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
           mouse: new Vector2(),
 
           fileChanged: false,
+
+          setNavigationView(selected) {
+            immerSet((state) => {
+              state.viewState.navigationView = selected;
+              state.viewState.enableRotate = !selected;
+              if (selected) {
+                state.viewState.orthographic = false;
+              }
+            });
+          },
+          set2DView(selected) {
+            immerSet((state) => {
+              state.viewState.orthographic = selected;
+              state.viewState.enableRotate = !selected;
+              if (selected) {
+                state.viewState.navigationView = false;
+              }
+            });
+          },
 
           applyCount: 0,
           setApplyCount(count) {

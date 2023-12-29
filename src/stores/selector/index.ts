@@ -30,6 +30,10 @@ export const navigationMoveSpeed = (state: PrimitiveStoreState) => state.navigat
 
 export const navigationTurnSpeed = (state: PrimitiveStoreState) => state.navigationTurnSpeed;
 
+export const setNavigationView = (state: CommonStoreState) => state.setNavigationView;
+
+export const set2DView = (state: CommonStoreState) => state.set2DView;
+
 export const getHeatmap = (state: DataStoreState) => state.getHeatmap;
 
 export const setHeatmap = (state: DataStoreState) => state.setHeatmap;

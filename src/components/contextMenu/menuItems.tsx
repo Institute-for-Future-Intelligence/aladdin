@@ -35,6 +35,7 @@ interface MenuItemProps {
 interface DialogItemProps {
   Dialog: (props: { setDialogVisible: (b: boolean) => void }) => JSX.Element | null;
   noPadding?: boolean;
+  onClick?: () => void;
   children?: React.ReactNode;
 }
 

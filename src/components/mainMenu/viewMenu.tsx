@@ -1,0 +1,379 @@
+/*
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ */
+
+import { MenuProps } from 'antd';
+import { useStore } from 'src/stores/common';
+import { MenuItem } from '../contextMenu/menuItems';
+import i18n from 'src/i18n/i18n';
+import { MainMenuCheckbox, LabelMark } from './mainMenuItems';
+import { useRefStore } from 'src/stores/commonRef';
+import { ObjectType } from 'src/types';
+import { UndoableResetView } from 'src/undo/UndoableResetView';
+import { CheckboxChangeEvent } from 'antd/lib/checkbox';
+import { UndoableCheck } from 'src/undo/UndoableCheck';
+import { DEFAULT_SOLAR_PANEL_SHININESS, FLOATING_WINDOW_OPACITY, KeyCtrl } from 'src/constants';
+import { UndoableChange } from 'src/undo/UndoableChange';
+import * as Selector from '../../stores/selector';
+
+export const createViewMenu = (
+  keyHome: string,
+  isMac: boolean,
+  zoomView: (scale: number) => void,
+  resetView: () => void,
+) => {
+  const lang = { lng: useStore.getState().language };
+  const orthographic = useStore.getState().viewState.orthographic;
+  const cameraPosition = useStore.getState().viewState.cameraPosition;
+  const panCenter = useStore.getState().viewState.panCenter;
+
+  const viewAlreadyReset =
+    cameraPosition[0] === cameraPosition[1] &&
+    cameraPosition[1] === cameraPosition[2] &&
+    panCenter[0] === 0 &&
+    panCenter[1] === 0 &&
+    panCenter[2] === 0;
+
+  const handleResetView = () => {
+    const undoableResetView = {
+      name: 'Reset View',
+      timestamp: Date.now(),
+      oldCameraPosition: [...cameraPosition],
+      oldPanCenter: [...panCenter],
+      undo: () => {
+        const orbitControlsRef = useRefStore.getState().orbitControlsRef;
+        if (orbitControlsRef?.current) {
+          orbitControlsRef.current.object.position.set(
+            undoableResetView.oldCameraPosition[0],
+            undoableResetView.oldCameraPosition[1],
+            undoableResetView.oldCameraPosition[2],
+          );
+          orbitControlsRef.current.target.set(
+            undoableResetView.oldPanCenter[0],
+            undoableResetView.oldPanCenter[1],
+            undoableResetView.oldPanCenter[2],
+          );
+          orbitControlsRef.current.update();
+          useStore.getState().set((state) => {
+            const v = state.viewState;
+            v.cameraPosition = [...undoableResetView.oldCameraPosition];
+            v.panCenter = [...undoableResetView.oldPanCenter];
+          });
+        }
+      },
+      redo: () => {
+        resetView();
+      },
+    } as UndoableResetView;
+    useStore.getState().addUndoable(undoableResetView);
+    resetView();
+    useStore.getState().set((state) => {
+      state.objectTypeToAdd = ObjectType.None;
+      state.groupActionMode = false;
+      state.viewState.orthographic = false;
+    });
+  };
+
+  const handleZoomOut = () => {
+    zoomView(1.1);
+  };
+
+  const handleZoomIn = () => {
+    zoomView(0.9);
+  };
+
+  const toggleNavigationView = (e: CheckboxChangeEvent) => {
+    const setNavigationView = useStore.getState().setNavigationView;
+
+    const undoableCheck = {
+      name: 'Toggle Navigation View',
+      timestamp: Date.now(),
+      checked: e.target.checked,
+      undo: () => {
+        setNavigationView(!undoableCheck.checked);
+      },
+      redo: () => {
+        setNavigationView(undoableCheck.checked);
+      },
+    } as UndoableCheck;
+    useStore.getState().addUndoable(undoableCheck);
+    useStore.getState().set((state) => {
+      state.viewState.autoRotate = false;
+    });
+    setNavigationView(e.target.checked);
+  };
+
+  const toggle2DView = (e: CheckboxChangeEvent) => {
+    const set2DView = useStore.getState().set2DView;
+
+    const undoableCheck = {
+      name: 'Toggle 2D View',
+      timestamp: Date.now(),
+      checked: e.target.checked,
+      undo: () => {
+        set2DView(!undoableCheck.checked);
+      },
+      redo: () => {
+        set2DView(undoableCheck.checked);
+      },
+    } as UndoableCheck;
+    useStore.getState().addUndoable(undoableCheck);
+    set2DView(e.target.checked);
+    useStore.getState().set((state) => {
+      state.viewState.autoRotate = false;
+    });
+  };
+
+  const toggleAutoRotate = (e: CheckboxChangeEvent) => {
+    if (!useStore.getState().viewState.orthographic) {
+      const undoableCheck = {
+        name: 'Auto Rotate',
+        timestamp: Date.now(),
+        checked: e.target.checked,
+        undo: () => {
+          useStore.getState().set((state) => {
+            state.objectTypeToAdd = ObjectType.None;
+            state.groupActionMode = false;
+            state.viewState.autoRotate = !undoableCheck.checked;
+          });
+        },
+        redo: () => {
+          useStore.getState().set((state) => {
+            state.objectTypeToAdd = ObjectType.None;
+            state.groupActionMode = false;
+            state.viewState.autoRotate = undoableCheck.checked;
+          });
+        },
+      } as UndoableCheck;
+      useStore.getState().addUndoable(undoableCheck);
+      useStore.getState().set((state) => {
+        state.objectTypeToAdd = ObjectType.None;
+        state.groupActionMode = false;
+        state.viewState.autoRotate = !state.viewState.autoRotate;
+      });
+    }
+  };
+
+  const toggleAxes = (e: CheckboxChangeEvent) => {
+    const checked = e.target.checked;
+    const undoableCheck = {
+      name: 'Show Axes',
+      timestamp: Date.now(),
+      checked: checked,
+      undo: () => {
+        useStore.getState().set((state) => {
+          state.viewState.axes = !undoableCheck.checked;
+        });
+      },
+      redo: () => {
+        useStore.getState().set((state) => {
+          state.viewState.axes = undoableCheck.checked;
+        });
+      },
+    } as UndoableCheck;
+    useStore.getState().addUndoable(undoableCheck);
+    useStore.getState().set((state) => {
+      state.viewState.axes = checked;
+    });
+  };
+
+  const toggleShadow = (e: CheckboxChangeEvent) => {
+    const undoableCheck = {
+      name: 'Show Shadow',
+      timestamp: Date.now(),
+      checked: e.target.checked,
+      undo: () => {
+        useStore.getState().set((state) => {
+          state.viewState.shadowEnabled = !undoableCheck.checked;
+          if (state.viewState.shadowEnabled) {
+            state.updateSceneRadius();
+          }
+        });
+      },
+      redo: () => {
+        useStore.getState().set((state) => {
+          state.viewState.shadowEnabled = undoableCheck.checked;
+          if (state.viewState.shadowEnabled) {
+            state.updateSceneRadius();
+          }
+        });
+      },
+    } as UndoableCheck;
+    useStore.getState().addUndoable(undoableCheck);
+    useStore.getState().set((state) => {
+      state.viewState.shadowEnabled = e.target.checked;
+      if (state.viewState.shadowEnabled) {
+        state.updateSceneRadius();
+      }
+    });
+  };
+
+  const toggleShinness = (e: CheckboxChangeEvent) => {
+    const value = e.target.checked ? DEFAULT_SOLAR_PANEL_SHININESS : 0;
+
+    const undoableChange = {
+      name: 'Set Surface Shininess',
+      timestamp: Date.now(),
+      oldValue: useStore.getState().viewState.solarPanelShininess ?? DEFAULT_SOLAR_PANEL_SHININESS,
+      newValue: value,
+      undo: () => {
+        useStore.getState().set((state) => {
+          state.viewState.solarPanelShininess = undoableChange.oldValue as number;
+        });
+      },
+      redo: () => {
+        useStore.getState().set((state) => {
+          state.viewState.solarPanelShininess = undoableChange.newValue as number;
+        });
+      },
+    } as UndoableChange;
+    useStore.getState().addUndoable(undoableChange);
+    useStore.getState().set((state) => {
+      state.viewState.solarPanelShininess = value;
+    });
+  };
+
+  const toggleTranslucency = (e: CheckboxChangeEvent) => {
+    const oldOpacity = useStore.getState().floatingWindowOpacity;
+    const newOpacity = e.target.checked ? FLOATING_WINDOW_OPACITY : 1;
+    const undoableChange = {
+      name: 'Floating Window Opacity',
+      timestamp: Date.now(),
+      oldValue: oldOpacity,
+      newValue: newOpacity,
+      undo: () => {
+        useStore.getState().set((state) => {
+          state.floatingWindowOpacity = undoableChange.oldValue as number;
+        });
+      },
+      redo: () => {
+        useStore.getState().set((state) => {
+          state.floatingWindowOpacity = undoableChange.newValue as number;
+        });
+      },
+    } as UndoableChange;
+    useStore.getState().addUndoable(undoableChange);
+    useStore.getState().set((state) => {
+      state.floatingWindowOpacity = newOpacity;
+    });
+  };
+
+  const items: MenuProps['items'] = [];
+
+  // reset-view
+  if (!orthographic && !viewAlreadyReset) {
+    items.push({
+      key: 'reset-view',
+      label: (
+        <MenuItem onClick={handleResetView}>
+          {i18n.t('menu.view.ResetView', lang)}
+          <LabelMark>({keyHome})</LabelMark>
+        </MenuItem>
+      ),
+    });
+  }
+
+  // zoom-out-view
+  items.push({
+    key: 'zoom-out-view',
+    label: (
+      <MenuItem onClick={handleZoomOut}>
+        {i18n.t('menu.view.ZoomOut', lang)}
+        <LabelMark>({isMac ? '⌘' : 'Ctrl'}+])</LabelMark>
+      </MenuItem>
+    ),
+  });
+
+  // zoom-in-view
+  items.push({
+    key: 'zoom-in-view',
+    label: (
+      <MenuItem onClick={handleZoomIn}>
+        {i18n.t('menu.view.ZoomIn', lang)}
+        <LabelMark>({isMac ? '⌘' : 'Ctrl'}+[)</LabelMark>
+      </MenuItem>
+    ),
+  });
+
+  // navigation-view-check-box
+  items.push({
+    key: 'navigation-view-check-box',
+    label: (
+      <MainMenuCheckbox selector={Selector.viewState.navigationView} onChange={toggleNavigationView}>
+        {i18n.t('menu.view.NavigationView', lang)}
+        <LabelMark>({KeyCtrl}+Q)</LabelMark>
+      </MainMenuCheckbox>
+    ),
+  });
+
+  // orthographic-check-box
+  items.push({
+    key: 'orthographic-check-box',
+    label: (
+      <MainMenuCheckbox selector={Selector.viewState.orthographic} onChange={toggle2DView}>
+        {i18n.t('menu.view.TwoDimensionalView', lang)}
+        <LabelMark>({KeyCtrl}+B)</LabelMark>
+      </MainMenuCheckbox>
+    ),
+  });
+
+  // auto-rotate-check-box
+  if (!orthographic) {
+    items.push({
+      key: 'auto-rotate-check-box',
+      label: (
+        <MainMenuCheckbox selector={Selector.viewState.autoRotate} onChange={toggleAutoRotate}>
+          {i18n.t('menu.view.AutoRotate', lang)}
+          <LabelMark>({KeyCtrl}+M)</LabelMark>
+        </MainMenuCheckbox>
+      ),
+    });
+  }
+
+  // axes-check-box
+  items.push({
+    key: 'axes-check-box',
+    label: (
+      <MainMenuCheckbox selector={Selector.viewState.axes} onChange={toggleAxes}>
+        {i18n.t('skyMenu.Axes', lang)}
+      </MainMenuCheckbox>
+    ),
+  });
+
+  // shadow-check-box
+  items.push({
+    key: 'shadow-check-box',
+    label: (
+      <MainMenuCheckbox selector={Selector.viewState.shadowEnabled} onChange={toggleShadow}>
+        {i18n.t('menu.view.ShowShadow', lang)}
+      </MainMenuCheckbox>
+    ),
+  });
+
+  // shininess-check-box
+  items.push({
+    key: 'shininess-check-box',
+    label: (
+      <MainMenuCheckbox
+        selector={(state) =>
+          state.viewState.solarPanelShininess === undefined || state.viewState.solarPanelShininess > 0
+        }
+        onChange={toggleShinness}
+      >
+        {i18n.t('menu.view.ShowSurfaceShininess', lang)}
+      </MainMenuCheckbox>
+    ),
+  });
+
+  // translucency-check-box
+  items.push({
+    key: 'translucency-check-box',
+    label: (
+      <MainMenuCheckbox selector={(state) => state.floatingWindowOpacity < 1} onChange={toggleTranslucency}>
+        {i18n.t('menu.view.TranslucentFloatingWindows', lang)}
+      </MainMenuCheckbox>
+    ),
+  });
+
+  return items;
+};
