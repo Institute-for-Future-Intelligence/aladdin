@@ -2,12 +2,11 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import { InputNumber, MenuProps, Select, Space, Switch } from 'antd';
+import { InputNumber, MenuProps, Select, Space } from 'antd';
 import { MenuItem } from '../contextMenu/menuItems';
 import i18n from 'src/i18n/i18n';
 import { useStore } from 'src/stores/common';
 import { useDataStore } from 'src/stores/commonData';
-import { Discretization } from 'src/types';
 import * as Selector from '../../stores/selector';
 import { useLanguage } from 'src/views/hooks';
 

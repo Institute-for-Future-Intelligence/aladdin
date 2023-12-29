@@ -3,7 +3,7 @@
  */
 
 import styled from 'styled-components';
-import { Avatar, Button, Dropdown, Menu, MenuProps, Popover, Space } from 'antd';
+import { Avatar, Button, Dropdown, MenuProps, Popover, Space } from 'antd';
 import MainToolBarButtons from './mainToolBarButtons';
 import i18n from './i18n/i18n';
 import React, { useMemo } from 'react';

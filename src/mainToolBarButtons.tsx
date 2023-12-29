@@ -34,7 +34,7 @@ import AnalyzeImage from './assets/analyze.png';
 import React, { useMemo, useState } from 'react';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
-import { Dropdown, Menu, MenuProps, Modal } from 'antd';
+import { Dropdown, MenuProps, Modal } from 'antd';
 import 'antd/dist/reset.css';
 import { ObjectType } from './types';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
