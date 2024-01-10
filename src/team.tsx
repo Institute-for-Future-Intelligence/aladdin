@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useMemo } from 'react';
@@ -118,7 +118,7 @@ const Team = ({ top, height, color }: TeamProps) => {
           left: '10%',
           marginRight: '10%',
           top: top200,
-          fontSize: 'smaller',
+          fontSize: '12px',
           textAlign: 'justify',
           color: color,
         }}

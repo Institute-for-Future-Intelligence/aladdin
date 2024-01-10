@@ -1,12 +1,11 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import { Color, Euler, Vector2, Vector3 } from 'three';
-import { Util } from './Util';
 import platform from 'platform';
 
-export const VERSION = '1.5.4';
+export const VERSION = '1.5.6';
 
 // used for check old file that need to update light intensity.
 export const LIGHT_INTENSITY_CHANGED_VERSION = '1.5.0';
