@@ -87,13 +87,13 @@ const ParallelCoordinates = ({
   // Compute lines
   const lineGenerator = d3Shape.line();
 
-  const allLines = data.map((series, i) => {
-    if (series.invisible) return null;
+  const allLines = data.map((e, i) => {
+    if (e.invisible) return null;
     const allCoordinates = variables.map((variable) => {
       const yScale = yScales[variable];
       // I don't understand the type of scalePoint. IMO x cannot be undefined since I'm passing it something of type Variable.
       const x = xScale(variable) ?? 0;
-      const y = yScale(series[variable] as number);
+      const y = yScale(e[variable] as number);
       return [x, y] as [number, number];
     });
 
@@ -110,10 +110,10 @@ const ParallelCoordinates = ({
         }}
         key={i}
         d={d}
-        stroke={series.hovered ? 'red' : colorScale(series.group as string)}
+        stroke={e.hovered ? 'red' : colorScale(e.group as string)}
         fill="none"
-        strokeWidth={series.selected ? 3 : 1}
-        strokeDasharray={series.hovered ? '5,3' : 'none'}
+        strokeWidth={e.selected ? 3 : 1}
+        strokeDasharray={e.hovered ? '3,3' : 'none'}
       />
     );
   });
@@ -152,6 +152,9 @@ const ParallelCoordinates = ({
       id={id}
       width={width}
       height={height}
+      onMouseLeave={() => {
+        if (hover) hover(-1);
+      }}
       onContextMenu={(event) => {
         event.stopPropagation();
       }}

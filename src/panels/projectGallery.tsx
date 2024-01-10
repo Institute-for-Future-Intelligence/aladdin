@@ -492,6 +492,8 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
     if (projectInfo.designs) {
       if (i >= 0 && i < projectInfo.designs.length) {
         setHoveredDesign(projectInfo.designs[i]);
+      } else {
+        setHoveredDesign(undefined);
       }
     }
   };

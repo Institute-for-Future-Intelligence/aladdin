@@ -332,7 +332,7 @@ export const i18n_en = {
         ResetView: 'Reset',
         ZoomIn: 'Zoom In',
         ZoomOut: 'Zoom Out',
-        AutoRotate: 'Auto rotate',
+        AutoRotate: 'Auto Rotate',
         ShowShadow: 'Show Shadow',
         ShowSurfaceShininess: 'Show Surface Shininess',
         TranslucentFloatingWindows: 'Translucent Floating Windows',
