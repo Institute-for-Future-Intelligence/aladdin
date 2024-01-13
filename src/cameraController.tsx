@@ -83,11 +83,10 @@ const CameraController = () => {
     return gl.domElement;
   }, []);
 
-  const orbitControlRef = useRef<MyOrbitControls>(null);
+  const orbitControlsRef = useRef<MyOrbitControls>(null);
   const persCameraRef = useRef<THREEPerspectiveCamera>(null);
   const orthCameraRef = useRef<THREEOrthographicCamera>(null);
 
-  //
   useEffect(() => {
     if (useStore.getState().viewState.cameraPosition2D[2] < 100) {
       setCommonStore((state) => {
@@ -96,24 +95,24 @@ const CameraController = () => {
     }
   }, []);
 
-  // save orbitControlRef to common store
+  // save orbitControlsRef to common ref store
   useEffect(() => {
-    if (orbitControlRef && orbitControlRef.current) {
+    if (orbitControlsRef && orbitControlsRef.current) {
       useRefStore.setState({
-        orbitControlsRef: orbitControlRef,
+        orbitControlsRef: orbitControlsRef,
       });
     }
   }, []);
 
   // add orbit control event listener
   useEffect(() => {
-    if (orbitControlRef.current) {
-      orbitControlRef.current.addEventListener('change', render);
-      orbitControlRef.current.addEventListener('start', onInteractionStart);
-      orbitControlRef.current.addEventListener('end', onInteractionEnd);
+    if (orbitControlsRef.current) {
+      orbitControlsRef.current.addEventListener('change', render);
+      orbitControlsRef.current.addEventListener('start', onInteractionStart);
+      orbitControlsRef.current.addEventListener('end', onInteractionEnd);
     }
     // copy a reference before the cleanup call
-    const oc = orbitControlRef.current;
+    const oc = orbitControlsRef.current;
     return () => {
       if (oc) {
         oc.removeEventListener('change', render);
@@ -126,7 +125,7 @@ const CameraController = () => {
   // open new/other file
   useEffect(() => {
     const viewState = useStore.getState().viewState;
-    if (orbitControlRef.current) {
+    if (orbitControlsRef.current) {
       if (persCameraRef.current) {
         if (enabledNavigationControls) {
           const camera = get().camera;
@@ -143,8 +142,8 @@ const CameraController = () => {
           persCameraRef.current.lookAt(panCenter);
           persCameraRef.current.zoom = 1;
           if (!orthographic) {
-            orbitControlRef.current.object = persCameraRef.current;
-            orbitControlRef.current.target.copy(panCenter);
+            orbitControlsRef.current.object = persCameraRef.current;
+            orbitControlsRef.current.target.copy(panCenter);
           }
         }
         camera.updateMatrixWorld();
@@ -159,8 +158,8 @@ const CameraController = () => {
         orthCameraRef.current.lookAt(panCenter2D);
         orthCameraRef.current.zoom = viewState.cameraZoom;
         if (orthographic) {
-          orbitControlRef.current.object = orthCameraRef.current;
-          orbitControlRef.current.target.copy(panCenter2D);
+          orbitControlsRef.current.object = orthCameraRef.current;
+          orbitControlsRef.current.target.copy(panCenter2D);
         }
       }
     }
@@ -168,10 +167,10 @@ const CameraController = () => {
 
   // switch camera
   useEffect(() => {
-    if (!orthCameraRef.current || !persCameraRef.current || !orbitControlRef.current) return;
+    if (!orthCameraRef.current || !persCameraRef.current || !orbitControlsRef.current) return;
 
     const viewState = useStore.getState().viewState;
-    const orbitControl = orbitControlRef.current;
+    const orbitControl = orbitControlsRef.current;
     const orthCam = orthCameraRef.current;
     const persCam = persCameraRef.current;
     if (orthographic) {
@@ -190,13 +189,13 @@ const CameraController = () => {
   // camera zoom in 2D view (no need to do this in 3D view)
   useEffect(() => {
     if (orthographic) {
-      if (orbitControlRef.current) {
+      if (orbitControlsRef.current) {
         if (orthCameraRef.current) {
           orthCameraRef.current.zoom = cameraZoom;
-          orbitControlRef.current.object = orthCameraRef.current;
+          orbitControlsRef.current.object = orthCameraRef.current;
         }
         render();
-        orbitControlRef.current.update();
+        orbitControlsRef.current.update();
       }
     }
   }, [cameraZoom]);
@@ -205,8 +204,8 @@ const CameraController = () => {
     invalidate();
     if (!useStore.getState().viewState.orthographic) {
       setCompassRotation(get().camera);
-      if (orbitControlRef.current) {
-        orbitControlRef.current.target.clamp(minPan, maxPan);
+      if (orbitControlsRef.current) {
+        orbitControlsRef.current.target.clamp(minPan, maxPan);
       }
     }
   };
@@ -222,11 +221,11 @@ const CameraController = () => {
       state.duringCameraInteraction = false;
     });
     setCommonStore((state) => {
-      if (!orbitControlRef.current) return;
+      if (!orbitControlsRef.current) return;
       const v = state.viewState;
       const cam = get().camera;
       const cameraPosition = cam.position;
-      const targetPosition = orbitControlRef.current.target;
+      const targetPosition = orbitControlsRef.current.target;
       if (v.orthographic) {
         if (cam.zoom && !isNaN(cam.zoom)) {
           v.cameraZoom = cam.zoom;
@@ -265,8 +264,8 @@ const CameraController = () => {
 
   // animation
   useFrame((state) => {
-    if (autoRotate && orbitControlRef.current) {
-      orbitControlRef.current.update();
+    if (autoRotate && orbitControlsRef.current) {
+      orbitControlsRef.current.update();
     }
   });
 
@@ -280,18 +279,18 @@ const CameraController = () => {
 
   // key event
   useEffect(() => {
-    if (!orbitControlRef.current) return;
+    if (!orbitControlsRef.current) return;
 
     if (enabledNavigationControls && !saveLocalFileDialogVisible && !showCloudFileTitleDialogFlag) {
-      orbitControlRef.current.listenToKeyEvents(window);
+      orbitControlsRef.current.listenToKeyEvents(window);
     } else {
-      orbitControlRef.current.removeKeyEvents();
+      orbitControlsRef.current.removeKeyEvents();
     }
   }, [enabledNavigationControls, saveLocalFileDialogVisible, showCloudFileTitleDialogFlag]);
 
   // switch to navigation controls
   useEffect(() => {
-    if (!orbitControlRef.current) return;
+    if (!orbitControlsRef.current) return;
 
     const viewState = useStore.getState().viewState;
 
@@ -306,15 +305,15 @@ const CameraController = () => {
       camera.updateMatrixWorld();
       setCompassRotation(get().camera);
     } else {
-      if (orbitControlRef.current && persCameraRef.current) {
+      if (orbitControlsRef.current && persCameraRef.current) {
         const cameraPosition = getVector(viewState.cameraPosition ?? [0, 0, 20]);
         const panCenter = getVector(viewState.panCenter ?? [0, 0, 0]);
         persCameraRef.current.position.copy(cameraPosition);
         persCameraRef.current.lookAt(panCenter);
         persCameraRef.current.zoom = 1;
         if (!orthographic) {
-          orbitControlRef.current.object = persCameraRef.current;
-          orbitControlRef.current.target.copy(panCenter);
+          orbitControlsRef.current.object = persCameraRef.current;
+          orbitControlsRef.current.target.copy(panCenter);
         }
         persCameraRef.current.updateMatrixWorld();
         setCompassRotation(persCameraRef.current);
@@ -328,7 +327,7 @@ const CameraController = () => {
       <PerspectiveCamera ref={persCameraRef} fov={DEFAULT_FOV} far={shadowCameraFar} up={[0, 0, 1]} />
       <OrthographicCamera ref={orthCameraRef} up={[0, 0, 1]} />
       <myOrbitControls
-        ref={orbitControlRef}
+        ref={orbitControlsRef}
         args={[initialOrbitCamera, initialOrbitDomElement]}
         autoRotate={autoRotate}
         enableRotate={enableRotate}

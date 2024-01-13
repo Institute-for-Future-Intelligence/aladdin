@@ -40,12 +40,12 @@ const Team = ({ top, height, color }: TeamProps) => {
         }}
       >
         <h2 style={{ marginTop: '20px', color: color }}>{i18n.t('aboutUs.ProductBroughtToYouBy', lang)}</h2>
-        <p style={{ fontSize: '12px', color: color }}>
+        <p style={{ paddingTop: '6px', fontSize: '12px', color: color }}>
           <a
             target="_blank"
             rel="noopener noreferrer"
             href="https://intofuture.org/aladdin-terms.html"
-            style={{ color: color }}
+            style={{ color: color, textDecoration: 'none' }}
           >
             {i18n.t('aboutUs.TermsOfService', lang)}
           </a>
@@ -54,7 +54,7 @@ const Team = ({ top, height, color }: TeamProps) => {
             target="_blank"
             rel="noopener noreferrer"
             href="https://intofuture.org/aladdin-privacy.html"
-            style={{ color: color }}
+            style={{ color: color, textDecoration: 'none' }}
           >
             {i18n.t('aboutUs.PrivacyPolicy', lang)}
           </a>
