@@ -7,11 +7,11 @@ import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import { saveAs } from 'file-saver';
 import { showError, showInfo } from './helpers';
-import i18n from './i18n/i18n';
 import { Button, Input, Modal } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { usePrimitiveStore } from './stores/commonPrimitive';
+import { useTranslation } from 'react-i18next';
 
 export interface LocalFileManagerProps {
   viewOnly: boolean;
@@ -35,6 +35,7 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
 
+  const { t } = useTranslation();
   const lang = useMemo(() => {
     return { lng: language };
   }, [language]);
@@ -55,10 +56,10 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
 
   const createNewFile = () => {
     Modal.confirm({
-      title: `${i18n.t('message.DoYouWantToSaveChanges', lang)}`,
+      title: `${t('message.DoYouWantToSaveChanges', lang)}`,
       icon: <ExclamationCircleOutlined />,
-      okText: `${i18n.t('word.Yes', lang)}`,
-      cancelText: `${i18n.t('word.No', lang)}`,
+      okText: `${t('word.Yes', lang)}`,
+      cancelText: `${t('word.No', lang)}`,
       onOk: () => {
         if (user.uid) {
           if (cloudFile) {
@@ -74,7 +75,7 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
             });
           }
         } else {
-          showInfo(i18n.t('menu.file.ToSaveYourWorkPleaseSignIn', lang));
+          showInfo(t('menu.file.ToSaveYourWorkPleaseSignIn', lang));
         }
       },
       onCancel: () => {
@@ -86,7 +87,7 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
   const readLocalFile = () => {
     if (!viewOnly && usePrimitiveStore.getState().changed) {
       Modal.confirm({
-        title: i18n.t('message.DoYouWantToSaveChanges', lang),
+        title: t('message.DoYouWantToSaveChanges', lang),
         icon: <ExclamationCircleOutlined />,
         onOk: () => {
           if (user.uid) {
@@ -100,12 +101,12 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
               });
             }
           } else {
-            showInfo(i18n.t('menu.file.ToSaveYourWorkPleaseSignIn', lang));
+            showInfo(t('menu.file.ToSaveYourWorkPleaseSignIn', lang));
           }
         },
         onCancel: () => loadLocalFile(false),
-        okText: i18n.t('word.Yes', lang),
-        cancelText: i18n.t('word.No', lang),
+        okText: t('word.Yes', lang),
+        cancelText: t('word.No', lang),
       });
     } else {
       loadLocalFile(false);
@@ -167,7 +168,7 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
       });
       return true;
     } else {
-      showError(i18n.t('menu.file.SavingAbortedMustHaveValidFileName', lang) + '.');
+      showError(t('menu.file.SavingAbortedMustHaveValidFileName', lang) + '.');
       return false;
     }
   };
@@ -219,28 +220,28 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('menu.file.SaveAsLocalFile', lang)}
+            {t('menu.file.SaveAsLocalFile', lang)}
           </div>
         }
         footer={
           cloudFile
             ? [
                 <Button key="Apply" onClick={useCloudFileName}>
-                  {i18n.t('menu.file.UseCloudFileName', lang)}
+                  {t('menu.file.UseCloudFileName', lang)}
                 </Button>,
                 <Button key="Cancel" onClick={performCancelAction}>
-                  {i18n.t('word.Cancel', lang)}
+                  {t('word.Cancel', lang)}
                 </Button>,
                 <Button key="OK" type="primary" onClick={performOkAction} disabled={!localFileName}>
-                  {i18n.t('word.OK', lang)}
+                  {t('word.OK', lang)}
                 </Button>,
               ]
             : [
                 <Button key="Cancel" onClick={performCancelAction}>
-                  {i18n.t('word.Cancel', lang)}
+                  {t('word.Cancel', lang)}
                 </Button>,
                 <Button key="OK" type="primary" onClick={performOkAction} disabled={!localFileName}>
-                  {i18n.t('word.OK', lang)}
+                  {t('word.OK', lang)}
                 </Button>,
               ]
         }
