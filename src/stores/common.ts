@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import { createWithEqualityFn } from 'zustand/traditional';
@@ -512,11 +512,6 @@ export interface CommonStoreState {
   groupActionUpdateFlag: boolean;
 
   locale: Locale;
-  localFileName: string;
-  createNewFileFlag: boolean;
-  setCreateNewFileFlag: (b: boolean) => void;
-  openLocalFileFlag: boolean;
-  setOpenLocalFileFlag: (b: boolean) => void;
   enableFineGrid: boolean;
   setEnableFineGrid: (b: boolean) => void;
 
@@ -4550,19 +4545,6 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
           groupActionUpdateFlag: false,
 
           locale: enUS,
-          localFileName: 'aladdin.ala',
-          createNewFileFlag: false,
-          setCreateNewFileFlag(b) {
-            immerSet((state) => {
-              state.createNewFileFlag = b;
-            });
-          },
-          openLocalFileFlag: false,
-          setOpenLocalFileFlag(b) {
-            immerSet((state) => {
-              state.openLocalFileFlag = b;
-            });
-          },
           localFileDialogRequested: false,
           loggable: false,
           actionInfo: undefined,

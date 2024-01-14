@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import { MenuProps } from 'antd';
@@ -61,8 +61,11 @@ export const createFileMenu = (viewOnly: boolean, isMac: boolean, canvas?: HTMLC
 
   const handleCreateNewFile = () => {
     undoManager.clear();
-    setCommonStore((state) => {
+    usePrimitiveStore.getState().set((state) => {
       state.createNewFileFlag = true;
+      state.openModelsMap = false;
+    });
+    setCommonStore((state) => {
       state.objectTypeToAdd = ObjectType.None;
       state.groupActionMode = false;
       window.history.pushState({}, document.title, HOME_URL);
@@ -73,15 +76,15 @@ export const createFileMenu = (viewOnly: boolean, isMac: boolean, canvas?: HTMLC
         };
       }
     });
-    usePrimitiveStore.getState().set((state) => {
-      state.openModelsMap = false;
-    });
   };
 
   const handleOpenLocalFile = () => {
     undoManager.clear();
-    setCommonStore((state) => {
+    usePrimitiveStore.getState().set((state) => {
       state.openLocalFileFlag = true;
+      state.openModelsMap = false;
+    });
+    setCommonStore((state) => {
       state.objectTypeToAdd = ObjectType.None;
       state.groupActionMode = false;
       state.cloudFile = undefined;
@@ -92,9 +95,6 @@ export const createFileMenu = (viewOnly: boolean, isMac: boolean, canvas?: HTMLC
           timestamp: new Date().getTime(),
         };
       }
-    });
-    usePrimitiveStore.getState().set((state) => {
-      state.openModelsMap = false;
     });
   };
 

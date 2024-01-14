@@ -23,10 +23,10 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
   const importContent = useStore(Selector.importContent);
   const createEmptyFile = useStore(Selector.createEmptyFile);
   const saveLocalFileDialogVisible = usePrimitiveStore(Selector.saveLocalFileDialogVisible);
-  const createNewFileFlag = useStore(Selector.createNewFileFlag);
-  const openLocalFileFlag = useStore(Selector.openLocalFileFlag);
+  const createNewFileFlag = usePrimitiveStore(Selector.createNewFileFlag);
+  const openLocalFileFlag = usePrimitiveStore(Selector.openLocalFileFlag);
   const cloudFile = useStore(Selector.cloudFile);
-  const localFileName = useStore(Selector.localFileName);
+  const localFileName = usePrimitiveStore(Selector.localFileName);
   const user = useStore(Selector.user);
   const language = useStore(Selector.language);
 
@@ -42,14 +42,14 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
   useEffect(() => {
     if (createNewFileFlag) {
       createNewFile();
-      useStore.getState().setCreateNewFileFlag(false);
+      usePrimitiveStore.getState().setCreateNewFileFlag(false);
     }
   }, [createNewFileFlag]);
 
   useEffect(() => {
     if (openLocalFileFlag) {
       readLocalFile();
-      useStore.getState().setOpenLocalFileFlag(false);
+      usePrimitiveStore.getState().setOpenLocalFileFlag(false);
     }
   }, [openLocalFileFlag]);
 
@@ -127,7 +127,7 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
         const reader = new FileReader();
         reader.readAsText(fileDialog.files[0]);
         const fn = fileDialog.files[0].name;
-        setCommonStore((state) => {
+        usePrimitiveStore.getState().set((state) => {
           state.localFileName = fn;
         });
         reader.onload = () => {
@@ -159,8 +159,10 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
       }
       const blob = new Blob([JSON.stringify(exportContent())], { type: 'application/json' });
       saveAs(blob, fn);
-      setCommonStore((state) => {
+      usePrimitiveStore.getState().set((state) => {
         state.localFileName = fn;
+      });
+      setCommonStore((state) => {
         state.cloudFile = undefined;
       });
       return true;
@@ -201,7 +203,7 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
 
   const useCloudFileName = () => {
     if (cloudFile) {
-      setCommonStore((state) => {
+      usePrimitiveStore.getState().set((state) => {
         state.localFileName = cloudFile;
         if (!state.localFileName.endsWith('.ala')) state.localFileName += '.ala';
       });
@@ -256,7 +258,7 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
           value={localFileName}
           onPressEnter={performOkAction}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setCommonStore((state) => {
+            usePrimitiveStore.getState().set((state) => {
               state.localFileName = e.target.value;
             });
           }}

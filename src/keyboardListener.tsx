@@ -884,8 +884,11 @@ const KeyboardListener = ({ canvas, resetView, zoomView }: KeyboardListenerProps
         break;
       case 'ctrl+f':
       case 'meta+f': // for Mac
-        setCommonStore((state) => {
+        usePrimitiveStore.getState().set((state) => {
           state.createNewFileFlag = true;
+          state.openModelsMap = false;
+        });
+        setCommonStore((state) => {
           state.objectTypeToAdd = ObjectType.None;
           state.groupActionMode = false;
           window.history.pushState({}, document.title, HOME_URL);
@@ -895,9 +898,6 @@ const KeyboardListener = ({ canvas, resetView, zoomView }: KeyboardListenerProps
               timestamp: new Date().getTime(),
             };
           }
-        });
-        usePrimitiveStore.getState().set((state) => {
-          state.openModelsMap = false;
         });
         break;
       case 'ctrl+s':
@@ -1154,9 +1154,11 @@ const KeyboardListener = ({ canvas, resetView, zoomView }: KeyboardListenerProps
         // this must be handled as a key-up event because it brings up a native file dialog
         // when the key is down and the corresponding key-up event would never be processed as the focus is lost
         if (!useStore.getState().localFileDialogRequested) {
+          usePrimitiveStore.getState().set((state) => {
+            state.openLocalFileFlag = true;
+          });
           setCommonStore((state) => {
             state.localFileDialogRequested = true;
-            state.openLocalFileFlag = true;
             if (loggable) {
               state.actionInfo = {
                 name: 'Open Local File',

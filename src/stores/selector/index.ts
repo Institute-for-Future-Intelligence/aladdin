@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import { CommonStoreState } from '../common';
@@ -148,11 +148,11 @@ export const listCloudFilesFlag = (state: PrimitiveStoreState) => state.listClou
 export const localContentToImportAfterCloudFileUpdate = (state: CommonStoreState) =>
   state.localContentToImportAfterCloudFileUpdate;
 
-export const localFileName = (state: CommonStoreState) => state.localFileName;
+export const localFileName = (state: PrimitiveStoreState) => state.localFileName;
 
-export const createNewFileFlag = (state: CommonStoreState) => state.createNewFileFlag;
+export const createNewFileFlag = (state: PrimitiveStoreState) => state.createNewFileFlag;
 
-export const openLocalFileFlag = (state: CommonStoreState) => state.openLocalFileFlag;
+export const openLocalFileFlag = (state: PrimitiveStoreState) => state.openLocalFileFlag;
 
 export const saveLocalFileDialogVisible = (state: PrimitiveStoreState) => state.saveLocalFileDialogVisible;
 

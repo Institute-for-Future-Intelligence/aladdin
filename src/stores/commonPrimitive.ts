@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import { createWithEqualityFn } from 'zustand/traditional';
@@ -12,6 +12,12 @@ export interface PrimitiveStoreState {
   setChanged: (b: boolean) => void;
   skipChange: boolean;
   setSkipChange: (b: boolean) => void;
+
+  localFileName: string;
+  createNewFileFlag: boolean;
+  setCreateNewFileFlag: (b: boolean) => void;
+  openLocalFileFlag: boolean;
+  setOpenLocalFileFlag: (b: boolean) => void;
 
   waiting: boolean;
 
@@ -177,6 +183,20 @@ export const usePrimitiveStore = createWithEqualityFn<PrimitiveStoreState>()((se
     setSkipChange(b) {
       immerSet((state: PrimitiveStoreState) => {
         state.skipChange = b;
+      });
+    },
+
+    localFileName: 'aladdin.ala',
+    createNewFileFlag: false,
+    setCreateNewFileFlag(b) {
+      immerSet((state) => {
+        state.createNewFileFlag = b;
+      });
+    },
+    openLocalFileFlag: false,
+    setOpenLocalFileFlag(b) {
+      immerSet((state) => {
+        state.openLocalFileFlag = b;
       });
     },
 
