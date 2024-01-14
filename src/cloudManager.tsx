@@ -350,20 +350,32 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     const firestore = firebase.firestore();
     let signFile = false;
     let noLogging = false;
-    let userCount = 0;
     let schoolID = SchoolID.UNKNOWN;
     let classID = ClassID.UNKNOWN;
     let likes: string[] = [];
     let published: string[] = [];
     let aliases: string[] = [];
-    const found = await firestore
-      .collection('users')
-      .get()
-      .then((querySnapshot) => {
-        userCount = querySnapshot.size;
-        for (const doc of querySnapshot.docs) {
-          if (doc.id === user.uid) {
-            const docData = doc.data();
+    let found = false;
+    let userCount = 0;
+    if (user.uid !== null) {
+      const superuser = user && user.email === 'charles@intofuture.org';
+      if (superuser) {
+        // This way of counting a collection is expensive. It is reserved for only superusers.
+        // It should be replaced by getCountFromServer in the latest version of Firestore;
+        await firestore
+          .collection('users')
+          .get()
+          .then((querySnapshot) => {
+            userCount = querySnapshot.size;
+          });
+      }
+      found = await firestore
+        .collection('users')
+        .doc(user.uid)
+        .get()
+        .then((doc) => {
+          const docData = doc.data();
+          if (docData) {
             signFile = !!docData.signFile;
             noLogging = !!docData.noLogging;
             schoolID = docData.schoolID ? (docData.schoolID as SchoolID) : SchoolID.UNKNOWN;
@@ -373,10 +385,11 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
             if (docData.aliases) aliases = docData.aliases;
             return true;
           }
-        }
-        return false;
-      });
+          return false;
+        });
+    }
     if (found) {
+      // update common store state
       setCommonStore((state) => {
         state.user.signFile = signFile;
         state.user.noLogging = noLogging;
@@ -389,6 +402,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       usePrimitiveStore.getState().set((state) => {
         state.userCount = userCount;
       });
+      // update current user object
       user.signFile = signFile;
       user.noLogging = noLogging;
       user.schoolID = schoolID;
