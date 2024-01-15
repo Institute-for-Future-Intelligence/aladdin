@@ -123,6 +123,8 @@ export const modelSites = (state: CommonStoreState) => state.modelSites;
 
 export const peopleModels = (state: CommonStoreState) => state.peopleModels;
 
+export const saveAccountSettingsFlag = (state: PrimitiveStoreState) => state.saveAccountSettingsFlag;
+
 export const saveCloudFileFlag = (state: PrimitiveStoreState) => state.saveCloudFileFlag;
 
 export const createProjectFlag = (state: PrimitiveStoreState) => state.createProjectFlag;

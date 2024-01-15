@@ -28,6 +28,8 @@ export interface PrimitiveStoreState {
   showNavigationPanel: boolean;
   showShadowSettings: boolean;
 
+  saveAccountSettingsFlag: boolean;
+
   saveCloudFileFlag: boolean;
   setSaveCloudFileFlag: (b: boolean) => void;
   listCloudFilesFlag: boolean;
@@ -212,6 +214,8 @@ export const usePrimitiveStore = createWithEqualityFn<PrimitiveStoreState>()((se
     showEconomicsPanel: false,
     showNavigationPanel: false,
     showShadowSettings: false,
+
+    saveAccountSettingsFlag: false,
 
     saveCloudFileFlag: false,
     setSaveCloudFileFlag(b) {

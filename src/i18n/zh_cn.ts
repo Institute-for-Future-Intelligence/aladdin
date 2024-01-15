@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 export const i18n_zh_cn = {
@@ -306,9 +306,9 @@ export const i18n_zh_cn = {
         SavingAbortedMustHaveValidFileName: '文件名无效，保存失败',
         OpenCloudFile: '打开云端文件',
         SaveCloudFile: '保存云端文件',
-        SaveAsCloudFile: '保存为云端文件',
+        SaveAsCloudFile: '另存云端文件为',
         SavingAbortedMustHaveValidTitle: '云端文件名无效，保存失败',
-        ToSaveYourWorkPleaseSignIn: '为了保存您的云端文件，请您先登录。',
+        ToSaveYourWorkPleaseSignIn: '为了保存您的云端文件，请先登录。',
         TakeScreenshot: '截屏',
         UseCloudFileName: '采用云端文件名',
         PublishOnModelsMap: '发布到地图上',

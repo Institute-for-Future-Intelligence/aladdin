@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -214,6 +214,9 @@ const AccountSettingsPanel = ({ openCloudFile }: { openCloudFile: (userid: strin
                           state.user.signFile = false;
                         });
                       }
+                      usePrimitiveStore.getState().set((state) => {
+                        state.saveAccountSettingsFlag = true;
+                      });
                     }}
                   />
                 </Col>
@@ -235,6 +238,9 @@ const AccountSettingsPanel = ({ openCloudFile }: { openCloudFile: (userid: strin
                     schoolIdRef.current = value;
                     setCommonStore((state) => {
                       state.user.schoolID = value;
+                    });
+                    usePrimitiveStore.getState().set((state) => {
+                      state.saveAccountSettingsFlag = true;
                     });
                   }}
                 >
@@ -272,6 +278,9 @@ const AccountSettingsPanel = ({ openCloudFile }: { openCloudFile: (userid: strin
                     classIdRef.current = value;
                     setCommonStore((state) => {
                       state.user.classID = value;
+                    });
+                    usePrimitiveStore.getState().set((state) => {
+                      state.saveAccountSettingsFlag = true;
                     });
                   }}
                 >

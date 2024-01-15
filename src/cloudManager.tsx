@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -73,6 +73,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const showAccountSettingsPanel = usePrimitiveStore(Selector.showAccountSettingsPanel);
   const openModelsMap = usePrimitiveStore(Selector.openModelsMap);
   const cloudFile = useStore(Selector.cloudFile);
+  const saveAccountSettingsFlag = usePrimitiveStore(Selector.saveAccountSettingsFlag);
   const saveCloudFileFlag = usePrimitiveStore(Selector.saveCloudFileFlag);
   const modelsMapFlag = usePrimitiveStore(Selector.modelsMapFlag);
   const leaderboardFlag = usePrimitiveStore(Selector.leaderboardFlag);
@@ -101,11 +102,34 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const cloudFiles = useRef<CloudFileInfo[] | void>();
   const myProjects = useRef<ProjectInfo[] | void>(); // Not sure why I need to use ref to store this
   const authorModelsRef = useRef<Map<string, ModelSite>>();
-  const firstAccountSettings = useRef<boolean>(true);
 
   const lang = useMemo(() => {
     return { lng: language };
   }, [language]);
+
+  useFlag(saveAccountSettingsFlag, saveAccountSettings, () => setPrimitiveStore('saveAccountSettingsFlag', false));
+
+  useFlag(saveCloudFileFlag, updateCloudFile, () => setPrimitiveStore('saveCloudFileFlag', false));
+
+  useFlag(modelsMapFlag, fetchModelSitesFn, () => setPrimitiveStore('modelsMapFlag', false));
+
+  useFlag(leaderboardFlag, fetchPeopleModelsFn, () => setPrimitiveStore('leaderboardFlag', false));
+
+  useFlag(publishOnMapFlag, publishOnModelsMap, () => setPrimitiveStore('publishOnModelsMapFlag', false));
+
+  useFlag(createProjectFlag, createNewProject, () => setPrimitiveStore('createProjectFlag', false));
+
+  useFlag(saveProjectFlag, saveProjectAs, () => setPrimitiveStore('saveProjectFlag', false));
+
+  useFlag(showProjectsFlag, showMyProjectsList, () => setPrimitiveStore('showProjectsFlag', false));
+
+  useFlag(updateProjectsFlag, hideMyProjectsList, () => setPrimitiveStore('updateProjectsFlag', false));
+
+  useFlag(listCloudFilesFlag, listMyCloudFiles, () => setPrimitiveStore('listCloudFilesFlag', false));
+
+  useFlag(curateDesignToProjectFlag, curateDesignToProject, () =>
+    setPrimitiveStore('curateDesignToProjectFlag', false),
+  );
 
   useEffect(() => {
     const config = {
@@ -246,28 +270,6 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     }
   }, [peopleModels, user.displayName, user.aliases]);
 
-  useFlag(saveCloudFileFlag, updateCloudFile, () => setPrimitiveStore('saveCloudFileFlag', false));
-
-  useFlag(modelsMapFlag, fetchModelSitesFn, () => setPrimitiveStore('modelsMapFlag', false));
-
-  useFlag(leaderboardFlag, fetchPeopleModelsFn, () => setPrimitiveStore('leaderboardFlag', false));
-
-  useFlag(publishOnMapFlag, publishOnModelsMap, () => setPrimitiveStore('publishOnModelsMapFlag', false));
-
-  useFlag(createProjectFlag, createNewProject, () => setPrimitiveStore('createProjectFlag', false));
-
-  useFlag(saveProjectFlag, saveProjectAs, () => setPrimitiveStore('saveProjectFlag', false));
-
-  useFlag(showProjectsFlag, showMyProjectsList, () => setPrimitiveStore('showProjectsFlag', false));
-
-  useFlag(updateProjectsFlag, hideMyProjectsList, () => setPrimitiveStore('updateProjectsFlag', false));
-
-  useFlag(listCloudFilesFlag, listMyCloudFiles, () => setPrimitiveStore('listCloudFilesFlag', false));
-
-  useFlag(curateDesignToProjectFlag, curateDesignToProject, () =>
-    setPrimitiveStore('curateDesignToProjectFlag', false),
-  );
-
   useEffect(() => {
     setTitleDialogVisible(showCloudFileTitleDialog);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -276,15 +278,6 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   useEffect(() => {
     setTitle(cloudFile ?? 'My Aladdin File');
   }, [cloudFile]);
-
-  useEffect(() => {
-    if (firstAccountSettings.current) {
-      firstAccountSettings.current = false;
-    } else {
-      saveAccountSettings(user);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user.signFile, user.schoolID, user.classID]);
 
   const init = () => {
     const params = new URLSearchParams(window.location.search);
@@ -462,7 +455,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       });
   };
 
-  const saveAccountSettings = (user: User) => {
+  function saveAccountSettings() {
     if (user.uid) {
       const firestore = firebase.firestore();
       firestore
@@ -480,7 +473,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           showError(i18n.t('message.CannotSaveYourAccountSettings', lang) + ': ' + error);
         });
     }
-  };
+  }
 
   const fetchModelSites = async () => {
     setLoading(true);

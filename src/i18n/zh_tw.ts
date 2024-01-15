@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 export const i18n_zh_tw = {
@@ -306,9 +306,9 @@ export const i18n_zh_tw = {
         SavingAbortedMustHaveValidFileName: '文檔名無效，保存失敗',
         OpenCloudFile: '打開雲端文檔',
         SaveCloudFile: '保存雲端文檔',
-        SaveAsCloudFile: '保存為雲端文檔',
+        SaveAsCloudFile: '另存雲端文檔為',
         SavingAbortedMustHaveValidTitle: '雲端文檔名無效，保存失敗',
-        ToSaveYourWorkPleaseSignIn: '為了保存您的雲端文檔，請您先登錄。',
+        ToSaveYourWorkPleaseSignIn: '為了保存您的雲端文檔，請先登錄。',
         TakeScreenshot: '截屏',
         UseCloudFileName: '採用雲端文件名',
         PublishOnModelsMap: '發佈到地圖上',
