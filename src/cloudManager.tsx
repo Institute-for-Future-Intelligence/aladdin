@@ -99,8 +99,8 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const [updateProjectArrayFlag, setUpdateProjectArrayFlag] = useState(false);
   const [title, setTitle] = useState<string>(cloudFile ?? 'My Aladdin File');
   const [titleDialogVisible, setTitleDialogVisible] = useState(false);
-  const cloudFiles = useRef<CloudFileInfo[] | void>();
-  const myProjects = useRef<ProjectInfo[] | void>(); // Not sure why I need to use ref to store this
+  const cloudFilesRef = useRef<CloudFileInfo[] | void>();
+  const myProjectsRef = useRef<ProjectInfo[] | void>(); // store sorted projects
   const authorModelsRef = useRef<Map<string, ModelSite>>();
 
   const lang = useMemo(() => {
@@ -201,9 +201,9 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   };
 
   useEffect(() => {
-    if (cloudFiles.current) {
+    if (cloudFilesRef.current) {
       const arr: any[] = [];
-      cloudFiles.current.forEach((f, i) => {
+      cloudFilesRef.current.forEach((f, i) => {
         arr.push({
           key: i.toString(),
           title: f.fileName,
@@ -219,12 +219,12 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     // FIXME: React says that the dependency of the mutable cloudFiles.current is unnecessary,
     //  but we need this for the code to work.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cloudFiles.current]);
+  }, [cloudFilesRef.current]);
 
   useEffect(() => {
-    if (myProjects.current) {
+    if (myProjectsRef.current) {
       const arr: any[] = [];
-      myProjects.current.forEach((f, i) => {
+      myProjectsRef.current.forEach((f, i) => {
         arr.push({
           key: i.toString(),
           owner: f.owner,
@@ -251,7 +251,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       setProjectArray(arr);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [myProjects.current, updateProjectArrayFlag]);
+  }, [myProjectsRef.current, updateProjectArrayFlag]);
 
   // fetch all the models that belong to the current user, including those published under all aliases
   useEffect(() => {
@@ -715,7 +715,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const fetchMyProjects = async (silent: boolean) => {
     if (!user.uid) return;
     if (!silent) setLoading(true);
-    myProjects.current = await firebase
+    myProjectsRef.current = await firebase
       .firestore()
       .collection('users')
       .doc(user.uid)
@@ -777,9 +777,9 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       .doc(title)
       .delete()
       .then(() => {
-        if (myProjects.current && user.uid) {
+        if (myProjectsRef.current && user.uid) {
           // also delete the designs of the deleted project
-          for (const p of myProjects.current) {
+          for (const p of myProjectsRef.current) {
             if (p.title === title && p.designs) {
               for (const d of p.designs) {
                 setCommonStore((state) => {
@@ -804,7 +804,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
               break;
             }
           }
-          myProjects.current = myProjects.current.filter((e) => {
+          myProjectsRef.current = myProjectsRef.current.filter((e) => {
             return e.title !== title;
           });
           setUpdateFlag(!updateFlag);
@@ -838,8 +838,8 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     // check if the new project title is already taken
     fetchMyProjects(false).then(() => {
       let exist = false;
-      if (myProjects.current) {
-        for (const p of myProjects.current) {
+      if (myProjectsRef.current) {
+        for (const p of myProjectsRef.current) {
           if (p.title === newTitle) {
             exist = true;
             break;
@@ -877,11 +877,11 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                       .doc(oldTitle)
                       .delete()
                       .then(() => {
-                        // TODO
+                        // ignore
                       });
-                    if (myProjects.current) {
+                    if (myProjectsRef.current) {
                       const newArray: ProjectInfo[] = [];
-                      for (const p of myProjects.current) {
+                      for (const p of myProjectsRef.current) {
                         if (p.title === oldTitle) {
                           newArray.push({
                             owner: p.owner,
@@ -898,7 +898,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                           newArray.push(p);
                         }
                       }
-                      myProjects.current = newArray;
+                      myProjectsRef.current = newArray;
                       setUpdateFlag(!updateFlag);
                     }
                     setCommonStore((state) => {
@@ -997,8 +997,8 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     if (checkExistence) {
       fetchMyCloudFiles().then(() => {
         let exist = false;
-        if (cloudFiles.current) {
-          for (const p of cloudFiles.current) {
+        if (cloudFilesRef.current) {
+          for (const p of cloudFilesRef.current) {
             if (p.fileName === t) {
               exist = true;
               break;
@@ -1153,7 +1153,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     if (!user.uid) return;
     setLoading(true);
     // fetch owner's file information from the cloud
-    cloudFiles.current = await firebase
+    cloudFilesRef.current = await firebase
       .firestore()
       .collection('users')
       .doc(user.uid)
@@ -1431,8 +1431,8 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     // check if the project title is already used
     fetchMyProjects(false).then(() => {
       let exist = false;
-      if (myProjects.current) {
-        for (const p of myProjects.current) {
+      if (myProjectsRef.current) {
+        for (const p of myProjectsRef.current) {
           if (p.title === t) {
             exist = true;
             break;
@@ -1515,8 +1515,8 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     // check if the project title is already taken
     fetchMyProjects(false).then(() => {
       let exist = false;
-      if (myProjects.current) {
-        for (const p of myProjects.current) {
+      if (myProjectsRef.current) {
+        for (const p of myProjectsRef.current) {
           if (p.title === t) {
             exist = true;
             break;
@@ -1661,7 +1661,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
         isTitleDialogVisible={() => titleDialogVisible}
       />
       <MainToolBar signIn={signIn} signOut={signOut} />
-      {showCloudFilePanel && cloudFiles.current && (
+      {showCloudFilePanel && cloudFilesRef.current && (
         <CloudFilePanel
           cloudFileArray={cloudFileArray}
           openCloudFile={openCloudFileWithSaveReminder}
@@ -1669,7 +1669,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           renameCloudFile={renameCloudFile}
         />
       )}
-      {showProjectListPanel && myProjects.current && (
+      {showProjectListPanel && myProjectsRef.current && (
         <ProjectListPanel
           projects={projectArray}
           setProjectState={setProjectState}
