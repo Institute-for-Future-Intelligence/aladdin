@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useMemo, useState } from 'react';
@@ -66,15 +66,13 @@ const LabelContainer = styled.div`
 
 export interface MainMenuProps {
   viewOnly: boolean;
-  resetView: () => void;
-  zoomView: (scale: number) => void;
   canvas?: HTMLCanvasElement | null;
 }
 
 const TUTORIALSMENUKEY = 'tutorials-submenu';
 const EXAMPLESMENUKEY = 'examples-submenu';
 
-const MainMenu = ({ viewOnly, resetView, zoomView, canvas }: MainMenuProps) => {
+const MainMenu = ({ viewOnly, canvas }: MainMenuProps) => {
   const setCommonStore = useStore(Selector.set);
   const importContent = useStore(Selector.importContent);
   const openModelsMap = usePrimitiveStore(Selector.openModelsMap);
@@ -241,7 +239,7 @@ const MainMenu = ({ viewOnly, resetView, zoomView, canvas }: MainMenuProps) => {
     menuItems.push({
       key: 'view-sub-menu',
       label: <MenuItem noPadding>{i18n.t('menu.viewSubMenu', lang)}</MenuItem>,
-      children: createViewMenu(keyHome, isMac, zoomView, resetView),
+      children: createViewMenu(keyHome, isMac),
     });
   }
 

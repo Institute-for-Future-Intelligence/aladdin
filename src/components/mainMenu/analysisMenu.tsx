@@ -795,7 +795,7 @@ export const createAnalysisMenu = (elementCounter: ElementCounter) => {
           key: 'building-energy-yearly-data',
           label: (
             <MenuItem noPadding onClick={handleBuildingEnergyYearlyData}>
-              {i18n.t('menu.building.AnalyzeDailyBuildingEnergy', lang)}
+              {i18n.t('menu.building.AnalyzeYearlyBuildingEnergy', lang)}
             </MenuItem>
           ),
         },

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  *
  * @author Charles Xie, Xiaotong Ding
  */
@@ -30,10 +30,7 @@ import i18n from './i18n/i18n';
 import KeyboardListener from './keyboardListener';
 import CloudImage from './assets/cloud.png';
 import SceneRadiusCalculator from './sceneRadiusCalculator';
-import { UndoableChange } from './undo/UndoableChange';
 import CameraController from './cameraController';
-import { useRefStore } from './stores/commonRef';
-import { UndoableCameraChange } from './undo/UndoableCameraChange';
 import ShareLink from './shareLinks';
 import SolarPanelTiltAngleGa from './ai/ga/solarPanelTiltAngleGa';
 import SolarPanelArrayGa from './ai/ga/solarPanelArrayGa';
@@ -60,7 +57,6 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const changed = usePrimitiveStore(Selector.changed);
-  const addUndoable = useStore(Selector.addUndoable);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
   const shadowCameraFar = useStore(Selector.viewState.shadowCameraFar) ?? DEFAULT_SHADOW_CAMERA_FAR;
   const cloudFile = useStore(Selector.cloudFile);
@@ -103,93 +99,6 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
-
-  const zoomView = (scale: number) => {
-    if (orthographic) {
-      // Previously, we declared this in the header: const cameraZoom = useStore(Selector.viewState.cameraZoom) ?? 20;
-      // But it causes the app to be re-rendered every time zoom is called.
-      const cameraZoom = useStore.getState().viewState.cameraZoom ?? 20;
-      const oldZoom = cameraZoom;
-      const newZoom = cameraZoom / scale;
-      const undoableChange = {
-        name: 'Zoom',
-        timestamp: Date.now(),
-        oldValue: oldZoom,
-        newValue: newZoom,
-        undo: () => {
-          setCommonStore((state) => {
-            state.viewState.cameraZoom = undoableChange.oldValue as number;
-          });
-        },
-        redo: () => {
-          setCommonStore((state) => {
-            state.viewState.cameraZoom = undoableChange.newValue as number;
-          });
-        },
-      } as UndoableChange;
-      addUndoable(undoableChange);
-      setCommonStore((state) => {
-        state.viewState.cameraZoom = newZoom;
-      });
-    } else {
-      const orbitControlsRef = useRefStore.getState().orbitControlsRef;
-      if (orbitControlsRef?.current) {
-        const p = orbitControlsRef.current.object.position;
-        const x = p.x * scale;
-        const y = p.y * scale;
-        const z = p.z * scale;
-        const undoableCameraChange = {
-          name: 'Zoom',
-          timestamp: Date.now(),
-          oldCameraPosition: [p.x, p.y, p.z],
-          newCameraPosition: [x, y, z],
-          undo: () => {
-            const oldX = undoableCameraChange.oldCameraPosition[0];
-            const oldY = undoableCameraChange.oldCameraPosition[1];
-            const oldZ = undoableCameraChange.oldCameraPosition[2];
-            orbitControlsRef.current?.object.position.set(oldX, oldY, oldZ);
-            orbitControlsRef.current?.update();
-            setCommonStore((state) => {
-              state.viewState.cameraPosition = [oldX, oldY, oldZ];
-            });
-          },
-          redo: () => {
-            const newX = undoableCameraChange.newCameraPosition[0];
-            const newY = undoableCameraChange.newCameraPosition[1];
-            const newZ = undoableCameraChange.newCameraPosition[2];
-            orbitControlsRef.current?.object.position.set(newX, newY, newZ);
-            orbitControlsRef.current?.update();
-            setCommonStore((state) => {
-              state.viewState.cameraPosition = [newX, newY, newZ];
-            });
-          },
-        } as UndoableCameraChange;
-        addUndoable(undoableCameraChange);
-        orbitControlsRef.current.object.position.set(x, y, z);
-        orbitControlsRef.current.update();
-        setCommonStore((state) => {
-          state.viewState.cameraPosition = [x, y, z];
-        });
-      }
-    }
-  };
-
-  const resetView = () => {
-    const orbitControlsRef = useRefStore.getState().orbitControlsRef;
-    if (orbitControlsRef?.current) {
-      // I don't know why the reset method results in a black screen.
-      // So we are resetting it here to a predictable position.
-      const z = Math.min(50, useStore.getState().sceneRadius * 4);
-      orbitControlsRef.current.object.position.set(z, z, z);
-      orbitControlsRef.current.target.set(0, 0, 0);
-      orbitControlsRef.current.update();
-      setCommonStore((state) => {
-        const v = state.viewState;
-        v.cameraPosition = [z, z, z];
-        v.panCenter = [0, 0, 0];
-      });
-    }
-  };
 
   console.log('x');
 
@@ -384,7 +293,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       {!viewOnly && (
         <ShareLink size={16} round={true} margin={'2px'} style={{ position: 'absolute', right: '0', top: '80px' }} />
       )}
-      <MainMenu viewOnly={viewOnly} canvas={canvasRef.current} resetView={resetView} zoomView={zoomView} />
+      <MainMenu viewOnly={viewOnly} canvas={canvasRef.current} />
       <CloudManager viewOnly={viewOnly} canvas={canvasRef.current} />
       <Panels />
       <DropdownContextMenu>
@@ -420,7 +329,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
             )}
             {createCanvas()}
           </SplitPane>
-          <KeyboardListener canvas={canvasRef.current} resetView={resetView} zoomView={zoomView} />
+          <KeyboardListener canvas={canvasRef.current} />
         </div>
       </DropdownContextMenu>
       <Compass visible={!orthographic} />

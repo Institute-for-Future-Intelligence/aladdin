@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef } from 'react';
@@ -31,11 +31,10 @@ import { UndoableMoveAllByKey, UndoableMoveSelectedByKey } from './undo/Undoable
 import { GroupableModel, isGroupable } from './models/Groupable';
 import { Point2 } from './models/Point2';
 import { areTwoBasesOverlapped } from './components/groupMaster';
+import { resetView, zoomView } from './components/mainMenu/viewMenu';
 
 export interface KeyboardListenerProps {
   canvas?: HTMLCanvasElement | null;
-  resetView: () => void;
-  zoomView: (scale: number) => void;
 }
 
 export enum MoveDirection {
@@ -224,7 +223,7 @@ const handleKeys = [
   'ctrl',
 ];
 
-const KeyboardListener = ({ canvas, resetView, zoomView }: KeyboardListenerProps) => {
+const KeyboardListener = ({ canvas }: KeyboardListenerProps) => {
   const setCommonStore = useStore(Selector.set);
   const loggable = useStore(Selector.loggable);
   const selectNone = useStore(Selector.selectNone);
