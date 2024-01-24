@@ -329,7 +329,7 @@ const WindTurbineBirdSafeSelection = ({ setDialogVisible }: { setDialogVisible: 
     >
       <Row gutter={6}>
         <Col className="gutter-row" span={8}>
-          <label>{i18n.t('word.Pattern', lang)}: </label>
+          <span>{i18n.t('word.Pattern', lang)}: </span>
           <Select
             style={{ width: '116px' }}
             value={inputValue}
@@ -348,7 +348,7 @@ const WindTurbineBirdSafeSelection = ({ setDialogVisible }: { setDialogVisible: 
             </Option>
           </Select>
           <div style={{ marginTop: '10px' }}>
-            <label>{i18n.t('word.Color', lang)} 1: </label>
+            <span>{i18n.t('word.Color', lang)} 1: </span>
             <input
               type="color"
               value={inputColor1}
@@ -358,7 +358,7 @@ const WindTurbineBirdSafeSelection = ({ setDialogVisible }: { setDialogVisible: 
             />
           </div>
           <div style={{ marginTop: '10px' }}>
-            <label>{i18n.t('word.Color', lang)} 2: </label>
+            <span>{i18n.t('word.Color', lang)} 2: </span>
             <input
               type="color"
               value={inputColor2}
