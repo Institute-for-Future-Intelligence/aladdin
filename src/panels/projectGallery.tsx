@@ -32,7 +32,7 @@ import { DataColoring, DatumEntry, Design, DesignProblem, Orientation } from '..
 import ParallelCoordinates from '../components/parallelCoordinates';
 //@ts-ignore
 import { saveSvgAsPng } from 'save-svg-as-png';
-import { copyTextToClipboard, showInfo, showSuccess } from '../helpers';
+import { showInfo, showSuccess } from '../helpers';
 import { Util } from '../Util';
 import { ProjectUtil } from './ProjectUtil';
 import { HOME_URL } from '../constants';
@@ -1190,8 +1190,9 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                         if (selectedDesign) {
                           url += '&title=' + encodeURIComponent(selectedDesign.title);
                         }
-                        copyTextToClipboard(url);
-                        showSuccess(t('projectListPanel.ProjectLinkGeneratedInClipBoard', lang) + '.');
+                        navigator.clipboard
+                          .writeText(url)
+                          .then(() => showSuccess(t('projectListPanel.ProjectLinkGeneratedInClipBoard', lang) + '.'));
                       }
                     }}
                   >

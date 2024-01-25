@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -10,7 +10,7 @@ import ReactDraggable, { DraggableBounds, DraggableData, DraggableEvent, Draggab
 import { Input, Modal, Space, Table, Typography } from 'antd';
 import { CopyOutlined, QuestionCircleOutlined, WarningOutlined } from '@ant-design/icons';
 import { HOME_URL, REGEX_ALLOWABLE_IN_NAME, Z_INDEX_FRONT_PANEL } from '../constants';
-import { copyTextToClipboard, showSuccess } from '../helpers';
+import { showSuccess } from '../helpers';
 import Draggable from 'react-draggable';
 import RenameImage from '../assets/rename.png';
 import DeleteImage from '../assets/delete.png';
@@ -389,8 +389,9 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
                       title={t('cloudFilePanel.CopyTitle', lang)}
                       alt={'Copy Title'}
                       onClick={() => {
-                        copyTextToClipboard(record.title);
-                        showSuccess(t('cloudFilePanel.TitleCopiedToClipBoard', lang) + '.');
+                        navigator.clipboard
+                          .writeText(record.title)
+                          .then(() => showSuccess(t('cloudFilePanel.TitleCopiedToClipBoard', lang) + '.'));
                       }}
                       height={16}
                       width={16}
@@ -410,8 +411,9 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
                           record.userid +
                           '&title=' +
                           encodeURIComponent(record.title);
-                        copyTextToClipboard(url);
-                        showSuccess(t('cloudFilePanel.LinkGeneratedInClipBoard', lang) + '.');
+                        navigator.clipboard
+                          .writeText(url)
+                          .then(() => showSuccess(t('cloudFilePanel.LinkGeneratedInClipBoard', lang) + '.'));
                       }}
                       height={16}
                       width={16}

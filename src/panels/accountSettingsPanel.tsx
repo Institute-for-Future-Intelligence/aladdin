@@ -8,7 +8,7 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Col, Modal, Row, Select, Switch } from 'antd';
-import { copyTextToClipboard, showSuccess } from '../helpers';
+import { showSuccess } from '../helpers';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { SchoolID } from '../types';
 import { ClassID } from '../types';
@@ -170,8 +170,9 @@ const AccountSettingsPanel = ({ openCloudFile }: { openCloudFile: (userid: strin
                 span={6}
                 onClick={() => {
                   if (user.uid) {
-                    copyTextToClipboard(user.uid);
-                    showSuccess(t('accountSettingsPanel.IDInClipBoard', lang));
+                    navigator.clipboard
+                      .writeText(user.uid)
+                      .then(() => showSuccess(t('accountSettingsPanel.IDInClipBoard', lang)));
                   }
                 }}
               >

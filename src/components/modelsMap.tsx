@@ -29,7 +29,7 @@ import * as Selector from '../stores/selector';
 import { UndoableChange } from '../undo/UndoableChange';
 import { UndoableChangeLocation } from '../undo/UndoableChangeLocation';
 import { DEFAULT_MODEL_MAP_ZOOM, HOME_URL, LAT_LNG_FRACTION_DIGITS } from '../constants';
-import { copyTextToClipboard, showError, showSuccess } from '../helpers';
+import { showError, showSuccess } from '../helpers';
 import i18n from '../i18n/i18n';
 import { ModelSite, ModelType } from '../types';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
@@ -287,8 +287,9 @@ const ModelsMap = ({
   const shareModelSite = (model: ModelSite) => {
     if (model.userid && model.title) {
       const url = HOME_URL + '?client=web&userid=' + model.userid + '&title=' + encodeURIComponent(model.title);
-      copyTextToClipboard(url);
-      showSuccess(i18n.t('cloudFilePanel.LinkGeneratedInClipBoard', lang) + '.');
+      navigator.clipboard
+        .writeText(url)
+        .then(() => showSuccess(i18n.t('cloudFilePanel.LinkGeneratedInClipBoard', lang) + '.'));
     } else {
       showError(i18n.t('message.ModelNotFound', lang));
     }
