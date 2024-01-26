@@ -2154,7 +2154,6 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
 
   function handleContextMenu(e: ThreeEvent<MouseEvent>, mesh: Mesh | null, canPaste?: boolean) {
     if (grabRef.current) return;
-
     selectMe(id, e, ActionType.ContextMenu);
     setCommonStore((state) => {
       if (e.intersections.length > 0 && e.intersections[0].object === mesh) {
@@ -2195,7 +2194,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     }
   }
 
-  function handleStudPointerDown(e: ThreeEvent<PointerEvent>) {
+  function handleStudOrPillarPointerDown(e: ThreeEvent<PointerEvent>) {
     if (e.button === 2 || e.intersections.length === 0 || e.intersections[0].object !== e.eventObject) return;
     if (useStore.getState().groupActionMode) {
       setCommonStore((state) => {
@@ -2217,12 +2216,12 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     }
   }
 
-  function handleStudContextMenu(e: ThreeEvent<MouseEvent>) {
+  function handleStudOrPillarContextMenu(e: ThreeEvent<MouseEvent>) {
     if (e.intersections.length > 0 && e.intersections[0].object === e.eventObject) {
+      selectMe(id, e, ActionType.ContextMenu);
       setCommonStore((state) => {
         state.contextMenuObjectType = ObjectType.Wall;
       });
-      selectMe(id, e, ActionType.ContextMenu);
       e.stopPropagation();
     }
   }
@@ -2258,8 +2257,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               position={[pos, hy, (height - lz) / 2 + y]}
               castShadow={shadowEnabled}
               receiveShadow={shadowEnabled}
-              onContextMenu={handleStudContextMenu}
-              onPointerDown={handleStudPointerDown}
+              onContextMenu={handleStudOrPillarContextMenu}
+              onPointerDown={handleStudOrPillarPointerDown}
             >
               <meshStandardMaterial color={structureColor} />
             </Box>
@@ -2271,8 +2270,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           rotation={[0, leftRotationY, 0]}
           castShadow={shadowEnabled}
           receiveShadow={shadowEnabled}
-          onContextMenu={handleStudContextMenu}
-          onPointerDown={handleStudPointerDown}
+          onContextMenu={handleStudOrPillarContextMenu}
+          onPointerDown={handleStudOrPillarPointerDown}
         >
           <meshStandardMaterial color={structureColor} />
         </Box>
@@ -2282,8 +2281,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           rotation={[0, rightRotationY, 0]}
           castShadow={shadowEnabled}
           receiveShadow={shadowEnabled}
-          onContextMenu={handleStudContextMenu}
-          onPointerDown={handleStudPointerDown}
+          onContextMenu={handleStudOrPillarContextMenu}
+          onPointerDown={handleStudOrPillarPointerDown}
         >
           <meshStandardMaterial color={structureColor} />
         </Box>
@@ -2324,8 +2323,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               rotation={[-HALF_PI, 0, 0]}
               castShadow={shadowEnabled}
               receiveShadow={shadowEnabled}
-              onContextMenu={handleStudContextMenu}
-              onPointerDown={handleStudPointerDown}
+              onContextMenu={handleStudOrPillarContextMenu}
+              onPointerDown={handleStudOrPillarPointerDown}
             >
               <meshStandardMaterial color={structureColor} />
             </Cylinder>
@@ -2337,8 +2336,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           rotation={[0, leftRotationY, 0]}
           castShadow={shadowEnabled}
           receiveShadow={shadowEnabled}
-          onContextMenu={handleStudContextMenu}
-          onPointerDown={handleStudPointerDown}
+          onContextMenu={handleStudOrPillarContextMenu}
+          onPointerDown={handleStudOrPillarPointerDown}
         >
           <meshStandardMaterial color={structureColor} />
         </Box>
@@ -2348,8 +2347,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           rotation={[0, rightRotationY, 0]}
           castShadow={shadowEnabled}
           receiveShadow={shadowEnabled}
-          onContextMenu={handleStudContextMenu}
-          onPointerDown={handleStudPointerDown}
+          onContextMenu={handleStudOrPillarContextMenu}
+          onPointerDown={handleStudOrPillarPointerDown}
         >
           <meshStandardMaterial color={structureColor} />
         </Box>
