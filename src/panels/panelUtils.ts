@@ -4,7 +4,7 @@
 
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 
-export const turnOffisualization = () => {
+export const turnOffVisualization = () => {
   usePrimitiveStore.getState().set((state) => {
     state.showSolarRadiationHeatmap = false;
     state.showHeatFluxes = false;

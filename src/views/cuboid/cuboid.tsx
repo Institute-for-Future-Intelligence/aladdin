@@ -352,7 +352,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
 
   useEffect(() => {
     invalidate();
-  }, [...textureTypes]);
+  }, [textureTypes]);
 
   const legalOnCuboid = (type: ObjectType) => {
     switch (type) {

@@ -7,7 +7,6 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import styled from 'styled-components';
 import { DatePicker, Slider, Space, Switch, TimePicker } from 'antd';
-import moment from 'moment';
 import 'antd/dist/reset.css';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { UndoableCheck } from '../undo/UndoableCheck';
@@ -19,7 +18,8 @@ import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { Undoable } from '../undo/Undoable';
 import { Z_INDEX_FRONT_PANEL } from '../constants';
 import { useTranslation } from 'react-i18next';
-import { turnOffisualization } from './panelUtils';
+import { turnOffVisualization } from './panelUtils';
+import dayjs from 'dayjs';
 
 const Container = styled.div`
   position: absolute;
@@ -56,13 +56,6 @@ const Header = styled.div`
   justify-content: space-between;
   align-items: center;
   cursor: move;
-
-  svg.icon {
-    height: 16px;
-    width: 16px;
-    padding: 8px;
-    fill: #666;
-  }
 `;
 
 const HeliodonPanel = () => {
@@ -240,7 +233,7 @@ const HeliodonPanel = () => {
               state.world.latitude = undoableChangeLocation.oldLatitude;
               state.world.address = undoableChangeLocation.oldAddress;
             });
-            turnOffisualization();
+            turnOffVisualization();
             setUpdateFlag(!updateFlag);
           },
           redo: () => {
@@ -248,7 +241,7 @@ const HeliodonPanel = () => {
               state.world.latitude = undoableChangeLocation.newLatitude;
               state.world.address = undoableChangeLocation.newAddress;
             });
-            turnOffisualization();
+            turnOffVisualization();
             setUpdateFlag(!updateFlag);
           },
         } as UndoableChangeLocation;
@@ -257,7 +250,7 @@ const HeliodonPanel = () => {
           state.world.latitude = value;
           state.world.address = '';
         });
-        turnOffisualization();
+        turnOffVisualization();
       },
       500,
       { leading: false, trailing: true },
@@ -433,7 +426,7 @@ const HeliodonPanel = () => {
               <br />
               <DatePicker
                 disabled={runSimulation}
-                value={moment(date) as any}
+                value={dayjs(date)}
                 onChange={(d) => {
                   if (d) {
                     const day = new Date(date);
@@ -450,20 +443,20 @@ const HeliodonPanel = () => {
                         setCommonStore((state) => {
                           state.world.date = undoableChange.oldValue as string;
                         });
-                        turnOffisualization();
+                        turnOffVisualization();
                       },
                       redo: () => {
                         setCommonStore((state) => {
                           state.world.date = undoableChange.newValue as string;
                         });
-                        turnOffisualization();
+                        turnOffVisualization();
                       },
                     } as UndoableChange;
                     addUndoable(undoableChange);
                     setCommonStore((state) => {
                       state.world.date = day.toLocaleString('en-US');
                     });
-                    turnOffisualization();
+                    turnOffVisualization();
                   }
                 }}
               />
@@ -473,7 +466,7 @@ const HeliodonPanel = () => {
               <br />
               <TimePicker
                 disabled={runSimulation}
-                value={moment(date, 'HH:mm') as any}
+                value={dayjs(date)}
                 format={'HH:mm'}
                 onChange={(t) => {
                   if (t) changeTime?.(t.toDate(), true);
