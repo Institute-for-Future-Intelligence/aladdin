@@ -42,15 +42,15 @@ import {
   updateDescription,
   updateDesign,
   updateDesignVisibility,
-  updateDotSizeScatteredPlot,
+  updateDotSizeScatterPlot,
   updateHiddenParameters,
   updateThumbnailWidth,
-  updateXAxisNameScatteredPlot,
-  updateYAxisNameScatteredPlot,
+  updateXAxisNameScatterPlot,
+  updateYAxisNameScatterPlot,
 } from '../cloudProjectUtil';
 import { loadCloudFile } from '../cloudFileUtil';
 import { CartesianGrid, Dot, DotProps, Scatter, ScatterChart, Tooltip, XAxis, YAxis } from 'recharts';
-import ScatteredPlotMenu from '../components/scatteredPlotMenu';
+import ScatterPlotMenu from '../components/scatterPlotMenu';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 
@@ -155,23 +155,23 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
   const parameterSelectionChangedRef = useRef<boolean>(false);
   const projectDesigns = useRef<Design[]>(projectInfo.designs ?? []); // store sorted designs
   const thumbnailSizeRef = useRef<number>(projectInfo.thumbnailWidth ?? 200);
-  const xAxisRef = useRef<string>(projectInfo.xAxisNameScatteredPlot ?? 'rowWidth');
-  const yAxisRef = useRef<string>(projectInfo.yAxisNameScatteredPlot ?? 'rowWidth');
-  const dotSizeRef = useRef<number>(projectInfo.dotSizeScatteredPlot ?? 5);
+  const xAxisRef = useRef<string>(projectInfo.xAxisNameScatterPlot ?? 'rowWidth');
+  const yAxisRef = useRef<string>(projectInfo.yAxisNameScatterPlot ?? 'rowWidth');
+  const dotSizeRef = useRef<number>(projectInfo.dotSizeScatterPlot ?? 5);
   const scatterChartHorizontalLinesRef = useRef<boolean>(true);
   const scatterChartVerticalLinesRef = useRef<boolean>(true);
 
   useEffect(() => {
-    xAxisRef.current = projectInfo.xAxisNameScatteredPlot ?? 'rowWidth';
-  }, [projectInfo.xAxisNameScatteredPlot]);
+    xAxisRef.current = projectInfo.xAxisNameScatterPlot ?? 'rowWidth';
+  }, [projectInfo.xAxisNameScatterPlot]);
 
   useEffect(() => {
-    yAxisRef.current = projectInfo.yAxisNameScatteredPlot ?? 'rowWidth';
-  }, [projectInfo.yAxisNameScatteredPlot]);
+    yAxisRef.current = projectInfo.yAxisNameScatterPlot ?? 'rowWidth';
+  }, [projectInfo.yAxisNameScatterPlot]);
 
   useEffect(() => {
-    dotSizeRef.current = projectInfo.dotSizeScatteredPlot ?? 5;
-  }, [projectInfo.dotSizeScatteredPlot]);
+    dotSizeRef.current = projectInfo.dotSizeScatterPlot ?? 5;
+  }, [projectInfo.dotSizeScatterPlot]);
 
   useEffect(() => {
     thumbnailSizeRef.current = projectInfo.thumbnailWidth ?? 200;
@@ -862,7 +862,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
     return <Dot cx={cx} cy={cy} fill="#8884d8" r={dotSizeRef.current} />;
   };
 
-  const createScatteredPlotContent = () => {
+  const createScatterPlotContent = () => {
     return (
       <div style={{ width: '280px' }}>
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
@@ -877,7 +877,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                 xAxisRef.current = value;
                 if (isOwner) {
                   if (user.uid && projectInfo.title) {
-                    updateXAxisNameScatteredPlot(user.uid, projectInfo.title, value).then(() => {
+                    updateXAxisNameScatterPlot(user.uid, projectInfo.title, value).then(() => {
                       //ignore
                     });
                   }
@@ -901,7 +901,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                 yAxisRef.current = value;
                 if (isOwner) {
                   if (user.uid && projectInfo.title) {
-                    updateYAxisNameScatteredPlot(user.uid, projectInfo.title, value).then(() => {
+                    updateYAxisNameScatterPlot(user.uid, projectInfo.title, value).then(() => {
                       //ignore
                     });
                   }
@@ -916,7 +916,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
         <Row style={{ paddingBottom: '8px' }}>
           <div>
             <ScatterChart
-              id={'scattered-chart'}
+              id={'scatter-chart'}
               width={280}
               height={240}
               margin={{
@@ -974,7 +974,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
               <Scatter name="All" data={scatterData} fill="#8884d8" shape={<RenderDot />} />
               {selectedDesign && <Scatter name="Selected" data={selectedData} fill="red" shape={'star'} />}
             </ScatterChart>
-            <ScatteredPlotMenu
+            <ScatterPlotMenu
               symbolSize={dotSizeRef.current}
               horizontalGrid={scatterChartHorizontalLinesRef.current}
               verticalGrid={scatterChartVerticalLinesRef.current}
@@ -990,7 +990,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                 dotSizeRef.current = value;
                 if (isOwner) {
                   if (user.uid && projectInfo.title) {
-                    updateDotSizeScatteredPlot(user.uid, projectInfo.title, value).then(() => {
+                    updateDotSizeScatterPlot(user.uid, projectInfo.title, value).then(() => {
                       //ignore
                     });
                   }
@@ -1004,11 +1004,11 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
           <span style={{ width: '100%', textAlign: 'center' }}>
             <CameraOutlined
               style={{ fontSize: '18px', color: 'gray', paddingRight: '8px' }}
-              title={t('projectPanel.ScatteredPlotScreenshot', lang)}
+              title={t('projectPanel.ScatterPlotScreenshot', lang)}
               onClick={() => {
-                const d = document.getElementById('scattered-chart');
+                const d = document.getElementById('scatter-chart');
                 if (d) {
-                  saveSvgAsPng(d, 'scattered-chart-' + projectInfo.title + '.png').then(() => {
+                  saveSvgAsPng(d, 'scatter-chart-' + projectInfo.title + '.png').then(() => {
                     showInfo(t('message.ScreenshotSaved', lang));
                   });
                 }
@@ -1484,7 +1484,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                     <BgColorsOutlined style={{ fontSize: '24px', color: 'gray' }} />
                   </Button>
                 </Popover>
-                <Popover title={t('projectPanel.GenerateScatteredPlot', lang)} content={createScatteredPlotContent()}>
+                <Popover title={t('projectPanel.GenerateScatterPlot', lang)} content={createScatterPlotContent()}>
                   <Button style={{ border: 'none', paddingRight: 0, background: 'white' }}>
                     <DotChartOutlined style={{ fontSize: '24px', color: 'gray' }} />
                   </Button>

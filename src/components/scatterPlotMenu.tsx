@@ -1,13 +1,11 @@
 /*
- * @Copyright 2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2023-2024. Institute for Future Intelligence, Inc.
  */
 
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { Menu, Dropdown, Checkbox, Slider } from 'antd';
+import { Dropdown } from 'antd';
 import { ReactComponent as MenuSVG } from '../assets/menu.svg';
-import { useStore } from '../stores/common';
-import * as Selector from '../stores/selector';
 import i18n from '../i18n/i18n';
 import { useLanguage } from 'src/views/hooks';
 import type { MenuProps } from 'antd';
@@ -27,7 +25,7 @@ const StyledMenuSVG = styled(MenuSVG)`
   }
 `;
 
-export interface ScatteredPlotMenuProps {
+export interface ScatterPlotMenuProps {
   horizontalGrid: boolean;
   verticalGrid: boolean;
   symbolSize: number;
@@ -36,14 +34,14 @@ export interface ScatteredPlotMenuProps {
   changeSymbolSize?: (count: number) => void;
 }
 
-const ScatteredPlotMenu = ({
+const ScatterPlotMenu = ({
   horizontalGrid,
   verticalGrid,
   symbolSize,
   changeHorizontalGrid,
   changeVerticalGrid,
   changeSymbolSize,
-}: ScatteredPlotMenuProps) => {
+}: ScatterPlotMenuProps) => {
   const lang = useLanguage();
 
   const onShowHorizontalGridLines = () => {
@@ -92,4 +90,4 @@ const ScatteredPlotMenu = ({
   );
 };
 
-export default ScatteredPlotMenu;
+export default ScatterPlotMenu;

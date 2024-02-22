@@ -138,9 +138,9 @@ export interface ProjectInfo {
   dataColoring: DataColoring;
   selectedProperty: string | null;
   sortDescending: boolean | null;
-  xAxisNameScatteredPlot: string | null;
-  yAxisNameScatteredPlot: string | null;
-  dotSizeScatteredPlot: number | null;
+  xAxisNameScatterPlot: string | null;
+  yAxisNameScatterPlot: string | null;
+  dotSizeScatterPlot: number | null;
   thumbnailWidth: number | null;
 }
 

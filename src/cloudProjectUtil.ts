@@ -37,9 +37,9 @@ export const fetchProject = async (userid: string, project: string, setProjectSt
           counter: data.counter ?? 0,
           selectedProperty: data.selectedProperty,
           sortDescending: data.sortDescending,
-          xAxisNameScatteredPlot: data.xAxisNameScatteredPlot,
-          yAxisNameScatteredPlot: data.yAxisNameScatteredPlot,
-          dotSizeScatteredPlot: data.dotSizeScatteredPlot,
+          xAxisNameScatterPlot: data.xAxisNameScatterPlot,
+          yAxisNameScatterPlot: data.yAxisNameScatterPlot,
+          dotSizeScatterPlot: data.dotSizeScatterPlot,
           thumbnailWidth: data.thumbnailWidth,
         } as ProjectInfo);
       } else {
@@ -204,10 +204,10 @@ export const updateSelectedProperty = (userid: string, projectTitle: string, sel
     });
 };
 
-export const updateXAxisNameScatteredPlot = (
+export const updateXAxisNameScatterPlot = (
   userid: string,
   projectTitle: string,
-  xAxisNameScatteredPlot: string | null,
+  xAxisNameScatterPlot: string | null,
 ) => {
   const lang = { lng: useStore.getState().language };
   return firebase
@@ -216,7 +216,7 @@ export const updateXAxisNameScatteredPlot = (
     .doc(userid)
     .collection('projects')
     .doc(projectTitle)
-    .update({ xAxisNameScatteredPlot })
+    .update({ xAxisNameScatterPlot: xAxisNameScatterPlot })
     .then(() => {
       // ignore
     })
@@ -225,10 +225,10 @@ export const updateXAxisNameScatteredPlot = (
     });
 };
 
-export const updateYAxisNameScatteredPlot = (
+export const updateYAxisNameScatterPlot = (
   userid: string,
   projectTitle: string,
-  yAxisNameScatteredPlot: string | null,
+  yAxisNameScatterPlot: string | null,
 ) => {
   const lang = { lng: useStore.getState().language };
   return firebase
@@ -237,7 +237,7 @@ export const updateYAxisNameScatteredPlot = (
     .doc(userid)
     .collection('projects')
     .doc(projectTitle)
-    .update({ yAxisNameScatteredPlot })
+    .update({ yAxisNameScatterPlot: yAxisNameScatterPlot })
     .then(() => {
       // ignore
     })
@@ -246,7 +246,7 @@ export const updateYAxisNameScatteredPlot = (
     });
 };
 
-export const updateDotSizeScatteredPlot = (userid: string, projectTitle: string, dotSizeScatteredPlot: number) => {
+export const updateDotSizeScatterPlot = (userid: string, projectTitle: string, dotSizeScatterPlot: number) => {
   const lang = { lng: useStore.getState().language };
   return firebase
     .firestore()
@@ -254,7 +254,7 @@ export const updateDotSizeScatteredPlot = (userid: string, projectTitle: string,
     .doc(userid)
     .collection('projects')
     .doc(projectTitle)
-    .update({ dotSizeScatteredPlot })
+    .update({ dotSizeScatterPlot: dotSizeScatterPlot })
     .then(() => {
       // ignore
     })

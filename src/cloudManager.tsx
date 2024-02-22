@@ -235,9 +235,9 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           dataColoring: f.dataColoring,
           selectedProperty: f.selectedProperty,
           sortDescending: f.sortDescending,
-          xAxisNameScatteredPlot: f.xAxisNameScatteredPlot,
-          yAxisNameScatteredPlot: f.yAxisNameScatteredPlot,
-          dotSizeScatteredPlot: f.dotSizeScatteredPlot,
+          xAxisNameScatterPlot: f.xAxisNameScatterPlot,
+          yAxisNameScatterPlot: f.yAxisNameScatterPlot,
+          dotSizeScatterPlot: f.dotSizeScatterPlot,
           thumbnailWidth: f.thumbnailWidth,
           type: f.type,
           designs: f.designs,
@@ -733,9 +733,9 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
             dataColoring: data.dataColoring,
             selectedProperty: data.selectedProperty,
             sortDescending: data.sortDescending,
-            xAxisNameScatteredPlot: data.xAxisNameScatteredPlot,
-            yAxisNameScatteredPlot: data.yAxisNameScatteredPlot,
-            dotSizeScatteredPlot: data.dotSizeScatteredPlot,
+            xAxisNameScatterPlot: data.xAxisNameScatterPlot,
+            yAxisNameScatterPlot: data.yAxisNameScatterPlot,
+            dotSizeScatterPlot: data.dotSizeScatterPlot,
             thumbnailWidth: data.thumbnailWidth,
             type: data.type,
             designs: data.designs ?? [],
@@ -816,9 +816,9 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
             state.projectInfo.dataColoring = DataColoring.ALL;
             state.projectInfo.selectedProperty = null;
             state.projectInfo.sortDescending = false;
-            state.projectInfo.xAxisNameScatteredPlot = null;
-            state.projectInfo.yAxisNameScatteredPlot = null;
-            state.projectInfo.dotSizeScatteredPlot = 5;
+            state.projectInfo.xAxisNameScatterPlot = null;
+            state.projectInfo.yAxisNameScatterPlot = null;
+            state.projectInfo.dotSizeScatterPlot = 5;
             state.projectInfo.thumbnailWidth = 200;
             state.projectInfo.counter = 0;
             state.projectInfo.designs = [];
@@ -1474,9 +1474,9 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                 state.projectInfo.dataColoring = DataColoring.ALL;
                 state.projectInfo.selectedProperty = null;
                 state.projectInfo.sortDescending = false;
-                state.projectInfo.xAxisNameScatteredPlot = null;
-                state.projectInfo.yAxisNameScatteredPlot = null;
-                state.projectInfo.dotSizeScatteredPlot = 5;
+                state.projectInfo.xAxisNameScatterPlot = null;
+                state.projectInfo.yAxisNameScatterPlot = null;
+                state.projectInfo.dotSizeScatterPlot = 5;
                 state.projectInfo.thumbnailWidth = 200;
                 state.projectInfo.designs = [];
                 state.projectInfo.ranges = [];
@@ -1537,9 +1537,9 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
             const dataColoring = useStore.getState().projectInfo.dataColoring ?? null;
             const selectedProperty = useStore.getState().projectInfo.selectedProperty ?? null;
             const sortDescending = !!useStore.getState().projectInfo.sortDescending;
-            const xAxisNameScatteredPlot = useStore.getState().projectInfo.xAxisNameScatteredPlot ?? 'rowWidth';
-            const yAxisNameScatteredPlot = useStore.getState().projectInfo.yAxisNameScatteredPlot ?? 'rowWidth';
-            const dotSizeScatteredPlot = useStore.getState().projectInfo.dotSizeScatteredPlot ?? 5;
+            const xAxisNameScatterPlot = useStore.getState().projectInfo.xAxisNameScatterPlot ?? 'rowWidth';
+            const yAxisNameScatterPlot = useStore.getState().projectInfo.yAxisNameScatterPlot ?? 'rowWidth';
+            const dotSizeScatterPlot = useStore.getState().projectInfo.dotSizeScatterPlot ?? 5;
             const thumbnailWidth = useStore.getState().projectInfo.thumbnailWidth ?? 200;
             const newDesigns: Design[] = changeDesignTitles(t, designs) ?? [];
             for (const [i, d] of designs.entries()) {
@@ -1568,9 +1568,9 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                   dataColoring,
                   selectedProperty,
                   sortDescending,
-                  xAxisNameScatteredPlot,
-                  yAxisNameScatteredPlot,
-                  dotSizeScatteredPlot,
+                  xAxisNameScatterPlot: xAxisNameScatterPlot,
+                  yAxisNameScatterPlot: yAxisNameScatterPlot,
+                  dotSizeScatterPlot: dotSizeScatterPlot,
                   thumbnailWidth,
                   designs: newDesigns,
                   ranges: useStore.getState().projectInfo.ranges ?? null,
