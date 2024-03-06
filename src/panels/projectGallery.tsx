@@ -2,7 +2,7 @@
  * @Copyright 2023-2024. Institute for Future Intelligence, Inc.
  */
 
-import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import styled from 'styled-components';
@@ -30,7 +30,7 @@ import { usePrimitiveStore } from '../stores/commonPrimitive';
 import ImageLoadFailureIcon from '../assets/image_fail_try_again.png';
 import { DataColoring, DatumEntry, Design, DesignProblem, Orientation } from '../types';
 import ParallelCoordinates from '../components/parallelCoordinates';
-//@ts-ignore
+//@ts-expect-error ignore
 import { saveSvgAsPng } from 'save-svg-as-png';
 import { showInfo, showSuccess } from '../helpers';
 import { Util } from '../Util';
@@ -49,7 +49,7 @@ import {
   updateYAxisNameScatterPlot,
 } from '../cloudProjectUtil';
 import { loadCloudFile } from '../cloudFileUtil';
-import { CartesianGrid, Dot, DotProps, Scatter, ScatterChart, Tooltip, XAxis, YAxis } from 'recharts';
+import { CartesianGrid, Dot, Scatter, ScatterChart, Tooltip, XAxis, YAxis } from 'recharts';
 import ScatterPlotMenu from '../components/scatterPlotMenu';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
@@ -746,7 +746,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
         <Option key={'meanYearlyYield'} value={'meanYearlyYield'}>
           <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayMeanYearlyYield', lang)}</span>
         </Option>
-        <Option key={'yearlProfit'} value={'yearlyProfit'}>
+        <Option key={'yearlyProfit'} value={'yearlyProfit'}>
           <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayYearlyProfit', lang)}</span>
         </Option>
       </>
@@ -858,10 +858,6 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
     return ProjectUtil.getUnit(yAxisRef.current, lang);
   }, [yAxisRef.current, lang]);
 
-  const RenderDot: FC<DotProps> = ({ cx, cy }) => {
-    return <Dot cx={cx} cy={cy} fill="#8884d8" r={dotSizeRef.current} />;
-  };
-
   const createScatterPlotContent = () => {
     return (
       <div style={{ width: '280px' }}>
@@ -971,7 +967,12 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                 }}
               />
               <Tooltip cursor={{ strokeDasharray: '3 3' }} formatter={(value: number) => value.toFixed(2)} />
-              <Scatter name="All" data={scatterData} fill="#8884d8" shape={<RenderDot />} />
+              <Scatter
+                name="All"
+                data={scatterData}
+                fill="#8884d8"
+                shape={<Dot fill="#8884d8" r={dotSizeRef.current} />}
+              />
               {selectedDesign && <Scatter name="Selected" data={selectedData} fill="red" shape={'star'} />}
             </ScatterChart>
             <ScatterPlotMenu
