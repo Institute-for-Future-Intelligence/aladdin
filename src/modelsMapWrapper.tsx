@@ -406,6 +406,7 @@ const ModelsMapWrapper = ({
               height: '28px',
               background: 'orange',
               boxShadow: '1px 1px 1px 1px gray',
+              paddingTop: '4px',
             }}
             onMouseDown={() => {
               close();

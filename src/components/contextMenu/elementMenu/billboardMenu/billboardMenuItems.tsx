@@ -254,7 +254,7 @@ export const TreeSpreadInput = ({ tree }: TreeMenuItemProps) => {
   const inputSpread = tree.lx ?? 1;
 
   const setSpread = (value: number | null) => {
-    if (!value || value === inputSpread) return;
+    if (value === null || value === inputSpread) return;
 
     const undoableChange = {
       name: 'Set Tree Spread',
@@ -302,7 +302,7 @@ export const TreeHeightInput = ({ tree }: TreeMenuItemProps) => {
   const inputHeight = tree.lz ?? 1;
 
   const setHeight = (value: number | null) => {
-    if (!value || value === inputHeight) return;
+    if (value === null || value === inputHeight) return;
 
     const undoableChange = {
       name: 'Set Tree Height',

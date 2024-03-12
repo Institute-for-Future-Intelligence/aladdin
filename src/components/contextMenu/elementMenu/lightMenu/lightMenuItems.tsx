@@ -66,7 +66,7 @@ export const LightIntensityInput = ({ light }: LightMenutItemProps) => {
   };
 
   const setIntensity = (value: number | null) => {
-    if (!value || value === inputIntensity) return;
+    if (value === null || value === inputIntensity) return;
     const undoableChange = {
       name: 'Set Light Intensity',
       timestamp: Date.now(),
@@ -112,7 +112,7 @@ export const LightDistanceInput = ({ light }: LightMenutItemProps) => {
   };
 
   const setDistance = (value: number | null) => {
-    if (!value || value === inputDistance) return;
+    if (value === null || value === inputDistance) return;
     const undoableChange = {
       name: 'Set Light Distance',
       timestamp: Date.now(),
