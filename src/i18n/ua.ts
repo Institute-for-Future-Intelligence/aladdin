@@ -1005,6 +1005,7 @@ export const i18n_ua = {
     },
 
     solarCollectorMenu: {
+      Coordinates: 'Coordinates',
       RelativeXCoordinateOfCenter: 'Relative X Coordinate of Center',
       RelativeYCoordinateOfCenter: 'Relative Y Coordinate of Center',
       RelativeAzimuth: 'Відносний азимут',

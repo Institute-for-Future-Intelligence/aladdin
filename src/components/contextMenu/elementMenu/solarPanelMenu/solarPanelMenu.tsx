@@ -81,23 +81,30 @@ export const createSolarPanelMenu = (selectedElement: ElementModel) => {
         key: 'solar-panel-width',
         label: <DialogItem Dialog={SolarPanelWidthInput}>{i18n.t('word.Width', lang)} ...</DialogItem>,
       },
-      {
-        key: 'solar-panel-center-x',
-        label: (
-          <DialogItem Dialog={SolarPanelXInput}>
-            {i18n.t('solarCollectorMenu.RelativeXCoordinateOfCenter', lang)} ...
-          </DialogItem>
-        ),
-      },
-      {
-        key: 'solar-panel-center-y',
-        label: (
-          <DialogItem Dialog={SolarPanelYInput}>
-            {i18n.t('solarCollectorMenu.RelativeYCoordinateOfCenter', lang)} ...
-          </DialogItem>
-        ),
-      },
     );
+
+    items.push({
+      key: 'solar-panel-coordinates-submenu',
+      label: <MenuItem>{i18n.t('solarCollectorMenu.Coordinates', lang)}</MenuItem>,
+      children: [
+        {
+          key: 'solar-panel-center-x',
+          label: (
+            <DialogItem Dialog={SolarPanelXInput}>
+              {i18n.t('solarCollectorMenu.RelativeXCoordinateOfCenter', lang)} ...
+            </DialogItem>
+          ),
+        },
+        {
+          key: 'solar-panel-center-y',
+          label: (
+            <DialogItem Dialog={SolarPanelYInput}>
+              {i18n.t('solarCollectorMenu.RelativeYCoordinateOfCenter', lang)} ...
+            </DialogItem>
+          ),
+        },
+      ],
+    });
 
     if (solarPanel.parentType === ObjectType.Wall) {
       items.push({

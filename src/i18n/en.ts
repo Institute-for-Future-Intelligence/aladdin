@@ -1003,6 +1003,7 @@ export const i18n_en = {
     },
 
     solarCollectorMenu: {
+      Coordinates: 'Coordinates',
       RelativeXCoordinateOfCenter: 'Relative X Coordinate of Center',
       RelativeYCoordinateOfCenter: 'Relative Y Coordinate of Center',
       RelativeAzimuth: 'Relative Azimuth',

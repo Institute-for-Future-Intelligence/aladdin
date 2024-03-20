@@ -979,6 +979,7 @@ export const i18n_zh_tw = {
     },
 
     solarCollectorMenu: {
+      Coordinates: '座標',
       RelativeXCoordinateOfCenter: '中心的相對X座標',
       RelativeYCoordinateOfCenter: '中心的相對Y座標',
       RelativeAzimuth: '相對方位角',
