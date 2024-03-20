@@ -43,7 +43,7 @@ export const LanguageRadioGroup = () => {
   };
 
   return (
-    <MenuItem stayAfterClick noPadding>
+    <MenuItem stayAfterClick noPadding update>
       <Radio.Group value={language} style={{ height: '170px' }} onChange={handleChange}>
         <Space direction="vertical">
           <Radio value={'en'}>{Language.English}</Radio>
