@@ -356,6 +356,20 @@ export const updateSolarCollectorRelativeAzimuthAboveFoundation = (state: Common
 export const updateSolarCollectorRelativeAzimuthForAll = (state: CommonStoreState) =>
   state.updateSolarCollectorRelativeAzimuthForAll;
 
+export const updateSolarCollectorXById = (state: CommonStoreState) => state.updateSolarCollectorXById;
+
+export const updateSolarCollectorXAboveFoundation = (state: CommonStoreState) =>
+  state.updateSolarCollectorXAboveFoundation;
+
+export const updateSolarCollectorXForAll = (state: CommonStoreState) => state.updateSolarCollectorXForAll;
+
+export const updateSolarCollectorYById = (state: CommonStoreState) => state.updateSolarCollectorYById;
+
+export const updateSolarCollectorYAboveFoundation = (state: CommonStoreState) =>
+  state.updateSolarCollectorYAboveFoundation;
+
+export const updateSolarCollectorYForAll = (state: CommonStoreState) => state.updateSolarCollectorYForAll;
+
 export const updateSolarCollectorPoleHeightById = (state: CommonStoreState) => state.updateSolarCollectorPoleHeightById;
 
 export const updateSolarCollectorPoleHeightOnSurface = (state: CommonStoreState) =>

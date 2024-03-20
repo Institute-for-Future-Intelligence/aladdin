@@ -48,9 +48,19 @@ const SolarPanelPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b:
   const needChange = (poleHeight: number) => {
     if (!solarPanel) return;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.SolarPanel && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            const sp = e as SolarPanelModel;
+            if (Math.abs(sp.poleHeight - poleHeight) > ZERO_TOLERANCE) {
+              return true;
+            }
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.SolarPanel && !e.locked) {
             const sp = e as SolarPanelModel;
             if (Math.abs(sp.poleHeight - poleHeight) > ZERO_TOLERANCE) {
               return true;

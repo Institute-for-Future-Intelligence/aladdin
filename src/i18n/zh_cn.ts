@@ -978,6 +978,8 @@ export const i18n_zh_cn = {
     },
 
     solarCollectorMenu: {
+      RelativeXCoordinateOfCenter: '中心的相对X坐标',
+      RelativeYCoordinateOfCenter: '中心的相对Y坐标',
       RelativeAzimuth: '相对方位角',
       Pole: '支柱',
       PoleHeight: '支柱高度',
@@ -995,6 +997,7 @@ export const i18n_zh_cn = {
     },
 
     solarPanelMenu: {
+      ElectricalProperties: '电气特性',
       InverterEfficiency: '逆变器效率',
       InverterEfficiencyExplained: '直流电转换为交流电的效率。',
       DcToAcSizeRatio: '直流-交流容量比例',

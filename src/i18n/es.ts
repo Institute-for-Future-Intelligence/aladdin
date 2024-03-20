@@ -1003,6 +1003,8 @@ export const i18n_es = {
     },
 
     solarCollectorMenu: {
+      RelativeXCoordinateOfCenter: 'Relative X Coordinate of Center',
+      RelativeYCoordinateOfCenter: 'Relative Y Coordinate of Center',
       RelativeAzimuth: 'Azimut relativa',
       Pole: 'Pole',
       PoleHeight: 'Altura del poste',
@@ -1020,6 +1022,7 @@ export const i18n_es = {
     },
 
     solarPanelMenu: {
+      ElectricalProperties: 'Electrical Properties',
       InverterEfficiency: 'Inverter Efficiency',
       InverterEfficiencyExplained: 'The efficiency for converting direct current (DC) to alternating current (AC).',
       DcToAcSizeRatio: 'DC-to-AC Size Ratio',

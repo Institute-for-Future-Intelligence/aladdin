@@ -287,6 +287,15 @@ export interface CommonStoreState {
     relativeAzimuth: number,
   ) => void;
   updateSolarCollectorRelativeAzimuthForAll: (type: ObjectType, relativeAzimuth: number) => void;
+
+  updateSolarCollectorXById: (id: string, cx: number) => void;
+  updateSolarCollectorXAboveFoundation: (type: ObjectType, foundationId: string, cx: number) => void;
+  updateSolarCollectorXForAll: (type: ObjectType, cx: number) => void;
+
+  updateSolarCollectorYById: (id: string, cy: number) => void;
+  updateSolarCollectorYAboveFoundation: (type: ObjectType, foundationId: string, cy: number) => void;
+  updateSolarCollectorYForAll: (type: ObjectType, cy: number) => void;
+
   updateSolarCollectorPoleHeightById: (id: string, poleHeight: number) => void;
   updateSolarCollectorPoleHeightOnSurface: (
     type: ObjectType,
@@ -1633,6 +1642,68 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
               for (const e of state.elements) {
                 if (e.type === type && !e.locked && (e as SolarPanelModel).parentType !== ObjectType.Wall) {
                   (e as SolarCollector).relativeAzimuth = relativeAzimuth;
+                }
+              }
+            });
+          },
+
+          updateSolarCollectorXById(id, cx) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.id === id && !e.locked && Util.isSolarCollector(e)) {
+                  (e as SolarCollector).cx = cx;
+                  break;
+                }
+              }
+            });
+          },
+          updateSolarCollectorXAboveFoundation(type, foundationId, cx) {
+            if (!Util.isSolarCollectorType(type)) return;
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.foundationId === foundationId && !e.locked && e.type === type) {
+                  (e as SolarCollector).cx = cx;
+                }
+              }
+            });
+          },
+          updateSolarCollectorXForAll(type, cx) {
+            if (!Util.isSolarCollectorType(type)) return;
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === type && !e.locked) {
+                  (e as SolarCollector).cx = cx;
+                }
+              }
+            });
+          },
+
+          updateSolarCollectorYById(id, cy) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.id === id && !e.locked && Util.isSolarCollector(e)) {
+                  (e as SolarCollector).cy = cy;
+                  break;
+                }
+              }
+            });
+          },
+          updateSolarCollectorYAboveFoundation(type, foundationId, cy) {
+            if (!Util.isSolarCollectorType(type)) return;
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.foundationId === foundationId && !e.locked && e.type === type) {
+                  (e as SolarCollector).cy = cy;
+                }
+              }
+            });
+          },
+          updateSolarCollectorYForAll(type, cy) {
+            if (!Util.isSolarCollectorType(type)) return;
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === type && !e.locked) {
+                  (e as SolarCollector).cy = cy;
                 }
               }
             });
@@ -4527,8 +4598,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
 
             if (!autoDeletedRoofs || !autoDeletedChild) return null;
 
-            const arr = [...autoDeletedRoofs, ...autoDeletedChild];
-            return arr;
+            return [...autoDeletedRoofs, ...autoDeletedChild];
           },
           deleteAddedRoofId(id: string) {
             immerSet((state) => {

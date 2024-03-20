@@ -127,6 +127,8 @@ export interface ActionState {
   solarPanelTiltAngle: number;
   solarPanelRelativeAzimuth: number;
   solarPanelFrameColor: string;
+  solarPanelCx: number;
+  solarPanelCy: number;
 
   parabolicDishReflectance: number;
   parabolicDishAbsorptance: number;

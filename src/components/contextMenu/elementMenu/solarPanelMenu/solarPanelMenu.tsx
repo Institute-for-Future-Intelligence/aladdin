@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import type { MenuProps } from 'antd';
@@ -16,15 +16,16 @@ import SolarPanelWidthInput from './solarPanelWidthInput';
 import SolarPanelInverterEfficiencyInput from '../solarPanelInverterEfficiencyInput';
 import SolarPanelDcToAcRatioInput from '../solarPanelDcToAcRatioInput';
 import SolarPanelTiltAngleInput from './solarPanelTiltAngleInput';
-import { Vector3 } from 'three';
 import { Util } from 'src/Util';
-import { UNIT_VECTOR_POS_Z } from 'src/constants';
+import { UNIT_VECTOR_POS_Z_ARRAY } from 'src/constants';
 import SolarPanelRelativeAzimuthInput from './solarPanelRelativeAzimuthInput';
 import SolarPanelTrackerSelection from './solarPanelTrackerSelection';
 import SolarPanelFrameColorSelection from './solarPanelFrameColorSelection';
 import SolarPanelPoleHeightInput from './solarPanelPoleHeightInput';
 import SolarPanelPoleSpacingInput from './solarPanelPoleSpacingInput';
 import { createLabelSubmenu } from '../../labelSubmenuItems';
+import SolarPanelXInput from './solarPanelXInput';
+import SolarPanelYInput from './solarPanelYInput';
 
 export const createSolarPanelMenu = (selectedElement: ElementModel) => {
   const items: MenuProps['items'] = [];
@@ -35,15 +36,13 @@ export const createSolarPanelMenu = (selectedElement: ElementModel) => {
 
   const editable = !solarPanel.locked;
   const lang = { lng: useStore.getState().language };
-  const panelNormal = new Vector3().fromArray(solarPanel.normal);
+  const upright = Util.isIdentical(solarPanel.normal, UNIT_VECTOR_POS_Z_ARRAY);
 
-  // solar-panel-copy
   items.push({
     key: 'solar-panel-copy',
     label: <Copy />,
   });
 
-  // solar-panel-cut
   if (editable) {
     items.push({
       key: 'solar-panel-cut',
@@ -51,7 +50,6 @@ export const createSolarPanelMenu = (selectedElement: ElementModel) => {
     });
   }
 
-  // solar-panel-lock
   items.push({
     key: 'solar-panel-lock',
     label: <Lock selectedElement={solarPanel} />,
@@ -59,7 +57,6 @@ export const createSolarPanelMenu = (selectedElement: ElementModel) => {
 
   if (editable) {
     items.push(
-      // solar-panel-model-change
       {
         key: 'solar-panel-model-change',
         label: (
@@ -68,7 +65,6 @@ export const createSolarPanelMenu = (selectedElement: ElementModel) => {
           </DialogItem>
         ),
       },
-      // solar-panel-orientation
       {
         key: 'solar-panel-orientation',
         label: (
@@ -77,37 +73,32 @@ export const createSolarPanelMenu = (selectedElement: ElementModel) => {
           </DialogItem>
         ),
       },
-      // solar-panel-length
       {
         key: 'solar-panel-length',
         label: <DialogItem Dialog={SolarPanelLengthInput}>{i18n.t('word.Length', lang)} ...</DialogItem>,
       },
-      // solar-panel-width
       {
         key: 'solar-panel-width',
         label: <DialogItem Dialog={SolarPanelWidthInput}>{i18n.t('word.Width', lang)} ...</DialogItem>,
       },
-      // solar-panel-inverter-efficiency
       {
-        key: 'solar-panel-inverter-efficiency',
+        key: 'solar-panel-center-x',
         label: (
-          <DialogItem Dialog={SolarPanelInverterEfficiencyInput}>
-            {i18n.t('solarPanelMenu.InverterEfficiency', lang)} ...
+          <DialogItem Dialog={SolarPanelXInput}>
+            {i18n.t('solarCollectorMenu.RelativeXCoordinateOfCenter', lang)} ...
           </DialogItem>
         ),
       },
-      // solar-panel-dc-ac-ratio
       {
-        key: 'solar-panel-dc-ac-ratio',
+        key: 'solar-panel-center-y',
         label: (
-          <DialogItem Dialog={SolarPanelDcToAcRatioInput}>
-            {i18n.t('solarPanelMenu.DcToAcSizeRatio', lang)} ...
+          <DialogItem Dialog={SolarPanelYInput}>
+            {i18n.t('solarCollectorMenu.RelativeYCoordinateOfCenter', lang)} ...
           </DialogItem>
         ),
       },
     );
 
-    // solar-panel-tilt-angle-on-wall
     if (solarPanel.parentType === ObjectType.Wall) {
       items.push({
         key: 'solar-panel-tilt-angle-on-wall',
@@ -117,8 +108,7 @@ export const createSolarPanelMenu = (selectedElement: ElementModel) => {
       });
     }
 
-    if (panelNormal && Util.isSame(panelNormal, UNIT_VECTOR_POS_Z)) {
-      // solar-panel-tilt-angle
+    if (upright) {
       if (solarPanel.trackerType === TrackerType.NO_TRACKER) {
         items.push({
           key: 'solar-panel-tilt-angle',
@@ -128,7 +118,6 @@ export const createSolarPanelMenu = (selectedElement: ElementModel) => {
         });
       }
 
-      // solar-panel-relative-azimuth
       items.push({
         key: 'solar-panel-relative-azimuth',
         label: (
@@ -138,7 +127,6 @@ export const createSolarPanelMenu = (selectedElement: ElementModel) => {
         ),
       });
 
-      // solar-panel-tracker
       if (solarPanel.parentType !== ObjectType.Roof) {
         items.push({
           key: 'solar-panel-tracker',
@@ -149,7 +137,6 @@ export const createSolarPanelMenu = (selectedElement: ElementModel) => {
       }
     }
 
-    // solar-panel-frame-color
     items.push({
       key: 'solar-panel-frame-color',
       label: (
@@ -157,13 +144,34 @@ export const createSolarPanelMenu = (selectedElement: ElementModel) => {
       ),
     });
 
-    // solar-panel-draw-sun-beam
     items.push({
       key: 'solar-panel-draw-sun-beam',
       label: <SolarCollectorSunBeamCheckbox solarCollector={solarPanel} />,
     });
 
-    // solar-panel-pole-submenu
+    items.push({
+      key: 'solar-panel-electrical-submenu',
+      label: <MenuItem>{i18n.t('solarPanelMenu.ElectricalProperties', lang)}</MenuItem>,
+      children: [
+        {
+          key: 'solar-panel-inverter-efficiency',
+          label: (
+            <DialogItem Dialog={SolarPanelInverterEfficiencyInput}>
+              {i18n.t('solarPanelMenu.InverterEfficiency', lang)} ...
+            </DialogItem>
+          ),
+        },
+        {
+          key: 'solar-panel-dc-ac-ratio',
+          label: (
+            <DialogItem Dialog={SolarPanelDcToAcRatioInput}>
+              {i18n.t('solarPanelMenu.DcToAcSizeRatio', lang)} ...
+            </DialogItem>
+          ),
+        },
+      ],
+    });
+
     items.push({
       key: 'solar-panel-pole-submenu',
       label: <MenuItem>{i18n.t('solarCollectorMenu.Pole', lang)}</MenuItem>,
@@ -187,7 +195,6 @@ export const createSolarPanelMenu = (selectedElement: ElementModel) => {
       ],
     });
 
-    // solar-panel-label
     items.push({
       key: 'solar-panel-label',
       label: <MenuItem>{i18n.t('labelSubMenu.Label', lang)}</MenuItem>,

@@ -32,9 +32,7 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
   const revertApply = useStore(Selector.revertApply);
 
   const solarPanel = useSelectedElement(ObjectType.SolarPanel) as SolarPanelModel | undefined;
-  const [inputValue, setInputValue] = useState(
-    solarPanel?.orientation === Orientation.portrait ? solarPanel?.ly ?? 2 : solarPanel?.lx ?? 1,
-  );
+  const [inputValue, setInputValue] = useState(solarPanel?.ly ?? 2);
 
   const [dy, setDy] = useState<number>(0);
   const rejectRef = useRef<boolean>(false);
