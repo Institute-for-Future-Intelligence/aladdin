@@ -906,6 +906,8 @@ export const geneticAlgorithmWizardSelectedTab = (state: CommonStoreState) => st
 export const particleSwarmOptimizationWizardSelectedTab = (state: CommonStoreState) =>
   state.particleSwarmOptimizationWizardSelectedTab;
 
+export const countHeatmapCells = (state: CommonStoreState) => state.countHeatmapCells;
+
 export const setPrimitiveStore = (state: PrimitiveStoreState) => state.setPrimitiveStore;
 
 export * as viewState from './viewState';

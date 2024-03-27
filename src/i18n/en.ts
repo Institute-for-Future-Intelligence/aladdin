@@ -190,6 +190,8 @@ export const i18n_en = {
     },
 
     message: {
+      CalculationMayBeSlowDoYouWantToContinue: 'Calculation may be slow. Do you want to continue?',
+      IncreaseSolarRadiationHeatmapGridCellSizeToSpeedUp: 'Increase solar radiation heatmap grid cell size to speed up',
       ModelNotFound: 'Model not found',
       CannotSignIn: 'Cannot sign in',
       CannotSignOut: 'Cannot sign out',

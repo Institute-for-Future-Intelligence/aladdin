@@ -190,6 +190,8 @@ export const i18n_zh_tw = {
     },
 
     message: {
+      CalculationMayBeSlowDoYouWantToContinue: '計算可能會很慢。您想繼續嗎？',
+      IncreaseSolarRadiationHeatmapGridCellSizeToSpeedUp: '加大太陽輻射熱圖網格的尺寸可加速',
       ModelNotFound: '沒有找到模型',
       CannotSignIn: '登錄失敗',
       CannotSignOut: '退出失敗',

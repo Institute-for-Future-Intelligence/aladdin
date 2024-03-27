@@ -208,6 +208,8 @@ export interface CommonStoreState {
   selectedElementIdSet: Set<string>;
   multiSelectionsMode: boolean;
 
+  countHeatmapCells: () => number;
+
   // for all types of elements
   updateAllElementLocks: (locked: boolean) => void;
   updateElementLockByFoundationId: (foundationId: string, locked: boolean) => void;
@@ -1146,6 +1148,20 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                 });
               }
             }
+          },
+
+          countHeatmapCells() {
+            let n = 0;
+            immerSet((state: CommonStoreState) => {
+              const cellSize = state.world.solarRadiationHeatmapGridCellSize ?? 0.5;
+              const cellArea = cellSize * cellSize;
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation || e.type === ObjectType.Cuboid) {
+                  n += (e.lx * e.ly) / cellArea;
+                }
+              }
+            });
+            return Math.round(n);
           },
 
           // for all types of elements

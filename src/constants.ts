@@ -5,7 +5,7 @@
 import { Color, Euler, Vector2, Vector3 } from 'three';
 import platform from 'platform';
 
-export const VERSION = '1.5.6';
+export const VERSION = '1.5.7';
 
 // used for check old file that need to update light intensity.
 export const LIGHT_INTENSITY_CHANGED_VERSION = '1.5.0';
@@ -89,6 +89,8 @@ export const LOCKED_ELEMENT_SELECTION_COLOR = 'yellow';
 export const GRID_RATIO = 5;
 export const FINE_GRID_SCALE = 0.1;
 export const NORMAL_GRID_SCALE = GRID_RATIO * FINE_GRID_SCALE;
+
+export const MAXIMUM_HEATMAP_CELLS = 10000;
 
 // solar panel texture
 export const RESOLUTION = 250;

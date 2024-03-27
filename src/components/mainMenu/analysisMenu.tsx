@@ -1,8 +1,8 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
-import { InputNumber, MenuProps, Space } from 'antd';
+import { InputNumber, MenuProps, Modal, Space } from 'antd';
 import { useStore } from 'src/stores/common';
 import { MenuItem } from '../contextMenu/menuItems';
 import i18n from 'src/i18n/i18n';
@@ -18,6 +18,9 @@ import { CheckStatus, checkBuilding } from 'src/analysis/heatTools';
 import { buildingEnergySimulationSettingsSubmenu } from './buildingEnergySimulationSettings';
 import { pvSimulationSettings } from './pvSimulationSettings';
 import { cspSimulationSettings } from './cspSimulationSettings';
+import { QuestionCircleOutlined } from '@ant-design/icons';
+import React from 'react';
+import { MAXIMUM_HEATMAP_CELLS } from '../../constants';
 
 const SolarRadiationHeatmapGridCellSizeInput = () => {
   const lang = useLanguage();
@@ -129,6 +132,7 @@ export const createAnalysisMenu = (elementCounter: ElementCounter) => {
   const setCommonStore = useStore.getState().set;
   const selectNone = useStore.getState().selectNone;
   const countElementsByType = useStore.getState().countElementsByType;
+  const countHeatmapCells = useStore.getState().countHeatmapCells;
 
   const runDynamicSimulation = usePrimitiveStore.getState().runDynamicSimulation;
   const runStaticSimulation = usePrimitiveStore.getState().runStaticSimulation;
@@ -179,6 +183,28 @@ export const createAnalysisMenu = (elementCounter: ElementCounter) => {
   };
 
   const handleDailySolarRadiationHeatmap = () => {
+    const cellCount = countHeatmapCells();
+    if (cellCount > MAXIMUM_HEATMAP_CELLS) {
+      Modal.confirm({
+        title:
+          i18n.t('message.CalculationMayBeSlowDoYouWantToContinue', lang) +
+          ' (' +
+          i18n.t('message.IncreaseSolarRadiationHeatmapGridCellSizeToSpeedUp', lang) +
+          ')',
+        icon: <QuestionCircleOutlined />,
+        onOk: () => {
+          toggleSolarRadiationHeatmap();
+        },
+        onCancel: () => {},
+        okText: `${i18n.t('word.Yes', lang)}`,
+        cancelText: `${i18n.t('word.No', lang)}`,
+      });
+    } else {
+      toggleSolarRadiationHeatmap();
+    }
+  };
+
+  const toggleSolarRadiationHeatmap = () => {
     if (!noAnimationForHeatmapSimulation || Util.hasMovingParts(elements)) {
       toggleDynamicSolarRadiationHeatmap();
     } else {

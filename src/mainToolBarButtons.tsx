@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import TinyLockImage from './assets/tiny_lock.png';
@@ -31,13 +31,13 @@ import ClearImage from './assets/clear.png';
 import HeliodonImage from './assets/heliodon.png';
 import AnalyzeImage from './assets/analyze.png';
 
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import { Dropdown, MenuProps, Modal } from 'antd';
 import 'antd/dist/reset.css';
 import { ObjectType } from './types';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import i18n from './i18n/i18n';
 import { UndoableRemoveAll } from './undo/UndoableRemoveAll';
 import { UndoableCheck } from './undo/UndoableCheck';
@@ -47,6 +47,7 @@ import { Util } from './Util';
 import { usePrimitiveStore } from './stores/commonPrimitive';
 import { useLanguage } from './views/hooks';
 import { MenuItem } from './components/contextMenu/menuItems';
+import { MAXIMUM_HEATMAP_CELLS } from './constants';
 
 const ToolBarButton = ({ ...props }) => {
   return (
@@ -115,7 +116,7 @@ const MainToolBarButtons = () => {
   const setCommonStore = useStore(Selector.set);
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const loggable = useStore(Selector.loggable);
-  const elements = useStore.getState().elements;
+  const elements = useStore(Selector.elements);
   const language = useStore(Selector.language);
   const selectNone = useStore(Selector.selectNone);
   const actionModeLock = useStore(Selector.actionModeLock);
@@ -133,6 +134,7 @@ const MainToolBarButtons = () => {
   const runDynamicSimulation = usePrimitiveStore(Selector.runDynamicSimulation);
   const runStaticSimulation = usePrimitiveStore(Selector.runStaticSimulation);
   const groupAction = useStore(Selector.groupActionMode);
+  const countHeatmapCells = useStore(Selector.countHeatmapCells);
 
   const [category1Flag, setCategory1Flag] = useState<ObjectType>(ObjectType.Foundation);
   const [category2Flag, setCategory2Flag] = useState<ObjectType>(ObjectType.Wall);
@@ -551,6 +553,14 @@ const MainToolBarButtons = () => {
     );
   };
 
+  const toggleSolarRadiationHeatmap = () => {
+    if (!noAnimationForHeatmapSimulation || Util.hasMovingParts(elements)) {
+      toggleDynamicSolarRadiationHeatmap();
+    } else {
+      toggleStaticSolarRadiationHeatmap();
+    }
+  };
+
   return (
     <div>
       {/* default to select */}
@@ -638,10 +648,24 @@ const MainToolBarButtons = () => {
                 state.showHeatFluxes = false;
               });
             } else {
-              if (!noAnimationForHeatmapSimulation || Util.hasMovingParts(elements)) {
-                toggleDynamicSolarRadiationHeatmap();
+              const cellCount = countHeatmapCells();
+              if (cellCount > MAXIMUM_HEATMAP_CELLS) {
+                Modal.confirm({
+                  title:
+                    i18n.t('message.CalculationMayBeSlowDoYouWantToContinue', lang) +
+                    ' (' +
+                    i18n.t('message.IncreaseSolarRadiationHeatmapGridCellSizeToSpeedUp', lang) +
+                    ')',
+                  icon: <QuestionCircleOutlined />,
+                  onOk: () => {
+                    toggleSolarRadiationHeatmap();
+                  },
+                  onCancel: () => {},
+                  okText: `${i18n.t('word.Yes', lang)}`,
+                  cancelText: `${i18n.t('word.No', lang)}`,
+                });
               } else {
-                toggleStaticSolarRadiationHeatmap();
+                toggleSolarRadiationHeatmap();
               }
             }
           }}
