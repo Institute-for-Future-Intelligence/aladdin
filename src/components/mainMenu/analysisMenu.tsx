@@ -205,7 +205,7 @@ export const createAnalysisMenu = (elementCounter: ElementCounter) => {
   };
 
   const toggleSolarRadiationHeatmap = () => {
-    if (!noAnimationForHeatmapSimulation || Util.hasMovingParts(elements)) {
+    if (!noAnimationForHeatmapSimulation || hasMovingParts) {
       toggleDynamicSolarRadiationHeatmap();
     } else {
       toggleStaticSolarRadiationHeatmap();
