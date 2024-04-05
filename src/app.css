@@ -40,3 +40,38 @@
     transform: rotate(360deg);
   }
 }
+
+.split-pane {
+  height: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  --percentWidth: 50%;
+}
+
+.split-pane .sash {
+  background-image: linear-gradient(to right, white, rgb(167, 165, 165));
+  width: 6px;
+  user-select: none;
+  cursor: col-resize;
+  position: absolute;
+  height: 100%;
+  z-index: 10;
+  left: var(--percentWidth);
+  transform: translateX(-50%);
+}
+
+.split-pane .sash:active {
+  background-image: none;
+  background-color: rgb(57, 166, 255);
+}
+
+.split-pane .left-child {
+  width: var(--percentWidth);
+  position: relative;
+}
+
+.split-pane .right-child {
+  width: calc(100% - var(--percentWidth));
+  position: relative;
+}

@@ -88,6 +88,17 @@ const CameraController = () => {
   const orthCameraRef = useRef<THREEOrthographicCamera>(null);
 
   useEffect(() => {
+    useRefStore.setState({
+      canvas: { gl, camera },
+    });
+    if (!orthographic && persCameraRef.current) {
+      useRefStore.setState({
+        canvas: { gl, camera: persCameraRef.current },
+      });
+    }
+  }, [orthographic]);
+
+  useEffect(() => {
     if (useStore.getState().viewState.cameraPosition2D[2] < 100) {
       setCommonStore((state) => {
         state.viewState.cameraPosition2D[2] = 150;

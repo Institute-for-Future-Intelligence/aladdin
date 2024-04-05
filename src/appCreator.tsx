@@ -7,7 +7,7 @@
 import React, { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { useStore } from './stores/common';
 import * as Selector from 'src/stores/selector';
-import { Canvas } from '@react-three/fiber';
+import { Canvas, invalidate } from '@react-three/fiber';
 import Sky from './views/sky';
 import Axes from './views/axes';
 import ElementsRenderer from './elementsRenderer';
@@ -43,9 +43,10 @@ import Simulations from './simulations';
 import { usePrimitiveStore } from './stores/commonPrimitive';
 import { Button } from 'antd';
 import ProjectGallery from './panels/projectGallery';
-import SplitPane from 'react-split-pane';
-import { throttle } from 'lodash';
 import GroupMasterWrapper from './components/groupMaster';
+import SplitPane from './components/splitPane';
+import { useRefStore } from './stores/commonRef';
+import { PerspectiveCamera, Vector2, Vector3 } from 'three';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -70,7 +71,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const evolutionaryAlgorithmState = useStore(Selector.evolutionaryAlgorithmState);
 
   const [initializing, setInitializing] = useState<boolean>(true);
-  const [canvasRelativeWidth, setCanvasRelativeWidth] = useState<number>(50);
+  const [canvasPercentWidth, setCanvasRelativeWidth] = useState<number>(50);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -151,6 +152,8 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       </Canvas>
     );
   };
+
+  const v = useMemo(() => new Vector2(), []);
 
   return (
     // disable the default context menu for the entire app
@@ -299,31 +302,27 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       <DropdownContextMenu>
         {/* must specify the height here for the floating window to have correct boundary check*/}
         <div style={{ height: 'calc(100vh - 72px)' }}>
-          {/* @ts-ignore */}
           <SplitPane
-            split={'vertical'}
-            defaultSize={projectView ? '50%' : 0}
-            onChange={throttle((size) => {
-              setCanvasRelativeWidth(Math.round(100 - (size / window.innerWidth) * 100));
-            }, 5)}
-            // must specify the height again for the split pane to resize correctly with the window
-            style={{ height: 'calc(100vh - 72px)', display: 'flex' }}
-            pane1Style={{
-              width: projectView ? 100 - canvasRelativeWidth + '%' : '0',
-              minWidth: projectView ? '25%' : 0,
-              maxWidth: projectView ? '75%' : 0,
-            }}
-            pane2Style={{ width: projectView ? canvasRelativeWidth + '%' : '100%' }}
-            resizerStyle={{
-              cursor: 'col-resize',
-              width: projectView ? '6px' : 0,
-              minWidth: projectView ? '6px' : 0,
-              maxWidth: projectView ? '6px' : 0,
-              backgroundImage: 'linear-gradient(to right, white, gray)',
+            showGallery={projectView}
+            defaultSize={projectView ? 50 : 0}
+            onChange={(size) => {
+              setCanvasRelativeWidth(Math.round(100 - size));
+              const canvas = useRefStore.getState().canvas;
+              if (canvas) {
+                const { gl, camera } = canvas;
+                const newWidth = ((100 - size) * window.innerWidth) / 100;
+                gl.getSize(v);
+                gl.setSize(newWidth, v.y);
+                if (camera instanceof PerspectiveCamera) {
+                  camera.aspect = newWidth / v.y;
+                  camera.updateProjectionMatrix();
+                  invalidate();
+                }
+              }
             }}
           >
             {projectView ? (
-              <ProjectGallery canvas={canvasRef.current} relativeWidth={1 - canvasRelativeWidth * 0.01} />
+              <ProjectGallery canvas={canvasRef.current} relativeWidth={1 - canvasPercentWidth * 0.01} />
             ) : (
               <></>
             )}

@@ -5,7 +5,7 @@
 import { createWithEqualityFn } from 'zustand/traditional';
 import { RefObject } from 'react';
 import { MyOrbitControls } from 'src/js/MyOrbitControls';
-import { Group } from 'three';
+import { Camera, Group, WebGLRenderer } from 'three';
 import { useStore } from './common';
 
 export interface RefStoreState {
@@ -23,6 +23,7 @@ export interface RefStoreState {
   listenToAutoDeletionByCutRef: React.MutableRefObject<boolean> | null;
   setListenToAutoDeletionByDelete: (b: boolean) => void;
   setListenToAutoDeletionByCut: (b: boolean) => void;
+  canvas: { gl: WebGLRenderer; camera: Camera } | null;
 }
 
 export const useRefStore = createWithEqualityFn<RefStoreState>()((set, get) => {
@@ -67,5 +68,6 @@ export const useRefStore = createWithEqualityFn<RefStoreState>()((set, get) => {
         listenToAutoDeletionByDeleteRef.current = b;
       }
     },
+    canvas: null,
   };
 });
