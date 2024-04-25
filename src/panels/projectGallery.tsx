@@ -576,6 +576,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
     return (
       <div>
         <Checkbox
+          style={{ width: '100%' }}
           onChange={(e) => {
             rowWidthSelectionRef.current = e.target.checked;
             selectParameter(rowWidthSelectionRef.current, 'rowWidth');
@@ -587,6 +588,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
         </Checkbox>
         <br />
         <Checkbox
+          style={{ width: '100%' }}
           onChange={(e) => {
             tiltAngleSelectionRef.current = e.target.checked;
             selectParameter(tiltAngleSelectionRef.current, 'tiltAngle');
@@ -598,6 +600,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
         </Checkbox>
         <br />
         <Checkbox
+          style={{ width: '100%' }}
           onChange={(e) => {
             rowSpacingSelectionRef.current = e.target.checked;
             selectParameter(rowSpacingSelectionRef.current, 'interRowSpacing');
@@ -609,6 +612,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
         </Checkbox>
         <br />
         <Checkbox
+          style={{ width: '100%' }}
           onChange={(e) => {
             latitudeSelectionRef.current = e.target.checked;
             selectParameter(latitudeSelectionRef.current, 'latitude');
@@ -620,6 +624,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
         </Checkbox>
         <br />
         <Checkbox
+          style={{ width: '100%' }}
           onChange={(e) => {
             orientationSelectionRef.current = e.target.checked;
             selectParameter(orientationSelectionRef.current, 'orientation');
@@ -631,6 +636,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
         </Checkbox>
         <br />
         <Checkbox
+          style={{ width: '100%' }}
           onChange={(e) => {
             poleHeightSelectionRef.current = e.target.checked;
             selectParameter(poleHeightSelectionRef.current, 'poleHeight');
@@ -642,6 +648,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
         </Checkbox>
         <br />
         <Checkbox
+          style={{ width: '100%' }}
           onChange={(e) => {
             unitCostSelectionRef.current = e.target.checked;
             selectParameter(unitCostSelectionRef.current, 'unitCost');
@@ -653,6 +660,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
         </Checkbox>
         <br />
         <Checkbox
+          style={{ width: '100%' }}
           onChange={(e) => {
             sellingPriceSelectionRef.current = e.target.checked;
             selectParameter(sellingPriceSelectionRef.current, 'sellingPrice');
@@ -664,6 +672,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
         </Checkbox>
         <br />
         <Checkbox
+          style={{ width: '100%' }}
           onChange={(e) => {
             costSelectionRef.current = e.target.checked;
             selectParameter(costSelectionRef.current, 'totalYearlyCost');
@@ -675,6 +684,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
         </Checkbox>
         <br />
         <Checkbox
+          style={{ width: '100%' }}
           onChange={(e) => {
             totalYieldSelectionRef.current = e.target.checked;
             selectParameter(totalYieldSelectionRef.current, 'totalYearlyYield');
@@ -686,6 +696,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
         </Checkbox>
         <br />
         <Checkbox
+          style={{ width: '100%' }}
           onChange={(e) => {
             meanYieldSelectionRef.current = e.target.checked;
             selectParameter(meanYieldSelectionRef.current, 'meanYearlyYield');
@@ -697,6 +708,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
         </Checkbox>
         <br />
         <Checkbox
+          style={{ width: '100%' }}
           onChange={(e) => {
             profitSelectionRef.current = e.target.checked;
             selectParameter(profitSelectionRef.current, 'yearlyProfit');

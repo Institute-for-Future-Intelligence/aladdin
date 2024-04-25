@@ -254,7 +254,7 @@ export const WindowEmptyCheckbox = ({ window }: WindowMenuItemProps) => {
 
   return (
     <MenuItem stayAfterClick noPadding>
-      <Checkbox checked={!!window.empty} onChange={handleChange}>
+      <Checkbox style={{ width: '100%' }} checked={!!window.empty} onChange={handleChange}>
         {i18n.t('windowMenu.Empty', lang)}
       </Checkbox>
     </MenuItem>
@@ -299,7 +299,7 @@ export const WindowInteriorCheckbox = ({ window }: WindowMenuItemProps) => {
 
   return (
     <MenuItem stayAfterClick noPadding>
-      <Checkbox checked={!!window.interior} onChange={handleChange}>
+      <Checkbox style={{ width: '100%' }} checked={!!window.interior} onChange={handleChange}>
         {i18n.t('windowMenu.Interior', lang)}
       </Checkbox>
     </MenuItem>

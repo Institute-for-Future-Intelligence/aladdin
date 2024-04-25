@@ -37,7 +37,7 @@ export const ShowLabelCheckbox = ({ element }: LabelSubmenuItemProps) => {
 
   return (
     <MenuItem stayAfterClick noPadding>
-      <Checkbox checked={!!element?.showLabel} onChange={showLabel}>
+      <Checkbox style={{ width: '100%' }} checked={!!element?.showLabel} onChange={showLabel}>
         {i18n.t('labelSubMenu.KeepShowingLabel', lang)}
       </Checkbox>
     </MenuItem>

@@ -45,7 +45,7 @@ export const AxesCheckBox = () => {
 
   return (
     <MenuItem stayAfterClick noPadding>
-      <Checkbox checked={axes} onChange={onChange}>
+      <Checkbox style={{ width: '100%' }} checked={axes} onChange={onChange}>
         {i18n.t('skyMenu.Axes', lang)}
       </Checkbox>
     </MenuItem>
@@ -139,7 +139,7 @@ export const ShowAzimuthAngleCheckbox = () => {
 
   return (
     <MenuItem stayAfterClick noPadding>
-      <Checkbox checked={showAzimuthAngle} onChange={onChange}>
+      <Checkbox style={{ width: '100%' }} checked={showAzimuthAngle} onChange={onChange}>
         {i18n.t('skyMenu.ShowAzimuthAngle', lang)}
       </Checkbox>
     </MenuItem>
@@ -177,7 +177,7 @@ export const ShowElevationAngle = () => {
 
   return (
     <MenuItem stayAfterClick noPadding>
-      <Checkbox checked={showElevationAngle} onChange={onChange}>
+      <Checkbox style={{ width: '100%' }} checked={showElevationAngle} onChange={onChange}>
         {i18n.t('skyMenu.ShowElevationAngle', lang)}
       </Checkbox>
     </MenuItem>
@@ -215,7 +215,7 @@ export const ShowZenithAngle = () => {
 
   return (
     <MenuItem stayAfterClick noPadding>
-      <Checkbox checked={showZenithAngle} onChange={onChange}>
+      <Checkbox style={{ width: '100%' }} checked={showZenithAngle} onChange={onChange}>
         {i18n.t('skyMenu.ShowZenithAngle', lang)}
       </Checkbox>
     </MenuItem>

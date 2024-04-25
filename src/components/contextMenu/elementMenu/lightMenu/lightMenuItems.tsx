@@ -42,7 +42,7 @@ export const LightInsideCheckbox = ({ light }: LightMenutItemProps) => {
 
   return (
     <MenuItem stayAfterClick noPadding>
-      <Checkbox checked={!!light.inside} onChange={handleChange}>
+      <Checkbox style={{ width: '100%' }} checked={!!light.inside} onChange={handleChange}>
         {i18n.t('lightMenu.Inside', lang)}
       </Checkbox>
     </MenuItem>

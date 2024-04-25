@@ -4,7 +4,7 @@
 
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Menu, Dropdown, Checkbox, Slider } from 'antd';
+import { Dropdown } from 'antd';
 import { ReactComponent as MenuSVG } from '../assets/menu.svg';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';

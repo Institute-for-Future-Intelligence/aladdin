@@ -249,7 +249,7 @@ export const Lock = ({ selectedElement }: { selectedElement: ElementModel }) => 
 
   return (
     <MenuItem stayAfterClick noPadding>
-      <Checkbox checked={selectedElement.locked} onChange={onChange}>
+      <Checkbox style={{ width: '100%' }} checked={selectedElement.locked} onChange={onChange}>
         {i18n.t('word.Lock', lang)}
       </Checkbox>
     </MenuItem>
@@ -340,7 +340,7 @@ export const GroupMasterCheckbox = ({ groupableElement }: GroupMasterCheckboxPro
 
   return (
     <MenuItem stayAfterClick noPadding>
-      <Checkbox checked={groupableElement.enableGroupMaster} onChange={onChange}>
+      <Checkbox style={{ width: '100%' }} checked={groupableElement.enableGroupMaster} onChange={onChange}>
         {i18n.t('foundationMenu.GroupMaster', lang)}
       </Checkbox>
     </MenuItem>
@@ -407,7 +407,11 @@ export const SolarCollectorSunBeamCheckbox = ({ solarCollector }: SolarCollector
 
   return (
     <MenuItem stayAfterClick noPadding>
-      <Checkbox checked={!!solarCollector.drawSunBeam} onChange={(e) => drawSunBeam(e.target.checked)}>
+      <Checkbox
+        style={{ width: '100%' }}
+        checked={!!solarCollector.drawSunBeam}
+        onChange={(e) => drawSunBeam(e.target.checked)}
+      >
         {i18n.t('solarCollectorMenu.DrawSunBeam', lang)}
       </Checkbox>
     </MenuItem>
@@ -417,7 +421,7 @@ export const SolarCollectorSunBeamCheckbox = ({ solarCollector }: SolarCollector
 export const CheckboxMenuItem = ({ checked, onClick, children }: CheckboxMenuItemProps) => {
   return (
     <MenuItem stayAfterClick noPadding>
-      <Checkbox checked={checked} onClick={onClick}>
+      <Checkbox style={{ width: '100%' }} checked={checked} onClick={onClick}>
         {children}
       </Checkbox>
     </MenuItem>

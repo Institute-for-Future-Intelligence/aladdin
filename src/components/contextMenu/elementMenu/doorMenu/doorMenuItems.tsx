@@ -56,7 +56,7 @@ export const DoorFilledCheckbox = ({ door }: DoorMenuItemProps) => {
 
   return (
     <MenuItem stayAfterClick noPadding>
-      <Checkbox checked={door.filled} onChange={handleChange}>
+      <Checkbox style={{ width: '100%' }} checked={door.filled} onChange={handleChange}>
         {i18n.t('doorMenu.Filled', lang)}
       </Checkbox>
     </MenuItem>
@@ -101,7 +101,7 @@ export const DoorInteriorCheckbox = ({ door }: DoorMenuItemProps) => {
 
   return (
     <MenuItem stayAfterClick noPadding>
-      <Checkbox checked={door.interior} onChange={handleChange}>
+      <Checkbox style={{ width: '100%' }} checked={door.interior} onChange={handleChange}>
         {i18n.t('doorMenu.Interior', lang)}
       </Checkbox>
     </MenuItem>

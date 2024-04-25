@@ -162,7 +162,7 @@ export const ParapetCheckbox = ({ wall }: WallMenuItemProps) => {
 
   return (
     <MenuItem stayAfterClick noPadding>
-      <Checkbox checked={wall.parapet.display} onChange={handleChange}>
+      <Checkbox style={{ width: '100%' }} checked={wall.parapet.display} onChange={handleChange}>
         {i18n.t('wallMenu.Parapet', lang)}
       </Checkbox>
     </MenuItem>
@@ -365,7 +365,7 @@ export const WallOpenToOutsideCheckbox = ({ wall }: WallMenuItemProps) => {
 
   return (
     <MenuItem stayAfterClick noPadding>
-      <Checkbox checked={!!wall.openToOutside} onChange={handleChange}>
+      <Checkbox style={{ width: '100%' }} checked={!!wall.openToOutside} onChange={handleChange}>
         {i18n.t('wallMenu.OpenToOutside', lang)}
       </Checkbox>
     </MenuItem>

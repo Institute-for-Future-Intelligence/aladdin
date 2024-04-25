@@ -54,7 +54,7 @@ export const PolygonFillCheckbox = ({ polygon }: PolygonMenuItemProps) => {
 
   return (
     <MenuItem stayAfterClick noPadding>
-      <Checkbox checked={!!polygon.filled} onChange={toggleFilled}>
+      <Checkbox style={{ width: '100%' }} checked={!!polygon.filled} onChange={toggleFilled}>
         {i18n.t('polygonMenu.Filled', lang)}
       </Checkbox>
     </MenuItem>
@@ -96,7 +96,7 @@ export const PolygonShinyCheckbox = ({ polygon }: PolygonMenuItemProps) => {
 
   return (
     <MenuItem stayAfterClick noPadding>
-      <Checkbox checked={!!polygon.shininess} onChange={toggleShiny}>
+      <Checkbox style={{ width: '100%' }} checked={!!polygon.shininess} onChange={toggleShiny}>
         {i18n.t('polygonMenu.Shiny', lang)}
       </Checkbox>
     </MenuItem>
@@ -137,7 +137,7 @@ export const PolygonOutlineCheckbox = ({ polygon }: PolygonMenuItemProps) => {
 
   return (
     <MenuItem stayAfterClick noPadding>
-      <Checkbox checked={!!polygon.noOutline} onChange={toggleNoOutline}>
+      <Checkbox style={{ width: '100%' }} checked={!!polygon.noOutline} onChange={toggleNoOutline}>
         {i18n.t('polygonMenu.NoOutline', lang)}
       </Checkbox>
     </MenuItem>

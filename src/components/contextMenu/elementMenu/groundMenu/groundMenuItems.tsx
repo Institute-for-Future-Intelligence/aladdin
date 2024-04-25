@@ -61,7 +61,7 @@ export const GroundImageCheckbox = () => {
 
   return (
     <MenuItem stayAfterClick noPadding>
-      <Checkbox checked={groundImage} onChange={onChange}>
+      <Checkbox style={{ width: '100%' }} checked={groundImage} onChange={onChange}>
         {i18n.t('groundMenu.ImageOnGround', lang)}
       </Checkbox>
     </MenuItem>
@@ -97,7 +97,7 @@ export const WaterSurfaceCheckbox = () => {
 
   return (
     <MenuItem stayAfterClick noPadding update>
-      <Checkbox checked={waterSurface} onChange={onChange}>
+      <Checkbox style={{ width: '100%' }} checked={waterSurface} onChange={onChange}>
         {i18n.t('groundMenu.WaterSurface', lang)}
       </Checkbox>
     </MenuItem>

@@ -20,7 +20,7 @@ export const SensorShowLabelCheckbox = ({ sensor }: SensorMenuItemProps) => {
 
   return (
     <MenuItem stayAfterClick noPadding>
-      <Checkbox checked={!!sensor.showLabel} onChange={showLabel}>
+      <Checkbox style={{ width: '100%' }} checked={!!sensor.showLabel} onChange={showLabel}>
         {i18n.t('labelSubMenu.KeepShowingLabel', lang)}
       </Checkbox>
     </MenuItem>

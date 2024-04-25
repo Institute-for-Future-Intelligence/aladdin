@@ -76,7 +76,7 @@ export const BuildingCheckbox = ({ foundation }: FoundationItemProps) => {
 
   return (
     <MenuItem stayAfterClick noPadding>
-      <Checkbox checked={!foundation.notBuilding} onChange={onChange}>
+      <Checkbox style={{ width: '100%' }} checked={!foundation.notBuilding} onChange={onChange}>
         {i18n.t('word.Building', lang)}
       </Checkbox>
     </MenuItem>

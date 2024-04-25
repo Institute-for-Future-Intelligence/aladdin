@@ -66,7 +66,7 @@ export const RoofCeilingCheckbox = ({ roof }: RoofMenuItemProps) => {
 
   return (
     <MenuItem stayAfterClick noPadding>
-      <Checkbox checked={roof.ceiling} onChange={handleChange}>
+      <Checkbox style={{ width: '100%' }} checked={roof.ceiling} onChange={handleChange}>
         {i18n.t('roofMenu.Ceiling', lang)}
       </Checkbox>
     </MenuItem>
