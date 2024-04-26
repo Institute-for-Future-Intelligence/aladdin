@@ -419,14 +419,18 @@ export const SolarStructureRadioGroup = ({ foundation }: FoundationItemProps) =>
     <MenuItem stayAfterClick noPadding>
       <Radio.Group value={selectedSolarStructure} onChange={handleChange}>
         <Space direction="vertical">
-          <Radio value={SolarStructure.None}>{i18n.t('word.None', lang)}</Radio>
-          <Radio value={SolarStructure.FocusPipe}>
+          <Radio style={{ width: '100%' }} value={SolarStructure.None}>
+            {i18n.t('word.None', lang)}
+          </Radio>
+          <Radio style={{ width: '100%' }} value={SolarStructure.FocusPipe}>
             {i18n.t('solarAbsorberPipeMenu.AbsorberPipeForFresnelReflectors', lang)}
           </Radio>
-          <Radio value={SolarStructure.FocusTower}>
+          <Radio style={{ width: '100%' }} value={SolarStructure.FocusTower}>
             {i18n.t('solarPowerTowerMenu.ReceiverTowerForHeliostats', lang)}
           </Radio>
-          <Radio value={SolarStructure.UpdraftTower}>{i18n.t('solarUpdraftTowerMenu.SolarUpdraftTower', lang)}</Radio>
+          <Radio style={{ width: '100%' }} value={SolarStructure.UpdraftTower}>
+            {i18n.t('solarUpdraftTowerMenu.SolarUpdraftTower', lang)}
+          </Radio>
         </Space>
       </Radio.Group>
     </MenuItem>

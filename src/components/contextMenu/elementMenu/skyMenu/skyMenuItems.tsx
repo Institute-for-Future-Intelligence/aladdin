@@ -98,7 +98,7 @@ export const ThemeRadioGroup = () => {
       <Radio.Group value={theme} onChange={onChange}>
         <Space direction="vertical">
           {radioArray.map((radio, idx) => (
-            <Radio key={`${idx}-${radio.value}`} value={radio.value}>
+            <Radio style={{ width: '100%' }} key={`${idx}-${radio.value}`} value={radio.value}>
               {i18n.t(radio.label, lang)}
             </Radio>
           ))}

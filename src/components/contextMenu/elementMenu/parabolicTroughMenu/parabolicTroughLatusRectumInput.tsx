@@ -356,14 +356,16 @@ const ParabolicTroughLatusRectumInput = ({ setDialogVisible }: { setDialogVisibl
         >
           <Radio.Group onChange={onScopeChange} value={actionScope}>
             <Space direction="vertical">
-              <Radio value={Scope.OnlyThisObject}>{i18n.t('parabolicTroughMenu.OnlyThisParabolicTrough', lang)}</Radio>
-              <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
+              <Radio style={{ width: '100%' }} value={Scope.OnlyThisObject}>
+                {i18n.t('parabolicTroughMenu.OnlyThisParabolicTrough', lang)}
+              </Radio>
+              <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('parabolicTroughMenu.AllParabolicTroughsAboveFoundation', lang)}
               </Radio>
-              <Radio value={Scope.AllSelectedObjectsOfThisType}>
+              <Radio style={{ width: '100%' }} value={Scope.AllSelectedObjectsOfThisType}>
                 {i18n.t('parabolicTroughMenu.AllSelectedParabolicTroughs', lang)}
               </Radio>
-              <Radio value={Scope.AllObjectsOfThisType}>
+              <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisType}>
                 {i18n.t('parabolicTroughMenu.AllParabolicTroughs', lang)}
               </Radio>
             </Space>

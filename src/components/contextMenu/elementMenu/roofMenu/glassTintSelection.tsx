@@ -240,11 +240,15 @@ const GlassTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
           >
             <Radio.Group onChange={(e) => setRoofActionScope(e.target.value)} value={roofActionScope}>
               <Space direction="vertical">
-                <Radio value={Scope.OnlyThisObject}>{i18n.t('roofMenu.OnlyThisRoof', lang)}</Radio>
-                <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
+                <Radio style={{ width: '100%' }} value={Scope.OnlyThisObject}>
+                  {i18n.t('roofMenu.OnlyThisRoof', lang)}
+                </Radio>
+                <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                   {i18n.t('roofMenu.AllRoofsAboveFoundation', lang)}
                 </Radio>
-                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('roofMenu.AllRoofs', lang)}</Radio>
+                <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisType}>
+                  {i18n.t('roofMenu.AllRoofs', lang)}
+                </Radio>
               </Space>
             </Radio.Group>
           </Col>

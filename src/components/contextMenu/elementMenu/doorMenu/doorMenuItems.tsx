@@ -148,8 +148,12 @@ export const DoorTypeRadioGroup = ({ door }: DoorMenuItemProps) => {
     <MenuItem stayAfterClick noPadding>
       <Radio.Group value={door.doorType} onChange={handleChange}>
         <Space direction="vertical">
-          <Radio value={DoorType.Default}>{i18n.t('doorMenu.Default', lang)}</Radio>
-          <Radio value={DoorType.Arched}>{i18n.t('doorMenu.Arched', lang)}</Radio>
+          <Radio style={{ width: '100%' }} value={DoorType.Default}>
+            {i18n.t('doorMenu.Default', lang)}
+          </Radio>
+          <Radio style={{ width: '100%' }} value={DoorType.Arched}>
+            {i18n.t('doorMenu.Arched', lang)}
+          </Radio>
         </Space>
       </Radio.Group>
     </MenuItem>

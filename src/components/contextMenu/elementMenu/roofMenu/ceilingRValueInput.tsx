@@ -283,11 +283,15 @@ const CeilingRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
           >
             <Radio.Group onChange={(e) => setActionScope(e.target.value)} value={actionScope}>
               <Space direction="vertical">
-                <Radio value={Scope.OnlyThisObject}>{i18n.t('roofMenu.OnlyThisCeiling', lang)}</Radio>
-                <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
+                <Radio style={{ width: '100%' }} value={Scope.OnlyThisObject}>
+                  {i18n.t('roofMenu.OnlyThisCeiling', lang)}
+                </Radio>
+                <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                   {i18n.t('roofMenu.AllCeilingsAboveFoundation', lang)}
                 </Radio>
-                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('roofMenu.AllCeilings', lang)}</Radio>
+                <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisType}>
+                  {i18n.t('roofMenu.AllCeilings', lang)}
+                </Radio>
               </Space>
             </Radio.Group>
           </Col>

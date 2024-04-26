@@ -688,12 +688,18 @@ const CuboidWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
         >
           <Radio.Group onChange={onScopeChange} value={actionScope}>
             <Space direction="vertical">
-              <Radio value={Scope.OnlyThisObject}>{i18n.t('cuboidMenu.OnlyThisCuboid', lang)}</Radio>
-              <Radio value={Scope.AllObjectsOfThisTypeOnSurface}>
+              <Radio style={{ width: '100%' }} value={Scope.OnlyThisObject}>
+                {i18n.t('cuboidMenu.OnlyThisCuboid', lang)}
+              </Radio>
+              <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisTypeOnSurface}>
                 {i18n.t('cuboidMenu.AllCuboidsOnSameSurface', lang)}
               </Radio>
-              <Radio value={Scope.AllSelectedObjectsOfThisType}>{i18n.t('cuboidMenu.AllSelectedCuboids', lang)}</Radio>
-              <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('cuboidMenu.AllCuboids', lang)}</Radio>
+              <Radio style={{ width: '100%' }} value={Scope.AllSelectedObjectsOfThisType}>
+                {i18n.t('cuboidMenu.AllSelectedCuboids', lang)}
+              </Radio>
+              <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisType}>
+                {i18n.t('cuboidMenu.AllCuboids', lang)}
+              </Radio>
             </Space>
           </Radio.Group>
         </Col>

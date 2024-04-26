@@ -246,11 +246,15 @@ const SolarPowerTowerRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b
             value={actionScope}
           >
             <Space direction="vertical">
-              <Radio value={Scope.OnlyThisObject}>{i18n.t('foundationMenu.OnlyThisFoundation', lang)}</Radio>
-              <Radio value={Scope.AllSelectedObjectsOfThisType}>
+              <Radio style={{ width: '100%' }} value={Scope.OnlyThisObject}>
+                {i18n.t('foundationMenu.OnlyThisFoundation', lang)}
+              </Radio>
+              <Radio style={{ width: '100%' }} value={Scope.AllSelectedObjectsOfThisType}>
                 {i18n.t('foundationMenu.AllSelectedFoundations', lang)}
               </Radio>
-              <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('foundationMenu.AllFoundations', lang)}</Radio>
+              <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisType}>
+                {i18n.t('foundationMenu.AllFoundations', lang)}
+              </Radio>
             </Space>
           </Radio.Group>
         </Col>

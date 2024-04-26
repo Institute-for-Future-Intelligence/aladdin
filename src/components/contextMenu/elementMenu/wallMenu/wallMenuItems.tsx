@@ -221,9 +221,15 @@ export const WallStructureRadioGroup = ({ wall }: WallMenuItemProps) => {
     <MenuItem stayAfterClick noPadding>
       <Radio.Group value={value} onChange={handleChange}>
         <Space direction="vertical">
-          <Radio value={WallStructure.Default}>{i18n.t('wallMenu.DefaultStructure', lang)}</Radio>
-          <Radio value={WallStructure.Stud}>{i18n.t('wallMenu.StudStructure', lang)}</Radio>
-          <Radio value={WallStructure.Pillar}>{i18n.t('wallMenu.PillarStructure', lang)}</Radio>
+          <Radio style={{ width: '100%' }} value={WallStructure.Default}>
+            {i18n.t('wallMenu.DefaultStructure', lang)}
+          </Radio>
+          <Radio style={{ width: '100%' }} value={WallStructure.Stud}>
+            {i18n.t('wallMenu.StudStructure', lang)}
+          </Radio>
+          <Radio style={{ width: '100%' }} value={WallStructure.Pillar}>
+            {i18n.t('wallMenu.PillarStructure', lang)}
+          </Radio>
         </Space>
       </Radio.Group>
     </MenuItem>
@@ -321,9 +327,15 @@ export const WallFillRadioGroup = ({ wall }: WallMenuItemProps) => {
     <MenuItem stayAfterClick noPadding>
       <Radio.Group value={wall.fill} onChange={handleChange}>
         <Space direction="vertical">
-          <Radio value={WallFill.Full}>{i18n.t('wallMenu.Full', lang)}</Radio>
-          <Radio value={WallFill.Partial}>{i18n.t('wallMenu.Partial', lang)}</Radio>
-          <Radio value={WallFill.Empty}>{i18n.t('wallMenu.Empty', lang)}</Radio>
+          <Radio style={{ width: '100%' }} value={WallFill.Full}>
+            {i18n.t('wallMenu.Full', lang)}
+          </Radio>
+          <Radio style={{ width: '100%' }} value={WallFill.Partial}>
+            {i18n.t('wallMenu.Partial', lang)}
+          </Radio>
+          <Radio style={{ width: '100%' }} value={WallFill.Empty}>
+            {i18n.t('wallMenu.Empty', lang)}
+          </Radio>
         </Space>
       </Radio.Group>
     </MenuItem>

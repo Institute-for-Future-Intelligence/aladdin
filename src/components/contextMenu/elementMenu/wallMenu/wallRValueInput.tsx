@@ -317,13 +317,21 @@ const WallRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
         >
           <Radio.Group onChange={(e) => useStore.getState().setWallActionScope(e.target.value)} value={actionScope}>
             <Space direction="vertical">
-              <Radio value={Scope.OnlyThisObject}>{i18n.t('wallMenu.OnlyThisWall', lang)}</Radio>
-              <Radio value={Scope.AllConnectedObjects}>{i18n.t('wallMenu.AllConnectedWalls', lang)}</Radio>
-              <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
+              <Radio style={{ width: '100%' }} value={Scope.OnlyThisObject}>
+                {i18n.t('wallMenu.OnlyThisWall', lang)}
+              </Radio>
+              <Radio style={{ width: '100%' }} value={Scope.AllConnectedObjects}>
+                {i18n.t('wallMenu.AllConnectedWalls', lang)}
+              </Radio>
+              <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('wallMenu.AllWallsAboveFoundation', lang)}
               </Radio>
-              <Radio value={Scope.AllSelectedObjectsOfThisType}>{i18n.t('wallMenu.AllSelectedWalls', lang)}</Radio>
-              <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('wallMenu.AllWalls', lang)}</Radio>
+              <Radio style={{ width: '100%' }} value={Scope.AllSelectedObjectsOfThisType}>
+                {i18n.t('wallMenu.AllSelectedWalls', lang)}
+              </Radio>
+              <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisType}>
+                {i18n.t('wallMenu.AllWalls', lang)}
+              </Radio>
             </Space>
           </Radio.Group>
         </Col>

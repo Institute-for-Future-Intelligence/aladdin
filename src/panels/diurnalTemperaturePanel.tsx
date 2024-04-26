@@ -324,10 +324,12 @@ const DiurnalTemperaturePanel = ({ city }: DiurnalTemperaturePanelProps) => {
           <Space style={{ alignSelf: 'center' }}>
             <Space>{i18n.t('diurnalTemperaturePanel.SelectAirTemperatureModel', lang)}</Space>
             <Radio.Group onChange={onChangeModel} value={selectedModel}>
-              <Radio value={DiurnalTemperatureModel.Sinusoidal}>
+              <Radio style={{ width: '100%' }} value={DiurnalTemperatureModel.Sinusoidal}>
                 {i18n.t('diurnalTemperaturePanel.Sinusoidal', lang)}
               </Radio>
-              <Radio value={DiurnalTemperatureModel.PartonLogan}>Parton-Logan</Radio>
+              <Radio style={{ width: '100%' }} value={DiurnalTemperatureModel.PartonLogan}>
+                Parton-Logan
+              </Radio>
             </Radio.Group>
           </Space>
         </ColumnWrapper>

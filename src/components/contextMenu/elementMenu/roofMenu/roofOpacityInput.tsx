@@ -246,12 +246,18 @@ const RoofOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
         >
           <Radio.Group onChange={(e) => useStore.getState().setRoofActionScope(e.target.value)} value={actionScope}>
             <Space direction="vertical">
-              <Radio value={Scope.OnlyThisObject}>{i18n.t('roofMenu.OnlyThisRoof', lang)}</Radio>
-              <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
+              <Radio style={{ width: '100%' }} value={Scope.OnlyThisObject}>
+                {i18n.t('roofMenu.OnlyThisRoof', lang)}
+              </Radio>
+              <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('roofMenu.AllRoofsAboveFoundation', lang)}
               </Radio>
-              <Radio value={Scope.AllSelectedObjectsOfThisType}>{i18n.t('roofMenu.AllSelectedRoofs', lang)}</Radio>
-              <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('roofMenu.AllRoofs', lang)}</Radio>
+              <Radio style={{ width: '100%' }} value={Scope.AllSelectedObjectsOfThisType}>
+                {i18n.t('roofMenu.AllSelectedRoofs', lang)}
+              </Radio>
+              <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisType}>
+                {i18n.t('roofMenu.AllRoofs', lang)}
+              </Radio>
             </Space>
           </Radio.Group>
         </Col>

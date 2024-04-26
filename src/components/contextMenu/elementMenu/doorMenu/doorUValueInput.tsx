@@ -328,13 +328,21 @@ const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
         >
           <Radio.Group onChange={(e) => useStore.getState().setDoorActionScope(e.target.value)} value={actionScope}>
             <Space direction="vertical">
-              <Radio value={Scope.OnlyThisObject}>{i18n.t('doorMenu.OnlyThisDoor', lang)}</Radio>
-              <Radio value={Scope.OnlyThisSide}>{i18n.t('doorMenu.AllDoorsOnWall', lang)}</Radio>
-              <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
+              <Radio style={{ width: '100%' }} value={Scope.OnlyThisObject}>
+                {i18n.t('doorMenu.OnlyThisDoor', lang)}
+              </Radio>
+              <Radio style={{ width: '100%' }} value={Scope.OnlyThisSide}>
+                {i18n.t('doorMenu.AllDoorsOnWall', lang)}
+              </Radio>
+              <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('doorMenu.AllDoorsAboveFoundation', lang)}
               </Radio>
-              <Radio value={Scope.AllSelectedObjectsOfThisType}>{i18n.t('doorMenu.AllSelectedDoors', lang)}</Radio>
-              <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('doorMenu.AllDoors', lang)}</Radio>
+              <Radio style={{ width: '100%' }} value={Scope.AllSelectedObjectsOfThisType}>
+                {i18n.t('doorMenu.AllSelectedDoors', lang)}
+              </Radio>
+              <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisType}>
+                {i18n.t('doorMenu.AllDoors', lang)}
+              </Radio>
             </Space>
           </Radio.Group>
         </Col>

@@ -372,14 +372,18 @@ const WindTurbineBladeRadiusInput = ({ setDialogVisible }: { setDialogVisible: (
         >
           <Radio.Group onChange={onScopeChange} value={actionScope}>
             <Space direction="vertical">
-              <Radio value={Scope.OnlyThisObject}>{i18n.t('windTurbineMenu.OnlyThisWindTurbine', lang)}</Radio>
-              <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
+              <Radio style={{ width: '100%' }} value={Scope.OnlyThisObject}>
+                {i18n.t('windTurbineMenu.OnlyThisWindTurbine', lang)}
+              </Radio>
+              <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('windTurbineMenu.AllWindTurbinesAboveFoundation', lang)}
               </Radio>
-              <Radio value={Scope.AllSelectedObjectsOfThisType}>
+              <Radio style={{ width: '100%' }} value={Scope.AllSelectedObjectsOfThisType}>
                 {i18n.t('windTurbineMenu.AllSelectedWindTurbines', lang)}
               </Radio>
-              <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('windTurbineMenu.AllWindTurbines', lang)}</Radio>
+              <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisType}>
+                {i18n.t('windTurbineMenu.AllWindTurbines', lang)}
+              </Radio>
             </Space>
           </Radio.Group>
         </Col>

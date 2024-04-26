@@ -361,16 +361,16 @@ const FresnelReflectorModuleLengthInput = ({ setDialogVisible }: { setDialogVisi
         >
           <Radio.Group onChange={onScopeChange} value={actionScope}>
             <Space direction="vertical">
-              <Radio value={Scope.OnlyThisObject}>
+              <Radio style={{ width: '100%' }} value={Scope.OnlyThisObject}>
                 {i18n.t('fresnelReflectorMenu.OnlyThisFresnelReflector', lang)}
               </Radio>
-              <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
+              <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('fresnelReflectorMenu.AllFresnelReflectorsAboveFoundation', lang)}
               </Radio>
-              <Radio value={Scope.AllSelectedObjectsOfThisType}>
+              <Radio style={{ width: '100%' }} value={Scope.AllSelectedObjectsOfThisType}>
                 {i18n.t('fresnelReflectorMenu.AllSelectedFresnelReflectors', lang)}
               </Radio>
-              <Radio value={Scope.AllObjectsOfThisType}>
+              <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisType}>
                 {i18n.t('fresnelReflectorMenu.AllFresnelReflectors', lang)}
               </Radio>
             </Space>

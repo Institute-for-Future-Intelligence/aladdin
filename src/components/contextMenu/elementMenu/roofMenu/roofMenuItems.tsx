@@ -192,9 +192,15 @@ export const RoofSturctureRadioGroup = ({ roof }: RoofMenuItemProps) => {
     <MenuItem stayAfterClick noPadding>
       <Radio.Group value={roof.roofStructure ?? RoofStructure.Default} onChange={handleChange}>
         <Space direction="vertical">
-          <Radio value={RoofStructure.Default}>{i18n.t('roofMenu.DefaultStructure', lang)}</Radio>
-          <Radio value={RoofStructure.Rafter}>{i18n.t('roofMenu.RafterStructure', lang)}</Radio>
-          <Radio value={RoofStructure.Glass}>{i18n.t('roofMenu.GlassStructure', lang)}</Radio>
+          <Radio style={{ width: '100%' }} value={RoofStructure.Default}>
+            {i18n.t('roofMenu.DefaultStructure', lang)}
+          </Radio>
+          <Radio style={{ width: '100%' }} value={RoofStructure.Rafter}>
+            {i18n.t('roofMenu.RafterStructure', lang)}
+          </Radio>
+          <Radio style={{ width: '100%' }} value={RoofStructure.Glass}>
+            {i18n.t('roofMenu.GlassStructure', lang)}
+          </Radio>
         </Space>
       </Radio.Group>
     </MenuItem>

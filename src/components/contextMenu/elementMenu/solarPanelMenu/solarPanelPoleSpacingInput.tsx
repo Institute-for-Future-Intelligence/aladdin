@@ -385,17 +385,21 @@ const SolarPanelPoleSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b
         >
           <Radio.Group onChange={onScopeChange} value={actionScope}>
             <Space direction="vertical">
-              <Radio value={Scope.OnlyThisObject}>{i18n.t('solarPanelMenu.OnlyThisSolarPanel', lang)}</Radio>
-              <Radio value={Scope.AllObjectsOfThisTypeOnSurface}>
+              <Radio style={{ width: '100%' }} value={Scope.OnlyThisObject}>
+                {i18n.t('solarPanelMenu.OnlyThisSolarPanel', lang)}
+              </Radio>
+              <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisTypeOnSurface}>
                 {i18n.t('solarPanelMenu.AllSolarPanelsOnSurface', lang)}
               </Radio>
-              <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
+              <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('solarPanelMenu.AllSolarPanelsAboveFoundation', lang)}
               </Radio>
-              <Radio value={Scope.AllSelectedObjectsOfThisType}>
+              <Radio style={{ width: '100%' }} value={Scope.AllSelectedObjectsOfThisType}>
                 {i18n.t('solarPanelMenu.AllSelectedSolarPanels', lang)}
               </Radio>
-              <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('solarPanelMenu.AllSolarPanels', lang)}</Radio>
+              <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisType}>
+                {i18n.t('solarPanelMenu.AllSolarPanels', lang)}
+              </Radio>
             </Space>
           </Radio.Group>
         </Col>

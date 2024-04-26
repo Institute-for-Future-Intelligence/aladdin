@@ -46,12 +46,24 @@ export const LanguageRadioGroup = () => {
     <MenuItem stayAfterClick noPadding update>
       <Radio.Group value={language} style={{ height: '170px' }} onChange={handleChange}>
         <Space direction="vertical">
-          <Radio value={'en'}>{Language.English}</Radio>
-          <Radio value={'es'}>{Language.Spanish}</Radio>
-          <Radio value={'zh_cn'}>{Language.ChineseSimplified}</Radio>
-          <Radio value={'zh_tw'}>{Language.ChineseTraditional}</Radio>
-          <Radio value={'tr'}>{Language.Turkish}</Radio>
-          <Radio value={'ua'}>{Language.Ukrainian}</Radio>
+          <Radio style={{ width: '100%' }} value={'en'}>
+            {Language.English}
+          </Radio>
+          <Radio style={{ width: '100%' }} value={'es'}>
+            {Language.Spanish}
+          </Radio>
+          <Radio style={{ width: '100%' }} value={'zh_cn'}>
+            {Language.ChineseSimplified}
+          </Radio>
+          <Radio style={{ width: '100%' }} value={'zh_tw'}>
+            {Language.ChineseTraditional}
+          </Radio>
+          <Radio style={{ width: '100%' }} value={'tr'}>
+            {Language.Turkish}
+          </Radio>
+          <Radio style={{ width: '100%' }} value={'ua'}>
+            {Language.Ukrainian}
+          </Radio>
         </Space>
       </Radio.Group>
     </MenuItem>

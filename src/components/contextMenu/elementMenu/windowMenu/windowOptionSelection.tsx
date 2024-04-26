@@ -335,13 +335,21 @@ const WindowOptionSelection = ({
         >
           <Radio.Group onChange={(e) => useStore.getState().setWindowActionScope(e.target.value)} value={actionScope}>
             <Space direction="vertical">
-              <Radio value={Scope.OnlyThisObject}>{i18n.t('windowMenu.OnlyThisWindow', lang)}</Radio>
-              <Radio value={Scope.OnlyThisSide}>{i18n.t('windowMenu.AllWindowsOnSurface', lang)}</Radio>
-              <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
+              <Radio style={{ width: '100%' }} value={Scope.OnlyThisObject}>
+                {i18n.t('windowMenu.OnlyThisWindow', lang)}
+              </Radio>
+              <Radio style={{ width: '100%' }} value={Scope.OnlyThisSide}>
+                {i18n.t('windowMenu.AllWindowsOnSurface', lang)}
+              </Radio>
+              <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                 {i18n.t('windowMenu.AllWindowsAboveFoundation', lang)}
               </Radio>
-              <Radio value={Scope.AllSelectedObjectsOfThisType}>{i18n.t('windowMenu.AllSelectedWindows', lang)}</Radio>
-              <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('windowMenu.AllWindows', lang)}</Radio>
+              <Radio style={{ width: '100%' }} value={Scope.AllSelectedObjectsOfThisType}>
+                {i18n.t('windowMenu.AllSelectedWindows', lang)}
+              </Radio>
+              <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisType}>
+                {i18n.t('windowMenu.AllWindows', lang)}
+              </Radio>
             </Space>
           </Radio.Group>
         </Col>

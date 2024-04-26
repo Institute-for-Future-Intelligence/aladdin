@@ -1042,11 +1042,11 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
           }}
           value={projectInfo.dataColoring ?? DataColoring.ALL}
         >
-          <Radio style={{ fontSize: '12px' }} value={DataColoring.ALL}>
+          <Radio style={{ fontSize: '12px', width: '100%' }} value={DataColoring.ALL}>
             {t('projectPanel.SameColorForAllDesigns', lang)}
           </Radio>
           <br />
-          <Radio style={{ fontSize: '12px' }} value={DataColoring.INDIVIDUALS}>
+          <Radio style={{ fontSize: '12px', width: '100%' }} value={DataColoring.INDIVIDUALS}>
             {t('projectPanel.OneColorForEachDesign', lang)}
           </Radio>
         </Radio.Group>

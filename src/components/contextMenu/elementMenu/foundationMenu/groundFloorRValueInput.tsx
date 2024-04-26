@@ -273,8 +273,12 @@ const GroundFloorRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
           >
             <Radio.Group onChange={(e) => setActionScope(e.target.value)} value={actionScope}>
               <Space direction="vertical">
-                <Radio value={Scope.OnlyThisObject}>{i18n.t('foundationMenu.OnlyThisGroundFloor', lang)}</Radio>
-                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('foundationMenu.AllGroundFloors', lang)}</Radio>
+                <Radio style={{ width: '100%' }} value={Scope.OnlyThisObject}>
+                  {i18n.t('foundationMenu.OnlyThisGroundFloor', lang)}
+                </Radio>
+                <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisType}>
+                  {i18n.t('foundationMenu.AllGroundFloors', lang)}
+                </Radio>
               </Space>
             </Radio.Group>
           </Col>

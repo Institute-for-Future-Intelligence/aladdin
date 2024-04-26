@@ -385,12 +385,18 @@ const CuboidColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
         >
           <Radio.Group onChange={onScopeChange} value={actionScope}>
             <Space direction="vertical">
-              <Radio value={Scope.OnlyThisSide}>{i18n.t('cuboidMenu.OnlyThisSide', lang)}</Radio>
-              <Radio value={Scope.OnlyThisObject}>{i18n.t('cuboidMenu.AllSidesOfThisCuboid', lang)}</Radio>
-              <Radio value={Scope.AllSelectedObjectsOfThisType}>
+              <Radio style={{ width: '100%' }} value={Scope.OnlyThisSide}>
+                {i18n.t('cuboidMenu.OnlyThisSide', lang)}
+              </Radio>
+              <Radio style={{ width: '100%' }} value={Scope.OnlyThisObject}>
+                {i18n.t('cuboidMenu.AllSidesOfThisCuboid', lang)}
+              </Radio>
+              <Radio style={{ width: '100%' }} value={Scope.AllSelectedObjectsOfThisType}>
                 {i18n.t('cuboidMenu.AllSidesOfSelectedCuboids', lang)}
               </Radio>
-              <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('cuboidMenu.AllSidesOfAllCuboids', lang)}</Radio>
+              <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisType}>
+                {i18n.t('cuboidMenu.AllSidesOfAllCuboids', lang)}
+              </Radio>
             </Space>
           </Radio.Group>
         </Col>
