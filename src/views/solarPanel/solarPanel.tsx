@@ -47,32 +47,39 @@ import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { PvModel } from 'src/models/PvModel';
 import { useSelected } from '../hooks';
 
-const SolarPanel = ({
-  id,
-  pvModelName = 'SPR-X21-335-BLK',
-  cx,
-  cy,
-  cz,
-  lx,
-  ly,
-  lz,
-  tiltAngle,
-  relativeAzimuth,
-  trackerType = TrackerType.NO_TRACKER,
-  poleHeight,
-  poleRadius,
-  poleSpacing,
-  drawSunBeam,
-  rotation = [0, 0, 0],
-  normal = [0, 0, 1],
-  color = 'white',
-  lineColor = 'black',
-  lineWidth = 0.1,
-  showLabel = false,
-  locked = false,
-  parentId,
-  orientation = Orientation.landscape,
-}: SolarPanelModel) => {
+type ParentData = { parentPosition: number[]; parentRotation: number };
+
+type SolarPanelOnFoundation = SolarPanelModel & ParentData;
+
+const SolarPanel = (solarPanel: SolarPanelOnFoundation) => {
+  let {
+    id,
+    pvModelName = 'SPR-X21-335-BLK',
+    cx,
+    cy,
+    cz,
+    lx,
+    ly,
+    lz,
+    tiltAngle,
+    relativeAzimuth,
+    trackerType = TrackerType.NO_TRACKER,
+    poleHeight,
+    poleRadius,
+    poleSpacing,
+    drawSunBeam,
+    rotation = [0, 0, 0],
+    normal = [0, 0, 1],
+    color = 'white',
+    lineColor = 'black',
+    lineWidth = 0.1,
+    showLabel = false,
+    locked = false,
+    orientation = Orientation.landscape,
+    parentPosition,
+    parentRotation,
+  } = solarPanel;
+
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const date = useStore(Selector.world.date);
@@ -122,52 +129,6 @@ const SolarPanel = ({
     return { lng: language };
   }, [language]);
 
-  // be sure to get the updated parent so that this memorized element can move with it
-  const parent = useStore((state) => {
-    for (const e of state.elements) {
-      if (e.id === parentId) {
-        return e;
-      }
-    }
-  });
-  if (parentId) {
-    if (parent) {
-      switch (parent.type) {
-        case ObjectType.Foundation:
-          cz = poleHeight + lz / 2 + parent.lz;
-          if (Util.isZero(rotation[2])) {
-            cx = parent.cx + cx * parent.lx;
-            cy = parent.cy + cy * parent.ly;
-          } else {
-            // we must rotate the real length, not normalized length
-            const v = new Vector3(cx * parent.lx, cy * parent.ly, 0);
-            v.applyAxisAngle(UNIT_VECTOR_POS_Z, rotation[2]);
-            cx = parent.cx + v.x;
-            cy = parent.cy + v.y;
-          }
-          break;
-        case ObjectType.Cuboid:
-          const { pos, rot } = Util.getWorldDataById(parent.id);
-          if (Util.isZero(rotation[2])) {
-            cx = pos.x + cx * parent.lx;
-            cy = pos.y + cy * parent.ly;
-          } else {
-            // we must rotate the real length, not normalized length
-            const v = new Vector3(cx * parent.lx, cy * parent.ly, cz * parent.lz);
-            v.applyAxisAngle(UNIT_VECTOR_POS_Z, rotation[2]);
-            cx = pos.x + v.x;
-            cy = pos.y + v.y;
-          }
-          if (Util.isSame(panelNormal, UNIT_VECTOR_POS_Z)) {
-            cz = poleHeight + lz / 2 + parent.lz;
-          } else {
-            cz = pos.z + cz * parent.lz;
-          }
-          break;
-      }
-    }
-  }
-
   if (pvModel) {
     lz = Math.max(pvModel.thickness, 0.02);
   }
@@ -180,7 +141,6 @@ const SolarPanel = ({
   const positionLR = new Vector3(hx, -hy, hz);
   const positionUR = new Vector3(hx, hy, hz);
   const radialSegmentsPole = elements.length < 100 ? 4 : 2;
-  const solarPanel = getElementById(id) as SolarPanelModel;
 
   useEffect(() => {
     if (pvModel) {
@@ -261,7 +221,7 @@ const SolarPanel = ({
       return new Euler(HALF_PI, 0, rotation[2], 'ZXY');
     }
     // top face in model coordinate system
-    return new Euler(0, 0, rotation[2], 'ZXY');
+    return new Euler(0, 0, 0, 'ZXY');
   }, [normal, rotation]);
 
   const hoverHandle = (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {
@@ -292,8 +252,9 @@ const SolarPanel = ({
   const sunDirection = useMemo(() => {
     return getSunDirection(new Date(date), latitude);
   }, [date, latitude]);
-  const rot = getElementById(parentId)?.rotation[2];
-  const rotatedSunDirection = rot ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot) : sunDirection;
+  const rotatedSunDirection = parentRotation
+    ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -parentRotation)
+    : sunDirection;
 
   const relativeEuler = useMemo(() => {
     if (Util.isSame(panelNormal, UNIT_VECTOR_POS_Z)) {
@@ -308,7 +269,7 @@ const SolarPanel = ({
               'ZXY',
             );
           case TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER:
-            return new Euler(0, Math.atan2(rotatedSunDirection.x, rotatedSunDirection.z), lx < ly ? 0 : HALF_PI, 'XYZ');
+            return new Euler(0, Math.atan2(rotatedSunDirection.x, rotatedSunDirection.z), 0, 'ZXY');
           case TrackerType.VERTICAL_SINGLE_AXIS_TRACKER:
             return new Euler(tiltAngle, 0, Math.atan2(rotatedSunDirection.y, rotatedSunDirection.x) + HALF_PI, 'ZXY');
         }
@@ -323,16 +284,9 @@ const SolarPanel = ({
     return drawSunBeam
       ? v
           .fromArray(normal)
-          .applyEuler(
-            new Euler(
-              relativeEuler.x,
-              relativeEuler.y,
-              relativeEuler.z + rotation[2] + (lx < ly ? 0 : HALF_PI),
-              lx < ly ? 'ZXY' : 'XYZ',
-            ),
-          )
+          .applyEuler(new Euler(relativeEuler.x, relativeEuler.y, relativeEuler.z + parentRotation, 'ZXY'))
       : v;
-  }, [drawSunBeam, normal, euler, relativeEuler]);
+  }, [drawSunBeam, normal, euler, relativeEuler, parentRotation]);
 
   const poleZ = -poleHeight / 2 - lz / 2;
 
@@ -770,22 +724,22 @@ const SolarPanel = ({
                       const intersects = ray.intersectObjects([tiltHandleRef.current]);
                       if (intersects.length > 0) {
                         const p = intersects[0].point;
-                        const parent = tiltHandleRef.current.parent;
-                        if (parent) {
-                          const ov = parent.position; // rotate point in world coordinate
-                          const cv = new Vector3().subVectors(p, ov);
-                          let angle = cv.angleTo(UNIT_VECTOR_POS_Z);
-                          const touch = 0.5 * solarPanel.ly * Math.abs(Math.sin(angle)) > solarPanel.poleHeight;
-                          if (!touch) {
-                            const wr = relativeAzimuth + rotation[2];
-                            const sign =
-                              wr % Math.PI === 0
-                                ? Math.sign(-cv.y) * Math.sign(Math.cos(wr))
-                                : Math.sign(cv.x) * Math.sign(Math.sin(wr));
-                            angle *= sign;
-                            updateSolarPanelTiltAngleById(id, angle);
-                            newTiltAngleRef.current = angle;
-                          }
+                        const ov = new Vector3(cx, cy)
+                          .applyEuler(new Euler(0, 0, parentRotation))
+                          .add(new Vector3().fromArray(parentPosition))
+                          .setZ(parentPosition[2] + cz + hz);
+                        const cv = new Vector3().subVectors(p, ov);
+                        let angle = cv.angleTo(UNIT_VECTOR_POS_Z);
+                        const touch = 0.5 * solarPanel.ly * Math.abs(Math.sin(angle)) > solarPanel.poleHeight;
+                        if (!touch) {
+                          const wr = relativeAzimuth;
+                          const sign =
+                            wr % Math.PI === 0
+                              ? Math.sign(-cv.y) * Math.sign(Math.cos(wr))
+                              : Math.sign(cv.x) * Math.sign(Math.sin(wr));
+                          angle *= sign;
+                          updateSolarPanelTiltAngleById(id, angle);
+                          newTiltAngleRef.current = angle;
                         }
                       }
                     }
@@ -871,7 +825,7 @@ const SolarPanel = ({
 
       {/*draw sun beam*/}
       {drawSunBeam && sunDirection.z > 0 && (
-        <group rotation={[-euler.x, 0, -euler.z]}>
+        <group rotation={[-euler.x, 0, -parentRotation]}>
           <Line
             userData={{ unintersectable: true }}
             points={[
@@ -905,7 +859,7 @@ const SolarPanel = ({
           />
           <group
             position={normalVector.clone().multiplyScalar(0.75)}
-            rotation={[HALF_PI + euler.x + relativeEuler.x, 0, euler.z + relativeEuler.z, lx < ly ? 'ZXY' : 'XYZ']}
+            rotation={[HALF_PI + euler.x + relativeEuler.x, 0, euler.z + relativeEuler.z + parentRotation, 'ZXY']}
           >
             <Cone
               userData={{ unintersectable: true }}

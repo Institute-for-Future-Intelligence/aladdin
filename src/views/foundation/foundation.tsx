@@ -76,6 +76,8 @@ import { useDataStore } from '../../stores/commonData';
 import { useSelected } from '../hooks';
 import { debounce } from 'lodash';
 import BuildingRenderer from './buildingRenderer';
+import { shallow } from 'zustand/shallow';
+import SolarPanel from '../solarPanel/solarPanel';
 
 interface WallAuxiliaryType {
   show: boolean;
@@ -2971,6 +2973,11 @@ const Foundation = (foundationModel: FoundationModel) => {
 
   const opacity = groundImage ? (orthographic ? 0.25 : 0.75) : 1;
 
+  const solarPanelsOnFoundation = useStore(
+    (state) => state.elements.filter((e) => e.type === ObjectType.SolarPanel && e.parentId === id) as SolarPanelModel[],
+    shallow,
+  );
+
   return (
     <>
       <group
@@ -3448,6 +3455,19 @@ const Foundation = (foundationModel: FoundationModel) => {
         {solarStructure === SolarStructure.UpdraftTower && <SolarUpdraftTower foundation={foundationModel} />}
 
         <BuildingRenderer {...foundationModel} />
+        {solarPanelsOnFoundation.map((sp) => {
+          return (
+            <SolarPanel
+              key={sp.id}
+              {...sp}
+              cx={sp.cx * lx}
+              cy={sp.cy * ly}
+              cz={sp.poleHeight + sp.lz / 2 + lz / 2}
+              parentPosition={[cx, cy, lz / 2]}
+              parentRotation={rotation[2]}
+            />
+          );
+        })}
       </group>
     </>
   );

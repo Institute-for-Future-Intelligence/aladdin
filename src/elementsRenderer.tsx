@@ -86,15 +86,6 @@ const ElementsRenderer: React.FC = () => {
             return <Tree key={e.id} {...(e as TreeModel)} />;
           case ObjectType.Flower:
             return <Flower key={e.id} {...(e as FlowerModel)} />;
-          case ObjectType.SolarPanel:
-            switch ((e as SolarPanelModel).parentType) {
-              case ObjectType.Roof:
-              case ObjectType.Wall:
-              case ObjectType.Cuboid:
-                return null;
-              default:
-                return <SolarPanel key={e.id} {...(e as SolarPanelModel)} />;
-            }
           case ObjectType.ParabolicDish:
             return <ParabolicDish key={e.id} {...(e as ParabolicDishModel)} />;
           case ObjectType.ParabolicTrough:

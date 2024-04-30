@@ -1540,7 +1540,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                   e.rotation[0] = x;
                   e.rotation[1] = y;
                   e.rotation[2] = z;
-                } else if (e.parentId === id && !isStackableModel(e)) {
+                } else if (e.parentId === id && !isStackableModel(e) && e.type !== ObjectType.SolarPanel) {
                   e.rotation[0] = x;
                   e.rotation[1] = y;
                   e.rotation[2] = z;
