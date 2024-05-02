@@ -68,8 +68,6 @@ const SolarPanel = (solarPanel: SolarPanelOnFoundation) => {
     poleRadius,
     poleSpacing,
     drawSunBeam,
-    rotation = [0, 0, 0],
-    normal = [0, 0, 1],
     color = 'white',
     lineColor = 'black',
     lineWidth = 0.1,
@@ -79,6 +77,7 @@ const SolarPanel = (solarPanel: SolarPanelOnFoundation) => {
     parentPosition,
     parentRotation,
   } = solarPanel;
+  const normal = [0, 0, 1];
 
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
@@ -107,7 +106,6 @@ const SolarPanel = (solarPanel: SolarPanelOnFoundation) => {
 
   const [hovered, setHovered] = useState(false);
   const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | RotateHandleType | null>(null);
-  const [faceUp, setFaceUp] = useState<boolean>();
   const baseRef = useRef<Mesh>(null);
   const moveHandleRef = useRef<Mesh>(null);
   const resizeHandleLowerRef = useRef<Mesh>(null);
@@ -122,7 +120,6 @@ const SolarPanel = (solarPanel: SolarPanelOnFoundation) => {
   const ray = useMemo(() => new Raycaster(), []);
 
   const sunBeamLength = Math.max(100, 10 * sceneRadius);
-  const panelNormal = new Vector3().fromArray(normal);
   const pvModel = pvModules[pvModelName] as PvModel;
 
   const lang = useMemo(() => {
@@ -180,10 +177,6 @@ const SolarPanel = (solarPanel: SolarPanelOnFoundation) => {
     };
   }, []);
 
-  useEffect(() => {
-    setFaceUp(Util.isSame(panelNormal, UNIT_VECTOR_POS_Z));
-  }, [normal]);
-
   const labelText = useMemo(() => {
     return (
       (solarPanel?.label ? solarPanel.label : i18n.t('shared.SolarPanelElement', lang)) +
@@ -202,27 +195,6 @@ const SolarPanel = (solarPanel: SolarPanelOnFoundation) => {
           i18n.t('word.MeterAbbreviation', lang))
     );
   }, [solarPanel?.label, solarPanel?.locked, lang, cx, cy, cz]);
-
-  const euler = useMemo(() => {
-    // east face in model coordinate system
-    if (Util.isSame(panelNormal, UNIT_VECTOR_POS_X)) {
-      return new Euler(HALF_PI, 0, rotation[2] + HALF_PI, 'ZXY');
-    }
-    // west face in model coordinate system
-    if (Util.isSame(panelNormal, UNIT_VECTOR_NEG_X)) {
-      return new Euler(HALF_PI, 0, rotation[2] - HALF_PI, 'ZXY');
-    }
-    // north face in the model coordinate system
-    if (Util.isSame(panelNormal, UNIT_VECTOR_POS_Y)) {
-      return new Euler(HALF_PI, 0, rotation[2] + Math.PI, 'ZXY');
-    }
-    // south face in the model coordinate system
-    if (Util.isSame(panelNormal, UNIT_VECTOR_NEG_Y)) {
-      return new Euler(HALF_PI, 0, rotation[2], 'ZXY');
-    }
-    // top face in model coordinate system
-    return new Euler(0, 0, 0, 'ZXY');
-  }, [normal, rotation]);
 
   const hoverHandle = (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {
     if (e.intersections.length > 0) {
@@ -257,27 +229,24 @@ const SolarPanel = (solarPanel: SolarPanelOnFoundation) => {
     : sunDirection;
 
   const relativeEuler = useMemo(() => {
-    if (Util.isSame(panelNormal, UNIT_VECTOR_POS_Z)) {
-      if (sunDirection.z > 0) {
-        switch (trackerType) {
-          case TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER:
-            const r = Math.hypot(rotatedSunDirection.x, rotatedSunDirection.y);
-            return new Euler(
-              Math.atan2(r, rotatedSunDirection.z),
-              0,
-              Math.atan2(rotatedSunDirection.y, rotatedSunDirection.x) + HALF_PI,
-              'ZXY',
-            );
-          case TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER:
-            return new Euler(0, Math.atan2(rotatedSunDirection.x, rotatedSunDirection.z), 0, 'ZXY');
-          case TrackerType.VERTICAL_SINGLE_AXIS_TRACKER:
-            return new Euler(tiltAngle, 0, Math.atan2(rotatedSunDirection.y, rotatedSunDirection.x) + HALF_PI, 'ZXY');
-        }
+    if (sunDirection.z > 0) {
+      switch (trackerType) {
+        case TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER:
+          const r = Math.hypot(rotatedSunDirection.x, rotatedSunDirection.y);
+          return new Euler(
+            Math.atan2(r, rotatedSunDirection.z),
+            0,
+            Math.atan2(rotatedSunDirection.y, rotatedSunDirection.x) + HALF_PI,
+            'ZXY',
+          );
+        case TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER:
+          return new Euler(0, Math.atan2(rotatedSunDirection.x, rotatedSunDirection.z), 0, 'ZXY');
+        case TrackerType.VERTICAL_SINGLE_AXIS_TRACKER:
+          return new Euler(tiltAngle, 0, Math.atan2(rotatedSunDirection.y, rotatedSunDirection.x) + HALF_PI, 'ZXY');
       }
-      return new Euler(tiltAngle, 0, relativeAzimuth, 'ZXY');
     }
-    return new Euler();
-  }, [trackerType, sunDirection, tiltAngle, relativeAzimuth, normal]);
+    return new Euler(tiltAngle, 0, relativeAzimuth, 'ZXY');
+  }, [trackerType, sunDirection, tiltAngle, relativeAzimuth]);
 
   const normalVector = useMemo(() => {
     const v = new Vector3();
@@ -286,7 +255,7 @@ const SolarPanel = (solarPanel: SolarPanelOnFoundation) => {
           .fromArray(normal)
           .applyEuler(new Euler(relativeEuler.x, relativeEuler.y, relativeEuler.z + parentRotation, 'ZXY'))
       : v;
-  }, [drawSunBeam, normal, euler, relativeEuler, parentRotation]);
+  }, [drawSunBeam, normal, relativeEuler, parentRotation]);
 
   const poleZ = -poleHeight / 2 - lz / 2;
 
@@ -364,7 +333,7 @@ const SolarPanel = (solarPanel: SolarPanelOnFoundation) => {
   };
 
   return (
-    <group name={'Solar Panel Group Grandpa ' + id} rotation={euler} position={[cx, cy, cz + hz]}>
+    <group name={'Solar Panel Group Grandpa ' + id} position={[cx, cy, cz + hz]}>
       <group name={'Solar Panel Group Dad ' + id} rotation={relativeEuler}>
         {/* draw panel */}
         <Box
@@ -613,7 +582,7 @@ const SolarPanel = (solarPanel: SolarPanelOnFoundation) => {
       </group>
 
       {/* draw rotate handles */}
-      {selected && !locked && trackerType === TrackerType.NO_TRACKER && faceUp && (
+      {selected && !locked && trackerType === TrackerType.NO_TRACKER && (
         <group position={[0, 0, -poleHeight]} rotation={[0, 0, relativeEuler.z]}>
           {/* rotate handles */}
           <RotateHandle
@@ -646,7 +615,7 @@ const SolarPanel = (solarPanel: SolarPanelOnFoundation) => {
       )}
 
       {/* draw tilt handles */}
-      {selected && !locked && trackerType === TrackerType.NO_TRACKER && faceUp && Math.abs(poleHeight) > 0.1 && (
+      {selected && !locked && trackerType === TrackerType.NO_TRACKER && Math.abs(poleHeight) > 0.1 && (
         <>
           {/* ring handles */}
           <Ring
@@ -805,7 +774,6 @@ const SolarPanel = (solarPanel: SolarPanelOnFoundation) => {
 
       {/* draw poles */}
       {poleHeight > 0 &&
-        faceUp &&
         poles.map((p, i) => {
           return (
             <Cylinder
@@ -825,7 +793,7 @@ const SolarPanel = (solarPanel: SolarPanelOnFoundation) => {
 
       {/*draw sun beam*/}
       {drawSunBeam && sunDirection.z > 0 && (
-        <group rotation={[-euler.x, 0, -parentRotation]}>
+        <group rotation={[0, 0, -parentRotation]}>
           <Line
             userData={{ unintersectable: true }}
             points={[
@@ -859,7 +827,7 @@ const SolarPanel = (solarPanel: SolarPanelOnFoundation) => {
           />
           <group
             position={normalVector.clone().multiplyScalar(0.75)}
-            rotation={[HALF_PI + euler.x + relativeEuler.x, 0, euler.z + relativeEuler.z + parentRotation, 'ZXY']}
+            rotation={[HALF_PI + relativeEuler.x, 0, relativeEuler.z + parentRotation, 'ZXY']}
           >
             <Cone
               userData={{ unintersectable: true }}

@@ -4685,7 +4685,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
           notes: state.notes,
           user: state.user,
           sceneRadius: state.sceneRadius,
-          // weatherData: state.weatherData,
+          weatherData: state.weatherData,
           solarPanelArrayLayoutParams: state.solarPanelArrayLayoutParams,
           solarPanelArrayLayoutConstraints: state.solarPanelArrayLayoutConstraints,
           economicsParams: state.economicsParams,
