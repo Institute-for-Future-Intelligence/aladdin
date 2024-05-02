@@ -78,6 +78,7 @@ import { debounce } from 'lodash';
 import BuildingRenderer from './buildingRenderer';
 import { shallow } from 'zustand/shallow';
 import SolarPanel from '../solarPanel/solarPanel';
+import { SharedUtil } from '../SharedUtil';
 
 interface WallAuxiliaryType {
   show: boolean;
@@ -1513,6 +1514,8 @@ const Foundation = (foundationModel: FoundationModel) => {
           setShowGrid(true);
           oldPositionRef.current.set(selectedElement.cx, selectedElement.cy, selectedElement.cz);
           oldDimensionRef.current.set(selectedElement.lx, selectedElement.ly, selectedElement.lz);
+          usePrimitiveStore.getState().setPrimitiveStore('oldParentId', id);
+          usePrimitiveStore.getState().setPrimitiveStore('oldFoundationId', id);
           switch (selectedElement.type) {
             case ObjectType.SolarPanel:
             case ObjectType.ParabolicTrough:
@@ -1618,6 +1621,10 @@ const Foundation = (foundationModel: FoundationModel) => {
   };
 
   const handlePointerUp = (e: ThreeEvent<MouseEvent>) => {
+    if (showIntersectionPlane) {
+      setIntersectionPlane(false);
+      // grabRef.current = null;
+    }
     if (e.altKey && e.button === 2) {
       // for pasting to the right-clicked position while the alt key is held down
       if (elementsToPaste && elementsToPaste.length > 0) {
@@ -1650,12 +1657,12 @@ const Foundation = (foundationModel: FoundationModel) => {
     }
     if (
       !grabRef.current ||
-      grabRef.current.parentId !== id ||
       grabRef.current.type === ObjectType.Tree ||
       grabRef.current.type === ObjectType.Flower ||
       grabRef.current.type === ObjectType.Human
-    )
+    ) {
       return;
+    }
     const elem = getElementById(grabRef.current.id);
     if (!elem) return;
     switch (elem.type) {
@@ -1959,35 +1966,7 @@ const Foundation = (foundationModel: FoundationModel) => {
               accept = isSolarCollectorNewPositionOk(elem as SolarCollector, elem.cx, elem.cy);
             }
             if (accept) {
-              const undoableMove = {
-                name: 'Move',
-                timestamp: Date.now(),
-                movedElementId: elem.id,
-                movedElementType: elem.type,
-                oldCx: oldPositionRef.current.x,
-                oldCy: oldPositionRef.current.y,
-                oldCz: oldPositionRef.current.z,
-                newCx: newPositionRef.current.x,
-                newCy: newPositionRef.current.y,
-                newCz: newPositionRef.current.z,
-                undo: () => {
-                  setElementPosition(
-                    undoableMove.movedElementId,
-                    undoableMove.oldCx,
-                    undoableMove.oldCy,
-                    undoableMove.oldCz,
-                  );
-                },
-                redo: () => {
-                  setElementPosition(
-                    undoableMove.movedElementId,
-                    undoableMove.newCx,
-                    undoableMove.newCy,
-                    undoableMove.newCz,
-                  );
-                },
-              } as UndoableMove;
-              addUndoable(undoableMove);
+              SharedUtil.addUndoableMove();
             } else {
               setElementPosition(elem.id, oldPositionRef.current.x, oldPositionRef.current.y, oldPositionRef.current.z);
             }
@@ -2184,6 +2163,7 @@ const Foundation = (foundationModel: FoundationModel) => {
   // handle pointer move
   const handlePointerMove = (e: ThreeEvent<PointerEvent>) => {
     if (!foundationModel) return;
+    handleShowIntersectionPlane(e);
     if (grabRef.current && Util.isSolarCollector(grabRef.current)) return;
     const objectTypeToAdd = useStore.getState().objectTypeToAdd;
     if (!grabRef.current && !addedWallIdRef.current && objectTypeToAdd !== ObjectType.Wall) return;
@@ -2667,6 +2647,10 @@ const Foundation = (foundationModel: FoundationModel) => {
   };
 
   const handlePointerOut = () => {
+    if (showIntersectionPlane) {
+      setIntersectionPlane(false);
+      grabRef.current = null;
+    }
     setHovered(false);
     setShowGrid(false);
     if (grabRef.current) {
@@ -2770,6 +2754,21 @@ const Foundation = (foundationModel: FoundationModel) => {
         if (moveHandleType && foundationModel) {
           p = Util.relativeCoordinates(p.x, p.y, p.z, foundationModel);
           setElementPosition(collector.id, p.x, p.y);
+          if (collector.parentId !== id) {
+            useStore.getState().set((state) => {
+              const sp = state.elements.find((e) => e.id === collector.id && e.type === ObjectType.SolarPanel) as
+                | SolarPanelModel
+                | undefined;
+              if (sp && (sp.parentId !== id || sp.foundationId !== id)) {
+                sp.parentId = id;
+                sp.foundationId = id;
+                sp.parentType = ObjectType.Foundation;
+                if (state.selectedElement) {
+                  state.selectedElement.parentId = id;
+                }
+              }
+            });
+          }
         } else if (rotateHandleType) {
           // tilt of solar panels not handled here
           if (rotateHandleType === RotateHandleType.Upper || rotateHandleType === RotateHandleType.Lower) {
@@ -2978,6 +2977,54 @@ const Foundation = (foundationModel: FoundationModel) => {
     shallow,
   );
 
+  // handle move sp between different parents
+  // todo: selectedElement parendId doesn't change.
+  const [showIntersectionPlane, setShowIntersectionPlane] = useState(false);
+
+  const handleShowIntersectionPlane = (e: ThreeEvent<PointerEvent>) => {
+    const intersectionObjects = e.intersections.filter(
+      (i) =>
+        i.eventObject.name === 'Foundation' ||
+        i.eventObject.name.includes('Roof') ||
+        i.eventObject.name.includes(SharedUtil.WALL_OUTSIDE_SURFACE_MESH_NAME),
+    );
+
+    if (intersectionObjects.length == 0 || intersectionObjects[0].eventObject.userData.id !== id) {
+      if (showIntersectionPlane) {
+        setIntersectionPlane(false);
+        grabRef.current = null;
+      }
+      return;
+    }
+
+    const selectedElement = useStore.getState().selectedElement;
+    if (
+      !showIntersectionPlane &&
+      selectedElement &&
+      !selectedElement.locked &&
+      selectedElement.type === ObjectType.SolarPanel &&
+      useStore.getState().moveHandleType
+    ) {
+      setIntersectionPlane(true, (selectedElement as SolarPanelModel).poleHeight);
+      grabRef.current = selectedElement;
+    }
+  };
+
+  const setIntersectionPlane = (show: boolean, height?: number) => {
+    if (show && height !== undefined) {
+      setShowIntersectionPlane(true);
+      intersectionPlanePosition.setZ(height);
+    } else {
+      setShowIntersectionPlane(false);
+      intersectionPlanePosition.setZ(0);
+    }
+  };
+
+  const ifShowIntersectionPlane = () => {
+    if (showIntersectionPlane) return true;
+    return grabRef.current && Util.isSolarCollector(grabRef.current) && !grabRef.current.locked;
+  };
+
   return (
     <>
       <group
@@ -2992,7 +3039,7 @@ const Foundation = (foundationModel: FoundationModel) => {
           castShadow={shadowEnabled}
           receiveShadow={shadowEnabled}
           uuid={id}
-          userData={{ simulation: true, stand: true }}
+          userData={{ simulation: true, stand: true, id: id }}
           ref={baseRef}
           name={'Foundation'}
           args={[lx, ly, lz]}
@@ -3029,7 +3076,7 @@ const Foundation = (foundationModel: FoundationModel) => {
         </Box>
 
         {/* intersection plane */}
-        {grabRef.current && Util.isSolarCollector(grabRef.current) && !grabRef.current.locked && (
+        {ifShowIntersectionPlane() && (
           <Plane
             ref={intersectPlaneRef}
             name={'Foundation Intersection Plane'}
@@ -3037,7 +3084,7 @@ const Foundation = (foundationModel: FoundationModel) => {
             args={[lx, ly]}
             visible={false}
             onPointerMove={handleSolarCollectorPointerMove}
-            onPointerOut={handleSolarCollectorPointerOut}
+            // onPointerOut={handleSolarCollectorPointerOut}
           />
         )}
 
