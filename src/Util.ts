@@ -678,7 +678,6 @@ export class Util {
 
   static doSolarPanelsOverlap(sp1: SolarPanelModel, sp2: SolarPanelModel, parent: ElementModel): boolean {
     if (sp1.parentId !== parent.id || sp2.parentId !== parent.id) return false;
-    if (!Util.isIdentical(sp1.normal, sp2.normal)) return false;
     const v1 = Util.fetchSolarPanelVertexCoordinates(sp1, parent);
     const v2 = Util.fetchSolarPanelVertexCoordinates(sp2, parent);
     v1.push(v1[0]);

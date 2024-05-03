@@ -1968,7 +1968,25 @@ const Foundation = (foundationModel: FoundationModel) => {
             if (accept) {
               SharedUtil.addUndoableMove();
             } else {
-              setElementPosition(elem.id, oldPositionRef.current.x, oldPositionRef.current.y, oldPositionRef.current.z);
+              setCommonStore((state) => {
+                const el = state.elements.find((e) => e.id === elem.id);
+                if (!el || !state.selectedElement) return;
+                const oldEl = state.selectedElement;
+                el.cx = oldEl.cx;
+                el.cy = oldEl.cy;
+                el.cz = oldEl.cz;
+                el.rotation = [...oldEl.rotation];
+                el.normal = [...oldEl.normal];
+                const oldParentId = usePrimitiveStore.getState().oldParentId;
+                const oldFoundationId = usePrimitiveStore.getState().oldFoundationId;
+                if (oldParentId) {
+                  el.parentId = oldParentId;
+                }
+                if (oldFoundationId) {
+                  el.foundationId = oldFoundationId;
+                }
+              });
+              // setElementPosition(elem.id, oldPositionRef.current.x, oldPositionRef.current.y, oldPositionRef.current.z);
             }
           }
         }
@@ -2765,6 +2783,7 @@ const Foundation = (foundationModel: FoundationModel) => {
                 sp.parentType = ObjectType.Foundation;
                 if (state.selectedElement) {
                   state.selectedElement.parentId = id;
+                  sp.color = state.selectedElement.color;
                 }
               }
             });
@@ -2978,7 +2997,6 @@ const Foundation = (foundationModel: FoundationModel) => {
   );
 
   // handle move sp between different parents
-  // todo: selectedElement parendId doesn't change.
   const [showIntersectionPlane, setShowIntersectionPlane] = useState(false);
 
   const handleShowIntersectionPlane = (e: ThreeEvent<PointerEvent>) => {
