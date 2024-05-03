@@ -3314,13 +3314,6 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                         oldElem.cz,
                         oldElem.type === ObjectType.Polygon,
                       );
-                      if (
-                        newElem?.type === ObjectType.Window &&
-                        (newElem as WindowModel).parentType === ObjectType.Wall
-                      ) {
-                        newElem.lx *= newParent.lx;
-                        newElem.lz *= newParent.lz;
-                      }
                     } else {
                       // preserve the ID if it is not in the elements
                       newElem = JSON.parse(JSON.stringify(oldElem));

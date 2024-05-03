@@ -678,7 +678,7 @@ export class ElementModelCloner {
   }
 
   private static cloneWindow(
-    parent: ElementModel,
+    newParent: ElementModel,
     window: WindowModel,
     x: number,
     y: number,
@@ -686,33 +686,45 @@ export class ElementModelCloner {
     oldParent?: ElementModel | null,
   ) {
     let foundationId;
-    let [lx, ly, lz] = [window.lx, parent.ly, window.lz];
+    let [lx, ly, lz] = [window.lx, newParent.ly, window.lz];
     let cy = 0.1;
     let rotation = [...window.rotation];
-    switch (parent.type) {
+    switch (newParent.type) {
       case ObjectType.Cuboid:
-        foundationId = parent.id;
+        foundationId = newParent.id;
         break;
       case ObjectType.Wall:
-        foundationId = parent.parentId;
+        foundationId = newParent.parentId;
         rotation = [0, -1, 0];
         break;
       case ObjectType.Roof:
-        foundationId = parent.parentId;
+        foundationId = newParent.parentId;
         cy = y;
-        ly = (parent as RoofModel).thickness;
+        ly = (newParent as RoofModel).thickness;
         break;
     }
 
-    // copy to wall
-    if (oldParent && oldParent?.type !== ObjectType.Wall && parent.type === ObjectType.Wall) {
-      lx = window.lx / parent.lx;
-      lz = window.lz / parent.lz;
-    }
-    // copy to roof
-    if (oldParent && oldParent.type !== ObjectType.Roof && parent.type === ObjectType.Roof) {
-      lx = window.lx * oldParent.lx;
-      lz = window.lz * oldParent.lz;
+    // oldParend only valid when copy single window. Not valid when copy with parent.
+    if (oldParent) {
+      // copy from roof to wall: abs -> relative
+      if (oldParent.type === ObjectType.Roof && newParent.type === ObjectType.Wall) {
+        lx = window.lx / newParent.lx;
+        lz = window.lz / newParent.lz;
+      }
+      // copy from wall to roof: relative -> abs
+      else if (oldParent.type === ObjectType.Wall && newParent.type === ObjectType.Roof) {
+        lx = window.lx * oldParent.lx;
+        lz = window.lz * oldParent.lz;
+      }
+      // copy from different wall to keep same abs window sise
+      else if (
+        oldParent.type === ObjectType.Wall &&
+        newParent.type === ObjectType.Wall &&
+        oldParent.id !== newParent.id
+      ) {
+        lx = (window.lx * oldParent.lx) / newParent.lx;
+        lz = (window.lz * oldParent.lz) / newParent.lz;
+      }
     }
 
     return {
@@ -739,7 +751,7 @@ export class ElementModelCloner {
       normal: [0, 0, 0],
       rotation: rotation,
       id: short.generate() as string,
-      parentId: parent.id,
+      parentId: newParent.id,
       foundationId: foundationId,
       tint: window.tint,
       opacity: window.opacity,
@@ -749,7 +761,7 @@ export class ElementModelCloner {
       shutterWidth: window.shutterWidth,
       empty: window.empty,
       interior: window.interior,
-      parentType: parent.type,
+      parentType: newParent.type,
       polygonTop: window.polygonTop,
     } as WindowModel;
   }
