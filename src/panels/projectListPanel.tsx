@@ -64,13 +64,6 @@ const Header = styled.div`
   justify-content: space-between;
   align-items: center;
   cursor: move;
-
-  svg.icon {
-    height: 16px;
-    width: 16px;
-    padding: 8px;
-    fill: #666;
-  }
 `;
 
 export interface ProjectListPanelProps {
@@ -304,27 +297,6 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
               }}
             >
               <Column
-                title={`${t('word.Type', lang)}`}
-                dataIndex="type"
-                key="type"
-                width={'25%'}
-                render={(type) => {
-                  return <Typography.Text style={{ fontSize: '12px', verticalAlign: 'top' }}>{type}</Typography.Text>;
-                }}
-                onCell={(data, index) => {
-                  return {
-                    style: {
-                      background:
-                        selectedIndex === index
-                          ? 'lightskyblue'
-                          : index !== undefined && index % 2 === 0
-                          ? 'beige'
-                          : 'gainsboro',
-                    },
-                  };
-                }}
-              />
-              <Column
                 title={`${t('word.Title', lang)}`}
                 dataIndex="title"
                 key="title"
@@ -335,6 +307,17 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
                 }}
                 render={(title, record, index) => {
                   const items: MenuProps['items'] = [
+                    {
+                      key: 'project-title',
+                      label: (
+                        <>
+                          <MenuItem noPadding fontWeight={'bold'}>
+                            {title}
+                          </MenuItem>
+                          <hr />
+                        </>
+                      ),
+                    },
                     {
                       key: 'open-project',
                       label: (
@@ -414,7 +397,16 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
                           }}
                         />
                       </Dropdown>
-                      <Typography.Text style={{ fontSize: '12px', cursor: 'pointer', verticalAlign: 'top' }}>
+                      <Typography.Text
+                        title={t('word.Open', lang)}
+                        style={{ fontSize: '12px', cursor: 'pointer', verticalAlign: 'top' }}
+                        onClick={() => {
+                          const selection = window.getSelection();
+                          if (selection && selection.toString().length > 0) return;
+                          // only proceed when no text is selected
+                          setProjectState(record as ProjectInfo);
+                        }}
+                      >
                         {title}
                       </Typography.Text>
                     </Space>
@@ -430,12 +422,27 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
                           ? 'beige'
                           : 'gainsboro',
                     },
-                    // onClick: () => {
-                    //   const selection = window.getSelection();
-                    //   if (selection && selection.toString().length > 0) return;
-                    //   // only proceed when no text is selected
-                    //   setProjectState(data as ProjectInfo);
-                    // },
+                  };
+                }}
+              />
+              <Column
+                title={`${t('word.Type', lang)}`}
+                dataIndex="type"
+                key="type"
+                width={'25%'}
+                render={(type) => {
+                  return <Typography.Text style={{ fontSize: '12px', verticalAlign: 'top' }}>{type}</Typography.Text>;
+                }}
+                onCell={(data, index) => {
+                  return {
+                    style: {
+                      background:
+                        selectedIndex === index
+                          ? 'lightskyblue'
+                          : index !== undefined && index % 2 === 0
+                          ? 'beige'
+                          : 'gainsboro',
+                    },
                   };
                 }}
               />

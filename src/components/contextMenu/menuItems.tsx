@@ -26,6 +26,7 @@ import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 interface MenuItemProps {
   noPadding?: boolean;
   stayAfterClick?: boolean;
+  fontWeight?: string;
   textSelectable?: boolean;
   update?: boolean;
   children?: React.ReactNode;
@@ -259,6 +260,7 @@ export const Lock = ({ selectedElement }: { selectedElement: ElementModel }) => 
 export const MenuItem: React.FC<MenuItemProps> = ({
   stayAfterClick,
   noPadding,
+  fontWeight,
   textSelectable = true,
   update,
   onClick,
@@ -282,6 +284,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({
       style={{
         userSelect: textSelectable ? 'auto' : 'none',
         display: 'inline-block',
+        fontWeight: fontWeight,
         width: '100%',
         paddingLeft: noPadding ? '0px' : '24px',
       }}
@@ -409,7 +412,7 @@ export const SolarCollectorSunBeamCheckbox = ({ solarCollector }: SolarCollector
     <MenuItem stayAfterClick noPadding>
       <Checkbox
         style={{ width: '100%' }}
-        checked={!!solarCollector.drawSunBeam}
+        checked={solarCollector.drawSunBeam}
         onChange={(e) => drawSunBeam(e.target.checked)}
       >
         {i18n.t('solarCollectorMenu.DrawSunBeam', lang)}

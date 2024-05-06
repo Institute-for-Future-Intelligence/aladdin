@@ -335,7 +335,7 @@ const ModelsMapWrapper = ({
               left: '5px',
               width: '180px',
               height: '25px',
-              paddingTop: '2px',
+              paddingTop: '4px',
               background: 'whitesmoke',
               boxShadow: '1px 1px 1px 1px gray',
               cursor: 'pointer',
