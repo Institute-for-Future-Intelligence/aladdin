@@ -59,7 +59,7 @@ const CreateNewProjectDialog = ({
   const onOkClick = () => {
     usePrimitiveStore.getState().set((state) => {
       if (saveAs) {
-        state.saveProjectFlag = true;
+        state.saveProjectAsFlag = true;
       } else {
         state.createProjectFlag = true;
       }

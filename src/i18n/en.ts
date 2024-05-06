@@ -298,6 +298,7 @@ export const i18n_en = {
       project: {
         CreateNewProject: 'Create New Project',
         OpenProject: 'Open Project',
+        SaveProject: 'Save Project',
         SaveProjectAs: 'Save Project As',
         YouMustLogInToCreateProject: 'You must log in to create a new project',
         YouMustLogInToOpenProject: 'You must log in to open a project',

@@ -87,7 +87,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const localContentToImportAfterCloudFileUpdate = useStore(Selector.localContentToImportAfterCloudFileUpdate);
   const peopleModels = useStore(Selector.peopleModels);
   const createProjectFlag = usePrimitiveStore(Selector.createProjectFlag);
-  const saveProjectFlag = usePrimitiveStore(Selector.saveProjectFlag);
+  const saveProjectAsFlag = usePrimitiveStore(Selector.saveProjectAsFlag);
   const curateDesignToProjectFlag = usePrimitiveStore(Selector.curateDesignToProjectFlag);
   const showProjectsFlag = usePrimitiveStore(Selector.showProjectsFlag);
   const updateProjectsFlag = usePrimitiveStore(Selector.updateProjectsFlag);
@@ -119,7 +119,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
 
   useFlag(createProjectFlag, createNewProject, () => setPrimitiveStore('createProjectFlag', false));
 
-  useFlag(saveProjectFlag, saveProjectAs, () => setPrimitiveStore('saveProjectFlag', false));
+  useFlag(saveProjectAsFlag, saveProjectAs, () => setPrimitiveStore('saveProjectAsFlag', false));
 
   useFlag(showProjectsFlag, showMyProjectsList, () => setPrimitiveStore('showProjectsFlag', false));
 

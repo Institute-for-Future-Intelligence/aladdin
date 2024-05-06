@@ -300,6 +300,7 @@ export const i18n_ua = {
       project: {
         CreateNewProject: 'Створити Новий Проєкт',
         OpenProject: 'Відкрити Проєкт',
+        SaveProject: 'Save Project',
         SaveProjectAs: 'Save Project As',
         YouMustLogInToCreateProject: 'Ви повинні увійти, щоб створити новий проєкт',
         YouMustLogInToOpenProject: 'Ви повинні увійти, щоб відкрити проєкт',

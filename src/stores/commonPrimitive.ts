@@ -42,7 +42,7 @@ export interface PrimitiveStoreState {
   modelsMapWeatherStations: boolean;
 
   createProjectFlag: boolean;
-  saveProjectFlag: boolean;
+  saveProjectAsFlag: boolean;
   curateDesignToProjectFlag: boolean;
   showProjectsFlag: boolean;
   updateProjectsFlag: boolean;
@@ -233,7 +233,7 @@ export const usePrimitiveStore = createWithEqualityFn<PrimitiveStoreState>()((se
     modelsMapWeatherStations: false,
 
     createProjectFlag: false,
-    saveProjectFlag: false,
+    saveProjectAsFlag: false,
     curateDesignToProjectFlag: false,
     showProjectsFlag: false,
     updateProjectsFlag: false,
