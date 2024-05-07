@@ -13,7 +13,7 @@ import { HOME_URL, REGEX_ALLOWABLE_IN_NAME, Z_INDEX_FRONT_PANEL } from '../const
 import { showSuccess } from '../helpers';
 import Draggable from 'react-draggable';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
-import { ProjectInfo } from '../types';
+import { ProjectState } from '../types';
 import { useTranslation } from 'react-i18next';
 import { MenuProps } from 'antd/lib';
 import { MenuItem } from 'src/components/contextMenu/menuItems';
@@ -68,7 +68,7 @@ const Header = styled.div`
 
 export interface ProjectListPanelProps {
   projects: object[];
-  setProjectState: (projectInfo: ProjectInfo) => void;
+  setProjectState: (projectState: ProjectState) => void;
   deleteProject: (title: string) => void;
   renameProject: (oldTitle: string, newTitle: string) => void;
 }
@@ -321,7 +321,7 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
                     {
                       key: 'open-project',
                       label: (
-                        <MenuItem noPadding onClick={() => setProjectState(record as ProjectInfo)}>
+                        <MenuItem noPadding onClick={() => setProjectState(record as ProjectState)}>
                           {t('word.Open', lang)}
                         </MenuItem>
                       ),
@@ -404,7 +404,7 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
                           const selection = window.getSelection();
                           if (selection && selection.toString().length > 0) return;
                           // only proceed when no text is selected
-                          setProjectState(record as ProjectInfo);
+                          setProjectState(record as ProjectState);
                         }}
                       >
                         {title}

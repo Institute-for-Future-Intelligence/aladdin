@@ -1512,7 +1512,7 @@ export const i18n_zh_cn = {
       ClickToFlipSortingOrder: '点击逆转排序方向',
       DesignNotShownInSolutionSpaceClickToShow: '此设计目前不显示在设计空间内，点击显示',
       DesignShownInSolutionSpaceClickToHide: '此设计目前显示在设计空间内,点击隐藏',
-      DistributionInSolutionSpace: '方案在设计空间里的分布',
+      SolutionSpace: '设计空间',
       ChooseSolutionSpace: '选择设计空间',
       ChooseDataColoring: '选择数据着色',
       SameColorForAllDesigns: '所有设计一个颜色',

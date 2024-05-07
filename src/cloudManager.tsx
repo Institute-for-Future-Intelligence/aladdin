@@ -23,7 +23,7 @@ import {
   FirebaseName,
   ModelSite,
   ObjectType,
-  ProjectInfo,
+  ProjectState,
   SchoolID,
   User,
 } from './types';
@@ -100,7 +100,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const [title, setTitle] = useState<string>(cloudFile ?? 'My Aladdin File');
   const [titleDialogVisible, setTitleDialogVisible] = useState(false);
   const cloudFilesRef = useRef<CloudFileInfo[] | void>();
-  const myProjectsRef = useRef<ProjectInfo[] | void>(); // store sorted projects
+  const myProjectsRef = useRef<ProjectState[] | void>(); // store sorted projects
   const authorModelsRef = useRef<Map<string, ModelSite>>();
 
   const lang = useMemo(() => {
@@ -722,7 +722,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       .collection('projects')
       .get()
       .then((querySnapshot) => {
-        const a: ProjectInfo[] = [];
+        const a: ProjectState[] = [];
         querySnapshot.forEach((doc) => {
           const data = doc.data();
           a.push({
@@ -742,7 +742,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
             ranges: data.ranges ?? [],
             hiddenParameters: data.hiddenParameters ?? ProjectUtil.getDefaultHiddenParameters(data.type),
             counter: data.counter ?? 0,
-          } as ProjectInfo);
+          } as ProjectState);
         });
         return a;
       })
@@ -810,20 +810,20 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           setUpdateFlag(!updateFlag);
         }
         setCommonStore((state) => {
-          if (title === state.projectInfo.title) {
-            state.projectInfo.title = null;
-            state.projectInfo.description = null;
-            state.projectInfo.dataColoring = DataColoring.ALL;
-            state.projectInfo.selectedProperty = null;
-            state.projectInfo.sortDescending = false;
-            state.projectInfo.xAxisNameScatterPlot = null;
-            state.projectInfo.yAxisNameScatterPlot = null;
-            state.projectInfo.dotSizeScatterPlot = 5;
-            state.projectInfo.thumbnailWidth = 200;
-            state.projectInfo.counter = 0;
-            state.projectInfo.designs = [];
-            state.projectInfo.ranges = [];
-            state.projectInfo.hiddenParameters = ProjectUtil.getDefaultHiddenParameters(state.projectInfo.type);
+          if (title === state.projectState.title) {
+            state.projectState.title = null;
+            state.projectState.description = null;
+            state.projectState.dataColoring = DataColoring.ALL;
+            state.projectState.selectedProperty = null;
+            state.projectState.sortDescending = false;
+            state.projectState.xAxisNameScatterPlot = null;
+            state.projectState.yAxisNameScatterPlot = null;
+            state.projectState.dotSizeScatterPlot = 5;
+            state.projectState.thumbnailWidth = 200;
+            state.projectState.counter = 0;
+            state.projectState.designs = [];
+            state.projectState.ranges = [];
+            state.projectState.hiddenParameters = ProjectUtil.getDefaultHiddenParameters(state.projectState.type);
             state.designProjectType = null;
             state.projectView = false;
           }
@@ -866,7 +866,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                   }
                   newData.designs = newDesigns;
                   setCommonStore((state) => {
-                    state.projectInfo.designs = newDesigns;
+                    state.projectState.designs = newDesigns;
                   });
                 }
                 files
@@ -880,7 +880,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                         // ignore
                       });
                     if (myProjectsRef.current) {
-                      const newArray: ProjectInfo[] = [];
+                      const newArray: ProjectState[] = [];
                       for (const p of myProjectsRef.current) {
                         if (p.title === oldTitle) {
                           newArray.push({
@@ -893,7 +893,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                             ranges: p.ranges ?? null,
                             hiddenParameters: p.hiddenParameters,
                             counter: p.counter,
-                          } as ProjectInfo);
+                          } as ProjectState);
                         } else {
                           newArray.push(p);
                         }
@@ -902,8 +902,8 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                       setUpdateFlag(!updateFlag);
                     }
                     setCommonStore((state) => {
-                      if (state.projectInfo.title === oldTitle) {
-                        state.projectInfo.title = newTitle;
+                      if (state.projectState.title === oldTitle) {
+                        state.projectState.title = newTitle;
                       }
                     });
                     // TODO
@@ -924,9 +924,9 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     });
   };
 
-  const setProjectState = (projectInfo: ProjectInfo) => {
+  const setProjectState = (projectState: ProjectState) => {
     setCommonStore((state) => {
-      state.projectInfo = { ...projectInfo };
+      state.projectState = { ...projectState };
       state.projectImages.clear();
       state.projectView = true;
     });
@@ -968,11 +968,11 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       })
       .then(() => {
         setCommonStore((state) => {
-          state.projectInfo.designs?.push(design);
+          state.projectState.designs?.push(design);
           // increment the local counter to be consistent with the database counter
-          state.projectInfo.counter++;
+          state.projectState.counter++;
           // store the project type in the design for linking it with the right type of project later
-          state.designProjectType = state.projectInfo.type;
+          state.designProjectType = state.projectState.type;
           state.cloudFile = design.title;
         });
         // regardless of where the design is, make a copy on the cloud
@@ -1466,21 +1466,21 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
               setCommonStore((state) => {
                 state.projectView = true;
                 // update the local copy as well
-                state.projectInfo.owner = user.uid;
-                state.projectInfo.type = type;
-                state.projectInfo.title = title;
-                state.projectInfo.description = description;
-                state.projectInfo.counter = 0;
-                state.projectInfo.dataColoring = DataColoring.ALL;
-                state.projectInfo.selectedProperty = null;
-                state.projectInfo.sortDescending = false;
-                state.projectInfo.xAxisNameScatterPlot = null;
-                state.projectInfo.yAxisNameScatterPlot = null;
-                state.projectInfo.dotSizeScatterPlot = 5;
-                state.projectInfo.thumbnailWidth = 200;
-                state.projectInfo.designs = [];
-                state.projectInfo.ranges = [];
-                state.projectInfo.hiddenParameters = ProjectUtil.getDefaultHiddenParameters(state.projectInfo.type);
+                state.projectState.owner = user.uid;
+                state.projectState.type = type;
+                state.projectState.title = title;
+                state.projectState.description = description;
+                state.projectState.counter = 0;
+                state.projectState.dataColoring = DataColoring.ALL;
+                state.projectState.selectedProperty = null;
+                state.projectState.sortDescending = false;
+                state.projectState.xAxisNameScatterPlot = null;
+                state.projectState.yAxisNameScatterPlot = null;
+                state.projectState.dotSizeScatterPlot = 5;
+                state.projectState.thumbnailWidth = 200;
+                state.projectState.designs = [];
+                state.projectState.ranges = [];
+                state.projectState.hiddenParameters = ProjectUtil.getDefaultHiddenParameters(state.projectState.type);
               });
             })
             .catch((error) => {
@@ -1527,20 +1527,20 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
         showInfo(i18n.t('message.TitleUsedChooseDifferentOne', lang) + ': ' + t);
       } else {
         if (user && user.uid) {
-          const designs = useStore.getState().projectInfo.designs;
+          const designs = useStore.getState().projectState.designs;
           if (designs) {
             const type = usePrimitiveStore.getState().projectType;
             const description = usePrimitiveStore.getState().projectDescription;
-            const owner = useStore.getState().projectInfo.owner;
+            const owner = useStore.getState().projectState.owner;
             const timestamp = new Date().getTime();
-            const counter = useStore.getState().projectInfo.counter;
-            const dataColoring = useStore.getState().projectInfo.dataColoring ?? null;
-            const selectedProperty = useStore.getState().projectInfo.selectedProperty ?? null;
-            const sortDescending = !!useStore.getState().projectInfo.sortDescending;
-            const xAxisNameScatterPlot = useStore.getState().projectInfo.xAxisNameScatterPlot ?? 'rowWidth';
-            const yAxisNameScatterPlot = useStore.getState().projectInfo.yAxisNameScatterPlot ?? 'rowWidth';
-            const dotSizeScatterPlot = useStore.getState().projectInfo.dotSizeScatterPlot ?? 5;
-            const thumbnailWidth = useStore.getState().projectInfo.thumbnailWidth ?? 200;
+            const counter = useStore.getState().projectState.counter;
+            const dataColoring = useStore.getState().projectState.dataColoring ?? null;
+            const selectedProperty = useStore.getState().projectState.selectedProperty ?? null;
+            const sortDescending = !!useStore.getState().projectState.sortDescending;
+            const xAxisNameScatterPlot = useStore.getState().projectState.xAxisNameScatterPlot ?? 'rowWidth';
+            const yAxisNameScatterPlot = useStore.getState().projectState.yAxisNameScatterPlot ?? 'rowWidth';
+            const dotSizeScatterPlot = useStore.getState().projectState.dotSizeScatterPlot ?? 5;
+            const thumbnailWidth = useStore.getState().projectState.thumbnailWidth ?? 200;
             const newDesigns: Design[] = changeDesignTitles(t, designs) ?? [];
             for (const [i, d] of designs.entries()) {
               copyDesign(d.title, newDesigns[i].title, owner, user.uid);
@@ -1573,17 +1573,17 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                   dotSizeScatterPlot: dotSizeScatterPlot,
                   thumbnailWidth,
                   designs: newDesigns,
-                  ranges: useStore.getState().projectInfo.ranges ?? null,
-                  hiddenParameters: useStore.getState().projectInfo.hiddenParameters,
+                  ranges: useStore.getState().projectState.ranges ?? null,
+                  hiddenParameters: useStore.getState().projectState.hiddenParameters,
                 })
                 .then(() => {
                   setCommonStore((state) => {
                     state.projectView = true;
-                    state.projectInfo.owner = user.uid;
-                    state.projectInfo.type = type;
-                    state.projectInfo.title = title;
-                    state.projectInfo.description = description;
-                    state.projectInfo.designs = newDesigns;
+                    state.projectState.owner = user.uid;
+                    state.projectState.type = type;
+                    state.projectState.title = title;
+                    state.projectState.description = description;
+                    state.projectState.designs = newDesigns;
                   });
                 })
                 .catch((error) => {
@@ -1605,16 +1605,16 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   }
 
   function curateDesignToProject() {
-    const projectOwner = useStore.getState().projectInfo.owner;
+    const projectOwner = useStore.getState().projectState.owner;
     if (user.uid !== projectOwner) {
       showInfo(i18n.t('message.CannotAddDesignToProjectOwnedByOthers', lang));
     } else {
-      const projectTitle = useStore.getState().projectInfo.title;
+      const projectTitle = useStore.getState().projectState.title;
       if (projectTitle) {
         setLoading(true);
-        const projectType = useStore.getState().projectInfo.type ?? DesignProblem.SOLAR_PANEL_ARRAY;
-        const thumbnailWidth = useStore.getState().projectInfo.thumbnailWidth ?? 200;
-        const counter = useStore.getState().projectInfo.counter ?? 0;
+        const projectType = useStore.getState().projectState.type ?? DesignProblem.SOLAR_PANEL_ARRAY;
+        const thumbnailWidth = useStore.getState().projectState.thumbnailWidth ?? 200;
+        const counter = useStore.getState().projectState.counter ?? 0;
         addDesignToProject(projectType, projectTitle, projectTitle + ' ' + counter, thumbnailWidth);
       }
     }

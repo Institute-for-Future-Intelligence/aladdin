@@ -8,7 +8,7 @@ import 'firebase/firestore';
 import 'firebase/storage';
 import { showError, showInfo } from './helpers';
 import i18n from './i18n/i18n';
-import { Design, DesignProblem, DataColoring, ProjectInfo, Range } from './types';
+import { Design, DesignProblem, DataColoring, ProjectState, Range } from './types';
 import { Util } from './Util';
 import { usePrimitiveStore } from './stores/commonPrimitive';
 
@@ -41,7 +41,7 @@ export const fetchProject = async (userid: string, project: string, setProjectSt
           yAxisNameScatterPlot: data.yAxisNameScatterPlot,
           dotSizeScatterPlot: data.dotSizeScatterPlot,
           thumbnailWidth: data.thumbnailWidth,
-        } as ProjectInfo);
+        } as ProjectState);
       } else {
         showError(i18n.t('message.CannotOpenProject', lang) + ': ' + project);
       }
@@ -499,7 +499,7 @@ export const updateDesign = (
                     .finally(() => {
                       // Update the cached array in the local storage via the common store
                       useStore.getState().set((state) => {
-                        state.projectInfo.designs = updatedDesigns;
+                        state.projectState.designs = updatedDesigns;
                       });
                       usePrimitiveStore.getState().set((state) => {
                         state.updateProjectsFlag = true;

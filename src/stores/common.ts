@@ -28,7 +28,7 @@ import {
   MoveHandleType,
   ObjectType,
   Orientation,
-  ProjectInfo,
+  ProjectState,
   Range,
   ResizeHandleType,
   RoofHandleType,
@@ -125,7 +125,7 @@ export interface CommonStoreState {
   modelLabel: string | null;
   modelDescription: string | null;
   projectView: boolean;
-  projectInfo: ProjectInfo;
+  projectState: ProjectState;
   projectImages: Map<string, HTMLImageElement>;
   designProjectType: DesignProblem | null; // this belongs to a design of a project
   notes: string[];
@@ -585,7 +585,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
           modelLabel: null,
           modelDescription: null,
           projectView: false,
-          projectInfo: {
+          projectState: {
             owner: null,
             title: null,
             description: null,
@@ -601,7 +601,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
             yAxisNameScatterPlot: null,
             dotSizeScatterPlot: 5,
             thumbnailWidth: 200,
-          } as ProjectInfo,
+          } as ProjectState,
           projectImages: new Map<string, HTMLImageElement>(),
           designProjectType: null,
           notes: [],
@@ -4673,7 +4673,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
           modelLabel: state.modelLabel,
           modelDescription: state.modelDescription,
           projectView: state.projectView,
-          projectInfo: state.projectInfo,
+          projectState: state.projectState,
           designProjectType: state.designProjectType,
           notes: state.notes,
           user: state.user,

@@ -5,7 +5,7 @@ import { MenuProps } from 'antd';
 import { MenuItem } from '../contextMenu/menuItems';
 import i18n from 'src/i18n/i18n';
 import { useStore } from 'src/stores/common';
-import { ProjectInfo } from 'src/types';
+import { ProjectState } from 'src/types';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import { fetchProject } from 'src/cloudProjectUtil';
 import { loadCloudFile } from 'src/cloudFileUtil';
@@ -20,9 +20,9 @@ export const createTutorialsMenu = (viewOnly: boolean) => {
   const lang = { lng: useStore.getState().language };
   const setCommonStore = useStore.getState().set;
 
-  const setProjectState = (projectInfo: ProjectInfo) => {
+  const setProjectState = (projectState: ProjectState) => {
     setCommonStore((state) => {
-      state.projectInfo = { ...projectInfo };
+      state.projectState = { ...projectState };
       state.projectImages.clear();
       state.projectView = true;
     });

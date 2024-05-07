@@ -84,7 +84,7 @@ export const createProjectMenu = () => {
   const lang = { lng: useStore.getState().language };
   const user = useStore.getState().user;
   const loggable = useStore.getState().loggable;
-  const projectInfo = useStore.getState().projectInfo;
+  const projectState = useStore.getState().projectState;
   const projectView = useStore.getState().projectView;
 
   const setCommonStore = useStore.getState().set;
@@ -130,7 +130,7 @@ export const createProjectMenu = () => {
   });
 
   // save-project-as
-  if (projectView && projectInfo.title && user.uid) {
+  if (projectView && projectState.title && user.uid) {
     items.push({
       key: 'save-project-as',
       label: <SaveProjectAsItem />,

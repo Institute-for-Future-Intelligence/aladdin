@@ -50,7 +50,7 @@ export interface PrimitiveStoreState {
   projectImagesUpdateFlag: boolean;
 
   // These stores the settings from createNewProjectDialog.tsx, because we don't want to overwrite
-  // the local state in the common store yet. Don't be confused with commonStore's projectInfo.
+  // the local state in the common store yet. Don't be confused with commonStore's projectState.
   projectType: DesignProblem;
   projectTitle: string | null;
   projectDescription: string | null;

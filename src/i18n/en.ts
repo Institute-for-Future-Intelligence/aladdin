@@ -1539,7 +1539,7 @@ export const i18n_en = {
       ClickToFlipSortingOrder: 'Click to flip the sorting order',
       DesignNotShownInSolutionSpaceClickToShow: 'This design is not shown in solution space; click to show',
       DesignShownInSolutionSpaceClickToHide: 'This design is shown in solution space; click to hide',
-      DistributionInSolutionSpace: 'Distribution in the Solution Space',
+      SolutionSpace: 'Solution Space',
       ChooseSolutionSpace: 'Choose solution space',
       ChooseDataColoring: 'Choose data coloring',
       SameColorForAllDesigns: 'Same color for all designs',

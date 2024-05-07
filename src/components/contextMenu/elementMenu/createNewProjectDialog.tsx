@@ -26,11 +26,11 @@ const CreateNewProjectDialog = ({
   const language = useStore(Selector.language);
 
   const [projectType, setProjectType] = useState<DesignProblem>(
-    useStore.getState().projectInfo.type ?? DesignProblem.SOLAR_PANEL_ARRAY,
+    useStore.getState().projectState.type ?? DesignProblem.SOLAR_PANEL_ARRAY,
   );
-  const [projectTitle, setProjectTitle] = useState<string | null>(useStore.getState().projectInfo.title);
+  const [projectTitle, setProjectTitle] = useState<string | null>(useStore.getState().projectState.title);
   const [projectDescription, setProjectDescription] = useState<string | null>(
-    useStore.getState().projectInfo.description,
+    useStore.getState().projectState.description,
   );
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
