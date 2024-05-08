@@ -30,7 +30,7 @@ const GlassTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
-  const okButtonRef = useRef<HTMLButtonElement | HTMLAnchorElement | null>(null);
+  const okButtonRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     okButtonRef.current?.focus();

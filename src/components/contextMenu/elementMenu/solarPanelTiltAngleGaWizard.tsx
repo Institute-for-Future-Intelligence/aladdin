@@ -43,7 +43,7 @@ const SolarPanelTiltAngleGaWizard = ({ setDialogVisible }: { setDialogVisible: (
   const crossoverRateRef = useRef<number>(params.crossoverRate ?? 0.5);
   const convergenceThresholdRef = useRef<number>(params.convergenceThreshold);
   const localSearchRadiusRef = useRef<number>(params.localSearchRadius);
-  const okButtonRef = useRef<HTMLButtonElement | HTMLAnchorElement | null>(null);
+  const okButtonRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     okButtonRef.current?.focus();
