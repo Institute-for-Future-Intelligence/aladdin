@@ -28,7 +28,7 @@ export const getSatelliteImage = (size: number, lat: number, lng: number, zoom: 
     'x' +
     size +
     '&scale=2&key=' +
-    process.env.REACT_APP_MAPS_API_KEY
+    import.meta.env.VITE_MAPS_API_KEY
   );
 };
 
@@ -45,7 +45,7 @@ export const getRoadMap = (size: number, lat: number, lng: number, zoom: number)
     'x' +
     size +
     '&scale=2&key=' +
-    process.env.REACT_APP_MAPS_API_KEY
+    import.meta.env.VITE_MAPS_API_KEY
   );
 };
 

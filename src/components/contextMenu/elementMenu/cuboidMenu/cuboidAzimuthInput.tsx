@@ -30,7 +30,7 @@ const CuboidAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   const cuboid = useSelectedElement(ObjectType.Cuboid) as CuboidModel | undefined;
 
   // reverse the sign because rotation angle is positive counterclockwise whereas azimuth is positive clockwise
-  const [inputValue, setInputValue] = useState<number>(cuboid ? -cuboid.rotation[2] ?? 0 : 0);
+  const [inputValue, setInputValue] = useState<number>(cuboid ? -cuboid.rotation[2] : 0);
 
   const lang = useLanguage();
 
@@ -83,7 +83,7 @@ const CuboidAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
         // should list here, so it doesn't go to default, but ignore
         break;
       default:
-        if (Math.abs((cuboid ? -cuboid.rotation[2] ?? 0 : 0) - azimuth) > ZERO_TOLERANCE) {
+        if (Math.abs((cuboid ? -cuboid.rotation[2] : 0) - azimuth) > ZERO_TOLERANCE) {
           return true;
         }
     }

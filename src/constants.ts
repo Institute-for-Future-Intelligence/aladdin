@@ -10,7 +10,7 @@ export const VERSION = '1.5.8';
 // used for check old file that need to update light intensity.
 export const LIGHT_INTENSITY_CHANGED_VERSION = '1.5.0';
 
-export const isProd = process.env.NODE_ENV === 'production';
+export const isProd = import.meta.env.NODE_ENV === 'production';
 
 export const HOME_URL: string = isProd
   ? 'https://institute-for-future-intelligence.github.io/aladdin/'

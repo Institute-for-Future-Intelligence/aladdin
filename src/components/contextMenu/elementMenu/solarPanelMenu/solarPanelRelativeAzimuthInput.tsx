@@ -41,7 +41,7 @@ const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible
   // reverse the sign because rotation angle is positive counterclockwise whereas azimuth is positive clockwise
   // unfortunately, the variable should not be named as relativeAzimuth. Instead, it should have been named as
   // relativeRotationAngle. Keep this in mind that relativeAzimuth is NOT really azimuth.
-  const [inputValue, setInputValue] = useState(solarPanel ? -solarPanel.relativeAzimuth ?? 0 : 0);
+  const [inputValue, setInputValue] = useState(solarPanel ? -solarPanel.relativeAzimuth : 0);
 
   const lang = useLanguage();
 

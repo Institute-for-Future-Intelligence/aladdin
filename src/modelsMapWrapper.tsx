@@ -98,7 +98,7 @@ const ModelsMapWrapper = ({
 
   const { isLoaded, loadError } = useJsApiLoader({
     id: 'google-map-script',
-    googleMapsApiKey: process.env.REACT_APP_MAPS_API_KEY as string,
+    googleMapsApiKey: import.meta.env.VITE_MAPS_API_KEY as string,
     libraries: libraries,
   });
 

@@ -33,7 +33,7 @@ export const createTutorialsMenu = (viewOnly: boolean) => {
   };
 
   const loadProject = (title: string, designIndex: number) => {
-    const owner = process.env.REACT_APP_EXAMPLE_PROJECT_OWNER;
+    const owner = import.meta.env.VITE_EXAMPLE_PROJECT_OWNER;
     if (title && owner) {
       fetchProject(owner, title, setProjectState).then(() => {
         loadCloudFile(owner, title + ' ' + designIndex, true, true, viewOnly).then(() => {

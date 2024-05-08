@@ -7,7 +7,7 @@ import { isProd } from '../constants';
 
 const DB_NAME = `aladdin_${isProd ? 'prod' : 'dev'}`;
 const DB_VERSION = 5.2;
-const MIGRATION_KEY = `DB_${DB_VERSION}_${process.env.NODE_ENV}_MIGRATED`;
+const MIGRATION_KEY = `DB_${DB_VERSION}_${import.meta.env.NODE_ENV}_MIGRATED`;
 
 localforage.config({
   name: DB_NAME,
