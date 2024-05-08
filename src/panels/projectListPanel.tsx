@@ -321,7 +321,7 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
                     {
                       key: 'open-project',
                       label: (
-                        <MenuItem noPadding onClick={() => setProjectState(record as ProjectState)}>
+                        <MenuItem noPadding onClick={() => setProjectState(record as unknown as ProjectState)}>
                           {t('word.Open', lang)}
                         </MenuItem>
                       ),
@@ -404,7 +404,7 @@ const ProjectListPanel = ({ projects, setProjectState, deleteProject, renameProj
                           const selection = window.getSelection();
                           if (selection && selection.toString().length > 0) return;
                           // only proceed when no text is selected
-                          setProjectState(record as ProjectState);
+                          setProjectState(record as unknown as ProjectState);
                         }}
                       >
                         {title}

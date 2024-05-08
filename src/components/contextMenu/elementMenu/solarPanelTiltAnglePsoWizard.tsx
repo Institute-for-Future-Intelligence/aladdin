@@ -37,7 +37,7 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
   const socialCoefficientRef = useRef<number>(params.socialCoefficient ?? 0.1);
   const convergenceThresholdRef = useRef<number>(params.convergenceThreshold);
   const localSearchRadiusRef = useRef<number>(params.localSearchRadius);
-  const okButtonRef = useRef<HTMLElement | null>(null);
+  const okButtonRef = useRef<HTMLButtonElement | HTMLAnchorElement | null>(null);
 
   useEffect(() => {
     okButtonRef.current?.focus();
