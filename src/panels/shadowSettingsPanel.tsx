@@ -24,7 +24,7 @@ const ShadowSettingsPanel = ({ setDialogVisible }: { setDialogVisible: (b: boole
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
-  const okButtonRef = useRef<HTMLElement | null>(null);
+  const okButtonRef = useRef<HTMLButtonElement | HTMLAnchorElement | null>(null);
   const shadowCameraFarRef = useRef<number>(shadowCameraFar ? Math.round(shadowCameraFar) / SHADOW_CAMERA_FAR_STEP : 1);
   const shadowMapSizeRef = useRef<number>(shadowMapSize ? Math.round(shadowMapSize / SHADOW_MAP_SIZE_STEP) : 1);
 

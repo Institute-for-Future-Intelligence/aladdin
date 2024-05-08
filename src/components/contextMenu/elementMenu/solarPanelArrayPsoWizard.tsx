@@ -64,7 +64,7 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
   const maximumRowsPerRackRef = useRef<number>(constraints.maximumRowsPerRack);
   const minimumInterRowSpacingRef = useRef<number>(constraints.minimumInterRowSpacing);
   const maximumInterRowSpacingRef = useRef<number>(constraints.maximumInterRowSpacing);
-  const okButtonRef = useRef<HTMLElement | null>(null);
+  const okButtonRef = useRef<HTMLButtonElement | HTMLAnchorElement | null>(null);
 
   useEffect(() => {
     okButtonRef.current?.focus();
