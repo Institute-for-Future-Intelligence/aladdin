@@ -11,7 +11,7 @@
     "@react-three/drei": "^9.88.10",
     "@react-three/fiber": "^8.15.9",
     "@tweenjs/tween.js": "^18.6.4",
-    "antd": "^5.12.5",
+    "antd": "^5.17.0",
     "dayjs": "^1.10.7",
     "file-saver": "^2.0.5",
     "firebase": "^8.10.0",
