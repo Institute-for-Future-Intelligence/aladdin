@@ -30,7 +30,7 @@ const FoundationAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
   const foundation = useSelectedElement(ObjectType.Foundation) as FoundationModel | undefined;
 
   // reverse the sign because rotation angle is positive counterclockwise whereas azimuth is positive clockwise
-  const [inputValue, setInputValue] = useState(foundation ? -foundation?.rotation[2] ?? 0 : 0);
+  const [inputValue, setInputValue] = useState(foundation ? -foundation?.rotation[2] : 0);
 
   const lang = useLanguage();
 

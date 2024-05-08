@@ -5,13 +5,13 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Dropdown } from 'antd';
-import { ReactComponent as MenuSVG } from '../assets/menu.svg';
+import ReactComponent from '../assets/menu.svg?react';
 import i18n from '../i18n/i18n';
 import { useLanguage } from 'src/views/hooks';
 import type { MenuProps } from 'antd';
 import { CheckboxMenuItem, SliderMenuItem } from './contextMenu/menuItems';
 
-const StyledMenuSVG = styled(MenuSVG)`
+const StyledMenuSVG = styled(ReactComponent)`
   position: absolute;
   top: 4px;
   right: 30px;
