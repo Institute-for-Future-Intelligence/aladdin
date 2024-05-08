@@ -67,6 +67,7 @@ import { ElementModelFactory } from 'src/models/ElementModelFactory';
 import { getSolarPanelUnitLength } from '../wall/wall';
 import { isSolarPanelOnTopFace } from '../solarPanel/solarPanelOnCuboid';
 import { useSelected } from '../hooks';
+import { SharedUtil } from '../SharedUtil';
 
 const Cuboid = (cuboidModel: CuboidModel) => {
   const {
@@ -138,7 +139,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
   const baseRef = useRef<Mesh>(null);
   const grabRef = useRef<ElementModel | null>(null);
   const faceNormalRef = useRef<Vector3>(UNIT_VECTOR_POS_Z);
-  const gridPositionRef = useRef<Vector3>(new Vector3(0, 0, 0));
+  const [gridPosition, setGridPosition] = useState(new Vector3(0, 0, 0));
   const gridRotationRef = useRef<Euler>(new Euler(0, 0, 0));
   const gridDimensionRef = useRef<Vector3>(new Vector3(1, 1, 1));
   const oldPositionRef = useRef<Vector3>(new Vector3());
@@ -377,27 +378,27 @@ const Cuboid = (cuboidModel: CuboidModel) => {
     faceNormalRef.current = face;
     const aboveDistance = 0.01;
     if (Util.isSame(faceNormalRef.current, UNIT_VECTOR_POS_Z)) {
-      gridPositionRef.current = new Vector3(0, 0, hz + aboveDistance);
+      setGridPosition(new Vector3(0, 0, hz + aboveDistance));
       gridRotationRef.current = new Euler(0, 0, 0);
       gridDimensionRef.current.set(hx, hy, hz);
     } else if (Util.isSame(faceNormalRef.current, UNIT_VECTOR_POS_X)) {
       // east face in view coordinate system
-      gridPositionRef.current = new Vector3(hx + aboveDistance, 0, 0);
+      setGridPosition(new Vector3(hx + aboveDistance, 0, 0));
       gridRotationRef.current = new Euler(0, HALF_PI, 0);
       gridDimensionRef.current.set(hz, hy, hx);
     } else if (Util.isSame(faceNormalRef.current, UNIT_VECTOR_NEG_X)) {
       // west face in view coordinate system
-      gridPositionRef.current = new Vector3(-hx - aboveDistance, 0, 0);
+      setGridPosition(new Vector3(-hx - aboveDistance, 0, 0));
       gridRotationRef.current = new Euler(0, -HALF_PI, 0);
       gridDimensionRef.current.set(hz, hy, hx);
     } else if (Util.isSame(faceNormalRef.current, UNIT_VECTOR_NEG_Y)) {
       // south face in the view coordinate system
-      gridPositionRef.current = new Vector3(0, -hy - aboveDistance, 0);
+      setGridPosition(new Vector3(0, -hy - aboveDistance, 0));
       gridRotationRef.current = new Euler(HALF_PI, 0, 0);
       gridDimensionRef.current.set(hx, hz, hy);
     } else if (Util.isSame(faceNormalRef.current, UNIT_VECTOR_POS_Y)) {
       // north face in the view coordinate system
-      gridPositionRef.current = new Vector3(0, hy + aboveDistance, 0);
+      setGridPosition(new Vector3(0, hy + aboveDistance, 0));
       gridRotationRef.current = new Euler(-HALF_PI, 0, 0);
       gridDimensionRef.current.set(hx, hz, hy);
     }
@@ -405,8 +406,6 @@ const Cuboid = (cuboidModel: CuboidModel) => {
 
   const ratio = Math.max(1, Math.max(lx, ly) / 8);
   const moveHandleSize = MOVE_HANDLE_RADIUS * ratio;
-
-  const onTopSurface = Util.isIdentical(grabRef.current?.normal, UNIT_VECTOR_POS_Z_ARRAY);
 
   const handleAddElement = (e: ThreeEvent<PointerEvent>) => {
     const intersection = e.intersections[0];
@@ -513,6 +512,8 @@ const Cuboid = (cuboidModel: CuboidModel) => {
           switch (selectedElement.type) {
             case ObjectType.SolarPanel:
               oldAzimuthRef.current = (selectedElement as SolarPanelModel).relativeAzimuth;
+              usePrimitiveStore.getState().setPrimitiveStore('oldParentId', id);
+              usePrimitiveStore.getState().setPrimitiveStore('oldFoundationId', id);
               break;
             case ObjectType.Polygon:
               oldVerticesRef.current = (selectedElement as PolygonModel).vertices.map((v) => ({ ...v }));
@@ -531,161 +532,203 @@ const Cuboid = (cuboidModel: CuboidModel) => {
 
     const face = intersects[0].face;
     if (!face) return;
+
+    const intersectionObjects = SharedUtil.getIntersectionObjects(e);
+
+    // return if it's not first intersected cuboid
+    if (intersectionObjects.length === 0 || intersectionObjects[0].eventObject.userData.id !== id) {
+      setShowIntersectionPlane(false);
+      grabRef.current = null;
+      return;
+    }
+
+    const selectedElement = useStore.getState().selectedElement;
+    const isSolarPanelChangingParent = !!(
+      selectedElement &&
+      !selectedElement.locked &&
+      selectedElement.type === ObjectType.SolarPanel &&
+      useStore.getState().moveHandleType
+    );
+    if (isSolarPanelChangingParent) {
+      grabRef.current = selectedElement;
+    }
+
     const onTopSurface = face.normal.z === 1;
     // if it's on top face, then handle operations on intersection plane.
     if (onTopSurface) {
       const showPlane = !!(
         grabRef.current?.type === ObjectType.SolarPanel &&
-        (useStore.getState().moveHandleType || useStore.getState().rotateHandleType) &&
+        (useStore.getState().moveHandleType ||
+          useStore.getState().rotateHandleType ||
+          useStore.getState().resizeHandleType) &&
         !grabRef.current.locked
       );
       setShowIntersectionPlane(showPlane);
       if (showPlane) {
         intersectionPlanePosition.set(0, 0, (grabRef.current as SolarPanelModel).poleHeight + lz / 2);
+        setupGridParams(new Vector3(0, 0, 1));
+        setShowGrid(true);
       }
       return;
     } else {
       setShowIntersectionPlane(false);
-      if (grabRef.current && cuboidModel) {
-        if (grabRef.current.parentId === id && grabRef.current.type && !grabRef.current.locked) {
-          const mouse = new Vector2(
-            (e.offsetX / domElement.clientWidth) * 2 - 1,
-            1 - (e.offsetY / domElement.clientHeight) * 2,
-          );
-          raycaster.setFromCamera(mouse, camera);
+      if (grabRef.current && cuboidModel && !grabRef.current.locked) {
+        const mouse = new Vector2(
+          (e.offsetX / domElement.clientWidth) * 2 - 1,
+          1 - (e.offsetY / domElement.clientHeight) * 2,
+        );
+        raycaster.setFromCamera(mouse, camera);
 
-          let p = intersects[0].point;
-          if (useStore.getState().moveHandleType) {
-            const n = face.normal;
-            setupGridParams(n);
-            p = Util.relativeCoordinates(p.x, p.y, p.z, cuboidModel);
-            if (grabRef.current.type === ObjectType.Polygon) {
-              const polygon = grabRef.current as PolygonModel;
-              if (useStore.getState().moveHandleType === MoveHandleType.Default) {
-                const centroid = Util.calculatePolygonCentroid(oldVerticesRef.current);
-                const n = new Vector3().fromArray(polygon.normal);
-                let dx: number, dy: number;
-                if (Util.isSame(n, UNIT_VECTOR_POS_X)) {
-                  // east face
-                  dx = -(centroid.x + p.z);
-                  dy = p.y - centroid.y;
-                } else if (Util.isSame(n, UNIT_VECTOR_NEG_X)) {
-                  // west face
-                  dx = p.z - centroid.x;
-                  dy = p.y - centroid.y;
-                } else if (Util.isSame(n, UNIT_VECTOR_POS_Y)) {
-                  // north face
-                  dx = p.x - centroid.x;
-                  dy = -(centroid.y + p.z);
-                } else if (Util.isSame(n, UNIT_VECTOR_NEG_Y)) {
-                  // south face
-                  dx = p.x - centroid.x;
-                  dy = p.z - centroid.y;
-                } else {
-                  // top face
-                  dx = p.x - centroid.x;
-                  dy = p.y - centroid.y;
-                }
-                const copy = oldVerticesRef.current.map((v) => ({ ...v }));
-                copy.forEach((v: Point2) => {
-                  v.x += dx;
-                  v.y += dy;
-                });
-                // update all the vertices at once with the DEEP COPY above
-                // do not update each vertex's position one by one (it is slower)
-                updatePolygonVerticesById(polygon.id, copy);
+        let p = intersects[0].point;
+        if (useStore.getState().moveHandleType) {
+          const n = face.normal;
+          setupGridParams(n);
+          p = Util.relativeCoordinates(p.x, p.y, p.z, cuboidModel);
+          if (grabRef.current.type === ObjectType.Polygon) {
+            const polygon = grabRef.current as PolygonModel;
+            if (useStore.getState().moveHandleType === MoveHandleType.Default) {
+              const centroid = Util.calculatePolygonCentroid(oldVerticesRef.current);
+              const n = new Vector3().fromArray(polygon.normal);
+              let dx: number, dy: number;
+              if (Util.isSame(n, UNIT_VECTOR_POS_X)) {
+                // east face
+                dx = -(centroid.x + p.z);
+                dy = p.y - centroid.y;
+              } else if (Util.isSame(n, UNIT_VECTOR_NEG_X)) {
+                // west face
+                dx = p.z - centroid.x;
+                dy = p.y - centroid.y;
+              } else if (Util.isSame(n, UNIT_VECTOR_POS_Y)) {
+                // north face
+                dx = p.x - centroid.x;
+                dy = -(centroid.y + p.z);
+              } else if (Util.isSame(n, UNIT_VECTOR_NEG_Y)) {
+                // south face
+                dx = p.x - centroid.x;
+                dy = p.z - centroid.y;
+              } else {
+                // top face
+                dx = p.x - centroid.x;
+                dy = p.y - centroid.y;
               }
-            } else {
-              setElementPosition(grabRef.current.id, p.x, p.y, p.z);
-              setElementNormal(grabRef.current.id, n.x, n.y, n.z);
+              const copy = oldVerticesRef.current.map((v) => ({ ...v }));
+              copy.forEach((v: Point2) => {
+                v.x += dx;
+                v.y += dy;
+              });
+              // update all the vertices at once with the DEEP COPY above
+              // do not update each vertex's position one by one (it is slower)
+              updatePolygonVerticesById(polygon.id, copy);
             }
-          } else if (useStore.getState().resizeHandleType) {
-            switch (grabRef.current.type) {
-              case ObjectType.SolarPanel:
-                const solarPanel = grabRef.current as SolarPanelModel;
-                const [unitX, unitY] = getSolarPanelUnitLength(solarPanel);
-                const resizeAnchor = useStore.getState().resizeAnchor;
-                const resizeHandleType = useStore.getState().resizeHandleType;
-
-                // z direction
-                if (resizeHandleType === ResizeHandleType.Lower || resizeHandleType === ResizeHandleType.Upper) {
-                  const ny = Math.max(1, Math.round(Math.abs(p.z - resizeAnchor.z) / unitY));
-                  const length = ny * unitY;
-                  const v = new Vector3(0, 0, p.z - resizeAnchor.z).normalize().multiplyScalar(length);
-                  const worldCenter = new Vector3().addVectors(resizeAnchor, v.clone().divideScalar(2));
-                  setCommonStore((state) => {
-                    const sp = state.elements.find((e) => e.id === solarPanel.id);
-                    if (!sp) return;
-                    sp.cz = (worldCenter.z - worldPositionRef.current.z) / lz;
-                    sp.ly = Math.abs(v.z);
-                  });
-                }
-                // XY direction
-                else if (resizeHandleType === ResizeHandleType.Left || resizeHandleType === ResizeHandleType.Right) {
-                  const diff = new Vector3().subVectors(p, resizeAnchor).setZ(0);
-                  const nx = Math.max(1, Math.round(diff.length() / unitX));
-                  const length = nx * unitX;
-                  const v = diff.clone().normalize().multiplyScalar(length);
-                  const worldCenter = new Vector3().addVectors(resizeAnchor, v.clone().divideScalar(2));
-                  const relativeCenter = new Vector3()
-                    .subVectors(worldCenter, worldPositionRef.current)
-                    .applyEuler(new Euler(0, 0, -worldRotationRef.current));
-                  setCommonStore((state) => {
-                    const sp = state.elements.find((e) => e.id === solarPanel.id);
-                    if (!sp) return;
-                    if (Math.abs(Math.abs(sp.normal[1]) - 1) < 0.01) {
-                      sp.cx = relativeCenter.x / lx;
-                    } else {
-                      sp.cy = relativeCenter.y / ly;
-                    }
-                    sp.lx = v.length();
-                  });
-                }
-                break;
-              case ObjectType.Polygon:
-                if (useStore.getState().resizeHandleType === ResizeHandleType.Default) {
-                  // first, reverse the rotation of p.x and p.y around the center of the cuboid
-                  let q = new Vector3(p.x - worldPositionRef.current.x, p.y - worldPositionRef.current.y, 0).applyEuler(
-                    new Euler(0, 0, -worldRotationRef.current, 'ZXY'),
-                  );
-                  // then do the vertex on each face in the de-rotated coordinate system
-                  const polygon = grabRef.current as PolygonModel;
-                  const n = new Vector3().fromArray(polygon.normal);
-                  let lx, ly;
-                  if (Util.isSame(n, UNIT_VECTOR_POS_X)) {
-                    // east face
-                    lx = cuboidModel.lz;
-                    ly = cuboidModel.ly;
-                    q.x = -p.z + worldPositionRef.current.z;
-                  } else if (Util.isSame(n, UNIT_VECTOR_NEG_X)) {
-                    // west face
-                    lx = cuboidModel.lz;
-                    ly = cuboidModel.ly;
-                    q.x = p.z - worldPositionRef.current.z;
-                  } else if (Util.isSame(n, UNIT_VECTOR_POS_Y)) {
-                    // north face
-                    lx = cuboidModel.lx;
-                    ly = cuboidModel.lz;
-                    q.y = -p.z + worldPositionRef.current.z;
-                  } else if (Util.isSame(n, UNIT_VECTOR_NEG_Y)) {
-                    // south face
-                    lx = cuboidModel.lx;
-                    ly = cuboidModel.lz;
-                    q.y = p.z - worldPositionRef.current.z;
-                  } else {
-                    // top face
-                    lx = cuboidModel.lx;
-                    ly = cuboidModel.ly;
+          } else {
+            setElementPosition(grabRef.current.id, p.x, p.y, p.z);
+            setElementNormal(grabRef.current.id, n.x, n.y, n.z);
+            // handle change parent
+            if (grabRef.current.parentId !== id) {
+              useStore.getState().set((state) => {
+                const sp = state.elements.find(
+                  (e) => e.id === grabRef.current?.id && e.type === ObjectType.SolarPanel,
+                ) as SolarPanelModel | undefined;
+                if (sp && (sp.parentId !== id || sp.foundationId !== id)) {
+                  sp.parentId = id;
+                  sp.foundationId = id;
+                  sp.parentType = ObjectType.Cuboid;
+                  if (state.selectedElement) {
+                    state.selectedElement.parentId = id;
+                    sp.color = state.selectedElement.color;
                   }
-                  q = useStore.getState().enableFineGrid ? Util.snapToFineGrid(q) : Util.snapToNormalGrid(q);
-                  q.x /= lx;
-                  q.y /= ly;
-                  updatePolygonVertexPositionById(polygon.id, polygon.selectedIndex, q.x, q.y);
                 }
-                break;
+              });
             }
           }
+        } else if (useStore.getState().resizeHandleType) {
+          switch (grabRef.current.type) {
+            case ObjectType.SolarPanel:
+              const solarPanel = grabRef.current as SolarPanelModel;
+              if (solarPanel.normal[2] === 1) break;
+              const [unitX, unitY] = getSolarPanelUnitLength(solarPanel);
+              const resizeAnchor = useStore.getState().resizeAnchor;
+              const resizeHandleType = useStore.getState().resizeHandleType;
+
+              // z direction
+              if (resizeHandleType === ResizeHandleType.Lower || resizeHandleType === ResizeHandleType.Upper) {
+                const ny = Math.max(1, Math.round(Math.abs(p.z - resizeAnchor.z) / unitY));
+                const length = ny * unitY;
+                const v = new Vector3(0, 0, p.z - resizeAnchor.z).normalize().multiplyScalar(length);
+                const worldCenter = new Vector3().addVectors(resizeAnchor, v.clone().divideScalar(2));
+                setCommonStore((state) => {
+                  const sp = state.elements.find((e) => e.id === solarPanel.id);
+                  if (!sp) return;
+                  sp.cz = (worldCenter.z - worldPositionRef.current.z) / lz;
+                  sp.ly = Math.abs(v.z);
+                });
+              }
+              // XY direction
+              else if (resizeHandleType === ResizeHandleType.Left || resizeHandleType === ResizeHandleType.Right) {
+                const diff = new Vector3().subVectors(p, resizeAnchor).setZ(0);
+                const nx = Math.max(1, Math.round(diff.length() / unitX));
+                const length = nx * unitX;
+                const v = diff.clone().normalize().multiplyScalar(length);
+                const worldCenter = new Vector3().addVectors(resizeAnchor, v.clone().divideScalar(2));
+                const relativeCenter = new Vector3()
+                  .subVectors(worldCenter, worldPositionRef.current)
+                  .applyEuler(new Euler(0, 0, -worldRotationRef.current));
+                setCommonStore((state) => {
+                  const sp = state.elements.find((e) => e.id === solarPanel.id);
+                  if (!sp) return;
+                  if (Math.abs(Math.abs(sp.normal[1]) - 1) < 0.01) {
+                    sp.cx = relativeCenter.x / lx;
+                  } else {
+                    sp.cy = relativeCenter.y / ly;
+                  }
+                  sp.lx = v.length();
+                });
+              }
+              break;
+            case ObjectType.Polygon:
+              if (useStore.getState().resizeHandleType === ResizeHandleType.Default) {
+                // first, reverse the rotation of p.x and p.y around the center of the cuboid
+                let q = new Vector3(p.x - worldPositionRef.current.x, p.y - worldPositionRef.current.y, 0).applyEuler(
+                  new Euler(0, 0, -worldRotationRef.current, 'ZXY'),
+                );
+                // then do the vertex on each face in the de-rotated coordinate system
+                const polygon = grabRef.current as PolygonModel;
+                const n = new Vector3().fromArray(polygon.normal);
+                let lx, ly;
+                if (Util.isSame(n, UNIT_VECTOR_POS_X)) {
+                  // east face
+                  lx = cuboidModel.lz;
+                  ly = cuboidModel.ly;
+                  q.x = -p.z + worldPositionRef.current.z;
+                } else if (Util.isSame(n, UNIT_VECTOR_NEG_X)) {
+                  // west face
+                  lx = cuboidModel.lz;
+                  ly = cuboidModel.ly;
+                  q.x = p.z - worldPositionRef.current.z;
+                } else if (Util.isSame(n, UNIT_VECTOR_POS_Y)) {
+                  // north face
+                  lx = cuboidModel.lx;
+                  ly = cuboidModel.lz;
+                  q.y = -p.z + worldPositionRef.current.z;
+                } else if (Util.isSame(n, UNIT_VECTOR_NEG_Y)) {
+                  // south face
+                  lx = cuboidModel.lx;
+                  ly = cuboidModel.lz;
+                  q.y = p.z - worldPositionRef.current.z;
+                } else {
+                  // top face
+                  lx = cuboidModel.lx;
+                  ly = cuboidModel.ly;
+                }
+                q = useStore.getState().enableFineGrid ? Util.snapToFineGrid(q) : Util.snapToNormalGrid(q);
+                q.x /= lx;
+                q.y /= ly;
+                updatePolygonVertexPositionById(polygon.id, polygon.selectedIndex, q.x, q.y);
+              }
+              break;
+          }
         }
+        setShowGrid(true);
       }
     }
   };
@@ -694,7 +737,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
     if (intersectPlaneRef.current && grabRef.current && cuboidModel) {
       if (grabRef.current.type !== ObjectType.SolarPanel) return;
       const solarPanel = grabRef.current as SolarPanelModel;
-      if (solarPanel.parentId !== id || solarPanel.locked) return;
+      if (solarPanel.locked) return;
       raycaster.setFromCamera(mouse, camera);
       const intersects = raycaster.intersectObjects([intersectPlaneRef.current]);
       if (intersects.length > 0) {
@@ -703,6 +746,23 @@ const Cuboid = (cuboidModel: CuboidModel) => {
           p = Util.relativeCoordinates(p.x, p.y, p.z - solarPanel.poleHeight, cuboidModel);
           setElementPosition(solarPanel.id, p.x, p.y, p.z);
           setElementNormal(grabRef.current.id, 0, 0, 1);
+          // handle change parent
+          if (grabRef.current.parentId !== id) {
+            useStore.getState().set((state) => {
+              const sp = state.elements.find(
+                (e) => e.id === grabRef.current?.id && e.type === ObjectType.SolarPanel,
+              ) as SolarPanelModel | undefined;
+              if (sp && (sp.parentId !== id || sp.foundationId !== id)) {
+                sp.parentId = id;
+                sp.foundationId = id;
+                sp.parentType = ObjectType.Cuboid;
+                if (state.selectedElement) {
+                  state.selectedElement.parentId = id;
+                  sp.color = state.selectedElement.color;
+                }
+              }
+            });
+          }
         } else if (
           useStore.getState().rotateHandleType &&
           useStore.getState().rotateHandleType !== RotateHandleType.Tilt
@@ -841,7 +901,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
   const handlePointerUp = () => {
     if (!grabRef.current) return;
     const elem = getElementById(grabRef.current.id);
-    if (!elem || elem.parentId !== id) return;
+    if (!elem) return;
     if (elem.type === ObjectType.Polygon) {
       if (useStore.getState().moveHandleType || useStore.getState().resizeHandleType) {
         newVerticesRef.current = (elem as PolygonModel).vertices.map((v) => ({ ...v }));
@@ -968,55 +1028,27 @@ const Cuboid = (cuboidModel: CuboidModel) => {
             accept = isSolarPanelNewPositionOk(elem as SolarPanelModel, elem.cx, elem.cy);
           }
           if (accept) {
-            const undoableMove = {
-              name: 'Move',
-              timestamp: Date.now(),
-              movedElementId: grabRef.current.id,
-              movedElementType: grabRef.current?.type,
-              oldCx: oldPositionRef.current.x,
-              oldCy: oldPositionRef.current.y,
-              oldCz: oldPositionRef.current.z,
-              oldNormal: oldNormalRef.current.clone(),
-              newCx: newPositionRef.current.x,
-              newCy: newPositionRef.current.y,
-              newCz: newPositionRef.current.z,
-              newNormal: newNormalRef.current.clone(),
-              undo: () => {
-                setElementPosition(
-                  undoableMove.movedElementId,
-                  undoableMove.oldCx,
-                  undoableMove.oldCy,
-                  undoableMove.oldCz,
-                );
-                if (undoableMove.oldNormal) {
-                  setElementNormal(
-                    undoableMove.movedElementId,
-                    undoableMove.oldNormal.x,
-                    undoableMove.oldNormal.y,
-                    undoableMove.oldNormal.z,
-                  );
-                }
-              },
-              redo: () => {
-                setElementPosition(
-                  undoableMove.movedElementId,
-                  undoableMove.newCx,
-                  undoableMove.newCy,
-                  undoableMove.newCz,
-                );
-                if (undoableMove.newNormal) {
-                  setElementNormal(
-                    undoableMove.movedElementId,
-                    undoableMove.newNormal.x,
-                    undoableMove.newNormal.y,
-                    undoableMove.newNormal.z,
-                  );
-                }
-              },
-            } as UndoableMove;
-            addUndoable(undoableMove);
+            SharedUtil.addUndoableMove();
           } else {
-            setElementPosition(elem.id, oldPositionRef.current.x, oldPositionRef.current.y, oldPositionRef.current.z);
+            setCommonStore((state) => {
+              const el = state.elements.find((e) => e.id === elem.id);
+              if (!el || !state.selectedElement) return;
+              const oldEl = state.selectedElement;
+              el.cx = oldEl.cx;
+              el.cy = oldEl.cy;
+              el.cz = oldEl.cz;
+              el.rotation = [...oldEl.rotation];
+              el.normal = [...oldEl.normal];
+              const oldParentId = usePrimitiveStore.getState().oldParentId;
+              const oldFoundationId = usePrimitiveStore.getState().oldFoundationId;
+              if (oldParentId) {
+                el.parentId = oldParentId;
+              }
+              if (oldFoundationId) {
+                el.foundationId = oldFoundationId;
+              }
+            });
+            // setElementPosition(elem.id, oldPositionRef.current.x, oldPositionRef.current.y, oldPositionRef.current.z);
           }
         }
       }
@@ -1045,22 +1077,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
 
   const handlePointerOut = () => {
     setHovered(false);
-    if (grabRef.current) {
-      switch (grabRef.current.type) {
-        case ObjectType.Human:
-        case ObjectType.Tree:
-        case ObjectType.Flower:
-          setShowGrid(false);
-          break;
-        case ObjectType.SolarPanel:
-          // Have to get the latest from the store (we may change this to ref in the future)
-          const sp = useStore.getState().getElementById(grabRef.current.id) as SolarPanelModel;
-          if (useStore.getState().moveHandleType && !isSolarPanelNewPositionOk(sp, sp.cx, sp.cy)) {
-            setElementPosition(sp.id, oldPositionRef.current.x, oldPositionRef.current.y, oldPositionRef.current.z);
-          }
-          break;
-      }
-    }
+    setShowGrid(false);
   };
 
   const handleContextMenu = (e: ThreeEvent<MouseEvent>) => {
@@ -1173,7 +1190,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
       <Box
         castShadow={shadowEnabled}
         receiveShadow={shadowEnabled}
-        userData={{ simulation: true, stand: true, stackable: stackable }}
+        userData={{ simulation: true, stand: true, stackable: stackable, id: id }}
         uuid={id}
         ref={baseRef}
         args={[lx, ly, lz]}
@@ -1193,7 +1210,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
       {showIntersectionPlane && (
         <Plane
           ref={intersectPlaneRef}
-          name={'Cuboid Intersection Plane'}
+          name={'Intersection Plane'}
           position={intersectionPlanePosition}
           args={[lx, ly]}
           visible={false}
@@ -1208,7 +1225,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
               hx={gridDimensionRef.current.x}
               hy={gridDimensionRef.current.y}
               hz={gridDimensionRef.current.z}
-              position={gridPositionRef.current}
+              position={gridPosition}
               rotation={gridRotationRef.current}
             />
           )}

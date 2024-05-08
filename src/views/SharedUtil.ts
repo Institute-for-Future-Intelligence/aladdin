@@ -10,9 +10,21 @@ import { Vector3 } from 'three';
 import { UndoableMove } from '../undo/UndoableMove';
 import { PolygonModel } from '../models/PolygonModel';
 import { Point2 } from '../models/Point2';
+import { ThreeEvent } from '@react-three/fiber';
 
 export class SharedUtil {
   static WALL_OUTSIDE_SURFACE_MESH_NAME = 'Wall Outside Surface';
+
+  static getIntersectionObjects(e: ThreeEvent<PointerEvent>) {
+    const intersections = e.intersections.filter(
+      (i) =>
+        i.eventObject.name.includes('Cuboid') ||
+        i.eventObject.name === 'Foundation' ||
+        i.eventObject.name.includes('Roof') ||
+        i.eventObject.name.includes(SharedUtil.WALL_OUTSIDE_SURFACE_MESH_NAME),
+    );
+    return intersections;
+  }
 
   static addUndoableMove() {
     const oldElement = useStore.getState().selectedElement;

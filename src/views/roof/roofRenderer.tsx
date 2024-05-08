@@ -411,8 +411,8 @@ export const handlePointerUp = (event: ThreeEvent<PointerEvent>, roofModel: Roof
 
   const element = useStore.getState().getElementById(selectedElement.id);
   if (element && useStore.getState().moveHandleType) {
-    const intersectionRoofs = event.intersections.filter((i) => i.eventObject.name.includes('Roof'));
-    const isFirstIntersectedRoof = intersectionRoofs[0].eventObject.userData.roofId === roofModel.id;
+    const intersections = SharedUtil.getIntersectionObjects(event);
+    const isFirstIntersectedRoof = intersections[0].eventObject.userData.roofId === roofModel.id;
     if (isFirstIntersectedRoof && element.foundationId) {
       const foundation = useStore.getState().getElementById(element.foundationId);
 
@@ -463,6 +463,8 @@ export const handlePointerMove = (event: ThreeEvent<PointerEvent>, id: string) =
       if (useStore.getState().moveHandleType) {
         const intersectionObjects = event.intersections.filter(
           (i) =>
+            i.eventObject.name === 'Foundation' ||
+            i.eventObject.name.includes('Cuboid') ||
             i.eventObject.name.includes('Roof') ||
             i.eventObject.name.includes(SharedUtil.WALL_OUTSIDE_SURFACE_MESH_NAME),
         );

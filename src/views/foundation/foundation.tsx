@@ -2195,6 +2195,7 @@ const Foundation = (foundationModel: FoundationModel) => {
       if (intersects.length === 0) return;
       let p = intersects[0].point;
       if (grabRef.current && grabRef.current.type && !grabRef.current.locked && intersects.length > 0) {
+        setShowGrid(true);
         switch (grabRef.current.type) {
           case ObjectType.Sensor:
           case ObjectType.Light:
@@ -3000,17 +3001,13 @@ const Foundation = (foundationModel: FoundationModel) => {
   const [showIntersectionPlane, setShowIntersectionPlane] = useState(false);
 
   const handleShowIntersectionPlane = (e: ThreeEvent<PointerEvent>) => {
-    const intersectionObjects = e.intersections.filter(
-      (i) =>
-        i.eventObject.name === 'Foundation' ||
-        i.eventObject.name.includes('Roof') ||
-        i.eventObject.name.includes(SharedUtil.WALL_OUTSIDE_SURFACE_MESH_NAME),
-    );
+    const intersectionObjects = SharedUtil.getIntersectionObjects(e);
 
     if (intersectionObjects.length == 0 || intersectionObjects[0].eventObject.userData.id !== id) {
       if (showIntersectionPlane) {
         setIntersectionPlane(false);
         grabRef.current = null;
+        setShowGrid(false);
       }
       return;
     }
@@ -3025,6 +3022,7 @@ const Foundation = (foundationModel: FoundationModel) => {
     ) {
       setIntersectionPlane(true, (selectedElement as SolarPanelModel).poleHeight);
       grabRef.current = selectedElement;
+      setShowGrid(true);
     }
   };
 
