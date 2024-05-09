@@ -36,14 +36,14 @@ const Container = styled.div`
 `;
 
 interface ColumnWrapperProps {
-  $project: string;
+  $projectView: boolean;
 }
 
 const ColumnWrapper = styled.div<ColumnWrapperProps>`
   background: #282c34;
   position: absolute;
   top: 0;
-  left: ${(p) => (p.$project === 'true' ? 'calc(3 * 100vw / 4 - 120px)' : 'calc(100vw / 2 - 120px)')};
+  left: ${(p) => (p.$projectView ? 'calc(3 * 100vw / 4 - 120px)' : 'calc(100vw / 2 - 120px)')};
   align-self: center;
   align-content: center;
   align-items: center;
@@ -112,7 +112,7 @@ const DesignInfoPanel = () => {
 
   return (
     <Container>
-      <ColumnWrapper $project={projectView.toString()}>
+      <ColumnWrapper $projectView={projectView}>
         <Space direction={'horizontal'} style={{ color: color, fontSize: '10px' }}>
           {solarPanelCount > 0 && (
             <>

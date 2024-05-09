@@ -92,13 +92,13 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const showProjectsFlag = usePrimitiveStore(Selector.showProjectsFlag);
   const updateProjectsFlag = usePrimitiveStore(Selector.updateProjectsFlag);
 
-  const [loading, setLoading] = useState(false);
-  const [updateFlag, setUpdateFlag] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [cloudFileArray, setCloudFileArray] = useState<any[]>([]);
   const [projectArray, setProjectArray] = useState<any[]>([]);
-  const [updateProjectArrayFlag, setUpdateProjectArrayFlag] = useState(false);
+  const [updateProjectArrayFlag, setUpdateProjectArrayFlag] = useState<boolean>(false);
   const [title, setTitle] = useState<string>(cloudFile ?? 'My Aladdin File');
-  const [titleDialogVisible, setTitleDialogVisible] = useState(false);
+  const [titleDialogVisible, setTitleDialogVisible] = useState<boolean>(false);
   const cloudFilesRef = useRef<CloudFileInfo[] | void>();
   const myProjectsRef = useRef<ProjectState[] | void>(); // store sorted projects
   const authorModelsRef = useRef<Map<string, ModelSite>>();
