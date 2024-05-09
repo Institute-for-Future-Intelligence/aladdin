@@ -34,13 +34,13 @@ const Container = styled.div`
 `;
 
 interface ColumnWrapperProps {
-  projectView: boolean;
+  $project: string;
 }
 
 const ColumnWrapper = styled.div<ColumnWrapperProps>`
   position: absolute;
   top: 0;
-  left: ${(p) => (p.projectView ? 'calc(100vw / 2)' : 'calc(100vw / 4)')};
+  left: ${(p) => (p.$project === 'true' ? 'calc(100vw / 2)' : 'calc(100vw / 4)')};
   align-self: center;
   align-content: center;
   align-items: center;
@@ -105,7 +105,7 @@ const SiteInfoPanel = ({ city }: SiteInfoPanelProps) => {
 
   return (
     <Container>
-      <ColumnWrapper projectView={projectView}>
+      <ColumnWrapper $project={projectView.toString()}>
         <Space direction={'horizontal'} style={{ color: color, fontSize: '10px' }}>
           <img
             title={i18n.t('word.Location', lang)}
