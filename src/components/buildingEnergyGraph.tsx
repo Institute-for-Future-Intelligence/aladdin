@@ -168,7 +168,7 @@ const BuildingEnergyGraph = ({
   }, [type, curveType, labels, buildingCount, buildingId, lineWidth, symbolCount, symbolSize, legendDataKey]);
 
   // @ts-ignore
-  const onMouseDown = (e) => {};
+  const onMouseDown = () => {};
 
   // @ts-ignore
   const onMouseEnterLegend = (o) => {
@@ -176,7 +176,7 @@ const BuildingEnergyGraph = ({
   };
 
   // @ts-ignore
-  const onMouseLeaveLegend = (o) => {
+  const onMouseLeaveLegend = () => {
     setLegendDataKey(null);
   };
 

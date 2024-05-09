@@ -1,28 +1,13 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
-import styled from 'styled-components';
-import { Dropdown } from 'antd';
-import ReactComponent from '../assets/menu.svg?react';
+import React, { useState } from 'react';
+import { BarsOutlined } from '@ant-design/icons';
+import { Popover } from 'antd';
 import i18n from '../i18n/i18n';
-import type { MenuProps } from 'antd';
 import { CheckboxMenuItem } from './contextMenu/menuItems';
 import { useLanguage } from 'src/views/hooks';
-
-const StyledMenuSVG = styled(ReactComponent)`
-  position: absolute;
-  top: 4px;
-  right: 30px;
-  height: 30px;
-  width: 30px;
-  transition: 0.5s;
-  fill: lightblue;
-
-  &:hover {
-    fill: darkgray;
-  }
-`;
 
 export interface BarGraphMenuProps {
   horizontalGrid: boolean;
@@ -38,6 +23,7 @@ const BarGraphMenu = ({
   changeVerticalGrid,
 }: BarGraphMenuProps) => {
   const lang = useLanguage();
+  const [hover, setHover] = useState<boolean>(false);
 
   const onShowHorizontalGridLines = () => {
     changeHorizontalGrid?.(!horizontalGrid);
@@ -47,29 +33,37 @@ const BarGraphMenu = ({
     changeVerticalGrid?.(!verticalGrid);
   };
 
-  const items: MenuProps['items'] = [
-    {
-      key: 'show-horizontal-grid-lines-checkbox',
-      label: (
-        <CheckboxMenuItem checked={horizontalGrid} onClick={onShowHorizontalGridLines}>
-          {i18n.t('menu.graph.ShowHorizontalGridLines', lang)}
-        </CheckboxMenuItem>
-      ),
-    },
-    {
-      key: 'show-vertical-grid-lines-checkbox',
-      label: (
-        <CheckboxMenuItem checked={verticalGrid} onClick={onShowVerticalGridLines}>
-          {i18n.t('menu.graph.ShowHorizontalGridLines', lang)}
-        </CheckboxMenuItem>
-      ),
-    },
-  ];
-
   return (
-    <Dropdown menu={{ items }} placement="bottomRight">
-      <StyledMenuSVG style={{ right: '32px' }} onClick={(e) => e.stopPropagation()} />
-    </Dropdown>
+    <Popover
+      content={
+        <div style={{ width: '200px' }}>
+          <CheckboxMenuItem checked={horizontalGrid} onClick={onShowHorizontalGridLines}>
+            {i18n.t('menu.graph.ShowHorizontalGridLines', lang)}
+          </CheckboxMenuItem>
+          <CheckboxMenuItem checked={verticalGrid} onClick={onShowVerticalGridLines}>
+            {i18n.t('menu.graph.ShowHorizontalGridLines', lang)}
+          </CheckboxMenuItem>
+        </div>
+      }
+    >
+      <BarsOutlined
+        style={{
+          position: 'absolute',
+          fontSize: '30px',
+          top: '4px',
+          right: '30px',
+          transition: '0.5s',
+          color: hover ? 'darkgray' : 'lightblue',
+          cursor: 'pointer',
+        }}
+        onMouseOver={() => {
+          setHover(true);
+        }}
+        onMouseOut={() => {
+          setHover(false);
+        }}
+      />
+    </Popover>
   );
 };
 

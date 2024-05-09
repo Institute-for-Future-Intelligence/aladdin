@@ -2,28 +2,12 @@
  * @Copyright 2023-2024. Institute for Future Intelligence, Inc.
  */
 
-import React from 'react';
-import styled from 'styled-components';
-import { Dropdown } from 'antd';
-import ReactComponent from '../assets/menu.svg?react';
+import React, { useState } from 'react';
+import { MoreOutlined } from '@ant-design/icons';
+import { Popover } from 'antd';
 import i18n from '../i18n/i18n';
 import { useLanguage } from 'src/views/hooks';
-import type { MenuProps } from 'antd';
 import { CheckboxMenuItem, SliderMenuItem } from './contextMenu/menuItems';
-
-const StyledMenuSVG = styled(ReactComponent)`
-  position: absolute;
-  top: 4px;
-  right: 30px;
-  height: 30px;
-  width: 30px;
-  transition: 0.5s;
-  fill: lightblue;
-
-  &:hover {
-    fill: darkgray;
-  }
-`;
 
 export interface ScatterPlotMenuProps {
   horizontalGrid: boolean;
@@ -43,6 +27,7 @@ const ScatterPlotMenu = ({
   changeSymbolSize,
 }: ScatterPlotMenuProps) => {
   const lang = useLanguage();
+  const [hover, setHover] = useState<boolean>(false);
 
   const onShowHorizontalGridLines = () => {
     changeHorizontalGrid?.(!horizontalGrid);
@@ -56,37 +41,40 @@ const ScatterPlotMenu = ({
     changeSymbolSize?.(size);
   };
 
-  const items: MenuProps['items'] = [
-    {
-      key: 'graph-symbol-size',
-      label: (
-        <SliderMenuItem min={1} max={8} value={symbolSize} onChange={onChangeSymbolSize}>
-          {i18n.t('menu.graph.SymbolSize', lang) + ':'}
-        </SliderMenuItem>
-      ),
-    },
-    {
-      key: 'show-horizontal-grid-lines-checkbox',
-      label: (
-        <CheckboxMenuItem checked={horizontalGrid} onClick={onShowHorizontalGridLines}>
-          {i18n.t('menu.graph.ShowHorizontalGridLines', lang)}
-        </CheckboxMenuItem>
-      ),
-    },
-    {
-      key: 'show-vertical-grid-lines-checkbox',
-      label: (
-        <CheckboxMenuItem checked={verticalGrid} onClick={onShowVerticalGridLines}>
-          {i18n.t('menu.graph.ShowHorizontalGridLines', lang)}
-        </CheckboxMenuItem>
-      ),
-    },
-  ];
-
   return (
-    <Dropdown menu={{ items }} placement="bottomRight">
-      <StyledMenuSVG style={{ top: '120px', right: '16px' }} onClick={(e) => e.stopPropagation()} />
-    </Dropdown>
+    <Popover
+      content={
+        <div style={{ width: '200px' }}>
+          <SliderMenuItem min={1} max={8} value={symbolSize} onChange={onChangeSymbolSize}>
+            {i18n.t('menu.graph.SymbolSize', lang) + ':'}
+          </SliderMenuItem>
+          <CheckboxMenuItem checked={horizontalGrid} onClick={onShowHorizontalGridLines}>
+            {i18n.t('menu.graph.ShowHorizontalGridLines', lang)}
+          </CheckboxMenuItem>
+          <CheckboxMenuItem checked={verticalGrid} onClick={onShowVerticalGridLines}>
+            {i18n.t('menu.graph.ShowHorizontalGridLines', lang)}
+          </CheckboxMenuItem>
+        </div>
+      }
+    >
+      <MoreOutlined
+        style={{
+          position: 'absolute',
+          fontSize: '20px',
+          top: '10px',
+          right: '10px',
+          transition: '0.5s',
+          color: hover ? 'black' : 'darkgray',
+          cursor: 'pointer',
+        }}
+        onMouseOver={() => {
+          setHover(true);
+        }}
+        onMouseOut={() => {
+          setHover(false);
+        }}
+      />
+    </Popover>
   );
 };
 
