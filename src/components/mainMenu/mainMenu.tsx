@@ -69,8 +69,8 @@ export interface MainMenuProps {
   canvas?: HTMLCanvasElement | null;
 }
 
-const TUTORIALS_MENU_KEY = 'tutorials-submenu';
-const EXAMPLES_MENU_KEY = 'examples-submenu';
+const TUTORIALSMENUKEY = 'tutorials-submenu';
+const EXAMPLESMENUKEY = 'examples-submenu';
 
 const MainMenu = ({ viewOnly, canvas }: MainMenuProps) => {
   const setCommonStore = useStore(Selector.set);
@@ -120,7 +120,7 @@ const MainMenu = ({ viewOnly, canvas }: MainMenuProps) => {
   }, []);
 
   const onClick: MenuProps['onClick'] = (e) => {
-    if (e.keyPath.find((s) => s === TUTORIALS_MENU_KEY || s === EXAMPLES_MENU_KEY)) {
+    if (e.keyPath.find((s) => s === TUTORIALSMENUKEY || s === EXAMPLESMENUKEY)) {
       loadFile(e.key);
     }
   };
@@ -272,14 +272,14 @@ const MainMenu = ({ viewOnly, canvas }: MainMenuProps) => {
 
   // tutorials menu
   menuItems.push({
-    key: TUTORIALS_MENU_KEY,
+    key: TUTORIALSMENUKEY,
     label: <MenuItem noPadding>{i18n.t('menu.tutorialsSubMenu', lang)}</MenuItem>,
     children: createTutorialsMenu(viewOnly),
   });
 
   // example menu
   menuItems.push({
-    key: EXAMPLES_MENU_KEY,
+    key: EXAMPLESMENUKEY,
     label: <MenuItem noPadding>{i18n.t('menu.examplesSubMenu', lang)}</MenuItem>,
     children: createExamplesMenu(),
   });
