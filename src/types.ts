@@ -15,6 +15,7 @@ import { FresnelReflectorModel } from './models/FresnelReflectorModel';
 import { HeliostatModel } from './models/HeliostatModel';
 import { ParabolicDishModel } from './models/ParabolicDishModel';
 import { ParabolicTroughModel } from './models/ParabolicTroughModel';
+import { Filter } from './Filter';
 
 // Extend makes these JSX elements (with the first character lower-cased)
 extend({ TextSprite });
@@ -133,6 +134,7 @@ export interface ProjectState {
   type: DesignProblem;
   designs: Design[] | null;
   ranges: Range[] | null;
+  filters: Filter[] | null;
   hiddenParameters: string[] | null;
   counter: number;
   dataColoring: DataColoring;

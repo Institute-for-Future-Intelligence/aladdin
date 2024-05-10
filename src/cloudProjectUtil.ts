@@ -33,6 +33,7 @@ export const fetchProject = async (userid: string, project: string, setProjectSt
           type: data.type,
           designs: data.designs,
           ranges: data.ranges,
+          filters: data.filters,
           hiddenParameters: data.hiddenParameters,
           counter: data.counter ?? 0,
           selectedProperty: data.selectedProperty,

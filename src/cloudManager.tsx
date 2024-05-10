@@ -242,6 +242,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           type: f.type,
           designs: f.designs,
           ranges: f.ranges ?? [],
+          filters: f.filters ?? [],
           hiddenParameters: f.hiddenParameters ?? ProjectUtil.getDefaultHiddenParameters(f.type),
           counter: f.counter,
           action: '',
@@ -740,6 +741,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
             type: data.type,
             designs: data.designs ?? [],
             ranges: data.ranges ?? [],
+            filters: data.filters ?? [],
             hiddenParameters: data.hiddenParameters ?? ProjectUtil.getDefaultHiddenParameters(data.type),
             counter: data.counter ?? 0,
           } as ProjectState);
@@ -823,6 +825,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
             state.projectState.counter = 0;
             state.projectState.designs = [];
             state.projectState.ranges = [];
+            state.projectState.filters = [];
             state.projectState.hiddenParameters = ProjectUtil.getDefaultHiddenParameters(state.projectState.type);
             state.designProjectType = null;
             state.projectView = false;
@@ -891,6 +894,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                             type: p.type,
                             designs: p.designs,
                             ranges: p.ranges ?? null,
+                            filters: p.filters ?? null,
                             hiddenParameters: p.hiddenParameters,
                             counter: p.counter,
                           } as ProjectState);
@@ -1480,6 +1484,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                 state.projectState.thumbnailWidth = 200;
                 state.projectState.designs = [];
                 state.projectState.ranges = [];
+                state.projectState.filters = [];
                 state.projectState.hiddenParameters = ProjectUtil.getDefaultHiddenParameters(state.projectState.type);
               });
             })
@@ -1574,6 +1579,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
                   thumbnailWidth,
                   designs: newDesigns,
                   ranges: useStore.getState().projectState.ranges ?? null,
+                  filters: useStore.getState().projectState.filters ?? null,
                   hiddenParameters: useStore.getState().projectState.hiddenParameters,
                 })
                 .then(() => {

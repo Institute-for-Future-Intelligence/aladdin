@@ -106,6 +106,7 @@ import { WindowModel } from 'src/models/WindowModel';
 import { ProjectUtil } from '../panels/ProjectUtil';
 import { StoreUtil } from './StoreUtil';
 import { isGroupable } from 'src/models/Groupable';
+import { Filter } from '../Filter';
 
 enableMapSet();
 
@@ -592,6 +593,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
             type: DesignProblem.SOLAR_PANEL_ARRAY,
             designs: new Array<Design>(),
             ranges: new Array<Range>(),
+            filters: new Array<Filter>(),
             hiddenParameters: ProjectUtil.getDefaultHiddenParameters(DesignProblem.SOLAR_PANEL_ARRAY),
             counter: 0,
             dataColoring: DataColoring.ALL,

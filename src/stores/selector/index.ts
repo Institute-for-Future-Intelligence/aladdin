@@ -537,7 +537,35 @@ export const setEnableFineGrid = (state: CommonStoreState) => state.setEnableFin
 
 export const showCloudFilePanel = (state: PrimitiveStoreState) => state.showCloudFilePanel;
 
-export const projectState = (state: CommonStoreState) => state.projectState;
+export const projectTitle = (state: CommonStoreState) => state.projectState.title;
+
+export const projectOwner = (state: CommonStoreState) => state.projectState.owner;
+
+export const projectDescription = (state: CommonStoreState) => state.projectState.description;
+
+export const projectDesigns = (state: CommonStoreState) => state.projectState.designs;
+
+export const projectType = (state: CommonStoreState) => state.projectState.type;
+
+export const projectSelectedProperty = (state: CommonStoreState) => state.projectState.selectedProperty;
+
+export const projectDataColoring = (state: CommonStoreState) => state.projectState.dataColoring;
+
+export const projectThumbnailWidth = (state: CommonStoreState) => state.projectState.thumbnailWidth;
+
+export const xAxisNameScatterPlot = (state: CommonStoreState) => state.projectState.xAxisNameScatterPlot;
+
+export const yAxisNameScatterPlot = (state: CommonStoreState) => state.projectState.yAxisNameScatterPlot;
+
+export const dotSizeScatterPlot = (state: CommonStoreState) => state.projectState.dotSizeScatterPlot;
+
+export const sortDescending = (state: CommonStoreState) => state.projectState.sortDescending;
+
+export const projectFilters = (state: CommonStoreState) => state.projectState.filters;
+
+export const projectRanges = (state: CommonStoreState) => state.projectState.ranges;
+
+export const hiddenParameters = (state: CommonStoreState) => state.projectState.hiddenParameters;
 
 export const projectView = (state: CommonStoreState) => state.projectView;
 
