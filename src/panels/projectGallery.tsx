@@ -349,6 +349,19 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
           d['selected'] = selectedDesign === design;
           d['hovered'] = hoveredDesign === design;
           d['invisible'] = design.invisible;
+          if (projectFilters) {
+            for (const f of projectFilters) {
+              if (f.type === FilterType.Between && f.upperBound !== undefined && f.lowerBound !== undefined) {
+                const v = d[f.variable];
+                if (typeof v === 'number') {
+                  if (v > f.upperBound || v < f.lowerBound) {
+                    d['excluded'] = true;
+                    break;
+                  }
+                }
+              }
+            }
+          }
           data.push(d);
         }
       }
@@ -362,8 +375,21 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
     economicsParams,
     hiddenParameters,
     projectDataColoring,
+    projectFilters,
     updateHiddenFlag,
   ]);
+
+  // must place this within useEffect to avoid "Cannot update a component while rendering a different component"
+  // https://stackoverflow.com/questions/62336340/cannot-update-a-component-while-rendering-a-different-component-warning
+  useEffect(() => {
+    setCommonStore((state) => {
+      if (state.projectState.designs) {
+        for (const [i, design] of state.projectState.designs.entries()) {
+          design.excluded = data[i].excluded;
+        }
+      }
+    });
+  }, [data]);
 
   const getMin = (variable: string, defaultValue: number) => {
     let min = defaultValue;
@@ -1329,7 +1355,6 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
               ? undefined
               : t('projectPanel.DoubleClickToMakeDescriptionEditable', lang)
           }
-          bordered={descriptionTextAreaEditableRef.current}
           readOnly={!descriptionTextAreaEditableRef.current}
           value={descriptionRef.current ?? undefined}
           onDoubleClick={() => {
@@ -1359,6 +1384,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
             paddingLeft: '10px',
             textAlign: 'left',
             resize: descriptionTextAreaEditableRef.current ? 'vertical' : 'none',
+            border: descriptionTextAreaEditableRef.current ? '1px solid gray' : 'none',
           }}
         />
       ),
@@ -1460,7 +1486,7 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
                       }
                       style={{
                         transition: '.5s ease',
-                        opacity: hoveredDesign === design ? 0.5 : 1,
+                        opacity: design.excluded ? 0.25 : hoveredDesign === design ? 0.5 : 1,
                         padding: '1px',
                         cursor: 'pointer',
                         borderRadius: selectedDesign === design ? '0' : '10px',

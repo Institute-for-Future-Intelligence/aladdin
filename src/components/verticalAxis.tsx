@@ -27,6 +27,7 @@ type VerticalAxisProps = {
   step: number;
   value?: number;
   filter?: Filter;
+  hover?: (i: number) => void;
 };
 
 const DEFAULT_TICK_LENGTH = 5;
@@ -45,6 +46,7 @@ const VerticalAxis = ({
   step,
   value,
   filter,
+  hover,
 }: VerticalAxisProps) => {
   const setCommonStore = useStore(Selector.set);
   const user = useStore(Selector.user);
@@ -357,9 +359,7 @@ const VerticalAxis = ({
                 if (filter) {
                   filter.lowerBound = values[0];
                   filter.upperBound = values[1];
-                  usePrimitiveStore.getState().set((state) => {
-                    // state.hoveredMolecule = null;
-                  });
+                  if (hover) hover(-1);
                   setCommonStore((state) => {
                     if (state.projectState.filters) {
                       let index = -1;
@@ -385,12 +385,6 @@ const VerticalAxis = ({
                         } as Filter;
                         state.projectState.filters.push(f);
                       }
-                      // for (const m of state.projectState.molecules) {
-                      //   const p = state.molecularPropertiesMap.get(m.name);
-                      //   if (p) {
-                      //     m.excluded = ProjectUtil.isExcluded(state.projectState.filters, p);
-                      //   }
-                      // }
                     }
                   });
                   setUpdateFlag(!updateFlag);

@@ -2,10 +2,10 @@
  * @Copyright 2023-2024. Institute for Future Intelligence, Inc.
  */
 
+import React, { useMemo } from 'react';
 import * as d3Scale from 'd3-scale';
 import * as d3Shape from 'd3-shape';
 import { DatumEntry } from '../types';
-import React from 'react';
 import VerticalAxis from './verticalAxis';
 import { Filter } from '../Filter';
 
@@ -41,7 +41,7 @@ type ParallelCoordinatesProps = {
   units: string[];
   digits: number[];
   tickIntegers: boolean[];
-  hover: Function;
+  hover: (i: number) => void;
   hoveredIndex: number;
   selectedIndex: number;
 };
@@ -90,36 +90,40 @@ const ParallelCoordinates = ({
   // Compute lines
   const lineGenerator = d3Shape.line();
 
-  const allLines = data.map((e, i) => {
-    if (e.invisible) return null;
-    const allCoordinates = variables.map((variable) => {
-      const yScale = yScales[variable];
-      // I don't understand the type of scalePoint. IMO x cannot be undefined since I'm passing it something of type Variable.
-      const x = xScale(variable) ?? 0;
-      const y = yScale(e[variable] as number);
-      return [x, y] as [number, number];
-    });
+  const allLines = useMemo(
+    () =>
+      data.map((e, i) => {
+        if (e.invisible) return null;
+        const allCoordinates = variables.map((variable) => {
+          const yScale = yScales[variable];
+          // I don't understand the type of scalePoint. IMO x cannot be undefined since I'm passing it something of type Variable.
+          const x = xScale(variable) ?? 0;
+          const y = yScale(e[variable] as number);
+          return [x, y] as [number, number];
+        });
 
-    const d = lineGenerator(allCoordinates);
+        const d = lineGenerator(allCoordinates);
 
-    if (!d) {
-      return undefined;
-    }
+        if (!d) {
+          return undefined;
+        }
 
-    return (
-      <path
-        onMouseOver={() => {
-          hover(i);
-        }}
-        key={i}
-        d={d}
-        stroke={e.hovered ? 'red' : colorScale(e.group as string)}
-        fill="none"
-        strokeWidth={e.selected ? 3 : 1}
-        strokeDasharray={e.hovered ? '3,3' : 'none'}
-      />
-    );
-  });
+        return (
+          <path
+            onMouseOver={() => {
+              hover(i);
+            }}
+            key={i}
+            d={d}
+            stroke={e.hovered ? 'red' : colorScale(e.group as string)}
+            fill="none"
+            strokeWidth={e.excluded ? 0.25 : e.selected ? 3 : 1}
+            strokeDasharray={e.hovered ? '3,3' : 'none'}
+          />
+        );
+      }),
+    [data],
+  );
 
   // Compute Axes
   const allAxes = variables.map((variable, i) => {
@@ -146,6 +150,7 @@ const ParallelCoordinates = ({
               : undefined
           }
           filter={filters[i]}
+          hover={hover}
         />
       </g>
     );
