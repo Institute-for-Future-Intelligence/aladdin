@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { DoubleSide, Vector3 } from 'three';
 import { useLoader } from '@react-three/fiber';
 import { Ring } from '@react-three/drei';
+//@ts-expect-error ignore
 import helvetikerFont from '../fonts/helvetiker_regular.typeface.fnt';
 import { Util } from '../Util';
 import { useStore } from '../stores/common';

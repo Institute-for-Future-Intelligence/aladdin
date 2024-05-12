@@ -8,6 +8,7 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { useLoader } from '@react-three/fiber';
 import { FontLoader, TextGeometryParameters } from 'three/examples/jsm/Addons';
+//@ts-expect-error ignore
 import helvetikerFont from '../fonts/helvetiker_regular.typeface.fnt';
 
 export interface AxesProps {

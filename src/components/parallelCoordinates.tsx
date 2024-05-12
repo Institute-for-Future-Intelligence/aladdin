@@ -70,22 +70,28 @@ const ParallelCoordinates = ({
   const boundsWidth = width - MARGIN.right - MARGIN.left;
   const boundsHeight = height - MARGIN.top - MARGIN.bottom;
 
-  const allGroups = [...new Set(data.map((d) => d.group as string))];
+  const allGroups = useMemo(() => [...new Set(data.map((d) => d.group as string))], [data]);
 
   // Compute a xScale: spread all Y axis along the chart width
-  const xScale = d3Scale.scalePoint<string>().range([0, boundsWidth]).domain(variables).padding(0);
+  const xScale = useMemo(
+    () => d3Scale.scalePoint<string>().range([0, boundsWidth]).domain(variables).padding(0),
+    [variables, boundsWidth],
+  );
 
   // Compute the yScales: 1 scale per variable
-  const yScales: { [name: string]: YScale } = {};
-  variables.forEach((variable, index) => {
-    yScales[variable] = d3Scale
-      .scaleLinear()
-      .range([boundsHeight, 0])
-      .domain([minima[index] ?? 0, maxima[index] ?? 1]);
-  });
+  const yScales: { [name: string]: YScale } = useMemo(() => {
+    const tmp: { [name: string]: YScale } = {};
+    variables.forEach((variable, index) => {
+      tmp[variable] = d3Scale
+        .scaleLinear()
+        .range([boundsHeight, 0])
+        .domain([minima[index] ?? 0, maxima[index] ?? 1]);
+    });
+    return tmp;
+  }, [variables, minima, maxima, boundsHeight]);
 
   // Color Scale
-  const colorScale = d3Scale.scaleOrdinal<string>().domain(allGroups).range(COLORS);
+  const colorScale = useMemo(() => d3Scale.scaleOrdinal<string>().domain(allGroups).range(COLORS), [allGroups, COLORS]);
 
   // Compute lines
   const lineGenerator = d3Shape.line();
@@ -103,10 +109,7 @@ const ParallelCoordinates = ({
         });
 
         const d = lineGenerator(allCoordinates);
-
-        if (!d) {
-          return undefined;
-        }
+        if (!d) return undefined;
 
         return (
           <path
@@ -122,39 +125,43 @@ const ParallelCoordinates = ({
           />
         );
       }),
-    [data],
+    [data, variables, xScale, yScales, colorScale],
   );
 
   // Compute Axes
-  const allAxes = variables.map((variable, i) => {
-    const yScale = yScales[variable];
-    return (
-      <g key={i} transform={'translate(' + xScale(variable) + ',0)'}>
-        <VerticalAxis
-          yScale={yScale}
-          tickLength={40}
-          tickIntegers={tickIntegers[i]}
-          type={types[i] ?? 'number'}
-          variable={variables[i]}
-          name={titles[i]}
-          unit={units[i]}
-          digits={digits[i]}
-          min={minima[i]}
-          max={maxima[i]}
-          step={steps[i]}
-          value={
-            hoveredIndex >= 0 && !data[hoveredIndex].invisible
-              ? (data[hoveredIndex][variable] as number)
-              : selectedIndex >= 0 && !data[selectedIndex].invisible
-              ? (data[selectedIndex][variable] as number)
-              : undefined
-          }
-          filter={filters[i]}
-          hover={hover}
-        />
-      </g>
-    );
-  });
+  const allAxes = useMemo(
+    () =>
+      variables.map((variable, i) => {
+        const yScale = yScales[variable];
+        return (
+          <g key={i} transform={'translate(' + xScale(variable) + ',0)'}>
+            <VerticalAxis
+              yScale={yScale}
+              tickLength={40}
+              tickIntegers={tickIntegers[i]}
+              type={types[i] ?? 'number'}
+              variable={variables[i]}
+              name={titles[i]}
+              unit={units[i]}
+              digits={digits[i]}
+              min={minima[i]}
+              max={maxima[i]}
+              step={steps[i]}
+              value={
+                hoveredIndex >= 0 && !data[hoveredIndex].invisible
+                  ? (data[hoveredIndex][variable] as number)
+                  : selectedIndex >= 0 && !data[selectedIndex].invisible
+                  ? (data[selectedIndex][variable] as number)
+                  : undefined
+              }
+              filter={filters[i]}
+              hover={hover}
+            />
+          </g>
+        );
+      }),
+    [variables, xScale, yScales, tickIntegers, types, titles, units, digits, minima, maxima, steps, selectedIndex],
+  );
 
   return (
     <svg

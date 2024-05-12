@@ -6,6 +6,7 @@ import React, { useMemo } from 'react';
 import { Euler } from 'three';
 import { useLoader } from '@react-three/fiber';
 import { Line } from '@react-three/drei';
+//@ts-expect-error ignore
 import helvetikerFont from '../fonts/helvetiker_regular.typeface.fnt';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';

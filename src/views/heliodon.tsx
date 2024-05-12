@@ -28,6 +28,7 @@ import { Line, Plane as DreiPlane, useTexture } from '@react-three/drei';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { useLoader } from '@react-three/fiber';
+//@ts-expect-error ignore
 import helvetikerFont from '../fonts/helvetiker_regular.typeface.fnt';
 import { HALF_PI, TWO_PI, UNIT_VECTOR_POS_Y, UNIT_VECTOR_POS_Z, ZERO_TOLERANCE } from '../constants';
 

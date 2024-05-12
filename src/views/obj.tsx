@@ -7,7 +7,9 @@ import { useLoader } from '@react-three/fiber';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
 import { Group, Mesh } from 'three';
+//@ts-expect-error ignore
 import sampleMtl from '../assets/house.mtl';
+//@ts-expect-error ignore
 import sampleObj from '../assets/house.obj';
 
 export interface ObjProps {
