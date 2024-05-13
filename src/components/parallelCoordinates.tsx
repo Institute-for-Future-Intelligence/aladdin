@@ -160,7 +160,22 @@ const ParallelCoordinates = ({
           </g>
         );
       }),
-    [variables, xScale, yScales, tickIntegers, types, titles, units, digits, minima, maxima, steps, selectedIndex],
+    [
+      variables,
+      data,
+      xScale,
+      yScales,
+      tickIntegers,
+      types,
+      titles,
+      units,
+      digits,
+      minima,
+      maxima,
+      steps,
+      selectedIndex,
+      hoveredIndex,
+    ],
   );
 
   return (
