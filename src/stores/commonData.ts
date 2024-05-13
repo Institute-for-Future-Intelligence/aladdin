@@ -185,7 +185,7 @@ export const useDataStore = createWithEqualityFn<DataStoreState>()((set, get) =>
       let sum = 0;
       for (const datum of this.dailyPvYield) {
         for (const prop in datum) {
-          if (datum.hasOwnProperty(prop)) {
+          if (Object.hasOwn(datum, prop)) {
             if (prop !== 'Hour') {
               sum += datum[prop] as number;
             }
@@ -218,7 +218,7 @@ export const useDataStore = createWithEqualityFn<DataStoreState>()((set, get) =>
       let sum = 0;
       for (const datum of this.yearlyPvYield) {
         for (const prop in datum) {
-          if (datum.hasOwnProperty(prop)) {
+          if (Object.hasOwn(datum, prop)) {
             if (prop !== 'Month') {
               sum += datum[prop] as number;
             }
@@ -260,7 +260,7 @@ export const useDataStore = createWithEqualityFn<DataStoreState>()((set, get) =>
       let sum = 0;
       for (const datum of this.dailyParabolicDishYield) {
         for (const prop in datum) {
-          if (datum.hasOwnProperty(prop)) {
+          if (Object.hasOwn(datum, prop)) {
             if (prop !== 'Hour') {
               sum += datum[prop] as number;
             }
@@ -277,7 +277,7 @@ export const useDataStore = createWithEqualityFn<DataStoreState>()((set, get) =>
       let sum = 0;
       for (const datum of this.yearlyParabolicDishYield) {
         for (const prop in datum) {
-          if (datum.hasOwnProperty(prop)) {
+          if (Object.hasOwn(datum, prop)) {
             if (prop !== 'Month') {
               sum += datum[prop] as number;
             }
@@ -299,7 +299,7 @@ export const useDataStore = createWithEqualityFn<DataStoreState>()((set, get) =>
       let sum = 0;
       for (const datum of this.dailyParabolicTroughYield) {
         for (const prop in datum) {
-          if (datum.hasOwnProperty(prop)) {
+          if (Object.hasOwn(datum, prop)) {
             if (prop !== 'Hour') {
               sum += datum[prop] as number;
             }
@@ -316,7 +316,7 @@ export const useDataStore = createWithEqualityFn<DataStoreState>()((set, get) =>
       let sum = 0;
       for (const datum of this.yearlyParabolicTroughYield) {
         for (const prop in datum) {
-          if (datum.hasOwnProperty(prop)) {
+          if (Object.hasOwn(datum, prop)) {
             if (prop !== 'Month') {
               sum += datum[prop] as number;
             }
@@ -338,7 +338,7 @@ export const useDataStore = createWithEqualityFn<DataStoreState>()((set, get) =>
       let sum = 0;
       for (const datum of this.dailyFresnelReflectorYield) {
         for (const prop in datum) {
-          if (datum.hasOwnProperty(prop)) {
+          if (Object.hasOwn(datum, prop)) {
             if (prop !== 'Hour') {
               sum += datum[prop] as number;
             }
@@ -355,7 +355,7 @@ export const useDataStore = createWithEqualityFn<DataStoreState>()((set, get) =>
       let sum = 0;
       for (const datum of this.yearlyFresnelReflectorYield) {
         for (const prop in datum) {
-          if (datum.hasOwnProperty(prop)) {
+          if (Object.hasOwn(datum, prop)) {
             if (prop !== 'Month') {
               sum += datum[prop] as number;
             }
@@ -377,7 +377,7 @@ export const useDataStore = createWithEqualityFn<DataStoreState>()((set, get) =>
       let sum = 0;
       for (const datum of this.dailyHeliostatYield) {
         for (const prop in datum) {
-          if (datum.hasOwnProperty(prop)) {
+          if (Object.hasOwn(datum, prop)) {
             if (prop !== 'Hour') {
               sum += datum[prop] as number;
             }
@@ -394,7 +394,7 @@ export const useDataStore = createWithEqualityFn<DataStoreState>()((set, get) =>
       let sum = 0;
       for (const datum of this.yearlyHeliostatYield) {
         for (const prop in datum) {
-          if (datum.hasOwnProperty(prop)) {
+          if (Object.hasOwn(datum, prop)) {
             if (prop !== 'Month') {
               sum += datum[prop] as number;
             }
@@ -420,7 +420,7 @@ export const useDataStore = createWithEqualityFn<DataStoreState>()((set, get) =>
       let sum = 0;
       for (const datum of this.dailyUpdraftTowerYield) {
         for (const prop in datum) {
-          if (datum.hasOwnProperty(prop)) {
+          if (Object.hasOwn(datum, prop)) {
             if (prop !== 'Hour') {
               sum += datum[prop] as number;
             }
@@ -437,7 +437,7 @@ export const useDataStore = createWithEqualityFn<DataStoreState>()((set, get) =>
       let sum = 0;
       for (const datum of this.yearlyUpdraftTowerYield) {
         for (const prop in datum) {
-          if (datum.hasOwnProperty(prop)) {
+          if (Object.hasOwn(datum, prop)) {
             if (prop !== 'Month') {
               sum += datum[prop] as number;
             }

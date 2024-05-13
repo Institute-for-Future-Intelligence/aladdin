@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React from 'react';
@@ -8,7 +8,7 @@ import i18n from './i18n/i18n';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 
-const AcceptCookie = () => {
+const AcceptCookie = React.memo(() => {
   const language = useStore(Selector.language);
   const lang = { lng: language };
   return (
@@ -23,6 +23,6 @@ const AcceptCookie = () => {
       {i18n.t('cookie.Statement', lang)}
     </CookieConsent>
   );
-};
+});
 
 export default AcceptCookie;

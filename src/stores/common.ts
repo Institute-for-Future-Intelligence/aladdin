@@ -160,7 +160,7 @@ export interface CommonStoreState {
   revertApply: () => void;
 
   importContent: (input: any, title?: string) => void;
-  exportContent: () => {};
+  exportContent: () => object;
   clearContent: () => void;
   createEmptyFile: () => void;
   undoManager: UndoManager;
@@ -2475,7 +2475,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                   state.elements.push(flower);
                   break;
                 }
-                case ObjectType.Polygon:
+                case ObjectType.Polygon: {
                   const polygonParentModel = parent as ElementModel;
                   const polygonRelativeCoordinates = Util.relativeCoordinates(p.x, p.y, p.z, polygonParentModel);
                   const polygon = ElementModelFactory.makePolygon(
@@ -2490,7 +2490,8 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                   model = polygon;
                   state.elements.push(polygon);
                   break;
-                case ObjectType.Sensor:
+                }
+                case ObjectType.Sensor: {
                   const sensorParentModel = parent as ElementModel;
                   const sensorRelativeCoordinates = Util.relativeCoordinates(p.x, p.y, p.z, sensorParentModel);
                   const sensor = ElementModelFactory.makeSensor(
@@ -2504,7 +2505,8 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                   model = sensor;
                   state.elements.push(sensor);
                   break;
-                case ObjectType.Light:
+                }
+                case ObjectType.Light: {
                   const lightParentModel = parent as ElementModel;
                   const lightRelativeCoordinates = Util.relativeCoordinates(p.x, p.y, p.z, lightParentModel);
                   const light = ElementModelFactory.makeLight(
@@ -2522,7 +2524,8 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                   model = light;
                   state.elements.push(light);
                   break;
-                case ObjectType.SolarPanel:
+                }
+                case ObjectType.SolarPanel: {
                   const solarPanelParentModel = parent as ElementModel;
                   const solarPanelRelativeCoordinates = Util.relativeCoordinates(p.x, p.y, p.z, solarPanelParentModel);
                   const solarPanel = ElementModelFactory.makeSolarPanel(
@@ -2543,7 +2546,8 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                   model = solarPanel;
                   state.elements.push(solarPanel);
                   break;
-                case ObjectType.ParabolicTrough:
+                }
+                case ObjectType.ParabolicTrough: {
                   const parabolicTroughParentModel = parent as ElementModel;
                   const parabolicTroughRelativeCoordinates = Util.relativeCoordinates(
                     p.x,
@@ -2570,7 +2574,8 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                   model = parabolicTrough;
                   state.elements.push(parabolicTrough);
                   break;
-                case ObjectType.ParabolicDish:
+                }
+                case ObjectType.ParabolicDish: {
                   const parabolicDishParentModel = parent as ElementModel;
                   const parabolicDishRelativeCoordinates = Util.relativeCoordinates(
                     p.x,
@@ -2598,7 +2603,8 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                   model = parabolicDish;
                   state.elements.push(parabolicDish);
                   break;
-                case ObjectType.FresnelReflector:
+                }
+                case ObjectType.FresnelReflector: {
                   const fresnelReflectorParentModel = parent as ElementModel;
                   const fresnelReflectorRelativeCoordinates = Util.relativeCoordinates(
                     p.x,
@@ -2622,7 +2628,8 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                   model = fresnelReflector;
                   state.elements.push(fresnelReflector);
                   break;
-                case ObjectType.Heliostat:
+                }
+                case ObjectType.Heliostat: {
                   const heliostatParentModel = parent as ElementModel;
                   const heliostatRelativeCoordinates = Util.relativeCoordinates(p.x, p.y, p.z, heliostatParentModel);
                   const heliostat = ElementModelFactory.makeHeliostat(
@@ -2641,7 +2648,8 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                   model = heliostat;
                   state.elements.push(heliostat);
                   break;
-                case ObjectType.WindTurbine:
+                }
+                case ObjectType.WindTurbine: {
                   const windTurbineParentModel = parent as ElementModel;
                   const windTurbineRelativeCoordinates = Util.relativeCoordinates(p.x, p.y, 0, windTurbineParentModel);
                   const windTurbine = ElementModelFactory.makeWindTurbine(
@@ -2668,7 +2676,8 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                   model = windTurbine;
                   state.elements.push(windTurbine);
                   break;
-                case ObjectType.Foundation:
+                }
+                case ObjectType.Foundation: {
                   const foundation = ElementModelFactory.makeFoundation(
                     p.x,
                     p.y,
@@ -2679,7 +2688,8 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                   model = foundation;
                   state.elements.push(foundation);
                   break;
-                case ObjectType.Cuboid:
+                }
+                case ObjectType.Cuboid: {
                   const cuboid = ElementModelFactory.makeCuboid(
                     p.x,
                     p.y,
@@ -2690,7 +2700,8 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                   model = cuboid;
                   state.elements.push(cuboid);
                   break;
-                case ObjectType.Wall:
+                }
+                case ObjectType.Wall: {
                   const wallParentModel = parent as ElementModel;
                   const relativePos = Util.wallRelativePosition(new Vector3(p.x, p.y), wallParentModel);
                   const wall = ElementModelFactory.makeWall(
@@ -2704,6 +2715,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                   state.selectedElement = wall;
                   model = wall;
                   break;
+                }
               }
               if (model) {
                 state.selectedElementIdSet.clear();
@@ -3093,13 +3105,14 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
               }
               if (excludeLocked && e.locked) continue;
               switch (e.type) {
-                case ObjectType.Foundation:
+                case ObjectType.Foundation: {
                   const f = e as FoundationModel;
                   if (f.solarStructure === SolarStructure.UpdraftTower) {
                     counter.solarUpdraftTowerCount++;
                   }
                   counter.foundationCount++;
                   break;
+                }
                 case ObjectType.Cuboid:
                   counter.cuboidCount++;
                   break;
@@ -3134,7 +3147,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                     counter.outsideLightCount++;
                   }
                   break;
-                case ObjectType.SolarPanel:
+                case ObjectType.SolarPanel: {
                   counter.solarPanelCount++;
                   const sp = e as SolarPanelModel;
                   const pvModel = get().getPvModule(sp.pvModelName);
@@ -3142,6 +3155,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                     counter.solarPanelModuleCount += Util.countSolarPanelsOnRack(sp, pvModel);
                   }
                   break;
+                }
                 case ObjectType.ParabolicDish:
                   counter.parabolicDishCount++;
                   break;
@@ -3175,13 +3189,14 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
               }
               if (includingLocked ? idOk : !e.locked && idOk) {
                 switch (e.type) {
-                  case ObjectType.Foundation:
+                  case ObjectType.Foundation: {
                     const f = e as FoundationModel;
                     if (f.solarStructure === SolarStructure.UpdraftTower) {
                       counter.solarUpdraftTowerCount++;
                     }
                     counter.foundationCount++;
                     break;
+                  }
                   case ObjectType.Cuboid:
                     counter.cuboidCount++;
                     break;
@@ -3221,7 +3236,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                     }
                     if (e.locked) counter.lockedLightCount++;
                     break;
-                  case ObjectType.SolarPanel:
+                  case ObjectType.SolarPanel: {
                     counter.solarPanelCount++;
                     if (e.locked) counter.lockedSolarPanelCount++;
                     const sp = e as SolarPanelModel;
@@ -3230,6 +3245,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                       counter.solarPanelModuleCount += Util.countSolarPanelsOnRack(sp, pvModel);
                     }
                     break;
+                  }
                   case ObjectType.ParabolicDish:
                     counter.parabolicDishCount++;
                     break;
@@ -3596,11 +3612,12 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                       if (newParent?.type === ObjectType.Wall) {
                         if (newParent) {
                           switch (Util.checkElementOnWallState(e, newParent)) {
-                            case ElementState.Valid:
+                            case ElementState.Valid: {
                               const angle = (newParent as WallModel).relativeAngle - HALF_PI;
                               e.normal = [Math.cos(angle), Math.sin(angle), 0];
                               approved = true;
                               break;
+                            }
                             case ElementState.OverLap:
                               showError(i18n.t('message.CannotPasteBecauseOfOverlap', lang));
                               break;
@@ -4106,7 +4123,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                         }
                       }
                       break;
-                    case ObjectType.Polygon:
+                    case ObjectType.Polygon: {
                       const polygon = e as PolygonModel;
                       for (const v of polygon.vertices) {
                         v.x += 0.1;
@@ -4116,6 +4133,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                       state.elementsToPaste = [polygon];
                       approved = true;
                       break;
+                    }
                     case ObjectType.Cuboid:
                       e.cx += e.lx;
                       if (state.elementsToPaste.length === 1) {
@@ -4287,7 +4305,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                       }
                       approved = true;
                       break;
-                    case ObjectType.Wall:
+                    case ObjectType.Wall: {
                       const w = e as WallModel;
                       const step = new Vector3(1, -1, 0).applyEuler(new Euler(0, 0, w.relativeAngle));
                       e.cx += step.x;
@@ -4342,6 +4360,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                       state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
                       approved = true;
                       break;
+                    }
                   }
                   if (state.elementsToPaste.length === 1 && approved) {
                     pastedElements.push(e);
@@ -4515,7 +4534,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
             let distance: number;
             const wd = get().weatherData;
             for (const name in wd) {
-              if (wd.hasOwnProperty(name)) {
+              if (Object.hasOwn(wd, name)) {
                 distance = Util.getDistance(lng, lat, wd[name].longitude, wd[name].latitude);
                 if (distance < min) {
                   min = distance;

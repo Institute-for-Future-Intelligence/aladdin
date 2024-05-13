@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef } from 'react';
@@ -11,7 +11,7 @@ import dayjs from 'dayjs';
 import { ClassID, FirebaseName, SchoolID } from './types';
 import { showWarning } from './helpers';
 
-const ActionLogger = () => {
+const ActionLogger = React.memo(() => {
   const actionInfo = useStore(Selector.actionInfo);
   const currentUndoable = useStore(Selector.currentUndoable);
   const user = useStore(Selector.user);
@@ -91,6 +91,6 @@ const ActionLogger = () => {
   }, [actionInfo, user.uid, classID, schoolID, cloudFile]);
 
   return <></>;
-};
+});
 
-export default React.memo(ActionLogger);
+export default ActionLogger;

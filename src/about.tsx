@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React from 'react';
@@ -24,7 +24,7 @@ const Container = styled.div`
   box-shadow: 3px 3px 3px 3px black;
 `;
 
-const About = ({ close }: { close: () => void }) => {
+const About = React.memo(({ close }: { close: () => void }) => {
   const language = useStore(Selector.language);
   return (
     <Container>
@@ -45,6 +45,6 @@ const About = ({ close }: { close: () => void }) => {
       </div>
     </Container>
   );
-};
+});
 
-export default React.memo(About);
+export default About;
