@@ -46,13 +46,13 @@ import ProjectGallery from './panels/projectGallery';
 import GroupMasterWrapper from './components/groupMaster';
 import SplitPane from './components/splitPane';
 import { useRefStore } from './stores/commonRef';
-import { PerspectiveCamera, Vector2, Vector3 } from 'three';
+import { PerspectiveCamera, Vector2 } from 'three';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
 }
 
-const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
+const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
   const user = useStore(Selector.user);
   const loggable = useStore(Selector.loggable);
   const setCommonStore = useStore(Selector.set);
@@ -336,6 +336,6 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       {!viewOnly && loggable && <ActionLogger />}
     </div>
   );
-};
+});
 
-export default React.memo(AppCreator);
+export default AppCreator;

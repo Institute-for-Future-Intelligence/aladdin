@@ -134,7 +134,7 @@ export interface ProjectGalleryProps {
   canvas: HTMLCanvasElement | null;
 }
 
-const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
+const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProps) => {
   const setCommonStore = useStore(Selector.set);
   const user = useStore(Selector.user);
   const language = useStore(Selector.language);
@@ -1640,6 +1640,6 @@ const ProjectGallery = ({ relativeWidth, canvas }: ProjectGalleryProps) => {
       </ColumnWrapper>
     </Container>
   );
-};
+});
 
-export default React.memo(ProjectGallery);
+export default ProjectGallery;

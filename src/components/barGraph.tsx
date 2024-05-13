@@ -104,17 +104,17 @@ const BarGraph = ({
       );
     }
     return bars;
-  }, [dataSetCount, legendDataKey]);
+  }, [dataSetCount, legendDataKey, color, type]);
 
-  // @ts-ignore
+  // @ts-expect-error ignore
   const onMouseDown = (e) => {};
 
-  // @ts-ignore
+  // @ts-expect-error ignore
   const onMouseEnterLegend = (o) => {
     setLegendDataKey(o.dataKey);
   };
 
-  // @ts-ignore
+  // @ts-expect-error ignore
   const onMouseLeaveLegend = (o) => {
     setLegendDataKey(null);
   };

@@ -12,7 +12,11 @@ import { Design, DesignProblem, DataColoring, ProjectState, Range } from './type
 import { Util } from './Util';
 import { usePrimitiveStore } from './stores/commonPrimitive';
 
-export const fetchProject = async (userid: string, project: string, setProjectState: Function) => {
+export const fetchProject = async (
+  userid: string,
+  project: string,
+  setProjectState: (projectState: ProjectState) => void,
+) => {
   const lang = { lng: useStore.getState().language };
   await firebase
     .firestore()
@@ -284,7 +288,7 @@ export const updateThumbnailWidth = (userid: string, projectTitle: string, thumb
 export const createDesign = (type: string, title: string, thumbnail: string): Design => {
   let design = { timestamp: Date.now(), title, thumbnail } as Design;
   switch (type) {
-    case DesignProblem.SOLAR_PANEL_ARRAY:
+    case DesignProblem.SOLAR_PANEL_ARRAY: {
       const latitude = useStore.getState().world.latitude;
       const panelCount = Util.countAllSolarPanels();
       const dailyYield = Util.countAllSolarPanelDailyYields();
@@ -303,6 +307,7 @@ export const createDesign = (type: string, title: string, thumbnail: string): De
         ...useStore.getState().solarPanelArrayLayoutParams,
       };
       break;
+    }
     case DesignProblem.SOLAR_PANEL_TILT_ANGLE:
       // TODO: Each row has a different tilt angle
       break;

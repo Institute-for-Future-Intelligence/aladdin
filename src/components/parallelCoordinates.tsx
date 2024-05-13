@@ -48,154 +48,157 @@ type ParallelCoordinatesProps = {
 
 type YScale = d3Scale.ScaleLinear<number, number>;
 
-const ParallelCoordinates = ({
-  id,
-  width,
-  height,
-  data,
-  types,
-  minima,
-  maxima,
-  filters,
-  steps,
-  variables,
-  titles,
-  units,
-  digits,
-  tickIntegers,
-  hover,
-  hoveredIndex,
-  selectedIndex,
-}: ParallelCoordinatesProps) => {
-  const boundsWidth = width - MARGIN.right - MARGIN.left;
-  const boundsHeight = height - MARGIN.top - MARGIN.bottom;
+const ParallelCoordinates = React.memo(
+  ({
+    id,
+    width,
+    height,
+    data,
+    types,
+    minima,
+    maxima,
+    filters,
+    steps,
+    variables,
+    titles,
+    units,
+    digits,
+    tickIntegers,
+    hover,
+    hoveredIndex,
+    selectedIndex,
+  }: ParallelCoordinatesProps) => {
+    const boundsWidth = width - MARGIN.right - MARGIN.left;
+    const boundsHeight = height - MARGIN.top - MARGIN.bottom;
 
-  const allGroups = useMemo(() => [...new Set(data.map((d) => d.group as string))], [data]);
+    const allGroups = useMemo(() => [...new Set(data.map((d) => d.group as string))], [data]);
 
-  // Compute a xScale: spread all Y axis along the chart width
-  const xScale = useMemo(
-    () => d3Scale.scalePoint<string>().range([0, boundsWidth]).domain(variables).padding(0),
-    [variables, boundsWidth],
-  );
+    // Compute a xScale: spread all Y axis along the chart width
+    const xScale = useMemo(
+      () => d3Scale.scalePoint<string>().range([0, boundsWidth]).domain(variables).padding(0),
+      [variables, boundsWidth],
+    );
 
-  // Compute the yScales: 1 scale per variable
-  const yScales: { [name: string]: YScale } = useMemo(() => {
-    const tmp: { [name: string]: YScale } = {};
-    variables.forEach((variable, index) => {
-      tmp[variable] = d3Scale
-        .scaleLinear()
-        .range([boundsHeight, 0])
-        .domain([minima[index] ?? 0, maxima[index] ?? 1]);
-    });
-    return tmp;
-  }, [variables, minima, maxima, boundsHeight]);
+    // Compute the yScales: 1 scale per variable
+    const yScales: { [name: string]: YScale } = useMemo(() => {
+      const tmp: { [name: string]: YScale } = {};
+      variables.forEach((variable, index) => {
+        tmp[variable] = d3Scale
+          .scaleLinear()
+          .range([boundsHeight, 0])
+          .domain([minima[index] ?? 0, maxima[index] ?? 1]);
+      });
+      return tmp;
+    }, [variables, minima, maxima, boundsHeight]);
 
-  // Color Scale
-  const colorScale = useMemo(() => d3Scale.scaleOrdinal<string>().domain(allGroups).range(COLORS), [allGroups, COLORS]);
+    // Color Scale
+    const colorScale = useMemo(() => d3Scale.scaleOrdinal<string>().domain(allGroups).range(COLORS), [allGroups]);
 
-  // Compute lines
-  const lineGenerator = d3Shape.line();
+    // Compute lines
+    const lineGenerator = d3Shape.line();
 
-  const allLines = useMemo(
-    () =>
-      data.map((e, i) => {
-        if (e.invisible) return null;
-        const allCoordinates = variables.map((variable) => {
-          const yScale = yScales[variable];
-          // I don't understand the type of scalePoint. IMO x cannot be undefined since I'm passing it something of type Variable.
-          const x = xScale(variable) ?? 0;
-          const y = yScale(e[variable] as number);
-          return [x, y] as [number, number];
-        });
+    const allLines = useMemo(
+      () =>
+        data.map((e, i) => {
+          if (e.invisible) return null;
+          const allCoordinates = variables.map((variable) => {
+            const yScale = yScales[variable];
+            // I don't understand the type of scalePoint. IMO x cannot be undefined since I'm passing it something of type Variable.
+            const x = xScale(variable) ?? 0;
+            const y = yScale(e[variable] as number);
+            return [x, y] as [number, number];
+          });
 
-        const d = lineGenerator(allCoordinates);
-        if (!d) return undefined;
+          const d = lineGenerator(allCoordinates);
+          if (!d) return undefined;
 
-        return (
-          <path
-            onMouseOver={() => {
-              hover(i);
-            }}
-            key={i}
-            d={d}
-            stroke={e.hovered ? 'red' : colorScale(e.group as string)}
-            fill="none"
-            strokeWidth={e.excluded ? 0.25 : e.selected ? 3 : 1}
-            strokeDasharray={e.hovered ? '3,3' : 'none'}
-          />
-        );
-      }),
-    [data, variables, xScale, yScales, colorScale],
-  );
-
-  // Compute Axes
-  const allAxes = useMemo(
-    () =>
-      variables.map((variable, i) => {
-        const yScale = yScales[variable];
-        return (
-          <g key={i} transform={'translate(' + xScale(variable) + ',0)'}>
-            <VerticalAxis
-              yScale={yScale}
-              tickLength={40}
-              tickIntegers={tickIntegers[i]}
-              type={types[i] ?? 'number'}
-              variable={variables[i]}
-              name={titles[i]}
-              unit={units[i]}
-              digits={digits[i]}
-              min={minima[i]}
-              max={maxima[i]}
-              step={steps[i]}
-              value={
-                hoveredIndex >= 0 && !data[hoveredIndex].invisible
-                  ? (data[hoveredIndex][variable] as number)
-                  : selectedIndex >= 0 && !data[selectedIndex].invisible
-                  ? (data[selectedIndex][variable] as number)
-                  : undefined
-              }
-              filter={filters[i]}
-              hover={hover}
+          return (
+            <path
+              onMouseOver={() => {
+                hover(i);
+              }}
+              key={i}
+              d={d}
+              stroke={e.hovered ? 'red' : colorScale(e.group as string)}
+              fill="none"
+              strokeWidth={e.excluded ? 0.25 : e.selected ? 3 : 1}
+              strokeDasharray={e.hovered ? '3,3' : 'none'}
             />
-          </g>
-        );
-      }),
-    [
-      variables,
-      data,
-      xScale,
-      yScales,
-      tickIntegers,
-      types,
-      titles,
-      units,
-      digits,
-      minima,
-      maxima,
-      steps,
-      selectedIndex,
-      hoveredIndex,
-    ],
-  );
+          );
+        }),
+      [data, variables, xScale, yScales, colorScale],
+    );
 
-  return (
-    <svg
-      id={id}
-      width={width}
-      height={height}
-      onMouseLeave={() => {
-        if (hover) hover(-1);
-      }}
-      onContextMenu={(event) => {
-        event.stopPropagation();
-      }}
-    >
-      <g width={boundsWidth} height={boundsHeight} transform={`translate(${[MARGIN.left, MARGIN.top].join(',')})`}>
-        {allLines}
-        {allAxes}
-      </g>
-    </svg>
-  );
-};
+    // Compute Axes
+    const allAxes = useMemo(
+      () =>
+        variables.map((variable, i) => {
+          const yScale = yScales[variable];
+          return (
+            <g key={i} transform={'translate(' + xScale(variable) + ',0)'}>
+              <VerticalAxis
+                yScale={yScale}
+                tickLength={40}
+                tickIntegers={tickIntegers[i]}
+                type={types[i] ?? 'number'}
+                variable={variables[i]}
+                name={titles[i]}
+                unit={units[i]}
+                digits={digits[i]}
+                min={minima[i]}
+                max={maxima[i]}
+                step={steps[i]}
+                value={
+                  hoveredIndex >= 0 && !data[hoveredIndex].invisible
+                    ? (data[hoveredIndex][variable] as number)
+                    : selectedIndex >= 0 && !data[selectedIndex].invisible
+                    ? (data[selectedIndex][variable] as number)
+                    : undefined
+                }
+                filter={filters[i]}
+                hover={hover}
+              />
+            </g>
+          );
+        }),
+      [
+        variables,
+        data,
+        xScale,
+        yScales,
+        tickIntegers,
+        types,
+        titles,
+        units,
+        digits,
+        minima,
+        maxima,
+        steps,
+        filters,
+        selectedIndex,
+        hoveredIndex,
+      ],
+    );
 
-export default React.memo(ParallelCoordinates);
+    return (
+      <svg
+        id={id}
+        width={width}
+        height={height}
+        onMouseLeave={() => {
+          if (hover) hover(-1);
+        }}
+        onContextMenu={(event) => {
+          event.stopPropagation();
+        }}
+      >
+        <g width={boundsWidth} height={boundsHeight} transform={`translate(${[MARGIN.left, MARGIN.top].join(',')})`}>
+          {allLines}
+          {allAxes}
+        </g>
+      </svg>
+    );
+  },
+);
+
+export default ParallelCoordinates;

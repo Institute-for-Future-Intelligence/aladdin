@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  *
  * @author Charles Xie, Xiaotong Ding
  */
@@ -72,6 +72,7 @@ const App = () => {
       });
     }
     // do not add dependencies on showSolarRadiationHeatmap and showHeatFluxes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [elements]);
 
   return (
