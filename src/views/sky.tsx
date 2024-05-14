@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { RefObject, useMemo, useRef, useState } from 'react';
@@ -41,12 +41,13 @@ import { UndoableChange } from '../undo/UndoableChange';
 import { UndoableMove } from 'src/undo/UndoableMove';
 import { showError } from 'src/helpers';
 import i18n from 'src/i18n/i18n';
+import { throttle } from 'lodash';
 
 export interface SkyProps {
   theme?: string;
 }
 
-const Sky = ({ theme = 'Default' }: SkyProps) => {
+const Sky = React.memo(({ theme = 'Default' }: SkyProps) => {
   const setCommonStore = useStore(Selector.set);
   const selectNone = useStore(Selector.selectNone);
   const getSelectedElement = useStore(Selector.getSelectedElement);
@@ -173,7 +174,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
       default:
         return DefaultImage;
     }
-  }, [theme, date, latitude]);
+  }, [theme, month, latitude]);
 
   const texture = useTexture(textureImg);
 
@@ -386,7 +387,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
         if (intersects && intersects.length > 0) {
           const p = intersects[0].point;
           switch (grabRef.current.type) {
-            case ObjectType.Tree:
+            case ObjectType.Tree: {
               const tree = grabRef.current as TreeModel;
               switch (resizeHandleType) {
                 case ResizeHandleType.Top:
@@ -404,10 +405,12 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
               }
               handleTreeOrHumanRefMove(useRefStore.getState().treeRef, e);
               break;
-            case ObjectType.Human:
+            }
+            case ObjectType.Human: {
               handleTreeOrHumanRefMove(useRefStore.getState().humanRef, e);
               break;
-            case ObjectType.Cuboid:
+            }
+            case ObjectType.Cuboid: {
               if (Util.isTopResizeHandle(resizeHandleType)) {
                 setCommonStore((state) => {
                   for (const e of state.elements) {
@@ -439,6 +442,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
                 }
               }
               break;
+            }
           }
         }
       }
@@ -480,14 +484,15 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
             for (const e of cuboidChildren) {
               switch (e.type) {
                 case ObjectType.Tree:
-                case ObjectType.Human:
+                case ObjectType.Human: {
                   const centerAbsPos = new Vector3(e.cx, e.cy, e.cz).applyEuler(new Euler(0, 0, a));
                   centerAbsPos.add(cuboidCenter);
                   absPosMapRef.current.set(e.id, centerAbsPos);
                   oldChildrenPositionsMapRef.current.set(e.id, new Vector3(e.cx, e.cy, e.cz));
                   break;
+                }
                 case ObjectType.SolarPanel:
-                case ObjectType.Sensor:
+                case ObjectType.Sensor: {
                   if (Util.isIdentical(e.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
                     const centerAbsPos = new Vector3(
                       e.cx * selectedElement.lx,
@@ -498,7 +503,8 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
                     absPosMapRef.current.set(e.id, centerAbsPos);
                   }
                   break;
-                case ObjectType.Polygon:
+                }
+                case ObjectType.Polygon: {
                   if (Util.isIdentical(e.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
                     const polygon = e as PolygonModel;
                     const vertexAbsPosArray: Vector2[] = [];
@@ -513,6 +519,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
                     polygonsAbsPosMapRef.current.set(polygon.id, vertexAbsPosArray);
                   }
                   break;
+                }
               }
             }
           }
@@ -534,7 +541,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
               case ResizeHandleType.UpperLeftTop:
               case ResizeHandleType.UpperRightTop:
               case ResizeHandleType.LowerLeftTop:
-              case ResizeHandleType.LowerRightTop:
+              case ResizeHandleType.LowerRightTop: {
                 oldChildrenParentIdMapRef.current.clear();
                 setCommonStore((state) => {
                   state.actionState.cuboidHeight = elem.lz;
@@ -633,11 +640,12 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
                 } as UndoableChange;
                 addUndoable(undoableChangeHeight);
                 break;
+              }
             }
             break;
           case ObjectType.Tree:
             switch (resizeHandleType) {
-              case ResizeHandleType.Top:
+              case ResizeHandleType.Top: {
                 const undoableChangeHeight = {
                   name: 'Change Tree Height',
                   timestamp: Date.now(),
@@ -657,10 +665,11 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
                   state.actionState.treeHeight = elem.lz;
                 });
                 break;
+              }
               case ResizeHandleType.Left:
               case ResizeHandleType.Right:
               case ResizeHandleType.Lower:
-              case ResizeHandleType.Upper:
+              case ResizeHandleType.Upper: {
                 const undoableChangeSpread = {
                   name: 'Change Tree Spread',
                   timestamp: Date.now(),
@@ -680,6 +689,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
                   state.actionState.treeSpread = elem.lx;
                 });
                 break;
+              }
             }
             elementRef = useRefStore.getState().treeRef?.current;
             break;
@@ -854,7 +864,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
           rotation={intersectionPlaneAngle}
           position={intersectionPlanePosition}
           args={[1000, 1000]}
-          onPointerMove={handlePointerMove}
+          onPointerMove={throttle(handlePointerMove, 100)}
           onPointerUp={handlePointerUp}
         >
           <meshStandardMaterial side={DoubleSide} />
@@ -862,6 +872,6 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
       )}
     </>
   );
-};
+});
 
-export default React.memo(Sky);
+export default Sky;

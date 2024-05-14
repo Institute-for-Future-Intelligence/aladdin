@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { RefObject, useEffect, useMemo, useRef } from 'react';
@@ -45,8 +45,9 @@ import { InnerCommonStoreState } from 'src/stores/InnerCommonState';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { GroupableModel, isGroupable } from 'src/models/Groupable';
 import { WindowModel } from 'src/models/WindowModel';
+import { throttle } from 'lodash';
 
-const Ground = () => {
+const Ground = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const getChildren = useStore(Selector.getChildren);
@@ -507,7 +508,7 @@ const Ground = () => {
     switch (elem.type) {
       case ObjectType.Tree:
         switch (resizeHandleType) {
-          case ResizeHandleType.Top:
+          case ResizeHandleType.Top: {
             const undoableChangeHeight = {
               name: 'Change Tree Height',
               timestamp: Date.now(),
@@ -527,10 +528,11 @@ const Ground = () => {
               state.actionState.treeHeight = elem.lz;
             });
             return;
+          }
           case ResizeHandleType.Left:
           case ResizeHandleType.Right:
           case ResizeHandleType.Lower:
-          case ResizeHandleType.Upper:
+          case ResizeHandleType.Upper: {
             const undoableChangeSpread = {
               name: 'Change Tree Spread',
               timestamp: Date.now(),
@@ -550,6 +552,7 @@ const Ground = () => {
               state.actionState.treeSpread = elem.lx;
             });
             return;
+          }
         }
         break;
       case ObjectType.Wall: {
@@ -1230,7 +1233,7 @@ const Ground = () => {
             case ObjectType.Human:
               oldHumanOrPlantParentIdRef.current = selectedElement.parentId;
               break;
-            case ObjectType.Cuboid:
+            case ObjectType.Cuboid: {
               if (isGroupable(selectedElement) && selectedElement.parentId === GROUND_ID) {
                 handleGroupMaster(e, selectedElement as GroupableModel);
               } else {
@@ -1318,7 +1321,8 @@ const Ground = () => {
                 }
               }
               break;
-            case ObjectType.Foundation:
+            }
+            case ObjectType.Foundation: {
               if (isGroupable(selectedElement)) {
                 handleGroupMaster(e, selectedElement as GroupableModel);
               }
@@ -1333,7 +1337,7 @@ const Ground = () => {
                 const a = selectedElement.rotation[2];
                 for (const e of foundationChildren) {
                   switch (e.type) {
-                    case ObjectType.Wall:
+                    case ObjectType.Wall: {
                       const wall = e as WallModel;
                       const centerPointAbsPos = new Vector2(wall.cx, wall.cy).rotateAround(ORIGIN_VECTOR2, a);
                       centerPointAbsPos.add(foundationCenterV2);
@@ -1353,6 +1357,7 @@ const Ground = () => {
                         rightPointAbsPos,
                       });
                       break;
+                    }
                     case ObjectType.Tree:
                     case ObjectType.Flower:
                     case ObjectType.Human: {
@@ -1367,7 +1372,7 @@ const Ground = () => {
                     case ObjectType.FresnelReflector:
                     case ObjectType.Heliostat:
                     case ObjectType.WindTurbine:
-                    case ObjectType.Sensor:
+                    case ObjectType.Sensor: {
                       const centerAbsPos = new Vector3(
                         e.cx * selectedElement.lx,
                         e.cy * selectedElement.ly,
@@ -1376,7 +1381,8 @@ const Ground = () => {
                       centerAbsPos.add(foundationCenter);
                       absPosMapRef.current.set(e.id, centerAbsPos);
                       break;
-                    case ObjectType.Polygon:
+                    }
+                    case ObjectType.Polygon: {
                       const polygon = e as PolygonModel;
                       const vertexAbsPosArray: Vector2[] = [];
                       for (const v of polygon.vertices) {
@@ -1389,6 +1395,7 @@ const Ground = () => {
                       }
                       polygonsAbsPosMapRef.current.set(polygon.id, vertexAbsPosArray);
                       break;
+                    }
                   }
                 }
               }
@@ -1411,6 +1418,7 @@ const Ground = () => {
                 }
               }
               break;
+            }
           }
         }
       }
@@ -1627,7 +1635,7 @@ const Ground = () => {
         if (intersects && intersects.length > 0) {
           const p = intersects[0].point;
           switch (grabRef.current.type) {
-            case ObjectType.Tree:
+            case ObjectType.Tree: {
               const tree = grabRef.current as TreeModel;
               switch (resizeHandleType) {
                 case ResizeHandleType.Top:
@@ -1646,6 +1654,7 @@ const Ground = () => {
               }
               handlePlantOrHumanRefMove(useRefStore.getState().treeRef, e);
               break;
+            }
             case ObjectType.Flower: {
               handlePlantOrHumanRefMove(useRefStore.getState().flowerRef, e);
               break;
@@ -1752,7 +1761,7 @@ const Ground = () => {
         if (e.id === grabRef.current.id) {
           switch (e.type) {
             case ObjectType.Cuboid: // we can only deal with the top surface of a cuboid now
-            case ObjectType.Foundation:
+            case ObjectType.Foundation: {
               const children = getChildren(e.id);
               if (children.length > 0) {
                 // basically, we have to create a copy of parent and children, set them to the new values,
@@ -1900,6 +1909,7 @@ const Ground = () => {
                 }
               }
               break;
+            }
           }
           break;
         }
@@ -1909,7 +1919,7 @@ const Ground = () => {
         for (const e of state.elements) {
           if (e.parentId === grabRef.current!.id) {
             switch (e.type) {
-              case ObjectType.Wall:
+              case ObjectType.Wall: {
                 const wall = e as WallModel;
                 const wallAbsPos = wallsAbsPosMapRef.current.get(e.id);
                 if (wallAbsPos) {
@@ -1945,6 +1955,7 @@ const Ground = () => {
                   wall.rightPoint = [rightPointRelativePos.x, rightPointRelativePos.y, 0];
                 }
                 break;
+              }
               case ObjectType.SolarPanel:
               case ObjectType.ParabolicTrough:
               case ObjectType.ParabolicDish:
@@ -2070,7 +2081,7 @@ const Ground = () => {
     });
 
     switch (grabRef.current.type) {
-      case ObjectType.Foundation:
+      case ObjectType.Foundation: {
         const foundationRef = useRefStore.getState().foundationRef;
         if (foundationRef?.current) {
           handleHumanAndPlantPositionFixedOnParent(
@@ -2082,7 +2093,8 @@ const Ground = () => {
           );
         }
         break;
-      case ObjectType.Cuboid:
+      }
+      case ObjectType.Cuboid: {
         const cuboidRef = useRefStore.getState().cuboidRef;
         if (cuboidRef?.current && cuboidRef.current.parent) {
           handleHumanAndPlantPositionFixedOnParent(
@@ -2094,6 +2106,7 @@ const Ground = () => {
           );
         }
         break;
+      }
     }
   };
 
@@ -2256,7 +2269,7 @@ const Ground = () => {
           rotation={intersectionPlaneAngle}
           position={intersectionPlanePosition}
           args={[100000, 100000]}
-          onPointerMove={handleIntersectionPointerMove}
+          onPointerMove={throttle(handleIntersectionPointerMove, 100)}
         >
           <meshStandardMaterial side={DoubleSide} opacity={0.5} transparent />
         </Plane>
@@ -2272,7 +2285,7 @@ const Ground = () => {
         renderOrder={-2}
         onContextMenu={handleContextMenu}
         onPointerDown={handlePointerDown}
-        onPointerMove={handleGroundPointerMove}
+        onPointerMove={throttle(handleGroundPointerMove, 100)}
         // onPointerOut={handleGroundPointerOut}
       >
         {showSolarRadiationHeatmap && !waterSurface ? (
@@ -2288,6 +2301,6 @@ const Ground = () => {
       </Plane>
     </>
   );
-};
+});
 
-export default React.memo(Ground);
+export default Ground;

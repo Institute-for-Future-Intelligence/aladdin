@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import FoundationTexture00 from '../../resources/tiny_white_square.png';
@@ -12,7 +12,7 @@ import FoundationTexture06 from '../../resources/foundation_06.png';
 import FoundationTexture07 from '../../resources/foundation_07.png';
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Box, Line, Plane, Sphere } from '@react-three/drei';
+import { Box, Plane, Sphere } from '@react-three/drei';
 import { CanvasTexture, Euler, Group, Mesh, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
 import { useStore } from '../../stores/common';
 import { useRefStore } from '../../stores/commonRef';
@@ -53,7 +53,7 @@ import RotateHandle from '../../components/rotateHandle';
 import Wireframe from '../../components/wireframe';
 import * as Selector from '../../stores/selector';
 import { FlippedWallSide, UndoableAdd, UndoableAddWall } from '../../undo/UndoableAdd';
-import { UndoableMove, UndoableMoveWall } from '../../undo/UndoableMove';
+import { UndoableMoveWall } from '../../undo/UndoableMove';
 import { UndoableResize, UndoableResizeWall } from '../../undo/UndoableResize';
 import { UndoableChange } from '../../undo/UndoableChange';
 import { ElementGrid } from '../elementGrid';
@@ -74,17 +74,12 @@ import { InnerCommonStoreState } from 'src/stores/InnerCommonState';
 import produce from 'immer';
 import { useDataStore } from '../../stores/commonData';
 import { useSelected } from '../hooks';
-import { debounce } from 'lodash';
+import { debounce, throttle } from 'lodash';
 import BuildingRenderer from './buildingRenderer';
 import { shallow } from 'zustand/shallow';
 import SolarPanel from '../solarPanel/solarPanel';
 import { SharedUtil } from '../SharedUtil';
-
-interface WallAuxiliaryType {
-  show: boolean;
-  direction: 'x' | 'y' | 'xy' | null;
-  position: number[] | null;
-}
+import WallAuxiliaryLine, { WallAuxiliaryType } from './wallAuxiliaryLine';
 
 interface SnapTargetType {
   id: string | null;
@@ -95,7 +90,7 @@ interface SnapTargetType {
 
 export const FOUNDATION_GROUP_NAME = 'Foundation Group';
 
-const Foundation = (foundationModel: FoundationModel) => {
+const Foundation = React.memo((foundationModel: FoundationModel) => {
   const {
     id,
     cx,
@@ -235,24 +230,28 @@ const Foundation = (foundationModel: FoundationModel) => {
   if (grabRef.current) {
     let poleHeight = -1;
     switch (grabRef.current.type) {
-      case ObjectType.SolarPanel:
+      case ObjectType.SolarPanel: {
         poleHeight = (grabRef.current as SolarPanelModel).poleHeight;
         break;
-      case ObjectType.ParabolicTrough:
+      }
+      case ObjectType.ParabolicTrough: {
         // pole height of parabolic trough is relative to its half width
         const trough = grabRef.current as ParabolicTroughModel;
         poleHeight = trough.poleHeight + trough.lx / 2;
         break;
-      case ObjectType.ParabolicDish:
+      }
+      case ObjectType.ParabolicDish: {
         // pole height of parabolic dish is relative to its radius
         const dish = grabRef.current as ParabolicDishModel;
         poleHeight = dish.poleHeight + dish.lx / 2 + (dish.lx * dish.lx) / (4 * dish.latusRectum);
         break;
-      case ObjectType.FresnelReflector:
+      }
+      case ObjectType.FresnelReflector: {
         // pole height of Fresnel reflector is relative to its half width
         const reflector = grabRef.current as FresnelReflectorModel;
         poleHeight = reflector.poleHeight + reflector.lx / 2;
         break;
+      }
     }
     if (poleHeight >= 0) {
       intersectionPlanePosition.set(0, 0, foundationModel?.lz / 2 + poleHeight);
@@ -266,7 +265,7 @@ const Foundation = (foundationModel: FoundationModel) => {
         wallMapOnFoundation.current.set(e.id, e as WallModel);
       }
     }
-  }, [updateWallMapOnFoundationFlag]);
+  }, [id, updateWallMapOnFoundationFlag]);
 
   useEffect(() => {
     if (deletedWallID && deletedWallID === addedWallIdRef.current) {
@@ -328,21 +327,24 @@ const Foundation = (foundationModel: FoundationModel) => {
       autoDeletedElements: [...autoDeletedElements],
       undo() {
         switch (this.flippedWallSide) {
-          case FlippedWallSide.loop:
+          case FlippedWallSide.loop: {
             flipWallLoop(this.id);
             break;
-          case FlippedWallSide.left:
+          }
+          case FlippedWallSide.left: {
             const lw = getElementById(this.newJoints[0][0]) as WallModel;
             if (lw) {
               flipWallsClockwise(lw);
             }
             break;
-          case FlippedWallSide.right:
+          }
+          case FlippedWallSide.right: {
             const rw = getElementById(this.newJoints[1][0]) as WallModel;
             if (rw) {
               flipWallsCounterClockwise(rw);
             }
             break;
+          }
         }
         const [oldLeftJoints, oldRightJoints] = this.oldJoints;
         const [newLeftJoints, newRightJoints] = this.newJoints;
@@ -464,21 +466,24 @@ const Foundation = (foundationModel: FoundationModel) => {
           });
         }
         switch (this.flippedWallSide) {
-          case FlippedWallSide.loop:
+          case FlippedWallSide.loop: {
             flipWallLoop(this.id);
             break;
-          case FlippedWallSide.left:
+          }
+          case FlippedWallSide.left: {
             const lw = getElementById(this.newJoints[0][0]) as WallModel;
             if (lw) {
               flipWallsCounterClockwise(lw);
             }
             break;
-          case FlippedWallSide.right:
+          }
+          case FlippedWallSide.right: {
             const rw = getElementById(this.newJoints[1][0]) as WallModel;
             if (rw) {
               flipWallsClockwise(rw);
             }
             break;
+          }
         }
         const set = new Set(this.autoDeletedElements.map((e) => e.id));
         setCommonStore((state) => {
@@ -1299,21 +1304,24 @@ const Foundation = (foundationModel: FoundationModel) => {
         flippedWallSide: flippedWallSide.current,
         undo() {
           switch (this.flippedWallSide) {
-            case FlippedWallSide.loop:
+            case FlippedWallSide.loop: {
               flipWallLoop(this.id);
               break;
-            case FlippedWallSide.left:
+            }
+            case FlippedWallSide.left: {
               const lw = getElementById(this.newJoints[0][0]) as WallModel;
               if (lw) {
                 flipWallsClockwise(lw);
               }
               break;
-            case FlippedWallSide.right:
+            }
+            case FlippedWallSide.right: {
               const rw = getElementById(this.newJoints[1][0]) as WallModel;
               if (rw) {
                 flipWallsCounterClockwise(rw);
               }
               break;
+            }
           }
           const [oldLeftJoints, oldRightJoints] = this.oldJoints;
           const [newLeftJoints, newRightJoints] = this.newJoints;
@@ -1430,21 +1438,24 @@ const Foundation = (foundationModel: FoundationModel) => {
             });
           }
           switch (this.flippedWallSide) {
-            case FlippedWallSide.loop:
+            case FlippedWallSide.loop: {
               flipWallLoop(this.id);
               break;
-            case FlippedWallSide.left:
+            }
+            case FlippedWallSide.left: {
               const lw = getElementById(this.newJoints[0][0]) as WallModel;
               if (lw) {
                 flipWallsCounterClockwise(lw);
               }
               break;
-            case FlippedWallSide.right:
+            }
+            case FlippedWallSide.right: {
               const rw = getElementById(this.newJoints[1][0]) as WallModel;
               if (rw) {
                 flipWallsClockwise(rw);
               }
               break;
+            }
           }
           setCommonStore((state) => {
             state.resizeHandleType = null;
@@ -1519,13 +1530,15 @@ const Foundation = (foundationModel: FoundationModel) => {
           switch (selectedElement.type) {
             case ObjectType.SolarPanel:
             case ObjectType.ParabolicTrough:
-            case ObjectType.FresnelReflector:
+            case ObjectType.FresnelReflector: {
               oldAzimuthRef.current = (selectedElement as SolarCollector).relativeAzimuth;
               break;
-            case ObjectType.Polygon:
+            }
+            case ObjectType.Polygon: {
               oldVerticesRef.current = (selectedElement as PolygonModel).vertices.map((v) => ({ ...v }));
               break;
-            case ObjectType.Wall:
+            }
+            case ObjectType.Wall: {
               const wall = selectedElement as WallModel;
               oldAzimuthRef.current = wall.relativeAngle;
               oldJointsRef.current = [[...wall.leftJoints], [...wall.rightJoints]];
@@ -1538,6 +1551,8 @@ const Foundation = (foundationModel: FoundationModel) => {
                   wallMapOnFoundation.current.set(e.id, e as WallModel);
                 }
               }
+              break;
+            }
           }
         }
       }
@@ -2199,11 +2214,12 @@ const Foundation = (foundationModel: FoundationModel) => {
         switch (grabRef.current.type) {
           case ObjectType.Sensor:
           case ObjectType.Light:
-          case ObjectType.WindTurbine:
+          case ObjectType.WindTurbine: {
             p = Util.relativeCoordinates(p.x, p.y, p.z, foundationModel);
             setElementPosition(grabRef.current.id, p.x, p.y);
             break;
-          case ObjectType.Polygon:
+          }
+          case ObjectType.Polygon: {
             const polygon = grabRef.current as PolygonModel;
             if (moveHandleType === MoveHandleType.Default) {
               // do not snap the centroid to the grid
@@ -2230,7 +2246,8 @@ const Foundation = (foundationModel: FoundationModel) => {
               updatePolygonVertexPositionById(polygon.id, polygon.selectedIndex, p.x, p.y);
             }
             break;
-          case ObjectType.Wall:
+          }
+          case ObjectType.Wall: {
             if (useStore.getState().selectedElement?.type !== ObjectType.Wall) break;
             if (
               resizeHandleType &&
@@ -2583,6 +2600,7 @@ const Foundation = (foundationModel: FoundationModel) => {
               }
             }
             break;
+          }
         }
       }
       if (objectTypeToAdd === ObjectType.Wall && !isSettingWallStartPointRef.current) {
@@ -2844,7 +2862,7 @@ const Foundation = (foundationModel: FoundationModel) => {
               case ResizeHandleType.Left:
               case ResizeHandleType.Right:
                 {
-                  let sign = resizeHandleType === ResizeHandleType.Left ? -1 : 1;
+                  const sign = resizeHandleType === ResizeHandleType.Left ? -1 : 1;
                   const theta = rp.angle() - angle + (resizeHandleType === ResizeHandleType.Left ? Math.PI : 0);
                   let dxl = distance * Math.cos(theta);
                   if (solarPanel.orientation === Orientation.portrait) {
@@ -2898,9 +2916,9 @@ const Foundation = (foundationModel: FoundationModel) => {
               case ResizeHandleType.Right:
                 // these two handles change the width, which is not controlled by module length
                 {
-                  let sign = resizeHandleType === ResizeHandleType.Left ? -1 : 1;
+                  const sign = resizeHandleType === ResizeHandleType.Left ? -1 : 1;
                   const theta = rp.angle() - angle + (resizeHandleType === ResizeHandleType.Left ? Math.PI : 0);
-                  let dxl = distance * Math.cos(theta);
+                  const dxl = distance * Math.cos(theta);
                   const wcx = resizeAnchor.x + (sign * (dxl * Math.cos(angle))) / 2;
                   const wcy = resizeAnchor.y + (sign * (dxl * Math.sin(angle))) / 2;
                   const wc = new Vector2(wcx, wcy);
@@ -2948,9 +2966,9 @@ const Foundation = (foundationModel: FoundationModel) => {
               case ResizeHandleType.Right:
                 // these two handles change the width, which is not controlled by module length
                 {
-                  let sign = resizeHandleType === ResizeHandleType.Left ? -1 : 1;
+                  const sign = resizeHandleType === ResizeHandleType.Left ? -1 : 1;
                   const theta = rp.angle() - angle + (resizeHandleType === ResizeHandleType.Left ? Math.PI : 0);
-                  let dxl = distance * Math.cos(theta);
+                  const dxl = distance * Math.cos(theta);
                   const wcx = resizeAnchor.x + (sign * (dxl * Math.cos(angle))) / 2;
                   const wcy = resizeAnchor.y + (sign * (dxl * Math.sin(angle))) / 2;
                   const wc = new Vector2(wcx, wcy);
@@ -2973,7 +2991,8 @@ const Foundation = (foundationModel: FoundationModel) => {
               case ResizeHandleType.Left:
               case ResizeHandleType.Right:
               case ResizeHandleType.Lower:
-              case ResizeHandleType.Upper: // all handles change the diameter of the dish
+              case ResizeHandleType.Upper: {
+                // all handles change the diameter of the dish
                 const diameter = Math.min(10, distance);
                 if (isSolarCollectorNewSizeOk(collector, parabolicDish.cx, parabolicDish.cy, collector.lx, diameter)) {
                   updateElementLxById(collector.id, diameter);
@@ -2983,6 +3002,7 @@ const Foundation = (foundationModel: FoundationModel) => {
                   });
                 }
                 break;
+              }
             }
           }
         }
@@ -3063,7 +3083,7 @@ const Foundation = (foundationModel: FoundationModel) => {
           onPointerOver={handlePointerOver}
           onPointerDown={handlePointerDown}
           onPointerUp={handlePointerUp}
-          onPointerMove={handlePointerMove}
+          onPointerMove={throttle(handlePointerMove, 100)}
           onPointerOut={handlePointerOut}
           onPointerEnter={handlePointerEnter}
         >
@@ -3099,7 +3119,7 @@ const Foundation = (foundationModel: FoundationModel) => {
             position={intersectionPlanePosition}
             args={[lx, ly]}
             visible={false}
-            onPointerMove={handleSolarCollectorPointerMove}
+            onPointerMove={throttle(handleSolarCollectorPointerMove, 100)}
             // onPointerOut={handleSolarCollectorPointerOut}
           />
         )}
@@ -3291,7 +3311,7 @@ const Foundation = (foundationModel: FoundationModel) => {
                   args={[moveHandleRadius, 6, 6, 0, Math.PI]}
                   position={[0, -hy - moveHandleRadius, 0]}
                   name={MoveHandleType.Lower}
-                  onPointerDown={(e) => {
+                  onPointerDown={() => {
                     setCommonStore((state) => {
                       state.moveHandleType = MoveHandleType.Lower;
                       state.selectedElement = state.elements.find((e) => e.id === id) ?? null;
@@ -3323,7 +3343,7 @@ const Foundation = (foundationModel: FoundationModel) => {
                   args={[moveHandleRadius, 6, 6, 0, Math.PI]}
                   position={[0, hy + moveHandleRadius, 0]}
                   name={MoveHandleType.Upper}
-                  onPointerDown={(e) => {
+                  onPointerDown={() => {
                     setCommonStore((state) => {
                       state.moveHandleType = MoveHandleType.Upper;
                       state.selectedElement = state.elements.find((e) => e.id === id) ?? null;
@@ -3355,7 +3375,7 @@ const Foundation = (foundationModel: FoundationModel) => {
                   args={[moveHandleRadius, 6, 6, 0, Math.PI]}
                   position={[-hx - moveHandleRadius, 0, 0]}
                   name={MoveHandleType.Left}
-                  onPointerDown={(e) => {
+                  onPointerDown={() => {
                     setCommonStore((state) => {
                       state.moveHandleType = MoveHandleType.Left;
                       state.selectedElement = state.elements.find((e) => e.id === id) ?? null;
@@ -3387,7 +3407,7 @@ const Foundation = (foundationModel: FoundationModel) => {
                   args={[moveHandleRadius, 6, 6, 0, Math.PI]}
                   position={[hx + moveHandleRadius, 0, 0]}
                   name={MoveHandleType.Right}
-                  onPointerDown={(e) => {
+                  onPointerDown={() => {
                     setCommonStore((state) => {
                       state.moveHandleType = MoveHandleType.Right;
                       state.selectedElement = state.elements.find((e) => e.id === id) ?? null;
@@ -3534,56 +3554,6 @@ const Foundation = (foundationModel: FoundationModel) => {
       </group>
     </>
   );
-};
+});
 
-const WallAuxiliaryLine = ({
-  hx,
-  hy,
-  position,
-  direction,
-  color,
-}: {
-  hx: number;
-  hy: number;
-  position: number[] | null;
-  direction: 'x' | 'y' | 'xy' | null;
-  color: string;
-}) => {
-  if (position === null) return null;
-
-  const [x, y] = position;
-  const points: [number, number, number][] = [];
-
-  if (direction === 'x') {
-    points.push([-hx, y, 0]);
-    points.push([hx, y, 0]);
-  } else if (direction === 'y') {
-    points.push([x, -hy, 0]);
-    points.push([x, hy, 0]);
-  } else if (direction === 'xy') {
-    return (
-      <>
-        <Line
-          points={[
-            [-hx, y, 0],
-            [hx, y, 0],
-          ]}
-          color={color}
-        />
-        <Line
-          points={[
-            [x, -hy, 0],
-            [x, hy, 0],
-          ]}
-          color={color}
-        />
-      </>
-    );
-  } else {
-    return null;
-  }
-
-  return <Line points={points} color={color} />;
-};
-
-export default React.memo(Foundation);
+export default Foundation;

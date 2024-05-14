@@ -11,7 +11,7 @@ import { PolarGrid } from './views/polarGrid';
 import { VerticalRuler } from './views/verticalRuler';
 import { Util } from './Util';
 
-export const Auxiliary = () => {
+export const Auxiliary = React.memo(() => {
   const moveHandleType = useStore(Selector.moveHandleType);
   const rotateHandleType = useStore(Selector.rotateHandleType);
   const resizeHandleType = useStore(Selector.resizeHandleType);
@@ -92,4 +92,4 @@ export const Auxiliary = () => {
       {showVerticalRuler && <VerticalRuler element={element} />}
     </>
   );
-};
+});
