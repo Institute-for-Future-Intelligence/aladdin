@@ -1,10 +1,10 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { ErrorInfo } from 'react';
 
-class ErrorPage extends React.Component<{}, { hasError: boolean }> {
+class ErrorPage extends React.Component<object, { hasError: boolean }> {
   constructor(props: any) {
     super(props);
     this.state = { hasError: false };
@@ -43,7 +43,7 @@ class ErrorPage extends React.Component<{}, { hasError: boolean }> {
         </div>
       );
     }
-    // @ts-ignore
+    // @ts-expect-error ignore
     return this.props.children;
   }
 }

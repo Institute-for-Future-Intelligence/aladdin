@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React from 'react';
@@ -44,7 +44,7 @@ const ColumnWrapper = styled.div`
   opacity: 100%;
 `;
 
-const InstructionPanel = () => {
+const InstructionPanel = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
   const language = useStore(Selector.language);
@@ -146,6 +146,6 @@ const InstructionPanel = () => {
       </ColumnWrapper>
     </Container>
   );
-};
+});
 
-export default React.memo(InstructionPanel);
+export default InstructionPanel;

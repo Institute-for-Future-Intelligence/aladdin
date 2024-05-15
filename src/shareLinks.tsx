@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React from 'react';
@@ -41,7 +41,7 @@ export interface ShareLinkProps {
   handleShareWindowClose?: () => void;
 }
 
-const ShareLinks = ({ style, size, margin, round, handleShareWindowClose }: ShareLinkProps) => {
+const ShareLinks = React.memo(({ style, size, margin, round, handleShareWindowClose }: ShareLinkProps) => {
   const user = useStore(Selector.user);
   const language = useStore(Selector.language);
   const cloudFile = useStore(Selector.cloudFile);
@@ -119,6 +119,6 @@ const ShareLinks = ({ style, size, margin, round, handleShareWindowClose }: Shar
       </WhatsappShareButton>
     </ShareLinkContainer>
   );
-};
+});
 
-export default React.memo(ShareLinks);
+export default ShareLinks;

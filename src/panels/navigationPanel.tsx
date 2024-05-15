@@ -1,5 +1,5 @@
 /*
- * @Copyright 2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2023-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -11,7 +11,7 @@ import i18n from '../i18n/i18n';
 import { UndoableChange } from '../undo/UndoableChange';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 
-const NavigationPanel = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const NavigationPanel = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const addUndoable = useStore(Selector.addUndoable);
@@ -209,6 +209,6 @@ const NavigationPanel = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
       </Row>
     </Modal>
   );
-};
+});
 
-export default React.memo(NavigationPanel);
+export default NavigationPanel;

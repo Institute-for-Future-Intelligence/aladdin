@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -10,7 +10,7 @@ import * as Selector from '../stores/selector';
 import i18n from '../i18n/i18n';
 import { UndoableChange } from '../undo/UndoableChange';
 
-const EconomicsPanel = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const EconomicsPanel = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const economicsParams = useStore(Selector.economicsParams);
@@ -206,6 +206,6 @@ const EconomicsPanel = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =
       </Row>
     </Modal>
   );
-};
+});
 
-export default React.memo(EconomicsPanel);
+export default EconomicsPanel;

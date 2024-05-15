@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -59,16 +59,9 @@ const Header = styled.div`
   justify-content: space-between;
   align-items: center;
   cursor: move;
-
-  svg.icon {
-    height: 16px;
-    width: 16px;
-    padding: 8px;
-    fill: #666;
-  }
 `;
 
-const SolarPanelOptimizationResult = () => {
+const SolarPanelOptimizationResult = React.memo(() => {
   const language = useStore(Selector.language);
   const loggable = useStore(Selector.loggable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
@@ -354,7 +347,6 @@ const SolarPanelOptimizationResult = () => {
                   screenshot(
                     'biaxial-line-graph-' + labelAxisX + '-' + labelVariable + '-' + labelObjective,
                     'solar-panel-tilt-angle-evolution',
-                    {},
                   ).then(() => {
                     showInfo(i18n.t('message.ScreenshotSaved', lang));
                   });
@@ -366,6 +358,6 @@ const SolarPanelOptimizationResult = () => {
       </Container>
     </ReactDraggable>
   );
-};
+});
 
-export default React.memo(SolarPanelOptimizationResult);
+export default SolarPanelOptimizationResult;

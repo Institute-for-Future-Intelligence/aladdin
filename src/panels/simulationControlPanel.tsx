@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React from 'react';
@@ -27,7 +27,7 @@ const Container = styled.div`
   z-index: 10000; // must be larger than that of the spinner so that this can be clicked
 `;
 
-const SimulationControlPanel = () => {
+const SimulationControlPanel = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
   const loggable = useStore(Selector.loggable);
   const language = useStore(Selector.language);
@@ -241,6 +241,6 @@ const SimulationControlPanel = () => {
       </Space>
     </Container>
   );
-};
+});
 
-export default React.memo(SimulationControlPanel);
+export default SimulationControlPanel;

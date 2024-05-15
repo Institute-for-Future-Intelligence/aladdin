@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -66,20 +66,13 @@ const Header = styled.div`
   justify-content: space-between;
   align-items: center;
   cursor: move;
-
-  svg.icon {
-    height: 16px;
-    width: 16px;
-    padding: 8px;
-    fill: #666;
-  }
 `;
 
 export interface YearlyParabolicTroughYieldPanelProps {
   city: string | null;
 }
 
-const YearlyParabolicTroughYieldPanel = ({ city }: YearlyParabolicTroughYieldPanelProps) => {
+const YearlyParabolicTroughYieldPanel = React.memo(({ city }: YearlyParabolicTroughYieldPanelProps) => {
   const language = useStore(Selector.language);
   const loggable = useStore(Selector.loggable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
@@ -117,7 +110,7 @@ const YearlyParabolicTroughYieldPanel = ({ city }: YearlyParabolicTroughYieldPan
     troughSumRef.current.clear();
     for (const datum of yearlyYield) {
       for (const prop in datum) {
-        if (datum.hasOwnProperty(prop)) {
+        if (Object.hasOwn(datum, prop)) {
           if (prop !== 'Month') {
             s += datum[prop] as number;
             troughSumRef.current.set(prop, (troughSumRef.current.get(prop) ?? 0) + (datum[prop] as number));
@@ -380,7 +373,7 @@ const YearlyParabolicTroughYieldPanel = ({ city }: YearlyParabolicTroughYieldPan
                 icon={<CameraOutlined />}
                 title={t('word.SaveAsImage', lang)}
                 onClick={() => {
-                  screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-parabolic-trough-yield', {}).then(() => {
+                  screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-parabolic-trough-yield').then(() => {
                     showInfo(t('message.ScreenshotSaved', lang));
                     if (loggable) {
                       setCommonStore((state) => {
@@ -418,6 +411,6 @@ const YearlyParabolicTroughYieldPanel = ({ city }: YearlyParabolicTroughYieldPan
       </Container>
     </ReactDraggable>
   );
-};
+});
 
-export default React.memo(YearlyParabolicTroughYieldPanel);
+export default YearlyParabolicTroughYieldPanel;

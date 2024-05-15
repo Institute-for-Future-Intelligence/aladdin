@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import NoLeafFlowerImage from './resources/no_leaf_flower.png';
@@ -103,7 +103,7 @@ export class FlowerData {
     }
   }
 
-  static fetchLabel(name: string, lang: {}): string {
+  static fetchLabel(name: string, lang: { lng: string }): string {
     switch (name) {
       case FlowerType.Bellflower:
         return i18n.t('flower.Bellflower', lang);

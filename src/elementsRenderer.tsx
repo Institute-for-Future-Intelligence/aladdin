@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef } from 'react';
@@ -37,7 +37,7 @@ import { EndWaiting } from './waiting';
 import WindTurbine from './views/windTurbine';
 import { WindTurbineModel } from './models/WindTurbineModel';
 
-const ElementsRenderer: React.FC = () => {
+const ElementsRenderer: React.FC = React.memo(() => {
   const elements = useStore(Selector.elements);
 
   const groupRef = useRef<Group>(null);
@@ -110,11 +110,11 @@ const ElementsRenderer: React.FC = () => {
       <ClearDeletedRoofIdSet />
     </group>
   );
-};
+});
 
 // Couldn't find a good way to clear this set to avoid memory leak.
 // This roof id set is used in all walls which shape needs to be changed by the deletion of the roof.
-// So fter all the walls have used it their useEffect hooks, then we can clear it.
+// So after all the walls have used it their useEffect hooks, then we can clear it.
 // And here is the last hook get called due to React hooks mechanism.
 const ClearDeletedRoofIdSet = () => {
   const deletedRoofIdSet = useStore(Selector.deletedRoofIdSet);
@@ -126,4 +126,4 @@ const ClearDeletedRoofIdSet = () => {
   return null;
 };
 
-export default React.memo(ElementsRenderer);
+export default ElementsRenderer;

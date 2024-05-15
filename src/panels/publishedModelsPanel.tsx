@@ -1,5 +1,5 @@
 /*
- * @Copyright 2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2023-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -57,13 +57,6 @@ const Header = styled.div`
   justify-content: space-between;
   align-items: center;
   cursor: move;
-
-  svg.icon {
-    height: 16px;
-    width: 16px;
-    padding: 8px;
-    fill: #666;
-  }
 `;
 
 export interface PublishedModelsPanelProps {
@@ -71,7 +64,7 @@ export interface PublishedModelsPanelProps {
   openCloudFile: (userid: string, title: string) => void;
 }
 
-const PublishedModelsPanel = ({ publishedModels, openCloudFile }: PublishedModelsPanelProps) => {
+const PublishedModelsPanel = React.memo(({ publishedModels, openCloudFile }: PublishedModelsPanelProps) => {
   const language = useStore(Selector.language);
   const user = useStore(Selector.user);
 
@@ -184,6 +177,6 @@ const PublishedModelsPanel = ({ publishedModels, openCloudFile }: PublishedModel
       </ReactDraggable>
     </>
   );
-};
+});
 
-export default React.memo(PublishedModelsPanel);
+export default PublishedModelsPanel;

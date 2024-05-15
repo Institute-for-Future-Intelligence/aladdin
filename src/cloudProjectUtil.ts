@@ -56,233 +56,212 @@ export const fetchProject = async (
     });
 };
 
-export const removeDesignFromProject = (userid: string, projectTitle: string, design: Design) => {
+export const removeDesignFromProject = async (userid: string, projectTitle: string, design: Design) => {
   const lang = { lng: useStore.getState().language };
-  return firebase
-    .firestore()
-    .collection('users')
-    .doc(userid)
-    .collection('projects')
-    .doc(projectTitle)
-    .update({
-      designs: firebase.firestore.FieldValue.arrayRemove(design),
-    })
-    .then(() => {
-      usePrimitiveStore.getState().set((state) => {
-        state.updateProjectsFlag = true;
+  try {
+    await firebase
+      .firestore()
+      .collection('users')
+      .doc(userid)
+      .collection('projects')
+      .doc(projectTitle)
+      .update({
+        designs: firebase.firestore.FieldValue.arrayRemove(design),
       });
-      // also delete the design
-      firebase
-        .firestore()
-        .collection('users')
-        .doc(userid)
-        .collection('designs')
-        .doc(design.title)
-        .delete()
-        .then(() => {
-          useStore.getState().set((state) => {
-            if (design.title === state.cloudFile) {
-              state.cloudFile = undefined;
-            }
-          });
-          showInfo(i18n.t('message.DesignRemovedFromProject', lang) + '.');
-        })
-        .catch((error) => {
-          showError(i18n.t('message.CannotDeleteCloudFile', lang) + ': ' + error);
-        });
-    })
-    .catch((error) => {
-      showError(i18n.t('message.CannotRemoveDesignFromProject', lang) + ': ' + error);
+    usePrimitiveStore.getState().set((state) => {
+      state.updateProjectsFlag = true;
     });
+    // also delete the design
+    firebase
+      .firestore()
+      .collection('users')
+      .doc(userid)
+      .collection('designs')
+      .doc(design.title)
+      .delete()
+      .then(() => {
+        useStore.getState().set((state_1) => {
+          if (design.title === state_1.cloudFile) {
+            state_1.cloudFile = undefined;
+          }
+        });
+        showInfo(i18n.t('message.DesignRemovedFromProject', lang) + '.');
+      })
+      .catch((error) => {
+        showError(i18n.t('message.CannotDeleteCloudFile', lang) + ': ' + error);
+      });
+  } catch (error_1) {
+    showError(i18n.t('message.CannotRemoveDesignFromProject', lang) + ': ' + error_1);
+  }
 };
 
-export const updateHiddenParameters = (
+export const updateHiddenParameters = async (
   userid: string,
   projectTitle: string,
   hiddenParameter: string,
   add: boolean, // true is to add, false is to remove
 ) => {
   const lang = { lng: useStore.getState().language };
-  return firebase
-    .firestore()
-    .collection('users')
-    .doc(userid)
-    .collection('projects')
-    .doc(projectTitle)
-    .update({
-      hiddenParameters: add
-        ? firebase.firestore.FieldValue.arrayUnion(hiddenParameter)
-        : firebase.firestore.FieldValue.arrayRemove(hiddenParameter),
-    })
-    .then(() => {
-      // ignore
-    })
-    .catch((error) => {
-      showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
-    });
+  try {
+    await firebase
+      .firestore()
+      .collection('users')
+      .doc(userid)
+      .collection('projects')
+      .doc(projectTitle)
+      .update({
+        hiddenParameters: add
+          ? firebase.firestore.FieldValue.arrayUnion(hiddenParameter)
+          : firebase.firestore.FieldValue.arrayRemove(hiddenParameter),
+      });
+  } catch (error) {
+    showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
+  }
 };
 
-export const addRange = (userid: string, projectTitle: string, range: Range) => {
+export const addRange = async (userid: string, projectTitle: string, range: Range) => {
   const lang = { lng: useStore.getState().language };
-  return firebase
-    .firestore()
-    .collection('users')
-    .doc(userid)
-    .collection('projects')
-    .doc(projectTitle)
-    .update({
-      ranges: firebase.firestore.FieldValue.arrayUnion(range),
-    })
-    .then(() => {
-      // ignore
-    })
-    .catch((error) => {
-      showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
-    });
+  try {
+    await firebase
+      .firestore()
+      .collection('users')
+      .doc(userid)
+      .collection('projects')
+      .doc(projectTitle)
+      .update({
+        ranges: firebase.firestore.FieldValue.arrayUnion(range),
+      });
+  } catch (error) {
+    showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
+  }
 };
 
-export const updateRanges = (userid: string, projectTitle: string, ranges: Range[]) => {
+export const updateRanges = async (userid: string, projectTitle: string, ranges: Range[]) => {
   const lang = { lng: useStore.getState().language };
-  return firebase
-    .firestore()
-    .collection('users')
-    .doc(userid)
-    .collection('projects')
-    .doc(projectTitle)
-    .update({ ranges })
-    .then(() => {
-      // ignore
-    })
-    .catch((error) => {
-      showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
-    });
+  try {
+    await firebase
+      .firestore()
+      .collection('users')
+      .doc(userid)
+      .collection('projects')
+      .doc(projectTitle)
+      .update({ ranges });
+  } catch (error) {
+    showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
+  }
 };
 
-export const updateDescription = (userid: string, projectTitle: string, description: string | null) => {
+export const updateDescription = async (userid: string, projectTitle: string, description: string | null) => {
   const lang = { lng: useStore.getState().language };
-  return firebase
-    .firestore()
-    .collection('users')
-    .doc(userid)
-    .collection('projects')
-    .doc(projectTitle)
-    .update({ description })
-    .then(() => {
-      // ignore
-    })
-    .catch((error) => {
-      showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
-    });
+  try {
+    await firebase
+      .firestore()
+      .collection('users')
+      .doc(userid)
+      .collection('projects')
+      .doc(projectTitle)
+      .update({ description });
+  } catch (error) {
+    showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
+  }
 };
 
-export const updateDataColoring = (userid: string, projectTitle: string, dataColoring: DataColoring) => {
+export const updateDataColoring = async (userid: string, projectTitle: string, dataColoring: DataColoring) => {
   const lang = { lng: useStore.getState().language };
-  return firebase
-    .firestore()
-    .collection('users')
-    .doc(userid)
-    .collection('projects')
-    .doc(projectTitle)
-    .update({ dataColoring })
-    .then(() => {
-      // ignore
-    })
-    .catch((error) => {
-      showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
-    });
+  try {
+    await firebase
+      .firestore()
+      .collection('users')
+      .doc(userid)
+      .collection('projects')
+      .doc(projectTitle)
+      .update({ dataColoring });
+  } catch (error) {
+    showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
+  }
 };
 
-export const updateSelectedProperty = (userid: string, projectTitle: string, selectedProperty: string | null) => {
+export const updateSelectedProperty = async (userid: string, projectTitle: string, selectedProperty: string | null) => {
   const lang = { lng: useStore.getState().language };
-  return firebase
-    .firestore()
-    .collection('users')
-    .doc(userid)
-    .collection('projects')
-    .doc(projectTitle)
-    .update({ selectedProperty })
-    .then(() => {
-      // ignore
-    })
-    .catch((error) => {
-      showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
-    });
+  try {
+    await firebase
+      .firestore()
+      .collection('users')
+      .doc(userid)
+      .collection('projects')
+      .doc(projectTitle)
+      .update({ selectedProperty });
+  } catch (error) {
+    showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
+  }
 };
 
-export const updateXAxisNameScatterPlot = (
+export const updateXAxisNameScatterPlot = async (
   userid: string,
   projectTitle: string,
   xAxisNameScatterPlot: string | null,
 ) => {
   const lang = { lng: useStore.getState().language };
-  return firebase
-    .firestore()
-    .collection('users')
-    .doc(userid)
-    .collection('projects')
-    .doc(projectTitle)
-    .update({ xAxisNameScatterPlot: xAxisNameScatterPlot })
-    .then(() => {
-      // ignore
-    })
-    .catch((error) => {
-      showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
-    });
+  try {
+    await firebase
+      .firestore()
+      .collection('users')
+      .doc(userid)
+      .collection('projects')
+      .doc(projectTitle)
+      .update({ xAxisNameScatterPlot: xAxisNameScatterPlot });
+  } catch (error) {
+    showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
+  }
 };
 
-export const updateYAxisNameScatterPlot = (
+export const updateYAxisNameScatterPlot = async (
   userid: string,
   projectTitle: string,
   yAxisNameScatterPlot: string | null,
 ) => {
   const lang = { lng: useStore.getState().language };
-  return firebase
-    .firestore()
-    .collection('users')
-    .doc(userid)
-    .collection('projects')
-    .doc(projectTitle)
-    .update({ yAxisNameScatterPlot: yAxisNameScatterPlot })
-    .then(() => {
-      // ignore
-    })
-    .catch((error) => {
-      showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
-    });
+  try {
+    await firebase
+      .firestore()
+      .collection('users')
+      .doc(userid)
+      .collection('projects')
+      .doc(projectTitle)
+      .update({ yAxisNameScatterPlot: yAxisNameScatterPlot });
+  } catch (error) {
+    showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
+  }
 };
 
-export const updateDotSizeScatterPlot = (userid: string, projectTitle: string, dotSizeScatterPlot: number) => {
+export const updateDotSizeScatterPlot = async (userid: string, projectTitle: string, dotSizeScatterPlot: number) => {
   const lang = { lng: useStore.getState().language };
-  return firebase
-    .firestore()
-    .collection('users')
-    .doc(userid)
-    .collection('projects')
-    .doc(projectTitle)
-    .update({ dotSizeScatterPlot: dotSizeScatterPlot })
-    .then(() => {
-      // ignore
-    })
-    .catch((error) => {
-      showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
-    });
+  try {
+    await firebase
+      .firestore()
+      .collection('users')
+      .doc(userid)
+      .collection('projects')
+      .doc(projectTitle)
+      .update({ dotSizeScatterPlot: dotSizeScatterPlot });
+  } catch (error) {
+    showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
+  }
 };
 
-export const updateThumbnailWidth = (userid: string, projectTitle: string, thumbnailWidth: number) => {
+export const updateThumbnailWidth = async (userid: string, projectTitle: string, thumbnailWidth: number) => {
   const lang = { lng: useStore.getState().language };
-  return firebase
-    .firestore()
-    .collection('users')
-    .doc(userid)
-    .collection('projects')
-    .doc(projectTitle)
-    .update({ thumbnailWidth })
-    .then(() => {
-      // ignore
-    })
-    .catch((error) => {
-      showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
-    });
+  try {
+    await firebase
+      .firestore()
+      .collection('users')
+      .doc(userid)
+      .collection('projects')
+      .doc(projectTitle)
+      .update({ thumbnailWidth });
+  } catch (error) {
+    showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
+  }
 };
 
 export const createDesign = (type: string, title: string, thumbnail: string): Design => {
@@ -437,7 +416,7 @@ export const updateDesignVisibility = (userid: string, projectTitle: string, des
     });
 };
 
-export const updateDesign = (
+export const updateDesign = async (
   userid: string,
   projectType: string,
   projectTitle: string,
@@ -451,77 +430,71 @@ export const updateDesign = (
   });
 
   // First we update the design file by overwriting it with the current content
-  return firebase
+  await firebase
     .firestore()
     .collection('users')
     .doc(userid)
     .collection('designs')
     .doc(designTitle)
-    .set(useStore.getState().exportContent())
-    .then(() => {
-      usePrimitiveStore.getState().setChanged(false);
-      if (canvas) {
-        // update the thumbnail image as well
-        const thumbnail = Util.resizeCanvas(canvas, thumbnailWidth).toDataURL();
-        firebase
-          .firestore()
-          .collection('users')
-          .doc(userid)
-          .collection('projects')
-          .doc(projectTitle)
-          .get()
-          .then((doc) => {
-            if (doc.exists) {
-              const data = doc.data();
-              if (data) {
-                const updatedDesigns: Design[] = [];
-                updatedDesigns.push(...data.designs);
-                // Get the index of the design to be modified by the title
-                let index = -1;
-                for (const [i, d] of updatedDesigns.entries()) {
-                  if (d.title === designTitle) {
-                    index = i;
-                    break;
-                  }
-                }
-                // If found, update the design in the array
-                if (index >= 0) {
-                  // Update design from the current parameters and results and the new thumbnail
-                  updatedDesigns[index] = createDesign(projectType, designTitle, thumbnail);
-                  // Finally, upload the updated design array back to Firestore
-                  firebase
-                    .firestore()
-                    .collection('users')
-                    .doc(userid)
-                    .collection('projects')
-                    .doc(projectTitle)
-                    .update({ designs: updatedDesigns })
-                    .then(() => {
-                      // ignore
-                    })
-                    .catch((error) => {
-                      showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
-                    })
-                    .finally(() => {
-                      // Update the cached array in the local storage via the common store
-                      useStore.getState().set((state) => {
-                        state.projectState.designs = updatedDesigns;
-                      });
-                      usePrimitiveStore.getState().set((state) => {
-                        state.updateProjectsFlag = true;
-                        state.waiting = false;
-                      });
-                    });
-                }
+    .set(useStore.getState().exportContent());
+  usePrimitiveStore.getState().setChanged(false);
+  if (canvas) {
+    // update the thumbnail image as well
+    const thumbnail = Util.resizeCanvas(canvas, thumbnailWidth).toDataURL();
+    firebase
+      .firestore()
+      .collection('users')
+      .doc(userid)
+      .collection('projects')
+      .doc(projectTitle)
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          const data_1 = doc.data();
+          if (data_1) {
+            const updatedDesigns: Design[] = [];
+            updatedDesigns.push(...data_1.designs);
+            // Get the index of the design to be modified by the title
+            let index = -1;
+            for (const [i, d] of updatedDesigns.entries()) {
+              if (d.title === designTitle) {
+                index = i;
+                break;
               }
             }
-          })
-          .catch((error) => {
-            showError(i18n.t('message.CannotFetchProjectData', lang) + ': ' + error);
-          })
-          .finally(() => {
-            // ignore
-          });
-      }
-    });
+            // If found, update the design in the array
+            if (index >= 0) {
+              // Update design from the current parameters and results and the new thumbnail
+              updatedDesigns[index] = createDesign(projectType, designTitle, thumbnail);
+              // Finally, upload the updated design array back to Firestore
+              firebase
+                .firestore()
+                .collection('users')
+                .doc(userid)
+                .collection('projects')
+                .doc(projectTitle)
+                .update({ designs: updatedDesigns })
+                .then(() => {})
+                .catch((error) => {
+                  showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
+                })
+                .finally(() => {
+                  // Update the cached array in the local storage via the common store
+                  useStore.getState().set((state_1) => {
+                    state_1.projectState.designs = updatedDesigns;
+                  });
+                  usePrimitiveStore.getState().set((state_2) => {
+                    state_2.updateProjectsFlag = true;
+                    state_2.waiting = false;
+                  });
+                });
+            }
+          }
+        }
+      })
+      .catch((error_1) => {
+        showError(i18n.t('message.CannotFetchProjectData', lang) + ': ' + error_1);
+      })
+      .finally(() => {});
+  }
 };

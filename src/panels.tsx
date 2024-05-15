@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  *
  */
 
@@ -39,7 +39,7 @@ import { GraphDataType } from './types';
 import NavigationPanel from './panels/navigationPanel';
 import ShadowSettingsPanel from './panels/shadowSettingsPanel';
 
-const Panels = () => {
+const Panels = React.memo(() => {
   const showSiteInfoPanel = useStore(Selector.viewState.showSiteInfoPanel);
   const showDesignInfoPanel = useStore(Selector.viewState.showDesignInfoPanel);
   const showInstructionPanel = useStore(Selector.viewState.showInstructionPanel);
@@ -143,6 +143,6 @@ const Panels = () => {
       {showEvolutionPanel && <SolarPanelOptimizationResult />}
     </>
   );
-};
+});
 
-export default React.memo(Panels);
+export default Panels;

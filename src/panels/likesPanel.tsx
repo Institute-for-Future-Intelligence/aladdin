@@ -1,5 +1,5 @@
 /*
- * @Copyright 2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2023-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -57,13 +57,6 @@ const Header = styled.div`
   justify-content: space-between;
   align-items: center;
   cursor: move;
-
-  svg.icon {
-    height: 16px;
-    width: 16px;
-    padding: 8px;
-    fill: #666;
-  }
 `;
 
 export interface LikesPanelProps {
@@ -71,7 +64,7 @@ export interface LikesPanelProps {
   openCloudFile: (userid: string, title: string) => void;
 }
 
-const LikesPanel = ({ likesArray, openCloudFile }: LikesPanelProps) => {
+const LikesPanel = React.memo(({ likesArray, openCloudFile }: LikesPanelProps) => {
   const language = useStore(Selector.language);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
@@ -185,6 +178,6 @@ const LikesPanel = ({ likesArray, openCloudFile }: LikesPanelProps) => {
       </ReactDraggable>
     </>
   );
-};
+});
 
-export default React.memo(LikesPanel);
+export default LikesPanel;

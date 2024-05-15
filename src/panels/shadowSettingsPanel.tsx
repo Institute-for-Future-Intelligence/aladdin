@@ -1,5 +1,5 @@
 /*
- * @Copyright 2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2023-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -10,7 +10,7 @@ import * as Selector from '../stores/selector';
 import i18n from '../i18n/i18n';
 import { UndoableChange } from '../undo/UndoableChange';
 
-const ShadowSettingsPanel = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const ShadowSettingsPanel = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const addUndoable = useStore(Selector.addUndoable);
@@ -219,6 +219,6 @@ const ShadowSettingsPanel = ({ setDialogVisible }: { setDialogVisible: (b: boole
       </Row>
     </Modal>
   );
-};
+});
 
-export default React.memo(ShadowSettingsPanel);
+export default ShadowSettingsPanel;

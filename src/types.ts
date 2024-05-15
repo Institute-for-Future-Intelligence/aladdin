@@ -359,6 +359,13 @@ export enum MoveHandleType {
   Mid = 'Move Handle Mid',
 }
 
+export enum MoveDirection {
+  Left = 'Left',
+  Right = 'Right',
+  Up = 'Up',
+  Down = 'Down',
+}
+
 export enum ResizeHandleType {
   LowerLeft = 'Resize Handle Lower Left',
   UpperLeft = 'Resize Handle Upper Left',

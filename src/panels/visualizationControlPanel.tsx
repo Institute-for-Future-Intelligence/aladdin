@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React from 'react';
@@ -41,7 +41,7 @@ const ColumnWrapper = styled.div`
   opacity: 100%;
 `;
 
-const VisualizationControlPanel = () => {
+const VisualizationControlPanel = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
@@ -100,6 +100,6 @@ const VisualizationControlPanel = () => {
       </ColumnWrapper>
     </Container>
   );
-};
+});
 
-export default React.memo(VisualizationControlPanel);
+export default VisualizationControlPanel;

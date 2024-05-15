@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -67,20 +67,13 @@ const Header = styled.div`
   justify-content: space-between;
   align-items: center;
   cursor: move;
-
-  svg.icon {
-    height: 16px;
-    width: 16px;
-    padding: 8px;
-    fill: #666;
-  }
 `;
 
 export interface DailyHeliostatYieldPanelProps {
   city: string | null;
 }
 
-const DailyHeliostatYieldPanel = ({ city }: DailyHeliostatYieldPanelProps) => {
+const DailyHeliostatYieldPanel = React.memo(({ city }: DailyHeliostatYieldPanelProps) => {
   const language = useStore(Selector.language);
   const loggable = useStore(Selector.loggable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
@@ -116,7 +109,7 @@ const DailyHeliostatYieldPanel = ({ city }: DailyHeliostatYieldPanelProps) => {
     heliostatSumRef.current.clear();
     for (const datum of dailyYield) {
       for (const prop in datum) {
-        if (datum.hasOwnProperty(prop)) {
+        if (Object.hasOwn(datum, prop)) {
           if (prop !== 'Hour') {
             s += datum[prop] as number;
             heliostatSumRef.current.set(prop, (heliostatSumRef.current.get(prop) ?? 0) + (datum[prop] as number));
@@ -376,7 +369,7 @@ const DailyHeliostatYieldPanel = ({ city }: DailyHeliostatYieldPanelProps) => {
                 icon={<CameraOutlined />}
                 title={t('word.SaveAsImage', lang)}
                 onClick={() => {
-                  screenshot('line-graph-' + labelX + '-' + labelY, 'daily-heliostat-yield', {}).then(() => {
+                  screenshot('line-graph-' + labelX + '-' + labelY, 'daily-heliostat-yield').then(() => {
                     showInfo(t('message.ScreenshotSaved', lang));
                     if (loggable) {
                       setCommonStore((state) => {
@@ -414,6 +407,6 @@ const DailyHeliostatYieldPanel = ({ city }: DailyHeliostatYieldPanelProps) => {
       </Container>
     </ReactDraggable>
   );
-};
+});
 
-export default React.memo(DailyHeliostatYieldPanel);
+export default DailyHeliostatYieldPanel;

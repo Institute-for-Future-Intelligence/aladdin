@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import JaahImage from './resources/jaah.png';
@@ -118,7 +118,7 @@ export class HumanData {
     }
   }
 
-  static fetchLabel(name: string, lang: {}): string {
+  static fetchLabel(name: string, lang: { lng: string }): string {
     switch (name) {
       case HumanName.Jaah:
         return i18n.t('people.Jaah', lang);

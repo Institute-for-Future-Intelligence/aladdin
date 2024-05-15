@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  *
  */
 
@@ -18,7 +18,7 @@ import SolarPanelSimulation from './analysis/solarPanelSimulation';
 import * as Selector from 'src/stores/selector';
 import { useStore } from './stores/common';
 
-const Simulations = () => {
+const Simulations = React.memo(() => {
   const worldLatitude = useStore(Selector.world.latitude);
   const worldLongitude = useStore(Selector.world.longitude);
   const getClosestCity = useStore(Selector.getClosestCity);
@@ -45,6 +45,6 @@ const Simulations = () => {
       <SolarUpdraftTowerSimulation city={city} />
     </>
   );
-};
+});
 
-export default React.memo(Simulations);
+export default Simulations;

@@ -3,7 +3,7 @@
  */
 
 import React, { useEffect, useMemo, useRef } from 'react';
-import { ActionInfo, ObjectType } from './types';
+import { ActionInfo, MoveDirection, ObjectType } from './types';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import { UndoableDelete, UndoableDeleteMultiple } from './undo/UndoableDelete';
@@ -35,13 +35,6 @@ import { resetView, zoomView } from './components/mainMenu/viewMenu';
 
 export interface KeyboardListenerProps {
   canvas?: HTMLCanvasElement | null;
-}
-
-export enum MoveDirection {
-  Left = 'Left',
-  Right = 'Right',
-  Up = 'Up',
-  Down = 'Down',
 }
 
 const AutoDeletionListener = React.memo(() => {
@@ -223,7 +216,7 @@ const handleKeys = [
   'ctrl',
 ];
 
-const KeyboardListener = ({ canvas }: KeyboardListenerProps) => {
+const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
   const setCommonStore = useStore(Selector.set);
   const loggable = useStore(Selector.loggable);
   const selectNone = useStore(Selector.selectNone);
@@ -381,10 +374,7 @@ const KeyboardListener = ({ canvas }: KeyboardListenerProps) => {
       }
       case ObjectType.Wall: {
         const wall = e as WallModel;
-        if (wall.leftJoints.length !== 0 || wall.rightJoints.length !== 0) {
-          return false;
-        }
-        return true;
+        return !(wall.leftJoints.length !== 0 || wall.rightJoints.length !== 0);
       }
       default:
         return true;
@@ -790,7 +780,8 @@ const KeyboardListener = ({ canvas }: KeyboardListenerProps) => {
         }
         break;
       case 'ctrl+v':
-      case 'meta+v': // for Mac
+      case 'meta+v': {
+        // for Mac
         const pastedElements = pasteElements();
         if (pastedElements.length > 0) {
           const undoablePaste = {
@@ -812,8 +803,9 @@ const KeyboardListener = ({ canvas }: KeyboardListenerProps) => {
           addUndoable(undoablePaste);
         }
         break;
+      }
       case 'ctrl+alt+h': // for Mac and Chrome OS
-      case 'ctrl+home':
+      case 'ctrl+home': {
         if (!orthographic) {
           const cameraPosition = useStore.getState().viewState.cameraPosition;
           const panCenter = useStore.getState().viewState.panCenter;
@@ -867,6 +859,7 @@ const KeyboardListener = ({ canvas }: KeyboardListenerProps) => {
           }
         }
         break;
+      }
       case 'f2':
       case 'ctrl+b':
       case 'meta+b':
@@ -1207,6 +1200,6 @@ const KeyboardListener = ({ canvas }: KeyboardListenerProps) => {
       <AutoDeletionListener />
     </>
   );
-};
+});
 
-export default React.memo(KeyboardListener);
+export default KeyboardListener;

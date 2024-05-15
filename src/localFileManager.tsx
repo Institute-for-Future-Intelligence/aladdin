@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -17,7 +17,7 @@ export interface LocalFileManagerProps {
   viewOnly: boolean;
 }
 
-const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
+const LocalFileManager = React.memo(({ viewOnly = false }: LocalFileManagerProps) => {
   const setCommonStore = useStore(Selector.set);
   const exportContent = useStore(Selector.exportContent);
   const importContent = useStore(Selector.importContent);
@@ -267,6 +267,6 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
       </Modal>
     </>
   );
-};
+});
 
-export default React.memo(LocalFileManager);
+export default LocalFileManager;

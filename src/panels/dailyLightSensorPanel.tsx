@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -61,20 +61,13 @@ const Header = styled.div`
   justify-content: space-between;
   align-items: center;
   cursor: move;
-
-  svg.icon {
-    height: 16px;
-    width: 16px;
-    padding: 8px;
-    fill: #666;
-  }
 `;
 
 export interface DailyLightSensorPanelProps {
   city: string | null;
 }
 
-const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
+const DailyLightSensorPanel = React.memo(({ city }: DailyLightSensorPanelProps) => {
   const language = useStore(Selector.language);
   const loggable = useStore(Selector.loggable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
@@ -272,7 +265,7 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
               icon={<CameraOutlined />}
               title={i18n.t('word.SaveAsImage', lang)}
               onClick={() => {
-                screenshot('line-graph-' + labelX + '-' + labelY, 'daily-light-sensor', {}).then(() => {
+                screenshot('line-graph-' + labelX + '-' + labelY, 'daily-light-sensor').then(() => {
                   showInfo(i18n.t('message.ScreenshotSaved', lang));
                   if (loggable) {
                     setCommonStore((state) => {
@@ -309,6 +302,6 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
       </Container>
     </ReactDraggable>
   );
-};
+});
 
-export default React.memo(DailyLightSensorPanel);
+export default DailyLightSensorPanel;

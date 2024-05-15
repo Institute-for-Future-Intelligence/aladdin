@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -53,18 +53,11 @@ const Header = styled.div`
   justify-content: space-between;
   align-items: center;
   cursor: move;
-
-  svg.icon {
-    height: 16px;
-    width: 16px;
-    padding: 8px;
-    fill: #666;
-  }
 `;
 
 const { TextArea } = Input;
 
-const StickyNotePanel = () => {
+const StickyNotePanel = React.memo(() => {
   const language = useStore(Selector.language);
   const addUndoable = useStore(Selector.addUndoable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
@@ -240,6 +233,6 @@ const StickyNotePanel = () => {
       </ReactDraggable>
     </>
   );
-};
+});
 
-export default React.memo(StickyNotePanel);
+export default StickyNotePanel;

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import { OrthographicCamera, PerspectiveCamera } from '@react-three/drei';
@@ -25,7 +25,7 @@ const getCameraDirection = (cam: Camera) => {
   return dir;
 };
 
-export const setCompassRotation = (camera: Camera) => {
+const setCompassRotation = (camera: Camera) => {
   const compass = document.getElementById('compassCanvas');
   const setCameraUnderGround = (b: boolean) => {
     usePrimitiveStore.getState().set((state) => {
@@ -49,7 +49,7 @@ export const setCompassRotation = (camera: Camera) => {
   }
 };
 
-const CameraController = () => {
+const CameraController = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
   const orthographic = useStore(Selector.viewState.orthographic);
   const enableRotate = useStore(Selector.viewState.enableRotate);
@@ -274,7 +274,7 @@ const CameraController = () => {
   };
 
   // animation
-  useFrame((state) => {
+  useFrame(() => {
     if (autoRotate && orbitControlsRef.current) {
       orbitControlsRef.current.update();
     }
@@ -354,6 +354,6 @@ const CameraController = () => {
       />
     </>
   );
-};
+});
 
-export default React.memo(CameraController);
+export default CameraController;

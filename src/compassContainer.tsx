@@ -1,5 +1,5 @@
 /*
- * @Copyright 2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2023-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef } from 'react';
@@ -11,7 +11,7 @@ const STYLE_SIZE = 120;
 const DARK = 'DarkSlateGray';
 const WHITE = 'white';
 
-const Compass = ({ visible = true }: { visible: boolean }) => {
+const Compass = React.memo(({ visible = true }: { visible: boolean }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const lang = useLanguage();
@@ -183,6 +183,6 @@ const Compass = ({ visible = true }: { visible: boolean }) => {
       }}
     ></canvas>
   );
-};
+});
 
-export default React.memo(Compass);
+export default Compass;

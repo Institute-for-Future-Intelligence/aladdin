@@ -65,308 +65,303 @@ const Header = styled.div`
   justify-content: space-between;
   align-items: center;
   cursor: move;
-
-  svg.icon {
-    height: 16px;
-    width: 16px;
-    padding: 8px;
-    fill: #666;
-  }
 `;
 
-const AccountSettingsPanel = ({ openCloudFile }: { openCloudFile: (userid: string, title: string) => void }) => {
-  const setCommonStore = useStore(Selector.set);
-  const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
-  const language = useStore(Selector.language);
-  const user = useStore(Selector.user);
-  const userCount = usePrimitiveStore(Selector.userCount);
-  const showLikesPanel = usePrimitiveStore(Selector.showLikesPanel);
-  const showPublishedModelsPanel = usePrimitiveStore(Selector.showPublishedModelsPanel);
+const AccountSettingsPanel = React.memo(
+  ({ openCloudFile }: { openCloudFile: (userid: string, title: string) => void }) => {
+    const setCommonStore = useStore(Selector.set);
+    const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
+    const language = useStore(Selector.language);
+    const user = useStore(Selector.user);
+    const userCount = usePrimitiveStore(Selector.userCount);
+    const showLikesPanel = usePrimitiveStore(Selector.showLikesPanel);
+    const showPublishedModelsPanel = usePrimitiveStore(Selector.showPublishedModelsPanel);
 
-  // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
-  // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
-  const nodeRef = React.useRef(null);
+    // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
+    // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
+    const nodeRef = React.useRef(null);
 
-  const wrapperRef = useRef<HTMLDivElement | null>(null);
-  const schoolIdRef = useRef<SchoolID>(user.schoolID ?? SchoolID.UNKNOWN);
-  const classIdRef = useRef<ClassID>(user.classID ?? ClassID.UNKNOWN);
-  const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
-  const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 600;
-  const [curPosition, setCurPosition] = useState({ x: 0, y: 0 });
-  const lang = { lng: language };
+    const wrapperRef = useRef<HTMLDivElement | null>(null);
+    const schoolIdRef = useRef<SchoolID>(user.schoolID ?? SchoolID.UNKNOWN);
+    const classIdRef = useRef<ClassID>(user.classID ?? ClassID.UNKNOWN);
+    const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
+    const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 600;
+    const [curPosition, setCurPosition] = useState({ x: 0, y: 0 });
+    const lang = { lng: language };
 
-  // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
-  useEffect(() => {
-    const handleResize = () => {
+    // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
+    useEffect(() => {
+      const handleResize = () => {
+        setCurPosition({
+          x: Math.max(0, wOffset - window.innerWidth),
+          y: Math.min(0, window.innerHeight - hOffset),
+        });
+      };
+      window.addEventListener('resize', handleResize);
+      return () => {
+        window.removeEventListener('resize', handleResize);
+      };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    const onDrag: DraggableEventHandler = (e, ui) => {
       setCurPosition({
-        x: Math.max(0, wOffset - window.innerWidth),
-        y: Math.min(0, window.innerHeight - hOffset),
+        x: Math.max(ui.x, wOffset - window.innerWidth),
+        y: Math.min(ui.y, window.innerHeight - hOffset),
       });
     };
-    window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
+
+    const onDragEnd: DraggableEventHandler = (e, ui) => {
+      // TODO: Should we save the position?
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
-  const onDrag: DraggableEventHandler = (e, ui) => {
-    setCurPosition({
-      x: Math.max(ui.x, wOffset - window.innerWidth),
-      y: Math.min(ui.y, window.innerHeight - hOffset),
-    });
-  };
+    const closePanel = () => {
+      usePrimitiveStore.getState().set((state) => {
+        state.showAccountSettingsPanel = false;
+      });
+    };
 
-  const onDragEnd: DraggableEventHandler = (e, ui) => {
-    // TODO: Should we save the position?
-  };
+    const superuser = user && user.email && user.email.endsWith('intofuture.org');
+    const signFile = false;
 
-  const closePanel = () => {
-    usePrimitiveStore.getState().set((state) => {
-      state.showAccountSettingsPanel = false;
-    });
-  };
+    const { t } = useTranslation();
 
-  const superuser = user && user.email && user.email.endsWith('intofuture.org');
-  const signFile = false;
-
-  const { t } = useTranslation();
-
-  return (
-    <>
-      {showLikesPanel && <LikesPanel likesArray={user.likes ?? []} openCloudFile={openCloudFile} />}
-      {showPublishedModelsPanel && (
-        <PublishedModelsPanel publishedModels={user.published ?? []} openCloudFile={openCloudFile} />
-      )}
-      <ReactDraggable
-        nodeRef={nodeRef}
-        handle={'.handle'}
-        bounds={'parent'}
-        axis="both"
-        position={curPosition}
-        onDrag={onDrag}
-        onStop={onDragEnd}
-      >
-        <Container ref={nodeRef}>
-          <ColumnWrapper ref={wrapperRef}>
-            <Header className="handle" style={{ direction: 'ltr' }}>
-              <span>{t('accountSettingsPanel.MyAccountSettings', lang)}</span>
-              <span
-                style={{ cursor: 'pointer' }}
-                onMouseDown={() => {
-                  closePanel();
-                }}
-                onTouchStart={() => {
-                  closePanel();
-                }}
-              >
-                {t('word.Close', lang)}
-              </span>
-            </Header>
-
-            <Row gutter={20} style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>
-              <Col
-                span={6}
-                onClick={() => {
-                  if (user.uid) {
-                    navigator.clipboard
-                      .writeText(user.uid)
-                      .then(() => showSuccess(t('accountSettingsPanel.IDInClipBoard', lang)));
-                  }
-                }}
-              >
-                <Button
-                  title={t('accountSettingsPanel.ClickToCopyMyID', lang)}
-                  style={{ cursor: 'copy', borderRadius: '8px' }}
+    return (
+      <>
+        {showLikesPanel && <LikesPanel likesArray={user.likes ?? []} openCloudFile={openCloudFile} />}
+        {showPublishedModelsPanel && (
+          <PublishedModelsPanel publishedModels={user.published ?? []} openCloudFile={openCloudFile} />
+        )}
+        <ReactDraggable
+          nodeRef={nodeRef}
+          handle={'.handle'}
+          bounds={'parent'}
+          axis="both"
+          position={curPosition}
+          onDrag={onDrag}
+          onStop={onDragEnd}
+        >
+          <Container ref={nodeRef}>
+            <ColumnWrapper ref={wrapperRef}>
+              <Header className="handle" style={{ direction: 'ltr' }}>
+                <span>{t('accountSettingsPanel.MyAccountSettings', lang)}</span>
+                <span
+                  style={{ cursor: 'pointer' }}
+                  onMouseDown={() => {
+                    closePanel();
+                  }}
+                  onTouchStart={() => {
+                    closePanel();
+                  }}
                 >
-                  {t('accountSettingsPanel.MyID', lang)}
-                </Button>
-              </Col>
-              <Col style={{ paddingTop: '8px' }} span={18}>
-                {user.uid}
-              </Col>
-            </Row>
+                  {t('word.Close', lang)}
+                </span>
+              </Header>
 
-            {signFile && (
+              <Row gutter={20} style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>
+                <Col
+                  span={6}
+                  onClick={() => {
+                    if (user.uid) {
+                      navigator.clipboard
+                        .writeText(user.uid)
+                        .then(() => showSuccess(t('accountSettingsPanel.IDInClipBoard', lang)));
+                    }
+                  }}
+                >
+                  <Button
+                    title={t('accountSettingsPanel.ClickToCopyMyID', lang)}
+                    style={{ cursor: 'copy', borderRadius: '8px' }}
+                  >
+                    {t('accountSettingsPanel.MyID', lang)}
+                  </Button>
+                </Col>
+                <Col style={{ paddingTop: '8px' }} span={18}>
+                  {user.uid}
+                </Col>
+              </Row>
+
+              {signFile && (
+                <Row gutter={20} style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>
+                  <Col style={{ paddingTop: '8px' }} span={6}>
+                    <Switch
+                      checked={user.signFile}
+                      onChange={(checked) => {
+                        if (checked) {
+                          confirm({
+                            title: t('accountSettingsPanel.DoYouReallyWantToShowYourNameInYourFiles', lang),
+                            icon: <ExclamationCircleOutlined />,
+                            content: t('accountSettingsPanel.SignFileDisclaimer', lang),
+                            onOk() {
+                              setCommonStore((state) => {
+                                state.user.signFile = true;
+                              });
+                            },
+                            onCancel() {
+                              setCommonStore((state) => {
+                                state.user.signFile = false;
+                              });
+                            },
+                          });
+                        } else {
+                          setCommonStore((state) => {
+                            state.user.signFile = false;
+                          });
+                        }
+                        usePrimitiveStore.getState().set((state) => {
+                          state.saveAccountSettingsFlag = true;
+                        });
+                      }}
+                    />
+                  </Col>
+                  <Col span={18}>{t('accountSettingsPanel.StoreMyNameInMyFilesWhenSaving', lang)}</Col>
+                </Row>
+              )}
+
               <Row gutter={20} style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>
                 <Col style={{ paddingTop: '8px' }} span={6}>
-                  <Switch
-                    checked={user.signFile}
-                    onChange={(checked) => {
-                      if (checked) {
-                        confirm({
-                          title: t('accountSettingsPanel.DoYouReallyWantToShowYourNameInYourFiles', lang),
-                          icon: <ExclamationCircleOutlined />,
-                          content: t('accountSettingsPanel.SignFileDisclaimer', lang),
-                          onOk() {
-                            setCommonStore((state) => {
-                              state.user.signFile = true;
-                            });
-                          },
-                          onCancel() {
-                            setCommonStore((state) => {
-                              state.user.signFile = false;
-                            });
-                          },
-                        });
-                      } else {
-                        setCommonStore((state) => {
-                          state.user.signFile = false;
-                        });
-                      }
+                  {t('accountSettingsPanel.SchoolID', lang)}
+                </Col>
+                <Col span={18}>
+                  <Select
+                    style={{ width: '90%' }}
+                    value={schoolIdRef.current}
+                    onChange={(value) => {
+                      schoolIdRef.current = value;
+                      setCommonStore((state) => {
+                        state.user.schoolID = value;
+                      });
                       usePrimitiveStore.getState().set((state) => {
                         state.saveAccountSettingsFlag = true;
                       });
                     }}
-                  />
+                  >
+                    <Option key={SchoolID.UNKNOWN} value={SchoolID.UNKNOWN}>
+                      {SchoolID.UNKNOWN}
+                    </Option>
+                    <Option key={SchoolID.SCHOOL1} value={SchoolID.SCHOOL1}>
+                      {SchoolID.SCHOOL1}
+                    </Option>
+                    <Option key={SchoolID.SCHOOL2} value={SchoolID.SCHOOL2}>
+                      {SchoolID.SCHOOL2}
+                    </Option>
+                    <Option key={SchoolID.SCHOOL3} value={SchoolID.SCHOOL3}>
+                      {SchoolID.SCHOOL3}
+                    </Option>
+                    <Option key={SchoolID.SCHOOL4} value={SchoolID.SCHOOL4}>
+                      {SchoolID.SCHOOL4}
+                    </Option>
+                    <Option key={SchoolID.SCHOOL5} value={SchoolID.SCHOOL5}>
+                      {SchoolID.SCHOOL5}
+                    </Option>
+                  </Select>
                 </Col>
-                <Col span={18}>{t('accountSettingsPanel.StoreMyNameInMyFilesWhenSaving', lang)}</Col>
               </Row>
-            )}
 
-            <Row gutter={20} style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>
-              <Col style={{ paddingTop: '8px' }} span={6}>
-                {t('accountSettingsPanel.SchoolID', lang)}
-              </Col>
-              <Col span={18}>
-                <Select
-                  style={{ width: '90%' }}
-                  value={schoolIdRef.current}
-                  onChange={(value) => {
-                    schoolIdRef.current = value;
-                    setCommonStore((state) => {
-                      state.user.schoolID = value;
-                    });
-                    usePrimitiveStore.getState().set((state) => {
-                      state.saveAccountSettingsFlag = true;
-                    });
-                  }}
-                >
-                  <Option key={SchoolID.UNKNOWN} value={SchoolID.UNKNOWN}>
-                    {SchoolID.UNKNOWN}
-                  </Option>
-                  <Option key={SchoolID.SCHOOL1} value={SchoolID.SCHOOL1}>
-                    {SchoolID.SCHOOL1}
-                  </Option>
-                  <Option key={SchoolID.SCHOOL2} value={SchoolID.SCHOOL2}>
-                    {SchoolID.SCHOOL2}
-                  </Option>
-                  <Option key={SchoolID.SCHOOL3} value={SchoolID.SCHOOL3}>
-                    {SchoolID.SCHOOL3}
-                  </Option>
-                  <Option key={SchoolID.SCHOOL4} value={SchoolID.SCHOOL4}>
-                    {SchoolID.SCHOOL4}
-                  </Option>
-                  <Option key={SchoolID.SCHOOL5} value={SchoolID.SCHOOL5}>
-                    {SchoolID.SCHOOL5}
-                  </Option>
-                </Select>
-              </Col>
-            </Row>
+              <Row gutter={20} style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>
+                <Col style={{ paddingTop: '8px' }} span={6}>
+                  {t('accountSettingsPanel.ClassID', lang)}
+                </Col>
+                <Col span={18}>
+                  <Select
+                    style={{ width: '90%' }}
+                    value={classIdRef.current}
+                    onChange={(value) => {
+                      classIdRef.current = value;
+                      setCommonStore((state) => {
+                        state.user.classID = value;
+                      });
+                      usePrimitiveStore.getState().set((state) => {
+                        state.saveAccountSettingsFlag = true;
+                      });
+                    }}
+                  >
+                    <Option key={ClassID.UNKNOWN} value={ClassID.UNKNOWN}>
+                      {ClassID.UNKNOWN}
+                    </Option>
+                    <Option key={ClassID.CLASS1} value={ClassID.CLASS1}>
+                      {ClassID.CLASS1}
+                    </Option>
+                    <Option key={ClassID.CLASS2} value={ClassID.CLASS2}>
+                      {ClassID.CLASS2}
+                    </Option>
+                    <Option key={ClassID.CLASS3} value={ClassID.CLASS3}>
+                      {ClassID.CLASS3}
+                    </Option>
+                    <Option key={ClassID.CLASS4} value={ClassID.CLASS4}>
+                      {ClassID.CLASS4}
+                    </Option>
+                    <Option key={ClassID.CLASS5} value={ClassID.CLASS5}>
+                      {ClassID.CLASS5}
+                    </Option>
+                    <Option key={ClassID.CLASS6} value={ClassID.CLASS6}>
+                      {ClassID.CLASS6}
+                    </Option>
+                    <Option key={ClassID.CLASS7} value={ClassID.CLASS7}>
+                      {ClassID.CLASS7}
+                    </Option>
+                    <Option key={ClassID.CLASS8} value={ClassID.CLASS8}>
+                      {ClassID.CLASS8}
+                    </Option>
+                    <Option key={ClassID.CLASS9} value={ClassID.CLASS9}>
+                      {ClassID.CLASS9}
+                    </Option>
+                  </Select>
+                </Col>
+              </Row>
 
-            <Row gutter={20} style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>
-              <Col style={{ paddingTop: '8px' }} span={6}>
-                {t('accountSettingsPanel.ClassID', lang)}
-              </Col>
-              <Col span={18}>
-                <Select
-                  style={{ width: '90%' }}
-                  value={classIdRef.current}
-                  onChange={(value) => {
-                    classIdRef.current = value;
-                    setCommonStore((state) => {
-                      state.user.classID = value;
-                    });
-                    usePrimitiveStore.getState().set((state) => {
-                      state.saveAccountSettingsFlag = true;
-                    });
-                  }}
-                >
-                  <Option key={ClassID.UNKNOWN} value={ClassID.UNKNOWN}>
-                    {ClassID.UNKNOWN}
-                  </Option>
-                  <Option key={ClassID.CLASS1} value={ClassID.CLASS1}>
-                    {ClassID.CLASS1}
-                  </Option>
-                  <Option key={ClassID.CLASS2} value={ClassID.CLASS2}>
-                    {ClassID.CLASS2}
-                  </Option>
-                  <Option key={ClassID.CLASS3} value={ClassID.CLASS3}>
-                    {ClassID.CLASS3}
-                  </Option>
-                  <Option key={ClassID.CLASS4} value={ClassID.CLASS4}>
-                    {ClassID.CLASS4}
-                  </Option>
-                  <Option key={ClassID.CLASS5} value={ClassID.CLASS5}>
-                    {ClassID.CLASS5}
-                  </Option>
-                  <Option key={ClassID.CLASS6} value={ClassID.CLASS6}>
-                    {ClassID.CLASS6}
-                  </Option>
-                  <Option key={ClassID.CLASS7} value={ClassID.CLASS7}>
-                    {ClassID.CLASS7}
-                  </Option>
-                  <Option key={ClassID.CLASS8} value={ClassID.CLASS8}>
-                    {ClassID.CLASS8}
-                  </Option>
-                  <Option key={ClassID.CLASS9} value={ClassID.CLASS9}>
-                    {ClassID.CLASS9}
-                  </Option>
-                </Select>
-              </Col>
-            </Row>
-
-            <Row gutter={6} style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>
-              <Col span={6}>{t('accountSettingsPanel.AllPublished', lang)}</Col>
-              <Col span={18}>
-                <span
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => {
-                    setPrimitiveStore('showPublishedModelsPanel', true);
-                  }}
-                >
-                  {user.published?.length ?? 0}
-                </span>
-              </Col>
-            </Row>
-
-            <Row gutter={6} style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>
-              <Col span={6}>{t('accountSettingsPanel.PublishedUnderAliases', lang)}</Col>
-              <Col span={18}>
-                <span style={{ fontSize: '10px' }}>
-                  {user.aliases?.map((value, index) => {
-                    if (!user.aliases) return null;
-                    return value + (index < user.aliases.length - 1 ? ', ' : '');
-                  })}
-                </span>
-              </Col>
-            </Row>
-
-            <Row gutter={6} style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>
-              <Col span={6}>{t('accountSettingsPanel.Likes', lang)}</Col>
-              <Col span={18}>
-                <span
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => {
-                    setPrimitiveStore('showLikesPanel', true);
-                  }}
-                >
-                  {user.likes?.length ?? 0}
-                </span>
-              </Col>
-            </Row>
-
-            {superuser && (
               <Row gutter={6} style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>
-                <Col span={6}>{t('accountSettingsPanel.UserCount', lang)}</Col>
-                <Col span={18}>{userCount}</Col>
+                <Col span={6}>{t('accountSettingsPanel.AllPublished', lang)}</Col>
+                <Col span={18}>
+                  <span
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => {
+                      setPrimitiveStore('showPublishedModelsPanel', true);
+                    }}
+                  >
+                    {user.published?.length ?? 0}
+                  </span>
+                </Col>
               </Row>
-            )}
-          </ColumnWrapper>
-        </Container>
-      </ReactDraggable>
-    </>
-  );
-};
 
-export default React.memo(AccountSettingsPanel);
+              <Row gutter={6} style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>
+                <Col span={6}>{t('accountSettingsPanel.PublishedUnderAliases', lang)}</Col>
+                <Col span={18}>
+                  <span style={{ fontSize: '10px' }}>
+                    {user.aliases?.map((value, index) => {
+                      if (!user.aliases) return null;
+                      return value + (index < user.aliases.length - 1 ? ', ' : '');
+                    })}
+                  </span>
+                </Col>
+              </Row>
+
+              <Row gutter={6} style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>
+                <Col span={6}>{t('accountSettingsPanel.Likes', lang)}</Col>
+                <Col span={18}>
+                  <span
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => {
+                      setPrimitiveStore('showLikesPanel', true);
+                    }}
+                  >
+                    {user.likes?.length ?? 0}
+                  </span>
+                </Col>
+              </Row>
+
+              {superuser && (
+                <Row gutter={6} style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>
+                  <Col span={6}>{t('accountSettingsPanel.UserCount', lang)}</Col>
+                  <Col span={18}>{userCount}</Col>
+                </Row>
+              )}
+            </ColumnWrapper>
+          </Container>
+        </ReactDraggable>
+      </>
+    );
+  },
+);
+
+export default AccountSettingsPanel;

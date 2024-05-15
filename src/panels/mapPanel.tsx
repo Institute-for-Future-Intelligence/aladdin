@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -73,7 +73,7 @@ const Header = styled.div`
   }
 `;
 
-const MapPanel = () => {
+const MapPanel = React.memo(() => {
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
@@ -329,6 +329,6 @@ const MapPanel = () => {
       </Container>
     </ReactDraggable>
   );
-};
+});
 
-export default React.memo(MapPanel);
+export default MapPanel;

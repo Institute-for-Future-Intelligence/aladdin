@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -77,7 +77,7 @@ export interface DailyBuildingEnergyPanelProps {
   city: string | null;
 }
 
-const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
+const DailyBuildingEnergyPanel = React.memo(({ city }: DailyBuildingEnergyPanelProps) => {
   const language = useStore(Selector.language);
   const loggable = useStore(Selector.loggable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
@@ -501,7 +501,7 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
                 icon={<CameraOutlined />}
                 title={i18n.t('word.SaveAsImage', lang)}
                 onClick={() => {
-                  screenshot('line-graph-' + labelX + '-' + labelY, 'daily-building-energy', {}).then(() => {
+                  screenshot('line-graph-' + labelX + '-' + labelY, 'daily-building-energy').then(() => {
                     showInfo(i18n.t('message.ScreenshotSaved', lang));
                     if (loggable) {
                       setCommonStore((state) => {
@@ -539,6 +539,6 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
       </Container>
     </ReactDraggable>
   );
-};
+});
 
-export default React.memo(DailyBuildingEnergyPanel);
+export default DailyBuildingEnergyPanel;

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2023-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { MutableRefObject, useEffect, useMemo, useRef, useState } from 'react';
@@ -21,227 +21,229 @@ export interface ModelsGalleryProps {
   openCloudFile?: (userid: string, title: string) => void;
 }
 
-const ModelsGallery = ({ latRef, lngRef, author, models, closeCallback, openCloudFile }: ModelsGalleryProps) => {
-  const user = useStore(Selector.user);
-  const language = useStore(Selector.language);
-  const setCommonStore = useStore(Selector.set);
-  const modelsMapType = useStore(Selector.modelsMapType);
+const ModelsGallery = React.memo(
+  ({ latRef, lngRef, author, models, closeCallback, openCloudFile }: ModelsGalleryProps) => {
+    const user = useStore(Selector.user);
+    const language = useStore(Selector.language);
+    const setCommonStore = useStore(Selector.set);
+    const modelsMapType = useStore(Selector.modelsMapType);
 
-  // make an editable copy because models is not mutable
-  const modelsRef = useRef<Map<string, ModelSite>>(models ? new Map(models) : new Map());
-  // set a flag so that we can update when modelsRef changes
-  const [recountFlag, setRecountFlag] = useState<boolean>(false);
-  const [selectedModel, setSelectedModel] = useState<ModelSite | undefined>();
-  const [ascendingOrder, setAscendingOrder] = useState<boolean>(false);
+    // make an editable copy because models is not mutable
+    const modelsRef = useRef<Map<string, ModelSite>>(models ? new Map(models) : new Map());
+    // set a flag so that we can update when modelsRef changes
+    const [recountFlag, setRecountFlag] = useState<boolean>(false);
+    const [selectedModel, setSelectedModel] = useState<ModelSite | undefined>();
+    const [ascendingOrder, setAscendingOrder] = useState<boolean>(false);
 
-  const { Search } = Input;
-  const lang = useMemo(() => {
-    return { lng: language };
-  }, [language]);
+    const { Search } = Input;
+    const lang = useMemo(() => {
+      return { lng: language };
+    }, [language]);
 
-  useEffect(() => {
-    if (models) {
-      modelsRef.current = new Map(models);
-      setRecountFlag(!recountFlag);
-    }
-  }, [models]);
-
-  const countModels = useMemo(() => {
-    let count = 0;
-    for (const v of modelsRef.current.values()) {
-      // when author is defined, all the models belong to him/her
-      // when user is undefined, we only count those that belong to the current user
-      if (author || v.userid === user.uid) count++;
-    }
-    return count;
-  }, [modelsRef.current, author, user.uid, recountFlag]);
-
-  // use a dark theme when the map is in the satellite mode to match the color
-  const dark = author && modelsMapType !== 'roadmap';
-
-  return modelsRef.current.size === 0 ? (
-    <Drawer
-      mask={false}
-      styles={{
-        header: {
-          height: '40px',
-          paddingLeft: '1px',
-          paddingRight: '1px',
-          paddingTop: '16px',
-          paddingBottom: '12px',
-          background: dark ? '#6A6B6E' : 'whitesmoke',
-        },
-        body: {
-          padding: '0px 4px 0px 4px',
-          overflowY: 'hidden',
-          background: dark ? '#2A2B2E' : 'white',
-        },
-      }}
-      style={{ scrollbarColor: dark ? '#6A6B6E' : 'whitesmoke' }}
-      title={(author ?? i18n.t('modelsMap.MyPublishedModels', lang)) + ' (0)'}
-      placement="bottom"
-      open={true}
-      height={'150px'}
-      onClose={() => {
-        closeCallback();
-      }}
-    >
-      <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ color: dark ? 'lightgray' : 'dimgray' }} />
-    </Drawer>
-  ) : (
-    <Drawer
-      extra={
-        <Space>
-          {ascendingOrder ? (
-            <LeftCircleOutlined
-              title={i18n.t('modelsMap.SortFromNewestToOldest', lang)}
-              style={{ cursor: 'pointer', marginLeft: '2px', marginRight: '6px' }}
-              onClick={() => {
-                setAscendingOrder(false);
-              }}
-            />
-          ) : (
-            <RightCircleOutlined
-              title={i18n.t('modelsMap.SortFromOldestToNewest', lang)}
-              style={{ cursor: 'pointer', marginLeft: '2px', marginRight: '6px' }}
-              onClick={() => {
-                setAscendingOrder(true);
-              }}
-            />
-          )}
-          <Search
-            title={i18n.t('modelsMap.SearchByLabel', lang)}
-            allowClear
-            size={'small'}
-            enterButton
-            onSearch={(s) => {
-              if (!models) return;
-              modelsRef.current.clear();
-              for (const [k, v] of models) {
-                if (v.label?.toLowerCase().includes(s.toLowerCase())) {
-                  modelsRef.current.set(k, v);
-                }
-              }
-              setRecountFlag(!recountFlag);
-            }}
-          />
-        </Space>
+    useEffect(() => {
+      if (models) {
+        modelsRef.current = new Map(models);
+        setRecountFlag(!recountFlag);
       }
-      mask={false}
-      styles={{
-        header: {
-          height: '40px',
-          color: dark ? 'white' : 'black', // doesn't work
-          background: dark ? '#6A6B6E' : 'whitesmoke',
-          paddingLeft: '1px',
-          paddingRight: '1px',
-          paddingTop: '16px',
-          paddingBottom: '12px',
-          border: 'none',
-        },
-        body: {
-          padding: '0px 4px 0px 4px',
-          overflowY: 'hidden',
-          background: dark ? '#2A2B2E' : 'white',
-        },
-      }}
-      title={(author ?? i18n.t('modelsMap.MyPublishedModels', lang)) + ' (' + countModels + ')'}
-      placement="bottom"
-      open={true}
-      height={'164px'}
-      onClose={() => {
-        setSelectedModel(undefined);
-        closeCallback();
-      }}
-    >
-      <table>
-        <tbody>
-          <tr>
-            {[...modelsRef.current.keys()]
-              .sort((a, b) => {
-                const modelA = modelsRef.current.get(a);
-                const modelB = modelsRef.current.get(b);
-                if (!modelA || !modelB) return 0;
-                return (ascendingOrder ? -1 : 1) * ((modelB.timeCreated ?? 0) - (modelA.timeCreated ?? 0));
-              })
-              .map((key: string, index: number) => {
-                const m = modelsRef.current.get(key);
-                if (!m) return null;
-                // only show the models that belong to the current user when author is undefined
-                if (!author && m.userid !== user.uid) return null;
-                return (
-                  <td key={index}>
-                    <div style={{ display: 'block', marginTop: '4px' }}>
-                      <img
-                        loading={'lazy'}
-                        height={'100px'}
-                        width={'auto'}
-                        onError={(event) => {
-                          (event.target as HTMLImageElement).src = ImageLoadFailureIcon;
-                        }}
-                        alt={m.label}
-                        title={m.label}
-                        src={m.thumbnailUrl}
-                        style={{
-                          cursor: 'pointer',
-                          borderRadius: selectedModel === m ? '0' : '10px',
-                          border: selectedModel === m ? '2px solid ' + (dark ? 'goldenrod' : 'red') : 'none',
-                          marginRight: '4px',
-                        }}
-                        onClick={() => {
-                          setSelectedModel(m);
-                          if (openCloudFile) {
-                            // provided when displaying current user's models
-                            openCloudFile(m.userid, m.title);
-                          } else {
-                            // go to the location on the map when the map is open
-                            setCommonStore((state) => {
-                              if (m) {
-                                state.modelsMapLatitude = m.latitude;
-                                state.modelsMapLongitude = m.longitude;
-                                state.modelsMapZoom = 17;
-                                if (latRef) latRef.current = m.latitude;
-                                if (lngRef) lngRef.current = m.longitude;
-                              }
-                            });
-                          }
-                        }}
-                      />
-                      {/* the following div is needed to wrap the image and text */}
-                      <div>
+    }, [models]);
+
+    const countModels = useMemo(() => {
+      let count = 0;
+      for (const v of modelsRef.current.values()) {
+        // when author is defined, all the models belong to him/her
+        // when user is undefined, we only count those that belong to the current user
+        if (author || v.userid === user.uid) count++;
+      }
+      return count;
+    }, [modelsRef.current, author, user.uid, recountFlag]);
+
+    // use a dark theme when the map is in the satellite mode to match the color
+    const dark = author && modelsMapType !== 'roadmap';
+
+    return modelsRef.current.size === 0 ? (
+      <Drawer
+        mask={false}
+        styles={{
+          header: {
+            height: '40px',
+            paddingLeft: '1px',
+            paddingRight: '1px',
+            paddingTop: '16px',
+            paddingBottom: '12px',
+            background: dark ? '#6A6B6E' : 'whitesmoke',
+          },
+          body: {
+            padding: '0px 4px 0px 4px',
+            overflowY: 'hidden',
+            background: dark ? '#2A2B2E' : 'white',
+          },
+        }}
+        style={{ scrollbarColor: dark ? '#6A6B6E' : 'whitesmoke' }}
+        title={(author ?? i18n.t('modelsMap.MyPublishedModels', lang)) + ' (0)'}
+        placement="bottom"
+        open={true}
+        height={'150px'}
+        onClose={() => {
+          closeCallback();
+        }}
+      >
+        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ color: dark ? 'lightgray' : 'dimgray' }} />
+      </Drawer>
+    ) : (
+      <Drawer
+        extra={
+          <Space>
+            {ascendingOrder ? (
+              <LeftCircleOutlined
+                title={i18n.t('modelsMap.SortFromNewestToOldest', lang)}
+                style={{ cursor: 'pointer', marginLeft: '2px', marginRight: '6px' }}
+                onClick={() => {
+                  setAscendingOrder(false);
+                }}
+              />
+            ) : (
+              <RightCircleOutlined
+                title={i18n.t('modelsMap.SortFromOldestToNewest', lang)}
+                style={{ cursor: 'pointer', marginLeft: '2px', marginRight: '6px' }}
+                onClick={() => {
+                  setAscendingOrder(true);
+                }}
+              />
+            )}
+            <Search
+              title={i18n.t('modelsMap.SearchByLabel', lang)}
+              allowClear
+              size={'small'}
+              enterButton
+              onSearch={(s) => {
+                if (!models) return;
+                modelsRef.current.clear();
+                for (const [k, v] of models) {
+                  if (v.label?.toLowerCase().includes(s.toLowerCase())) {
+                    modelsRef.current.set(k, v);
+                  }
+                }
+                setRecountFlag(!recountFlag);
+              }}
+            />
+          </Space>
+        }
+        mask={false}
+        styles={{
+          header: {
+            height: '40px',
+            color: dark ? 'white' : 'black', // doesn't work
+            background: dark ? '#6A6B6E' : 'whitesmoke',
+            paddingLeft: '1px',
+            paddingRight: '1px',
+            paddingTop: '16px',
+            paddingBottom: '12px',
+            border: 'none',
+          },
+          body: {
+            padding: '0px 4px 0px 4px',
+            overflowY: 'hidden',
+            background: dark ? '#2A2B2E' : 'white',
+          },
+        }}
+        title={(author ?? i18n.t('modelsMap.MyPublishedModels', lang)) + ' (' + countModels + ')'}
+        placement="bottom"
+        open={true}
+        height={'164px'}
+        onClose={() => {
+          setSelectedModel(undefined);
+          closeCallback();
+        }}
+      >
+        <table>
+          <tbody>
+            <tr>
+              {[...modelsRef.current.keys()]
+                .sort((a, b) => {
+                  const modelA = modelsRef.current.get(a);
+                  const modelB = modelsRef.current.get(b);
+                  if (!modelA || !modelB) return 0;
+                  return (ascendingOrder ? -1 : 1) * ((modelB.timeCreated ?? 0) - (modelA.timeCreated ?? 0));
+                })
+                .map((key: string, index: number) => {
+                  const m = modelsRef.current.get(key);
+                  if (!m) return null;
+                  // only show the models that belong to the current user when author is undefined
+                  if (!author && m.userid !== user.uid) return null;
+                  return (
+                    <td key={index}>
+                      <div style={{ display: 'block', marginTop: '4px' }}>
                         <img
-                          alt={m.type}
-                          src={getIconUrl(m)}
+                          loading={'lazy'}
+                          height={'100px'}
+                          width={'auto'}
+                          onError={(event) => {
+                            (event.target as HTMLImageElement).src = ImageLoadFailureIcon;
+                          }}
+                          alt={m.label}
+                          title={m.label}
+                          src={m.thumbnailUrl}
                           style={{
-                            position: 'relative',
-                            left: '8px',
-                            bottom: '28px',
-                            width: '16px',
-                            height: '16px',
+                            cursor: 'pointer',
+                            borderRadius: selectedModel === m ? '0' : '10px',
+                            border: selectedModel === m ? '2px solid ' + (dark ? 'goldenrod' : 'red') : 'none',
+                            marginRight: '4px',
+                          }}
+                          onClick={() => {
+                            setSelectedModel(m);
+                            if (openCloudFile) {
+                              // provided when displaying current user's models
+                              openCloudFile(m.userid, m.title);
+                            } else {
+                              // go to the location on the map when the map is open
+                              setCommonStore((state) => {
+                                if (m) {
+                                  state.modelsMapLatitude = m.latitude;
+                                  state.modelsMapLongitude = m.longitude;
+                                  state.modelsMapZoom = 17;
+                                  if (latRef) latRef.current = m.latitude;
+                                  if (lngRef) lngRef.current = m.longitude;
+                                }
+                              });
+                            }
                           }}
                         />
-                        <span
-                          style={{
-                            position: 'relative',
-                            left: '16px',
-                            bottom: '24px',
-                            color: 'white',
-                            fontSize: '8px',
-                            fontWeight: 'bold',
-                          }}
-                        >
-                          {m.label ? (m.label.length > 30 ? m.label.substring(0, 30) + '...' : m.label) : 'Unknown'}
-                        </span>
+                        {/* the following div is needed to wrap the image and text */}
+                        <div>
+                          <img
+                            alt={m.type}
+                            src={getIconUrl(m)}
+                            style={{
+                              position: 'relative',
+                              left: '8px',
+                              bottom: '28px',
+                              width: '16px',
+                              height: '16px',
+                            }}
+                          />
+                          <span
+                            style={{
+                              position: 'relative',
+                              left: '16px',
+                              bottom: '24px',
+                              color: 'white',
+                              fontSize: '8px',
+                              fontWeight: 'bold',
+                            }}
+                          >
+                            {m.label ? (m.label.length > 30 ? m.label.substring(0, 30) + '...' : m.label) : 'Unknown'}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                );
-              })}
-          </tr>
-        </tbody>
-      </table>
-    </Drawer>
-  );
-};
+                    </td>
+                  );
+                })}
+            </tr>
+          </tbody>
+        </table>
+      </Drawer>
+    );
+  },
+);
 
-export default React.memo(ModelsGallery);
+export default ModelsGallery;

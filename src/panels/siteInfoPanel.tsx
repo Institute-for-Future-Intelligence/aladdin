@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useState } from 'react';
@@ -56,7 +56,7 @@ export interface SiteInfoPanelProps {
   city: string | null;
 }
 
-const SiteInfoPanel = ({ city }: SiteInfoPanelProps) => {
+const SiteInfoPanel = React.memo(({ city }: SiteInfoPanelProps) => {
   const language = useStore(Selector.language);
   const dateString = useStore(Selector.world.date);
   const address = useStore(Selector.world.address);
@@ -170,6 +170,6 @@ const SiteInfoPanel = ({ city }: SiteInfoPanelProps) => {
       </ColumnWrapper>
     </Container>
   );
-};
+});
 
-export default React.memo(SiteInfoPanel);
+export default SiteInfoPanel;

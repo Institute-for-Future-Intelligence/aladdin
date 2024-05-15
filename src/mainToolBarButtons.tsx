@@ -31,7 +31,7 @@ import ClearImage from './assets/clear.png';
 import HeliodonImage from './assets/heliodon.png';
 import AnalyzeImage from './assets/analyze.png';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import { Dropdown, MenuProps, Modal } from 'antd';
@@ -112,7 +112,7 @@ const ToolBarMenuItem = ({ objectType, srcImg, setFlag, replacingText }: ToolBar
   );
 };
 
-const MainToolBarButtons = () => {
+const MainToolBarButtons = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const loggable = useStore(Selector.loggable);
@@ -690,6 +690,6 @@ const MainToolBarButtons = () => {
       </ToolBarButton>
     </div>
   );
-};
+});
 
-export default React.memo(MainToolBarButtons);
+export default MainToolBarButtons;

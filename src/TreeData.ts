@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import AppleSpringImage from './resources/apple_spring.png';
@@ -50,7 +50,7 @@ export class TreeData {
     return type === TreeType.Spruce;
   }
 
-  static fetchLabel(name: string, lang: {}): string {
+  static fetchLabel(name: string, lang: { lng: string }): string {
     switch (name) {
       case TreeType.Apple:
         return i18n.t('tree.Apple', lang);

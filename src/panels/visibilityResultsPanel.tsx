@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -62,16 +62,9 @@ const Header = styled.div`
   justify-content: space-between;
   align-items: center;
   cursor: move;
-
-  svg.icon {
-    height: 16px;
-    width: 16px;
-    padding: 8px;
-    fill: #666;
-  }
 `;
 
-const VisibilityResultsPanel = () => {
+const VisibilityResultsPanel = React.memo(() => {
   const language = useStore(Selector.language);
   const loggable = useStore(Selector.loggable);
   const setCommonStore = useStore(Selector.set);
@@ -297,7 +290,7 @@ const VisibilityResultsPanel = () => {
               icon={<SaveOutlined />}
               title={t('word.SaveAsImage', lang)}
               onClick={() => {
-                screenshot('visibility-results-table', 'visibility-results', {}).then(() => {
+                screenshot('visibility-results-table', 'visibility-results').then(() => {
                   showInfo(t('message.ScreenshotSaved', lang));
                 });
               }}
@@ -307,6 +300,6 @@ const VisibilityResultsPanel = () => {
       </Container>
     </ReactDraggable>
   );
-};
+});
 
-export default React.memo(VisibilityResultsPanel);
+export default VisibilityResultsPanel;

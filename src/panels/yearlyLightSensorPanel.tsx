@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -61,20 +61,13 @@ const Header = styled.div`
   justify-content: space-between;
   align-items: center;
   cursor: move;
-
-  svg.icon {
-    height: 16px;
-    width: 16px;
-    padding: 8px;
-    fill: #666;
-  }
 `;
 
 export interface YearlyLightSensorPanelProps {
   city: string | null;
 }
 
-const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
+const YearlyLightSensorPanel = React.memo(({ city }: YearlyLightSensorPanelProps) => {
   const language = useStore(Selector.language);
   const loggable = useStore(Selector.loggable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
@@ -345,7 +338,7 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
                 icon={<CameraOutlined />}
                 title={t('word.SaveAsImage', lang)}
                 onClick={() => {
-                  screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-light-sensor', {}).then(() => {
+                  screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-light-sensor').then(() => {
                     showInfo(t('message.ScreenshotSaved', lang));
                     if (loggable) {
                       setCommonStore((state) => {
@@ -383,6 +376,6 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
       </Container>
     </ReactDraggable>
   );
-};
+});
 
-export default React.memo(YearlyLightSensorPanel);
+export default YearlyLightSensorPanel;

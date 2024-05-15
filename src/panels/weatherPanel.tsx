@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -63,7 +63,7 @@ export interface WeatherPanelProps {
   graphs: GraphDataType[];
 }
 
-const WeatherPanel = ({ city, graphs }: WeatherPanelProps) => {
+const WeatherPanel = React.memo(({ city, graphs }: WeatherPanelProps) => {
   const language = useStore(Selector.language);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
@@ -301,6 +301,6 @@ const WeatherPanel = ({ city, graphs }: WeatherPanelProps) => {
       </Container>
     </ReactDraggable>
   );
-};
+});
 
-export default React.memo(WeatherPanel);
+export default WeatherPanel;

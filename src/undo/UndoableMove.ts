@@ -1,13 +1,12 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import { Undoable } from './Undoable';
 import { Vector3 } from 'three';
-import { ObjectType } from '../types';
+import { MoveDirection, ObjectType } from '../types';
 import { FlippedWallSide } from './UndoableAdd';
 import { ElementModel } from 'src/models/ElementModel';
-import { MoveDirection } from 'src/keyboardListener';
 
 export interface UndoableMove extends Undoable {
   oldCx: number;

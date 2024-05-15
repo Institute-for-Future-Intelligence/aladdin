@@ -18,9 +18,9 @@ export class Random {
       v = 0;
     while (u === 0) u = Math.random(); //Converting [0,1) to (0,1)
     while (v === 0) v = Math.random();
-    let r: number[] = new Array(2);
-    let a = Math.sqrt(-2.0 * Math.log(u));
-    let b = 2.0 * Math.PI * v;
+    const r: number[] = new Array(2);
+    const a = Math.sqrt(-2.0 * Math.log(u));
+    const b = 2.0 * Math.PI * v;
     r[0] = a * Math.cos(b);
     r[1] = a * Math.sin(b);
     return r;
@@ -31,7 +31,7 @@ export class Random {
     let x = 0,
       p = Math.exp(-lambda),
       s = p;
-    let u = Math.random();
+    const u = Math.random();
     while (u > s) {
       x++;
       p *= lambda / x;

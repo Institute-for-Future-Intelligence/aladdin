@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect } from 'react';
@@ -8,7 +8,7 @@ import { useThree } from '@react-three/fiber';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 
-const SceneRadiusCalculator = () => {
+const SceneRadiusCalculator = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
   const updateSceneRadiusFlag = useStore(Selector.updateSceneRadiusFlag);
 
@@ -63,6 +63,6 @@ const SceneRadiusCalculator = () => {
   };
 
   return <></>;
-};
+});
 
-export default React.memo(SceneRadiusCalculator);
+export default SceneRadiusCalculator;

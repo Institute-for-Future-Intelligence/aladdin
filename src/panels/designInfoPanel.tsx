@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import SolarPanelImage from '../assets/solar-panel.png';
@@ -55,7 +55,7 @@ const ColumnWrapper = styled.div<ColumnWrapperProps>`
   opacity: 100%;
 `;
 
-const DesignInfoPanel = () => {
+const DesignInfoPanel = React.memo(() => {
   const elements = useStore(Selector.elements);
   const countElementsByType = useStore(Selector.countElementsByType);
   const countSolarPanelsOnRack = useStore(Selector.countSolarPanelsOnRack);
@@ -215,6 +215,6 @@ const DesignInfoPanel = () => {
       </ColumnWrapper>
     </Container>
   );
-};
+});
 
-export default React.memo(DesignInfoPanel);
+export default DesignInfoPanel;

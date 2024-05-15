@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useRef } from 'react';
@@ -13,7 +13,7 @@ import {
   UNIT_VECTOR_POS_Z,
 } from './constants';
 
-const Lights = () => {
+const Lights = React.memo(() => {
   const directLightIntensity = useStore(Selector.viewState.directLightIntensity) ?? 3.5;
   const ambientLightIntensity = useStore(Selector.viewState.ambientLightIntensity) ?? 0.2;
   const shadowCameraFar = useStore(Selector.viewState.shadowCameraFar) ?? DEFAULT_SHADOW_CAMERA_FAR;
@@ -55,6 +55,6 @@ const Lights = () => {
       />
     </>
   );
-};
+});
 
-export default React.memo(Lights);
+export default Lights;

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -65,20 +65,13 @@ const Header = styled.div`
   justify-content: space-between;
   align-items: center;
   cursor: move;
-
-  svg.icon {
-    height: 16px;
-    width: 16px;
-    padding: 8px;
-    fill: #666;
-  }
 `;
 
 export interface DiurnalTemperaturePanelProps {
   city: string | null;
 }
 
-const DiurnalTemperaturePanel = ({ city }: DiurnalTemperaturePanelProps) => {
+const DiurnalTemperaturePanel = React.memo(({ city }: DiurnalTemperaturePanelProps) => {
   const language = useStore(Selector.language);
   const addUndoable = useStore(Selector.addUndoable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
@@ -336,6 +329,6 @@ const DiurnalTemperaturePanel = ({ city }: DiurnalTemperaturePanelProps) => {
       </Container>
     </ReactDraggable>
   );
-};
+});
 
-export default React.memo(DiurnalTemperaturePanel);
+export default DiurnalTemperaturePanel;

@@ -684,7 +684,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
         .then(() => {
           if (successCallback) successCallback();
         })
-        .catch((error) => {
+        .catch(() => {
           // ignore
         });
     }
@@ -706,7 +706,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
         .then(() => {
           // ignore
         })
-        .catch((error) => {
+        .catch(() => {
           // ignore
         });
     }

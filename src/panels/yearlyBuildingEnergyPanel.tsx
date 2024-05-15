@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -63,20 +63,13 @@ const Header = styled.div`
   justify-content: space-between;
   align-items: center;
   cursor: move;
-
-  svg.icon {
-    height: 16px;
-    width: 16px;
-    padding: 8px;
-    fill: #666;
-  }
 `;
 
 export interface YearlyBuildingEnergyPanelProps {
   city: string | null;
 }
 
-const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => {
+const YearlyBuildingEnergyPanel = React.memo(({ city }: YearlyBuildingEnergyPanelProps) => {
   const world = useStore.getState().world;
   const getWeather = useStore(Selector.getWeather);
   const language = useStore(Selector.language);
@@ -556,7 +549,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
                     return;
                   }
                   if (checkResult.status === CheckStatus.AT_LEAST_ONE_BAD_NO_GOOD) {
-                    let errorType = '';
+                    let errorType;
                     switch (checkResult.buildingCompletion) {
                       case BuildingCompletionStatus.WALL_DISJOINED:
                         errorType = i18n.t('message.WallsAreNotConnected', lang);
@@ -601,7 +594,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
                 icon={<CameraOutlined />}
                 title={i18n.t('word.SaveAsImage', lang)}
                 onClick={() => {
-                  screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-building-energy', {}).then(() => {
+                  screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-building-energy').then(() => {
                     showInfo(i18n.t('message.ScreenshotSaved', lang));
                     if (loggable) {
                       setCommonStore((state) => {
@@ -639,6 +632,6 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
       </Container>
     </ReactDraggable>
   );
-};
+});
 
-export default React.memo(YearlyBuildingEnergyPanel);
+export default YearlyBuildingEnergyPanel;

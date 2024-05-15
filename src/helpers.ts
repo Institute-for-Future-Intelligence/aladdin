@@ -123,13 +123,13 @@ export const containedInDOMRect = (rect: DOMRect, x: number, y: number, margin: 
 };
 
 export const saveImage = (fileName: string, imgUrl: string) => {
-  let a = document.createElement('a') as HTMLAnchorElement;
+  const a = document.createElement('a') as HTMLAnchorElement;
   a.download = fileName;
   a.href = imgUrl;
   a.click();
 };
 
-export const screenshot = async (elementId: string, name: string, options: {}) => {
+export const screenshot = async (elementId: string, name: string, options?: object) => {
   const source = window.document.getElementById(elementId);
   if (source) {
     const canvas = await html2canvas(source, { ...options, removeContainer: true });
