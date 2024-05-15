@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef } from 'react';
@@ -44,7 +44,7 @@ export interface StaticSolarRadiationSimulationProps {
 // note that this cannot be used for anything related to CSP as CPS must move to track or reflect the sun
 // for the same reason, this cannot be used for PV with trackers.
 
-const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulationProps) => {
+const StaticSolarRadiationSimulation = React.memo(({ city }: StaticSolarRadiationSimulationProps) => {
   const language = useStore(Selector.language);
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
@@ -60,6 +60,8 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
   const lang = useMemo(() => {
     return { lng: language };
   }, [language]);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const weather = useMemo(() => getWeather(city ?? 'Boston MA, USA'), [city]);
   const now = new Date(world.date);
 
@@ -113,26 +115,31 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
     fetchObjects();
     for (const e of elements) {
       switch (e.type) {
-        case ObjectType.Foundation:
+        case ObjectType.Foundation: {
           const f = e as FoundationModel;
           generateHeatmapForFoundation(f);
           if (f.solarStructure === SolarStructure.UpdraftTower) {
             generateHeatmapForSolarUpdraftTower(f);
           }
           break;
-        case ObjectType.Cuboid:
+        }
+        case ObjectType.Cuboid: {
           generateHeatmapForCuboid(e as CuboidModel);
           break;
-        case ObjectType.SolarPanel:
+        }
+        case ObjectType.SolarPanel: {
           generateHeatmapForSolarPanel(e as SolarPanelModel);
           break;
-        case ObjectType.Wall:
+        }
+        case ObjectType.Wall: {
           generateHeatmapForWall(e as WallModel);
           break;
-        case ObjectType.Door:
+        }
+        case ObjectType.Door: {
           generateHeatmapForDoor(e as DoorModel);
           break;
-        case ObjectType.Roof:
+        }
+        case ObjectType.Roof: {
           const roof = e as RoofModel;
           switch (roof.roofType) {
             case RoofType.Pyramid:
@@ -152,6 +159,7 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
               break;
           }
           break;
+        }
       }
     }
   };
@@ -469,7 +477,7 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
     if (panel.trackerType !== TrackerType.NO_TRACKER) throw new Error('trackers cannot use static simulation');
     let parent = getParent(panel);
     if (!parent) throw new Error('parent of solar panel does not exist');
-    let rooftop = panel.parentType === ObjectType.Roof;
+    const rooftop = panel.parentType === ObjectType.Roof;
     const walltop = panel.parentType === ObjectType.Wall;
     if (rooftop) {
       // x and y coordinates of a rooftop solar panel are relative to the foundation
@@ -1440,6 +1448,6 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
   };
 
   return <></>;
-};
+});
 
-export default React.memo(StaticSolarRadiationSimulation);
+export default StaticSolarRadiationSimulation;

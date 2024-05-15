@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -58,7 +58,7 @@ interface RoofSegmentResult {
   totalArea: number;
 }
 
-const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
+const ThermalSimulation = React.memo(({ city }: ThermalSimulationProps) => {
   const setCommonStore = useStore(Selector.set);
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const getWeather = useStore(Selector.getWeather);
@@ -82,7 +82,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
 
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
-  const noAnimation = !!world.noAnimationForThermalSimulation;
+  const noAnimation = world.noAnimationForThermalSimulation;
   const highestTemperatureTimeInMinutes = world.highestTemperatureTimeInMinutes ?? 900;
 
   const requestRef = useRef<number>(0);
@@ -108,6 +108,8 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const lang = useMemo(() => {
     return { lng: language };
   }, [language]);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const weather = useMemo(() => getWeather(city ?? 'Boston MA, USA'), [city]);
   const now = new Date(world.date);
 
@@ -289,6 +291,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       // continue the simulation
       calculateDaily();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pauseDailySimulation]);
 
   // TODO
@@ -436,6 +439,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     setTimeout(() => {
       fetchObjects();
     }, 200);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [monthIndex]);
 
   useEffect(() => {
@@ -488,6 +492,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       // continue the simulation
       simulateYearly();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pauseYearlySimulation]);
 
   const initYearly = () => {
@@ -590,24 +595,29 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     sunDirectionRef.current = calculateSunDirection();
     for (const e of elements) {
       switch (e.type) {
-        case ObjectType.Door:
+        case ObjectType.Door: {
           calculateDoor(e as DoorModel);
           break;
-        case ObjectType.Window:
+        }
+        case ObjectType.Window: {
           calculateWindow(e as WindowModel);
           calculateSolarHeatGain(e as WindowModel);
           break;
-        case ObjectType.Wall:
+        }
+        case ObjectType.Wall: {
           calculateWall(e as WallModel);
           break;
-        case ObjectType.Roof:
+        }
+        case ObjectType.Roof: {
           const roof = e as RoofModel;
           calculateRoof(roof);
           calculateFloor(roof);
           break;
-        case ObjectType.SolarPanel:
+        }
+        case ObjectType.SolarPanel: {
           calculateSolarPanel(e as SolarPanelModel);
           break;
+        }
       }
     }
   };
@@ -1596,6 +1606,6 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   };
 
   return <></>;
-};
+});
 
-export default React.memo(ThermalSimulation);
+export default ThermalSimulation;

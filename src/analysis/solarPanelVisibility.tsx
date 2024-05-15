@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef } from 'react';
@@ -17,7 +17,7 @@ import i18n from '../i18n/i18n';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
 
-const SolarPanelVisibility = () => {
+const SolarPanelVisibility = React.memo(() => {
   const language = useStore(Selector.language);
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
@@ -177,6 +177,6 @@ const SolarPanelVisibility = () => {
   };
 
   return <></>;
-};
+});
 
-export default React.memo(SolarPanelVisibility);
+export default SolarPanelVisibility;

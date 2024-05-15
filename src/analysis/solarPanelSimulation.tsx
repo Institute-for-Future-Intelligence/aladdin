@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef } from 'react';
@@ -39,7 +39,7 @@ const getPanelEfficiency = (temperature: number, pvModel: PvModel) => {
   return e * (1 + pvModel.pmaxTC * (temperature - 25));
 };
 
-const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
+const SolarPanelSimulation = React.memo(({ city }: SolarPanelSimulationProps) => {
   const setCommonStore = useStore(Selector.set);
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const loggable = useStore(Selector.loggable);
@@ -72,6 +72,8 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
   const lang = useMemo(() => {
     return { lng: language };
   }, [language]);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const weather = useMemo(() => getWeather(city ?? 'Boston MA, USA'), [city]);
   const now = new Date(world.date);
 
@@ -99,6 +101,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
   // this is used in daily simulation that should respond to change of date and latitude
   const sunMinutes = useMemo(() => {
     return computeSunriseAndSunsetInMinutes(now, world.latitude);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [world.date, world.latitude]);
 
   // this is used in yearly simulation in which the date is changed programmatically based on the current latitude
@@ -165,6 +168,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       // continue the simulation
       simulateDaily();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pauseDailySimulation]);
 
   const staticSimulateDaily = (lastStep: boolean) => {
@@ -418,6 +422,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       // continue the simulation
       simulateYearly();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pauseYearlySimulation]);
 
   const initYearly = () => {
@@ -643,7 +648,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       throw new Error('static simulation is not for solar panel with tracker');
     let parent = getParent(panel);
     if (!parent) throw new Error('parent of solar panel does not exist');
-    let rooftop = panel.parentType === ObjectType.Roof;
+    const rooftop = panel.parentType === ObjectType.Roof;
     const walltop = panel.parentType === ObjectType.Wall;
     if (rooftop) {
       // x and y coordinates of a rooftop solar panel are relative to the foundation
@@ -803,7 +808,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
           updateTemperature(currentTime);
           const eff = getPanelEfficiency(currentTemperatureRef.current, pvModel);
           switch (pvModel.shadeTolerance) {
-            case ShadeTolerance.NONE:
+            case ShadeTolerance.NONE: {
               // all the cells are connected in a single series,
               // so the total output is determined by the minimum
               let min1 = Number.MAX_VALUE;
@@ -817,7 +822,8 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
               }
               sum = min1 * nx * ny;
               break;
-            case ShadeTolerance.PARTIAL:
+            }
+            case ShadeTolerance.PARTIAL: {
               // assuming each panel uses a diode bypass to connect two columns of cells
               let min2 = Number.MAX_VALUE;
               if (panel.orientation === Orientation.portrait) {
@@ -856,7 +862,8 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
                 }
               }
               break;
-            default:
+            }
+            default: {
               // this probably is too idealized
               for (let kx = 0; kx < nx; kx++) {
                 for (let ky = 0; ky < ny; ky++) {
@@ -864,6 +871,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
                 }
               }
               break;
+            }
           }
           output[i] += (eff * sum) / (nx * ny);
         } else {
@@ -880,7 +888,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
   const calculateYield = (panel: SolarPanelModel) => {
     let parent = getParent(panel);
     if (!parent) throw new Error('parent of solar panel does not exist');
-    let rooftop = panel.parentType === ObjectType.Roof;
+    const rooftop = panel.parentType === ObjectType.Roof;
     const walltop = panel.parentType === ObjectType.Wall;
     if (rooftop) {
       // x and y coordinates of a rooftop solar panel are relative to the foundation
@@ -968,13 +976,14 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
         ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
         : sunDirection.clone();
       switch (panel.trackerType) {
-        case TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER:
+        case TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER: {
           const qRotAADAT = new Quaternion().setFromUnitVectors(UNIT_VECTOR_POS_Z, rotatedSunDirection);
           normalEuler = new Euler().setFromQuaternion(qRotAADAT);
           // the default order is XYZ, so we rotate the relative azimuth below using the z-component
           normalEuler.z += zRot;
           break;
-        case TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER:
+        }
+        case TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER: {
           const qRotHSAT = new Quaternion().setFromUnitVectors(
             UNIT_VECTOR_POS_Z,
             new Vector3(rotatedSunDirection.x, 0, rotatedSunDirection.z).normalize(),
@@ -983,14 +992,17 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
           // the default order is XYZ, so we rotate the relative azimuth below using the z-component
           normalEuler.z += zRot;
           break;
-        case TrackerType.VERTICAL_SINGLE_AXIS_TRACKER:
+        }
+        case TrackerType.VERTICAL_SINGLE_AXIS_TRACKER: {
           const v2 = new Vector3(rotatedSunDirection.x, -rotatedSunDirection.y, 0).normalize();
           const az = Math.acos(UNIT_VECTOR_POS_Y.dot(v2)) * Math.sign(v2.x);
           normalEuler = new Euler(panel.tiltAngle, 0, az + rot, 'ZYX');
           break;
-        case TrackerType.TILTED_SINGLE_AXIS_TRACKER:
+        }
+        case TrackerType.TILTED_SINGLE_AXIS_TRACKER: {
           // TODO
           break;
+        }
       }
     }
     normal.applyEuler(normalEuler);
@@ -1054,7 +1066,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     // Nice demo at: https://www.youtube.com/watch?v=UNPJapaZlCU
     let sum = 0;
     switch (pvModel.shadeTolerance) {
-      case ShadeTolerance.NONE:
+      case ShadeTolerance.NONE: {
         // all the cells are connected in a single series,
         // so the total output is determined by the minimum
         let min1 = Number.MAX_VALUE;
@@ -1068,7 +1080,8 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
         }
         sum = min1 * nx * ny;
         break;
-      case ShadeTolerance.PARTIAL:
+      }
+      case ShadeTolerance.PARTIAL: {
         // assuming each panel uses a diode bypass to connect two columns of cells
         let min2 = Number.MAX_VALUE;
         if (panel.orientation === Orientation.portrait) {
@@ -1107,7 +1120,8 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
           }
         }
         break;
-      default:
+      }
+      default: {
         // this probably is too idealized
         for (let kx = 0; kx < nx; kx++) {
           for (let ky = 0; ky < ny; ky++) {
@@ -1115,6 +1129,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
           }
         }
         break;
+      }
     }
     const output = dailyOutputsMapRef.current.get(panel.id);
     if (output) {
@@ -1211,6 +1226,6 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
   };
 
   return <></>;
-};
+});
 
-export default React.memo(SolarPanelSimulation);
+export default SolarPanelSimulation;

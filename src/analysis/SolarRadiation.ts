@@ -36,9 +36,9 @@ export class SolarRadiation {
     parent: ElementModel,
     foundation: FoundationModel,
     elevation: number,
-    distanceToClosestObject: Function,
+    distanceToClosestObject: (elementId: string, position: Vector3, sunDirection: Vector3) => number,
   ): { heatmap: number[][]; average: number } {
-    let rooftop = panel.parentType === ObjectType.Roof;
+    const rooftop = panel.parentType === ObjectType.Roof;
     const walltop = panel.parentType === ObjectType.Wall;
     if (rooftop) {
       // x and y coordinates of a rooftop solar panel are relative to the foundation
@@ -121,13 +121,14 @@ export class SolarRadiation {
         ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
         : sunDirection.clone();
       switch (panel.trackerType) {
-        case TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER:
+        case TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER: {
           const qRotAADAT = new Quaternion().setFromUnitVectors(UNIT_VECTOR_POS_Z, rotatedSunDirection);
           normalEuler = new Euler().setFromQuaternion(qRotAADAT);
           // the default order is XYZ, so we rotate the relative azimuth below using the z-component
           normalEuler.z += zRot;
           break;
-        case TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER:
+        }
+        case TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER: {
           const qRotHSAT = new Quaternion().setFromUnitVectors(
             UNIT_VECTOR_POS_Z,
             new Vector3(rotatedSunDirection.x, 0, rotatedSunDirection.z).normalize(),
@@ -136,14 +137,17 @@ export class SolarRadiation {
           // the default order is XYZ, so we rotate the relative azimuth below using the z-component
           normalEuler.z += zRot;
           break;
-        case TrackerType.VERTICAL_SINGLE_AXIS_TRACKER:
+        }
+        case TrackerType.VERTICAL_SINGLE_AXIS_TRACKER: {
           const v2 = new Vector3(rotatedSunDirection.x, -rotatedSunDirection.y, 0).normalize();
           const az = Math.acos(UNIT_VECTOR_POS_Y.dot(v2)) * Math.sign(v2.x);
           normalEuler = new Euler(panel.tiltAngle, 0, az + rot, 'ZYX');
           break;
-        case TrackerType.TILTED_SINGLE_AXIS_TRACKER:
+        }
+        case TrackerType.TILTED_SINGLE_AXIS_TRACKER: {
           // TODO
           break;
+        }
       }
     }
     normal.applyEuler(normalEuler);
@@ -182,7 +186,7 @@ export class SolarRadiation {
     // Nice demo at: https://www.youtube.com/watch?v=UNPJapaZlCU
     let sum = 0;
     switch (pvModel.shadeTolerance) {
-      case ShadeTolerance.NONE:
+      case ShadeTolerance.NONE: {
         // all the cells are connected in a single series,
         // so the total output is determined by the minimum
         let min1 = Number.MAX_VALUE;
@@ -196,7 +200,8 @@ export class SolarRadiation {
         }
         sum = min1 * nx * ny;
         break;
-      case ShadeTolerance.PARTIAL:
+      }
+      case ShadeTolerance.PARTIAL: {
         // assuming each panel uses a diode bypass to connect two columns of cells
         let min2 = Number.MAX_VALUE;
         if (panel.orientation === Orientation.portrait) {
@@ -235,7 +240,8 @@ export class SolarRadiation {
           }
         }
         break;
-      default:
+      }
+      default: {
         // this probably is too idealized
         for (let kx = 0; kx < nx; kx++) {
           for (let ky = 0; ky < ny; ky++) {
@@ -243,6 +249,7 @@ export class SolarRadiation {
           }
         }
         break;
+      }
     }
     return { heatmap: cellOutputs, average: sum / (nx * ny) };
   }
@@ -260,7 +267,7 @@ export class SolarRadiation {
     solarPanels: ElementModel[],
     margin: number,
     elevation: number,
-    distanceToClosestObject: Function,
+    distanceToClosestObject: (elementId: string, position: Vector3, sunDirection: Vector3) => number,
   ): { intensity: number[][]; unitArea: number; heatmap: number[][] } {
     const dayOfYear = Util.dayOfYear(now);
     const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
@@ -393,7 +400,7 @@ export class SolarRadiation {
     wall: WallModel,
     foundation: FoundationModel,
     elevation: number,
-    distanceToClosestObject: Function,
+    distanceToClosestObject: (elementId: string, position: Vector3, sunDirection: Vector3) => number,
   ): { intensity: number[][]; unitArea: number } {
     const dayOfYear = Util.dayOfYear(now);
     const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
@@ -489,7 +496,7 @@ export class SolarRadiation {
     wall: WallModel,
     foundation: FoundationModel,
     elevation: number,
-    distanceToClosestObject: Function,
+    distanceToClosestObject: (elementId: string, position: Vector3, sunDirection: Vector3) => number,
   ): { intensity: number[][]; unitArea: number } {
     const dayOfYear = Util.dayOfYear(now);
     const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
@@ -566,7 +573,7 @@ export class SolarRadiation {
     roof: RoofModel,
     foundation: FoundationModel,
     elevation: number,
-    distanceToClosestObject: Function,
+    distanceToClosestObject: (elementId: string, position: Vector3, sunDirection: Vector3) => number,
   ): { intensity: number[][]; unitArea: number } {
     const dayOfYear = Util.dayOfYear(now);
     const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
@@ -649,7 +656,7 @@ export class SolarRadiation {
     windows: ElementModel[],
     solarPanels: ElementModel[],
     elevation: number,
-    distanceToClosestObject: Function,
+    distanceToClosestObject: (elementId: string, position: Vector3, sunDirection: Vector3) => number,
   ): { segmentIntensities: number[][][]; segmentUnitArea: number[] } {
     if (flat) {
       return SolarRadiation.computeFlatRoofSolarRadiationEnergy(
@@ -768,7 +775,7 @@ export class SolarRadiation {
     windows: ElementModel[],
     solarPanels: ElementModel[],
     elevation: number,
-    distanceToClosestObject: Function,
+    distanceToClosestObject: (elementId: string, position: Vector3, sunDirection: Vector3) => number,
   ): { segmentIntensities: number[][][]; segmentUnitArea: number[] } {
     if (flat) {
       return SolarRadiation.computeFlatRoofSolarRadiationEnergy(
@@ -918,7 +925,7 @@ export class SolarRadiation {
     windows: ElementModel[],
     solarPanels: ElementModel[],
     elevation: number,
-    distanceToClosestObject: Function,
+    distanceToClosestObject: (elementId: string, position: Vector3, sunDirection: Vector3) => number,
   ): { segmentIntensities: number[][][]; segmentUnitArea: number[] } {
     if (flat) {
       return SolarRadiation.computeFlatRoofSolarRadiationEnergy(
@@ -1024,7 +1031,7 @@ export class SolarRadiation {
     windows: ElementModel[],
     solarPanels: ElementModel[],
     elevation: number,
-    distanceToClosestObject: Function,
+    distanceToClosestObject: (elementId: string, position: Vector3, sunDirection: Vector3) => number,
   ): { segmentIntensities: number[][][]; segmentUnitArea: number[] } {
     if (flat) {
       return SolarRadiation.computeFlatRoofSolarRadiationEnergy(
@@ -1187,7 +1194,7 @@ export class SolarRadiation {
     windows: ElementModel[],
     solarPanels: ElementModel[],
     elevation: number,
-    distanceToClosestObject: Function,
+    distanceToClosestObject: (elementId: string, position: Vector3, sunDirection: Vector3) => number,
   ): { segmentIntensities: number[][][]; segmentUnitArea: number[] } {
     const dayOfYear = Util.dayOfYear(now);
     const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
@@ -1270,7 +1277,7 @@ export class SolarRadiation {
     windows: ElementModel[],
     solarPanels: ElementModel[],
     elevation: number,
-    distanceToClosestObject: Function,
+    distanceToClosestObject: (elementId: string, position: Vector3, sunDirection: Vector3) => number,
   ): { segmentIntensities: number[][][]; segmentUnitArea: number[] } {
     const dayOfYear = Util.dayOfYear(now);
     const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;

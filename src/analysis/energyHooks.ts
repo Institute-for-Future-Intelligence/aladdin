@@ -234,6 +234,7 @@ export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarP
       }
       sum.push(datum);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [flagOfDailySimulation]);
 
   return {

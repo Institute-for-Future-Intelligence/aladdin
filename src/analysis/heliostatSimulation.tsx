@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef } from 'react';
@@ -24,7 +24,7 @@ export interface HeliostatSimulationProps {
   city: string | null;
 }
 
-const HeliostatSimulation = ({ city }: HeliostatSimulationProps) => {
+const HeliostatSimulation = React.memo(({ city }: HeliostatSimulationProps) => {
   const setCommonStore = useStore(Selector.set);
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const loggable = useStore(Selector.loggable);
@@ -50,6 +50,8 @@ const HeliostatSimulation = ({ city }: HeliostatSimulationProps) => {
   const lang = useMemo(() => {
     return { lng: language };
   }, [language]);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const weather = useMemo(() => getWeather(city ?? 'Boston MA, USA'), [city]);
   const now = new Date(world.date);
 
@@ -75,6 +77,7 @@ const HeliostatSimulation = ({ city }: HeliostatSimulationProps) => {
   // this is used in daily simulation that should respond to change of date and latitude
   const sunMinutes = useMemo(() => {
     return computeSunriseAndSunsetInMinutes(now, world.latitude);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [world.date, world.latitude]);
 
   // this is used in yearly simulation in which the date is changed programmatically based on the current latitude
@@ -119,6 +122,7 @@ const HeliostatSimulation = ({ city }: HeliostatSimulationProps) => {
       // continue the simulation
       simulateDaily();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pauseDailySimulation]);
 
   const initDaily = () => {
@@ -301,6 +305,7 @@ const HeliostatSimulation = ({ city }: HeliostatSimulationProps) => {
       // continue the simulation
       simulateYearly();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pauseYearlySimulation]);
 
   const initYearly = () => {
@@ -630,6 +635,6 @@ const HeliostatSimulation = ({ city }: HeliostatSimulationProps) => {
   };
 
   return <></>;
-};
+});
 
-export default React.memo(HeliostatSimulation);
+export default HeliostatSimulation;

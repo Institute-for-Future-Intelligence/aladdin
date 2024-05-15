@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import { DAILY_LAG_IN_MINUTES, MINUTES_OF_DAY, OMEGA_DAY, OMEGA_YEAR, YEARLY_LAG_IN_DAYS } from './analysisConstants';
@@ -25,8 +25,8 @@ export const U_VALUE_OPENING = 50;
 
 export const checkBuilding = (
   elements: ElementModel[],
-  countElementsByType: Function,
-  getChildrenOfType: Function,
+  countElementsByType: (type: ObjectType, excludeLocked?: boolean) => number,
+  getChildrenOfType: (type: ObjectType, id: string) => ElementModel[],
 ): CheckResult => {
   const foundationCount = countElementsByType(ObjectType.Foundation);
   if (foundationCount === 0) return { status: CheckStatus.NO_BUILDING } as CheckResult;

@@ -1119,7 +1119,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                   state.contextMenuObjectType = null;
                   if (action) {
                     switch (action) {
-                      case ActionType.Move:
+                      case ActionType.Move: {
                         if (
                           state.selectedElement?.type === ObjectType.Tree ||
                           state.selectedElement?.type === ObjectType.Human
@@ -1131,20 +1131,25 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                         }
                         setEnableOrbitController(false);
                         break;
-                      case ActionType.Resize:
+                      }
+                      case ActionType.Resize: {
                         state.resizeHandleType = e.eventObject.name as ResizeHandleType;
                         setEnableOrbitController(false);
                         break;
-                      case ActionType.Rotate:
+                      }
+                      case ActionType.Rotate: {
                         state.rotateHandleType = e.eventObject.name as RotateHandleType;
                         setEnableOrbitController(false);
                         break;
-                      case ActionType.Select:
+                      }
+                      case ActionType.Select: {
                         state.selectedElementAngle = e.object.parent?.rotation.z ?? 0;
                         setEnableOrbitController(true);
                         break;
-                      default:
+                      }
+                      default: {
                         setEnableOrbitController(true);
+                      }
                     }
                   }
                 });
@@ -3113,40 +3118,50 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                   counter.foundationCount++;
                   break;
                 }
-                case ObjectType.Cuboid:
+                case ObjectType.Cuboid: {
                   counter.cuboidCount++;
                   break;
-                case ObjectType.Wall:
+                }
+                case ObjectType.Wall: {
                   counter.wallCount++;
                   break;
-                case ObjectType.Window:
+                }
+                case ObjectType.Window: {
                   counter.windowCount++;
                   break;
-                case ObjectType.Door:
+                }
+                case ObjectType.Door: {
                   counter.doorCount++;
                   break;
-                case ObjectType.Human:
+                }
+                case ObjectType.Human: {
                   counter.humanCount++;
                   break;
-                case ObjectType.Tree:
+                }
+                case ObjectType.Tree: {
                   counter.treeCount++;
                   break;
-                case ObjectType.Flower:
+                }
+                case ObjectType.Flower: {
                   counter.flowerCount++;
                   break;
-                case ObjectType.Polygon:
+                }
+                case ObjectType.Polygon: {
                   counter.polygonCount++;
                   break;
-                case ObjectType.Sensor:
+                }
+                case ObjectType.Sensor: {
                   counter.sensorCount++;
                   break;
-                case ObjectType.Light:
+                }
+                case ObjectType.Light: {
                   if ((e as LightModel).inside) {
                     counter.insideLightCount++;
                   } else {
                     counter.outsideLightCount++;
                   }
                   break;
+                }
                 case ObjectType.SolarPanel: {
                   counter.solarPanelCount++;
                   const sp = e as SolarPanelModel;
@@ -3156,21 +3171,26 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                   }
                   break;
                 }
-                case ObjectType.ParabolicDish:
+                case ObjectType.ParabolicDish: {
                   counter.parabolicDishCount++;
                   break;
-                case ObjectType.ParabolicTrough:
+                }
+                case ObjectType.ParabolicTrough: {
                   counter.parabolicTroughCount++;
                   break;
-                case ObjectType.FresnelReflector:
+                }
+                case ObjectType.FresnelReflector: {
                   counter.fresnelReflectorCount++;
                   break;
-                case ObjectType.Heliostat:
+                }
+                case ObjectType.Heliostat: {
                   counter.heliostatCount++;
                   break;
-                case ObjectType.WindTurbine:
+                }
+                case ObjectType.WindTurbine: {
                   counter.windTurbineCount++;
                   break;
+                }
               }
             }
             return counter;
@@ -3197,38 +3217,47 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                     counter.foundationCount++;
                     break;
                   }
-                  case ObjectType.Cuboid:
+                  case ObjectType.Cuboid: {
                     counter.cuboidCount++;
                     break;
-                  case ObjectType.Wall:
+                  }
+                  case ObjectType.Wall: {
                     counter.wallCount++;
                     break;
-                  case ObjectType.Window:
+                  }
+                  case ObjectType.Window: {
                     counter.windowCount++;
                     if (e.locked) counter.lockedWindowCount++;
                     break;
-                  case ObjectType.Door:
+                  }
+                  case ObjectType.Door: {
                     counter.doorCount++;
                     if (e.locked) counter.lockedDoorCount++;
                     break;
-                  case ObjectType.Human:
+                  }
+                  case ObjectType.Human: {
                     counter.humanCount++;
                     break;
-                  case ObjectType.Tree:
+                  }
+                  case ObjectType.Tree: {
                     counter.treeCount++;
                     break;
-                  case ObjectType.Flower:
+                  }
+                  case ObjectType.Flower: {
                     counter.flowerCount++;
                     break;
-                  case ObjectType.Polygon:
+                  }
+                  case ObjectType.Polygon: {
                     counter.polygonCount++;
                     if (e.locked) counter.lockedPolygonCount++;
                     break;
-                  case ObjectType.Sensor:
+                  }
+                  case ObjectType.Sensor: {
                     counter.sensorCount++;
                     if (e.locked) counter.lockedSensorCount++;
                     break;
-                  case ObjectType.Light:
+                  }
+                  case ObjectType.Light: {
                     if ((e as LightModel).inside) {
                       counter.insideLightCount++;
                     } else {
@@ -3236,6 +3265,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                     }
                     if (e.locked) counter.lockedLightCount++;
                     break;
+                  }
                   case ObjectType.SolarPanel: {
                     counter.solarPanelCount++;
                     if (e.locked) counter.lockedSolarPanelCount++;
@@ -3246,22 +3276,27 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                     }
                     break;
                   }
-                  case ObjectType.ParabolicDish:
+                  case ObjectType.ParabolicDish: {
                     counter.parabolicDishCount++;
                     break;
-                  case ObjectType.ParabolicTrough:
+                  }
+                  case ObjectType.ParabolicTrough: {
                     counter.parabolicTroughCount++;
                     break;
-                  case ObjectType.FresnelReflector:
+                  }
+                  case ObjectType.FresnelReflector: {
                     counter.fresnelReflectorCount++;
                     break;
-                  case ObjectType.Heliostat:
+                  }
+                  case ObjectType.Heliostat: {
                     counter.heliostatCount++;
                     break;
-                  case ObjectType.WindTurbine:
+                  }
+                  case ObjectType.WindTurbine: {
                     counter.windTurbineCount++;
                     if (e.locked) counter.lockedWindTurbineCount++;
                     break;
+                  }
                 }
               }
             }
@@ -3832,7 +3867,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                   let approved = false;
                   switch (e.type) {
                     case ObjectType.Door:
-                    case ObjectType.Window:
+                    case ObjectType.Window: {
                       if (parent) {
                         const hx = e.lx / 2;
                         e.cx += hx * 3;
@@ -3931,24 +3966,27 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                         }
                       }
                       break;
-                    case ObjectType.Human:
+                    }
+                    case ObjectType.Human: {
                       e.cx += 1;
                       state.elements.push(e);
                       state.elementsToPaste = [e];
                       approved = true;
                       break;
+                    }
                     case ObjectType.Tree:
-                    case ObjectType.Flower:
+                    case ObjectType.Flower: {
                       e.cx += e.lx;
                       state.elements.push(e);
                       state.elementsToPaste = [e];
                       approved = true;
                       break;
+                    }
                     case ObjectType.SolarPanel:
                     case ObjectType.FresnelReflector:
                     case ObjectType.Heliostat:
                     case ObjectType.ParabolicDish:
-                    case ObjectType.ParabolicTrough:
+                    case ObjectType.ParabolicTrough: {
                       if (e.parentId) {
                         const parent = state.getParent(e);
                         if (parent) {
@@ -4108,9 +4146,10 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                         }
                       }
                       break;
+                    }
                     case ObjectType.Sensor:
                     case ObjectType.Light:
-                    case ObjectType.WindTurbine:
+                    case ObjectType.WindTurbine: {
                       if (e.parentId) {
                         const parent = state.getParent(e);
                         if (parent) {
@@ -4123,6 +4162,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                         }
                       }
                       break;
+                    }
                     case ObjectType.Polygon: {
                       const polygon = e as PolygonModel;
                       for (const v of polygon.vertices) {
@@ -4134,7 +4174,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                       approved = true;
                       break;
                     }
-                    case ObjectType.Cuboid:
+                    case ObjectType.Cuboid: {
                       e.cx += e.lx;
                       if (state.elementsToPaste.length === 1) {
                         const getAllChildren = (el: ElementModel) => {
@@ -4197,7 +4237,8 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                       }
                       approved = false;
                       break;
-                    case ObjectType.Foundation:
+                    }
+                    case ObjectType.Foundation: {
                       e.cx += e.lx;
                       if (state.elementsToPaste.length === 1) {
                         // When copying from an existing container, elementsToPaste stores only the container.
@@ -4305,6 +4346,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                       }
                       approved = true;
                       break;
+                    }
                     case ObjectType.Wall: {
                       const w = e as WallModel;
                       const step = new Vector3(1, -1, 0).applyEuler(new Euler(0, 0, w.relativeAngle));

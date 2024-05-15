@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef } from 'react';
@@ -37,7 +37,7 @@ export interface SolarUpdraftTowerSimulationProps {
   city: string | null;
 }
 
-const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps) => {
+const SolarUpdraftTowerSimulation = React.memo(({ city }: SolarUpdraftTowerSimulationProps) => {
   const setCommonStore = useStore(Selector.set);
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const loggable = useStore(Selector.loggable);
@@ -62,6 +62,8 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
   const lang = useMemo(() => {
     return { lng: language };
   }, [language]);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const weather = useMemo(() => getWeather(city ?? 'Boston MA, USA'), [city]);
   const now = new Date(world.date);
 
@@ -89,6 +91,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
   // this is used in daily simulation that should respond to change of date and latitude
   const sunMinutes = useMemo(() => {
     return computeSunriseAndSunsetInMinutes(now, world.latitude);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [world.date, world.latitude]);
 
   // this is used in yearly simulation in which the date is changed programmatically based on the current latitude
@@ -137,6 +140,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
       // continue the simulation
       simulateDaily();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pauseDailySimulation]);
 
   const staticSimulateDaily = () => {
@@ -410,6 +414,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
       // continue the simulation
       simulateYearly();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pauseYearlySimulation]);
 
   const initYearly = () => {
@@ -848,6 +853,6 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
   };
 
   return <></>;
-};
+});
 
-export default React.memo(SolarUpdraftTowerSimulation);
+export default SolarUpdraftTowerSimulation;

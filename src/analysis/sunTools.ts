@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import { Vector3 } from 'three';
@@ -86,17 +86,20 @@ const getExtraterrestrialRadiation = (dayOfYear: number) => {
 const computeAirMass = (airMassType: AirMass, sunDirection: Vector3, altitude: number) => {
   let zenithAngle;
   switch (airMassType) {
-    case AirMass.NONE:
+    case AirMass.NONE: {
       return 1;
-    case AirMass.KASTEN_YOUNG:
+    }
+    case AirMass.KASTEN_YOUNG: {
       zenithAngle = sunDirection.angleTo(UNIT_VECTOR_POS_Z);
       return 1 / (Math.cos(zenithAngle) + 0.50572 * Math.pow(96.07995 - (zenithAngle / Math.PI) * 180, -1.6364));
-    default:
+    }
+    default: {
       zenithAngle = sunDirection.angleTo(UNIT_VECTOR_POS_Z);
       const cos = Math.cos(zenithAngle);
       const r = 708;
       const c = altitude / 9000;
       return Math.sqrt((r + c) * (r + c) * cos * cos + (2 * r + 1 + c) * (1 - c)) - (r + c) * cos;
+    }
   }
 };
 

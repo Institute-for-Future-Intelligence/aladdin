@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef } from 'react';
@@ -46,7 +46,7 @@ export interface DynamicSolarRadiationSimulationProps {
   city: string | null;
 }
 
-const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulationProps) => {
+const DynamicSolarRadiationSimulation = React.memo(({ city }: DynamicSolarRadiationSimulationProps) => {
   const setCommonStore = useStore(Selector.set);
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const language = useStore(Selector.language);
@@ -66,6 +66,8 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
   const lang = useMemo(() => {
     return { lng: language };
   }, [language]);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const weather = useMemo(() => getWeather(city ?? 'Boston MA, USA'), [city]);
   const now = new Date(world.date);
 
@@ -84,6 +86,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
 
   const sunMinutes = useMemo(() => {
     return computeSunriseAndSunsetInMinutes(now, world.latitude);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [world.date, world.latitude]);
 
   useEffect(() => {
@@ -117,6 +120,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       // continue the simulation
       simulate();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pauseSimulation]);
 
   // getting ready for the simulation
@@ -136,17 +140,19 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         case ObjectType.ParabolicTrough:
         case ObjectType.ParabolicDish:
         case ObjectType.FresnelReflector:
-        case ObjectType.Heliostat:
+        case ObjectType.Heliostat: {
           cellOutputsMapRef.current.delete(e.id);
           break;
-        case ObjectType.Cuboid:
+        }
+        case ObjectType.Cuboid: {
           cellOutputsMapRef.current.delete(e.id + '-top');
           cellOutputsMapRef.current.delete(e.id + '-north');
           cellOutputsMapRef.current.delete(e.id + '-south');
           cellOutputsMapRef.current.delete(e.id + '-west');
           cellOutputsMapRef.current.delete(e.id + '-east');
           break;
-        case ObjectType.Roof:
+        }
+        case ObjectType.Roof: {
           const roof = e as RoofModel;
           const segments = getRoofSegmentVertices(roof.id);
           if (segments) {
@@ -157,10 +163,12 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
           }
           cellOutputsMapRef.current.delete(roof.id); // in case it is a flat roof
           break;
-        case ObjectType.Foundation:
+        }
+        case ObjectType.Foundation: {
           cellOutputsMapRef.current.delete(e.id);
           cellOutputsMapRef.current.delete(e.id + '-sut');
           break;
+        }
       }
     }
   };
@@ -181,7 +189,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         case ObjectType.ParabolicTrough:
         case ObjectType.ParabolicDish:
         case ObjectType.FresnelReflector:
-        case ObjectType.Heliostat:
+        case ObjectType.Heliostat: {
           const data = cellOutputsMapRef.current.get(e.id);
           if (data) {
             for (let i = 0; i < data.length; i++) {
@@ -196,14 +204,16 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
             );
           }
           break;
-        case ObjectType.Cuboid:
+        }
+        case ObjectType.Cuboid: {
           setCuboidHeatmap(e.id, 'top', scaleFactor);
           setCuboidHeatmap(e.id, 'south', scaleFactor);
           setCuboidHeatmap(e.id, 'north', scaleFactor);
           setCuboidHeatmap(e.id, 'west', scaleFactor);
           setCuboidHeatmap(e.id, 'east', scaleFactor);
           break;
-        case ObjectType.Roof:
+        }
+        case ObjectType.Roof: {
           const roof = e as RoofModel;
           const segments = getRoofSegmentVertices(roof.id);
           if (segments && segments.length > 0) {
@@ -259,6 +269,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
             }
           }
           break;
+        }
       }
       if (e.type === ObjectType.Foundation) {
         const foundation = e as FoundationModel;
@@ -344,38 +355,47 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       } else {
         for (const e of elements) {
           switch (e.type) {
-            case ObjectType.Foundation:
+            case ObjectType.Foundation: {
               const foundation = e as FoundationModel;
               calculateFoundation(foundation);
               if (foundation.solarStructure === SolarStructure.UpdraftTower) {
                 calculateSolarUpdraftTower(foundation);
               }
               break;
-            case ObjectType.Cuboid:
+            }
+            case ObjectType.Cuboid: {
               calculateCuboid(e as CuboidModel);
               break;
-            case ObjectType.SolarPanel:
+            }
+            case ObjectType.SolarPanel: {
               calculateSolarPanel(e as SolarPanelModel);
               break;
-            case ObjectType.ParabolicTrough:
+            }
+            case ObjectType.ParabolicTrough: {
               calculateParabolicTrough(e as ParabolicTroughModel);
               break;
-            case ObjectType.ParabolicDish:
+            }
+            case ObjectType.ParabolicDish: {
               calculateParabolicDish(e as ParabolicDishModel);
               break;
-            case ObjectType.FresnelReflector:
+            }
+            case ObjectType.FresnelReflector: {
               calculateFresnelReflector(e as FresnelReflectorModel);
               break;
-            case ObjectType.Heliostat:
+            }
+            case ObjectType.Heliostat: {
               calculateHeliostat(e as HeliostatModel);
               break;
-            case ObjectType.Wall:
+            }
+            case ObjectType.Wall: {
               calculateWall(e as WallModel);
               break;
-            case ObjectType.Door:
+            }
+            case ObjectType.Door: {
               calculateDoor(e as DoorModel);
               break;
-            case ObjectType.Roof:
+            }
+            case ObjectType.Roof: {
               const roof = e as RoofModel;
               switch (roof.roofType) {
                 case RoofType.Pyramid:
@@ -395,6 +415,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
                   break;
               }
               break;
+            }
           }
         }
       }
@@ -1361,7 +1382,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     if (sunDirection.z <= 0) return; // when the sun is not out
     let parent = getParent(panel);
     if (!parent) throw new Error('parent of solar panel does not exist');
-    let rooftop = panel.parentType === ObjectType.Roof;
+    const rooftop = panel.parentType === ObjectType.Roof;
     const walltop = panel.parentType === ObjectType.Wall;
     if (rooftop) {
       // x and y coordinates of a rooftop solar panel are relative to the foundation
@@ -1427,13 +1448,14 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
         : sunDirection.clone();
       switch (panel.trackerType) {
-        case TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER:
+        case TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER: {
           const qRotAADAT = new Quaternion().setFromUnitVectors(UNIT_VECTOR_POS_Z, rotatedSunDirection);
           normalEuler = new Euler().setFromQuaternion(qRotAADAT);
           // the default order is XYZ, so we rotate the relative azimuth below using the z-component
           normalEuler.z += zRot;
           break;
-        case TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER:
+        }
+        case TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER: {
           const qRotHSAT = new Quaternion().setFromUnitVectors(
             UNIT_VECTOR_POS_Z,
             new Vector3(rotatedSunDirection.x, 0, rotatedSunDirection.z).normalize(),
@@ -1442,16 +1464,19 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
           // the default order is XYZ, so we rotate the relative azimuth below using the z-component
           normalEuler.z += zRot;
           break;
-        case TrackerType.VERTICAL_SINGLE_AXIS_TRACKER:
+        }
+        case TrackerType.VERTICAL_SINGLE_AXIS_TRACKER: {
           if (Math.abs(panel.tiltAngle) > 0.001) {
             const v2 = new Vector3(rotatedSunDirection.x, -rotatedSunDirection.y, 0).normalize();
             const az = Math.acos(UNIT_VECTOR_POS_Y.dot(v2)) * Math.sign(v2.x);
             normalEuler = new Euler(panel.tiltAngle, 0, az + rot, 'ZYX');
           }
           break;
-        case TrackerType.TILTED_SINGLE_AXIS_TRACKER:
+        }
+        case TrackerType.TILTED_SINGLE_AXIS_TRACKER: {
           // TODO
           break;
+        }
       }
     }
     normal.applyEuler(normalEuler);
@@ -1946,6 +1971,6 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
   };
 
   return <></>;
-};
+});
 
-export default React.memo(DynamicSolarRadiationSimulation);
+export default DynamicSolarRadiationSimulation;

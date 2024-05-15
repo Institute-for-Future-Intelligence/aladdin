@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef } from 'react';
@@ -23,7 +23,7 @@ export interface ParabolicDishSimulationProps {
   city: string | null;
 }
 
-const ParabolicDishSimulation = ({ city }: ParabolicDishSimulationProps) => {
+const ParabolicDishSimulation = React.memo(({ city }: ParabolicDishSimulationProps) => {
   const setCommonStore = useStore(Selector.set);
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const loggable = useStore(Selector.loggable);
@@ -49,6 +49,8 @@ const ParabolicDishSimulation = ({ city }: ParabolicDishSimulationProps) => {
   const lang = useMemo(() => {
     return { lng: language };
   }, [language]);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const weather = useMemo(() => getWeather(city ?? 'Boston MA, USA'), [city]);
   const now = new Date(world.date);
 
@@ -74,6 +76,7 @@ const ParabolicDishSimulation = ({ city }: ParabolicDishSimulationProps) => {
   // this is used in daily simulation that should respond to change of date and latitude
   const sunMinutes = useMemo(() => {
     return computeSunriseAndSunsetInMinutes(now, world.latitude);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [world.date, world.latitude]);
 
   // this is used in yearly simulation in which the date is changed programmatically based on the current latitude
@@ -118,6 +121,7 @@ const ParabolicDishSimulation = ({ city }: ParabolicDishSimulationProps) => {
       // continue the simulation
       simulateDaily();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pauseDailySimulation]);
 
   const initDaily = () => {
@@ -300,6 +304,7 @@ const ParabolicDishSimulation = ({ city }: ParabolicDishSimulationProps) => {
       // continue the simulation
       simulateYearly();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pauseYearlySimulation]);
 
   const initYearly = () => {
@@ -468,8 +473,8 @@ const ParabolicDishSimulation = ({ city }: ParabolicDishSimulationProps) => {
     const originalNormal = normal.clone();
     const lx = dish.lx;
     const ly = dish.ly;
-    let nx = Math.max(2, Math.round(dish.lx / cellSize));
-    let ny = Math.max(2, Math.round(dish.ly / cellSize));
+    const nx = Math.max(2, Math.round(dish.lx / cellSize));
+    const ny = Math.max(2, Math.round(dish.ly / cellSize));
     const dx = lx / nx;
     const dy = ly / ny;
     const depth = (lx * lx) / (4 * dish.latusRectum); // the distance from the bottom to the aperture plane
@@ -594,6 +599,6 @@ const ParabolicDishSimulation = ({ city }: ParabolicDishSimulationProps) => {
   };
 
   return <></>;
-};
+});
 
-export default React.memo(ParabolicDishSimulation);
+export default ParabolicDishSimulation;
