@@ -1185,12 +1185,12 @@ const Cuboid = (cuboidModel: CuboidModel) => {
   const [showIntersectionPlane, setShowIntersectionPlane] = useState(false);
 
   return (
-    <group ref={groupRef} name={'Cuboid Group ' + id} userData={{ aabb: true }}>
+    <group ref={groupRef} name={'Cuboid Group ' + id}>
       {/* draw rectangular cuboid */}
       <Box
         castShadow={shadowEnabled}
         receiveShadow={shadowEnabled}
-        userData={{ simulation: true, stand: true, stackable: stackable, id: id }}
+        userData={{ simulation: true, stand: true, stackable: stackable, id: id, aabb: true }}
         uuid={id}
         ref={baseRef}
         args={[lx, ly, lz]}

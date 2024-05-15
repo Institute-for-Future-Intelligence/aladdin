@@ -3066,7 +3066,6 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
       <group
         ref={groupRef}
         name={`${FOUNDATION_GROUP_NAME} ${id}`}
-        userData={{ aabb: true }}
         position={[cx, cy, hz]}
         rotation={[0, 0, rotation[2]]}
       >
@@ -3075,7 +3074,7 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
           castShadow={shadowEnabled}
           receiveShadow={shadowEnabled}
           uuid={id}
-          userData={{ simulation: true, stand: true, id: id }}
+          userData={{ simulation: true, stand: true, id: id, aabb: true }}
           ref={baseRef}
           name={'Foundation'}
           args={[lx, ly, lz]}
