@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useState } from 'react';
@@ -7,7 +7,7 @@ import { DoubleSide, Vector3 } from 'three';
 import { useLoader } from '@react-three/fiber';
 import { Ring } from '@react-three/drei';
 //@ts-expect-error ignore
-import helvetikerFont from '../fonts/helvetiker_regular.typeface.fnt';
+import helvetikerFont from '../assets/helvetiker_regular.typeface.fnt';
 import { Util } from '../Util';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
@@ -16,7 +16,7 @@ import { ElementModel } from '../models/ElementModel';
 import { HALF_PI } from '../constants';
 import { FontLoader, TextGeometryParameters } from 'three/examples/jsm/Addons';
 
-export const PolarGrid = ({ element, height }: { element: ElementModel; height?: number }) => {
+export const PolarGrid = React.memo(({ element, height }: { element: ElementModel; height?: number }) => {
   const rotateHandle = useStore(Selector.rotateHandleType);
   const hoveredHandle = useStore(Selector.hoveredHandle);
   const angle = useStore(Selector.selectedElementAngle);
@@ -31,7 +31,7 @@ export const PolarGrid = ({ element, height }: { element: ElementModel; height?:
     if (rotateHandle || hoveredHandle) {
       const { cx, cy, lx, ly, type } = element;
       switch (type) {
-        case ObjectType.SolarPanel:
+        case ObjectType.SolarPanel: {
           const currParent = getParent(element);
           if (currParent) {
             const rcx = cx * currParent.lx;
@@ -39,21 +39,26 @@ export const PolarGrid = ({ element, height }: { element: ElementModel; height?:
             setPosition(new Vector3(rcx, rcy, height ?? currParent.lz));
           }
           break;
-        case ObjectType.Foundation:
+        }
+        case ObjectType.Foundation: {
           setPosition(new Vector3(cx, cy, groundImage ? 0.1 : 0));
           break;
-        case ObjectType.Cuboid:
+        }
+        case ObjectType.Cuboid: {
           const { pos } = Util.getWorldDataById(element.id);
           const { rot } = Util.getWorldDataById(element.parentId);
           setPosition(new Vector3(pos.x, pos.y, pos.z - element.lz / 2 + 0.2));
           setRotation(rot);
           break;
-        default:
+        }
+        default: {
           setPosition(new Vector3(cx, cy, groundImage ? 0.2 : 0));
+          break;
+        }
       }
       setRadius(Math.max(5, Math.hypot(lx, ly) * 0.75));
     }
-  }, [rotateHandle, hoveredHandle, groundImage, height]);
+  }, [element, rotateHandle, hoveredHandle, groundImage, height]);
 
   const font = useLoader(FontLoader, helvetikerFont);
   const fontSize = radius * 0.05;
@@ -119,6 +124,4 @@ export const PolarGrid = ({ element, height }: { element: ElementModel; height?:
       )}
     </>
   );
-};
-
-export default React.memo(PolarGrid);
+});

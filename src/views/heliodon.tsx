@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import GlowImage from '../resources/glow.png';
@@ -29,7 +29,7 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { useLoader } from '@react-three/fiber';
 //@ts-expect-error ignore
-import helvetikerFont from '../fonts/helvetiker_regular.typeface.fnt';
+import helvetikerFont from '../assets/helvetiker_regular.typeface.fnt';
 import { HALF_PI, TWO_PI, UNIT_VECTOR_POS_Y, UNIT_VECTOR_POS_Z, ZERO_TOLERANCE } from '../constants';
 
 const HOUR_DIVISIONS = 48;
@@ -43,7 +43,7 @@ interface HeliodonProps {
   worldLatitude: number;
 }
 
-const Heliodon = ({ date, hourAngle, declinationAngle, worldLatitude }: HeliodonProps) => {
+const Heliodon = React.memo(({ date, hourAngle, declinationAngle, worldLatitude }: HeliodonProps) => {
   const radius = useStore(Selector.sceneRadius);
   const showSunAngles = useStore(Selector.viewState.showSunAngles);
   const showAzimuthAngle = useStore(Selector.viewState.showAzimuthAngle) ?? true;
@@ -153,7 +153,7 @@ const Heliodon = ({ date, hourAngle, declinationAngle, worldLatitude }: Heliodon
       }
     }
     return points;
-  }, [latitude, radius, declinationAngle]);
+  }, [date, latitude, radius, declinationAngle]);
 
   const getSunPathPointsByDate = (day: Date) => {
     const decline = computeDeclinationAngle(day);
@@ -205,7 +205,7 @@ const Heliodon = ({ date, hourAngle, declinationAngle, worldLatitude }: Heliodon
       points3D.push(new Vector3(p.x, p.y, 0));
     }
     return points3D;
-  }, [elevationAngle, sunPosition]);
+  }, [elevationAngle, sunPosition, angleArcRadius]);
 
   const zenithAngle = useMemo(() => {
     return Math.acos(sunPosition.z / sunPosition.length());
@@ -219,7 +219,7 @@ const Heliodon = ({ date, hourAngle, declinationAngle, worldLatitude }: Heliodon
       points3D.push(new Vector3(p.x, p.y, 0));
     }
     return points3D;
-  }, [zenithAngle, sunPosition]);
+  }, [zenithAngle, sunPosition, angleArcRadius, elevationAngle]);
 
   const azimuthAngle = useMemo(() => {
     const a = Math.acos(sunPosition.y / Math.hypot(sunPosition.x, sunPosition.y));
@@ -243,7 +243,7 @@ const Heliodon = ({ date, hourAngle, declinationAngle, worldLatitude }: Heliodon
       points3D.push(new Vector3(p.x, p.y, 0));
     }
     return points3D;
-  }, [azimuthAngle, sunPosition]);
+  }, [azimuthAngle, sunPosition, angleArcRadius]);
 
   const sunbeltGeometry = useMemo(() => {
     const declinationStep = (2.0 * TILT_ANGLE) / DECLINATION_DIVISIONS;
@@ -487,6 +487,6 @@ const Heliodon = ({ date, hourAngle, declinationAngle, worldLatitude }: Heliodon
       )}
     </group>
   );
-};
+});
 
-export default React.memo(Heliodon);
+export default Heliodon;

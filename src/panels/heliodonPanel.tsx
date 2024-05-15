@@ -109,8 +109,7 @@ const HeliodonPanel = React.memo(() => {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [hOffset, wOffset, heliodonPanelX, heliodonPanelY]);
 
   useEffect(() => {
     requestRef.current = requestAnimationFrame(animate);
@@ -129,6 +128,7 @@ const HeliodonPanel = React.memo(() => {
         });
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sunriseAndSunsetInMinutes.sunset]);
 
   const animate = () => {
@@ -293,9 +293,9 @@ const HeliodonPanel = React.memo(() => {
           </Header>
           <Space style={{ padding: '20px' }} align={'baseline'} size={20}>
             <div>
-              {t('menu.settings.Heliodon', lang)}
-              <br />
+              <span>{t('menu.settings.Heliodon', lang)}</span>
               <Switch
+                style={{ marginTop: '6px' }}
                 checked={heliodon}
                 onChange={(checked) => {
                   const undoableCheck = {
@@ -332,8 +332,8 @@ const HeliodonPanel = React.memo(() => {
             {heliodon && (
               <div>
                 <span style={{ fontSize: '10px' }}>{t('heliodonPanel.SunAngles', lang)}</span>
-                <br />
                 <Switch
+                  style={{ marginTop: '6px' }}
                   checked={showSunAngles}
                   onChange={(checked) => {
                     const undoableCheck = {
@@ -362,9 +362,9 @@ const HeliodonPanel = React.memo(() => {
             {sunriseAndSunsetInMinutes.sunset > 0 && !runSimulation && (
               <>
                 <div>
-                  {t('word.Animate', lang)}
-                  <br />
+                  <span>{t('word.Animate', lang)}</span>
                   <Switch
+                    style={{ marginTop: '6px' }}
                     checked={animateSun}
                     onChange={(checked) => {
                       const undoableCheck = {
@@ -392,8 +392,8 @@ const HeliodonPanel = React.memo(() => {
                 {animateSun && (
                   <div>
                     <span style={{ fontSize: '10px' }}>{t('heliodonPanel.TwentyFourHours', lang)}</span>
-                    <br />
                     <Switch
+                      style={{ marginTop: '6px' }}
                       checked={animate24Hours}
                       onChange={(checked) => {
                         const undoableCheck = {
@@ -422,9 +422,9 @@ const HeliodonPanel = React.memo(() => {
               </>
             )}
             <div>
-              {t('word.Date', lang)}
-              <br />
+              <span>{t('word.Date', lang)}</span>
               <DatePicker
+                style={{ marginTop: '6px' }}
                 disabled={runSimulation}
                 value={dayjs(date)}
                 onChange={(d) => {
@@ -462,9 +462,9 @@ const HeliodonPanel = React.memo(() => {
               />
             </div>
             <div>
-              {t('word.Time', lang)}
-              <br />
+              <span>{t('word.Time', lang)}</span>
               <TimePicker
+                style={{ marginTop: '6px' }}
                 disabled={runSimulation}
                 value={dayjs(date)}
                 format={'HH:mm'}
