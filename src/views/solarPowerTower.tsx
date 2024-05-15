@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useMemo } from 'react';
@@ -12,7 +12,7 @@ import { getSunDirection } from '../analysis/sunTools';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 
-const SolarPowerTower = ({ foundation }: { foundation: FoundationModel }) => {
+const SolarPowerTower = React.memo(({ foundation }: { foundation: FoundationModel }) => {
   const date = useStore(Selector.world.date);
   const latitude = useStore(Selector.world.latitude);
 
@@ -70,6 +70,6 @@ const SolarPowerTower = ({ foundation }: { foundation: FoundationModel }) => {
       )}
     </group>
   );
-};
+});
 
-export default React.memo(SolarPowerTower);
+export default SolarPowerTower;

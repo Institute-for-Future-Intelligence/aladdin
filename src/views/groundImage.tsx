@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useRef } from 'react';
@@ -23,7 +23,7 @@ const NATICK_MAP_SCALE_FACTOR = 0.7;
 const NATICK_LATITUDE = 42.2845513;
 const MERCATOR_PROJECTION_SCALE_CONSTANT = NATICK_MAP_SCALE_FACTOR / Math.cos(Util.toRadians(NATICK_LATITUDE));
 
-const GroundImage = () => {
+const GroundImage = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
   const latitude = useStore(Selector.world.latitude);
   const longitude = useStore(Selector.world.longitude);
@@ -79,6 +79,6 @@ const GroundImage = () => {
   ) : (
     <></>
   );
-};
+});
 
-export default React.memo(GroundImage);
+export default GroundImage;

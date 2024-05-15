@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import { Util } from '../Util';
@@ -9,7 +9,7 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import Heliodon from './heliodon';
 
-const HeliodonWrapper = () => {
+const HeliodonWrapper = React.memo(() => {
   const heliodon = useStore(Selector.viewState.heliodon);
   const heliodonRadius = useStore(Selector.sceneRadius);
   const worldLatitude = useStore(Selector.world.latitude);
@@ -39,6 +39,6 @@ const HeliodonWrapper = () => {
       )}
     </>
   );
-};
+});
 
-export default React.memo(HeliodonWrapper);
+export default HeliodonWrapper;

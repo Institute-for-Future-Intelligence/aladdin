@@ -42,6 +42,7 @@ import { useRefStore } from '../stores/commonRef';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useSelected } from './hooks';
 
+// maybe we should not wrap this with React.memo as the polygon seems to need to update with its parent
 const Polygon = ({
   id,
   lz = 0.1,
@@ -131,17 +132,19 @@ const Polygon = ({
     const av = new Array<Point2>();
     if (parent) {
       switch (parent.type) {
-        case ObjectType.Foundation:
+        case ObjectType.Foundation: {
           for (const v of vertices) {
             av.push({ x: v.x * parent.lx, y: v.y * parent.ly } as Point2);
           }
           break;
-        case ObjectType.Wall:
+        }
+        case ObjectType.Wall: {
           for (const v of vertices) {
             av.push({ x: v.x * parent.lx, y: v.y * parent.lz } as Point2);
           }
           break;
-        case ObjectType.Cuboid:
+        }
+        case ObjectType.Cuboid: {
           const n = new Vector3().fromArray(normal);
           let lx, ly;
           if (Util.isUnitVectorX(n)) {
@@ -161,6 +164,7 @@ const Polygon = ({
             av.push({ x: v.x * lx, y: v.y * ly } as Point2);
           }
           break;
+        }
       }
       const centroid = Util.calculatePolygonCentroid(av);
       setCenterX(centroid.x);

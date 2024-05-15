@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useMemo, useRef, useState } from 'react';
@@ -32,8 +32,8 @@ import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import { getRotationFromNormal } from './solarPanel/solarPanelOnCuboid';
 import { useSelected } from './hooks';
 
-const Light = (lightModel: LightModel) => {
-  let {
+const Light = React.memo((lightModel: LightModel) => {
+  const {
     id,
     cx,
     cy,
@@ -44,9 +44,9 @@ const Light = (lightModel: LightModel) => {
     rotation = [0, 0, 0],
     normal = [0, 0, 1],
     color = '#ffff99',
-    lineColor = 'black',
     lineWidth = 0.1,
     locked = false,
+    label,
     showLabel = false,
     parentId,
     foundationId,
@@ -94,37 +94,41 @@ const Light = (lightModel: LightModel) => {
 
   let parentThickness = 0.1;
 
+  let rx = cx;
+  let ry = cy;
+  let rz = cz;
+
   if (parentId) {
     if (parent) {
       switch (parent.type) {
         case ObjectType.Foundation:
-          cz = parent.cz + parent.lz / 2;
+          rz = parent.cz + parent.lz / 2;
           if (Util.isZero(rotation[2])) {
-            cx = parent.cx + cx * parent.lx;
-            cy = parent.cy + cy * parent.ly;
+            rx = parent.cx + cx * parent.lx;
+            ry = parent.cy + cy * parent.ly;
           } else {
             // we must rotate the real length, not normalized length
             const v = new Vector3(cx * parent.lx, cy * parent.ly, 0);
             v.applyAxisAngle(UNIT_VECTOR_POS_Z, rotation[2]);
-            cx = parent.cx + v.x;
-            cy = parent.cy + v.y;
+            rx = parent.cx + v.x;
+            ry = parent.cy + v.y;
           }
           break;
         case ObjectType.Wall:
           if (foundation?.type === ObjectType.Foundation) {
             const absoluteCoordinates = Util.absoluteCoordinates(cx, cy, cz, parent, foundation as FoundationModel);
-            cx = absoluteCoordinates.x;
-            cy = absoluteCoordinates.y;
-            cz = absoluteCoordinates.z;
+            rx = absoluteCoordinates.x;
+            ry = absoluteCoordinates.y;
+            rz = absoluteCoordinates.z;
           }
           parentThickness = (parent as WallModel).ly;
           break;
         case ObjectType.Roof:
           if (foundation?.type === ObjectType.Foundation) {
             const absoluteCoordinates = Util.absoluteCoordinates(cx, cy, cz, parent, foundation as FoundationModel);
-            cx = absoluteCoordinates.x;
-            cy = absoluteCoordinates.y;
-            cz = absoluteCoordinates.z;
+            rx = absoluteCoordinates.x;
+            ry = absoluteCoordinates.y;
+            rz = absoluteCoordinates.z;
           }
           parentThickness = (parent as RoofModel).thickness;
           break;
@@ -170,33 +174,33 @@ const Light = (lightModel: LightModel) => {
     }
     // top face in model coordinate system
     return new Euler(0, 0, rotation[2]);
-  }, [normal, rotation, foundation?.rotation]);
+  }, [normal, rotation, foundation, parent]);
 
   const labelText = useMemo(() => {
     return (
-      (lightModel?.label ? lightModel.label : i18n.t('shared.LightElement', lang)) +
-      (lightModel?.locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
+      (label ? label : i18n.t('shared.LightElement', lang)) +
+      (locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
       '\n' +
       i18n.t('word.Coordinates', lang) +
       ': (' +
-      cx.toFixed(1) +
+      rx.toFixed(1) +
       ', ' +
-      cy.toFixed(1) +
+      ry.toFixed(1) +
       ', ' +
-      cz.toFixed(1) +
+      rz.toFixed(1) +
       ') ' +
       i18n.t('word.MeterAbbreviation', lang)
     );
-  }, [lightModel?.label, locked, language, cx, cy, cz]);
+  }, [label, locked, lang, rx, ry, rz]);
 
   return (
-    <group name={'Light Group ' + id} rotation={euler} position={[cx, cy, cz]}>
+    <group name={'Light Group ' + id} rotation={euler} position={[rx, ry, rz]}>
       {night && (
         <pointLight
           color={color}
           name={'Point Light ' + id}
           position={[0, 0, inside ? -parentThickness - hz : hz]}
-          decay={decay}
+          decay={decay * 0.2} // backward compatibility: earlier versions of three.js decay more slowly
           distance={distance}
           intensity={intensity}
           castShadow={true}
@@ -322,6 +326,6 @@ const Light = (lightModel: LightModel) => {
       )}
     </group>
   );
-};
+});
 
-export default React.memo(Light);
+export default Light;

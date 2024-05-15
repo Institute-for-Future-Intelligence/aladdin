@@ -292,10 +292,9 @@ const HeliodonPanel = React.memo(() => {
             </span>
           </Header>
           <Space style={{ padding: '20px' }} align={'baseline'} size={20}>
-            <div>
+            <Space direction={'vertical'}>
               <span>{t('menu.settings.Heliodon', lang)}</span>
               <Switch
-                style={{ marginTop: '6px' }}
                 checked={heliodon}
                 onChange={(checked) => {
                   const undoableCheck = {
@@ -328,12 +327,11 @@ const HeliodonPanel = React.memo(() => {
                   });
                 }}
               />
-            </div>
+            </Space>
             {heliodon && (
-              <div>
+              <Space direction={'vertical'}>
                 <span style={{ fontSize: '10px' }}>{t('heliodonPanel.SunAngles', lang)}</span>
                 <Switch
-                  style={{ marginTop: '6px' }}
                   checked={showSunAngles}
                   onChange={(checked) => {
                     const undoableCheck = {
@@ -357,14 +355,13 @@ const HeliodonPanel = React.memo(() => {
                     });
                   }}
                 />
-              </div>
+              </Space>
             )}
             {sunriseAndSunsetInMinutes.sunset > 0 && !runSimulation && (
               <>
-                <div>
+                <Space direction={'vertical'}>
                   <span>{t('word.Animate', lang)}</span>
                   <Switch
-                    style={{ marginTop: '6px' }}
                     checked={animateSun}
                     onChange={(checked) => {
                       const undoableCheck = {
@@ -388,12 +385,11 @@ const HeliodonPanel = React.memo(() => {
                       });
                     }}
                   />
-                </div>
+                </Space>
                 {animateSun && (
-                  <div>
+                  <Space direction={'vertical'}>
                     <span style={{ fontSize: '10px' }}>{t('heliodonPanel.TwentyFourHours', lang)}</span>
                     <Switch
-                      style={{ marginTop: '6px' }}
                       checked={animate24Hours}
                       onChange={(checked) => {
                         const undoableCheck = {
@@ -417,14 +413,13 @@ const HeliodonPanel = React.memo(() => {
                         });
                       }}
                     />
-                  </div>
+                  </Space>
                 )}
               </>
             )}
-            <div>
+            <Space direction={'vertical'}>
               <span>{t('word.Date', lang)}</span>
               <DatePicker
-                style={{ marginTop: '6px' }}
                 disabled={runSimulation}
                 value={dayjs(date)}
                 onChange={(d) => {
@@ -460,11 +455,10 @@ const HeliodonPanel = React.memo(() => {
                   }
                 }}
               />
-            </div>
-            <div>
+            </Space>
+            <Space direction={'vertical'}>
               <span>{t('word.Time', lang)}</span>
               <TimePicker
-                style={{ marginTop: '6px' }}
                 disabled={runSimulation}
                 value={dayjs(date)}
                 format={'HH:mm'}
@@ -472,10 +466,12 @@ const HeliodonPanel = React.memo(() => {
                   if (t) changeTime?.(t.toDate(), true);
                 }}
               />
-            </div>
+            </Space>
             {!runSimulation && (
-              <div>
-                {t('word.Latitude', lang)}: {latitude.toFixed(2)}°
+              <Space direction={'vertical'}>
+                <span>
+                  {t('word.Latitude', lang)}: {latitude.toFixed(2)}°
+                </span>
                 <Slider
                   disabled={runSimulation}
                   style={{ width: '110px' }}
@@ -486,7 +482,7 @@ const HeliodonPanel = React.memo(() => {
                   tooltip={{ open: false }}
                   onChange={onLatitudeChangeRef.current}
                 />
-              </div>
+              </Space>
             )}
           </Space>
         </ColumnWrapper>

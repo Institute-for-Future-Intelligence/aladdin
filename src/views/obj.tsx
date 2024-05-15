@@ -22,7 +22,6 @@ const Obj = ({ scale = 0.5 }: ObjProps) => {
   const material = useLoader(MTLLoader, sampleMtl) as MTLLoader.MaterialCreator;
   const model = useLoader(OBJLoader, sampleObj, (loader) => {
     material.preload();
-    // @ts-ignore
     loader.setMaterials(material);
   }) as Group;
 

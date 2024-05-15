@@ -1,5 +1,5 @@
 /*
- * @Copyright 2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2023-2024. Institute for Future Intelligence, Inc.
  */
 
 import { useStore } from '../stores/common';
@@ -16,14 +16,13 @@ export class SharedUtil {
   static WALL_OUTSIDE_SURFACE_MESH_NAME = 'Wall Outside Surface';
 
   static getIntersectionObjects(e: ThreeEvent<PointerEvent>) {
-    const intersections = e.intersections.filter(
+    return e.intersections.filter(
       (i) =>
         i.eventObject.name.includes('Cuboid') ||
         i.eventObject.name === 'Foundation' ||
         i.eventObject.name.includes('Roof') ||
         i.eventObject.name.includes(SharedUtil.WALL_OUTSIDE_SURFACE_MESH_NAME),
     );
-    return intersections;
   }
 
   static addUndoableMove() {

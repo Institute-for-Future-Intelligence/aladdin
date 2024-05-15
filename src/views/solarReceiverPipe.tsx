@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useMemo } from 'react';
@@ -8,7 +8,7 @@ import { DoubleSide, Vector3 } from 'three';
 import { FoundationModel } from '../models/FoundationModel';
 import { HALF_PI } from '../constants';
 
-const SolarReceiverPipe = ({ foundation }: { foundation: FoundationModel }) => {
+const SolarReceiverPipe = React.memo(({ foundation }: { foundation: FoundationModel }) => {
   const { ly, lz, solarAbsorberPipe } = foundation;
 
   const absorberHeight = solarAbsorberPipe?.absorberHeight ?? 10;
@@ -89,6 +89,6 @@ const SolarReceiverPipe = ({ foundation }: { foundation: FoundationModel }) => {
         })}
     </group>
   );
-};
+});
 
-export default React.memo(SolarReceiverPipe);
+export default SolarReceiverPipe;

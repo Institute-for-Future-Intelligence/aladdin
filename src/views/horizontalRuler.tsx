@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useMemo } from 'react';
@@ -15,7 +15,7 @@ export interface HorizontalRulerProps {
   verticalLift: number;
 }
 
-export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps) => {
+export const HorizontalRuler = React.memo(({ element, verticalLift }: HorizontalRulerProps) => {
   const language = useStore(Selector.language);
   const orthographic = useStore(Selector.viewState.orthographic);
   const resizeHandleType = useStore(Selector.resizeHandleType);
@@ -50,7 +50,7 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
         return element.lz + 0.1;
     }
     return 0.1;
-  }, [element.type, element.lz]);
+  }, [orthographic, element.type, element.lz]);
 
   const ll2ul = useMemo(() => {
     return (
@@ -113,7 +113,7 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
         />
       </>
     );
-  }, [hx, hy, hz, lang, color]);
+  }, [hx, hy, hz, lang, color, verticalLift]);
 
   const lr2ur = useMemo(() => {
     return (
@@ -176,7 +176,7 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
         />
       </>
     );
-  }, [hx, hy, hz, lang, color]);
+  }, [hx, hy, hz, lang, color, verticalLift]);
 
   const ll2lr = useMemo(() => {
     return (
@@ -239,7 +239,7 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
         />
       </>
     );
-  }, [hx, hy, hz, lang, color]);
+  }, [hx, hy, hz, lang, color, verticalLift]);
 
   const ul2ur = useMemo(() => {
     return (
@@ -302,7 +302,7 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
         />
       </>
     );
-  }, [hx, hy, hz, lang, color]);
+  }, [hx, hy, hz, lang, color, verticalLift]);
 
   if (resizeHandleType) {
     if (element.type === ObjectType.Wall) {
@@ -389,6 +389,4 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
   }
 
   return <></>;
-};
-
-export default React.memo(HorizontalRuler);
+});

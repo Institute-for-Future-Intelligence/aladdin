@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -17,7 +17,7 @@ import { Util } from '../Util';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
 
-const SolarUpdraftTower = ({ foundation }: { foundation: FoundationModel }) => {
+const SolarUpdraftTower = React.memo(({ foundation }: { foundation: FoundationModel }) => {
   const date = useStore(Selector.world.date);
   const latitude = useStore(Selector.world.latitude);
   const animate = usePrimitiveStore(Selector.animateSun);
@@ -271,6 +271,6 @@ const SolarUpdraftTower = ({ foundation }: { foundation: FoundationModel }) => {
       )}
     </group>
   );
-};
+});
 
-export default React.memo(SolarUpdraftTower);
+export default SolarUpdraftTower;
