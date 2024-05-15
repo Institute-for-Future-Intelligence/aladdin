@@ -107,18 +107,18 @@ export class Population {
 
   // uniform crossover
   crossover(crossoverRate: number): void {
-    const numberOfSurvivers = this.survivors.length;
-    if (numberOfSurvivers <= 1) {
+    const numberOfSurvivors = this.survivors.length;
+    if (numberOfSurvivors <= 1) {
       return;
     }
 
-    const lowestFitness = this.individuals[numberOfSurvivers].fitness;
+    const lowestFitness = this.individuals[numberOfSurvivors].fitness;
     let sumOfFitness = 0;
-    for (let i = 0; i < numberOfSurvivers; i++) {
+    for (let i = 0; i < numberOfSurvivors; i++) {
       sumOfFitness += this.individuals[i].fitness - lowestFitness;
     }
 
-    const newBorn = this.individuals.length - numberOfSurvivers;
+    const newBorn = this.individuals.length - numberOfSurvivors;
     const oldFolks = new Array<Parents>();
     while (oldFolks.length * 2 < newBorn) {
       // multiplying 2 above because each couple produces two children as shown in the mating algorithm below
@@ -136,7 +136,7 @@ export class Population {
     }
 
     // mating of dad and mom produces two children
-    let childIndex = numberOfSurvivers;
+    let childIndex = numberOfSurvivors;
     for (const p of oldFolks) {
       const n = p.dad.chromosome.length;
       const child1 = new Individual(n, true, this.discretizationSteps);
@@ -171,11 +171,11 @@ export class Population {
   selectParentsByRouletteWheel(lowestFitness: number, sumOfFitness: number): Parents | null {
     // spin the wheel to find dad
     let dad = null;
-    let roulettWheelPosition = Math.random() * sumOfFitness;
+    let rouletteWheelPosition = Math.random() * sumOfFitness;
     let spinWheel = 0;
     for (const s of this.survivors) {
       spinWheel += s.fitness - lowestFitness;
-      if (spinWheel >= roulettWheelPosition) {
+      if (spinWheel >= rouletteWheelPosition) {
         dad = s;
         break;
       }
@@ -183,11 +183,11 @@ export class Population {
     // spin the wheel to find mom
     let mom = null;
     do {
-      roulettWheelPosition = Math.random() * sumOfFitness;
+      rouletteWheelPosition = Math.random() * sumOfFitness;
       spinWheel = 0;
       for (const s of this.survivors) {
         spinWheel += s.fitness - lowestFitness;
-        if (spinWheel >= roulettWheelPosition) {
+        if (spinWheel >= rouletteWheelPosition) {
           if (s !== dad) {
             mom = s;
           }
@@ -201,11 +201,11 @@ export class Population {
 
   // select a parent by tournament
   selectParentsByTournament(): Parents | null {
-    const numberOfSurvivers = this.survivors.length;
-    if (numberOfSurvivers <= 1) {
+    const numberOfSurvivors = this.survivors.length;
+    if (numberOfSurvivors <= 1) {
       throw new Error('Must have at least two survivors to be used as parents');
     }
-    const n1 = numberOfSurvivers - 1;
+    const n1 = numberOfSurvivors - 1;
 
     // find dad first
     let i = Math.floor(Math.random() * n1);

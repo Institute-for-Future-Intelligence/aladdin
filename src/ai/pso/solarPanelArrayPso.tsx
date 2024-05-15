@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef } from 'react';
@@ -23,7 +23,7 @@ import { PolygonModel } from '../../models/PolygonModel';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
 
-const SolarPanelArrayPso = () => {
+const SolarPanelArrayPso = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
   const loggable = useStore(Selector.loggable);
   const language = useStore(Selector.language);
@@ -63,6 +63,7 @@ const SolarPanelArrayPso = () => {
     if (runEvolution) {
       init();
       requestRef.current = requestAnimationFrame(evolve);
+      const initialSolarPanelArrayCopy = [...initialSolarPanelArrayRef.current];
       return () => {
         // this is called when the recursive call of requestAnimationFrame exits
         cancelAnimationFrame(requestRef.current);
@@ -79,8 +80,8 @@ const SolarPanelArrayPso = () => {
             if (solarPanelArrayRef.current.length > 0) {
               removeElementsByReferenceId(polygon.id, false);
             }
-            if (initialSolarPanelArrayRef.current.length > 0) {
-              solarPanelArrayRef.current = [...initialSolarPanelArrayRef.current];
+            if (initialSolarPanelArrayCopy.length > 0) {
+              solarPanelArrayRef.current = initialSolarPanelArrayCopy;
               runCallback(true);
             }
           }, 100);
@@ -165,11 +166,11 @@ const SolarPanelArrayPso = () => {
     switch (params.objectiveFunctionType) {
       case ObjectiveFunctionType.DAILY_TOTAL_OUTPUT:
       case ObjectiveFunctionType.DAILY_AVERAGE_OUTPUT:
-      case ObjectiveFunctionType.DAILY_PROFIT:
+      case ObjectiveFunctionType.DAILY_PROFIT: {
         const dailyPvYield = useDataStore.getState().dailyPvYield;
         for (const datum of dailyPvYield) {
           for (const prop in datum) {
-            if (datum.hasOwnProperty(prop)) {
+            if (Object.hasOwn(datum, prop)) {
               if (prop === 'Total') {
                 total += datum[prop] as number;
               }
@@ -177,13 +178,14 @@ const SolarPanelArrayPso = () => {
           }
         }
         break;
+      }
       case ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT:
       case ObjectiveFunctionType.YEARLY_AVERAGE_OUTPUT:
-      case ObjectiveFunctionType.YEARLY_PROFIT:
+      case ObjectiveFunctionType.YEARLY_PROFIT: {
         const yearlyPvYield = useDataStore.getState().yearlyPvYield;
         for (const datum of yearlyPvYield) {
           for (const prop in datum) {
-            if (datum.hasOwnProperty(prop)) {
+            if (Object.hasOwn(datum, prop)) {
               if (prop === 'Total') {
                 total += datum[prop] as number;
               }
@@ -192,6 +194,7 @@ const SolarPanelArrayPso = () => {
         }
         total *= 12 / daysPerYear;
         break;
+      }
     }
     const count = optimizerRef.current?.solarPanelCount;
     switch (params.objectiveFunctionType) {
@@ -378,6 +381,6 @@ const SolarPanelArrayPso = () => {
   };
 
   return <></>;
-};
+});
 
-export default React.memo(SolarPanelArrayPso);
+export default SolarPanelArrayPso;

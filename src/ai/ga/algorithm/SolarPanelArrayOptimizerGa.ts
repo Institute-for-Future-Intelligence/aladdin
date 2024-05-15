@@ -105,7 +105,7 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
       if (initialSolarPanels.length > 1) {
         const firstBorn: Individual = this.population.individuals[0];
         // calculate the genes of the initial solar panels
-        let gene1 =
+        const gene1 =
           this.maximumTiltAngle === this.minimumTiltAngle
             ? 0
             : (sp1.tiltAngle - this.minimumTiltAngle) / (this.maximumTiltAngle - this.minimumTiltAngle);

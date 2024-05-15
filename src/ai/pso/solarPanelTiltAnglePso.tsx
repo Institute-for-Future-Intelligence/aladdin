@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef } from 'react';
@@ -16,7 +16,7 @@ import { SolarPanelTiltAngleOptimizerPso } from './algorithm/SolarPanelTiltAngle
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
 
-const SolarPanelTiltAnglePso = () => {
+const SolarPanelTiltAnglePso = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
   const loggable = useStore(Selector.loggable);
   const language = useStore(Selector.language);
@@ -48,6 +48,7 @@ const SolarPanelTiltAnglePso = () => {
     if (runEvolution) {
       init();
       requestRef.current = requestAnimationFrame(evolve);
+      const initialSolarPanelsCopy = [...initialSolarPanelsRef.current];
       return () => {
         // this is called when the recursive call of requestAnimationFrame exits
         cancelAnimationFrame(requestRef.current);
@@ -57,8 +58,8 @@ const SolarPanelTiltAnglePso = () => {
             state.evolutionInProgress = false;
           });
           // revert to the initial solar panels
-          if (initialSolarPanelsRef.current.length > 0) {
-            solarPanelsRef.current = [...initialSolarPanelsRef.current];
+          if (initialSolarPanelsCopy.length > 0) {
+            solarPanelsRef.current = initialSolarPanelsCopy;
             runCallback(true);
           }
         }
@@ -136,11 +137,11 @@ const SolarPanelTiltAnglePso = () => {
   const getTotal = (): number => {
     let total = 0;
     switch (params.objectiveFunctionType) {
-      case ObjectiveFunctionType.DAILY_TOTAL_OUTPUT:
+      case ObjectiveFunctionType.DAILY_TOTAL_OUTPUT: {
         const dailyPvYield = useDataStore.getState().dailyPvYield;
         for (const datum of dailyPvYield) {
           for (const prop in datum) {
-            if (datum.hasOwnProperty(prop)) {
+            if (Object.hasOwn(datum, prop)) {
               if (prop === 'Total') {
                 total += datum[prop] as number;
               }
@@ -148,11 +149,12 @@ const SolarPanelTiltAnglePso = () => {
           }
         }
         break;
-      case ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT:
+      }
+      case ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT: {
         const yearlyPvYield = useDataStore.getState().yearlyPvYield;
         for (const datum of yearlyPvYield) {
           for (const prop in datum) {
-            if (datum.hasOwnProperty(prop)) {
+            if (Object.hasOwn(datum, prop)) {
               if (prop === 'Total') {
                 total += datum[prop] as number;
               }
@@ -161,6 +163,7 @@ const SolarPanelTiltAnglePso = () => {
         }
         total *= 12 / daysPerYear;
         break;
+      }
     }
     return total;
   };
@@ -312,6 +315,6 @@ const SolarPanelTiltAnglePso = () => {
   };
 
   return <></>;
-};
+});
 
-export default React.memo(SolarPanelTiltAnglePso);
+export default SolarPanelTiltAnglePso;
