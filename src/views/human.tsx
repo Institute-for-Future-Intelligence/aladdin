@@ -62,6 +62,7 @@ const Human = React.memo(
     const getElementById = useStore(Selector.getElementById);
     const moveHandleType = useStore(Selector.moveHandleType);
     const hoveredHandle = useStore(Selector.hoveredHandle);
+    const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
 
     const selected = useSelected(id);
 
@@ -206,7 +207,7 @@ const Human = React.memo(
             <Plane
               ref={planeRef}
               renderOrder={3}
-              receiveShadow={true}
+              receiveShadow={!showSolarRadiationHeatmap}
               name={`Human ${name} plane`}
               args={[width, height]}
               onContextMenu={(e) => {

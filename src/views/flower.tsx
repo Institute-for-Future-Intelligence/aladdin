@@ -60,6 +60,7 @@ const Flower = React.memo(
     const getElementById = useStore(Selector.getElementById);
     const moveHandleType = useStore(Selector.moveHandleType);
     const hoveredHandle = useStore(Selector.hoveredHandle);
+    const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
 
     const [hovered, setHovered] = useState(false);
     const { gl } = useThree();
@@ -230,7 +231,7 @@ const Flower = React.memo(
           >
             <group position={[0, 0, height / 2]}>
               <Billboard ref={flowerRef} uuid={id} name={name} follow={false} rotation={[HALF_PI, 0, 0]}>
-                <Plane args={[width, height]} receiveShadow={true}>
+                <Plane args={[width, height]} receiveShadow={!showSolarRadiationHeatmap}>
                   <meshToonMaterial map={texture} side={DoubleSide} alphaTest={0.5} />
                 </Plane>
               </Billboard>
