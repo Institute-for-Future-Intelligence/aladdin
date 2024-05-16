@@ -1750,9 +1750,37 @@ const Ground = React.memo(() => {
     const anchor = new Vector2(resizeAnchor.x, resizeAnchor.y);
     const distance = anchor.distanceTo(point);
     const angle = Math.atan2(point.x - resizeAnchor.x, point.y - resizeAnchor.y) + grabRef.current.rotation[2];
-    const lx = Math.abs(distance * Math.sin(angle));
-    const ly = Math.abs(distance * Math.cos(angle));
+    let lx = Math.abs(distance * Math.sin(angle));
+    let ly = Math.abs(distance * Math.cos(angle));
     const center = new Vector2().addVectors(point, anchor).multiplyScalar(0.5);
+    if (grabRef.current.type === ObjectType.Cuboid) {
+      if (
+        resizeHandleType === ResizeHandleType.Lower ||
+        resizeHandleType === ResizeHandleType.Upper ||
+        resizeHandleType === ResizeHandleType.Left ||
+        resizeHandleType === ResizeHandleType.Right
+      ) {
+        const anchorWorldPos = new Vector3(resizeAnchor.x, resizeAnchor.y);
+        const rot = grabRef.current.rotation[2];
+        const localizedPointToAnchor = new Vector3(p.x, p.y).sub(anchorWorldPos).applyEuler(new Euler(0, 0, -rot));
+        const v0 = new Vector3(1, 0, 0);
+        if (resizeHandleType === ResizeHandleType.Upper || resizeHandleType === ResizeHandleType.Lower) {
+          v0.set(0, 1, 0);
+        }
+        v0.applyEuler(new Euler(0, 0, rot));
+        const center0 = anchorWorldPos.clone().add(v0.clone().multiplyScalar(localizedPointToAnchor.x / 2));
+        if (resizeHandleType === ResizeHandleType.Left || resizeHandleType === ResizeHandleType.Right) {
+          lx = Math.abs(localizedPointToAnchor.x);
+          ly = grabRef.current.ly;
+        } else if (resizeHandleType === ResizeHandleType.Upper || resizeHandleType === ResizeHandleType.Lower) {
+          lx = grabRef.current.lx;
+          ly = Math.abs(localizedPointToAnchor.y);
+          center0.copy(anchorWorldPos.add(v0.clone().multiplyScalar(localizedPointToAnchor.y / 2)));
+        }
+        center.x = center0.x;
+        center.y = center0.y;
+      }
+    }
     setCommonStore((state) => {
       if (!grabRef.current) return;
       let sizeOk = false;
@@ -1838,14 +1866,8 @@ const Ground = React.memo(() => {
                 switch (resizeHandleType) {
                   case ResizeHandleType.Lower:
                   case ResizeHandleType.Upper:
-                    parentClone.ly = ly;
-                    parentClone.cy = center.y;
-                    break;
                   case ResizeHandleType.Left:
                   case ResizeHandleType.Right:
-                    parentClone.lx = lx;
-                    parentClone.cx = center.x;
-                    break;
                   case ResizeHandleType.LowerLeft:
                   case ResizeHandleType.LowerRight:
                   case ResizeHandleType.UpperLeft:
@@ -1860,14 +1882,8 @@ const Ground = React.memo(() => {
                   switch (resizeHandleType) {
                     case ResizeHandleType.Lower:
                     case ResizeHandleType.Upper:
-                      e.ly = ly;
-                      e.cy = center.y;
-                      break;
                     case ResizeHandleType.Left:
                     case ResizeHandleType.Right:
-                      e.lx = lx;
-                      e.cx = center.x;
-                      break;
                     case ResizeHandleType.LowerLeft:
                     case ResizeHandleType.LowerRight:
                     case ResizeHandleType.UpperLeft:
@@ -1886,14 +1902,8 @@ const Ground = React.memo(() => {
                   switch (resizeHandleType) {
                     case ResizeHandleType.Lower:
                     case ResizeHandleType.Upper:
-                      e.ly = ly;
-                      e.cy = center.y;
-                      break;
                     case ResizeHandleType.Left:
                     case ResizeHandleType.Right:
-                      e.lx = lx;
-                      e.cx = center.x;
-                      break;
                     case ResizeHandleType.LowerLeft:
                     case ResizeHandleType.LowerRight:
                     case ResizeHandleType.UpperLeft:
