@@ -555,7 +555,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
 
     const onTopSurface = face.normal.z === 1;
     // if it's on top face, then handle operations on intersection plane.
-    if (onTopSurface) {
+    if (onTopSurface && grabRef.current?.type !== ObjectType.Polygon) {
       const showPlane = !!(
         grabRef.current?.type === ObjectType.SolarPanel &&
         (useStore.getState().moveHandleType ||
