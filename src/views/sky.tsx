@@ -30,6 +30,7 @@ import {
   GROUND_ID,
   HALF_PI,
   ORIGIN_VECTOR2,
+  THROTTLE_WAIT,
   TWO_PI,
   UNIT_VECTOR_POS_Z_ARRAY,
   ZERO_TOLERANCE,
@@ -862,7 +863,7 @@ const Sky = React.memo(({ theme = 'Default' }: SkyProps) => {
           rotation={intersectionPlaneAngle}
           position={intersectionPlanePosition}
           args={[1000, 1000]}
-          onPointerMove={throttle(handlePointerMove, 100)}
+          onPointerMove={throttle(handlePointerMove, THROTTLE_WAIT)}
           onPointerUp={handlePointerUp}
         >
           <meshStandardMaterial side={DoubleSide} />

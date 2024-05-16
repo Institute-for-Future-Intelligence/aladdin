@@ -38,6 +38,7 @@ import {
   MOVE_HANDLE_COLOR_2,
   ORIGIN_VECTOR2,
   RESIZE_HANDLE_COLOR,
+  THROTTLE_WAIT,
   TWO_PI,
   UNIT_VECTOR_POS_Z,
   ZERO_TOLERANCE,
@@ -3082,7 +3083,7 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
           onPointerOver={handlePointerOver}
           onPointerDown={handlePointerDown}
           onPointerUp={handlePointerUp}
-          onPointerMove={throttle(handlePointerMove, 100)}
+          onPointerMove={throttle(handlePointerMove, THROTTLE_WAIT)}
           onPointerOut={handlePointerOut}
           onPointerEnter={handlePointerEnter}
         >
@@ -3118,7 +3119,7 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
             position={intersectionPlanePosition}
             args={[lx, ly]}
             visible={false}
-            onPointerMove={throttle(handleSolarCollectorPointerMove, 100)}
+            onPointerMove={throttle(handleSolarCollectorPointerMove, THROTTLE_WAIT)}
             // onPointerOut={handleSolarCollectorPointerOut}
           />
         )}

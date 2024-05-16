@@ -21,6 +21,8 @@ export const PRESET_COLORS = ['#627682', '#8884d8', '#f97356', '#1bc32c', '#c650
 
 export const Z_INDEX_FRONT_PANEL = 15;
 
+export const THROTTLE_WAIT = 50;
+
 export const UNDO_SHOW_INFO_DURATION = 0.5;
 export const FLOATING_WINDOW_OPACITY = 0.8;
 export const BLUE = new Color(0, 0, 1);

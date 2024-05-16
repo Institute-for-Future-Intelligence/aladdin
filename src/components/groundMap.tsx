@@ -22,7 +22,7 @@ const GroundMap = ({ width = 400, height = 400 }: { width: number; height: numbe
 
   const [map, setMap] = useState<google.maps.Map | null>(null);
 
-  const waitTime = 200;
+  const waitTime = 100;
 
   const onLoad = useCallback((map: google.maps.Map) => {
     setMap(map);

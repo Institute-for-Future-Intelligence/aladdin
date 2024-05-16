@@ -23,6 +23,7 @@ import {
   HALF_PI,
   MOVE_HANDLE_RADIUS,
   ORIGIN_VECTOR2,
+  THROTTLE_WAIT,
   TWO_PI,
   UNIT_VECTOR_POS_Z,
   UNIT_VECTOR_POS_Z_ARRAY,
@@ -2267,7 +2268,7 @@ const Ground = React.memo(() => {
           rotation={intersectionPlaneAngle}
           position={intersectionPlanePosition}
           args={[100000, 100000]}
-          onPointerMove={throttle(handleIntersectionPointerMove, 100)}
+          onPointerMove={throttle(handleIntersectionPointerMove, THROTTLE_WAIT)}
         >
           <meshStandardMaterial side={DoubleSide} opacity={0.5} transparent />
         </Plane>
@@ -2283,7 +2284,7 @@ const Ground = React.memo(() => {
         renderOrder={-2}
         onContextMenu={handleContextMenu}
         onPointerDown={handlePointerDown}
-        onPointerMove={throttle(handleGroundPointerMove, 100)}
+        onPointerMove={throttle(handleGroundPointerMove, THROTTLE_WAIT)}
         // onPointerOut={handleGroundPointerOut}
       >
         {showSolarRadiationHeatmap && !waterSurface ? (
