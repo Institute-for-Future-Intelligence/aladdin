@@ -54,6 +54,7 @@ import ScatterPlotMenu from '../components/scatterPlotMenu';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { Filter, FilterType } from '../Filter';
+import { useLanguage } from '../views/hooks';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -137,7 +138,6 @@ export interface ProjectGalleryProps {
 const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProps) => {
   const setCommonStore = useStore(Selector.set);
   const user = useStore(Selector.user);
-  const language = useStore(Selector.language);
   const cloudFile = useStore(Selector.cloudFile);
   const projectTitle = useStore(Selector.projectTitle);
   const projectOwner = useStore(Selector.projectOwner);
@@ -194,9 +194,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
 
   const { t } = useTranslation();
 
-  const lang = useMemo(() => {
-    return { lng: language };
-  }, [language]);
+  const lang = useLanguage();
 
   const isOwner = user.uid === projectOwner;
 

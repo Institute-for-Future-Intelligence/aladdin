@@ -18,6 +18,7 @@ import { Rectangle } from '../models/Rectangle';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
 import { useTranslation } from 'react-i18next';
+import { useLanguage } from '../views/hooks';
 
 const Container = styled.div`
   position: fixed;
@@ -68,7 +69,6 @@ export interface YearlyLightSensorPanelProps {
 }
 
 const YearlyLightSensorPanel = React.memo(({ city }: YearlyLightSensorPanelProps) => {
-  const language = useStore(Selector.language);
   const loggable = useStore(Selector.loggable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
@@ -95,7 +95,7 @@ const YearlyLightSensorPanel = React.memo(({ city }: YearlyLightSensorPanelProps
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
   const nodeRef = React.useRef(null);
 
-  const lang = { lng: language };
+  const lang = useLanguage();
   const referenceX = MONTHS_ABBV[now.getMonth()];
 
   useEffect(() => {

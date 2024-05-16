@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React from 'react';
@@ -8,15 +8,15 @@ import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import i18n from '../../../i18n/i18n';
 import { useDataStore } from '../../../stores/commonData';
+import { useLanguage } from '../../../views/hooks';
 
-const CspSimulationSettings = ({ name }: { name: string }) => {
+const CspSimulationSettings = React.memo(({ name }: { name: string }) => {
   const setCommonStore = useStore(Selector.set);
-  const language = useStore(Selector.language);
   const cspTimesPerHour = useStore(Selector.world.cspTimesPerHour);
   const cspDaysPerYear = useStore(Selector.world.cspDaysPerYear);
   const cspGridCellSize = useStore(Selector.world.cspGridCellSize);
 
-  const lang = { lng: language };
+  const lang = useLanguage();
   const { SubMenu } = Menu;
   const { Option } = Select;
 
@@ -109,6 +109,6 @@ const CspSimulationSettings = ({ name }: { name: string }) => {
       </Menu>
     </SubMenu>
   );
-};
+});
 
 export default CspSimulationSettings;

@@ -19,6 +19,7 @@ import { UndoableCheck } from '../undo/UndoableCheck';
 import { Undoable } from '../undo/Undoable';
 import { LAT_LNG_FRACTION_DIGITS, Z_INDEX_FRONT_PANEL } from '../constants';
 import { turnOffVisualization } from './panelUtils';
+import { useLanguage } from '../views/hooks';
 
 const libraries = ['places'] as Libraries;
 
@@ -74,7 +75,6 @@ const Header = styled.div`
 `;
 
 const MapPanel = React.memo(() => {
-  const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
   const address = useStore(Selector.world.address);
@@ -99,7 +99,7 @@ const MapPanel = React.memo(() => {
     y: isNaN(mapPanelY) ? 0 : Math.min(mapPanelY, window.innerHeight - hOffset),
   });
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
-  const lang = { lng: language };
+  const lang = useLanguage();
 
   // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
   useEffect(() => {

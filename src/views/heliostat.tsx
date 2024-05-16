@@ -18,7 +18,7 @@ import { FoundationModel } from '../models/FoundationModel';
 import { HeliostatModel } from '../models/HeliostatModel';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
-import { useSelected } from './hooks';
+import { useLanguage, useSelected } from './hooks';
 
 const Heliostat = React.memo(
   ({
@@ -45,7 +45,6 @@ const Heliostat = React.memo(
     towerId,
   }: HeliostatModel) => {
     const setCommonStore = useStore(Selector.set);
-    const language = useStore(Selector.language);
     const date = useStore(Selector.world.date);
     const latitude = useStore(Selector.world.latitude);
     const elements = useStore(Selector.elements);
@@ -70,9 +69,7 @@ const Heliostat = React.memo(
     const pointerDown = useRef<boolean>(false);
 
     const sunBeamLength = Math.max(100, 10 * sceneRadius);
-    const lang = useMemo(() => {
-      return { lng: language };
-    }, [language]);
+    const lang = useLanguage();
 
     const hx = lx / 2;
     const hy = ly / 2;

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -13,10 +13,10 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { CompactPicker } from 'react-color';
 import { RoofModel } from 'src/models/RoofModel';
+import { useLanguage } from '../../../../views/hooks';
 
-const GlassTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const GlassTintSelection = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
-  const language = useStore(Selector.language);
   const roof = useStore(Selector.selectedElement) as RoofModel;
   const addUndoable = useStore(Selector.addUndoable);
   const roofActionScope = useStore(Selector.roofActionScope);
@@ -36,7 +36,7 @@ const GlassTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
     okButtonRef.current?.focus();
   });
 
-  const lang = { lng: language };
+  const lang = useLanguage();
 
   useEffect(() => {
     if (roof) {
@@ -72,7 +72,7 @@ const GlassTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   const setTint = (value: string) => {
     if (!roof) return;
     switch (roofActionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllObjectsOfThisType: {
         const oldTintsAll = new Map<string, string>();
         for (const elem of useStore.getState().elements) {
           if (elem.type === ObjectType.Roof && !elem.locked) {
@@ -95,7 +95,8 @@ const GlassTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
         updateColorInMap(oldTintsAll, value);
         setApplyCount(applyCount + 1);
         break;
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      }
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (roof.foundationId) {
           const oldTintsAboveFoundation = new Map<string, string>();
           for (const elem of useStore.getState().elements) {
@@ -126,7 +127,8 @@ const GlassTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
           setApplyCount(applyCount + 1);
         }
         break;
-      default:
+      }
+      default: {
         if (roof) {
           const updatedRoof = getElementById(roof.id) as RoofModel;
           const oldTint = (updatedRoof ? updatedRoof.glassTint : roof.glassTint) ?? '#73D8FF';
@@ -148,6 +150,8 @@ const GlassTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
           updateTintById(roof.id, value);
           setApplyCount(applyCount + 1);
         }
+        break;
+      }
     }
   };
 
@@ -256,6 +260,6 @@ const GlassTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
       </Modal>
     </>
   );
-};
+});
 
 export default GlassTintSelection;

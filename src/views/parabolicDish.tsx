@@ -36,7 +36,7 @@ import { Paraboloid } from './shapes';
 import GlowImage from '../resources/glow.png';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
-import { useSelected } from './hooks';
+import { useLanguage, useSelected } from './hooks';
 
 const ParabolicDish = React.memo(
   ({
@@ -66,7 +66,6 @@ const ParabolicDish = React.memo(
     parentId,
   }: ParabolicDishModel) => {
     const setCommonStore = useStore(Selector.set);
-    const language = useStore(Selector.language);
     const date = useStore(Selector.world.date);
     const latitude = useStore(Selector.world.latitude);
     const elements = useStore(Selector.elements);
@@ -110,9 +109,7 @@ const ParabolicDish = React.memo(
     const hz = lz / 2;
     const actualPoleHeight = poleHeight + hx;
 
-    const lang = useMemo(() => {
-      return { lng: language };
-    }, [language]);
+    const lang = useLanguage();
 
     // be sure to get the updated parent so that this memorized element can move with it
     const parent = useStore((state) => {

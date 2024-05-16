@@ -17,6 +17,7 @@ import DeleteImage from '../assets/delete.png';
 import LinkImage from '../assets/create_link.png';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useTranslation } from 'react-i18next';
+import { useLanguage } from '../views/hooks';
 
 const { Column } = Table;
 
@@ -75,7 +76,6 @@ export interface CloudFilePanelProps {
 
 const CloudFilePanel = React.memo(
   ({ cloudFileArray, openCloudFile, deleteCloudFile, renameCloudFile }: CloudFilePanelProps) => {
-    const language = useStore(Selector.language);
     const setCommonStore = useStore(Selector.set);
     const selectedFloatingWindow = useStore(Selector.selectedFloatingWindow);
 
@@ -100,7 +100,7 @@ const CloudFilePanel = React.memo(
     const [recountFlag, setRecountFlag] = useState<boolean>(false);
 
     const { Search } = Input;
-    const lang = { lng: language };
+    const lang = useLanguage();
 
     // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
     useEffect(() => {

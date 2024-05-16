@@ -9,7 +9,7 @@ import i18n from './i18n/i18n';
 import { Drawer, Empty, Input, Space } from 'antd';
 import { ModelSite } from './types';
 import { LeftCircleOutlined, RightCircleOutlined } from '@ant-design/icons';
-import { getIconUrl } from './components/modelsMap';
+import { getIconUrl } from './components/mapUtils';
 import ImageLoadFailureIcon from './assets/image_load_failure.png';
 
 export interface ModelsGalleryProps {

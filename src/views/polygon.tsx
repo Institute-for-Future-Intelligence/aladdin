@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import PolygonTexture01 from '../resources/foundation_01.png';
@@ -40,7 +40,7 @@ import { PolygonModel } from '../models/PolygonModel';
 import { Point2 } from '../models/Point2';
 import { useRefStore } from '../stores/commonRef';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
-import { useSelected } from './hooks';
+import { useLanguage, useSelected } from './hooks';
 
 // maybe we should not wrap this with React.memo as the polygon seems to need to update with its parent
 const Polygon = ({
@@ -73,7 +73,6 @@ const Polygon = ({
   textureType = PolygonTexture.NoTexture,
 }: PolygonModel) => {
   const setCommonStore = useStore(Selector.set);
-  const language = useStore(Selector.language);
   const selectMe = useStore(Selector.selectMe);
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
@@ -113,9 +112,7 @@ const Polygon = ({
   const resizeHandleSize = RESIZE_HANDLE_SIZE * ratio;
   const moveHandleSize = MOVE_HANDLE_RADIUS * ratio;
 
-  const lang = useMemo(() => {
-    return { lng: language };
-  }, [language]);
+  const lang = useLanguage();
 
   const updatePolygonSelectedIndexById = (id: string, index: number) => {
     setCommonStore((state: CommonStoreState) => {

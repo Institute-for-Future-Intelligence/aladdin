@@ -16,9 +16,9 @@ import { showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
+import { useLanguage } from '../views/hooks';
 
 const SolarPanelVisibility = React.memo(() => {
-  const language = useStore(Selector.language);
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
   const setCommonStore = useStore(Selector.set);
@@ -28,7 +28,7 @@ const SolarPanelVisibility = React.memo(() => {
   const runAnalysis = usePrimitiveStore(Selector.runSolarPanelVisibilityAnalysis);
 
   const { scene } = useThree();
-  const lang = { lng: language };
+  const lang = useLanguage();
   const ray = useMemo(() => new Raycaster(), []);
   const cellSize = world.solarPanelVisibilityGridCellSize ?? 0.2;
   const vantagesRef = useRef<Vantage[]>([]);

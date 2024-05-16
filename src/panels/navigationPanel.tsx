@@ -10,10 +10,10 @@ import * as Selector from '../stores/selector';
 import i18n from '../i18n/i18n';
 import { UndoableChange } from '../undo/UndoableChange';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { useLanguage } from '../views/hooks';
 
 const NavigationPanel = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
-  const language = useStore(Selector.language);
   const addUndoable = useStore(Selector.addUndoable);
   const minimumMoveSpeed = useStore(Selector.minimumNavigationMoveSpeed);
   const minimumTurnSpeed = useStore(Selector.minimumNavigationTurnSpeed);
@@ -26,7 +26,7 @@ const NavigationPanel = React.memo(({ setDialogVisible }: { setDialogVisible: (b
   const minimumMoveSpeedRef = useRef<number>(minimumMoveSpeed);
   const minimumTurnSpeedRef = useRef<number>(minimumTurnSpeed);
 
-  const lang = { lng: language };
+  const lang = useLanguage();
 
   useEffect(() => {
     okButtonRef.current?.focus();

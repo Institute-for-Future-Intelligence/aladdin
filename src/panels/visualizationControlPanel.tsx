@@ -9,6 +9,7 @@ import styled from 'styled-components';
 import { InputNumber, Space } from 'antd';
 import i18n from '../i18n/i18n';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { useLanguage } from '../views/hooks';
 
 const Container = styled.div`
   position: absolute;
@@ -43,13 +44,12 @@ const ColumnWrapper = styled.div`
 
 const VisualizationControlPanel = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
-  const language = useStore(Selector.language);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const showSiteInfoPanel = useStore(Selector.viewState.showSiteInfoPanel);
   const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
   const showHeatFluxes = usePrimitiveStore(Selector.showHeatFluxes);
 
-  const lang = { lng: language };
+  const lang = useLanguage();
 
   return (
     <Container style={{ top: showSiteInfoPanel ? '110px' : '80px' }}>

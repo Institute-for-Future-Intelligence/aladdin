@@ -30,7 +30,7 @@ import { RoofModel } from '../models/RoofModel';
 import { useRefStore } from 'src/stores/commonRef';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import { getRotationFromNormal } from './solarPanel/solarPanelOnCuboid';
-import { useSelected } from './hooks';
+import { useLanguage, useSelected } from './hooks';
 
 const Light = React.memo((lightModel: LightModel) => {
   const {
@@ -57,7 +57,6 @@ const Light = React.memo((lightModel: LightModel) => {
   } = lightModel;
 
   const setCommonStore = useStore(Selector.set);
-  const language = useStore(Selector.language);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const selectMe = useStore(Selector.selectMe);
   const sunlightDirection = useStore(Selector.sunlightDirection);
@@ -71,9 +70,7 @@ const Light = React.memo((lightModel: LightModel) => {
   const baseRef = useRef<Mesh>(null);
   const handleRef = useRef<Mesh>(null);
 
-  const lang = useMemo(() => {
-    return { lng: language };
-  }, [language]);
+  const lang = useLanguage();
 
   // be sure to get the updated parent so that this memorized element can move with it
   const parent = useStore((state) => {

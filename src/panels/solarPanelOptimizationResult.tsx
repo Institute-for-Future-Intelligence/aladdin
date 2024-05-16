@@ -16,6 +16,7 @@ import { DesignProblem, EvolutionMethod, ObjectiveFunctionType, ObjectType } fro
 import { Rectangle } from '../models/Rectangle';
 import { FLOATING_WINDOW_OPACITY, Z_INDEX_FRONT_PANEL } from '../constants';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { useLanguage } from '../views/hooks';
 
 const Container = styled.div`
   position: fixed;
@@ -62,7 +63,6 @@ const Header = styled.div`
 `;
 
 const SolarPanelOptimizationResult = React.memo(() => {
-  const language = useStore(Selector.language);
   const loggable = useStore(Selector.loggable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
@@ -89,9 +89,7 @@ const SolarPanelOptimizationResult = React.memo(() => {
     y: panelRect ? Math.min(panelRect.y, window.innerHeight - hOffset) : 0,
   });
 
-  const lang = useMemo(() => {
-    return { lng: language };
-  }, [language]);
+  const lang = useLanguage();
 
   useEffect(() => {
     setCurPosition({

@@ -21,7 +21,7 @@ import { ActionType, BirdSafeDesign, MoveHandleType, ObjectType } from '../types
 import { Util } from '../Util';
 import i18n from '../i18n/i18n';
 import { WindTurbineModel } from '../models/WindTurbineModel';
-import { useSelected } from './hooks';
+import { useLanguage, useSelected } from './hooks';
 
 const WindTurbine = React.memo(
   ({
@@ -57,7 +57,6 @@ const WindTurbine = React.memo(
     parentId,
   }: WindTurbineModel) => {
     const setCommonStore = useStore(Selector.set);
-    const language = useStore(Selector.language);
     const getElementById = useStore(Selector.getElementById);
     const selectMe = useStore(Selector.selectMe);
     const selected = useSelected(id);
@@ -73,9 +72,7 @@ const WindTurbine = React.memo(
     const moveHandleRef = useRef<Mesh>(null);
     const pointerDown = useRef<boolean>(false);
 
-    const lang = useMemo(() => {
-      return { lng: language };
-    }, [language]);
+    const lang = useLanguage();
 
     const texture = useMemo(() => {
       return Util.fetchBladeTexture(bladeRadius, bladeRootRadius * 2, 100, birdSafe, bladeColor, stripeColor);

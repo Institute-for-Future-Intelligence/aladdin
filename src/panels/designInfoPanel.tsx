@@ -17,6 +17,7 @@ import { BuildingCompletionStatus, ObjectType } from '../types';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { Util } from 'src/Util';
 import { FoundationModel } from '../models/FoundationModel';
+import { useLanguage } from '../views/hooks';
 
 const Container = styled.div`
   position: absolute;
@@ -60,7 +61,6 @@ const DesignInfoPanel = React.memo(() => {
   const countElementsByType = useStore(Selector.countElementsByType);
   const countSolarPanelsOnRack = useStore(Selector.countSolarPanelsOnRack);
   const getParent = useStore(Selector.getParent);
-  const language = useStore(Selector.language);
   const sunlightDirection = useStore(Selector.sunlightDirection);
   const sceneRadius = useStore(Selector.sceneRadius);
   const projectView = useStore(Selector.projectView);
@@ -95,7 +95,7 @@ const DesignInfoPanel = React.memo(() => {
     heliostatCount = countElementsByType(ObjectType.Heliostat);
   }
 
-  const lang = { lng: language };
+  const lang = useLanguage();
   const daytime = sunlightDirection.y > 0;
   const color = daytime ? 'navajowhite' : 'antiquewhite';
   const filter = daytime

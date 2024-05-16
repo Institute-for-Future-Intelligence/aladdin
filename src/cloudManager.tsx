@@ -2,7 +2,7 @@
  * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useStore } from './stores/common';
 import { usePrimitiveStore } from './stores/commonPrimitive';
 import * as Selector from './stores/selector';
@@ -42,6 +42,7 @@ import ProjectListPanel from './panels/projectListPanel';
 import { loadCloudFile } from './cloudFileUtil';
 import { changeDesignTitles, copyDesign, createDesign, fetchProject, getImageData } from './cloudProjectUtil';
 import { ProjectUtil } from './panels/ProjectUtil';
+import { useLanguage } from './views/hooks';
 
 export interface CloudManagerProps {
   viewOnly: boolean;
@@ -60,7 +61,6 @@ const useFlag = (flag: boolean, fn: Function, setFlag: () => void) => {
 const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const setCommonStore = useStore(Selector.set);
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
-  const language = useStore(Selector.language);
   const user = useStore(Selector.user);
   const latitude = useStore(Selector.world.latitude);
   const longitude = useStore(Selector.world.longitude);
@@ -103,9 +103,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
   const myProjectsRef = useRef<ProjectState[] | void>(); // store sorted projects
   const authorModelsRef = useRef<Map<string, ModelSite>>();
 
-  const lang = useMemo(() => {
-    return { lng: language };
-  }, [language]);
+  const lang = useLanguage();
 
   useFlag(saveAccountSettingsFlag, saveAccountSettings, () => setPrimitiveStore('saveAccountSettingsFlag', false));
 

@@ -46,6 +46,7 @@ import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { GroupableModel, isGroupable } from 'src/models/Groupable';
 import { WindowModel } from 'src/models/WindowModel';
 import { throttle } from 'lodash';
+import { useLanguage } from './hooks';
 
 const Ground = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
@@ -64,7 +65,6 @@ const Ground = React.memo(() => {
   const updatePolygonVerticesById = useStore(Selector.updatePolygonVerticesById);
   const updateSceneRadius = useStore(Selector.updateSceneRadius);
 
-  const language = useStore(Selector.language);
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
   const moveHandleType = useStore(Selector.moveHandleType);
   const resizeHandleType = useStore(Selector.resizeHandleType);
@@ -111,9 +111,7 @@ const Ground = React.memo(() => {
   const baseGroupNewPosMapRef = useRef<Map<string, number[]>>(new Map());
   const moveHandleWorldDiffV3Ref = useRef(new Vector3());
 
-  const lang = useMemo(() => {
-    return { lng: language };
-  }, [language]);
+  const lang = useLanguage();
 
   // add pointer up event to window
   useEffect(() => {

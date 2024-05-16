@@ -10,6 +10,7 @@ import * as Selector from '../stores/selector';
 import { Util } from '../Util';
 import { CloseOutlined } from '@ant-design/icons';
 import { Undoable } from '../undo/Undoable';
+import { useLanguage } from '../views/hooks';
 
 const Container = styled.div`
   position: absolute;
@@ -47,11 +48,10 @@ const ColumnWrapper = styled.div`
 const InstructionPanel = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
-  const language = useStore(Selector.language);
   const sunlightDirection = useStore(Selector.sunlightDirection);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
   const navigation = useStore(Selector.viewState.navigationView) ?? false;
-  const lang = { lng: language };
+  const lang = useLanguage();
   const color = sunlightDirection.y > 0 ? 'navajowhite' : 'antiquewhite';
 
   const isMac = Util.isMac();

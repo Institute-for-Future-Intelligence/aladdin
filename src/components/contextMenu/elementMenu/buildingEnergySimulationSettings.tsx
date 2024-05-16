@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React from 'react';
@@ -7,15 +7,15 @@ import { InputNumber, Menu, Select, Space } from 'antd';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import i18n from '../../../i18n/i18n';
+import { useLanguage } from '../../../views/hooks';
 
-const BuildingEnergySimulationSettings = () => {
+const BuildingEnergySimulationSettings = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
-  const language = useStore(Selector.language);
   const timesPerHour = useStore(Selector.world.timesPerHour);
   const daysPerYear = useStore(Selector.world.daysPerYear);
   const gridCellSize = useStore(Selector.world.solarRadiationHeatmapGridCellSize);
 
-  const lang = { lng: language };
+  const lang = useLanguage();
   const { SubMenu } = Menu;
   const { Option } = Select;
 
@@ -116,6 +116,6 @@ const BuildingEnergySimulationSettings = () => {
       </Menu>
     </SubMenu>
   );
-};
+});
 
 export default BuildingEnergySimulationSettings;

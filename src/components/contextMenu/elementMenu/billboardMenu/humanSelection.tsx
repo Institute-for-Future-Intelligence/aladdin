@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import JaahImage from 'src/resources/jaah.png';
@@ -48,6 +48,7 @@ import { HumanModel } from '../../../../models/HumanModel';
 import { UndoableChange } from '../../../../undo/UndoableChange';
 import i18n from '../../../../i18n/i18n';
 import { HumanData } from '../../../../HumanData';
+import { useLanguage } from '../../../../views/hooks';
 
 const { Option } = Select;
 
@@ -55,13 +56,12 @@ interface HumanSelectionProps {
   human: HumanModel;
 }
 
-const HumanSelection = ({ human }: HumanSelectionProps) => {
+const HumanSelection = React.memo(({ human }: HumanSelectionProps) => {
   const setCommonStore = useStore(Selector.set);
-  const language = useStore(Selector.language);
   const addUndoable = useStore(Selector.addUndoable);
 
   const [updateFlag, setUpdateFlag] = useState(false);
-  const lang = { lng: language };
+  const lang = useLanguage();
 
   const updateHumanNameById = (id: string, name: HumanName) => {
     setCommonStore((state: CommonStoreState) => {
@@ -255,6 +255,6 @@ const HumanSelection = ({ human }: HumanSelectionProps) => {
       </Option>
     </Select>
   );
-};
+});
 
 export default HumanSelection;

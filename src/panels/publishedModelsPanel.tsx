@@ -10,6 +10,7 @@ import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Table } from 'antd';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useTranslation } from 'react-i18next';
+import { useLanguage } from '../views/hooks';
 
 const { Column } = Table;
 
@@ -65,7 +66,6 @@ export interface PublishedModelsPanelProps {
 }
 
 const PublishedModelsPanel = React.memo(({ publishedModels, openCloudFile }: PublishedModelsPanelProps) => {
-  const language = useStore(Selector.language);
   const user = useStore(Selector.user);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
@@ -76,7 +76,7 @@ const PublishedModelsPanel = React.memo(({ publishedModels, openCloudFile }: Pub
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 680;
   const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 600;
   const [curPosition, setCurPosition] = useState({ x: 0, y: 0 });
-  const lang = { lng: language };
+  const lang = useLanguage();
   const { t } = useTranslation();
 
   // when the window is resized (the code depends on where the panel is originally anchored in the CSS)

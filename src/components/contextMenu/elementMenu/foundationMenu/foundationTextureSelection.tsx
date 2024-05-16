@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import Foundation_Texture_01_Menu from '../../../../resources/foundation_01_menu.png';
@@ -164,7 +164,7 @@ const FoundationTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b
         setApplyCount(applyCount + 1);
         break;
       }
-      default:
+      default: {
         // foundation via selected element may be outdated, make sure that we get the latest
         const f = getElementById(foundation.id) as FoundationModel;
         const oldTexture = f ? f.textureType : foundation.textureType;
@@ -185,6 +185,8 @@ const FoundationTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b
         addUndoable(undoableChange);
         updateFoundationTextureById(foundation.id, value);
         setApplyCount(applyCount + 1);
+        break;
+      }
     }
     setCommonStore((state) => {
       state.actionState.foundationTexture = value;

@@ -42,6 +42,7 @@ import { UndoableMove } from 'src/undo/UndoableMove';
 import { showError } from 'src/helpers';
 import i18n from 'src/i18n/i18n';
 import { throttle } from 'lodash';
+import { useLanguage } from './hooks';
 
 export interface SkyProps {
   theme?: string;
@@ -62,7 +63,6 @@ const Sky = React.memo(({ theme = 'Default' }: SkyProps) => {
   const date = useStore(Selector.world.date);
   const addUndoable = useStore(Selector.addUndoable);
   const setElementPosition = useStore(Selector.setElementPosition);
-  const language = useStore(Selector.language);
   const updateSceneRadius = useStore(Selector.updateSceneRadius);
 
   const {
@@ -86,9 +86,7 @@ const Sky = React.memo(({ theme = 'Default' }: SkyProps) => {
   const newChildrenParentIdMapRef = useRef<Map<string, string>>(new Map<string, string>());
   const oldHumanOrTreeParentIdRef = useRef<string | null>(null);
 
-  const lang = useMemo(() => {
-    return { lng: language };
-  }, [language]);
+  const lang = useLanguage();
   const ray = useMemo(() => new Raycaster(), []);
   const elementParentRotation = useMemo(() => new Euler(), []);
 

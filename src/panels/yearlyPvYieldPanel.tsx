@@ -24,6 +24,7 @@ import { Util } from 'src/Util';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
 import { useTranslation } from 'react-i18next';
+import { useLanguage } from '../views/hooks';
 
 const Container = styled.div`
   position: fixed;
@@ -74,7 +75,6 @@ export interface YearlyPvYieldPanelProps {
 }
 
 const YearlyPvYieldPanel = React.memo(({ city }: YearlyPvYieldPanelProps) => {
-  const language = useStore(Selector.language);
   const loggable = useStore(Selector.loggable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
@@ -106,7 +106,7 @@ const YearlyPvYieldPanel = React.memo(({ city }: YearlyPvYieldPanelProps) => {
   const resizeObserverRef = useRef<ResizeObserver>();
 
   const referenceX = MONTHS_ABBV[now.getMonth()];
-  const lang = { lng: language };
+  const lang = useLanguage();
   const solarPanelCount = countElementsByType(ObjectType.SolarPanel);
 
   useEffect(() => {

@@ -27,7 +27,7 @@ import { useRefStore } from 'src/stores/commonRef';
 import { Util } from '../Util';
 import { TreeData } from '../TreeData';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
-import { useSelected } from './hooks';
+import { useLanguage, useSelected } from './hooks';
 
 const Tree = React.memo(
   ({
@@ -65,7 +65,6 @@ const Tree = React.memo(
     }, [isRender]);
 
     const setCommonStore = useStore(Selector.set);
-    const language = useStore(Selector.language);
     const orthographic = useStore(Selector.viewState.orthographic) ?? false;
     const date = useStore(Selector.world.date);
     const latitude = useStore(Selector.world.latitude);
@@ -95,9 +94,7 @@ const Tree = React.memo(
     const resizeHandleLowerRef = useRef<Mesh>(null);
     const resizeHandleUpperRef = useRef<Mesh>(null);
 
-    const lang = useMemo(() => {
-      return { lng: language };
-    }, [language]);
+    const lang = useLanguage();
     const treeModel = useMemo(() => getElementById(id) as TreeModel, [id]);
 
     const dayOfYear = useMemo(() => {

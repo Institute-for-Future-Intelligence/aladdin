@@ -1,5 +1,5 @@
 /*
- * @Copyright 2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2023-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -14,9 +14,9 @@ import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { Util } from '../../../../Util';
 import { FoundationModel } from '../../../../models/FoundationModel';
 import { DEFAULT_GROUND_FLOOR_R_VALUE, ZERO_TOLERANCE } from '../../../../constants';
+import { useLanguage } from '../../../../views/hooks';
 
-const GroundFloorRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
-  const language = useStore(Selector.language);
+const GroundFloorRValueInput = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const elements = useStore(Selector.elements);
   const selectedElement = useStore(Selector.selectedElement) as FoundationModel;
   const addUndoable = useStore(Selector.addUndoable);
@@ -45,7 +45,7 @@ const GroundFloorRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
 
-  const lang = { lng: language };
+  const lang = useLanguage();
 
   useEffect(() => {
     if (foundationModel) {
@@ -100,7 +100,7 @@ const GroundFloorRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
     if (!foundationModel) return;
     if (!needChange(value)) return;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllObjectsOfThisType: {
         const oldValuesAll = new Map<string, number | undefined>();
         setCommonStore((state) => {
           for (const e of state.elements) {
@@ -126,7 +126,8 @@ const GroundFloorRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
         addUndoable(undoableChangeAll);
         setApplyCount(applyCount + 1);
         break;
-      default:
+      }
+      default: {
         if (foundationModel) {
           const updatedFoundation = getElementById(foundationModel.id) as FoundationModel;
           const oldValue = updatedFoundation.rValue ?? foundationModel.rValue ?? DEFAULT_GROUND_FLOOR_R_VALUE;
@@ -148,6 +149,8 @@ const GroundFloorRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
           updateById(foundationModel.id, value);
           setApplyCount(applyCount + 1);
         }
+        break;
+      }
     }
     setCommonStore((state) => {
       state.actionState.groundFloorRValue = value;
@@ -286,6 +289,6 @@ const GroundFloorRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
       </Modal>
     </>
   );
-};
+});
 
 export default GroundFloorRValueInput;

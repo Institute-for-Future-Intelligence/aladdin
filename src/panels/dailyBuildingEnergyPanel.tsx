@@ -21,6 +21,7 @@ import BuildingEnergyGraph from '../components/buildingEnergyGraph';
 import { Util } from '../Util';
 import { checkBuilding, CheckStatus } from '../analysis/heatTools';
 import { useDataStore } from '../stores/commonData';
+import { useLanguage } from '../views/hooks';
 
 const Container = styled.div`
   position: fixed;
@@ -64,13 +65,6 @@ const Header = styled.div`
   justify-content: space-between;
   align-items: center;
   cursor: move;
-
-  svg.icon {
-    height: 16px;
-    width: 16px;
-    padding: 8px;
-    fill: #666;
-  }
 `;
 
 export interface DailyBuildingEnergyPanelProps {
@@ -78,7 +72,6 @@ export interface DailyBuildingEnergyPanelProps {
 }
 
 const DailyBuildingEnergyPanel = React.memo(({ city }: DailyBuildingEnergyPanelProps) => {
-  const language = useStore(Selector.language);
   const loggable = useStore(Selector.loggable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
@@ -115,7 +108,7 @@ const DailyBuildingEnergyPanel = React.memo(({ city }: DailyBuildingEnergyPanelP
   const [netSum, setNetSum] = useState(0);
   const [labels, setLabels] = useState(['Heater', 'AC', 'Net']);
 
-  const lang = { lng: language };
+  const lang = useLanguage();
   const weather = getWeather(city ?? 'Boston MA, USA');
   const tooltipHeaterBreakdown = useRef<string[]>([]);
   const tooltipAcBreakdown = useRef<string[]>([]);

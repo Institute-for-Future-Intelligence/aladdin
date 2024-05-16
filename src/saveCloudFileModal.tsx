@@ -9,6 +9,7 @@ import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import { REGEX_ALLOWABLE_IN_NAME } from './constants';
+import { useLanguage } from './views/hooks';
 
 export interface CloudFileSaveModalProps {
   saveToCloud: (title: string, silent: boolean, checkExistence: boolean) => void;
@@ -29,13 +30,12 @@ const SaveCloudFileModal = React.memo(
     isTitleDialogVisible,
   }: CloudFileSaveModalProps) => {
     const setCommonStore = useStore(Selector.set);
-    const language = useStore(Selector.language);
 
     const [dragEnabled, setDragEnabled] = useState<boolean>(false);
     const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
     const dragRef = useRef<HTMLDivElement | null>(null);
 
-    const lang = { lng: language };
+    const lang = useLanguage();
 
     const onStart = (event: DraggableEvent, uiData: DraggableData) => {
       if (dragRef.current) {

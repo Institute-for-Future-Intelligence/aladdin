@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useRef, useState } from 'react';
@@ -23,7 +23,7 @@ import { useSelectedElement } from '../menuHooks';
 import Dialog from '../../dialog';
 import { useLanguage } from 'src/views/hooks';
 
-const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const FoundationWidthInput = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
   const setElementPosition = useStore(Selector.setElementPosition);
@@ -59,7 +59,7 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
   const containsAllChildren = (ly: number) => {
     if (!foundation) return;
     switch (actionScope) {
-      case Scope.AllSelectedObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.Foundation && useStore.getState().selectedElementIdSet.has(e.id)) {
             const f = e as FoundationModel;
@@ -72,7 +72,8 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
           }
         }
         break;
-      case Scope.AllObjectsOfThisType:
+      }
+      case Scope.AllObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.Foundation) {
             const f = e as FoundationModel;
@@ -85,11 +86,14 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
           }
         }
         break;
-      default:
+      }
+      default: {
         const children = getChildren(foundation.id);
         if (children.length > 0) {
           return Util.doesNewSizeContainAllChildren(foundation, children, foundation.lx, ly);
         }
+        break;
+      }
     }
     return true;
   };
@@ -181,20 +185,22 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
     if (children.length > 0) {
       for (const c of children) {
         switch (c.type) {
-          case ObjectType.Wall:
+          case ObjectType.Wall: {
             // TODO
             break;
+          }
           case ObjectType.SolarPanel:
           case ObjectType.ParabolicTrough:
           case ObjectType.ParabolicDish:
           case ObjectType.FresnelReflector:
           case ObjectType.Heliostat:
-          case ObjectType.Sensor:
+          case ObjectType.Sensor: {
             const p = new Vector2(c.cx * parent.lx, c.cy * parent.ly).rotateAround(ORIGIN_VECTOR2, azimuth);
             denormalizedPositionMapRef.current.set(c.id, p);
             oldChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy));
             break;
-          case ObjectType.Polygon:
+          }
+          case ObjectType.Polygon: {
             const polygon = c as PolygonModel;
             const arr: Vector2[] = [];
             for (const v of polygon.vertices) {
@@ -206,10 +212,12 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
               polygon.vertices.map((v) => ({ ...v })),
             );
             break;
+          }
           case ObjectType.Human:
-          case ObjectType.Tree:
+          case ObjectType.Tree: {
             oldChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy, c.cz));
             break;
+          }
         }
       }
     }
@@ -219,15 +227,16 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
     if (children.length > 0) {
       for (const c of children) {
         switch (c.type) {
-          case ObjectType.Wall:
+          case ObjectType.Wall: {
             // TODO
             break;
+          }
           case ObjectType.SolarPanel:
           case ObjectType.ParabolicTrough:
           case ObjectType.ParabolicDish:
           case ObjectType.FresnelReflector:
           case ObjectType.Heliostat:
-          case ObjectType.Sensor:
+          case ObjectType.Sensor: {
             const p = denormalizedPositionMapRef.current.get(c.id);
             if (p) {
               const relativePos = new Vector2(p.x, p.y).rotateAround(ORIGIN_VECTOR2, -azimuth);
@@ -236,7 +245,8 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
               newChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, newCy));
             }
             break;
-          case ObjectType.Polygon:
+          }
+          case ObjectType.Polygon: {
             const arr = denormalizedVerticesMapRef.current.get(c.id);
             if (arr) {
               const newVertices: Point2[] = [];
@@ -253,8 +263,9 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
               );
             }
             break;
+          }
           case ObjectType.Human:
-          case ObjectType.Tree:
+          case ObjectType.Tree: {
             newChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy, c.cz));
             oldChildrenParentIdMapRef.current.set(c.id, parent.id);
             // top, north, south face
@@ -276,6 +287,7 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
               newChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cz, newCy, c.cz));
             }
             break;
+          }
         }
       }
     }
@@ -482,7 +494,7 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
           setApplyCount(applyCount + 1);
           break;
         }
-        default:
+        default: {
           updateLyWithChildren(foundation, value);
           const undoableChange = {
             name: 'Set Foundation Width',
@@ -538,6 +550,8 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
           } as UndoableSizeChange;
           addUndoable(undoableChange);
           setApplyCount(applyCount + 1);
+          break;
+        }
       }
     }
   };
@@ -625,6 +639,6 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
       </Row>
     </Dialog>
   );
-};
+});
 
 export default FoundationWidthInput;

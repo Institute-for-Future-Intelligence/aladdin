@@ -47,6 +47,7 @@ import GroupMasterWrapper from './components/groupMaster';
 import SplitPane from './components/splitPane';
 import { useRefStore } from './stores/commonRef';
 import { PerspectiveCamera, Vector2 } from 'three';
+import { useLanguage } from './views/hooks';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -56,7 +57,6 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
   const user = useStore(Selector.user);
   const loggable = useStore(Selector.loggable);
   const setCommonStore = useStore(Selector.set);
-  const language = useStore(Selector.language);
   const changed = usePrimitiveStore(Selector.changed);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
   const shadowCameraFar = useStore(Selector.viewState.shadowCameraFar) ?? DEFAULT_SHADOW_CAMERA_FAR;
@@ -75,9 +75,7 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const lang = useMemo(() => {
-    return { lng: language };
-  }, [language]);
+  const lang = useLanguage();
 
   useEffect(() => {
     setInitializing(false);

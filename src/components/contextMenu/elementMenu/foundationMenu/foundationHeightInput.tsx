@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useRef, useState } from 'react';
@@ -21,7 +21,7 @@ import { useSelectedElement } from '../menuHooks';
 import Dialog from '../../dialog';
 import { useLanguage } from 'src/views/hooks';
 
-const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const FoundationHeightInput = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -280,7 +280,7 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
         setApplyCount(applyCount + 1);
         break;
       }
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllObjectsOfThisType: {
         const oldLzsAll = new Map<string, number>();
         for (const elem of elements) {
           if (elem.type === ObjectType.Foundation) {
@@ -337,7 +337,8 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
         updateLzAndCzForAll(ObjectType.Foundation, value);
         setApplyCount(applyCount + 1);
         break;
-      default:
+      }
+      default: {
         // foundation via selected element may be outdated, make sure that we get the latest
         const f = getElementById(foundation.id);
         const oldLz = f ? f.lz : foundation.lz;
@@ -385,6 +386,8 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
         } as UndoableChange;
         addUndoable(undoableChange);
         setApplyCount(applyCount + 1);
+        break;
+      }
     }
     setCommonStore((state) => {
       state.actionState.foundationHeight = value;
@@ -447,6 +450,6 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
       </Row>
     </Dialog>
   );
-};
+});
 
 export default FoundationHeightInput;

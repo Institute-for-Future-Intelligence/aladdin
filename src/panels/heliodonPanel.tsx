@@ -20,6 +20,7 @@ import { Z_INDEX_FRONT_PANEL } from '../constants';
 import { useTranslation } from 'react-i18next';
 import { turnOffVisualization } from './panelUtils';
 import dayjs from 'dayjs';
+import { useLanguage } from '../views/hooks';
 
 const Container = styled.div`
   position: absolute;
@@ -59,7 +60,6 @@ const Header = styled.div`
 `;
 
 const HeliodonPanel = React.memo(() => {
-  const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
   const dateString = useStore(Selector.world.date);
@@ -95,7 +95,7 @@ const HeliodonPanel = React.memo(() => {
   }, [date, latitude]);
 
   const { t } = useTranslation();
-  const lang = { lng: language };
+  const lang = useLanguage();
 
   // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
   useEffect(() => {

@@ -14,6 +14,7 @@ import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 import { Undoable } from '../undo/Undoable';
+import { useLanguage } from '../views/hooks';
 
 const Container = styled.div`
   position: fixed;
@@ -64,7 +65,6 @@ export interface WeatherPanelProps {
 }
 
 const WeatherPanel = React.memo(({ city, graphs }: WeatherPanelProps) => {
-  const language = useStore(Selector.language);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
@@ -85,7 +85,7 @@ const WeatherPanel = React.memo(({ city, graphs }: WeatherPanelProps) => {
     x: panelRect ? Math.min(panelRect.x, window.innerWidth - wOffset) : 0,
     y: panelRect ? Math.min(panelRect.y, window.innerHeight - hOffset) : 0,
   });
-  const lang = { lng: language };
+  const lang = useLanguage();
 
   useEffect(() => {
     setCurPosition({

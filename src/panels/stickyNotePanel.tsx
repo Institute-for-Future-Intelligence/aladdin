@@ -12,6 +12,7 @@ import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 import { FLOATING_WINDOW_OPACITY, Z_INDEX_FRONT_PANEL } from '../constants';
 import { Undoable } from '../undo/Undoable';
+import { useLanguage } from '../views/hooks';
 
 const Container = styled.div`
   position: fixed;
@@ -58,7 +59,6 @@ const Header = styled.div`
 const { TextArea } = Input;
 
 const StickyNotePanel = React.memo(() => {
-  const language = useStore(Selector.language);
   const addUndoable = useStore(Selector.addUndoable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
@@ -79,7 +79,7 @@ const StickyNotePanel = React.memo(() => {
     y: panelRect ? Math.min(panelRect.y, window.innerHeight - hOffset) : 0,
   });
   const [text, setText] = useState<string>(notes.length > 0 ? notes[0] : '');
-  const lang = { lng: language };
+  const lang = useLanguage();
 
   useEffect(() => {
     setCurPosition({

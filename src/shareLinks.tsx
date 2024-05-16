@@ -26,6 +26,7 @@ import { HOME_URL } from './constants';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import i18n from './i18n/i18n';
+import { useLanguage } from './views/hooks';
 
 const ShareLinkContainer = styled.div`
   display: flex;
@@ -43,12 +44,11 @@ export interface ShareLinkProps {
 
 const ShareLinks = React.memo(({ style, size, margin, round, handleShareWindowClose }: ShareLinkProps) => {
   const user = useStore(Selector.user);
-  const language = useStore(Selector.language);
   const cloudFile = useStore(Selector.cloudFile);
 
   const params = new URLSearchParams(window.location.search);
   const userid = params.get('userid');
-  const lang = { lng: language };
+  const lang = useLanguage();
   const title = cloudFile ?? i18n.t('name.Tagline', lang);
   const via = 'aladdinIFI ' + (cloudFile ? i18n.t('name.Tagline', lang) : '');
   let url = HOME_URL;

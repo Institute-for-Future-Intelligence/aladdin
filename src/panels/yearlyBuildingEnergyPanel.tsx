@@ -20,6 +20,7 @@ import BuildingEnergyGraph from '../components/buildingEnergyGraph';
 import { Util } from '../Util';
 import { checkBuilding, CheckStatus } from '../analysis/heatTools';
 import { useDataStore } from '../stores/commonData';
+import { useLanguage } from '../views/hooks';
 
 const Container = styled.div`
   position: fixed;
@@ -72,7 +73,6 @@ export interface YearlyBuildingEnergyPanelProps {
 const YearlyBuildingEnergyPanel = React.memo(({ city }: YearlyBuildingEnergyPanelProps) => {
   const world = useStore.getState().world;
   const getWeather = useStore(Selector.getWeather);
-  const language = useStore(Selector.language);
   const loggable = useStore(Selector.loggable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
@@ -102,7 +102,7 @@ const YearlyBuildingEnergyPanel = React.memo(({ city }: YearlyBuildingEnergyPane
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
   const nodeRef = React.useRef(null);
 
-  const lang = { lng: language };
+  const lang = useLanguage();
   const weather = getWeather(city ?? 'Boston MA, USA');
   const referenceX = MONTHS_ABBV[now.getMonth()];
   const daysPerYear = world.daysPerYear ?? 6;

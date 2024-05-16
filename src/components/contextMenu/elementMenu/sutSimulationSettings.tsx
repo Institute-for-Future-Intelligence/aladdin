@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React from 'react';
@@ -9,17 +9,17 @@ import * as Selector from '../../../stores/selector';
 import i18n from '../../../i18n/i18n';
 import { Util } from '../../../Util';
 import { useDataStore } from '../../../stores/commonData';
+import { useLanguage } from '../../../views/hooks';
 
-const SutSimulationSettings = () => {
+const SutSimulationSettings = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore.getState().elements;
-  const language = useStore(Selector.language);
   const sutTimesPerHour = useStore(Selector.world.sutTimesPerHour);
   const sutDaysPerYear = useStore(Selector.world.sutDaysPerYear);
   const sutGridCellSize = useStore(Selector.world.sutGridCellSize);
   const noAnimation = useStore(Selector.world.noAnimationForSolarUpdraftTowerSimulation);
 
-  const lang = { lng: language };
+  const lang = useLanguage();
   const { SubMenu } = Menu;
   const { Option } = Select;
 
@@ -124,6 +124,6 @@ const SutSimulationSettings = () => {
       </Menu>
     </SubMenu>
   );
-};
+});
 
 export default SutSimulationSettings;

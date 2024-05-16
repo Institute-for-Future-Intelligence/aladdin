@@ -23,6 +23,7 @@ import { Rectangle } from '../models/Rectangle';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
 import { useTranslation } from 'react-i18next';
+import { useLanguage } from '../views/hooks';
 
 const Container = styled.div`
   position: fixed;
@@ -73,7 +74,6 @@ export interface YearlyParabolicDishYieldPanelProps {
 }
 
 const YearlyParabolicDishYieldPanel = React.memo(({ city }: YearlyParabolicDishYieldPanelProps) => {
-  const language = useStore(Selector.language);
   const loggable = useStore(Selector.loggable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
@@ -103,7 +103,7 @@ const YearlyParabolicDishYieldPanel = React.memo(({ city }: YearlyParabolicDishY
   const dishSumRef = useRef(new Map<string, number>());
 
   const referenceX = MONTHS_ABBV[now.getMonth()];
-  const lang = { lng: language };
+  const lang = useLanguage();
 
   useEffect(() => {
     let s = 0;

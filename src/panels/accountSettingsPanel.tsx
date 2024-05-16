@@ -16,6 +16,7 @@ import { usePrimitiveStore } from '../stores/commonPrimitive';
 import LikesPanel from './likesPanel';
 import PublishedModelsPanel from './publishedModelsPanel';
 import { useTranslation } from 'react-i18next';
+import { useLanguage } from '../views/hooks';
 
 const { confirm } = Modal;
 const { Option } = Select;
@@ -71,7 +72,6 @@ const AccountSettingsPanel = React.memo(
   ({ openCloudFile }: { openCloudFile: (userid: string, title: string) => void }) => {
     const setCommonStore = useStore(Selector.set);
     const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
-    const language = useStore(Selector.language);
     const user = useStore(Selector.user);
     const userCount = usePrimitiveStore(Selector.userCount);
     const showLikesPanel = usePrimitiveStore(Selector.showLikesPanel);
@@ -87,7 +87,7 @@ const AccountSettingsPanel = React.memo(
     const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
     const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 600;
     const [curPosition, setCurPosition] = useState({ x: 0, y: 0 });
-    const lang = { lng: language };
+    const lang = useLanguage();
 
     // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
     useEffect(() => {

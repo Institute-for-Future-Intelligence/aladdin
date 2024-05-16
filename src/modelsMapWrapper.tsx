@@ -19,6 +19,7 @@ import { ModelSite } from './types';
 import ReactCountryFlag from 'react-country-flag';
 import { VerticalAlignBottomOutlined, VerticalAlignTopOutlined, UserOutlined } from '@ant-design/icons';
 import ModelsGallery from './modelsGallery';
+import { useLanguage } from './views/hooks';
 
 const libraries = ['places'] as Libraries;
 
@@ -46,7 +47,6 @@ export interface ModelsMapWrapperProps {
 const ModelsMapWrapper = React.memo(
   ({ openCloudFile, deleteModelFromMap, likeModelFromMap, pinModelFromMap }: ModelsMapWrapperProps) => {
     const user = useStore(Selector.user);
-    const language = useStore(Selector.language);
     const setCommonStore = useStore(Selector.set);
     const addUndoable = useStore(Selector.addUndoable);
     const modelsMapType = useStore(Selector.modelsMapType);
@@ -72,9 +72,7 @@ const ModelsMapWrapper = React.memo(
     const latRef = useRef<number>(latitude);
     const lngRef = useRef<number>(longitude);
 
-    const lang = useMemo(() => {
-      return { lng: language };
-    }, [language]);
+    const lang = useLanguage();
 
     const { Search } = Input;
 

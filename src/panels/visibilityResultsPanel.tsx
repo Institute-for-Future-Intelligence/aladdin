@@ -17,6 +17,7 @@ import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
 import { Z_INDEX_FRONT_PANEL } from '../constants';
 import { useTranslation } from 'react-i18next';
+import { useLanguage } from '../views/hooks';
 
 const { Column } = Table;
 
@@ -65,7 +66,6 @@ const Header = styled.div`
 `;
 
 const VisibilityResultsPanel = React.memo(() => {
-  const language = useStore(Selector.language);
   const loggable = useStore(Selector.loggable);
   const setCommonStore = useStore(Selector.set);
   const now = new Date(useStore(Selector.world.date));
@@ -88,7 +88,7 @@ const VisibilityResultsPanel = React.memo(() => {
   });
   const [resultArray, setResultArray] = useState<any[]>([]);
 
-  const lang = { lng: language };
+  const lang = useLanguage();
 
   useEffect(() => {
     setCurPosition({
@@ -109,8 +109,7 @@ const VisibilityResultsPanel = React.memo(() => {
     return () => {
       window.removeEventListener('resize', handleWindowResize);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [hOffset, panelRect?.x, panelRect?.y, wOffset]);
 
   useEffect(() => {
     if (wrapperRef.current) {

@@ -4,12 +4,11 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { useStore } from '../stores/common';
-import * as Selector from '../stores/selector';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Table } from 'antd';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useTranslation } from 'react-i18next';
+import { useLanguage } from '../views/hooks';
 
 const { Column } = Table;
 
@@ -65,17 +64,14 @@ export interface LikesPanelProps {
 }
 
 const LikesPanel = React.memo(({ likesArray, openCloudFile }: LikesPanelProps) => {
-  const language = useStore(Selector.language);
-
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
   const nodeRef = React.useRef(null);
-
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 680;
   const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 600;
   const [curPosition, setCurPosition] = useState({ x: 0, y: 0 });
-  const lang = { lng: language };
+  const lang = useLanguage();
   const { t } = useTranslation();
 
   // when the window is resized (the code depends on where the panel is originally anchored in the CSS)

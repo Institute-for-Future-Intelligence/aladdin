@@ -18,6 +18,7 @@ import { Rectangle } from '../models/Rectangle';
 import { FLOATING_WINDOW_OPACITY, Z_INDEX_FRONT_PANEL } from '../constants';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
+import { useLanguage } from '../views/hooks';
 
 const Container = styled.div`
   position: fixed;
@@ -68,7 +69,6 @@ export interface DailyLightSensorPanelProps {
 }
 
 const DailyLightSensorPanel = React.memo(({ city }: DailyLightSensorPanelProps) => {
-  const language = useStore(Selector.language);
   const loggable = useStore(Selector.loggable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
@@ -92,7 +92,7 @@ const DailyLightSensorPanel = React.memo(({ city }: DailyLightSensorPanelProps) 
     y: panelRect ? Math.min(panelRect.y, window.innerHeight - hOffset) : 0,
   });
 
-  const lang = { lng: language };
+  const lang = useLanguage();
 
   useEffect(() => {
     setCurPosition({

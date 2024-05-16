@@ -9,6 +9,7 @@ import styled from 'styled-components';
 import { Button, Space } from 'antd';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useTranslation } from 'react-i18next';
+import { useLanguage } from '../views/hooks';
 
 const Container = styled.div`
   position: absolute;
@@ -30,11 +31,10 @@ const Container = styled.div`
 const SimulationControlPanel = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
   const loggable = useStore(Selector.loggable);
-  const language = useStore(Selector.language);
   const simulationPaused = usePrimitiveStore(Selector.simulationPaused);
   const showDesignInfoPanel = useStore(Selector.viewState.showDesignInfoPanel);
 
-  const lang = { lng: language };
+  const lang = useLanguage();
 
   const cancel = () => {
     usePrimitiveStore.getState().set((state) => {

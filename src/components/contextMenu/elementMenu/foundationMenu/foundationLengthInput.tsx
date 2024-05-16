@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useRef, useState } from 'react';
@@ -21,9 +21,9 @@ import { useRefStore } from 'src/stores/commonRef';
 import { invalidate } from '@react-three/fiber';
 import { useSelectedElement } from '../menuHooks';
 import Dialog from '../../dialog';
+import { useLanguage } from '../../../../views/hooks';
 
-const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
-  const language = useStore(Selector.language);
+const FoundationLengthInput = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
   const updateElementCxById = useStore(Selector.updateElementCxById);
@@ -54,12 +54,12 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   const rejectRef = useRef<boolean>(false);
   const rejectedValue = useRef<number | undefined>();
 
-  const lang = { lng: language };
+  const lang = useLanguage();
 
   const containsAllChildren = (lx: number) => {
     if (!foundation) return;
     switch (actionScope) {
-      case Scope.AllSelectedObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.Foundation && useStore.getState().selectedElementIdSet.has(e.id)) {
             const f = e as FoundationModel;
@@ -72,7 +72,8 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
           }
         }
         break;
-      case Scope.AllObjectsOfThisType:
+      }
+      case Scope.AllObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.Foundation) {
             const f = e as FoundationModel;
@@ -85,11 +86,14 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
           }
         }
         break;
-      default:
+      }
+      default: {
         const children = getChildren(foundation.id);
         if (children.length > 0) {
           return Util.doesNewSizeContainAllChildren(foundation, children, lx, foundation.ly);
         }
+        break;
+      }
     }
     return true;
   };
@@ -180,19 +184,21 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
     if (children.length > 0) {
       for (const c of children) {
         switch (c.type) {
-          case ObjectType.Wall:
+          case ObjectType.Wall: {
             break;
+          }
           case ObjectType.SolarPanel:
           case ObjectType.ParabolicTrough:
           case ObjectType.ParabolicDish:
           case ObjectType.FresnelReflector:
           case ObjectType.Heliostat:
-          case ObjectType.Sensor:
+          case ObjectType.Sensor: {
             const p = new Vector2(c.cx * parent.lx, c.cy * parent.ly).rotateAround(ORIGIN_VECTOR2, azimuth);
             denormalizedPosMapRef.current.set(c.id, p);
             oldChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy));
             break;
-          case ObjectType.Polygon:
+          }
+          case ObjectType.Polygon: {
             const polygon = c as PolygonModel;
             const arr: Vector2[] = [];
             for (const v of polygon.vertices) {
@@ -204,10 +210,12 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
               polygon.vertices.map((v) => ({ ...v })),
             );
             break;
+          }
           case ObjectType.Human:
-          case ObjectType.Tree:
+          case ObjectType.Tree: {
             oldChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy, c.cz));
             break;
+          }
         }
       }
     }
@@ -217,15 +225,16 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
     if (children.length > 0) {
       for (const c of children) {
         switch (c.type) {
-          case ObjectType.Wall:
+          case ObjectType.Wall: {
             // TODO
             break;
+          }
           case ObjectType.SolarPanel:
           case ObjectType.ParabolicTrough:
           case ObjectType.ParabolicDish:
           case ObjectType.FresnelReflector:
           case ObjectType.Heliostat:
-          case ObjectType.Sensor:
+          case ObjectType.Sensor: {
             const p = denormalizedPosMapRef.current.get(c.id);
             if (p) {
               const relativePos = new Vector2(p.x, p.y).rotateAround(ORIGIN_VECTOR2, -azimuth);
@@ -234,7 +243,8 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
               newChildrenPositionsMapRef.current.set(c.id, new Vector3(newCx, c.cy));
             }
             break;
-          case ObjectType.Polygon:
+          }
+          case ObjectType.Polygon: {
             const arr = denormalizedVerticesMapRef.current.get(c.id);
             if (arr) {
               const newVertices: Point2[] = [];
@@ -251,8 +261,9 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
               );
             }
             break;
+          }
           case ObjectType.Human:
-          case ObjectType.Tree:
+          case ObjectType.Tree: {
             newChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy, c.cz));
             oldChildrenParentIdMapRef.current.set(c.id, parent.id);
             // top, north, south face
@@ -274,6 +285,7 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
               newChildrenPositionsMapRef.current.set(c.id, new Vector3(newCx, c.cy, c.cz));
             }
             break;
+          }
         }
       }
     }
@@ -412,7 +424,7 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
           setApplyCount(applyCount + 1);
           break;
         }
-        case Scope.AllObjectsOfThisType:
+        case Scope.AllObjectsOfThisType: {
           const oldLxsAll = new Map<string, number>();
           for (const elem of elements) {
             if (elem.type === ObjectType.Foundation) {
@@ -480,7 +492,8 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
           addUndoable(undoableChangeAll);
           setApplyCount(applyCount + 1);
           break;
-        default:
+        }
+        default: {
           updateLxWithChildren(foundation, value);
           const undoableChange = {
             name: 'Set Foundation Length',
@@ -536,6 +549,8 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
           } as UndoableSizeChange;
           addUndoable(undoableChange);
           setApplyCount(applyCount + 1);
+          break;
+        }
       }
     }
   };
@@ -623,6 +638,6 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
       </Row>
     </Dialog>
   );
-};
+});
 
 export default FoundationLengthInput;

@@ -9,10 +9,10 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import i18n from '../i18n/i18n';
 import { UndoableChange } from '../undo/UndoableChange';
+import { useLanguage } from '../views/hooks';
 
 const ShadowSettingsPanel = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
-  const language = useStore(Selector.language);
   const addUndoable = useStore(Selector.addUndoable);
   const shadowCameraFar = useStore(Selector.viewState.shadowCameraFar);
   const shadowMapSize = useStore(Selector.shadowMapSize);
@@ -28,7 +28,7 @@ const ShadowSettingsPanel = React.memo(({ setDialogVisible }: { setDialogVisible
   const shadowCameraFarRef = useRef<number>(shadowCameraFar ? Math.round(shadowCameraFar) / SHADOW_CAMERA_FAR_STEP : 1);
   const shadowMapSizeRef = useRef<number>(shadowMapSize ? Math.round(shadowMapSize / SHADOW_MAP_SIZE_STEP) : 1);
 
-  const lang = { lng: language };
+  const lang = useLanguage();
 
   useEffect(() => {
     okButtonRef.current?.focus();

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -17,7 +17,7 @@ import { useSelectedElement } from '../menuHooks';
 import Dialog from '../../dialog';
 import { useLanguage } from 'src/views/hooks';
 
-const FoundationAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const FoundationAzimuthInput = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
   const updateElementRotationById = useStore(Selector.updateElementRotationById);
@@ -111,7 +111,7 @@ const FoundationAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
         setApplyCount(applyCount + 1);
         break;
       }
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllObjectsOfThisType: {
         const oldAzimuthsAll = new Map<string, number>();
         for (const elem of elements) {
           if (elem.type === ObjectType.Foundation) {
@@ -136,7 +136,8 @@ const FoundationAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
         updateElementRotationForAll(ObjectType.Foundation, 0, 0, -value);
         setApplyCount(applyCount + 1);
         break;
-      default:
+      }
+      default: {
         // foundation via selected element may be outdated, make sure that we get the latest
         const f = getElementById(foundation.id);
         const oldAzimuth = f ? -f.rotation[2] : -foundation.rotation[2];
@@ -157,6 +158,8 @@ const FoundationAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
         addUndoable(undoableChange);
         updateElementRotationById(foundation.id, 0, 0, -value);
         setApplyCount(applyCount + 1);
+        break;
+      }
     }
   };
 
@@ -219,6 +222,6 @@ const FoundationAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
       </Row>
     </Dialog>
   );
-};
+});
 
 export default FoundationAzimuthInput;

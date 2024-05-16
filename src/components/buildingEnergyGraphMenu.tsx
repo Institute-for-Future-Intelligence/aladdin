@@ -5,10 +5,9 @@
 import React, { useState } from 'react';
 import { BarsOutlined } from '@ant-design/icons';
 import { Popover } from 'antd';
-import { useStore } from '../stores/common';
-import * as Selector from '../stores/selector';
 import i18n from '../i18n/i18n';
 import { CheckboxMenuItem, SliderMenuItem } from './contextMenu/menuItems';
+import { useLanguage } from '../views/hooks';
 
 export interface BuildingEnergyGraphMenuProps {
   horizontalGrid: boolean;
@@ -35,8 +34,7 @@ const BuildingEnergyGraphMenu = ({
   changeSymbolSize,
   changeBarCategoryGap,
 }: BuildingEnergyGraphMenuProps) => {
-  const language = useStore(Selector.language);
-  const lang = { lng: language };
+  const lang = useLanguage();
   const [hover, setHover] = useState<boolean>(false);
 
   const onShowHorizontalGridLines = () => {

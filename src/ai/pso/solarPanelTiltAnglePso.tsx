@@ -15,11 +15,11 @@ import { Util } from '../../Util';
 import { SolarPanelTiltAngleOptimizerPso } from './algorithm/SolarPanelTiltAngleOptimizerPso';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
+import { useLanguage } from '../../views/hooks';
 
 const SolarPanelTiltAnglePso = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
   const loggable = useStore(Selector.loggable);
-  const language = useStore(Selector.language);
   const daysPerYear = useStore(Selector.world.daysPerYear) ?? 6;
   const evolutionMethod = useStore(Selector.evolutionMethod);
   const runEvolution = usePrimitiveStore(Selector.runEvolution);
@@ -32,7 +32,7 @@ const SolarPanelTiltAnglePso = React.memo(() => {
   const setParticleLabels = useStore(Selector.setVariableLabels);
   const params = useStore(Selector.evolutionaryAlgorithmState).particleSwarmOptimizationParams;
 
-  const lang = { lng: language };
+  const lang = useLanguage();
   const requestRef = useRef<number>(0);
   const evolutionCompletedRef = useRef<boolean>(false);
   const pauseRef = useRef<boolean>(false);

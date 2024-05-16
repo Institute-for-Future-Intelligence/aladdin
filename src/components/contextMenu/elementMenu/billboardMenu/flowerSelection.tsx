@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -28,6 +28,7 @@ import { UndoableChange } from '../../../../undo/UndoableChange';
 import i18n from '../../../../i18n/i18n';
 import { FlowerModel } from '../../../../models/FlowerModel';
 import { FlowerData } from '../../../../FlowerData';
+import { useLanguage } from '../../../../views/hooks';
 
 const { Option } = Select;
 
@@ -35,13 +36,12 @@ interface FlowerSelectionProps {
   flower: FlowerModel;
 }
 
-const FlowerSelection = ({ flower }: FlowerSelectionProps) => {
+const FlowerSelection = React.memo(({ flower }: FlowerSelectionProps) => {
   const setCommonStore = useStore(Selector.set);
-  const language = useStore(Selector.language);
   const addUndoable = useStore(Selector.addUndoable);
 
   const [updateFlag, setUpdateFlag] = useState(false);
-  const lang = { lng: language };
+  const lang = useLanguage();
 
   const updateFlowerTypeById = (id: string, type: FlowerType) => {
     setCommonStore((state: CommonStoreState) => {
@@ -159,6 +159,6 @@ const FlowerSelection = ({ flower }: FlowerSelectionProps) => {
       </Option>
     </Select>
   );
-};
+});
 
 export default FlowerSelection;

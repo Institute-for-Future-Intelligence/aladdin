@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React from 'react';
@@ -10,18 +10,18 @@ import i18n from '../../../i18n/i18n';
 import { Discretization } from '../../../types';
 import { Util } from '../../../Util';
 import { useDataStore } from '../../../stores/commonData';
+import { useLanguage } from '../../../views/hooks';
 
-const PvSimulationSettings = () => {
+const PvSimulationSettings = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore.getState().elements;
-  const language = useStore(Selector.language);
   const timesPerHour = useStore(Selector.world.timesPerHour);
   const daysPerYear = useStore(Selector.world.daysPerYear);
   const gridCellSize = useStore(Selector.world.pvGridCellSize);
   const discretization = useStore(Selector.world.discretization);
   const noAnimationForSolarPanelSimulation = useStore(Selector.world.noAnimationForSolarPanelSimulation);
 
-  const lang = { lng: language };
+  const lang = useLanguage();
   const { SubMenu } = Menu;
   const { Option } = Select;
 
@@ -147,6 +147,6 @@ const PvSimulationSettings = () => {
       </Menu>
     </SubMenu>
   );
-};
+});
 
 export default PvSimulationSettings;

@@ -32,7 +32,7 @@ import { useRefStore } from 'src/stores/commonRef';
 import { HumanData } from '../HumanData';
 import { Util } from '../Util';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
-import { useSelected } from './hooks';
+import { useLanguage, useSelected } from './hooks';
 
 const Human = React.memo(
   ({ id, cx, cy, cz, name = HumanName.Jack, locked = false, flip = false, observer = false, parentId }: HumanModel) => {
@@ -57,7 +57,6 @@ const Human = React.memo(
     }, [isRender, id]);
 
     const setCommonStore = useStore(Selector.set);
-    const language = useStore(Selector.language);
     const orthographic = useStore(Selector.viewState.orthographic) ?? false;
     const selectMe = useStore(Selector.selectMe);
     const getElementById = useStore(Selector.getElementById);
@@ -73,9 +72,7 @@ const Human = React.memo(
     const groupRef = useRef<Group>(null);
     const planeRef = useRef<Mesh>(null);
 
-    const lang = useMemo(() => {
-      return { lng: language };
-    }, [language]);
+    const lang = useLanguage();
 
     const humanModel = useMemo(() => getElementById(id) as HumanModel, [id]);
 

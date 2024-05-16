@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -17,12 +17,12 @@ import { showError } from '../../../helpers';
 import { SolarPanelArrayLayoutParams } from '../../../stores/SolarPanelArrayLayoutParams';
 import { SolarPanelLayoutRelative } from '../../../pd/SolarPanelLayoutRelative';
 import { SolarPanelLayoutAbsolute } from '../../../pd/SolarPanelLayoutAbsolute';
+import { useLanguage } from '../../../views/hooks';
 
 const { Option } = Select;
 
 const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
-  const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const solarPanelArrayLayoutParams = useStore.getState().solarPanelArrayLayoutParams;
   const getSelectedElement = useStore(Selector.getSelectedElement);
@@ -57,7 +57,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
   const poleHeightRef = useRef<number>(useStore(Selector.solarPanelArrayLayoutParams.poleHeight));
   const poleSpacingRef = useRef<number>(useStore(Selector.solarPanelArrayLayoutParams.poleSpacing));
 
-  const lang = { lng: language };
+  const lang = useLanguage();
   const pvModel = getPvModule(pvModelNameRef.current);
   const reference = getSelectedElement();
 

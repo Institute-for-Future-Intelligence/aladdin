@@ -27,7 +27,7 @@ import { LineData } from './LineData';
 import { ParabolicCylinder } from './shapes';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
-import { useSelected } from './hooks';
+import { useLanguage, useSelected } from './hooks';
 
 const ParabolicTrough = React.memo(
   ({
@@ -56,7 +56,6 @@ const ParabolicTrough = React.memo(
     parentId,
   }: ParabolicTroughModel) => {
     const setCommonStore = useStore(Selector.set);
-    const language = useStore(Selector.language);
     const date = useStore(Selector.world.date);
     const latitude = useStore(Selector.world.latitude);
     const elements = useStore(Selector.elements);
@@ -95,9 +94,7 @@ const ParabolicTrough = React.memo(
     const parabolaSegments = 16;
     const night = sunlightDirection.z <= 0;
 
-    const lang = useMemo(() => {
-      return { lng: language };
-    }, [language]);
+    const lang = useLanguage();
 
     const hx = lx / 2;
     const hy = ly / 2;

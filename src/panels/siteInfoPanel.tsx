@@ -15,6 +15,7 @@ import { computeSunriseAndSunsetInMinutes } from '../analysis/sunTools';
 import LocationImage from '../assets/location.png';
 import DateImage from '../assets/date.png';
 import ThermometerImage from '../assets/thermometer.png';
+import { useLanguage } from '../views/hooks';
 
 const Container = styled.div`
   position: absolute;
@@ -57,7 +58,6 @@ export interface SiteInfoPanelProps {
 }
 
 const SiteInfoPanel = React.memo(({ city }: SiteInfoPanelProps) => {
-  const language = useStore(Selector.language);
   const dateString = useStore(Selector.world.date);
   const address = useStore(Selector.world.address);
   const latitude = useStore(Selector.world.latitude);
@@ -72,7 +72,7 @@ const SiteInfoPanel = React.memo(({ city }: SiteInfoPanelProps) => {
   const [currentTemperature, setCurrentTemperature] = useState<number>(10);
   const now = new Date(dateString);
   const daytime = sunlightDirection.y > 0;
-  const lang = { lng: language };
+  const lang = useLanguage();
 
   useEffect(() => {
     if (city) {

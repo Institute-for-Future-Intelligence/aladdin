@@ -22,11 +22,11 @@ import { PolygonModel } from '../../models/PolygonModel';
 import { SolarPanelArrayOptimizerGa } from './algorithm/SolarPanelArrayOptimizerGa';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
+import { useLanguage } from '../../views/hooks';
 
 const SolarPanelArrayGa = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
   const loggable = useStore(Selector.loggable);
-  const language = useStore(Selector.language);
   const daysPerYear = useStore(Selector.world.daysPerYear) ?? 6;
   const evolutionMethod = useStore(Selector.evolutionMethod);
   const runEvolution = usePrimitiveStore(Selector.runEvolution);
@@ -54,7 +54,7 @@ const SolarPanelArrayGa = React.memo(() => {
   const solarPanelArrayRef = useRef<SolarPanelModel[]>([]);
   const initialSolarPanelArrayRef = useRef<SolarPanelModel[]>([]);
 
-  const lang = { lng: language };
+  const lang = useLanguage();
   const foundation = polygon ? (getParent(polygon) as FoundationModel) : undefined;
 
   useEffect(() => {

@@ -9,10 +9,10 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import i18n from '../i18n/i18n';
 import { UndoableChange } from '../undo/UndoableChange';
+import { useLanguage } from '../views/hooks';
 
 const EconomicsPanel = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
-  const language = useStore(Selector.language);
   const economicsParams = useStore(Selector.economicsParams);
   const addUndoable = useStore(Selector.addUndoable);
 
@@ -24,7 +24,7 @@ const EconomicsPanel = React.memo(({ setDialogVisible }: { setDialogVisible: (b:
   const electricitySellingPriceRef = useRef<number>(economicsParams.electricitySellingPrice);
   const operationalCostPerUnitRef = useRef<number>(economicsParams.operationalCostPerUnit);
 
-  const lang = { lng: language };
+  const lang = useLanguage();
 
   useEffect(() => {
     okButtonRef.current?.focus();

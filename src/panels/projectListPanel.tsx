@@ -2,7 +2,7 @@
  * @Copyright 2023-2024. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
@@ -17,6 +17,7 @@ import { ProjectState } from '../types';
 import { useTranslation } from 'react-i18next';
 import { MenuProps } from 'antd/lib';
 import { MenuItem } from 'src/components/contextMenu/menuItems';
+import { useLanguage } from '../views/hooks';
 
 const { Column } = Table;
 
@@ -75,7 +76,6 @@ export interface ProjectListPanelProps {
 
 const ProjectListPanel = React.memo(
   ({ projects, setProjectState, deleteProject, renameProject }: ProjectListPanelProps) => {
-    const language = useStore(Selector.language);
     const user = useStore(Selector.user);
     const setCommonStore = useStore(Selector.set);
     const selectedFloatingWindow = useStore(Selector.selectedFloatingWindow);
@@ -102,9 +102,7 @@ const ProjectListPanel = React.memo(
 
     const { Search } = Input;
     const { t } = useTranslation();
-    const lang = useMemo(() => {
-      return { lng: language };
-    }, [language]);
+    const lang = useLanguage();
 
     // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
     useEffect(() => {

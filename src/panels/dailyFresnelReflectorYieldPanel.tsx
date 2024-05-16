@@ -24,6 +24,7 @@ import { FLOATING_WINDOW_OPACITY, Z_INDEX_FRONT_PANEL } from '../constants';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
 import { useTranslation } from 'react-i18next';
+import { useLanguage } from '../views/hooks';
 
 const Container = styled.div`
   position: fixed;
@@ -74,7 +75,6 @@ export interface DailyFresnelReflectorYieldPanelProps {
 }
 
 const DailyFresnelReflectorYieldPanel = React.memo(({ city }: DailyFresnelReflectorYieldPanelProps) => {
-  const language = useStore(Selector.language);
   const loggable = useStore(Selector.loggable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
@@ -102,7 +102,7 @@ const DailyFresnelReflectorYieldPanel = React.memo(({ city }: DailyFresnelReflec
   const [sum, setSum] = useState(0);
   const reflectorSumRef = useRef(new Map<string, number>());
 
-  const lang = { lng: language };
+  const lang = useLanguage();
 
   useEffect(() => {
     let s = 0;

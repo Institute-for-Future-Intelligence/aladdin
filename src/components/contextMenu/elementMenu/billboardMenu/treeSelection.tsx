@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -22,6 +22,7 @@ import SpruceImage from 'src/resources/spruce.png';
 import { UndoableChange } from '../../../../undo/UndoableChange';
 import i18n from '../../../../i18n/i18n';
 import { TreeModel } from '../../../../models/TreeModel';
+import { useLanguage } from '../../../../views/hooks';
 
 const { Option } = Select;
 
@@ -29,13 +30,12 @@ interface TreeSelectionProps {
   tree: TreeModel;
 }
 
-const TreeSelection = ({ tree }: TreeSelectionProps) => {
+const TreeSelection = React.memo(({ tree }: TreeSelectionProps) => {
   const setCommonStore = useStore(Selector.set);
-  const language = useStore(Selector.language);
   const addUndoable = useStore(Selector.addUndoable);
 
   const [updateFlag, setUpdateFlag] = useState(false);
-  const lang = { lng: language };
+  const lang = useLanguage();
 
   const updateTreeTypeById = (id: string, type: TreeType) => {
     setCommonStore((state: CommonStoreState) => {
@@ -130,6 +130,6 @@ const TreeSelection = ({ tree }: TreeSelectionProps) => {
       </Option>
     </Select>
   );
-};
+});
 
 export default TreeSelection;

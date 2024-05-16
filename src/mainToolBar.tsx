@@ -6,11 +6,12 @@ import styled from 'styled-components';
 import { Avatar, Button, Dropdown, MenuProps, Popover, Space } from 'antd';
 import MainToolBarButtons from './mainToolBarButtons';
 import i18n from './i18n/i18n';
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import { usePrimitiveStore } from './stores/commonPrimitive';
 import { MenuItem } from './components/contextMenu/menuItems';
+import { useLanguage } from './views/hooks';
 
 const ButtonsContainer = styled.div`
   position: absolute;
@@ -32,13 +33,10 @@ export interface MainToolBarProps {
 }
 
 const MainToolBar = React.memo(({ signIn, signOut }: MainToolBarProps) => {
-  const language = useStore(Selector.language);
   const user = useStore(Selector.user);
   const openModelsMap = usePrimitiveStore(Selector.openModelsMap);
 
-  const lang = useMemo(() => {
-    return { lng: language };
-  }, [language]);
+  const lang = useLanguage();
 
   const avatarMenu: MenuProps['items'] = [
     {

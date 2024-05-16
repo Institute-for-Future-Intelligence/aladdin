@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useMemo, useRef, useState } from 'react';
@@ -29,10 +29,10 @@ import { FoundationModel } from '../models/FoundationModel';
 import { useRefStore } from 'src/stores/commonRef';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import { getRotationFromNormal } from './solarPanel/solarPanelOnCuboid';
-import { useSelected } from './hooks';
+import { useLanguage, useSelected } from './hooks';
 
-const Sensor = (sensorModel: SensorModel) => {
-  let {
+const Sensor = React.memo((sensorModel: SensorModel) => {
+  const {
     id,
     cx,
     cy,
@@ -46,6 +46,7 @@ const Sensor = (sensorModel: SensorModel) => {
     lineColor = 'black',
     lineWidth = 0.1,
     locked = false,
+    label,
     showLabel = false,
     parentId,
     foundationId,
@@ -54,7 +55,6 @@ const Sensor = (sensorModel: SensorModel) => {
   } = sensorModel;
 
   const setCommonStore = useStore(Selector.set);
-  const language = useStore(Selector.language);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const selectMe = useStore(Selector.selectMe);
   const selected = useSelected(id);
@@ -66,9 +66,7 @@ const Sensor = (sensorModel: SensorModel) => {
   const baseRef = useRef<Mesh>(null);
   const handleRef = useRef<Mesh>(null);
 
-  const lang = useMemo(() => {
-    return { lng: language };
-  }, [language]);
+  const lang = useLanguage();
 
   // be sure to get the updated parent so that this memorized element can move with it
   const parent = useStore((state) => {
@@ -87,38 +85,45 @@ const Sensor = (sensorModel: SensorModel) => {
     }
   });
 
+  let rx = cx;
+  let ry = cy;
+  let rz = cz;
+
   if (parentId) {
     if (parent) {
       switch (parent.type) {
-        case ObjectType.Foundation:
-          cz = parent.cz + parent.lz / 2;
+        case ObjectType.Foundation: {
+          rz = parent.cz + parent.lz / 2;
           if (Util.isZero(rotation[2])) {
-            cx = parent.cx + cx * parent.lx;
-            cy = parent.cy + cy * parent.ly;
+            rx = parent.cx + cx * parent.lx;
+            ry = parent.cy + cy * parent.ly;
           } else {
             // we must rotate the real length, not normalized length
             const v = new Vector3(cx * parent.lx, cy * parent.ly, 0);
             v.applyAxisAngle(UNIT_VECTOR_POS_Z, rotation[2]);
-            cx = parent.cx + v.x;
-            cy = parent.cy + v.y;
+            rx = parent.cx + v.x;
+            ry = parent.cy + v.y;
           }
           break;
-        case ObjectType.Wall:
+        }
+        case ObjectType.Wall: {
           if (foundation?.type === ObjectType.Foundation) {
             const absoluteCoordinates = Util.absoluteCoordinates(cx, cy, cz, parent, foundation as FoundationModel);
-            cx = absoluteCoordinates.x;
-            cy = absoluteCoordinates.y;
-            cz = absoluteCoordinates.z;
+            rx = absoluteCoordinates.x;
+            ry = absoluteCoordinates.y;
+            rz = absoluteCoordinates.z;
           }
           break;
-        case ObjectType.Roof:
+        }
+        case ObjectType.Roof: {
           if (foundation?.type === ObjectType.Foundation) {
             const absoluteCoordinates = Util.absoluteCoordinates(cx, cy, cz, parent, foundation as FoundationModel);
-            cx = absoluteCoordinates.x;
-            cy = absoluteCoordinates.y;
-            cz = absoluteCoordinates.z;
+            rx = absoluteCoordinates.x;
+            ry = absoluteCoordinates.y;
+            rz = absoluteCoordinates.z;
           }
           break;
+        }
       }
     }
   }
@@ -165,23 +170,23 @@ const Sensor = (sensorModel: SensorModel) => {
 
   const labelText = useMemo(() => {
     return (
-      (sensorModel?.label ? sensorModel.label : i18n.t('shared.SensorElement', lang)) +
-      (sensorModel?.locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
+      (label ? label : i18n.t('shared.SensorElement', lang)) +
+      (locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
       '\n' +
       i18n.t('word.Coordinates', lang) +
       ': (' +
-      cx.toFixed(1) +
+      rx.toFixed(1) +
       ', ' +
-      cy.toFixed(1) +
+      ry.toFixed(1) +
       ', ' +
-      cz.toFixed(1) +
+      rz.toFixed(1) +
       ') ' +
       i18n.t('word.MeterAbbreviation', lang)
     );
-  }, [sensorModel?.label, locked, language, cx, cy, cz]);
+  }, [label, locked, lang, rx, ry, rz]);
 
   return (
-    <group name={'Sensor Group ' + id} rotation={euler} position={[cx, cy, cz + hz]}>
+    <group name={'Sensor Group ' + id} rotation={euler} position={[rx, ry, rz + hz]}>
       {/* draw rectangle (too small to cast shadow) */}
       <Box
         receiveShadow={shadowEnabled}
@@ -305,6 +310,6 @@ const Sensor = (sensorModel: SensorModel) => {
       )}
     </group>
   );
-};
+});
 
-export default React.memo(Sensor);
+export default Sensor;

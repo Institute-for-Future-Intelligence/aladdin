@@ -5,12 +5,10 @@
 import React from 'react';
 import CookieConsent from 'react-cookie-consent';
 import i18n from './i18n/i18n';
-import { useStore } from './stores/common';
-import * as Selector from './stores/selector';
+import { useLanguage } from './views/hooks';
 
 const AcceptCookie = React.memo(() => {
-  const language = useStore(Selector.language);
-  const lang = { lng: language };
+  const lang = useLanguage();
   return (
     <CookieConsent
       location="bottom"
