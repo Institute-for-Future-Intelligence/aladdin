@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -162,7 +162,7 @@ const PolygonLineWidthSelection = ({ setDialogVisible }: { setDialogVisible: (b:
         setApplyCount(applyCount + 1);
         break;
       }
-      case Scope.AllObjectsOfThisTypeOnSurface:
+      case Scope.AllObjectsOfThisTypeOnSurface: {
         const parent = getParent(polygon);
         if (parent) {
           const oldLineWidthsOnSurface = new Map<string, number>();
@@ -203,7 +203,8 @@ const PolygonLineWidthSelection = ({ setDialogVisible }: { setDialogVisible: (b:
           setApplyCount(applyCount + 1);
         }
         break;
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      }
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (polygon.foundationId) {
           const oldLineWidthsAboveFoundation = new Map<string, number>();
           for (const elem of elements) {
@@ -237,7 +238,8 @@ const PolygonLineWidthSelection = ({ setDialogVisible }: { setDialogVisible: (b:
           setApplyCount(applyCount + 1);
         }
         break;
-      default:
+      }
+      default: {
         const p = getElementById(polygon.id) as PolygonModel;
         const oldWidth = p ? p.lineWidth : polygon.lineWidth;
         const undoableChange = {
@@ -257,6 +259,8 @@ const PolygonLineWidthSelection = ({ setDialogVisible }: { setDialogVisible: (b:
         addUndoable(undoableChange);
         updateElementLineWidthById(polygon.id, value);
         setApplyCount(applyCount + 1);
+        break;
+      }
     }
   };
 

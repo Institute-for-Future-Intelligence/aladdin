@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -205,7 +205,7 @@ const PolygonLineStyleSelection = ({ setDialogVisible }: { setDialogVisible: (b:
         setApplyCount(applyCount + 1);
         break;
       }
-      case Scope.AllObjectsOfThisTypeOnSurface:
+      case Scope.AllObjectsOfThisTypeOnSurface: {
         const parent = getParent(polygon);
         if (parent) {
           const oldLineStylesOnSurface = new Map<string, LineStyle>();
@@ -245,7 +245,8 @@ const PolygonLineStyleSelection = ({ setDialogVisible }: { setDialogVisible: (b:
           setApplyCount(applyCount + 1);
         }
         break;
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      }
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (polygon.foundationId) {
           const oldLineStylesAboveFoundation = new Map<string, LineStyle>();
           for (const elem of elements) {
@@ -278,7 +279,8 @@ const PolygonLineStyleSelection = ({ setDialogVisible }: { setDialogVisible: (b:
           setApplyCount(applyCount + 1);
         }
         break;
-      default:
+      }
+      default: {
         const p = getElementById(polygon.id) as PolygonModel;
         const oldStyle = p ? p.lineStyle : polygon.lineStyle;
         const undoableChange = {
@@ -298,6 +300,8 @@ const PolygonLineStyleSelection = ({ setDialogVisible }: { setDialogVisible: (b:
         addUndoable(undoableChange);
         updatePolygonLineStyleById(polygon.id, value);
         setApplyCount(applyCount + 1);
+        break;
+      }
     }
   };
 

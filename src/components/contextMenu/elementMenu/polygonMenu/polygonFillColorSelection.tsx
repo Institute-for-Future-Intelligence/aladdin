@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -162,7 +162,7 @@ const PolygonFillColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
         setApplyCount(applyCount + 1);
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (polygon.foundationId) {
           const oldFillColorsAboveFoundation = new Map<string, string>();
           for (const elem of elements) {
@@ -196,7 +196,8 @@ const PolygonFillColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
           setApplyCount(applyCount + 1);
         }
         break;
-      case Scope.AllObjectsOfThisTypeOnSurface:
+      }
+      case Scope.AllObjectsOfThisTypeOnSurface: {
         const parent = getParent(polygon);
         if (parent) {
           const oldFillColorsOnSurface = new Map<string, string>();
@@ -237,7 +238,8 @@ const PolygonFillColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
           setApplyCount(applyCount + 1);
         }
         break;
-      default:
+      }
+      default: {
         const p = getElementById(polygon.id) as PolygonModel;
         const oldColor = p ? p.color : polygon.color;
         const undoableChange = {
@@ -257,6 +259,8 @@ const PolygonFillColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
         addUndoable(undoableChange);
         updateElementFillColorById(polygon.id, value);
         setApplyCount(applyCount + 1);
+        break;
+      }
     }
   };
 

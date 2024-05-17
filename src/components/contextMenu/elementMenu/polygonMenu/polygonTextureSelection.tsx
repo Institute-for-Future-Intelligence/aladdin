@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import Polygon_Texture_01_Menu from 'src/resources/foundation_01_menu.png';
@@ -220,7 +220,7 @@ const PolygonTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
         setApplyCount(applyCount + 1);
         break;
       }
-      case Scope.AllObjectsOfThisTypeOnSurface:
+      case Scope.AllObjectsOfThisTypeOnSurface: {
         const parent = getParent(polygon);
         if (parent) {
           const oldTexturesOnSurface = new Map<string, PolygonTexture>();
@@ -260,7 +260,8 @@ const PolygonTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
           setApplyCount(applyCount + 1);
         }
         break;
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      }
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (polygon.foundationId) {
           const oldTexturesAboveFoundation = new Map<string, PolygonTexture>();
           for (const elem of elements) {
@@ -293,7 +294,8 @@ const PolygonTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
           setApplyCount(applyCount + 1);
         }
         break;
-      default:
+      }
+      default: {
         const p = getElementById(polygon.id) as PolygonModel;
         const oldTexture = p ? p.textureType : polygon.textureType;
         const undoableChange = {
@@ -313,6 +315,8 @@ const PolygonTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
         addUndoable(undoableChange);
         updatePolygonTextureById(polygon.id, value);
         setApplyCount(applyCount + 1);
+        break;
+      }
     }
   };
 

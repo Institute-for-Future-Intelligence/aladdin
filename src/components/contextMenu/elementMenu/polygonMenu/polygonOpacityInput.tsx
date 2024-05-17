@@ -1,5 +1,5 @@
 /*
- * @Copyright 2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2023-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -168,7 +168,7 @@ const PolygonOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boole
         setApplyCount(applyCount + 1);
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (polygon.foundationId) {
           const oldValuesAboveFoundation = new Map<string, number | undefined>();
           for (const e of elements) {
@@ -198,7 +198,8 @@ const PolygonOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boole
           setApplyCount(applyCount + 1);
         }
         break;
-      case Scope.AllObjectsOfThisTypeOnSurface:
+      }
+      case Scope.AllObjectsOfThisTypeOnSurface: {
         if (polygon.parentId) {
           const oldValuesOnSurface = new Map<string, number | undefined>();
           for (const e of elements) {
@@ -233,7 +234,8 @@ const PolygonOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boole
           setApplyCount(applyCount + 1);
         }
         break;
-      default:
+      }
+      default: {
         if (polygon) {
           const updatedPolygon = getElementById(polygon.id) as PolygonModel;
           const oldOpacity =
@@ -259,7 +261,9 @@ const PolygonOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boole
           addUndoable(undoableChange);
           updateOpacityById(polygon.id, value);
           setApplyCount(applyCount + 1);
+          break;
         }
+      }
     }
   };
 

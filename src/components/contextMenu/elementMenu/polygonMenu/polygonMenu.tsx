@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import type { MenuProps } from 'antd';
@@ -20,8 +20,8 @@ import {
   PolygonShinyCheckbox,
   PolygonText,
 } from './polygonMenuItems';
-import PolygonLineColorSelection from './polygonLineColorSelection';
 import i18n from 'src/i18n/i18n';
+import PolygonLineColorSelection from './polygonLineColorSelection';
 import PolygonLineStyleSelection from './polygonLineStyleSelection';
 import PolygonLineWidthSelection from './polygonLineWidthSelection';
 import PolygonFillColorSelection from './polygonFillColorSelection';
