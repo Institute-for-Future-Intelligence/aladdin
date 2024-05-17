@@ -15,7 +15,7 @@ import { Util } from '../../../../Util';
 import { ZERO_TOLERANCE } from '../../../../constants';
 import { useSelectedElement } from '../menuHooks';
 import Dialog from '../../dialog';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 
 const SolarPanelTiltAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);

@@ -22,7 +22,7 @@ import SpruceImage from 'src/resources/spruce.png';
 import { UndoableChange } from '../../../../undo/UndoableChange';
 import i18n from '../../../../i18n/i18n';
 import { TreeModel } from '../../../../models/TreeModel';
-import { useLanguage } from '../../../../views/hooks';
+import { useLanguage } from '../../../../hooks';
 
 const { Option } = Select;
 

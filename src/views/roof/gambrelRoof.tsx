@@ -51,7 +51,7 @@ import FlatRoof from './flatRoof';
 import { WindowModel, WindowType } from 'src/models/WindowModel';
 import { DEFAULT_POLYGONTOP } from '../window/window';
 import { shallow } from 'zustand/shallow';
-import { useSelected } from '../hooks';
+import { useSelected } from '../../hooks';
 
 type RoofEdge = {
   start: number;

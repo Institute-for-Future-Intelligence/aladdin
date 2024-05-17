@@ -28,7 +28,7 @@ import { UndoableChange } from '../../../../undo/UndoableChange';
 import i18n from '../../../../i18n/i18n';
 import { FlowerModel } from '../../../../models/FlowerModel';
 import { FlowerData } from '../../../../FlowerData';
-import { useLanguage } from '../../../../views/hooks';
+import { useLanguage } from '../../../../hooks';
 
 const { Option } = Select;
 

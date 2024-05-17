@@ -54,7 +54,7 @@ import ScatterPlotMenu from '../components/scatterPlotMenu';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { Filter, FilterType } from '../Filter';
-import { useLanguage } from '../views/hooks';
+import { useLanguage } from '../hooks';
 
 const { TextArea } = Input;
 const { Option } = Select;

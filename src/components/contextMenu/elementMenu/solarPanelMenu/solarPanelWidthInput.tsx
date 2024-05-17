@@ -15,7 +15,7 @@ import { Util } from '../../../../Util';
 import { UNIT_VECTOR_POS_Z_ARRAY, ZERO_TOLERANCE } from '../../../../constants';
 import { RoofModel } from 'src/models/RoofModel';
 import { useSelectedElement } from '../menuHooks';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 import Dialog from '../../dialog';
 
 const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {

@@ -14,7 +14,7 @@ import { WallModel } from '../../../../models/WallModel';
 import { CompactPicker } from 'react-color';
 import { Util } from '../../../../Util';
 import { useColorPicker, useSelectedElement } from '../menuHooks';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 import Dialog from '../../dialog';
 
 const WallParapetColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {

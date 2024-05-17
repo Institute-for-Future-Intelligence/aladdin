@@ -25,7 +25,7 @@ import { Util } from '../Util';
 import { FlowerModel } from '../models/FlowerModel';
 import { FlowerData } from '../FlowerData';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
-import { useSelected } from './hooks';
+import { useSelected } from '../hooks';
 
 const Flower = React.memo(
   ({ parentId, id, cx, cy, cz, name = FlowerType.WhiteFlower, flip = false, locked = false }: FlowerModel) => {

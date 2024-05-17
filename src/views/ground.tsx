@@ -47,7 +47,7 @@ import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { GroupableModel, isGroupable } from 'src/models/Groupable';
 import { WindowModel } from 'src/models/WindowModel';
 import { throttle } from 'lodash';
-import { useLanguage } from './hooks';
+import { useLanguage } from '../hooks';
 
 const Ground = React.memo(() => {
   const setCommonStore = useStore(Selector.set);

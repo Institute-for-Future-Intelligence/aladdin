@@ -22,7 +22,7 @@ import { SolarPanelArrayOptimizerPso } from './algorithm/SolarPanelArrayOptimize
 import { PolygonModel } from '../../models/PolygonModel';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
-import { useLanguage } from '../../views/hooks';
+import { useLanguage } from '../../hooks';
 
 const SolarPanelArrayPso = React.memo(() => {
   const setCommonStore = useStore(Selector.set);

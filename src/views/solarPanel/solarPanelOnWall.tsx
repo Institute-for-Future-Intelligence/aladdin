@@ -48,7 +48,7 @@ import { useSolarPanelHeatmapTexture, useSolarPanelTexture } from './hooks';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { PvModel } from 'src/models/PvModel';
 import { ElementModel } from 'src/models/ElementModel';
-import { useSelected } from '../hooks';
+import { useSelected } from '../../hooks';
 
 interface SunbeamProps {
   drawSunbeam: boolean;

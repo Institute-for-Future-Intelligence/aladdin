@@ -25,7 +25,7 @@ import { PolygonModel } from '../../../../models/PolygonModel';
 import { Util } from '../../../../Util';
 import { useSelectedElement } from '../menuHooks';
 import Dialog from '../../dialog';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 
 const PolygonTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);

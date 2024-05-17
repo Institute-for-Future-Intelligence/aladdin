@@ -17,7 +17,7 @@ import DeleteImage from '../assets/delete.png';
 import LinkImage from '../assets/create_link.png';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useTranslation } from 'react-i18next';
-import { useLanguage } from '../views/hooks';
+import { useLanguage } from '../hooks';
 
 const { Column } = Table;
 

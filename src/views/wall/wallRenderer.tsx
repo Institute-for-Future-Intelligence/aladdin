@@ -9,7 +9,7 @@ import Wall from './wall';
 import WallMoveHandleWrapper from './wallMoveHandleWrapper';
 import WallResizeHandleWrapper from './wallResizeHandleWrapper';
 import { FoundationModel } from 'src/models/FoundationModel';
-import { useSelected } from '../hooks';
+import { useSelected } from '../../hooks';
 
 interface WallRendererProps {
   wallModel: WallModel;

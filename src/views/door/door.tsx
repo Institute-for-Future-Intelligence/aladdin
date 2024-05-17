@@ -31,7 +31,7 @@ import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
 import { useRefStore } from 'src/stores/commonRef';
 import { ElementModel } from 'src/models/ElementModel';
-import { useSelected } from '../hooks';
+import { useSelected } from '../../hooks';
 
 interface DoorHandleWrapperProps {
   dimension: number[];

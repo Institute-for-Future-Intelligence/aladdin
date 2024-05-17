@@ -15,7 +15,7 @@ import { HALF_PI } from '../../constants';
 import { Util } from '../../Util';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
-import { useLanguage } from '../../views/hooks';
+import { useLanguage } from '../../hooks';
 
 const SolarPanelTiltAngleGa = React.memo(() => {
   const setCommonStore = useStore(Selector.set);

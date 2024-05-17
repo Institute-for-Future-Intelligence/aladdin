@@ -61,7 +61,7 @@ import { UndoableChange } from '../../undo/UndoableChange';
 import Parapet, { DEFAULT_PARAPET_SETTINGS } from './parapet';
 import { InnerCommonStoreState } from 'src/stores/InnerCommonState';
 import WallHeatFlux from './wallHeatFlux';
-import { useSelected } from '../hooks';
+import { useSelected } from '../../hooks';
 
 export const WALL_BLOCK_PLANE = 'Wall Block Plane';
 

@@ -19,7 +19,7 @@ import { FoundationModel } from '../models/FoundationModel';
 import { SunMinutes } from './SunMinutes';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
-import { useLanguage, useWeather } from '../views/hooks';
+import { useLanguage, useWeather } from '../hooks';
 
 export interface HeliostatSimulationProps {
   city: string | null;

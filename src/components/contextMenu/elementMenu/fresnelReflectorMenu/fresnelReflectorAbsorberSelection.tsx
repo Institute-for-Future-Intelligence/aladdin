@@ -14,7 +14,7 @@ import { UndoableChangeGroup } from '../../../../undo/UndoableChangeGroup';
 import { FoundationModel } from '../../../../models/FoundationModel';
 import { useSelectedElement } from '../menuHooks';
 import Dialog from '../../dialog';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 import { Util } from 'src/Util';
 import { HeliostatModel } from 'src/models/HeliostatModel';
 

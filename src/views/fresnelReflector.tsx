@@ -28,7 +28,7 @@ import { FresnelReflectorModel } from '../models/FresnelReflectorModel';
 import { FoundationModel } from '../models/FoundationModel';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
-import { useSelected } from './hooks';
+import { useSelected } from '../hooks';
 
 const FresnelReflector = React.memo(
   ({

@@ -20,7 +20,7 @@ import { Z_INDEX_FRONT_PANEL } from '../constants';
 import { useTranslation } from 'react-i18next';
 import { turnOffVisualization } from './panelUtils';
 import dayjs from 'dayjs';
-import { useLanguage } from '../views/hooks';
+import { useLanguage } from '../hooks';
 
 const Container = styled.div`
   position: absolute;

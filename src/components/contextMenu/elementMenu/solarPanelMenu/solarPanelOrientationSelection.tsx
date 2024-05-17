@@ -16,7 +16,7 @@ import { UNIT_VECTOR_POS_Z_ARRAY } from '../../../../constants';
 import { RoofModel } from 'src/models/RoofModel';
 import { useSelectedElement } from '../menuHooks';
 import Dialog from '../../dialog';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 
 const { Option } = Select;
 

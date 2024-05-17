@@ -19,7 +19,7 @@ import { UndoableCheck } from '../undo/UndoableCheck';
 import { Undoable } from '../undo/Undoable';
 import { LAT_LNG_FRACTION_DIGITS, Z_INDEX_FRONT_PANEL } from '../constants';
 import { turnOffVisualization } from './panelUtils';
-import { useLanguage } from '../views/hooks';
+import { useLanguage } from '../hooks';
 
 const libraries = ['places'] as Libraries;
 

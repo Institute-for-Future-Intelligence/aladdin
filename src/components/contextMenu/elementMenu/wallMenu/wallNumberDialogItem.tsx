@@ -5,7 +5,7 @@
 import { useState } from 'react';
 import { WallNumberInputProps } from './wallNumberInput';
 import { WallModel } from 'src/models/WallModel';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 import { useStore } from 'src/stores/common';
 import { MenuItem } from '../../menuItems';
 import i18n from 'src/i18n/i18n';

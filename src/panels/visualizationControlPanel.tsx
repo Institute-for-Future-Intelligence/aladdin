@@ -9,7 +9,7 @@ import styled from 'styled-components';
 import { InputNumber, Space } from 'antd';
 import i18n from '../i18n/i18n';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
-import { useLanguage } from '../views/hooks';
+import { useLanguage } from '../hooks';
 
 const Container = styled.div`
   position: absolute;

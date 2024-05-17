@@ -17,7 +17,7 @@ import { BuildingCompletionStatus, ObjectType } from '../types';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { Util } from 'src/Util';
 import { FoundationModel } from '../models/FoundationModel';
-import { useLanguage } from '../views/hooks';
+import { useLanguage } from '../hooks';
 
 const Container = styled.div`
   position: absolute;

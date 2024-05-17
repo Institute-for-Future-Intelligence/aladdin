@@ -45,7 +45,7 @@ import { LineData } from '../LineData';
 import { useSolarPanelHeatmapTexture, useSolarPanelTexture } from './hooks';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { PvModel } from 'src/models/PvModel';
-import { useSelected } from '../hooks';
+import { useSelected } from '../../hooks';
 
 type ParentData = { parentPosition: number[]; parentRotation: number };
 

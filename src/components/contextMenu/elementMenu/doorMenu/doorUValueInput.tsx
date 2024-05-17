@@ -14,7 +14,7 @@ import { DoorModel } from '../../../../models/DoorModel';
 import { Util } from '../../../../Util';
 import { DEFAULT_DOOR_U_VALUE } from '../../../../constants';
 import { useSelectedElement } from '../menuHooks';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 import Dialog from '../../dialog';
 
 const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {

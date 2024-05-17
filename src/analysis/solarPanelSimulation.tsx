@@ -26,7 +26,7 @@ import { SunMinutes } from './SunMinutes';
 import { WallModel } from '../models/WallModel';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
-import { useLanguage, useWeather } from '../views/hooks';
+import { useLanguage, useWeather } from '../hooks';
 
 export interface SolarPanelSimulationProps {
   city: string | null;

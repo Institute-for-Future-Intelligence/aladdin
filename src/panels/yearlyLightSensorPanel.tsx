@@ -18,7 +18,7 @@ import { Rectangle } from '../models/Rectangle';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
 import { useTranslation } from 'react-i18next';
-import { useLanguage } from '../views/hooks';
+import { useLanguage } from '../hooks';
 
 const Container = styled.div`
   position: fixed;

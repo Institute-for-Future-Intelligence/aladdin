@@ -27,7 +27,7 @@ import { useRefStore } from 'src/stores/commonRef';
 import { Util } from '../Util';
 import { TreeData } from '../TreeData';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
-import { useLanguage, useSelected } from './hooks';
+import { useLanguage, useSelected } from '../hooks';
 
 const Tree = React.memo(
   ({

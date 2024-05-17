@@ -11,7 +11,7 @@ import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import { usePrimitiveStore } from './stores/commonPrimitive';
 import { MenuItem } from './components/contextMenu/menuItems';
-import { useLanguage } from './views/hooks';
+import { useLanguage } from './hooks';
 
 const ButtonsContainer = styled.div`
   position: absolute;

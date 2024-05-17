@@ -13,7 +13,7 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { CompactPicker } from 'react-color';
 import { RoofModel } from 'src/models/RoofModel';
-import { useLanguage } from '../../../../views/hooks';
+import { useLanguage } from '../../../../hooks';
 
 const GlassTintSelection = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);

@@ -48,7 +48,7 @@ import { HumanModel } from '../../../../models/HumanModel';
 import { UndoableChange } from '../../../../undo/UndoableChange';
 import i18n from '../../../../i18n/i18n';
 import { HumanData } from '../../../../HumanData';
-import { useLanguage } from '../../../../views/hooks';
+import { useLanguage } from '../../../../hooks';
 
 const { Option } = Select;
 

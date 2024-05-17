@@ -16,7 +16,7 @@ import { showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
-import { useLanguage } from '../views/hooks';
+import { useLanguage } from '../hooks';
 
 const SolarPanelVisibility = React.memo(() => {
   const world = useStore.getState().world;

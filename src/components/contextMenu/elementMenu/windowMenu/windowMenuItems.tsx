@@ -4,7 +4,7 @@
 
 import { WindowModel, WindowType } from 'src/models/WindowModel';
 import WindowNumberInput from './windowNumberInput';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 import { useState } from 'react';
 import { useStore } from 'src/stores/common';
 import i18n from 'src/i18n/i18n';

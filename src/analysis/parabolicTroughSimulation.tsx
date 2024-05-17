@@ -18,7 +18,7 @@ import { ParabolicTroughModel } from '../models/ParabolicTroughModel';
 import { SunMinutes } from './SunMinutes';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
-import { useLanguage, useWeather } from '../views/hooks';
+import { useLanguage, useWeather } from '../hooks';
 
 export interface ParabolicTroughSimulationProps {
   city: string | null;

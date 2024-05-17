@@ -71,7 +71,7 @@ import Ceiling from './ceiling';
 import { WindowModel, WindowType } from 'src/models/WindowModel';
 import { WallHeights, isRoofValid } from './gambrelRoof';
 import { shallow } from 'zustand/shallow';
-import { useSelected } from '../hooks';
+import { useSelected } from '../../hooks';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();

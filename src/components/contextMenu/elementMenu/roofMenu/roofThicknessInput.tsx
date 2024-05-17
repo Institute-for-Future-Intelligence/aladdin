@@ -12,7 +12,7 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { RoofModel } from 'src/models/RoofModel';
 import { useSelectedElement } from '../menuHooks';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 import Dialog from '../../dialog';
 
 const RoofThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {

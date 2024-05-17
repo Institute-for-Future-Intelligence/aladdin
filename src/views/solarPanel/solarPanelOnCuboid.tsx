@@ -39,7 +39,7 @@ import { Euler, Vector3, Mesh, DoubleSide, Color, FrontSide } from 'three';
 import * as Selector from '../../stores/selector';
 import { LineData } from '../LineData';
 import { useSolarPanelHeatmapTexture, useSolarPanelTexture } from './hooks';
-import { useSelected } from '../hooks';
+import { useSelected } from '../../hooks';
 
 interface SolarPanelBoxGroupProps {
   solarPanelModel: SolarPanelModel;

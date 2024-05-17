@@ -5,7 +5,7 @@
 import { Checkbox, InputNumber, Space } from 'antd';
 import { MenuItem } from '../../menuItems';
 import { LightModel } from 'src/models/LightModel';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 import i18n from 'src/i18n/i18n';
 import { useStore } from 'src/stores/common';
 import { UndoableCheck } from 'src/undo/UndoableCheck';

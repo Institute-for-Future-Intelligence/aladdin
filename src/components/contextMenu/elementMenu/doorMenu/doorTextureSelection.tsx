@@ -31,7 +31,7 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { DoorModel } from 'src/models/DoorModel';
 import { useSelectedElement } from '../menuHooks';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 import Dialog from '../../dialog';
 
 const DoorTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {

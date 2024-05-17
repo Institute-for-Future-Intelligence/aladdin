@@ -66,7 +66,7 @@ import Handles from './handles';
 import { ElementModelFactory } from 'src/models/ElementModelFactory';
 import { getSolarPanelUnitLength } from '../wall/wall';
 import { isSolarPanelOnTopFace } from '../solarPanel/solarPanelOnCuboid';
-import { useSelected } from '../hooks';
+import { useSelected } from '../../hooks';
 import { SharedUtil } from '../SharedUtil';
 
 const Cuboid = (cuboidModel: CuboidModel) => {

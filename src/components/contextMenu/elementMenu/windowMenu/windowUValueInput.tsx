@@ -15,7 +15,7 @@ import { Util } from '../../../../Util';
 import { DEFAULT_WINDOW_U_VALUE } from '../../../../constants';
 import { useSelectedElement } from '../menuHooks';
 import Dialog from '../../dialog';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 
 const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const elements = useStore(Selector.elements);

@@ -16,7 +16,7 @@ import { usePrimitiveStore } from '../stores/commonPrimitive';
 import LikesPanel from './likesPanel';
 import PublishedModelsPanel from './publishedModelsPanel';
 import { useTranslation } from 'react-i18next';
-import { useLanguage } from '../views/hooks';
+import { useLanguage } from '../hooks';
 
 const { confirm } = Modal;
 const { Option } = Select;

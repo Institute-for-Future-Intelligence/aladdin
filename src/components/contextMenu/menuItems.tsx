@@ -16,7 +16,7 @@ import { showInfo } from 'src/helpers';
 import { WallModel } from 'src/models/WallModel';
 import { useRefStore } from 'src/stores/commonRef';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { ElementModel } from 'src/models/ElementModel';
 import { GroupableModel, isGroupable } from 'src/models/Groupable';

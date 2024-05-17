@@ -48,7 +48,7 @@ import { PvModel } from '../models/PvModel';
 import { SunMinutes } from './SunMinutes';
 import { useDataStore } from '../stores/commonData';
 import { RoofUtil } from '../views/roof/RoofUtil';
-import { useLanguage, useWeather } from '../views/hooks';
+import { useLanguage, useWeather } from '../hooks';
 
 interface ThermalSimulationProps {
   city: string | null;

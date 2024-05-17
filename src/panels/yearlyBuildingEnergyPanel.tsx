@@ -20,7 +20,7 @@ import BuildingEnergyGraph from '../components/buildingEnergyGraph';
 import { Util } from '../Util';
 import { checkBuilding, CheckStatus } from '../analysis/heatTools';
 import { useDataStore } from '../stores/commonData';
-import { useLanguage, useWeather } from '../views/hooks';
+import { useLanguage, useWeather } from '../hooks';
 
 const Container = styled.div`
   position: fixed;

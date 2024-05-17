@@ -9,7 +9,7 @@ import { useStore } from 'src/stores/common';
 import { useDataStore } from 'src/stores/commonData';
 import { Discretization } from 'src/types';
 import * as Selector from '../../stores/selector';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 
 const { Option } = Select;
 

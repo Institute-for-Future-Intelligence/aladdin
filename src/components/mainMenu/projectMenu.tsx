@@ -10,7 +10,7 @@ import { showInfo } from 'src/helpers';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import { useState } from 'react';
 import CreateNewProjectDialog from '../contextMenu/elementMenu/createNewProjectDialog';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 
 const CreateNewProjectItem = () => {
   const [createNewProjectDialogVisible, setCreateNewProjectDialogVisible] = useState(false);

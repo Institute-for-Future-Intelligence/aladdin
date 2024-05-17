@@ -3,7 +3,7 @@
  */
 
 import { SensorModel } from 'src/models/SensorModel';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 import { useLabel, useLabelShow, useLabelText } from '../menuHooks';
 import { MenuItem } from '../../menuItems';
 import { Checkbox, Input, Space } from 'antd';

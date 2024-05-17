@@ -9,7 +9,7 @@ import styled from 'styled-components';
 import { Button, Space } from 'antd';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useTranslation } from 'react-i18next';
-import { useLanguage } from '../views/hooks';
+import { useLanguage } from '../hooks';
 
 const Container = styled.div`
   position: absolute;

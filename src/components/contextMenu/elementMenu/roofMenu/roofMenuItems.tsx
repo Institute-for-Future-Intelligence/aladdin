@@ -11,7 +11,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { UndoableRemoveAllChildren } from 'src/undo/UndoableRemoveAllChildren';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 import i18n from 'src/i18n/i18n';
 import { UndoableCheck } from 'src/undo/UndoableCheck';
 import { UndoableChange } from 'src/undo/UndoableChange';

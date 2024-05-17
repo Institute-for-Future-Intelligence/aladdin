@@ -15,7 +15,7 @@ import { computeSunriseAndSunsetInMinutes } from '../analysis/sunTools';
 import LocationImage from '../assets/location.png';
 import DateImage from '../assets/date.png';
 import ThermometerImage from '../assets/thermometer.png';
-import { useLanguage } from '../views/hooks';
+import { useLanguage } from '../hooks';
 
 const Container = styled.div`
   position: absolute;

@@ -43,7 +43,7 @@ import { UndoableMove } from 'src/undo/UndoableMove';
 import { showError } from 'src/helpers';
 import i18n from 'src/i18n/i18n';
 import { throttle } from 'lodash';
-import { useLanguage } from './hooks';
+import { useLanguage } from '../hooks';
 
 export interface SkyProps {
   theme?: string;

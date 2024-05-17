@@ -36,7 +36,7 @@ import { Paraboloid } from './shapes';
 import GlowImage from '../resources/glow.png';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
-import { useLanguage, useSelected } from './hooks';
+import { useLanguage, useSelected } from '../hooks';
 
 const ParabolicDish = React.memo(
   ({

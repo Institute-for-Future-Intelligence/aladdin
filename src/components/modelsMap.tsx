@@ -31,7 +31,7 @@ import {
 import ReactTimeago from 'react-timeago';
 import ReactCountryFlag from 'react-country-flag';
 import { Util } from '../Util';
-import { useLanguage } from '../views/hooks';
+import { useLanguage } from '../hooks';
 import { getIconUrl } from './mapUtils';
 
 const { Panel } = Collapse;

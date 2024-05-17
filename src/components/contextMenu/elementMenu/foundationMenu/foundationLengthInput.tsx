@@ -21,7 +21,7 @@ import { useRefStore } from 'src/stores/commonRef';
 import { invalidate } from '@react-three/fiber';
 import { useSelectedElement } from '../menuHooks';
 import Dialog from '../../dialog';
-import { useLanguage } from '../../../../views/hooks';
+import { useLanguage } from '../../../../hooks';
 
 const FoundationLengthInput = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const elements = useStore(Selector.elements);

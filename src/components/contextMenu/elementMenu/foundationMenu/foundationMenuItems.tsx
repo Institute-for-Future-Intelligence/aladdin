@@ -7,7 +7,7 @@ import { MenuItem } from '../../menuItems';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { useStore } from 'src/stores/common';
 import { UndoableCheck } from 'src/undo/UndoableCheck';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 import i18n from 'src/i18n/i18n';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';

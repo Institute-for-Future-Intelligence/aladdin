@@ -74,7 +74,7 @@ import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import { InnerCommonStoreState } from 'src/stores/InnerCommonState';
 import produce from 'immer';
 import { useDataStore } from '../../stores/commonData';
-import { useSelected } from '../hooks';
+import { useSelected } from '../../hooks';
 import { debounce, throttle } from 'lodash';
 import BuildingRenderer from './buildingRenderer';
 import { shallow } from 'zustand/shallow';

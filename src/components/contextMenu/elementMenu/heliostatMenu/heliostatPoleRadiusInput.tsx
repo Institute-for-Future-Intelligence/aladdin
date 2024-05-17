@@ -13,7 +13,7 @@ import { UndoableChangeGroup } from '../../../../undo/UndoableChangeGroup';
 import { ZERO_TOLERANCE } from '../../../../constants';
 import { HeliostatModel } from '../../../../models/HeliostatModel';
 import { useSelectedElement } from '../menuHooks';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 import Dialog from '../../dialog';
 
 const HeliostatPoleRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {

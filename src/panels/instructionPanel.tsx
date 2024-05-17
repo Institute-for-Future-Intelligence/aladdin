@@ -10,7 +10,7 @@ import * as Selector from '../stores/selector';
 import { Util } from '../Util';
 import { CloseOutlined } from '@ant-design/icons';
 import { Undoable } from '../undo/Undoable';
-import { useLanguage } from '../views/hooks';
+import { useLanguage } from '../hooks';
 
 const Container = styled.div`
   position: absolute;

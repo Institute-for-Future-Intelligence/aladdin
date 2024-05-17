@@ -14,7 +14,7 @@ import { RoofModel } from '../../../../models/RoofModel';
 import { Util } from '../../../../Util';
 import { DEFAULT_ROOF_R_VALUE } from '../../../../constants';
 import { useSelectedElement } from '../menuHooks';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 import Dialog from '../../dialog';
 
 const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {

@@ -18,7 +18,7 @@ import { FoundationModel } from '../models/FoundationModel';
 import { HeliostatModel } from '../models/HeliostatModel';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
-import { useLanguage, useSelected } from './hooks';
+import { useLanguage, useSelected } from '../hooks';
 
 const Heliostat = React.memo(
   ({

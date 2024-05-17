@@ -14,7 +14,7 @@ import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { Util } from '../../../../Util';
 import { FoundationModel } from '../../../../models/FoundationModel';
 import { DEFAULT_GROUND_FLOOR_R_VALUE, ZERO_TOLERANCE } from '../../../../constants';
-import { useLanguage } from '../../../../views/hooks';
+import { useLanguage } from '../../../../hooks';
 
 const GroundFloorRValueInput = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const elements = useStore(Selector.elements);

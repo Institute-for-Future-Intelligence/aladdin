@@ -23,7 +23,7 @@ import { Rectangle } from '../models/Rectangle';
 import { DEFAULT_FOUNDATION_SLAB_DEPTH, FLOATING_WINDOW_OPACITY, Z_INDEX_FRONT_PANEL } from '../constants';
 import { UndoableChange } from '../undo/UndoableChange';
 import { Undoable } from '../undo/Undoable';
-import { useLanguage, useWeather } from '../views/hooks';
+import { useLanguage, useWeather } from '../hooks';
 
 const Container = styled.div`
   position: fixed;

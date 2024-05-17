@@ -42,7 +42,7 @@ import ProjectListPanel from './panels/projectListPanel';
 import { loadCloudFile } from './cloudFileUtil';
 import { changeDesignTitles, copyDesign, createDesign, fetchProject, getImageData } from './cloudProjectUtil';
 import { ProjectUtil } from './panels/ProjectUtil';
-import { useLanguage } from './views/hooks';
+import { useLanguage } from './hooks';
 
 export interface CloudManagerProps {
   viewOnly: boolean;

@@ -14,7 +14,7 @@ import { UndoableChangeGroup } from '../../../../undo/UndoableChangeGroup';
 import { ZERO_TOLERANCE } from '../../../../constants';
 import { Util } from '../../../../Util';
 import { useSelectedElement } from '../menuHooks';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 import Dialog from '../../dialog';
 
 // for Fresnel reflectors, since the default alignment is north-south, ly is always much larger than lx.

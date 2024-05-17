@@ -5,7 +5,7 @@
 import { Checkbox, Radio, RadioChangeEvent, Space } from 'antd';
 import { DoorModel, DoorType } from 'src/models/DoorModel';
 import { MenuItem } from '../../menuItems';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';

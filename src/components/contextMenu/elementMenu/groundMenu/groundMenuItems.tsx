@@ -4,7 +4,7 @@
 
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import * as Selector from '../../../../stores/selector';
 import { UndoableRemoveAll } from '../../../../undo/UndoableRemoveAll';

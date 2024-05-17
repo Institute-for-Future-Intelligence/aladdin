@@ -40,7 +40,7 @@ import { PolygonModel } from '../models/PolygonModel';
 import { Point2 } from '../models/Point2';
 import { useRefStore } from '../stores/commonRef';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
-import { useLanguage, useSelected } from './hooks';
+import { useLanguage, useSelected } from '../hooks';
 
 // maybe we should not wrap this with React.memo as the polygon seems to need to update with its parent
 const Polygon = ({

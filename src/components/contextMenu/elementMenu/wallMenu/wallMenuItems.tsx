@@ -12,7 +12,7 @@ import { UndoableRemoveAllChildren } from 'src/undo/UndoableRemoveAllChildren';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { UndoableCheck } from 'src/undo/UndoableCheck';
 import i18n from 'src/i18n/i18n';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { Euler, Vector3 } from 'three';

@@ -13,7 +13,7 @@ import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { RoofModel } from '../../../../models/RoofModel';
 import { useSelectedElement } from '../menuHooks';
 
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 import Dialog from '../../dialog';
 
 const RoofHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {

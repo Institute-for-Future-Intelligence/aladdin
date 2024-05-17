@@ -6,7 +6,7 @@ import { InputNumber, MenuProps, Select, Space } from 'antd';
 import { MenuItem } from '../contextMenu/menuItems';
 import i18n from 'src/i18n/i18n';
 import { useStore } from 'src/stores/common';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 import * as Selector from '../../stores/selector';
 
 const { Option } = Select;

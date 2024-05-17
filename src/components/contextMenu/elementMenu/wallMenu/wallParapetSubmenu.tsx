@@ -12,7 +12,7 @@ import WallParapetColorSelection from './wallParapetColorSelection';
 import WallParapetTextureSelection from './wallParapetTextureSelection';
 import { useState } from 'react';
 import ParapetNumberInput, { ParapetNumberInputProps } from './wallParapetNumberInput';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 
 interface NumberDialogItems {
   Dialog: (props: ParapetNumberInputProps) => JSX.Element;

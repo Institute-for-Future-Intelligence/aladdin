@@ -17,7 +17,7 @@ import { showError } from '../../../helpers';
 import { SolarPanelArrayLayoutParams } from '../../../stores/SolarPanelArrayLayoutParams';
 import { SolarPanelLayoutRelative } from '../../../pd/SolarPanelLayoutRelative';
 import { SolarPanelLayoutAbsolute } from '../../../pd/SolarPanelLayoutAbsolute';
-import { useLanguage } from '../../../views/hooks';
+import { useLanguage } from '../../../hooks';
 
 const { Option } = Select;
 

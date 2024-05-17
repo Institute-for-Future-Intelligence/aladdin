@@ -30,7 +30,7 @@ import { RoofModel } from '../models/RoofModel';
 import { useRefStore } from 'src/stores/commonRef';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import { getRotationFromNormal } from './solarPanel/solarPanelOnCuboid';
-import { useLanguage, useSelected } from './hooks';
+import { useLanguage, useSelected } from '../hooks';
 
 const Light = React.memo((lightModel: LightModel) => {
   const {

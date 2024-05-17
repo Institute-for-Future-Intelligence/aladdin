@@ -5,7 +5,7 @@
 import { Checkbox, Modal } from 'antd';
 import { MenuItem } from '../../menuItems';
 import i18n from 'src/i18n/i18n';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 import { CuboidModel } from 'src/models/CuboidModel';
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';

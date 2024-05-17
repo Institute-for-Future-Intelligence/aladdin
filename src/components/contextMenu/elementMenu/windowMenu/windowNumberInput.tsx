@@ -14,7 +14,7 @@ import { WindowModel } from 'src/models/WindowModel';
 import { WindowDataType } from './windowMenu';
 import Dialog from '../../dialog';
 
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 
 export interface WindowNumberInputProps {
   windowModel: WindowModel;

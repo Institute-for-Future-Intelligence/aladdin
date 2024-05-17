@@ -32,7 +32,7 @@ import { useRefStore } from 'src/stores/commonRef';
 import { HumanData } from '../HumanData';
 import { Util } from '../Util';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
-import { useLanguage, useSelected } from './hooks';
+import { useLanguage, useSelected } from '../hooks';
 
 const Human = React.memo(
   ({ id, cx, cy, cz, name = HumanName.Jack, locked = false, flip = false, observer = false, parentId }: HumanModel) => {

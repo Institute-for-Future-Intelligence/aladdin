@@ -13,7 +13,7 @@ import { UndoableChangeGroup } from '../../../../undo/UndoableChangeGroup';
 import { WallModel } from '../../../../models/WallModel';
 import { Util } from '../../../../Util';
 import Dialog from '../../dialog';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 
 export interface WallNumberInputProps {
   wall: WallModel;

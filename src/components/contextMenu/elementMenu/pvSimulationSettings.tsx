@@ -10,7 +10,7 @@ import i18n from '../../../i18n/i18n';
 import { Discretization } from '../../../types';
 import { Util } from '../../../Util';
 import { useDataStore } from '../../../stores/commonData';
-import { useLanguage } from '../../../views/hooks';
+import { useLanguage } from '../../../hooks';
 
 const PvSimulationSettings = React.memo(() => {
   const setCommonStore = useStore(Selector.set);

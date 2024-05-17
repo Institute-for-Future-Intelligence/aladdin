@@ -15,7 +15,7 @@ import { ZERO_TOLERANCE } from '../../../../constants';
 import { Util } from '../../../../Util';
 import { useSelectedElement } from '../menuHooks';
 import Dialog from '../../dialog';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 
 // for parabolic troughs, since the default alignment is north-south, ly is always much larger than lx.
 // to agree with the convention, we call ly length and lx width, reversed from most other elements in Aladdin.

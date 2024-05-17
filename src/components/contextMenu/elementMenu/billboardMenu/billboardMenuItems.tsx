@@ -4,7 +4,7 @@
 
 import { Checkbox, Space, InputNumber } from 'antd';
 import { MenuItem } from '../../menuItems';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 import i18n from 'src/i18n/i18n';
 import { ObjectType } from 'src/types';
 import { useStore } from 'src/stores/common';

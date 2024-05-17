@@ -14,7 +14,7 @@ import {
 } from './elementMenu/menuHooks';
 import type { MenuProps } from 'antd';
 import { ElementModel } from 'src/models/ElementModel';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 import { MenuItem } from './menuItems';
 import i18n from 'src/i18n/i18n';
 

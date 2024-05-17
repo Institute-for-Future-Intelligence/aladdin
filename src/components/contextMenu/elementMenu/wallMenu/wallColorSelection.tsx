@@ -14,7 +14,7 @@ import { WallModel } from '../../../../models/WallModel';
 import { Util } from '../../../../Util';
 import { useColorPicker, useSelectedElement } from '../menuHooks';
 import Dialog from '../../dialog';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 import { CompactPicker } from 'react-color';
 
 const WallColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {

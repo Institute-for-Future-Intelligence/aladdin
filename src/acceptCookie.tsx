@@ -5,7 +5,7 @@
 import React from 'react';
 import CookieConsent from 'react-cookie-consent';
 import i18n from './i18n/i18n';
-import { useLanguage } from './views/hooks';
+import { useLanguage } from './hooks';
 
 const AcceptCookie = React.memo(() => {
   const lang = useLanguage();

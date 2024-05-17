@@ -10,7 +10,7 @@ import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import * as Selector from '../../stores/selector';
 import { Util } from 'src/Util';
 import { showError, showInfo, showWarning } from 'src/helpers';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 import { MainMenuSwicth } from './mainMenuItems';
 import { ElementCounter } from 'src/stores/ElementCounter';
 import { BuildingCompletionStatus, ObjectType, SolarStructure } from 'src/types';

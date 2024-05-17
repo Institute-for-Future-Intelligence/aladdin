@@ -3,7 +3,7 @@
  */
 
 import { useStore } from 'src/stores/common';
-import * as Selector from '../stores/selector';
+import * as Selector from './stores/selector';
 import { useMemo } from 'react';
 
 export const useSelected = (id: string) => {

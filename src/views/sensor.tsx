@@ -29,7 +29,7 @@ import { FoundationModel } from '../models/FoundationModel';
 import { useRefStore } from 'src/stores/commonRef';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import { getRotationFromNormal } from './solarPanel/solarPanelOnCuboid';
-import { useLanguage, useSelected } from './hooks';
+import { useLanguage, useSelected } from '../hooks';
 
 const Sensor = React.memo((sensorModel: SensorModel) => {
   const {

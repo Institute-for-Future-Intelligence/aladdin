@@ -6,7 +6,7 @@ import React, { PropsWithChildren, useEffect } from 'react';
 import { Button, Divider, Modal } from 'antd';
 import { useRef, useState } from 'react';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 import { useStore } from 'src/stores/common';
 import * as Selector from '../../stores/selector';
 import { useTranslation } from 'react-i18next';

@@ -8,7 +8,7 @@ import i18n from 'src/i18n/i18n';
 import { useStore } from 'src/stores/common';
 import { useDataStore } from 'src/stores/commonData';
 import * as Selector from '../../stores/selector';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 
 const { Option } = Select;
 

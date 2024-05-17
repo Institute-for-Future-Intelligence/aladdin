@@ -45,7 +45,7 @@ import { useRefStore } from './stores/commonRef';
 import { showInfo } from './helpers';
 import { Util } from './Util';
 import { usePrimitiveStore } from './stores/commonPrimitive';
-import { useLanguage } from './views/hooks';
+import { useLanguage } from './hooks';
 import { MenuItem } from './components/contextMenu/menuItems';
 import { MAXIMUM_HEATMAP_CELLS } from './constants';
 

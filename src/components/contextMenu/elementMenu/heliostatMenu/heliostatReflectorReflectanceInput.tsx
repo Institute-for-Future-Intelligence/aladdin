@@ -13,7 +13,7 @@ import { UndoableChange } from '../../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../../undo/UndoableChangeGroup';
 import { ZERO_TOLERANCE } from '../../../../constants';
 import { useSelectedElement } from '../menuHooks';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 import Dialog from '../../dialog';
 
 const HeliostatReflectanceInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {

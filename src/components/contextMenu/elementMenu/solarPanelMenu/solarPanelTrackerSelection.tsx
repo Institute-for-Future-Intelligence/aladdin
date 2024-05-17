@@ -13,7 +13,7 @@ import { UndoableChange } from '../../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../../undo/UndoableChangeGroup';
 import { Util } from '../../../../Util';
 import { useSelectedElement } from '../menuHooks';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 import Dialog from '../../dialog';
 
 const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {

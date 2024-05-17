@@ -10,7 +10,7 @@ import * as Selector from '../stores/selector';
 import i18n from '../i18n/i18n';
 import { UndoableChange } from '../undo/UndoableChange';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
-import { useLanguage } from '../views/hooks';
+import { useLanguage } from '../hooks';
 
 const NavigationPanel = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);

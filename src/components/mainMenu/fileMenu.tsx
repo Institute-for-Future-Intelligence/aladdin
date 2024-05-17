@@ -11,7 +11,7 @@ import { HOME_URL } from 'src/constants';
 import i18n from 'src/i18n/i18n';
 import { saveImage, showInfo } from 'src/helpers';
 import ModelSiteDialog from '../contextMenu/elementMenu/modelSiteDialog';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 import { useState } from 'react';
 import { LabelMark } from './mainMenuItems';
 

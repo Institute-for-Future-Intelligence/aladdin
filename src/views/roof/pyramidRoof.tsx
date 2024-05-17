@@ -46,7 +46,7 @@ import FlatRoof from './flatRoof';
 import { BuildingParts, FoundationModel } from '../../models/FoundationModel';
 import { shallow } from 'zustand/shallow';
 import { WindowModel } from 'src/models/WindowModel';
-import { useSelected } from '../hooks';
+import { useSelected } from '../../hooks';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();

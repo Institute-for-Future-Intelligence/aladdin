@@ -27,7 +27,7 @@ import { LineData } from './LineData';
 import { ParabolicCylinder } from './shapes';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
-import { useLanguage, useSelected } from './hooks';
+import { useLanguage, useSelected } from '../hooks';
 
 const ParabolicTrough = React.memo(
   ({

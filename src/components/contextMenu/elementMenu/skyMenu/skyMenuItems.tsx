@@ -7,7 +7,7 @@ import { MenuItem } from '../../menuItems';
 import { Checkbox, InputNumber, Radio, Space } from 'antd';
 import * as Selector from '../../../../stores/selector';
 import i18n from 'src/i18n/i18n';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { UndoableCheck } from 'src/undo/UndoableCheck';
 import type { RadioChangeEvent } from 'antd';

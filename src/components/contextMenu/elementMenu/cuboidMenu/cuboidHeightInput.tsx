@@ -18,7 +18,7 @@ import { ElementModel } from 'src/models/ElementModel';
 import { invalidate } from '@react-three/fiber';
 import { Util } from '../../../../Util';
 import { useSelectedElement } from '../menuHooks';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 import Dialog from '../../dialog';
 
 const CuboidHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {

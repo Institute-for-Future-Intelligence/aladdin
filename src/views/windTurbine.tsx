@@ -21,7 +21,7 @@ import { ActionType, BirdSafeDesign, MoveHandleType, ObjectType } from '../types
 import { Util } from '../Util';
 import i18n from '../i18n/i18n';
 import { WindTurbineModel } from '../models/WindTurbineModel';
-import { useLanguage, useSelected } from './hooks';
+import { useLanguage, useSelected } from '../hooks';
 
 const WindTurbine = React.memo(
   ({

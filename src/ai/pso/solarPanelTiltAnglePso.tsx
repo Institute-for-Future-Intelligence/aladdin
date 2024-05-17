@@ -15,7 +15,7 @@ import { Util } from '../../Util';
 import { SolarPanelTiltAngleOptimizerPso } from './algorithm/SolarPanelTiltAngleOptimizerPso';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
-import { useLanguage } from '../../views/hooks';
+import { useLanguage } from '../../hooks';
 
 const SolarPanelTiltAnglePso = React.memo(() => {
   const setCommonStore = useStore(Selector.set);

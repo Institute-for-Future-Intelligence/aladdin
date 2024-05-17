@@ -10,7 +10,7 @@ import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Table } from 'antd';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useTranslation } from 'react-i18next';
-import { useLanguage } from '../views/hooks';
+import { useLanguage } from '../hooks';
 
 const { Column } = Table;
 

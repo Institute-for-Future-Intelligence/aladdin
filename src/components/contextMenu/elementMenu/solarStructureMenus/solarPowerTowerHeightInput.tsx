@@ -14,7 +14,7 @@ import { FoundationModel } from 'src/models/FoundationModel';
 import { ZERO_TOLERANCE } from 'src/constants';
 import { SolarPowerTowerModel } from '../../../../models/SolarPowerTowerModel';
 import { useSelectedElement } from '../menuHooks';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 import Dialog from '../../dialog';
 
 const SolarPowerTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {

@@ -7,7 +7,7 @@ import { InputNumber, Menu, Select, Space } from 'antd';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import i18n from '../../../i18n/i18n';
-import { useLanguage } from '../../../views/hooks';
+import { useLanguage } from '../../../hooks';
 
 const BuildingEnergySimulationSettings = React.memo(() => {
   const setCommonStore = useStore(Selector.set);

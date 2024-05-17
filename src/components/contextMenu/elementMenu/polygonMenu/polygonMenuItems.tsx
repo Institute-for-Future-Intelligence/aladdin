@@ -5,7 +5,7 @@
 import { PolygonModel } from 'src/models/PolygonModel';
 import { MenuItem } from '../../menuItems';
 import { Checkbox, Input, InputNumber } from 'antd';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 import i18n from 'src/i18n/i18n';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { ObjectType } from 'src/types';

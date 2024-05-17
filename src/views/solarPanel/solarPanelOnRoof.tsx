@@ -52,7 +52,7 @@ import { RoofUtil } from '../roof/RoofUtil';
 import { useSolarPanelHeatmapTexture, useSolarPanelTexture } from './hooks';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { PvModel } from 'src/models/PvModel';
-import { useSelected } from '../hooks';
+import { useSelected } from '../../hooks';
 
 interface MoveHandleProps {
   id: string;

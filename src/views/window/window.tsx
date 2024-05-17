@@ -20,7 +20,7 @@ import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useRefStore } from 'src/stores/commonRef';
 import { ElementModel } from 'src/models/ElementModel';
 import PolygonalWindow from './polygonalWindow';
-import { useSelected } from '../hooks';
+import { useSelected } from '../../hooks';
 
 export type MullionDataType = {
   horizontalMullion: boolean;

@@ -11,7 +11,7 @@ import i18n from '../../../i18n/i18n';
 import { usePrimitiveStore } from '../../../stores/commonPrimitive';
 import { DesignProblem } from '../../../types';
 import { REGEX_ALLOWABLE_IN_NAME } from '../../../constants';
-import { useLanguage } from '../../../views/hooks';
+import { useLanguage } from '../../../hooks';
 
 const { Option } = Select;
 

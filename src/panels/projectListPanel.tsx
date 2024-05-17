@@ -17,7 +17,7 @@ import { ProjectState } from '../types';
 import { useTranslation } from 'react-i18next';
 import { MenuProps } from 'antd/lib';
 import { MenuItem } from 'src/components/contextMenu/menuItems';
-import { useLanguage } from '../views/hooks';
+import { useLanguage } from '../hooks';
 
 const { Column } = Table;
 

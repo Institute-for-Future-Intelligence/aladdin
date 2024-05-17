@@ -15,7 +15,7 @@ import { WindowModel } from 'src/models/WindowModel';
 import { WindowDataType } from './windowMenu';
 
 import { useColorPicker } from '../menuHooks';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 import Dialog from '../../dialog';
 
 interface WindowColorSelectionProps {

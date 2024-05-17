@@ -47,7 +47,7 @@ import GroupMasterWrapper from './components/groupMaster';
 import SplitPane from './components/splitPane';
 import { useRefStore } from './stores/commonRef';
 import { PerspectiveCamera, Vector2 } from 'three';
-import { useLanguage } from './views/hooks';
+import { useLanguage } from './hooks';
 
 export interface AppCreatorProps {
   viewOnly: boolean;

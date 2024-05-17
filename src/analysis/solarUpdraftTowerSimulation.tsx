@@ -32,7 +32,7 @@ import { FoundationModel } from '../models/FoundationModel';
 import { computeOutsideTemperature, getOutsideTemperatureAtMinute } from './heatTools';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
-import { useLanguage, useWeather } from '../views/hooks';
+import { useLanguage, useWeather } from '../hooks';
 
 export interface SolarUpdraftTowerSimulationProps {
   city: string | null;

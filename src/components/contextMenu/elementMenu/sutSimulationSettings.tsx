@@ -9,7 +9,7 @@ import * as Selector from '../../../stores/selector';
 import i18n from '../../../i18n/i18n';
 import { Util } from '../../../Util';
 import { useDataStore } from '../../../stores/commonData';
-import { useLanguage } from '../../../views/hooks';
+import { useLanguage } from '../../../hooks';
 
 const SutSimulationSettings = React.memo(() => {
   const setCommonStore = useStore(Selector.set);

@@ -19,7 +19,7 @@ import { ModelSite } from './types';
 import ReactCountryFlag from 'react-country-flag';
 import { VerticalAlignBottomOutlined, VerticalAlignTopOutlined, UserOutlined } from '@ant-design/icons';
 import ModelsGallery from './modelsGallery';
-import { useLanguage } from './views/hooks';
+import { useLanguage } from './hooks';
 
 const libraries = ['places'] as Libraries;
 

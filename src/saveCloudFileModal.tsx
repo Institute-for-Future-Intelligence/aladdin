@@ -9,7 +9,7 @@ import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import { REGEX_ALLOWABLE_IN_NAME } from './constants';
-import { useLanguage } from './views/hooks';
+import { useLanguage } from './hooks';
 
 export interface CloudFileSaveModalProps {
   saveToCloud: (title: string, silent: boolean, checkExistence: boolean) => void;

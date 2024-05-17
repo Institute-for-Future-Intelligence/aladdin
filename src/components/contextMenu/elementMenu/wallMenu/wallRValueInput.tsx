@@ -15,7 +15,7 @@ import { Util } from '../../../../Util';
 import { DEFAULT_WALL_R_VALUE } from '../../../../constants';
 import { useSelectedElement } from '../menuHooks';
 import Dialog from '../../dialog';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 
 const WallRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const elements = useStore(Selector.elements);

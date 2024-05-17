@@ -4,7 +4,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import { useRefStore } from './stores/commonRef';
-import { useLanguage } from './views/hooks';
+import { useLanguage } from './hooks';
 import i18n from './i18n/i18n';
 
 const STYLE_SIZE = 120;

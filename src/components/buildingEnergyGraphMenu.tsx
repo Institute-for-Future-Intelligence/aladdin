@@ -7,7 +7,7 @@ import { BarsOutlined } from '@ant-design/icons';
 import { Popover } from 'antd';
 import i18n from '../i18n/i18n';
 import { CheckboxMenuItem, SliderMenuItem } from './contextMenu/menuItems';
-import { useLanguage } from '../views/hooks';
+import { useLanguage } from '../hooks';
 
 export interface BuildingEnergyGraphMenuProps {
   horizontalGrid: boolean;

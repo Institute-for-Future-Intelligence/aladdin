@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import { MoreOutlined } from '@ant-design/icons';
 import { Popover } from 'antd';
 import i18n from '../i18n/i18n';
-import { useLanguage } from 'src/views/hooks';
+import { useLanguage } from 'src/hooks';
 import { CheckboxMenuItem, SliderMenuItem } from './contextMenu/menuItems';
 
 export interface ScatterPlotMenuProps {

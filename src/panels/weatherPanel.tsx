@@ -14,7 +14,7 @@ import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 import { Undoable } from '../undo/Undoable';
-import { useLanguage, useWeather } from '../views/hooks';
+import { useLanguage, useWeather } from '../hooks';
 
 const Container = styled.div`
   position: fixed;
