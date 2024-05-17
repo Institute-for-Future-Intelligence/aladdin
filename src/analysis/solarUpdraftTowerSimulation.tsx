@@ -32,6 +32,7 @@ import { FoundationModel } from '../models/FoundationModel';
 import { computeOutsideTemperature, getOutsideTemperatureAtMinute } from './heatTools';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
+import { useLanguage, useWeather } from '../views/hooks';
 
 export interface SolarUpdraftTowerSimulationProps {
   city: string | null;
@@ -41,10 +42,8 @@ const SolarUpdraftTowerSimulation = React.memo(({ city }: SolarUpdraftTowerSimul
   const setCommonStore = useStore(Selector.set);
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const loggable = useStore(Selector.loggable);
-  const language = useStore(Selector.language);
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
-  const getWeather = useStore(Selector.getWeather);
   const setLabels = useDataStore(Selector.setUpdraftTowerLabels);
   const setDailyResults = useDataStore(Selector.setDailyUpdraftTowerResults);
   const setDailyYield = useDataStore(Selector.setDailyUpdraftTowerYield);
@@ -59,15 +58,11 @@ const SolarUpdraftTowerSimulation = React.memo(({ city }: SolarUpdraftTowerSimul
   const cellSize = world.sutGridCellSize ?? 1;
 
   const { scene } = useThree();
-  const lang = useMemo(() => {
-    return { lng: language };
-  }, [language]);
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const weather = useMemo(() => getWeather(city ?? 'Boston MA, USA'), [city]);
+  const lang = useLanguage();
+  const weather = useWeather(city);
   const now = new Date(world.date);
 
-  const elevation = city ? getWeather(city)?.elevation : 0;
+  const elevation = weather ? weather.elevation : 0;
   const timesPerHour = world.sutTimesPerHour ?? 4;
   const minuteInterval = 60 / timesPerHour;
   const daysPerYear = world.sutDaysPerYear ?? 6;
@@ -266,9 +261,8 @@ const SolarUpdraftTowerSimulation = React.memo(({ city }: SolarUpdraftTowerSimul
           if (outputs && chimneyInletTemperatures && windSpeeds) {
             const powerFactor = 0.5 * dischargeCoefficient * turbineEfficiency * AIR_DENSITY * chimneyArea;
             const date = new Date(world.date);
-            let weather, temp;
-            if (city) {
-              weather = getWeather(city);
+            let temp;
+            if (weather) {
               temp = computeOutsideTemperature(date, weather.lowestTemperatures, weather.highestTemperatures);
             }
             for (let i = 0; i < outputs.length; i++) {
@@ -567,9 +561,8 @@ const SolarUpdraftTowerSimulation = React.memo(({ city }: SolarUpdraftTowerSimul
             const dca = AIR_DENSITY * AIR_ISOBARIC_SPECIFIC_HEAT * chimneyArea;
             const speedFactor = 2 * GRAVITATIONAL_ACCELERATION * f.solarUpdraftTower.chimneyHeight;
             const powerFactor = 0.5 * dischargeCoefficient * turbineEfficiency * AIR_DENSITY * chimneyArea;
-            let weather, temp;
-            if (city) {
-              weather = getWeather(city);
+            let temp;
+            if (weather) {
               temp = computeOutsideTemperature(now, weather.lowestTemperatures, weather.highestTemperatures);
             }
             for (let i = 0; i < outputs.length; i++) {

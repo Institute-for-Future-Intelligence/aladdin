@@ -166,6 +166,8 @@ export interface CommonStoreState {
   undoManager: UndoManager;
   addUndoable: (undoable: Undoable) => void;
 
+  weatherModel: WeatherModel | undefined;
+  setWeatherModel: (location: string) => void;
   weatherData: { [key: string]: WeatherModel };
   getWeather: (location: string) => WeatherModel;
   loadWeatherData: () => void;
@@ -4463,6 +4465,12 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
             return get().pvModules[name];
           },
 
+          weatherModel: undefined,
+          setWeatherModel(location: string) {
+            immerSet((state: CommonStoreState) => {
+              state.weatherModel = state.weatherData[location];
+            });
+          },
           weatherData: {},
           loadWeatherData() {
             if (Object.keys(get().weatherData).length > 0) return;
@@ -4502,11 +4510,16 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                   for (const row of data) {
                     state.weatherData[row.city + ', ' + row.country] = row;
                   }
+                  // set default weather model
+                  state.weatherModel = state.weatherData['Boston MA, USA'];
                 });
+                console.log(data.length + ' weather datasets loaded');
               },
             });
           },
           getWeather(location) {
+            const wm = get().weatherModel;
+            if (wm) return wm;
             return get().weatherData[location];
           },
           horizontalSolarRadiationData: {},
@@ -4742,7 +4755,8 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
           notes: state.notes,
           user: state.user,
           sceneRadius: state.sceneRadius,
-          weatherData: state.weatherData,
+          // weatherData: state.weatherData,
+          weatherModel: state.weatherModel,
           solarPanelArrayLayoutParams: state.solarPanelArrayLayoutParams,
           solarPanelArrayLayoutConstraints: state.solarPanelArrayLayoutConstraints,
           economicsParams: state.economicsParams,

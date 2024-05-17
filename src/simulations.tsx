@@ -22,13 +22,18 @@ const Simulations = React.memo(() => {
   const worldLatitude = useStore(Selector.world.latitude);
   const worldLongitude = useStore(Selector.world.longitude);
   const getClosestCity = useStore(Selector.getClosestCity);
+  const setWeatherModel = useStore(Selector.setWeatherModel);
+  const weatherData = useStore(Selector.weatherData);
 
   const [city, setCity] = useState<string>('Boston MA, USA');
 
   useEffect(() => {
-    setCity(getClosestCity(worldLatitude, worldLongitude) ?? 'Boston MA, USA');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [worldLatitude, worldLongitude]);
+    // weatherData has the city info, return if it has not been loaded and try again after it is loaded
+    if (Object.keys(weatherData).length === 0) return;
+    const location = getClosestCity(worldLatitude, worldLongitude) ?? 'Boston MA, USA';
+    setCity(location);
+    setWeatherModel(location);
+  }, [worldLatitude, worldLongitude, weatherData]);
 
   return (
     <>

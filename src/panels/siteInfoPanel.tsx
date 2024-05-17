@@ -53,17 +53,13 @@ const ColumnWrapper = styled.div<ColumnWrapperProps>`
   opacity: 100%;
 `;
 
-export interface SiteInfoPanelProps {
-  city: string | null;
-}
-
-const SiteInfoPanel = React.memo(({ city }: SiteInfoPanelProps) => {
+const SiteInfoPanel = React.memo(() => {
   const dateString = useStore(Selector.world.date);
   const address = useStore(Selector.world.address);
   const latitude = useStore(Selector.world.latitude);
   const longitude = useStore(Selector.world.longitude);
   const diurnalTemperatureModel = useStore(Selector.world.diurnalTemperatureModel);
-  const weatherData = useStore(Selector.weatherData);
+  const weatherModel = useStore(Selector.weatherModel);
   const sunlightDirection = useStore(Selector.sunlightDirection);
   const highestTemperatureTimeInMinutes = useStore(Selector.world.highestTemperatureTimeInMinutes) ?? 900;
   const projectView = useStore(Selector.projectView);
@@ -75,24 +71,21 @@ const SiteInfoPanel = React.memo(({ city }: SiteInfoPanelProps) => {
   const lang = useLanguage();
 
   useEffect(() => {
-    if (city) {
-      const weather = weatherData[city];
-      if (weather) {
-        const t = computeOutsideTemperature(now, weather.lowestTemperatures, weather.highestTemperatures);
-        setDailyTemperatures(t);
-        const c = getOutsideTemperatureAtMinute(
-          t.high,
-          t.low,
-          diurnalTemperatureModel,
-          highestTemperatureTimeInMinutes,
-          sunMinutes,
-          Util.minutesIntoDay(now),
-        );
-        setCurrentTemperature(c);
-      }
+    if (weatherModel) {
+      const t = computeOutsideTemperature(now, weatherModel.lowestTemperatures, weatherModel.highestTemperatures);
+      setDailyTemperatures(t);
+      const c = getOutsideTemperatureAtMinute(
+        t.high,
+        t.low,
+        diurnalTemperatureModel,
+        highestTemperatureTimeInMinutes,
+        sunMinutes,
+        Util.minutesIntoDay(now),
+      );
+      setCurrentTemperature(c);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [city, dateString]);
+  }, [dateString, weatherModel]);
 
   const sunMinutes = useMemo(() => {
     return computeSunriseAndSunsetInMinutes(now, latitude);

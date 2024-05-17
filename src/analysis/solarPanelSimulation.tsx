@@ -26,6 +26,7 @@ import { SunMinutes } from './SunMinutes';
 import { WallModel } from '../models/WallModel';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
+import { useLanguage, useWeather } from '../views/hooks';
 
 export interface SolarPanelSimulationProps {
   city: string | null;
@@ -43,11 +44,9 @@ const SolarPanelSimulation = React.memo(({ city }: SolarPanelSimulationProps) =>
   const setCommonStore = useStore(Selector.set);
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const loggable = useStore(Selector.loggable);
-  const language = useStore(Selector.language);
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
   const getPvModule = useStore(Selector.getPvModule);
-  const getWeather = useStore(Selector.getWeather);
   const getParent = useStore(Selector.getParent);
   const getFoundation = useStore(Selector.getFoundation);
   const setDailyYield = useDataStore(Selector.setDailyPvYield);
@@ -69,12 +68,8 @@ const SolarPanelSimulation = React.memo(({ city }: SolarPanelSimulationProps) =>
   const runEvolution = usePrimitiveStore(Selector.runEvolution);
 
   const { scene } = useThree();
-  const lang = useMemo(() => {
-    return { lng: language };
-  }, [language]);
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const weather = useMemo(() => getWeather(city ?? 'Boston MA, USA'), [city]);
+  const lang = useLanguage();
+  const weather = useWeather(city);
   const now = new Date(world.date);
 
   const elevation = city ? weather?.elevation : 0;
@@ -1187,19 +1182,16 @@ const SolarPanelSimulation = React.memo(({ city }: SolarPanelSimulationProps) =>
   };
 
   const updateTemperature = (currentTime: Date) => {
-    if (city) {
-      const weather = getWeather(city);
-      if (weather) {
-        const t = computeOutsideTemperature(currentTime, weather.lowestTemperatures, weather.highestTemperatures);
-        currentTemperatureRef.current = getOutsideTemperatureAtMinute(
-          t.high,
-          t.low,
-          world.diurnalTemperatureModel,
-          highestTemperatureTimeInMinutes,
-          computeSunriseAndSunsetInMinutes(currentTime, world.latitude),
-          Util.minutesIntoDay(currentTime),
-        );
-      }
+    if (weather) {
+      const t = computeOutsideTemperature(currentTime, weather.lowestTemperatures, weather.highestTemperatures);
+      currentTemperatureRef.current = getOutsideTemperatureAtMinute(
+        t.high,
+        t.low,
+        world.diurnalTemperatureModel,
+        highestTemperatureTimeInMinutes,
+        computeSunriseAndSunsetInMinutes(currentTime, world.latitude),
+        Util.minutesIntoDay(currentTime),
+      );
     }
   };
 

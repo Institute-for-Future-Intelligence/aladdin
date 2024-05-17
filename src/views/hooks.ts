@@ -16,3 +16,9 @@ export const useLanguage = () => {
     return { lng: language };
   }, [language]);
 };
+
+export const useWeather = (city: string | null) => {
+  return useStore.getState().getWeather(city ?? 'Boston MA, USA');
+  // useMemo may cache undefined
+  // return useMemo(() => useStore.getState().getWeather(city ?? 'Boston MA, USA'), [city]);
+};

@@ -21,7 +21,7 @@ import BuildingEnergyGraph from '../components/buildingEnergyGraph';
 import { Util } from '../Util';
 import { checkBuilding, CheckStatus } from '../analysis/heatTools';
 import { useDataStore } from '../stores/commonData';
-import { useLanguage } from '../views/hooks';
+import { useLanguage, useWeather } from '../views/hooks';
 
 const Container = styled.div`
   position: fixed;
@@ -76,7 +76,6 @@ const DailyBuildingEnergyPanel = React.memo(({ city }: DailyBuildingEnergyPanelP
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
   const selectNone = useStore(Selector.selectNone);
-  const getWeather = useStore(Selector.getWeather);
   const now = new Date(useStore(Selector.world.date));
   const panelRect = useStore(Selector.viewState.dailyBuildingEnergyPanelRect);
   const flagOfDailySimulation = usePrimitiveStore(Selector.flagOfDailySimulation);
@@ -109,7 +108,7 @@ const DailyBuildingEnergyPanel = React.memo(({ city }: DailyBuildingEnergyPanelP
   const [labels, setLabels] = useState(['Heater', 'AC', 'Net']);
 
   const lang = useLanguage();
-  const weather = getWeather(city ?? 'Boston MA, USA');
+  const weather = useWeather(city);
   const tooltipHeaterBreakdown = useRef<string[]>([]);
   const tooltipAcBreakdown = useRef<string[]>([]);
   const tooltipSolarPanelBreakdown = useRef<string[]>([]);

@@ -18,6 +18,7 @@ import { ParabolicDishModel } from '../models/ParabolicDishModel';
 import { SunMinutes } from './SunMinutes';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
+import { useLanguage, useWeather } from '../views/hooks';
 
 export interface ParabolicDishSimulationProps {
   city: string | null;
@@ -27,10 +28,8 @@ const ParabolicDishSimulation = React.memo(({ city }: ParabolicDishSimulationPro
   const setCommonStore = useStore(Selector.set);
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const loggable = useStore(Selector.loggable);
-  const language = useStore(Selector.language);
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
-  const getWeather = useStore(Selector.getWeather);
   const getParent = useStore(Selector.getParent);
   const setDailyYield = useDataStore(Selector.setDailyParabolicDishYield);
   const updateDailyYield = useStore(Selector.updateSolarCollectorDailyYieldById);
@@ -46,12 +45,8 @@ const ParabolicDishSimulation = React.memo(({ city }: ParabolicDishSimulationPro
   const showDailyParabolicDishYieldPanel = useStore(Selector.viewState.showDailyParabolicDishYieldPanel);
 
   const { scene } = useThree();
-  const lang = useMemo(() => {
-    return { lng: language };
-  }, [language]);
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const weather = useMemo(() => getWeather(city ?? 'Boston MA, USA'), [city]);
+  const lang = useLanguage();
+  const weather = useWeather(city);
   const now = new Date(world.date);
 
   const elevation = city ? weather?.elevation : 0;

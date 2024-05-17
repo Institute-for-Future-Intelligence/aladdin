@@ -19,6 +19,7 @@ import { FoundationModel } from '../models/FoundationModel';
 import { SunMinutes } from './SunMinutes';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
+import { useLanguage, useWeather } from '../views/hooks';
 
 export interface HeliostatSimulationProps {
   city: string | null;
@@ -28,10 +29,8 @@ const HeliostatSimulation = React.memo(({ city }: HeliostatSimulationProps) => {
   const setCommonStore = useStore(Selector.set);
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const loggable = useStore(Selector.loggable);
-  const language = useStore(Selector.language);
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
-  const getWeather = useStore(Selector.getWeather);
   const getParent = useStore(Selector.getParent);
   const setDailyYield = useDataStore(Selector.setDailyHeliostatYield);
   const updateDailyYield = useStore(Selector.updateSolarCollectorDailyYieldById);
@@ -47,12 +46,8 @@ const HeliostatSimulation = React.memo(({ city }: HeliostatSimulationProps) => {
   const showDailyHeliostatYieldPanel = useStore(Selector.viewState.showDailyHeliostatYieldPanel);
 
   const { scene } = useThree();
-  const lang = useMemo(() => {
-    return { lng: language };
-  }, [language]);
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const weather = useMemo(() => getWeather(city ?? 'Boston MA, USA'), [city]);
+  const lang = useLanguage();
+  const weather = useWeather(city);
   const now = new Date(world.date);
 
   const elevation = city ? weather?.elevation : 0;

@@ -29,6 +29,7 @@ export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarP
   const sumSolarPanelMapRef = useRef<Map<string, number>>(new Map<string, number>());
 
   useEffect(() => {
+    if (!weather) return;
     // get the highest and lowest temperatures of the day from the weather data
     const outsideTemperatureRange = computeOutsideTemperature(
       now,
@@ -235,7 +236,7 @@ export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarP
       sum.push(datum);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [flagOfDailySimulation]);
+  }, [flagOfDailySimulation, weather]);
 
   return {
     sum,

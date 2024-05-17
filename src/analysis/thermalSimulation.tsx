@@ -48,6 +48,7 @@ import { PvModel } from '../models/PvModel';
 import { SunMinutes } from './SunMinutes';
 import { useDataStore } from '../stores/commonData';
 import { RoofUtil } from '../views/roof/RoofUtil';
+import { useLanguage, useWeather } from '../views/hooks';
 
 interface ThermalSimulationProps {
   city: string | null;
@@ -61,7 +62,6 @@ interface RoofSegmentResult {
 const ThermalSimulation = React.memo(({ city }: ThermalSimulationProps) => {
   const setCommonStore = useStore(Selector.set);
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
-  const getWeather = useStore(Selector.getWeather);
   const getFoundation = useStore(Selector.getFoundation);
   const getParent = useStore(Selector.getParent);
   const getChildrenOfType = useStore(Selector.getChildrenOfType);
@@ -72,8 +72,6 @@ const ThermalSimulation = React.memo(({ city }: ThermalSimulationProps) => {
   const setHourlyHeatExchangeArray = useDataStore(Selector.setHourlyHeatExchangeArray);
   const setHourlySolarHeatGainArray = useDataStore(Selector.setHourlySolarHeatGainArray);
   const setHourlySolarPanelOutputArray = useDataStore(Selector.setHourlySolarPanelOutputArray);
-
-  const language = useStore(Selector.language);
   const loggable = useStore(Selector.loggable);
   const runDailySimulation = usePrimitiveStore(Selector.runDailyThermalSimulation);
   const pauseDailySimulation = usePrimitiveStore(Selector.pauseDailyThermalSimulation);
@@ -105,12 +103,8 @@ const ThermalSimulation = React.memo(({ city }: ThermalSimulationProps) => {
   const scaleFactorRef = useRef<number>(0);
   const solarHeatmapRef = useRef<Map<string, number[][]>>(new Map<string, number[][]>());
 
-  const lang = useMemo(() => {
-    return { lng: language };
-  }, [language]);
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const weather = useMemo(() => getWeather(city ?? 'Boston MA, USA'), [city]);
+  const lang = useLanguage();
+  const weather = useWeather(city);
   const now = new Date(world.date);
 
   const elevation = city ? weather?.elevation : 0;

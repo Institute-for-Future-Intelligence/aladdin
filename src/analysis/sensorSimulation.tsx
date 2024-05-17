@@ -30,6 +30,7 @@ import { SunMinutes } from './SunMinutes';
 import { FoundationModel } from '../models/FoundationModel';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
+import { useLanguage, useWeather } from '../views/hooks';
 
 export interface SensorSimulationProps {
   city: string | null;
@@ -39,12 +40,10 @@ const SensorSimulation = React.memo(({ city }: SensorSimulationProps) => {
   const setCommonStore = useStore(Selector.set);
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const loggable = useStore(Selector.loggable);
-  const language = useStore(Selector.language);
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
   const getParent = useStore(Selector.getParent);
   const getFoundation = useStore(Selector.getFoundation);
-  const getWeather = useStore(Selector.getWeather);
   const getHorizontalSolarRadiation = useStore(Selector.getHorizontalSolarRadiation);
   const getVerticalSolarRadiation = useStore(Selector.getVerticalSolarRadiation);
   const setSensorLabels = useDataStore(Selector.setSensorLabels);
@@ -58,12 +57,8 @@ const SensorSimulation = React.memo(({ city }: SensorSimulationProps) => {
   const noAnimation = useStore(Selector.world.noAnimationForSensorDataCollection);
 
   const { scene } = useThree();
-  const lang = useMemo(() => {
-    return { lng: language };
-  }, [language]);
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const weather = useMemo(() => getWeather(city ?? 'Boston MA, USA'), [city]);
+  const lang = useLanguage();
+  const weather = useWeather(city);
   const now = new Date(world.date);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const measuredHorizontalRadiation = useMemo(() => getHorizontalSolarRadiation(city ?? 'Boston MA, USA'), [city]);

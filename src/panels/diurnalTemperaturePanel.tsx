@@ -23,7 +23,7 @@ import { Rectangle } from '../models/Rectangle';
 import { DEFAULT_FOUNDATION_SLAB_DEPTH, FLOATING_WINDOW_OPACITY, Z_INDEX_FRONT_PANEL } from '../constants';
 import { UndoableChange } from '../undo/UndoableChange';
 import { Undoable } from '../undo/Undoable';
-import { useLanguage } from '../views/hooks';
+import { useLanguage, useWeather } from '../views/hooks';
 
 const Container = styled.div`
   position: fixed;
@@ -76,13 +76,12 @@ const DiurnalTemperaturePanel = React.memo(({ city }: DiurnalTemperaturePanelPro
   const addUndoable = useStore(Selector.addUndoable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
-  const now = new Date(useStore(Selector.world.date));
+  const dateString = useStore(Selector.world.date);
   const latitude = useStore(Selector.world.latitude);
   const ground = useStore(Selector.world.ground);
   const diurnalTemperatureModel =
     useStore(Selector.world.diurnalTemperatureModel) ?? DiurnalTemperatureModel.Sinusoidal;
   const highestTemperatureTimeInMinutes = useStore(Selector.world.highestTemperatureTimeInMinutes) ?? 900;
-  const getWeather = useStore(Selector.getWeather);
   const panelRect = useStore(Selector.viewState.diurnalTemperaturePanelRect);
   const selectedFloatingWindow = useStore(Selector.selectedFloatingWindow);
 
@@ -99,7 +98,10 @@ const DiurnalTemperaturePanel = React.memo(({ city }: DiurnalTemperaturePanelPro
     y: panelRect ? Math.min(panelRect.y, window.innerHeight - hOffset) : 0,
   });
   const [selectedModel, setSelectedModel] = useState<DiurnalTemperatureModel>(diurnalTemperatureModel);
+
+  const now = new Date(dateString);
   const lang = useLanguage();
+  const weather = useWeather(city);
 
   useEffect(() => {
     setCurPosition({
@@ -147,50 +149,46 @@ const DiurnalTemperaturePanel = React.memo(({ city }: DiurnalTemperaturePanelPro
 
   const getData = useMemo(() => {
     const result = [];
-    if (city) {
-      const weather = getWeather(city);
-      if (weather) {
-        const sunMinutes = computeSunriseAndSunsetInMinutes(now, latitude);
-        for (let i = 0; i < 24; i++) {
-          now.setHours(i);
-          const t = computeOutsideTemperature(now, weather.lowestTemperatures, weather.highestTemperatures);
-          const m = Util.minutesIntoDay(now);
-          result.push({
-            Hour: i,
-            Sinusoidal: getOutsideTemperatureAtMinute(
-              t.high,
-              t.low,
-              DiurnalTemperatureModel.Sinusoidal,
-              highestTemperatureTimeInMinutes,
-              sunMinutes,
-              m,
-            ),
-            PartonLogan: getOutsideTemperatureAtMinute(
-              t.high,
-              t.low,
-              DiurnalTemperatureModel.PartonLogan,
-              highestTemperatureTimeInMinutes,
-              sunMinutes,
-              m,
-            ),
-            Ground: getGroundTemperatureAtMinute(
-              latitude,
-              Util.dayOfYear(now),
-              m,
-              weather.lowestTemperatures,
-              weather.highestTemperatures,
-              highestTemperatureTimeInMinutes,
-              0.5 * (t.high - t.low),
-              ground.thermalDiffusivity ?? 0.05,
-              DEFAULT_FOUNDATION_SLAB_DEPTH,
-            ),
-          });
-        }
+    if (weather) {
+      const sunMinutes = computeSunriseAndSunsetInMinutes(now, latitude);
+      for (let i = 0; i < 24; i++) {
+        now.setHours(i);
+        const t = computeOutsideTemperature(now, weather.lowestTemperatures, weather.highestTemperatures);
+        const m = Util.minutesIntoDay(now);
+        result.push({
+          Hour: i,
+          Sinusoidal: getOutsideTemperatureAtMinute(
+            t.high,
+            t.low,
+            DiurnalTemperatureModel.Sinusoidal,
+            highestTemperatureTimeInMinutes,
+            sunMinutes,
+            m,
+          ),
+          PartonLogan: getOutsideTemperatureAtMinute(
+            t.high,
+            t.low,
+            DiurnalTemperatureModel.PartonLogan,
+            highestTemperatureTimeInMinutes,
+            sunMinutes,
+            m,
+          ),
+          Ground: getGroundTemperatureAtMinute(
+            latitude,
+            Util.dayOfYear(now),
+            m,
+            weather.lowestTemperatures,
+            weather.highestTemperatures,
+            highestTemperatureTimeInMinutes,
+            0.5 * (t.high - t.low),
+            ground.thermalDiffusivity ?? 0.05,
+            DEFAULT_FOUNDATION_SLAB_DEPTH,
+          ),
+        });
       }
     }
     return result;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [city, highestTemperatureTimeInMinutes, diurnalTemperatureModel, now.getMonth(), now.getDate()]);
+  }, [weather, highestTemperatureTimeInMinutes, dateString, latitude, ground.thermalDiffusivity]);
 
   const onDrag: DraggableEventHandler = (e, ui) => {
     setCurPosition({
@@ -316,11 +314,11 @@ const DiurnalTemperaturePanel = React.memo(({ city }: DiurnalTemperaturePanelPro
           />
           <Space style={{ alignSelf: 'center' }}>
             <Space>{i18n.t('diurnalTemperaturePanel.SelectAirTemperatureModel', lang)}</Space>
-            <Radio.Group onChange={onChangeModel} value={selectedModel}>
-              <Radio style={{ width: '100%' }} value={DiurnalTemperatureModel.Sinusoidal}>
+            <Radio.Group onChange={onChangeModel} value={selectedModel} style={{ display: 'flex' }}>
+              <Radio style={{ width: 'auto' }} value={DiurnalTemperatureModel.Sinusoidal}>
                 {i18n.t('diurnalTemperaturePanel.Sinusoidal', lang)}
               </Radio>
-              <Radio style={{ width: '100%' }} value={DiurnalTemperatureModel.PartonLogan}>
+              <Radio style={{ width: 'auto' }} value={DiurnalTemperatureModel.PartonLogan}>
                 Parton-Logan
               </Radio>
             </Radio.Group>

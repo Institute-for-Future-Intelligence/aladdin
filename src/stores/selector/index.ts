@@ -580,11 +580,13 @@ export const showLikesPanel = (state: PrimitiveStoreState) => state.showLikesPan
 export const showPublishedModelsPanel = (state: PrimitiveStoreState) => state.showPublishedModelsPanel;
 
 // science
+export const weatherModel = (state: CommonStoreState) => state.weatherModel;
+
+export const setWeatherModel = (state: CommonStoreState) => state.setWeatherModel;
+
 export const weatherData = (state: CommonStoreState) => state.weatherData;
 
 export const loadWeatherData = (state: CommonStoreState) => state.loadWeatherData;
-
-export const getWeather = (state: CommonStoreState) => state.getWeather;
 
 export const loadHorizontalSolarRadiationData = (state: CommonStoreState) => state.loadHorizontalSolarRadiationData;
 

@@ -14,7 +14,7 @@ import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 import { Undoable } from '../undo/Undoable';
-import { useLanguage } from '../views/hooks';
+import { useLanguage, useWeather } from '../views/hooks';
 
 const Container = styled.div`
   position: fixed;
@@ -69,7 +69,6 @@ const WeatherPanel = React.memo(({ city, graphs }: WeatherPanelProps) => {
   const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
   const now = new Date(useStore(Selector.world.date));
-  const getWeather = useStore(Selector.getWeather);
   const panelRect = useStore(Selector.viewState.weatherPanelRect);
   const selectedFloatingWindow = useStore(Selector.selectedFloatingWindow);
 
@@ -86,6 +85,7 @@ const WeatherPanel = React.memo(({ city, graphs }: WeatherPanelProps) => {
     y: panelRect ? Math.min(panelRect.y, window.innerHeight - hOffset) : 0,
   });
   const lang = useLanguage();
+  const weather = useWeather(city);
 
   useEffect(() => {
     setCurPosition({
@@ -140,36 +140,32 @@ const WeatherPanel = React.memo(({ city, graphs }: WeatherPanelProps) => {
       return;
     }
     const result: any = {};
-    if (city) {
-      const weather = getWeather(city);
-      if (weather) {
-        graphs.forEach((g) => {
-          result[g] = [];
-          switch (g) {
-            case GraphDataType.MonthlyTemperatures:
-              for (let i = 0; i < 12; i++) {
-                result[g].push({
-                  Month: MONTHS_ABBV[i],
-                  Low: weather.lowestTemperatures[i],
-                  High: weather.highestTemperatures[i],
-                });
-              }
-              break;
-            case GraphDataType.SunshineHours:
-              for (let i = 0; i < 12; i++) {
-                result[g].push({
-                  Month: MONTHS_ABBV[i],
-                  Sunshine: weather.sunshineHours[i],
-                });
-              }
-              break;
-          }
-        });
-      }
+    if (weather) {
+      graphs.forEach((g) => {
+        result[g] = [];
+        switch (g) {
+          case GraphDataType.MonthlyTemperatures:
+            for (let i = 0; i < 12; i++) {
+              result[g].push({
+                Month: MONTHS_ABBV[i],
+                Low: weather.lowestTemperatures[i],
+                High: weather.highestTemperatures[i],
+              });
+            }
+            break;
+          case GraphDataType.SunshineHours:
+            for (let i = 0; i < 12; i++) {
+              result[g].push({
+                Month: MONTHS_ABBV[i],
+                Sunshine: weather.sunshineHours[i],
+              });
+            }
+            break;
+        }
+      });
     }
     return result;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [graphs, city]);
+  }, [graphs, weather]);
 
   const yNames = [
     'NA',

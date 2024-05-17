@@ -41,6 +41,7 @@ import { DoorModel, DoorType } from '../models/DoorModel';
 import { SolarRadiation } from './SolarRadiation';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
+import { useLanguage, useWeather } from '../views/hooks';
 
 export interface DynamicSolarRadiationSimulationProps {
   city: string | null;
@@ -49,10 +50,8 @@ export interface DynamicSolarRadiationSimulationProps {
 const DynamicSolarRadiationSimulation = React.memo(({ city }: DynamicSolarRadiationSimulationProps) => {
   const setCommonStore = useStore(Selector.set);
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
-  const language = useStore(Selector.language);
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
-  const getWeather = useStore(Selector.getWeather);
   const getParent = useStore(Selector.getParent);
   const getFoundation = useStore(Selector.getFoundation);
   const setHeatmap = useDataStore(Selector.setHeatmap);
@@ -63,12 +62,8 @@ const DynamicSolarRadiationSimulation = React.memo(({ city }: DynamicSolarRadiat
   const getRoofSegmentVertices = useDataStore(Selector.getRoofSegmentVertices);
 
   const { scene } = useThree();
-  const lang = useMemo(() => {
-    return { lng: language };
-  }, [language]);
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const weather = useMemo(() => getWeather(city ?? 'Boston MA, USA'), [city]);
+  const lang = useLanguage();
+  const weather = useWeather(city);
   const now = new Date(world.date);
 
   const elevation = city ? weather?.elevation : 0;
