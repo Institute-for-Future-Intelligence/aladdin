@@ -167,11 +167,17 @@ const SolarPanelOnCuboid = (solarPanelModel: SolarPanelModel) => {
       useRefStore.getState().setEnableOrbitController(true);
       pointerDown.current = false;
       setShowTiltAngle(false);
-      setCommonStore((state) => {
-        state.rotateHandleType = null;
-        state.moveHandleType = null;
-        state.resizeHandleType = null;
-      });
+      if (
+        useStore.getState().rotateHandleType ||
+        useStore.getState().moveHandleType ||
+        useStore.getState().resizeHandleType
+      ) {
+        setCommonStore((state) => {
+          state.rotateHandleType = null;
+          state.moveHandleType = null;
+          state.resizeHandleType = null;
+        });
+      }
     };
     window.addEventListener('pointerup', handlePointerUp);
     return () => {
