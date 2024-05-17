@@ -4465,6 +4465,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
 
           weatherData: {},
           loadWeatherData() {
+            if (Object.keys(get().weatherData).length > 0) return;
             const data: WeatherModel[] = [];
             Papa.parse(weather, {
               download: true,
