@@ -83,6 +83,7 @@ const MapPanel = React.memo(() => {
   const mapPanelX = useStore(Selector.viewState.mapPanelX);
   const mapPanelY = useStore(Selector.viewState.mapPanelY);
   const groundImage = useStore(Selector.viewState.groundImage);
+  const hideAddress = useStore(Selector.viewState.hideAddress);
   const mapZoom = useStore(Selector.viewState.mapZoom);
   const selectedFloatingWindow = useStore(Selector.selectedFloatingWindow);
 
@@ -251,7 +252,7 @@ const MapPanel = React.memo(() => {
           <Space direction={'vertical'}>
             <Space style={{ paddingTop: '10px' }} align={'center'} size={20}>
               <Space direction={'horizontal'}>
-                <Space>{i18n.t('mapPanel.ImageOnGround', lang) + ':'}</Space>
+                <Space style={{ fontSize: '12px' }}>{i18n.t('mapPanel.ImageOnGround', lang) + ':'}</Space>
                 <Switch
                   title={'Show ground image'}
                   checked={groundImage}
@@ -274,6 +275,32 @@ const MapPanel = React.memo(() => {
                     addUndoable(undoableCheck);
                     setCommonStore((state) => {
                       state.viewState.groundImage = checked;
+                    });
+                  }}
+                />
+                <Space style={{ fontSize: '12px' }}>{i18n.t('mapPanel.HideAddress', lang) + ':'}</Space>
+                <Switch
+                  title={'Hide address'}
+                  checked={hideAddress}
+                  onChange={(checked) => {
+                    const undoableCheck = {
+                      name: 'Hide Address',
+                      timestamp: Date.now(),
+                      checked: checked,
+                      undo: () => {
+                        setCommonStore((state) => {
+                          state.viewState.hideAddress = !undoableCheck.checked;
+                        });
+                      },
+                      redo: () => {
+                        setCommonStore((state) => {
+                          state.viewState.hideAddress = undoableCheck.checked;
+                        });
+                      },
+                    } as UndoableCheck;
+                    addUndoable(undoableCheck);
+                    setCommonStore((state) => {
+                      state.viewState.hideAddress = checked;
                     });
                   }}
                 />

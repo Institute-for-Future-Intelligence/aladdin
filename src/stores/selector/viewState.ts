@@ -41,6 +41,8 @@ export const showZenithAngle = (state: CommonStoreState) => state.viewState.show
 
 export const autoRotate = (state: CommonStoreState) => state.viewState.autoRotate;
 
+export const hideAddress = (state: CommonStoreState) => state.viewState.hideAddress;
+
 export const groundImage = (state: CommonStoreState) => state.viewState.groundImage;
 
 export const groundImageType = (state: CommonStoreState) => state.viewState.groundImageType;

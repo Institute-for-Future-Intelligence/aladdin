@@ -1370,6 +1370,7 @@ export const i18n_zh_cn = {
 
     mapPanel: {
       ImageOnGround: '地面显示图像',
+      HideAddress: '隐藏地址',
       WeatherStations: '气象站',
       WeatherStationsNote: '关闭此选项以提高地图速度',
       Coordinates: '经纬度坐标',

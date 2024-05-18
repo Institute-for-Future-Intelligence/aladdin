@@ -1371,6 +1371,7 @@ export const i18n_zh_tw = {
 
     mapPanel: {
       ImageOnGround: '地面顯示圖像',
+      HideAddress: '隱藏地址',
       WeatherStations: '氣象站',
       WeatherStationsNote: '關閉此選項以提高地圖速度',
       Coordinates: '經緯度坐標',

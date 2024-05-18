@@ -45,6 +45,7 @@ export class DefaultViewState implements ViewState {
   showAzimuthAngle: boolean;
   showElevationAngle: boolean;
   showZenithAngle: boolean;
+  hideAddress: boolean;
   groundImage: boolean;
   groundImageType: string;
   groundColor: string;
@@ -140,6 +141,7 @@ export class DefaultViewState implements ViewState {
     this.showAzimuthAngle = true;
     this.showElevationAngle = true;
     this.showZenithAngle = true;
+    this.hideAddress = false;
     this.groundImage = false;
     this.groundImageType = 'roadmap';
     this.groundColor = '#16A5A5';
@@ -236,6 +238,7 @@ export class DefaultViewState implements ViewState {
     viewState.showAzimuthAngle = true;
     viewState.showElevationAngle = true;
     viewState.showZenithAngle = true;
+    viewState.hideAddress = false;
     viewState.groundImage = false;
     viewState.groundImageType = 'roadmap';
     viewState.groundColor = '#16A5A5';

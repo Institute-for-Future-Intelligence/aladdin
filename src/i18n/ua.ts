@@ -1397,6 +1397,7 @@ export const i18n_ua = {
 
     mapPanel: {
       ImageOnGround: 'Зображення на землі',
+      HideAddress: 'Hide Address',
       WeatherStations: 'Метеостанції',
       WeatherStationsNote: 'Вимкніть це, щоб прискорити',
       Coordinates: 'Координати',

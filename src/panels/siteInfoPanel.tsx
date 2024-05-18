@@ -63,6 +63,7 @@ const SiteInfoPanel = React.memo(() => {
   const sunlightDirection = useStore(Selector.sunlightDirection);
   const highestTemperatureTimeInMinutes = useStore(Selector.world.highestTemperatureTimeInMinutes) ?? 900;
   const projectView = useStore(Selector.projectView);
+  const hideAddress = useStore(Selector.viewState.hideAddress);
 
   const [dailyTemperatures, setDailyTemperatures] = useState({ low: 0, high: 20 });
   const [currentTemperature, setCurrentTemperature] = useState<number>(10);
@@ -112,7 +113,7 @@ const SiteInfoPanel = React.memo(() => {
               verticalAlign: 'middle',
             }}
           />
-          {(address ?? '') +
+          {(hideAddress ? '' : address ?? '') +
             ' (' +
             Math.abs(latitude).toFixed(2) +
             '°' +

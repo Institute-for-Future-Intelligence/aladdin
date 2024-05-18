@@ -1396,6 +1396,7 @@ export const i18n_tr = {
 
     mapPanel: {
       ImageOnGround: 'Yüzey Görünümü',
+      HideAddress: 'Hide Address',
       WeatherStations: 'Referans',
       WeatherStationsNote: 'Turn this off to speed up',
       Coordinates: 'Koordinatlar',

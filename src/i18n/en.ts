@@ -1395,6 +1395,7 @@ export const i18n_en = {
 
     mapPanel: {
       ImageOnGround: 'Image on Ground',
+      HideAddress: 'Hide Address',
       WeatherStations: 'Weather Stations',
       WeatherStationsNote: 'Turn this off to speed up',
       Coordinates: 'Coordinates',

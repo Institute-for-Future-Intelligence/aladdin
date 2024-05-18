@@ -33,6 +33,7 @@ export interface ViewState {
   showAzimuthAngle: boolean;
   showElevationAngle: boolean;
   showZenithAngle: boolean;
+  hideAddress: boolean;
   groundImage: boolean;
   groundImageType: string;
   groundColor: string;
