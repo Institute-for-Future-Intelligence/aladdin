@@ -21,74 +21,76 @@ export interface LineGraphMenuProps {
   changeSymbolSize?: (count: number) => void;
 }
 
-const LineGraphMenu = ({
-  horizontalGrid,
-  verticalGrid,
-  lineCount,
-  lineWidth,
-  symbolSize,
-  changeHorizontalGrid,
-  changeVerticalGrid,
-  changeLineWidth,
-  changeSymbolSize,
-}: LineGraphMenuProps) => {
-  const lang = useLanguage();
-  const [hover, setHover] = useState<boolean>(false);
+const LineGraphMenu = React.memo(
+  ({
+    horizontalGrid,
+    verticalGrid,
+    lineCount,
+    lineWidth,
+    symbolSize,
+    changeHorizontalGrid,
+    changeVerticalGrid,
+    changeLineWidth,
+    changeSymbolSize,
+  }: LineGraphMenuProps) => {
+    const lang = useLanguage();
+    const [hover, setHover] = useState<boolean>(false);
 
-  const onShowHorizontalGridLines = () => {
-    changeHorizontalGrid?.(!horizontalGrid);
-  };
+    const onShowHorizontalGridLines = () => {
+      changeHorizontalGrid?.(!horizontalGrid);
+    };
 
-  const onShowVerticalGridLines = () => {
-    changeVerticalGrid?.(!verticalGrid);
-  };
+    const onShowVerticalGridLines = () => {
+      changeVerticalGrid?.(!verticalGrid);
+    };
 
-  const onChangeLineWidth = (value: number) => {
-    changeLineWidth?.(value / 2);
-  };
+    const onChangeLineWidth = (value: number) => {
+      changeLineWidth?.(value / 2);
+    };
 
-  const onChangeSymbolSize = (size: number) => {
-    changeSymbolSize?.(size / 5);
-  };
+    const onChangeSymbolSize = (size: number) => {
+      changeSymbolSize?.(size / 5);
+    };
 
-  return (
-    <Popover
-      content={
-        <div style={{ width: '200px' }}>
-          <SliderMenuItem min={0} max={10} value={lineWidth * 2} onChange={onChangeLineWidth}>
-            {i18n.t('menu.graph.LineWidth', lang) + ':'}
-          </SliderMenuItem>
-          <SliderMenuItem min={2} max={12} value={symbolSize * 5} onChange={onChangeSymbolSize}>
-            {i18n.t('menu.graph.SymbolSize', lang) + ':'}
-          </SliderMenuItem>
-          <CheckboxMenuItem checked={horizontalGrid} onClick={onShowHorizontalGridLines}>
-            {i18n.t('menu.graph.ShowHorizontalGridLines', lang)}
-          </CheckboxMenuItem>
-          <CheckboxMenuItem checked={verticalGrid} onClick={onShowVerticalGridLines}>
-            {i18n.t('menu.graph.ShowHorizontalGridLines', lang)}
-          </CheckboxMenuItem>
-        </div>
-      }
-    >
-      <BarsOutlined
-        style={{
-          position: 'absolute',
-          fontSize: '30px',
-          top: '4px',
-          right: '30px',
-          transition: '0.5s',
-          color: hover ? 'darkgray' : 'lightblue',
-          cursor: 'pointer',
-        }}
-        onMouseOver={() => {
-          setHover(true);
-        }}
-        onMouseOut={() => {
-          setHover(false);
-        }}
-      />
-    </Popover>
-  );
-};
+    return (
+      <Popover
+        content={
+          <div style={{ width: '200px' }}>
+            <SliderMenuItem min={0} max={10} value={lineWidth * 2} onChange={onChangeLineWidth}>
+              {i18n.t('menu.graph.LineWidth', lang) + ':'}
+            </SliderMenuItem>
+            <SliderMenuItem min={2} max={12} value={symbolSize * 5} onChange={onChangeSymbolSize}>
+              {i18n.t('menu.graph.SymbolSize', lang) + ':'}
+            </SliderMenuItem>
+            <CheckboxMenuItem checked={horizontalGrid} onClick={onShowHorizontalGridLines}>
+              {i18n.t('menu.graph.ShowHorizontalGridLines', lang)}
+            </CheckboxMenuItem>
+            <CheckboxMenuItem checked={verticalGrid} onClick={onShowVerticalGridLines}>
+              {i18n.t('menu.graph.ShowHorizontalGridLines', lang)}
+            </CheckboxMenuItem>
+          </div>
+        }
+      >
+        <BarsOutlined
+          style={{
+            position: 'absolute',
+            fontSize: '30px',
+            top: '4px',
+            right: '30px',
+            transition: '0.5s',
+            color: hover ? 'darkgray' : 'lightblue',
+            cursor: 'pointer',
+          }}
+          onMouseOver={() => {
+            setHover(true);
+          }}
+          onMouseOut={() => {
+            setHover(false);
+          }}
+        />
+      </Popover>
+    );
+  },
+);
 
 export default LineGraphMenu;

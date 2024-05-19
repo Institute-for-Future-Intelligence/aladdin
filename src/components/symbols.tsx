@@ -4,19 +4,7 @@
 
 import React from 'react';
 
-export const SYMBOLS = [
-  'circle',
-  'square',
-  'triangle up',
-  'triangle down',
-  'triangle right',
-  'triangle left',
-  'star',
-  'diamond',
-  'hexagon',
-];
-
-export enum Direction {
+enum Direction {
   DOWN,
   UP,
   LEFT,

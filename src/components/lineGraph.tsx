@@ -17,11 +17,12 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import { createSymbol, SYMBOLS } from './symbols';
+import { createSymbol } from './symbols';
 import { PRESET_COLORS } from '../constants';
 import { ChartType, DatumEntry, GraphDataType } from '../types';
 import { CurveType } from 'recharts/types/shape/Curve';
 import LineGraphMenu from './lineGraphMenu';
+import { SYMBOLS } from './symbolConstants';
 
 export interface LineGraphProps {
   type: GraphDataType;
@@ -203,16 +204,14 @@ const LineGraph = ({
     return representations;
   }, [type, chartType, selectedIndex, curveType, labels, lineCount, lineWidth, symbolCount, symbolSize, legendDataKey]);
 
-  // @ts-ignore
-  const onMouseDown = (e) => {};
+  const onMouseDown = () => {};
 
-  // @ts-ignore
+  // @ts-expect-error ignore
   const onMouseEnterLegend = (o) => {
     setLegendDataKey(o.dataKey);
   };
 
-  // @ts-ignore
-  const onMouseLeaveLegend = (o) => {
+  const onMouseLeaveLegend = () => {
     setLegendDataKey(null);
   };
 

@@ -16,11 +16,12 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import { createSymbol, SYMBOLS } from './symbols';
+import { createSymbol } from './symbols';
 import { DatumEntry, GraphDataType } from '../types';
 import { CurveType } from 'recharts/types/shape/Curve';
 import BuildingEnergyGraphMenu from './buildingEnergyGraphMenu';
 import { PRESET_COLORS } from '../constants';
+import { SYMBOLS } from './symbolConstants';
 
 export interface BuildingEnergyGraphProps {
   type: GraphDataType;
@@ -146,7 +147,7 @@ const BuildingEnergyGraph = ({
     }
     const m = n - 1;
     for (let i = 0; i < buildingCount; i++) {
-      let name = buildingCount > 1 ? labels[i * n + m] : buildingId ? 'Net ' + buildingId : 'Net';
+      const name = buildingCount > 1 ? labels[i * n + m] : buildingId ? 'Net ' + buildingId : 'Net';
       const opacity = legendDataKey === null ? 1 : legendDataKey === name ? 1 : 0.25;
       const symbol = createSymbol(SYMBOLS[i], symbolSize, dataSource.length, symbolCount, opacity);
       if (i === 0) defaultSymbol = symbol;
@@ -167,15 +168,13 @@ const BuildingEnergyGraph = ({
     return representations;
   }, [type, curveType, labels, buildingCount, buildingId, lineWidth, symbolCount, symbolSize, legendDataKey]);
 
-  // @ts-ignore
   const onMouseDown = () => {};
 
-  // @ts-ignore
+  // @ts-expect-error ignore
   const onMouseEnterLegend = (o) => {
     setLegendDataKey(o.dataKey);
   };
 
-  // @ts-ignore
   const onMouseLeaveLegend = () => {
     setLegendDataKey(null);
   };

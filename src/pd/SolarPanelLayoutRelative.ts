@@ -138,8 +138,8 @@ export class SolarPanelLayoutRelative {
     margin: number,
   ) {
     const shorter = Math.abs(p1.y - q1.y) < Math.abs(p2.y - q2.y);
-    let y1 = shorter ? p1.y : p2.y;
-    let y2 = shorter ? q1.y : q2.y;
+    const y1 = shorter ? p1.y : p2.y;
+    const y2 = shorter ? q1.y : q2.y;
     const lx = Math.abs(y1 - y2) - (2 * margin) / base.ly;
     if (lx > 0) {
       return ElementModelFactory.makeSolarPanel(

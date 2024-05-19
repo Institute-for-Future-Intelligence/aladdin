@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React from 'react';
@@ -20,46 +20,48 @@ export interface RotateHandleProps {
   noHoverHandle: () => void;
 }
 
-const RotateHandle = ({ id, position, ratio, handleType, hoverHandle, noHoverHandle }: RotateHandleProps) => {
-  const selectMe = useStore(Selector.selectMe);
+const RotateHandle = React.memo(
+  ({ id, position, ratio, handleType, hoverHandle, noHoverHandle }: RotateHandleProps) => {
+    const selectMe = useStore(Selector.selectMe);
 
-  const rotateHandleType = useStore(Selector.rotateHandleType);
-  const hoveredHandle = useStore(Selector.hoveredHandle);
+    const rotateHandleType = useStore(Selector.rotateHandleType);
+    const hoveredHandle = useStore(Selector.hoveredHandle);
 
-  const color =
-    hoveredHandle === handleType || rotateHandleType === handleType ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR;
+    const color =
+      hoveredHandle === handleType || rotateHandleType === handleType ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR;
 
-  const rotationHandleLMesh = <meshBasicMaterial color={color} />;
+    const rotationHandleLMesh = <meshBasicMaterial color={color} />;
 
-  return (
-    <group position={position} rotation={[HALF_PI, 0, 0]} scale={ratio} name={handleType}>
-      <group>
-        <Torus args={[0.15, 0.05, 6, 8, (3 / 2) * Math.PI]} rotation={[HALF_PI, 0, HALF_PI]}>
-          {rotationHandleLMesh}
-        </Torus>
-        <Cone args={[0.1, 0.1, 6]} rotation={[HALF_PI, 0, 0]} position={[0.15, 0, 0.05]}>
-          {rotationHandleLMesh}
-        </Cone>
-        <Circle args={[0.05, 6]} rotation={[0, HALF_PI, 0]} position={[0, 0, 0.15]}>
-          {rotationHandleLMesh}
-        </Circle>
+    return (
+      <group position={position} rotation={[HALF_PI, 0, 0]} scale={ratio} name={handleType}>
+        <group>
+          <Torus args={[0.15, 0.05, 6, 8, (3 / 2) * Math.PI]} rotation={[HALF_PI, 0, HALF_PI]}>
+            {rotationHandleLMesh}
+          </Torus>
+          <Cone args={[0.1, 0.1, 6]} rotation={[HALF_PI, 0, 0]} position={[0.15, 0, 0.05]}>
+            {rotationHandleLMesh}
+          </Cone>
+          <Circle args={[0.05, 6]} rotation={[0, HALF_PI, 0]} position={[0, 0, 0.15]}>
+            {rotationHandleLMesh}
+          </Circle>
+        </group>
+        <Plane
+          name={handleType}
+          args={[0.35, 0.35]}
+          position={[0, 0.05, 0]}
+          rotation={[-HALF_PI, 0, 0]}
+          visible={false}
+          onPointerDown={(e) => {
+            selectMe(id, e, ActionType.Rotate);
+          }}
+          onPointerOver={(e) => {
+            hoverHandle(e, handleType);
+          }}
+          onPointerOut={noHoverHandle}
+        />
       </group>
-      <Plane
-        name={handleType}
-        args={[0.35, 0.35]}
-        position={[0, 0.05, 0]}
-        rotation={[-HALF_PI, 0, 0]}
-        visible={false}
-        onPointerDown={(e) => {
-          selectMe(id, e, ActionType.Rotate);
-        }}
-        onPointerOver={(e) => {
-          hoverHandle(e, handleType);
-        }}
-        onPointerOut={noHoverHandle}
-      />
-    </group>
-  );
-};
+    );
+  },
+);
 
-export default React.memo(RotateHandle);
+export default RotateHandle;

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  *
  * Not sure why I wanted wireframe to be treated differently in a previous version
  * when there is a ground image.
@@ -16,7 +16,7 @@ export interface WireframeProps {
   lineWidth?: number;
 }
 
-const Wireframe = ({ hx, hy, hz, lineColor = 'black', lineWidth = 0.2 }: WireframeProps) => {
+const Wireframe = React.memo(({ hx, hy, hz, lineColor = 'black', lineWidth = 0.2 }: WireframeProps) => {
   return (
     <Line
       points={[
@@ -46,6 +46,6 @@ const Wireframe = ({ hx, hy, hz, lineColor = 'black', lineWidth = 0.2 }: Wirefra
       color={lineColor}
     />
   );
-};
+});
 
-export default React.memo(Wireframe);
+export default Wireframe;

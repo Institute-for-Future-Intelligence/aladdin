@@ -18,64 +18,66 @@ export interface ScatterPlotMenuProps {
   changeSymbolSize?: (count: number) => void;
 }
 
-const ScatterPlotMenu = ({
-  horizontalGrid,
-  verticalGrid,
-  symbolSize,
-  changeHorizontalGrid,
-  changeVerticalGrid,
-  changeSymbolSize,
-}: ScatterPlotMenuProps) => {
-  const lang = useLanguage();
-  const [hover, setHover] = useState<boolean>(false);
+const ScatterPlotMenu = React.memo(
+  ({
+    horizontalGrid,
+    verticalGrid,
+    symbolSize,
+    changeHorizontalGrid,
+    changeVerticalGrid,
+    changeSymbolSize,
+  }: ScatterPlotMenuProps) => {
+    const lang = useLanguage();
+    const [hover, setHover] = useState<boolean>(false);
 
-  const onShowHorizontalGridLines = () => {
-    changeHorizontalGrid?.(!horizontalGrid);
-  };
+    const onShowHorizontalGridLines = () => {
+      changeHorizontalGrid?.(!horizontalGrid);
+    };
 
-  const onShowVerticalGridLines = () => {
-    changeVerticalGrid?.(!verticalGrid);
-  };
+    const onShowVerticalGridLines = () => {
+      changeVerticalGrid?.(!verticalGrid);
+    };
 
-  const onChangeSymbolSize = (size: number) => {
-    changeSymbolSize?.(size);
-  };
+    const onChangeSymbolSize = (size: number) => {
+      changeSymbolSize?.(size);
+    };
 
-  return (
-    <Popover
-      content={
-        <div style={{ width: '200px' }}>
-          <SliderMenuItem min={1} max={8} value={symbolSize} onChange={onChangeSymbolSize}>
-            {i18n.t('menu.graph.SymbolSize', lang) + ':'}
-          </SliderMenuItem>
-          <CheckboxMenuItem checked={horizontalGrid} onClick={onShowHorizontalGridLines}>
-            {i18n.t('menu.graph.ShowHorizontalGridLines', lang)}
-          </CheckboxMenuItem>
-          <CheckboxMenuItem checked={verticalGrid} onClick={onShowVerticalGridLines}>
-            {i18n.t('menu.graph.ShowHorizontalGridLines', lang)}
-          </CheckboxMenuItem>
-        </div>
-      }
-    >
-      <MoreOutlined
-        style={{
-          position: 'absolute',
-          fontSize: '20px',
-          top: '10px',
-          right: '10px',
-          transition: '0.5s',
-          color: hover ? 'black' : 'darkgray',
-          cursor: 'pointer',
-        }}
-        onMouseOver={() => {
-          setHover(true);
-        }}
-        onMouseOut={() => {
-          setHover(false);
-        }}
-      />
-    </Popover>
-  );
-};
+    return (
+      <Popover
+        content={
+          <div style={{ width: '200px' }}>
+            <SliderMenuItem min={1} max={8} value={symbolSize} onChange={onChangeSymbolSize}>
+              {i18n.t('menu.graph.SymbolSize', lang) + ':'}
+            </SliderMenuItem>
+            <CheckboxMenuItem checked={horizontalGrid} onClick={onShowHorizontalGridLines}>
+              {i18n.t('menu.graph.ShowHorizontalGridLines', lang)}
+            </CheckboxMenuItem>
+            <CheckboxMenuItem checked={verticalGrid} onClick={onShowVerticalGridLines}>
+              {i18n.t('menu.graph.ShowHorizontalGridLines', lang)}
+            </CheckboxMenuItem>
+          </div>
+        }
+      >
+        <MoreOutlined
+          style={{
+            position: 'absolute',
+            fontSize: '20px',
+            top: '10px',
+            right: '10px',
+            transition: '0.5s',
+            color: hover ? 'black' : 'darkgray',
+            cursor: 'pointer',
+          }}
+          onMouseOver={() => {
+            setHover(true);
+          }}
+          onMouseOut={() => {
+            setHover(false);
+          }}
+        />
+      </Popover>
+    );
+  },
+);
 
 export default ScatterPlotMenu;

@@ -1,9 +1,9 @@
 /*
  * @Copyright 2023-2024. Institute for Future Intelligence, Inc.
  */
+
 import React, { useCallback, useEffect, useRef } from 'react';
 import { throttle } from 'lodash';
-import { useRefStore } from '../stores/commonRef';
 
 interface SplitPaneProps {
   showGallery: boolean;
@@ -47,7 +47,7 @@ const SplitPane = React.memo(
 
     useEffect(() => {
       updateCSSPercentWidth(defaultSize);
-    }, []);
+    }, [defaultSize]);
 
     useEffect(() => {
       const handlePointerUp = () => {
@@ -63,7 +63,7 @@ const SplitPane = React.memo(
       } else {
         updateCSSPercentWidth(defaultSize);
       }
-    }, [showGallery]);
+    }, [showGallery, defaultSize]);
 
     return (
       <div className="split-pane" onPointerMove={handlePointerMove}>

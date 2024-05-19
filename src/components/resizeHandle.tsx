@@ -1,10 +1,10 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import { Box } from '@react-three/drei';
 import { ThreeEvent } from '@react-three/fiber';
-import { useRef } from 'react';
+import React, { useRef } from 'react';
 import { HIGHLIGHT_HANDLE_COLOR, RESIZE_HANDLE_COLOR } from 'src/constants';
 import { useStore } from 'src/stores/common';
 import { useRefStore } from 'src/stores/commonRef';
@@ -20,7 +20,7 @@ interface ResizeHandleProps {
   onPointerOut: () => void;
 }
 
-const ResizeHandle = ({ handleType, position, size, onPointerOver, onPointerOut }: ResizeHandleProps) => {
+const ResizeHandle = React.memo(({ handleType, position, size, onPointerOver, onPointerOut }: ResizeHandleProps) => {
   const resizeHandleType = useStore(Selector.resizeHandleType);
   const hoveredHandle = useStore(Selector.hoveredHandle);
 
@@ -56,6 +56,6 @@ const ResizeHandle = ({ handleType, position, size, onPointerOver, onPointerOut 
       <meshBasicMaterial color={color} />
     </Box>
   );
-};
+});
 
 export default ResizeHandle;

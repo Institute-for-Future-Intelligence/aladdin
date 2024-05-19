@@ -15,13 +15,14 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import { createSymbol, SYMBOLS } from './symbols';
+import { createSymbol } from './symbols';
 import { PRESET_COLORS } from '../constants';
 import { DatumEntry } from '../types';
 import { CurveType } from 'recharts/types/shape/Curve';
 import { Util } from '../Util';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
+import { SYMBOLS } from './symbolConstants';
 
 export interface GaBiaxialLineGraphProps {
   dataSource: DatumEntry[];
@@ -159,15 +160,13 @@ const EvolutionBiaxialLineGraph = ({
     return lines;
   }, [dataSource, curveType, lineWidth, symbolSize, legendDataKey]);
 
-  // @ts-ignore
   const onMouseDown = () => {};
 
-  // @ts-ignore
+  // @ts-expect-error ignore
   const onMouseEnterLegend = (o) => {
     setLegendDataKey(o.id);
   };
 
-  // @ts-ignore
   const onMouseLeaveLegend = () => {
     setLegendDataKey(null);
   };

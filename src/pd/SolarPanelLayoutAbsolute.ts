@@ -65,7 +65,7 @@ export class SolarPanelLayoutAbsolute {
             const y2 = shorter ? g1.y : g2.y;
             const lx = Math.hypot(x1 - x2, y1 - y2) - 2 * margin;
             if (lx > 0) {
-              let cp = Util.relativeCoordinates((x1 + x2) / 2, cy, 0, base);
+              const cp = Util.relativeCoordinates((x1 + x2) / 2, cy, 0, base);
               const panel = ElementModelFactory.makeSolarPanel(
                 base,
                 pvModel,
@@ -117,7 +117,7 @@ export class SolarPanelLayoutAbsolute {
             const y2 = shorter ? g1.y : g2.y;
             const lx = Math.hypot(x1 - x2, y1 - y2) - 2 * margin;
             if (lx > 0) {
-              let cp = Util.relativeCoordinates(cx, (y1 + y2) / 2, 0, base);
+              const cp = Util.relativeCoordinates(cx, (y1 + y2) / 2, 0, base);
               const panel = ElementModelFactory.makeSolarPanel(
                 base,
                 pvModel,

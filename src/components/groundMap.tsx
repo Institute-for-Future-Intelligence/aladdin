@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useCallback, useState } from 'react';
@@ -11,7 +11,7 @@ import { UndoableChangeLocation } from '../undo/UndoableChangeLocation';
 import { throttle } from 'lodash';
 import { turnOffVisualization } from '../panels/panelUtils';
 
-const GroundMap = ({ width = 400, height = 400 }: { width: number; height: number }) => {
+const GroundMap = React.memo(({ width = 400, height = 400 }: { width: number; height: number }) => {
   const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
   const latitude = useStore(Selector.world.latitude);
@@ -214,6 +214,6 @@ const GroundMap = ({ width = 400, height = 400 }: { width: number; height: numbe
       onMapTypeIdChanged={onMapTypeIdChanged}
     />
   );
-};
+});
 
-export default React.memo(GroundMap);
+export default GroundMap;
