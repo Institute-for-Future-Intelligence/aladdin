@@ -164,7 +164,6 @@ const Compass = React.memo(({ visible = true }: { visible: boolean }) => {
     ctx.restore();
   }, [lang, visible]);
 
-  console.log('vis', visible);
   if (!visible) return null;
 
   return (
