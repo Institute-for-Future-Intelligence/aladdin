@@ -1,7 +1,8 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
+import React from 'react';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { CommonStoreState, useStore } from 'src/stores/common';
 import { MenuItem } from '../contextMenu/menuItems';
@@ -17,7 +18,7 @@ interface MainMenuCheckboxProps {
   children?: React.ReactNode;
 }
 
-interface MainMenuSwtichProps {
+interface MainMenuSwitchProps {
   selector: (state: CommonStoreState) => CommonStoreState[keyof CommonStoreState];
   onChange: (e: boolean) => void;
   children?: React.ReactNode;
@@ -38,7 +39,7 @@ export const MainMenuCheckbox = ({ selector, onChange, children }: MainMenuCheck
   );
 };
 
-export const MainMenuSwicth = ({ selector, onChange, children }: MainMenuSwtichProps) => {
+export const MainMenuSwitch = ({ selector, onChange, children }: MainMenuSwitchProps) => {
   const checked = useStore(selector);
   return (
     <MenuItem noPadding stayAfterClick>

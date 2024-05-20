@@ -9,45 +9,9 @@ import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
 import { HOME_URL } from 'src/constants';
 import i18n from 'src/i18n/i18n';
-import { saveImage, showInfo } from 'src/helpers';
-import ModelSiteDialog from '../contextMenu/elementMenu/modelSiteDialog';
-import { useLanguage } from 'src/hooks';
-import { useState } from 'react';
+import { saveImage } from 'src/helpers';
 import { LabelMark } from './mainMenuItems';
-
-const PublishOnModelMapItem = () => {
-  const lang = useLanguage();
-  const user = useStore.getState().user;
-  const cloudFile = useStore.getState().cloudFile;
-
-  const [modelSiteDialogVisible, setModelSiteDialogVisible] = useState(false);
-
-  const handleClick = () => {
-    const urlId = new URLSearchParams(window.location.search).get('userid');
-    const matched = urlId === user.uid;
-    const allowed = user.uid && cloudFile && matched;
-    if (allowed) {
-      setModelSiteDialogVisible(true);
-    } else {
-      if (!user.uid) {
-        showInfo(i18n.t('menu.file.YouMustLogInToPublishYourModel', lang) + '.');
-      } else if (urlId && !matched) {
-        showInfo(i18n.t('menu.file.YouCannotPublishAModelThatYouDoNotOwn', lang) + '.');
-      } else {
-        showInfo(i18n.t('menu.file.YouMustSaveModelOnCloudBeforePublishingIt', lang) + '.');
-      }
-    }
-  };
-
-  return (
-    <>
-      <MenuItem noPadding onClick={handleClick}>
-        {i18n.t('menu.file.PublishOnModelsMap', lang)}...
-      </MenuItem>
-      {modelSiteDialogVisible && <ModelSiteDialog setDialogVisible={setModelSiteDialogVisible} />}
-    </>
-  );
-};
+import { PublishOnModelMapItem } from './publishOnModelMapItem';
 
 export const createFileMenu = (viewOnly: boolean, isMac: boolean, canvas?: HTMLCanvasElement | null) => {
   const lang = { lng: useStore.getState().language };

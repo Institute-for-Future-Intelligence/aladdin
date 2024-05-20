@@ -1,5 +1,5 @@
 /*
- * @Copyright 2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2023-2024. Institute for Future Intelligence, Inc.
  */
 
 import ResidentialBuildingIcon from '../../../assets/map_residential_building.png';
@@ -24,7 +24,7 @@ import * as Selector from '../../../stores/selector';
 import i18n from '../../../i18n/i18n';
 import { usePrimitiveStore } from '../../../stores/commonPrimitive';
 import { ModelType } from '../../../types';
-import { uniqueNamesGenerator, adjectives, colors, animals } from 'unique-names-generator';
+import { uniqueNamesGenerator, colors, animals } from 'unique-names-generator';
 import { REGEX_ALLOWABLE_IN_NAME } from '../../../constants';
 import { useTranslation } from 'react-i18next';
 
@@ -39,7 +39,9 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   const [modelAuthor, setModelAuthor] = useState<string | null>(
     useStore.getState().modelAuthor ??
       uniqueNamesGenerator({
-        dictionaries: [adjectives, colors, animals],
+        dictionaries: [colors, animals],
+        separator: ' ',
+        style: 'capital',
       }),
   );
   const [modelLabel, setModelLabel] = useState<string | null>(

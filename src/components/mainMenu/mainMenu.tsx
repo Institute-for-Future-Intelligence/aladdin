@@ -72,7 +72,7 @@ export interface MainMenuProps {
 const TUTORIALS_MENU_KEY = 'tutorials-submenu';
 const EXAMPLES_MENU_KEY = 'examples-submenu';
 
-const MainMenu = ({ viewOnly, canvas }: MainMenuProps) => {
+const MainMenu = React.memo(({ viewOnly, canvas }: MainMenuProps) => {
   const setCommonStore = useStore(Selector.set);
   const importContent = useStore(Selector.importContent);
   const openModelsMap = usePrimitiveStore(Selector.openModelsMap);
@@ -329,6 +329,6 @@ const MainMenu = ({ viewOnly, canvas }: MainMenuProps) => {
       {aboutUs && <About close={closeAboutUs} />}
     </>
   );
-};
+});
 
-export default React.memo(MainMenu);
+export default MainMenu;

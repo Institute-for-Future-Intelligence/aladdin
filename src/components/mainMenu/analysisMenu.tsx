@@ -2,7 +2,7 @@
  * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
-import { InputNumber, MenuProps, Modal, Space } from 'antd';
+import { MenuProps, Modal } from 'antd';
 import { useStore } from 'src/stores/common';
 import { MenuItem } from '../contextMenu/menuItems';
 import i18n from 'src/i18n/i18n';
@@ -10,120 +10,21 @@ import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import * as Selector from '../../stores/selector';
 import { Util } from 'src/Util';
 import { showError, showInfo, showWarning } from 'src/helpers';
-import { useLanguage } from 'src/hooks';
-import { MainMenuSwicth } from './mainMenuItems';
+import { MainMenuSwitch } from './mainMenuItems';
 import { ElementCounter } from 'src/stores/ElementCounter';
-import { BuildingCompletionStatus, ObjectType, SolarStructure } from 'src/types';
-import { CheckStatus, checkBuilding } from 'src/analysis/heatTools';
+import { BuildingCompletionStatus, EnergyModelingType, ObjectType, SolarStructure } from 'src/types';
+import { checkBuilding, CheckStatus } from 'src/analysis/heatTools';
 import { buildingEnergySimulationSettingsSubmenu } from './buildingEnergySimulationSettings';
 import { pvSimulationSettings } from './pvSimulationSettings';
 import { cspSimulationSettings } from './cspSimulationSettings';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import React from 'react';
 import { MAXIMUM_HEATMAP_CELLS } from '../../constants';
-
-const SolarRadiationHeatmapGridCellSizeInput = () => {
-  const lang = useLanguage();
-  const solarRadiationHeatmapGridCellSize = useStore(Selector.world.solarRadiationHeatmapGridCellSize);
-
-  return (
-    <MenuItem noPadding stayAfterClick>
-      <Space style={{ width: '280px' }}>{i18n.t('menu.physics.SolarRadiationHeatmapGridCellSize', lang) + ':'}</Space>
-      <InputNumber
-        min={0.1}
-        max={20}
-        step={0.1}
-        style={{ width: 60 }}
-        precision={1}
-        value={solarRadiationHeatmapGridCellSize ?? 0.5}
-        onChange={(value) => {
-          if (value === null) return;
-          useStore.getState().set((state) => {
-            state.world.solarRadiationHeatmapGridCellSize = value;
-          });
-        }}
-      />
-      <Space style={{ paddingLeft: '10px' }}>{i18n.t('word.MeterAbbreviation', lang)}</Space>
-    </MenuItem>
-  );
-};
-
-const SolarRadiationHeatmapMaxValueInput = () => {
-  const lang = useLanguage();
-  const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
-  return (
-    <MenuItem noPadding stayAfterClick>
-      <Space style={{ width: '280px' }}>{i18n.t('menu.physics.SolarRadiationHeatmapMaxValue', lang) + ':'}</Space>
-      <InputNumber
-        min={0.5}
-        max={50}
-        step={0.5}
-        style={{ width: 60 }}
-        precision={1}
-        value={solarRadiationHeatmapMaxValue ?? 5}
-        onChange={(value) => {
-          useStore.getState().set((state) => {
-            if (value === null) return;
-            state.viewState.solarRadiationHeatMapMaxValue = value;
-          });
-        }}
-      />
-    </MenuItem>
-  );
-};
-
-const SensorSimulationSamplingFrequencyInput = () => {
-  const lang = useLanguage();
-  const timesPerHour = useStore(Selector.world.timesPerHour);
-
-  return (
-    <MenuItem noPadding stayAfterClick>
-      <Space style={{ width: '150px' }}>{i18n.t('menu.option.SamplingFrequency', lang) + ':'}</Space>
-      <InputNumber
-        min={1}
-        max={60}
-        step={1}
-        style={{ width: 60 }}
-        precision={0}
-        value={timesPerHour}
-        formatter={(a) => Number(a).toFixed(0)}
-        onChange={(value) => {
-          if (value === null) return;
-          useStore.getState().set((state) => {
-            state.world.timesPerHour = value;
-          });
-        }}
-      />
-      <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.option.TimesPerHour', lang)}</Space>
-    </MenuItem>
-  );
-};
-
-const SolarPanelVisibilityGridCellSizeInput = () => {
-  const lang = useLanguage();
-  const solarPanelVisibilityGridCellSize = useStore(Selector.world.solarPanelVisibilityGridCellSize);
-
-  return (
-    <MenuItem noPadding stayAfterClick>
-      <Space style={{ paddingRight: '10px' }}>{i18n.t('menu.solarPanel.VisibilityGridCellSize', lang) + ':'}</Space>
-      <InputNumber
-        min={0.1}
-        max={5}
-        step={0.1}
-        style={{ width: 60 }}
-        precision={1}
-        value={solarPanelVisibilityGridCellSize ?? 0.2}
-        onChange={(value) => {
-          if (value === null) return;
-          useStore.getState().set((state) => {
-            state.world.solarPanelVisibilityGridCellSize = value;
-          });
-        }}
-      />
-      <Space style={{ paddingLeft: '10px' }}>{i18n.t('word.MeterAbbreviation', lang)}</Space>
-    </MenuItem>
-  );
-};
+import { SolarRadiationHeatmapMaxValueInput } from './solarRadiationHeatmapMaxValueInput';
+import { SensorSimulationSamplingFrequencyInput } from './sensorSimulationSamplingFrequencyInput';
+import { SolarPanelVisibilityGridCellSizeInput } from './solarPanelVisibilityGridCellSizeInput';
+import { EnergyGridCellSizeInput } from './energyGridCellSizeInput';
+import { sutSimulationSettings } from './sutSimulationSettings';
 
 export const createAnalysisMenu = (elementCounter: ElementCounter) => {
   const lang = { lng: useStore.getState().language };
@@ -678,7 +579,7 @@ export const createAnalysisMenu = (elementCounter: ElementCounter) => {
   // solar-radiation-heatmap-grid-cell-size
   physicsOptionsItems.push({
     key: 'solar-radiation-heatmap-grid-cell-size',
-    label: <SolarRadiationHeatmapGridCellSizeInput />,
+    label: <EnergyGridCellSizeInput type={EnergyModelingType.BUILDING} />,
   });
 
   // solar-radiation-heatmap-max-value
@@ -692,7 +593,7 @@ export const createAnalysisMenu = (elementCounter: ElementCounter) => {
     physicsOptionsItems.push({
       key: 'solar-radiation-heatmap-reflection-only',
       label: (
-        <MainMenuSwicth
+        <MainMenuSwitch
           selector={Selector.viewState.solarRadiationHeatmapReflectionOnly}
           onChange={(checked) => {
             useStore.getState().set((state) => {
@@ -701,7 +602,7 @@ export const createAnalysisMenu = (elementCounter: ElementCounter) => {
           }}
         >
           {i18n.t('menu.physics.ReflectionHeatmap', lang) + ':'}
-        </MainMenuSwicth>
+        </MainMenuSwitch>
       ),
     });
   }
@@ -711,7 +612,7 @@ export const createAnalysisMenu = (elementCounter: ElementCounter) => {
     physicsOptionsItems.push({
       key: 'solar-radiation-heatmap-no-animation',
       label: (
-        <MainMenuSwicth
+        <MainMenuSwitch
           selector={Selector.world.noAnimationForHeatmapSimulation}
           onChange={(checked) => {
             useStore.getState().set((state) => {
@@ -720,7 +621,7 @@ export const createAnalysisMenu = (elementCounter: ElementCounter) => {
           }}
         >
           {i18n.t('menu.physics.SolarRadiationHeatmapNoAnimation', lang) + ':'}
-        </MainMenuSwicth>
+        </MainMenuSwitch>
       ),
     });
   }
@@ -759,7 +660,7 @@ export const createAnalysisMenu = (elementCounter: ElementCounter) => {
     sensorSimulationOptionsItems.push({
       key: 'sensor-simulation-no-animation',
       label: (
-        <MainMenuSwicth
+        <MainMenuSwitch
           selector={Selector.world.noAnimationForSensorDataCollection}
           onChange={(checked) => {
             useStore.getState().set((state) => {
@@ -768,7 +669,7 @@ export const createAnalysisMenu = (elementCounter: ElementCounter) => {
           }}
         >
           {i18n.t('menu.sensor.SensorSimulationNoAnimation', lang) + ':'}
-        </MainMenuSwicth>
+        </MainMenuSwitch>
       ),
     });
   }
@@ -1032,7 +933,7 @@ export const createAnalysisMenu = (elementCounter: ElementCounter) => {
         {
           key: 'solar-updraft-tower-analysis-options',
           label: <MenuItem noPadding>{i18n.t('menu.AnalysisOptions', lang)}</MenuItem>,
-          children: cspSimulationSettings('solar-updraft-tower'),
+          children: sutSimulationSettings(),
         },
       ],
     });

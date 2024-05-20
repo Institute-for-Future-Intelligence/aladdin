@@ -291,7 +291,7 @@ export const createViewMenu = (keyHome: string, isMac: boolean) => {
     });
   };
 
-  const toggleShinness = (e: CheckboxChangeEvent) => {
+  const toggleShininess = (e: CheckboxChangeEvent) => {
     const value = e.target.checked ? DEFAULT_SOLAR_PANEL_SHININESS : 0;
 
     const undoableChange = {
@@ -441,7 +441,7 @@ export const createViewMenu = (keyHome: string, isMac: boolean) => {
         selector={(state) =>
           state.viewState.solarPanelShininess === undefined || state.viewState.solarPanelShininess > 0
         }
-        onChange={toggleShinness}
+        onChange={toggleShininess}
       >
         {i18n.t('menu.view.ShowSurfaceShininess', lang)}
       </MainMenuCheckbox>

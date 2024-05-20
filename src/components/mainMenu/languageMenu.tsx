@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import { Radio, RadioChangeEvent, Space } from 'antd';
@@ -13,8 +13,9 @@ import enUS from 'antd/lib/locale/en_US';
 import ukUA from 'antd/lib/locale/uk_UA';
 import { Language } from 'src/types';
 import { MenuItem } from '../contextMenu/menuItems';
+import React from 'react';
 
-export const LanguageRadioGroup = () => {
+export const LanguageRadioGroup = React.memo(() => {
   const language = useStore.getState().language;
 
   const handleChange = (e: RadioChangeEvent) => {
@@ -68,4 +69,4 @@ export const LanguageRadioGroup = () => {
       </Radio.Group>
     </MenuItem>
   );
-};
+});

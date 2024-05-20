@@ -8,19 +8,19 @@ import { EnergyModelingType } from '../../types';
 import { SamplingFrequencySelect } from './samplingFrequencySelect';
 import { EnergyGridCellSizeInput } from './energyGridCellSizeInput';
 
-export const cspSimulationSettings = (name: string) => {
+export const sutSimulationSettings = () => {
   return [
     {
-      key: `${name}-simulation-sampling-frequency`,
-      label: <SamplingFrequencySelect type={EnergyModelingType.CSP} />,
+      key: `sut-simulation-sampling-frequency`,
+      label: <SamplingFrequencySelect type={EnergyModelingType.SUT} />,
     },
     {
-      key: `${name}-simulation-sampling-days`,
-      label: <SimulationSamplingDaysSelect type={EnergyModelingType.CSP} />,
+      key: `sut-simulation-sampling-days`,
+      label: <SimulationSamplingDaysSelect type={EnergyModelingType.SUT} />,
     },
     {
-      key: `${name}-simulation-grid-cell-size`,
-      label: <EnergyGridCellSizeInput type={EnergyModelingType.CSP} />,
+      key: `sut-simulation-grid-cell-size`,
+      label: <EnergyGridCellSizeInput type={EnergyModelingType.SUT} />,
     },
   ] as MenuProps['items'];
 };

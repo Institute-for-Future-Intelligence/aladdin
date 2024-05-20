@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import { extend, Object3DNode } from '@react-three/fiber';
@@ -26,6 +26,7 @@ extend({ ConvexGeometry });
 extend({ TextGeometry });
 
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace JSX {
     interface IntrinsicElements {
       textSprite: Object3DNode<TextSprite, typeof TextSprite>;
@@ -669,3 +670,11 @@ export type SolarCollector =
   | HeliostatModel
   | ParabolicDishModel
   | ParabolicTroughModel;
+
+export enum EnergyModelingType {
+  BUILDING = 'Building',
+  PV = 'PV',
+  CSP = 'CSP',
+  SUT = 'SUT',
+  WIND = 'Wind',
+}
