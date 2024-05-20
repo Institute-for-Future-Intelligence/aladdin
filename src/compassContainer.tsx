@@ -32,7 +32,7 @@ const Compass = React.memo(({ visible = true }: { visible: boolean }) => {
   }, []);
 
   useEffect(() => {
-    if (!canvasRef.current) return;
+    if (!canvasRef.current || !visible) return;
     const ctx = canvasRef.current.getContext('2d') as CanvasRenderingContext2D;
     if (!ctx) return;
 
@@ -162,8 +162,9 @@ const Compass = React.memo(({ visible = true }: { visible: boolean }) => {
     ctx.rotate(Math.PI / 2);
     ctx.fillText(`${i18n.t('compass.E', lang)}`, center, fontToEdge);
     ctx.restore();
-  }, [lang]);
+  }, [lang, visible]);
 
+  console.log('vis', visible);
   if (!visible) return null;
 
   return (
