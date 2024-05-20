@@ -5,14 +5,12 @@
 import { Color, Euler, Vector2, Vector3 } from 'three';
 import platform from 'platform';
 
-export const VERSION = '1.5.9';
+export const VERSION = '1.6.0';
 
 // used for check old file that need to update light intensity.
 export const LIGHT_INTENSITY_CHANGED_VERSION = '1.5.0';
 
-export const isProd = import.meta.env.NODE_ENV === 'production';
-
-export const HOME_URL: string = isProd
+export const HOME_URL: string = import.meta.env.PROD
   ? 'https://institute-for-future-intelligence.github.io/aladdin/'
   : 'http://localhost:3000/aladdin';
 
