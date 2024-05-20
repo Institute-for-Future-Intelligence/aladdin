@@ -24,7 +24,7 @@ import * as Selector from '../../../stores/selector';
 import i18n from '../../../i18n/i18n';
 import { usePrimitiveStore } from '../../../stores/commonPrimitive';
 import { ModelType } from '../../../types';
-import generateRandomAnimal from 'random-animal-name';
+import { uniqueNamesGenerator, adjectives, colors, animals } from 'unique-names-generator';
 import { REGEX_ALLOWABLE_IN_NAME } from '../../../constants';
 import { useTranslation } from 'react-i18next';
 
@@ -37,7 +37,10 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
 
   const [modelType, setModelType] = useState<ModelType>(useStore.getState().modelType);
   const [modelAuthor, setModelAuthor] = useState<string | null>(
-    useStore.getState().modelAuthor ?? generateRandomAnimal(),
+    useStore.getState().modelAuthor ??
+      uniqueNamesGenerator({
+        dictionaries: [adjectives, colors, animals],
+      }),
   );
   const [modelLabel, setModelLabel] = useState<string | null>(
     useStore.getState().modelLabel ?? useStore.getState().cloudFile ?? null,
