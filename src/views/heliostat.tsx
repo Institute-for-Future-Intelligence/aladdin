@@ -21,7 +21,7 @@ import { useDataStore } from '../stores/commonData';
 import { useLanguage, useSelected } from '../hooks';
 
 const Heliostat = React.memo((heliostat: HeliostatModel) => {
-  let {
+  const {
     id,
     cx,
     cy,
@@ -72,6 +72,10 @@ const Heliostat = React.memo((heliostat: HeliostatModel) => {
   const sunBeamLength = Math.max(100, 10 * sceneRadius);
   const lang = useLanguage();
 
+  let rx = cx;
+  let ry = cy;
+  let rz = cz;
+
   const hx = lx / 2;
   const hy = ly / 2;
   const hz = lz / 2;
@@ -89,16 +93,16 @@ const Heliostat = React.memo((heliostat: HeliostatModel) => {
   if (parent) {
     switch (parent.type) {
       case ObjectType.Foundation:
-        cz = actualPoleHeight + hz + parent.lz;
+        rz = actualPoleHeight + hz + parent.lz;
         if (Util.isZero(rotation[2])) {
-          cx = parent.cx + cx * parent.lx;
-          cy = parent.cy + cy * parent.ly;
+          rx = parent.cx + cx * parent.lx;
+          ry = parent.cy + cy * parent.ly;
         } else {
           // we must rotate the real length, not normalized length
           const v = new Vector3(cx * parent.lx, cy * parent.ly, 0);
           v.applyAxisAngle(UNIT_VECTOR_POS_Z, rotation[2]);
-          cx = parent.cx + v.x;
-          cy = parent.cy + v.y;
+          rx = parent.cx + v.x;
+          ry = parent.cy + v.y;
         }
         break;
     }
@@ -133,15 +137,15 @@ const Heliostat = React.memo((heliostat: HeliostatModel) => {
         : '\n' +
           i18n.t('word.Coordinates', lang) +
           ': (' +
-          cx.toFixed(1) +
+          rx.toFixed(1) +
           ', ' +
-          cy.toFixed(1) +
+          ry.toFixed(1) +
           ', ' +
-          cz.toFixed(1) +
+          rz.toFixed(1) +
           ') ' +
           i18n.t('word.MeterAbbreviation', lang))
     );
-  }, [heliostat?.label, heliostat?.locked, lang, cx, cy, cz]);
+  }, [heliostat?.label, heliostat?.locked, lang, rx, ry, rz]);
 
   // in model coordinate system
   const euler = useMemo(() => {
@@ -176,9 +180,9 @@ const Heliostat = React.memo((heliostat: HeliostatModel) => {
         if (foundation.solarStructure === SolarStructure.FocusTower && foundation.solarPowerTower) {
           // convert the receiver's coordinates into those relative to the center of this heliostat
           return new Vector3(
-            foundation.cx - cx,
-            foundation.cy - cy,
-            foundation.cz - cz + foundation.lz / 2 + (foundation.solarPowerTower.towerHeight ?? 20),
+            foundation.cx - rx,
+            foundation.cy - ry,
+            foundation.cz - rz + foundation.lz / 2 + (foundation.solarPowerTower.towerHeight ?? 20),
           );
         }
       }
@@ -189,16 +193,16 @@ const Heliostat = React.memo((heliostat: HeliostatModel) => {
           if (foundation.solarStructure === SolarStructure.FocusTower && foundation.solarPowerTower) {
             // convert the receiver's coordinates into those relative to the center of this heliostat
             return new Vector3(
-              foundation.cx - cx,
-              foundation.cy - cy,
-              foundation.cz - cz + foundation.lz / 2 + (foundation.solarPowerTower.towerHeight ?? 20),
+              foundation.cx - rx,
+              foundation.cy - ry,
+              foundation.cz - rz + foundation.lz / 2 + (foundation.solarPowerTower.towerHeight ?? 20),
             );
           }
         }
       }
     }
     return null;
-  }, [parent, cx, cy, cz, tower]);
+  }, [parent, rx, ry, rz, tower]);
 
   const relativeEuler = useMemo(() => {
     if (receiverCenter && sunDirection.z > 0) {
@@ -222,7 +226,7 @@ const Heliostat = React.memo((heliostat: HeliostatModel) => {
   const moveHandleSize = MOVE_HANDLE_RADIUS * baseSize * 4;
 
   return (
-    <group name={'Heliostat Group ' + id} rotation={euler} position={[cx, cy, cz + hz]}>
+    <group name={'Heliostat Group ' + id} rotation={euler} position={[rx, ry, rz + hz]}>
       <group rotation={relativeEuler}>
         {/* draw the upper side of the heliostat */}
         <Box
