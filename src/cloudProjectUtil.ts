@@ -265,7 +265,7 @@ export const updateThumbnailWidth = async (userid: string, projectTitle: string,
 };
 
 export const createDesign = (type: string, title: string, thumbnail: string): Design => {
-  let design = { timestamp: Date.now(), title, thumbnail } as Design;
+  let design = { timestamp: Date.now(), title, thumbnail, excluded: false } as Design;
   switch (type) {
     case DesignProblem.SOLAR_PANEL_ARRAY: {
       const latitude = useStore.getState().world.latitude;
