@@ -347,6 +347,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
           d['selected'] = selectedDesign === design;
           d['hovered'] = hoveredDesign === design;
           d['invisible'] = design.invisible;
+          d['excluded'] = false;
           if (projectFilters) {
             for (const f of projectFilters) {
               if (f.type === FilterType.Between && f.upperBound !== undefined && f.lowerBound !== undefined) {
