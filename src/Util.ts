@@ -3,6 +3,7 @@
  */
 
 import {
+  DEFAULT_SHADOW_MAP_SIZE,
   FINE_GRID_SCALE,
   GROUND_ID,
   HALF_PI,
@@ -68,6 +69,12 @@ import { ViewState } from './stores/ViewState';
 import { WindTurbineModel } from './models/WindTurbineModel';
 
 export class Util {
+  static getShadowMapSize() {
+    const val = localStorage.getItem('aladdin-shadow-map-size');
+    if (!val) return DEFAULT_SHADOW_MAP_SIZE;
+    return Number(val);
+  }
+
   // calculate the annual profit in 1,000 dollars
   static calculateProfit(design: Design): number {
     return (design.yearlyYield * design.sellingPrice - design.panelCount * design.unitCost * 365) * 0.001;

@@ -10,13 +10,13 @@ import * as Selector from '../stores/selector';
 import i18n from '../i18n/i18n';
 import { UndoableChange } from '../undo/UndoableChange';
 import { useLanguage } from '../hooks';
+import { Util } from 'src/Util';
 
 const ShadowSettingsPanel = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
   const shadowCameraFar = useStore(Selector.viewState.shadowCameraFar);
-  const shadowMapSize = useStore(Selector.shadowMapSize);
-
+  const shadowMapSize = Util.getShadowMapSize();
   const SHADOW_MAP_SIZE_STEP = 4096;
   const SHADOW_CAMERA_FAR_STEP = 10000;
 
@@ -54,9 +54,7 @@ const ShadowSettingsPanel = React.memo(({ setDialogVisible }: { setDialogVisible
   };
 
   const setShadowMapSize = (value: number) => {
-    setCommonStore((state) => {
-      state.shadowMapSize = value;
-    });
+    localStorage.setItem('aladdin-shadow-map-size', value.toString());
   };
 
   const apply = () => {
