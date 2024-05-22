@@ -67,28 +67,30 @@ export const removeDesignFromProject = async (userid: string, projectTitle: stri
       .doc(projectTitle)
       .update({
         designs: firebase.firestore.FieldValue.arrayRemove(design),
-      });
-    usePrimitiveStore.getState().set((state) => {
-      state.updateProjectsFlag = true;
-    });
-    // also delete the design
-    firebase
-      .firestore()
-      .collection('users')
-      .doc(userid)
-      .collection('designs')
-      .doc(design.title)
-      .delete()
-      .then(() => {
-        useStore.getState().set((state_1) => {
-          if (design.title === state_1.cloudFile) {
-            state_1.cloudFile = undefined;
-          }
-        });
-        showInfo(i18n.t('message.DesignRemovedFromProject', lang) + '.');
       })
-      .catch((error) => {
-        showError(i18n.t('message.CannotDeleteCloudFile', lang) + ': ' + error);
+      .then(() => {
+        usePrimitiveStore.getState().set((state) => {
+          state.updateProjectsFlag = true;
+        });
+        // also delete the design
+        firebase
+          .firestore()
+          .collection('users')
+          .doc(userid)
+          .collection('designs')
+          .doc(design.title)
+          .delete()
+          .then(() => {
+            useStore.getState().set((state_1) => {
+              if (design.title === state_1.cloudFile) {
+                state_1.cloudFile = undefined;
+              }
+            });
+            showInfo(i18n.t('message.DesignRemovedFromProject', lang) + '.');
+          })
+          .catch((error) => {
+            showError(i18n.t('message.CannotDeleteCloudFile', lang) + ': ' + error);
+          });
       });
   } catch (error_1) {
     showError(i18n.t('message.CannotRemoveDesignFromProject', lang) + ': ' + error_1);
@@ -495,6 +497,8 @@ export const updateDesign = async (
       .catch((error_1) => {
         showError(i18n.t('message.CannotFetchProjectData', lang) + ': ' + error_1);
       })
-      .finally(() => {});
+      .finally(() => {
+        // TODO
+      });
   }
 };
