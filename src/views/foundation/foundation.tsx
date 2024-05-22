@@ -3087,16 +3087,16 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
           onPointerOut={handlePointerOut}
           onPointerEnter={handlePointerEnter}
         >
-          <meshStandardMaterial attach="material-0" color={color} transparent={groundImage} opacity={opacity} />
-          <meshStandardMaterial attach="material-1" color={color} transparent={groundImage} opacity={opacity} />
-          <meshStandardMaterial attach="material-2" color={color} transparent={groundImage} opacity={opacity} />
-          <meshStandardMaterial attach="material-3" color={color} transparent={groundImage} opacity={opacity} />
+          <meshStandardMaterial attach="material-0" color={color} transparent={true} opacity={opacity} />
+          <meshStandardMaterial attach="material-1" color={color} transparent={true} opacity={opacity} />
+          <meshStandardMaterial attach="material-2" color={color} transparent={true} opacity={opacity} />
+          <meshStandardMaterial attach="material-3" color={color} transparent={true} opacity={opacity} />
           {showSolarRadiationHeatmap && heatmapTexture ? (
             <meshBasicMaterial
               attach="material-4"
               color={'white'}
               map={heatmapTexture}
-              transparent={groundImage}
+              transparent={true}
               opacity={opacity}
             />
           ) : (
@@ -3104,11 +3104,11 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
               attach="material-4"
               color={textureType === FoundationTexture.NoTexture ? color : 'white'}
               map={texture}
-              transparent={groundImage}
+              transparent={true}
               opacity={opacity}
             />
           )}
-          <meshStandardMaterial attach="material-5" color={color} transparent={groundImage} opacity={opacity} />
+          <meshStandardMaterial attach="material-5" color={color} transparent={true} opacity={opacity} />
         </Box>
 
         {/* intersection plane */}

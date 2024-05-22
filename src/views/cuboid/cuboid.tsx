@@ -1131,7 +1131,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
               attach={`material-${i}`}
               color={'white'}
               map={textures[i]}
-              transparent={orthographic && groundImage}
+              transparent={true}
               opacity={opacity}
             />
           ) : (
@@ -1141,7 +1141,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
               attach={`material-${i}`}
               color={'white'}
               map={textures[i]}
-              transparent={orthographic && groundImage}
+              transparent={true}
               opacity={opacity}
             />
           );
@@ -1153,7 +1153,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
               attach={`material-${i}`}
               color={'white'}
               map={textures[i]}
-              transparent={orthographic && groundImage}
+              transparent={true}
               opacity={opacity}
             />
           ) : (
@@ -1163,19 +1163,14 @@ const Cuboid = (cuboidModel: CuboidModel) => {
               attach={`material-${i}`}
               color={cuboidModel.faceColors ? cuboidModel.faceColors[i] : color}
               map={textures[i]}
-              transparent={orthographic && groundImage}
+              transparent={true}
               opacity={opacity}
             />
           );
         }
       })
     ) : (
-      <meshStandardMaterial
-        side={FrontSide}
-        color={color}
-        transparent={orthographic && groundImage}
-        opacity={opacity}
-      />
+      <meshStandardMaterial side={FrontSide} color={color} transparent={true} opacity={opacity} />
     );
 
   const handleArgs = useMemo(() => [hx, hy, hz], [hx, hy, hz]);
