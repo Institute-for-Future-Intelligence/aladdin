@@ -1141,7 +1141,9 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   }
 
   function isFirstIntersectedWall(e: ThreeEvent<PointerEvent>, id: string) {
-    const intersectedWalls = e.intersections.filter((i) => i.object.name !== WALL_INTERSECTION_PLANE_NAME);
+    const intersectedWalls = e.intersections.filter((i) =>
+      i.object.name.includes(SharedUtil.WALL_OUTSIDE_SURFACE_MESH_NAME),
+    );
     if (
       intersectedWalls.length > 0 &&
       intersectedWalls[0].object.name === `${SharedUtil.WALL_OUTSIDE_SURFACE_MESH_NAME} ${id}`
