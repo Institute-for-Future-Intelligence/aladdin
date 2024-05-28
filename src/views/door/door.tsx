@@ -219,7 +219,6 @@ const Door = (doorModel: DoorModel) => {
     setCommonStore((state) => {
       state.resizeHandleType = handleType;
       state.resizeAnchor.copy(new Vector3(cx, 0, cz).add(p));
-      state.selectedElement = state.elements.find((e) => e.selected) as ElementModel;
     });
   };
 
