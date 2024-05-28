@@ -1019,6 +1019,11 @@ const Ground = React.memo(() => {
       treeRef: null,
       flowerRef: null,
     });
+    usePrimitiveStore.getState().set((state) => {
+      state.showWallIntersectionPlaneId = null;
+      state.oldParentId = null;
+      state.oldFoundationId = null;
+    });
   };
 
   const setBasePosMap = (element: ElementModel, pointer: Vector3) => {
