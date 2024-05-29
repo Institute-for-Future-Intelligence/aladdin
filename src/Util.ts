@@ -899,13 +899,14 @@ export class Util {
           // TODO
           break;
         case ObjectType.SolarPanel:
-        case ObjectType.Sensor:
+        case ObjectType.Sensor: {
           const absPos = new Vector2(c.cx * parent.lx, c.cy * parent.ly).rotateAround(
             ORIGIN_VECTOR2,
             parent.rotation[2],
           );
           childAbsPosMap.set(c.id, absPos);
           break;
+        }
       }
     }
     const childrenClone: ElementModel[] = [];
@@ -1514,10 +1515,10 @@ export class Util {
   }
 
   static sphericalToCartesianZ(sphereCoords: Vector3): Vector3 {
-    let a = sphereCoords.x * Math.cos(sphereCoords.z);
-    let x = a * Math.cos(sphereCoords.y);
-    let y = a * Math.sin(sphereCoords.y);
-    let z = sphereCoords.x * Math.sin(sphereCoords.z);
+    const a = sphereCoords.x * Math.cos(sphereCoords.z);
+    const x = a * Math.cos(sphereCoords.y);
+    const y = a * Math.sin(sphereCoords.y);
+    const z = sphereCoords.x * Math.sin(sphereCoords.z);
     sphereCoords.set(x, y, z);
     return sphereCoords;
   }
@@ -1949,6 +1950,34 @@ export class Util {
   static isElementAllowedMultipleMoveOnGround(e: ElementModel) {
     if (e.type === ObjectType.Foundation) return true;
     if (e.type === ObjectType.Cuboid && e.parentId === GROUND_ID) return true;
+    return false;
+  }
+
+  static areBasesOverlapped(bId1: string, bId2: string, verticesMap: Map<string, Point2[]>) {
+    const v1 = verticesMap.get(bId1);
+    const v2 = verticesMap.get(bId2);
+    if (!v1 || !v2) return false;
+    for (const v of v1) {
+      if (Util.isPointInside(v.x, v.y, v2)) {
+        return true;
+      }
+    }
+    for (const v of v2) {
+      if (Util.isPointInside(v.x, v.y, v1)) {
+        return true;
+      }
+    }
+    v1.push(v1[0]);
+    v2.push(v2[0]);
+    for (let i1 = 0; i1 < v1.length - 1; i1++) {
+      const from1 = v1[i1];
+      const to1 = v1[i1 + 1];
+      for (let i2 = 0; i2 < v2.length - 1; i2++) {
+        const from2 = v2[i2];
+        const to2 = v2[i2 + 1];
+        if (Util.lineIntersection(from1, to1, from2, to2)) return true;
+      }
+    }
     return false;
   }
 

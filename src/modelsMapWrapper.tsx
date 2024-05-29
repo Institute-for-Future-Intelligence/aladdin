@@ -39,9 +39,9 @@ const Container = styled.div`
 
 export interface ModelsMapWrapperProps {
   openCloudFile: (model: ModelSite) => void;
-  deleteModelFromMap: (model: ModelSite, successCallback?: Function) => void;
-  likeModelFromMap: (model: ModelSite, like: boolean, successCallback?: Function) => void;
-  pinModelFromMap: (model: ModelSite, pinned: boolean, successCallback?: Function) => void;
+  deleteModelFromMap: (model: ModelSite, successCallback?: () => void) => void;
+  likeModelFromMap: (model: ModelSite, like: boolean, successCallback?: () => void) => void;
+  pinModelFromMap: (model: ModelSite, pinned: boolean, successCallback?: () => void) => void;
 }
 
 const ModelsMapWrapper = React.memo(

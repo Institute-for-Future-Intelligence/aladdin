@@ -1,3 +1,7 @@
+/*
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ */
+
 import React from 'react';
 import { GROUND_ID } from 'src/constants';
 import { ElementModel } from 'src/models/ElementModel';
@@ -14,34 +18,6 @@ import { GroupableModel, isGroupable } from 'src/models/Groupable';
 
 const isBaseElement = (e: ElementModel) => {
   return e.parentId === GROUND_ID && (e.type === ObjectType.Foundation || e.type === ObjectType.Cuboid);
-};
-
-export const areTwoBasesOverlapped = (bId1: string, bId2: string, verticesMap: Map<string, Point2[]>) => {
-  const v1 = verticesMap.get(bId1);
-  const v2 = verticesMap.get(bId2);
-  if (!v1 || !v2) return false;
-  for (const v of v1) {
-    if (Util.isPointInside(v.x, v.y, v2)) {
-      return true;
-    }
-  }
-  for (const v of v2) {
-    if (Util.isPointInside(v.x, v.y, v1)) {
-      return true;
-    }
-  }
-  v1.push(v1[0]);
-  v2.push(v2[0]);
-  for (let i1 = 0; i1 < v1.length - 1; i1++) {
-    const from1 = v1[i1];
-    const to1 = v1[i1 + 1];
-    for (let i2 = 0; i2 < v2.length - 1; i2++) {
-      const from2 = v2[i2];
-      const to2 = v2[i2 + 1];
-      if (Util.lineIntersection(from1, to1, from2, to2)) return true;
-    }
-  }
-  return false;
 };
 
 const GroupMasterController = React.memo(() => {
@@ -101,7 +77,7 @@ const GroupMasterController = React.memo(() => {
     for (const baseElement of allBaseElements) {
       if (
         !groupIdSet.has(baseElement.id) &&
-        areTwoBasesOverlapped(curr.id, baseElement.id, allBaseElementsVerticesMap)
+        Util.areBasesOverlapped(curr.id, baseElement.id, allBaseElementsVerticesMap)
       ) {
         groupIdSet.add(baseElement.id);
         groupElements.push(baseElement);
@@ -166,16 +142,15 @@ const GroupMasterController = React.memo(() => {
     <GroupMaster
       groupedElementsIdSet={groupIdSet}
       childCuboidSet={childCuboidIdSet}
-      initalPosition={position.toArray()}
-      initalDimension={dimension}
-      initalRotation={rotation}
+      initialPosition={position.toArray()}
+      initialDimension={dimension}
+      initialRotation={rotation}
     />
   );
 });
 
 const GroupMasterWrapper = React.memo(() => {
   const enableGroupAction = useStore(Selector.groupActionMode);
-
   if (!enableGroupAction) return null;
   return <GroupMasterController />;
 });

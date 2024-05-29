@@ -30,7 +30,6 @@ import { Vector3 } from 'three';
 import { UndoableMoveAllByKey, UndoableMoveSelectedByKey } from './undo/UndoableMove';
 import { GroupableModel, isGroupable } from './models/Groupable';
 import { Point2 } from './models/Point2';
-import { areTwoBasesOverlapped } from './components/groupMaster';
 import { resetView, zoomView } from './components/mainMenu/viewMenu';
 
 export interface KeyboardListenerProps {
@@ -406,7 +405,7 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
 
     const checkBaseOverlap = (curr: GroupableModel) => {
       for (const base of allBases) {
-        if (!idSet.has(base.id) && areTwoBasesOverlapped(curr.id, base.id, verticesMap)) {
+        if (!idSet.has(base.id) && Util.areBasesOverlapped(curr.id, base.id, verticesMap)) {
           idSet.add(base.id);
           arr.push(base);
           if (base.enableGroupMaster) {

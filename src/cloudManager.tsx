@@ -49,7 +49,7 @@ export interface CloudManagerProps {
   canvas?: HTMLCanvasElement | null;
 }
 
-const useFlag = (flag: boolean, fn: Function, setFlag: () => void) => {
+const useFlag = (flag: boolean, fn: () => void, setFlag: () => void) => {
   useEffect(() => {
     if (flag) {
       fn();
@@ -58,7 +58,7 @@ const useFlag = (flag: boolean, fn: Function, setFlag: () => void) => {
   }, [flag]);
 };
 
-const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
+const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps) => {
   const setCommonStore = useStore(Selector.set);
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const user = useStore(Selector.user);
@@ -409,7 +409,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
           .doc(user.uid)
           .set({
             uid: user.uid,
-            signFile: !!user.signFile, // don't listen to WebStorm's suggestion to simplify it
+            signFile: !!user.signFile, // don't listen to WebStorm's suggestion to simplify it as this may be undefined
             noLogging: !!user.noLogging,
             schoolID: user.schoolID ?? SchoolID.UNKNOWN,
             classID: user.classID ?? ClassID.UNKNOWN,
@@ -461,7 +461,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
         .collection('users')
         .doc(user.uid)
         .update({
-          signFile: !!user.signFile,
+          signFile: !!user.signFile, // don't listen to WebStorm's suggestion to simplify it as this may be undefined
           schoolID: user.schoolID ?? SchoolID.UNKNOWN,
           classID: user.classID ?? ClassID.UNKNOWN,
         })
@@ -563,7 +563,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       });
   };
 
-  const deleteFromModelsMap = (model: ModelSite, successCallback?: Function) => {
+  const deleteFromModelsMap = (model: ModelSite, successCallback?: () => void) => {
     // pass if there is no user currently logged in
     if (user && user.uid) {
       firebase
@@ -621,7 +621,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     }
   };
 
-  const likeModelsMap = (model: ModelSite, like: boolean, successCallback?: Function) => {
+  const likeModelsMap = (model: ModelSite, like: boolean, successCallback?: () => void) => {
     // pass if there is no user currently logged in
     if (user && user.uid) {
       const modelKey = Util.getModelKey(model);
@@ -669,7 +669,7 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
     }
   };
 
-  const pinModelsMap = (model: ModelSite, pinned: boolean, successCallback?: Function) => {
+  const pinModelsMap = (model: ModelSite, pinned: boolean, successCallback?: () => void) => {
     // pass if there is no user currently logged in
     if (user && user.uid) {
       firebase
@@ -1703,6 +1703,6 @@ const CloudManager = ({ viewOnly = false, canvas }: CloudManagerProps) => {
       )}
     </>
   );
-};
+});
 
-export default React.memo(CloudManager);
+export default CloudManager;
