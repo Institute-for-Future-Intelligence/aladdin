@@ -1360,7 +1360,7 @@ export class Util {
     return ElementState.Invalid;
   }
 
-  static relativeCoordinates(x: number, y: number, z: number, parent: ElementModel): Vector3 {
+  static relativeCoordinates(x: number, y: number, z: number, parent: ElementModel, isAbs?: boolean): Vector3 {
     const v = new Vector3(x, y, z);
     if (parent.type === ObjectType.Wall) {
       const parentPos = new Vector3(parent.cx, parent.cy); // relative
@@ -1377,6 +1377,9 @@ export class Util {
       const { pos, rot } = Util.getWorldDataById(parent.id);
       v.set(x - pos.x, y - pos.y, z - pos.z);
       v.applyEuler(new Euler(0, 0, -rot));
+    }
+    if (isAbs) {
+      return v;
     }
     v.x /= parent.lx;
     v.y /= parent.ly;

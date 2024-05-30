@@ -7,7 +7,7 @@
 import React, { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { useStore } from './stores/common';
 import * as Selector from 'src/stores/selector';
-import { Canvas, invalidate } from '@react-three/fiber';
+import { Canvas, invalidate, useThree } from '@react-three/fiber';
 import Sky from './views/sky';
 import Axes from './views/axes';
 import ElementsRenderer from './elementsRenderer';
@@ -53,6 +53,7 @@ export interface AppCreatorProps {
   viewOnly: boolean;
 }
 
+const HEADER_HEIGHT = 72;
 const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
   const user = useStore(Selector.user);
   const loggable = useStore(Selector.loggable);
@@ -103,6 +104,20 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
 
   const isCloudFileOwner = user.uid && new URLSearchParams(window.location.search).get('userid') === user.uid;
 
+  const updatePointer = (e: React.PointerEvent<HTMLDivElement>) => {
+    useRefStore.setState((state) => {
+      if (!canvasRef.current) return state;
+      const pointer = state.pointer;
+      pointer.x = (e.clientX / canvasRef.current.clientWidth) * 2 - 1;
+      pointer.y = -((e.clientY - HEADER_HEIGHT) / canvasRef.current.clientHeight) * 2 + 1;
+      return { pointer };
+    });
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    updatePointer(e);
+  };
+
   const createCanvas = () => {
     return (
       <Canvas
@@ -112,6 +127,7 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
         frameloop={'demand'}
         style={{ height: '100%', width: '100%', backgroundColor: 'black' }}
         camera={{ fov: DEFAULT_FOV, far: shadowCameraFar, up: [0, 0, 1] }}
+        onPointerMove={handlePointerMove}
       >
         <NavigationController />
         <CameraController />
@@ -162,7 +178,7 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
       <div
         style={{
           backgroundColor: 'lightblue',
-          height: '72px',
+          height: HEADER_HEIGHT + 'px',
           paddingTop: '10px',
           textAlign: 'start',
           userSelect: 'none',
@@ -299,7 +315,7 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
       <Panels />
       <DropdownContextMenu>
         {/* must specify the height here for the floating window to have correct boundary check*/}
-        <div style={{ height: 'calc(100vh - 72px)' }}>
+        <div style={{ height: `calc(100vh - ${HEADER_HEIGHT}px)` }}>
           <SplitPane
             showGallery={projectView}
             defaultSize={projectView ? 50 : 0}

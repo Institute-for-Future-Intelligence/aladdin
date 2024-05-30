@@ -2552,6 +2552,38 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                   state.elements.push(solarPanel);
                   break;
                 }
+                case ObjectType.RefSolarPanel: {
+                  const solarPanelParentModel = parent as ElementModel;
+                  const solarPanelAbsCoordinatesToParent = Util.relativeCoordinates(
+                    p.x,
+                    p.y,
+                    p.z,
+                    solarPanelParentModel,
+                    true,
+                  );
+                  const refSolarPanel = ElementModelFactory.makeSolarPanel(
+                    solarPanelParentModel,
+                    state.getPvModule(state.actionState.solarPanelModelName ?? 'SPR-X21-335-BLK'),
+                    solarPanelAbsCoordinatesToParent.x,
+                    solarPanelAbsCoordinatesToParent.y,
+                    0,
+                    state.actionState.solarPanelOrientation ?? Orientation.landscape,
+                    state.actionState.solarPanelPoleHeight ?? 1,
+                    state.actionState.solarPanelPoleSpacing ?? 3,
+                    state.actionState.solarPanelTiltAngle ?? 0,
+                    state.actionState.solarPanelRelativeAzimuth ?? 0,
+                    normal,
+                    'rotation' in parent ? parent.rotation : undefined,
+                    state.actionState.solarPanelFrameColor ?? 'white',
+                    undefined,
+                    undefined,
+                    undefined,
+                    true,
+                  );
+                  model = refSolarPanel;
+                  state.elements.push(refSolarPanel);
+                  break;
+                }
                 case ObjectType.ParabolicTrough: {
                   const parabolicTroughParentModel = parent as ElementModel;
                   const parabolicTroughRelativeCoordinates = Util.relativeCoordinates(

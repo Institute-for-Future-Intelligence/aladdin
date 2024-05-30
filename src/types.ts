@@ -305,6 +305,7 @@ export enum ObjectType {
   MansardRoof = 'Mansard Roof',
   Sensor = 'Sensor',
   SolarPanel = 'Solar Panel',
+  RefSolarPanel = 'Ref Solar Panel',
   WaterHeater = 'Water Heater',
   ParabolicDish = 'Parabolic Dish',
   ParabolicTrough = 'Parabolic Trough',

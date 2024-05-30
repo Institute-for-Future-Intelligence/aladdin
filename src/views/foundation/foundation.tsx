@@ -81,6 +81,8 @@ import { shallow } from 'zustand/shallow';
 import SolarPanel from '../solarPanel/solarPanel';
 import { SharedUtil } from '../SharedUtil';
 import WallAuxiliaryLine, { WallAuxiliaryType } from './wallAuxiliaryLine';
+import RefSolarPanel from '../solarPanel/refSolarPanel';
+import SolarPanelWrapper from '../solarPanel/solarPanelWrapper';
 
 interface SnapTargetType {
   id: string | null;
@@ -89,7 +91,7 @@ interface SnapTargetType {
   jointId: string | undefined;
 }
 
-export const FOUNDATION_GROUP_NAME = 'Foundation Group';
+export const FOUNDATION_GROUP_NAME = 'Foundation_Group';
 
 const Foundation = React.memo((foundationModel: FoundationModel) => {
   const {
@@ -615,6 +617,7 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
       case ObjectType.Sensor:
       case ObjectType.Light:
       case ObjectType.SolarPanel:
+      case ObjectType.RefSolarPanel:
       case ObjectType.ParabolicDish:
       case ObjectType.ParabolicTrough:
       case ObjectType.FresnelReflector:
@@ -3014,7 +3017,10 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
   const opacity = groundImage ? (orthographic ? 0.25 : 0.75) : 1;
 
   const solarPanelsOnFoundation = useStore(
-    (state) => state.elements.filter((e) => e.type === ObjectType.SolarPanel && e.parentId === id) as SolarPanelModel[],
+    (state) =>
+      state.elements.filter(
+        (e) => (e.type === ObjectType.SolarPanel || e.type === ObjectType.RefSolarPanel) && e.parentId === id,
+      ) as SolarPanelModel[],
     shallow,
   );
 
@@ -3070,6 +3076,8 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
         position={[cx, cy, hz]}
         rotation={[0, 0, rotation[2]]}
       >
+        <SolarPanelWrapper parentId={id} lx={lx} ly={ly} lz={lz} />
+
         {/* draw rectangle */}
         <Box
           castShadow={shadowEnabled}
@@ -3539,17 +3547,21 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
 
         <BuildingRenderer {...foundationModel} />
         {solarPanelsOnFoundation.map((sp) => {
-          return (
-            <SolarPanel
-              key={sp.id}
-              {...sp}
-              cx={sp.cx * lx}
-              cy={sp.cy * ly}
-              cz={sp.poleHeight + sp.lz / 2 + lz / 2}
-              parentPosition={[cx, cy, lz / 2]}
-              parentRotation={rotation[2]}
-            />
-          );
+          if (sp.type === ObjectType.SolarPanel) {
+            return (
+              <SolarPanel
+                key={sp.id}
+                {...sp}
+                cx={sp.cx * lx}
+                cy={sp.cy * ly}
+                cz={sp.poleHeight + sp.lz / 2 + lz / 2}
+                parentPosition={[cx, cy, lz / 2]}
+                parentRotation={rotation[2]}
+              />
+            );
+          } else {
+            return null;
+          }
         })}
       </group>
     </>

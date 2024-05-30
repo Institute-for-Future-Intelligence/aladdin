@@ -47,7 +47,7 @@ import { Util } from './Util';
 import { usePrimitiveStore } from './stores/commonPrimitive';
 import { useLanguage } from './hooks';
 import { MenuItem } from './components/contextMenu/menuItems';
-import { MAXIMUM_HEATMAP_CELLS } from './constants';
+import { MAXIMUM_HEATMAP_CELLS, isProd } from './constants';
 
 const ToolBarButton = ({ ...props }) => {
   return (
@@ -138,7 +138,9 @@ const MainToolBarButtons = React.memo(() => {
 
   const [category1Flag, setCategory1Flag] = useState<ObjectType>(ObjectType.Foundation);
   const [category2Flag, setCategory2Flag] = useState<ObjectType>(ObjectType.Wall);
-  const [category3Flag, setCategory3Flag] = useState<ObjectType>(ObjectType.SolarPanel);
+  const [category3Flag, setCategory3Flag] = useState<ObjectType>(
+    isProd ? ObjectType.SolarPanel : ObjectType.RefSolarPanel,
+  );
 
   const lang = useMemo(() => {
     return { lng: language };
@@ -266,6 +268,7 @@ const MainToolBarButtons = React.memo(() => {
       case ObjectType.Flower:
       case ObjectType.Sensor:
       case ObjectType.SolarPanel:
+      case ObjectType.RefSolarPanel:
       case ObjectType.ParabolicDish:
       case ObjectType.ParabolicTrough:
       case ObjectType.FresnelReflector:
@@ -283,18 +286,22 @@ const MainToolBarButtons = React.memo(() => {
 
   const buttonImg = (objectType: ObjectType, srcImg: string, addedElemId?: string | null, text?: string) => {
     const needLock = needToLock(objectType);
+    const getTitle = () => {
+      if (objectType === ObjectType.RefSolarPanel) return 'Ref Solar Panel';
+      return (
+        i18n.t(`toolbar.Add${text ?? objectType.replaceAll(' ', '')}`, lang) +
+        (needLock
+          ? '\n' +
+            (actionModeLock
+              ? i18n.t(`toolbar.ClickToUnlockThisModeForNextAction`, lang)
+              : i18n.t(`toolbar.DoubleClickToLockThisModeForNextAction`, lang))
+          : '')
+      );
+    };
     return (
       <>
         <img
-          title={
-            i18n.t(`toolbar.Add${text ?? objectType.replaceAll(' ', '')}`, lang) +
-            (needLock
-              ? '\n' +
-                (actionModeLock
-                  ? i18n.t(`toolbar.ClickToUnlockThisModeForNextAction`, lang)
-                  : i18n.t(`toolbar.DoubleClickToLockThisModeForNextAction`, lang))
-              : '')
-          }
+          title={getTitle()}
           alt={objectType}
           src={srcImg}
           height={36}
@@ -482,6 +489,13 @@ const MainToolBarButtons = React.memo(() => {
     // },
   ];
 
+  if (!isProd) {
+    category3Menu.push({
+      key: 'add-ref-solar-panel',
+      label: <ToolBarMenuItem objectType={ObjectType.RefSolarPanel} srcImg={SelectImage} setFlag={setCategory3Flag} />,
+    });
+  }
+
   const category1Button = (objectType: ObjectType) => {
     switch (objectType) {
       case ObjectType.Foundation:
@@ -522,6 +536,8 @@ const MainToolBarButtons = React.memo(() => {
     switch (objectType) {
       case ObjectType.SolarPanel:
         return buttonImg(objectType, SolarPanelImage);
+      case ObjectType.RefSolarPanel:
+        return buttonImg(objectType, SelectImage);
       case ObjectType.ParabolicTrough:
         return buttonImg(objectType, ParabolicTroughImage);
       case ObjectType.ParabolicDish:
