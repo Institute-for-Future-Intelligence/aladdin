@@ -47,7 +47,9 @@ import { Util } from './Util';
 import { usePrimitiveStore } from './stores/commonPrimitive';
 import { useLanguage } from './hooks';
 import { MenuItem } from './components/contextMenu/menuItems';
-import { MAXIMUM_HEATMAP_CELLS, isProd } from './constants';
+import { MAXIMUM_HEATMAP_CELLS } from './constants';
+
+const isProd = import.meta.env.PROD;
 
 const ToolBarButton = ({ ...props }) => {
   return (

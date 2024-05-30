@@ -10,7 +10,7 @@ import { useStore } from 'src/stores/common';
 import { useRefStore } from 'src/stores/commonRef';
 import { ObjectType, ResizeHandleType } from 'src/types';
 import { Euler, Group, Mesh, Vector3 } from 'three';
-import { useSelected } from '../hooks';
+import { useSelected } from '../../hooks';
 import * as Selector from '../../stores/selector';
 import { SOLAR_PANELS_WRAPPER_NAME } from './solarPanelWrapper';
 import { useHandleSize } from '../wall/hooks';
