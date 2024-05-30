@@ -39,8 +39,9 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
   const resizeHandleGroupRef = useRef<Group>(null!);
 
   // vairables
-  const vector = new Vector3();
-  const euler = new Euler();
+  const tempVector3_0 = new Vector3();
+  const tempVector3_1 = new Vector3();
+  const tempEuler = new Euler();
   const worldRotationRef = useRef(new Euler());
   const resizeAnchorRef = useRef(new Vector3());
   const newParentIdRef = useRef<string | null>(null);
@@ -99,6 +100,23 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
     });
   };
 
+  const computerResizeCenter = (args: {
+    anchor: Vector3;
+    direction: number[];
+    distance: number;
+    parentPos: Vector3;
+    parentRot: number;
+    selfRot: number;
+  }) => {
+    return tempVector3_1
+      .fromArray(args.direction) // unit direction
+      .applyEuler(tempEuler.set(0, 0, args.parentRot + args.selfRot))
+      .multiplyScalar(args.distance)
+      .add(args.anchor) // world center
+      .sub(args.parentPos)
+      .applyEuler(tempEuler.set(0, 0, -args.parentRot));
+  };
+
   /** Events */
   const onGroupPointerDown = (event: ThreeEvent<PointerEvent>) => {
     event.stopPropagation();
@@ -135,7 +153,9 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
         break;
       }
     }
-    groupRef.current.localToWorld(resizeAnchorRef.current.set(-e.object.position.x, -e.object.position.y, 0));
+    groupRef.current.localToWorld(
+      resizeAnchorRef.current.set(-e.object.position.x, -e.object.position.y, 0).applyEuler(tempEuler.set(0, 0, R)),
+    );
   };
 
   // todo: need update common state here
@@ -210,29 +230,47 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
         // updating mesh
         groupRef.current.position.x = point.x - foundationGroup.position.x;
         groupRef.current.position.y = point.y - foundationGroup.position.y;
-        euler.z = -foundationGroup.rotation.z;
-        groupRef.current.position.applyEuler(euler);
+        tempEuler.z = -foundationGroup.rotation.z;
+        groupRef.current.position.applyEuler(tempEuler);
         groupRef.current.rotation.z = worldRotationRef.current.z - foundationGroup.rotation.z;
         break;
       }
-      // todo: resize with rotated
       case Operation.ResizeX:
       case Operation.ResizeY: {
+        const parentRotation = foundationGroup.rotation.z;
+        const selfRotation = 0; // todo
         const point = firstIntersectedFoundation.point;
+        const anchor = resizeAnchorRef.current;
 
-        const dx = point.x - resizeAnchorRef.current.x;
-        const dy = point.y - resizeAnchorRef.current.y;
-        const cx = (point.x + resizeAnchorRef.current.x) / 2;
-        const cy = (point.y + resizeAnchorRef.current.y) / 2;
-
-        if (!boxMeshRef.current) break;
+        const localizedAnchorToPoint = tempVector3_0
+          .subVectors(point, anchor)
+          .setZ(0)
+          .applyEuler(tempEuler.set(0, 0, -parentRotation - selfRotation));
 
         if (operationRef.current === Operation.ResizeX) {
-          boxMeshRef.current.scale.x = dx;
-          groupRef.current.position.x = cx - foundationGroup.position.x;
+          const center = computerResizeCenter({
+            anchor,
+            direction: [1, 0, 0],
+            distance: localizedAnchorToPoint.x / 2,
+            parentPos: foundationGroup.position,
+            parentRot: parentRotation,
+            selfRot: selfRotation,
+          });
+          boxMeshRef.current.scale.x = localizedAnchorToPoint.x;
+          groupRef.current.position.x = center.x;
+          groupRef.current.position.y = center.y;
         } else if (operationRef.current === Operation.ResizeY) {
-          boxMeshRef.current.scale.y = dy;
-          groupRef.current.position.y = cy - foundationGroup.position.y;
+          const center = computerResizeCenter({
+            anchor,
+            direction: [0, 1, 0],
+            distance: localizedAnchorToPoint.y / 2,
+            parentPos: foundationGroup.position,
+            parentRot: parentRotation,
+            selfRot: selfRotation,
+          });
+          boxMeshRef.current.scale.y = localizedAnchorToPoint.y;
+          groupRef.current.position.x = center.x;
+          groupRef.current.position.y = center.y;
         }
 
         updateChildMeshes();
@@ -244,6 +282,7 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
     }
   });
 
+  const R = 0; // todo
   return (
     <group
       name={`Ref_Solar_Panel_Group ${id}`}
@@ -257,12 +296,12 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
       }}
     >
       {/* panel */}
-      <Box name="Box Mesh" ref={boxMeshRef} scale={[lx, ly, 0.1]}>
+      <Box name="Box Mesh" ref={boxMeshRef} scale={[lx, ly, 0.1]} rotation={[0, 0, R]}>
         <meshStandardMaterial color={'blue'} />
       </Box>
 
       {/* handles */}
-      <group name="Handles Group" visible={selected}>
+      <group name="Handles Group" visible={selected} rotation={[0, 0, R]}>
         {/* move handle group */}
         <group name="Move Handle Group">
           <Sphere args={[handleSize]} onPointerDown={onMoveHandlePointerDown} />
