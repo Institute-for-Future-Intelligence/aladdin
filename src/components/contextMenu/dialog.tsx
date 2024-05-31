@@ -1,8 +1,8 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
-import React, { PropsWithChildren, useEffect } from 'react';
+import React, { PropsWithChildren, useCallback, useEffect } from 'react';
 import { Button, Divider, Modal } from 'antd';
 import { useRef, useState } from 'react';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
@@ -55,7 +55,7 @@ const Dialog: React.FunctionComponent<PropsWithChildren<DialogProps>> = ({
     }
   };
 
-  const handleClickOk = () => {
+  const handleClickOk = useCallback(() => {
     if (onClickOk) {
       onClickOk();
     } else {
@@ -63,7 +63,7 @@ const Dialog: React.FunctionComponent<PropsWithChildren<DialogProps>> = ({
       onClose();
       setApplyCount(0);
     }
-  };
+  }, [onApply, onClickOk, onClose, setApplyCount]);
 
   const handleClickCancel = () => {
     if (onClickCancel) {

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useState } from 'react';
@@ -19,7 +19,7 @@ import { useLanguage } from 'src/hooks';
 
 const { Option } = Select;
 
-const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const SolarPanelModelSelection = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -76,8 +76,6 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
             sp.lx = nx * pvModel.length;
             sp.ly = ny * pvModel.width;
           }
-          if (sp.parentType === ObjectType.Wall) {
-          }
           break;
         }
       }
@@ -87,7 +85,6 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
   const updateSolarPanelModelAboveFoundation = (foundationId: string, pvModelName: string) => {
     setCommonStore((state: CommonStoreState) => {
       const pvModel = state.pvModules[pvModelName];
-      let updateWall = false;
       for (const e of state.elements) {
         if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId && !e.locked) {
           const sp = e as SolarPanelModel;
@@ -105,12 +102,7 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
             sp.lx = nx * pvModel.length;
             sp.ly = ny * pvModel.width;
           }
-          if (sp.parentType === ObjectType.Wall) {
-            updateWall = true;
-          }
         }
-      }
-      if (updateWall) {
       }
     });
   };
@@ -118,7 +110,6 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
   const updateSolarPanelModelOnSurface = (parentId: string, normal: number[] | undefined, pvModelName: string) => {
     setCommonStore((state: CommonStoreState) => {
       const pvModel = state.pvModules[pvModelName];
-      let updateWall = false;
       for (const e of state.elements) {
         if (e.type === ObjectType.SolarPanel && !e.locked) {
           let found;
@@ -143,13 +134,8 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
               sp.lx = nx * pvModel.length;
               sp.ly = ny * pvModel.width;
             }
-            if (sp.parentType === ObjectType.Wall) {
-              updateWall = true;
-            }
           }
         }
-      }
-      if (updateWall) {
       }
     });
   };
@@ -157,7 +143,6 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
   const updateSolarPanelModelForAll = (pvModelName: string) => {
     setCommonStore((state: CommonStoreState) => {
       const pvModel = state.pvModules[pvModelName];
-      let updateWall = false;
       for (const e of state.elements) {
         if (e.type === ObjectType.SolarPanel && !e.locked) {
           const sp = e as SolarPanelModel;
@@ -175,12 +160,7 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
             sp.lx = nx * pvModel.length;
             sp.ly = ny * pvModel.width;
           }
-          if (sp.parentType === ObjectType.Wall) {
-            updateWall = true;
-          }
         }
-      }
-      if (updateWall) {
       }
     });
   };
@@ -188,7 +168,6 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
   const updateInMap = (map: Map<string, string>, value: string) => {
     useStore.getState().set((state) => {
       const pvModel = state.pvModules[value];
-      let updateWall = false;
       for (const e of state.elements) {
         if (e.type === ObjectType.SolarPanel && !e.locked && map.has(e.id)) {
           const sp = e as SolarPanelModel;
@@ -206,9 +185,6 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
             sp.lx = nx * pvModel.length;
             sp.ly = ny * pvModel.width;
           }
-          if (sp.parentType === ObjectType.Wall) {
-            updateWall = true;
-          }
         }
       }
     });
@@ -221,7 +197,7 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
   const needChange = (pvModelName: string) => {
     if (!solarPanel) return;
     switch (actionScope) {
-      case Scope.AllSelectedObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.SolarPanel && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
             const sp = e as SolarPanelModel;
@@ -231,7 +207,8 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
           }
         }
         break;
-      case Scope.AllObjectsOfThisType:
+      }
+      case Scope.AllObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.SolarPanel && !e.locked) {
             const sp = e as SolarPanelModel;
@@ -241,7 +218,8 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
           }
         }
         break;
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      }
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         for (const e of elements) {
           if (e.type === ObjectType.SolarPanel && e.foundationId === solarPanel?.foundationId && !e.locked) {
             const sp = e as SolarPanelModel;
@@ -251,7 +229,8 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
           }
         }
         break;
-      case Scope.AllObjectsOfThisTypeOnSurface:
+      }
+      case Scope.AllObjectsOfThisTypeOnSurface: {
         const parent = getParent(solarPanel);
         if (parent) {
           const isParentCuboid = parent.type === ObjectType.Cuboid;
@@ -281,10 +260,13 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
           }
         }
         break;
-      default:
+      }
+      default: {
         if (solarPanel?.pvModelName !== pvModelName) {
           return true;
         }
+        break;
+      }
     }
     return false;
   };
@@ -348,7 +330,7 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
         setApplyCount(applyCount + 1);
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (solarPanel.foundationId) {
           const oldModelsAboveFoundation = new Map<string, string>();
           for (const elem of elements) {
@@ -381,7 +363,8 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
           setApplyCount(applyCount + 1);
         }
         break;
-      case Scope.AllObjectsOfThisTypeOnSurface:
+      }
+      case Scope.AllObjectsOfThisTypeOnSurface: {
         const parent = getParent(solarPanel);
         if (parent) {
           const oldModelsOnSurface = new Map<string, string>();
@@ -431,7 +414,8 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
           setApplyCount(applyCount + 1);
         }
         break;
-      default:
+      }
+      default: {
         // solar panel selected element may be outdated, make sure that we get the latest
         const sp = getElementById(solarPanel.id) as SolarPanelModel;
         const oldModel = sp ? sp.pvModelName : solarPanel.pvModelName;
@@ -452,6 +436,8 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
         addUndoable(undoableChange);
         updateSolarPanelModelById(solarPanel.id, value);
         setApplyCount(applyCount + 1);
+        break;
+      }
     }
     setCommonStore((state) => {
       state.actionState.solarPanelModelName = value;
@@ -663,6 +649,6 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
       </Row>
     </Dialog>
   );
-};
+});
 
 export default SolarPanelModelSelection;

@@ -1,21 +1,21 @@
 /*
- * @Copyright 2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2023-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Col, InputNumber, Modal, Radio, RadioChangeEvent, Row, Space } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
-import { CommonStoreState, useStore } from '../../../stores/common';
-import * as Selector from '../../../stores/selector';
-import { SolarPanelModel } from '../../../models/SolarPanelModel';
-import { ObjectType, Scope } from '../../../types';
-import i18n from '../../../i18n/i18n';
-import { UndoableChange } from '../../../undo/UndoableChange';
-import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
-import { Util } from '../../../Util';
-import { ZERO_TOLERANCE } from '../../../constants';
+import { CommonStoreState, useStore } from '../../../../stores/common';
+import * as Selector from '../../../../stores/selector';
+import { SolarPanelModel } from '../../../../models/SolarPanelModel';
+import { ObjectType, Scope } from '../../../../types';
+import i18n from '../../../../i18n/i18n';
+import { UndoableChange } from '../../../../undo/UndoableChange';
+import { UndoableChangeGroup } from '../../../../undo/UndoableChangeGroup';
+import { Util } from '../../../../Util';
+import { ZERO_TOLERANCE } from '../../../../constants';
 
-const SolarPanelDcToAcRatioInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const SolarPanelDcToAcRatioInput = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
@@ -113,7 +113,7 @@ const SolarPanelDcToAcRatioInput = ({ setDialogVisible }: { setDialogVisible: (b
 
   const needChange = (ratio: number) => {
     switch (actionScope) {
-      case Scope.AllSelectedObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.SolarPanel && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
             const sp = e as SolarPanelModel;
@@ -123,7 +123,8 @@ const SolarPanelDcToAcRatioInput = ({ setDialogVisible }: { setDialogVisible: (b
           }
         }
         break;
-      case Scope.AllObjectsOfThisType:
+      }
+      case Scope.AllObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.SolarPanel && !e.locked) {
             const sp = e as SolarPanelModel;
@@ -133,7 +134,8 @@ const SolarPanelDcToAcRatioInput = ({ setDialogVisible }: { setDialogVisible: (b
           }
         }
         break;
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      }
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         for (const e of elements) {
           if (e.type === ObjectType.SolarPanel && e.foundationId === solarPanel?.foundationId && !e.locked) {
             const sp = e as SolarPanelModel;
@@ -143,7 +145,8 @@ const SolarPanelDcToAcRatioInput = ({ setDialogVisible }: { setDialogVisible: (b
           }
         }
         break;
-      case Scope.AllObjectsOfThisTypeOnSurface:
+      }
+      case Scope.AllObjectsOfThisTypeOnSurface: {
         const parent = getParent(solarPanel);
         if (parent) {
           const isParentCuboid = parent.type === ObjectType.Cuboid;
@@ -173,10 +176,13 @@ const SolarPanelDcToAcRatioInput = ({ setDialogVisible }: { setDialogVisible: (b
           }
         }
         break;
-      default:
+      }
+      default: {
         if (Math.abs((solarPanel?.dcToAcRatio ?? 1) - ratio) > ZERO_TOLERANCE) {
           return true;
         }
+        break;
+      }
     }
     return false;
   };
@@ -240,7 +246,7 @@ const SolarPanelDcToAcRatioInput = ({ setDialogVisible }: { setDialogVisible: (b
         setApplyCount(applyCount + 1);
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (solarPanel.foundationId) {
           const oldValuesAboveFoundation = new Map<string, number>();
           for (const elem of elements) {
@@ -273,7 +279,8 @@ const SolarPanelDcToAcRatioInput = ({ setDialogVisible }: { setDialogVisible: (b
           setApplyCount(applyCount + 1);
         }
         break;
-      case Scope.AllObjectsOfThisTypeOnSurface:
+      }
+      case Scope.AllObjectsOfThisTypeOnSurface: {
         const parent = getParent(solarPanel);
         if (parent) {
           const oldValuesOnSurface = new Map<string, number>();
@@ -323,7 +330,8 @@ const SolarPanelDcToAcRatioInput = ({ setDialogVisible }: { setDialogVisible: (b
           setApplyCount(applyCount + 1);
         }
         break;
-      default:
+      }
+      default: {
         // solar panel selected element may be outdated, make sure that we get the latest
         const sp = getElementById(solarPanel.id);
         const oldValue = sp ? (sp as SolarPanelModel).dcToAcRatio ?? 1 : solarPanel.dcToAcRatio ?? 1;
@@ -344,6 +352,8 @@ const SolarPanelDcToAcRatioInput = ({ setDialogVisible }: { setDialogVisible: (b
         addUndoable(undoableChange);
         updateDcToAcRatioById(solarPanel.id, value);
         setApplyCount(applyCount + 1);
+        break;
+      }
     }
     setUpdateFlag(!updateFlag);
   };
@@ -468,6 +478,6 @@ const SolarPanelDcToAcRatioInput = ({ setDialogVisible }: { setDialogVisible: (b
       </Modal>
     </>
   );
-};
+});
 
 export default SolarPanelDcToAcRatioInput;

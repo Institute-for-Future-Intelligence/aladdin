@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -17,7 +17,7 @@ import { useSelectedElement } from '../menuHooks';
 import { useLanguage } from 'src/hooks';
 import Dialog from '../../dialog';
 
-const SolarPanelPoleSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const SolarPanelPoleSpacingInput = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -108,7 +108,7 @@ const SolarPanelPoleSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b
   const needChange = (poleSpacing: number) => {
     if (!solarPanel) return;
     switch (actionScope) {
-      case Scope.AllSelectedObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.SolarPanel && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
             const sp = e as SolarPanelModel;
@@ -118,7 +118,8 @@ const SolarPanelPoleSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b
           }
         }
         break;
-      case Scope.AllObjectsOfThisType:
+      }
+      case Scope.AllObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.SolarPanel && !e.locked) {
             const sp = e as SolarPanelModel;
@@ -128,7 +129,8 @@ const SolarPanelPoleSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b
           }
         }
         break;
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      }
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         for (const e of elements) {
           if (e.type === ObjectType.SolarPanel && e.foundationId === solarPanel?.foundationId && !e.locked) {
             const sp = e as SolarPanelModel;
@@ -138,7 +140,8 @@ const SolarPanelPoleSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b
           }
         }
         break;
-      case Scope.AllObjectsOfThisTypeOnSurface:
+      }
+      case Scope.AllObjectsOfThisTypeOnSurface: {
         const parent = getParent(solarPanel);
         if (parent) {
           const isParentCuboid = parent.type === ObjectType.Cuboid;
@@ -168,10 +171,13 @@ const SolarPanelPoleSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b
           }
         }
         break;
-      default:
+      }
+      default: {
         if (Math.abs(solarPanel?.poleSpacing - poleSpacing) > ZERO_TOLERANCE) {
           return true;
         }
+        break;
+      }
     }
     return false;
   };
@@ -235,7 +241,7 @@ const SolarPanelPoleSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b
         setApplyCount(applyCount + 1);
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (solarPanel.foundationId) {
           const oldPoleSpacingsAboveFoundation = new Map<string, number>();
           for (const elem of elements) {
@@ -268,7 +274,8 @@ const SolarPanelPoleSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b
           setApplyCount(applyCount + 1);
         }
         break;
-      case Scope.AllObjectsOfThisTypeOnSurface:
+      }
+      case Scope.AllObjectsOfThisTypeOnSurface: {
         const parent = getParent(solarPanel);
         if (parent) {
           const oldPoleSpacingsOnSurface = new Map<string, number>();
@@ -318,7 +325,8 @@ const SolarPanelPoleSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b
           setApplyCount(applyCount + 1);
         }
         break;
-      default:
+      }
+      default: {
         // solar panel selected element may be outdated, make sure that we get the latest
         const sp = getElementById(solarPanel.id) as SolarPanelModel;
         const oldPoleSpacing = sp ? sp.poleSpacing : solarPanel.poleSpacing;
@@ -339,6 +347,8 @@ const SolarPanelPoleSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b
         addUndoable(undoableChange);
         updateSolarPanelPoleSpacingById(solarPanel.id, value);
         setApplyCount(applyCount + 1);
+        break;
+      }
     }
     setCommonStore((state) => {
       state.actionState.solarPanelPoleSpacing = value;
@@ -406,6 +416,6 @@ const SolarPanelPoleSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b
       </Row>
     </Dialog>
   );
-};
+});
 
 export default SolarPanelPoleSpacingInput;

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -18,7 +18,7 @@ import { useSelectedElement } from '../menuHooks';
 import { useLanguage } from 'src/hooks';
 import Dialog from '../../dialog';
 
-const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const SolarPanelWidthInput = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -161,7 +161,7 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
   const needChange = (ly: number) => {
     if (!solarPanel) return;
     switch (actionScope) {
-      case Scope.AllSelectedObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.SolarPanel && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
             const sp = e as SolarPanelModel;
@@ -171,7 +171,8 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
           }
         }
         break;
-      case Scope.AllObjectsOfThisType:
+      }
+      case Scope.AllObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.SolarPanel && !e.locked) {
             const sp = e as SolarPanelModel;
@@ -181,7 +182,8 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
           }
         }
         break;
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      }
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         for (const e of elements) {
           if (e.type === ObjectType.SolarPanel && e.foundationId === solarPanel?.foundationId && !e.locked) {
             const sp = e as SolarPanelModel;
@@ -191,7 +193,8 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
           }
         }
         break;
-      case Scope.AllObjectsOfThisTypeOnSurface:
+      }
+      case Scope.AllObjectsOfThisTypeOnSurface: {
         const parent = getParent(solarPanel);
         if (parent) {
           const isParentCuboid = parent.type === ObjectType.Cuboid;
@@ -221,10 +224,13 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
           }
         }
         break;
-      default:
+      }
+      default: {
         if (Math.abs(solarPanel?.ly - ly) > ZERO_TOLERANCE) {
           return true;
         }
+        break;
+      }
     }
     return false;
   };
@@ -317,7 +323,7 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
         }
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (solarPanel.foundationId) {
           rejectRef.current = false;
           for (const elem of elements) {
@@ -364,7 +370,8 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
           }
         }
         break;
-      case Scope.AllObjectsOfThisTypeOnSurface:
+      }
+      case Scope.AllObjectsOfThisTypeOnSurface: {
         const parent = getParent(solarPanel);
         if (parent) {
           rejectRef.current = false;
@@ -444,7 +451,8 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
           }
         }
         break;
-      default:
+      }
+      default: {
         // solar panel selected element may be outdated, make sure that we get the latest
         const sp = getElementById(solarPanel.id);
         const oldWidth = sp ? sp.ly : solarPanel.ly;
@@ -471,6 +479,8 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
           updateSolarPanelLyById(solarPanel.id, value);
           setApplyCount(applyCount + 1);
         }
+        break;
+      }
     }
   };
 
@@ -570,6 +580,6 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
       </Row>
     </Dialog>
   );
-};
+});
 
 export default SolarPanelWidthInput;

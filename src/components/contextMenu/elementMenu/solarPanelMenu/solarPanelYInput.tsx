@@ -16,7 +16,7 @@ import { useSelectedElement } from '../menuHooks';
 import Dialog from '../../dialog';
 import { useLanguage } from 'src/hooks';
 
-const SolarPanelYInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const SolarPanelYInput = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const getParent = useStore(Selector.getParent);
@@ -189,7 +189,7 @@ const SolarPanelYInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
         }
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (solarPanel.foundationId) {
           rejectRef.current = false;
           for (const elem of elements) {
@@ -237,7 +237,8 @@ const SolarPanelYInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
           }
         }
         break;
-      default:
+      }
+      default: {
         // solar panel selected element may be outdated, make sure that we get the latest
         const sp = getElementById(solarPanel.id) as SolarPanelModel;
         const oldValue = sp ? sp.cy : solarPanel.cy;
@@ -264,6 +265,8 @@ const SolarPanelYInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
           updateById(solarPanel.id, value);
           setApplyCount(applyCount + 1);
         }
+        break;
+      }
     }
     setCommonStore((state) => {
       state.actionState.solarPanelCy = value;
@@ -351,6 +354,6 @@ const SolarPanelYInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
       </Row>
     </Dialog>
   );
-};
+});
 
 export default SolarPanelYInput;

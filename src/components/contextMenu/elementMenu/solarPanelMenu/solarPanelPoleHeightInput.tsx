@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useRef, useState } from 'react';
@@ -17,7 +17,7 @@ import { useSelectedElement } from '../menuHooks';
 import Dialog from '../../dialog';
 import { useLanguage } from 'src/hooks';
 
-const SolarPanelPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const SolarPanelPoleHeightInput = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -48,7 +48,7 @@ const SolarPanelPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b:
   const needChange = (poleHeight: number) => {
     if (!solarPanel) return;
     switch (actionScope) {
-      case Scope.AllSelectedObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.SolarPanel && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
             const sp = e as SolarPanelModel;
@@ -58,7 +58,8 @@ const SolarPanelPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b:
           }
         }
         break;
-      case Scope.AllObjectsOfThisType:
+      }
+      case Scope.AllObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.SolarPanel && !e.locked) {
             const sp = e as SolarPanelModel;
@@ -68,7 +69,8 @@ const SolarPanelPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b:
           }
         }
         break;
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      }
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         for (const e of elements) {
           if (e.type === ObjectType.SolarPanel && e.foundationId === solarPanel?.foundationId && !e.locked) {
             const sp = e as SolarPanelModel;
@@ -78,7 +80,8 @@ const SolarPanelPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b:
           }
         }
         break;
-      case Scope.AllObjectsOfThisTypeOnSurface:
+      }
+      case Scope.AllObjectsOfThisTypeOnSurface: {
         const parent = getParent(solarPanel);
         if (parent) {
           const isParentCuboid = parent.type === ObjectType.Cuboid;
@@ -108,10 +111,13 @@ const SolarPanelPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b:
           }
         }
         break;
-      default:
+      }
+      default: {
         if (Math.abs(solarPanel?.poleHeight - poleHeight) > ZERO_TOLERANCE) {
           return true;
         }
+        break;
+      }
     }
     return false;
   };
@@ -215,7 +221,7 @@ const SolarPanelPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b:
         }
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (solarPanel.foundationId) {
           rejectRef.current = false;
           for (const elem of elements) {
@@ -263,7 +269,8 @@ const SolarPanelPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b:
           }
         }
         break;
-      case Scope.AllObjectsOfThisTypeOnSurface:
+      }
+      case Scope.AllObjectsOfThisTypeOnSurface: {
         const parent = getParent(solarPanel);
         if (parent) {
           rejectRef.current = false;
@@ -346,7 +353,8 @@ const SolarPanelPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b:
           }
         }
         break;
-      default:
+      }
+      default: {
         // solar panel selected element may be outdated, make sure that we get the latest
         const sp = getElementById(solarPanel.id) as SolarPanelModel;
         const oldPoleHeight = sp ? sp.poleHeight : solarPanel.poleHeight;
@@ -373,6 +381,8 @@ const SolarPanelPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b:
           updatePoleHeightById(solarPanel.id, value);
           setApplyCount(applyCount + 1);
         }
+        break;
+      }
     }
     setCommonStore((state) => {
       state.actionState.solarPanelPoleHeight = value;
@@ -468,6 +478,6 @@ const SolarPanelPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b:
       </Row>
     </Dialog>
   );
-};
+});
 
 export default SolarPanelPoleHeightInput;

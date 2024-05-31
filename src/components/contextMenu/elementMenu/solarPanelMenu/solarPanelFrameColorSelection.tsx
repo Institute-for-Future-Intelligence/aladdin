@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -17,7 +17,7 @@ import { useSelectedElement } from '../menuHooks';
 import Dialog from '../../dialog';
 import { useLanguage } from 'src/hooks';
 
-const SolarPanelFrameColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const SolarPanelFrameColorSelection = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -100,7 +100,7 @@ const SolarPanelFrameColorSelection = ({ setDialogVisible }: { setDialogVisible:
   const needChange = (frameColor: string) => {
     if (!solarPanel) return;
     switch (actionScope) {
-      case Scope.AllSelectedObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.SolarPanel && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
             const sp = e as SolarPanelModel;
@@ -110,7 +110,8 @@ const SolarPanelFrameColorSelection = ({ setDialogVisible }: { setDialogVisible:
           }
         }
         break;
-      case Scope.AllObjectsOfThisType:
+      }
+      case Scope.AllObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.SolarPanel && !e.locked) {
             const sp = e as SolarPanelModel;
@@ -120,7 +121,8 @@ const SolarPanelFrameColorSelection = ({ setDialogVisible }: { setDialogVisible:
           }
         }
         break;
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      }
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         for (const e of elements) {
           if (e.type === ObjectType.SolarPanel && e.foundationId === solarPanel?.foundationId && !e.locked) {
             const sp = e as SolarPanelModel;
@@ -130,7 +132,8 @@ const SolarPanelFrameColorSelection = ({ setDialogVisible }: { setDialogVisible:
           }
         }
         break;
-      case Scope.AllObjectsOfThisTypeOnSurface:
+      }
+      case Scope.AllObjectsOfThisTypeOnSurface: {
         const parent = getParent(solarPanel);
         if (parent) {
           const isParentCuboid = parent.type === ObjectType.Cuboid;
@@ -160,10 +163,13 @@ const SolarPanelFrameColorSelection = ({ setDialogVisible }: { setDialogVisible:
           }
         }
         break;
-      default:
+      }
+      default: {
         if (solarPanel?.frameColor !== frameColor) {
           return true;
         }
+        break;
+      }
     }
     return false;
   };
@@ -227,7 +233,7 @@ const SolarPanelFrameColorSelection = ({ setDialogVisible }: { setDialogVisible:
         setApplyCount(applyCount + 1);
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (solarPanel.foundationId) {
           const oldFrameColorsAboveFoundation = new Map<string, string>();
           for (const elem of elements) {
@@ -260,7 +266,8 @@ const SolarPanelFrameColorSelection = ({ setDialogVisible }: { setDialogVisible:
           setApplyCount(applyCount + 1);
         }
         break;
-      case Scope.AllObjectsOfThisTypeOnSurface:
+      }
+      case Scope.AllObjectsOfThisTypeOnSurface: {
         const parent = getParent(solarPanel);
         if (parent) {
           const oldFrameColorsOnSurface = new Map<string, string>();
@@ -310,7 +317,8 @@ const SolarPanelFrameColorSelection = ({ setDialogVisible }: { setDialogVisible:
           setApplyCount(applyCount + 1);
         }
         break;
-      default:
+      }
+      default: {
         // solar panel selected element may be outdated, make sure that we get the latest
         const sp = getElementById(solarPanel.id) as SolarPanelModel;
         const oldFrameColor = sp ? sp.frameColor : solarPanel.frameColor;
@@ -331,6 +339,8 @@ const SolarPanelFrameColorSelection = ({ setDialogVisible }: { setDialogVisible:
         addUndoable(undoableChange);
         updateSolarPanelFrameColorById(solarPanel.id, value);
         setApplyCount(applyCount + 1);
+        break;
+      }
     }
     setCommonStore((state) => {
       state.actionState.solarPanelFrameColor = value;
@@ -384,6 +394,6 @@ const SolarPanelFrameColorSelection = ({ setDialogVisible }: { setDialogVisible:
       </Row>
     </Dialog>
   );
-};
+});
 
 export default SolarPanelFrameColorSelection;

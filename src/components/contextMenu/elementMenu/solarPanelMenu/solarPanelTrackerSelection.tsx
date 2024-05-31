@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -16,7 +16,7 @@ import { useSelectedElement } from '../menuHooks';
 import { useLanguage } from 'src/hooks';
 import Dialog from '../../dialog';
 
-const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const SolarPanelTrackerSelection = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -106,7 +106,7 @@ const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b
   const needChange = (tracker: TrackerType) => {
     if (!solarPanel) return;
     switch (actionScope) {
-      case Scope.AllSelectedObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.SolarPanel && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
             const sp = e as SolarPanelModel;
@@ -116,7 +116,8 @@ const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b
           }
         }
         break;
-      case Scope.AllObjectsOfThisType:
+      }
+      case Scope.AllObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.SolarPanel && !e.locked) {
             const sp = e as SolarPanelModel;
@@ -126,7 +127,8 @@ const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b
           }
         }
         break;
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      }
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         for (const e of elements) {
           if (e.type === ObjectType.SolarPanel && e.foundationId === solarPanel?.foundationId && !e.locked) {
             const sp = e as SolarPanelModel;
@@ -136,7 +138,8 @@ const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b
           }
         }
         break;
-      case Scope.AllObjectsOfThisTypeOnSurface:
+      }
+      case Scope.AllObjectsOfThisTypeOnSurface: {
         const parent = getParent(solarPanel);
         if (parent) {
           const isParentCuboid = parent.type === ObjectType.Cuboid;
@@ -166,10 +169,13 @@ const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b
           }
         }
         break;
-      default:
+      }
+      default: {
         if (solarPanel?.trackerType !== tracker) {
           return true;
         }
+        break;
+      }
     }
     return false;
   };
@@ -233,7 +239,7 @@ const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b
         setApplyCount(applyCount + 1);
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (solarPanel.foundationId) {
           const oldTrackerTypesAboveFoundation = new Map<string, TrackerType>();
           for (const elem of elements) {
@@ -266,7 +272,8 @@ const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b
           setApplyCount(applyCount + 1);
         }
         break;
-      case Scope.AllObjectsOfThisTypeOnSurface:
+      }
+      case Scope.AllObjectsOfThisTypeOnSurface: {
         const parent = getParent(solarPanel);
         if (parent) {
           const oldTrackerTypesOnSurface = new Map<string, TrackerType>();
@@ -316,7 +323,8 @@ const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b
           setApplyCount(applyCount + 1);
         }
         break;
-      default:
+      }
+      default: {
         // solar panel selected element may be outdated, make sure that we get the latest
         const sp = getElementById(solarPanel.id) as SolarPanelModel;
         const oldTrackerType = sp ? sp.trackerType : solarPanel.trackerType;
@@ -337,6 +345,8 @@ const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b
         addUndoable(undoableChange);
         updateSolarPanelTrackerTypeById(solarPanel.id, value);
         setApplyCount(applyCount + 1);
+        break;
+      }
     }
   };
 
@@ -414,6 +424,6 @@ const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b
       </Row>
     </Dialog>
   );
-};
+});
 
 export default SolarPanelTrackerSelection;
