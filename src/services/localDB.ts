@@ -3,9 +3,8 @@
  */
 
 import localforage from 'localforage';
-import { isProd } from '../constants';
 
-const DB_NAME = `aladdin_${isProd ? 'prod' : 'dev'}`;
+const DB_NAME = `aladdin_${import.meta.env.PROD ? 'prod' : 'dev'}`;
 const DB_VERSION = 5.2;
 const MIGRATION_KEY = `DB_${DB_VERSION}_${import.meta.env.NODE_ENV}_MIGRATED`;
 

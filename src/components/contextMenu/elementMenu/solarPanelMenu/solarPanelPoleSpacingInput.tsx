@@ -17,7 +17,7 @@ import { useSelectedElement } from '../menuHooks';
 import { useLanguage } from 'src/hooks';
 import Dialog from '../../dialog';
 
-const SolarPanelPoleSpacingInput = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const SolarPanelPoleSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -416,6 +416,6 @@ const SolarPanelPoleSpacingInput = React.memo(({ setDialogVisible }: { setDialog
       </Row>
     </Dialog>
   );
-});
+};
 
 export default SolarPanelPoleSpacingInput;

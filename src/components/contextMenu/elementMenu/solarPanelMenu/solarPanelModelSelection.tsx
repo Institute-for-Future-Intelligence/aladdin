@@ -19,7 +19,7 @@ import { useLanguage } from 'src/hooks';
 
 const { Option } = Select;
 
-const SolarPanelModelSelection = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -649,6 +649,6 @@ const SolarPanelModelSelection = React.memo(({ setDialogVisible }: { setDialogVi
       </Row>
     </Dialog>
   );
-});
+};
 
 export default SolarPanelModelSelection;

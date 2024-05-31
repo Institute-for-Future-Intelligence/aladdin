@@ -1,21 +1,14 @@
 /*
  * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
+
 import type { MenuProps } from 'antd';
-import { useStore } from 'src/stores/common';
-import {
-  WindowBooleanData,
-  WindowBooleanDialogItem,
-  WindowColorData,
-  WindowColorDialogItem,
-  WindowNumberData,
-  WindowNumberDialogItem,
-} from './windowMenuItems';
+import { WindowBooleanDialogItem, WindowColorDialogItem, WindowNumberDialogItem } from './windowMenuItems';
 import { WindowModel } from 'src/models/WindowModel';
+import { WindowBooleanData, WindowColorData, WindowNumberData } from './WindowPropertyTypes';
 
 export const createWindowFrameSubmenu = (window: WindowModel) => {
   const items: MenuProps['items'] = [];
-  const lang = { lng: useStore.getState().language };
 
   items.push({
     key: 'window-frame-boolean',

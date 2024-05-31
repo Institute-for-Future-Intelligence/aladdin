@@ -9,13 +9,10 @@ import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
 import { Copy, Cut, DialogItem, Lock, MenuItem } from '../../menuItems';
 import {
-  WindowColorData,
   WindowColorDialogItem,
   WindowEmptyCheckbox,
   WindowInteriorCheckbox,
-  WindowNumberData,
   WindowNumberDialogItem,
-  WindowOptionData,
   WindowOptionDialogItem,
 } from './windowMenuItems';
 import i18n from 'src/i18n/i18n';
@@ -23,14 +20,14 @@ import WindowUValueInput from './windowUValueInput';
 import { createWindowFrameSubmenu } from './windowFrameSubmenu';
 import { createWindowMullionSubmenu } from './windowMullionSubmenu';
 import { createWindowShutterSubmenu } from './windowShutterSubmenu';
+import { WindowColorData, WindowNumberData, WindowOptionData } from './WindowPropertyTypes';
 
+// TODO: This needs to be merged with WindowPropertyType
 export enum WindowDataType {
   Color = 'Color',
   Tint = 'Tint',
   Opacity = 'Opacity',
   WindowType = 'WindowType',
-  HorizontalMullion = 'HorizontalMullion',
-  VerticalMullion = 'VerticalMullion',
   MullionWidth = 'MullionWidth',
   HorizontalMullionSpacing = 'HorizontalMullionSpacing',
   VerticalMullionSpacing = 'VerticalMullionSpacing',
@@ -40,11 +37,6 @@ export enum WindowDataType {
   SillWidth = 'SillWidth',
   Width = 'Width',
   Height = 'Height',
-  Setback = 'Setback',
-  LeftShutter = 'LeftShutter',
-  RightShutter = 'RightShutter',
-  ShutterColor = 'ShutterColor',
-  ShutterWidth = 'ShutterWidth',
 }
 
 export type WindowColorSelectionSettingType = {

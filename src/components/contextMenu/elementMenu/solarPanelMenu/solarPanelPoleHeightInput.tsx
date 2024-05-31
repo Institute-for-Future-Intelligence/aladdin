@@ -17,7 +17,7 @@ import { useSelectedElement } from '../menuHooks';
 import Dialog from '../../dialog';
 import { useLanguage } from 'src/hooks';
 
-const SolarPanelPoleHeightInput = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const SolarPanelPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -478,6 +478,6 @@ const SolarPanelPoleHeightInput = React.memo(({ setDialogVisible }: { setDialogV
       </Row>
     </Dialog>
   );
-});
+};
 
 export default SolarPanelPoleHeightInput;

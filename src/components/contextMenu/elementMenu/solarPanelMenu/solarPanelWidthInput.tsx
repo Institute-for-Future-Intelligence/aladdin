@@ -18,7 +18,7 @@ import { useSelectedElement } from '../menuHooks';
 import { useLanguage } from 'src/hooks';
 import Dialog from '../../dialog';
 
-const SolarPanelWidthInput = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -580,6 +580,6 @@ const SolarPanelWidthInput = React.memo(({ setDialogVisible }: { setDialogVisibl
       </Row>
     </Dialog>
   );
-});
+};
 
 export default SolarPanelWidthInput;

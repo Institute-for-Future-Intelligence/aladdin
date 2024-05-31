@@ -27,6 +27,7 @@ import { Checkbox } from 'antd';
 import { UndoableCheck } from 'src/undo/UndoableCheck';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { useSelectedElement } from '../menuHooks';
+import { WindowBooleanData, WindowColorData, WindowNumberData, WindowOptionData } from './WindowPropertyTypes';
 
 interface WindowMenuItemProps {
   window: WindowModel;
@@ -37,38 +38,6 @@ interface WindowDialogItemProps<T> {
   dataType: T;
   noPadding?: boolean;
   children?: React.ReactNode;
-}
-
-export enum WindowNumberData {
-  Opacity = 'Opacity',
-  Width = 'Width',
-  Height = 'Height',
-  Setback = 'Setback',
-  HorizontalMullionSpacing = 'HorizontalMullionSpacing',
-  VerticalMullionSpacing = 'VerticalMullionSpacing',
-  MullionWidth = 'MullionWidth',
-  SillWidth = 'SillWidth',
-  FrameWidth = 'FrameWidth',
-  ShutterWidth = 'ShutterWidth',
-}
-
-export enum WindowColorData {
-  ShutterColor = 'ShutterColor',
-  Color = 'Color',
-  MullionColor = 'MullionColor',
-  Tint = 'Tint',
-}
-
-export enum WindowBooleanData {
-  Frame = 'Frame',
-  LeftShutter = 'LeftShutter',
-  RightShutter = 'RightShutter',
-  HorizontalMullion = 'HorizontalMullion',
-  VerticalMullion = 'VerticalMullion',
-}
-
-export enum WindowOptionData {
-  WindowType = 'WindowType',
 }
 
 export const WindowNumberDialogItem = ({ dataType, noPadding }: WindowDialogItemProps<WindowNumberData>) => {

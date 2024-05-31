@@ -17,7 +17,7 @@ import { useSelectedElement } from '../menuHooks';
 import Dialog from '../../dialog';
 import { useLanguage } from 'src/hooks';
 
-const SolarPanelFrameColorSelection = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const SolarPanelFrameColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -394,6 +394,6 @@ const SolarPanelFrameColorSelection = React.memo(({ setDialogVisible }: { setDia
       </Row>
     </Dialog>
   );
-});
+};
 
 export default SolarPanelFrameColorSelection;

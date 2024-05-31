@@ -17,7 +17,7 @@ import { useSelectedElement } from '../menuHooks';
 import Dialog from '../../dialog';
 import { useLanguage } from 'src/hooks';
 
-const SolarPanelTiltAngleInput = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const SolarPanelTiltAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -546,6 +546,6 @@ const SolarPanelTiltAngleInput = React.memo(({ setDialogVisible }: { setDialogVi
       </Row>
     </Dialog>
   );
-});
+};
 
 export default SolarPanelTiltAngleInput;

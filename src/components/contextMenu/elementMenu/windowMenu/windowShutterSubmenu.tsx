@@ -3,15 +3,9 @@
  */
 
 import type { MenuProps } from 'antd';
-import {
-  WindowBooleanData,
-  WindowBooleanDialogItem,
-  WindowColorData,
-  WindowColorDialogItem,
-  WindowNumberData,
-  WindowNumberDialogItem,
-} from './windowMenuItems';
+import { WindowBooleanDialogItem, WindowColorDialogItem, WindowNumberDialogItem } from './windowMenuItems';
 import { WindowModel } from 'src/models/WindowModel';
+import { WindowBooleanData, WindowColorData, WindowNumberData } from './WindowPropertyTypes';
 
 export const createWindowShutterSubmenu = (window: WindowModel) => {
   const items: MenuProps['items'] = [];

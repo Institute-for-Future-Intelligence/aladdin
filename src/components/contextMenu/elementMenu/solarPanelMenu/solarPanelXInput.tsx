@@ -16,7 +16,7 @@ import { useSelectedElement } from '../menuHooks';
 import Dialog from '../../dialog';
 import { useLanguage } from 'src/hooks';
 
-const SolarPanelXInput = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const SolarPanelXInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const getParent = useStore(Selector.getParent);
@@ -354,6 +354,6 @@ const SolarPanelXInput = React.memo(({ setDialogVisible }: { setDialogVisible: (
       </Row>
     </Dialog>
   );
-});
+};
 
 export default SolarPanelXInput;

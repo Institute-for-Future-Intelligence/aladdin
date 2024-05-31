@@ -16,7 +16,7 @@ import { useSelectedElement } from '../menuHooks';
 import { useLanguage } from 'src/hooks';
 import Dialog from '../../dialog';
 
-const SolarPanelTrackerSelection = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -424,6 +424,6 @@ const SolarPanelTrackerSelection = React.memo(({ setDialogVisible }: { setDialog
       </Row>
     </Dialog>
   );
-});
+};
 
 export default SolarPanelTrackerSelection;

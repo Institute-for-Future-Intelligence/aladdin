@@ -15,7 +15,7 @@ import { UndoableChangeGroup } from '../../../../undo/UndoableChangeGroup';
 import { Util } from '../../../../Util';
 import { ZERO_TOLERANCE } from '../../../../constants';
 
-const SolarPanelDcToAcRatioInput = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const SolarPanelDcToAcRatioInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
@@ -478,6 +478,6 @@ const SolarPanelDcToAcRatioInput = React.memo(({ setDialogVisible }: { setDialog
       </Modal>
     </>
   );
-});
+};
 
 export default SolarPanelDcToAcRatioInput;

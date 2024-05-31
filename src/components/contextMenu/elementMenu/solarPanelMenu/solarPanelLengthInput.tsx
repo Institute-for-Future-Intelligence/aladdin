@@ -18,7 +18,7 @@ import { useSelectedElement } from '../menuHooks';
 import Dialog from '../../dialog';
 import { useLanguage } from 'src/hooks';
 
-const SolarPanelLengthInput = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -576,6 +576,6 @@ const SolarPanelLengthInput = React.memo(({ setDialogVisible }: { setDialogVisib
       </Row>
     </Dialog>
   );
-});
+};
 
 export default SolarPanelLengthInput;
