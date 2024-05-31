@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useMemo, useState } from 'react';
@@ -66,7 +66,7 @@ const DoorWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =
   const needChange = (value: number) => {
     if (!door) return;
     switch (actionScope) {
-      case Scope.AllSelectedObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.Door && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
             const parent = getParent(e);
@@ -74,7 +74,8 @@ const DoorWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =
           }
         }
         break;
-      case Scope.AllObjectsOfThisType:
+      }
+      case Scope.AllObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.Door && !e.locked) {
             const parent = getParent(e);
@@ -82,7 +83,8 @@ const DoorWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =
           }
         }
         break;
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      }
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         for (const e of elements) {
           if (e.type === ObjectType.Door && e.foundationId === door.foundationId && !e.locked) {
             const parent = getParent(e);
@@ -90,7 +92,8 @@ const DoorWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =
           }
         }
         break;
-      case Scope.OnlyThisSide:
+      }
+      case Scope.OnlyThisSide: {
         for (const e of elements) {
           if (e.type === ObjectType.Door && e.parentId === door.parentId && !e.locked) {
             const parent = getParent(e);
@@ -98,10 +101,12 @@ const DoorWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =
           }
         }
         break;
-      default:
+      }
+      default: {
         const parent = getParent(door);
         if (parent && value !== door.lx * parent.lx) return true;
         break;
+      }
     }
     return false;
   };

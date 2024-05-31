@@ -32,11 +32,7 @@ import { useLanguage } from '../../../../hooks';
 
 const { Option } = Select;
 
-interface FlowerSelectionProps {
-  flower: FlowerModel;
-}
-
-const FlowerSelection = React.memo(({ flower }: FlowerSelectionProps) => {
+const FlowerSelection = React.memo(({ flower }: { flower: FlowerModel }) => {
   const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
 

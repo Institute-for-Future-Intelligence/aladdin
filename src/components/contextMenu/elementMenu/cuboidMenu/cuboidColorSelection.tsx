@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useState } from 'react';
@@ -272,7 +272,7 @@ const CuboidColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
         });
         break;
       }
-      case Scope.OnlyThisObject:
+      case Scope.OnlyThisObject: {
         let oldColors;
         if (cuboid.faceColors) {
           oldColors = [...cuboid.faceColors];
@@ -309,7 +309,8 @@ const CuboidColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
           }
         });
         break;
-      default:
+      }
+      default: {
         if (selectedSideIndex >= 0) {
           const oldColor = cuboid.faceColors ? cuboid.faceColors[selectedSideIndex] : cuboid.color;
           const undoableChange = {
@@ -348,6 +349,8 @@ const CuboidColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
             state.actionState.cuboidFaceColors[selectedSideIndex] = value;
           });
         }
+        break;
+      }
     }
     setUpdateFlag(!updateFlag);
   };

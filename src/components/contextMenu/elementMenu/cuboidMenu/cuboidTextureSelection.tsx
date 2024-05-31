@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import CuboidTexture01Icon from '../../../../resources/building_facade_01_menu.png';
@@ -288,7 +288,7 @@ const CuboidTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
         });
         break;
       }
-      case Scope.OnlyThisObject:
+      case Scope.OnlyThisObject: {
         const oldTextures = cuboid.textureTypes ? [...cuboid.textureTypes] : undefined;
         const undoableChange = {
           name: 'Set Texture for All Sides of Selected Cuboid',
@@ -330,7 +330,8 @@ const CuboidTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
           }
         });
         break;
-      default:
+      }
+      default: {
         if (selectedSideIndex >= 0) {
           const oldTexture = cuboid.textureTypes ? cuboid.textureTypes[selectedSideIndex] : CuboidTexture.NoTexture;
           const undoableChange = {
@@ -376,6 +377,8 @@ const CuboidTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
             state.actionState.cuboidFaceTextures[selectedSideIndex] = value;
           });
         }
+        break;
+      }
     }
   };
 

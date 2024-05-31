@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -195,7 +195,7 @@ const CuboidAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         // should list here, so it doesn't go to default, but ignore
         break;
-      default:
+      default: {
         // cuboid via selected element may be outdated, make sure that we get the latest
         const c = getElementById(cuboid.id);
         const oldAzimuth = c ? -c.rotation[2] : -cuboid.rotation[2];
@@ -216,6 +216,8 @@ const CuboidAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
         addUndoable(undoableChange);
         updateElementRotationById(cuboid.id, 0, 0, -value);
         setApplyCount(applyCount + 1);
+        break;
+      }
     }
   };
 

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import { Checkbox, Space, InputNumber } from 'antd';
@@ -13,7 +13,7 @@ import { TreeModel } from 'src/models/TreeModel';
 import { FlowerModel } from 'src/models/FlowerModel';
 import { UndoableCheck } from 'src/undo/UndoableCheck';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Easing, Tween, update } from '@tweenjs/tween.js';
 import { Util } from 'src/Util';
 import { useRefStore } from 'src/stores/commonRef';
@@ -21,19 +21,7 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 
 type BillBoardModel = HumanModel | TreeModel | FlowerModel;
 
-interface BillboardFlipCheckboxProps {
-  billboardModel: BillBoardModel;
-}
-
-interface HumanMenuItemProps {
-  human: HumanModel;
-}
-
-interface TreeMenuItemProps {
-  tree: TreeModel;
-}
-
-export const BillboardFlipCheckbox = ({ billboardModel }: BillboardFlipCheckboxProps) => {
+export const BillboardFlipCheckbox = React.memo(({ billboardModel }: { billboardModel: BillBoardModel }) => {
   const lang = useLanguage();
 
   const updateBillboardFlipById = (id: string, yes: boolean) => {
@@ -77,9 +65,9 @@ export const BillboardFlipCheckbox = ({ billboardModel }: BillboardFlipCheckboxP
       </Checkbox>
     </MenuItem>
   );
-};
+});
 
-export const HumanObserverCheckbox = ({ human }: HumanMenuItemProps) => {
+export const HumanObserverCheckbox = React.memo(({ human }: { human: HumanModel }) => {
   const lang = useLanguage();
 
   const updateHumanObserverById = (id: string, yes: boolean) => {
@@ -119,9 +107,9 @@ export const HumanObserverCheckbox = ({ human }: HumanMenuItemProps) => {
       </Checkbox>
     </MenuItem>
   );
-};
+});
 
-export const HumanMoveViewItem = ({ human }: HumanMenuItemProps) => {
+export const HumanMoveViewItem = React.memo(({ human }: { human: HumanModel }) => {
   const lang = useLanguage();
 
   const [animationFlag, setAnimationFlag] = useState(false);
@@ -201,9 +189,9 @@ export const HumanMoveViewItem = ({ human }: HumanMenuItemProps) => {
   };
 
   return <MenuItem onClick={handleClick}>{i18n.t('peopleMenu.ViewFromThisPerson', lang)}</MenuItem>;
-};
+});
 
-export const TreeShowModelCheckbox = ({ tree }: TreeMenuItemProps) => {
+export const TreeShowModelCheckbox = React.memo(({ tree }: { tree: TreeModel }) => {
   const lang = useLanguage();
 
   const updateTreeShowModelById = (id: string, showModel: boolean) => {
@@ -246,9 +234,9 @@ export const TreeShowModelCheckbox = ({ tree }: TreeMenuItemProps) => {
       </Checkbox>
     </MenuItem>
   );
-};
+});
 
-export const TreeSpreadInput = ({ tree }: TreeMenuItemProps) => {
+export const TreeSpreadInput = React.memo(({ tree }: { tree: TreeModel }) => {
   const updateElementLxById = useStore.getState().updateElementLxById;
 
   const lang = useLanguage();
@@ -294,9 +282,9 @@ export const TreeSpreadInput = ({ tree }: TreeMenuItemProps) => {
       />
     </MenuItem>
   );
-};
+});
 
-export const TreeHeightInput = ({ tree }: TreeMenuItemProps) => {
+export const TreeHeightInput = React.memo(({ tree }: { tree: TreeModel }) => {
   const updateElementLzById = useStore.getState().updateElementLzById;
 
   const lang = useLanguage();
@@ -342,4 +330,4 @@ export const TreeHeightInput = ({ tree }: TreeMenuItemProps) => {
       />
     </MenuItem>
   );
-};
+});

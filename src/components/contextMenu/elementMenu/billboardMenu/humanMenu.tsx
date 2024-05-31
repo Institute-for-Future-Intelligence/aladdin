@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import { Space, type MenuProps } from 'antd';
@@ -23,13 +23,11 @@ export const createHumanMenu = (selectedElement: ElementModel) => {
   const lang = { lng: useStore.getState().language };
   const orthographic = useStore.getState().viewState.orthographic ?? false;
 
-  // copy
   items.push({
     key: 'human-copy',
     label: <Copy />,
   });
 
-  // cut
   if (editable) {
     items.push({
       key: 'human-cut',
@@ -37,13 +35,11 @@ export const createHumanMenu = (selectedElement: ElementModel) => {
     });
   }
 
-  // lock
   items.push({
     key: 'human-lock',
     label: <Lock selectedElement={human} />,
   });
 
-  // human-flip
   if (editable) {
     items.push({
       key: 'human-flip',
@@ -51,7 +47,6 @@ export const createHumanMenu = (selectedElement: ElementModel) => {
     });
   }
 
-  // human-move-view
   if (!orthographic) {
     items.push({
       key: 'human-move-view',
@@ -59,16 +54,12 @@ export const createHumanMenu = (selectedElement: ElementModel) => {
     });
   }
 
-  // observer
   if (editable) {
     items.push({
       key: 'human-obserber',
       label: <HumanObserverCheckbox human={human} />,
     });
-  }
 
-  // human-selection
-  if (editable) {
     items.push({
       key: 'human-selection',
       label: (

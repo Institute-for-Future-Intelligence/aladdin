@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import { Space, type MenuProps } from 'antd';
@@ -22,13 +22,11 @@ export const createFlowerMenu = (selectedElement: ElementModel) => {
   const editable = !flower.locked;
   const lang = { lng: useStore.getState().language };
 
-  // copy
   items.push({
     key: 'flower-copy',
     label: <Copy />,
   });
 
-  // cut
   if (editable) {
     items.push({
       key: 'flower-cut',
@@ -36,23 +34,18 @@ export const createFlowerMenu = (selectedElement: ElementModel) => {
     });
   }
 
-  // lock
   items.push({
     key: 'flower-lock',
     label: <Lock selectedElement={flower} />,
   });
 
   if (editable) {
-    items.push(
-      // flip
-      {
-        key: 'flower-flip',
-        label: <BillboardFlipCheckbox billboardModel={flower} />,
-      },
-    );
+    items.push({
+      key: 'flower-flip',
+      label: <BillboardFlipCheckbox billboardModel={flower} />,
+    });
   }
 
-  // flower-change-type
   if (editable) {
     items.push({
       key: 'flower-change-type',

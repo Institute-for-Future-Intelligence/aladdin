@@ -1,3 +1,7 @@
+/*
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ */
+
 import { ElementCounter } from 'src/stores/ElementCounter';
 import { ObjectType } from 'src/types';
 import type { MenuProps } from 'antd';

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import type { MenuProps } from 'antd';
@@ -28,13 +28,12 @@ export const createDoorMenu = (selectedElement: ElementModel) => {
 
   const editable = !door.locked;
   const lang = { lng: useStore.getState().language };
-  // copy
+
   items.push({
     key: 'door-copy',
     label: <Copy />,
   });
 
-  // cut
   if (editable) {
     items.push({
       key: 'door-cut',
@@ -42,7 +41,6 @@ export const createDoorMenu = (selectedElement: ElementModel) => {
     });
   }
 
-  // lock
   items.push({
     key: 'door-lock',
     label: <Lock selectedElement={door} />,
@@ -50,22 +48,17 @@ export const createDoorMenu = (selectedElement: ElementModel) => {
 
   if (editable) {
     items.push(
-      // door-filled
       {
         key: 'door-filled',
         label: <DoorFilledCheckbox door={door} />,
       },
-      // door-interior
       {
         key: 'door-interior',
         label: <DoorInteriorCheckbox door={door} />,
       },
     );
-  }
 
-  if (editable) {
     items.push(
-      // door-type-submenu
       {
         key: 'door-type-submenu',
         label: <MenuItem>{i18n.t('doorMenu.DoorType', lang)}</MenuItem>,
@@ -77,12 +70,10 @@ export const createDoorMenu = (selectedElement: ElementModel) => {
           },
         ],
       },
-      // door-width
       {
         key: 'door-width',
         label: <DialogItem Dialog={DoorWidthInput}>{i18n.t('word.Width', lang)} ...</DialogItem>,
       },
-      // door-height
       {
         key: 'door-height',
         label: <DialogItem Dialog={DoorHeightInput}>{i18n.t('word.Height', lang)} ...</DialogItem>,
@@ -91,29 +82,24 @@ export const createDoorMenu = (selectedElement: ElementModel) => {
 
     if (door.filled) {
       items.push(
-        // door-u-value
         {
           key: 'door-u-value',
           label: <DialogItem Dialog={DoorUValueInput}>{i18n.t('word.UValue', lang)} ...</DialogItem>,
         },
-        // door-heat-capacity
         {
           key: 'door-heat-capacity',
           label: (
             <DialogItem Dialog={DoorHeatCapacityInput}>{i18n.t('word.VolumetricHeatCapacity', lang)} ...</DialogItem>
           ),
         },
-        // door-texture
         {
           key: 'door-texture',
           label: <DialogItem Dialog={DoorTextureSelection}>{i18n.t('word.Texture', lang)} ...</DialogItem>,
         },
-        // door-color
         {
           key: 'door-color',
           label: <DialogItem Dialog={DoorColorSelection}>{i18n.t('word.Color', lang)} ...</DialogItem>,
         },
-        // door-frame-color
         {
           key: 'door-frame-color',
           label: <DialogItem Dialog={DoorFrameColorSelection}>{i18n.t('doorMenu.FrameColor', lang)} ...</DialogItem>,
@@ -121,7 +107,6 @@ export const createDoorMenu = (selectedElement: ElementModel) => {
       );
 
       if (door.textureType === DoorTexture.Default || door.textureType === DoorTexture.NoTexture) {
-        // door-opacity
         items.push({
           key: 'door-opacity',
           label: <DialogItem Dialog={DoorOpacityInput}>{i18n.t('wallMenu.Opacity', lang)} ...</DialogItem>,

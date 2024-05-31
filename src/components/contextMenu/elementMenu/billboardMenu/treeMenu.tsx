@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import { Space, type MenuProps } from 'antd';
@@ -23,13 +23,11 @@ export const createTreeMenu = (selectedElement: ElementModel) => {
   const editable = !tree.locked;
   const lang = { lng: useStore.getState().language };
 
-  // copy
   items.push({
     key: 'tree-copy',
     label: <Copy />,
   });
 
-  // cut
   if (editable) {
     items.push({
       key: 'tree-cut',
@@ -37,7 +35,6 @@ export const createTreeMenu = (selectedElement: ElementModel) => {
     });
   }
 
-  // lock
   items.push({
     key: 'tree-lock',
     label: <Lock selectedElement={tree} />,
@@ -45,22 +42,18 @@ export const createTreeMenu = (selectedElement: ElementModel) => {
 
   if (editable) {
     items.push(
-      // show-model
       {
         key: 'tree-show-model',
         label: <TreeShowModelCheckbox tree={tree} />,
       },
-      // flip
+
       {
         key: 'tree-flip',
         label: <BillboardFlipCheckbox billboardModel={tree} />,
       },
     );
-  }
 
-  if (editable) {
     items.push(
-      // tree-change-type
       {
         key: 'tree-change-type',
         label: (
@@ -70,17 +63,14 @@ export const createTreeMenu = (selectedElement: ElementModel) => {
           </MenuItem>
         ),
       },
-      // tree-spread
       {
         key: 'tree-spread',
         label: <TreeSpreadInput tree={tree} />,
       },
-      // tree-height
       {
         key: 'tree-height',
         label: <TreeHeightInput tree={tree} />,
       },
-      // tree-label-submenu
       {
         key: 'tree-label-submenu',
         label: <MenuItem>{i18n.t('labelSubMenu.Label', lang)}</MenuItem>,

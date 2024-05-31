@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import { Checkbox, Modal } from 'antd';
@@ -20,6 +20,7 @@ import {
 import { UndoableAdd } from 'src/undo/UndoableAdd';
 import { UndoableRemoveAllChildren } from 'src/undo/UndoableRemoveAllChildren';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import React from 'react';
 
 interface CuboidMenuItemProps {
   cuboid: CuboidModel;
@@ -36,7 +37,7 @@ interface RemoveCuboidElementsItemProps extends CuboidMenuItemProps {
   children?: React.ReactNode;
 }
 
-export const StackableCheckbox = ({ cuboid }: CuboidMenuItemProps) => {
+export const StackableCheckbox = React.memo(({ cuboid }: CuboidMenuItemProps) => {
   const lang = useLanguage();
 
   const handleChange = () => {
@@ -60,9 +61,9 @@ export const StackableCheckbox = ({ cuboid }: CuboidMenuItemProps) => {
       </Checkbox>
     </MenuItem>
   );
-};
+});
 
-export const AddPolygonItem = ({ cuboid, selectedSideIndex }: AddPolygonItemProps) => {
+export const AddPolygonItem = React.memo(({ cuboid, selectedSideIndex }: AddPolygonItemProps) => {
   const lang = useLanguage();
 
   const setCommonStore = useStore.getState().set;
@@ -112,52 +113,48 @@ export const AddPolygonItem = ({ cuboid, selectedSideIndex }: AddPolygonItemProp
   };
 
   return <MenuItem onClick={handleClick}>{i18n.t('cuboidMenu.AddPolygon', lang)}</MenuItem>;
-};
+});
 
-export const RemoveCuboidElementsItem = ({
-  cuboid,
-  objectType,
-  modalTitle,
-  onClickOk,
-  children,
-}: RemoveCuboidElementsItemProps) => {
-  const removeAllChildElementsByType = useStore.getState().removeAllChildElementsByType;
+export const RemoveCuboidElementsItem = React.memo(
+  ({ cuboid, objectType, modalTitle, onClickOk, children }: RemoveCuboidElementsItemProps) => {
+    const removeAllChildElementsByType = useStore.getState().removeAllChildElementsByType;
 
-  const handleModalOk = () => {
-    const removed = useStore
-      .getState()
-      .elements.filter((e) => !e.locked && e.type === objectType && e.parentId === cuboid.id);
-    removeAllChildElementsByType(cuboid.id, objectType);
-    const removedElements = JSON.parse(JSON.stringify(removed));
-    const undoableRemove = {
-      name: `Remove All ${objectType}s on Cuboid`,
-      timestamp: Date.now(),
-      parentId: cuboid.id,
-      removedElements: removedElements,
-      undo: () => {
-        useStore.getState().set((state) => {
-          state.elements.push(...undoableRemove.removedElements);
-        });
-      },
-      redo: () => {
-        removeAllChildElementsByType(undoableRemove.parentId, objectType);
-      },
-    } as UndoableRemoveAllChildren;
-    useStore.getState().addUndoable(undoableRemove);
-  };
+    const handleModalOk = () => {
+      const removed = useStore
+        .getState()
+        .elements.filter((e) => !e.locked && e.type === objectType && e.parentId === cuboid.id);
+      removeAllChildElementsByType(cuboid.id, objectType);
+      const removedElements = JSON.parse(JSON.stringify(removed));
+      const undoableRemove = {
+        name: `Remove All ${objectType}s on Cuboid`,
+        timestamp: Date.now(),
+        parentId: cuboid.id,
+        removedElements: removedElements,
+        undo: () => {
+          useStore.getState().set((state) => {
+            state.elements.push(...undoableRemove.removedElements);
+          });
+        },
+        redo: () => {
+          removeAllChildElementsByType(undoableRemove.parentId, objectType);
+        },
+      } as UndoableRemoveAllChildren;
+      useStore.getState().addUndoable(undoableRemove);
+    };
 
-  const handleClickItem = () => {
-    const onOk = onClickOk ?? handleModalOk;
-    Modal.confirm({
-      title: modalTitle,
-      icon: <ExclamationCircleOutlined />,
-      onOk: onOk,
-    });
-  };
+    const handleClickItem = () => {
+      const onOk = onClickOk ?? handleModalOk;
+      Modal.confirm({
+        title: modalTitle,
+        icon: <ExclamationCircleOutlined />,
+        onOk: onOk,
+      });
+    };
 
-  return (
-    <MenuItem noPadding onClick={handleClickItem}>
-      {children}
-    </MenuItem>
-  );
-};
+    return (
+      <MenuItem noPadding onClick={handleClickItem}>
+        {children}
+      </MenuItem>
+    );
+  },
+);

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useRef, useState } from 'react';
@@ -85,7 +85,7 @@ const CuboidHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
   const needChange = (lz: number) => {
     if (!cuboid) return;
     switch (actionScope) {
-      case Scope.AllSelectedObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.Cuboid && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
             const c = e as CuboidModel;
@@ -95,7 +95,8 @@ const CuboidHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
           }
         }
         break;
-      case Scope.AllObjectsOfThisType:
+      }
+      case Scope.AllObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.Cuboid && !e.locked) {
             const c = e as CuboidModel;
@@ -105,7 +106,8 @@ const CuboidHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
           }
         }
         break;
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      }
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         const baseId = Util.getBaseId(cuboid?.id);
         if (baseId && baseId !== GROUND_ID) {
           for (const e of elements) {
@@ -120,7 +122,8 @@ const CuboidHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
           }
         }
         break;
-      case Scope.AllObjectsOfThisTypeOnSurface:
+      }
+      case Scope.AllObjectsOfThisTypeOnSurface: {
         for (const e of elements) {
           if (
             e.type === ObjectType.Cuboid &&
@@ -135,10 +138,13 @@ const CuboidHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
           }
         }
         break;
-      default:
+      }
+      default: {
         if (Math.abs(cuboid?.lz - lz) > ZERO_TOLERANCE) {
           return true;
         }
+        break;
+      }
     }
     return false;
   };
@@ -482,7 +488,7 @@ const CuboidHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
         setApplyCount(applyCount + 1);
         break;
       }
-      default:
+      default: {
         // cuboid via selected element may be outdated, make sure that we get the latest
         const c = getElementById(cuboid.id);
         const oldLz = c ? c.lz : cuboid.lz;
@@ -530,6 +536,8 @@ const CuboidHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
         } as UndoableChange;
         addUndoable(undoableChange);
         setApplyCount(applyCount + 1);
+        break;
+      }
     }
     setCommonStore((state) => {
       state.actionState.cuboidHeight = value;

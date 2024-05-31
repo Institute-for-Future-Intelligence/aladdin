@@ -52,11 +52,7 @@ import { useLanguage } from '../../../../hooks';
 
 const { Option } = Select;
 
-interface HumanSelectionProps {
-  human: HumanModel;
-}
-
-const HumanSelection = React.memo(({ human }: HumanSelectionProps) => {
+const HumanSelection = React.memo(({ human }: { human: HumanModel }) => {
   const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
 

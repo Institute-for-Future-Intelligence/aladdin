@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useRef, useState } from 'react';
@@ -63,7 +63,7 @@ const CuboidLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
   const containsAllChildren = (lx: number) => {
     if (!cuboid) return;
     switch (actionScope) {
-      case Scope.AllSelectedObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.Cuboid && useStore.getState().selectedElementIdSet.has(e.id)) {
             const c = e as CuboidModel;
@@ -76,7 +76,8 @@ const CuboidLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
           }
         }
         break;
-      case Scope.AllObjectsOfThisType:
+      }
+      case Scope.AllObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.Cuboid) {
             const c = e as CuboidModel;
@@ -89,11 +90,14 @@ const CuboidLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
           }
         }
         break;
-      default:
+      }
+      default: {
         const children = getChildren(cuboid.id);
         if (children.length > 0) {
           return Util.doesNewSizeContainAllChildren(cuboid, children, lx, cuboid.ly);
         }
+        break;
+      }
     }
     return true;
   };
@@ -208,12 +212,13 @@ const CuboidLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
           // top face
           switch (c.type) {
             case ObjectType.SolarPanel:
-            case ObjectType.Sensor:
+            case ObjectType.Sensor: {
               const p = new Vector2(c.cx * parent.lx, c.cy * parent.ly).rotateAround(ORIGIN_VECTOR2, azimuth);
               denormalizedPosMapRef.current.set(c.id, p);
               oldChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy));
               break;
-            case ObjectType.Polygon:
+            }
+            case ObjectType.Polygon: {
               const polygon = c as PolygonModel;
               const arr: Vector2[] = [];
               for (const v of polygon.vertices) {
@@ -225,6 +230,7 @@ const CuboidLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
                 polygon.vertices.map((v) => ({ ...v })),
               );
               break;
+            }
           }
         }
         if (Util.isPlantOrHuman(c)) {
@@ -241,7 +247,7 @@ const CuboidLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
           // top face
           switch (c.type) {
             case ObjectType.SolarPanel:
-            case ObjectType.Sensor:
+            case ObjectType.Sensor: {
               const p = denormalizedPosMapRef.current.get(c.id);
               if (p) {
                 const relativePos = new Vector2(p.x, p.y).rotateAround(ORIGIN_VECTOR2, -azimuth);
@@ -250,7 +256,8 @@ const CuboidLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
                 newChildrenPositionsMapRef.current.set(c.id, new Vector3(newCx, c.cy));
               }
               break;
-            case ObjectType.Polygon:
+            }
+            case ObjectType.Polygon: {
               const arr = denormalizedVerticesMapRef.current.get(c.id);
               if (arr) {
                 const newVertices: Point2[] = [];
@@ -267,6 +274,7 @@ const CuboidLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
                 );
               }
               break;
+            }
           }
         }
         if (Util.isPlantOrHuman(c)) {
@@ -555,7 +563,7 @@ const CuboidLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
         case Scope.AllObjectsOfThisTypeAboveFoundation:
           // should list here, so it doesn't go to default, but ignore
           break;
-        default:
+        default: {
           updateLxWithChildren(cuboid, value);
           const undoableChange = {
             name: 'Set Cuboid Length',
@@ -611,6 +619,8 @@ const CuboidLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
           } as UndoableSizeChange;
           addUndoable(undoableChange);
           setApplyCount(applyCount + 1);
+          break;
+        }
       }
     }
   };

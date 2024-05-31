@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import { useStore } from 'src/stores/common';
@@ -55,7 +55,6 @@ export const createCuboidMenu = (selectedElement: ElementModel) => {
     !cuboid.textureTypes ||
     (selectedSideIndex >= 0 && cuboid.textureTypes[selectedSideIndex] === CuboidTexture.NoTexture);
 
-  // paste
   if (legalToPaste()) {
     items.push({
       key: 'cuboid-paste',
@@ -63,13 +62,11 @@ export const createCuboidMenu = (selectedElement: ElementModel) => {
     });
   }
 
-  // copy
   items.push({
     key: 'cuboid-copy',
     label: <Copy />,
   });
 
-  // cut
   if (editable) {
     items.push({
       key: 'cuboid-cut',
@@ -77,25 +74,21 @@ export const createCuboidMenu = (selectedElement: ElementModel) => {
     });
   }
 
-  // lock
   items.push({
     key: 'cuboid-lock',
     label: <Lock selectedElement={cuboid} />,
   });
 
-  // group-master
   items.push({
     key: 'cuboid-group-master',
     label: <GroupMasterCheckbox groupableElement={cuboid} />,
   });
 
-  // stackable
   items.push({
     key: 'cuboid-stackable',
     label: <StackableCheckbox cuboid={cuboid} />,
   });
 
-  // element-counter
   if (counterUnlocked.gotSome()) {
     items.push({
       key: 'cuboid-clear',
@@ -105,7 +98,6 @@ export const createCuboidMenu = (selectedElement: ElementModel) => {
   }
 
   if (editable) {
-    // cuboid-color
     if (showColorSelection) {
       items.push({
         key: 'cuboid-color',
@@ -113,44 +105,37 @@ export const createCuboidMenu = (selectedElement: ElementModel) => {
       });
     }
 
-    // cuboid-texture
     items.push({
       key: 'cuboid-texture',
       label: <DialogItem Dialog={CuboidTextureSelection}>{i18n.t('word.Texture', lang)} ...</DialogItem>,
     });
 
-    // cuboid-length
     items.push({
       key: 'cuboid-length',
       label: <DialogItem Dialog={CuboidLengthInput}>{i18n.t('word.Length', lang)} ...</DialogItem>,
     });
 
-    // cuboid-width
     items.push({
       key: 'cuboid-width',
       label: <DialogItem Dialog={CuboidWidthInput}>{i18n.t('word.Width', lang)} ...</DialogItem>,
     });
 
-    // cuboid-height
     items.push({
       key: 'cuboid-height',
       label: <DialogItem Dialog={CuboidHeightInput}>{i18n.t('word.Height', lang)} ...</DialogItem>,
     });
 
-    // cuboid-azimuth
     items.push({
       key: 'cuboid-azimuth',
       label: <DialogItem Dialog={CuboidAzimuthInput}>{i18n.t('word.Azimuth', lang)} ...</DialogItem>,
     });
   }
 
-  // add-polygon-on-cuboid
   items.push({
     key: 'add-polygon-on-cuboid',
     label: <AddPolygonItem cuboid={cuboid} selectedSideIndex={selectedSideIndex} />,
   });
 
-  // cuboid-label
   if (editable) {
     items.push({
       key: 'cuboid-label',

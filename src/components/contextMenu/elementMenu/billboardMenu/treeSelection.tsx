@@ -26,11 +26,7 @@ import { useLanguage } from '../../../../hooks';
 
 const { Option } = Select;
 
-interface TreeSelectionProps {
-  tree: TreeModel;
-}
-
-const TreeSelection = React.memo(({ tree }: TreeSelectionProps) => {
+const TreeSelection = React.memo(({ tree }: { tree: TreeModel }) => {
   const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
 

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import { Checkbox, Radio, RadioChangeEvent, Space } from 'antd';
@@ -12,13 +12,14 @@ import { ObjectType } from 'src/types';
 import { UndoableCheck } from 'src/undo/UndoableCheck';
 import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
+import React from 'react';
 
 interface DoorMenuItemProps {
   door: DoorModel;
   children?: React.ReactNode;
 }
 
-export const DoorFilledCheckbox = ({ door }: DoorMenuItemProps) => {
+export const DoorFilledCheckbox = React.memo(({ door }: DoorMenuItemProps) => {
   const lang = useLanguage();
 
   const updateDoorFilledById = (id: string, checked: boolean) => {
@@ -61,9 +62,9 @@ export const DoorFilledCheckbox = ({ door }: DoorMenuItemProps) => {
       </Checkbox>
     </MenuItem>
   );
-};
+});
 
-export const DoorInteriorCheckbox = ({ door }: DoorMenuItemProps) => {
+export const DoorInteriorCheckbox = React.memo(({ door }: DoorMenuItemProps) => {
   const lang = useLanguage();
 
   const updateInteriorById = (id: string, interior: boolean) => {
@@ -106,9 +107,9 @@ export const DoorInteriorCheckbox = ({ door }: DoorMenuItemProps) => {
       </Checkbox>
     </MenuItem>
   );
-};
+});
 
-export const DoorTypeRadioGroup = ({ door }: DoorMenuItemProps) => {
+export const DoorTypeRadioGroup = React.memo(({ door }: DoorMenuItemProps) => {
   const lang = useLanguage();
 
   const updateDoorTypeById = (id: string, type: DoorType) => {
@@ -158,4 +159,4 @@ export const DoorTypeRadioGroup = ({ door }: DoorMenuItemProps) => {
       </Radio.Group>
     </MenuItem>
   );
-};
+});
