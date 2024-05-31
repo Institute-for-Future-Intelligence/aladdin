@@ -1,5 +1,5 @@
 /*
- * @Copyright 2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -188,7 +188,7 @@ const WindowBooleanSelection = ({
         setApplyCount(applyCount + 1);
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (windowModel.foundationId) {
           const oldValuesAboveFoundation = new Map<string, boolean>();
           for (const e of elements) {
@@ -217,7 +217,8 @@ const WindowBooleanSelection = ({
           setApplyCount(applyCount + 1);
         }
         break;
-      case Scope.OnlyThisSide:
+      }
+      case Scope.OnlyThisSide: {
         if (windowModel.parentId) {
           const oldValues = new Map<string, boolean>();
           for (const e of elements) {
@@ -243,7 +244,8 @@ const WindowBooleanSelection = ({
           setApplyCount(applyCount + 1);
         }
         break;
-      default:
+      }
+      default: {
         if (windowModel) {
           const oldValue = windowModel[attributeKey] as boolean;
           const undoableChange = {
@@ -264,6 +266,8 @@ const WindowBooleanSelection = ({
           updateById(windowModel.id, value);
           setApplyCount(applyCount + 1);
         }
+        break;
+      }
     }
   };
 

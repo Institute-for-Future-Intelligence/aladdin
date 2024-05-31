@@ -1,11 +1,11 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import { WindowModel, WindowType } from 'src/models/WindowModel';
 import WindowNumberInput from './windowNumberInput';
 import { useLanguage } from 'src/hooks';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useStore } from 'src/stores/common';
 import i18n from 'src/i18n/i18n';
 import { MenuItem } from '../../menuItems';

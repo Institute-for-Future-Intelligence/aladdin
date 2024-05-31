@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React from 'react';
@@ -210,7 +210,7 @@ const WindowColorSelection = ({
         setApplyCount(applyCount + 1);
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (windowModel.foundationId) {
           const oldValuesAboveFoundation = new Map<string, string>();
           for (const e of elements) {
@@ -239,7 +239,8 @@ const WindowColorSelection = ({
           setApplyCount(applyCount + 1);
         }
         break;
-      case Scope.OnlyThisSide:
+      }
+      case Scope.OnlyThisSide: {
         if (windowModel.parentId) {
           const oldValues = new Map<string, string>();
           for (const e of elements) {
@@ -265,7 +266,8 @@ const WindowColorSelection = ({
           setApplyCount(applyCount + 1);
         }
         break;
-      default:
+      }
+      default: {
         if (windowModel) {
           const oldValue = windowModel[attributeKey] as string;
           const undoableChange = {
@@ -286,6 +288,8 @@ const WindowColorSelection = ({
           updateById(windowModel.id, value);
           setApplyCount(applyCount + 1);
         }
+        break;
+      }
     }
     setCommonStore((state) => {
       switch (dataType) {

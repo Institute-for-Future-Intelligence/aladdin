@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -168,7 +168,7 @@ const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
         setApplyCount(applyCount + 1);
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (windowModel.foundationId) {
           const oldValuesAboveFoundation = new Map<string, number | undefined>();
           for (const e of elements) {
@@ -198,7 +198,8 @@ const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
           setApplyCount(applyCount + 1);
         }
         break;
-      case Scope.OnlyThisSide:
+      }
+      case Scope.OnlyThisSide: {
         if (windowModel.parentId) {
           const oldValues = new Map<string, number>();
           for (const e of elements) {
@@ -228,7 +229,8 @@ const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
           setApplyCount(applyCount + 1);
         }
         break;
-      default:
+      }
+      default: {
         if (windowModel) {
           const updatedWindow = getElementById(windowModel.id) as WindowModel;
           const oldValue = updatedWindow.uValue ?? windowModel.uValue ?? DEFAULT_WINDOW_U_VALUE;
@@ -250,6 +252,8 @@ const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
           updateById(windowModel.id, value);
           setApplyCount(applyCount + 1);
         }
+        break;
+      }
     }
     setCommonStore((state) => {
       state.actionState.windowUValue = value;

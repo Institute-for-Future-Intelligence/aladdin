@@ -1,5 +1,5 @@
 /*
- * @Copyright 2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2023-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -214,7 +214,7 @@ const WindowOptionSelection = ({
         setApplyCount(applyCount + 1);
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (window.foundationId) {
           const oldValuesAboveFoundation = new Map<string, string>();
           for (const e of elements) {
@@ -243,7 +243,8 @@ const WindowOptionSelection = ({
           setApplyCount(applyCount + 1);
         }
         break;
-      case Scope.OnlyThisSide:
+      }
+      case Scope.OnlyThisSide: {
         if (window.parentId) {
           const oldValues = new Map<string, string>();
           for (const e of elements) {
@@ -269,7 +270,8 @@ const WindowOptionSelection = ({
           setApplyCount(applyCount + 1);
         }
         break;
-      default:
+      }
+      default: {
         if (window) {
           const oldValue = window[attributeKey] as string;
           const undoableChange = {
@@ -290,6 +292,8 @@ const WindowOptionSelection = ({
           updateById(window.id, value);
           setApplyCount(applyCount + 1);
         }
+        break;
+      }
     }
     setCommonStore((state) => {
       switch (dataType) {

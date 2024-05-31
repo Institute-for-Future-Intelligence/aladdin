@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 import type { MenuProps } from 'antd';
 import { ElementModel } from 'src/models/ElementModel';
@@ -30,13 +30,11 @@ export const createWindTurbineMenu = (selectedElement: ElementModel) => {
   const lang = { lng: useStore.getState().language };
   const editable = !windTurbine.locked;
 
-  // copy
   items.push({
     key: 'wind-turbine-copy',
     label: <Copy />,
   });
 
-  // cut
   if (editable) {
     items.push({
       key: 'wind-turbine-cut',
@@ -44,7 +42,6 @@ export const createWindTurbineMenu = (selectedElement: ElementModel) => {
     });
   }
 
-  // lock
   items.push({
     key: 'wind-turbine-lock',
     label: <Lock selectedElement={windTurbine} />,
@@ -52,19 +49,16 @@ export const createWindTurbineMenu = (selectedElement: ElementModel) => {
 
   if (editable) {
     items.push(
-      // wind-turbine-relative-yaw-angle
       {
         key: 'wind-turbine-relative-yaw-angle',
         label: (
           <DialogItem Dialog={WindTurbineYawInput}>{i18n.t('windTurbineMenu.RelativeYawAngle', lang)} ...</DialogItem>
         ),
       },
-      // wind-turbine-rotor-submenu
       {
         key: 'wind-turbine-rotor-submenu',
         label: <MenuItem>{i18n.t('windTurbineMenu.Rotor', lang)}</MenuItem>,
         children: [
-          // wind-turbine-rotor-blade-number
           {
             key: 'wind-turbine-rotor-blade-number',
             label: (
@@ -73,7 +67,6 @@ export const createWindTurbineMenu = (selectedElement: ElementModel) => {
               </DialogItem>
             ),
           },
-          // wind-turbine-rotor-initial-angle
           {
             key: 'wind-turbine-rotor-initial-angle',
             label: (
@@ -82,7 +75,6 @@ export const createWindTurbineMenu = (selectedElement: ElementModel) => {
               </DialogItem>
             ),
           },
-          // wind-turbine-rotor-blade-pitch-angle
           {
             key: 'wind-turbine-rotor-blade-pitch-angle',
             label: (
@@ -91,7 +83,6 @@ export const createWindTurbineMenu = (selectedElement: ElementModel) => {
               </DialogItem>
             ),
           },
-          // wind-turbine-rotor-blade-radius
           {
             key: 'wind-turbine-rotor-blade-radius',
             label: (
@@ -100,7 +91,6 @@ export const createWindTurbineMenu = (selectedElement: ElementModel) => {
               </DialogItem>
             ),
           },
-          // wind-turbine-rotor-blade-design
           {
             key: 'wind-turbine-rotor-blade-design',
             label: (
@@ -109,7 +99,6 @@ export const createWindTurbineMenu = (selectedElement: ElementModel) => {
               </DialogItem>
             ),
           },
-          // wind-turbine-hub-design
           {
             key: 'wind-turbine-hub-design',
             label: (
@@ -118,7 +107,6 @@ export const createWindTurbineMenu = (selectedElement: ElementModel) => {
               </DialogItem>
             ),
           },
-          // wind-turbine-bird-safe-blade
           {
             key: 'wind-turbine-bird-safe-blade',
             label: (
@@ -129,12 +117,10 @@ export const createWindTurbineMenu = (selectedElement: ElementModel) => {
           },
         ],
       },
-      // wind-turbine-tower-submenu
       {
         key: 'wind-turbine-tower-submenu',
         label: <MenuItem>{i18n.t('windTurbineMenu.Tower', lang)}</MenuItem>,
         children: [
-          // wind-turbine-tower-height
           {
             key: 'wind-turbine-tower-height',
             label: (
@@ -143,7 +129,6 @@ export const createWindTurbineMenu = (selectedElement: ElementModel) => {
               </DialogItem>
             ),
           },
-          // wind-turbine-tower-radius
           {
             key: 'wind-turbine-tower-radius',
             label: (
@@ -154,7 +139,6 @@ export const createWindTurbineMenu = (selectedElement: ElementModel) => {
           },
         ],
       },
-      // wind-turbine-label
       {
         key: 'wind-turbine-label',
         label: <MenuItem>{i18n.t('labelSubMenu.Label', lang)}</MenuItem>,

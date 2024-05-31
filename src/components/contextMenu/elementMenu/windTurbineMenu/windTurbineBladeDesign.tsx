@@ -1,5 +1,5 @@
 /*
- * @Copyright 2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2023-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -254,7 +254,7 @@ const WindTurbineBladeDesign = ({ setDialogVisible }: { setDialogVisible: (b: bo
         setApplyCount(applyCount + 1);
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (turbine.foundationId) {
           const oldValuesAboveFoundation = new Map<string, number>();
           for (const elem of elements) {
@@ -287,7 +287,8 @@ const WindTurbineBladeDesign = ({ setDialogVisible }: { setDialogVisible: (b: bo
           setApplyCount(applyCount + 1);
         }
         break;
-      default:
+      }
+      default: {
         // selected element may be outdated, make sure that we get the latest
         const wt = getElementById(turbine.id) as WindTurbineModel;
         const oldValue = wt ? wt.bladeRootRadius : turbine.bladeRootRadius;
@@ -308,6 +309,8 @@ const WindTurbineBladeDesign = ({ setDialogVisible }: { setDialogVisible: (b: bo
         addUndoable(undoableChange);
         updateRootRadiusById(turbine.id, value);
         setApplyCount(applyCount + 1);
+        break;
+      }
     }
     setCommonStore((state) => {
       state.actionState.windTurbineBladeRootRadius = value;
@@ -461,7 +464,7 @@ const WindTurbineBladeDesign = ({ setDialogVisible }: { setDialogVisible: (b: bo
         setApplyCount(applyCount + 1);
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (turbine.foundationId) {
           const oldValuesAboveFoundation = new Map<string, number>();
           for (const elem of elements) {
@@ -494,7 +497,8 @@ const WindTurbineBladeDesign = ({ setDialogVisible }: { setDialogVisible: (b: bo
           setApplyCount(applyCount + 1);
         }
         break;
-      default:
+      }
+      default: {
         // selected element may be outdated, make sure that we get the latest
         const wt = getElementById(turbine.id) as WindTurbineModel;
         const oldValue = wt ? wt.maximumChordLength : turbine.maximumChordLength;
@@ -515,6 +519,8 @@ const WindTurbineBladeDesign = ({ setDialogVisible }: { setDialogVisible: (b: bo
         addUndoable(undoableChange);
         updateMaximumChordLengthById(turbine.id, value);
         setApplyCount(applyCount + 1);
+        break;
+      }
     }
     setCommonStore((state) => {
       state.actionState.windTurbineBladeMaximumChordLength = value;
@@ -668,7 +674,7 @@ const WindTurbineBladeDesign = ({ setDialogVisible }: { setDialogVisible: (b: bo
         setApplyCount(applyCount + 1);
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (turbine.foundationId) {
           const oldValuesAboveFoundation = new Map<string, number>();
           for (const elem of elements) {
@@ -701,7 +707,8 @@ const WindTurbineBladeDesign = ({ setDialogVisible }: { setDialogVisible: (b: bo
           setApplyCount(applyCount + 1);
         }
         break;
-      default:
+      }
+      default: {
         // selected element may be outdated, make sure that we get the latest
         const wt = getElementById(turbine.id) as WindTurbineModel;
         const oldValue = wt ? wt.maximumChordRadius : turbine.maximumChordRadius;
@@ -722,6 +729,8 @@ const WindTurbineBladeDesign = ({ setDialogVisible }: { setDialogVisible: (b: bo
         addUndoable(undoableChange);
         updateMaximumChordRadiusById(turbine.id, value);
         setApplyCount(applyCount + 1);
+        break;
+      }
     }
     setCommonStore((state) => {
       state.actionState.windTurbineBladeMaximumChordRadius = value;

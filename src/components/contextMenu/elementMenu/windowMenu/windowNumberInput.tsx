@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useMemo, useState } from 'react';
@@ -143,7 +143,7 @@ const WindowNumberInput = ({
 
   const needChange = (value: number) => {
     switch (actionScope) {
-      case Scope.AllSelectedObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.Window && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
             const w = e as WindowModel;
@@ -163,7 +163,8 @@ const WindowNumberInput = ({
           }
         }
         break;
-      case Scope.AllObjectsOfThisType:
+      }
+      case Scope.AllObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.Window && !e.locked) {
             const w = e as WindowModel;
@@ -183,7 +184,8 @@ const WindowNumberInput = ({
           }
         }
         break;
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      }
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         for (const e of elements) {
           if (e.type === ObjectType.Window && e.foundationId === windowModel.foundationId && !e.locked) {
             const w = e as WindowModel;
@@ -203,7 +205,8 @@ const WindowNumberInput = ({
           }
         }
         break;
-      case Scope.OnlyThisSide:
+      }
+      case Scope.OnlyThisSide: {
         for (const e of elements) {
           if (e.type === ObjectType.Window && e.parentId === windowModel.parentId && !e.locked) {
             const w = e as WindowModel;
@@ -223,7 +226,8 @@ const WindowNumberInput = ({
           }
         }
         break;
-      default:
+      }
+      default: {
         const parent = getParent(windowModel);
         if (parent && windowModel.parentType !== ObjectType.Roof) {
           // on a wall
@@ -238,6 +242,7 @@ const WindowNumberInput = ({
           if (value !== windowModel[attributeKey]) return true;
         }
         break;
+      }
     }
     return false;
   };

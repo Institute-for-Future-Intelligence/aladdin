@@ -1,5 +1,5 @@
 /*
- * @Copyright 2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2023-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -182,7 +182,7 @@ const WindTurbineBladeNumberSelection = ({ setDialogVisible }: { setDialogVisibl
         setApplyCount(applyCount + 1);
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (windTurbine.foundationId) {
           const oldValuesAboveFoundation = new Map<string, number>();
           for (const elem of elements) {
@@ -215,7 +215,8 @@ const WindTurbineBladeNumberSelection = ({ setDialogVisible }: { setDialogVisibl
           setApplyCount(applyCount + 1);
         }
         break;
-      default:
+      }
+      default: {
         // selected element may be outdated, make sure that we get the latest
         const wt = getElementById(windTurbine.id) as WindTurbineModel;
         const oldValue = wt ? wt.numberOfBlades ?? 3 : windTurbine.numberOfBlades ?? 3;
@@ -236,6 +237,8 @@ const WindTurbineBladeNumberSelection = ({ setDialogVisible }: { setDialogVisibl
         addUndoable(undoableChange);
         updateBladeNumberById(windTurbine.id, value);
         setApplyCount(applyCount + 1);
+        break;
+      }
     }
     setCommonStore((state) => {
       state.actionState.windTurbineNumberOfBlades = value;

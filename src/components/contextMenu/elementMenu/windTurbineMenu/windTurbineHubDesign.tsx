@@ -1,9 +1,9 @@
 /*
- * @Copyright 2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2023-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
-import { Col, Divider, InputNumber, Radio, RadioChangeEvent, Row, Space } from 'antd';
+import { Col, InputNumber, Radio, RadioChangeEvent, Row, Space } from 'antd';
 import { CommonStoreState, useStore } from '../../../../stores/common';
 import * as Selector from '../../../../stores/selector';
 import { ObjectType, Scope } from '../../../../types';
@@ -200,7 +200,7 @@ const WindTurbineHubDesign = ({ setDialogVisible }: { setDialogVisible: (b: bool
         setApplyCount(applyCount + 1);
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (windTurbine.foundationId) {
           const oldValuesAboveFoundation = new Map<string, number[]>();
           for (const elem of elements) {
@@ -234,7 +234,8 @@ const WindTurbineHubDesign = ({ setDialogVisible }: { setDialogVisible: (b: bool
           setApplyCount(applyCount + 1);
         }
         break;
-      default:
+      }
+      default: {
         // selected element may be outdated, make sure that we get the latest
         const wt = getElementById(windTurbine.id) as WindTurbineModel;
         const oldHubRadius = wt ? wt.hubRadius : windTurbine.hubRadius;
@@ -256,6 +257,8 @@ const WindTurbineHubDesign = ({ setDialogVisible }: { setDialogVisible: (b: bool
         addUndoable(undoableChange);
         updateById(windTurbine.id, values);
         setApplyCount(applyCount + 1);
+        break;
+      }
     }
     setCommonStore((state) => {
       state.actionState.windTurbineHubRadius = values[0];

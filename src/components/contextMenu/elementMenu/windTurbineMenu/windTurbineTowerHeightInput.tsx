@@ -1,5 +1,5 @@
 /*
- * @Copyright 2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2023-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useRef, useState } from 'react';
@@ -219,7 +219,7 @@ const WindTurbineTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (
         }
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (windTurbine.foundationId) {
           rejectRef.current = false;
           for (const elem of elements) {
@@ -267,7 +267,8 @@ const WindTurbineTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (
           }
         }
         break;
-      default:
+      }
+      default: {
         // selected element may be outdated, make sure that we get the latest
         const wt = getElementById(windTurbine.id) as WindTurbineModel;
         const oldHeight = wt ? wt.towerHeight : windTurbine.towerHeight;
@@ -294,6 +295,8 @@ const WindTurbineTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (
           updateTowerHeightById(windTurbine.id, value);
           setApplyCount(applyCount + 1);
         }
+        break;
+      }
     }
     setCommonStore((state) => {
       state.actionState.windTurbineTowerHeight = value;
