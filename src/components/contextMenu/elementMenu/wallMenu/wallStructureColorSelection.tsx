@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React from 'react';
@@ -93,7 +93,7 @@ const WallStructureColorSelection = ({ setDialogVisible }: { setDialogVisible: (
   const needChange = (value: string) => {
     if (!wall) return;
     switch (actionScope) {
-      case Scope.AllSelectedObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
         for (const e of elements) {
           if (
             e.type === ObjectType.Wall &&
@@ -105,14 +105,16 @@ const WallStructureColorSelection = ({ setDialogVisible }: { setDialogVisible: (
           }
         }
         break;
-      case Scope.AllObjectsOfThisType:
+      }
+      case Scope.AllObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.Wall && value !== (e as WallModel).structureColor && !e.locked) {
             return true;
           }
         }
         break;
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      }
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         for (const e of elements) {
           if (
             e.type === ObjectType.Wall &&
@@ -124,7 +126,8 @@ const WallStructureColorSelection = ({ setDialogVisible }: { setDialogVisible: (
           }
         }
         break;
-      case Scope.AllConnectedObjects:
+      }
+      case Scope.AllConnectedObjects: {
         const connectedWalls = Util.getAllConnectedWalls(wall);
         for (const e of connectedWalls) {
           if (value !== e.structureColor && !e.locked) {
@@ -132,11 +135,13 @@ const WallStructureColorSelection = ({ setDialogVisible }: { setDialogVisible: (
           }
         }
         break;
-      default:
+      }
+      default: {
         if (value !== wall?.structureColor) {
           return true;
         }
         break;
+      }
     }
     return false;
   };

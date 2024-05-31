@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useRef } from 'react';
@@ -134,7 +134,7 @@ const WallNumberInput = ({
 
   const needChange = (value: number) => {
     switch (actionScope) {
-      case Scope.AllSelectedObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
         for (const e of elements) {
           if (
             e.type === ObjectType.Wall &&
@@ -146,14 +146,16 @@ const WallNumberInput = ({
           }
         }
         break;
-      case Scope.AllObjectsOfThisType:
+      }
+      case Scope.AllObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.Wall && value !== (e as WallModel)[attributeKey] && !e.locked) {
             return true;
           }
         }
         break;
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      }
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         for (const e of elements) {
           if (
             e.type === ObjectType.Wall &&
@@ -165,7 +167,8 @@ const WallNumberInput = ({
           }
         }
         break;
-      case Scope.AllConnectedObjects:
+      }
+      case Scope.AllConnectedObjects: {
         const connectedWalls = Util.getAllConnectedWalls(wall);
         for (const e of connectedWalls) {
           if (value !== e[attributeKey] && !e.locked) {
@@ -173,11 +176,13 @@ const WallNumberInput = ({
           }
         }
         break;
-      default:
+      }
+      default: {
         if (value !== wall[attributeKey]) {
           return true;
         }
         break;
+      }
     }
     return false;
   };

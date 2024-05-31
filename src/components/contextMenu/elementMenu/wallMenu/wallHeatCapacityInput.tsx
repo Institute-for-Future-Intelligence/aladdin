@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -162,7 +162,7 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
         setApplyCount(applyCount + 1);
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (wall?.foundationId) {
           const oldValuesAboveFoundation = new Map<string, number | undefined>();
           for (const e of elements) {
@@ -192,7 +192,8 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
           setApplyCount(applyCount + 1);
         }
         break;
-      case Scope.AllConnectedObjects:
+      }
+      case Scope.AllConnectedObjects: {
         if (wall) {
           const connectedWalls = Util.getAllConnectedWalls(wall);
           const oldValuesConnectedWalls = new Map<string, number | undefined>();
@@ -222,7 +223,8 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
           setApplyCount(applyCount + 1);
         }
         break;
-      default:
+      }
+      default: {
         if (wall) {
           const updatedWall = getElementById(wall.id) as WallModel;
           const oldValue = updatedWall.volumetricHeatCapacity ?? wall.volumetricHeatCapacity ?? 0.5;
@@ -244,6 +246,8 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
           updateById(wall.id, value);
           setApplyCount(applyCount + 1);
         }
+        break;
+      }
     }
     setCommonStore((state) => {
       state.actionState.wallVolumetricHeatCapacity = value;

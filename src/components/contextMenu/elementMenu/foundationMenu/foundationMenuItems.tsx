@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import { Checkbox, Input, InputNumber, Modal, Radio, RadioChangeEvent, Space } from 'antd';
@@ -14,21 +14,12 @@ import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { ObjectType, SolarStructure } from 'src/types';
 import { UndoableRemoveAllChildren } from 'src/undo/UndoableRemoveAllChildren';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Vector3 } from 'three';
 import { UNIT_VECTOR_POS_Z } from 'src/constants';
 import { UndoableAdd } from 'src/undo/UndoableAdd';
 import { HvacSystem } from 'src/models/HvacSystem';
 import { UndoableChange } from 'src/undo/UndoableChange';
-import {
-  useLabel,
-  useLabelColor,
-  useLabelFontSize,
-  useLabelHeight,
-  useLabelShow,
-  useLabelSize,
-  useLabelText,
-} from '../menuHooks';
 
 interface FoundationItemProps {
   foundation: FoundationModel;

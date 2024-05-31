@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useRef, useState } from 'react';
@@ -210,7 +210,7 @@ const FresnelReflectorModuleLengthInput = ({ setDialogVisible }: { setDialogVisi
         }
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (fresnelReflector.foundationId) {
           rejectRef.current = false;
           for (const elem of elements) {
@@ -258,7 +258,8 @@ const FresnelReflectorModuleLengthInput = ({ setDialogVisible }: { setDialogVisi
           }
         }
         break;
-      default:
+      }
+      default: {
         // selected element may be outdated, make sure that we get the latest
         const f = getElementById(fresnelReflector.id) as FresnelReflectorModel;
         const oldModuleLength = f ? f.moduleLength : fresnelReflector.moduleLength;
@@ -285,6 +286,8 @@ const FresnelReflectorModuleLengthInput = ({ setDialogVisible }: { setDialogVisi
           updateModuleLengthById(fresnelReflector.id, value);
           setApplyCount(applyCount + 1);
         }
+        break;
+      }
     }
     setCommonStore((state) => {
       state.actionState.fresnelReflectorModuleLength = value;

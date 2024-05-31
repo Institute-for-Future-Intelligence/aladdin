@@ -42,19 +42,16 @@ export const createPolygonMenu = (selectedElement: ElementModel) => {
   const lang = { lng: useStore.getState().language };
   const editable = !polygon.locked;
 
-  // paste
   items.push({
     key: 'polygon-paste',
     label: <Paste />,
   });
 
-  // copy
   items.push({
     key: 'polygon-copy',
     label: <Copy />,
   });
 
-  // cut
   if (editable) {
     items.push({
       key: 'polygon-cut',
@@ -62,7 +59,6 @@ export const createPolygonMenu = (selectedElement: ElementModel) => {
     });
   }
 
-  // layout-submenu
   if (parent && (parent.type === ObjectType.Foundation || parent.type === ObjectType.Cuboid)) {
     items.push({
       key: 'polygon-layout-submenu',
@@ -102,20 +98,17 @@ export const createPolygonMenu = (selectedElement: ElementModel) => {
     });
   }
 
-  // lock
   items.push({
     key: 'polygon-lock',
     label: <Lock selectedElement={polygon} />,
   });
 
   if (editable) {
-    // polygon-filled
     items.push({
       key: 'polygon-filled',
       label: <PolygonFillCheckbox polygon={polygon} />,
     });
 
-    // polygon-shiny
     if (polygon.filled) {
       items.push({
         key: 'polygon-shiny',
@@ -123,29 +116,22 @@ export const createPolygonMenu = (selectedElement: ElementModel) => {
       });
     }
 
-    items.push(
-      // polygon-no-outline
-      {
-        key: 'polygon-no-outline',
-        label: <PolygonOutlineCheckbox polygon={polygon} />,
-      },
-    );
+    items.push({
+      key: 'polygon-no-outline',
+      label: <PolygonOutlineCheckbox polygon={polygon} />,
+    });
   }
 
   if (editable) {
-    // line-color-style-width
     items.push(
-      // polygon-line-color
       {
         key: 'polygon-line-color',
         label: <DialogItem Dialog={PolygonLineColorSelection}>{i18n.t('polygonMenu.LineColor', lang)} ...</DialogItem>,
       },
-      // polygon-line-style
       {
         key: 'polygon-line-style',
         label: <DialogItem Dialog={PolygonLineStyleSelection}>{i18n.t('polygonMenu.LineStyle', lang)} ...</DialogItem>,
       },
-      // polygon-line-width
       {
         key: 'polygon-line-width',
         label: <DialogItem Dialog={PolygonLineWidthSelection}>{i18n.t('polygonMenu.LineWidth', lang)} ...</DialogItem>,
@@ -153,7 +139,6 @@ export const createPolygonMenu = (selectedElement: ElementModel) => {
     );
 
     if (polygon.filled) {
-      // polygon-fill-color
       if (!polygon.textureType || polygon.textureType === PolygonTexture.NoTexture) {
         items.push({
           key: 'polygon-fill-color',
@@ -164,14 +149,12 @@ export const createPolygonMenu = (selectedElement: ElementModel) => {
       }
 
       items.push(
-        // polygon-texture
         {
           key: 'polygon-texture',
           label: (
             <DialogItem Dialog={PolygonTextureSelection}>{i18n.t('polygonMenu.FillTexture', lang)} ...</DialogItem>
           ),
         },
-        // polygon-opacity
         {
           key: 'polygon-opacity',
           label: <DialogItem Dialog={PolygonOpacityInput}>{i18n.t('polygonMenu.Opacity', lang)} ...</DialogItem>,
@@ -179,42 +162,34 @@ export const createPolygonMenu = (selectedElement: ElementModel) => {
       );
     }
 
-    // polygon-text-box
     items.push({
       key: 'polygon-text-box',
       label: <MenuItem>{i18n.t('polygonMenu.TextBox', lang)}</MenuItem>,
       children: [
-        // polygon-text
         {
           key: 'polygon-text',
           label: <PolygonText polygon={polygon} />,
         },
-        // polygon-font-size
         {
           key: 'polygon-font-size',
           label: <PolygonFontSize polygon={polygon} />,
         },
-        // polygon-font-color
         {
           key: 'polygon-font-color',
           label: <PolygonFontColor polygon={polygon} />,
         },
-        // polygon-font-outline-color
         {
           key: 'polygon-font-outline-color',
           label: <PolygonFontOutlineColor polygon={polygon} />,
         },
-        // polygon-font-outline-width
         {
           key: 'polygon-font-outline-width',
           label: <PolygonFontOutlineWidth polygon={polygon} />,
         },
-        // polygon-font-stroke-color
         {
           key: 'polygon-font-stroke-color',
           label: <PolygonFontStrokeColor polygon={polygon} />,
         },
-        // polygon-font-stroke-width
         {
           key: 'polygon-font-stroke-width',
           label: <PolygonFontStrokeWidth polygon={polygon} />,

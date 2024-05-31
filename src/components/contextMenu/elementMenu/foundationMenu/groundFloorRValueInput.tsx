@@ -16,7 +16,7 @@ import { FoundationModel } from '../../../../models/FoundationModel';
 import { DEFAULT_GROUND_FLOOR_R_VALUE, ZERO_TOLERANCE } from '../../../../constants';
 import { useLanguage } from '../../../../hooks';
 
-const GroundFloorRValueInput = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const GroundFloorRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const elements = useStore(Selector.elements);
   const selectedElement = useStore(Selector.selectedElement) as FoundationModel;
   const addUndoable = useStore(Selector.addUndoable);
@@ -289,6 +289,6 @@ const GroundFloorRValueInput = React.memo(({ setDialogVisible }: { setDialogVisi
       </Modal>
     </>
   );
-});
+};
 
 export default GroundFloorRValueInput;

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import { SensorModel } from 'src/models/SensorModel';
@@ -8,6 +8,7 @@ import { useLabel, useLabelShow, useLabelText } from '../menuHooks';
 import { MenuItem } from '../../menuItems';
 import { Checkbox, Input, Space } from 'antd';
 import i18n from 'src/i18n/i18n';
+import React from 'react';
 
 interface SensorMenuItemProps {
   sensor: SensorModel;

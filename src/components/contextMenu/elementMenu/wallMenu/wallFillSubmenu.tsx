@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import i18n from 'src/i18n/i18n';
@@ -11,7 +11,6 @@ import { WallOpenToOutsideCheckbox, WallFillRadioGroup } from './wallMenuItems';
 export const createWallFillSubmenu = (wall: WallModel) => {
   const items: MenuProps['items'] = [];
 
-  // wall-fill-radio-group
   items.push({
     key: 'wall-fill-radio-group',
     label: <WallFillRadioGroup wall={wall} />,

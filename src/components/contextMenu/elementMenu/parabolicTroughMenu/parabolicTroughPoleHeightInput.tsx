@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useRef, useState } from 'react';
@@ -47,7 +47,7 @@ const ParabolicTroughPoleHeightInput = ({ setDialogVisible }: { setDialogVisible
   const needChange = (poleHeight: number) => {
     if (!parabolicTrough) return;
     switch (actionScope) {
-      case Scope.AllSelectedObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
         for (const e of elements) {
           if (
             e.type === ObjectType.ParabolicTrough &&
@@ -61,7 +61,8 @@ const ParabolicTroughPoleHeightInput = ({ setDialogVisible }: { setDialogVisible
           }
         }
         break;
-      case Scope.AllObjectsOfThisType:
+      }
+      case Scope.AllObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.ParabolicTrough && !e.locked) {
             const pt = e as ParabolicTroughModel;
@@ -71,7 +72,8 @@ const ParabolicTroughPoleHeightInput = ({ setDialogVisible }: { setDialogVisible
           }
         }
         break;
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      }
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         for (const e of elements) {
           if (e.type === ObjectType.ParabolicTrough && e.foundationId === parabolicTrough?.foundationId && !e.locked) {
             const pt = e as ParabolicTroughModel;
@@ -81,7 +83,8 @@ const ParabolicTroughPoleHeightInput = ({ setDialogVisible }: { setDialogVisible
           }
         }
         break;
-      case Scope.AllObjectsOfThisTypeOnSurface:
+      }
+      case Scope.AllObjectsOfThisTypeOnSurface: {
         const parent = getParent(parabolicTrough);
         if (parent) {
           for (const e of elements) {
@@ -94,10 +97,13 @@ const ParabolicTroughPoleHeightInput = ({ setDialogVisible }: { setDialogVisible
           }
         }
         break;
-      default:
+      }
+      default: {
         if (Math.abs(parabolicTrough?.poleHeight - poleHeight) > ZERO_TOLERANCE) {
           return true;
         }
+        break;
+      }
     }
     return false;
   };
@@ -200,7 +206,7 @@ const ParabolicTroughPoleHeightInput = ({ setDialogVisible }: { setDialogVisible
         }
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (parabolicTrough.foundationId) {
           rejectRef.current = false;
           for (const elem of elements) {
@@ -248,7 +254,8 @@ const ParabolicTroughPoleHeightInput = ({ setDialogVisible }: { setDialogVisible
           }
         }
         break;
-      default:
+      }
+      default: {
         const p = getElementById(parabolicTrough.id) as ParabolicTroughModel;
         const oldPoleHeight = p ? p.poleHeight : parabolicTrough.poleHeight;
         rejectRef.current = 0.5 * parabolicTrough.lx * Math.abs(Math.sin(parabolicTrough.tiltAngle)) > value;
@@ -274,6 +281,8 @@ const ParabolicTroughPoleHeightInput = ({ setDialogVisible }: { setDialogVisible
           updatePoleHeightById(parabolicTrough.id, value);
           setApplyCount(applyCount + 1);
         }
+        break;
+      }
     }
     setCommonStore((state) => {
       state.actionState.parabolicTroughPoleHeight = value;

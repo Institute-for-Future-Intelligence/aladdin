@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import type { MenuProps } from 'antd';
@@ -30,13 +30,11 @@ export const createParabolicTroughMenu = (selectedElement: ElementModel) => {
   const lang = { lng: useStore.getState().language };
   const editable = !parabolicTrough.locked;
 
-  // copy
   items.push({
     key: 'parabolic-trough-copy',
     label: <Copy />,
   });
 
-  // cut
   if (editable) {
     items.push({
       key: 'parabolic-trough-cut',
@@ -44,7 +42,6 @@ export const createParabolicTroughMenu = (selectedElement: ElementModel) => {
     });
   }
 
-  // lock
   items.push({
     key: 'parabolic-trough-lock',
     label: <Lock selectedElement={parabolicTrough} />,
@@ -52,17 +49,14 @@ export const createParabolicTroughMenu = (selectedElement: ElementModel) => {
 
   if (editable) {
     items.push(
-      // parabolic-trough-length
       {
         key: 'parabolic-trough-length',
         label: <DialogItem Dialog={ParabolicTroughLengthInput}>{i18n.t('word.Length', lang)} ...</DialogItem>,
       },
-      // parabolic-trough-width
       {
         key: 'parabolic-trough-width',
         label: <DialogItem Dialog={ParabolicTroughWidthInput}>{i18n.t('word.Width', lang)} ...</DialogItem>,
       },
-      // parabolic-trough-module-length
       {
         key: 'parabolic-trough-module-length',
         label: (
@@ -71,7 +65,6 @@ export const createParabolicTroughMenu = (selectedElement: ElementModel) => {
           </DialogItem>
         ),
       },
-      // parabolic-trough-latus-rectum
       {
         key: 'parabolic-trough-latus-rectum',
         label: (
@@ -80,7 +73,6 @@ export const createParabolicTroughMenu = (selectedElement: ElementModel) => {
           </DialogItem>
         ),
       },
-      // parabolic-trough-pole-height
       {
         key: 'parabolic-trough-pole-height',
         label: (
@@ -89,7 +81,6 @@ export const createParabolicTroughMenu = (selectedElement: ElementModel) => {
           </DialogItem>
         ),
       },
-      // parabolic-trough-reflectance
       {
         key: 'parabolic-trough-reflectance',
         label: (
@@ -98,7 +89,6 @@ export const createParabolicTroughMenu = (selectedElement: ElementModel) => {
           </DialogItem>
         ),
       },
-      // parabolic-trough-absorptance
       {
         key: 'parabolic-trough-absorptance',
         label: (
@@ -107,7 +97,6 @@ export const createParabolicTroughMenu = (selectedElement: ElementModel) => {
           </DialogItem>
         ),
       },
-      // parabolic-trough-optical-efficiency
       {
         key: 'parabolic-trough-optical-efficiency',
         label: (
@@ -116,7 +105,6 @@ export const createParabolicTroughMenu = (selectedElement: ElementModel) => {
           </DialogItem>
         ),
       },
-      // parabolic-trough-thermal-efficiency
       {
         key: 'parabolic-trough-thermal-efficiency',
         label: (
@@ -125,12 +113,10 @@ export const createParabolicTroughMenu = (selectedElement: ElementModel) => {
           </DialogItem>
         ),
       },
-      // draw-sun-beam
       {
         key: 'parabolic-dish-draw-sun-beam',
         label: <SolarCollectorSunBeamCheckbox solarCollector={parabolicTrough} />,
       },
-      // parabolic-trough-label-submenu
       {
         key: 'parabolic-trough-label-submenu',
         label: <MenuItem>{i18n.t('labelSubMenu.Label', lang)}</MenuItem>,

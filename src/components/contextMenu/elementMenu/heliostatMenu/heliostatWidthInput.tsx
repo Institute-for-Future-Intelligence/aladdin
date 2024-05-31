@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useRef, useState } from 'react';
@@ -203,7 +203,7 @@ const HeliostatWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boole
         }
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (heliostat.foundationId) {
           rejectRef.current = false;
           for (const elem of elements) {
@@ -251,7 +251,8 @@ const HeliostatWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boole
           }
         }
         break;
-      default:
+      }
+      default: {
         // selected element may be outdated, make sure that we get the latest
         const h = getElementById(heliostat.id) as HeliostatModel;
         const oldValue = h ? h.ly : heliostat.ly;
@@ -278,6 +279,8 @@ const HeliostatWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boole
           updateLyById(heliostat.id, value);
           setApplyCount(applyCount + 1);
         }
+        break;
+      }
     }
     setCommonStore((state) => {
       state.actionState.heliostatWidth = value;

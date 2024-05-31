@@ -23,7 +23,7 @@ import { useSelectedElement } from '../menuHooks';
 import Dialog from '../../dialog';
 import { useLanguage } from 'src/hooks';
 
-const FoundationWidthInput = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
   const setElementPosition = useStore(Selector.setElementPosition);
@@ -639,6 +639,6 @@ const FoundationWidthInput = React.memo(({ setDialogVisible }: { setDialogVisibl
       </Row>
     </Dialog>
   );
-});
+};
 
 export default FoundationWidthInput;

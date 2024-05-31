@@ -23,7 +23,7 @@ import { useSelectedElement } from '../menuHooks';
 import Dialog from '../../dialog';
 import { useLanguage } from '../../../../hooks';
 
-const FoundationLengthInput = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
   const updateElementCxById = useStore(Selector.updateElementCxById);
@@ -638,6 +638,6 @@ const FoundationLengthInput = React.memo(({ setDialogVisible }: { setDialogVisib
       </Row>
     </Dialog>
   );
-});
+};
 
 export default FoundationLengthInput;

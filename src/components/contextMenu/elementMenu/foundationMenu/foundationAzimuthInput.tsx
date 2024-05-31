@@ -17,7 +17,7 @@ import { useSelectedElement } from '../menuHooks';
 import Dialog from '../../dialog';
 import { useLanguage } from 'src/hooks';
 
-const FoundationAzimuthInput = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const FoundationAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
   const updateElementRotationById = useStore(Selector.updateElementRotationById);
@@ -222,6 +222,6 @@ const FoundationAzimuthInput = React.memo(({ setDialogVisible }: { setDialogVisi
       </Row>
     </Dialog>
   );
-});
+};
 
 export default FoundationAzimuthInput;

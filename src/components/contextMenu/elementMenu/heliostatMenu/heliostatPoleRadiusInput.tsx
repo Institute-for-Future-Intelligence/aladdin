@@ -1,5 +1,5 @@
 /*
- * @Copyright 2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2023-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -43,7 +43,7 @@ const HeliostatPoleRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b: 
   const needChange = (poleRadius: number) => {
     if (!heliostat) return;
     switch (actionScope) {
-      case Scope.AllSelectedObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.Heliostat && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
             const hs = e as HeliostatModel;
@@ -53,7 +53,8 @@ const HeliostatPoleRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b: 
           }
         }
         break;
-      case Scope.AllObjectsOfThisType:
+      }
+      case Scope.AllObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.Heliostat && !e.locked) {
             const hs = e as HeliostatModel;
@@ -63,7 +64,8 @@ const HeliostatPoleRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b: 
           }
         }
         break;
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      }
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         for (const e of elements) {
           if (e.type === ObjectType.Heliostat && e.foundationId === heliostat?.foundationId && !e.locked) {
             const hs = e as HeliostatModel;
@@ -73,7 +75,8 @@ const HeliostatPoleRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b: 
           }
         }
         break;
-      case Scope.AllObjectsOfThisTypeOnSurface:
+      }
+      case Scope.AllObjectsOfThisTypeOnSurface: {
         const parent = getParent(heliostat);
         if (parent) {
           for (const e of elements) {
@@ -86,10 +89,13 @@ const HeliostatPoleRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b: 
           }
         }
         break;
-      default:
+      }
+      default: {
         if (Math.abs(heliostat?.poleRadius - poleRadius) > ZERO_TOLERANCE) {
           return true;
         }
+        break;
+      }
     }
     return false;
   };
@@ -163,7 +169,7 @@ const HeliostatPoleRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b: 
         setApplyCount(applyCount + 1);
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (heliostat.foundationId) {
           const oldValuesAboveFoundation = new Map<string, number>();
           for (const elem of elements) {
@@ -197,7 +203,8 @@ const HeliostatPoleRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b: 
           setApplyCount(applyCount + 1);
         }
         break;
-      default:
+      }
+      default: {
         // selected element may be outdated, make sure that we get the latest
         const h = getElementById(heliostat.id) as HeliostatModel;
         const oldPoleRadius = h ? h.poleRadius : heliostat.poleRadius;
@@ -218,6 +225,8 @@ const HeliostatPoleRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b: 
         addUndoable(undoableChange);
         updatePoleRadiusById(heliostat.id, value);
         setApplyCount(applyCount + 1);
+        break;
+      }
     }
     setCommonStore((state) => {
       state.actionState.heliostatPoleRadius = value;

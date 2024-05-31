@@ -1,5 +1,5 @@
 /*
- * @Copyright 2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2023-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -78,7 +78,7 @@ const CeilingRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   const setValue = (value: number) => {
     if (!roofModel) return;
     switch (actionScope) {
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllObjectsOfThisType: {
         const oldValuesAll = new Map<string, number | undefined>();
         setCommonStore((state) => {
           for (const e of state.elements) {
@@ -104,7 +104,8 @@ const CeilingRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
         addUndoable(undoableChangeAll);
         setApplyCount(applyCount + 1);
         break;
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      }
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (roofModel.foundationId) {
           const oldValuesAboveFoundation = new Map<string, number | undefined>();
           setCommonStore((state) => {
@@ -136,7 +137,8 @@ const CeilingRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
           setApplyCount(applyCount + 1);
         }
         break;
-      default:
+      }
+      default: {
         if (roofModel) {
           const updatedRoof = getElementById(roofModel.id) as RoofModel;
           const oldValue = updatedRoof.ceilingRValue ?? roofModel.ceilingRValue ?? DEFAULT_CEILING_R_VALUE;
@@ -158,6 +160,8 @@ const CeilingRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
           updateById(roofModel.id, value);
           setApplyCount(applyCount + 1);
         }
+        break;
+      }
     }
     setCommonStore((state) => {
       state.actionState.roofRValue = value;

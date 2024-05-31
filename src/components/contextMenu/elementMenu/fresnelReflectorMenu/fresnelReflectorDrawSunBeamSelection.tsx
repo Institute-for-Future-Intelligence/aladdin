@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -157,7 +157,7 @@ const FresnelReflectorDrawSunBeamSelection = ({ setDialogVisible }: { setDialogV
         setApplyCount(applyCount + 1);
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (fresnelReflector.foundationId) {
           const oldValuesAboveFoundation = new Map<string, boolean>();
           for (const elem of elements) {
@@ -191,7 +191,8 @@ const FresnelReflectorDrawSunBeamSelection = ({ setDialogVisible }: { setDialogV
           setApplyCount(applyCount + 1);
         }
         break;
-      default:
+      }
+      default: {
         // selected element may be outdated, make sure that we get the latest
         const f = getElementById(fresnelReflector.id) as FresnelReflectorModel;
         const oldValue = f ? f.drawSunBeam : fresnelReflector.drawSunBeam;
@@ -212,6 +213,8 @@ const FresnelReflectorDrawSunBeamSelection = ({ setDialogVisible }: { setDialogV
         addUndoable(undoableChange);
         updateById(fresnelReflector.id, value);
         setApplyCount(applyCount + 1);
+        break;
+      }
     }
   };
 

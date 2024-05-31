@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -185,7 +185,7 @@ const SolarUpdraftTowerTurbineEfficiencyInput = ({ setDialogVisible }: { setDial
         setApplyCount(applyCount + 1);
         break;
       }
-      default:
+      default: {
         if (foundation.solarStructure === SolarStructure.UpdraftTower && foundation.solarUpdraftTower) {
           // foundation selected element may be outdated, make sure that we get the latest
           const f = getElementById(foundation.id) as FoundationModel;
@@ -211,6 +211,8 @@ const SolarUpdraftTowerTurbineEfficiencyInput = ({ setDialogVisible }: { setDial
           addUndoable(undoableChange);
           setApplyCount(applyCount + 1);
         }
+        break;
+      }
     }
   };
 

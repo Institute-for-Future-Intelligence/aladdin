@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useRef, useState } from 'react';
@@ -203,7 +203,7 @@ const ParabolicDishLatusRectumInput = ({ setDialogVisible }: { setDialogVisible:
         }
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (parabolicDish.foundationId) {
           rejectRef.current = false;
           for (const elem of elements) {
@@ -251,7 +251,8 @@ const ParabolicDishLatusRectumInput = ({ setDialogVisible }: { setDialogVisible:
           }
         }
         break;
-      default:
+      }
+      default: {
         const p = getElementById(parabolicDish.id) as ParabolicDishModel;
         const oldLatusRectum = p ? p.latusRectum : parabolicDish.latusRectum;
         rejectRef.current = rejectChange(parabolicDish, value);
@@ -277,6 +278,8 @@ const ParabolicDishLatusRectumInput = ({ setDialogVisible }: { setDialogVisible:
           updateLatusRectumById(parabolicDish.id, value);
           setApplyCount(applyCount + 1);
         }
+        break;
+      }
     }
     setCommonStore((state) => {
       state.actionState.parabolicDishLatusRectum = value;

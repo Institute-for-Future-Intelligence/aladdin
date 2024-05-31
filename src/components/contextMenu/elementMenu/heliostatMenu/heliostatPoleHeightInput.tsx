@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useRef, useState } from 'react';
@@ -47,7 +47,7 @@ const HeliostatPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: 
   const needChange = (poleHeight: number) => {
     if (!heliostat) return;
     switch (actionScope) {
-      case Scope.AllSelectedObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.Heliostat && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
             const hs = e as HeliostatModel;
@@ -57,7 +57,8 @@ const HeliostatPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: 
           }
         }
         break;
-      case Scope.AllObjectsOfThisType:
+      }
+      case Scope.AllObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.Heliostat && !e.locked) {
             const hs = e as HeliostatModel;
@@ -67,7 +68,8 @@ const HeliostatPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: 
           }
         }
         break;
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      }
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         for (const e of elements) {
           if (e.type === ObjectType.Heliostat && e.foundationId === heliostat?.foundationId && !e.locked) {
             const hs = e as HeliostatModel;
@@ -77,7 +79,8 @@ const HeliostatPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: 
           }
         }
         break;
-      case Scope.AllObjectsOfThisTypeOnSurface:
+      }
+      case Scope.AllObjectsOfThisTypeOnSurface: {
         const parent = getParent(heliostat);
         if (parent) {
           for (const e of elements) {
@@ -90,10 +93,13 @@ const HeliostatPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: 
           }
         }
         break;
-      default:
+      }
+      default: {
         if (Math.abs(heliostat?.poleHeight - poleHeight) > ZERO_TOLERANCE) {
           return true;
         }
+        break;
+      }
     }
     return false;
   };
@@ -196,7 +202,7 @@ const HeliostatPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: 
         }
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (heliostat.foundationId) {
           rejectRef.current = false;
           for (const elem of elements) {
@@ -244,7 +250,8 @@ const HeliostatPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: 
           }
         }
         break;
-      default:
+      }
+      default: {
         // selected element may be outdated, make sure that we get the latest
         const h = getElementById(heliostat.id) as HeliostatModel;
         const oldPoleHeight = h ? h.poleHeight : heliostat.poleHeight;
@@ -272,6 +279,8 @@ const HeliostatPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: 
           updatePoleHeightById(heliostat.id, value);
           setApplyCount(applyCount + 1);
         }
+        break;
+      }
     }
     setCommonStore((state) => {
       state.actionState.heliostatPoleHeight = value;

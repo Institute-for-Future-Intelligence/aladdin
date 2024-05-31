@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import WallTextureDefaultIcon from 'src/resources/wall_edge.png';
@@ -106,7 +106,7 @@ const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
   const needChange = (value: WallTexture) => {
     if (!wall) return;
     switch (actionScope) {
-      case Scope.AllSelectedObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
         for (const e of elements) {
           if (
             e.type === ObjectType.Wall &&
@@ -118,14 +118,16 @@ const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
           }
         }
         break;
-      case Scope.AllObjectsOfThisType:
+      }
+      case Scope.AllObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.Wall && value !== (e as WallModel).textureType && !e.locked) {
             return true;
           }
         }
         break;
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      }
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         for (const e of elements) {
           if (
             e.type === ObjectType.Wall &&
@@ -137,7 +139,8 @@ const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
           }
         }
         break;
-      case Scope.AllConnectedObjects:
+      }
+      case Scope.AllConnectedObjects: {
         const connectedWalls = Util.getAllConnectedWalls(wall);
         for (const e of connectedWalls) {
           if (value !== e.textureType && !e.locked) {
@@ -145,11 +148,13 @@ const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
           }
         }
         break;
-      default:
+      }
+      default: {
         if (value !== wall?.textureType) {
           return true;
         }
         break;
+      }
     }
     return false;
   };

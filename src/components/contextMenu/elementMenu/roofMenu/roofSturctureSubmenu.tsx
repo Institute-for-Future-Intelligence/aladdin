@@ -6,7 +6,7 @@ import i18n from 'src/i18n/i18n';
 import { useStore } from 'src/stores/common';
 import type { MenuProps } from 'antd';
 import { RoofModel, RoofStructure } from 'src/models/RoofModel';
-import { RoofSturctureRadioGroup } from './roofMenuItems';
+import { RoofStructureRadioGroup } from './roofMenuItems';
 import { DialogItem } from '../../menuItems';
 import RoofRafterColorSelection from './roofRafterColorSelection';
 import RoofRafterSpacingInput from './roofRafterSpacingInput';
@@ -20,7 +20,7 @@ export const createRoofStructureSubmenu = (roof: RoofModel) => {
 
   items.push({
     key: 'roof-structure-radio-group',
-    label: <RoofSturctureRadioGroup roof={roof} />,
+    label: <RoofStructureRadioGroup roof={roof} />,
     style: { backgroundColor: 'white' },
   });
 

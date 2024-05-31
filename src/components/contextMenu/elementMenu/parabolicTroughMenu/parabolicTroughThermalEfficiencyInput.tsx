@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -152,7 +152,7 @@ const ParabolicTroughThermalEfficiencyInput = ({ setDialogVisible }: { setDialog
         setApplyCount(applyCount + 1);
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (parabolicTrough.foundationId) {
           const oldThermalEfficienciesAboveFoundation = new Map<string, number>();
           for (const elem of elements) {
@@ -186,7 +186,8 @@ const ParabolicTroughThermalEfficiencyInput = ({ setDialogVisible }: { setDialog
           setApplyCount(applyCount + 1);
         }
         break;
-      default:
+      }
+      default: {
         const p = getElementById(parabolicTrough.id) as ParabolicTroughModel;
         const oldThermalEfficiency = p ? p.thermalEfficiency : parabolicTrough.thermalEfficiency;
         const undoableChange = {
@@ -206,6 +207,8 @@ const ParabolicTroughThermalEfficiencyInput = ({ setDialogVisible }: { setDialog
         addUndoable(undoableChange);
         updateById(parabolicTrough.id, value);
         setApplyCount(applyCount + 1);
+        break;
+      }
     }
     setCommonStore((state) => {
       state.actionState.parabolicTroughThermalEfficiency = value;

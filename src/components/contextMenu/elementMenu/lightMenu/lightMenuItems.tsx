@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import { Checkbox, InputNumber, Space } from 'antd';
@@ -13,13 +13,14 @@ import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { ObjectType } from 'src/types';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { CompactPicker } from 'react-color';
+import React from 'react';
 
-interface LightMenutItemProps {
+interface LightMenuItemProps {
   light: LightModel;
   children?: React.ReactNode;
 }
 
-export const LightInsideCheckbox = ({ light }: LightMenutItemProps) => {
+export const LightInsideCheckbox = ({ light }: LightMenuItemProps) => {
   const lang = useLanguage();
   const updateLightInsideById = useStore.getState().updateInsideLightById;
 
@@ -42,14 +43,14 @@ export const LightInsideCheckbox = ({ light }: LightMenutItemProps) => {
 
   return (
     <MenuItem stayAfterClick noPadding>
-      <Checkbox style={{ width: '100%' }} checked={!!light.inside} onChange={handleChange}>
+      <Checkbox style={{ width: '100%' }} checked={light.inside} onChange={handleChange}>
         {i18n.t('lightMenu.Inside', lang)}
       </Checkbox>
     </MenuItem>
   );
 };
 
-export const LightIntensityInput = ({ light }: LightMenutItemProps) => {
+export const LightIntensityInput = ({ light }: LightMenuItemProps) => {
   const lang = useLanguage();
 
   const inputIntensity = light.intensity ?? 3;
@@ -95,7 +96,7 @@ export const LightIntensityInput = ({ light }: LightMenutItemProps) => {
   );
 };
 
-export const LightDistanceInput = ({ light }: LightMenutItemProps) => {
+export const LightDistanceInput = ({ light }: LightMenuItemProps) => {
   const lang = useLanguage();
 
   const inputDistance = light.distance ?? 5;
@@ -141,7 +142,7 @@ export const LightDistanceInput = ({ light }: LightMenutItemProps) => {
   );
 };
 
-export const LightColorPicker = ({ light }: LightMenutItemProps) => {
+export const LightColorPicker = ({ light }: LightMenuItemProps) => {
   const inputColor = light.color ?? '#ffff99';
 
   const updateLightColorById = (id: string, color: string) => {

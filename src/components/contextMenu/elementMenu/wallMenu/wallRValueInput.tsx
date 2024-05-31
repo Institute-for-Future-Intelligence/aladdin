@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -59,7 +59,7 @@ const WallRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   const needChange = (value: number) => {
     if (!wall) return;
     switch (actionScope) {
-      case Scope.AllSelectedObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
         for (const e of elements) {
           if (
             e.type === ObjectType.Wall &&
@@ -71,14 +71,16 @@ const WallRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
           }
         }
         break;
-      case Scope.AllObjectsOfThisType:
+      }
+      case Scope.AllObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.Wall && value !== (e as WallModel).rValue && !e.locked) {
             return true;
           }
         }
         break;
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      }
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         for (const e of elements) {
           if (
             e.type === ObjectType.Wall &&
@@ -90,7 +92,8 @@ const WallRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
           }
         }
         break;
-      case Scope.AllConnectedObjects:
+      }
+      case Scope.AllConnectedObjects: {
         const connectedWalls = Util.getAllConnectedWalls(wall);
         for (const e of connectedWalls) {
           if (value !== e.rValue && !e.locked) {
@@ -98,11 +101,13 @@ const WallRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
           }
         }
         break;
-      default:
+      }
+      default: {
         if (value !== wall?.rValue) {
           return true;
         }
         break;
+      }
     }
     return false;
   };

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useRef, useState } from 'react';
@@ -209,7 +209,7 @@ const ParabolicTroughLengthInput = ({ setDialogVisible }: { setDialogVisible: (b
         }
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (parabolicTrough.foundationId) {
           rejectRef.current = false;
           for (const elem of elements) {
@@ -257,7 +257,8 @@ const ParabolicTroughLengthInput = ({ setDialogVisible }: { setDialogVisible: (b
           }
         }
         break;
-      default:
+      }
+      default: {
         const p = getElementById(parabolicTrough.id) as ParabolicTroughModel;
         const oldLength = p ? p.ly : parabolicTrough.ly;
         rejectRef.current = rejectChange(parabolicTrough, value);
@@ -283,6 +284,8 @@ const ParabolicTroughLengthInput = ({ setDialogVisible }: { setDialogVisible: (b
           updateLyById(parabolicTrough.id, value);
           setApplyCount(applyCount + 1);
         }
+        break;
+      }
     }
   };
 

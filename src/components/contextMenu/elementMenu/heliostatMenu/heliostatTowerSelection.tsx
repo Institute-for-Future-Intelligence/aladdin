@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useState } from 'react';
@@ -182,7 +182,7 @@ const HeliostatTowerSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
         setApplyCount(applyCount + 1);
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (heliostat.foundationId) {
           const oldValuesAboveFoundation = new Map<string, string>();
           for (const elem of elements) {
@@ -216,7 +216,8 @@ const HeliostatTowerSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
           setApplyCount(applyCount + 1);
         }
         break;
-      default:
+      }
+      default: {
         // selected element may be outdated, make sure that we get the latest
         const h = getElementById(heliostat.id) as HeliostatModel;
         const oldValue = h ? h.towerId : heliostat.towerId;
@@ -237,6 +238,8 @@ const HeliostatTowerSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
         addUndoable(undoableChange);
         updateById(heliostat.id, value);
         setApplyCount(applyCount + 1);
+        break;
+      }
     }
     setCommonStore((state) => {
       state.actionState.heliostatTower = value;

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -149,7 +149,7 @@ const ParabolicDishAbsorptanceInput = ({ setDialogVisible }: { setDialogVisible:
         setApplyCount(applyCount + 1);
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (parabolicDish.foundationId) {
           const oldAbsorptancesAboveFoundation = new Map<string, number>();
           for (const elem of elements) {
@@ -183,7 +183,8 @@ const ParabolicDishAbsorptanceInput = ({ setDialogVisible }: { setDialogVisible:
           setApplyCount(applyCount + 1);
         }
         break;
-      default:
+      }
+      default: {
         const p = getElementById(parabolicDish.id) as ParabolicDishModel;
         const oldAbsorptance = p ? p.absorptance : parabolicDish.absorptance;
         const undoableChange = {
@@ -203,6 +204,8 @@ const ParabolicDishAbsorptanceInput = ({ setDialogVisible }: { setDialogVisible:
         addUndoable(undoableChange);
         updateById(parabolicDish.id, value);
         setApplyCount(applyCount + 1);
+        break;
+      }
     }
     setCommonStore((state) => {
       state.actionState.parabolicDishAbsorptance = value;

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import type { MenuProps } from 'antd';
@@ -28,13 +28,11 @@ export const createFresnelReflectorMenu = (selectedElement: ElementModel) => {
   const lang = { lng: useStore.getState().language };
   const editable = !fresnelReflector.locked;
 
-  // copy
   items.push({
     key: 'fresnel-reflector-copy',
     label: <Copy />,
   });
 
-  // cut
   if (editable) {
     items.push({
       key: 'fresnel-reflector-cut',
@@ -42,7 +40,6 @@ export const createFresnelReflectorMenu = (selectedElement: ElementModel) => {
     });
   }
 
-  // lock
   items.push({
     key: 'fresnel-reflector-lock',
     label: <Lock selectedElement={fresnelReflector} />,
@@ -50,7 +47,6 @@ export const createFresnelReflectorMenu = (selectedElement: ElementModel) => {
 
   if (editable) {
     items.push(
-      // fresnel-reflector-receiver
       {
         key: 'fresnel-reflector-receiver',
         label: (
@@ -59,17 +55,14 @@ export const createFresnelReflectorMenu = (selectedElement: ElementModel) => {
           </DialogItem>
         ),
       },
-      // fresnel-reflector-length
       {
         key: 'fresnel-reflector-length',
         label: <DialogItem Dialog={FresnelReflectorLengthInput}>{i18n.t('word.Length', lang)} ...</DialogItem>,
       },
-      // fresnel-reflector-width
       {
         key: 'fresnel-reflector-width',
         label: <DialogItem Dialog={FresnelReflectorWidthInput}>{i18n.t('word.Width', lang)} ...</DialogItem>,
       },
-      // fresnel-reflector-module-length
       {
         key: 'fresnel-reflector-module-length',
         label: (
@@ -78,7 +71,6 @@ export const createFresnelReflectorMenu = (selectedElement: ElementModel) => {
           </DialogItem>
         ),
       },
-      // fresnel-reflector-pole-height
       {
         key: 'fresnel-reflector-pole-height',
         label: (
@@ -87,7 +79,6 @@ export const createFresnelReflectorMenu = (selectedElement: ElementModel) => {
           </DialogItem>
         ),
       },
-      // fresnel-reflector-reflectance
       {
         key: 'fresnel-reflector-reflectance',
         label: (
@@ -96,7 +87,6 @@ export const createFresnelReflectorMenu = (selectedElement: ElementModel) => {
           </DialogItem>
         ),
       },
-      // draw-sun-beam
       {
         key: 'fresnel-reflector-draw-sun-beam',
         label: (
@@ -105,7 +95,6 @@ export const createFresnelReflectorMenu = (selectedElement: ElementModel) => {
           </DialogItem>
         ),
       },
-      // fresnel-reflector-label-submenu
       {
         key: 'fresnel-reflector-label-submenu',
         label: <MenuItem>{i18n.t('labelSubMenu.Label', lang)}</MenuItem>,

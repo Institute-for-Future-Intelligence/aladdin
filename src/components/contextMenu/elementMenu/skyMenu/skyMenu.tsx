@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import type { MenuProps } from 'antd';
@@ -24,13 +24,11 @@ export const createSkyMenu = () => {
 
   const items: MenuProps['items'] = [];
 
-  // axes
   items.push({
     key: 'axes',
     label: <AxesCheckBox />,
   });
 
-  // theme
   items.push({
     key: 'theme-submenu',
     label: <MenuItem>{i18n.t('skyMenu.Theme', lang)}</MenuItem>,
@@ -43,7 +41,6 @@ export const createSkyMenu = () => {
     ],
   });
 
-  // sun-angles
   items.push({
     key: 'sun-angles-submenu',
     label: <MenuItem>{i18n.t('skyMenu.SelectSunAnglesToShow', lang)}</MenuItem>,
@@ -63,31 +60,26 @@ export const createSkyMenu = () => {
     ],
   });
 
-  // direct-light-intensity
   items.push({
     key: 'direct-light-intensity',
     label: <DirectLightIntensityInput />,
   });
 
-  // ambient-light-intensity
   items.push({
     key: 'ambient-light-intensity',
     label: <AmbientLightIntensityInput />,
   });
 
-  // air-attenuation-coefficient
   items.push({
     key: 'air-attenuation-coefficient',
     label: <AirAttenuationCoefficientInput />,
   });
 
-  // air-convective-coefficient
   items.push({
     key: 'air-convective-coefficient',
     label: <AirConvectiveCoefficientInput />,
   });
 
-  // highest-temperature-time-in-minutes
   items.push({
     key: 'highest-temperature-time-in-minutes',
     label: <HighestTemperatureTimeInput />,

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React from 'react';
@@ -92,7 +92,7 @@ const WallParapetColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
   const needChange = (value: string) => {
     if (!wall) return;
     switch (actionScope) {
-      case Scope.AllSelectedObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
         for (const e of elements) {
           if (
             e.type === ObjectType.Wall &&
@@ -104,14 +104,16 @@ const WallParapetColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
           }
         }
         break;
-      case Scope.AllObjectsOfThisType:
+      }
+      case Scope.AllObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.Wall && value !== (e as WallModel).parapet.color && !e.locked) {
             return true;
           }
         }
         break;
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      }
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         for (const e of elements) {
           if (
             e.type === ObjectType.Wall &&
@@ -123,7 +125,8 @@ const WallParapetColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
           }
         }
         break;
-      case Scope.AllConnectedObjects:
+      }
+      case Scope.AllConnectedObjects: {
         const connectedWalls = Util.getAllConnectedWalls(wall);
         for (const e of connectedWalls) {
           if (value !== e.parapet.color && !e.locked) {
@@ -131,11 +134,13 @@ const WallParapetColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
           }
         }
         break;
-      default:
+      }
+      default: {
         if (value !== wall?.parapet.color) {
           return true;
         }
         break;
+      }
     }
     return false;
   };

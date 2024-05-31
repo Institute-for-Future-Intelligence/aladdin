@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -110,7 +110,7 @@ const FoundationColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
         setApplyCount(useStore.getState().applyCount + 1);
         break;
       }
-      case Scope.AllObjectsOfThisType:
+      case Scope.AllObjectsOfThisType: {
         const oldColorsAll = new Map<string, string>();
         for (const elem of useStore.getState().elements) {
           if (elem.type === ObjectType.Foundation) {
@@ -135,7 +135,8 @@ const FoundationColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
         updateElementColorForAll(ObjectType.Foundation, value);
         setApplyCount(useStore.getState().applyCount + 1);
         break;
-      default:
+      }
+      default: {
         // foundation via selected element may be outdated, make sure that we get the latest
         const f = getElementById(foundation.id);
         const oldColor = f ? f.color : foundation.color;
@@ -156,6 +157,8 @@ const FoundationColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
         addUndoable(undoableChange);
         updateElementColorById(foundation.id, value);
         setApplyCount(useStore.getState().applyCount + 1);
+        break;
+      }
     }
     setCommonStore((state) => {
       state.actionState.foundationColor = value;

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -186,7 +186,7 @@ const SolarPowerTowerReceiverAbsorptanceInput = ({ setDialogVisible }: { setDial
         setApplyCount(applyCount + 1);
         break;
       }
-      default:
+      default: {
         // foundation selected element may be outdated, make sure that we get the latest
         const f = getElementById(foundation.id) as FoundationModel;
         const oldValue =
@@ -210,6 +210,8 @@ const SolarPowerTowerReceiverAbsorptanceInput = ({ setDialogVisible }: { setDial
         } as UndoableChange;
         addUndoable(undoableChange);
         setApplyCount(applyCount + 1);
+        break;
+      }
     }
   };
 

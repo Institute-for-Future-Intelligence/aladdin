@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import { WallFill, WallModel, WallStructure } from 'src/models/WallModel';
@@ -20,6 +20,7 @@ import { FoundationModel } from 'src/models/FoundationModel';
 import { Util } from 'src/Util';
 import { ElementModelFactory } from 'src/models/ElementModelFactory';
 import { UndoableAdd } from 'src/undo/UndoableAdd';
+import React from 'react';
 
 interface WallMenuItemProps {
   wall: WallModel;

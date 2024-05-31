@@ -15,7 +15,7 @@ import { CompactPicker } from 'react-color';
 import { RoofModel } from 'src/models/RoofModel';
 import { useLanguage } from '../../../../hooks';
 
-const GlassTintSelection = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const GlassTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const roof = useStore(Selector.selectedElement) as RoofModel;
   const addUndoable = useStore(Selector.addUndoable);
@@ -260,6 +260,6 @@ const GlassTintSelection = React.memo(({ setDialogVisible }: { setDialogVisible:
       </Modal>
     </>
   );
-});
+};
 
 export default GlassTintSelection;

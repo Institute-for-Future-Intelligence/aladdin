@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useRef, useState } from 'react';
@@ -210,7 +210,7 @@ const ParabolicTroughWidthInput = ({ setDialogVisible }: { setDialogVisible: (b:
         }
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (parabolicTrough.foundationId) {
           rejectRef.current = false;
           for (const elem of elements) {
@@ -258,7 +258,8 @@ const ParabolicTroughWidthInput = ({ setDialogVisible }: { setDialogVisible: (b:
           }
         }
         break;
-      default:
+      }
+      default: {
         const p = getElementById(parabolicTrough.id) as ParabolicTroughModel;
         const oldWidth = p ? p.lx : parabolicTrough.lx;
         rejectRef.current = rejectChange(parabolicTrough, value);
@@ -284,6 +285,8 @@ const ParabolicTroughWidthInput = ({ setDialogVisible }: { setDialogVisible: (b:
           updateLxById(parabolicTrough.id, value);
           setApplyCount(applyCount + 1);
         }
+        break;
+      }
     }
     setCommonStore((state) => {
       state.actionState.parabolicTroughWidth = value;

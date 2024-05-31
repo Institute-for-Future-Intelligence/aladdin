@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import type { MenuProps } from 'antd';
@@ -28,13 +28,11 @@ export const createHeliostatMenu = (selectedElement: ElementModel) => {
   const lang = { lng: useStore.getState().language };
   const editable = !heliostat.locked;
 
-  // copy
   items.push({
     key: 'heliostat-copy',
     label: <Copy />,
   });
 
-  // cut
   if (editable) {
     items.push({
       key: 'heliostat-cut',
@@ -42,7 +40,6 @@ export const createHeliostatMenu = (selectedElement: ElementModel) => {
     });
   }
 
-  // lock
   items.push({
     key: 'heliostat-lock',
     label: <Lock selectedElement={heliostat} />,
@@ -50,7 +47,6 @@ export const createHeliostatMenu = (selectedElement: ElementModel) => {
 
   if (editable) {
     items.push(
-      // heliostat-tower
       {
         key: 'heliostat-tower',
         label: (
@@ -59,17 +55,14 @@ export const createHeliostatMenu = (selectedElement: ElementModel) => {
           </DialogItem>
         ),
       },
-      // heliostat-length
       {
         key: 'heliostat-length',
         label: <DialogItem Dialog={HeliostatLengthInput}>{i18n.t('word.Length', lang)} ...</DialogItem>,
       },
-      // heliostat-width
       {
         key: 'heliostat-width',
         label: <DialogItem Dialog={HeliostatWidthInput}>{i18n.t('word.Width', lang)} ...</DialogItem>,
       },
-      // heliostat-pole-height
       {
         key: 'heliostat-pole-height',
         label: (
@@ -78,14 +71,12 @@ export const createHeliostatMenu = (selectedElement: ElementModel) => {
           </DialogItem>
         ),
       },
-      // heliostat-pole-radius
       {
         key: 'heliostat-pole-radius',
         label: (
           <DialogItem Dialog={HeliostatPoleRadiusInput}>{i18n.t('solarCollectorMenu.PoleRadius', lang)} ...</DialogItem>
         ),
       },
-      // heliostat-reflectance
       {
         key: 'heliostat-reflectance',
         label: (
@@ -94,7 +85,6 @@ export const createHeliostatMenu = (selectedElement: ElementModel) => {
           </DialogItem>
         ),
       },
-      // draw-sun-beam
       {
         key: 'heliostat-draw-sun-beam',
         label: (
@@ -103,7 +93,6 @@ export const createHeliostatMenu = (selectedElement: ElementModel) => {
           </DialogItem>
         ),
       },
-      // heliostat-label-submenu
       {
         key: 'heliostat-label-submenu',
         label: <MenuItem>{i18n.t('labelSubMenu.Label', lang)}</MenuItem>,

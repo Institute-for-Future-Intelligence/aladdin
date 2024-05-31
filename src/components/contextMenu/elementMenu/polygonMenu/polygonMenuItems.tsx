@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import { PolygonModel } from 'src/models/PolygonModel';
@@ -11,7 +11,7 @@ import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { ObjectType } from 'src/types';
 import { useStore } from 'src/stores/common';
 import { UndoableCheck } from 'src/undo/UndoableCheck';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { LabelAddonBefore } from '../../labelSubmenuItems';
 
@@ -54,7 +54,7 @@ export const PolygonFillCheckbox = ({ polygon }: PolygonMenuItemProps) => {
 
   return (
     <MenuItem stayAfterClick noPadding>
-      <Checkbox style={{ width: '100%' }} checked={!!polygon.filled} onChange={toggleFilled}>
+      <Checkbox style={{ width: '100%' }} checked={polygon.filled} onChange={toggleFilled}>
         {i18n.t('polygonMenu.Filled', lang)}
       </Checkbox>
     </MenuItem>
@@ -137,7 +137,7 @@ export const PolygonOutlineCheckbox = ({ polygon }: PolygonMenuItemProps) => {
 
   return (
     <MenuItem stayAfterClick noPadding>
-      <Checkbox style={{ width: '100%' }} checked={!!polygon.noOutline} onChange={toggleNoOutline}>
+      <Checkbox style={{ width: '100%' }} checked={polygon.noOutline} onChange={toggleNoOutline}>
         {i18n.t('polygonMenu.NoOutline', lang)}
       </Checkbox>
     </MenuItem>

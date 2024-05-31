@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import { RoofModel, RoofStructure } from 'src/models/RoofModel';
@@ -15,6 +15,7 @@ import { useLanguage } from 'src/hooks';
 import i18n from 'src/i18n/i18n';
 import { UndoableCheck } from 'src/undo/UndoableCheck';
 import { UndoableChange } from 'src/undo/UndoableChange';
+import React from 'react';
 
 interface RoofMenuItemProps {
   roof: RoofModel;
@@ -161,7 +162,7 @@ export const LockRoofElementsItem = ({ roof, objectType, lock, children }: LockR
   );
 };
 
-export const RoofSturctureRadioGroup = ({ roof }: RoofMenuItemProps) => {
+export const RoofStructureRadioGroup = ({ roof }: RoofMenuItemProps) => {
   const lang = useLanguage();
 
   const updateRoofStructureById = useStore.getState().updateRoofStructureById;

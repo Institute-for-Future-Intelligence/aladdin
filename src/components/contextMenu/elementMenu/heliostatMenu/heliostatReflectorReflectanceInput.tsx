@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -149,7 +149,7 @@ const HeliostatReflectanceInput = ({ setDialogVisible }: { setDialogVisible: (b:
         setApplyCount(applyCount + 1);
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (heliostat.foundationId) {
           const oldReflectancesAboveFoundation = new Map<string, number>();
           for (const elem of elements) {
@@ -183,7 +183,8 @@ const HeliostatReflectanceInput = ({ setDialogVisible }: { setDialogVisible: (b:
           setApplyCount(applyCount + 1);
         }
         break;
-      default:
+      }
+      default: {
         // selected element may be outdated, make sure that we get the latest
         const h = getElementById(heliostat.id) as HeliostatModel;
         const oldReflectance = h ? h.reflectance : heliostat.reflectance;
@@ -204,6 +205,8 @@ const HeliostatReflectanceInput = ({ setDialogVisible }: { setDialogVisible: (b:
         addUndoable(undoableChange);
         updateById(heliostat.id, value);
         setApplyCount(applyCount + 1);
+        break;
+      }
     }
     setCommonStore((state) => {
       state.actionState.heliostatReflectance = value;

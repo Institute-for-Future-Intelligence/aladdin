@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import { useStore } from 'src/stores/common';
@@ -96,7 +96,6 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
 
   const counterUnlocked = useStore.getState().countAllOffspringsByTypeAtOnce(foundation.id, false);
 
-  // paste
   if (legalToPasteOnFoundation()) {
     items.push({
       key: 'foundation-paste',
@@ -104,13 +103,11 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
     });
   }
 
-  // copy
   items.push({
     key: 'foundation-copy',
     label: <Copy />,
   });
 
-  // cut
   if (editable) {
     items.push({
       key: 'foundation-cut',
@@ -118,13 +115,11 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
     });
   }
 
-  // lock
   items.push({
     key: 'foundation-lock',
     label: <Lock selectedElement={foundation} />,
   });
 
-  // group-master
   if (editable) {
     items.push({
       key: 'foundation-group-master',
@@ -132,13 +127,11 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
     });
   }
 
-  // building
   items.push({
     key: 'building',
     label: <BuildingCheckbox foundation={foundation} />,
   });
 
-  // lock-unlock-clear-on-foundation
   if (counterAll.gotSome()) {
     items.push({
       key: 'lock-unlock-clear-on-foundation',
@@ -148,45 +141,38 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
   }
 
   if (editable) {
-    // foundation-color
     if (!foundation.textureType || foundation.textureType === FoundationTexture.NoTexture) {
       items.push({
-        key: 'fountaion-color',
+        key: 'foundation-color',
         label: <DialogItem Dialog={FoundationColorSelection}>{i18n.t('word.Color', lang)} ...</DialogItem>,
       });
     }
 
-    // foundation-texture
     items.push({
-      key: 'fountaion-texture',
+      key: 'foundation-texture',
       label: <DialogItem Dialog={FoundationTextureSelection}>{i18n.t('word.Texture', lang)} ...</DialogItem>,
     });
 
-    // foundation-length
     items.push({
-      key: 'fountaion-length',
+      key: 'foundation-length',
       label: <DialogItem Dialog={FoundationLengthInput}>{i18n.t('word.Length', lang)} ...</DialogItem>,
     });
 
-    // foundation-width
     items.push({
-      key: 'fountaion-width',
+      key: 'foundation-width',
       label: <DialogItem Dialog={FoundationWidthInput}>{i18n.t('word.Width', lang)} ...</DialogItem>,
     });
 
-    // foundation-height
     items.push({
-      key: 'fountaion-height',
+      key: 'foundation-height',
       label: <DialogItem Dialog={FoundationHeightInput}>{i18n.t('word.Height', lang)} ...</DialogItem>,
     });
 
-    // foundation-azimuth
     items.push({
-      key: 'fountaion-azimuth',
+      key: 'foundation-azimuth',
       label: <DialogItem Dialog={FoundationAzimuthInput}>{i18n.t('word.Azimuth', lang)} ...</DialogItem>,
     });
 
-    // ground-floor-r-value
     if (isBuilding) {
       items.push({
         key: 'ground-floor-r-value',
@@ -199,13 +185,11 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
     }
   }
 
-  // add-polygon-on-foundation
   items.push({
     key: 'add-polygon-on-foundation',
     label: <AddPolygonItem foundation={foundation} />,
   });
 
-  // building-hvac-system
   if (!foundation.notBuilding && counterAll.wallCount > 0) {
     items.push({
       key: 'building-hvac-system',
@@ -228,7 +212,6 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
   }
 
   if (editable) {
-    // select-solar-structure
     items.push({
       key: 'select-solar-structure',
       label: <MenuItem>{i18n.t('foundationMenu.SolarStructure', lang)}</MenuItem>,
@@ -241,7 +224,6 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
       ],
     });
 
-    // solar-absorber-pipe-physical-properties
     if (foundation.solarStructure === SolarStructure.FocusPipe) {
       items.push({
         key: 'solar-absorber-pipe-physical-properties',
@@ -299,7 +281,6 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
       });
     }
 
-    // solar-power-tower-physical-properties
     if (foundation.solarStructure === SolarStructure.FocusTower) {
       items.push({
         key: 'solar-power-tower-physical-properties',
@@ -349,7 +330,6 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
       });
     }
 
-    // solar-updraft-tower-physical-properties
     if (foundation.solarStructure === SolarStructure.UpdraftTower) {
       items.push({
         key: 'solar-updraft-tower-physical-properties',
@@ -424,7 +404,6 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
     }
   }
 
-  // optimization
   items.push({
     key: 'optimization',
     label: <MenuItem>{i18n.t('optimizationMenu.Optimization', lang)}</MenuItem>,
@@ -462,7 +441,6 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
     ],
   });
 
-  // foundation-label
   if (editable) {
     items.push({
       key: 'foundation-label',

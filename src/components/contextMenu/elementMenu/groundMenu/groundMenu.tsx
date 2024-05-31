@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import { useStore } from '../../../../stores/common';
@@ -101,7 +101,6 @@ export const createGroundMenu = () => {
 
   const items: MenuProps['items'] = [];
 
-  // paste
   if (legalToPaste()) {
     items.push({
       key: 'ground-paste',
@@ -109,7 +108,6 @@ export const createGroundMenu = () => {
     });
   }
 
-  // elements counter
   counterItems.forEach(({ key, type, itemLabel, modalTitle }) => {
     const count = elementCounter[key];
     if (typeof count === 'number' && count > 0) {
@@ -126,7 +124,6 @@ export const createGroundMenu = () => {
     }
   });
 
-  // lock-all-elements
   if (elementCounter.unlockedCount > 0) {
     items.push({
       key: 'lock-all-elements',
@@ -140,7 +137,6 @@ export const createGroundMenu = () => {
     });
   }
 
-  // unlock-all-elements
   if (elementCounter.lockedCount > 0 && useStore.getState().elements.length > 0) {
     items.push({
       key: 'unlock-all-elements',
@@ -154,26 +150,23 @@ export const createGroundMenu = () => {
     });
   }
 
-  // image-on-ground
   items.push({
     key: 'image-on-ground',
     label: <GroundImageCheckbox />,
   });
 
-  // water-surface
   items.push({
     key: 'water-surface',
     label: <WaterSurfaceCheckbox />,
   });
 
-  // ground-color-submenu
   if (!useStore.getState().viewState.waterSurface) {
     items.push({
       key: 'ground-color-submenu',
       label: <MenuItem>{i18n.t('word.Color', lang)}</MenuItem>,
       children: [
         {
-          key: 'groung-color-picker',
+          key: 'ground-color-picker',
           label: <GroundColorPicker />,
           style: { backgroundColor: 'white' },
         },
@@ -181,7 +174,6 @@ export const createGroundMenu = () => {
     });
   }
 
-  // vegetation-submenu
   items.push({
     key: 'vegetation-submenu',
     label: <MenuItem>{i18n.t('groundMenu.Vegetation', lang)}</MenuItem>,
@@ -197,22 +189,16 @@ export const createGroundMenu = () => {
     ],
   });
 
-  // monthly-irradiance-loss-submenu
   items.push({
     key: 'monthly-irradiance-loss-submenu',
     label: <MenuItem>{i18n.t('groundMenu.MonthlyIrradianceLoss', lang)}</MenuItem>,
     children: createMonthlyIrradianceLossSubmenu(),
   });
 
-  // ground-albedo
   items.push({
     key: 'ground-albedo',
     label: <AlbedoInput />,
   });
 
-  const onClick: MenuProps['onClick'] = ({ key }) => {
-    // console.log('clicked on item', key);
-  };
-
-  return { items, onClick } as MenuProps;
+  return { items } as MenuProps;
 };

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import type { MenuProps } from 'antd';
@@ -30,13 +30,11 @@ export const createParabolicDishMenu = (selectedElement: ElementModel) => {
   const lang = { lng: useStore.getState().language };
   const editable = !parabolicDish.locked;
 
-  // copy
   items.push({
     key: 'parabolic-dish-copy',
     label: <Copy />,
   });
 
-  // cut
   if (editable) {
     items.push({
       key: 'parabolic-dish-cut',
@@ -44,7 +42,6 @@ export const createParabolicDishMenu = (selectedElement: ElementModel) => {
     });
   }
 
-  // lock
   items.push({
     key: 'parabolic-dish-lock',
     label: <Lock selectedElement={parabolicDish} />,
@@ -52,7 +49,6 @@ export const createParabolicDishMenu = (selectedElement: ElementModel) => {
 
   if (editable) {
     items.push(
-      // parabolic-dish-radius
       {
         key: 'parabolic-dish-radius',
         label: (
@@ -61,7 +57,6 @@ export const createParabolicDishMenu = (selectedElement: ElementModel) => {
           </DialogItem>
         ),
       },
-      // parabolic-dish-latus-rectum
       {
         key: 'parabolic-dish-latus-rectum',
         label: (
@@ -70,7 +65,6 @@ export const createParabolicDishMenu = (selectedElement: ElementModel) => {
           </DialogItem>
         ),
       },
-      // parabolic-dish-structure-type
       {
         key: 'parabolic-dish-structure-type',
         label: (
@@ -79,7 +73,6 @@ export const createParabolicDishMenu = (selectedElement: ElementModel) => {
           </DialogItem>
         ),
       },
-      // parabolic-dish-pole-height
       {
         key: 'parabolic-dish-pole-height',
         label: (
@@ -88,7 +81,6 @@ export const createParabolicDishMenu = (selectedElement: ElementModel) => {
           </DialogItem>
         ),
       },
-      // parabolic-dish-pole-radius
       {
         key: 'parabolic-dish-pole-radius',
         label: (
@@ -97,7 +89,6 @@ export const createParabolicDishMenu = (selectedElement: ElementModel) => {
           </DialogItem>
         ),
       },
-      // parabolic-dish-reflectance
       {
         key: 'parabolic-dish-reflectance',
         label: (
@@ -106,7 +97,6 @@ export const createParabolicDishMenu = (selectedElement: ElementModel) => {
           </DialogItem>
         ),
       },
-      // parabolic-dish-absorptance
       {
         key: 'parabolic-dish-absorptance',
         label: (
@@ -115,7 +105,6 @@ export const createParabolicDishMenu = (selectedElement: ElementModel) => {
           </DialogItem>
         ),
       },
-      // parabolic-dish-optical-efficiency
       {
         key: 'parabolic-dish-optical-efficiency',
         label: (
@@ -124,7 +113,6 @@ export const createParabolicDishMenu = (selectedElement: ElementModel) => {
           </DialogItem>
         ),
       },
-      // parabolic-dish-thermal-efficiency
       {
         key: 'parabolic-dish-thermal-efficiency',
         label: (
@@ -133,12 +121,10 @@ export const createParabolicDishMenu = (selectedElement: ElementModel) => {
           </DialogItem>
         ),
       },
-      // draw-sun-beam
       {
         key: 'parabolic-dish-draw-sun-beam',
         label: <SolarCollectorSunBeamCheckbox solarCollector={parabolicDish} />,
       },
-      // parabolic-dish-label-submenu
       {
         key: 'parabolic-dish-label-submenu',
         label: <MenuItem>{i18n.t('labelSubMenu.Label', lang)}</MenuItem>,

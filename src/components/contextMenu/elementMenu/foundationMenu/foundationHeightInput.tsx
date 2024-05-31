@@ -21,7 +21,7 @@ import { useSelectedElement } from '../menuHooks';
 import Dialog from '../../dialog';
 import { useLanguage } from 'src/hooks';
 
-const FoundationHeightInput = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -450,6 +450,6 @@ const FoundationHeightInput = React.memo(({ setDialogVisible }: { setDialogVisib
       </Row>
     </Dialog>
   );
-});
+};
 
 export default FoundationHeightInput;

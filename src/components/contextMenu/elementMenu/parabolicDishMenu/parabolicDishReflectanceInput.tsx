@@ -148,7 +148,7 @@ const ParabolicDishReflectanceInput = ({ setDialogVisible }: { setDialogVisible:
         setApplyCount(applyCount + 1);
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (parabolicDish.foundationId) {
           const oldReflectancesAboveFoundation = new Map<string, number>();
           for (const elem of elements) {
@@ -182,7 +182,8 @@ const ParabolicDishReflectanceInput = ({ setDialogVisible }: { setDialogVisible:
           setApplyCount(applyCount + 1);
         }
         break;
-      default:
+      }
+      default: {
         const p = getElementById(parabolicDish.id) as ParabolicDishModel;
         const oldReflectance = p ? p.reflectance : parabolicDish.reflectance;
         const undoableChange = {
@@ -202,6 +203,8 @@ const ParabolicDishReflectanceInput = ({ setDialogVisible }: { setDialogVisible:
         addUndoable(undoableChange);
         updateById(parabolicDish.id, value);
         setApplyCount(applyCount + 1);
+        break;
+      }
     }
     setCommonStore((state) => {
       state.actionState.parabolicDishReflectance = value;

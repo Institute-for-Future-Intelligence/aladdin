@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useRef, useState } from 'react';
@@ -48,7 +48,7 @@ const FresnelReflectorPoleHeightInput = ({ setDialogVisible }: { setDialogVisibl
   const needChange = (poleHeight: number) => {
     if (!fresnelReflector) return;
     switch (actionScope) {
-      case Scope.AllSelectedObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
         for (const e of elements) {
           if (
             e.type === ObjectType.FresnelReflector &&
@@ -62,7 +62,8 @@ const FresnelReflectorPoleHeightInput = ({ setDialogVisible }: { setDialogVisibl
           }
         }
         break;
-      case Scope.AllObjectsOfThisType:
+      }
+      case Scope.AllObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.FresnelReflector && !e.locked) {
             const fr = e as FresnelReflectorModel;
@@ -72,7 +73,8 @@ const FresnelReflectorPoleHeightInput = ({ setDialogVisible }: { setDialogVisibl
           }
         }
         break;
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      }
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         for (const e of elements) {
           if (
             e.type === ObjectType.FresnelReflector &&
@@ -86,7 +88,8 @@ const FresnelReflectorPoleHeightInput = ({ setDialogVisible }: { setDialogVisibl
           }
         }
         break;
-      case Scope.AllObjectsOfThisTypeOnSurface:
+      }
+      case Scope.AllObjectsOfThisTypeOnSurface: {
         const parent = getParent(fresnelReflector);
         if (parent) {
           for (const e of elements) {
@@ -99,10 +102,13 @@ const FresnelReflectorPoleHeightInput = ({ setDialogVisible }: { setDialogVisibl
           }
         }
         break;
-      default:
+      }
+      default: {
         if (Math.abs(fresnelReflector?.poleHeight - poleHeight) > ZERO_TOLERANCE) {
           return true;
         }
+        break;
+      }
     }
     return false;
   };
@@ -205,7 +211,7 @@ const FresnelReflectorPoleHeightInput = ({ setDialogVisible }: { setDialogVisibl
         }
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (fresnelReflector.foundationId) {
           rejectRef.current = false;
           for (const elem of elements) {
@@ -253,7 +259,8 @@ const FresnelReflectorPoleHeightInput = ({ setDialogVisible }: { setDialogVisibl
           }
         }
         break;
-      default:
+      }
+      default: {
         // selected element may be outdated, make sure that we get the latest
         const f = getElementById(fresnelReflector.id) as FresnelReflectorModel;
         const oldPoleHeight = f ? f.poleHeight : fresnelReflector.poleHeight;
@@ -280,6 +287,8 @@ const FresnelReflectorPoleHeightInput = ({ setDialogVisible }: { setDialogVisibl
           updatePoleHeightById(fresnelReflector.id, value);
           setApplyCount(applyCount + 1);
         }
+        break;
+      }
     }
     setCommonStore((state) => {
       state.actionState.fresnelReflectorPoleHeight = value;

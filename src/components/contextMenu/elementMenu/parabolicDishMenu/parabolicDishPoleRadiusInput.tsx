@@ -1,5 +1,5 @@
 /*
- * @Copyright 2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2023-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -43,7 +43,7 @@ const ParabolicDishPoleRadiusInput = ({ setDialogVisible }: { setDialogVisible: 
   const needChange = (poleRadius: number) => {
     if (!parabolicDish) return;
     switch (actionScope) {
-      case Scope.AllSelectedObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.ParabolicDish && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
             const pt = e as ParabolicDishModel;
@@ -53,7 +53,8 @@ const ParabolicDishPoleRadiusInput = ({ setDialogVisible }: { setDialogVisible: 
           }
         }
         break;
-      case Scope.AllObjectsOfThisType:
+      }
+      case Scope.AllObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.ParabolicDish && !e.locked) {
             const pt = e as ParabolicDishModel;
@@ -63,7 +64,8 @@ const ParabolicDishPoleRadiusInput = ({ setDialogVisible }: { setDialogVisible: 
           }
         }
         break;
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      }
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         for (const e of elements) {
           if (e.type === ObjectType.ParabolicDish && e.foundationId === parabolicDish?.foundationId && !e.locked) {
             const pt = e as ParabolicDishModel;
@@ -73,7 +75,8 @@ const ParabolicDishPoleRadiusInput = ({ setDialogVisible }: { setDialogVisible: 
           }
         }
         break;
-      case Scope.AllObjectsOfThisTypeOnSurface:
+      }
+      case Scope.AllObjectsOfThisTypeOnSurface: {
         const parent = getParent(parabolicDish);
         if (parent) {
           for (const e of elements) {
@@ -86,10 +89,13 @@ const ParabolicDishPoleRadiusInput = ({ setDialogVisible }: { setDialogVisible: 
           }
         }
         break;
-      default:
+      }
+      default: {
         if (Math.abs(parabolicDish?.poleRadius - poleRadius) > ZERO_TOLERANCE) {
           return true;
         }
+        break;
+      }
     }
     return false;
   };
@@ -163,7 +169,7 @@ const ParabolicDishPoleRadiusInput = ({ setDialogVisible }: { setDialogVisible: 
         setApplyCount(applyCount + 1);
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (parabolicDish.foundationId) {
           const oldValuesAboveFoundation = new Map<string, number>();
           for (const elem of elements) {
@@ -197,7 +203,8 @@ const ParabolicDishPoleRadiusInput = ({ setDialogVisible }: { setDialogVisible: 
           setApplyCount(applyCount + 1);
         }
         break;
-      default:
+      }
+      default: {
         const p = getElementById(parabolicDish.id) as ParabolicDishModel;
         const oldValue = p ? p.poleRadius : parabolicDish.poleRadius;
         const undoableChange = {
@@ -217,6 +224,8 @@ const ParabolicDishPoleRadiusInput = ({ setDialogVisible }: { setDialogVisible: 
         addUndoable(undoableChange);
         updatePoleRadiusById(parabolicDish.id, value);
         setApplyCount(applyCount + 1);
+        break;
+      }
     }
     setCommonStore((state) => {
       state.actionState.parabolicDishPoleRadius = value;

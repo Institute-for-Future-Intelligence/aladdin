@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import type { MenuProps } from 'antd';
@@ -22,13 +22,11 @@ export const createLightMenu = (selectedElement: ElementModel) => {
   const lang = { lng: useStore.getState().language };
   const parent = light.parentId ? useStore.getState().getParent(light) : undefined;
 
-  // copy
   items.push({
     key: 'light-copy',
     label: <Copy />,
   });
 
-  // cut
   if (editable) {
     items.push({
       key: 'light-cut',
@@ -36,14 +34,12 @@ export const createLightMenu = (selectedElement: ElementModel) => {
     });
   }
 
-  // lock
   items.push({
     key: 'light-lock',
     label: <Lock selectedElement={light} />,
   });
 
   if (editable) {
-    // light-inside
     if (parent && (parent.type === ObjectType.Roof || parent.type === ObjectType.Wall)) {
       items.push({
         key: 'light-inside',
@@ -54,17 +50,14 @@ export const createLightMenu = (selectedElement: ElementModel) => {
 
   if (editable) {
     items.push(
-      // light-intensity
       {
         key: 'light-intensity',
         label: <LightIntensityInput light={light} />,
       },
-      // light-distance
       {
         key: 'light-distance',
         label: <LightDistanceInput light={light} />,
       },
-      // light-color
       {
         key: 'light-color',
         label: <MenuItem>{i18n.t('word.Color', lang)}</MenuItem>,

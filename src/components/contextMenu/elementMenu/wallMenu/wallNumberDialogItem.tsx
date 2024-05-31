@@ -1,8 +1,8 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { WallNumberInputProps } from './wallNumberInput';
 import { WallModel } from 'src/models/WallModel';
 import { useLanguage } from 'src/hooks';
@@ -12,15 +12,7 @@ import i18n from 'src/i18n/i18n';
 import { WallNumberDialogSettingType, WallNumberDialogSettings } from './wallMenu';
 import { useSelectedElement } from '../menuHooks';
 import { ObjectType } from 'src/types';
-
-export enum WallNumberDataType {
-  Height = 'Height',
-  Opacity = 'Opacity',
-  StructureSpacing = 'StructureSpacing',
-  StructureWidth = 'StructureWidth',
-  Thickness = 'Thickness',
-  EavesLength = 'EavesLength',
-}
+import { WallNumberDataType } from './WallNumberDataType';
 
 interface WallNumberDialogItemsProps {
   Dialog: (props: WallNumberInputProps) => JSX.Element;

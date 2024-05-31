@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React from 'react';
@@ -93,7 +93,7 @@ const WallColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   const needChange = (value: string) => {
     if (!wall) return;
     switch (actionScope) {
-      case Scope.AllSelectedObjectsOfThisType:
+      case Scope.AllSelectedObjectsOfThisType: {
         for (const e of elements) {
           if (
             e.type === ObjectType.Wall &&
@@ -105,21 +105,24 @@ const WallColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
           }
         }
         break;
-      case Scope.AllObjectsOfThisType:
+      }
+      case Scope.AllObjectsOfThisType: {
         for (const e of elements) {
           if (e.type === ObjectType.Wall && value !== e.color && !e.locked) {
             return true;
           }
         }
         break;
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      }
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         for (const e of elements) {
           if (e.type === ObjectType.Wall && e.foundationId === wall.foundationId && value !== e.color && !e.locked) {
             return true;
           }
         }
         break;
-      case Scope.AllConnectedObjects:
+      }
+      case Scope.AllConnectedObjects: {
         const connectedWalls = Util.getAllConnectedWalls(wall);
         for (const e of connectedWalls) {
           if (value !== e.color && !e.locked) {
@@ -127,11 +130,13 @@ const WallColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
           }
         }
         break;
-      default:
+      }
+      default: {
         if (value !== wall?.color) {
           return true;
         }
         break;
+      }
     }
     return false;
   };
@@ -195,7 +200,7 @@ const WallColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
         setApplyCount(applyCount + 1);
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (wall.foundationId) {
           const oldColorsAboveFoundation = new Map<string, string>();
           for (const e of elements) {
@@ -228,7 +233,8 @@ const WallColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
           setApplyCount(applyCount + 1);
         }
         break;
-      case Scope.AllConnectedObjects:
+      }
+      case Scope.AllConnectedObjects: {
         const connectedWalls = Util.getAllConnectedWalls(wall);
         const oldValuesConnectedWalls = new Map<string, string>();
         for (const e of connectedWalls) {
@@ -251,9 +257,9 @@ const WallColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
         addUndoable(undoableChangeConnectedWalls);
         updateConnectedWalls(value);
         setApplyCount(applyCount + 1);
-
         break;
-      default:
+      }
+      default: {
         if (wall) {
           const updatedWall = getElementById(wall.id) as WallModel;
           const oldColor = updatedWall?.color ?? wall.color ?? '#ffffff';
@@ -275,6 +281,8 @@ const WallColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
           updateById(wall.id, value);
           setApplyCount(applyCount + 1);
         }
+        break;
+      }
     }
     setCommonStore((state) => {
       state.actionState.wallColor = value;

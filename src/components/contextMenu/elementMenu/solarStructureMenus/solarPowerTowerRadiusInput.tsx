@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -181,7 +181,7 @@ const SolarPowerTowerRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b
         setApplyCount(applyCount + 1);
         break;
       }
-      default:
+      default: {
         // foundation selected element may be outdated, make sure that we get the latest
         const f = getElementById(foundation.id) as FoundationModel;
         const oldValue = f && f.solarPowerTower ? f.solarPowerTower.towerRadius ?? 1 : powerTower.towerRadius ?? 1;
@@ -202,6 +202,8 @@ const SolarPowerTowerRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b
         } as UndoableChange;
         addUndoable(undoableChange);
         setApplyCount(applyCount + 1);
+        break;
+      }
     }
   };
 

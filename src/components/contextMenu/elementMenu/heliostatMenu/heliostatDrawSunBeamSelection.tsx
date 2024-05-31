@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -146,7 +146,7 @@ const HeliostatDrawSunBeamSelection = ({ setDialogVisible }: { setDialogVisible:
         setApplyCount(applyCount + 1);
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (heliostat.foundationId) {
           const oldValuesAboveFoundation = new Map<string, boolean>();
           for (const elem of elements) {
@@ -180,7 +180,8 @@ const HeliostatDrawSunBeamSelection = ({ setDialogVisible }: { setDialogVisible:
           setApplyCount(applyCount + 1);
         }
         break;
-      default:
+      }
+      default: {
         // selected element may be outdated, make sure that we get the latest
         const h = getElementById(heliostat.id) as HeliostatModel;
         const oldValue = h ? h.drawSunBeam : heliostat.drawSunBeam;
@@ -201,6 +202,8 @@ const HeliostatDrawSunBeamSelection = ({ setDialogVisible }: { setDialogVisible:
         addUndoable(undoableChange);
         updateById(heliostat.id, value);
         setApplyCount(applyCount + 1);
+        break;
+      }
     }
   };
 

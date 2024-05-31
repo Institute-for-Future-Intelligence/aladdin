@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -149,7 +149,7 @@ const ParabolicDishOpticalEfficiencyInput = ({ setDialogVisible }: { setDialogVi
         setApplyCount(applyCount + 1);
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (parabolicDish.foundationId) {
           const oldOpticalEfficienciesAboveFoundation = new Map<string, number>();
           for (const elem of elements) {
@@ -183,7 +183,8 @@ const ParabolicDishOpticalEfficiencyInput = ({ setDialogVisible }: { setDialogVi
           setApplyCount(applyCount + 1);
         }
         break;
-      default:
+      }
+      default: {
         const p = getElementById(parabolicDish.id) as ParabolicDishModel;
         const oldOpticalEfficiency = p ? p.opticalEfficiency : parabolicDish.opticalEfficiency;
         const undoableChange = {
@@ -203,6 +204,8 @@ const ParabolicDishOpticalEfficiencyInput = ({ setDialogVisible }: { setDialogVi
         addUndoable(undoableChange);
         updateById(parabolicDish.id, value);
         setApplyCount(applyCount + 1);
+        break;
+      }
     }
     setCommonStore((state) => {
       state.actionState.parabolicDishOpticalEfficiency = value;

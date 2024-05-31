@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useState } from 'react';
@@ -197,7 +197,7 @@ const FresnelReflectorAbsorberSelection = ({ setDialogVisible }: { setDialogVisi
         setApplyCount(applyCount + 1);
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (fresnelReflector.foundationId) {
           const oldValuesAboveFoundation = new Map<string, string>();
           for (const elem of elements) {
@@ -231,7 +231,8 @@ const FresnelReflectorAbsorberSelection = ({ setDialogVisible }: { setDialogVisi
           setApplyCount(applyCount + 1);
         }
         break;
-      default:
+      }
+      default: {
         // selected element may be outdated, make sure that we get the latest
         const f = getElementById(fresnelReflector.id) as FresnelReflectorModel;
         const oldValue = f ? f.receiverId : fresnelReflector.receiverId;
@@ -252,6 +253,8 @@ const FresnelReflectorAbsorberSelection = ({ setDialogVisible }: { setDialogVisi
         addUndoable(undoableChange);
         updateById(fresnelReflector.id, value);
         setApplyCount(applyCount + 1);
+        break;
+      }
     }
     setCommonStore((state) => {
       state.actionState.fresnelReflectorReceiver = value;

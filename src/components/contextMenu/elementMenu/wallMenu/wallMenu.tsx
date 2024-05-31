@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import type { MenuProps } from 'antd';
@@ -13,7 +13,7 @@ import i18n from 'src/i18n/i18n';
 import { createWallElementCounterSubmenu } from './wallElementCounterSubmenu';
 import { createParapetSubmenu } from './wallParapetSubmenu';
 import { createWallStructureSubmenu } from './wallStructureSubmenu';
-import { WallNumberDataType, WallNumberDialogItem } from './wallNumberDialogItem';
+import { WallNumberDialogItem } from './wallNumberDialogItem';
 import WallNumberInput from './wallNumberInput';
 import { AddPolygonOnWallItem } from './wallMenuItems';
 import { createWallFillSubmenu } from './wallFillSubmenu';
@@ -21,6 +21,7 @@ import WallRValueInput from './wallRValueInput';
 import WallHeatCapacityInput from './wallHeatCapacityInput';
 import WallTextureSelection from './wallTextureSelection';
 import WallColorSelection from './wallColorSelection';
+import { WallNumberDataType } from './WallNumberDataType';
 
 export type WallNumberDialogSettingType = {
   attributeKey: keyof WallModel;
@@ -67,7 +68,6 @@ export const createWallMenu = (selectedElement: ElementModel) => {
   const counterAll = countAllOffspringsByType(wall.id, true);
   const counterUnlocked = countAllOffspringsByType(wall.id, false);
 
-  // paste
   if (legalToPaste()) {
     items.push({
       key: 'wall-paste',
@@ -75,13 +75,11 @@ export const createWallMenu = (selectedElement: ElementModel) => {
     });
   }
 
-  // copy
   items.push({
     key: 'wall-copy',
     label: <Copy />,
   });
 
-  // cut
   if (editable) {
     items.push({
       key: 'wall-cut',
@@ -89,14 +87,12 @@ export const createWallMenu = (selectedElement: ElementModel) => {
     });
   }
 
-  // lock
   items.push({
     key: 'wall-lock',
     label: <Lock selectedElement={wall} />,
   });
 
   if (editable) {
-    // element-counter
     if (counterAll.gotSome()) {
       items.push({
         key: 'lock-unlock-clear-on-wall',
@@ -105,21 +101,18 @@ export const createWallMenu = (selectedElement: ElementModel) => {
       });
     }
 
-    // parapet-submenu
     items.push({
       key: 'wall-parapet',
       label: <MenuItem>{i18n.t('wallMenu.Parapet', lang)}</MenuItem>,
       children: createParapetSubmenu(wall),
     });
 
-    // structure-submenu
     items.push({
       key: 'wall-structure',
       label: <MenuItem>{i18n.t('wallMenu.WallStructure', lang)}</MenuItem>,
       children: createWallStructureSubmenu(wall),
     });
 
-    // opacity
     if (wall.wallStructure !== WallStructure.Default) {
       items.push({
         key: 'wall-opacity',

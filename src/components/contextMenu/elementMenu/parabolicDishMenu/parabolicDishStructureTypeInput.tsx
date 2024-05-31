@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -184,7 +184,7 @@ const ParabolicDishStructureTypeInput = ({ setDialogVisible }: { setDialogVisibl
         setApplyCount(applyCount + 1);
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
+      case Scope.AllObjectsOfThisTypeAboveFoundation: {
         if (parabolicDish.foundationId) {
           const oldStructureTypesAboveFoundation = new Map<string, number>();
           for (const elem of elements) {
@@ -217,7 +217,8 @@ const ParabolicDishStructureTypeInput = ({ setDialogVisible }: { setDialogVisibl
           setApplyCount(applyCount + 1);
         }
         break;
-      default:
+      }
+      default: {
         const p = getElementById(parabolicDish.id) as ParabolicDishModel;
         const oldStructureType = p ? p.structureType : parabolicDish.structureType;
         const undoableChange = {
@@ -237,6 +238,8 @@ const ParabolicDishStructureTypeInput = ({ setDialogVisible }: { setDialogVisibl
         addUndoable(undoableChange);
         updateById(parabolicDish.id, type);
         setApplyCount(applyCount + 1);
+        break;
+      }
     }
     setCommonStore((state) => {
       state.actionState.parabolicDishReceiverStructure = type;

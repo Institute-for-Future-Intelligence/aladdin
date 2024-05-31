@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import { type MenuProps } from 'antd';
@@ -18,13 +18,11 @@ export const createSensorMenu = (selectedElement: ElementModel) => {
 
   const editable = !sensor.locked;
 
-  // copy
   items.push({
     key: 'sensor-copy',
     label: <Copy />,
   });
 
-  // cut
   if (editable) {
     items.push({
       key: 'sensor-cut',
@@ -32,24 +30,16 @@ export const createSensorMenu = (selectedElement: ElementModel) => {
     });
   }
 
-  // lock
   items.push({
     key: 'sensor-lock',
     label: <Lock selectedElement={sensor} />,
   });
 
   if (editable) {
-    items.push(
-      // show-label
-      {
-        key: 'seneor-show-label',
-        label: <SensorShowLabelCheckbox sensor={sensor} />,
-      },
-    );
-  }
-
-  if (editable) {
-    // sensor-label-text
+    items.push({
+      key: 'sensor-show-label',
+      label: <SensorShowLabelCheckbox sensor={sensor} />,
+    });
     items.push({
       key: 'sensor-label-text',
       label: <SensorLabelTextInput sensor={sensor} />,
