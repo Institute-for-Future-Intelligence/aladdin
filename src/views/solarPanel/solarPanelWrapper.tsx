@@ -8,14 +8,16 @@ import RefSolarPanel from './refSolarPanel';
 import { useStore } from 'src/stores/common';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { shallow } from 'zustand/shallow';
+import { HALF_PI } from 'src/constants';
 
 export const SOLAR_PANELS_WRAPPER_NAME = 'Solar_Panels_Wrapper_Group';
 
 interface SolarPanelWrapperProps {
   parentId: string;
-  lx: number;
-  ly: number;
-  lz: number;
+  parentType: ObjectType;
+  plx: number;
+  ply: number;
+  plz: number;
 }
 
 /**
@@ -23,26 +25,36 @@ interface SolarPanelWrapperProps {
  *
  */
 // todo: specific to foundation only for now
-const SolarPanelWrapper = ({ parentId, lx, ly, lz }: SolarPanelWrapperProps) => {
+const SolarPanelWrapper = ({ parentId, parentType, plx, ply, plz }: SolarPanelWrapperProps) => {
   const solarPanels = useStore(
     (state) =>
-      state.elements.filter(
-        (e) => (e.type === ObjectType.SolarPanel || e.type === ObjectType.RefSolarPanel) && e.parentId === parentId,
-      ) as SolarPanelModel[],
+      state.elements.filter((e) => e.type === ObjectType.RefSolarPanel && e.parentId === parentId) as SolarPanelModel[],
     shallow,
   );
 
-  return (
-    <group name={SOLAR_PANELS_WRAPPER_NAME} position={[0, 0, lz / 2]}>
-      {solarPanels.map((sp) => {
-        if (sp.type === ObjectType.RefSolarPanel) {
-          return <RefSolarPanel key={sp.id} {...sp} cx={sp.cx} cy={sp.cy} cz={0} />;
-        } else {
-          return null;
-        }
-      })}
-    </group>
-  );
+  switch (parentType) {
+    case ObjectType.Foundation: {
+      return (
+        <group name={SOLAR_PANELS_WRAPPER_NAME} position={[0, 0, plz / 2]}>
+          {solarPanels.map((sp) => (
+            <RefSolarPanel key={sp.id} {...sp} />
+          ))}
+        </group>
+      );
+    }
+    case ObjectType.Wall: {
+      return (
+        <group name={SOLAR_PANELS_WRAPPER_NAME} position={[0, 0, 0]}>
+          {solarPanels.map((sp) => (
+            <RefSolarPanel key={sp.id} {...sp} cx={sp.cx * plx} cz={sp.cz * plz} />
+          ))}
+        </group>
+      );
+    }
+
+    default:
+      return null;
+  }
 };
 
 export default React.memo(SolarPanelWrapper);

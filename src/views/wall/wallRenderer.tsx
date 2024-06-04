@@ -10,6 +10,8 @@ import WallMoveHandleWrapper from './wallMoveHandleWrapper';
 import WallResizeHandleWrapper from './wallResizeHandleWrapper';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { useSelected } from '../../hooks';
+import SolarPanelWrapper from '../solarPanel/solarPanelWrapper';
+import { ObjectType } from 'src/types';
 
 interface WallRendererProps {
   wallModel: WallModel;
@@ -34,6 +36,7 @@ const WallRenderer = ({ wallModel, foundationModel }: WallRendererProps) => {
     rightTopPartialHeight,
     leftJoints,
     rightJoints,
+    parentId,
   } = wallModel;
 
   const selected = useSelected(id);
@@ -57,7 +60,14 @@ const WallRenderer = ({ wallModel, foundationModel }: WallRendererProps) => {
   };
 
   return (
-    <group name={`Wall Group ${id}`} position={[cx, cy, hz]} rotation={[0, 0, relativeAngle]} userData={{ aabb: true }}>
+    <group
+      name={`Wall_Group ${id}`}
+      position={[cx, cy, hz]}
+      rotation={[0, 0, relativeAngle]}
+      userData={{ aabb: true, id: id, fId: parentId }}
+    >
+      <SolarPanelWrapper parentId={id} parentType={ObjectType.Wall} plx={lx} ply={ly} plz={lz} />
+
       {renderWall()}
 
       {/* handles */}

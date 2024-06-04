@@ -1547,7 +1547,12 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                   e.rotation[0] = x;
                   e.rotation[1] = y;
                   e.rotation[2] = z;
-                } else if (e.parentId === id && !isStackableModel(e) && e.type !== ObjectType.SolarPanel) {
+                } else if (
+                  e.parentId === id &&
+                  !isStackableModel(e) &&
+                  e.type !== ObjectType.SolarPanel &&
+                  e.type !== ObjectType.RefSolarPanel
+                ) {
                   e.rotation[0] = x;
                   e.rotation[1] = y;
                   e.rotation[2] = z;
@@ -2573,7 +2578,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                     state.actionState.solarPanelTiltAngle ?? 0,
                     state.actionState.solarPanelRelativeAzimuth ?? 0,
                     normal,
-                    'rotation' in parent ? parent.rotation : undefined,
+                    [0, 0, 0],
                     state.actionState.solarPanelFrameColor ?? 'white',
                     undefined,
                     undefined,

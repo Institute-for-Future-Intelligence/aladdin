@@ -93,6 +93,8 @@ interface SnapTargetType {
 
 export const FOUNDATION_GROUP_NAME = 'Foundation_Group';
 
+export const FOUNDATION_NAME = 'Foundation';
+
 const Foundation = React.memo((foundationModel: FoundationModel) => {
   const {
     id,
@@ -3075,8 +3077,9 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
         name={`${FOUNDATION_GROUP_NAME} ${id}`}
         position={[cx, cy, hz]}
         rotation={[0, 0, rotation[2]]}
+        userData={{ id: id, fId: id }}
       >
-        <SolarPanelWrapper parentId={id} lx={lx} ly={ly} lz={lz} />
+        <SolarPanelWrapper parentId={id} parentType={ObjectType.Foundation} plx={lx} ply={ly} plz={lz} />
 
         {/* draw rectangle */}
         <Box
@@ -3085,7 +3088,7 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
           uuid={id}
           userData={{ simulation: true, stand: true, id: id, aabb: true }}
           ref={baseRef}
-          name={'Foundation'}
+          name={FOUNDATION_NAME}
           args={[lx, ly, lz]}
           onContextMenu={handleContextMenu}
           onPointerOver={handlePointerOver}
