@@ -66,7 +66,14 @@ const WallRenderer = ({ wallModel, foundationModel }: WallRendererProps) => {
       rotation={[0, 0, relativeAngle]}
       userData={{ aabb: true, id: id, fId: parentId }}
     >
-      <SolarPanelWrapper parentId={id} parentType={ObjectType.Wall} plx={lx} ply={ly} plz={lz} />
+      <SolarPanelWrapper
+        parentId={id}
+        foundationId={parentId}
+        parentType={ObjectType.Wall}
+        plx={lx}
+        ply={ly}
+        plz={lz}
+      />
 
       {renderWall()}
 

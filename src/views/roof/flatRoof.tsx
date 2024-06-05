@@ -135,7 +135,7 @@ export const TopExtrude = ({
       uuid={uuid}
       userData={{ simulation: simulation }}
       ref={ref}
-      name={'Flat roof top extrude'}
+      name={'Flat Roof Top Extrude'}
       castShadow={castShadow}
       receiveShadow={receiveShadow}
     >

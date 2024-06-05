@@ -3079,7 +3079,14 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
         rotation={[0, 0, rotation[2]]}
         userData={{ id: id, fId: id }}
       >
-        <SolarPanelWrapper parentId={id} parentType={ObjectType.Foundation} plx={lx} ply={ly} plz={lz} />
+        <SolarPanelWrapper
+          parentId={id}
+          foundationId={id}
+          parentType={ObjectType.Foundation}
+          plx={lx}
+          ply={ly}
+          plz={lz}
+        />
 
         {/* draw rectangle */}
         <Box

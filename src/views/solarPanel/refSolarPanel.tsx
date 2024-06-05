@@ -17,6 +17,8 @@ import { useHandleSize } from '../wall/hooks';
 import { HALF_PI } from 'src/constants';
 import { SharedUtil } from '../SharedUtil';
 import { FOUNDATION_GROUP_NAME, FOUNDATION_NAME } from '../foundation/foundation';
+import { RoofSegmentGroupUserData } from '../roof/roofRenderer';
+import { RoofUtil } from '../roof/RoofUtil';
 
 enum Operation {
   Move = 'Move',
@@ -160,14 +162,21 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
       .applyEuler(tempEuler.set(0, 0, -args.parentRot));
   };
 
+  const findParentGroup = (obj: Object3D<Object3DEventMap>, name: string): Object3D<Object3DEventMap> | null => {
+    const parent = obj.parent;
+    if (!parent) return null;
+    if (parent.name.includes(name)) return parent;
+    return findParentGroup(parent, name);
+  };
+
   /** Return first intersectable mesh's point, parent group and type */
-  const getInterectionData = (intersections: Intersection<Object3D<Object3DEventMap>>[]) => {
+  const getIntersectionData = (intersections: Intersection<Object3D<Object3DEventMap>>[]) => {
     for (const intersection of intersections) {
       if (intersection.object.name === FOUNDATION_NAME) {
         const parent = intersection.object.parent;
         if (!parent) return null;
         return {
-          point: intersection.point,
+          intersection: intersection,
           parentGroup: parent,
           parentType: ObjectType.Foundation,
         };
@@ -176,13 +185,29 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
         const parent = intersection.object.parent;
         if (!parent) return null;
         return {
-          point: intersection.point,
+          intersection: intersection,
           parentGroup: parent,
           parentType: ObjectType.Wall,
         };
       }
+      if (intersection.object.name.includes('Roof')) {
+        const foundation = findParentGroup(intersection.object, FOUNDATION_NAME);
+        if (!foundation) return null;
+        return {
+          intersection: intersection,
+          parentGroup: foundation,
+          parentType: ObjectType.Roof,
+        };
+      }
     }
     return null;
+  };
+
+  const getRoofSegmentData = (object: Object3D<Object3DEventMap> | null): RoofSegmentGroupUserData | null => {
+    if (!object) return null;
+    const { roofId, foundation, centroid, roofSegments } = object.userData;
+    if (!roofId || !foundation || !centroid || !roofSegments) return getRoofSegmentData(object.parent);
+    return { roofId, foundation, centroid, roofSegments } as RoofSegmentGroupUserData;
   };
 
   const handleChangeParent = (
@@ -201,11 +226,11 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
 
       const userData = newWrapper.parent?.userData;
       if (userData && userData.id && userData.fId) {
-        newParentIdRef.current = userData.id;
+        newParentIdRef.current = userData.id; // todo: sp on roof pId === fId?
         newFoundationIdRef.current = userData.fId;
-        newParentTypeRef.current = newParentType;
       }
     }
+    newParentTypeRef.current = newParentType;
   };
 
   // ===== Events =====
@@ -269,14 +294,11 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
           if (!sp) return;
 
           // change parent first if needed
-          if (
-            sp.parentId !== newParentIdRef.current &&
-            newParentIdRef.current &&
-            newFoundationIdRef.current &&
-            newParentTypeRef.current
-          ) {
+          if (sp.parentId !== newParentIdRef.current && newParentIdRef.current && newFoundationIdRef.current) {
             sp.parentId = newParentIdRef.current;
             sp.foundationId = newFoundationIdRef.current;
+          }
+          if (newParentTypeRef.current && newParentTypeRef.current !== sp.parentType) {
             sp.parentType = newParentTypeRef.current;
           }
 
@@ -302,7 +324,13 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
               if (worldRotationRef.current !== null) {
                 sp.relativeAzimuth = worldRotationRef.current - parentFoundation.rotation[2];
               }
-              sp.rotation = [sp.tiltAngle, 0, sp.relativeAzimuth];
+              if (sp.parentType === ObjectType.Roof) {
+                const { x, y, z } = groupRef.current.rotation;
+                sp.rotation = [x, y, z];
+                // todo: is sp.normal needed?
+              } else {
+                sp.rotation = [sp.tiltAngle, 0, sp.relativeAzimuth];
+              }
             }
           }
           sp.lx = boxMeshRef.current.scale.x;
@@ -332,10 +360,11 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
     raycaster.setFromCamera(pointer, camera);
     const intersections = raycaster.intersectObjects(scene.children);
 
-    const intersectionData = getInterectionData(intersections);
+    const intersectionData = getIntersectionData(intersections);
     if (!intersectionData) return;
 
-    const { point, parentGroup, parentType } = intersectionData;
+    const { intersection, parentGroup, parentType } = intersectionData;
+    const point = intersection.point;
 
     switch (operationRef.current) {
       case Operation.Move: {
@@ -349,7 +378,7 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
             groupRef.current.position.z = 0;
             groupRef.current.position.applyEuler(tempEuler.set(0, 0, -parentGroup.rotation.z));
             // todo: hard code for now
-            groupRef.current.rotation.x = rotation[0];
+            groupRef.current.rotation.set(0, 0, 0);
             if (worldRotationRef.current !== null) {
               topGroupRef.current.rotation.z = worldRotationRef.current - parentGroup.rotation.z;
             } else {
@@ -358,13 +387,42 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
             break;
           }
           case ObjectType.Wall: {
-            parentGroup.localToWorld(tempVector3_0.set(0, 0, 0));
-            groupRef.current.position.x = point.x - tempVector3_0.x;
-            groupRef.current.position.y = 0;
-            groupRef.current.position.z = point.z - tempVector3_0.z;
-            // todo: hard code for now
-            groupRef.current.rotation.x = HALF_PI;
-            topGroupRef.current.rotation.z = 0;
+            const foundationGroup = findParentGroup(parentGroup, FOUNDATION_GROUP_NAME);
+            if (foundationGroup) {
+              parentGroup.localToWorld(tempVector3_0.set(0, 0, 0));
+              tempVector3_1
+                .set(0, 0, 0)
+                .subVectors(point, tempVector3_0)
+                .applyEuler(tempEuler.set(0, 0, -foundationGroup.rotation.z - parentGroup.rotation.z));
+
+              groupRef.current.position.x = tempVector3_1.x;
+              groupRef.current.position.y = 0;
+              groupRef.current.position.z = tempVector3_1.z;
+
+              // todo: hard code for now
+              groupRef.current.rotation.set(HALF_PI, 0, 0);
+              topGroupRef.current.rotation.set(0, 0, 0);
+            }
+            break;
+          }
+          case ObjectType.Roof: {
+            const roofSegmentUserData = getRoofSegmentData(intersection.object);
+            if (roofSegmentUserData) {
+              const { roofId, foundation, centroid, roofSegments } = roofSegmentUserData;
+              if (foundation && centroid && roofSegments && roofId) {
+                const posRelToFoundation = new Vector3()
+                  .subVectors(point, new Vector3(foundation.cx, foundation.cy))
+                  .applyEuler(new Euler(0, 0, -foundation.rotation[2]));
+                const posRelToCentroid = posRelToFoundation.clone().sub(centroid);
+                const { normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
+                groupRef.current.position.x = posRelToFoundation.x;
+                groupRef.current.position.y = posRelToFoundation.y;
+                groupRef.current.position.z = posRelToFoundation.z - foundation.lz;
+                groupRef.current.rotation.set(rotation[0], rotation[1], rotation[2], 'ZXY');
+                topGroupRef.current.rotation.set(0, 0, 0);
+                // e.normal = normal.toArray(); // todo: normal seems doesn't affect anything
+              }
+            }
             break;
           }
         }
@@ -424,11 +482,17 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
     if (parentType === ObjectType.Wall) {
       return new Euler(HALF_PI, 0, 0);
     }
+    if (parentType === ObjectType.Roof) {
+      return new Euler(rotation[0], rotation[1], rotation[2], 'ZXY');
+    }
     return new Euler();
-  }, [parentType]);
+  }, [parentType, ...rotation]);
 
   const panelEuler = useMemo(() => {
     if (parentType === ObjectType.Wall) {
+      return new Euler();
+    }
+    if (parentType === ObjectType.Roof) {
       return new Euler();
     }
     return new Euler(0, 0, rotation[2], 'ZXY');
