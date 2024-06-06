@@ -95,6 +95,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
   const [loading, setLoading] = useState<boolean>(false);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [cloudFileArray, setCloudFileArray] = useState<any[]>([]);
+  const [updateCloudFileArray, setUpdateCloudFileArray] = useState<boolean>(false);
   const [projectArray, setProjectArray] = useState<any[]>([]);
   const [updateProjectArrayFlag, setUpdateProjectArrayFlag] = useState<boolean>(false);
   const [title, setTitle] = useState<string>(cloudFile ?? 'My Aladdin File');
@@ -199,25 +200,25 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
   };
 
   useEffect(() => {
-    if (cloudFilesRef.current) {
-      const arr: any[] = [];
-      cloudFilesRef.current.forEach((f, i) => {
-        arr.push({
-          key: i.toString(),
-          title: f.fileName,
-          time: dayjs(new Date(f.timestamp)).format('MM/DD/YYYY hh:mm A'),
-          timestamp: f.timestamp,
-          userid: f.userid,
-          action: '',
+    if (updateCloudFileArray) {
+      if (cloudFilesRef.current) {
+        const arr: any[] = [];
+        cloudFilesRef.current.forEach((f, i) => {
+          arr.push({
+            key: i.toString(),
+            title: f.fileName,
+            time: dayjs(new Date(f.timestamp)).format('MM/DD/YYYY hh:mm A'),
+            timestamp: f.timestamp,
+            userid: f.userid,
+            action: '',
+          });
         });
-      });
-      arr.sort((a, b) => b.timestamp - a.timestamp);
-      setCloudFileArray(arr);
+        arr.sort((a, b) => b.timestamp - a.timestamp);
+        setCloudFileArray(arr);
+      }
+      setUpdateCloudFileArray(false);
     }
-    // FIXME: React says that the dependency of the mutable cloudFiles.current is unnecessary,
-    //  but we need this for the code to work.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cloudFilesRef.current]);
+  }, [updateCloudFileArray]);
 
   useEffect(() => {
     if (myProjectsRef.current) {
@@ -1155,30 +1156,30 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
     if (!user.uid) return;
     setLoading(true);
     // fetch owner's file information from the cloud
-    cloudFilesRef.current = await firebase
+    cloudFilesRef.current = [];
+    await firebase
       .firestore()
       .collection('users')
       .doc(user.uid)
       .collection('files')
       .get()
       .then((querySnapshot) => {
-        const a: CloudFileInfo[] = [];
         querySnapshot.forEach((doc) => {
           const data = doc.data();
-          a.push({
+          cloudFilesRef.current?.push({
             timestamp: data.timestamp,
             fileName: doc.id,
             userid: user.uid,
             uuid: data.docid,
           } as CloudFileInfo);
         });
-        return a;
       })
       .catch((error) => {
         showError(i18n.t('message.CannotOpenCloudFolder', lang) + ': ' + error);
       })
       .finally(() => {
         setLoading(false);
+        setUpdateCloudFileArray(true);
       });
   };
 
