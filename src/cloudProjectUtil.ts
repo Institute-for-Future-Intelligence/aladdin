@@ -12,6 +12,15 @@ import { Design, DesignProblem, DataColoring, ProjectState, Range } from './type
 import { Util } from './Util';
 import { usePrimitiveStore } from './stores/commonPrimitive';
 
+export const doesProjectExist = async (uid: string, projectName: string, errorCallback: (error: string) => void) => {
+  try {
+    const doc = await firebase.firestore().collection('users').doc(uid).collection('projects').doc(projectName).get();
+    return doc.exists;
+  } catch (error) {
+    errorCallback(error as string);
+  }
+};
+
 export const fetchProject = async (
   userid: string,
   project: string,

@@ -40,7 +40,14 @@ import SaveCloudFileModal from './saveCloudFileModal';
 import ModelsGallery from './modelsGallery';
 import ProjectListPanel from './panels/projectListPanel';
 import { doesDocExist, loadCloudFile } from './cloudFileUtil';
-import { changeDesignTitles, copyDesign, createDesign, fetchProject, getImageData } from './cloudProjectUtil';
+import {
+  changeDesignTitles,
+  copyDesign,
+  createDesign,
+  doesProjectExist,
+  fetchProject,
+  getImageData,
+} from './cloudProjectUtil';
 import { ProjectUtil } from './panels/ProjectUtil';
 import { useLanguage } from './hooks';
 
@@ -999,7 +1006,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
     setLoading(true);
     if (checkExistence) {
       doesDocExist(user.uid, title, (error) => {
-        showError(i18n.t('message.CannotOpenCloudFolder', lang) + ': ' + error);
+        showError(i18n.t('message.CannotOpenCloudFile', lang) + ': ' + error);
       }).then((exist) => {
         if (exist) {
           setLoading(false);
@@ -1426,76 +1433,73 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
       return;
     }
     // check if the project title is already used
-    fetchMyProjects(false).then(() => {
-      let exist = false;
-      if (myProjectsRef.current) {
-        for (const p of myProjectsRef.current) {
-          if (p.title === t) {
-            exist = true;
-            break;
+    doesProjectExist(user.uid, t, (error) => {
+      showError(i18n.t('message.CannotOpenCloudFile', lang) + ': ' + error);
+    })
+      .then((exist) => {
+        if (exist) {
+          showInfo(i18n.t('message.TitleUsedChooseDifferentOne', lang) + ': ' + t);
+        } else {
+          if (user && user.uid) {
+            const type = usePrimitiveStore.getState().projectType ?? DesignProblem.SOLAR_PANEL_ARRAY;
+            const description = usePrimitiveStore.getState().projectDescription ?? null;
+            const timestamp = new Date().getTime();
+            const counter = 0;
+            firebase
+              .firestore()
+              .collection('users')
+              .doc(user.uid)
+              .collection('projects')
+              .doc(t)
+              .set({
+                owner: user.uid,
+                timestamp,
+                type,
+                description,
+                counter,
+                designs: [],
+                hiddenParameters: ProjectUtil.getDefaultHiddenParameters(type),
+              })
+              .then(() => {
+                setCommonStore((state) => {
+                  state.projectView = true;
+                  // update the local copy as well
+                  state.projectState.owner = user.uid;
+                  state.projectState.type = type;
+                  state.projectState.title = title;
+                  state.projectState.description = description;
+                  state.projectState.counter = 0;
+                  state.projectState.dataColoring = DataColoring.ALL;
+                  state.projectState.selectedProperty = null;
+                  state.projectState.sortDescending = false;
+                  state.projectState.xAxisNameScatterPlot = null;
+                  state.projectState.yAxisNameScatterPlot = null;
+                  state.projectState.dotSizeScatterPlot = 5;
+                  state.projectState.thumbnailWidth = 200;
+                  state.projectState.designs = [];
+                  state.projectState.ranges = [];
+                  state.projectState.filters = [];
+                  state.projectState.hiddenParameters = ProjectUtil.getDefaultHiddenParameters(state.projectState.type);
+                });
+              })
+              .catch((error) => {
+                showError(i18n.t('message.CannotCreateNewProject', lang) + ': ' + error);
+              })
+              .finally(() => {
+                // if the project list panel is open, update it
+                if (showProjectListPanel) {
+                  fetchMyProjects(false).then(() => {
+                    setUpdateFlag(!updateFlag);
+                  });
+                }
+                setLoading(false);
+              });
           }
         }
-      }
-      if (exist) {
-        showInfo(i18n.t('message.TitleUsedChooseDifferentOne', lang) + ': ' + t);
-      } else {
-        if (user && user.uid) {
-          const type = usePrimitiveStore.getState().projectType ?? DesignProblem.SOLAR_PANEL_ARRAY;
-          const description = usePrimitiveStore.getState().projectDescription ?? null;
-          const timestamp = new Date().getTime();
-          const counter = 0;
-          firebase
-            .firestore()
-            .collection('users')
-            .doc(user.uid)
-            .collection('projects')
-            .doc(t)
-            .set({
-              owner: user.uid,
-              timestamp,
-              type,
-              description,
-              counter,
-              designs: [],
-              hiddenParameters: ProjectUtil.getDefaultHiddenParameters(type),
-            })
-            .then(() => {
-              setCommonStore((state) => {
-                state.projectView = true;
-                // update the local copy as well
-                state.projectState.owner = user.uid;
-                state.projectState.type = type;
-                state.projectState.title = title;
-                state.projectState.description = description;
-                state.projectState.counter = 0;
-                state.projectState.dataColoring = DataColoring.ALL;
-                state.projectState.selectedProperty = null;
-                state.projectState.sortDescending = false;
-                state.projectState.xAxisNameScatterPlot = null;
-                state.projectState.yAxisNameScatterPlot = null;
-                state.projectState.dotSizeScatterPlot = 5;
-                state.projectState.thumbnailWidth = 200;
-                state.projectState.designs = [];
-                state.projectState.ranges = [];
-                state.projectState.filters = [];
-                state.projectState.hiddenParameters = ProjectUtil.getDefaultHiddenParameters(state.projectState.type);
-              });
-            })
-            .catch((error) => {
-              showError(i18n.t('message.CannotCreateNewProject', lang) + ': ' + error);
-            })
-            .finally(() => {
-              // if the project list panel is open, update it
-              if (showProjectListPanel) {
-                fetchMyProjects(false).then(() => {
-                  setUpdateFlag(!updateFlag);
-                });
-              }
-              setLoading(false);
-            });
-        }
-      }
-    });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }
 
   function saveProjectAs() {
