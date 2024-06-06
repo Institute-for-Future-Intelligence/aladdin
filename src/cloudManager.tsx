@@ -529,12 +529,12 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
           if (data && data.latestModel) {
             setCommonStore((state) => {
               // if it has been deleted, don't show
-              let existing = false;
+              let found = false;
               const m = data.latestModel as ModelSite;
               if (m.author) {
-                existing = !!state.peopleModels.get(m.author)?.get(Util.getModelKey(m));
+                found = !!state.peopleModels.get(m.author)?.get(Util.getModelKey(m));
               }
-              state.latestModelSite = existing ? m : undefined;
+              state.latestModelSite = found ? m : undefined;
             });
           }
         }
@@ -844,34 +844,28 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
   };
 
   const renameProject = (oldTitle: string, newTitle: string) => {
+    const uid = user.uid;
+    if (!uid) return;
     // check if the new project title is already taken
-    fetchMyProjects(false).then(() => {
-      let exist = false;
-      if (myProjectsRef.current) {
-        for (const p of myProjectsRef.current) {
-          if (p.title === newTitle) {
-            exist = true;
-            break;
-          }
-        }
-      }
+    doesProjectExist(uid, newTitle, (error) => {
+      showError(i18n.t('message.CannotOpenCloudFile', lang) + ': ' + error);
+    }).then((exist) => {
       if (exist) {
         showInfo(i18n.t('message.TitleUsedChooseDifferentOne', lang) + ': ' + newTitle);
       } else {
-        if (!user.uid) return;
-        const files = firebase.firestore().collection('users').doc(user.uid).collection('projects');
+        const files = firebase.firestore().collection('users').doc(uid).collection('projects');
         files
           .doc(oldTitle)
           .get()
           .then((doc) => {
-            if (doc && doc.exists) {
+            if (doc.exists) {
               const data = doc.data();
-              if (data && user.uid) {
+              if (data) {
                 const newData = { ...data };
                 if (data.designs && data.designs.length > 0) {
                   const newDesigns: Design[] = changeDesignTitles(newTitle, data.designs) ?? [];
                   for (const [i, d] of data.designs.entries()) {
-                    copyDesign(d.title, newDesigns[i].title, data.owner, user.uid);
+                    copyDesign(d.title, newDesigns[i].title, data.owner, uid);
                   }
                   newData.designs = newDesigns;
                   setCommonStore((state) => {
@@ -1210,49 +1204,58 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
   };
 
   const renameCloudFile = (userid: string, oldTitle: string, newTitle: string) => {
-    const files = firebase.firestore().collection('users').doc(userid).collection('files');
-    files
-      .doc(oldTitle)
-      .get()
-      .then((doc) => {
-        if (doc && doc.exists) {
-          const data = doc.data();
-          if (data) {
-            files
-              .doc(newTitle)
-              .set(data)
-              .then(() => {
+    doesDocExist(userid, newTitle, (error) => {
+      showError(i18n.t('message.CannotOpenCloudFile', lang) + ': ' + error);
+    }).then((exist) => {
+      if (exist) {
+        showInfo(i18n.t('message.TitleUsedChooseDifferentOne', lang) + ': ' + newTitle);
+      } else {
+        const files = firebase.firestore().collection('users').doc(userid).collection('files');
+        files
+          .doc(oldTitle)
+          .get()
+          .then((doc) => {
+            if (doc.exists) {
+              const data = doc.data();
+              if (data) {
                 files
-                  .doc(oldTitle)
-                  .delete()
+                  .doc(newTitle)
+                  .set(data)
                   .then(() => {
-                    // TODO
+                    files
+                      .doc(oldTitle)
+                      .delete()
+                      .then(() => {
+                        // TODO
+                      });
+                    for (const f of cloudFileArray) {
+                      if (f.userid === userid && f.title === oldTitle) {
+                        f.title = newTitle;
+                        break;
+                      }
+                    }
+                    setCloudFileArray([...cloudFileArray]);
+                    setCommonStore((state) => {
+                      if (state.cloudFile === oldTitle) {
+                        state.cloudFile = newTitle;
+                      }
+                    });
+                    // change the address field of the browser when the cloud file is currently open
+                    const params = new URLSearchParams(window.location.search);
+                    if (params.get('title') === oldTitle && params.get('userid') === user.uid) {
+                      const newUrl =
+                        HOME_URL + '?client=web&userid=' + user.uid + '&title=' + encodeURIComponent(newTitle);
+                      window.history.pushState({}, document.title, newUrl);
+                    }
                   });
-                for (const f of cloudFileArray) {
-                  if (f.userid === userid && f.title === oldTitle) {
-                    f.title = newTitle;
-                    break;
-                  }
-                }
-                setCloudFileArray([...cloudFileArray]);
-                setCommonStore((state) => {
-                  if (state.cloudFile === oldTitle) {
-                    state.cloudFile = newTitle;
-                  }
-                });
-                // change the address field of the browser when the cloud file is currently open
-                const params = new URLSearchParams(window.location.search);
-                if (params.get('title') === oldTitle && params.get('userid') === user.uid) {
-                  const newUrl = HOME_URL + '?client=web&userid=' + user.uid + '&title=' + encodeURIComponent(newTitle);
-                  window.history.pushState({}, document.title, newUrl);
-                }
-              });
-          }
-        }
-      })
-      .catch((error) => {
-        showError(i18n.t('message.CannotRenameCloudFile', lang) + ': ' + error);
-      });
+              }
+            }
+          })
+          .catch((error) => {
+            showError(i18n.t('message.CannotRenameCloudFile', lang) + ': ' + error);
+          });
+      }
+    });
   };
 
   function updateCloudFile() {
@@ -1515,16 +1518,9 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
       return;
     }
     // check if the project title is already taken
-    fetchMyProjects(false).then(() => {
-      let exist = false;
-      if (myProjectsRef.current) {
-        for (const p of myProjectsRef.current) {
-          if (p.title === t) {
-            exist = true;
-            break;
-          }
-        }
-      }
+    doesProjectExist(user.uid, t, (error) => {
+      showError(i18n.t('message.CannotOpenCloudFile', lang) + ': ' + error);
+    }).then((exist) => {
       if (exist) {
         showInfo(i18n.t('message.TitleUsedChooseDifferentOne', lang) + ': ' + t);
       } else {
