@@ -39,7 +39,7 @@ import MainToolBar from './mainToolBar';
 import SaveCloudFileModal from './saveCloudFileModal';
 import ModelsGallery from './modelsGallery';
 import ProjectListPanel from './panels/projectListPanel';
-import { loadCloudFile } from './cloudFileUtil';
+import { doesDocExist, loadCloudFile } from './cloudFileUtil';
 import { changeDesignTitles, copyDesign, createDesign, fetchProject, getImageData } from './cloudProjectUtil';
 import { ProjectUtil } from './panels/ProjectUtil';
 import { useLanguage } from './hooks';
@@ -998,17 +998,11 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
     }
     setLoading(true);
     if (checkExistence) {
-      fetchMyCloudFiles().then(() => {
-        let exist = false;
-        if (cloudFilesRef.current) {
-          for (const p of cloudFilesRef.current) {
-            if (p.fileName === t) {
-              exist = true;
-              break;
-            }
-          }
-        }
+      doesDocExist(user.uid, title, (error) => {
+        showError(i18n.t('message.CannotOpenCloudFolder', lang) + ': ' + error);
+      }).then((exist) => {
         if (exist) {
+          setLoading(false);
           Modal.confirm({
             title: `${i18n.t('message.CloudFileWithTitleExistsDoYouWantToOverwrite', lang)}`,
             icon: <QuestionCircleOutlined />,

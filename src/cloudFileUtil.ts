@@ -11,6 +11,15 @@ import i18n from './i18n/i18n';
 import { HOME_URL } from './constants';
 import { usePrimitiveStore } from './stores/commonPrimitive';
 
+export const doesDocExist = async (uid: string, fileName: string, errorCallback: (error: string) => void) => {
+  try {
+    const doc = await firebase.firestore().collection('users').doc(uid).collection('files').doc(fileName).get();
+    return doc.exists;
+  } catch (error) {
+    errorCallback(error as string);
+  }
+};
+
 export const loadCloudFile = async (
   userid: string,
   title: string,
