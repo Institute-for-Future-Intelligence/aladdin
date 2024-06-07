@@ -1042,16 +1042,15 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
   const saveToCloudWithoutCheckingExistence = (title: string, silent: boolean, ofProject?: boolean) => {
     if (!user.uid) return;
     try {
-      const doc = firebase.firestore().collection('users').doc(user.uid);
-      if (doc) {
+      const userDocuments = firebase.firestore().collection('users').doc(user.uid);
+      if (userDocuments) {
         if (localContentToImportAfterCloudFileUpdate) {
           usePrimitiveStore.getState().set((state) => {
             state.waiting = true;
           });
         }
+        const doc = userDocuments.collection(ofProject ? 'designs' : 'files').doc(title);
         doc
-          .collection(ofProject ? 'designs' : 'files')
-          .doc(title)
           .set(exportContent())
           .then(() => {
             if (!silent) {
@@ -1073,8 +1072,27 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
               }
             }
             if (showCloudFilePanel) {
-              fetchMyCloudFiles().then(() => {
-                setUpdateFlag(!updateFlag);
+              doc.get().then((snapshot) => {
+                const data = snapshot.data();
+                if (data && cloudFilesRef.current) {
+                  let index = -1;
+                  for (const [i, file] of cloudFilesRef.current.entries()) {
+                    if (file.fileName === title) {
+                      index = i;
+                      break;
+                    }
+                  }
+                  if (index !== -1) {
+                    cloudFilesRef.current.splice(index, 1);
+                  }
+                  cloudFilesRef.current.push({
+                    timestamp: data.timestamp,
+                    fileName: title,
+                    userid: user.uid,
+                    uuid: data.docid,
+                  } as CloudFileInfo);
+                  setUpdateCloudFileArray(true);
+                }
               });
             }
           })
