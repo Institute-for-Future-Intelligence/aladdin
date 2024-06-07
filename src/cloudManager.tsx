@@ -1039,6 +1039,44 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
     setTitleDialogVisible(false);
   };
 
+  const removeCloudFileRefIfExisting = (title: string) => {
+    if (cloudFilesRef.current) {
+      let index = -1;
+      for (const [i, file] of cloudFilesRef.current.entries()) {
+        if (file.fileName === title) {
+          index = i;
+          break;
+        }
+      }
+      if (index !== -1) {
+        cloudFilesRef.current.splice(index, 1);
+      }
+    }
+  };
+
+  const renameCloudFileRef = (oldTitle: string, newTitle: string) => {
+    if (cloudFilesRef.current) {
+      let index = -1;
+      let info = null;
+      for (const [i, file] of cloudFilesRef.current.entries()) {
+        if (file.fileName === oldTitle) {
+          index = i;
+          info = {
+            fileName: newTitle,
+            uuid: file.uuid,
+            userid: file.userid,
+            timestamp: file.timestamp,
+          } as CloudFileInfo;
+          break;
+        }
+      }
+      if (index !== -1 && info) {
+        cloudFilesRef.current.splice(index, 1);
+        cloudFilesRef.current.push(info);
+      }
+    }
+  };
+
   const saveToCloudWithoutCheckingExistence = (title: string, silent: boolean, ofProject?: boolean) => {
     if (!user.uid) return;
     try {
@@ -1071,30 +1109,19 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
                 window.history.pushState({}, document.title, newUrl);
               }
             }
-            if (showCloudFilePanel) {
-              doc.get().then((snapshot) => {
-                const data = snapshot.data();
-                if (data && cloudFilesRef.current) {
-                  let index = -1;
-                  for (const [i, file] of cloudFilesRef.current.entries()) {
-                    if (file.fileName === title) {
-                      index = i;
-                      break;
-                    }
-                  }
-                  if (index !== -1) {
-                    cloudFilesRef.current.splice(index, 1);
-                  }
-                  cloudFilesRef.current.push({
-                    timestamp: data.timestamp,
-                    fileName: title,
-                    userid: user.uid,
-                    uuid: data.docid,
-                  } as CloudFileInfo);
-                  setUpdateCloudFileArray(true);
-                }
-              });
-            }
+            doc.get().then((snapshot) => {
+              const data = snapshot.data();
+              if (data && cloudFilesRef.current) {
+                removeCloudFileRefIfExisting(title);
+                cloudFilesRef.current.push({
+                  timestamp: data.timestamp,
+                  fileName: title,
+                  userid: user.uid,
+                  uuid: data.docid,
+                } as CloudFileInfo);
+                setUpdateCloudFileArray(true);
+              }
+            });
           })
           .catch((error) => {
             showError(i18n.t('message.CannotSaveYourFileToCloud', lang) + ': ' + error);
@@ -1215,6 +1242,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
       .doc(title)
       .delete()
       .then(() => {
+        removeCloudFileRefIfExisting(title);
         setCloudFileArray(
           cloudFileArray.filter((e) => {
             return e.userid !== userid || e.title !== title;
@@ -1266,6 +1294,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
                       }
                     }
                     setCloudFileArray([...cloudFileArray]);
+                    renameCloudFileRef(oldTitle, newTitle);
                     setCommonStore((state) => {
                       if (state.cloudFile === oldTitle) {
                         state.cloudFile = newTitle;
