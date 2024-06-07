@@ -101,15 +101,21 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
 
   const [loading, setLoading] = useState<boolean>(false);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
-  const [cloudFileArray, setCloudFileArray] = useState<any[]>([]);
-  const [updateCloudFileArray, setUpdateCloudFileArray] = useState<boolean>(false);
-  const [projectArray, setProjectArray] = useState<any[]>([]);
-  const [updateProjectArrayFlag, setUpdateProjectArrayFlag] = useState<boolean>(false);
   const [title, setTitle] = useState<string>(cloudFile ?? 'My Aladdin File');
   const [titleDialogVisible, setTitleDialogVisible] = useState<boolean>(false);
-  const cloudFilesRef = useRef<CloudFileInfo[] | void>();
-  const myProjectsRef = useRef<ProjectState[] | void>(); // store sorted projects
   const authorModelsRef = useRef<Map<string, ModelSite>>();
+
+  // store cloud files as ref first because useState triggers re-rendering every time an element is being pushed into
+  // the array. This causes slowdown when the array is being generated from the cloud data (the larger the array, the
+  // more calls for rendering). The actual array for rendering is stored in cloudFileArray. The flag updateCloudFileArray
+  // is used to instruct when it is time to copy the data from the ref array to the state array.
+  const cloudFilesRef = useRef<CloudFileInfo[] | void>();
+  const [cloudFileArray, setCloudFileArray] = useState<any[]>([]);
+  const [updateCloudFileArray, setUpdateCloudFileArray] = useState<boolean>(false);
+  // same logic for projects
+  const myProjectsRef = useRef<ProjectState[] | void>(); // store sorted projects
+  const [projectArray, setProjectArray] = useState<any[]>([]);
+  const [updateProjectArrayFlag, setUpdateProjectArrayFlag] = useState<boolean>(false);
 
   const lang = useLanguage();
 
@@ -1226,7 +1232,10 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
                       .doc(oldTitle)
                       .delete()
                       .then(() => {
-                        // TODO
+                        // ignore for now
+                      })
+                      .catch((error) => {
+                        showError(i18n.t('message.CannotDeleteCloudFile', lang) + ' ' + oldTitle + ': ' + error);
                       });
                     for (const f of cloudFileArray) {
                       if (f.userid === userid && f.title === oldTitle) {
