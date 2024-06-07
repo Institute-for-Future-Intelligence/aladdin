@@ -23,10 +23,11 @@ interface SolarPanelWrapperProps {
 }
 
 /**
- * sp position data on foundtion is absolute position to the center point on top surface, which means sp's cz = 0.
- *
+ * foundation: position is absolute to center of top surface, [cx, cy, 0].
+ * wall: position is relative to center of wall outside surface, [cx, 0, cz], rotation is [0,0,0] when stick on wall.
+ * roof: position is absolute to foundation top surface.
+ * cuboid: position is absolute to center of cuboid.
  */
-// todo: specific to foundation only for now
 const SolarPanelWrapper = ({ parentId, foundationId, parentType, plx, ply, plz }: SolarPanelWrapperProps) => {
   const filterFn = useCallback(
     (e: ElementModel) => {
@@ -34,6 +35,7 @@ const SolarPanelWrapper = ({ parentId, foundationId, parentType, plx, ply, plz }
 
       switch (parentType) {
         case ObjectType.Foundation:
+        case ObjectType.Cuboid:
         case ObjectType.Wall: {
           return e.parentId === parentId;
         }
@@ -69,6 +71,15 @@ const SolarPanelWrapper = ({ parentId, foundationId, parentType, plx, ply, plz }
       );
     }
     case ObjectType.Roof: {
+      return (
+        <group name={SOLAR_PANELS_WRAPPER_NAME} position={[0, 0, 0]}>
+          {solarPanels.map((sp) => (
+            <RefSolarPanel key={sp.id} {...sp} />
+          ))}
+        </group>
+      );
+    }
+    case ObjectType.Cuboid: {
       return (
         <group name={SOLAR_PANELS_WRAPPER_NAME} position={[0, 0, 0]}>
           {solarPanels.map((sp) => (

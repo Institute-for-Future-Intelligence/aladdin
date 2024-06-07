@@ -1048,6 +1048,10 @@ export class Util {
     return true;
   }
 
+  static isEqula(a: number, b: number): boolean {
+    return Math.abs(a - b) < ZERO_TOLERANCE;
+  }
+
   static isZero(x: number): boolean {
     return Math.abs(x) < ZERO_TOLERANCE;
   }
