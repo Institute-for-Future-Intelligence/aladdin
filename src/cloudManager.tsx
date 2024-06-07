@@ -115,7 +115,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
   // same logic for projects
   const myProjectsRef = useRef<ProjectState[] | void>(); // store sorted projects
   const [projectArray, setProjectArray] = useState<any[]>([]);
-  const [updateProjectArrayFlag, setUpdateProjectArrayFlag] = useState<boolean>(false);
+  const [updateProjectArray, setUpdateProjectArray] = useState<boolean>(false);
 
   const lang = useLanguage();
 
@@ -234,37 +234,39 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
   }, [updateCloudFileArray]);
 
   useEffect(() => {
-    if (myProjectsRef.current) {
-      const arr: any[] = [];
-      myProjectsRef.current.forEach((f, i) => {
-        arr.push({
-          key: i.toString(),
-          owner: f.owner,
-          title: f.title,
-          time: dayjs(new Date(f.timestamp)).format('MM/DD/YYYY hh:mm A'),
-          timestamp: f.timestamp,
-          description: f.description,
-          dataColoring: f.dataColoring,
-          selectedProperty: f.selectedProperty,
-          sortDescending: f.sortDescending,
-          xAxisNameScatterPlot: f.xAxisNameScatterPlot,
-          yAxisNameScatterPlot: f.yAxisNameScatterPlot,
-          dotSizeScatterPlot: f.dotSizeScatterPlot,
-          thumbnailWidth: f.thumbnailWidth,
-          type: f.type,
-          designs: f.designs,
-          ranges: f.ranges ?? [],
-          filters: f.filters ?? [],
-          hiddenParameters: f.hiddenParameters ?? ProjectUtil.getDefaultHiddenParameters(f.type),
-          counter: f.counter,
-          action: '',
+    if (updateProjectArray) {
+      if (myProjectsRef.current) {
+        const arr: any[] = [];
+        myProjectsRef.current.forEach((f, i) => {
+          arr.push({
+            key: i.toString(),
+            owner: f.owner,
+            title: f.title,
+            time: dayjs(new Date(f.timestamp)).format('MM/DD/YYYY hh:mm A'),
+            timestamp: f.timestamp,
+            description: f.description,
+            dataColoring: f.dataColoring,
+            selectedProperty: f.selectedProperty,
+            sortDescending: f.sortDescending,
+            xAxisNameScatterPlot: f.xAxisNameScatterPlot,
+            yAxisNameScatterPlot: f.yAxisNameScatterPlot,
+            dotSizeScatterPlot: f.dotSizeScatterPlot,
+            thumbnailWidth: f.thumbnailWidth,
+            type: f.type,
+            designs: f.designs,
+            ranges: f.ranges ?? [],
+            filters: f.filters ?? [],
+            hiddenParameters: f.hiddenParameters ?? ProjectUtil.getDefaultHiddenParameters(f.type),
+            counter: f.counter,
+            action: '',
+          });
         });
-      });
-      arr.sort((a, b) => b.timestamp - a.timestamp);
-      setProjectArray(arr);
+        arr.sort((a, b) => b.timestamp - a.timestamp);
+        setProjectArray(arr);
+      }
+      setUpdateProjectArray(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [myProjectsRef.current, updateProjectArrayFlag]);
+  }, [updateProjectArray]);
 
   // fetch all the models that belong to the current user, including those published under all aliases
   useEffect(() => {
@@ -765,6 +767,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
       })
       .finally(() => {
         if (!silent) setLoading(false);
+        setUpdateProjectArray(true);
       });
   };
 
@@ -776,7 +779,6 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
             state.showProjectListPanel = true;
           });
         }
-        setUpdateProjectArrayFlag(!updateProjectArrayFlag);
       });
     }
   };
@@ -815,6 +817,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
                     showError(i18n.t('message.CannotDeleteCloudFile', lang) + ': ' + error);
                   });
               }
+              setUpdateProjectArray(true);
               break;
             }
           }
@@ -910,6 +913,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
                       }
                       myProjectsRef.current = newArray;
                       setUpdateFlag(!updateFlag);
+                      setUpdateProjectArray(true);
                     }
                     setCommonStore((state) => {
                       if (state.projectState.title === oldTitle) {
