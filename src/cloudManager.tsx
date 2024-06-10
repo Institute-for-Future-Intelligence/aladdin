@@ -214,7 +214,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
 
   useEffect(() => {
     if (updateCloudFileArray) {
-      if (cloudFilesRef.current) {
+      if (cloudFilesRef.current && user.uid) {
         const arr: any[] = [];
         cloudFilesRef.current.forEach((f, i) => {
           arr.push({
@@ -222,7 +222,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
             title: f.fileName,
             time: dayjs(new Date(f.timestamp)).format('MM/DD/YYYY hh:mm A'),
             timestamp: f.timestamp,
-            userid: f.userid,
+            userid: user.uid,
             action: '',
           });
         });
@@ -1064,7 +1064,6 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
           info = {
             fileName: newTitle,
             uuid: file.uuid,
-            userid: file.userid,
             timestamp: file.timestamp,
           } as CloudFileInfo;
           break;
@@ -1116,7 +1115,6 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
                 cloudFilesRef.current.push({
                   timestamp: data.timestamp,
                   fileName: title,
-                  userid: user.uid,
                   uuid: data.docid,
                 } as CloudFileInfo);
                 setUpdateCloudFileArray(true);
@@ -1219,7 +1217,6 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
           cloudFilesRef.current?.push({
             timestamp: data.timestamp,
             fileName: doc.id,
-            userid: user.uid,
             uuid: data.docid,
           } as CloudFileInfo);
         });

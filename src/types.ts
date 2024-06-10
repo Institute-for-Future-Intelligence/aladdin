@@ -111,7 +111,6 @@ export interface CloudFileInfo {
   readonly timestamp: number;
   readonly fileName: string;
   readonly uuid: string;
-  readonly userid: string;
 }
 
 export enum DataColoring {
