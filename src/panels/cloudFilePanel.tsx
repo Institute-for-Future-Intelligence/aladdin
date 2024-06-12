@@ -18,6 +18,7 @@ import LinkImage from '../assets/create_link.png';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '../hooks';
+import dayjs from 'dayjs';
 
 const { Column } = Table;
 
@@ -38,7 +39,7 @@ const ColumnWrapper = styled.div`
   right: 0;
   top: 0;
   width: 680px;
-  height: 520px;
+  height: 550px;
   min-width: 400px;
   max-width: 800px;
   min-height: 200px;
@@ -69,35 +70,35 @@ const Header = styled.div`
 
 export interface CloudFilePanelProps {
   cloudFileArray: object[];
-  openCloudFile: (userid: string, title: string) => void;
-  deleteCloudFile: (userid: string, title: string) => void;
-  renameCloudFile: (userid: string, oldTitle: string, newTitle: string) => void;
+  openCloudFile: (title: string) => void;
+  deleteCloudFile: (title: string) => void;
+  renameCloudFile: (oldTitle: string, newTitle: string) => void;
 }
 
 const CloudFilePanel = React.memo(
   ({ cloudFileArray, openCloudFile, deleteCloudFile, renameCloudFile }: CloudFilePanelProps) => {
     const setCommonStore = useStore(Selector.set);
+    const user = useStore(Selector.user);
     const selectedFloatingWindow = useStore(Selector.selectedFloatingWindow);
 
-    // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
-    // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
-    const nodeRef = React.useRef(null);
-
-    const wrapperRef = useRef<HTMLDivElement | null>(null);
-    const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 680;
-    const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 600;
     const [curPosition, setCurPosition] = useState({ x: 0, y: 0 });
     const [renameDialogVisible, setRenameDialogVisible] = useState(false);
     const [dragEnabled, setDragEnabled] = useState<boolean>(false);
     const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
-    const [oldTitle, setOldTitle] = useState<string>();
-    const [newTitle, setNewTitle] = useState<string>();
-    const [userid, setUserid] = useState<string>();
-    const dragRef = useRef<HTMLDivElement | null>(null);
+    const [updateFlag, setUpdateFlag] = useState<boolean>(false);
+
     // make an editable copy because the file array is not mutable
     const filesRef = useRef<object[]>([...cloudFileArray]);
-    // set a flag so that we can update when filesRef changes
-    const [recountFlag, setRecountFlag] = useState<boolean>(false);
+    const oldTitleRef = useRef<string>();
+    const newTitleRef = useRef<string>();
+
+    // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
+    // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
+    const nodeRef = React.useRef(null);
+    const dragRef = useRef<HTMLDivElement | null>(null);
+    const wrapperRef = useRef<HTMLDivElement | null>(null);
+    const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 680;
+    const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 600;
 
     const { Search } = Input;
     const lang = useLanguage();
@@ -120,7 +121,7 @@ const CloudFilePanel = React.memo(
     useEffect(() => {
       if (cloudFileArray) {
         filesRef.current = [...cloudFileArray];
-        setRecountFlag(!recountFlag);
+        setUpdateFlag(!updateFlag);
       }
     }, [cloudFileArray]);
 
@@ -141,7 +142,7 @@ const CloudFilePanel = React.memo(
       });
     };
 
-    const deleteFile = (userid: string, title: string) => {
+    const deleteFile = (title: string) => {
       Modal.confirm({
         title: t('cloudFilePanel.DoYouReallyWantToDelete', lang) + ' "' + title + '"?',
         content: (
@@ -152,10 +153,10 @@ const CloudFilePanel = React.memo(
         ),
         icon: <QuestionCircleOutlined />,
         onOk: () => {
-          deleteCloudFile(userid, title);
+          deleteCloudFile(title);
           // change the address field of the browser when the cloud file is currently open
           const params = new URLSearchParams(window.location.search);
-          if (params.get('title') === title && params.get('userid') === userid) {
+          if (params.get('title') === title && params.get('userid') === user.uid) {
             window.history.pushState({}, document.title, HOME_URL);
           }
         },
@@ -163,9 +164,9 @@ const CloudFilePanel = React.memo(
     };
 
     const renameFile = () => {
-      if (userid && oldTitle && newTitle) {
-        renameCloudFile(userid, oldTitle, newTitle);
-        setNewTitle(undefined);
+      if (oldTitleRef.current && newTitleRef.current) {
+        renameCloudFile(oldTitleRef.current, newTitleRef.current);
+        newTitleRef.current = undefined;
       }
       setRenameDialogVisible(false);
     };
@@ -201,7 +202,7 @@ const CloudFilePanel = React.memo(
           onOk={renameFile}
           onCancel={() => {
             setRenameDialogVisible(false);
-            setNewTitle(undefined);
+            newTitleRef.current = undefined;
           }}
           modalRender={(modal) => (
             <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
@@ -212,7 +213,7 @@ const CloudFilePanel = React.memo(
           <Space direction={'vertical'} style={{ width: '100%' }}>
             <Input
               placeholder="Title"
-              value={newTitle ? newTitle : oldTitle}
+              value={newTitleRef.current ? newTitleRef.current : oldTitleRef.current}
               onPressEnter={renameFile}
               onKeyDown={(e) => {
                 if (!REGEX_ALLOWABLE_IN_NAME.test(e.key)) {
@@ -221,7 +222,8 @@ const CloudFilePanel = React.memo(
                 }
               }}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setNewTitle(e.target.value);
+                newTitleRef.current = e.target.value;
+                setUpdateFlag(!updateFlag);
               }}
             />
             <span style={{ fontSize: '11px', color: 'red' }}>
@@ -278,12 +280,11 @@ const CloudFilePanel = React.memo(
                     // must create a new array for ant table to update (don't just set length to 0)
                     filesRef.current = [];
                     for (const f of cloudFileArray) {
-                      // @ts-expect-error ignore
-                      if (f['title']?.toLowerCase().includes(s.toLowerCase())) {
+                      if ((f as any)['key']?.toLowerCase().includes(s.toLowerCase())) {
                         filesRef.current.push(f);
                       }
                     }
-                    setRecountFlag(!recountFlag);
+                    setUpdateFlag(!updateFlag);
                   }}
                 />
               </span>
@@ -291,7 +292,7 @@ const CloudFilePanel = React.memo(
                 size={'small'}
                 style={{ width: '100%', direction: 'ltr' }}
                 dataSource={filesRef.current}
-                scroll={{ y: 360 }}
+                scroll={{ y: 390 }}
                 pagination={{
                   defaultPageSize: 10,
                   showSizeChanger: true,
@@ -301,18 +302,17 @@ const CloudFilePanel = React.memo(
               >
                 <Column
                   title={`${t('word.Title', lang)}`}
-                  dataIndex="title"
-                  key="title"
+                  dataIndex="key"
+                  key="key"
                   width={'56%'}
                   sortDirections={['ascend', 'descend', 'ascend']}
-                  sorter={(a, b) => {
-                    // @ts-expect-error ignore
-                    return a['title'].localeCompare(b['title']);
+                  sorter={(a: any, b: any) => {
+                    return a['key'].localeCompare(b['key']);
                   }}
-                  render={(title, record) => {
+                  render={(key) => {
                     return (
                       <Typography.Text style={{ fontSize: '12px', cursor: 'pointer' }} title={t('word.Open', lang)}>
-                        {title}
+                        {key}
                       </Typography.Text>
                     );
                   }}
@@ -322,39 +322,41 @@ const CloudFilePanel = React.memo(
                         const selection = window.getSelection();
                         if (selection && selection.toString().length > 0) return;
                         // only proceed when no text is selected
-                        // @ts-expect-error ignore
-                        openCloudFile(data.userid, data.title);
+                        openCloudFile(data.key);
                       },
                     };
                   }}
                 />
                 <Column
                   title={`${t('word.Time', lang)}`}
-                  dataIndex="time"
-                  key="time"
+                  dataIndex="timestamp"
+                  key="timestamp"
                   width={'25%'}
                   defaultSortOrder={'descend'}
                   sortDirections={['ascend', 'descend', 'ascend']}
-                  sorter={(a, b) => {
-                    // @ts-expect-error ignore
+                  sorter={(a: any, b: any) => {
                     return a['timestamp'] - b['timestamp'];
                   }}
-                  render={(time, record) => {
-                    return <Typography.Text style={{ fontSize: '12px' }}>{time}</Typography.Text>;
+                  render={(timestamp) => {
+                    return (
+                      <Typography.Text style={{ fontSize: '12px' }}>
+                        {dayjs(new Date(timestamp)).format('MM/DD/YYYY hh:mm A')}
+                      </Typography.Text>
+                    );
                   }}
                 />
                 <Column
                   width={'19%'}
                   title={`${t('word.Action', lang)}`}
                   key="action"
-                  render={(text, record: any) => (
+                  render={(record: any) => (
                     <Space size="middle">
                       <img
                         title={t('word.Delete', lang)}
                         alt={'Delete'}
                         src={DeleteImage}
                         onClick={() => {
-                          deleteFile(record.userid, record.title);
+                          deleteFile(record.key);
                         }}
                         height={16}
                         width={16}
@@ -368,8 +370,7 @@ const CloudFilePanel = React.memo(
                         alt={'Rename'}
                         src={RenameImage}
                         onClick={() => {
-                          setOldTitle(record.title);
-                          setUserid(record.userid);
+                          oldTitleRef.current = record.key;
                           setRenameDialogVisible(true);
                         }}
                         height={16}
@@ -384,7 +385,7 @@ const CloudFilePanel = React.memo(
                         alt={'Copy Title'}
                         onClick={() => {
                           navigator.clipboard
-                            .writeText(record.title)
+                            .writeText(record.key)
                             .then(() => showSuccess(t('cloudFilePanel.TitleCopiedToClipBoard', lang) + '.'));
                         }}
                         height={16}
@@ -404,7 +405,7 @@ const CloudFilePanel = React.memo(
                             '?client=web&userid=' +
                             record.userid +
                             '&title=' +
-                            encodeURIComponent(record.title);
+                            encodeURIComponent(record.key);
                           navigator.clipboard
                             .writeText(url)
                             .then(() => showSuccess(t('cloudFilePanel.LinkGeneratedInClipBoard', lang) + '.'));

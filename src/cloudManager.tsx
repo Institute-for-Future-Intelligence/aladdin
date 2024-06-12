@@ -217,14 +217,8 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
       if (cloudFilesRef.current && user.uid) {
         const arr: any[] = [];
         cloudFilesRef.current.forEach((f, i) => {
-          arr.push({
-            key: i.toString(),
-            title: f.fileName,
-            time: dayjs(new Date(f.timestamp)).format('MM/DD/YYYY hh:mm A'),
-            timestamp: f.timestamp,
-            userid: user.uid,
-            action: '',
-          });
+          // use title/file name as key
+          arr.push({ key: f.fileName, timestamp: f.timestamp });
         });
         arr.sort((a, b) => b.timestamp - a.timestamp);
         setCloudFileArray(arr);
@@ -1240,11 +1234,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
       .delete()
       .then(() => {
         removeCloudFileRefIfExisting(title);
-        setCloudFileArray(
-          cloudFileArray.filter((e) => {
-            return e.userid !== userid || e.title !== title;
-          }),
-        );
+        setCloudFileArray(cloudFileArray.filter((e) => e.key !== title));
         setCommonStore((state) => {
           if (title === state.cloudFile) {
             state.cloudFile = undefined;
@@ -1285,8 +1275,8 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
                         showError(i18n.t('message.CannotDeleteCloudFile', lang) + ' ' + oldTitle + ': ' + error);
                       });
                     for (const f of cloudFileArray) {
-                      if (f.userid === userid && f.title === oldTitle) {
-                        f.title = newTitle;
+                      if (f.key === oldTitle) {
+                        f.key = newTitle;
                         break;
                       }
                     }
@@ -1720,9 +1710,15 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
       {showCloudFilePanel && cloudFilesRef.current && (
         <CloudFilePanel
           cloudFileArray={cloudFileArray}
-          openCloudFile={openCloudFileWithSaveReminder}
-          deleteCloudFile={deleteCloudFile}
-          renameCloudFile={renameCloudFile}
+          openCloudFile={(title) => {
+            if (user.uid) openCloudFileWithSaveReminder(user.uid, title);
+          }}
+          deleteCloudFile={(title) => {
+            if (user.uid) deleteCloudFile(user.uid, title);
+          }}
+          renameCloudFile={(oldTitle, newTitle) => {
+            if (user.uid) renameCloudFile(user.uid, oldTitle, newTitle);
+          }}
         />
       )}
       {showProjectListPanel && myProjectsRef.current && (

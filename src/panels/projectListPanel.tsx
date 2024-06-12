@@ -301,8 +301,8 @@ const ProjectListPanel = React.memo(
                   key="title"
                   width={'50%'}
                   sortDirections={['ascend', 'descend', 'ascend']}
-                  sorter={(a, b) => {
-                    return (a as any)['title'].localeCompare((b as any)['title']);
+                  sorter={(a: any, b: any) => {
+                    return a['title'].localeCompare(b['title']);
                   }}
                   render={(title, record, index) => {
                     const items: MenuProps['items'] = [
@@ -452,8 +452,7 @@ const ProjectListPanel = React.memo(
                   width={'25%'}
                   defaultSortOrder={'descend'}
                   sortDirections={['ascend', 'descend', 'ascend']}
-                  sorter={(a, b) => {
-                    // @ts-expect-error ignore
+                  sorter={(a: any, b: any) => {
                     return a['timestamp'] - b['timestamp'];
                   }}
                   render={(time) => {
