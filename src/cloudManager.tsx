@@ -1054,11 +1054,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
       for (const [i, file] of cloudFilesRef.current.entries()) {
         if (file.title === oldTitle) {
           index = i;
-          info = {
-            title: newTitle,
-            uuid: file.uuid,
-            timestamp: file.timestamp,
-          } as CloudFileInfo;
+          info = { title: newTitle, timestamp: file.timestamp } as CloudFileInfo;
           break;
         }
       }
@@ -1105,11 +1101,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
               const data = snapshot.data();
               if (data && cloudFilesRef.current) {
                 removeCloudFileRefIfExisting(title);
-                cloudFilesRef.current.push({
-                  timestamp: data.timestamp,
-                  title,
-                  uuid: data.docid,
-                } as CloudFileInfo);
+                cloudFilesRef.current.push({ timestamp: data.timestamp, title } as CloudFileInfo);
                 setUpdateCloudFileArray(true);
               }
             });
@@ -1207,11 +1199,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
           const data = doc.data();
-          cloudFilesRef.current?.push({
-            timestamp: data.timestamp,
-            title: doc.id,
-            uuid: data.docid,
-          } as CloudFileInfo);
+          cloudFilesRef.current?.push({ timestamp: data.timestamp, title: doc.id } as CloudFileInfo);
         });
       })
       .catch((error) => {

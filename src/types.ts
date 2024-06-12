@@ -110,7 +110,6 @@ export enum ClassID {
 export interface CloudFileInfo {
   readonly timestamp: number;
   readonly title: string;
-  readonly uuid: string;
 }
 
 export enum DataColoring {

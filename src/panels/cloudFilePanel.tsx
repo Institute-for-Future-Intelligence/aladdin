@@ -324,7 +324,7 @@ const CloudFilePanel = React.memo(
                       </Typography.Text>
                     );
                   }}
-                  onCell={(data, index) => {
+                  onCell={(data) => {
                     return {
                       onClick: () => {
                         const selection = window.getSelection();
