@@ -217,8 +217,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
       if (cloudFilesRef.current && user.uid) {
         const arr: any[] = [];
         cloudFilesRef.current.forEach((f, i) => {
-          // use title/file name as key
-          arr.push({ key: f.fileName, timestamp: f.timestamp });
+          arr.push({ title: f.title, timestamp: f.timestamp });
         });
         arr.sort((a, b) => b.timestamp - a.timestamp);
         setCloudFileArray(arr);
@@ -1037,7 +1036,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
     if (cloudFilesRef.current) {
       let index = -1;
       for (const [i, file] of cloudFilesRef.current.entries()) {
-        if (file.fileName === title) {
+        if (file.title === title) {
           index = i;
           break;
         }
@@ -1053,10 +1052,10 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
       let index = -1;
       let info = null;
       for (const [i, file] of cloudFilesRef.current.entries()) {
-        if (file.fileName === oldTitle) {
+        if (file.title === oldTitle) {
           index = i;
           info = {
-            fileName: newTitle,
+            title: newTitle,
             uuid: file.uuid,
             timestamp: file.timestamp,
           } as CloudFileInfo;
@@ -1108,7 +1107,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
                 removeCloudFileRefIfExisting(title);
                 cloudFilesRef.current.push({
                   timestamp: data.timestamp,
-                  fileName: title,
+                  title,
                   uuid: data.docid,
                 } as CloudFileInfo);
                 setUpdateCloudFileArray(true);
@@ -1210,7 +1209,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
           const data = doc.data();
           cloudFilesRef.current?.push({
             timestamp: data.timestamp,
-            fileName: doc.id,
+            title: doc.id,
             uuid: data.docid,
           } as CloudFileInfo);
         });
@@ -1234,7 +1233,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
       .delete()
       .then(() => {
         removeCloudFileRefIfExisting(title);
-        setCloudFileArray(cloudFileArray.filter((e) => e.key !== title));
+        setCloudFileArray(cloudFileArray.filter((e) => e.title !== title));
         setCommonStore((state) => {
           if (title === state.cloudFile) {
             state.cloudFile = undefined;
@@ -1275,8 +1274,8 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
                         showError(i18n.t('message.CannotDeleteCloudFile', lang) + ' ' + oldTitle + ': ' + error);
                       });
                     for (const f of cloudFileArray) {
-                      if (f.key === oldTitle) {
-                        f.key = newTitle;
+                      if (f.title === oldTitle) {
+                        f.title = newTitle;
                         break;
                       }
                     }

@@ -81,6 +81,14 @@ const CloudFilePanel = React.memo(
     const user = useStore(Selector.user);
     const selectedFloatingWindow = useStore(Selector.selectedFloatingWindow);
 
+    const cloudFileArrayWithKeys = () => {
+      const arr: object[] = [];
+      for (const [i, f] of cloudFileArray.entries()) {
+        arr.push({ ...f, key: i });
+      }
+      return arr;
+    };
+
     const [curPosition, setCurPosition] = useState({ x: 0, y: 0 });
     const [renameDialogVisible, setRenameDialogVisible] = useState(false);
     const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -88,7 +96,7 @@ const CloudFilePanel = React.memo(
     const [updateFlag, setUpdateFlag] = useState<boolean>(false);
 
     // make an editable copy because the file array is not mutable
-    const filesRef = useRef<object[]>([...cloudFileArray]);
+    const filesRef = useRef<object[]>(cloudFileArrayWithKeys());
     const oldTitleRef = useRef<string>();
     const newTitleRef = useRef<string>();
 
@@ -120,7 +128,7 @@ const CloudFilePanel = React.memo(
 
     useEffect(() => {
       if (cloudFileArray) {
-        filesRef.current = [...cloudFileArray];
+        filesRef.current = cloudFileArrayWithKeys();
         setUpdateFlag(!updateFlag);
       }
     }, [cloudFileArray]);
@@ -279,9 +287,9 @@ const CloudFilePanel = React.memo(
                     if (!cloudFileArray) return;
                     // must create a new array for ant table to update (don't just set length to 0)
                     filesRef.current = [];
-                    for (const f of cloudFileArray) {
-                      if ((f as any)['key']?.toLowerCase().includes(s.toLowerCase())) {
-                        filesRef.current.push(f);
+                    for (const [i, f] of cloudFileArray.entries()) {
+                      if ((f as any)['title']?.toLowerCase().includes(s.toLowerCase())) {
+                        filesRef.current.push({ ...f, key: i });
                       }
                     }
                     setUpdateFlag(!updateFlag);
@@ -302,17 +310,17 @@ const CloudFilePanel = React.memo(
               >
                 <Column
                   title={`${t('word.Title', lang)}`}
-                  dataIndex="key"
-                  key="key"
+                  dataIndex="title"
+                  key="title"
                   width={'56%'}
                   sortDirections={['ascend', 'descend', 'ascend']}
                   sorter={(a: any, b: any) => {
-                    return a['key'].localeCompare(b['key']);
+                    return a['title'].localeCompare(b['title']);
                   }}
-                  render={(key) => {
+                  render={(title) => {
                     return (
                       <Typography.Text style={{ fontSize: '12px', cursor: 'pointer' }} title={t('word.Open', lang)}>
-                        {key}
+                        {title}
                       </Typography.Text>
                     );
                   }}
@@ -322,7 +330,7 @@ const CloudFilePanel = React.memo(
                         const selection = window.getSelection();
                         if (selection && selection.toString().length > 0) return;
                         // only proceed when no text is selected
-                        openCloudFile(data.key);
+                        openCloudFile(data.title);
                       },
                     };
                   }}
@@ -356,7 +364,7 @@ const CloudFilePanel = React.memo(
                         alt={'Delete'}
                         src={DeleteImage}
                         onClick={() => {
-                          deleteFile(record.key);
+                          deleteFile(record.title);
                         }}
                         height={16}
                         width={16}
@@ -370,7 +378,7 @@ const CloudFilePanel = React.memo(
                         alt={'Rename'}
                         src={RenameImage}
                         onClick={() => {
-                          oldTitleRef.current = record.key;
+                          oldTitleRef.current = record.title;
                           setRenameDialogVisible(true);
                         }}
                         height={16}
@@ -385,7 +393,7 @@ const CloudFilePanel = React.memo(
                         alt={'Copy Title'}
                         onClick={() => {
                           navigator.clipboard
-                            .writeText(record.key)
+                            .writeText(record.title)
                             .then(() => showSuccess(t('cloudFilePanel.TitleCopiedToClipBoard', lang) + '.'));
                         }}
                         height={16}
@@ -405,7 +413,7 @@ const CloudFilePanel = React.memo(
                             '?client=web&userid=' +
                             record.userid +
                             '&title=' +
-                            encodeURIComponent(record.key);
+                            encodeURIComponent(record.title);
                           navigator.clipboard
                             .writeText(url)
                             .then(() => showSuccess(t('cloudFilePanel.LinkGeneratedInClipBoard', lang) + '.'));
