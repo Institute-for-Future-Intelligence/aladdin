@@ -27,58 +27,60 @@ interface SolarPanelWrapperProps {
  * roof: position is absolute to foundation top surface.
  * cuboid: position is absolute to center of cuboid.
  */
-const SolarPanelWrapper = ({ parentId, foundationId, wrapperType, plx, ply, plz }: SolarPanelWrapperProps) => {
-  const filterFn = useCallback(
-    (e: ElementModel) => {
-      if (e.type !== ObjectType.RefSolarPanel) return false;
+const SolarPanelWrapper = React.memo(
+  ({ parentId, foundationId, wrapperType, plx, ply, plz }: SolarPanelWrapperProps) => {
+    const filterFn = useCallback(
+      (e: ElementModel) => {
+        if (e.type !== ObjectType.RefSolarPanel) return false;
 
-      const sp = e as SolarPanelModel;
+        const sp = e as SolarPanelModel;
 
-      switch (wrapperType) {
-        case ObjectType.Foundation: {
-          return (
-            sp.foundationId === foundationId &&
-            (sp.parentType === ObjectType.Foundation || sp.parentType === ObjectType.Roof)
-          );
+        switch (wrapperType) {
+          case ObjectType.Foundation: {
+            return (
+              sp.foundationId === foundationId &&
+              (sp.parentType === ObjectType.Foundation || sp.parentType === ObjectType.Roof)
+            );
+          }
+          case ObjectType.Cuboid: {
+            return sp.foundationId === foundationId && sp.parentType === ObjectType.Cuboid;
+          }
+          case ObjectType.Wall: {
+            return e.parentId === parentId && sp.parentType === ObjectType.Wall;
+          }
         }
-        case ObjectType.Cuboid: {
-          return sp.foundationId === foundationId && sp.parentType === ObjectType.Cuboid;
-        }
-        case ObjectType.Wall: {
-          return e.parentId === parentId && sp.parentType === ObjectType.Wall;
-        }
+
+        return false;
+      },
+      [parentId, foundationId, wrapperType],
+    );
+
+    const solarPanels = useStore((state) => state.elements.filter(filterFn) as SolarPanelModel[], shallow);
+
+    switch (wrapperType) {
+      case ObjectType.Foundation:
+      case ObjectType.Cuboid: {
+        return (
+          <group name={SOLAR_PANELS_WRAPPER_NAME}>
+            {solarPanels.map((sp) => (
+              <RefSolarPanel key={sp.id} {...sp} />
+            ))}
+          </group>
+        );
       }
-
-      return false;
-    },
-    [parentId, foundationId, wrapperType],
-  );
-
-  const solarPanels = useStore((state) => state.elements.filter(filterFn) as SolarPanelModel[], shallow);
-
-  switch (wrapperType) {
-    case ObjectType.Foundation:
-    case ObjectType.Cuboid: {
-      return (
-        <group name={SOLAR_PANELS_WRAPPER_NAME}>
-          {solarPanels.map((sp) => (
-            <RefSolarPanel key={sp.id} {...sp} />
-          ))}
-        </group>
-      );
+      case ObjectType.Wall: {
+        return (
+          <group name={SOLAR_PANELS_WRAPPER_NAME}>
+            {solarPanels.map((sp) => (
+              <RefSolarPanel key={sp.id} {...sp} cx={sp.cx * plx} cz={sp.cz * plz} />
+            ))}
+          </group>
+        );
+      }
+      default:
+        return null;
     }
-    case ObjectType.Wall: {
-      return (
-        <group name={SOLAR_PANELS_WRAPPER_NAME}>
-          {solarPanels.map((sp) => (
-            <RefSolarPanel key={sp.id} {...sp} cx={sp.cx * plx} cz={sp.cz * plz} />
-          ))}
-        </group>
-      );
-    }
-    default:
-      return null;
-  }
-};
+  },
+);
 
-export default React.memo(SolarPanelWrapper);
+export default SolarPanelWrapper;
