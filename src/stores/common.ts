@@ -2571,7 +2571,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                     state.getPvModule(state.actionState.solarPanelModelName ?? 'SPR-X21-335-BLK'),
                     solarPanelAbsCoordinatesToParent.x,
                     solarPanelAbsCoordinatesToParent.y,
-                    0,
+                    solarPanelAbsCoordinatesToParent.z,
                     state.actionState.solarPanelOrientation ?? Orientation.landscape,
                     state.actionState.solarPanelPoleHeight ?? 1,
                     state.actionState.solarPanelPoleSpacing ?? 3,

@@ -3082,7 +3082,7 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
         <SolarPanelWrapper
           parentId={id}
           foundationId={id}
-          parentType={ObjectType.Foundation}
+          wrapperType={ObjectType.Foundation}
           plx={lx}
           ply={ly}
           plz={lz}

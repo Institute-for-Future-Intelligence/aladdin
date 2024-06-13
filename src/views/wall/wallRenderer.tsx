@@ -18,6 +18,8 @@ interface WallRendererProps {
   foundationModel: FoundationModel;
 }
 
+export const WALL_GROUP_NAME = 'Wall_Group';
+
 const WallRenderer = ({ wallModel, foundationModel }: WallRendererProps) => {
   const {
     id,
@@ -61,7 +63,7 @@ const WallRenderer = ({ wallModel, foundationModel }: WallRendererProps) => {
 
   return (
     <group
-      name={`Wall_Group ${id}`}
+      name={`${WALL_GROUP_NAME} ${id}`}
       position={[cx, cy, hz]}
       rotation={[0, 0, relativeAngle]}
       userData={{ aabb: true, id: id, fId: parentId }}
@@ -69,7 +71,7 @@ const WallRenderer = ({ wallModel, foundationModel }: WallRendererProps) => {
       <SolarPanelWrapper
         parentId={id}
         foundationId={parentId}
-        parentType={ObjectType.Wall}
+        wrapperType={ObjectType.Wall}
         plx={lx}
         ply={ly}
         plz={lz}

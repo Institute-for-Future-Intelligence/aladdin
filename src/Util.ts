@@ -1048,7 +1048,7 @@ export class Util {
     return true;
   }
 
-  static isEqula(a: number, b: number): boolean {
+  static isEqual(a: number, b: number): boolean {
     return Math.abs(a - b) < ZERO_TOLERANCE;
   }
 

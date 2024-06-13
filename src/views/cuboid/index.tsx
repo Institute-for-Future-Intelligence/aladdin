@@ -39,7 +39,7 @@ const CuboidRenderer = ({ elements, cuboidModel }: CuboidRendererProps) => {
       userData={{ id: id, fId: id }}
     >
       <Cuboid {...cuboidModel} />
-      <SolarPanelWrapper parentId={id} foundationId={id} parentType={ObjectType.Cuboid} plx={lx} ply={ly} plz={lz} />
+      <SolarPanelWrapper parentId={id} foundationId={id} wrapperType={ObjectType.Cuboid} plx={lx} ply={ly} plz={lz} />
       {elements.map((e) => {
         if (isStackableChild(e)) {
           return (

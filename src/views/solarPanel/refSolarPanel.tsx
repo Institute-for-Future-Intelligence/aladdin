@@ -9,7 +9,18 @@ import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { useStore } from 'src/stores/common';
 import { useRefStore } from 'src/stores/commonRef';
 import { ObjectType, ResizeHandleType, RotateHandleType } from 'src/types';
-import { Euler, Group, Intersection, Mesh, Object3D, Object3DEventMap, Quaternion, Vector3 } from 'three';
+import {
+  Euler,
+  Group,
+  Intersection,
+  Mesh,
+  Object3D,
+  Object3DEventMap,
+  Quaternion,
+  Raycaster,
+  Scene,
+  Vector3,
+} from 'three';
 import { useSelected } from '../../hooks';
 import * as Selector from '../../stores/selector';
 import { SOLAR_PANELS_WRAPPER_NAME } from './solarPanelWrapper';
@@ -21,18 +32,24 @@ import { RoofSegmentGroupUserData } from '../roof/roofRenderer';
 import { RoofUtil } from '../roof/RoofUtil';
 import { CUBOID_WRAPPER_NAME } from '../cuboid';
 import { Util } from 'src/Util';
+import { WALL_GROUP_NAME } from '../wall/wallRenderer';
 
 enum Operation {
   Move = 'Move',
-  Rotate = 'Rotate',
+  RotateUpper = 'RotateUpper',
+  RotateLower = 'RotateLower',
   ResizeX = 'ResizeX',
   ResizeY = 'ResizeY',
 }
 
 const tempVector3_0 = new Vector3();
 const tempVector3_1 = new Vector3();
+const tempVector3_2 = new Vector3();
+const tempVector3_3 = new Vector3();
 const tempEuler = new Euler();
 const tempQuaternion_0 = new Quaternion();
+
+const INTERSECTION_PLANE_XY = 'Intersection Plane XY';
 
 const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
   const {
@@ -60,21 +77,27 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
 
   const setCommonStore = useStore(Selector.set);
 
+  const [showXYIntersectionPlane, setShowXYIntersectionPlane] = useState(false);
+
   // meshes ref
   const groupRef = useRef<Group>(null!);
   const boxMeshRef = useRef<Mesh>(null!);
   const resizeHandleGroupRef = useRef<Group>(null!);
   const rotateHandleGroupRef = useRef<Group>(null!);
+  const tiltHandleGroupRef = useRef<Group>(null!);
   const topGroupRef = useRef<Group>(null!);
   const polesGroupRef = useRef<Group>(null!);
+  const intersectionPlaneRef = useRef<Mesh>(null!);
 
   // vairables
   const worldRotationRef = useRef<number | null>(null); // keep sp world rotation same when moving between different foundations
-  const resizeAnchorRef = useRef(new Vector3());
+  const anchorRef = useRef(new Vector3());
+  const unitVecterRef = useRef(new Vector3());
   const newParentIdRef = useRef<string | null>(null);
   const newFoundationIdRef = useRef<string | null>(null);
   const newParentTypeRef = useRef<ObjectType | null>(null);
   const operationRef = useRef<Operation | null>(null);
+  const parentGroupRef = useRef<Object3D | null>(null);
 
   const setFrameLoop = (frameloop: 'always' | 'demand') => {
     set({ frameloop });
@@ -149,21 +172,21 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
     });
   };
 
-  const computeResizeCenter = (args: {
+  const computeResizeCenterOnFlatTopSurface = (args: {
     anchor: Vector3;
     direction: number[];
     distance: number;
-    parentPos: Vector3;
-    parentRot: number;
-    selfRot: number;
+    parentWorldPosition: Vector3;
+    parentWorldRotation: number;
+    selfWorldRotation: number;
   }) => {
-    return tempVector3_1
+    return tempVector3_2
       .fromArray(args.direction) // unit direction
-      .applyEuler(tempEuler.set(0, 0, args.parentRot + args.selfRot))
+      .applyEuler(tempEuler.set(0, 0, args.selfWorldRotation))
       .multiplyScalar(args.distance)
       .add(args.anchor) // world center
-      .sub(args.parentPos)
-      .applyEuler(tempEuler.set(0, 0, -args.parentRot));
+      .sub(args.parentWorldPosition)
+      .applyEuler(tempEuler.set(0, 0, -args.parentWorldRotation));
   };
 
   const findParentGroup = (obj: Object3D<Object3DEventMap>, names: string[]): Object3D<Object3DEventMap> | null => {
@@ -176,43 +199,60 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
   };
 
   /** Return first intersectable mesh's point, parent group and type */
-  const getIntersectionData = (intersections: Intersection<Object3D<Object3DEventMap>>[]) => {
-    for (const intersection of intersections) {
-      if (intersection.object.name === FOUNDATION_NAME) {
-        const parent = intersection.object.parent;
-        if (!parent) return null;
-        return {
-          intersection: intersection,
-          parentGroup: parent,
-          parentType: ObjectType.Foundation,
-        };
+  const getIntersectionData = (raycaster: Raycaster, scene: Scene, operation: Operation) => {
+    switch (operation) {
+      case Operation.Move: {
+        const intersections = raycaster.intersectObjects(scene.children);
+        for (const intersection of intersections) {
+          if (intersection.object.name === FOUNDATION_NAME) {
+            const parent = intersection.object.parent;
+            if (!parent) return null;
+            return {
+              intersection: intersection,
+              parentGroup: parent,
+              parentType: ObjectType.Foundation,
+            };
+          }
+          if (intersection.object.name.includes(SharedUtil.WALL_OUTSIDE_SURFACE_MESH_NAME)) {
+            const parent = intersection.object.parent;
+            if (!parent) return null;
+            return {
+              intersection: intersection,
+              parentGroup: parent,
+              parentType: ObjectType.Wall,
+            };
+          }
+          if (intersection.object.name.includes('Roof')) {
+            const foundation = findParentGroup(intersection.object, [FOUNDATION_NAME]);
+            if (!foundation) return null;
+            return {
+              intersection: intersection,
+              parentGroup: foundation,
+              parentType: ObjectType.Roof,
+            };
+          }
+          if (intersection.object.name.includes('Cuboid')) {
+            const parent = findParentGroup(intersection.object, [CUBOID_WRAPPER_NAME]);
+            if (!parent) return null;
+            return {
+              intersection: intersection,
+              parentGroup: parent,
+              parentType: ObjectType.Cuboid,
+            };
+          }
+        }
+        break;
       }
-      if (intersection.object.name.includes(SharedUtil.WALL_OUTSIDE_SURFACE_MESH_NAME)) {
-        const parent = intersection.object.parent;
-        if (!parent) return null;
-        return {
-          intersection: intersection,
-          parentGroup: parent,
-          parentType: ObjectType.Wall,
-        };
-      }
-      if (intersection.object.name.includes('Roof')) {
-        const foundation = findParentGroup(intersection.object, [FOUNDATION_NAME]);
-        if (!foundation) return null;
-        return {
-          intersection: intersection,
-          parentGroup: foundation,
-          parentType: ObjectType.Roof,
-        };
-      }
-      if (intersection.object.name.includes('Cuboid')) {
-        const parent = findParentGroup(intersection.object, [CUBOID_WRAPPER_NAME]);
-        if (!parent) return null;
-        return {
-          intersection: intersection,
-          parentGroup: parent,
-          parentType: ObjectType.Cuboid,
-        };
+      case Operation.ResizeX:
+      case Operation.ResizeY:
+      case Operation.RotateLower:
+      case Operation.RotateUpper: {
+        if (!showXYIntersectionPlane || !intersectionPlaneRef.current || !parentGroupRef.current) return null;
+        const intersections = raycaster.intersectObjects([intersectionPlaneRef.current]);
+        const intersection = intersections[0];
+        // BUG: intersection plane position is incorrect(z=0) at the first calculation. (plane object parent is null, don't know why)
+        if (!intersection || Util.isEqual(intersection.point.z, 0)) return null;
+        return { intersection: intersections[0], parentGroup: parentGroupRef.current, parentType: parentType };
       }
     }
     return null;
@@ -225,10 +265,18 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
     return { roofId, foundation, centroid, roofSegments } as RoofSegmentGroupUserData;
   };
 
+  const getRoofId = (object: Object3D<Object3DEventMap> | null): string | null => {
+    if (!object) return null;
+    const roofId = object.userData.roofId as string;
+    if (roofId) return roofId;
+    return getRoofId(object.parent);
+  };
+
   const handleChangeParent = (
     currentWrapper: Object3D<Object3DEventMap> | null,
     newParent: Object3D<Object3DEventMap>,
     newParentType: ObjectType,
+    object: Object3D<Object3DEventMap>,
   ) => {
     // todo: different element has different structure
     const newWrapper = newParent.children.find((obj) => obj.name === SOLAR_PANELS_WRAPPER_NAME);
@@ -244,6 +292,12 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
         newParentIdRef.current = userData.id; // todo: sp on roof pId === fId?
         newFoundationIdRef.current = userData.fId;
       }
+      if (newParentType === ObjectType.Roof) {
+        const roofId = getRoofId(object);
+        if (roofId) {
+          newParentIdRef.current = roofId;
+        }
+      }
     }
     newParentTypeRef.current = newParentType;
   };
@@ -252,7 +306,7 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
     if (!normal) return;
     const { x, y, z } = normal;
     // top face
-    if (Util.isEqula(z, 1)) {
+    if (Util.isEqual(z, 1)) {
       // todo: hard code for now
       groupRef.current.rotation.set(0, 0, 0);
       if (worldRotationRef.current !== null) {
@@ -263,22 +317,60 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
       return;
     }
     // north face
-    if (Util.isEqula(x, 0) && Util.isEqula(y, 1)) {
+    if (Util.isEqual(x, 0) && Util.isEqual(y, 1)) {
       groupRef.current.rotation.set(-HALF_PI, 0, 0);
     }
     // south face
-    else if (Util.isEqula(x, 0) && Util.isEqula(y, -1)) {
+    else if (Util.isEqual(x, 0) && Util.isEqual(y, -1)) {
       groupRef.current.rotation.set(HALF_PI, 0, 0);
     }
     // west face
-    else if (Util.isEqula(x, -1) && Util.isEqula(y, 0)) {
+    else if (Util.isEqual(x, -1) && Util.isEqual(y, 0)) {
       groupRef.current.rotation.set(HALF_PI, 0, -HALF_PI, 'ZXY');
     }
     // east face
-    else if (Util.isEqula(x, 1) && Util.isEqula(y, 0)) {
+    else if (Util.isEqual(x, 1) && Util.isEqual(y, 0)) {
       groupRef.current.rotation.set(HALF_PI, 0, HALF_PI, 'ZXY');
     }
     topGroupRef.current.rotation.set(0, 0, 0);
+  };
+
+  const getRelativeAzimuth = (angle: number) => {
+    if (angle > Math.PI) return angle - Math.PI * 2;
+    if (angle < -Math.PI) return angle + Math.PI * 2;
+    return angle;
+  };
+
+  const setHandlesVisibility = (rotate: boolean, tilt: boolean) => {
+    if (rotateHandleGroupRef.current) {
+      rotateHandleGroupRef.current.visible = rotate;
+    }
+    if (tiltHandleGroupRef.current) {
+      tiltHandleGroupRef.current.visible = tilt;
+    }
+  };
+
+  const updateHandlesVisibility = (parentType: ObjectType, rotationX: number, poleHeight: number) => {
+    switch (parentType) {
+      case ObjectType.Foundation: {
+        setHandlesVisibility(true, poleHeight === 0);
+        break;
+      }
+      case ObjectType.Wall: {
+        setHandlesVisibility(false, true);
+        break;
+      }
+      case ObjectType.Cuboid:
+      case ObjectType.Roof: {
+        const isOnFlatTopSurface = Util.isEqual(rotationX, 0);
+        if (isOnFlatTopSurface) {
+          setHandlesVisibility(true, poleHeight === 0);
+        } else {
+          setHandlesVisibility(false, false);
+        }
+        break;
+      }
+    }
   };
 
   // ===== Events =====
@@ -302,7 +394,7 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
   };
 
   const onResizeHandleGroupPointerDown = (e: ThreeEvent<PointerEvent>) => {
-    if (!selected || !groupRef.current) return;
+    if (!selected || !topGroupRef.current) return;
     setFrameLoop('always');
     useRefStore.getState().setEnableOrbitController(false);
     switch (e.object.name) {
@@ -317,29 +409,48 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
         break;
       }
     }
-    groupRef.current.localToWorld(
-      resizeAnchorRef.current
-        .set(-e.object.position.x, -e.object.position.y, 0)
-        .applyEuler(tempEuler.set(0, 0, rotation[2])),
-    );
+    topGroupRef.current.localToWorld(anchorRef.current.set(-e.object.position.x, -e.object.position.y, -lz / 2));
+    setShowXYIntersectionPlane(true);
+    parentGroupRef.current = findParentGroup(groupRef.current, [
+      WALL_GROUP_NAME,
+      FOUNDATION_GROUP_NAME,
+      CUBOID_WRAPPER_NAME,
+    ]);
   };
 
-  // todo
-  const onRotateHandleGroupPointerDown = (e: ThreeEvent<PointerEvent>) => {};
+  // bug: need to disable it when it's not visiable
+  const onRotateHandlePointerDown = (e: ThreeEvent<PointerEvent>) => {
+    if (!topGroupRef.current || !rotateHandleGroupRef.current.visible) return;
+    setFrameLoop('always');
+    useRefStore.getState().setEnableOrbitController(false);
+    switch (e.eventObject.name) {
+      case RotateHandleType.Upper: {
+        operationRef.current = Operation.RotateUpper;
+        break;
+      }
+      case RotateHandleType.Lower: {
+        operationRef.current = Operation.RotateLower;
+        break;
+      }
+    }
+    topGroupRef.current.getWorldPosition(anchorRef.current);
+    anchorRef.current.z = 0;
+    setShowXYIntersectionPlane(true);
+    parentGroupRef.current = findParentGroup(groupRef.current, [FOUNDATION_GROUP_NAME, CUBOID_WRAPPER_NAME]);
+  };
 
   // update common state here
   const onWindowPointerUp = useCallback(() => {
     switch (operationRef.current) {
-      case Operation.ResizeX:
-      case Operation.ResizeY:
       case Operation.Move: {
         setCommonStore((state) => {
-          if (!groupRef.current || !boxMeshRef.current) return;
+          if (!groupRef.current) return;
 
           const sp = state.elements.find((e) => e.id === id) as SolarPanelModel | undefined;
           if (!sp) return;
 
           // change parent first if needed
+          // todo: sp on roof parent id is foundation. need change?
           if (sp.parentId !== newParentIdRef.current && newParentIdRef.current && newFoundationIdRef.current) {
             sp.parentId = newParentIdRef.current;
             sp.foundationId = newFoundationIdRef.current;
@@ -371,24 +482,51 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
                   tempEuler.setFromQuaternion(parentGroup.getWorldQuaternion(tempQuaternion_0.set(0, 0, 0, 0))).z;
               }
             }
-            if (sp.parentType === ObjectType.Roof) {
-              const { x, y, z } = groupRef.current.rotation;
-              sp.rotation = [x, y, z];
-              // todo: is sp.normal needed?
-            } else if (sp.parentType === ObjectType.Cuboid) {
+            if (sp.parentType === ObjectType.Roof || sp.parentType === ObjectType.Cuboid) {
               const { x, y, z } = groupRef.current.rotation;
               // on top face
-              if (Util.isEqula(groupRef.current.rotation.x, 0)) {
+              if (Util.isEqual(groupRef.current.rotation.x, 0)) {
                 sp.rotation = [sp.tiltAngle, 0, sp.relativeAzimuth];
               } else {
                 sp.rotation = [x, y, z];
               }
+              // todo: is sp.normal needed?
             } else {
               sp.rotation = [sp.tiltAngle, 0, sp.relativeAzimuth];
             }
           }
+        });
+        break;
+      }
+      case Operation.ResizeX:
+      case Operation.ResizeY: {
+        setCommonStore((state) => {
+          if (!boxMeshRef.current || !groupRef.current) return;
+          const sp = state.elements.find((e) => e.id === id) as SolarPanelModel | undefined;
+          if (!sp) return;
           sp.lx = boxMeshRef.current.scale.x;
           sp.ly = boxMeshRef.current.scale.y;
+          // todo: should use ref to find parent
+          if (sp.parentType === ObjectType.Wall) {
+            const parentWall = state.elements.find((e) => e.id === sp.parentId);
+            if (parentWall) {
+              sp.cx = groupRef.current.position.x / parentWall.lx;
+              sp.cy = 0;
+              sp.cz = groupRef.current.position.z / parentWall.lz;
+            }
+          }
+        });
+        break;
+      }
+      case Operation.RotateLower:
+      case Operation.RotateUpper: {
+        setCommonStore((state) => {
+          if (!topGroupRef.current) return;
+          const sp = state.elements.find((e) => e.id === id) as SolarPanelModel | undefined;
+          if (!sp) return;
+          const angle = getRelativeAzimuth(topGroupRef.current.rotation.z);
+          sp.relativeAzimuth = angle;
+          sp.rotation[2] = angle;
         });
         break;
       }
@@ -400,7 +538,9 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
     newParentIdRef.current = null;
     newFoundationIdRef.current = null;
     newParentTypeRef.current = null;
-  }, []);
+    parentGroupRef.current = null;
+    setShowXYIntersectionPlane(false);
+  }, [setShowXYIntersectionPlane]);
 
   useEffect(() => {
     window.addEventListener('pointerup', onWindowPointerUp);
@@ -412,9 +552,7 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
 
     const pointer = useRefStore.getState().pointer;
     raycaster.setFromCamera(pointer, camera);
-    const intersections = raycaster.intersectObjects(scene.children);
-
-    const intersectionData = getIntersectionData(intersections);
+    const intersectionData = getIntersectionData(raycaster, scene, operationRef.current);
     if (!intersectionData) return;
 
     const { intersection, parentGroup, parentType } = intersectionData;
@@ -422,14 +560,15 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
 
     switch (operationRef.current) {
       case Operation.Move: {
-        handleChangeParent(groupRef.current.parent, parentGroup, parentType);
+        if (!parentType) break;
+        handleChangeParent(groupRef.current.parent, parentGroup, parentType, intersection.object);
 
         // updating mesh
         switch (parentType) {
           case ObjectType.Foundation: {
             groupRef.current.position.x = point.x - parentGroup.position.x;
             groupRef.current.position.y = point.y - parentGroup.position.y;
-            groupRef.current.position.z = 0;
+            groupRef.current.position.z = point.z - parentGroup.position.z;
             groupRef.current.position.applyEuler(tempEuler.set(0, 0, -parentGroup.rotation.z));
             // todo: hard code for now
             groupRef.current.rotation.set(0, 0, 0);
@@ -471,9 +610,19 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
                 const { normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
                 groupRef.current.position.x = posRelToFoundation.x;
                 groupRef.current.position.y = posRelToFoundation.y;
-                groupRef.current.position.z = posRelToFoundation.z - foundation.lz;
-                groupRef.current.rotation.set(rotation[0], rotation[1], rotation[2], 'ZXY');
-                topGroupRef.current.rotation.set(0, 0, 0);
+                groupRef.current.position.z = posRelToFoundation.z;
+                // on flat top surface
+                if (Util.isEqual(rotation[0], 0)) {
+                  groupRef.current.rotation.set(0, 0, 0, 'ZXY');
+                  if (worldRotationRef.current !== null) {
+                    topGroupRef.current.rotation.set(0, 0, worldRotationRef.current - parentGroup.rotation.z);
+                  } else {
+                    topGroupRef.current.rotation.set(0, 0, relativeAzimuth);
+                  }
+                } else {
+                  groupRef.current.rotation.set(rotation[0], rotation[1], rotation[2], 'ZXY');
+                  topGroupRef.current.rotation.set(0, 0, 0);
+                }
                 // e.normal = normal.toArray(); // todo: normal seems doesn't affect anything
               }
             }
@@ -481,56 +630,60 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
           }
           case ObjectType.Cuboid: {
             parentGroup.getWorldPosition(tempVector3_0);
-            parentGroup.getWorldQuaternion(tempQuaternion_0.set(0, 0, 0, 0));
+            parentGroup.getWorldQuaternion(tempQuaternion_0);
             tempEuler.setFromQuaternion(tempQuaternion_0);
             groupRef.current.position.subVectors(point, tempVector3_0).applyQuaternion(tempQuaternion_0.invert());
             updateRotationOnCuboid(intersection.normal);
           }
         }
+
+        updateHandlesVisibility(parentType, groupRef.current.rotation.x, poleHeight);
         break;
       }
       case Operation.ResizeX:
       case Operation.ResizeY: {
-        // todo: bug: pointer shouldn't be on other elements
-        const parentRotation = parentGroup.rotation.z;
-        const selfRotation = rotation[2]; // todo
-        const anchor = resizeAnchorRef.current;
+        const anchor = anchorRef.current;
+        const pointerOnPlane = tempVector3_0.subVectors(point, anchor);
+        const dirVector = groupRef.current.getWorldPosition(tempVector3_1).sub(anchor).normalize();
+        const angle = pointerOnPlane.angleTo(dirVector);
+        const length = pointerOnPlane.length() * Math.cos(angle);
+        dirVector.multiplyScalar(length / 2);
 
-        const localizedAnchorToPoint = tempVector3_0
-          .subVectors(point, anchor)
-          .setZ(0)
-          .applyEuler(tempEuler.set(0, 0, -parentRotation - selfRotation));
+        const parentCenter = parentGroup.getWorldPosition(tempVector3_3);
+
+        const center = tempVector3_2
+          .addVectors(anchor, dirVector)
+          .sub(parentCenter)
+          .applyQuaternion(parentGroup.getWorldQuaternion(tempQuaternion_0).invert());
 
         if (operationRef.current === Operation.ResizeX) {
-          const center = computeResizeCenter({
-            anchor,
-            direction: [1, 0, 0],
-            distance: localizedAnchorToPoint.x / 2,
-            parentPos: parentGroup.position,
-            parentRot: parentRotation,
-            selfRot: selfRotation,
-          });
-          boxMeshRef.current.scale.x = Math.abs(localizedAnchorToPoint.x);
-          groupRef.current.position.x = center.x;
-          groupRef.current.position.y = center.y;
+          boxMeshRef.current.scale.x = Math.abs(length);
         } else if (operationRef.current === Operation.ResizeY) {
-          const center = computeResizeCenter({
-            anchor,
-            direction: [0, 1, 0],
-            distance: localizedAnchorToPoint.y / 2,
-            parentPos: parentGroup.position,
-            parentRot: parentRotation,
-            selfRot: selfRotation,
-          });
-          boxMeshRef.current.scale.y = Math.abs(localizedAnchorToPoint.y);
-          groupRef.current.position.x = center.x;
-          groupRef.current.position.y = center.y;
+          boxMeshRef.current.scale.y = Math.abs(length);
         }
+        groupRef.current.position.x = center.x;
+        groupRef.current.position.y = center.y;
+        groupRef.current.position.z = center.z;
 
         updateChildMeshes();
         break;
       }
-      case Operation.Rotate: {
+      case Operation.RotateUpper: {
+        tempVector3_0.subVectors(point, anchorRef.current).setZ(0);
+        let angle = tempVector3_0.angleTo(tempVector3_1.set(0, 1, 0));
+        if (tempVector3_0.x > 0) {
+          angle = -angle;
+        }
+        topGroupRef.current.rotation.z = angle - parentGroup.rotation.z;
+        break;
+      }
+      case Operation.RotateLower: {
+        tempVector3_0.subVectors(point, anchorRef.current).setZ(0);
+        let angle = tempVector3_0.angleTo(tempVector3_1.set(0, -1, 0));
+        if (tempVector3_0.x < 0) {
+          angle = -angle;
+        }
+        topGroupRef.current.rotation.z = angle - parentGroup.rotation.z;
         break;
       }
     }
@@ -543,11 +696,8 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
     if (parentType === ObjectType.Wall) {
       return new Euler(HALF_PI, 0, 0);
     }
-    if (parentType === ObjectType.Roof) {
-      return new Euler(rotation[0], rotation[1], rotation[2], 'ZXY');
-    }
-    // on cuboid side faces
-    if (parentType === ObjectType.Cuboid && rotation[0] !== 0) {
+    // on cuboid or roof side faces
+    if ((parentType === ObjectType.Cuboid || parentType === ObjectType.Roof) && !Util.isEqual(rotation[0], 0)) {
       return new Euler(rotation[0], rotation[1], rotation[2], 'ZXY');
     }
     return new Euler();
@@ -557,11 +707,8 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
     if (parentType === ObjectType.Wall) {
       return new Euler();
     }
-    if (parentType === ObjectType.Roof) {
-      return new Euler();
-    }
-    // on cuboid side faces
-    if (parentType === ObjectType.Cuboid && rotation[0] !== 0) {
+    // on cuboid or roof side faces
+    if ((parentType === ObjectType.Cuboid || parentType === ObjectType.Roof) && !Util.isEqual(rotation[0], 0)) {
       return new Euler();
     }
     return new Euler(0, 0, rotation[2], 'ZXY');
@@ -581,46 +728,56 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
       }}
     >
       <group name={'Top_Group'} ref={topGroupRef} position={[0, 0, panelCenterHeight]} rotation={panelEuler}>
-        {/* panel group */}
-        <group name={'Panel_Group'}>
-          {/* panel */}
-          <Box name="Box_Mesh" ref={boxMeshRef} scale={[lx, ly, lz]}>
-            <meshStandardMaterial color={'blue'} />
-          </Box>
+        {/* panel */}
+        <Box name="Box_Mesh" ref={boxMeshRef} scale={[lx, ly, lz]}>
+          <meshStandardMaterial color={'blue'} />
+        </Box>
 
-          {/* move and resize handles group */}
-          <group name="Move&Resize_Handles_Group" visible={selected}>
-            {/* move handle group */}
-            <group name="Move_Handle_Group">
-              <Sphere args={[handleSize]} onPointerDown={onMoveHandlePointerDown} />
-            </group>
+        {/* move, resize and rotate handles */}
+        <group name="Move_Resize_Rotate_Handles_Group" visible={selected}>
+          {/* move handle group */}
+          <group name="Move_Handle_Group">
+            <Sphere args={[handleSize]} onPointerDown={onMoveHandlePointerDown} />
+          </group>
 
-            {/* resize handle group */}
-            <group
-              name="Resize_Handles_Group"
-              ref={resizeHandleGroupRef}
-              onPointerDown={onResizeHandleGroupPointerDown}
-            >
-              <Box name={ResizeHandleType.Right} position={[hlx, 0, 0.1]} args={[handleSize, handleSize, 0.1]} />
-              <Box name={ResizeHandleType.Left} position={[-hlx, 0, 0.1]} args={[handleSize, handleSize, 0.1]} />
-              <Box name={ResizeHandleType.Upper} position={[0, hly, 0.1]} args={[handleSize, handleSize, 0.1]}>
-                <meshBasicMaterial color="yellow" />
-              </Box>
-              <Box name={ResizeHandleType.Lower} position={[0, -hly, 0.1]} args={[handleSize, handleSize, 0.1]} />
-            </group>
+          {/* resize handle group */}
+          <group name="Resize_Handles_Group" ref={resizeHandleGroupRef} onPointerDown={onResizeHandleGroupPointerDown}>
+            <Box name={ResizeHandleType.Right} position={[hlx, 0, 0.1]} args={[handleSize, handleSize, 0.1]}>
+              <meshBasicMaterial color="yellow" />
+            </Box>
+            <Box name={ResizeHandleType.Left} position={[-hlx, 0, 0.1]} args={[handleSize, handleSize, 0.1]} />
+            <Box name={ResizeHandleType.Upper} position={[0, hly, 0.1]} args={[handleSize, handleSize, 0.1]}>
+              <meshBasicMaterial color="red" />
+            </Box>
+            <Box name={ResizeHandleType.Lower} position={[0, -hly, 0.1]} args={[handleSize, handleSize, 0.1]} />
+          </group>
+
+          {/* rotate handles group */}
+          <group name={'Rotate_Handles_Group'} ref={rotateHandleGroupRef}>
+            <RotateHandle
+              name={RotateHandleType.Upper}
+              position={[0, hly + RotateHandleDist, 0]}
+              onPointerDown={onRotateHandlePointerDown}
+            />
+            <RotateHandle
+              name={RotateHandleType.Lower}
+              position={[0, -hly - RotateHandleDist, 0]}
+              onPointerDown={onRotateHandlePointerDown}
+            />
           </group>
         </group>
 
-        {/* rotate handles group */}
-        {/* <group
-          name={'Rotate_Handles_Group'}
-          ref={rotateHandleGroupRef}
-          visible={selected}
-          onPointerDown={onRotateHandleGroupPointerDown}
-        >
-          <RotateHandle name={RotateHandleType.Upper} position={[0, hly + RotateHandleDist, 0]} />
-          <RotateHandle name={RotateHandleType.Lower} position={[0, -hly - RotateHandleDist, 0]} />
-        </group> */}
+        {showXYIntersectionPlane && (
+          <Plane
+            name={INTERSECTION_PLANE_XY}
+            ref={intersectionPlaneRef}
+            args={[10, 10]}
+            position={[0, 0, -panelCenterHeight]}
+            visible={true}
+          >
+            <meshBasicMaterial color={'darkgrey'} />
+          </Plane>
+        )}
       </group>
 
       {/* poles */}
@@ -638,9 +795,17 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
   );
 });
 
-const RotateHandle = ({ position, name }: { name: string; position: [number, number, number] }) => {
+const RotateHandle = ({
+  position,
+  name,
+  onPointerDown,
+}: {
+  name: string;
+  position: [number, number, number];
+  onPointerDown: (e: ThreeEvent<PointerEvent>) => void;
+}) => {
   return (
-    <group name={name} position={position} rotation={[HALF_PI, 0, 0]}>
+    <group name={name} position={position} rotation={[HALF_PI, 0, 0]} onPointerDown={onPointerDown}>
       <Torus args={[0.15, 0.05, 6, 8, (3 / 2) * Math.PI]} rotation={[HALF_PI, 0, HALF_PI]}>
         <meshBasicMaterial color={'white'} />
       </Torus>
