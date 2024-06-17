@@ -283,7 +283,7 @@ const SolarPanel = (solarPanel: SolarPanelOnFoundation) => {
   const tiltHandleSize = rotateHandleSize;
 
   const degree = new Array(13).fill(0);
-  const [showTiltAngle, setShowTiltAngle] = useState(false);
+  const [showTiltAngle, setShowTiltAngle] = useState(true);
 
   const texture = useSolarPanelTexture(
     lx,
@@ -649,7 +649,7 @@ const SolarPanel = (solarPanel: SolarPanelOnFoundation) => {
               }
             />
           </Ring>
-          {showTiltAngle && (
+          {true && (
             <>
               {/* intersection plane */}
               <Ring
