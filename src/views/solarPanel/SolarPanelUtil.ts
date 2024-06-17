@@ -3,10 +3,11 @@
  */
 
 import { Util } from 'src/Util';
-import { ObjectType } from 'src/types';
 import { Object3D, Object3DEventMap } from 'three';
 import { RoofSegmentGroupUserData } from '../roof/roofRenderer';
 import { useStore } from 'src/stores/common';
+import { HALF_PI } from 'src/constants';
+import { SurfaceType } from './refSolarPanel';
 
 export class SolarPanelUtil {
   static setSelected(id: string, b: boolean) {
@@ -28,9 +29,14 @@ export class SolarPanelUtil {
     });
   }
 
-  static isOnFlatTopSurface(parentType: ObjectType | undefined, rotationX: number) {
-    if (parentType === ObjectType.Wall) return false;
-    return Util.isEqual(rotationX, 0);
+  static getSurfaceType(rotationX: number) {
+    if (Util.isEqual(rotationX, 0)) {
+      return SurfaceType.Horizontal;
+    } else if (Util.isEqual(rotationX, HALF_PI)) {
+      return SurfaceType.Vertical;
+    } else {
+      return SurfaceType.Inclined;
+    }
   }
 
   static findParentGroup(obj: Object3D<Object3DEventMap>, names: string[]): Object3D<Object3DEventMap> | null {
