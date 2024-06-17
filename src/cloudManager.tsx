@@ -39,7 +39,7 @@ import MainToolBar from './mainToolBar';
 import SaveCloudFileModal from './saveCloudFileModal';
 import ModelsGallery from './modelsGallery';
 import ProjectListPanel from './panels/projectListPanel';
-import { doesDocExist, loadCloudFile } from './cloudFileUtil';
+import { addFileToList, doesDocExist, loadCloudFile, removeFileFromList } from './cloudFileUtil';
 import {
   changeDesignTitles,
   copyDesign,
@@ -353,6 +353,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
     let noLogging = false;
     let schoolID = SchoolID.UNKNOWN;
     let classID = ClassID.UNKNOWN;
+    let fileList: CloudFileInfo[] = [];
     let likes: string[] = [];
     let published: string[] = [];
     let aliases: string[] = [];
@@ -381,6 +382,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
             noLogging = !!docData.noLogging;
             schoolID = docData.schoolID ? (docData.schoolID as SchoolID) : SchoolID.UNKNOWN;
             classID = docData.classID ? (docData.classID as ClassID) : ClassID.UNKNOWN;
+            if (docData.fileList) fileList = docData.fileList;
             if (docData.likes) likes = docData.likes;
             if (docData.published) published = docData.published;
             if (docData.aliases) aliases = docData.aliases;
@@ -396,6 +398,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
         state.user.noLogging = noLogging;
         state.user.schoolID = schoolID;
         state.user.classID = classID;
+        state.user.fileList = fileList;
         state.user.likes = likes;
         state.user.published = published;
         state.user.aliases = aliases;
@@ -408,6 +411,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
       user.noLogging = noLogging;
       user.schoolID = schoolID;
       user.classID = classID;
+      user.fileList = fileList;
       user.likes = likes;
       user.published = published;
       user.aliases = aliases;
@@ -446,6 +450,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
           state.user.displayName = null;
           state.user.photoURL = null;
           state.user.signFile = false;
+          state.user.fileList = [];
           state.user.likes = [];
           state.user.published = [];
           state.user.aliases = [];
@@ -1032,12 +1037,13 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
     setTitleDialogVisible(false);
   };
 
-  const removeCloudFileRefIfExisting = (title: string) => {
+  const removeCloudFileIfExisting = (uid: string, title: string) => {
     if (cloudFilesRef.current) {
       let index = -1;
       for (const [i, file] of cloudFilesRef.current.entries()) {
         if (file.title === title) {
           index = i;
+          removeFileFromList(uid, file);
           break;
         }
       }
@@ -1047,28 +1053,33 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
     }
   };
 
-  const renameCloudFileRef = (oldTitle: string, newTitle: string) => {
+  const renameCloudFileAndUpdateList = (uid: string, oldTitle: string, newTitle: string) => {
     if (cloudFilesRef.current) {
       let index = -1;
-      let info = null;
+      let oldFile = null;
+      let newFile = null;
       for (const [i, file] of cloudFilesRef.current.entries()) {
         if (file.title === oldTitle) {
           index = i;
-          info = { title: newTitle, timestamp: file.timestamp } as CloudFileInfo;
+          oldFile = { title: oldTitle, timestamp: file.timestamp } as CloudFileInfo;
+          newFile = { title: newTitle, timestamp: file.timestamp } as CloudFileInfo;
           break;
         }
       }
-      if (index !== -1 && info) {
+      if (index !== -1 && newFile && oldFile) {
         cloudFilesRef.current.splice(index, 1);
-        cloudFilesRef.current.push(info);
+        cloudFilesRef.current.push(newFile);
+        removeFileFromList(uid, oldFile);
+        addFileToList(uid, newFile);
       }
     }
   };
 
   const saveToCloudWithoutCheckingExistence = (title: string, silent: boolean, ofProject?: boolean) => {
-    if (!user.uid) return;
+    const uid = user.uid;
+    if (!uid) return;
     try {
-      const userDocuments = firebase.firestore().collection('users').doc(user.uid);
+      const userDocuments = firebase.firestore().collection('users').doc(uid);
       if (userDocuments) {
         if (localContentToImportAfterCloudFileUpdate) {
           usePrimitiveStore.getState().set((state) => {
@@ -1093,15 +1104,17 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
               }
             } else {
               if (!ofProject) {
-                const newUrl = HOME_URL + '?client=web&userid=' + user.uid + '&title=' + encodeURIComponent(title);
+                const newUrl = HOME_URL + '?client=web&userid=' + uid + '&title=' + encodeURIComponent(title);
                 window.history.pushState({}, document.title, newUrl);
               }
             }
             doc.get().then((snapshot) => {
               const data = snapshot.data();
               if (data && cloudFilesRef.current) {
-                removeCloudFileRefIfExisting(title);
-                cloudFilesRef.current.push({ timestamp: data.timestamp, title } as CloudFileInfo);
+                removeCloudFileIfExisting(uid, title);
+                const file = { timestamp: data.timestamp, title } as CloudFileInfo;
+                cloudFilesRef.current.push(file);
+                addFileToList(uid, file);
                 setUpdateCloudFileArray(true);
               }
             });
@@ -1185,25 +1198,53 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
     }
   };
 
+  // fetch owner's file information from the cloud
   const fetchMyCloudFiles = async () => {
-    if (!user.uid) return;
+    const uid = user.uid;
+    if (!uid) return;
     setLoading(true);
-    // fetch owner's file information from the cloud
     cloudFilesRef.current = [];
     await firebase
       .firestore()
       .collection('users')
-      .doc(user.uid)
-      .collection('files')
+      .doc(uid)
       .get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          cloudFilesRef.current?.push({ timestamp: data.timestamp, title: doc.id } as CloudFileInfo);
-        });
-      })
-      .catch((error) => {
-        showError(i18n.t('message.CannotOpenCloudFolder', lang) + ': ' + error);
+      .then(async (doc) => {
+        const fileList = doc.data()?.fileList;
+        if (fileList && fileList.length > 0) {
+          // if a file list exists, use it
+          cloudFilesRef.current?.push(...fileList);
+        } else {
+          // if a file list does not exist, create one
+          await firebase
+            .firestore()
+            .collection('users')
+            .doc(uid)
+            .collection('files')
+            .get()
+            .then((querySnapshot) => {
+              querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                cloudFilesRef.current?.push({ timestamp: data.timestamp, title: doc.id } as CloudFileInfo);
+              });
+            })
+            .catch((error) => {
+              showError(i18n.t('message.CannotOpenCloudFolder', lang) + ': ' + error);
+            })
+            .finally(() => {
+              firebase
+                .firestore()
+                .collection('users')
+                .doc(uid)
+                .update({ fileList: cloudFilesRef.current })
+                .then(() => {
+                  // ignore
+                })
+                .catch((error) => {
+                  console.log(error);
+                });
+            });
+        }
       })
       .finally(() => {
         setLoading(false);
@@ -1211,16 +1252,16 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
       });
   };
 
-  const deleteCloudFile = (userid: string, title: string) => {
+  const deleteCloudFile = (uid: string, title: string) => {
     firebase
       .firestore()
       .collection('users')
-      .doc(userid)
+      .doc(uid)
       .collection('files')
       .doc(title)
       .delete()
       .then(() => {
-        removeCloudFileRefIfExisting(title);
+        removeCloudFileIfExisting(uid, title);
         setCloudFileArray(cloudFileArray.filter((e) => e.title !== title));
         setCommonStore((state) => {
           if (title === state.cloudFile) {
@@ -1233,14 +1274,14 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
       });
   };
 
-  const renameCloudFile = (userid: string, oldTitle: string, newTitle: string) => {
-    doesDocExist(userid, newTitle, (error) => {
+  const renameCloudFile = (uid: string, oldTitle: string, newTitle: string) => {
+    doesDocExist(uid, newTitle, (error) => {
       showError(i18n.t('message.CannotOpenCloudFile', lang) + ': ' + error);
     }).then((exist) => {
       if (exist) {
         showInfo(i18n.t('message.TitleUsedChooseDifferentOne', lang) + ': ' + newTitle);
       } else {
-        const files = firebase.firestore().collection('users').doc(userid).collection('files');
+        const files = firebase.firestore().collection('users').doc(uid).collection('files');
         files
           .doc(oldTitle)
           .get()
@@ -1268,7 +1309,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
                       }
                     }
                     setCloudFileArray([...cloudFileArray]);
-                    renameCloudFileRef(oldTitle, newTitle);
+                    renameCloudFileAndUpdateList(uid, oldTitle, newTitle);
                     setCommonStore((state) => {
                       if (state.cloudFile === oldTitle) {
                         state.cloudFile = newTitle;

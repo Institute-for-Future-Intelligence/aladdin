@@ -49,6 +49,7 @@ export interface User {
   noLogging: boolean;
   schoolID: SchoolID;
   classID: ClassID;
+  fileList?: CloudFileInfo[];
   likes?: string[];
   published?: string[];
   aliases?: string[];

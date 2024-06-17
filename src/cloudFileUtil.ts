@@ -10,6 +10,7 @@ import { showError, showInfo } from './helpers';
 import i18n from './i18n/i18n';
 import { HOME_URL } from './constants';
 import { usePrimitiveStore } from './stores/commonPrimitive';
+import { CloudFileInfo } from './types';
 
 export const doesDocExist = async (uid: string, fileName: string, callbackOnError: (error: string) => void) => {
   try {
@@ -18,6 +19,34 @@ export const doesDocExist = async (uid: string, fileName: string, callbackOnErro
   } catch (error) {
     callbackOnError(error as string);
   }
+};
+
+export const addFileToList = async (uid: string, file: CloudFileInfo) => {
+  await firebase
+    .firestore()
+    .collection('users')
+    .doc(uid)
+    .update({ fileList: firebase.firestore.FieldValue.arrayUnion(file) })
+    .then(() => {
+      // ignore
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const removeFileFromList = async (uid: string, file: CloudFileInfo) => {
+  await firebase
+    .firestore()
+    .collection('users')
+    .doc(uid)
+    .update({ fileList: firebase.firestore.FieldValue.arrayRemove(file) })
+    .then(() => {
+      // ignore
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 };
 
 export const loadCloudFile = async (
@@ -47,11 +76,11 @@ export const loadCloudFile = async (
       useStore.getState().importContent(data, title);
     } else {
       showInfo(i18n.t('message.CloudFileNotFound', lang) + ': ' + title);
-      useStore.getState().set((state_1) => {
-        state_1.cloudFile = undefined;
+      useStore.getState().set((state) => {
+        state.cloudFile = undefined;
       });
-      usePrimitiveStore.getState().set((state_2) => {
-        state_2.waiting = false;
+      usePrimitiveStore.getState().set((state) => {
+        state.waiting = false;
       });
     }
     if (!popState && !viewOnly) {
@@ -60,8 +89,8 @@ export const loadCloudFile = async (
     }
   } catch (error) {
     showError(i18n.t('message.CannotOpenCloudFile', lang) + ': ' + error);
-    usePrimitiveStore.getState().set((state_3) => {
-      state_3.waiting = false;
+    usePrimitiveStore.getState().set((state) => {
+      state.waiting = false;
     });
   }
 };
