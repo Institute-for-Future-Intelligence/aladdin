@@ -6,6 +6,7 @@ import { message } from 'antd';
 import html2canvas from 'html2canvas';
 import { saveAs } from 'file-saver';
 import { DatumEntry } from './types';
+import { Euler, Quaternion, Vector3 } from 'three';
 
 export const visitIFI = () => {
   window.open('https://intofuture.org', '_blank');
@@ -157,3 +158,10 @@ export const saveCsv = (data: DatumEntry[], fileName: string) => {
   const blob = new Blob([content], { type: 'text/csv;charset=utf-8' });
   saveAs(blob, fileName);
 };
+
+export const tempVector3_0 = new Vector3();
+export const tempVector3_1 = new Vector3();
+export const tempVector3_2 = new Vector3();
+export const tempVector3_3 = new Vector3();
+export const tempEuler = new Euler();
+export const tempQuaternion_0 = new Quaternion();

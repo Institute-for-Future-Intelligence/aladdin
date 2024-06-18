@@ -2,14 +2,14 @@
  * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
-import { Box, Cylinder, Plane, Sphere } from '@react-three/drei';
+import { Box, Cone, Cylinder, Line, Plane, Sphere } from '@react-three/drei';
 import { ThreeEvent, useFrame, useThree } from '@react-three/fiber';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { useStore } from 'src/stores/common';
 import { useRefStore } from 'src/stores/commonRef';
 import { ObjectType, ResizeHandleType, RotateHandleType } from 'src/types';
-import { Euler, Group, Mesh, Object3D, Object3DEventMap, Quaternion, Raycaster, Scene, Vector3 } from 'three';
+import { Euler, Group, Mesh, Object3D, Object3DEventMap, Raycaster, Scene, Vector3 } from 'three';
 import { useSelected } from '../../hooks';
 import * as Selector from '../../stores/selector';
 import { SOLAR_PANELS_WRAPPER_NAME } from './solarPanelWrapper';
@@ -23,6 +23,8 @@ import { WALL_GROUP_NAME } from '../wall/wallRenderer';
 import { SolarPanelUtil } from './SolarPanelUtil';
 import RotateHandle from './rotateHandle';
 import TiltHandle, { TiltHandleRefPros } from './tiltHandle';
+import { tempEuler, tempQuaternion_0, tempVector3_0, tempVector3_1, tempVector3_2, tempVector3_3 } from 'src/helpers';
+import SunBeam, { NormalPointer, SunBeamRefProps } from './sunBeam';
 
 enum Operation {
   Move = 'Move',
@@ -39,13 +41,6 @@ export enum SurfaceType {
   Horizontal = 'Horizontal',
   Inclined = 'Inclined',
 }
-
-const tempVector3_0 = new Vector3();
-const tempVector3_1 = new Vector3();
-const tempVector3_2 = new Vector3();
-const tempVector3_3 = new Vector3();
-const tempEuler = new Euler();
-const tempQuaternion_0 = new Quaternion();
 
 const INTERSECTION_PLANE_XY_NAME = 'Intersection Plane XY';
 
@@ -66,6 +61,7 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
     parentType,
     // poleHeight,
     poleRadius,
+    drawSunBeam,
   } = refSolarPanel;
   const poleHeight = 1;
 
@@ -91,6 +87,7 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
   const rotateHandleGroupRef = useRef<Group>(null!);
   const tiltHandleRef = useRef<TiltHandleRefPros>(null!);
   const polesGroupRef = useRef<Group>(null!);
+  const sunBeamGroupRef = useRef<SunBeamRefProps>(null!);
   const intersectionPlaneRef = useRef<Mesh>(null!);
 
   // vairables
@@ -196,7 +193,7 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
     const { x, y, z } = normal;
     // top face
     if (Util.isEqual(z, 1)) {
-      groupRef.current.rotation.set(0, 0, 0);
+      updateGroupRotation(0, 0, 0);
       if (worldRotationRef.current !== null) {
         topAzimuthGroupRef.current.rotation.z = worldRotationRef.current - tempEuler.z;
       } else {
@@ -206,21 +203,39 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
     }
     // north face
     if (Util.isEqual(x, 0) && Util.isEqual(y, 1)) {
-      groupRef.current.rotation.set(HALF_PI, 0, Math.PI);
+      updateGroupRotation(HALF_PI, 0, Math.PI);
     }
     // south face
     else if (Util.isEqual(x, 0) && Util.isEqual(y, -1)) {
-      groupRef.current.rotation.set(HALF_PI, 0, 0);
+      updateGroupRotation(HALF_PI, 0, 0);
     }
     // west face
     else if (Util.isEqual(x, -1) && Util.isEqual(y, 0)) {
-      groupRef.current.rotation.set(HALF_PI, 0, -HALF_PI, 'ZXY');
+      updateGroupRotation(HALF_PI, 0, -HALF_PI);
     }
     // east face
     else if (Util.isEqual(x, 1) && Util.isEqual(y, 0)) {
-      groupRef.current.rotation.set(HALF_PI, 0, HALF_PI, 'ZXY');
+      updateGroupRotation(HALF_PI, 0, HALF_PI);
     }
     topAzimuthGroupRef.current.rotation.set(0, 0, 0);
+  };
+
+  const updateGroupRotation = (x: number, y: number, z: number) => {
+    if (groupRef.current) {
+      groupRef.current.rotation.set(x, y, z, 'ZXY');
+    }
+    if (sunBeamGroupRef.current) {
+      sunBeamGroupRef.current.setRotationX(-x);
+    }
+  };
+
+  const updateAuzimuthGroupZ = (z: number) => {
+    if (topAzimuthGroupRef.current) {
+      topAzimuthGroupRef.current.position.z = z;
+    }
+    if (sunBeamGroupRef.current) {
+      sunBeamGroupRef.current.setPositionZ(z);
+    }
   };
 
   const updateTilt = (angle: number, z: number) => {
@@ -423,7 +438,7 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
     if (surfaceType === SurfaceType.Vertical) {
       const a = angle > 0 ? -angle : angle;
       const z = hlz - hly * Math.sin(a);
-      topAzimuthGroupRef.current.position.z = z;
+      updateAuzimuthGroupZ(z);
       updateTilt(a, -z);
     } else {
       updateTilt(angle, 0);
@@ -576,7 +591,7 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
             groupRef.current.position.y = point.y - parentGroup.position.y;
             groupRef.current.position.z = point.z - parentGroup.position.z;
             groupRef.current.position.applyEuler(tempEuler.set(0, 0, -parentGroup.rotation.z));
-            groupRef.current.rotation.set(0, 0, 0);
+            updateGroupRotation(0, 0, 0);
             if (worldRotationRef.current !== null) {
               topAzimuthGroupRef.current.rotation.z = worldRotationRef.current - parentGroup.rotation.z;
             } else {
@@ -596,8 +611,7 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
               groupRef.current.position.x = tempVector3_1.x;
               groupRef.current.position.y = 0;
               groupRef.current.position.z = tempVector3_1.z;
-
-              groupRef.current.rotation.set(HALF_PI, 0, 0);
+              updateGroupRotation(HALF_PI, 0, 0);
               topAzimuthGroupRef.current.rotation.set(0, 0, 0);
             }
             break;
@@ -617,14 +631,14 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
                 groupRef.current.position.z = posRelToFoundation.z;
                 // on flat top surface
                 if (Util.isEqual(rotation[0], 0)) {
-                  groupRef.current.rotation.set(0, 0, 0, 'ZXY');
+                  updateGroupRotation(0, 0, 0);
                   if (worldRotationRef.current !== null) {
                     topAzimuthGroupRef.current.rotation.set(0, 0, worldRotationRef.current - parentGroup.rotation.z);
                   } else {
                     topAzimuthGroupRef.current.rotation.set(0, 0, relativeAzimuth);
                   }
                 } else {
-                  groupRef.current.rotation.set(rotation[0], rotation[1], rotation[2], 'ZXY');
+                  updateGroupRotation(rotation[0], rotation[1], rotation[2]);
                   topAzimuthGroupRef.current.rotation.set(0, 0, 0);
                 }
                 // e.normal = normal.toArray(); // todo: normal seems doesn't affect anything
@@ -646,10 +660,10 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
         // update poles
         if (surfaceType === SurfaceType.Horizontal) {
           polesGroupRef.current.visible = true;
-          topAzimuthGroupRef.current.position.z = poleHeight + hlz;
+          updateAuzimuthGroupZ(poleHeight + hlz);
         } else {
           polesGroupRef.current.visible = false;
-          topAzimuthGroupRef.current.position.z = hlz;
+          updateAuzimuthGroupZ(hlz);
         }
 
         // update tilt
@@ -661,7 +675,7 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
           case SurfaceType.Vertical: {
             const angle = Math.min(0, tiltAngle);
             const z = hlz - hly * Math.sin(angle);
-            topAzimuthGroupRef.current.position.z = z;
+            updateAuzimuthGroupZ(z);
             updateTilt(angle, -z);
             break;
           }
@@ -742,11 +756,10 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
     }
   }, [poleHeight, surfaceType, tiltAngle]);
 
-  // ===
+  // ==============================================
+  // ==============================================
 
-  // ===
-
-  // todo: rotate handle visiable on wall
+  // todo: pointer down should check if it's the first element
   return (
     <group
       name={`Ref_Solar_Panel_Group ${id}`}
@@ -793,6 +806,9 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
             </Box>
             <Box name={ResizeHandleType.Lower} position={[0, -hly, 0.1]} args={[handleSize, handleSize, 0.1]} />
           </group>
+
+          {/* normal pointer group for sun beam */}
+          {drawSunBeam && <NormalPointer />}
         </group>
 
         {/* XY intersection plane */}
@@ -830,6 +846,16 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
           />
         )}
       </group>
+
+      {/* sun beam group */}
+      {drawSunBeam && (
+        <SunBeam
+          ref={sunBeamGroupRef}
+          topTiltGroupRef={topTiltGroupRef}
+          positionZ={panelCenterHeight}
+          rotationX={-rotation[0]}
+        />
+      )}
 
       {/* poles */}
       <group name={'Poles_Group'} ref={polesGroupRef} visible={surfaceType === SurfaceType.Horizontal}>
