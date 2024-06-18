@@ -2,25 +2,14 @@
  * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
-import { Box, Circle, Cone, Cylinder, Line, Plane, Ring, Sphere, Torus } from '@react-three/drei';
+import { Box, Cylinder, Plane, Sphere } from '@react-three/drei';
 import { ThreeEvent, useFrame, useThree } from '@react-three/fiber';
-import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { useStore } from 'src/stores/common';
 import { useRefStore } from 'src/stores/commonRef';
 import { ObjectType, ResizeHandleType, RotateHandleType } from 'src/types';
-import {
-  DoubleSide,
-  Euler,
-  Group,
-  Mesh,
-  Object3D,
-  Object3DEventMap,
-  Quaternion,
-  Raycaster,
-  Scene,
-  Vector3,
-} from 'three';
+import { Euler, Group, Mesh, Object3D, Object3DEventMap, Quaternion, Raycaster, Scene, Vector3 } from 'three';
 import { useSelected } from '../../hooks';
 import * as Selector from '../../stores/selector';
 import { SOLAR_PANELS_WRAPPER_NAME } from './solarPanelWrapper';
@@ -32,7 +21,8 @@ import { CUBOID_WRAPPER_NAME } from '../cuboid';
 import { Util } from 'src/Util';
 import { WALL_GROUP_NAME } from '../wall/wallRenderer';
 import { SolarPanelUtil } from './SolarPanelUtil';
-import SpriteText from 'three-spritetext';
+import RotateHandle from './rotateHandle';
+import TiltHandle, { TiltHandleRefPros } from './tiltHandle';
 
 enum Operation {
   Move = 'Move',
@@ -41,6 +31,7 @@ enum Operation {
   ResizeX = 'ResizeX',
   ResizeY = 'ResizeY',
   Tilt = 'Tilt',
+  None = 'None',
 }
 
 export enum SurfaceType {
@@ -56,7 +47,7 @@ const tempVector3_3 = new Vector3();
 const tempEuler = new Euler();
 const tempQuaternion_0 = new Quaternion();
 
-const INTERSECTION_PLANE_XY = 'Intersection Plane XY';
+const INTERSECTION_PLANE_XY_NAME = 'Intersection Plane XY';
 
 // todo: handle right click
 const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
@@ -114,26 +105,37 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
 
   const surfaceType = useMemo(() => SolarPanelUtil.getSurfaceType(rotation[0]), [rotation[0]]);
 
-  // panel center height offset due to tilt angle on vertical surface
-  const tiltHandleoffsetZ = useMemo(() => {
-    const angle = tiltAngle;
-    const z = -(ly / 2) * Math.sin(angle);
-    return z;
-  }, [tiltAngle, ly]);
+  // panel center height offset due to tilt angle on vertical surface, tiltAngle is negetive when on vertical surface
+  const tiltHandleoffsetZ = useMemo(() => -hly * Math.sin(Math.min(0, tiltAngle)), [tiltAngle, hly]);
 
   const panelCenterHeight = useMemo(() => {
     switch (surfaceType) {
       case SurfaceType.Horizontal: {
-        return lz / 2 + poleHeight;
+        return hlz + poleHeight;
       }
       case SurfaceType.Vertical: {
-        return lz / 2 + tiltHandleoffsetZ;
+        return hlz + tiltHandleoffsetZ;
       }
       case SurfaceType.Inclined: {
-        return lz / 2;
+        return hlz;
       }
     }
-  }, [poleHeight, lz, surfaceType, tiltHandleoffsetZ]);
+  }, [poleHeight, hlz, surfaceType, tiltHandleoffsetZ]);
+
+  const isShowResizeHandle = useCallback(() => {
+    return selected;
+  }, [selected]);
+
+  const isShowRotateHandle = useCallback(() => {
+    return selected && surfaceType === SurfaceType.Horizontal;
+  }, [selected, surfaceType]);
+
+  const isShowTiltHandle = useCallback(() => {
+    if (!selected) return false;
+    if (surfaceType === SurfaceType.Vertical) return true;
+    if (surfaceType === SurfaceType.Horizontal && poleHeight > 0) return true;
+    return false;
+  }, [selected, surfaceType, poleHeight]);
 
   const setFrameLoop = (frameloop: 'always' | 'demand') => {
     set({ frameloop });
@@ -184,8 +186,49 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
       }
     }
 
-    // update poles
+    // todo: update poles
     if (polesGroupRef.current) {
+    }
+  };
+
+  const updateRotationOnCuboid = (normal?: Vector3) => {
+    if (!normal) return;
+    const { x, y, z } = normal;
+    // top face
+    if (Util.isEqual(z, 1)) {
+      groupRef.current.rotation.set(0, 0, 0);
+      if (worldRotationRef.current !== null) {
+        topAzimuthGroupRef.current.rotation.z = worldRotationRef.current - tempEuler.z;
+      } else {
+        topAzimuthGroupRef.current.rotation.z = relativeAzimuth;
+      }
+      return;
+    }
+    // north face
+    if (Util.isEqual(x, 0) && Util.isEqual(y, 1)) {
+      groupRef.current.rotation.set(HALF_PI, 0, Math.PI);
+    }
+    // south face
+    else if (Util.isEqual(x, 0) && Util.isEqual(y, -1)) {
+      groupRef.current.rotation.set(HALF_PI, 0, 0);
+    }
+    // west face
+    else if (Util.isEqual(x, -1) && Util.isEqual(y, 0)) {
+      groupRef.current.rotation.set(HALF_PI, 0, -HALF_PI, 'ZXY');
+    }
+    // east face
+    else if (Util.isEqual(x, 1) && Util.isEqual(y, 0)) {
+      groupRef.current.rotation.set(HALF_PI, 0, HALF_PI, 'ZXY');
+    }
+    topAzimuthGroupRef.current.rotation.set(0, 0, 0);
+  };
+
+  const updateTilt = (angle: number, z: number) => {
+    if (topTiltGroupRef.current) {
+      topTiltGroupRef.current.rotation.x = angle;
+    }
+    if (tiltHandleRef.current) {
+      tiltHandleRef.current.update(angle, z);
     }
   };
 
@@ -279,54 +322,6 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
     newParentTypeRef.current = newParentType;
   };
 
-  const updateRotationOnCuboid = (normal?: Vector3) => {
-    if (!normal) return;
-    const { x, y, z } = normal;
-    // top face
-    if (Util.isEqual(z, 1)) {
-      // todo: hard code for now
-      groupRef.current.rotation.set(0, 0, 0);
-      if (worldRotationRef.current !== null) {
-        topAzimuthGroupRef.current.rotation.z = worldRotationRef.current - tempEuler.z;
-      } else {
-        topAzimuthGroupRef.current.rotation.z = relativeAzimuth;
-      }
-      return;
-    }
-    // north face
-    if (Util.isEqual(x, 0) && Util.isEqual(y, 1)) {
-      groupRef.current.rotation.set(HALF_PI, 0, Math.PI);
-    }
-    // south face
-    else if (Util.isEqual(x, 0) && Util.isEqual(y, -1)) {
-      groupRef.current.rotation.set(HALF_PI, 0, 0);
-    }
-    // west face
-    else if (Util.isEqual(x, -1) && Util.isEqual(y, 0)) {
-      groupRef.current.rotation.set(HALF_PI, 0, -HALF_PI, 'ZXY');
-    }
-    // east face
-    else if (Util.isEqual(x, 1) && Util.isEqual(y, 0)) {
-      groupRef.current.rotation.set(HALF_PI, 0, HALF_PI, 'ZXY');
-    }
-    topAzimuthGroupRef.current.rotation.set(0, 0, 0);
-  };
-
-  const isShowResizeHandle = useCallback(() => {
-    return selected;
-  }, [selected]);
-
-  const isShowRotateHandle = useCallback(() => {
-    return selected && surfaceType === SurfaceType.Horizontal;
-  }, [selected, surfaceType]);
-
-  const isShowTiltHandle = useCallback(() => {
-    if (!selected) return false;
-    if (surfaceType === SurfaceType.Vertical) return true;
-    if (surfaceType === SurfaceType.Horizontal && poleHeight > 0) return true;
-    return false;
-  }, [selected, surfaceType, poleHeight]);
-
   // ===== Events =====
   const onGroupPointerDown = (event: ThreeEvent<PointerEvent>) => {
     event.stopPropagation();
@@ -368,13 +363,11 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
         anchorRef.current.set(
           -e.object.position.x,
           -e.object.position.y * Math.abs(Math.cos(tiltAngle)),
-          -lz / 2 - poleHeight,
+          -hlz - poleHeight,
         ),
       );
     } else {
-      topAzimuthGroupRef.current.localToWorld(
-        anchorRef.current.set(-e.object.position.x, -e.object.position.y, -lz / 2),
-      );
+      topAzimuthGroupRef.current.localToWorld(anchorRef.current.set(-e.object.position.x, -e.object.position.y, -hlz));
     }
     setShowXYIntersectionPlane(true);
     parentGroupRef.current = SolarPanelUtil.findParentGroup(groupRef.current, [
@@ -385,7 +378,7 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
   };
 
   const onRotateHandlePointerDown = (e: ThreeEvent<PointerEvent>) => {
-    if (!topAzimuthGroupRef.current || !rotateHandleGroupRef.current.visible) return;
+    if (!topAzimuthGroupRef.current || !rotateHandleGroupRef.current) return;
     setFrameLoop('always');
     useRefStore.getState().setEnableOrbitController(false);
     switch (e.eventObject.name) {
@@ -407,7 +400,6 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
     ]);
   };
 
-  // todo: anchor on vertical surface
   const onTiltHandlePointerDown = () => {
     operationRef.current = Operation.Tilt;
     setFrameLoop('always');
@@ -419,6 +411,7 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
     }
   };
 
+  // todo: anchor on vertial surface may have problem
   const onTiltHandlePointerMove = (e: ThreeEvent<PointerEvent>) => {
     if (!topAzimuthGroupRef.current || !topTiltGroupRef.current || !tiltHandleRef.current) return;
     const anchorToPoint = tempVector3_0.subVectors(e.point, anchorRef.current);
@@ -429,15 +422,11 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
 
     if (surfaceType === SurfaceType.Vertical) {
       const a = angle > 0 ? -angle : angle;
-      const z = lz / 2 - (ly / 2) * Math.sin(a);
+      const z = hlz - hly * Math.sin(a);
       topAzimuthGroupRef.current.position.z = z;
-      tiltHandleRef.current.setPositionZ(-z);
-      topTiltGroupRef.current.rotation.x = a;
-      tiltHandleRef.current.setRotationX(a);
+      updateTilt(a, -z);
     } else {
-      topTiltGroupRef.current.rotation.x = angle; // update panel
-      tiltHandleRef.current.setRotationX(angle); // update handle
-      tiltHandleRef.current.setPositionZ(0);
+      updateTilt(angle, 0);
     }
   };
 
@@ -657,34 +646,27 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
         // update poles
         if (surfaceType === SurfaceType.Horizontal) {
           polesGroupRef.current.visible = true;
-          topAzimuthGroupRef.current.position.z = poleHeight + lz / 2;
+          topAzimuthGroupRef.current.position.z = poleHeight + hlz;
         } else {
           polesGroupRef.current.visible = false;
-          topAzimuthGroupRef.current.position.z = lz / 2;
+          topAzimuthGroupRef.current.position.z = hlz;
         }
 
         // update tilt
         switch (surfaceType) {
           case SurfaceType.Horizontal: {
-            const angle = tiltAngle;
-            topTiltGroupRef.current.rotation.x = angle; // update panel
-            tiltHandleRef.current.setRotationX(angle); // update handle
-            tiltHandleRef.current.setPositionZ(0);
+            updateTilt(tiltAngle, 0); // update handle
             break;
           }
           case SurfaceType.Vertical: {
             const angle = Math.min(0, tiltAngle);
-            const z = lz / 2 - (ly / 2) * Math.sin(angle);
+            const z = hlz - hly * Math.sin(angle);
             topAzimuthGroupRef.current.position.z = z;
-            tiltHandleRef.current.setPositionZ(-z);
-            topTiltGroupRef.current.rotation.x = angle;
-            tiltHandleRef.current.setRotationX(angle);
+            updateTilt(angle, -z);
             break;
           }
           case SurfaceType.Inclined: {
-            topTiltGroupRef.current.rotation.x = 0; // update panel
-            tiltHandleRef.current.setRotationX(0); // update handle
-            tiltHandleRef.current.setPositionZ(0);
+            updateTilt(0, 0); // update handle
             break;
           }
         }
@@ -778,12 +760,14 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
         }
       }}
     >
+      {/* auzimuth group */}
       <group
         name={'Top_Azimuth_Group'}
         ref={topAzimuthGroupRef}
         position={[0, 0, panelCenterHeight]}
         rotation={topAzimuthEuler}
       >
+        {/* tilt group */}
         <group name={'Top_Tilt_Group'} ref={topTiltGroupRef} rotation={topTiltEuler}>
           {/* panel */}
           <Box name="Box_Mesh" ref={boxMeshRef} scale={[lx, ly, lz]}>
@@ -813,34 +797,38 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
 
         {/* XY intersection plane */}
         {showXYIntersectionPlane && (
-          <Plane name={INTERSECTION_PLANE_XY} ref={intersectionPlaneRef} args={[10, 10]} visible={false}>
+          <Plane name={INTERSECTION_PLANE_XY_NAME} ref={intersectionPlaneRef} args={[10, 10]} visible={false}>
             <meshBasicMaterial color={'darkgrey'} />
           </Plane>
         )}
 
         {/* rotate handles group */}
-        <group name={'Rotate_Handles_Group'} ref={rotateHandleGroupRef} visible={isShowRotateHandle()}>
-          <RotateHandle
-            name={RotateHandleType.Upper}
-            position={[0, hly + RotateHandleDist, 0]}
-            onPointerDown={onRotateHandlePointerDown}
-          />
-          <RotateHandle
-            name={RotateHandleType.Lower}
-            position={[0, -hly - RotateHandleDist, 0]}
-            onPointerDown={onRotateHandlePointerDown}
-          />
-        </group>
+        {isShowRotateHandle() && (
+          <group name={'Rotate_Handles_Group'} ref={rotateHandleGroupRef}>
+            <RotateHandle
+              name={RotateHandleType.Upper}
+              positionY={hly + RotateHandleDist}
+              onPointerDown={onRotateHandlePointerDown}
+            />
+            <RotateHandle
+              name={RotateHandleType.Lower}
+              positionY={-hly - RotateHandleDist}
+              onPointerDown={onRotateHandlePointerDown}
+            />
+          </group>
+        )}
 
-        <TiltHandle
-          ref={tiltHandleRef}
-          tiltAngle={tiltAngle}
-          positionZ={-tiltHandleoffsetZ}
-          visiable={isShowTiltHandle()}
-          isOnVerticalSurface={surfaceType === SurfaceType.Vertical}
-          onPointerDown={onTiltHandlePointerDown}
-          onPointerMove={onTiltHandlePointerMove}
-        />
+        {/* tilt handle */}
+        {isShowTiltHandle() && (
+          <TiltHandle
+            ref={tiltHandleRef}
+            tiltAngle={tiltAngle}
+            positionZ={-tiltHandleoffsetZ}
+            isOnVerticalSurface={surfaceType === SurfaceType.Vertical}
+            onPointerDown={onTiltHandlePointerDown}
+            onPointerMove={onTiltHandlePointerMove}
+          />
+        )}
       </group>
 
       {/* poles */}
@@ -857,191 +845,5 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
     </group>
   );
 });
-
-interface TiltHandleProps {
-  tiltAngle: number;
-  positionZ: number;
-  isOnVerticalSurface: boolean;
-  visiable: boolean;
-  onPointerDown: (e: ThreeEvent<PointerEvent>) => void;
-  onPointerMove: (e: ThreeEvent<PointerEvent>) => void;
-}
-
-interface TiltHandleRefPros {
-  setVisiable: (b: boolean) => void;
-  setRotationX: (n: number) => void;
-  setPositionZ: (n: number) => void;
-}
-
-const TiltHandle = forwardRef<TiltHandleRefPros, TiltHandleProps>(
-  ({ tiltAngle, positionZ, isOnVerticalSurface, visiable, onPointerDown, onPointerMove }, ref) => {
-    const tiltHandleSize = 1;
-    const degreeUnit = Math.PI / 12;
-
-    const ringThetaLength = useMemo(() => (isOnVerticalSurface ? HALF_PI : Math.PI), [isOnVerticalSurface]);
-    const degree = useMemo(
-      () => (isOnVerticalSurface ? new Array(7).fill(0) : new Array(13).fill(0)),
-      [isOnVerticalSurface],
-    );
-    const z = useMemo(() => (isOnVerticalSurface ? positionZ : 0), [isOnVerticalSurface, positionZ]);
-
-    const [showTiltAngle, setShowTiltAngle] = useState(false);
-
-    const tiltHandleGroupRef = useRef<Group>(null!);
-    const tiltHandlePointerRef = useRef<Group>(null!);
-    const textRef = useRef<SpriteText>(null!);
-
-    useImperativeHandle(
-      ref,
-      () => {
-        return {
-          setVisiable(b: boolean) {
-            if (tiltHandleGroupRef.current) {
-              tiltHandleGroupRef.current.visible = b;
-            }
-          },
-          setRotationX(n: number) {
-            if (tiltHandlePointerRef.current) {
-              tiltHandlePointerRef.current.rotation.set(n, 0, 0);
-            }
-            if (textRef.current) {
-              textRef.current.text = getAngleText(n);
-            }
-          },
-          setPositionZ(n: number) {
-            if (tiltHandleGroupRef.current && isOnVerticalSurface) {
-              tiltHandleGroupRef.current.position.z = n;
-            }
-          },
-        };
-      },
-      [],
-    );
-
-    const getAngleText = (angle: number) => {
-      const a = isOnVerticalSurface ? -angle : angle;
-      return `${Math.floor((a / Math.PI) * 180)}°`;
-    };
-
-    const onTiltHandlePointerDown = (event: ThreeEvent<PointerEvent>) => {
-      setShowTiltAngle(true);
-      onPointerDown(event);
-    };
-
-    const onTiltHandlePointerMove = (event: ThreeEvent<PointerEvent>) => {
-      onPointerMove(event);
-    };
-
-    // onPointerUp
-    useEffect(() => {
-      const onPointerUp = () => {
-        setShowTiltAngle(false);
-      };
-      window.addEventListener('pointerup', onPointerUp);
-      return () => window.addEventListener('pointerup', onPointerUp);
-    }, []);
-
-    return (
-      <group name={'Tilt_Handle_Group'} ref={tiltHandleGroupRef} position={[0, 0, z]} visible={visiable}>
-        {/* ring handles */}
-        <Ring
-          name={RotateHandleType.Tilt}
-          args={[1, 1.1, 18, 2, 0, ringThetaLength]}
-          rotation={[HALF_PI, 0, HALF_PI, 'ZXY']}
-          onPointerDown={onTiltHandlePointerDown}
-        >
-          <meshBasicMaterial side={DoubleSide} />
-        </Ring>
-        {showTiltAngle && (
-          <>
-            {/* tilt handle intersection plane */}
-            <Ring
-              name={'Tilt_Handle_Intersection_Plane'}
-              args={[tiltHandleSize, 2 * tiltHandleSize, 18, 2, 0, ringThetaLength]}
-              rotation={[HALF_PI, 0, HALF_PI, 'ZXY']}
-              onPointerMove={onTiltHandlePointerMove}
-            >
-              <meshBasicMaterial depthTest={false} transparent={true} opacity={0.5} side={DoubleSide} />
-            </Ring>
-
-            {/* scale */}
-            <group rotation={[-HALF_PI, 0, 0]}>
-              {degree.map((e, i) => {
-                const text = isOnVerticalSurface ? `${90 - i * 15}°` : `${i * 15 - 90}°`;
-                return (
-                  <group key={i} rotation={[degreeUnit * i, 0, 0, 'ZXY']}>
-                    <Line
-                      points={[
-                        [0, 0, 1.8 * tiltHandleSize],
-                        [0, 0, 2 * tiltHandleSize],
-                      ]}
-                      color={'white'}
-                      transparent={true}
-                      opacity={0.5}
-                    />
-                    <textSprite
-                      userData={{ unintersectable: true }}
-                      text={text}
-                      fontSize={20 * tiltHandleSize}
-                      fontFace={'Times Roman'}
-                      textHeight={0.15 * tiltHandleSize}
-                      position={[0, 0, 1.6 * tiltHandleSize]}
-                    />
-                  </group>
-                );
-              })}
-            </group>
-            {/* pointer group */}
-            <group ref={tiltHandlePointerRef} rotation={[tiltAngle, 0, 0]}>
-              {/* pointer */}
-              <Line
-                points={[
-                  [0, 0, tiltHandleSize],
-                  [0, 0, 1.75 * tiltHandleSize],
-                ]}
-              />
-
-              {/* show current degree */}
-              <textSprite
-                ref={textRef}
-                userData={{ unintersectable: true }}
-                text={getAngleText(tiltAngle)}
-                fontSize={20 * tiltHandleSize}
-                fontFace={'Times Roman'}
-                textHeight={0.2 * tiltHandleSize}
-                position={[0, 0, 0.75 * tiltHandleSize]}
-              />
-            </group>
-          </>
-        )}
-      </group>
-    );
-  },
-);
-
-const RotateHandle = ({
-  position,
-  name,
-  onPointerDown,
-}: {
-  name: string;
-  position: [number, number, number];
-  onPointerDown: (e: ThreeEvent<PointerEvent>) => void;
-}) => {
-  return (
-    <group name={name} position={position} rotation={[HALF_PI, 0, 0]} onPointerDown={onPointerDown}>
-      <Torus args={[0.15, 0.05, 6, 8, (3 / 2) * Math.PI]} rotation={[HALF_PI, 0, HALF_PI]}>
-        <meshBasicMaterial color={'white'} />
-      </Torus>
-      <Cone args={[0.1, 0.1, 6]} rotation={[HALF_PI, 0, 0]} position={[0.15, 0, 0.05]}>
-        <meshBasicMaterial color={'white'} />
-      </Cone>
-      <Circle args={[0.05, 6]} rotation={[0, HALF_PI, 0]} position={[0, 0, 0.15]}>
-        <meshBasicMaterial color={'white'} />
-      </Circle>
-      <Plane args={[0.35, 0.35]} position={[0, 0.05, 0]} rotation={[-HALF_PI, 0, 0]} visible={false} />
-    </group>
-  );
-};
 
 export default RefSolarPanel;

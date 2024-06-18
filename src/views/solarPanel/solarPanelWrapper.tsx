@@ -22,10 +22,10 @@ interface SolarPanelWrapperProps {
 }
 
 /**
- * foundation: position is absolute to center of foundation.
- * wall: position is relative[-0.5, 0.5] to center of wall outside surface, [cx, 0, cz], rotation is [0,0,0] when stick on wall.
- * roof: position is absolute to foundation top surface.
- * cuboid: position is absolute to center of cuboid.
+ * foundation: position is absolute to center of foundation, rotation is relative to foundation.
+ * wall: position is relative[-0.5, 0.5] to center of wall outside surface, [cx, 0, cz], rotation is [HALF_PI,0,0] when stick on wall.
+ * roof: position is absolute to foundation top surface, rotation is relative to foundation.
+ * cuboid: position is absolute to center of cuboid, rotation is relative to parent cuboid.
  */
 const SolarPanelWrapper = React.memo(
   ({ parentId, foundationId, wrapperType, plx, ply, plz }: SolarPanelWrapperProps) => {
