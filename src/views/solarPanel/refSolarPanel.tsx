@@ -45,6 +45,8 @@ export enum SurfaceType {
 const INTERSECTION_PLANE_XY_NAME = 'Intersection Plane XY';
 
 // todo: handle right click
+// bug: pointer down should check if it's the first element
+
 const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
   const {
     id,
@@ -93,7 +95,7 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
   // vairables
   const worldRotationRef = useRef<number | null>(null); // keep sp world rotation same when moving between different foundations
   const anchorRef = useRef(new Vector3()); // anchor for resize and rotate, top surface of foundation/cuboid/roof when on top surfaces, bottom surface of panel when on side surfaces
-  const unitVecterRef = useRef(new Vector3());
+  const dirVectorRef = useRef(new Vector3());
   const newParentIdRef = useRef<string | null>(null);
   const newFoundationIdRef = useRef<string | null>(null);
   const newParentTypeRef = useRef<ObjectType | null>(null);
@@ -358,7 +360,7 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
   };
 
   const onResizeHandleGroupPointerDown = (e: ThreeEvent<PointerEvent>) => {
-    if (!selected || !topAzimuthGroupRef.current) return;
+    if (!selected || !groupRef.current || !topAzimuthGroupRef.current) return;
     setFrameLoop('always');
     useRefStore.getState().setEnableOrbitController(false);
     switch (e.object.name) {
@@ -381,8 +383,10 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
           -hlz - poleHeight,
         ),
       );
+      groupRef.current.getWorldPosition(dirVectorRef.current).sub(anchorRef.current).normalize();
     } else {
-      topAzimuthGroupRef.current.localToWorld(anchorRef.current.set(-e.object.position.x, -e.object.position.y, -hlz));
+      topAzimuthGroupRef.current.localToWorld(anchorRef.current.set(-e.object.position.x, -e.object.position.y, 0));
+      topAzimuthGroupRef.current.getWorldPosition(dirVectorRef.current).sub(anchorRef.current).normalize();
     }
     setShowXYIntersectionPlane(true);
     parentGroupRef.current = SolarPanelUtil.findParentGroup(groupRef.current, [
@@ -521,6 +525,8 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
               sp.cy = 0;
               sp.cz = groupRef.current.position.z / parentWall.lz;
             }
+          } else {
+            [sp.cx, sp.cy, sp.cz] = groupRef.current.position;
           }
         });
         break;
@@ -689,27 +695,57 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
       case Operation.ResizeX:
       case Operation.ResizeY: {
         const anchor = anchorRef.current;
-        const pointerOnPlane = tempVector3_0.subVectors(point, anchor);
-        const dirVector = groupRef.current.getWorldPosition(tempVector3_1).sub(anchor).normalize();
-        const angle = pointerOnPlane.angleTo(dirVector);
-        const length = pointerOnPlane.length() * Math.cos(angle);
-        dirVector.multiplyScalar(length / 2);
+        const anchorToPoint = tempVector3_0.subVectors(point, anchor);
+        const anchorToCenter = dirVectorRef.current;
+        const angle = anchorToPoint.angleTo(anchorToCenter);
+        const length = anchorToPoint.length() * Math.cos(angle);
 
-        const parentCenter = parentGroup.getWorldPosition(tempVector3_3);
+        if (surfaceType === SurfaceType.Vertical) {
+          const centerToSurface = groupRef.current
+            .getWorldPosition(tempVector3_0)
+            .sub(topAzimuthGroupRef.current.getWorldPosition(tempVector3_1));
 
-        const center = tempVector3_2
-          .addVectors(anchor, dirVector)
-          .sub(parentCenter)
-          .applyQuaternion(parentGroup.getWorldQuaternion(tempQuaternion_0).invert());
+          const center = tempVector3_2
+            .copy(anchorToCenter)
+            .multiplyScalar(length / 2)
+            .add(anchor)
+            .add(centerToSurface)
+            .sub(parentGroup.getWorldPosition(tempVector3_3))
+            .applyQuaternion(parentGroup.getWorldQuaternion(tempQuaternion_0).invert());
 
-        if (operationRef.current === Operation.ResizeX) {
-          boxMeshRef.current.scale.x = Math.abs(length);
-        } else if (operationRef.current === Operation.ResizeY) {
-          boxMeshRef.current.scale.y = Math.abs(length);
+          groupRef.current.position.x = center.x;
+          groupRef.current.position.z = center.z;
+          // bug: can't update auzimuth group z on cuboid. because anchor and pointer won't be on same vertical plane.
+          if (parentType === ObjectType.Cuboid) {
+            groupRef.current.position.y = center.y;
+          }
+
+          if (operationRef.current === Operation.ResizeX) {
+            boxMeshRef.current.scale.x = Math.abs(length);
+          } else if (operationRef.current === Operation.ResizeY) {
+            boxMeshRef.current.scale.y = Math.abs(length);
+            // bug: can't update auzimuth group z on cuboid. because anchor and pointer won't be on same vertical plane.
+            if (parentType === ObjectType.Wall) {
+              updateAuzimuthGroupZ(Math.abs((length / 2) * Math.sin(tiltAngle)));
+            }
+          }
+        } else {
+          const center = tempVector3_0
+            .copy(anchorToCenter)
+            .multiplyScalar(length / 2)
+            .add(anchor)
+            .sub(parentGroup.getWorldPosition(tempVector3_3))
+            .applyQuaternion(parentGroup.getWorldQuaternion(tempQuaternion_0).invert());
+
+          if (operationRef.current === Operation.ResizeX) {
+            boxMeshRef.current.scale.x = Math.abs(length);
+          } else if (operationRef.current === Operation.ResizeY) {
+            boxMeshRef.current.scale.y = Math.abs(length);
+          }
+          groupRef.current.position.x = center.x;
+          groupRef.current.position.y = center.y;
+          groupRef.current.position.z = center.z;
         }
-        groupRef.current.position.x = center.x;
-        groupRef.current.position.y = center.y;
-        groupRef.current.position.z = center.z;
 
         updateChildMeshes();
         break;
@@ -759,7 +795,6 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
   // ==============================================
   // ==============================================
 
-  // todo: pointer down should check if it's the first element
   return (
     <group
       name={`Ref_Solar_Panel_Group ${id}`}
@@ -813,7 +848,7 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
 
         {/* XY intersection plane */}
         {showXYIntersectionPlane && (
-          <Plane name={INTERSECTION_PLANE_XY_NAME} ref={intersectionPlaneRef} args={[10, 10]} visible={false}>
+          <Plane name={INTERSECTION_PLANE_XY_NAME} ref={intersectionPlaneRef} args={[10000, 10000]} visible={false}>
             <meshBasicMaterial color={'darkgrey'} />
           </Plane>
         )}

@@ -72,7 +72,6 @@ const SunBeam = React.memo(
       if (b) {
         if (!show) {
           setShow(true);
-          console.log('set true');
         }
       } else {
         if (show) setShow(false);
