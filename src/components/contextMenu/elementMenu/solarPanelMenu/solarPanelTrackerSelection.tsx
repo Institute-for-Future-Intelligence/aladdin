@@ -27,7 +27,7 @@ const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
 
-  const solarPanel = useSelectedElement(ObjectType.SolarPanel) as SolarPanelModel | undefined;
+  const solarPanel = useSelectedElement() as SolarPanelModel | undefined;
 
   const [selectedTrackerType, setSelectedTrackerType] = useState<TrackerType>(
     solarPanel?.trackerType ?? TrackerType.NO_TRACKER,
@@ -39,7 +39,7 @@ const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b
   const updateSolarPanelTrackerTypeById = (id: string, trackerType: TrackerType) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
-        if (e.type === ObjectType.SolarPanel && e.id === id && !e.locked) {
+        if ((e.type === ObjectType.SolarPanel || e.type === ObjectType.RefSolarPanel) && e.id === id && !e.locked) {
           (e as SolarPanelModel).trackerType = trackerType;
           break;
         }
@@ -50,7 +50,11 @@ const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b
   const updateSolarPanelTrackerTypeAboveFoundation = (foundationId: string, trackerType: TrackerType) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
-        if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId && !e.locked) {
+        if (
+          (e.type === ObjectType.SolarPanel || e.type === ObjectType.RefSolarPanel) &&
+          e.foundationId === foundationId &&
+          !e.locked
+        ) {
           (e as SolarPanelModel).trackerType = trackerType;
         }
       }
@@ -64,7 +68,7 @@ const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b
   ) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
-        if (e.type === ObjectType.SolarPanel && !e.locked) {
+        if ((e.type === ObjectType.SolarPanel || e.type === ObjectType.RefSolarPanel) && !e.locked) {
           let found;
           if (normal) {
             found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
@@ -82,7 +86,7 @@ const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b
   const updateSolarPanelTrackerTypeForAll = (trackerType: TrackerType) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
-        if (e.type === ObjectType.SolarPanel && !e.locked) {
+        if ((e.type === ObjectType.SolarPanel || e.type === ObjectType.RefSolarPanel) && !e.locked) {
           (e as SolarPanelModel).trackerType = trackerType;
         }
       }
@@ -92,7 +96,7 @@ const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b
   const updateInMap = (map: Map<string, TrackerType>, value: TrackerType) => {
     useStore.getState().set((state) => {
       for (const e of state.elements) {
-        if (e.type === ObjectType.SolarPanel && !e.locked && map.has(e.id)) {
+        if ((e.type === ObjectType.SolarPanel || e.type === ObjectType.RefSolarPanel) && !e.locked && map.has(e.id)) {
           (e as SolarPanelModel).trackerType = value;
         }
       }
@@ -108,7 +112,11 @@ const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType: {
         for (const e of elements) {
-          if (e.type === ObjectType.SolarPanel && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+          if (
+            (e.type === ObjectType.SolarPanel || e.type === ObjectType.RefSolarPanel) &&
+            !e.locked &&
+            useStore.getState().selectedElementIdSet.has(e.id)
+          ) {
             const sp = e as SolarPanelModel;
             if (sp.trackerType !== tracker) {
               return true;
@@ -119,7 +127,7 @@ const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b
       }
       case Scope.AllObjectsOfThisType: {
         for (const e of elements) {
-          if (e.type === ObjectType.SolarPanel && !e.locked) {
+          if ((e.type === ObjectType.SolarPanel || e.type === ObjectType.RefSolarPanel) && !e.locked) {
             const sp = e as SolarPanelModel;
             if (sp.trackerType !== tracker) {
               return true;
@@ -130,7 +138,11 @@ const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b
       }
       case Scope.AllObjectsOfThisTypeAboveFoundation: {
         for (const e of elements) {
-          if (e.type === ObjectType.SolarPanel && e.foundationId === solarPanel?.foundationId && !e.locked) {
+          if (
+            (e.type === ObjectType.SolarPanel || e.type === ObjectType.RefSolarPanel) &&
+            e.foundationId === solarPanel?.foundationId &&
+            !e.locked
+          ) {
             const sp = e as SolarPanelModel;
             if (sp.trackerType !== tracker) {
               return true;
@@ -146,7 +158,7 @@ const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b
           if (isParentCuboid) {
             for (const e of elements) {
               if (
-                e.type === ObjectType.SolarPanel &&
+                (e.type === ObjectType.SolarPanel || e.type === ObjectType.RefSolarPanel) &&
                 e.parentId === solarPanel.parentId &&
                 Util.isIdentical(e.normal, solarPanel.normal) &&
                 !e.locked
@@ -159,7 +171,11 @@ const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b
             }
           } else {
             for (const e of elements) {
-              if (e.type === ObjectType.SolarPanel && e.parentId === solarPanel.parentId && !e.locked) {
+              if (
+                (e.type === ObjectType.SolarPanel || e.type === ObjectType.RefSolarPanel) &&
+                e.parentId === solarPanel.parentId &&
+                !e.locked
+              ) {
                 const sp = e as SolarPanelModel;
                 if (sp.trackerType !== tracker) {
                   return true;

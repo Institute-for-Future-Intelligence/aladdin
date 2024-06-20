@@ -64,8 +64,10 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
     // poleHeight,
     poleRadius,
     drawSunBeam,
+    trackerType,
   } = refSolarPanel;
   const poleHeight = 1;
+  console.log(trackerType);
 
   const [hlx, hly, hlz] = [lx / 2, ly / 2, lz / 2];
 
@@ -343,6 +345,11 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
   const onGroupPointerDown = (event: ThreeEvent<PointerEvent>) => {
     event.stopPropagation();
     SolarPanelUtil.setSelected(id, true);
+    if (event.button === 2) {
+      setCommonStore((state) => {
+        state.contextMenuObjectType = ObjectType.SolarPanel;
+      });
+    }
   };
 
   const onMoveHandlePointerDown = (event: ThreeEvent<PointerEvent>) => {

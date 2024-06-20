@@ -1193,7 +1193,12 @@ export class Util {
   }
 
   static isSolarCollectorType(type: ObjectType): boolean {
-    return type === ObjectType.SolarPanel || type === ObjectType.WaterHeater || Util.isCspCollectorType(type);
+    return (
+      type === ObjectType.SolarPanel ||
+      type === ObjectType.RefSolarPanel ||
+      type === ObjectType.WaterHeater ||
+      Util.isCspCollectorType(type)
+    );
   }
 
   static isCspCollector(elem: ElementModel): boolean {
