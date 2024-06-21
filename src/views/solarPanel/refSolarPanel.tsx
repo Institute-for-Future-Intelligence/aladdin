@@ -2,13 +2,13 @@
  * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
-import { Box, Cone, Cylinder, Line, Plane, Sphere } from '@react-three/drei';
+import { Box, Cylinder, Plane, Sphere } from '@react-three/drei';
 import { ThreeEvent, useFrame, useThree } from '@react-three/fiber';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { useStore } from 'src/stores/common';
 import { useRefStore } from 'src/stores/commonRef';
-import { ObjectType, ResizeHandleType, RotateHandleType } from 'src/types';
+import { ObjectType, ResizeHandleType, RotateHandleType, TrackerType } from 'src/types';
 import { Euler, Group, Mesh, Object3D, Object3DEventMap, Raycaster, Scene, Vector3 } from 'three';
 import { useSelected } from '../../hooks';
 import * as Selector from '../../stores/selector';
@@ -25,6 +25,7 @@ import RotateHandle from './rotateHandle';
 import TiltHandle, { TiltHandleRefPros } from './tiltHandle';
 import { tempEuler, tempQuaternion_0, tempVector3_0, tempVector3_1, tempVector3_2, tempVector3_3 } from 'src/helpers';
 import SunBeam, { NormalPointer, SunBeamRefProps } from './sunBeam';
+import TrackerGroup, { TrackerGroupRefProps } from './trackerGroup';
 
 enum Operation {
   Move = 'Move',
@@ -45,7 +46,9 @@ export enum SurfaceType {
 const INTERSECTION_PLANE_XY_NAME = 'Intersection Plane XY';
 
 // todo: handle right click
-// bug: pointer down should check if it's the first element
+// bug: pointer down should check if it's the first element.
+// bug: resize when tracker is enabled. auzi and tilt should use tracker group value.
+// bug: tilt anchor on cuboid vertial surfaces have problem. anchor is not on same plane with pointer
 
 const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
   const {
@@ -57,6 +60,7 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
     ly,
     lz,
     rotation,
+    normal,
     relativeAzimuth,
     tiltAngle,
     parentId,
@@ -67,7 +71,6 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
     trackerType,
   } = refSolarPanel;
   const poleHeight = 1;
-  console.log(trackerType);
 
   const [hlx, hly, hlz] = [lx / 2, ly / 2, lz / 2];
 
@@ -76,7 +79,7 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
   const handleSize = 0.3;
   const RotateHandleDist = 1;
 
-  const { set, get } = useThree();
+  const { set, get, raycaster } = useThree();
 
   const setCommonStore = useStore(Selector.set);
 
@@ -84,6 +87,7 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
 
   // meshes ref
   const groupRef = useRef<Group>(null!);
+  const trackerGroupRef = useRef<TrackerGroupRefProps>(null!);
   const topAzimuthGroupRef = useRef<Group>(null!);
   const topTiltGroupRef = useRef<Group>(null!);
   const boxMeshRef = useRef<Mesh>(null!);
@@ -102,9 +106,17 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
   const newFoundationIdRef = useRef<string | null>(null);
   const newParentTypeRef = useRef<ObjectType | null>(null);
   const operationRef = useRef<Operation | null>(null);
-  const parentGroupRef = useRef<Object3D | null>(null);
+  const parentGroupRef = useRef<Object3D | null>(null); // todo: improve performance
 
-  const surfaceType = useMemo(() => SolarPanelUtil.getSurfaceType(rotation[0]), [rotation[0]]);
+  const surfaceType = useMemo(
+    () => SolarPanelUtil.getSurfaceType(parentType, new Vector3().fromArray(normal)),
+    [parentType, normal],
+  );
+
+  const trackerEnabled = useMemo(
+    () => SolarPanelUtil.isTrackerEnabled(surfaceType, trackerType),
+    [surfaceType, trackerType],
+  );
 
   // panel center height offset due to tilt angle on vertical surface, tiltAngle is negetive when on vertical surface
   const tiltHandleoffsetZ = useMemo(() => -hly * Math.sin(Math.min(0, tiltAngle)), [tiltAngle, hly]);
@@ -128,15 +140,15 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
   }, [selected]);
 
   const isShowRotateHandle = useCallback(() => {
-    return selected && surfaceType === SurfaceType.Horizontal;
-  }, [selected, surfaceType]);
+    return selected && surfaceType === SurfaceType.Horizontal && !trackerEnabled;
+  }, [selected, surfaceType, trackerType, trackerEnabled]);
 
   const isShowTiltHandle = useCallback(() => {
-    if (!selected) return false;
+    if (!selected || trackerEnabled) return false;
     if (surfaceType === SurfaceType.Vertical) return true;
     if (surfaceType === SurfaceType.Horizontal && poleHeight > 0) return true;
     return false;
-  }, [selected, surfaceType, poleHeight]);
+  }, [selected, surfaceType, poleHeight, trackerEnabled]);
 
   const setFrameLoop = (frameloop: 'always' | 'demand') => {
     set({ frameloop });
@@ -311,13 +323,12 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
     return null;
   };
 
-  const handleChangeParent = (
+  const handleParentChange = (
     currentWrapper: Object3D<Object3DEventMap> | null,
     newParent: Object3D<Object3DEventMap>,
     newParentType: ObjectType,
     object: Object3D<Object3DEventMap>,
   ) => {
-    // todo: different element has different structure
     const newWrapper = newParent.children.find((obj) => obj.name === SOLAR_PANELS_WRAPPER_NAME);
     if (newWrapper && currentWrapper && newWrapper !== currentWrapper) {
       // remove from current wrapper
@@ -437,7 +448,6 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
     }
   };
 
-  // todo: anchor on vertial surface may have problem
   const onTiltHandlePointerMove = (e: ThreeEvent<PointerEvent>) => {
     if (!topAzimuthGroupRef.current || !topTiltGroupRef.current || !tiltHandleRef.current) return;
     const anchorToPoint = tempVector3_0.subVectors(e.point, anchorRef.current);
@@ -461,7 +471,14 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
     switch (operationRef.current) {
       case Operation.Move: {
         setCommonStore((state) => {
-          if (!groupRef.current) return;
+          if (!groupRef.current || !operationRef.current) return;
+
+          const pointer = useRefStore.getState().pointer;
+          raycaster.setFromCamera(pointer, get().camera);
+          const intersectionData = getIntersectionData(raycaster, get().scene, operationRef.current);
+          if (!intersectionData) return;
+
+          const { intersection, parentGroup, parentType } = intersectionData;
 
           const sp = state.elements.find((e) => e.id === id) as SolarPanelModel | undefined;
           if (!sp) return;
@@ -483,6 +500,7 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
               sp.cy = 0;
               sp.cz = groupRef.current.position.z / parentWall.lz;
               sp.rotation = [HALF_PI, 0, 0];
+              sp.normal = [0, -1, 0];
             }
           } else {
             sp.cx = groupRef.current.position.x;
@@ -490,27 +508,20 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
             sp.cz = groupRef.current.position.z;
 
             if (worldRotationRef.current !== null) {
-              const parentGroup = SolarPanelUtil.findParentGroup(groupRef.current, [
-                FOUNDATION_GROUP_NAME,
-                CUBOID_WRAPPER_NAME,
-              ]);
-              if (parentGroup) {
-                sp.relativeAzimuth =
-                  worldRotationRef.current -
-                  tempEuler.setFromQuaternion(parentGroup.getWorldQuaternion(tempQuaternion_0.set(0, 0, 0, 0))).z;
-              }
+              sp.relativeAzimuth =
+                worldRotationRef.current -
+                tempEuler.setFromQuaternion(parentGroup.getWorldQuaternion(tempQuaternion_0.set(0, 0, 0, 0))).z;
             }
-            if (sp.parentType === ObjectType.Roof || sp.parentType === ObjectType.Cuboid) {
-              const { x, y, z } = groupRef.current.rotation;
-              // on top face
-              if (Util.isEqual(groupRef.current.rotation.x, 0)) {
-                sp.rotation = [0, 0, 0];
-              } else {
-                sp.rotation = [x, y, z];
-              }
-              // todo: is sp.normal needed?
-            } else {
+
+            const surfaceType = SolarPanelUtil.getSurfaceType(parentType, intersection.normal);
+            if (surfaceType === SurfaceType.Horizontal) {
               sp.rotation = [0, 0, 0];
+              sp.normal = [0, 0, 1];
+            } else {
+              const { x, y, z } = groupRef.current.rotation;
+              const normal = tempVector3_0.set(0, 0, 1).applyEuler(groupRef.current.rotation);
+              sp.rotation = [x, y, z];
+              sp.normal = [normal.x, normal.y, normal.z];
             }
           }
         });
@@ -595,7 +606,7 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
     switch (operationRef.current) {
       case Operation.Move: {
         if (!parentType) break;
-        handleChangeParent(groupRef.current.parent, parentGroup, parentType, intersection.object);
+        handleParentChange(groupRef.current.parent, parentGroup, parentType, intersection.object);
 
         // updating mesh
         switch (parentType) {
@@ -654,7 +665,6 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
                   updateGroupRotation(rotation[0], rotation[1], rotation[2]);
                   topAzimuthGroupRef.current.rotation.set(0, 0, 0);
                 }
-                // e.normal = normal.toArray(); // todo: normal seems doesn't affect anything
               }
             }
             break;
@@ -668,9 +678,8 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
           }
         }
 
-        const surfaceType = SolarPanelUtil.getSurfaceType(groupRef.current.rotation.x);
+        const surfaceType = SolarPanelUtil.getSurfaceType(parentType, intersection.normal);
 
-        // update poles
         if (surfaceType === SurfaceType.Horizontal) {
           polesGroupRef.current.visible = true;
           updateAuzimuthGroupZ(poleHeight + hlz);
@@ -696,6 +705,18 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
             updateTilt(0, 0); // update handle
             break;
           }
+        }
+
+        // update tracker. have to put this last to overwrite other values.
+        if (SolarPanelUtil.isTrackerEnabled(surfaceType, trackerType)) {
+          topAzimuthGroupRef.current.rotation.set(0, 0, 0);
+          topTiltGroupRef.current.rotation.set(0, 0, 0);
+          trackerGroupRef.current.update(
+            trackerType,
+            tempEuler.setFromQuaternion(parentGroup.getWorldQuaternion(tempQuaternion_0)).z,
+          );
+        } else {
+          trackerGroupRef.current.reset();
         }
         break;
       }
@@ -782,14 +803,15 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
   });
 
   const topAzimuthEuler = useMemo(() => {
-    if (surfaceType === SurfaceType.Horizontal) {
+    if (surfaceType === SurfaceType.Horizontal && !trackerEnabled) {
       return new Euler(0, 0, relativeAzimuth, 'ZXY');
     } else {
       return new Euler(0, 0, 0, 'ZXY');
     }
-  }, [surfaceType, relativeAzimuth]);
+  }, [surfaceType, relativeAzimuth, trackerEnabled]);
 
   const topTiltEuler = useMemo(() => {
+    if (trackerEnabled) return new Euler(0, 0, 0, 'ZXY');
     if (surfaceType === SurfaceType.Horizontal && poleHeight > 0) {
       return new Euler(tiltAngle, 0, 0, 'ZXY');
     } else if (surfaceType === SurfaceType.Vertical) {
@@ -797,11 +819,9 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
     } else {
       return new Euler(0, 0, 0, 'ZXY');
     }
-  }, [poleHeight, surfaceType, tiltAngle]);
+  }, [poleHeight, surfaceType, tiltAngle, trackerEnabled]);
 
   // ==============================================
-  // ==============================================
-
   return (
     <group
       name={`Ref_Solar_Panel_Group ${id}`}
@@ -822,36 +842,39 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
         position={[0, 0, panelCenterHeight]}
         rotation={topAzimuthEuler}
       >
-        {/* tilt group */}
-        <group name={'Top_Tilt_Group'} ref={topTiltGroupRef} rotation={topTiltEuler}>
-          {/* panel */}
-          <Box name="Box_Mesh" ref={boxMeshRef} scale={[lx, ly, lz]}>
-            <meshStandardMaterial color={'blue'} />
-          </Box>
-
-          {/* move handle */}
-          <Sphere name="Move_Handle" args={[handleSize]} visible={selected} onPointerDown={onMoveHandlePointerDown} />
-
-          {/* resize handles group */}
-          <group
-            name="Resize_Handles_Group"
-            ref={resizeHandleGroupRef}
-            visible={isShowResizeHandle()}
-            onPointerDown={onResizeHandleGroupPointerDown}
-          >
-            <Box name={ResizeHandleType.Right} position={[hlx, 0, 0.1]} args={[handleSize, handleSize, 0.1]}>
-              <meshBasicMaterial color="yellow" />
+        {/* tracker group */}
+        <TrackerGroup ref={trackerGroupRef} tiltAngle={tiltAngle} trackerType={trackerType} surfaceType={surfaceType}>
+          {/* tilt group */}
+          <group name={'Top_Tilt_Group'} ref={topTiltGroupRef} rotation={topTiltEuler}>
+            {/* panel */}
+            <Box name="Box_Mesh" ref={boxMeshRef} scale={[lx, ly, lz]}>
+              <meshStandardMaterial color={'blue'} />
             </Box>
-            <Box name={ResizeHandleType.Left} position={[-hlx, 0, 0.1]} args={[handleSize, handleSize, 0.1]} />
-            <Box name={ResizeHandleType.Upper} position={[0, hly, 0.1]} args={[handleSize, handleSize, 0.1]}>
-              <meshBasicMaterial color="red" />
-            </Box>
-            <Box name={ResizeHandleType.Lower} position={[0, -hly, 0.1]} args={[handleSize, handleSize, 0.1]} />
+
+            {/* move handle */}
+            <Sphere name="Move_Handle" args={[handleSize]} visible={selected} onPointerDown={onMoveHandlePointerDown} />
+
+            {/* resize handles group */}
+            <group
+              name="Resize_Handles_Group"
+              ref={resizeHandleGroupRef}
+              visible={isShowResizeHandle()}
+              onPointerDown={onResizeHandleGroupPointerDown}
+            >
+              <Box name={ResizeHandleType.Right} position={[hlx, 0, 0.1]} args={[handleSize, handleSize, 0.1]}>
+                <meshBasicMaterial color="yellow" />
+              </Box>
+              <Box name={ResizeHandleType.Left} position={[-hlx, 0, 0.1]} args={[handleSize, handleSize, 0.1]} />
+              <Box name={ResizeHandleType.Upper} position={[0, hly, 0.1]} args={[handleSize, handleSize, 0.1]}>
+                <meshBasicMaterial color="red" />
+              </Box>
+              <Box name={ResizeHandleType.Lower} position={[0, -hly, 0.1]} args={[handleSize, handleSize, 0.1]} />
+            </group>
+
+            {/* normal pointer group for sun beam */}
+            {drawSunBeam && <NormalPointer />}
           </group>
-
-          {/* normal pointer group for sun beam */}
-          {drawSunBeam && <NormalPointer />}
-        </group>
+        </TrackerGroup>
 
         {/* XY intersection plane */}
         {showXYIntersectionPlane && (

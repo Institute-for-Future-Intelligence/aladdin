@@ -3,11 +3,12 @@
  */
 
 import { Util } from 'src/Util';
-import { Object3D, Object3DEventMap } from 'three';
+import { Object3D, Object3DEventMap, Vector3 } from 'three';
 import { RoofSegmentGroupUserData } from '../roof/roofRenderer';
 import { useStore } from 'src/stores/common';
 import { HALF_PI } from 'src/constants';
 import { SurfaceType } from './refSolarPanel';
+import { ObjectType, TrackerType } from 'src/types';
 
 export class SolarPanelUtil {
   static setSelected(id: string, b: boolean) {
@@ -29,10 +30,13 @@ export class SolarPanelUtil {
     });
   }
 
-  static getSurfaceType(rotationX: number) {
-    if (Util.isEqual(rotationX, 0)) {
+  static getSurfaceType(parentType?: ObjectType, normal?: Vector3) {
+    if (!normal || !parentType) return SurfaceType.Horizontal;
+    if (parentType === ObjectType.Wall) {
+      return SurfaceType.Vertical;
+    } else if (Util.isEqual(normal.z, 1)) {
       return SurfaceType.Horizontal;
-    } else if (Util.isEqual(rotationX, HALF_PI)) {
+    } else if (parentType === ObjectType.Cuboid) {
       return SurfaceType.Vertical;
     } else {
       return SurfaceType.Inclined;
@@ -67,4 +71,8 @@ export class SolarPanelUtil {
     if (angle < -Math.PI) return angle + Math.PI * 2;
     return angle;
   }
+
+  static isTrackerEnabled = (surfaceType: SurfaceType, trackerType: TrackerType) => {
+    return surfaceType === SurfaceType.Horizontal && trackerType !== TrackerType.NO_TRACKER;
+  };
 }
