@@ -313,7 +313,7 @@ const ThermalSimulation = React.memo(({ city }: ThermalSimulationProps) => {
     // store the results in the common store for other components to use
     for (const e of elements) {
       // heat exchanges through individual elements on a building envelope
-      if (Util.onBuildingEnvelope(e) || e.type === ObjectType.SolarPanel) {
+      if (Util.onBuildingEnvelope(e) || e.type === ObjectType.SolarPanel || e.type === ObjectType.RefSolarPanel) {
         const arr = hourlyHeatExchangeArrayMapRef.current.get(e.id);
         if (arr) {
           setHourlyHeatExchangeArray(e.id, [...arr]);
@@ -608,7 +608,8 @@ const ThermalSimulation = React.memo(({ city }: ThermalSimulationProps) => {
           calculateFloor(roof);
           break;
         }
-        case ObjectType.SolarPanel: {
+        case ObjectType.SolarPanel:
+        case ObjectType.RefSolarPanel: {
           calculateSolarPanel(e as SolarPanelModel);
           break;
         }

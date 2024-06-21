@@ -18,6 +18,31 @@ import { CanvasTexture, RepeatWrapping } from 'three';
 import * as Selector from '../../stores/selector';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
+import { Operation } from './refSolarPanel';
+
+export const useMaterialSize = (lx: number, ly: number) => {
+  const [materialLx, setMaterialLx] = useState(lx);
+  const [materialLy, setMaterialLy] = useState(ly);
+
+  useEffect(() => {
+    setMaterialLx(lx);
+    setMaterialLy(ly);
+  }, [lx, ly]);
+
+  const setMaterialSize = (operation: Operation, distance: number) => {
+    if (operation === Operation.ResizeX) {
+      if (distance !== materialLx) {
+        setMaterialLx(distance);
+      }
+    } else {
+      if (distance !== materialLy) {
+        setMaterialLy(distance);
+      }
+    }
+  };
+
+  return { materialLx, materialLy, setMaterialSize };
+};
 
 export const useSolarPanelHeatmapTexture = (id: string) => {
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);

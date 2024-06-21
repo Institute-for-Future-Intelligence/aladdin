@@ -122,7 +122,8 @@ const StaticSolarRadiationSimulation = React.memo(({ city }: StaticSolarRadiatio
           generateHeatmapForCuboid(e as CuboidModel);
           break;
         }
-        case ObjectType.SolarPanel: {
+        case ObjectType.SolarPanel:
+        case ObjectType.RefSolarPanel: {
           generateHeatmapForSolarPanel(e as SolarPanelModel);
           break;
         }

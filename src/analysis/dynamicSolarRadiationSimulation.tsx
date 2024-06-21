@@ -132,6 +132,7 @@ const DynamicSolarRadiationSimulation = React.memo(({ city }: DynamicSolarRadiat
         case ObjectType.Wall:
         case ObjectType.Door:
         case ObjectType.SolarPanel:
+        case ObjectType.RefSolarPanel:
         case ObjectType.ParabolicTrough:
         case ObjectType.ParabolicDish:
         case ObjectType.FresnelReflector:
@@ -181,6 +182,7 @@ const DynamicSolarRadiationSimulation = React.memo(({ city }: DynamicSolarRadiat
         case ObjectType.Wall:
         case ObjectType.Door:
         case ObjectType.SolarPanel:
+        case ObjectType.RefSolarPanel:
         case ObjectType.ParabolicTrough:
         case ObjectType.ParabolicDish:
         case ObjectType.FresnelReflector:
@@ -362,7 +364,8 @@ const DynamicSolarRadiationSimulation = React.memo(({ city }: DynamicSolarRadiat
               calculateCuboid(e as CuboidModel);
               break;
             }
-            case ObjectType.SolarPanel: {
+            case ObjectType.SolarPanel:
+            case ObjectType.RefSolarPanel: {
               calculateSolarPanel(e as SolarPanelModel);
               break;
             }

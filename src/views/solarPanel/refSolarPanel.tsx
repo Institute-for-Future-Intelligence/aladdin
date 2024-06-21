@@ -27,8 +27,10 @@ import { tempEuler, tempQuaternion_0, tempVector3_0, tempVector3_1, tempVector3_
 import SunBeam, { NormalPointer, SunBeamRefProps } from './sunBeam';
 import TrackerGroup, { TrackerGroupRefProps } from './trackerGroup';
 import { PvModel } from 'src/models/PvModel';
+import { useMaterialSize } from './hooks';
+import Materials from './materials';
 
-enum Operation {
+export enum Operation {
   Move = 'Move',
   RotateUpper = 'RotateUpper',
   RotateLower = 'RotateLower',
@@ -46,8 +48,8 @@ export enum SurfaceType {
 
 const INTERSECTION_PLANE_XY_NAME = 'Intersection Plane XY';
 
-// todo: handle right click
-// bug: pointer down should check if it's the first element.
+// todo: pointer down should check if it's the first element.
+
 // bug: resize when tracker is enabled. auzi and tilt should use tracker group value.
 // bug: tilt anchor on cuboid vertial surfaces have problem. anchor is not on same plane with pointer
 
@@ -81,6 +83,8 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
   const [hlx, hly, hlz] = [lx / 2, ly / 2, lz / 2];
 
   const selected = useSelected(id);
+  const { materialLx, materialLy, setMaterialSize } = useMaterialSize(lx, ly);
+
   // const handleSize = useHandleSize(); // todo: performance issue: wrap handles into new component
   const handleSize = 0.3;
   const RotateHandleDist = 1;
@@ -798,6 +802,7 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
           groupRef.current.position.z = center.z;
         }
 
+        setMaterialSize(operationRef.current, distance);
         updateChildMeshes();
         break;
       }
@@ -845,6 +850,8 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
   }, [poleHeight, surfaceType, tiltAngle, trackerEnabled]);
 
   // ==============================================
+
+  // ==============================================
   return (
     <group
       name={`Ref_Solar_Panel_Group ${id}`}
@@ -870,8 +877,8 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
           {/* tilt group */}
           <group name={'Top_Tilt_Group'} ref={topTiltGroupRef} rotation={topTiltEuler}>
             {/* panel */}
-            <Box name="Box_Mesh" ref={boxMeshRef} scale={[lx, ly, lz]}>
-              <meshStandardMaterial color={'blue'} />
+            <Box name="Box_Mesh" ref={boxMeshRef} userData={{ simulation: true }} scale={[lx, ly, lz]}>
+              <Materials solarPanel={refSolarPanel} lx={materialLx} ly={materialLy} />
             </Box>
 
             {/* move handle */}
