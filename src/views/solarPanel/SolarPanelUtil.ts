@@ -8,7 +8,7 @@ import { RoofSegmentGroupUserData } from '../roof/roofRenderer';
 import { useStore } from 'src/stores/common';
 import { HALF_PI } from 'src/constants';
 import { SurfaceType } from './refSolarPanel';
-import { ObjectType, TrackerType } from 'src/types';
+import { ObjectType, Orientation, TrackerType } from 'src/types';
 
 export class SolarPanelUtil {
   static setSelected(id: string, b: boolean) {
@@ -72,7 +72,15 @@ export class SolarPanelUtil {
     return angle;
   }
 
-  static isTrackerEnabled = (surfaceType: SurfaceType, trackerType: TrackerType) => {
+  static isTrackerEnabled(surfaceType: SurfaceType, trackerType: TrackerType) {
     return surfaceType === SurfaceType.Horizontal && trackerType !== TrackerType.NO_TRACKER;
-  };
+  }
+
+  static getUnitSize(orientation: Orientation, moduleLength: number, moduleWidth: number) {
+    if (orientation === Orientation.landscape) {
+      return { length: moduleLength, width: moduleWidth };
+    } else {
+      return { length: moduleWidth, width: moduleLength };
+    }
+  }
 }

@@ -8,7 +8,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { useStore } from 'src/stores/common';
 import { useRefStore } from 'src/stores/commonRef';
-import { ObjectType, ResizeHandleType, RotateHandleType, TrackerType } from 'src/types';
+import { ObjectType, Orientation, ResizeHandleType, RotateHandleType, TrackerType } from 'src/types';
 import { Euler, Group, Mesh, Object3D, Object3DEventMap, Raycaster, Scene, Vector3 } from 'three';
 import { useSelected } from '../../hooks';
 import * as Selector from '../../stores/selector';
@@ -26,6 +26,7 @@ import TiltHandle, { TiltHandleRefPros } from './tiltHandle';
 import { tempEuler, tempQuaternion_0, tempVector3_0, tempVector3_1, tempVector3_2, tempVector3_3 } from 'src/helpers';
 import SunBeam, { NormalPointer, SunBeamRefProps } from './sunBeam';
 import TrackerGroup, { TrackerGroupRefProps } from './trackerGroup';
+import { PvModel } from 'src/models/PvModel';
 
 enum Operation {
   Move = 'Move',
@@ -58,7 +59,7 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
     cz,
     lx,
     ly,
-    lz,
+    // lz,
     rotation,
     normal,
     relativeAzimuth,
@@ -68,9 +69,14 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
     // poleHeight,
     poleRadius,
     drawSunBeam,
-    trackerType,
+    trackerType = TrackerType.NO_TRACKER,
+    pvModelName = 'SPR-X21-335-BLK',
+    orientation = Orientation.landscape,
   } = refSolarPanel;
   const poleHeight = 1;
+
+  const pvModel = useStore.getState().pvModules[pvModelName] as PvModel;
+  const lz = Math.max(pvModel.thickness, 0.02);
 
   const [hlx, hly, hlz] = [lx / 2, ly / 2, lz / 2];
 
@@ -321,6 +327,22 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
       }
     }
     return null;
+  };
+
+  const getResizeDistanceByModule = (operation: Operation, d: number) => {
+    const { length, width } = SolarPanelUtil.getUnitSize(orientation, pvModel.length, pvModel.width);
+    if (operation === Operation.ResizeX) {
+      if (d < length && d > -length) {
+        d = length;
+      }
+      return Math.round(d / length) * length;
+    } else if (operation === Operation.ResizeY) {
+      if (d < width && d > -width) {
+        d = width;
+      }
+      return Math.round(d / width) * width;
+    }
+    return d;
   };
 
   const handleParentChange = (
@@ -726,7 +748,8 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
         const anchorToPoint = tempVector3_0.subVectors(point, anchor);
         const anchorToCenter = dirVectorRef.current;
         const angle = anchorToPoint.angleTo(anchorToCenter);
-        const length = anchorToPoint.length() * Math.cos(angle);
+        const d = anchorToPoint.length() * Math.cos(angle);
+        const distance = getResizeDistanceByModule(operationRef.current, d);
 
         if (surfaceType === SurfaceType.Vertical) {
           const centerToSurface = groupRef.current
@@ -735,7 +758,7 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
 
           const center = tempVector3_2
             .copy(anchorToCenter)
-            .multiplyScalar(length / 2)
+            .multiplyScalar(distance / 2)
             .add(anchor)
             .add(centerToSurface)
             .sub(parentGroup.getWorldPosition(tempVector3_3))
@@ -749,26 +772,26 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
           }
 
           if (operationRef.current === Operation.ResizeX) {
-            boxMeshRef.current.scale.x = Math.abs(length);
+            boxMeshRef.current.scale.x = Math.abs(distance);
           } else if (operationRef.current === Operation.ResizeY) {
-            boxMeshRef.current.scale.y = Math.abs(length);
+            boxMeshRef.current.scale.y = Math.abs(distance);
             // bug: can't update auzimuth group z on cuboid. because anchor and pointer won't be on same vertical plane.
             if (parentType === ObjectType.Wall) {
-              updateAuzimuthGroupZ(Math.abs((length / 2) * Math.sin(tiltAngle)));
+              updateAuzimuthGroupZ(Math.abs((distance / 2) * Math.sin(tiltAngle)));
             }
           }
         } else {
           const center = tempVector3_0
             .copy(anchorToCenter)
-            .multiplyScalar(length / 2)
+            .multiplyScalar(distance / 2)
             .add(anchor)
             .sub(parentGroup.getWorldPosition(tempVector3_3))
             .applyQuaternion(parentGroup.getWorldQuaternion(tempQuaternion_0).invert());
 
           if (operationRef.current === Operation.ResizeX) {
-            boxMeshRef.current.scale.x = Math.abs(length);
+            boxMeshRef.current.scale.x = Math.abs(distance);
           } else if (operationRef.current === Operation.ResizeY) {
-            boxMeshRef.current.scale.y = Math.abs(length);
+            boxMeshRef.current.scale.y = Math.abs(distance);
           }
           groupRef.current.position.x = center.x;
           groupRef.current.position.y = center.y;

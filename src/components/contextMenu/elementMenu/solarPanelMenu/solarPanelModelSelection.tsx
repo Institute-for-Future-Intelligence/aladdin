@@ -32,7 +32,7 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
 
-  const solarPanel = useSelectedElement(ObjectType.SolarPanel) as SolarPanelModel | undefined;
+  const solarPanel = useSelectedElement() as SolarPanelModel | undefined;
 
   const [selectedPvModel, setSelectedPvModel] = useState<string>(solarPanel?.pvModelName ?? 'SPR-X21-335-BLK');
   const [panelSizeString, setPanelSizeString] = useState<string>();
@@ -59,7 +59,7 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
   const updateSolarPanelModelById = (id: string, pvModelName: string) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
-        if (e.type === ObjectType.SolarPanel && e.id === id && !e.locked) {
+        if ((e.type === ObjectType.SolarPanel || e.type === ObjectType.RefSolarPanel) && e.id === id && !e.locked) {
           const sp = e as SolarPanelModel;
           sp.pvModelName = pvModelName;
           const pvModel = state.pvModules[pvModelName];
@@ -86,7 +86,11 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
     setCommonStore((state: CommonStoreState) => {
       const pvModel = state.pvModules[pvModelName];
       for (const e of state.elements) {
-        if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId && !e.locked) {
+        if (
+          (e.type === ObjectType.SolarPanel || e.type === ObjectType.RefSolarPanel) &&
+          e.foundationId === foundationId &&
+          !e.locked
+        ) {
           const sp = e as SolarPanelModel;
           sp.pvModelName = pvModelName;
           if (sp.orientation === Orientation.portrait) {
@@ -111,7 +115,7 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
     setCommonStore((state: CommonStoreState) => {
       const pvModel = state.pvModules[pvModelName];
       for (const e of state.elements) {
-        if (e.type === ObjectType.SolarPanel && !e.locked) {
+        if ((e.type === ObjectType.SolarPanel || e.type === ObjectType.RefSolarPanel) && !e.locked) {
           let found;
           if (normal) {
             found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
@@ -144,7 +148,7 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
     setCommonStore((state: CommonStoreState) => {
       const pvModel = state.pvModules[pvModelName];
       for (const e of state.elements) {
-        if (e.type === ObjectType.SolarPanel && !e.locked) {
+        if ((e.type === ObjectType.SolarPanel || e.type === ObjectType.RefSolarPanel) && !e.locked) {
           const sp = e as SolarPanelModel;
           sp.pvModelName = pvModelName;
           if (sp.orientation === Orientation.portrait) {
@@ -169,7 +173,7 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
     useStore.getState().set((state) => {
       const pvModel = state.pvModules[value];
       for (const e of state.elements) {
-        if (e.type === ObjectType.SolarPanel && !e.locked && map.has(e.id)) {
+        if ((e.type === ObjectType.SolarPanel || e.type === ObjectType.RefSolarPanel) && !e.locked && map.has(e.id)) {
           const sp = e as SolarPanelModel;
           sp.pvModelName = value;
           if (sp.orientation === Orientation.portrait) {
@@ -199,7 +203,11 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType: {
         for (const e of elements) {
-          if (e.type === ObjectType.SolarPanel && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+          if (
+            (e.type === ObjectType.SolarPanel || e.type === ObjectType.RefSolarPanel) &&
+            !e.locked &&
+            useStore.getState().selectedElementIdSet.has(e.id)
+          ) {
             const sp = e as SolarPanelModel;
             if (sp.pvModelName !== pvModelName) {
               return true;
@@ -210,7 +218,7 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
       }
       case Scope.AllObjectsOfThisType: {
         for (const e of elements) {
-          if (e.type === ObjectType.SolarPanel && !e.locked) {
+          if ((e.type === ObjectType.SolarPanel || e.type === ObjectType.RefSolarPanel) && !e.locked) {
             const sp = e as SolarPanelModel;
             if (sp.pvModelName !== pvModelName) {
               return true;
@@ -221,7 +229,11 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
       }
       case Scope.AllObjectsOfThisTypeAboveFoundation: {
         for (const e of elements) {
-          if (e.type === ObjectType.SolarPanel && e.foundationId === solarPanel?.foundationId && !e.locked) {
+          if (
+            (e.type === ObjectType.SolarPanel || e.type === ObjectType.RefSolarPanel) &&
+            e.foundationId === solarPanel?.foundationId &&
+            !e.locked
+          ) {
             const sp = e as SolarPanelModel;
             if (sp.pvModelName !== pvModelName) {
               return true;
@@ -237,7 +249,7 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
           if (isParentCuboid) {
             for (const e of elements) {
               if (
-                e.type === ObjectType.SolarPanel &&
+                (e.type === ObjectType.SolarPanel || e.type === ObjectType.RefSolarPanel) &&
                 e.parentId === solarPanel.parentId &&
                 Util.isIdentical(e.normal, solarPanel.normal) &&
                 !e.locked
@@ -250,7 +262,11 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
             }
           } else {
             for (const e of elements) {
-              if (e.type === ObjectType.SolarPanel && e.parentId === solarPanel.parentId && !e.locked) {
+              if (
+                (e.type === ObjectType.SolarPanel || e.type === ObjectType.RefSolarPanel) &&
+                e.parentId === solarPanel.parentId &&
+                !e.locked
+              ) {
                 const sp = e as SolarPanelModel;
                 if (sp.pvModelName !== pvModelName) {
                   return true;
