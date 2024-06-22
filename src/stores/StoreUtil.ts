@@ -8,10 +8,13 @@ import { WindowModel, WindowType } from 'src/models/WindowModel';
 import { WallFill, WallModel, WallStructure } from 'src/models/WallModel';
 import { DEFAULT_PARAPET_SETTINGS } from 'src/views/wall/parapet';
 import { GambrelRoofModel, RoofModel, RoofType } from 'src/models/RoofModel';
-import { GROUND_ID, LIGHT_INTENSITY_CHANGED_VERSION } from 'src/constants';
+import { GROUND_ID, HALF_PI, LIGHT_INTENSITY_CHANGED_VERSION } from 'src/constants';
 import { DoorModel, DoorType } from 'src/models/DoorModel';
 import { ElementModel } from 'src/models/ElementModel';
 import { Util } from 'src/Util';
+import { SolarPanelModel } from 'src/models/SolarPanelModel';
+import { SolarPanelUtil } from 'src/views/solarPanel/SolarPanelUtil';
+import { Vector3 } from 'three';
 
 export class StoreUtil {
   static updateOldFileData() {
@@ -196,6 +199,54 @@ export class StoreUtil {
                 gambrelRoof.topRidgePoint = gambrelRoof.topRidgeLeftPoint ? [...gambrelRoof.topRidgeLeftPoint] : [0, 1];
                 gambrelRoof.topRidgeLeftPoint = undefined;
                 gambrelRoof.topRidgeRightPoint = undefined;
+              }
+            }
+            break;
+          }
+          case ObjectType.SolarPanel: {
+            const solarPanel = e as SolarPanelModel;
+            if (solarPanel.version === undefined) {
+              solarPanel.version = 1;
+              switch (solarPanel.parentType) {
+                case undefined:
+                case ObjectType.Foundation: {
+                  solarPanel.parentType = ObjectType.Foundation;
+                  const foundation = elementMap.get(solarPanel.parentId);
+                  if (foundation) {
+                    solarPanel.cx = solarPanel.cx * foundation.lx;
+                    solarPanel.cy = solarPanel.cy * foundation.ly;
+                    solarPanel.cz = solarPanel.cz * foundation.lz;
+                  }
+                  break;
+                }
+                case ObjectType.Cuboid: {
+                  const cuboid = elementMap.get(solarPanel.parentId);
+                  if (cuboid) {
+                    solarPanel.cx = solarPanel.cx * cuboid.lx;
+                    solarPanel.cy = solarPanel.cy * cuboid.ly;
+                    solarPanel.cz = solarPanel.cz * cuboid.lz;
+                    solarPanel.rotation = SolarPanelUtil.getRotationOnCuboid(
+                      new Vector3().fromArray(solarPanel.normal),
+                    );
+                  }
+                  break;
+                }
+                case ObjectType.Wall: {
+                  solarPanel.normal = [0, -1, 0];
+                  solarPanel.rotation = [HALF_PI, 0, 0];
+                  break;
+                }
+                case ObjectType.Roof: {
+                  if (solarPanel.foundationId) {
+                    const foundation = elementMap.get(solarPanel.foundationId);
+                    if (foundation) {
+                      solarPanel.cx = solarPanel.cx * foundation.lx;
+                      solarPanel.cy = solarPanel.cy * foundation.ly;
+                      solarPanel.cz = solarPanel.cz + foundation.lz / 2;
+                    }
+                  }
+                  break;
+                }
               }
             }
           }

@@ -53,6 +53,7 @@ const INTERSECTION_PLANE_XY_NAME = 'Intersection Plane XY';
 // copy/cut/paste
 // todo: pointer down should check if it's the first element.
 
+// bug: texture incorrect when scale is negtive
 // bug: resize when tracker is enabled. auzi and tilt should use tracker group value.
 // bug: tilt anchor on cuboid vertial surfaces have problem. anchor is not on same plane with pointer
 
