@@ -32,11 +32,11 @@ export const useMaterialSize = (lx: number, ly: number) => {
   const setMaterialSize = (operation: Operation, distance: number) => {
     if (operation === Operation.ResizeX) {
       if (distance !== materialLx) {
-        setMaterialLx(distance);
+        setMaterialLx(Math.abs(distance));
       }
     } else {
       if (distance !== materialLy) {
-        setMaterialLy(distance);
+        setMaterialLy(Math.abs(distance));
       }
     }
   };
