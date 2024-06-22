@@ -113,11 +113,42 @@ const handleAddElementOnRoof = (
 
   const pointer = getPointerOnRoof(e);
   const posRelToFoundation = new Vector3()
-    .subVectors(pointer, new Vector3(foundation.cx, foundation.cy, foundation.lz))
+    .subVectors(pointer, new Vector3(foundation.cx, foundation.cy, foundation.lz / 2))
     .applyEuler(new Euler(0, 0, -foundation.rotation[2]));
   const posRelToCentroid = posRelToFoundation.clone().sub(ridgeMidPoint);
 
   switch (objectTypeToAdd) {
+    case ObjectType.RefSolarPanel: {
+      const { normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
+      const actionState = useStore.getState().actionState;
+      const newElement = ElementModelFactory.makeSolarPanel(
+        roof,
+        useStore.getState().getPvModule(actionState.solarPanelModelName ?? 'SPR-X21-335-BLK'),
+        posRelToFoundation.x,
+        posRelToFoundation.y,
+        posRelToFoundation.z,
+        actionState.solarPanelOrientation ?? Orientation.landscape,
+        actionState.solarPanelPoleHeight ?? 1,
+        actionState.solarPanelPoleSpacing ?? 3,
+        actionState.solarPanelTiltAngle ?? 0,
+        actionState.solarPanelRelativeAzimuth ?? 0,
+        normal,
+        rotation ?? [0, 0, 1],
+        actionState.solarPanelFrameColor,
+        undefined,
+        undefined,
+        ObjectType.Roof,
+        true,
+      );
+      useStore.getState().set((state) => {
+        state.elements.push(newElement);
+        state.selectedElementIdSet.clear();
+        state.selectedElementIdSet.add(newElement.id);
+        if (!state.actionModeLock) state.objectTypeToAdd = ObjectType.None;
+      });
+      addUndoableAddRooftopElement(newElement);
+      break;
+    }
     case ObjectType.SolarPanel: {
       const { normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
       const actionState = useStore.getState().actionState;

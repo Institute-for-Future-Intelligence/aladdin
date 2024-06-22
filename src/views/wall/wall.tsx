@@ -2075,7 +2075,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           }
           break;
         }
-        case ObjectType.SolarPanel: {
+        case ObjectType.RefSolarPanel: {
           if (pointer && body) {
             const p = getRelativePosOnWall(pointer, wallModel);
             const angle = wallModel.relativeAngle - HALF_PI;
@@ -2091,12 +2091,13 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               actionState.solarPanelPoleSpacing ?? 3,
               0,
               0,
-              new Vector3(Math.cos(angle), Math.sin(angle), 0),
-              [0, 0, 0],
+              new Vector3(0, -1, 0),
+              [HALF_PI, 0, 0],
               actionState.solarPanelFrameColor,
               undefined,
               undefined,
               ObjectType.Wall,
+              true,
             );
           }
           break;

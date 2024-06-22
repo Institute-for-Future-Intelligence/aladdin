@@ -68,6 +68,7 @@ import { getSolarPanelUnitLength } from '../wall/wall';
 import { isSolarPanelOnTopFace } from '../solarPanel/solarPanelOnCuboid';
 import { useSelected } from '../../hooks';
 import { SharedUtil } from '../SharedUtil';
+import { SolarPanelUtil } from '../solarPanel/SolarPanelUtil';
 
 const Cuboid = (cuboidModel: CuboidModel) => {
   const {
@@ -366,6 +367,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
       case ObjectType.Sensor:
       case ObjectType.Light:
       case ObjectType.SolarPanel:
+      case ObjectType.RefSolarPanel:
       case ObjectType.Human:
       case ObjectType.Tree:
       case ObjectType.Flower:
@@ -429,6 +431,35 @@ const Cuboid = (cuboidModel: CuboidModel) => {
         [0, 0, 0],
         useStore.getState().actionState.solarPanelFrameColor ?? 'white',
       );
+      setCommonStore((state) => {
+        state.elements.push(addedElement);
+      });
+      return addedElement;
+    } else if (objectToAdd === ObjectType.RefSolarPanel) {
+      const pointer = intersection.point;
+      const { pos, rot } = Util.getWorldDataById(id);
+      const diff = new Vector3().subVectors(pointer, pos).applyEuler(new Euler(0, 0, -rot));
+      const normal = intersection.face?.normal ?? new Vector3(0, 0, 1);
+      const addedElement = ElementModelFactory.makeSolarPanel(
+        cuboidModel,
+        useStore.getState().getPvModule(useStore.getState().actionState.solarPanelModelName ?? 'SPR-X21-335-BLK'),
+        diff.x,
+        diff.y,
+        diff.z,
+        useStore.getState().actionState.solarPanelOrientation ?? Orientation.landscape,
+        useStore.getState().actionState.solarPanelPoleHeight ?? 1,
+        useStore.getState().actionState.solarPanelPoleSpacing ?? 3,
+        useStore.getState().actionState.solarPanelTiltAngle ?? 0,
+        useStore.getState().actionState.solarPanelRelativeAzimuth ?? 0,
+        normal,
+        SolarPanelUtil.getRotationOnCuboid(normal),
+        useStore.getState().actionState.solarPanelFrameColor ?? 'white',
+        undefined,
+        undefined,
+        ObjectType.Cuboid,
+        true,
+      );
+      console.log('added', addedElement);
       setCommonStore((state) => {
         state.elements.push(addedElement);
       });

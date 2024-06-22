@@ -216,34 +216,20 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
 
   const updateRotationOnCuboid = (normal?: Vector3) => {
     if (!normal) return;
-    const { x, y, z } = normal;
-    // top face
-    if (Util.isEqual(z, 1)) {
-      updateGroupRotation(0, 0, 0);
+
+    const [rx, ry, rz] = SolarPanelUtil.getRotationOnCuboid(normal);
+    updateGroupRotation(rx, ry, rz);
+
+    // on top surface
+    if (Util.isEqual(normal.z, 1)) {
       if (worldRotationRef.current !== null) {
         topAzimuthGroupRef.current.rotation.z = worldRotationRef.current - tempEuler.z;
       } else {
         topAzimuthGroupRef.current.rotation.z = relativeAzimuth;
       }
-      return;
+    } else {
+      topAzimuthGroupRef.current.rotation.set(0, 0, 0);
     }
-    // north face
-    if (Util.isEqual(x, 0) && Util.isEqual(y, 1)) {
-      updateGroupRotation(HALF_PI, 0, Math.PI);
-    }
-    // south face
-    else if (Util.isEqual(x, 0) && Util.isEqual(y, -1)) {
-      updateGroupRotation(HALF_PI, 0, 0);
-    }
-    // west face
-    else if (Util.isEqual(x, -1) && Util.isEqual(y, 0)) {
-      updateGroupRotation(HALF_PI, 0, -HALF_PI);
-    }
-    // east face
-    else if (Util.isEqual(x, 1) && Util.isEqual(y, 0)) {
-      updateGroupRotation(HALF_PI, 0, HALF_PI);
-    }
-    topAzimuthGroupRef.current.rotation.set(0, 0, 0);
   };
 
   const updateGroupRotation = (x: number, y: number, z: number) => {
@@ -672,7 +658,7 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
               const { roofId, foundation, centroid, roofSegments } = roofSegmentUserData;
               if (foundation && centroid && roofSegments && roofId) {
                 const posRelToFoundation = new Vector3()
-                  .subVectors(point, new Vector3(foundation.cx, foundation.cy))
+                  .subVectors(point, new Vector3(foundation.cx, foundation.cy, foundation.cz))
                   .applyEuler(new Euler(0, 0, -foundation.rotation[2]));
                 const posRelToCentroid = posRelToFoundation.clone().sub(centroid);
                 const { normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);

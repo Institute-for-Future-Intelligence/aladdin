@@ -83,4 +83,29 @@ export class SolarPanelUtil {
       return { length: moduleWidth, width: moduleLength };
     }
   }
+
+  static getRotationOnCuboid(normal: Vector3) {
+    const { x, y, z } = normal;
+    // top face
+    if (Util.isEqual(z, 1)) {
+      return [0, 0, 0];
+    }
+    // north face
+    if (Util.isEqual(x, 0) && Util.isEqual(y, 1)) {
+      return [HALF_PI, 0, Math.PI];
+    }
+    // south face
+    else if (Util.isEqual(x, 0) && Util.isEqual(y, -1)) {
+      return [HALF_PI, 0, 0];
+    }
+    // west face
+    else if (Util.isEqual(x, -1) && Util.isEqual(y, 0)) {
+      return [HALF_PI, 0, -HALF_PI];
+    }
+    // east face
+    else if (Util.isEqual(x, 1) && Util.isEqual(y, 0)) {
+      return [HALF_PI, 0, HALF_PI];
+    }
+    return [0, 0, 0];
+  }
 }
