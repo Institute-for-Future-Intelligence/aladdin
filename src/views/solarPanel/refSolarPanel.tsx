@@ -48,6 +48,9 @@ export enum SurfaceType {
 
 const INTERSECTION_PLANE_XY_NAME = 'Intersection Plane XY';
 
+// todo: move with parents
+// todo: undo/redo/actionState
+// copy/cut/paste
 // todo: pointer down should check if it's the first element.
 
 // bug: resize when tracker is enabled. auzi and tilt should use tracker group value.

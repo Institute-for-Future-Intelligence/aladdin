@@ -31,7 +31,7 @@ const SolarPanelWrapper = React.memo(
   ({ parentId, foundationId, wrapperType, plx, ply, plz }: SolarPanelWrapperProps) => {
     const filterFn = useCallback(
       (e: ElementModel) => {
-        if (e.type !== ObjectType.RefSolarPanel) return false;
+        if (e.type !== ObjectType.SolarPanel) return false;
 
         const sp = e as SolarPanelModel;
 

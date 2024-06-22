@@ -50,17 +50,17 @@ const CuboidRenderer = ({ elements, cuboidModel }: CuboidRendererProps) => {
         } else if (e.parentId === id) {
           const { lx, ly, lz } = cuboidModel;
           switch (e.type) {
-            case ObjectType.SolarPanel: {
-              return (
-                <SolarPanelOnCuboid
-                  key={e.id}
-                  {...(e as SolarPanelModel)}
-                  cx={e.cx * lx}
-                  cy={e.cy * ly}
-                  cz={e.cz * lz}
-                />
-              );
-            }
+            // case ObjectType.SolarPanel: {
+            //   return (
+            //     <SolarPanelOnCuboid
+            //       key={e.id}
+            //       {...(e as SolarPanelModel)}
+            //       cx={e.cx * lx}
+            //       cy={e.cy * ly}
+            //       cz={e.cz * lz}
+            //     />
+            //   );
+            // }
             case ObjectType.Sensor: {
               return <Sensor key={e.id} {...(e as SensorModel)} cx={e.cx * lx} cy={e.cy * ly} cz={e.cz * lz} />;
             }

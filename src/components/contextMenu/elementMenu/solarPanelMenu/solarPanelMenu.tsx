@@ -30,16 +30,14 @@ import SolarPanelYInput from './solarPanelYInput';
 export const createSolarPanelMenu = (selectedElement: ElementModel) => {
   const items: MenuProps['items'] = [];
 
-  if (selectedElement.type !== ObjectType.SolarPanel && selectedElement.type !== ObjectType.RefSolarPanel)
-    return { items };
+  if (selectedElement.type !== ObjectType.SolarPanel) return { items };
 
   const solarPanel = selectedElement as SolarPanelModel;
 
   const editable = !solarPanel.locked;
   const lang = { lng: useStore.getState().language };
   const upright =
-    (selectedElement.type === ObjectType.SolarPanel && Util.isIdentical(solarPanel.normal, UNIT_VECTOR_POS_Z_ARRAY)) ||
-    selectedElement.type === ObjectType.RefSolarPanel;
+    selectedElement.type === ObjectType.SolarPanel && Util.isIdentical(solarPanel.normal, UNIT_VECTOR_POS_Z_ARRAY);
 
   items.push({
     key: 'solar-panel-copy',

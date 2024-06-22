@@ -1547,12 +1547,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                   e.rotation[0] = x;
                   e.rotation[1] = y;
                   e.rotation[2] = z;
-                } else if (
-                  e.parentId === id &&
-                  !isStackableModel(e) &&
-                  e.type !== ObjectType.SolarPanel &&
-                  e.type !== ObjectType.RefSolarPanel
-                ) {
+                } else if (e.parentId === id && !isStackableModel(e) && e.type !== ObjectType.SolarPanel) {
                   e.rotation[0] = x;
                   e.rotation[1] = y;
                   e.rotation[2] = z;
@@ -2537,28 +2532,6 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                 }
                 case ObjectType.SolarPanel: {
                   const solarPanelParentModel = parent as ElementModel;
-                  const solarPanelRelativeCoordinates = Util.relativeCoordinates(p.x, p.y, p.z, solarPanelParentModel);
-                  const solarPanel = ElementModelFactory.makeSolarPanel(
-                    solarPanelParentModel,
-                    state.getPvModule(state.actionState.solarPanelModelName ?? 'SPR-X21-335-BLK'),
-                    solarPanelRelativeCoordinates.x,
-                    solarPanelRelativeCoordinates.y,
-                    solarPanelRelativeCoordinates.z,
-                    state.actionState.solarPanelOrientation ?? Orientation.landscape,
-                    state.actionState.solarPanelPoleHeight ?? 1,
-                    state.actionState.solarPanelPoleSpacing ?? 3,
-                    state.actionState.solarPanelTiltAngle ?? 0,
-                    state.actionState.solarPanelRelativeAzimuth ?? 0,
-                    normal,
-                    'rotation' in parent ? parent.rotation : undefined,
-                    state.actionState.solarPanelFrameColor ?? 'white',
-                  );
-                  model = solarPanel;
-                  state.elements.push(solarPanel);
-                  break;
-                }
-                case ObjectType.RefSolarPanel: {
-                  const solarPanelParentModel = parent as ElementModel;
                   const solarPanelAbsCoordinatesToParent = Util.relativeCoordinates(
                     p.x,
                     p.y,
@@ -2580,10 +2553,6 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                     normal,
                     [0, 0, 0],
                     state.actionState.solarPanelFrameColor ?? 'white',
-                    undefined,
-                    undefined,
-                    undefined,
-                    true,
                   );
                   model = refSolarPanel;
                   state.elements.push(refSolarPanel);

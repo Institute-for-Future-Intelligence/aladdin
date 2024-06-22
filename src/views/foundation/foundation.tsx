@@ -619,7 +619,6 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
       case ObjectType.Sensor:
       case ObjectType.Light:
       case ObjectType.SolarPanel:
-      case ObjectType.RefSolarPanel:
       case ObjectType.ParabolicDish:
       case ObjectType.ParabolicTrough:
       case ObjectType.FresnelReflector:
@@ -3018,13 +3017,13 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
 
   const opacity = groundImage ? (orthographic ? 0.25 : 0.75) : 1;
 
-  const solarPanelsOnFoundation = useStore(
-    (state) =>
-      state.elements.filter(
-        (e) => (e.type === ObjectType.SolarPanel || e.type === ObjectType.RefSolarPanel) && e.parentId === id,
-      ) as SolarPanelModel[],
-    shallow,
-  );
+  // const solarPanelsOnFoundation = useStore(
+  //   (state) =>
+  //     state.elements.filter(
+  //       (e) => (e.type === ObjectType.SolarPanel || e.type === ObjectType.RefSolarPanel) && e.parentId === id,
+  //     ) as SolarPanelModel[],
+  //   shallow,
+  // );
 
   // handle move sp between different parents
   const [showIntersectionPlane, setShowIntersectionPlane] = useState(false);
@@ -3556,7 +3555,7 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
         {solarStructure === SolarStructure.UpdraftTower && <SolarUpdraftTower foundation={foundationModel} />}
 
         <BuildingRenderer {...foundationModel} />
-        {solarPanelsOnFoundation.map((sp) => {
+        {/* {solarPanelsOnFoundation.map((sp) => {
           if (sp.type === ObjectType.SolarPanel) {
             return (
               <SolarPanel
@@ -3572,7 +3571,7 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
           } else {
             return null;
           }
-        })}
+        })} */}
       </group>
     </>
   );

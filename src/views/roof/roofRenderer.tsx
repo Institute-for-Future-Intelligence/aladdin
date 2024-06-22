@@ -118,7 +118,7 @@ const handleAddElementOnRoof = (
   const posRelToCentroid = posRelToFoundation.clone().sub(ridgeMidPoint);
 
   switch (objectTypeToAdd) {
-    case ObjectType.RefSolarPanel: {
+    case ObjectType.SolarPanel: {
       const { normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
       const actionState = useStore.getState().actionState;
       const newElement = ElementModelFactory.makeSolarPanel(
@@ -135,10 +135,6 @@ const handleAddElementOnRoof = (
         normal,
         rotation ?? [0, 0, 1],
         actionState.solarPanelFrameColor,
-        undefined,
-        undefined,
-        ObjectType.Roof,
-        true,
       );
       useStore.getState().set((state) => {
         state.elements.push(newElement);
@@ -147,37 +143,6 @@ const handleAddElementOnRoof = (
         if (!state.actionModeLock) state.objectTypeToAdd = ObjectType.None;
       });
       addUndoableAddRooftopElement(newElement);
-      break;
-    }
-    case ObjectType.SolarPanel: {
-      const { normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
-      const actionState = useStore.getState().actionState;
-      const newElement = ElementModelFactory.makeSolarPanel(
-        roof,
-        useStore.getState().getPvModule(actionState.solarPanelModelName ?? 'SPR-X21-335-BLK'),
-        posRelToFoundation.x / foundation.lx,
-        posRelToFoundation.y / foundation.ly,
-        posRelToFoundation.z,
-        actionState.solarPanelOrientation ?? Orientation.landscape,
-        actionState.solarPanelPoleHeight ?? 1,
-        actionState.solarPanelPoleSpacing ?? 3,
-        actionState.solarPanelTiltAngle ?? 0,
-        actionState.solarPanelRelativeAzimuth ?? 0,
-        normal,
-        rotation ?? [0, 0, 1],
-        actionState.solarPanelFrameColor,
-        undefined,
-        undefined,
-        ObjectType.Roof,
-      );
-      useStore.getState().set((state) => {
-        state.elements.push(newElement);
-        state.selectedElementIdSet.clear();
-        state.selectedElementIdSet.add(newElement.id);
-        if (!state.actionModeLock) state.objectTypeToAdd = ObjectType.None;
-      });
-      addUndoableAddRooftopElement(newElement);
-
       break;
     }
     case ObjectType.Window: {

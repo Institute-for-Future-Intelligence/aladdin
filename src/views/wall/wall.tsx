@@ -2075,7 +2075,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           }
           break;
         }
-        case ObjectType.RefSolarPanel: {
+        case ObjectType.SolarPanel: {
           if (pointer && body) {
             const p = getRelativePosOnWall(pointer, wallModel);
             const angle = wallModel.relativeAngle - HALF_PI;
@@ -2094,10 +2094,6 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               new Vector3(0, -1, 0),
               [HALF_PI, 0, 0],
               actionState.solarPanelFrameColor,
-              undefined,
-              undefined,
-              ObjectType.Wall,
-              true,
             );
           }
           break;
@@ -2548,16 +2544,16 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
                   />
                 );
               }
-              case ObjectType.SolarPanel:
-                let r = 0;
-                if (latestFoundation && wallModel) {
-                  r = latestFoundation.rotation[2] + wallModel.relativeAngle;
-                }
-                return (
-                  <group key={e.id} position={[0, -e.lz / 2, 0]}>
-                    <SolarPanelOnWall {...(e as SolarPanelModel)} cx={e.cx * lx} cz={e.cz * lz} absRotation={r} />
-                  </group>
-                );
+              // case ObjectType.SolarPanel:
+              //   let r = 0;
+              //   if (latestFoundation && wallModel) {
+              //     r = latestFoundation.rotation[2] + wallModel.relativeAngle;
+              //   }
+              //   return (
+              //     <group key={e.id} position={[0, -e.lz / 2, 0]}>
+              //       <SolarPanelOnWall {...(e as SolarPanelModel)} cx={e.cx * lx} cz={e.cz * lz} absRotation={r} />
+              //     </group>
+              //   );
               default:
                 return null;
             }

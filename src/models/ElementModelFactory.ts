@@ -107,7 +107,6 @@ export class ElementModelFactory {
     lx?: number,
     ly?: number,
     parentType?: ObjectType,
-    isRef?: boolean,
   ) {
     let foundationId;
     switch (parent.type) {
@@ -125,7 +124,7 @@ export class ElementModelFactory {
         break;
     }
     return {
-      type: isRef ? ObjectType.RefSolarPanel : ObjectType.SolarPanel,
+      type: ObjectType.SolarPanel,
       pvModelName: pvModel.name,
       trackerType: TrackerType.NO_TRACKER,
       relativeAzimuth: relativeAzimuth ?? 0,
@@ -146,7 +145,7 @@ export class ElementModelFactory {
       rotation: rotation ? rotation : [0, 0, 0],
       color: '#fff',
       frameColor: frameColor ?? 'white',
-      parentType: parentType,
+      parentType: parentType ?? parent.type,
       parentId: parent.id,
       foundationId: foundationId,
       id: short.generate() as string,
