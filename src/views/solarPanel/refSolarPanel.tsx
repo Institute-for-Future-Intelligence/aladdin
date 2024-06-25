@@ -30,6 +30,7 @@ import { PvModel } from 'src/models/PvModel';
 import { useMaterialSize } from './hooks';
 import Materials from './materials';
 import Poles, { PolesRefProps } from './poles';
+import Wireframe from './wireframe';
 
 export enum Operation {
   Move = 'Move',
@@ -49,7 +50,6 @@ export enum SurfaceType {
 
 const INTERSECTION_PLANE_XY_NAME = 'Intersection Plane XY';
 
-// todo: lock
 // todo: move with parents
 // todo: undo/redo/actionState
 // todo: copy/cut/paste
@@ -82,6 +82,7 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
     poleRadius,
     poleSpacing,
     color = 'white',
+    locked,
   } = refSolarPanel;
 
   const pvModel = useStore.getState().pvModules[pvModelName] as PvModel;
@@ -152,20 +153,20 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
     }
   }, [poleHeight, hlz, surfaceType, tiltHandleoffsetZ]);
 
-  const isShowResizeHandle = useMemo(() => {
-    return selected;
-  }, [selected]);
+  const isShowMoveAndResizeHandle = useMemo(() => {
+    return selected && !locked;
+  }, [selected, locked]);
 
   const isShowRotateHandle = useMemo(() => {
-    return selected && surfaceType === SurfaceType.Horizontal && !trackerEnabled;
-  }, [selected, surfaceType, trackerType, trackerEnabled]);
+    return selected && surfaceType === SurfaceType.Horizontal && !trackerEnabled && !locked;
+  }, [selected, surfaceType, trackerType, trackerEnabled, locked]);
 
   const isShowTiltHandle = useMemo(() => {
-    if (!selected || trackerEnabled) return false;
+    if (!selected || trackerEnabled || locked) return false;
     if (surfaceType === SurfaceType.Vertical) return true;
     if (surfaceType === SurfaceType.Horizontal && poleHeight > 0) return true;
     return false;
-  }, [selected, surfaceType, poleHeight, trackerEnabled]);
+  }, [selected, surfaceType, poleHeight, trackerEnabled, locked]);
 
   const isShowPoles = useMemo(() => {
     return poleHeight > 0 && surfaceType === SurfaceType.Horizontal;
@@ -888,25 +889,32 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
               <Materials solarPanel={refSolarPanel} lx={materialLx} ly={materialLy} />
             </Box>
 
-            {/* move handle */}
-            <Sphere name="Move_Handle" args={[handleSize]} visible={selected} onPointerDown={onMoveHandlePointerDown} />
+            {/* wireframe */}
+            {selected && locked && <Wireframe hlx={hlx} hly={hly} />}
 
-            {/* resize handles group */}
-            <group
-              name="Resize_Handles_Group"
-              ref={resizeHandleGroupRef}
-              visible={isShowResizeHandle}
-              onPointerDown={onResizeHandleGroupPointerDown}
-            >
-              <Box name={ResizeHandleType.Right} position={[hlx, 0, 0.1]} args={[handleSize, handleSize, 0.1]}>
-                <meshBasicMaterial color="yellow" />
-              </Box>
-              <Box name={ResizeHandleType.Left} position={[-hlx, 0, 0.1]} args={[handleSize, handleSize, 0.1]} />
-              <Box name={ResizeHandleType.Upper} position={[0, hly, 0.1]} args={[handleSize, handleSize, 0.1]}>
-                <meshBasicMaterial color="red" />
-              </Box>
-              <Box name={ResizeHandleType.Lower} position={[0, -hly, 0.1]} args={[handleSize, handleSize, 0.1]} />
-            </group>
+            {/* move and resize handle */}
+            {isShowMoveAndResizeHandle && (
+              <>
+                {/* move handle */}
+                {<Sphere name="Move_Handle" args={[handleSize]} onPointerDown={onMoveHandlePointerDown} />}
+
+                {/* resize handles group */}
+                <group
+                  name="Resize_Handles_Group"
+                  ref={resizeHandleGroupRef}
+                  onPointerDown={onResizeHandleGroupPointerDown}
+                >
+                  <Box name={ResizeHandleType.Right} position={[hlx, 0, 0.1]} args={[handleSize, handleSize, 0.1]}>
+                    <meshBasicMaterial color="yellow" />
+                  </Box>
+                  <Box name={ResizeHandleType.Left} position={[-hlx, 0, 0.1]} args={[handleSize, handleSize, 0.1]} />
+                  <Box name={ResizeHandleType.Upper} position={[0, hly, 0.1]} args={[handleSize, handleSize, 0.1]}>
+                    <meshBasicMaterial color="red" />
+                  </Box>
+                  <Box name={ResizeHandleType.Lower} position={[0, -hly, 0.1]} args={[handleSize, handleSize, 0.1]} />
+                </group>
+              </>
+            )}
 
             {/* normal pointer group for sun beam */}
             {drawSunBeam && <NormalPointer />}
