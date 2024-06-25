@@ -321,7 +321,7 @@ export const updateRooftopElements = (
     for (const e of state.elements) {
       if (e.parentId === roofId && e.foundationId) {
         if (e.type === ObjectType.SolarPanel) {
-          const posRelToFoundation = new Vector3(e.cx * foundation.lx, e.cy * foundation.ly, e.cz + foundation.lz);
+          const posRelToFoundation = new Vector3(e.cx, e.cy, e.cz);
           const posRelToCentroid = posRelToFoundation.clone().sub(centroid);
           const { segmentVertices, normal, rotation } = RoofUtil.computeState(
             roofSegments,
@@ -337,7 +337,7 @@ export const updateRooftopElements = (
           if (normal && rotation && z !== undefined) {
             e.normal = normal.toArray();
             e.rotation = [...rotation];
-            e.cz = z;
+            e.cz = z + foundation.lz / 2;
           }
         } else if (e.type === ObjectType.Window) {
           const posRelToFoundation = new Vector3(e.cx, e.cy, e.cz + foundation.lz);

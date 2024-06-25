@@ -792,58 +792,56 @@ const Cuboid = (cuboidModel: CuboidModel) => {
           const rp = new Vector2().subVectors(wp, resizeAnchor2D); // relative vector from anchor to pointer
           switch (useStore.getState().resizeHandleType) {
             case ResizeHandleType.Lower:
-            case ResizeHandleType.Upper:
-              {
-                const sign = useStore.getState().resizeHandleType === ResizeHandleType.Lower ? 1 : -1;
-                const theta = rp.angle() - angle + sign * HALF_PI;
-                let dyl = distance * Math.cos(theta);
-                if (solarPanel.orientation === Orientation.portrait) {
-                  const nx = Math.max(1, Math.ceil((dyl - pvModel.length / 2) / pvModel.length));
-                  dyl = nx * pvModel.length;
-                } else {
-                  const nx = Math.max(1, Math.ceil((dyl - pvModel.width / 2) / pvModel.width));
-                  dyl = nx * pvModel.width;
-                }
-                const wcx = resizeAnchor.x + (sign * (dyl * Math.sin(angle))) / 2;
-                const wcy = resizeAnchor.y - (sign * (dyl * Math.cos(angle))) / 2;
-                const wc = new Vector2(wcx, wcy); // world panel center
-                const wbc = new Vector2(worldPositionRef.current.x, worldPositionRef.current.y); // world foundation center
-                const rc = new Vector2().subVectors(wc, wbc).rotateAround(ORIGIN_VECTOR2, -worldRotationRef.current);
-                const newCx = rc.x / lx;
-                const newCy = rc.y / ly;
-                if (isSolarPanelNewSizeOk(solarPanel, newCx, newCy, solarPanel.lx, dyl)) {
-                  updateElementLyById(solarPanel.id, dyl);
-                  setElementPosition(solarPanel.id, newCx, newCy);
-                }
+            case ResizeHandleType.Upper: {
+              const sign = useStore.getState().resizeHandleType === ResizeHandleType.Lower ? 1 : -1;
+              const theta = rp.angle() - angle + sign * HALF_PI;
+              let dyl = distance * Math.cos(theta);
+              if (solarPanel.orientation === Orientation.portrait) {
+                const nx = Math.max(1, Math.ceil((dyl - pvModel.length / 2) / pvModel.length));
+                dyl = nx * pvModel.length;
+              } else {
+                const nx = Math.max(1, Math.ceil((dyl - pvModel.width / 2) / pvModel.width));
+                dyl = nx * pvModel.width;
+              }
+              const wcx = resizeAnchor.x + (sign * (dyl * Math.sin(angle))) / 2;
+              const wcy = resizeAnchor.y - (sign * (dyl * Math.cos(angle))) / 2;
+              const wc = new Vector2(wcx, wcy); // world panel center
+              const wbc = new Vector2(worldPositionRef.current.x, worldPositionRef.current.y); // world foundation center
+              const rc = new Vector2().subVectors(wc, wbc).rotateAround(ORIGIN_VECTOR2, -worldRotationRef.current);
+              const newCx = rc.x / lx;
+              const newCy = rc.y / ly;
+              if (isSolarPanelNewSizeOk(solarPanel, newCx, newCy, solarPanel.lx, dyl)) {
+                updateElementLyById(solarPanel.id, dyl);
+                setElementPosition(solarPanel.id, newCx, newCy);
               }
               break;
+            }
             case ResizeHandleType.Left:
-            case ResizeHandleType.Right:
-              {
-                let sign = useStore.getState().resizeHandleType === ResizeHandleType.Left ? -1 : 1;
-                const theta =
-                  rp.angle() - angle + (useStore.getState().resizeHandleType === ResizeHandleType.Left ? Math.PI : 0);
-                let dxl = distance * Math.cos(theta);
-                if (solarPanel.orientation === Orientation.portrait) {
-                  const nx = Math.max(1, Math.ceil((dxl - pvModel.width / 2) / pvModel.width));
-                  dxl = nx * pvModel.width;
-                } else {
-                  const nx = Math.max(1, Math.ceil((dxl - pvModel.length / 2) / pvModel.length));
-                  dxl = nx * pvModel.length;
-                }
-                const wcx = resizeAnchor.x + (sign * (dxl * Math.cos(angle))) / 2;
-                const wcy = resizeAnchor.y + (sign * (dxl * Math.sin(angle))) / 2;
-                const wc = new Vector2(wcx, wcy);
-                const wbc = new Vector2(worldPositionRef.current.x, worldPositionRef.current.y);
-                const rc = new Vector2().subVectors(wc, wbc).rotateAround(ORIGIN_VECTOR2, -worldRotationRef.current);
-                const newCx = rc.x / lx;
-                const newCy = rc.y / ly;
-                if (isSolarPanelNewSizeOk(solarPanel, newCx, newCy, dxl, solarPanel.ly)) {
-                  updateElementLxById(solarPanel.id, dxl);
-                  setElementPosition(solarPanel.id, newCx, newCy);
-                }
+            case ResizeHandleType.Right: {
+              let sign = useStore.getState().resizeHandleType === ResizeHandleType.Left ? -1 : 1;
+              const theta =
+                rp.angle() - angle + (useStore.getState().resizeHandleType === ResizeHandleType.Left ? Math.PI : 0);
+              let dxl = distance * Math.cos(theta);
+              if (solarPanel.orientation === Orientation.portrait) {
+                const nx = Math.max(1, Math.ceil((dxl - pvModel.width / 2) / pvModel.width));
+                dxl = nx * pvModel.width;
+              } else {
+                const nx = Math.max(1, Math.ceil((dxl - pvModel.length / 2) / pvModel.length));
+                dxl = nx * pvModel.length;
+              }
+              const wcx = resizeAnchor.x + (sign * (dxl * Math.cos(angle))) / 2;
+              const wcy = resizeAnchor.y + (sign * (dxl * Math.sin(angle))) / 2;
+              const wc = new Vector2(wcx, wcy);
+              const wbc = new Vector2(worldPositionRef.current.x, worldPositionRef.current.y);
+              const rc = new Vector2().subVectors(wc, wbc).rotateAround(ORIGIN_VECTOR2, -worldRotationRef.current);
+              const newCx = rc.x / lx;
+              const newCy = rc.y / ly;
+              if (isSolarPanelNewSizeOk(solarPanel, newCx, newCy, dxl, solarPanel.ly)) {
+                updateElementLxById(solarPanel.id, dxl);
+                setElementPosition(solarPanel.id, newCx, newCy);
               }
               break;
+            }
           }
         }
       }

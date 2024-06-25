@@ -932,6 +932,7 @@ export class Util {
       switch (e.type) {
         // solar panels can be installed on any surface, but we can only check horizontal surfaces now
         case ObjectType.SolarPanel:
+          if ((e as SolarPanelModel).parentType === ObjectType.Roof) continue;
           if (Util.isIdentical(e.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
             if (!Util.isSolarCollectorWithinHorizontalSurface(e as SolarCollector, parent)) {
               return false;
@@ -991,8 +992,8 @@ export class Util {
   }
 
   static isSolarCollectorWithinHorizontalSurface(collector: SolarCollector, parent: ElementModel): boolean {
-    const x0 = collector.cx * parent.lx;
-    const y0 = collector.cy * parent.ly;
+    const x0 = collector.cx;
+    const y0 = collector.cy;
     const cosaz = Math.cos(collector.relativeAzimuth);
     const sinaz = Math.sin(collector.relativeAzimuth);
     const dx = parent.lx * 0.5;

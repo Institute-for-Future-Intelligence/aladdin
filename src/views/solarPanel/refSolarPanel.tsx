@@ -50,7 +50,6 @@ export enum SurfaceType {
 
 const INTERSECTION_PLANE_XY_NAME = 'Intersection Plane XY';
 
-// todo: move with parents
 // todo: undo/redo/actionState
 // todo: copy/cut/paste
 // todo: pointer down should check if it's the first element.

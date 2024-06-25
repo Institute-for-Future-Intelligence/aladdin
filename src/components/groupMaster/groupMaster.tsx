@@ -20,6 +20,7 @@ import { RoofModel } from 'src/models/RoofModel';
 import { isGroupable } from 'src/models/Groupable';
 import { Util } from 'src/Util';
 import { WindowModel } from 'src/models/WindowModel';
+import { SolarPanelModel } from 'src/models/SolarPanelModel';
 
 interface GroupMasterProps {
   groupedElementsIdSet: Set<string>;
@@ -133,7 +134,7 @@ const GroupMaster = React.memo(
     const elementHeightMapRef = useRef<Map<string, number>>(new Map());
     const wallRelPointsMapRef = useRef<Map<string, Vector2[]>>(new Map<string, Vector2[]>());
     const partialWallHeightMapRef = useRef<Map<string, PartialWallHeight>>(new Map());
-    const skylightRelPosMapRef = useRef<Map<string, number[]>>(new Map());
+    const childRelPosMapRef = useRef<Map<string, number[]>>(new Map());
     const baseRelPosMapRef = useRef<Map<string, Vector3>>(new Map());
     const baseRotationMapRef = useRef<Map<string, number>>(new Map());
     const basePosRatioMapRef = useRef<Map<string, number[]>>(new Map()); // 2d
@@ -146,7 +147,7 @@ const GroupMaster = React.memo(
     const wallOldPointsMapRef = useRef<Map<string, number[]>>(new Map());
     const elementOldHeightMapRef = useRef<Map<string, number>>(new Map());
     const oldPartialWallHeightMapRef = useRef<Map<string, PartialWallHeight>>(new Map());
-    const oldSkylightPosMapRef = useRef<Map<string, number[]>>(new Map());
+    const oldChildPosMapRef = useRef<Map<string, number[]>>(new Map());
 
     const [position, setPosition] = useState<Vector3>(new Vector3(cx, cy, cz));
     const [rotation, setRotation] = useState<number>(initialRotation);
@@ -207,7 +208,7 @@ const GroupMaster = React.memo(
         for (const elem of state.elements) {
           if (isGroupable(elem) && foundationDataMap.has(elem.id)) {
             [elem.cx, elem.cy, elem.lx, elem.ly] = foundationDataMap.get(elem.id)!;
-          } else if (foundationDataMap.has(elem.parentId)) {
+          } else if (elem.foundationId && foundationDataMap.has(elem.foundationId)) {
             switch (elem.type) {
               case ObjectType.Wall: {
                 const points = wallPointsMap.get(elem.id);
@@ -231,6 +232,12 @@ const GroupMaster = React.memo(
                 [window.cx, window.cy] = position;
                 break;
               }
+              case ObjectType.SolarPanel: {
+                const position = skylightPosMap.get(elem.id);
+                if (!position) continue;
+                [elem.cx, elem.cy] = position;
+                break;
+              }
             }
           }
         }
@@ -250,6 +257,8 @@ const GroupMaster = React.memo(
             if (height !== undefined) {
               if (elem.type === ObjectType.Roof) {
                 (elem as RoofModel).rise = height;
+              } else if (elem.type === ObjectType.SolarPanel) {
+                elem.cz = height;
               } else {
                 elem.lz = height;
               }
@@ -314,17 +323,21 @@ const GroupMaster = React.memo(
     const addUndoableResizeXY = () => {
       const foundationNewDataMap = new Map<string, number[]>();
       const wallNewPointsMap = new Map<string, number[]>();
-      const newSkylightPosMap = new Map<string, number[]>();
+      const newChildPosMap = new Map<string, number[]>();
       for (const elem of useStore.getState().elements) {
         if (isGroupable(elem) && foundationOldDataMapRef.current.has(elem.id)) {
           foundationNewDataMap.set(elem.id, [elem.cx, elem.cy, elem.lx, elem.ly]);
         } else if (wallOldPointsMapRef.current.has(elem.id)) {
           const w = elem as WallModel;
           wallNewPointsMap.set(elem.id, [...w.leftPoint, ...w.rightPoint]);
-        } else if (oldSkylightPosMapRef.current.has(elem.id)) {
-          const window = elem as WindowModel;
-          if (window.parentType !== ObjectType.Roof) continue;
-          newSkylightPosMap.set(window.id, [window.cx, window.cy]);
+        } else if (oldChildPosMapRef.current.has(elem.id)) {
+          if (elem.type === ObjectType.Window) {
+            const window = elem as WindowModel;
+            if (window.parentType !== ObjectType.Roof) continue;
+            newChildPosMap.set(window.id, [window.cx, window.cy]);
+          } else if (elem.type === ObjectType.SolarPanel) {
+            newChildPosMap.set(elem.id, [elem.cx, elem.cy]);
+          }
         }
       }
       const undoableResizeXY = {
@@ -334,8 +347,8 @@ const GroupMaster = React.memo(
         newFoundationDataMap: new Map(foundationNewDataMap),
         oldWallPointsMap: new Map(wallOldPointsMapRef.current),
         newWallPointsMap: new Map(wallNewPointsMap),
-        oldSkylightPosMap: new Map(oldSkylightPosMapRef.current),
-        newSkylightPosMap: new Map(newSkylightPosMap),
+        oldSkylightPosMap: new Map(oldChildPosMapRef.current),
+        newSkylightPosMap: new Map(newChildPosMap),
         undo: () => {
           updateUndoableResizeXY(
             undoableResizeXY.oldFoundationDataMap,
@@ -362,6 +375,8 @@ const GroupMaster = React.memo(
         if (elementOldHeightMapRef.current.has(elem.id)) {
           if (elem.type === ObjectType.Roof) {
             newHeightMap.set(elem.id, (elem as RoofModel).rise);
+          } else if (elem.type === ObjectType.SolarPanel) {
+            newHeightMap.set(elem.id, elem.cz);
           } else {
             newHeightMap.set(elem.id, elem.lz);
           }
@@ -467,13 +482,51 @@ const GroupMaster = React.memo(
                         wall.rightPoint = [...rightPoint];
                         break;
                       }
-                      case ObjectType.Window: {
-                        const window = e as WindowModel;
-                        if (window.parentType !== ObjectType.Roof) continue;
-                        const relativePosition = skylightRelPosMapRef.current.get(window.id);
+                      case ObjectType.SolarPanel: {
+                        const solarPanel = e as SolarPanelModel;
+                        const relativePosition = childRelPosMapRef.current.get(solarPanel.id);
                         if (!relativePosition) continue;
-                        window.cx = relativePosition[0] * newLx;
-                        window.cy = relativePosition[1] * newLy;
+
+                        const parentType = solarPanel.parentType;
+                        const [x, y, z] = solarPanel.normal;
+                        if (
+                          parentType === ObjectType.Foundation ||
+                          parentType === ObjectType.Roof ||
+                          (parentType === ObjectType.Cuboid && Util.isEqual(z, 1))
+                        ) {
+                          solarPanel.cx = relativePosition[0] * newLx;
+                          solarPanel.cy = relativePosition[1] * newLy;
+                        } else if (parentType === ObjectType.Cuboid) {
+                          // north face
+                          if (Util.isEqual(x, 0) && Util.isEqual(y, 1)) {
+                            solarPanel.cx = relativePosition[0] * newLx;
+                            solarPanel.cy = newLy / 2;
+                          }
+                          // south face
+                          else if (Util.isEqual(x, 0) && Util.isEqual(y, -1)) {
+                            solarPanel.cx = relativePosition[0] * newLx;
+                            solarPanel.cy = -newLy / 2;
+                          }
+                          // west face
+                          else if (Util.isEqual(x, -1) && Util.isEqual(y, 0)) {
+                            solarPanel.cx = -newLx / 2;
+                            solarPanel.cy = relativePosition[1] * newLy;
+                          }
+                          // east face
+                          else if (Util.isEqual(x, 1) && Util.isEqual(y, 0)) {
+                            solarPanel.cx = newLx / 2;
+                            solarPanel.cy = relativePosition[1] * newLy;
+                          }
+                        }
+                        break;
+                      }
+                      case ObjectType.Window: {
+                        const skylight = e as WindowModel;
+                        if (skylight.parentType !== ObjectType.Roof) continue;
+                        const relativePosition = childRelPosMapRef.current.get(skylight.id);
+                        if (!relativePosition) continue;
+                        skylight.cx = relativePosition[0] * newLx;
+                        skylight.cy = relativePosition[1] * newLy;
                         break;
                       }
                     }
@@ -518,13 +571,51 @@ const GroupMaster = React.memo(
                   wall.rightPoint = [...rightPoint];
                   break;
                 }
-                case ObjectType.Window: {
-                  const window = elem as WindowModel;
-                  if (window.parentType !== ObjectType.Roof) continue;
-                  const relativePosition = skylightRelPosMapRef.current.get(window.id);
+                case ObjectType.SolarPanel: {
+                  const solarPanel = elem as SolarPanelModel;
+                  const relativePosition = childRelPosMapRef.current.get(solarPanel.id);
                   if (!relativePosition) continue;
-                  window.cx = relativePosition[0] * lx;
-                  window.cy = relativePosition[1] * ly;
+
+                  const parentType = solarPanel.parentType;
+                  const [x, y, z] = solarPanel.normal;
+                  if (
+                    parentType === ObjectType.Foundation ||
+                    parentType === ObjectType.Roof ||
+                    (parentType === ObjectType.Cuboid && Util.isEqual(z, 1))
+                  ) {
+                    solarPanel.cx = relativePosition[0] * lx;
+                    solarPanel.cy = relativePosition[1] * ly;
+                  } else if (parentType === ObjectType.Cuboid) {
+                    // north face
+                    if (Util.isEqual(x, 0) && Util.isEqual(y, 1)) {
+                      solarPanel.cx = relativePosition[0] * lx;
+                      solarPanel.cy = ly / 2;
+                    }
+                    // south face
+                    else if (Util.isEqual(x, 0) && Util.isEqual(y, -1)) {
+                      solarPanel.cx = relativePosition[0] * lx;
+                      solarPanel.cy = -ly / 2;
+                    }
+                    // west face
+                    else if (Util.isEqual(x, -1) && Util.isEqual(y, 0)) {
+                      solarPanel.cx = -lx / 2;
+                      solarPanel.cy = relativePosition[1] * ly;
+                    }
+                    // east face
+                    else if (Util.isEqual(x, 1) && Util.isEqual(y, 0)) {
+                      solarPanel.cx = lx / 2;
+                      solarPanel.cy = relativePosition[1] * ly;
+                    }
+                  }
+                  break;
+                }
+                case ObjectType.Window: {
+                  const skylight = elem as WindowModel;
+                  if (skylight.parentType !== ObjectType.Roof) continue;
+                  const relativePosition = childRelPosMapRef.current.get(skylight.id);
+                  if (!relativePosition) continue;
+                  skylight.cx = relativePosition[0] * lx;
+                  skylight.cy = relativePosition[1] * ly;
                 }
               }
             }
@@ -562,6 +653,26 @@ const GroupMaster = React.memo(
                 const newHeight = heightRatio * height;
                 elem.lz = newHeight;
                 elem.cz = newHeight / 2;
+              }
+            } else if (
+              elem.type === ObjectType.SolarPanel &&
+              (elem as SolarPanelModel).parentType === ObjectType.Cuboid &&
+              elementHeightMapRef.current.has(elem.parentId)
+            ) {
+              const parentHeightRatio = elementHeightMapRef.current.get(elem.parentId);
+              if (parentHeightRatio) {
+                const newParentHeight = parentHeightRatio * height;
+                // on top
+                if (Util.isEqual(elem.normal[2], 1)) {
+                  elem.cz = newParentHeight / 2;
+                }
+                // on sides
+                else {
+                  const elemHeightRatio = elementHeightMapRef.current.get(elem.id);
+                  if (elemHeightRatio) {
+                    elem.cz = elemHeightRatio * newParentHeight;
+                  }
+                }
               }
             }
           }
@@ -611,8 +722,8 @@ const GroupMaster = React.memo(
       wallRelPointsMapRef.current.clear();
       foundationOldDataMapRef.current.clear();
       wallOldPointsMapRef.current.clear();
-      skylightRelPosMapRef.current.clear();
-      oldSkylightPosMapRef.current.clear();
+      childRelPosMapRef.current.clear();
+      oldChildPosMapRef.current.clear();
 
       const [currLx, currLy] = [hx * 2, hy * 2];
       for (const elem of useStore.getState().elements) {
@@ -624,7 +735,10 @@ const GroupMaster = React.memo(
           foundationOldDataMapRef.current.set(elem.id, [elem.cx, elem.cy, elem.lx, elem.ly]);
         }
         // child elements
-        else if (elem.foundationId && groupedElementsIdSet.has(elem.foundationId)) {
+        else if (
+          elem.foundationId &&
+          (groupedElementsIdSet.has(elem.foundationId) || childCuboidSet.has(elem.foundationId))
+        ) {
           const foundation = getElementById(elem.foundationId);
           if (!foundation) continue;
           switch (elem.type) {
@@ -642,11 +756,11 @@ const GroupMaster = React.memo(
               wallOldPointsMapRef.current.set(wall.id, [...wall.leftPoint, ...wall.rightPoint]);
               break;
             }
+            case ObjectType.SolarPanel:
             case ObjectType.Window: {
-              const window = elem as WindowModel;
-              if (window.parentType !== ObjectType.Roof) continue;
-              skylightRelPosMapRef.current.set(window.id, [window.cx / foundation.lx, window.cy / foundation.ly]);
-              oldSkylightPosMapRef.current.set(window.id, [window.cx, window.cy]);
+              const child = elem as WindowModel | SolarPanelModel;
+              childRelPosMapRef.current.set(child.id, [child.cx / foundation.lx, child.cy / foundation.ly]);
+              oldChildPosMapRef.current.set(child.id, [child.cx, child.cy]);
               break;
             }
           }
@@ -666,7 +780,7 @@ const GroupMaster = React.memo(
       oldPartialWallHeightMapRef.current.clear();
 
       for (const elem of useStore.getState().elements) {
-        if (elem.foundationId && groupedElementsIdSet.has(elem.foundationId)) {
+        if (elem.foundationId && (groupedElementsIdSet.has(elem.foundationId) || childCuboidSet.has(elem.parentId))) {
           if (elem.type === ObjectType.Wall) {
             elementHeightMapRef.current.set(elem.id, elem.lz / height);
             elementOldHeightMapRef.current.set(elem.id, elem.lz);
@@ -688,6 +802,15 @@ const GroupMaster = React.memo(
           } else if (elem.type === ObjectType.Roof) {
             elementHeightMapRef.current.set(elem.id, (elem as RoofModel).rise / height);
             elementOldHeightMapRef.current.set(elem.id, (elem as RoofModel).rise);
+          } else if (
+            elem.type === ObjectType.SolarPanel &&
+            (elem as SolarPanelModel).parentType === ObjectType.Cuboid
+          ) {
+            const parent = useStore.getState().elements.find((e) => e.id === elem.parentId);
+            if (parent) {
+              elementHeightMapRef.current.set(elem.id, elem.cz / parent.lz);
+              elementOldHeightMapRef.current.set(elem.id, elem.cz);
+            }
           }
         } else if (groupedElementsIdSet.has(elem.id) || childCuboidSet.has(elem.id)) {
           elementHeightMapRef.current.set(elem.id, elem.lz / height);

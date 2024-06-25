@@ -1293,7 +1293,11 @@ const Ground = React.memo(() => {
                       absPosMapRef.current.set(e.id, centerAbsPos);
                       break;
                     }
-                    case ObjectType.SolarPanel:
+                    case ObjectType.SolarPanel: {
+                      const center = new Vector3(e.cx, e.cy, e.cz).applyEuler(new Euler(0, 0, rot)).add(cuboidCenter);
+                      absPosMapRef.current.set(e.id, center);
+                      break;
+                    }
                     case ObjectType.Light:
                     case ObjectType.Sensor:
                       if (Util.isIdentical(e.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
@@ -1370,7 +1374,11 @@ const Ground = React.memo(() => {
                       absPosMapRef.current.set(e.id, centerAbsPos);
                       break;
                     }
-                    case ObjectType.SolarPanel:
+                    case ObjectType.SolarPanel: {
+                      const center = new Vector3(e.cx, e.cy, e.cz).applyEuler(new Euler(0, 0, a)).add(foundationCenter);
+                      absPosMapRef.current.set(e.id, center);
+                      break;
+                    }
                     case ObjectType.ParabolicTrough:
                     case ObjectType.ParabolicDish:
                     case ObjectType.FresnelReflector:
@@ -1408,7 +1416,7 @@ const Ground = React.memo(() => {
                 const euler = new Euler(0, 0, selectedElement.rotation[2]);
                 for (const e of elementsOnRoof) {
                   // skylight window position is absolute to foundation
-                  if (e.type === ObjectType.Window) {
+                  if (e.type === ObjectType.Window || e.type === ObjectType.SolarPanel) {
                     const centerAbsPos = new Vector3(e.cx, e.cy).applyEuler(euler);
                     centerAbsPos.add(foundationCenter);
                     absPosMapRef.current.set(e.id, centerAbsPos);
@@ -1849,20 +1857,47 @@ const Ground = React.memo(() => {
                         switch (resizeHandleType) {
                           case ResizeHandleType.Lower:
                           case ResizeHandleType.Upper:
-                            childClone.cy = relativePos.y / ly;
+                            if (childClone.type === ObjectType.SolarPanel) {
+                              childClone.cy = relativePos.y;
+                            } else {
+                              childClone.cy = relativePos.y / ly;
+                            }
                             break;
                           case ResizeHandleType.Left:
                           case ResizeHandleType.Right:
-                            childClone.cx = relativePos.x / lx;
+                            if (childClone.type === ObjectType.SolarPanel) {
+                              childClone.cx = relativePos.x;
+                            } else {
+                              childClone.cx = relativePos.x / lx;
+                            }
                             break;
                           case ResizeHandleType.LowerLeft:
                           case ResizeHandleType.LowerRight:
                           case ResizeHandleType.UpperLeft:
                           case ResizeHandleType.UpperRight:
-                            childClone.cx = relativePos.x / lx;
-                            childClone.cy = relativePos.y / ly;
+                            if (childClone.type === ObjectType.SolarPanel) {
+                              childClone.cx = relativePos.x;
+                              childClone.cy = relativePos.y;
+                            } else {
+                              childClone.cx = relativePos.x / lx;
+                              childClone.cy = relativePos.y / ly;
+                            }
                             break;
                         }
+                      }
+                    }
+                  } else {
+                    if (
+                      childClone.type === ObjectType.SolarPanel &&
+                      (childClone as SolarPanelModel).parentType === ObjectType.Roof
+                    ) {
+                      const centerAbsPos = absPosMapRef.current.get(c.id);
+                      if (centerAbsPos) {
+                        const relativePos = new Vector2()
+                          .subVectors(new Vector2(centerAbsPos.x, centerAbsPos.y), center)
+                          .rotateAround(ORIGIN_VECTOR2, -e.rotation[2]);
+                        childClone.cx = relativePos.x;
+                        childClone.cy = relativePos.y;
                       }
                     }
                   }
@@ -1970,7 +2005,37 @@ const Ground = React.memo(() => {
                 }
                 break;
               }
-              case ObjectType.SolarPanel:
+              case ObjectType.SolarPanel: {
+                const centerAbsPos = absPosMapRef.current.get(e.id);
+                if (centerAbsPos) {
+                  const relativePos = new Vector2()
+                    .subVectors(new Vector2(centerAbsPos.x, centerAbsPos.y), center)
+                    .rotateAround(ORIGIN_VECTOR2, -grabRef.current!.rotation[2]);
+                  const [x, y, z] = e.normal;
+                  // top face
+                  if (Util.isEqual(z, 1)) {
+                    e.cx = relativePos.x;
+                    e.cy = relativePos.y;
+                  }
+                  // north face
+                  if (Util.isEqual(x, 0) && Util.isEqual(y, 1)) {
+                    e.cy = ly / 2;
+                  }
+                  // south face
+                  else if (Util.isEqual(x, 0) && Util.isEqual(y, -1)) {
+                    e.cy = -ly / 2;
+                  }
+                  // west face
+                  else if (Util.isEqual(x, -1) && Util.isEqual(y, 0)) {
+                    e.cx = -lx / 2;
+                  }
+                  // east face
+                  else if (Util.isEqual(x, 1) && Util.isEqual(y, 0)) {
+                    e.cx = lx / 2;
+                  }
+                }
+                break;
+              }
               case ObjectType.ParabolicTrough:
               case ObjectType.ParabolicDish:
               case ObjectType.FresnelReflector:
@@ -2049,7 +2114,7 @@ const Ground = React.memo(() => {
           }
           if (
             e.foundationId === grabRef.current.id &&
-            e.type === ObjectType.SolarPanel &&
+            (e.type === ObjectType.SolarPanel || e.type === ObjectType.Window) &&
             (e as SolarPanelModel).parentType === ObjectType.Roof
           ) {
             const centerAbsPos = absPosMapRef.current.get(e.id);
@@ -2057,43 +2122,29 @@ const Ground = React.memo(() => {
               const relativePos = new Vector2()
                 .subVectors(new Vector2(centerAbsPos.x, centerAbsPos.y), center)
                 .rotateAround(ORIGIN_VECTOR2, -grabRef.current!.rotation[2]);
-              switch (resizeHandleType) {
-                case ResizeHandleType.Lower:
-                case ResizeHandleType.Upper:
-                  e.cy = relativePos.y / ly;
-                  break;
-                case ResizeHandleType.Left:
-                case ResizeHandleType.Right:
-                  e.cx = relativePos.x / lx;
-                  break;
-                case ResizeHandleType.LowerLeft:
-                case ResizeHandleType.LowerRight:
-                case ResizeHandleType.UpperLeft:
-                case ResizeHandleType.UpperRight:
-                  e.cx = relativePos.x / lx;
-                  e.cy = relativePos.y / ly;
-                  break;
-              }
+              e.cx = relativePos.x;
+              e.cy = relativePos.y;
             }
           }
           if (
             e.foundationId === grabRef.current.id &&
-            e.type === ObjectType.Window &&
-            (e as WindowModel).parentType === ObjectType.Roof
+            (e.type === ObjectType.Sensor || e.type === ObjectType.Light) &&
+            (e as SolarPanelModel).parentType === ObjectType.Roof
           ) {
             const centerPos = absPosMapRef.current.get(e.id);
             if (centerPos) {
               const relPosToFoundation = new Vector2()
                 .subVectors(new Vector2(centerPos.x, centerPos.y), center)
                 .rotateAround(ORIGIN_VECTOR2, -grabRef.current!.rotation[2]);
-              e.cx = relPosToFoundation.x;
-              e.cy = relPosToFoundation.y;
+              e.cx = relPosToFoundation.x / lx;
+              e.cy = relPosToFoundation.y / ly;
             }
           }
         }
       }
     });
 
+    // for human and plants
     switch (grabRef.current.type) {
       case ObjectType.Foundation: {
         const foundationRef = useRefStore.getState().foundationRef;
