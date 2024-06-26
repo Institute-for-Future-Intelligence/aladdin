@@ -2,7 +2,7 @@
  * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
-import { Box, Plane, Sphere } from '@react-three/drei';
+import { Box, Plane } from '@react-three/drei';
 import { ThreeEvent, useFrame, useThree } from '@react-three/fiber';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
@@ -32,6 +32,8 @@ import Materials from './materials';
 import Poles, { PolesRefProps } from './poles';
 import Wireframe from './wireframe';
 import Label from './label';
+import MoveHandle from './moveHandle';
+import ResizeHandleGroup from './resizeHandle';
 
 export enum Operation {
   Move = 'Move',
@@ -51,14 +53,17 @@ export enum SurfaceType {
 
 const INTERSECTION_PLANE_XY_NAME = 'Intersection Plane XY';
 
+const RotateHandleDist = 1;
+
 /**
  * todos:
- * -handle size, style and color
  * -heatmap lines
  * -undo/redo/actionState
  * -copy/cut/paste
- * -pointer down should check if it's the first element.
  * -simulations
+ * -polarGrid
+ * -pointer down should check if it's the first element.
+ * -pointer style
  *
  * bugs:
  * -resize when tracker is enabled. auzi and tilt should use tracker group value.
@@ -96,10 +101,6 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
 
   const selected = useSelected(id);
   const { materialLx, materialLy, setMaterialSize } = useMaterialSize(lx, ly);
-
-  // const handleSize = useHandleSize(); // todo: performance issue: wrap handles into new component
-  const handleSize = 0.3;
-  const RotateHandleDist = 1;
 
   const { set, get, raycaster } = useThree();
 
@@ -908,23 +909,15 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
             {isShowMoveAndResizeHandle && (
               <>
                 {/* move handle */}
-                {<Sphere name="Move_Handle" args={[handleSize]} onPointerDown={onMoveHandlePointerDown} />}
+                {<MoveHandle onPointerDown={onMoveHandlePointerDown} />}
 
                 {/* resize handles group */}
-                <group
-                  name="Resize_Handles_Group"
+                <ResizeHandleGroup
                   ref={resizeHandleGroupRef}
+                  hlx={hlx}
+                  hly={hly}
                   onPointerDown={onResizeHandleGroupPointerDown}
-                >
-                  <Box name={ResizeHandleType.Right} position={[hlx, 0, 0.1]} args={[handleSize, handleSize, 0.1]}>
-                    <meshBasicMaterial color="yellow" />
-                  </Box>
-                  <Box name={ResizeHandleType.Left} position={[-hlx, 0, 0.1]} args={[handleSize, handleSize, 0.1]} />
-                  <Box name={ResizeHandleType.Upper} position={[0, hly, 0.1]} args={[handleSize, handleSize, 0.1]}>
-                    <meshBasicMaterial color="red" />
-                  </Box>
-                  <Box name={ResizeHandleType.Lower} position={[0, -hly, 0.1]} args={[handleSize, handleSize, 0.1]} />
-                </group>
+                />
               </>
             )}
 

@@ -2,9 +2,10 @@
  * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   GAP_PERCENT,
+  HIGHLIGHT_HANDLE_COLOR,
   MARGIN_PERCENT,
   RESOLUTION,
   SOLAR_PANEL_CELL_COLOR_BLACK,
@@ -19,6 +20,42 @@ import * as Selector from '../../stores/selector';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
 import { Operation } from './refSolarPanel';
+
+export const useHandle = (handleColor: string) => {
+  const [_color, setColor] = useState(handleColor);
+
+  const pointerDownRef = useRef(false);
+  const hoveredRef = useRef(false);
+
+  useEffect(() => {
+    const handlePointerUp = () => {
+      pointerDownRef.current = false;
+      if (!hoveredRef.current) {
+        setColor(handleColor);
+      }
+    };
+    window.addEventListener('pointerup', handlePointerUp);
+    return () => window.removeEventListener('pointerup', handlePointerUp);
+  }, []);
+
+  const _onPointerDown = () => {
+    pointerDownRef.current = true;
+  };
+
+  const _onPointerEnter = () => {
+    hoveredRef.current = true;
+    setColor(HIGHLIGHT_HANDLE_COLOR);
+  };
+
+  const _onPointerLeave = () => {
+    hoveredRef.current = false;
+    if (!pointerDownRef.current) {
+      setColor(handleColor);
+    }
+  };
+
+  return { _color, _onPointerDown, _onPointerEnter, _onPointerLeave };
+};
 
 export const useMaterialSize = (lx: number, ly: number) => {
   const [materialLx, setMaterialLx] = useState(lx);

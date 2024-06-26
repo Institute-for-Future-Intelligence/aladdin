@@ -6,10 +6,12 @@ import { Line, Ring } from '@react-three/drei';
 import { ThreeEvent } from '@react-three/fiber';
 import React from 'react';
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
-import { HALF_PI } from 'src/constants';
+import { HALF_PI, RESIZE_HANDLE_COLOR } from 'src/constants';
 import { RotateHandleType } from 'src/types';
 import { DoubleSide, Group } from 'three';
 import SpriteText from 'three-spritetext';
+import { useHandleSize } from '../wall/hooks';
+import { useHandle } from './hooks';
 
 interface TiltHandleProps {
   tiltAngle: number;
@@ -27,7 +29,7 @@ export interface TiltHandleRefPros {
 const TiltHandle = React.memo(
   forwardRef<TiltHandleRefPros, TiltHandleProps>(
     ({ tiltAngle, positionZ, isOnVerticalSurface, onPointerDown, onPointerMove }, ref) => {
-      const tiltHandleSize = 1;
+      const handleSize = useHandleSize() * 3;
       const degreeUnit = Math.PI / 12;
 
       const ringThetaLength = useMemo(() => (isOnVerticalSurface ? HALF_PI : Math.PI), [isOnVerticalSurface]);
@@ -42,6 +44,8 @@ const TiltHandle = React.memo(
       const tiltHandleGroupRef = useRef<Group>(null!);
       const tiltHandlePointerRef = useRef<Group>(null!);
       const textRef = useRef<SpriteText>(null!);
+
+      const { _color, _onPointerDown, _onPointerEnter, _onPointerLeave } = useHandle(RESIZE_HANDLE_COLOR);
 
       useImperativeHandle(
         ref,
@@ -76,6 +80,7 @@ const TiltHandle = React.memo(
       const onTiltHandlePointerDown = (event: ThreeEvent<PointerEvent>) => {
         setShowTiltAngle(true);
         onPointerDown(event);
+        _onPointerDown();
       };
 
       const onTiltHandlePointerMove = (event: ThreeEvent<PointerEvent>) => {
@@ -96,22 +101,24 @@ const TiltHandle = React.memo(
           {/* ring handles */}
           <Ring
             name={RotateHandleType.Tilt}
-            args={[1, 1.1, 18, 2, 0, ringThetaLength]}
+            args={[handleSize, 1.125 * handleSize, 18, 2, 0, ringThetaLength]}
             rotation={[HALF_PI, 0, HALF_PI, 'ZXY']}
             onPointerDown={onTiltHandlePointerDown}
+            onPointerEnter={_onPointerEnter}
+            onPointerLeave={_onPointerLeave}
           >
-            <meshBasicMaterial side={DoubleSide} />
+            <meshBasicMaterial side={DoubleSide} color={_color} />
           </Ring>
           {showTiltAngle && (
             <>
               {/* tilt handle intersection plane */}
               <Ring
                 name={'Tilt_Handle_Intersection_Plane'}
-                args={[tiltHandleSize, 2 * tiltHandleSize, 18, 2, 0, ringThetaLength]}
+                args={[handleSize, 2 * handleSize, 18, 2, 0, ringThetaLength]}
                 rotation={[HALF_PI, 0, HALF_PI, 'ZXY']}
                 onPointerMove={onTiltHandlePointerMove}
               >
-                <meshBasicMaterial depthTest={false} transparent={true} opacity={0.5} side={DoubleSide} />
+                <meshBasicMaterial transparent depthTest={false} opacity={0.5} side={DoubleSide} />
               </Ring>
 
               {/* scale */}
@@ -122,8 +129,8 @@ const TiltHandle = React.memo(
                     <group key={i} rotation={[degreeUnit * i, 0, 0, 'ZXY']}>
                       <Line
                         points={[
-                          [0, 0, 1.8 * tiltHandleSize],
-                          [0, 0, 2 * tiltHandleSize],
+                          [0, 0, 1.8 * handleSize],
+                          [0, 0, 2 * handleSize],
                         ]}
                         color={'white'}
                         transparent={true}
@@ -132,10 +139,10 @@ const TiltHandle = React.memo(
                       <textSprite
                         userData={{ unintersectable: true }}
                         text={text}
-                        fontSize={20 * tiltHandleSize}
+                        fontSize={20 * handleSize}
                         fontFace={'Times Roman'}
-                        textHeight={0.15 * tiltHandleSize}
-                        position={[0, 0, 1.6 * tiltHandleSize]}
+                        textHeight={0.15 * handleSize}
+                        position={[0, 0, 1.6 * handleSize]}
                       />
                     </group>
                   );
@@ -146,8 +153,8 @@ const TiltHandle = React.memo(
                 {/* pointer */}
                 <Line
                   points={[
-                    [0, 0, tiltHandleSize],
-                    [0, 0, 1.75 * tiltHandleSize],
+                    [0, 0, handleSize],
+                    [0, 0, 1.75 * handleSize],
                   ]}
                 />
 
@@ -156,10 +163,10 @@ const TiltHandle = React.memo(
                   ref={textRef}
                   userData={{ unintersectable: true }}
                   text={getAngleText(tiltAngle)}
-                  fontSize={20 * tiltHandleSize}
+                  fontSize={20 * handleSize}
                   fontFace={'Times Roman'}
-                  textHeight={0.2 * tiltHandleSize}
-                  position={[0, 0, 0.75 * tiltHandleSize]}
+                  textHeight={0.2 * handleSize}
+                  position={[0, 0, 0.75 * handleSize]}
                 />
               </group>
             </>
