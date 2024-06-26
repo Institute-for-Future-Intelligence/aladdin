@@ -57,10 +57,9 @@ const RotateHandleDist = 1;
 
 /**
  * todos:
- * -heatmap lines
- * -undo/redo/actionState
  * -copy/cut/paste
  * -simulations
+ * -heatmap lines
  * -polarGrid
  * -pointer down should check if it's the first element.
  * -pointer style
@@ -497,6 +496,10 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
 
   // update common state here
   const onWindowPointerUp = useCallback(() => {
+    if (!operationRef.current) return;
+
+    const oldElement = useStore.getState().elements.find((e) => e.id === id) as SolarPanelModel | undefined;
+
     switch (operationRef.current) {
       case Operation.Move: {
         setCommonStore((state) => {
@@ -599,6 +602,8 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
         break;
       }
     }
+    SolarPanelUtil.addUndoable(oldElement, operationRef.current);
+
     if (get().frameloop !== 'demand') {
       setFrameLoop('demand');
     }
@@ -616,7 +621,7 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
   useEffect(() => {
     window.addEventListener('pointerup', onWindowPointerUp);
     return () => window.removeEventListener('pointerup', onWindowPointerUp);
-  }, []);
+  }, [onWindowPointerUp]);
 
   useFrame(({ camera, scene, raycaster }) => {
     if (!groupRef.current || !topAzimuthGroupRef.current || !selected || !operationRef.current) return;

@@ -145,3 +145,15 @@ export interface UndoableResizeSkylightPolygonTop extends Undoable {
   oldPolygonTop: number[];
   newPolygonTop: number[];
 }
+
+export interface UnoableResizeSolarPanel extends Undoable {
+  id: string;
+  oldPos: number[];
+  newPos: number[];
+  oldDms: number[];
+  newDms: number[];
+  oldRot: number[];
+  newRot: number[];
+  oldNor: number[];
+  newNor: number[];
+}
