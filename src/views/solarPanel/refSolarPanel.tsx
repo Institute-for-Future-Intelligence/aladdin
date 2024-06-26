@@ -31,6 +31,7 @@ import { useMaterialSize } from './hooks';
 import Materials from './materials';
 import Poles, { PolesRefProps } from './poles';
 import Wireframe from './wireframe';
+import Label from './label';
 
 export enum Operation {
   Move = 'Move',
@@ -50,15 +51,21 @@ export enum SurfaceType {
 
 const INTERSECTION_PLANE_XY_NAME = 'Intersection Plane XY';
 
-// todo: undo/redo/actionState
-// todo: copy/cut/paste
-// todo: pointer down should check if it's the first element.
-// todo: simulations
+/**
+ * todos:
+ * -handle size, style and color
+ * -heatmap lines
+ * -undo/redo/actionState
+ * -copy/cut/paste
+ * -pointer down should check if it's the first element.
+ * -simulations
+ *
+ * bugs:
+ * -resize when tracker is enabled. auzi and tilt should use tracker group value.
+ * -tilt anchor on cuboid vertial surfaces have problem. anchor is not on same plane with pointer
+ */
 
-// bug: resize when tracker is enabled. auzi and tilt should use tracker group value.
-// bug: tilt anchor on cuboid vertial surfaces have problem. anchor is not on same plane with pointer
-
-const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
+const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
   const {
     id,
     cx,
@@ -66,12 +73,10 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
     cz,
     lx,
     ly,
-    // lz,
     rotation,
     normal,
     relativeAzimuth,
     tiltAngle,
-    parentId,
     parentType,
     drawSunBeam,
     trackerType = TrackerType.NO_TRACKER,
@@ -82,10 +87,10 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
     poleSpacing,
     color = 'white',
     locked,
-  } = refSolarPanel;
+  } = solarPanel;
 
   const pvModel = useStore.getState().pvModules[pvModelName] as PvModel;
-  const lz = Math.max(pvModel.thickness, 0.02);
+  const lz = Math.max(pvModel?.thickness ?? 0.02, 0.02);
 
   const [hlx, hly, hlz] = [lx / 2, ly / 2, lz / 2];
 
@@ -100,6 +105,7 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
 
   const setCommonStore = useStore(Selector.set);
 
+  const [hovered, setHovered] = useState(false);
   const [showXYIntersectionPlane, setShowXYIntersectionPlane] = useState(false);
 
   // meshes ref
@@ -884,8 +890,15 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
           {/* tilt group */}
           <group name={'Top_Tilt_Group'} ref={topTiltGroupRef} rotation={topTiltEuler}>
             {/* panel */}
-            <Box name="Box_Mesh" ref={boxMeshRef} userData={{ simulation: true }} scale={[lx, ly, lz]}>
-              <Materials solarPanel={refSolarPanel} lx={materialLx} ly={materialLy} />
+            <Box
+              name="Box_Mesh"
+              ref={boxMeshRef}
+              userData={{ simulation: true }}
+              scale={[lx, ly, lz]}
+              onPointerOver={() => setHovered(true)}
+              onPointerOut={() => setHovered(false)}
+            >
+              <Materials solarPanel={solarPanel} lx={materialLx} ly={materialLy} />
             </Box>
 
             {/* wireframe */}
@@ -967,6 +980,9 @@ const RefSolarPanel = React.memo((refSolarPanel: SolarPanelModel) => {
           color={color}
           visiable={isShowPoles}
         />
+
+        {/* label */}
+        {(hovered || solarPanel.showLabel) && !selected && <Label solarPanel={solarPanel} />}
       </group>
 
       {/* sun beam group */}
