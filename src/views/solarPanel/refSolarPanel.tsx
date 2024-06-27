@@ -64,7 +64,6 @@ const RotateHandleDist = 1;
  * -pointer down should check if it's the first element.
  * -coor text z
  * -pointer style
- * -tilt,resize limitation
  *
  * bugs:
  * -resize when tracker is enabled. auzi and tilt should use tracker group value.
@@ -360,6 +359,15 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
     return d;
   };
 
+  const getLimitedResizeDistance = (distance: number, operation: Operation) => {
+    if (operation === Operation.ResizeX) {
+      return distance;
+    } else {
+      const max = Math.abs((2 * poleHeight) / Math.sin(tiltAngle));
+      return Util.clamp(distance, -max, max);
+    }
+  };
+
   const handleParentChange = (
     currentWrapper: Object3D<Object3DEventMap> | null,
     newParent: Object3D<Object3DEventMap>,
@@ -499,7 +507,8 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
       updateAuzimuthGroupZ(z);
       updateTilt(a, -z);
     } else {
-      updateTilt(angle, 0);
+      const maxAngle = poleHeight >= hly ? HALF_PI : Math.asin(poleHeight / hly);
+      updateTilt(Util.clamp(angle, -maxAngle, maxAngle), 0);
     }
   };
 
@@ -805,15 +814,18 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
               updateAuzimuthGroupZ(Math.abs((distance / 2) * Math.sin(Math.min(0, tiltAngle))));
             }
           }
+          setMaterialSize(operationRef.current, distance);
         } else {
+          const dist = getLimitedResizeDistance(distance, operationRef.current);
+
           const center = tempVector3_0
             .copy(anchorToCenter)
-            .multiplyScalar(distance / 2)
+            .multiplyScalar(dist / 2)
             .add(anchor)
             .sub(parentGroup.getWorldPosition(tempVector3_3))
             .applyQuaternion(parentGroup.getWorldQuaternion(tempQuaternion_0).invert());
 
-          const d = Math.abs(distance);
+          const d = Math.abs(dist);
           if (operationRef.current === Operation.ResizeX) {
             boxGroupMeshRef.current.scale.x = d;
             if (polesRef.current) {
@@ -828,9 +840,9 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
           groupRef.current.position.x = center.x;
           groupRef.current.position.y = center.y;
           groupRef.current.position.z = center.z;
+          setMaterialSize(operationRef.current, dist);
         }
 
-        setMaterialSize(operationRef.current, distance);
         updateChildMeshes();
         updateSolarPanelCount(boxGroupMeshRef.current.scale.x, boxGroupMeshRef.current.scale.y);
         break;
