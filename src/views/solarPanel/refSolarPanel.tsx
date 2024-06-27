@@ -2,7 +2,7 @@
  * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
-import { Box, Plane } from '@react-three/drei';
+import { Plane } from '@react-three/drei';
 import { ThreeEvent, useFrame, useThree } from '@react-three/fiber';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
@@ -34,6 +34,7 @@ import Wireframe from './wireframe';
 import Label from './label';
 import MoveHandle from './moveHandle';
 import ResizeHandleGroup from './resizeHandle';
+import PanelBox from './panelBox';
 
 export enum Operation {
   Move = 'Move',
@@ -58,7 +59,6 @@ const RotateHandleDist = 1;
 /**
  * todos:
  * -GD
- * -shadow
  * -info panel
  * -panel rack on wall
  * -heatmap lines
@@ -901,9 +901,9 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
             {/* panel box group */}
             <group ref={boxGroupMeshRef} scale={[lx, ly, lz]}>
               {/* panel box mesh */}
-              <Box name="Box_Mesh" onPointerOver={() => setHovered(true)} onPointerOut={() => setHovered(false)}>
+              <PanelBox onPointerOver={() => setHovered(true)} onPointerOut={() => setHovered(false)}>
                 <Materials solarPanel={solarPanel} lx={materialLx} ly={materialLy} />
-              </Box>
+              </PanelBox>
               {/* simulation panel */}
               <Plane name={'Solar Panel Simulation Plane'} uuid={id} userData={{ simulation: true }} visible={false}>
                 <meshBasicMaterial side={DoubleSide} />
