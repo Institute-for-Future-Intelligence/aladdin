@@ -114,9 +114,9 @@ const SolarPanelVisibility = React.memo(() => {
       if (!parent) throw new Error('foundation of solar panel does not exist');
       rooftop = true;
     }
-    const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
+    const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent, undefined, undefined, true);
     if (rooftop) {
-      center.z = panel.cz + parent.cz + parent.lz / 2;
+      center.z = panel.cz + parent.cz;
     }
     const normal = new Vector3().fromArray(panel.normal);
     const zRot = parent.rotation[2] + panel.relativeAzimuth;

@@ -9,7 +9,7 @@ import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { useStore } from 'src/stores/common';
 import { useRefStore } from 'src/stores/commonRef';
 import { ObjectType, Orientation, ResizeHandleType, RotateHandleType, TrackerType } from 'src/types';
-import { Euler, Group, Mesh, Object3D, Object3DEventMap, Raycaster, Scene, Vector3 } from 'three';
+import { DoubleSide, Euler, Group, Mesh, Object3D, Object3DEventMap, Raycaster, Scene, Vector3 } from 'three';
 import { useSelected } from '../../hooks';
 import * as Selector from '../../stores/selector';
 import { SOLAR_PANELS_WRAPPER_NAME } from './solarPanelWrapper';
@@ -57,11 +57,15 @@ const RotateHandleDist = 1;
 
 /**
  * todos:
- * -simulations
+ * -GD
+ * -shadow
+ * -foundation and cuboid height change by context menu
  * -info panel
+ * -panel rack on wall
  * -heatmap lines
  * -polarGrid
  * -pointer down should check if it's the first element.
+ * -coor text z
  * -pointer style
  *
  * bugs:
@@ -113,7 +117,7 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
   const trackerGroupRef = useRef<TrackerGroupRefProps>(null!);
   const topAzimuthGroupRef = useRef<Group>(null!);
   const topTiltGroupRef = useRef<Group>(null!);
-  const boxMeshRef = useRef<Mesh>(null!);
+  const boxGroupMeshRef = useRef<Group>(null!);
   const resizeHandleGroupRef = useRef<Group>(null!);
   const rotateHandleGroupRef = useRef<Group>(null!);
   const tiltHandleRef = useRef<TiltHandleRefPros>(null!);
@@ -183,8 +187,8 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
 
   // update child meshes position due to resize
   const updateChildMeshes = () => {
-    if (!boxMeshRef.current) return;
-    const [hx, hy] = boxMeshRef.current.scale.toArray().map((v) => v / 2);
+    if (!boxGroupMeshRef.current) return;
+    const [hx, hy] = boxGroupMeshRef.current.scale.toArray().map((v) => v / 2);
 
     // update resize handle
     if (resizeHandleGroupRef.current) {
@@ -562,11 +566,11 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
       case Operation.ResizeX:
       case Operation.ResizeY: {
         setCommonStore((state) => {
-          if (!boxMeshRef.current || !groupRef.current) return;
+          if (!boxGroupMeshRef.current || !groupRef.current) return;
           const sp = state.elements.find((e) => e.id === id) as SolarPanelModel | undefined;
           if (!sp) return;
-          sp.lx = boxMeshRef.current.scale.x;
-          sp.ly = boxMeshRef.current.scale.y;
+          sp.lx = boxGroupMeshRef.current.scale.x;
+          sp.ly = boxGroupMeshRef.current.scale.y;
           // todo: should use ref to find parent
           if (sp.parentType === ObjectType.Wall) {
             const parentWall = state.elements.find((e) => e.id === sp.parentId);
@@ -788,9 +792,9 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
           }
 
           if (operationRef.current === Operation.ResizeX) {
-            boxMeshRef.current.scale.x = Math.abs(distance);
+            boxGroupMeshRef.current.scale.x = Math.abs(distance);
           } else if (operationRef.current === Operation.ResizeY) {
-            boxMeshRef.current.scale.y = Math.abs(distance);
+            boxGroupMeshRef.current.scale.y = Math.abs(distance);
             // bug: can't update auzimuth group z on cuboid. because anchor and pointer won't be on same vertical plane.
             if (parentType === ObjectType.Wall) {
               updateAuzimuthGroupZ(Math.abs((distance / 2) * Math.sin(tiltAngle)));
@@ -806,12 +810,12 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
 
           const d = Math.abs(distance);
           if (operationRef.current === Operation.ResizeX) {
-            boxMeshRef.current.scale.x = d;
+            boxGroupMeshRef.current.scale.x = d;
             if (polesRef.current) {
               polesRef.current.update({ lx: d });
             }
           } else if (operationRef.current === Operation.ResizeY) {
-            boxMeshRef.current.scale.y = d;
+            boxGroupMeshRef.current.scale.y = d;
             if (polesRef.current) {
               polesRef.current.update({ ly: d });
             }
@@ -895,17 +899,17 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
         <TrackerGroup ref={trackerGroupRef} tiltAngle={tiltAngle} trackerType={trackerType} surfaceType={surfaceType}>
           {/* tilt group */}
           <group name={'Top_Tilt_Group'} ref={topTiltGroupRef} rotation={topTiltEuler}>
-            {/* panel */}
-            <Box
-              name="Box_Mesh"
-              ref={boxMeshRef}
-              userData={{ simulation: true }}
-              scale={[lx, ly, lz]}
-              onPointerOver={() => setHovered(true)}
-              onPointerOut={() => setHovered(false)}
-            >
-              <Materials solarPanel={solarPanel} lx={materialLx} ly={materialLy} />
-            </Box>
+            {/* panel box group */}
+            <group ref={boxGroupMeshRef} scale={[lx, ly, lz]}>
+              {/* panel box mesh */}
+              <Box name="Box_Mesh" onPointerOver={() => setHovered(true)} onPointerOut={() => setHovered(false)}>
+                <Materials solarPanel={solarPanel} lx={materialLx} ly={materialLy} />
+              </Box>
+              {/* simulation panel */}
+              <Plane name={'Solar Panel Simulation Plane'} uuid={id} userData={{ simulation: true }} visible={false}>
+                <meshBasicMaterial side={DoubleSide} />
+              </Plane>
+            </group>
 
             {/* wireframe */}
             {selected && locked && <Wireframe hlx={hlx} hly={hly} />}

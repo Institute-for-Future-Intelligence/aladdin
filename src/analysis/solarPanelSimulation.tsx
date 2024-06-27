@@ -656,14 +656,14 @@ const SolarPanelSimulation = React.memo(({ city }: SolarPanelSimulationProps) =>
     if (!output) return;
     const center = walltop
       ? Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent, getFoundation(panel), panel.lz)
-      : Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
+      : Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent, undefined, undefined, true);
     const rot = parent.rotation[2];
     let zRot = rot + panel.relativeAzimuth;
     let angle = panel.tiltAngle;
     let flat = true;
     if (rooftop) {
       // z coordinate of a rooftop solar panel is absolute
-      center.z = panel.cz + panel.lz + 0.02 + parent.cz + parent.lz / 2;
+      center.z = panel.cz + panel.lz + 0.02 + parent.cz;
       if (Util.isZero(panel.rotation[0])) {
         // on a flat roof, add pole height
         center.z += panel.poleHeight;
@@ -896,14 +896,14 @@ const SolarPanelSimulation = React.memo(({ city }: SolarPanelSimulationProps) =>
     if (sunDirection.z <= 0) return; // when the sun is not out
     const center = walltop
       ? Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent, getFoundation(panel), panel.lz)
-      : Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
+      : Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent, undefined, undefined, true);
     const rot = parent.rotation[2];
     let angle = panel.tiltAngle;
     let zRot = rot + panel.relativeAzimuth;
     let flat = true;
     if (rooftop) {
       // z coordinate of a rooftop solar panel is absolute
-      center.z = panel.cz + panel.lz + 0.02 + parent.cz + parent.lz / 2;
+      center.z = panel.cz + panel.lz + 0.02 + parent.cz;
       if (Util.isZero(panel.rotation[0])) {
         // on a flat roof, add pole height
         center.z += panel.poleHeight;

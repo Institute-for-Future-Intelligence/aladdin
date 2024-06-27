@@ -1400,6 +1400,7 @@ export class Util {
     parent: ElementModel,
     foundation?: FoundationModel | null,
     shift?: number,
+    isAbs?: boolean,
   ): Vector3 {
     if (parent.type === ObjectType.Wall && foundation) {
       const wall = parent as WallModel;
@@ -1419,13 +1420,18 @@ export class Util {
       }
     }
     if (parent.type === ObjectType.Roof && foundation) {
-      const v = new Vector3(x * foundation.lx, y * foundation.ly, z + foundation.lz);
+      const v = new Vector3(x, y, z + foundation.cz);
       v.applyEuler(new Euler().fromArray(foundation.rotation as XYZO));
       v.x += foundation.cx;
       v.y += foundation.cy;
       return v;
     }
-    const v = new Vector3(x * parent.lx, y * parent.ly, z * parent.lz);
+    const v = new Vector3();
+    if (isAbs) {
+      v.set(x, y, z);
+    } else {
+      v.set(x * parent.lx, y * parent.ly, z * parent.lz);
+    }
     v.applyEuler(new Euler().fromArray(parent.rotation as XYZO));
     v.x += parent.cx;
     v.y += parent.cy;
