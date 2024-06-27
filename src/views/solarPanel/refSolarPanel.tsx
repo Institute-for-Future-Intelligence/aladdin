@@ -59,12 +59,12 @@ const RotateHandleDist = 1;
 
 /**
  * todos:
- * -info panel
  * -panel rack on wall
  * -polarGrid
  * -pointer down should check if it's the first element.
  * -coor text z
  * -pointer style
+ * -tilt,resize limitation
  *
  * bugs:
  * -negtive tilt angle on wall, and resizeY
@@ -275,6 +275,13 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
     }
     if (polesRef.current) {
       polesRef.current.update({ tilt: angle });
+    }
+  };
+
+  const updateSolarPanelCount = (lx: number, ly: number) => {
+    const ref = useRefStore.getState().solarPanelCountRef;
+    if (ref && ref.current) {
+      ref.current.textContent = `${SolarPanelUtil.getRackCount(orientation, lx, ly, pvModel.length, pvModel.width)}`;
     }
   };
 
@@ -826,6 +833,7 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
 
         setMaterialSize(operationRef.current, distance);
         updateChildMeshes();
+        updateSolarPanelCount(boxGroupMeshRef.current.scale.x, boxGroupMeshRef.current.scale.y);
         break;
       }
       case Operation.RotateUpper: {

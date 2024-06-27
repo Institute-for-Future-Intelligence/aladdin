@@ -15,6 +15,18 @@ import { UnoableResizeSolarPanel } from 'src/undo/UndoableResize';
 import { UndoableChange } from 'src/undo/UndoableChange';
 
 export class SolarPanelUtil {
+  static getRackCount(orientation: Orientation, lx: number, ly: number, modelLength: number, modelWidth: number) {
+    if (orientation === Orientation.portrait) {
+      const nx = Math.max(1, Math.round(lx / modelWidth));
+      const ny = Math.max(1, Math.round(ly / modelLength));
+      return nx * ny;
+    } else {
+      const nx = Math.max(1, Math.round(lx / modelLength));
+      const ny = Math.max(1, Math.round(ly / modelWidth));
+      return nx * ny;
+    }
+  }
+
   static setSelected(id: string, b: boolean) {
     useStore.getState().set((state) => {
       if (!state.multiSelectionsMode) {

@@ -21,6 +21,7 @@ export interface RefStoreState {
   cuboidRef: RefObject<Group> | null;
   listenToAutoDeletionByDeleteRef: React.MutableRefObject<boolean> | null;
   listenToAutoDeletionByCutRef: React.MutableRefObject<boolean> | null;
+  solarPanelCountRef: React.MutableRefObject<HTMLSpanElement> | null;
   setListenToAutoDeletionByDelete: (b: boolean) => void;
   setListenToAutoDeletionByCut: (b: boolean) => void;
   canvas: { gl: WebGLRenderer; camera: Camera } | null;
@@ -71,5 +72,6 @@ export const useRefStore = createWithEqualityFn<RefStoreState>()((set, get) => {
     },
     canvas: null,
     pointer: new Vector2(),
+    solarPanelCountRef: null,
   };
 });

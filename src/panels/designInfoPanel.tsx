@@ -7,7 +7,7 @@ import HeliostatImage from '../assets/heliostat.png';
 import LightBulbImage from '../assets/light_bulb.png';
 import DiameterImage from '../assets/diameter.png';
 import AreaImage from '../assets/area.png';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import styled from 'styled-components';
@@ -18,6 +18,7 @@ import { SolarPanelModel } from '../models/SolarPanelModel';
 import { Util } from 'src/Util';
 import { FoundationModel } from '../models/FoundationModel';
 import { useLanguage } from '../hooks';
+import { useRefStore } from 'src/stores/commonRef';
 
 const Container = styled.div`
   position: absolute;
@@ -110,6 +111,15 @@ const DesignInfoPanel = React.memo(() => {
     Util.getBuildingCompletionStatus(selectedElement as FoundationModel, elements) ===
       BuildingCompletionStatus.COMPLETE;
 
+  const solarPanelCountRef = useRef<HTMLSpanElement>(null!);
+  useEffect(() => {
+    if (solarPanelCountRef.current) {
+      useRefStore.setState({
+        solarPanelCountRef: solarPanelCountRef,
+      });
+    }
+  }, [solarPanelCount]);
+
   return (
     <Container>
       <ColumnWrapper $projectView={projectView}>
@@ -124,7 +134,7 @@ const DesignInfoPanel = React.memo(() => {
                 width={36}
                 style={{ paddingLeft: '10px', cursor: 'pointer', filter: 'invert(100%) ' }}
               />
-              <span>{solarPanelCount}</span>
+              <span ref={solarPanelCountRef}>{solarPanelCount}</span>
             </>
           )}
           {heliostatCount > 0 && (
