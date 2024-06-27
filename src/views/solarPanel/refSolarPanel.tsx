@@ -67,7 +67,6 @@ const RotateHandleDist = 1;
  * -tilt,resize limitation
  *
  * bugs:
- * -negtive tilt angle on wall, and resizeY
  * -resize when tracker is enabled. auzi and tilt should use tracker group value.
  * -tilt anchor on cuboid vertial surfaces have problem. anchor is not on same plane with pointer
  */
@@ -803,7 +802,7 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
             boxGroupMeshRef.current.scale.y = Math.abs(distance);
             // bug: can't update auzimuth group z on cuboid. because anchor and pointer won't be on same vertical plane.
             if (parentType === ObjectType.Wall) {
-              updateAuzimuthGroupZ(Math.abs((distance / 2) * Math.sin(tiltAngle)));
+              updateAuzimuthGroupZ(Math.abs((distance / 2) * Math.sin(Math.min(0, tiltAngle))));
             }
           }
         } else {
