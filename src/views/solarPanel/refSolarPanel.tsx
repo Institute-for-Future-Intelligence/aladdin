@@ -58,7 +58,6 @@ const RotateHandleDist = 1;
 
 /**
  * todos:
- * -GD
  * -info panel
  * -panel rack on wall
  * -heatmap lines
