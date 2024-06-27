@@ -20,6 +20,7 @@ import { Util } from '../../../../Util';
 import { useSelectedElement } from '../menuHooks';
 import Dialog from '../../dialog';
 import { useLanguage } from 'src/hooks';
+import { SolarPanelModel } from 'src/models/SolarPanelModel';
 
 const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
@@ -124,7 +125,7 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
     }
   };
 
-  const updateCzOfChildren = (parent: ElementModel, value: number) => {
+  const updateCzOfChildren = (parent: ElementModel, value: number, oldValue?: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.parentId === parent.id) {
@@ -149,6 +150,19 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
                 newChildrenPositionsMapRef.current.set(e.id, new Vector3(e.cx, e.cy, newRelZ));
               }
             }
+          } else if (e.type === ObjectType.SolarPanel) {
+            e.cz = value / 2;
+            newChildrenPositionsMapRef.current.set(e.id, new Vector3(e.cx, e.cy, value / 2));
+          }
+        } else if (
+          e.foundationId === parent.id &&
+          e.type === ObjectType.SolarPanel &&
+          (e as SolarPanelModel).parentType == ObjectType.Roof
+        ) {
+          if (oldValue !== undefined) {
+            oldChildrenPositionsMapRef.current.set(e.id, new Vector3(e.cx, e.cy, e.cz));
+            e.cz = e.cz - oldValue / 2 + value / 2;
+            newChildrenPositionsMapRef.current.set(e.id, new Vector3(e.cx, e.cy, e.cz));
           }
         }
       }
@@ -227,7 +241,7 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
             !elem.locked &&
             useStore.getState().selectedElementIdSet.has(elem.id)
           ) {
-            updateCzOfChildren(elem, value);
+            updateCzOfChildren(elem, value, oldLzsSelected.get(elem.id));
           }
         }
         const undoableChangeSelected = {
@@ -289,7 +303,7 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
         }
         for (const elem of elements) {
           if (elem.type === ObjectType.Foundation) {
-            updateCzOfChildren(elem, value);
+            updateCzOfChildren(elem, value, oldLzsAll.get(elem.id));
           }
         }
         const undoableChangeAll = {
@@ -342,7 +356,7 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
         // foundation via selected element may be outdated, make sure that we get the latest
         const f = getElementById(foundation.id);
         const oldLz = f ? f.lz : foundation.lz;
-        updateCzOfChildren(foundation, value);
+        updateCzOfChildren(foundation, value, oldLz);
         updateLzAndCzById(foundation.id, value);
         const undoableChange = {
           name: 'Set Foundation Height',

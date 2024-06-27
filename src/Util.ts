@@ -898,7 +898,11 @@ export class Util {
         case ObjectType.Wall:
           // TODO
           break;
-        case ObjectType.SolarPanel:
+        case ObjectType.SolarPanel: {
+          const absPos = new Vector2(c.cx, c.cy).rotateAround(ORIGIN_VECTOR2, parent.rotation[2]);
+          childAbsPosMap.set(c.id, absPos);
+          break;
+        }
         case ObjectType.Sensor: {
           const absPos = new Vector2(c.cx * parent.lx, c.cy * parent.ly).rotateAround(
             ORIGIN_VECTOR2,
@@ -916,8 +920,10 @@ export class Util {
       const childAbsPos = childAbsPosMap.get(c.id);
       if (childAbsPos) {
         const relativePos = new Vector2(childAbsPos.x, childAbsPos.y).rotateAround(ORIGIN_VECTOR2, -c.rotation[2]);
-        childClone.cx = relativePos.x / lx;
-        childClone.cy = relativePos.y / ly;
+        if (childClone.type !== ObjectType.SolarPanel) {
+          childClone.cx = relativePos.x / lx;
+          childClone.cy = relativePos.y / ly;
+        }
       }
     }
     const parentClone = JSON.parse(JSON.stringify(parent));

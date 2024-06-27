@@ -211,7 +211,6 @@ const CuboidLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
         if (Util.isIdentical(c.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
           // top face
           switch (c.type) {
-            case ObjectType.SolarPanel:
             case ObjectType.Sensor: {
               const p = new Vector2(c.cx * parent.lx, c.cy * parent.ly).rotateAround(ORIGIN_VECTOR2, azimuth);
               denormalizedPosMapRef.current.set(c.id, p);
@@ -232,6 +231,11 @@ const CuboidLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
               break;
             }
           }
+        } else if (c.type === ObjectType.SolarPanel) {
+          // west, east
+          if (Util.isEqual(c.normal[0], -1) || Util.isEqual(c.normal[0], 1)) {
+            oldChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy, c.cz));
+          }
         }
         if (Util.isPlantOrHuman(c)) {
           oldChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy, c.cz));
@@ -246,7 +250,6 @@ const CuboidLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
         if (Util.isIdentical(c.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
           // top face
           switch (c.type) {
-            case ObjectType.SolarPanel:
             case ObjectType.Sensor: {
               const p = denormalizedPosMapRef.current.get(c.id);
               if (p) {
@@ -275,6 +278,17 @@ const CuboidLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
               }
               break;
             }
+          }
+        } else if (c.type === ObjectType.SolarPanel) {
+          // west
+          if (Util.isEqual(c.normal[0], -1)) {
+            updateElementCxById(c.id, -value / 2);
+            newChildrenPositionsMapRef.current.set(c.id, new Vector3(-value / 2, c.cy, c.cz));
+          }
+          // east
+          if (Util.isEqual(c.normal[0], 1)) {
+            updateElementCxById(c.id, value / 2);
+            newChildrenPositionsMapRef.current.set(c.id, new Vector3(value / 2, c.cy, c.cz));
           }
         }
         if (Util.isPlantOrHuman(c)) {

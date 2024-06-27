@@ -212,7 +212,6 @@ const CuboidWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
         if (Util.isIdentical(c.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
           // top face
           switch (c.type) {
-            case ObjectType.SolarPanel:
             case ObjectType.Sensor: {
               const p = new Vector2(c.cx * parent.lx, c.cy * parent.ly).rotateAround(ORIGIN_VECTOR2, azimuth);
               denormalizedPositionMapRef.current.set(c.id, p);
@@ -233,6 +232,11 @@ const CuboidWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
               break;
             }
           }
+        } else if (c.type === ObjectType.SolarPanel) {
+          // north, south
+          if (Util.isEqual(c.normal[1], -1) || Util.isEqual(c.normal[1], 1)) {
+            oldChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy, c.cz));
+          }
         }
         if (Util.isPlantOrHuman(c)) {
           oldChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy, c.cz));
@@ -247,7 +251,6 @@ const CuboidWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
         if (Util.isIdentical(c.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
           // top face
           switch (c.type) {
-            case ObjectType.SolarPanel:
             case ObjectType.Sensor: {
               const p = denormalizedPositionMapRef.current.get(c.id);
               if (p) {
@@ -276,6 +279,17 @@ const CuboidWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
               }
               break;
             }
+          }
+        } else if (c.type === ObjectType.SolarPanel) {
+          // south
+          if (Util.isEqual(c.normal[1], -1)) {
+            updateElementCyById(c.id, -value / 2);
+            newChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, -value / 2, c.cz));
+          }
+          // north
+          if (Util.isEqual(c.normal[1], 1)) {
+            updateElementCyById(c.id, value / 2);
+            newChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, value / 2, c.cz));
           }
         }
         if (Util.isPlantOrHuman(c)) {

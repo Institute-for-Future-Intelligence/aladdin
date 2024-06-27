@@ -204,6 +204,9 @@ const CuboidHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
                 newChildrenPositionsMapRef.current.set(e.id, new Vector3(e.cx, e.cy, newRelZ));
               }
             }
+          } else if (e.type === ObjectType.SolarPanel && Util.isEqual(e.normal[2], 1)) {
+            e.cz = value / 2;
+            newChildrenPositionsMapRef.current.set(e.id, new Vector3(e.cx, e.cy, value / 2));
           }
         }
       }

@@ -59,7 +59,6 @@ const RotateHandleDist = 1;
  * todos:
  * -GD
  * -shadow
- * -foundation and cuboid height change by context menu
  * -info panel
  * -panel rack on wall
  * -heatmap lines
