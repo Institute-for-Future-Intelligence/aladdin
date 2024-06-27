@@ -35,6 +35,7 @@ import Label from './label';
 import MoveHandle from './moveHandle';
 import ResizeHandleGroup from './resizeHandle';
 import PanelBox from './panelBox';
+import HeatmapLines from './heatmapLines';
 
 export enum Operation {
   Move = 'Move',
@@ -60,13 +61,13 @@ const RotateHandleDist = 1;
  * todos:
  * -info panel
  * -panel rack on wall
- * -heatmap lines
  * -polarGrid
  * -pointer down should check if it's the first element.
  * -coor text z
  * -pointer style
  *
  * bugs:
+ * -negtive tilt angle on wall, and resizeY
  * -resize when tracker is enabled. auzi and tilt should use tracker group value.
  * -tilt anchor on cuboid vertial surfaces have problem. anchor is not on same plane with pointer
  */
@@ -909,8 +910,18 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
               </Plane>
             </group>
 
-            {/* wireframe */}
+            {/* wireframe for locked */}
             {selected && locked && <Wireframe hlx={hlx} hly={hly} />}
+
+            {/* lines for heatmap */}
+            <HeatmapLines
+              lx={materialLx}
+              ly={materialLy}
+              lz={lz}
+              orientation={orientation}
+              modelLength={pvModel.length}
+              modelWidth={pvModel.width}
+            />
 
             {/* move and resize handle */}
             {isShowMoveAndResizeHandle && (
