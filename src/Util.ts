@@ -702,8 +702,8 @@ export class Util {
   }
 
   static fetchSolarPanelVertexCoordinates(sp: SolarPanelModel, parent: ElementModel): Point2[] {
-    const xc = sp.cx * parent.lx;
-    const yc = sp.cy * parent.ly;
+    const xc = sp.cx;
+    const yc = sp.cy;
     const cosaz = Math.cos(sp.relativeAzimuth);
     const sinaz = Math.sin(sp.relativeAzimuth);
     const rx = sp.lx * 0.5;

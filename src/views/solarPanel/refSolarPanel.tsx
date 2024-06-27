@@ -57,8 +57,8 @@ const RotateHandleDist = 1;
 
 /**
  * todos:
- * -copy/cut/paste
  * -simulations
+ * -info panel
  * -heatmap lines
  * -polarGrid
  * -pointer down should check if it's the first element.

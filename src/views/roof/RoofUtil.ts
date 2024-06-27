@@ -486,7 +486,7 @@ export class RoofUtil {
 
   static getSolarPanelVerticesOnRoof(sp: SolarPanelModel, foundation: ElementModel): Vector3[] {
     const vertices: Vector3[] = [];
-    const center = new Vector3(sp.cx * foundation.lx, sp.cy * foundation.ly, sp.cz + foundation.lz);
+    const center = new Vector3(sp.cx, sp.cy, sp.cz + foundation.cz);
     for (let i = -1; i <= 1; i += 2) {
       for (let j = -1; j <= 1; j += 2) {
         const vertex = new Vector3((sp.lx / 2) * i, (sp.ly / 2) * j * i, 0);

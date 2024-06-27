@@ -21,6 +21,7 @@ import {
   DEFAULT_CEILING_R_VALUE,
   DEFAULT_GROUND_FLOOR_R_VALUE,
   GROUND_ID,
+  HALF_PI,
   UNIT_VECTOR_NEG_X,
   UNIT_VECTOR_NEG_Y,
   UNIT_VECTOR_POS_X,
@@ -356,10 +357,13 @@ export class ElementModelCloner {
         break;
     }
     let rotation;
-    if (solarPanel.parentType === ObjectType.Roof) {
-      rotation = [...solarPanel.rotation];
+    let normal;
+    if (parent.type === ObjectType.Wall) {
+      rotation = [HALF_PI, 0, 0];
+      normal = [0, -1, 0];
     } else {
-      rotation = solarPanel.parentId ? [...parent.rotation] : [0, 0, 0];
+      rotation = [0, 0, 0];
+      normal = [0, 0, 1];
     }
     return {
       type: ObjectType.SolarPanel,
@@ -378,7 +382,7 @@ export class ElementModelCloner {
       poleHeight: solarPanel.poleHeight,
       poleSpacing: solarPanel.poleSpacing,
       showLabel: solarPanel.showLabel,
-      normal: [...solarPanel.normal],
+      normal: normal,
       rotation: rotation,
       parentType: parentType,
       parentId: parent.id,

@@ -3373,6 +3373,10 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                         oldElem.cz,
                         oldElem.type === ObjectType.Polygon,
                       );
+                      if (newElem?.type === ObjectType.SolarPanel) {
+                        newElem.rotation = [...oldElem.rotation];
+                        newElem.normal = [...oldElem.normal];
+                      }
                     } else {
                       // preserve the ID if it is not in the elements
                       newElem = JSON.parse(JSON.stringify(oldElem));
@@ -3428,7 +3432,6 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                 }
               }
             }
-
             return copiedElements;
           },
 
@@ -3457,12 +3460,18 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                     if (newParent.parentId) {
                       const foundation = state.getElementById(newParent.parentId);
                       if (foundation) {
-                        m.sub(new Vector3(foundation.cx, foundation.cy, foundation.lz)).applyEuler(
-                          new Euler(0, 0, -foundation.rotation[2]),
-                        );
-                        if (elemToPaste.type !== ObjectType.Window) {
-                          m.setX(m.x / foundation.lx);
-                          m.setY(m.y / foundation.ly);
+                        if (elemToPaste.type === ObjectType.SolarPanel) {
+                          m.sub(new Vector3(foundation.cx, foundation.cy, foundation.cz)).applyEuler(
+                            new Euler(0, 0, -foundation.rotation[2]),
+                          );
+                        } else {
+                          m.sub(new Vector3(foundation.cx, foundation.cy, foundation.lz)).applyEuler(
+                            new Euler(0, 0, -foundation.rotation[2]),
+                          );
+                          if (elemToPaste.type !== ObjectType.Window) {
+                            m.setX(m.x / foundation.lx);
+                            m.setY(m.y / foundation.ly);
+                          }
                         }
                       }
                     }
@@ -3471,7 +3480,11 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                       const { pos } = Util.getWorldDataById(newParent.id);
                       m.sub(pos);
                     } else if (Util.isPositionRelative(elemToPaste.type)) {
-                      m = Util.relativeCoordinates(m.x, m.y, m.z, newParent);
+                      if (elemToPaste.type === ObjectType.SolarPanel) {
+                        m = Util.relativeCoordinates(m.x, m.y, m.z, newParent, true);
+                      } else {
+                        m = Util.relativeCoordinates(m.x, m.y, m.z, newParent);
+                      }
                     }
                     elemToPaste.parentId = newParent.id;
                   } else if (newParent.type === ObjectType.Wall) {
@@ -3482,7 +3495,11 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                       if (elemToPaste.type !== ObjectType.Foundation) {
                         elemToPaste.parentId = newParent.id;
                         if (Util.isPositionRelative(elemToPaste.type)) {
-                          m = Util.relativeCoordinates(m.x, m.y, m.z, newParent);
+                          if (elemToPaste.type === ObjectType.SolarPanel) {
+                            m = Util.relativeCoordinates(m.x, m.y, m.z, newParent, true);
+                          } else {
+                            m = Util.relativeCoordinates(m.x, m.y, m.z, newParent);
+                          }
                         }
                       }
                     }
@@ -3502,8 +3519,9 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                   oldParent,
                 );
                 if (e) {
-                  if (state.pasteNormal) {
+                  if (state.pasteNormal && newParent?.type === ObjectType.Cuboid) {
                     e.normal = state.pasteNormal.toArray();
+                    e.rotation = RoofUtil.getRotationFromNormal(state.pasteNormal);
                   }
                   const lang = { lng: state.language };
                   let approved = false;
@@ -3642,7 +3660,81 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                       }
                       break;
                     }
-                    case ObjectType.SolarPanel:
+                    case ObjectType.SolarPanel: {
+                      if (newParent?.type === ObjectType.Wall) {
+                        if (newParent) {
+                          switch (Util.checkElementOnWallState(e, newParent)) {
+                            case ElementState.Valid: {
+                              const angle = (newParent as WallModel).relativeAngle - HALF_PI;
+                              e.normal = [Math.cos(angle), Math.sin(angle), 0];
+                              approved = true;
+                              break;
+                            }
+                            case ElementState.OverLap:
+                              showError(i18n.t('message.CannotPasteBecauseOfOverlap', lang));
+                              break;
+                            case ElementState.OutsideBoundary:
+                              showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
+                              break;
+                          }
+                        }
+                        break;
+                      }
+                      if (newParent && newParent.type === ObjectType.Roof) {
+                        if (e.foundationId) {
+                          const foundation = state.getElementById(e.foundationId);
+                          if (foundation) {
+                            const solarPanelVertices = RoofUtil.getSolarPanelVerticesOnRoof(
+                              e as SolarPanelModel,
+                              foundation,
+                            );
+                            const boundaryVertices = RoofUtil.getRoofBoundaryVertices(newParent as RoofModel);
+
+                            if (!RoofUtil.rooftopElementBoundaryCheck(solarPanelVertices, boundaryVertices)) {
+                              showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
+                              break;
+                            }
+                            if (
+                              !RoofUtil.rooftopSPCollisionCheck(e as SolarPanelModel, foundation, solarPanelVertices)
+                            ) {
+                              showError(i18n.t('message.CannotPasteBecauseOfOverlap', lang));
+                              break;
+                            }
+                            approved = true;
+                            state.updateElementOnRoofFlag = true;
+                          }
+                        }
+                        break;
+                      }
+                      if (state.overlapWithSibling(e)) {
+                        // overlap, do not approve
+                        showError(i18n.t('message.CannotPasteBecauseOfOverlap', lang));
+                      } else {
+                        if (newParent) {
+                          if (
+                            newParent.type === ObjectType.Foundation ||
+                            (newParent.type === ObjectType.Cuboid &&
+                              Util.isIdentical(e.normal, UNIT_VECTOR_POS_Z_ARRAY))
+                          ) {
+                            if (Util.isSolarCollector(e)) {
+                              approved = Util.isSolarCollectorWithinHorizontalSurface(e as SolarCollector, newParent);
+                              if (!approved) {
+                                showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
+                              }
+                            } else {
+                              // if it is a wind turbine, we don't check out-of-boundary issues
+                              approved = true;
+                            }
+                          } else {
+                            // TODO: other surfaces
+                            approved = true;
+                          }
+                        } else {
+                          approved = true;
+                        }
+                      }
+                      break;
+                    }
                     case ObjectType.Sensor:
                     case ObjectType.Light:
                     case ObjectType.WindTurbine:
@@ -3988,7 +4080,170 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                       approved = true;
                       break;
                     }
-                    case ObjectType.SolarPanel:
+                    case ObjectType.SolarPanel: {
+                      if (e.parentId) {
+                        const parent = state.getParent(e);
+                        if (parent) {
+                          if (parent.type === ObjectType.Wall) {
+                            const hx = e.lx / parent.lx / 2;
+                            e.cx += hx * 3;
+                            // searching +x direction
+                            while (e.cx + hx < 0.5) {
+                              if (Util.checkElementOnWallState(e, parent) === ElementState.Valid) {
+                                state.elements.push(e);
+                                approved = true;
+                                break;
+                              } else {
+                                e.cx += hx;
+                              }
+                            }
+                            // searching -x direction
+                            if (!approved) {
+                              e.cx = elem.cx - hx * 3;
+                              while (e.cx - hx > -0.5) {
+                                if (Util.checkElementOnWallState(e, parent) === ElementState.Valid) {
+                                  state.elements.push(e);
+                                  state.elementsToPaste = [e];
+                                  approved = true;
+                                  break;
+                                } else {
+                                  e.cx -= hx;
+                                }
+                              }
+                            }
+                            if (!approved) {
+                              const lang = { lng: state.language };
+                              showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
+                            }
+                            break;
+                          } else if (parent.type === ObjectType.Roof) {
+                            if (elem.foundationId) {
+                              const foundation = state.getElementById(elem.foundationId);
+                              if (foundation) {
+                                const boundaryVertices = RoofUtil.getRoofBoundaryVertices(parent as RoofModel);
+
+                                const step = e.lx * 1.25;
+                                e.cx += step;
+
+                                while (e.cx + e.lx / 2 < foundation.lx / 2) {
+                                  const solarPanelVertices = RoofUtil.getSolarPanelVerticesOnRoof(
+                                    e as SolarPanelModel,
+                                    foundation,
+                                  );
+                                  if (
+                                    RoofUtil.rooftopElementBoundaryCheck(solarPanelVertices, boundaryVertices) &&
+                                    RoofUtil.rooftopSPCollisionCheck(
+                                      e as SolarPanelModel,
+                                      foundation,
+                                      solarPanelVertices,
+                                    )
+                                  ) {
+                                    state.elements.push(e);
+                                    approved = true;
+                                    break;
+                                  } else {
+                                    e.cx += step;
+                                  }
+                                }
+                                if (!approved) {
+                                  e.cx = elem.cx - step;
+                                  while (e.cx - e.lx / 2 > -foundation.lx / 2) {
+                                    const solarPanelVertices = RoofUtil.getSolarPanelVerticesOnRoof(
+                                      e as SolarPanelModel,
+                                      foundation,
+                                    );
+                                    if (
+                                      RoofUtil.rooftopElementBoundaryCheck(solarPanelVertices, boundaryVertices) &&
+                                      RoofUtil.rooftopSPCollisionCheck(
+                                        e as SolarPanelModel,
+                                        foundation,
+                                        solarPanelVertices,
+                                      )
+                                    ) {
+                                      state.elements.push(e);
+                                      approved = true;
+                                      break;
+                                    } else {
+                                      e.cx -= step;
+                                    }
+                                  }
+                                }
+                                if (!approved) {
+                                  const lang = { lng: state.language };
+                                  showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
+                                } else {
+                                  state.updateElementOnRoofFlag = true;
+                                }
+                              }
+                            }
+                            break;
+                          } else if (parent.type === ObjectType.Cuboid) {
+                            e.normal = [...elem.normal];
+                            e.rotation = [...elem.rotation];
+                          }
+                          const nearestNeighborId = state.findNearestSibling(elem.id);
+                          if (nearestNeighborId) {
+                            const nearestNeighbor = state.getElementById(nearestNeighborId);
+                            if (nearestNeighbor) {
+                              const oldX = e.cx;
+                              const oldY = e.cy;
+                              const oldZ = e.cz;
+                              const dx = nearestNeighbor.cx - elem.cx;
+                              const dy = nearestNeighbor.cy - elem.cy;
+                              const dz = nearestNeighbor.cz - elem.cz;
+                              e.cx = nearestNeighbor.cx + dx;
+                              e.cy = nearestNeighbor.cy + dy;
+                              e.cz = nearestNeighbor.cz + dz;
+                              if (state.overlapWithSibling(e)) {
+                                // try the opposite direction first before giving up
+                                e.cx = elem.cx - dx;
+                                e.cy = elem.cy - dy;
+                                e.cz = elem.cz - dz;
+                                if (state.overlapWithSibling(e)) {
+                                  // we may need to hop twice in the opposite direction
+                                  e.cx = elem.cx - 2 * dx;
+                                  e.cy = elem.cy - 2 * dy;
+                                  e.cz = elem.cz - 2 * dz;
+                                  if (state.overlapWithSibling(e)) {
+                                    e.cx = oldX - dx;
+                                    e.cy = oldY - dy;
+                                    e.cz = oldZ - dz;
+                                  }
+                                }
+                              }
+                            } else {
+                              e.cx += 1.25 * e.lx;
+                            }
+                          } else {
+                            // a loner
+                            e.cx += 1.25 * e.lx; // give a small offset to ensure no overlap
+                          }
+                          const lang = { lng: state.language };
+                          if (!state.overlapWithSibling(e)) {
+                            if (
+                              parent.type === ObjectType.Foundation ||
+                              (parent.type === ObjectType.Cuboid && Util.isIdentical(e.normal, UNIT_VECTOR_POS_Z_ARRAY))
+                            ) {
+                              if (Util.isSolarCollectorWithinHorizontalSurface(e as SolarCollector, parent)) {
+                                state.elements.push(e);
+                                state.elementsToPaste = [e];
+                                approved = true;
+                              } else {
+                                showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
+                              }
+                            } else {
+                              // TODO: For other surfaces, handle out-of-bounds errors here
+                              state.elements.push(e);
+                              state.elementsToPaste = [e];
+                              approved = true;
+                            }
+                          } else {
+                            showError(i18n.t('message.CannotPasteBecauseOfOverlap', lang));
+                          }
+                        }
+                      }
+                      break;
+                    }
                     case ObjectType.FresnelReflector:
                     case ObjectType.Heliostat:
                     case ObjectType.ParabolicDish:
