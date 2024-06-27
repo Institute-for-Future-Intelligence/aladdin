@@ -388,6 +388,7 @@ export class ElementModelCloner {
       parentId: parent.id,
       foundationId: foundationId,
       id: short.generate() as string,
+      version: solarPanel.version,
     } as SolarPanelModel;
   }
 

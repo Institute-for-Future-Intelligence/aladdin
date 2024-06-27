@@ -149,6 +149,7 @@ export class ElementModelFactory {
       parentId: parent.id,
       foundationId: foundationId,
       id: short.generate() as string,
+      version: 1,
     } as SolarPanelModel;
   }
 
