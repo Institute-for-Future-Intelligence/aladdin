@@ -550,7 +550,7 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
               sp.cy = 0;
               sp.cz = groupRef.current.position.z / parentWall.lz;
               sp.rotation = [HALF_PI, 0, 0];
-              sp.normal = [0, -1, 0];
+              sp.normal = [-1, 0, 0];
             }
           } else {
             sp.cx = groupRef.current.position.x;
