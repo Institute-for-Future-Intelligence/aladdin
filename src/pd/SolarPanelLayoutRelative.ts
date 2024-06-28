@@ -81,7 +81,7 @@ export class SolarPanelLayoutRelative {
       const h = (0.5 * Math.abs(Math.cos(tiltAngle)) * ly) / base.ly;
       const a: Point2 = { x: -0.5, y: 0 } as Point2;
       const b: Point2 = { x: 0.5, y: 0 } as Point2;
-      const rotation = 'rotation' in base ? base.rotation : undefined;
+      const rotation = undefined;
       for (let i = 0; i <= n; i++) {
         const cy = start + i * delta;
         a.y = b.y = cy - h;

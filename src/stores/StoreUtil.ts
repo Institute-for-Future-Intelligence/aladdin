@@ -217,6 +217,10 @@ export class StoreUtil {
                     solarPanel.cy = solarPanel.cy * foundation.ly;
                     solarPanel.cz = solarPanel.cz * foundation.lz;
                   }
+                  // for PD layout
+                  if (solarPanel.rotation[2] !== 0) {
+                    solarPanel.rotation = [0, 0, 0];
+                  }
                   break;
                 }
                 case ObjectType.Cuboid: {
