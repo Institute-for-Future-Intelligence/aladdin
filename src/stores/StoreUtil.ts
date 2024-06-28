@@ -232,6 +232,10 @@ export class StoreUtil {
                     solarPanel.rotation = SolarPanelUtil.getRotationOnCuboid(
                       new Vector3().fromArray(solarPanel.normal),
                     );
+                    // for PD layout
+                    if (Util.isEqual(0, solarPanel.rotation[0]) && solarPanel.rotation[2] !== 0) {
+                      solarPanel.rotation = [0, 0, 0];
+                    }
                   }
                   break;
                 }
