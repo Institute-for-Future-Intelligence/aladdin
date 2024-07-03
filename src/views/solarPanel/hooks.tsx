@@ -21,6 +21,16 @@ import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
 import { Operation } from './refSolarPanel';
 
+export const useInnerState = <T,>(val: T) => {
+  const [_val, setVal] = useState<T>(val);
+  useEffect(() => {
+    if (val !== _val) {
+      setVal(val);
+    }
+  }, [val]);
+  return [_val, setVal] as [T, React.Dispatch<React.SetStateAction<T>>];
+};
+
 export const useHandle = (handleColor: string) => {
   const [_color, setColor] = useState(handleColor);
 

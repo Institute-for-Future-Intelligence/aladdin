@@ -26,7 +26,6 @@ import TiltHandle, { TiltHandleRefPros } from './tiltHandle';
 import { tempEuler, tempQuaternion_0, tempVector3_0, tempVector3_1, tempVector3_2, tempVector3_3 } from 'src/helpers';
 import SunBeam, { NormalPointer, SunBeamRefProps } from './sunBeam';
 import TrackerGroup, { TrackerGroupRefProps } from './trackerGroup';
-import { PvModel } from 'src/models/PvModel';
 import { useMaterialSize } from './hooks';
 import Materials from './materials';
 import Poles, { PolesRefProps } from './poles';
@@ -36,6 +35,9 @@ import MoveHandle from './moveHandle';
 import ResizeHandleGroup from './resizeHandle';
 import PanelBox from './panelBox';
 import HeatmapLines from './heatmapLines';
+import PolarGrid, { PolarGridRefProps } from './polarGrid';
+import { MountRefProps } from './mount';
+import Mount from './mount';
 
 export enum Operation {
   Move = 'Move',
@@ -59,11 +61,10 @@ const RotateHandleDist = 1;
 
 /**
  * todos:
- * -panel rack on wall
- * -polarGrid
  * -pointer down should check if it's the first element.
  * -coor text z
  * -pointer style
+ * -collision check
  *
  * bugs:
  * -resize when tracker is enabled. auzi and tilt should use tracker group value.
@@ -94,8 +95,8 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
     locked,
   } = solarPanel;
 
-  const pvModel = useStore.getState().pvModules[pvModelName] as PvModel;
-  const lz = Math.max(pvModel?.thickness ?? 0.02, 0.02);
+  const pvModel = useMemo(() => SolarPanelUtil.getPVModel(pvModelName), [pvModelName]);
+  const lz = Math.max(pvModel.thickness, 0.02);
 
   const [hlx, hly, hlz] = [lx / 2, ly / 2, lz / 2];
 
@@ -108,6 +109,7 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
 
   const [hovered, setHovered] = useState(false);
   const [showXYIntersectionPlane, setShowXYIntersectionPlane] = useState(false);
+  const [showPolarGrid, setShowPolerGrid] = useState(false);
 
   // meshes ref
   const groupRef = useRef<Group>(null!);
@@ -121,6 +123,8 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
   const sunBeamGroupRef = useRef<SunBeamRefProps>(null!);
   const polesRef = useRef<PolesRefProps>(null!);
   const intersectionPlaneRef = useRef<Mesh>(null!);
+  const polarGridRef = useRef<PolarGridRefProps>(null!);
+  const mountRef = useRef<MountRefProps>(null!);
 
   // vairables
   const worldRotationRef = useRef<number | null>(null); // keep sp world rotation same when moving between different foundations
@@ -177,6 +181,10 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
   const isShowPoles = useMemo(() => {
     return poleHeight > 0 && surfaceType === SurfaceType.Horizontal;
   }, [poleHeight, surfaceType]);
+
+  const isShowMount = useMemo(() => {
+    return surfaceType === SurfaceType.Vertical;
+  }, [surfaceType]);
 
   const setFrameLoop = (frameloop: 'always' | 'demand') => {
     set({ frameloop });
@@ -274,12 +282,33 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
     if (polesRef.current) {
       polesRef.current.update({ tilt: angle });
     }
+    if (mountRef.current) {
+      mountRef.current.update(angle, ly);
+    }
   };
 
   const updateSolarPanelCount = (lx: number, ly: number) => {
     const ref = useRefStore.getState().solarPanelCountRef;
     if (ref && ref.current) {
       ref.current.textContent = `${SolarPanelUtil.getRackCount(orientation, lx, ly, pvModel.length, pvModel.width)}`;
+    }
+  };
+
+  const updatePolarGrid = (val: number) => {
+    if (polarGridRef.current) {
+      polarGridRef.current.setAzimuth(val);
+    }
+  };
+
+  const updateMountX = (lx: number) => {
+    if (mountRef.current) {
+      mountRef.current.resizeX(Math.abs(lx));
+    }
+  };
+
+  const updateMountY = (ly: number) => {
+    if (mountRef.current) {
+      mountRef.current.update(tiltAngle, Math.abs(ly));
     }
   };
 
@@ -476,6 +505,7 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
     topAzimuthGroupRef.current.getWorldPosition(anchorRef.current);
     anchorRef.current.z = 0;
     setShowXYIntersectionPlane(true);
+    setShowPolerGrid(true);
     parentGroupRef.current = SolarPanelUtil.findParentGroup(groupRef.current, [
       FOUNDATION_GROUP_NAME,
       CUBOID_WRAPPER_NAME,
@@ -633,6 +663,7 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
     newParentTypeRef.current = null;
     parentGroupRef.current = null;
     setShowXYIntersectionPlane(false);
+    setShowPolerGrid(false);
   }, []);
 
   // onPointerUp
@@ -736,10 +767,16 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
           if (polesRef.current) {
             polesRef.current.setVisiable(true);
           }
+          if (mountRef.current) {
+            mountRef.current.setVisiable(false);
+          }
           updateAuzimuthGroupZ(poleHeight + hlz);
         } else {
           if (polesRef.current) {
             polesRef.current.setVisiable(false);
+          }
+          if (mountRef.current) {
+            mountRef.current.setVisiable(true);
           }
           updateAuzimuthGroupZ(hlz);
         }
@@ -807,8 +844,10 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
 
           if (operationRef.current === Operation.ResizeX) {
             boxGroupMeshRef.current.scale.x = Math.abs(distance);
+            updateMountX(distance);
           } else if (operationRef.current === Operation.ResizeY) {
             boxGroupMeshRef.current.scale.y = Math.abs(distance);
+            updateMountY(distance);
             // bug: can't update auzimuth group z on cuboid. because anchor and pointer won't be on same vertical plane.
             if (parentType === ObjectType.Wall) {
               updateAuzimuthGroupZ(Math.abs((distance / 2) * Math.sin(Math.min(0, tiltAngle))));
@@ -855,6 +894,7 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
         }
         topAzimuthGroupRef.current.rotation.z =
           angle - tempEuler.setFromQuaternion(parentGroup.getWorldQuaternion(tempQuaternion_0)).z;
+        updatePolarGrid(topAzimuthGroupRef.current.rotation.z);
         break;
       }
       case Operation.RotateLower: {
@@ -866,6 +906,7 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
 
         topAzimuthGroupRef.current.rotation.z =
           angle - tempEuler.setFromQuaternion(parentGroup.getWorldQuaternion(tempQuaternion_0)).z;
+        updatePolarGrid(topAzimuthGroupRef.current.rotation.z);
         break;
       }
     }
@@ -891,7 +932,6 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
   }, [poleHeight, surfaceType, tiltAngle, trackerEnabled]);
 
   // ==============================================
-
   // ==============================================
   return (
     <group
@@ -1024,6 +1064,18 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
           rotationX={-rotation[0]}
         />
       )}
+
+      <Mount
+        ref={mountRef}
+        tiltAngle={-tiltAngle}
+        lx={lx}
+        ly={ly}
+        modelLength={pvModel.length}
+        visiable={isShowMount}
+      />
+
+      {/* polar grid group */}
+      {showPolarGrid && <PolarGrid ref={polarGridRef} lx={lx} ly={ly} relativeAzimuth={relativeAzimuth} />}
     </group>
   );
 });

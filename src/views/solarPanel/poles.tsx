@@ -3,10 +3,11 @@
  */
 
 import { Cylinder } from '@react-three/drei';
-import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import React, { forwardRef, useImperativeHandle, useMemo, useRef } from 'react';
 import { HALF_PI } from 'src/constants';
 import { useStore } from 'src/stores/common';
 import { Group, Vector4 } from 'three';
+import { useInnerState } from './hooks';
 
 interface PolesProps {
   lx: number;
@@ -23,16 +24,6 @@ export interface PolesRefProps {
   update: ({ lx, ly, tilt }: { lx?: number; ly?: number; tilt?: number }) => void;
   setVisiable: (b: boolean) => void;
 }
-
-const useInnerState = <T,>(val: T) => {
-  const [_val, setVal] = useState<T>(val);
-  useEffect(() => {
-    if (val !== _val) {
-      setVal(val);
-    }
-  }, [val]);
-  return [_val, setVal] as [T, React.Dispatch<React.SetStateAction<T>>];
-};
 
 const Poles = React.memo(
   forwardRef<PolesRefProps, PolesProps>(
