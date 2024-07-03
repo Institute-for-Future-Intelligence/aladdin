@@ -13,6 +13,7 @@ import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { UndoableMove } from 'src/undo/UndoableMove';
 import { UnoableResizeSolarPanel } from 'src/undo/UndoableResize';
 import { UndoableChange } from 'src/undo/UndoableChange';
+import { PvModel } from 'src/models/PvModel';
 
 export class SolarPanelUtil {
   static getRackCount(orientation: Orientation, lx: number, ly: number, modelLength: number, modelWidth: number) {
@@ -123,6 +124,39 @@ export class SolarPanelUtil {
       return [HALF_PI, 0, HALF_PI];
     }
     return [0, 0, 0];
+  }
+
+  static getPVModel(pvModelName: string) {
+    const pvModel = useStore.getState().pvModules[pvModelName];
+    if (!pvModel) {
+      console.warn('pvModel undefined. Using default model: SPR-X21-335-BLK');
+      return {
+        name: 'SPR-X21-335-BLK',
+        brand: 'SunPower',
+        cellType: 'Monocrystalline',
+        efficiency: 0.21,
+        length: 1.558,
+        nominalLength: 1.56,
+        width: 1.046,
+        nominalWidth: 1.05,
+        thickness: 0.046,
+        m: 12,
+        n: 8,
+        pmax: 335,
+        vmpp: 57.3,
+        impp: 5.85,
+        voc: 67.9,
+        isc: 6.23,
+        pmaxTC: -0.0029,
+        noct: 41.5,
+        weight: 18.6,
+        color: 'Black',
+        shadeTolerance: 'High',
+        bifacialityFactor: 0,
+      } as PvModel;
+    } else {
+      return pvModel;
+    }
   }
 
   static addUndoable(oldElement: SolarPanelModel | undefined, operation: Operation) {
