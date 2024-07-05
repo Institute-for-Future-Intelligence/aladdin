@@ -62,7 +62,6 @@ const RotateHandleDist = 1;
 /**
  * todos:
  * -pointer down should check if it's the first element.
- * -coor text z
  * -pointer style
  * -collision check
  *
@@ -1052,7 +1051,7 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
         />
 
         {/* label */}
-        {(hovered || solarPanel.showLabel) && !selected && <Label solarPanel={solarPanel} />}
+        {(hovered || solarPanel.showLabel) && !selected && <Label solarPanel={solarPanel} boxRef={boxGroupMeshRef} />}
       </group>
 
       {/* sun beam group */}
