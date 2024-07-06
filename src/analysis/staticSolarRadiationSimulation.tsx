@@ -483,8 +483,11 @@ const StaticSolarRadiationSimulation = React.memo(({ city }: StaticSolarRadiatio
       ? Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent, getFoundation(panel), panel.lz)
       : Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent, undefined, undefined, true);
     const normal = new Vector3().fromArray(panel.normal);
+    if (walltop) {
+      normal.applyEuler(new Euler(0, 0, (parent as WallModel).relativeAngle));
+    }
     const rot = parent.rotation[2];
-    let zRot = rot + panel.relativeAzimuth;
+    let zRot = rot + (walltop ? 0 : panel.relativeAzimuth);
     let angle = panel.tiltAngle;
     let flat = true;
     if (rooftop) {
@@ -541,9 +544,12 @@ const StaticSolarRadiationSimulation = React.memo(({ city }: StaticSolarRadiatio
       normalEuler.z = panel.rotation[2] + rot;
     }
     if (walltop) {
-      // wall panels use negative tilt angles, opposite to foundation panels, so we use + below.
-      normalEuler.x = HALF_PI + panel.tiltAngle;
-      normalEuler.z = (parent as WallModel).relativeAngle + rot;
+      const foundation = getParent(panel);
+      if (foundation) {
+        // wall panels use negative tilt angles, opposite to foundation panels, so we use + below.
+        normalEuler.x = HALF_PI + panel.tiltAngle;
+        normalEuler.z = (parent as WallModel).relativeAngle + foundation.rotation[2];
+      }
     }
     for (let i = 0; i < 24; i++) {
       for (let j = 0; j < world.timesPerHour; j++) {

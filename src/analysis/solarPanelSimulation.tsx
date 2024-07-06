@@ -899,7 +899,7 @@ const SolarPanelSimulation = React.memo(({ city }: SolarPanelSimulationProps) =>
       : Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent, undefined, undefined, true);
     const rot = parent.rotation[2];
     let angle = panel.tiltAngle;
-    let zRot = rot + panel.relativeAzimuth;
+    let zRot = rot + (walltop ? 0 : panel.relativeAzimuth);
     let flat = true;
     if (rooftop) {
       // z coordinate of a rooftop solar panel is absolute
@@ -1000,6 +1000,9 @@ const SolarPanelSimulation = React.memo(({ city }: SolarPanelSimulationProps) =>
         }
       }
     }
+    if (walltop) {
+      normal.applyEuler(new Euler(0, 0, (parent as WallModel).relativeAngle));
+    }
     normal.applyEuler(normalEuler);
     // the dot array on a solar panel above a tilted roof has not been tilted or rotated
     // we need to set the normal Euler below for this case
@@ -1008,9 +1011,12 @@ const SolarPanelSimulation = React.memo(({ city }: SolarPanelSimulationProps) =>
       normalEuler.z = panel.rotation[2] + rot;
     }
     if (walltop) {
-      // wall panels use negative tilt angles, opposite to foundation panels, so we use + below.
-      normalEuler.x = HALF_PI + panel.tiltAngle;
-      normalEuler.z = (parent as WallModel).relativeAngle + rot;
+      const foundation = getParent(panel);
+      if (foundation) {
+        // wall panels use negative tilt angles, opposite to foundation panels, so we use + below.
+        normalEuler.x = HALF_PI + panel.tiltAngle;
+        normalEuler.z = (parent as WallModel).relativeAngle + foundation.rotation[2];
+      }
     }
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
     const frontIndirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);

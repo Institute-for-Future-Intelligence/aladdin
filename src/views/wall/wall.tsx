@@ -2091,7 +2091,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               actionState.solarPanelPoleSpacing ?? 3,
               0,
               0,
-              new Vector3(-1, 0, 0),
+              new Vector3(0, -1, 0),
               [HALF_PI, 0, 0],
               actionState.solarPanelFrameColor,
             );

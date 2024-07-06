@@ -17,6 +17,7 @@ import i18n from '../i18n/i18n';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
 import { useLanguage } from '../hooks';
+import { WallModel } from 'src/models/WallModel';
 
 const SolarPanelVisibility = React.memo(() => {
   const world = useStore.getState().world;
@@ -109,16 +110,23 @@ const SolarPanelVisibility = React.memo(() => {
     let parent = getParent(panel);
     if (!parent) throw new Error('parent of solar panel does not exist');
     let rooftop = false;
+    const walltop = panel.parentType === ObjectType.Wall;
     if (parent.type === ObjectType.Roof) {
       parent = getFoundation(parent);
       if (!parent) throw new Error('foundation of solar panel does not exist');
       rooftop = true;
     }
-    const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent, undefined, undefined, true);
+    const center = walltop
+      ? Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent, getFoundation(panel), panel.lz)
+      : Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent, undefined, undefined, true);
+    // const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent, undefined, undefined, true);
     if (rooftop) {
       center.z = panel.cz + parent.cz;
     }
     const normal = new Vector3().fromArray(panel.normal);
+    if (walltop) {
+      normal.applyEuler(new Euler(0, 0, (parent as WallModel).relativeAngle));
+    }
     const zRot = parent.rotation[2] + panel.relativeAzimuth;
     if (Math.abs(panel.tiltAngle) > 0.001) {
       normal.applyEuler(new Euler(panel.tiltAngle, 0, zRot, 'ZYX'));
