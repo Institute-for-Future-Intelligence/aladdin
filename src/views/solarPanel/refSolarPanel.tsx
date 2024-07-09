@@ -63,7 +63,6 @@ const RotateHandleDist = 1;
  * todos:
  * -pointer down should check if it's the first element.
  * -pointer style
- * -collision check
  *
  * bugs:
  * -resize when tracker is enabled. auzi and tilt should use tracker group value.
@@ -545,7 +544,7 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
   const onWindowPointerUp = useCallback(() => {
     if (!operationRef.current) return;
 
-    const oldElement = useStore.getState().elements.find((e) => e.id === id) as SolarPanelModel | undefined;
+    const oldElement = useStore.getState().elements.find((e) => e.id === id) as SolarPanelModel;
 
     switch (operationRef.current) {
       case Operation.Move: {
@@ -555,11 +554,8 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
           const pointer = useRefStore.getState().pointer;
           raycaster.setFromCamera(pointer, get().camera);
           const intersectionData = getIntersectionData(raycaster, get().scene, operationRef.current);
-          if (!intersectionData) return;
 
-          const { intersection, parentGroup, parentType } = intersectionData;
-
-          const sp = state.elements.find((e) => e.id === id) as SolarPanelModel | undefined;
+          const sp = state.elements.find((e) => e.id === id) as SolarPanelModel;
           if (!sp) return;
 
           // change parent first if needed
@@ -586,16 +582,25 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
             sp.cy = groupRef.current.position.y;
             sp.cz = groupRef.current.position.z;
 
-            if (worldRotationRef.current !== null) {
+            if (worldRotationRef.current !== null && intersectionData?.parentGroup) {
               sp.relativeAzimuth =
                 worldRotationRef.current -
-                tempEuler.setFromQuaternion(parentGroup.getWorldQuaternion(tempQuaternion_0.set(0, 0, 0, 0))).z;
+                tempEuler.setFromQuaternion(
+                  intersectionData.parentGroup.getWorldQuaternion(tempQuaternion_0.set(0, 0, 0, 0)),
+                ).z;
             }
 
-            const surfaceType = SolarPanelUtil.getSurfaceType(parentType, intersection.normal);
-            if (surfaceType === SurfaceType.Horizontal) {
-              sp.rotation = [0, 0, 0];
-              sp.normal = [0, 0, 1];
+            if (intersectionData?.intersection) {
+              const surfaceType = SolarPanelUtil.getSurfaceType(parentType, intersectionData.intersection.normal);
+              if (surfaceType === SurfaceType.Horizontal) {
+                sp.rotation = [0, 0, 0];
+                sp.normal = [0, 0, 1];
+              } else {
+                const { x, y, z } = groupRef.current.rotation;
+                const normal = tempVector3_0.set(0, 0, 1).applyEuler(groupRef.current.rotation);
+                sp.rotation = [x, y, z];
+                sp.normal = [normal.x, normal.y, normal.z];
+              }
             } else {
               const { x, y, z } = groupRef.current.rotation;
               const normal = tempVector3_0.set(0, 0, 1).applyEuler(groupRef.current.rotation);
@@ -623,6 +628,9 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
               sp.cz = groupRef.current.position.z / parentWall.lz;
             }
           } else {
+            if (sp.parentType === ObjectType.Roof) {
+              state.updateElementOnRoofFlag = !state.updateElementOnRoofFlag;
+            }
             [sp.cx, sp.cy, sp.cz] = groupRef.current.position;
           }
         });
@@ -649,7 +657,22 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
         break;
       }
     }
-    SolarPanelUtil.addUndoable(oldElement, operationRef.current);
+
+    const newElement = useStore.getState().elements.find((e) => e.id === id) as SolarPanelModel;
+    if (oldElement && newElement) {
+      if (SolarPanelUtil.isNewPositionOk(newElement)) {
+        SolarPanelUtil.addUndoable(oldElement, operationRef.current);
+      } else {
+        setTimeout(() => {
+          setCommonStore((state) => {
+            const idx = state.elements.findIndex((e) => e.id === id);
+            if (idx !== -1) {
+              state.elements[idx] = oldElement;
+            }
+          });
+        }, 10);
+      }
+    }
 
     if (get().frameloop !== 'demand') {
       setFrameLoop('demand');

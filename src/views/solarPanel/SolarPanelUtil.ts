@@ -8,14 +8,71 @@ import { RoofSegmentGroupUserData } from '../roof/roofRenderer';
 import { useStore } from 'src/stores/common';
 import { HALF_PI } from 'src/constants';
 import { Operation, SurfaceType } from './refSolarPanel';
-import { ObjectType, Orientation, TrackerType } from 'src/types';
+import { ElementState, ObjectType, Orientation, TrackerType } from 'src/types';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { UndoableMove } from 'src/undo/UndoableMove';
 import { UnoableResizeSolarPanel } from 'src/undo/UndoableResize';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { PvModel } from 'src/models/PvModel';
+import { showError } from 'src/helpers';
+import i18n from 'src/i18n/i18n';
+import { RoofModel } from 'src/models/RoofModel';
 
 export class SolarPanelUtil {
+  static isNewPositionOk(sp: SolarPanelModel) {
+    const parent = useStore.getState().elements.find((e) => e.id === sp.parentId);
+    if (!parent) return false;
+    switch (parent.type) {
+      case ObjectType.Foundation: {
+        if (!Util.isSolarCollectorWithinHorizontalSurface(sp, parent)) {
+          showError(i18n.t('message.MoveOutsideBoundaryCancelled', { lng: useStore.getState().language }));
+          return false;
+        }
+        if (useStore.getState().overlapWithSibling(sp)) {
+          showError(i18n.t('message.MoveCancelledBecauseOfOverlap', { lng: useStore.getState().language }));
+          return false;
+        }
+        break;
+      }
+      case ObjectType.Cuboid: {
+        if (Util.isEqual(sp.normal[2], 1)) {
+          if (!Util.isSolarCollectorWithinHorizontalSurface(sp, parent)) {
+            showError(i18n.t('message.MoveOutsideBoundaryCancelled', { lng: useStore.getState().language }));
+            return false;
+          }
+          if (useStore.getState().overlapWithSibling(sp)) {
+            showError(i18n.t('message.MoveCancelledBecauseOfOverlap', { lng: useStore.getState().language }));
+            return false;
+          }
+        }
+        break;
+      }
+      case ObjectType.Wall: {
+        const state = Util.checkElementOnWallState(sp, parent);
+        if (state === ElementState.OutsideBoundary) {
+          showError(i18n.t('message.MoveOutsideBoundaryCancelled', { lng: useStore.getState().language }));
+          return false;
+        } else if (state === ElementState.OverLap) {
+          showError(i18n.t('message.MoveCancelledBecauseOfOverlap', { lng: useStore.getState().language }));
+          return false;
+        }
+        break;
+      }
+      case ObjectType.Roof: {
+        const state = Util.checkElementOnRoofState(sp, parent as RoofModel);
+        if (state === ElementState.OutsideBoundary) {
+          showError(i18n.t('message.MoveOutsideBoundaryCancelled', { lng: useStore.getState().language }));
+          return false;
+        } else if (state === ElementState.OverLap) {
+          showError(i18n.t('message.MoveCancelledBecauseOfOverlap', { lng: useStore.getState().language }));
+          return false;
+        }
+        break;
+      }
+    }
+    return true;
+  }
+
   static getRackCount(orientation: Orientation, lx: number, ly: number, modelLength: number, modelWidth: number) {
     if (orientation === Orientation.portrait) {
       const nx = Math.max(1, Math.round(lx / modelWidth));
@@ -49,7 +106,9 @@ export class SolarPanelUtil {
 
   static getSurfaceType(parentType?: ObjectType, normal?: Vector3) {
     if (!normal || !parentType) return SurfaceType.Horizontal;
-    if (parentType === ObjectType.Wall) {
+    if (parentType === ObjectType.Foundation) {
+      return SurfaceType.Horizontal;
+    } else if (parentType === ObjectType.Wall) {
       return SurfaceType.Vertical;
     } else if (Util.isEqual(normal.z, 1)) {
       return SurfaceType.Horizontal;
