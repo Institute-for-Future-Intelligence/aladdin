@@ -61,7 +61,6 @@ const RotateHandleDist = 1;
 
 /**
  * todos:
- * -pointer down should check if it's the first element.
  * -pointer style
  *
  * bugs:
@@ -426,6 +425,7 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
 
   // ===== Events =====
   const onGroupPointerDown = (event: ThreeEvent<PointerEvent>) => {
+    if (event.intersections.length == 0 || event.intersections[0].object !== event.object) return;
     event.stopPropagation();
     SolarPanelUtil.setSelected(id, true);
     if (event.button === 2) {
@@ -437,6 +437,7 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
 
   const onMoveHandlePointerDown = (event: ThreeEvent<PointerEvent>) => {
     if (!selected || !groupRef.current || !topAzimuthGroupRef.current) return;
+    if (event.intersections.length == 0 || event.intersections[0].object !== event.object) return;
     setFrameLoop('always');
     useRefStore.getState().setEnableOrbitController(false);
     operationRef.current = Operation.Move;
@@ -451,6 +452,7 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
 
   const onResizeHandleGroupPointerDown = (e: ThreeEvent<PointerEvent>) => {
     if (!selected || !groupRef.current || !topAzimuthGroupRef.current) return;
+    if (e.intersections.length == 0 || e.intersections[0].object !== e.object) return;
     setFrameLoop('always');
     useRefStore.getState().setEnableOrbitController(false);
     switch (e.object.name) {
@@ -488,6 +490,7 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
 
   const onRotateHandlePointerDown = (e: ThreeEvent<PointerEvent>) => {
     if (!topAzimuthGroupRef.current || !rotateHandleGroupRef.current) return;
+    if (e.intersections.length == 0 || e.intersections[0].object !== e.object) return;
     setFrameLoop('always');
     useRefStore.getState().setEnableOrbitController(false);
     switch (e.eventObject.name) {
@@ -510,7 +513,8 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
     ]);
   };
 
-  const onTiltHandlePointerDown = () => {
+  const onTiltHandlePointerDown = (e: ThreeEvent<PointerEvent>) => {
+    if (e.intersections.length == 0 || e.intersections[0].object !== e.object) return;
     operationRef.current = Operation.Tilt;
     setFrameLoop('always');
     useRefStore.getState().setEnableOrbitController(false);
