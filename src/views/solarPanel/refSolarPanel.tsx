@@ -61,7 +61,6 @@ const RotateHandleDist = 1;
 
 /**
  * todos:
- * -pointer style
  *
  * bugs:
  * -resize when tracker is enabled. auzi and tilt should use tracker group value.

@@ -17,7 +17,7 @@ interface RotateHandleProps {
 }
 const RotateHandle = React.memo(({ positionY, name, onPointerDown }: RotateHandleProps) => {
   const handleSize = useHandleSize();
-  const { _color, _onPointerDown, _onPointerEnter, _onPointerLeave } = useHandle(RESIZE_HANDLE_COLOR);
+  const { _color, _onPointerDown, _onPointerMove, _onPointerLeave } = useHandle(RESIZE_HANDLE_COLOR, 'grab');
 
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
     onPointerDown(e);
@@ -31,7 +31,7 @@ const RotateHandle = React.memo(({ positionY, name, onPointerDown }: RotateHandl
       rotation={[HALF_PI, 0, 0]}
       scale={handleSize * 3}
       onPointerDown={handlePointerDown}
-      onPointerEnter={_onPointerEnter}
+      onPointerMove={_onPointerMove}
       onPointerLeave={_onPointerLeave}
     >
       <Torus args={[0.15, 0.05, 6, 8, (3 / 2) * Math.PI]} rotation={[HALF_PI, 0, HALF_PI]}>

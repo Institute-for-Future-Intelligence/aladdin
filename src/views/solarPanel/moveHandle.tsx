@@ -1,5 +1,5 @@
 import { Sphere } from '@react-three/drei';
-import { ThreeEvent } from '@react-three/fiber';
+import { ThreeEvent, useThree } from '@react-three/fiber';
 import React from 'react';
 import { MOVE_HANDLE_COLOR_1 } from 'src/constants';
 import { useHandle } from './hooks';
@@ -10,8 +10,10 @@ interface MoveHandleProps {
 }
 
 const MoveHandle = React.memo(({ onPointerDown }: MoveHandleProps) => {
-  const { _color, _onPointerDown, _onPointerEnter, _onPointerLeave } = useHandle(MOVE_HANDLE_COLOR_1);
+  const { _color, _onPointerDown, _onPointerMove, _onPointerLeave } = useHandle(MOVE_HANDLE_COLOR_1, 'move');
   const handleSize = useHandleSize();
+
+  const { gl } = useThree();
   return (
     <Sphere
       name="Move_Handle"
@@ -19,8 +21,9 @@ const MoveHandle = React.memo(({ onPointerDown }: MoveHandleProps) => {
       onPointerDown={(e) => {
         onPointerDown(e);
         _onPointerDown();
+        gl.domElement.style.cursor = 'move';
       }}
-      onPointerEnter={_onPointerEnter}
+      onPointerMove={_onPointerMove}
       onPointerLeave={_onPointerLeave}
     >
       <meshBasicMaterial color={_color} />

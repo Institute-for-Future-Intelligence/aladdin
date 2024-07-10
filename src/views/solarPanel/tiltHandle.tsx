@@ -45,7 +45,7 @@ const TiltHandle = React.memo(
       const tiltHandlePointerRef = useRef<Group>(null!);
       const textRef = useRef<SpriteText>(null!);
 
-      const { _color, _onPointerDown, _onPointerEnter, _onPointerLeave } = useHandle(RESIZE_HANDLE_COLOR);
+      const { _color, _onPointerDown, _onPointerMove, _onPointerLeave } = useHandle(RESIZE_HANDLE_COLOR, 'grab');
 
       useImperativeHandle(
         ref,
@@ -104,7 +104,7 @@ const TiltHandle = React.memo(
             args={[handleSize, 1.125 * handleSize, 18, 2, 0, ringThetaLength]}
             rotation={[HALF_PI, 0, HALF_PI, 'ZXY']}
             onPointerDown={onTiltHandlePointerDown}
-            onPointerEnter={_onPointerEnter}
+            onPointerMove={_onPointerMove}
             onPointerLeave={_onPointerLeave}
           >
             <meshBasicMaterial side={DoubleSide} color={_color} />

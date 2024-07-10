@@ -20,6 +20,7 @@ import * as Selector from '../../stores/selector';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
 import { Operation } from './refSolarPanel';
+import { ThreeEvent, useThree } from '@react-three/fiber';
 
 export const useInnerState = <T,>(val: T) => {
   const [_val, setVal] = useState<T>(val);
@@ -31,7 +32,8 @@ export const useInnerState = <T,>(val: T) => {
   return [_val, setVal] as [T, React.Dispatch<React.SetStateAction<T>>];
 };
 
-export const useHandle = (handleColor: string) => {
+export const useHandle = (handleColor: string, cursorStyle: string) => {
+  const { gl } = useThree();
   const [_color, setColor] = useState(handleColor);
 
   const pointerDownRef = useRef(false);
@@ -39,9 +41,11 @@ export const useHandle = (handleColor: string) => {
 
   useEffect(() => {
     const handlePointerUp = () => {
+      if (!pointerDownRef.current) return;
       pointerDownRef.current = false;
       if (!hoveredRef.current) {
         setColor(handleColor);
+        gl.domElement.style.cursor = 'default';
       }
     };
     window.addEventListener('pointerup', handlePointerUp);
@@ -50,21 +54,33 @@ export const useHandle = (handleColor: string) => {
 
   const _onPointerDown = () => {
     pointerDownRef.current = true;
+    // bug: don't know why pointer down would reset cursor style to default?
+    setTimeout(() => {
+      gl.domElement.style.cursor = cursorStyle;
+    }, 10);
   };
 
-  const _onPointerEnter = () => {
-    hoveredRef.current = true;
-    setColor(HIGHLIGHT_HANDLE_COLOR);
+  const _onPointerMove = (event: ThreeEvent<PointerEvent>) => {
+    if (event.intersections.length == 0 || event.intersections[0].object !== event.object) {
+      hoveredRef.current = false;
+      setColor(handleColor);
+      gl.domElement.style.cursor = 'default';
+    } else {
+      hoveredRef.current = true;
+      setColor(HIGHLIGHT_HANDLE_COLOR);
+      gl.domElement.style.cursor = cursorStyle;
+    }
   };
 
   const _onPointerLeave = () => {
     hoveredRef.current = false;
     if (!pointerDownRef.current) {
       setColor(handleColor);
+      gl.domElement.style.cursor = 'default';
     }
   };
 
-  return { _color, _onPointerDown, _onPointerEnter, _onPointerLeave };
+  return { _color, _onPointerDown, _onPointerMove, _onPointerLeave };
 };
 
 export const useMaterialSize = (lx: number, ly: number) => {

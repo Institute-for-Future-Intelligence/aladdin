@@ -21,14 +21,14 @@ interface ResizeHandleGroupProps {
 }
 
 const ResizeHandle = React.memo(({ cx, cy, size, type }: ResizeHandleProps) => {
-  const { _color, _onPointerDown, _onPointerEnter, _onPointerLeave } = useHandle(RESIZE_HANDLE_COLOR);
+  const { _color, _onPointerDown, _onPointerMove, _onPointerLeave } = useHandle(RESIZE_HANDLE_COLOR, 'pointer');
   return (
     <Box
       name={type}
       position={[cx, cy, 0.1]}
       args={[size, size, 0.1]}
       onPointerDown={_onPointerDown}
-      onPointerEnter={_onPointerEnter}
+      onPointerMove={_onPointerMove}
       onPointerLeave={_onPointerLeave}
     >
       <meshBasicMaterial color={_color} />
