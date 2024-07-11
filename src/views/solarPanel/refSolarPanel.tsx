@@ -594,7 +594,10 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
             }
 
             if (intersectionData?.intersection) {
-              const surfaceType = SolarPanelUtil.getSurfaceType(parentType, intersectionData.intersection.normal);
+              const surfaceType = SolarPanelUtil.getSurfaceType(
+                intersectionData.parentType,
+                intersectionData.intersection.normal,
+              );
               if (surfaceType === SurfaceType.Horizontal) {
                 sp.rotation = [0, 0, 0];
                 sp.normal = [0, 0, 1];

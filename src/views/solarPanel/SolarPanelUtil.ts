@@ -35,15 +35,13 @@ export class SolarPanelUtil {
         break;
       }
       case ObjectType.Cuboid: {
-        if (Util.isEqual(sp.normal[2], 1)) {
-          if (!Util.isSolarCollectorWithinHorizontalSurface(sp, parent)) {
-            showError(i18n.t('message.MoveOutsideBoundaryCancelled', { lng: useStore.getState().language }));
-            return false;
-          }
-          if (useStore.getState().overlapWithSibling(sp)) {
-            showError(i18n.t('message.MoveCancelledBecauseOfOverlap', { lng: useStore.getState().language }));
-            return false;
-          }
+        const state = Util.checkElementOnCuboidState(sp, parent as RoofModel);
+        if (state === ElementState.OutsideBoundary) {
+          showError(i18n.t('message.MoveOutsideBoundaryCancelled', { lng: useStore.getState().language }));
+          return false;
+        } else if (state === ElementState.OverLap) {
+          showError(i18n.t('message.MoveCancelledBecauseOfOverlap', { lng: useStore.getState().language }));
+          return false;
         }
         break;
       }

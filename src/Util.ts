@@ -1290,6 +1290,88 @@ export class Util {
     return true;
   }
 
+  static isRectOutsideBoundary(cx: number, cy: number, rHlx: number, rHly: number, bHx: number, bHy: number) {
+    return cx + rHlx > bHx || cx - rHlx < -bHx || cy + rHly > bHy || cy - rHly < -bHy;
+  }
+
+  static getSolarPanelVerticesOnCuboidVerticalFace(sp: ElementModel) {
+    const arr: Point2[] = [];
+    const [hx, hy] = [sp.lx / 2, sp.ly / 2];
+    // east west
+    if (Util.isIdentical(sp.normal, [-1, 0, 0]) || Util.isIdentical(sp.normal, [1, 0, 0])) {
+      arr.push({ x: sp.cy - hx, y: sp.cz - hy });
+      arr.push({ x: sp.cy + hx, y: sp.cz - hy });
+      arr.push({ x: sp.cy + hx, y: sp.cz + hy });
+      arr.push({ x: sp.cy - hx, y: sp.cz + hy });
+    }
+    // north south
+    else if (Util.isIdentical(sp.normal, [0, 1, 0]) || Util.isIdentical(sp.normal, [0, -1, 0])) {
+      arr.push({ x: sp.cx - hx, y: sp.cz - hy });
+      arr.push({ x: sp.cx + hx, y: sp.cz - hy });
+      arr.push({ x: sp.cx + hx, y: sp.cz + hy });
+      arr.push({ x: sp.cx - hx, y: sp.cz + hy });
+    }
+    return arr;
+  }
+
+  static checkCollisionOnCuboidSameVerticalFace(sp: ElementModel) {
+    for (const e of useStore.getState().elements) {
+      if (
+        e.type === ObjectType.SolarPanel &&
+        e.id !== sp.id &&
+        e.parentId === sp.parentId &&
+        Util.isIdentical(e.normal, sp.normal)
+      ) {
+        const targetVertices: Point2[] = Util.getSolarPanelVerticesOnCuboidVerticalFace(e);
+        const currentVertices: Point2[] = Util.getSolarPanelVerticesOnCuboidVerticalFace(sp);
+        for (const v of targetVertices) {
+          if (Util.isPointInside(v.x, v.y, currentVertices)) {
+            return true;
+          }
+        }
+        for (const v of currentVertices) {
+          if (Util.isPointInside(v.x, v.y, targetVertices)) {
+            return true;
+          }
+        }
+      }
+    }
+
+    return false;
+  }
+
+  static checkElementOnCuboidState(sp: SolarPanelModel, parent: ElementModel): ElementState {
+    if (Util.isIdentical(sp.normal, [0, 0, 1])) {
+      if (!Util.isSolarCollectorWithinHorizontalSurface(sp, parent)) {
+        return ElementState.OutsideBoundary;
+      }
+      if (useStore.getState().overlapWithSibling(sp)) {
+        return ElementState.OverLap;
+      }
+    } else {
+      const [spHlx, spHly] = [sp.lx / 2, sp.ly / 2];
+      const [parentHlx, parentHly, parentHlz] = [parent.lx / 2, parent.ly / 2, parent.lz / 2];
+      // boundary check
+      // west east
+      if (Util.isIdentical(sp.normal, [-1, 0, 0]) || Util.isIdentical(sp.normal, [1, 0, 0])) {
+        if (Util.isRectOutsideBoundary(sp.cy, sp.cz, spHlx, spHly, parentHly, parentHlz)) {
+          return ElementState.OutsideBoundary;
+        }
+      }
+      // north south
+      else if (Util.isIdentical(sp.normal, [0, 1, 0]) || Util.isIdentical(sp.normal, [0, -1, 0])) {
+        if (Util.isRectOutsideBoundary(sp.cx, sp.cz, spHlx, spHly, parentHlx, parentHlz)) {
+          return ElementState.OutsideBoundary;
+        }
+      }
+      // collision check
+      if (Util.checkCollisionOnCuboidSameVerticalFace(sp)) {
+        return ElementState.OverLap;
+      }
+    }
+    return ElementState.Valid;
+  }
+
   static checkElementOnWallState(elem: ElementModel, parent?: ElementModel): ElementState {
     const margin = 0.00001;
 

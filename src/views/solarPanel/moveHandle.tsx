@@ -11,7 +11,7 @@ interface MoveHandleProps {
 
 const MoveHandle = React.memo(({ onPointerDown }: MoveHandleProps) => {
   const { _color, _onPointerDown, _onPointerMove, _onPointerLeave } = useHandle(MOVE_HANDLE_COLOR_1, 'move');
-  const handleSize = useHandleSize();
+  const handleSize = useHandleSize() * 0.75;
 
   const { gl } = useThree();
   return (
