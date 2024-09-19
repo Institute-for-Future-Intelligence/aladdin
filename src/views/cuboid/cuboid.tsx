@@ -69,6 +69,7 @@ import { isSolarPanelOnTopFace } from '../solarPanel/solarPanelOnCuboid';
 import { useSelected } from '../../hooks';
 import { SharedUtil } from '../SharedUtil';
 import { SolarPanelUtil } from '../solarPanel/SolarPanelUtil';
+import { useTransparent } from '../roof/hooks';
 
 const Cuboid = (cuboidModel: CuboidModel) => {
   const {
@@ -1109,7 +1110,13 @@ const Cuboid = (cuboidModel: CuboidModel) => {
     });
   };
 
-  const opacity = groundImage ? (orthographic ? 0.25 : 0.75) : 1;
+  const { transparent, opacity } = useTransparent();
+  useEffect(() => {
+    if (baseRef.current) {
+      // @ts-ignore
+      baseRef.current.material[4].needsUpdate = true;
+    }
+  }, [transparent]);
 
   const faces: number[] = [0, 1, 2, 3, 4, 5];
   const textures = [
@@ -1131,7 +1138,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
               attach={`material-${i}`}
               color={'white'}
               map={textures[i]}
-              transparent={true}
+              transparent={transparent}
               opacity={opacity}
             />
           ) : (
@@ -1141,7 +1148,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
               attach={`material-${i}`}
               color={'white'}
               map={textures[i]}
-              transparent={true}
+              transparent={transparent}
               opacity={opacity}
             />
           );
@@ -1153,7 +1160,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
               attach={`material-${i}`}
               color={'white'}
               map={textures[i]}
-              transparent={true}
+              transparent={transparent}
               opacity={opacity}
             />
           ) : (
@@ -1163,14 +1170,14 @@ const Cuboid = (cuboidModel: CuboidModel) => {
               attach={`material-${i}`}
               color={cuboidModel.faceColors ? cuboidModel.faceColors[i] : color}
               map={textures[i]}
-              transparent={true}
+              transparent={transparent}
               opacity={opacity}
             />
           );
         }
       })
     ) : (
-      <meshStandardMaterial side={FrontSide} color={color} transparent={true} opacity={opacity} />
+      <meshStandardMaterial side={FrontSide} color={color} transparent={transparent} opacity={opacity} />
     );
 
   const handleArgs = useMemo(() => [hx, hy, hz], [hx, hy, hz]);

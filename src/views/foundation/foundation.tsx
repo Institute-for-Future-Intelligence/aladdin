@@ -83,6 +83,7 @@ import { SharedUtil } from '../SharedUtil';
 import WallAuxiliaryLine, { WallAuxiliaryType } from './wallAuxiliaryLine';
 import RefSolarPanel from '../solarPanel/refSolarPanel';
 import SolarPanelWrapper from '../solarPanel/solarPanelWrapper';
+import { useTransparent } from '../roof/hooks';
 
 interface SnapTargetType {
   id: string | null;
@@ -3015,7 +3016,13 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
     }
   };
 
-  const opacity = groundImage ? (orthographic ? 0.25 : 0.75) : 1;
+  const { transparent, opacity } = useTransparent();
+  useEffect(() => {
+    if (baseRef.current) {
+      // @ts-ignore
+      baseRef.current.material[4].needsUpdate = true;
+    }
+  }, [transparent]);
 
   // const solarPanelsOnFoundation = useStore(
   //   (state) =>
@@ -3104,16 +3111,16 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
           onPointerOut={handlePointerOut}
           onPointerEnter={handlePointerEnter}
         >
-          <meshStandardMaterial attach="material-0" color={color} transparent={true} opacity={opacity} />
-          <meshStandardMaterial attach="material-1" color={color} transparent={true} opacity={opacity} />
-          <meshStandardMaterial attach="material-2" color={color} transparent={true} opacity={opacity} />
-          <meshStandardMaterial attach="material-3" color={color} transparent={true} opacity={opacity} />
+          <meshStandardMaterial attach="material-0" color={color} />
+          <meshStandardMaterial attach="material-1" color={color} />
+          <meshStandardMaterial attach="material-2" color={color} />
+          <meshStandardMaterial attach="material-3" color={color} />
           {showSolarRadiationHeatmap && heatmapTexture ? (
             <meshBasicMaterial
               attach="material-4"
               color={'white'}
               map={heatmapTexture}
-              transparent={true}
+              transparent={transparent}
               opacity={opacity}
             />
           ) : (
@@ -3121,11 +3128,11 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
               attach="material-4"
               color={textureType === FoundationTexture.NoTexture ? color : 'white'}
               map={texture}
-              transparent={true}
+              transparent={transparent}
               opacity={opacity}
             />
           )}
-          <meshStandardMaterial attach="material-5" color={color} transparent={true} opacity={opacity} />
+          <meshStandardMaterial attach="material-5" color={color} />
         </Box>
 
         {/* intersection plane */}
