@@ -54,6 +54,7 @@ export class DefaultActionState implements ActionState {
   cuboidFaceColors: string[];
   cuboidFaceTextures: CuboidTexture[];
   cuboidStackable: boolean;
+  cuboidTransparent: boolean;
 
   wallHeight: number;
   wallThickness: number;
@@ -207,6 +208,7 @@ export class DefaultActionState implements ActionState {
       CuboidTexture.NoTexture,
     ];
     this.cuboidStackable = false;
+    this.cuboidTransparent = false;
 
     this.wallHeight = 5;
     this.wallThickness = 0.3;

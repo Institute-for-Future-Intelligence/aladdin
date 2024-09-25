@@ -867,6 +867,7 @@ export const i18n_ua = {
       AddPolygon: 'Додати полігон',
       Stackable: 'Стекабельне',
       GroupMaster: 'Майстер групи',
+      Transparent: 'Transparent',
     },
 
     polygonMenu: {

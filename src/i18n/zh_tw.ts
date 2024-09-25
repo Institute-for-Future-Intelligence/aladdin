@@ -841,6 +841,7 @@ export const i18n_zh_tw = {
       AddPolygon: '添加多邊形',
       Stackable: '可堆砌',
       GroupMaster: '主長方體',
+      Transparent: '透明',
     },
 
     polygonMenu: {

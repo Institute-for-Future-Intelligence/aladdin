@@ -865,6 +865,7 @@ export const i18n_tr = {
       AddPolygon: 'Poligon Ekle',
       Stackable: 'Stackable',
       GroupMaster: 'Group Master',
+      Transparent: 'Transparent',
     },
 
     polygonMenu: {

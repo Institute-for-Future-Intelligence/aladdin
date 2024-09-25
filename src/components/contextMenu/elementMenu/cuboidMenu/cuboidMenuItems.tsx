@@ -37,6 +37,32 @@ interface RemoveCuboidElementsItemProps extends CuboidMenuItemProps {
   children?: React.ReactNode;
 }
 
+export const TransparentCheckbox = React.memo(({ cuboid }: CuboidMenuItemProps) => {
+  const lang = useLanguage();
+
+  const handleChange = () => {
+    useStore.getState().set((state) => {
+      for (const e of state.elements) {
+        if (e.id === cuboid.id && e.type === ObjectType.Cuboid) {
+          const cuboid = e as CuboidModel;
+          const transparent = !cuboid.transparent;
+          cuboid.transparent = transparent;
+          state.actionState.cuboidTransparent = transparent;
+          break;
+        }
+      }
+    });
+  };
+
+  return (
+    <MenuItem stayAfterClick noPadding>
+      <Checkbox style={{ width: '100%' }} checked={cuboid.transparent} onChange={handleChange}>
+        {i18n.t('cuboidMenu.Transparent', lang)}
+      </Checkbox>
+    </MenuItem>
+  );
+});
+
 export const StackableCheckbox = React.memo(({ cuboid }: CuboidMenuItemProps) => {
   const lang = useLanguage();
 

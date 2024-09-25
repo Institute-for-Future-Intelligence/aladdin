@@ -65,7 +65,6 @@ import { useDataStore } from '../../stores/commonData';
 import Handles from './handles';
 import { ElementModelFactory } from 'src/models/ElementModelFactory';
 import { getSolarPanelUnitLength } from '../wall/wall';
-import { isSolarPanelOnTopFace } from '../solarPanel/solarPanelOnCuboid';
 import { useSelected } from '../../hooks';
 import { SharedUtil } from '../SharedUtil';
 import { SolarPanelUtil } from '../solarPanel/SolarPanelUtil';
@@ -93,6 +92,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
       CuboidTexture.NoTexture,
     ],
     stackable,
+    transparent,
   } = cuboidModel;
 
   const selected = useSelected(id);
@@ -1110,13 +1110,15 @@ const Cuboid = (cuboidModel: CuboidModel) => {
     });
   };
 
-  const { transparent, opacity } = useTransparent();
+  const { transparent: _transparent, opacity } = useTransparent(transparent);
   useEffect(() => {
     if (baseRef.current) {
-      // @ts-ignore
-      baseRef.current.material[4].needsUpdate = true;
+      for (let i = 0; i < 6; i++) {
+        // @ts-ignore
+        baseRef.current.material[i].needsUpdate = true;
+      }
     }
-  }, [transparent]);
+  }, [_transparent]);
 
   const faces: number[] = [0, 1, 2, 3, 4, 5];
   const textures = [
@@ -1138,7 +1140,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
               attach={`material-${i}`}
               color={'white'}
               map={textures[i]}
-              transparent={transparent}
+              transparent={_transparent}
               opacity={opacity}
             />
           ) : (
@@ -1148,7 +1150,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
               attach={`material-${i}`}
               color={'white'}
               map={textures[i]}
-              transparent={transparent}
+              transparent={_transparent}
               opacity={opacity}
             />
           );
@@ -1160,7 +1162,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
               attach={`material-${i}`}
               color={'white'}
               map={textures[i]}
-              transparent={transparent}
+              transparent={_transparent}
               opacity={opacity}
             />
           ) : (
@@ -1170,14 +1172,14 @@ const Cuboid = (cuboidModel: CuboidModel) => {
               attach={`material-${i}`}
               color={cuboidModel.faceColors ? cuboidModel.faceColors[i] : color}
               map={textures[i]}
-              transparent={transparent}
+              transparent={_transparent}
               opacity={opacity}
             />
           );
         }
       })
     ) : (
-      <meshStandardMaterial side={FrontSide} color={color} transparent={transparent} opacity={opacity} />
+      <meshStandardMaterial side={FrontSide} color={color} transparent={_transparent} opacity={opacity} />
     );
 
   const handleArgs = useMemo(() => [hx, hy, hz], [hx, hy, hz]);
@@ -1243,13 +1245,13 @@ const Cuboid = (cuboidModel: CuboidModel) => {
       {selected && <HorizontalRuler element={cuboidModel} verticalLift={moveHandleSize} />}
 
       {/* wireFrame */}
-      {(!selected || groundImage) && (
+      {(transparent || !selected || groundImage) && (
         <Wireframe
           hx={hx}
           hy={hy}
           hz={hz}
-          lineColor={groundImage && orthographic ? 'white' : lineColor}
-          lineWidth={groundImage && orthographic ? lineWidth * 5 : lineWidth}
+          lineColor={transparent || (groundImage && orthographic) ? 'white' : lineColor}
+          lineWidth={transparent ? lineWidth * 15 : groundImage && orthographic ? lineWidth * 5 : lineWidth}
         />
       )}
 

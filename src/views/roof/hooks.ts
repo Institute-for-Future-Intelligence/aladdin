@@ -104,10 +104,10 @@ export const useTransparent = (transparent?: boolean, opacity?: number) => {
   const groundImage = useStore(Selector.viewState.groundImage);
   const orthographic = useStore(Selector.viewState.orthographic);
 
-  const _transparent = groundImage && orthographic;
-  const _opacity = _transparent ? 0.25 : 1;
+  const _transparent = transparent || (groundImage && orthographic);
+  let _opacity = groundImage && orthographic ? 0.25 : transparent ? 0.25 : 1;
 
-  return { transparent: transparent || _transparent, opacity: Math.min(opacity !== undefined ? opacity : 1, _opacity) };
+  return { transparent: _transparent, opacity: Math.min(opacity !== undefined ? opacity : 1, _opacity) };
 };
 
 export const useMultiCurrWallArray = (fId: string | undefined, roofId: string, wallsId: string[]) => {

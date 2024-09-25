@@ -772,6 +772,7 @@ export const i18n_es = {
       AddPolygon: 'Añadir polígono',
       SolarStructure: 'Solar Structure',
       GroupMaster: 'Group Master',
+      Transparent: 'Transparent',
       LockAllUnlockedElementsOnThisFoundation: 'Lock All Unlocked Elements on This Foundation',
       UnlockAllLockedElementsOnThisFoundation: 'Unlock All Locked Elements on This Foundation',
       GroundFloorRValue: 'Ground Floor R-Value',

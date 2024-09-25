@@ -8,7 +8,7 @@ import { ElementModel } from 'src/models/ElementModel';
 import { CuboidTexture, ObjectType } from 'src/types';
 import { Copy, Cut, DialogItem, GroupMasterCheckbox, Lock, MenuItem, Paste } from '../../menuItems';
 import { CuboidModel } from 'src/models/CuboidModel';
-import { AddPolygonItem, StackableCheckbox } from './cuboidMenuItems';
+import { AddPolygonItem, StackableCheckbox, TransparentCheckbox } from './cuboidMenuItems';
 import i18n from 'src/i18n/i18n';
 import CuboidColorSelection from './cuboidColorSelection';
 import CuboidTextureSelection from './cuboidTextureSelection';
@@ -87,6 +87,11 @@ export const createCuboidMenu = (selectedElement: ElementModel) => {
   items.push({
     key: 'cuboid-stackable',
     label: <StackableCheckbox cuboid={cuboid} />,
+  });
+
+  items.push({
+    key: 'cuboid-transparent',
+    label: <TransparentCheckbox cuboid={cuboid} />,
   });
 
   if (counterUnlocked.gotSome()) {

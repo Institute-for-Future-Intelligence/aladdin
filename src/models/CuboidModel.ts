@@ -10,4 +10,5 @@ import { Stackable } from './Stackable';
 export interface CuboidModel extends ElementModel, Groupable, Stackable {
   textureTypes?: CuboidTexture[];
   faceColors?: string[]; // if defined, these colors supersede the color attribute
+  transparent?: boolean;
 }

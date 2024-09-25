@@ -31,7 +31,7 @@ export type WallNumberDialogSettingType = {
 };
 
 export const WallNumberDialogSettings = {
-  Height: { attributeKey: 'lz', range: [0.1, 100], step: 0.1, unit: 'word.MeterAbbreviation' },
+  Height: { attributeKey: 'lz', range: [0.1, 1000], step: 0.1, unit: 'word.MeterAbbreviation' },
   Opacity: { attributeKey: 'opacity', range: [0, 1], step: 0.01 },
   StructureSpacing: { attributeKey: 'structureSpacing', range: [0.1, 1000], step: 0.1, unit: 'word.MeterAbbreviation' },
   StructureWidth: { attributeKey: 'structureWidth', range: [0.01, 1], step: 0.1, unit: 'word.MeterAbbreviation' },

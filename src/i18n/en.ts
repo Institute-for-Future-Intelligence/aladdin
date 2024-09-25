@@ -865,6 +865,7 @@ export const i18n_en = {
       AddPolygon: 'Add Polygon',
       Stackable: 'Stackable',
       GroupMaster: 'Group Master',
+      Transparent: 'Transparent',
     },
 
     polygonMenu: {
