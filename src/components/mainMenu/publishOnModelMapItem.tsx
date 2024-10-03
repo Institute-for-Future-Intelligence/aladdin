@@ -9,11 +9,12 @@ import { showInfo } from 'src/helpers';
 import ModelSiteDialog from '../contextMenu/elementMenu/modelSiteDialog';
 import { useLanguage } from 'src/hooks';
 import React, { useState } from 'react';
+import * as Selector from '../../stores/selector';
 
 export const PublishOnModelMapItem = React.memo(() => {
   const lang = useLanguage();
-  const user = useStore.getState().user;
-  const cloudFile = useStore.getState().cloudFile;
+  const user = useStore(Selector.user);
+  const cloudFile = useStore(Selector.cloudFile);
 
   const [modelSiteDialogVisible, setModelSiteDialogVisible] = useState(false);
 
