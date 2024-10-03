@@ -39,7 +39,7 @@ import MainToolBar from './mainToolBar';
 import SaveCloudFileModal from './saveCloudFileModal';
 import ModelsGallery from './modelsGallery';
 import ProjectListPanel from './panels/projectListPanel';
-import { addFileToList, doesDocExist, loadCloudFile, removeFileFromList } from './cloudFileUtil';
+import { addFileToList, doesDocExist, fetchFileList, loadCloudFile, removeFileFromList } from './cloudFileUtil';
 import {
   changeDesignTitles,
   copyDesign,
@@ -109,7 +109,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
   // the array. This causes slowdown when the array is being generated from the cloud data (the larger the array, the
   // more calls for rendering). The actual array for rendering is stored in cloudFileArray. The flag updateCloudFileArray
   // is used to instruct when it is time to copy the data from the ref array to the state array.
-  const cloudFilesRef = useRef<CloudFileInfo[] | void>();
+  const cloudFilesRef = useRef<CloudFileInfo[]>([]);
   const [cloudFileArray, setCloudFileArray] = useState<any[]>([]);
   const [updateCloudFileArray, setUpdateCloudFileArray] = useState<boolean>(false);
   // same logic for projects
@@ -213,8 +213,16 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
   };
 
   useEffect(() => {
+    if (user.uid && cloudFilesRef.current.length === 0) {
+      fetchFileList(user.uid, cloudFilesRef.current).then(() => {
+        // ignore
+      });
+    }
+  }, [user.uid]);
+
+  useEffect(() => {
     if (updateCloudFileArray) {
-      if (cloudFilesRef.current && user.uid) {
+      if (cloudFilesRef.current.length > 0 && user.uid) {
         const arr: any[] = [];
         cloudFilesRef.current.forEach((f, i) => {
           arr.push({ title: f.title, timestamp: f.timestamp });
@@ -1038,7 +1046,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
   };
 
   const removeCloudFileIfExisting = (uid: string, title: string) => {
-    if (cloudFilesRef.current) {
+    if (cloudFilesRef.current.length > 0) {
       let index = -1;
       for (const [i, file] of cloudFilesRef.current.entries()) {
         if (file.title === title) {
@@ -1054,7 +1062,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
   };
 
   const renameCloudFileAndUpdateList = (uid: string, oldTitle: string, newTitle: string) => {
-    if (cloudFilesRef.current) {
+    if (cloudFilesRef.current.length > 0) {
       let index = -1;
       let oldFile = null;
       let newFile = null;
@@ -1110,7 +1118,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
             }
             doc.get().then((snapshot) => {
               const data = snapshot.data();
-              if (data && cloudFilesRef.current) {
+              if (data && cloudFilesRef.current.length > 0) {
                 removeCloudFileIfExisting(uid, title);
                 const file = { timestamp: data.timestamp, title } as CloudFileInfo;
                 cloudFilesRef.current.push(file);
@@ -1735,7 +1743,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
         isTitleDialogVisible={() => titleDialogVisible}
       />
       <MainToolBar signIn={signIn} signOut={signOut} />
-      {showCloudFilePanel && cloudFilesRef.current && (
+      {showCloudFilePanel && cloudFilesRef.current.length > 0 && (
         <CloudFilePanel
           cloudFileArray={cloudFileArray}
           openCloudFile={(title) => {

@@ -21,6 +21,22 @@ export const doesDocExist = async (uid: string, fileName: string, callbackOnErro
   }
 };
 
+export const fetchFileList = async (uid: string, array: CloudFileInfo[]) => {
+  await firebase
+    .firestore()
+    .collection('users')
+    .doc(uid)
+    .get()
+    .then((doc) => {
+      const docData = doc.data();
+      if (docData) {
+        if (docData.fileList) array.push(...docData.fileList);
+        return true;
+      }
+      return false;
+    });
+};
+
 export const addFileToList = async (uid: string, file: CloudFileInfo) => {
   await firebase
     .firestore()
