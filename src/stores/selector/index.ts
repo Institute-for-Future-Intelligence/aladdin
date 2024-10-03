@@ -145,6 +145,8 @@ export const publishOnModelsMapFlag = (state: PrimitiveStoreState) => state.publ
 
 export const listCloudFilesFlag = (state: PrimitiveStoreState) => state.listCloudFilesFlag;
 
+export const refreshCloudFilesFlag = (state: PrimitiveStoreState) => state.refreshCloudFilesFlag;
+
 export const localContentToImportAfterCloudFileUpdate = (state: CommonStoreState) =>
   state.localContentToImportAfterCloudFileUpdate;
 

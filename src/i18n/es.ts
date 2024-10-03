@@ -31,6 +31,7 @@ export const i18n_es = {
     },
 
     word: {
+      Refresh: 'Refresh',
       LastUpdate: 'Last Update',
       Small: 'Small',
       Medium: 'Medium',

@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import ReactDraggable, { DraggableBounds, DraggableData, DraggableEvent, DraggableEventHandler } from 'react-draggable';
-import { Input, Modal, Space, Table, Typography } from 'antd';
+import { Button, Input, Modal, Space, Table, Typography } from 'antd';
 import { CopyOutlined, QuestionCircleOutlined, WarningOutlined } from '@ant-design/icons';
 import { HOME_URL, REGEX_ALLOWABLE_IN_NAME, Z_INDEX_FRONT_PANEL } from '../constants';
 import { showSuccess } from '../helpers';
@@ -276,7 +276,7 @@ const CloudFilePanel = React.memo(
                   {t('word.Close', lang)}
                 </span>
               </Header>
-              <span style={{ direction: 'ltr' }}>
+              <div style={{ direction: 'ltr', width: '100%', justifyContent: 'center' }}>
                 <Search
                   style={{ width: '50%', paddingTop: '8px', paddingBottom: '8px' }}
                   title={t('cloudFilePanel.SearchByTitle', lang)}
@@ -295,7 +295,19 @@ const CloudFilePanel = React.memo(
                     setUpdateFlag(!updateFlag);
                   }}
                 />
-              </span>
+                <Button
+                  type={'primary'}
+                  size={'small'}
+                  style={{ marginLeft: '10px', marginTop: '8px' }}
+                  onClick={() => {
+                    usePrimitiveStore.getState().set((state) => {
+                      state.refreshCloudFilesFlag = true;
+                    });
+                  }}
+                >
+                  {t('word.Refresh', lang)}
+                </Button>
+              </div>
               <Table
                 size={'small'}
                 style={{ width: '100%', direction: 'ltr' }}

@@ -14,9 +14,10 @@ import ukUA from 'antd/lib/locale/uk_UA';
 import { Language } from 'src/types';
 import { MenuItem } from '../contextMenu/menuItems';
 import React from 'react';
+import * as Selector from '../../stores/selector';
 
 export const LanguageRadioGroup = React.memo(() => {
-  const language = useStore.getState().language;
+  const language = useStore(Selector.language);
 
   const handleChange = (e: RadioChangeEvent) => {
     useStore.getState().set((state) => {

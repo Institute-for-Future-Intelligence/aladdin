@@ -33,6 +33,7 @@ export interface PrimitiveStoreState {
   saveCloudFileFlag: boolean;
   setSaveCloudFileFlag: (b: boolean) => void;
   listCloudFilesFlag: boolean;
+  refreshCloudFilesFlag: boolean;
   saveLocalFileDialogVisible: boolean;
 
   modelsMapFlag: boolean;
@@ -224,6 +225,7 @@ export const usePrimitiveStore = createWithEqualityFn<PrimitiveStoreState>()((se
       });
     },
     listCloudFilesFlag: false,
+    refreshCloudFilesFlag: false,
     saveLocalFileDialogVisible: false,
 
     modelsMapFlag: false,

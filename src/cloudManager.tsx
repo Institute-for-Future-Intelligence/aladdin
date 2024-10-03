@@ -86,6 +86,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
   const leaderboardFlag = usePrimitiveStore(Selector.leaderboardFlag);
   const publishOnMapFlag = usePrimitiveStore(Selector.publishOnModelsMapFlag);
   const listCloudFilesFlag = usePrimitiveStore(Selector.listCloudFilesFlag);
+  const refreshCloudFilesFlag = usePrimitiveStore(Selector.refreshCloudFilesFlag);
   const showCloudFileTitleDialog = useStore(Selector.showCloudFileTitleDialog);
   const showCloudFileTitleDialogFlag = useStore(Selector.showCloudFileTitleDialogFlag);
   const importContent = useStore(Selector.importContent);
@@ -138,6 +139,8 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
   useFlag(updateProjectsFlag, hideMyProjectsList, () => setPrimitiveStore('updateProjectsFlag', false));
 
   useFlag(listCloudFilesFlag, listMyCloudFiles, () => setPrimitiveStore('listCloudFilesFlag', false));
+
+  useFlag(refreshCloudFilesFlag, refreshMyCloudFiles, () => setPrimitiveStore('refreshCloudFilesFlag', false));
 
   useFlag(curateDesignToProjectFlag, curateDesignToProject, () =>
     setPrimitiveStore('curateDesignToProjectFlag', false),
@@ -1207,7 +1210,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
   };
 
   // fetch owner's file information from the cloud
-  const fetchMyCloudFiles = async () => {
+  const fetchMyCloudFiles = async (refresh: boolean) => {
     const uid = user.uid;
     if (!uid) return;
     setLoading(true);
@@ -1219,7 +1222,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
       .get()
       .then(async (doc) => {
         const fileList = doc.data()?.fileList;
-        if (fileList && fileList.length > 0) {
+        if (!refresh && fileList && fileList.length > 0) {
           // if a file list exists, use it
           cloudFilesRef.current?.push(...fileList);
         } else {
@@ -1704,10 +1707,17 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
 
   function listMyCloudFiles() {
     if (!user.uid) return;
-    fetchMyCloudFiles().then(() => {
+    fetchMyCloudFiles(false).then(() => {
       usePrimitiveStore.getState().set((state) => {
         state.showCloudFilePanel = true;
       });
+    });
+  }
+
+  function refreshMyCloudFiles() {
+    if (!user.uid) return;
+    fetchMyCloudFiles(true).then(() => {
+      // ignore
     });
   }
 
