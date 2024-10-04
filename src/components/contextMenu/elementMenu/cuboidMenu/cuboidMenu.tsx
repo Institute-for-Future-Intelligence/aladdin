@@ -8,7 +8,7 @@ import { ElementModel } from 'src/models/ElementModel';
 import { CuboidTexture, ObjectType } from 'src/types';
 import { Copy, Cut, DialogItem, GroupMasterCheckbox, Lock, MenuItem, Paste } from '../../menuItems';
 import { CuboidModel } from 'src/models/CuboidModel';
-import { AddPolygonItem, StackableCheckbox, TransparentCheckbox } from './cuboidMenuItems';
+import { AddPolygonItem, StackableCheckbox } from './cuboidMenuItems';
 import i18n from 'src/i18n/i18n';
 import CuboidColorSelection from './cuboidColorSelection';
 import CuboidTextureSelection from './cuboidTextureSelection';
@@ -18,6 +18,7 @@ import CuboidHeightInput from './cuboidHeightInput';
 import CuboidAzimuthInput from './cuboidAzimuthInput';
 import { createLabelSubmenu } from '../../labelSubmenuItems';
 import { createCuboidElementCounterSubmenu } from './cuboidElementCounterSubmenu';
+import CuboidTransparencyInput from './cuboidTransparencyInput';
 
 const legalToPaste = () => {
   const elementsToPaste = useStore.getState().elementsToPaste;
@@ -89,11 +90,6 @@ export const createCuboidMenu = (selectedElement: ElementModel) => {
     label: <StackableCheckbox cuboid={cuboid} />,
   });
 
-  items.push({
-    key: 'cuboid-transparent',
-    label: <TransparentCheckbox cuboid={cuboid} />,
-  });
-
   if (counterUnlocked.gotSome()) {
     items.push({
       key: 'cuboid-clear',
@@ -133,6 +129,11 @@ export const createCuboidMenu = (selectedElement: ElementModel) => {
     items.push({
       key: 'cuboid-azimuth',
       label: <DialogItem Dialog={CuboidAzimuthInput}>{i18n.t('word.Azimuth', lang)} ...</DialogItem>,
+    });
+
+    items.push({
+      key: 'cuboid-transparency',
+      label: <DialogItem Dialog={CuboidTransparencyInput}>{i18n.t('word.Transparency', lang)} ...</DialogItem>,
     });
   }
 

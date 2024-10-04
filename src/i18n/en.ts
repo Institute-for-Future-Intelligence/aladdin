@@ -95,6 +95,7 @@ export const i18n_en = {
       Delete: 'Delete',
       Lock: 'Lock',
       Translucent: 'Translucent',
+      Transparency: 'Transparency',
       Color: 'Color',
       Pattern: 'Pattern',
       Texture: 'Texture',
@@ -866,7 +867,6 @@ export const i18n_en = {
       AddPolygon: 'Add Polygon',
       Stackable: 'Stackable',
       GroupMaster: 'Group Master',
-      Transparent: 'Transparent',
     },
 
     polygonMenu: {

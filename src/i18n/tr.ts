@@ -95,6 +95,7 @@ export const i18n_tr = {
       Delete: 'Sil',
       Lock: 'Kilitle',
       Translucent: 'Yarı Saydam',
+      Transparency: 'Transparency',
       Color: 'Renk',
       Pattern: 'Pattern',
       Texture: 'Doku',
@@ -866,7 +867,6 @@ export const i18n_tr = {
       AddPolygon: 'Poligon Ekle',
       Stackable: 'Stackable',
       GroupMaster: 'Group Master',
-      Transparent: 'Transparent',
     },
 
     polygonMenu: {

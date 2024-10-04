@@ -61,7 +61,6 @@ import { FoundationModel } from '../models/FoundationModel';
 import {
   DEFAULT_ADDRESS,
   DEFAULT_MODEL_MAP_ZOOM,
-  DEFAULT_SHADOW_MAP_SIZE,
   DEFAULT_WIND_TURBINE_BLADE_COLOR,
   DEFAULT_WIND_TURBINE_STRIPE_COLOR,
   FLOATING_WINDOW_OPACITY,
@@ -1997,7 +1996,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
           },
 
           // for cuboids
-          cuboidActionScope: Scope.OnlyThisSide,
+          cuboidActionScope: Scope.OnlyThisObject,
           setCuboidActionScope(scope) {
             immerSet((state: CommonStoreState) => {
               state.cuboidActionScope = scope;

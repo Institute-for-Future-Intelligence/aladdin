@@ -51,7 +51,6 @@ import { PolarGrid } from '../polarGrid';
 import Wireframe from '../../components/wireframe';
 import { SolarPanelModel } from '../../models/SolarPanelModel';
 import { UndoableAdd } from '../../undo/UndoableAdd';
-import { UndoableMove } from '../../undo/UndoableMove';
 import { UndoableResize } from '../../undo/UndoableResize';
 import { UndoableChange } from '../../undo/UndoableChange';
 import i18n from '../../i18n/i18n';
@@ -92,7 +91,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
       CuboidTexture.NoTexture,
     ],
     stackable,
-    transparent,
+    transparency,
   } = cuboidModel;
 
   const selected = useSelected(id);
@@ -646,7 +645,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
           }
         } else if (useStore.getState().resizeHandleType) {
           switch (grabRef.current.type) {
-            case ObjectType.SolarPanel:
+            case ObjectType.SolarPanel: {
               const solarPanel = grabRef.current as SolarPanelModel;
               if (solarPanel.normal[2] === 1) break;
               const [unitX, unitY] = getSolarPanelUnitLength(solarPanel);
@@ -688,7 +687,8 @@ const Cuboid = (cuboidModel: CuboidModel) => {
                 });
               }
               break;
-            case ObjectType.Polygon:
+            }
+            case ObjectType.Polygon: {
               if (useStore.getState().resizeHandleType === ResizeHandleType.Default) {
                 // first, reverse the rotation of p.x and p.y around the center of the cuboid
                 let q = new Vector3(p.x - worldPositionRef.current.x, p.y - worldPositionRef.current.y, 0).applyEuler(
@@ -729,6 +729,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
                 updatePolygonVertexPositionById(polygon.id, polygon.selectedIndex, q.x, q.y);
               }
               break;
+            }
           }
         }
         setShowGrid(true);
@@ -819,7 +820,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
             }
             case ResizeHandleType.Left:
             case ResizeHandleType.Right: {
-              let sign = useStore.getState().resizeHandleType === ResizeHandleType.Left ? -1 : 1;
+              const sign = useStore.getState().resizeHandleType === ResizeHandleType.Left ? -1 : 1;
               const theta =
                 rp.angle() - angle + (useStore.getState().resizeHandleType === ResizeHandleType.Left ? Math.PI : 0);
               let dxl = distance * Math.cos(theta);
@@ -1110,11 +1111,14 @@ const Cuboid = (cuboidModel: CuboidModel) => {
     });
   };
 
-  const { transparent: _transparent, opacity } = useTransparent(transparent);
+  const { transparent: _transparent, opacity } = useTransparent(
+    transparency !== undefined && transparency > 0,
+    1 - (transparency ?? 0),
+  );
   useEffect(() => {
     if (baseRef.current) {
       for (let i = 0; i < 6; i++) {
-        // @ts-ignore
+        // @ts-expect-error ignore
         baseRef.current.material[i].needsUpdate = true;
       }
     }
@@ -1245,13 +1249,13 @@ const Cuboid = (cuboidModel: CuboidModel) => {
       {selected && <HorizontalRuler element={cuboidModel} verticalLift={moveHandleSize} />}
 
       {/* wireFrame */}
-      {(transparent || !selected || groundImage) && (
+      {(transparency || !selected || groundImage) && (
         <Wireframe
           hx={hx}
           hy={hy}
           hz={hz}
-          lineColor={transparent || (groundImage && orthographic) ? 'white' : lineColor}
-          lineWidth={transparent ? lineWidth * 15 : groundImage && orthographic ? lineWidth * 5 : lineWidth}
+          lineColor={transparency || (groundImage && orthographic) ? 'white' : lineColor}
+          lineWidth={transparency ? lineWidth * 15 : groundImage && orthographic ? lineWidth * 5 : lineWidth}
         />
       )}
 

@@ -96,6 +96,7 @@ export const i18n_ua = {
       Delete: 'Видалити',
       Lock: 'Заблокувати',
       Translucent: 'Півпрозорий',
+      Transparency: 'Transparency',
       Color: 'Колір',
       Pattern: 'Pattern',
       Texture: 'Текстура',
@@ -868,7 +869,6 @@ export const i18n_ua = {
       AddPolygon: 'Додати полігон',
       Stackable: 'Стекабельне',
       GroupMaster: 'Майстер групи',
-      Transparent: 'Transparent',
     },
 
     polygonMenu: {

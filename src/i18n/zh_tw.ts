@@ -95,6 +95,7 @@ export const i18n_zh_tw = {
       Delete: '删除',
       Lock: '固定',
       Translucent: '半透明',
+      Transparency: '透明度',
       Color: '顏色',
       Pattern: '圖案',
       Texture: '材質',
@@ -842,7 +843,6 @@ export const i18n_zh_tw = {
       AddPolygon: '添加多邊形',
       Stackable: '可堆砌',
       GroupMaster: '主長方體',
-      Transparent: '透明',
     },
 
     polygonMenu: {

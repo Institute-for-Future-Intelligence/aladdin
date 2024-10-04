@@ -105,7 +105,7 @@ export const useTransparent = (transparent?: boolean, opacity?: number) => {
   const orthographic = useStore(Selector.viewState.orthographic);
 
   const _transparent = transparent || (groundImage && orthographic);
-  let _opacity = groundImage && orthographic ? 0.25 : transparent ? 0.25 : 1;
+  const _opacity = groundImage && orthographic ? 0.25 : transparent ? 0.25 : 1;
 
   return { transparent: _transparent, opacity: Math.min(opacity !== undefined ? opacity : 1, _opacity) };
 };
@@ -301,7 +301,7 @@ export const useUpdateSegmentVerticesMap = (
   const updateSegmentVertices = () => {
     const relToFoundation = (v: Vector3) => v.clone().add(centroid);
 
-    let vertices: Vector3[][] = [];
+    const vertices: Vector3[][] = [];
 
     // FIXME
     // In the following, the vertices are relative to the foundation only in terms of position.

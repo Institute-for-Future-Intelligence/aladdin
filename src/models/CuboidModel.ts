@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import { ElementModel } from './ElementModel';
@@ -10,5 +10,5 @@ import { Stackable } from './Stackable';
 export interface CuboidModel extends ElementModel, Groupable, Stackable {
   textureTypes?: CuboidTexture[];
   faceColors?: string[]; // if defined, these colors supersede the color attribute
-  transparent?: boolean;
+  transparency?: number;
 }

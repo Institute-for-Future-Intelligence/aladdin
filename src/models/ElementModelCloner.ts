@@ -632,7 +632,7 @@ export class ElementModelCloner {
       normal: [...cuboid.normal],
       rotation: [...cuboid.rotation],
       stackable: cuboid.stackable,
-      transparent: cuboid.transparent,
+      transparency: cuboid.transparency,
       enableGroupMaster: cuboid.enableGroupMaster,
       parentId: parentId,
       id: short.generate() as string,
