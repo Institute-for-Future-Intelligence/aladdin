@@ -584,6 +584,7 @@ export const i18n_es = {
       commercialBuildingsSubMenu: 'Commercial Buildings',
       commercialBuildingExamples: {
         WhiteHouse: 'White House',
+        HaroldWashingtonCollege: 'Harold Washington College',
         BilimMersinTurkiye: 'BILIM, Mersin, Turkiye',
         SpanishStyleHotel: 'Spanish Style Hotel',
         ApartmentBuilding: 'Apartment Building',
@@ -597,7 +598,8 @@ export const i18n_es = {
       },
       urbanPlanningSubMenu: 'Urban Planning',
       urbanPlanningExamples: {
-        Heatmap1: 'Heatmap',
+        CityBlockHeatmap: 'City Block Heatmap',
+        ChicagoSkyline: 'Chicago Skyline',
       },
       otherBuildingsSubMenu: 'Other Buildings',
       otherBuildingExamples: {

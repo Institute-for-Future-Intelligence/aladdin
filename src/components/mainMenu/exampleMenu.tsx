@@ -97,6 +97,7 @@ export const createExamplesMenu = () => {
           label: <MenuItem noPadding>{i18n.t('menu.commercialBuildingsSubMenu', lang)}</MenuItem>,
           children: [
             { key: 'white_house', label: 'menu.commercialBuildingExamples.WhiteHouse' },
+            { key: 'harold_washington_college', label: 'menu.commercialBuildingExamples.HaroldWashingtonCollege' },
             { key: 'bilim_mersin_turkiye', label: 'menu.commercialBuildingExamples.BilimMersinTurkiye' },
             { key: 'spanish_style_hotel', label: 'menu.commercialBuildingExamples.SpanishStyleHotel' },
             { key: 'apartment_building_01', label: 'menu.commercialBuildingExamples.ApartmentBuilding' },
@@ -139,7 +140,16 @@ export const createExamplesMenu = () => {
         {
           key: 'urban_planning',
           label: <MenuItem noPadding>{i18n.t('menu.urbanPlanningSubMenu', lang)}</MenuItem>,
-          children: [{ key: 'heatmap_01', label: 'menu.urbanPlanningExamples.Heatmap1' }].map(mapFunction),
+          children: [
+            {
+              key: 'city_block_heatmap',
+              label: 'menu.urbanPlanningExamples.CityBlockHeatmap',
+            },
+            {
+              key: 'chicago_skyline',
+              label: 'menu.urbanPlanningExamples.ChicagoSkyline',
+            },
+          ].map(mapFunction),
         },
       ],
     },

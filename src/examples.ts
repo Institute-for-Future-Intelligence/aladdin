@@ -46,6 +46,7 @@ import monitor_roof from './examples/monitor_roof.json';
 import colonial_vs_saltbox from './examples/colonial_vs_saltbox.json';
 import gambrel_roof_vs_mansard_roof from './examples/gambrel_roof_vs_mansard_roof.json';
 import white_house from './examples/white_house.json';
+import harold_washington_college from './examples/harold_washington_college.json';
 import bilim_mersin_turkiye from './examples/bilim_mersin_turkiye.json';
 import office_building_01 from './examples/office_building_01.json';
 import hotel_01 from './examples/hotel_01.json';
@@ -53,7 +54,8 @@ import spanish_style_hotel from './examples/spanish_style_hotel.json';
 import apartment_building_01 from './examples/apartment_building_01.json';
 import south_burlington_high_school from './examples/south_burlington_high_school.json';
 import mescalero_apache_school from './examples/mescalero_apache_school.json';
-import heatmap_01 from './examples/heatmap_01.json';
+import city_block_heatmap from './examples/city_block_heatmap.json';
+import chicago_skyline from './examples/chicago_skyline.json';
 import greenhouse from './examples/greenhouse.json';
 import pavilion from './examples/pavilion.json';
 import octagonal_pagoda from './examples/octagonal_pagoda.json';
@@ -183,6 +185,9 @@ export const getExample = (name: string) => {
     case 'white_house':
       input = white_house;
       break;
+    case 'harold_washington_college':
+      input = harold_washington_college;
+      break;
     case 'bilim_mersin_turkiye':
       input = bilim_mersin_turkiye;
       break;
@@ -192,8 +197,11 @@ export const getExample = (name: string) => {
     case 'mescalero_apache_school':
       input = mescalero_apache_school;
       break;
-    case 'heatmap_01':
-      input = heatmap_01;
+    case 'city_block_heatmap':
+      input = city_block_heatmap;
+      break;
+    case 'chicago_skyline':
+      input = chicago_skyline;
       break;
     case 'vegetative_buffer_01':
       input = vegetative_buffer_01;

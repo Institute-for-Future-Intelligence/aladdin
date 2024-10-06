@@ -581,6 +581,7 @@ export const i18n_zh_cn = {
       commercialBuildingsSubMenu: '商用建筑',
       commercialBuildingExamples: {
         WhiteHouse: '白宫',
+        HaroldWashingtonCollege: '哈罗德华盛顿学院',
         BilimMersinTurkiye: '土耳其梅尔辛科学教育中心',
         SpanishStyleHotel: '西班牙风格旅馆',
         ApartmentBuilding: '公寓楼',
@@ -594,7 +595,8 @@ export const i18n_zh_cn = {
       },
       urbanPlanningSubMenu: '城市规划',
       urbanPlanningExamples: {
-        Heatmap1: '热图例一',
+        CityBlockHeatmap: '城市街区热图',
+        ChicagoSkyline: '芝加哥天际线',
       },
       otherBuildingsSubMenu: '其它建筑',
       otherBuildingExamples: {

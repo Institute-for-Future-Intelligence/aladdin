@@ -587,6 +587,7 @@ export const i18n_ua = {
       commercialBuildingsSubMenu: 'Комерційні будівлі',
       commercialBuildingExamples: {
         WhiteHouse: 'Білий Дім',
+        HaroldWashingtonCollege: 'Harold Washington College',
         BilimMersinTurkiye: 'Bilim, Mersin, Туреччина',
         SpanishStyleHotel: 'Готель в іспанському стилі',
         ApartmentBuilding: 'Багатоквартирний будинок',
@@ -600,7 +601,8 @@ export const i18n_ua = {
       },
       urbanPlanningSubMenu: 'Міське планування',
       urbanPlanningExamples: {
-        Heatmap1: 'Теплова карта',
+        CityBlockHeatmap: 'City Block Heatmap',
+        ChicagoSkyline: 'Chicago Skyline',
       },
       otherBuildingsSubMenu: 'Інші будівлі',
       otherBuildingExamples: {

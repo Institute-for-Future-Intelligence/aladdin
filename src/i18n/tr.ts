@@ -584,6 +584,7 @@ export const i18n_tr = {
       commercialBuildingsSubMenu: 'Ticari Binalar',
       commercialBuildingExamples: {
         WhiteHouse: 'White House',
+        HaroldWashingtonCollege: 'Harold Washington College',
         BilimMersinTurkiye: 'Yenişehir Belediyesi Bilim ve Sanat Merkezi',
         SpanishStyleHotel: 'Spanish Style Hotel',
         ApartmentBuilding: 'Apartment Building',
@@ -597,7 +598,8 @@ export const i18n_tr = {
       },
       urbanPlanningSubMenu: 'Şehir Planlaması',
       urbanPlanningExamples: {
-        Heatmap1: 'Isı Haritası',
+        CityBlockHeatmap: 'City Block Heatmap',
+        ChicagoSkyline: 'Chicago Skyline',
       },
       otherBuildingsSubMenu: 'Other Buildings',
       otherBuildingExamples: {
