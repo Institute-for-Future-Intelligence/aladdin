@@ -192,6 +192,7 @@ export const i18n_zh_cn = {
     },
 
     message: {
+      NewVersionAvailable: '有新版本',
       CalculationMayBeSlowDoYouWantToContinue: '计算可能会很慢。您想继续吗？',
       IncreaseSolarRadiationHeatmapGridCellSizeToSpeedUp: '加大太阳辐射热图网格的尺寸可加速',
       ModelNotFound: '没有找到模型',

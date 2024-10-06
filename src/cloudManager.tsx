@@ -323,6 +323,9 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
         state.cloudFile = undefined;
       });
     }
+    fetchLatestVersion().then(() => {
+      // ignore
+    });
   };
 
   const resetToSelectMode = () => {
@@ -330,6 +333,28 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
       state.objectTypeToAdd = ObjectType.None;
       state.groupActionMode = false;
     });
+  };
+
+  // get latest version
+  const fetchLatestVersion = async () => {
+    await firebase
+      .firestore()
+      .collection('app')
+      .doc('info')
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          const data = doc.data();
+          if (data && data.latestVersion) {
+            usePrimitiveStore.getState().set((state) => {
+              state.latestVersion = data.latestVersion;
+            });
+          }
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   const signIn = () => {

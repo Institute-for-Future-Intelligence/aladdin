@@ -59,6 +59,8 @@ export const getRoofSegmentVertices = (state: DataStoreState) => state.getRoofSe
 export const getRoofSegmentVerticesWithoutOverhang = (state: DataStoreState) =>
   state.getRoofSegmentVerticesWithoutOverhang;
 
+export const latestVersion = (state: PrimitiveStoreState) => state.latestVersion;
+
 export const changed = (state: PrimitiveStoreState) => state.changed;
 
 export const setChanged = (state: PrimitiveStoreState) => state.setChanged;

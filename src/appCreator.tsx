@@ -7,7 +7,7 @@
 import React, { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { useStore } from './stores/common';
 import * as Selector from 'src/stores/selector';
-import { Canvas, invalidate, useThree } from '@react-three/fiber';
+import { Canvas, invalidate } from '@react-three/fiber';
 import Sky from './views/sky';
 import Axes from './views/axes';
 import ElementsRenderer from './elementsRenderer';
@@ -41,13 +41,14 @@ import Waiting from './waiting';
 import Panels from './panels';
 import Simulations from './simulations';
 import { usePrimitiveStore } from './stores/commonPrimitive';
-import { Button } from 'antd';
+import { Badge, Button, Space } from 'antd';
 import ProjectGallery from './panels/projectGallery';
 import GroupMasterWrapper from './components/groupMaster';
 import SplitPane from './components/splitPane';
 import { useRefStore } from './stores/commonRef';
 import { PerspectiveCamera, Vector2 } from 'three';
 import { useLanguage } from './hooks';
+import { AlertFilled } from '@ant-design/icons';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -56,6 +57,7 @@ export interface AppCreatorProps {
 const HEADER_HEIGHT = 72;
 const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
   const user = useStore(Selector.user);
+  const latestVersion = usePrimitiveStore(Selector.latestVersion);
   const loggable = useStore(Selector.loggable);
   const setCommonStore = useStore(Selector.set);
   const changed = usePrimitiveStore(Selector.changed);
@@ -73,6 +75,7 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
 
   const [initializing, setInitializing] = useState<boolean>(true);
   const [canvasPercentWidth, setCanvasRelativeWidth] = useState<number>(50);
+  const [latestVersionReminder, setLatestVersionReminder] = useState<boolean>(false);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -81,6 +84,10 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
   useEffect(() => {
     setInitializing(false);
   }, []);
+
+  useEffect(() => {
+    if (latestVersion) setLatestVersionReminder(VERSION.localeCompare(latestVersion) < 0);
+  }, [latestVersion]);
 
   useEffect(() => {
     setCommonStore((state) => {
@@ -185,18 +192,31 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
           fontSize: '30px',
         }}
       >
-        <span
-          style={{
-            marginLeft: '120px',
-            verticalAlign: 'middle',
-            cursor: 'pointer',
-            userSelect: 'none',
-          }}
-          title={i18n.t('tooltip.visitAladdinHomePage', lang)}
-          onClick={visitHomepage}
+        <Badge
+          offset={['10px', '0px']}
+          count={
+            latestVersionReminder ? (
+              <AlertFilled
+                style={{ color: 'red', cursor: 'pointer' }}
+                title={i18n.t('message.NewVersionAvailable', lang)}
+              />
+            ) : undefined
+          }
         >
-          {`${i18n.t('name.Aladdin', lang)}`}
-        </span>
+          <Space
+            style={{
+              marginLeft: '120px',
+              verticalAlign: 'middle',
+              cursor: 'pointer',
+              userSelect: 'none',
+              fontSize: '30px',
+            }}
+            title={i18n.t('tooltip.visitAladdinHomePage', lang)}
+            onClick={visitHomepage}
+          >
+            {`${i18n.t('name.Aladdin', lang)}`}
+          </Space>
+        </Badge>
         {cloudFile && !openModelsMap && (
           <span
             style={{

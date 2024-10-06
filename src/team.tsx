@@ -96,15 +96,11 @@ const Team = React.memo(({ top, height, color }: TeamProps) => {
               </td>
               <td>
                 <h3 style={{ color: color }}>{i18n.t('aboutUs.Content', lang)}</h3>
-                Elena Sereiviene
-                <br />
                 Charles Xie
                 <br />
               </td>
               <td>
                 <h3 style={{ color: color }}>{i18n.t('aboutUs.Support', lang)}</h3>
-                Elena Sereiviene
-                <br />
                 Charles Xie
                 <br />
               </td>
