@@ -2324,6 +2324,39 @@ const Ground = React.memo(() => {
     }
   };
 
+  useEffect(() => {
+    const beforeUnload = () => {
+      const addedFoundationID = useStore.getState().addedFoundationId;
+      const addedCuboidID = useStore.getState().addedCuboidId;
+      if (addedFoundationID) {
+        removeElementById(addedFoundationID, false);
+        setCommonStore((state) => {
+          state.objectTypeToAdd = ObjectType.Foundation;
+          state.addedFoundationId = null;
+        });
+        useRefStore.getState().setEnableOrbitController(true);
+        grabRef.current = null;
+        isSettingFoundationStartPointRef.current = false;
+        isSettingFoundationEndPointRef.current = false;
+      }
+      if (addedCuboidID) {
+        removeElementById(addedCuboidID, false);
+        setCommonStore((state) => {
+          state.objectTypeToAdd = ObjectType.Cuboid;
+          state.addedCuboidId = null;
+        });
+        useRefStore.getState().setEnableOrbitController(true);
+        grabRef.current = null;
+        isSettingCuboidStartPointRef.current = false;
+        isSettingCuboidEndPointRef.current = false;
+      }
+    };
+    window.addEventListener('beforeunload', beforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', beforeUnload);
+    };
+  }, []);
+
   return (
     <>
       {grabRef.current && intersectionPlaneType !== IntersectionPlaneType.Ground && (

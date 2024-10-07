@@ -3076,6 +3076,18 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
     return grabRef.current && Util.isSolarCollector(grabRef.current) && !grabRef.current.locked;
   };
 
+  useEffect(() => {
+    const beforeUnload = () => {
+      if (grabRef.current && isSettingWallStartPointRef.current) {
+        removeElementById(grabRef.current.id, false);
+      }
+    };
+    window.addEventListener('beforeunload', beforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', beforeUnload);
+    };
+  }, []);
+
   return (
     <>
       <group
