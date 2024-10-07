@@ -606,6 +606,8 @@ export const setSunlightDirection = (state: CommonStoreState) => state.setSunlig
 
 export const showSolarRadiationHeatmap = (state: PrimitiveStoreState) => state.showSolarRadiationHeatmap;
 
+export const selectButtonClicked = (state: PrimitiveStoreState) => state.selectButtonClicked;
+
 export const showHeatFluxes = (state: PrimitiveStoreState) => state.showHeatFluxes;
 
 // solar panels (PV)

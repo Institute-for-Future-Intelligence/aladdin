@@ -78,6 +78,7 @@ const Ground = React.memo(() => {
   const deletedFoundationId = useStore(Selector.deletedFoundationId);
   const deletedCuboidId = useStore(Selector.deletedCuboidId);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
+  const selectButtonClicked = usePrimitiveStore(Selector.selectButtonClicked);
 
   const { get: getThree, scene, invalidate } = useThree();
   const groundPlaneRef = useRef<Mesh>(null);
@@ -1007,7 +1008,6 @@ const Ground = React.memo(() => {
           }
         }
       }
-      grabRef.current = null;
     }
     setCommonStore((state) => {
       state.moveHandleType = null;
@@ -1163,6 +1163,7 @@ const Ground = React.memo(() => {
           state.updateSceneRadius();
         });
       }
+      grabRef.current = null;
     } else {
       const selectedElementIdSet = useStore.getState().selectedElementIdSet;
       if (selectedElementIdSet.size > 1) {
@@ -1432,6 +1433,8 @@ const Ground = React.memo(() => {
               break;
             }
           }
+        } else {
+          grabRef.current = null;
         }
       }
     }
@@ -1470,6 +1473,32 @@ const Ground = React.memo(() => {
 
     return Util.isChild(currId, firstIntersectedCuboidObjectId) ? undefined : firstIntersectedCuboidObject;
   };
+
+  useEffect(() => {
+    if (grabRef.current && (selectButtonClicked || objectTypeToAdd !== ObjectType.None)) {
+      if (isSettingFoundationStartPointRef.current && objectTypeToAdd !== ObjectType.Foundation) {
+        isSettingFoundationStartPointRef.current = false;
+        isSettingFoundationEndPointRef.current = false;
+        setCommonStore((state) => {
+          state.addedFoundationId = null;
+          state.updateSceneRadius();
+        });
+        usePrimitiveStore.getState().setSelectButtonClicked(false);
+        removeElementById(grabRef.current.id, false);
+        grabRef.current = null;
+      } else if (isSettingCuboidStartPointRef.current && objectTypeToAdd !== ObjectType.Cuboid) {
+        isSettingCuboidStartPointRef.current = false;
+        isSettingCuboidEndPointRef.current = false;
+        setCommonStore((state) => {
+          state.addedCuboidId = null;
+          state.updateSceneRadius();
+        });
+        usePrimitiveStore.getState().setSelectButtonClicked(false);
+        removeElementById(grabRef.current.id, false);
+        grabRef.current = null;
+      }
+    }
+  }, [objectTypeToAdd, selectButtonClicked]);
 
   const handleGroundPointerMove = (e: ThreeEvent<PointerEvent>) => {
     if (grabRef.current && grabRef.current.type && !grabRef.current.locked) {

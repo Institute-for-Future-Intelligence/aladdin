@@ -152,6 +152,7 @@ const MainToolBarButtons = React.memo(() => {
       state.groupActionMode = false;
       state.actionModeLock = false;
     });
+    usePrimitiveStore.getState().setSelectButtonClicked(true);
   };
 
   const handleGroupActionMode = () => {
@@ -257,6 +258,7 @@ const MainToolBarButtons = React.memo(() => {
       state.actionModeLock = false;
     });
     useRefStore.getState().setEnableOrbitController(false);
+    usePrimitiveStore.getState().setSelectButtonClicked(false);
     selectNone();
   };
 

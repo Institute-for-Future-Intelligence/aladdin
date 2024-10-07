@@ -151,6 +151,9 @@ export interface PrimitiveStoreState {
 
   isCameraUnderGround: boolean;
 
+  selectButtonClicked: boolean;
+  setSelectButtonClicked: (b: boolean) => void;
+
   set: (fn: (state: PrimitiveStoreState) => void) => void;
   setPrimitiveStore: <K extends keyof PrimitiveStoreState, V extends PrimitiveStoreState[K]>(key: K, val: V) => void;
 }
@@ -343,5 +346,12 @@ export const usePrimitiveStore = createWithEqualityFn<PrimitiveStoreState>()((se
     },
 
     isCameraUnderGround: false,
+
+    selectButtonClicked: false,
+    setSelectButtonClicked(b) {
+      immerSet((state) => {
+        state.selectButtonClicked = b;
+      });
+    },
   };
 });
