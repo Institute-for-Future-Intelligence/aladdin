@@ -3107,7 +3107,7 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
           onPointerOver={handlePointerOver}
           onPointerDown={handlePointerDown}
           onPointerUp={handlePointerUp}
-          onPointerMove={throttle(handlePointerMove, THROTTLE_WAIT)}
+          onPointerMove={throttle(handlePointerMove, THROTTLE_WAIT, { trailing: false })}
           onPointerOut={handlePointerOut}
           onPointerEnter={handlePointerEnter}
         >
