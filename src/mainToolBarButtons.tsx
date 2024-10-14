@@ -30,6 +30,8 @@ import GroupImage from './assets/group.png';
 import ClearImage from './assets/clear.png';
 import HeliodonImage from './assets/heliodon.png';
 import AnalyzeImage from './assets/analyze.png';
+import PowerWallImage from './assets/wall.png';
+import WaterHeaterImage from './assets/solar_water_heater.png';
 
 import React, { useMemo, useState } from 'react';
 import { useStore } from './stores/common';
@@ -483,10 +485,16 @@ const MainToolBarButtons = React.memo(() => {
       key: 'add-light',
       label: <ToolBarMenuItem objectType={ObjectType.Light} srcImg={LightImage} setFlag={setCategory3Flag} />,
     },
-    // {
-    //   key: 'add-water-heater',
-    //   label: <ToolBarMenuItem objectType={ObjectType.WaterHeater} srcImg={WaterHeaterImage} setFlag={setCategory3Flag} />,
-    // },
+    {
+      key: 'add-water-heater',
+      label: (
+        <ToolBarMenuItem objectType={ObjectType.WaterHeater} srcImg={WaterHeaterImage} setFlag={setCategory3Flag} />
+      ),
+    },
+    {
+      key: 'add-power-wall',
+      label: <ToolBarMenuItem objectType={ObjectType.PowerWall} srcImg={PowerWallImage} setFlag={setCategory3Flag} />,
+    },
   ];
 
   const category1Button = (objectType: ObjectType) => {
@@ -545,6 +553,10 @@ const MainToolBarButtons = React.memo(() => {
         return buttonImg(objectType, VerticalAxisWindTurbineImage);
       case ObjectType.Light:
         return buttonImg(objectType, LightImage);
+      case ObjectType.WaterHeater:
+        return buttonImg(objectType, WaterHeaterImage);
+      case ObjectType.PowerWall:
+        return buttonImg(objectType, PowerWallImage);
     }
   };
 

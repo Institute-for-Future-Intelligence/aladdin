@@ -319,6 +319,7 @@ export enum ObjectType {
   Polygon = 'Polygon',
   PolygonVertex = 'Polygon Vertex',
   Light = 'Light',
+  PowerWall = 'Power Wall',
   None = 'None',
 }
 
