@@ -2078,7 +2078,6 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         case ObjectType.SolarPanel: {
           if (pointer && body) {
             const p = getRelativePosOnWall(pointer, wallModel);
-            const angle = wallModel.relativeAngle - HALF_PI;
             const actionState = useStore.getState().actionState;
             newElement = ElementModelFactory.makeSolarPanel(
               wallModel,
@@ -2130,6 +2129,14 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               new Vector3(Math.cos(angle), Math.sin(angle), 0),
               [0, 0, 0],
             );
+          }
+          break;
+        }
+        case ObjectType.PowerWall: {
+          if (pointer && body) {
+            const p = getRelativePosOnWall(pointer, wallModel);
+            const actionState = useStore.getState().actionState;
+            newElement = ElementModelFactory.makePowerWall(wallModel, p.x / lx, 0, p.z / lz);
           }
           break;
         }

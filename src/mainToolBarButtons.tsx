@@ -30,7 +30,7 @@ import GroupImage from './assets/group.png';
 import ClearImage from './assets/clear.png';
 import HeliodonImage from './assets/heliodon.png';
 import AnalyzeImage from './assets/analyze.png';
-import PowerWallImage from './assets/wall.png';
+import PowerWallImage from './assets/power_wall.png';
 import WaterHeaterImage from './assets/solar_water_heater.png';
 
 import React, { useMemo, useState } from 'react';

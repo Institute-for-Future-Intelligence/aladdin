@@ -56,6 +56,7 @@ import { LightModel } from './LightModel';
 import { HvacSystem } from './HvacSystem';
 import { useStore } from 'src/stores/common';
 import { RoofUtil } from '../views/roof/RoofUtil';
+import { PowerWallModel } from './PowerWallModel';
 
 export class ElementModelFactory {
   static makeHuman(name: HumanName, parentId: string, x: number, y: number, z?: number) {
@@ -151,6 +152,24 @@ export class ElementModelFactory {
       id: short.generate() as string,
       version: 1,
     } as SolarPanelModel;
+  }
+
+  static makePowerWall(parent: ElementModel, x: number, y: number, z: number) {
+    return {
+      type: ObjectType.PowerWall,
+      id: short.generate() as string,
+      parentId: parent.id,
+      foundationId: parent.parentId,
+      cx: x,
+      cy: y,
+      cz: z,
+      lx: 1,
+      ly: 0.35,
+      lz: 1.6,
+      normal: [0, -1, 0],
+      rotation: [0, 0, 0],
+      color: '#C7BABE',
+    } as PowerWallModel;
   }
 
   static makeFlower(name: FlowerType, parentId: string, x: number, y: number, z?: number) {

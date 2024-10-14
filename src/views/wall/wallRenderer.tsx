@@ -12,6 +12,7 @@ import { FoundationModel } from 'src/models/FoundationModel';
 import { useSelected } from '../../hooks';
 import SolarPanelWrapper from '../solarPanel/solarPanelWrapper';
 import { ObjectType } from 'src/types';
+import PowerWallWrapper from '../powerWall';
 
 interface WallRendererProps {
   wallModel: WallModel;
@@ -76,6 +77,8 @@ const WallRenderer = ({ wallModel, foundationModel }: WallRendererProps) => {
         ply={ly}
         plz={lz}
       />
+
+      <PowerWallWrapper parentId={id} foundationId={parentId} parentLx={lx} parentLz={lz} />
 
       {renderWall()}
 
