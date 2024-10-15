@@ -57,6 +57,7 @@ import { HvacSystem } from './HvacSystem';
 import { useStore } from 'src/stores/common';
 import { RoofUtil } from '../views/roof/RoofUtil';
 import { PowerWallModel } from './PowerWallModel';
+import { WaterHeaterModel } from './WaterHeaterModel';
 
 export class ElementModelFactory {
   static makeHuman(name: HumanName, parentId: string, x: number, y: number, z?: number) {
@@ -152,6 +153,26 @@ export class ElementModelFactory {
       id: short.generate() as string,
       version: 1,
     } as SolarPanelModel;
+  }
+
+  static makeWaterHeater(parent: ElementModel, x: number, y: number, z: number, normal: Vector3, rotation: number[]) {
+    return {
+      type: ObjectType.WaterHeater,
+      cx: x,
+      cy: y,
+      cz: z,
+      lx: 0,
+      ly: 0,
+      lz: 0,
+      showLabel: false,
+      normal: normal ? normal.toArray() : [0, 0, 1],
+      rotation: rotation ? rotation : [0, 0, 0],
+      color: '#fff',
+      parentType: parent.type,
+      parentId: parent.id,
+      foundationId: parent.parentId,
+      id: short.generate() as string,
+    } as WaterHeaterModel;
   }
 
   static makePowerWall(parent: ElementModel, x: number, y: number, z: number) {

@@ -77,13 +77,11 @@ import { useDataStore } from '../../stores/commonData';
 import { useSelected } from '../../hooks';
 import { debounce, throttle } from 'lodash';
 import BuildingRenderer from './buildingRenderer';
-import { shallow } from 'zustand/shallow';
-import SolarPanel from '../solarPanel/solarPanel';
 import { SharedUtil } from '../SharedUtil';
 import WallAuxiliaryLine, { WallAuxiliaryType } from './wallAuxiliaryLine';
-import RefSolarPanel from '../solarPanel/refSolarPanel';
 import SolarPanelWrapper from '../solarPanel/solarPanelWrapper';
 import { useTransparent } from '../roof/hooks';
+import WaterHeaterWrapper from '../waterHeater/waterHeaterWrapper';
 
 interface SnapTargetType {
   id: string | null;
@@ -3105,6 +3103,8 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
           ply={ly}
           plz={lz}
         />
+
+        <WaterHeaterWrapper foundationId={id} wrapperType={ObjectType.Foundation} />
 
         {/* draw rectangle */}
         <Box

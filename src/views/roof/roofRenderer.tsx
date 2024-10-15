@@ -145,6 +145,26 @@ const handleAddElementOnRoof = (
       addUndoableAddRooftopElement(newElement);
       break;
     }
+    case ObjectType.WaterHeater: {
+      const { normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
+      const actionState = useStore.getState().actionState;
+      const newElement = ElementModelFactory.makeWaterHeater(
+        roof,
+        posRelToFoundation.x,
+        posRelToFoundation.y,
+        posRelToFoundation.z,
+        normal,
+        rotation ?? [0, 0, 1],
+      );
+      useStore.getState().set((state) => {
+        state.elements.push(newElement);
+        state.selectedElementIdSet.clear();
+        state.selectedElementIdSet.add(newElement.id);
+        if (!state.actionModeLock) state.objectTypeToAdd = ObjectType.None;
+      });
+      addUndoableAddRooftopElement(newElement);
+      break;
+    }
     case ObjectType.Window: {
       const { normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
       const newElement = ElementModelFactory.makeWindow(
