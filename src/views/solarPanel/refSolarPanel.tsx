@@ -32,7 +32,7 @@ import Poles, { PolesRefProps } from './poles';
 import Wireframe from './wireframe';
 import Label from './label';
 import MoveHandle from './moveHandle';
-import ResizeHandleGroup from './resizeHandle';
+import ResizeHandleGroup from './resizeHandleGroup';
 import PanelBox from './panelBox';
 import HeatmapLines from './heatmapLines';
 import PolarGrid, { PolarGridRefProps } from './polarGrid';
@@ -45,6 +45,7 @@ export enum Operation {
   RotateLower = 'RotateLower',
   ResizeX = 'ResizeX',
   ResizeY = 'ResizeY',
+  ResizeHeight = 'ResizeHeight',
   Tilt = 'Tilt',
   None = 'None',
 }
