@@ -157,3 +157,9 @@ export interface UnoableResizeSolarPanel extends Undoable {
   oldNor: number[];
   newNor: number[];
 }
+
+export interface UndoableResizeWaterHeaterHeight extends Undoable {
+  id: string;
+  oldHeight: number;
+  newHeight: number;
+}

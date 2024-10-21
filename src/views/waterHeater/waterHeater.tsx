@@ -2,7 +2,7 @@
  * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
-import { Box, Cylinder, Plane, Sphere } from '@react-three/drei';
+import { Box, Cylinder, Plane } from '@react-three/drei';
 import { ThreeEvent, useFrame, useThree } from '@react-three/fiber';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { HALF_PI } from 'src/constants';
@@ -26,6 +26,7 @@ import { tempEuler, tempQuaternion_0, tempVector3_0, tempVector3_1, tempVector3_
 import { WATER_HEATER_WRAPPER_NAME } from './waterHeaterWrapper';
 import PanelBox from '../solarPanel/panelBox';
 import PolarGrid, { PolarGridRefProps } from '../solarPanel/polarGrid';
+import { WaterHeaterUtil } from './waterHeaterUtil';
 
 const MOUNT_LEFT = 'Mount Left';
 const MOUNT_RIGHT = 'Mount Right';
@@ -36,7 +37,6 @@ const MOUNT_RIGHT = 'Mount Right';
  * - material
  * - text
  * - move/resize validation
- * - undo/redo
  * - copy/cut/paste
  * - context menu
  * - lock wireframe
@@ -402,8 +402,7 @@ const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
         });
         break;
       }
-      case Operation.ResizeX:
-      case Operation.ResizeY: {
+      case Operation.ResizeX: {
         setCommonStore((state) => {
           if (!boxGroupMeshRef.current || !groupRef.current) return;
           const waterHeater = state.elements.find((e) => e.id === id) as WaterHeaterModel | undefined;
@@ -455,6 +454,7 @@ const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
     //     }, 10);
     //   }
     // }
+    WaterHeaterUtil.addUndoable(oldElement, operationRef.current);
 
     if (get().frameloop !== 'demand') {
       setFrameLoop('demand');
