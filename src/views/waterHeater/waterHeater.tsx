@@ -27,6 +27,7 @@ import { WATER_HEATER_WRAPPER_NAME } from './waterHeaterWrapper';
 import PanelBox from '../solarPanel/panelBox';
 import PolarGrid, { PolarGridRefProps } from '../solarPanel/polarGrid';
 import { WaterHeaterUtil } from './waterHeaterUtil';
+import Wireframe from './wireframe';
 
 const MOUNT_LEFT = 'Mount Left';
 const MOUNT_RIGHT = 'Mount Right';
@@ -39,7 +40,6 @@ const MOUNT_RIGHT = 'Mount Right';
  * - move/resize validation
  * - copy/cut/paste
  * - context menu
- * - lock wireframe
  * - simulation
  */
 
@@ -664,7 +664,7 @@ const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
             </group>
 
             {/* move/resize handle */}
-            {selected && (
+            {selected && !locked && (
               <>
                 {/* move handle */}
                 <MoveHandle onPointerDown={onMoveHandlePointerDown} />
@@ -679,6 +679,11 @@ const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
                   <ResizeHandle cx={-panelLength / 2} cy={0} type={ResizeHandleType.Left} size={handleSize} />
                 </group>
               </>
+            )}
+
+            {/* lock wireframe */}
+            {selected && locked && (
+              <Wireframe waterTankLength={waterTankLength} waterTankRadius={waterTankRadius} panelWidth={panelWidth} />
             )}
           </group>
         </group>
