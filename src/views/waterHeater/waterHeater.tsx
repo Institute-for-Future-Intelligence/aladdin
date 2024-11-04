@@ -41,6 +41,7 @@ const MOUNT_RIGHT = 'Mount Right';
  * - copy/cut/paste
  * - context menu
  * - simulation
+ * - change with parent
  */
 
 const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
@@ -53,7 +54,7 @@ const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
   const waterTankRadius = 0.3;
   const waterTankLength = panelLength + 0.25;
   const mountHeight = lz - waterTankRadius * 2; // surface to tank bottom, lz is from surface to top
-  const angle = Math.asin((mountHeight + waterTankRadius) / panelWidth);
+  const angle = Math.asin(Math.min(1, (mountHeight + waterTankRadius) / panelWidth));
   const rotateHandleOffset = 0.5;
 
   // variable ref

@@ -1032,6 +1032,14 @@ export const i18n_ua = {
       ReceiverThermalEfficiency: 'Теплова ефективність приймача',
     },
 
+    waterHeaterMenu: {
+      OnlyThisWaterHeater: 'Only This Water Heater',
+      AllWaterHeatersOnSurface: 'All Water Heaters on the Same Surface',
+      AllWaterHeatersAboveFoundation: 'All Water Heaters Above the Same Foundation',
+      AllSelectedWaterHeaters: 'All Selected Water Heaters',
+      AllWaterHeaters: 'All Water Heaters',
+    },
+
     solarPanelMenu: {
       ElectricalProperties: 'Electrical Properties',
       InverterEfficiency: 'Inverter Efficiency',

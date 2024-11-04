@@ -1006,6 +1006,14 @@ export const i18n_zh_tw = {
       ReceiverThermalEfficiency: '接收器熱效率',
     },
 
+    waterHeaterMenu: {
+      OnlyThisWaterHeater: '只這個熱水器',
+      AllWaterHeatersOnSurface: '同一表面上所有的熱水器',
+      AllWaterHeatersAboveFoundation: '同一地基上所有的熱水器',
+      AllSelectedWaterHeaters: '所有選中的熱水器',
+      AllWaterHeaters: '所有的熱水器',
+    },
+
     solarPanelMenu: {
       ElectricalProperties: '電氣特性',
       InverterEfficiency: '逆變器效率',

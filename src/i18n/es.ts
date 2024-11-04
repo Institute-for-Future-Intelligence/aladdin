@@ -1060,6 +1060,14 @@ export const i18n_es = {
       AllSolarPanels: 'Todos los paneles solares',
     },
 
+    waterHeaterMenu: {
+      OnlyThisWaterHeater: 'Only This Water Heater',
+      AllWaterHeatersOnSurface: 'All Water Heaters on the Same Surface',
+      AllWaterHeatersAboveFoundation: 'All Water Heaters Above the Same Foundation',
+      AllSelectedWaterHeaters: 'All Selected Water Heaters',
+      AllWaterHeaters: 'All Water Heaters',
+    },
+
     pvModelPanel: {
       SolarPanelSpecs: 'Especificaciones del panel solar',
       Model: 'Modelo',

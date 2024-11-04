@@ -365,6 +365,10 @@ export interface CommonStoreState {
   updatePolygonVertexPositionById: (id: string, index: number, x: number, y: number) => void;
   updatePolygonVerticesById: (id: string, vertices: Point2[]) => void;
 
+  // for water heater
+  waterHeaterActionScope: Scope;
+  setWaterHeaterActionScope: (scope: Scope) => void;
+
   // for solar panels
   solarPanelActionScope: Scope;
   setSolarPanelActionScope: (scope: Scope) => void;
@@ -2034,6 +2038,14 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                   break;
                 }
               }
+            });
+          },
+
+          // for water heater
+          waterHeaterActionScope: Scope.OnlyThisObject,
+          setWaterHeaterActionScope(scope) {
+            immerSet((state: CommonStoreState) => {
+              state.waterHeaterActionScope = scope;
             });
           },
 
