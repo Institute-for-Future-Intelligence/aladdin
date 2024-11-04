@@ -178,7 +178,7 @@ export class ElementModelFactory {
 
   static makePowerWall(parent: ElementModel, x: number, y: number, z: number) {
     return {
-      type: ObjectType.PowerWall,
+      type: ObjectType.BatteryStorage,
       id: short.generate() as string,
       parentId: parent.id,
       foundationId: parent.parentId,

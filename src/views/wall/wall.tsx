@@ -2132,7 +2132,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           }
           break;
         }
-        case ObjectType.PowerWall: {
+        case ObjectType.BatteryStorage: {
           if (pointer && body) {
             const p = getRelativePosOnWall(pointer, wallModel);
             const actionState = useStore.getState().actionState;

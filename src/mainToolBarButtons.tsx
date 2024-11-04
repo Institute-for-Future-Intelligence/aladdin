@@ -30,7 +30,7 @@ import GroupImage from './assets/group.png';
 import ClearImage from './assets/clear.png';
 import HeliodonImage from './assets/heliodon.png';
 import AnalyzeImage from './assets/analyze.png';
-import PowerWallImage from './assets/power_wall.png';
+import BatteryStorageImage from './assets/battery_storage.png';
 import WaterHeaterImage from './assets/solar_water_heater.png';
 
 import React, { useMemo, useState } from 'react';
@@ -492,8 +492,14 @@ const MainToolBarButtons = React.memo(() => {
       ),
     },
     {
-      key: 'add-power-wall',
-      label: <ToolBarMenuItem objectType={ObjectType.PowerWall} srcImg={PowerWallImage} setFlag={setCategory3Flag} />,
+      key: 'add-battery-storage',
+      label: (
+        <ToolBarMenuItem
+          objectType={ObjectType.BatteryStorage}
+          srcImg={BatteryStorageImage}
+          setFlag={setCategory3Flag}
+        />
+      ),
     },
   ];
 
@@ -555,8 +561,8 @@ const MainToolBarButtons = React.memo(() => {
         return buttonImg(objectType, LightImage);
       case ObjectType.WaterHeater:
         return buttonImg(objectType, WaterHeaterImage);
-      case ObjectType.PowerWall:
-        return buttonImg(objectType, PowerWallImage);
+      case ObjectType.BatteryStorage:
+        return buttonImg(objectType, BatteryStorageImage);
     }
   };
 

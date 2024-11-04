@@ -25,7 +25,7 @@ interface PowerWallProps {}
 
 const PowerWallWrapper = React.memo(({ parentId, foundationId, parentLx, parentLz }: WrapperProps) => {
   const filter = (e: ElementModel) => {
-    if (e.type !== ObjectType.PowerWall) return false;
+    if (e.type !== ObjectType.BatteryStorage) return false;
     return e.parentId === parentId;
   };
 
