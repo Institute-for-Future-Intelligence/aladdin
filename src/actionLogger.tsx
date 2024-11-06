@@ -48,7 +48,7 @@ const ActionLogger = React.memo(() => {
   }, []);
 
   useEffect(() => {
-    if (currentUndoable) {
+    if (currentUndoable && user.uid) {
       // we cannot use hh:mm:SSS as suggested by dayjs's format documentation
       // because SSS only takes the last three digits of the millisecond string,
       // resulting in incorrect ordering of the log. so we use the millisecond string
@@ -70,7 +70,7 @@ const ActionLogger = React.memo(() => {
         showWarning('Data logger error: ' + currentUndoable + ' - ' + e);
       });
     }
-  }, [currentUndoable, user.uid, classID, schoolID, cloudFile]);
+  }, [currentUndoable, user.uid, cloudFile]);
 
   useEffect(() => {
     if (actionInfo) {
