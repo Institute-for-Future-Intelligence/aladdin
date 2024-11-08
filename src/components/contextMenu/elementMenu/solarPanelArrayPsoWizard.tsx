@@ -174,6 +174,11 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
           state.actionInfo = {
             name: 'Run Particle Swarm Optimization for Solar Panel Array Layout',
             timestamp: new Date().getTime(),
+            details: {
+              ...useStore.getState().evolutionaryAlgorithmState.particleSwarmOptimizationParams,
+              ...useStore.getState().solarPanelArrayLayoutConstraints,
+              ...useStore.getState().economicsParams,
+            },
           };
         }
       });

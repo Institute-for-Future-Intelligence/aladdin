@@ -172,6 +172,11 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
           state.actionInfo = {
             name: 'Run Genetic Algorithm for Solar Panel Array Layout',
             timestamp: new Date().getTime(),
+            details: {
+              ...useStore.getState().evolutionaryAlgorithmState.geneticAlgorithmParams,
+              ...useStore.getState().solarPanelArrayLayoutConstraints,
+              ...useStore.getState().economicsParams,
+            },
           };
         }
       });
