@@ -93,11 +93,11 @@
     "eslint": "^8.55.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
-    "gh-pages": "5.0.0",
+    "gh-pages": "3.2.0",
     "husky": "^7.0.2",
     "lint-staged": "^11.1.2",
     "prettier": "^2.3.2",
-    "vite": "5.4.6",
+    "vite": "5.2.11",
     "vite-plugin-svgr": "^4.2.0"
   }
 }
