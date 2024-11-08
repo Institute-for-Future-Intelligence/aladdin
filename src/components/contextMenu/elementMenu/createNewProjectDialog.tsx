@@ -69,6 +69,7 @@ const CreateNewProjectDialog = React.memo(
           state.actionInfo = {
             name: saveAs ? 'Save Project as' : 'Create New Project',
             timestamp: new Date().getTime(),
+            details: { type: projectType, title: projectTitle, description: projectDescription },
           };
         });
       }

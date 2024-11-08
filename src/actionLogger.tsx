@@ -16,6 +16,8 @@ const ActionLogger = React.memo(() => {
   const currentUndoable = useStore(Selector.currentUndoable);
   const user = useStore(Selector.user);
   const cloudFile = useStore(Selector.cloudFile);
+  const projectView = useStore(Selector.projectView);
+  const projectTitle = useStore(Selector.projectTitle);
 
   const databaseRef = useRef<firebase.database.Database>();
   const schoolID = user.schoolID ?? SchoolID.UNKNOWN;
@@ -60,17 +62,24 @@ const ActionLogger = React.memo(() => {
             ' (' +
             dayjs(new Date(currentUndoable.timestamp)).format('MM-DD-YYYY hh:mm A') +
             ')';
-          await databaseRef.current.ref(schoolID + '/' + classID + '/' + user.uid + '/' + timestamp).set({
-            file: cloudFile ?? 'Untitled',
-            action: JSON.stringify(currentUndoable),
-          });
+          await databaseRef.current.ref(schoolID + '/' + classID + '/' + user.uid + '/' + timestamp).set(
+            projectView
+              ? {
+                  project: projectTitle ?? 'Untitled',
+                  action: JSON.stringify(currentUndoable),
+                }
+              : {
+                  file: cloudFile ?? 'Untitled',
+                  action: JSON.stringify(currentUndoable),
+                },
+          );
         }
       };
       logData().catch((e) => {
         showWarning('Data logger error: ' + currentUndoable + ' - ' + e);
       });
     }
-  }, [currentUndoable, user.uid, cloudFile]);
+  }, [currentUndoable]);
 
   useEffect(() => {
     if (actionInfo) {
@@ -78,17 +87,20 @@ const ActionLogger = React.memo(() => {
         if (databaseRef.current) {
           const timestamp =
             actionInfo.timestamp + ' (' + dayjs(new Date(actionInfo.timestamp)).format('MM-DD-YYYY hh:mm A') + ')';
-          await databaseRef.current.ref(schoolID + '/' + classID + '/' + user.uid + '/' + timestamp).set({
-            file: cloudFile ?? 'Untitled',
-            action: JSON.stringify(actionInfo),
-          });
+          await databaseRef.current
+            .ref(schoolID + '/' + classID + '/' + user.uid + '/' + timestamp)
+            .set(
+              projectView
+                ? { project: projectTitle ?? 'Untitled', action: JSON.stringify(actionInfo) }
+                : { file: cloudFile ?? 'Untitled', action: JSON.stringify(actionInfo) },
+            );
         }
       };
       logData().catch((e) => {
         showWarning('Data logger error: ' + actionInfo + ' - ' + e);
       });
     }
-  }, [actionInfo, user.uid, classID, schoolID, cloudFile]);
+  }, [actionInfo]);
 
   return <></>;
 });

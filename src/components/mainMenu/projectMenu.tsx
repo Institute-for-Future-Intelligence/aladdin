@@ -35,7 +35,7 @@ export const createProjectMenu = () => {
     if (loggable) {
       setCommonStore((state) => {
         state.actionInfo = {
-          name: 'Open Project',
+          name: 'Open Project List',
           timestamp: new Date().getTime(),
         };
       });

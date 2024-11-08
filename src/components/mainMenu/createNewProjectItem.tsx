@@ -25,14 +25,6 @@ export const CreateNewProjectItem = () => {
     usePrimitiveStore.getState().set((state) => {
       state.openModelsMap = false;
     });
-    if (useStore.getState().loggable) {
-      useStore.getState().set((state) => {
-        state.actionInfo = {
-          name: 'Create New Project',
-          timestamp: new Date().getTime(),
-        };
-      });
-    }
   };
 
   return (
