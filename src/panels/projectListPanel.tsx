@@ -77,6 +77,7 @@ export interface ProjectListPanelProps {
 const ProjectListPanel = React.memo(
   ({ projects, setProjectState, deleteProject, renameProject }: ProjectListPanelProps) => {
     const user = useStore(Selector.user);
+    const loggable = useStore(Selector.loggable);
     const setCommonStore = useStore(Selector.set);
     const selectedFloatingWindow = useStore(Selector.selectedFloatingWindow);
 
@@ -141,6 +142,14 @@ const ProjectListPanel = React.memo(
       usePrimitiveStore.getState().set((state) => {
         state.showProjectListPanel = false;
       });
+      if (loggable) {
+        setCommonStore((state) => {
+          state.actionInfo = {
+            name: 'Close Project List',
+            timestamp: new Date().getTime(),
+          };
+        });
+      }
     };
 
     const confirmDeleteProject = (title: string) => {
@@ -155,6 +164,15 @@ const ProjectListPanel = React.memo(
         icon: <QuestionCircleOutlined />,
         onOk: () => {
           deleteProject(title);
+          if (loggable) {
+            setCommonStore((state) => {
+              state.actionInfo = {
+                name: 'Delete Project',
+                timestamp: new Date().getTime(),
+                details: title,
+              };
+            });
+          }
         },
       });
     };
@@ -164,6 +182,15 @@ const ProjectListPanel = React.memo(
         renameProject(oldTitle, newTitle);
         setNewTitle(undefined);
         setRecountFlag(!recountFlag);
+        if (loggable) {
+          setCommonStore((state) => {
+            state.actionInfo = {
+              name: 'Rename Project',
+              timestamp: new Date().getTime(),
+              details: { oldTitle, newTitle },
+            };
+          });
+        }
       }
       setRenameDialogVisible(false);
     };
@@ -320,7 +347,21 @@ const ProjectListPanel = React.memo(
                       {
                         key: 'open-project',
                         label: (
-                          <MenuItem noPadding onClick={() => setProjectState(record as unknown as ProjectState)}>
+                          <MenuItem
+                            noPadding
+                            onClick={() => {
+                              setProjectState(record as unknown as ProjectState);
+                              if (loggable) {
+                                setCommonStore((state) => {
+                                  state.actionInfo = {
+                                    name: 'Open Project',
+                                    timestamp: new Date().getTime(),
+                                    details: (record as ProjectState).title,
+                                  };
+                                });
+                              }
+                            }}
+                          >
                             {t('word.Open', lang)}
                           </MenuItem>
                         ),
@@ -331,9 +372,18 @@ const ProjectListPanel = React.memo(
                           <MenuItem
                             noPadding
                             onClick={() => {
-                              navigator.clipboard
-                                .writeText(title)
-                                .then(() => showSuccess(t('projectListPanel.TitleCopiedToClipBoard', lang) + '.'));
+                              navigator.clipboard.writeText(title).then(() => {
+                                showSuccess(t('projectListPanel.TitleCopiedToClipBoard', lang) + '.');
+                                if (loggable) {
+                                  setCommonStore((state) => {
+                                    state.actionInfo = {
+                                      name: 'Copy Project Title',
+                                      timestamp: new Date().getTime(),
+                                      details: title,
+                                    };
+                                  });
+                                }
+                              });
                             }}
                           >
                             {t('projectListPanel.CopyTitle', lang)}
@@ -370,11 +420,18 @@ const ProjectListPanel = React.memo(
                             onClick={() => {
                               const url =
                                 HOME_URL + '?client=web&userid=' + user.uid + '&project=' + encodeURIComponent(title);
-                              navigator.clipboard
-                                .writeText(url)
-                                .then(() =>
-                                  showSuccess(t('projectListPanel.ProjectLinkGeneratedInClipBoard', lang) + '.'),
-                                );
+                              navigator.clipboard.writeText(url).then(() => {
+                                showSuccess(t('projectListPanel.ProjectLinkGeneratedInClipBoard', lang) + '.');
+                                if (loggable) {
+                                  setCommonStore((state) => {
+                                    state.actionInfo = {
+                                      name: 'Generate Project Link',
+                                      timestamp: new Date().getTime(),
+                                      details: url,
+                                    };
+                                  });
+                                }
+                              });
                             }}
                           >
                             {t('projectListPanel.GenerateProjectLink', lang)}

@@ -20,14 +20,6 @@ export const SaveProjectAsItem = () => {
     usePrimitiveStore.getState().set((state) => {
       state.openModelsMap = false;
     });
-    if (useStore.getState().loggable) {
-      useStore.getState().set((state) => {
-        state.actionInfo = {
-          name: 'Save Project As',
-          timestamp: new Date().getTime(),
-        };
-      });
-    }
   };
 
   return (
