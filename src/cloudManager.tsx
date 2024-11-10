@@ -188,6 +188,9 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
             state.user.displayName = u.displayName;
             state.user.email = u.email;
             state.user.photoURL = u.photoURL;
+            registerUser({ ...state.user }).then(() => {
+              // ignore
+            });
           }
           state.cloudFile = title ?? undefined;
         });

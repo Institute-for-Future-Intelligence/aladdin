@@ -421,11 +421,7 @@ const CloudFilePanel = React.memo(
                         src={LinkImage}
                         onClick={() => {
                           const url =
-                            HOME_URL +
-                            '?client=web&userid=' +
-                            record.userid +
-                            '&title=' +
-                            encodeURIComponent(record.title);
+                            HOME_URL + '?client=web&userid=' + user.uid + '&title=' + encodeURIComponent(record.title);
                           navigator.clipboard
                             .writeText(url)
                             .then(() => showSuccess(t('cloudFilePanel.LinkGeneratedInClipBoard', lang) + '.'));
