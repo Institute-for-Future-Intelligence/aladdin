@@ -375,7 +375,7 @@ export const copyDesign = (original: string, copy: string, owner: string | null,
     });
 };
 
-export const updateDesignVisibility = (userid: string, projectTitle: string, design: Design) => {
+export const updateDesignVisibility = async (userid: string, projectTitle: string, design: Design) => {
   const lang = { lng: useStore.getState().language };
   firebase
     .firestore()

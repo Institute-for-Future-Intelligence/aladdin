@@ -290,6 +290,14 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
     usePrimitiveStore.getState().set((state) => {
       state.curateDesignToProjectFlag = true;
     });
+    if (loggable) {
+      setCommonStore((state) => {
+        state.actionInfo = {
+          name: 'Curate Current Design',
+          timestamp: new Date().getTime(),
+        };
+      });
+    }
   };
 
   const removeSelectedDesign = () => {
@@ -307,6 +315,13 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
             }
             if (index >= 0) {
               state.projectState.designs.splice(index, 1);
+              if (loggable) {
+                state.actionInfo = {
+                  name: 'Remove Selected Design',
+                  timestamp: new Date().getTime(),
+                  details: selectedDesign.title,
+                };
+              }
             }
           }
         });
@@ -623,7 +638,17 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
     localToggleDesignVisibility(design.title);
     if (isOwner) {
       if (user.uid && projectTitle) {
-        updateDesignVisibility(user.uid, projectTitle, design);
+        updateDesignVisibility(user.uid, projectTitle, design).then(() => {
+          if (loggable) {
+            setCommonStore((state) => {
+              state.actionInfo = {
+                name: 'Toggle Design Visibility',
+                timestamp: new Date().getTime(),
+                result: { title: design.title, visible: design.invisible },
+              };
+            });
+          }
+        });
       }
     }
   };
@@ -1271,6 +1296,15 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                           canvas,
                         ).then(() => {
                           setUpdateFlag(!updateFlag);
+                          if (loggable) {
+                            setCommonStore((state) => {
+                              state.actionInfo = {
+                                name: 'Update Selected Design',
+                                timestamp: new Date().getTime(),
+                                details: { design: cloudFile },
+                              };
+                            });
+                          }
                         });
                       }
                     }}
@@ -1310,6 +1344,15 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                         navigator.clipboard
                           .writeText(url)
                           .then(() => showSuccess(t('projectListPanel.ProjectLinkGeneratedInClipBoard', lang) + '.'));
+                        if (loggable) {
+                          setCommonStore((state) => {
+                            state.actionInfo = {
+                              name: 'Generate Project Link',
+                              timestamp: new Date().getTime(),
+                              details: url,
+                            };
+                          });
+                        }
                       }
                     }}
                   >
