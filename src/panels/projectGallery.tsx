@@ -138,6 +138,7 @@ export interface ProjectGalleryProps {
 const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProps) => {
   const setCommonStore = useStore(Selector.set);
   const user = useStore(Selector.user);
+  const loggable = useStore(Selector.loggable);
   const cloudFile = useStore(Selector.cloudFile);
   const projectTitle = useStore(Selector.projectTitle);
   const projectOwner = useStore(Selector.projectOwner);
@@ -265,6 +266,13 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
 
   const closeProject = () => {
     setCommonStore((state) => {
+      if (loggable) {
+        state.actionInfo = {
+          name: 'Close Project',
+          timestamp: new Date().getTime(),
+          details: state.projectState.title,
+        };
+      }
       state.projectView = false;
       state.projectState.title = null;
       state.projectState.description = null;
@@ -1499,7 +1507,15 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                         setSelectedDesign(design);
                         if (projectOwner) {
                           loadCloudFile(projectOwner, design.title, true, true).then(() => {
-                            // ignore
+                            if (loggable) {
+                              setCommonStore((state) => {
+                                state.actionInfo = {
+                                  name: 'Open Design',
+                                  timestamp: new Date().getTime(),
+                                  details: design.title,
+                                };
+                              });
+                            }
                           });
                         }
                       }}
@@ -1509,6 +1525,15 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                           target.src = design.thumbnailUrl;
                         }
                         setSelectedDesign(design !== selectedDesign ? design : undefined);
+                        if (loggable) {
+                          setCommonStore((state) => {
+                            state.actionInfo = {
+                              name: design !== selectedDesign ? 'Select Design' : 'Deselect Design',
+                              timestamp: new Date().getTime(),
+                              details: design?.title,
+                            };
+                          });
+                        }
                       }}
                     />
                     <div

@@ -195,6 +195,19 @@ const ProjectListPanel = React.memo(
       setRenameDialogVisible(false);
     };
 
+    const openProject = (projectState: ProjectState) => {
+      setProjectState(projectState);
+      if (loggable) {
+        setCommonStore((state) => {
+          state.actionInfo = {
+            name: 'Open Project',
+            timestamp: new Date().getTime(),
+            details: projectState.title,
+          };
+        });
+      }
+    };
+
     const onStart = (event: DraggableEvent, uiData: DraggableData) => {
       if (dragRef.current) {
         const { clientWidth, clientHeight } = window.document.documentElement;
@@ -347,21 +360,7 @@ const ProjectListPanel = React.memo(
                       {
                         key: 'open-project',
                         label: (
-                          <MenuItem
-                            noPadding
-                            onClick={() => {
-                              setProjectState(record as unknown as ProjectState);
-                              if (loggable) {
-                                setCommonStore((state) => {
-                                  state.actionInfo = {
-                                    name: 'Open Project',
-                                    timestamp: new Date().getTime(),
-                                    details: (record as ProjectState).title,
-                                  };
-                                });
-                              }
-                            }}
-                          >
+                          <MenuItem noPadding onClick={() => openProject(record as unknown as ProjectState)}>
                             {t('word.Open', lang)}
                           </MenuItem>
                         ),
@@ -460,7 +459,7 @@ const ProjectListPanel = React.memo(
                             const selection = window.getSelection();
                             if (selection && selection.toString().length > 0) return;
                             // only proceed when no text is selected
-                            setProjectState(record as unknown as ProjectState);
+                            openProject(record as unknown as ProjectState);
                           }}
                         >
                           {title}
