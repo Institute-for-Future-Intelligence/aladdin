@@ -511,6 +511,7 @@ export const i18n_en = {
 
       otherTypesOfSolarPowerSubMenu: 'Other Types of Solar Power',
       otherTypesOfSolarPowerTutorials: {
+        SolarWaterHeaters: 'Solar Water Heaters',
         SolarUpdraftTower: 'Solar Updraft Tower',
       },
 

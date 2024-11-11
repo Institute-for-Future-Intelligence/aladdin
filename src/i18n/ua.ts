@@ -514,6 +514,7 @@ export const i18n_ua = {
 
       otherTypesOfSolarPowerSubMenu: 'Інші типи сонячної енергії',
       otherTypesOfSolarPowerTutorials: {
+        SolarWaterHeaters: 'Solar Water Heaters',
         SolarUpdraftTower: 'Сонячна вежа з використаним повітрям',
       },
 

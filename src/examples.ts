@@ -98,6 +98,7 @@ import bestest_case_600 from './examples/bestest_case_600.json';
 import bestest_case_610 from './examples/bestest_case_610.json';
 import bestest_case_620 from './examples/bestest_case_620.json';
 import bestest_case_630 from './examples/bestest_case_630.json';
+import solar_water_heaters from './examples/solar_water_heaters.json';
 import solar_updraft_tower from './examples/solar_updraft_tower.json';
 import solar_updraft_tower_city from './examples/solar_updraft_tower_city.json';
 import effect_blade_number from './examples/effect_blade_number.json';
@@ -322,6 +323,9 @@ export const getExample = (name: string) => {
       break;
     case 'solar_power_tower':
       input = solar_power_tower;
+      break;
+    case 'solar_water_heaters':
+      input = solar_water_heaters;
       break;
     case 'solar_updraft_tower':
       input = solar_updraft_tower;

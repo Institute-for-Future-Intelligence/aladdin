@@ -301,6 +301,10 @@ export const createTutorialsMenu = (viewOnly: boolean) => {
       label: <MenuItem noPadding>{i18n.t('menu.otherTypesOfSolarPowerSubMenu', lang)}</MenuItem>,
       children: [
         {
+          key: 'solar_water_heaters',
+          label: 'menu.otherTypesOfSolarPowerTutorials.SolarWaterHeaters',
+        },
+        {
           key: 'solar_updraft_tower',
           label: 'menu.otherTypesOfSolarPowerTutorials.SolarUpdraftTower',
         },

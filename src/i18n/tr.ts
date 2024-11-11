@@ -511,6 +511,7 @@ export const i18n_tr = {
 
       otherTypesOfSolarPowerSubMenu: 'Diğer Güneş Gücü Türleri',
       otherTypesOfSolarPowerTutorials: {
+        SolarWaterHeaters: 'Solar Water Heaters',
         SolarUpdraftTower: 'Solar Updraft Kulesi',
       },
 

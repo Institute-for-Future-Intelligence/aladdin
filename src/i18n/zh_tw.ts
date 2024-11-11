@@ -508,6 +508,7 @@ export const i18n_zh_tw = {
 
       otherTypesOfSolarPowerSubMenu: '其它類型的太陽能發電',
       otherTypesOfSolarPowerTutorials: {
+        SolarWaterHeaters: '太陽能熱水器',
         SolarUpdraftTower: '太陽能上升氣流塔',
       },
 
