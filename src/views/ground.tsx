@@ -227,8 +227,11 @@ const Ground = React.memo(() => {
   const getObjectId = (obj: Object3D | null): string => {
     if (!obj) return '';
 
+    if (obj.userData.id) {
+      return obj.userData.id;
+    }
     const nameArray = obj.name.split(' ');
-    if (nameArray[2]) {
+    if (nameArray[2] && nameArray[2].length > 0) {
       return nameArray[2];
     }
 
@@ -1008,6 +1011,7 @@ const Ground = React.memo(() => {
           }
         }
       }
+      grabRef.current = null;
     }
     setCommonStore((state) => {
       state.moveHandleType = null;
