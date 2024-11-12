@@ -55,6 +55,7 @@ const VerticalAxis = React.memo(
     const owner = useStore(Selector.projectOwner);
     const projectTitle = useStore(Selector.projectTitle);
     const selectedProperty = useStore(Selector.projectSelectedProperty);
+    const loggable = useStore(Selector.loggable);
 
     const [updateFlag, setUpdateFlag] = useState<boolean>(false);
     const minRef = useRef<number>(min);
@@ -89,6 +90,13 @@ const VerticalAxis = React.memo(
     const localSelect = () => {
       setCommonStore((state) => {
         state.projectState.selectedProperty = state.projectState.selectedProperty !== variable ? variable : null;
+        if (loggable) {
+          state.actionInfo = {
+            name: 'Select Property',
+            timestamp: new Date().getTime(),
+            details: state.projectState.selectedProperty,
+          };
+        }
       });
       usePrimitiveStore.getState().set((state) => {
         state.updateProjectsFlag = true;

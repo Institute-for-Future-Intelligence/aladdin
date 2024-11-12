@@ -1371,6 +1371,13 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                   e.stopPropagation();
                   setCommonStore((state) => {
                     state.projectState.sortDescending = !state.projectState.sortDescending;
+                    if (loggable) {
+                      state.actionInfo = {
+                        name: 'Sort Design',
+                        timestamp: new Date().getTime(),
+                        details: { descending: !state.projectState.sortDescending },
+                      };
+                    }
                   });
                 }}
               >
