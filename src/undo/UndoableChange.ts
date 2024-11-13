@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import { Undoable } from './Undoable';
@@ -30,7 +30,7 @@ export interface UndoableChange extends Undoable {
     | LineStyle
     | ParabolicDishStructureType
     | SolarStructure;
-  changedElementId?: string;
+  changedElementId: string;
   changedElementType?: ObjectType;
   changedSideIndex?: number;
   oldChildrenParentIdMap?: Map<string, string>;

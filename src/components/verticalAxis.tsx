@@ -12,6 +12,7 @@ import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { ConfigProvider, InputNumber, Popover, Slider } from 'antd';
 import { Range } from '../types';
 import { Filter, FilterType } from '../Filter';
+import { UndoableChange } from '../undo/UndoableChange';
 
 type VerticalAxisProps = {
   variable: string;
@@ -51,6 +52,7 @@ const VerticalAxis = React.memo(
   }: VerticalAxisProps) => {
     const setCommonStore = useStore(Selector.set);
     const user = useStore(Selector.user);
+    const addUndoable = useStore(Selector.addUndoable);
     const language = useStore(Selector.language);
     const owner = useStore(Selector.projectOwner);
     const projectTitle = useStore(Selector.projectTitle);
@@ -167,6 +169,130 @@ const VerticalAxis = React.memo(
       return Number.MAX_SAFE_INTEGER;
     };
 
+    const setMin = (newValue: number | null) => {
+      if (newValue === null) return;
+      const oldValue = minRef.current;
+      const undoableChange = {
+        name: 'Set Minimum: ' + name,
+        timestamp: Date.now(),
+        oldValue,
+        newValue,
+        undo: () => {
+          setRangeMinimum(oldValue);
+        },
+        redo: () => {
+          setRangeMinimum(newValue);
+        },
+      } as UndoableChange;
+      addUndoable(undoableChange);
+      setRangeMinimum(newValue);
+    };
+
+    const setRangeMinimum = (value: number) => {
+      setCommonStore((state) => {
+        if (state.projectState.ranges) {
+          let index = -1;
+          let range = null;
+          for (const [i, r] of state.projectState.ranges.entries()) {
+            if (r.variable === variable) {
+              index = i;
+              range = r;
+              break;
+            }
+          }
+          if (index >= 0 && range) {
+            state.projectState.ranges[index] = {
+              variable: range.variable,
+              minimum: value,
+              maximum: range.maximum,
+            } as Range;
+            if (user.uid && state.projectState.title) {
+              updateRanges(user.uid, state.projectState.title, state.projectState.ranges).then(() => {
+                // ignore
+              });
+            }
+          } else {
+            const r = { variable, minimum: value, maximum: max } as Range;
+            state.projectState.ranges.push(r);
+            if (user.uid && state.projectState.title) {
+              addRange(user.uid, state.projectState.title, r).then(() => {
+                // ignore
+              });
+            }
+          }
+        } else {
+          const r = { variable, minimum: value, maximum: max } as Range;
+          state.projectState.ranges = [r];
+          if (user.uid && state.projectState.title) {
+            addRange(user.uid, state.projectState.title, r).then(() => {
+              // ignore
+            });
+          }
+        }
+      });
+      minRef.current = Number(value);
+      setUpdateFlag(!updateFlag);
+    };
+
+    const setMax = (newValue: number | null) => {
+      if (newValue === null) return;
+      const oldValue = maxRef.current;
+      const undoableChange = {
+        name: 'Set Maximum: ' + name,
+        timestamp: Date.now(),
+        oldValue,
+        newValue,
+        undo: () => {
+          setRangeMaximum(oldValue);
+        },
+        redo: () => {
+          setRangeMaximum(newValue);
+        },
+      } as UndoableChange;
+      addUndoable(undoableChange);
+      setRangeMaximum(newValue);
+    };
+
+    const setRangeMaximum = (value: number) => {
+      setCommonStore((state) => {
+        if (state.projectState.ranges) {
+          let index = -1;
+          let range = null;
+          for (const [i, r] of state.projectState.ranges.entries()) {
+            if (r.variable === variable) {
+              index = i;
+              range = r;
+              break;
+            }
+          }
+          if (index >= 0 && range) {
+            state.projectState.ranges[index] = {
+              variable: range.variable,
+              minimum: range.minimum,
+              maximum: value,
+            } as Range;
+            if (user.uid && state.projectState.title) {
+              updateRanges(user.uid, state.projectState.title, state.projectState.ranges);
+            }
+          } else {
+            const r = { variable, minimum: min, maximum: value } as Range;
+            state.projectState.ranges.push(r);
+            if (user.uid && state.projectState.title) {
+              addRange(user.uid, state.projectState.title, r);
+            }
+          }
+        } else {
+          const r = { variable, minimum: min, maximum: value } as Range;
+          state.projectState.ranges = [r];
+          if (user.uid && state.projectState.title) {
+            addRange(user.uid, state.projectState.title, r);
+          }
+        }
+      });
+      maxRef.current = Number(value);
+      setUpdateFlag(!updateFlag);
+    };
+
     return (
       <>
         {/* Title */}
@@ -182,46 +308,8 @@ const VerticalAxis = React.memo(
                   max={maxRef.current - step}
                   step={step}
                   value={minRef.current}
-                  onChange={(value) => {
-                    if (value === null) return;
-                    setCommonStore((state) => {
-                      if (state.projectState.ranges) {
-                        let index = -1;
-                        let range = null;
-                        for (const [i, r] of state.projectState.ranges.entries()) {
-                          if (r.variable === variable) {
-                            index = i;
-                            range = r;
-                            break;
-                          }
-                        }
-                        if (index >= 0 && range) {
-                          state.projectState.ranges[index] = {
-                            variable: range.variable,
-                            minimum: value,
-                            maximum: range.maximum,
-                          } as Range;
-                          if (user.uid && state.projectState.title) {
-                            updateRanges(user.uid, state.projectState.title, state.projectState.ranges);
-                          }
-                        } else {
-                          const r = { variable, minimum: value, maximum: max } as Range;
-                          state.projectState.ranges.push(r);
-                          if (user.uid && state.projectState.title) {
-                            addRange(user.uid, state.projectState.title, r);
-                          }
-                        }
-                      } else {
-                        const r = { variable, minimum: value, maximum: max } as Range;
-                        state.projectState.ranges = [r];
-                        if (user.uid && state.projectState.title) {
-                          addRange(user.uid, state.projectState.title, r);
-                        }
-                      }
-                    });
-                    minRef.current = Number(value);
-                    setUpdateFlag(!updateFlag);
-                  }}
+                  onPressEnter={(e) => setMin(Number.parseFloat((e.target as HTMLInputElement).value))}
+                  onStep={(value) => setMin(value)}
                 />
                 <br />
                 <InputNumber
@@ -232,46 +320,8 @@ const VerticalAxis = React.memo(
                   max={getMax()}
                   step={step}
                   value={maxRef.current}
-                  onChange={(value) => {
-                    if (value === null) return;
-                    setCommonStore((state) => {
-                      if (state.projectState.ranges) {
-                        let index = -1;
-                        let range = null;
-                        for (const [i, r] of state.projectState.ranges.entries()) {
-                          if (r.variable === variable) {
-                            index = i;
-                            range = r;
-                            break;
-                          }
-                        }
-                        if (index >= 0 && range) {
-                          state.projectState.ranges[index] = {
-                            variable: range.variable,
-                            minimum: range.minimum,
-                            maximum: value,
-                          } as Range;
-                          if (user.uid && state.projectState.title) {
-                            updateRanges(user.uid, state.projectState.title, state.projectState.ranges);
-                          }
-                        } else {
-                          const r = { variable, minimum: min, maximum: value } as Range;
-                          state.projectState.ranges.push(r);
-                          if (user.uid && state.projectState.title) {
-                            addRange(user.uid, state.projectState.title, r);
-                          }
-                        }
-                      } else {
-                        const r = { variable, minimum: min, maximum: value } as Range;
-                        state.projectState.ranges = [r];
-                        if (user.uid && state.projectState.title) {
-                          addRange(user.uid, state.projectState.title, r);
-                        }
-                      }
-                    });
-                    maxRef.current = Number(value);
-                    setUpdateFlag(!updateFlag);
-                  }}
+                  onPressEnter={(e) => setMax(Number.parseFloat((e.target as HTMLInputElement).value))}
+                  onStep={(value) => setMax(value)}
                 />
               </div>
             }
