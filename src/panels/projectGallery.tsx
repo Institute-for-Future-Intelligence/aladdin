@@ -744,7 +744,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
   };
 
   const selectDataColoring = (value: DataColoring) => {
-    const undoableSelect = {
+    const undoableChange = {
       name: 'Select Data Coloring',
       timestamp: Date.now(),
       oldValue: projectDataColoring,
@@ -756,7 +756,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
         selectDataColoringSync(value);
       },
     } as UndoableChange;
-    addUndoable(undoableSelect);
+    addUndoable(undoableChange);
     selectDataColoringSync(value);
   };
 
@@ -1058,6 +1058,62 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
     return ProjectUtil.getUnit(yAxisRef.current, lang);
   }, [yAxisRef.current, lang]);
 
+  const changeXAxis = (newValue: string) => {
+    const oldValue = xAxisRef.current;
+    const undoableChange = {
+      name: 'Change X Axis',
+      timestamp: Date.now(),
+      oldValue,
+      newValue,
+      undo: () => {
+        selectXAxis(oldValue);
+      },
+      redo: () => {
+        selectXAxis(newValue);
+      },
+    } as UndoableChange;
+    addUndoable(undoableChange);
+    selectXAxis(newValue);
+  };
+
+  const selectXAxis = (value: string) => {
+    xAxisRef.current = value;
+    if (isOwner && user.uid && projectTitle) {
+      updateXAxisNameScatterPlot(user.uid, projectTitle, value).then(() => {
+        //ignore
+      });
+    }
+    setUpdateFlag(!updateFlag);
+  };
+
+  const changeYAxis = (newValue: string) => {
+    const oldValue = yAxisRef.current;
+    const undoableChange = {
+      name: 'Change Y Axis',
+      timestamp: Date.now(),
+      oldValue,
+      newValue,
+      undo: () => {
+        selectYAxis(oldValue);
+      },
+      redo: () => {
+        selectYAxis(newValue);
+      },
+    } as UndoableChange;
+    addUndoable(undoableChange);
+    selectYAxis(newValue);
+  };
+
+  const selectYAxis = (value: string) => {
+    yAxisRef.current = value;
+    if (isOwner && user.uid && projectTitle) {
+      updateYAxisNameScatterPlot(user.uid, projectTitle, value).then(() => {
+        //ignore
+      });
+    }
+    setUpdateFlag(!updateFlag);
+  };
+
   const createScatterPlotContent = () => {
     return (
       <div style={{ width: '280px' }}>
@@ -1066,21 +1122,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
             <span style={{ fontSize: '12px' }}>{t('projectPanel.SelectXAxis', lang)}: </span>
           </Col>
           <Col span={16}>
-            <Select
-              style={{ width: '100%' }}
-              value={xAxisRef.current}
-              onChange={(value) => {
-                xAxisRef.current = value;
-                if (isOwner) {
-                  if (user.uid && projectTitle) {
-                    updateXAxisNameScatterPlot(user.uid, projectTitle, value).then(() => {
-                      //ignore
-                    });
-                  }
-                }
-                setUpdateFlag(!updateFlag);
-              }}
-            >
+            <Select style={{ width: '100%' }} value={xAxisRef.current} onChange={(value) => changeXAxis(value)}>
               {createAxisOptions()}
             </Select>
           </Col>
@@ -1090,21 +1132,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
             <span style={{ fontSize: '12px' }}>{t('projectPanel.SelectYAxis', lang)}: </span>
           </Col>
           <Col span={16}>
-            <Select
-              style={{ width: '100%' }}
-              value={yAxisRef.current}
-              onChange={(value) => {
-                yAxisRef.current = value;
-                if (isOwner) {
-                  if (user.uid && projectTitle) {
-                    updateYAxisNameScatterPlot(user.uid, projectTitle, value).then(() => {
-                      //ignore
-                    });
-                  }
-                }
-                setUpdateFlag(!updateFlag);
-              }}
-            >
+            <Select style={{ width: '100%' }} value={yAxisRef.current} onChange={(value) => changeYAxis(value)}>
               {createAxisOptions()}
             </Select>
           </Col>
