@@ -56,6 +56,7 @@ import { useTranslation } from 'react-i18next';
 import { Filter, FilterType } from '../Filter';
 import { useLanguage } from '../hooks';
 import { UndoableCheck } from '../undo/UndoableCheck';
+import { UndoableChange } from '../undo/UndoableChange';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -141,6 +142,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
   const user = useStore(Selector.user);
   const loggable = useStore(Selector.loggable);
   const addUndoable = useStore(Selector.addUndoable);
+  const undoManager = useStore(Selector.undoManager);
   const cloudFile = useStore(Selector.cloudFile);
   const projectTitle = useStore(Selector.projectTitle);
   const projectOwner = useStore(Selector.projectOwner);
@@ -283,6 +285,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       state.projectImages.clear();
     });
     setSelectedDesign(undefined);
+    undoManager.clear();
     usePrimitiveStore.getState().set((state) => {
       state.projectImagesUpdateFlag = !state.projectImagesUpdateFlag;
     });
@@ -623,6 +626,8 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
     }
   };
 
+  // toggle design visibility
+
   const localToggleDesignVisibility = (title: string) => {
     setCommonStore((state) => {
       if (state.projectState.designs) {
@@ -637,13 +642,14 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
   };
 
   const toggleDesignVisibilitySync = (design: Design) => {
-    localToggleDesignVisibility(design.title);
     if (isOwner) {
       if (user.uid && projectTitle) {
         updateDesignVisibility(user.uid, projectTitle, design).then(() => {
-          // ignore
+          localToggleDesignVisibility(design.title);
         });
       }
+    } else {
+      localToggleDesignVisibility(design.title);
     }
   };
 
@@ -663,6 +669,8 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
     addUndoable(undoableSelect);
     toggleDesignVisibilitySync(design);
   };
+
+  // select parameter
 
   const localSelectParameter = (selected: boolean, parameter: string) => {
     setCommonStore((state) => {
@@ -710,6 +718,8 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
     selectParameterSync(selected, parameter);
   };
 
+  // select data coloring
+
   const localSelectDataColoring = () => {
     setCommonStore((state) => {
       state.projectState.dataColoring = dataColoringSelectionRef.current;
@@ -720,7 +730,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
     setUpdateFlag(!updateFlag);
   };
 
-  const selectDataColoring = (value: DataColoring) => {
+  const selectDataColoringSync = (value: DataColoring) => {
     dataColoringSelectionRef.current = value;
     if (isOwner) {
       if (user.uid && projectTitle) {
@@ -733,7 +743,24 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
     }
   };
 
-  const createChooseSolutionSolutionContent = () => {
+  const selectDataColoring = (value: DataColoring) => {
+    const undoableSelect = {
+      name: 'Select Data Coloring',
+      timestamp: Date.now(),
+      oldValue: projectDataColoring,
+      newValue: value,
+      undo: () => {
+        selectDataColoringSync(projectDataColoring);
+      },
+      redo: () => {
+        selectDataColoringSync(value);
+      },
+    } as UndoableChange;
+    addUndoable(undoableSelect);
+    selectDataColoringSync(value);
+  };
+
+  const createChooseSolutionSpaceContent = () => {
     return (
       <div>
         <Checkbox
@@ -1184,6 +1211,15 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                 if (d) {
                   saveSvgAsPng(d, 'scatter-chart-' + projectTitle + '.png').then(() => {
                     showInfo(t('message.ScreenshotSaved', lang));
+                    if (loggable) {
+                      setCommonStore((state) => {
+                        state.actionInfo = {
+                          name: 'Scatter chart screenshot',
+                          timestamp: new Date().getTime(),
+                          details: { image: 'scatter-chart-' + projectTitle + '.png' },
+                        };
+                      });
+                    }
                   });
                 }
               }}
@@ -1683,7 +1719,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                         parameterSelectionChangedRef.current = false;
                       }
                     }}
-                    content={createChooseSolutionSolutionContent()}
+                    content={createChooseSolutionSpaceContent()}
                   >
                     <Button style={{ border: 'none', paddingRight: 0, background: 'white' }}>
                       <CarryOutOutlined style={{ fontSize: '24px', color: 'gray' }} />
@@ -1707,6 +1743,15 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                     if (d) {
                       saveSvgAsPng(d, 'design-space-' + projectTitle + '.png').then(() => {
                         showInfo(t('message.ScreenshotSaved', lang));
+                        if (loggable) {
+                          setCommonStore((state) => {
+                            state.actionInfo = {
+                              name: 'Solution space screenshot',
+                              timestamp: new Date().getTime(),
+                              details: { image: 'design-space-' + projectTitle + '.png' },
+                            };
+                          });
+                        }
                       });
                     }
                   }}
