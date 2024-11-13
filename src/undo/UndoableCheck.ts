@@ -7,6 +7,7 @@ import { ObjectType } from '../types';
 
 export interface UndoableCheck extends Undoable {
   checked: boolean;
+  property?: string;
   selectedElementId?: string;
   selectedElementType?: ObjectType;
 }

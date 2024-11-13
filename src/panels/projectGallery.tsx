@@ -55,6 +55,7 @@ import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { Filter, FilterType } from '../Filter';
 import { useLanguage } from '../hooks';
+import { UndoableCheck } from '../undo/UndoableCheck';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -139,6 +140,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
   const setCommonStore = useStore(Selector.set);
   const user = useStore(Selector.user);
   const loggable = useStore(Selector.loggable);
+  const addUndoable = useStore(Selector.addUndoable);
   const cloudFile = useStore(Selector.cloudFile);
   const projectTitle = useStore(Selector.projectTitle);
   const projectOwner = useStore(Selector.projectOwner);
@@ -669,7 +671,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
     });
   };
 
-  const selectParameter = (selected: boolean, parameter: string) => {
+  const selectParameterSync = (selected: boolean, parameter: string) => {
     parameterSelectionChangedRef.current = true;
     if (isOwner) {
       if (user.uid && projectTitle) {
@@ -680,6 +682,22 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
     } else {
       localSelectParameter(selected, parameter);
     }
+  };
+
+  const selectParameter = (selected: boolean, parameter: string) => {
+    const undoableSelect = {
+      name: 'Select Parameter',
+      timestamp: Date.now(),
+      checked: selected,
+      property: parameter,
+      undo: () => {
+        selectParameterSync(selected, parameter);
+      },
+      redo: () => {
+        selectParameterSync(selected, parameter);
+      },
+    } as UndoableCheck;
+    addUndoable(undoableSelect);
   };
 
   const localSelectDataColoring = () => {
