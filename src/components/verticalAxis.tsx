@@ -272,24 +272,84 @@ const VerticalAxis = React.memo(
               maximum: value,
             } as Range;
             if (user.uid && state.projectState.title) {
-              updateRanges(user.uid, state.projectState.title, state.projectState.ranges);
+              updateRanges(user.uid, state.projectState.title, state.projectState.ranges).then(() => {
+                // ignore
+              });
             }
           } else {
             const r = { variable, minimum: min, maximum: value } as Range;
             state.projectState.ranges.push(r);
             if (user.uid && state.projectState.title) {
-              addRange(user.uid, state.projectState.title, r);
+              addRange(user.uid, state.projectState.title, r).then(() => {
+                // ignore
+              });
             }
           }
         } else {
           const r = { variable, minimum: min, maximum: value } as Range;
           state.projectState.ranges = [r];
           if (user.uid && state.projectState.title) {
-            addRange(user.uid, state.projectState.title, r);
+            addRange(user.uid, state.projectState.title, r).then(() => {
+              // ignore
+            });
           }
         }
       });
       maxRef.current = Number(value);
+      setUpdateFlag(!updateFlag);
+    };
+
+    const changeFilter = (values: number[]) => {
+      if (!filter) return;
+      const oldValue = [filter.lowerBound, filter.upperBound] as number[];
+      const undoableChange = {
+        name: 'Set Filter: ' + name,
+        timestamp: Date.now(),
+        oldValue,
+        newValue: values,
+        undo: () => {
+          setFilterBounds(oldValue);
+        },
+        redo: () => {
+          setFilterBounds(values);
+        },
+      } as UndoableChange;
+      addUndoable(undoableChange);
+      setFilterBounds(values);
+    };
+
+    const setFilterBounds = (values: number[]) => {
+      if (!filter) return;
+      filter.lowerBound = values[0];
+      filter.upperBound = values[1];
+      if (hover) hover(-1);
+      setCommonStore((state) => {
+        if (state.projectState.filters) {
+          let index = -1;
+          for (const [i, f] of state.projectState.filters.entries()) {
+            if (f.variable === variable) {
+              index = i;
+              break;
+            }
+          }
+          if (index >= 0) {
+            state.projectState.filters[index] = {
+              variable: filter.variable,
+              type: filter.type,
+              lowerBound: filter.lowerBound,
+              upperBound: filter.upperBound,
+            } as Filter;
+          } else {
+            const f = {
+              variable,
+              type: filter.type,
+              lowerBound: filter.lowerBound,
+              upperBound: filter.upperBound,
+            } as Filter;
+            state.projectState.filters.push(f);
+          }
+        }
+      });
       setUpdateFlag(!updateFlag);
     };
 
@@ -414,41 +474,8 @@ const VerticalAxis = React.memo(
                 max={max}
                 step={(max - min) / 100}
                 value={[filter.lowerBound ?? min, filter.upperBound ?? max]}
-                onChange={(values) => {
-                  if (filter) {
-                    filter.lowerBound = values[0];
-                    filter.upperBound = values[1];
-                    if (hover) hover(-1);
-                    setCommonStore((state) => {
-                      if (state.projectState.filters) {
-                        let index = -1;
-                        for (const [i, f] of state.projectState.filters.entries()) {
-                          if (f.variable === variable) {
-                            index = i;
-                            break;
-                          }
-                        }
-                        if (index >= 0) {
-                          state.projectState.filters[index] = {
-                            variable: filter.variable,
-                            type: filter.type,
-                            lowerBound: filter.lowerBound,
-                            upperBound: filter.upperBound,
-                          } as Filter;
-                        } else {
-                          const f = {
-                            variable,
-                            type: filter.type,
-                            lowerBound: filter.lowerBound,
-                            upperBound: filter.upperBound,
-                          } as Filter;
-                          state.projectState.filters.push(f);
-                        }
-                      }
-                    });
-                    setUpdateFlag(!updateFlag);
-                  }
-                }}
+                onChange={(values) => setFilterBounds(values)}
+                onChangeComplete={(values) => changeFilter(values)}
                 range={true}
                 vertical
               />
