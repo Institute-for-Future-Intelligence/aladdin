@@ -636,23 +636,32 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
     });
   };
 
-  const toggleDesignVisibility = (design: Design) => {
+  const toggleDesignVisibilitySync = (design: Design) => {
     localToggleDesignVisibility(design.title);
     if (isOwner) {
       if (user.uid && projectTitle) {
         updateDesignVisibility(user.uid, projectTitle, design).then(() => {
-          if (loggable) {
-            setCommonStore((state) => {
-              state.actionInfo = {
-                name: 'Toggle Design Visibility',
-                timestamp: new Date().getTime(),
-                result: { title: design.title, visible: design.invisible },
-              };
-            });
-          }
+          // ignore
         });
       }
     }
+  };
+
+  const toggleDesignVisibility = (design: Design) => {
+    const undoableSelect = {
+      name: 'Select Design Visibility',
+      timestamp: Date.now(),
+      checked: !!design.invisible,
+      property: design.title,
+      undo: () => {
+        toggleDesignVisibilitySync(design);
+      },
+      redo: () => {
+        toggleDesignVisibilitySync(design);
+      },
+    } as UndoableCheck;
+    addUndoable(undoableSelect);
+    toggleDesignVisibilitySync(design);
   };
 
   const localSelectParameter = (selected: boolean, parameter: string) => {
@@ -691,13 +700,14 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       checked: selected,
       property: parameter,
       undo: () => {
-        selectParameterSync(selected, parameter);
+        selectParameterSync(!selected, parameter);
       },
       redo: () => {
         selectParameterSync(selected, parameter);
       },
     } as UndoableCheck;
     addUndoable(undoableSelect);
+    selectParameterSync(selected, parameter);
   };
 
   const localSelectDataColoring = () => {

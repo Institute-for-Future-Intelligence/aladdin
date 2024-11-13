@@ -78,6 +78,7 @@ const ProjectListPanel = React.memo(
   ({ projects, setProjectState, deleteProject, renameProject }: ProjectListPanelProps) => {
     const user = useStore(Selector.user);
     const loggable = useStore(Selector.loggable);
+    const undoManager = useStore(Selector.undoManager);
     const setCommonStore = useStore(Selector.set);
     const selectedFloatingWindow = useStore(Selector.selectedFloatingWindow);
 
@@ -197,6 +198,7 @@ const ProjectListPanel = React.memo(
 
     const openProject = (projectState: ProjectState) => {
       setProjectState(projectState);
+      undoManager.clear();
       if (loggable) {
         setCommonStore((state) => {
           state.actionInfo = {
