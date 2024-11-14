@@ -129,8 +129,8 @@ export const useSolarPanelTexture = (
   ly: number,
   pvModel: PvModel,
   orientation: Orientation,
-  customizedFrameColor: string | undefined,
-  customizedBacksheetColor: string | undefined,
+  customizedFrameColor?: string | undefined,
+  customizedBacksheetColor?: string | undefined,
 ) => {
   const frameColor =
     customizedFrameColor ??

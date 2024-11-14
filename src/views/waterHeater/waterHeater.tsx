@@ -28,6 +28,7 @@ import PanelBox from '../solarPanel/panelBox';
 import PolarGrid, { PolarGridRefProps } from '../solarPanel/polarGrid';
 import { WaterHeaterUtil } from './waterHeaterUtil';
 import Wireframe from './wireframe';
+import Materials, { MaterialRefProps } from './materials';
 
 const MOUNT_LEFT = 'Mount Left';
 const MOUNT_RIGHT = 'Mount Right';
@@ -35,7 +36,6 @@ const MOUNT_RIGHT = 'Mount Right';
 /**
  * todos:
  * - resize y
- * - material
  * - text
  * - move/resize validation
  * - copy/cut/paste
@@ -45,7 +45,21 @@ const MOUNT_RIGHT = 'Mount Right';
  */
 
 const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
-  const { id, cx, cy, cz, lx, ly, lz, rotation, normal, relativeAzimuth, parentType, locked } = waterHeater;
+  const {
+    id,
+    cx,
+    cy,
+    cz,
+    lx,
+    ly,
+    lz,
+    rotation,
+    normal,
+    relativeAzimuth,
+    parentType,
+    locked,
+    color = 'grey',
+  } = waterHeater;
 
   // constant
   const panelLength = lx;
@@ -80,6 +94,7 @@ const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
   const heightHandleRef = useRef<Mesh>(null!);
   const waterTankGroupRef = useRef<Group>(null!);
   const panelGroupRef = useRef<Group>(null!);
+  const materialRef = useRef<MaterialRefProps>(null!);
 
   // states
   const [showXYIntersectionPlane, setShowXYIntersectionPlane] = useState(false);
@@ -561,7 +576,10 @@ const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
           groupRef.current.position.x = center.x;
           groupRef.current.position.y = center.y;
           groupRef.current.position.z = center.z;
-          // setMaterialSize(operationRef.current, dist);
+
+          if (materialRef.current) {
+            materialRef.current.update(boxGroupMeshRef.current.scale.x);
+          }
         }
 
         updateChildMeshes();
@@ -655,8 +673,7 @@ const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
             <group ref={boxGroupMeshRef} scale={[panelLength, panelWidth, panelThickness]}>
               {/* panel box mesh */}
               <PanelBox onPointerOver={() => setHovered(true)} onPointerOut={() => setHovered(false)}>
-                {/* <Materials solarPanel={solarPanel} lx={materialLx} ly={materialLy} /> */}
-                <meshStandardMaterial color={'grey'} />
+                <Materials ref={materialRef} lx={lx} ly={ly} color={color} />
               </PanelBox>
               {/* simulation panel */}
               <Plane name={'Water Heater Simulation Plane'} uuid={id} userData={{ simulation: true }} visible={false}>
