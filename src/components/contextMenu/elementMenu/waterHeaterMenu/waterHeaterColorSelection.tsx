@@ -175,7 +175,11 @@ const WaterHeaterColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
       case Scope.AllSelectedObjectsOfThisType: {
         const oldColorsSelected = new Map<string, string>();
         for (const elem of elements) {
-          if (elem.type === ObjectType.WaterHeater && useStore.getState().selectedElementIdSet.has(elem.id)) {
+          if (
+            elem.type === ObjectType.WaterHeater &&
+            useStore.getState().selectedElementIdSet.has(elem.id) &&
+            !elem.locked
+          ) {
             oldColorsSelected.set(elem.id, elem.color ?? 'grey');
           }
         }
@@ -204,7 +208,7 @@ const WaterHeaterColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
       case Scope.AllObjectsOfThisType: {
         const oldFrameColorsAll = new Map<string, string>();
         for (const elem of elements) {
-          if (elem.type === ObjectType.WaterHeater) {
+          if (elem.type === ObjectType.WaterHeater && !elem.locked) {
             oldFrameColorsAll.set(elem.id, elem.color ?? 'grey');
           }
         }
@@ -231,7 +235,11 @@ const WaterHeaterColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
         if (waterHeater.foundationId) {
           const oldColorsAboveFoundation = new Map<string, string>();
           for (const elem of elements) {
-            if (elem.type === ObjectType.WaterHeater && elem.foundationId === waterHeater.foundationId) {
+            if (
+              elem.type === ObjectType.WaterHeater &&
+              !elem.locked &&
+              elem.foundationId === waterHeater.foundationId
+            ) {
               oldColorsAboveFoundation.set(elem.id, elem.color ?? 'grey');
             }
           }
@@ -270,6 +278,7 @@ const WaterHeaterColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
             for (const elem of elements) {
               if (
                 elem.type === ObjectType.WaterHeater &&
+                !elem.locked &&
                 elem.parentId === waterHeater.parentId &&
                 Util.isIdentical(elem.normal, waterHeater.normal)
               ) {
@@ -278,7 +287,7 @@ const WaterHeaterColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
             }
           } else {
             for (const elem of elements) {
-              if (elem.type === ObjectType.WaterHeater && elem.parentId === waterHeater.parentId) {
+              if (elem.type === ObjectType.WaterHeater && !elem.locked && elem.parentId === waterHeater.parentId) {
                 oldFrameColorsOnSurface.set(elem.id, elem.color ?? 'grey');
               }
             }

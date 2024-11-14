@@ -330,6 +330,10 @@ export const solarPanelActionScope = (state: CommonStoreState) => state.solarPan
 
 export const setSolarPanelActionScope = (state: CommonStoreState) => state.setSolarPanelActionScope;
 
+export const waterHeaterActionScope = (state: CommonStoreState) => state.solarPanelActionScope;
+
+export const setWaterHeaterActionScope = (state: CommonStoreState) => state.setSolarPanelActionScope;
+
 export const updateSolarCollectorDailyYieldById = (state: CommonStoreState) => state.updateSolarCollectorDailyYieldById;
 
 export const updateSolarCollectorYearlyYieldById = (state: CommonStoreState) =>

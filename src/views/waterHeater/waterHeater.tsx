@@ -32,9 +32,11 @@ import Materials, { MaterialRefProps } from './materials';
 
 const MOUNT_LEFT = 'Mount Left';
 const MOUNT_RIGHT = 'Mount Right';
+export const WATER_TANK_RADIUS = 0.3;
 
 /**
  * todos:
+ * - multiple selection
  * - resize y
  * - text
  * - move/resize validation
@@ -53,6 +55,7 @@ const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
     lx,
     ly,
     lz,
+    waterTankRadius = WATER_TANK_RADIUS,
     rotation,
     normal,
     relativeAzimuth,
@@ -65,7 +68,6 @@ const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
   const panelLength = lx;
   const panelWidth = ly;
   const panelThickness = 0.05;
-  const waterTankRadius = 0.3;
   const waterTankLength = panelLength + 0.25;
   const mountHeight = lz - waterTankRadius * 2; // surface to tank bottom, lz is from surface to top
   const angle = Math.asin(Math.min(1, (mountHeight + waterTankRadius) / panelWidth));

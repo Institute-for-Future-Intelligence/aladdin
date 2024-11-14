@@ -23,8 +23,8 @@ const WaterHeaterLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
   const getElementById = useStore(Selector.getElementById);
   const getParent = useStore(Selector.getParent);
   const addUndoable = useStore(Selector.addUndoable);
-  const actionScope = useStore(Selector.solarPanelActionScope);
-  const setActionScope = useStore(Selector.setSolarPanelActionScope);
+  const actionScope = useStore(Selector.waterHeaterActionScope);
+  const setActionScope = useStore(Selector.setWaterHeaterActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
@@ -213,7 +213,11 @@ const WaterHeaterLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
       case Scope.AllSelectedObjectsOfThisType: {
         rejectRef.current = false;
         for (const elem of elements) {
-          if (elem.type === ObjectType.WaterHeater && useStore.getState().selectedElementIdSet.has(elem.id)) {
+          if (
+            elem.type === ObjectType.WaterHeater &&
+            !elem.locked &&
+            useStore.getState().selectedElementIdSet.has(elem.id)
+          ) {
             if (rejectChange(elem as WaterHeaterModel, value)) {
               rejectRef.current = true;
               break;
@@ -256,7 +260,7 @@ const WaterHeaterLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
       case Scope.AllObjectsOfThisType: {
         rejectRef.current = false;
         for (const elem of elements) {
-          if (elem.type === ObjectType.WaterHeater && useStore.getState().selectedElementIdSet.has(elem.id)) {
+          if (elem.type === ObjectType.WaterHeater && !elem.locked) {
             if (rejectChange(elem as WaterHeaterModel, value)) {
               rejectRef.current = true;
               break;
@@ -297,7 +301,11 @@ const WaterHeaterLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
         if (waterHeater.foundationId) {
           rejectRef.current = false;
           for (const elem of elements) {
-            if (elem.type === ObjectType.WaterHeater && elem.foundationId === waterHeater.foundationId) {
+            if (
+              elem.type === ObjectType.WaterHeater &&
+              !elem.locked &&
+              elem.foundationId === waterHeater.foundationId
+            ) {
               if (rejectChange(elem as WaterHeaterModel, value)) {
                 rejectRef.current = true;
                 break;
@@ -350,6 +358,7 @@ const WaterHeaterLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
             for (const elem of elements) {
               if (
                 elem.type === ObjectType.WaterHeater &&
+                !elem.locked &&
                 elem.parentId === waterHeater.parentId &&
                 Util.isIdentical(elem.normal, waterHeater.normal)
               ) {
@@ -361,7 +370,7 @@ const WaterHeaterLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
             }
           } else {
             for (const elem of elements) {
-              if (elem.type === ObjectType.WaterHeater && elem.parentId === waterHeater.parentId) {
+              if (elem.type === ObjectType.WaterHeater && !elem.locked && elem.parentId === waterHeater.parentId) {
                 if (rejectChange(elem as WaterHeaterModel, value)) {
                   rejectRef.current = true;
                   break;

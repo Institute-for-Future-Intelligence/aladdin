@@ -7,4 +7,5 @@ import { SolarCollector } from './SolarCollector';
 
 export interface WaterHeaterModel extends SolarCollector {
   parentType: ObjectType;
+  waterTankRadius: number;
 }

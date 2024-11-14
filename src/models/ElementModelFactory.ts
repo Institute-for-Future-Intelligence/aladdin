@@ -58,6 +58,7 @@ import { useStore } from 'src/stores/common';
 import { RoofUtil } from '../views/roof/RoofUtil';
 import { PowerWallModel } from './PowerWallModel';
 import { WaterHeaterModel } from './WaterHeaterModel';
+import { WATER_TANK_RADIUS } from 'src/views/waterHeater/waterHeater';
 
 export class ElementModelFactory {
   static makeHuman(name: HumanName, parentId: string, x: number, y: number, z?: number) {
@@ -156,19 +157,21 @@ export class ElementModelFactory {
   }
 
   static makeWaterHeater(parent: ElementModel, x: number, y: number, z: number, normal: Vector3, rotation: number[]) {
+    const actionState = useStore.getState().actionState;
     return {
       type: ObjectType.WaterHeater,
       cx: x,
       cy: y,
       cz: z,
       lx: 2.092,
-      ly: 1.558,
-      lz: 1,
-      relativeAzimuth: 0,
+      ly: 1.558 + actionState.waterHeaterTankRadius,
+      lz: actionState.waterHeaterHeight,
+      waterTankRadius: actionState.waterHeaterTankRadius,
+      relativeAzimuth: actionState.waterHeaterRelativeAzimuth,
       showLabel: false,
       normal: normal ? normal.toArray() : [0, 0, 1],
       rotation: rotation ? rotation : [0, 0, 0],
-      color: '#fff',
+      color: actionState.waterHeaterColor,
       parentType: parent.type,
       parentId: parent.id,
       foundationId: parent.parentId,

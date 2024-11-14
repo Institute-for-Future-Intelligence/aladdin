@@ -28,8 +28,8 @@ const WaterHeaterRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisibl
   const updateRelativeAzimuthForAll = useStore(Selector.updateSolarCollectorRelativeAzimuthForAll);
   const getParent = useStore(Selector.getParent);
   const addUndoable = useStore(Selector.addUndoable);
-  const actionScope = useStore(Selector.solarPanelActionScope);
-  const setActionScope = useStore(Selector.setSolarPanelActionScope);
+  const actionScope = useStore(Selector.waterHeaterActionScope);
+  const setActionScope = useStore(Selector.setWaterHeaterActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
@@ -171,7 +171,11 @@ const WaterHeaterRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisibl
       case Scope.AllSelectedObjectsOfThisType: {
         rejectRef.current = false;
         for (const elem of elements) {
-          if (elem.type === ObjectType.WaterHeater && useStore.getState().selectedElementIdSet.has(elem.id)) {
+          if (
+            elem.type === ObjectType.WaterHeater &&
+            !elem.locked &&
+            useStore.getState().selectedElementIdSet.has(elem.id)
+          ) {
             if (rejectChange(elem as WaterHeaterModel, value)) {
               rejectRef.current = true;
               break;
@@ -214,7 +218,7 @@ const WaterHeaterRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisibl
       case Scope.AllObjectsOfThisType: {
         rejectRef.current = false;
         for (const elem of elements) {
-          if (elem.type === ObjectType.WaterHeater) {
+          if (elem.type === ObjectType.WaterHeater && !elem.locked) {
             if (rejectChange(elem as WaterHeaterModel, value)) {
               rejectRef.current = true;
               break;
@@ -255,7 +259,11 @@ const WaterHeaterRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisibl
         if (waterHeater.foundationId) {
           rejectRef.current = false;
           for (const elem of elements) {
-            if (elem.type === ObjectType.WaterHeater && elem.foundationId === waterHeater.foundationId) {
+            if (
+              elem.type === ObjectType.WaterHeater &&
+              !elem.locked &&
+              elem.foundationId === waterHeater.foundationId
+            ) {
               if (rejectChange(elem as WaterHeaterModel, value)) {
                 rejectRef.current = true;
                 break;
@@ -310,6 +318,7 @@ const WaterHeaterRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisibl
               for (const elem of elements) {
                 if (
                   elem.type === ObjectType.WaterHeater &&
+                  !elem.locked &&
                   elem.parentId === waterHeater.parentId &&
                   Util.isIdentical(elem.normal, waterHeater.normal)
                 ) {
@@ -321,7 +330,7 @@ const WaterHeaterRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisibl
               }
             } else {
               for (const elem of elements) {
-                if (elem.type === ObjectType.WaterHeater && elem.parentId === waterHeater.parentId) {
+                if (elem.type === ObjectType.WaterHeater && !elem.locked && elem.parentId === waterHeater.parentId) {
                   if (rejectChange(elem as WaterHeaterModel, value)) {
                     rejectRef.current = true;
                     break;
@@ -415,7 +424,7 @@ const WaterHeaterRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisibl
       }
     }
     setCommonStore((state) => {
-      state.actionState.solarPanelRelativeAzimuth = -value;
+      state.actionState.waterHeaterRelativeAzimuth = -value;
     });
   };
 
@@ -489,19 +498,19 @@ const WaterHeaterRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisibl
           <Radio.Group onChange={onScopeChange} value={actionScope}>
             <Space direction="vertical">
               <Radio style={{ width: '100%' }} value={Scope.OnlyThisObject}>
-                {i18n.t('solarPanelMenu.OnlyThisSolarPanel', lang)}
+                {i18n.t('waterHeaterMenu.OnlyThisWaterHeater', lang)}
               </Radio>
               <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisTypeOnSurface}>
-                {i18n.t('solarPanelMenu.AllSolarPanelsOnSurface', lang)}
+                {i18n.t('waterHeaterMenu.AllWaterHeatersOnSurface', lang)}
               </Radio>
               <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisTypeAboveFoundation}>
-                {i18n.t('solarPanelMenu.AllSolarPanelsAboveFoundation', lang)}
+                {i18n.t('waterHeaterMenu.AllWaterHeatersAboveFoundation', lang)}
               </Radio>
               <Radio style={{ width: '100%' }} value={Scope.AllSelectedObjectsOfThisType}>
-                {i18n.t('solarPanelMenu.AllSelectedSolarPanels', lang)}
+                {i18n.t('waterHeaterMenu.AllSelectedWaterHeaters', lang)}
               </Radio>
               <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisType}>
-                {i18n.t('solarPanelMenu.AllSolarPanels', lang)}
+                {i18n.t('waterHeaterMenu.AllWaterHeaters', lang)}
               </Radio>
             </Space>
           </Radio.Group>

@@ -132,6 +132,9 @@ export interface ActionState {
   solarPanelCy: number;
 
   waterHeaterColor: string;
+  waterHeaterRelativeAzimuth: number;
+  waterHeaterTankRadius: number;
+  waterHeaterHeight: number;
 
   parabolicDishReflectance: number;
   parabolicDishAbsorptance: number;
