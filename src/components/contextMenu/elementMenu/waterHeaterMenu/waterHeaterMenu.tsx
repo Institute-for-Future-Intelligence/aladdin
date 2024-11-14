@@ -15,6 +15,7 @@ import { Util } from 'src/Util';
 import { UNIT_VECTOR_POS_Z_ARRAY } from 'src/constants';
 import WaterHeaterRelativeAzimuthInput from './waterHeaterRelativeAzimuthInput';
 import WaterHeaterHeightInput from './waterHeaterHeightInput';
+import WaterHeaterColorSelection from './waterHeaterColorSelection';
 
 export const createWaterHeaterMenu = (selectedElement: ElementModel) => {
   const items: MenuProps['items'] = [];
@@ -60,16 +61,21 @@ export const createWaterHeaterMenu = (selectedElement: ElementModel) => {
         label: <DialogItem Dialog={WaterHeaterHeightInput}>{i18n.t('word.Height', lang)} ...</DialogItem>,
       },
     );
-  }
 
-  if (upright) {
+    if (upright) {
+      items.push({
+        key: 'water-heater-relative-azimuth',
+        label: (
+          <DialogItem Dialog={WaterHeaterRelativeAzimuthInput}>
+            {i18n.t('solarCollectorMenu.RelativeAzimuth', lang)} ...
+          </DialogItem>
+        ),
+      });
+    }
+
     items.push({
-      key: 'water-heater-relative-azimuth',
-      label: (
-        <DialogItem Dialog={WaterHeaterRelativeAzimuthInput}>
-          {i18n.t('solarCollectorMenu.RelativeAzimuth', lang)} ...
-        </DialogItem>
-      ),
+      key: 'water-heater-frame-color',
+      label: <DialogItem Dialog={WaterHeaterColorSelection}>{i18n.t('word.Color', lang)} ...</DialogItem>,
     });
   }
 

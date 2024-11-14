@@ -147,6 +147,8 @@ export class DefaultActionState implements ActionState {
   solarPanelCx: number;
   solarPanelCy: number;
 
+  waterHeaterColor: string;
+
   parabolicDishReflectance: number;
   parabolicDishAbsorptance: number;
   parabolicDishOpticalEfficiency: number;
@@ -301,6 +303,8 @@ export class DefaultActionState implements ActionState {
     this.solarPanelFrameColor = '#ffffff';
     this.solarPanelCx = 0;
     this.solarPanelCy = 0;
+
+    this.waterHeaterColor = 'grey';
 
     this.parabolicDishReflectance = 0.9;
     this.parabolicDishAbsorptance = 0.95;

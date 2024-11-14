@@ -131,6 +131,8 @@ export interface ActionState {
   solarPanelCx: number;
   solarPanelCy: number;
 
+  waterHeaterColor: string;
+
   parabolicDishReflectance: number;
   parabolicDishAbsorptance: number;
   parabolicDishOpticalEfficiency: number;

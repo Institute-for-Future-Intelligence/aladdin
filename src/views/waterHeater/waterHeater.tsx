@@ -647,7 +647,7 @@ const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
             rotation={[0, 0, HALF_PI]}
             scale={[1, waterTankLength, 1]}
           >
-            <meshStandardMaterial color={'grey'} />
+            <meshStandardMaterial color={color} />
           </Cylinder>
           {/* height handle */}
           {selected && (
@@ -673,7 +673,7 @@ const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
             <group ref={boxGroupMeshRef} scale={[panelLength, panelWidth, panelThickness]}>
               {/* panel box mesh */}
               <PanelBox onPointerOver={() => setHovered(true)} onPointerOut={() => setHovered(false)}>
-                <Materials ref={materialRef} lx={lx} ly={ly} color={color} />
+                <Materials ref={materialRef} lx={lx} ly={ly} color={'white'} />
               </PanelBox>
               {/* simulation panel */}
               <Plane name={'Water Heater Simulation Plane'} uuid={id} userData={{ simulation: true }} visible={false}>
