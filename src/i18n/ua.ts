@@ -1779,6 +1779,7 @@ export const i18n_ua = {
     },
 
     modelsMap: {
+      AllTime: 'All Time',
       SearchByPublisher: 'Пошук за виробником',
       SearchByLabel: 'Пошук за міткою',
       MyPublishedModels: 'Мої опубліковані моделі',

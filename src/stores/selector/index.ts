@@ -139,6 +139,8 @@ export const updateProjectsFlag = (state: PrimitiveStoreState) => state.updatePr
 
 export const modelsMapFlag = (state: PrimitiveStoreState) => state.modelsMapFlag;
 
+export const showModelsFromAllTime = (state: PrimitiveStoreState) => state.showModelsFromAllTime;
+
 export const leaderboardFlag = (state: PrimitiveStoreState) => state.leaderboardFlag;
 
 export const showLeaderboard = (state: PrimitiveStoreState) => state.showLeaderboard;

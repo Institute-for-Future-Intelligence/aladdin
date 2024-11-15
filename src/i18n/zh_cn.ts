@@ -1750,6 +1750,7 @@ export const i18n_zh_cn = {
     },
 
     modelsMap: {
+      AllTime: '全部时间',
       SearchByPublisher: '按发布者搜索',
       SearchByLabel: '按标签搜索',
       MyPublishedModels: '我发布的模型',

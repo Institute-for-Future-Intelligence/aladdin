@@ -10,7 +10,7 @@ import i18n from './i18n/i18n';
 import { Libraries } from '@react-google-maps/api/dist/utils/make-load-script-url';
 import { StandaloneSearchBox, useJsApiLoader } from '@react-google-maps/api';
 import Spinner from './components/spinner';
-import { Checkbox, Empty, Input, Space, Tag } from 'antd';
+import { Checkbox, DatePicker, Empty, Input, Space, Tag } from 'antd';
 import ModelsMap from './components/modelsMap';
 import { UndoableChangeLocation } from './undo/UndoableChangeLocation';
 import { DEFAULT_ADDRESS } from './constants';
@@ -22,6 +22,8 @@ import ModelsGallery from './modelsGallery';
 import { useLanguage } from './hooks';
 
 const libraries = ['places'] as Libraries;
+
+const { RangePicker } = DatePicker;
 
 const Container = styled.div`
   position: absolute;
@@ -56,6 +58,7 @@ const ModelsMapWrapper = React.memo(
     const longitude = modelsMapLongitude !== undefined ? modelsMapLongitude : -71.3488548;
     const address = useStore.getState().modelsMapAddress ?? DEFAULT_ADDRESS;
     const mapWeatherStations = usePrimitiveStore(Selector.modelsMapWeatherStations);
+    const showModelsFromAllTime = usePrimitiveStore(Selector.showModelsFromAllTime);
     const showLeaderboard = usePrimitiveStore(Selector.showLeaderboard);
     const latestModelSite = useStore(Selector.latestModelSite);
     const modelSites = useStore(Selector.modelSites);
@@ -180,40 +183,68 @@ const ModelsMapWrapper = React.memo(
         }}
       >
         {isLoaded && (
-          <Space>
-            <div
-              style={{
-                position: 'absolute',
-                fontSize: 'medium',
-                color: 'black',
-                cursor: 'pointer',
-                top: '-40px',
-                left: '40%',
-                width: '20%',
-                height: '28px',
-                background: 'white',
-                boxShadow: '1px 1px 1px 1px gray',
+          <Space
+            style={{
+              position: 'absolute',
+              fontSize: 'medium',
+              color: 'black',
+              top: '-40px',
+              left: '40%',
+              width: '20%',
+              height: '28px',
+              background: 'white',
+              borderRadius: '5px',
+              boxShadow: '1px 1px 1px 1px gray',
+            }}
+          >
+            <StandaloneSearchBox onLoad={onLoad} onPlacesChanged={onPlacesChanged}>
+              <input
+                type="text"
+                placeholder={address}
+                style={{
+                  boxSizing: `border-box`,
+                  border: `1px solid transparent`,
+                  width: `100%`,
+                  height: `100%`,
+                  fontSize: `14px`,
+                  paddingLeft: '8px',
+                  paddingRight: '8px',
+                  outline: `none`,
+                  textOverflow: `ellipses`,
+                  position: 'relative',
+                }}
+              />
+            </StandaloneSearchBox>
+          </Space>
+        )}
+        {isLoaded && (
+          <Space
+            style={{
+              position: 'absolute',
+              fontSize: 'medium',
+              color: 'black',
+              top: '-40px',
+              left: '60%',
+              width: '40%',
+              height: '28px',
+              paddingLeft: '12px',
+            }}
+          >
+            <Checkbox
+              checked={showModelsFromAllTime}
+              onChange={(e) => {
+                usePrimitiveStore.getState().set((state) => {
+                  state.showModelsFromAllTime = e.target.checked;
+                });
               }}
             >
-              <StandaloneSearchBox onLoad={onLoad} onPlacesChanged={onPlacesChanged}>
-                <input
-                  type="text"
-                  placeholder={address}
-                  style={{
-                    boxSizing: `border-box`,
-                    border: `1px solid transparent`,
-                    width: `100%`,
-                    height: `100%`,
-                    fontSize: `14px`,
-                    paddingLeft: '8px',
-                    paddingRight: '8px',
-                    outline: `none`,
-                    textOverflow: `ellipses`,
-                    position: 'relative',
-                  }}
-                />
-              </StandaloneSearchBox>
-            </div>
+              {i18n.t('modelsMap.AllTime', lang)}
+            </Checkbox>
+            {!showModelsFromAllTime && (
+              <>
+                <RangePicker format="YYYY-MM-DD HH:mm" onChange={(value, dateString) => {}} onOk={() => {}} />
+              </>
+            )}
           </Space>
         )}
         {isLoaded ? (

@@ -38,6 +38,7 @@ export interface PrimitiveStoreState {
   saveLocalFileDialogVisible: boolean;
 
   modelsMapFlag: boolean;
+  showModelsFromAllTime: boolean;
   leaderboardFlag: boolean;
   showLeaderboard: boolean;
   publishOnModelsMapFlag: boolean;
@@ -235,6 +236,7 @@ export const usePrimitiveStore = createWithEqualityFn<PrimitiveStoreState>()((se
     saveLocalFileDialogVisible: false,
 
     modelsMapFlag: false,
+    showModelsFromAllTime: true,
     leaderboardFlag: false,
     showLeaderboard: false,
     publishOnModelsMapFlag: false,

@@ -1778,6 +1778,7 @@ export const i18n_tr = {
     },
 
     modelsMap: {
+      AllTime: 'All Time',
       SearchByPublisher: 'Search by publisher',
       SearchByLabel: 'Search by label',
       MyPublishedModels: 'My Published Models',

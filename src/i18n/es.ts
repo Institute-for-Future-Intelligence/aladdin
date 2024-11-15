@@ -1777,6 +1777,7 @@ export const i18n_es = {
     },
 
     modelsMap: {
+      AllTime: 'All Time',
       SearchByPublisher: 'Search by publisher',
       SearchByLabel: 'Search by label',
       MyPublishedModels: 'My Published Models',

@@ -1751,6 +1751,7 @@ export const i18n_zh_tw = {
     },
 
     modelsMap: {
+      AllTime: '全部時間',
       SearchByPublisher: '按發布者搜索',
       SearchByLabel: '按標籤搜索',
       MyPublishedModels: '我發布的模型',
