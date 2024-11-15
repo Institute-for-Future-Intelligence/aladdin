@@ -143,6 +143,10 @@ export interface CommonStoreState {
   modelsMapType: string;
   modelsMapTilt: number;
 
+  showModelsAllTime: boolean;
+  showModelsFromDate: string;
+  showModelsToDate: string;
+
   minimumNavigationMoveSpeed: number;
   minimumNavigationTurnSpeed: number;
 
@@ -623,6 +627,10 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
           modelsMapZoom: DEFAULT_MODEL_MAP_ZOOM,
           modelsMapType: 'roadmap',
           modelsMapTilt: 0,
+
+          showModelsAllTime: true,
+          showModelsFromDate: '2021-01-01',
+          showModelsToDate: '2025-12-31',
 
           minimumNavigationMoveSpeed: 3,
           minimumNavigationTurnSpeed: 3,
@@ -5010,6 +5018,9 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
           modelsMapZoom: state.modelsMapZoom,
           modelsMapType: state.modelsMapType,
           modelsMapTilt: state.modelsMapTilt,
+          showModelsAllTime: state.showModelsAllTime,
+          showModelsFromDate: state.showModelsFromDate,
+          showModelsToDate: state.showModelsToDate,
           world: state.world,
           elements: state.elements,
           viewState: state.viewState,

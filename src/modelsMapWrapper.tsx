@@ -20,6 +20,7 @@ import ReactCountryFlag from 'react-country-flag';
 import { VerticalAlignBottomOutlined, VerticalAlignTopOutlined, UserOutlined } from '@ant-design/icons';
 import ModelsGallery from './modelsGallery';
 import { useLanguage } from './hooks';
+import dayjs from 'dayjs';
 
 const libraries = ['places'] as Libraries;
 
@@ -58,7 +59,9 @@ const ModelsMapWrapper = React.memo(
     const longitude = modelsMapLongitude !== undefined ? modelsMapLongitude : -71.3488548;
     const address = useStore.getState().modelsMapAddress ?? DEFAULT_ADDRESS;
     const mapWeatherStations = usePrimitiveStore(Selector.modelsMapWeatherStations);
-    const showModelsFromAllTime = usePrimitiveStore(Selector.showModelsFromAllTime);
+    const showModelsAllTime = useStore(Selector.showModelsAllTime);
+    const showModelsFromDate = useStore(Selector.showModelsFromDate);
+    const showModelsToDate = useStore(Selector.showModelsToDate);
     const showLeaderboard = usePrimitiveStore(Selector.showLeaderboard);
     const latestModelSite = useStore(Selector.latestModelSite);
     const modelSites = useStore(Selector.modelSites);
@@ -231,18 +234,27 @@ const ModelsMapWrapper = React.memo(
             }}
           >
             <Checkbox
-              checked={showModelsFromAllTime}
+              checked={showModelsAllTime}
               onChange={(e) => {
-                usePrimitiveStore.getState().set((state) => {
-                  state.showModelsFromAllTime = e.target.checked;
+                setCommonStore((state) => {
+                  state.showModelsAllTime = e.target.checked;
                 });
               }}
             >
               {i18n.t('modelsMap.AllTime', lang)}
             </Checkbox>
-            {!showModelsFromAllTime && (
+            {!showModelsAllTime && (
               <>
-                <RangePicker format="YYYY-MM-DD HH:mm" onChange={(value, dateString) => {}} onOk={() => {}} />
+                <RangePicker
+                  format="YYYY-MM-DD HH:mm"
+                  value={[dayjs(showModelsFromDate), dayjs(showModelsToDate)]}
+                  onChange={(value, dateString) => {
+                    setCommonStore((state) => {
+                      state.showModelsFromDate = dateString[0];
+                      state.showModelsToDate = dateString[1];
+                    });
+                  }}
+                />
               </>
             )}
           </Space>

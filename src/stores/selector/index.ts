@@ -139,7 +139,11 @@ export const updateProjectsFlag = (state: PrimitiveStoreState) => state.updatePr
 
 export const modelsMapFlag = (state: PrimitiveStoreState) => state.modelsMapFlag;
 
-export const showModelsFromAllTime = (state: PrimitiveStoreState) => state.showModelsFromAllTime;
+export const showModelsAllTime = (state: CommonStoreState) => state.showModelsAllTime;
+
+export const showModelsFromDate = (state: CommonStoreState) => state.showModelsFromDate;
+
+export const showModelsToDate = (state: CommonStoreState) => state.showModelsToDate;
 
 export const leaderboardFlag = (state: PrimitiveStoreState) => state.leaderboardFlag;
 
