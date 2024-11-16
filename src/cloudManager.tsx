@@ -99,6 +99,9 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
   const curateDesignToProjectFlag = usePrimitiveStore(Selector.curateDesignToProjectFlag);
   const showProjectsFlag = usePrimitiveStore(Selector.showProjectsFlag);
   const updateProjectsFlag = usePrimitiveStore(Selector.updateProjectsFlag);
+  const showModelsFromDate = useStore(Selector.showModelsFromDate);
+  const showModelsToDate = useStore(Selector.showModelsToDate);
+  const showModelsAllTime = useStore(Selector.showModelsAllTime);
 
   const [loading, setLoading] = useState<boolean>(false);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
@@ -529,29 +532,41 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
 
   const fetchModelSites = async () => {
     setLoading(true);
+    const start: number = dayjs(showModelsFromDate).toDate().getTime();
+    const end: number = dayjs(showModelsToDate).toDate().getTime();
     await firebase
       .firestore()
       .collection('models')
       .get()
       .then((querySnapshot) => {
-        const models = new Map<string, Map<string, ModelSite>>();
+        const selectedModels = new Map<string, Map<string, ModelSite>>();
+        const allModels = new Map<string, Map<string, ModelSite>>();
         querySnapshot.forEach((doc) => {
           const data = doc.data();
           if (data) {
-            const m = new Map<string, ModelSite>();
+            const m1 = new Map<string, ModelSite>();
+            const m2 = new Map<string, ModelSite>();
             for (const k in data) {
               if (!data[k].countryCode) {
                 if (data[k].address?.endsWith('USA')) data[k]['countryCode'] = 'US';
               }
-              m.set(k, data[k]);
+              if (showModelsAllTime) {
+                m1.set(k, data[k]);
+              } else {
+                const timestamp = data[k].timeCreated;
+                if (timestamp === undefined || (timestamp >= start && timestamp <= end)) m1.set(k, data[k]);
+              }
+              m2.set(k, data[k]);
             }
-            models.set(doc.id, m);
+            if (m1.size > 0) selectedModels.set(doc.id, m1);
+            if (m2.size > 0) allModels.set(doc.id, m2);
           }
         });
         setCommonStore((state) => {
-          state.modelSites = models;
+          state.modelSites = selectedModels;
+          state.allModelSites = allModels;
         });
-        return models;
+        return selectedModels;
       })
       .catch((error) => {
         showError(i18n.t('message.CannotLoadModelsOnMap', lang) + ': ' + error);

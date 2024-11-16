@@ -21,6 +21,7 @@ import { VerticalAlignBottomOutlined, VerticalAlignTopOutlined, UserOutlined } f
 import ModelsGallery from './modelsGallery';
 import { useLanguage } from './hooks';
 import dayjs from 'dayjs';
+import { RangePickerProps } from 'antd/lib/date-picker';
 
 const libraries = ['places'] as Libraries;
 
@@ -65,6 +66,7 @@ const ModelsMapWrapper = React.memo(
     const showLeaderboard = usePrimitiveStore(Selector.showLeaderboard);
     const latestModelSite = useStore(Selector.latestModelSite);
     const modelSites = useStore(Selector.modelSites);
+    const allModelSites = useStore(Selector.allModelSites);
     const peopleModels = useStore(Selector.peopleModels);
 
     // make an editable copy because models is not mutable
@@ -168,14 +170,14 @@ const ModelsMapWrapper = React.memo(
 
     const ifiUser = user.email?.endsWith('@intofuture.org');
 
-    const modelSitesCount = useMemo(() => {
-      if (!modelSites || !modelSites.size) return 0;
+    const allModelSitesCount = useMemo(() => {
+      if (!allModelSites || !allModelSites.size) return 0;
       let count = 0;
-      for (const value of modelSites.values()) {
+      for (const value of allModelSites.values()) {
         count += value.size ?? 0;
       }
       return count;
-    }, [modelSites]);
+    }, [allModelSites]);
 
     return (
       <Container
@@ -239,23 +241,44 @@ const ModelsMapWrapper = React.memo(
                 setCommonStore((state) => {
                   state.showModelsAllTime = e.target.checked;
                 });
+                usePrimitiveStore.getState().set((state) => {
+                  state.modelsMapFlag = true;
+                });
               }}
             >
               {i18n.t('modelsMap.AllTime', lang)}
             </Checkbox>
             {!showModelsAllTime && (
-              <>
-                <RangePicker
-                  format="YYYY-MM-DD HH:mm"
-                  value={[dayjs(showModelsFromDate), dayjs(showModelsToDate)]}
-                  onChange={(value, dateString) => {
-                    setCommonStore((state) => {
-                      state.showModelsFromDate = dateString[0];
-                      state.showModelsToDate = dateString[1];
-                    });
-                  }}
-                />
-              </>
+              <RangePicker
+                format="YYYY-MM-DD"
+                size={'small'}
+                allowClear={false}
+                needConfirm={true}
+                value={[dayjs(showModelsFromDate), dayjs(showModelsToDate)]}
+                onOk={(value: RangePickerProps['value']) => {
+                  if (!value) return;
+                  const dateString: string[] = ['2021-01-01', '2025-12-31'];
+                  if (value[0]) dateString[0] = value[0].toISOString();
+                  if (value[1]) dateString[1] = value[1].toISOString();
+                  const start: number = dayjs(dateString[0]).toDate().getTime();
+                  const end: number = dayjs(dateString[1]).toDate().getTime();
+                  const newModelSites = new Map<string, Map<string, ModelSite>>();
+                  for (const [location, entries] of allModelSites) {
+                    const newEntries = new Map<string, ModelSite>();
+                    for (const [key, prop] of entries) {
+                      if (prop.timeCreated && prop.timeCreated >= start && prop.timeCreated <= end) {
+                        newEntries.set(key, prop);
+                      }
+                    }
+                    if (newEntries.size > 0) newModelSites.set(location, newEntries);
+                  }
+                  setCommonStore((state) => {
+                    state.showModelsFromDate = dateString[0];
+                    state.showModelsToDate = dateString[1];
+                    state.modelSites = newModelSites;
+                  });
+                }}
+              />
             )}
           </Space>
         )}
@@ -367,7 +390,7 @@ const ModelsMapWrapper = React.memo(
           )}
           <Space>
             <div
-              title={i18n.t('modelsMap.TotalNumberOfUserPublishedModels', lang) + ': ' + modelSitesCount}
+              title={i18n.t('modelsMap.AllTimeTotalNumberOfUserPublishedModels', lang) + ': ' + allModelSitesCount}
               style={{
                 position: 'absolute',
                 fontSize: '14px',
@@ -434,6 +457,20 @@ const ModelsMapWrapper = React.memo(
               </div>
             </Space>
           )}
+          <Space>
+            <div
+              style={{
+                position: 'absolute',
+                fontSize: '12px',
+                color: modelsMapType === 'roadmap' ? 'black' : 'white',
+                top: '6px',
+                height: '25x',
+                padding: '6px 6px 2px 6px',
+              }}
+            >
+              {modelSites.size + ' ' + i18n.t('modelsMap.SitesFound', lang)}
+            </div>
+          </Space>
           <Space>
             <div
               style={{

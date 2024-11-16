@@ -121,6 +121,8 @@ export const latestModelSite = (state: CommonStoreState) => state.latestModelSit
 
 export const modelSites = (state: CommonStoreState) => state.modelSites;
 
+export const allModelSites = (state: CommonStoreState) => state.allModelSites;
+
 export const peopleModels = (state: CommonStoreState) => state.peopleModels;
 
 export const saveAccountSettingsFlag = (state: PrimitiveStoreState) => state.saveAccountSettingsFlag;
