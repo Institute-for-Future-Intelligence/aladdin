@@ -8,10 +8,10 @@ import { PvModel } from 'src/models/PvModel';
 import { DEFAULT_SOLAR_PANEL_SHININESS, SOLAR_PANEL_BLACK_SPECULAR, SOLAR_PANEL_BLUE_SPECULAR } from 'src/constants';
 import * as Selector from '../../stores/selector';
 import { Color, FrontSide } from 'three';
-import { Orientation } from 'src/types';
-import { useMaterialSize, useSolarPanelTexture } from '../solarPanel/hooks';
+import { useMaterialSize } from '../solarPanel/hooks';
 import { forwardRef, useImperativeHandle } from 'react';
 import { Operation } from '../solarPanel/refSolarPanel';
+import { useWaterHeaterTexture } from './texture';
 
 interface MaterialsProps {
   lx: number;
@@ -32,9 +32,8 @@ const Materials = forwardRef(({ lx, ly, color }: MaterialsProps, ref) => {
 
   const pvModelName = 'SPR-X21-335-BLK';
   const pvModel = useStore.getState().pvModules[pvModelName] as PvModel;
-  const orientation = Orientation.portrait;
 
-  const texture = useSolarPanelTexture(materialLx, materialLy, pvModel, orientation);
+  const texture = useWaterHeaterTexture(materialLx, materialLy);
   // const heatmapTexture = useSolarPanelHeatmapTexture(id);
   const heatmapTexture = null;
 
