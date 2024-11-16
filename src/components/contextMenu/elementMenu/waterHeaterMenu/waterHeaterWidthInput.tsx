@@ -237,7 +237,11 @@ const WaterHeaterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
         } else {
           const oldWidthSelected = new Map<string, number>();
           for (const elem of elements) {
-            if (elem.type === ObjectType.WaterHeater && useStore.getState().selectedElementIdSet.has(elem.id)) {
+            if (
+              elem.type === ObjectType.WaterHeater &&
+              !elem.locked &&
+              useStore.getState().selectedElementIdSet.has(elem.id)
+            ) {
               oldWidthSelected.set(elem.id, elem.ly);
             }
           }
@@ -280,7 +284,7 @@ const WaterHeaterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
         } else {
           const oldLengthsAll = new Map<string, number>();
           for (const elem of elements) {
-            if (elem.type === ObjectType.WaterHeater && useStore.getState().selectedElementIdSet.has(elem.id)) {
+            if (elem.type === ObjectType.WaterHeater && !elem.locked) {
               oldLengthsAll.set(elem.id, elem.ly);
             }
           }
@@ -325,7 +329,11 @@ const WaterHeaterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
           } else {
             const oldWidthAboveFoundation = new Map<string, number>();
             for (const elem of elements) {
-              if (elem.type === ObjectType.WaterHeater && elem.foundationId === waterHeater.foundationId) {
+              if (
+                elem.type === ObjectType.WaterHeater &&
+                !elem.locked &&
+                elem.foundationId === waterHeater.foundationId
+              ) {
                 oldWidthAboveFoundation.set(elem.id, elem.ly);
               }
             }
