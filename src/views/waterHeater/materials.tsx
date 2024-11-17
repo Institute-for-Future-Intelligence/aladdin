@@ -7,7 +7,7 @@ import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import { PvModel } from 'src/models/PvModel';
 import { DEFAULT_SOLAR_PANEL_SHININESS, SOLAR_PANEL_BLACK_SPECULAR, SOLAR_PANEL_BLUE_SPECULAR } from 'src/constants';
 import * as Selector from '../../stores/selector';
-import { Color, FrontSide } from 'three';
+import { Color, DoubleSide, FrontSide } from 'three';
 import { useMaterialSize } from '../solarPanel/hooks';
 import { forwardRef, useImperativeHandle } from 'react';
 import { Operation } from '../solarPanel/refSolarPanel';
@@ -47,12 +47,12 @@ const Materials = forwardRef(({ lx, ly, color }: MaterialsProps, ref) => {
     }
     return (
       <meshPhongMaterial
-        attach="material-4"
         specular={new Color(pvModel?.color === 'Blue' ? SOLAR_PANEL_BLUE_SPECULAR : SOLAR_PANEL_BLACK_SPECULAR)}
         shininess={solarPanelShininess ?? DEFAULT_SOLAR_PANEL_SHININESS}
-        side={FrontSide}
+        side={DoubleSide}
         map={texture}
         color={color}
+        transparent={true}
       />
     );
   };
@@ -68,16 +68,7 @@ const Materials = forwardRef(({ lx, ly, color }: MaterialsProps, ref) => {
     },
   }));
 
-  return (
-    <>
-      <meshStandardMaterial attach="material-0" color={color} />
-      <meshStandardMaterial attach="material-1" color={color} />
-      <meshStandardMaterial attach="material-2" color={color} />
-      <meshStandardMaterial attach="material-3" color={color} />
-      {renderTopTextureMaterial()}
-      <meshStandardMaterial attach="material-5" color={color} />
-    </>
-  );
+  return <>{renderTopTextureMaterial()}</>;
 });
 
 export default Materials;

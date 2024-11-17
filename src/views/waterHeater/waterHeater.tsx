@@ -674,9 +674,9 @@ const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
             {/* panel box group */}
             <group ref={boxGroupMeshRef} scale={[panelLength, panelWidth, panelThickness]}>
               {/* panel box mesh */}
-              <PanelBox onPointerOver={() => setHovered(true)} onPointerOut={() => setHovered(false)}>
+              <Plane>
                 <Materials ref={materialRef} lx={lx} ly={ly} color={'white'} />
-              </PanelBox>
+              </Plane>
               {/* simulation panel */}
               <Plane name={'Water Heater Simulation Plane'} uuid={id} userData={{ simulation: true }} visible={false}>
                 <meshBasicMaterial side={DoubleSide} />
