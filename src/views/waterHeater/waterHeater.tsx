@@ -648,6 +648,7 @@ const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
           <Cylinder
             ref={waterTankRef}
             args={[waterTankRadius, waterTankRadius, 1]}
+            castShadow={true}
             rotation={[0, 0, HALF_PI]}
             scale={[1, waterTankLength, 1]}
           >
@@ -676,7 +677,7 @@ const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
             {/* panel box group */}
             <group ref={boxGroupMeshRef} scale={[panelLength, panelWidth, panelThickness]}>
               {/* panel box mesh */}
-              <Plane>
+              <Plane castShadow={true}>
                 <Materials ref={materialRef} lx={lx} ly={ly} color={'white'} />
               </Plane>
               {/* simulation panel */}
@@ -718,10 +719,10 @@ const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
           scale={[1, mountHeight + 0.1, 1]}
         >
           {/* should use scale */}
-          <Cylinder name={MOUNT_LEFT} args={[0.05, 0.05, 1]} position={[-panelLength * 0.4, 0, 0]}>
+          <Cylinder name={MOUNT_LEFT} args={[0.05, 0.05, 1]} position={[-panelLength * 0.4, 0, 0]} castShadow={true}>
             <meshStandardMaterial color={'grey'} />
           </Cylinder>
-          <Cylinder name={MOUNT_RIGHT} args={[0.05, 0.05, 1]} position={[panelLength * 0.4, 0, 0]}>
+          <Cylinder name={MOUNT_RIGHT} args={[0.05, 0.05, 1]} position={[panelLength * 0.4, 0, 0]} castShadow={true}>
             <meshStandardMaterial color={'grey'} />
           </Cylinder>
         </group>
