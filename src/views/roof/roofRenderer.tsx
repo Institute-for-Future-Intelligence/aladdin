@@ -340,7 +340,7 @@ export const updateRooftopElements = (
     if (foundation === null) return;
     for (const e of state.elements) {
       if (e.parentId === roofId && e.foundationId) {
-        if (e.type === ObjectType.SolarPanel) {
+        if (e.type === ObjectType.SolarPanel || e.type === ObjectType.WaterHeater) {
           const posRelToFoundation = new Vector3(e.cx, e.cy, e.cz);
           const posRelToCentroid = posRelToFoundation.clone().sub(centroid);
           const { segmentVertices, normal, rotation } = RoofUtil.computeState(
