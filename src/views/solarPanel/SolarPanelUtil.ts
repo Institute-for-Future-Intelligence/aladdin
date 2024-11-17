@@ -98,6 +98,16 @@ export class SolarPanelUtil {
             state.selectedElementIdSet.delete(id);
           }
         }
+      } else {
+        if (b) {
+          if (state.selectedElementIdSet.has(id)) {
+            state.selectedElementIdSet.delete(id);
+          } else {
+            state.selectedElementIdSet.add(id);
+          }
+        } else {
+          state.selectedElementIdSet.delete(id);
+        }
       }
     });
   }

@@ -36,14 +36,12 @@ export const WATER_TANK_RADIUS = 0.3;
 
 /**
  * todos:
- * - multiple selection
  * - resize y
  * - text
  * - move/resize validation
  * - copy/cut/paste
  * - context menu
  * - simulation
- * - change with parent
  */
 
 const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
@@ -266,11 +264,15 @@ const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
   const onGroupPointerDown = (event: ThreeEvent<PointerEvent>) => {
     if (event.intersections.length == 0 || event.intersections[0].object !== event.object) return;
     event.stopPropagation();
-    SolarPanelUtil.setSelected(id, true);
     if (event.button === 2) {
+      if (!useStore.getState().selectedElementIdSet.has(id)) {
+        SolarPanelUtil.setSelected(id, true);
+      }
       setCommonStore((state) => {
         state.contextMenuObjectType = ObjectType.WaterHeater;
       });
+    } else {
+      SolarPanelUtil.setSelected(id, true);
     }
   };
 

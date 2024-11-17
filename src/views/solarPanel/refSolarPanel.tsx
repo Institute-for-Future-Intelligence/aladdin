@@ -427,11 +427,15 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
   const onGroupPointerDown = (event: ThreeEvent<PointerEvent>) => {
     if (event.intersections.length == 0 || event.intersections[0].object !== event.object) return;
     event.stopPropagation();
-    SolarPanelUtil.setSelected(id, true);
     if (event.button === 2) {
+      if (!useStore.getState().selectedElementIdSet.has(id)) {
+        SolarPanelUtil.setSelected(id, true);
+      }
       setCommonStore((state) => {
         state.contextMenuObjectType = ObjectType.SolarPanel;
       });
+    } else {
+      SolarPanelUtil.setSelected(id, true);
     }
   };
 
@@ -969,11 +973,6 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
       position={[cx, cy, cz]}
       rotation={[rotation[0], rotation[1], rotation[2], 'ZXY']}
       onPointerDown={onGroupPointerDown}
-      onPointerMissed={() => {
-        if (selected) {
-          SolarPanelUtil.setSelected(id, false);
-        }
-      }}
     >
       {/* auzimuth group */}
       <group
