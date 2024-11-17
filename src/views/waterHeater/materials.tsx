@@ -7,7 +7,7 @@ import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import { PvModel } from 'src/models/PvModel';
 import { DEFAULT_SOLAR_PANEL_SHININESS, SOLAR_PANEL_BLACK_SPECULAR, SOLAR_PANEL_BLUE_SPECULAR } from 'src/constants';
 import * as Selector from '../../stores/selector';
-import { Color, DoubleSide, FrontSide } from 'three';
+import { Color, Side } from 'three';
 import { useMaterialSize } from '../solarPanel/hooks';
 import { forwardRef, useImperativeHandle } from 'react';
 import { Operation } from '../solarPanel/refSolarPanel';
@@ -17,13 +17,14 @@ interface MaterialsProps {
   lx: number;
   ly: number;
   color: string;
+  side: Side;
 }
 
 export interface MaterialRefProps {
   update: (lx: number | undefined, ly?: number | undefined) => void;
 }
 
-const Materials = forwardRef(({ lx, ly, color }: MaterialsProps, ref) => {
+const Materials = forwardRef(({ lx, ly, color, side }: MaterialsProps, ref) => {
   const { materialLx, materialLy, setMaterialSize } = useMaterialSize(lx, ly);
 
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
@@ -49,7 +50,7 @@ const Materials = forwardRef(({ lx, ly, color }: MaterialsProps, ref) => {
       <meshPhongMaterial
         specular={new Color(pvModel?.color === 'Blue' ? SOLAR_PANEL_BLUE_SPECULAR : SOLAR_PANEL_BLACK_SPECULAR)}
         shininess={solarPanelShininess ?? DEFAULT_SOLAR_PANEL_SHININESS}
-        side={DoubleSide}
+        side={side}
         map={texture}
         color={color}
         transparent={true}

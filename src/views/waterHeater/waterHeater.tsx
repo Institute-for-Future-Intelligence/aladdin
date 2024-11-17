@@ -15,7 +15,19 @@ import { ObjectType, ResizeHandleType, RotateHandleType } from 'src/types';
 import { useHandleSize } from '../wall/hooks';
 import ResizeHandle from '../solarPanel/resizeHandle';
 import MoveHandle from '../solarPanel/moveHandle';
-import { DoubleSide, Euler, Group, Mesh, Object3D, Object3DEventMap, Raycaster, Scene, Vector3 } from 'three';
+import {
+  BackSide,
+  DoubleSide,
+  Euler,
+  FrontSide,
+  Group,
+  Mesh,
+  Object3D,
+  Object3DEventMap,
+  Raycaster,
+  Scene,
+  Vector3,
+} from 'three';
 import { useRefStore } from 'src/stores/commonRef';
 import { Operation, SurfaceType } from '../solarPanel/refSolarPanel';
 import { FOUNDATION_GROUP_NAME, FOUNDATION_NAME } from '../foundation/foundation';
@@ -24,7 +36,6 @@ import { RoofUtil } from '../roof/RoofUtil';
 import { Util } from 'src/Util';
 import { tempEuler, tempQuaternion_0, tempVector3_0, tempVector3_1, tempVector3_3 } from 'src/helpers';
 import { WATER_HEATER_WRAPPER_NAME } from './waterHeaterWrapper';
-import PanelBox from '../solarPanel/panelBox';
 import PolarGrid, { PolarGridRefProps } from '../solarPanel/polarGrid';
 import { WaterHeaterUtil } from './waterHeaterUtil';
 import Wireframe from './wireframe';
@@ -94,9 +105,12 @@ const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
   const heightHandleRef = useRef<Mesh>(null!);
   const waterTankGroupRef = useRef<Group>(null!);
   const panelGroupRef = useRef<Group>(null!);
-  const materialRef = useRef<MaterialRefProps>(null!);
+  const materialRefFront = useRef<MaterialRefProps>(null!);
+  const materialRefBack = useRef<MaterialRefProps>(null!);
 
   // states
+  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
+
   const [showXYIntersectionPlane, setShowXYIntersectionPlane] = useState(false);
   const [showXZIntersectionPlane, setShowXZIntersectionPlane] = useState(false);
   const [hovered, setHovered] = useState(false);
@@ -581,8 +595,11 @@ const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
           groupRef.current.position.y = center.y;
           groupRef.current.position.z = center.z;
 
-          if (materialRef.current) {
-            materialRef.current.update(boxGroupMeshRef.current.scale.x);
+          if (materialRefFront.current) {
+            materialRefFront.current.update(boxGroupMeshRef.current.scale.x);
+          }
+          if (materialRefBack.current) {
+            materialRefBack.current.update(boxGroupMeshRef.current.scale.x);
           }
         }
 
@@ -648,8 +665,8 @@ const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
           <Cylinder
             ref={waterTankRef}
             args={[waterTankRadius, waterTankRadius, 1]}
-            castShadow={true}
-            receiveShadow={true}
+            castShadow={shadowEnabled}
+            receiveShadow={shadowEnabled}
             rotation={[0, 0, HALF_PI]}
             scale={[1, waterTankLength, 1]}
           >
@@ -678,9 +695,14 @@ const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
             {/* panel box group */}
             <group ref={boxGroupMeshRef} scale={[panelLength, panelWidth, panelThickness]}>
               {/* panel box mesh */}
-              <Plane castShadow={true} receiveShadow={true}>
-                <Materials ref={materialRef} lx={lx} ly={ly} color={'white'} />
+              <Plane castShadow={false} receiveShadow={shadowEnabled}>
+                <Materials ref={materialRefFront} lx={lx} ly={ly} color={'white'} side={FrontSide} />
               </Plane>
+              {shadowEnabled && (
+                <Plane castShadow={shadowEnabled} receiveShadow={false} position={[0, 0, -1]}>
+                  <Materials ref={materialRefBack} lx={lx} ly={ly} color={'white'} side={BackSide} />
+                </Plane>
+              )}
               {/* simulation panel */}
               <Plane name={'Water Heater Simulation Plane'} uuid={id} userData={{ simulation: true }} visible={false}>
                 <meshBasicMaterial side={DoubleSide} />
@@ -720,10 +742,20 @@ const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
           scale={[1, mountHeight + 0.1, 1]}
         >
           {/* should use scale */}
-          <Cylinder name={MOUNT_LEFT} args={[0.05, 0.05, 1]} position={[-panelLength * 0.4, 0, 0]} castShadow={true}>
+          <Cylinder
+            name={MOUNT_LEFT}
+            args={[0.05, 0.05, 1]}
+            position={[-panelLength * 0.4, 0, 0]}
+            castShadow={shadowEnabled}
+          >
             <meshStandardMaterial color={'grey'} />
           </Cylinder>
-          <Cylinder name={MOUNT_RIGHT} args={[0.05, 0.05, 1]} position={[panelLength * 0.4, 0, 0]} castShadow={true}>
+          <Cylinder
+            name={MOUNT_RIGHT}
+            args={[0.05, 0.05, 1]}
+            position={[panelLength * 0.4, 0, 0]}
+            castShadow={shadowEnabled}
+          >
             <meshStandardMaterial color={'grey'} />
           </Cylinder>
         </group>
