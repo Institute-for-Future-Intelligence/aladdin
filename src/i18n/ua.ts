@@ -1654,7 +1654,7 @@ export const i18n_ua = {
       AddSensor: 'Додати датчик',
       AddSolarPanel: 'Додати сонячну панель',
       AddWaterHeater: 'Додати водонагрівач',
-      AddPowerWall: 'Add Power Wall',
+      AddBatteryStorage: 'Add Battery Storage',
       AddParabolicDish: 'Додати параболічну тарілку',
       AddParabolicTrough: 'Додати параболічний сонячний колектор',
       AddFresnelReflector: 'Додати відбивач Френеля',

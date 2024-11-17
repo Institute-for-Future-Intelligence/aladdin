@@ -12,7 +12,7 @@ import { FoundationModel } from 'src/models/FoundationModel';
 import { useSelected } from '../../hooks';
 import SolarPanelWrapper from '../solarPanel/solarPanelWrapper';
 import { ObjectType } from 'src/types';
-import PowerWallWrapper from '../powerWall';
+import BatteryStorageWrapper from '../batteryStorage';
 
 interface WallRendererProps {
   wallModel: WallModel;
@@ -78,7 +78,7 @@ const WallRenderer = ({ wallModel, foundationModel }: WallRendererProps) => {
         plz={lz}
       />
 
-      <PowerWallWrapper parentId={id} foundationId={parentId} parentLx={lx} parentLz={lz} />
+      <BatteryStorageWrapper parentId={id} foundationId={parentId} parentLx={lx} parentLz={lz} />
 
       {renderWall()}
 

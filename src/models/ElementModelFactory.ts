@@ -56,9 +56,8 @@ import { LightModel } from './LightModel';
 import { HvacSystem } from './HvacSystem';
 import { useStore } from 'src/stores/common';
 import { RoofUtil } from '../views/roof/RoofUtil';
-import { PowerWallModel } from './PowerWallModel';
+import { BatteryStorageModel } from './BatteryStorageModel';
 import { WaterHeaterModel } from './WaterHeaterModel';
-import { WATER_TANK_RADIUS } from 'src/views/waterHeater/waterHeater';
 
 export class ElementModelFactory {
   static makeHuman(name: HumanName, parentId: string, x: number, y: number, z?: number) {
@@ -179,7 +178,7 @@ export class ElementModelFactory {
     } as WaterHeaterModel;
   }
 
-  static makePowerWall(parent: ElementModel, x: number, y: number, z: number) {
+  static makeBatteryStorage(parent: ElementModel, x: number, y: number, z: number) {
     return {
       type: ObjectType.BatteryStorage,
       id: short.generate() as string,
@@ -194,7 +193,7 @@ export class ElementModelFactory {
       normal: [0, -1, 0],
       rotation: [0, 0, 0],
       color: '#C7BABE',
-    } as PowerWallModel;
+    } as BatteryStorageModel;
   }
 
   static makeFlower(name: FlowerType, parentId: string, x: number, y: number, z?: number) {

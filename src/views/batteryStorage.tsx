@@ -7,7 +7,7 @@ import { ThreeEvent } from '@react-three/fiber';
 import React from 'react';
 import { useSelected } from 'src/hooks';
 import { ElementModel } from 'src/models/ElementModel';
-import { PowerWallModel } from 'src/models/PowerWallModel';
+import { BatteryStorageModel } from 'src/models/BatteryStorageModel';
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
 import { shallow } from 'zustand/shallow';
@@ -21,23 +21,23 @@ interface WrapperProps {
   parentLz: number;
 }
 
-interface PowerWallProps {}
+interface BatteryStorageProps {}
 
-const PowerWallWrapper = React.memo(({ parentId, foundationId, parentLx, parentLz }: WrapperProps) => {
+const BatteryStorageWrapper = React.memo(({ parentId, foundationId, parentLx, parentLz }: WrapperProps) => {
   const filter = (e: ElementModel) => {
     if (e.type !== ObjectType.BatteryStorage) return false;
     return e.parentId === parentId;
   };
 
-  const powerWalls = useStore((state) => state.elements.filter(filter) as PowerWallModel[], shallow);
+  const batteryStorags = useStore((state) => state.elements.filter(filter) as BatteryStorageModel[], shallow);
 
-  return powerWalls.map((pw) => (
-    <PowerWall key={pw.id} {...(pw as PowerWallModel)} cx={pw.cx * parentLx} cz={pw.cz * parentLz} />
+  return batteryStorags.map((pw) => (
+    <BatteryStorage key={pw.id} {...(pw as BatteryStorageModel)} cx={pw.cx * parentLx} cz={pw.cz * parentLz} />
   ));
 });
 
-const PowerWall = (powerWall: PowerWallModel) => {
-  const { id, cx, cz, lx, ly, lz, color } = powerWall;
+const BatteryStorage = (batteryStorag: BatteryStorageModel) => {
+  const { id, cx, cz, lx, ly, lz, color } = batteryStorag;
   const hy = ly / 2;
 
   const setCommonStore = useStore(Selector.set);
@@ -56,7 +56,7 @@ const PowerWall = (powerWall: PowerWallModel) => {
   };
 
   return (
-    <group name={`Power_Wall_Group ${id}`} position={[cx, 0, cz]} onPointerDown={onGroupPointerDown}>
+    <group name={`Battery_Storag_Group ${id}`} position={[cx, 0, cz]} onPointerDown={onGroupPointerDown}>
       <Box args={[lx, ly, lz]} position={[0, -hy, 0]}>
         <meshStandardMaterial color={color} />
       </Box>
@@ -65,4 +65,4 @@ const PowerWall = (powerWall: PowerWallModel) => {
   );
 };
 
-export default PowerWallWrapper;
+export default BatteryStorageWrapper;

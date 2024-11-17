@@ -1652,7 +1652,7 @@ export const i18n_es = {
       AddSensor: 'Añadir Sensor',
       AddSolarPanel: 'Añadir Panel Solar',
       AddWaterHeater: 'Add Water Heater',
-      AddPowerWall: 'Add Power Wall',
+      AddBatteryStorage: 'Add Battery Storage',
       AddParabolicDish: 'Add Parabolic Dish',
       AddParabolicTrough: 'Add Parabolic Trough',
       AddFresnelReflector: 'Add Fresnel Reflector',

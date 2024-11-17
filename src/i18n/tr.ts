@@ -1653,7 +1653,7 @@ export const i18n_tr = {
       AddSensor: 'Sensör Ekle',
       AddSolarPanel: 'Güneş Paneli Ekle',
       AddWaterHeater: 'Su Isıtıcı Ekle',
-      AddPowerWall: 'Add Power Wall',
+      AddBatteryStorage: 'Add Battery Storage',
       AddParabolicDish: 'Parabolik Çanak Ekle',
       AddParabolicTrough: 'Parabolik Oluk Ekle',
       AddFresnelReflector: 'Fresnel Reflektörü Ekle',

@@ -4,4 +4,4 @@
 
 import { ElementModel } from './ElementModel';
 
-export interface PowerWallModel extends ElementModel {}
+export interface BatteryStorageModel extends ElementModel {}

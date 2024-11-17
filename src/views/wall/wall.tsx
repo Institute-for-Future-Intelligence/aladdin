@@ -2136,7 +2136,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           if (pointer && body) {
             const p = getRelativePosOnWall(pointer, wallModel);
             const actionState = useStore.getState().actionState;
-            newElement = ElementModelFactory.makePowerWall(wallModel, p.x / lx, 0, p.z / lz);
+            newElement = ElementModelFactory.makeBatteryStorage(wallModel, p.x / lx, 0, p.z / lz);
           }
           break;
         }

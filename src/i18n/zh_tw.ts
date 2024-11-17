@@ -1626,7 +1626,7 @@ export const i18n_zh_tw = {
       AddSensor: '添加傳感器',
       AddSolarPanel: '添加光伏板',
       AddWaterHeater: '添加太陽能熱水器',
-      AddPowerWall: '添加電源墻',
+      AddBatteryStorage: '添加儲蓄電池',
       AddParabolicDish: '添加拋物線碟',
       AddParabolicTrough: '添加拋物線槽',
       AddFresnelReflector: '添加菲涅耳反射鏡',
