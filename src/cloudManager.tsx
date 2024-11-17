@@ -606,6 +606,8 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
 
   const fetchPeopleModels = async () => {
     setLoading(true);
+    const start: number = dayjs(showModelsFromDate).toDate().getTime();
+    const end: number = dayjs(showModelsToDate).toDate().getTime();
     await firebase
       .firestore()
       .collection('board')
@@ -614,12 +616,26 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
       .then((doc) => {
         const data = doc.data();
         if (data) {
-          const peopleModels = new Map<string, Map<string, ModelSite>>();
+          const selectedPeopleModels = new Map<string, Map<string, ModelSite>>();
+          const allPeopleModels = new Map<string, Map<string, ModelSite>>();
           for (const k in data) {
-            peopleModels.set(k, new Map<string, ModelSite>(Object.entries(data[k])));
+            if (showModelsAllTime) {
+              selectedPeopleModels.set(k, new Map<string, ModelSite>(Object.entries(data[k])));
+            } else {
+              const newModelSites = new Map<string, ModelSite>();
+              for (const model of Object.entries(data[k])) {
+                const timestamp = (model[1] as any)['timeCreated'];
+                if (timestamp === undefined || (timestamp >= start && timestamp <= end)) {
+                  newModelSites.set(model[0], model[1] as ModelSite);
+                }
+              }
+              if (newModelSites.size > 0) selectedPeopleModels.set(k, newModelSites);
+            }
+            allPeopleModels.set(k, new Map<string, ModelSite>(Object.entries(data[k])));
           }
           setCommonStore((state) => {
-            state.peopleModels = peopleModels;
+            state.peopleModels = selectedPeopleModels;
+            state.allPeopleModels = allPeopleModels;
           });
         }
       })

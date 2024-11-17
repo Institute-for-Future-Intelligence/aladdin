@@ -137,6 +137,7 @@ export interface CommonStoreState {
   modelSites: Map<string, Map<string, ModelSite>>; // primary key: 'lat, lng', secondary key: 'title, userid'
   allModelSites: Map<string, Map<string, ModelSite>>; // same as above but for all time
   peopleModels: Map<string, Map<string, ModelSite>>; // primary key: author, secondary key: 'title, userid'
+  allPeopleModels: Map<string, Map<string, ModelSite>>; // same as above but for all time
   modelsMapLatitude: number;
   modelsMapLongitude: number;
   modelsMapAddress: string;
@@ -623,6 +624,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
           modelSites: new Map<string, Map<string, ModelSite>>(),
           allModelSites: new Map<string, Map<string, ModelSite>>(),
           peopleModels: new Map<string, Map<string, ModelSite>>(),
+          allPeopleModels: new Map<string, Map<string, ModelSite>>(),
           modelsMapLatitude: 42.2844063,
           modelsMapLongitude: -71.3488548,
           modelsMapAddress: DEFAULT_ADDRESS,

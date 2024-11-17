@@ -68,6 +68,7 @@ const ModelsMapWrapper = React.memo(
     const modelSites = useStore(Selector.modelSites);
     const allModelSites = useStore(Selector.allModelSites);
     const peopleModels = useStore(Selector.peopleModels);
+    const allPeopleModels = useStore(Selector.allPeopleModels);
 
     // make an editable copy because models is not mutable
     const peopleModelsRef = useRef<Map<string, Map<string, ModelSite>>>(
@@ -179,6 +180,31 @@ const ModelsMapWrapper = React.memo(
       return count;
     }, [allModelSites]);
 
+    const selectedModelSitesCount = useMemo(() => {
+      if (!modelSites || !modelSites.size) return 0;
+      let count = 0;
+      for (const value of modelSites.values()) {
+        count += value.size ?? 0;
+      }
+      return count;
+    }, [modelSites]);
+
+    const selectPeopleModelsBetweenDates = (start: number, end: number) => {
+      const newPeopleModels = new Map<string, Map<string, ModelSite>>();
+      for (const [key, entries] of allPeopleModels) {
+        const newEntries = new Map<string, ModelSite>();
+        for (const [k, p] of entries) {
+          if (p.timeCreated && p.timeCreated >= start && p.timeCreated <= end) {
+            newEntries.set(k, p);
+          }
+        }
+        if (newEntries.size > 0) newPeopleModels.set(key, newEntries);
+      }
+      setCommonStore((state) => {
+        state.peopleModels = newPeopleModels;
+      });
+    };
+
     return (
       <Container
         onKeyDown={(e) => {
@@ -238,9 +264,19 @@ const ModelsMapWrapper = React.memo(
             <Checkbox
               checked={showModelsAllTime}
               onChange={(e) => {
+                const checked = e.target.checked;
                 setCommonStore((state) => {
-                  state.showModelsAllTime = e.target.checked;
+                  state.showModelsAllTime = checked;
                 });
+                if (checked) {
+                  setCommonStore((state) => {
+                    state.peopleModels = new Map<string, Map<string, ModelSite>>(state.allPeopleModels);
+                  });
+                } else {
+                  const start: number = dayjs(showModelsFromDate).toDate().getTime();
+                  const end: number = dayjs(showModelsToDate).toDate().getTime();
+                  selectPeopleModelsBetweenDates(start, end);
+                }
                 usePrimitiveStore.getState().set((state) => {
                   state.modelsMapFlag = true;
                 });
@@ -277,6 +313,9 @@ const ModelsMapWrapper = React.memo(
                     state.showModelsToDate = dateString[1];
                     state.modelSites = newModelSites;
                   });
+                  if (showLeaderboard) {
+                    selectPeopleModelsBetweenDates(start, end);
+                  }
                 }}
               />
             )}
@@ -390,7 +429,15 @@ const ModelsMapWrapper = React.memo(
           )}
           <Space>
             <div
-              title={i18n.t('modelsMap.AllTimeTotalNumberOfUserPublishedModels', lang) + ': ' + allModelSitesCount}
+              title={
+                i18n.t('modelsMap.TotalNumberOfUserPublishedModelsInSelectedPeriod', lang) +
+                ': ' +
+                selectedModelSitesCount +
+                '\n' +
+                i18n.t('modelsMap.AllTimeTotal', lang) +
+                ': ' +
+                allModelSitesCount
+              }
               style={{
                 position: 'absolute',
                 fontSize: '14px',

@@ -125,6 +125,8 @@ export const allModelSites = (state: CommonStoreState) => state.allModelSites;
 
 export const peopleModels = (state: CommonStoreState) => state.peopleModels;
 
+export const allPeopleModels = (state: CommonStoreState) => state.allPeopleModels;
+
 export const saveAccountSettingsFlag = (state: PrimitiveStoreState) => state.saveAccountSettingsFlag;
 
 export const saveCloudFileFlag = (state: PrimitiveStoreState) => state.saveCloudFileFlag;
