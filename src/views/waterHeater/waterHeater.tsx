@@ -649,6 +649,7 @@ const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
             ref={waterTankRef}
             args={[waterTankRadius, waterTankRadius, 1]}
             castShadow={true}
+            receiveShadow={true}
             rotation={[0, 0, HALF_PI]}
             scale={[1, waterTankLength, 1]}
           >
@@ -677,7 +678,7 @@ const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
             {/* panel box group */}
             <group ref={boxGroupMeshRef} scale={[panelLength, panelWidth, panelThickness]}>
               {/* panel box mesh */}
-              <Plane castShadow={true}>
+              <Plane castShadow={true} receiveShadow={true}>
                 <Materials ref={materialRef} lx={lx} ly={ly} color={'white'} />
               </Plane>
               {/* simulation panel */}
