@@ -637,6 +637,8 @@ export const i18n_es = {
       PrivacyStatement:
         'When you sign in, your Google ID is used to create and access your Aladdin account. Only a random alphanumeric string is stored in our database as a reference. No personally identifiable data such as your name or email is ever gathered. For more information, see our ',
       SignIn: 'Iniciar sesión',
+      SignInAsMe: 'Sign in as me',
+      SignInAnonymously: 'Sign in anonymously',
       SignOut: 'Desconectar',
       IfYouAreAStudent: 'Si eres un estudiante',
     },

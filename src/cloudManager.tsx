@@ -363,6 +363,33 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
       });
   };
 
+  const signInAnonymously = () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    firebase
+      .auth()
+      .signInAnonymously()
+      .then((result) => {
+        setCommonStore((state) => {
+          if (result.user) {
+            console.log(result.user.uid);
+            state.user.uid = result.user.uid;
+            state.user.email = result.user.email;
+            state.user.displayName = result.user.displayName;
+            state.user.photoURL = result.user.photoURL;
+            registerUser({ ...state.user }).then(() => {
+              // ignore
+            });
+          }
+        });
+      })
+      .catch((error) => {
+        if (error.code !== 'auth/popup-closed-by-user' && error.code !== 'auth/cancelled-popup-request') {
+          showError(i18n.t('message.CannotSignIn', lang) + ': ' + error);
+        }
+      });
+    resetToSelectMode();
+  };
+
   const signIn = () => {
     const provider = new firebase.auth.GoogleAuthProvider();
     firebase
@@ -1811,7 +1838,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
         setTitleDialogVisible={setTitleDialogVisible}
         isTitleDialogVisible={() => titleDialogVisible}
       />
-      <MainToolBar signIn={signIn} signOut={signOut} />
+      <MainToolBar signIn={signIn} signInAnonymously={signInAnonymously} signOut={signOut} />
       {showCloudFilePanel && cloudFilesRef.current.length > 0 && (
         <CloudFilePanel
           cloudFileArray={cloudFileArray}

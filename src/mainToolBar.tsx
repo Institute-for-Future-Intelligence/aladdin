@@ -29,10 +29,11 @@ const ButtonsContainer = styled.div`
 
 export interface MainToolBarProps {
   signIn: () => void;
+  signInAnonymously: () => void;
   signOut: () => void;
 }
 
-const MainToolBar = React.memo(({ signIn, signOut }: MainToolBarProps) => {
+const MainToolBar = React.memo(({ signIn, signInAnonymously, signOut }: MainToolBarProps) => {
   const user = useStore(Selector.user);
   const openModelsMap = usePrimitiveStore(Selector.openModelsMap);
 
@@ -64,6 +65,25 @@ const MainToolBar = React.memo(({ signIn, signOut }: MainToolBarProps) => {
     },
   ];
 
+  const signInMenu: MenuProps['items'] = [
+    {
+      key: 'signin-default',
+      label: (
+        <MenuItem noPadding onClick={signIn}>
+          {i18n.t('avatarMenu.SignInAsMe', lang)}
+        </MenuItem>
+      ),
+    },
+    {
+      key: 'signin-anonymously',
+      label: (
+        <MenuItem noPadding onClick={signInAnonymously}>
+          {i18n.t('avatarMenu.SignInAnonymously', lang)}
+        </MenuItem>
+      ),
+    },
+  ];
+
   return (
     <ButtonsContainer>
       <Space direction="horizontal">
@@ -80,22 +100,9 @@ const MainToolBar = React.memo(({ signIn, signOut }: MainToolBarProps) => {
               </a>
             </Dropdown>
           ) : (
-            <Popover
-              title={<div onClick={(e) => e.stopPropagation()}>{i18n.t('avatarMenu.PrivacyStatementTitle', lang)}</div>}
-              content={
-                <div style={{ width: '280px', fontSize: '12px' }}>
-                  {i18n.t('avatarMenu.PrivacyStatement', lang)}
-                  <a target="_blank" rel="noopener noreferrer" href={'https://intofuture.org/aladdin-privacy.html'}>
-                    {i18n.t('aboutUs.PrivacyPolicy', lang)}
-                  </a>
-                  .
-                </div>
-              }
-            >
-              <Button type="primary" onClick={signIn}>
-                {i18n.t('avatarMenu.SignIn', lang)}
-              </Button>
-            </Popover>
+            <Dropdown menu={{ items: signInMenu }} trigger={['click']}>
+              <Button type="primary">{i18n.t('avatarMenu.SignIn', lang)}</Button>
+            </Dropdown>
           )}
         </div>
       </Space>
