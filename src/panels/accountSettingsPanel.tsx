@@ -144,7 +144,10 @@ const AccountSettingsPanel = React.memo(
           <Container ref={nodeRef}>
             <ColumnWrapper ref={wrapperRef}>
               <Header className="handle" style={{ direction: 'ltr' }}>
-                <span>{t('accountSettingsPanel.MyAccountSettings', lang)}</span>
+                <span>
+                  {t('accountSettingsPanel.MyAccountSettings', lang) +
+                    (user.anonymous ? ' (' + t('word.Anonymous', lang) + ')' : '')}
+                </span>
                 <span
                   style={{ cursor: 'pointer' }}
                   onMouseDown={() => {

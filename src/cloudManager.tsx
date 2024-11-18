@@ -50,6 +50,7 @@ import {
 } from './cloudProjectUtil';
 import { ProjectUtil } from './panels/ProjectUtil';
 import { useLanguage } from './hooks';
+import AnonymousImage from './assets/anonymous.png';
 
 export interface CloudManagerProps {
   viewOnly: boolean;
@@ -188,9 +189,9 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
         setCommonStore((state) => {
           if (state.user) {
             state.user.uid = u.uid;
-            state.user.displayName = u.displayName;
+            state.user.displayName = u.displayName ?? 'Anonymous';
             state.user.email = u.email;
-            state.user.photoURL = u.photoURL;
+            state.user.photoURL = u.photoURL ?? AnonymousImage;
             registerUser({ ...state.user }).then(() => {
               // ignore
             });
@@ -371,11 +372,9 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
       .then((result) => {
         setCommonStore((state) => {
           if (result.user) {
-            console.log(result.user.uid);
             state.user.uid = result.user.uid;
-            state.user.email = result.user.email;
-            state.user.displayName = result.user.displayName;
-            state.user.photoURL = result.user.photoURL;
+            state.user.anonymous = true;
+            state.user.displayName = 'Anonymous';
             registerUser({ ...state.user }).then(() => {
               // ignore
             });
@@ -420,6 +419,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
     const firestore = firebase.firestore();
     let signFile = false;
     let noLogging = false;
+    let anonymous = false;
     let schoolID = SchoolID.UNKNOWN;
     let classID = ClassID.UNKNOWN;
     let fileList: CloudFileInfo[] = [];
@@ -449,6 +449,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
           if (docData) {
             signFile = !!docData.signFile;
             noLogging = !!docData.noLogging;
+            anonymous = !!docData.anonymous;
             schoolID = docData.schoolID ? (docData.schoolID as SchoolID) : SchoolID.UNKNOWN;
             classID = docData.classID ? (docData.classID as ClassID) : ClassID.UNKNOWN;
             if (docData.fileList) fileList = docData.fileList;
@@ -465,6 +466,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
       setCommonStore((state) => {
         state.user.signFile = signFile;
         state.user.noLogging = noLogging;
+        state.user.anonymous = anonymous;
         state.user.schoolID = schoolID;
         state.user.classID = classID;
         state.user.fileList = fileList;
@@ -478,6 +480,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
       // update current user object
       user.signFile = signFile;
       user.noLogging = noLogging;
+      user.anonymous = anonymous;
       user.schoolID = schoolID;
       user.classID = classID;
       user.fileList = fileList;
@@ -491,6 +494,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
           .doc(user.uid)
           .set({
             uid: user.uid,
+            anonymous: !!user.anonymous,
             signFile: !!user.signFile, // don't listen to WebStorm's suggestion to simplify it as this may be undefined
             noLogging: !!user.noLogging,
             schoolID: user.schoolID ?? SchoolID.UNKNOWN,
@@ -1839,7 +1843,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
         isTitleDialogVisible={() => titleDialogVisible}
       />
       <MainToolBar signIn={signIn} signInAnonymously={signInAnonymously} signOut={signOut} />
-      {showCloudFilePanel && cloudFilesRef.current.length > 0 && (
+      {showCloudFilePanel && (
         <CloudFilePanel
           cloudFileArray={cloudFileArray}
           openCloudFile={(title) => {
