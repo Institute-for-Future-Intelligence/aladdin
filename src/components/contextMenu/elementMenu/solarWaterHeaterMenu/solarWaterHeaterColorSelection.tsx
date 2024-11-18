@@ -15,9 +15,9 @@ import { CompactPicker } from 'react-color';
 import { useSelectedElement } from '../menuHooks';
 import Dialog from '../../dialog';
 import { useLanguage } from 'src/hooks';
-import { WaterHeaterModel } from 'src/models/WaterHeaterModel';
+import { SolarWaterHeaterModel } from 'src/models/SolarWaterHeaterModel';
 
-const WaterHeaterColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const SolarWaterHeaterColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const getParent = useStore(Selector.getParent);
@@ -27,7 +27,7 @@ const WaterHeaterColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
 
-  const waterHeater = useSelectedElement(ObjectType.WaterHeater) as WaterHeaterModel | undefined;
+  const waterHeater = useSelectedElement(ObjectType.SolarWaterHeater) as SolarWaterHeaterModel | undefined;
 
   const [selectedColor, setSelectedColor] = useState<string>(waterHeater?.color ?? 'grey');
 
@@ -36,7 +36,7 @@ const WaterHeaterColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
   const updateById = (id: string, color: string) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
-        if (e.type === ObjectType.WaterHeater && e.id === id && !e.locked) {
+        if (e.type === ObjectType.SolarWaterHeater && e.id === id && !e.locked) {
           e.color = color;
           break;
         }
@@ -47,7 +47,7 @@ const WaterHeaterColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
   const updateAboveFoundation = (foundationId: string, color: string) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
-        if (e.type === ObjectType.WaterHeater && e.foundationId === foundationId && !e.locked) {
+        if (e.type === ObjectType.SolarWaterHeater && e.foundationId === foundationId && !e.locked) {
           e.color = color;
         }
       }
@@ -57,7 +57,7 @@ const WaterHeaterColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
   const updateOnSurface = (parentId: string, normal: number[] | undefined, color: string) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
-        if (e.type === ObjectType.WaterHeater && !e.locked) {
+        if (e.type === ObjectType.SolarWaterHeater && !e.locked) {
           let found;
           if (normal) {
             found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
@@ -75,7 +75,7 @@ const WaterHeaterColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
   const updateForAll = (color: string) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
-        if (e.type === ObjectType.WaterHeater && !e.locked) {
+        if (e.type === ObjectType.SolarWaterHeater && !e.locked) {
           e.color = color;
         }
       }
@@ -85,7 +85,7 @@ const WaterHeaterColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
   const updateInMap = (map: Map<string, string>, value: string) => {
     useStore.getState().set((state) => {
       for (const e of state.elements) {
-        if (e.type === ObjectType.WaterHeater && !e.locked && map.has(e.id)) {
+        if (e.type === ObjectType.SolarWaterHeater && !e.locked && map.has(e.id)) {
           e.color = value;
         }
       }
@@ -101,7 +101,11 @@ const WaterHeaterColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType: {
         for (const e of elements) {
-          if (e.type === ObjectType.WaterHeater && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+          if (
+            e.type === ObjectType.SolarWaterHeater &&
+            !e.locked &&
+            useStore.getState().selectedElementIdSet.has(e.id)
+          ) {
             if (e.color !== color) {
               return true;
             }
@@ -111,7 +115,7 @@ const WaterHeaterColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
       }
       case Scope.AllObjectsOfThisType: {
         for (const e of elements) {
-          if (e.type === ObjectType.WaterHeater && !e.locked) {
+          if (e.type === ObjectType.SolarWaterHeater && !e.locked) {
             if (e.color !== color) {
               return true;
             }
@@ -121,7 +125,7 @@ const WaterHeaterColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
       }
       case Scope.AllObjectsOfThisTypeAboveFoundation: {
         for (const e of elements) {
-          if (e.type === ObjectType.WaterHeater && e.foundationId === waterHeater?.foundationId && !e.locked) {
+          if (e.type === ObjectType.SolarWaterHeater && e.foundationId === waterHeater?.foundationId && !e.locked) {
             if (e.color !== color) {
               return true;
             }
@@ -136,7 +140,7 @@ const WaterHeaterColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
           if (isParentCuboid) {
             for (const e of elements) {
               if (
-                e.type === ObjectType.WaterHeater &&
+                e.type === ObjectType.SolarWaterHeater &&
                 e.parentId === waterHeater.parentId &&
                 Util.isIdentical(e.normal, waterHeater.normal) &&
                 !e.locked
@@ -148,7 +152,7 @@ const WaterHeaterColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
             }
           } else {
             for (const e of elements) {
-              if (e.type === ObjectType.WaterHeater && e.parentId === waterHeater.parentId && !e.locked) {
+              if (e.type === ObjectType.SolarWaterHeater && e.parentId === waterHeater.parentId && !e.locked) {
                 if (e.color !== color) {
                   return true;
                 }
@@ -176,7 +180,7 @@ const WaterHeaterColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
         const oldColorsSelected = new Map<string, string>();
         for (const elem of elements) {
           if (
-            elem.type === ObjectType.WaterHeater &&
+            elem.type === ObjectType.SolarWaterHeater &&
             useStore.getState().selectedElementIdSet.has(elem.id) &&
             !elem.locked
           ) {
@@ -184,7 +188,7 @@ const WaterHeaterColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
           }
         }
         const undoableChangeSelected = {
-          name: 'Set Color for Selected Water Heaters',
+          name: 'Set Color for Selected Solar Water Heaters',
           timestamp: Date.now(),
           oldValues: oldColorsSelected,
           newValue: value,
@@ -208,12 +212,12 @@ const WaterHeaterColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
       case Scope.AllObjectsOfThisType: {
         const oldFrameColorsAll = new Map<string, string>();
         for (const elem of elements) {
-          if (elem.type === ObjectType.WaterHeater && !elem.locked) {
+          if (elem.type === ObjectType.SolarWaterHeater && !elem.locked) {
             oldFrameColorsAll.set(elem.id, elem.color ?? 'grey');
           }
         }
         const undoableChangeAll = {
-          name: 'Set Color for All Water Heaters',
+          name: 'Set Color for All Solar Water Heaters',
           timestamp: Date.now(),
           oldValues: oldFrameColorsAll,
           newValue: value,
@@ -236,7 +240,7 @@ const WaterHeaterColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
           const oldColorsAboveFoundation = new Map<string, string>();
           for (const elem of elements) {
             if (
-              elem.type === ObjectType.WaterHeater &&
+              elem.type === ObjectType.SolarWaterHeater &&
               !elem.locked &&
               elem.foundationId === waterHeater.foundationId
             ) {
@@ -277,7 +281,7 @@ const WaterHeaterColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
           if (isParentCuboid) {
             for (const elem of elements) {
               if (
-                elem.type === ObjectType.WaterHeater &&
+                elem.type === ObjectType.SolarWaterHeater &&
                 !elem.locked &&
                 elem.parentId === waterHeater.parentId &&
                 Util.isIdentical(elem.normal, waterHeater.normal)
@@ -287,7 +291,7 @@ const WaterHeaterColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
             }
           } else {
             for (const elem of elements) {
-              if (elem.type === ObjectType.WaterHeater && !elem.locked && elem.parentId === waterHeater.parentId) {
+              if (elem.type === ObjectType.SolarWaterHeater && !elem.locked && elem.parentId === waterHeater.parentId) {
                 oldFrameColorsOnSurface.set(elem.id, elem.color ?? 'grey');
               }
             }
@@ -375,19 +379,19 @@ const WaterHeaterColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
           <Radio.Group onChange={onScopeChange} value={actionScope}>
             <Space direction="vertical">
               <Radio style={{ width: '100%' }} value={Scope.OnlyThisObject}>
-                {i18n.t('waterHeaterMenu.OnlyThisWaterHeater', lang)}
+                {i18n.t('solarWaterHeaterMenu.OnlyThisSolarWaterHeater', lang)}
               </Radio>
               <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisTypeOnSurface}>
-                {i18n.t('waterHeaterMenu.AllWaterHeatersOnSurface', lang)}
+                {i18n.t('solarWaterHeaterMenu.AllSolarWaterHeatersOnSurface', lang)}
               </Radio>
               <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisTypeAboveFoundation}>
-                {i18n.t('waterHeaterMenu.AllWaterHeatersAboveFoundation', lang)}
+                {i18n.t('solarWaterHeaterMenu.AllSolarWaterHeatersAboveFoundation', lang)}
               </Radio>
               <Radio style={{ width: '100%' }} value={Scope.AllSelectedObjectsOfThisType}>
-                {i18n.t('waterHeaterMenu.AllSelectedWaterHeaters', lang)}
+                {i18n.t('solarWaterHeaterMenu.AllSelectedSolarWaterHeaters', lang)}
               </Radio>
               <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisType}>
-                {i18n.t('waterHeaterMenu.AllWaterHeaters', lang)}
+                {i18n.t('solarWaterHeaterMenu.AllSolarWaterHeaters', lang)}
               </Radio>
             </Space>
           </Radio.Group>
@@ -397,4 +401,4 @@ const WaterHeaterColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
   );
 };
 
-export default WaterHeaterColorSelection;
+export default SolarWaterHeaterColorSelection;

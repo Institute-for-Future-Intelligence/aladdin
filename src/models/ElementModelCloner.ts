@@ -139,10 +139,11 @@ export class ElementModelCloner {
       case ObjectType.Foundation:
         clone = ElementModelCloner.cloneFoundation(e as FoundationModel, x, y);
         break;
-      case ObjectType.Cuboid:
+      case ObjectType.Cuboid: {
         const parentId = parent ? parent.id : GROUND_ID;
         clone = ElementModelCloner.cloneCuboid(parentId, e as CuboidModel, x, y);
         break;
+      }
     }
     return clone;
   }
@@ -842,24 +843,28 @@ export class ElementModelCloner {
       glassTint: roof.glassTint,
     } as RoofModel;
     switch (roof.roofType) {
-      case RoofType.Gable:
+      case RoofType.Gable: {
         (newRoof as GableRoofModel).ridgeLeftPoint = [...(roof as GableRoofModel).ridgeLeftPoint];
         (newRoof as GableRoofModel).ridgeRightPoint = [...(roof as GableRoofModel).ridgeRightPoint];
         break;
-      case RoofType.Gambrel:
+      }
+      case RoofType.Gambrel: {
         const newGambrelRoof = newRoof as GambrelRoofModel;
         const oldGambrelRoof = roof as GambrelRoofModel;
         newGambrelRoof.topRidgePoint = [...oldGambrelRoof.topRidgePoint];
         newGambrelRoof.frontRidgePoint = [...oldGambrelRoof.frontRidgePoint];
         newGambrelRoof.backRidgePoint = [...oldGambrelRoof.backRidgePoint];
         break;
-      case RoofType.Hip:
+      }
+      case RoofType.Hip: {
         (newRoof as HipRoofModel).rightRidgeLength = (roof as HipRoofModel).rightRidgeLength;
         (newRoof as HipRoofModel).leftRidgeLength = (roof as HipRoofModel).leftRidgeLength;
         break;
-      case RoofType.Mansard:
+      }
+      case RoofType.Mansard: {
         (newRoof as MansardRoofModel).ridgeWidth = (roof as MansardRoofModel).ridgeWidth;
         break;
+      }
     }
     return newRoof as ElementModel;
   }

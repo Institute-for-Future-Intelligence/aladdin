@@ -2,7 +2,7 @@
  * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Col, InputNumber, Radio, RadioChangeEvent, Row, Space } from 'antd';
 import { CommonStoreState, useStore } from '../../../../stores/common';
 import * as Selector from '../../../../stores/selector';
@@ -15,54 +15,61 @@ import { UNIT_VECTOR_POS_Z_ARRAY, ZERO_TOLERANCE } from '../../../../constants';
 import { useSelectedElement } from '../menuHooks';
 import Dialog from '../../dialog';
 import { useLanguage } from 'src/hooks';
-import { WaterHeaterModel } from 'src/models/WaterHeaterModel';
+import { SolarWaterHeaterModel } from 'src/models/SolarWaterHeaterModel';
 
-const WaterHeaterLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const SolarWaterHeaterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
   const getParent = useStore(Selector.getParent);
   const addUndoable = useStore(Selector.addUndoable);
-  const actionScope = useStore(Selector.waterHeaterActionScope);
-  const setActionScope = useStore(Selector.setWaterHeaterActionScope);
+  const actionScope = useStore(Selector.solarPanelActionScope);
+  const setActionScope = useStore(Selector.setSolarPanelActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const waterHeater = useSelectedElement(ObjectType.WaterHeater) as WaterHeaterModel | undefined;
+  const waterHeater = useSelectedElement(ObjectType.SolarWaterHeater) as SolarWaterHeaterModel | undefined;
 
-  const [inputValue, setInputValue] = useState(waterHeater?.lx ?? 1);
+  const [minValue, setMinValue] = useState(0);
+  const [inputValue, setInputValue] = useState(waterHeater?.ly ?? 1);
 
   const rejectRef = useRef<boolean>(false);
   const rejectedValue = useRef<number | undefined>();
 
   const lang = useLanguage();
 
-  const updateWaterHeaterLxById = (id: string, lx: number) => {
+  useEffect(() => {
+    if (waterHeater) {
+      setMinValue(Number((waterHeater.lz - 0.3).toFixed(2)));
+    }
+  }, [waterHeater]);
+
+  const updateWaterHeaterLyById = (id: string, ly: number) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
-        if (e.type === ObjectType.WaterHeater && e.id === id && !e.locked) {
-          e.lx = lx;
+        if (e.type === ObjectType.SolarWaterHeater && e.id === id && !e.locked) {
+          e.ly = ly;
           break;
         }
       }
     });
   };
 
-  const updateWaterHeaterLxAboveFoundation = (foundationId: string, lx: number) => {
+  const updateWaterHeaterLyAboveFoundation = (foundationId: string, ly: number) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
-        if (e.type === ObjectType.WaterHeater && e.foundationId === foundationId && !e.locked) {
-          e.lx = lx;
+        if (e.type === ObjectType.SolarWaterHeater && e.foundationId === foundationId && !e.locked) {
+          e.ly = ly;
         }
       }
     });
   };
 
-  const updateWaterHeaterLxOnSurface = (parentId: string, normal: number[] | undefined, lx: number) => {
+  const updateWaterHeaterLyOnSurface = (parentId: string, normal: number[] | undefined, ly: number) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
-        if (e.type === ObjectType.WaterHeater && !e.locked) {
+        if (e.type === ObjectType.SolarWaterHeater && !e.locked) {
           let found;
           if (normal) {
             found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
@@ -70,18 +77,18 @@ const WaterHeaterLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
             found = e.parentId === parentId;
           }
           if (found) {
-            e.lx = lx;
+            e.ly = ly;
           }
         }
       }
     });
   };
 
-  const updateWaterHeaterLxForAll = (lx: number) => {
+  const updateWaterHeaterLyForAll = (ly: number) => {
     setCommonStore((state: CommonStoreState) => {
       for (const e of state.elements) {
-        if (e.type === ObjectType.WaterHeater && !e.locked) {
-          e.lx = lx;
+        if (e.type === ObjectType.SolarWaterHeater && !e.locked) {
+          e.ly = ly;
         }
       }
     });
@@ -90,8 +97,8 @@ const WaterHeaterLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
   const updateInMap = (map: Map<string, number>, value: number) => {
     useStore.getState().set((state) => {
       for (const e of state.elements) {
-        if (e.type === ObjectType.WaterHeater && !e.locked && map.has(e.id)) {
-          e.lx = value;
+        if (e.type === ObjectType.SolarWaterHeater && !e.locked && map.has(e.id)) {
+          e.ly = value;
         }
       }
     });
@@ -101,15 +108,15 @@ const WaterHeaterLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
     setActionScope(e.target.value);
   };
 
-  const withinParent = (sp: WaterHeaterModel, lx: number) => {
+  const withinParent = (sp: SolarWaterHeaterModel, ly: number) => {
     const parent = getParent(sp);
     if (parent) {
       if (parent.type === ObjectType.Cuboid && !Util.isIdentical(sp.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
         // TODO: cuboid vertical sides
         return true;
       }
-      const clone = JSON.parse(JSON.stringify(sp)) as WaterHeaterModel;
-      clone.lx = lx;
+      const clone = JSON.parse(JSON.stringify(sp)) as SolarWaterHeaterModel;
+      clone.ly = ly;
       if (parent.type === ObjectType.Roof) {
         // todo: water heater
         // return Util.checkElementOnRoofState(clone, parent as RoofModel) === ElementState.Valid;
@@ -120,9 +127,9 @@ const WaterHeaterLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
     return false;
   };
 
-  const rejectChange = (sp: WaterHeaterModel, lx: number) => {
+  const rejectChange = (sp: SolarWaterHeaterModel, ly: number) => {
     // check if the new length will cause the solar panel to be out of the bound
-    if (!withinParent(sp, lx)) {
+    if (!withinParent(sp, ly)) {
       return true;
     }
     // other check?
@@ -131,13 +138,17 @@ const WaterHeaterLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
 
   // FIXME: When there are multiple types of solar panels that have different dimensions,
   // this will not work properly.
-  const needChange = (lx: number) => {
+  const needChange = (ly: number) => {
     if (!waterHeater) return;
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType: {
         for (const e of elements) {
-          if (e.type === ObjectType.WaterHeater && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
-            if (Math.abs(e.lx - lx) > ZERO_TOLERANCE) {
+          if (
+            e.type === ObjectType.SolarWaterHeater &&
+            !e.locked &&
+            useStore.getState().selectedElementIdSet.has(e.id)
+          ) {
+            if (Math.abs(e.ly - ly) > ZERO_TOLERANCE) {
               return true;
             }
           }
@@ -146,8 +157,8 @@ const WaterHeaterLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
       }
       case Scope.AllObjectsOfThisType: {
         for (const e of elements) {
-          if (e.type === ObjectType.WaterHeater && !e.locked) {
-            if (Math.abs(e.lx - lx) > ZERO_TOLERANCE) {
+          if (e.type === ObjectType.SolarWaterHeater && !e.locked) {
+            if (Math.abs(e.ly - ly) > ZERO_TOLERANCE) {
               return true;
             }
           }
@@ -156,8 +167,8 @@ const WaterHeaterLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
       }
       case Scope.AllObjectsOfThisTypeAboveFoundation: {
         for (const e of elements) {
-          if (e.type === ObjectType.WaterHeater && e.foundationId === waterHeater?.foundationId && !e.locked) {
-            if (Math.abs(e.lx - lx) > ZERO_TOLERANCE) {
+          if (e.type === ObjectType.SolarWaterHeater && e.foundationId === waterHeater?.foundationId && !e.locked) {
+            if (Math.abs(e.ly - ly) > ZERO_TOLERANCE) {
               return true;
             }
           }
@@ -171,22 +182,22 @@ const WaterHeaterLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
           if (isParentCuboid) {
             for (const e of elements) {
               if (
-                e.type === ObjectType.WaterHeater &&
+                e.type === ObjectType.SolarWaterHeater &&
                 e.parentId === waterHeater.parentId &&
                 Util.isIdentical(e.normal, waterHeater.normal) &&
                 !e.locked
               ) {
-                const sp = e as WaterHeaterModel;
-                if (Math.abs(sp.lx - lx) > ZERO_TOLERANCE) {
+                const sp = e as SolarWaterHeaterModel;
+                if (Math.abs(sp.ly - ly) > ZERO_TOLERANCE) {
                   return true;
                 }
               }
             }
           } else {
             for (const e of elements) {
-              if (e.type === ObjectType.WaterHeater && e.parentId === waterHeater.parentId && !e.locked) {
-                const sp = e as WaterHeaterModel;
-                if (Math.abs(sp.lx - lx) > ZERO_TOLERANCE) {
+              if (e.type === ObjectType.SolarWaterHeater && e.parentId === waterHeater.parentId && !e.locked) {
+                const sp = e as SolarWaterHeaterModel;
+                if (Math.abs(sp.ly - ly) > ZERO_TOLERANCE) {
                   return true;
                 }
               }
@@ -196,7 +207,7 @@ const WaterHeaterLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
         break;
       }
       default: {
-        if (Math.abs(waterHeater?.lx - lx) > ZERO_TOLERANCE) {
+        if (Math.abs(waterHeater?.ly - ly) > ZERO_TOLERANCE) {
           return true;
         }
         break;
@@ -214,11 +225,11 @@ const WaterHeaterLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
         rejectRef.current = false;
         for (const elem of elements) {
           if (
-            elem.type === ObjectType.WaterHeater &&
+            elem.type === ObjectType.SolarWaterHeater &&
             !elem.locked &&
             useStore.getState().selectedElementIdSet.has(elem.id)
           ) {
-            if (rejectChange(elem as WaterHeaterModel, value)) {
+            if (rejectChange(elem as SolarWaterHeaterModel, value)) {
               rejectRef.current = true;
               break;
             }
@@ -226,22 +237,26 @@ const WaterHeaterLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
         }
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputValue(waterHeater.lx);
+          setInputValue(waterHeater.ly);
         } else {
-          const oldLengthsSelected = new Map<string, number>();
+          const oldWidthSelected = new Map<string, number>();
           for (const elem of elements) {
-            if (elem.type === ObjectType.WaterHeater && useStore.getState().selectedElementIdSet.has(elem.id)) {
-              oldLengthsSelected.set(elem.id, elem.lx);
+            if (
+              elem.type === ObjectType.SolarWaterHeater &&
+              !elem.locked &&
+              useStore.getState().selectedElementIdSet.has(elem.id)
+            ) {
+              oldWidthSelected.set(elem.id, elem.ly);
             }
           }
           const undoableChangeSelected = {
-            name: 'Set Length for Selected Water Heater',
+            name: 'Set Width for Selected Water Heater',
             timestamp: Date.now(),
-            oldValues: oldLengthsSelected,
+            oldValues: oldWidthSelected,
             newValue: value,
             undo: () => {
-              for (const [id, lx] of undoableChangeSelected.oldValues.entries()) {
-                updateWaterHeaterLxById(id, lx as number);
+              for (const [id, ly] of undoableChangeSelected.oldValues.entries()) {
+                updateWaterHeaterLyById(id, ly as number);
               }
             },
             redo: () => {
@@ -252,7 +267,7 @@ const WaterHeaterLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeSelected);
-          updateInMap(oldLengthsSelected, value);
+          updateInMap(oldWidthSelected, value);
           setApplyCount(applyCount + 1);
         }
         break;
@@ -260,8 +275,8 @@ const WaterHeaterLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
       case Scope.AllObjectsOfThisType: {
         rejectRef.current = false;
         for (const elem of elements) {
-          if (elem.type === ObjectType.WaterHeater && !elem.locked) {
-            if (rejectChange(elem as WaterHeaterModel, value)) {
+          if (elem.type === ObjectType.SolarWaterHeater && !elem.locked) {
+            if (rejectChange(elem as SolarWaterHeaterModel, value)) {
               rejectRef.current = true;
               break;
             }
@@ -269,12 +284,12 @@ const WaterHeaterLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
         }
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputValue(waterHeater.lx);
+          setInputValue(waterHeater.ly);
         } else {
           const oldLengthsAll = new Map<string, number>();
           for (const elem of elements) {
-            if (elem.type === ObjectType.WaterHeater && useStore.getState().selectedElementIdSet.has(elem.id)) {
-              oldLengthsAll.set(elem.id, elem.lx);
+            if (elem.type === ObjectType.SolarWaterHeater && !elem.locked) {
+              oldLengthsAll.set(elem.id, elem.ly);
             }
           }
           const undoableChangeAll = {
@@ -283,16 +298,16 @@ const WaterHeaterLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
             oldValues: oldLengthsAll,
             newValue: value,
             undo: () => {
-              for (const [id, lx] of undoableChangeAll.oldValues.entries()) {
-                updateWaterHeaterLxById(id, lx as number);
+              for (const [id, ly] of undoableChangeAll.oldValues.entries()) {
+                updateWaterHeaterLyById(id, ly as number);
               }
             },
             redo: () => {
-              updateWaterHeaterLxForAll(undoableChangeAll.newValue as number);
+              updateWaterHeaterLyForAll(undoableChangeAll.newValue as number);
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAll);
-          updateWaterHeaterLxForAll(value);
+          updateWaterHeaterLyForAll(value);
           setApplyCount(applyCount + 1);
         }
         break;
@@ -302,11 +317,11 @@ const WaterHeaterLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
           rejectRef.current = false;
           for (const elem of elements) {
             if (
-              elem.type === ObjectType.WaterHeater &&
+              elem.type === ObjectType.SolarWaterHeater &&
               !elem.locked &&
               elem.foundationId === waterHeater.foundationId
             ) {
-              if (rejectChange(elem as WaterHeaterModel, value)) {
+              if (rejectChange(elem as SolarWaterHeaterModel, value)) {
                 rejectRef.current = true;
                 break;
               }
@@ -314,28 +329,32 @@ const WaterHeaterLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
           }
           if (rejectRef.current) {
             rejectedValue.current = value;
-            setInputValue(waterHeater.lx);
+            setInputValue(waterHeater.ly);
           } else {
-            const oldLengthsAboveFoundation = new Map<string, number>();
+            const oldWidthAboveFoundation = new Map<string, number>();
             for (const elem of elements) {
-              if (elem.type === ObjectType.WaterHeater && elem.foundationId === waterHeater.foundationId) {
-                oldLengthsAboveFoundation.set(elem.id, elem.lx);
+              if (
+                elem.type === ObjectType.SolarWaterHeater &&
+                !elem.locked &&
+                elem.foundationId === waterHeater.foundationId
+              ) {
+                oldWidthAboveFoundation.set(elem.id, elem.ly);
               }
             }
             const undoableChangeAboveFoundation = {
-              name: 'Set Length for All Water Heater Above Foundation',
+              name: 'Set Width for All Water Heater Above Foundation',
               timestamp: Date.now(),
-              oldValues: oldLengthsAboveFoundation,
+              oldValues: oldWidthAboveFoundation,
               newValue: value,
               groupId: waterHeater.foundationId,
               undo: () => {
                 for (const [id, lx] of undoableChangeAboveFoundation.oldValues.entries()) {
-                  updateWaterHeaterLxById(id, lx as number);
+                  updateWaterHeaterLyById(id, lx as number);
                 }
               },
               redo: () => {
                 if (undoableChangeAboveFoundation.groupId) {
-                  updateWaterHeaterLxAboveFoundation(
+                  updateWaterHeaterLyAboveFoundation(
                     undoableChangeAboveFoundation.groupId,
                     undoableChangeAboveFoundation.newValue as number,
                   );
@@ -343,7 +362,7 @@ const WaterHeaterLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
               },
             } as UndoableChangeGroup;
             addUndoable(undoableChangeAboveFoundation);
-            updateWaterHeaterLxAboveFoundation(waterHeater.foundationId, value);
+            updateWaterHeaterLyAboveFoundation(waterHeater.foundationId, value);
             setApplyCount(applyCount + 1);
           }
         }
@@ -357,12 +376,12 @@ const WaterHeaterLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
           if (isParentCuboid) {
             for (const elem of elements) {
               if (
-                elem.type === ObjectType.WaterHeater &&
-                !elem.locked &&
+                elem.type === ObjectType.SolarWaterHeater &&
                 elem.parentId === waterHeater.parentId &&
-                Util.isIdentical(elem.normal, waterHeater.normal)
+                Util.isIdentical(elem.normal, waterHeater.normal) &&
+                !elem.locked
               ) {
-                if (rejectChange(elem as WaterHeaterModel, value)) {
+                if (rejectChange(elem as SolarWaterHeaterModel, value)) {
                   rejectRef.current = true;
                   break;
                 }
@@ -370,8 +389,8 @@ const WaterHeaterLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
             }
           } else {
             for (const elem of elements) {
-              if (elem.type === ObjectType.WaterHeater && !elem.locked && elem.parentId === waterHeater.parentId) {
-                if (rejectChange(elem as WaterHeaterModel, value)) {
+              if (elem.type === ObjectType.SolarWaterHeater && elem.parentId === waterHeater.parentId && !elem.locked) {
+                if (rejectChange(elem as SolarWaterHeaterModel, value)) {
                   rejectRef.current = true;
                   break;
                 }
@@ -380,43 +399,48 @@ const WaterHeaterLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
           }
           if (rejectRef.current) {
             rejectedValue.current = value;
-            setInputValue(waterHeater.lx);
+            setInputValue(waterHeater.ly);
           } else {
-            const oldLengthsOnSurface = new Map<string, number>();
+            const oldWidthOnSurface = new Map<string, number>();
             const isParentCuboid = parent.type === ObjectType.Cuboid;
             if (isParentCuboid) {
               for (const elem of elements) {
                 if (
-                  elem.type === ObjectType.WaterHeater &&
+                  elem.type === ObjectType.SolarWaterHeater &&
                   elem.parentId === waterHeater.parentId &&
-                  Util.isIdentical(elem.normal, waterHeater.normal)
+                  Util.isIdentical(elem.normal, waterHeater.normal) &&
+                  !elem.locked
                 ) {
-                  oldLengthsOnSurface.set(elem.id, elem.lx);
+                  oldWidthOnSurface.set(elem.id, elem.ly);
                 }
               }
             } else {
               for (const elem of elements) {
-                if (elem.type === ObjectType.WaterHeater && elem.parentId === waterHeater.parentId) {
-                  oldLengthsOnSurface.set(elem.id, elem.lx);
+                if (
+                  elem.type === ObjectType.SolarWaterHeater &&
+                  elem.parentId === waterHeater.parentId &&
+                  !elem.locked
+                ) {
+                  oldWidthOnSurface.set(elem.id, elem.ly);
                 }
               }
             }
             const normal = isParentCuboid ? waterHeater.normal : undefined;
             const undoableChangeOnSurface = {
-              name: 'Set Length for All Water Heater on Surface',
+              name: 'Set Width for All Water Heater on Surface',
               timestamp: Date.now(),
-              oldValues: oldLengthsOnSurface,
+              oldValues: oldWidthOnSurface,
               newValue: value,
               groupId: waterHeater.parentId,
               normal: normal,
               undo: () => {
                 for (const [id, lx] of undoableChangeOnSurface.oldValues.entries()) {
-                  updateWaterHeaterLxById(id, lx as number);
+                  updateWaterHeaterLyById(id, lx as number);
                 }
               },
               redo: () => {
                 if (undoableChangeOnSurface.groupId) {
-                  updateWaterHeaterLxOnSurface(
+                  updateWaterHeaterLyOnSurface(
                     undoableChangeOnSurface.groupId,
                     undoableChangeOnSurface.normal,
                     undoableChangeOnSurface.newValue as number,
@@ -425,7 +449,7 @@ const WaterHeaterLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
               },
             } as UndoableChangeGroup;
             addUndoable(undoableChangeOnSurface);
-            updateWaterHeaterLxOnSurface(waterHeater.parentId, normal, value);
+            updateWaterHeaterLyOnSurface(waterHeater.parentId, normal, value);
             setApplyCount(applyCount + 1);
           }
         }
@@ -434,28 +458,28 @@ const WaterHeaterLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
       default: {
         // solar panel selected element may be outdated, make sure that we get the latest
         const sp = getElementById(waterHeater.id);
-        const oldLength = sp ? sp.lx : waterHeater.lx;
+        const oldLength = sp ? sp.ly : waterHeater.ly;
         rejectRef.current = rejectChange(waterHeater, value);
         if (rejectRef.current) {
           rejectedValue.current = value;
           setInputValue(oldLength);
         } else {
           const undoableChange = {
-            name: 'Set Water Heater Length',
+            name: 'Set Water Heater Width',
             timestamp: Date.now(),
             oldValue: oldLength,
             newValue: value,
             changedElementId: waterHeater.id,
             changedElementType: waterHeater.type,
             undo: () => {
-              updateWaterHeaterLxById(undoableChange.changedElementId, undoableChange.oldValue as number);
+              updateWaterHeaterLyById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateWaterHeaterLxById(undoableChange.changedElementId, undoableChange.newValue as number);
+              updateWaterHeaterLyById(undoableChange.changedElementId, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateWaterHeaterLxById(waterHeater.id, value);
+          updateWaterHeaterLyById(waterHeater.id, value);
           setApplyCount(applyCount + 1);
         }
         break;
@@ -491,10 +515,11 @@ const WaterHeaterLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
       (rejectedValue.current !== undefined ? ' (' + rejectedValue.current.toFixed(2) + ')' : '')
     : null;
 
+  console.log('min', minValue);
   return (
     <Dialog
       width={550}
-      title={i18n.t('word.Length', lang)}
+      title={i18n.t('word.Width', lang)}
       rejectedMessage={rejectedMessage}
       onApply={apply}
       onClose={close}
@@ -504,7 +529,7 @@ const WaterHeaterLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
       <Row gutter={6}>
         <Col className="gutter-row" span={6}>
           <InputNumber
-            min={0}
+            min={minValue}
             max={100}
             step={0.1}
             style={{ width: 120 }}
@@ -527,19 +552,19 @@ const WaterHeaterLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
           <Radio.Group onChange={onScopeChange} value={actionScope}>
             <Space direction="vertical">
               <Radio style={{ width: '100%' }} value={Scope.OnlyThisObject}>
-                {i18n.t('waterHeaterMenu.OnlyThisWaterHeater', lang)}
+                {i18n.t('solarWaterHeaterMenu.OnlyThisSolarWaterHeater', lang)}
               </Radio>
               <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisTypeOnSurface}>
-                {i18n.t('waterHeaterMenu.AllWaterHeatersOnSurface', lang)}
+                {i18n.t('solarWaterHeaterMenu.AllSolarWaterHeatersOnSurface', lang)}
               </Radio>
               <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisTypeAboveFoundation}>
-                {i18n.t('waterHeaterMenu.AllWaterHeatersAboveFoundation', lang)}
+                {i18n.t('solarWaterHeaterMenu.AllSolarWaterHeatersAboveFoundation', lang)}
               </Radio>
               <Radio style={{ width: '100%' }} value={Scope.AllSelectedObjectsOfThisType}>
-                {i18n.t('waterHeaterMenu.AllSelectedWaterHeaters', lang)}
+                {i18n.t('solarWaterHeaterMenu.AllSelectedSolarWaterHeaters', lang)}
               </Radio>
               <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisType}>
-                {i18n.t('waterHeaterMenu.AllWaterHeaters', lang)}
+                {i18n.t('solarWaterHeaterMenu.AllSolarWaterHeaters', lang)}
               </Radio>
             </Space>
           </Radio.Group>
@@ -549,4 +574,4 @@ const WaterHeaterLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
   );
 };
 
-export default WaterHeaterLengthInput;
+export default SolarWaterHeaterWidthInput;

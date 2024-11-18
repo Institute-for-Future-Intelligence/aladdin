@@ -178,7 +178,7 @@ export const i18n_tr = {
       PolygonElement: 'Poligon',
       SensorElement: 'Sensör',
       SolarPanelElement: 'Güneş Paneli',
-      WaterHeaterElement: 'Su Isıtıcı',
+      SolarWaterHeaterElement: 'Su Isıtıcı',
       ParabolicDishElement: 'Parabolik Çanak',
       ParabolicTroughElement: 'Parabolik Oluk',
       FresnelReflectorElement: 'Fresnel Reflektör',
@@ -1033,14 +1033,6 @@ export const i18n_tr = {
       ReceiverThermalEfficiency: 'Alıcı Termal Verimliliği',
     },
 
-    waterHeaterMenu: {
-      OnlyThisWaterHeater: 'Only This Water Heater',
-      AllWaterHeatersOnSurface: 'All Water Heaters on the Same Surface',
-      AllWaterHeatersAboveFoundation: 'All Water Heaters Above the Same Foundation',
-      AllSelectedWaterHeaters: 'All Selected Water Heaters',
-      AllWaterHeaters: 'All Water Heaters',
-    },
-
     solarPanelMenu: {
       ElectricalProperties: 'Electrical Properties',
       InverterEfficiency: 'Inverter Efficiency',
@@ -1069,6 +1061,14 @@ export const i18n_tr = {
       AllSolarPanelsAboveFoundation: 'Tüm Güneş Panelleri Aynı Temel Üzerinde',
       AllSelectedSolarPanels: 'All Selected Solar Panels',
       AllSolarPanels: 'Tüm Güneş Panelleri',
+    },
+
+    solarWaterHeaterMenu: {
+      OnlyThisSolarWaterHeater: 'Only This Solar Water Heater',
+      AllSolarWaterHeatersOnSurface: 'All Solar Water Heaters on the Same Surface',
+      AllSolarWaterHeatersAboveFoundation: 'All Solar Water Heaters Above the Same Foundation',
+      AllSelectedSolarWaterHeaters: 'All Selected Solar Water Heaters',
+      AllSolarWaterHeaters: 'All Solar Water Heaters',
     },
 
     pvModelPanel: {
@@ -1630,7 +1630,7 @@ export const i18n_tr = {
       NoSensorForCollectingData: 'Veri toplamak için sensör yok.',
       NoSolarPanelForAnalysis: 'Analiz için güneş paneli yok.',
       NoObserverForVisibilityAnalysis: 'Görünürlük analizi için gözlemci yok.',
-      NoWaterHeaterForAnalysis: 'Analiz için su ısıtıcısı yok',
+      NoSolarWaterHeaterForAnalysis: 'Analiz için su ısıtıcısı yok',
       NoParabolicDishForAnalysis: 'Analiz için parabolik çanak yok',
       NoParabolicTroughForAnalysis: 'Analiz için parabolik oluk yok.',
       NoFresnelReflectorForAnalysis: 'Analiz için Fresnel reflektörü yok.',
@@ -1654,7 +1654,7 @@ export const i18n_tr = {
       AddCuboid: 'Kübik Ekle',
       AddSensor: 'Sensör Ekle',
       AddSolarPanel: 'Güneş Paneli Ekle',
-      AddWaterHeater: 'Su Isıtıcı Ekle',
+      AddSolarWaterHeater: 'Su Isıtıcı Ekle',
       AddBatteryStorage: 'Add Battery Storage',
       AddParabolicDish: 'Parabolik Çanak Ekle',
       AddParabolicTrough: 'Parabolik Oluk Ekle',

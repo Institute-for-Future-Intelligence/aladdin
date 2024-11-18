@@ -31,7 +31,7 @@ import ClearImage from './assets/clear.png';
 import HeliodonImage from './assets/heliodon.png';
 import AnalyzeImage from './assets/analyze.png';
 import BatteryStorageImage from './assets/battery_storage.png';
-import WaterHeaterImage from './assets/solar_water_heater.png';
+import SolarWaterHeaterImage from './assets/solar_water_heater.png';
 
 import React, { useMemo, useState } from 'react';
 import { useStore } from './stores/common';
@@ -488,7 +488,11 @@ const MainToolBarButtons = React.memo(() => {
     {
       key: 'add-water-heater',
       label: (
-        <ToolBarMenuItem objectType={ObjectType.WaterHeater} srcImg={WaterHeaterImage} setFlag={setCategory3Flag} />
+        <ToolBarMenuItem
+          objectType={ObjectType.SolarWaterHeater}
+          srcImg={SolarWaterHeaterImage}
+          setFlag={setCategory3Flag}
+        />
       ),
     },
     {
@@ -559,8 +563,8 @@ const MainToolBarButtons = React.memo(() => {
         return buttonImg(objectType, VerticalAxisWindTurbineImage);
       case ObjectType.Light:
         return buttonImg(objectType, LightImage);
-      case ObjectType.WaterHeater:
-        return buttonImg(objectType, WaterHeaterImage);
+      case ObjectType.SolarWaterHeater:
+        return buttonImg(objectType, SolarWaterHeaterImage);
       case ObjectType.BatteryStorage:
         return buttonImg(objectType, BatteryStorageImage);
     }

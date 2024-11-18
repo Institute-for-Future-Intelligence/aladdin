@@ -81,7 +81,7 @@ import { SharedUtil } from '../SharedUtil';
 import WallAuxiliaryLine, { WallAuxiliaryType } from './wallAuxiliaryLine';
 import SolarPanelWrapper from '../solarPanel/solarPanelWrapper';
 import { useTransparent } from '../roof/hooks';
-import WaterHeaterWrapper from '../waterHeater/waterHeaterWrapper';
+import SolarWaterHeaterWrapper from '../solarWaterHeater/solarWaterHeaterWrapper';
 
 interface SnapTargetType {
   id: string | null;
@@ -3017,7 +3017,7 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
   const { transparent, opacity } = useTransparent();
   useEffect(() => {
     if (baseRef.current) {
-      // @ts-ignore
+      // @ts-expect-error ignore
       baseRef.current.material[4].needsUpdate = true;
     }
   }, [transparent]);
@@ -3104,7 +3104,7 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
           plz={lz}
         />
 
-        <WaterHeaterWrapper foundationId={id} wrapperType={ObjectType.Foundation} />
+        <SolarWaterHeaterWrapper foundationId={id} wrapperType={ObjectType.Foundation} />
 
         {/* draw rectangle */}
         <Box

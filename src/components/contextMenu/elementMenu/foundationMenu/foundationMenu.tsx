@@ -64,7 +64,7 @@ const legalToPasteOnFoundation = () => {
       e.type === ObjectType.Sensor ||
       e.type === ObjectType.Light ||
       e.type === ObjectType.SolarPanel ||
-      e.type === ObjectType.WaterHeater ||
+      e.type === ObjectType.SolarWaterHeater ||
       e.type === ObjectType.ParabolicDish ||
       e.type === ObjectType.Heliostat ||
       e.type === ObjectType.FresnelReflector ||

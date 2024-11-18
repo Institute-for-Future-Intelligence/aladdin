@@ -1,41 +1,41 @@
-import { WaterHeaterModel } from 'src/models/WaterHeaterModel';
+import { SolarWaterHeaterModel } from 'src/models/SolarWaterHeaterModel';
 import { Operation } from '../solarPanel/refSolarPanel';
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
 import { UndoableMove } from 'src/undo/UndoableMove';
 import { Vector3 } from 'three';
-import { UndoableResizeWaterHeaterHeight, UnoableResizeSolarPanel } from 'src/undo/UndoableResize';
 import { UndoableChange } from 'src/undo/UndoableChange';
+import { UnoableResizeSolarPanel } from '../../undo/UndoableResize';
 
-export class WaterHeaterUtil {
-  static addUndoable(oldElement: WaterHeaterModel | undefined, operation: Operation) {
+export class SolarWaterHeaterUtil {
+  static addUndoable(oldElement: SolarWaterHeaterModel | undefined, operation: Operation) {
     if (!oldElement) return;
 
     switch (operation) {
       case Operation.Move: {
-        WaterHeaterUtil.addUndoableMove(oldElement);
+        SolarWaterHeaterUtil.addUndoableMove(oldElement);
         break;
       }
       case Operation.ResizeX: {
-        WaterHeaterUtil.addUndoableResizeX(oldElement);
+        SolarWaterHeaterUtil.addUndoableResizeX(oldElement);
         break;
       }
       case Operation.ResizeHeight: {
-        WaterHeaterUtil.addUndoablResizeHeight(oldElement);
+        SolarWaterHeaterUtil.addUndoablResizeHeight(oldElement);
         break;
       }
       case Operation.RotateLower:
       case Operation.RotateUpper: {
-        WaterHeaterUtil.addUndoableRotate(oldElement);
+        SolarWaterHeaterUtil.addUndoableRotate(oldElement);
         break;
       }
     }
   }
 
-  static addUndoableMove(oldElement: WaterHeaterModel) {
+  static addUndoableMove(oldElement: SolarWaterHeaterModel) {
     const newElement = useStore
       .getState()
-      .elements.find((e) => e.id === oldElement.id && e.type === ObjectType.WaterHeater) as WaterHeaterModel;
+      .elements.find((e) => e.id === oldElement.id && e.type === ObjectType.SolarWaterHeater) as SolarWaterHeaterModel;
     if (!newElement) return;
 
     const undoableMove = {
@@ -95,7 +95,7 @@ export class WaterHeaterUtil {
     ) => {
       useStore.getState().set((state) => {
         const el = state.elements.find((e) => e.id === id);
-        if (!el || el.type !== ObjectType.WaterHeater) return;
+        if (!el || el.type !== ObjectType.SolarWaterHeater) return;
         [el.cx, el.cy, el.cz] = [...pos];
         if (parentId) {
           el.parentId = parentId;
@@ -104,7 +104,7 @@ export class WaterHeaterUtil {
           el.foundationId = foundationId;
         }
         if (parentType) {
-          (el as WaterHeaterModel).parentType = parentType;
+          (el as SolarWaterHeaterModel).parentType = parentType;
         }
         if (rotation) {
           el.rotation = [...rotation];
@@ -116,10 +116,10 @@ export class WaterHeaterUtil {
     };
   }
 
-  static addUndoableResizeX(oldElement: WaterHeaterModel) {
+  static addUndoableResizeX(oldElement: SolarWaterHeaterModel) {
     const newElement = useStore
       .getState()
-      .elements.find((e) => e.id === oldElement.id && e.type === ObjectType.WaterHeater) as WaterHeaterModel;
+      .elements.find((e) => e.id === oldElement.id && e.type === ObjectType.SolarWaterHeater) as SolarWaterHeaterModel;
     if (!newElement) return;
 
     const undoableResize = {
@@ -164,23 +164,23 @@ export class WaterHeaterUtil {
     useStore.getState().addUndoable(undoableResize);
   }
 
-  static addUndoablResizeHeight(oldElement: WaterHeaterModel) {
+  static addUndoablResizeHeight(oldElement: SolarWaterHeaterModel) {
     const newElement = useStore
       .getState()
-      .elements.find((e) => e.id === oldElement.id && e.type === ObjectType.WaterHeater) as WaterHeaterModel;
+      .elements.find((e) => e.id === oldElement.id && e.type === ObjectType.SolarWaterHeater) as SolarWaterHeaterModel;
     if (!newElement) return;
 
     const undoableResize = {
-      name: 'Resize Water Heater Height',
+      name: 'Resize Solar Water Heater Height',
       timestamp: Date.now(),
-      id: newElement.id,
-      oldHeight: oldElement.lz,
-      newHeight: newElement.lz,
+      changedElementId: newElement.id,
+      oldValue: oldElement.lz,
+      newValue: newElement.lz,
       undo() {
         useStore.getState().set((state) => {
           for (const e of state.elements) {
-            if (e.id === undoableResize.id) {
-              e.lz = undoableResize.oldHeight;
+            if (e.id === undoableResize.changedElementId) {
+              e.lz = undoableResize.oldValue as number;
               break;
             }
           }
@@ -189,21 +189,21 @@ export class WaterHeaterUtil {
       redo() {
         useStore.getState().set((state) => {
           for (const e of state.elements) {
-            if (e.id === undoableResize.id) {
-              e.lz = undoableResize.newHeight;
+            if (e.id === undoableResize.changedElementId) {
+              e.lz = undoableResize.newValue as number;
               break;
             }
           }
         });
       },
-    } as UndoableResizeWaterHeaterHeight;
+    } as UndoableChange;
     useStore.getState().addUndoable(undoableResize);
   }
 
-  static addUndoableRotate(oldElement: WaterHeaterModel) {
+  static addUndoableRotate(oldElement: SolarWaterHeaterModel) {
     const newElement = useStore
       .getState()
-      .elements.find((e) => e.id === oldElement.id && e.type === ObjectType.WaterHeater) as WaterHeaterModel;
+      .elements.find((e) => e.id === oldElement.id && e.type === ObjectType.SolarWaterHeater) as SolarWaterHeaterModel;
     if (!newElement) return;
 
     const undoableChange = {
@@ -212,7 +212,7 @@ export class WaterHeaterUtil {
       changedElementId: newElement.id,
       oldValue: oldElement.relativeAzimuth,
       newValue: newElement.relativeAzimuth,
-      changedElementType: ObjectType.WaterHeater,
+      changedElementType: ObjectType.SolarWaterHeater,
       undo: () => {
         setState(undoableChange.oldValue as number);
       },
@@ -225,10 +225,10 @@ export class WaterHeaterUtil {
     const setState = (auzimuth: number) => {
       useStore.getState().set((state) => {
         const sp = state.elements.find(
-          (e) => e.id === undoableChange.changedElementId && e.type === ObjectType.WaterHeater,
+          (e) => e.id === undoableChange.changedElementId && e.type === ObjectType.SolarWaterHeater,
         );
         if (!sp) return;
-        (sp as WaterHeaterModel).relativeAzimuth = auzimuth;
+        (sp as SolarWaterHeaterModel).relativeAzimuth = auzimuth;
       });
     };
   }

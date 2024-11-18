@@ -7,8 +7,8 @@ import { ObjectType } from 'src/types';
 import { useStore } from 'src/stores/common';
 import { shallow } from 'zustand/shallow';
 import { ElementModel } from 'src/models/ElementModel';
-import { WaterHeaterModel } from 'src/models/WaterHeaterModel';
-import WaterHeater from './waterHeater';
+import { SolarWaterHeaterModel } from 'src/models/SolarWaterHeaterModel';
+import SolarWaterHeater from './solarWaterHeater';
 
 export const WATER_HEATER_WRAPPER_NAME = 'Water_Heater_Wrapper_Group';
 
@@ -22,12 +22,12 @@ interface Props {
  * foundation: position is absolute to center of foundation, rotation is relative to foundation.
  * cuboid: position is absolute to center of cuboid, rotation is relative to parent cuboid.
  */
-const WaterHeaterWrapper = React.memo(({ foundationId, wrapperType }: Props) => {
+const SolarWaterHeaterWrapper = React.memo(({ foundationId, wrapperType }: Props) => {
   const filterFn = useCallback(
     (e: ElementModel) => {
-      if (e.type !== ObjectType.WaterHeater) return false;
+      if (e.type !== ObjectType.SolarWaterHeater) return false;
 
-      const wh = e as WaterHeaterModel;
+      const wh = e as SolarWaterHeaterModel;
 
       switch (wrapperType) {
         case ObjectType.Foundation: {
@@ -42,14 +42,14 @@ const WaterHeaterWrapper = React.memo(({ foundationId, wrapperType }: Props) => 
     [foundationId, wrapperType],
   );
 
-  const waterHeaters = useStore((state) => state.elements.filter(filterFn) as WaterHeaterModel[], shallow);
+  const waterHeaters = useStore((state) => state.elements.filter(filterFn) as SolarWaterHeaterModel[], shallow);
 
   switch (wrapperType) {
     case ObjectType.Foundation: {
       return (
         <group name={WATER_HEATER_WRAPPER_NAME}>
           {waterHeaters.map((sp) => (
-            <WaterHeater key={sp.id} {...sp} />
+            <SolarWaterHeater key={sp.id} {...sp} />
           ))}
         </group>
       );
@@ -59,4 +59,4 @@ const WaterHeaterWrapper = React.memo(({ foundationId, wrapperType }: Props) => 
   }
 });
 
-export default WaterHeaterWrapper;
+export default SolarWaterHeaterWrapper;

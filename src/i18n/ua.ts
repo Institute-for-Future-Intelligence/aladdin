@@ -179,7 +179,7 @@ export const i18n_ua = {
       PolygonElement: 'Багатокутник',
       SensorElement: 'Сенсор',
       SolarPanelElement: 'Сонячна панель',
-      WaterHeaterElement: 'Водонагрівач',
+      SolarWaterHeaterElement: 'Водонагрівач',
       ParabolicDishElement: 'Параболічна тарілка',
       ParabolicTroughElement: 'Параболічний сонячний колектор',
       FresnelReflectorElement: 'Відбивач Френеля',
@@ -1035,12 +1035,12 @@ export const i18n_ua = {
       ReceiverThermalEfficiency: 'Теплова ефективність приймача',
     },
 
-    waterHeaterMenu: {
-      OnlyThisWaterHeater: 'Only This Water Heater',
-      AllWaterHeatersOnSurface: 'All Water Heaters on the Same Surface',
-      AllWaterHeatersAboveFoundation: 'All Water Heaters Above the Same Foundation',
-      AllSelectedWaterHeaters: 'All Selected Water Heaters',
-      AllWaterHeaters: 'All Water Heaters',
+    solarWaterHeaterMenu: {
+      OnlyThisSolarWaterHeater: 'Only This Solar Water Heater',
+      AllSolarWaterHeatersOnSurface: 'All Solar Water Heaters on the Same Surface',
+      AllSolarWaterHeatersAboveFoundation: 'All Solar Water Heaters Above the Same Foundation',
+      AllSelectedSolarWaterHeaters: 'All Selected Solar Water Heaters',
+      AllSolarWaterHeaters: 'All Solar Water Heaters',
     },
 
     solarPanelMenu: {
@@ -1631,7 +1631,7 @@ export const i18n_ua = {
       NoSensorForCollectingData: 'Немає датчика для збору даних.',
       NoSolarPanelForAnalysis: 'Немає сонячної панелі для аналізу.',
       NoObserverForVisibilityAnalysis: 'Немає спостерігача для аналізу видимості.',
-      NoWaterHeaterForAnalysis: 'Немає водонагрівача для аналізу.',
+      NoSolarWaterHeaterForAnalysis: 'Немає водонагрівача для аналізу.',
       NoParabolicDishForAnalysis: 'Немає параболічної тарілки для аналізу.',
       NoParabolicTroughForAnalysis: 'Немає параболічного сонячного колектора для аналізу.',
       NoFresnelReflectorForAnalysis: 'Немає відбивача Френеля для аналізу.',
@@ -1655,7 +1655,7 @@ export const i18n_ua = {
       AddCuboid: 'Додати прямокутний паралелепіпед',
       AddSensor: 'Додати датчик',
       AddSolarPanel: 'Додати сонячну панель',
-      AddWaterHeater: 'Додати водонагрівач',
+      AddSolarWaterHeater: 'Додати водонагрівач',
       AddBatteryStorage: 'Add Battery Storage',
       AddParabolicDish: 'Додати параболічну тарілку',
       AddParabolicTrough: 'Додати параболічний сонячний колектор',

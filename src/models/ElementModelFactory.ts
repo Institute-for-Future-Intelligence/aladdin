@@ -57,7 +57,7 @@ import { HvacSystem } from './HvacSystem';
 import { useStore } from 'src/stores/common';
 import { RoofUtil } from '../views/roof/RoofUtil';
 import { BatteryStorageModel } from './BatteryStorageModel';
-import { WaterHeaterModel } from './WaterHeaterModel';
+import { SolarWaterHeaterModel } from './SolarWaterHeaterModel';
 
 export class ElementModelFactory {
   static makeHuman(name: HumanName, parentId: string, x: number, y: number, z?: number) {
@@ -155,27 +155,34 @@ export class ElementModelFactory {
     } as SolarPanelModel;
   }
 
-  static makeWaterHeater(parent: ElementModel, x: number, y: number, z: number, normal: Vector3, rotation: number[]) {
+  static makeSolarWaterHeater(
+    parent: ElementModel,
+    x: number,
+    y: number,
+    z: number,
+    normal: Vector3,
+    rotation: number[],
+  ) {
     const actionState = useStore.getState().actionState;
     return {
-      type: ObjectType.WaterHeater,
+      type: ObjectType.SolarWaterHeater,
       cx: x,
       cy: y,
       cz: z,
       lx: 2.092,
-      ly: 1.558 + actionState.waterHeaterTankRadius,
-      lz: actionState.waterHeaterHeight,
-      waterTankRadius: actionState.waterHeaterTankRadius,
-      relativeAzimuth: actionState.waterHeaterRelativeAzimuth,
+      ly: 1.558 + actionState.solarWaterHeaterTankRadius,
+      lz: actionState.solarWaterHeaterHeight,
+      waterTankRadius: actionState.solarWaterHeaterTankRadius,
+      relativeAzimuth: actionState.solarWaterHeaterRelativeAzimuth,
       showLabel: false,
       normal: normal ? normal.toArray() : [0, 0, 1],
       rotation: rotation ? rotation : [0, 0, 0],
-      color: actionState.waterHeaterColor,
+      color: actionState.solarWaterHeaterColor,
       parentType: parent.type,
       parentId: parent.id,
       foundationId: parent.parentId,
       id: short.generate() as string,
-    } as WaterHeaterModel;
+    } as SolarWaterHeaterModel;
   }
 
   static makeBatteryStorage(parent: ElementModel, x: number, y: number, z: number) {

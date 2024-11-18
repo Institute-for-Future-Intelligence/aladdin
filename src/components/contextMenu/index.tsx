@@ -34,7 +34,7 @@ import { useSelectedElement } from './elementMenu/menuHooks';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import { ElementModel } from 'src/models/ElementModel';
 import './style.css';
-import { createWaterHeaterMenu } from './elementMenu/waterHeaterMenu/waterHeaterMenu';
+import { createSolarWaterHeaterMenu } from './elementMenu/solarWaterHeaterMenu/solarWaterHeaterMenu';
 export interface ContextMenuProps {
   [key: string]: any;
 }
@@ -110,8 +110,8 @@ const DropdownContextMenu: React.FC<ContextMenuProps> = ({ children }) => {
         return createPolygonVertexMenu(selectedElement);
       case ObjectType.WindTurbine:
         return createWindTurbineMenu(selectedElement);
-      case ObjectType.WaterHeater:
-        return createWaterHeaterMenu(selectedElement);
+      case ObjectType.SolarWaterHeater:
+        return createSolarWaterHeaterMenu(selectedElement);
       default:
         return { items: [] };
     }

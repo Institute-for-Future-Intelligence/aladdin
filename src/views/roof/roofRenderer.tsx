@@ -145,10 +145,10 @@ const handleAddElementOnRoof = (
       addUndoableAddRooftopElement(newElement);
       break;
     }
-    case ObjectType.WaterHeater: {
+    case ObjectType.SolarWaterHeater: {
       const { normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
       const actionState = useStore.getState().actionState;
-      const newElement = ElementModelFactory.makeWaterHeater(
+      const newElement = ElementModelFactory.makeSolarWaterHeater(
         roof,
         posRelToFoundation.x,
         posRelToFoundation.y,
@@ -340,7 +340,7 @@ export const updateRooftopElements = (
     if (foundation === null) return;
     for (const e of state.elements) {
       if (e.parentId === roofId && e.foundationId) {
-        if (e.type === ObjectType.SolarPanel || e.type === ObjectType.WaterHeater) {
+        if (e.type === ObjectType.SolarPanel || e.type === ObjectType.SolarWaterHeater) {
           const posRelToFoundation = new Vector3(e.cx, e.cy, e.cz);
           const posRelToCentroid = posRelToFoundation.clone().sub(centroid);
           const { segmentVertices, normal, rotation } = RoofUtil.computeState(

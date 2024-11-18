@@ -178,7 +178,7 @@ export const i18n_zh_cn = {
       PolygonElement: '多边形',
       SensorElement: '传感器',
       SolarPanelElement: '光伏板',
-      WaterHeaterElement: '太阳能热水器',
+      SolarWaterHeaterElement: '太阳能热水器',
       ParabolicDishElement: '抛物线碟',
       ParabolicTroughElement: '抛物线槽',
       FresnelReflectorElement: '菲涅耳反射镜',
@@ -1008,12 +1008,12 @@ export const i18n_zh_cn = {
       ReceiverThermalEfficiency: '接收器热效率',
     },
 
-    waterHeaterMenu: {
-      OnlyThisWaterHeater: '只这个热水器',
-      AllWaterHeatersOnSurface: '同一表面上所有的热水器',
-      AllWaterHeatersAboveFoundation: '同一地基上所有的热水器',
-      AllSelectedWaterHeaters: '所有选中的热水器',
-      AllWaterHeaters: '所有的热水器',
+    solarWaterHeaterMenu: {
+      OnlyThisSolarWaterHeater: '只这个太阳能热水器',
+      AllSolarWaterHeatersOnSurface: '同一表面上所有的太阳能热水器',
+      AllSolarWaterHeatersAboveFoundation: '同一地基上所有的太阳能热水器',
+      AllSelectedSolarWaterHeaters: '所有选中的太阳能热水器',
+      AllSolarWaterHeaters: '所有的太阳能热水器',
     },
 
     solarPanelMenu: {
@@ -1602,7 +1602,7 @@ export const i18n_zh_cn = {
       NoSensorForCollectingData: '没有传感器收集数据。',
       NoSolarPanelForAnalysis: '没有光伏板可以分析。',
       NoObserverForVisibilityAnalysis: '没有找到可见度分析的观察者。',
-      NoWaterHeaterForAnalysis: '沒有太阳能热水器可以分析。',
+      NoSolarWaterHeaterForAnalysis: '沒有太阳能热水器可以分析。',
       NoParabolicDishForAnalysis: '沒有抛物线碟可以分析。',
       NoParabolicTroughForAnalysis: '沒有抛物线槽可以分析。',
       NoFresnelReflectorForAnalysis: '沒有菲涅耳反射镜可以分析。',
@@ -1626,7 +1626,7 @@ export const i18n_zh_cn = {
       AddCuboid: '添加长方体',
       AddSensor: '添加传感器',
       AddSolarPanel: '添加光伏板',
-      AddWaterHeater: '添加太阳能热水器',
+      AddSolarWaterHeater: '添加太阳能热水器',
       AddBatteryStorage: '添加储蓄电池',
       AddParabolicDish: '添加抛物线碟',
       AddParabolicTrough: '添加抛物线槽',

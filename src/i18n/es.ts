@@ -178,7 +178,7 @@ export const i18n_es = {
       PolygonElement: 'Polígon',
       SensorElement: 'Sensor',
       SolarPanelElement: 'Panel solar',
-      WaterHeaterElement: 'Water Heater',
+      SolarWaterHeaterElement: 'Solar Water Heater',
       ParabolicDishElement: 'Parabolic Dish',
       ParabolicTroughElement: 'Parabolic Trough',
       FresnelReflectorElement: 'Fresnel Reflector',
@@ -1063,12 +1063,12 @@ export const i18n_es = {
       AllSolarPanels: 'Todos los paneles solares',
     },
 
-    waterHeaterMenu: {
-      OnlyThisWaterHeater: 'Only This Water Heater',
-      AllWaterHeatersOnSurface: 'All Water Heaters on the Same Surface',
-      AllWaterHeatersAboveFoundation: 'All Water Heaters Above the Same Foundation',
-      AllSelectedWaterHeaters: 'All Selected Water Heaters',
-      AllWaterHeaters: 'All Water Heaters',
+    solarWaterHeaterMenu: {
+      OnlyThisSolarWaterHeater: 'Only This Solar Water Heater',
+      AllSolarWaterHeatersOnSurface: 'All Solar Water Heaters on the Same Surface',
+      AllSolarWaterHeatersAboveFoundation: 'All Solar Water Heaters Above the Same Foundation',
+      AllSelectedSolarWaterHeaters: 'All Selected Solar Water Heaters',
+      AllSolarWaterHeaters: 'All Solar Water Heaters',
     },
 
     pvModelPanel: {
@@ -1629,7 +1629,7 @@ export const i18n_es = {
       NoSensorForCollectingData: 'Sin sensor para recopilar datos',
       NoSolarPanelForAnalysis: 'Sin panel solar para el análisis',
       NoObserverForVisibilityAnalysis: 'There is no observer for visibility analysis.',
-      NoWaterHeaterForAnalysis: 'There is no water heater for analysis.',
+      NoSolarWaterHeaterForAnalysis: 'There is no solar water heater for analysis.',
       NoParabolicDishForAnalysis: 'There is no parabolic dish for analysis.',
       NoParabolicTroughForAnalysis: 'There is no parabolic trough for analysis.',
       NoFresnelReflectorForAnalysis: 'There is no Fresnel reflector for analysis.',
@@ -1653,7 +1653,7 @@ export const i18n_es = {
       AddCuboid: 'Añadir Cuboid',
       AddSensor: 'Añadir Sensor',
       AddSolarPanel: 'Añadir Panel Solar',
-      AddWaterHeater: 'Add Water Heater',
+      AddSolarWaterHeater: 'Add Solar Water Heater',
       AddBatteryStorage: 'Add Battery Storage',
       AddParabolicDish: 'Add Parabolic Dish',
       AddParabolicTrough: 'Add Parabolic Trough',

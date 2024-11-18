@@ -32,7 +32,7 @@ import {
   DEFAULT_WINDOW_U_VALUE,
 } from '../constants';
 import { DEFAULT_PARAPET_SETTINGS } from 'src/views/wall/parapet';
-import { WATER_TANK_RADIUS } from 'src/views/waterHeater/waterHeater';
+import { WATER_TANK_RADIUS } from 'src/views/solarWaterHeater/solarWaterHeater';
 
 export class DefaultActionState implements ActionState {
   // Needed for immer drafting to work properly: https://immerjs.github.io/immer/docs/complex-objects
@@ -148,10 +148,10 @@ export class DefaultActionState implements ActionState {
   solarPanelCx: number;
   solarPanelCy: number;
 
-  waterHeaterColor: string;
-  waterHeaterRelativeAzimuth: number;
-  waterHeaterTankRadius: number;
-  waterHeaterHeight: number;
+  solarWaterHeaterColor: string;
+  solarWaterHeaterRelativeAzimuth: number;
+  solarWaterHeaterTankRadius: number;
+  solarWaterHeaterHeight: number;
 
   parabolicDishReflectance: number;
   parabolicDishAbsorptance: number;
@@ -308,10 +308,10 @@ export class DefaultActionState implements ActionState {
     this.solarPanelCx = 0;
     this.solarPanelCy = 0;
 
-    this.waterHeaterColor = 'grey';
-    this.waterHeaterRelativeAzimuth = 0;
-    this.waterHeaterTankRadius = WATER_TANK_RADIUS;
-    this.waterHeaterHeight = 1;
+    this.solarWaterHeaterColor = 'grey';
+    this.solarWaterHeaterRelativeAzimuth = 0;
+    this.solarWaterHeaterTankRadius = WATER_TANK_RADIUS;
+    this.solarWaterHeaterHeight = 1;
 
     this.parabolicDishReflectance = 0.9;
     this.parabolicDishAbsorptance = 0.95;

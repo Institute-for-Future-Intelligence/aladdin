@@ -7,7 +7,7 @@ import { ThreeEvent, useFrame, useThree } from '@react-three/fiber';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { HALF_PI } from 'src/constants';
 import { useSelected } from 'src/hooks';
-import { WaterHeaterModel } from 'src/models/WaterHeaterModel';
+import { SolarWaterHeaterModel } from 'src/models/SolarWaterHeaterModel';
 import { SolarPanelUtil } from '../solarPanel/SolarPanelUtil';
 import { useStore } from 'src/stores/common';
 import * as Selector from '../../stores/selector';
@@ -35,9 +35,9 @@ import RotateHandle from '../solarPanel/rotateHandle';
 import { RoofUtil } from '../roof/RoofUtil';
 import { Util } from 'src/Util';
 import { tempEuler, tempQuaternion_0, tempVector3_0, tempVector3_1, tempVector3_3 } from 'src/helpers';
-import { WATER_HEATER_WRAPPER_NAME } from './waterHeaterWrapper';
+import { WATER_HEATER_WRAPPER_NAME } from './solarWaterHeaterWrapper';
 import PolarGrid, { PolarGridRefProps } from '../solarPanel/polarGrid';
-import { WaterHeaterUtil } from './waterHeaterUtil';
+import { SolarWaterHeaterUtil } from './solarWaterHeaterUtil';
 import Wireframe from './wireframe';
 import PanelMaterial, { MaterialRefProps } from './panelMaterial';
 import BarMaterial from './barMaterial';
@@ -56,7 +56,7 @@ export const WATER_TANK_RADIUS = 0.3;
  * - simulation
  */
 
-const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
+const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
   const {
     id,
     cx,
@@ -283,7 +283,7 @@ const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
         SolarPanelUtil.setSelected(id, true);
       }
       setCommonStore((state) => {
-        state.contextMenuObjectType = ObjectType.WaterHeater;
+        state.contextMenuObjectType = ObjectType.SolarWaterHeater;
       });
     } else {
       SolarPanelUtil.setSelected(id, true);
@@ -381,7 +381,7 @@ const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
   const onWindowPointerUp = useCallback(() => {
     if (!operationRef.current) return;
 
-    const oldElement = useStore.getState().elements.find((e) => e.id === id) as WaterHeaterModel;
+    const oldElement = useStore.getState().elements.find((e) => e.id === id) as SolarWaterHeaterModel;
 
     switch (operationRef.current) {
       case Operation.Move: {
@@ -392,7 +392,7 @@ const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
           raycaster.setFromCamera(pointer, get().camera);
           const intersectionData = getIntersectionData(raycaster, get().scene, operationRef.current);
 
-          const waterHeater = state.elements.find((e) => e.id === id) as WaterHeaterModel;
+          const waterHeater = state.elements.find((e) => e.id === id) as SolarWaterHeaterModel;
           if (!waterHeater) return;
 
           // change parent first if needed
@@ -439,7 +439,7 @@ const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
       case Operation.ResizeX: {
         setCommonStore((state) => {
           if (!boxGroupMeshRef.current || !groupRef.current) return;
-          const waterHeater = state.elements.find((e) => e.id === id) as WaterHeaterModel | undefined;
+          const waterHeater = state.elements.find((e) => e.id === id) as SolarWaterHeaterModel | undefined;
           if (!waterHeater) return;
           waterHeater.lx = boxGroupMeshRef.current.scale.x;
           waterHeater.ly = boxGroupMeshRef.current.scale.y;
@@ -453,7 +453,7 @@ const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
       case Operation.ResizeHeight: {
         setCommonStore((state) => {
           if (!waterTankGroupRef.current) return;
-          const waterHeater = state.elements.find((e) => e.id === id) as WaterHeaterModel | undefined;
+          const waterHeater = state.elements.find((e) => e.id === id) as SolarWaterHeaterModel | undefined;
           if (!waterHeater) return;
           waterHeater.lz = waterTankGroupRef.current.position.z + waterTankRadius;
         });
@@ -463,7 +463,7 @@ const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
       case Operation.RotateUpper: {
         setCommonStore((state) => {
           if (!azimuthGroupRef.current) return;
-          const waterHeater = state.elements.find((e) => e.id === id) as WaterHeaterModel | undefined;
+          const waterHeater = state.elements.find((e) => e.id === id) as SolarWaterHeaterModel | undefined;
           if (!waterHeater) return;
           const angle = SolarPanelUtil.getRelativeAzimuth(azimuthGroupRef.current.rotation.z);
           waterHeater.relativeAzimuth = angle;
@@ -488,7 +488,7 @@ const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
     //     }, 10);
     //   }
     // }
-    WaterHeaterUtil.addUndoable(oldElement, operationRef.current);
+    SolarWaterHeaterUtil.addUndoable(oldElement, operationRef.current);
 
     if (get().frameloop !== 'demand') {
       setFrameLoop('demand');
@@ -805,4 +805,4 @@ const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
   );
 });
 
-export default WaterHeater;
+export default SolarWaterHeater;

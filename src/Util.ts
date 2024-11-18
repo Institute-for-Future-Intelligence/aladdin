@@ -1176,7 +1176,7 @@ export class Util {
       objectType === ObjectType.FresnelReflector ||
       objectType === ObjectType.Heliostat ||
       objectType === ObjectType.WindTurbine ||
-      objectType === ObjectType.WaterHeater ||
+      objectType === ObjectType.SolarWaterHeater ||
       objectType === ObjectType.Sensor ||
       objectType === ObjectType.Light ||
       objectType === ObjectType.Polygon ||
@@ -1200,7 +1200,7 @@ export class Util {
   }
 
   static isSolarCollectorType(type: ObjectType): boolean {
-    return type === ObjectType.SolarPanel || type === ObjectType.WaterHeater || Util.isCspCollectorType(type);
+    return type === ObjectType.SolarPanel || type === ObjectType.SolarWaterHeater || Util.isCspCollectorType(type);
   }
 
   static isCspCollector(elem: ElementModel): boolean {

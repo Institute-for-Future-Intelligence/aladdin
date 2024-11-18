@@ -7,27 +7,28 @@ import { ElementModel } from 'src/models/ElementModel';
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
 import { Copy, Cut, DialogItem, Lock } from '../../menuItems';
-import { WaterHeaterModel } from 'src/models/WaterHeaterModel';
+import { SolarWaterHeaterModel } from 'src/models/SolarWaterHeaterModel';
 import i18n from 'src/i18n/i18n';
-import WaterHeaterLengthInput from './waterHeaterLengthInput';
-import WaterHeaterWidthInput from './waterHeaterWidthInput';
+import SolarWaterHeaterLengthInput from './solarWaterHeaterLengthInput';
+import SolarWaterHeaterWidthInput from './solarWaterHeaterWidthInput';
 import { Util } from 'src/Util';
 import { UNIT_VECTOR_POS_Z_ARRAY } from 'src/constants';
-import WaterHeaterRelativeAzimuthInput from './waterHeaterRelativeAzimuthInput';
-import WaterHeaterHeightInput from './waterHeaterHeightInput';
-import WaterHeaterColorSelection from './waterHeaterColorSelection';
+import SolarWaterHeaterRelativeAzimuthInput from './solarWaterHeaterRelativeAzimuthInput';
+import SolarWaterHeaterHeightInput from './solarWaterHeaterHeightInput';
+import SolarWaterHeaterColorSelection from './solarWaterHeaterColorSelection';
 
-export const createWaterHeaterMenu = (selectedElement: ElementModel) => {
+export const createSolarWaterHeaterMenu = (selectedElement: ElementModel) => {
   const items: MenuProps['items'] = [];
 
-  if (selectedElement.type !== ObjectType.WaterHeater) return { items };
+  if (selectedElement.type !== ObjectType.SolarWaterHeater) return { items };
 
-  const waterHeater = selectedElement as WaterHeaterModel;
+  const waterHeater = selectedElement as SolarWaterHeaterModel;
 
   const editable = !waterHeater.locked;
   const lang = { lng: useStore.getState().language };
   const upright =
-    selectedElement.type === ObjectType.WaterHeater && Util.isIdentical(waterHeater.normal, UNIT_VECTOR_POS_Z_ARRAY);
+    selectedElement.type === ObjectType.SolarWaterHeater &&
+    Util.isIdentical(waterHeater.normal, UNIT_VECTOR_POS_Z_ARRAY);
 
   items.push({
     key: 'water-heater-copy',
@@ -50,15 +51,15 @@ export const createWaterHeaterMenu = (selectedElement: ElementModel) => {
     items.push(
       {
         key: 'water-heater-length',
-        label: <DialogItem Dialog={WaterHeaterLengthInput}>{i18n.t('word.Length', lang)} ...</DialogItem>,
+        label: <DialogItem Dialog={SolarWaterHeaterLengthInput}>{i18n.t('word.Length', lang)} ...</DialogItem>,
       },
       {
         key: 'water-heater-width',
-        label: <DialogItem Dialog={WaterHeaterWidthInput}>{i18n.t('word.Width', lang)} ...</DialogItem>,
+        label: <DialogItem Dialog={SolarWaterHeaterWidthInput}>{i18n.t('word.Width', lang)} ...</DialogItem>,
       },
       {
         key: 'water-heater-height',
-        label: <DialogItem Dialog={WaterHeaterHeightInput}>{i18n.t('word.Height', lang)} ...</DialogItem>,
+        label: <DialogItem Dialog={SolarWaterHeaterHeightInput}>{i18n.t('word.Height', lang)} ...</DialogItem>,
       },
     );
 
@@ -66,7 +67,7 @@ export const createWaterHeaterMenu = (selectedElement: ElementModel) => {
       items.push({
         key: 'water-heater-relative-azimuth',
         label: (
-          <DialogItem Dialog={WaterHeaterRelativeAzimuthInput}>
+          <DialogItem Dialog={SolarWaterHeaterRelativeAzimuthInput}>
             {i18n.t('solarCollectorMenu.RelativeAzimuth', lang)} ...
           </DialogItem>
         ),
@@ -75,7 +76,7 @@ export const createWaterHeaterMenu = (selectedElement: ElementModel) => {
 
     items.push({
       key: 'water-heater-frame-color',
-      label: <DialogItem Dialog={WaterHeaterColorSelection}>{i18n.t('word.Color', lang)} ...</DialogItem>,
+      label: <DialogItem Dialog={SolarWaterHeaterColorSelection}>{i18n.t('word.Color', lang)} ...</DialogItem>,
     });
   }
 
