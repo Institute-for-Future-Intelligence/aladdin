@@ -39,7 +39,8 @@ import { WATER_HEATER_WRAPPER_NAME } from './waterHeaterWrapper';
 import PolarGrid, { PolarGridRefProps } from '../solarPanel/polarGrid';
 import { WaterHeaterUtil } from './waterHeaterUtil';
 import Wireframe from './wireframe';
-import Materials, { MaterialRefProps } from './materials';
+import PanelMaterial, { MaterialRefProps } from './panelMaterial';
+import BarMaterial from './barMaterial';
 
 const MOUNT_LEFT = 'Mount Left';
 const MOUNT_RIGHT = 'Mount Right';
@@ -76,7 +77,6 @@ const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
   // constant
   const panelLength = lx;
   const panelWidth = ly;
-  const panelThickness = 0.05;
   const waterTankLength = panelLength + 0.25;
   const mountHeight = lz - waterTankRadius * 2; // surface to tank bottom, lz is from surface to top
   const angle = Math.asin(Math.min(1, (mountHeight + waterTankRadius) / panelWidth));
@@ -670,7 +670,7 @@ const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
             rotation={[0, 0, HALF_PI]}
             scale={[1, waterTankLength, 1]}
           >
-            <meshStandardMaterial color={color} />
+            <meshStandardMaterial color={color} roughness={0.2} />
           </Cylinder>
           {/* height handle */}
           {selected && (
@@ -691,16 +691,19 @@ const WaterHeater = React.memo((waterHeater: WaterHeaterModel) => {
           position={[0, panelWidth / 2, waterTankRadius + mountHeight]}
           rotation={[angle, 0, 0]}
         >
-          <group position={[0, -panelWidth / 2, panelThickness / 2]}>
+          <group position={[0, -panelWidth / 2, 0]}>
             {/* panel box group */}
-            <group ref={boxGroupMeshRef} scale={[panelLength, panelWidth, panelThickness]}>
+            <group ref={boxGroupMeshRef} scale={[panelLength, panelWidth, 1]}>
               {/* panel box mesh */}
               <Plane castShadow={false} receiveShadow={shadowEnabled}>
-                <Materials ref={materialRefFront} lx={lx} ly={ly} color={'white'} side={FrontSide} />
+                <PanelMaterial ref={materialRefFront} lx={lx} ly={ly} side={FrontSide} />
+              </Plane>
+              <Plane receiveShadow={shadowEnabled} position={[0, -0.475, 0.001]} args={[1, 0.05]}>
+                <BarMaterial />
               </Plane>
               {shadowEnabled && (
-                <Plane castShadow={shadowEnabled} receiveShadow={false} position={[0, 0, -1]}>
-                  <Materials ref={materialRefBack} lx={lx} ly={ly} color={'white'} side={BackSide} />
+                <Plane castShadow={shadowEnabled} receiveShadow={false} position={[0, 0, -0.05]}>
+                  <PanelMaterial ref={materialRefBack} lx={lx} ly={ly} side={BackSide} />
                 </Plane>
               )}
               {/* simulation panel */}

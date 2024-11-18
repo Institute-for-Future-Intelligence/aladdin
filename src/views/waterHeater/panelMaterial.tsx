@@ -4,19 +4,17 @@
 
 import { useStore } from 'src/stores/common';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
-import { PvModel } from 'src/models/PvModel';
 import { DEFAULT_SOLAR_PANEL_SHININESS, SOLAR_PANEL_BLACK_SPECULAR, SOLAR_PANEL_BLUE_SPECULAR } from 'src/constants';
 import * as Selector from '../../stores/selector';
 import { Color, Side } from 'three';
 import { useMaterialSize } from '../solarPanel/hooks';
 import { forwardRef, useImperativeHandle } from 'react';
 import { Operation } from '../solarPanel/refSolarPanel';
-import { useWaterHeaterTexture } from './texture';
+import { useWaterHeaterPanelTexture } from './texture';
 
 interface MaterialsProps {
   lx: number;
   ly: number;
-  color: string;
   side: Side;
 }
 
@@ -24,35 +22,31 @@ export interface MaterialRefProps {
   update: (lx: number | undefined, ly?: number | undefined) => void;
 }
 
-const Materials = forwardRef(({ lx, ly, color, side }: MaterialsProps, ref) => {
+const PanelMaterial = forwardRef(({ lx, ly, side }: MaterialsProps, ref) => {
   const { materialLx, materialLy, setMaterialSize } = useMaterialSize(lx, ly);
 
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
   const solarPanelShininess = useStore(Selector.viewState.solarPanelShininess);
 
-  const pvModelName = 'SPR-X21-335-BLK';
-  const pvModel = useStore.getState().pvModules[pvModelName] as PvModel;
-
-  const texture = useWaterHeaterTexture(materialLx, materialLy);
+  const texture = useWaterHeaterPanelTexture(materialLx, materialLy);
   // const heatmapTexture = useSolarPanelHeatmapTexture(id);
   const heatmapTexture = null;
 
   const renderTopTextureMaterial = () => {
     if (showSolarRadiationHeatmap && heatmapTexture) {
-      return <meshBasicMaterial attach="material-4" map={heatmapTexture} />;
+      return <meshBasicMaterial map={heatmapTexture} />;
     }
     if (!texture) return null;
     if (orthographic || solarPanelShininess === 0) {
-      return <meshStandardMaterial attach="material-4" map={texture} color={color} />;
+      return <meshStandardMaterial map={texture} side={side} transparent={true} />;
     }
     return (
       <meshPhongMaterial
-        specular={new Color(pvModel?.color === 'Blue' ? SOLAR_PANEL_BLUE_SPECULAR : SOLAR_PANEL_BLACK_SPECULAR)}
+        specular={new Color(SOLAR_PANEL_BLACK_SPECULAR)}
         shininess={solarPanelShininess ?? DEFAULT_SOLAR_PANEL_SHININESS}
         side={side}
         map={texture}
-        color={color}
         transparent={true}
       />
     );
@@ -72,4 +66,4 @@ const Materials = forwardRef(({ lx, ly, color, side }: MaterialsProps, ref) => {
   return <>{renderTopTextureMaterial()}</>;
 });
 
-export default Materials;
+export default PanelMaterial;
