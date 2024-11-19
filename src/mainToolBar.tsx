@@ -3,7 +3,7 @@
  */
 
 import styled from 'styled-components';
-import { Avatar, Button, Dropdown, MenuProps, Popover, Space } from 'antd';
+import { Avatar, Button, Dropdown, MenuProps, Modal, Space } from 'antd';
 import MainToolBarButtons from './mainToolBarButtons';
 import i18n from './i18n/i18n';
 import React from 'react';
@@ -12,6 +12,7 @@ import * as Selector from './stores/selector';
 import { usePrimitiveStore } from './stores/commonPrimitive';
 import { MenuItem } from './components/contextMenu/menuItems';
 import { useLanguage } from './hooks';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 
 const ButtonsContainer = styled.div`
   position: absolute;
@@ -39,6 +40,25 @@ const MainToolBar = React.memo(({ signIn, signInAnonymously, signOut }: MainTool
 
   const lang = useLanguage();
 
+  const signOutCheck = () => {
+    if (user.anonymous) {
+      Modal.confirm({
+        title: `${i18n.t('message.SigningOutAnonymousAccount', lang)}`,
+        icon: <QuestionCircleOutlined />,
+        onOk: () => {
+          signOut();
+        },
+        onCancel: () => {
+          // do nothing
+        },
+        okText: `${i18n.t('word.Yes', lang)}`,
+        cancelText: `${i18n.t('word.No', lang)}`,
+      });
+    } else {
+      signOut();
+    }
+  };
+
   const avatarMenu: MenuProps['items'] = [
     {
       key: 'account',
@@ -58,7 +78,7 @@ const MainToolBar = React.memo(({ signIn, signInAnonymously, signOut }: MainTool
     {
       key: 'signOut',
       label: (
-        <MenuItem noPadding onClick={signOut}>
+        <MenuItem noPadding onClick={signOutCheck}>
           {i18n.t('avatarMenu.SignOut', lang)}
         </MenuItem>
       ),
