@@ -287,6 +287,7 @@ export const i18n_ua = {
       BuildingContainsEmptyWall: 'Будівля містить одну або кілька порожніх стін.',
       BuildingRoofMissing: 'У будівлі відсутній дах.',
       UnknownErrors: 'Невідомі помилки.',
+      SigningOutAnonymousAccount: 'Are you sure you want to sign out? This anonymous account will be lost.',
     },
 
     menu: {

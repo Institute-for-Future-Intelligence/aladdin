@@ -284,6 +284,7 @@ export const i18n_tr = {
       BuildingContainsEmptyWall: 'Building contains one or more empty wall.',
       BuildingRoofMissing: 'Building has a missing roof.',
       UnknownErrors: 'Unknown errors.',
+      SigningOutAnonymousAccount: 'Are you sure you want to sign out? This anonymous account will be lost.',
     },
 
     menu: {

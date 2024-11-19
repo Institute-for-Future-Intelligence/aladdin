@@ -283,6 +283,7 @@ export const i18n_zh_cn = {
       BuildingContainsEmptyWall: '建筑物有空墙。',
       BuildingRoofMissing: '建筑物没有屋顶。',
       UnknownErrors: '未知错误。',
+      SigningOutAnonymousAccount: '你确定退出吗？一旦退出，此匿名账号将不可恢复。',
     },
 
     menu: {
