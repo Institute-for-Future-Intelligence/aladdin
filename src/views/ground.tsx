@@ -48,6 +48,7 @@ import { GroupableModel, isGroupable } from 'src/models/Groupable';
 import { WindowModel } from 'src/models/WindowModel';
 import { throttle } from 'lodash';
 import { useLanguage } from '../hooks';
+import { SolarWaterHeaterModel } from 'src/models/SolarWaterHeaterModel';
 
 const Ground = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
@@ -1081,6 +1082,8 @@ const Ground = React.memo(() => {
     return useStore.getState().elements.filter((e) => {
       if (e.foundationId !== fId) return false;
       if (e.type === ObjectType.SolarPanel && (e as SolarPanelModel).parentType === ObjectType.Roof) return true;
+      if (e.type === ObjectType.SolarWaterHeater && (e as SolarWaterHeaterModel).parentType === ObjectType.Roof)
+        return true;
       if (e.type === ObjectType.Window && (e as WindowModel).parentType === ObjectType.Roof) return true;
       if (e.type === ObjectType.Sensor || e.type === ObjectType.Light) return true;
       return false;
@@ -1421,7 +1424,11 @@ const Ground = React.memo(() => {
                 const euler = new Euler(0, 0, selectedElement.rotation[2]);
                 for (const e of elementsOnRoof) {
                   // skylight window position is absolute to foundation
-                  if (e.type === ObjectType.Window || e.type === ObjectType.SolarPanel) {
+                  if (
+                    e.type === ObjectType.Window ||
+                    e.type === ObjectType.SolarPanel ||
+                    e.type === ObjectType.SolarWaterHeater
+                  ) {
                     const centerAbsPos = new Vector3(e.cx, e.cy).applyEuler(euler);
                     centerAbsPos.add(foundationCenter);
                     absPosMapRef.current.set(e.id, centerAbsPos);
@@ -1898,7 +1905,10 @@ const Ground = React.memo(() => {
                             break;
                           case ResizeHandleType.Left:
                           case ResizeHandleType.Right:
-                            if (childClone.type === ObjectType.SolarPanel) {
+                            if (
+                              childClone.type === ObjectType.SolarPanel ||
+                              childClone.type === ObjectType.SolarWaterHeater
+                            ) {
                               childClone.cx = relativePos.x;
                             } else {
                               childClone.cx = relativePos.x / lx;
@@ -1921,7 +1931,7 @@ const Ground = React.memo(() => {
                     }
                   } else {
                     if (
-                      childClone.type === ObjectType.SolarPanel &&
+                      (childClone.type === ObjectType.SolarPanel || childClone.type === ObjectType.SolarWaterHeater) &&
                       (childClone as SolarPanelModel).parentType === ObjectType.Roof
                     ) {
                       const centerAbsPos = absPosMapRef.current.get(c.id);
@@ -2147,7 +2157,9 @@ const Ground = React.memo(() => {
           }
           if (
             e.foundationId === grabRef.current.id &&
-            (e.type === ObjectType.SolarPanel || e.type === ObjectType.Window) &&
+            (e.type === ObjectType.SolarPanel ||
+              e.type === ObjectType.SolarWaterHeater ||
+              e.type === ObjectType.Window) &&
             (e as SolarPanelModel).parentType === ObjectType.Roof
           ) {
             const centerAbsPos = absPosMapRef.current.get(e.id);
