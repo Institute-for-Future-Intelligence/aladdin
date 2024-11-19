@@ -1435,16 +1435,16 @@ export class Util {
     return ElementState.Valid;
   }
 
-  static checkElementOnRoofState(sp: SolarPanelModel, roof: RoofModel): ElementState {
-    if (sp.foundationId) {
-      const foundation = useStore.getState().getElementById(sp.foundationId);
+  static checkElementOnRoofState(element: ElementModel, roof: RoofModel): ElementState {
+    if (element.foundationId) {
+      const foundation = useStore.getState().getElementById(element.foundationId);
       if (foundation) {
-        const solarPanelVertices = RoofUtil.getSolarPanelVerticesOnRoof(sp as SolarPanelModel, foundation);
+        const elementVertices = RoofUtil.getElementVerticesOnRoof(element, foundation);
         const wallVertices = RoofUtil.getRoofBoundaryVertices(roof);
-        if (!RoofUtil.rooftopElementBoundaryCheck(solarPanelVertices, wallVertices)) {
+        if (!RoofUtil.rooftopElementBoundaryCheck(elementVertices, wallVertices)) {
           return ElementState.OutsideBoundary;
         }
-        if (!RoofUtil.rooftopSPCollisionCheck(sp as SolarPanelModel, foundation, solarPanelVertices)) {
+        if (!RoofUtil.rooftopElementCollisionCheck(element, foundation, elementVertices)) {
           return ElementState.OverLap;
         }
         return ElementState.Valid;

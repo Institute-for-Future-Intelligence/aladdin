@@ -17,25 +17,27 @@ import { PvModel } from 'src/models/PvModel';
 import { showError } from 'src/helpers';
 import i18n from 'src/i18n/i18n';
 import { RoofModel } from 'src/models/RoofModel';
+import { SolarWaterHeaterModel } from 'src/models/SolarWaterHeaterModel';
 
 export class SolarPanelUtil {
-  static isNewPositionOk(sp: SolarPanelModel) {
-    const parent = useStore.getState().elements.find((e) => e.id === sp.parentId);
+  static isNewPositionOk(el: SolarPanelModel | SolarWaterHeaterModel) {
+    const parent = useStore.getState().elements.find((e) => e.id === el.parentId);
     if (!parent) return false;
     switch (parent.type) {
       case ObjectType.Foundation: {
-        if (!Util.isSolarCollectorWithinHorizontalSurface(sp, parent)) {
+        if (!Util.isSolarCollectorWithinHorizontalSurface(el, parent)) {
           showError(i18n.t('message.MoveOutsideBoundaryCancelled', { lng: useStore.getState().language }));
           return false;
         }
-        if (useStore.getState().overlapWithSibling(sp)) {
+        if (useStore.getState().overlapWithSibling(el)) {
           showError(i18n.t('message.MoveCancelledBecauseOfOverlap', { lng: useStore.getState().language }));
           return false;
         }
         break;
       }
       case ObjectType.Cuboid: {
-        const state = Util.checkElementOnCuboidState(sp, parent as RoofModel);
+        if (el.type === ObjectType.SolarWaterHeater) break;
+        const state = Util.checkElementOnCuboidState(el as SolarPanelModel, parent as RoofModel);
         if (state === ElementState.OutsideBoundary) {
           showError(i18n.t('message.MoveOutsideBoundaryCancelled', { lng: useStore.getState().language }));
           return false;
@@ -46,7 +48,7 @@ export class SolarPanelUtil {
         break;
       }
       case ObjectType.Wall: {
-        const state = Util.checkElementOnWallState(sp, parent);
+        const state = Util.checkElementOnWallState(el, parent);
         if (state === ElementState.OutsideBoundary) {
           showError(i18n.t('message.MoveOutsideBoundaryCancelled', { lng: useStore.getState().language }));
           return false;
@@ -57,7 +59,7 @@ export class SolarPanelUtil {
         break;
       }
       case ObjectType.Roof: {
-        const state = Util.checkElementOnRoofState(sp, parent as RoofModel);
+        const state = Util.checkElementOnRoofState(el, parent as RoofModel);
         if (state === ElementState.OutsideBoundary) {
           showError(i18n.t('message.MoveOutsideBoundaryCancelled', { lng: useStore.getState().language }));
           return false;

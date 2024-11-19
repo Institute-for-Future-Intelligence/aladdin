@@ -2,7 +2,7 @@
  * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
-import { Box, Cylinder, Plane } from '@react-three/drei';
+import { Box, Cylinder, Plane, Sphere } from '@react-three/drei';
 import { ThreeEvent, useFrame, useThree } from '@react-three/fiber';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { HALF_PI } from 'src/constants';
@@ -48,10 +48,9 @@ export const WATER_TANK_RADIUS = 0.3;
 
 /**
  * todos:
+ * - fix on resizing foundation
  * - resize y
  * - text
- * - move/resize validation
- * - copy/cut/paste
  * - context menu
  * - simulation
  */
@@ -473,22 +472,21 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
     }
 
     // // check validation and add undo
-    // const newElement = useStore.getState().elements.find((e) => e.id === id) as WaterHeaterModel;
-    // if (oldElement && newElement) {
-    //   if (SolarPanelUtil.isNewPositionOk(newElement)) {
-    //     SolarPanelUtil.addUndoable(oldElement, operationRef.current);
-    //   } else {
-    //     setTimeout(() => {
-    //       setCommonStore((state) => {
-    //         const idx = state.elements.findIndex((e) => e.id === id);
-    //         if (idx !== -1) {
-    //           state.elements[idx] = oldElement;
-    //         }
-    //       });
-    //     }, 10);
-    //   }
-    // }
-    SolarWaterHeaterUtil.addUndoable(oldElement, operationRef.current);
+    const newElement = useStore.getState().elements.find((e) => e.id === id) as SolarWaterHeaterModel;
+    if (oldElement && newElement) {
+      if (SolarPanelUtil.isNewPositionOk(newElement)) {
+        SolarWaterHeaterUtil.addUndoable(oldElement, operationRef.current);
+      } else {
+        setTimeout(() => {
+          setCommonStore((state) => {
+            const idx = state.elements.findIndex((e) => e.id === id);
+            if (idx !== -1) {
+              state.elements[idx] = oldElement;
+            }
+          });
+        }, 10);
+      }
+    }
 
     if (get().frameloop !== 'demand') {
       setFrameLoop('demand');

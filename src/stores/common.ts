@@ -106,6 +106,7 @@ import { ProjectUtil } from '../panels/ProjectUtil';
 import { StoreUtil } from './StoreUtil';
 import { isGroupable } from 'src/models/Groupable';
 import { Filter } from '../Filter';
+import { SolarWaterHeaterModel } from 'src/models/SolarWaterHeaterModel';
 
 enableMapSet();
 
@@ -3396,7 +3397,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                         oldElem.cz,
                         oldElem.type === ObjectType.Polygon,
                       );
-                      if (newElem?.type === ObjectType.SolarPanel) {
+                      if (newElem?.type === ObjectType.SolarPanel || newElem?.type === ObjectType.SolarWaterHeater) {
                         newElem.rotation = [...oldElem.rotation];
                         newElem.normal = [...oldElem.normal];
                       }
@@ -3483,7 +3484,10 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                     if (newParent.parentId) {
                       const foundation = state.getElementById(newParent.parentId);
                       if (foundation) {
-                        if (elemToPaste.type === ObjectType.SolarPanel) {
+                        if (
+                          elemToPaste.type === ObjectType.SolarPanel ||
+                          elemToPaste.type === ObjectType.SolarWaterHeater
+                        ) {
                           m.sub(new Vector3(foundation.cx, foundation.cy, foundation.cz)).applyEuler(
                             new Euler(0, 0, -foundation.rotation[2]),
                           );
@@ -3718,7 +3722,11 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                               break;
                             }
                             if (
-                              !RoofUtil.rooftopSPCollisionCheck(e as SolarPanelModel, foundation, solarPanelVertices)
+                              !RoofUtil.rooftopElementCollisionCheck(
+                                e as SolarPanelModel,
+                                foundation,
+                                solarPanelVertices,
+                              )
                             ) {
                               showError(i18n.t('message.CannotPasteBecauseOfOverlap', lang));
                               break;
@@ -3755,6 +3763,39 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                         } else {
                           approved = true;
                         }
+                      }
+                      break;
+                    }
+                    case ObjectType.SolarWaterHeater: {
+                      if (newParent && newParent.type === ObjectType.Roof) {
+                        if (e.foundationId) {
+                          const foundation = state.getElementById(e.foundationId);
+                          if (foundation) {
+                            const waterHeaterVertices = RoofUtil.getSolarWaterHeaterVerticesOnRoof(
+                              e as SolarWaterHeaterModel,
+                              foundation,
+                            );
+                            const boundaryVertices = RoofUtil.getRoofBoundaryVertices(newParent as RoofModel);
+
+                            if (!RoofUtil.rooftopElementBoundaryCheck(waterHeaterVertices, boundaryVertices)) {
+                              showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
+                              break;
+                            }
+                            if (
+                              !RoofUtil.rooftopElementCollisionCheck(
+                                e as SolarWaterHeaterModel,
+                                foundation,
+                                waterHeaterVertices,
+                              )
+                            ) {
+                              showError(i18n.t('message.CannotPasteBecauseOfOverlap', lang));
+                              break;
+                            }
+                            approved = true;
+                            state.updateElementOnRoofFlag = true;
+                          }
+                        }
+                        break;
                       }
                       break;
                     }
@@ -3799,7 +3840,11 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                               break;
                             }
                             if (
-                              !RoofUtil.rooftopSPCollisionCheck(e as SolarPanelModel, foundation, solarPanelVertices)
+                              !RoofUtil.rooftopElementCollisionCheck(
+                                e as SolarPanelModel,
+                                foundation,
+                                solarPanelVertices,
+                              )
                             ) {
                               showError(i18n.t('message.CannotPasteBecauseOfOverlap', lang));
                               break;
@@ -4155,7 +4200,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                                   );
                                   if (
                                     RoofUtil.rooftopElementBoundaryCheck(solarPanelVertices, boundaryVertices) &&
-                                    RoofUtil.rooftopSPCollisionCheck(
+                                    RoofUtil.rooftopElementCollisionCheck(
                                       e as SolarPanelModel,
                                       foundation,
                                       solarPanelVertices,
@@ -4177,7 +4222,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                                     );
                                     if (
                                       RoofUtil.rooftopElementBoundaryCheck(solarPanelVertices, boundaryVertices) &&
-                                      RoofUtil.rooftopSPCollisionCheck(
+                                      RoofUtil.rooftopElementCollisionCheck(
                                         e as SolarPanelModel,
                                         foundation,
                                         solarPanelVertices,
@@ -4267,6 +4312,79 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                       }
                       break;
                     }
+                    case ObjectType.SolarWaterHeater: {
+                      if (e.parentId) {
+                        const parent = state.getParent(e);
+                        if (parent) {
+                          if (parent.type === ObjectType.Roof) {
+                            if (elem.foundationId) {
+                              const foundation = state.getElementById(elem.foundationId);
+                              if (foundation) {
+                                const boundaryVertices = RoofUtil.getRoofBoundaryVertices(parent as RoofModel);
+
+                                const step = e.lx * 1.25;
+                                e.cx += step;
+                                while (e.cx + e.lx / 2 < foundation.lx / 2) {
+                                  const waterHeaterVertices = RoofUtil.getSolarWaterHeaterVerticesOnRoof(
+                                    e as SolarWaterHeaterModel,
+                                    foundation,
+                                  );
+
+                                  if (
+                                    RoofUtil.rooftopElementBoundaryCheck(waterHeaterVertices, boundaryVertices) &&
+                                    RoofUtil.rooftopElementCollisionCheck(
+                                      e as SolarWaterHeaterModel,
+                                      foundation,
+                                      waterHeaterVertices,
+                                    )
+                                  ) {
+                                    state.elements.push(e);
+                                    approved = true;
+                                    break;
+                                  } else {
+                                    e.cx += step;
+                                  }
+                                }
+                                if (!approved) {
+                                  e.cx = elem.cx - step;
+                                  while (e.cx - e.lx / 2 > -foundation.lx / 2) {
+                                    const waterHeaterVertices = RoofUtil.getSolarWaterHeaterVerticesOnRoof(
+                                      e as SolarWaterHeaterModel,
+                                      foundation,
+                                    );
+                                    if (
+                                      RoofUtil.rooftopElementBoundaryCheck(waterHeaterVertices, boundaryVertices) &&
+                                      RoofUtil.rooftopElementCollisionCheck(
+                                        e as SolarWaterHeaterModel,
+                                        foundation,
+                                        waterHeaterVertices,
+                                      )
+                                    ) {
+                                      state.elements.push(e);
+                                      approved = true;
+                                      break;
+                                    } else {
+                                      e.cx -= step;
+                                    }
+                                  }
+                                }
+                                if (!approved) {
+                                  const lang = { lng: state.language };
+                                  showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
+                                } else {
+                                  state.updateElementOnRoofFlag = true;
+                                }
+                              }
+                            }
+                            break;
+                          } else if (parent.type === ObjectType.Cuboid) {
+                            e.normal = [...elem.normal];
+                            e.rotation = [...elem.rotation];
+                          }
+                        }
+                      }
+                      break;
+                    }
                     case ObjectType.FresnelReflector:
                     case ObjectType.Heliostat:
                     case ObjectType.ParabolicDish:
@@ -4322,7 +4440,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                                   );
                                   if (
                                     RoofUtil.rooftopElementBoundaryCheck(solarPanelVertices, boundaryVertices) &&
-                                    RoofUtil.rooftopSPCollisionCheck(
+                                    RoofUtil.rooftopElementCollisionCheck(
                                       e as SolarPanelModel,
                                       foundation,
                                       solarPanelVertices,
@@ -4344,7 +4462,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                                     );
                                     if (
                                       RoofUtil.rooftopElementBoundaryCheck(solarPanelVertices, boundaryVertices) &&
-                                      RoofUtil.rooftopSPCollisionCheck(
+                                      RoofUtil.rooftopElementCollisionCheck(
                                         e as SolarPanelModel,
                                         foundation,
                                         solarPanelVertices,

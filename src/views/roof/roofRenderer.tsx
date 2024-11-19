@@ -312,7 +312,7 @@ export const spBoundaryCheck = (solarPanelVertices: Vector3[], wallVertices: Poi
 
 export const spCollisionCheck = (sp: SolarPanelModel, foundation: ElementModel, spVertices: Vector3[]) => {
   const lang = { lng: useStore.getState().language };
-  if (RoofUtil.rooftopSPCollisionCheck(sp, foundation, spVertices)) {
+  if (RoofUtil.rooftopElementCollisionCheck(sp, foundation, spVertices)) {
     return true;
   } else {
     if (useStore.getState().moveHandleType || useStore.getState().viewState.orthographic) {

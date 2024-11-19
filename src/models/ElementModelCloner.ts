@@ -36,6 +36,7 @@ import { DoorModel } from './DoorModel';
 import { WindTurbineModel } from './WindTurbineModel';
 import { FlowerModel } from './FlowerModel';
 import { LightModel } from './LightModel';
+import { SolarWaterHeaterModel } from './SolarWaterHeaterModel';
 
 export class ElementModelCloner {
   static clone(
@@ -72,6 +73,12 @@ export class ElementModelCloner {
         if (parent) {
           // must have a parent
           clone = ElementModelCloner.cloneSolarPanel(parent, e as SolarPanelModel, x, y, z);
+        }
+        break;
+      case ObjectType.SolarWaterHeater:
+        if (parent) {
+          // must have a parent
+          clone = ElementModelCloner.cloneSolarWaterHeater(parent, e as SolarWaterHeaterModel, x, y, z);
         }
         break;
       case ObjectType.ParabolicTrough:
@@ -391,6 +398,48 @@ export class ElementModelCloner {
       id: short.generate() as string,
       version: solarPanel.version,
     } as SolarPanelModel;
+  }
+
+  private static cloneSolarWaterHeater(
+    parent: ElementModel,
+    solarWaterHeater: SolarWaterHeaterModel,
+    x: number,
+    y: number,
+    z?: number,
+  ) {
+    let foundationId;
+    let parentType;
+    switch (parent.type) {
+      case ObjectType.Foundation:
+      case ObjectType.Cuboid:
+        foundationId = parent.id;
+        parentType = parent.type;
+        break;
+      case ObjectType.Roof:
+        parentType = ObjectType.Roof;
+        foundationId = parent.parentId;
+        break;
+    }
+    const rotation = [0, 0, 0];
+    const normal = [0, 0, 1];
+    return {
+      type: ObjectType.SolarWaterHeater,
+      cx: x,
+      cy: y,
+      cz: z,
+      lx: solarWaterHeater.lx,
+      ly: solarWaterHeater.ly,
+      lz: solarWaterHeater.lz,
+      waterTankRadius: solarWaterHeater.waterTankRadius,
+      relativeAzimuth: solarWaterHeater.relativeAzimuth,
+      showLabel: solarWaterHeater.showLabel,
+      normal: normal,
+      rotation: rotation,
+      parentType: parentType,
+      parentId: parent.id,
+      foundationId: foundationId,
+      id: short.generate() as string,
+    } as SolarWaterHeaterModel;
   }
 
   private static cloneParabolicTrough(

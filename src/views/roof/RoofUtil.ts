@@ -20,6 +20,7 @@ import { FoundationModel } from '../../models/FoundationModel';
 import { DEFAULT_POLYGONTOP } from '../window/window';
 import { ComposedWall } from './hooks';
 import { useDataStore } from 'src/stores/commonData';
+import { SolarWaterHeaterModel } from 'src/models/SolarWaterHeaterModel';
 
 export class RoofUtil {
   // roof related
@@ -484,6 +485,14 @@ export class RoofUtil {
     return vertices;
   }
 
+  static getElementVerticesOnRoof(el: ElementModel, foundation: ElementModel): Vector3[] {
+    if (el.type === ObjectType.SolarPanel)
+      return RoofUtil.getSolarPanelVerticesOnRoof(el as SolarPanelModel, foundation);
+    if (el.type === ObjectType.SolarWaterHeater)
+      return RoofUtil.getSolarWaterHeaterVerticesOnRoof(el as SolarWaterHeaterModel, foundation);
+    return [];
+  }
+
   static getSolarPanelVerticesOnRoof(sp: SolarPanelModel, foundation: ElementModel): Vector3[] {
     const vertices: Vector3[] = [];
     const center = new Vector3(sp.cx, sp.cy, sp.cz + foundation.cz);
@@ -499,6 +508,23 @@ export class RoofUtil {
         vertices.push(vertex);
       }
     }
+    return vertices;
+  }
+
+  static getSolarWaterHeaterVerticesOnRoof(swh: SolarWaterHeaterModel, foundation: ElementModel): Vector3[] {
+    const vertices: Vector3[] = []; // counter-clockwise
+    const { lx, ly, lz, waterTankRadius, relativeAzimuth } = swh;
+    const mountHeight = lz - waterTankRadius * 2; // surface to tank bottom, lz is from surface to top
+    const angle = Math.asin(Math.min(1, (mountHeight + waterTankRadius) / ly));
+    const width2D = ly * Math.cos(angle);
+
+    const topY = ly / 2 + waterTankRadius;
+    const center = new Vector3(swh.cx, swh.cy, swh.cz + foundation.cz);
+    const euler = new Euler(0, 0, relativeAzimuth, 'ZXY');
+    vertices.push(new Vector3(-lx / 2, topY).applyEuler(euler).add(center));
+    vertices.push(new Vector3(-lx / 2, topY - width2D).applyEuler(euler).add(center));
+    vertices.push(new Vector3(lx / 2, topY - width2D).applyEuler(euler).add(center));
+    vertices.push(new Vector3(lx / 2, topY).applyEuler(euler).add(center));
     return vertices;
   }
 
@@ -559,22 +585,26 @@ export class RoofUtil {
     return true;
   }
 
-  static rooftopSPCollisionCheck(sp: SolarPanelModel, foundation: ElementModel, spVertices: Vector3[]): boolean {
+  static rooftopElementCollisionCheck(el: ElementModel, foundation: ElementModel, selfVertices: Vector3[]): boolean {
     for (const elem of useStore.getState().elements) {
-      if (elem.type === sp.type && elem.parentId === sp.parentId && elem.id !== sp.id) {
-        const sp2Vertices = RoofUtil.getSolarPanelVerticesOnRoof(elem as SolarPanelModel, foundation);
-        for (const vertex of spVertices) {
-          if (Util.isPointInside(vertex.x, vertex.y, sp2Vertices)) {
+      if (
+        (elem.type === ObjectType.SolarPanel || elem.type === ObjectType.SolarWaterHeater) &&
+        elem.parentId === el.parentId &&
+        elem.id !== el.id
+      ) {
+        const siblingVertices = RoofUtil.getElementVerticesOnRoof(elem, foundation);
+        for (const vertex of selfVertices) {
+          if (Util.isPointInside(vertex.x, vertex.y, siblingVertices)) {
             return false;
           }
         }
-        for (const vertex of sp2Vertices) {
-          if (Util.isPointInside(vertex.x, vertex.y, spVertices)) {
+        for (const vertex of siblingVertices) {
+          if (Util.isPointInside(vertex.x, vertex.y, selfVertices)) {
             return false;
           }
         }
-        const v1 = spVertices.map(Util.mapVector3ToPoint2);
-        const v2 = sp2Vertices.map(Util.mapVector3ToPoint2);
+        const v1 = selfVertices.map(Util.mapVector3ToPoint2);
+        const v2 = siblingVertices.map(Util.mapVector3ToPoint2);
         v1.push(v1[0]);
         v2.push(v2[0]);
         for (let i1 = 0; i1 < v1.length - 1; i1++) {
