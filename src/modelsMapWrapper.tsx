@@ -17,7 +17,7 @@ import { DEFAULT_ADDRESS } from './constants';
 import { usePrimitiveStore } from './stores/commonPrimitive';
 import { ModelSite } from './types';
 import ReactCountryFlag from 'react-country-flag';
-import { VerticalAlignBottomOutlined, VerticalAlignTopOutlined, UserOutlined } from '@ant-design/icons';
+import { VerticalAlignBottomOutlined, VerticalAlignTopOutlined, UserOutlined, SearchOutlined } from '@ant-design/icons';
 import ModelsGallery from './modelsGallery';
 import { useLanguage } from './hooks';
 import dayjs from 'dayjs';
@@ -220,8 +220,8 @@ const ModelsMapWrapper = React.memo(
               fontSize: 'medium',
               color: 'black',
               top: '-40px',
-              left: '40%',
-              width: '20%',
+              left: '240px',
+              width: '300px',
               height: '28px',
               background: 'white',
               borderRadius: '5px',
@@ -237,7 +237,7 @@ const ModelsMapWrapper = React.memo(
                   border: `1px solid transparent`,
                   width: `100%`,
                   height: `100%`,
-                  fontSize: `14px`,
+                  fontSize: `12px`,
                   paddingLeft: '8px',
                   paddingRight: '8px',
                   outline: `none`,
@@ -246,6 +246,7 @@ const ModelsMapWrapper = React.memo(
                 }}
               />
             </StandaloneSearchBox>
+            <SearchOutlined style={{ marginLeft: '100px' }} />
           </Space>
         )}
         {isLoaded && (
@@ -255,8 +256,8 @@ const ModelsMapWrapper = React.memo(
               fontSize: 'medium',
               color: 'black',
               top: '-40px',
-              left: '60%',
-              width: '40%',
+              left: '540px',
+              width: '400px',
               height: '28px',
               paddingLeft: '12px',
             }}

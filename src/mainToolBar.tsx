@@ -12,7 +12,7 @@ import * as Selector from './stores/selector';
 import { usePrimitiveStore } from './stores/commonPrimitive';
 import { MenuItem } from './components/contextMenu/menuItems';
 import { useLanguage } from './hooks';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { WarningOutlined } from '@ant-design/icons';
 
 const ButtonsContainer = styled.div`
   position: absolute;
@@ -44,7 +44,7 @@ const MainToolBar = React.memo(({ signIn, signInAnonymously, signOut }: MainTool
     if (user.anonymous) {
       Modal.confirm({
         title: `${i18n.t('message.SigningOutAnonymousAccount', lang)}`,
-        icon: <QuestionCircleOutlined />,
+        icon: <WarningOutlined />,
         type: 'warning',
         keyboard: false, // disable Escape key so that onCancel is not called when Escape is pressed
         onOk: () => {
