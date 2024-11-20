@@ -16,7 +16,7 @@ import Heliodon from './views/heliodonWrapper';
 import ifiLogo from './assets/ifi-logo.png';
 import MainMenu from './components/mainMenu/mainMenu';
 import { DEFAULT_SHADOW_CAMERA_FAR, DEFAULT_FOV, VERSION } from './constants';
-import { visitHomepage, visitIFI } from './helpers';
+import { visitHomepage } from './helpers';
 import AcceptCookie from './acceptCookie';
 import GroundImage from './views/groundImage';
 import DropdownContextMenu from './components/contextMenu';
@@ -277,14 +277,7 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
                 : 'antiquewhite',
           }}
         >
-          <img
-            alt="IFI Logo"
-            src={ifiLogo}
-            height="30px"
-            style={{ verticalAlign: 'bottom', cursor: 'pointer' }}
-            title={i18n.t('tooltip.gotoIFI', lang)}
-            onClick={visitIFI}
-          />
+          <img alt="IFI Logo" src={ifiLogo} height="30px" style={{ verticalAlign: 'bottom' }} />
           {' V ' + VERSION}
         </div>
       ) : (
@@ -295,14 +288,11 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
             height={projectView ? '24px' : '40px'}
             style={{
               position: 'absolute',
-              cursor: 'pointer',
               bottom: '6px',
               left: '6px',
               zIndex: 999,
               userSelect: 'none',
             }}
-            title={i18n.t('tooltip.gotoIFI', lang)}
-            onClick={visitIFI}
           />
           <div
             style={{
@@ -312,6 +302,7 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
               zIndex: 999,
               fontSize: '10px',
               userSelect: 'none',
+              pointerEvents: 'none',
               color: groundImage
                 ? groundImageType !== 'roadmap'
                   ? 'antiquewhite'
