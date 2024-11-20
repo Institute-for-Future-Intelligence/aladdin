@@ -45,14 +45,16 @@ const MainToolBar = React.memo(({ signIn, signInAnonymously, signOut }: MainTool
       Modal.confirm({
         title: `${i18n.t('message.SigningOutAnonymousAccount', lang)}`,
         icon: <QuestionCircleOutlined />,
+        type: 'warning',
+        keyboard: false, // disable Escape key so that onCancel is not called when Escape is pressed
         onOk: () => {
-          signOut();
+          // swap OK and Cancel so that ENTER maps to cancel
         },
         onCancel: () => {
-          // do nothing
+          signOut();
         },
-        okText: `${i18n.t('word.Yes', lang)}`,
-        cancelText: `${i18n.t('word.No', lang)}`,
+        okText: `${i18n.t('word.No', lang)}`,
+        cancelText: `${i18n.t('word.Yes', lang)}`,
       });
     } else {
       signOut();

@@ -365,7 +365,6 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
   };
 
   const signInAnonymously = () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
     firebase
       .auth()
       .signInAnonymously()
@@ -1144,7 +1143,9 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
       for (const [i, file] of cloudFilesRef.current.entries()) {
         if (file.title === title) {
           index = i;
-          removeFileFromList(uid, file);
+          removeFileFromList(uid, file).then(() => {
+            // ignore
+          });
           break;
         }
       }
@@ -1170,8 +1171,12 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
       if (index !== -1 && newFile && oldFile) {
         cloudFilesRef.current.splice(index, 1);
         cloudFilesRef.current.push(newFile);
-        removeFileFromList(uid, oldFile);
-        addFileToList(uid, newFile);
+        const newFile2 = newFile;
+        removeFileFromList(uid, oldFile).then(() => {
+          addFileToList(uid, newFile2).then(() => {
+            // ignore
+          });
+        });
       }
     }
   };
@@ -1215,7 +1220,9 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
                 removeCloudFileIfExisting(uid, title);
                 const file = { timestamp: data.timestamp, title } as CloudFileInfo;
                 cloudFilesRef.current.push(file);
-                addFileToList(uid, file);
+                addFileToList(uid, file).then(() => {
+                  // ignore
+                });
                 setUpdateCloudFileArray(true);
               }
             });
