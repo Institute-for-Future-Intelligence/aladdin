@@ -841,7 +841,7 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
 
           {/* XZ intersection plane */}
           {showXZIntersectionPlane && (
-            <Plane ref={xZIntersectionPlaneRef} args={[10000, 10000]} rotation={[HALF_PI, 0, 0, 'ZXY']} visible={true}>
+            <Plane ref={xZIntersectionPlaneRef} args={[10000, 10000]} rotation={[HALF_PI, 0, 0, 'ZXY']} visible={false}>
               <meshBasicMaterial color={'darkgrey'} />
             </Plane>
           )}
