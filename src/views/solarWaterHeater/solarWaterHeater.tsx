@@ -48,10 +48,7 @@ export const WATER_TANK_RADIUS = 0.3;
 
 /**
  * todos:
- * - fix on resizing foundation
- * - resize y
  * - text
- * - context menu
  * - simulation
  */
 
@@ -74,11 +71,10 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
   } = waterHeater;
 
   // constant
-  const panelLength = lx;
-  const panelWidth = ly;
-  const waterTankLength = panelLength + 0.25;
+  const panelWidth = Math.hypot(lz - waterTankRadius, ly);
+  const waterTankLength = lx + 0.25;
   const mountHeight = lz - waterTankRadius * 2; // surface to tank bottom, lz is from surface to top
-  const angle = Math.asin(Math.min(1, (mountHeight + waterTankRadius) / panelWidth));
+  const angle = Math.asin(Math.min(1, (lz - waterTankRadius) / panelWidth));
   const rotateHandleOffset = 0.5;
 
   // variable ref
@@ -93,9 +89,14 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
   // mesh ref
   const groupRef = useRef<Group>(null!);
   const azimuthGroupRef = useRef<Group>(null!);
-  const boxGroupMeshRef = useRef<Group>(null!);
+  const upperYOffsetGroup = useRef<Group>(null!);
+  const upperZOffsetGroup = useRef<Group>(null!);
+  const panelTiltGroupRef = useRef<Group>(null!);
+  const panelOffsetGroupRef = useRef<Group>(null!);
+  const panelPlaneGroupMeshRef = useRef<Group>(null!);
   const waterTankRef = useRef<Mesh>(null!);
-  const resizeHandleGroupRef = useRef<Group>(null!);
+  const xResizeHandleGroupRef = useRef<Group>(null!);
+  const yResizeHandleGroupRef = useRef<Group>(null!);
   const rotateHandleGroupRef = useRef<Group>(null!);
   const xYIntersectionPlaneRef = useRef<Mesh>(null!);
   const xZIntersectionPlaneRef = useRef<Mesh>(null!);
@@ -103,7 +104,6 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
   const polarGridRef = useRef<PolarGridRefProps>(null!);
   const heightHandleRef = useRef<Mesh>(null!);
   const waterTankGroupRef = useRef<Group>(null!);
-  const panelGroupRef = useRef<Group>(null!);
   const materialRefFront = useRef<MaterialRefProps>(null!);
   const materialRefBack = useRef<MaterialRefProps>(null!);
 
@@ -112,6 +112,7 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
 
   const [showXYIntersectionPlane, setShowXYIntersectionPlane] = useState(false);
   const [showXZIntersectionPlane, setShowXZIntersectionPlane] = useState(false);
+  const [xYPlaneHeight, setXYPlaneHeight] = useState<number | null>(null);
   const [hovered, setHovered] = useState(false);
   const [showPolarGrid, setShowPolerGrid] = useState(false);
 
@@ -218,49 +219,70 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
     }
   };
 
-  // update child meshes position due to resize
-  const updateChildMeshes = () => {
-    if (!boxGroupMeshRef.current) return;
-    const [hx, hy] = boxGroupMeshRef.current.scale.toArray().map((v) => v / 2);
-
-    // resize handle
-    if (resizeHandleGroupRef.current) {
-      for (const obj of resizeHandleGroupRef.current.children) {
-        switch (obj.name) {
-          case ResizeHandleType.Left: {
-            obj.position.x = -hx;
-            break;
-          }
-          case ResizeHandleType.Right: {
-            obj.position.x = hx;
-            break;
-          }
-          case ResizeHandleType.Upper: {
-            obj.position.y = hy;
-            break;
-          }
-          case ResizeHandleType.Lower: {
-            obj.position.y = -hy;
-            break;
+  const updateChildMeshes = (lx: number | null, ly: number | null) => {
+    // resize handles
+    if (xResizeHandleGroupRef.current) {
+      if (lx !== null) {
+        const hx = lx / 2;
+        for (const obj of xResizeHandleGroupRef.current.children) {
+          switch (obj.name) {
+            case ResizeHandleType.Left: {
+              obj.position.x = -hx;
+              break;
+            }
+            case ResizeHandleType.Right: {
+              obj.position.x = hx;
+              break;
+            }
           }
         }
       }
     }
+    if (yResizeHandleGroupRef.current) {
+      if (ly !== null) {
+        yResizeHandleGroupRef.current.position.y = -ly / 2;
+      }
+    }
+    // rotate handles
+    if (rotateHandleGroupRef.current)
+      if (ly !== null) {
+        for (const obj of rotateHandleGroupRef.current.children) {
+          switch (obj.name) {
+            case RotateHandleType.Lower: {
+              obj.position.y = -ly / 2 - rotateHandleOffset;
+              break;
+            }
+            case RotateHandleType.Upper: {
+              obj.position.y = ly / 2 + waterTankRadius + rotateHandleOffset;
+              break;
+            }
+          }
+        }
+      }
     // water tank
+    if (upperYOffsetGroup.current) {
+      if (ly !== null) {
+        upperYOffsetGroup.current.position.y = ly / 2;
+      }
+    }
     if (waterTankRef.current) {
-      waterTankRef.current.scale.y = boxGroupMeshRef.current.scale.x + 0.25;
+      if (lx !== null) {
+        waterTankRef.current.scale.y = lx + 0.25;
+      }
     }
     // mount
     if (mountGroupRef.current) {
-      for (const obj of mountGroupRef.current.children) {
-        switch (obj.name) {
-          case MOUNT_LEFT: {
-            obj.position.x = -boxGroupMeshRef.current.scale.x * 0.4;
-            break;
-          }
-          case MOUNT_RIGHT: {
-            obj.position.x = boxGroupMeshRef.current.scale.x * 0.4;
-            break;
+      if (lx !== null) {
+        for (const obj of mountGroupRef.current.children) {
+          switch (obj.name) {
+            case MOUNT_LEFT: {
+              obj.position.x = -lx * 0.4;
+              break;
+            }
+            case MOUNT_RIGHT: {
+              obj.position.x = lx * 0.4;
+              break;
+            }
           }
         }
       }
@@ -304,7 +326,7 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
     }
   };
 
-  const onResizeHandleGroupPointerDown = (e: ThreeEvent<PointerEvent>) => {
+  const onXResizeHandleGroupPointerDown = (e: ThreeEvent<PointerEvent>) => {
     if (!selected || !groupRef.current || !azimuthGroupRef.current) return;
     if (e.intersections.length == 0 || e.intersections[0].object !== e.object) return;
     setFrameLoop('always');
@@ -329,6 +351,25 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
       azimuthGroupRef.current.getWorldPosition(dirVectorRef.current).sub(anchorRef.current).normalize();
     }
     setShowXYIntersectionPlane(true);
+    setXYPlaneHeight(mountHeight / 2);
+    parentGroupRef.current = SolarPanelUtil.findParentGroup(groupRef.current, [FOUNDATION_GROUP_NAME]);
+  };
+
+  const onYResizeHandleGroupPointerDown = (e: ThreeEvent<PointerEvent>) => {
+    if (!selected || !groupRef.current || !upperYOffsetGroup.current) return;
+    if (e.intersections.length == 0 || e.intersections[0].object !== e.object) return;
+    setFrameLoop('always');
+    useRefStore.getState().setEnableOrbitController(false);
+    operationRef.current = Operation.ResizeY;
+    if (surfaceType === SurfaceType.Horizontal) {
+      upperYOffsetGroup.current.localToWorld(anchorRef.current.set(0, 0, 0));
+      groupRef.current.getWorldPosition(dirVectorRef.current).sub(anchorRef.current).normalize();
+    } else {
+      azimuthGroupRef.current.localToWorld(anchorRef.current.set(0, 0, 0));
+      azimuthGroupRef.current.getWorldPosition(dirVectorRef.current).sub(anchorRef.current).normalize();
+    }
+    setShowXYIntersectionPlane(true);
+    setXYPlaneHeight(0);
     parentGroupRef.current = SolarPanelUtil.findParentGroup(groupRef.current, [FOUNDATION_GROUP_NAME]);
   };
 
@@ -344,7 +385,7 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
     setTimeout(() => {
       if (xZIntersectionPlaneRef.current) {
         const cp = get().camera.position;
-        e.intersections[0].object.localToWorld(tempVector3_0.set(0, 0, 0));
+        e.intersections[0].object.localToWorld(tempVector3_0.set(0, 0, -lz));
         xZIntersectionPlaneRef.current.lookAt(cp.x, cp.y, tempVector3_0.z);
         e.intersections[0].object.localToWorld(anchorRef.current.set(0, 0, -lz));
         setTimeout(() => {
@@ -372,6 +413,7 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
     azimuthGroupRef.current.getWorldPosition(anchorRef.current);
     anchorRef.current.z = 0;
     setShowXYIntersectionPlane(true);
+    setXYPlaneHeight(mountHeight / 2);
     setShowPolerGrid(true);
     parentGroupRef.current = SolarPanelUtil.findParentGroup(groupRef.current, [FOUNDATION_GROUP_NAME]);
   };
@@ -437,11 +479,23 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
       }
       case Operation.ResizeX: {
         setCommonStore((state) => {
-          if (!boxGroupMeshRef.current || !groupRef.current) return;
+          if (!panelPlaneGroupMeshRef.current || !groupRef.current) return;
           const waterHeater = state.elements.find((e) => e.id === id) as SolarWaterHeaterModel | undefined;
           if (!waterHeater) return;
-          waterHeater.lx = boxGroupMeshRef.current.scale.x;
-          waterHeater.ly = boxGroupMeshRef.current.scale.y;
+          waterHeater.lx = panelPlaneGroupMeshRef.current.scale.x;
+          if (waterHeater.parentType === ObjectType.Roof) {
+            state.updateElementOnRoofFlag = !state.updateElementOnRoofFlag;
+          }
+          [waterHeater.cx, waterHeater.cy, waterHeater.cz] = groupRef.current.position;
+        });
+        break;
+      }
+      case Operation.ResizeY: {
+        setCommonStore((state) => {
+          if (!panelPlaneGroupMeshRef.current || !upperYOffsetGroup.current) return;
+          const waterHeater = state.elements.find((e) => e.id === id) as SolarWaterHeaterModel | undefined;
+          if (!waterHeater) return;
+          waterHeater.ly = upperYOffsetGroup.current.position.y * 2;
           if (waterHeater.parentType === ObjectType.Roof) {
             state.updateElementOnRoofFlag = !state.updateElementOnRoofFlag;
           }
@@ -451,10 +505,10 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
       }
       case Operation.ResizeHeight: {
         setCommonStore((state) => {
-          if (!waterTankGroupRef.current) return;
+          if (!upperZOffsetGroup.current) return;
           const waterHeater = state.elements.find((e) => e.id === id) as SolarWaterHeaterModel | undefined;
           if (!waterHeater) return;
-          waterHeater.lz = waterTankGroupRef.current.position.z + waterTankRadius;
+          waterHeater.lz = upperZOffsetGroup.current.position.z + waterTankRadius;
         });
         break;
       }
@@ -471,7 +525,7 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
       }
     }
 
-    // // check validation and add undo
+    // check validation and add undo
     const newElement = useStore.getState().elements.find((e) => e.id === id) as SolarWaterHeaterModel;
     if (oldElement && newElement) {
       if (SolarPanelUtil.isNewPositionOk(newElement)) {
@@ -499,6 +553,7 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
     // newParentTypeRef.current = null;
     parentGroupRef.current = null;
     setShowXYIntersectionPlane(false);
+    setXYPlaneHeight(null);
     setShowXZIntersectionPlane(false);
     setShowPolerGrid(false);
   }, []);
@@ -560,48 +615,66 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
         }
         break;
       }
-      case Operation.ResizeX:
-      case Operation.ResizeY: {
+      case Operation.ResizeX: {
         const anchor = anchorRef.current;
         const anchorToPoint = tempVector3_0.subVectors(point, anchor);
         const anchorToCenter = dirVectorRef.current;
         const angle = anchorToPoint.angleTo(anchorToCenter);
-        const d = anchorToPoint.length() * Math.cos(angle);
-        const distance = d;
+        const distance = anchorToPoint.length() * Math.cos(angle);
 
         if (surfaceType === SurfaceType.Vertical) {
         } else {
-          const dist = distance;
-
           const center = tempVector3_0
             .copy(anchorToCenter)
-            .multiplyScalar(dist / 2)
+            .multiplyScalar(distance / 2)
             .add(anchor)
             .sub(parentGroup.getWorldPosition(tempVector3_3))
             .applyQuaternion(parentGroup.getWorldQuaternion(tempQuaternion_0).invert());
 
-          const d = Math.abs(dist);
-          if (operationRef.current === Operation.ResizeX) {
-            boxGroupMeshRef.current.scale.x = d;
-          } else if (operationRef.current === Operation.ResizeY) {
-            // boxGroupMeshRef.current.scale.y = d;
-            // if (polesRef.current) {
-            //   polesRef.current.update({ ly: d });
-            // }
-          }
+          const d = Math.abs(distance);
+          panelPlaneGroupMeshRef.current.scale.x = d;
           groupRef.current.position.x = center.x;
           groupRef.current.position.y = center.y;
           groupRef.current.position.z = center.z;
 
           if (materialRefFront.current) {
-            materialRefFront.current.update(boxGroupMeshRef.current.scale.x);
+            materialRefFront.current.update(panelPlaneGroupMeshRef.current.scale.x);
           }
-          if (materialRefBack.current) {
-            materialRefBack.current.update(boxGroupMeshRef.current.scale.x);
-          }
+          updateChildMeshes(d, null);
         }
 
-        updateChildMeshes();
+        break;
+      }
+      case Operation.ResizeY: {
+        const anchor = anchorRef.current;
+        const anchorToPoint = tempVector3_0.subVectors(point, anchor);
+        const anchorToCenter = dirVectorRef.current;
+        const a = anchorToPoint.angleTo(anchorToCenter);
+        const distance = Math.cos(a) > 0 ? anchorToPoint.length() * Math.cos(a) : 0.1;
+
+        if (surfaceType === SurfaceType.Vertical) {
+        } else {
+          const height = lz - waterTankRadius;
+          const newPanelWidth = Math.hypot(distance, height);
+          const angle = Math.asin(height / newPanelWidth);
+
+          const center = tempVector3_0
+            .copy(anchorToCenter)
+            .multiplyScalar(distance / 2)
+            .add(anchor)
+            .sub(parentGroup.getWorldPosition(tempVector3_3))
+            .applyQuaternion(parentGroup.getWorldQuaternion(tempQuaternion_0).invert());
+
+          groupRef.current.position.x = center.x;
+          groupRef.current.position.y = center.y;
+
+          panelTiltGroupRef.current.rotation.x = angle;
+          panelOffsetGroupRef.current.position.y = -newPanelWidth / 2;
+          panelPlaneGroupMeshRef.current.scale.y = newPanelWidth;
+
+          updateChildMeshes(null, distance);
+        }
+
         break;
       }
       case Operation.RotateUpper: {
@@ -628,19 +701,23 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
         break;
       }
       case Operation.ResizeHeight: {
-        if (xZIntersectionPlaneRef.current.userData.state && waterTankGroupRef.current) {
-          const newLz = Util.clamp(point.z - anchorRef.current.z, waterTankRadius * 2, panelWidth + waterTankRadius);
+        if (xZIntersectionPlaneRef.current.userData.state && upperZOffsetGroup.current) {
+          const newLz = Math.max(point.z - anchorRef.current.z, waterTankRadius * 2);
           const newWaterTankCz = newLz - waterTankRadius;
           const newMountHeight = newLz - waterTankRadius * 2;
+          const newPanelWidth = Math.hypot(newWaterTankCz, ly);
 
-          waterTankGroupRef.current.position.z = newWaterTankCz;
+          upperZOffsetGroup.current.position.z = newWaterTankCz;
 
-          if (panelGroupRef.current && mountGroupRef.current) {
+          if (panelTiltGroupRef.current && mountGroupRef.current) {
             mountGroupRef.current.scale.y = newMountHeight;
             mountGroupRef.current.position.z = newMountHeight / 2;
 
-            panelGroupRef.current.position.z = newWaterTankCz;
-            panelGroupRef.current.rotation.x = Math.asin(newWaterTankCz / panelWidth);
+            panelTiltGroupRef.current.rotation.x = Math.asin(newWaterTankCz / newPanelWidth);
+            panelOffsetGroupRef.current.position.y = -newPanelWidth / 2;
+            panelPlaneGroupMeshRef.current.scale.y = newPanelWidth;
+
+            rotateHandleGroupRef.current.position.z = newMountHeight / 2;
           }
         }
         break;
@@ -657,143 +734,151 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
     >
       {/* auzimuth group */}
       <group ref={azimuthGroupRef} rotation={azimuthEuler}>
-        {/* water tank group */}
-        <group ref={waterTankGroupRef} position={[0, panelWidth / 2, waterTankRadius + mountHeight]}>
-          {/* water tank */}
-          <Cylinder
-            ref={waterTankRef}
-            args={[waterTankRadius, waterTankRadius, 1]}
-            castShadow={shadowEnabled}
-            receiveShadow={shadowEnabled}
-            rotation={[0, 0, HALF_PI]}
-            scale={[1, waterTankLength, 1]}
+        {/* upper Y offset */}
+        <group ref={upperYOffsetGroup} position={[0, ly / 2, 0]}>
+          {/* upper Z offset */}
+          <group ref={upperZOffsetGroup} position={[0, 0, waterTankRadius + mountHeight]}>
+            {/* water tank group */}
+            <group ref={waterTankGroupRef}>
+              {/* water tank */}
+              <Cylinder
+                ref={waterTankRef}
+                args={[waterTankRadius, waterTankRadius, 1]}
+                castShadow={shadowEnabled}
+                receiveShadow={shadowEnabled}
+                rotation={[0, 0, HALF_PI]}
+                scale={[1, waterTankLength, 1]}
+              >
+                <meshStandardMaterial color={color} roughness={0.2} />
+              </Cylinder>
+              {/* height handle */}
+              {selected && (
+                <Box
+                  ref={heightHandleRef}
+                  args={[handleSize, 0.1, handleSize]}
+                  position={[0, 0, waterTankRadius]}
+                  onPointerDown={onHeightHandlePointerDown}
+                >
+                  <meshBasicMaterial color={'white'} />
+                </Box>
+              )}
+            </group>
+
+            {/* panel tilt group */}
+            <group ref={panelTiltGroupRef} rotation={[angle, 0, 0]}>
+              {/* panel offset group */}
+              <group ref={panelOffsetGroupRef} position={[0, -panelWidth / 2, 0]}>
+                {/* panel plane group */}
+                <group ref={panelPlaneGroupMeshRef} scale={[lx, panelWidth, 1]}>
+                  {/* panel mesh */}
+                  <Plane castShadow={false} receiveShadow={shadowEnabled}>
+                    <PanelMaterial ref={materialRefFront} lx={lx} ly={ly} side={FrontSide} />
+                  </Plane>
+                  <Plane receiveShadow={shadowEnabled} position={[0, -0.475, 0.001]} args={[1, 0.05]}>
+                    <BarMaterial />
+                  </Plane>
+                  {shadowEnabled && (
+                    <Plane castShadow={shadowEnabled} receiveShadow={false} position={[0, 0, -0.05]}>
+                      <PanelMaterial ref={materialRefBack} lx={lx} ly={ly} side={BackSide} />
+                    </Plane>
+                  )}
+                  {/* simulation panel */}
+                  <Plane
+                    name={'Water Heater Simulation Plane'}
+                    uuid={id}
+                    userData={{ simulation: true }}
+                    visible={false}
+                  >
+                    <meshBasicMaterial side={DoubleSide} />
+                  </Plane>
+                </group>
+
+                {/* move/xResize handle */}
+                {selected && !locked && (
+                  <>
+                    {/* move handle */}
+                    <MoveHandle onPointerDown={onMoveHandlePointerDown} />
+
+                    {/* x resize handle */}
+                    <group
+                      name="X_Resize_Handles_Group"
+                      ref={xResizeHandleGroupRef}
+                      onPointerDown={onXResizeHandleGroupPointerDown}
+                    >
+                      <ResizeHandle cx={lx / 2} cy={0} type={ResizeHandleType.Right} size={handleSize} />
+                      <ResizeHandle cx={-lx / 2} cy={0} type={ResizeHandleType.Left} size={handleSize} />
+                    </group>
+                  </>
+                )}
+
+                {/* lock wireframe */}
+                {selected && locked && (
+                  <Wireframe
+                    waterTankLength={waterTankLength}
+                    waterTankRadius={waterTankRadius}
+                    panelWidth={panelWidth}
+                  />
+                )}
+              </group>
+            </group>
+          </group>
+
+          {/* mount group*/}
+          <group
+            ref={mountGroupRef}
+            position={[0, 0, mountHeight / 2]}
+            rotation={[HALF_PI, 0, 0]}
+            scale={[1, mountHeight + 0.1, 1]}
           >
-            <meshStandardMaterial color={color} roughness={0.2} />
-          </Cylinder>
-          {/* height handle */}
-          {selected && (
-            <Box
-              ref={heightHandleRef}
-              args={[handleSize, 0.1, handleSize]}
-              position={[0, 0, waterTankRadius]}
-              onPointerDown={onHeightHandlePointerDown}
-            >
-              <meshBasicMaterial color={'white'} />
-            </Box>
+            {/* should use scale */}
+            <Cylinder name={MOUNT_LEFT} args={[0.05, 0.05, 1]} position={[-lx * 0.4, 0, 0]} castShadow={shadowEnabled}>
+              <meshStandardMaterial color={'grey'} />
+            </Cylinder>
+            <Cylinder name={MOUNT_RIGHT} args={[0.05, 0.05, 1]} position={[lx * 0.4, 0, 0]} castShadow={shadowEnabled}>
+              <meshStandardMaterial color={'grey'} />
+            </Cylinder>
+          </group>
+
+          {/* XZ intersection plane */}
+          {showXZIntersectionPlane && (
+            <Plane ref={xZIntersectionPlaneRef} args={[10000, 10000]} rotation={[HALF_PI, 0, 0, 'ZXY']} visible={true}>
+              <meshBasicMaterial color={'darkgrey'} />
+            </Plane>
           )}
         </group>
 
-        {/* panel group */}
-        <group
-          ref={panelGroupRef}
-          position={[0, panelWidth / 2, waterTankRadius + mountHeight]}
-          rotation={[angle, 0, 0]}
-        >
-          <group position={[0, -panelWidth / 2, 0]}>
-            {/* panel box group */}
-            <group ref={boxGroupMeshRef} scale={[panelLength, panelWidth, 1]}>
-              {/* panel box mesh */}
-              <Plane castShadow={false} receiveShadow={shadowEnabled}>
-                <PanelMaterial ref={materialRefFront} lx={lx} ly={ly} side={FrontSide} />
-              </Plane>
-              <Plane receiveShadow={shadowEnabled} position={[0, -0.475, 0.001]} args={[1, 0.05]}>
-                <BarMaterial />
-              </Plane>
-              {shadowEnabled && (
-                <Plane castShadow={shadowEnabled} receiveShadow={false} position={[0, 0, -0.05]}>
-                  <PanelMaterial ref={materialRefBack} lx={lx} ly={ly} side={BackSide} />
-                </Plane>
-              )}
-              {/* simulation panel */}
-              <Plane name={'Water Heater Simulation Plane'} uuid={id} userData={{ simulation: true }} visible={false}>
-                <meshBasicMaterial side={DoubleSide} />
-              </Plane>
-            </group>
-
-            {/* move/resize handle */}
-            {selected && !locked && (
-              <>
-                {/* move handle */}
-                <MoveHandle onPointerDown={onMoveHandlePointerDown} />
-
-                {/* resize handle */}
-                <group
-                  name="Resize_Handles_Group"
-                  ref={resizeHandleGroupRef}
-                  onPointerDown={onResizeHandleGroupPointerDown}
-                >
-                  <ResizeHandle cx={panelLength / 2} cy={0} type={ResizeHandleType.Right} size={handleSize} />
-                  <ResizeHandle cx={-panelLength / 2} cy={0} type={ResizeHandleType.Left} size={handleSize} />
-                </group>
-              </>
-            )}
-
-            {/* lock wireframe */}
-            {selected && locked && (
-              <Wireframe waterTankLength={waterTankLength} waterTankRadius={waterTankRadius} panelWidth={panelWidth} />
-            )}
+        {/* y resize handle */}
+        {selected && !locked && (
+          <group
+            name="Y_Resize_Handles_Group"
+            ref={yResizeHandleGroupRef}
+            position={[0, -ly / 2, 0]}
+            onPointerDown={onYResizeHandleGroupPointerDown}
+          >
+            <ResizeHandle cx={0} cy={0} type={ResizeHandleType.Lower} size={handleSize} />
           </group>
-        </group>
-
-        {/* mount */}
-        <group
-          ref={mountGroupRef}
-          position={[0, panelWidth / 2, mountHeight / 2]}
-          rotation={[HALF_PI, 0, 0]}
-          scale={[1, mountHeight + 0.1, 1]}
-        >
-          {/* should use scale */}
-          <Cylinder
-            name={MOUNT_LEFT}
-            args={[0.05, 0.05, 1]}
-            position={[-panelLength * 0.4, 0, 0]}
-            castShadow={shadowEnabled}
-          >
-            <meshStandardMaterial color={'grey'} />
-          </Cylinder>
-          <Cylinder
-            name={MOUNT_RIGHT}
-            args={[0.05, 0.05, 1]}
-            position={[panelLength * 0.4, 0, 0]}
-            castShadow={shadowEnabled}
-          >
-            <meshStandardMaterial color={'grey'} />
-          </Cylinder>
-        </group>
+        )}
 
         {/* rotate handles group */}
         {isShowRotateHandle && (
           <group name={'Rotate_Handles_Group'} ref={rotateHandleGroupRef} position={[0, 0, mountHeight / 2]}>
             <RotateHandle
               name={RotateHandleType.Upper}
-              positionY={panelWidth / 2 + waterTankRadius + rotateHandleOffset}
+              positionY={ly / 2 + waterTankRadius + rotateHandleOffset}
               onPointerDown={onRotateHandlePointerDown}
             />
             <RotateHandle
               name={RotateHandleType.Lower}
-              positionY={-panelWidth / 2 - rotateHandleOffset}
+              positionY={-ly / 2 - rotateHandleOffset}
               onPointerDown={onRotateHandlePointerDown}
             />
           </group>
         )}
-
-        {/* XZ intersection plane */}
-        {showXZIntersectionPlane && (
-          <Plane
-            ref={xZIntersectionPlaneRef}
-            args={[10000, 10000]}
-            position={[0, panelWidth / 2, 0]}
-            rotation={[HALF_PI, 0, 0, 'ZXY']}
-            visible={false}
-          >
-            <meshBasicMaterial color={'darkgrey'} />
-          </Plane>
-        )}
       </group>
 
       {/* XY intersection plane */}
-      {showXYIntersectionPlane && (
-        <Plane ref={xYIntersectionPlaneRef} args={[10000, 10000]} position={[0, 0, mountHeight / 2]} visible={false}>
+      {showXYIntersectionPlane && xYPlaneHeight !== null && (
+        <Plane ref={xYIntersectionPlaneRef} args={[10000, 10000]} position={[0, 0, xYPlaneHeight]} visible={false}>
           <meshBasicMaterial color={'darkgrey'} />
         </Plane>
       )}

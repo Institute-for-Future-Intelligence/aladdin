@@ -17,7 +17,11 @@ export class SolarWaterHeaterUtil {
         break;
       }
       case Operation.ResizeX: {
-        SolarWaterHeaterUtil.addUndoableResizeX(oldElement);
+        SolarWaterHeaterUtil.addUndoableResize(oldElement, 'X');
+        break;
+      }
+      case Operation.ResizeY: {
+        SolarWaterHeaterUtil.addUndoableResize(oldElement, 'Y');
         break;
       }
       case Operation.ResizeHeight: {
@@ -116,14 +120,14 @@ export class SolarWaterHeaterUtil {
     };
   }
 
-  static addUndoableResizeX(oldElement: SolarWaterHeaterModel) {
+  static addUndoableResize(oldElement: SolarWaterHeaterModel, dir: 'X' | 'Y') {
     const newElement = useStore
       .getState()
       .elements.find((e) => e.id === oldElement.id && e.type === ObjectType.SolarWaterHeater) as SolarWaterHeaterModel;
     if (!newElement) return;
 
     const undoableResize = {
-      name: 'Resize Water Heater X',
+      name: `Resize Water Heater ${dir}`,
       timestamp: Date.now(),
       id: newElement.id,
       oldPos: [oldElement.cx, oldElement.cy, oldElement.cz],
