@@ -31,6 +31,8 @@ export const i18n_zh_cn = {
     },
 
     word: {
+      BrandName: '品牌',
+      Name: '名字',
       Refresh: '刷新',
       LastUpdate: '上一次更新',
       Small: '小',
@@ -356,6 +358,8 @@ export const i18n_zh_cn = {
         DiurnalTemperature: '昼夜温度',
         Heliodon: '日影仪',
         SunAndTime: '太阳和时间',
+        SolarPanelCustomization: '定制光伏板',
+        CustomizeSolarPanel: '添加定制光伏板',
       },
       benchmarksSubMenu: '基准',
       benchmarks: {

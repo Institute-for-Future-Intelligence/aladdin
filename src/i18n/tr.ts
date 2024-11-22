@@ -31,6 +31,8 @@ export const i18n_tr = {
     },
 
     word: {
+      BrandName: 'Brand Name',
+      Name: 'Name',
       Refresh: 'Refresh',
       LastUpdate: 'Last Update',
       Small: 'Small',
@@ -357,6 +359,8 @@ export const i18n_tr = {
         DiurnalTemperature: 'Günlük Sıcaklık',
         Heliodon: 'Heliodon',
         SunAndTime: 'Güneş & Zaman',
+        SolarPanelCustomization: 'Solar Panel Customization',
+        CustomizeSolarPanel: 'Customize Solar Panel',
       },
       benchmarksSubMenu: 'Deneysel',
       benchmarks: {

@@ -18,6 +18,7 @@ export const createSettingsMenu = () => {
   const showMapPanel = useStore.getState().viewState.showMapPanel;
   const showWeatherPanel = useStore.getState().viewState.showWeatherPanel;
   const showDiurnalTemperaturePanel = useStore.getState().viewState.showDiurnalTemperaturePanel;
+  const showSolarPanelCustomizationPanel = usePrimitiveStore.getState().showSolarPanelCustomizationPanel;
   const showEconomicsPanel = usePrimitiveStore.getState().showEconomicsPanel;
   const showNavigationPanel = usePrimitiveStore.getState().showNavigationPanel;
   const showShadowSettings = usePrimitiveStore.getState().showShadowSettings;
@@ -111,6 +112,20 @@ export const createSettingsMenu = () => {
     });
   };
 
+  const openSolarPanelCustomizationPanel = () => {
+    usePrimitiveStore.getState().set((state) => {
+      state.showSolarPanelCustomizationPanel = true;
+    });
+    if (loggable) {
+      setCommonStore((state) => {
+        state.actionInfo = {
+          name: 'Open Solar Panel Customization Panel',
+          timestamp: new Date().getTime(),
+        };
+      });
+    }
+  };
+
   const openEconomicsPanel = () => {
     usePrimitiveStore.getState().set((state) => {
       state.showEconomicsPanel = true;
@@ -198,6 +213,18 @@ export const createSettingsMenu = () => {
       label: (
         <MenuItem noPadding onClick={openDiurnalTemperaturePanel}>
           {i18n.t('menu.settings.DiurnalTemperature', lang)}...
+        </MenuItem>
+      ),
+    });
+  }
+
+  // solar-panel-customization
+  if (!showSolarPanelCustomizationPanel) {
+    items.push({
+      key: 'solar-panel-customization',
+      label: (
+        <MenuItem noPadding onClick={openSolarPanelCustomizationPanel}>
+          {i18n.t('menu.settings.SolarPanelCustomization', lang)}...
         </MenuItem>
       ),
     });

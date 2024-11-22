@@ -25,6 +25,7 @@ export interface PrimitiveStoreState {
   contextMenuFlag: boolean;
   updateContextMenu: () => void;
 
+  showSolarPanelCustomizationPanel: boolean;
   showEconomicsPanel: boolean;
   showNavigationPanel: boolean;
   showShadowSettings: boolean;
@@ -218,6 +219,7 @@ export const usePrimitiveStore = createWithEqualityFn<PrimitiveStoreState>()((se
       });
     },
 
+    showSolarPanelCustomizationPanel: false,
     showEconomicsPanel: false,
     showNavigationPanel: false,
     showShadowSettings: false,

@@ -32,6 +32,8 @@ export const i18n_ua = {
     },
 
     word: {
+      BrandName: 'Brand Name',
+      Name: 'Name',
       Refresh: 'Refresh',
       LastUpdate: 'Last Update',
       Small: 'Small',
@@ -361,6 +363,8 @@ export const i18n_ua = {
         DiurnalTemperature: 'Добова температура',
         Heliodon: 'Геліодон',
         SunAndTime: 'Сонце та час',
+        SolarPanelCustomization: 'Solar Panel Customization',
+        CustomizeSolarPanel: 'Customize Solar Panel',
       },
       benchmarksSubMenu: 'Бенчмарки',
       benchmarks: {

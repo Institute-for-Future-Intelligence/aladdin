@@ -38,6 +38,7 @@ import * as Selector from 'src/stores/selector';
 import { GraphDataType } from './types';
 import NavigationPanel from './panels/navigationPanel';
 import ShadowSettingsPanel from './panels/shadowSettingsPanel';
+import SolarPanelCustomizationPanel from './panels/solarPanelCustomizationPanel';
 
 const Panels = React.memo(() => {
   const showSiteInfoPanel = useStore(Selector.viewState.showSiteInfoPanel);
@@ -48,6 +49,7 @@ const Panels = React.memo(() => {
   const showStickyNotePanel = useStore(Selector.viewState.showStickyNotePanel);
   const showWeatherPanel = useStore(Selector.viewState.showWeatherPanel);
   const showDiurnalTemperaturePanel = useStore(Selector.viewState.showDiurnalTemperaturePanel);
+  const showSolarPanelCustomizationPanel = usePrimitiveStore(Selector.showSolarPanelCustomizationPanel);
   const showEconomicsPanel = usePrimitiveStore(Selector.showEconomicsPanel);
   const showNavigationPanel = usePrimitiveStore(Selector.showNavigationPanel);
   const showShadowSettings = usePrimitiveStore(Selector.showShadowSettings);
@@ -100,6 +102,15 @@ const Panels = React.memo(() => {
         <WeatherPanel city={city} graphs={[GraphDataType.MonthlyTemperatures, GraphDataType.SunshineHours]} />
       )}
       {showDiurnalTemperaturePanel && <DiurnalTemperaturePanel city={city} />}
+      {showSolarPanelCustomizationPanel && (
+        <SolarPanelCustomizationPanel
+          setDialogVisible={(visible) => {
+            usePrimitiveStore.getState().set((state) => {
+              state.showSolarPanelCustomizationPanel = visible;
+            });
+          }}
+        />
+      )}
       {showEconomicsPanel && (
         <EconomicsPanel
           setDialogVisible={(visible) => {
