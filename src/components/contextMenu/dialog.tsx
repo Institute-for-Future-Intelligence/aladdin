@@ -121,9 +121,9 @@ const Dialog: React.FunctionComponent<PropsWithChildren<DialogProps>> = ({
         </Draggable>
       )}
     >
-      <Divider />
+      <Divider style={{ marginTop: 0, marginBottom: '4px', border: 'none' }} />
       {children}
-      <Divider />
+      <Divider style={{ marginTop: 0, marginBottom: '4px', border: 'none' }} />
     </Modal>
   );
 };

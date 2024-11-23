@@ -9,12 +9,15 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import i18n from '../i18n/i18n';
 import { useLanguage } from '../hooks';
+import { PvModel } from '../models/PvModel';
+import { ShadeTolerance } from '../types';
 
 const { Option } = Select;
 
 const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
+  const addCustomPvModule = useStore(Selector.addCustomPvModule);
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -22,14 +25,19 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
   const dragRef = useRef<HTMLDivElement | null>(null);
   const okButtonRef = useRef<HTMLButtonElement | HTMLAnchorElement | null>(null);
   const modelRef = useRef<string>('Unknown');
+  const brandRef = useRef<string>('Unknown');
   const cellTypeRef = useRef<string>('Monocrystalline');
+  const cellNxRef = useRef<number>(8);
+  const cellNyRef = useRef<number>(8);
   const colorRef = useRef<string>('Black');
   const widthRef = useRef<number>(1);
-  const heightRef = useRef<number>(1);
+  const lengthRef = useRef<number>(1);
   const bifacialityFactorRef = useRef<number>(0);
   const efficiencyRef = useRef<number>(0.2);
   const noctRef = useRef<number>(45);
+  const pmaxRef = useRef<number>(300);
   const pmaxTCRef = useRef<number>(-0.002);
+  const weightRef = useRef<number>(30);
 
   const lang = useLanguage();
 
@@ -50,14 +58,36 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
     }
   };
 
-  const apply = () => {};
-
   const onCancelClick = () => {
     setDialogVisible(false);
   };
 
   const onOkClick = () => {
-    apply();
+    const pv = {
+      name: modelRef.current,
+      brand: brandRef.current,
+      cellType: cellTypeRef.current,
+      efficiency: efficiencyRef.current,
+      length: lengthRef.current,
+      nominalLength: lengthRef.current,
+      width: widthRef.current,
+      nominalWidth: widthRef.current,
+      thickness: 0.005,
+      m: cellNxRef.current,
+      n: cellNyRef.current,
+      pmax: pmaxRef.current,
+      vmpp: 50,
+      impp: 8,
+      voc: 60,
+      isc: 8,
+      pmaxTC: pmaxTCRef.current,
+      noct: noctRef.current,
+      weight: weightRef.current,
+      color: colorRef.current,
+      shadeTolerance: ShadeTolerance.PARTIAL,
+      bifacialityFactor: bifacialityFactorRef.current,
+    } as PvModel;
+    addCustomPvModule(pv);
     setDialogVisible(false);
   };
 
@@ -109,6 +139,21 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
         </Col>
       </Row>
 
+      <Row gutter={6} style={{ paddingTop: '10px', paddingBottom: '4px' }}>
+        <Col className="gutter-row" span={16}>
+          {i18n.t('word.BrandName', lang) + ': '}
+        </Col>
+        <Col className="gutter-row" span={8}>
+          <Input
+            value={modelRef.current}
+            onChange={(e) => {
+              brandRef.current = e.target.value;
+              setUpdateFlag(!updateFlag);
+            }}
+          />
+        </Col>
+      </Row>
+
       <Row gutter={6} style={{ paddingBottom: '4px' }}>
         <Col className="gutter-row" span={16}>
           {i18n.t('word.Width', lang) + ' ([0.1m, 3m]): '}
@@ -142,7 +187,7 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
 
       <Row gutter={6} style={{ paddingBottom: '4px' }}>
         <Col className="gutter-row" span={16}>
-          {i18n.t('word.Height', lang) + ' ([0.1m, 3m]): '}
+          {i18n.t('word.Length', lang) + ' ([0.1m, 3m]): '}
         </Col>
         <Col className="gutter-row" span={8}>
           <InputNumber
@@ -154,17 +199,17 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
             step={0.01}
             onChange={(value) => {
               if (value === null) return;
-              heightRef.current = value;
+              lengthRef.current = value;
               setUpdateFlag(!updateFlag);
             }}
             onBlur={(e) => {
               const v = parseFloat((e.target as HTMLInputElement).value);
-              heightRef.current = Number.isNaN(v) ? 1 : v;
+              lengthRef.current = Number.isNaN(v) ? 1 : v;
               setUpdateFlag(!updateFlag);
             }}
             onPressEnter={(e) => {
               const v = parseFloat((e.target as HTMLInputElement).value);
-              heightRef.current = Number.isNaN(v) ? 1 : v;
+              lengthRef.current = Number.isNaN(v) ? 1 : v;
               setUpdateFlag(!updateFlag);
             }}
           />

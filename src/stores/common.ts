@@ -11,7 +11,7 @@ import enUS from 'antd/lib/locale/en_US';
 import weather from '../resources/weather.csv';
 import solar_radiation_horizontal from '../resources/solar_radiation_horizontal.csv';
 import solar_radiation_vertical from '../resources/solar_radiation_vertical.csv';
-import pvmodules from '../resources/pvmodules.csv';
+import supportedPvModules from '../resources/pvmodules.csv';
 import produce, { enableMapSet } from 'immer';
 import {
   ActionInfo,
@@ -184,9 +184,11 @@ export interface CommonStoreState {
   loadVerticalSolarRadiationData: () => void;
   getClosestCity: (lat: number, lng: number) => string | null;
 
-  pvModules: { [key: string]: PvModel };
+  supportedPvModules: { [key: string]: PvModel };
+  customPvModules: { [key: string]: PvModel };
   getPvModule: (name: string) => PvModel;
-  loadPvModules: () => void;
+  loadSupportedPvModules: () => void;
+  addCustomPvModule: (m: PvModel) => void;
 
   aabb: Box3; // axis-aligned bounding box of elements
   animate24Hours: boolean;
@@ -4818,10 +4820,11 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
             return pastedElements;
           },
 
-          pvModules: {},
-          loadPvModules() {
+          supportedPvModules: {},
+          customPvModules: {},
+          loadSupportedPvModules() {
             const pvModels: PvModel[] = [];
-            Papa.parse(pvmodules, {
+            Papa.parse(supportedPvModules, {
               download: true,
               complete: function (results) {
                 for (const row of results.data) {
@@ -4853,16 +4856,24 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                     pvModels.push(pv);
                   }
                 }
+                console.log(pvModels.length + ' PV models loaded');
                 immerSet((state: CommonStoreState) => {
                   for (const model of pvModels) {
-                    state.pvModules[model.name] = model;
+                    state.supportedPvModules[model.name] = model;
                   }
                 });
               },
             });
           },
           getPvModule(name: string) {
-            return get().pvModules[name];
+            let m = get().supportedPvModules[name];
+            if (!m) m = get().customPvModules[name];
+            return m;
+          },
+          addCustomPvModule(m: PvModel) {
+            immerSet((state: CommonStoreState) => {
+              state.customPvModules[m.name] = m;
+            });
           },
 
           weatherModel: undefined,
@@ -5169,6 +5180,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
           particleSwarmOptimizationWizardSelectedTab: state.particleSwarmOptimizationWizardSelectedTab,
           minimumNavigationMoveSpeed: state.minimumNavigationMoveSpeed,
           minimumNavigationTurnSpeed: state.minimumNavigationTurnSpeed,
+          customPvModules: state.customPvModules,
         }),
       },
     ),

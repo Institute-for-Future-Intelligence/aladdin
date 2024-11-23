@@ -28,7 +28,7 @@ const App = () => {
   const loadWeatherData = useStore(Selector.loadWeatherData);
   const loadHorizontalSolarRadiationData = useStore(Selector.loadHorizontalSolarRadiationData);
   const loadVerticalSolarRadiationData = useStore(Selector.loadVerticalSolarRadiationData);
-  const loadPvModules = useStore(Selector.loadPvModules);
+  const loadSupportedPvModules = useStore(Selector.loadSupportedPvModules);
 
   const params = new URLSearchParams(window.location.search);
   const viewOnly = params.get('viewonly') === 'true';
@@ -38,7 +38,7 @@ const App = () => {
     loadWeatherData();
     loadHorizontalSolarRadiationData();
     loadVerticalSolarRadiationData();
-    loadPvModules();
+    loadSupportedPvModules();
     usePrimitiveStore.getState().set((state) => {
       state.openModelsMap = map;
       if (map) {

@@ -2,7 +2,7 @@
  * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Button, Col, InputNumber, Modal, Row, Select, Slider, Tabs } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from '../../../stores/common';
@@ -34,7 +34,8 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
   const loggable = useStore(Selector.loggable);
   const language = useStore(Selector.language);
   const runEvolution = usePrimitiveStore(Selector.runEvolution);
-  const pvModules = useStore(Selector.pvModules);
+  const supportedPvModules = useStore(Selector.supportedPvModules);
+  const customPvModules = useStore(Selector.customPvModules);
   const polygon = useStore(Selector.selectedElement) as PolygonModel;
   const getParent = useStore(Selector.getParent);
   const getChildrenOfType = useStore(Selector.getChildrenOfType);
@@ -65,6 +66,10 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
   const minimumInterRowSpacingRef = useRef<number>(constraints.minimumInterRowSpacing);
   const maximumInterRowSpacingRef = useRef<number>(constraints.maximumInterRowSpacing);
   const okButtonRef = useRef<HTMLButtonElement | HTMLAnchorElement | null>(null);
+
+  const pvModules = useMemo(() => {
+    return { ...supportedPvModules, ...customPvModules };
+  }, [supportedPvModules, customPvModules]);
 
   useEffect(() => {
     okButtonRef.current?.focus();

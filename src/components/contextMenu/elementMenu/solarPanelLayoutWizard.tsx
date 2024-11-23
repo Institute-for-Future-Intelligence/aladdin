@@ -2,7 +2,7 @@
  * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Button, Col, InputNumber, Modal, Row, Select } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from '../../../stores/common';
@@ -27,7 +27,8 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
   const solarPanelArrayLayoutParams = useStore.getState().solarPanelArrayLayoutParams;
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const getParent = useStore(Selector.getParent);
-  const pvModules = useStore(Selector.pvModules);
+  const supportedPvModules = useStore(Selector.supportedPvModules);
+  const customPvModules = useStore(Selector.customPvModules);
   const getPvModule = useStore(Selector.getPvModule);
   const updateElementReferenceById = useStore(Selector.updateElementReferenceById);
   const countElementsByReferenceId = useStore(Selector.countElementsByReferenceId);
@@ -60,6 +61,10 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
   const lang = useLanguage();
   const pvModel = getPvModule(pvModelNameRef.current);
   const reference = getSelectedElement();
+
+  const pvModules = useMemo(() => {
+    return { ...supportedPvModules, ...customPvModules };
+  }, [supportedPvModules, customPvModules]);
 
   useEffect(() => {
     okButtonRef.current?.focus();

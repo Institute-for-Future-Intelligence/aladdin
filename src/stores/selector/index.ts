@@ -79,9 +79,13 @@ export const elements = (state: CommonStoreState) => state.elements;
 
 export const notes = (state: CommonStoreState) => state.notes;
 
-export const pvModules = (state: CommonStoreState) => state.pvModules;
+export const supportedPvModules = (state: CommonStoreState) => state.supportedPvModules;
 
-export const loadPvModules = (state: CommonStoreState) => state.loadPvModules;
+export const customPvModules = (state: CommonStoreState) => state.customPvModules;
+
+export const loadSupportedPvModules = (state: CommonStoreState) => state.loadSupportedPvModules;
+
+export const addCustomPvModule = (state: CommonStoreState) => state.addCustomPvModule;
 
 export const getPvModule = (state: CommonStoreState) => state.getPvModule;
 

@@ -95,7 +95,8 @@ const SolarPanel = (solarPanel: SolarPanelOnFoundation) => {
   const rotateHandleType = useStore(Selector.rotateHandleType);
   const addUndoable = useStore(Selector.addUndoable);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
-  const pvModules = useStore(Selector.pvModules);
+  const supportedPvModules = useStore(Selector.supportedPvModules);
+  const customPvModules = useStore(Selector.customPvModules);
 
   const selected = useSelected(id);
 
@@ -120,6 +121,9 @@ const SolarPanel = (solarPanel: SolarPanelOnFoundation) => {
   const ray = useMemo(() => new Raycaster(), []);
 
   const sunBeamLength = Math.max(100, 10 * sceneRadius);
+  const pvModules = useMemo(() => {
+    return { ...supportedPvModules, ...customPvModules };
+  }, [supportedPvModules, customPvModules]);
   const pvModel = pvModules[pvModelName] as PvModel;
 
   const lang = useMemo(() => {

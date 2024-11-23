@@ -502,12 +502,17 @@ const SolarPanelOnRoof = ({
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const solarPanelShininess = useStore(Selector.viewState.solarPanelShininess);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
-  const pvModules = useStore(Selector.pvModules);
+  const supportedPvModules = useStore(Selector.supportedPvModules);
+  const customPvModules = useStore(Selector.customPvModules);
   const sceneRadius = useStore(Selector.sceneRadius);
 
   const selected = useSelected(id);
 
   const latestFoundationRef = useRef<FoundationModel | null>(null);
+
+  const pvModules = useMemo(() => {
+    return { ...supportedPvModules, ...customPvModules };
+  }, [supportedPvModules, customPvModules]);
 
   const pvModel = pvModules[pvModelName] as PvModel;
   if (pvModel) {

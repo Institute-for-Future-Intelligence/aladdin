@@ -10,6 +10,7 @@ import { PvModel } from 'src/models/PvModel';
 import { DEFAULT_SOLAR_PANEL_SHININESS, SOLAR_PANEL_BLACK_SPECULAR, SOLAR_PANEL_BLUE_SPECULAR } from 'src/constants';
 import * as Selector from '../../stores/selector';
 import { Color, FrontSide } from 'three';
+import { useMemo } from 'react';
 
 interface MaterialsProps {
   solarPanel: SolarPanelModel;
@@ -23,8 +24,14 @@ const Materials = ({ solarPanel, lx, ly }: MaterialsProps) => {
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
   const solarPanelShininess = useStore(Selector.viewState.solarPanelShininess);
+  const supportedPvModules = useStore(Selector.supportedPvModules);
+  const customPvModules = useStore(Selector.customPvModules);
 
-  const pvModel = useStore.getState().pvModules[pvModelName] as PvModel;
+  const pvModules = useMemo(() => {
+    return { ...supportedPvModules, ...customPvModules };
+  }, [supportedPvModules, customPvModules]);
+
+  const pvModel = pvModules[pvModelName] as PvModel;
 
   const texture = useSolarPanelTexture(lx, ly, pvModel, orientation, solarPanel.frameColor, solarPanel.backsheetColor);
   const heatmapTexture = useSolarPanelHeatmapTexture(id);

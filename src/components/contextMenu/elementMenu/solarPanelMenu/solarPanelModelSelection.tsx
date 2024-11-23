@@ -2,7 +2,7 @@
  * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Col, Input, InputNumber, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
 import { CommonStoreState, useStore } from '../../../../stores/common';
 import * as Selector from '../../../../stores/selector';
@@ -24,7 +24,8 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
   const getParent = useStore(Selector.getParent);
-  const pvModules = useStore(Selector.pvModules);
+  const supportedPvModules = useStore(Selector.supportedPvModules);
+  const customPvModules = useStore(Selector.customPvModules);
   const getPvModule = useStore(Selector.getPvModule);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.solarPanelActionScope);
@@ -38,6 +39,9 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
   const [panelSizeString, setPanelSizeString] = useState<string>();
 
   const lang = useLanguage();
+  const pvModules = useMemo(() => {
+    return { ...supportedPvModules, ...customPvModules };
+  }, [supportedPvModules, customPvModules]);
   const pvModel = getPvModule(selectedPvModel ?? 'SPR-X21-335-BLK');
 
   useEffect(() => {
@@ -62,7 +66,8 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
         if (e.type === ObjectType.SolarPanel && e.id === id && !e.locked) {
           const sp = e as SolarPanelModel;
           sp.pvModelName = pvModelName;
-          const pvModel = state.pvModules[pvModelName];
+          let pvModel = state.supportedPvModules[pvModelName];
+          if (!pvModel) pvModel = state.customPvModules[pvModelName];
           if (sp.orientation === Orientation.portrait) {
             // calculate the current x-y layout
             const nx = Math.max(1, Math.round(sp.lx / pvModel.width));
@@ -84,7 +89,8 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
 
   const updateSolarPanelModelAboveFoundation = (foundationId: string, pvModelName: string) => {
     setCommonStore((state: CommonStoreState) => {
-      const pvModel = state.pvModules[pvModelName];
+      let pvModel = state.supportedPvModules[pvModelName];
+      if (!pvModel) pvModel = state.customPvModules[pvModelName];
       for (const e of state.elements) {
         if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId && !e.locked) {
           const sp = e as SolarPanelModel;
@@ -109,7 +115,8 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
 
   const updateSolarPanelModelOnSurface = (parentId: string, normal: number[] | undefined, pvModelName: string) => {
     setCommonStore((state: CommonStoreState) => {
-      const pvModel = state.pvModules[pvModelName];
+      let pvModel = state.supportedPvModules[pvModelName];
+      if (!pvModel) pvModel = state.customPvModules[pvModelName];
       for (const e of state.elements) {
         if (e.type === ObjectType.SolarPanel && !e.locked) {
           let found;
@@ -142,7 +149,8 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
 
   const updateSolarPanelModelForAll = (pvModelName: string) => {
     setCommonStore((state: CommonStoreState) => {
-      const pvModel = state.pvModules[pvModelName];
+      let pvModel = state.supportedPvModules[pvModelName];
+      if (!pvModel) pvModel = state.customPvModules[pvModelName];
       for (const e of state.elements) {
         if (e.type === ObjectType.SolarPanel && !e.locked) {
           const sp = e as SolarPanelModel;
@@ -167,7 +175,8 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
 
   const updateInMap = (map: Map<string, string>, value: string) => {
     useStore.getState().set((state) => {
-      const pvModel = state.pvModules[value];
+      let pvModel = state.supportedPvModules[value];
+      if (!pvModel) pvModel = state.customPvModules[value];
       for (const e of state.elements) {
         if (e.type === ObjectType.SolarPanel && !e.locked && map.has(e.id)) {
           const sp = e as SolarPanelModel;
@@ -620,7 +629,15 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
       </Row>
       <Row
         gutter={6}
-        style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
+        style={{
+          border: '2px dashed #ccc',
+          marginTop: '6px',
+          marginLeft: '0',
+          marginRight: '0',
+          paddingLeft: '8px',
+          paddingTop: '8px',
+          paddingBottom: '8px',
+        }}
       >
         <Col className="gutter-row" span={3}>
           {i18n.t('word.ApplyTo', lang) + ':'}

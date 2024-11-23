@@ -3,7 +3,7 @@
  */
 
 import { Util } from 'src/Util';
-import { Object3D, Object3DEventMap, Vector3 } from 'three';
+import { Object3D, Vector3 } from 'three';
 import { RoofSegmentGroupUserData } from '../roof/roofRenderer';
 import { useStore } from 'src/stores/common';
 import { HALF_PI } from 'src/constants';
@@ -129,7 +129,7 @@ export class SolarPanelUtil {
     }
   }
 
-  static findParentGroup(obj: Object3D<Object3DEventMap>, names: string[]): Object3D<Object3DEventMap> | null {
+  static findParentGroup(obj: Object3D, names: string[]): Object3D | null {
     const parent = obj.parent;
     if (!parent) return null;
     for (const name of names) {
@@ -138,14 +138,14 @@ export class SolarPanelUtil {
     return SolarPanelUtil.findParentGroup(parent, names);
   }
 
-  static getRoofId(object: Object3D<Object3DEventMap> | null): string | null {
+  static getRoofId(object: Object3D | null): string | null {
     if (!object) return null;
     const roofId = object.userData.roofId as string;
     if (roofId) return roofId;
     return SolarPanelUtil.getRoofId(object.parent);
   }
 
-  static getRoofSegmentData(object: Object3D<Object3DEventMap> | null): RoofSegmentGroupUserData | null {
+  static getRoofSegmentData(object: Object3D | null): RoofSegmentGroupUserData | null {
     if (!object) return null;
     const { roofId, foundation, centroid, roofSegments } = object.userData;
     if (!roofId || !foundation || !centroid || !roofSegments) return SolarPanelUtil.getRoofSegmentData(object.parent);
@@ -196,36 +196,35 @@ export class SolarPanelUtil {
   }
 
   static getPVModel(pvModelName: string) {
-    const pvModel = useStore.getState().pvModules[pvModelName];
-    if (!pvModel) {
-      console.warn('pvModel undefined. Using default model: SPR-X21-335-BLK');
-      return {
-        name: 'SPR-X21-335-BLK',
-        brand: 'SunPower',
-        cellType: 'Monocrystalline',
-        efficiency: 0.21,
-        length: 1.558,
-        nominalLength: 1.56,
-        width: 1.046,
-        nominalWidth: 1.05,
-        thickness: 0.046,
-        m: 12,
-        n: 8,
-        pmax: 335,
-        vmpp: 57.3,
-        impp: 5.85,
-        voc: 67.9,
-        isc: 6.23,
-        pmaxTC: -0.0029,
-        noct: 41.5,
-        weight: 18.6,
-        color: 'Black',
-        shadeTolerance: 'High',
-        bifacialityFactor: 0,
-      } as PvModel;
-    } else {
-      return pvModel;
-    }
+    let pvModel = useStore.getState().supportedPvModules[pvModelName];
+    if (pvModel) return pvModel;
+    pvModel = useStore.getState().customPvModules[pvModelName];
+    if (pvModel) return pvModel;
+    console.warn('pvModel undefined. Using default model: SPR-X21-335-BLK');
+    return {
+      name: 'SPR-X21-335-BLK',
+      brand: 'SunPower',
+      cellType: 'Monocrystalline',
+      efficiency: 0.21,
+      length: 1.558,
+      nominalLength: 1.56,
+      width: 1.046,
+      nominalWidth: 1.05,
+      thickness: 0.046,
+      m: 12,
+      n: 8,
+      pmax: 335,
+      vmpp: 57.3,
+      impp: 5.85,
+      voc: 67.9,
+      isc: 6.23,
+      pmaxTC: -0.0029,
+      noct: 41.5,
+      weight: 18.6,
+      color: 'Black',
+      shadeTolerance: 'High',
+      bifacialityFactor: 0,
+    } as PvModel;
   }
 
   static addUndoable(oldElement: SolarPanelModel | undefined, operation: Operation) {

@@ -395,7 +395,8 @@ const SolarPanelOnWall = ({
   const selectMe = useStore(Selector.selectMe);
   const resizeHandleType = useStore(Selector.resizeHandleType);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
-  const pvModules = useStore(Selector.pvModules);
+  const supportedPvModules = useStore(Selector.supportedPvModules);
+  const customPvModules = useStore(Selector.customPvModules);
 
   const { camera, gl } = useThree();
 
@@ -409,6 +410,10 @@ const SolarPanelOnWall = ({
 
   const ray = useMemo(() => new Raycaster(), []);
   const mouse = useMemo(() => new Vector2(), []);
+
+  const pvModules = useMemo(() => {
+    return { ...supportedPvModules, ...customPvModules };
+  }, [supportedPvModules, customPvModules]);
 
   const pvModel = pvModules[pvModelName] as PvModel;
 

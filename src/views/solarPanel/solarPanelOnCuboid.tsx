@@ -139,7 +139,7 @@ const SolarPanelOnCuboid = (solarPanelModel: SolarPanelModel) => {
       const sunDirection = getSunDirection(dateObject, latitude);
       const rot = getWorldRotationZ(parentId, groupRotation.z) - groupRotation.z;
       switch (trackerType) {
-        case TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER:
+        case TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER: {
           const r = Math.hypot(sunDirection.x, sunDirection.y);
           return new Euler(
             Math.atan2(r, sunDirection.z),
@@ -147,6 +147,7 @@ const SolarPanelOnCuboid = (solarPanelModel: SolarPanelModel) => {
             Math.atan2(sunDirection.y, sunDirection.x) + HALF_PI - rot,
             'ZXY',
           );
+        }
         case TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER:
           return new Euler(0, Math.atan2(sunDirection.x, sunDirection.z), -rot + (lx < ly ? 0 : HALF_PI), 'XYZ');
         case TrackerType.VERTICAL_SINGLE_AXIS_TRACKER:
@@ -463,7 +464,8 @@ const SolarPanelBoxGroup = ({ solarPanelModel, groupRotation, panelRotation }: S
   const resizeHandleType = useStore(Selector.resizeHandleType);
   const language = useStore(Selector.language);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
-  const pvModules = useStore(Selector.pvModules);
+  const supportedPvModules = useStore(Selector.supportedPvModules);
+  const customPvModules = useStore(Selector.customPvModules);
   const solarPanelShininess = useStore(Selector.viewState.solarPanelShininess);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
 
@@ -479,6 +481,11 @@ const SolarPanelBoxGroup = ({ solarPanelModel, groupRotation, panelRotation }: S
   const moveHandleSize = MOVE_HANDLE_RADIUS * baseSize * 2;
   const [hx, hy, hz] = [lx, ly, lz].map((v) => v / 2);
   const resizeHandleArgs = [resizeHandleSize, resizeHandleSize, lz * 1.2] as BoxArgs;
+
+  const pvModules = useMemo(() => {
+    return { ...supportedPvModules, ...customPvModules };
+  }, [supportedPvModules, customPvModules]);
+
   const pvModel = pvModules[pvModelName] as PvModel;
 
   if (pvModel) {

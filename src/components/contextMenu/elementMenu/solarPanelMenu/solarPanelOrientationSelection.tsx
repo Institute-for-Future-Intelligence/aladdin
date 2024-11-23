@@ -49,7 +49,8 @@ const SolarPanelOrientationSelection = ({ setDialogVisible }: { setDialogVisible
       for (const e of state.elements) {
         if (e.type === ObjectType.SolarPanel && e.id === id && !e.locked) {
           const sp = e as SolarPanelModel;
-          const pvModel = state.pvModules[sp.pvModelName];
+          let pvModel = state.supportedPvModules[sp.pvModelName];
+          if (!pvModel) pvModel = state.customPvModules[sp.pvModelName];
           state.setSolarPanelOrientation(sp, pvModel, orientation);
           break;
         }
@@ -62,7 +63,8 @@ const SolarPanelOrientationSelection = ({ setDialogVisible }: { setDialogVisible
       for (const e of state.elements) {
         if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId && !e.locked) {
           const sp = e as SolarPanelModel;
-          const pvModel = state.pvModules[sp.pvModelName];
+          let pvModel = state.supportedPvModules[sp.pvModelName];
+          if (!pvModel) pvModel = state.customPvModules[sp.pvModelName];
           state.setSolarPanelOrientation(sp, pvModel, orientation);
         }
       }
@@ -85,7 +87,8 @@ const SolarPanelOrientationSelection = ({ setDialogVisible }: { setDialogVisible
           }
           if (found) {
             const sp = e as SolarPanelModel;
-            const pvModel = state.pvModules[sp.pvModelName];
+            let pvModel = state.supportedPvModules[sp.pvModelName];
+            if (!pvModel) pvModel = state.customPvModules[sp.pvModelName];
             state.setSolarPanelOrientation(sp, pvModel, orientation);
           }
         }
@@ -98,7 +101,8 @@ const SolarPanelOrientationSelection = ({ setDialogVisible }: { setDialogVisible
       for (const e of state.elements) {
         if (e.type === ObjectType.SolarPanel && !e.locked) {
           const sp = e as SolarPanelModel;
-          const pvModel = state.pvModules[sp.pvModelName];
+          let pvModel = state.supportedPvModules[sp.pvModelName];
+          if (!pvModel) pvModel = state.customPvModules[sp.pvModelName];
           state.setSolarPanelOrientation(sp, pvModel, orientation);
         }
       }
@@ -110,7 +114,8 @@ const SolarPanelOrientationSelection = ({ setDialogVisible }: { setDialogVisible
       for (const e of state.elements) {
         if (e.type === ObjectType.SolarPanel && !e.locked && map.has(e.id)) {
           const sp = e as SolarPanelModel;
-          const pvModel = state.pvModules[sp.pvModelName];
+          let pvModel = state.supportedPvModules[sp.pvModelName];
+          if (!pvModel) pvModel = state.customPvModules[sp.pvModelName];
           state.setSolarPanelOrientation(sp, pvModel, value);
         }
       }
