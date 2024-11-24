@@ -123,7 +123,7 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
             </Col>
             <Col className="gutter-row" span={8}>
               <Input
-                value={modelRef.current}
+                value={brandRef.current}
                 onChange={(e) => {
                   brandRef.current = e.target.value;
                   setUpdateFlag(!updateFlag);

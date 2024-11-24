@@ -729,6 +729,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
               state.selectedElementIdSet.clear();
               state.groupActionMode = false;
               state.selectedFloatingWindow = null;
+              state.customPvModules = content.customPvModules ?? {};
             });
             StoreUtil.updateOldFileData();
             usePrimitiveStore.getState().set((state) => {
@@ -779,6 +780,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
               notes: state.notes,
               minimumNavigationMoveSpeed: state.minimumNavigationMoveSpeed,
               minimumNavigationTurnSpeed: state.minimumNavigationTurnSpeed,
+              customPvModules: JSON.parse(JSON.stringify(state.customPvModules)),
             };
           },
           clearContent() {

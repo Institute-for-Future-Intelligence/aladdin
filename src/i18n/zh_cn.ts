@@ -362,7 +362,7 @@ export const i18n_zh_cn = {
         Heliodon: '日影仪',
         SunAndTime: '太阳和时间',
         SolarPanelCustomization: '定制光伏板',
-        CustomizeSolarPanel: '添加定制光伏板',
+        CustomizeSolarPanel: '定制光伏板',
       },
       benchmarksSubMenu: '基准',
       benchmarks: {
