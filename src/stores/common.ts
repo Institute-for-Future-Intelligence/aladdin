@@ -189,6 +189,7 @@ export interface CommonStoreState {
   getPvModule: (name: string) => PvModel;
   loadSupportedPvModules: () => void;
   addCustomPvModule: (m: PvModel) => void;
+  removeCustomPvModule: (name: string) => void;
 
   aabb: Box3; // axis-aligned bounding box of elements
   animate24Hours: boolean;
@@ -4875,6 +4876,25 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
           addCustomPvModule(m: PvModel) {
             immerSet((state: CommonStoreState) => {
               state.customPvModules[m.name] = m;
+            });
+          },
+          removeCustomPvModule(name: string) {
+            immerSet((state: CommonStoreState) => {
+              let used = false;
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel) {
+                  if ((e as SolarPanelModel).pvModelName === name) {
+                    used = true;
+                    break;
+                  }
+                }
+              }
+              if (used) {
+                const lang = { lng: state.language };
+                showError(i18n.t('pvModelPanel.ThisCustomSolarPanelIsUsed', lang));
+              } else {
+                delete state.customPvModules[name];
+              }
             });
           },
 

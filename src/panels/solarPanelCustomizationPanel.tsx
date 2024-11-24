@@ -2,8 +2,15 @@
  * @Copyright 2024. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useRef, useState } from 'react';
-import { Button, Col, Input, InputNumber, Modal, Row, Select, Tabs, TabsProps } from 'antd';
+import React, { useMemo, useRef, useState } from 'react';
+import {
+  DeleteOutlined,
+  ArrowLeftOutlined,
+  ArrowRightOutlined,
+  WarningOutlined,
+  QuestionCircleOutlined,
+} from '@ant-design/icons';
+import { Button, Col, Divider, Input, InputNumber, List, Modal, Row, Select, Space, Tabs, TabsProps } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
@@ -15,15 +22,14 @@ import { ShadeTolerance } from '../types';
 const { Option } = Select;
 
 const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
-  const setCommonStore = useStore(Selector.set);
-  const addUndoable = useStore(Selector.addUndoable);
+  const customPvModules = useStore(Selector.customPvModules);
   const addCustomPvModule = useStore(Selector.addCustomPvModule);
+  const removeCustomPvModule = useStore(Selector.removeCustomPvModule);
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
-  const okButtonRef = useRef<HTMLButtonElement | HTMLAnchorElement | null>(null);
   const modelRef = useRef<string>('Unknown');
   const brandRef = useRef<string>('Unknown');
   const cellTypeRef = useRef<string>('Monocrystalline');
@@ -46,10 +52,6 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
 
   const lang = useLanguage();
 
-  useEffect(() => {
-    okButtonRef.current?.focus();
-  }, []);
-
   const onStart = (event: DraggableEvent, uiData: DraggableData) => {
     if (dragRef.current) {
       const { clientWidth, clientHeight } = window.document.documentElement;
@@ -63,11 +65,7 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
     }
   };
 
-  const onCancelClick = () => {
-    setDialogVisible(false);
-  };
-
-  const onOkClick = () => {
+  const addCustomSolarPanel = () => {
     const pv = {
       name: modelRef.current,
       brand: brandRef.current,
@@ -93,7 +91,6 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
       bifacialityFactor: bifacialityFactorRef.current,
     } as PvModel;
     addCustomPvModule(pv);
-    setDialogVisible(false);
   };
 
   const items: TabsProps['items'] = [
@@ -496,9 +493,33 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
     },
   ];
 
+  const names = useMemo(() => {
+    const array: string[] = [];
+    for (const key in customPvModules) {
+      array.push(key);
+    }
+    return array;
+  }, [customPvModules]);
+
+  const confirmRemoveCustomSolarPanel = (name: string) => {
+    Modal.confirm({
+      title: i18n.t('pvModelPanel.DoYouReallyWantToRemoveCustomSolarPanel', lang) + ' "' + name + '"?',
+      content: (
+        <span style={{ color: 'red', fontWeight: 'bold' }}>
+          <WarningOutlined style={{ marginRight: '6px' }} />
+          {i18n.t('word.Warning', lang) + ': ' + i18n.t('pvModelPanel.MakeSureThisCustomSolarPanelIsNotUsed', lang)}
+        </span>
+      ),
+      icon: <QuestionCircleOutlined />,
+      onOk: () => {
+        removeCustomPvModule(name);
+      },
+    });
+  };
+
   return (
     <Modal
-      width={500}
+      width={720}
       open={true}
       title={
         <div
@@ -510,17 +531,12 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
         </div>
       }
       footer={[
-        <Button key="Cancel" onClick={onCancelClick}>
-          {i18n.t('word.Cancel', lang)}
-        </Button>,
-        <Button key="OK" type="primary" ref={okButtonRef} onClick={onOkClick}>
-          {i18n.t('word.OK', lang)}
+        <Button key="Close" type="primary" onClick={() => setDialogVisible(false)}>
+          {i18n.t('word.Close', lang)}
         </Button>,
       ]}
       // this must be specified for the x button in the upper-right corner to work
-      onCancel={() => {
-        setDialogVisible(false);
-      }}
+      onCancel={() => setDialogVisible(false)}
       maskClosable={false}
       destroyOnClose={false}
       modalRender={(modal) => (
@@ -529,7 +545,36 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
         </Draggable>
       )}
     >
-      <Tabs defaultActiveKey="1" type="card" items={items} />
+      <Row>
+        <Col>
+          <Tabs defaultActiveKey="1" type="card" items={items} />
+        </Col>
+        <Col>
+          <Space style={{ height: '100%', justifyContent: 'center', marginLeft: '8px' }} direction={'vertical'}>
+            <ArrowRightOutlined title={'Add'} style={{ cursor: 'pointer' }} onClick={() => addCustomSolarPanel()} />
+            <Divider />
+            <ArrowLeftOutlined title={'Load'} style={{ cursor: 'pointer' }} onClick={() => {}} />
+          </Space>
+        </Col>
+        <Col>
+          <List
+            style={{ marginTop: '56px', marginLeft: '8px' }}
+            size="small"
+            header={<div style={{ fontWeight: 'bold' }}>Existing</div>}
+            bordered
+            dataSource={names}
+            renderItem={(item) => (
+              <List.Item key={item}>
+                <DeleteOutlined
+                  style={{ paddingRight: '6px', cursor: 'pointer' }}
+                  onClick={() => confirmRemoveCustomSolarPanel(item)}
+                />
+                {item}
+              </List.Item>
+            )}
+          />
+        </Col>
+      </Row>
     </Modal>
   );
 });

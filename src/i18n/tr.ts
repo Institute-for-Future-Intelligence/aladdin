@@ -1107,6 +1107,9 @@ export const i18n_tr = {
       SolarCellEfficiency: 'Güneş Pili Verimliliği',
       NominalOperatingCellTemperature: 'Nominal Çalışma Hücresi Sıcaklığı',
       TemperatureCoefficientOfPmax: 'Pmax Sıcaklık Katsayısı',
+      DoYouReallyWantToRemoveCustomSolarPanel: 'Do you really want to remove custom solar panel',
+      MakeSureThisCustomSolarPanelIsNotUsed: 'Make sure this custom solar panel is not used in the current model',
+      ThisCustomSolarPanelIsUsed: 'This custom solar panel is used in the current model',
     },
 
     parabolicTroughMenu: {

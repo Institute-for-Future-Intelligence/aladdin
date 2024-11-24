@@ -1083,6 +1083,9 @@ export const i18n_zh_tw = {
       SolarCellEfficiency: '光伏電池效率',
       NominalOperatingCellTemperature: '名義電池運行溫度',
       TemperatureCoefficientOfPmax: 'Pmax溫度係數',
+      DoYouReallyWantToRemoveCustomSolarPanel: '你確定刪除此定制光伏板',
+      MakeSureThisCustomSolarPanelIsNotUsed: '刪除之前請確認此定制光伏板沒有被當前模型採用',
+      ThisCustomSolarPanelIsUsed: '此定制光伏板被當前模型採用',
     },
 
     parabolicTroughMenu: {

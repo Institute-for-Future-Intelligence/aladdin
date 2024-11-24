@@ -1109,6 +1109,9 @@ export const i18n_ua = {
       SolarCellEfficiency: 'Ефективність сонячної комірки',
       NominalOperatingCellTemperature: 'Номінальна робоча температура комірки',
       TemperatureCoefficientOfPmax: 'Температурний коефіцієнт Pmax',
+      DoYouReallyWantToRemoveCustomSolarPanel: 'Do you really want to remove custom solar panel',
+      MakeSureThisCustomSolarPanelIsNotUsed: 'Make sure this custom solar panel is not used in the current model',
+      ThisCustomSolarPanelIsUsed: 'This custom solar panel is used in the current model',
     },
 
     parabolicTroughMenu: {
