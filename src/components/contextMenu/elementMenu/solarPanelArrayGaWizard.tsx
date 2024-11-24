@@ -1,9 +1,9 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Button, Col, InputNumber, Modal, Row, Select, Slider, Tabs } from 'antd';
+import { Button, Col, InputNumber, Modal, Row, Select, Slider, Tabs, TabsProps } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
@@ -28,7 +28,6 @@ import { usePrimitiveStore } from '../../../stores/commonPrimitive';
 import { useTranslation } from 'react-i18next';
 
 const { Option } = Select;
-const { TabPane } = Tabs;
 
 const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
@@ -69,7 +68,7 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
   const okButtonRef = useRef<HTMLButtonElement | HTMLAnchorElement | null>(null);
 
   const pvModules = useMemo(() => {
-    return { ...supportedPvModules, ...customPvModules };
+    return { ...customPvModules, ...supportedPvModules };
   }, [supportedPvModules, customPvModules]);
 
   useEffect(() => {
@@ -189,6 +188,808 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
   };
 
   const { t } = useTranslation();
+
+  const items: TabsProps['items'] = [
+    {
+      key: '1',
+      label: t('optimizationMenu.Parameters', lang),
+      children: (
+        <>
+          <Row gutter={6} style={{ paddingBottom: '4px' }}>
+            <Col className="gutter-row" span={12}>
+              {t('optimizationMenu.Objective', lang) + ':'}
+            </Col>
+            <Col className="gutter-row" span={12}>
+              <Select
+                defaultValue={objectiveFunctionTypeRef.current}
+                style={{ width: '100%' }}
+                value={objectiveFunctionTypeRef.current}
+                onChange={(value) => {
+                  objectiveFunctionTypeRef.current = value;
+                  setUpdateFlag(!updateFlag);
+                }}
+              >
+                <Option key={ObjectiveFunctionType.DAILY_TOTAL_OUTPUT} value={ObjectiveFunctionType.DAILY_TOTAL_OUTPUT}>
+                  {t('optimizationMenu.ObjectiveFunctionDailyTotalYield', lang)}
+                </Option>
+                <Option
+                  key={ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT}
+                  value={ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT}
+                >
+                  {t('optimizationMenu.ObjectiveFunctionYearlyTotalYield', lang)}
+                </Option>
+                <Option
+                  key={ObjectiveFunctionType.DAILY_AVERAGE_OUTPUT}
+                  value={ObjectiveFunctionType.DAILY_AVERAGE_OUTPUT}
+                >
+                  {t('optimizationMenu.ObjectiveFunctionDailyMeanYield', lang)}
+                </Option>
+                <Option
+                  key={ObjectiveFunctionType.YEARLY_AVERAGE_OUTPUT}
+                  value={ObjectiveFunctionType.YEARLY_AVERAGE_OUTPUT}
+                >
+                  {t('optimizationMenu.ObjectiveFunctionYearlyMeanYield', lang)}
+                </Option>
+                <Option key={ObjectiveFunctionType.DAILY_PROFIT} value={ObjectiveFunctionType.DAILY_PROFIT}>
+                  {t('optimizationMenu.ObjectiveFunctionDailyProfit', lang)}
+                </Option>
+                <Option key={ObjectiveFunctionType.YEARLY_PROFIT} value={ObjectiveFunctionType.YEARLY_PROFIT}>
+                  {t('optimizationMenu.ObjectiveFunctionYearlyProfit', lang)}
+                </Option>
+              </Select>
+            </Col>
+          </Row>
+
+          <Row gutter={6} style={{ paddingBottom: '4px' }}>
+            <Col className="gutter-row" span={12}>
+              {t('optimizationMenu.GeneticAlgorithmSelectionMethod', lang) + ':'}
+            </Col>
+            <Col className="gutter-row" span={12}>
+              <Select
+                defaultValue={selectionMethodRef.current}
+                style={{ width: '100%' }}
+                value={selectionMethodRef.current}
+                onChange={(value) => {
+                  selectionMethodRef.current = value;
+                  setUpdateFlag(!updateFlag);
+                }}
+              >
+                <Option
+                  key={GeneticAlgorithmSelectionMethod.ROULETTE_WHEEL}
+                  value={GeneticAlgorithmSelectionMethod.ROULETTE_WHEEL}
+                >
+                  {t('optimizationMenu.RouletteWheel', lang)}
+                </Option>
+                <Option
+                  key={GeneticAlgorithmSelectionMethod.TOURNAMENT}
+                  value={GeneticAlgorithmSelectionMethod.TOURNAMENT}
+                >
+                  {t('optimizationMenu.Tournament', lang)}
+                </Option>
+              </Select>
+            </Col>
+          </Row>
+
+          <Row gutter={6} style={{ paddingBottom: '4px' }}>
+            <Col className="gutter-row" span={12}>
+              {t('optimizationMenu.PopulationSize', lang) + ' [10, 100]:'}
+            </Col>
+            <Col className="gutter-row" span={12}>
+              <InputNumber
+                min={10}
+                max={100}
+                style={{ width: '100%' }}
+                precision={0}
+                value={populationSizeRef.current}
+                step={1}
+                formatter={(a) => Number(a).toFixed(0)}
+                onChange={(value) => {
+                  if (value === null) return;
+                  populationSizeRef.current = Number(value);
+                  setUpdateFlag(!updateFlag);
+                }}
+              />
+            </Col>
+          </Row>
+
+          <Row gutter={6} style={{ paddingBottom: '4px' }}>
+            <Col className="gutter-row" span={12}>
+              {t('optimizationMenu.MaximumGenerations', lang) + ' [5, 100]:'}
+            </Col>
+            <Col className="gutter-row" span={12}>
+              <InputNumber
+                min={5}
+                max={100}
+                step={1}
+                style={{ width: '100%' }}
+                precision={0}
+                value={maximumGenerationsRef.current}
+                formatter={(a) => Number(a).toFixed(0)}
+                onChange={(value) => {
+                  if (value === null) return;
+                  maximumGenerationsRef.current = Number(value);
+                  setUpdateFlag(!updateFlag);
+                }}
+              />
+            </Col>
+          </Row>
+
+          <Row gutter={6} style={{ paddingBottom: '4px' }}>
+            <Col className="gutter-row" span={12}>
+              {t('optimizationMenu.SelectionRate', lang) + ' [0, 1]: '}
+            </Col>
+            <Col className="gutter-row" span={12}>
+              <InputNumber
+                min={0}
+                max={1}
+                style={{ width: '100%' }}
+                precision={2}
+                value={selectionRateRef.current}
+                step={0.01}
+                onChange={(value) => {
+                  if (value === null) return;
+                  selectionRateRef.current = Number(value);
+                  setUpdateFlag(!updateFlag);
+                }}
+              />
+            </Col>
+          </Row>
+
+          <Row gutter={6} style={{ paddingBottom: '4px' }}>
+            <Col className="gutter-row" span={12}>
+              {t('optimizationMenu.CrossoverRate', lang) + ' [0, 1]: '}
+            </Col>
+            <Col className="gutter-row" span={12}>
+              <InputNumber
+                min={0}
+                max={1}
+                style={{ width: '100%' }}
+                precision={2}
+                value={crossoverRateRef.current}
+                step={0.01}
+                onChange={(value) => {
+                  if (value === null) return;
+                  crossoverRateRef.current = Number(value);
+                  setUpdateFlag(!updateFlag);
+                }}
+              />
+            </Col>
+          </Row>
+
+          <Row gutter={6} style={{ paddingBottom: '4px' }}>
+            <Col className="gutter-row" span={12}>
+              {t('optimizationMenu.MutationRate', lang) + ' [0, 1]: '}
+            </Col>
+            <Col className="gutter-row" span={12}>
+              <InputNumber
+                min={0}
+                max={1}
+                style={{ width: '100%' }}
+                precision={2}
+                value={mutationRateRef.current}
+                step={0.01}
+                onChange={(value) => {
+                  if (value === null) return;
+                  mutationRateRef.current = Number(value);
+                  setUpdateFlag(!updateFlag);
+                }}
+              />
+            </Col>
+          </Row>
+
+          <Row gutter={6} style={{ paddingBottom: '4px' }}>
+            <Col className="gutter-row" span={12}>
+              {t('optimizationMenu.ConvergenceThreshold', lang) + ' (0, 0.1]: '}
+            </Col>
+            <Col className="gutter-row" span={12}>
+              <InputNumber
+                min={0.001}
+                max={0.1}
+                style={{ width: '100%' }}
+                precision={3}
+                value={convergenceThresholdRef.current}
+                step={0.001}
+                onChange={(value) => {
+                  if (value === null) return;
+                  convergenceThresholdRef.current = Number(value);
+                  setUpdateFlag(!updateFlag);
+                }}
+              />
+            </Col>
+          </Row>
+
+          <Row gutter={6} style={{ paddingBottom: '4px' }}>
+            <Col className="gutter-row" span={12}>
+              {t('optimizationMenu.SearchMethod', lang) + ':'}
+            </Col>
+            <Col className="gutter-row" span={12}>
+              <Select
+                defaultValue={searchMethodRef.current}
+                style={{ width: '100%' }}
+                value={searchMethodRef.current}
+                onChange={(value) => {
+                  searchMethodRef.current = Number(value);
+                  setUpdateFlag(!updateFlag);
+                }}
+              >
+                <Option
+                  key={SearchMethod.GLOBAL_SEARCH_UNIFORM_SELECTION}
+                  value={SearchMethod.GLOBAL_SEARCH_UNIFORM_SELECTION}
+                >
+                  {t('optimizationMenu.GlobalSearchUniformSelection', lang)}
+                </Option>
+                <Option
+                  key={SearchMethod.LOCAL_SEARCH_RANDOM_OPTIMIZATION}
+                  value={SearchMethod.LOCAL_SEARCH_RANDOM_OPTIMIZATION}
+                >
+                  {t('optimizationMenu.LocalSearchRandomOptimization', lang)}
+                </Option>
+              </Select>
+            </Col>
+          </Row>
+
+          {searchMethodRef.current === SearchMethod.LOCAL_SEARCH_RANDOM_OPTIMIZATION && (
+            <Row gutter={6} style={{ paddingBottom: '4px' }}>
+              <Col className="gutter-row" span={12}>
+                {t('optimizationMenu.LocalSearchRadius', lang) + ' ([0, 1]: '}
+              </Col>
+              <Col className="gutter-row" span={12}>
+                <InputNumber
+                  min={0}
+                  max={1}
+                  style={{ width: '100%' }}
+                  precision={2}
+                  value={localSearchRadiusRef.current}
+                  step={0.01}
+                  onChange={(value) => {
+                    if (value === null) return;
+                    localSearchRadiusRef.current = Number(value);
+                    setUpdateFlag(!updateFlag);
+                  }}
+                />
+              </Col>
+            </Row>
+          )}
+        </>
+      ),
+    },
+    {
+      key: '2',
+      label: t('optimizationMenu.Variables', lang),
+      children: (
+        <>
+          <Row gutter={6}>
+            <Col className="gutter-row" span={12}>
+              {t('optimizationMenu.TiltAngleRange', lang) + ':'}
+            </Col>
+            <Col className="gutter-row" span={12}>
+              <Slider
+                range
+                onChange={(value) => {
+                  minimumTiltAngleRef.current = Util.toRadians(value[0]);
+                  maximumTiltAngleRef.current = Util.toRadians(value[1]);
+                  setUpdateFlag(!updateFlag);
+                }}
+                min={-90}
+                max={90}
+                defaultValue={[
+                  Util.toDegrees(minimumTiltAngleRef.current),
+                  Util.toDegrees(maximumTiltAngleRef.current),
+                ]}
+                marks={{
+                  '-90': {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: '-90°',
+                  },
+                  '-45': {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: '-45°',
+                  },
+                  '0': {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: '0°',
+                  },
+                  '45': {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: '45°',
+                  },
+                  '90': {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: '90°',
+                  },
+                }}
+              />
+            </Col>
+          </Row>
+
+          <Row gutter={6}>
+            <Col className="gutter-row" span={12}>
+              {t('optimizationMenu.RowsPerRackRange', lang) + ':'}
+            </Col>
+            <Col className="gutter-row" span={12}>
+              <Slider
+                range
+                onChange={(value) => {
+                  minimumRowsPerRackRef.current = value[0];
+                  maximumRowsPerRackRef.current = value[1];
+                  setUpdateFlag(!updateFlag);
+                }}
+                min={1}
+                max={9}
+                defaultValue={[minimumRowsPerRackRef.current, maximumRowsPerRackRef.current]}
+                marks={{
+                  1: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: 1,
+                  },
+                  2: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: 2,
+                  },
+                  3: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: 3,
+                  },
+                  4: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: 4,
+                  },
+                  5: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: 5,
+                  },
+                  6: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: 6,
+                  },
+                  7: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: 7,
+                  },
+                  8: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: 8,
+                  },
+                  9: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: 9,
+                  },
+                }}
+              />
+            </Col>
+          </Row>
+
+          <Row gutter={6}>
+            <Col className="gutter-row" span={12}>
+              {t('optimizationMenu.InterRowSpacingRange', lang) + ':'}
+            </Col>
+            <Col className="gutter-row" span={12}>
+              <Slider
+                range
+                onChange={(value) => {
+                  minimumInterRowSpacingRef.current = value[0];
+                  maximumInterRowSpacingRef.current = value[1];
+                  setUpdateFlag(!updateFlag);
+                }}
+                min={1}
+                max={10}
+                defaultValue={[minimumInterRowSpacingRef.current, maximumInterRowSpacingRef.current]}
+                marks={{
+                  1: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: '1m',
+                  },
+                  3: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: '3m',
+                  },
+                  5: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: '5m',
+                  },
+                  7: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: '7m',
+                  },
+                  9: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: '9m',
+                  },
+                }}
+              />
+            </Col>
+          </Row>
+        </>
+      ),
+    },
+    {
+      key: '3',
+      label: t('optimizationMenu.Constants', lang),
+      children: (
+        <>
+          <Row gutter={6} style={{ paddingBottom: '6px', paddingTop: '0px' }}>
+            <Col className="gutter-row" span={12}>
+              {t('polygonMenu.SolarPanelArrayModel', lang) +
+                ' (' +
+                Object.keys(pvModules).length +
+                ' ' +
+                t('word.Options', lang) +
+                '):'}
+            </Col>
+            <Col className="gutter-row" span={12}>
+              <Select
+                defaultValue="Custom"
+                style={{ width: '100%' }}
+                value={pvModelNameRef.current}
+                onChange={(value) => {
+                  pvModelNameRef.current = value;
+                  setUpdateFlag(!updateFlag);
+                }}
+              >
+                {Object.keys(pvModules).map((key) => (
+                  <Option key={key} value={key}>
+                    {key + (pvModules[key].bifacialityFactor > 0 ? ' (' + t('pvModelPanel.Bifacial', lang) + ')' : '')}
+                  </Option>
+                ))}
+              </Select>
+            </Col>
+          </Row>
+
+          <Row gutter={6} style={{ paddingBottom: '6px', paddingTop: '8px' }}>
+            <Col className="gutter-row" span={12}>
+              {t('polygonMenu.SolarPanelArrayRowAxis', lang) + ':'}
+            </Col>
+            <Col className="gutter-row" span={12}>
+              <Select
+                style={{ width: '100%' }}
+                value={rowAxisRef.current}
+                onChange={(value) => {
+                  rowAxisRef.current = value;
+                  setUpdateFlag(!updateFlag);
+                }}
+              >
+                <Option key={RowAxis.leftRight} value={RowAxis.leftRight}>
+                  {t('polygonMenu.SolarPanelArrayLeftRightRowAxis', lang)}
+                </Option>
+                <Option key={RowAxis.upDown} value={RowAxis.upDown}>
+                  {t('polygonMenu.SolarPanelArrayUpDownRowAxis', lang)}
+                </Option>
+              </Select>
+            </Col>
+          </Row>
+
+          <Row gutter={6} style={{ paddingBottom: '6px', paddingTop: '8px' }}>
+            <Col className="gutter-row" span={12}>
+              {t('polygonMenu.SolarPanelArrayOrientation', lang) + ':'}
+            </Col>
+            <Col className="gutter-row" span={12}>
+              <Select
+                style={{ width: '100%' }}
+                value={orientationRef.current}
+                onChange={(value) => {
+                  orientationRef.current = value;
+                  setUpdateFlag(!updateFlag);
+                }}
+              >
+                <Option key={Orientation.portrait} value={Orientation.portrait}>
+                  {t('solarPanelMenu.Portrait', lang)}
+                </Option>
+                <Option key={Orientation.landscape} value={Orientation.landscape}>
+                  {t('solarPanelMenu.Landscape', lang)}
+                </Option>
+              </Select>
+            </Col>
+          </Row>
+
+          <Row gutter={6} style={{ paddingBottom: '0px', paddingTop: '12px' }}>
+            <Col className="gutter-row" span={12}>
+              {t('polygonMenu.SolarPanelArrayMargin', lang) + ':'}
+            </Col>
+            <Col className="gutter-row" span={12}>
+              <Slider
+                style={{ paddingBottom: 0, paddingTop: 0, marginTop: '16px', marginBottom: '16px' }}
+                onChange={(value) => {
+                  marginRef.current = value;
+                  setUpdateFlag(!updateFlag);
+                }}
+                min={0}
+                max={5}
+                step={0.1}
+                defaultValue={marginRef.current}
+                marks={{
+                  0: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: '0m',
+                  },
+                  1: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: '1m',
+                  },
+                  2: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: '2m',
+                  },
+                  3: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: '3m',
+                  },
+                  4: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: '4m',
+                  },
+                  5: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: '5m',
+                  },
+                }}
+              />
+            </Col>
+          </Row>
+
+          <Row gutter={6} style={{ paddingBottom: '0px', paddingTop: '12px' }}>
+            <Col className="gutter-row" span={12}>
+              {t('solarCollectorMenu.PoleHeight', lang) + ':'}
+            </Col>
+            <Col className="gutter-row" span={12}>
+              <Slider
+                style={{ paddingBottom: 0, paddingTop: 0, marginTop: '16px', marginBottom: '16px' }}
+                onChange={(value) => {
+                  poleHeightRef.current = value;
+                  setUpdateFlag(!updateFlag);
+                }}
+                min={0}
+                max={10}
+                step={0.1}
+                defaultValue={poleHeightRef.current}
+                marks={{
+                  0: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: '0m',
+                  },
+                  2: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: '2m',
+                  },
+                  4: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: '4m',
+                  },
+                  6: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: '6m',
+                  },
+                  8: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: '8m',
+                  },
+                  10: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: '10m',
+                  },
+                }}
+              />
+            </Col>
+          </Row>
+
+          <Row gutter={6} style={{ paddingBottom: '0px', paddingTop: '12px' }}>
+            <Col className="gutter-row" span={12}>
+              {t('solarPanelMenu.PoleSpacing', lang) + ':'}
+            </Col>
+            <Col className="gutter-row" span={12}>
+              <Slider
+                style={{ paddingBottom: 0, paddingTop: 0, marginTop: '16px', marginBottom: '16px' }}
+                onChange={(value) => {
+                  poleSpacingRef.current = value;
+                  setUpdateFlag(!updateFlag);
+                }}
+                min={2}
+                max={10}
+                step={0.1}
+                defaultValue={poleSpacingRef.current}
+                marks={{
+                  2: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: '2m',
+                  },
+                  4: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: '4m',
+                  },
+                  6: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: '6m',
+                  },
+                  8: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: '8m',
+                  },
+                  10: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: '10m',
+                  },
+                }}
+              />
+            </Col>
+          </Row>
+
+          <Row gutter={6} style={{ paddingBottom: '0px', paddingTop: '12px' }}>
+            <Col className="gutter-row" span={12}>
+              {t('economicsPanel.OperationalCostPerUnit', lang) + ':'}
+            </Col>
+            <Col className="gutter-row" span={12}>
+              <Slider
+                style={{ paddingBottom: 0, paddingTop: 0, marginTop: '16px', marginBottom: '16px' }}
+                onChange={(value) => {
+                  operationalCostPerUnitRef.current = value;
+                  setUpdateFlag(!updateFlag);
+                }}
+                min={0.1}
+                max={1}
+                step={0.01}
+                defaultValue={operationalCostPerUnitRef.current}
+                marks={{
+                  0.1: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: '10¢',
+                  },
+                  0.3: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: '30¢',
+                  },
+                  0.5: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: '50¢',
+                  },
+                  0.7: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: '70¢',
+                  },
+                  0.9: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: '90¢',
+                  },
+                }}
+              />
+            </Col>
+          </Row>
+
+          <Row gutter={6} style={{ paddingBottom: '0px', paddingTop: '12px' }}>
+            <Col className="gutter-row" span={12}>
+              {t('economicsPanel.ElectricitySellingPrice', lang) + ':'}
+            </Col>
+            <Col className="gutter-row" span={12}>
+              <Slider
+                style={{ paddingBottom: 0, paddingTop: 0, marginTop: '16px', marginBottom: '16px' }}
+                onChange={(value) => {
+                  electricitySellingPriceRef.current = value;
+                  setUpdateFlag(!updateFlag);
+                }}
+                min={0.1}
+                max={1}
+                step={0.01}
+                defaultValue={electricitySellingPriceRef.current}
+                marks={{
+                  0.1: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: '10¢',
+                  },
+                  0.3: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: '30¢',
+                  },
+                  0.5: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: '50¢',
+                  },
+                  0.7: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: '70¢',
+                  },
+                  0.9: {
+                    style: {
+                      fontSize: '10px',
+                    },
+                    label: '90¢',
+                  },
+                }}
+              />
+            </Col>
+          </Row>
+        </>
+      ),
+    },
+  ];
+
   return (
     <>
       <Modal
@@ -240,800 +1041,14 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
       >
         <Tabs
           defaultActiveKey={geneticAlgorithmWizardSelectedTab}
+          items={items}
           type="card"
           onChange={(key) => {
             setCommonStore((state) => {
               state.geneticAlgorithmWizardSelectedTab = key;
             });
           }}
-        >
-          <TabPane tab={t('optimizationMenu.Parameters', lang)} key="1">
-            <Row gutter={6} style={{ paddingBottom: '4px' }}>
-              <Col className="gutter-row" span={12}>
-                {t('optimizationMenu.Objective', lang) + ':'}
-              </Col>
-              <Col className="gutter-row" span={12}>
-                <Select
-                  defaultValue={objectiveFunctionTypeRef.current}
-                  style={{ width: '100%' }}
-                  value={objectiveFunctionTypeRef.current}
-                  onChange={(value) => {
-                    objectiveFunctionTypeRef.current = value;
-                    setUpdateFlag(!updateFlag);
-                  }}
-                >
-                  <Option
-                    key={ObjectiveFunctionType.DAILY_TOTAL_OUTPUT}
-                    value={ObjectiveFunctionType.DAILY_TOTAL_OUTPUT}
-                  >
-                    {t('optimizationMenu.ObjectiveFunctionDailyTotalYield', lang)}
-                  </Option>
-                  <Option
-                    key={ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT}
-                    value={ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT}
-                  >
-                    {t('optimizationMenu.ObjectiveFunctionYearlyTotalYield', lang)}
-                  </Option>
-                  <Option
-                    key={ObjectiveFunctionType.DAILY_AVERAGE_OUTPUT}
-                    value={ObjectiveFunctionType.DAILY_AVERAGE_OUTPUT}
-                  >
-                    {t('optimizationMenu.ObjectiveFunctionDailyMeanYield', lang)}
-                  </Option>
-                  <Option
-                    key={ObjectiveFunctionType.YEARLY_AVERAGE_OUTPUT}
-                    value={ObjectiveFunctionType.YEARLY_AVERAGE_OUTPUT}
-                  >
-                    {t('optimizationMenu.ObjectiveFunctionYearlyMeanYield', lang)}
-                  </Option>
-                  <Option key={ObjectiveFunctionType.DAILY_PROFIT} value={ObjectiveFunctionType.DAILY_PROFIT}>
-                    {t('optimizationMenu.ObjectiveFunctionDailyProfit', lang)}
-                  </Option>
-                  <Option key={ObjectiveFunctionType.YEARLY_PROFIT} value={ObjectiveFunctionType.YEARLY_PROFIT}>
-                    {t('optimizationMenu.ObjectiveFunctionYearlyProfit', lang)}
-                  </Option>
-                </Select>
-              </Col>
-            </Row>
-
-            <Row gutter={6} style={{ paddingBottom: '4px' }}>
-              <Col className="gutter-row" span={12}>
-                {t('optimizationMenu.GeneticAlgorithmSelectionMethod', lang) + ':'}
-              </Col>
-              <Col className="gutter-row" span={12}>
-                <Select
-                  defaultValue={selectionMethodRef.current}
-                  style={{ width: '100%' }}
-                  value={selectionMethodRef.current}
-                  onChange={(value) => {
-                    selectionMethodRef.current = value;
-                    setUpdateFlag(!updateFlag);
-                  }}
-                >
-                  <Option
-                    key={GeneticAlgorithmSelectionMethod.ROULETTE_WHEEL}
-                    value={GeneticAlgorithmSelectionMethod.ROULETTE_WHEEL}
-                  >
-                    {t('optimizationMenu.RouletteWheel', lang)}
-                  </Option>
-                  <Option
-                    key={GeneticAlgorithmSelectionMethod.TOURNAMENT}
-                    value={GeneticAlgorithmSelectionMethod.TOURNAMENT}
-                  >
-                    {t('optimizationMenu.Tournament', lang)}
-                  </Option>
-                </Select>
-              </Col>
-            </Row>
-
-            <Row gutter={6} style={{ paddingBottom: '4px' }}>
-              <Col className="gutter-row" span={12}>
-                {t('optimizationMenu.PopulationSize', lang) + ' [10, 100]:'}
-              </Col>
-              <Col className="gutter-row" span={12}>
-                <InputNumber
-                  min={10}
-                  max={100}
-                  style={{ width: '100%' }}
-                  precision={0}
-                  value={populationSizeRef.current}
-                  step={1}
-                  formatter={(a) => Number(a).toFixed(0)}
-                  onChange={(value) => {
-                    if (value === null) return;
-                    populationSizeRef.current = Number(value);
-                    setUpdateFlag(!updateFlag);
-                  }}
-                />
-              </Col>
-            </Row>
-
-            <Row gutter={6} style={{ paddingBottom: '4px' }}>
-              <Col className="gutter-row" span={12}>
-                {t('optimizationMenu.MaximumGenerations', lang) + ' [5, 100]:'}
-              </Col>
-              <Col className="gutter-row" span={12}>
-                <InputNumber
-                  min={5}
-                  max={100}
-                  step={1}
-                  style={{ width: '100%' }}
-                  precision={0}
-                  value={maximumGenerationsRef.current}
-                  formatter={(a) => Number(a).toFixed(0)}
-                  onChange={(value) => {
-                    if (value === null) return;
-                    maximumGenerationsRef.current = Number(value);
-                    setUpdateFlag(!updateFlag);
-                  }}
-                />
-              </Col>
-            </Row>
-
-            <Row gutter={6} style={{ paddingBottom: '4px' }}>
-              <Col className="gutter-row" span={12}>
-                {t('optimizationMenu.SelectionRate', lang) + ' [0, 1]: '}
-              </Col>
-              <Col className="gutter-row" span={12}>
-                <InputNumber
-                  min={0}
-                  max={1}
-                  style={{ width: '100%' }}
-                  precision={2}
-                  value={selectionRateRef.current}
-                  step={0.01}
-                  onChange={(value) => {
-                    if (value === null) return;
-                    selectionRateRef.current = Number(value);
-                    setUpdateFlag(!updateFlag);
-                  }}
-                />
-              </Col>
-            </Row>
-
-            <Row gutter={6} style={{ paddingBottom: '4px' }}>
-              <Col className="gutter-row" span={12}>
-                {t('optimizationMenu.CrossoverRate', lang) + ' [0, 1]: '}
-              </Col>
-              <Col className="gutter-row" span={12}>
-                <InputNumber
-                  min={0}
-                  max={1}
-                  style={{ width: '100%' }}
-                  precision={2}
-                  value={crossoverRateRef.current}
-                  step={0.01}
-                  onChange={(value) => {
-                    if (value === null) return;
-                    crossoverRateRef.current = Number(value);
-                    setUpdateFlag(!updateFlag);
-                  }}
-                />
-              </Col>
-            </Row>
-
-            <Row gutter={6} style={{ paddingBottom: '4px' }}>
-              <Col className="gutter-row" span={12}>
-                {t('optimizationMenu.MutationRate', lang) + ' [0, 1]: '}
-              </Col>
-              <Col className="gutter-row" span={12}>
-                <InputNumber
-                  min={0}
-                  max={1}
-                  style={{ width: '100%' }}
-                  precision={2}
-                  value={mutationRateRef.current}
-                  step={0.01}
-                  onChange={(value) => {
-                    if (value === null) return;
-                    mutationRateRef.current = Number(value);
-                    setUpdateFlag(!updateFlag);
-                  }}
-                />
-              </Col>
-            </Row>
-
-            <Row gutter={6} style={{ paddingBottom: '4px' }}>
-              <Col className="gutter-row" span={12}>
-                {t('optimizationMenu.ConvergenceThreshold', lang) + ' (0, 0.1]: '}
-              </Col>
-              <Col className="gutter-row" span={12}>
-                <InputNumber
-                  min={0.001}
-                  max={0.1}
-                  style={{ width: '100%' }}
-                  precision={3}
-                  value={convergenceThresholdRef.current}
-                  step={0.001}
-                  onChange={(value) => {
-                    if (value === null) return;
-                    convergenceThresholdRef.current = Number(value);
-                    setUpdateFlag(!updateFlag);
-                  }}
-                />
-              </Col>
-            </Row>
-
-            <Row gutter={6} style={{ paddingBottom: '4px' }}>
-              <Col className="gutter-row" span={12}>
-                {t('optimizationMenu.SearchMethod', lang) + ':'}
-              </Col>
-              <Col className="gutter-row" span={12}>
-                <Select
-                  defaultValue={searchMethodRef.current}
-                  style={{ width: '100%' }}
-                  value={searchMethodRef.current}
-                  onChange={(value) => {
-                    searchMethodRef.current = Number(value);
-                    setUpdateFlag(!updateFlag);
-                  }}
-                >
-                  <Option
-                    key={SearchMethod.GLOBAL_SEARCH_UNIFORM_SELECTION}
-                    value={SearchMethod.GLOBAL_SEARCH_UNIFORM_SELECTION}
-                  >
-                    {t('optimizationMenu.GlobalSearchUniformSelection', lang)}
-                  </Option>
-                  <Option
-                    key={SearchMethod.LOCAL_SEARCH_RANDOM_OPTIMIZATION}
-                    value={SearchMethod.LOCAL_SEARCH_RANDOM_OPTIMIZATION}
-                  >
-                    {t('optimizationMenu.LocalSearchRandomOptimization', lang)}
-                  </Option>
-                </Select>
-              </Col>
-            </Row>
-
-            {searchMethodRef.current === SearchMethod.LOCAL_SEARCH_RANDOM_OPTIMIZATION && (
-              <Row gutter={6} style={{ paddingBottom: '4px' }}>
-                <Col className="gutter-row" span={12}>
-                  {t('optimizationMenu.LocalSearchRadius', lang) + ' ([0, 1]: '}
-                </Col>
-                <Col className="gutter-row" span={12}>
-                  <InputNumber
-                    min={0}
-                    max={1}
-                    style={{ width: '100%' }}
-                    precision={2}
-                    value={localSearchRadiusRef.current}
-                    step={0.01}
-                    onChange={(value) => {
-                      if (value === null) return;
-                      localSearchRadiusRef.current = Number(value);
-                      setUpdateFlag(!updateFlag);
-                    }}
-                  />
-                </Col>
-              </Row>
-            )}
-          </TabPane>
-
-          <TabPane tab={t('optimizationMenu.Variables', lang)} key="2">
-            <Row gutter={6}>
-              <Col className="gutter-row" span={12}>
-                {t('optimizationMenu.TiltAngleRange', lang) + ':'}
-              </Col>
-              <Col className="gutter-row" span={12}>
-                <Slider
-                  range
-                  onChange={(value) => {
-                    minimumTiltAngleRef.current = Util.toRadians(value[0]);
-                    maximumTiltAngleRef.current = Util.toRadians(value[1]);
-                    setUpdateFlag(!updateFlag);
-                  }}
-                  min={-90}
-                  max={90}
-                  defaultValue={[
-                    Util.toDegrees(minimumTiltAngleRef.current),
-                    Util.toDegrees(maximumTiltAngleRef.current),
-                  ]}
-                  marks={{
-                    '-90': {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: '-90°',
-                    },
-                    '-45': {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: '-45°',
-                    },
-                    '0': {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: '0°',
-                    },
-                    '45': {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: '45°',
-                    },
-                    '90': {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: '90°',
-                    },
-                  }}
-                />
-              </Col>
-            </Row>
-
-            <Row gutter={6}>
-              <Col className="gutter-row" span={12}>
-                {t('optimizationMenu.RowsPerRackRange', lang) + ':'}
-              </Col>
-              <Col className="gutter-row" span={12}>
-                <Slider
-                  range
-                  onChange={(value) => {
-                    minimumRowsPerRackRef.current = value[0];
-                    maximumRowsPerRackRef.current = value[1];
-                    setUpdateFlag(!updateFlag);
-                  }}
-                  min={1}
-                  max={9}
-                  defaultValue={[minimumRowsPerRackRef.current, maximumRowsPerRackRef.current]}
-                  marks={{
-                    1: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: 1,
-                    },
-                    2: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: 2,
-                    },
-                    3: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: 3,
-                    },
-                    4: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: 4,
-                    },
-                    5: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: 5,
-                    },
-                    6: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: 6,
-                    },
-                    7: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: 7,
-                    },
-                    8: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: 8,
-                    },
-                    9: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: 9,
-                    },
-                  }}
-                />
-              </Col>
-            </Row>
-
-            <Row gutter={6}>
-              <Col className="gutter-row" span={12}>
-                {t('optimizationMenu.InterRowSpacingRange', lang) + ':'}
-              </Col>
-              <Col className="gutter-row" span={12}>
-                <Slider
-                  range
-                  onChange={(value) => {
-                    minimumInterRowSpacingRef.current = value[0];
-                    maximumInterRowSpacingRef.current = value[1];
-                    setUpdateFlag(!updateFlag);
-                  }}
-                  min={1}
-                  max={10}
-                  defaultValue={[minimumInterRowSpacingRef.current, maximumInterRowSpacingRef.current]}
-                  marks={{
-                    1: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: '1m',
-                    },
-                    3: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: '3m',
-                    },
-                    5: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: '5m',
-                    },
-                    7: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: '7m',
-                    },
-                    9: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: '9m',
-                    },
-                  }}
-                />
-              </Col>
-            </Row>
-          </TabPane>
-
-          <TabPane tab={t('optimizationMenu.Constants', lang)} key="3">
-            <Row gutter={6} style={{ paddingBottom: '6px', paddingTop: '0px' }}>
-              <Col className="gutter-row" span={12}>
-                {t('polygonMenu.SolarPanelArrayModel', lang) +
-                  ' (' +
-                  Object.keys(pvModules).length +
-                  ' ' +
-                  t('word.Options', lang) +
-                  '):'}
-              </Col>
-              <Col className="gutter-row" span={12}>
-                <Select
-                  defaultValue="Custom"
-                  style={{ width: '100%' }}
-                  value={pvModelNameRef.current}
-                  onChange={(value) => {
-                    pvModelNameRef.current = value;
-                    setUpdateFlag(!updateFlag);
-                  }}
-                >
-                  {Object.keys(pvModules).map((key) => (
-                    <Option key={key} value={key}>
-                      {key +
-                        (pvModules[key].bifacialityFactor > 0 ? ' (' + t('pvModelPanel.Bifacial', lang) + ')' : '')}
-                    </Option>
-                  ))}
-                </Select>
-              </Col>
-            </Row>
-
-            <Row gutter={6} style={{ paddingBottom: '6px', paddingTop: '8px' }}>
-              <Col className="gutter-row" span={12}>
-                {t('polygonMenu.SolarPanelArrayRowAxis', lang) + ':'}
-              </Col>
-              <Col className="gutter-row" span={12}>
-                <Select
-                  style={{ width: '100%' }}
-                  value={rowAxisRef.current}
-                  onChange={(value) => {
-                    rowAxisRef.current = value;
-                    setUpdateFlag(!updateFlag);
-                  }}
-                >
-                  <Option key={RowAxis.leftRight} value={RowAxis.leftRight}>
-                    {t('polygonMenu.SolarPanelArrayLeftRightRowAxis', lang)}
-                  </Option>
-                  <Option key={RowAxis.upDown} value={RowAxis.upDown}>
-                    {t('polygonMenu.SolarPanelArrayUpDownRowAxis', lang)}
-                  </Option>
-                </Select>
-              </Col>
-            </Row>
-
-            <Row gutter={6} style={{ paddingBottom: '6px', paddingTop: '8px' }}>
-              <Col className="gutter-row" span={12}>
-                {t('polygonMenu.SolarPanelArrayOrientation', lang) + ':'}
-              </Col>
-              <Col className="gutter-row" span={12}>
-                <Select
-                  style={{ width: '100%' }}
-                  value={orientationRef.current}
-                  onChange={(value) => {
-                    orientationRef.current = value;
-                    setUpdateFlag(!updateFlag);
-                  }}
-                >
-                  <Option key={Orientation.portrait} value={Orientation.portrait}>
-                    {t('solarPanelMenu.Portrait', lang)}
-                  </Option>
-                  <Option key={Orientation.landscape} value={Orientation.landscape}>
-                    {t('solarPanelMenu.Landscape', lang)}
-                  </Option>
-                </Select>
-              </Col>
-            </Row>
-
-            <Row gutter={6} style={{ paddingBottom: '0px', paddingTop: '12px' }}>
-              <Col className="gutter-row" span={12}>
-                {t('polygonMenu.SolarPanelArrayMargin', lang) + ':'}
-              </Col>
-              <Col className="gutter-row" span={12}>
-                <Slider
-                  style={{ paddingBottom: 0, paddingTop: 0, marginTop: '16px', marginBottom: '16px' }}
-                  onChange={(value) => {
-                    marginRef.current = value;
-                    setUpdateFlag(!updateFlag);
-                  }}
-                  min={0}
-                  max={5}
-                  step={0.1}
-                  defaultValue={marginRef.current}
-                  marks={{
-                    0: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: '0m',
-                    },
-                    1: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: '1m',
-                    },
-                    2: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: '2m',
-                    },
-                    3: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: '3m',
-                    },
-                    4: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: '4m',
-                    },
-                    5: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: '5m',
-                    },
-                  }}
-                />
-              </Col>
-            </Row>
-
-            <Row gutter={6} style={{ paddingBottom: '0px', paddingTop: '12px' }}>
-              <Col className="gutter-row" span={12}>
-                {t('solarCollectorMenu.PoleHeight', lang) + ':'}
-              </Col>
-              <Col className="gutter-row" span={12}>
-                <Slider
-                  style={{ paddingBottom: 0, paddingTop: 0, marginTop: '16px', marginBottom: '16px' }}
-                  onChange={(value) => {
-                    poleHeightRef.current = value;
-                    setUpdateFlag(!updateFlag);
-                  }}
-                  min={0}
-                  max={10}
-                  step={0.1}
-                  defaultValue={poleHeightRef.current}
-                  marks={{
-                    0: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: '0m',
-                    },
-                    2: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: '2m',
-                    },
-                    4: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: '4m',
-                    },
-                    6: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: '6m',
-                    },
-                    8: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: '8m',
-                    },
-                    10: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: '10m',
-                    },
-                  }}
-                />
-              </Col>
-            </Row>
-
-            <Row gutter={6} style={{ paddingBottom: '0px', paddingTop: '12px' }}>
-              <Col className="gutter-row" span={12}>
-                {t('solarPanelMenu.PoleSpacing', lang) + ':'}
-              </Col>
-              <Col className="gutter-row" span={12}>
-                <Slider
-                  style={{ paddingBottom: 0, paddingTop: 0, marginTop: '16px', marginBottom: '16px' }}
-                  onChange={(value) => {
-                    poleSpacingRef.current = value;
-                    setUpdateFlag(!updateFlag);
-                  }}
-                  min={2}
-                  max={10}
-                  step={0.1}
-                  defaultValue={poleSpacingRef.current}
-                  marks={{
-                    2: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: '2m',
-                    },
-                    4: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: '4m',
-                    },
-                    6: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: '6m',
-                    },
-                    8: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: '8m',
-                    },
-                    10: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: '10m',
-                    },
-                  }}
-                />
-              </Col>
-            </Row>
-
-            <Row gutter={6} style={{ paddingBottom: '0px', paddingTop: '12px' }}>
-              <Col className="gutter-row" span={12}>
-                {t('economicsPanel.OperationalCostPerUnit', lang) + ':'}
-              </Col>
-              <Col className="gutter-row" span={12}>
-                <Slider
-                  style={{ paddingBottom: 0, paddingTop: 0, marginTop: '16px', marginBottom: '16px' }}
-                  onChange={(value) => {
-                    operationalCostPerUnitRef.current = value;
-                    setUpdateFlag(!updateFlag);
-                  }}
-                  min={0.1}
-                  max={1}
-                  step={0.01}
-                  defaultValue={operationalCostPerUnitRef.current}
-                  marks={{
-                    0.1: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: '10¢',
-                    },
-                    0.3: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: '30¢',
-                    },
-                    0.5: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: '50¢',
-                    },
-                    0.7: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: '70¢',
-                    },
-                    0.9: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: '90¢',
-                    },
-                  }}
-                />
-              </Col>
-            </Row>
-
-            <Row gutter={6} style={{ paddingBottom: '0px', paddingTop: '12px' }}>
-              <Col className="gutter-row" span={12}>
-                {t('economicsPanel.ElectricitySellingPrice', lang) + ':'}
-              </Col>
-              <Col className="gutter-row" span={12}>
-                <Slider
-                  style={{ paddingBottom: 0, paddingTop: 0, marginTop: '16px', marginBottom: '16px' }}
-                  onChange={(value) => {
-                    electricitySellingPriceRef.current = value;
-                    setUpdateFlag(!updateFlag);
-                  }}
-                  min={0.1}
-                  max={1}
-                  step={0.01}
-                  defaultValue={electricitySellingPriceRef.current}
-                  marks={{
-                    0.1: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: '10¢',
-                    },
-                    0.3: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: '30¢',
-                    },
-                    0.5: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: '50¢',
-                    },
-                    0.7: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: '70¢',
-                    },
-                    0.9: {
-                      style: {
-                        fontSize: '10px',
-                      },
-                      label: '90¢',
-                    },
-                  }}
-                />
-              </Col>
-            </Row>
-          </TabPane>
-        </Tabs>
+        />
       </Modal>
     </>
   );

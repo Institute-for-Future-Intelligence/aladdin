@@ -40,7 +40,7 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
 
   const lang = useLanguage();
   const pvModules = useMemo(() => {
-    return { ...supportedPvModules, ...customPvModules };
+    return { ...customPvModules, ...supportedPvModules };
   }, [supportedPvModules, customPvModules]);
   const pvModel = getPvModule(selectedPvModel ?? 'SPR-X21-335-BLK');
 

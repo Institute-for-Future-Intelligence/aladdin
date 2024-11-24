@@ -63,7 +63,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
   const reference = getSelectedElement();
 
   const pvModules = useMemo(() => {
-    return { ...supportedPvModules, ...customPvModules };
+    return { ...customPvModules, ...supportedPvModules };
   }, [supportedPvModules, customPvModules]);
 
   useEffect(() => {

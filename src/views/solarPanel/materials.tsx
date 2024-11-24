@@ -28,7 +28,7 @@ const Materials = ({ solarPanel, lx, ly }: MaterialsProps) => {
   const customPvModules = useStore(Selector.customPvModules);
 
   const pvModules = useMemo(() => {
-    return { ...supportedPvModules, ...customPvModules };
+    return { ...customPvModules, ...supportedPvModules };
   }, [supportedPvModules, customPvModules]);
 
   const pvModel = pvModules[pvModelName] as PvModel;

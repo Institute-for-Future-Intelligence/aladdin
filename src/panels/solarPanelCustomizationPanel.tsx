@@ -3,7 +3,7 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Col, Input, InputNumber, Modal, Row, Select, Tabs } from 'antd';
+import { Button, Col, Input, InputNumber, Modal, Row, Select, Tabs, TabsProps } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
@@ -13,7 +13,6 @@ import { PvModel } from '../models/PvModel';
 import { ShadeTolerance } from '../types';
 
 const { Option } = Select;
-const { TabPane } = Tabs;
 
 const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
@@ -97,41 +96,12 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
     setDialogVisible(false);
   };
 
-  return (
-    <Modal
-      width={500}
-      open={true}
-      title={
-        <div
-          style={{ width: '100%', cursor: 'move' }}
-          onMouseOver={() => setDragEnabled(true)}
-          onMouseOut={() => setDragEnabled(false)}
-        >
-          {i18n.t('menu.settings.CustomizeSolarPanel', lang)}
-        </div>
-      }
-      footer={[
-        <Button key="Cancel" onClick={onCancelClick}>
-          {i18n.t('word.Cancel', lang)}
-        </Button>,
-        <Button key="OK" type="primary" ref={okButtonRef} onClick={onOkClick}>
-          {i18n.t('word.OK', lang)}
-        </Button>,
-      ]}
-      // this must be specified for the x button in the upper-right corner to work
-      onCancel={() => {
-        setDialogVisible(false);
-      }}
-      maskClosable={false}
-      destroyOnClose={false}
-      modalRender={(modal) => (
-        <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
-          <div ref={dragRef}>{modal}</div>
-        </Draggable>
-      )}
-    >
-      <Tabs type="card">
-        <TabPane tab={i18n.t('pvModelPanel.General', lang)} key="1">
+  const items: TabsProps['items'] = [
+    {
+      key: '1',
+      label: i18n.t('pvModelPanel.General', lang),
+      children: (
+        <>
           <Row gutter={6} style={{ paddingBottom: '4px' }}>
             <Col className="gutter-row" span={16}>
               {i18n.t('pvModelPanel.Model', lang) + ': '}
@@ -309,9 +279,14 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
               </Select>
             </Col>
           </Row>
-        </TabPane>
-
-        <TabPane tab={i18n.t('pvModelPanel.Electrical', lang)} key="2">
+        </>
+      ),
+    },
+    {
+      key: '2',
+      label: i18n.t('pvModelPanel.Electrical', lang),
+      children: (
+        <>
           <Row gutter={6} style={{ paddingBottom: '4px' }}>
             <Col className="gutter-row" span={16}>
               {i18n.t('pvModelPanel.SolarCellEfficiency', lang) + ' (%):'}
@@ -516,8 +491,45 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
               />
             </Col>
           </Row>
-        </TabPane>
-      </Tabs>
+        </>
+      ),
+    },
+  ];
+
+  return (
+    <Modal
+      width={500}
+      open={true}
+      title={
+        <div
+          style={{ width: '100%', cursor: 'move' }}
+          onMouseOver={() => setDragEnabled(true)}
+          onMouseOut={() => setDragEnabled(false)}
+        >
+          {i18n.t('menu.settings.CustomizeSolarPanel', lang)}
+        </div>
+      }
+      footer={[
+        <Button key="Cancel" onClick={onCancelClick}>
+          {i18n.t('word.Cancel', lang)}
+        </Button>,
+        <Button key="OK" type="primary" ref={okButtonRef} onClick={onOkClick}>
+          {i18n.t('word.OK', lang)}
+        </Button>,
+      ]}
+      // this must be specified for the x button in the upper-right corner to work
+      onCancel={() => {
+        setDialogVisible(false);
+      }}
+      maskClosable={false}
+      destroyOnClose={false}
+      modalRender={(modal) => (
+        <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
+          <div ref={dragRef}>{modal}</div>
+        </Draggable>
+      )}
+    >
+      <Tabs defaultActiveKey="1" type="card" items={items} />
     </Modal>
   );
 });
