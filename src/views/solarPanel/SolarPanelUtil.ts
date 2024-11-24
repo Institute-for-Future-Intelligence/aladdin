@@ -7,7 +7,7 @@ import { Euler, Object3D, Vector3 } from 'three';
 import { RoofSegmentGroupUserData } from '../roof/roofRenderer';
 import { useStore } from 'src/stores/common';
 import { HALF_PI } from 'src/constants';
-import { Operation, SurfaceType } from './refSolarPanel';
+import { Operation, SurfaceType } from './solarPanel';
 import { ElementState, ObjectType, Orientation, TrackerType } from 'src/types';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { UndoableMove } from 'src/undo/UndoableMove';

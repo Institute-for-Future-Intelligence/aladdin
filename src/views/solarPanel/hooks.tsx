@@ -19,7 +19,7 @@ import { CanvasTexture, RepeatWrapping } from 'three';
 import * as Selector from '../../stores/selector';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
-import { Operation } from './refSolarPanel';
+import { Operation } from './solarPanel';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 
 export const useInnerState = <T,>(val: T) => {

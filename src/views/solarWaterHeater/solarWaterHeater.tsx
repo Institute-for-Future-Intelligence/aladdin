@@ -29,7 +29,7 @@ import {
   Vector3,
 } from 'three';
 import { useRefStore } from 'src/stores/commonRef';
-import { Operation, SurfaceType } from '../solarPanel/refSolarPanel';
+import { Operation, SurfaceType } from '../solarPanel/solarPanel';
 import { FOUNDATION_GROUP_NAME, FOUNDATION_NAME } from '../foundation/foundation';
 import RotateHandle from '../solarPanel/rotateHandle';
 import { RoofUtil } from '../roof/RoofUtil';

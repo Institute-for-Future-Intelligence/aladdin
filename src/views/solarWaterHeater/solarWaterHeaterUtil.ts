@@ -1,5 +1,5 @@
 import { SolarWaterHeaterModel } from 'src/models/SolarWaterHeaterModel';
-import { Operation } from '../solarPanel/refSolarPanel';
+import { Operation } from '../solarPanel/solarPanel';
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
 import { UndoableMove } from 'src/undo/UndoableMove';

@@ -3,7 +3,7 @@
  */
 
 import { TrackerType } from 'src/types';
-import { SurfaceType } from './refSolarPanel';
+import { SurfaceType } from './solarPanel';
 import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from 'react';
 import { Group, Vector3 } from 'three';
 import { useStore } from 'src/stores/common';

@@ -9,7 +9,7 @@ import * as Selector from '../../stores/selector';
 import { Color, Side } from 'three';
 import { useMaterialSize } from '../solarPanel/hooks';
 import { forwardRef, useImperativeHandle } from 'react';
-import { Operation } from '../solarPanel/refSolarPanel';
+import { Operation } from '../solarPanel/solarPanel';
 import { useWaterHeaterPanelTexture } from './texture';
 
 interface MaterialsProps {

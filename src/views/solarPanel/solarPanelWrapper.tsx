@@ -4,7 +4,7 @@
 
 import React, { useCallback } from 'react';
 import { ObjectType } from 'src/types';
-import RefSolarPanel from './refSolarPanel';
+import SolarPanel from './solarPanel';
 import { useStore } from 'src/stores/common';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { shallow } from 'zustand/shallow';
@@ -63,7 +63,7 @@ const SolarPanelWrapper = React.memo(
         return (
           <group name={SOLAR_PANELS_WRAPPER_NAME}>
             {solarPanels.map((sp) => (
-              <RefSolarPanel key={sp.id} {...sp} />
+              <SolarPanel key={sp.id} {...sp} />
             ))}
           </group>
         );
@@ -72,7 +72,7 @@ const SolarPanelWrapper = React.memo(
         return (
           <group name={SOLAR_PANELS_WRAPPER_NAME}>
             {solarPanels.map((sp) => (
-              <RefSolarPanel key={sp.id} {...sp} cx={sp.cx * plx} cz={sp.cz * plz} />
+              <SolarPanel key={sp.id} {...sp} cx={sp.cx * plx} cz={sp.cz * plz} />
             ))}
           </group>
         );

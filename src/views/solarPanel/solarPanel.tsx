@@ -68,7 +68,7 @@ const RotateHandleDist = 1;
  * -tilt anchor on cuboid vertial surfaces have problem. anchor is not on same plane with pointer
  */
 
-const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
+const SolarPanel = React.memo((solarPanel: SolarPanelModel) => {
   const {
     id,
     cx,
@@ -1108,4 +1108,4 @@ const RefSolarPanel = React.memo((solarPanel: SolarPanelModel) => {
   );
 });
 
-export default RefSolarPanel;
+export default SolarPanel;
