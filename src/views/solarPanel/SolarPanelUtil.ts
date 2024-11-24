@@ -3,7 +3,7 @@
  */
 
 import { Util } from 'src/Util';
-import { Object3D, Vector3 } from 'three';
+import { Euler, Object3D, Vector3 } from 'three';
 import { RoofSegmentGroupUserData } from '../roof/roofRenderer';
 import { useStore } from 'src/stores/common';
 import { HALF_PI } from 'src/constants';
@@ -20,6 +20,29 @@ import { RoofModel } from 'src/models/RoofModel';
 import { SolarWaterHeaterModel } from 'src/models/SolarWaterHeaterModel';
 
 export class SolarPanelUtil {
+  static getSolarPanelUnitLength(solarPanel: SolarPanelModel) {
+    const pvModel = useStore.getState().getPvModule(solarPanel.pvModelName);
+    if (solarPanel.orientation === Orientation.landscape) {
+      return [pvModel.length, pvModel.width];
+    } else {
+      return [pvModel.width, pvModel.length];
+    }
+  }
+
+  static getRotationFromNormal(normal: number[]) {
+    const [x, y, z] = normal;
+    if (z === 1) {
+      return new Euler(0, 0, 0);
+    }
+    if (x !== 0) {
+      return new Euler(HALF_PI, 0, x * HALF_PI, 'ZXY');
+    }
+    if (y !== 0) {
+      return new Euler(-y * HALF_PI, 0, 0);
+    }
+    return new Euler();
+  }
+
   static isNewPositionOk(el: SolarPanelModel | SolarWaterHeaterModel) {
     const parent = useStore.getState().elements.find((e) => e.id === el.parentId);
     if (!parent) return false;

@@ -9,7 +9,6 @@ import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { WindowModel } from 'src/models/WindowModel';
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
-import SolarPanelOnRoof from '../solarPanel/solarPanelOnRoof';
 import { shallow } from 'zustand/shallow';
 import Window from '../window/window';
 import WallRenderer from '../wall/wallRenderer';
@@ -44,18 +43,6 @@ const BuildingRenderer = (foundationModel: FoundationModel) => {
             return <WallRenderer key={e.id} wallModel={e as WallModel} foundationModel={foundationModel} />;
           case ObjectType.Roof:
             return <RoofRenderer key={e.id} roofModel={e as RoofModel} foundationModel={foundationModel} />;
-          // case ObjectType.SolarPanel:
-          //   // rooftop solar panels
-          //   return (
-          //     <SolarPanelOnRoof
-          //       key={e.id}
-          //       {...(e as SolarPanelModel)}
-          //       cx={e.cx * lx}
-          //       cy={e.cy * ly}
-          //       cz={e.cz}
-          //       foundationModel={foundationModel}
-          //     />
-          //   );
           case ObjectType.Window:
             // rooftop windows
             return <Window key={e.id} {...(e as WindowModel)} cz={e.cz} />;

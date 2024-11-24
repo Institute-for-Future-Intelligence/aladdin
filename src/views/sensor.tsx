@@ -28,8 +28,8 @@ import { WallModel } from '../models/WallModel';
 import { FoundationModel } from '../models/FoundationModel';
 import { useRefStore } from 'src/stores/commonRef';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
-import { getRotationFromNormal } from './solarPanel/solarPanelOnCuboid';
 import { useLanguage, useSelected } from '../hooks';
+import { SolarPanelUtil } from './solarPanel/SolarPanelUtil';
 
 const Sensor = React.memo((sensorModel: SensorModel) => {
   const {
@@ -144,7 +144,7 @@ const Sensor = React.memo((sensorModel: SensorModel) => {
       );
     }
     if (parent?.type === ObjectType.Cuboid) {
-      return getRotationFromNormal(normal);
+      return SolarPanelUtil.getRotationFromNormal(normal);
     }
     // the normal below seems to be relative to its parent
     const n = new Vector3().fromArray(normal);

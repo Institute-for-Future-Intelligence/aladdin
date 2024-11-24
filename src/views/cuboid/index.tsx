@@ -7,8 +7,6 @@ import { ElementModel } from 'src/models/ElementModel';
 import { isStackableModel } from 'src/models/Stackable';
 import Cuboid from './cuboid';
 import { ObjectType } from 'src/types';
-import SolarPanelOnCuboid from '../solarPanel/solarPanelOnCuboid';
-import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import Sensor from '../sensor';
 import { SensorModel } from 'src/models/SensorModel';
 import Light from '../light';
@@ -50,17 +48,6 @@ const CuboidRenderer = ({ elements, cuboidModel }: CuboidRendererProps) => {
         } else if (e.parentId === id) {
           const { lx, ly, lz } = cuboidModel;
           switch (e.type) {
-            // case ObjectType.SolarPanel: {
-            //   return (
-            //     <SolarPanelOnCuboid
-            //       key={e.id}
-            //       {...(e as SolarPanelModel)}
-            //       cx={e.cx * lx}
-            //       cy={e.cy * ly}
-            //       cz={e.cz * lz}
-            //     />
-            //   );
-            // }
             case ObjectType.Sensor: {
               return <Sensor key={e.id} {...(e as SensorModel)} cx={e.cx * lx} cy={e.cy * ly} cz={e.cz * lz} />;
             }

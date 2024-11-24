@@ -38,7 +38,6 @@ import { UndoableResizeElementOnWall } from 'src/undo/UndoableResize';
 import { DoorModel, DoorType } from 'src/models/DoorModel';
 import Door from '../door/door';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
-import SolarPanelOnWall from '../solarPanel/solarPanelOnWall';
 import { useElements, useLatestFoundation, useWallTexture } from './hooks';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { HorizontalRuler } from '../horizontalRuler';
@@ -62,6 +61,7 @@ import Parapet, { DEFAULT_PARAPET_SETTINGS } from './parapet';
 import { InnerCommonStoreState } from 'src/stores/InnerCommonState';
 import WallHeatFlux from './wallHeatFlux';
 import { useSelected } from '../../hooks';
+import { SolarPanelUtil } from '../solarPanel/SolarPanelUtil';
 
 export const WALL_BLOCK_PLANE = 'Wall Block Plane';
 
@@ -1922,7 +1922,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           }
           case ObjectType.SolarPanel: {
             const solarPanel = selectedElement as SolarPanelModel;
-            const [unitX, unitY] = getSolarPanelUnitLength(solarPanel);
+            const [unitX, unitY] = SolarPanelUtil.getSolarPanelUnitLength(solarPanel);
             // Z direction
             if (resizeHandleType === ResizeHandleType.Lower || resizeHandleType === ResizeHandleType.Upper) {
               const ny = Math.max(1, Math.round(Math.abs(relativePointer.z - resizeAnchor.z) / unitY));
@@ -2551,16 +2551,6 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
                   />
                 );
               }
-              // case ObjectType.SolarPanel:
-              //   let r = 0;
-              //   if (latestFoundation && wallModel) {
-              //     r = latestFoundation.rotation[2] + wallModel.relativeAngle;
-              //   }
-              //   return (
-              //     <group key={e.id} position={[0, -e.lz / 2, 0]}>
-              //       <SolarPanelOnWall {...(e as SolarPanelModel)} cx={e.cx * lx} cz={e.cz * lz} absRotation={r} />
-              //     </group>
-              //   );
               default:
                 return null;
             }
@@ -2627,15 +2617,6 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     </>
   );
 };
-
-export function getSolarPanelUnitLength(solarPanel: SolarPanelModel) {
-  const pvModel = useStore.getState().getPvModule(solarPanel.pvModelName);
-  if (solarPanel.orientation === Orientation.landscape) {
-    return [pvModel.length, pvModel.width];
-  } else {
-    return [pvModel.width, pvModel.length];
-  }
-}
 
 const areEqual = (prev: WallProps, curr: WallProps) => prev.wallModel === curr.wallModel;
 

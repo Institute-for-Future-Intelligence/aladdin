@@ -63,7 +63,6 @@ import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
 import Handles from './handles';
 import { ElementModelFactory } from 'src/models/ElementModelFactory';
-import { getSolarPanelUnitLength } from '../wall/wall';
 import { useSelected } from '../../hooks';
 import { SharedUtil } from '../SharedUtil';
 import { SolarPanelUtil } from '../solarPanel/SolarPanelUtil';
@@ -648,7 +647,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
             case ObjectType.SolarPanel: {
               const solarPanel = grabRef.current as SolarPanelModel;
               if (solarPanel.normal[2] === 1) break;
-              const [unitX, unitY] = getSolarPanelUnitLength(solarPanel);
+              const [unitX, unitY] = SolarPanelUtil.getSolarPanelUnitLength(solarPanel);
               const resizeAnchor = useStore.getState().resizeAnchor;
               const resizeHandleType = useStore.getState().resizeHandleType;
 
