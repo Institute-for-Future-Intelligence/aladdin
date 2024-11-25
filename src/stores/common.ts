@@ -824,6 +824,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
               state.autoDeletedChild = null;
               state.deletedRoofIdSet.clear();
               state.addedRoofIdSet.clear();
+              state.customPvModules = {};
             });
             usePrimitiveStore.getState().set((state) => {
               state.changed = false;
@@ -4890,8 +4891,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                 }
               }
               if (used) {
-                const lang = { lng: state.language };
-                showError(i18n.t('pvModelPanel.ThisCustomSolarPanelIsUsed', lang));
+                showError(i18n.t('pvModelPanel.ThisCustomSolarPanelIsUsed', { lng: state.language }));
               } else {
                 delete state.customPvModules[name];
               }

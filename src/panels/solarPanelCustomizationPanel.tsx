@@ -5,6 +5,7 @@
 import React, { useMemo, useRef, useState } from 'react';
 import {
   DeleteOutlined,
+  ExportOutlined,
   ArrowLeftOutlined,
   ArrowRightOutlined,
   WarningOutlined,
@@ -551,21 +552,35 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
         </Col>
         <Col>
           <Space style={{ height: '100%', justifyContent: 'center', marginLeft: '8px' }} direction={'vertical'}>
-            <ArrowRightOutlined title={'Add'} style={{ cursor: 'pointer' }} onClick={() => addCustomSolarPanel()} />
+            <ArrowRightOutlined
+              title={i18n.t('word.Add', lang)}
+              style={{ cursor: 'pointer', border: '2px solid lightgray', borderRadius: '5px', padding: '4px' }}
+              onClick={() => addCustomSolarPanel()}
+            />
             <Divider />
-            <ArrowLeftOutlined title={'Load'} style={{ cursor: 'pointer' }} onClick={() => {}} />
+            <ArrowLeftOutlined
+              title={i18n.t('pvModelPanel.CopySelectedCustomSolarPanel', lang)}
+              style={{ cursor: 'pointer', border: '2px solid lightgray', borderRadius: '5px', padding: '4px' }}
+              onClick={() => {}}
+            />
           </Space>
         </Col>
         <Col>
           <List
             style={{ marginTop: '56px', marginLeft: '8px' }}
             size="small"
-            header={<div style={{ fontWeight: 'bold' }}>Existing</div>}
+            header={<div style={{ fontWeight: 'bold' }}>{i18n.t('pvModelPanel.AddedCustomSolarPanels', lang)}</div>}
             bordered
             dataSource={names}
             renderItem={(item) => (
               <List.Item key={item}>
+                <ExportOutlined
+                  title={i18n.t('pvModelPanel.ExportCustomSolarPanel', lang)}
+                  style={{ paddingRight: '4px', cursor: 'pointer' }}
+                  onClick={() => {}}
+                />
                 <DeleteOutlined
+                  title={i18n.t('word.Delete', lang)}
                   style={{ paddingRight: '6px', cursor: 'pointer' }}
                   onClick={() => confirmRemoveCustomSolarPanel(item)}
                 />
