@@ -229,7 +229,7 @@ const SolarAbsorberPipeOpticalEfficiencyInput = ({ setDialogVisible }: { setDial
       onClose={close}
     >
       <Row gutter={6}>
-        <Col className="gutter-row" span={8}>
+        <Col span={8}>
           <InputNumber
             min={0}
             max={1}
@@ -247,7 +247,6 @@ const SolarAbsorberPipeOpticalEfficiencyInput = ({ setDialogVisible }: { setDial
           </div>
         </Col>
         <Col
-          className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={16}
         >

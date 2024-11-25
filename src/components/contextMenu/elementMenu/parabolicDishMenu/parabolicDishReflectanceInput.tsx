@@ -229,7 +229,7 @@ const ParabolicDishReflectanceInput = ({ setDialogVisible }: { setDialogVisible:
       onClose={close}
     >
       <Row gutter={6}>
-        <Col className="gutter-row" span={7}>
+        <Col span={7}>
           <InputNumber
             min={0}
             max={1}
@@ -247,7 +247,6 @@ const ParabolicDishReflectanceInput = ({ setDialogVisible }: { setDialogVisible:
           </div>
         </Col>
         <Col
-          className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={17}
         >

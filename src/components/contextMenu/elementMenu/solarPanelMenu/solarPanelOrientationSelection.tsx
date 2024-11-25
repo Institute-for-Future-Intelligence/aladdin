@@ -567,7 +567,7 @@ const SolarPanelOrientationSelection = ({ setDialogVisible }: { setDialogVisible
       onClickOk={ok}
     >
       <Row gutter={6}>
-        <Col className="gutter-row" span={8}>
+        <Col span={8}>
           <Select
             style={{ width: '150px' }}
             value={selectedOrientation}
@@ -582,7 +582,6 @@ const SolarPanelOrientationSelection = ({ setDialogVisible }: { setDialogVisible
           </Select>
         </Col>
         <Col
-          className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={16}
         >

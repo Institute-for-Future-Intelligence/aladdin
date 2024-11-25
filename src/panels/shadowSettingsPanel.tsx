@@ -141,13 +141,13 @@ const ShadowSettingsPanel = React.memo(({ setDialogVisible }: { setDialogVisible
       )}
     >
       <Row gutter={6} style={{ paddingBottom: '4px' }}>
-        <Col className="gutter-row" span={18}>
+        <Col span={18}>
           {i18n.t('shadowSettingsPanel.ShadowCameraFarDistance', lang) +
             ' ([1, 1000]×' +
             SHADOW_CAMERA_FAR_STEP +
             '): '}
         </Col>
-        <Col className="gutter-row" span={6}>
+        <Col span={6}>
           <InputNumber
             min={1}
             max={1000}
@@ -175,10 +175,10 @@ const ShadowSettingsPanel = React.memo(({ setDialogVisible }: { setDialogVisible
         </Col>
       </Row>
       <Row gutter={6} style={{ paddingBottom: '10px' }}>
-        <Col className="gutter-row" span={18}>
+        <Col span={18}>
           {i18n.t('shadowSettingsPanel.ShadowMapSize', lang) + ' ([1, 4]×' + SHADOW_MAP_SIZE_STEP + '): '}
         </Col>
-        <Col className="gutter-row" span={6}>
+        <Col span={6}>
           <InputNumber
             min={1}
             max={4}

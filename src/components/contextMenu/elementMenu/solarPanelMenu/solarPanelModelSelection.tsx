@@ -464,7 +464,7 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
   return (
     <Dialog width={640} title={i18n.t('pvModelPanel.SolarPanelSpecs', lang)} onApply={apply} onClose={close}>
       <Row gutter={6} style={{ paddingBottom: '4px' }}>
-        <Col className="gutter-row" span={13}>
+        <Col span={13}>
           {i18n.t('pvModelPanel.Model', lang) +
             ' (' +
             Object.keys(pvModules).length +
@@ -472,7 +472,7 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
             i18n.t('word.Options', lang) +
             '):'}
         </Col>
-        <Col className="gutter-row" span={11}>
+        <Col span={11}>
           <Select defaultValue="Custom" style={{ width: '100%' }} value={selectedPvModel} onChange={setSelectedPvModel}>
             {Object.keys(pvModules).map((key) => (
               <Option key={key} value={key}>
@@ -483,10 +483,8 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
         </Col>
       </Row>
       <Row gutter={6} style={{ paddingBottom: '4px' }}>
-        <Col className="gutter-row" span={13}>
-          {i18n.t('pvModelPanel.PanelSize', lang) + ':'}
-        </Col>
-        <Col className="gutter-row" span={11}>
+        <Col span={13}>{i18n.t('pvModelPanel.PanelSize', lang) + ':'}</Col>
+        <Col span={11}>
           <Select
             disabled={true}
             style={{ width: '100%' }}
@@ -506,10 +504,8 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
         </Col>
       </Row>
       <Row gutter={6} style={{ paddingBottom: '4px' }}>
-        <Col className="gutter-row" span={13}>
-          {i18n.t('pvModelPanel.CellType', lang) + ':'}
-        </Col>
-        <Col className="gutter-row" span={11}>
+        <Col span={13}>{i18n.t('pvModelPanel.CellType', lang) + ':'}</Col>
+        <Col span={11}>
           <Select
             disabled={true}
             style={{ width: '100%' }}
@@ -533,10 +529,8 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
         </Col>
       </Row>
       <Row gutter={6} style={{ paddingBottom: '4px' }}>
-        <Col className="gutter-row" span={13}>
-          {i18n.t('pvModelPanel.BifacialityFactor', lang) + ':'}
-        </Col>
-        <Col className="gutter-row" span={11}>
+        <Col span={13}>{i18n.t('pvModelPanel.BifacialityFactor', lang) + ':'}</Col>
+        <Col span={11}>
           <InputNumber
             disabled={true}
             style={{ width: '100%' }}
@@ -551,10 +545,8 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
         </Col>
       </Row>
       <Row gutter={6} style={{ paddingBottom: '4px' }}>
-        <Col className="gutter-row" span={13}>
-          {i18n.t('word.Color', lang) + ':'}
-        </Col>
-        <Col className="gutter-row" span={11}>
+        <Col span={13}>{i18n.t('word.Color', lang) + ':'}</Col>
+        <Col span={11}>
           <Select
             disabled={true}
             style={{ width: '100%' }}
@@ -575,10 +567,8 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
         </Col>
       </Row>
       <Row gutter={6} style={{ paddingBottom: '4px' }}>
-        <Col className="gutter-row" span={13}>
-          {i18n.t('pvModelPanel.SolarCellEfficiency', lang) + ' (%):'}
-        </Col>
-        <Col className="gutter-row" span={11}>
+        <Col span={13}>{i18n.t('pvModelPanel.SolarCellEfficiency', lang) + ' (%):'}</Col>
+        <Col span={11}>
           <InputNumber
             disabled={true}
             style={{ width: '100%' }}
@@ -593,10 +583,8 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
         </Col>
       </Row>
       <Row gutter={6} style={{ paddingBottom: '4px' }}>
-        <Col className="gutter-row" span={13}>
-          {i18n.t('pvModelPanel.NominalOperatingCellTemperature', lang) + ' (°C):'}
-        </Col>
-        <Col className="gutter-row" span={11}>
+        <Col span={13}>{i18n.t('pvModelPanel.NominalOperatingCellTemperature', lang) + ' (°C):'}</Col>
+        <Col span={11}>
           <InputNumber
             disabled={true}
             style={{ width: '100%' }}
@@ -611,10 +599,8 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
         </Col>
       </Row>
       <Row gutter={6} style={{ paddingBottom: '4px' }}>
-        <Col className="gutter-row" span={13}>
-          {i18n.t('pvModelPanel.TemperatureCoefficientOfPmax', lang) + ' (%/°C):'}
-        </Col>
-        <Col className="gutter-row" span={11}>
+        <Col span={13}>{i18n.t('pvModelPanel.TemperatureCoefficientOfPmax', lang) + ' (%/°C):'}</Col>
+        <Col span={11}>
           <Input
             disabled={true}
             style={{ width: '100%' }}
@@ -639,10 +625,8 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
           paddingBottom: '8px',
         }}
       >
-        <Col className="gutter-row" span={3}>
-          {i18n.t('word.ApplyTo', lang) + ':'}
-        </Col>
-        <Col className="gutter-row" span={21}>
+        <Col span={3}>{i18n.t('word.ApplyTo', lang) + ':'}</Col>
+        <Col span={21}>
           <Radio.Group onChange={onScopeChange} value={actionScope}>
             <Space direction="vertical">
               <Radio style={{ width: '100%' }} value={Scope.OnlyThisObject}>

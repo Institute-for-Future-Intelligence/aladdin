@@ -245,7 +245,7 @@ const ParabolicDishPoleRadiusInput = ({ setDialogVisible }: { setDialogVisible: 
   return (
     <Dialog width={600} title={i18n.t('solarCollectorMenu.PoleRadius', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
-        <Col className="gutter-row" span={6}>
+        <Col span={6}>
           <InputNumber
             min={0.1}
             max={0.5}
@@ -262,11 +262,10 @@ const ParabolicDishPoleRadiusInput = ({ setDialogVisible }: { setDialogVisible: 
             {i18n.t('word.Range', lang)}: [0.1, 0.5] {i18n.t('word.MeterAbbreviation', lang)}
           </div>
         </Col>
-        <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
+        <Col span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
           {i18n.t('word.MeterAbbreviation', lang)}
         </Col>
         <Col
-          className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={17}
         >

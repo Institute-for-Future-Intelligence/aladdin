@@ -216,7 +216,7 @@ const SolarAbsorberPipePoleNumberInput = ({ setDialogVisible }: { setDialogVisib
       onClose={close}
     >
       <Row gutter={6}>
-        <Col className="gutter-row" span={7}>
+        <Col span={7}>
           <InputNumber
             min={1}
             max={100}
@@ -234,7 +234,6 @@ const SolarAbsorberPipePoleNumberInput = ({ setDialogVisible }: { setDialogVisib
           </div>
         </Col>
         <Col
-          className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={17}
         >

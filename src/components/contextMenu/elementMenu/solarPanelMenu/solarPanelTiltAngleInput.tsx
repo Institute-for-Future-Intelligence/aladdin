@@ -497,7 +497,7 @@ const SolarPanelTiltAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: 
       onClickOk={ok}
     >
       <Row gutter={6}>
-        <Col className="gutter-row" span={6}>
+        <Col span={6}>
           <InputNumber
             min={isOnWall ? 0 : -90}
             max={90}
@@ -519,7 +519,6 @@ const SolarPanelTiltAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: 
           </div>
         </Col>
         <Col
-          className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={18}
         >

@@ -101,11 +101,10 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
       children: (
         <>
           <Row gutter={6} style={{ paddingBottom: '4px' }}>
-            <Col className="gutter-row" span={16}>
-              {i18n.t('pvModelPanel.Model', lang) + ': '}
-            </Col>
-            <Col className="gutter-row" span={8}>
+            <Col span={14}>{i18n.t('pvModelPanel.Model', lang) + ': '}</Col>
+            <Col span={10}>
               <Input
+                style={{ width: '100%' }}
                 value={modelRef.current}
                 onChange={(e) => {
                   modelRef.current = e.target.value;
@@ -116,11 +115,10 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
           </Row>
 
           <Row gutter={6} style={{ paddingBottom: '4px' }}>
-            <Col className="gutter-row" span={16}>
-              {i18n.t('word.BrandName', lang) + ': '}
-            </Col>
-            <Col className="gutter-row" span={8}>
+            <Col span={14}>{i18n.t('word.BrandName', lang) + ': '}</Col>
+            <Col span={10}>
               <Input
+                style={{ width: '100%' }}
                 value={brandRef.current}
                 onChange={(e) => {
                   brandRef.current = e.target.value;
@@ -131,11 +129,15 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
           </Row>
 
           <Row gutter={6} style={{ paddingBottom: '4px' }}>
-            <Col className="gutter-row" span={16}>
-              {i18n.t('pvModelPanel.CellType', lang) + ':'}
-            </Col>
-            <Col className="gutter-row" span={8}>
-              <Select style={{ width: '100%' }} value={cellTypeRef.current} onChange={(value) => {}}>
+            <Col span={14}>{i18n.t('pvModelPanel.CellType', lang) + ':'}</Col>
+            <Col span={10}>
+              <Select
+                style={{ width: '100%' }}
+                value={cellTypeRef.current}
+                onChange={(value) => {
+                  cellTypeRef.current = value;
+                }}
+              >
                 <Option key={'Monocrystalline'} value={'Monocrystalline'}>
                   {i18n.t('pvModelPanel.Monocrystalline', lang)}
                 </Option>
@@ -150,10 +152,10 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
           </Row>
 
           <Row gutter={6} style={{ paddingBottom: '4px' }}>
-            <Col className="gutter-row" span={16}>
+            <Col span={14}>
               {i18n.t('word.Width', lang) + ' ([0.1, 3]' + i18n.t('word.MeterAbbreviation', lang) + '): '}
             </Col>
-            <Col className="gutter-row" span={8}>
+            <Col span={10}>
               <InputNumber
                 min={0.1}
                 max={3}
@@ -181,10 +183,10 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
           </Row>
 
           <Row gutter={6} style={{ paddingBottom: '4px' }}>
-            <Col className="gutter-row" span={16}>
+            <Col span={14}>
               {i18n.t('word.Length', lang) + ' ([0.1, 3]' + i18n.t('word.MeterAbbreviation', lang) + '): '}
             </Col>
-            <Col className="gutter-row" span={8}>
+            <Col span={10}>
               <InputNumber
                 min={0.1}
                 max={3}
@@ -212,10 +214,8 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
           </Row>
 
           <Row gutter={6} style={{ paddingBottom: '4px' }}>
-            <Col className="gutter-row" span={16}>
-              {i18n.t('pvModelPanel.BifacialityFactor', lang) + ' ([0, 1]):'}
-            </Col>
-            <Col className="gutter-row" span={8}>
+            <Col span={14}>{i18n.t('pvModelPanel.BifacialityFactor', lang) + ' ([0, 1]):'}</Col>
+            <Col span={10}>
               <InputNumber
                 style={{ width: '100%' }}
                 precision={2}
@@ -229,10 +229,10 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
           </Row>
 
           <Row gutter={6} style={{ paddingBottom: '4px' }}>
-            <Col className="gutter-row" span={16}>
+            <Col span={14}>
               {i18n.t('pvModelPanel.Weight', lang) + ' (' + i18n.t('pvModelPanel.Kilogram', lang) + '):'}
             </Col>
-            <Col className="gutter-row" span={8}>
+            <Col span={10}>
               <InputNumber
                 style={{ width: '100%' }}
                 precision={1}
@@ -246,10 +246,8 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
           </Row>
 
           <Row gutter={6} style={{ paddingBottom: '4px' }}>
-            <Col className="gutter-row" span={16}>
-              {i18n.t('word.Thickness', lang) + ' (' + i18n.t('word.MeterAbbreviation', lang) + '):'}
-            </Col>
-            <Col className="gutter-row" span={8}>
+            <Col span={14}>{i18n.t('word.Thickness', lang) + ' (' + i18n.t('word.MeterAbbreviation', lang) + '):'}</Col>
+            <Col span={10}>
               <InputNumber
                 style={{ width: '100%' }}
                 precision={1}
@@ -263,11 +261,15 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
           </Row>
 
           <Row gutter={6} style={{ paddingBottom: '4px' }}>
-            <Col className="gutter-row" span={16}>
-              {i18n.t('word.Color', lang) + ':'}
-            </Col>
-            <Col className="gutter-row" span={8}>
-              <Select style={{ width: '100%' }} value={colorRef.current} onChange={(value) => {}}>
+            <Col span={14}>{i18n.t('word.Color', lang) + ':'}</Col>
+            <Col span={10}>
+              <Select
+                style={{ width: '100%' }}
+                value={colorRef.current}
+                onChange={(value) => {
+                  colorRef.current = value;
+                }}
+              >
                 <Option key={'Black'} value={'Black'}>
                   {i18n.t('pvModelPanel.Black', lang)}
                 </Option>
@@ -286,10 +288,8 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
       children: (
         <>
           <Row gutter={6} style={{ paddingBottom: '4px' }}>
-            <Col className="gutter-row" span={16}>
-              {i18n.t('pvModelPanel.SolarCellEfficiency', lang) + ' (%):'}
-            </Col>
-            <Col className="gutter-row" span={8}>
+            <Col span={16}>{i18n.t('pvModelPanel.SolarCellEfficiency', lang) + ' (%):'}</Col>
+            <Col span={8}>
               <InputNumber
                 style={{ width: '100%' }}
                 precision={2}
@@ -303,10 +303,8 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
           </Row>
 
           <Row gutter={6} style={{ paddingBottom: '4px' }}>
-            <Col className="gutter-row" span={16}>
-              {i18n.t('pvModelPanel.CellCountInXDirection', lang) + ': '}
-            </Col>
-            <Col className="gutter-row" span={8}>
+            <Col span={16}>{i18n.t('pvModelPanel.CellCountInXDirection', lang) + ': '}</Col>
+            <Col span={8}>
               <InputNumber
                 min={1}
                 max={36}
@@ -334,10 +332,8 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
           </Row>
 
           <Row gutter={6} style={{ paddingBottom: '4px' }}>
-            <Col className="gutter-row" span={16}>
-              {i18n.t('pvModelPanel.CellCountInYDirection', lang) + ': '}
-            </Col>
-            <Col className="gutter-row" span={8}>
+            <Col span={16}>{i18n.t('pvModelPanel.CellCountInYDirection', lang) + ': '}</Col>
+            <Col span={8}>
               <InputNumber
                 min={1}
                 max={36}
@@ -365,13 +361,13 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
           </Row>
 
           <Row gutter={6} style={{ paddingBottom: '4px' }}>
-            <Col className="gutter-row" span={16}>
+            <Col span={16}>
               {i18n.t('pvModelPanel.MaximumRatedPower', lang) +
                 ' Pmax (' +
                 i18n.t('word.WattAbbreviation', lang) +
                 '):'}
             </Col>
-            <Col className="gutter-row" span={8}>
+            <Col span={8}>
               <InputNumber
                 style={{ width: '100%' }}
                 value={pmaxRef.current}
@@ -384,10 +380,8 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
           </Row>
 
           <Row gutter={6} style={{ paddingBottom: '4px' }}>
-            <Col className="gutter-row" span={16}>
-              {i18n.t('pvModelPanel.TemperatureCoefficientOfPmax', lang) + ' (%/°C):'}
-            </Col>
-            <Col className="gutter-row" span={8}>
+            <Col span={16}>{i18n.t('pvModelPanel.TemperatureCoefficientOfPmax', lang) + ' (%/°C):'}</Col>
+            <Col span={8}>
               <InputNumber
                 style={{ width: '100%' }}
                 value={pmaxTCRef.current}
@@ -400,10 +394,8 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
           </Row>
 
           <Row gutter={6} style={{ paddingBottom: '4px' }}>
-            <Col className="gutter-row" span={16}>
-              {i18n.t('pvModelPanel.NominalOperatingCellTemperature', lang) + ' (°C):'}
-            </Col>
-            <Col className="gutter-row" span={8}>
+            <Col span={16}>{i18n.t('pvModelPanel.NominalOperatingCellTemperature', lang) + ' (°C):'}</Col>
+            <Col span={8}>
               <InputNumber
                 style={{ width: '100%' }}
                 precision={1}
@@ -417,10 +409,10 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
           </Row>
 
           <Row gutter={6} style={{ paddingBottom: '4px' }}>
-            <Col className="gutter-row" span={16}>
+            <Col span={16}>
               {i18n.t('pvModelPanel.RatedVoltage', lang) + ' Vmpp (' + i18n.t('word.VoltAbbreviation', lang) + '):'}
             </Col>
-            <Col className="gutter-row" span={8}>
+            <Col span={8}>
               <InputNumber
                 style={{ width: '100%' }}
                 precision={1}
@@ -434,10 +426,10 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
           </Row>
 
           <Row gutter={6} style={{ paddingBottom: '4px' }}>
-            <Col className="gutter-row" span={16}>
+            <Col span={16}>
               {i18n.t('pvModelPanel.RatedCurrent', lang) + ' Impp (' + i18n.t('word.AmpereAbbreviation', lang) + '):'}
             </Col>
-            <Col className="gutter-row" span={8}>
+            <Col span={8}>
               <InputNumber
                 style={{ width: '100%' }}
                 precision={1}
@@ -451,13 +443,13 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
           </Row>
 
           <Row gutter={6} style={{ paddingBottom: '4px' }}>
-            <Col className="gutter-row" span={16}>
+            <Col span={16}>
               {i18n.t('pvModelPanel.OpenCircuitVoltage', lang) +
                 ' Voc (' +
                 i18n.t('word.VoltAbbreviation', lang) +
                 '):'}
             </Col>
-            <Col className="gutter-row" span={8}>
+            <Col span={8}>
               <InputNumber
                 style={{ width: '100%' }}
                 precision={1}
@@ -471,13 +463,13 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
           </Row>
 
           <Row gutter={6} style={{ paddingBottom: '4px' }}>
-            <Col className="gutter-row" span={16}>
+            <Col span={16}>
               {i18n.t('pvModelPanel.ShortCircuitCurrent', lang) +
                 ' Isc (' +
                 i18n.t('word.AmpereAbbreviation', lang) +
                 '):'}
             </Col>
-            <Col className="gutter-row" span={8}>
+            <Col span={8}>
               <InputNumber
                 style={{ width: '100%' }}
                 precision={1}
@@ -546,12 +538,12 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
         </Draggable>
       )}
     >
-      <Row>
-        <Col>
+      <Row style={{ justifyContent: 'space-between' }}>
+        <Col flex={3}>
           <Tabs defaultActiveKey="1" type="card" items={items} />
         </Col>
-        <Col>
-          <Space style={{ height: '100%', justifyContent: 'center', marginLeft: '8px' }} direction={'vertical'}>
+        <Col flex={0.5}>
+          <Space style={{ height: '100%', justifyContent: 'center', marginLeft: '10px' }} direction={'vertical'}>
             <ArrowRightOutlined
               title={i18n.t('word.Add', lang)}
               style={{ cursor: 'pointer', border: '2px solid lightgray', borderRadius: '5px', padding: '4px' }}
@@ -565,7 +557,7 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
             />
           </Space>
         </Col>
-        <Col>
+        <Col flex={2}>
           <List
             style={{ marginTop: '56px', marginLeft: '8px' }}
             size="small"

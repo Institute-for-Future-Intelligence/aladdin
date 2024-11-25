@@ -364,7 +364,7 @@ export const i18n_es = {
         DiurnalTemperature: 'Diurnal Temperature',
         Heliodon: 'Heliodon',
         SunAndTime: 'Sun & Time',
-        SolarPanelCustomization: 'Solar Panel Customization',
+        CustomSolarPanels: 'Custom Solar Panels',
         CustomizeSolarPanel: 'Customize Solar Panel',
       },
       benchmarksSubMenu: 'Benchmarks',

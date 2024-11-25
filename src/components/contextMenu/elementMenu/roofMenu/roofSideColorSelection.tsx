@@ -227,7 +227,7 @@ const RoofSideColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
   return (
     <Dialog width={640} title={i18n.t('roofMenu.RoofSideColor', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
-        <Col className="gutter-row" span={11}>
+        <Col span={11}>
           <CompactPicker
             color={selectedSideColor ?? roof?.sideColor ?? '#ffffff'}
             onChangeComplete={(colorResult) => {
@@ -236,7 +236,6 @@ const RoofSideColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
           />
         </Col>
         <Col
-          className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={13}
         >

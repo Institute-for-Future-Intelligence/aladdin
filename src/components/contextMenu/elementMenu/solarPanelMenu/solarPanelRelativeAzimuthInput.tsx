@@ -482,7 +482,7 @@ const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible
       onClickOk={ok}
     >
       <Row gutter={6}>
-        <Col className="gutter-row" span={6}>
+        <Col span={6}>
           <InputNumber
             min={-180}
             max={180}
@@ -506,7 +506,6 @@ const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible
           </div>
         </Col>
         <Col
-          className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={18}
         >

@@ -275,7 +275,7 @@ const PolygonLineColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
   return (
     <Dialog width={600} title={i18n.t('polygonMenu.LineColor', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
-        <Col className="gutter-row" span={12}>
+        <Col span={12}>
           <CompactPicker
             color={selectedColor ?? polygon?.lineColor ?? 'black'}
             onChangeComplete={(colorResult) => {
@@ -284,7 +284,6 @@ const PolygonLineColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
           />
         </Col>
         <Col
-          className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={12}
         >

@@ -473,7 +473,7 @@ const SolarWaterHeaterHeightInput = ({ setDialogVisible }: { setDialogVisible: (
       }
     }
     setCommonStore((state) => {
-      state.actionState.waterHeaterHeight = value;
+      state.actionState.solarWaterHeaterHeight = value;
     });
   };
 
@@ -516,7 +516,7 @@ const SolarWaterHeaterHeightInput = ({ setDialogVisible }: { setDialogVisible: (
       onClickOk={ok}
     >
       <Row gutter={6}>
-        <Col className="gutter-row" span={6}>
+        <Col span={6}>
           <InputNumber
             min={0.6}
             max={maxValue}
@@ -530,11 +530,10 @@ const SolarWaterHeaterHeightInput = ({ setDialogVisible }: { setDialogVisible: (
             }}
           />
         </Col>
-        <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
+        <Col span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
           {i18n.t('word.MeterAbbreviation', lang)}
         </Col>
         <Col
-          className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={17}
         >

@@ -224,7 +224,7 @@ export const createSettingsMenu = () => {
       key: 'solar-panel-customization',
       label: (
         <MenuItem noPadding onClick={openSolarPanelCustomizationPanel}>
-          {i18n.t('menu.settings.SolarPanelCustomization', lang)}...
+          {i18n.t('menu.settings.CustomSolarPanels', lang)}...
         </MenuItem>
       ),
     });

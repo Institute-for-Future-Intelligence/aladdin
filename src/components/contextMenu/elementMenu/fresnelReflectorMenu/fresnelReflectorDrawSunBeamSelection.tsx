@@ -231,7 +231,7 @@ const FresnelReflectorDrawSunBeamSelection = ({ setDialogVisible }: { setDialogV
   return (
     <Dialog width={500} title={i18n.t('solarCollectorMenu.DrawSunBeam', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
-        <Col className="gutter-row" span={4}>
+        <Col span={4}>
           <Switch
             checked={sunBeam}
             onChange={(checked) => {
@@ -240,7 +240,6 @@ const FresnelReflectorDrawSunBeamSelection = ({ setDialogVisible }: { setDialogV
           />
         </Col>
         <Col
-          className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={20}
         >

@@ -204,7 +204,7 @@ const FoundationTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b
   return (
     <Dialog width={500} title={i18n.t('word.Texture', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
-        <Col className="gutter-row" span={10}>
+        <Col span={10}>
           <Select style={{ width: '150px' }} value={selectedTexture} onChange={setSelectedTexture}>
             <Option key={FoundationTexture.NoTexture} value={FoundationTexture.NoTexture}>
               <div
@@ -301,7 +301,6 @@ const FoundationTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b
           </Select>
         </Col>
         <Col
-          className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={14}
         >

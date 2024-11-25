@@ -110,10 +110,8 @@ const CreateNewProjectDialog = React.memo(
         )}
       >
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={8}>
-            {i18n.t('projectPanel.ProjectType', lang) + ':'}
-          </Col>
-          <Col className="gutter-row" span={16}>
+          <Col span={8}>{i18n.t('projectPanel.ProjectType', lang) + ':'}</Col>
+          <Col span={16}>
             <Select
               disabled={saveAs}
               style={{ width: '100%' }}
@@ -130,10 +128,8 @@ const CreateNewProjectDialog = React.memo(
         </Row>
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={8}>
-            {`${i18n.t('word.Title', lang)}`}:
-          </Col>
-          <Col className="gutter-row" span={16}>
+          <Col span={8}>{`${i18n.t('word.Title', lang)}`}:</Col>
+          <Col span={16}>
             <Input
               maxLength={50}
               style={{ width: '100%' }}
@@ -152,11 +148,11 @@ const CreateNewProjectDialog = React.memo(
         </Row>
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={8}>
+          <Col span={8}>
             {`${i18n.t('word.Description', lang)}`}:<br />
             <span style={{ fontSize: '10px' }}>({`${i18n.t('word.MaximumCharacters', lang)}`}: 200)</span>
           </Col>
-          <Col className="gutter-row" span={16}>
+          <Col span={16}>
             <TextArea
               rows={5}
               maxLength={200}

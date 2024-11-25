@@ -146,10 +146,8 @@ const NavigationPanel = React.memo(({ setDialogVisible }: { setDialogVisible: (b
       )}
     >
       <Row gutter={6} style={{ paddingBottom: '4px' }}>
-        <Col className="gutter-row" span={16}>
-          {i18n.t('navigationPanel.MinimumMoveSpeed', lang) + ' ([1, 10]): '}
-        </Col>
-        <Col className="gutter-row" span={8}>
+        <Col span={16}>{i18n.t('navigationPanel.MinimumMoveSpeed', lang) + ' ([1, 10]): '}</Col>
+        <Col span={8}>
           <InputNumber
             min={1}
             max={10}
@@ -177,10 +175,8 @@ const NavigationPanel = React.memo(({ setDialogVisible }: { setDialogVisible: (b
         </Col>
       </Row>
       <Row gutter={6} style={{ paddingBottom: '4px' }}>
-        <Col className="gutter-row" span={16}>
-          {i18n.t('navigationPanel.MinimumTurnSpeed', lang) + ' ([1, 5]): '}
-        </Col>
-        <Col className="gutter-row" span={8}>
+        <Col span={16}>{i18n.t('navigationPanel.MinimumTurnSpeed', lang) + ' ([1, 5]): '}</Col>
+        <Col span={8}>
           <InputNumber
             min={1}
             max={5}

@@ -362,7 +362,7 @@ export const i18n_zh_cn = {
         DiurnalTemperature: '昼夜温度',
         Heliodon: '日影仪',
         SunAndTime: '太阳和时间',
-        SolarPanelCustomization: '定制光伏板',
+        CustomSolarPanels: '定制的光伏板',
         CustomizeSolarPanel: '定制光伏板',
       },
       benchmarksSubMenu: '基准',

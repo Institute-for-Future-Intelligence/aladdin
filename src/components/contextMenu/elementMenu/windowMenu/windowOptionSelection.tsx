@@ -321,7 +321,7 @@ const WindowOptionSelection = ({
   return (
     <Dialog width={560} title={i18n.t(`windowMenu.${dataType}`, lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
-        <Col className="gutter-row" span={8}>
+        <Col span={8}>
           <Select style={{ width: '150px' }} value={selectedOption} onChange={(value) => setSelectedOption(value)}>
             {options.map((e, index) => {
               return (
@@ -333,7 +333,6 @@ const WindowOptionSelection = ({
           </Select>
         </Col>
         <Col
-          className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={16}
         >

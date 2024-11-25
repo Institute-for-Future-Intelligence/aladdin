@@ -372,7 +372,7 @@ const CuboidColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
   return (
     <Dialog width={600} title={i18n.t('word.Color', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
-        <Col className="gutter-row" span={12}>
+        <Col span={12}>
           <CompactPicker
             color={selectedColor ?? currentColor}
             onChangeComplete={(colorResult) => {
@@ -382,7 +382,6 @@ const CuboidColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
           />
         </Col>
         <Col
-          className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={12}
         >

@@ -174,7 +174,7 @@ const FoundationAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
   return (
     <Dialog width={500} title={i18n.t('word.Azimuth', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
-        <Col className="gutter-row" span={7}>
+        <Col span={7}>
           <InputNumber
             min={-180}
             max={180}
@@ -198,7 +198,6 @@ const FoundationAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
           </div>
         </Col>
         <Col
-          className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={17}
         >

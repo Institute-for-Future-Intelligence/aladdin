@@ -367,7 +367,7 @@ export const i18n_ua = {
         DiurnalTemperature: 'Добова температура',
         Heliodon: 'Геліодон',
         SunAndTime: 'Сонце та час',
-        SolarPanelCustomization: 'Solar Panel Customization',
+        CustomSolarPanels: 'Custom Solar Panels',
         CustomizeSolarPanel: 'Customize Solar Panel',
       },
       benchmarksSubMenu: 'Бенчмарки',

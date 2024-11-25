@@ -236,7 +236,7 @@ const SolarUpdraftTowerDischargeCoefficientInput = ({
       onClose={close}
     >
       <Row gutter={6}>
-        <Col className="gutter-row" span={6}>
+        <Col span={6}>
           <InputNumber
             min={0.65}
             max={0.7}
@@ -254,7 +254,6 @@ const SolarUpdraftTowerDischargeCoefficientInput = ({
           </div>
         </Col>
         <Col
-          className="gutter-row"
           style={{
             border: '2px dashed #ccc',
             marginLeft: '16px',

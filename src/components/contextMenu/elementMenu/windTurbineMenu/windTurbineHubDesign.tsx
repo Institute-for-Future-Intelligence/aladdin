@@ -295,7 +295,7 @@ const WindTurbineHubDesign = ({ setDialogVisible }: { setDialogVisible: (b: bool
       onClickOk={ok}
     >
       <Row gutter={6}>
-        <Col className="gutter-row" span={7}>
+        <Col span={7}>
           <div style={{ marginTop: '-20px', textAlign: 'left', fontSize: '12px' }}>
             {i18n.t('windTurbineMenu.HubRadius', lang)}
           </div>
@@ -335,7 +335,6 @@ const WindTurbineHubDesign = ({ setDialogVisible }: { setDialogVisible: (b: bool
           </div>
         </Col>
         <Col
-          className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={17}
         >

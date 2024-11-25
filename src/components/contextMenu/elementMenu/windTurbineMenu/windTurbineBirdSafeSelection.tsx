@@ -331,7 +331,7 @@ const WindTurbineBirdSafeSelection = ({ setDialogVisible }: { setDialogVisible: 
       onClickOk={ok}
     >
       <Row gutter={6}>
-        <Col className="gutter-row" span={8}>
+        <Col span={8}>
           <span>{i18n.t('word.Pattern', lang)}: </span>
           <Select
             style={{ width: '116px' }}
@@ -372,7 +372,6 @@ const WindTurbineBirdSafeSelection = ({ setDialogVisible }: { setDialogVisible: 
           </div>
         </Col>
         <Col
-          className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={16}
         >

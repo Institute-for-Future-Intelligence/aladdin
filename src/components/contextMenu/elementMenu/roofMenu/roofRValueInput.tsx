@@ -230,7 +230,7 @@ const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
       onClose={close}
     >
       <Row gutter={6}>
-        <Col className="gutter-row" span={7}>
+        <Col span={7}>
           <InputNumber
             min={0.01}
             max={100}
@@ -272,7 +272,6 @@ const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
           </div>
         </Col>
         <Col
-          className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={17}
         >

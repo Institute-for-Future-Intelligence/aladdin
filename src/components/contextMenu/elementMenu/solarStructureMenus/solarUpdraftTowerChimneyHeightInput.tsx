@@ -233,7 +233,7 @@ const SolarUpdraftTowerChimneyHeightInput = ({ setDialogVisible }: { setDialogVi
       onClose={close}
     >
       <Row gutter={6}>
-        <Col className="gutter-row" span={6}>
+        <Col span={6}>
           <InputNumber
             min={1}
             max={1000}
@@ -250,11 +250,10 @@ const SolarUpdraftTowerChimneyHeightInput = ({ setDialogVisible }: { setDialogVi
             {i18n.t('word.Range', lang)}: [1, 1000] {i18n.t('word.MeterAbbreviation', lang)}
           </div>
         </Col>
-        <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
+        <Col span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
           {i18n.t('word.MeterAbbreviation', lang)}
         </Col>
         <Col
-          className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={16}
         >

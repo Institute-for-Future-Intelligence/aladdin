@@ -268,7 +268,7 @@ const HeliostatTowerSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
       onClose={close}
     >
       <Row gutter={6}>
-        <Col className="gutter-row" span={8}>
+        <Col span={8}>
           <Select style={{ width: '120px' }} value={selectedTowerId} onChange={setSelectedTowerId}>
             {towers.map((s, i) => {
               return (
@@ -280,7 +280,6 @@ const HeliostatTowerSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
           </Select>
         </Col>
         <Col
-          className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={16}
         >

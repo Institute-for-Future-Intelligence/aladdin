@@ -152,10 +152,8 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
         )}
       >
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={12}>
-            {t('optimizationMenu.Objective', lang) + ':'}
-          </Col>
-          <Col className="gutter-row" span={12}>
+          <Col span={12}>{t('optimizationMenu.Objective', lang) + ':'}</Col>
+          <Col span={12}>
             <Select
               defaultValue={objectiveFunctionTypeRef.current}
               style={{ width: '100%' }}
@@ -176,10 +174,8 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
         </Row>
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={12}>
-            {t('optimizationMenu.SwarmSize', lang) + ':'}
-          </Col>
-          <Col className="gutter-row" span={12}>
+          <Col span={12}>{t('optimizationMenu.SwarmSize', lang) + ':'}</Col>
+          <Col span={12}>
             <InputNumber
               min={10}
               max={100}
@@ -197,10 +193,8 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
         </Row>
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={12}>
-            {t('optimizationMenu.MaximumSteps', lang) + ':'}
-          </Col>
-          <Col className="gutter-row" span={12}>
+          <Col span={12}>{t('optimizationMenu.MaximumSteps', lang) + ':'}</Col>
+          <Col span={12}>
             <InputNumber
               min={5}
               max={100}
@@ -218,10 +212,8 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
         </Row>
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={12}>
-            {t('optimizationMenu.CognitiveCoefficient', lang) + ' [0, 1]: '}
-          </Col>
-          <Col className="gutter-row" span={12}>
+          <Col span={12}>{t('optimizationMenu.CognitiveCoefficient', lang) + ' [0, 1]: '}</Col>
+          <Col span={12}>
             <InputNumber
               min={0}
               max={1}
@@ -238,10 +230,8 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
         </Row>
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={12}>
-            {t('optimizationMenu.SocialCoefficient', lang) + ' [0, 1]: '}
-          </Col>
-          <Col className="gutter-row" span={12}>
+          <Col span={12}>{t('optimizationMenu.SocialCoefficient', lang) + ' [0, 1]: '}</Col>
+          <Col span={12}>
             <InputNumber
               min={0}
               max={1}
@@ -258,10 +248,8 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
         </Row>
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={12}>
-            {t('optimizationMenu.InertiaWeight', lang) + ' [0, 1]: '}
-          </Col>
-          <Col className="gutter-row" span={12}>
+          <Col span={12}>{t('optimizationMenu.InertiaWeight', lang) + ' [0, 1]: '}</Col>
+          <Col span={12}>
             <InputNumber
               min={0}
               max={1}
@@ -278,10 +266,8 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
         </Row>
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={12}>
-            {t('optimizationMenu.MaximumVelocity', lang) + ' [0.001, 0.1]: '}
-          </Col>
-          <Col className="gutter-row" span={12}>
+          <Col span={12}>{t('optimizationMenu.MaximumVelocity', lang) + ' [0.001, 0.1]: '}</Col>
+          <Col span={12}>
             <InputNumber
               min={0.001}
               max={0.1}
@@ -298,10 +284,8 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
         </Row>
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={12}>
-            {t('optimizationMenu.ConvergenceThreshold', lang) + ' [0, 0.1]: '}
-          </Col>
-          <Col className="gutter-row" span={12}>
+          <Col span={12}>{t('optimizationMenu.ConvergenceThreshold', lang) + ' [0, 0.1]: '}</Col>
+          <Col span={12}>
             <InputNumber
               min={0.001}
               max={0.1}
@@ -318,10 +302,8 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
         </Row>
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={12}>
-            {t('optimizationMenu.SearchMethod', lang) + ':'}
-          </Col>
-          <Col className="gutter-row" span={12}>
+          <Col span={12}>{t('optimizationMenu.SearchMethod', lang) + ':'}</Col>
+          <Col span={12}>
             <Select
               defaultValue={searchMethodRef.current}
               style={{ width: '100%' }}
@@ -349,10 +331,8 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
 
         {searchMethodRef.current === SearchMethod.LOCAL_SEARCH_RANDOM_OPTIMIZATION && (
           <Row gutter={6} style={{ paddingBottom: '4px' }}>
-            <Col className="gutter-row" span={12}>
-              {t('optimizationMenu.LocalSearchRadius', lang) + ' ([0, 1]: '}
-            </Col>
-            <Col className="gutter-row" span={12}>
+            <Col span={12}>{t('optimizationMenu.LocalSearchRadius', lang) + ' ([0, 1]: '}</Col>
+            <Col span={12}>
               <InputNumber
                 min={0}
                 max={1}

@@ -277,7 +277,7 @@ const PolygonLineWidthSelection = ({ setDialogVisible }: { setDialogVisible: (b:
   return (
     <Dialog width={560} title={i18n.t('polygonMenu.LineWidth', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
-        <Col className="gutter-row" span={10}>
+        <Col span={10}>
           <Select
             style={{ width: '200px' }}
             value={selectedLineWidth}
@@ -350,7 +350,6 @@ const PolygonLineWidthSelection = ({ setDialogVisible }: { setDialogVisible: (b:
           </Select>
         </Col>
         <Col
-          className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={14}
         >

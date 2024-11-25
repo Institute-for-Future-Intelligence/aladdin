@@ -315,7 +315,7 @@ const WallParapetTextureSelection = ({ setDialogVisible }: { setDialogVisible: (
   return (
     <Dialog width={550} title={i18n.t('word.Texture', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
-        <Col className="gutter-row" span={9}>
+        <Col span={9}>
           <Select style={{ width: '150px' }} value={selectedTexture} onChange={setSelectedTexture}>
             <Option key={WallTexture.NoTexture} value={WallTexture.NoTexture}>
               <div
@@ -456,7 +456,6 @@ const WallParapetTextureSelection = ({ setDialogVisible }: { setDialogVisible: (
           </Select>
         </Col>
         <Col
-          className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={15}
         >

@@ -229,7 +229,7 @@ const GlassTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
         )}
       >
         <Row gutter={6}>
-          <Col className="gutter-row" span={11}>
+          <Col span={11}>
             <CompactPicker
               color={selectedTint ?? roof?.glassTint ?? '#73D8FF'}
               onChangeComplete={(colorResult) => {
@@ -238,7 +238,6 @@ const GlassTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
             />
           </Col>
           <Col
-            className="gutter-row"
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
             span={13}
           >

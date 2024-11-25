@@ -396,7 +396,7 @@ const CuboidTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
   return (
     <Dialog width={600} title={i18n.t('word.Texture', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
-        <Col className="gutter-row" span={12}>
+        <Col span={12}>
           <Select style={{ width: '150px' }} value={selectedTexture} onChange={setSelectedTexture}>
             <Option key={CuboidTexture.NoTexture} value={CuboidTexture.NoTexture}>
               <div
@@ -526,7 +526,6 @@ const CuboidTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
           </Select>
         </Col>
         <Col
-          className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={12}
         >

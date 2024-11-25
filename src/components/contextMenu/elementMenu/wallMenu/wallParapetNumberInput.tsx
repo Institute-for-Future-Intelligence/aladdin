@@ -331,7 +331,7 @@ const ParapetNumberInput = ({
   return (
     <Dialog width={550} title={i18n.t(`wallMenu.${dataType}`, lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
-        <Col className="gutter-row" span={6}>
+        <Col span={6}>
           <InputNumber
             min={range[0]}
             max={range[1]}
@@ -345,11 +345,10 @@ const ParapetNumberInput = ({
             {i18n.t('word.Range', lang)}: [{range.toString()}] {unit}
           </div>
         </Col>
-        <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
+        <Col span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
           {unit ?? ' '}
         </Col>
         <Col
-          className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={17}
         >

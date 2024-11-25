@@ -319,11 +319,10 @@ const WindowColorSelection = ({
   return (
     <Dialog width={640} title={i18n.t(`windowMenu.${dataType}`, lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
-        <Col className="gutter-row" span={11}>
+        <Col span={11}>
           <CompactPicker color={selectedItem ?? '#73D8FF'} onChangeComplete={onItemChange} />
         </Col>
         <Col
-          className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={13}
         >

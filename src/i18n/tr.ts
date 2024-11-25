@@ -363,7 +363,7 @@ export const i18n_tr = {
         DiurnalTemperature: 'Günlük Sıcaklık',
         Heliodon: 'Heliodon',
         SunAndTime: 'Güneş & Zaman',
-        SolarPanelCustomization: 'Solar Panel Customization',
+        CustomSolarPanels: 'Custom Solar Panels',
         CustomizeSolarPanel: 'Customize Solar Panel',
       },
       benchmarksSubMenu: 'Deneysel',

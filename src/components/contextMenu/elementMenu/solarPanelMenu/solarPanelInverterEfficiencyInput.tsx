@@ -357,7 +357,7 @@ const SolarPanelInverterEfficiencyInput = ({ setDialogVisible }: { setDialogVisi
   return (
     <Dialog width={550} title={i18n.t('solarPanelMenu.InverterEfficiency', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
-        <Col className="gutter-row" span={6}>
+        <Col span={6}>
           <InputNumber
             min={0.5}
             max={1}
@@ -377,7 +377,6 @@ const SolarPanelInverterEfficiencyInput = ({ setDialogVisible }: { setDialogVisi
           </div>
         </Col>
         <Col
-          className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={17}
         >

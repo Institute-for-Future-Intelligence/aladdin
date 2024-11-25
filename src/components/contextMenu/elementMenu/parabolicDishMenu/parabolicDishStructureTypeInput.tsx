@@ -259,7 +259,7 @@ const ParabolicDishStructureTypeInput = ({ setDialogVisible }: { setDialogVisibl
   return (
     <Dialog width={640} title={i18n.t('parabolicDishMenu.ReceiverStructure', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
-        <Col className="gutter-row" span={8}>
+        <Col span={8}>
           <Select value={inputStructureType} onChange={(value) => setInputStructureType(value)}>
             <Option key={ParabolicDishStructureType.CentralPole} value={ParabolicDishStructureType.CentralPole}>
               {i18n.t('parabolicDishMenu.CentralPole', lang)}
@@ -276,7 +276,6 @@ const ParabolicDishStructureTypeInput = ({ setDialogVisible }: { setDialogVisibl
           </Select>
         </Col>
         <Col
-          className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={16}
         >

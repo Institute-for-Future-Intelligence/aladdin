@@ -316,7 +316,7 @@ const PolygonLineStyleSelection = ({ setDialogVisible }: { setDialogVisible: (b:
   return (
     <Dialog width={600} title={i18n.t('polygonMenu.LineStyle', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
-        <Col className="gutter-row" span={10}>
+        <Col span={10}>
           <Select
             style={{ width: '200px' }}
             value={selectedLineStyle}
@@ -372,7 +372,6 @@ const PolygonLineStyleSelection = ({ setDialogVisible }: { setDialogVisible: (b:
           </Select>
         </Col>
         <Col
-          className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={14}
         >

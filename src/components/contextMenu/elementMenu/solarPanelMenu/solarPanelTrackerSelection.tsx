@@ -361,7 +361,7 @@ const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b
   return (
     <Dialog width={550} title={i18n.t('solarPanelMenu.Tracker', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
-        <Col className="gutter-row" span={7}>
+        <Col span={7}>
           <Select
             style={{ width: '120px' }}
             value={selectedTrackerType}
@@ -397,7 +397,6 @@ const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b
           </div>
         </Col>
         <Col
-          className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={17}
         >

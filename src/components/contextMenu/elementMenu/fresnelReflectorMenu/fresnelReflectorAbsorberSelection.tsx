@@ -281,7 +281,7 @@ const FresnelReflectorAbsorberSelection = ({ setDialogVisible }: { setDialogVisi
       onClose={close}
     >
       <Row gutter={6}>
-        <Col className="gutter-row" span={9}>
+        <Col span={9}>
           <Select
             style={{ width: '160px' }}
             value={selectedReceiverId}
@@ -299,7 +299,6 @@ const FresnelReflectorAbsorberSelection = ({ setDialogVisible }: { setDialogVisi
           </Select>
         </Col>
         <Col
-          className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={15}
         >

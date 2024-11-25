@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -259,7 +259,7 @@ const DoorFrameColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
   return (
     <Dialog width={640} title={i18n.t('doorMenu.FrameColor', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
-        <Col className="gutter-row" span={11}>
+        <Col span={11}>
           <CompactPicker
             color={selectedColor ?? door?.frameColor ?? '#ffffff'}
             onChangeComplete={(colorResult) => {
@@ -268,7 +268,6 @@ const DoorFrameColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
           />
         </Col>
         <Col
-          className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={13}
         >

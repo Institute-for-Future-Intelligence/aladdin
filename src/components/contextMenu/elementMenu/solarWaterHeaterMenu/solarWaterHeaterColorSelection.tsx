@@ -348,7 +348,7 @@ const SolarWaterHeaterColorSelection = ({ setDialogVisible }: { setDialogVisible
       }
     }
     setCommonStore((state) => {
-      state.actionState.waterHeaterColor = value;
+      state.actionState.solarWaterHeaterColor = value;
     });
   };
 
@@ -363,7 +363,7 @@ const SolarWaterHeaterColorSelection = ({ setDialogVisible }: { setDialogVisible
   return (
     <Dialog width={680} title={i18n.t('word.Color', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
-        <Col className="gutter-row" span={10}>
+        <Col span={10}>
           <CompactPicker
             color={selectedColor ?? waterHeater?.color ?? 'grey'}
             onChangeComplete={(colorResult) => {
@@ -372,7 +372,6 @@ const SolarWaterHeaterColorSelection = ({ setDialogVisible }: { setDialogVisible
           />
         </Col>
         <Col
-          className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={14}
         >

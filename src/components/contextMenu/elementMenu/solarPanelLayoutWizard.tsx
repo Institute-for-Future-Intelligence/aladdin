@@ -370,8 +370,8 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
           </Draggable>
         )}
       >
-        <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={13}>
+        <Row gutter={6} style={{ paddingBottom: '4px', paddingTop: '10px' }}>
+          <Col span={13}>
             {i18n.t('polygonMenu.SolarPanelArrayModel', lang) +
               ' (' +
               Object.keys(pvModules).length +
@@ -379,7 +379,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
               i18n.t('word.Options', lang) +
               '):'}
           </Col>
-          <Col className="gutter-row" span={11}>
+          <Col span={11}>
             <Select
               defaultValue="Custom"
               style={{ width: '100%' }}
@@ -402,10 +402,8 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
         </Row>
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={13}>
-            {i18n.t('polygonMenu.SolarPanelArrayRowAxis', lang) + ':'}
-          </Col>
-          <Col className="gutter-row" span={11}>
+          <Col span={13}>{i18n.t('polygonMenu.SolarPanelArrayRowAxis', lang) + ':'}</Col>
+          <Col span={11}>
             <Select
               style={{ width: '100%' }}
               value={rowAxisRef.current}
@@ -433,10 +431,8 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
         </Row>
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={13}>
-            {i18n.t('polygonMenu.SolarPanelArrayOrientation', lang) + ':'}
-          </Col>
-          <Col className="gutter-row" span={11}>
+          <Col span={13}>{i18n.t('polygonMenu.SolarPanelArrayOrientation', lang) + ':'}</Col>
+          <Col span={11}>
             <Select
               style={{ width: '100%' }}
               value={orientationRef.current}
@@ -458,10 +454,8 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
         </Row>
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={13}>
-            {i18n.t('polygonMenu.SolarPanelArrayTiltAngle', lang) + ' ([-90°, 90°]): '}
-          </Col>
-          <Col className="gutter-row" span={11}>
+          <Col span={13}>{i18n.t('polygonMenu.SolarPanelArrayTiltAngle', lang) + ' ([-90°, 90°]): '}</Col>
+          <Col span={11}>
             <InputNumber
               min={-90}
               max={90}
@@ -482,13 +476,13 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
         </Row>
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={13}>
+          <Col span={13}>
             {i18n.t('polygonMenu.SolarPanelArrayRowWidth', lang) +
               ' ([1-100] ' +
               i18n.t('solarPanelMenu.Panels', lang) +
               '): '}
           </Col>
-          <Col className="gutter-row" span={11}>
+          <Col span={11}>
             <InputNumber
               min={1}
               max={100}
@@ -508,13 +502,13 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
         </Row>
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={13}>
+          <Col span={13}>
             {i18n.t('polygonMenu.SolarPanelArrayInterRowSpacing', lang) +
               ' ([1, 20] ' +
               i18n.t('word.MeterAbbreviation', lang) +
               '): '}
           </Col>
-          <Col className="gutter-row" span={11}>
+          <Col span={11}>
             <InputNumber
               min={1}
               max={20}
@@ -533,13 +527,13 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
         </Row>
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={13}>
+          <Col span={13}>
             {i18n.t('polygonMenu.SolarPanelArrayMargin', lang) +
               ' ([0, 5] ' +
               i18n.t('word.MeterAbbreviation', lang) +
               '): '}
           </Col>
-          <Col className="gutter-row" span={11}>
+          <Col span={11}>
             <InputNumber
               min={0}
               max={5}
@@ -558,13 +552,13 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
         </Row>
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={13}>
+          <Col span={13}>
             {i18n.t('polygonMenu.SolarPanelArrayPoleHeight', lang) +
               ' ([0, 10] ' +
               i18n.t('word.MeterAbbreviation', lang) +
               '): '}
           </Col>
-          <Col className="gutter-row" span={11}>
+          <Col span={11}>
             <InputNumber
               min={0}
               max={10}
@@ -583,13 +577,13 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
         </Row>
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={13}>
+          <Col span={13}>
             {i18n.t('polygonMenu.SolarPanelArrayPoleSpacing', lang) +
               ' ([2, 50] ' +
               i18n.t('word.MeterAbbreviation', lang) +
               '): '}
           </Col>
-          <Col className="gutter-row" span={11}>
+          <Col span={11}>
             <InputNumber
               min={2}
               max={50}

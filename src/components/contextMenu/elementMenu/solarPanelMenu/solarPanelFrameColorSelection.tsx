@@ -358,7 +358,7 @@ const SolarPanelFrameColorSelection = ({ setDialogVisible }: { setDialogVisible:
   return (
     <Dialog width={680} title={i18n.t('solarPanelMenu.FrameColor', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
-        <Col className="gutter-row" span={10}>
+        <Col span={10}>
           <CompactPicker
             color={selectedColor ?? solarPanel?.color ?? 'white'}
             onChangeComplete={(colorResult) => {
@@ -367,7 +367,6 @@ const SolarPanelFrameColorSelection = ({ setDialogVisible }: { setDialogVisible:
           />
         </Col>
         <Col
-          className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={14}
         >

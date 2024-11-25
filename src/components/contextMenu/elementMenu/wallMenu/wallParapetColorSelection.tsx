@@ -302,11 +302,10 @@ const WallParapetColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
   return (
     <Dialog width={640} title={i18n.t('wallMenu.ParapetColor', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
-        <Col className="gutter-row" span={11}>
+        <Col span={11}>
           <CompactPicker color={selectedColor} onChangeComplete={onColorChange} />
         </Col>
         <Col
-          className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={13}
         >

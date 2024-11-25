@@ -781,7 +781,7 @@ const WindTurbineBladeDesign = ({ setDialogVisible }: { setDialogVisible: (b: bo
         </Col>
       </Row>
       <Row gutter={6}>
-        <Col className="gutter-row" span={8}>
+        <Col span={8}>
           <Row gutter={6} style={{ paddingBottom: '8px' }}>
             <Col style={{ textAlign: 'center', fontStyle: 'italic' }}>A: </Col>
             <Col>
@@ -841,7 +841,6 @@ const WindTurbineBladeDesign = ({ setDialogVisible }: { setDialogVisible: (b: bo
           </Row>
         </Col>
         <Col
-          className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={16}
         >

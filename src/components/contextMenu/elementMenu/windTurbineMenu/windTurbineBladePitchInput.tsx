@@ -275,7 +275,7 @@ const WindTurbineBladePitchInput = ({ setDialogVisible }: { setDialogVisible: (b
       onClickOk={ok}
     >
       <Row gutter={6}>
-        <Col className="gutter-row" span={6}>
+        <Col span={6}>
           <InputNumber
             min={-180}
             max={180}
@@ -294,7 +294,6 @@ const WindTurbineBladePitchInput = ({ setDialogVisible }: { setDialogVisible: (b
           </div>
         </Col>
         <Col
-          className="gutter-row"
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={17}
         >

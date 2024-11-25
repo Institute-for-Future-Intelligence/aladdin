@@ -135,10 +135,8 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
       )}
     >
       <Row gutter={6} style={{ paddingBottom: '4px' }}>
-        <Col className="gutter-row" span={8}>
-          {t('shared.ModelType', lang) + ':'}
-        </Col>
-        <Col className="gutter-row" span={16}>
+        <Col span={8}>{t('shared.ModelType', lang) + ':'}</Col>
+        <Col span={16}>
           <Select
             style={{ width: '100%' }}
             value={modelType}
@@ -208,10 +206,8 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
       </Row>
 
       <Row gutter={6} style={{ paddingBottom: '4px' }}>
-        <Col className="gutter-row" span={8}>
-          {t('word.Publisher', lang)}:
-        </Col>
-        <Col className="gutter-row" span={16}>
+        <Col span={8}>{t('word.Publisher', lang)}:</Col>
+        <Col span={16}>
           <Input
             maxLength={30}
             style={{ width: '100%' }}
@@ -230,10 +226,8 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
       </Row>
 
       <Row gutter={6} style={{ paddingBottom: '4px' }}>
-        <Col className="gutter-row" span={8}>
-          {t('word.Label', lang)}:
-        </Col>
-        <Col className="gutter-row" span={16}>
+        <Col span={8}>{t('word.Label', lang)}:</Col>
+        <Col span={16}>
           <Input
             maxLength={50}
             style={{ width: '100%' }}
@@ -252,11 +246,11 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
       </Row>
 
       <Row gutter={6} style={{ paddingBottom: '4px' }}>
-        <Col className="gutter-row" span={8}>
+        <Col span={8}>
           {t('word.Description', lang)}:<br />
           <span style={{ fontSize: '10px' }}>({t('word.MaximumCharacters', lang)}: 200)</span>
         </Col>
-        <Col className="gutter-row" span={16}>
+        <Col span={16}>
           <TextArea
             rows={5}
             maxLength={200}
