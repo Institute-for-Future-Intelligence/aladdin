@@ -34,8 +34,8 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
   const modelRef = useRef<string>('Unknown');
   const brandRef = useRef<string>('Unknown');
   const cellTypeRef = useRef<string>('Monocrystalline');
-  const cellNxRef = useRef<number>(8);
-  const cellNyRef = useRef<number>(12);
+  const cellNxRef = useRef<number>(12);
+  const cellNyRef = useRef<number>(8);
   const colorRef = useRef<string>('Black');
   const widthRef = useRef<number>(1);
   const lengthRef = useRef<number>(1.5);
@@ -232,37 +232,6 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
 
           <Row gutter={6} style={{ paddingBottom: '4px' }}>
             <Col span={14}>
-              {i18n.t('word.Width', lang) + ' ([0.1, 3]' + i18n.t('word.MeterAbbreviation', lang) + '): '}
-            </Col>
-            <Col span={10}>
-              <InputNumber
-                min={0.1}
-                max={3}
-                style={{ width: '100%' }}
-                precision={2}
-                value={widthRef.current}
-                step={0.01}
-                onChange={(value) => {
-                  if (value === null) return;
-                  widthRef.current = value;
-                  setUpdateFlag(!updateFlag);
-                }}
-                onBlur={(e) => {
-                  const v = parseFloat((e.target as HTMLInputElement).value);
-                  widthRef.current = Number.isNaN(v) ? 1 : v;
-                  setUpdateFlag(!updateFlag);
-                }}
-                onPressEnter={(e) => {
-                  const v = parseFloat((e.target as HTMLInputElement).value);
-                  widthRef.current = Number.isNaN(v) ? 1 : v;
-                  setUpdateFlag(!updateFlag);
-                }}
-              />
-            </Col>
-          </Row>
-
-          <Row gutter={6} style={{ paddingBottom: '4px' }}>
-            <Col span={14}>
               {i18n.t('word.Length', lang) + ' ([0.1, 3]' + i18n.t('word.MeterAbbreviation', lang) + '): '}
             </Col>
             <Col span={10}>
@@ -286,6 +255,37 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
                 onPressEnter={(e) => {
                   const v = parseFloat((e.target as HTMLInputElement).value);
                   lengthRef.current = Number.isNaN(v) ? 1 : v;
+                  setUpdateFlag(!updateFlag);
+                }}
+              />
+            </Col>
+          </Row>
+
+          <Row gutter={6} style={{ paddingBottom: '4px' }}>
+            <Col span={14}>
+              {i18n.t('word.Width', lang) + ' ([0.1, 3]' + i18n.t('word.MeterAbbreviation', lang) + '): '}
+            </Col>
+            <Col span={10}>
+              <InputNumber
+                min={0.1}
+                max={3}
+                style={{ width: '100%' }}
+                precision={2}
+                value={widthRef.current}
+                step={0.01}
+                onChange={(value) => {
+                  if (value === null) return;
+                  widthRef.current = value;
+                  setUpdateFlag(!updateFlag);
+                }}
+                onBlur={(e) => {
+                  const v = parseFloat((e.target as HTMLInputElement).value);
+                  widthRef.current = Number.isNaN(v) ? 1 : v;
+                  setUpdateFlag(!updateFlag);
+                }}
+                onPressEnter={(e) => {
+                  const v = parseFloat((e.target as HTMLInputElement).value);
+                  widthRef.current = Number.isNaN(v) ? 1 : v;
                   setUpdateFlag(!updateFlag);
                 }}
               />

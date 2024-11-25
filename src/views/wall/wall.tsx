@@ -47,6 +47,7 @@ import { showError } from 'src/helpers';
 import i18n from 'src/i18n/i18n';
 import { RoofUtil } from '../roof/RoofUtil';
 import {
+  DEFAULT_SOLAR_PANEL_MODEL,
   FINE_GRID_SCALE,
   HALF_PI,
   INVALID_ELEMENT_COLOR,
@@ -2079,9 +2080,13 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           if (pointer && body) {
             const p = getRelativePosOnWall(pointer, wallModel);
             const actionState = useStore.getState().actionState;
+            let pvModel = useStore
+              .getState()
+              .getPvModule(useStore.getState().actionState.solarPanelModelName ?? DEFAULT_SOLAR_PANEL_MODEL);
+            if (!pvModel) pvModel = useStore.getState().getPvModule(DEFAULT_SOLAR_PANEL_MODEL);
             newElement = ElementModelFactory.makeSolarPanel(
               wallModel,
-              useStore.getState().getPvModule(actionState.solarPanelModelName ?? 'SPR-X21-335-BLK'),
+              pvModel,
               p.x / lx,
               0,
               p.z / lz,

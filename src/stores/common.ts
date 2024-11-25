@@ -61,6 +61,7 @@ import { FoundationModel } from '../models/FoundationModel';
 import {
   DEFAULT_ADDRESS,
   DEFAULT_MODEL_MAP_ZOOM,
+  DEFAULT_SOLAR_PANEL_MODEL,
   DEFAULT_WIND_TURBINE_BLADE_COLOR,
   DEFAULT_WIND_TURBINE_STRIPE_COLOR,
   FLOATING_WINDOW_OPACITY,
@@ -825,6 +826,8 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
               state.deletedRoofIdSet.clear();
               state.addedRoofIdSet.clear();
               state.customPvModules = {};
+              // a new file does not have any custom solar panels, so this needs to be reset
+              state.actionState.solarPanelModelName = DEFAULT_SOLAR_PANEL_MODEL;
             });
             usePrimitiveStore.getState().set((state) => {
               state.changed = false;
@@ -2569,9 +2572,11 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                     solarPanelParentModel,
                     true,
                   );
+                  let pvModel = state.getPvModule(state.actionState.solarPanelModelName ?? DEFAULT_SOLAR_PANEL_MODEL);
+                  if (!pvModel) pvModel = state.getPvModule(DEFAULT_SOLAR_PANEL_MODEL);
                   const refSolarPanel = ElementModelFactory.makeSolarPanel(
                     solarPanelParentModel,
-                    state.getPvModule(state.actionState.solarPanelModelName ?? 'SPR-X21-335-BLK'),
+                    pvModel,
                     solarPanelAbsCoordinatesToParent.x,
                     solarPanelAbsCoordinatesToParent.y,
                     solarPanelAbsCoordinatesToParent.z,

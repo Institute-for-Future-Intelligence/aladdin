@@ -23,7 +23,7 @@ import MansardRoof from './mansardRoof';
 import { Euler, Mesh, Vector3 } from 'three';
 import { ObjectType, Orientation } from 'src/types';
 import { ThreeEvent, useThree } from '@react-three/fiber';
-import { HIGHLIGHT_HANDLE_COLOR } from 'src/constants';
+import { DEFAULT_SOLAR_PANEL_MODEL, HIGHLIGHT_HANDLE_COLOR } from 'src/constants';
 import { Point2 } from 'src/models/Point2';
 import { showError } from 'src/helpers';
 import i18n from 'src/i18n/i18n';
@@ -121,9 +121,13 @@ const handleAddElementOnRoof = (
     case ObjectType.SolarPanel: {
       const { normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
       const actionState = useStore.getState().actionState;
+      let pvModel = useStore
+        .getState()
+        .getPvModule(useStore.getState().actionState.solarPanelModelName ?? DEFAULT_SOLAR_PANEL_MODEL);
+      if (!pvModel) pvModel = useStore.getState().getPvModule(DEFAULT_SOLAR_PANEL_MODEL);
       const newElement = ElementModelFactory.makeSolarPanel(
         roof,
-        useStore.getState().getPvModule(actionState.solarPanelModelName ?? 'SPR-X21-335-BLK'),
+        pvModel,
         posRelToFoundation.x,
         posRelToFoundation.y,
         posRelToFoundation.z,

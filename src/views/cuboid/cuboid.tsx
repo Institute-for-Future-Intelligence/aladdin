@@ -32,6 +32,7 @@ import {
   RotateHandleType,
 } from '../../types';
 import {
+  DEFAULT_SOLAR_PANEL_MODEL,
   HALF_PI,
   LOCKED_ELEMENT_SELECTION_COLOR,
   MOVE_HANDLE_RADIUS,
@@ -415,9 +416,13 @@ const Cuboid = (cuboidModel: CuboidModel) => {
       const { pos, rot } = Util.getWorldDataById(id);
       const diff = new Vector3().subVectors(pointer, pos).applyEuler(new Euler(0, 0, -rot));
       const normal = intersection.face?.normal ?? new Vector3(0, 0, 1);
+      let pvModel = useStore
+        .getState()
+        .getPvModule(useStore.getState().actionState.solarPanelModelName ?? DEFAULT_SOLAR_PANEL_MODEL);
+      if (!pvModel) pvModel = useStore.getState().getPvModule(DEFAULT_SOLAR_PANEL_MODEL);
       const addedElement = ElementModelFactory.makeSolarPanel(
         cuboidModel,
-        useStore.getState().getPvModule(useStore.getState().actionState.solarPanelModelName ?? 'SPR-X21-335-BLK'),
+        pvModel,
         diff.x,
         diff.y,
         diff.z,

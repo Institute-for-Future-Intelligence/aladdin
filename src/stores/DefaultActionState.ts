@@ -26,6 +26,7 @@ import {
   DEFAULT_DOOR_U_VALUE,
   DEFAULT_GROUND_FLOOR_R_VALUE,
   DEFAULT_ROOF_R_VALUE,
+  DEFAULT_SOLAR_PANEL_MODEL,
   DEFAULT_WALL_R_VALUE,
   DEFAULT_WIND_TURBINE_BLADE_COLOR,
   DEFAULT_WIND_TURBINE_STRIPE_COLOR,
@@ -298,7 +299,7 @@ export class DefaultActionState implements ActionState {
     this.windTurbineHubRadius = 0.75;
     this.windTurbineHubLength = 1.5;
 
-    this.solarPanelModelName = 'SPR-X21-335-BLK';
+    this.solarPanelModelName = DEFAULT_SOLAR_PANEL_MODEL;
     this.solarPanelOrientation = Orientation.landscape;
     this.solarPanelPoleHeight = 1;
     this.solarPanelPoleSpacing = 3;
