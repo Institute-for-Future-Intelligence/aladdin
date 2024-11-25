@@ -32,18 +32,11 @@ const SolarWaterHeaterHeightInput = ({ setDialogVisible }: { setDialogVisible: (
   const waterHeater = useSelectedElement(ObjectType.SolarWaterHeater) as SolarWaterHeaterModel | undefined;
 
   const [inputValue, setInputValue] = useState(waterHeater?.lz ?? 1);
-  const [maxValue, setMaxValue] = useState(0);
 
   const rejectRef = useRef<boolean>(false);
   const rejectedValue = useRef<number | undefined>();
 
   const lang = useLanguage();
-
-  useEffect(() => {
-    if (waterHeater) {
-      setMaxValue(waterHeater.ly + 0.3);
-    }
-  }, [waterHeater]);
 
   const updateWaterHeaterLzById = (id: string, lz: number) => {
     setCommonStore((state: CommonStoreState) => {
@@ -519,7 +512,7 @@ const SolarWaterHeaterHeightInput = ({ setDialogVisible }: { setDialogVisible: (
         <Col span={6}>
           <InputNumber
             min={0.6}
-            max={maxValue}
+            max={10}
             step={0.1}
             style={{ width: 120 }}
             precision={2}
