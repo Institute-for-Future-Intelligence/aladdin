@@ -11,7 +11,7 @@ import {
   WarningOutlined,
   QuestionCircleOutlined,
 } from '@ant-design/icons';
-import { Button, Col, Divider, Input, InputNumber, List, Modal, Row, Select, Space, Tabs, TabsProps } from 'antd';
+import { Button, Col, Input, InputNumber, List, Modal, Row, Select, Space, Tabs, TabsProps } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
@@ -66,6 +66,14 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
     }
   };
 
+  const names = useMemo(() => {
+    const array: string[] = [];
+    for (const key in customPvModules) {
+      array.push(key);
+    }
+    return array;
+  }, [customPvModules]);
+
   const addCustomSolarPanel = () => {
     const pv = {
       name: modelRef.current,
@@ -92,6 +100,77 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
       bifacialityFactor: bifacialityFactorRef.current,
     } as PvModel;
     addCustomPvModule(pv);
+  };
+
+  const confirmAddCustomSolarPanel = () => {
+    if (names.includes(modelRef.current)) {
+      Modal.info({
+        title: i18n.t('pvModelPanel.CannotAddCustomSolarPanel', lang),
+        content: i18n.t('pvModelPanel.CustomSolarPanelExists', lang) + ': "' + modelRef.current + '"',
+      });
+    } else {
+      addCustomSolarPanel();
+    }
+  };
+
+  const copyCustomSolarPanel = (name: string) => {
+    const pv = customPvModules[name];
+    if (!pv) return;
+    modelRef.current = pv.name;
+    brandRef.current = pv.brand;
+    cellTypeRef.current = pv.cellType;
+    efficiencyRef.current = pv.efficiency;
+    lengthRef.current = pv.length;
+    widthRef.current = pv.width;
+    thicknessRef.current = pv.thickness;
+    cellNxRef.current = pv.m;
+    cellNyRef.current = pv.n;
+    pmaxRef.current = pv.pmax;
+    vmppRef.current = pv.vmpp;
+    imppRef.current = pv.impp;
+    vocRef.current = pv.voc;
+    iscRef.current = pv.isc;
+    pmaxTCRef.current = pv.pmaxTC;
+    noctRef.current = pv.noct;
+    weightRef.current = pv.weight;
+    colorRef.current = pv.color;
+    bifacialityFactorRef.current = pv.bifacialityFactor;
+    setUpdateFlag(!updateFlag);
+  };
+
+  const confirmCopyCustomSolarPanel = (name: string) => {
+    Modal.confirm({
+      title: i18n.t('pvModelPanel.DoYouReallyWantToCopyThisCustomSolarPanel', lang) + ' "' + name + '"?',
+      content: (
+        <span style={{ color: 'red', fontWeight: 'bold' }}>
+          <WarningOutlined style={{ marginRight: '6px' }} />
+          {i18n.t('word.Warning', lang) + ': ' + i18n.t('pvModelPanel.ExistingSettingsWillBeOverwritten', lang) + '.'}
+        </span>
+      ),
+      icon: <QuestionCircleOutlined />,
+      onOk: () => {
+        copyCustomSolarPanel(name);
+      },
+    });
+  };
+
+  const confirmRemoveCustomSolarPanel = (name: string) => {
+    Modal.confirm({
+      title: i18n.t('pvModelPanel.DoYouReallyWantToRemoveThisCustomSolarPanel', lang) + ' "' + name + '"?',
+      content: (
+        <span style={{ color: 'red', fontWeight: 'bold' }}>
+          <WarningOutlined style={{ marginRight: '6px' }} />
+          {i18n.t('word.Warning', lang) +
+            ': ' +
+            i18n.t('pvModelPanel.MakeSureThisCustomSolarPanelIsNotUsed', lang) +
+            '.'}
+        </span>
+      ),
+      icon: <QuestionCircleOutlined />,
+      onOk: () => {
+        removeCustomPvModule(name);
+      },
+    });
   };
 
   const items: TabsProps['items'] = [
@@ -486,30 +565,6 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
     },
   ];
 
-  const names = useMemo(() => {
-    const array: string[] = [];
-    for (const key in customPvModules) {
-      array.push(key);
-    }
-    return array;
-  }, [customPvModules]);
-
-  const confirmRemoveCustomSolarPanel = (name: string) => {
-    Modal.confirm({
-      title: i18n.t('pvModelPanel.DoYouReallyWantToRemoveCustomSolarPanel', lang) + ' "' + name + '"?',
-      content: (
-        <span style={{ color: 'red', fontWeight: 'bold' }}>
-          <WarningOutlined style={{ marginRight: '6px' }} />
-          {i18n.t('word.Warning', lang) + ': ' + i18n.t('pvModelPanel.MakeSureThisCustomSolarPanelIsNotUsed', lang)}
-        </span>
-      ),
-      icon: <QuestionCircleOutlined />,
-      onOk: () => {
-        removeCustomPvModule(name);
-      },
-    });
-  };
-
   return (
     <Modal
       width={720}
@@ -543,17 +598,18 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
           <Tabs defaultActiveKey="1" type="card" items={items} />
         </Col>
         <Col flex={0.5}>
-          <Space style={{ height: '100%', justifyContent: 'center', marginLeft: '10px' }} direction={'vertical'}>
+          <Space style={{ height: '100%', justifyContent: 'center', marginLeft: '12px' }} direction={'vertical'}>
             <ArrowRightOutlined
               title={i18n.t('word.Add', lang)}
-              style={{ cursor: 'pointer', border: '2px solid lightgray', borderRadius: '5px', padding: '4px' }}
-              onClick={() => addCustomSolarPanel()}
-            />
-            <Divider />
-            <ArrowLeftOutlined
-              title={i18n.t('pvModelPanel.CopySelectedCustomSolarPanel', lang)}
-              style={{ cursor: 'pointer', border: '2px solid lightgray', borderRadius: '5px', padding: '4px' }}
-              onClick={() => {}}
+              style={{
+                cursor: 'pointer',
+                fontSize: '20px',
+                color: 'dimgray',
+                border: '2px solid lightgray',
+                borderRadius: '6px',
+                padding: '4px',
+              }}
+              onClick={() => confirmAddCustomSolarPanel()}
             />
           </Space>
         </Col>
@@ -566,8 +622,15 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
             dataSource={names}
             renderItem={(item) => (
               <List.Item key={item}>
+                <ArrowLeftOutlined
+                  title={i18n.t('pvModelPanel.CopyThisCustomSolarPanel', lang)}
+                  style={{ paddingRight: '4px', cursor: 'pointer' }}
+                  onClick={() => {
+                    confirmCopyCustomSolarPanel(item);
+                  }}
+                />
                 <ExportOutlined
-                  title={i18n.t('pvModelPanel.ExportCustomSolarPanel', lang)}
+                  title={i18n.t('pvModelPanel.ExportThisCustomSolarPanel', lang)}
                   style={{ paddingRight: '4px', cursor: 'pointer' }}
                   onClick={() => {}}
                 />

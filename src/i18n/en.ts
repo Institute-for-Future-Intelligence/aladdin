@@ -1109,11 +1109,15 @@ export const i18n_en = {
       NominalOperatingCellTemperature: 'Nominal Operating Cell Temperature',
       TemperatureCoefficientOfPmax: 'Temperature Coefficient of Pmax',
       AddedCustomSolarPanels: 'Added',
-      CopySelectedCustomSolarPanel: 'Copy selected custom solar panel',
-      ExportCustomSolarPanel: 'Export custom solar panel',
-      DoYouReallyWantToRemoveCustomSolarPanel: 'Do you really want to remove custom solar panel',
+      CopyThisCustomSolarPanel: 'Copy this custom solar panel',
+      ExportThisCustomSolarPanel: 'Export this custom solar panel',
+      DoYouReallyWantToRemoveThisCustomSolarPanel: 'Do you really want to remove this custom solar panel',
       MakeSureThisCustomSolarPanelIsNotUsed: 'Make sure this custom solar panel is not used in the current model',
       ThisCustomSolarPanelIsUsed: 'This custom solar panel is used in the current model',
+      DoYouReallyWantToCopyThisCustomSolarPanel: 'Do you really want to copy this custom solar panel',
+      ExistingSettingsWillBeOverwritten: 'The existing settings will be overwritten',
+      CannotAddCustomSolarPanel: 'Cannot add custom solar panel',
+      CustomSolarPanelExists: 'A custom solar panel with this name already exists',
     },
 
     parabolicTroughMenu: {

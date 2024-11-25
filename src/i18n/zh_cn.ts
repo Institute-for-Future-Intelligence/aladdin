@@ -1084,11 +1084,15 @@ export const i18n_zh_cn = {
       NominalOperatingCellTemperature: '名义电池运行温度',
       TemperatureCoefficientOfPmax: 'Pmax温度系数',
       AddedCustomSolarPanels: '已有',
-      CopySelectedCustomSolarPanel: '拷贝选中的定制光伏板',
-      ExportCustomSolarPanel: '输出此定制光伏板',
-      DoYouReallyWantToRemoveCustomSolarPanel: '你确定删除此定制光伏板',
+      CopyThisCustomSolarPanel: '拷贝这个定制光伏板',
+      ExportThisCustomSolarPanel: '输出此定制光伏板',
+      DoYouReallyWantToRemoveThisCustomSolarPanel: '你确定删除此定制光伏板',
       MakeSureThisCustomSolarPanelIsNotUsed: '删除之前请确认此定制光伏板没有被当前模型采用',
       ThisCustomSolarPanelIsUsed: '此定制光伏板被当前模型采用',
+      DoYouReallyWantToCopyThisCustomSolarPanel: '你确定拷贝此定制光伏板',
+      ExistingSettingsWillBeOverwritten: '现有的设定将被取代',
+      CannotAddCustomSolarPanel: '无法添加此定制光伏板',
+      CustomSolarPanelExists: '当前文件已经定义了此名字的定制光伏板',
     },
 
     parabolicTroughMenu: {
