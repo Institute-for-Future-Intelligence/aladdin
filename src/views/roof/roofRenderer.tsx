@@ -103,7 +103,6 @@ const handleAddElementOnRoof = (
   ridgeMidPoint: Vector3,
 ) => {
   if (e.intersections.length === 0) return;
-
   const objectTypeToAdd = useStore.getState().objectTypeToAdd;
   if (objectTypeToAdd === ObjectType.None) return;
 
@@ -117,6 +116,7 @@ const handleAddElementOnRoof = (
     .applyEuler(new Euler(0, 0, -foundation.rotation[2]));
   const posRelToCentroid = posRelToFoundation.clone().sub(ridgeMidPoint);
 
+  let newElement: ElementModel | null = null;
   switch (objectTypeToAdd) {
     case ObjectType.SolarPanel: {
       const { normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
@@ -125,7 +125,7 @@ const handleAddElementOnRoof = (
         .getState()
         .getPvModule(useStore.getState().actionState.solarPanelModelName ?? DEFAULT_SOLAR_PANEL_MODEL);
       if (!pvModel) pvModel = useStore.getState().getPvModule(DEFAULT_SOLAR_PANEL_MODEL);
-      const newElement = ElementModelFactory.makeSolarPanel(
+      newElement = ElementModelFactory.makeSolarPanel(
         roof,
         pvModel,
         posRelToFoundation.x,
@@ -140,19 +140,12 @@ const handleAddElementOnRoof = (
         rotation ?? [0, 0, 1],
         actionState.solarPanelFrameColor,
       );
-      useStore.getState().set((state) => {
-        state.elements.push(newElement);
-        state.selectedElementIdSet.clear();
-        state.selectedElementIdSet.add(newElement.id);
-        if (!state.actionModeLock) state.objectTypeToAdd = ObjectType.None;
-      });
       addUndoableAddRooftopElement(newElement);
       break;
     }
     case ObjectType.SolarWaterHeater: {
       const { normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
-      const actionState = useStore.getState().actionState;
-      const newElement = ElementModelFactory.makeSolarWaterHeater(
+      newElement = ElementModelFactory.makeSolarWaterHeater(
         roof,
         posRelToFoundation.x,
         posRelToFoundation.y,
@@ -160,18 +153,12 @@ const handleAddElementOnRoof = (
         normal,
         rotation ?? [0, 0, 1],
       );
-      useStore.getState().set((state) => {
-        state.elements.push(newElement);
-        state.selectedElementIdSet.clear();
-        state.selectedElementIdSet.add(newElement.id);
-        if (!state.actionModeLock) state.objectTypeToAdd = ObjectType.None;
-      });
       addUndoableAddRooftopElement(newElement);
       break;
     }
     case ObjectType.Window: {
       const { normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
-      const newElement = ElementModelFactory.makeWindow(
+      newElement = ElementModelFactory.makeWindow(
         roof,
         posRelToFoundation.x,
         posRelToFoundation.y,
@@ -181,19 +168,13 @@ const handleAddElementOnRoof = (
         0.5,
         0.5,
       );
-      useStore.getState().set((state) => {
-        state.elements.push(newElement);
-        state.selectedElementIdSet.clear();
-        state.selectedElementIdSet.add(newElement.id);
-        if (!state.actionModeLock) state.objectTypeToAdd = ObjectType.None;
-      });
       addUndoableAddRooftopElement(newElement);
 
       break;
     }
     case ObjectType.Sensor: {
       const { normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
-      const newElement = ElementModelFactory.makeSensor(
+      newElement = ElementModelFactory.makeSensor(
         roof,
         posRelToFoundation.x / foundation.lx,
         posRelToFoundation.y / foundation.ly,
@@ -201,12 +182,6 @@ const handleAddElementOnRoof = (
         normal,
         rotation ?? [0, 0, 1],
       );
-      useStore.getState().set((state) => {
-        state.elements.push(newElement);
-        state.selectedElementIdSet.clear();
-        state.selectedElementIdSet.add(newElement.id);
-        if (!state.actionModeLock) state.objectTypeToAdd = ObjectType.None;
-      });
       addUndoableAddRooftopElement(newElement);
 
       break;
@@ -214,7 +189,7 @@ const handleAddElementOnRoof = (
     case ObjectType.Light: {
       const { normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
       const actionState = useStore.getState().actionState;
-      const newElement = ElementModelFactory.makeLight(
+      newElement = ElementModelFactory.makeLight(
         roof,
         2,
         actionState.lightDistance,
@@ -226,16 +201,19 @@ const handleAddElementOnRoof = (
         normal,
         rotation ?? [0, 0, 1],
       );
-      useStore.getState().set((state) => {
-        state.elements.push(newElement);
-        state.selectedElementIdSet.clear();
-        state.selectedElementIdSet.add(newElement.id);
-        if (!state.actionModeLock) state.objectTypeToAdd = ObjectType.None;
-      });
       addUndoableAddRooftopElement(newElement);
 
       break;
     }
+  }
+  if (newElement) {
+    useStore.getState().set((state) => {
+      state.elements.push(newElement);
+      state.selectedElement = newElement;
+      state.selectedElementIdSet.clear();
+      state.selectedElementIdSet.add(newElement.id);
+      if (!state.actionModeLock) state.objectTypeToAdd = ObjectType.None;
+    });
   }
 };
 
@@ -420,6 +398,7 @@ export const handlePointerDown = (
   }
   // click on roof body
   else {
+    console.log('down');
     handleRoofBodyPointerDown(e, roofId, foundationId);
     handleAddElementOnRoof(e, foundationId, roofId, roofSegments, centroid);
   }

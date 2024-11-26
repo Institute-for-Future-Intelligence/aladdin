@@ -2150,6 +2150,9 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         handleUndoableAdd(newElement);
         setCommonStore((state) => {
           state.elements.push(newElement as ElementModel);
+          state.selectedElementIdSet.clear();
+          state.selectedElementIdSet.add(newElement.id);
+          state.selectedElement = newElement;
           if (newElement && newElement.type === ObjectType.Roof) {
             state.addedRoofIdSet.add(newElement.id);
           }

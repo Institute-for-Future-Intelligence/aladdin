@@ -2766,6 +2766,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
               if (model) {
                 state.selectedElementIdSet.clear();
                 state.selectedElementIdSet.add(model.id);
+                state.selectedElement = model;
               }
             });
             return model;

@@ -479,6 +479,9 @@ const Cuboid = (cuboidModel: CuboidModel) => {
           } as UndoableAdd;
           addUndoable(undoableAdd);
           setCommonStore((state) => {
+            state.selectedElementIdSet.clear();
+            state.selectedElementIdSet.add(addedElement.id);
+            state.selectedElement = addedElement;
             state.objectTypeToAdd = ObjectType.None;
           });
         }
