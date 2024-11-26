@@ -1093,6 +1093,7 @@ export const i18n_zh_tw = {
       DoYouReallyWantToCopyThisCustomSolarPanel: '你確定拷貝此客製化光伏板',
       ExistingSettingsWillBeOverwritten: '現有的設定將被取代',
       CannotAddCustomSolarPanel: '無法添加此客製化光伏板',
+      CustomSolarPanelMustHaveModelName: '客製化光伏板必須要有型號',
       CustomSolarPanelExists: '目前文件已經定義了此名字的客製化光伏板',
     },
 

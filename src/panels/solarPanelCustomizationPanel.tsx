@@ -103,6 +103,13 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
   };
 
   const confirmAddCustomSolarPanel = () => {
+    if (modelRef.current.trim() === '') {
+      Modal.info({
+        title: i18n.t('pvModelPanel.CannotAddCustomSolarPanel', lang),
+        content: i18n.t('pvModelPanel.CustomSolarPanelMustHaveModelName', lang) + '.',
+      });
+      return;
+    }
     if (names.includes(modelRef.current)) {
       Modal.info({
         title: i18n.t('pvModelPanel.CannotAddCustomSolarPanel', lang),

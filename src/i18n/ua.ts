@@ -1119,6 +1119,7 @@ export const i18n_ua = {
       DoYouReallyWantToCopyThisCustomSolarPanel: 'Do you really want to copy this custom solar panel',
       ExistingSettingsWillBeOverwritten: 'The existing settings will be overwritten',
       CannotAddCustomSolarPanel: 'Cannot add custom solar panel',
+      CustomSolarPanelMustHaveModelName: 'A custom solar panel must have a model name',
       CustomSolarPanelExists: 'A custom solar panel with this name already exists',
     },
 
