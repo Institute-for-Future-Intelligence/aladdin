@@ -19,6 +19,7 @@ import i18n from '../i18n/i18n';
 import { useLanguage } from '../hooks';
 import { PvModel } from '../models/PvModel';
 import { ShadeTolerance } from '../types';
+import { showInfo } from '../helpers';
 
 const { Option } = Select;
 
@@ -120,7 +121,7 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
     }
   };
 
-  const copyCustomSolarPanel = (name: string) => {
+  const displayCustomSolarPanel = (name: string) => {
     const pv = customPvModules[name];
     if (!pv) return;
     modelRef.current = pv.name;
@@ -145,9 +146,9 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
     setUpdateFlag(!updateFlag);
   };
 
-  const confirmCopyCustomSolarPanel = (name: string) => {
+  const confirmDisplayCustomSolarPanel = (name: string) => {
     Modal.confirm({
-      title: i18n.t('pvModelPanel.DoYouReallyWantToCopyThisCustomSolarPanel', lang) + ' "' + name + '"?',
+      title: i18n.t('pvModelPanel.DoYouReallyWantToDisplayThisCustomSolarPanel', lang) + ' "' + name + '"?',
       content: (
         <span style={{ color: 'red', fontWeight: 'bold' }}>
           <WarningOutlined style={{ marginRight: '6px' }} />
@@ -156,7 +157,7 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
       ),
       icon: <QuestionCircleOutlined />,
       onOk: () => {
-        copyCustomSolarPanel(name);
+        displayCustomSolarPanel(name);
       },
     });
   };
@@ -586,7 +587,7 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
         </div>
       }
       footer={[
-        <Button key="Close" type="primary" onClick={() => setDialogVisible(false)}>
+        <Button key="Close" onClick={() => setDialogVisible(false)}>
           {i18n.t('word.Close', lang)}
         </Button>,
       ]}
@@ -630,16 +631,20 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
             renderItem={(item) => (
               <List.Item key={item}>
                 <ArrowLeftOutlined
-                  title={i18n.t('pvModelPanel.CopyThisCustomSolarPanel', lang)}
+                  title={i18n.t('pvModelPanel.DisplayThisCustomSolarPanel', lang)}
                   style={{ paddingRight: '4px', cursor: 'pointer' }}
                   onClick={() => {
-                    confirmCopyCustomSolarPanel(item);
+                    confirmDisplayCustomSolarPanel(item);
                   }}
                 />
                 <ExportOutlined
                   title={i18n.t('pvModelPanel.ExportThisCustomSolarPanel', lang)}
                   style={{ paddingRight: '4px', cursor: 'pointer' }}
-                  onClick={() => {}}
+                  onClick={() => {
+                    const pv = customPvModules[item];
+                    navigator.clipboard.writeText(JSON.stringify(pv));
+                    showInfo(i18n.t('pvModelPanel.CustomSolarPanelExportedToClipboard', lang) + ' (' + item + ').');
+                  }}
                 />
                 <DeleteOutlined
                   title={i18n.t('word.Delete', lang)}
