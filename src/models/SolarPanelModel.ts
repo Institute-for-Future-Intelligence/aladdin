@@ -20,7 +20,3 @@ export interface SolarPanelModel extends SolarCollector {
   dcToAcRatio?: number;
   version?: number; // version 1: change to ref solar panel.
 }
-
-export interface SolarPanelModelOnWall extends SolarPanelModel {
-  absRotation: number;
-}
