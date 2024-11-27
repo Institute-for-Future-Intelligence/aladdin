@@ -37,6 +37,7 @@ import { SolarRadiation } from './SolarRadiation';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
 import { useLanguage, useWeather } from '../hooks';
+import { SolarWaterHeaterModel } from 'src/models/SolarWaterHeaterModel';
 
 export interface StaticSolarRadiationSimulationProps {
   city: string | null;
@@ -124,6 +125,10 @@ const StaticSolarRadiationSimulation = React.memo(({ city }: StaticSolarRadiatio
         }
         case ObjectType.SolarPanel: {
           generateHeatmapForSolarPanel(e as SolarPanelModel);
+          break;
+        }
+        case ObjectType.SolarWaterHeater: {
+          generateHeatmapForSolarWaterHeater(e as SolarWaterHeaterModel);
           break;
         }
         case ObjectType.Wall: {
@@ -588,6 +593,84 @@ const StaticSolarRadiationSimulation = React.memo(({ city }: StaticSolarRadiatio
     applyScaleFactor(cellOutputTotals, scaleFactor);
     // send heat map data to common store for visualization
     setHeatmap(panel.id, cellOutputTotals);
+  };
+
+  const generateHeatmapForSolarWaterHeater = (heater: SolarWaterHeaterModel) => {
+    const parent = getParent(heater);
+    if (!parent) throw new Error('parent of solar water heater does not exist');
+    // x and y coordinates of a rooftop solar panel are relative to the foundation
+    const foundation = getFoundation(parent);
+    if (!foundation) throw new Error('foundation of solar water heater does not exist');
+
+    // world center, the center of the panel, not only [cx,cy,cz]
+    const center = Util.absoluteCoordinates(heater.cx, heater.cy, heater.cz, foundation, undefined, undefined, true);
+    const euler = new Euler(); // world rotation euler
+    const localCz = (heater.lz - heater.waterTankRadius) / 2;
+    const tiltAngle = Math.atan2(heater.lz - heater.waterTankRadius, heater.ly);
+
+    const isFlat = Util.isZero(heater.rotation[0]);
+    if (isFlat) {
+      euler.set(tiltAngle, 0, heater.relativeAzimuth + foundation.rotation[2], 'ZXY');
+      center.z += localCz;
+    } else {
+      euler.set(heater.rotation[0] + tiltAngle, 0, heater.rotation[2] + foundation.rotation[2], 'ZXY');
+      center.add(new Vector3(0, 0, localCz).applyEuler(euler));
+    }
+
+    const normal = new Vector3(0, 0, 1).applyEuler(euler);
+
+    // TODO: right now we assume a parent rotation is always around the z-axis
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const date = now.getDate();
+    const dayOfYear = Util.dayOfYear(now);
+    const lx = heater.lx;
+    const ly = Math.hypot(heater.ly, heater.lz - heater.waterTankRadius);
+    const nx = Math.max(2, Math.round(heater.lx / cellSize));
+    const ny = Math.max(2, Math.round(heater.ly / cellSize));
+    const dx = lx / nx;
+    const dy = ly / ny;
+    const x0 = -(lx - cellSize) / 2;
+    const y0 = -(ly - cellSize) / 2;
+    const cellOutputTotals = Array(nx)
+      .fill(0)
+      .map(() => Array(ny).fill(0));
+    let count = 0;
+    for (let i = 0; i < 24; i++) {
+      for (let j = 0; j < world.timesPerHour; j++) {
+        const currentTime = new Date(year, month, date, i, j * interval);
+        const sunDirection = getSunDirection(currentTime, world.latitude);
+        if (sunDirection.z > 0) {
+          // when the sun is out
+          count++;
+          const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
+          const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
+          const dot = normal.dot(sunDirection);
+          const v2d = new Vector2();
+          const pos = new Vector3();
+          for (let kx = 0; kx < nx; kx++) {
+            for (let ky = 0; ky < ny; ky++) {
+              cellOutputTotals[kx][ky] += indirectRadiation;
+              if (dot > 0) {
+                v2d.set(x0 + kx * dx, y0 + ky * dy);
+                pos.set(v2d.x, v2d.y, 0).applyEuler(euler).add(center);
+                if (!inShadow(heater.id, pos, sunDirection)) {
+                  // direct radiation
+                  cellOutputTotals[kx][ky] += dot * peakRadiation;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    // apply clearness and convert the unit of time step from minute to hour so that we get kWh
+    const daylight = (count * interval) / 60;
+    const scaleFactor =
+      daylight > ZERO_TOLERANCE ? weather.sunshineHours[month] / (30 * daylight * world.timesPerHour) : 0;
+    applyScaleFactor(cellOutputTotals, scaleFactor);
+    // send heat map data to common store for visualization
+    setHeatmap(heater.id, cellOutputTotals);
   };
 
   const generateHeatmapForWall = (wall: WallModel) => {

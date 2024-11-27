@@ -41,6 +41,7 @@ import { SolarWaterHeaterUtil } from './solarWaterHeaterUtil';
 import Wireframe from './wireframe';
 import PanelMaterial, { MaterialRefProps } from './panelMaterial';
 import BarMaterial from './barMaterial';
+import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 
 const MOUNT_LEFT = 'Mount Left';
 const MOUNT_RIGHT = 'Mount Right';
@@ -74,7 +75,7 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
   const panelWidth = Math.hypot(lz - waterTankRadius, ly);
   const waterTankLength = lx + 0.25;
   const mountHeight = lz - waterTankRadius * 2; // surface to tank bottom, lz is from surface to top
-  const angle = Math.asin(Math.min(1, (lz - waterTankRadius) / panelWidth));
+  const angle = Math.atan2(lz - waterTankRadius, ly);
   const rotateHandleOffset = 0.5;
 
   // variable ref
@@ -109,6 +110,7 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
 
   // states
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
+  const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
 
   const [showXYIntersectionPlane, setShowXYIntersectionPlane] = useState(false);
   const [showXZIntersectionPlane, setShowXZIntersectionPlane] = useState(false);
@@ -717,7 +719,9 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
             panelOffsetGroupRef.current.position.y = -newPanelWidth / 2;
             panelPlaneGroupMeshRef.current.scale.y = newPanelWidth;
 
-            rotateHandleGroupRef.current.position.z = newMountHeight / 2;
+            if (rotateHandleGroupRef.current) {
+              rotateHandleGroupRef.current.position.z = newMountHeight / 2;
+            }
           }
         }
         break;
@@ -744,8 +748,8 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
               <Cylinder
                 ref={waterTankRef}
                 args={[waterTankRadius, waterTankRadius, 1]}
-                castShadow={shadowEnabled}
-                receiveShadow={shadowEnabled}
+                castShadow={shadowEnabled && !showSolarRadiationHeatmap}
+                receiveShadow={shadowEnabled && !showSolarRadiationHeatmap}
                 rotation={[0, 0, HALF_PI]}
                 scale={[1, waterTankLength, 1]}
               >
@@ -772,14 +776,16 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
                 <group ref={panelPlaneGroupMeshRef} scale={[lx, panelWidth, 1]}>
                   {/* panel mesh */}
                   <Plane castShadow={false} receiveShadow={shadowEnabled}>
-                    <PanelMaterial ref={materialRefFront} lx={lx} ly={ly} side={FrontSide} />
+                    <PanelMaterial ref={materialRefFront} id={id} lx={lx} ly={ly} side={FrontSide} />
                   </Plane>
-                  <Plane receiveShadow={shadowEnabled} position={[0, -0.475, 0.001]} args={[1, 0.05]}>
-                    <BarMaterial />
-                  </Plane>
+                  {!showSolarRadiationHeatmap && (
+                    <Plane receiveShadow={shadowEnabled} position={[0, -0.475, 0.001]} args={[1, 0.05]}>
+                      <BarMaterial />
+                    </Plane>
+                  )}
                   {shadowEnabled && (
                     <Plane castShadow={shadowEnabled} receiveShadow={false} position={[0, 0, -0.05]}>
-                      <PanelMaterial ref={materialRefBack} lx={lx} ly={ly} side={BackSide} />
+                      <PanelMaterial ref={materialRefBack} id={id} lx={lx} ly={ly} side={BackSide} />
                     </Plane>
                   )}
                   {/* simulation panel */}
@@ -787,6 +793,7 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
                     name={'Water Heater Simulation Plane'}
                     uuid={id}
                     userData={{ simulation: true }}
+                    position={[0, 0, 0.001]}
                     visible={false}
                   >
                     <meshBasicMaterial side={DoubleSide} />

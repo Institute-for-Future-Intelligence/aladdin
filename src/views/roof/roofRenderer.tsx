@@ -398,7 +398,6 @@ export const handlePointerDown = (
   }
   // click on roof body
   else {
-    console.log('down');
     handleRoofBodyPointerDown(e, roofId, foundationId);
     handleAddElementOnRoof(e, foundationId, roofId, roofSegments, centroid);
   }

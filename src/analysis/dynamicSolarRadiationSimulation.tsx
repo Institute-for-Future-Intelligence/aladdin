@@ -42,6 +42,7 @@ import { SolarRadiation } from './SolarRadiation';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
 import { useLanguage, useWeather } from '../hooks';
+import { SolarWaterHeaterModel } from 'src/models/SolarWaterHeaterModel';
 
 export interface DynamicSolarRadiationSimulationProps {
   city: string | null;
@@ -132,6 +133,7 @@ const DynamicSolarRadiationSimulation = React.memo(({ city }: DynamicSolarRadiat
         case ObjectType.Wall:
         case ObjectType.Door:
         case ObjectType.SolarPanel:
+        case ObjectType.SolarWaterHeater:
         case ObjectType.ParabolicTrough:
         case ObjectType.ParabolicDish:
         case ObjectType.FresnelReflector:
@@ -181,6 +183,7 @@ const DynamicSolarRadiationSimulation = React.memo(({ city }: DynamicSolarRadiat
         case ObjectType.Wall:
         case ObjectType.Door:
         case ObjectType.SolarPanel:
+        case ObjectType.SolarWaterHeater:
         case ObjectType.ParabolicTrough:
         case ObjectType.ParabolicDish:
         case ObjectType.FresnelReflector:
@@ -364,6 +367,10 @@ const DynamicSolarRadiationSimulation = React.memo(({ city }: DynamicSolarRadiat
             }
             case ObjectType.SolarPanel: {
               calculateSolarPanel(e as SolarPanelModel);
+              break;
+            }
+            case ObjectType.SolarWaterHeater: {
+              calculateSolarWaterHeater(e as SolarWaterHeaterModel);
               break;
             }
             case ObjectType.ParabolicTrough: {
@@ -1511,6 +1518,73 @@ const DynamicSolarRadiationSimulation = React.memo(({ city }: DynamicSolarRadiat
           dv.applyEuler(normalEuler);
           v.set(center.x + dv.x, center.y + dv.y, z0 + dv.z);
           if (!inShadow(panel.id, v, sunDirection)) {
+            // direct radiation
+            cellOutputs[kx][ky] += dot * peakRadiation;
+          }
+        }
+      }
+    }
+  };
+
+  const calculateSolarWaterHeater = (heater: SolarWaterHeaterModel) => {
+    const sunDirection = getSunDirection(now, world.latitude);
+    if (sunDirection.z <= 0) return; // when the sun is not out
+    const parent = getParent(heater);
+    if (!parent) throw new Error('parent of solar water heater does not exist');
+
+    // x and y coordinates of a rooftop solar water heater are relative to the foundation
+    const foundation = getFoundation(parent);
+    if (!foundation) throw new Error('foundation of solar water heater does not exist');
+
+    // world center, the center of the panel, not only [cx,cy,cz]
+    const center = Util.absoluteCoordinates(heater.cx, heater.cy, heater.cz, foundation, undefined, undefined, true);
+    const euler = new Euler(); // world rotation euler
+    const localCz = (heater.lz - heater.waterTankRadius) / 2;
+    const tiltAngle = Math.atan2(heater.lz - heater.waterTankRadius, heater.ly);
+
+    const isFlat = Util.isZero(heater.rotation[0]);
+    if (isFlat) {
+      euler.set(tiltAngle, 0, heater.relativeAzimuth + foundation.rotation[2], 'ZXY');
+      center.z += localCz;
+    } else {
+      euler.set(heater.rotation[0] + tiltAngle, 0, heater.rotation[2] + foundation.rotation[2], 'ZXY');
+      center.add(new Vector3(0, 0, localCz).applyEuler(euler));
+    }
+
+    const lx = heater.lx;
+    const ly = Math.hypot(heater.ly, heater.lz - heater.waterTankRadius);
+    const nx = Math.max(2, Math.round(lx / cellSize));
+    const ny = Math.max(2, Math.round(ly / cellSize));
+    const dx = lx / nx;
+    const dy = ly / ny;
+    const x0 = -(lx - cellSize) / 2;
+    const y0 = -(ly - cellSize) / 2;
+    let cellOutputs = cellOutputsMapRef.current.get(heater.id);
+    if (!cellOutputs || cellOutputs.length !== nx || cellOutputs[0].length !== ny) {
+      cellOutputs = Array(nx)
+        .fill(0)
+        .map(() => Array(ny).fill(0));
+      cellOutputsMapRef.current.set(heater.id, cellOutputs);
+    }
+
+    const normal = new Vector3(0, 0, 1).applyEuler(euler);
+    const peakRadiation = calculatePeakRadiation(sunDirection, Util.dayOfYear(now), elevation, AirMass.SPHERE_MODEL);
+    const indirectRadiation = calculateDiffuseAndReflectedRadiation(
+      world.ground,
+      now.getMonth(),
+      normal,
+      peakRadiation,
+    );
+    const dot = normal.dot(sunDirection);
+    const v2d = new Vector2();
+    const pos = new Vector3();
+    for (let kx = 0; kx < nx; kx++) {
+      for (let ky = 0; ky < ny; ky++) {
+        cellOutputs[kx][ky] += indirectRadiation;
+        if (dot > 0) {
+          v2d.set(x0 + kx * dx, y0 + ky * dy);
+          pos.set(v2d.x, v2d.y, 0).applyEuler(euler).add(center);
+          if (!inShadow(heater.id, pos, sunDirection)) {
             // direct radiation
             cellOutputs[kx][ky] += dot * peakRadiation;
           }
