@@ -2,7 +2,7 @@
  * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
-import { Box, Cylinder, Plane, Sphere } from '@react-three/drei';
+import { Box, Cylinder, Plane } from '@react-three/drei';
 import { ThreeEvent, useFrame, useThree } from '@react-three/fiber';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { HALF_PI } from 'src/constants';
@@ -42,6 +42,7 @@ import Wireframe from './wireframe';
 import PanelMaterial, { MaterialRefProps } from './panelMaterial';
 import BarMaterial from './barMaterial';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
+import Label from './label';
 
 const MOUNT_LEFT = 'Mount Left';
 const MOUNT_RIGHT = 'Mount Right';
@@ -49,7 +50,6 @@ export const WATER_TANK_RADIUS = 0.3;
 
 /**
  * todos:
- * - text
  * - simulation
  */
 
@@ -735,6 +735,8 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
       position={[cx, cy, cz]}
       rotation={[rotation[0], rotation[1], rotation[2], 'ZXY']}
       onPointerDown={onGroupPointerDown}
+      onPointerOver={() => setHovered(true)}
+      onPointerOut={() => setHovered(false)}
     >
       {/* auzimuth group */}
       <group ref={azimuthGroupRef} rotation={azimuthEuler}>
@@ -880,6 +882,11 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
               onPointerDown={onRotateHandlePointerDown}
             />
           </group>
+        )}
+
+        {/* label */}
+        {(hovered || waterHeater.showLabel) && !selected && (
+          <Label solarWaterHeater={waterHeater} groupRef={groupRef} />
         )}
       </group>
 

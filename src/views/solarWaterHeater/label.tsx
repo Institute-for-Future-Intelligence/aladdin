@@ -2,38 +2,32 @@ import React, { useEffect, useState } from 'react';
 import { tempVector3_0 } from 'src/helpers';
 import { useLanguage } from 'src/hooks';
 import i18n from 'src/i18n/i18n';
-import { SolarPanelModel } from 'src/models/SolarPanelModel';
-import { Group, Object3DEventMap } from 'three';
+import { SolarWaterHeaterModel } from 'src/models/SolarWaterHeaterModel';
+import { Group } from 'three';
 
 interface LabelProps {
-  solarPanel: SolarPanelModel;
-  boxRef: React.MutableRefObject<Group<Object3DEventMap>>;
+  solarWaterHeater: SolarWaterHeaterModel;
+  groupRef: React.MutableRefObject<Group>;
 }
 
-const Label = React.memo(({ solarPanel, boxRef }: LabelProps) => {
+const Label = React.memo(({ solarWaterHeater, groupRef }: LabelProps) => {
   const {
-    ly,
-    tiltAngle,
     label,
     locked,
     labelColor = 'white',
     labelFontSize = 20,
     labelSize = 0.2,
-    labelHeight,
-  } = solarPanel;
+    labelHeight = 2,
+  } = solarWaterHeater;
 
-  const hy = ly / 2;
   const lang = useLanguage();
-
   const [text, setText] = useState('');
 
   useEffect(() => {
-    if (!boxRef.current) return;
-
-    const { x, y, z } = boxRef.current.getWorldPosition(tempVector3_0);
-
+    if (!groupRef.current) return;
+    const { x, y, z } = groupRef.current.getWorldPosition(tempVector3_0);
     setText(
-      (label ?? i18n.t('shared.SolarPanelElement', lang)) +
+      (label ?? i18n.t('shared.SolarWaterHeaterElement', lang)) +
         (locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
         (label
           ? ''
@@ -50,8 +44,6 @@ const Label = React.memo(({ solarPanel, boxRef }: LabelProps) => {
     );
   }, [label, locked, lang]);
 
-  const _labelHeight = labelHeight ?? Math.max(hy * Math.abs(Math.sin(tiltAngle)) + 0.1, 0.2);
-
   return (
     <textSprite
       userData={{ unintersectable: true }}
@@ -61,7 +53,7 @@ const Label = React.memo(({ solarPanel, boxRef }: LabelProps) => {
       color={labelColor}
       fontSize={labelFontSize}
       textHeight={labelSize}
-      position={[0, 0, _labelHeight]}
+      position={[0, 0, labelHeight]}
     />
   );
 });

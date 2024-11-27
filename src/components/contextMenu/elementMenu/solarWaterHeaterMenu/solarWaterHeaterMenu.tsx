@@ -6,7 +6,7 @@ import type { MenuProps } from 'antd';
 import { ElementModel } from 'src/models/ElementModel';
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
-import { Copy, Cut, DialogItem, Lock } from '../../menuItems';
+import { Copy, Cut, DialogItem, Lock, MenuItem } from '../../menuItems';
 import { SolarWaterHeaterModel } from 'src/models/SolarWaterHeaterModel';
 import i18n from 'src/i18n/i18n';
 import SolarWaterHeaterLengthInput from './solarWaterHeaterLengthInput';
@@ -16,6 +16,7 @@ import { UNIT_VECTOR_POS_Z_ARRAY } from 'src/constants';
 import SolarWaterHeaterRelativeAzimuthInput from './solarWaterHeaterRelativeAzimuthInput';
 import SolarWaterHeaterHeightInput from './solarWaterHeaterHeightInput';
 import SolarWaterHeaterColorSelection from './solarWaterHeaterColorSelection';
+import { createLabelSubmenu } from '../../labelSubmenuItems';
 
 export const createSolarWaterHeaterMenu = (selectedElement: ElementModel) => {
   const items: MenuProps['items'] = [];
@@ -77,6 +78,12 @@ export const createSolarWaterHeaterMenu = (selectedElement: ElementModel) => {
     items.push({
       key: 'water-heater-frame-color',
       label: <DialogItem Dialog={SolarWaterHeaterColorSelection}>{i18n.t('word.Color', lang)} ...</DialogItem>,
+    });
+
+    items.push({
+      key: 'solar-water-heater-label',
+      label: <MenuItem>{i18n.t('labelSubMenu.Label', lang)}</MenuItem>,
+      children: createLabelSubmenu(waterHeater),
     });
   }
 
