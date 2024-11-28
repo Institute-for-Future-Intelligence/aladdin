@@ -11,7 +11,7 @@ import {
   WarningOutlined,
   QuestionCircleOutlined,
 } from '@ant-design/icons';
-import { Button, Col, Input, InputNumber, List, Modal, Row, Select, Space, Tabs, TabsProps } from 'antd';
+import { Button, Col, Divider, Input, InputNumber, List, Modal, Row, Select, Space, Tabs, TabsProps } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
@@ -19,7 +19,7 @@ import i18n from '../i18n/i18n';
 import { useLanguage } from '../hooks';
 import { PvModel } from '../models/PvModel';
 import { ShadeTolerance } from '../types';
-import { showInfo } from '../helpers';
+import { showError, showInfo } from '../helpers';
 
 const { Option } = Select;
 
@@ -121,9 +121,7 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
     }
   };
 
-  const displayCustomSolarPanel = (name: string) => {
-    const pv = customPvModules[name];
-    if (!pv) return;
+  const setPv = (pv: PvModel) => {
     modelRef.current = pv.name;
     brandRef.current = pv.brand;
     cellTypeRef.current = pv.cellType;
@@ -143,12 +141,11 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
     weightRef.current = pv.weight;
     colorRef.current = pv.color;
     bifacialityFactorRef.current = pv.bifacialityFactor;
-    setUpdateFlag(!updateFlag);
   };
 
-  const confirmDisplayCustomSolarPanel = (name: string) => {
+  const confirmImportFromClipboard = () => {
     Modal.confirm({
-      title: i18n.t('pvModelPanel.DoYouReallyWantToDisplayThisCustomSolarPanel', lang) + ' "' + name + '"?',
+      title: i18n.t('pvModelPanel.DoYouReallyWantToImportCustomSolarPanel', lang) + '?',
       content: (
         <span style={{ color: 'red', fontWeight: 'bold' }}>
           <WarningOutlined style={{ marginRight: '6px' }} />
@@ -157,7 +154,22 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
       ),
       icon: <QuestionCircleOutlined />,
       onOk: () => {
-        displayCustomSolarPanel(name);
+        navigator.clipboard
+          .readText()
+          .then((text) => {
+            const pv = JSON.parse(text);
+            // if the clipboard does not have either of these two properties, then it is not a solar panel,
+            // even though the parser does not return a parsing error
+            if (!pv['cellType'] || !pv['pmax']) {
+              showError(i18n.t('pvModelPanel.FailInImportingDataFromClipboard', lang));
+              return;
+            }
+            setPv(pv as PvModel);
+            setUpdateFlag(!updateFlag);
+          })
+          .catch((err) => {
+            showError(i18n.t('pvModelPanel.FailInImportingDataFromClipboard', lang) + ':' + err);
+          });
       },
     });
   };
@@ -619,6 +631,21 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
               }}
               onClick={() => confirmAddCustomSolarPanel()}
             />
+            <Divider style={{ marginTop: '12px', marginBottom: '12px' }} />
+            <ArrowLeftOutlined
+              title={i18n.t('pvModelPanel.ImportCustomSolarPanelFromClipboard', lang)}
+              style={{
+                cursor: 'pointer',
+                fontSize: '20px',
+                color: 'dimgray',
+                border: '2px solid lightgray',
+                borderRadius: '6px',
+                padding: '4px',
+              }}
+              onClick={() => {
+                confirmImportFromClipboard();
+              }}
+            />
           </Space>
         </Col>
         <Col flex={2}>
@@ -630,20 +657,14 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
             dataSource={names}
             renderItem={(item) => (
               <List.Item key={item}>
-                <ArrowLeftOutlined
-                  title={i18n.t('pvModelPanel.DisplayThisCustomSolarPanel', lang)}
-                  style={{ paddingRight: '4px', cursor: 'pointer' }}
-                  onClick={() => {
-                    confirmDisplayCustomSolarPanel(item);
-                  }}
-                />
                 <ExportOutlined
                   title={i18n.t('pvModelPanel.ExportThisCustomSolarPanel', lang)}
                   style={{ paddingRight: '4px', cursor: 'pointer' }}
                   onClick={() => {
                     const pv = customPvModules[item];
-                    navigator.clipboard.writeText(JSON.stringify(pv));
-                    showInfo(i18n.t('pvModelPanel.CustomSolarPanelExportedToClipboard', lang) + ' (' + item + ').');
+                    navigator.clipboard.writeText(JSON.stringify(pv)).then(() => {
+                      showInfo(i18n.t('pvModelPanel.CustomSolarPanelExportedToClipboard', lang) + ' (' + item + ').');
+                    });
                   }}
                 />
                 <DeleteOutlined

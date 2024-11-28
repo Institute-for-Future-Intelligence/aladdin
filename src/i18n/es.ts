@@ -1111,15 +1111,17 @@ export const i18n_es = {
       AddedCustomSolarPanels: 'Added',
       DisplayThisCustomSolarPanel: 'Display this custom solar panel',
       ExportThisCustomSolarPanel: 'Export this custom solar panel',
+      ImportCustomSolarPanelFromClipboard: 'Import custom solar panel from clipboard',
       CustomSolarPanelExportedToClipboard: 'Custom solar panel exported to Clipboard',
       DoYouReallyWantToRemoveThisCustomSolarPanel: 'Do you really want to remove this custom solar panel',
       MakeSureThisCustomSolarPanelIsNotUsed: 'Make sure this custom solar panel is not used in the current model',
       ThisCustomSolarPanelIsUsed: 'This custom solar panel is used in the current model',
-      DoYouReallyWantToDisplayThisCustomSolarPanel: 'Do you really want to display this custom solar panel',
+      DoYouReallyWantToImportCustomSolarPanel: 'Do you really want to import a custom solar panel',
       ExistingSettingsWillBeOverwritten: 'The existing settings will be overwritten',
       CannotAddCustomSolarPanel: 'Cannot add custom solar panel',
       CustomSolarPanelMustHaveModelName: 'A custom solar panel must have a model name',
       CustomSolarPanelExists: 'A custom solar panel with this name already exists',
+      FailInImportingDataFromClipboard: 'Failed in importing data from the clipboard',
     },
 
     parabolicTroughMenu: {

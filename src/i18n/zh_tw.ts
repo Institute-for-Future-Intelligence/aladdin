@@ -1087,15 +1087,17 @@ export const i18n_zh_tw = {
       AddedCustomSolarPanels: '已有',
       DisplayThisCustomSolarPanel: '展示這個客製化光伏板',
       ExportThisCustomSolarPanel: '輸出此客製化光伏板',
+      ImportCustomSolarPanelFromClipboard: '從系統剪切板輸入客製化光伏板數據',
       CustomSolarPanelExportedToClipboard: '客製化光伏板拷貝到剪貼板',
       DoYouReallyWantToRemoveThisCustomSolarPanel: '你確定刪除此客製化光伏板',
       MakeSureThisCustomSolarPanelIsNotUsed: '刪除之前請確認此客製化光伏板沒有被當前模型採用',
       ThisCustomSolarPanelIsUsed: '此客製化光伏板被當前模型採用',
-      DoYouReallyWantToDisplayThisCustomSolarPanel: '你確定展示此客製化光伏板',
+      DoYouReallyWantToImportCustomSolarPanel: '你確定輸入客製化光伏板',
       ExistingSettingsWillBeOverwritten: '現有的設定將被取代',
       CannotAddCustomSolarPanel: '無法添加此客製化光伏板',
       CustomSolarPanelMustHaveModelName: '客製化光伏板必須要有型號',
       CustomSolarPanelExists: '目前文件已經定義了此名字的客製化光伏板',
+      FailInImportingDataFromClipboard: '從系統剪切板輸入資料失敗',
     },
 
     parabolicTroughMenu: {
