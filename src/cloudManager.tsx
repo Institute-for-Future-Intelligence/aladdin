@@ -1879,6 +1879,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
           openCloudFile={openCloudFileWithSaveReminder}
           closeCallback={() => {
             setPrimitiveStore('showModelsGallery', false);
+            setPrimitiveStore('modelsMapSelectedSite', undefined);
             authorModelsRef.current = undefined;
           }}
         />

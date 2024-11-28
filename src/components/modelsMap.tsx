@@ -33,6 +33,7 @@ import ReactCountryFlag from 'react-country-flag';
 import { Util } from '../Util';
 import { useLanguage } from '../hooks';
 import { getIconUrl } from './mapUtils';
+import Point = google.maps.Point;
 
 const { Panel } = Collapse;
 
@@ -678,12 +679,30 @@ const ModelsMap = React.memo(
                     const model = m.get(keys[0]);
                     if (!model) return null;
                     const iconUrl = getIconUrl(model);
+                    const selectedModelSite = usePrimitiveStore.getState().modelsMapSelectedSite;
+                    let selected = false;
+                    for (const [k, v] of m) {
+                      if (v.title === selectedModelSite?.title) {
+                        selected = true;
+                        break;
+                      }
+                    }
                     return (
                       <Marker
+                        label={
+                          selected
+                            ? {
+                                text: '⇧',
+                                color: 'red',
+                                fontSize: '24px',
+                                fontWeight: 'bold',
+                              }
+                            : undefined
+                        }
                         key={index}
                         ref={(e) => (markersRef.current[index] = e)}
                         clusterer={clusterer}
-                        icon={iconUrl ? { url: iconUrl } : undefined}
+                        icon={iconUrl ? { url: iconUrl, labelOrigin: { x: 15, y: 42 } as Point } : undefined}
                         position={{ lat: model.latitude, lng: model.longitude }}
                         onClick={() => openModelSite(model)}
                         onMouseOver={() => {

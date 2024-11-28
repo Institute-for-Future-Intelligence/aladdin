@@ -3,7 +3,7 @@
  */
 
 import { createWithEqualityFn } from 'zustand/traditional';
-import { DesignProblem } from '../types';
+import { DesignProblem, ModelSite } from '../types';
 import produce from 'immer';
 
 // avoid using undefined value in the store for now.
@@ -39,6 +39,7 @@ export interface PrimitiveStoreState {
   saveLocalFileDialogVisible: boolean;
 
   modelsMapFlag: boolean;
+  modelsMapSelectedSite: ModelSite | undefined;
   leaderboardFlag: boolean;
   showLeaderboard: boolean;
   publishOnModelsMapFlag: boolean;
@@ -237,6 +238,7 @@ export const usePrimitiveStore = createWithEqualityFn<PrimitiveStoreState>()((se
     saveLocalFileDialogVisible: false,
 
     modelsMapFlag: false,
+    modelsMapSelectedSite: undefined,
     leaderboardFlag: false,
     showLeaderboard: false,
     publishOnModelsMapFlag: false,

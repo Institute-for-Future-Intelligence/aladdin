@@ -52,6 +52,7 @@ const ModelsMapWrapper = React.memo(
   ({ openCloudFile, deleteModelFromMap, likeModelFromMap, pinModelFromMap }: ModelsMapWrapperProps) => {
     const user = useStore(Selector.user);
     const setCommonStore = useStore(Selector.set);
+    const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
     const addUndoable = useStore(Selector.addUndoable);
     const modelsMapType = useStore(Selector.modelsMapType);
     const modelsMapLatitude = useStore(Selector.modelsMapLatitude);
@@ -350,6 +351,7 @@ const ModelsMapWrapper = React.memo(
               models={authorModelsRef.current}
               closeCallback={() => {
                 setSelectedAuthor(undefined);
+                setPrimitiveStore('modelsMapSelectedSite', undefined);
                 authorModelsRef.current = undefined;
               }}
             />

@@ -11,6 +11,7 @@ import { ModelSite } from './types';
 import { LeftCircleOutlined, RightCircleOutlined } from '@ant-design/icons';
 import { getIconUrl } from './components/mapUtils';
 import ImageLoadFailureIcon from './assets/image_load_failure.png';
+import { usePrimitiveStore } from './stores/commonPrimitive';
 
 export interface ModelsGalleryProps {
   latRef?: MutableRefObject<number>;
@@ -186,7 +187,7 @@ const ModelsGallery = React.memo(
                           style={{
                             cursor: 'pointer',
                             borderRadius: selectedModel === m ? '0' : '10px',
-                            border: selectedModel === m ? '2px solid ' + (dark ? 'goldenrod' : 'red') : 'none',
+                            border: selectedModel === m ? '4px solid ' + (dark ? 'goldenrod' : 'red') : 'none',
                             marginRight: '4px',
                           }}
                           onClick={() => {
@@ -204,6 +205,9 @@ const ModelsGallery = React.memo(
                                   if (latRef) latRef.current = m.latitude;
                                   if (lngRef) lngRef.current = m.longitude;
                                 }
+                              });
+                              usePrimitiveStore.getState().set((state) => {
+                                state.modelsMapSelectedSite = m;
                               });
                             }
                           }}
