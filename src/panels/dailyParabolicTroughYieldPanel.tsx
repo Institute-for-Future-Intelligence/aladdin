@@ -100,6 +100,7 @@ const DailyParabolicTroughYieldPanel = React.memo(({ city }: DailyParabolicTroug
     y: panelRect ? Math.min(panelRect.y, window.innerHeight - hOffset) : 0,
   });
   const [sum, setSum] = useState(0);
+  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const troughSumRef = useRef(new Map<string, number>());
 
   const lang = useLanguage();
@@ -118,6 +119,8 @@ const DailyParabolicTroughYieldPanel = React.memo(({ city }: DailyParabolicTroug
       }
     }
     setSum(s);
+    // sum does not change when we run a breakdown simulation; so we use updateFlag to trigger re-rendering
+    setUpdateFlag(!updateFlag);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dailyYield]);
 

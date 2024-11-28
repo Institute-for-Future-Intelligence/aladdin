@@ -101,7 +101,8 @@ const DailyPvYieldPanel = React.memo(({ city }: DailyPvYieldPanelProps) => {
     x: panelRect ? Math.max(panelRect.x, wOffset - window.innerWidth) : 0,
     y: panelRect ? Math.min(panelRect.y, window.innerHeight - hOffset) : 0,
   });
-  const [sum, setSum] = useState(0);
+  const [sum, setSum] = useState<number>(0);
+  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const panelSumRef = useRef(new Map<string, number>());
   const resizeObserverRef = useRef<ResizeObserver>();
 
@@ -121,6 +122,8 @@ const DailyPvYieldPanel = React.memo(({ city }: DailyPvYieldPanelProps) => {
       }
     }
     setSum(s);
+    // sum does not change when we run a breakdown simulation; so we use updateFlag to trigger re-rendering
+    setUpdateFlag(!updateFlag);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dailyYield]);
 

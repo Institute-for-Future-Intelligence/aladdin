@@ -102,6 +102,7 @@ const YearlyPvYieldPanel = React.memo(({ city }: YearlyPvYieldPanelProps) => {
     y: panelRect ? Math.min(panelRect.y, window.innerHeight - hOffset) : 0,
   });
   const [sum, setSum] = useState(0);
+  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const panelSumRef = useRef(new Map<string, number>());
   const resizeObserverRef = useRef<ResizeObserver>();
 
@@ -123,6 +124,8 @@ const YearlyPvYieldPanel = React.memo(({ city }: YearlyPvYieldPanelProps) => {
       }
     }
     setSum(s);
+    // sum does not change when we run a breakdown simulation; so we use updateFlag to trigger re-rendering
+    setUpdateFlag(!updateFlag);
   }, [yearlyYield]);
 
   useEffect(() => {

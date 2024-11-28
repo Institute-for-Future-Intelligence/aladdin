@@ -352,7 +352,7 @@
       "weight": 37.8,
       "color": "Black",
       "shadeTolerance": "Partial",
-      "bifacialityFactor": 1
+      "bifacialityFactor": 0.8
     },
     "CS7N-695TB-AG": {
       "name": "CS7N-695TB-AG",
@@ -376,7 +376,7 @@
       "weight": 37.8,
       "color": "Black",
       "shadeTolerance": "Partial",
-      "bifacialityFactor": 1
+      "bifacialityFactor": 0.8
     },
     "CS7N-720TB-AG": {
       "name": "CS7N-720TB-AG",
@@ -400,7 +400,7 @@
       "weight": 37.8,
       "color": "Black",
       "shadeTolerance": "Partial",
-      "bifacialityFactor": 1
+      "bifacialityFactor": 0.8
     }
   }
 }

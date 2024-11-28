@@ -100,6 +100,7 @@ const YearlyHeliostatYieldPanel = React.memo(({ city }: YearlyHeliostatYieldPane
     y: panelRect ? Math.min(panelRect.y, window.innerHeight - hOffset) : 0,
   });
   const [sum, setSum] = useState(0);
+  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const heliostatSumRef = useRef(new Map<string, number>());
 
   const referenceX = MONTHS_ABBV[now.getMonth()];
@@ -119,6 +120,8 @@ const YearlyHeliostatYieldPanel = React.memo(({ city }: YearlyHeliostatYieldPane
       }
     }
     setSum(s);
+    // sum does not change when we run a breakdown simulation; so we use updateFlag to trigger re-rendering
+    setUpdateFlag(!updateFlag);
   }, [yearlyYield]);
 
   useEffect(() => {

@@ -100,6 +100,7 @@ const YearlyParabolicDishYieldPanel = React.memo(({ city }: YearlyParabolicDishY
     y: panelRect ? Math.min(panelRect.y, window.innerHeight - hOffset) : 0,
   });
   const [sum, setSum] = useState(0);
+  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const dishSumRef = useRef(new Map<string, number>());
 
   const referenceX = MONTHS_ABBV[now.getMonth()];
@@ -119,6 +120,8 @@ const YearlyParabolicDishYieldPanel = React.memo(({ city }: YearlyParabolicDishY
       }
     }
     setSum(s);
+    // sum does not change when we run a breakdown simulation; so we use updateFlag to trigger re-rendering
+    setUpdateFlag(!updateFlag);
   }, [yearlyYield]);
 
   useEffect(() => {
