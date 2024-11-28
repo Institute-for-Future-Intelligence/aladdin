@@ -314,7 +314,7 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
           </Row>
 
           <Row gutter={6} style={{ paddingBottom: '4px' }}>
-            <Col span={14}>{i18n.t('pvModelPanel.BifacialityFactor', lang) + ' ([0, 1]):'}</Col>
+            <Col span={14}>{i18n.t('pvModelPanel.PowerBifaciality', lang) + ' ([0, 1]):'}</Col>
             <Col span={10}>
               <InputNumber
                 style={{ width: '100%' }}

@@ -1102,7 +1102,7 @@ export const i18n_tr = {
       Polycrystalline: 'Polikristal',
       ThinFilm: 'İnce Katman',
       Bifacial: 'Bifacial',
-      BifacialityFactor: 'Bifaciality Factor',
+      PowerBifaciality: 'Power Bifaciality (Rear/Front)',
       Black: 'Siyah',
       Blue: 'Mavi',
       ShadeTolerance: 'Gölge Toleransı',

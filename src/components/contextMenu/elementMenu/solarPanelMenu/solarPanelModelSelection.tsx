@@ -529,7 +529,7 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
         </Col>
       </Row>
       <Row gutter={6} style={{ paddingBottom: '4px' }}>
-        <Col span={13}>{i18n.t('pvModelPanel.BifacialityFactor', lang) + ':'}</Col>
+        <Col span={13}>{i18n.t('pvModelPanel.PowerBifaciality', lang) + ':'}</Col>
         <Col span={11}>
           <InputNumber
             disabled={true}
