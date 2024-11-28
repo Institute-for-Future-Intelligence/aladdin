@@ -493,6 +493,7 @@ export const i18n_en = {
         EffectOfTiltAngleOfSolarPanel: 'Effect of Tilt Angle of a Solar Panel',
         EffectOfAzimuthOfSolarPanel: 'Effect of Azimuth of a Solar Panel',
         SolarPanelTypes: 'Solar Panel Types',
+        DefineYourOwnSolarPanels: 'Define Your Own Solar Panels',
         VerticalBifacialSolarPanels: 'Vertical Bifacial Solar Panels',
         CompareMonofacialAndBifacialSolarPanels: 'Monofacial vs. Bifacial Solar Panels',
         SolarTrackers: 'Solar Trackers',

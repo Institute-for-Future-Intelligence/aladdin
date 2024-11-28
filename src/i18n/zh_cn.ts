@@ -491,6 +491,7 @@ export const i18n_zh_cn = {
         EffectOfTiltAngleOfSolarPanel: '光伏板倾斜角对发电量的影响',
         EffectOfAzimuthOfSolarPanel: '光伏板方位角对发电量的影响',
         SolarPanelTypes: '光伏板类型',
+        DefineYourOwnSolarPanels: '定义自己的光伏板',
         VerticalBifacialSolarPanels: '竖直的双面光伏板',
         CompareMonofacialAndBifacialSolarPanels: '单面光伏板和双面光伏板的对比',
         SolarTrackers: '自动追日器',

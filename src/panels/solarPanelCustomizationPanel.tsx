@@ -235,6 +235,7 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
                 value={cellTypeRef.current}
                 onChange={(value) => {
                   cellTypeRef.current = value;
+                  setUpdateFlag(!updateFlag);
                 }}
               >
                 <Option key={'Monocrystalline'} value={'Monocrystalline'}>
@@ -259,7 +260,7 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
                 min={0.1}
                 max={3}
                 style={{ width: '100%' }}
-                precision={2}
+                precision={3}
                 value={lengthRef.current}
                 step={0.01}
                 onChange={(value) => {
@@ -290,7 +291,7 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
                 min={0.1}
                 max={3}
                 style={{ width: '100%' }}
-                precision={2}
+                precision={3}
                 value={widthRef.current}
                 step={0.01}
                 onChange={(value) => {
@@ -318,10 +319,12 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
               <InputNumber
                 style={{ width: '100%' }}
                 precision={2}
+                step={0.01}
                 value={bifacialityFactorRef.current}
                 onChange={(value) => {
                   if (value === null) return;
                   bifacialityFactorRef.current = value;
+                  setUpdateFlag(!updateFlag);
                 }}
               />
             </Col>
@@ -335,10 +338,12 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
               <InputNumber
                 style={{ width: '100%' }}
                 precision={1}
+                step={0.1}
                 value={weightRef.current}
                 onChange={(value) => {
                   if (value === null) return;
                   weightRef.current = value;
+                  setUpdateFlag(!updateFlag);
                 }}
               />
             </Col>
@@ -349,11 +354,13 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
             <Col span={10}>
               <InputNumber
                 style={{ width: '100%' }}
-                precision={1}
+                precision={4}
+                step={0.0001}
                 value={thicknessRef.current}
                 onChange={(value) => {
                   if (value === null) return;
                   thicknessRef.current = value;
+                  setUpdateFlag(!updateFlag);
                 }}
               />
             </Col>
@@ -367,6 +374,7 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
                 value={colorRef.current}
                 onChange={(value) => {
                   colorRef.current = value;
+                  setUpdateFlag(!updateFlag);
                 }}
               >
                 <Option key={'Black'} value={'Black'}>
@@ -391,11 +399,13 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
             <Col span={8}>
               <InputNumber
                 style={{ width: '100%' }}
-                precision={2}
+                precision={1}
+                step={0.1}
                 value={100 * efficiencyRef.current}
                 onChange={(value) => {
                   if (value === null) return;
                   efficiencyRef.current = value * 0.01;
+                  setUpdateFlag(!updateFlag);
                 }}
               />
             </Col>
@@ -469,10 +479,13 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
             <Col span={8}>
               <InputNumber
                 style={{ width: '100%' }}
+                precision={1}
+                step={1}
                 value={pmaxRef.current}
                 onChange={(value) => {
                   if (value === null) return;
                   pmaxRef.current = value;
+                  setUpdateFlag(!updateFlag);
                 }}
               />
             </Col>
@@ -483,10 +496,12 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
             <Col span={8}>
               <InputNumber
                 style={{ width: '100%' }}
+                step={0.0001}
                 value={pmaxTCRef.current}
                 onChange={(value) => {
                   if (value === null) return;
                   pmaxTCRef.current = value;
+                  setUpdateFlag(!updateFlag);
                 }}
               />
             </Col>
@@ -497,11 +512,13 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
             <Col span={8}>
               <InputNumber
                 style={{ width: '100%' }}
+                step={1}
                 precision={1}
                 value={noctRef.current}
                 onChange={(value) => {
                   if (value === null) return;
                   noctRef.current = value;
+                  setUpdateFlag(!updateFlag);
                 }}
               />
             </Col>
@@ -515,10 +532,12 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
               <InputNumber
                 style={{ width: '100%' }}
                 precision={1}
+                step={0.1}
                 value={vmppRef.current}
                 onChange={(value) => {
                   if (value === null) return;
                   vmppRef.current = value;
+                  setUpdateFlag(!updateFlag);
                 }}
               />
             </Col>
@@ -531,11 +550,13 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
             <Col span={8}>
               <InputNumber
                 style={{ width: '100%' }}
-                precision={1}
+                precision={2}
+                step={0.1}
                 value={imppRef.current}
                 onChange={(value) => {
                   if (value === null) return;
                   imppRef.current = value;
+                  setUpdateFlag(!updateFlag);
                 }}
               />
             </Col>
@@ -552,10 +573,12 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
               <InputNumber
                 style={{ width: '100%' }}
                 precision={1}
+                step={0.1}
                 value={vocRef.current}
                 onChange={(value) => {
                   if (value === null) return;
                   vocRef.current = value;
+                  setUpdateFlag(!updateFlag);
                 }}
               />
             </Col>
@@ -571,11 +594,13 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
             <Col span={8}>
               <InputNumber
                 style={{ width: '100%' }}
-                precision={1}
+                precision={2}
+                step={0.1}
                 value={iscRef.current}
                 onChange={(value) => {
                   if (value === null) return;
                   iscRef.current = value;
+                  setUpdateFlag(!updateFlag);
                 }}
               />
             </Col>

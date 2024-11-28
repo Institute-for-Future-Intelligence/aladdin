@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import sun_angles from './examples/sun_angles.json';
@@ -7,6 +7,7 @@ import insolation_and_climate from './examples/insolation_and_climate.json';
 import solar_radiation_to_box from './examples/solar_radiation_to_box.json';
 import sun_beam_at_center from './examples/sun_beam_at_center.json';
 import solar_panel_types from './examples/solar_panel_types.json';
+import custom_solar_panels from './examples/custom_solar_panels.json';
 import vertical_bifacial_solar_panels from './examples/vertical_bifacial_solar_panels.json';
 import compare_monofacial_bifacial_solar_panels from './examples/compare_monofacial_bifacial_solar_panels.json';
 import rooftop_solar_panels from './examples/rooftop_solar_panels.json';
@@ -251,6 +252,9 @@ export const getExample = (name: string) => {
       break;
     case 'solar_panel_types':
       input = solar_panel_types;
+      break;
+    case 'custom_solar_panels':
+      input = custom_solar_panels;
       break;
     case 'vertical_bifacial_solar_panels':
       input = vertical_bifacial_solar_panels;

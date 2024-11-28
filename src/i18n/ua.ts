@@ -496,6 +496,7 @@ export const i18n_ua = {
         EffectOfTiltAngleOfSolarPanel: 'Вплив кута нахилу сонячної панелі',
         EffectOfAzimuthOfSolarPanel: 'Вплив азимуту сонячної панелі',
         SolarPanelTypes: 'Типи сонячних панелей',
+        DefineYourOwnSolarPanels: 'Define Your Own Solar Panels',
         VerticalBifacialSolarPanels: 'Vertical Bifacial Solar Panels',
         CompareMonofacialAndBifacialSolarPanels: 'Monofacial vs. Bifacial Solar Panels',
         SolarTrackers: 'Сонячні трекери',

@@ -205,6 +205,10 @@ export const createTutorialsMenu = (viewOnly: boolean) => {
           label: 'menu.photovoltaicSolarPowerTutorials.SolarPanelTypes',
         },
         {
+          key: 'custom_solar_panels',
+          label: 'menu.photovoltaicSolarPowerTutorials.DefineYourOwnSolarPanels',
+        },
+        {
           key: 'vertical_bifacial_solar_panels',
           label: 'menu.photovoltaicSolarPowerTutorials.VerticalBifacialSolarPanels',
         },
