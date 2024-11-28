@@ -1099,6 +1099,8 @@ export const i18n_zh_tw = {
       CustomSolarPanelMustHaveModelName: '客製化光伏板必須要有型號',
       CustomSolarPanelExists: '目前文件已經定義了此名字的客製化光伏板',
       FailInImportingDataFromClipboard: '從系統剪切板輸入資料失敗',
+      NoNeedToAddThisCustomSolarPanel: '無需定義此光伏板',
+      SolarPanelModelAlreadyProvidedBySystem: '系統已提供此光伏板',
     },
 
     parabolicTroughMenu: {

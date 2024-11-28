@@ -1123,6 +1123,8 @@ export const i18n_tr = {
       CustomSolarPanelMustHaveModelName: 'A custom solar panel must have a model name',
       CustomSolarPanelExists: 'A custom solar panel with this name already exists',
       FailInImportingDataFromClipboard: 'Failed in importing data from the clipboard',
+      NoNeedToAddThisCustomSolarPanel: 'No Need to Add This',
+      SolarPanelModelAlreadyProvidedBySystem: 'This solar panel model is already provided by the system',
     },
 
     parabolicTroughMenu: {

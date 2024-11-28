@@ -24,6 +24,7 @@ import { showError, showInfo } from '../helpers';
 const { Option } = Select;
 
 const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const supportedPvModules = useStore(Selector.supportedPvModules);
   const customPvModules = useStore(Selector.customPvModules);
   const addCustomPvModule = useStore(Selector.addCustomPvModule);
   const removeCustomPvModule = useStore(Selector.removeCustomPvModule);
@@ -108,6 +109,13 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
       Modal.info({
         title: i18n.t('pvModelPanel.CannotAddCustomSolarPanel', lang),
         content: i18n.t('pvModelPanel.CustomSolarPanelMustHaveModelName', lang) + '.',
+      });
+      return;
+    }
+    if (supportedPvModules[modelRef.current.trim()]) {
+      Modal.info({
+        title: i18n.t('pvModelPanel.NoNeedToAddThisCustomSolarPanel', lang),
+        content: i18n.t('pvModelPanel.SolarPanelModelAlreadyProvidedBySystem', lang) + ' (' + modelRef.current + ').',
       });
       return;
     }
