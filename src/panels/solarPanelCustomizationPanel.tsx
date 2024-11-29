@@ -2,7 +2,7 @@
  * @Copyright 2024. Institute for Future Intelligence, Inc.
  */
 
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   DeleteOutlined,
   ExportOutlined,
@@ -57,6 +57,16 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
   const iscRef = useRef<number>(15);
 
   const lang = useLanguage();
+
+  useEffect(() => {
+    const nodes = document.getElementsByClassName('ant-modal-wrap');
+    if (nodes) {
+      for (const node of nodes) {
+        //@ts-expect-error ignore
+        node.style['pointer-events'] = 'none';
+      }
+    }
+  }, []);
 
   const onStart = (event: DraggableEvent, uiData: DraggableData) => {
     if (dragRef.current) {
@@ -676,6 +686,7 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
       // this must be specified for the x button in the upper-right corner to work
       onCancel={() => setDialogVisible(false)}
       maskClosable={false}
+      mask={false}
       destroyOnClose={false}
       modalRender={(modal) => (
         <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
