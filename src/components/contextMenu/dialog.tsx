@@ -86,6 +86,16 @@ const Dialog: React.FunctionComponent<PropsWithChildren<DialogProps>> = ({
 
   const showRejectMessage = !!rejectedMessage && rejectedMessage.length > 0;
 
+  useEffect(() => {
+    const nodes = document.getElementsByClassName('ant-modal-wrap');
+    if (nodes) {
+      for (const node of nodes) {
+        //@ts-expect-error
+        node.style['pointer-events'] = 'none';
+      }
+    }
+  }, []);
+
   return (
     <Modal
       width={width}
@@ -115,6 +125,7 @@ const Dialog: React.FunctionComponent<PropsWithChildren<DialogProps>> = ({
       onCancel={onClose}
       maskClosable={false}
       destroyOnClose={false}
+      mask={false}
       modalRender={(modal) => (
         <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
           <div ref={dragRef}>{modal}</div>
