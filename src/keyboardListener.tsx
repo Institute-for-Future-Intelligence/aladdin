@@ -1178,6 +1178,7 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
   return (
     <>
       <KeyboardEventHandler
+        handleFocusableElements={true}
         handleKeys={handleKeys}
         handleEventType={'keydown'}
         onKeyEvent={(key, e) => {
@@ -1188,6 +1189,7 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
         }}
       />
       <KeyboardEventHandler
+        handleFocusableElements={true}
         handleKeys={handleKeys}
         handleEventType={'keyup'}
         onKeyEvent={(key, e) => {

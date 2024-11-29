@@ -21,11 +21,13 @@ import { PvModel } from '../models/PvModel';
 import { ObjectType, ShadeTolerance } from '../types';
 import { showError, showInfo } from '../helpers';
 import { SolarPanelModel } from '../models/SolarPanelModel';
+import { UndoableDeleteCustomSolarPanel } from '../undo/UndoableDeleteCustomSolarPanel';
 
 const { Option } = Select;
 
 const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
+  const addUndoable = useStore(Selector.addUndoable);
   const supportedPvModules = useStore(Selector.supportedPvModules);
   const customPvModules = useStore(Selector.customPvModules);
   const addCustomPvModule = useStore(Selector.addCustomPvModule);
@@ -197,6 +199,21 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
       if (used) {
         showError(i18n.t('pvModelPanel.ThisCustomSolarPanelIsUsed', { lng: state.language }));
       } else {
+        const selectedPvModel = { ...state.customPvModules[name] };
+        const undoableRemove = {
+          name: 'Remove Custom Solar Panel',
+          timestamp: Date.now(),
+          deletedPvModel: selectedPvModel,
+          undo: () => {
+            addCustomPvModule(selectedPvModel);
+          },
+          redo: () => {
+            setCommonStore((state) => {
+              delete state.customPvModules[name];
+            });
+          },
+        } as UndoableDeleteCustomSolarPanel;
+        addUndoable(undoableRemove);
         delete state.customPvModules[name];
       }
     });
