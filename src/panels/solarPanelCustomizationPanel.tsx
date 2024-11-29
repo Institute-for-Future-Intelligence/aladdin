@@ -18,16 +18,17 @@ import * as Selector from '../stores/selector';
 import i18n from '../i18n/i18n';
 import { useLanguage } from '../hooks';
 import { PvModel } from '../models/PvModel';
-import { ShadeTolerance } from '../types';
+import { ObjectType, ShadeTolerance } from '../types';
 import { showError, showInfo } from '../helpers';
+import { SolarPanelModel } from '../models/SolarPanelModel';
 
 const { Option } = Select;
 
 const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const supportedPvModules = useStore(Selector.supportedPvModules);
   const customPvModules = useStore(Selector.customPvModules);
   const addCustomPvModule = useStore(Selector.addCustomPvModule);
-  const removeCustomPvModule = useStore(Selector.removeCustomPvModule);
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -179,6 +180,25 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
             showError(i18n.t('pvModelPanel.FailInImportingDataFromClipboard', lang) + ':' + err);
           });
       },
+    });
+  };
+
+  const removeCustomPvModule = (name: string) => {
+    setCommonStore((state) => {
+      let used = false;
+      for (const e of state.elements) {
+        if (e.type === ObjectType.SolarPanel) {
+          if ((e as SolarPanelModel).pvModelName === name) {
+            used = true;
+            break;
+          }
+        }
+      }
+      if (used) {
+        showError(i18n.t('pvModelPanel.ThisCustomSolarPanelIsUsed', { lng: state.language }));
+      } else {
+        delete state.customPvModules[name];
+      }
     });
   };
 

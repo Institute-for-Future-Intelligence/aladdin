@@ -87,8 +87,6 @@ export const loadSupportedPvModules = (state: CommonStoreState) => state.loadSup
 
 export const addCustomPvModule = (state: CommonStoreState) => state.addCustomPvModule;
 
-export const removeCustomPvModule = (state: CommonStoreState) => state.removeCustomPvModule;
-
 export const getPvModule = (state: CommonStoreState) => state.getPvModule;
 
 export const floatingWindowOpacity = (state: CommonStoreState) => state.floatingWindowOpacity;
