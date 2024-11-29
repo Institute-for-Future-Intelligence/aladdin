@@ -186,7 +186,7 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
         return;
       }
       setPv(pv as PvModel);
-      setUpdateFlag(!updateFlag);
+      setUpdateFlag((b) => !b);
     } catch (err) {
       showError(i18n.t('pvModelPanel.FailInImportingDataFromClipboard', lang) + ':' + err);
     }
@@ -213,12 +213,12 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
               info: text,
               undo: () => {
                 setPv(undoableImport.pvModel);
-                console.log(getPv().name);
-                setUpdateFlag(!updateFlag);
+                // for some reason setUpdateFlag(!updateFlag) doesn't update UI here
+                // the following treatment ensures UI update
+                setUpdateFlag((b) => !b);
               },
               redo: () => {
                 if (undoableImport.info) parsePv(undoableImport.info);
-                console.log(getPv().name);
               },
             } as UndoableCustomSolarPanelAction;
             addUndoable(undoableImport);
