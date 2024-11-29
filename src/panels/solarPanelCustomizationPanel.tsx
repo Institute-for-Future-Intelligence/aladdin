@@ -21,7 +21,7 @@ import { PvModel } from '../models/PvModel';
 import { ObjectType, ShadeTolerance } from '../types';
 import { showError, showInfo } from '../helpers';
 import { SolarPanelModel } from '../models/SolarPanelModel';
-import { UndoableDeleteCustomSolarPanel } from '../undo/UndoableDeleteCustomSolarPanel';
+import { UndoableCustomSolarPanelAction } from '../undo/UndoableCustomSolarPanelAction';
 
 const { Option } = Select;
 
@@ -89,10 +89,10 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
     return array;
   }, [customPvModules]);
 
-  const addCustomSolarPanel = () => {
-    const pv = {
-      name: modelRef.current,
-      brand: brandRef.current,
+  const getPv = (): PvModel => {
+    return {
+      name: modelRef.current.trim(),
+      brand: brandRef.current.trim(),
       cellType: cellTypeRef.current,
       efficiency: efficiencyRef.current,
       length: lengthRef.current,
@@ -114,32 +114,6 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
       shadeTolerance: ShadeTolerance.PARTIAL,
       bifacialityFactor: bifacialityFactorRef.current,
     } as PvModel;
-    addCustomPvModule(pv);
-  };
-
-  const confirmAddCustomSolarPanel = () => {
-    if (modelRef.current.trim() === '') {
-      Modal.info({
-        title: i18n.t('pvModelPanel.CannotAddCustomSolarPanel', lang),
-        content: i18n.t('pvModelPanel.CustomSolarPanelMustHaveModelName', lang) + '.',
-      });
-      return;
-    }
-    if (supportedPvModules[modelRef.current.trim()]) {
-      Modal.info({
-        title: i18n.t('pvModelPanel.NoNeedToAddThisCustomSolarPanel', lang),
-        content: i18n.t('pvModelPanel.SolarPanelModelAlreadyProvidedBySystem', lang) + ' (' + modelRef.current + ').',
-      });
-      return;
-    }
-    if (names.includes(modelRef.current)) {
-      Modal.info({
-        title: i18n.t('pvModelPanel.CannotAddCustomSolarPanel', lang),
-        content: i18n.t('pvModelPanel.CustomSolarPanelExists', lang) + ': "' + modelRef.current + '"',
-      });
-    } else {
-      addCustomSolarPanel();
-    }
   };
 
   const setPv = (pv: PvModel) => {
@@ -164,6 +138,60 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
     bifacialityFactorRef.current = pv.bifacialityFactor;
   };
 
+  const confirmAddCustomSolarPanel = () => {
+    if (modelRef.current.trim() === '') {
+      Modal.info({
+        title: i18n.t('pvModelPanel.CannotAddCustomSolarPanel', lang),
+        content: i18n.t('pvModelPanel.CustomSolarPanelMustHaveModelName', lang) + '.',
+      });
+      return;
+    }
+    if (supportedPvModules[modelRef.current.trim()]) {
+      Modal.info({
+        title: i18n.t('pvModelPanel.NoNeedToAddThisCustomSolarPanel', lang),
+        content: i18n.t('pvModelPanel.SolarPanelModelAlreadyProvidedBySystem', lang) + ' (' + modelRef.current + ').',
+      });
+      return;
+    }
+    if (names.includes(modelRef.current)) {
+      Modal.info({
+        title: i18n.t('pvModelPanel.CannotAddCustomSolarPanel', lang),
+        content: i18n.t('pvModelPanel.CustomSolarPanelExists', lang) + ': "' + modelRef.current + '"',
+      });
+    } else {
+      const pv = getPv();
+      const undoableAdd = {
+        name: 'Add Custom Solar Panel',
+        timestamp: Date.now(),
+        pvModel: pv,
+        undo: () => {
+          deletePvModel(modelRef.current.trim());
+        },
+        redo: () => {
+          addCustomPvModule(pv);
+        },
+      } as UndoableCustomSolarPanelAction;
+      addUndoable(undoableAdd);
+      addCustomPvModule(pv);
+    }
+  };
+
+  const parsePv = (text: string) => {
+    try {
+      const pv = JSON.parse(text);
+      // if the clipboard does not have either of these two properties, then it is not a solar panel,
+      // even though the parser does not return a parsing error
+      if (!pv['cellType'] || !pv['pmax']) {
+        showError(i18n.t('pvModelPanel.FailInImportingDataFromClipboard', lang));
+        return;
+      }
+      setPv(pv as PvModel);
+      setUpdateFlag(!updateFlag);
+    } catch (err) {
+      showError(i18n.t('pvModelPanel.FailInImportingDataFromClipboard', lang) + ':' + err);
+    }
+  };
+
   const confirmImportFromClipboard = () => {
     Modal.confirm({
       title: i18n.t('pvModelPanel.DoYouReallyWantToImportCustomSolarPanel', lang) + '?',
@@ -178,20 +206,34 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
         navigator.clipboard
           .readText()
           .then((text) => {
-            const pv = JSON.parse(text);
-            // if the clipboard does not have either of these two properties, then it is not a solar panel,
-            // even though the parser does not return a parsing error
-            if (!pv['cellType'] || !pv['pmax']) {
-              showError(i18n.t('pvModelPanel.FailInImportingDataFromClipboard', lang));
-              return;
-            }
-            setPv(pv as PvModel);
-            setUpdateFlag(!updateFlag);
+            const undoableImport = {
+              name: 'Import Custom Solar Panel',
+              timestamp: Date.now(),
+              pvModel: getPv(),
+              info: text,
+              undo: () => {
+                setPv(undoableImport.pvModel);
+                console.log(getPv().name);
+                setUpdateFlag(!updateFlag);
+              },
+              redo: () => {
+                if (undoableImport.info) parsePv(undoableImport.info);
+                console.log(getPv().name);
+              },
+            } as UndoableCustomSolarPanelAction;
+            addUndoable(undoableImport);
+            parsePv(text);
           })
           .catch((err) => {
             showError(i18n.t('pvModelPanel.FailInImportingDataFromClipboard', lang) + ':' + err);
           });
       },
+    });
+  };
+
+  const deletePvModel = (name: string) => {
+    setCommonStore((state) => {
+      delete state.customPvModules[name];
     });
   };
 
@@ -213,16 +255,14 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
         const undoableRemove = {
           name: 'Remove Custom Solar Panel',
           timestamp: Date.now(),
-          deletedPvModel: selectedPvModel,
+          pvModel: selectedPvModel,
           undo: () => {
             addCustomPvModule(selectedPvModel);
           },
           redo: () => {
-            setCommonStore((state) => {
-              delete state.customPvModules[name];
-            });
+            deletePvModel(name);
           },
-        } as UndoableDeleteCustomSolarPanel;
+        } as UndoableCustomSolarPanelAction;
         addUndoable(undoableRemove);
         delete state.customPvModules[name];
       }

@@ -5,6 +5,7 @@
 import { Undoable } from './Undoable';
 import { PvModel } from '../models/PvModel';
 
-export interface UndoableDeleteCustomSolarPanel extends Undoable {
-  deletedPvModel: PvModel;
+export interface UndoableCustomSolarPanelAction extends Undoable {
+  pvModel: PvModel;
+  info?: string;
 }
