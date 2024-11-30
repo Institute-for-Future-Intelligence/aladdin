@@ -539,6 +539,7 @@ export const i18n_zh_cn = {
       generativeDesignTutorials: {
         MonofacialSolarPanelArrayTiltAngle: '单面光伏板阵列的倾斜角',
         BifacialSolarPanelArrayTiltAngle: '双面光伏板阵列的倾斜角',
+        SolarPanelArrayInterRowSpacing: '光伏板阵列的行间距',
         OutputOfSolarPanelArrayInDifferentPlaces: '一个光伏板阵列在不同地区的产出',
         SimpleSolarFarmParetoFront: '简单太阳能农场设计的帕累托前沿',
       },

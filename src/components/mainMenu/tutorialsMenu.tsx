@@ -351,7 +351,7 @@ export const createTutorialsMenu = (viewOnly: boolean) => {
       label: <MenuItem noPadding>{i18n.t('menu.generativeDesignSubMenu', lang)}</MenuItem>,
       children: [
         {
-          key: 'Tilt Angle',
+          key: 'tilt_angle',
           label: (
             <MenuItem noPadding onClick={() => loadProject('Tilt Angle', 48)}>
               {i18n.t('menu.generativeDesignTutorials.MonofacialSolarPanelArrayTiltAngle', lang)}
@@ -359,10 +359,18 @@ export const createTutorialsMenu = (viewOnly: boolean) => {
           ),
         },
         {
-          key: 'Bifacial Tilt Angle',
+          key: 'bifacial_tilt_angle',
           label: (
             <MenuItem noPadding onClick={() => loadProject('Bifacial Tilt Angle', 50)}>
               {i18n.t('menu.generativeDesignTutorials.BifacialSolarPanelArrayTiltAngle', lang)}
+            </MenuItem>
+          ),
+        },
+        {
+          key: 'inter_row_spacing',
+          label: (
+            <MenuItem noPadding onClick={() => loadProject('Inter-Row Spacing', 0)}>
+              {i18n.t('menu.generativeDesignTutorials.SolarPanelArrayInterRowSpacing', lang)}
             </MenuItem>
           ),
         },
@@ -375,7 +383,7 @@ export const createTutorialsMenu = (viewOnly: boolean) => {
           ),
         },
         {
-          key: 'Pareto Front',
+          key: 'pareto_front',
           label: (
             <MenuItem noPadding onClick={() => loadProject('Pareto Front', 0)}>
               {i18n.t('menu.generativeDesignTutorials.SimpleSolarFarmParetoFront', lang)}
