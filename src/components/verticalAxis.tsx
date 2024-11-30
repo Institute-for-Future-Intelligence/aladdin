@@ -7,7 +7,7 @@ import { ScaleLinear } from 'd3-scale';
 import i18n from '../i18n/i18n';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { addRange, updateRanges, updateSelectedProperty } from '../cloudProjectUtil';
+import { addFilter, addRange, updateFilters, updateRanges, updateSelectedProperty } from '../cloudProjectUtil';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { ConfigProvider, InputNumber, Popover, Slider } from 'antd';
 import { Range } from '../types';
@@ -339,6 +339,11 @@ const VerticalAxis = React.memo(
               lowerBound: filter.lowerBound,
               upperBound: filter.upperBound,
             } as Filter;
+            if (user.uid && state.projectState.title) {
+              updateFilters(user.uid, state.projectState.title, state.projectState.filters).then(() => {
+                // ignore
+              });
+            }
           } else {
             const f = {
               variable,
@@ -347,6 +352,11 @@ const VerticalAxis = React.memo(
               upperBound: filter.upperBound,
             } as Filter;
             state.projectState.filters.push(f);
+            if (user.uid && state.projectState.title) {
+              addFilter(user.uid, state.projectState.title, f).then(() => {
+                // ignore
+              });
+            }
           }
         }
       });

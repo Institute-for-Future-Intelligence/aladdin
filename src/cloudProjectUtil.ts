@@ -11,6 +11,7 @@ import i18n from './i18n/i18n';
 import { Design, DesignProblem, DataColoring, ProjectState, Range } from './types';
 import { Util } from './Util';
 import { usePrimitiveStore } from './stores/commonPrimitive';
+import { Filter } from './Filter';
 
 export const doesProjectExist = async (uid: string, projectName: string, callbackOnError: (error: string) => void) => {
   try {
@@ -157,6 +158,38 @@ export const updateRanges = async (userid: string, projectTitle: string, ranges:
       .collection('projects')
       .doc(projectTitle)
       .update({ ranges });
+  } catch (error) {
+    showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
+  }
+};
+
+export const addFilter = async (userid: string, projectTitle: string, filter: Filter) => {
+  const lang = { lng: useStore.getState().language };
+  try {
+    await firebase
+      .firestore()
+      .collection('users')
+      .doc(userid)
+      .collection('projects')
+      .doc(projectTitle)
+      .update({
+        filters: firebase.firestore.FieldValue.arrayUnion(filter),
+      });
+  } catch (error) {
+    showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
+  }
+};
+
+export const updateFilters = async (userid: string, projectTitle: string, filters: Filter[]) => {
+  const lang = { lng: useStore.getState().language };
+  try {
+    await firebase
+      .firestore()
+      .collection('users')
+      .doc(userid)
+      .collection('projects')
+      .doc(projectTitle)
+      .update({ filters });
   } catch (error) {
     showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
   }
