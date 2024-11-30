@@ -18,16 +18,20 @@ import * as Selector from '../stores/selector';
 import i18n from '../i18n/i18n';
 import { useLanguage } from '../hooks';
 import { PvModel } from '../models/PvModel';
-import { ObjectType, ShadeTolerance } from '../types';
+import { ActionInfo, ObjectType, ShadeTolerance } from '../types';
 import { showError, showInfo } from '../helpers';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { UndoableCustomSolarPanelAction } from '../undo/UndoableCustomSolarPanelAction';
+import KeyboardEventHandler from 'react-keyboard-event-handler';
+import { UNDO_SHOW_INFO_DURATION } from '../constants';
 
 const { Option } = Select;
 
 const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
+  const undoManager = useStore(Selector.undoManager);
   const addUndoable = useStore(Selector.addUndoable);
+  const loggable = useStore(Selector.loggable);
   const supportedPvModules = useStore(Selector.supportedPvModules);
   const customPvModules = useStore(Selector.customPvModules);
   const addCustomPvModule = useStore(Selector.addCustomPvModule);
@@ -705,6 +709,41 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
     },
   ];
 
+  const handleKeyEvent = (key: string) => {
+    switch (key) {
+      case 'ctrl+z':
+      case 'meta+z': // for Mac
+        if (undoManager.hasUndo()) {
+          const commandName = undoManager.undo();
+          if (commandName) showInfo(i18n.t('menu.edit.Undo', lang) + ': ' + commandName, UNDO_SHOW_INFO_DURATION);
+          if (loggable) {
+            setCommonStore((state) => {
+              state.actionInfo = {
+                name: 'Undo',
+                timestamp: new Date().getTime(),
+              } as ActionInfo;
+            });
+          }
+        }
+        break;
+      case 'ctrl+y':
+      case 'meta+y': // for Mac
+        if (undoManager.hasRedo()) {
+          const commandName = undoManager.redo();
+          if (commandName) showInfo(i18n.t('menu.edit.Redo', lang) + ': ' + commandName, UNDO_SHOW_INFO_DURATION);
+          if (loggable) {
+            setCommonStore((state) => {
+              state.actionInfo = {
+                name: 'Redo',
+                timestamp: new Date().getTime(),
+              } as ActionInfo;
+            });
+          }
+        }
+        break;
+    }
+  };
+
   return (
     <Modal
       width={720}
@@ -799,6 +838,15 @@ const SolarPanelCustomizationPanel = React.memo(({ setDialogVisible }: { setDial
           />
         </Col>
       </Row>
+      <KeyboardEventHandler
+        handleFocusableElements={true}
+        handleKeys={['ctrl+z', 'meta+z', 'ctrl+y', 'meta+y']}
+        handleEventType={'keydown'}
+        onKeyEvent={(key, e) => {
+          e.preventDefault();
+          handleKeyEvent(key);
+        }}
+      />
     </Modal>
   );
 });
