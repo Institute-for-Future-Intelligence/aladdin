@@ -172,8 +172,8 @@ export const LeafOutDayInput = () => {
   };
 
   const AddonBefore = () => (
-    <div style={{ width: '80px' }}>
-      {i18n.t(northHemisphere ? 'groundMenu.LeafOffDay' : 'groundMenu.LeafOutDay', lang)}
+    <div style={{ width: '100px' }}>
+      {i18n.t(northHemisphere ? 'groundMenu.LeafOutDay' : 'groundMenu.LeafOffDay', lang)}
     </div>
   );
 
@@ -229,7 +229,7 @@ export const LeafShedDayInput = () => {
   };
 
   const AddonBefore = () => (
-    <div style={{ width: '80px' }}>
+    <div style={{ width: '100px' }}>
       {i18n.t(northHemisphere ? 'groundMenu.LeafOffDay' : 'groundMenu.LeafOutDay', lang)}
     </div>
   );
@@ -296,7 +296,7 @@ export const IrradianceLossInput = ({ monthIndex }: { monthIndex: number }) => {
   return (
     <InputNumber
       addonBefore={<span style={{ fontFamily: 'monospace' }}>{i18n.t(`month.${MONTHS[monthIndex]}`, lang)}</span>}
-      style={{ width: '120px' }}
+      style={{ width: '120px', paddingRight: monthIndex % 2 === 0 ? '6px' : 0 }}
       min={0}
       max={1}
       step={0.01}
