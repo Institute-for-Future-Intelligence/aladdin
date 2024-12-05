@@ -110,6 +110,7 @@ export const i18n_ua = {
       Thickness: 'Товщина',
       Yes: 'Так',
       No: 'Ні',
+      NoAndDoNotAskAgain: "No and don't ask again",
       OK: 'ОК',
       Cancel: 'Скасувати',
       Apply: 'Застосувати',

@@ -6,7 +6,21 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import styled from 'styled-components';
-import { Button, Checkbox, Col, Collapse, CollapseProps, Input, List, Modal, Popover, Radio, Row, Select } from 'antd';
+import {
+  Button,
+  Checkbox,
+  Col,
+  Collapse,
+  CollapseProps,
+  Input,
+  List,
+  Modal,
+  Popover,
+  Radio,
+  Row,
+  Select,
+  Space,
+} from 'antd';
 import {
   BgColorsOutlined,
   CameraOutlined,
@@ -25,7 +39,7 @@ import {
   SortAscendingOutlined,
   SortDescendingOutlined,
   FolderOpenOutlined,
-  ExclamationCircleOutlined,
+  QuestionCircleOutlined,
 } from '@ant-design/icons';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import ImageLoadFailureIcon from '../assets/image_fail_try_again.png';
@@ -142,6 +156,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
   const setCommonStore = useStore(Selector.set);
   const user = useStore(Selector.user);
   const changed = usePrimitiveStore(Selector.changed);
+  const confirmOpeningDesign = usePrimitiveStore(Selector.confirmOpeningDesign);
   const loggable = useStore(Selector.loggable);
   const addUndoable = useStore(Selector.addUndoable);
   const undoManager = useStore(Selector.undoManager);
@@ -1570,28 +1585,55 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
   };
 
   const confirmToOpenDesign = (design: Design) => {
-    if (changed) {
+    if (changed && confirmOpeningDesign) {
       if (cloudFileBelongToProject()) {
         // reverse OK and Cancel functions because we want to default to Cancel
-        Modal.confirm({
+        const modal = Modal.confirm({
           title: t('message.DoYouWantToUpdateDesign', lang),
-          icon: <ExclamationCircleOutlined />,
-          onCancel: () => {
-            updateSelectedDesign(() => {
-              openDesign(design);
-            });
-          },
-          onOk: () => {
-            openDesign(design);
-          },
-          cancelText: t('word.Yes', lang),
-          okText: t('word.No', lang),
+          icon: <QuestionCircleOutlined />,
+          footer: (
+            <Space direction={'horizontal'} style={{ marginTop: '10px', width: '100%', justifyContent: 'end' }}>
+              <Button
+                key="Yes"
+                onClick={() => {
+                  updateSelectedDesign(() => {
+                    openDesign(design);
+                    modal.destroy();
+                  });
+                }}
+              >
+                {t('word.Yes', lang)}
+              </Button>
+              <Button
+                key="NoAndDoNotShowAgain"
+                onClick={() => {
+                  openDesign(design);
+                  usePrimitiveStore.getState().set((state) => {
+                    state.confirmOpeningDesign = false;
+                  });
+                  modal.destroy();
+                }}
+              >
+                {t('word.NoAndDoNotAskAgain', lang)}
+              </Button>
+              <Button
+                key="No"
+                type="primary"
+                onClick={() => {
+                  openDesign(design);
+                  modal.destroy();
+                }}
+              >
+                {t('word.No', lang)}
+              </Button>
+            </Space>
+          ),
         });
       } else {
         // don't reverse OK and Cancel functions because we want to default to OK
         Modal.confirm({
           title: t('message.DoYouWantToSaveChanges', lang),
-          icon: <ExclamationCircleOutlined />,
+          icon: <QuestionCircleOutlined />,
           onOk: () => {
             if (cloudFile) {
               usePrimitiveStore.getState().setSaveCloudFileFlag(true);

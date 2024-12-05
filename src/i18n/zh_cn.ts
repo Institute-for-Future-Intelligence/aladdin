@@ -109,6 +109,7 @@ export const i18n_zh_cn = {
       Size: '尺寸',
       Yes: '是',
       No: '不',
+      NoAndDoNotAskAgain: '不，别再问',
       OK: '确定',
       Cancel: '取消',
       Apply: '应用',

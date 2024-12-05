@@ -52,6 +52,7 @@ export interface PrimitiveStoreState {
   updateProjectsFlag: boolean;
   showProjectListPanel: boolean;
   projectImagesUpdateFlag: boolean;
+  confirmOpeningDesign: boolean;
 
   // These stores the settings from createNewProjectDialog.tsx, because we don't want to overwrite
   // the local state in the common store yet. Don't be confused with commonStore's projectState.
@@ -251,6 +252,7 @@ export const usePrimitiveStore = createWithEqualityFn<PrimitiveStoreState>()((se
     updateProjectsFlag: false,
     showProjectListPanel: false,
     projectImagesUpdateFlag: false,
+    confirmOpeningDesign: true,
     projectType: DesignProblem.SOLAR_PANEL_ARRAY,
     projectTitle: null,
     projectDescription: null,

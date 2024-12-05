@@ -147,6 +147,8 @@ export const showProjectsFlag = (state: PrimitiveStoreState) => state.showProjec
 
 export const updateProjectsFlag = (state: PrimitiveStoreState) => state.updateProjectsFlag;
 
+export const confirmOpeningDesign = (state: PrimitiveStoreState) => state.confirmOpeningDesign;
+
 export const modelsMapFlag = (state: PrimitiveStoreState) => state.modelsMapFlag;
 
 export const showModelsAllTime = (state: CommonStoreState) => state.showModelsAllTime;

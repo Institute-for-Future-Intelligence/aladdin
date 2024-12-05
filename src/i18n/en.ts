@@ -109,6 +109,7 @@ export const i18n_en = {
       Thickness: 'Thickness',
       Yes: 'Yes',
       No: 'No',
+      NoAndDoNotAskAgain: "No and don't ask again",
       OK: 'OK',
       Cancel: 'Cancel',
       Apply: 'Apply',

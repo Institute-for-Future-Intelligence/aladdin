@@ -109,6 +109,7 @@ export const i18n_tr = {
       Thickness: 'Kalınlık',
       Yes: 'Evet',
       No: 'Hayır',
+      NoAndDoNotAskAgain: "No and don't ask again",
       OK: 'Tamam',
       Cancel: 'İptal',
       Apply: 'Uygula',
