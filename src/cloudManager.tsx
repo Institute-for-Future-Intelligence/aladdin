@@ -1214,18 +1214,21 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
                 window.history.pushState({}, document.title, newUrl);
               }
             }
-            doc.get().then((snapshot) => {
-              const data = snapshot.data();
-              if (data && cloudFilesRef.current.length > 0) {
-                removeCloudFileIfExisting(uid, title);
-                const file = { timestamp: data.timestamp, title } as CloudFileInfo;
-                cloudFilesRef.current.push(file);
-                addFileToList(uid, file).then(() => {
-                  // ignore
-                });
-                setUpdateCloudFileArray(true);
-              }
-            });
+            // a project file should not be added to the local cache
+            if (!ofProject) {
+              doc.get().then((snapshot) => {
+                const data = snapshot.data();
+                if (data && cloudFilesRef.current.length > 0) {
+                  removeCloudFileIfExisting(uid, title);
+                  const file = { timestamp: data.timestamp, title } as CloudFileInfo;
+                  cloudFilesRef.current.push(file);
+                  addFileToList(uid, file).then(() => {
+                    // ignore
+                  });
+                  setUpdateCloudFileArray(true);
+                }
+              });
+            }
           })
           .catch((error) => {
             showError(i18n.t('message.CannotSaveYourFileToCloud', lang) + ': ' + error);
