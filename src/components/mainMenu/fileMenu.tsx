@@ -17,6 +17,7 @@ export const createFileMenu = (viewOnly: boolean, isMac: boolean, canvas?: HTMLC
   const lang = { lng: useStore.getState().language };
   const user = useStore.getState().user;
   const cloudFile = useStore.getState().cloudFile;
+  const cloudFileBelongToProject = useStore.getState().cloudFileBelongToProject;
 
   const undoManager = useStore.getState().undoManager;
   const loggable = useStore.getState().loggable;
@@ -189,7 +190,7 @@ export const createFileMenu = (viewOnly: boolean, isMac: boolean, canvas?: HTMLC
   }
 
   // save-cloud-file
-  if (user.uid && cloudFile && !viewOnly) {
+  if (user.uid && cloudFile && !viewOnly && !cloudFileBelongToProject()) {
     items.push({
       key: 'save-cloud-file',
       label: (

@@ -129,6 +129,7 @@ export interface CommonStoreState {
   projectState: ProjectState;
   projectImages: Map<string, HTMLImageElement>;
   designProjectType: DesignProblem | null; // this belongs to a design of a project
+  cloudFileBelongToProject: () => boolean;
   notes: string[];
   user: User;
   language: string;
@@ -619,6 +620,21 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
           } as ProjectState,
           projectImages: new Map<string, HTMLImageElement>(),
           designProjectType: null,
+
+          cloudFileBelongToProject() {
+            const cf = get().cloudFile;
+            if (!cf) return false;
+            const designs = get().projectState.designs;
+            if (designs) {
+              for (const d of designs) {
+                if (d.title === cf) {
+                  return true;
+                }
+              }
+            }
+            return false;
+          },
+
           notes: [],
           language: 'en',
           floatingWindowOpacity: FLOATING_WINDOW_OPACITY,

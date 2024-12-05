@@ -72,6 +72,7 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
   const openModelsMap = usePrimitiveStore(Selector.openModelsMap);
   const evolutionMethod = useStore(Selector.evolutionMethod);
   const evolutionaryAlgorithmState = useStore(Selector.evolutionaryAlgorithmState);
+  const cloudFileBelongToProject = useStore(Selector.cloudFileBelongToProject);
 
   const [initializing, setInitializing] = useState<boolean>(true);
   const [canvasPercentWidth, setCanvasRelativeWidth] = useState<number>(50);
@@ -236,7 +237,7 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
               style={{ paddingRight: '8px' }}
             />
             {cloudFile + (isCloudFileOwner && changed ? ' *' : '')}
-            {!viewOnly && isCloudFileOwner && changed && (
+            {!viewOnly && isCloudFileOwner && changed && !cloudFileBelongToProject() && (
               <Button
                 type="primary"
                 size={'small'}

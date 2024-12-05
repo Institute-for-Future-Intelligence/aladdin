@@ -591,6 +591,8 @@ export const hiddenParameters = (state: CommonStoreState) => state.projectState.
 
 export const projectView = (state: CommonStoreState) => state.projectView;
 
+export const cloudFileBelongToProject = (state: CommonStoreState) => state.cloudFileBelongToProject;
+
 export const showProjectListPanel = (state: PrimitiveStoreState) => state.showProjectListPanel;
 
 export const showModelsGallery = (state: PrimitiveStoreState) => state.showModelsGallery;

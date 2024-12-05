@@ -281,6 +281,16 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       state.projectState.title = null;
       state.projectState.description = null;
       state.projectState.owner = null;
+      // when a project is closed, the current cloud file is detached
+      const designs = state.projectState.designs;
+      if (designs) {
+        for (const d of designs) {
+          if (d.title === state.cloudFile) {
+            state.cloudFile = undefined;
+            break;
+          }
+        }
+      }
       // clear the cached images for the previously open project
       state.projectImages.clear();
     });
