@@ -6,7 +6,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import styled from 'styled-components';
-import { Button, Checkbox, Col, Collapse, CollapseProps, Input, List, Popover, Radio, Row, Select } from 'antd';
+import { Button, Checkbox, Col, Collapse, CollapseProps, Input, List, Modal, Popover, Radio, Row, Select } from 'antd';
 import {
   BgColorsOutlined,
   CameraOutlined,
@@ -25,6 +25,7 @@ import {
   SortAscendingOutlined,
   SortDescendingOutlined,
   FolderOpenOutlined,
+  ExclamationCircleOutlined,
 } from '@ant-design/icons';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import ImageLoadFailureIcon from '../assets/image_fail_try_again.png';
@@ -140,6 +141,7 @@ export interface ProjectGalleryProps {
 const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProps) => {
   const setCommonStore = useStore(Selector.set);
   const user = useStore(Selector.user);
+  const changed = usePrimitiveStore(Selector.changed);
   const loggable = useStore(Selector.loggable);
   const addUndoable = useStore(Selector.addUndoable);
   const undoManager = useStore(Selector.undoManager);
@@ -161,6 +163,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
   const dotSizeScatterPlot = useStore(Selector.dotSizeScatterPlot);
   const solarPanelArrayLayoutConstraints = useStore(Selector.solarPanelArrayLayoutConstraints);
   const economicsParams = useStore(Selector.economicsParams);
+  const cloudFileBelongToProject = useStore(Selector.cloudFileBelongToProject);
 
   const [selectedDesign, setSelectedDesign] = useState<Design | undefined>();
   const [hoveredDesign, setHoveredDesign] = useState<Design | undefined>();
@@ -180,6 +183,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
   const dotSizeRef = useRef<number>(dotSizeScatterPlot ?? 5);
   const scatterChartHorizontalLinesRef = useRef<boolean>(true);
   const scatterChartVerticalLinesRef = useRef<boolean>(true);
+  const timePassed = useRef(0);
 
   useEffect(() => {
     xAxisRef.current = xAxisNameScatterPlot ?? 'rowWidth';
@@ -340,6 +344,24 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
             }
           }
         });
+      });
+    }
+  };
+
+  const updateSelectedDesign = (callback?: () => void) => {
+    if (canvas && user.uid && projectTitle && cloudFile) {
+      updateDesign(user.uid, projectType, projectTitle, projectThumbnailWidth ?? 200, cloudFile, canvas).then(() => {
+        if (callback) callback();
+        setUpdateFlag(!updateFlag);
+        if (loggable) {
+          setCommonStore((state) => {
+            state.actionInfo = {
+              name: 'Update Selected Design',
+              timestamp: new Date().getTime(),
+              details: { design: cloudFile },
+            };
+          });
+        }
       });
     }
   };
@@ -1388,27 +1410,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                     style={{ border: 'none', padding: '4px' }}
                     onClick={(e) => {
                       e.stopPropagation();
-                      if (canvas && user.uid && projectTitle && cloudFile) {
-                        updateDesign(
-                          user.uid,
-                          projectType,
-                          projectTitle,
-                          projectThumbnailWidth ?? 200,
-                          cloudFile,
-                          canvas,
-                        ).then(() => {
-                          setUpdateFlag(!updateFlag);
-                          if (loggable) {
-                            setCommonStore((state) => {
-                              state.actionInfo = {
-                                name: 'Update Selected Design',
-                                timestamp: new Date().getTime(),
-                                details: { design: cloudFile },
-                              };
-                            });
-                          }
-                        });
-                      }
+                      updateSelectedDesign();
                     }}
                   >
                     <CloudUploadOutlined
@@ -1550,6 +1552,94 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
     },
   ];
 
+  const openDesign = (design: Design) => {
+    setSelectedDesign(design);
+    if (projectOwner) {
+      loadCloudFile(projectOwner, design.title, true, true).then(() => {
+        if (loggable) {
+          setCommonStore((state) => {
+            state.actionInfo = {
+              name: 'Open Design',
+              timestamp: new Date().getTime(),
+              details: design.title,
+            };
+          });
+        }
+      });
+    }
+  };
+
+  const confirmToOpenDesign = (design: Design) => {
+    if (changed) {
+      if (cloudFileBelongToProject()) {
+        // reverse OK and Cancel functions because we want to default to Cancel
+        Modal.confirm({
+          title: t('message.DoYouWantToUpdateDesign', lang),
+          icon: <ExclamationCircleOutlined />,
+          onCancel: () => {
+            updateSelectedDesign(() => {
+              openDesign(design);
+            });
+          },
+          onOk: () => {
+            openDesign(design);
+          },
+          cancelText: t('word.Yes', lang),
+          okText: t('word.No', lang),
+        });
+      } else {
+        // don't reverse OK and Cancel functions because we want to default to OK
+        Modal.confirm({
+          title: t('message.DoYouWantToSaveChanges', lang),
+          icon: <ExclamationCircleOutlined />,
+          onOk: () => {
+            if (cloudFile) {
+              usePrimitiveStore.getState().setSaveCloudFileFlag(true);
+            } else {
+              // no cloud file has been created
+              setCommonStore((state) => {
+                state.showCloudFileTitleDialogFlag = !state.showCloudFileTitleDialogFlag;
+                state.showCloudFileTitleDialog = true;
+              });
+            }
+          },
+          onCancel: () => {
+            openDesign(design);
+          },
+          okText: t('word.Yes', lang),
+          cancelText: t('word.No', lang),
+        });
+      }
+    } else {
+      openDesign(design);
+    }
+  };
+
+  const onImageClick = (event: any, design: Design) => {
+    const target = event.target as HTMLImageElement;
+    if (target.src === ImageLoadFailureIcon) {
+      target.src = design.thumbnailUrl;
+    }
+    setSelectedDesign(design !== selectedDesign ? design : undefined);
+    if (loggable) {
+      setCommonStore((state) => {
+        state.actionInfo = {
+          name: design !== selectedDesign ? 'Select Design' : 'Deselect Design',
+          timestamp: new Date().getTime(),
+          details: design?.title,
+        };
+      });
+    }
+  };
+
+  const onImageDoubleClick = (event: any, design: Design) => {
+    const target = event.target as HTMLImageElement;
+    if (target.src === ImageLoadFailureIcon) {
+      target.src = design.thumbnailUrl;
+    }
+    confirmToOpenDesign(design);
+  };
+
   return (
     <Container
       onContextMenu={(e) => {
@@ -1651,40 +1741,18 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                         borderRadius: selectedDesign === design ? '0' : '10px',
                         border: selectedDesign === design ? '2px solid red' : 'none',
                       }}
-                      onDoubleClick={(event) => {
-                        const target = event.target as HTMLImageElement;
-                        if (target.src === ImageLoadFailureIcon) {
-                          target.src = design.thumbnailUrl;
-                        }
-                        setSelectedDesign(design);
-                        if (projectOwner) {
-                          loadCloudFile(projectOwner, design.title, true, true).then(() => {
-                            if (loggable) {
-                              setCommonStore((state) => {
-                                state.actionInfo = {
-                                  name: 'Open Design',
-                                  timestamp: new Date().getTime(),
-                                  details: design.title,
-                                };
-                              });
-                            }
-                          });
-                        }
-                      }}
                       onClick={(event) => {
-                        const target = event.target as HTMLImageElement;
-                        if (target.src === ImageLoadFailureIcon) {
-                          target.src = design.thumbnailUrl;
+                        const delay = 300;
+                        if (event.detail === 1) {
+                          setTimeout(() => {
+                            if (Date.now() - timePassed.current >= delay) {
+                              onImageClick(event, design);
+                            }
+                          }, delay);
                         }
-                        setSelectedDesign(design !== selectedDesign ? design : undefined);
-                        if (loggable) {
-                          setCommonStore((state) => {
-                            state.actionInfo = {
-                              name: design !== selectedDesign ? 'Select Design' : 'Deselect Design',
-                              timestamp: new Date().getTime(),
-                              details: design?.title,
-                            };
-                          });
+                        if (event.detail === 2) {
+                          timePassed.current = Date.now();
+                          onImageDoubleClick(event, design);
                         }
                       }}
                     />

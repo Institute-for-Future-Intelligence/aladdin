@@ -239,6 +239,7 @@ export const i18n_es = {
       CannotDeleteCloudFile: 'Cannot delete the cloud file',
       CannotRenameCloudFile: 'Cannot rename the cloud file',
       DoYouWantToSaveChanges: '¿Quieres guardar los cambios?',
+      DoYouWantToUpdateDesign: 'Do you want to update this design?',
       NotApplicableToSelectedAction: 'No se aplica a la acción seleccionada',
       ThisElementIsLocked: 'Este elemento está bloqueado',
       ThisCannotBeUndone: 'Esto no se puede deshacer',

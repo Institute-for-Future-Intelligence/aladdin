@@ -241,6 +241,7 @@ export const i18n_ua = {
       CannotDeleteCloudFile: 'Не вдається видалити файл у хмарному середовищі',
       CannotRenameCloudFile: 'Не вдається перейменувати файл у хмарному середовищі',
       DoYouWantToSaveChanges: 'Бажаєте зберегти зміни?',
+      DoYouWantToUpdateDesign: 'Do you want to update this design?',
       NotApplicableToSelectedAction: 'Не застосовується до обраної дії',
       ThisElementIsLocked: 'Цей елемент заблокований.',
       ThisCannotBeUndone: 'Це не можна скасувати.',

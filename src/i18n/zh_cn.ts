@@ -239,6 +239,7 @@ export const i18n_zh_cn = {
       CannotDeleteCloudFile: '无法删除此云端文件',
       CannotRenameCloudFile: '此云端文件的名字无法更改',
       DoYouWantToSaveChanges: '您要保存当前文件吗？',
+      DoYouWantToUpdateDesign: '您要更新选中设计吗？',
       NotApplicableToSelectedAction: '此值不适用于当前选择范围',
       ThisElementIsLocked: '这个部件被锁定。',
       ThisCannotBeUndone: '这个操作一旦执行就不能撤销。',

@@ -239,6 +239,7 @@ export const i18n_tr = {
       CannotDeleteCloudFile: 'Bulut dosyası silinemiyor',
       CannotRenameCloudFile: 'Bulut dosyası yeniden adlandırılamıyor',
       DoYouWantToSaveChanges: 'Değişiklikleri kaydetmek istiyor musunuz?',
+      DoYouWantToUpdateDesign: 'Do you want to update this design?',
       NotApplicableToSelectedAction: 'Seçili eyleme uygulanamaz',
       ThisElementIsLocked: 'Bu öğe kilitli.',
       ThisCannotBeUndone: 'Geri alınamaz.',
