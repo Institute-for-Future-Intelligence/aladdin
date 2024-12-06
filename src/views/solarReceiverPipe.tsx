@@ -7,9 +7,18 @@ import { Cylinder } from '@react-three/drei';
 import { DoubleSide, Vector3 } from 'three';
 import { FoundationModel } from '../models/FoundationModel';
 import { HALF_PI } from '../constants';
+import { useStore } from 'src/stores/common';
+import * as Selector from '../stores/selector';
+import { getSunDirection } from 'src/analysis/sunTools';
 
 const SolarReceiverPipe = React.memo(({ foundation }: { foundation: FoundationModel }) => {
   const { ly, lz, solarAbsorberPipe } = foundation;
+
+  const date = useStore(Selector.world.date);
+  const latitude = useStore(Selector.world.latitude);
+  const sunDirection = useMemo(() => {
+    return getSunDirection(new Date(date), latitude);
+  }, [date, latitude]);
 
   const absorberHeight = solarAbsorberPipe?.absorberHeight ?? 10;
   const apertureWidth = solarAbsorberPipe?.apertureWidth ?? 0.6;
@@ -67,7 +76,11 @@ const SolarReceiverPipe = React.memo(({ foundation }: { foundation: FoundationMo
         position={[0, 0, absorberHeight + lz / 2 - apertureWidth / 4]}
         rotation={[0, 0, 0]}
       >
-        <meshStandardMaterial attach="material" color={'white'} side={DoubleSide} />
+        {sunDirection.z > 0 ? (
+          <meshBasicMaterial color={[11, 11, 11]} toneMapped={false} side={DoubleSide} />
+        ) : (
+          <meshStandardMaterial color={'white'} side={DoubleSide} />
+        )}
       </Cylinder>
       {/* draw poles */}
       {solarReceiverPipePoles &&

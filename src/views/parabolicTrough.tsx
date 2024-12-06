@@ -441,7 +441,11 @@ const ParabolicTrough = React.memo((trough: ParabolicTroughModel) => {
           receiveShadow={false}
           castShadow={true}
         >
-          <meshStandardMaterial attach="material" color={'white'} />
+          {night ? (
+            <meshStandardMaterial color={'white'} />
+          ) : (
+            <meshStandardMaterial color={[11, 11, 11]} toneMapped={false} />
+          )}
         </Cylinder>
 
         {/* simulation element */}

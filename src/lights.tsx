@@ -8,6 +8,7 @@ import * as Selector from './stores/selector';
 import { DirectionalLight } from 'three';
 import { DEFAULT_SHADOW_CAMERA_FAR, STARLIGHT_INTENSITY, UNIT_VECTOR_POS_Z } from './constants';
 import { Util } from './Util';
+import { Bloom, EffectComposer } from '@react-three/postprocessing';
 
 const Lights = React.memo(() => {
   const directLightIntensity = useStore(Selector.viewState.directLightIntensity) ?? 3.5;
@@ -32,9 +33,13 @@ const Lights = React.memo(() => {
 
   const day = sunlightDirection.z > 0;
   const dot = day ? sunlightDirection.normalize().dot(UNIT_VECTOR_POS_Z) : 0;
+  const intensity = 0.1 + 0.2 * sunlightDirection.z;
 
   return (
     <>
+      <EffectComposer>
+        <Bloom mipmapBlur={true} luminanceThreshold={10} intensity={intensity} radius={0.5} />
+      </EffectComposer>
       <ambientLight intensity={STARLIGHT_INTENSITY + (day ? ambientLightIntensity * dot : 0)} name={'Ambient Light'} />
       <directionalLight
         ref={ref}

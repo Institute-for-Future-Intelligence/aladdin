@@ -3,11 +3,9 @@
  */
 
 import React, { useMemo } from 'react';
-import { Cylinder, useTexture } from '@react-three/drei';
-import { AdditiveBlending } from 'three';
+import { Cylinder } from '@react-three/drei';
 import { FoundationModel } from '../models/FoundationModel';
 import { HALF_PI } from '../constants';
-import GlowImage from '../resources/glow.png';
 import { getSunDirection } from '../analysis/sunTools';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
@@ -15,9 +13,6 @@ import * as Selector from '../stores/selector';
 const SolarPowerTower = React.memo(({ foundation }: { foundation: FoundationModel }) => {
   const date = useStore(Selector.world.date);
   const latitude = useStore(Selector.world.latitude);
-
-  const glowTexture = useTexture(GlowImage);
-
   const sunDirection = useMemo(() => {
     return getSunDirection(new Date(date), latitude);
   }, [date, latitude]);
@@ -28,7 +23,6 @@ const SolarPowerTower = React.memo(({ foundation }: { foundation: FoundationMode
   const towerHeight = solarPowerTower?.towerHeight ?? 20;
   const receiverHeight = towerHeight / 10;
   const receiverRadius = towerRadius * 1.5;
-  const haloSize = Math.max(receiverHeight, receiverRadius) * 2.4;
 
   return (
     <group>
@@ -52,22 +46,12 @@ const SolarPowerTower = React.memo(({ foundation }: { foundation: FoundationMode
         position={[0, 0, towerHeight + lz / 2]}
         rotation={[HALF_PI, 0, 0]}
       >
-        <meshStandardMaterial attach="material" color={'white'} />
+        {sunDirection.z > 0 ? (
+          <meshBasicMaterial color={[50, 50, 50]} toneMapped={false} />
+        ) : (
+          <meshStandardMaterial color={'white'} />
+        )}
       </Cylinder>
-      {/* simple glow effect to create a halo */}
-      {sunDirection.z > 0 && (
-        <mesh position={[0, 0, towerHeight + lz / 2]}>
-          <sprite scale={[haloSize, haloSize, haloSize]}>
-            <spriteMaterial
-              map={glowTexture}
-              transparent={false}
-              color={0xffffff}
-              blending={AdditiveBlending}
-              depthWrite={false} // this must be set to hide the rectangle of the texture image
-            />
-          </sprite>
-        </mesh>
-      )}
     </group>
   );
 });
