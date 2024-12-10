@@ -34,27 +34,23 @@ const GroundMap = React.memo(({ width = 400, height = 400 }: { width: number; he
 
   const updateAddress = () => {
     const latlng = new google.maps.LatLng(latitude, longitude);
-    new google.maps.Geocoder()
-      .geocode({ location: latlng }, function (results, status) {
-        if (status === google.maps.GeocoderStatus.OK) {
-          if (results && results[0].address_components) {
-            setCommonStore((state) => {
-              state.world.address = results[0].formatted_address;
-            });
-            for (const a of results[0].address_components) {
-              if (a.types[0] === 'country') {
-                setCommonStore((state) => {
-                  state.world.countryCode = a.short_name;
-                });
-                break;
-              }
+    new google.maps.Geocoder().geocode({ location: latlng }, function (results, status) {
+      if (status === google.maps.GeocoderStatus.OK) {
+        if (results && results[0].address_components) {
+          setCommonStore((state) => {
+            state.world.address = results[0].formatted_address;
+          });
+          for (const a of results[0].address_components) {
+            if (a.types[0] === 'country') {
+              setCommonStore((state) => {
+                state.world.countryCode = a.short_name;
+              });
+              break;
             }
           }
         }
-      })
-      .then(() => {
-        // ignore
-      });
+      }
+    });
   };
 
   // FIXME: Undo doesn't work unless the focus is returned to the main window

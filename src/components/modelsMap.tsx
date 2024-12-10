@@ -98,34 +98,12 @@ const ModelsMap = React.memo(
       setMap(null);
     }, []);
 
-    // FIXME: Undo doesn't work unless the focus is returned to the main window
     const onCenterChanged = () => {
       if (map) {
         const center = map.getCenter();
         if (center) {
-          const lat = center.lat();
-          const lng = center.lng();
-          if (lat !== latRef.current || lng !== lngRef.current) {
-            const undoableChangeLocation = {
-              name: 'Set Model Map Location',
-              timestamp: Date.now(),
-              oldLatitude: latRef.current,
-              newLatitude: lat,
-              oldLongitude: lngRef.current,
-              newLongitude: lng,
-              undo: () => {
-                latRef.current = undoableChangeLocation.oldLatitude;
-                lngRef.current = undoableChangeLocation.oldLongitude;
-              },
-              redo: () => {
-                latRef.current = undoableChangeLocation.newLatitude;
-                lngRef.current = undoableChangeLocation.newLongitude;
-              },
-            } as UndoableChangeLocation;
-            addUndoable(undoableChangeLocation);
-            latRef.current = lat;
-            lngRef.current = lng;
-          }
+          latRef.current = center.lat();
+          lngRef.current = center.lng();
         }
       }
     };
@@ -134,23 +112,6 @@ const ModelsMap = React.memo(
       if (map) {
         const z = map.getZoom();
         if (z !== undefined && z !== mapZoom) {
-          const undoableChange = {
-            name: 'Zoom Model Map',
-            timestamp: Date.now(),
-            oldValue: mapZoom,
-            newValue: z,
-            undo: () => {
-              setCommonStore((state) => {
-                state.modelsMapZoom = undoableChange.oldValue as number;
-              });
-            },
-            redo: () => {
-              setCommonStore((state) => {
-                state.modelsMapZoom = undoableChange.newValue as number;
-              });
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
           setCommonStore((state) => {
             state.modelsMapZoom = z;
           });
