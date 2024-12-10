@@ -29,8 +29,8 @@ const Container = styled.div`
 `;
 
 const SimulationControlPanel = React.memo(() => {
-  const setCommonStore = useStore(Selector.set);
   const loggable = useStore(Selector.loggable);
+  const logAction = useStore(Selector.logAction);
   const simulationPaused = usePrimitiveStore(Selector.simulationPaused);
   const showDesignInfoPanel = useStore(Selector.viewState.showDesignInfoPanel);
 
@@ -78,14 +78,7 @@ const SimulationControlPanel = React.memo(() => {
       state.pauseYearlySimulationForHeliostats = false;
     });
 
-    setCommonStore((state) => {
-      if (loggable) {
-        state.actionInfo = {
-          name: 'Cancel Simulation',
-          timestamp: new Date().getTime(),
-        };
-      }
-    });
+    if (loggable) logAction('Cancel Simulation');
   };
 
   const pause = () => {
@@ -144,14 +137,7 @@ const SimulationControlPanel = React.memo(() => {
       }
     });
 
-    setCommonStore((state) => {
-      if (loggable) {
-        state.actionInfo = {
-          name: 'Pause Simulation',
-          timestamp: new Date().getTime(),
-        };
-      }
-    });
+    if (loggable) logAction('Pause Simulation');
   };
 
   const resume = () => {
@@ -210,14 +196,7 @@ const SimulationControlPanel = React.memo(() => {
       }
     });
 
-    setCommonStore((state) => {
-      if (loggable) {
-        state.actionInfo = {
-          name: 'Resume Simulation',
-          timestamp: new Date().getTime(),
-        };
-      }
-    });
+    if (loggable) logAction('Resume Simulation');
   };
 
   const { t } = useTranslation();

@@ -13,6 +13,7 @@ export interface PrimitiveStoreState {
   setChanged: (b: boolean) => void;
   skipChange: boolean;
   setSkipChange: (b: boolean) => void;
+  muteUndoMessage: boolean;
 
   localFileName: string;
   createNewFileFlag: boolean;
@@ -197,6 +198,7 @@ export const usePrimitiveStore = createWithEqualityFn<PrimitiveStoreState>()((se
         state.skipChange = b;
       });
     },
+    muteUndoMessage: false,
 
     localFileName: 'aladdin.ala',
     createNewFileFlag: false,
