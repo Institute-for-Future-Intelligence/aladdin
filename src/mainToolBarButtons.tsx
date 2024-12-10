@@ -51,8 +51,6 @@ import { useLanguage } from './hooks';
 import { MenuItem } from './components/contextMenu/menuItems';
 import { MAXIMUM_HEATMAP_CELLS } from './constants';
 
-const isProd = import.meta.env.PROD;
-
 const ToolBarButton = ({ ...props }) => {
   return (
     <div
@@ -120,6 +118,7 @@ const MainToolBarButtons = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const loggable = useStore(Selector.loggable);
+  const logAction = useStore(Selector.logAction);
   const elements = useStore(Selector.elements);
   const language = useStore(Selector.language);
   const selectNone = useStore(Selector.selectNone);
@@ -223,14 +222,7 @@ const MainToolBarButtons = React.memo(() => {
     setTimeout(() => {
       selectNone();
       setPrimitiveStore('runStaticSimulation', !runStaticSimulation);
-      setCommonStore((state) => {
-        if (loggable) {
-          state.actionInfo = {
-            name: 'Generate Daily Solar Radiation Heatmap (Static)',
-            timestamp: new Date().getTime(),
-          };
-        }
-      });
+      if (loggable) logAction('Generate Daily Solar Radiation Heatmap (Static)');
     }, 100);
   };
 
@@ -242,14 +234,7 @@ const MainToolBarButtons = React.memo(() => {
     setTimeout(() => {
       selectNone();
       setPrimitiveStore('runDynamicSimulation', !runDynamicSimulation);
-      setCommonStore((state) => {
-        if (loggable) {
-          state.actionInfo = {
-            name: 'Generate Daily Solar Radiation Heatmap (Dynamic)',
-            timestamp: new Date().getTime(),
-          };
-        }
-      });
+      if (loggable) logAction('Generate Daily Solar Radiation Heatmap (Dynamic)');
     }, 100);
   };
 

@@ -101,6 +101,8 @@ export const loggable = (state: CommonStoreState) => state.loggable;
 
 export const actionInfo = (state: CommonStoreState) => state.actionInfo;
 
+export const logAction = (state: CommonStoreState) => state.logAction;
+
 export const currentUndoable = (state: CommonStoreState) => state.currentUndoable;
 
 export const openModelsMap = (state: PrimitiveStoreState) => state.openModelsMap;

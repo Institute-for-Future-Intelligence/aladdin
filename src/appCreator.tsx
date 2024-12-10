@@ -73,6 +73,7 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
   const evolutionMethod = useStore(Selector.evolutionMethod);
   const evolutionaryAlgorithmState = useStore(Selector.evolutionaryAlgorithmState);
   const cloudFileBelongToProject = useStore(Selector.cloudFileBelongToProject);
+  const logAction = useStore(Selector.logAction);
 
   const [initializing, setInitializing] = useState<boolean>(true);
   const [canvasPercentWidth, setCanvasRelativeWidth] = useState<number>(50);
@@ -245,14 +246,7 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
                 title={i18n.t('menu.file.SaveCloudFile', lang)}
                 onClick={() => {
                   usePrimitiveStore.getState().setSaveCloudFileFlag(true);
-                  if (loggable) {
-                    setCommonStore((state) => {
-                      state.actionInfo = {
-                        name: 'Save Cloud File',
-                        timestamp: new Date().getTime(),
-                      };
-                    });
-                  }
+                  if (loggable) logAction('Save Cloud File');
                 }}
               >
                 {`${i18n.t('word.Save', lang)}`}

@@ -31,6 +31,7 @@ import { UndoableMoveAllByKey, UndoableMoveSelectedByKey } from './undo/Undoable
 import { GroupableModel, isGroupable } from './models/Groupable';
 import { Point2 } from './models/Point2';
 import { resetView, zoomView } from './components/mainMenu/viewMenu';
+import { message } from 'antd';
 
 export interface KeyboardListenerProps {
   canvas?: HTMLCanvasElement | null;
@@ -233,6 +234,7 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
   const updateWallRightJointsById = useStore(Selector.updateWallRightJointsById);
   const setEnableFineGrid = useStore(Selector.setEnableFineGrid);
   const overlapWithSibling = useStore(Selector.overlapWithSibling);
+  const logAction = useStore(Selector.logAction);
 
   const moveStepAbsolute = 0.1;
 
@@ -883,12 +885,7 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
           state.objectTypeToAdd = ObjectType.None;
           state.groupActionMode = false;
           window.history.pushState({}, document.title, HOME_URL);
-          if (loggable) {
-            state.actionInfo = {
-              name: 'Create New File',
-              timestamp: new Date().getTime(),
-            };
-          }
+          if (loggable) logAction('Create New File');
         });
         break;
       case 'ctrl+s':
@@ -896,14 +893,7 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
         usePrimitiveStore.getState().set((state) => {
           state.saveLocalFileDialogVisible = true;
         });
-        if (loggable) {
-          setCommonStore((state) => {
-            state.actionInfo = {
-              name: 'Save Local File',
-              timestamp: new Date().getTime(),
-            };
-          });
-        }
+        if (loggable) logAction('Save Local File');
         break;
       case 'ctrl+shift+o':
       case 'meta+shift+o': // for Mac
@@ -911,26 +901,12 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
           state.listCloudFilesFlag = true;
           state.openModelsMap = false;
         });
-        if (loggable) {
-          setCommonStore((state) => {
-            state.actionInfo = {
-              name: 'List Cloud Files',
-              timestamp: new Date().getTime(),
-            };
-          });
-        }
+        if (loggable) logAction('List Cloud Files');
         break;
       case 'ctrl+shift+s':
       case 'meta+shift+s': // for Mac
         usePrimitiveStore.getState().setSaveCloudFileFlag(true);
-        if (loggable) {
-          setCommonStore((state) => {
-            state.actionInfo = {
-              name: 'Save Cloud File',
-              timestamp: new Date().getTime(),
-            };
-          });
-        }
+        if (loggable) logAction('Save Cloud File');
         break;
       case 'alt+backspace':
       case 'backspace':
@@ -1047,40 +1023,32 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
       case 'meta+z': // for Mac
         if (undoManager.hasUndo()) {
           const commandName = undoManager.undo();
+          if (commandName) {
+            message.destroy();
+            showInfo(i18n.t('menu.edit.Undo', lang) + ': ' + commandName, UNDO_SHOW_INFO_DURATION);
+          }
           if (useStore.getState().groupActionMode) {
             setCommonStore((state) => {
               state.groupActionUpdateFlag = !state.groupActionUpdateFlag;
             });
           }
-          if (commandName) showInfo(i18n.t('menu.edit.Undo', lang) + ': ' + commandName, UNDO_SHOW_INFO_DURATION);
-          if (loggable) {
-            setCommonStore((state) => {
-              state.actionInfo = {
-                name: 'Undo',
-                timestamp: new Date().getTime(),
-              } as ActionInfo;
-            });
-          }
+          if (loggable) logAction('Undo');
         }
         break;
       case 'ctrl+y':
       case 'meta+y': // for Mac
         if (undoManager.hasRedo()) {
           const commandName = undoManager.redo();
-          if (commandName) showInfo(i18n.t('menu.edit.Redo', lang) + ': ' + commandName, UNDO_SHOW_INFO_DURATION);
+          if (commandName) {
+            message.destroy();
+            showInfo(i18n.t('menu.edit.Redo', lang) + ': ' + commandName, UNDO_SHOW_INFO_DURATION);
+          }
           if (useStore.getState().groupActionMode) {
             setCommonStore((state) => {
               state.groupActionUpdateFlag = !state.groupActionUpdateFlag;
             });
           }
-          if (loggable) {
-            setCommonStore((state) => {
-              state.actionInfo = {
-                name: 'Redo',
-                timestamp: new Date().getTime(),
-              } as ActionInfo;
-            });
-          }
+          if (loggable) logAction('Redo');
         }
         break;
       case 'shift':
@@ -1150,12 +1118,7 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
           });
           setCommonStore((state) => {
             state.localFileDialogRequested = true;
-            if (loggable) {
-              state.actionInfo = {
-                name: 'Open Local File',
-                timestamp: new Date().getTime(),
-              };
-            }
+            if (loggable) state.logAction('Open Local File');
           });
         }
         break;

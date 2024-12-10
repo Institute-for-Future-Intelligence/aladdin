@@ -31,6 +31,7 @@ export const i18n_tr = {
     },
 
     word: {
+      Mute: 'Mute',
       BrandName: 'Brand Name',
       Name: 'Name',
       Refresh: 'Refresh',
@@ -199,6 +200,7 @@ export const i18n_tr = {
     },
 
     message: {
+      DoNotShowAgain: "Don't show again",
       NewVersionAvailable: 'A new version is available',
       CalculationMayBeSlowDoYouWantToContinue: 'Calculation may be slow. Do you want to continue?',
       IncreaseSolarRadiationHeatmapGridCellSizeToSpeedUp: 'Increase solar radiation heatmap grid cell size to speed up',
@@ -338,6 +340,7 @@ export const i18n_tr = {
       edit: {
         Undo: 'Geri Al',
         Redo: 'Yinele',
+        Undone: 'Undone',
       },
       viewSubMenu: 'Görünüm',
       view: {

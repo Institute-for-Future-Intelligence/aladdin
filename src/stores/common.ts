@@ -74,7 +74,7 @@ import {
 import { PolygonModel } from '../models/PolygonModel';
 import { Point2 } from '../models/Point2';
 import { useRefStore } from './commonRef';
-import { showError } from '../helpers';
+import { showError, showUndo } from '../helpers';
 import { SolarPanelArrayLayoutParams } from './SolarPanelArrayLayoutParams';
 import { DefaultSolarPanelArrayLayoutParams } from './DefaultSolarPanelArrayLayoutParams';
 import { SolarCollector } from '../models/SolarCollector';
@@ -544,6 +544,8 @@ export interface CommonStoreState {
 
   loggable: boolean;
   actionInfo: ActionInfo | undefined;
+  logAction: (name: string) => void;
+
   currentUndoable: Undoable | undefined;
   showCloudFileTitleDialog: boolean;
   // we have to use the sure flip of an additional flag to ensure it triggers useEffect hook
@@ -856,6 +858,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
           },
           undoManager: new UndoManager(),
           addUndoable(undoable: Undoable) {
+            if (!usePrimitiveStore.getState().muteUndoMessage) showUndo(undoable.name);
             immerSet((state: CommonStoreState) => {
               if (state.loggable) {
                 state.currentUndoable = undoable;
@@ -5140,6 +5143,12 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
           localFileDialogRequested: false,
           loggable: false,
           actionInfo: undefined,
+          logAction(name: string) {
+            immerSet((state: CommonStoreState) => {
+              state.actionInfo = { name, timestamp: new Date().getTime() };
+            });
+          },
+
           currentUndoable: undefined,
           showCloudFileTitleDialog: false,
           showCloudFileTitleDialogFlag: false,

@@ -31,6 +31,7 @@ export const i18n_es = {
     },
 
     word: {
+      Mute: 'Mute',
       BrandName: 'Brand Name',
       Name: 'Name',
       Refresh: 'Refresh',
@@ -199,6 +200,7 @@ export const i18n_es = {
     },
 
     message: {
+      DoNotShowAgain: "Don't show again",
       NewVersionAvailable: 'A new version is available',
       CalculationMayBeSlowDoYouWantToContinue: 'Calculation may be slow. Do you want to continue?',
       IncreaseSolarRadiationHeatmapGridCellSizeToSpeedUp: 'Increase solar radiation heatmap grid cell size to speed up',
@@ -339,6 +341,7 @@ export const i18n_es = {
       edit: {
         Undo: 'Deshacer',
         Redo: 'Repetir',
+        Undone: 'Undone',
       },
       viewSubMenu: 'Vista',
       view: {

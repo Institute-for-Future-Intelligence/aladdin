@@ -31,6 +31,7 @@ export const i18n_zh_cn = {
     },
 
     word: {
+      Mute: '勿扰',
       BrandName: '品牌',
       Name: '名字',
       Refresh: '刷新',
@@ -199,6 +200,7 @@ export const i18n_zh_cn = {
     },
 
     message: {
+      DoNotShowAgain: '别再显示',
       NewVersionAvailable: '有新版本',
       CalculationMayBeSlowDoYouWantToContinue: '计算可能会很慢。您想继续吗？',
       IncreaseSolarRadiationHeatmapGridCellSizeToSpeedUp: '加大太阳辐射热图网格的尺寸可加速',
@@ -337,6 +339,7 @@ export const i18n_zh_cn = {
       edit: {
         Undo: '撤销',
         Redo: '重做',
+        Undone: '已撤销',
       },
       viewSubMenu: '视界',
       view: {

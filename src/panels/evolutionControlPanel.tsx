@@ -29,10 +29,10 @@ const Container = styled.div`
 `;
 
 const EvolutionControlPanel = React.memo(() => {
-  const setCommonStore = useStore(Selector.set);
   const loggable = useStore(Selector.loggable);
   const evolutionPaused = usePrimitiveStore(Selector.evolutionPaused);
   const showDesignInfoPanel = useStore(Selector.viewState.showDesignInfoPanel);
+  const logAction = useStore(Selector.logAction);
 
   const { t } = useTranslation();
   const lang = useLanguage();
@@ -44,14 +44,7 @@ const EvolutionControlPanel = React.memo(() => {
       state.runEvolution = false;
       state.pauseEvolution = false;
     });
-    if (loggable) {
-      setCommonStore((state) => {
-        state.actionInfo = {
-          name: 'Cancel Evolution',
-          timestamp: new Date().getTime(),
-        };
-      });
-    }
+    if (loggable) logAction('Cancel Evolution');
   };
 
   const pause = () => {
@@ -61,14 +54,7 @@ const EvolutionControlPanel = React.memo(() => {
         state.pauseEvolution = true;
       }
     });
-    if (loggable) {
-      setCommonStore((state) => {
-        state.actionInfo = {
-          name: 'Pause Evolution',
-          timestamp: new Date().getTime(),
-        };
-      });
-    }
+    if (loggable) logAction('Pause Evolution');
   };
 
   const resume = () => {
@@ -78,14 +64,7 @@ const EvolutionControlPanel = React.memo(() => {
         state.pauseEvolution = false;
       }
     });
-    if (loggable) {
-      setCommonStore((state) => {
-        state.actionInfo = {
-          name: 'Resume Evolution',
-          timestamp: new Date().getTime(),
-        };
-      });
-    }
+    if (loggable) logAction('Resume Evolution');
   };
 
   return (
