@@ -206,7 +206,7 @@ const VerticalAxis = React.memo(
               minimum: value,
               maximum: range.maximum,
             } as Range;
-            if (user.uid && state.projectState.title) {
+            if (isOwner && owner && user.uid && state.projectState.title) {
               updateRanges(user.uid, state.projectState.title, state.projectState.ranges).then(() => {
                 // ignore
               });
@@ -214,7 +214,7 @@ const VerticalAxis = React.memo(
           } else {
             const r = { variable, minimum: value, maximum: max } as Range;
             state.projectState.ranges.push(r);
-            if (user.uid && state.projectState.title) {
+            if (isOwner && owner && user.uid && state.projectState.title) {
               addRange(user.uid, state.projectState.title, r).then(() => {
                 // ignore
               });
@@ -223,7 +223,7 @@ const VerticalAxis = React.memo(
         } else {
           const r = { variable, minimum: value, maximum: max } as Range;
           state.projectState.ranges = [r];
-          if (user.uid && state.projectState.title) {
+          if (isOwner && owner && user.uid && state.projectState.title) {
             addRange(user.uid, state.projectState.title, r).then(() => {
               // ignore
             });
@@ -271,7 +271,7 @@ const VerticalAxis = React.memo(
               minimum: range.minimum,
               maximum: value,
             } as Range;
-            if (user.uid && state.projectState.title) {
+            if (isOwner && owner && user.uid && state.projectState.title) {
               updateRanges(user.uid, state.projectState.title, state.projectState.ranges).then(() => {
                 // ignore
               });
@@ -279,7 +279,7 @@ const VerticalAxis = React.memo(
           } else {
             const r = { variable, minimum: min, maximum: value } as Range;
             state.projectState.ranges.push(r);
-            if (user.uid && state.projectState.title) {
+            if (isOwner && owner && user.uid && state.projectState.title) {
               addRange(user.uid, state.projectState.title, r).then(() => {
                 // ignore
               });
@@ -288,7 +288,7 @@ const VerticalAxis = React.memo(
         } else {
           const r = { variable, minimum: min, maximum: value } as Range;
           state.projectState.ranges = [r];
-          if (user.uid && state.projectState.title) {
+          if (isOwner && owner && user.uid && state.projectState.title) {
             addRange(user.uid, state.projectState.title, r).then(() => {
               // ignore
             });
@@ -339,7 +339,7 @@ const VerticalAxis = React.memo(
               lowerBound: filter.lowerBound,
               upperBound: filter.upperBound,
             } as Filter;
-            if (user.uid && state.projectState.title) {
+            if (isOwner && owner && user.uid && state.projectState.title) {
               updateFilters(user.uid, state.projectState.title, state.projectState.filters).then(() => {
                 // ignore
               });
@@ -352,7 +352,7 @@ const VerticalAxis = React.memo(
               upperBound: filter.upperBound,
             } as Filter;
             state.projectState.filters.push(f);
-            if (user.uid && state.projectState.title) {
+            if (isOwner && owner && user.uid && state.projectState.title) {
               addFilter(user.uid, state.projectState.title, f).then(() => {
                 // ignore
               });
