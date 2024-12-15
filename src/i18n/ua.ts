@@ -298,6 +298,8 @@ export const i18n_ua = {
       BuildingRoofMissing: 'У будівлі відсутній дах.',
       UnknownErrors: 'Невідомі помилки.',
       SigningOutAnonymousAccount: 'Are you sure you want to sign out? This anonymous account will be lost.',
+      SigningInAnonymousAccount:
+        'Are you sure you want to sign in anonymously? An anonymous account will be lost if you sign out.',
     },
 
     menu: {

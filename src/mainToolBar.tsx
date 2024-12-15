@@ -40,6 +40,20 @@ const MainToolBar = React.memo(({ signIn, signInAnonymously, signOut }: MainTool
 
   const lang = useLanguage();
 
+  const anonymousSignInCheck = () => {
+    Modal.confirm({
+      title: `${i18n.t('message.SigningInAnonymousAccount', lang)}`,
+      icon: <WarningOutlined />,
+      type: 'warning',
+      onOk: () => {
+        signInAnonymously();
+      },
+      onCancel: () => {},
+      okText: `${i18n.t('word.Yes', lang)}`,
+      cancelText: `${i18n.t('word.No', lang)}`,
+    });
+  };
+
   const signOutCheck = () => {
     if (user.anonymous) {
       Modal.confirm({
@@ -99,7 +113,7 @@ const MainToolBar = React.memo(({ signIn, signInAnonymously, signOut }: MainTool
     {
       key: 'signin-anonymously',
       label: (
-        <MenuItem noPadding onClick={signInAnonymously}>
+        <MenuItem noPadding onClick={anonymousSignInCheck}>
           {i18n.t('avatarMenu.SignInAnonymously', lang)}
         </MenuItem>
       ),

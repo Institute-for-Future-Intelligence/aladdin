@@ -294,6 +294,7 @@ export const i18n_zh_cn = {
       BuildingRoofMissing: '建筑物没有屋顶。',
       UnknownErrors: '未知错误。',
       SigningOutAnonymousAccount: '你确定退出吗？一旦退出，此匿名账号将不可恢复。',
+      SigningInAnonymousAccount: '你确定匿名登录吗？一旦退出，匿名账号将无法恢复。',
     },
 
     menu: {
