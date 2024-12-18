@@ -3,12 +3,14 @@
  */
 
 import React, { useMemo } from 'react';
-import { Cylinder } from '@react-three/drei';
+import { Cylinder, useTexture } from '@react-three/drei';
 import { FoundationModel } from '../models/FoundationModel';
 import { HALF_PI } from '../constants';
 import { getSunDirection } from '../analysis/sunTools';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
+import GlowImage from '../resources/glow.png';
+import { AdditiveBlending } from 'three';
 
 const SolarPowerTower = React.memo(({ foundation }: { foundation: FoundationModel }) => {
   const date = useStore(Selector.world.date);
@@ -16,6 +18,7 @@ const SolarPowerTower = React.memo(({ foundation }: { foundation: FoundationMode
   const sunDirection = useMemo(() => {
     return getSunDirection(new Date(date), latitude);
   }, [date, latitude]);
+  const glowTexture = useTexture(GlowImage);
 
   const { lz, solarPowerTower } = foundation;
 
@@ -47,11 +50,17 @@ const SolarPowerTower = React.memo(({ foundation }: { foundation: FoundationMode
         rotation={[HALF_PI, 0, 0]}
       >
         {sunDirection.z > 0 ? (
-          <meshBasicMaterial color={[50, 50, 50]} toneMapped={false} />
+          <meshBasicMaterial color={[1, 1, 1]} toneMapped={false} />
         ) : (
           <meshStandardMaterial color={'white'} />
         )}
       </Cylinder>
+
+      {sunDirection.z > 0 && (
+        <sprite scale={[10, 10, 10]} position={[0, 0, towerHeight + lz / 2]}>
+          <spriteMaterial map={glowTexture} color={'white'} blending={AdditiveBlending} depthWrite={false} />
+        </sprite>
+      )}
     </group>
   );
 });

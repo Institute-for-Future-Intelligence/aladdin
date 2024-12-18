@@ -3,12 +3,23 @@
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Box, Cylinder, Line, Plane, Sphere } from '@react-three/drei';
-import { BackSide, CanvasTexture, Color, DoubleSide, Euler, FrontSide, Mesh, Vector3 } from 'three';
+import { Box, Cylinder, Line, Plane, Sphere, useTexture } from '@react-three/drei';
+import {
+  AdditiveBlending,
+  BackSide,
+  CanvasTexture,
+  Color,
+  DoubleSide,
+  Euler,
+  FrontSide,
+  Group,
+  Mesh,
+  Vector3,
+} from 'three';
 import { useStore } from '../stores/common';
 import { useRefStore } from 'src/stores/commonRef';
 import * as Selector from '../stores/selector';
-import { ThreeEvent, useThree } from '@react-three/fiber';
+import { ThreeEvent, useFrame, useThree } from '@react-three/fiber';
 import {
   HALF_PI,
   HIGHLIGHT_HANDLE_COLOR,
@@ -28,6 +39,8 @@ import { ParabolicCylinder } from './shapes';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
 import { useLanguage, useSelected } from '../hooks';
+import GlowImage_Cylinderic from '../resources/glow_cylinderic.png';
+import GlowImage_Corner from '../resources/glow_corner.png';
 
 const ParabolicTrough = React.memo((trough: ParabolicTroughModel) => {
   const {
@@ -69,6 +82,8 @@ const ParabolicTrough = React.memo((trough: ParabolicTroughModel) => {
   const sceneRadius = useStore(Selector.sceneRadius);
   const resizeHandleType = useStore(Selector.resizeHandleType);
   const sunlightDirection = useStore(Selector.sunlightDirection);
+  const glowTexture = useTexture(GlowImage_Cylinderic);
+  const glowTexture_2 = useTexture(GlowImage_Corner);
 
   const selected = useSelected(id);
 
@@ -88,6 +103,7 @@ const ParabolicTrough = React.memo((trough: ParabolicTroughModel) => {
   const resizeHandleLeftRef = useRef<Mesh>(null);
   const resizeHandleRightRef = useRef<Mesh>(null);
   const pointerDown = useRef<boolean>(false);
+  const haloGroupRef = useRef<Group>(null!);
 
   const sunBeamLength = Math.max(100, 10 * sceneRadius);
   const parabolaSegments = 16;
@@ -276,6 +292,17 @@ const ParabolicTrough = React.memo((trough: ParabolicTroughModel) => {
   const moveHandleSize = MOVE_HANDLE_RADIUS * baseSize * 2;
   const detailed = elements.length < 50 && moduleLines.length < 10;
   const radialSegmentsPole = detailed ? 4 : 2;
+  const haloSize = absorberTubeRadius * 6;
+
+  useFrame(({ camera }) => {
+    if (!haloGroupRef.current || !parent) return;
+    const worldPosition = haloGroupRef.current.localToWorld(new Vector3(0, 0, 0));
+    const cameraLocalPosition = new Vector3()
+      .subVectors(camera.position, worldPosition)
+      .applyEuler(new Euler(0, 0, -parent?.rotation[2] - relativeAzimuth));
+    const rot = Math.atan2(cameraLocalPosition.z, cameraLocalPosition.x);
+    haloGroupRef.current.rotation.y = -Math.PI / 2 - rot;
+  });
 
   return (
     <group name={'Parabolic Trough Group ' + id} rotation={euler} position={[rx, ry, rz + hz]}>
@@ -444,9 +471,71 @@ const ParabolicTrough = React.memo((trough: ParabolicTroughModel) => {
           {night ? (
             <meshStandardMaterial color={'white'} />
           ) : (
-            <meshStandardMaterial color={[11, 11, 11]} toneMapped={false} />
+            <meshBasicMaterial color={[1, 1, 1]} toneMapped={false} />
           )}
         </Cylinder>
+
+        {sunDirection.z > 0 && (
+          <group ref={haloGroupRef} position={[0, 0, focalLength]}>
+            <Plane args={[haloSize, ly]}>
+              <meshBasicMaterial
+                side={DoubleSide}
+                map={glowTexture}
+                color={'white'}
+                blending={AdditiveBlending}
+                transparent
+              />
+            </Plane>
+            <Plane
+              args={[haloSize / 2, haloSize / 2]}
+              rotation={[0, 0, Math.PI]}
+              position={[haloSize / 4, haloSize / 4 + ly / 2, 0]}
+            >
+              <meshBasicMaterial
+                side={DoubleSide}
+                map={glowTexture_2}
+                color={'white'}
+                blending={AdditiveBlending}
+                transparent
+              />
+            </Plane>
+            <Plane
+              args={[haloSize / 2, haloSize / 2]}
+              rotation={[0, 0, -Math.PI / 2]}
+              position={[-haloSize / 4, haloSize / 4 + ly / 2, 0]}
+            >
+              <meshBasicMaterial
+                side={DoubleSide}
+                map={glowTexture_2}
+                color={'white'}
+                blending={AdditiveBlending}
+                transparent
+              />
+            </Plane>
+            <Plane
+              args={[haloSize / 2, haloSize / 2]}
+              rotation={[0, 0, Math.PI / 2]}
+              position={[haloSize / 4, -haloSize / 4 - ly / 2, 0]}
+            >
+              <meshBasicMaterial
+                side={DoubleSide}
+                map={glowTexture_2}
+                color={'white'}
+                blending={AdditiveBlending}
+                transparent
+              />
+            </Plane>
+            <Plane args={[haloSize / 2, haloSize / 2]} position={[-haloSize / 4, -haloSize / 4 - ly / 2, 0]}>
+              <meshBasicMaterial
+                side={DoubleSide}
+                map={glowTexture_2}
+                color={'white'}
+                blending={AdditiveBlending}
+                transparent
+              />
+            </Plane>
+          </group>
+        )}
 
         {/* simulation element */}
         <Plane
