@@ -78,6 +78,7 @@ const InstructionPanel = React.memo(() => {
               marginBottom: '6px',
               background: 'tomato',
               border: '1px solid',
+              pointerEvents: 'auto',
             }}
           >
             <b>{i18n.t('instructionPanel.NavigationMode', lang)}</b>
