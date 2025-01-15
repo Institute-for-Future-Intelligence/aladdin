@@ -97,7 +97,7 @@ const SolarPanelVisibility = React.memo(() => {
         if (e.type === ObjectType.SolarPanel) {
           const sp = e as SolarPanelModel;
           let vf = resultMap.get(sp.parentId) ?? 0;
-          vf += getViewFactor(sp, vantage.position) * 100; // multiplied by 100 as view factor is between 0 and 1
+          vf += getVisibilityFactor(sp, vantage.position) * 100; // multiplied by 100 as view factor is between 0 and 1
           resultMap.set(sp.parentId, vf);
         }
       }
@@ -105,8 +105,9 @@ const SolarPanelVisibility = React.memo(() => {
     }
   };
 
-  // view factor: https://en.wikipedia.org/wiki/View_factor
-  const getViewFactor = (panel: SolarPanelModel, vantage: Vector3) => {
+  // visibility factor is similar to but different from view factor: https://en.wikipedia.org/wiki/View_factor
+  // visibility factor is a sum over all the directions around a vantage point
+  const getVisibilityFactor = (panel: SolarPanelModel, vantage: Vector3) => {
     let parent = getParent(panel);
     if (!parent) throw new Error('parent of solar panel does not exist');
     let rooftop = false;
@@ -163,7 +164,7 @@ const SolarPanelVisibility = React.memo(() => {
         }
       }
     }
-    return (integral * cellSize * cellSize) / Math.PI;
+    return (integral * cellSize * cellSize) / (4 * Math.PI);
   };
 
   const isVisible = (panelId: string, point: Vector3, direction: Vector3) => {

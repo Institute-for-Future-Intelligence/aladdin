@@ -5,7 +5,7 @@
 import { Color, Euler, Vector2, Vector3 } from 'three';
 import platform from 'platform';
 
-export const VERSION = '1.7.1';
+export const VERSION = '1.7.0';
 
 // used for check old file that need to update light intensity.
 export const LIGHT_INTENSITY_CHANGED_VERSION = '1.5.0';
