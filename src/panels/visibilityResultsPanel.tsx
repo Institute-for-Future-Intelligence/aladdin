@@ -155,8 +155,7 @@ const VisibilityResultsPanel = React.memo(() => {
             vantage.position.y.toFixed(1) +
             ', ' +
             vantage.position.z.toFixed(1) +
-            ') ' +
-            t('word.MeterAbbreviation', lang),
+            ') ',
           total: total.toFixed(2),
           itemized: count > 1 ? fieldString.substring(0, fieldString.length - 2) : '---',
         });
@@ -246,8 +245,12 @@ const VisibilityResultsPanel = React.memo(() => {
             }}
           >
             <Column title={`${t('visibilityPanel.Observer', lang)}`} dataIndex="observer" key="observer" />
-            <Column title={`${t('visibilityPanel.VantagePoint', lang)}`} dataIndex="vantage" key="vantage" />
-            <Column title={`${t('visibilityPanel.TotalVisibility', lang)}`} dataIndex="total" key="total" />
+            <Column
+              title={`${t('visibilityPanel.VantagePoint', lang) + ' (' + t('word.MeterAbbreviation', lang) + ')'}`}
+              dataIndex="vantage"
+              key="vantage"
+            />
+            <Column title={`${t('visibilityPanel.TotalVisibility', lang) + ' (%)'}`} dataIndex="total" key="total" />
             <Column
               title={`${t('visibilityPanel.ItemizedVisibilityByFields', lang)}`}
               dataIndex="itemized"

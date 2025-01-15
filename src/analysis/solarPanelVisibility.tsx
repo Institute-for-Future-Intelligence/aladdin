@@ -97,7 +97,7 @@ const SolarPanelVisibility = React.memo(() => {
         if (e.type === ObjectType.SolarPanel) {
           const sp = e as SolarPanelModel;
           let vf = resultMap.get(sp.parentId) ?? 0;
-          vf += getViewFactor(sp, vantage.position) * 100; // 100 is for percentage
+          vf += getViewFactor(sp, vantage.position) * 100; // multiplied by 100 as view factor is between 0 and 1
           resultMap.set(sp.parentId, vf);
         }
       }
