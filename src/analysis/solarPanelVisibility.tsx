@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef } from 'react';
@@ -119,7 +119,6 @@ const SolarPanelVisibility = React.memo(() => {
     const center = walltop
       ? Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent, getFoundation(panel), panel.lz)
       : Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent, undefined, undefined, true);
-    // const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent, undefined, undefined, true);
     if (rooftop) {
       center.z = panel.cz + parent.cz;
     }
@@ -146,7 +145,7 @@ const SolarPanelVisibility = React.memo(() => {
     let integral = 0;
     const point = new Vector3();
     const direction = new Vector3();
-    let r;
+    let rsq;
     const v2 = new Vector2();
     const zRotZero = Util.isZero(zRot);
     for (let kx = 0; kx < nx; kx++) {
@@ -155,16 +154,16 @@ const SolarPanelVisibility = React.memo(() => {
         if (!zRotZero) v2.rotateAround(center2d, zRot);
         point.set(v2.x, v2.y, z0 + ky * dz);
         direction.set(vantage.x - point.x, vantage.y - point.y, vantage.z - point.z);
-        r = direction.length();
-        if (r > 0) {
+        rsq = direction.lengthSq();
+        if (rsq !== 0) {
           direction.normalize();
           if (isVisible(panel.id, point, direction)) {
-            integral += Math.abs(direction.dot(normal)) / (r * r);
+            integral += Math.abs(direction.dot(normal)) / rsq;
           }
         }
       }
     }
-    return (integral * cellSize * cellSize) / (4 * Math.PI);
+    return (integral * cellSize * cellSize) / Math.PI;
   };
 
   const isVisible = (panelId: string, point: Vector3, direction: Vector3) => {
