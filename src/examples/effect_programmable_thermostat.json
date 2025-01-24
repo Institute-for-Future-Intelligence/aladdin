@@ -939,22 +939,10 @@
         "temperatureThreshold": 2,
         "type": "Programmable",
         "thermostatSetpoints": [
-          [
-            6,
-            20
-          ],
-          [
-            8,
-            15
-          ],
-          [
-            18,
-            20
-          ],
-          [
-            23,
-            15
-          ]
+          {"time": 6,"temp": 20},
+          {"time": 8,"temp": 15},
+          {"time": 18,"temp": 20},
+          {"time": 23,"temp": 15}
         ]
       },
       "labelHeight": 8.5,

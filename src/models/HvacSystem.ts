@@ -20,5 +20,10 @@ export interface HvacSystem {
   temperatureThreshold: number;
 
   type?: 'Simple' | 'Programmable';
-  thermostatSetpoints?: number[][]; // [time, temp][]
+  thermostatSetpoints?: ProgrammableSetpoint[]; // {time, temp}[]
+}
+
+export interface ProgrammableSetpoint {
+  time: number;
+  temp: number;
 }

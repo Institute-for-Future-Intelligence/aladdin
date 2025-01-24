@@ -79,12 +79,12 @@ export class Util {
       if (setpoints) {
         const nowTime = now.getHours() + now.getMinutes() / 60;
         for (let i = 0; i < setpoints.length; i++) {
-          const currPeriodTime = setpoints[i][0];
+          const currPeriodTime = setpoints[i].time;
           if (nowTime < currPeriodTime) {
             const idx = (i + setpoints.length - 1) % setpoints.length;
-            return setpoints[idx][1];
+            return setpoints[idx].temp;
           } else if (i === setpoints.length - 1) {
-            return setpoints[i][1];
+            return setpoints[i].temp;
           }
         }
       }
