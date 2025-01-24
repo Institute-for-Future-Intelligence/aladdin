@@ -67,8 +67,31 @@ import { DoorModel, DoorType } from './models/DoorModel';
 import { CUBOID_STACKABLE_CHILD, CUBOID_WRAPPER_NAME } from './views/cuboid';
 import { ViewState } from './stores/ViewState';
 import { WindTurbineModel } from './models/WindTurbineModel';
+import { HvacSystem } from './models/HvacSystem';
 
 export class Util {
+  static getSetpoit(now: Date, hvac: HvacSystem | undefined) {
+    if (!hvac) return 20;
+    if (!hvac.type || hvac.type === 'Simple') {
+      return hvac.thermostatSetpoint ?? 20;
+    } else if (hvac.type === 'Programmable') {
+      const setpoints = hvac.thermostatSetpoints;
+      if (setpoints) {
+        const nowTime = now.getHours() + now.getMinutes() / 60;
+        for (let i = 0; i < setpoints.length; i++) {
+          const currPeriodTime = setpoints[i][0];
+          if (nowTime < currPeriodTime) {
+            const idx = (i + setpoints.length - 1) % setpoints.length;
+            return setpoints[idx][1];
+          } else if (i === setpoints.length - 1) {
+            return setpoints[i][1];
+          }
+        }
+      }
+    }
+    return 20;
+  }
+
   static getShadowMapSize() {
     const val = localStorage.getItem('aladdin-shadow-map-size');
     if (!val) return DEFAULT_SHADOW_MAP_SIZE;
