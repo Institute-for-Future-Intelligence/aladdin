@@ -123,7 +123,7 @@ export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarP
                 !f.notBuilding &&
                 Util.getBuildingCompletionStatus(f, elements) === BuildingCompletionStatus.COMPLETE
               ) {
-                const setpoint = Util.getSetpoit(now, f.hvacSystem);
+                const setpoint = Util.getSetpoint(now, f.hvacSystem);
                 const threshold = f.hvacSystem?.temperatureThreshold ?? 3;
                 const id = f.hvacSystem?.id ?? (value.label && value.label !== '' ? value.label : index.toString());
                 if (id === index.toString()) index++;
@@ -194,7 +194,7 @@ export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarP
                 !f.notBuilding &&
                 Util.getBuildingCompletionStatus(f, elements) === BuildingCompletionStatus.COMPLETE
               ) {
-                const setpoint = Util.getSetpoit(now, f.hvacSystem);
+                const setpoint = Util.getSetpoint(now, f.hvacSystem);
                 const threshold = f.hvacSystem?.temperatureThreshold ?? 3;
                 let adjustedHeat = Math.abs(
                   adjustEnergyUsage(outsideTemperatureRange, value.heater, setpoint, threshold),

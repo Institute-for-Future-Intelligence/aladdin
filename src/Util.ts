@@ -70,7 +70,7 @@ import { WindTurbineModel } from './models/WindTurbineModel';
 import { HvacSystem } from './models/HvacSystem';
 
 export class Util {
-  static getSetpoit(now: Date, hvac: HvacSystem | undefined) {
+  static getSetpoint(now: Date, hvac: HvacSystem | undefined) {
     if (!hvac) return 20;
     if (!hvac.type || hvac.type === 'Simple') {
       return hvac.thermostatSetpoint ?? 20;

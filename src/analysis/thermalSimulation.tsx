@@ -691,7 +691,7 @@ const ThermalSimulation = React.memo(({ city }: ThermalSimulationProps) => {
     if (foundation) {
       const parent = getParent(window);
       if (parent) {
-        const setpoint = Util.getSetpoit(now, foundation.hvacSystem);
+        const setpoint = Util.getSetpoint(now, foundation.hvacSystem);
         const area = Util.getWindowArea(window, window.parentType === ObjectType.Roof ? undefined : parent);
         const deltaT = currentOutsideTemperatureRef.current - setpoint;
         // convert heat exchange to kWh
@@ -780,7 +780,7 @@ const ThermalSimulation = React.memo(({ city }: ThermalSimulationProps) => {
     if (foundation) {
       const parent = getParent(door);
       if (parent) {
-        const setpoint = Util.getSetpoit(now, foundation.hvacSystem);
+        const setpoint = Util.getSetpoint(now, foundation.hvacSystem);
         const area = Util.getDoorArea(door, parent);
         if (door.filled) {
           const absorption = getLightAbsorption(door);
@@ -840,7 +840,7 @@ const ThermalSimulation = React.memo(({ city }: ThermalSimulationProps) => {
     const foundation = getFoundation(wall);
     if (foundation) {
       const filled = wall.fill !== WallFill.Empty && wall.wallStructure === WallStructure.Default;
-      const setpoint = Util.getSetpoit(now, foundation.hvacSystem);
+      const setpoint = Util.getSetpoint(now, foundation.hvacSystem);
       if (filled) {
         const partial = wall.fill === WallFill.Partial && !Util.isPartialWallFull(wall);
         const frameVertices = Util.getWallVertices(wall, 0);
@@ -932,7 +932,7 @@ const ThermalSimulation = React.memo(({ city }: ThermalSimulationProps) => {
   const calculateFloor = (roof: RoofModel) => {
     const foundation = getFoundation(roof);
     if (!foundation) return;
-    const setpoint = Util.getSetpoit(now, foundation.hvacSystem);
+    const setpoint = Util.getSetpoint(now, foundation.hvacSystem);
     const floorArea = Util.calculateBuildingArea(roof);
     const deltaT = currentGroundTemperatureRef.current - setpoint;
     updateHeatExchangeNow(
@@ -976,7 +976,7 @@ const ThermalSimulation = React.memo(({ city }: ThermalSimulationProps) => {
         break;
     }
     if (roofSegmentResults) {
-      const setpoint = Util.getSetpoit(now, foundation.hvacSystem);
+      const setpoint = Util.getSetpoint(now, foundation.hvacSystem);
       let heatExchange = 0;
       for (const [i, segmentResult] of roofSegmentResults.entries()) {
         const deltaT =
