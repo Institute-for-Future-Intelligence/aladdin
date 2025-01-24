@@ -116,7 +116,7 @@ const BuildingHVACSystem = ({ setDialogVisible }: { setDialogVisible: (b: boolea
       name: 'Set Building HVAC System',
       timestamp: Date.now(),
       foundationID: foundation.id,
-      SystemID: foundation.hvacSystem.id,
+      systemID: foundation.hvacSystem.id,
       oldValues: hvacMap,
       newValue: hvac,
       undo() {
