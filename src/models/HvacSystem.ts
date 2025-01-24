@@ -18,4 +18,7 @@ export interface HvacSystem {
    The same logic can be applied to the case of cooling as well.
    */
   temperatureThreshold: number;
+
+  type?: 'Simple' | 'Programmable';
+  thermostatSetpoints?: number[][]; // [time, temp][]
 }

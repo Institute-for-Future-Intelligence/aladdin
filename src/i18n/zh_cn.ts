@@ -84,11 +84,6 @@ export const i18n_zh_cn = {
       UValue: 'U值',
       RValue: 'R值',
       VolumetricHeatCapacity: '容积热容',
-      BuildingHVACSystem: '建筑物暖通空调系统',
-      ThermostatSetpoint: '恒温器设定值',
-      TemperatureToleranceThreshold: '温度忍耐阈值',
-      TemperatureToleranceThresholdExplanation:
-        '当日最低外面温度高于恒温器设定值减去此阈值，暖气不开。\n当日最高外面温度低于恒温器设定值加上此阈值，空调不开。',
       Press: '按',
       Open: '打开',
       Save: '保存',
@@ -644,6 +639,26 @@ export const i18n_zh_cn = {
       ModelsGallery: '模型画廊',
       ModelsMap: '模型地图',
       AboutUs: '关于我们',
+    },
+
+    HVACMenu: {
+      BuildingHVACSystem: '建筑物暖通空调系统',
+      ThermostatSetpoint: '恒温器设定值',
+      Tolerance: '温度忍耐阈值',
+      ToleranceExplanation:
+        '当日最低外面温度高于恒温器设定值减去此阈值，暖气不开。\n当日最高外面温度低于恒温器设定值加上此阈值，空调不开。',
+      ID: 'ID',
+      Type: '类型',
+      Simple: '简单',
+      Programmable: '编程',
+      Period: '时段',
+      StartTime: '开始时间',
+      Setpoint: '设定值',
+      Wake: '起床',
+      Day: '白天',
+      Evening: '夜晚',
+      Sleep: '睡眠',
+      TimeErrorMessage: '开始时间应晚于上一个时段',
     },
 
     avatarMenu: {

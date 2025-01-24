@@ -84,11 +84,6 @@ export const i18n_tr = {
       UValue: 'U-Value',
       RValue: 'R-Value',
       VolumetricHeatCapacity: 'Volumetric Heat Capacity',
-      BuildingHVACSystem: 'Building HVAC System',
-      ThermostatSetpoint: 'Thermostat Setpoint',
-      TemperatureToleranceThreshold: 'Tolerance Threshold',
-      TemperatureToleranceThresholdExplanation:
-        'Heater will not run if the lowest outside temperature of the day is higher than the setpoint minus this threshold.\nAC will not run if the highest outside temperature of the day is lower than the setpoint plus this threshold.',
       Press: 'Tıkla',
       Open: 'Aç',
       Save: 'Kaydet',
@@ -647,6 +642,26 @@ export const i18n_tr = {
       ModelsGallery: 'Models Gallery',
       ModelsMap: 'Models Map',
       AboutUs: 'Hakkımızda',
+    },
+
+    HVACMenu: {
+      BuildingHVACSystem: 'Building HVAC System',
+      ID: 'ID',
+      Tolerance: 'Tolerance',
+      ToleranceExplanation:
+        'Heater will not run if the lowest outside temperature of the day is higher than the setpoint minus this threshold.\nAC will not run if the highest outside temperature of the day is lower than the setpoint plus this threshold.',
+      Type: 'Type',
+      Simple: 'Simple',
+      Programmable: 'Programmable',
+      ThermostatSetpoint: 'Thermostat Setpoint',
+      Period: 'Period',
+      StartTime: 'Start Time',
+      Setpoint: 'Setpoint',
+      Wake: 'Wake',
+      Day: 'Day',
+      Evening: 'Evening',
+      Sleep: 'Sleep',
+      TimeErrorMessage: 'Start time should be later than previous period.',
     },
 
     avatarMenu: {

@@ -266,7 +266,7 @@ export class ElementModelFactory {
       solarUpdraftTower: {},
       solarAbsorberPipe: {},
       solarPowerTower: {},
-      hvacSystem: { thermostatSetpoint: 20 } as HvacSystem,
+      hvacSystem: { thermostatSetpoint: 20, temperatureThreshold: 3 } as HvacSystem,
       id: short.generate() as string,
     } as FoundationModel;
   }

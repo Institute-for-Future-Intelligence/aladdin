@@ -85,11 +85,6 @@ export const i18n_ua = {
       UValue: 'U-Значення',
       RValue: 'R-Значення',
       VolumetricHeatCapacity: "Об'ємна Теплоємність",
-      BuildingHVACSystem: 'Побудова Системи Опалення, Вентиляції та Кондиціювання Повітря (ОВК)',
-      ThermostatSetpoint: 'Задана Температура Термостата',
-      TemperatureToleranceThreshold: 'Порогове Значення Допустимого Відхилення Температури',
-      TemperatureToleranceThresholdExplanation:
-        'Обігрівач не працюватиме, якщо найнижча зовнішня температура дня вища за значення отриманe, якщо від заданої температури відняти порогове значення. Кондиціонер не працюватиме, якщо найвища зовнішня температура дня нижча за значення отримане, якщо від заданої температури відняти порогове значення.',
       Press: 'Натисніть',
       Open: 'Відкрити',
       Save: 'Зберегти',
@@ -649,6 +644,26 @@ export const i18n_ua = {
       ModelsGallery: 'Галерея моделей',
       ModelsMap: 'Карта моделей',
       AboutUs: 'Про нас',
+    },
+
+    HVACMenu: {
+      BuildingHVACSystem: 'Побудова Системи Опалення, Вентиляції та Кондиціювання Повітря (ОВК)',
+      ThermostatSetpoint: 'Задана Температура Термостата',
+      Tolerance: 'Порогове Значення Допустимого Відхилення Температури',
+      ToleranceExplanation:
+        'Обігрівач не працюватиме, якщо найнижча зовнішня температура дня вища за значення отриманe, якщо від заданої температури відняти порогове значення. Кондиціонер не працюватиме, якщо найвища зовнішня температура дня нижча за значення отримане, якщо від заданої температури відняти порогове значення.',
+      ID: 'ID',
+      Type: 'Type',
+      Simple: 'Simple',
+      Programmable: 'Programmable',
+      Period: 'Period',
+      StartTime: 'Start Time',
+      Setpoint: 'Setpoint',
+      Wake: 'Wake',
+      Day: 'Day',
+      Evening: 'Evening',
+      Sleep: 'Sleep',
+      TimeErrorMessage: 'Start time should be later than previous period.',
     },
 
     avatarMenu: {

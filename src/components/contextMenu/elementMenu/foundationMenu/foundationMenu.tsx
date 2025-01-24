@@ -48,6 +48,7 @@ import SolarPanelTiltAngleGaWizard from '../solarPanelTiltAngleGaWizard';
 import SolarPanelTiltAnglePsoWizard from '../solarPanelTiltAnglePsoWizard';
 import { createLabelSubmenu } from '../../labelSubmenuItems';
 import { createFoundationElementCounterSubmenu } from './foundationElementCounterSubmenu';
+import BuildingHVACSystem from './buildingHVACSystem';
 
 const legalToPasteOnFoundation = () => {
   const elementsToPaste = useStore.getState().elementsToPaste;
@@ -192,22 +193,8 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
 
   if (!foundation.notBuilding && counterAll.wallCount > 0) {
     items.push({
-      key: 'building-hvac-system',
-      label: <MenuItem>{i18n.t('word.BuildingHVACSystem', lang)}</MenuItem>,
-      children: [
-        {
-          key: 'hvac-system-id',
-          label: <HvacSystemIdInput foundation={foundation} />,
-        },
-        {
-          key: 'thermostat-temperature',
-          label: <ThermostatTemperatureInput foundation={foundation} />,
-        },
-        {
-          key: 'tolerance-threshold',
-          label: <ToleranceThresholdInput foundation={foundation} />,
-        },
-      ],
+      key: 'building-programmable-hvac',
+      label: <DialogItem Dialog={BuildingHVACSystem}>{i18n.t('HVACMenu.BuildingHVACSystem', lang)} ...</DialogItem>,
     });
   }
 
