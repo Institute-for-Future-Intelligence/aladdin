@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import { useStore } from 'src/stores/common';
@@ -8,14 +8,7 @@ import { BuildingCompletionStatus, FoundationTexture, ObjectType, SolarStructure
 import { Copy, Cut, DialogItem, GroupMasterCheckbox, Lock, MenuItem, Paste } from '../../menuItems';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { ElementModel } from 'src/models/ElementModel';
-import {
-  AddPolygonItem,
-  BuildingCheckbox,
-  HvacSystemIdInput,
-  SolarStructureRadioGroup,
-  ThermostatTemperatureInput,
-  ToleranceThresholdInput,
-} from './foundationMenuItems';
+import { AddPolygonItem, BuildingCheckbox, SolarStructureRadioGroup } from './foundationMenuItems';
 import i18n from 'src/i18n/i18n';
 import FoundationTextureSelection from './foundationTextureSelection';
 import FoundationColorSelection from './foundationColorSelection';

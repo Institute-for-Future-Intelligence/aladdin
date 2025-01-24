@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 export const i18n_ua = {
@@ -471,6 +471,7 @@ export const i18n_ua = {
         EffectOfEavesOverhangLengthOnBuildingEnergy: 'Вплив довжини виступу карнизу на енергію будівлі',
         EffectOfWindowSHGCOnBuildingEnergy: 'Вплив коефіцієнта сонячного теплозиску вікна на енергію будівлі',
         EffectOfThermostatSetpointOnBuildingEnergy: 'Вплив заданої температури на термостаті на енергію будівлі',
+        EffectOfProgrammableThermostatOnBuildingEnergy: 'Effect of Programmable Thermostat on Building Energy',
         EffectOfSolarPanelsOnBuildingEnergy: 'Вплив сонячних панелей на енергію будівлі',
         EffectOfGroundTemperatureOnBuildingEnergy: 'Вплив температури грунту на енергію будівлі',
         EffectOfTreesOnBuildingEnergy: 'Вплив дерев на енергію будівлі',
@@ -653,7 +654,7 @@ export const i18n_ua = {
       ToleranceExplanation:
         'Обігрівач не працюватиме, якщо найнижча зовнішня температура дня вища за значення отриманe, якщо від заданої температури відняти порогове значення. Кондиціонер не працюватиме, якщо найвища зовнішня температура дня нижча за значення отримане, якщо від заданої температури відняти порогове значення.',
       ID: 'ID',
-      Type: 'Type',
+      ThermostatType: 'Thermostat Type',
       Simple: 'Simple',
       Programmable: 'Programmable',
       Period: 'Period',

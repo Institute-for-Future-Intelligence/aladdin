@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useRef, useState } from 'react';
@@ -189,7 +189,7 @@ const BuildingHVACSystem = ({ setDialogVisible }: { setDialogVisible: (b: boolea
 
   return (
     <Dialog
-      width={400}
+      width={450}
       title={i18n.t('HVACMenu.BuildingHVACSystem', lang)}
       onApply={onApply}
       onClose={onClose}
@@ -231,10 +231,10 @@ const BuildingHVACSystem = ({ setDialogVisible }: { setDialogVisible: (b: boolea
         </Col>
       </Row>
       <Row style={{ padding: '4px 0', height: '39px' }}>
-        <Col span={6} style={{ display: 'flex', alignItems: 'center' }}>
-          <b>{i18n.t('HVACMenu.Type', lang)}:</b>
+        <Col span={8} style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
+          <b>{i18n.t('HVACMenu.ThermostatType', lang)}:</b>
         </Col>
-        <Col span={18} style={{ display: 'flex', alignItems: 'center' }}>
+        <Col span={16} style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
           <Radio.Group defaultValue={type} onChange={(e) => setType(e.target.value)}>
             <Radio value={'Simple'}>{i18n.t('HVACMenu.Simple', lang)}</Radio>
             <Radio style={{ margin: '0 0 0 48px' }} value={'Programmable'}>

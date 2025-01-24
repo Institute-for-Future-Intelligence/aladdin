@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 export const i18n_en = {
@@ -468,6 +468,7 @@ export const i18n_en = {
         EffectOfEavesOverhangLengthOnBuildingEnergy: 'Effect of Eaves Overhang Length on Building Energy',
         EffectOfWindowSHGCOnBuildingEnergy: 'Effect of Window Solar Heat Gain on Building Energy',
         EffectOfThermostatSetpointOnBuildingEnergy: 'Effect of Thermostat Setpoint on Building Energy',
+        EffectOfProgrammableThermostatOnBuildingEnergy: 'Effect of Programmable Thermostat on Building Energy',
         EffectOfSolarPanelsOnBuildingEnergy: 'Effect of Solar Panels on Building Energy',
         EffectOfGroundTemperatureOnBuildingEnergy: 'Effect of Ground Temperature on Building Energy',
         EffectOfTreesOnBuildingEnergy: 'Effect of Trees on Building Energy',
@@ -650,7 +651,7 @@ export const i18n_en = {
       Tolerance: 'Tolerance',
       ToleranceExplanation:
         'Heater will not run if the lowest outside temperature of the day is higher than the setpoint minus this threshold.\nAC will not run if the highest outside temperature of the day is lower than the setpoint plus this threshold.',
-      Type: 'Type',
+      ThermostatType: 'Thermostat Type',
       Simple: 'Simple',
       Programmable: 'Programmable',
       ThermostatSetpoint: 'Thermostat Setpoint',

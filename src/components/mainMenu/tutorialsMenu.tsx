@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 import { MenuProps } from 'antd';
 import { MenuItem } from '../contextMenu/menuItems';
@@ -115,6 +115,10 @@ export const createTutorialsMenu = (viewOnly: boolean) => {
         {
           key: 'effect_thermostat_setpoint',
           label: 'menu.buildingScienceTutorials.EffectOfThermostatSetpointOnBuildingEnergy',
+        },
+        {
+          key: 'effect_programmable_thermostat',
+          label: 'menu.buildingScienceTutorials.EffectOfProgrammableThermostatOnBuildingEnergy',
         },
         {
           key: 'effect_solar_panels',

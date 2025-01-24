@@ -119,6 +119,7 @@ import effect_roof_color from './examples/effect_roof_color.json';
 import effect_eaves_overhang_length from './examples/effect_eaves_overhang_length.json';
 import effect_window_shgc from './examples/effect_window_shgc.json';
 import effect_thermostat_setpoint from './examples/effect_thermostat_setpoint.json';
+import effect_programmable_thermostat from './examples/effect_programmable_thermostat.json';
 import effect_solar_panels from './examples/effect_solar_panels.json';
 import effect_ground_temperature from './examples/effect_ground_temperature.json';
 import effect_trees from './examples/effect_trees.json';
@@ -162,6 +163,9 @@ export const getExample = (name: string) => {
       break;
     case 'effect_thermostat_setpoint':
       input = effect_thermostat_setpoint;
+      break;
+    case 'effect_programmable_thermostat':
+      input = effect_programmable_thermostat;
       break;
     case 'effect_solar_panels':
       input = effect_solar_panels;

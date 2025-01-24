@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 export const i18n_zh_cn = {
@@ -466,6 +466,7 @@ export const i18n_zh_cn = {
         EffectOfEavesOverhangLengthOnBuildingEnergy: '屋檐延伸长度对建筑物能耗的影响',
         EffectOfWindowSHGCOnBuildingEnergy: '窗户太阳能输入对房屋能耗的影响',
         EffectOfThermostatSetpointOnBuildingEnergy: '恒温器设定值对房屋能耗的影响',
+        EffectOfProgrammableThermostatOnBuildingEnergy: '可编程恒温器对房屋能耗的影响',
         EffectOfSolarPanelsOnBuildingEnergy: '光伏板对房屋能耗的影响',
         EffectOfGroundTemperatureOnBuildingEnergy: '地表温度对房屋能耗的影响',
         EffectOfTreesOnBuildingEnergy: '树荫对房屋能耗的影响',
@@ -648,7 +649,7 @@ export const i18n_zh_cn = {
       ToleranceExplanation:
         '当日最低外面温度高于恒温器设定值减去此阈值，暖气不开。\n当日最高外面温度低于恒温器设定值加上此阈值，空调不开。',
       ID: 'ID',
-      Type: '类型',
+      ThermostatType: '恒温器类型',
       Simple: '简单',
       Programmable: '编程',
       Period: '时段',
