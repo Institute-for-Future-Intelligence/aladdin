@@ -3,12 +3,12 @@
  */
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { DoubleSide, Group, Mesh, RepeatWrapping, TextureLoader, Vector3 } from 'three';
+import { DoubleSide, Group, Mesh, RepeatWrapping, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { ThreeEvent, useFrame, useThree } from '@react-three/fiber';
 import { HumanModel } from '../models/HumanModel';
-import { Billboard, Cylinder, Line, Plane, Sphere } from '@react-three/drei';
+import { Billboard, Cylinder, Line, Plane, Sphere, useTexture } from '@react-three/drei';
 import {
   GROUND_ID,
   HALF_PI,
@@ -107,16 +107,19 @@ const Human = React.memo((humanModel: HumanModel) => {
     }
   }, [fileChangedState, parentId]);
 
-  const loadedTexture = useMemo(() => {
-    return new TextureLoader().load(HumanData.fetchTextureImage(name), (texture) => {
-      if (flip) {
-        texture.wrapS = RepeatWrapping;
-        texture.repeat.x = -1;
-      }
-      setTexture(texture);
-    });
-  }, [name, flip]);
-  const [texture, setTexture] = useState(loadedTexture);
+  // useTexture use same texture on all different element with same texture type, so we have to clone each one for different flip state.
+  const texture = useTexture(HumanData.fetchTextureImage(name));
+  const _texture = useMemo(() => {
+    const cloned = texture.clone();
+    if (flip) {
+      cloned.wrapS = RepeatWrapping;
+      cloned.repeat.x = -1;
+      cloned.needsUpdate = true;
+    } else {
+      cloned.repeat.x = 1;
+    }
+    return cloned;
+  }, [texture, flip]);
 
   const width = useMemo(() => {
     return HumanData.fetchWidth(name);
@@ -250,7 +253,7 @@ const Human = React.memo((humanModel: HumanModel) => {
               setHovered(false);
             }}
           >
-            <meshToonMaterial map={texture} alphaTest={0.5} side={DoubleSide} />
+            <meshToonMaterial map={_texture} alphaTest={0.5} side={DoubleSide} />
           </Plane>
         </Billboard>
 

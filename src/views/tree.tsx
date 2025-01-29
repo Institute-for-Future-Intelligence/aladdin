@@ -3,11 +3,11 @@
  */
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { DoubleSide, Group, Mesh, RepeatWrapping, TextureLoader, Vector3 } from 'three';
+import { DoubleSide, Group, Mesh, RepeatWrapping, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { ThreeEvent, useFrame, useThree } from '@react-three/fiber';
-import { Billboard, Box, Cone, Line, Plane, Sphere } from '@react-three/drei';
+import { Billboard, Box, Cone, Line, Plane, Sphere, useTexture } from '@react-three/drei';
 import {
   DEFAULT_LEAF_OFF_DAY,
   DEFAULT_LEAF_OUT_DAY,
@@ -136,19 +136,19 @@ const Tree = React.memo((treeModel: TreeModel) => {
     }
   }, [contentRef]);
 
-  const loadedTexture = useMemo(() => {
-    return new TextureLoader().load(
-      TreeData.fetchTextureImage(name, dayOfYear, latitude, leafDayOfYear1, leafDayOfYear2),
-      (texture) => {
-        if (flip) {
-          texture.wrapS = RepeatWrapping;
-          texture.repeat.x = -1;
-        }
-        setTexture(texture);
-      },
-    );
-  }, [name, dayOfYear, latitude, flip, leafDayOfYear1, leafDayOfYear2]);
-  const [texture, setTexture] = useState(loadedTexture);
+  // useTexture use same texture on all different element with same texture type, so we have to clone each one for different flip state.
+  const texture = useTexture(TreeData.fetchTextureImage(name, dayOfYear, latitude, leafDayOfYear1, leafDayOfYear2));
+  const _texture = useMemo(() => {
+    const cloned = texture.clone();
+    if (flip) {
+      cloned.wrapS = RepeatWrapping;
+      cloned.repeat.x = -1;
+      cloned.needsUpdate = true;
+    } else {
+      cloned.repeat.x = 1;
+    }
+    return cloned;
+  }, [texture, flip]);
 
   const labelText = useMemo(() => {
     return (
@@ -250,14 +250,14 @@ const Tree = React.memo((treeModel: TreeModel) => {
           <group position={[0, 0, lz / 2]}>
             <Billboard ref={solidTreeRef} uuid={id} name={name} follow={false}>
               <Plane args={[lx, lz]}>
-                <meshToonMaterial map={texture} side={DoubleSide} alphaTest={0.5} />
+                <meshToonMaterial map={_texture} side={DoubleSide} alphaTest={0.5} />
               </Plane>
             </Billboard>
 
             {/* cast shadow */}
             <Billboard ref={shadowTreeRef} name={name + ' Shadow Billboard'} follow={false}>
               <Plane args={[lx, lz]} castShadow={shadowEnabled}>
-                <meshBasicMaterial map={texture} side={DoubleSide} alphaTest={0.5} opacity={0} />
+                <meshBasicMaterial map={_texture} side={DoubleSide} alphaTest={0.5} opacity={0} />
               </Plane>
             </Billboard>
 

@@ -12,7 +12,7 @@ import FoundationTexture06 from '../../resources/foundation_06.png';
 import FoundationTexture07 from '../../resources/foundation_07.png';
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Box, Plane, Sphere } from '@react-three/drei';
+import { Box, Plane, Sphere, useTexture } from '@react-three/drei';
 import { CanvasTexture, Euler, Group, Mesh, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
 import { useStore } from '../../stores/common';
 import { useRefStore } from '../../stores/commonRef';
@@ -538,41 +538,37 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
     }
   };
 
-  const textureLoader = useMemo(() => {
-    let textureImg;
+  const fetchTextureImage = (textureType: FoundationTexture) => {
     switch (textureType) {
       case FoundationTexture.Texture01:
-        textureImg = FoundationTexture01;
-        break;
+        return FoundationTexture01;
       case FoundationTexture.Texture02:
-        textureImg = FoundationTexture02;
-        break;
+        return FoundationTexture02;
       case FoundationTexture.Texture03:
-        textureImg = FoundationTexture03;
-        break;
+        return FoundationTexture03;
       case FoundationTexture.Texture04:
-        textureImg = FoundationTexture04;
-        break;
+        return FoundationTexture04;
       case FoundationTexture.Texture05:
-        textureImg = FoundationTexture05;
-        break;
+        return FoundationTexture05;
       case FoundationTexture.Texture06:
-        textureImg = FoundationTexture06;
-        break;
+        return FoundationTexture06;
       case FoundationTexture.Texture07:
-        textureImg = FoundationTexture07;
-        break;
+        return FoundationTexture07;
       default:
-        textureImg = FoundationTexture00;
+        return FoundationTexture00;
     }
-    return new TextureLoader().load(textureImg, (t) => {
-      t.wrapS = t.wrapT = RepeatWrapping;
-      const param = fetchRepeatDividers(textureType);
-      t.repeat.set(lx / param.x, ly / param.y);
-      setTexture(t);
-    });
-  }, [textureType, lx, ly]);
-  const [texture, setTexture] = useState(textureLoader);
+  };
+
+  // useTexture use same texture on all different element with same texture type, so we have to clone each one for different flip state.
+  const texture = useTexture(fetchTextureImage(textureType));
+  const _texture = useMemo(() => {
+    const cloned = texture.clone();
+    cloned.wrapS = cloned.wrapT = RepeatWrapping;
+    const param = fetchRepeatDividers(textureType);
+    cloned.repeat.set(lx / param.x, ly / param.y);
+    cloned.needsUpdate = true;
+    return cloned;
+  }, [texture, lx, ly]);
 
   const hoverHandle = useCallback(
     (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {
@@ -3139,7 +3135,7 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
             <meshStandardMaterial
               attach="material-4"
               color={textureType === FoundationTexture.NoTexture ? color : 'white'}
-              map={texture}
+              map={_texture}
               transparent={transparent}
               opacity={opacity}
             />

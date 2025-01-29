@@ -3,11 +3,11 @@
  */
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { DoubleSide, Group, Mesh, RepeatWrapping, TextureLoader, Vector3 } from 'three';
+import { DoubleSide, Group, Mesh, RepeatWrapping, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { ThreeEvent, useFrame, useThree } from '@react-three/fiber';
-import { Billboard, Line, Plane, Sphere } from '@react-three/drei';
+import { Billboard, Line, Plane, Sphere, useTexture } from '@react-three/drei';
 import {
   DEFAULT_LEAF_OFF_DAY,
   DEFAULT_LEAF_OUT_DAY,
@@ -110,16 +110,19 @@ const Flower = React.memo((flowerModel: FlowerModel) => {
     }
   }, [contentRef]);
 
-  const loadedTexture = useMemo(() => {
-    return new TextureLoader().load(FlowerData.fetchTextureImage(name, noLeaves), (texture) => {
-      if (flip) {
-        texture.wrapS = RepeatWrapping;
-        texture.repeat.x = -1;
-      }
-      setTexture(texture);
-    });
-  }, [name, noLeaves, flip]);
-  const [texture, setTexture] = useState(loadedTexture);
+  // useTexture use same texture on all different element with same texture type, so we have to clone each one for different flip state.
+  const texture = useTexture(FlowerData.fetchTextureImage(name, noLeaves));
+  const _texture = useMemo(() => {
+    const cloned = texture.clone();
+    if (flip) {
+      cloned.wrapS = RepeatWrapping;
+      cloned.repeat.x = -1;
+      cloned.needsUpdate = true;
+    } else {
+      cloned.repeat.x = 1;
+    }
+    return cloned;
+  }, [texture, flip]);
 
   const labelText = useMemo(() => {
     return (
@@ -230,7 +233,7 @@ const Flower = React.memo((flowerModel: FlowerModel) => {
           <group position={[0, 0, height / 2]}>
             <Billboard ref={flowerRef} uuid={id} name={name} follow={false} rotation={[HALF_PI, 0, 0]}>
               <Plane args={[width, height]} receiveShadow={!showSolarRadiationHeatmap}>
-                <meshToonMaterial map={texture} side={DoubleSide} alphaTest={0.5} />
+                <meshToonMaterial map={_texture} side={DoubleSide} alphaTest={0.5} />
               </Plane>
             </Billboard>
 
