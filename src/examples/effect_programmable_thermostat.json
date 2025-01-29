@@ -1,7 +1,7 @@
 {
-  "docid": "fXkf2vQB7kuhQrenDyYNCq",
-  "time": "01/24/2025 12:49 PM",
-  "timestamp": 1737740967206,
+  "docid": "k16EEJcqfh7Ym4wjvbrPa1",
+  "time": "01/24/2025 05:04 PM",
+  "timestamp": 1737756258091,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -939,10 +939,22 @@
         "temperatureThreshold": 2,
         "type": "Programmable",
         "thermostatSetpoints": [
-          {"time": 6,"temp": 20},
-          {"time": 8,"temp": 15},
-          {"time": 18,"temp": 20},
-          {"time": 23,"temp": 15}
+          {
+            "time": 6,
+            "temp": 20
+          },
+          {
+            "time": 8,
+            "temp": 15
+          },
+          {
+            "time": 18,
+            "temp": 20
+          },
+          {
+            "time": 23,
+            "temp": 15
+          }
         ]
       },
       "labelHeight": 8.5,
@@ -1018,7 +1030,7 @@
       "id": "afEtgeFVMoeDZdyxJU1psm"
     }
   ],
-  "sceneRadius": 13,
+  "sceneRadius": 24,
   "view": {
     "dailyPvYieldPanelX": 0,
     "mapPanelY": 0,
