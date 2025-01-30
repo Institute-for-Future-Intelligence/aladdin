@@ -109,7 +109,7 @@ const InsideWallMaterial = React.memo(
 );
 
 const Wall = ({ wallModel, foundationModel }: WallProps) => {
-  let {
+  const {
     id,
     cx,
     cy,
@@ -146,8 +146,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     rightPoint,
   } = wallModel;
 
-  leftRoofHeight = leftJoints.length > 0 ? leftRoofHeight : lz;
-  rightRoofHeight = rightJoints.length > 0 ? rightRoofHeight : lz;
+  const _leftRoofHeight = leftJoints.length > 0 ? leftRoofHeight : lz;
+  const _rightRoofHeight = rightJoints.length > 0 ? rightRoofHeight : lz;
 
   const texture = useWallTexture(textureType);
 
@@ -207,8 +207,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   const leftOffset = Util.getInnerWallOffset(leftWall, lx, ly, relativeAngle, 'left');
   const rightOffset = Util.getInnerWallOffset(rightWall, lx, ly, relativeAngle, 'right');
   const transparent = wallStructure === WallStructure.Stud || wallStructure === WallStructure.Pillar;
-  const wallLeftHeight = leftRoofHeight ?? lz;
-  const wallRightHeight = rightRoofHeight ?? lz;
+  const wallLeftHeight = _leftRoofHeight ?? lz;
+  const wallRightHeight = _rightRoofHeight ?? lz;
   const isPartial = fill === WallFill.Partial;
   const realLeftUnfilledHeight = isPartial ? leftUnfilledHeight : 0;
   const realRightUnfilledHeight = isPartial ? rightUnfilledHeight : 0;
@@ -281,8 +281,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     realWallLeftHeight,
     realWallRightHeight,
     elementsOnWall,
-    leftRoofHeight,
-    rightRoofHeight,
+    _leftRoofHeight,
+    _rightRoofHeight,
     centerRoofHeight,
     centerLeftRoofHeight,
     centerRightRoofHeight,
@@ -339,16 +339,16 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       wallShape.lineTo(hx - rightOffset, -hy + realWallLeftHeight + rightOffsetHeight); // upper right
       wallShape.lineTo(-hx + leftOffset, -hy + realWallLeftHeight + leftOffsetHeight); // upper left
     } else if (roofId) {
-      if (rightRoofHeight) {
-        wallShape.lineTo(hx - rightOffset, rightRoofHeight - hy);
+      if (_rightRoofHeight) {
+        wallShape.lineTo(hx - rightOffset, _rightRoofHeight - hy);
       } else {
         wallShape.lineTo(hx - rightOffset, hy); // upper right
       }
       centerRightRoofHeight && wallShape.lineTo(centerRightRoofHeight[0] * lx, centerRightRoofHeight[1] - hy);
       centerRoofHeight && wallShape.lineTo(centerRoofHeight[0] * lx, centerRoofHeight[1] - hy);
       centerLeftRoofHeight && wallShape.lineTo(centerLeftRoofHeight[0] * lx, centerLeftRoofHeight[1] - hy);
-      if (leftRoofHeight) {
-        wallShape.lineTo(-hx + leftOffset, leftRoofHeight - hy);
+      if (_leftRoofHeight) {
+        wallShape.lineTo(-hx + leftOffset, _leftRoofHeight - hy);
       } else {
         wallShape.lineTo(-hx + leftOffset, hy); // upper left
       }
@@ -399,8 +399,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     rightOffset,
     elementsOnWall,
     roofId,
-    leftRoofHeight,
-    rightRoofHeight,
+    _leftRoofHeight,
+    _rightRoofHeight,
     centerRoofHeight,
     centerLeftRoofHeight,
     centerRightRoofHeight,
@@ -457,7 +457,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       points.push({ x: x - rightOffset, y: -y + realWallRightHeight });
       points.push({ x: -x + leftOffset, y: -y + realWallLeftHeight });
     } else {
-      rightRoofHeight ? points.push({ x: x, y: rightRoofHeight - y }) : points.push({ x: x, y: y });
+      _rightRoofHeight ? points.push({ x: x, y: _rightRoofHeight - y }) : points.push({ x: x, y: y });
       if (centerRightRoofHeight) {
         points.push({ x: centerRightRoofHeight[0] * lx, y: centerRightRoofHeight[1] - y });
       }
@@ -467,7 +467,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       if (centerLeftRoofHeight) {
         points.push({ x: centerLeftRoofHeight[0] * lx, y: centerLeftRoofHeight[1] - y });
       }
-      leftRoofHeight ? points.push({ x: -x, y: leftRoofHeight - y }) : points.push({ x: -x, y: y });
+      _leftRoofHeight ? points.push({ x: -x, y: _leftRoofHeight - y }) : points.push({ x: -x, y: y });
     }
 
     return points;
@@ -479,8 +479,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     realRightUnfilledHeight,
     realWallLeftHeight,
     realWallRightHeight,
-    leftRoofHeight,
-    rightRoofHeight,
+    _leftRoofHeight,
+    _rightRoofHeight,
     centerRoofHeight,
     centerLeftRoofHeight,
     centerRightRoofHeight,
@@ -701,16 +701,16 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       shape.lineTo(cx + hx - rightOffset, cy - hy + realWallRightHeight); // top right
       shape.lineTo(cx - hx + leftOffset, cy - hy + realWallLeftHeight); // top left
     } else if (roofId) {
-      if (rightRoofHeight) {
-        shape.lineTo(cx + hx - rightOffset, rightRoofHeight - hy);
+      if (_rightRoofHeight) {
+        shape.lineTo(cx + hx - rightOffset, _rightRoofHeight - hy);
       } else {
         shape.lineTo(cx + hx - rightOffset, cy + hy); // upper right
       }
       centerRightRoofHeight && shape.lineTo(centerRightRoofHeight[0] * lx, centerRightRoofHeight[1] - hy);
       centerRoofHeight && shape.lineTo(centerRoofHeight[0] * lx, centerRoofHeight[1] - hy);
       centerLeftRoofHeight && shape.lineTo(centerLeftRoofHeight[0] * lx, centerLeftRoofHeight[1] - hy);
-      if (leftRoofHeight) {
-        shape.lineTo(cx - hx + leftOffset, leftRoofHeight - hy);
+      if (_leftRoofHeight) {
+        shape.lineTo(cx - hx + leftOffset, _leftRoofHeight - hy);
       } else {
         shape.lineTo(cx - hx + leftOffset, cy + hy); // upper left
       }
@@ -1324,7 +1324,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     if (isTopPartial || leftUnfilledHeight !== rightUnfilledHeight || leftTopPartialHeight !== rightTopPartialHeight)
       return false;
     if (!roofId) return true;
-    if (leftRoofHeight !== rightRoofHeight) return false;
+    if (_leftRoofHeight !== _rightRoofHeight) return false;
     return !(
       centerRoofHeight !== undefined ||
       centerLeftRoofHeight !== undefined ||
@@ -1431,18 +1431,18 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     // exception: shed roof
     if (centerRoofHeight) {
       const x = centerRoofHeight[0];
-      if (x === 0.5 && leftRoofHeight !== undefined) {
-        roofPoints.push(new Vector3(hx, centerRoofHeight[1] - hz), new Vector3(-hx, leftRoofHeight - hz));
+      if (x === 0.5 && _leftRoofHeight !== undefined) {
+        roofPoints.push(new Vector3(hx, centerRoofHeight[1] - hz), new Vector3(-hx, _leftRoofHeight - hz));
         return roofPoints;
       }
-      if (x === -0.5 && rightRoofHeight !== undefined) {
-        roofPoints.push(new Vector3(hx, rightRoofHeight - hz), new Vector3(-hx, centerRoofHeight[1] - hz));
+      if (x === -0.5 && _rightRoofHeight !== undefined) {
+        roofPoints.push(new Vector3(hx, _rightRoofHeight - hz), new Vector3(-hx, centerRoofHeight[1] - hz));
         return roofPoints;
       }
     }
 
-    if (rightRoofHeight !== undefined) {
-      roofPoints.push(new Vector3(hx, rightRoofHeight - hz));
+    if (_rightRoofHeight !== undefined) {
+      roofPoints.push(new Vector3(hx, _rightRoofHeight - hz));
     } else {
       roofPoints.push(new Vector3(hx, hz));
     }
@@ -1455,8 +1455,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     if (centerLeftRoofHeight !== undefined) {
       roofPoints.push(new Vector3(centerLeftRoofHeight[0] * lx, centerLeftRoofHeight[1] - hz));
     }
-    if (leftRoofHeight !== undefined) {
-      roofPoints.push(new Vector3(-hx, leftRoofHeight - hz));
+    if (_leftRoofHeight !== undefined) {
+      roofPoints.push(new Vector3(-hx, _leftRoofHeight - hz));
     } else {
       roofPoints.push(new Vector3(-hx, hz));
     }
