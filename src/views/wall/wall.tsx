@@ -876,10 +876,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     const [tx, th] = polygonTop;
     const topPointX = center.x + wLx * tx;
     const topPointY = center.z + wLz / 2 + th;
-    if (!Util.isPointInside(topPointX, topPointY, getWallBoundary(wallModel, 0))) {
-      return false;
-    }
-    return true;
+    return Util.isPointInside(topPointX, topPointY, getWallBoundary(wallModel, 0));
   }
 
   function setRayCast(e: ThreeEvent<PointerEvent>) {
@@ -1067,7 +1064,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     switch (newElement.type) {
       case ObjectType.Door:
       case ObjectType.Window:
-      case ObjectType.SolarPanel:
+      case ObjectType.SolarPanel: {
         const undoableResize = {
           name: `Resize ${newElement.type}`,
           timestamp: Date.now(),
@@ -1108,7 +1105,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         } as UndoableResizeElementOnWall;
         addUndoable(undoableResize);
         break;
-      case ObjectType.Polygon:
+      }
+      case ObjectType.Polygon: {
         const oldPg = oldElement as PolygonModel;
         const newPg = newElement as PolygonModel;
         const undoableEditPolygon = {
@@ -1127,6 +1125,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         } as UndoableChange;
         addUndoable(undoableEditPolygon);
         break;
+      }
     }
   }
 
@@ -1143,13 +1142,10 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
 
   function isFirstIntersectedWall(e: ThreeEvent<PointerEvent>, id: string) {
     const intersectedWalls = SharedUtil.getIntersectionObjects(e);
-    if (
+    return (
       intersectedWalls.length > 0 &&
       intersectedWalls[0].object.name === `${SharedUtil.WALL_OUTSIDE_SURFACE_MESH_NAME} ${id}`
-    ) {
-      return true;
-    }
-    return false;
+    );
   }
 
   function isFirstIntersectedObject(e: ThreeEvent<PointerEvent>) {
@@ -1321,10 +1317,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   }
 
   function isAllowedToSelectMe() {
-    if (useStore.getState().moveHandleType || useStore.getState().resizeHandleType || isAddingElement()) {
-      return false;
-    }
-    return true;
+    return !(useStore.getState().moveHandleType || useStore.getState().resizeHandleType || isAddingElement());
   }
 
   function isRectWall() {
@@ -1332,9 +1325,11 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       return false;
     if (!roofId) return true;
     if (leftRoofHeight !== rightRoofHeight) return false;
-    if (centerRoofHeight !== undefined || centerLeftRoofHeight !== undefined || centerRightRoofHeight !== undefined)
-      return false;
-    return true;
+    return !(
+      centerRoofHeight !== undefined ||
+      centerLeftRoofHeight !== undefined ||
+      centerRightRoofHeight !== undefined
+    );
   }
 
   /** Relative to wall and snapped to grid */
@@ -2149,6 +2144,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       if (newElement) {
         handleUndoableAdd(newElement);
         setCommonStore((state) => {
+          if (!newElement) return;
           state.elements.push(newElement as ElementModel);
           state.selectedElementIdSet.clear();
           state.selectedElementIdSet.add(newElement.id);
@@ -2190,11 +2186,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       if (useStore.getState().groupActionMode) {
         setCommonStore((state) => {
           for (const e of state.elements) {
-            if (e.id === parentId) {
-              e.selected = true;
-            } else {
-              e.selected = false;
-            }
+            e.selected = e.id === parentId;
           }
         });
         e.stopPropagation();
