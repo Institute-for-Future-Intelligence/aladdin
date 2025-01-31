@@ -4,6 +4,7 @@
 
 import { Color, Euler, Vector2, Vector3 } from 'three';
 import platform from 'platform';
+import { HvacSystem } from './models/HvacSystem';
 
 export const VERSION = '1.7.1';
 
@@ -139,6 +140,8 @@ export const HALF_PI_Z_EULER = new Euler(0, 0, HALF_PI);
 export const REGEX_ALLOWABLE_IN_NAME = /^[A-Za-z0-9\s-_()!?%&,]*$/;
 
 export const KeyCtrl = isMac() ? '⌘' : 'Ctrl';
+
+export const DEFAULT_HVAC_SYSTEM = { thermostatSetpoint: 20, temperatureThreshold: 3 } as HvacSystem;
 
 function isMac() {
   const os = platform.os?.family;

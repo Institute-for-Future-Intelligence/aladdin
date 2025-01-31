@@ -8,13 +8,14 @@ import { WindowModel, WindowType } from 'src/models/WindowModel';
 import { WallFill, WallModel, WallStructure } from 'src/models/WallModel';
 import { DEFAULT_PARAPET_SETTINGS } from 'src/views/wall/parapet';
 import { GambrelRoofModel, RoofModel, RoofType } from 'src/models/RoofModel';
-import { GROUND_ID, HALF_PI, LIGHT_INTENSITY_CHANGED_VERSION } from 'src/constants';
+import { DEFAULT_HVAC_SYSTEM, GROUND_ID, HALF_PI, LIGHT_INTENSITY_CHANGED_VERSION } from 'src/constants';
 import { DoorModel, DoorType } from 'src/models/DoorModel';
 import { ElementModel } from 'src/models/ElementModel';
 import { Util } from 'src/Util';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { SolarPanelUtil } from 'src/views/solarPanel/SolarPanelUtil';
 import { Vector3 } from 'three';
+import { FoundationModel } from 'src/models/FoundationModel';
 
 export class StoreUtil {
   static updateOldFileData() {
@@ -35,10 +36,14 @@ export class StoreUtil {
       for (const e of state.elements) {
         switch (e.type) {
           case ObjectType.Foundation: {
+            const foundation = e as FoundationModel;
             // TODO: fix these bugs that are tentatively corrected here
             if (e.parentId !== GROUND_ID) {
               console.error('Error: ' + e.parentId + ' is not ground!');
               e.parentId = GROUND_ID;
+            }
+            if (!foundation.hvacSystem) {
+              foundation.hvacSystem = { ...DEFAULT_HVAC_SYSTEM };
             }
             break;
           }
@@ -257,6 +262,7 @@ export class StoreUtil {
                 }
               }
             }
+            break;
           }
         }
       }

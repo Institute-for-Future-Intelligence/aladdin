@@ -39,7 +39,7 @@ import {
   RoofStructure,
   RoofType,
 } from './RoofModel';
-import { GROUND_ID } from '../constants';
+import { DEFAULT_HVAC_SYSTEM, GROUND_ID } from '../constants';
 import { WindowModel } from './WindowModel';
 import { Point2 } from './Point2';
 import { PolygonModel } from './PolygonModel';
@@ -266,7 +266,7 @@ export class ElementModelFactory {
       solarUpdraftTower: {},
       solarAbsorberPipe: {},
       solarPowerTower: {},
-      hvacSystem: { thermostatSetpoint: 20, temperatureThreshold: 3 } as HvacSystem,
+      hvacSystem: { ...DEFAULT_HVAC_SYSTEM },
       id: short.generate() as string,
     } as FoundationModel;
   }
