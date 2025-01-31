@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -972,20 +972,20 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   }
 
   function collisionHelper(args: number[], tolerance = 0) {
-    let [tMinX, tMaxX, tMinZ, tMaxZ, cMinX, cMaxX, cMinZ, cMaxZ] = args;
-    cMinX += tolerance;
-    cMaxX -= tolerance;
-    cMinZ += tolerance;
-    cMaxZ -= tolerance;
+    const [tMinX, tMaxX, tMinZ, tMaxZ, cMinX, cMaxX, cMinZ, cMaxZ] = args;
+    const _cMinX = cMinX + tolerance;
+    const _cMaxX = cMaxX - tolerance;
+    const _cMinZ = cMinZ + tolerance;
+    const _cMaxZ = cMaxZ - tolerance;
     return (
-      ((cMinX >= tMinX && cMinX <= tMaxX) ||
-        (cMaxX >= tMinX && cMaxX <= tMaxX) ||
-        (tMinX >= cMinX && tMinX <= cMaxX) ||
-        (tMaxX >= cMinX && tMaxX <= cMaxX)) &&
-      ((cMinZ >= tMinZ && cMinZ <= tMaxZ) ||
-        (cMaxZ >= tMinZ && cMaxZ <= tMaxZ) ||
-        (tMinZ >= cMinZ && tMinZ <= cMaxZ) ||
-        (tMaxZ >= cMinZ && tMaxZ <= cMaxZ))
+      ((_cMinX >= tMinX && _cMinX <= tMaxX) ||
+        (_cMaxX >= tMinX && _cMaxX <= tMaxX) ||
+        (tMinX >= _cMinX && tMinX <= _cMaxX) ||
+        (tMaxX >= _cMinX && tMaxX <= _cMaxX)) &&
+      ((_cMinZ >= tMinZ && _cMinZ <= tMaxZ) ||
+        (_cMaxZ >= tMinZ && _cMaxZ <= tMaxZ) ||
+        (tMinZ >= _cMinZ && tMinZ <= _cMaxZ) ||
+        (tMaxZ >= _cMinZ && tMaxZ <= _cMaxZ))
     );
   }
 
@@ -1267,8 +1267,6 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     }, new Map<string, WallModel>());
 
     let isLoop = false,
-      isSameHeight = true,
-      isPerpendicular = true,
       count = 0;
 
     const lang = { lng: useStore.getState().language };
@@ -1279,12 +1277,10 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       const rightWall = wallMapOnFoundation.get(w.rightJoints[0]);
       if (!rightWall) break;
       if (sameHeight && rightWall.lz !== startWall.lz) {
-        isSameHeight = false;
         showError(i18n.t('message.WallsAreNotAtSameHeight', lang));
         return false;
       }
       if (rect && !checkPerpendicular(w, rightWall)) {
-        isPerpendicular = false;
         showError(i18n.t('message.WallsAreNotPerpendicular', lang));
         return false;
       }
@@ -1573,8 +1569,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
             const centroid = Util.calculatePolygonCentroid(pg.vertices);
             const dx = -pointer.x / lx - centroid.x;
             const dy = -pointer.z / lz - centroid.y;
-            const newVertices = pg.vertices.map((v) => ({ x: v.x + dx, y: v.y + dy }));
-            (el as PolygonModel).vertices = newVertices;
+            (el as PolygonModel).vertices = pg.vertices.map((v) => ({ x: v.x + dx, y: v.y + dy }));
           }
           break;
         }
@@ -1800,8 +1795,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
             polygonTop = (selectedElement as WindowModel).polygonTop ?? DEFAULT_POLYGONTOP;
             isInside = checkPolygonTopInsideBoundary(boundedPointer, eLx, eLz, polygonTop);
           }
-          const isvalid = checkCollision(selectedElement.id, boundedPointer, eLx, eLz, polygonTop);
-          if (isInside && isvalid) {
+          const isValid = checkCollision(selectedElement.id, boundedPointer, eLx, eLz, polygonTop);
+          if (isInside && isValid) {
             invalidElementIdRef.current = null;
           } else {
             invalidElementIdRef.current = selectedElement.id;
@@ -2135,7 +2130,6 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         case ObjectType.BatteryStorage: {
           if (pointer && body) {
             const p = getRelativePosOnWall(pointer, wallModel);
-            const actionState = useStore.getState().actionState;
             newElement = ElementModelFactory.makeBatteryStorage(wallModel, p.x / lx, 0, p.z / lz);
           }
           break;
@@ -2231,14 +2225,14 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   }
 
   function renderStuds() {
-    let [wallCenterPos, wallCenterHeight] = centerRoofHeight ?? [0, (realWallLeftHeight + realWallRightHeight) / 2];
-    wallCenterPos = wallCenterPos * lx;
+    const [wallCenterPos, wallCenterHeight] = centerRoofHeight ?? [0, (realWallLeftHeight + realWallRightHeight) / 2];
+    const _wallCenterPos = wallCenterPos * lx;
 
-    const leftX = wallCenterPos + hx;
+    const leftX = _wallCenterPos + hx;
     const leftLength = Math.hypot(leftX, wallCenterHeight - realWallLeftHeight);
     const leftRotationY = -Math.atan2(wallCenterHeight - realWallLeftHeight, leftX);
 
-    const rightX = hx - wallCenterPos;
+    const rightX = hx - _wallCenterPos;
     const rightLength = Math.hypot(rightX, realWallRightHeight - wallCenterHeight);
     const rightRotationY = -Math.atan2(realWallRightHeight - wallCenterHeight, rightX);
 
@@ -2246,12 +2240,12 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       <group name={`wall stud group ${id}`}>
         {structureUnitArray.map(([pos, y], idx) => {
           let height;
-          if (pos < wallCenterPos) {
+          if (pos < _wallCenterPos) {
             height =
-              ((pos + hx) * (wallCenterHeight - realWallLeftHeight)) / (wallCenterPos + hx) + realWallLeftHeight - y;
+              ((pos + hx) * (wallCenterHeight - realWallLeftHeight)) / (_wallCenterPos + hx) + realWallLeftHeight - y;
           } else {
             height =
-              ((pos - hx) * (wallCenterHeight - realWallRightHeight)) / (wallCenterPos - hx) + realWallRightHeight - y;
+              ((pos - hx) * (wallCenterHeight - realWallRightHeight)) / (_wallCenterPos - hx) + realWallRightHeight - y;
           }
 
           return (
@@ -2295,14 +2289,14 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   }
 
   function renderPillars() {
-    let [wallCenterPos, wallCenterHeight] = centerRoofHeight ?? [0, (realWallLeftHeight + realWallRightHeight) / 2];
-    wallCenterPos = wallCenterPos * lx;
+    const [wallCenterPos, wallCenterHeight] = centerRoofHeight ?? [0, (realWallLeftHeight + realWallRightHeight) / 2];
+    const _wallCenterPos = wallCenterPos * lx;
 
-    const leftX = wallCenterPos + hx;
+    const leftX = _wallCenterPos + hx;
     const leftLength = Math.hypot(leftX, wallCenterHeight - realWallLeftHeight);
     const leftRotationY = -Math.atan2(wallCenterHeight - realWallLeftHeight, leftX);
 
-    const rightX = hx - wallCenterPos;
+    const rightX = hx - _wallCenterPos;
     const rightLength = Math.hypot(rightX, realWallRightHeight - wallCenterHeight);
     const rightRotationY = -Math.atan2(realWallRightHeight - wallCenterHeight, rightX);
 
@@ -2312,12 +2306,12 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       <group name={`wall pillar group ${id}`} position={[0, -ly / 2, 0]}>
         {structureUnitArray.map(([pos, y], idx) => {
           let height;
-          if (pos < wallCenterPos) {
+          if (pos < _wallCenterPos) {
             height =
-              ((pos + hx) * (wallCenterHeight - realWallLeftHeight)) / (wallCenterPos + hx) + realWallLeftHeight - y;
+              ((pos + hx) * (wallCenterHeight - realWallLeftHeight)) / (_wallCenterPos + hx) + realWallLeftHeight - y;
           } else {
             height =
-              ((pos - hx) * (wallCenterHeight - realWallRightHeight)) / (wallCenterPos - hx) + realWallRightHeight - y;
+              ((pos - hx) * (wallCenterHeight - realWallRightHeight)) / (_wallCenterPos - hx) + realWallRightHeight - y;
           }
           return (
             <Cylinder
