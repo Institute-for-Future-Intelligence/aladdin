@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2025. Institute for Future Intelligence, Inc.
  */
 
 export interface HvacSystem {
@@ -9,7 +9,9 @@ export interface HvacSystem {
   */
   id?: string;
 
-  thermostatSetpoint: number;
+  thermostatSetpoint: number; // legacy, for backward compatability
+  heatingSetpoint?: number;
+  coolingSetpoint?: number;
 
   /*
    If the lowest temperature of the day is this degree below the thermostat setpoint,
@@ -20,10 +22,11 @@ export interface HvacSystem {
   temperatureThreshold: number;
 
   type?: 'Simple' | 'Programmable';
-  thermostatSetpoints?: ProgrammableSetpoint[]; // {time, temp}[]
+  thermostatSetpoints?: TimedSetpoint[];
 }
 
-export interface ProgrammableSetpoint {
+export interface TimedSetpoint {
   time: number;
-  temp: number;
+  heat: number;
+  cool: number;
 }

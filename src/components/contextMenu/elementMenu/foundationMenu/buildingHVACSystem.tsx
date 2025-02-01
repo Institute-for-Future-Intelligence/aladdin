@@ -13,15 +13,15 @@ import { useSelectedElement } from '../menuHooks';
 import Dialog from '../../dialog';
 import { useLanguage } from 'src/hooks';
 import dayjs from 'dayjs';
-import { HvacSystem, ProgrammableSetpoint } from 'src/models/HvacSystem';
+import { HvacSystem, TimedSetpoint } from 'src/models/HvacSystem';
 import produce from 'immer';
 import { UndoableHvacSystem } from 'src/undo/UndoableHvacSystem';
 
 const Default_Thermostat_Setpoints = [
-  { time: 6, temp: 20 },
-  { time: 8, temp: 20 },
-  { time: 18, temp: 20 },
-  { time: 23, temp: 20 },
+  { time: 6, heat: 20, cool: 20 },
+  { time: 8, heat: 20, cool: 20 },
+  { time: 18, heat: 20, cool: 20 },
+  { time: 23, heat: 20, cool: 20 },
 ];
 
 const timeFormat = 'HH:mm';
@@ -37,8 +37,13 @@ const BuildingHVACSystem = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   const IDRef = useRef(hvac?.id);
   const [type, setType] = useState<'Simple' | 'Programmable'>(hvac?.type ?? 'Simple');
   const [tolerance, setTolerance] = useState<number>(hvac?.temperatureThreshold ?? 2);
-  const [setpoint, setSetpoint] = useState<number>(hvac?.thermostatSetpoint ?? 20);
-  const [setpoints, setSetpoints] = useState<ProgrammableSetpoint[]>(
+  const [heatingSetpoint, setHeatingSetpoint] = useState<number>(
+    hvac?.heatingSetpoint ?? hvac?.thermostatSetpoint ?? 20,
+  );
+  const [coolingSetpoint, setCoolingSetpoint] = useState<number>(
+    hvac?.coolingSetpoint ?? hvac?.thermostatSetpoint ?? 20,
+  );
+  const [thermostatSetpoints, setThermostatSetpoints] = useState<TimedSetpoint[]>(
     hvac?.thermostatSetpoints ?? Default_Thermostat_Setpoints,
   );
   const [timeError, setTimeError] = useState<number | null>(null);
@@ -51,7 +56,8 @@ const BuildingHVACSystem = ({ setDialogVisible }: { setDialogVisible: (b: boolea
     if (
       h1.id !== h2.id ||
       h1.temperatureThreshold !== h2.temperatureThreshold ||
-      h1.thermostatSetpoint !== h2.thermostatSetpoint ||
+      h1.heatingSetpoint !== h2.heatingSetpoint ||
+      h1.coolingSetpoint !== h2.coolingSetpoint ||
       h1.type !== h2.type
     ) {
       return false;
@@ -59,7 +65,8 @@ const BuildingHVACSystem = ({ setDialogVisible }: { setDialogVisible: (b: boolea
     if (h1.thermostatSetpoints && h2.thermostatSetpoints) {
       for (let i = 0; i < h1.thermostatSetpoints.length; i++) {
         if (h1.thermostatSetpoints[i].time !== h2.thermostatSetpoints[i].time) return false;
-        if (h1.thermostatSetpoints[i].temp !== h2.thermostatSetpoints[i].temp) return false;
+        if (h1.thermostatSetpoints[i].heat !== h2.thermostatSetpoints[i].heat) return false;
+        if (h1.thermostatSetpoints[i].cool !== h2.thermostatSetpoints[i].cool) return false;
       }
     } else if (h1.thermostatSetpoints || h2.thermostatSetpoints) {
       return false;
@@ -138,21 +145,23 @@ const BuildingHVACSystem = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   };
 
   const setSetpointsValueByIndex = (val: number, i: number, j: number) => {
-    setSetpoints(
+    setThermostatSetpoints(
       produce((setpoints) => {
         if (j === 0) {
           setpoints[i].time = val;
         } else if (j === 1) {
-          setpoints[i].temp = val;
+          setpoints[i].heat = val;
+        } else if (j === 2) {
+          setpoints[i].cool = val;
         }
       }),
     );
   };
 
   const isTimeInvalid = () => {
-    for (let i = 1; i < setpoints.length; i++) {
-      const prevTime = setpoints[i - 1].time;
-      const currTime = setpoints[i].time;
+    for (let i = 1; i < thermostatSetpoints.length; i++) {
+      const prevTime = thermostatSetpoints[i - 1].time;
+      const currTime = thermostatSetpoints[i].time;
       if (prevTime > currTime) {
         setTimeError(i);
         return true;
@@ -163,15 +172,15 @@ const BuildingHVACSystem = ({ setDialogVisible }: { setDialogVisible: (b: boolea
 
   const onApply = () => {
     const hvac = {
-      thermostatSetpoint: setpoint,
+      heatingSetpoint,
+      coolingSetpoint,
       temperatureThreshold: tolerance,
-      type: type,
-      thermostatSetpoints: setpoints,
+      type,
+      thermostatSetpoints,
     } as HvacSystem;
     if (IDRef.current) {
       hvac.id = IDRef.current;
     }
-
     if (noChange(hvac) || isTimeInvalid()) {
       return;
     } else {
@@ -195,7 +204,7 @@ const BuildingHVACSystem = ({ setDialogVisible }: { setDialogVisible: (b: boolea
 
   return (
     <Dialog
-      width={450}
+      width={500}
       title={i18n.t('HVACMenu.BuildingHVACSystem', lang)}
       onApply={onApply}
       onClose={onClose}
@@ -254,17 +263,34 @@ const BuildingHVACSystem = ({ setDialogVisible }: { setDialogVisible: (b: boolea
         <>
           <Row>
             <Col span={11} style={{ display: 'flex', alignItems: 'center' }}>
-              <b>{i18n.t('HVACMenu.ThermostatSetpoint', lang)}:</b>
+              <b>{i18n.t('HVACMenu.HeatingSetpoint', lang)}:</b>
             </Col>
             <Col span={13}>
               <InputNumber
                 addonAfter="°C"
-                value={setpoint}
+                value={heatingSetpoint}
                 min={0}
                 max={30}
                 onChange={(val) => {
                   if (val === null) return;
-                  setSetpoint(Number(val));
+                  setHeatingSetpoint(Number(val));
+                }}
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col span={11} style={{ display: 'flex', alignItems: 'center' }}>
+              <b>{i18n.t('HVACMenu.CoolingSetpoint', lang)}:</b>
+            </Col>
+            <Col span={13}>
+              <InputNumber
+                addonAfter="°C"
+                value={coolingSetpoint}
+                min={0}
+                max={30}
+                onChange={(val) => {
+                  if (val === null) return;
+                  setCoolingSetpoint(Number(val));
                 }}
               />
             </Col>
@@ -273,23 +299,26 @@ const BuildingHVACSystem = ({ setDialogVisible }: { setDialogVisible: (b: boolea
       ) : (
         <>
           <Row style={{ height: '34px' }}>
-            <Col span={6}>
+            <Col span={4}>
               <b>{i18n.t('HVACMenu.Period', lang)}</b>
             </Col>
-            <Col span={9}>
+            <Col span={6} style={{ paddingRight: '6px' }}>
               <b>{i18n.t('HVACMenu.StartTime', lang)}</b>
             </Col>
-            <Col span={9}>
-              <b>{i18n.t('HVACMenu.Setpoint', lang)}</b>
+            <Col span={7} style={{ paddingRight: '6px' }}>
+              <b>{i18n.t('HVACMenu.HeatingSetpoint', lang)}</b>
+            </Col>
+            <Col span={7}>
+              <b>{i18n.t('HVACMenu.CoolingSetpoint', lang)}</b>
             </Col>
           </Row>
           <Row>
-            <Col span={6} style={{ padding: '6px 0' }}>
+            <Col span={4} style={{ paddingRight: '6px' }}>
               {i18n.t('HVACMenu.Wake', lang)}
             </Col>
-            <Col span={9} style={{ paddingRight: '6px' }}>
+            <Col span={6} style={{ paddingRight: '6px' }}>
               <TimePicker
-                value={getTime(setpoints[0].time)}
+                value={getTime(thermostatSetpoints[0].time)}
                 format={timeFormat}
                 onChange={(t) => {
                   setSetpointsValueByIndex(t.hour() + t.minute() / 60, 0, 0);
@@ -297,10 +326,10 @@ const BuildingHVACSystem = ({ setDialogVisible }: { setDialogVisible: (b: boolea
                 }}
               />
             </Col>
-            <Col span={9}>
+            <Col span={7} style={{ paddingRight: '6px' }}>
               <InputNumber
                 addonAfter="°C"
-                value={setpoints[0].temp}
+                value={thermostatSetpoints[0].heat ?? 20}
                 min={0}
                 max={30}
                 onChange={(val) => {
@@ -309,15 +338,27 @@ const BuildingHVACSystem = ({ setDialogVisible }: { setDialogVisible: (b: boolea
                 }}
               />
             </Col>
+            <Col span={7}>
+              <InputNumber
+                addonAfter="°C"
+                value={thermostatSetpoints[0].cool ?? 20}
+                min={0}
+                max={30}
+                onChange={(val) => {
+                  if (val === null) return;
+                  setSetpointsValueByIndex(val, 0, 2);
+                }}
+              />
+            </Col>
           </Row>
           <Row>
-            <Col span={6} style={{ padding: '6px 0' }}>
+            <Col span={4} style={{ paddingRight: '6px' }}>
               {i18n.t('HVACMenu.Day', lang)}
             </Col>
-            <Col span={9} style={{ paddingRight: '6px' }}>
+            <Col span={6} style={{ paddingRight: '6px' }}>
               <TimePicker
                 status={timeError === 1 ? 'error' : undefined}
-                value={getTime(setpoints[1].time)}
+                value={getTime(thermostatSetpoints[1].time)}
                 format={timeFormat}
                 onChange={(t) => {
                   setSetpointsValueByIndex(t.hour() + t.minute() / 60, 1, 0);
@@ -325,10 +366,10 @@ const BuildingHVACSystem = ({ setDialogVisible }: { setDialogVisible: (b: boolea
                 }}
               />
             </Col>
-            <Col span={9}>
+            <Col span={7} style={{ paddingRight: '6px' }}>
               <InputNumber
                 addonAfter="°C"
-                value={setpoints[1].temp}
+                value={thermostatSetpoints[1].heat ?? 20}
                 min={0}
                 max={30}
                 onChange={(val) => {
@@ -337,15 +378,27 @@ const BuildingHVACSystem = ({ setDialogVisible }: { setDialogVisible: (b: boolea
                 }}
               />
             </Col>
+            <Col span={7}>
+              <InputNumber
+                addonAfter="°C"
+                value={thermostatSetpoints[1].cool ?? 20}
+                min={0}
+                max={30}
+                onChange={(val) => {
+                  if (val === null) return;
+                  setSetpointsValueByIndex(val, 1, 2);
+                }}
+              />
+            </Col>
           </Row>
           <Row>
-            <Col span={6} style={{ padding: '6px 0' }}>
+            <Col span={4} style={{ paddingRight: '6px' }}>
               {i18n.t('HVACMenu.Evening', lang)}
             </Col>
-            <Col span={9} style={{ paddingRight: '6px' }}>
+            <Col span={6} style={{ paddingRight: '6px' }}>
               <TimePicker
                 status={timeError === 2 ? 'error' : undefined}
-                value={getTime(setpoints[2].time)}
+                value={getTime(thermostatSetpoints[2].time)}
                 format={timeFormat}
                 onChange={(t) => {
                   setSetpointsValueByIndex(t.hour() + t.minute() / 60, 2, 0);
@@ -353,10 +406,10 @@ const BuildingHVACSystem = ({ setDialogVisible }: { setDialogVisible: (b: boolea
                 }}
               />
             </Col>
-            <Col span={9}>
+            <Col span={7} style={{ paddingRight: '6px' }}>
               <InputNumber
                 addonAfter="°C"
-                value={setpoints[2].temp}
+                value={thermostatSetpoints[2].heat ?? 20}
                 min={0}
                 max={30}
                 onChange={(val) => {
@@ -365,15 +418,27 @@ const BuildingHVACSystem = ({ setDialogVisible }: { setDialogVisible: (b: boolea
                 }}
               />
             </Col>
+            <Col span={7}>
+              <InputNumber
+                addonAfter="°C"
+                value={thermostatSetpoints[2].cool ?? 20}
+                min={0}
+                max={30}
+                onChange={(val) => {
+                  if (val === null) return;
+                  setSetpointsValueByIndex(val, 2, 2);
+                }}
+              />
+            </Col>
           </Row>
           <Row>
-            <Col span={6} style={{ padding: '6px 0' }}>
+            <Col span={4} style={{ paddingRight: '6px' }}>
               {i18n.t('HVACMenu.Sleep', lang)}
             </Col>
-            <Col span={9} style={{ paddingRight: '6px' }}>
+            <Col span={6} style={{ paddingRight: '6px' }}>
               <TimePicker
                 status={timeError === 3 ? 'error' : undefined}
-                value={getTime(setpoints[3].time)}
+                value={getTime(thermostatSetpoints[3].time)}
                 format={timeFormat}
                 onChange={(t) => {
                   setSetpointsValueByIndex(t.hour() + t.minute() / 60, 3, 0);
@@ -381,15 +446,27 @@ const BuildingHVACSystem = ({ setDialogVisible }: { setDialogVisible: (b: boolea
                 }}
               />
             </Col>
-            <Col span={9}>
+            <Col span={7} style={{ paddingRight: '6px' }}>
               <InputNumber
                 addonAfter="°C"
-                value={setpoints[3].temp}
+                value={thermostatSetpoints[3].heat ?? 20}
                 min={0}
                 max={30}
                 onChange={(val) => {
                   if (val === null) return;
                   setSetpointsValueByIndex(val, 3, 1);
+                }}
+              />
+            </Col>
+            <Col span={7}>
+              <InputNumber
+                addonAfter="°C"
+                value={thermostatSetpoints[3].cool ?? 20}
+                min={0}
+                max={30}
+                onChange={(val) => {
+                  if (val === null) return;
+                  setSetpointsValueByIndex(val, 3, 2);
                 }}
               />
             </Col>

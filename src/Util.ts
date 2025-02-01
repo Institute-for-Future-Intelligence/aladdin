@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import {
@@ -70,10 +70,10 @@ import { WindTurbineModel } from './models/WindTurbineModel';
 import { HvacSystem } from './models/HvacSystem';
 
 export class Util {
-  static getSetpoint(now: Date, hvac: HvacSystem | undefined) {
+  static getHeatingSetpoint(now: Date, hvac: HvacSystem | undefined) {
     if (!hvac) return 20;
     if (!hvac.type || hvac.type === 'Simple') {
-      return hvac.thermostatSetpoint ?? 20;
+      return hvac.heatingSetpoint ?? hvac.thermostatSetpoint ?? 20;
     } else if (hvac.type === 'Programmable') {
       const setpoints = hvac.thermostatSetpoints;
       if (setpoints) {
@@ -82,9 +82,31 @@ export class Util {
           const currPeriodTime = setpoints[i].time;
           if (nowTime < currPeriodTime) {
             const idx = (i + setpoints.length - 1) % setpoints.length;
-            return setpoints[idx].temp;
+            return setpoints[idx].heat;
           } else if (i === setpoints.length - 1) {
-            return setpoints[i].temp;
+            return setpoints[i].heat;
+          }
+        }
+      }
+    }
+    return 20;
+  }
+
+  static getCoolingSetpoint(now: Date, hvac: HvacSystem | undefined) {
+    if (!hvac) return 20;
+    if (!hvac.type || hvac.type === 'Simple') {
+      return hvac.coolingSetpoint ?? hvac.thermostatSetpoint ?? 20;
+    } else if (hvac.type === 'Programmable') {
+      const setpoints = hvac.thermostatSetpoints;
+      if (setpoints) {
+        const nowTime = now.getHours() + now.getMinutes() / 60;
+        for (let i = 0; i < setpoints.length; i++) {
+          const currPeriodTime = setpoints[i].time;
+          if (nowTime < currPeriodTime) {
+            const idx = (i + setpoints.length - 1) % setpoints.length;
+            return setpoints[idx].cool;
+          } else if (i === setpoints.length - 1) {
+            return setpoints[i].cool;
           }
         }
       }

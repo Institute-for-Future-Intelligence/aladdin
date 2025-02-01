@@ -123,14 +123,15 @@ export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarP
                 !f.notBuilding &&
                 Util.getBuildingCompletionStatus(f, elements) === BuildingCompletionStatus.COMPLETE
               ) {
-                const setpoint = Util.getSetpoint(now, f.hvacSystem);
+                const heatingSetpoint = Util.getHeatingSetpoint(now, f.hvacSystem);
+                const coolingSetpoint = Util.getCoolingSetpoint(now, f.hvacSystem);
                 const threshold = f.hvacSystem?.temperatureThreshold ?? 3;
                 const id = f.hvacSystem?.id ?? (value.label && value.label !== '' ? value.label : index.toString());
                 if (id === index.toString()) index++;
                 let adjustedHeat = Math.abs(
-                  adjustEnergyUsage(outsideTemperatureRange, value.heater, setpoint, threshold),
+                  adjustEnergyUsage(outsideTemperatureRange, value.heater, heatingSetpoint, threshold),
                 );
-                let adjustedAc = adjustEnergyUsage(outsideTemperatureRange, value.ac, setpoint, threshold);
+                let adjustedAc = adjustEnergyUsage(outsideTemperatureRange, value.ac, coolingSetpoint, threshold);
                 if (adjustedHeat > 0) {
                   adjustedHeat -= value.geothermal;
                   if (adjustedHeat < 0) adjustedHeat = 0;
@@ -194,12 +195,13 @@ export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarP
                 !f.notBuilding &&
                 Util.getBuildingCompletionStatus(f, elements) === BuildingCompletionStatus.COMPLETE
               ) {
-                const setpoint = Util.getSetpoint(now, f.hvacSystem);
+                const heatingSetpoint = Util.getHeatingSetpoint(now, f.hvacSystem);
+                const coolingSetpoint = Util.getCoolingSetpoint(now, f.hvacSystem);
                 const threshold = f.hvacSystem?.temperatureThreshold ?? 3;
                 let adjustedHeat = Math.abs(
-                  adjustEnergyUsage(outsideTemperatureRange, value.heater, setpoint, threshold),
+                  adjustEnergyUsage(outsideTemperatureRange, value.heater, heatingSetpoint, threshold),
                 );
-                let adjustedAc = adjustEnergyUsage(outsideTemperatureRange, value.ac, setpoint, threshold);
+                let adjustedAc = adjustEnergyUsage(outsideTemperatureRange, value.ac, coolingSetpoint, threshold);
                 if (adjustedHeat > 0) {
                   adjustedHeat -= value.geothermal;
                   if (adjustedHeat < 0) adjustedHeat = 0;

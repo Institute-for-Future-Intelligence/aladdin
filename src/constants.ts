@@ -141,7 +141,7 @@ export const REGEX_ALLOWABLE_IN_NAME = /^[A-Za-z0-9\s-_()!?%&,]*$/;
 
 export const KeyCtrl = isMac() ? '⌘' : 'Ctrl';
 
-export const DEFAULT_HVAC_SYSTEM = { thermostatSetpoint: 20, temperatureThreshold: 3 } as HvacSystem;
+export const DEFAULT_HVAC_SYSTEM = { heatingSetpoint: 20, coolingSetpoint: 20, temperatureThreshold: 3 } as HvacSystem;
 
 function isMac() {
   const os = platform.os?.family;

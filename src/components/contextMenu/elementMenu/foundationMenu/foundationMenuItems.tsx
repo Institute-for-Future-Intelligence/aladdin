@@ -1,8 +1,8 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
-import { Checkbox, Input, InputNumber, Modal, Radio, RadioChangeEvent, Space } from 'antd';
+import { Checkbox, Modal, Radio, RadioChangeEvent, Space } from 'antd';
 import { MenuItem } from '../../menuItems';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { useStore } from 'src/stores/common';
@@ -14,11 +14,10 @@ import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { ObjectType, SolarStructure } from 'src/types';
 import { UndoableRemoveAllChildren } from 'src/undo/UndoableRemoveAllChildren';
-import React, { useState } from 'react';
+import React from 'react';
 import { Vector3 } from 'three';
 import { UNIT_VECTOR_POS_Z } from 'src/constants';
 import { UndoableAdd } from 'src/undo/UndoableAdd';
-import { HvacSystem } from 'src/models/HvacSystem';
 import { UndoableChange } from 'src/undo/UndoableChange';
 
 interface FoundationItemProps {
@@ -196,177 +195,6 @@ export const AddPolygonItem = ({ foundation }: FoundationItemProps) => {
   };
 
   return <MenuItem onClick={handleClick}>{i18n.t('foundationMenu.AddPolygon', lang)}</MenuItem>;
-};
-
-export const HvacSystemIdInput = ({ foundation }: FoundationItemProps) => {
-  const [hvacId, setHvacId] = useState<string | undefined>(foundation?.hvacSystem?.id);
-
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let s: string | undefined = e.target.value;
-    if (s.trim().length === 0) s = undefined;
-    setHvacId(s);
-  };
-
-  const updateHvacIdByFoundationId = (id: string, value: string | undefined) => {
-    useStore.getState().set((state) => {
-      for (const e of state.elements) {
-        if (e.type === ObjectType.Foundation && e.id === id) {
-          const foundation = e as FoundationModel;
-          if (foundation.hvacSystem) {
-            foundation.hvacSystem.id = value;
-          } else {
-            foundation.hvacSystem = { thermostatSetpoint: 20, temperatureThreshold: 3, id: value } as HvacSystem;
-          }
-          break;
-        }
-      }
-    });
-  };
-
-  const updateHvacId = (value: string | undefined) => {
-    const oldValue = foundation.hvacSystem?.id;
-    const newValue = value && value.trim().length > 0 ? value : undefined;
-    const undoableChange = {
-      name: 'Change HVAC ID',
-      timestamp: Date.now(),
-      oldValue: oldValue,
-      newValue: newValue,
-      undo: () => {
-        updateHvacIdByFoundationId(foundation.id, undoableChange.oldValue as string | undefined);
-      },
-      redo: () => {
-        updateHvacIdByFoundationId(foundation.id, undoableChange.newValue as string | undefined);
-      },
-    } as UndoableChange;
-    useStore.getState().addUndoable(undoableChange);
-    updateHvacIdByFoundationId(foundation.id, newValue);
-  };
-
-  return (
-    <MenuItem stayAfterClick noPadding>
-      <Space style={{ width: '40px', paddingLeft: '0px', textAlign: 'left' }}>{'ID:'}</Space>
-      <Input
-        style={{ width: '180px' }}
-        value={hvacId}
-        onChange={onChange}
-        onPressEnter={() => updateHvacId(hvacId)}
-        onBlur={() => updateHvacId(hvacId)}
-      />
-    </MenuItem>
-  );
-};
-
-export const ThermostatTemperatureInput = ({ foundation }: FoundationItemProps) => {
-  const lang = useLanguage();
-
-  const updateFoundationThermostatSetpointById = (id: string, value: number) => {
-    useStore.getState().set((state) => {
-      for (const e of state.elements) {
-        if (e.type === ObjectType.Foundation && e.id === id) {
-          const foundation = e as FoundationModel;
-          if (foundation.hvacSystem) {
-            foundation.hvacSystem.thermostatSetpoint = value;
-          } else {
-            foundation.hvacSystem = { thermostatSetpoint: value, temperatureThreshold: 3 } as HvacSystem;
-          }
-          break;
-        }
-      }
-    });
-  };
-
-  const onChange = (value: number | null) => {
-    if (value === null) return;
-    const oldValue = foundation.hvacSystem?.thermostatSetpoint ?? 20;
-    const newValue = value;
-    const undoableChange = {
-      name: 'Change Thermostat Setpoint',
-      timestamp: Date.now(),
-      oldValue: oldValue,
-      newValue: newValue,
-      undo: () => {
-        updateFoundationThermostatSetpointById(foundation.id, undoableChange.oldValue as number);
-      },
-      redo: () => {
-        updateFoundationThermostatSetpointById(foundation.id, undoableChange.newValue as number);
-      },
-    } as UndoableChange;
-    useStore.getState().addUndoable(undoableChange);
-    updateFoundationThermostatSetpointById(foundation.id, newValue);
-  };
-
-  return (
-    <MenuItem stayAfterClick noPadding>
-      <Space style={{ width: '160px' }}>{i18n.t('word.ThermostatSetpoint', lang) + ':'}</Space>
-      <InputNumber
-        min={0}
-        max={30}
-        step={1}
-        style={{ width: 60 }}
-        precision={1}
-        value={foundation.hvacSystem?.thermostatSetpoint ?? 20}
-        onChange={onChange}
-      />
-    </MenuItem>
-  );
-};
-
-export const ToleranceThresholdInput = ({ foundation }: FoundationItemProps) => {
-  const lang = useLanguage();
-
-  const updateFoundationTemperatureThresholdById = (id: string, value: number) => {
-    useStore.getState().set((state) => {
-      for (const e of state.elements) {
-        if (e.type === ObjectType.Foundation && e.id === id) {
-          const foundation = e as FoundationModel;
-          if (foundation.hvacSystem) {
-            foundation.hvacSystem.temperatureThreshold = value;
-          } else {
-            foundation.hvacSystem = { thermostatSetpoint: 20, temperatureThreshold: value } as HvacSystem;
-          }
-          break;
-        }
-      }
-    });
-  };
-
-  const handleChange = (value: number | null) => {
-    if (value === null) return;
-    const oldValue = foundation.hvacSystem?.temperatureThreshold ?? 3;
-    const newValue = value;
-    const undoableChange = {
-      name: 'Change Temperature Tolerance Threshold',
-      timestamp: Date.now(),
-      oldValue: oldValue,
-      newValue: newValue,
-      undo: () => {
-        updateFoundationTemperatureThresholdById(foundation.id, undoableChange.oldValue as number);
-      },
-      redo: () => {
-        updateFoundationTemperatureThresholdById(foundation.id, undoableChange.newValue as number);
-      },
-    } as UndoableChange;
-    useStore.getState().addUndoable(undoableChange);
-    updateFoundationTemperatureThresholdById(foundation.id, newValue);
-  };
-
-  return (
-    <MenuItem stayAfterClick noPadding>
-      <Space title={i18n.t('word.TemperatureToleranceThresholdExplanation', lang)} style={{ width: '160px' }}>
-        {i18n.t('word.TemperatureToleranceThreshold', lang) + ':'}
-      </Space>
-      <InputNumber
-        min={0}
-        max={30}
-        step={1}
-        style={{ width: 60 }}
-        precision={1}
-        value={foundation.hvacSystem?.temperatureThreshold ?? 3}
-        onChange={handleChange}
-      />
-      <Space style={{ paddingLeft: '10px' }}>°C</Space>
-    </MenuItem>
-  );
 };
 
 export const SolarStructureRadioGroup = ({ foundation }: FoundationItemProps) => {

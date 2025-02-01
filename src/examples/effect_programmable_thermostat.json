@@ -1,7 +1,7 @@
 {
-  "docid": "k16EEJcqfh7Ym4wjvbrPa1",
-  "time": "01/24/2025 05:04 PM",
-  "timestamp": 1737756258091,
+  "docid": "oRhfkmG6myQVZ23PhXrw8R",
+  "time": "02/01/2025 03:51 PM",
+  "timestamp": 1738443100573,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -935,25 +935,34 @@
       "solarAbsorberPipe": {},
       "solarPowerTower": {},
       "hvacSystem": {
-        "thermostatSetpoint": 25,
+        "heatingSetpoint": 25,
+        "coolingSetpoint": 25,
         "temperatureThreshold": 2,
         "type": "Programmable",
         "thermostatSetpoints": [
           {
             "time": 6,
-            "temp": 20
+            "temp": 20,
+            "heat": 20,
+            "cool": 24
           },
           {
             "time": 8,
-            "temp": 15
+            "temp": 15,
+            "heat": 15,
+            "cool": 26
           },
           {
             "time": 18,
-            "temp": 20
+            "temp": 20,
+            "heat": 20,
+            "cool": 26
           },
           {
             "time": 23,
-            "temp": 15
+            "temp": 15,
+            "heat": 15,
+            "cool": 24
           }
         ]
       },
@@ -1060,8 +1069,8 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -22.2016642534087,
-      -33.32056618638889,
+      -22.20166425340871,
+      -33.32056618638886,
       7.43795481566419
     ],
     "showYearlyHeliostatYieldPanel": false,

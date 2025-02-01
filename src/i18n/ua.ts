@@ -649,7 +649,6 @@ export const i18n_ua = {
 
     HVACMenu: {
       BuildingHVACSystem: 'Побудова Системи Опалення, Вентиляції та Кондиціювання Повітря (ОВК)',
-      ThermostatSetpoint: 'Задана Температура Термостата',
       Tolerance: 'Порогове Значення Допустимого Відхилення Температури',
       ToleranceExplanation:
         'Обігрівач не працюватиме, якщо найнижча зовнішня температура дня вища за значення отриманe, якщо від заданої температури відняти порогове значення. Кондиціонер не працюватиме, якщо найвища зовнішня температура дня нижча за значення отримане, якщо від заданої температури відняти порогове значення.',
@@ -657,6 +656,9 @@ export const i18n_ua = {
       ThermostatType: 'Thermostat Type',
       Simple: 'Simple',
       Programmable: 'Programmable',
+      ThermostatSetpoint: 'Задана Температура Термостата',
+      HeatingSetpoint: 'Heating Setpoint',
+      CoolingSetpoint: 'Cooling Setpoint',
       Period: 'Period',
       StartTime: 'Start Time',
       Setpoint: 'Setpoint',

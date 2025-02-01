@@ -644,7 +644,6 @@ export const i18n_zh_cn = {
 
     HVACMenu: {
       BuildingHVACSystem: '建筑物暖通空调系统',
-      ThermostatSetpoint: '恒温器设定值',
       Tolerance: '温度忍耐阈值',
       ToleranceExplanation:
         '当日最低外面温度高于恒温器设定值减去此阈值，暖气不开。\n当日最高外面温度低于恒温器设定值加上此阈值，空调不开。',
@@ -652,6 +651,9 @@ export const i18n_zh_cn = {
       ThermostatType: '恒温器类型',
       Simple: '简单',
       Programmable: '编程',
+      ThermostatSetpoint: '恒温器设定值',
+      HeatingSetpoint: '供暖温度设定值',
+      CoolingSetpoint: '空调温度设定值',
       Period: '时段',
       StartTime: '开始时间',
       Setpoint: '设定值',

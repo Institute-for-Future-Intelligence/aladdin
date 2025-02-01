@@ -655,6 +655,8 @@ export const i18n_en = {
       Simple: 'Simple',
       Programmable: 'Programmable',
       ThermostatSetpoint: 'Thermostat Setpoint',
+      HeatingSetpoint: 'Heating Setpoint',
+      CoolingSetpoint: 'Cooling Setpoint',
       Period: 'Period',
       StartTime: 'Start Time',
       Setpoint: 'Setpoint',
