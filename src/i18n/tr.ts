@@ -669,9 +669,6 @@ export const i18n_tr = {
 
     avatarMenu: {
       AccountSettings: 'Hesap Ayarları',
-      PrivacyStatementTitle: 'User Privacy Protection Statement',
-      PrivacyStatement:
-        'Oturum açtığınızda, Aladdin hesabınızı oluşturmak ve hesabınıza erişmek için Google Kimliğiniz kullanılır. Veritabanımızda referans olarak yalnızca rastgele bir alfasayısal dize depolanır. Adınız veya e-posta adresiniz gibi kişisel olarak tanımlanabilir hiçbir veri toplanmaz. Daha fazla bilgi için ',
       SignIn: 'Kayıt Ol',
       SignInAsMe: 'Sign in as me',
       SignInAnonymously: 'Sign in anonymously',

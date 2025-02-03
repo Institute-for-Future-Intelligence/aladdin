@@ -671,9 +671,6 @@ export const i18n_ua = {
 
     avatarMenu: {
       AccountSettings: 'Налаштування облікового запису',
-      PrivacyStatementTitle: 'User Privacy Protection Statement',
-      PrivacyStatement:
-        "Коли ви увійдете, ваш Google ID використовується для створення та доступу до вашого облікового запису Aladdin. В нашій базі даних зберігається лише випадковий алфавітно-цифровий рядок як посилання. Ми ніколи не збираємо особисто ідентифіковану інформацію, таку як ваше ім'я або електронна пошта. Для отримання додаткової інформації ознайомтесь з нашою ",
       SignIn: 'Увійти',
       SignInAsMe: 'Sign in as me',
       SignInAnonymously: 'Sign in anonymously',

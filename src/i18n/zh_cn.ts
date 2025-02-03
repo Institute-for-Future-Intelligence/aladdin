@@ -666,9 +666,6 @@ export const i18n_zh_cn = {
 
     avatarMenu: {
       AccountSettings: '账号设定',
-      PrivacyStatementTitle: '用户隐私保护声明',
-      PrivacyStatement:
-        '登录需要采用您的谷歌ID建立或进入您的阿拉丁账户。 我们只储存一个随机的字符串作为您的ID。 任何关于您的可辨识的个人信息都没有被收集。 详情请参考我们的',
       SignIn: '登录',
       SignInAsMe: '实名登录',
       SignInAnonymously: '匿名登录',
